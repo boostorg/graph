@@ -355,9 +355,10 @@ struct property;
 </PRE>
 
 <P>
-The <b><TT>PropertyTag</TT></b> template parameter is a tag class that
-simply identifies or gives a unique name to the property. There are
-several predefined tags, and it is easy to add more.
+The <a href="./PropertyTag.html"><TT>PropertyTag</TT></a> template
+parameter is a tag class that simply identifies or gives a unique name
+to the property. There are several predefined tags, and it is easy to
+add more.
 
 <P>
 <PRE>
@@ -447,11 +448,23 @@ struct capacity_t {
 </PRE>
 
 <p>
-You can also use enum's instead of struct's to create tag types.  See
-<a
-href="../example/edge_property.cpp"><tt>example/edge_property.cpp</tt></a>
-for an example of this.
+You can also use enum's instead of struct's to create tag types.
+Create an enum type for each property. The first part of the name of
+the enum type must be <tt>edge</tt>, <tt>vertex</tt>, or
+<tt>graph</tt> followed by an underscore, with a <tt>_t</tt> at the
+end. Inside the enum, define a value with the same name minus the
+<tt>_t</tt> and with a unique integer value. Then invoke the
+<tt>BOOST_INSTALL_PROPERTY</tt> macro.
 
+<pre>
+enum edge_myflow_t { edge_myflow = 100 };
+enum edge_mycapacity_t { edge_mycapacity = 101 };
+
+namespace boost {
+  BOOST_INSTALL_PROPERTY(edge, myflow);
+  BOOST_INSTALL_PROPERTY(edge, mycapacity);
+}
+</pre>
 
 <P>
 Now you can use your new property tag in the definition of properties
