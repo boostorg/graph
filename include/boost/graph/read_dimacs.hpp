@@ -208,7 +208,6 @@ int read_dimacs_max_flow(Graph& g,
       default:
         /* wrong type of node-line */
         err_no = EN12; goto error; 
-        break;
       }
       break;
       

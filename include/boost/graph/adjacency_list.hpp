@@ -340,6 +340,7 @@ namespace boost {
 
     typedef EdgeProperty edge_property_type;
     typedef VertexProperty vertex_property_type;
+    typedef GraphProperty graph_property_type;
 
     inline adjacency_list(const GraphProperty& p = GraphProperty()) 
       : m_property(p) { }
@@ -381,9 +382,16 @@ namespace boost {
     GraphProperty m_property;
   };
 
+  template <class Graph, class Property>
+  class graph_property {
+  public:
+    typedef typename property_value<typename Graph::graph_property_type, 
+      Property>::type type;
+  };
+
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
-  typename property_value<GP, Tag>::type&
+  typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
   get_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
     typedef typename property_value<GP, Tag>::type value_type;
     return get_property_value(g.m_property, value_type(), Tag());
@@ -391,7 +399,7 @@ namespace boost {
 
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
-  const typename property_value<GP, Tag>::type&
+  const typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
   get_property(const adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
     typedef typename property_value<GP, Tag>::type value_type;
     return get_property_value(g.m_property, value_type(), Tag());
