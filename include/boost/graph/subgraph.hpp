@@ -98,11 +98,18 @@ namespace boost {
     subgraph(vertices_size_type n, 
 	     const graph_property_type& p = graph_property_type()) 
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
-    { }
+    {
+      std::vector<vertex_descriptor>::iterator b = m_global_vertex.begin();
+      std::vector<vertex_descriptor>::iterator e = m_global_vertex.end();
+      for(vertices_size_type i = 0; b != e; ++b)
+        *b = i++;
+    }
 
     // copy constructor
     subgraph(const subgraph& x)
-      : m_graph(x.m_graph), m_parent(x.m_parent), m_edge_counter(x.m_edge_counter)
+      : m_graph(x.m_graph), m_parent(x.m_parent), 
+      m_edge_counter(x.m_edge_counter),
+      m_global_vertex(x.m_global_vertex)
     {
       // Do a deep copy
       for (std::list< subgraph<Graph>*>::iterator i = x.m_children.begin();
