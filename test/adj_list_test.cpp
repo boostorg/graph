@@ -5,7 +5,7 @@
 
 // This is meant to be executed from the boost/status/ directory
 
-std::string container_types [] = { "vecS", "listS", "setS", "slistS" };
+std::string container_types [] = { "vecS", "listS", "setS" };
 const int N = sizeof(container_types)/sizeof(std::string);
 
 std::string directed_types[] = { "bidirectionalS", "directedS", "undirectedS"};
