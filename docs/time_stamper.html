@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: predecessor_recorder</Title>
+<Title>Boost Graph Library: time_stamper</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -21,20 +21,17 @@
 
 <H1>
 <pre>
-predecessor_recorder&lt;PredecessorPA, EventTag&gt;
+time_stamper&lt;TimePA, TimeT, EventTag&gt;
 </pre>
 </H1>
 
-This is an <a href="./EventVisitor.html">EventVisitor</a> that records
-the predecessor (or parent) of a vertex in a predecessor property
-accessor. This is particularly useful in graph search algorithms where
-recording the predecessors is an efficient way to encode the search
-tree that was traversed during the search. The predecessor recorder is
-typically used with the <tt>on_tree_edge</tt> or
-<tt>on_relax_edge</tt> events, and connot be used with vertex events.
+This is an <a href="./EventVisitor.html">EventVisitor</a> that can be
+used to &quot;stamp&quot; a time at some event-point within an
+algorithm. An example of this is recording the discover or finish
+time of a vertex during a graph search.
 
 <p>
-<tt>predecessor_recorder</tt> can be used with graph algorithms by
+<tt>time_stamper</tt> can be used with graph algorithms by
 wrapping it with the algorithm specific adaptor, such as <a
 href="./bfs_visitor.html"><tt>bfs_visitor</tt></a> and <a
 href="./dfs_visitor.html"><tt>dfs_visitor</tt></a>. Also, this event
@@ -43,7 +40,21 @@ visitor can be combined with other event visitors using
 
 <h3>Example</h3>
 
-See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
+The following is an excerpt from <a
+href="../examples/bfs_basics.cpp"><tt>examples/bfs_basics.cpp</tt></a>.
+
+<pre>
+  std::vector<default_color_type> color(num_vertices(G));
+  std::vector<size_type> dtime(num_vertices(G));
+  std::vector<size_type> ftime(num_vertices(G));
+
+  int time = 0;
+  boost::breadth_first_search
+    (G, vertex(s, G), make_bfs_visitor(
+     std::make_pair(stamp_times(dtime.begin(), time, on_discover_vertex()),
+		    stamp_times(ftime.begin(), time, on_finish_vertex()))),
+     color.begin());
+</pre>
 
 <h3>Model of</h3>
 
@@ -64,7 +75,7 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PredecessorPA</TT></TD>
+<TR><TD><TT>TimePA</TT></TD>
 <TD>
 A <a
 href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
@@ -76,7 +87,7 @@ of the graph.
 
 <TR><TD><TT>EventTag</TT></TD>
 <TD>
-The tag to specify when the <tt>predecessor_recorder</tt> should be
+The tag to specify when the <tt>time_stamper</tt> should be
 applied during the graph algorithm. <tt>EventTag</tt> must be an
 edge event.
 </TD>
@@ -94,7 +105,7 @@ edge event.
 </tr>
 
 <tr>
-<td><tt>predecessor_recorder::event_filter</tt></td>
+<td><tt>time_stamper::event_filter</tt></td>
 <td>
 This will be the same type as the template parameter <tt>EventTag</tt>.
 </td>
@@ -113,22 +124,22 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-predecessor_recorder(PredecessorPA pa);
+time_stamper(TimePA time_pa, TimeT& t);
 </tt></td>
 <td>
-Construct a predecessor recorder object with predecessor property accessor
-<tt>pa</tt>.
+Construct a time stamper object with time property accessor
+<tt>time_pa</tt> and time counter <tt>t</tt>.
 </td>
 </tr>
 
 <tr>
 <td><tt>
-template &lt;class Edge, class Graph&gt;
-void operator()(Edge e, const Graph& g);
+template &lt;class Vertex, class Graph&gt;
+void operator()(Vertex u, const Graph& g);
 </tt></td>
 <td>
-Given edge <i>e = (u,v)</i>, this records <i>u</i> as the
-predecessor (or parent) of <i>v</i>.
+This increments the time count and &quot;stamps&quot; the time:<br>
+<tt>put(time_pa, u, ++t);</tt>
 </td>
 </tr>
 
@@ -142,11 +153,11 @@ predecessor (or parent) of <i>v</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class PredecessorPA, class Tag&gt;<br>
-predecessor_recorder&lt;PredecessorPA, Tag&gt; <br>
-record_predecessors(PredecessorPA pa, Tag);
+template &lt;class TimePA, class Tag&gt;<br>
+time_stamper&lt;TimePA, Tag&gt; <br>
+record_predecessors(TimePA pa, Tag);
 </tt></td><td>
-A convenient wat to create a <tt>predecessor_recorder</tt>.
+A convenient wat to create a <tt>time_stamper</tt>.
 </td></tr>
 
 </table>

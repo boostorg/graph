@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: predecessor_recorder</Title>
+<Title>Boost Graph Library: distance_recorder</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -21,20 +21,21 @@
 
 <H1>
 <pre>
-predecessor_recorder&lt;PredecessorPA, EventTag&gt;
+distance_recorder&lt;DistancePA, EventTag&gt;
 </pre>
 </H1>
 
 This is an <a href="./EventVisitor.html">EventVisitor</a> that records
-the predecessor (or parent) of a vertex in a predecessor property
-accessor. This is particularly useful in graph search algorithms where
-recording the predecessors is an efficient way to encode the search
-tree that was traversed during the search. The predecessor recorder is
-typically used with the <tt>on_tree_edge</tt> or
-<tt>on_relax_edge</tt> events, and connot be used with vertex events.
+the distance of a vertex (using a <a
+href="../../property_accessor.html">property accessor</a>) from some
+source vertex during a graph search. When applied to edge <i>e =
+(u,v)</i>, the distance of <i>v</i> is recorded to be one more than
+the distance of <i>u</i>. The distance recorder is typically used with
+the <tt>on_tree_edge</tt> or <tt>on_relax_edge</tt> events, and
+connot be used with vertex events.
 
 <p>
-<tt>predecessor_recorder</tt> can be used with graph algorithms by
+<tt>distance_recorder</tt> can be used with graph algorithms by
 wrapping it with the algorithm specific adaptor, such as <a
 href="./bfs_visitor.html"><tt>bfs_visitor</tt></a> and <a
 href="./dfs_visitor.html"><tt>dfs_visitor</tt></a>. Also, this event
@@ -64,7 +65,7 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PredecessorPA</TT></TD>
+<TR><TD><TT>DistancePA</TT></TD>
 <TD>
 A <a
 href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
@@ -76,7 +77,7 @@ of the graph.
 
 <TR><TD><TT>EventTag</TT></TD>
 <TD>
-The tag to specify when the <tt>predecessor_recorder</tt> should be
+The tag to specify when the <tt>distance_recorder</tt> should be
 applied during the graph algorithm. <tt>EventTag</tt> must be an
 edge event.
 </TD>
@@ -94,7 +95,7 @@ edge event.
 </tr>
 
 <tr>
-<td><tt>predecessor_recorder::event_filter</tt></td>
+<td><tt>distance_recorder::event_filter</tt></td>
 <td>
 This will be the same type as the template parameter <tt>EventTag</tt>.
 </td>
@@ -113,10 +114,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-predecessor_recorder(PredecessorPA pa);
+distance_recorder(DistancePA pa);
 </tt></td>
 <td>
-Construct a predecessor recorder object with predecessor property accessor
+Construct a distance recorder object with distance property accessor
 <tt>pa</tt>.
 </td>
 </tr>
@@ -127,8 +128,8 @@ template &lt;class Edge, class Graph&gt;
 void operator()(Edge e, const Graph& g);
 </tt></td>
 <td>
-Given edge <i>e = (u,v)</i>, this records <i>u</i> as the
-predecessor (or parent) of <i>v</i>.
+Given edge <i>e = (u,v)</i>, this records the distance of <i>v</i> as 
+one plus the distance of <i>u</i>.
 </td>
 </tr>
 
@@ -142,11 +143,11 @@ predecessor (or parent) of <i>v</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class PredecessorPA, class Tag&gt;<br>
-predecessor_recorder&lt;PredecessorPA, Tag&gt; <br>
-record_predecessors(PredecessorPA pa, Tag);
+template &lt;class DistancePA, class Tag&gt;<br>
+distance_recorder&lt;DistancePA, Tag&gt; <br>
+record_distances(DistancePA pa, Tag);
 </tt></td><td>
-A convenient wat to create a <tt>predecessor_recorder</tt>.
+A convenient wat to create a <tt>distance_recorder</tt>.
 </td></tr>
 
 </table>
@@ -156,7 +157,7 @@ A convenient wat to create a <tt>predecessor_recorder</tt>.
 <a href="./visitor_concepts.html">Visitor concepts</a>
 <p>
 The following are other event visitors: <a
-<a href="./distance_recorder.html"><tt>distance_recorder</tt></a>,
+ href="./distance_recorder.html"><tt>predecessor_recorder</tt></a>,
 <a href="./time_stamper.html"><tt>time_stamper</tt></a>,
 and <a href="./property_writer.html"><tt>property_writer</tt></a>.
 
