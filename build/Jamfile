@@ -33,7 +33,7 @@ GRAPHVIZ_DEFS(graphviz_digraph_parser) =
 
     lib bgl-viz
         : ../src/$(SOURCES).cpp 
-        : <sysinclude>$(BOOST_ROOT)
+        : <sysinclude>$(BOOST_ROOT) <define>YY_NO_UNISTD_H
         : debug <inlining>on #inlining prevents linker name clashes due to truncation! 
         ;
 

@@ -9,6 +9,7 @@ lib libbgl-viz
     graphviz_digraph_lex 
     graphviz_graph_parser 
     graphviz_digraph_parser
+    : <define>YY_NO_UNISTD_H
 	;
 
 obj graphviz_graph_lex : graphviz_lex.ll 
