@@ -15,6 +15,7 @@
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
+#include <boost/graph/create_condensation_graph.hpp>
 
 // For a description of the implementation see ../doc/transitive_closure.pdf.
 
@@ -74,6 +75,7 @@ namespace boost {
     typedef typename property_traits<VertexIndexMap>::value_type size_type;
     typedef typename graph_traits<Graph>::adjacency_iterator 
       adjacency_iterator;
+    typedef size_type cg_vertex;
 
     function_requires< VertexListGraphConcept<Graph> >();
     function_requires< AdjacencyGraphConcept<Graph> >();
@@ -81,44 +83,26 @@ namespace boost {
     function_requires< EdgeMutableGraphConcept<GraphTC> >();
     function_requires< ReadablePropertyMapConcept<VertexIndexMap, vertex> >();
 
-    // Compute strongly connected components of the graph
-    typedef size_type cg_vertex;
     std::vector<cg_vertex> component_number_vec(num_vertices(g));
     iterator_property_map<cg_vertex*, VertexIndexMap> 
       component_number(&component_number_vec[0], index_map);
 
     int num_scc = strong_components(g, component_number,
       vertex_index_map(index_map));
+
     std::vector< std::vector<vertex> > components;
     build_component_lists(g, num_scc, component_number, components);
 
-    // Construct the condensation graph   
     typedef std::vector< std::vector<cg_vertex> > CG_t;
-    CG_t CG(num_scc);
-    for (cg_vertex s = 0; s < components.size(); ++s) {
-      std::vector<cg_vertex> adj;
-      for (size_type i = 0; i < components[s].size(); ++i) {
-        vertex u = components[s][i];
-        adjacency_iterator v, v_end;
-        for (tie(v, v_end) = adjacent_vertices(u, g); v != v_end; ++v) {
-          cg_vertex t = component_number[*v];
-          if (s != t) // Avoid loops in the condensation graph
-            adj.push_back(t);
-        }
-      }
-      std::sort(adj.begin(), adj.end());
-      std::vector<cg_vertex>::iterator
-	di = std::unique(adj.begin(), adj.end());
-      if (di != adj.end())
-        adj.erase(di, adj.end());        
-      CG[s] = adj;
-    }
+    CG_t CG;
+    create_condensation_graph(g, components, component_number, CG);
 
-    // topological sort the condensation graph
     std::vector<cg_vertex> topo_order;
     std::vector<cg_vertex> topo_number(num_vertices(CG));
+
     topological_sort(CG, std::back_inserter(topo_order), 
       vertex_index_map(identity_property_map()));
+
     std::reverse(topo_order.begin(), topo_order.end());
     size_type n = 0;
     for (std::vector<cg_vertex>::iterator i = topo_order.begin();
