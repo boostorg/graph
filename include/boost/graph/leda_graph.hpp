@@ -522,32 +522,34 @@ namespace boost {
     NodeMapPtr m_array;
   };
   template <class E>
-  leda_node_property_map<E, const E&, const node_array<E>*>
-  make_leda_node_property_map(const node_array<E>& a)
+  leda_node_property_map<E, const E&, const leda_node_array<E>*>
+  make_leda_node_property_map(const leda_node_array<E>& a)
   {
-    typedef leda_node_property_map<E,const E&,const node_array<E>*> pmap_type;
+    typedef leda_node_property_map<E, const E&, const leda_node_array<E>*>
+      pmap_type;
     return pmap_type(&a);
   }
   template <class E>
-  leda_node_property_map<E, E&, node_array<E>*>
-  make_leda_node_property_map(node_array<E>& a)
+  leda_node_property_map<E, E&, leda_node_array<E>*>
+  make_leda_node_property_map(leda_node_array<E>& a)
   {
-    typedef leda_node_property_map<E, E&, node_array<E>*> pmap_type;
+    typedef leda_node_property_map<E, E&, leda_node_array<E>*> pmap_type;
     return pmap_type(&a);
   }
 
   template <class E>
-  leda_node_property_map<E, const E&, const node_map<E>*>
-  make_leda_node_property_map(const node_map<E>& a)
+  leda_node_property_map<E, const E&, const leda_node_map<E>*>
+  make_leda_node_property_map(const leda_node_map<E>& a)
   {
-    typedef leda_node_property_map<E,const E&,const node_map<E>*> pmap_type;
+    typedef leda_node_property_map<E,const E&,const leda_node_map<E>*> 
+      pmap_type;
     return pmap_type(&a);
   }
   template <class E>
-  leda_node_property_map<E, E&, node_map<E>*>
-  make_leda_node_property_map(node_map<E>& a)
+  leda_node_property_map<E, E&, leda_node_map<E>*>
+  make_leda_node_property_map(leda_node_map<E>& a)
   {
-    typedef leda_node_property_map<E, E&, node_map<E>*> pmap_type;
+    typedef leda_node_property_map<E, E&, leda_node_map<E>*> pmap_type;
     return pmap_type(&a);
   }
 
