@@ -20,7 +20,11 @@
 #  include <hash_set>
 #endif
 
-namespace boost {
+// The content of this file is in 'graph_detail' because otherwise
+// there will be name clashes with 
+// sandbox/boost/sequence_algo/container_traits.hpp
+// The 'detail' subnamespace will still cause problems.
+namespace boost { namespace graph_detail {
 
   //======================================================================
   // Container Category Tags
@@ -385,6 +389,6 @@ namespace boost {
     return push_dispatch(c, v, container_category(c));
   }
 
-} // namespace boost
+}} // namespace boost::graph_detail
 
 #endif // BOOST_GRAPH_DETAIL_CONTAINER_TRAITS_H

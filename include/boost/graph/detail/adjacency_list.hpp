@@ -115,7 +115,7 @@ namespace boost {
     void erase_from_incidence_list(EdgeList& el, vertex_descriptor v,
                                    allow_parallel_edge_tag)
     {
-      boost::erase_if(el, detail::target_is<vertex_descriptor>(v));
+      boost::graph_detail::erase_if(el, detail::target_is<vertex_descriptor>(v));
     }
     // O(log(E/V))
     template <class EdgeList, class vertex_descriptor>
@@ -603,7 +603,7 @@ namespace boost {
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList::iterator i; 
       bool inserted;
-      boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
+      boost::tie(i, inserted) = boost::graph_detail::push(g.out_edge_list(u), 
                                             StoredEdge(v, p));
       return std::make_pair(edge_descriptor(u, v, &(*i).get_property()), 
                             inserted);
@@ -900,10 +900,10 @@ namespace boost {
       typename Config::EdgeContainer::iterator p_iter 
         = boost::prior(g.m_edges.end());
       typename Config::OutEdgeList::iterator i;
-      boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
+      boost::tie(i, inserted) = boost::graph_detail::push(g.out_edge_list(u), 
                                     StoredEdge(v, p_iter, &g.m_edges));
       if (inserted) {
-        boost::push(g.out_edge_list(v), StoredEdge(u, p_iter, &g.m_edges));
+        boost::graph_detail::push(g.out_edge_list(v), StoredEdge(u, p_iter, &g.m_edges));
         return std::make_pair(edge_descriptor(u, v, &p_iter->get_property()),
                               true);
       } else {
@@ -1246,10 +1246,10 @@ namespace boost {
       typename Config::EdgeContainer::iterator p_iter 
         = boost::prior(g.m_edges.end());
       typename Config::OutEdgeList::iterator i;
-      boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
+      boost::tie(i, inserted) = boost::graph_detail::push(g.out_edge_list(u), 
                                         StoredEdge(v, p_iter, &g.m_edges));
       if (inserted) {
-        boost::push(in_edge_list(g, v), StoredEdge(u, p_iter, &g.m_edges));
+        boost::graph_detail::push(in_edge_list(g, v), StoredEdge(u, p_iter, &g.m_edges));
         return std::make_pair(edge_descriptor(u, v, &p_iter->m_property), 
                               true);
       } else {
@@ -1705,7 +1705,7 @@ namespace boost {
       stored_vertex* v = new stored_vertex;
       typename Config::StoredVertexList::iterator pos;
       bool inserted;
-      boost::tie(pos,inserted) = boost::push(g.m_vertices, v);
+      boost::tie(pos,inserted) = boost::graph_detail::push(g.m_vertices, v);
       v->m_position = pos;
       return v;
     }
@@ -1720,7 +1720,7 @@ namespace boost {
       stored_vertex* v = new stored_vertex(p);
       typename Config::StoredVertexList::iterator pos;
       bool inserted;
-      boost::tie(pos,inserted) = boost::push(g.m_vertices, v);
+      boost::tie(pos,inserted) = boost::graph_detail::push(g.m_vertices, v);
       v->m_position = pos;
       return v;
     }
