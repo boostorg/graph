@@ -314,8 +314,8 @@ namespace boost {
       // Need to write this explicitly so stored_edge_property can
       // invoke Base::operator= (at least, for SGI MIPSPro compiler)
       inline stored_edge& operator=(const stored_edge& x) {
-	m_target = x.m_target;
-	return *this;
+        m_target = x.m_target;
+        return *this;
       }
       inline Vertex& get_target() const { return m_target; }
       inline const no_property& get_property() const { return s_prop; }
@@ -876,15 +876,17 @@ namespace boost {
         typename Config::EdgeContainer::iterator p_iter 
           = boost::prior(g.m_edges.end());
         typename Config::OutEdgeList::iterator i;
-        boost::tie(i,inserted) = boost::push(g.out_edge_list(u), 
-                                             StoredEdge(v, p_iter));
+        boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
+                                              StoredEdge(v, p_iter));
         if (inserted) {
           boost::push(g.out_edge_list(v), StoredEdge(u, p_iter));
           return std::make_pair(edge_descriptor(u, v, &p_iter->get_property()),
                                 true);
         } else {
           g.m_edges.erase(p_iter);
-          return std::make_pair(edge_descriptor(u, v), false);
+          return std::make_pair(edge_descriptor(u, v, 
+                                            &i->get_iter()->get_property()),
+                                false);
         }
       }
       return std::make_pair(edge_descriptor(u,v), false);
@@ -1005,10 +1007,10 @@ namespace boost {
         if (pred(*out_i)) {
           detail::remove_directed_edge_dispatch
             (*out_i, g.in_edge_list(target(*out_i, g)),
-	     *(PropT*)(*out_i).get_property());
-	  // Put in garbage to delete later. Will need the properties
-	  // for the remove_if of the out-edges.
-	  garbage.push_back((*out_i.iter()).get_iter());
+             *(PropT*)(*out_i).get_property());
+          // Put in garbage to delete later. Will need the properties
+          // for the remove_if of the out-edges.
+          garbage.push_back((*out_i.iter()).get_iter());
         }
 
       // Now remove the edges from this out-edge list.
@@ -1020,8 +1022,8 @@ namespace boost {
 
       // Now delete the edge properties from the g.m_edges list
       for (typename Garbage::iterator i = garbage.begin();
-	   i != garbage.end(); ++i)
-	g.m_edges.erase(*i);
+           i != garbage.end(); ++i)
+        g.m_edges.erase(*i);
     }
     template <class Config, class Predicate>
     inline void
@@ -1043,9 +1045,9 @@ namespace boost {
           typename Config::vertex_descriptor u = source(*in_i, g);
           detail::remove_directed_edge_dispatch
             (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
-	  // Put in garbage to delete later. Will need the properties
-	  // for the remove_if of the out-edges.
-	  garbage.push_back((*in_i.iter()).get_iter());
+          // Put in garbage to delete later. Will need the properties
+          // for the remove_if of the out-edges.
+          garbage.push_back((*in_i.iter()).get_iter());
         }
       // Now remove the edges from this in-edge list.
       typename Config::in_edge_iterator first, last;
@@ -1056,8 +1058,8 @@ namespace boost {
 
       // Now delete the edge properties from the g.m_edges list
       for (typename Garbage::iterator i = garbage.begin();
-	   i != garbage.end(); ++i)
-	g.m_edges.erase(*i);
+           i != garbage.end(); ++i)
+        g.m_edges.erase(*i);
     }
 
     template <class Config>
@@ -1206,7 +1208,9 @@ namespace boost {
                               true);
       } else {
         g.m_edges.erase(p_iter);
-        return std::make_pair(edge_descriptor(u,v), false);
+        return std::make_pair(edge_descriptor(u, v, 
+                                              &i->get_iter()->get_property()), 
+                              false);
       }
     }
 
@@ -1772,7 +1776,7 @@ namespace boost {
     template <class Derived, class Config, class Base>
     inline typename Config::vertex_descriptor
     add_vertex(const typename Config::vertex_property_type& p,
-	       adj_list_impl<Derived, Config, Base>& g_)
+               adj_list_impl<Derived, Config, Base>& g_)
     {
       Derived& g = static_cast<Derived&>(g_);
       typedef typename Config::stored_vertex stored_vertex;
@@ -2235,29 +2239,29 @@ namespace boost {
         typedef typename container_gen<VertexListS, vertex_ptr>::type
           SeqStoredVertexList;
         struct seq_stored_vertex {
-	  seq_stored_vertex() { }
-	  seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
+          seq_stored_vertex() { }
+          seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct bidir_seq_stored_vertex {
-	  bidir_seq_stored_vertex() { }
-	  bidir_seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
+          bidir_seq_stored_vertex() { }
+          bidir_seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
           VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct rand_stored_vertex {
-	  rand_stored_vertex() { }
-	  rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
+          rand_stored_vertex() { }
+          rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           VertexProperty m_property;
         };
         struct bidir_rand_stored_vertex {
-	  bidir_rand_stored_vertex() { }
-	  bidir_rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
+          bidir_rand_stored_vertex() { }
+          bidir_rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
           VertexProperty m_property;
@@ -2269,9 +2273,9 @@ namespace boost {
             bidir_seq_stored_vertex, seq_stored_vertex>::type
         >::type StoredVertex;
         struct stored_vertex : public StoredVertex {
-	  stored_vertex() { }
-	  stored_vertex(const VertexProperty& p) : StoredVertex(p) { }
-	};
+          stored_vertex() { }
+          stored_vertex(const VertexProperty& p) : StoredVertex(p) { }
+        };
 
         typedef typename container_gen<VertexListS, stored_vertex>::type
           RandStoredVertexList;
