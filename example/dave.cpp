@@ -210,30 +210,33 @@ main(int , char* [])
   std::ostream_iterator<int> cout_int(std::cout, " ");
   std::ostream_iterator<char> cout_char(std::cout, " ");
 
+  std::queue<Vertex> Q;
   boost::breadth_first_search
-    (G, vertex(a, G), 
-     visitor(make_bfs_visitor(
+    (G, vertex(a, G), Q,
+     make_bfs_visitor(
      boost::make_list
-     (write_property(make_iterator_property_map(name, vertex_id,
-						name[0]),
-		     cout_char, on_examine_vertex()),
-      write_property(make_iterator_property_map(distance.begin(),
-						vertex_id, 
-						distance[0]), 
-		     cout_int, on_examine_vertex()),
-      print_edge(make_iterator_property_map(name, vertex_id, 
-					    name[0]),
-		 std::cout, on_examine_edge()),
-      print_endl(std::cout, on_finish_vertex())))));
+      (write_property(make_iterator_property_map(name, vertex_id,
+                                                name[0]),
+                      cout_char, on_examine_vertex()),
+       write_property(make_iterator_property_map(distance.begin(),
+                                                vertex_id, 
+                                                distance[0]), 
+                      cout_int, on_examine_vertex()),
+       print_edge(make_iterator_property_map(name, vertex_id, 
+                                            name[0]),
+                  std::cout, on_examine_edge()),
+       print_endl(std::cout, on_finish_vertex()))),
+     get(vertex_color, G));
 
+  std::cout << "about to call dijkstra's" << std::endl;
 
   parent[vertex(a, G)] = vertex(a, G);
   boost::dijkstra_shortest_paths
     (G, vertex(a, G), 
      distance_map(make_iterator_property_map(distance.begin(), vertex_id, 
-					     distance[0])).
+                                             distance[0])).
      predecessor_map(make_iterator_property_map(parent.begin(), vertex_id,
-						parent[0])).
+                                                parent[0])).
      visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
 
   cout << endl;
@@ -243,15 +246,15 @@ main(int , char* [])
      visitor(make_bfs_visitor(
      boost::make_list
      (write_property(make_iterator_property_map(name, vertex_id,
-						name[0]),
-		     cout_char, on_examine_vertex()),
+                                                name[0]),
+                     cout_char, on_examine_vertex()),
       write_property(make_iterator_property_map(distance.begin(),
-						vertex_id, 
-						distance[0]), 
-		     cout_int, on_examine_vertex()),
+                                                vertex_id, 
+                                                distance[0]), 
+                     cout_int, on_examine_vertex()),
       print_edge(make_iterator_property_map(name, vertex_id, 
-					    name[0]),
-		 std::cout, on_examine_edge()),
+                                            name[0]),
+                 std::cout, on_examine_edge()),
       print_endl(std::cout, on_finish_vertex())))));
 
   return 0;
