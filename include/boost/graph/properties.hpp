@@ -37,7 +37,8 @@ namespace boost {
   inline default_color_type black(default_color_type) { return black_color; }
 
   namespace detail {
-    // These enums are only used in the no partial specialzation workaround
+    // These enum's are only necessary for a workaround for compilers that
+    // don't do partial specialization (like VC++).
     enum property_tag_num
     {
       NO_PLUGIN_TAG, ID_PLUGIN_TAG, NAME_PLUGIN_TAG, WEIGHT_PLUGIN_TAG, 
@@ -47,94 +48,157 @@ namespace boost {
     };
   } // namespace detail
 
-  // The enum's are only necessary for a workaround for compilers that
-  // don't do partial specialization (like VC++).
+
+  struct graph_property_tag { };
+  struct vertex_property_tag { };
+  struct edge_property_tag { };
 
   struct vertex_index {
+    typedef vertex_property_tag kind;
+    enum { num = detail::ID_PLUGIN_TAG };
+  };
+  struct edge_index {
+    typedef edge_property_tag kind;
     enum { num = detail::ID_PLUGIN_TAG };
   };
   struct graph_name { 
+    typedef graph_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
   struct vertex_name { 
+    typedef vertex_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
   struct edge_name { 
+    typedef edge_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
   struct edge_weight { 
+    typedef edge_property_tag kind;
     enum { num = detail::WEIGHT_PLUGIN_TAG };
   };
   struct vertex_distance { 
+    typedef vertex_property_tag kind;
     enum { num = detail::DISTANCE_PLUGIN_TAG };
   };
   struct vertex_color { 
+    typedef vertex_property_tag kind;
     enum { num = detail::COLOR_PLUGIN_TAG };
   };
   struct vertex_degree { 
+    typedef vertex_property_tag kind;
     enum { num = detail::DEGREE_PLUGIN_TAG };
   };
   struct vertex_out_degree { 
+    typedef vertex_property_tag kind;
     enum { num = detail::OUT_DEGREE_PLUGIN_TAG };
   };
   struct vertex_in_degree { 
+    typedef vertex_property_tag kind;
     enum { num = detail::IN_DEGREE_PLUGIN_TAG };
   };
   struct vertex_discover_time { 
+    typedef vertex_property_tag kind;
     enum { num = detail::DISCOVER_TIME_PLUGIN_TAG };
   };
   struct vertex_finish_time { 
+    typedef vertex_property_tag kind;
     enum { num = detail::FINISH_TIME_PLUGIN_TAG };
   };
 
-  struct foo_edge_property_selector {
-    template <class Graph, class Plugin, class Tag>
-    struct bind {
-      typedef void type;
-      typedef void const_type;
+  namespace detail {
+
+    struct dummy_edge_property_selector {
+      template <class Graph, class Plugin, class Tag>
+      struct bind {
+	typedef void type;
+	typedef void const_type;
+      };
     };
-  };
+    struct dummy_vertex_property_selector {
+      template <class Graph, class Plugin, class Tag>
+      struct bind {
+	typedef void type;
+	typedef void const_type;
+      };
+    };
+
+  } // namespace detail
+
+  // Graph classes can either partially specialize property_map
+  // or they can specialize these two selector classes.
   template <class GraphTag>
   struct edge_property_selector {
-    typedef foo_edge_property_selector type;
-  };
-
-  struct foo_vertex_property_selector {
-    template <class Graph, class Plugin, class Tag>
-    struct bind {
-      typedef void type;
-      typedef void const_type;
-    };
+    typedef detail::dummy_edge_property_selector type;
   };
 
   template <class GraphTag>
   struct vertex_property_selector {
-    typedef foo_vertex_property_selector type;
+    typedef detail::dummy_vertex_property_selector type;
   };
 
-  template <class Graph, class PropertyTag>
-  struct edge_property_accessor {
-    typedef typename Graph::directed_category Directed;
-    typedef typename Graph::edge_plugin_type Plugin;
-    typedef typename Graph::graph_tag graph_tag;
-    typedef typename edge_property_selector<graph_tag>::type Selector;
-    typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
-      Bind;
-    typedef typename Bind::type type;
-    typedef typename Bind::const_type const_type;
-  };
-  template <class Graph, class PropertyTag>
-  class vertex_property_accessor {
-    typedef typename Graph::vertex_plugin_type Plugin;
-    typedef typename Graph::graph_tag graph_tag;
-    typedef typename vertex_property_selector<graph_tag>::type Selector;
-    typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
-      Bind;
+  namespace detail {
+
+    template <class Graph, class PropertyTag>
+    struct edge_property_map {
+      typedef typename Graph::directed_category Directed;
+      typedef typename Graph::edge_plugin_type Plugin;
+      typedef typename Graph::graph_tag graph_tag;
+      typedef typename edge_property_selector<graph_tag>::type Selector;
+      typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
+	Bind;
+      typedef typename Bind::type type;
+      typedef typename Bind::const_type const_type;
+    };
+    template <class Graph, class PropertyTag>
+    class vertex_property_map {
+      typedef typename Graph::vertex_plugin_type Plugin;
+      typedef typename Graph::graph_tag graph_tag;
+      typedef typename vertex_property_selector<graph_tag>::type Selector;
+      typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
+	Bind;
+    public:
+      typedef typename Bind::type type;
+      typedef typename Bind::const_type const_type;
+    };
+
+    // This selects the kind of property map, whether is maps from
+    // edges or from vertices.
+    //
+    // It is overly complicated because it's a workaround for
+    // partial specialization.
+    template <class Kind>
+    struct property_map_kind_selector { };
+
+    struct choose_vertex_property_map {
+      template <class Graph, class Property>
+      struct bind {
+        typedef vertex_property_map<Graph, Property> type;
+      };
+    };
+    struct choose_edge_property_map {
+      template <class Graph, class Property>
+      struct bind {
+        typedef edge_property_map<Graph, Property> type;
+      };
+    };
+    template <> struct property_map_kind_selector<vertex_property_tag> {
+      typedef choose_vertex_property_map type;
+    };
+    template <> struct property_map_kind_selector<edge_property_tag> {
+      typedef choose_edge_property_map type;
+    };
+  } // namespace detail
+
+  template <class Graph, class Property>
+  class property_map {
+    typedef typename Property::kind Kind;
+    typedef typename detail::property_map_kind_selector<Kind>::type Selector;
+    typedef typename Selector::bind<Graph, Property>::type Map;
   public:
-    typedef typename Bind::type type;
-    typedef typename Bind::const_type const_type;
+    typedef typename Map::type type;
+    typedef typename Map::const_type const_type;
   };
-
 
 } // namespace boost
 

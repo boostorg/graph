@@ -64,7 +64,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
     kruskal_minimum_spanning_tree(G, spanning_tree_edges, rank, parent, 
-				  get_edge_property_accessor(G, edge_weight()));
+				  get(edge_weight(), G));
   }
 
   // Variant (2)

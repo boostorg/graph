@@ -117,26 +117,26 @@ namespace boost {
   }
   template <class IncidenceGraph>
   void print_graph(const IncidenceGraph& G) {
-    print_graph(G, get_vertex_property_accessor(G, vertex_index()));
+    print_graph(G, get(vertex_index(), G));
   }
 
   template <class EdgeListGraph, class Name>
   void print_edges(const EdgeListGraph& G, Name name)
   {
-    typename graph_traits<EdgeListGraph>::edge_iterator ei,ei_end;
-    for (boost::tie(ei,ei_end) = edges(G); ei != ei_end; ++ei)
-      std::cout << "(" << get(name,source(*ei,G))
-		<< "," << get(name,target(*ei,G)) << ") ";
+    typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
+      std::cout << "(" << get(name, source(*ei, G))
+		<< "," << get(name, target(*ei, G)) << ") ";
     std::cout << std::endl;
   }
 
   template <class EdgeListGraph, class VertexName, class EdgeName>
   void print_edges2(const EdgeListGraph& G, VertexName vname, EdgeName ename)
   {
-    typename graph_traits<EdgeListGraph>::edge_iterator ei,ei_end;
-    for (boost::tie(ei,ei_end) = edges(G); ei != ei_end; ++ei)
-      std::cout << get(ename,*ei) << "(" << get(vname,source(*ei,G))
-		<< "," << get(vname,target(*ei,G)) << ") ";
+    typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
+      std::cout << get(ename, *ei) << "(" << get(vname, source(*ei, G))
+		<< "," << get(vname, target(*ei, G)) << ") ";
     std::cout << std::endl;
   }
 

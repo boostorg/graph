@@ -412,15 +412,9 @@ namespace boost {
 
   template <class Triangle, class HList, class Iterator>
   inline 
-  SAW_visitor< typename detail::property_accessor_adaptor<Triangle>::type, 
-    HList, 
-    typename detail::property_accessor_adaptor<Iterator>::type >
-  visit_SAW( Triangle t, HList hl, Iterator i) {
-    typedef typename detail::property_accessor_adaptor<Triangle>::type
-      TriangleD;
-    typedef typename detail::property_accessor_adaptor<Iterator>::type
-      IteratorD;
-    return SAW_visitor<TriangleD, HList, IteratorD>(t, hl, i);
+  SAW_visitor<Triangle, HList, Iterator>
+  visit_SAW(Triangle t, HList hl, Iterator i) {
+    return SAW_visitor<Triangle, HList, Iterator>(t, hl, i);
   }
 
   template <class Tri, class HList, class Iter>

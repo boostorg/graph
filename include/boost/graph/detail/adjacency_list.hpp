@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.6  2000/09/21 03:31:19  jsiek
+// property accessor interface changes
+//
 // Revision 1.5  2000/09/20 19:30:09  jsiek
 // changed the name of the property tags: name_tag -> vertex_name, etc.
 //
@@ -902,69 +905,63 @@ namespace boost {
       return g.in_edge_list(u).size();
     }
 
-    // The get_edge_property() and get_vertex_property() functions
-    // have to be defined outside the class definition because
-    // of a VC++ bug triggered by the need for Tag to be templated
-    // independently of the adj_list_helper class.
+    namespace detail {
+      template <class Config, class Base, class Property>
+      inline
+      typename boost::property_map<typename Config::graph_type,
+	Property>::type
+      get(adj_list_helper<Config,Base>&, Property, 
+	  boost::edge_property_tag) {
+	typedef typename Config::graph_type Graph;
+	typedef typename boost::property_map<Graph, Property>::type PA;
+	return PA();
+      }
+      template <class Config, class Base, class Property>
+      inline
+      typename boost::property_map<typename Config::graph_type, 
+        Property>::const_type
+      get(const adj_list_helper<Config,Base>&, Property, 
+	  boost::edge_property_tag) {
+	typedef typename Config::graph_type Graph;
+	typedef typename boost::property_map<Graph, Property>::const_type PA;
+	return PA();
+      }
 
-    template <class Config, class Base, class Tag>
-    inline
-    typename boost::edge_property_accessor<typename Config::graph_type,
-      Tag>::type
-    get_edge_property_accessor(const adj_list_helper<Config,Base>&, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::edge_property_accessor<Graph, Tag>::type PA;
-      return PA();
-    }
+      template <class Config, class Base, class Property>
+      inline
+      typename boost::property_map<typename Config::graph_type, 
+        Property>::type
+      get(adj_list_helper<Config,Base>& g, Property, 
+	  boost::vertex_property_tag) {
+	typedef typename Config::graph_type Graph;
+	typedef typename boost::property_map<Graph, Property>::type PA;
+	return PA(static_cast<Graph&>(g));
+      }
+      template <class Config, class Base, class Property>
+      inline
+      typename boost::property_map<typename Config::graph_type,
+        Property>::const_type
+      get(const adj_list_helper<Config,Base>& g, Property, 
+	  boost::vertex_property_tag) {
+	typedef typename Config::graph_type Graph;
+	typedef typename boost::property_map<Graph, Property>::const_type PA;
+	return PA(static_cast<const Graph&>(g));
+      }
+    } // namespace detail
 
-    template <class Config, class Base, class Tag>
+    template <class Config, class Base, class Property>
     inline
-    typename boost::edge_property_accessor<typename Config::graph_type,
-      Tag>::type
-    get_edge_property(const adj_list_helper<Config,Base>&, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::edge_property_accessor<Graph, Tag>::type PA;
-      return PA();
+    typename boost::property_map<typename Config::graph_type, Property>::type
+    get(Property t, adj_list_helper<Config,Base>& g) {
+      typedef typename Property::kind Kind;
+      return detail::get(g, t, Kind());
     }
-
-    template <class Config, class Base, class Tag>
+    template <class Config, class Base, class Property>
     inline
-    typename boost::vertex_property_accessor<typename Config::graph_type,
-                                            Tag>::type
-    get_vertex_property_accessor(adj_list_helper<Config,Base>& g, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::vertex_property_accessor<Graph, Tag>::type PA;
-      return PA(static_cast<Graph&>(g));
-    }
-    template <class Config, class Base, class Tag>
-    inline
-    typename boost::vertex_property_accessor<typename Config::graph_type,
-                                            Tag>::const_type
-    get_vertex_property_accessor(const adj_list_helper<Config,Base>& g, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::vertex_property_accessor<Graph, Tag>
-        ::const_type PA;
-      return PA(static_cast<const Graph&>(g));
-    }
-
-    template <class Config, class Base, class Tag>
-    inline
-    typename boost::vertex_property_accessor<typename Config::graph_type,
-                                            Tag>::type
-    get_vertex_property(adj_list_helper<Config,Base>& g, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::vertex_property_accessor<Graph, Tag>::type PA;
-      return PA(static_cast<Graph&>(g));
-    }
-    template <class Config, class Base, class Tag>
-    inline
-    typename boost::vertex_property_accessor<typename Config::graph_type,
-                                            Tag>::const_type
-    get_vertex_property(const adj_list_helper<Config,Base>& g, Tag) {
-      typedef typename Config::graph_type Graph;
-      typedef typename boost::vertex_property_accessor<Graph, Tag>
-        ::const_type PA;
-      return PA(static_cast<const Graph&>(g));
+    typename boost::property_map<typename Config::graph_type,Property>::const_type
+    get(Property t, const adj_list_helper<Config,Base>& g) {
+      typedef typename Property::kind Kind;
+      return detail::get(g, t, Kind());
     }
 
     //=========================================================================

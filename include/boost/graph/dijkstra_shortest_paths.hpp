@@ -36,39 +36,41 @@ namespace boost {
   // Variant (1)
   template <class VertexListGraph>
   inline void
-  dijkstra_shortest_paths(VertexListGraph& g,
-                  typename graph_traits<VertexListGraph>::vertex_descriptor s)
+  dijkstra_shortest_paths
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s)
   {
-    dijkstra_shortest_paths(g, s, 
-                            get_vertex_property_accessor(G, vertex_distance()));
+    dijkstra_shortest_paths(g, s, get(vertex_distance(), g));
   }
 
   // Variant (2)
   template <class VertexListGraph, class DistancePA>
   inline void
-  dijkstra_shortest_paths(VertexListGraph& g,
-                  typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-                  DistancePA d)
+  dijkstra_shortest_paths
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     DistancePA d)
   {
     null_visitor null_vis;
     dijkstra_shortest_paths(g, s, d,
-                            get_edge_property_accessor(g, edge_weight()), 
-                            get_vertex_property_accessor(g, vertex_color()), 
-                            get_vertex_property_accessor(g, vertex_index()), 
+                            get(edge_weight(), g), 
+                            get(vertex_color(), g), 
+                            get(vertex_index(), g), 
                             make_ucs_visitor(null_vis));
   }
 
   // Variant (3)
   template <class VertexListGraph, class DistancePA, class UniformCostVisitor>
   inline void
-  dijkstra_shortest_paths(VertexListGraph& g, 
-                  typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-                  DistancePA d, UniformCostVisitor visit)
+  dijkstra_shortest_paths
+    (VertexListGraph& g, 
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     DistancePA d, UniformCostVisitor visit)
   {
     dijkstra_shortest_paths(g, s, d, 
-                            get_edge_property_accessor(g, edge_weight()), 
-                            get_vertex_property_accessor(g, vertex_color()), 
-                            get_vertex_property_accessor(g, vertex_index()), 
+                            get(edge_weight(), g),
+                            get(vertex_color(), g),
+                            get(vertex_index(), g),
                             visit);
   }
 
@@ -76,10 +78,11 @@ namespace boost {
   template <class VertexListGraph, class UniformCostVisitor, 
             class DistancePA, class WeightPA, class ColorPA, class ID_PA>
   inline void
-  dijkstra_shortest_paths(VertexListGraph& g,
-                  typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-                  DistancePA distance, WeightPA weight, ColorPA color, ID_PA id,
-                  UniformCostVisitor vis)
+  dijkstra_shortest_paths
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     DistancePA distance, WeightPA weight, ColorPA color, ID_PA id,
+     UniformCostVisitor vis)
   {
     typedef typename property_traits<DistancePA>::value_type D;
     typedef typename property_traits<WeightPA>::value_type W;

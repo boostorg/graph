@@ -208,9 +208,8 @@ namespace boost {
     connected_components(Graph& G, DFSVisitor v, Components c, 
 			 undirected_tag) 
     {
-      return connected_components(G, v, c, 
-		   get_vertex_property_accessor(G, vertex_color()), 
-		   undirected_tag());
+      return connected_components(G, v, c, get(vertex_color(), G), 
+				  undirected_tag());
     }
 
     template <class Graph, class DFSVisitor, class Components>
@@ -219,10 +218,10 @@ namespace boost {
 			  directed_tag)
     {
       return connected_components(G, v, c, 
-		     get_vertex_property_accessor(G, vertex_discover_time()),
-		     get_vertex_property_accessor(G, vertex_finish_time()),
-		     get_vertex_property_accessor(G, vertex_color()),
-		     directed_tag());
+				  get(vertex_discover_time(), G),
+				  get(vertex_finish_time(), G),
+				  get(vertex_color(), G),
+				  directed_tag());
     }
 
     template <class Graph, class DFSVisitor,
@@ -234,9 +233,9 @@ namespace boost {
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       return connected_components(G, v, c, 
-		   get_vertex_property_accessor(G, vertex_discover_time()),
-		   get_vertex_property_accessor(G, vertex_finish_time()),
-		   color, directed_tag());
+				  get(vertex_discover_time(), G),
+				  get(vertex_finish_time(), G),
+				  color, directed_tag());
     }
   } // namespace detail
 

@@ -253,107 +253,78 @@ namespace boost {
     G g;
   };
 
-  template <class G, class Tag>
+  template <class G, class X, class Property>
+  struct PropertyGraph_concept
+  {
+    typedef typename property_map<G, Property>::type PMap;
+    typedef typename property_map<G, Property>::const_type const_PMap;
+    void constraints() {
+      REQUIRE(G, Graph);
+      REQUIRE2(PMap, X, ReadWritePropertyAccessor);
+      REQUIRE2(const_PMap, X, ReadablePropertyAccessor);
+
+      PMap pmap = get(Property(), g);
+#if 0
+      pval = get(Property(), g, x);
+      put(Property(), g, x, pval);
+#endif
+      ignore_unused_variable_warning(pmap);
+    }
+    void const_constraints(const G& g) {
+      const_PMap pmap = get(Property(), g);
+#if 0
+      pval = get(Property(), g, x);
+#endif
+      ignore_unused_variable_warning(pmap);
+    }
+    G g;
+    X x;
+    typename property_traits<PMap>::value_type pval;
+  };
+
+#if 0
+  template <class G, class Property>
   struct VertexPropertyGraph_concept
   {
     typedef typename graph_traits<G>::vertex_descriptor Vertex;
-    typedef typename vertex_property_accessor<G,Tag>::type PA;
-    typedef typename vertex_property_accessor<G,Tag>::const_type const_PA;
+    typedef typename property_map<G, Property>::type PA;
+    typedef typename property_map<G, Property>::const_type const_PA;
     void constraints() {
       REQUIRE(G, Graph);
       REQUIRE2(PA, Vertex, ReadWritePropertyAccessor);
       REQUIRE2(const_PA, Vertex, ReadablePropertyAccessor);
 
-      PA pa = get_vertex_property_accessor(g, Tag());
+      PA pa = get(Property(), g);
       ignore_unused_variable_warning(pa);
     }
     void const_constraints(const G& g) {
-      const_PA pa = get_vertex_property_accessor(g, Tag());
+      const_PA pa = get(Property(), g);
       ignore_unused_variable_warning(pa);
     }
     G g;
   };
 
-  template <class G, class Tag>
+  template <class G, class Property>
   struct EdgePropertyGraph_concept
   {
     typedef typename graph_traits<G>::edge_descriptor Edge;
-    typedef typename edge_property_accessor<G,Tag>::type PA;
-    typedef typename edge_property_accessor<G,Tag>::const_type const_PA;
+    typedef typename property_map<G, Property>::type PA;
+    typedef typename property_map<G, Property>::const_type const_PA;
     void constraints() {
       REQUIRE(G, Graph);
       REQUIRE2(PA, Edge, ReadWritePropertyAccessor);
       REQUIRE2(const_PA, Edge, ReadablePropertyAccessor);
 
-      PA pa = get_edge_property_accessor(g, Tag());
+      PA pa = get(Property(), g);
     }
     void const_constraints(const G& g) {
-      const_PA pa = get_edge_property_accessor(g, Tag());
+      const_PA pa = get(Property(), g);
     }
     G g;
   };
-
-#if 0
-  struct initialize_shortest_paths {
-    void operator()(Vertex v) {
-      
-    }
-  };
-
-  dijkstra_shortest_paths( 
-    make_visitor(
-		 make_pair(initialize_shortest_paths(), 
-			   initialize_vertex_tag()),
-		 make_pair(predecessor_recorder(p.begin()), 
-			   explore_edge_tag())
-		 )
-    );
-
-  bellman_ford_shortest_paths(
-    make_visitor(
-		 make_pair(initialize_shortest_paths(), 
-			   initialize_vertex_tag()),
-		 make_pair(predecessor_recorder(p.begin()), 
-			   relax_edge_tag())
-		 )
-   );
-  /*
-    Advantages:
-    1. visitor functionality separate from callback event point
-    2. unifies UserVisitor edge category stuff with rest of visitor
-      callback events
-    3. easy to extend to different algorithms. Each algorithm says
-      which tags it will invoke.
-
-    Disadvantages:
-    1. more complicated for user
-    2. deeper template nesting, perhaps compiler problems
-  
-   */
-
-
-  // T is a Vertex or Edge depending on the Tag
-  template <class Visitor, class T, class Graph, class Tag>
-  struct Visitor_concept {
-    void constraints () {
-      visitor(x, g, tag);
-    }
-    Visitor visitor;
-    Graph g;
-    T x;
-    Tag tag;
-  };
-
-  template <class VisitorList>
-  struct controling_visitor {
-    template <class EdgeOrVertex, class Graph, class Tag>
-    void visit( ) {
-
-    }
-    VisitorList m_list;
-  };
 #endif
 
+#if 0
   template <class V, class Vertex, class Edge, class Graph>
   struct Visitor_concept
   {
@@ -402,7 +373,9 @@ namespace boost {
     }
   };
 #endif
+#endif
 
+  // This needs to move out of the graph library
   template <class B>
   struct Buffer_concept
   {

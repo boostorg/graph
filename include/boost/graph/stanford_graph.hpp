@@ -245,7 +245,7 @@ namespace boost {
     inline long operator[](Vertex* v) const { return v - _g->vertices; }
     Graph* _g;
   };
-  inline sgb_vertex_id_accessor get_vertex_property_accessor(Graph* g, vertex_index) {
+  inline sgb_vertex_id_accessor get(vertex_index, Graph* g) {
     return sgb_vertex_id_accessor(g);
   }
 
@@ -258,21 +258,47 @@ namespace boost {
     typedef Vertex* key_type;
     inline char* operator[](Vertex* v) const { return v->name; }
   };
-  inline sgb_vertex_name_accessor get_vertex_property_accessor(Graph* g, vertex_name) {
+  inline sgb_vertex_name_accessor get(vertex_name, Graph* g) {
     return sgb_vertex_name_accessor();
   }
 
   // Vertex Property Tags
-  template <class T> struct u_tag  { typedef T type; };
-  template <class T> struct v_tag  { typedef T type; };
-  template <class T> struct w_tag  { typedef T type; };
-  template <class T> struct x_tag  { typedef T type; };
-  template <class T> struct y_tag  { typedef T type; };
-  template <class T> struct z_tag  { typedef T type; };
+  template <class T> struct u_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct v_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct w_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct x_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct y_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct z_property  { 
+    typedef vertex_property_tag kind;
+    typedef T type; 
+  };
   // Edge Property Tags
-  template <class T> struct a_tag  { typedef T type; };
-  template <class T> struct b_tag  { typedef T type; };
-  struct length_tag { };
+  template <class T> struct a_property  { 
+    typedef edge_property_tag kind;
+    typedef T type; 
+  };
+  template <class T> struct b_property  { 
+    typedef edge_property_tag kind;
+    typedef T type; 
+  };
+  struct edge_length {
+    typedef edge_property_tag kind;
+  };
 
   // Vertex Utility Accessor
 
@@ -285,7 +311,7 @@ namespace boost {
 
 #define GET_VERTEX_UTIL_FIELD(X) \
   template <class T> \
-  inline T& get_util_field(Vertex* v, X##_tag<T>) { \
+  inline T& get_util_field(Vertex* v, X##_property<T>) { \
     return get_util(v->X, T());  }
 
   GET_VERTEX_UTIL_FIELD(u)
@@ -296,7 +322,7 @@ namespace boost {
 
 #define GET_EDGE_UTIL_FIELD(X) \
   template <class T> \
-  inline T& get_util_field(Arc* e, X##_tag<T>) { \
+  inline T& get_util_field(Arc* e, X##_property<T>) { \
     return get_util(e->X, T());  }
 
   GET_EDGE_UTIL_FIELD(a)
@@ -320,7 +346,7 @@ namespace boost {
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Tag>
   inline sgb_vertex_util_accessor<Tag>
-  get_vertex_property_accessor(Graph* g, Tag) {
+  get_property_map(Tag, Graph* g, vertex_property_tag) {
     return sgb_vertex_util_accessor<Tag>();
   }
 #endif
@@ -340,7 +366,7 @@ namespace boost {
     }
   };
   inline sgb_edge_length_accessor
-  get_edge_property_accessor(Graph* g, length_tag) { 
+  get(edge_length, Graph* g) { 
     return sgb_edge_length_accessor(); 
   }
   
@@ -362,101 +388,126 @@ namespace boost {
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION  
   template <class Tag>
   inline sgb_edge_util_accessor<Tag> 
-  get_edge_property_accessor(Graph* g, Tag) {
+  get_property_map(Tag, Graph* g, edge_property_tag) {
     return sgb_edge_util_accessor<Tag>();
   }
+  template <class Tag, class Kind>  
+  struct sgb_util_accessor { };
+  template <class Tag> struct sgb_util_accessor<Tag, vertex_property_tag> {
+    typedef typename sgb_vertex_util_accessor<Tag>::type type;
+  };
+  template <class Tag> struct sgb_util_accessor<Tag, edge_property_tag> {
+    typedef typename sgb_edge_util_accessor<Tag>::type type;
+  };
+#if 0
+  template <class Tag>
+  inline typename sgb_util_accessor<Tag, typename Tag::kind>::type
+  get(Tag t, Graph* g) {
+    typedef typename Tag::kind Kind;
+    return get_property_map(t, g, Kind());
+  }
+#endif
 #endif
 
   // Property Accessor Traits Classes
 
   template <>
-  struct edge_property_accessor<Graph*,length_tag> {
+  struct property_map<Graph*, edge_length> {
     typedef sgb_edge_length_accessor type;
   };
   template <>
-  struct vertex_property_accessor<Graph*,vertex_index> {
+  struct property_map<Graph*, vertex_index> {
     typedef sgb_vertex_id_accessor type;
   };
   template <>
-  struct vertex_property_accessor<Graph*,vertex_name> {
+  struct property_map<Graph*, vertex_name> {
     typedef sgb_vertex_name_accessor type;
   };
 #ifdef BOOST_GRAPH_PARTIAL_SPECIALIZATION  
+  namespace detail {
+    template <class Kind, class PropertyTag>
+    struct choose_property_map { };
+    template <class PropertyTag>
+    struct choose_property_map<edge_property_tag, PropertyTag> {
+      typedef sgb_edge_util_accessor<PropertyTag> type;
+    };
+    template <class PropertyTag>
+    struct choose_property_map<vertex_property_tag, PropertyTag> {
+      typedef sgb_vertex_util_accessor<PropertyTag> type;
+    };
+  } // namespace detail
   template <class PropertyTag>
-  struct edge_property_accessor<Graph*,PropertyTag> {
-    typedef sgb_edge_util_accessor<PropertyTag> type;
-  };
-  template <class PropertyTag>
-  struct vertex_property_accessor<Graph*,PropertyTag> {
-    typedef sgb_vertex_util_accessor<PropertyTag> type;
+  struct property_map<Graph*, PropertyTag> {
+    typedef typename PropertyTag::kind Kind;
+    typedef typename detail::choose_property_map<Kind, PropertyTag>::type type;
   };
 #else
 
 #define SGB_VERTEX_UTIL_ACCESSOR(TAG,TYPE) \
   inline sgb_vertex_util_accessor< TAG<TYPE> > \
-  get_vertex_property_accessor(Graph* g, TAG<TYPE> ) { \
+  get(TAG<TYPE>, Graph* g) { \
     return sgb_vertex_util_accessor< TAG<TYPE> >(); \
   } \
-  template <> struct vertex_property_accessor<Graph*, TAG<TYPE> > { \
+  template <> struct property_map<Graph*, TAG<TYPE> > { \
     typedef sgb_vertex_util_accessor< TAG<TYPE> > type; \
   }
 
-SGB_VERTEX_UTIL_ACCESSOR(u_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(u_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(u_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(u_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(u_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, char*);
 
-SGB_VERTEX_UTIL_ACCESSOR(v_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(v_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(v_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(v_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(v_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, char*);
 
-SGB_VERTEX_UTIL_ACCESSOR(w_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(w_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(w_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(w_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(w_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, char*);
 
-SGB_VERTEX_UTIL_ACCESSOR(x_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(x_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(x_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(x_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(x_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, char*);
   
-SGB_VERTEX_UTIL_ACCESSOR(y_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(y_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(y_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(y_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(y_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, char*);
 
-SGB_VERTEX_UTIL_ACCESSOR(z_tag,Vertex*);
-SGB_VERTEX_UTIL_ACCESSOR(z_tag,Arc*);
-SGB_VERTEX_UTIL_ACCESSOR(z_tag,Graph*);
-SGB_VERTEX_UTIL_ACCESSOR(z_tag,long);
-SGB_VERTEX_UTIL_ACCESSOR(z_tag,char*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, char*);
 
 #define SGB_EDGE_UTIL_ACCESSOR(TAG,TYPE) \
   inline sgb_edge_util_accessor< TAG<TYPE> > \
-  get_edge_property_accessor(Graph* g, TAG<TYPE> ) { \
+  get(TAG<TYPE>, Graph*) { \
     return sgb_edge_util_accessor< TAG<TYPE> >(); \
   } \
-  template <> struct edge_property_accessor<Graph*, TAG<TYPE> > { \
+  template <> struct property_map<Graph*, TAG<TYPE> > { \
     typedef sgb_edge_util_accessor< TAG<TYPE> > type; \
   }
 
-SGB_EDGE_UTIL_ACCESSOR(a_tag,Vertex*);
-SGB_EDGE_UTIL_ACCESSOR(a_tag,Arc*);
-SGB_EDGE_UTIL_ACCESSOR(a_tag,Graph*);
-SGB_EDGE_UTIL_ACCESSOR(a_tag,long);
-SGB_EDGE_UTIL_ACCESSOR(a_tag,char*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, Vertex*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, Arc*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, Graph*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, long);
+SGB_EDGE_UTIL_ACCESSOR(a_property, char*);
 
-SGB_EDGE_UTIL_ACCESSOR(b_tag,Vertex*);
-SGB_EDGE_UTIL_ACCESSOR(b_tag,Arc*);
-SGB_EDGE_UTIL_ACCESSOR(b_tag,Graph*);
-SGB_EDGE_UTIL_ACCESSOR(b_tag,long);
-SGB_EDGE_UTIL_ACCESSOR(b_tag,char*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, Vertex*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, Arc*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, Graph*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, long);
+SGB_EDGE_UTIL_ACCESSOR(b_property, char*);
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 

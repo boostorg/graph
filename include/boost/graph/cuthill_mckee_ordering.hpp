@@ -68,14 +68,14 @@ namespace boost {
     
     inline void pop() {
       if ( !_size ) 
-	Qsize = base::size();
+        Qsize = base::size();
 
       base::pop();
       if ( _size == Qsize-1 ) {
-	_size = 0;
-	++eccen;
+        _size = 0;
+        ++eccen;
       } else 
-	++_size;
+        ++_size;
       
     }
 
@@ -120,7 +120,7 @@ namespace boost {
   template <class Graph, class Vertex, class Color, class Degree>
   Vertex 
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
-			 Color color, Degree degree)
+                         Color color, Degree degree)
   {
     typename property_traits<Color>::value_type c = get(color, u);
 
@@ -185,9 +185,9 @@ namespace boost {
              class Color, class Degree >
   inline void 
   cuthill_mckee_ordering(Graph& G, 
-			 Vertex s,
-			 OutputIterator inverse_permutation, 
-			 Color color, Degree degree)
+                         Vertex s,
+                         OutputIterator inverse_permutation, 
+                         Color color, Degree degree)
   {
     typedef typename property_traits<Degree>::value_type DS;
     typename property_traits<Color>::value_type c = get(color, s);
@@ -208,7 +208,7 @@ namespace boost {
              class Color, class Degree >
   inline void 
   cuthill_mckee_ordering(Graph& G, OutputIterator inverse_permutation, 
-			 Color color, Degree degree)
+                         Color color, Degree degree)
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::graph_traits<Graph>::vertex_iterator   VerIter;
@@ -224,11 +224,11 @@ namespace boost {
   template < class Graph, class OutputIterator, class Color >
   inline void 
   cuthill_mckee_ordering(Graph& G, OutputIterator inverse_permutation, 
-			 Color color)
+                         Color color)
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     cuthill_mckee_ordering(G, inverse_permutation, color, 
-			   get_vertex_property_accessor(G, vertex_degree()));
+                           get(vertex_degree(), G));
   }
   
   template <class Graph, class OutputIterator>
@@ -236,8 +236,7 @@ namespace boost {
   cuthill_mckee_ordering(Graph& G, OutputIterator inverse_permutation)
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    cuthill_mckee_ordering(G, inverse_permutation, 
-			   get_vertex_property_accessor(G, vertex_color()));
+    cuthill_mckee_ordering(G, inverse_permutation, get(vertex_color(), G));
   }
 
 } /*namespace matrix_ordering*/
