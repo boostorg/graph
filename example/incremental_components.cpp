@@ -72,7 +72,7 @@ int main(int , char* [])
   const int N = 6;
   Graph G(N);
 
-  std::vector<Vertex> rank(num_vertices(G));
+  std::vector<size_type> rank(num_vertices(G));
   std::vector<Vertex> parent(num_vertices(G));
   // VC++ version of std::vector has no ::pointer, so
   // I use ::value_type* instead.
