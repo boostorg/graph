@@ -364,16 +364,16 @@ namespace boost {
   {
   private:
     typedef graph_traits<Graph> traits;
-	typedef typename Graph::vertex_bundled vertex_bundled;
-	typedef typename Graph::edge_bundled edge_bundled;
+    typedef typename Graph::vertex_bundled vertex_bundled;
+    typedef typename Graph::edge_bundled edge_bundled;
     typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
-				       typename traits::vertex_descriptor,
-				       typename traits::edge_descriptor>::type
-	  descriptor;
-	
+                       typename traits::vertex_descriptor,
+                       typename traits::edge_descriptor>::type
+      descriptor;
+    
   public:
     typedef bundle_property_map<Graph, descriptor, Bundle, T> type;
-	typedef bundle_property_map<const Graph, descriptor, Bundle, const T> const_type;
+    typedef bundle_property_map<const Graph, descriptor, Bundle, const T> const_type;
   };
 #endif
 

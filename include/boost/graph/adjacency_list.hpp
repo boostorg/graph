@@ -492,53 +492,53 @@ namespace boost {
   // Support for bundled properties
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
-		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
+           typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
   inline
   typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
-						               GraphProperty, EdgeListS>, T Bundle::*>::type
+                                       GraphProperty, EdgeListS>, T Bundle::*>::type
   get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
                                     GraphProperty, EdgeListS>& g)
   {
     typedef typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, 
-	                                             EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::type
-	  result_type;
-	return result_type(&g, p);
+                                                 EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::type
+      result_type;
+    return result_type(&g, p);
   }
   
   template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
-		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
+           typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
   inline
   typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
-						               GraphProperty, EdgeListS>, T Bundle::*>::const_type
+                                       GraphProperty, EdgeListS>, T Bundle::*>::const_type
   get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
                                     GraphProperty, EdgeListS> const & g)
   {
     typedef typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, 
-	                                             EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::const_type
-	  result_type;
-	return result_type(&g, p);
+                                                 EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::const_type
+      result_type;
+    return result_type(&g, p);
   }
 
   template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
-		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
-		   typename Key>
+           typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
+           typename Key>
   inline T
   get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
                                     GraphProperty, EdgeListS> const & g, const Key& key)
   {
     return get(get(p, g), key);
-  }									
+  }
 
   template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
-		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
-		   typename Key>
+           typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
+           typename Key>
   inline void
   put(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
                                     GraphProperty, EdgeListS>& g, const Key& key, const T& value)
   {
     put(get(p, g), key, value);
-  }						
-									
+  }
+
 #endif
 
 

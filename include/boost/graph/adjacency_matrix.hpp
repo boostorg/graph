@@ -357,23 +357,23 @@ namespace boost {
   class adjacency_matrix {
     typedef adjacency_matrix self;
     typedef adjacency_matrix_traits<Directed> Traits;
-	
-	struct no_vertex_bundle {};
-	struct no_edge_bundle {};
+    
+    struct no_vertex_bundle {};
+    struct no_edge_bundle {};
   public:
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     typedef typename detail::retag_property_list<vertex_bundle_t, VertexProperty>::type
-	  vertex_property_type;
-	typedef typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type
-	  edge_property_type;
-	  
+      vertex_property_type;
+    typedef typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type
+      edge_property_type;
+      
   private:
     typedef typename detail::retag_property_list<vertex_bundle_t, VertexProperty>::retagged
       maybe_vertex_bundled;
 
-	typedef typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::retagged
+    typedef typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::retagged
       maybe_edge_bundled;
-	
+    
   public:
     // The types that are actually bundled
     typedef typename ct_if<(is_same<maybe_vertex_bundled, no_property>::value),
@@ -385,8 +385,8 @@ namespace boost {
 #else
     typedef EdgeProperty     edge_property_type;
     typedef VertexProperty   vertex_property_type;
-	typedef no_vertex_bundle vertex_bundled;
-	typedef no_edge_bundle   edge_bundled;
+    typedef no_vertex_bundle vertex_bundled;
+    typedef no_edge_bundle   edge_bundled;
 #endif
 
   public: // should be private
@@ -471,7 +471,7 @@ namespace boost {
       m_num_edges(0) { }
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-	// Directly access a vertex or edge bundle
+    // Directly access a vertex or edge bundle
     vertex_bundled& operator[](vertex_descriptor v)
     { return get(vertex_bundle, *this)[v]; }
 
@@ -484,7 +484,7 @@ namespace boost {
     const edge_bundled& operator[](edge_descriptor e) const
     { return get(edge_bundle, *this)[e]; }
 #endif
-	
+    
     //private: if friends worked, these would be private
 
     typename Matrix::const_reference
@@ -1035,36 +1035,36 @@ namespace boost {
             typename Allocator, typename T, typename Bundle>
   inline
   typename property_map<adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator>,
-						T Bundle::*>::type
+                        T Bundle::*>::type
   get(T Bundle::* p, adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator>& g)
   {
     typedef typename property_map<adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator>,
-	                              T Bundle::*>::type
-	  result_type;
-	return result_type(&g, p);
+                                  T Bundle::*>::type
+      result_type;
+    return result_type(&g, p);
   }
 
   template <typename Directed, typename VertexProperty, typename EdgeProperty, typename GraphProperty,
             typename Allocator, typename T, typename Bundle>
   inline
   typename property_map<adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator>,
-						T Bundle::*>::const_type
+                        T Bundle::*>::const_type
   get(T Bundle::* p, adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator> const & g)
   {
     typedef typename property_map<adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator>,
-	                              T Bundle::*>::const_type
-	  result_type;
-	return result_type(&g, p);
+                                  T Bundle::*>::const_type
+      result_type;
+    return result_type(&g, p);
   }
     
   template <typename Directed, typename VertexProperty, typename EdgeProperty, typename GraphProperty,
             typename Allocator, typename T, typename Bundle, typename Key>
   inline T
   get(T Bundle::* p, adjacency_matrix<Directed, VertexProperty, EdgeProperty, GraphProperty, Allocator> const & g,
-	  const Key& key)
+      const Key& key)
   {
     return get(get(p, g), key);
-  }									
+  }
 
   template <typename Directed, typename VertexProperty, typename EdgeProperty, typename GraphProperty,
             typename Allocator, typename T, typename Bundle, typename Key>
@@ -1073,8 +1073,8 @@ namespace boost {
       const Key& key, const T& value)
   {
     put(get(p, g), key, value);
-  }						
-									
+  }
+
 #endif
 
 } // namespace boost

@@ -1068,7 +1068,7 @@ namespace boost {
         PType& p = *(PType*)e.get_property();
         detail::remove_directed_edge_dispatch(e, oel, p);
         detail::remove_directed_edge_dispatch(e, iel, p);
-	detail::remove_directed_edge_dispatch(e, g.m_edges, p);
+        detail::remove_directed_edge_dispatch(e, g.m_edges, p);
       }
 
       inline void
