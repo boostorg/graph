@@ -230,7 +230,7 @@ namespace boost {
 
   //===========================================================================
   // Adjacency Matrix Traits
-  template <typename Directed>
+  template <typename Directed = directedS>
   class adjacency_matrix_traits {
     typedef typename Directed::is_bidir_t is_bidir;
     typedef typename Directed::is_directed_t is_directed;
