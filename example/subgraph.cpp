@@ -74,8 +74,8 @@ int main(int,char*[])
   add_vertex(E, G1); // global vertex E becomes local B1 for G1
   add_vertex(F, G1); // global vertex F becomes local C1 for G1
   
-  add_vertex(A, G2); // global vertex A becomes local A1 for G1
-  add_vertex(B, G2); // global vertex B becomes local B1 for G1
+  add_vertex(A, G2); // global vertex A becomes local A1 for G2
+  add_vertex(B, G2); // global vertex B becomes local B1 for G2
 
   add_edge(A, B, G0);
   add_edge(B, C, G0);
