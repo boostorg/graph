@@ -2079,17 +2079,6 @@ namespace boost {
 
   namespace detail {
 
-    template <class P>
-    struct has_property { 
-      enum { value = true }; 
-      typedef true_type type;
-    };
-    template <>
-    struct has_property<no_property> { 
-      enum { value = false }; 
-      typedef false_type type; 
-    };
-
     //=========================================================================
     // Adjacency List Generator
 
