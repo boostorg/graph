@@ -299,7 +299,34 @@ namespace boost {
     // Directed Graph Helper Class
 
     template <class Config>
-    struct directed_edges_helper { };
+    struct directed_edges_helper {
+
+      // Placement of these overloaded remove_edge() functions
+      // inside the class avoids a VC++ bug.
+      
+      // O(E/V)
+      inline void
+      remove_edge(typename Config::edge_descriptor e)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+        typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        detail::remove_directed_edge_dispatch(e, el, (PType*)e.get_property());
+      }
+
+      // O(1)
+      inline void
+      remove_edge(typename Config::out_edge_iterator iter)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+        typename Config::edge_descriptor e = *iter;
+        typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
+        el.erase(iter.iter());
+      }
+
+    };
 
     // O(1)
     template <class Config>
@@ -419,30 +446,11 @@ namespace boost {
 
     } // namespace detail
 
-    // O(E/V)
-    template <class Config>
+    template <class EdgeOrIter, class Config>
     inline void
-    remove_edge(typename Config::edge_descriptor e,
-                directed_graph_helper<Config>& g_)
+    remove_edge(EdgeOrIter e_or_iter, directed_graph_helper<Config>& g_)
     {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-      typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
-      typedef typename Config::OutEdgeList::value_type::property_type PType;
-      detail::remove_directed_edge_dispatch(e, el, (PType*)e.get_property());
-    }
-
-    // O(1)
-    template <class Config>
-    inline void
-    remove_edge(typename Config::out_edge_iterator iter,
-                directed_graph_helper<Config>& g_)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-      typename Config::edge_descriptor e = *iter;
-      typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
-      el.erase(iter.iter());
+      g_.remove_edge(e_or_iter);
     }
 
     // O(V + E) for allow_parallel_edges
@@ -538,7 +546,27 @@ namespace boost {
     };
 
     template <class Config>
-    struct undirected_graph_helper { };
+    struct undirected_graph_helper {
+
+      // Placement of these overloaded remove_edge() functions
+      // inside the class avoids a VC++ bug.
+
+      // O(E/V)
+      inline void
+      remove_edge(typename Config::edge_descriptor e)
+      {
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        detail::remove_undirected_edge_dispatch(e, *this,
+                                                (PType*)e.get_property());
+      }
+      // O(E/V)
+      inline void
+      remove_edge(typename Config::out_edge_iterator iter)
+      {
+        this->remove_edge(*iter);
+      }
+
+    };
 
     // O(1)
     template <class Config>
@@ -624,21 +652,11 @@ namespace boost {
     } // namespace detail
 
     // O(E/V)
-    template <class Config>
+    template <class EdgeOrIter, class Config>
     inline void
-    remove_edge(typename Config::edge_descriptor e,
-                undirected_graph_helper<Config>& g)
+    remove_edge(EdgeOrIter e, undirected_graph_helper<Config>& g_)
     {
-      typedef typename Config::OutEdgeList::value_type::property_type PType;
-      detail::remove_undirected_edge_dispatch(e, g, (PType*)e.get_property());
-    }
-    // O(E/V)
-    template <class Config>
-    inline void
-    remove_edge(typename Config::out_edge_iterator iter,
-                undirected_graph_helper<Config>& g_)
-    {
-      remove_edge(*iter, g_);
+      g_.remove_edge(e);
     }
     // O(1)
     template <class Config>
@@ -750,7 +768,8 @@ namespace boost {
     // Bidirectional Graph Helper Class (with edge properties)
 
     template <class EdgeProperty>
-    struct bidir_edge { // short name due to VC++ truncation and linker problems
+    struct bidir_edge {
+      // short name due to VC++ truncation and linker problems
       bidir_edge(const EdgeProperty& p)
         : m_property(p) { }
       EdgeProperty* get_property() { return &m_property; }
@@ -760,7 +779,43 @@ namespace boost {
 
     template <class Config>
     struct bidirectional_graph_helper_with_property
-      : public directed_edges_helper<Config> { };
+      : public directed_edges_helper<Config>
+    {
+      // Placement of these overloaded remove_edge() functions
+      // inside the class avoids a VC++ bug.
+      
+      // O(E/V)
+      inline void
+      remove_edge(typename Config::edge_descriptor e)
+      {
+	typedef typename Config::graph_type graph_type;
+	graph_type& g = static_cast<graph_type&>(*this);
+
+	typedef typename Config::OutEdgeList::value_type::property_type PType;
+	PType* p = (PType*) e.get_property();
+
+	typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+	typename Config::OutEdgeList::iterator out_i = out_el.begin();
+	for (; out_i != out_el.end(); ++out_i)
+	  if ((*out_i).get_property() == p) {
+	    g.m_edges.erase((*out_i).get_iter());
+	    out_el.erase(out_i);
+	    break;
+	  }
+	typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
+	typename Config::InEdgeList::iterator in_i = in_el.begin();
+	for (; in_i != in_el.end(); ++in_i)
+	  if ((*in_i).get_property() == p) {
+	    in_el.erase(in_i);
+	    break;
+	  }
+      }
+      inline void
+      remove_edge(typename Config::out_edge_iterator iter)
+      {
+	this->remove_edge(*iter);
+      }
+    };
 
     // O(E/V) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
@@ -778,40 +833,12 @@ namespace boost {
       boost::erase(g.in_edge_list(v), StoredEdge(u));
     }
     // O(E/V)
-    template <class Config>
+    template <class EdgeOrIter, class Config>
     inline void
-    remove_edge(typename Config::edge_descriptor e,
+    remove_edge(EdgeOrIter e,
                 bidirectional_graph_helper_with_property<Config>& g_)
     {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-
-      typedef typename Config::OutEdgeList::value_type::property_type PType;
-      PType* p = (PType*) e.get_property();
-
-      typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-      typename Config::OutEdgeList::iterator out_i = out_el.begin();
-      for (; out_i != out_el.end(); ++out_i)
-        if ((*out_i).get_property() == p) {
-          g.m_edges.erase((*out_i).get_iter());
-          out_el.erase(out_i);
-          break;
-        }
-      typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
-      typename Config::InEdgeList::iterator in_i = in_el.begin();
-      for (; in_i != in_el.end(); ++in_i)
-        if ((*in_i).get_property() == p) {
-          in_el.erase(in_i);
-          break;
-        }
-    }
-
-    template <class Config>
-    inline void
-    remove_edge(typename Config::out_edge_iterator iter,
-                bidirectional_graph_helper_with_property<Config>& g_)
-    {
-      remove_edge(*iter, g_);
+      g_.remove_edge(e);
     }
 
     // O(1)
@@ -904,7 +931,40 @@ namespace boost {
 
     template <class Config>
     struct bidirectional_graph_helper_without_property
-      : public directed_edges_helper<Config> { };
+      : public directed_edges_helper<Config>
+    {
+      // Placement of these overloaded remove_edge() functions
+      // inside the class avoids a VC++ bug.
+      
+      // O(E/V)
+      inline void
+      remove_edge(typename Config::edge_descriptor e)
+      {
+	typedef typename Config::graph_type graph_type;
+	graph_type& g = static_cast<graph_type&>(*this);
+
+	typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+	typename Config::OutEdgeList::iterator out_i = out_el.begin();
+	for (; out_i != out_el.end(); ++i)
+	  if ((*out_i).get_target() == target(e, g)) {
+	    g.m_edges.erase((*out_i).get_iter());
+	    out_el.erase(*out_i);
+	    break;
+	  }
+	typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
+	typename Config::InEdgeList::iterator in_i = in_el.begin();
+	for (; in_i != in_el.end(); ++i)
+	  if ((*in_i).get_target() == source(e, g)) {
+	    in_el.erase(*in_i);
+	    break;
+	  }
+      }
+      inline void
+      remove_edge(typename Config::out_edge_iterator iter)
+      {
+	this->remove_edge(*iter);
+      }
+    };
 
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
@@ -943,29 +1003,12 @@ namespace boost {
       boost::erase(g.in_edge_list(v), StoredEdge(u));
     }
     // O(E/V)
-    template <class Config>
+    template <class EdgeOrIter, class Config>
     inline void
-    remove_edge(typename Config::edge_descriptor e,
+    remove_edge(EdgeOrIter e,
                 bidirectional_graph_helper_without_property<Config>& g_)
     {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-
-      typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-      typename Config::OutEdgeList::iterator out_i = out_el.begin();
-      for (; out_i != out_el.end(); ++i)
-        if ((*out_i).get_target() == target(e, g)) {
-          g.m_edges.erase((*out_i).get_iter());
-          out_el.erase(*out_i);
-          break;
-        }
-      typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
-      typename Config::InEdgeList::iterator in_i = in_el.begin();
-      for (; in_i != in_el.end(); ++i)
-        if ((*in_i).get_target() == source(e, g)) {
-          in_el.erase(*in_i);
-          break;
-        }
+      g_.remove_edge(e);
     }
     // O(V), could do better...
     template <class Config>

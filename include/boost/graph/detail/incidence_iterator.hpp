@@ -60,8 +60,6 @@ namespace boost {
       inline reference operator*() const {
         return deref_helper(EdgeDir());
       }
-      inline bool operator!=(const self& x) const { return i != x.i; }
-      inline bool operator==(const self& x) const { return i == x.i; }
       inline self* operator->() { return this; }
       
       Iterator1D& iter() { return i; }
@@ -77,7 +75,21 @@ namespace boost {
         return edge_type((*i).get_target(), _src, (*i).get_property() );
       }
     };
-    
+
+    template <class V, class E, class Iter, class Dir>
+    inline bool operator==(const bidir_incidence_iterator<V,E,Iter,Dir>& x,
+			   const bidir_incidence_iterator<V,E,Iter,Dir>& y)
+    {
+      return x.i == y.i;
+    }
+    template <class V, class E, class Iter, class Dir>
+    inline bool operator!=(const bidir_incidence_iterator<V,E,Iter,Dir>& x,
+			   const bidir_incidence_iterator<V,E,Iter,Dir>& y)
+    {
+      return x.i != y.i;
+    }
+
+
   }
 } 
 #endif
