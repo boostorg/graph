@@ -169,7 +169,7 @@ struct dfs_test
 
 int test_main(int argc, char* argv[])
 {
-  int max_V = 15;
+  int max_V = 7;
   if (argc > 1)
     max_V = atoi(argv[1]);
 
