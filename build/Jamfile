@@ -3,12 +3,16 @@ subproject libs/graph/build ;
 SOURCES = graphviz_graph_lex graphviz_digraph_lex
     graphviz_graph_parser graphviz_digraph_parser ;
 
+GRAPHVIZ_DEFS(graphviz_graph_lex) =
+    GRAPHVIZ_DIRECTED=0
+    ;
+GRAPHVIZ_DEFS(graphviz_digraph_lex) =
+    GRAPHVIZ_DIRECTED=1
+    ;
 GRAPHVIZ_DEFS(graphviz_graph_parser) =
-    GRAPHVIZ_GRAPH=boost::GraphvizGraph
     GRAPHVIZ_DIRECTED=0
     ;
 GRAPHVIZ_DEFS(graphviz_digraph_parser) =
-    GRAPHVIZ_GRAPH=boost::GraphvizDigraph
     GRAPHVIZ_DIRECTED=1
     ;
 
