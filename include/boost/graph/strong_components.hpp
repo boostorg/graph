@@ -43,29 +43,28 @@ namespace boost {
   namespace detail {
     
     template <typename ComponentMap, typename RootMap, typename DiscoverTime,
-              typename Stack, typename DFSVisitor>
-    class tarjan_scc_visitor : public DFSVisitor 
+              typename Stack>
+    class tarjan_scc_visitor : public dfs_visitor<> 
     {
       typedef typename property_traits<ComponentMap>::value_type comp_type;
       typedef typename property_traits<DiscoverTime>::value_type time_type;
     public:
       tarjan_scc_visitor(ComponentMap comp_map, RootMap r, DiscoverTime d, 
-                         comp_type& c_, Stack& s_, DFSVisitor v = DFSVisitor())
+                         comp_type& c_, Stack& s_)
         : c(c_), comp(comp_map), root(r), discover_time(d),
           dfs_time(time_type()), s(s_) { }
 
       template <typename Graph>
       void discover_vertex(typename graph_traits<Graph>::vertex_descriptor v,
-			   const Graph& g) {
+                           const Graph& g) {
         put(root, v, v);
         put(comp, v, std::numeric_limits<comp_type>::max());
         put(discover_time, v, dfs_time++);
         s.push(v);
-	DFSVisitor::discover_vertex(v, g);
       }
       template <typename Graph>
       void finish_vertex(typename graph_traits<Graph>::vertex_descriptor v,
-			 const Graph& g) {
+                         const Graph& g) {
         typename graph_traits<Graph>::vertex_descriptor w;
         typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
         for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
@@ -80,7 +79,6 @@ namespace boost {
           } while (w != v);
           ++c;
         }
-	DFSVisitor::finish_vertex(v, g);
       }
     private:
       template <typename Vertex>
@@ -96,48 +94,118 @@ namespace boost {
       Stack& s;
     };
     
+    template <class Graph, class ComponentMap, class RootMap,
+              class DiscoverTime, class P, class T, class R>
+    typename property_traits<ComponentMap>::value_type
+    strong_components_impl
+      (const Graph& g,    // Input
+       ComponentMap comp, // Output
+       // Internal record keeping
+       RootMap root, 
+       DiscoverTime discover_time,
+       const bgl_named_params<P, T, R>& params)
+    {
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      function_requires< ReadWritePropertyMapConcept<ComponentMap, Vertex> >();
+      function_requires< ReadWritePropertyMapConcept<RootMap, Vertex> >();
+      typedef typename property_traits<RootMap>::value_type RootV;
+      function_requires< ConvertibleConcept<RootV, Vertex> >();
+      function_requires< ReadWritePropertyMapConcept<DiscoverTime, Vertex> >();
+
+      typename property_traits<ComponentMap>::value_type total = 0;
+
+      std::stack<Vertex> s;
+      detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
+        std::stack<Vertex> > 
+        vis(comp, root, discover_time, total, s);
+      depth_first_search(g, params.visitor(vis));
+      return total;
+    }
+
+    //-------------------------------------------------------------------------
+    // The dispatch functions handle the defaults for the rank and discover
+    // time property maps.
+
+    template <class Graph, class ComponentMap, class RootMap,
+              class P, class T, class R>
+    inline typename property_traits<ComponentMap>::value_type
+    strong_comp_dispatch2(const Graph& g,
+                          ComponentMap comp,
+                          RootMap r_map,
+                          const bgl_named_params<P, T, R>& params,
+                          detail::error_property_not_found)
+    {
+      typedef typename graph_traits<Graph>::vertices_size_type size_type;
+      std::vector<size_type> time_vec(num_vertices(g));
+      return strong_components_impl
+        (g, comp, r_map,
+         make_iterator_property_map(time_vec.begin(), choose_const_pmap
+                                    (get_param(params, vertex_index),
+                                     g, vertex_index)),
+         params);
+    }
+    template <class Graph, class ComponentMap, class RootMap,
+              class P, class T, class R, class DiscoverTimeMap>
+    inline typename property_traits<ComponentMap>::value_type
+    strong_comp_dispatch2(const Graph& g,
+                          ComponentMap comp,
+                          RootMap r_map,
+                          const bgl_named_params<P, T, R>& params,
+                          DiscoverTimeMap time_map)
+    {
+      return strong_components_impl(g, comp, r_map, time_map, params);
+    }
+
+    template <class Graph, class ComponentMap, 
+              class P, class T, class R>
+    inline typename property_traits<ComponentMap>::value_type
+    strong_comp_dispatch1(const Graph& g,
+                          ComponentMap comp,
+                          const bgl_named_params<P, T, R>& params,
+                          detail::error_property_not_found)
+    {
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      std::vector<Vertex> root_vec(num_vertices(g));
+      return strong_comp_dispatch2
+        (g, comp, 
+         make_iterator_property_map(root_vec.begin(), choose_const_pmap
+                                    (get_param(params, vertex_index),
+                                     g, vertex_index)),
+         params, 
+         get_param(params, vertex_discover_time));
+    }
+
+    template <class Graph, class ComponentMap, class RootMap,
+              class P, class T, class R>
+    inline typename property_traits<ComponentMap>::value_type
+    strong_comp_dispatch1(const Graph& g,
+                          ComponentMap comp,
+                          const bgl_named_params<P, T, R>& params,
+                          RootMap r_map)
+    {
+      return strong_comp_dispatch2(g, comp, r_map, params,
+                                   get_param(params, vertex_discover_time));
+    }
+
   } // namespace detail 
 
-
-  // Version (2)
-  template <typename Graph, typename ComponentMap, typename RootMap,
-            typename ColorMap, typename DiscoverTime, typename DFSVisitor>
-  typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g,    // Input
-                    ComponentMap comp, // Output
-                    // Internal record keeping
-                    RootMap root, ColorMap color, DiscoverTime discover_time,
-		    DFSVisitor v)
-  {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename property_traits<ColorMap>::value_type ColorV;
-    function_requires< ColorValueConcept<ColorV> >();
-    function_requires< ReadWritePropertyMapConcept<ComponentMap, Vertex> >();
-    function_requires< ReadWritePropertyMapConcept<RootMap, Vertex> >();
-    typedef typename property_traits<RootMap>::value_type RootV;
-    function_requires< ConvertibleConcept<RootV, Vertex> >();
-    function_requires< ReadWritePropertyMapConcept<DiscoverTime, Vertex> >();
-    
-    typename property_traits<ComponentMap>::value_type total = 0;
-    
-    std::stack<Vertex> s;
-    detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
-      std::stack<Vertex>, DFSVisitor > 
-      vis(comp, root, discover_time, total, s, v);
-    depth_first_search(g, vis, color);
-    return total;
-  }
-  
-  // Version (1)  
-  template <typename Graph, typename ComponentMap, typename RootMap,
-            typename ColorMap, typename DiscoverTime>
+  template <class Graph, class ComponentMap, 
+            class P, class T, class R>
   inline typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g,    // Input
-                    ComponentMap comp, // Output
-                    // Internal record keeping
-                    RootMap root, ColorMap color, DiscoverTime d)
+  strong_components(const Graph& g, ComponentMap comp,
+                    const bgl_named_params<P, T, R>& params)
   {
-    return strong_components(g, comp, root, color, d, dfs_visitor<>());
+    return detail::strong_comp_dispatch1
+      (g, comp, params, get_param(params, vertex_root_t()));
+  }
+
+  template <class Graph, class ComponentMap, 
+            class P, class T, class R>
+  inline typename property_traits<ComponentMap>::value_type
+  strong_components(const Graph& g, ComponentMap comp)
+  {
+    bgl_named_params<int, int> params(0);
+    return strong_components(g, comp, params);
   }
 
 } // namespace boost
@@ -162,11 +230,11 @@ namespace boost {
   // more memory, and puts more requirements on the graph type.
 
   template <class Graph, class DFSVisitor, class ComponentsMap,
-	    class DiscoverTime, class FinishTime,
-	    class ColorMap>
+            class DiscoverTime, class FinishTime,
+            class ColorMap>
   typename property_traits<ComponentsMap>::value_type
   kosaraju_strong_components(Graph& G, ComponentsMap c,
-			     FinishTime finish_time, ColorMap color)
+                             FinishTime finish_time, ColorMap color)
   {
     function_requires< MutableGraphConcept<Graph> >();
     // ...
@@ -185,8 +253,8 @@ namespace boost {
     typedef typename property_traits<ComponentsMap>::value_type count_type;
 
     count_type c_count(0);
-    detail::components_recorder<ComponentsMap, dfs_visitor<> >
-      vis(c, c_count, dfs_visitor<>());
+    detail::components_recorder<ComponentsMap>
+      vis(c, c_count);
 
     // initialize G_T
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
@@ -211,8 +279,8 @@ namespace boost {
       Vertex u = Q.top();
       Q.pop();
       if  (get(color, u) == Color::white()) {
-	depth_first_visit(G_T, u, vis, color);
-	++c_count; 
+        depth_first_visit(G_T, u, vis, color);
+        ++c_count; 
       }
     }
     return c_count;
