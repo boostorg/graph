@@ -39,6 +39,7 @@ namespace boost {
   struct vertex_copy_t { enum { num = detail::vertex_copy_num }; };
   struct vertex_isomorphism_t { enum { num =detail::vertex_isomorphism_num}; };
   struct vertex_invariant_t { enum { num =detail::vertex_invariant_num}; };
+  struct vertex_root_t { enum { num =detail::vertex_root_num}; };
   struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
   
   namespace detail {
@@ -97,10 +98,51 @@ namespace boost {
       return Params(pmap, *this);
     }
 
+    template <typename RootMap>
+    bgl_named_params<RootMap, vertex_root_t, self>
+    root_map(const RootMap& pmap) const {
+      typedef bgl_named_params<RootMap, vertex_root_t, self> 
+        Params;
+      return Params(pmap, *this);
+    }
+
     template <typename ColorMap>
     bgl_named_params<ColorMap, vertex_color_t, self>
     color_map(const ColorMap& pmap) const {
       typedef bgl_named_params<ColorMap, vertex_color_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename CapacityMap>
+    bgl_named_params<CapacityMap, edge_capacity_t, self>
+    capacity_map(CapacityMap pmap) {
+      typedef bgl_named_params<CapacityMap, edge_capacity_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename Residual_CapacityMap>
+    bgl_named_params<Residual_CapacityMap, edge_residual_capacity_t, self>
+    residual_capacity_map(Residual_CapacityMap pmap) {
+      typedef bgl_named_params<Residual_CapacityMap, 
+	edge_residual_capacity_t, self>
+	Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename ReverseMap>
+    bgl_named_params<ReverseMap, edge_reverse_t, self>
+    reverse_edge_map(ReverseMap pmap) {
+      typedef bgl_named_params<ReverseMap, 
+	edge_reverse_t, self>
+	Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename DiscoverTimeMap>
+    bgl_named_params<DiscoverTimeMap, vertex_discover_time_t, self>
+    discover_time_map(const DiscoverTimeMap& pmap) const {
+      typedef bgl_named_params<DiscoverTimeMap, vertex_discover_time_t, self>
+	Params;
       return Params(pmap, *this);
     }
 
@@ -240,10 +282,47 @@ namespace boost {
     return Params(pmap);
   }
 
+  template <typename RootMap>
+  bgl_named_params<RootMap, vertex_root_t>
+  root_map(RootMap pmap) {
+    typedef bgl_named_params<RootMap, vertex_root_t> Params;
+    return Params(pmap);
+  }
+
   template <typename ColorMap>
   bgl_named_params<ColorMap, vertex_color_t>
   color_map(ColorMap pmap) {
     typedef bgl_named_params<ColorMap, vertex_color_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename CapacityMap>
+  bgl_named_params<CapacityMap, edge_capacity_t>
+  capacity_map(CapacityMap pmap) {
+    typedef bgl_named_params<CapacityMap, edge_capacity_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename Residual_CapacityMap>
+  bgl_named_params<Residual_CapacityMap, edge_residual_capacity_t>
+  residual_capacity_map(Residual_CapacityMap pmap) {
+    typedef bgl_named_params<Residual_CapacityMap, edge_residual_capacity_t>
+      Params;
+    return Params(pmap);
+  }
+
+  template <typename ReverseMap>
+  bgl_named_params<ReverseMap, edge_reverse_t>
+  reverse_edge_map(ReverseMap pmap) {
+    typedef bgl_named_params<ReverseMap, edge_reverse_t>
+      Params;
+    return Params(pmap);
+  }
+
+  template <typename DiscoverTimeMap>
+  bgl_named_params<DiscoverTimeMap, vertex_discover_time_t>
+  discover_time_map(DiscoverTimeMap pmap) {
+    typedef bgl_named_params<DiscoverTimeMap, vertex_discover_time_t> Params;
     return Params(pmap);
   }
 
@@ -383,6 +462,7 @@ namespace boost {
       struct bind {
 	typedef const P& const_result_type;
 	typedef const P& result_type;
+	typedef P type;
 	static const_result_type const_apply(const P& p, const Graph&, Tag&)
 	{ return p; }
 	static result_type apply(const P& p, Graph&, Tag&)
@@ -424,6 +504,7 @@ namespace boost {
       typedef typename Selector:: template bind<Param, Graph, Tag> type;
       typedef typename type::result_type result_type;
       typedef typename type::const_result_type const_result_type;
+      typedef typename type::type result;
     };
 
 
