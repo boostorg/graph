@@ -40,7 +40,7 @@
     Reverse Cuthill-McKee ordering: //choose vertex 9
     0 8 5 7 3 6 4 2 1 9 
  */
-int main(int argc, char* argv[])
+int main(int , char* [])
 {
   using namespace boost;
   using namespace std;

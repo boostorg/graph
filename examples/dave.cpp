@@ -166,7 +166,7 @@ void print(Graph& G, Name name)
 
 
 int 
-main(int argc, char* argv[])
+main(int , char* [])
 {
   // Name and ID numbers for the vertices
   char name[] = "abcdefg";

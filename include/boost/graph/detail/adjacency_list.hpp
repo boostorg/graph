@@ -154,9 +154,15 @@ namespace boost {
 #endif
 
     template <class P>
-    struct has_property { enum { value = true }; };
+    struct has_property { 
+      enum { value = true }; 
+      typedef true_type type;
+    };
     template <>
-    struct has_property<no_property> { enum { value = false }; };
+    struct has_property<no_property> { 
+      enum { value = false }; 
+      typedef false_type type; 
+    };
 
 
     //=========================================================================
@@ -1026,6 +1032,7 @@ namespace boost {
       g.out_edge_list(u).clear();
       g.in_edge_list(u).clear();
     }
+
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
@@ -1055,6 +1062,7 @@ namespace boost {
         return std::make_pair(edge_descriptor(u,v), false);
       }
     }
+
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
     add_edge(typename Config::vertex_descriptor u,
@@ -1141,7 +1149,7 @@ namespace boost {
     inline std::pair<typename Config::edge_descriptor, bool>
     add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
-	     const no_property&,
+             const no_property&,
              bidirectional_graph_helper_without_property<Config>& g_)
     {
       return add_edge(u, v, g_);
@@ -1239,11 +1247,14 @@ namespace boost {
 
       //    protected:
 
+      // The edge_dispatch() functions should be static, but
+      // Borland gets confused about constness.
+
       // O(E/V)
-      static inline std::pair<edge_descriptor,bool>      
+      inline std::pair<edge_descriptor,bool>      
       edge_dispatch(const AdjList& g, 
                     vertex_descriptor u, vertex_descriptor v, 
-                    boost::allow_parallel_edge_tag)
+                    boost::allow_parallel_edge_tag) const
       {
         bool found;
         const typename Config::OutEdgeList& el = g.out_edge_list(u);
@@ -1257,10 +1268,10 @@ namespace boost {
           return std::make_pair(edge_descriptor(u, v), false);
       }
       // O(log(E/V))
-      static inline std::pair<edge_descriptor,bool>      
+      inline std::pair<edge_descriptor,bool>      
       edge_dispatch(const AdjList& g, 
                     vertex_descriptor u, vertex_descriptor v, 
-                    boost::disallow_parallel_edge_tag)
+                    boost::disallow_parallel_edge_tag) const
       {
         bool found;
         typename Config::OutEdgeList::const_iterator 
@@ -1742,11 +1753,11 @@ namespace boost {
     add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
              const typename Config::edge_property_type& p,
-	     vec_adj_list_impl<Graph, Config, Base>& g_)
+             vec_adj_list_impl<Graph, Config, Base>& g_)
     {
       typename Config::vertex_descriptor x = std::max(u, v);
       if (x >= num_vertices(g_))
-	g_.m_vertices.resize(x + 1);
+        g_.m_vertices.resize(x + 1);
       adj_list_helper<Config, Base>& g = g_;
       return add_edge(u, v, p, g);
     }
@@ -1754,7 +1765,7 @@ namespace boost {
     inline std::pair<typename Config::edge_descriptor, bool>
     add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
-	     vec_adj_list_impl<Graph, Config, Base>& g_)
+             vec_adj_list_impl<Graph, Config, Base>& g_)
     {
       typename Config::edge_property_type p;
       return add_edge(u, v, p, g_);
@@ -1803,10 +1814,9 @@ namespace boost {
         for (vertex_descriptor v = 0; v < V; ++v)
           reindex_edge_list(g.out_edge_list(v), u, 
                             edge_parallel_category());
-
-        typename Graph::EdgeContainer::iterator 
-          ei = g.m_edges.begin(),
-          ei_end = g.m_edges.end();
+        typedef typename Graph::EdgeContainer Container;
+        typedef typename Container::iterator Iter;
+        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
         for (; ei != ei_end; ++ei) {
           if (ei->m_source > u)
             --ei->m_source;
@@ -1869,10 +1879,11 @@ namespace boost {
               class GraphProperty>
     struct adjacency_list_generator
     {
-      enum { is_rand_access = detail::is_random_access<VertexListS>::value,
-             has_edge_property = has_property<EdgeProperty>::value,
-             Directed = DirectedS::is_directed,
-             Bidirectional = DirectedS::is_bidir };
+      typedef typename detail::is_random_access<VertexListS>::type 
+        is_rand_access;
+      typedef typename has_property<EdgeProperty>::type has_edge_property; 
+      typedef typename DirectedS::is_directed_t DirectedT;
+      typedef typename DirectedS::is_bidir_t BidirectionalT;
 
       struct config
       {
@@ -1896,7 +1907,7 @@ namespace boost {
         typedef typename container_gen<VertexListS, 
           vertex_ptr>::type SeqVertexList;
         typedef boost::integer_range<std::size_t> RandVertexList;
-        typedef typename boost::ct_if<is_rand_access,
+        typedef typename boost::ct_if_t<is_rand_access,
           RandVertexList, SeqVertexList>::type VertexList;
 
         typedef typename VertexList::iterator vertex_iterator;
@@ -1911,41 +1922,42 @@ namespace boost {
         // need to reorganize this to avoid instantiating stuff
         // that doesn't get used -JGS
 
-        typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_property,
+        typedef typename boost::ct_if_t<DirectedT,
+          typename boost::ct_if_t< typename ct_and<BidirectionalT,has_edge_property>::type,
             BidirEdgeList,
             no_property
           >::type,
-          typename boost::ct_if< has_edge_property,
+          typename boost::ct_if_t<has_edge_property,
             UndirEdgeList,
             UndirEdgeNoPropertyList
           >::type
         >::type EdgeContainer;
 
-        typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_property,
+        typedef typename boost::ct_if_t<DirectedT,
+          typename boost::ct_if_t<typename ct_and<BidirectionalT,has_edge_property>::type,
             typename BidirEdgeList::size_type,
             std::size_t
           >::type,
-          typename boost::ct_if< has_edge_property,
+          typename boost::ct_if_t<has_edge_property,
             typename UndirEdgeList::size_type,
             typename UndirEdgeNoPropertyList::size_type
           >::type
         >::type edges_size_type;
 
-        typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_property,
+        typedef typename boost::ct_if_t< DirectedT,
+          typename boost::ct_if_t<typename ct_and<BidirectionalT, has_edge_property>::type,
             typename BidirEdgeList::iterator,
             typename BidirEdgeList::iterator // bogus, not used
           >::type,
-          typename boost::ct_if< has_edge_property,
+          typename boost::ct_if_t<has_edge_property,
             typename UndirEdgeList::iterator,
             typename UndirEdgeNoPropertyList::iterator
           >::type
         >::type EdgeIter;
 
-        typedef typename boost::ct_if< Directed && !Bidirectional,
-          typename boost::ct_if< has_edge_property,
+        typedef typename ct_and<DirectedT, typename ct_not<BidirectionalT>::type>::type on_edge_storage;
+        typedef typename boost::ct_if_t<on_edge_storage,
+          typename boost::ct_if_t<has_edge_property,
             stored_edge_property<vertex_descriptor, EdgeProperty>,  
             stored_edge<vertex_descriptor>
           >::type,
@@ -2022,7 +2034,7 @@ namespace boost {
 
         typedef adj_list_edge_iterator<vertex_iterator, out_edge_iterator, 
            graph_type> DirectedEdgeIter;
-        typedef typename boost::ct_if< Directed,
+        typedef typename boost::ct_if_t<DirectedT,
           DirectedEdgeIter, UndirectedEdgeIter >::type edge_iterator;
 
         // stored_vertex and StoredVertexList
@@ -2048,32 +2060,34 @@ namespace boost {
           InEdgeList m_in_edges;
           VertexProperty m_property;
         };
-        typedef typename boost::ct_if< is_rand_access,
-          typename boost::ct_if< Bidirectional,
+        typedef typename boost::ct_if_t<is_rand_access,
+          typename boost::ct_if_t<BidirectionalT,
             bidir_rand_stored_vertex, rand_stored_vertex>::type,
-          typename boost::ct_if< Bidirectional,
+          typename boost::ct_if_t<BidirectionalT,
             bidir_seq_stored_vertex, seq_stored_vertex>::type
         >::type StoredVertex;
         struct stored_vertex : public StoredVertex { };
 
         typedef typename container_gen<VertexListS, stored_vertex>::type
           RandStoredVertexList;
-        typedef typename boost::ct_if< is_rand_access,
+        typedef typename boost::ct_if_t< is_rand_access,
           RandStoredVertexList, SeqStoredVertexList>::type StoredVertexList;
-      };
+      }; // end of config
 
-      typedef typename boost::ct_if< Bidirectional,
-        typename boost::ct_if< has_edge_property,
+
+
+      typedef typename boost::ct_if_t<BidirectionalT,
+        typename boost::ct_if_t<has_edge_property,
           bidirectional_graph_helper_with_property<config>,
           bidirectional_graph_helper_without_property<config>
         >::type,
-        typename boost::ct_if< Directed,
+        typename boost::ct_if_t<DirectedT,
           directed_graph_helper<config>,
           undirected_graph_helper<config>
         >::type
       >::type DirectedHelper;
 
-      typedef typename boost::ct_if< is_rand_access,
+      typedef typename boost::ct_if_t<is_rand_access,
         vec_adj_list_impl<Graph, config, DirectedHelper>,
         adj_list_impl<Graph, config, DirectedHelper>
       >::type type;

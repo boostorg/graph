@@ -104,7 +104,7 @@ copy_graph(NewGraph& g, Tag) {
   return graph_copier<NewGraph, Tag>(g);
 }
 
-int main(int argc, char* argv[]) 
+int main(int , char* []) 
 {
   typedef boost::adjacency_list< 
     boost::mapS, boost::vecS, boost::bidirectionalS,

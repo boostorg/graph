@@ -68,7 +68,7 @@
 using namespace std;
 using boost::tie;
 
-int main(int argc, char* argv[]) 
+int main(int , char* []) 
 {
   using namespace boost;
   typedef int Index; // ID of a Vertex

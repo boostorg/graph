@@ -225,11 +225,13 @@ namespace boost {
 
   namespace detail {
     template <class Directed> struct is_random_access { 
-      enum { value = false}; 
+      enum { value = false};
+      typedef false_type type;
     };
     template <>
     struct is_random_access<vecS> { 
       enum { value = true }; 
+      typedef true_type type;
     };
 
   } // namespace detail
@@ -238,9 +240,20 @@ namespace boost {
   //===========================================================================
   // Selectors for the Directed template parameter of adjacency_list.
 
-  struct directedS { enum { is_directed = true, is_bidir = false }; };
-  struct undirectedS { enum { is_directed = false, is_bidir = false }; };
-  struct bidirectionalS { enum { is_directed = true, is_bidir = true }; };
+  struct directedS { enum { is_directed = true, is_bidir = false }; 
+    typedef true_type is_directed_t; 
+    typedef false_type is_bidir_t;
+  };
+  struct undirectedS { 
+    enum { is_directed = false, is_bidir = false }; 
+    typedef false_type is_directed_t;
+    typedef false_type is_bidir_t;
+  };
+  struct bidirectionalS { 
+    enum { is_directed = true, is_bidir = true }; 
+    typedef true_type is_directed_t;
+    typedef true_type is_bidir_t;
+  };
 
   //===========================================================================
   // The adjacency_list_traits class, which provides a way to access
@@ -254,11 +267,14 @@ namespace boost {
             class DirectedS = directedS>
   struct adjacency_list_traits
   {
-    enum { is_rand_access = detail::is_random_access<VertexListS>::value };
+    typedef typename detail::is_random_access<VertexListS>::type
+      is_rand_access;
+    typedef typename DirectedS::is_bidir_t is_bidir;
+    typedef typename DirectedS::is_directed_t is_directed;
 
-    typedef typename boost::ct_if<DirectedS::is_bidir,
+    typedef typename boost::ct_if_t<is_bidir,
       bidirectional_tag,
-      typename boost::ct_if<DirectedS::is_directed,
+      typename boost::ct_if_t<is_directed,
         directed_tag, undirected_tag
       >::type
     >::type directed_category;
@@ -267,9 +283,8 @@ namespace boost {
       edge_parallel_category;
 
     typedef void* vertex_ptr;
-    typedef typename boost::ct_if<is_rand_access,
+    typedef typename boost::ct_if_t<is_rand_access,
       std::size_t, vertex_ptr>::type vertex_descriptor;
-
     typedef detail::edge_desc_impl<directed_category, vertex_descriptor>
       edge_descriptor;
   };

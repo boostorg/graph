@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <stdlib.h>
 #include <iostream>
 #include <stack>
 #include <queue>

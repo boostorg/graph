@@ -47,7 +47,7 @@ typedef std::pair<size_t,size_t> Pair;
 */
 
 int
-main(int argc, char* argv[])
+main(int , char* [])
 {
   //begin
   using namespace boost;

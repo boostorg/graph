@@ -43,6 +43,7 @@ namespace adstl {
 #endif
 class array_binary_tree_node {
 public:
+  typedef array_binary_tree_node ArrayBinaryTreeNode;
   typedef RandomAccessIterator rep_iterator;
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
   typedef typename std::iterator_traits<RandomAccessIterator>::difference_type
@@ -57,8 +58,8 @@ public:
 
   struct children_type {
     struct iterator
-        : boost::iterator<std::bidirectional_iterator_tag, array_binary_tree_node,
-                       difference_type, array_binary_tree_node*, array_binary_tree_node&>
+        : boost::iterator<std::bidirectional_iterator_tag, ArrayBinaryTreeNode,
+                       difference_type, array_binary_tree_node*, ArrayBinaryTreeNode&>
     { // replace with iterator_adaptor implementation -JGS
         
       inline iterator() : i(0), n(0) { }
@@ -73,7 +74,8 @@ public:
                       size_type ii, 
                       size_type nn, 
                       const ID& _id) : r(rr), i(ii), n(nn), id(_id) { }
-      inline array_binary_tree_node operator*() { return array_binary_tree_node(r, i, n, id); }
+      inline array_binary_tree_node operator*() {
+        return ArrayBinaryTreeNode(r, i, n, id); }
       inline iterator& operator++() { ++i; return *this; }
       inline iterator operator++(int)
         { iterator t = *this; ++(*this); return t; }
@@ -116,7 +118,7 @@ public:
   inline array_binary_tree_node() : i(0), n(0) { }
   inline array_binary_tree_node(const array_binary_tree_node& x) 
     : r(x.r), i(x.i), n(x.n), id(x.id) { }
-  inline array_binary_tree_node& operator=(const array_binary_tree_node& x) {
+  inline ArrayBinaryTreeNode& operator=(const ArrayBinaryTreeNode& x) {
     r = x.r;
     i = x.i; 
     n = x.n; 
@@ -125,16 +127,18 @@ public:
     return *this;
   }
   inline array_binary_tree_node(rep_iterator start, 
-                         rep_iterator end, 
-                         rep_iterator pos, const ID& _id)
+                                rep_iterator end, 
+                                rep_iterator pos, const ID& _id)
     : r(start), i(pos - start), n(end - start), id(_id) { }
   inline array_binary_tree_node(rep_iterator rr, 
-                         size_type ii, 
-                         size_type nn, const ID& _id) 
+                                size_type ii, 
+                                size_type nn, const ID& _id) 
     : r(rr), i(ii), n(nn), id(_id) { }
   inline value_type& value() { return *(r + i); }
   inline const value_type& value() const { return *(r + i); }
-  inline array_binary_tree_node parent() const { return array_binary_tree_node(r, (i - 1) / 2, n, id); }
+  inline ArrayBinaryTreeNode parent() const {
+    return ArrayBinaryTreeNode(r, (i - 1) / 2, n, id);
+  }
   inline bool has_parent() const { return i != 0; }
   inline children_type children() { return children_type(r, i, n, id); }
   /*
@@ -146,7 +150,7 @@ public:
   }
   */
   template <class ExternalData>
-  inline void swap(array_binary_tree_node x, ExternalData& edata ) {
+  inline void swap(ArrayBinaryTreeNode x, ExternalData& edata ) {
     value_type tmp = x.value();
 
     /*swap external data*/

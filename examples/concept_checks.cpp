@@ -57,6 +57,7 @@ main(int,char*[])
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
     REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
   }
+#if 0
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
       property<vertex_color_t, int>,
@@ -107,5 +108,6 @@ main(int,char*[])
     typedef Graph* Graph;
     REQUIRE(Graph, VertexListGraph);
   }
+#endif
   return 0;
 }

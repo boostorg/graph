@@ -54,7 +54,7 @@ using namespace std;
 
 enum family { Jeanie, Debbie, Rick, John, Amanda, Margaret, Benjamin, N };
 
-int main(int argc, char* argv[]) 
+int main(int , char* []) 
 {
   using namespace boost;
   using boost::tie;

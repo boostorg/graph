@@ -59,7 +59,7 @@ struct close_paren : public base_visitor<close_paren> {
 
 
 int 
-main(int argc, char* argv[])
+main(int, char*[])
 {
 
   using namespace boost;

@@ -58,7 +58,7 @@
 using namespace std;
 using namespace boost;
 
-int main(int argc, char* argv[]) 
+int main(int, char*[]) 
 {
   // Select the graph type we wish to use
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;

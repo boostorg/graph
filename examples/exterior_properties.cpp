@@ -79,7 +79,7 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int , char* []) {
 
   typedef boost::adjacency_list<boost::vecS, boost::vecS, 
     boost::bidirectionalS, boost::no_property, 

@@ -79,7 +79,7 @@ edge_printer<Tag> print_edge(std::string type, Tag) {
 }
 
 int 
-main(int argc, char* argv[])
+main(int, char*[])
 {
 
   using namespace boost;

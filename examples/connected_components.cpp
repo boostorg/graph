@@ -64,7 +64,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) 
+int main(int , char* []) 
 {
   // First example: the connected components of an undirected graph
   using namespace boost;

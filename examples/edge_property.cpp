@@ -119,7 +119,7 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 }
 
 
-int main(int argc, char* argv[])
+int main(int , char* [])
 {
   typedef property<edge_capacity_t, int> Cap;
   typedef property<edge_flow_t, int, Cap> Flow;
