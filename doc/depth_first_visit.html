@@ -30,6 +30,12 @@ template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a 
 void depth_first_visit(IncidenceGraph& g,
   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
   DFSVisitor&amp; vis, ColorMap color)
+
+template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>, 
+          class TerminatorFunc&gt;
+void depth_first_visit(IncidenceGraph& g,
+  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+  DFSVisitor&amp; vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
 </PRE>
 
 <P>
@@ -47,6 +53,21 @@ actions are taken at each event-point within the algorithm.
 <p>
 The <tt>ColorMap</tt> is used by the algorithm to keep track
 of which vertices have been visited.
+
+<p>
+The <tt>func</tt> parameter for the second variant of the algorithm is used to
+prevent the search to proceed past some vertices. It should be functional
+object callable with two parameters - the descriptor of vertex and the
+graph instance - and returing bool. 
+
+<p>The call is made immediately after call to 'discover_vertex' visitor
+event. If <tt>true</tt> is returned, the out edges of the vertex are not
+examined, as if they don't exist.
+
+<p>The second variant can be used, for example, to find all marked vertices
+reachable from a start vertex by a path which does not contain any another
+marked vertices.
+
 
 <P>
 

@@ -45,6 +45,9 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+
+#include <boost/ref.hpp>
+
 #include <vector>
 #include <utility>
 
@@ -73,6 +76,12 @@ namespace boost {
 
   namespace detail {
 
+    struct truth2 {
+      template<class T, class T2>
+      bool operator()(const T&, const T2&) const { return true; }
+    };
+
+
 // Define BOOST_RECURSIVE_DFS to use older, recursive version.
 // It is retained for a while in order to perform performance
 // comparison.
@@ -89,12 +98,13 @@ namespace boost {
     //
     // See http://lists.boost.org/MailArchives/boost/msg48752.php for FAQ.
 
-    template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+    template <class IncidenceGraph, class DFSVisitor, class ColorMap,
+            class TerminatorFunc>
     void depth_first_visit_impl
       (const IncidenceGraph& g,
        typename graph_traits<IncidenceGraph>::vertex_descriptor u,
        DFSVisitor& vis,
-       ColorMap color)
+       ColorMap color, TerminatorFunc func = TerminatorFunc())
     {
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
       function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
@@ -112,10 +122,17 @@ namespace boost {
       // Possible optimization for vector
       //stack.reserve(num_vertices(g));
 
+      typedef typename unwrap_reference<TerminatorFunc>::type TF;
+
       put(color, u, Color::gray());
       vis.discover_vertex(u, g);
       tie(ei, ei_end) = out_edges(u, g);
-      stack.push_back(std::make_pair(u, std::make_pair(ei, ei_end)));
+      if (static_cast<TF&>(func)(u, g)) {          
+          // If this vertex terminates the search, we push empty range
+          stack.push_back(std::make_pair(u, std::make_pair(ei_end, ei_end)));
+      } else {
+          stack.push_back(std::make_pair(u, std::make_pair(ei, ei_end)));
+      }
       while (!stack.empty()) {
         VertexInfo& back = stack.back();
         u = back.first;
@@ -132,6 +149,9 @@ namespace boost {
             put(color, u, Color::gray());
             vis.discover_vertex(u, g);
             tie(ei, ei_end) = out_edges(u, g);
+            if (static_cast<TF&>(func)(u, g)) {
+                ei = ei_end;
+            }
           } else if (v_color == Color::gray()) {
             vis.back_edge(*ei, g);
             ++ei;
@@ -146,13 +166,14 @@ namespace boost {
     }
 
 #else // BOOST_RECURSIVE_DFS is defined
-
-    template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+  
+    template <class IncidenceGraph, class DFSVisitor, class ColorMap,
+              class TerminatorFunc>
     void depth_first_visit_impl
       (const IncidenceGraph& g,
        typename graph_traits<IncidenceGraph>::vertex_descriptor u,
        DFSVisitor& vis,  // pass-by-reference here, important!
-       ColorMap color)
+       ColorMap color, TerminatorFunc func)
     {
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
       function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
@@ -164,14 +185,17 @@ namespace boost {
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
 
       put(color, u, Color::gray());          vis.discover_vertex(u, g);
-      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-        Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
-        ColorValue v_color = get(color, v);
-        if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
-          depth_first_visit_impl(g, v, vis, color);
-        } else if (v_color == Color::gray()) vis.back_edge(*ei, g);
-        else                                 vis.forward_or_cross_edge(*ei, g);
-      }
+
+      typedef typename unwrap_reference<TerminatorFunc>::type TF;
+      if (!static_cast<TF&>(func)(u, g))
+        for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+          Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
+          ColorValue v_color = get(color, v);
+          if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
+          depth_first_visit_impl(g, v, vis, color, func);
+          } else if (v_color == Color::gray()) vis.back_edge(*ei, g);
+          else                                 vis.forward_or_cross_edge(*ei, g);
+        }
       put(color, u, Color::black());         vis.finish_vertex(u, g);
     }
 
@@ -195,13 +219,14 @@ namespace boost {
     }
 
     if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
-      detail::depth_first_visit_impl(g, start_vertex, vis, color);
+      detail::depth_first_visit_impl(g, start_vertex, vis, color, 
+                                     detail::truth2());
     }
 
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(color, *ui);
       if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-        detail::depth_first_visit_impl(g, *ui, vis, color);
+        detail::depth_first_visit_impl(g, *ui, vis, color, detail::truth2());
       }
     }
   }
@@ -328,7 +353,6 @@ namespace boost {
        );
   }
 
-
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit
     (const IncidenceGraph& g,
@@ -336,7 +360,18 @@ namespace boost {
      DFSVisitor vis, ColorMap color)
   {
     vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color);
+    detail::depth_first_visit_impl(g, u, vis, color, detail::truth2());
+  }
+
+  template <class IncidenceGraph, class DFSVisitor, class ColorMap,
+            class TerminatorFunc>
+  void depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
+  {
+    vis.start_vertex(u, g);
+    detail::depth_first_visit_impl(g, u, vis, color, func);
   }
 
 
