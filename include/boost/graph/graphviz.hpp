@@ -69,7 +69,7 @@ namespace boost {
   class label_writer {
   public:
     label_writer(Name _name) : name(_name) {}
-    template <class VertexOrEdge, class Graph>
+    template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
       out << "[label=\"" << name[v] << "\"]";
     }
@@ -378,12 +378,23 @@ namespace boost {
 		   GraphvizVertexProperty,
 		   GraphvizEdgeProperty,
 		   GraphvizGraphProperty> >
-          GraphvizGraph;
+          GraphvizDigraph;
 
-  // These two require linking the BGL-Graphviz library: libbgl-viz.a
+  typedef subgraph<adjacency_list<boost::vecS, 
+		   boost::vecS, boost::undirectedS, 
+		   GraphvizVertexProperty,
+		   GraphvizEdgeProperty,
+		   GraphvizGraphProperty> >
+          GraphvizGraph;
+  
+
+  // These four require linking the BGL-Graphviz library: libbgl-viz.a
   // from the /src directory.
+  extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
+  extern void read_graphviz(FILE* file, GraphvizDigraph& g);
+
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
-  extern void read_graphviz(FILE* filem, GraphvizGraph& g);
+  extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
 } //namespace boost
   
