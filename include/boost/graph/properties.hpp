@@ -76,6 +76,7 @@ namespace boost {
   struct vertex_property_tag { };
   struct edge_property_tag { };
 
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   // See examples/edge_property.cpp for how to use this.
 #define BOOST_INSTALL_PROPERTY(KIND, NAME) \
   template <> struct property_num<KIND##_##NAME##_t> { \
@@ -83,6 +84,12 @@ namespace boost {
   template <> struct property_kind<KIND##_##NAME##_t> { \
     typedef KIND##_property_tag type; \
   }
+#else
+#define BOOST_INSTALL_PROPERTY(KIND, NAME) \
+  template <> struct property_kind<KIND##_##NAME##_t> { \
+    typedef KIND##_property_tag type; \
+  }
+#endif
 
 #define BOOST_DEF_PROPERTY(KIND, NAME) \
   enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
@@ -194,7 +201,6 @@ namespace boost {
   template <class Graph, class Property>
   struct property_map {
   private:
-    //    typedef typename Property::kind Kind;
     typedef typename property_kind<Property>::type Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
     typedef typename Selector::template bind<Graph, Property> Bind;
