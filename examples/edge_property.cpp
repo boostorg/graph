@@ -25,6 +25,45 @@
 //
 //  Sample output:
 //
+//   0	--(8, 10)--> 1	
+//
+//   1	--(12, 20)--> 4	--(12, 40)--> 3	
+// 	  <--(8,10)-- 0	<--(16,20)-- 2	
+//   2	--(16, 20)--> 1	
+// 	  <--(16,20)-- 5	
+//   3	--(12, 40)--> 6	
+// 	  <--(12,40)-- 1	
+//   4	--(12, 20)--> 7	
+// 	  <--(12,20)-- 1	
+//   5	--(16, 20)--> 2	
+// 	  <--(16,20)-- 6	
+//   6	--(16, 20)--> 5	--(8, 10)--> 8	
+// 	  <--(12,20)-- 7	<--(12,40)-- 3	
+//   7	--(12, 20)--> 6	
+// 	  <--(12,20)-- 4	
+//   8	
+// 	  <--(8,10)-- 6	
+//
+//
+//   0	--(8, 1)--> 1	
+//
+//   1	--(12, 2)--> 4	--(12, 3)--> 3	
+// 	  <--(8,1)-- 0	<--(16,4)-- 2	
+//   2	--(16, 4)--> 1	
+// 	  <--(16,7)-- 5	
+//   3	--(12, 5)--> 6	
+// 	  <--(12,3)-- 1	
+//   4	--(12, 6)--> 7	
+// 	  <--(12,2)-- 1	
+//   5	--(16, 7)--> 2	
+// 	  <--(16,8)-- 6	
+//   6	--(16, 8)--> 5	
+// 	  <--(12,10)-- 7	<--(12,5)-- 3	
+//   7	--(12, 10)--> 6	
+// 	  <--(12,6)-- 4	
+//   8	
+//
+	
 #include <iostream>
 
 #include <boost/utility.hpp>
@@ -36,6 +75,7 @@ using namespace boost;
 using namespace std;
 
 
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 enum edge_flow_t { edge_flow = 100 };
 enum edge_capacity_t { edge_capacity = 101 };
 
@@ -43,6 +83,10 @@ namespace boost {
   BOOST_INSTALL_PROPERTY(edge, flow);
   BOOST_INSTALL_PROPERTY(edge, capacity);
 }
+#else
+struct edge_flow_t { typedef edge_property_tag kind; } edge_flow;
+struct edge_capacity_t { typedef edge_property_tag kind; } edge_capacity;
+#endif
 
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)

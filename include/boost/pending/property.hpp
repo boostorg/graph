@@ -16,12 +16,13 @@ namespace boost {
     typedef Tag tag_type;
     typedef T value_type;
     property() { }
+    property(const property& x) : Base(x), m_value(x.m_value) { }
     property(const T& v) : m_value(v) { }
     property(const T& v, const Base& b) : Base(b), m_value(v) { }
     T m_value;
   };
 
-  // The BGL properties just specialize property_kind and
+  // The BGL properties specialize property_kind and
   // property_num, and use enum's for the Property type (see
   // graph/properties.hpp), but the user may want to use a class
   // instead with a nested kind type and num.  Also, we may want to
@@ -31,6 +32,9 @@ namespace boost {
   struct property_kind {
     typedef typename Property::kind type;
   };
+
+  // The property_num is only needed for no partial spec. workaround
+  // in detail::same_property.
 
   template <class Property>
   struct property_num {
@@ -47,16 +51,14 @@ namespace boost {
   template <class Tag1, class Tag2, class T1, class T2, class Base>
   inline T2& 
   get_property_value(property<Tag1,T1,Base>& p, T2 t2, Tag2 tag2) {
-    enum { match = int(property_num<Tag1>::value)
-           == int(property_num<Tag2>::value) };
+    enum { match = detail::same_property<Tag1,Tag2>::value };
     typedef detail::property_value_dispatch<match> Dispatcher;
     return Dispatcher::get_value(p, t2, tag2);
   }
   template <class Tag1, class Tag2, class T1, class T2, class Base>
   inline const T2& 
   get_property_value(const property<Tag1,T1,Base>& p, T2 t2, Tag2 tag2) {
-    enum { match = int(property_num<Tag1>::value) 
-           == int(property_num<Tag2>::value) };
+    enum { match = detail::same_property<Tag1,Tag2>::value };
     typedef detail::property_value_dispatch<match> Dispatcher;
     return Dispatcher::const_get_value(p, t2, tag2);
   }
