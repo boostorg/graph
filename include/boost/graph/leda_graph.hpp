@@ -126,6 +126,7 @@ namespace boost {
 
   struct leda_graph_traversal_category : 
     public virtual bidirectional_graph_tag,
+    public virtual adjacency_graph_tag,
     public virtual vertex_list_graph_tag { };
 
   template <class vtype, class etype>
@@ -135,7 +136,7 @@ namespace boost {
 
     typedef boost::iterator_adaptor<edge,
       boost::leda_adjacency_iterator_policies, 
-      node, const node&, const node*,
+      node, node, const node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > adjacency_iterator;
@@ -156,7 +157,7 @@ namespace boost {
 
     typedef boost::iterator_adaptor<node,
       boost::leda_vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      node, const node&, const node*,
+      node, node, const node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > vertex_iterator;
