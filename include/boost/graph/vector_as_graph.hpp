@@ -284,7 +284,14 @@ namespace boost {
   remove_vertex(typename EdgeList::value_type u,
                 std::vector<EdgeList, Allocator>& g)
   {
-    assert(!"implemented");
+    typedef typename EdgeList::iterator iterator;
+    clear_vertex(u, g);
+    g.erase(g.begin() + u);
+    for (std::size_t i = 0; i < g.size(); ++i)
+      for ( iterator it = g[i].begin(); it != g[i].end(); ++it )
+        // after clear_vertex *it is never equal to u
+        if ( *it > u )
+          --*it;
   }
 
 } // namespace boost
