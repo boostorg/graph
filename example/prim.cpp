@@ -33,7 +33,7 @@
 //
 // Sample output
 //
-//  parent[a] = x
+//  parent[a] = a
 //  parent[b] = a
 //  parent[c] = f
 //  parent[d] = c
