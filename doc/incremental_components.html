@@ -89,7 +89,7 @@ slightly larger than <i>O(V + E)</i>.
 Maintain the connected components of a graph while adding edges using
 the disjoint-sets data structure. The full source code for this
 example can be found in <a
-href="../example/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</TT></a>.
+href="../example/incremental_components.cpp"><TT>examples/incremental_components.cpp</TT></a>.
 
 <P>
 <PRE>
@@ -178,7 +178,7 @@ void initialize_incremental_components(VertexListGraph&amp; G, DisjointSets&amp;
 </PRE>
 
 <P>
-This prepares the disjoint-sets data structure for the dynamic
+This prepares the disjoint-sets data structure for the incremental
 connected components algorithm by making each vertex in the graph a
 member of its own component (or set).
 
@@ -193,7 +193,7 @@ member of its own component (or set).
 <hr>
 <P>
 
-<H2><A NAME="sec:dynamic-connected-components"></A>
+<H2><A NAME="sec:incremental-connected-components"></A>
 <TT>incremental_components</TT>
 </H2>
 
