@@ -86,12 +86,6 @@ protected:
   bool& m_has_cycle;
 };
 
-struct max_operation {
-  template <class T>
-  const T& operator()(const T& a, const T& b) const {
-    return std::max(a, b);
-  }
-};
 
 int main(int,char*[])
 {
@@ -156,16 +150,16 @@ int main(int,char*[])
       for (tie(j, jend) = out_edges(*i,g); j != jend; ++j)
         in_degree[target(*j,g)] += 1;
 
-    max_operation summarize;
-    std::plus<int> extend;
+    std::greater<int> compare;
+    std::plus<int> combine;
 
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0)
         dijkstra_shortest_paths(g, *i, 
 				distance_map(&time[0]). 
-				distance_summarize(summarize).
-				distance_extend(extend).
+				distance_compare(compare).
+				distance_combine(combine).
 				distance_inf(0).
 				weight_map(weight));
     }
