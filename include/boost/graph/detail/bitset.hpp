@@ -484,7 +484,7 @@ namespace boost {
       explicit dyn_size_bitset
         (const basic_string<CharT,Traits,Alloc>& s,
          std::size_t pos = 0,
-         std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos),
+         std::size_t n = std::size_t(basic_string<CharT,Traits,Alloc>::npos),
          const Allocator& alloc = Allocator())
         : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
           m_size(n), m_num_words((n + word_size - 1) / word_size),
@@ -552,7 +552,7 @@ namespace boost {
       explicit bitset
         (const basic_string<CharT,Traits,Alloc>& s,
          std::size_t pos = 0,
-         std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos))
+         std::size_t n = std::size_t(basic_string<CharT,Traits,Alloc>::npos))
       {
         BOOST_ASSERT_THROW
           (pos < s.size(), std::out_of_range("bitset::bitset(s,pos,n)"));
@@ -716,7 +716,7 @@ namespace boost {
         word_type thisword = data()[i];
         if ( thisword != static_cast<word_type>(0) ) {
           // find byte within word
-          for ( size_t j = 0; j < sizeof(word_type); j++ ) {
+          for ( std::size_t j = 0; j < sizeof(word_type); j++ ) {
             unsigned char this_byte
               = static_cast<unsigned char>(thisword & (~(unsigned char)0));
             if ( this_byte )

@@ -54,14 +54,14 @@ void print(Graph& g) {
   }
 }
 
-size_t myrand(size_t N) {
-  size_t ret = rand() % N; 
+std::size_t myrand(std::size_t N) {
+  std::size_t ret = rand() % N; 
   //  cout << "N = " << N << "  rand = " << ret << endl;
   return ret;
 }
 
 template <class Graph>
-bool check_edge(Graph& g, size_t a, size_t b) {
+bool check_edge(Graph& g, std::size_t a, std::size_t b) {
   typedef typename Graph::vertex_descriptor Vertex;
   typename Graph::adjacency_iterator vi, viend, found;
   boost::tie(vi, viend) = adjacent_vertices(vertex(a,g), g);
@@ -75,7 +75,7 @@ bool check_edge(Graph& g, size_t a, size_t b) {
 
 int main(int, char*[])
 {
-  size_t N = 5;
+  std::size_t N = 5;
 
   Graph g(N);
   int i;
@@ -83,7 +83,7 @@ int main(int, char*[])
   bool is_failed = false;
 
   for (i=0; i<6; ++i) {
-    size_t a = myrand(N), b = myrand(N);
+    std::size_t a = myrand(N), b = myrand(N);
     while ( a == b ) b = myrand(N);
     cout << "edge edge (" << a << "," << b <<")" << endl;
     //add edges
@@ -100,7 +100,7 @@ int main(int, char*[])
   
   //remove_edge
   for (i = 0; i<2; ++i) {
-    size_t a = myrand(N), b = myrand(N);
+    std::size_t a = myrand(N), b = myrand(N);
     while ( a == b ) b = myrand(N);
     cout << "remove edge (" << a << "," << b <<")" << endl;
     remove_edge(a, b, g);
@@ -115,9 +115,9 @@ int main(int, char*[])
   
   //add_vertex
   is_failed = false;
-  size_t old_N = N;
-  size_t vid   = add_vertex(g);
-  size_t vidp1 = add_vertex(g);
+  std::size_t old_N = N;
+  std::size_t vid   = add_vertex(g);
+  std::size_t vidp1 = add_vertex(g);
   
   N = num_vertices(g);
   if ( (N - 2) != old_N )
@@ -127,7 +127,7 @@ int main(int, char*[])
   
   is_failed = false;
   for (i=0; i<2; ++i) {
-    size_t a = myrand(N), b = myrand(N);
+    std::size_t a = myrand(N), b = myrand(N);
     while ( a == vid ) a = myrand(N);
     while ( b == vidp1 ) b = myrand(N);
     cout << "add edge (" << vid << "," << a <<")" << endl;
@@ -144,7 +144,7 @@ int main(int, char*[])
   print(g);
   
   // clear_vertex
-  size_t c = myrand(N);
+  std::size_t c = myrand(N);
   is_failed = false;
   clear_vertex(c, g);
 

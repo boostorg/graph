@@ -54,7 +54,7 @@ int main(int , char* [])
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::vertices_size_type size_type;
 
-  typedef std::pair<size_t, size_t> Pair;
+  typedef std::pair<std::size_t, std::size_t> Pair;
   Pair edges[14] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c

@@ -32,7 +32,7 @@
 #include <utility>
 
 
-typedef std::pair<size_t,size_t> Pair;
+typedef std::pair<std::size_t,std::size_t> Pair;
 
 /*
   Topological sort example

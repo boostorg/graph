@@ -47,7 +47,7 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
     //typedef typename GraphTraits::size_type size_type;
-    typedef size_t size_type;
+    typedef std::size_t size_type;
     
     const size_type num = num_vertices(G);
     
@@ -69,7 +69,7 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
     //typedef typename GraphTraits::size_type size_type;
-    typedef size_t size_type;
+    typedef std::size_t size_type;
 
     const size_type num = num_vertices(G);
     
