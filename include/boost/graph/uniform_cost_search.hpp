@@ -45,6 +45,7 @@ namespace boost {
     void constraints() {
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
+      vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
       vis.edge_not_relaxed(e, g);
@@ -126,6 +127,10 @@ namespace boost {
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {
         m_vis.discover_vertex(u, g);
+      }
+      template <class Vertex, class Graph>
+      void examine_vertex(Vertex u, Graph& g) {
+        m_vis.examine_vertex(u, g);
       }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) { 
