@@ -60,7 +60,8 @@ int main(int,char*[])
     function_requires< IncidenceGraphConcept<Graph> >();
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires< ReadablePropertyGraphConcept<Graph, 
       Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
@@ -77,7 +78,8 @@ int main(int,char*[])
     function_requires< IncidenceGraphConcept<Graph> >();
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires< ReadablePropertyGraphConcept<Graph, 
       Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();

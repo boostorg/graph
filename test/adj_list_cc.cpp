@@ -43,7 +43,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -65,7 +66,8 @@ int main(int,char*[])
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -86,7 +88,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires< 
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -107,7 +110,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -130,7 +134,8 @@ int main(int,char*[])
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -151,7 +156,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -172,7 +178,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
@@ -191,7 +198,8 @@ int main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
   }
