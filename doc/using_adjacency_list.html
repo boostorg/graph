@@ -355,30 +355,40 @@ struct property;
 </PRE>
 
 <P>
-The <TT>PropertyTag</TT> is a tag class (empty class) that simply
-identifies or gives a unique name to the property. There are several
-predefined tags, and it is easy to add more.
+The <b><TT>PropertyTag</TT></b> template parameter is a tag class that
+simply identifies or gives a unique name to the property. There are
+several predefined tags, and it is easy to add more.
 
 <P>
 <PRE>
-  struct vertex_index_t { }
-  struct edge_index_t { }
-  struct graph_name_t { } 
-  struct vertex_name_t { } 
-  struct edge_name_t { } 
-  struct edge_weight_t { } 
-  struct vertex_distance_t { } 
-  struct vertex_color_t { } 
-  struct vertex_degree_t { } 
-  struct vertex_out_degree_t { } 
-  struct vertex_in_degree_t { } 
-  struct vertex_discover_time_t { } 
-  struct vertex_finish_time_t { }
+  struct vertex_index_t { ... };
+  struct edge_index_t { ... };
+  struct graph_name_t { ... };
+  struct vertex_name_t { ... };
+  struct edge_name_t { ... };
+  struct edge_weight_t { ... };
+  struct vertex_distance_t { ... };
+  struct vertex_color_t { ... };
+  struct vertex_degree_t { ... };
+  struct vertex_out_degree_t { ... };
+  struct vertex_in_degree_t { ... };
+  struct vertex_discover_time_t { ... };
+  struct vertex_finish_time_t { ... };
 </PRE>
 
 <P>
-The <TT>T</TT> parameter of <TT>property</TT> specifies the type of the
-property values.  The <TT>NextProperty</TT> parameter allows <TT>property</TT>
+The <b><TT>T</TT></b> template parameter of <TT>property</TT>
+specifies the type of the property values. The type <tt>T</tt> must be
+<a
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default
+Constructible</a>, <a
+href="../../utility/Assignable.html">Assignable</a>, and <a
+href="../../utility/CopyConstructible.html">Copy Constructible</a>.
+Like the containers of the C++ Standard Library, the property objects
+of type <tt>T</tt> are held by-value inside of the graph.
+
+<p>
+The <b><TT>NextProperty</TT></b> parameter allows <TT>property</TT>
 types to be nested, so that an arbitrary number of properties can be
 attached to the same graph.
 
@@ -461,9 +471,9 @@ obtained from the graph via the
 
 <P>
 <PRE>
-  property_map&lt;Graph, capacity_tag&gt;::type capacity
+  property_map&lt;Graph, capacity_t&gt;::type capacity
     = get(capacity_t(), G);
-  property_map&lt;Graph, flow_tag&gt;::type flow
+  property_map&lt;Graph, flow_t&gt;::type flow
     = get(flow_t(), G);
 </PRE>
 
