@@ -63,9 +63,9 @@ namespace boost {
   //
   /////////////////////////////////////////////////////////////////////////
   template<class Distance>
-  unsigned RLS_depth(Distance& d)
+  int RLS_depth(Distance& d)
   {
-    unsigned h_s = 0;
+    int h_s = 0;
     typename Distance::iterator iter;
     
     for (iter = d.begin(); iter != d.end(); ++iter)
@@ -87,14 +87,14 @@ namespace boost {
   //
   /////////////////////////////////////////////////////////////////////////
   template<class Distance, class my_int>
-  unsigned RLS_max_width(Distance& d, my_int depth)
+  int RLS_max_width(Distance& d, my_int depth)
   {
     
       //Searching for the maximum width of a level
-      std::vector<unsigned> dummy_width(depth+1, 0);
-      std::vector<unsigned>::iterator my_it;
+      std::vector<int> dummy_width(depth+1, 0);
+      std::vector<int>::iterator my_it;
       typename Distance::iterator iter;
-      unsigned w_max = 0;
+      int w_max = 0;
       
       for (iter = d.begin(); iter != d.end(); ++iter)
       {
@@ -126,26 +126,26 @@ namespace boost {
   {
     typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef std::vector<graph_traits<Graph>::vertices_size_type>::iterator vec_iter;
-    typedef graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename std::vector< typename graph_traits<Graph>::vertices_size_type>::iterator vec_iter;
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
     
-    typedef property_map<Graph, vertex_index_t>::const_type VertexID;
+    typedef typename property_map<Graph, vertex_index_t>::const_type VertexID;
     
     Vertex e, i;
     s = *(vertices(G).first);
-    unsigned my_degree = get(degree, s ); 
-    unsigned dummy, h_i, h_s, w_i, w_e;
+    int my_degree = get(degree, s ); 
+    int dummy, h_i, h_s, w_i, w_e;
     bool new_start = true;
-    unsigned maximum_degree = 0;
+    int maximum_degree = 0;
     
     //Creating a std-vector for storing the distance from the start vertex in dist
-    std::vector<graph_traits<Graph>::vertices_size_type> dist(num_vertices(G), 0);
+    std::vector<typename graph_traits<Graph>::vertices_size_type> dist(num_vertices(G), 0);
 
     //Wrap a property_map_iterator around the std::iterator
     boost::iterator_property_map<vec_iter, VertexID, size_type, size_type&> dist_pmap(dist.begin(), get(vertex_index, G));
     
     //Creating a property_map for the indices of a vertex
-    property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, G);
+    typename property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, G);
     
     //Creating a priority queue
     typedef indirect_cmp<DegreeMap, std::greater<DS> > Compare;
@@ -177,7 +177,7 @@ namespace boost {
       
       //step 2
       //initialize the the disance std-vector with 0
-      for(std::vector<graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
+      for(typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
       
       //generating the RLS (rooted level structure)
       breadth_first_search
@@ -224,7 +224,7 @@ namespace boost {
 	degree_queue.pop();           //ereasing the node with the lowest degree from the degree queue
 	
 	//generating a RLS	    
-	for(std::vector<graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
+	for(typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
 	
 	breadth_first_search
 	  (G, i, boost::visitor
@@ -283,14 +283,14 @@ namespace boost {
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef std::vector<graph_traits<Graph>::vertices_size_type>::iterator vec_iter;
-    typedef graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator vec_iter;
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
 
-    typedef property_map<Graph, vertex_index_t>::const_type VertexID;
+    typedef typename property_map<Graph, vertex_index_t>::const_type VertexID;
 
     
     //Creating a std-vector for storing the distance from the end vertex in it
-    std::vector<graph_traits<Graph>::vertices_size_type> dist(num_vertices(g), 0);
+    typename std::vector<typename graph_traits<Graph>::vertices_size_type> dist(num_vertices(g), 0);
     
     //Wrap a property_map_iterator around the std::iterator
     boost::iterator_property_map<vec_iter, VertexID, size_type, size_type&> dist_pmap(dist.begin(), get(vertex_index, g)); 
@@ -303,10 +303,10 @@ namespace boost {
        );
     
     //Creating a property_map for the indices of a vertex
-    property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, g);
+    typename property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, g);
     
     //Sets the color and priority to their initial status
-    unsigned cdeg;    
+    int cdeg;    
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
@@ -318,12 +318,7 @@ namespace boost {
     //Priority list
     typedef indirect_cmp<PriorityMap, std::greater<DS> > Compare;
     Compare comp(priority);
-    
-#if !defined BOOST_NO_SLIST
-    std::slist<Vertex> priority_list;
-#else
     std::list<Vertex> priority_list;
-#endif
 
     //Some more declarations
     typename graph_traits<Graph>::out_edge_iterator ei, ei_end, ei2, ei2_end;

@@ -37,6 +37,9 @@
 #include <boost/graph/wavefront.hpp>
 
 
+using std::cout;
+using std::endl;
+
 /*
   Sample Output
   #####################################

@@ -128,7 +128,7 @@ namespace boost {
     double b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      b += std::pow(ith_wavefront(*i, g, index), 2);
+      b += std::pow(double ( ith_wavefront(*i, g, index) ), 2.0);
 
     b /= num_vertices(g);
 
