@@ -40,6 +40,8 @@
   
 */
 
+#include <boost/config.hpp> // put this first to suppress some VC++ warnings
+
 #include <iostream>
 #include <iterator>
 #include <algorithm>
