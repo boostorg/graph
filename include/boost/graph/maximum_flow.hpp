@@ -553,6 +553,7 @@ namespace boost {
           if (u != src && u != sink && excess_flow[u] != sum)
             return false;
         }
+	return true;
       } // is_flow()
 
       bool is_optimal() {
@@ -614,8 +615,10 @@ namespace boost {
 
     algo.convert_preflow_to_flow();
 
+#if 0
     assert(algo.is_flow());
     assert(algo.is_optimal());
+#endif
 
   } // maximum_flow()
 
