@@ -263,13 +263,21 @@ namespace boost {
   template <typename G, typename EP, typename VP>  
   typename filtered_graph<G, EP, VP>::vertices_size_type
   num_vertices(const filtered_graph<G, EP, VP>& g) {
-    return num_vertices(g);
+    typename filtered_graph<G, EP, VP>::vertices_size_type n = 0;
+    typename filtered_graph<G, EP, VP>::vertex_iterator f, l;
+    for (tie(f, l) = vertices(g); f != l; ++f)
+      ++n;
+    return n;
   }
 
   template <typename G, typename EP, typename VP>  
   typename filtered_graph<G, EP, VP>::edges_size_type
   num_edges(const filtered_graph<G, EP, VP>& g) {
-    return num_edges(g);
+    typename filtered_graph<G, EP, VP>::edges_size_type n = 0;
+    typename filtered_graph<G, EP, VP>::edge_iterator f, l;
+    for (tie(f, l) = edges(g); f != l; ++f)
+      ++n;
+    return n;
   }
   
   template <typename G, typename EP, typename VP>
