@@ -86,7 +86,7 @@ for (boost::graph_traits<GraphType>::edge_iterator \
      BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? (ENAME = *BGL_FIRST(__LINE__), true):false; \
      ++BGL_FIRST(__LINE__))
 
-#define BGL_FORALL_ADJACENT_T(UNAME, VNAME, GNAME, GraphType) \
+#define BGL_FORALL_ADJ_T(UNAME, VNAME, GNAME, GraphType) \
 for (typename boost::graph_traits<GraphType>::adjacency_iterator \
   BGL_FIRST(__LINE__) = adjacent_vertices(UNAME, GNAME).first,\
   BGL_LAST(__LINE__) = adjacent_vertices(UNAME, GNAME).second; \
@@ -95,7 +95,7 @@ for (typename boost::graph_traits<GraphType>::vertex_descriptor VNAME; \
   BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? (VNAME = *BGL_FIRST(__LINE__), true) : false; \
    ++BGL_FIRST(__LINE__))
 
-#define BGL_FORALL_ADJACENT(UNAME, VNAME, GNAME, GraphType) \
+#define BGL_FORALL_ADJ(UNAME, VNAME, GNAME, GraphType) \
 for (boost::graph_traits<GraphType>::adjacency_iterator \
   BGL_FIRST(__LINE__) = adjacent_vertices(UNAME, GNAME).first,\
   BGL_LAST(__LINE__) = adjacent_vertices(UNAME, GNAME).second; \
