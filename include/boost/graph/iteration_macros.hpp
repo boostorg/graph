@@ -113,7 +113,7 @@ for (typename boost::graph_traits<GraphType>::edge_descriptor ENAME; \
   BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? (ENAME = *BGL_FIRST(__LINE__), true) : false; \
    ++BGL_FIRST(__LINE__))
 
-#define BGL_FORALL_OUTEDGES_T(UNAME, ENAME, GNAME, GraphType) \
+#define BGL_FORALL_OUTEDGES(UNAME, ENAME, GNAME, GraphType) \
 for (boost::graph_traits<GraphType>::out_edge_iterator \
   BGL_FIRST(__LINE__) = out_edges(UNAME, GNAME).first,\
   BGL_LAST(__LINE__) = out_edges(UNAME, GNAME).second; \
@@ -131,7 +131,7 @@ for (typename boost::graph_traits<GraphType>::edge_descriptor ENAME; \
   BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? (ENAME = *BGL_FIRST(__LINE__), true) : false; \
    ++BGL_FIRST(__LINE__))
 
-#define BGL_FORALL_INEDGES_T(UNAME, ENAME, GNAME, GraphType) \
+#define BGL_FORALL_INEDGES(UNAME, ENAME, GNAME, GraphType) \
 for (boost::graph_traits<GraphType>::in_edge_iterator \
   BGL_FIRST(__LINE__) = in_edges(UNAME, GNAME).first,\
   BGL_LAST(__LINE__) = in_edges(UNAME, GNAME).second; \
