@@ -338,15 +338,18 @@ namespace boost {
       return *this;
     }
 
+    // Required by Mutable Graph
     inline adjacency_list(vertices_size_type num_vertices, 
                           const GraphProperty& p = GraphProperty())
       : Base(num_vertices), m_property(p) { }
 
+    // Required by Iterator Constructible Graph
     template <class EdgeIterator>
-    inline adjacency_list(vertices_size_type num_vertices,
-                          EdgeIterator first, EdgeIterator last,
+    inline adjacency_list(EdgeIterator first, EdgeIterator last,
+			  vertices_size_type n = 0,
+			  edges_size_type m = 0,
                           const GraphProperty& p = GraphProperty())
-      : Base(num_vertices, first, last), m_property(p) { }
+      : Base(n, first, last), m_property(p) { }
 
     template <class EdgeIterator, class EdgePropertyIterator>
     inline adjacency_list(vertices_size_type num_vertices,
@@ -354,6 +357,14 @@ namespace boost {
                           EdgePropertyIterator ep_iter,
                           const GraphProperty& p = GraphProperty())
       : Base(num_vertices, first, last, ep_iter), m_property(p) { }
+
+    // Deprecated
+    template <class EdgeIterator>
+    inline adjacency_list(vertices_size_type num_vertices,
+                          EdgeIterator first, EdgeIterator last,
+                          const GraphProperty& p = GraphProperty())
+      : Base(num_vertices, first, last), m_property(p) { }
+
 
     void swap(adjacency_list& x) {
       // Is there a more efficient way to do this?
