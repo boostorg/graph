@@ -14,7 +14,7 @@
 <Title>Boost Graph Library: Topological Sort</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
-<IMG SRC="c++boost.gif" 
+<IMG SRC="../../../c++boost.gif" 
      ALT="C++ Boost"> 
 
 <BR Clear>
@@ -34,7 +34,12 @@
 <TD ALIGN="LEFT">color</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
+<TD ALIGN="LEFT">time: <i>O(V + E)</i></TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
+</TD>
 </TR>
 </TABLE>
 </DIV>
@@ -52,9 +57,9 @@ void topological_sort(VertexListGraph&amp; G, OutputIterator iter,
 
 (3)
 template &lt;class VertexListGraph, class OutputIterator, 
-          class Color, class Visitor&gt;
+          class ColorPA, class DFSVisitor&gt;
 void topological_sort(VertexListGraph&amp; G, OutputIterator iter, 
-                      Color color, Visitor visit)
+                      ColorPA color, DFSVisitor visit)
 </PRE>
 
 <P>
@@ -64,12 +69,6 @@ vertices such that if edge <i>(u,v)</i> appears in the graph, then
 directed acyclic graph (DAG). The implementation consists mainly of a
 call to <a
 href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
-
-<P>
-
-<H3>Where Defined</H3>
-
-<a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
 
 <P>
 
@@ -87,19 +86,14 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
 <LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
 </LI>
-<LI>The <TT>Color</TT> must be a <a
+<LI>The <TT>ColorPA</TT> must be a <a
     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>
     and vertex descriptors from the graph must be usable as the
     accessor's key type.
 </LI>
+<LI>The <TT>DFSVisitor</TT> type must be a model of <a href="./DFSVisitor.html">DFSVisitor</a>.
+
 </UL>
-
-<P>
-
-<H3>Complexity</H3>
-
-<P>
-The time complexity is <i>O(V + E)</i>.
 
 <P>
 

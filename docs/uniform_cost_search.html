@@ -34,7 +34,7 @@
 </TR>
 
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O((V + E) log V)</i>
+<TD ALIGN="LEFT">time: <i>O((V + E) log V)</i>
 </TD>
 </TR>
 
@@ -84,7 +84,7 @@
 This is a generalized version of <a
 href="./dijkstra_shortest_paths.html">Dijkstra's single-source
 shortest paths</a> algorithm. In Dijkstra's algorithm the ``cost'' is
-the distance. With <TT>uniform_cost_search()</TT> the user supplies
+the edge weight. With <TT>uniform_cost_search()</TT> the user supplies
 the meaning of ``cost'' through the <TT>compare</TT> and
 <tt>combine</tt> function objects. For Dijkstra's algorithm
 <TT>compare</tt> is <tt>std::less&lt;D&gt;</TT> and
@@ -162,21 +162,21 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <P>
 </LI>
 <LI>The type <TT>DistancePA</TT> must be a model of <a
-    href="./ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
     vertex descriptor type of the graph needs to be usable as the key
     type of the distance accessor.
 
 <P>
 </LI>
 <LI>The type <TT>WeightPA</TT> must be a model of <a
-     href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
      edge descriptor type of the graph needs to be usable as the key
      type for the weight accessor.
 
 <P>
 </LI>
 <LI>The type <TT>ColorPA</TT> must be a model of <a
-     href="./ReadWritePropertyAccessor">ReadWritePropertyAccessor</a>. A
+     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. A
      vertex descriptor must be usable as the key type of the accessor,
      and the value type of the accessor must be a model of
      <a href="./ColorValue.html">ColorValue</a>.
@@ -184,7 +184,7 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <P>
 </LI>
 <LI>The type <TT>ID_PA</TT> must be a model of <a
-     href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
      value type of <TT>ID_PA</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
      of the ID accessor.

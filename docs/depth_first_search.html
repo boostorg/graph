@@ -14,7 +14,7 @@
 <Title>Boost Graph Library: Depth-First Search</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
-<IMG SRC="c++boost.gif" 
+<IMG SRC="../../../c++boost.gif" 
      ALT="C++ Boost"> 
 
 <BR Clear>
@@ -26,27 +26,37 @@
 <P>
 <DIV ALIGN="LEFT">
 <TABLE CELLPADDING=3 border>
+
 <TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
 <TD ALIGN="LEFT">directed and undirected</TD>
 </TR>
+
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
 <TD ALIGN="LEFT">color</TD>
 </TR>
+
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
+<TD ALIGN="LEFT">time: <i>O(V + E)</i></TD>
 </TR>
+
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/depth_first_search.hpp"><TT>boost/graph/depth_first_search.hpp</TT></a>
+</TD>
+</TR>
+
 </TABLE>
 </DIV>
 
 <P>
 <PRE>
 (1)
-template &lt;class VertexListGraph, class UserVisitor&gt;
-void depth_first_search(VertexListGraph&amp; G, UserVisitor v);
+template &lt;class VertexListGraph, class DFSVisitor&gt;
+void depth_first_search(VertexListGraph&amp; G, DFSVisitor v);
 
 (2)
-template &lt;class VertexListGraph, class UserVisitor, class Color&gt;
-void depth_first_search(VertexListGraph&amp; G, UserVisitor v, Color c);
+template &lt;class VertexListGraph, class DFSVisitor, class ColorPA&gt;
+void depth_first_search(VertexListGraph&amp; G, DFSVisitor v, ColorPA c);
 </PRE>
 
 <P>
@@ -78,16 +88,7 @@ component algorithms.
 
 <P>
 
-<H3>Where Defined</H3>
-
-<P>
-<a href="../../../boost/graph/depth_first_search.hpp"><TT>boost/graph/depth_first_search.hpp</TT></a>
-
-<P>
-
-<H3><A NAME="SECTION001340200000000000000">
-Requirements on Types</A>
-</H3>
+<H3>Requirements on Types</H3>
 
 <P>
 
@@ -100,12 +101,12 @@ Requirements on Types</A>
     <TT>color_tag</TT> and the color property accessor for the graph
     must meet the same requirements as <TT>Color</TT>.
 </LI>
-<LI>The type <TT>Color</TT> must be a model of <a
+<LI>The type <TT>ColorPA</TT> must be a model of <a
      href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>, and the value type of <TT>Color</TT> must be a model of
      <a href="./ColorValue.html">ColorValue</a>.
 </LI>
-<LI>The visitor type must be a model of <a
-href="./UserVisitor.html">UserVisitor</a>.
+<LI>The <tt>DFSVisitor</tt> type must be a model of <a
+href="./DFSVisitor.html">DFSVisitor</a>.
 </LI>
 </UL>
 
