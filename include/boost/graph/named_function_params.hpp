@@ -37,6 +37,8 @@ namespace boost {
   struct buffer_param_t { enum { num = detail::buffer_param_num }; };
   struct edge_copy_t { enum { num = detail::edge_copy_num }; };
   struct vertex_copy_t { enum { num = detail::vertex_copy_num }; };
+  struct vertex_isomorphism_t { enum { num =detail::vertex_isomorphism_num}; };
+  struct vertex_invariant_t { enum { num =detail::vertex_invariant_num}; };
   struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
   
   namespace detail {
@@ -99,6 +101,20 @@ namespace boost {
     bgl_named_params<IndexMap, vertex_index_t, self>
     vertex_index_map(const IndexMap& pmap) const {
       typedef bgl_named_params<IndexMap, vertex_index_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename IndexMap>
+    bgl_named_params<IndexMap, vertex_index1_t, self>
+    vertex_index1_map(const IndexMap& pmap) const {
+      typedef bgl_named_params<IndexMap, vertex_index1_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename IndexMap>
+    bgl_named_params<IndexMap, vertex_index2_t, self>
+    vertex_index2_map(const IndexMap& pmap) const {
+      typedef bgl_named_params<IndexMap, vertex_index2_t, self> Params;
       return Params(pmap, *this);
     }
 
@@ -166,6 +182,20 @@ namespace boost {
       return Params(c, *this);
     }
 
+    template <typename IsoMap>
+    bgl_named_params<IsoMap, vertex_isomorphism_t, self>
+    isomorphism_map(const IsoMap& c) const {
+      typedef bgl_named_params<IsoMap, vertex_isomorphism_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename VertexInvar>
+    bgl_named_params<VertexInvar, vertex_invariant_t, self>
+    vertex_invariant(const VertexInvar& c) const {
+      typedef bgl_named_params<VertexInvar, vertex_invariant_t, self> Params;
+      return Params(c, *this);
+    }
+
   };
 
   template <typename WeightMap>
@@ -207,6 +237,20 @@ namespace boost {
   bgl_named_params<IndexMap, vertex_index_t>
   vertex_index_map(IndexMap pmap) {
     typedef bgl_named_params<IndexMap, vertex_index_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename IndexMap>
+  bgl_named_params<IndexMap, vertex_index1_t>
+  vertex_index1_map(const IndexMap& pmap) {
+    typedef bgl_named_params<IndexMap, vertex_index1_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename IndexMap>
+  bgl_named_params<IndexMap, vertex_index2_t>
+  vertex_index2_map(const IndexMap& pmap) {
+    typedef bgl_named_params<IndexMap, vertex_index2_t> Params;
     return Params(pmap);
   }
 
@@ -273,6 +317,20 @@ namespace boost {
     return Params(c);
   }
 
+  template <typename IsoMap>
+  bgl_named_params<IsoMap, vertex_isomorphism_t>
+  isomorphism_map(const IsoMap& c) {
+    typedef bgl_named_params<IsoMap, vertex_isomorphism_t> Params;
+    return Params(c);
+  }
+
+  template <typename VertexInvar>
+  bgl_named_params<VertexInvar, vertex_invariant_t>
+  vertex_invariant(const VertexInvar& c) {
+    typedef bgl_named_params<VertexInvar, vertex_invariant_t> Params;
+    return Params(c);
+  }
+
   //===========================================================================
   // Functions for extracting parameters from bgl_named_params
 
@@ -311,7 +369,7 @@ namespace boost {
       struct bind {
 	typedef const P& const_result_type;
 	typedef P& result_type;
-	static const_result_type apply(const P& p, const Graph&, Tag&)
+	static const_result_type const_apply(const P& p, const Graph&, Tag&)
 	{ return p; }
 	static result_type apply(P& p, Graph&, Tag&)
 	{ return p; }
@@ -326,7 +384,7 @@ namespace boost {
 	  const_result_type;
 
 	static const_result_type
-	apply(const P& p, const Graph& g, Tag tag) { 
+	const_apply(const P& p, const Graph& g, Tag tag) { 
 	  return get(tag, g); 
 	}
 
@@ -363,11 +421,11 @@ namespace boost {
   template <typename Param, typename Graph, typename PropertyTag>
   typename
     detail::choose_pmap_helper<Param,Graph,PropertyTag>::const_result_type
-  choose_pmap(const Param& p, const Graph& g, PropertyTag tag)
+  choose_const_pmap(const Param& p, const Graph& g, PropertyTag tag)
   { 
     typedef typename 
       detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
-    return Choice::apply(p, g, tag);
+    return Choice::const_apply(p, g, tag);
   }
 
   template <typename Param, typename Graph, typename PropertyTag>

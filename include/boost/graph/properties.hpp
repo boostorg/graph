@@ -62,7 +62,8 @@ namespace boost {
     // don't do partial specialization (like VC++).
     enum property_tag_num
     {
-      vertex_index_num = 1, edge_index_num, vertex_name_num,
+      vertex_index_num = 1, vertex_index1_num, vertex_index2_num,
+      edge_index_num, vertex_name_num,
       edge_name_num, graph_name_num, edge_weight_num, vertex_distance_num,
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
       vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
@@ -71,6 +72,7 @@ namespace boost {
       distance_compare_num, distance_combine_num, distance_inf_num,
       distance_zero_num, buffer_param_num, edge_copy_num, vertex_copy_num,
       orig_to_copy_num, vertex_rank_num, vertex_predecessor_num,
+      vertex_isomorphism_num, vertex_invariant_num,
       last_property_num
     };
   } // namespace detail
@@ -103,6 +105,8 @@ namespace boost {
   BOOST_DEF_PROPERTY(edge, all);
   BOOST_DEF_PROPERTY(graph, all);
   BOOST_DEF_PROPERTY(vertex, index);
+  BOOST_DEF_PROPERTY(vertex, index1);
+  BOOST_DEF_PROPERTY(vertex, index2);
   BOOST_DEF_PROPERTY(edge, index);
   BOOST_DEF_PROPERTY(edge, name);
   BOOST_DEF_PROPERTY(edge, weight);
