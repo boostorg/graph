@@ -57,8 +57,8 @@ main(int , char* [])
   using namespace boost;
 
   typedef property<edge_weight_t, int> weightp;
-  typedef adjacency_list< listS, vecS, directedS, 
-    property<vertex_color_t,default_color_type>, weightp > Graph;
+  typedef adjacency_list<listS, vecS, directedS, 
+    no_property, weightp> Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
   typedef std::pair<int,int> E;
@@ -77,9 +77,10 @@ main(int , char* [])
   std::vector<int> d(num_vertices(G));
 
   graph_traits<Graph>::vertex_iterator vi, vend;
-  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+  for(tie(vi, vend) = vertices(G); vi != vend; ++vi)
     p[*vi] = *vi;
   Vertex s = *(vertices(G).first);
+
   dijkstra_shortest_paths
     (G, s, distance_map(&d[0]).visitor(make_ucs_visitor
 				       (record_predecessors
