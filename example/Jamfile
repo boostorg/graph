@@ -4,8 +4,6 @@ subproject libs/graph/example ;
 # LEDA (also top level directory) at the command line of jam using -s
 
 
-
-
 exe remove_edge_if_bidir : remove_edge_if_bidir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe remove_edge_if_dir : remove_edge_if_dir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe remove_edge_if_undir : remove_edge_if_undir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
@@ -29,7 +27,7 @@ exe topo-sort-with-sgb : topo-sort-with-sgb.cpp : <include>$(BOOST_ROOT)
 exe transitive_closure : transitive_closure.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe transpose-example : transpose-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe undirected : undirected.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe vector-as-graph : vector-as-graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe vector-as-graph : vector-as-graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe vertex_basics : vertex_basics.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe vertex-name-property : vertex-name-property.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe visitor : visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
@@ -37,44 +35,44 @@ exe visitor : visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 
 exe accum-compile-times : accum-compile-times.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe adjacency_list : adjacency_list.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe adjacency_list_io : adjacency_list_io.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe adjacency_list_io : adjacency_list_io.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe adjacency_matrix : adjacency_matrix.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe bellman-example : bellman-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe bellman-example : bellman-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe bellman-ford-internet : bellman-ford-internet.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe bfs : bfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe bfs-example : bfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe bfs-example : bfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe bfs-name-printer : bfs-name-printer.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe bfs_neighbor : bfs_neighbor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe biconnected_components : biconnected_components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe boost_web_graph : boost_web_graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe bucket_sorter : bucket_sorter.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe cc-internet : cc-internet.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe city_visitor : city_visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe city_visitor : city_visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe components_on_edgelist : components_on_edgelist.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe connected_components : connected_components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe connected-components : connected-components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe container_gen : container_gen.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe copy-example : copy-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe cycle-file-dep2 : cycle-file-dep2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe cycle-file-dep : cycle-file-dep.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe dag_shortest_paths : dag_shortest_paths.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe dave : dave.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe cycle-file-dep2 : cycle-file-dep2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe cycle-file-dep : cycle-file-dep.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe dag_shortest_paths : dag_shortest_paths.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe dave : dave.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe default-constructor2 : default-constructor2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe default-constructor : default-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dfs : dfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe dfs-example : dfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe dfs-example : dfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dfs-parenthesis : dfs-parenthesis.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dijkstra-example : dijkstra-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge_basics : edge_basics.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe edge_connectivity : edge_connectivity.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe edge-connectivity : edge-connectivity.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe edge_connectivity : edge_connectivity.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe edge-connectivity : edge-connectivity.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge-function : edge-function.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge_iterator_constructor : edge_iterator_constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge-iter-constructor : edge-iter-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge_property : edge_property.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe edmunds-karp-eg : edmunds-karp-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe edmunds_karp_max_flow : edmunds_karp_max_flow.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe edmunds-karp-eg : edmunds-karp-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe edmunds_karp_max_flow : edmunds_karp_max_flow.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe exterior_properties : exterior_properties.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe exterior_property_map : exterior_property_map.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe family-tree-eg : family-tree-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
@@ -128,6 +126,6 @@ exe push-relabel-eg : push-relabel-eg.cpp : <include>$(BOOST_ROOT) : debug <inli
 exe put-get-helper-eg : put-get-helper-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe quick_tour : quick_tour.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe quick-tour : quick-tour.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe reachable-loop-head : reachable-loop-head.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-# exe reachable-loop-tail : reachable-loop-tail.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe reachable-loop-head : reachable-loop-head.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe reachable-loop-tail : reachable-loop-tail.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
 
