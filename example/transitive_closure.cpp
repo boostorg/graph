@@ -16,6 +16,7 @@
 
 #include <boost/graph/transitive_closure.hpp>
 #include <boost/graph/graphviz.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 int
 main(int, char *[])
