@@ -600,7 +600,7 @@ private:
    *  are each log_n long, with the last group potentially being
    *  smaller.
    */
-  std::vector<::boost::optional<value_type> > groups;
+  std::vector< ::boost::optional<value_type> > groups;
 
   /** The list of active groups, indexed by rank. When A[r] is null,
    *  there is no active group of rank r. Otherwise, A[r] is the active
