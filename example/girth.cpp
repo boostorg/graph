@@ -125,12 +125,11 @@ main()
     }
     distance_list.clear();
     distance_list.resize(boost::num_vertices(g), 0);
-    
+
+    // obtain property maps
     distance = get(dist_t(), g);
     predecessor = get(pred_t(), g);
     color = get(color_t(), g);
-
-    vertex_descriptor s = *boost::vertices(g).first;
 
     vertex_iterator i, end;
     for (boost::tie(i, end) = boost::vertices(g); i != end; ++i)
@@ -139,6 +138,8 @@ main()
     std::size_t k = 0;
     std::size_t girth = std::numeric_limits<std::size_t>::max();
     diameter_and_girth_visitor visitor(k, girth);
+
+    vertex_descriptor s = *boost::vertices(g).first;
 
     // Call Variant 2 of BFS
     boost::breadth_first_search(g, s, visitor, color);
@@ -152,7 +153,7 @@ main()
     std::cout << "So the diameter is " << k - 1
 	      << ", and the girth is " << girth
 	      << "." << std::endl;
-  }
+  } // end while
 
   return 0;
 }
