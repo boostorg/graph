@@ -1,6 +1,6 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek 2000
+  -- Copyright (c) Jeremy Siek 2000-2001
   --
   -- Permission to use, copy, modify, distribute and sell this software
   -- and its documentation for any purpose is hereby granted without fee,
@@ -21,105 +21,95 @@
 
 
 <H1>
-<A NAME="sec:connected-components"></A><A NAME="sec:strongly-connected-components"></A>
-<TT>connected_components</TT>
+<A NAME="sec:connected-components">
+<TT>connected_components</TT></A>
 </H1>
 
-<P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">see below</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">components, color</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
-</TR>
-</TABLE>
-</DIV>
-
-<P>
 <PRE>
-(2)
-template &lt;class VertexListGraph, class ComponentMap, class ColorMap&gt;
+template &lt;class VertexListGraph, class ComponentMap, class P, class T, class R&gt;
 typename property_traits&lt;ComponentMap&gt;::value_type
-connected_components(VertexListGraph&amp; G, ComponentMap comp, ColorMap color);
-
-(2)
-template &lt;class VertexListGraph, 
-          class ComponentMap, class ColorMap, class DFSVisitor&gt;
-typename property_traits&lt;ComponentMap&gt;::value_type
-connected_components(VertexListGraph&amp; G, ComponentMap comp, ColorMap color,
-  DFSVisitor v);
+connected_components(VertexListGraph&amp; G, ComponentMap comp,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </PRE>
 
 <P>
 The <TT>connected_components()</TT> functions compute the connected
-components of an undirected graph using a DFS-based approach. If the
-connected-components are to be calculated over and over while a graph
-is changing the disjoint-set based approach of function
-<TT>dynamic_connected_components()</TT> is faster. For ``static''
-graphs this DFS-based approach is faster&nbsp;[<A
+components of an undirected graph using a DFS-based approach.  A
+<b><I>connected component</I></b> of an undirected graph is a set of
+vertices that are all reachable from each other. If the connected
+components need to be maintained while a graph is growing the
+disjoint-set based approach of function <a
+href="./incremental_components.html">
+<TT>incremental_components()</TT></a> is faster. For ``static'' graphs
+this DFS-based approach is faster&nbsp;[<A
 HREF="bibliography.html#clr90">8</A>].
-</LI>
-</UL>
 
 <P>
-The output of the algorithm is recorded in the component property
-map <TT>comp</TT>, which will contain numbers giving the component ID
-assigned to each vertex. The number of components is the return value
-of the function.
-
-<P>
-The algorithm requires the use of several property maps: color,
-discover time, and finish time. There are several versions of this
-algorithm to accommodate whether you wish to use interior or exterior
-property maps.
-
-<P>
+The output of the algorithm is recorded in the component property map
+<TT>comp</TT>, which will contain numbers giving the component number
+assigned to each vertex. The total number of components is the return
+value of the function.
 
 <H3>Where Defined</H3>
 
 <P>
 <a href="../../../boost/graph/connected_components.hpp"><TT>boost/graph/connected_components.hpp</TT></a>
 
-<P>
 
-<H3>Definitions</H3>
+<h3>Parameters</h3>
 
-<P>
-A <b><I>connected component</I></b> of an undirected graph is a set of
-vertices that are all reachable from each other.  
+IN: <tt>const Graph&amp; g</tt>
+<blockquote>
+An undirected graph. The graph type must be a model of <a
+href="VertexListGraph.html">Vertex List Graph</a> and <a
+href="IncidenceGraph.html">Incidence Graph</a>.
+</blockquote>
 
-<P>
+OUT: <tt>ComponentMap c</tt>
+<blockquote>
+The algorithm computes how many connected components are in the graph,
+and assigning each component an integer label. The algorithm then
+records which component each vertex in the graph belongs to by
+recording the component number in the component property map. The
+<tt>ComponentMap</tt> type must be a model of <a
+href="../../property_map/WritablePropertyMap.html">Writable Property
+Map</a>. The value type shouch be an integer type, preferably the same
+as the <tt>vertices_size_type</tt> of the graph. The key type must be
+the graph's vertex descriptor type.
+</blockquote>
 
-<H3>Requirements on Types</H3>
+<h3>Named Parameters</h3>
 
-<P>
+UTIL: <tt>color_map(ColorMap color)</tt>
+<blockquote>
+  This is used by the algorithm to keep track of its progress through
+  the graph. The type <tt>ColorMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> and its key type must be the graph's vertex
+  descriptor type and the value type of the color map must model
+  <a href="./ColorValue.html">ColorValue</a>.<br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of <tt>default_color_type</tt> of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
 
-<UL>
-<LI>The graph type must be a model of <a
-href="./VertexListGraph.html">VertexListGraph</a>.
- 
-</LI>
-<LI>The <TT>ComponentMap</TT> type must be a model of <a
-    href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>. The
-    value type of the <TT>ComponentMap</TT> property map should be
-    an integer type, preferably the same as the <TT>size_type</TT> of
-    the graph. The key type should be the graph's vertex descriptor
-    type.
-</LI>
-<LI>The <TT>ColorMap</TT> map must be a <a
-     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
-     and the graph's vertex descriptor type should be usable as the
-     map's key type. The value type of the map must be a
-     model of <I>ColorValue</I>.
-</LI>
-</UL>
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+  num_vertices(g))</tt>. This parameter is only necessary when the
+  default color property map is used. The type <tt>VertexIndexMap</tt>
+  must be a model of <a
+  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  Map</a>. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key
+  type of the map.<br>
 
-<P>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+</blockquote>
+
 
 <H3>Complexity</H3>
 
@@ -137,49 +127,10 @@ and <a href="./incremental_components.html"><tt>incremental_components()</tt></a
 <H3>Example</H3>
 
 <P>
-Calculating the connected components of an undirected graph. The
-complete source is in file <a
-href="../example/connected_components.cpp"><tt>examples/connected_components.cpp</tt></a>.
-
-<P>
-<PRE>
-  typedef discover_time_property&lt; finish_time_property
-                                &lt; color_property&lt;&gt; &gt; &gt; VertexProperty;
-  typedef adjacency_list &lt;vecS, vecS, undirectedS, VertexProperty&gt; Graph;
-  typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
-
-  const int N = 6;
-  Graph G(N);
-  add_edge(0, 1, G);
-  add_edge(1, 4, G);
-  add_edge(4, 0, G);
-  add_edge(2, 5, G);
-    
-  std::vector&lt;int&gt; c(num_vertices(G));
-  int num = connected_components(G, c.begin(), 
-              get_color_map(G), null_visitor());
-    
-  cout &lt;&lt; endl;
-  std::vector&lt;int&gt;::iterator i;
-  cout &lt;&lt; "Total number of components: " &lt;&lt; num &lt;&lt; endl;
-  for (i = c.begin(); i != c.end(); ++i)
-    cout &lt;&lt; "Vertex " &lt;&lt; i - c.begin() 
-         &lt;&lt; " is in component " &lt;&lt; *i &lt;&lt; endl;
-  cout &lt;&lt; endl;
-</PRE>
-The output is:
-<PRE>
-  Total number of components: 3
-  Vertex 0 is in component 1
-  Vertex 1 is in component 1
-  Vertex 2 is in component 2
-  Vertex 3 is in component 3
-  Vertex 4 is in component 1
-  Vertex 5 is in component 2
-</PRE>
-
-<P>
-
+The file <a
+href="../example/connected_components.cpp"><tt>examples/connected_components.cpp</tt></a>
+contains an example of calculating the connected components of an
+undirected graph.
 
 <br>
 <HR>
