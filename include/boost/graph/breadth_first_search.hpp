@@ -99,7 +99,7 @@ namespace boost {
     typename property_traits<ColorMap>::value_type c = get(color, s);
 
     put(color, s, gray(c));
-    vis.discover_vertex(v, g);
+    vis.discover_vertex(s, g);
     Q.push(s);
     while (! Q.empty()) {
       Vertex u = Q.top();
