@@ -174,7 +174,7 @@
 
     static const std::string& get_graph_name(const Subgraph& g) {
       const boost::graph_property<Subgraph, boost::graph_name_t>::type&
-	name = boost::get_property(g, boost::graph_name);
+        name = boost::get_property(g, boost::graph_name);
       return name; 
     }
 
@@ -191,7 +191,7 @@
 
       //set the label of vertex, it could be overwritten later.
       boost::property_map<GRAPHVIZ_GRAPH, boost::vertex_attribute_t>::type
-	va = boost::get(boost::vertex_attribute, g); 
+        va = boost::get(boost::vertex_attribute, g); 
       va[v]["label"] = name; 
       
       //add v into the map so next time we will find it.
@@ -215,85 +215,85 @@
 
     
     static void set_attribute(GraphvizAttrList& p,
-			      const GraphvizAttrList& attr) {
+                              const GraphvizAttrList& attr) {
       GraphvizAttrList::const_iterator i, end;
       for ( i=attr.begin(), end=attr.end(); i!=end; ++i)
-	p[i->first]=i->second;
+        p[i->first]=i->second;
     }
   
     static void set_attribute(Subgraph& g,
-			      AttrState s, bool clear_attribute = true) {
+                              AttrState s, bool clear_attribute = true) {
       typedef Subgraph Graph;
       switch ( s ) {
       case GRAPH_GRAPH_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_graph_attribute_t>::type&
-	    gga = boost::get_property(g, boost::graph_graph_attribute);
-	  set_attribute(gga, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_graph_attribute_t>::type&
+            gga = boost::get_property(g, boost::graph_graph_attribute);
+          set_attribute(gga, attributes); 
+        }
+        break;
       case GRAPH_NODE_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_vertex_attribute_t>::type&
-	    gna = boost::get_property(g, boost::graph_vertex_attribute);
-	  set_attribute(gna, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_vertex_attribute_t>::type&
+            gna = boost::get_property(g, boost::graph_vertex_attribute);
+          set_attribute(gna, attributes); 
+        }
+        break;
       case GRAPH_EDGE_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_edge_attribute_t>::type&
-	    gea = boost::get_property(g, boost::graph_edge_attribute);
-	  set_attribute(gea, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_edge_attribute_t>::type&
+            gea = boost::get_property(g, boost::graph_edge_attribute);
+          set_attribute(gea, attributes); 
+        }
+        break;
       case NODE_A:
-	{
-	  boost::property_map<Graph, boost::vertex_attribute_t>::type
-	    va = boost::get(boost::vertex_attribute, g);    //va[v]
-	  set_attribute(va[current_vertex], attributes);
-	}
-	break;
+        {
+          boost::property_map<Graph, boost::vertex_attribute_t>::type
+            va = boost::get(boost::vertex_attribute, g);    //va[v]
+          set_attribute(va[current_vertex], attributes);
+        }
+        break;
       case EDGE_A: 
-	{
-	  boost::property_map<Graph, boost::edge_attribute_t>::type
-	    ea = boost::get(boost::edge_attribute, g);      //ea[e]
-	  set_attribute(ea[current_edge], attributes); 
-	}
-	break;
+        {
+          boost::property_map<Graph, boost::edge_attribute_t>::type
+            ea = boost::get(boost::edge_attribute, g);      //ea[e]
+          set_attribute(ea[current_edge], attributes); 
+        }
+        break;
       }
       if ( clear_attribute )
-	attributes.clear();
+        attributes.clear();
     }
 
 
     static void add_edges(const Vertex& u,
-			  const Vertex& v, GRAPHVIZ_GRAPH& g) {
+                          const Vertex& v, GRAPHVIZ_GRAPH& g) {
       graphviz::current_edge = boost::add_edge(u, v, g).first; 
       graphviz::set_attribute(g, EDGE_A, false);
     }
     
     static void add_edges(Subgraph* G1, Subgraph* G2,
-			  GRAPHVIZ_GRAPH& g) {
+                          GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j, m, n;
       for ( boost::tie(i, j) = boost::vertices(*G1); i != j; ++i) {
-	for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
-	  graphviz::add_edges(G1->local_to_global(*i),
-			      G2->local_to_global(*m), g);
-	}
+        for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
+          graphviz::add_edges(G1->local_to_global(*i),
+                              G2->local_to_global(*m), g);
+        }
       }
     }
 
     static void add_edges(Subgraph* G, const Vertex& v, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
-	graphviz::add_edges(G->local_to_global(*i), v, g);
+        graphviz::add_edges(G->local_to_global(*i), v, g);
       }
     }
 
     static void add_edges(const Vertex& u, Subgraph* G, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
-	graphviz::add_edges(u, G->local_to_global(*i), g);
+        graphviz::add_edges(u, G->local_to_global(*i), g);
       }
     }
 
@@ -316,7 +316,7 @@
 
     static void set_graph_name(const std::string& name) {
       boost::graph_property<Subgraph, boost::graph_name_t>::type&
-	gea = boost::get_property(*current_graph, boost::graph_name);
+        gea = boost::get_property(*current_graph, boost::graph_name);
       gea = name;
     }
 
@@ -386,7 +386,7 @@ typedef int YYSTYPE;
 
 #if (! defined (yyoverflow) \
      && (! defined (__cplusplus) \
-	 || (YYSTYPE_IS_TRIVIAL)))
+         || (YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
@@ -401,7 +401,7 @@ union yyalloc
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (short) + sizeof (YYSTYPE))				\
+     ((N) * (sizeof (short) + sizeof (YYSTYPE))                         \
       + YYSTACK_GAP_MAXIMUM)
 
 /* Copy COUNT objects from FROM to TO.  The source and destination do
@@ -411,13 +411,13 @@ union yyalloc
 #   define YYCOPY(To, From, Count) \
       __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
 #  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  register YYSIZE_T yyi;		\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
+#   define YYCOPY(To, From, Count)              \
+      do                                        \
+        {                                       \
+          register YYSIZE_T yyi;                \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (To)[yyi] = (From)[yyi];            \
+        }                                       \
       while (0)
 #  endif
 # endif
@@ -427,15 +427,15 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack)					\
-    do									\
-      {									\
-	YYSIZE_T yynewbytes;						\
-	YYCOPY (&yyptr->Stack, Stack, yysize);				\
-	Stack = &yyptr->Stack;						\
-	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-	yyptr += yynewbytes / sizeof (*yyptr);				\
-      }									\
+# define YYSTACK_RELOCATE(Stack)                                        \
+    do                                                                  \
+      {                                                                 \
+        YYSIZE_T yynewbytes;                                            \
+        YYCOPY (&yyptr->Stack, Stack, yysize);                          \
+        Stack = &yyptr->Stack;                                          \
+        yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / sizeof (*yyptr);                          \
+      }                                                                 \
     while (0)
 
 #endif
@@ -464,7 +464,7 @@ union yyalloc
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   264
 
-#define YYTRANSLATE(YYX) 						\
+#define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
@@ -683,43 +683,43 @@ static const unsigned char yystos[] =
 # define YYSIZE_T unsigned int
 #endif
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		(-2)
-#define YYEOF		0
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+#define YYEMPTY         (-2)
+#define YYEOF           0
 
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT		goto yyabortlab
-#define YYERROR		goto yyerrlab1
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrlab1
 
 
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
 
-#define YYFAIL		goto yyerrlab
+#define YYFAIL          goto yyerrlab
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      yytoken = YYTRANSLATE (yychar);				\
-      YYPOPSTACK;						\
-      goto yybackup;						\
-    }								\
-  else								\
-    { 								\
+#define YYBACKUP(Token, Value)                                  \
+do                                                              \
+  if (yychar == YYEMPTY && yylen == 1)                          \
+    {                                                           \
+      yychar = (Token);                                         \
+      yylval = (Value);                                         \
+      yytoken = YYTRANSLATE (yychar);                           \
+      YYPOPSTACK;                                               \
+      goto yybackup;                                            \
+    }                                                           \
+  else                                                          \
+    {                                                           \
       yyerror ("syntax error: cannot back up");\
-      YYERROR;							\
-    }								\
+      YYERROR;                                                  \
+    }                                                           \
 while (0)
 
-#define YYTERROR	1
-#define YYERRCODE	256
+#define YYTERROR        1
+#define YYERRCODE       256
 
 /* YYLLOC_DEFAULT -- Compute the default location (before the actions
    are run).  */
@@ -748,27 +748,27 @@ while (0)
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)			\
-do {						\
-  if (yydebug)					\
-    YYFPRINTF Args;				\
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (yydebug)                                  \
+    YYFPRINTF Args;                             \
 } while (0)
 
-# define YYDSYMPRINT(Args)			\
-do {						\
-  if (yydebug)					\
-    yysymprint Args;				\
+# define YYDSYMPRINT(Args)                      \
+do {                                            \
+  if (yydebug)                                  \
+    yysymprint Args;                            \
 } while (0)
 
-# define YYDSYMPRINTF(Title, Token, Value, Location)		\
-do {								\
-  if (yydebug)							\
-    {								\
-      YYFPRINTF (stderr, "%s ", Title);				\
-      yysymprint (stderr, 					\
-                  Token, Value);	\
-      YYFPRINTF (stderr, "\n");					\
-    }								\
+# define YYDSYMPRINTF(Title, Token, Value, Location)            \
+do {                                                            \
+  if (yydebug)                                                  \
+    {                                                           \
+      YYFPRINTF (stderr, "%s ", Title);                         \
+      yysymprint (stderr,                                       \
+                  Token, Value);        \
+      YYFPRINTF (stderr, "\n");                                 \
+    }                                                           \
 } while (0)
 
 /*------------------------------------------------------------------.
@@ -792,10 +792,10 @@ yy_stack_print (bottom, top)
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)				\
-do {								\
-  if (yydebug)							\
-    yy_stack_print ((Bottom), (Top));				\
+# define YY_STACK_PRINT(Bottom, Top)                            \
+do {                                                            \
+  if (yydebug)                                                  \
+    yy_stack_print ((Bottom), (Top));                           \
 } while (0)
 
 
@@ -822,10 +822,10 @@ yy_reduce_print (yyrule)
   YYFPRINTF (stderr, "-> %s\n", yytname [yyr1[yyrule]]);
 }
 
-# define YY_REDUCE_PRINT(Rule)		\
-do {					\
-  if (yydebug)				\
-    yy_reduce_print (Rule);		\
+# define YY_REDUCE_PRINT(Rule)          \
+do {                                    \
+  if (yydebug)                          \
+    yy_reduce_print (Rule);             \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -841,7 +841,7 @@ int yydebug;
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -1050,7 +1050,7 @@ int yynerrs;
      to reallocate them elsewhere.  */
 
   /* The state stack.  */
-  short	yyssa[YYINITDEPTH];
+  short         yyssa[YYINITDEPTH];
   short *yyss = yyssa;
   register short *yyssp;
 
@@ -1079,7 +1079,7 @@ int yynerrs;
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;		/* Cause a token to be read.  */
+  yychar = YYEMPTY;             /* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
@@ -1110,25 +1110,25 @@ int yynerrs;
 
 #ifdef yyoverflow
       {
-	/* Give user a chance to reallocate the stack. Use copies of
-	   these so that the &'s don't force the real ones into
-	   memory.  */
-	YYSTYPE *yyvs1 = yyvs;
-	short *yyss1 = yyss;
+        /* Give user a chance to reallocate the stack. Use copies of
+           these so that the &'s don't force the real ones into
+           memory.  */
+        YYSTYPE *yyvs1 = yyvs;
+        short *yyss1 = yyss;
 
 
-	/* Each stack pointer address is followed by the size of the
-	   data in use in that stack, in bytes.  This used to be a
-	   conditional around just the two extra args, but that might
-	   be undefined if yyoverflow is a macro.  */
-	yyoverflow ("parser stack overflow",
-		    &yyss1, yysize * sizeof (*yyssp),
-		    &yyvs1, yysize * sizeof (*yyvsp),
+        /* Each stack pointer address is followed by the size of the
+           data in use in that stack, in bytes.  This used to be a
+           conditional around just the two extra args, but that might
+           be undefined if yyoverflow is a macro.  */
+        yyoverflow ("parser stack overflow",
+                    &yyss1, yysize * sizeof (*yyssp),
+                    &yyvs1, yysize * sizeof (*yyvsp),
 
-		    &yystacksize);
+                    &yystacksize);
 
-	yyss = yyss1;
-	yyvs = yyvs1;
+        yyss = yyss1;
+        yyvs = yyvs1;
       }
 #else /* no yyoverflow */
 # ifndef YYSTACK_RELOCATE
@@ -1136,23 +1136,23 @@ int yynerrs;
 # else
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-	goto yyoverflowlab;
+        goto yyoverflowlab;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 
       {
-	short *yyss1 = yyss;
-	union yyalloc *yyptr =
-	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-	if (! yyptr)
-	  goto yyoverflowlab;
-	YYSTACK_RELOCATE (yyss);
-	YYSTACK_RELOCATE (yyvs);
+        short *yyss1 = yyss;
+        union yyalloc *yyptr =
+          (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+        if (! yyptr)
+          goto yyoverflowlab;
+        YYSTACK_RELOCATE (yyss);
+        YYSTACK_RELOCATE (yyvs);
 
 #  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
-	  YYSTACK_FREE (yyss1);
+        if (yyss1 != yyssa)
+          YYSTACK_FREE (yyss1);
       }
 # endif
 #endif /* no yyoverflow */
@@ -1162,10 +1162,10 @@ int yynerrs;
 
 
       YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-		  (unsigned long int) yystacksize));
+                  (unsigned long int) yystacksize));
 
       if (yyss + yystacksize - 1 <= yyssp)
-	YYABORT;
+        YYABORT;
     }
 
   YYDPRINTF ((stderr, "Entering state %d\n", yystate));
@@ -1216,7 +1216,7 @@ yybackup:
   if (yyn <= 0)
     {
       if (yyn == 0 || yyn == YYTABLE_NINF)
-	goto yyerrlab;
+        goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -1308,7 +1308,7 @@ yyreduce:
 #line 291 "graphviz_parser.yy"
     { 
     graphviz::set_attribute(*graphviz::current_graph,
-			  graphviz::attribute_state); 
+                          graphviz::attribute_state); 
   ;}
     break;
 
@@ -1348,7 +1348,7 @@ yyreduce:
     { 
     graphviz::set_attribute(
          *static_cast<graphviz::Subgraph*>(graphviz::current_graph),
-			    GRAPH_GRAPH_A);
+                            GRAPH_GRAPH_A);
   ;}
     break;
 
@@ -1358,7 +1358,7 @@ yyreduce:
     graphviz::Vertex* temp   = static_cast<graphviz::Vertex*>(yyvsp[-1].ptr); 
     graphviz::current_vertex = *temp;
     graphviz::set_attribute(*static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM),
-			    NODE_A); 
+                            NODE_A); 
     delete temp;
     yyval.i = 0;
   ;}
@@ -1382,7 +1382,7 @@ yyreduce:
     if (result.second) {
       graphviz::current_vertex = result.first->second; 
       if (! graphviz::current_graph->is_root())
-	boost::add_vertex(graphviz::current_vertex, *graphviz::current_graph);
+        boost::add_vertex(graphviz::current_vertex, *graphviz::current_graph);
     } else
       graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM)) ; 
     graphviz::Vertex* temp = new graphviz::Vertex(graphviz::current_vertex);
@@ -1425,27 +1425,27 @@ yyreduce:
     Ptr source = static_cast<Ptr>(yyvsp[-2].ptr);
 
     for (std::vector<Ptr>::iterator it=graphviz::vlist.begin();
-	 it !=graphviz::vlist.end(); ++it) { 
+         it !=graphviz::vlist.end(); ++it) { 
       if ( source->second ) {
-	if ( (*it)->second )
-	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
-			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	else
-	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
-			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        if ( (*it)->second )
+          graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
+                            static_cast<graphviz::Subgraph*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        else
+          graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
+                            *static_cast<graphviz::Vertex*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
       } else {
-	graphviz::Vertex* temp = static_cast<graphviz::Vertex*>(source->first);
-	if ( (*it)->second )
-	  graphviz::add_edges(*temp,
-			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	else
-	  graphviz::add_edges(*temp,
-			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	delete temp;
+        graphviz::Vertex* temp = static_cast<graphviz::Vertex*>(source->first);
+        if ( (*it)->second )
+          graphviz::add_edges(*temp,
+                            static_cast<graphviz::Subgraph*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        else
+          graphviz::add_edges(*temp,
+                            *static_cast<graphviz::Vertex*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        delete temp;
       }
 
       delete source; 
@@ -1596,50 +1596,50 @@ yyerrlab:
       yyn = yypact[yystate];
 
       if (YYPACT_NINF < yyn && yyn < YYLAST)
-	{
-	  YYSIZE_T yysize = 0;
-	  int yytype = YYTRANSLATE (yychar);
-	  char *yymsg;
-	  int yyx, yycount;
+        {
+          YYSIZE_T yysize = 0;
+          int yytype = YYTRANSLATE (yychar);
+          char *yymsg;
+          int yyx, yycount;
 
-	  yycount = 0;
-	  /* Start YYX at -YYN if negative to avoid negative indexes in
-	     YYCHECK.  */
-	  for (yyx = yyn < 0 ? -yyn : 0;
-	       yyx < (int) (sizeof (yytname) / sizeof (char *)); yyx++)
-	    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-	      yysize += yystrlen (yytname[yyx]) + 15, yycount++;
-	  yysize += yystrlen ("syntax error, unexpected ") + 1;
-	  yysize += yystrlen (yytname[yytype]);
-	  yymsg = (char *) YYSTACK_ALLOC (yysize);
-	  if (yymsg != 0)
-	    {
-	      char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
-	      yyp = yystpcpy (yyp, yytname[yytype]);
+          yycount = 0;
+          /* Start YYX at -YYN if negative to avoid negative indexes in
+             YYCHECK.  */
+          for (yyx = yyn < 0 ? -yyn : 0;
+               yyx < (int) (sizeof (yytname) / sizeof (char *)); yyx++)
+            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+              yysize += yystrlen (yytname[yyx]) + 15, yycount++;
+          yysize += yystrlen ("syntax error, unexpected ") + 1;
+          yysize += yystrlen (yytname[yytype]);
+          yymsg = (char *) YYSTACK_ALLOC (yysize);
+          if (yymsg != 0)
+            {
+              char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
+              yyp = yystpcpy (yyp, yytname[yytype]);
 
-	      if (yycount < 5)
-		{
-		  yycount = 0;
-		  for (yyx = yyn < 0 ? -yyn : 0;
-		       yyx < (int) (sizeof (yytname) / sizeof (char *));
-		       yyx++)
-		    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-		      {
-			const char *yyq = ! yycount ? ", expecting " : " or ";
-			yyp = yystpcpy (yyp, yyq);
-			yyp = yystpcpy (yyp, yytname[yyx]);
-			yycount++;
-		      }
-		}
-	      yyerror (yymsg);
-	      YYSTACK_FREE (yymsg);
-	    }
-	  else
-	    yyerror ("syntax error; also virtual memory exhausted");
-	}
+              if (yycount < 5)
+                {
+                  yycount = 0;
+                  for (yyx = yyn < 0 ? -yyn : 0;
+                       yyx < (int) (sizeof (yytname) / sizeof (char *));
+                       yyx++)
+                    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+                      {
+                        const char *yyq = ! yycount ? ", expecting " : " or ";
+                        yyp = yystpcpy (yyp, yyq);
+                        yyp = yystpcpy (yyp, yytname[yyx]);
+                        yycount++;
+                      }
+                }
+              yyerror (yymsg);
+              YYSTACK_FREE (yymsg);
+            }
+          else
+            yyerror ("syntax error; also virtual memory exhausted");
+        }
       else
 #endif /* YYERROR_VERBOSE */
-	yyerror ("syntax error");
+        yyerror ("syntax error");
     }
 
 
@@ -1647,21 +1647,21 @@ yyerrlab:
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
-	 error, discard it.  */
+         error, discard it.  */
 
       /* Return failure if at end of input.  */
       if (yychar == YYEOF)
         {
-	  /* Pop the error token.  */
+          /* Pop the error token.  */
           YYPOPSTACK;
-	  /* Pop the rest of the stack.  */
-	  while (yyss < yyssp)
-	    {
-	      YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
-	      yydestruct (yystos[*yyssp], yyvsp);
-	      YYPOPSTACK;
-	    }
-	  YYABORT;
+          /* Pop the rest of the stack.  */
+          while (yyss < yyssp)
+            {
+              YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
+              yydestruct (yystos[*yyssp], yyvsp);
+              YYPOPSTACK;
+            }
+          YYABORT;
         }
 
       YYDSYMPRINTF ("Error: discarding", yytoken, &yylval, &yylloc);
@@ -1679,25 +1679,25 @@ yyerrlab:
 | yyerrlab1 -- error raised explicitly by an action.  |
 `----------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   for (;;)
     {
       yyn = yypact[yystate];
       if (yyn != YYPACT_NINF)
-	{
-	  yyn += YYTERROR;
-	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-	    {
-	      yyn = yytable[yyn];
-	      if (0 < yyn)
-		break;
-	    }
-	}
+        {
+          yyn += YYTERROR;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+            {
+              yyn = yytable[yyn];
+              if (0 < yyn)
+                break;
+            }
+        }
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-	YYABORT;
+        YYABORT;
 
       YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
       yydestruct (yystos[yystate], yyvsp);

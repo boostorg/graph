@@ -107,7 +107,7 @@ int test_main(int argc, char* argv[])
     gt.test_adjacency_matrix(sub_vertex_set, sub_edge_set, g_s);
     
     if (num_vertices(g_s) == 0)
-	return 0;
+      return 0;
     std::vector<int> weights;
     for (unsigned i = 0; i < num_vertices(g_s); ++i)
     weights.push_back(i*2);
@@ -131,7 +131,7 @@ int test_main(int argc, char* argv[])
             get(edge_weight, sub, *ei);
         }
     }
-		    
+
   }  
   return 0;
 }

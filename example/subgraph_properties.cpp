@@ -34,10 +34,10 @@ int main(int,char*[])
 {
   using namespace boost;
   //typedef adjacency_list_traits<vecS, vecS, directedS> Traits;// Does nothing?
-  typedef property< 	vertex_color_t, int,
+  typedef property<   vertex_color_t, int,
     property< vertex_name_t, std::string > > VertexProperty;
   
-  typedef subgraph< adjacency_list<	vecS, vecS, directedS,
+  typedef subgraph< adjacency_list<  vecS, vecS, directedS,
     VertexProperty, property<edge_index_t, int> > > Graph;
   
   const int N = 6;
@@ -63,21 +63,21 @@ int main(int,char*[])
   name1[A1] = "A1";
   
   std::cout << std::endl << "After initializing properties for G1:" << std::endl;
-  std::cout << "	Global and local properties for vertex G0[C]..." << std::endl;
-  std::cout << "		G0[C]= " << boost::get(vertex_name, G0, C) << std::endl;// prints: "G0[C]= C"
-  std::cout << "		G1[A1]= " << boost::get(vertex_name, G1, A1) << std::endl;// prints: "G1[A1]= A1"
+  std::cout << "  Global and local properties for vertex G0[C]..." << std::endl;
+  std::cout << "    G0[C]= " << boost::get(vertex_name, G0, C) << std::endl;// prints: "G0[C]= C"
+  std::cout << "    G1[A1]= " << boost::get(vertex_name, G1, A1) << std::endl;// prints: "G1[A1]= A1"
   
   name1[B1] = "B1";
   
-  std::cout << "	Global and local properties for vertex G0[E]..." << std::endl;
-  std::cout << "		G0[E]= " << boost::get(vertex_name, G0, E) << std::endl;// prints: "G0[E]= E"
-  std::cout << "		G1[B1]= " << boost::get(vertex_name, G1, B1) << std::endl;// prints: "G1[B1]= B1"
+  std::cout << "  Global and local properties for vertex G0[E]..." << std::endl;
+  std::cout << "    G0[E]= " << boost::get(vertex_name, G0, E) << std::endl;// prints: "G0[E]= E"
+  std::cout << "    G1[B1]= " << boost::get(vertex_name, G1, B1) << std::endl;// prints: "G1[B1]= B1"
   
   name1[C1] = "C1";
   
-  std::cout << "	Global and local properties for vertex G0[F]..." << std::endl;
-  std::cout << "		G0[F]= " << boost::get(vertex_name, G0, F) << std::endl;// prints: "G0[F]= F"
-  std::cout << "		G1[C1]= " << boost::get(vertex_name, G1, C1) << std::endl;// prints: "G1[C1]= C1"
+  std::cout << "  Global and local properties for vertex G0[F]..." << std::endl;
+  std::cout << "    G0[F]= " << boost::get(vertex_name, G0, F) << std::endl;// prints: "G0[F]= F"
+  std::cout << "    G1[C1]= " << boost::get(vertex_name, G1, C1) << std::endl;// prints: "G1[C1]= C1"
   
   Graph& G2 = G0.create_subgraph();
   enum { A2, B2 };              // for conveniently refering to vertices in G2
@@ -89,16 +89,16 @@ int main(int,char*[])
   name2[A2] = "A2";
   
   std::cout << std::endl << std::endl << "After initializing properties for G2:" << std::endl;
-  std::cout << "	Global and local properties for vertex G0[A]" << std::endl;
-  std::cout << "		G0[A]= " << boost::get(vertex_name, G0, A) << std::endl;// prints: "G0[A]= A"
-  std::cout << "		G2[A2]= " << boost::get(vertex_name, G2, A2) << std::endl;// prints: "G2[A2]= A2"
+  std::cout << "  Global and local properties for vertex G0[A]" << std::endl;
+  std::cout << "    G0[A]= " << boost::get(vertex_name, G0, A) << std::endl;// prints: "G0[A]= A"
+  std::cout << "    G2[A2]= " << boost::get(vertex_name, G2, A2) << std::endl;// prints: "G2[A2]= A2"
   
   name2[B2] = "B2";
   
-  std::cout << "	Global and local properties for vertex G0[C]..." << std::endl;
-  std::cout << "		G0[C]= " << boost::get(vertex_name, G0, C) << std::endl;// prints: "G0[C]= C"
-  std::cout << "		G1[A1]= " << boost::get(vertex_name, G1, A1) << std::endl;// prints: "G1[A1]= A1"
-  std::cout << "		G2[B2]= " << boost::get(vertex_name, G2, B2) << std::endl;// prints: "G2[B2]= B2"
+  std::cout << "  Global and local properties for vertex G0[C]..." << std::endl;
+  std::cout << "    G0[C]= " << boost::get(vertex_name, G0, C) << std::endl;// prints: "G0[C]= C"
+  std::cout << "    G1[A1]= " << boost::get(vertex_name, G1, A1) << std::endl;// prints: "G1[A1]= A1"
+  std::cout << "    G2[B2]= " << boost::get(vertex_name, G2, B2) << std::endl;// prints: "G2[B2]= B2"
   
   return 0;
 }

@@ -81,7 +81,7 @@ void test_bundled_properties(Map*, truth<CanAddVertex> can_add_vertex)
 
   // Try adding a vertex with a property value
   vertex_descriptor bloomington = do_add_vertex(map, vi, City("Bloomington", 39000, 47401),
-									  	        can_add_vertex);
+                                                can_add_vertex);
   BOOST_TEST(get(boost::vertex_bundle, map)[bloomington].zipcodes[0] == 47401);
   
   edge_descriptor e = add_edge(v, u, map).first;
