@@ -41,7 +41,6 @@ using namespace boost;
 
 int main()
 {
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   enum { r, s, t, u, v, w, x, y, N };
   char name[] = { 'r', 's', 't', 'u', 'v', 'w', 'x', 'y' };
 
@@ -65,11 +64,12 @@ int main()
   typedef vector<int>::iterator iter_t;
   int time = 0;
   breadth_first_search
-    (g, int(s), make_bfs_visitor(make_pair(stamp_times(discover.begin(), time,
-                                                       on_discover_vertex()),
-                                           stamp_times(finish.begin(), time,
-                                                       on_finish_vertex()))),
-     color.begin());
+    (g, int(s), 
+     visitor(make_bfs_visitor(make_pair(stamp_times(discover.begin(), time,
+						    on_discover_vertex()),
+					stamp_times(finish.begin(), time,
+						    on_finish_vertex())))).
+     color_map(&color[0]));
 
   std::cout << "order of discovery: ";
 
@@ -96,8 +96,5 @@ int main()
   for (int j = 0; j < N; ++j)
     std::cout << name[ finish_order[j] ] << " ";
   std::cout << std::endl;
-#else
-  std::cout << "The vec_adj_list module requires partial specialization" << std::endl;
-#endif
   return 0;
 }
