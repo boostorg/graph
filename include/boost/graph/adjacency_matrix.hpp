@@ -30,7 +30,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
-#include <limits>
+#include <boost/limits.hpp>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
@@ -376,8 +376,8 @@ namespace boost {
     static vertex_descriptor null_vertex()
     {
       return std::numeric_limits<vertex_descriptor>::max();
-    }  
-
+    }
+      
     //private: if friends worked, these would be private
 
     typedef detail::dir_adj_matrix_out_edge_iter<

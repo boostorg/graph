@@ -32,6 +32,7 @@
 #include <boost/pending/ct_if.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/detail/workaround.hpp>
 
 namespace boost {
   
@@ -53,11 +54,15 @@ namespace boost {
     typedef typename G::edges_size_type        edges_size_type;
     typedef typename G::degree_size_type       degree_size_type;
 
-    static vertex_descriptor null_vertex()
-    {
-        return G::null_vertex();
-    }
+    static inline vertex_descriptor null_vertex();
   };
+
+  template <typename G>
+  inline typename graph_traits<G>::vertex_descriptor
+  graph_traits<G>::null_vertex()
+  {
+    return G::null_vertex();
+  }
 
   // directed_category tags
   struct directed_tag { };

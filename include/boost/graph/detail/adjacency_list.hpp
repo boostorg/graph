@@ -35,7 +35,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <memory>
 #include <algorithm>
-#include <limits>
+#include <boost/limits.hpp>
 
 #include <boost/iterator_adaptors.hpp>
 
@@ -1573,7 +1573,7 @@ namespace boost {
       {
         return 0;
       }
-
+      
       inline adj_list_impl() { }
 
       inline adj_list_impl(const adj_list_impl& x) {
@@ -1868,7 +1868,7 @@ namespace boost {
       {
         return std::numeric_limits<vertex_descriptor>::max();
       }
-
+      
       inline vec_adj_list_impl() { }
 
       inline vec_adj_list_impl(const vec_adj_list_impl& x) {
