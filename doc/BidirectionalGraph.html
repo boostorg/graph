@@ -85,7 +85,11 @@ meet the requirements of <a href="../../utility/MultiPassInputIterator.html">Mul
 <TD>
 Returns an iterator-range providing access to the
 in-edges (for directed graphs) or incident edges (for
-undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.<br>
+undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.
+For both directed and undirected graphs, the target of
+an out-edge is required to be vertex <tt>v</tt> and the
+source is required to be a vertex that is adjacent to <tt>v</tt>.
+<br>
 Return type: <TT>std::pair&lt;in_edge_iterator, in_edge_iterator&gt;</TT>
 </TD>
 </TR>
