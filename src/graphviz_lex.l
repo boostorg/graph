@@ -71,7 +71,7 @@ ID        {VARIABLE}|{NUMBER}
 
 
 void begin_literal() {
-   literal = "\"";
+   literal = "";
 }
 
 void add_string(const char* str) {
@@ -79,7 +79,6 @@ void add_string(const char* str) {
 }
 
 void end_literal() {
-   literal += "\"";
 }
 
 void yyerror(char *str)

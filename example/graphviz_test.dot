@@ -1,20 +1,40 @@
 digraph G {
-  color=green;
-  graph [bgcolor=white]
-  node[shape=polygon,size=4,color=lightgrey];
 
-  edge[style=dashed color=blue]   //default edge attributes
+  
+  subgraph cluster0 {  //subgraph<Graph>
+    node [style=filled color=white];
+    style = filled;
+    color = lightgrey;
 
-  0 -> 1 -> 2 -> 3 [style=dotted];   //an edge
-//  3 -> 1 [label=I] ;
-	
-	//  subgraph two {  4 -> 5 }
-	
+    subgraph inner { //subgraph<Graph> or subgraph of subgraph
+	node [color = green];
+	a1 -> a2 -> a3 
+    };
 
-  2 -> subgraph two
+    a0 -> subgraph inner;
 
-  //1 [shape=circle, style=filled, label="Hello World\n From Rich"];
+    label = "process #1";
+  }
 
-   2 -> { 6 7 8 } -> 0
+  subgraph cluster1 {
+    node [style=filled];
+    b0 -> b1 -> b2 -> b3;
+    label = "process #2";
+    color = blue
+     b1  -> subgraph inner[style=dotted]; //this is odd, but it is allowed
+  }
 
+  subgraph cluster1 -> subgraph cluster0 [style=dotted]
+
+  start -> subgraph inner[style=dotted];
+
+  start -> a0;
+  start -> b0;
+  a1 -> b3;
+  b2 -> a3;
+  a3 -> end;
+  b3 -> end;
+
+  start [shape=Mdiamond];
+  end [shape=Msquare];
 }
