@@ -14,6 +14,8 @@
 %\newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.pdf}}\caption{#2}\label{fig:#1}\end{figure}}
 \newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.eps}}\caption{#2}\label{fig:#1}\end{figure}}
 
+% jweb -np isomorphism-impl.w; dot -Tps out.dot -o out.eps; dot -Tps in.dot -o in.eps; latex isomorphism-impl.tex; dvips isomorphism-impl.dvi -o isomorphism-impl.ps
+
 \setlength\overfullrule{5pt}
 \tolerance=10000
 \sloppy
@@ -102,9 +104,9 @@ IS\=O\=M\=O\=RPH($k$, $S$, $f_{k-1}$) $\equiv$ \\
 \>\>\>ISOMORPH($k+1$, $S \union \{ v \}$, $f_k$)\\
 \>\>\textbf{else}\\
 \>\>\>\textbf{return} false \\
+\\
+ISOMORPH($0$, $G_1$, $\emptyset$, $G_2$)
 \end{tabbing}
-
-%ISOMORPH($0$, $G_1$, $\emptyset$, $G_2$)
 
 The basic idea of the match operation is to check whether $G_1[k]$ is
 isomorphic to $G_2[S \union \{ v \}]$. We already know that $G_1[k-1]
@@ -114,31 +116,15 @@ correspond to the vertices connected by the edges in $E_2[S \union \{
 v \}] - E_2[S]$. The edges in $E_1[k] - E_1[k-1]$ are all the
 out-edges $(k,j)$ and in-edges $(j,k)$ of $k$ where $j$ is less than
 or equal to $k$ according to the ordering.  The edges in $E_2[S \union
-\{ v \}] - E_2[S]$ consists of all the out-edges $(v,f(j))$ and
-in-edges $(f(j),v)$ of $v$.
+\{ v \}] - E_2[S]$ consists of all the out-edges $(v,u)$ and
+in-edges $(u,v)$ of $v$ where $u \in S$.
 
 \begin{tabbing}
 M\=ATCH($k$, $v$) $\equiv$ \\
-\>$out \leftarrow \forall (k,j) \in E_1[k] - E_1[k-1] \Big( (v,f(j)) \in E_2[S \union \{
-v \}] - E_2[S] \Big)$ \\
-\>$in \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{
-v \}] - E_2[S]) \Big)$ \\
+\>$out \leftarrow \forall (k,j) \in E_1[k] - E_1[k-1] \Big( (v,f(j)) \in E_2[S \union \{ v \}] - E_2[S] \Big)$ \\
+\>$in \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{ v \}] - E_2[S] \Big)$ \\
 \>\textbf{return} $out \Land in$ 
 \end{tabbing}
-
-% For MATCH, do we have check going from G_2 to G_1 as well?
-
-% \begin{tabbing}
-% MA\=TC\=H(\=$i$\=, $v$) $\equiv$ \\
-% \>\textbf{for} each edge $(i, j) \in E_1[i] - E_1[k]$ \\
-% \>\>\textbf{if} ($k=i$) \\
-% \>\>\>\textbf{if} ( $(v,f(j)) \notin E_2[S \union \{ v \}] - E_2[S]$ ) \\
-% \>\>\>\>\textbf{return} false\\
-% \>\>\textbf{else if} ($k=j$) \\
-% \>\>\>\textbf{if} ( $(f(i),v) \notin E_2[S \union \{ v \}] - E_2[S]$ ) \\
-% \>\>\>\>\textbf{return} false\\
-% \end{tabbing}
-
 
 The problem with the exhaustive backtracking algorithm is that there
 are $N!$ possible vertex mappings, and $N!$ gets very large as $N$
@@ -174,8 +160,8 @@ help rule out vertices.
 
 \begin{tabbing}
 M\=A\=T\=C\=H-INVAR($k$, $v$) $\equiv$ \\
-\>$out \leftarrow \forall (k,j) \in Out[k] \Big( (v,f(j)) \in Out[v] \Land i(v) = i(k) \Big)$ \\
-\>$in \leftarrow \forall (j,k) \in In[k] \Big( (f(j),v) \in In[v]) \Land i(v) = i(k) \Big)$ \\
+\>$out \leftarrow \forall (k,j) \in E_1[k] - E_1[k-1] \Big( (v,f(j)) \in E_2[S \union \{ v \}] - E_2[S] \Land i(v) = i(k) \Big)$ \\
+\>$in \leftarrow \forall (j,k) \in E_1[k] - E_1[k-1] \Big( (f(j),v) \in E_2[S \union \{ v \}] - E_2[S] \Land i(v) = i(k) \Big)$ \\
 \>\textbf{return} $out \Land in$ 
 \end{tabbing}
 
@@ -219,14 +205,14 @@ with lowest invariant multiplicity.
 @d Isomorphism Function Interface
 @{
 template <typename Graph1, typename Graph2, 
-	  typename IndexMapping, typename VertexInvariant,
-	  typename IndexMap1, typename IndexMap2>
+          typename IndexMapping, typename VertexInvariant,
+          typename IndexMap1, typename IndexMap2>
 bool isomorphism(const Graph1& g1,
-		 const Graph2& g2,
-		 IndexMapping f,
-		 VertexInvariant invariant,
-		 IndexMap1 index_map1,
-		 IndexMap2 index_map2)
+                 const Graph2& g2,
+                 IndexMapping f,
+                 VertexInvariant invariant,
+                 IndexMap1 index_map1,
+                 IndexMap2 index_map2)
 @}
 
 
@@ -264,6 +250,7 @@ them here.
 
 @d Some type definitions and iterator declarations
 @{
+typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
 typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
 typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
@@ -351,7 +338,7 @@ invariants, and then check to see if they are equal.
   std::sort(invar1_tmp.begin(), invar1_tmp.end());
   std::sort(invar2_tmp.begin(), invar2_tmp.end());
   if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), 
-		   invar2_tmp.begin()))
+                   invar2_tmp.begin()))
     return false;
 }
 @}
@@ -383,8 +370,8 @@ std::vector<size_type> perm;
 integer_range<size_type> range(0, num_vertices(g1));
 std::copy(range.begin(), range.end(), std::back_inserter(perm));
 std::sort(perm.begin(), perm.end(),
-	  detail::compare_invariant_multiplicity(invar1_vec.begin(),
-						 invar_mult.begin()));
+          detail::compare_invariant_multiplicity(invar1_vec.begin(),
+                                                 invar_mult.begin()));
 
 typedef typename graph_traits<Graph1>::vertex_descriptor VertexG1;
 std::vector<VertexG1> g1_vertices;
@@ -393,9 +380,9 @@ for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
 permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 @}
 
-The definition of the \code{compare\_multiplicity} predicate is shown
-below. This predicate provides the glue that binds \code{std::sort} to
-our current purpose.
+\noindent The definition of the \code{compare\_multiplicity} predicate
+is shown below. This predicate provides the glue that binds
+\code{std::sort} to our current purpose.
 
 @d Compare multiplicity predicate
 @{
@@ -458,9 +445,9 @@ for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
       == color_traits<default_color_type>::white()) {
     depth_first_visit
       (g1, *ui, detail::record_dfs_order<Graph1, IndexMap1>(perm, 
-						       index_map1), 
+                                                       index_map1), 
        make_iterator_property_map(&color_vec[0], index_map1, 
-				  color_vec[0]));
+                                  color_vec[0]));
   }
 }
 @}
@@ -491,45 +478,61 @@ namespace detail {
 @}
 
 
-Need to explain why we need to do this. Has to do
-with how much of f is defined at each stage.
+In the MATCH operation, we need to examine all the edges in the set
+$E_1[k] - E_1[k-1]$. That is, we need to loop through all the edges of
+the form $(k,j)$ or $(j,k)$ where $j \leq k$. To do this efficiently,
+we create an array of all the edges in $G_1$ that has been sorted so
+that $E_1[k] - E_1[k-1]$ forms a contiguous range.  To each edge
+$e=(u,v)$ we assign the number $\max(u,v)$, and then sort the edges by
+this number. All the edges $(u,v) \in E_1[k] - E_1[k-1]$ can then be
+identified because $\max(u,v) = k$. The following code creates an
+array of edges and then sorts them. The \code{edge\_\-ordering\_\-fun}
+function object is described next.
 
 @d Order the edges by DFS discover time
 @{
 typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
 std::vector<edge1_t> edge_set;
 std::copy(edges(g1).first, edges(g1).second, 
-	  std::back_inserter(edge_set));
+          std::back_inserter(edge_set));
 
 std::sort(edge_set.begin(), edge_set.end(), 
-	  detail::isomorph_edge_ordering
-	  (make_iterator_property_map(perm.begin(), index_map1, 
-				      perm[0]), g1));
+          detail::edge_ordering
+          (make_iterator_property_map(perm.begin(), index_map1, perm[0]), g1));
 @}
+
+\noindent The \code{edge\_num} function computes the ordering number
+for an edge, which for edge $e=(u,v)$ is $\max(u,v)$. The
+\code{edge\_\-ordering\_\-fun} function object simply returns
+comparison of two edge's ordering numbers.
 
 @d Isomorph edge ordering predicate
 @{
 namespace detail {
-  template <class VertexIndexMap, class Graph>
-  struct isomorph_edge_ordering_predicate {
-    isomorph_edge_ordering_predicate(VertexIndexMap vip,
-				     const Graph& g)
+
+  template <typename VertexIndexMap, typename Graph>
+  std::size_t edge_num(const typename graph_traits<Graph>::edge_descriptor e,
+                       VertexIndexMap index_map, const Graph& g) {
+    return std::max(get(index_map, source(e, g)), get(index_map, target(e, g)));    
+  }
+
+  template <typename VertexIndexMap, typename Graph>
+  class edge_ordering_fun {
+  public:
+    edge_ordering_fun(VertexIndexMap vip, const Graph& g)
       : m_index_map(vip), m_g(g) { }
-    template <class Edge>
+    template <typename Edge>
     bool operator()(const Edge& e1, const Edge& e2) const {
-      return std::max(get(m_index_map, source(e1, m_g)), 
-		      get(m_index_map, target(e1, m_g)))
-	< std::max(get(m_index_map, source(e2, m_g)), 
-		   get(m_index_map, target(e2, m_g)));
+      return edge_num(e1, m_index_map, m_g) < edge_num(e2, m_index_map, m_g);
     }
     VertexIndexMap m_index_map;
     const Graph& m_g;
   };
   template <class VertexIndexMap, class G>
-  inline isomorph_edge_ordering_predicate<VertexIndexMap,G>
-  isomorph_edge_ordering(VertexIndexMap vip, const G& g)
+  inline edge_ordering_fun<VertexIndexMap,G>
+  edge_ordering(VertexIndexMap vip, const G& g)
   {
-    return isomorph_edge_ordering_predicate<VertexIndexMap,G>(vip, g);
+    return edge_ordering_fun<VertexIndexMap,G>(vip, g);
   }
 } // namespace detail
 @}
@@ -538,21 +541,19 @@ namespace detail {
 We are now ready to enter the main part of the algorithm, the
 backtracking search implemented by the \code{isomorph} function (which
 corresponds to the ISOMORPH algorithm).  The set $S$ is not
-represented directly. Instead of represent $V_2 - S$ as a bitset named
-\code{not\_in\_S}. Initially $S = \emptyset$ so $V_2 - S = V_2$.
-We use the permuted indices for the vertices of graph \code{g1}.
+represented directly; instead we represent $V_2 - S$.  Initially $S =
+\emptyset$ so $V_2 - S = V_2$.  We use the permuted indices for the
+vertices of graph \code{g1}.
 
 @d Invoke recursive \code{isomorph} function
 @{
-typename std::vector<VertexG1>::iterator first = g1_vertices.begin();
-typedef indirect_cmp<IndexMap2, std::less<size_type> >  Cmp;
-Cmp cmp(index_map2);
-typedef typename graph_traits<Graph2>::vertex_descriptor VertexG2;
-std::set<VertexG2, Cmp> not_in_S(cmp);
+typedef indirect_cmp<IndexMap2, std::less<size_type> >  cmp_t;
+cmp_t cmp(index_map2);
+std::set<vertex2_t, cmp_t> not_in_S(cmp);
 for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
   set_insert(not_in_S, *i2);
 
-return detail::isomorph(first, g1_vertices.end(), 
+return detail::isomorph(g1_vertices.begin(), g1_vertices.end(), 
       edge_set.begin(), edge_set.end(), g1, g2,
       make_iterator_property_map(perm.begin(), index_map1, perm[0]),
       index_map2, f, invar1, invar2, not_in_S);
@@ -574,12 +575,12 @@ template <class VertexIter, class EdgeIter, class Graph1, class Graph2,
   class IndexMap1, class IndexMap2, class IndexMapping, 
   class Invar1, class Invar2, class Set>
 bool isomorph(VertexIter k_iter, VertexIter last,
-	      EdgeIter edge_iter, EdgeIter edge_iter_end,
-	      const Graph1& g1, const Graph2& g2,
-	      IndexMap1 index_map1,
-	      IndexMap2 index_map2,
-	      IndexMapping f, Invar1 invar1, Invar2 invar2,
-	      const Set& not_in_S)
+              EdgeIter edge_iter, EdgeIter edge_iter_end,
+              const Graph1& g1, const Graph2& g2,
+              IndexMap1 index_map1,
+              IndexMap2 index_map2,
+              IndexMapping f, Invar1 invar1, Invar2 invar2,
+              const Set& not_in_S)
 @}
 
 \noindent The steps for this function are as follows.
@@ -619,15 +620,8 @@ if (k_iter == last)
 In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
 \in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
 approach is to directly iterate through all the potential matches for
-$k$, for this often is many fewer vertices than $V_2 - S$.  Let $M$
-denote the set of vertices that can be potentially matched to $k$. We
-define $M$ as follows:
-%
-\begin{align*}
-M &= out \intersect in \\ 
-out &= \Big\{ v \st \forall (k,j) \in Out[k] \Big( (v,f(j)) \in In[f(j)] \Land i(v) = i(k) \Land v \in V_2 - S \Big) \Big\} \\
-in &= \Big\{ v \st \forall (j,k) \in In[k] \Big( (f(j),v) \in Out[f(j)] \Land i(v) = i(k) \Land v \in V_2 - S \Big) \Big\}
-\end{align*}
+$k$, for this often is many fewer vertices than $V_2 - S$. 
+
 
 \noindent We use sorted vectors to store these sets and
 \code{std::set\_intersection} to implement $M \leftarrow out \intersect
@@ -639,10 +633,8 @@ std::vector<vertex2_t> potential_matches;
 std::copy(not_in_S.begin(), not_in_S.end(), std::back_inserter(potential_matches));
 
 for (; edge_iter != edge_iter_end; ++edge_iter) {
-  size_type a = get(index_map1, source(*edge_iter, g1)),
-       b = get(index_map1, target(*edge_iter, g1));	
-  if (get(index_map1, k) != std::max(a, b))
-    break;    	
+  if (get(index_map1, k) != edge_num(*edge_iter, index_map1, g1))
+    break;      
   std::vector<vertex2_t> tmp_matches;
 
   if (k == source(*edge_iter, g1)) { // (k,j)
@@ -673,14 +665,12 @@ for (tie(ei, ei_end) = in_edges(get(f, j), g2); ei != ei_end; ++ei) {
   if (invar1[k] == invar2[v])
     out.push_back(v);
 }
-
 // set_intersection requires sorted ranges
 indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
 std::sort(out.begin(), out.end(), cmp);
 std::set_intersection(out.begin(), out.end(),
-		      potential_matches.begin(), potential_matches.end(),
-		      std::back_inserter(tmp_matches),
-		      cmp);
+                      potential_matches.begin(), potential_matches.end(),
+                      std::back_inserter(tmp_matches), cmp);
 @}
 
 % Shoot, there is some problem with f(j). Could have to do with the
@@ -744,14 +734,12 @@ for (tie(ei, ei_end) = out_edges(get(f, j), g2); ei != ei_end; ++ei) {
   if (invar1[k] == invar2[v])
     in.push_back(v);
 }
-
 // set_intersection requires sorted ranges
 indirect_cmp<IndexMap2, std::less<std::size_t> > cmp(index_map2);
 std::sort(in.begin(), in.end(), cmp);
 std::set_intersection(in.begin(), in.end(),
-		      potential_matches.begin(), potential_matches.end(),
-		      std::back_inserter(tmp_matches), 
-		      cmp);
+                      potential_matches.begin(), potential_matches.end(),
+                      std::back_inserter(tmp_matches), cmp);
 @}
 
 \vizfig{in}{Computing the $in$ set.}
@@ -816,8 +804,8 @@ for (std::size_t j = 0; j < potential_matches.size(); ++j) {
   Set my_not_in_S(not_in_S);
   set_remove(my_not_in_S, potential_matches[j]);
   if (isomorph(boost::next(k_iter), last, edge_iter, edge_iter_end, g1, g2, 
-	       index_map1, index_map2, 
-	       my_f, invar1, invar2, my_not_in_S)) {
+               index_map1, index_map2, 
+               my_f, invar1, invar2, my_not_in_S)) {
     for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
       put(f, *i1, my_f[*i1]);
     return true;
@@ -853,8 +841,6 @@ code parts into namespace \code{boost}.
 #include <boost/pending/integer_range.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/depth_first_search.hpp>
-
-#define VERBOSE 1
 
 namespace boost {
 
