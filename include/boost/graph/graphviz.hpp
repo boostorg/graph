@@ -57,14 +57,9 @@ namespace boost {
     }
   };
 
-
-  struct default_graph_writer {
-    template <class Graph>
-    void operator()(std::ostream&, const Graph&) const {
-    }
-  };
-
   struct default_writer {
+    void operator()(std::ostream&) const {
+    }
     template <class VorE, class Graph>
     void operator()(std::ostream&, const VorE&, const Graph&) const {
     }
@@ -264,7 +259,7 @@ namespace boost {
   inline void 
   write_graphviz(std::ostream& out, const Graph& g) {
     default_writer dw;
-    default_graph_writer gw;
+    default_writer gw;
     write_graphviz(out, g, dw, dw, gw);
   }
 
@@ -272,7 +267,7 @@ namespace boost {
   inline void 
   write_graphviz(std::ostream& out, const Graph& g, VertexWriter vw) {
     default_writer dw;
-    default_graph_writer gw;
+    default_writer gw;
     write_graphviz(out, g, vw, dw, gw);
   }
 
@@ -280,7 +275,7 @@ namespace boost {
   inline void
   write_graphviz(std::ostream& out, const Graph& g, 
                  VertexWriter vw, EdgeWriter ew) {
-    default_graph_writer gw;
+    default_writer gw;
     write_graphviz(out, g, vw, ew, gw);
   }
 
@@ -353,7 +348,7 @@ namespace boost {
     std::vector<bool> edge_marker(num_edges(g), true);
     std::vector<bool> vertex_marker(num_vertices(g), true);
 
-    detail::write_graphviz_subgraph(out, g, g,
+    detail::write_graphviz_subgraph(out, g,
                                     vertex_marker.begin(),
                                     edge_marker.begin());
   }
@@ -365,16 +360,26 @@ namespace boost {
   }
 
   typedef std::map<std::string, std::string> GraphvizAttrList;
-  typedef boost::subgraph<boost::adjacency_list<boost::vecS, 
-    boost::vecS, boost::directedS, 
-    boost::property<boost::vertex_attribute_t, GraphvizAttrList>, 
-    boost::property<boost::edge_attribute_t, GraphvizAttrList, 
-    boost::property<boost::edge_index_t, int> >, 
-    boost::property<boost::graph_graph_attribute_t, GraphvizAttrList, 
-    boost::property<boost::graph_node_attribute_t, GraphvizAttrList, 
-    boost::property<boost::graph_edge_attribute_t, GraphvizAttrList, 
-    boost::property<boost::graph_name_t, std::string> > > > > >
-  GraphvizGraph;
+
+  typedef property<boost::vertex_attribute_t, GraphvizAttrList> 
+          GraphvizVertexProperty;
+
+  typedef property<boost::edge_attribute_t, GraphvizAttrList, 
+		   property<boost::edge_index_t, int> >
+          GraphvizEdgeProperty;
+  
+  typedef property<boost::graph_graph_attribute_t, GraphvizAttrList, 
+		   property<boost::graph_node_attribute_t, GraphvizAttrList, 
+		   property<boost::graph_edge_attribute_t, GraphvizAttrList, 
+		   property<boost::graph_name_t, std::string> > > >
+          GraphvizGraphProperty;
+    
+  typedef subgraph<adjacency_list<boost::vecS, 
+		   boost::vecS, boost::directedS, 
+		   GraphvizVertexProperty,
+		   GraphvizEdgeProperty,
+		   GraphvizGraphProperty> >
+          GraphvizGraph;
 
   // These two require linking the BGL-Graphviz library: libbgl-viz.a
   // from the /src directory.
