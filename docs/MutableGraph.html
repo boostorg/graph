@@ -63,7 +63,7 @@ edges and vertices.
 <TD><tt>p</tt></TD>
 <TD>is an object of a type that models <a
 href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>
-and whose argument type matches the edge descriptor type. 
+and whose argument type matches the <tt>edge_descriptor</tt> type. 
 </TR>
 
 </table>
@@ -248,6 +248,7 @@ is no longer a valid vertex descriptor.
       remove_out_edge_if(u, p, g);
     }
     G g;
+    typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     dummy_edge_predicate&lt;edge_descriptor&gt; p;
     typename boost::graph_traits&lt;G&gt;::vertex_descriptor u;
     typename boost::graph_traits&lt;G&gt;::out_edge_iterator iter;
@@ -261,6 +262,7 @@ is no longer a valid vertex descriptor.
       remove_in_edge_if(u, p, g);
     }
     G g;
+    typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     dummy_edge_predicate&lt;edge_descriptor&gt; p;
     typename boost::graph_traits&lt;G&gt;::vertex_descriptor u;
   };
@@ -273,6 +275,7 @@ is no longer a valid vertex descriptor.
       remove_edge_if(p, g);
     }
     G g;
+    typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     dummy_edge_predicate&lt;edge_descriptor&gt; p;
   };
 </PRE>
