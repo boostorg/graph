@@ -47,7 +47,7 @@ struct positive_edge_weight {
   positive_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
   template <typename Edge>
   bool operator()(const Edge& e) const {
-    return 0 < get(m_weight, e);
+    return 0 < boost::get(m_weight, e);
   }
   EdgeWeightMap m_weight;
 };
