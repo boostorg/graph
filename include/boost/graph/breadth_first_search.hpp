@@ -236,6 +236,36 @@ namespace boost {
        );
   }
 
+
+  // This version does not initialize colors, user has to.
+
+  template <class VertexListGraph, class P, class T, class R>
+  void breadth_first_visit
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     const bgl_named_params<P, T, R>& params)
+  {
+    typedef graph_traits<VertexListGraph> Traits;
+    // Buffer default
+    typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+    queue_t Q;
+    // ColorMap default
+    typename Traits::vertices_size_type
+      n = is_default_param(get_param(params, vertex_color)) ? 
+      num_vertices(g) : 0;
+
+    detail::wrap_ref<queue_t> Qref(Q);
+
+    breadth_first_search
+      (g, s,
+       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+       choose_param(get_param(params, graph_visitor),
+                    make_bfs_visitor(null_visitor())),
+       choose_pmap(get_param(params, vertex_color), g, vertex_color)
+       );
+  }
+
+
 } // namespace boost
 
 #endif /* BOOST_GRAPH_BFS_H */
