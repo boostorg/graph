@@ -82,6 +82,65 @@ namespace boost {
       return vertex_descriptor();
   }
 
+  //===========================================================================
+  // Some handy predicates
+
+  template <typename Vertex, typename Graph>
+  struct has_source_predicate {
+    has_source_predicate(Vertex u, const Graph& g)
+      : m_u(u), m_g(g) { }
+    template <class Edge>
+    bool operator()(const Edge& e) const {
+      return source(e, m_g) == m_u;
+    }
+    Vertex m_u;
+    const Graph& m_g;
+  };
+  template <typename Vertex, typename Graph>
+  inline has_source_predicate<Vertex, Graph>
+  has_source(Vertex u, const Graph& g) {
+    return has_source_predicate<Vertex, Graph>(u, g);
+  }
+  
+  template <typename Vertex, typename Graph>
+  struct has_target_predicate {
+    has_target_predicate(Vertex u, const Graph& g)
+      : m_u(u), m_g(g) { }
+    template <class Edge>
+    bool operator()(const Edge& e) const {
+      return target(e, m_g) == m_u;
+    }
+    Vertex m_u;
+    const Graph& m_g;
+  };
+  template <typename Vertex, typename Graph>
+  inline has_target_predicate<Vertex, Graph>
+  has_target(Vertex u, const Graph& g) {
+    return has_target_predicate<Vertex, Graph>(u, g);
+  }
+  
+  template <typename Vertex, typename Graph>
+  struct connects_predicate {
+    connects_predicate(Vertex u, Vertex v, const Graph& g)
+      : m_u(u), m_v(v), m_g(g) { }
+    template <class Edge>
+    bool operator()(const Edge& e) const {
+      if (is_directed(m_g))
+        return source(e, m_g) == m_u && target(e, m_g) == m_v;
+      else
+        return (source(e, m_g) == m_u && target(e, m_g) == m_v)
+          || (source(e, m_g) == m_v && target(e, m_g) == m_u);
+    }
+    Vertex m_u, m_v;
+    const Graph& m_g;
+  };
+  template <typename Vertex, typename Graph>
+  inline connects_predicate<Vertex, Graph>
+  connects(Vertex u, Vertex v, const Graph& g) {
+          return connects_predicate<Vertex, Graph>(u, v, g);
+  }
+
+
   // Need to convert all of these printing functions to take an ostream object
   // -JGS
 
@@ -219,7 +278,7 @@ namespace boost {
     for (e_size_t j = 0; j < E; ++j) {
       vertex_descriptor a = random_vertex(g), b;
       do {
-	b = random_vertex(g);
+        b = random_vertex(g);
       } while (self_edges == false && a == b);
       add_edge(a, b, g);
     }
@@ -240,14 +299,14 @@ namespace boost {
     typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
-    out_found = std::find(oi, oiend, edge_descriptor(a,b));
+    out_found = std::find_if(oi, oiend, has_target(b, g));
     if (out_found == oiend)
       return false;
 
     typename graph_traits<Graph>::in_edge_iterator ii, iiend, 
       in_found;
     boost::tie(ii, iiend) = in_edges(b, g);
-    in_found = std::find(ii, iiend, edge_descriptor(a,b));
+    in_found = std::find_if(ii, iiend, has_source(a, g));
     if (in_found == iiend)
       return false;
 
@@ -265,8 +324,8 @@ namespace boost {
     found = viend;
     for (; vi != viend; ++vi)
       if (*vi == b) {
-	found = vi;
-	break;
+        found = vi;
+        break;
       }
 #else
     found = std::find(vi, viend, b);
@@ -282,12 +341,12 @@ namespace boost {
     // Getting internal compiler error with std::find()
     out_found = oiend;
     for (; oi != oiend; ++oi)
-      if (*oi == edge_descriptor(a,b)) {
-	out_found = oi;
-	break;
+      if (target(*oi, g) == b) {
+        out_found = oi;
+        break;
       }
 #else
-    out_found = std::find(oi, oiend, edge_descriptor(a,b));
+    out_found = std::find_if(oi, oiend, has_target(b, g));
 #endif
     if (out_found == oiend)
       return false;
@@ -373,12 +432,12 @@ namespace boost {
       ui, ui_end, vi, vi_end, ci, ci_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-	if (*ui != *vi) {
-	  for (tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci) 
-	    put(color, *ci, Color::white());
-	  if (! is_reachable(*ui, *vi, color))
-	    return false;
-	}
+        if (*ui != *vi) {
+          for (tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci) 
+            put(color, *ci, Color::white());
+          if (! is_reachable(*ui, *vi, color))
+            return false;
+        }
     return true;
   }
 
