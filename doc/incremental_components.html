@@ -93,59 +93,58 @@ href="../example/incremental_components.cpp"><TT>examples/incremental_components
 
 <P>
 <PRE>
-  // Create a graph
-  typedef adjacency_list &lt;vecS, vecS, undirectedS&gt; Graph;
-  typedef Graph::vertex_descriptor Vertex;
-  const int N = 6;
-  Graph G(N);
-  add_edge(0, 1, G);
-  add_edge(1, 4, G);
+typedef adjacency_list &lt;vecS, vecS, undirectedS&gt; Graph;
+typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+typedef graph_traits&lt;Graph&gt;::vertices_size_type size_type;
 
-  // create the disjoint-sets structure, which requires
-  // rank and parent vertex properties
-  std::vector&lt;Vertex&gt; rank(num_vertices(G));
-  std::vector&lt;Vertex&gt; parent(num_vertices(G));
-  typedef std::vector&lt;Graph::size_type&gt;::iterator Rank;
-  typedef std::vector&lt;Vertex&gt;::iterator Parent;
-  disjoint_sets&lt;Rank, Parent&gt; ds(rank.begin(), parent.begin());
+const int N = 6;
+Graph G(N);
 
-  // determine the connected components
-  // the results are embedded in the disjoint-sets structure
-  initialize_incremental_components(G, ds);
-  incremental_components(G, ds);
+std::vector&lt;size_type&gt; rank(num_vertices(G));
+std::vector&lt;Vertex&gt; parent(num_vertices(G));
+typedef size_type* Rank;
+typedef Vertex* Parent;
+disjoint_sets&lt;Rank, Parent&gt;  ds(&amp;rank[0], &amp;parent[0]);
 
-  Graph::edge_descriptor e;
-  bool flag;
+initialize_incremental_components(G, ds);
+incremental_components(G, ds);
 
-  // Add a couple more edges and update the disjoint-sets
-  tie(e,flag) = add_edge(4, 0, G);
-  ds.union_set(4,0);
+graph_traits&lt;Graph&gt;::edge_descriptor e;
+bool flag;
+boost::tie(e,flag) = add_edge(0, 1, G);
+ds.union_set(0,1);
 
-  tie(e,flag) = add_edge(2, 5, G);
-  ds.union_set(2,5);
-    
-  cout &lt;&lt; "An undirected graph:" &lt;&lt; endl;
-  print_graph(G, get(vertex_index, G));
+boost::tie(e,flag) = add_edge(1, 4, G);
+ds.union_set(1,4);
+
+boost::tie(e,flag) = add_edge(4, 0, G);
+ds.union_set(4,0);
+
+boost::tie(e,flag) = add_edge(2, 5, G);
+ds.union_set(2,5);
+
+cout &lt;&lt; &quot;An undirected graph:&quot; &lt;&lt; endl;
+print_graph(G, get(vertex_index, G));
+cout &lt;&lt; endl;
+
+graph_traits&lt;Graph&gt;::vertex_iterator i,end;
+for (boost::tie(i, end) = vertices(G); i != end; ++i)
+  cout &lt;&lt; &quot;representative[&quot; &lt;&lt; *i &lt;&lt; &quot;] = &quot; &lt;&lt; 
+    ds.find_set(*i) &lt;&lt; endl;;
+cout &lt;&lt; endl;
+
+typedef component_index&lt;unsigned int&gt; Components;
+Components components(&amp;parent[0], &amp;parent[0] + parent.size());
+
+for (Components::size_type c = 0; c &lt; components.size(); ++c) {
+  cout &lt;&lt; &quot;component &quot; &lt;&lt; c &lt;&lt; &quot; contains: &quot;;
+  Components::value_type::iterator
+    j = components[c].begin(),
+    jend = components[c].end();
+  for ( ; j != jend; ++j)
+    cout &lt;&lt; *j &lt;&lt; &quot; &quot;;
   cout &lt;&lt; endl;
-    
-  Graph::vertex_iterator i,end;
-  for (tie(i,end) = vertices(G); i != end; ++i)
-    cout &lt;&lt; "representative[" &lt;&lt; *i &lt;&lt; "] = " &lt;&lt; 
-      ds.find_set(*i) &lt;&lt; endl;;
-  cout &lt;&lt; endl;
-
-  typedef component_index&lt;int&gt; Components;
-  Components components(parent.begin(), parent.end());
-
-  for (Components::size_type i = 0; i &lt; components.size(); ++i) {
-    cout &lt;&lt; "component " &lt;&lt; i &lt;&lt; " contains: ";
-    Components::value_type::iterator
-      j = components[i].begin(),
-      jend = components[i].end();
-    for ( ; j != jend; ++j)
-      cout &lt;&lt; *j &lt;&lt; " ";
-    cout &lt;&lt; endl;
-  }
+}
 </PRE>
 
 <P>
