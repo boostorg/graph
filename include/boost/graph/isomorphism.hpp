@@ -18,7 +18,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/utility.hpp>
-#include <boost/graph/detail/algorithm.hpp>
+#include <boost/detail/algorithm.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 
 namespace boost {
