@@ -28,17 +28,17 @@
 <P>
 <PRE>
 <i>// named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
-void prim_minimum_spanning_tree(VertexListGraph&amp; g,
-  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+template &lt;class Graph, class P, class T, class R&gt;
+void prim_minimum_spanning_tree(Graph&amp; g,
+  typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
   const bgl_named_params&lt;P, T, R&gt;&amp; params)
 
 <i>// non-named parameter version</i>
-template &lt;class VertexListGraph, class DijkstraVisitor, 
+template &lt;class Graph, class DijkstraVisitor, 
 	  class PredecessorMap, class DistanceMap,
 	  class WeightMap, class IndexMap&gt;
-void prim_minimum_spanning_tree(const VertexListGraph&amp; g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+void prim_minimum_spanning_tree(const Graph&amp; g,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
    IndexMap index_map, DijkstraVisitor vis)
 </PRE>
@@ -131,10 +131,11 @@ finish <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>const VertexListGraph&amp; g</tt> 
+IN: <tt>const Graph&amp; g</tt> 
 <blockquote>
-  An undirected graph. The type <tt>VertexListGraph</tt> must be a
-  model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  An undirected graph. The type <tt>Graph</tt> must be a
+  model of <a href="./VertexListGraph.html">Vertex List Graph</a>
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
 </blockquote>
 
 OUT: <tt>PredecessorMap p_map</tt>
