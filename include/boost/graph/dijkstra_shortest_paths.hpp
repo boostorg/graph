@@ -171,6 +171,7 @@ namespace boost {
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
         put(distance, *ui, init());
         put(predecessor, *ui, *ui);
+	vis.initialize(*ui, g);
       }
       put(distance, s, zero());
       
