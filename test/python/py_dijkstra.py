@@ -67,7 +67,7 @@ E = g.add_vertex()
 name[E] = "E"
 
 # Create (weighted) edges in the graph
-weight = g.get_edge_double_map("weight")
+weight = g.get_edge_double_map("label")
 weight[g.add_edge(A, C)] = 1
 weight[g.add_edge(B, B)] = 2
 weight[g.add_edge(B, D)] = 1
@@ -101,7 +101,8 @@ class show_relaxed_edges(bgl.Digraph.DijkstraVisitor):
 # Run Dijkstra's algorithm to compute shortest paths
 distance2 = g.get_vertex_double_map("distance_from_A_also");
 bgl.dijkstra_shortest_paths(g, A, distance_map = distance2, 
-                            visitor=show_relaxed_edges());
+                            visitor=show_relaxed_edges(),
+                            weight_map = g.get_edge_double_map("label"));
                                
 # Emit graph
 g.write_graphviz("dijkstra-example.dot")
