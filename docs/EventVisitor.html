@@ -31,7 +31,9 @@ of the visitor for an algorithm. For example, the <a
 href="./BFSVisitor.html">BFSVisitor</a> of <a
 href="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>
 has a <tt>cycle_edge()</tt> member function. The corresponding tag is
-<tt>on_cycle_edge</tt>.
+<tt>on_cycle_edge</tt>. The first argument is the event visitor's
+<tt>operator()</tt> must be either an edge or vertex descriptor
+depending on the event tag.
 
 <pre>
 namespace boost {
@@ -51,6 +53,76 @@ namespace boost {
 } // namespace boost
 </pre>
 
+<h3>Creating an EventVisitorList</h3>
+
+Often times one would like to use multiple single-event vistors in a
+call to a particular algorithm. In the following example we will show
+how to combine event visitors into a list using <tt>std::pair</tt> and
+the algorithm's visitor adaptor class.
+
+<p>
+Suppose we would like to print out the parenthesis
+structure of the discover/finish times of vertices in a <a
+href="./graph_theory_review.html#sec:dfs-algorithm">depth-first
+search</a>. We can use the BGL algorithm <a
+href="./depth_first_search.html"><tt>depth_first_search()</tt></a> and
+two event visitors to accomplish this. The complete source code for
+the following example is in <a href="../examples/dfs_parenthesis.cpp">
+<tt>examples/dfs_parenthesis.cpp</tt></a>. First we define the two
+event visitors. We use <tt>on_discover_vertex</tt> and
+<tt>on_finish_vertex</tt> as the event points, selected from the list
+of event points specified in <a
+href="./DFSVisitor.html">DFSVisitor</a>.
+
+<pre>
+struct open_paren : public base_visitor&lt;open_paren&gt; {
+  typedef on_discover_vertex event_filter;
+  template &lt;class Vertex, class Graph&gt;
+  void operator()(Vertex v, Graph& G) {
+    std::cout &lt;&lt; "(" &lt;&lt; v;
+  }
+};
+struct close_paren : public base_visitor&lt;close_paren&gt; {
+  typedef on_finish_vertex event_filter;
+  template &lt;class Vertex, class Graph&gt;
+  void operator()(Vertex v, Graph& G) {
+    std::cout &lt;&lt; v &lt;&lt; ")";
+  }
+};
+</pre>
+
+Next we create two event visitor objects and make an EventVisitorList
+out of them using a <tt>std::pair</tt> which created by
+<tt>std::make_pair</tt>.
+
+<pre>
+std::make_pair(open_paren(), close_paren())
+</pre>
+
+Next we want to pass this list into <tt>depth_first_search()</tt>, but
+<tt>depth_first_search()</tt> is expecting a <a
+href="./DFSVisitor.html">DFSVisitor</a>, not a EventVisitorList.  We
+therefore use the <a
+href="./dfs_visitor.html"><tt>dfs_visitor</tt></a> adaptor which turns
+an EventVisitor list into a DFSVisitor. Like all of the visitor
+adaptors, <tt>dfs_visitor</tt> has a creation function called
+<tt>make_dfs_visitor()</tt>.
+
+<pre>
+make_dfs_visitor(std::make_pair(open_paren(), close_paren()))
+</pre>
+
+Now we can pass the resulting visitor object into
+<tt>depth_first_search()</tt> as follows.
+
+<pre>
+  // graph object G is created ...
+
+  std::vector&lt;default_color_type&gt; color(num_vertices(G));
+
+  depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), close_paren())),
+		     color.begin());
+</pre>
 
 <h3>Refinement of</h3>
 
@@ -68,6 +140,16 @@ none
 <TR>
 <TD><tt>g</tt></TD>
 <TD>An object of type <tt>G</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>V</tt></TD>
+<TD>A type that is a model of EventVisitor.</TD>
+</TR>
+
+<TR>
+<TD><tt>vis</tt></TD>
+<TD>An object of type <tt>V</tt>.</TD>
 </TR>
 
 <TR>
@@ -103,7 +185,7 @@ A tag struct to specify on which event the visitor should be invoked.
 
 <tr>
 <td>Apply Visitor</td>
-<td><TT>operator(x, g)</TT></TD>
+<td><TT>vis(x, g)</TT></TD>
 <TD><TT>void</TT></TD>
 <TD>
 Invokes the visitor operation on object <tt>x</tt>, which is
@@ -113,3 +195,37 @@ either a vertex or edge descriptor of the graph.
 
 
 </table>
+
+
+<h3>Models</h3>
+
+<ul>
+ <li><a
+ href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
+ <li><a href="./distance_recorder.html"><tt>distance_recorder</tt></a>
+ <li><a href="./time_stamper.html"><tt>time_stamper</tt></a>
+ <li><a href="./property_writer.html"><tt>property_writer</tt></a>
+ <li><a href="./null_visitor.html"><tt>null_visitor</tt></a>
+</ul>
+
+<h3>See Also</h3>
+
+<a href="./visitor_concepts.html">Visitor concepts</a>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~llee1>Lie-Quan Lee</A>, Univ.of Notre Dame (<A HREF="mailto:llee1@lsc.nd.edu">llee1@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~lums>Andrew Lumsdaine</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 
