@@ -423,39 +423,39 @@ graph <tt>g</tt>.
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>&gt;
-property_map&lt;filtered_graph, Property&gt;::type
-get(Property, filtered_graph&amp; g)
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
+property_map&lt;filtered_graph, PropertyTag&gt;::type
+get(PropertyTag, filtered_graph&amp; g)
 
-template &lt;class <a href="./Property.html">Property</a>&gt;
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
 property_map&lt;filtered_graph, Tag&gt;::const_type
-get(Property, const filtered_graph&amp; g)
+get(PropertyTag, const filtered_graph&amp; g)
 </pre>
 Returns the property map object for the vertex property specified by
-<TT>Property</TT>. The <TT>Property</TT> must match one of the
+<TT>PropertyTag</TT>. The <TT>PropertyTag</TT> must match one of the
 properties specified in the graph's <TT>VertexProperty</TT> template
 argument.
 
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>, class X&gt;
-typename property_traits&lt;property_map&lt;filtered_graph, Property&gt;::const_type&gt::value_type
-get(Property, const filtered_graph&amp; g, X x)
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X&gt;
+typename property_traits&lt;property_map&lt;filtered_graph, PropertyTag&gt;::const_type&gt::value_type
+get(PropertyTag, const filtered_graph&amp; g, X x)
 </pre>
 This returns the property value for <tt>x</tt>, where <tt>x</tt> is either
 a vertex or edge descriptor.
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>, class X, class Value&gt;
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X, class Value&gt;
 void
-put(Property, const filtered_graph&amp; g, X x, const Value& value)
+put(PropertyTag, const filtered_graph&amp; g, X x, const Value& value)
 </pre>
 This sets the property value for <tt>x</tt> to
 <tt>value</tt>. <tt>x</tt> is either a vertex or edge descriptor.
 <tt>Value</tt> must be convertible to
-<tt>typename property_traits&lt;property_map&lt;filtered_graph, Property&gt;::type&gt::value_type</tt>
+<tt>typename property_traits&lt;property_map&lt;filtered_graph, PropertyTag&gt;::type&gt::value_type</tt>
 
 <hr>
 
