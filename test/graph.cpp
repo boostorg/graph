@@ -6,7 +6,7 @@
 #include <utility>
 #include <algorithm>
 
-#define VERBOSE 0
+#define VERBOSE 1
 
 #include <boost/utility.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -147,7 +147,8 @@ int main(int, char* [])
     add_vertex(current_vertex_id++, g);
 
   // also need to test EdgeIterator graph constructor -JGS
-
+  mt19937 gen;
+    
   for (j=0; j < 10; ++j) {
 
     // add_edge
@@ -156,9 +157,10 @@ int main(int, char* [])
 #endif
     for (i=0; i < 6; ++i) {
       Vertex a, b;
-      a = random_vertex(g);
+      std::cout << "getting random vertex" << std::endl;
+      a = random_vertex(g, gen);
       do {
-	b = random_vertex(g);
+	b = random_vertex(g, gen);
       } while ( a == b ); // don't do self edges
 #if VERBOSE
       cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] <<")" << endl; 
@@ -173,6 +175,7 @@ int main(int, char* [])
       std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
       print_edges2(g, vertex_id_map, edge_id_map);
       print_graph(g, vertex_id_map);
+      std::cout << "finished printing" << std::endl;
       //      print_in_edges(g, vertex_id_map);
 #endif
       if (! check_edge_added(g, e, a, b, edge_id_map, 
@@ -180,6 +183,7 @@ int main(int, char* [])
 	ret = -1;
 	break;
       }
+      std::cout << "finished check" << std::endl;
       ++E;
     }
 
@@ -192,7 +196,8 @@ int main(int, char* [])
       print_edges(g, vertex_id_map);
 #endif
       Vertex a, b;
-      Edge e = random_edge(g);
+      
+      Edge e = random_edge(g, gen);
       boost::tie(a,b) = boost::incident(e, g);
       --E;
 #if VERBOSE
@@ -229,7 +234,7 @@ int main(int, char* [])
       print_edges(g, vertex_id_map);
 #endif
       Vertex a, b;
-      Edge e = random_edge(g);
+      Edge e = random_edge(g, gen);
       boost::tie(a,b) = boost::incident(e, g);
       --E;
 #if VERBOSE
@@ -357,10 +362,11 @@ int main(int, char* [])
 #if VERBOSE
     cerr << "Testing add_edge after add_vertex ..." << endl; is_failed = false;
 #endif
+
     for (i=0; i<2; ++i) {
-      Vertex a = random_vertex(g), b = random_vertex(g);
-      while ( a == vid ) a = random_vertex(g);
-      while ( b == vidp1 ) b = random_vertex(g);
+      Vertex a = random_vertex(g, gen), b = random_vertex(g, gen);
+      while ( a == vid ) a = random_vertex(g, gen);
+      while ( b == vidp1 ) b = random_vertex(g, gen);
       Edge e; 
       bool inserted;
 #if VERBOSE
@@ -391,7 +397,7 @@ int main(int, char* [])
     }
     
     // clear_vertex
-    Vertex c = random_vertex(g);
+    Vertex c = random_vertex(g, gen);
 #if VERBOSE
     cerr << "Testing clear vertex ..." << endl; is_failed = false;
     print_graph(g, vertex_id_map);
