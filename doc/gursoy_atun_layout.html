@@ -1,6 +1,19 @@
 <HTML>
 <Head>
 <Title>Boost Graph Library: Gursoy-Atun Layout</Title>
+<script language="JavaScript" type="text/JavaScript">
+<!--
+function address(host, user) {
+        var atchar = '@';
+        var thingy = user+atchar+host;
+        thingy = '<a hre' + 'f=' + "mai" + "lto:" + thingy + '>' + user+atchar+host + '</a>';
+        document.write(thingy);
+}
+//-->
+</script>
+</head>
+
+
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -54,10 +67,10 @@ template&lt;typename RandomNumberGenerator = minstd_rand&gt; class <a href="#hea
 <h3>Description</h3>
 
 <P> This algorithm&nbsp;[<A HREF="bibliography.html#gursoy00">60</A>]
-performs layout of undirected, weighted or weighted graphs. This
-algorithm is very different from either the <a
-href="kamada_kawai_spring_layout.html">Kamada-Kawai</a> or <a
-href="fruchterman_reingold.html">Fruchternman-Reingold</a> algorithms,
+performs layout of directed graphs, either weighted or unweighted. This
+algorithm is very different from the <a
+href="kamada_kawai_spring_layout.html">Kamada-Kawai</a> and <a
+href="fruchterman_reingold.html">Fruchterman-Reingold</a> algorithms,
 because it does not explicitly strive to layout graphs in a visually
 pleasing manner. Instead, it attempts to distribute the vertices
 uniformly within a <em>topology</em> (e.g., rectangle, sphere, heart shape),
@@ -75,7 +88,7 @@ href="#sphere_topology">sphere topology</a> (or N-dimensional <a
 href="#ball_topology">ball topology</a>) make sense for different
 problems, whereas the <a href="#heart_topology">heart topology</a> is
 just plain fun. One can also <a href="#topology-concept">define a
-topology</a> to suit other particular needs.
+topology</a> to suit other particular needs. <br>
 
 <a href="#square_topology"><img src="figs/ga-square.png"></a>
 <a href="#heart_topology"><img src="figs/ga-heart.png"></a>
@@ -127,7 +140,7 @@ IN: <tt>double diameter_initial</tt>
   <tt>diameter_final</tt> in the last iteration, progressing
   exponentially. Generally the diameter decreases, in a manner similar to
   the cooling schedule in <a
-href="fruchterman_reingold.html">Fruchternman-Reingold</a>. The
+href="fruchterman_reingold.html">Fruchterman-Reingold</a>. The
 diameter should typically decrease in later iterations, so this value
 should not be less than <tt>diameter_final</tt>.<br>
   <b>Default</b>: <tt>sqrt((double)num_vertices(g))</tt>
@@ -141,12 +154,12 @@ IN: <tt>double diameter_final</tt>
 
 IN: <tt>double learning_constant_initial</tt>
 <blockquote>
-  The learning rate affects how much vertices can rearrange themselves
-  in a given iteration. The learning rate progresses linearly from the
-  initial value to the final value, both of which should be between 0
-  and 1. The learning rate should typically decrease, so the initial
-  value should not exceed the final value.<br>
-  <b>Default</b>: 0.8
+  The learning rate affects how far vertices can moved to rearrange
+  themselves in a given iteration. The learning rate progresses
+  linearly from the initial value to the final value, both of which
+  should be between 0 and 1. The learning rate should typically
+  decrease, so the initial value should not exceed the final
+  value.<br> <b>Default</b>: 0.8
 </blockquote>
 
 IN: <tt>double learning_constant_final</tt>
@@ -240,7 +253,7 @@ below). The following expressions must be valid:
   <tr>
     <td><tt>space.random_point()</tt></td>
     <td>point_type</td>
-    <td>Returns a random point (usually randomly distributed) within
+    <td>Returns a random point (usually uniformly distributed) within
     the space.</td>
   </tr>
   <tr>
@@ -250,7 +263,7 @@ below). The following expressions must be valid:
     and <tt>p2</tt> using a path going completely inside the space.
     This only needs to have the same &lt; relation as actual
     distances, and does not need to satisfy the other properties of a
-    norm in a Banach space</td>
+    norm in a Banach space.</td>
   </tr>
   <tr>
     <td><tt>space.move_position_toward(p1, fraction, p2)</tt></td>
@@ -424,11 +437,10 @@ class heart_topology
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2004</TD><TD>
-Jeremiah Willcock, Indiana University<br>  
-<A HREF="../../../people/doug_gregor.html">Doug Gregor</A>, Indiana University (dgregor -at- cs.indiana.edu)<br>
+Jeremiah Willcock, Indiana University (<script language="Javascript">address("osl.iu.edu", "jewillco")</script>)<br>
+<A HREF="../../../people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
   <A HREF=http://www.osl.iu.edu/~lums>Andrew Lumsdaine</A>,
-Indiana University (<A
-HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
+Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
 </TD></TR></TABLE>
 
 </BODY>

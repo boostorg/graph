@@ -31,22 +31,6 @@
 
 namespace boost { 
 
-// Concept for Topology parameter:
-// Let Topology be a topology and space an object of type Topology.  The
-// following expressions must be valid:
-// type Topology::point_type -- type of points in the space
-// point_type space.random_point() -- get a random point (usually uniformly
-//   distributed) in the space
-// double space.distance(point_type p1, point_type p2) -- get a quantity
-//   representing the distance between p1 and p2 using a path going
-//   completely inside the space.  This only needs to have the same < as
-//   actual distances, and does not need to satisfy the other properties of
-//   a norm in a Banach space
-// point_type move_position_toward(point_type p1, double fraction, 
-//				   point_type p2) -- return a new point
-//   which is fraction (which must be between 0 and 1, inclusive) of the
-//   way from p1 to p2 on the line segment connecting these two points
-
 namespace detail {
 
 struct over_distance_limit : public std::exception {};
@@ -63,7 +47,7 @@ struct update_position_visitor {
   double learning_constant;
   double falloff_ratio;
 
-  typedef boost::on_discover_vertex event_filter;
+  typedef boost::on_examine_vertex event_filter;
 
   typedef typename graph_traits<Graph>::vertex_descriptor
     vertex_descriptor;
