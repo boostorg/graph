@@ -48,8 +48,69 @@ Spanning Tree Problem</A> for more details. The implementation is
 simply a call to <a
 href="./dijkstra_shortest_paths.html"><TT>dijkstra_shortest_paths()</TT></a>
 with the appropriate choice of comparison and combine functors.
+The pseudo-code for Prim's algorithm is listed below.
+</p>
 
-<P>
+<table>
+<tr>
+<td valign="top">
+<pre>
+PRIM-MST(<i>G</i>, <i>s</i>, <i>w</i>)
+  <b>for</b> each vertex <i>u</i> <i>in</i> <i>V[G]</i>  
+    <i>color[u] :=</i> WHITE
+    <i>d[u] :=</i> <i>infinity</i>  
+  <i>color[s] :=</i> GRAY
+  <i>d[s] := 0</i> 
+  ENQUEUE(<i>PQ</i>, <i>s</i>)  
+  <i>p[s] := s</i> 
+  <b>while</b> (<i>PQ != &Oslash;</i>) 
+    <i>u :=</i> DEQUEUE(<i>PQ</i>)
+    <b>for</b> each <i>v in Adj[u]</i>  
+      <b>if</b> (<i>w(u,v) < d[v]</i>)
+        <i>d[v] := w(u,v)</i>
+        <i>p[v] := u</i> 
+        <b>if</b> (<i>color[v] = </i> WHITE) 
+          ENQUEUE(<i>PQ</i>, <i>v</i>) 
+          <i>color[v] :=</i> GRAY 
+        <b>else if</b> (<i>color[v] = </i> GRAY) 
+          UPDATE(<i>PQ</i>, <i>v</i>) 
+      <b>else</b> 
+        do nothing
+    <b>end for</b>
+    <i>color[u] :=</i> BLACK
+  <b>end while</b>
+  <b>return</b> (<i>p</i>, <i>d</i>)
+</pre>
+</td>
+<td valign="top">
+<pre>
+
+initialize vertex <i>u</i>
+
+
+
+start vertex <i>s</i>
+discover vertex <i>s</i> 
+
+
+examine vertex <i>u</i>
+examining edge <i>(u,v)</i> 
+
+edge <i>(u,v)</i> relaxed
+
+
+discover vertex <i>v</i>
+
+
+
+
+edge <i>(u,v)</i> not relaxed 
+
+finish <i>u</i>
+</pre>
+</tr>
+</table>
+
 
 <H3>Where Defined</H3>
 
@@ -66,13 +127,28 @@ IN: <tt>const VertexListGraph&amp; g</tt>
   model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
 </blockquote>
 
-IN: <tt>vertex_descriptor s</tt> 
+OUT: <tt>PredecessorMap p_map</tt>
 <blockquote>
-  The source vertex. All distance will be calculated from this vertex,
-  and the shortest paths tree will be rooted at this vertex.
+  The predecessor map records the edges in the minimum spanning
+  tree. Upon completion of the algorithm, the edges 
+  <i>(p[u],u)</i> for all <i>u in V</i> are in the minimum spanning
+  tree. If <i>p[u] = u</i> then <i>u</i> is either the root of the
+  tree or is a vertex that is not reachable from the root.
+  The <tt>PredecessorMap</tt> type must be a <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>
+  with key and vertex types the same as the vertex descriptor type
+  of the graph.
 </blockquote>
 
 <h3>Named Parameters</h3>
+
+IN: <tt>root_vertex(vertex_descriptor r)</tt>
+<blockquote>
+  The vertex that will be the root of the minimum spanning tree.
+  The choice of the root vertex is arbitrary.
+  <b>Default:</b> <tt>*vertices(g).first</tt>
+</blockquote>
 
 IN: <tt>weight_map(WeightMap w_map)</tt>   
 <blockquote>
@@ -95,20 +171,6 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>
-</blockquote>
-
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
-<blockquote>
-  The predecessor map records the edges in the minimum spanning
-  tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
-  for all <i>u in V</i> are in the minimum spanning tree. If <i>p[u] =
-  u</i> then <i>u</i> is either the source vertex or a vertex that is
-  not reachable from the source.  The <tt>PredecessorMap</tt> type
-  must be a <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> which key and vertex types the same as the vertex
-  descriptor type of the graph.<br>
-  <b>Default:</b> <tt>dummy_property_map</tt>
 </blockquote>
 
 UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
