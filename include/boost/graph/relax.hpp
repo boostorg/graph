@@ -29,15 +29,20 @@
 #define BOOST_GRAPH_RELAX_HPP
 
 #include <functional>
-#include <boost/limits.hpp>
+#include <boost/limits.hpp> // for numeric limits
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map.hpp>
+
+#include <cstdlib>  // for abs
+#ifdef BOOST_NO_STDC_NAMESPACE
+namespace std { using ::abs; }
+#endif
 
 namespace boost {
 
     // warning: when weight of e is size_t and weight of e is
     // close to max of size_t, du + wuv will overflow. To avoid
-    // this, Be careful about the value of weight. If it is larger
+    // this, be careful about the value of weight. If it is larger
     // than the half of current max of the type, change the type of
     // weight to have more bytes.
     
