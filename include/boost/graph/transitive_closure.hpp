@@ -75,6 +75,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::adjacency_iterator 
       adjacency_iterator;
 
+    function_requires< VertexListGraphConcept<Graph> >();
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< VertexMutableGraphConcept<GraphTC> >();
     function_requires< EdgeMutableGraphConcept<GraphTC> >();
