@@ -36,14 +36,14 @@ dijkstra_shortest_paths(VertexListGraph&amp; g,
 <i>// non-named parameter version</i>
 template &lt;typename <a href="./VertexListGraph.html">VertexListGraph</a>, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
 	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename IndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Compare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Combine</a>, 
+	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>, 
 	  typename DistInf, typename DistZero&gt;
 void dijkstra_shortest_paths
   (const VertexListGraph&amp; g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-   IndexMap index_map,
-   Compare compare, Combine combine, DistInf inf, DistZero zero,
+   VertexIndexMap index_map,
+   CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
    DijkstraVisitor vis)
 </PRE>
 
@@ -182,7 +182,8 @@ finish vertex <i>u</i>
 IN: <tt>const VertexListGraph&amp; g</tt> 
 <blockquote>
   The graph object on which the algorithm will be applied.
-  The type <tt>VertexListGraph</tt> must be a model of \concept{VertexListGraph}.
+  The type <tt>VertexListGraph</tt> must be a model of 
+  <a href="./VertexListGraph.html">Vertex List Graph</a>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt> 
@@ -300,8 +301,9 @@ IN: <tt>distance_zero(D zero)</tt>
   The <tt>zero</tt> value must be the identity element for the
   <a href="./Monoid.html">Monoid</a> formed by the distance values
   and the <tt>combine</tt> function object.
-  The type \code{D} is the value type of the \code{DistanceMap}
-  <b>Default:</b> <tt>D()</tt>
+  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
+  <b>Default:</b> <tt>D()</tt>with
+   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
