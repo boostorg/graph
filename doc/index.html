@@ -61,9 +61,14 @@ which you can <a href="http://sourceforge.net/project/showfiles.php?group_id=758
 download from here</a>.
 
 <H2>How to Build the BGL</H2>
-<b>DON'T!</b> The Boost Graph Library is a header-only library and
+<p><b>DON'T!</b> The Boost Graph Library is a header-only library and
 does not need to be built to be used. The only exception is the <a
-href="read-graphviz.html">GraphViz input parser</a>.
+href="read-graphviz.html">GraphViz input parser</a>.</p>
+
+<p>When compiling programs that use the BGL, <b>be sure to compile
+with optimization</b>. For instance, select "Release" mode with
+Microsoft Visual C++ or supply the flag <tt>-O2</tt> or <tt>-O3</tt>
+to GCC. </p>
 
 <H2>Genericity in STL</H2>
 
