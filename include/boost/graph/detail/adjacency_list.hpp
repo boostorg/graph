@@ -2039,32 +2039,28 @@ namespace boost {
     //=========================================================================
     // Vertex Property Maps
 
-    template <class Graph, class Property, class Tag>
+    template <class Graph, class ValueType, class Reference, class Tag>
     struct adj_list_vertex_property_map
       : public boost::put_get_at_helper<
-          typename property_value<Property,Tag>::type,
-          adj_list_vertex_property_map<Graph, Property, Tag>
+          ValueType,
+          adj_list_vertex_property_map<Graph, ValueType, Reference, Tag>
         >
     {
       typedef typename Graph::stored_vertex StoredVertex;
-      typedef typename property_value<Property, Tag>::type value_type;
+      typedef ValueType value_type;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       inline adj_list_vertex_property_map(Graph&) { }
-      inline value_type& operator[](key_type v) {
-        StoredVertex* sv = (StoredVertex*)v;
-        return get_property_value(sv->m_property, value_type(), Tag());
-      }
-      inline const value_type& operator[](key_type v) const {
+      inline Reference operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
         return get_property_value(sv->m_property, value_type(), Tag());
       }
     };
 
-    template <class Graph, class Property>
+    template <class Graph, class Property, class PropRef>
     struct adj_list_vertex_all_properties_map
       : public boost::put_get_at_helper<Property,
-          adj_list_vertex_all_properties_map<Graph, Property>
+          adj_list_vertex_all_properties_map<Graph, Property, PropRef>
         >
     {
       typedef typename Graph::stored_vertex StoredVertex;
@@ -2072,52 +2068,44 @@ namespace boost {
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       inline adj_list_vertex_all_properties_map(Graph&) { }
-      inline value_type& operator[](key_type v) {
-        StoredVertex* sv = (StoredVertex*)v;
-        return sv->m_property;
-      }
-      inline const value_type& operator[](key_type v) const {
+      inline PropRef operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
         return sv->m_property;
       }
     };
 
-    template <class Graph, class GraphRef, class Property, class Tag>
+    template <class Graph, class GraphRef, class ValueType, class Reference,
+              class Tag>
     struct vec_adj_list_vertex_property_map
       : public boost::put_get_at_helper<
-          typename property_value<Property,Tag>::type,
-          vec_adj_list_vertex_property_map<Graph,GraphRef,Property,Tag>
+          ValueType,
+          vec_adj_list_vertex_property_map<Graph,GraphRef,ValueType,Reference,
+             Tag>
         >
     {
-      typedef typename property_value<Property,Tag>::type value_type;
+      typedef ValueType value_type;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
-      inline value_type& operator[](key_type v) {
-        return get_property_value(m_g.m_vertices[v].m_property, 
-                                value_type(), Tag());
-      }
-      inline const value_type& operator[](key_type v) const {
+      inline Reference operator[](key_type v) const {
         return get_property_value(m_g.m_vertices[v].m_property, 
                                 value_type(), Tag());
       }
       GraphRef m_g;
     };
 
-    template <class Graph, class GraphRef, class Property>
+    template <class Graph, class GraphRef, class Property, class PropertyRef>
     struct vec_adj_list_vertex_all_properties_map
       : public boost::put_get_at_helper<Property,
-          vec_adj_list_vertex_all_properties_map<Graph,GraphRef,Property>
+          vec_adj_list_vertex_all_properties_map<Graph,GraphRef,Property,
+            PropertyRef>
         >
     {
       typedef Property value_type;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_all_properties_map(GraphRef g) : m_g(g) { }
-      inline value_type& operator[](key_type v) {
-        return m_g.m_vertices[v].m_property;
-      }
-      inline const value_type& operator[](key_type v) const {
+      inline PropertyRef operator[](key_type v) const {
         return m_g.m_vertices[v].m_property;
       }
       GraphRef m_g;
@@ -2126,18 +2114,24 @@ namespace boost {
     struct adj_list_any_vertex_pa {
       template <class Tag, class Graph, class Property>
       struct bind {
+	typedef typename property_value<Property, Tag>::type value_type;
+	typedef value_type& reference;
+	typedef const value_type& const_reference;
+
         typedef adj_list_vertex_property_map
-          <Graph, Property, Tag> type;
+          <Graph, value_type, reference, Tag> type;
         typedef adj_list_vertex_property_map
-          <Graph, Property, Tag> const_type;
+          <Graph, value_type, const_reference, Tag> const_type;
       };
     };
     struct adj_list_all_vertex_pa {
       template <class Tag, class Graph, class Property>
       struct bind {
         typedef typename Graph::vertex_descriptor Vertex;
-        typedef adj_list_vertex_all_properties_map<Graph,Property> type;
-        typedef adj_list_vertex_all_properties_map<Graph,Property> const_type;
+        typedef adj_list_vertex_all_properties_map<Graph,Property,
+	  Property&> type;
+        typedef adj_list_vertex_all_properties_map<Graph,Property,
+	  const Property&> const_type;
       };
     };
 
@@ -2158,10 +2152,14 @@ namespace boost {
     struct vec_adj_list_any_vertex_pa {
       template <class Tag, class Graph, class Property>
       struct bind {
+	typedef typename property_value<Property, Tag>::type value_type;
+	typedef value_type& reference;
+	typedef const value_type& const_reference;
+
         typedef vec_adj_list_vertex_property_map
-          <Graph, Graph&, Property, Tag> type;
+          <Graph, Graph&, value_type, reference, Tag> type;
         typedef vec_adj_list_vertex_property_map
-          <Graph, const Graph&, Property, Tag> const_type;
+          <Graph, const Graph&, value_type, const_reference, Tag> const_type;
       };
     };
     struct vec_adj_list_id_vertex_pa {
@@ -2177,9 +2175,9 @@ namespace boost {
       struct bind {
         typedef typename Graph::vertex_descriptor Vertex;
         typedef vec_adj_list_vertex_all_properties_map
-	  <Graph, Graph&, Property> type;
+	  <Graph, Graph&, Property, Property&> type;
         typedef vec_adj_list_vertex_all_properties_map
-	  <Graph, const Graph&, Property> const_type;
+	  <Graph, const Graph&, Property, const Property&> const_type;
       };
     };
   namespace detail {
@@ -2224,40 +2222,37 @@ namespace boost {
     //=========================================================================
     // Edge Property Map
 
-    template <class Directed, class Property, class Vertex, class Tag>
+    template <class Directed, class Value, class Ref, class Vertex,
+              class Property, class Tag>
     struct adj_list_edge_property_map
       : public put_get_at_helper< 
-          typename property_value<Property,Tag>::type,
-          adj_list_edge_property_map<Directed, Property, Vertex, Tag>
+          Value,
+          adj_list_edge_property_map<Directed, Value, Ref, Vertex, Property, 
+            Tag>
         >
     {
-      typedef typename property_value<Property,Tag>::type value_type;
+      typedef Value value_type;
       typedef detail::edge_desc_impl<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
-      inline value_type& operator[](key_type e) {
+      inline Ref operator[](key_type e) const {
         Property& p = *(Property*)e.get_property();
-        return get_property_value(p, value_type(), Tag());
-      }
-      inline const value_type& operator[](key_type e) const {
-        const Property& p = *(const Property*)e.get_property();
         return get_property_value(p, value_type(), Tag());
       }
     };
 
-    template <class Directed, class Property, class Vertex>
+    template <class Directed, class Property, class PropRef, class PropPtr,
+      class Vertex>
     struct adj_list_edge_all_properties_map
       : public put_get_at_helper<Property,
-          adj_list_edge_all_properties_map<Directed, Property, Vertex>
+          adj_list_edge_all_properties_map<Directed, Property, PropRef, 
+            PropPtr, Vertex>
         >
     {
       typedef Property value_type;
       typedef detail::edge_desc_impl<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
-      inline value_type& operator[](key_type e) {
-        return *(Property*)e.get_property();
-      }
-      inline const value_type& operator[](key_type e) const {
-        return *(const Property*)e.get_property();
+      inline PropRef operator[](key_type e) const {
+        return *(PropPtr)e.get_property();
       }
     };
 
@@ -2267,19 +2262,27 @@ namespace boost {
     struct adj_list_any_edge_pmap {
       template <class Graph, class Property, class Tag>
       struct bind {
+	typedef typename property_value<Property,Tag>::type value_type;
+	typedef value_type& reference;
+	typedef const value_type& const_reference;
+	
 	typedef adj_list_edge_property_map
-	   <typename Graph::directed_category, Property, 
-	    typename Graph::vertex_descriptor,Tag> type;
-	typedef type const_type;
+	   <typename Graph::directed_category, value_type, reference, 
+	    typename Graph::vertex_descriptor,Property,Tag> type;
+	typedef adj_list_edge_property_map
+	   <typename Graph::directed_category, value_type, const_reference, 
+	    typename Graph::vertex_descriptor,const Property, Tag> const_type;
       };
     };
     struct adj_list_all_edge_pmap {
       template <class Graph, class Property, class Tag>
       struct bind {
 	typedef adj_list_edge_all_properties_map
-	   <typename Graph::directed_category, Property, 
+	<typename Graph::directed_category, Property, Property&, Property*,
 	    typename Graph::vertex_descriptor> type;
-	typedef type const_type;
+	typedef adj_list_edge_all_properties_map
+	<typename Graph::directed_category, Property, const Property&, 
+	    const Property*, typename Graph::vertex_descriptor> const_type;
       };
     };
 
