@@ -74,6 +74,7 @@ namespace boost {
       distance_zero_num, buffer_param_num, edge_copy_num, vertex_copy_num,
       orig_to_copy_num, vertex_rank_num, vertex_predecessor_num,
       vertex_isomorphism_num, vertex_invariant_num,
+      vertex_invariant1_num, vertex_invariant2_num, vertex_max_invariant_num,
       last_property_num
     };
   } // namespace detail

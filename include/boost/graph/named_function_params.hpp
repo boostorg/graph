@@ -39,6 +39,9 @@ namespace boost {
   struct vertex_copy_t { enum { num = detail::vertex_copy_num }; };
   struct vertex_isomorphism_t { enum { num =detail::vertex_isomorphism_num}; };
   struct vertex_invariant_t { enum { num =detail::vertex_invariant_num}; };
+  struct vertex_invariant1_t { enum { num =detail::vertex_invariant1_num}; };
+  struct vertex_invariant2_t { enum { num =detail::vertex_invariant2_num}; };
+  struct vertex_max_invariant_t { enum { num =detail::vertex_max_invariant_num}; };
   struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
   struct root_vertex_t { enum { num = detail::root_vertex_num }; };
   
