@@ -199,8 +199,7 @@ namespace boost {
       (g, comp, params, get_param(params, vertex_root_t()));
   }
 
-  template <class Graph, class ComponentMap, 
-            class P, class T, class R>
+  template <class Graph, class ComponentMap>
   inline typename property_traits<ComponentMap>::value_type
   strong_components(const Graph& g, ComponentMap comp)
   {
