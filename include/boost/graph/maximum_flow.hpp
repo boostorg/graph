@@ -26,6 +26,8 @@
 #ifndef BOOST_MAXIMUM_FLOW_HPP
 #define BOOST_MAXIMUM_FLOW_HPP
 
+// UNDER CONSTRUCTION
+
 #include <vector>
 #include <list>
 
@@ -52,11 +54,12 @@ namespace boost {
    // This implements the highest-label version of the push-relabel method
    // with the global relabeling and gap relabeling heuristics.
 
-   // The terms "rank" and "distance" are synonyms in Goldberg's
-   // implementation and paper, and a "layer" is a group of vertices with
-   // the same distance. The vertices in each layer are categorized as
-   // active or inactive.  An active vertex has positive excess flow and
-   // its distance is less than n (it is not blocked).
+   // The terms "rank", "distance", "height" are synonyms in
+   // Goldberg's implementation, paper and in the CLR.  A "layer" is a
+   // group of vertices with the same distance. The vertices in each
+   // layer are categorized as active or inactive.  An active vertex
+   // has positive excess flow and its distance is less than n (it is
+   // not blocked).
 
    // need to write a DIMACS graph format reader...
 
@@ -240,41 +243,40 @@ namespace boost {
       //=======================================================================
       // This function is called "push" in Goldberg's h_prf implementation,
       // but it is called "discharge" in the paper and in hi_pr.c.
-      void discharge(vertex_descriptor i)
+      void discharge(vertex_descriptor u)
       {
-        assert(excess_flow[i] > 0);
+        assert(excess_flow[u] > 0);
         while (1) {
-          distance_size_type next_layer_distance = distance[i] - 1;
           out_edge_iterator ai, ai_end;
-          for (ai = current[i], ai_end = out_edges(i, g).second;
+          for (ai = current[u], ai_end = out_edges(u, g).second;
                ai != ai_end; ++ai) {
             edge_descriptor a = *ai;
             if (residual_capacity[a] > 0) {
-              vertex_descriptor j = target(a, g);
-              if (distance[j] == next_layer_distance) {
-                if (j != sink && excess_flow[j] == 0) {
-                  remove_from_inactive_list(j);
-                  add_to_active_list(j, layers[next_layer_distance]);
+              vertex_descriptor v = target(a, g);
+              if (distance[u] == distance[v] + 1) { // if (u,v) is admissible
+                if (v != sink && excess_flow[v] == 0) {
+                  remove_from_inactive_list(v);
+                  add_to_active_list(v, layers[distance[v]]);
                 }
                 push_flow(a);
-                if (excess_flow[i] == 0)
+                if (excess_flow[u] == 0)
                   break;
               }
             }
           } // for out_edges of i starting from current
 
-          Layer& layer = layers[distance[i]];
+          Layer& layer = layers[distance[u]];
 
           if (ai == ai_end) {   // i must be relabeled
-            relabel(i);
+            relabel(u);
             if (layer.active_vertices.empty()
                 && layer.inactive_vertices.empty())
-              gap(distance[i]);
-            if (distance[i] == n)
+              gap(distance[u]);
+            if (distance[u] == n)
               break;
           } else {              // i is no longer active
-            current[i] = ai;
-            add_to_inactive_list(i, layer);
+            current[u] = ai;
+            add_to_inactive_list(u, layer);
             break;
           }
         } // while (1)
@@ -302,7 +304,7 @@ namespace boost {
 
       //=======================================================================
       // The main purpose of this routine is to set distance[v]
-      // to the largest value allowed by the valid labeling constraints,
+      // to the smallest value allowed by the valid labeling constraints,
       // which are:
       // distance[t] = 0
       // distance[u] <= distance[v] + 1   for every residual edge (u,v)
