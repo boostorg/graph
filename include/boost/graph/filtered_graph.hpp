@@ -27,6 +27,8 @@
 #define BOOST_FILTERED_GRAPH_HPP
 
 #include <boost/iterator_adaptors.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 
 namespace boost {
@@ -51,7 +53,32 @@ namespace boost {
     ResidualCapacityEdgeMap m_rcap;
   };
 
+  template <typename Set>
+  struct is_in_subset {
+    is_in_subset() : m_s(0) { }
+    is_in_subset(const Set& s) : m_s(&s) { }
+
+    template <typename Elt>
+    bool operator()(const Elt& x) const {
+      return set_contains(*m_s, x);
+    }
+    const Set* m_s;
+  };
+
+  template <typename Set>
+  struct is_not_in_subset {
+    is_not_in_subset() : m_s(0) { }
+    is_not_in_subset(const Set& s) : m_s(&s) { }
+
+    template <typename Elt>
+    bool operator()(const Elt& x) const {
+      return !set_contains(*m_s, x);
+    }
+    const Set* m_s;
+  };
+  
   namespace detail {
+
     template <typename EdgePredicate, typename VertexPredicate, typename Graph>
     struct out_edge_predicate {
       out_edge_predicate() { }
@@ -100,6 +127,7 @@ namespace boost {
       VertexPredicate m_vertex_pred;
       const Graph* m_g;
     };
+
   } // namespace detail
 
 
@@ -126,6 +154,19 @@ namespace boost {
 
     filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp)
       : m_g(g), m_edge_pred(ep), m_vertex_pred(vp) { }
+
+#if 0
+    filtered_graph(const self& x) 
+      : m_g(x.m_g), m_edge_pred(x.m_edge_pred), 
+	m_vertex_pred(x.m_vertex_pred) { }
+
+    self& operator=(const self& x) {
+      m_g = x.m_g;
+      m_edge_pred = x.m_edge_pred;
+      m_vertex_pred = x.m_vertex_pred;
+      return *this;
+    }
+#endif
 
     // Graph requirements
     typedef typename Traits::vertex_descriptor          vertex_descriptor;
@@ -183,6 +224,7 @@ namespace boost {
     typedef typename out_edge_iterator::policies_type out_edge_iter_policy;
     typedef typename out_edge_iterator::policies_type in_edge_iter_policy;
     typedef typename edge_iterator::policies_type edge_iter_policy;
+    typedef typename vertex_iterator::policies_type vertex_iter_policy;
   };
 
   //===========================================================================
@@ -203,22 +245,31 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::vertex_iterator,
             typename filtered_graph<G, EP, VP>::vertex_iterator>
-  vertices(const filtered_graph<G, EP, VP>& g) {
-    return vertices(g.m_g);
+  vertices(const filtered_graph<G, EP, VP>& g)
+  {
+    typedef filtered_graph<G, EP, VP> Graph;    
+    typename graph_traits<G>::vertex_iterator f, l;
+    tie(f, l) = vertices(g.m_g);
+    typedef typename Graph::vertex_iter_policy Pol;
+    Pol pol(g.m_vertex_pred, l);
+    typedef typename Graph::vertex_iterator iter;
+    return std::make_pair(iter(f, pol), 
+			  iter(l, pol));
   }
 
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::edge_iterator,
             typename filtered_graph<G, EP, VP>::edge_iterator>
-  edges(const filtered_graph<G, EP, VP>& g) {
+  edges(const filtered_graph<G, EP, VP>& g)
+  {
     typedef filtered_graph<G, EP, VP> Graph;
     typedef typename Graph::edge_iter_policy Pol;
     typename Graph::EdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typename graph_traits<G>::edge_iterator f, l;
     tie(f, l) = edges(g.m_g);
     typedef typename Graph::edge_iterator iter;
-    return std::make_pair(iter(f, Pol(pred, l)), 
-                          iter(l, Pol(pred, l)));
+    Pol pol(pred, l);
+    return std::make_pair(iter(f, pol), iter(l, pol));
   }
 
   template <typename G, typename EP, typename VP>  
@@ -348,6 +399,33 @@ namespace boost {
       const Value& val)
   {
     put(p, g.m_g, k, val);
+  }
+
+  //===========================================================================
+  // Some filtered subgraph specializations
+
+  template <typename Graph, typename Set>
+  struct vertex_subset_filter {
+    typedef filtered_graph<Graph, keep_all, is_in_subset<Set> > type;
+  };
+  template <typename Graph, typename Set>
+  inline typename vertex_subset_filter<Graph, Set>::type
+  make_vertex_subset_filter(Graph& g, const Set& s) {
+    typedef typename vertex_subset_filter<Graph, Set>::type Filter;
+    is_in_subset<Set> p(s);
+    return Filter(g, keep_all(), p);
+  }
+
+  template <typename Graph, typename Set>
+  struct vertex_subset_compliment_filter {
+    typedef filtered_graph<Graph, keep_all, is_not_in_subset<Set> > type;
+  };
+  template <typename Graph, typename Set>
+  inline typename vertex_subset_compliment_filter<Graph, Set>::type
+  make_vertex_subset_compliment_filter(Graph& g, const Set& s) {
+    typedef typename vertex_subset_compliment_filter<Graph, Set>::type Filter;
+    is_not_in_subset<Set> p(s);
+    return Filter(g, keep_all(), p);
   }
 
 

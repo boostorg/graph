@@ -1,9 +1,217 @@
+// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
+// sell and distribute this software is granted provided this
+// copyright notice appears in all copies. This software is provided
+// "as is" without express or implied warranty, and with no claim as
+// to its suitability for any purpose.
+
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
 // UNDER CONSTRUCTION
 
+#include <boost/graph/detail/set_adaptor.hpp>
+#include <boost/graph/detail/permutation.hpp>
+#include <boost/graph/filtered_graph.hpp>
+
 namespace boost {
+
+  //===========================================================================
+  // A simple but slow implementation based on description of the direct
+  // isomorphism algorithm in "The Graph Isomorphism Problem" by Scott
+  // Fortin, which was adapted from "Combinatorial Algorithms: Theory
+  // and Practice" by Reingold, Nievergelt, and Deo.
+  //
+  // The plan is to eventually replace this with the faster algorithm
+  // used in "nauty" by Brendan McKay, the beginnings of which is at
+  // the bottom of this file.
+
+  namespace detail {
+
+    template <typename InvarMap, typename MultMap>
+    struct compare_invariant_multiplicity_predicate
+    {
+      compare_invariant_multiplicity_predicate(InvarMap i, MultMap m)
+        : m_invar(i), m_mult(m) { }
+
+      template <typename Vertex>
+      bool operator()(const Vertex& x, const Vertex& y) const {
+        return m_mult[m_invar[x]] < m_mult[m_invar[x]];
+      }
+
+      InvarMap m_invar;
+      MultMap m_mult;
+    };
+    template <typename InvarMap, typename MultMap>
+    compare_invariant_multiplicity_predicate<InvarMap, MultMap>
+    compare_invariant_multiplicity(InvarMap i, MultMap m) {
+      return compare_invariant_multiplicity_predicate<InvarMap, MultMap>(i,m);
+    }
+
+    // forall i in g1, (i,k) in g1 iff (f[i], j) in g2
+    template <typename Vertex, typename IndexMapping,
+              typename Graph1, typename Graph2>
+    bool can_match(Vertex k, Vertex j, IndexMapping f,
+                   const Graph1& g1, const Graph2& g2)
+    {
+      typedef typename property_traits<IndexMapping>::value_type Idx;
+      typename graph_traits<Graph1>::vertex_iterator i, i_end;
+      for (tie(i, i_end) = vertices(g1); i != i_end; ++i)
+        // only look at already mapped vertices
+        if(f[*i] != std::numeric_limits<Idx>::max()) 
+          if (edge(*i, k, g1).second) {
+            if (!edge(f[*i], j, g2).second)
+              return false;
+          } else
+            if (edge(f[*i], j, g2).second)
+              return false;
+    }
+
+
+    template <typename Set, typename Graph1, typename Graph2, 
+              typename VertexIter, typename IndexMapping,
+              typename Invar1, typename Invar2>
+    bool isomorph(const Set& s, const Graph1& g1, const Graph2& g2, 
+                  VertexIter k, VertexIter last,
+                  IndexMapping f, Invar1 invar1, Invar2 invar2)
+    {
+      if (k == last) 
+        return true;
+
+      std::vector<int> my_f(num_vertices(g1));
+      for (int i = 0; i < num_vertices(g1); ++i)
+        my_f[i] = f[i];
+
+      typedef typename vertex_subset_compliment_filter
+        <Graph2, Set>::type Subgraph;
+      Subgraph s_g2 = 
+        make_vertex_subset_compliment_filter(const_cast<Graph2&>(g2), s);
+      typename graph_traits<Subgraph>::vertex_iterator j, j_end;
+      for (tie(j, j_end) = vertices(s_g2); j != j_end; ++j) {
+        if ( (invar1[*k] != invar2[*j]) || ! can_match(*k, *j, f, g1, g2) )
+          continue;
+        my_f[*k] = *j;
+        Set s_j(s);
+        set_insert(s_j, *j);
+        if (isomorph(s_j, g1, g2, boost::next(k), last, my_f.begin(),
+                     invar1, invar2)) {
+          for (int c = 0; c < num_vertices(g1); ++c)
+            f[c] = my_f[c];
+          return true;
+        }
+      }
+      return false;
+    }
+
+  } // namespace detail
+
+
+  template <typename Graph>  
+  struct degree_vertex_invariant {
+    typedef typename graph_traits<Graph>::degree_size_type result_type;
+
+    result_type
+    operator()(typename graph_traits<Graph>::vertex_descriptor v,
+               const Graph& g)
+    {
+      return out_degree(v, g);
+    }
+  };
+
+  template <typename Graph1, typename Graph2, 
+            typename IndexMapping, typename VertexInvariant>
+  bool isomorphism(const Graph1& g1,
+                   const Graph2& g2,
+                   IndexMapping f,
+                   VertexInvariant invariant)
+  {
+    typedef typename graph_traits<Graph1>::vertices_size_type v_size_t;
+    typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
+    typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
+
+    typedef typename VertexInvariant::result_type InvarValue;
+
+    typedef std::vector<InvarValue> invar_vec;
+
+    if (num_vertices(g1) != num_vertices(g2))
+      return false;
+
+    // Initialize f to infinity
+    typedef typename property_traits<IndexMapping>::value_type Idx;
+    for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+      f[*i1] = std::numeric_limits<Idx>::max();
+
+    invar_vec invar1(num_vertices(g1)), invar2(num_vertices(g2));
+
+    for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+      invar1[*i1] = invariant(*i1, g1);
+
+    for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
+      invar2[*i2] = invariant(*i2, g2);
+
+    { // check if the graph's invariants do not match
+      invar_vec invar1_tmp(invar1), invar2_tmp(invar2);
+      std::sort(invar1_tmp.begin(), invar1_tmp.end());
+      std::sort(invar2_tmp.begin(), invar2_tmp.end());
+      if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), 
+                       invar2_tmp.begin()))
+        return false;
+    }
+    //-------------------------------------------------------------------------
+    // reorder vertices of g1 based on invariant multiplicity
+
+    typedef typename graph_traits<Graph1>::vertex_descriptor VertexG1;
+    std::vector<VertexG1> g1_vertices;
+    for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+      g1_vertices.push_back(*i1);
+    {
+      // set up permutation
+      std::vector<int> perm(num_vertices(g1));
+      for (int i = 0; i != num_vertices(g1); ++i)
+        perm[i] = i;
+
+      // compute invariant multiplicity
+      std::vector<std::size_t> invar_mult(num_vertices(g1), 0);
+      for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)      
+        ++invar_mult[invar1[*i1]];
+      // calculate the permutation that would sort vertices based on
+      // invariant multiplicity
+      std::sort(perm.begin(), perm.end(),
+                detail::compare_invariant_multiplicity(invar1.begin(), 
+                                                       invar_mult.begin()));
+      // permute g1's vertices
+      inplace_permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
+
+      // permute invar1 to match
+      inplace_permute(invar1.begin(), invar1.end(), perm.begin());
+
+    }
+    std::set<int> s;
+    return detail::isomorph(s, g1, g2, 
+                            g1_vertices.begin(), g1_vertices.end(),
+                            f, invar1.begin(), invar2.begin());
+  }
+  
+  template <typename Graph1, typename Graph2, typename IndexMapping>
+  bool isomorphism(const Graph1& g1,
+                   const Graph2& g2,
+                   IndexMapping f)
+  {
+    return isomorphism(g1, g2, f, degree_vertex_invariant<Graph1>());
+  }
+
+
+  template <typename Graph1, typename Graph2>
+  bool is_isomorphic(const Graph1& g1, const Graph2& g2)
+  {
+    std::vector<int> f;
+    return isomorphism(g1, g2, f);
+  }
+
+
+#if 0
+
+  // The beginnings of a C++ implementation of canonical labelling
+  // derived from the nauty program.
 
   namespace detail {
 
@@ -112,7 +320,7 @@ namespace boost {
     int test_canonical_labeling(const Graph1& g, const Graph2& canonical_g,
                                 const Labeling1& g_labeling, 
                                 const Labeling2& canonical_g_labeling, 
-				int& same_rows)
+                                int& same_rows)
     {
       int i, j;
       set *ph;
@@ -125,20 +333,20 @@ namespace boost {
 
       //for (i = 0, ph = canong; i < n; ++i, ph += M) {
       for (tie(i, i_end) = vertices(canonical_g); i != i_end; ++i) {
-	
+        
         permutation_set(adjacent_vertices(g_labeling[*i], g),
-			work_i_set, work_perm);
+                        work_i_set, work_perm);
 
-	// Or perhaps canonical_g should be stored with ordered out-edges
+        // Or perhaps canonical_g should be stored with ordered out-edges
         permutation_set(adjacent_vertices(*i, canonical_g),
-			canon_i_set, canonical_g_labeling);
-	
-	int cmp = set_lex_compare(work_i_set, canon_i_set);
+                        canon_i_set, canonical_g_labeling);
+        
+        int cmp = set_lex_compare(work_i_set, canon_i_set);
 
-	if (cmp != 0) {
-	  same_rows = i;
-	  return cmp;
-	}
+        if (cmp != 0) {
+          same_rows = i;
+          return cmp;
+        }
       }
       same_rows = n;
       return 0;
@@ -695,6 +903,7 @@ namespace boost {
     }
 
   }
+#endif
 
 } // namespace boost
 

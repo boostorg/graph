@@ -2,6 +2,7 @@
 #define BOOST_ADJACENCY_ITERATOR_HPP
 
 #include <boost/iterator_adaptors.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 namespace boost {
 
