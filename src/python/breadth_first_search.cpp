@@ -101,48 +101,57 @@ template<typename Graph>
 
 template<typename Graph>
 void 
-breadth_first_search_v
-  (const Graph& g,
-   typename Graph::Vertex s,
-   const bfs_visitor<Graph>& visitor)
-{
-  if (dynamic_cast<const default_bfs_visitor<Graph>*>(&visitor)) {
-    // No visitor. Do default BFS
-    boost::breadth_first_search(g, s, 
-                                vertex_index_map(g.get_vertex_index_map()));
-  } else {
-    boost::breadth_first_search
-      (g, s, 
-       vertex_index_map(g.get_vertex_index_map()).
-       visitor(wrap_bfs_visitor_ref<Graph>(visitor)));
-  }
-}
- 
-template<typename Graph>
-void 
 breadth_first_search_qv
   (const Graph& g,
    typename Graph::Vertex s,
-   const python_queue<typename Graph::Vertex>& Q)
-//   const bfs_visitor<Graph>& visitor)
+   python_queue<typename Graph::Vertex>& Q,
+   const bfs_visitor<Graph>& visitor)
 {
-    boost::breadth_first_search(g, s, 
-                                vertex_index_map(g.get_vertex_index_map()));
+  typedef typename python_queue<typename Graph::Vertex>::default_queue
+    default_queue_type;
+
+  bool has_default_buffer = dynamic_cast<default_queue_type*>(&Q);
+  bool has_default_visitor = 
+    dynamic_cast<const default_bfs_visitor<Graph>*>(&visitor);
+
+  if (has_default_buffer) {
+    if (has_default_visitor) {
+      boost::breadth_first_search(g, s,
+                                  vertex_index_map(g.get_vertex_index_map()));
+    } else {
+      boost::breadth_first_search
+        (g, s, 
+         vertex_index_map(g.get_vertex_index_map()).
+         visitor(wrap_bfs_visitor_ref<Graph>(visitor)));
+    }
+  } else {
+    if (has_default_visitor) {
+      boost::breadth_first_search(g, s, 
+                                  buffer(Q).
+                                  vertex_index_map(g.get_vertex_index_map()));
+    } else {
+      boost::breadth_first_search
+        (g, s, 
+         buffer(Q).
+         vertex_index_map(g.get_vertex_index_map()).
+         visitor(wrap_bfs_visitor_ref<Graph>(visitor)));
+    }
+  }
 }
-
-
+ 
 void export_breadth_first_search() 
 { 
   using boost::python::arg;
 
-  // Breadth-first search algorithm
-  def("breadth_first_search", &breadth_first_search_v<Graph>,
+  def("breadth_first_search", &breadth_first_search_qv<Graph>,
       (arg("graph"), "root_vertex", 
+       arg("buffer") = python_queue<Graph::Vertex>::default_queue(),
        arg("visitor") = default_bfs_visitor<Graph>()));
 
-  def("breadth_first_search2", &breadth_first_search_qv<Graph>);
-//      (arg("graph"), "root_vertex", 
-//       arg("buffer") = python_queue<Graph::Vertex>::default_queue()));
+  def("breadth_first_search", &breadth_first_search_qv<Digraph>,
+      (arg("graph"), "root_vertex", 
+       arg("buffer") = python_queue<Digraph::Vertex>::default_queue(),
+       arg("visitor") = default_bfs_visitor<Digraph>()));
 }
 
 template<typename Graph>

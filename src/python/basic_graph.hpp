@@ -85,7 +85,7 @@ struct declare_property_map
   }
 };
 
-template<typename T>
+template<typename T, typename DirectedS>
 struct basic_descriptor
 {
   basic_descriptor() {}
@@ -102,16 +102,16 @@ struct basic_descriptor
   T base;
 };
 
-template<typename T>
+template<typename T, typename DirectedS>
 inline bool 
-operator==(const basic_descriptor<T>& u,
-           const basic_descriptor<T>& v)
+operator==(const basic_descriptor<T, DirectedS>& u,
+           const basic_descriptor<T, DirectedS>& v)
 { return u.base == v.base; }
 
-template<typename T>
+template<typename T, typename DirectedS>
 inline bool 
-operator!=(const basic_descriptor<T>& u,
-           const basic_descriptor<T>& v)
+operator!=(const basic_descriptor<T, DirectedS>& u,
+           const basic_descriptor<T, DirectedS>& v)
 { return u.base != v.base; }
 
 template<typename Key, typename IndexMap>
@@ -161,9 +161,11 @@ class basic_graph
   typedef typename traits::edge_descriptor           base_edge_descriptor;
 
  public:
-  typedef basic_descriptor<base_vertex_descriptor>   Vertex;
+  typedef basic_descriptor<base_vertex_descriptor, DirectedS>
+                                                     Vertex;
   typedef Vertex                                     vertex_descriptor;
-  typedef basic_descriptor<base_edge_descriptor>     Edge;
+  typedef basic_descriptor<base_edge_descriptor, DirectedS>
+                                                     Edge;
   typedef Edge                                       edge_descriptor;
   typedef basic_index_map<Vertex, base_vertex_index_map>
                                                      VertexIndexMap;

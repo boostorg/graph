@@ -12,9 +12,9 @@ class python_queue
     : public python_queue<T>, public boost::python::wrapper<python_queue<T> >
   {
   public:
-    bool empty() const { return this->get_override("empty")(); }
-    T top() const { return this->get_override("top")(); }
-    void pop() { this->get_override("pop")(); }
+    bool empty() const    { return this->get_override("empty")(); }
+    T top() const         { return this->get_override("top")(); }
+    void pop()            { this->get_override("pop")(); }
     void push(const T& x) { this->get_override("push")(x); }
   };
 
@@ -37,18 +37,18 @@ class python_queue
   {
     using namespace boost::python;
 
-//    if (objects::registered_class_object(type_id<wrap>()).get() == 0) {
+    if (objects::registered_class_object(type_id<wrap>()).get() == 0) {
       class_<wrap, boost::noncopyable>(name)
         .def("empty", pure_virtual(&python_queue<T>::empty))
         .def("top", pure_virtual(&python_queue<T>::top))
         .def("pop", pure_virtual(&python_queue<T>::pop))
         .def("push", pure_virtual(&python_queue<T>::push))
         ;
-//    }
+     }
 
-//    if (objects::registered_class_object(type_id<default_queue>()).get() == 0)
+    if (objects::registered_class_object(type_id<default_queue>()).get() == 0)
     {
-      class_<default_queue, bases<python_queue<T> > >(default_name, no_init);
+      class_<default_queue, bases<python_queue> >(default_name, no_init);
     }
   }
 };
