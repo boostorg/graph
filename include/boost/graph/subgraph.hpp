@@ -16,8 +16,8 @@ namespace boost {
   struct subgraph_tag { };
 
   // Invariants:
-  //   if vertex u is in subgraph g, then u must be in parent[g]
-  //   if edge e is in subgraph e, then e must be in parent[g]
+  //   If vertex u is in subgraph g, then u must be in g.parent().
+  //   If edge e is in subgraph e, then e must be in g.parent().
 
   // The Graph template parameter must have a vertex_index 
   // and edge_index internal property. It is assumed that
@@ -97,6 +97,9 @@ namespace boost {
     {
       return m_vertex_membership[u_global];
     }
+
+    // Return the parent graph.
+    subgraph& parent() { return *m_parent; }
     
     // Return the root graph of the subgraph tree.
     subgraph& root() {
