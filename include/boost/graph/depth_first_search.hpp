@@ -79,10 +79,11 @@ namespace boost {
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         vis.examine_edge(*ei, g);
-        if (get(color, target(*ei, g)) == Color::white()) {
+	ColorValue v_color = get(color, target(*ei, g));
+        if (v_color == Color::white()) {
           vis.tree_edge(*ei, g);
           depth_first_visit_impl(g, target(*ei, g), vis, color);
-        } else if (get(color, target(*ei, g)) == Color::gray())
+        } else if (v_color == Color::gray())
           vis.back_edge(*ei, g);
         else
           vis.forward_or_cross_edge(*ei, g);
@@ -104,17 +105,20 @@ namespace boost {
         put(color, *ui, Color::white());
         vis.initialize_vertex(*ui, g);
       }
-      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-        if (get(color, *ui) == Color::white()) {
+      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+	ColorValue u_color = get(color, *ui);
+        if (u_color == Color::white()) {
           vis.start_vertex(*ui, g);
           detail::depth_first_visit_impl(g, *ui, vis, color);
         }
+      }
     }
 
     template <class ColorMap>
     struct dfs_dispatch {
 
-      template <class VertexListGraph, class DFSVisitor, class P, class T, class R>
+      template <class VertexListGraph, class DFSVisitor, class P, class T, 
+        class R>
       static void
       apply(const VertexListGraph& g, DFSVisitor vis, 
 	    const bgl_named_params<P, T, R>& params,                
@@ -151,7 +155,8 @@ namespace boost {
   depth_first_search(const VertexListGraph& g, 
                      const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+    typedef typename property_value< bgl_named_params<P, T, R>, 
+      vertex_color_t>::type C;
     detail::dfs_dispatch<C>::apply
       (g,
        choose_param(get_param(params, graph_visitor),
