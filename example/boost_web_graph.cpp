@@ -32,7 +32,9 @@
 #include <boost/utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/depth_first_search.hpp>
+
 
 template <class Distance>
 class calc_distance_visitor : public boost::bfs_visitor<>
@@ -54,6 +56,34 @@ private:
 };
 
 
+template <class VertexNameMap, class DistanceMap>
+class print_tree_visitor : public boost::dfs_visitor<>
+{
+public:
+  print_tree_visitor(VertexNameMap n, DistanceMap d) : name(n), distance(d) { }
+  template <class Graph>
+  void 
+  discover_vertex(typename boost::graph_traits<Graph>::vertex_descriptor v,
+	    Graph&)
+  {
+    // indentation based on depth
+    for (int i = 0; i < distance[v]; ++i)
+      std::cout << "  ";
+    std::cout << name[v] << std::endl;
+  }
+
+  template <class Graph>
+  void tree_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
+                 Graph& g)
+  {
+    distance[target(e, g)] = distance[source(e, g)] + 1;
+  }  
+
+private:
+  VertexNameMap name;
+  DistanceMap distance;
+};
+
 int
 main()
 {
@@ -64,6 +94,9 @@ main()
     std::cerr << "No ./boost_web.dat file" << std::endl;
     return -1;
   }
+
+  //===========================================================================
+  // Declare the graph type and object, and some property maps.
 
   typedef adjacency_list<vecS, vecS, undirectedS, 
     property<vertex_name_t, std::string, 
@@ -79,12 +112,13 @@ main()
   NameVertexMap name2vertex;
   Graph g;
 
-  property_map<Graph, vertex_name_t>::type node_name = get(vertex_name, g);
+  typedef property_map<Graph, vertex_name_t>::type NameMap;
+  NameMap node_name  = get(vertex_name, g);
   property_map<Graph, vertex_index_t>::type node_id = get(vertex_index, g);
   property_map<Graph, edge_name_t>::type link_name = get(edge_name, g);
 
   //===========================================================================
-  // Read the Data File
+  // Read the data file and construct the graph.
   
   std::string line;
   while (getline(datafile,line)) {
@@ -124,16 +158,8 @@ main()
     }
   }
 
-#if 0
-  {
-    Traits::edge_iterator i, end;
-    for (tie(i, end) = edges(g); i != end; ++i)
-      std::cout << get(node_name, source(*i, g)) << " has link <"
-
-                << get(link_name, *i) << "> to "
-                << get(node_name, target(*i, g)) << std::endl;
-  }
-#endif
+  //===========================================================================
+  // Calculate the diameter of the graph.
 
   typedef Traits::vertices_size_type size_type;
   typedef std::vector<size_type> IntVector;
@@ -155,7 +181,47 @@ main()
                                                     d_matrix[i].end()));
   
   std::cout << "The diameter of the boost web-site graph is " << diameter
-            << std::endl;
+            << std::endl << std::endl;
 
+  std::cout << "Number of clicks from the home page: " << std::endl;
+  Traits::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    std::cout << d_matrix[0][*vi] << "\t" << node_name[*vi] << std::endl;
+  std::cout << std::endl;
+  
+  //===========================================================================
+  // Print out the breadth-first search tree starting at the home page
+
+  // Create storage for a mapping from vertices to their parents
+  std::vector<Traits::vertex_descriptor> parent(num_vertices(g));
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    parent[*vi] = *vi;
+
+  // Do a BFS starting at the home page, recording the parent of each
+  // vertex (where parent is with respect to the search tree).
+  Traits::vertex_descriptor src = vertices(g).first[0];
+  breadth_first_search(g, src, 
+		       make_bfs_visitor(record_predecessors(&parent[0],
+							    on_tree_edge())));
+
+  // Add all the search tree edges into a new graph
+  Graph search_tree(num_vertices(g));
+  tie(vi, vi_end) = vertices(g);
+  ++vi;
+  for (; vi != vi_end; ++vi)
+    add_edge(parent[*vi], *vi, search_tree);
+
+  std::cout << "The breadth-first search tree:" << std::endl;
+
+  // Print out the search tree. We use DFS because it visits
+  // the tree nodes in the order that we want to print out:
+  // a directory-structure like format.
+  std::vector<size_type> dfs_distances(num_vertices(g), 0);
+  print_tree_visitor<NameMap, size_type*>
+    tree_printer(node_name, &dfs_distances[0]);
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    get(vertex_color, g)[*vi] = white_color;
+  depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
+  
   return 0;
 }
