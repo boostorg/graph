@@ -7,7 +7,6 @@
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
 #include "basic_graph.hpp"
-#include "point2d.hpp"
 
 namespace boost { 
 
@@ -518,24 +517,20 @@ void export_basic_graph(const char* name)
         // Vertex property maps
         .def("has_vertex_map", &Graph::has_vertex_map)
         .def("get_vertex_index_map", &Graph::get_vertex_index_map)
-        .def("get_vertex_color_map", 
-             &Graph::template get_vertex_map<default_color_type>)
-        .def("get_vertex_double_map", &Graph::template get_vertex_map<double>)
-        .def("get_vertex_int_map", &Graph::template get_vertex_map<int>)
-        .def("get_vertex_string_map", 
-             &Graph::template get_vertex_map<std::string>)
-        .def("get_vertex_object_map", &Graph::template get_vertex_map<object>)
-        .def("get_vertex_point2d_map", 
-             &Graph::template get_vertex_map<point2d>)
+        .def("get_vertex_color_map", &Graph::get_vertex_color_map)
+        .def("get_vertex_double_map", &Graph::get_vertex_double_map)
+        .def("get_vertex_int_map", &Graph::get_vertex_int_map)
+        .def("get_vertex_string_map", &Graph::get_vertex_string_map)
+        .def("get_vertex_object_map", &Graph::get_vertex_object_map)
+        .def("get_vertex_point2d_map", &Graph::get_vertex_point2d_map)
         // Edge property maps
         .def("has_edge_map", &Graph::has_vertex_map)
         .def("get_edge_index_map", &Graph::get_edge_index_map)
-        .def("get_edge_color_map", 
-             &Graph::template get_edge_map<default_color_type>)
-        .def("get_edge_double_map", &Graph::template get_edge_map<double>)
-        .def("get_edge_int_map", &Graph::template get_edge_map<int>)
-        .def("get_edge_string_map", &Graph::template get_edge_map<std::string>)
-        .def("get_edge_object_map", &Graph::template get_edge_map<object>)
+        .def("get_edge_color_map", &Graph::get_edge_color_map)
+        .def("get_edge_double_map", &Graph::get_edge_double_map)
+        .def("get_edge_int_map", &Graph::get_edge_int_map)
+        .def("get_edge_string_map", &Graph::get_edge_string_map)
+        .def("get_edge_object_map", &Graph::get_edge_object_map)
         // Graph I/O
         .def("read_graphviz", &Graph::read_graphviz)
         .def("write_graphviz", &Graph::write_graphviz)

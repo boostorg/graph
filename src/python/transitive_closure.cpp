@@ -39,7 +39,7 @@ void export_transitive_closure()
   def("transitive_closure", &transitive_closure<Digraph>, 
       (arg("graph"),
        arg("g_to_tc_map") = 
-         (vector_property_map<Graph::Vertex, Digraph::VertexIndexMap>*)0));
+         (vector_property_map<Digraph::Vertex, Digraph::VertexIndexMap>*)0));
 }
 
 } } } // end namespace boost::graph::python

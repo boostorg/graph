@@ -35,6 +35,9 @@ extern void export_strong_components();
 extern void export_biconnected_components();
 extern void export_incremental_components();
 extern void export_topological_sort();
+extern void export_cuthill_mckee_ordering();
+  //extern void export_minimum_degree_ordering();
+extern void export_sequential_vertex_coloring();
 extern void export_circle_graph_layout();
 extern void export_fruchterman_reingold_force_directed_layout();
 extern void export_kamada_kawai_spring_layout();
@@ -94,13 +97,21 @@ BOOST_PYTHON_MODULE(bgl)
   export_strong_components();  
   export_biconnected_components();  
   export_incremental_components();  
+
+  // Sparse Matrix Ordering
+  export_cuthill_mckee_ordering();
+  //  export_minimum_degree_ordering();
+
+  // Other algorithms
+  export_topological_sort();
+  export_transitive_closure();
+  export_sequential_vertex_coloring();
+
   // Layout Algorithms
   export_circle_graph_layout();
   export_fruchterman_reingold_force_directed_layout();
   export_kamada_kawai_spring_layout();
-  // Other algorithms
-  export_topological_sort();
-  export_transitive_closure();
+
   //  export_transpose_graph();
   export_isomorphism();
 }
