@@ -65,8 +65,6 @@ dijkstra_shortest_paths
 template<typename Graph>
 void export_dijkstra_shortest_paths_in_graph()
 {
-  using boost::python::arg;
-
   dijkstra_visitor<Graph>::declare("DijkstraVisitor", 
                                    "DefaultDijkstraVisitor");
 }

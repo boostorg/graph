@@ -29,6 +29,12 @@ BOOST_PYTHON_MODULE(bgl)
     .value("graphviz", gfk_graphviz)
     ;
 
+  enum_<default_color_type>("Color")
+    .value("white", color_traits<default_color_type>::white())
+    .value("gray", color_traits<default_color_type>::gray())
+    .value("black", color_traits<default_color_type>::black())
+    ;
+
   export_Graph();
   export_Digraph();
   export_betweenness_centrality();

@@ -523,7 +523,10 @@ void export_basic_graph(const char* name)
     ::declare("vertex_string_map");
   declare_property_map<vector_property_map<object, VertexIndexMap> >
     ::declare("vertex_object_map");
-  
+  declare_property_map<vector_property_map<default_color_type, 
+                                           VertexIndexMap> >
+    ::declare("vertex_color_map");
+
   // Edge property maps
   declare_readable_property_map<EdgeIndexMap>
     ::declare("edge_index_map");
@@ -537,6 +540,8 @@ void export_basic_graph(const char* name)
     ::declare("edge_string_map");
   declare_property_map<vector_property_map<object, EdgeIndexMap> >
     ::declare("edge_object_map");
+  declare_property_map<vector_property_map<default_color_type, EdgeIndexMap> >
+    ::declare("edge_color_map");
 }
 
 } } } // end namespace boost::graph::python
