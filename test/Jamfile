@@ -1,47 +1,53 @@
+# Define SGB (stanford graph base top level directory) and 
+# LEDA (also top level directory) at the command line of jam using -s
+
+
 subproject libs/graph/test ;
 
 import testing ;
 
-# Define SGB (stanford graph base top level directory) and 
-# LEDA (also top level directory) at the command line of jam using -s
+test-suite graph : 
 
-unit-test transitive_closure_test : transitive_closure_test.cpp : <sysinclude>$(BOOST_ROOT) ;
+    [ run transitive_closure_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+             
+    [ compile adj_list_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-compile adj_list_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    # adj_list_test needs some work -JGS
+    # unit-test adj_list_test : adj_list_test.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile adj_matrix_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-# adj_list_test needs some work -JGS
-# unit-test adj_list_test : adj_list_test.cpp : <sysinclude>$(BOOST_ROOT)  ;
-compile adj_matrix_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ run bfs.cpp <lib>../../test/build/boost_test_exec_monitor 
+        : : : <sysinclude>$(BOOST_ROOT) ]
 
-unit-test bfs : bfs.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ run dfs.cpp <lib>../../test/build/boost_test_exec_monitor 
+        : : : <sysinclude>$(BOOST_ROOT) ]
 
-unit-test dfs : dfs.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile dfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-compile dfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile dijkstra_cc.cpp : <sysinclude>$(BOOST_ROOT) ]
 
-compile dijkstra_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile edge_list_cc.cpp : <sysinclude>$(BOOST_ROOT) ]
 
-compile edge_list_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile filtered_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ]
 
-compile filtered_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ run graph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
-unit-test graph : graph.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
 
-compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
 
-compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ run subgraph.cpp <lib>../../test/build/boost_test_exec_monitor 
+        : : : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run isomorphism.cpp <lib>../../test/build/boost_test_exec_monitor 
+        : : : <sysinclude>$(BOOST_ROOT) ]
 
-unit-test subgraph : subgraph.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+    [ compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-unit-test isomorphism : isomorphism.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
-
-compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
-
-compile copy.cpp : <sysinclude>$(BOOST_ROOT) ;
-
+    [ compile copy.cpp : <sysinclude>$(BOOST_ROOT) ]
+    ;
 
 # Run SDB tests only when -sSDB= is set.
 if $(SDB) != ""
