@@ -43,7 +43,7 @@ namespace boost {
 
   // Invariants of an induced subgraph:
   //   - If vertex u is in subgraph g, then u must be in g.parent().
-  //   - If edge e is in subgraph e, then e must be in g.parent().
+  //   - If edge e is in subgraph g, then e must be in g.parent().
   //   - If edge e=(u,v) is in the root graph, then edge e
   //     is also in any subgraph that contains both vertex u and v.
 
@@ -744,9 +744,9 @@ namespace boost {
 
   template <typename G, typename Property, typename Key, typename Value>
   void
-  put(Property, const subgraph<G>& g, const Key& k, const Value& val)
+  put(Property, subgraph<G>& g, const Key& k, const Value& val)
   {
-    typedef typename property_map< subgraph<G>, Property>::const_type PMap;
+    typedef typename property_map< subgraph<G>, Property>::type PMap;
     PMap pmap(&g, get(Property(), g.m_graph));
     pmap[k] = val;
   }
