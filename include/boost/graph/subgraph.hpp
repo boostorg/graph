@@ -89,6 +89,10 @@ namespace boost {
     // Constructors
 
     // Create the main graph, the root of the subgraph tree
+    subgraph() 
+      : m_parent(0), m_edge_counter(0)
+    { }
+    // Create the main graph, the root of the subgraph tree
     subgraph(vertices_size_type n) 
       : m_graph(n), m_parent(0), m_vertex_membership(n, true),
 	m_edge_counter(0)
@@ -160,10 +164,10 @@ namespace boost {
     // Return the children subgraphs of this graph/subgraph.
     typedef subgraph<Graph>* inner_iter;
     typedef typename std::list<inner_iter>::const_iterator outer_iter;
-    typedef typename boost::indirect_iterator<outer_iter, inner_iter,
+    typedef typename boost::indirect_iterator_generator<outer_iter, inner_iter,
+      boost::iterator<std::input_iterator_tag, const subgraph<Graph> >,
       boost::iterator<std::input_iterator_tag, inner_iter, std::ptrdiff_t,
-                      inner_iter*, inner_iter>,
-      boost::iterator<std::forward_iterator_tag, const subgraph<Graph> >
+                      inner_iter*, inner_iter>
     >::type children_iterator;
 
     std::pair<children_iterator, children_iterator>
@@ -531,7 +535,7 @@ namespace boost {
         g.m_global_vertex.push_back(u_global);
         g.m_local_vertex[u_global] = u_local;
       }
-      g.m_vertex_membership[u_global] = true;
+      g.m_vertex_membership.push_back(true);
       return u_global;
     }
     
@@ -542,15 +546,15 @@ namespace boost {
   add_vertex(subgraph<G>& g)
   {
     typename subgraph<G>::vertex_descriptor  u_local, u_global;
-    if (g.m_parent == 0)
+    if (g.m_parent == 0) {
       u_global = add_vertex(g.m_graph);
-    else {
+      g.m_vertex_membership.push_back(true);
+    } else {
       u_global = detail::add_vertex_recur_up(g);
       u_local = add_vertex(g.m_graph);
       g.m_global_vertex.push_back(u_global);
       g.m_local_vertex[u_global] = u_local;
     }
-    g.m_vertex_membership[u_global] = true;
     return u_local;
   }
 
