@@ -37,9 +37,9 @@ src="Boost Graph Library Cuthill-Mckee Ordering_files/c++boost.gif" width=277>
   template &lt;class Graph, class ColorMap, class DegreeMap&gt;
   typename graph_traits&lt;Graph&gt;::vertex_descriptor
   sloan_start_end_vertices(Graph&amp; G,
-                                       typename graph_traits&lt;Graph&gt;::vertex_descriptor &amp;s,
-                                       ColorMap color, 
-                                       DegreeMap degree )
+                           typename graph_traits&lt;Graph&gt;::vertex_descriptor &amp;s,
+                           ColorMap color, 
+                           DegreeMap degree )
 </PRE>
 <p>The goal of the sloan_start_end_vertices algorithm[1, 2] is to find good start- 
   and end-vertices for the profile and wavefront reduction algorithm sloan_ordering. 

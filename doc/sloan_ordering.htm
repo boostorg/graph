@@ -38,14 +38,14 @@
                   class PriorityMap, class Weight&gt;
   OutputIterator
   sloan_ordering(Graph&amp; g,
-                        typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
-                        typename graph_traits&lt;Graph&gt;::vertex_descriptor e,
-                        OutputIterator permutation, 
-                        ColorMap color, 
-                        DegreeMap degree, 
-                        PriorityMap priority, 
-                        Weight W1, 
-                        Weight W2 )
+                 typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+                 typename graph_traits&lt;Graph&gt;::vertex_descriptor e,
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority, 
+                 Weight W1, 
+                 Weight W2 )
 
   (2)
    template &lt;class Graph, class OutputIterator,
@@ -53,12 +53,12 @@
                   class PriorityMap, class Weight&gt;
   OutputIterator
   sloan_ordering(Graph&amp; g,
-                        OutputIterator permutation, 
-                        ColorMap color, 
-                        DegreeMap degree, 
-                        PriorityMap priority, 
-                        Weight W1, 
-                        Weight W2 )
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority, 
+                 Weight W1, 
+                 Weight W2 )
 
 
 (3)
@@ -67,12 +67,12 @@
                   class PriorityMap&gt;
   OutputIterator
   sloan_ordering(Graph&amp; g,
-                        typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
-                        typename graph_traits&lt;Graph&gt;::vertex_descriptor e,
-                        OutputIterator permutation, 
-                        ColorMap color, 
-                        DegreeMap degree, 
-                        PriorityMap priority )
+                 typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+                 typename graph_traits&lt;Graph&gt;::vertex_descriptor e,
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority )
 
 
 (4)
@@ -81,10 +81,10 @@
                   class PriorityMap&gt;
   OutputIterator
   sloan_ordering(Graph&amp; g,
-                        OutputIterator permutation, 
-                        ColorMap color, 
-                        DegreeMap degree, 
-                        PriorityMap priority )</PRE>
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority )</PRE>
 <p>The goal of the Sloan ordering algorithm[1, 2] is to reduce the profile and 
   the wavefront of a graph by reordering the indices assigned to each vertex. 
   The Sloan algorithm needs a start and an end vertex. These vertices can be asigned 
