@@ -24,24 +24,27 @@ namespace boost {
     };
 #endif
 
+    struct error_property_not_found { };
+
     template <int TagMatched>
     struct property_value_dispatch { };
 
     template <>
     struct property_value_dispatch<1> {
       template <class Property, class T, class Tag>
-      static T& get_value(Property& p, T, Tag) {
+      static T& get_value(Property& p, T*, Tag) {
         return p.m_value; 
       }
       template <class Property, class T, class Tag>
-      static const T& const_get_value(const Property& p, T, Tag) {
+      static const T& const_get_value(const Property& p, T*, Tag) {
         return p.m_value; 
       }
     };
     template <>
     struct property_value_dispatch<0> {
+
       template <class Property, class T, class Tag>
-      static T& get_value(Property& p, T t, Tag tag) {
+      static T& get_value(Property& p, T* t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = same_property<Next_tag,Tag>::value };
@@ -49,12 +52,25 @@ namespace boost {
           ::get_value(static_cast<Next&>(p), t, tag);
       }
       template <class Property, class T, class Tag>
-      static const T& const_get_value(const Property& p, T t, Tag tag) {
+      static const T& const_get_value(const Property& p, T* t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = same_property<Next_tag,Tag>::value };
         return property_value_dispatch<match>
           ::const_get_value(static_cast<const Next&>(p), t, tag);
+      }
+      // Stop the recursion and return error
+      template <class T, class Tag>
+      static detail::error_property_not_found&
+      get_value(no_property&, T* t, Tag tag) {
+	static error_property_not_found s_prop_not_found;
+        return s_prop_not_found;
+      }
+      template <class T, class Tag>
+      static const detail::error_property_not_found&
+      const_get_value(const no_property&, T* t, Tag tag) {
+	static error_property_not_found s_prop_not_found;
+        return s_prop_not_found;
       }
     };
 
@@ -72,8 +88,6 @@ namespace boost {
     {
       typedef no_property type;
     };
-
-    struct error_property_not_found { };
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     template <class TagValueAList, class Tag>
