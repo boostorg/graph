@@ -79,6 +79,7 @@ namespace boost {
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< VertexMutableGraphConcept<GraphTC> >();
     function_requires< EdgeMutableGraphConcept<GraphTC> >();
+    function_requires< ReadablePropertyMapConcept<VertexIndexMap, vertex> >();
 
     // Compute strongly connected components of the graph
     typedef size_type cg_vertex;
