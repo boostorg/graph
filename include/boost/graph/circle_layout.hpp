@@ -30,8 +30,10 @@ namespace boost {
   {
     const double pi = 3.14159;
 
+#ifndef BOOST_NO_STDC_NAMESPACE
     using std::sin;
     using std::cos;
+#endif // BOOST_NO_STDC_NAMESPACE
 
     typedef typename graph_traits<VertexListGraph>::vertices_size_type 
       vertices_size_type;
