@@ -83,15 +83,17 @@ of <i>L</i> that are not present in the non-zero structure of
 <i>A</i>), the ordering has a significant impact on the memory and
 computational requirements for the latter stages.  However, finding
 the optimal ordering for <i>A</i> (in the sense of minimizing fill-in)
-has been proven to be NP-complete&nbsp;[] requiring that heuristics be
-used for all but simple (or specially structured) cases.
+has been proven to be NP-complete&nbsp;[<a
+href="bibliography.html#garey79:computers-and-intractability">30</a>]
+requiring that heuristics be used for all but simple (or specially
+structured) cases.
 
 <P>
 A widely used but rather simple ordering algorithm is a variant of the
 Cuthill-McKee orderings, the reverse Cuthill-McKee ordering algorithm.
 This algorithm can be used as a preordering method to improve ordering
 in more sophisticated methods such as minimum degree
-algorithms&nbsp;[].
+algorithms&nbsp;[<a href="bibliography.html#LIU:MMD">21</a>].
 
 <P>
 
@@ -138,11 +140,17 @@ namespace boost {
   template &lt;class Graph, class Vertex, class Color, class Degree&gt;
   Vertex 
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
-                         Color c, Degree d) {
-    typedef typename detail::property_accessor_adaptor&lt;Degree&gt;
-      ::type DegreeDecorator;
-    rcm_queue&lt;Vertex, DegreeDecorator&gt; Q(d);
-    _breadth_first_search(G, u, Q, null_visitor(), c);
+                         Color color, Degree degree)
+  {
+    typename property_traits&lt;Color&gt;::value_type c = get(color, u);
+
+    rcm_queue&lt;Vertex, Degree&gt; Q(degree);
+    
+    typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+      put(color, *ui, white(c));
+    breadth_first_search(G, u, Q, bfs_visitor&lt;&gt;(), color);
+
     ecc = Q.eccentricity(); 
     return Q.spouse();
   }
@@ -198,19 +206,21 @@ from GGCL can be reused.
   cuthill_mckee_ordering(Graph& G, 
                          Vertex s,
                          OutputIterator inverse_permutation, 
-                         Color c, Degree d)
+                         Color color, Degree degree)
   {
     typedef typename property_traits&lt;Degree&gt;::value_type DS;
+    typename property_traits&lt;Color&gt;::value_type c = get(color, s);
     typedef indirect_cmp&lt;Degree, std::greater&lt;DS&gt; &gt; Compare;
-    Compare comp(d);
+    Compare comp(degree);
     fenced_priority_queue&lt;Vertex, Compare &gt; Q(comp);
 
     typedef cuthill_mckee_visitor&lt;OutputIterator&gt;  CMVisitor;
     CMVisitor cm_visitor(inverse_permutation);
     
-    bfs_visitor&lt;Color, CMVisitor&gt; visitor(c, cm_visitor);
-    initialize_graph(G, visitor);
-    breadth_first_search(G, s, Q, visitor, detail::null_operation() );
+    typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+      put(color, *ui, white(c));
+    breadth_first_search(G, s, Q, cm_visitor, color);
   }  
 </pre>
 </td></tr></table>
@@ -231,7 +241,7 @@ wide use is based on a greedy approach such that the ordering is
 chosen to minimize some quantity at each step of a simulated -step
 symmetric Gaussian elimination process.  The algorithms using such an
 approach are typically distinguished by their greedy minimization
-criteria&nbsp;[].
+criteria&nbsp;[<a href="bibliography.html#ng-raghavan">34</a>].
 
 <P>
 In graph terms, the basic ordering process used by most greedy
@@ -263,12 +273,12 @@ v<sup>1</sup>,...}</i> selected by the algorithm.
 One of the most important examples of such an algorithm is the
 <I>Minimum Degree</I> algorithm.  At each step the minimum degree
 algorithm chooses the vertex with minimum degree in the corresponding
-graph as <i>v<sup>k</sup></i>.
-A number of enhancements to the basic minimum degree algorithm have
-been developed, such as the use of a quotient graph representation,
-mass elimination, incomplete degree update, multiple elimination, and
-external degree.  See&nbsp;[] for a historical survey
-of the minimum degree algorithm.
+graph as <i>v<sup>k</sup></i>.  A number of enhancements to the basic
+minimum degree algorithm have been developed, such as the use of a
+quotient graph representation, mass elimination, incomplete degree
+update, multiple elimination, and external degree.  See&nbsp;[<A
+href="bibliography.html#George:evolution">35</a>] for a historical
+survey of the minimum degree algorithm.
 
 <P>
 The BGL implementation of the Minimum Degree algorithm closely follows
@@ -355,9 +365,9 @@ edge between two vertices in the dual graph. By using a dual graph of
 a mesh, one way to implement the algorithm family of constructing a
 PSAW is to reuse  BGL algorithms such as BFS and DFS with a customized
 visitor to provide operations during
-traversal. The customized visitor has the function <TT>explore()</TT>
+traversal. The customized visitor has the function <TT>tree_edge()</TT>
 which is to extend partial PSAW in case by case and function
-<TT>start()</TT> which is to set up the PSAW for the starting vertex.
+<TT>start_vertex()</TT> which is to set up the PSAW for the starting vertex.
 
 <br>
 <HR>

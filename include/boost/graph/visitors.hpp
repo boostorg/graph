@@ -35,6 +35,8 @@
 
 namespace boost {
 
+  // This is a bit more convenient than std::numeric_limits because
+  // you don't have to explicitly provide type T.
   template <class T>
   inline T numeric_limits_max(T) { return std::numeric_limits<T>::max(); }
 
@@ -64,15 +66,16 @@ namespace boost {
   struct false_tag { enum { num = FALSE_TAG }; };
 
   //========================================================================
-  // base_visitor and null_visitor
+  // null_visitor and base_visitor
 
-  template <class Visitor>
-  struct base_visitor {
+  struct null_visitor {
     typedef void event_filter;
     template <class T, class Graph>
     void operator()(T, Graph&) { }
   };
-  struct null_visitor {
+  // needed for MSVC workaround
+  template <class Visitor>
+  struct base_visitor {
     typedef void event_filter;
     template <class T, class Graph>
     void operator()(T, Graph&) { }
@@ -123,7 +126,9 @@ namespace boost {
   // predecessor_recorder
 
   template <class PredecessorPA, class Tag>
-  struct predecessor_recorder {
+  struct predecessor_recorder
+    : public base_visitor<predecessor_recorder<PredecessorPA, Tag> >
+  {
     typedef Tag event_filter;
     predecessor_recorder(PredecessorPA pa) : m_predecessor(pa) { }
     template <class Edge, class Graph>
@@ -142,7 +147,9 @@ namespace boost {
   // distance_recorder
 
   template <class DistancePA, class Tag>
-  struct distance_recorder {
+  struct distance_recorder
+    : public base_visitor<distance_recorder<DistancePA, Tag> >
+  {
     typedef Tag event_filter;
     distance_recorder(DistancePA pa) : m_distance(pa) { }
     template <class Edge, class Graph>
@@ -164,7 +171,9 @@ namespace boost {
 
   
   template <class TimePA, class TimeT, class Tag>
-  struct time_stamper {
+  struct time_stamper
+    : public base_visitor<time_stamper<TimePA, TimeT, Tag> >
+  {
     typedef Tag event_filter;
     time_stamper(TimePA pa, TimeT& t) : m_time_pa(pa), m_time(t) { }
     template <class Vertex, class Graph>
@@ -184,7 +193,9 @@ namespace boost {
   // property_writer
 
   template <class PA, class OutputIterator, class Tag>
-  struct property_writer {
+  struct property_writer
+    : public base_visitor<property_writer<PA, OutputIterator, Tag> >
+  {
     typedef Tag event_filter;
 
     property_writer(PA pa, OutputIterator out) : m_pa(pa), m_out(out) { }

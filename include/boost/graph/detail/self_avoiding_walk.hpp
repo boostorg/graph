@@ -158,7 +158,9 @@ namespace boost {
    * a point though.
    */
   template < class TriangleDecorator, class HList, class IteratorD>
-  class SAW_visitor  : public null_visitor  {
+  class SAW_visitor
+    : public bfs_visitor<>, public dfs_visitor<>
+  {
     typedef typename boost::property_traits<IteratorD>::value_type iter;
     /*use boost shared_ptr*/
     typedef typename HList::element_type::value_type::second_type     Line;
@@ -169,8 +171,8 @@ namespace boost {
     inline SAW_visitor(TriangleDecorator _td, HList _hlist, IteratorD ia)
       : td(_td), hlist(_hlist), iter_d(ia) {}
 
-    template <class Vertex>
-    inline void start(Vertex v) {
+    template <class Vertex, class Graph>
+    inline void start_vertex(Vertex v, Graph&) {
       Line l1;
       l1.first = SAW_SENTINAL;
       l1.second = SAW_SENTINAL;
@@ -186,7 +188,7 @@ namespace boost {
       w(i) ^ w(i+1): the line or point w go over from w(i) to w(i+1)
     */
     template <class Edge, class Graph>
-    bool explore(Edge e, Graph& G) {
+    bool tree_edge(Edge e, Graph& G) {
 	  using std::make_pair;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex tau = target(e, G);
