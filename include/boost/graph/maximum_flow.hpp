@@ -16,7 +16,7 @@ namespace boost {
       by B.V. Cherkassky and A.V. Goldberg, IPCO '95, 157--171.
 
       This implements the highest-label version of the push-relabel method
-      with the global relabeling and gap relabelling heuristics.
+      with the global relabeling and gap relabeling heuristics.
 
       need to write a DIMACS graph format reader...
      */
@@ -25,13 +25,13 @@ namespace boost {
     struct preflow_layer {
       typedef std::list<Vertex> list_type;
       typedef typename layer_list_type::iterator list_iterator;
-      LayerList push_list;		// nodes with positive excess
-      LayerList trans_list;		// nodes with zero excess
+      LayerList push_list;              // nodes with positive excess
+      LayerList trans_list;             // nodes with zero excess
     };
 
     // Graph must have edge_sister and edge_rcap properties
     template <class Graph, 
-              class CapacityMap,	// integer value type
+              class EdgeCapacityMap,    // integer value type
               class VertexIndexMap,
               class FlowValue>
     class preflow_push {
@@ -44,7 +44,8 @@ namespace boost {
       typedef typename Traits::vertices_size_type vertices_size_type;
 
       typedef typename property_map<Graph, edge_sister_t>::type SisterMap;
-      typedef typename property_map<Graph, edge_rcap_t>::type ResidualCapacityMap;
+      typedef typename property_map<Graph, edge_rcap_t>::type
+        ResidualCapacityMap;
 
       typedef preflow_layer<vertex_descriptor> Layer;
       typedef std::vector< Layer > LayerArray;
@@ -53,275 +54,306 @@ namespace boost {
 
       //=======================================================================
       preflow_push(Graph& g_, 
-		   CapacityMap cap_,
-		   vertex_descriptor src_, 
-		   vertex_descriptor sink_,
-		   VertexIndexMap idx_)
-	: g(g_), n(num_vertices(g_)), capacity(cap_), src(src_), sink(sink_), 
-	  index(idx_),
-	  sister(get(edge_sister, g_)), 
-	  residual_capacity(get(edge_rcap, g_))
+                   EdgeCapacityMap cap_,
+                   vertex_descriptor src_, 
+                   vertex_descriptor sink_,
+                   VertexIndexMap idx_)
+        : g(g_), n(num_vertices(g_)), capacity(cap_), src(src_), sink(sink_), 
+          index(idx_),
+          sister(get(edge_sister, g_)), 
+          residual_capacity(get(edge_rcap, g_))
       {
-	vertex_iterator i_iter, end;
-	for (tie(i_iter, end) = vertices(g); i_iter != end; ++i_iter)
-	  excess_flow[*i_iter] = FlowValue();
-	
-	excess_flow[src] = std::numeric_limits<FlowValue>::max();
-	lmax = num_vertices(g) - 1;
+        vertex_iterator i_iter, end;
+        for (tie(i_iter, end) = vertices(g); i_iter != end; ++i_iter)
+          excess_flow[*i_iter] = FlowValue();
+        
+        excess_flow[src] = std::numeric_limits<FlowValue>::max();
+        lmax = num_vertices(g) - 1;
       }
 
       //=======================================================================
       void global_rank_update()
       {
-	vertex_iterator i_iter, i_end;
-	for (tie(i_iter,i_end) = vertices(g); i_iter != i_end; ++i_iter) {
-	  rank[*i_iter] = n;
-	rank[sink] = 0;
+        vertex_iterator i_iter, i_end;
+        for (tie(i_iter,i_end) = vertices(g); i_iter != i_end; ++i_iter) {
+          rank[*i_iter] = n;
+        rank[sink] = 0;
 
-	Q.push(sink);
-	lmax = lmax_push = 0;
-	lmin_push = n;
+        Q.push(sink);
+        lmax = lmax_push = 0;
+        lmin_push = n;
 
-	while (! Q.empty()) {
-	  vertex_descriptor i = Q.top();
-	  Q.pop();
-	  rank_size_type j_rank = rank[i] + 1;
+        while (! Q.empty()) {
+          vertex_descriptor i = Q.top();
+          Q.pop();
+          rank_size_type j_rank = rank[i] + 1;
 
-	  out_edge_iterator ai, a_end;
-	  for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
-	    edge_descriptor a = *ai;
-	    vertex_descriptor j = target(a, g);
-	    if ( rank[j] == n && residual_capacity[sister[a]] > 0 ) {
-	      rank[j] = j_rank;
-	      current[j] = out_edges(j, g).first;
-	      Layer& layer = layers[j_rank];
-	      lmax = std::max(j_rank, lmax);
+          out_edge_iterator ai, a_end;
+          for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
+            edge_descriptor a = *ai;
+            vertex_descriptor j = target(a, g);
+            if ( rank[j] == n && residual_capacity[sister[a]] > 0 ) {
+              rank[j] = j_rank;
+              current[j] = out_edges(j, g).first;
+              Layer& layer = layers[j_rank];
+              lmax = std::max(j_rank, lmax);
 
-	      if (excess_flow[j] > 0) {
-		layer.push_list.push_front(j);
-		layer_list_iter[j] = layer.push_list.begin();
-		lmax_push = std::max(j_rank, lmax_push);
-		lmin_push = std::min(j_rank, lmin_push);
-	      } else {
-		layer.transit_list.push_front(j);
-		layer_list_iter[j] = layer.transit_list.begin();
-	      }
-	      Q.push(j);
-	    } // if (rank[j] == n && ...)
-	  } // for out_edges(i)
-	} // while (! Q.empty())
+              if (excess_flow[j] > 0) {
+                layer.push_list.push_front(j);
+                layer_list_iter[j] = layer.push_list.begin();
+                lmax_push = std::max(j_rank, lmax_push);
+                lmin_push = std::min(j_rank, lmin_push);
+              } else {
+                layer.transit_list.push_front(j);
+                layer_list_iter[j] = layer.transit_list.begin();
+              }
+              Q.push(j);
+            } // if (rank[j] == n && ...)
+          } // for out_edges(i)
+        } // while (! Q.empty())
       } // global_rank_update()
 
       //=======================================================================
       bool push(vertex_descriptor i)
       {
-	rank_size_type next_layer_rank = rank[i] - 1;
+        rank_size_type next_layer_rank = rank[i] - 1;
 
-	out_edge_iterator ai, a_end;
-	ai = current[i]; a_end = out_edges(i, g).second;
-	for (; ai != a_end; ++ai) {
-	  edge_descriptor a = *ai;
-	  vertex_descriptor j = target(a, g);
+        out_edge_iterator ai, a_end;
+        ai = current[i]; a_end = out_edges(i, g).second;
+        for (; ai != a_end; ++ai) {
+          edge_descriptor a = *ai;
+          vertex_descriptor j = target(a, g);
 
-	  if (rank[j] == next_layer_rank) {
+          if (rank[j] == next_layer_rank) {
 
-	    flow_delta = std::min(excess_flow[i], residual_capacity[a]);
+            flow_delta = std::min(excess_flow[i], residual_capacity[a]);
 
-	    residual_capacity[a] -= flow_delta;
-	    residual_capacity[sister[a]] += flow_delta;
+            residual_capacity[a] -= flow_delta;
+            residual_capacity[sister[a]] += flow_delta;
 
-	    if (next_layer_rank > 0) {
-	      next_layer = layers[next_layer_rank];
-	      if (excess_flow[j] == 0) {
-		next_layer.transit_list.erase( layer_list_iter[j] );
-		next_layer.push_list.push_front(j);
-		lmin_push = std::min(next_layer_rank, lmin_push);
-	      } // if (excess_flow[j] == 0)
-	    } // if (next_layer_rank > 0)
+            if (next_layer_rank > 0) {
+              next_layer = layers[next_layer_rank];
+              if (excess_flow[j] == 0) {
+                next_layer.transit_list.erase( layer_list_iter[j] );
+                next_layer.push_list.push_front(j);
+                lmin_push = std::min(next_layer_rank, lmin_push);
+              } // if (excess_flow[j] == 0)
+            } // if (next_layer_rank > 0)
 
-	    excess_flow[j] += flow_delta;
-	    excess_flow[i] -= flow_delta;
+            excess_flow[j] += flow_delta;
+            excess_flow[i] -= flow_delta;
 
-	    if (excess_flow[i] == 0) 
-	      break;
+            if (excess_flow[i] == 0) 
+              break;
 
-	  } // if (rank[j] == next_layer_rank)
-	} // for out_edges of i from current
+          } // if (rank[j] == next_layer_rank)
+        } // for out_edges of i from current
 
-	current[i] = ai;
-	return ai == out_edges(i,g).second ? true : false;
+        current[i] = ai;
+        return ai == out_edges(i,g).second ? true : false;
       } // push()
 
       //=======================================================================
       rank_size_type relabel(vertex_descriptor i)
       {
-	rank_size_type j_rank = num_vertices(g);
-	rank[i] = j_rank;
+        rank_size_type j_rank = num_vertices(g);
+        rank[i] = j_rank;
 
-	out_edge_iterator ai, a_end, a_j;
-	for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
-	  edge_descriptor a = *ai;
-	  if (residual_capacity[a] > 0) {
-	    vertex_descriptor j = target(a, g);
-	    if (rank[j] < j_rank) {
-	      j_rank = rank[j];
-	      a_j = ai;
-	    }
-	  }
-	} // for all out edges of i
+        out_edge_iterator ai, a_end, a_j;
+        for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
+          edge_descriptor a = *ai;
+          if (residual_capacity[a] > 0) {
+            vertex_descriptor j = target(a, g);
+            if (rank[j] < j_rank) {
+              j_rank = rank[j];
+              a_j = ai;
+            }
+          }
+        } // for all out edges of i
 
-	++j_rank;
-	if (j_rank < n) {
-	  rank[i] = j_rank;
-	  current[i] = a_j;
-	  Layer& layer = layers[j_rank];
-	  if (excess_flow[i] > 0) {
-	    layer.push_list.push_front(, i);
-	    layer_list_iter[i] = layer.push_list.begin();
-	    lmax_push = std::max(j_rank, lmax_push);
-	    lmin_mush = std::min(j_rank, lmin_push);
-	  } else {
-	    layer.transit_list.push_front(i);
-	    layer_list_iter[i] = layer.transit_list.begin();
-	  } // if (excess_flow[i] > 0)
-	  lmax = std::max(j_rank, lmax);
-	} // (j_rank < n)
+        ++j_rank;
+        if (j_rank < n) {
+          rank[i] = j_rank;
+          current[i] = a_j;
+          Layer& layer = layers[j_rank];
+          if (excess_flow[i] > 0) {
+            layer.push_list.push_front(, i);
+            layer_list_iter[i] = layer.push_list.begin();
+            lmax_push = std::max(j_rank, lmax_push);
+            lmin_mush = std::min(j_rank, lmin_push);
+          } else {
+            layer.transit_list.push_front(i);
+            layer_list_iter[i] = layer.transit_list.begin();
+          } // if (excess_flow[i] > 0)
+          lmax = std::max(j_rank, lmax);
+        } // (j_rank < n)
 
-	return j_rank;
+        return j_rank;
       } // relabel()
 
       //=======================================================================
       // cleanup beyond the gap
       void gap(layer_iterator empty_layer)
       {
-	rank_size_type r; // rank of layer before the current layer
-	r = (empty_layer - layers.begin()) - 1;
+        rank_size_type r; // rank of layer before the current layer
+        r = (empty_layer - layers.begin()) - 1;
 
-	for (layer_iterator l = empty_layer + 1;
-	     l != layers.begin() + lmax; ++l) {
-	  for (typename Layer::list_iterator i = l->push_list.begin();
-	       i != l->push_list.end(); ++i)
-	    rank[*i] = n;
+        for (layer_iterator l = empty_layer + 1;
+             l != layers.begin() + lmax; ++l) {
+          for (typename Layer::list_iterator i = l->push_list.begin();
+               i != l->push_list.end(); ++i)
+            rank[*i] = n;
 
-	  for (typename Layer::list_iterator i = l->trans_list.begin();
-	       i != l->push_list.end(); ++i)
-	    rank[*i] = n;
+          for (typename Layer::list_iterator i = l->trans_list.begin();
+               i != l->push_list.end(); ++i)
+            rank[*i] = n;
 
-	  l->push_list.clear();
-	  l->trans_list.clear();
-	}
-	lmax = r;
-	lmax_push = r;
+          l->push_list.clear();
+          l->trans_list.clear();
+        }
+        lmax = r;
+        lmax_push = r;
       }
 
       //=======================================================================
+      // remove excessive flow, the "second phase"
+      // Basically, this does a DFS on the reverse flow graph of nodes
+      //   with excess flow.
+      // If a cycle is found, cancel it.
+      // Return the nodes with excess flow in topological order.
+      //
+      // Unlike the prefl_to_flow() implementation, we use
+      //   "color" instead of "rank" for the DFS labels
+      //   "parent" instead of nl_prev for the DFS tree
+      //   "topo_order" instead of nl_next for the topological ordering
       void convert_preflow_to_flow()
       {
-	vertex_iterator i_iter, i_end;
-	out_edge_iterator ai, a_end;
+        vertex_iterator i_iter, i_end;
+        out_edge_iterator ai, a_end;
 
-	// handle self-loops
-	for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter)
-	  for (tie(ai, a_end) = out_edge(*i, g); ai != a_end; ++ai)
-	    if (target(*ai, g) == *i_iter)
-	      residual_capacity[*ai] = capacity[*ai];
+	// tos, bos, restart, r: vertex_iterator or vertex_descriptor?
 
-	// initialize
-	for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter) {
-	  i = *i_iter;
-	  rank[i] = white(rank[i]);
-	  current[i] = out_edges(i,g).first;
-	}
+	std::vector<default_color_type> color(n);
+	typedef color_traits<default_color_type> ColorTr;
 
-	for (tie(i_iter,i_end) = vertices(g); i_iter != i_end; ++i) {
-	  i = *i_iter;
-	  if ( rank[i] == white() && excess_flow[i] > 0
-	       && i != src && i != sink ) {
-	    r = i;
-	    rank[r] = gray();
-	    do {
-	      for (; current[i] != out_edges(i,g).second; ++current[i]) {
-		a = current[i];
-		if ( capacity[a] == 0 && residual_capacity[a] > 0
-		     && target(a,g) != src && target(a,g) != sink ) {
-		  j = target(a, g);
-		  if (rank[j] == white()) {
-		    rank[j] = grey();
-		    layer_list_iter[j] = i_iter;
-		    i = j; // ??
-		    break;
-		  } else if (rank[j] == grey()) {
-		    delta = residual_capacity[a];
+	std::vector<vertex_descriptor> parent(n);
+	std::vector<vertex_descriptor> topo_order;
+
+        // handle self-loops
+        for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter)
+          for (tie(ai, a_end) = out_edge(*i, g); ai != a_end; ++ai)
+            if (target(*ai, g) == *i_iter)
+              residual_capacity[*ai] = capacity[*ai];
+
+        // initialize
+        for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter) {
+          i = *i_iter;
+          color[i] = ColorTr::white();
+          current[i] = out_edges(i, g).first;
+	  parent[i] = i;
+        }
+
+        for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i) {
+          i = *i_iter;
+          if ( color[i] == ColorTr::white() && excess_flow[i] > 0
+               && i != src && i != sink ) {
+            r = i;
+            color[r] = ColorTr::gray();
+	    while (1) {
+              for (; current[i] != out_edges(i, g).second; ++current[i]) {
+                a = current[i];
+                if ( capacity[a] == 0 && residual_capacity[a] > 0
+                     && target(a, g) != src && target(a, g) != sink ) {
+                  j = target(a, g);
+                  if (color[j] == ColorTr::white()) {
+                    color[j] = ColorTr::gray();
+		    parent[j] = i;
+                    i = j; // ??
+                    break;
+                  } else if (color[j] == ColorTr::gray()) {
+		    // find minimum flow on the cycle
+                    delta = residual_capacity[a];
+                    while (1) {
+                      delta = std::min(delta, residual_capacity[*current[j]]);
+                      if (j == i)
+                        break;
+                      else
+                        j = target(*current[j], g);
+                    }
+		    // remove delta flow units
+		    j = i;
 		    while (1) {
-		      delta = std::min(delta, residual_capacity[*current[j]]);
+		      a = *current[j];
+		      residual_capacity[a] -= delta;
+		      residual_capacity[sister[a]] += delta;
+		      j = target(a, g);
 		      if (j == i)
 			break;
-		      else
-			j = target(*current[j], g);
-		    }
-		    // back-out DFS to the first zeroed edge
-		    restart = i;
-		    for (j = target(*current[i], g); j != i; j = target(a,g)) {
-		      a = current[j];
-		      if (rank[j] == white() || residual_capacity[a] == 0) {
-			rank[target(*current[j],g)] = white();
-			if (rank[k] != white())
-			  restart = j;
-		      }
 		    }
 
-		    if (restart != i) {
-		      i = restart;
-		      ++current[i];
-		      break;
-		    }
-		  }
+                    // back-out DFS to the first zeroed edge
+                    restart = i;
+                    for (j = target(*current[i], g); j != i; j = target(a, g)) {
+                      a = current[j];
+                      if (color[j] == ColorTr::white() || 
+			  residual_capacity[a] == 0) {
+                        color[target(*current[j], g)] = ColorTr::white();
+                        if (color[j] != ColorTr::white())
+                          restart = j;
+                      }
+                    } // for
+                    if (restart != i) {
+                      i = restart;
+                      ++current[i];
+                      break;
+                    }
+                  } // else if (color[j] == ColorTr::gray())
+                } // if (capacity[a] == 0 ...
+              } // for
 
-		}
-	      } // for
+              if (current[i] == out_edges(i, g).second) {
+		// scan of i is complete
+                color[i] = ColorTr::black();
+                if (i != src) {
+                  if (bos == NULL) { 
+                    bos = i_iter;
+                    tos = i_iter;
+                  } else {
+                    layer_list_iter[i] = tos;
+                    tos = i_iter;
+                  }
+                }
+                if (i != r)
+                  layer.push_or_transit_list.erase(layer_list_iter[i]); // ??
+                else
+                  break;
+              }
+            } // while (1)
+          } // if
+        } // for 
 
-	      if (current[i] == out_edges(i,g).second) {
-		rank[i] = black();
-		if (i != src) {
-		  if (bos == NULL) { 
-		    bos = i_iter;
-		    tos = i_iter;
-		  } else {
-		    layer_list_iter[i] = tos;
-		    tos = i_iter;
-		  }
-		}
-		if (i != r)
-		  layer.push_or_transit_list.erase(layer_list_iter[i]); // ??
-		else
-		  break;
-	      }
-	    } while ( 1 );
-	  } // if
-	} // for 
-
-	if (bos != NULL) {
-	  i_iter = tos;
-	  do {
-	    i = *i_iter;
-	    ai = out_edges(i, g).first;
-	    a = *ai;
-	    while (excess_flow[i] > 0) {
-	      if (capacity[a] == 0 && residual_capacity[a] > 0) {
-		delta = std::min(excess_flow[i], residual_capacity[a]);
-		residual_capacity[a] -= delta;
-		residual_capacity[sister[a]] += delta;
-		excess_flow[i] -= delta;
-		excess_flow[target(a, g)] += delta;
-	      }
-	      ++ai;
-	    } // while (excess_flow[i] > 0)
-	    if (i == bos)
-	      break;
-	    else
-	      ++i_iter;
-	  } while ( 1 );
-	}
+        if (bos != NULL) {
+          i_iter = tos;
+          do {
+            i = *i_iter;
+            ai = out_edges(i, g).first;
+            a = *ai;
+            while (excess_flow[i] > 0) {
+              if (capacity[a] == 0 && residual_capacity[a] > 0) {
+                delta = std::min(excess_flow[i], residual_capacity[a]);
+                residual_capacity[a] -= delta;
+                residual_capacity[sister[a]] += delta;
+                excess_flow[i] -= delta;
+                excess_flow[target(a, g)] += delta;
+              }
+              ++ai;
+            } // while (excess_flow[i] > 0)
+            if (i == bos)
+              break;
+            else
+              ++i_iter;
+          } while ( 1 );
+        }
 
       } // convert_preflow_to_flow()
 
@@ -329,7 +361,7 @@ namespace boost {
 
       Graph& g;
       const vertices_size_type n;
-      CapacityMap capacity;
+      EdgeCapacityMap capacity;
       Vertex src;
       Vertex sink;
       VertexIndexMap index;
@@ -338,15 +370,16 @@ namespace boost {
       std::vector< FlowValue > excess_flow;
       std::vector< typename Layer::list_iterator > layer_list_iter;
       std::vector< out_edge_iterator > current;
-      std::vector< size_type > rank;
+      std::vector< rank_size_type > rank;
 
+      // Edge Property Maps that must be interior to the graph
       SisterMap sister;
       ResidualCapacityMap residual_capacity;
 
       LayerArray layers;
-      size_type lmax;			// maximal layer
-      size_type lmax_push;		// maximal layer with excess node
-      size_type lmin_push;		// minimal layer with excess node
+      rank_size_type lmax;              // maximal layer
+      rank_size_type lmax_push;         // maximal layer with excess node
+      rank_size_type lmin_push;         // minimal layer with excess node
       std::queue<vertex_descriptor> Q;
 
       enum { global_update_frequency = 1 };
@@ -355,15 +388,15 @@ namespace boost {
   } // namespace detail
 
   template <class Graph, 
-            class CapacityMap, class VertexIndexMap, 
+            class EdgeCapacityMap, class VertexIndexMap, 
             class FlowValue>
   void maximum_flow(Graph& g, 
-		    typename graph_traits<Graph>::vertex_descriptor src,
-		    typename graph_traits<Graph>::vertex_descriptor sink,
-		    CapacityMap cap, VertexIndexMap index_map,
-		    FlowValue& flow)
+                    typename graph_traits<Graph>::vertex_descriptor src,
+                    typename graph_traits<Graph>::vertex_descriptor sink,
+                    EdgeCapacityMap cap, VertexIndexMap index_map,
+                    FlowValue& flow)
   {
-    detail::preflow_push<Graph, CapacityMap, VertexIndexMap, FlowValue> 
+    detail::preflow_push<Graph, EdgeCapacityMap, VertexIndexMap, FlowValue> 
       algo(g, cap, src, sink, index_map);
 
     algo.global_rank_update();
@@ -375,22 +408,22 @@ namespace boost {
       
       typename List::list_iterator i_iter = layer.push_list.begin();
       if (i_iter == layer.push_list.end())
-	--algo.lmax_push;
+        --algo.lmax_push;
       else {
-	layer.push_list.pop_front();
-	if (algo.push(*i_iter)) { // i must be relabelled
-	  algo.relabel(*i_iter);
-	  ++num_relabels;
-	  if (layer.push_list.empty() && layer.transit_list.empty())
-	    algo.gap(layer);
-	  
-	  if (n_r > global_update_frequency * n) {
-	    algo.global_rank_update();
-	    num_relabels = 0;
-	  }
-	} else {
-	  layer.transit_list.erase(i_iter);
-	}
+        layer.push_list.pop_front();
+        if (algo.push(*i_iter)) { // i must be relabelled
+          algo.relabel(*i_iter);
+          ++num_relabels;
+          if (layer.push_list.empty() && layer.transit_list.empty())
+            algo.gap(layer);
+          
+          if (n_r > global_update_frequency * n) {
+            algo.global_rank_update();
+            num_relabels = 0;
+          }
+        } else {
+          layer.transit_list.erase(i_iter);
+        }
       }
       
     } // while (algo.lmax_push >= algo.lmin_push)
@@ -409,20 +442,20 @@ namespace boost {
   Max-Flow(V, E, s, t, c)
     <<initialization>>
       <<intialize preflow>>
-	 for all (v,w) in (V - {s}) x (V - {s}) 
-	   f(v,w) <- 0
-	   f(w,v) <- 0
-	 for all v in V
-	   f(s,v) <- c(s,v)
-	   f(v,s) <- -c(s,v)
+         for all (v,w) in (V - {s}) x (V - {s}) 
+           f(v,w) <- 0
+           f(w,v) <- 0
+         for all v in V
+           f(s,v) <- c(s,v)
+           f(v,s) <- -c(s,v)
       <<initialize labels and excesses>>
-	d(s) <- n
-	for all v in V - {s}
-	  d(v) <- 0
-	  e(v) <- f(s,v)
+        d(s) <- n
+        for all v in V - {s}
+          d(v) <- 0
+          e(v) <- f(s,v)
     <<loop>>
       while there exists a basic operation that applies
-	select a basic op and apply it
+        select a basic op and apply it
     return f;
 
     Basic operations are push and relabel
