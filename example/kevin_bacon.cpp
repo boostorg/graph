@@ -30,7 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 #include <map>
 
 int
@@ -116,16 +116,18 @@ main()
     // numbers of all the actors in our graph.
 
     std::vector<int> bacon_number( num_vertices(g) );
-    std::vector<default_color_type> color( num_vertices(g) );
     std::vector<Vertex> predecessor( num_vertices(g) );
 
     Vertex src = actors["Kevin Bacon"];
     
-    dijkstra_shortest_paths
-      (g, src, &bacon_number[0], get(edge_weight, g),
-       &color[0], get(vertex_index, g),
-       make_ucs_visitor(record_predecessors(&predecessor[0], 
-                                            on_edge_relaxed())));
+    breadth_first_search
+      (g, src, 
+       visitor(make_bfs_visitor
+	       (make_list(record_predecessors(&predecessor[0], 
+					      on_examine_edge()),
+			  record_distances(&bacon_number[0],
+					   on_examine_edge()))))
+       );
 
     graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
