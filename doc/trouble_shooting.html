@@ -44,6 +44,34 @@ There is a VC++ bug that appears when using <tt>get(property, graph, edge)</tt>.
 
 <hr>
 
+<pre>
+C:\Program Files\Microsoft Visual Studio\VC98\INCLUDE\xmemory(59) : fatal
+error C1001: INTERNAL COMPILER ERROR
+        (compiler file 'msc1.cpp', line 1786)
+</pre>
+
+There can be many reasons for this error, but sometimes it is caused
+by using the flag <tt>/Gm</tt> (minimal rebuild). As this flag is not
+really necessary, it is a good idea to turn it off.
+
+<hr>
+
+<pre>
+V:\3rdPARTY\SXL\INCLUDE\xlocnum(309) : error C2587: '_U' : illegal
+ use of local variable as default parameter
+</pre>
+Workaround from Andreas Scherer:<br>
+That's the usual problem with MSVC-- 6.0 sp[34] when compiling some
+(or all?) of the BGL examples.  You can't use the DLL version of the
+run-time system.  I succeeded in compiling file_dependencies.cpp after
+switching to ``[Debug] Multithreaded'' (section ``Code Generation'' on
+page ``C/C++'' in the ``Project Settings'').
+
+
+
+
+<hr>
+
 <br>
 <HR>
 <TABLE>
