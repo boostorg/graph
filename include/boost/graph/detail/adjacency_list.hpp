@@ -255,7 +255,8 @@ namespace boost {
       inline Self& operator--() { --m_iter; return *this; }
       inline Self operator--(int) { Self t=*this; --m_iter; return t; }
       inline Edge operator*() const {
-        return Edge(m_iter->m_source, m_iter->m_target, m_iter->get_property());
+        return Edge(m_iter->m_source, m_iter->m_target, 
+                    &m_iter->get_property());
       }
       inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
       inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
