@@ -1065,8 +1065,8 @@ namespace boost {
         typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
         typedef typename Config::OutEdgeList::value_type::property_type PType;
         PType& p = *(PType*)e.get_property();
-        remove_directed_edge_dispatch(e, oel, p);
-        remove_directed_edge_dispatch(e, iel, p);
+        detail::remove_directed_edge_dispatch(e, oel, p);
+        detail::remove_directed_edge_dispatch(e, iel, p);
       }
 
       inline void
