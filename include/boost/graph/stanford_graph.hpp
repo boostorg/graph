@@ -101,6 +101,21 @@ namespace boost {
     typedef vertex_list_graph_tag traversal_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
   };
+  template <> struct graph_traits<Graph*const> {
+    typedef Vertex* vertex_descriptor;
+    typedef boost::sgb_edge edge_descriptor;
+    typedef sgb_out_edge_iterator out_edge_iterator;
+    typedef void in_edge_iterator;
+    typedef sgb_adj_iterator adjacency_iterator;
+    typedef sgb_vertex_iterator vertex_iterator;
+    typedef void edge_iterator;
+    typedef long vertices_size_type;
+    typedef long edge_size_type;
+    typedef long degree_size_type;
+    typedef directed_tag directed_category;
+    typedef vertex_list_graph_tag traversal_category;
+    typedef allow_parallel_edge_tag edge_parallel_category;
+  };
 }
 
 namespace boost {
