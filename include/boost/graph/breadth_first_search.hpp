@@ -112,8 +112,8 @@ namespace boost {
         vis.examine_edge(e, g);
         Vertex v = target(e, g);
         if (get(color, v) == white(c)) {
-          put(color, v, gray(c));
           vis.tree_edge(e, g);
+          put(color, v, gray(c));
           vis.discover_vertex(v, g);
           Q.push(v);
         } else {
