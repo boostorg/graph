@@ -26,6 +26,7 @@
 //
 //
 // Revision History:
+//   04 April 2001: Added named parameter variant. (Jeremy Siek)
 //   01 April 2001: Modified to use new <boost/limits.hpp> header. (JMaddock)
 //
 #ifndef BOOST_GRAPH_DIJKSTRA_HPP
@@ -34,6 +35,7 @@
 #include <functional>
 #include <boost/limits.hpp>
 #include <boost/graph/uniform_cost_search.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -102,7 +104,58 @@ namespace boost {
                         compare, combine, vis);
   }
 
+  namespace detail {
 
-} /*namespace*/
+    // Default for distance and color is to use an algorithm-internal
+    // property map.
+    template <class VertexListGraph, class UniformCostVisitor, 
+	      class DistanceMap, class WeightMap, class ColorMap,
+              class IndexMap>
+    inline void
+    dijkstra_dispatch
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+       DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
+       UniformCostVisitor vis)
+    {
+      typedef typename property_traits<WeightMap>::value_type T;
+      std::vector<T>::size_type n;
+      n = is_default_param(distance) ? num_vertices(g) : 0;
+      std::vector<T> distance_map(n);
+      n = is_default_param(color) ? num_vertices(g) : 0;
+      std::vector<default_color_type> color_map(n);
+      dijkstra_shortest_paths
+	(g, s, choose_param(distance, 
+		    make_iterator_property_map(distance_map.begin(), id)),
+	 weight, choose_param(color,
+		    make_iterator_property_map(color_map.begin(), id)),
+	 id, vis);
+    }
+  }
+
+  // Named Parameter Variant
+  template <class VertexListGraph, class W, class D, class C, class I, class V>
+  inline void
+  dijkstra_shortest_paths
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     const bgl_named_params<W,D,C,I,V>& params)
+  {
+    // Default for edge weight and vertex index map is to ask for them
+    // from the graph.  Default for the visitor is null_visitor.
+    null_visitor null_vis;
+    detail::dijkstra_dispatch(g, s, 
+			      params.m_dist_map,
+			      choose_param(params.m_weight_map,
+					   get(edge_weight, g)),
+			      params.m_color_map,
+			      choose_param(params.m_vertex_index_map,
+					   get(vertex_index, g)),
+			      choose_param(params.m_visitor,
+					   make_ucs_visitor(null_vis)));
+  }
+
+
+} // namespace boost
 
 #endif /* BOOST_GRAPH_DIJKSTRA_HPP*/
