@@ -345,7 +345,7 @@ namespace boost {
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Tag>
   inline sgb_vertex_util_map<Tag>
-  get_property_map(Tag, Graph* g, vertex_property_tag) {
+  get_property_map(Tag, const Graph* g, vertex_property_tag) {
     return sgb_vertex_util_map<Tag>();
   }
 #endif
@@ -366,7 +366,7 @@ namespace boost {
     }
   };
   inline sgb_edge_length_map
-  get(edge_length, Graph*) { 
+  get(edge_length, const Graph*) { 
     return sgb_edge_length_map(); 
   }
   
@@ -389,7 +389,7 @@ namespace boost {
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION  
   template <class Tag>
   inline sgb_edge_util_map<Tag> 
-  get_property_map(Tag, Graph* g, edge_property_tag) {
+  get_property_map(Tag, const Graph* g, edge_property_tag) {
     return sgb_edge_util_map<Tag>();
   }
   template <class Tag, class Kind>  
@@ -407,14 +407,17 @@ namespace boost {
   template <>
   struct property_map<Graph*, edge_length> {
     typedef sgb_edge_length_map type;
+    typedef sgb_edge_length_map const_type;
   };
   template <>
   struct property_map<Graph*, vertex_index_t> {
     typedef sgb_vertex_id_map type;
+    typedef sgb_vertex_id_map const_type;
   };
   template <>
   struct property_map<Graph*, vertex_name_t> {
     typedef sgb_vertex_name_t_map type;
+    typedef sgb_vertex_name_t_map consts_type;
   };
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
   namespace detail {
@@ -433,32 +436,140 @@ namespace boost {
   struct property_map<Graph*, PropertyTag> {
     typedef typename property_kind<PropertyTag>::type Kind;
     typedef typename detail::choose_property_map<Kind, PropertyTag>::type type;
+    typedef type const_type;
   };
-#else
 
 #define SGB_VERTEX_UTIL_ACCESSOR(X) \
   template <class T> \
   inline sgb_vertex_util_map< X##_property<T> > \
   get(X##_property<T>, Graph*) { \
     return sgb_vertex_util_map< X##_property<T> >(); \
+  } \
+  template <class T, class Key> \
+  inline typename sgb_vertex_util_map< X##_property<T> >::value_type \
+  get(X##_property<T>, const Graph*, const Key& key) { \
+    return sgb_vertex_util_map< X##_property<T> >()[key]; \
+  } \
+  template <class T, class Key, class Value> \
+  inline  void \
+  put(X##_property<T>, Graph*, const Key& key, const Value& value) { \
+    sgb_vertex_util_map< X##_property<T> >()[key] = value; \
   }
 
-SGB_VERTEX_UTIL_ACCESSOR(u);
-SGB_VERTEX_UTIL_ACCESSOR(v);
-SGB_VERTEX_UTIL_ACCESSOR(w);
-SGB_VERTEX_UTIL_ACCESSOR(x);
-SGB_VERTEX_UTIL_ACCESSOR(y);
-SGB_VERTEX_UTIL_ACCESSOR(z);
+  SGB_VERTEX_UTIL_ACCESSOR(u)
+  SGB_VERTEX_UTIL_ACCESSOR(v)
+  SGB_VERTEX_UTIL_ACCESSOR(w)
+  SGB_VERTEX_UTIL_ACCESSOR(x)
+  SGB_VERTEX_UTIL_ACCESSOR(y)
+  SGB_VERTEX_UTIL_ACCESSOR(z)
 
 #define SGB_EDGE_UTIL_ACCESSOR(X) \
   template <class T> \
   inline sgb_edge_util_map< X##_property<T> > \
   get(X##_property<T>, Graph*) { \
     return sgb_edge_util_map< X##_property<T> >(); \
+  } \
+  template <class T, class Key> \
+  inline typename sgb_edge_util_map< X##_property<T> >::value_type \
+  get(X##_property<T>, const Graph*, const Key& key) { \
+    return sgb_edge_util_map< X##_property<T> >()[key]; \
+  } \
+  template <class T, class Key, class Value> \
+  inline  void \
+  put(X##_property<T>, Graph*, const Key& key, const Value& value) { \
+    sgb_edge_util_map< X##_property<T> >()[key] = value; \
   }
 
-SGB_EDGE_UTIL_ACCESSOR(a);
-SGB_EDGE_UTIL_ACCESSOR(b);
+  SGB_EDGE_UTIL_ACCESSOR(a)
+  SGB_EDGE_UTIL_ACCESSOR(b)
+
+#else // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
+#define SGB_VERTEX_UTIL_ACCESSOR(TAG,TYPE) \
+  inline sgb_vertex_util_map< TAG<TYPE> > \
+  get(TAG<TYPE>, Graph*) { \
+    return sgb_vertex_util_map< TAG<TYPE> >(); \
+  } \
+  template <class Key> \
+  inline typename sgb_vertex_util_map< TAG<TYPE> >::value_type \
+  get(TAG<TYPE>, const Graph*, const Key& key) { \
+    return sgb_vertex_util_map< TAG<TYPE> >()[key]; \
+  } \
+  template <class Key, class Value> \
+  inline  void \
+  put(TAG<TYPE>, Graph*, const Key& key, const Value& value) { \
+    sgb_vertex_util_map< TAG<TYPE> >()[key] = value; \
+  } \
+  template <> struct property_map<Graph*, TAG<TYPE> > { \
+    typedef sgb_vertex_util_map< TAG<TYPE> > type; \
+  }
+
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(u_property, char*);
+
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(v_property, char*);
+
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(w_property, char*);
+
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(x_property, char*);
+  
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(y_property, char*);
+
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Vertex*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Arc*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, Graph*);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, long);
+SGB_VERTEX_UTIL_ACCESSOR(z_property, char*);
+
+#define SGB_EDGE_UTIL_ACCESSOR(TAG,TYPE) \
+  inline sgb_edge_util_map< TAG<TYPE> > \
+  get(TAG<TYPE>, Graph*) { \
+    return sgb_edge_util_map< TAG<TYPE> >(); \
+  } \
+  template <class Key> \
+  inline typename sgb_edge_util_map< TAG<TYPE> >::value_type \
+  get(TAG<TYPE>, const Graph*, const Key& key) { \
+    return sgb_edge_util_map< TAG<TYPE> >()[key]; \
+  } \
+  template <class Key, class Value> \
+  inline  void \
+  put(TAG<TYPE>, Graph*, const Key& key, const Value& value) { \
+    sgb_edge_util_map< TAG<TYPE> >()[key] = value; \
+  } \
+  template <> struct property_map<Graph*, TAG<TYPE> > { \
+    typedef sgb_edge_util_map< TAG<TYPE> > type; \
+  }
+
+SGB_EDGE_UTIL_ACCESSOR(a_property, Vertex*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, Arc*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, Graph*);
+SGB_EDGE_UTIL_ACCESSOR(a_property, long);
+SGB_EDGE_UTIL_ACCESSOR(a_property, char*);
+
+SGB_EDGE_UTIL_ACCESSOR(b_property, Vertex*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, Arc*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, Graph*);
+SGB_EDGE_UTIL_ACCESSOR(b_property, long);
+SGB_EDGE_UTIL_ACCESSOR(b_property, char*);
 
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
