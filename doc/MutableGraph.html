@@ -75,7 +75,11 @@ and whose argument type matches the <tt>edge_descriptor</tt> type.
 <tr>
 <TD><a name="sec:add-edge"><TT>add_edge(u,&nbsp;v,&nbsp;g)</TT></a></TD>
 <TD>
-Inserts the edge <i>(u,v)</i> into the graph.<br>
+Inserts the edge <i>(u,v)</i> into the graph, and returns an edge
+descriptor pointing to the new edge. If the graph disallows
+parallel edges, and the edge <i>(u,v)</i> is already in the graph,
+then the <tt>bool</tt> flag returned is <tt>false</tt> and the
+returned edge descriptor points to the already existing edge.<br>
 Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT>
 </TD>
 </tr>

@@ -736,7 +736,7 @@ the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
 <i>v</i> are descriptors for the same vertex (creating a self loop)
 and the graph is undirected, then the edge will not be added and the
 flag will be <TT>false</TT>.  When the flag is <TT>false</TT>, the
-edge descriptor is invalid and any use of it is undefined.  
+returned edge descriptor points to the already existing edge.
 
 <p>
 The placement of the new edge in the out-edge list is in general
