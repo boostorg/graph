@@ -61,12 +61,14 @@
 
 \section{Introduction}
 
-This paper documents the implementation of the
-\code{isomorphism()} function of the Boost Graph Library.
-This function answers the question, ``are these two graphs equal?''
-By \emph{equal}, we mean the two graphs have the same structure---the
-vertices and edges are connected in the same way. The mathematical
-name for this kind of equality is \emph{isomorphic}.
+This paper documents the implementation of the \code{isomorphism()}
+function of the Boost Graph Library.  The implementation was by Jeremy
+Siek with algorithmic improvements and test code from Douglas Gregor.
+The \code{isomorphism()} function answers the question, ``are these
+two graphs equal?''  By \emph{equal}, we mean the two graphs have the
+same structure---the vertices and edges are connected in the same
+way. The mathematical name for this kind of equality is
+\emph{isomorphic}.
 
 An \emph{isomorphism} is a one-to-one mapping of the vertices in one
 graph to the vertices of another graph such that adjacency is
@@ -239,10 +241,12 @@ below in the section ``Concept checking''.
 @d Isomorphism Function Interface
 @{
 template <typename Graph1, typename Graph2, 
-          typename IndexMapping, typename VertexInvariant,
+          typename IndexMapping, 
+          typename VertexInvariant1, typename VertexInvariant2,
           typename IndexMap1, typename IndexMap2>
 bool isomorphism(const Graph1& g1, const Graph2& g2, 
-                 IndexMapping f, VertexInvariant invariant,
+                 IndexMapping f, 
+                 VertexInvariant1 invariant1, VertexInvariant2 invariant2,
                  IndexMap1 index_map1, IndexMap2 index_map2)
 @}
 
@@ -329,22 +333,37 @@ if (num_vertices(g1) != num_vertices(g2))
 
 \subsection{Ordering by Vertex Invariant Multiplicity}
 
-The user can supply the vertex invariant function as a function object
-(the \code{invariant} parameter), but we also define a default which
-uses the out-degree of a vertex. The following is the definition of
-the function object for the default vertex invariant. User-defined
-vertex invariant function objects should follow the same pattern.
+The user can supply the vertex invariant functions as a
+\stlconcept{AdaptableUnaryFunction} (with the addition of the
+\code{max} function) in the \code{invariant1} and \code{invariant2}
+parameters. We also define a default which uses the out-degree and
+in-degree of a vertex. The following is the definition of the function
+object for the default vertex invariant. User-defined vertex invariant
+function objects should follow the same pattern.
 
 @d Degree vertex invariant
 @{
-struct degree_vertex_invariant {
-  template <typename Graph> struct result {
-    typedef typename graph_traits<Graph>::degree_size_type type;
-  };
-  template <typename Graph>
-  typename graph_traits<Graph>::degree_size_type
-  operator()(typename graph_traits<Graph>::vertex_descriptor v, const Graph& g)
-    { return out_degree(v, g); }
+template <typename InDegreeMap, typename Graph>
+class degree_vertex_invariant
+{
+public:
+  typedef typename graph_traits<Graph>::vertex_descriptor argument_type;
+  typedef typename graph_traits<Graph>::degree_size_type result_type;
+
+  degree_vertex_invariant(const InDegreeMap& in_degree_map, const Graph& g)
+    : m_in_degree_map(in_degree_map), m_g(g) { }
+
+  result_type operator()(argument_type v) const {
+    return (num_vertices(m_g) + 1) * out_degree(v, m_g)
+      + get(m_in_degree_map, v);
+  }
+  // The largest possible vertex invariant number
+  result_type max() const { 
+    return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
+  }
+private:
+  InDegreeMap m_in_degree_map;
+  const Graph& m_g;
 };
 @}
 
@@ -357,9 +376,9 @@ maps for accessing the stored invariants, which are described next.
 @{
 @<Setup storage for vertex invariants@>
 for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-  invar1[*i1] = invariant(*i1, g1);
+  invar1[*i1] = invariant1(*i1);
 for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
-  invar2[*i2] = invariant(*i2, g2);
+  invar2[*i2] = invariant2(*i2);
 @}
 
 \noindent We store the invariants in two vectors, indexed by the vertex indices
@@ -369,10 +388,8 @@ to invariant, instead of vertex to index to invariant).
 
 @d Setup storage for vertex invariants
 @{
-typedef typename VertexInvariant::template result<Graph1>::type
-  InvarValue1;
-typedef typename VertexInvariant::template result<Graph2>::type
-  InvarValue2;
+typedef typename VertexInvariant1::result_type InvarValue1;
+typedef typename VertexInvariant2::result_type InvarValue2;
 typedef std::vector<InvarValue1> invar_vec1_t;
 typedef std::vector<InvarValue2> invar_vec2_t;
 invar_vec1_t invar1_vec(num_vertices(g1));
@@ -410,7 +427,7 @@ graph to record the multiplicity.
 
 @d Compute invariant multiplicity
 @{
-std::vector<std::size_t> invar_mult(num_vertices(g1), 0);
+std::vector<std::size_t> invar_mult(invariant1.max(), 0);
 for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)      
   ++invar_mult[invar1[*i1]];
 @}
@@ -558,7 +575,7 @@ std::sort(edge_set.begin(), edge_set.end(),
           (make_iterator_property_map(perm.begin(), index_map1, perm[0]), g1));
 @}
 
-\noindent The \code{edge\_num} function computes the ordering number
+\noindent The \code{edge\_order} function computes the ordering number
 for an edge, which for edge $e=(u,v)$ is $\max(u,v)$. The
 \code{edge\_\-ordering\_\-fun} function object simply returns
 comparison of two edge's ordering numbers.
@@ -568,8 +585,8 @@ comparison of two edge's ordering numbers.
 namespace detail {
 
   template <typename VertexIndexMap, typename Graph>
-  std::size_t edge_num(const typename graph_traits<Graph>::edge_descriptor e,
-                       VertexIndexMap index_map, const Graph& g) {
+  std::size_t edge_order(const typename graph_traits<Graph>::edge_descriptor e,
+                         VertexIndexMap index_map, const Graph& g) {
     return std::max(get(index_map, source(e, g)), get(index_map, target(e, g)));    
   }
 
@@ -580,7 +597,7 @@ namespace detail {
       : m_index_map(vip), m_g(g) { }
     template <typename Edge>
     bool operator()(const Edge& e1, const Edge& e2) const {
-      return edge_num(e1, m_index_map, m_g) < edge_num(e2, m_index_map, m_g);
+      return edge_order(e1, m_index_map, m_g) < edge_order(e2, m_index_map, m_g);
     }
     VertexIndexMap m_index_map;
     const Graph& m_g;
@@ -702,7 +719,7 @@ std::vector<vertex2_t> potential_matches;
 bool some_edges = false;
 
 for (; edge_iter != edge_iter_end; ++edge_iter) {
-  if (get(index_map1, k) != edge_num(*edge_iter, index_map1, g1))
+  if (get(index_map1, k) != edge_order(*edge_iter, index_map1, g1))
     break;      
   if (k == source(*edge_iter, g1)) { // (k,j)
     @<Compute the $out$ set@>
@@ -968,7 +985,7 @@ Here we output the header file \code{isomorphism.hpp}. We add a
 copyright statement, include some files, and then pull the top-level
 code parts into namespace \code{boost}.
 
-@o isomorphism.hpp
+@o isomorphism.hpp -d
 @{
 
 // (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
@@ -1012,11 +1029,78 @@ namespace boost {
   @<Isomorphism Function Interface@>
   @<Isomorphism Function Body@>
 
+  namespace detail {
+    // Should move this, make is public
+    template <typename Graph, typename InDegreeMap, typename Cat>
+    void compute_in_degree(const Graph& g, const InDegreeMap& in_degree_map,
+                           Cat)
+    {
+      typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+      typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+      for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+        for (tie(ei, ei_end) = out_edges(*vi, g); ei != ei_end; ++ei) {
+          typename graph_traits<Graph>::vertex_descriptor v = target(*ei, g);
+          put(in_degree_map, v, get(in_degree_map, v) + 1);
+        }
+    }
+    template <typename Graph, typename InDegreeMap>
+    void compute_in_degree(const Graph& g, const InDegreeMap& in_degree_map,
+                           edge_list_graph_tag)
+    {
+      typename graph_traits<Graph>::edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+        typename graph_traits<Graph>::vertex_descriptor v = target(*ei, g);
+        put(in_degree_map, v, get(in_degree_map, v) + 1);
+      }
+    }
+    template <typename Graph, typename InDegreeMap>
+    void compute_in_degree(const Graph& g, const InDegreeMap& in_degree_map)
+    {
+      typename graph_traits<Graph>::traversal_category cat;
+      compute_in_degree(g, in_degree_map, cat);
+    }
+
+
+    template <typename Graph1, typename Graph2, 
+              typename IndexMapping, typename IndexMap1, typename IndexMap2,
+              typename P, typename T, typename R>
+    bool isomorphism_impl(const Graph1& g1, const Graph2& g2, 
+                          IndexMapping f, 
+                          IndexMap1 index_map1, IndexMap2 index_map2,
+                          const bgl_named_params<P,T,R>& params)
+    {
+      typedef typename graph_traits<Graph1>::vertices_size_type size_type;
+
+      // Compute the in-degrees
+      std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
+      typedef iterator_property_map<size_type*, IndexMap1, 
+         size_type, size_type&> InDegreeMap1;
+      InDegreeMap1 in_degree_map1(&in_degree_vec1[0], index_map1);
+      detail::compute_in_degree(g1, in_degree_map1);
+      degree_vertex_invariant<InDegreeMap1, Graph1> 
+        default_invar1(in_degree_map1, g1);
+
+      std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
+      typedef iterator_property_map<size_type*, IndexMap2, 
+         size_type, size_type&> InDegreeMap2;
+      InDegreeMap2 in_degree_map2(&in_degree_vec2[0], index_map2);
+      detail::compute_in_degree(g2, in_degree_map2);
+      degree_vertex_invariant<InDegreeMap2, Graph2>
+         default_invar2(in_degree_map2, g2);
+
+      return isomorphism(g1, g2, f, 
+        choose_param(get_param(params, vertex_invariant_t()), default_invar1),
+        choose_param(get_param(params, vertex_invariant_t()), default_invar2),
+        index_map1, index_map2);
+    }
+
+  } // namespace detail
+
   // Named parameter interface
   template <typename Graph1, typename Graph2, class P, class T, class R>
   bool isomorphism(const Graph1& g1,
-                          const Graph2& g2,
-                          const bgl_named_params<P,T,R>& params)
+                   const Graph2& g2,
+                   const bgl_named_params<P,T,R>& params)
   {
     typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
     typename std::vector<vertex2_t>::size_type
@@ -1024,22 +1108,17 @@ namespace boost {
         ? num_vertices(g1) : 1;
     std::vector<vertex2_t> f(n);
     vertex2_t x;
-    degree_vertex_invariant default_invar;
-    return isomorphism
+    return detail::isomorphism_impl
       (g1, g2, 
-       choose_param
-       (get_param(params, vertex_isomorphism_t()),
-        make_iterator_property_map
-        (f.begin(), 
-         choose_const_pmap(get_param(params, vertex_index1),
-                     g1, vertex_index), x)),
-       choose_param(get_param(params, vertex_invariant_t()),
-                    default_invar),
+       choose_param(get_param(params, vertex_isomorphism_t()),
+          make_iterator_property_map(f.begin(), 
+            choose_const_pmap(get_param(params, vertex_index1),
+                        g1, vertex_index), x)),
        choose_const_pmap(get_param(params, vertex_index1),
-                   g1, vertex_index),
+                     g1, vertex_index),
        choose_const_pmap(get_param(params, vertex_index2),
-                   g2, vertex_index)
-       );
+                     g2, vertex_index),
+       params);
   }
 
   // All defaults interface
@@ -1050,14 +1129,29 @@ namespace boost {
     typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
     std::vector<vertex2_t> f(num_vertices(g1));
     vertex2_t x;
-    degree_vertex_invariant invariant;
+
+    // Compute the in-degrees
+    std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
+    typedef typename property_map<Graph1,vertex_index_t>::const_type IndexMap1;
+    typedef iterator_property_map<size_type*, IndexMap1, 
+       size_type, size_type&> InDegreeMap1;
+    InDegreeMap1 in_degree_map1(&in_degree_vec1[0], get(vertex_index, g1));
+    detail::compute_in_degree(g1, in_degree_map1);
+    degree_vertex_invariant<InDegreeMap1, Graph1>
+      invariant1(in_degree_map, g1);
+
+    std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
+    typedef typename property_map<Graph2,vertex_index_t>::const_type IndexMap2;
+    typedef iterator_property_map<size_type*, IndexMap2, 
+       size_type, size_type&> InDegreeMap2;
+    InDegreeMap2 in_degree_map2(&in_degree_vec2[0], get(vertex_index, g2));
+    detail::compute_in_degree(g2, in_degree_map2);
+    degree_vertex_invariant<InDegreeMap2, Graph2> 
+      invariant2(in_degree_map, g2);
+
     return isomorphism
-      (g1, g2,
-       make_iterator_property_map(f.begin(), get(vertex_index, g1), x),
-       invariant,
-       get(vertex_index, g1),
-       get(vertex_index, g2)
-       );
+      (g1, g2, make_iterator_property_map(f.begin(), get(vertex_index, g1), x),
+       invariant1, invariant2, get(vertex_index, g1), get(vertex_index, g2));
   }
 
 } // namespace boost
