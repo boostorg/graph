@@ -60,14 +60,14 @@ int main()
   g[y].push_back(u);
 
   vector<default_color_type> color(N, white(default_color_type()));
-  vector<int> discover(N), finish(N);
-  typedef vector<int>::iterator iter_t;
+  vector<Graph::size_type> discover(N), finish(N);
+  typedef Graph::size_type* ptr_t;
   int time = 0;
   breadth_first_search
     (g, int(s), 
-     visitor(make_bfs_visitor(make_pair(stamp_times(discover.begin(), time,
+     visitor(make_bfs_visitor(make_pair(stamp_times(&discover[0], time,
 						    on_discover_vertex()),
-					stamp_times(finish.begin(), time,
+					stamp_times(&finish[0], time,
 						    on_finish_vertex())))).
      color_map(&color[0]));
 
@@ -79,7 +79,7 @@ int main()
   boost::integer_range<int> ir(0,N);
   copy(ir.begin(), ir.end(), discover_order.begin());
   sort(discover_order.begin(), discover_order.end(),
-       indirect_cmp<iter_t, less<int> >(discover.begin()));
+       indirect_cmp<ptr_t, less<int> >(&discover[0]));
   
   for (int i = 0; i < N; ++i)
     std::cout << name[ discover_order[i] ] << " ";
@@ -91,7 +91,7 @@ int main()
   vector<Graph::size_type> finish_order(N);
   copy(ir.begin(), ir.end(), finish_order.begin());
   sort(finish_order.begin(), finish_order.end(),
-       indirect_cmp<iter_t, less<int> >(finish.begin()));
+       indirect_cmp<ptr_t, less<int> >(&finish[0]));
   
   for (int j = 0; j < N; ++j)
     std::cout << name[ finish_order[j] ] << " ";
