@@ -59,13 +59,13 @@ namespace boost {
   inline TreeNode down_heap(TreeNode x, Compare comp, ExternalData& edata) {
     while (x.children().size() > 0) {
       typename TreeNode::children_type::iterator 
-	child_iter = std::min_element(x.children().begin(),
-				      x.children().end(), 
-				      comp);
+        child_iter = std::min_element(x.children().begin(),
+                                      x.children().end(), 
+                                      comp);
       if (comp(*child_iter, x))
-	x.swap(*child_iter, edata);
+        x.swap(*child_iter, edata);
       else
-	break;
+        break;
     }
     return x;
   }
