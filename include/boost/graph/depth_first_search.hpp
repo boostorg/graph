@@ -24,10 +24,21 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 //
+
+// Nonrecursive implementation of depth_first_visit_impl submitted by
+// Bruce Barr, schmoost <at> yahoo.com, May/June 2003.
+//
+// (C) Copyright Bruce Barr, 2003
+// Permission to copy, use, modify, sell and distribute this software
+// is granted provided this copyright notice appears in all copies.
+// This software is provided "as is" without express or implied
+// warranty, and with no claim as to its suitability for any purpose.
+
+
+
 #ifndef BOOST_GRAPH_RECURSIVE_DFS_HPP
 #define BOOST_GRAPH_RECURSIVE_DFS_HPP
 
-#include <stack>
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -35,6 +46,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <vector>
+#include <utility>
 
 namespace boost {
 
@@ -60,6 +72,80 @@ namespace boost {
   };
 
   namespace detail {
+
+// Define BOOST_RECURSIVE_DFS to use older, recursive version.
+// It is retained for a while in order to perform performance
+// comparison.
+#ifndef BOOST_RECURSIVE_DFS
+
+    // If the vertex u and the iterators ei and ei_end are thought of as the
+    // context of the algorithm, each push and pop from the stack could
+    // be thought of as a context shift.
+    // Each pass through "while (ei != ei_end)" may refer to the out-edges of
+    // an entirely different vertex, because the context of the algorithm
+    // shifts every time a white adjacent vertex is discovered.
+    // The corresponding context shift back from the adjacent vertex occurs
+    // after all of its out-edges have been examined.
+    //
+    // See http://lists.boost.org/MailArchives/boost/msg48752.php for FAQ.
+
+    template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+    void depth_first_visit_impl
+      (const IncidenceGraph& g,
+       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       DFSVisitor& vis,
+       ColorMap color)
+    {
+      function_requires<IncidenceGraphConcept<IncidenceGraph> >();
+      function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
+      typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
+      function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
+      typedef typename property_traits<ColorMap>::value_type ColorValue;
+      function_requires< ColorValueConcept<ColorValue> >();
+      typedef color_traits<ColorValue> Color;
+      typedef typename graph_traits<IncidenceGraph>::out_edge_iterator Iter;
+      typedef std::pair<Vertex, std::pair<Iter, Iter> > VertexInfo;
+
+      Iter ei, ei_end;
+      std::vector<VertexInfo> stack;
+
+      // Possible optimization for vector
+      //stack.reserve(num_vertices(g));
+
+      put(color, u, Color::gray());
+      vis.discover_vertex(u, g);
+      tie(ei, ei_end) = out_edges(u, g);
+      stack.push_back(std::make_pair(u, std::make_pair(ei, ei_end)));
+      while (!stack.empty()) {
+        VertexInfo& back = stack.back();
+        u = back.first;
+        tie(ei, ei_end) = back.second;
+        stack.pop_back();
+        while (ei != ei_end) {
+          Vertex v = target(*ei, g);
+          vis.examine_edge(*ei, g);
+          ColorValue v_color = get(color, v);
+          if (v_color == Color::white()) {
+            vis.tree_edge(*ei, g);
+            stack.push_back(std::make_pair(u, std::make_pair(++ei, ei_end)));
+            u = v;
+            put(color, u, Color::gray());
+            vis.discover_vertex(u, g);
+            tie(ei, ei_end) = out_edges(u, g);
+          } else if (v_color == Color::gray()) {
+            vis.back_edge(*ei, g);
+            ++ei;
+          } else {
+            vis.forward_or_cross_edge(*ei, g);
+            ++ei;
+          }
+        }
+        put(color, u, Color::black());
+        vis.finish_vertex(u, g);
+      }
+    }
+
+#else // BOOST_RECURSIVE_DFS is defined
 
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
     void depth_first_visit_impl
@@ -88,6 +174,9 @@ namespace boost {
       }
       put(color, u, Color::black());         vis.finish_vertex(u, g);
     }
+
+#endif
+
   } // namespace detail
 
   template <class VertexListGraph, class DFSVisitor, class ColorMap,
