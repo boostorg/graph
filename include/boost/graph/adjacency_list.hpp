@@ -40,6 +40,8 @@
 #include <set>
 #include <map>
 
+#include <boost/config.hpp>
+
 #if !defined BOOST_NO_HASH
 #include <hash_set>
 #include <hash_map>
@@ -49,7 +51,6 @@
 #include <slist>
 #endif
 
-#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map.hpp>
 #include <boost/pending/ct_if.hpp>
