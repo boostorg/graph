@@ -34,6 +34,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/relax.hpp>
+#include <algorithm> // for std::min and std::max
 
 namespace boost
 {
@@ -46,6 +47,8 @@ namespace boost
       const BinaryFunction &combine, const Infinity& inf, 
       const Zero& zero)
     {
+      BOOST_USING_STD_MIN();
+
       typename graph_traits<VertexListGraph>::vertex_iterator 
         i, lasti, j, lastj, k, lastk;
     
@@ -54,7 +57,7 @@ namespace boost
         for (tie(i, lasti) = vertices(g); i != lasti; i++)
           for (tie(j, lastj) = vertices(g); j != lastj; j++)
           {
-            d[*i][*j] = std::min(d[*i][*j], 
+            d[*i][*j] = min BOOST_PREVENT_MACRO_SUBSTITUTION(d[*i][*j], 
               inf_combine(d[*i][*k], d[*k][*j], inf, combine, 
               compare), compare);
           }
@@ -93,6 +96,8 @@ namespace boost
     const BinaryPredicate& compare, const BinaryFunction& combine, 
     const Infinity& inf, const Zero& zero)
   {
+    BOOST_USING_STD_MIN();
+
     function_requires<VertexListGraphConcept<VertexAndEdgeListGraph> >();
     function_requires<EdgeListGraphConcept<VertexAndEdgeListGraph> >();
     function_requires<IncidenceGraphConcept<VertexAndEdgeListGraph> >();
@@ -115,7 +120,7 @@ namespace boost
     {
       if (d[source(*first, g)][target(*first, g)] != inf)
         d[source(*first, g)][target(*first, g)] = 
-          std::min(get(w, *first), 
+          min BOOST_PREVENT_MACRO_SUBSTITUTION(get(w, *first), 
             d[source(*first, g)][target(*first, g)]);
       else 
         d[source(*first, g)][target(*first, g)] = get(w, *first);
@@ -130,7 +135,7 @@ namespace boost
       {
         if (d[target(*first, g)][source(*first, g)] != inf)
           d[target(*first, g)][source(*first, g)] = 
-            std::min(get(w, *first), 
+            min BOOST_PREVENT_MACRO_SUBSTITUTION(get(w, *first), 
             d[target(*first, g)][source(*first, g)]);
         else 
           d[target(*first, g)][source(*first, g)] = get(w, *first);
@@ -158,7 +163,7 @@ namespace boost
         choose_param(get_param(params, distance_combine_t()), 
           std::plus<WM>()),
         choose_param(get_param(params, distance_inf_t()), 
-          std::numeric_limits<WM>::max()),
+          std::numeric_limits<WM>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
         choose_param(get_param(params, distance_zero_t()), 
           WM()));
     }
@@ -179,7 +184,7 @@ namespace boost
         choose_param(get_param(params, distance_combine_t()), 
           std::plus<WM>()),
         choose_param(get_param(params, distance_inf_t()), 
-          std::numeric_limits<WM>::max()),
+          std::numeric_limits<WM>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
         choose_param(get_param(params, distance_zero_t()), 
           WM()));
     }
