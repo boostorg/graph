@@ -311,6 +311,12 @@ namespace boost {
       typedef no_property property_type;
       inline stored_edge(Vertex target, const no_property& = no_property())
         : m_target(target) { }
+      // Need to write this explicitly so stored_edge_property can
+      // invoke Base::operator= (at least, for SGI MIPSPro compiler)
+      inline stored_edge& operator=(const stored_edge& x) {
+	m_target = x.m_target;
+	return *this;
+      }
       inline Vertex& get_target() const { return m_target; }
       inline const no_property& get_property() const { return s_prop; }
       inline bool operator==(const stored_edge& x) const
@@ -348,7 +354,8 @@ namespace boost {
     protected:
       // Holding the property by-value causes edge-descriptor
       // invalidation for add_edge() with EdgeList=vecS. Instead we
-      // hold a pointer to the property.
+      // hold a pointer to the property. std::auto_ptr is not
+      // a perfect fit for the job, but it is darn close.
       std::auto_ptr<Property> m_property;
     };
 
@@ -2176,7 +2183,7 @@ namespace boost {
         typedef OutEdgeIterDiff InEdgeIterDiff;
 
 #if !defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef typename boost::iterator_adaptor<InEdgeIter, 
+        typedef boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, InEdgeIterCat, InEdgeIterDiff>
         > in_edge_iterator;
@@ -2196,7 +2203,7 @@ namespace boost {
 #endif
 
 #if !defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef typename boost::iterator_adaptor<EdgeIter,
+        typedef boost::iterator_adaptor<EdgeIter,
               undirected_edge_iter_policies,
               edge_iter_traits<edge_descriptor, EdgeIterCat, EdgeIterDiff> > 
           UndirectedEdgeIter;
