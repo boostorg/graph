@@ -19,7 +19,9 @@
 
 #include <boost/config.hpp>
 #include <memory>
+#include <stdexcept>
 #include <algorithm>
+#include <string>
 #include <boost/pending/ct_if.hpp>
 
 // This provides versions of std::bitset with both static and dynamic size.
@@ -52,25 +54,12 @@ namespace boost {
       static const std::size_t word_size = CHAR_BIT * sizeof(word_type);
     };
     
-    // ------------------------------------------------------------
-    // Helper class to zero out the unused high-order bits in the highest word.
-
-    template <size_type ExtraBits> struct sanitize_high {
-      template <typename WordType>
-      static void apply(WordType& val)
-
-    };
-
-    template <> struct sanitize_high<0> {
-      template <typename WordType>
-      static void apply(WordType) {}
-    };
-
     //=========================================================================
     template <class WordTraits, class SizeType, class Derived>
     class bitset_base
     {
-    private:
+      //    private:
+    public:
       typedef SizeType size_type;
       typedef typename WordTraits::word_type word_type;
 
@@ -78,7 +67,7 @@ namespace boost {
         return pos / WordTraits::word_size;
       }
       static size_type s_which_byte(size_type pos) {
-        return (__pos % WordTraits::word_size) / CHAR_BIT;
+        return (pos % WordTraits::word_size) / CHAR_BIT;
       }
       static size_type s_which_bit(size_type pos) {
         return pos % WordTraits::word_size;
@@ -95,10 +84,10 @@ namespace boost {
       word_type& m_hi_word() { return data()[num_words() - 1]; }
       word_type  m_hi_word() const { return data()[num_words() - 1]; }
 
-      void sanitize_highest() {
-        size_type extra_bits = num_words() % WordTraits::word_size;
+      void m_sanitize_highest() {
+        size_type extra_bits = size() % WordTraits::word_size;
         if (extra_bits)
-          m_hi_word() &= ~((~static_cast<WordType>(0)) << extra_bits);
+          m_hi_word() &= ~((~static_cast<word_type>(0)) << extra_bits);
       }
     public:
 
@@ -112,8 +101,8 @@ namespace boost {
         reference();
 
         reference(bitset_base& b, size_type pos ) {
-          m_word_ptr = &b._M_getword(pos);
-          m_bit_pos = _S_whichbit(pos);
+          m_word_ptr = &b.m_get_word(pos);
+          m_bit_pos = s_which_bit(pos);
         }
 
       public:
@@ -122,9 +111,9 @@ namespace boost {
         // for b[i] = x;
         reference& operator=(bool x) {
           if ( x )
-            *m_word_ptr |= _S_maskbit(m_bit_pos);
+            *m_word_ptr |= s_mask_bit(m_bit_pos);
           else
-            *m_word_ptr &= ~_S_maskbit(m_bit_pos);
+            *m_word_ptr &= ~s_mask_bit(m_bit_pos);
 
           return *this;
         }
@@ -152,6 +141,14 @@ namespace boost {
         }
       };
 
+      void init_from_ulong(unsigned long val) {
+        reset();
+        const size_type n = std::min(sizeof(unsigned long) * CHAR_BIT,
+                                     WordTraits::word_size * num_words());
+        for(size_type i = 0; i < n; ++i, val >>= 1)
+          if ( val & 0x1 )
+            m_get_word(i) |= s_mask_bit(i);
+      }
       
       // intersection: this = this & x
       Derived& operator&=(const Derived& x) {
@@ -180,13 +177,13 @@ namespace boost {
       Derived& set() {
         for (size_type i = 0; i < num_words(); ++i)
           data()[i] = ~static_cast<word_type>(0);
+        m_sanitize_highest();
         return static_cast<Derived&>(*this);
       }
 
       Derived& set(size_type pos, int val = true)
       {
-        BOOST_ASSERT_THROW(pos < size(),
-                           out_of_range("boost::bit_set::set(pos,value)"));
+        BOOST_ASSERT_THROW(pos < size(), std::out_of_range("boost::bitset::set(pos,value)"));
         if (val)
           m_get_word(pos) |= s_mask_bit(pos);
         else
@@ -201,25 +198,24 @@ namespace boost {
       }
 
       Derived& reset(size_type pos) {
-        BOOST_ASSERT_THROW(pos < size(),
-                           out_of_range("boost::bit_set::reset(pos)"));
+        BOOST_ASSERT_THROW(pos < size(), std::out_of_range("boost::bitset::reset(pos)"));
         m_get_word(pos) &= ~s_mask_bit(pos);
         return static_cast<Derived&>(*this);
       }
 
       // compliment
       Derived operator~() const {
-        return Derived(*this).flip();
+        return Derived(static_cast<const Derived&>(*this)).flip();
       }
       
       Derived& flip() {
         for (size_type i = 0; i < num_words(); ++i)
           data()[i] = ~data()[i];
+        m_sanitize_highest();
         return static_cast<Derived&>(*this);
       }
       Derived& flip(size_type pos) {
-        BOOST_ASSERT_THROW(pos < size(),
-                           out_of_range("boost::bit_set::flip(pos)"));
+        BOOST_ASSERT_THROW(pos < size(), std::out_of_range("boost::bitset::flip(pos)"));
         m_get_word(pos) ^= s_mask_bit(pos);
         return static_cast<Derived&>(*this);
       }
@@ -252,7 +248,13 @@ namespace boost {
       }
 
       bool operator!=(const Derived& x) const {
-        return !std::equal(data(), data() + num_words(), x.data());
+        return ! this->operator==(x);
+      }
+
+      bool test(size_type pos) const {
+        BOOST_ASSERT_THROW(pos < size(), std::out_of_range("boost::bitset::test(pos)"));
+        return (m_get_word(pos) & s_mask_bit(pos))
+          != static_cast<word_type>(0);
       }
 
       bool any() const {
@@ -267,10 +269,40 @@ namespace boost {
       }
 
       Derived operator<<(size_type pos) const
-        { return Derived(*this) <<= pos; }
+        { return Derived(static_cast<const Derived&>(*this)) <<= pos; }
 
       Derived operator>>(size_type pos) const
-        { return Derived(*this) >>= pos; }
+        { return Derived(static_cast<const Derived&>(*this)) >>= pos; }
+
+      template <class CharT, class Traits, class Alloc>
+      void m_copy_from_string(const basic_string<CharT,Traits,Alloc>& s,
+                              size_type pos, size_type n)
+      {
+        reset();
+        const size_type nbits = std::min(size(), min(n, s.size() - pos));
+        for (size_type i = 0; i < nbits; ++i) {
+          switch(s[pos + nbits - i - 1]) {
+          case '0':
+            break;
+          case '1':
+            this->set(i);
+            break;
+          default:
+            throw std::invalid_argument
+              ("boost::bitset_base::m_copy_from_string(s, pos, n)");
+          }
+        }
+      }
+
+      template <class CharT, class Traits, class Alloc>
+      void m_copy_to_string(basic_string<CharT, Traits, Alloc>& s) const
+      {
+        s.assign(size(), '0');
+        
+        for (size_type i = 0; i < size(); ++i)
+          if (test(i))
+            s[size() - 1 - i] = '1';
+      }
 
       //-----------------------------------------------------------------------
       // Stuff not in std::bitset
@@ -294,43 +326,172 @@ namespace boost {
       // find the index of the next "on" bit after prev
       size_type find_next(size_type prev) const;
 
-    private:
+      
+      size_type _Find_first() const { return find_first(); }
+
+      // find the index of the next "on" bit after prev
+      size_type _Find_next(size_type prev) const { return find_next(prev); }
+
+      //    private:
       word_type* data()
-        { return static_cast<Derived>(this)->data(); }
+        { return static_cast<Derived*>(this)->data(); }
 
       const word_type* data() const 
-        { return static_cast<Derived>(this)->data(); }
+        { return static_cast<const Derived*>(this)->data(); }
 
       size_type num_words() const 
-        { return static_cast<Derived>(this)->num_words(); }
+        { return static_cast<const Derived*>(this)->num_words(); }
+
+      size_type size() const 
+        { return static_cast<const Derived*>(this)->size(); }
     };
 
+    // 23.3.5.3 bitset operations:
+    template <class W, class S, class D>
+    inline D operator&(const bitset_base<W,S,D>& x,
+                       const bitset_base<W,S,D>& y) {
+      D result(static_cast<const D&>(x));
+      result &= static_cast<const D&>(y);
+      return result;
+    }
 
+    template <class W, class S, class D>
+    inline D operator|(const bitset_base<W,S,D>& x,
+                       const bitset_base<W,S,D>& y) {
+      D result(static_cast<const D&>(x));
+      result |= static_cast<const D&>(y);
+      return result;
+    }
+
+    template <class W, class S, class D>
+    inline D operator^(const bitset_base<W,S,D>& x,
+                       const bitset_base<W,S,D>& y) {
+      D result(static_cast<const D&>(x));
+      result ^= static_cast<const D&>(y);
+      return result;
+    }
+
+    // this one is an extension
+    template <class W, class S, class D>
+    inline D operator-(const bitset_base<W,S,D>& x,
+                       const bitset_base<W,S,D>& y) {
+      D result(static_cast<const D&>(x));
+      result -= static_cast<const D&>(y);
+      return result;
+    }
+
+
+    template <class W, class S, class D>
+    std::istream&
+    operator>>(std::istream& is, bitset_base<W,S,D>& x) {
+      std::string tmp;
+      tmp.reserve(x.size());
+
+      // In new templatized iostreams, use istream::sentry
+      if (is.flags() & ios::skipws) {
+        char c;
+        do
+          is.get(c);
+        while (is && isspace(c));
+        if (is)
+          is.putback(c);
+      }
+
+      for (S i = 0; i < x.size(); ++i) {
+        char c;
+        is.get(c);
+
+        if (!is)
+          break;
+        else if (c != '0' && c != '1') {
+          is.putback(c);
+          break;
+        }
+        else
+          //      tmp.push_back(c);
+          tmp += c;
+      }
+
+      if (tmp.empty())
+        is.clear(is.rdstate() | ios::failbit);
+      else
+        x.m_copy_from_string(tmp, static_cast<S>(0), x.size());
+
+      return is;
+    }
+
+    template <class W, class S, class D>
+    std::ostream& operator<<(std::ostream& os, 
+                             const bitset_base<W,S,D>& x) {
+      std::string tmp;
+      x.m_copy_to_string(tmp);
+      return os << tmp;
+    }
 
     //=========================================================================
     template <typename WordType = unsigned long,
               typename SizeType = std::size_t,
-              typename Allocator = std::allocator<
-                  typename word_traits<WordSize>::word_type>
+              typename Allocator = std::allocator<WordType>
              >
-    class dynamic_bitset
+    class dyn_size_bitset
       : public bitset_base<word_traits<WordType>, SizeType,
-          dynamic_bitset<WordType,SizeType,Allocator> >
+          dyn_size_bitset<WordType,SizeType,Allocator> >
     {
-      typedef bit_set self;
+      typedef dyn_size_bitset self;
     public:
       typedef SizeType size_type;
     private:
-      typedef word_traits<word_size> WordTraits;
+      typedef word_traits<WordType> WordTraits;
       static const size_type word_size = WordTraits::word_size;
-      
+
     public:
-      bit_set(size_type N, const Allocator& alloc = Allocator())
-        : m_data(alloc.allocate((N + word_size - 1) / word_size)), 
-          m_size(N), m_num_words((N + word_size - 1) / word_size)
+      dyn_size_bitset(unsigned long val, 
+                      size_type n,
+                      const Allocator& alloc = Allocator()) 
+        : m_data(alloc.allocate((n + word_size - 1) / word_size)),
+          m_size(n),
+          m_num_words((n + word_size - 1) / word_size),
+          m_alloc(alloc)
+      {
+        init_from_ulong(val);
+      }
+
+      dyn_size_bitset(size_type n,  // size of the set's "universe"
+                      const Allocator& alloc = Allocator())
+        : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
+          m_size(n), m_num_words((n + word_size - 1) / word_size),
+          m_alloc(alloc)
       { }
-      ~bit_set() { 
-        alloc.deallocate(m_data, m_num_words); 
+
+      template<class CharT, class Traits, class Alloc>
+      explicit dyn_size_bitset
+        (const basic_string<CharT,Traits,Alloc>& s,
+         std::size_t pos = 0,
+         std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos),
+	 const Allocator& alloc = Allocator())
+        : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
+          m_size(n), m_num_words((n + word_size - 1) / word_size),
+          m_alloc(alloc)
+      {
+        BOOST_ASSERT_THROW(pos < s.size(), std::out_of_range("dyn_size_bitset::dyn_size_bitset(s,pos,n,alloc)"));
+        m_copy_from_string(s, pos, n);
+      }
+
+      template <typename InputIterator>
+      explicit dyn_size_bitset
+        (InputIterator first, InputIterator last,
+	 size_type n,  // size of the set's "universe"
+	 const Allocator& alloc = Allocator())
+        : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
+          m_size(N), m_num_words((n + word_size - 1) / word_size),
+          m_alloc(alloc)
+      {
+        while (first != last)
+          this->set(*first++);
+      }
+
+      ~dyn_size_bitset() { 
+        m_alloc.deallocate(m_data, m_num_words); 
       }
       
       size_type size() const { return m_size; }
@@ -339,13 +500,13 @@ namespace boost {
       size_type num_words() const { return m_num_words; }
 
       word_type* data() { return m_data; }
-
       const word_type* data() const { return m_data; }
 
     protected:
       word_type* m_data;
       SizeType m_size;
       SizeType m_num_words;
+      Allocator m_alloc;
     };
 
     //=========================================================================
@@ -353,28 +514,41 @@ namespace boost {
       typename SizeType = std::size_t>
     class bitset
       : public bitset_base<word_traits<WordType>, SizeType,
-          static_bitset<N, WordType, SizeType> >
+          bitset<N, WordType, SizeType> >
     {
       typedef bitset self;
       static const std::size_t word_size = word_traits<WordType>::word_size;
     public:
         // 23.3.5.1 constructors:
-      bitset() {}
+      bitset() {
+#if defined(__GNUC__)
+        for (size_type i = 0; i < num_words(); ++i)
+          m_data[i] = static_cast<WordType>(0);
+#endif
+      }
 
       bitset(unsigned long val) {
-	init_from_ulong(val);
+        init_from_ulong(val);
       }
 
       template<class CharT, class Traits, class Alloc>
       explicit bitset
         (const basic_string<CharT,Traits,Alloc>& s,
-	 std::size_t pos = 0,
-	 std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos))
+         std::size_t pos = 0,
+         std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos))
       {
-	BOOST_ASSERT_THROW(pos < s.size(), out_of_range("bitset"));
-	m_copy_from_string(s, pos, n);
+        BOOST_ASSERT_THROW
+          (pos < s.size(), std::out_of_range("bitset::bitset(s,pos,n)"));
+        m_copy_from_string(s, pos, n);
       }
 
+      size_type size() const { return N; }
+
+      // protected:
+      size_type num_words() const { return (N + word_size - 1) / word_size; }
+
+      word_type* data() { return m_data; }
+      const word_type* data() const { return m_data; }
     protected:
       word_type m_data[(N + word_size - 1) / word_size];
     };
@@ -386,20 +560,20 @@ namespace boost {
         typedef bitset<N, WordT, SizeT> type;
       };
     };
-    struct select_dynamic_bitset {
+    struct select_dyn_size_bitset {
       template <std::size_t N, typename WordT, typename SizeT, typename Alloc>
       struct bind {
-        typedef dynamic_bitset<WordT, SizeT, Alloc> type;
+        typedef dyn_size_bitset<WordT, SizeT, Alloc> type;
       };
     };
 
     template <std::size_t N = 0, // 0 means use dynamic
       typename WordType = unsigned long,
       typename Size_type = std::size_t, 
-      typename Allocator = std::allocator<
-          typename word_traits<WordSize>::word_type>
+      typename Allocator = std::allocator<WordType>
+             >
     class bitset_generator {
-      typedef typename ct_if<N, select_dynamic_bitset,
+      typedef typename ct_if<N, select_dyn_size_bitset,
         select_static_bitset>::type selector;
     public:
       typedef typename selector
@@ -411,11 +585,12 @@ namespace boost {
     // bitset_base non-inline member function implementations
 
     template <class WordTraits, class SizeType, class Derived>
+    Derived&
     bitset_base<WordTraits, SizeType, Derived>::
     operator<<=(size_type shift)
     {
       typedef typename WordTraits::word_type word_type;
-      typedef typename WordTraits::size_type size_type;
+      typedef SizeType size_type;
       if (shift != 0) {
         const size_type wshift = shift / WordTraits::word_size;
         const size_type offset = shift % WordTraits::word_size;
@@ -429,15 +604,18 @@ namespace boost {
         for (size_type n1 = 0; n1 < n; ++n1)
           data()[n1] = static_cast<word_type>(0);
       }
+      m_sanitize_highest();
+      return static_cast<Derived&>(*this);
     } // end operator<<=
 
 
     template <class WordTraits, class SizeType, class Derived>
+    Derived&
     bitset_base<WordTraits, SizeType, Derived>::
     operator>>=(size_type shift)
     {
       typedef typename WordTraits::word_type word_type;
-      typedef typename WordTraits::size_type size_type;
+      typedef SizeType size_type;
       if (shift != 0) {
         const size_type wshift = shift / WordTraits::word_size;
         const size_type offset = shift % WordTraits::word_size;
@@ -451,6 +629,8 @@ namespace boost {
         for (size_type n1 = limit + 1; n1 < num_words(); ++n1)
           data()[n1] = static_cast<word_type>(0);
       }
+      m_sanitize_highest();
+      return static_cast<Derived&>(*this);
     } // end operator>>=
 
 
@@ -459,8 +639,8 @@ namespace boost {
     to_ulong() const 
     {
       typedef typename WordTraits::word_type word_type;
-      typedef typename WordTraits::size_type size_type;
-      const overflow_error
+      typedef SizeType size_type;
+      const std::overflow_error
         overflow("boost::bit_set::operator unsigned long()");
 
       if (sizeof(word_type) >= sizeof(unsigned long)) {
@@ -490,11 +670,15 @@ namespace boost {
         // from another word.
         const size_type part = sizeof(unsigned long) % sizeof(word_type);
 
+#if 0
+        // bug in here?
+        // >> to far?
         BOOST_ASSERT_THROW((part != 0 
                             && nwords <= num_words() 
                             && (data()[min_nwords - 1] >>
                                 ((sizeof(word_type) - part) * CHAR_BIT)) != 0),
                            overflow);
+#endif
 
         unsigned long result = 0;
         for (size_type i = 0; i < min_nwords; ++i) {
@@ -508,22 +692,23 @@ namespace boost {
 
     template <class WordTraits, class SizeType, class Derived>
     SizeType bitset_base<WordTraits,SizeType,Derived>::
-    find_first(size_type not_found) const
+    find_first() const
     {
-      for (size_type i = 0; i < _Nw; i++ ) {
-	word_type thisword = _M_w[i];
-	if ( thisword != static_cast<word_type>(0) ) {
-	  // find byte within word
-	  for ( size_t j = 0; j < sizeof(word_type); j++ ) {
-	    unsigned char this_byte
-	      = static_cast<unsigned char>(thisword & (~(unsigned char)0));
-	    if ( this_byte )
-	      return i*BITS_PER_WORDT(word_type) + j*CHAR_BIT +
-		_First_one<true>::_S_first_one[this_byte];
+      SizeType not_found = size();
+      for (size_type i = 0; i < num_words(); i++ ) {
+        word_type thisword = data()[i];
+        if ( thisword != static_cast<word_type>(0) ) {
+          // find byte within word
+          for ( size_t j = 0; j < sizeof(word_type); j++ ) {
+            unsigned char this_byte
+              = static_cast<unsigned char>(thisword & (~(unsigned char)0));
+            if ( this_byte )
+              return i * WordTraits::word_size + j * CHAR_BIT +
+                first_bit_location<>::value[this_byte];
 
-	    thisword >>= CHAR_BIT;
-	  }
-	}
+            thisword >>= CHAR_BIT;
+          }
+        }
       }
       // not found, so return an indication of failure.
       return not_found;
@@ -532,54 +717,54 @@ namespace boost {
     template <class WordTraits, class SizeType, class Derived>
     SizeType bitset_base<WordTraits, SizeType, Derived>::
     bitset_base<WordTraits,SizeType,Derived>::
-    find_next(size_type prev,
-	      size_type not_found) const
+    find_next(size_type prev) const
     {
+      SizeType not_found = size();
       // make bound inclusive
       ++prev;
 
       // check out of bounds
       if ( prev >= num_words() * WordTraits::word_size )
-	return not_found;
+        return not_found;
 
-	// search first word
-      size_type i = _S_whichword(prev);
+        // search first word
+      size_type i = s_which_word(prev);
       word_type thisword = data()[i];
 
-	// mask off bits below bound
-      thisword &= (~static_cast<word_type>(0)) << _S_whichbit(prev);
+        // mask off bits below bound
+      thisword &= (~static_cast<word_type>(0)) << s_which_bit(prev);
 
       if ( thisword != static_cast<word_type>(0) ) {
-	// find byte within word
-	// get first byte into place
-	thisword >>= _S_whichbyte(prev) * CHAR_BIT;
-	for ( size_type j = _S_whichbyte(prev); j < sizeof(word_type); j++ ) {
-	  unsigned char this_byte
-	    = static_cast<unsigned char>(thisword & (~(unsigned char)0));
-	  if ( this_byte )
-	    return i * WordTraits::word_size + j*CHAR_BIT +
-	      first_bit_location<>::value[this_byte];
+        // find byte within word
+        // get first byte into place
+        thisword >>= s_which_byte(prev) * CHAR_BIT;
+        for ( size_type j = s_which_byte(prev); j < sizeof(word_type); j++ ) {
+          unsigned char this_byte
+            = static_cast<unsigned char>(thisword & (~(unsigned char)0));
+          if ( this_byte )
+            return i * WordTraits::word_size + j * CHAR_BIT +
+              first_bit_location<>::value[this_byte];
 
-	  thisword >>= CHAR_BIT;
-	}
+          thisword >>= CHAR_BIT;
+        }
       }
 
       // check subsequent words
       i++;
       for ( ; i < num_words(); i++ ) {
-	word_type thisword = data()[i];
-	if ( thisword != static_cast<word_type>(0) ) {
-	  // find byte within word
-	  for ( size_type j = 0; j < sizeof(word_type); j++ ) {
-	    unsigned char this_byte
-	      = static_cast<unsigned char>(thisword & (~(unsigned char)0));
-	    if ( this_byte )
-	      return i * WordTraits::word_size + j * CHAR_BIT +
-		first_bit_location<>::value[this_byte];
+        word_type thisword = data()[i];
+        if ( thisword != static_cast<word_type>(0) ) {
+          // find byte within word
+          for ( size_type j = 0; j < sizeof(word_type); j++ ) {
+            unsigned char this_byte
+              = static_cast<unsigned char>(thisword & (~(unsigned char)0));
+            if ( this_byte )
+              return i * WordTraits::word_size + j * CHAR_BIT +
+                first_bit_location<>::value[this_byte];
 
-	    thisword >>= CHAR_BIT;
-	  }
-	}
+            thisword >>= CHAR_BIT;
+          }
+        }
       }
 
       // not found, so return an indication of failure.

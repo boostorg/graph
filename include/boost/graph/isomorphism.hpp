@@ -10,23 +10,23 @@ namespace boost {
     //=========================================================================
     // Mathematical Set Concept
     //
-    // bool equal(a,b)
+    // bool set_equal(a,b)
     // bool is_subset(a, b)
     // bool is_proper_subset(a, b)
-    // void intersect(a, b, c)
-    // void union(a, b, c)
-    // void difference(a, b, c)
-    // void complement(a, c)
-    // void insert(a, x)
-    // void remove(a, x)
-    // bool contains(a, x)
-    // void clear(a)
-    // bool empty(a)
+    // void set_intersect(a, b, c)
+    // void set_union(a, b, c)
+    // void set_difference(a, b, c)
+    // void set_complement(a, c)
+    // void set_insert(a, x)
+    // void set_remove(a, x)
+    // bool set_contains(a, x)
+    // void set_clear(a)
+    // bool set_empty(a)
     // set_traits<S>::size_type
-    // size_type size(a)
+    // size_type set_size(a)
     // set_traits<S>::iterator
-    // iterator begin(a)
-    // iterator end(a)
+    // iterator set_begin(a)
+    // iterator set_end(a)
 
     //=========================================================================
     // d_G(v,W) == out_degree(v, vertex_subset_filter(W, G))
