@@ -109,11 +109,9 @@ each strongly connected component (SCC) of the graph. This is done
 with the \code{strong\_components()} function. The result of this
 function is stored in the \code{component\_number} array which maps
 each vertex to the number of the SCC to which it belongs (the
-components are numbered zero through \code{num\_scc}). Later we will
-need efficient access to all vertices in the same SCC so we create a
-\code{std::vector} of vertices for each SCC. Later we will use the SCC
-numbers for vertices in the condensation graph (CG), so we use the
-same integer type \code{cg\_vertex} for both.
+components are numbered zero through \code{num\_scc}).  We will use
+the SCC numbers for vertices in the condensation graph (CG), so we use
+the same integer type \code{cg\_vertex} for both.
 
 @d Compute strongly connected components of the graph
 @{
@@ -124,11 +122,29 @@ iterator_property_map<cg_vertex*, VertexIndexMap>
 
 int num_scc = strong_components(g, component_number,
   vertex_index_map(index_map));
+
 std::vector< std::vector<vertex> > components;
-components.resize(num_scc);
-vertex_iterator vi, vi_end;
-for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-  components[component_number[*vi]].push_back(*vi);
+build_components_lists(g, num_scc, component_number, components);
+@}
+
+\noindent Later we will need efficient access to all vertices in the
+same SCC so we create a \code{std::vector} of vertices for each SCC
+and fill it in with the \code{build\_components\_lists()} function.
+
+@d Build a list of vertices for each strongly connected component
+@{
+template <class ComponentMap, class ComponentLists>
+void build_component_lists
+  (const Graph& g,
+   typename graph_traits<Graph>::vertices_size_type num_scc,
+   ComponentMap component_number,
+   ComponentLists& components)
+{
+  components.resize(num_scc);
+  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    components[component_number[*vi]].push_back(*vi);
+}
 @}
 
 The next step is to construct the condensation graph.  There will be
@@ -490,6 +506,7 @@ for (size_type i = 0; i < components.size(); ++i)
 namespace boost {
   @<Union of successor sets@>
   @<Subscript function object@>
+  @<Build a list of vertices for each strongly connected component@>
   @<Transitive Closure Function@>
 } // namespace boost
 
