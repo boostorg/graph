@@ -91,13 +91,13 @@ function $f$ such that for all pairs of vertices $a,b$ in $V_{1}$,
 edge $(a,b)$ is in $E_{1}$ if and only if edge $(f(a),f(b))$ is in
 $E_{2}$.
 
-Both graphs must be the same size, so let $N = |V_1| = |V_2|$. The
-graph $G_1$ is \emph{isomorphic} to $G_2$ if an isomorphism exists
+The graph $G_1$ is \emph{isomorphic} to $G_2$ if an isomorphism exists
 between the two graphs, which we denote by $G_1 \isomorphic G_2$.
+Both graphs must be the same size, so let $N = |V_1| = |V_2|$.
 
-In the following discussion we will need to use several notions from
-graph theory. The graph $G_s=(V_s,E_s)$ is a \emph{subgraph} of graph
-$G=(V,E)$ if $V_s \subseteq V$ and $E_s \subseteq E$.  An
+In the following discussion we will need to use several more notions
+from graph theory. The graph $G_s=(V_s,E_s)$ is a \emph{subgraph} of
+graph $G=(V,E)$ if $V_s \subseteq V$ and $E_s \subseteq E$.  An
 \emph{induced subgraph}, denoted by $G[V_s]$, of a graph $G=(V,E)$
 consists of the vertices in $V_s$, which is a subset of $V$, and every
 edge $(u,v)$ in $E$ such that both $u$ and $v$ are in $V_s$.  We use
@@ -106,19 +106,19 @@ the notation $E[V_s]$ to mean the edges in $G[V_s]$.
 \section{Backtracking Search}
 \label{sec:backtracking}
 
-The algorithm used by the \code{isomorphism()} function is, at
-first approximation, an exhaustive search implemented via
-backtracking.  The backtracking algorithm is a recursive function. At
-each stage we will try to extend the match that we have found so far.
-So suppose that we have already determined that some subgraph of $G_1$
-is isomorphic to a subgraph of $G_2$.  We then try to add a vertex to
-each subgraph such that the new subgraphs are still isomorphic to one
-another. At some point we may hit a dead end---there are no vertices
-that can be added to extend the isomorphic subgraphs. We then
-backtrack to previous smaller matching subgraphs, and try extending
-with a different vertex choice. The process ends by either finding a
-complete mapping between $G_1$ and $G_2$ and return true, or by
-exhausting all possibilities and returning false.
+The algorithm used by the \code{isomorphism()} function is, at first
+approximation, an exhaustive search implemented via backtracking.  The
+backtracking algorithm is a recursive function. At each stage we will
+try to extend the match that we have found so far.  So suppose that we
+have already determined that some subgraph of $G_1$ is isomorphic to a
+subgraph of $G_2$.  We then try to add a vertex to each subgraph such
+that the new subgraphs are still isomorphic to one another. At some
+point we may hit a dead end---there are no vertices that can be added
+to extend the isomorphic subgraphs. We then backtrack to previous
+smaller matching subgraphs, and try extending with a different vertex
+choice. The process ends by either finding a complete mapping between
+$G_1$ and $G_2$ and returning true, or by exhausting all possibilities
+and returning false.
 
 The problem with the exhaustive backtracking algorithm is that there
 are $N!$ possible vertex mappings, and $N!$ gets very large as $N$
@@ -126,7 +126,9 @@ increases, so we need to prune the search space. We use the pruning
 techniques described in
 \cite{deo77:_new_algo_digraph_isomorph,fortin96:_isomorph,reingold77:_combin_algo},
 some of which originated in
-\cite{sussenguth65:_isomorphism,unger64:_isomorphism}.
+\cite{sussenguth65:_isomorphism,unger64:_isomorphism}. Also, the
+specific backtracking method we use is the one from
+\cite{deo77:_new_algo_digraph_isomorph}.
 
 We consider the vertices of $G_1$ for addition to the matched subgraph
 in a specific order, so assume that the vertices of $G_1$ are labeled
@@ -153,18 +155,23 @@ edges are the solid lines. Nodes $0$ and $5$ are DFS tree root nodes.}
 Each step of the backtracking search moves from left to right though
 the ordered edges. At each step it examines an edge $(u,v)$ of $G_1$
 and decides whether to continue to the left or to go back. There are
-four cases to consider:
+three cases to consider:
 
 \begin{enumerate}
-\item \label{case:1} $i \leq k$ and $j \leq k$.
+\item \label{case:1} $i > k$
 \item \label{case:2} $i \leq k$ and $j > k$.
-\item \label{case:3} $i > k$ and $j \leq k$.
-\item \label{case:4} $i > k$ and $j > k$.
+\item \label{case:3} $i \leq k$ and $j \leq k$.
 \end{enumerate}
 
-\paragraph{Case 1: $i \leq k$ and $j \leq k$.}
-Both $i$ and $j$ are in $G_1[k]$.  We check to make sure that
-$(f(i),f(j)) \in E_2[S]$ and then proceed to the next edge.
+\paragraph{Case 1: $i > k$.}
+$i$ is not in the matched subgraph $G_1[k]$. This situation only
+happens at the very beginning of the search, or when $i$ is not
+reachable from any of the vertices in $G_1[k]$.  This means that we
+are finished with $G_1[k]$.  We increment $k$ and find match for it
+amongst any of the eligible vertices in $V_2 - S$. We then proceed to
+Case 2. It is usually the case that $i$ is equal to the new $k$, but
+when there is another DFS root $r$ with no in-edges or out-edges
+and if $r < i$ then it will be the new $k$.
 
 \paragraph{Case 2: $i \leq k$ and $j > k$.}
 $i$ is in the matched subgraph $G_1[k]$, but $j$ is not. We are about
@@ -186,21 +193,14 @@ see an edge incident on $k$ and decrement for each edge incident on
 $f(k)$. If the counter gets back to zero we know the edges match up.
 
 Once we have verified that $G_1[k] \isomorphic G_2[S]$ we add $f(k)$
-to $S$, increment $k$ (so now $k=j$), and then try assigning $j$ to
+to $S$, increment $k$, and then try assigning $j$ to
 any of the eligible vertices in $V_2 - S$. More about what
 ``eligible'' means below.
 
-\paragraph{Case 3: $i > k$ and $j \leq k$.}
-This case will not occur due to the DFS numbering of the vertices. The
-existence of edge $(i,j)$ means that $i < j$.
+\paragraph{Case 3: $i \leq k$ and $j \leq k$.}
+Both $i$ and $j$ are in $G_1[k]$.  We check to make sure that
+$(f(i),f(j)) \in E_2[S]$ and then proceed to the next edge.
 
-\paragraph{Case 4: $i > k$ and $j > k$.}
-Neither $i$ or $j$ is in the matched subgraph $G_1[k]$. This situation
-only happens at the very beginning of the search, or when $i$ and $j$
-are not reachable from any of the vertices in $G_1[k]$. This means
-that $i$ must be the root of a DFS tree. We assign $i$ to any of the
-eligible vertices in $V_2 - S$, and then proceed as if we were in Case
-2.
 
 \subsection{Vertex Invariants}
 \label{sec:vertex-invariants}
@@ -289,22 +289,18 @@ handling the four cases described in \S\ref{sec:backtracking}.
 
 @d Match function
 @{
-bool match(edge_iter iter, vertex1_t k)
+bool match(edge_iter iter, int dfs_num_k)
 {
-    std::cout << "match(" << *iter << ", " << k << ")" << std::endl;
     if (iter != ordered_edges.end()) {
         vertex1_t i = source(*iter, G1), j = target(*iter, G2);
-        if (dfs_num[i] <= dfs_num[k] && dfs_num[j] <= dfs_num[k]) {
-            @<Check to see if $(f(i),f(j)) \in E_2[S]$ and continue@>
+        if (dfs_num[i] > dfs_num_k) {
+           @<Find a match for the DFS tree root $k+1$@>
         }
-        else if (dfs_num[i] <= dfs_num[k] && dfs_num[j] > dfs_num[k]) {
+        else if (dfs_num[j] > dfs_num_k) {
             @<Verify $G_1[k] \isomorphic G_2[S]$ and then find match for $j$@>
         }
-        else if (dfs_num[i] > dfs_num[k] && dfs_num[j] <= dfs_num[k]) {
-            assert(!"The case (i > k && j <= k) should never occur.");
-        }
-        else if (dfs_num[i] > dfs_num[k] && dfs_num[j] > dfs_num[k]) {
-            @<Find a match for the DFS tree root $i$@>
+        else {
+            @<Check to see if $(f(i),f(j)) \in E_2[S]$ and continue@>
         }
     } else 
         return true;
@@ -314,19 +310,25 @@ bool match(edge_iter iter, vertex1_t k)
 
 \noindent Now to describe how each of the four cases is implemented.
 
-\paragraph{Case 1: both $i$ and $j$ are in $G_1[k]$.} 
-We examine the vertices $Adj[f(i)]$ to see if any of them is equal to
-$f(j)$. If so, then we have a match for the edge $(i,j)$, and can
-increment the counter for the number of edges incident on $k$ in
-$E_1[k]$. We continue by calling \code{match} on the next edge.
+\paragraph{Case 1: $i \not\in G_1[k]$.}
+We increment $k$ and try to map it to any of the eligible vertices of
+$V_2 - S$.  After matching the new $k$ we proceed by invoking
+\code{match}. We do not yet move on to the next edge, since we have
+not yet found a match for edge, or for target $j$.  We reset the edge
+counter to zero.
 
-@d Check to see if $(f(i),f(j)) \in E_2[S]$ and continue
+@d Find a match for the DFS tree root $k+1$
 @{
-std::cout << "Case 1" << std::endl;
-if (any_equal(adjacent_vertices(f[i], G2), f[j])) {
-    ++num_edges_on_k;
-    if (match(next(iter), k))
-         return true;
+vertex1_t kp1 = dfs_vertices[dfs_num_k + 1];
+BGL_FORALL_VERTICES_T(u, G2, Graph2) {
+    if (invariant1(kp1) == invariant2(u) && in_S[u] == false) {
+        f[kp1] = u;
+        in_S[u] = true;
+        num_edges_on_k = 0;
+        if (match(iter, dfs_num_k + 1));
+            return true;
+        in_S[u] = false;
+    }
 }
 @}
 
@@ -339,7 +341,7 @@ should bring the counter back down to zero. If not we return false.
 
 @d Verify $G_1[k] \isomorphic G_2[S]$ and then find match for $j$
 @{
-std::cout << "Case 2" << std::endl;
+vertex1_t k = dfs_vertices[dfs_num_k];
 @<Count out-edges of $f(k)$ in $G_2[S]$@>
 @<Count in-edges of $f(k)$ in $G_2[S]$@>
 if (num_edges_on_k != 0)
@@ -353,15 +355,18 @@ counting, using \code{boost::bind} to create the predicate functor.
 
 @d Count out-edges of $f(k)$ in $G_2[S]$
 @{
-num_edges_on_k -= count_if(adjacent_vertices(f[k], G2), make_indirect_pmap(in_S));
+num_edges_on_k -= 
+    count_if(adjacent_vertices(f[k], G2), make_indirect_pmap(in_S));
 @}
 
 \noindent Next we iterate through all the vertices in $S$ and for each
 we decrement the counter for each edge whose target is $k$.
 
+% We could specialize this for the case when G_2 is bidirectional.
+
 @d Count in-edges of $f(k)$ in $G_2[S]$
 @{
-for (std::size_t jj = 0; jj < dfs_num[k]; ++jj) {
+for (int jj = 0; jj < dfs_num_k; ++jj) {
     vertex1_t j = dfs_vertices[jj];
     num_edges_on_k -= count(adjacent_vertices(f[j], G2), f[k]);
 }
@@ -372,51 +377,41 @@ we can now consider extending the isomorphism. We need to find a match
 for $j$ in $V_2 - S$. Since $j$ is adjacent to $i$, we can further
 narrow down the search by only considering vertices adjacent to
 $f(i)$. Also, the vertex must have the same vertex invariant. Once we
-have a matching vertex $v$, we extend the matching subgraphs, set
-$f(j) = v$, increment $k$, and set the edge counter to $1$ (since
-$(i,j)$ is the first edge incident on our new $k$). We continue to the
-next edge by calling \code{match}. If that fails we undo the
-assignment $f(j) = v$.
+have a matching vertex $v$ we extend the matching subgraphs by
+incrementing $k$ and adding $v$ to $S$, we set $f(j) = v$, and we set
+the edge counter to $1$ (since $(i,j)$ is the first edge incident on
+our new $k$). We continue to the next edge by calling \code{match}. If
+that fails we undo the assignment $f(j) = v$.
 
 @d Find a match for $j$ and continue
 @{
 BGL_FORALL_ADJ_T(f[i], v, G2, Graph2)
     if (invariant2(v) == invariant1(j) && in_S[v] == false) {
         f[j] = v;
-        std::cout << "f[" << j << "]=" << v << std::endl;
-        f_inv[v] = j; in_S[v] = true;
+        in_S[v] = true;
         num_edges_on_k = 1;
-        if (match(next(iter), k+1))
+	int next_k = std::max(dfs_num_k, std::max(dfs_num[i], dfs_num[j]));
+        if (match(next(iter), next_k))
             return true;
         in_S[v] = false;
     }
 @}
 
-\paragraph{Case 3: $i \not\in G_1[k]$ and $j \in G_1[k]$.}
-This case can not happen, as explained previously.
+\paragraph{Case 3: both $i$ and $j$ are in $G_1[k]$.} 
+Our goal is to check whether $(f(i),f(j)) \in E_2[S]$.
+We examine the vertices $Adj[f(i)]$ to see if any of them is equal to
+$f(j)$. If so, then we have a match for the edge $(i,j)$, and can
+increment the counter for the number of edges incident on $k$ in
+$E_1[k]$. We continue by calling \code{match} on the next edge.
 
-\paragraph{Case 4: neither $i$ nor $j$ is in $G_1[k]$.}
-We try mapping $i$ to each of the eligible vertices of $V_2 - S$ in
-turn, then proceed to try to match $j$ by invoking \code{match}, this
-time staying on the same edge. Also, we reset the edge counter to
-zero.
-
-@d Find a match for the DFS tree root $i$
+@d Check to see if $(f(i),f(j)) \in E_2[S]$ and continue
 @{
-std::cout << "Case 3" << std::endl;
-BGL_FORALL_VERTICES_T(u, G2, Graph2) {
-    if (invariant1(i) == invariant2(u) && in_S[u] == false) {
-        f[i] = u;
-        std::cout << "f[" << i << "]=" << u << std::endl;
-        f_inv[u] = i; in_S[u] = true;
-        num_edges_on_k = 0;
-        if (match(iter, k))
-            return true;
-        in_S[u] = false;
-    }
+if (any_equal(adjacent_vertices(f[i], G2), f[j])) {
+    ++num_edges_on_k;
+    if (match(next(iter), dfs_num_k))
+         return true;
 }
 @}
-
 
 \section{Public Interface}
 
@@ -430,9 +425,9 @@ otherwise. The invariant parameters are function objects that compute
 the vertex invariants for vertices of the two graphs.  The
 \code{max\_invariant} parameter is to specify one past the largest
 integer that a vertex invariant number could be (the invariants
-numbers are assumed to span from zero to the number).  The
-requirements on type template parameters are described below in the
-``Concept checking'' part.
+numbers are assumed to span from zero to \code{max\_invariant-1}).
+The requirements on the template parameters are described below in the
+``Concept checking'' code part.
 
 
 @d Isomorphism function interface
@@ -448,7 +443,7 @@ bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
 
 
 The function body consists of the concept checks followed by a quick
-check for empty graphs or graphs of different size and then construct
+check for empty graphs or graphs of different size and then constructs
 an algorithm object. We then call the \code{test\_isomorphism} member
 function, which runs the algorithm.  The reason that we implement the
 algorithm using a class is that there are a fair number of internal
@@ -464,8 +459,8 @@ of global variables (non-reentrant, etc.).
 {
     @<Concept checking@>
     @<Quick return based on size@>
-    detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1, Invariant2, 
-        IndexMap1, IndexMap2> 
+    detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1,
+        Invariant2, IndexMap1, IndexMap2> 
         algo(G1, G2, f, invariant1, invariant2, max_invariant, 
              index_map1, index_map2);
     return algo.test_isomorphism();
@@ -475,27 +470,25 @@ of global variables (non-reentrant, etc.).
 
 \noindent If there are no vertices in either graph, then they are
 trivially isomorphic. If the graphs have different numbers of vertices
-then they are not isomorphic.
+then they are not isomorphic. We could also check the number of edges
+here, but that would introduce the \bglconcept{EdgeListGraph}
+requirement, which we otherwise do not need.
 
 @d Quick return based on size
 @{
-if (num_vertices(G1) != num_vertices(G2)) {
-    std::cout << "different number of vertices" << std::endl;
+if (num_vertices(G1) != num_vertices(G2))
     return false;
-}
-if (num_vertices(G1) == 0 && num_vertices(G2) == 0) {
-    std::cout << "two empty graphs" << std::endl;
+if (num_vertices(G1) == 0 && num_vertices(G2) == 0)
     return true;
-}
 @}
 
-We use the Boost Concept Checking Library to make sure that the type
-arguments to the function fulfill there requirements. The graph types
-must model the \bglconcept{VertexListGraph} and
-\bglconcept{AdjacencyGraph} concepts. The vertex invariants must model
-the \stlconcept{AdaptableUnaryFunction} concept, with a vertex as
-their argument and an integer return type.  The \code{IsoMapping} type
-that represents the isomorphism $f$ must be a
+We use the Boost Concept Checking Library to make sure that the
+template arguments fulfill certain requirements. The graph types must
+model the \bglconcept{VertexListGraph} and \bglconcept{AdjacencyGraph}
+concepts. The vertex invariants must model the
+\stlconcept{AdaptableUnaryFunction} concept, with a vertex as their
+argument and an integer return type.  The \code{IsoMapping} type
+representing the isomorphism $f$ must be a
 \pmconcept{ReadWritePropertyMap} that maps from vertices in $G_1$ to
 vertices in $G_2$. The two other index maps are
 \pmconcept{ReadablePropertyMap}s from vertices in $G_1$ and $G_2$ to
@@ -538,7 +531,7 @@ BOOST_STATIC_ASSERT((is_convertible<IndexMap2Value, size_type>::value));
 \section{Data Structure Setup}
 
 The following is the outline of the isomorphism algorithm class.  The
-class is templated on all of the same parameters of the
+class is templated on all of the same parameters as the
 \code{isomorphism} function, and all of the parameter values are
 stored in the class as data members, in addition to the internal data
 structures.
@@ -546,8 +539,8 @@ structures.
 @d Isomorphism algorithm class
 @{
 template <typename Graph1, typename Graph2, typename IsoMapping,
-  typename Invariant1, typename Invariant2,
-  typename IndexMap1, typename IndexMap2>
+    typename Invariant1, typename Invariant2,
+    typename IndexMap1, typename IndexMap2>
 class isomorphism_algo
 {
     @<Typedefs for commonly used types@>
@@ -561,25 +554,20 @@ public:
     @<Isomorphism algorithm constructor@>
     @<Test isomorphism member function@>
 private:
-    @<In $S$ predicate@>
     @<Match function@>
 };
 @}
 
 The interesting parts of this class are the \code{test\_isomorphism}
-function, and the \code{match} function. We focus on those in in the
+function and the \code{match} function. We focus on those in in the
 following sections, and leave the other parts of the class to the
 Appendix.
 
 The \code{test\_isomorphism} function does all of the setup required
 of the algorithm. This consists of sorting the vertices according to
 invariant multiplicity, and then by DFS order.  The edges are then
-sorted by the DFS order of vertices incident on the edges. More
-details about this to come. The last step of this function is to begin
-the backtracking search. We don't call the \code{match} function
-directly, because there is no convenient was to create a ficticous
-vertex $k$ where $k < 0$. Instead we jump into Case 4 of the match
-function.
+sorted as previously described. The last step of this function is to
+begin the backtracking search.
 
 @d Test isomorphism member function
 @{
@@ -590,11 +578,8 @@ bool test_isomorphism()
     @<Order vertices and edges by DFS@>
     @<Sort edges according to vertex DFS order@>
 
-    vertex1_t i = dfs_vertices[0];
-    vertex1_t k = i;
-    edge_iter iter = ordered_edges.begin();
-    @<Find a match for the DFS tree root $i$@>
-    return false;
+    int dfs_num_k = -1;
+    return this->match(ordered_edges.begin(), dfs_num_k);
 }
 @}
 
@@ -617,11 +602,8 @@ isomorphic.
     BGL_FORALL_VERTICES_T(v, G2, Graph2)
         invar2_array.push_back(invariant2(v));
     sort(invar2_array);
-
-    if (! equal(invar1_array, invar2_array)) {
-        std::cout << "invariants do not match" << std::endl;
+    if (! equal(invar1_array, invar2_array))
         return false;
-    }
 }
 @}
 
@@ -641,8 +623,7 @@ BGL_FORALL_VERTICES_T(v, G1, Graph1)
     std::vector<size_type> multiplicity(max_invariant, 0);
     BGL_FORALL_VERTICES_T(v, G1, Graph1)
         ++multiplicity[invariant1(v)];
-
-    std::sort(V_mult.begin(), V_mult.end(), compare_multiplicity(*this, &multiplicity[0]));
+    sort(V_mult, compare_multiplicity(invariant1, &multiplicity[0]));
 }
 @}
 
@@ -654,12 +635,12 @@ is shown below. This predicate provides the glue that binds
 @{
 struct compare_multiplicity
 {
-    compare_multiplicity(isomorphism_algo& algo, size_type* multiplicity)
-        : algo(algo), multiplicity(multiplicity) { }
+    compare_multiplicity(Invariant1 invariant1, size_type* multiplicity)
+        : invariant1(invariant1), multiplicity(multiplicity) { }
     bool operator()(const vertex1_t& x, const vertex1_t& y) const {
-        return multiplicity[algo.invariant1(x)] < multiplicity[algo.invariant1(y)];
+        return multiplicity[invariant1(x)] < multiplicity[invariant1(y)];
     }
-    isomorphism_algo& algo;
+    Invariant1 invariant1;
     size_type* multiplicity;
 };
 @}
@@ -675,7 +656,7 @@ portion of the DFS. The \code{record\_dfs\_order} adapts the DFS to
 record the ordering, storing the results in in the
 \code{dfs\_vertices} and \code{ordered\_edges} arrays. We then create
 the \code{dfs\_num} array which provides a mapping from vertex to DFS
-number, and renumber the edges with the DFS numbers.
+number.
 
 @d Order vertices and edges by DFS
 @{
@@ -700,7 +681,7 @@ for (vertex_iter v = dfs_vertices.begin(); v != dfs_vertices.end(); ++v)
 @}
 
 \noindent The definition of the \code{record\_dfs\_order} visitor
-class is as follows. EXPLAIN ficticious edges
+class is as follows.
 
 @d DFS visitor to record vertex and edge order
 @{
@@ -727,9 +708,6 @@ $k=1,...,n$.
 @d Sort edges according to vertex DFS order
 @{
 sort(ordered_edges, edge_cmp(G1, dfs_num));
-std::cout << "ordered edges: ";
-copy(ordered_edges, std::ostream_iterator<edge1_t>(std::cout, " "));
-std::cout << std::endl;
 @}
 
 \noindent The edge comparison function object is defined as follows.
@@ -741,14 +719,13 @@ struct edge_cmp {
         : G1(G1), dfs_num(dfs_num) { }
     bool operator()(const edge1_t& e1, const edge1_t& e2) const {
         using namespace std;
-        vertex1_t u1 = dfs_num[source(e1, G1)],
-                  v1 = dfs_num[target(e1, G1)];
-        vertex1_t u2 = dfs_num[source(e2, G1)],
-                  v2 = dfs_num[target(e2, G1)];
+        vertex1_t u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
+        vertex1_t u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
         int m1 = max(u1, v1);
         int m2 = max(u2, v2);
         // lexicographical comparison 
-        return make_pair(m1, make_pair(u1, v1)) < make_pair(m2, make_pair(u2, v2));
+        return make_pair(m1, make_pair(u1, v1))
+             < make_pair(m2, make_pair(u2, v2));
     }
     const Graph1& G1;
     DFSNumMap dfs_num;
@@ -785,21 +762,16 @@ IndexMap2 index_map2;
 @{
 std::vector<vertex1_t> dfs_vertices;
 typedef std::vector<vertex1_t>::iterator vertex_iter;
-std::vector<size_type> dfs_num_vec;
-typedef safe_iterator_property_map<typename std::vector<size_type>::iterator, IndexMap1> DFSNumMap;
+std::vector<int> dfs_num_vec;
+typedef safe_iterator_property_map<typename std::vector<int>::iterator, IndexMap1> DFSNumMap;
 DFSNumMap dfs_num;
 std::vector<edge1_t> ordered_edges;
 typedef std::vector<edge1_t>::iterator edge_iter;
-
-std::vector<vertex1_t> f_inv_vec;
-safe_iterator_property_map<typename std::vector<vertex1_t>::iterator,
-    IndexMap2> f_inv;
 
 std::vector<char> in_S_vec;
 typedef safe_iterator_property_map<typename std::vector<char>::iterator,
     IndexMap2> InSMap;
 InSMap in_S;
-
 
 int num_edges_on_k;
 @}
@@ -813,10 +785,6 @@ isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
       max_invariant(max_invariant),
       index_map1(index_map1), index_map2(index_map2)
 {
-    f_inv_vec.resize(num_vertices(G1));
-    f_inv = make_safe_iterator_property_map
-        (f_inv_vec.begin(), f_inv_vec.size(), index_map2);
-
     in_S_vec.resize(num_vertices(G1));
     in_S = make_safe_iterator_property_map
         (in_S_vec.begin(), in_S_vec.size(), index_map2);
@@ -824,7 +792,7 @@ isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
 @}
 
 
-@o isomorphism-v3.hpp -d
+@o isomorphism.hpp
 @{
 // Copyright (C) 2001 Jeremy Siek, Doug Gregor, Brian Osman
 //
