@@ -394,9 +394,8 @@ namespace detail {
       : m_invar(i), m_mult(m) { }
 
     template <typename Vertex>
-    bool operator()(const Vertex& x, const Vertex& y) const {
-      return m_mult[m_invar[x]] < m_mult[m_invar[x]];
-    }
+    bool operator()(const Vertex& x, const Vertex& y) const
+      { return m_mult[m_invar[x]] < m_mult[m_invar[x]]; }
 
     InvarMap m_invar;
     MultMap m_mult;
@@ -493,8 +492,7 @@ function object is described next.
 @{
 typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
 std::vector<edge1_t> edge_set;
-std::copy(edges(g1).first, edges(g1).second, 
-          std::back_inserter(edge_set));
+std::copy(edges(g1).first, edges(g1).second, std::back_inserter(edge_set));
 
 std::sort(edge_set.begin(), edge_set.end(), 
           detail::edge_ordering
@@ -547,11 +545,9 @@ vertices of graph \code{g1}.
 
 @d Invoke recursive \code{isomorph} function
 @{
-typedef indirect_cmp<IndexMap2, std::less<size_type> >  cmp_t;
-cmp_t cmp(index_map2);
-std::set<vertex2_t, cmp_t> not_in_S(cmp);
-for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
-  set_insert(not_in_S, *i2);
+std::vector<char> not_in_S_vec(num_vertices(g2), true);
+iterator_property_map<char*, IndexMap2, char, char&>
+  not_in_S(&not_in_S_vec[0], index_map2);
 
 return detail::isomorph(g1_vertices.begin(), g1_vertices.end(), 
       edge_set.begin(), edge_set.end(), g1, g2,
@@ -619,33 +615,57 @@ if (k_iter == last)
 
 In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
 \in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
-approach is to directly iterate through all the potential matches for
-$k$, for this often is many fewer vertices than $V_2 - S$. 
+approach is to directly iterate through the potential matches for $k$,
+for this often is many fewer vertices than $V_2 - S$. Let $M$ be the
+set of potential matches for $k$. $M$ consists of all the vertices $v
+\in V_2 - S$ such that if $(k,j)$ or $(j,k) \in E_1[k] - E_1[k-1]$
+then $(v,f(j)$ or $(f(j),v) \in E_2$ with $i(v) = i(k)$. Note that
+this means if there are no edges in $E_1[k] - E_1[k-1]$ then $M = V_2
+- S$. In the case where there are edges in $E_1[k] - E_1[k-1]$ we
+break the computation of $M$ into two parts, computing $out$ sets
+which are vertices that can match according to an out-edge of $k$, and
+computing $in$ sets which are vertices that can match according to an
+in-edge of $k$.
 
-
-\noindent We use sorted vectors to store these sets and
-\code{std::set\_intersection} to implement $M \leftarrow out \intersect
-in$.
+The implementation consists of a loop through the edges of $E_1[k] -
+E_1[k-1]$. The straightforward implementation would initialize $M
+\leftarrow V_2 - S$, and then intersect $M$ with the $out$ or $in$ set
+for each edge. However, to reduce the cost of the intersection
+operation, we start with $M \leftarrow \emptyset$, and on the first
+iteration of the loop we do $M \leftarrow out$ or $M \leftarrow in$
+instead of an intersection operation.
 
 @d Compute $M$, the potential matches for $k$
 @{
 std::vector<vertex2_t> potential_matches;
-std::copy(not_in_S.begin(), not_in_S.end(), std::back_inserter(potential_matches));
+bool some_edges = false;
 
 for (; edge_iter != edge_iter_end; ++edge_iter) {
   if (get(index_map1, k) != edge_num(*edge_iter, index_map1, g1))
     break;      
-  std::vector<vertex2_t> tmp_matches;
-
   if (k == source(*edge_iter, g1)) { // (k,j)
-    @<Apply the out-edge constraints@>
+    @<Compute the $out$ set@>
+    if (some_edges == false) {
+      @<Perform $M \leftarrow out$@>
+    } else {
+      @<Perform $M \leftarrow M \intersect out$@>
+    }
+    some_edges = true;
   } else { // (j,k)
-    @<Apply the in-edge constraints@>
+    @<Compute the $in$ set@>
+    if (some_edges == false) {
+      @<Perform $M \leftarrow in$@>
+    } else {
+      @<Perform $M \leftarrow M \intersect in$@>
+    }
+    some_edges = true;
   }
-  std::swap(potential_matches, tmp_matches);
   if (potential_matches.empty())
     break;
 } // for edge_iter
+if (some_edges == false) {
+  @<Perform $M \leftarrow V_2 - S$@>
+}
 @}
 
 To compute the $out$ set, we iterate through the out-edges $(k,j)$ of
@@ -655,22 +675,38 @@ invariant as $k$, and which are in $V_2 - S$. Figure~\ref{fig:out}
 depicts the computation of the $out$ set. The implementation is as
 follows.
 
-@d Apply the out-edge constraints
+@d Compute the $out$ set
 @{
 vertex1_t j = target(*edge_iter, g1);
 std::vector<vertex2_t> out;
 typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
 for (tie(ei, ei_end) = in_edges(get(f, j), g2); ei != ei_end; ++ei) {
   vertex2_t v = source(*ei, g2); // (v,f[j])
-  if (invar1[k] == invar2[v])
+  if (invar1[k] == invar2[v] && not_in_S[v])
     out.push_back(v);
 }
-// set_intersection requires sorted ranges
+@}
+
+@d Perform $M \leftarrow out$
+@{
 indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
 std::sort(out.begin(), out.end(), cmp);
+std::copy(out.begin(), out.end(), std::back_inserter(potential_matches));
+@}
+
+\noindent We use sorted vectors to store these sets and
+\code{std::set\_intersection} to implement $M \leftarrow M \intersect
+out$.
+
+@d Perform $M \leftarrow M \intersect out$
+@{
+indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
+std::sort(out.begin(), out.end(), cmp);
+std::vector<vertex2_t> tmp_matches;
 std::set_intersection(out.begin(), out.end(),
                       potential_matches.begin(), potential_matches.end(),
                       std::back_inserter(tmp_matches), cmp);
+std::swap(potential_matches, tmp_matches);
 @}
 
 % Shoot, there is some problem with f(j). Could have to do with the
@@ -724,22 +760,37 @@ same vertex invariant as $k$, and which are in $V_2 -
 S$. Figure~\ref{fig:in} depicts the computation of the $in$ set.  The
 following code computes the $in$ set.
 
-@d Apply the in-edge constraints
+@d Compute the $in$ set
 @{
 vertex1_t j = source(*edge_iter, g1);
 std::vector<vertex2_t> in;
 typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
 for (tie(ei, ei_end) = out_edges(get(f, j), g2); ei != ei_end; ++ei) {
   vertex2_t v = target(*ei, g2); // (f[j],v)
-  if (invar1[k] == invar2[v])
+  if (invar1[k] == invar2[v] && not_in_S[v])
     in.push_back(v);
 }
-// set_intersection requires sorted ranges
+@}
+
+@d Perform $M \leftarrow in$
+@{
+indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
+std::sort(in.begin(), in.end(), cmp);
+std::copy(in.begin(), in.end(), std::back_inserter(potential_matches));
+@}
+
+\noindent Again we use \code{std::set\_intersection} on
+sorted vectors to implement $M \leftarrow M \intersect in$.
+
+@d Perform $M \leftarrow M \intersect in$
+@{
 indirect_cmp<IndexMap2, std::less<std::size_t> > cmp(index_map2);
 std::sort(in.begin(), in.end(), cmp);
+std::vector<vertex2_t> tmp_matches;
 std::set_intersection(in.begin(), in.end(),
                       potential_matches.begin(), potential_matches.end(),
                       std::back_inserter(tmp_matches), cmp);
+std::swap(potential_matches, tmp_matches);
 @}
 
 \vizfig{in}{Computing the $in$ set.}
@@ -774,6 +825,18 @@ digraph G {
 }
 @}
 
+In the case where there were no edges in $E_1[k] - E_1[k-1}$, then $M
+= V_2 - S$, so here we insert all the vertices from $V_2$ that are not
+in $S$.
+
+@d Perform $M \leftarrow V_2 - S$
+@{
+typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
+for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi)
+  if (not_in_S[*vi])
+    potential_matches.push_back(*vi);
+@}
+
 For each vertex $v$ in the potential matches $M$, we will create an
 extended isomorphism $f_k = f_{k-1} \union \pair{k}{v}$. First
 we create a local copy of $f_{k-1}$.
@@ -801,8 +864,7 @@ mapping into the mapping from the previous calling function.
 @{
 for (std::size_t j = 0; j < potential_matches.size(); ++j) {
   my_f[k] = potential_matches[j];
-  Set my_not_in_S(not_in_S);
-  set_remove(my_not_in_S, potential_matches[j]);
+  @<Perform $S' = S - \{ v \}$@>
   if (isomorph(boost::next(k_iter), last, edge_iter, edge_iter_end, g1, g2, 
                index_map1, index_map2, 
                my_f, invar1, invar2, my_not_in_S)) {
@@ -813,6 +875,20 @@ for (std::size_t j = 0; j < potential_matches.size(); ++j) {
 }
 return false;
 @}
+
+
+
+@d Perform $S' = S - \{ v \}$
+@{
+std::vector<char> my_not_in_S_vec(num_vertices(g2));
+iterator_property_map<char*, IndexMap2, char, char&>
+  my_not_in_S(&my_not_in_S_vec[0], index_map2);
+typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
+for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi)
+  my_not_in_S[*vi] = not_in_S[*vi];;
+my_not_in_S[potential_matches[j]] = false;
+@}
+
 
 \section{Appendix}
 
