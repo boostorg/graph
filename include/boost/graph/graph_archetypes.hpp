@@ -38,13 +38,13 @@ namespace boost { // should use a different namespace for this
   V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
 	   const incidence_graph_archetype<V,D,P>& )
   {
-    return V(dummy_cons);
+    return V(static_object<detail::dummy_constructor>::get());
   }
   template <typename V, typename D, typename P>
   V target(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
 	   const incidence_graph_archetype<V,D,P>& )
   {
-    return V(dummy_cons);
+    return V(static_object<detail::dummy_constructor>::get());
   }
   
   template <typename V, typename D, typename P>
@@ -237,11 +237,20 @@ namespace boost { // should use a different namespace for this
   template <>
   struct color_traits<color_value_archetype> {
     static color_value_archetype white()
-      { return color_value_archetype(dummy_cons); }
+    { 
+      return color_value_archetype
+	(static_object<detail::dummy_constructor>::get()); 
+    }
     static color_value_archetype gray()
-      { return color_value_archetype(dummy_cons); }
+    {
+      return color_value_archetype
+	(static_object<detail::dummy_constructor>::get()); 
+    }
     static color_value_archetype black()
-      { return color_value_archetype(dummy_cons); }
+    {
+      return color_value_archetype
+	(static_object<detail::dummy_constructor>::get()); 
+    }
   };
 
   template <typename T>
