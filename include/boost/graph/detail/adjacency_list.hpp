@@ -55,6 +55,14 @@
 #include <boost/graph/properties.hpp>
 #include <boost/pending/property.hpp>
 
+// Symbol truncation problems with MSVC, trying to shorten names.
+#define edge_iter_traits eit_
+#define out_edge_iter_policies oeip_
+#define in_edge_iter_policies ieip_
+#define stored_edge se_
+#define stored_edge_property sep_
+#define stored_edge_iter sei_
+
 namespace boost {
 
   namespace detail {
@@ -188,13 +196,13 @@ namespace boost {
     // Out-Edge and In-Edge Iterator Implementation
 
 #if !defined(BOOST_NO_ITERATOR_ADAPTORS)
-    template <class EdgeDescriptor, class EdgeIterTraits>
+    template <class EdgeDescriptor, class EdgeIterCat, class EdgeIterDiff>
     struct edge_iter_traits {
       typedef EdgeDescriptor value_type;
       typedef value_type reference;
       typedef value_type* pointer;
-      typedef typename EdgeIterTraits::iterator_category iterator_category;
-      typedef typename EdgeIterTraits::difference_type difference_type;
+      typedef EdgeIterCat iterator_category;
+      typedef EdgeIterDiff difference_type;
     };
 
     template <class VertexDescriptor>
@@ -295,6 +303,7 @@ namespace boost {
     template <class Vertex>
     no_property stored_edge<Vertex>::s_prop;
 
+
     template <class Vertex, class Property>
     class stored_edge_property : public stored_edge<Vertex> {
       typedef stored_edge_property self;
@@ -320,6 +329,7 @@ namespace boost {
       std::auto_ptr<Property> m_property;
     };
 
+
     template <class Vertex, class Iter, class Property>
     class stored_edge_iter
       : public stored_edge<Vertex>
@@ -340,14 +350,18 @@ namespace boost {
     
   template <class Tag, class Vertex, class Property>
   const typename property_value<Property,Tag>::type&
-  get(Tag property_tag, const detail::stored_edge_property<Vertex, Property>& e) {
+  get(Tag property_tag,
+      const detail::stored_edge_property<Vertex, Property>& e)
+  {
     typedef typename property_value<Property,Tag>::type value_type;
     return get_property_value(e.get_property(), value_type(), property_tag);
   }
 
   template <class Tag, class Vertex, class Iter, class Property>
   const typename property_value<Property,Tag>::type&
-  get(Tag property_tag, const detail::stored_edge_iter<Vertex, Iter, Property>& e) {
+  get(Tag property_tag,
+      const detail::stored_edge_iter<Vertex, Iter, Property>& e)
+  {
     typedef typename property_value<Property,Tag>::type value_type;
     return get_property_value(e.get_property(), value_type(), property_tag);
   }
@@ -1985,7 +1999,7 @@ namespace boost {
     template <class Graph, class VertexListS, class EdgeListS,
               class DirectedS, class VertexProperty, class EdgeProperty, 
               class GraphProperty>
-    struct adjacency_list_generator
+    struct adj_list_gen
     {
       typedef typename detail::is_random_access<VertexListS>::type 
         is_rand_access;
@@ -2082,16 +2096,11 @@ namespace boost {
         typedef typename OutEdgeList::iterator OutEdgeIter;
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
         typedef std::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
+	typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
+	typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
 #else
-        // was going to use boost::iterator here, but that also caused VC++
-        // problems! !*&^(*%(*!&^(*@&
-        struct OutEdgeIterTraits {
-          typedef std::forward_iterator_tag iterator_category;
-          typedef StoredEdge value_type;
-          typedef value_type* pointer;
-          typedef value_type& reference;
-          typedef std::ptrdiff_t difference_type;
-        };
+	typedef std::forward_iterator_tag OutEdgeIterCat;
+	typedef std::ptrdiff_t OutEdgeIterDiff;
 #endif
 
 #if defined BOOST_NO_ITERATOR_ADAPTORS
@@ -2100,7 +2109,7 @@ namespace boost {
 #else
         typedef iterator_adaptor<OutEdgeIter, 
           out_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, OutEdgeIterTraits>
+          edge_iter_traits<edge_descriptor, OutEdgeIterCat, OutEdgeIterDiff>
         > out_edge_iterator;
 #endif
 
@@ -2114,12 +2123,13 @@ namespace boost {
 
         typedef OutEdgeList InEdgeList;
         typedef OutEdgeIter InEdgeIter;
-        typedef OutEdgeIterTraits InEdgeIterTraits;
+        typedef OutEdgeIterCat InEdgeIterCat;
+        typedef OutEdgeIterDiff InEdgeIterDiff;
 
 #if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, InEdgeIterTraits>
+          edge_iter_traits<edge_descriptor, InEdgeIterCat, InEdgeIterDiff>
         > in_edge_iterator;
 #else
         typedef detail::bidir_incidence_iterator<vertex_descriptor,
@@ -2129,14 +2139,17 @@ namespace boost {
         // Edge Iterator
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
         typedef std::iterator_traits<EdgeIter> EdgeIterTraits;
+	typedef typename EdgeIterTraits::iterator_category EdgeIterCat;
+	typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
 #else
-        typedef OutEdgeIterTraits EdgeIterTraits;
+        typedef OutEdgeIterCat EdgeIterCat;
+        typedef OutEdgeIterDiff EdgeIterDiff;
 #endif
 
 #if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename boost::iterator_adaptor<EdgeIter,
               undirected_edge_iter_policies,
-              edge_iter_traits<edge_descriptor, EdgeIterTraits> > 
+              edge_iter_traits<edge_descriptor, EdgeIterCat, EdgeIterDiff> > 
           UndirectedEdgeIter;
 #else
         typedef undirected_edge_iter<EdgeIter,edge_descriptor> UndirectedEdgeIter;
@@ -2183,7 +2196,6 @@ namespace boost {
         typedef typename boost::ct_if_t< is_rand_access,
           RandStoredVertexList, SeqStoredVertexList>::type StoredVertexList;
       }; // end of config
-
 
 
       typedef typename boost::ct_if_t<BidirectionalT,
@@ -2374,6 +2386,13 @@ namespace boost {
   };
 
 } // namespace boost
+
+#undef stored_edge
+#undef stored_edge_property
+#undef stored_edge_iter
+#undef edge_iter_traits
+#undef out_edge_iter_policies
+#undef in_edge_iter_policies
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
 

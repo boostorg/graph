@@ -321,20 +321,19 @@ namespace boost {
             class EdgeProperty = no_property,
             class GraphProperty = no_property>
   class adjacency_list
-    : public detail::adjacency_list_generator<
+    : public detail::adj_list_gen<
       adjacency_list<EdgeListS,VertexListS,DirectedS,
                      VertexProperty,EdgeProperty,GraphProperty>,
       VertexListS, EdgeListS, DirectedS, 
       VertexProperty, EdgeProperty, GraphProperty>::type
   {
     typedef adjacency_list self;
-    typedef typename detail::adjacency_list_generator<
+    typedef typename detail::adj_list_gen<
       self, VertexListS, EdgeListS, DirectedS, 
       VertexProperty, EdgeProperty, GraphProperty
     >::type Base;
   public:
     typedef typename Base::stored_vertex stored_vertex;
-
     typedef typename Base::vertices_size_type vertices_size_type;
     typedef typename Base::edges_size_type edges_size_type;
     typedef typename Base::degree_size_type degree_size_type;
