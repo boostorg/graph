@@ -264,7 +264,7 @@ namespace boost {
     for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
       f[*first] = *vi;
       
-      typedef typename graph_traits<Graph1>::vertex_descriptor VertexG2;
+      typedef typename graph_traits<Graph2>::vertex_descriptor VertexG2;
       typedef typename property_traits<V2Map>::value_type V2Idx;
       typedef indirect_cmp<V2Map, std::less<V2Idx> >  Cmp;
       Cmp cmp(v2_index_map);
