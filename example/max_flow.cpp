@@ -35,7 +35,7 @@ main()
 {
   using namespace boost;
 
-  typedef adjacency_list_traits<listS, vecS, directedS> Traits;
+  typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
   typedef adjacency_list<listS, vecS, directedS, 
     property<vertex_name_t, std::string>,
     property<edge_capacity_t, long,
