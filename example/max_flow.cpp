@@ -49,17 +49,26 @@ main()
     capacity = get(edge_capacity, g);
   property_map<Graph, edge_reverse_t>::type 
     rev = get(edge_reverse, g);
+  property_map<Graph, edge_residual_capacity_t>::type 
+    residual_capacity = get(edge_residual_capacity, g);
 
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  print_graph(g, get(vertex_index, g));
-  
   long flow;
-  flow = maximum_flow(g, s, t, capacity, get(edge_residual_capacity, g),
+  flow = maximum_flow(g, s, t, capacity, residual_capacity,
 		      rev, get(vertex_index, g));
   
-  std::cout << "flow: " << flow << std::endl;
+  std::cout << "total flow: " << flow << std::endl;
+
+  std::cout << "flow values:" << std::endl;
+  graph_traits<Graph>::vertex_iterator u_iter, u_end;
+  graph_traits<Graph>::out_edge_iterator ei, e_end;
+  for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+    for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+      if (capacity[*ei] > 0)
+	std::cout << "flow(" << *u_iter << "," << target(*ei, g) << ") = " 
+		  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
   
   return 0;
 }
