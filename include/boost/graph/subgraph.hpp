@@ -100,6 +100,17 @@ namespace boost {
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     { }
 
+    // copy constructor
+    subgraph(const subgraph& x)
+      : m_graph(x.m_graph), m_parent(x.m_parent), m_edge_counter(x.m_edge_counter)
+    {
+      // Do a deep copy
+      for (std::list< subgraph<Graph>*>::iterator i = x.m_children.begin();
+	   i != x.m_children.end(); ++i)
+	m_children.push_back(new subgraph<Graph>( **i ));
+    }
+
+
     ~subgraph() {
       for (std::list< subgraph<Graph>*>::iterator i = m_children.begin();
 	   i != m_children.end(); ++i)
@@ -122,7 +133,7 @@ namespace boost {
       m_children.push_back(new subgraph<Graph>());
       m_children.back()->m_parent = this;
       for (; first != last; ++first)
-	add_vertex(*first, m_children.back());
+	add_vertex(*first, *m_children.back());
       return *m_children.back();
     }
 
@@ -203,6 +214,8 @@ namespace boost {
       return std::make_pair(children_iterator(m_children.begin()), 
 			    children_iterator(m_children.end()));
     }
+
+    std::size_t num_children() const { return m_children.size(); }
 
     //  private:
     Graph m_graph;
