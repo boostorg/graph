@@ -73,9 +73,9 @@ int main(int argc, char* argv[])
 
   std::vector<Vertex> rank(num_vertices(G));
   std::vector<Vertex> parent(num_vertices(G));
-  typedef std::vector<size_type>::iterator Rank;
-  typedef std::vector<Vertex>::iterator Parent;
-  disjoint_sets<Rank, Parent>  ds(rank.begin(), parent.begin());
+  typedef std::vector<size_type>::pointer Rank;
+  typedef std::vector<Vertex>::pointer Parent;
+  disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
   initialize_dynamic_components(G, ds);
   dynamic_connected_components(G, ds);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
   cout << endl;
 
   typedef component_index<int> Components;
-  Components components(parent.begin(), parent.end());
+  Components components(&parent[0], &parent[0]);
 
   for (Components::size_type c = 0; c < components.size(); ++c) {
     cout << "component " << c << " contains: ";

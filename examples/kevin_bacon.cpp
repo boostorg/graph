@@ -121,9 +121,9 @@ main()
     Vertex src = actors["Kevin Bacon"];
     
     dijkstra_shortest_paths
-      (g, src, bacon_number.begin(), get(edge_weight(), g),
-       color.begin(), get(vertex_index(), g),
-       make_ucs_visitor(record_predecessors(predecessor.begin(), 
+      (g, src, &bacon_number[0], get(edge_weight(), g),
+       &color[0], get(vertex_index(), g),
+       make_ucs_visitor(record_predecessors(&predecessor[0], 
 					    on_edge_relaxed())));
 
     graph_traits<Graph>::vertex_iterator i, end;

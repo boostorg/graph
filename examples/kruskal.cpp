@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
   std::vector<int> rank(num_vertices(G));
 
   kruskal_minimum_spanning_tree(G, std::back_inserter(spanning_tree_edges), 
-				rank.begin(), p.begin());
+				&rank[0], &p[0]);
   
   cout << "Print the edge in MST:" << endl;
   for (std::vector<Edge>::iterator ei = spanning_tree_edges.begin();

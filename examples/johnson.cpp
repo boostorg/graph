@@ -84,7 +84,7 @@ main()
   //int D[V][V]; //SGI MIPSpro Compiler barfs for the type of D.
   std::vector<std::vector<int> > D(6, std::vector<int>(6)); 
 
-  johnson_all_pairs_shortest_paths(g, D, d.begin(), h.begin(), w, c.begin(), 
+  johnson_all_pairs_shortest_paths(g, D, &d[0], &h[0], w, &c[0], 
                                    get(vertex_index(), g));
 
   std::cout << "\t";

@@ -32,8 +32,8 @@
 #include <boost/graph/adjacency_list.hpp>
 
 
-using boost::tie;
-using boost::graph_traits;
+using namespace boost;
+using namespace std;
 
 
 struct edge_flow { 
@@ -44,9 +44,6 @@ struct edge_capacity {
   typedef boost::edge_property_tag kind; 
   enum { num = 201 }; // for partial spec. workaround
 };
-
-using namespace boost;
-using namespace std;
 
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
@@ -125,10 +122,9 @@ int main(int argc, char* argv[])
   boost::graph_traits<Graph>::vertex_iterator v, v_end;
   boost::graph_traits<Graph>::out_edge_iterator e, e_end;
   int f = 0;
-  for (tie(v,v_end) = vertices(G); v != v_end; ++v)
-    for (tie(e,e_end) = out_edges(*v,G); e != e_end; ++e)
+  for (tie(v, v_end) = vertices(G); v != v_end; ++v)
+    for (tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
       flow[*e] = ++f;
-
   cout << endl << endl;
 
   remove_edge(G, 6, 8);

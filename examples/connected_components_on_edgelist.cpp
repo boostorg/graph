@@ -87,8 +87,8 @@ int main(int argc, char* argv[])
   disjoint_sets_with_storage<> ds;
   dynamic_connected_components(g, ds);
   
-  component_index<int> components(ds.parents().begin(), 
-				  ds.parents().end());
+  component_index<int> components(&ds.parents()[0], 
+				  &ds.parents()[0] + ds.parents().size());
 
   cout << "Total number of components: " << components.size() << endl;
   for (int k = 0; k != N; ++k)

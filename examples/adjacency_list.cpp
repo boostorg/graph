@@ -59,14 +59,13 @@ int main(int argc, char* argv[])
   typedef plugin<edge_name, std::string> EdgePlugin;
   typedef plugin<vertex_color,default_color_type> ColorPlugin;
   typedef plugin<vertex_index, std::size_t, ColorPlugin> VertexPlugin;
-  typedef plugin<graph_name, std::string> GraphPlugin;
 
   typedef adjacency_list<vecS, listS, undirectedS, 
-    VertexPlugin, EdgePlugin, GraphPlugin> Graph;
+    VertexPlugin, EdgePlugin> Graph;
 
   const int V = 5;
-  Graph g(V, GraphPlugin("foo"));
-  cout << "graph name: " << get_plugin(g, graph_name()) << endl;
+  Graph g(V);
+
   property_map<Graph, vertex_index>::type id = get(vertex_index(), g);
 
   property_map<Graph, edge_name>::type name = get(edge_name(), g);
@@ -104,6 +103,5 @@ int main(int argc, char* argv[])
   }
 
   print_edges(g, id);
-
   return 0;
 }

@@ -118,9 +118,9 @@ main(int argc, char* argv[])
   std::vector<size_type> f(num_vertices(G));
   int t = 0;
   depth_first_search(G, categorize_edges(
-                     make_pair(stamp_times(d.begin(), t, on_discover_vertex()),
-			       stamp_times(f.begin(), t, on_finish_vertex()))),
-                     c.begin());
+                     make_pair(stamp_times(&d[0], t, on_discover_vertex()),
+			       stamp_times(&f[0], t, on_finish_vertex()))),
+                     &c[0]);
 
 
   std::vector<size_type>::iterator i, j;

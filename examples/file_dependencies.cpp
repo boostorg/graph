@@ -160,7 +160,7 @@ int main(int,char*[])
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0)
-        uniform_cost_search(g, *i, time.begin(), weight, 
+        uniform_cost_search(g, *i, &time[0], weight, 
 			    compare, combine);
     }
 

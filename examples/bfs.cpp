@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
   // Array to store predecessor (parent) of each vertex. This will be
   // used as a Decorator (actually, its iterator will be).
   std::vector<Vertex> p(boost::num_vertices(G));
-  typedef std::vector<Vertex>::iterator Piter;
+  typedef std::vector<Vertex>::pointer Piter;
 
   // Array to store distances from the source to each vertex .  We use
   // a built-in array here just for variety. This will also be used as
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
   boost::breadth_first_search(G, s, 
    boost::make_bfs_visitor(
     std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
-    std::make_pair(boost::record_predecessors(p.begin(), 
+    std::make_pair(boost::record_predecessors(&p[0], 
 					      boost::on_tree_edge()),
 		   copy_graph(G_copy, boost::on_examine_edge())))) );
 
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 
     std::for_each(boost::vertices(G).first, boost::vertices(G).second, 
-		  print_parent<Piter>(p.begin()));
+		  print_parent<Piter>(&p[0]));
   }
 
   return 0;

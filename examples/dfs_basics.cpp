@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
   typedef std::vector<Vertex>::iterator Piter;
-  typedef std::vector<size_type>::iterator Iiter;
+  typedef std::vector<size_type>::pointer Iiter;
 
   // color, discover time, and finish time properties
   std::vector<default_color_type> color(num_vertices(G));
@@ -92,17 +92,17 @@ int main(int argc, char* argv[])
   std::vector<size_type> ftime(num_vertices(G));
   int t = 0;
   depth_first_search
-    (G, make_dfs_visitor(make_pair(stamp_times(dtime.begin(), t, 
+    (G, make_dfs_visitor(make_pair(stamp_times(&dtime[0], t, 
 					       on_discover_vertex()),
-				   stamp_times(ftime.begin(), t, 
+				   stamp_times(&ftime[0], t, 
 					       on_finish_vertex()))),
-     color.begin());
+     &color[0]);
 
   // use std::sort to order the vertices by their discover time
   vector<size_type> discover_order(N);
   iota(discover_order.begin(), discover_order.end(), 0);
   std::sort(discover_order.begin(), discover_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(dtime.begin()));
+	    indirect_cmp<Iiter, std::less<size_type> >(&dtime[0]));
 
   cout << "order of discovery: ";
   for (i = 0; i < N; ++i)
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
   vector<size_type> finish_order(N);
   iota(finish_order.begin(), finish_order.end(), 0);
   std::sort(finish_order.begin(), finish_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(ftime.begin()));
+	    indirect_cmp<Iiter, std::less<size_type> >(&ftime[0]));
 
   cout << endl << "order of finish: ";
   for (i = 0; i < N; ++i)

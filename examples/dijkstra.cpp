@@ -76,8 +76,8 @@ main(int argc, char* argv[])
 
   Vertex s = *(vertices(G).first);
   
-  dijkstra_shortest_paths(G, s, d.begin(), 
-    make_ucs_visitor(record_predecessors(p.begin(), on_edge_relaxed())));
+  dijkstra_shortest_paths(G, s, &d[0], 
+    make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
   std::cout << "distances from start vertex:" << std::endl;
   graph_traits<Graph>::vertex_iterator vi, vend;
