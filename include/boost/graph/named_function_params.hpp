@@ -440,6 +440,8 @@ namespace boost {
     return Dispatcher::const_get_value(p, t2, tag2);
   }
 
+
+#if 0
   template <typename Default>
   const Default& 
   choose_param(const detail::error_property_not_found&, const Default& d)
@@ -448,6 +450,31 @@ namespace boost {
   template <class P, class Default> 
   const P&
   choose_param(const P& param, const Default&) { return param; }
+#else
+  // MSVC++ workaround
+
+  namespace detail {
+    template <class Param>
+    struct choose_param_helper {
+      template <class Default> struct result { typedef Param type; };
+      template <typename Default>
+      static const Param& apply(const Param& p, const Default& d) { return p; }
+    };
+    template <>
+    struct choose_param_helper<error_property_not_found> {
+      template <class Default> struct result { typedef Default type; };
+      template <typename Default>
+      static const Default& apply(const error_property_not_found&, const Default& d)
+        { return d; }
+    };
+  } // namespace detail
+
+  template <class P, class Default> 
+  const typename detail::choose_param_helper<P>::template result<Default>::type&
+  choose_param(const P& param, const Default& d) { 
+    return detail::choose_param_helper<P>::apply(param, d);
+  }
+#endif
 
   template <typename T>
   inline bool is_default_param(const T&) { return false; }
@@ -463,12 +490,19 @@ namespace boost {
 	typedef const P& const_result_type;
 	typedef const P& result_type;
 	typedef P type;
-	static const_result_type const_apply(const P& p, const Graph&, Tag&)
-	{ return p; }
-	static result_type apply(const P& p, Graph&, Tag&)
-	{ return p; }
       };
+
+      template <class P, class Graph, class Tag>
+      static typename bind<P, Graph, Tag>::const_result_type
+      const_apply(const P& p, const Graph&, Tag&) 
+      { return p; }
+
+      template <class P, class Graph, class Tag>
+      static typename bind<P, Graph, Tag>::result_type
+      apply(const P& p, Graph&, Tag&) 
+      { return p; }
     };
+
     struct choose_default_param {
       template <class P, class Graph, class Tag>
       struct bind {
@@ -478,17 +512,18 @@ namespace boost {
 	  const_result_type;
 	typedef typename property_map<Graph, Tag>::const_type 
 	  type;
-
-	static const_result_type
-	const_apply(const P& p, const Graph& g, Tag tag) { 
-	  return get(tag, g); 
-	}
-
-	static result_type
-	apply(const P& p, Graph& g, Tag tag) { 
-	  return get(tag, g); 
-	}
       };
+
+      template <class P, class Graph, class Tag>
+      static typename bind<P, Graph, Tag>::const_result_type
+      const_apply(const P& p, const Graph& g, Tag tag) { 
+	return get(tag, g); 
+      }
+      template <class P, class Graph, class Tag>
+      static typename bind<P, Graph, Tag>::result_type
+      apply(const P& p, Graph& g, Tag tag) { 
+	return get(tag, g); 
+      }
     };
 
     template <class Param>
@@ -532,7 +567,7 @@ namespace boost {
   choose_const_pmap(const Param& p, const Graph& g, PropertyTag tag)
   { 
     typedef typename 
-      detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
+      detail::choose_pmap_helper<Param,Graph,PropertyTag>::Selector Choice;
     return Choice::const_apply(p, g, tag);
   }
 
@@ -541,7 +576,7 @@ namespace boost {
   choose_pmap(const Param& p, Graph& g, PropertyTag tag)
   { 
     typedef typename 
-      detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
+      detail::choose_pmap_helper<Param,Graph,PropertyTag>::Selector Choice;
     return Choice::apply(p, g, tag);
   }
 
