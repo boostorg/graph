@@ -64,11 +64,12 @@ HREF="bibliography.html#george81:__sparse_pos_def">14</A>, <A
 HREF="bibliography.html#cuthill69:reducing_bandwith">43</A>, <a
 href="bibliography.html#liu75:rcm">44</a>, <a
 href="bibliography.html#george71:fem">45</a> ] is to reduce the <a
-href="./bandwidth.html">bandwidth</a> of a graph.  The Cuthill-Mckee
-ordering algorithm works by a local minimization of the i-th
-bandwidths. The vertices are basically assigned a breadth-first search
-order, except that at each step, the adjacent vertices are placed in
-the queue in order of increasing degree.
+href="./bandwidth.html">bandwidth</a> of a graph by reordering the
+indices assigned to each vertex.  The Cuthill-Mckee ordering algorithm
+works by a local minimization of the i-th bandwidths. The vertices are
+basically assigned a breadth-first search order, except that at each
+step, the adjacent vertices are placed in the queue in order of
+increasing degree.
 
 <p>
 Version 1 of the algorithm lets the user choose the ``starting
@@ -77,7 +78,7 @@ pseudo-peripheral pair heuristic. The choice of the ``starting
 vertex'' can have a significant effect on the quality of the ordering.
 
 <p>
-The output of the algorithm is the vertices in the new ordering.
+The output of the algorithm are the vertices in the new ordering.
 Depending on what kind of output iterator you use, you can get either
 the Cuthill-Mckee ordering or the reverse Cuthill-McKee ordering.  For
 example, if you store the output into a vector using the vector's
