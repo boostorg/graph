@@ -23,8 +23,11 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
+#include <iostream>
 #include <vector>
-#include <boost/graph/tarjan_scc.hpp>
+
+#include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -35,23 +38,24 @@ int main(int, char*[])
   const char* name = "abcdefghij";
 
   GraphvizGraph G;
-  read_graphviz("scc2.dot", G);
+  read_graphviz("scc.dot", G);
 
   typedef graph_traits<GraphvizGraph>::vertex_descriptor Vertex;
     
-  std::vector<int> comp(num_vertices(G)), dfs_numbers(num_vertices(G));
+  std::vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
-  int num = tarjan_scc(G, &comp[0], &root[0], &color[0], &dfs_numbers[0]);
+  int num = strong_components(G, &component[0], &root[0], &color[0], 
+			      &discover_time[0]);
     
-  cout << "A directed graph:" << endl;
+  std::cout << "A directed graph:" << std::endl;
   print_graph(G, name);
-  cout << endl;
-  cout << "Total number of components: " << num << endl;
-  std::vector<int>::iterator i;
-  for (i = comp.begin(); i != comp.end(); ++i)
-    cout << "Vertex " << name[i - comp.begin()]
-	 <<" is in component " << *i << endl;
+  std::cout << std::endl;
+  std::cout << "Total number of components: " << num << std::endl;
+  std::vector<int>::size_type i;
+  for (i = 0; i != component.size(); ++i)
+    std::cout << "Vertex " << name[i]
+	 <<" is in component " << component[i] << std::endl;
     
   return 0;
 }

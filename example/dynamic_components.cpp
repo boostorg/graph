@@ -29,7 +29,7 @@
 #include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
-#include <boost/graph/connected_components.hpp>
+#include <boost/graph/dynamic_components.hpp>
 
 /*
 
@@ -81,7 +81,7 @@ int main(int , char* [])
   disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
   initialize_dynamic_components(G, ds);
-  dynamic_connected_components(G, ds);
+  dynamic_components(G, ds);
 
   graph_traits<Graph>::edge_descriptor e;
   bool flag;

@@ -34,14 +34,11 @@
 /*
 
   This example demonstrates the usage of the connected_components
-  algorithm on a directed and undirected graph. The example graphs
-  come from "Introduction to Algorithms", Cormen, Leiserson, and
-  Rivest p. 87 (though we number the vertices from zero instead of
-  one).
+  algorithm on a undirected graph. The example graphs come from
+  "Introduction to Algorithms", Cormen, Leiserson, and Rivest p. 87
+  (though we number the vertices from zero instead of one).
 
   Sample output:
-
-  An undirected graph:
 
   Total number of components: 3
   Vertex 0 is in component 0
@@ -50,16 +47,6 @@
   Vertex 3 is in component 2
   Vertex 4 is in component 0
   Vertex 5 is in component 1
-
-  A directed graph:
-
-  Total number of components: 3
-  Vertex 0 is in component 2
-  Vertex 1 is in component 2
-  Vertex 2 is in component 1
-  Vertex 3 is in component 2
-  Vertex 4 is in component 2
-  Vertex 5 is in component 0
 
  */
 
@@ -82,50 +69,15 @@ int main(int , char* [])
     add_edge(4, 0, G);
     add_edge(2, 5, G);
     
+    std::vector<int> component(num_vertices(G));
+    int num = connected_components(G, &component[0], get(vertex_color, G));
     
-    std::vector<int> c(num_vertices(G));
-    int num = connected_components(G, &c[0], get(vertex_color, G), 
-                                   dfs_visitor<>());
-    
-    cout << "An undirected graph:" << endl;
-    cout << endl;
-    std::vector<int>::iterator i;
+    std::vector<int>::size_type i;
     cout << "Total number of components: " << num << endl;
-    for (i = c.begin(); i != c.end(); ++i)
-      cout << "Vertex " << i - c.begin() <<" is in component " << *i << endl;
+    for (i = 0; i != component.size(); ++i)
+      cout << "Vertex " << i <<" is in component " << component[i] << endl;
     cout << endl;
   }
-  // Second example: the strongly connected components of a directed
-  // graph
-  {
-    typedef property<vertex_discover_time_t, int,
-      property< vertex_finish_time_t, int,
-        property< vertex_color_t, default_color_type > > > VertexProperty;
-    typedef adjacency_list< vecS, vecS, directedS, VertexProperty >  Graph;
-    Graph G;
-    add_edge(0, 1, G);
-    add_edge(1, 1, G);
-    add_edge(1, 3, G);
-    add_edge(1, 4, G);
-    add_edge(4, 3, G);
-    add_edge(3, 4, G);
-    add_edge(3, 0, G);
-    add_edge(5, 2, G);
-
-    typedef graph_traits<Graph>::vertex_descriptor Vertex;
-    
-    std::vector<int> c(num_vertices(G));
-    int num = connected_components(G, &c[0], get(vertex_color, G),
-                                   dfs_visitor<>());
-    
-    cout << "A directed graph:" << endl;
-    cout << endl;
-    cout << "Total number of components: " << num << endl;
-    std::vector<int>::iterator i;
-    for (i = c.begin(); i != c.end(); ++i)
-      cout << "Vertex " << i - c.begin() <<" is in component " << *i << endl;
-  }
-
   return 0;
 }
 
