@@ -198,7 +198,7 @@ namespace boost {
         { return m_target == x.get_target(); }
       inline bool operator<(const stored_edge& x) const
         { return m_target < x.get_target(); }
-    protected:
+      //protected: need to add hash<> as a friend
       static no_property s_prop;
       // Sometimes target not used as key in the set, and in that case
       // it is ok to change the target.
@@ -2458,6 +2458,21 @@ namespace boost {
   };
 
 } // namespace boost
+
+#if !defined(BOOST_NO_HASH) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+namespace std {
+
+  template <typename V, typename P>
+  struct hash< boost::detail::stored_edge_property <V,P> > 
+  {
+    size_t operator()(const boost::detail::stored_edge_property<V,P>& e) const
+    {
+      return hash<V>()(e.m_target);
+    }
+  };
+}
+#endif
+
 
 #undef stored_edge
 #undef stored_edge_property
