@@ -36,9 +36,11 @@ LATEXOUT	= pdf
 	jweb -np $*.w
 
 BOOST		= ../../..
-CXX		= c++
+CXX		= g++
 INCLUDES	= -I$(BOOST)
-CXXFLAGS	= -Wall -g -Wno-long-double -ftemplate-depth-30 $(INCLUDES)
+#OPT		= +K2 --display_error_number --diag_suppress=186
+OPT		= -Wall -Wno-long-long -ftemplate-depth-30
+CXXFLAGS	= $(OPT) $(INCLUDES)
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -c
@@ -50,10 +52,16 @@ EPS_GEN	= $(DOT:.dot=.eps)
 WEBTEX	= $(JWEB:.w=.tex)
 PDFPICT	= $(EPS_GEN:.eps=.pdf)
 
-default: isomorphism-impl.$(LATEXOUT)
+default: isomorphism-impl-v2.$(LATEXOUT)
+	$(LATEX) isomorphism-impl-v2
+	csh ./mungeaux.csh *.aux
+	$(LATEX) isomorphism-impl-v2
+
+v1: isomorphism-impl.$(LATEXOUT) 
 	$(LATEX) isomorphism-impl
 	csh ./mungeaux.csh *.aux
 	$(LATEX) isomorphism-impl
+
 
 isomorphism-impl.dvi: $(EPS_GEN) $(WEBTEX)
 isomorphism-impl.ps: isomorphism-impl.dvi
@@ -63,6 +71,7 @@ isomorphism.hpp: isomorphism-impl.w isomorphism-impl.tex
 isomorphism-impl-v2.dvi: $(EPS_GEN) $(WEBTEX)
 isomorphism-impl-v2.ps: isomorphism-impl-v2.dvi
 isomorphism-impl-v2.pdf: $(PDFPICT) $(WEBTEX)
+
 isomorphism-v2.hpp: isomorphism-impl-v2.w isomorphism-impl-v2.tex
 
 out.dot: isomorphism-impl.w
