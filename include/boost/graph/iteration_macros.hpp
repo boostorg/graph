@@ -44,7 +44,7 @@ for (boost::graph_traits<GraphType>::vertex_descriptor VNAME; \
 #define BGL_FORALL_EDGES_T(ENAME, GNAME, GraphType) \
 typename boost::graph_traits<GraphType>::edge_iterator BGL_FIRST(__LINE__),\
   BGL_LAST(__LINE__); \
-tie(BGL_FIRST(__LINE__), BGL_LAST(__LINE__)) = edge(GNAME); \
+tie(BGL_FIRST(__LINE__), BGL_LAST(__LINE__)) = edges(GNAME); \
 for (typename boost::graph_traits<GraphType>::edge_descriptor ENAME; \
   BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? \
   (ENAME = *BGL_FIRST(__LINE__), true) : false;\
@@ -53,7 +53,7 @@ for (typename boost::graph_traits<GraphType>::edge_descriptor ENAME; \
 #define BGL_FORALL_EDGES(ENAME, GNAME, GraphType) \
  boost::graph_traits<GraphType>::edge_iterator BGL_FIRST(__LINE__),\
   BGL_LAST(__LINE__); \
-tie(BGL_FIRST(__LINE__), BGL_LAST(__LINE__)) = edge(GNAME); \
+tie(BGL_FIRST(__LINE__), BGL_LAST(__LINE__)) = edges(GNAME); \
 for (boost::graph_traits<GraphType>::edge_descriptor ENAME; \
   BGL_FIRST(__LINE__) != BGL_LAST(__LINE__) ? \
   (ENAME = *BGL_FIRST(__LINE__), true) : false;\
