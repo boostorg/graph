@@ -108,7 +108,7 @@ endl_printer<Tag> print_endl(std::ostream& os, Tag) {
 
 template <class PA, class Tag>
 struct edge_printer
- : public boost:;base_visitor< edge_printer<PA, Tag> >
+ : public boost::base_visitor< edge_printer<PA, Tag> >
 {
   typedef Tag event_filter;
 
