@@ -178,7 +178,7 @@ struct PropertyPrinter<Graph, no_property>
   PropertyPrinter( Graph& ){}
 
   template<class Iterator>
-  PropertyPrinter& operator () ( std::ostream&, Iterator it ){ return *this; }
+  PropertyPrinter& operator () ( std::ostream&, Iterator){ return *this; }
 };
 
 // property printer
