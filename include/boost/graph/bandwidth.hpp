@@ -11,9 +11,10 @@
 #ifndef BOOST_GRAPH_BANDWIDTH_HPP
 #define BOOST_GRAPH_BANDWIDTH_HPP
 
+#include <algorithm> // for std::min and std::max
+#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
-#include <boost/minmax.hpp>
 
 namespace boost {
 

@@ -15,11 +15,11 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/utility.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
-#include <boost/minmax.hpp>
 
 #ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
 #define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file

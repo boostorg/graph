@@ -28,12 +28,13 @@
 #ifndef BOOST_GRAPH_WAVEFRONT_HPP
 #define BOOST_GRAPH_WAVEFRONT_HPP
 
+#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
 #include <boost/graph/bandwidth.hpp>
-#include <boost/minmax.hpp>
 #include <cmath>
 #include <vector>
+#include <algorithm> // for std::min and std::max
 
 namespace boost {
 

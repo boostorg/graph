@@ -22,9 +22,9 @@
 #include <stdexcept>
 #include <algorithm>
 #include <string>
+#include <boost/config.hpp>
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/detail/bitset_adaptor.hpp>
-#include <boost/minmax.hpp>
 
 // This provides versions of std::bitset with both static and dynamic size.
 

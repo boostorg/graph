@@ -35,9 +35,9 @@
  */
 #include <vector>
 #include <algorithm>
+#include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/bucket_sorter.hpp>
-#include <boost/minmax.hpp>
 
 namespace boost {
 

@@ -34,7 +34,6 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/minmax.hpp>
 
 
 template <class Distance>

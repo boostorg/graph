@@ -12,14 +12,15 @@
 #define BOOST_GRAPH_TRANSITIVE_CLOSURE_HPP
 
 #include <vector>
+#include <algorithm> // for std::min and std::max
 #include <functional>
+#include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/minmax.hpp>
 
 namespace boost
 {

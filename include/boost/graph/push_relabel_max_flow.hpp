@@ -31,12 +31,12 @@
 #include <vector>
 #include <list>
 #include <iosfwd>
+#include <algorithm> // for std::min and std::max
 
 #include <boost/pending/queue.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/minmax.hpp>
 
 namespace boost {
 

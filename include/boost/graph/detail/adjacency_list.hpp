@@ -33,7 +33,6 @@
 #include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/minmax.hpp>
 #include <memory>
 #include <algorithm>
 #include <boost/limits.hpp>

@@ -14,11 +14,12 @@
 #define BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP
 
 #include <stack>
+#include <algorithm> // for std::min and std::max
+#include <boost/config.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/property_map.hpp>
-#include <boost/minmax.hpp>
 
 namespace boost
 {
