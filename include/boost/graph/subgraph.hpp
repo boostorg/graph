@@ -62,6 +62,7 @@ namespace boost {
     typedef typename Traits::edge_descriptor           edge_descriptor;
     typedef typename Traits::directed_category         directed_category;
     typedef typename Traits::edge_parallel_category    edge_parallel_category;
+    typedef typename Traits::traversal_category        traversal_category;
 
     // IncidenceGraph requirements
     typedef typename Traits::out_edge_iterator         out_edge_iterator;

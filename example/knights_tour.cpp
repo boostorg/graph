@@ -78,6 +78,7 @@ struct knights_tour_graph
   typedef int edges_size_type;
   typedef boost::directed_tag directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;
+  typedef boost::adjacency_graph_tag traversal_category;
 
   knights_tour_graph(int n) 
     : m_board_size(n) { }
