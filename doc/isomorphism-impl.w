@@ -94,7 +94,7 @@ v \}]$.
 
 \begin{tabbing}
 IS\=O\=M\=O\=RPH($k$, $S$, $f_{k-1}$) $\equiv$ \\
-\>\textbf{if} ($S = V_2$) \\
+\>\textbf{if} ($k = |V_1|+1$) \\
 \>\>\textbf{return} true \\
 \>\textbf{for} each vertex $v \in V_2 - S$ \\
 \>\>\textbf{if} (MATCH($k$, $v$)) \\
@@ -210,6 +210,7 @@ start the DFS at the vertex with the lowest invariant multiplicity,
 and each time we restart the DFS, we choose the undiscovered vertex
 with lowest invariant multiplicity.
 
+
 \section{Implementation}
 
 
@@ -220,7 +221,7 @@ template <typename Graph1, typename Graph2,
           typename VertexIndexMap1, typename VertexIndexMap2>
 bool simple_isomorphism(const Graph1& g1, const Graph2& g2,
     IndexMapping f, VertexInvariant invariant,
-    VertexIndexMap1 v1_index_map, VertexIndexMap2 v2_index_map)
+    VertexIndexMap1 index_map1, VertexIndexMap2 index_map2)
 @}
 
 
@@ -235,8 +236,7 @@ bool simple_isomorphism(const Graph1& g1, const Graph2& g2,
   @<Compute invariant multiplicity@>
   @<Sort vertices by invariant multiplicity@>
   @<Order the vertices by DFS discover time@>
-  @<Order the edge set by DFS discover time@>
-  @<Perform backtracking searches, trying each vertex in $G_2$ as the start@>
+  @<Invoke recursive \code{isomorph} function@>
 }
 @}
 
@@ -259,6 +259,14 @@ typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
 @}
 
 
+@d Quick return with false if $|V_1| \neq |V_2|$
+@{
+if (num_vertices(g1) != num_vertices(g2))
+  return false;
+@}
+
+
+\subsection{Ordering by Vertex Invariant Multiplicity}
 
 
 @d Degree vertex invariant
@@ -270,20 +278,9 @@ struct degree_vertex_invariant {
   template <typename Graph>
   typename graph_traits<Graph>::degree_size_type
   operator()(typename graph_traits<Graph>::vertex_descriptor v, const Graph& g)
-  {
-    return out_degree(v, g);
-  }
+    { return out_degree(v, g); }
 };
 @}
-
-
-
-@d Quick return with false if $|V_1| \neq |V_2|$
-@{
-if (num_vertices(g1) != num_vertices(g2))
-  return false;
-@}
-
 
 
 @d Compute vertex invariants
@@ -307,9 +304,9 @@ invar_vec2_t invar2_vec(num_vertices(g2));
 
 // Provide Property Map interface for invariants
 iterator_property_map<vec1_iter, V1Map, InvarValue1, InvarValue1&>
-  invar1(invar1_vec.begin(), v1_index_map);
+  invar1(invar1_vec.begin(), index_map1);
 iterator_property_map<vec2_iter, V2Map, InvarValue2, InvarValue2&>
-  invar2(invar2_vec.begin(), v2_index_map);
+  invar2(invar2_vec.begin(), index_map2);
 @}
 
 
@@ -349,6 +346,8 @@ for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
 permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 @}
 
+\subsection{Ordering by DFS Discover Time}
+
 
 @d Order the vertices by DFS discover time
 @{
@@ -368,78 +367,44 @@ permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 std::vector<default_color_type> color_vec(num_vertices(g1));
 for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
      ui != g1_vertices.end(); ++ui) {
-  if (color_vec[get(v1_index_map, *ui)] 
+  if (color_vec[get(index_map1, *ui)] 
       == color_traits<default_color_type>::white()) {
     depth_first_visit
-      (g1, *ui, detail::record_dfs_order<Graph1, V1Map>(perm, 
-                                                       v1_index_map), 
-       make_iterator_property_map(&color_vec[0], v1_index_map, 
-                                  color_vec[0]));
+      (g1, *ui, detail::record_dfs_order<Graph1, V1Map>(perm, index_map1), 
+       make_iterator_property_map(&color_vec[0], index_map1, color_vec[0]));
   }
 }
 @}
 
+The set $V_2 - S$ is represented with a bitset named
+\code{not\_in\_S}. 
 
-@d Order the edge set by DFS discover time
+
+
+@d Invoke recursive \code{isomorph} function
 @{
-typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
-std::vector<edge1_t> edge_set;
-std::copy(edges(g1).first, edges(g1).second, 
-          std::back_inserter(edge_set));
-
-std::sort(edge_set.begin(), edge_set.end(), 
-          detail::isomorph_edge_ordering
-          (make_iterator_property_map(perm.begin(), v1_index_map, 
-                                      perm[0]), g1));
+std::vector<char> not_in_S(num_vertices(g2), true);
+return detail::isomorph(g1_vertices.begin(), g1_vertices.end(), g1, g2,
+    make_iterator_property_map(perm.begin(), index_map1, perm[0]),
+    index_map2, f, invar1, invar2, not_in_S));
 @}
 
 
-
-@d Perform backtracking searches, trying each vertex in $G_2$ as the start
-@{
-typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
-for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
-  f[*first] = *vi; // S = { *vi }
-  @<Construct $V_2 - S$, calling it \code{not\_in\_S}@>
-  @<Attempt to extend $S$ to the whole of $V_2$@>
-}
-@}
-
-
-@d Construct $V_2 - S$, calling it \code{not\_in\_S}
-@{
-typedef indirect_cmp<V2Map, std::less<V2Idx> >  Cmp;
-Cmp cmp(v2_index_map);
-std::set<VertexG2, Cmp> not_in_S(cmp);
-for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
-  set_insert(not_in_S, *i2);
-set_remove(not_in_S, *vi);
-@}
-
-
-
-@d Attempt to extend $S$ to the whole of $V_2$
-@{
-if(detail::isomorph(boost::next(first), g1_vertices.end(), 
-    edge_set.begin(), edge_set.end(), g1, g2,
-    make_iterator_property_map(perm.begin(), v1_index_map, perm[0]),
-    v2_index_map, f, invar1, invar2, not_in_S))
-  return true;
-@}
+\subsection{Implementation of ISOMORPH}
 
 
 @d Signature for the recursive isomorph function
 @{
-template <class VertexIter, class EdgeIter, class Graph1, class Graph2,
-  class V1IndexMap, class V2IndexMap, class IndexMapping, 
-  class Invar1, class Invar2, class Set>
+template <typename VertexIter, typename Graph1, typename Graph2,
+    typename IndexMap2, typename IndexMap2, typename IndexMapping, 
+    typename Invar1, typename Invar2, typename NotInSMap>
 bool isomorph(VertexIter k, VertexIter last,
-              EdgeIter edge_iter, EdgeIter edge_iter_end,
               const Graph1& g1, const Graph2& g2,
-              V1IndexMap v1_index_map,
-              V2IndexMap v2_index_map,
-              IndexMapping f, Invar1 invar1, Invar2 invar2,
-              const Set& not_in_S)
+              IndexMap2 index_map2,
+              IndexMap2 index_map2,
+              IndexMapping f, 
+              Invar1 invar1, Invar2 invar2,
+              const NotInSMap& not_in_S)
 @}
 
 
@@ -447,8 +412,9 @@ bool isomorph(VertexIter k, VertexIter last,
 @d Outline for the isomorph function
 @{
 @<Return true if matching is complete@>
+@<Compute $M$, the potential matches for $k$@>
 @<Create a local copy of the mapping $f_k$@>
-@<Find potential matches for $k$ in $V_2 - S$@>
+@<Invoke isomorph for each vertex in $M$@>
 @}
 
 @d Return true if matching is complete
@@ -457,24 +423,13 @@ if (k == last)
   return true;
 @}
 
-@d Create a local copy of the mapping $f_k$
-@{
-typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
-std::vector<v2_desc_t> my_f_vec(num_vertices(g1));
-typedef typename std::vector<v2_desc_t>::iterator vec_iter;
-iterator_property_map<vec_iter,  V1IndexMap, v2_desc_t, v2_desc_t&>
-  my_f(my_f_vec.begin(), v1_index_map);
-
-typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-  my_f[*i1] = f[*i1];
-@}
 
 In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
 \in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
 approach is to directly iterate through all the potential matches for
-$k$. Let $M$ be the set of vertices that can be potentially matched to
-$k$. We define $M$ as follows:
+$k$, for this often is many fewer vertices than $V_2 - S$.  Let $M$
+denote the set of vertices that can be potentially matched to $k$. We
+define $M$ as follows:
 %
 \begin{align*}
 M &= out \intersect in \\ 
@@ -495,7 +450,22 @@ in &= \Big\{ v \st \forall (j,k) \in In[k] \Big( (f(j),v) \in Out[f(j)] \Land i(
 To compute the $out$ set, we iterate through the out-edges $(k,j)$ of
 $k$, and for each $j$ we iterate through the in-edges $(v,f(j))$ of
 $f(j)$, putting all of the $v$'s in $out$ that have the same vertex
-invariant as $k$, and which are in $V_2 - S$.
+invariant as $k$, and which are in $V_2 - S$. Figure~\ref{fig:out}
+depicts the computation of the $out$ set. The implementation is as
+follows.
+
+@d Compute the $out$ set
+@{
+ for (tie(k_j, k_j_end) = out_edges(k, g1); k_j != k_j_end; ++k_j) {
+   vertex1_t j = target(*k_j, g1);
+   for (tie(v_fj, v_fj_end) = in_edges(get(f, j), g2); v_fj != v_fj_end; ++v_fj) {
+     vertex2_t v = source(*v_fj, g2);
+     if ((get(invar1, j) == get(invar2, get(f, j))) && not_in_S[get(index_map2, v)])
+       out.push_back(v);
+   }
+ }
+@}
+
 
 \vizfig{out}{Computing the $out$ set.}
 
@@ -503,7 +473,7 @@ invariant as $k$, and which are in $V_2 - S$.
 @{
 digraph G {
   node[shape=circle]
-  size="5,3"
+  size="4,2"
   ratio="fill"
 
   subgraph cluster0 { label="G_1"
@@ -536,6 +506,24 @@ digraph G {
 }
 @}
 
+The $in$ set is is constructed by iterating through the in-edges
+$(j,k)$ of $k$, and for each $j$ we iterate through the out-edges
+$(f(j),v)$ of $f(j)$. We put all of the $v$'s in $in$ that have the
+same vertex invariant as $k$, and which are in $V_2 -
+S$. Figure~\ref{fig:in} depicts the computation of the $in$ set.  The
+following code computes the $in$ set.
+
+@d Compute the $in$ set
+@{
+ for (tie(j_k, j_k_end) = in_edges(k, g1); j_k != j_k_end; ++j_k) {
+   j = source(*j_k, g1);
+   for (tie(fj_v, fj_v_end) = out_edges(get(f, j), g2); fj_v != fj_v_end; ++fj_v) {
+     v = target(*fj_v, g2);
+     if ((get(invar1, j) == get(invar2, get(f, j))) && not_in_S[get(index_map2, v)])
+       in.push_back(v);
+   }
+ }
+@}
 
 \vizfig{in}{Computing the $in$ set.}
 
@@ -569,93 +557,46 @@ digraph G {
 }
 @}
 
+For each vertex $v$ in the potential matches $M$, we will create an
+extended isomorphism $f_k = f_{k-1} \union \pair{k}{v}$. First
+we create a local copy of $f_{k-1}$.
 
-The set $V_2 - S$ is represented with a bitset named
-\code{not\_in\_S}. The bitset is accessed here through the property
-map interface. The implementation for computing the $out$ set is as
-follows.
-
-
-@d Compute the $out$ set
+@d Create a copy of $f_{k-1}$ which will become $f_k$
 @{
- for (tie(k_j, k_j_end) = out_edges(k, g1); k_j != k_j_end; ++k_j) {
-     vertex1_t j = target(*k_j, g1);
-     for (tie(v_fj, v_fj_end) = in_edges(get(f, j), g2); v_fj != v_fj_end; ++v_fj) {
-         vertex2_t v = source(*v_fj, g2);
-         if ((get(invar1, j) == get(invar2, get(f, j))) && get(not_in_S, v))
-             out.push_back(v);
-     }
- }
+typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
+std::vector<vertex2_t> my_f_vec(num_vertices(g1));
+
+// Construct property map interface to my_f_vec
+typedef typename std::vector<v2_desc_t>::iterator vec_iter;
+iterator_property_map<vec_iter,  IndexMap2, v2_desc_t, v2_desc_t&>
+  my_f(my_f_vec.begin(), index_map2);
+
+typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+  my_f[*i1] = f[*i1];
 @}
 
+Next we enter the loop through every vertex $v$ in $M$, and extend the
+isomorphism with $\pair{k}{v}$. We then update the set $S$ (by
+removing $v$ from $V_2 - S$) and make the recursive call to
+\code{isomorph}. If \code{isomorph} returns successfully, we have
+found an isomorphism for the complete graph, so we copy our local
+mapping into the mapping from the previous calling function.
 
-@d Compute the $in$ set
+@d Invoke isomorph for each vertex in $M$
 @{
- for (tie(j_k, j_k_end) = in_edges(k, g1); j_k != j_k_end; ++j_k) {
-     j = source(*j_k, g1);
-     for (tie(fj_v, fj_v_end) = out_edges(get(f, j), g2); fj_v != fj_v_end; ++fj_v) {
-         v = target(*fj_v, g2);
-         if ((get(invar1, j) == get(invar2, get(f, j))) && get(not_in_S, v))
-             in.push_back(v);
-     }
- }
+for (iterator v_iter = M.begin(); v_iter != M.end(); ++v_iter) {
+  vertex2_t v = *v_iter;
+  my_f[k] = v;
+  std::vector<char> my_not_in_S(not_in_S);
+  my_not_in_S[get(index_map2, v)] = false;
+  if (isomorph(next(k), last, g1, g2, index_map2, index_map2, my_f, invar1, invar2, my_not_in_S)) {
+    for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+      f[*i1] = my_f[*i1];
+    return true;
+  }
+}
 @}
-
-
-%(k,j)
-%(j,k)
-%(v,f(j))
-%(f(j), v)
-
-Let $M$ be the set of vertices that have the same connectivity
-structure as $k$ with respect to the vertices that have already been
-mapped, and which have the same vertex invariant. It is the
-intersection of the vertices in $C$ with the vertices in $V_2 - S_2$
-that are potential matches for $k$, which we denote $P$.
-
-introduce notion of partial isomorphism?
-
-
-
-
-
-@d Let $P = V_2 - S$
-@{
-std::vector<v2_desc_t> vertex_set;
-std::copy(not_in_S.begin(), not_in_S.end(), std::back_inserter(vertex_set));
-@}
-
-@d Construct $C$, the vertices that are partially isomorphic to $k$
-@{
-
-@}
-
-@d Perform $P = P \intersect C$
-@{
-
-@}
-
-Let $P_2$ be the vertices from $V_2 - S$ that have the same
-connectivity with respect to vertex $k$ and the same vertex invariant
-as $k$.
-
-
-@d MATCH-INVAR implementation
-@{
-@}
-
-% P_2 = V_2 - S_2
-
-% (k, v_1)
-% v_2 = f(v_1)
-% A = {}
-% for all (u,v_2) \in E_2
-%   if (i(k) = i(u))
-%     A = A U { u }
-
-% P_2 <- P_2 \intersect A
-
-% same connectivity and same vertex invariant
 
 
 \end{document}
