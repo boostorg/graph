@@ -29,10 +29,7 @@
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/mersenne_twister.hpp>
-
-#ifndef BOOST_NO_STDC_NAMESPACE
-namespace std { using ::atoi; using ::atof; }
-#endif
+#include <boost/lexical_cast.hpp>
 
 using namespace boost;
 
@@ -159,12 +156,8 @@ int test_main(int argc, char* argv[])
     return 0;
   }
 
-#ifndef BOOST_NO_STDC_NAMESPACE
-  using std::atoi;
-  using std::atof;
-#endif
-  int n = std::atoi(argv[1]);
-  double edge_prob = std::atof(argv[2]);
+  int n = boost::lexical_cast<int>(argv[1]);
+  double edge_prob = boost::lexical_cast<double>(argv[2]);
   test_isomorphism(n, edge_prob);
 
   return 0;
