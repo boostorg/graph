@@ -142,9 +142,11 @@ namespace boost {
       (g,
        choose_param(get_param(params, graph_visitor),
                     make_dfs_visitor(null_visitor())),
-       choose_param(get_param(params, vertex_color),
-         make_iterator_property_map(color_map.begin(), 
-	   choose_pmap(get_param(params, vertex_index), g, vertex_index)))
+       choose_param
+       (get_param(params, vertex_color),
+	make_iterator_property_map
+	(color_map.begin(), 
+	 choose_const_pmap(get_param(params, vertex_index), g, vertex_index)))
        );
   }
   
