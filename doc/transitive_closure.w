@@ -438,7 +438,6 @@ typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
 std::vector<tc_vertex> to_tc_vec(num_vertices(g));
 iterator_property_map<tc_vertex*, VertexIndexMap> 
   to_tc(&to_tc_vec[0], index_map);
-
 {
   vertex_iterator i, i_end;
   for (tie(i, i_end) = vertices(g); i != i_end; ++i)
