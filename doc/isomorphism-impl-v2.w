@@ -499,9 +499,14 @@ namespace detail {
       : dfs_order(dfs_order), index(index) { }
 
     void discover_vertex(vertex_t v, const Graph1& g) const {
+        std::cout << "discover " << get(index, v) << std::endl;
       dfs_order.push_back(get(index, v));
     }
-    std::vector<size_type>& dfs_order; 
+    void examine_edge(edge_t e, const Graph1& g) const {
+        
+    }
+    std::vector<size_type>& dfs_order;
+    std::vector<edge_info>& edge_set;
     IndexMap1 index;
   };
 } // namespace detail
@@ -521,54 +526,43 @@ function object is described next.
 
 @d Order the edges by DFS discover time
 @{
-std::copy(edges(g1).first, edges(g1).second, std::back_inserter(edge_set));
-edge_order = edge_order_fun<PermMap, Graph1>(perm_map, g1);
-std::sort(edge_set.begin(), edge_set.end(), detail::edge_cmp(edge_order));
-std::cout << "edge set = ";
-for (edge_iter_t e = edge_set.begin(); e != edge_set.end(); ++e) {
-  std::cout << "(" << get(perm_map, source(*e, g1)) << ","
-    << get(perm_map, target(*e, g1)) << ") ";
+BGL_FORALL_EDGES_T(e, g1, Graph1)
+  edge_set.push_back(edge_info(get(perm_map, source(e, g1)),
+                               get(perm_map, target(e, g1)), 0));
+// Add ficticious edges for DFS-tree root nodes
+BGL_FORALL_VERTICES_T(v, g1, Graph1)
+    if (in_degree(v, g1) == 0)
+        edge_set.push_back(edge_info(-1, get(perm_map, v), 0));
+
+std::sort(edge_set.begin(), edge_set.end());
+
+if (!edge_set.empty()) {
+  edge_iter_t e = edge_set.begin();
+  e->order = 0;
+  edge_iter_t prev = e;
+  for (++e; e != edge_set.end(); prev = e, ++e)
+    e->order = std::max(prev->from, prev->to);
 }
+std::cout << "edge set = ";
+for (edge_iter_t e = edge_set.begin(); e != edge_set.end(); ++e)
+    std::cout << "(" << e->from << "," << e->to << "," << e->order << ") ";
 std::cout << std::endl;
 @}
-
-\noindent The function object created by \code{edge\_cmp} compares the
-ordering number for an edge, which for edge $e=(u,v)$ is
-$\max(u,v)$. The \code{edge\_\-order\_\-fun} computes the ordering
-number.
 
 @d Isomorph edge ordering function and predicate
 @{
 namespace detail {
 
-  template <typename VertexIndexMap, typename Graph>
-  class edge_order_fun {
-    typedef typename graph_traits<Graph>::edge_descriptor edge_t;
-    typedef typename graph_traits<Graph>::vertices_size_type size_type;
-  public:
-    typedef edge_t argument_type;
-    typedef size_type result_type;
-
-    edge_order_fun() { }
-    edge_order_fun(VertexIndexMap vim, const Graph& g)
-      : index_map(vim), g(&g) { }
-
-    size_type operator()(const edge_t& e) const {
-      return std::max(get(index_map, source(e, *g)), 
-                      get(index_map, target(e, *g)));    
+  struct edge_info {
+    edge_info(std::size_t f, std::size_t t, std::size_t o)
+        : from(f), to(t), order(o) { }
+    bool operator<(const edge_info& e) const {
+        return std::max(from, to) < std::max(e.from, e.to);
     }
-    VertexIndexMap index_map;
-    const Graph* g;
+    int from;
+    int to;
+    int order;
   };
-
-  // edge_cmp(x,y) = order(x) < order(y)
-  template <typename EdgeOrder>
-  compose_f_gx_hy_t< std::less<typename EdgeOrder::result_type>,
-                     EdgeOrder, EdgeOrder >
-  edge_cmp(const EdgeOrder& order) {
-    std::less<typename EdgeOrder::result_type> cmp;
-    return compose_f_gx_hy(cmp, order, order);
-  }
 
 } // namespace detail
 @}
@@ -592,6 +586,89 @@ the iterator range \code{[k\_iter,last)}. The function returns true if
 a isomorphism is found between the vertices of $G_1$ in
 \code{[k\_iter,last)} and the vertices of $G_2$ in \code{not\_in\_S}.
 The mapping is recorded in the parameter \code{f}.
+
+
+@d Case 1
+@{
+std::cout << "** case 1" << std::endl;
+// Try all possible mappings
+BGL_FORALL_VERTICES_T(y, g2, Graph2) {
+    std::cout << "y: " << get(index_map2, y) << std::endl;
+    if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
+        std::cout << "f(" << get(perm_map, v) << ")="
+            << get(index_map2, y) << std::endl;
+        APAIR[v] = y; 
+        APAIR_assigned[v] = true;
+        BPAIR[y] = v; BPAIR_assigned[y] = true;
+        mc = 0;
+        if (match(next(edge_iter)))
+            return true;
+        APAIR_assigned[v] = false;
+        BPAIR_assigned[y] = false;
+    }
+    std::cout << "xxx" << std::endl;
+}
+@}
+
+@d Case 2
+@{
+std::cout << "** case 2" << std::endl;
+vertex1_t x = g1_vertices[edge_order_num];
+std::cout << "edge_order(edge)=" << get(perm_map, x) << std::endl;
+assert(APAIR_assigned[x] == true);
+vertex2_t z = APAIR[x];
+std::cout << "z: " << get(index_map2, z) << std::endl;
+BGL_FORALL_ADJACENT_T(z, w, g2, Graph2) {
+    if (BPAIR_assigned[w] == true)
+        --mc;
+}
+for (std::size_t ji = 0; ji <= edge_order_num; ++ji) {
+    vertex1_t j = g1_vertices[ji];
+    BGL_FORALL_ADJACENT_T(APAIR[j], w, g2, Graph2) {
+    if (w == z)
+        --mc;
+    }
+}
+if (mc != 0)
+    return false;
+
+BGL_FORALL_ADJACENT_T(APAIR[u], y, g2, Graph2) {
+    std::cout << "y: " << get(index_map2, y) << std::endl;
+    if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
+        APAIR[v] = y; APAIR_assigned[v] = true;
+        std::cout << "f(" << get(perm_map, v) << ")=" 
+                    << get(index_map2, y) << std::endl;;
+        BPAIR[y] = v; BPAIR_assigned[y] = true;
+        mc = 1;
+        if (match(next(edge_iter)))
+            return true;
+        APAIR_assigned[v] = true;
+        BPAIR_assigned[y] = true;
+    }
+}
+@}
+
+@d Case 3
+@{
+std::cout << "** case 3" << std::endl;
+bool verify = false;
+assert(APAIR_assigned[u] == true);
+vertex1_t w = g1_vertices[std::min(edge.from, edge.to)];
+BGL_FORALL_ADJACENT_T(APAIR[w], y, g2, Graph2) {
+    std::cout << "y: " << get(index_map2, y) << std::endl;
+    assert(APAIR_assigned[v] == true);
+    if (y == APAIR[v]) {        
+        verify = true;
+        break;
+    }
+}
+if (verify == true) {
+    ++mc;
+    if (match(next(edge_iter)))
+    return true;
+}
+@}
+
 
 @d Isomorphism algorithm class
 @{
@@ -619,15 +696,13 @@ struct isomorphism_algo
   // Internal
   std::vector<vertex1_t> g1_vertices;
   std::vector<size_type> perm;
-  std::vector<edge1_t> edge_set;
-  typedef typename std::vector<edge1_t>::iterator edge_iter_t;
+  std::vector<edge_info> edge_set;
+  typedef typename std::vector<edge_info>::iterator edge_iter_t;
   size_type mc; // number of edges in S
 
   typedef safe_iterator_property_map<size_type*, IndexMap1, size_type, size_type&>
     PermMap;
   PermMap perm_map;
-  edge_order_fun<PermMap, Graph1> edge_order;
-
   std::vector<vertex1_t> BPAIR_vec; // B -> A
   typedef safe_iterator_property_map<vertex1_t*,IndexMap2,vertex1_t,vertex1_t&> 
      IndexMapping2;
@@ -658,12 +733,16 @@ struct isomorphism_algo
 
   bool isomorphism()
   {
+    std::cout << "g1=";
+    print_graph(g1, index_map1);
     @<Quick return if the graph's invariants do not match@>
     @<Compute invariant multiplicity@>
     @<Sort vertices by invariant multiplicity@>
     @<Order the vertices by DFS discover time@>
     std::cout << "reordered g1=" << std::endl;
     print_graph(g1, perm_map);
+    std::cout << "g2=" << std::endl;
+    print_graph(g2, index_map2);
     @<Order the edges by DFS discover time@>
     return this->match(edge_set.begin());
   }
@@ -672,76 +751,19 @@ struct isomorphism_algo
   {
     std::cout << "*** entering match" << std::endl;
     if (edge_iter != edge_set.end()) {
-      edge1_t edge = *edge_iter;
-      vertex1_t u = source(edge, g1);
-      vertex1_t v = target(edge, g1);
-      std::cout << "edge: (" << get(perm_map, u) 
-         << "," << get(perm_map, v) << ")"<< std::endl;
-      if (get(perm_map, u) == 0) { // root node
-         // Try all possible mappings
-        BGL_FORALL_VERTICES_T(y, g2, Graph2) {
-          std::cout << "y: " << get(index_map2, y) << std::endl;
-          if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
-            std::cout << "f(" << get(perm_map, v) << ")="
-              << get(index_map2, y) << std::endl;
-            APAIR[v] = y; 
-            APAIR_assigned[v] = true;
-            BPAIR[y] = v; BPAIR_assigned[y] = true;
-            mc = 0;
-            if (match(next(edge_iter)))
-              return true;
-            APAIR_assigned[v] = false;
-            BPAIR_assigned[y] = false;
-          }
-          std::cout << "xxx" << std::endl;
-        }
+      edge_info edge = *edge_iter;
+      size_type edge_order_num = edge.order;
+      vertex1_t u;
+      if (edge.from != -1)
+        u = g1_vertices[edge.from];
+      vertex1_t v = g1_vertices[edge.to];
+      std::cout << "edge: (" << edge.from << "," << edge.to << ")"<< std::endl;
+      if (edge.from == -1) { // root node
+        @<Case 1@>
       } else if (APAIR_assigned[v] == false) {
-        vertex1_t x = g1_vertices[edge_order(edge)];
-        std::cout << "edge_order(edge)=" << get(perm_map, x) << std::endl;
-        std::cout << "APAIR_assigned[edge_order(edge)]="
-          << (APAIR_assigned[x] == 1) << std::endl;
-        vertex2_t z = APAIR[x];
-        std::cout << "z: " << get(index_map2, z) << std::endl;
-        BGL_FORALL_ADJACENT_T(z, w, g2, Graph2) {
-          if (BPAIR_assigned[w] == true)
-            --mc;
-        }
-        for (std::size_t ji = 0; ji <= edge_order(edge); ++ji) {
-          vertex1_t j = g1_vertices[ji];
-          BGL_FORALL_ADJACENT_T(APAIR[j], w, g2, Graph2) {
-             if (w == z)
-              --mc;
-          }
-        }
-        if (mc != 0)
-          return false;
-
-        BGL_FORALL_ADJACENT_T(APAIR[u], y, g2, Graph2) {
-          std::cout << "y: " << get(index_map2, y) << std::endl;
-          if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
-            APAIR[v] = y; APAIR_assigned[v] = true;
-            std::cout << "f(" << get(perm_map, v) << ")=" 
-                      << get(index_map2, y) << std::endl;;
-            BPAIR[y] = v; BPAIR_assigned[y] = true;
-            mc = 1;
-            if (match(next(edge_iter)))
-              return true;
-            APAIR_assigned[v] = true;
-            BPAIR_assigned[y] = true;
-          }
-        }
+        @<Case 2@>
       } else {
-        bool verify = false;
-        BGL_FORALL_ADJACENT_T(APAIR[u], y, g2, Graph2) {
-          std::cout << "y: " << get(index_map2, y) << std::endl;
-          if (y == APAIR[v])
-            verify = true;
-        }
-        if (verify == true) {
-          ++mc;
-          if (match(next(edge_iter)))
-            return true;
-        }
+        @<Case 3@>
       }
     } else 
       return true;
