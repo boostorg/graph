@@ -24,6 +24,7 @@
 
 #include <boost/config.hpp>
 #include <string>
+#include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/property_iter_range.hpp>
 
