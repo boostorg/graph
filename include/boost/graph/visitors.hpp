@@ -116,10 +116,10 @@ namespace boost {
     detail::invoke_dispatch(vlist.first, x, g, IsSameTag());
     invoke_visitors(vlist.second, x, g, tag);
   }
-#if (defined BOOST_MSVC) 
+#if defined(BOOST_MSVC) 
   template <class Visitor, class T, class Graph, class Tag>
   inline void 
-  invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag tag) {
+  invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
     Visitor& v = static_cast<Visitor&>(vis);
@@ -128,7 +128,7 @@ namespace boost {
 #else
   template <class Visitor, class T, class Graph, class Tag>
   inline void 
-  invoke_visitors(Visitor& v, T x, Graph& g, Tag tag) {
+  invoke_visitors(Visitor& v, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
     detail::invoke_dispatch(v, x, g, IsSameTag());
