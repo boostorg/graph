@@ -109,5 +109,12 @@ namespace boost {
   
 } // namespace boost
 
+template <class D, class V>
+std::ostream& 
+operator<<(std::ostream& os, const boost::detail::edge_desc_impl<D,V>& e)
+{
+  return os << "(" << e.m_source << "," << e.m_target << ")";
+}
+
 
 #endif /*BOOST_GRAPH_DETAIL_DETAIL::EDGE_H*/
