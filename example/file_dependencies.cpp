@@ -161,7 +161,7 @@ int main(int,char*[])
         in_degree[target(*j,g)] += 1;
 
     std::greater<int> compare;
-    std::plus<int> combine;
+    closed_plus<int> combine;
 
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {

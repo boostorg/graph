@@ -83,47 +83,50 @@ namespace boost {
       } while (u != src);
     }
 
-    template <class Graph, 
-	      class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-	      class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
-    typename property_traits<CapacityEdgeMap>::value_type
-    edmunds_karp_max_flow_impl
-      (Graph& g, 
-       typename graph_traits<Graph>::vertex_descriptor src,
-       typename graph_traits<Graph>::vertex_descriptor sink,
-       CapacityEdgeMap cap, 
-       ResidualCapacityEdgeMap res,
-       ReverseEdgeMap rev, 
-       ColorMap color, 
-       PredEdgeMap pred)
-    {
-      typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
-      typedef typename property_traits<ColorMap>::value_type ColorValue;
-      typedef color_traits<ColorValue> Color;
+  } // namespace detail
 
-      typename graph_traits<Graph>::vertex_iterator u_iter, u_end;
-      typename graph_traits<Graph>::out_edge_iterator ei, e_end;
-      for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-	for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-	  res[*ei] = cap[*ei];
-
-      color[sink] = Color::gray();
-      while (color[sink] != Color::white()) {
-	boost::queue<vertex_t> Q;
-	breadth_first_search
-	  (detail::residual_graph(g, res), src, Q,
-	   make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
-	   color);
-	if (color[sink] != Color::white())
-	  detail::augment(g, src, sink, pred, res, rev);
-      } // while
-
-      typename property_traits<CapacityEdgeMap>::value_type flow = 0;
-      for (tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
-	flow += (cap[*ei] - res[*ei]);
-      return flow;
-    } // edmunds_karp_max_flow_impl()
+  template <class Graph, 
+	    class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+	    class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
+  typename property_traits<CapacityEdgeMap>::value_type
+  edmunds_karp_max_flow
+    (Graph& g, 
+     typename graph_traits<Graph>::vertex_descriptor src,
+     typename graph_traits<Graph>::vertex_descriptor sink,
+     CapacityEdgeMap cap, 
+     ResidualCapacityEdgeMap res,
+     ReverseEdgeMap rev, 
+     ColorMap color, 
+     PredEdgeMap pred)
+  {
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
     
+    typename graph_traits<Graph>::vertex_iterator u_iter, u_end;
+    typename graph_traits<Graph>::out_edge_iterator ei, e_end;
+    for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+      for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+	res[*ei] = cap[*ei];
+    
+    color[sink] = Color::gray();
+    while (color[sink] != Color::white()) {
+      boost::queue<vertex_t> Q;
+      breadth_first_search
+	(detail::residual_graph(g, res), src, Q,
+	 make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
+	 color);
+      if (color[sink] != Color::white())
+	detail::augment(g, src, sink, pred, res, rev);
+    } // while
+    
+    typename property_traits<CapacityEdgeMap>::value_type flow = 0;
+    for (tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
+      flow += (cap[*ei] - res[*ei]);
+    return flow;
+  } // edmunds_karp_max_flow_impl()
+  
+  namespace detail {
     //-------------------------------------------------------------------------
     // Handle default for color property map
 
@@ -257,7 +260,7 @@ namespace boost {
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink)
   {
-    bgl_named_params<int, int> params(0);
+    bgl_named_params<int, buffer_param_t> params(0);
     return edmunds_karp_max_flow(g, src, sink, params);
   }
 

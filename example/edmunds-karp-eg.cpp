@@ -52,7 +52,14 @@ main()
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
+#ifdef BOOST_MSVC
+  std::vector<default_color_type> color(num_vertices(g));
+  std::vector<Traits::edge_descriptor> pred(num_vertices(g));
+  long flow = edmunds_karp_max_flow
+    (g, s, t, capacity, residual_capacity, rev, &color[0], &pred[0]);
+#else
   long flow = edmunds_karp_max_flow(g, s, t);
+#endif
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;

@@ -68,8 +68,9 @@ namespace boost
   }
 
   template < typename VertexListGraph, typename OutputIterator >
-    typename graph_traits < VertexListGraph >::degree_size_type
-    edge_connectivity(VertexListGraph & g, OutputIterator disconnecting_set) {
+  typename graph_traits < VertexListGraph >::degree_size_type
+  edge_connectivity(VertexListGraph & g, OutputIterator disconnecting_set)
+  {
     typedef typename graph_traits <
       VertexListGraph >::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits <
@@ -125,9 +126,7 @@ namespace boost
     while (!nonneighbor_S.empty()) {
       k = nonneighbor_S.front();
       alpha_S_k = edmunds_karp_max_flow
-        (flow_g, p, k, capacity_map(cap).residual_capacity_map(res_cap).
-         reverse_edge_map(rev_edge).color_map(&color[0]).
-         predecessor_map(&pred[0]));
+        (flow_g, p, k, cap, res_cap, rev_edge, &color[0], &pred[0]);
       if (alpha_S_k < alpha_star) {
         alpha_star = alpha_S_k;
         S_star.clear();

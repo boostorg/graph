@@ -73,7 +73,6 @@ exe edge_iterator_constructor : edge_iterator_constructor.cpp : <include>$(BOOST
 exe edge-iter-constructor : edge-iter-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge_property : edge_property.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edmunds-karp-eg : edmunds-karp-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edmunds_karp_max_flow : edmunds_karp_max_flow.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe exterior_properties : exterior_properties.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe exterior_property_map : exterior_property_map.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe family-tree-eg : family-tree-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
