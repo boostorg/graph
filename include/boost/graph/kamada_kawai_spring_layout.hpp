@@ -331,11 +331,11 @@ namespace boost {
       } else {
         if (last_local_energy == std::numeric_limits<T>::max()) {
           last_local_energy = delta_p;
-          return false;
+          return delta_p == T(0);
         }
           
         T diff = last_local_energy - delta_p;
-        bool done = (delta_p == T(0) || diff / last_local_energy < tolerance);
+        bool done = (delta_p == T(0) || (diff / last_local_energy) < tolerance);
         last_local_energy = delta_p;
         return done;
       }

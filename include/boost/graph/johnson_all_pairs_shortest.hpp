@@ -89,20 +89,20 @@ namespace boost {
       int i = 1;
       for (tie(v, v_end) = vertices(g1); v != v_end; ++v, ++i) {
         typename Traits2::edge_descriptor e; bool z;
-        tie(e, z) = add_edge(s, id1[*v] + 1, g2);
-        w[e] = zero;
+        tie(e, z) = add_edge(s, get(id1, *v) + 1, g2);
+        put(w, e, zero);
         verts1[i] = *v;
       }
       typename Traits1::edge_iterator e, e_end;
       for (tie(e, e_end) = edges(g1); e != e_end; ++e) {
         typename Traits2::edge_descriptor e2; bool z;
-        tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
-                             id1[target(*e, g1)] + 1, g2);
-        w[e2] = get(w1, *e);
+        tie(e2, z) = add_edge(get(id1, source(*e, g1)) + 1, 
+                              get(id1, target(*e, g1)) + 1, g2);
+        put(w, e2, get(w1, *e));
         if (is_undirected) {
-          tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
-                                id1[source(*e, g1)] + 1, g2);
-          w[e2] = get(w1, *e);
+          tie(e2, z) = add_edge(get(id1, target(*e, g1)) + 1, 
+                                get(id1, source(*e, g1)) + 1, g2);
+          put(w, e2, get(w1, *e));
         }
       }
     }

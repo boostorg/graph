@@ -49,7 +49,8 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     std::vector<Vertex> rev_topo_order;
     rev_topo_order.reserve(num_vertices(g));
-    topological_sort(g, std::back_inserter(rev_topo_order));
+    topological_sort(g, std::back_inserter(rev_topo_order),
+                     color_map(color));
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
