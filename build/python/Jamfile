@@ -22,5 +22,6 @@ extension bgl
     ../../src/python/done.cpp
     ../../src/python/breadth_first_search.cpp
     ../../src/python/dijkstra_shortest_paths.cpp
+    ../../src/python/biconnected_components.cpp
     <dll>../../../python/build/boost_python # dependencies
     ;

@@ -10,7 +10,7 @@
 #include "graph.hpp"
 #include "digraph.hpp"
 #include <boost/python.hpp>
-#include "point2d.hpp"
+// #include "point2d.hpp"
 
 namespace boost { namespace graph { namespace python {
 
@@ -23,6 +23,7 @@ extern void export_breadth_first_search();
 extern void export_dijkstra_shortest_paths();
 template<typename Graph> void export_breadth_first_search_in_graph();
 template<typename Graph> void export_dijkstra_shortest_paths_in_graph();
+extern void export_biconnected_components();
 
 template<typename Graph>
 void export_in_graph()
@@ -44,10 +45,12 @@ BOOST_PYTHON_MODULE(bgl)
     .value("black", color_traits<default_color_type>::black())
     ;
 
-  enum_<point2d>("Point2D")
+#if 0
+  class_<point2d>("Point2D")
     .def("x", &point2d::x)
     .def("y", &point2d::y)
     ;
+#endif
 
   export_Graph();
   export_Digraph();
@@ -56,6 +59,7 @@ BOOST_PYTHON_MODULE(bgl)
   export_done();
   export_breadth_first_search();
   export_dijkstra_shortest_paths();
+  export_biconnected_components();
 }
 
 template void export_in_graph<Graph>();

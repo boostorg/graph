@@ -354,10 +354,40 @@ add_edge(typename basic_graph<DirectedS>::vertex_descriptor u,
          typename basic_graph<DirectedS>::vertex_descriptor v, 
          basic_graph<DirectedS>& g)
 { return std::make_pair(g.add_edge(u, v), true); }
- 
+
 template<typename DirectedS>
 void export_basic_graph(const char* name);
 
+template<typename DirectedS>
+typename basic_graph<DirectedS>::VertexIndexMap
+get(vertex_index_t, const basic_graph<DirectedS>& g)
+{ return g.get_vertex_index_map(); }
+
+template<typename DirectedS>
+typename basic_graph<DirectedS>::EdgeIndexMap
+get(edge_index_t, const basic_graph<DirectedS>& g)
+{ return g.get_edge_index_map(); }
+
 } } } // end namespace boost::graph::python
+
+#if 0
+namespace boost {
+  template<typename DirectedS>
+  struct property_map<graph::python::basic_graph<DirectedS>, vertex_index_t>
+  {
+    typedef typename graph::python::basic_graph<DirectedS>::VertexIndexMap
+      type;
+    typedef type const_type;
+  };
+
+  template<typename DirectedS>
+  struct property_map<graph::python::basic_graph<DirectedS>, edge_index_t>
+  {
+    typedef typename graph::python::basic_graph<DirectedS>::EdgeIndexMap
+      type;
+    typedef type const_type;
+  };
+}
+#endif
 
 #endif // BOOST_GRAPH_BASIC_GRAPH_HPP
