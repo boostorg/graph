@@ -702,14 +702,20 @@ for the new edge. For graphs that do not allow parallel edges, if the
 edge is already in the graph then a duplicate will not be added and
 the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
 <i>v</i> are descriptors for the same vertex (creating a self loop)
-then the edge will not be added and the flag will be <TT>false</TT>.
-When the flag is <TT>false</TT>, the edge descriptor is invalid and
-any use of it is undefined.  The location of the placement of the edge
-in the out-edge list for <i>u</i> is unspecified. If the
-<tt>VertexList</tt> selector is <tt>vecS</tt>, and if either vertex
-descriptor <tt>u</tt> or <tt>v</tt> (which are integers) has a value
-greater than the current number of vertices in the graph, the graph is
-enlarged so that the number of vertices is <tt>std::max(u,v) + 1</tt>.
+and the graph is undirected, then the edge will not be added and the
+flag will be <TT>false</TT>.  When the flag is <TT>false</TT>, the
+edge descriptor is invalid and any use of it is undefined.  
+
+<p>
+The placement of the new edge in the out-edge list is in general
+unspecified, though ordering of the out-edge list can be accomplished
+through the choice of <tt>EdgeList</tt>. 
+
+If the <tt>VertexList</tt> selector is
+<tt>vecS</tt>, and if either vertex descriptor <tt>u</tt> or
+<tt>v</tt> (which are integers) has a value greater than the current
+number of vertices in the graph, the graph is enlarged so that the
+number of vertices is <tt>std::max(u,v) + 1</tt>.
 
 <p>
 If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
@@ -777,7 +783,8 @@ void remove_edge(out_edge_iterator iter, adjacency_list&amp; g)
 </pre>
 This has the same effect as <tt>remove_edge(*iter, g)</tt>. The
 difference is that this function has constant time complexity
-in the case of directed graphs.
+in the case of directed graphs, whereas <tt>remove_edge(e, g)</tt>
+has time complexity <i>O(E/V)</i>.
 
 <hr>
 

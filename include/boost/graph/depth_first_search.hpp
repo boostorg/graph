@@ -43,6 +43,7 @@ namespace boost {
       vis.initialize_vertex(u, g);
       vis.start_vertex(u, g);
       vis.discover_vertex(u, g);
+      vis.examine_edge(e, g);
       vis.tree_edge(e, g);
       vis.back_edge(e, g);
       vis.forward_or_cross_edge(e, g);

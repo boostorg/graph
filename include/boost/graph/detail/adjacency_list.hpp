@@ -57,16 +57,6 @@ namespace boost {
 
   namespace detail {
 
-    template <class Vertex>
-    struct target_is {
-      target_is(const Vertex& v) : m_target(v) { }
-      template <class StoredEdge>
-      bool operator()(const StoredEdge& e) const {
-        return e.get_target() == m_target;
-      }
-      Vertex m_target;
-    };
-
     template <typename DirectedS>
     struct directed_category_traits {
       typedef directed_tag directed_category;
@@ -84,6 +74,35 @@ namespace boost {
     struct directed_category_traits<bidirectionalS> {
       typedef bidirectional_tag directed_category;
     };
+
+    template <class Vertex>
+    struct target_is {
+      target_is(const Vertex& v) : m_target(v) { }
+      template <class StoredEdge>
+      bool operator()(const StoredEdge& e) const {
+        return e.get_target() == m_target;
+      }
+      Vertex m_target;
+    };
+
+    // O(E/V)
+    template <class EdgeList, class vertex_descriptor>
+    void erase_from_incidence_list(EdgeList& el, vertex_descriptor v,
+                                   allow_parallel_edge_tag)
+    {
+      boost::erase_if(el, detail::target_is<vertex_descriptor>(v));
+    }
+    // O(log(E/V))
+    template <class EdgeList, class vertex_descriptor>
+    void erase_from_incidence_list(EdgeList& el, vertex_descriptor v,
+                                   disallow_parallel_edge_tag)
+    {
+      typedef typename EdgeList::value_type StoredEdge;
+      el.erase(StoredEdge(v));
+    }
+
+    //=========================================================================
+    // Adjacency Iterator Implementation
 
 #ifndef BOOST_NO_ITERATOR_ADAPTORS
     template <class Vertex, class Traits>
@@ -162,18 +181,6 @@ namespace boost {
     protected:
     };
 #endif
-
-    template <class P>
-    struct has_property { 
-      enum { value = true }; 
-      typedef true_type type;
-    };
-    template <>
-    struct has_property<no_property> { 
-      enum { value = false }; 
-      typedef false_type type; 
-    };
-
 
     //=========================================================================
     // Out-Edge and In-Edge Iterator Implementation
@@ -395,11 +402,9 @@ namespace boost {
                 directed_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
-      typename Config::OutEdgeList& el = g.out_edge_list(u);
-      boost::erase_if(el, detail::target_is<Vertex>(v));
+      detail::erase_from_incidence_list(g.out_edge_list(u), v, Cat());
     }
 
     namespace detail {
@@ -513,12 +518,11 @@ namespace boost {
                  directed_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::vertex_iterator vi, viend;
       for (boost::tie(vi, viend) = vertices(g); vi != viend; ++vi)
-        boost::erase_if(g.out_edge_list(*vi), detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list(g.out_edge_list(*vi), u, Cat());
       g.out_edge_list(u).clear();
       // clear() should be a req of Sequence and AssociativeContainer,
       // or maybe just Container
@@ -694,12 +698,10 @@ namespace boost {
                 undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
-      boost::erase_if(g.out_edge_list(v), detail::target_is<Vertex>(u));
+      detail::erase_from_incidence_list(g.out_edge_list(v), u, Cat());
     }
   
     template <class Config, class Predicate>
@@ -781,15 +783,14 @@ namespace boost {
                  undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator 
         ei = el.begin(), ei_end = el.end();
       for (; ei != ei_end; ++ei) {
-        boost::erase_if(g.out_edge_list((*ei).get_target()), 
-			detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list
+          (g.out_edge_list((*ei).get_target()), u, Cat());
         g.m_edges.erase((*ei).get_iter());
       }
       g.out_edge_list(u).clear();
@@ -852,14 +853,14 @@ namespace boost {
       template <class Graph, class EdgeList, class Vertex>
       inline void
       remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
-                               boost::allow_parallel_edge_tag)
+                               boost::allow_parallel_edge_tag cat)
       {
         typedef typename EdgeList::value_type StoredEdge;
         typename EdgeList::iterator i = el.begin(), end = el.end();
         for (; i != end; ++i)
           if ((*i).get_target() == v)
             g.m_edges.erase((*i).get_iter());
-        boost::erase_if(el, target_is<Vertex>(v));
+        detail::erase_from_incidence_list(el, v, cat);
       }
       // O(log(E/V))
       template <class Graph, class EdgeList, class Vertex>
@@ -1017,12 +1018,10 @@ namespace boost {
                 bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
-      boost::erase_if(g.in_edge_list(v), detail::target_is<Vertex>(u));
+      detail::erase_from_incidence_list(g.in_edge_list(v), u, Cat());
     }
     // O(E/V)
     template <class EdgeOrIter, class Config>
@@ -1049,23 +1048,22 @@ namespace boost {
                  bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator 
         ei = el.begin(), ei_end = el.end();
       for (; ei != ei_end; ++ei) {
-        boost::erase_if(g.in_edge_list((*ei).get_target()), 
-			detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list
+          (g.in_edge_list((*ei).get_target()), u, Cat());
         g.m_edges.erase((*ei).get_iter());
       }      
       typename Config::InEdgeList& in_el = g.in_edge_list(u);
       typename Config::InEdgeList::iterator 
         in_ei = in_el.begin(), in_ei_end = in_el.end();
       for (; in_ei != in_ei_end; ++in_ei) {
-        boost::erase_if(g.out_edge_list((*in_ei).get_target()), 
-			detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list
+          (g.out_edge_list((*in_ei).get_target()), u, Cat());
         g.m_edges.erase((*in_ei).get_iter());
       }      
       g.out_edge_list(u).clear();
@@ -1202,11 +1200,10 @@ namespace boost {
                 bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
-      boost::erase_if(g.out_edge_list(u), detail::target_is<Vertex>(v));
-      boost::erase_if(g.in_edge_list(v), detail::target_is<Vertex>(u));
+      detail::erase_from_incidence_list(g.out_edge_list(u), v, Cat());
+      detail::erase_from_incidence_list(g.in_edge_list(v), u, Cat());
     }
     // O(E/V)
     template <class EdgeOrIter, class Config>
@@ -1236,20 +1233,19 @@ namespace boost {
                  bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::vertex_descriptor Vertex;
+      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::out_edge_iterator out_ei, out_ei_end;
       for (boost::tie(out_ei, out_ei_end) = out_edges(u, g); 
            out_ei != out_ei_end; ++out_ei)
-        boost::erase_if(g.in_edge_list(target(*out_ei,g)),
-                        detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list
+          (g.in_edge_list(target(*out_ei,g)), u, Cat());
       
       typename Config::in_edge_iterator in_ei, in_ei_end;
       for (boost::tie(in_ei, in_ei_end) = in_edges(u, g); 
            in_ei != in_ei_end; ++in_ei)
-        boost::erase_if(g.out_edge_list(source(*in_ei,g)),
-                        detail::target_is<Vertex>(u));
+        detail::erase_from_incidence_list
+          (g.out_edge_list(source(*in_ei,g)), u, Cat());
       
       g.out_edge_list(u).clear();
       g.in_edge_list(u).clear();
@@ -1931,6 +1927,17 @@ namespace boost {
     } // namespace detail
 
   namespace detail {
+
+    template <class P>
+    struct has_property { 
+      enum { value = true }; 
+      typedef true_type type;
+    };
+    template <>
+    struct has_property<no_property> { 
+      enum { value = false }; 
+      typedef false_type type; 
+    };
 
     //=========================================================================
     // Adjacency List Generator

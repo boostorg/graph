@@ -81,6 +81,8 @@ struct order_by_name
   : public std::binary_function<StoredEdge,StoredEdge,bool> 
 {
   bool operator()(const StoredEdge& e1, const StoredEdge& e2) const {
+    // Using std::pair operator< as an easy way to get lexicographical
+    // compare over tuples.
     return std::make_pair(e1.get_target(), boost::get(boost::edge_name, e1))
       < std::make_pair(e2.get_target(), boost::get(boost::edge_name, e2));
   }

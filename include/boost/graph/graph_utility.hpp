@@ -276,6 +276,25 @@ namespace boost {
     return false;
   }
 
+  template <class T1, class T2>
+  std::pair<T1,T2> 
+  make_list(const T1& t1, const T2& t2) 
+    { return std::make_pair(t1, t2); }
+
+  template <class T1, class T2, class T3>
+  std::pair<T1,std::pair<T2,T3> > 
+  make_list(const T1& t1, const T2& t2, const T3& t3)
+    { return std::make_pair(t1, std::make_pair(t2, t3)); }
+
+  template <class T1, class T2, class T3, class T4>
+  std::pair<T1,std::pair<T2,std::pair<T3,T4> > > 
+  make_list(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
+    { return std::make_pair(t1, std::make_pair(t2, std::make_pair(t3, t4))); }
+
+  template <class T1, class T2, class T3, class T4, class T5>
+  std::pair<T1,std::pair<T2,std::pair<T3,std::pair<T4,T5> > > > 
+  make_list(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5)
+    { return std::make_pair(t1, std::make_pair(t2, std::make_pair(t3, std::make_pair(t4, t5)))); }
 
 } /* namespace boost */
 

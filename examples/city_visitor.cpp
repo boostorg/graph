@@ -32,6 +32,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/property_map.hpp>
+#include <boost/graph/graph_utility.hpp> // for boost::make_list
 
 
 /*
@@ -51,16 +52,16 @@
 
   The visitor has three main functions: 
   
-  discover(u) is invoked when the algorithm first arrives at the
+  discover_vertex(u,g) is invoked when the algorithm first arrives at the
     vertex u. This will happen in the depth first or breadth first
     order depending on which algorithm you use.
 
-  process(e) is invoked when the algorithm first checks an edge to see
+  examine_edge(e,g) is invoked when the algorithm first checks an edge to see
     whether it has already been there. Whether using BFS or DFS, all
     the edges of vertex u are examined immediately after the call to
     visit(u).
 
-  finish(u) is called when after all the vertices reachable from vertex
+  finish_vertex(u,g) is called when after all the vertices reachable from vertex
     u have already been visited.    
 
  */
@@ -68,32 +69,37 @@
 using namespace std;
 using namespace boost;
 
-struct city_visitor
- : public null_visitor
-{
 
-  city_visitor(string* n) : names(n) { }
-
-  template <class Vertex>
-  inline void discover(Vertex u) {
+struct city_arrival {
+  city_arrival(string* n) : names(n) { }
+  typedef on_discover_vertex event_filter;
+  template <class Vertex, class Graph>
+  inline void operator()(Vertex u, Graph&) {
     cout << endl << "arriving at " << names[u] << endl
          << "  neighboring cities are: ";
   }
-
-  template <class Edge, class Graph>
-  inline void process(Edge e, Graph& g) {
-    cout << names[ target(e,g) ] << ", ";
-  }
-
-  template <class Vertex>
-  inline void finish(Vertex u) {
-    cout << endl << "finished with " << names[u] << endl;
-  }
-
   string* names;
 };
 
+struct neighbor_cities {
+  neighbor_cities(string* n) : names(n) { }
+  typedef on_examine_edge event_filter;
+  template <class Edge, class Graph>
+  inline void operator()(Edge e, Graph& g) {
+    cout << names[ target(e, g) ] << ", ";
+  }
+  string* names;
+};
 
+struct finish_city {
+  finish_city(string* n) : names(n) { }
+  typedef on_finish_vertex event_filter;
+  template <class Vertex, class Graph>
+  inline void operator()(Vertex u, Graph&) {
+    cout << endl << "finished with " << names[u] << endl;
+  }
+  string* names;
+};
 
 int main(int argc, char* argv[]) 
 {
@@ -123,7 +129,11 @@ int main(int argc, char* argv[])
   colors_t colors(N);
 
   cout << "*** Depth First ***" << endl;
-  depth_first_search(G, city_visitor(names), colors.begin());
+  depth_first_search
+    (G, make_dfs_visitor(boost::make_list(city_arrival(names),
+                                          neighbor_cities(names),
+                                          finish_city(names))),
+     &colors[0]);
   cout << endl;
 
   /* Get the source vertex */
@@ -131,8 +141,11 @@ int main(int argc, char* argv[])
     s = vertex(SanJose,G);
 
   cout << "*** Breadth First ***" << endl;
-  breadth_first_search(G, s, city_visitor(names), colors.begin());
-
-  //end
+  breadth_first_search
+    (G, s, make_bfs_visitor(boost::make_list(city_arrival(names), 
+                                             neighbor_cities(names), 
+                                             finish_city(names))),
+     &colors[0]);
+  
   return 0;
 }
