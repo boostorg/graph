@@ -13,6 +13,7 @@
 #include <vector>
 
 using namespace std;
+using namespace boost;
 
 struct City
 {
