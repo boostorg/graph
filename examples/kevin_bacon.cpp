@@ -61,6 +61,8 @@ main()
 
   vertex_property_accessor<Graph, name_tag>::type 
     actor_name = get_vertex_property_accessor(g, name_tag());
+  vertex_property_accessor<Graph, id_tag>::type 
+    vertex_id = get_vertex_property_accessor(g, id_tag());
   edge_property_accessor<Graph, name_tag>::type 
     connecting_movie = get_edge_property_accessor(g, name_tag());
   edge_property_accessor<Graph, weight_tag>::type 
@@ -81,7 +83,7 @@ main()
     tie(pos, inserted) = actors.insert(make_pair(*i, Vertex()));
     if (inserted) {
       u = add_vertex(g);
-      actor_name[u] = *i;
+      put(actor_name, u, *i);
       pos->second = u;
     } else
       u = pos->second;
@@ -92,7 +94,7 @@ main()
     tie(pos, inserted) = actors.insert(make_pair(*i, Vertex()));
     if (inserted) {
       v = add_vertex(g);
-      actor_name[v] = *i;
+      put(actor_name, v, *i);
       pos->second = v;
     } else
       v = pos->second;
@@ -100,17 +102,17 @@ main()
     Edge e;
     tie(e, inserted) = add_edge(g, u, v);
     if (inserted) {
-      connecting_movie[e] = movie_name;
-      weight[e] = 1;
+      put(connecting_movie, e, movie_name);
+      put(weight, e, 1);
     }
   }
 
   {
     graph_traits<Graph>::edge_iterator i, end;
     for (tie(i, end) = edges(g); i != end; ++i)
-      cout << actor_name[source(*i, g)] << " was in "
-	   << connecting_movie[*i] << " with "
-	   << actor_name[target(*i, g)] << endl;
+      cout << get(actor_name, source(*i, g)) << " was in "
+	   << get(connecting_movie, *i) << " with "
+	   << get(actor_name, target(*i, g)) << endl;
   }
 
   {
@@ -133,8 +135,8 @@ main()
 
     graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      cout << actor_name[*i] << "'s bacon number is " 
-	   << bacon_number[*i] << endl;
+      cout << get(actor_name, *i) << "'s bacon number is " 
+	   << bacon_number[get(vertex_id, *i)] << endl;
 
     // use the predecessors to determine shortest paths to kevin...
   }
