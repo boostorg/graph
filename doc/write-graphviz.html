@@ -251,7 +251,7 @@ const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
 int main(int,char*[])
 {
     
-  typedef pair<int,int> Edge;
+  typedef pair&lt;int,int&gt; Edge;
   Edge used_by[] = {
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
