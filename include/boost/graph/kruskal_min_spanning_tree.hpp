@@ -65,7 +65,8 @@ namespace boost {
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
-      function_requires<VertexAndEdgeListGraphConcept<Graph> >();
+      function_requires<VertexListGraphConcept<Graph> >();
+      function_requires<EdgeListGraphConcept<Graph> >();
       function_requires<OutputIteratorConcept<OutputIterator, Edge> >();
       function_requires<ReadWritePropertyMapConcept<Rank, Vertex> >();
       function_requires<ReadWritePropertyMapConcept<Parent, Vertex> >();
