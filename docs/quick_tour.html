@@ -179,20 +179,21 @@ iterators</I> (the <TT>first</TT> iterator points to the
 &quot;beginning&quot; of the vertices and the <TT>second</TT> iterator
 points &quot;past the end&quot;). Dereferencing a vertex iterator
 gives a vertex object.  The type of the vertex iterator is given by
-the <TT>graph_traits</TT> class. Note that different graph classes can
-have different associated vertex iterator types, which is why we need
-the <TT>graph_traits</TT> class. Given some graph type, the
-<TT>graph_traits</TT> class will provide access to the
-<TT>vertex_iterator</TT> type.
+the <a href="./graph_traits.html"><TT>graph_traits</TT></a>
+class. Note that different graph classes can have different associated
+vertex iterator types, which is why we need the <TT>graph_traits</TT>
+class. Given some graph type, the <TT>graph_traits</TT> class will
+provide access to the <TT>vertex_iterator</TT> type.
 
 <P>
 The following example prints out the index for each of the vertices in
-the graph. All vertex and edge properties, including index, are accessed
-via property map objects.  The <TT>property_map</TT>
-class is used to obtain the property map type for a specific
-property (specified by <TT>vertex_index_t</TT>, one of the BGL
-predefined tags) and function call <TT>get(vertex_index, g)</TT>
-returns the actual property map object.
+the graph. All vertex and edge properties, including index, are
+accessed via property map objects.  The <a
+href="./property_map.html"><TT>property_map</TT></a> class is used to
+obtain the property map type for a specific property (specified by
+<TT>vertex_index_t</TT>, one of the BGL predefined properties) and
+function call <TT>get(vertex_index, g)</TT> returns the actual
+property map object.
 
 <P>
 <PRE>
@@ -225,8 +226,10 @@ The output is:
 <H2>Accessing the Edge Set</H2>
 
 <P>
-The set of edges for a graph can be accessed with the <TT>edges()</TT>
-function. Similar to the <TT>vertices()</TT> function, this returns a
+The set of edges for a graph can be accessed with the <a
+href="./EdgeListGraph.html#sec:edges"><TT>edges()</TT></a> function of
+the <a href="./EdgeListGraph.html">EdgeListGraph</a>
+interface. Similar to the <TT>vertices()</TT> function, this returns a
 pair of iterators, but in this case the iterators are <I>edge
 iterators</I>. Dereferencing an edge iterator gives an edge
 object. The <TT>source()</TT> and <TT>target()</TT> functions return
@@ -348,8 +351,10 @@ method:
 <H3>Out-Edges, In-Edges, and Edge Descriptors</H3>
 
 <P>
-The out-edges of a vertex are accessed with the <TT>out_edges()</TT>
-function. The <TT>out_edges()</TT> function takes two arguments: the
+The out-edges of a vertex are accessed with the <a
+href="./IncidenceGraph.html#sec:out-edges"><TT>out_edges()</TT></a>
+function of the <a href="./IncidenceGraph.html">IncidenceGraph</a>
+interface. The <TT>out_edges()</TT> function takes two arguments: the
 first argument is the vertex and the second is the graph object. The
 function returns a pair of iterators which provide access to all of
 the out-edges of a vertex (similar to how the <TT>vertices()</TT>
@@ -357,8 +362,8 @@ function returned a pair of iterators).  The iterators are called
 <I>out-edge iterators</I> and dereferencing one of these iterators
 gives an <I>edge descriptor</I> object. An edge descriptor plays the
 same kind of role as the vertex descriptor object, it is a &quot;black
-box&quot; provided by the graph type. The following code snippet prints
-the source-target pairs for each out-edge of vertex <TT>v</TT>.
+box&quot; provided by the graph type. The following code snippet
+prints the source-target pairs for each out-edge of vertex <TT>v</TT>.
 
 <P>
 <PRE>
@@ -392,12 +397,16 @@ For vertex 0 the output is:
 </PRE>
 
 <P>
-The <TT>in_edges()</TT> function provides access to all the in-edges of
-a vertex through <I>in-edge iterators</I>. The <TT>in_edges()</TT>
-function is only available for the <TT>adjacency_list</TT> if
-<TT>bidirectionalS</TT> is supplied for the <TT>Directed</TT> template
-parameter.  There is an extra cost in space when <TT>bidirectionalS</TT>
-is specified instead of <TT>directedS</TT>.
+The <a
+href="./BidirectionalGraph.html#sec:in-edges"><TT>in_edges()</TT></a>
+function of the <a
+href="./BidirectionalGraph.html">BidirectionalGraph</a> interface
+provides access to all the in-edges of a vertex through <I>in-edge
+iterators</I>. The <TT>in_edges()</TT> function is only available for
+the <TT>adjacency_list</TT> if <TT>bidirectionalS</TT> is supplied for
+the <TT>Directed</TT> template parameter.  There is an extra cost in
+space when <TT>bidirectionalS</TT> is specified instead of
+<TT>directedS</TT>.
 
 <P>
 <PRE>
@@ -434,11 +443,13 @@ For vertex 0 the output is:
 Given the out-edges of a vertex, the target vertices of these edges
 are <I>adjacent</I> to the source vertex.  Sometimes an algorithm does
 not need to look at the edges of the graph and only cares about the
-vertices. Therefore the graph interface also includes the
-<TT>adjacent_vertices()</TT> function which provides direct access to
-the adjacent vertices. This function returns a pair of <I>adjacency
-  iterators</I>.  Dereferencing an adjacency iterator gives a vertex
-descriptor for an adjacent vertex.
+vertices. Therefore the graph interface also includes the <a
+href="./AdjacencyGraph.html#sec:adjacent-vertices"><TT>adjacent_vertices()</TT></a>
+function of the <a href="./AdjacencyGraph.html">AdjacencyGraph</a>
+interface which provides direct access to the adjacent vertices. This
+function returns a pair of <I>adjacency iterators</I>.  Dereferencing
+an adjacency iterator gives a vertex descriptor for an adjacent
+vertex.
 
 <P>
 <PRE>
