@@ -52,12 +52,20 @@ namespace boost {
       edge_parallel_category;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
+    typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
+    typedef typename graph_traits<G>::edges_size_type edges_size_type;
     void constraints() {
       function_requires< DefaultConstructibleConcept<vertex_descriptor> >();
       function_requires< EqualityComparableConcept<vertex_descriptor> >();
       function_requires< AssignableConcept<vertex_descriptor> >();
     }
+    void const_constraints(const G& g) {
+      V = num_vertices(g);
+      E = num_edges(g);
+    }
     G g;
+    vertices_size_type V;
+    edges_size_type E;
   };
 
   template <class G>
@@ -156,7 +164,6 @@ namespace boost {
   struct VertexListGraphConcept
   {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
-    typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
     void constraints() {
@@ -171,14 +178,12 @@ namespace boost {
       const_constraints(g);
     }
     void const_constraints(const G& g) {
-      V = num_vertices(g);
       p = vertices(g);
       v = *p.first;
     }
     std::pair<vertex_iterator,vertex_iterator> p;
     typename graph_traits<G>::vertex_descriptor v;
     G g;
-    vertices_size_type V;
   };
 
   template <class G>
@@ -186,7 +191,6 @@ namespace boost {
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
-    typedef typename graph_traits<G>::edges_size_type edges_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
     void constraints() {
@@ -207,7 +211,6 @@ namespace boost {
     void const_constraints(const G& g) {
       p = edges(g);
       e = *p.first;
-      E = num_edges(g);
       u = source(e, g);
       v = target(e, g);
     }
@@ -215,7 +218,6 @@ namespace boost {
     typename graph_traits<G>::vertex_descriptor u, v;
     typename graph_traits<G>::edge_descriptor e;
     G g;
-    edges_size_type E;
   };
 
   template <class G>

@@ -10,12 +10,14 @@ namespace boost { // should use a different namespace for this
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct incidence_graph_archetype
   {
-#if defined(BOOST_USE_NEW_GRAPH_TRAITS)
     typedef incidence_graph_tag traversal_category;
+#if 0
     typedef immutable_graph_tag mutability_category;
 #endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
+    typedef unsigned int vertices_size_type;
+    typedef unsigned int edges_size_type;
     struct edge_descriptor {
       edge_descriptor() { }
       edge_descriptor(const detail::dummy_constructor&) { }
@@ -30,18 +32,16 @@ namespace boost { // should use a different namespace for this
     typedef void adjacency_iterator;
     typedef void in_edge_iterator;
     typedef void vertex_iterator;
-    typedef void vertices_size_type;
     typedef void edge_iterator;
-    typedef void edges_size_type;
   };
   template <typename V, typename D, typename P>
-  V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor& ,
+  V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
 	   const incidence_graph_archetype<V,D,P>& )
   {
     return V(dummy_cons);
   }
   template <typename V, typename D, typename P>
-  V target(const typename incidence_graph_archetype<V, D, P>::edge_descriptor& ,
+  V target(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
 	   const incidence_graph_archetype<V,D,P>& )
   {
     return V(dummy_cons);
@@ -63,16 +63,32 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
+  template <typename V, typename D, typename P>
+  typename incidence_graph_archetype<V,D,P>::vertices_size_type
+  num_vertices(const incidence_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
+  template <typename V, typename D, typename P>
+  typename incidence_graph_archetype<V,D,P>::edges_size_type
+  num_edges(const incidence_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct adjacency_graph_archetype
   {
-#if defined(BOOST_USE_NEW_GRAPH_TRAITS)
     typedef adjacency_graph_tag traversal_category;
+#if 0
     typedef immutable_graph_tag mutability_category;
 #endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
+    typedef unsigned int vertices_size_type;
+    typedef unsigned int edges_size_type;
     typedef void edge_descriptor;
     typedef input_iterator_archetype<Vertex> adjacency_iterator;
 
@@ -82,9 +98,7 @@ namespace boost { // should use a different namespace for this
     typedef void in_edge_iterator;
     typedef void out_edge_iterator;
     typedef void vertex_iterator;
-    typedef void vertices_size_type;
     typedef void edge_iterator;
-    typedef void edges_size_type;
   };
   
   template <typename V, typename D, typename P>
@@ -103,6 +117,20 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
+  template <typename V, typename D, typename P>
+  typename adjacency_graph_archetype<V,D,P>::vertices_size_type
+  num_vertices(const adjacency_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
+  template <typename V, typename D, typename P>
+  typename adjacency_graph_archetype<V,D,P>::edges_size_type
+  num_edges(const adjacency_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct vertex_list_graph_archetype
@@ -112,8 +140,8 @@ namespace boost { // should use a different namespace for this
     typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> Incidence;
     typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> Adjacency;
 
-#if defined(BOOST_NEW_GRAPH_TRAITS)
     typedef vertex_list_graph_tag traversal_category;
+#if 0
     typedef immutable_graph_tag mutability_category;
 #endif
     typedef Vertex vertex_descriptor;
@@ -124,13 +152,13 @@ namespace boost { // should use a different namespace for this
 
     typedef input_iterator_archetype<Vertex> vertex_iterator;
     typedef unsigned int vertices_size_type;
+    typedef unsigned int edges_size_type;
 
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
     typedef void in_edge_iterator;
     typedef void edge_iterator;
-    typedef void edges_size_type;
   };
   
   template <typename V, typename D, typename P>
@@ -145,6 +173,13 @@ namespace boost { // should use a different namespace for this
   template <typename V, typename D, typename P>
   typename vertex_list_graph_archetype<V,D,P>::vertices_size_type
   num_vertices(const vertex_list_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
+  template <typename V, typename D, typename P>
+  typename vertex_list_graph_archetype<V,D,P>::edges_size_type
+  num_edges(const vertex_list_graph_archetype<V,D,P>& )
   {
     return 0;
   }

@@ -31,6 +31,7 @@
   Breadth First Search Algorithm (Cormen, Leiserson, and Rivest p. 470)
 */
 #include <boost/config.hpp>
+#include <vector>
 #include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>

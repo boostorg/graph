@@ -25,6 +25,16 @@
 //=======================================================================
 //
 
+/*
+  This file implements the function
+
+  template <class EdgeListGraph, class Size, class P, class T, class R>
+  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
+     const bgl_named_params<P, T, R>& params)
+  
+ */
+
+
 #ifndef BOOST_GRAPH_BELLMAN_FORD_SHORTEST_PATHS_HPP
 #define BOOST_GRAPH_BELLMAN_FORD_SHORTEST_PATHS_HPP
 
@@ -191,11 +201,10 @@ namespace boost {
       (g, N,
        choose_pmap(get_param(params, edge_weight), g, edge_weight),
        choose_pmap(get_param(params, vertex_distance), g, vertex_distance),
-       //       get_param(params, vertex_distance),
        get_param(params, graph_visitor),
        params);
   }
 
-} /* namespace boost */
+} // namespace boost
 
-#endif /* BOOST_GRAPH_BELLMAN_FORD_SHORTEST_PATHS_HPP */
+#endif // BOOST_GRAPH_BELLMAN_FORD_SHORTEST_PATHS_HPP

@@ -70,7 +70,7 @@ namespace boost {
       vertex_all_num, edge_all_num, graph_all_num, graph_visitor_num,
       distance_compare_num, distance_combine_num, distance_inf_num,
       distance_zero_num, buffer_param_num, edge_copy_num, vertex_copy_num,
-      orig_to_copy_num,
+      orig_to_copy_num, vertex_rank_num, vertex_predecessor_num,
       last_property_num
     };
   } // namespace detail
@@ -115,6 +115,8 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, out_degree);
   BOOST_DEF_PROPERTY(vertex, discover_time);
   BOOST_DEF_PROPERTY(vertex, finish_time);
+  BOOST_DEF_PROPERTY(vertex, predecessor);
+  BOOST_DEF_PROPERTY(vertex, rank);
   BOOST_DEF_PROPERTY(edge, reverse);
   BOOST_DEF_PROPERTY(edge, capacity);
   BOOST_DEF_PROPERTY(edge, residual_capacity);

@@ -54,12 +54,12 @@ namespace boost {
   // set of edges.
   //
 
-
   // Variant (1)
   template <class Graph, class OutputIterator, 
             class Rank, class Parent>
   inline void 
-  kruskal_minimum_spanning_tree(Graph& G, OutputIterator spanning_tree_edges, 
+  kruskal_minimum_spanning_tree(const Graph& G, 
+                                OutputIterator spanning_tree_edges, 
                                 Rank rank, Parent parent)
   {
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
@@ -71,7 +71,8 @@ namespace boost {
   template <class Graph, class OutputIterator, 
             class Rank, class Parent, class Weight>
   void
-  kruskal_minimum_spanning_tree(Graph& G, OutputIterator spanning_tree_edges, 
+  kruskal_minimum_spanning_tree(const Graph& G, 
+                                OutputIterator spanning_tree_edges, 
                                 Rank rank, Parent parent, Weight weight)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -94,34 +95,82 @@ namespace boost {
     for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui)
       dset.make_set(*ui);
 
-    typedef typename property_traits<Weight>::value_type W;
-    typedef indirect_cmp<Weight, std::greater<W> > weight_greater;
-
+    typedef indirect_cmp<Weight, std::greater<W_value> > weight_greater;
     weight_greater wl(weight);
-
-    typedef std::priority_queue <Edge, std::vector<Edge>, weight_greater>
-      Queue;
-    Queue Q(wl);
-
+    std::priority_queue<Edge, std::vector<Edge>, weight_greater> Q(wl);
     /*push all edge into Q*/
     typename graph_traits<Graph>::edge_iterator ei, eiend;
-    for (boost::tie(ei,eiend) = edges(G); ei != eiend; ++ei) 
+    for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei) 
       Q.push(*ei);
     
-    while ( !Q.empty() ) {
+    while (! Q.empty()) {
       Edge e = Q.top();
       Q.pop();
       Vertex u = dset.find_set(source(e, G));
       Vertex v = dset.find_set(target(e, G));
       if ( u != v ) {
-        *spanning_tree_edges++ = e;
-        dset.link(u, v);
+	*spanning_tree_edges++ = e;
+	dset.link(u, v);
       }
     }
   }
 
-} /*namespace*/
+  // Named Parameters Variants
+  // (1)
+  template <class Graph, class OutputIterator>
+  inline void 
+  kruskal_minimum_spanning_tree(const Graph& g,
+                                OutputIterator spanning_tree_edges)
+  {
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename property_map<Graph, vertex_index_t>::type index_map_t;
+    typename graph_traits<Graph>::vertices_size_type
+      n = num_vertices(g);
+    std::vector<size_type> rank_map(n);
+    std::vector<vertex_t> pred_map(n);
+
+    kruskal_minimum_spanning_tree
+      (g, spanning_tree_edges, 
+       make_iterator_property_map(rank_map.begin(), get(vertex_index, g)),
+       make_iterator_property_map(pred_map.begin(), get(vertex_index, g)),
+       get(edge_weight, g));
+  }
+
+  // (2)
+  template <class Graph, class OutputIterator, class P, class T, class R>
+  inline void
+  kruskal_minimum_spanning_tree(const Graph& g,
+                                OutputIterator spanning_tree_edges, 
+                                const bgl_named_params<P, T, R>& params)
+  {
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    typename graph_traits<Graph>::vertices_size_type n;
+    n = is_default_param(get_param(params, vertex_rank))
+                                   ? num_vertices(g) : 0;
+    std::vector<size_type> rank_map(n);
+    n = is_default_param(get_param(params, vertex_predecessor))
+                                   ? num_vertices(g) : 0;
+    std::vector<vertex_t> pred_map(n);
+    
+    kruskal_minimum_spanning_tree
+      (g, spanning_tree_edges, 
+       choose_param
+       (get_param(params, vertex_rank), 
+	make_iterator_property_map
+	(rank_map.begin(), 
+	 choose_pmap(get_param(params, vertex_index), g, vertex_index))),
+       choose_param
+       (get_param(params, vertex_predecessor), 
+	make_iterator_property_map
+	(predecessor_map.begin(), 
+	 choose_pmap(get_param(params, vertex_index), g, vertex_index))),
+       choose_pmap(get_param(params, edge_weight), g, edge_weight));
+  }
+    
+} // namespace boost
 
 
-#endif /*BOOST_GRAPH_MST_KRUSKAL_H*/
+#endif // BOOST_GRAPH_MST_KRUSKAL_HPP
 

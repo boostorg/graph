@@ -1,3 +1,59 @@
+//
+//=======================================================================
+// Copyright 1997-2001 University of Notre Dame.
+// Authors: Jeremy G. Siek, Lie-Quan Lee, Andrew Lumsdaine
+//
+// This file is part of the Boost Graph Library
+//
+// You should have received a copy of the License Agreement for the
+// Boost Graph Library along with the software; see the file LICENSE.
+// If not, contact Office of Research, University of Notre Dame, Notre
+// Dame, IN 46556.
+//
+// Permission to modify the code and to distribute modified code is
+// granted, provided the text of this NOTICE is retained, a notice that
+// the code was modified is included with the above COPYRIGHT NOTICE and
+// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
+// file is distributed with the modified code.
+//
+// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
+// By way of example, but not limitation, Licensor MAKES NO
+// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
+// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
+// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
+// OR OTHER RIGHTS.
+//=======================================================================
+//
+
+/*
+  This file implements the following functions:
+
+
+  template <typename VertexListGraph, typename MutableGraph>
+  void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out)
+
+  template <typename VertexListGraph, typename MutableGraph, 
+    class P, class T, class R>
+  void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out, 
+                  const bgl_named_params<P, T, R>& params)
+
+
+  template <typename IncidenceGraph, typename MutableGraph>
+  typename graph_traits<MutableGraph>::vertex_descriptor
+  copy_component(IncidenceGraph& g_in, 
+                 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
+                 MutableGraph& g_out)
+
+  template <typename IncidenceGraph, typename MutableGraph, 
+           typename P, typename T, typename R>
+  typename graph_traits<MutableGraph>::vertex_descriptor
+  copy_component(IncidenceGraph& g_in, 
+                 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
+                 MutableGraph& g_out, 
+                 const bgl_named_params<P, T, R>& params)
+ */
+
+
 #ifndef BOOST_GRAPH_COPY_HPP
 #define BOOST_GRAPH_COPY_HPP
 
@@ -7,8 +63,7 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-
-// UNDER CONSTRUCTION
+#include <boost/type_traits/conversion_traits.hpp>
 
 namespace boost {
 
@@ -60,36 +115,116 @@ namespace boost {
     // Copy all the vertices and edges of graph g_in into graph g_out.
     // The copy_vertex and copy_edge function objects control how vertex
     // and edge properties are copied.
-    template <typename Graph, typename MutableGraph, 
-              typename CopyVertex, typename CopyEdge, 
-              typename Orig2CopyVertexIndexMap>
-    void copy_graph_impl(const Graph& g_in, MutableGraph& g_out, 
-                         CopyVertex copy_vertex, CopyEdge copy_edge,
-                         Orig2CopyVertexIndexMap orig2copy)
+
+    template <int Version>
+    struct copy_graph_impl { };
+
+    template <> struct copy_graph_impl<0>
     {
-      // assert Graph::directed_category == MutableGraph::directed_category
-      // or allow conversions? 
-
-      // dispatch based on directed_category and traversal_category...
-
-      typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-      for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
-        typename graph_traits<MutableGraph>::vertex_descriptor
-          new_v = add_vertex(g_out);
-        put(orig2copy, *vi, new_v);
-        copy_vertex(*vi, new_v);
+      template <typename Graph, typename MutableGraph, 
+        typename CopyVertex, typename CopyEdge, typename IndexMap,
+        typename Orig2CopyVertexIndexMap>
+      static void apply(const Graph& g_in, MutableGraph& g_out, 
+                        CopyVertex copy_vertex, CopyEdge copy_edge,
+                        Orig2CopyVertexIndexMap orig2copy, IndexMap)
+      {
+        typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+          typename graph_traits<MutableGraph>::vertex_descriptor
+            new_v = add_vertex(g_out);
+          put(orig2copy, *vi, new_v);
+          copy_vertex(*vi, new_v);
+        }
+        typename graph_traits<Graph>::edge_iterator ei, ei_end;
+        for (tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
+          typename graph_traits<MutableGraph>::edge_descriptor new_e;
+          bool inserted;
+          tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
+                                          get(orig2copy, target(*ei, g_in)),
+                                          g_out);
+          copy_edge(*ei, new_e);
+        }
       }
+    };
 
-      typename graph_traits<Graph>::edge_iterator ei, ei_end;
-      for (tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
-        typename graph_traits<MutableGraph>::edge_descriptor new_e;
-        bool inserted;
-        tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
-                                        get(orig2copy, target(*ei, g_in)),
-                                        g_out);
-        copy_edge(*ei, new_e);
+    // for directed graphs
+    template <> struct copy_graph_impl<1>
+    {
+      template <typename Graph, typename MutableGraph, 
+        typename CopyVertex, typename CopyEdge, typename IndexMap,
+        typename Orig2CopyVertexIndexMap>
+      static void apply(const Graph& g_in, MutableGraph& g_out, 
+                        CopyVertex copy_vertex, CopyEdge copy_edge,
+                        Orig2CopyVertexIndexMap orig2copy, IndexMap)
+      {
+        typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+          typename graph_traits<MutableGraph>::vertex_descriptor
+            new_v = add_vertex(g_out);
+          put(orig2copy, *vi, new_v);
+          copy_vertex(*vi, new_v);
+        }
+        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+          typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+          for (tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
+            typename graph_traits<MutableGraph>::edge_descriptor new_e;
+            bool inserted;
+            tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
+                                            get(orig2copy, target(*ei, g_in)),
+                                            g_out);
+            copy_edge(*ei, new_e);
+          }
+        }
       }
-    }
+    };
+
+    // for undirected graphs
+    template <> struct copy_graph_impl<2>
+    {
+      template <typename Graph, typename MutableGraph, 
+        typename CopyVertex, typename CopyEdge, typename IndexMap,
+        typename Orig2CopyVertexIndexMap>
+      static void apply(const Graph& g_in, MutableGraph& g_out, 
+                        CopyVertex copy_vertex, CopyEdge copy_edge,
+                        Orig2CopyVertexIndexMap orig2copy,
+                        IndexMap index_map)
+      {
+        typedef color_traits<default_color_type> Color;
+        std::vector<default_color_type> 
+          color(num_vertices(g_in), Color::white());
+        typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+          typename graph_traits<MutableGraph>::vertex_descriptor
+            new_v = add_vertex(g_out);
+          put(orig2copy, *vi, new_v);
+          copy_vertex(*vi, new_v);
+        }
+        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+          typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+          for (tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
+            typename graph_traits<MutableGraph>::edge_descriptor new_e;
+            bool inserted;
+            if (color[get(index_map, target(*ei, g_in))] == Color::white()) {
+              tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei,g_in)),
+                                              get(orig2copy, target(*ei,g_in)),
+                                              g_out);
+              copy_edge(*ei, new_e);
+            }
+          }
+          color[get(index_map, *vi)] = Color::black();
+        }
+      }
+    };
+
+    template <class Graph>
+    struct choose_graph_copy {
+      typedef typename Graph::traversal_category Trv;
+      typedef typename Graph::directed_category Dr;
+      enum { algo = 
+             is_convertible<Trv, vertex_and_edge_list_graph_tag>::value ? 0 :
+             is_convertible<Dr, directed_tag>::value ? 1 : 2 };
+      typedef copy_graph_impl<algo> type;
+    };
 
     //-------------------------------------------------------------------------
     struct choose_copier_parameter {
@@ -168,30 +303,37 @@ namespace boost {
   } // namespace detail
 
 
-  template <typename Graph, typename MutableGraph>
-  void copy_graph(const Graph& g_in, MutableGraph& g_out)
+  template <typename VertexListGraph, typename MutableGraph>
+  void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out)
   {
-    std::vector<typename graph_traits<Graph>::vertex_descriptor> 
+    std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor> 
       orig2copy(num_vertices(g_in));
-    detail::copy_graph_impl
+    typedef typename detail::choose_graph_copy<VertexListGraph>::type 
+      copy_impl;
+    copy_impl::apply
       (g_in, g_out, 
        make_vertex_copier(g_in, g_out), 
        make_edge_copier(g_in, g_out), 
        make_iterator_property_map(orig2copy.begin(), 
-                                  get(vertex_index, g_in)));
+                                  get(vertex_index, g_in)),
+       get(vertex_index, g_in)
+       );
   }
 
-  template <typename Graph, typename MutableGraph, class P, class T, class R>
-  void copy_graph(const Graph& g_in, MutableGraph& g_out, 
+  template <typename VertexListGraph, typename MutableGraph, 
+    class P, class T, class R>
+  void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out, 
                   const bgl_named_params<P, T, R>& params)
   {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
         ? num_vertices(g_in) : 0;
-    std::vector<typename graph_traits<Graph>::vertex_descriptor> 
+    std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor> 
       orig2copy(n);
-    
-    detail::copy_graph_impl
+
+    typedef typename detail::choose_graph_copy<VertexListGraph>::type 
+      copy_impl;
+    copy_impl::apply
       (g_in, g_out,
        detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
                                     g_in, g_out),
@@ -201,7 +343,8 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index)))
+                                 g, vertex_index))),
+       choose_pmap(get_param(params, vertex_index), g, vertex_index)
        );
   }
 
@@ -242,7 +385,8 @@ namespace boost {
     template <typename Graph, typename MutableGraph, 
               typename CopyVertex, typename CopyEdge, 
               typename Orig2CopyVertexIndexMap, typename Params>
-    void copy_component_impl
+    typename graph_traits<MutableGraph>::vertex_descriptor
+    copy_component_impl
       (const Graph& g_in, 
        typename graph_traits<Graph>::vertex_descriptor src,
        MutableGraph& g_out, 
@@ -253,6 +397,7 @@ namespace boost {
       graph_copy_visitor<MutableGraph, Orig2CopyVertexIndexMap, 
         CopyVertex, CopyEdge> vis(g_out, orig2copy, copy_vertex, copy_edge);
       breadth_first_search(g_in, src, params.visitor(vis));
+      return get(orig2copy, src);
     }
 
   } // namespace detail
@@ -263,7 +408,7 @@ namespace boost {
   // in g_out that matches the source vertex of g_in.
   template <typename IncidenceGraph, typename MutableGraph, 
            typename P, typename T, typename R>
-  typename graph_traits<IncidenceGraph>::vertex_descriptor
+  typename graph_traits<MutableGraph>::vertex_descriptor
   copy_component(IncidenceGraph& g_in, 
                  typename graph_traits<IncidenceGraph>::vertex_descriptor src,
                  MutableGraph& g_out, 
@@ -277,7 +422,7 @@ namespace boost {
     
     return detail::copy_component_impl
       (g_in, src, g_out,
-       detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
+       detail::choose_vertex_copier(get_param(params, vertex_copy_t()), 
                                     g_in, g_out),
        detail::choose_edge_copier(get_param(params, edge_copy_t()), 
                                   g_in, g_out),
@@ -285,7 +430,27 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index)))
+                                 g, vertex_index))),
+       params
+       );
+  }
+
+  template <typename IncidenceGraph, typename MutableGraph>
+  typename graph_traits<MutableGraph>::vertex_descriptor
+  copy_component(IncidenceGraph& g_in, 
+                 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
+                 MutableGraph& g_out)
+  {
+    std::vector<typename graph_traits<IncidenceGraph>::vertex_descriptor> 
+      orig2copy(num_vertices(g_in));
+    
+    return detail::copy_component_impl
+      (g_in, src, g_out,
+       make_vertex_copier(g_in, g_out), 
+       make_edge_copier(g_in, g_out), 
+       make_iterator_property_map(orig2copy.begin(), 
+                                  get(vertex_index, g_in)),
+       bgl_named_params<char,char>('x') // dummy param object
        );
   }
 
