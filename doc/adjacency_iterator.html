@@ -56,7 +56,7 @@ class my_graph {
   // ...
   typedef ... out_edge_iterator;
   typedef ... vertex_descriptor;
-  typedef boost::adjacency_iterator&lt;my_graph, vertex_descriptor, out_edge_iterator&gt;::type adjacency_iterator;
+  typedef boost::adjacency_iterator_generator&lt;my_graph, vertex_descriptor, out_edge_iterator&gt;::type adjacency_iterator;
   // ...
 };
 
