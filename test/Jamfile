@@ -41,6 +41,8 @@ test-suite graph :
 
     [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run graphviz_test.cpp : : : <sysinclude>$(BOOST_ROOT) ] 
+
     [ run gursoy_atun_layout_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run layout_test.cpp : : : <test-info>always_show_run_output ]

@@ -93,14 +93,16 @@ September 27, 2000.
       <li><a href="undirected_dfs.html"><tt>undirected_dfs</tt></a> is now data-recursive, resulting in improved performance in some cases, from Synge Todo.</li>
       <li><a href="dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths</tt></a> now uses a relaxed heap&nbsp;[<A
   HREF="bibliography.html#driscoll88">61</A>] as its priority queue, improving its complexity to <em>O(V log V)</em> and improving real-world performance for larger graphs.</li>
+      <li><a href="read_graphviz.html"><code>read_graphviz</code></a> now has a new, Spirit-based parser that works for all graph types and supports arbitrary properties on the graph, from Ron Garcia. The old, Bison-based GraphViz reader has been deprecated and will be removed in a future Boost release.</li>
       
     </ul><br><b>Bug fixes</b><br>
     <ul>
       <li><a href="bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></a> now deals with unreachable vertices better.</li>
-      <li><a href="adjacency_list.html"><tt>adjacency_list</tt></a>: parallel edge removal with <tt>OutEdgeListS = listS</tt> has been fixed.</li>
+      <li><a href="adjacency_list.html"><tt>adjacency_list</tt></a>: parallel edge removal with <tt>OutEdgeListS = listS</tt> has been fixed. Copying and swapping has been fixed.</li>
       <li><a href="incremental_components.html">Incremental connected components</a>: fixed a bug in the <tt>incremental_components</tt> routine that may have caused incorrect results.</li>
       <li>The <tt>remove_out_edge_if</tt> function for an undirected <a href="adjacency_list.html"><tt>adjacency_list</tt></a> has been rewritten and should no longer dereference singular iterators.</li>
       <li><a href="write-graphviz.html"><tt>write_graphviz</tt></a> now accepts a <tt>vertex_id</tt> parameter that is used to name the nodes.</li>
+      <li><a href="read-graphviz.html"><tt>read_graphviz</tt></a> now accepts empty attribute lists.</li>
       <li><a href="sequential_vertex_coloring.html"><tt>sequential_vertex_coloring</tt></a> has been updated, tested, and documented.</li>
     </ul>
   </li>

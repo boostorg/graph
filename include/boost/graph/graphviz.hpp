@@ -45,6 +45,11 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+// TBD: this should be a real macro at some point...
+#ifndef BOOST_NO_SPIRIT
+#  include <boost/graph/detail/read_graphviz_spirit.hpp>
+#endif // BOOST_NO_SPIRIT
+
 namespace boost {
 
   template <typename directed_category>
