@@ -16,28 +16,30 @@
  
 namespace boost {
   
-  template<typename TreeGraph, typename TreeGraphVisitor>
-  void traverse_tree_graph
-  (typename boost::graph_traits<TreeGraph>::vertex_descriptor v,
-   TreeGraph & g,
-   TreeGraphVisitor visitor)
-  {
-    visitor.preorder(v, g);
-    typename boost::graph_traits<TreeGraph>::adjacency_iterator i, end;
-    tie(i, end) = adjacent_vertices(v, g);
-    if (i != end) {// if current node is not a leaf
-      traverse_tree_graph(*i, g, visitor);
-      visitor.on_edge(boost::edge(v, *i++, g).first, g);
-      while (i != end) {
-	visitor.inorder(v, g);
-	traverse_tree_graph(*i, g, visitor);
-	visitor.on_edge(boost::edge(v, *i++, g).first, g);
-      }
-    } else
-      visitor.inorder(v, g);
-    visitor.postorder(v, g);
+    template<typename TreeGraph, typename TreeGraphVisitor>
+    void traverse_tree_graph(
+	typename boost::graph_traits<TreeGraph>::vertex_descriptor v,
+	TreeGraph & g,
+	TreeGraphVisitor visitor)
+    {
+	visitor.preorder(v, g);
+	typename boost::graph_traits<TreeGraph>::adjacency_iterator i, end;
+	tie(i, end) = adjacent_vertices(v, g);
+	if (i != end) { // if current node is not a leaf
+	    visitor.on_edge(boost::edge(v, *i, g).first, g);
+	    traverse_tree_graph(*i, g, visitor);
+	    visitor.postedge(boost::edge(v, *i++, g).first, g);
+	    while (i != end) {
+		visitor.inorder(v, g);
+		visitor.on_edge(boost::edge(v, *i, g).first, g);
+		traverse_tree_graph(*i, g, visitor);
+		visitor.postedge(boost::edge(v, *i++, g).first, g);
+	    }
+	} else
+	    visitor.inorder(v, g);
+	visitor.postorder(v, g);
   }
-  
+    
 } // namespace boost
  
 #endif // BOOST_TRAVERSE_TREE_GRAPH_HPP
