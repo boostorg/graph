@@ -83,14 +83,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
 
 UTIL: <tt>weight_map2(WeightMap2 w2_map)</tt>   
 <blockquote>
-  The algorithm requires storage for modified edge weights.  The type
-  <tt>WeightMap2</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html"> Read/Write
-  Property Map</a>. The edge descriptor type of the graph needs to be
-  usable as the key type for the weight map. The value type for the
-  map must be <i>Addable</i> with the value type of the distance
-  map.<br>
-  <b>Default:</b>  <tt>get(edge_weight2, g)</tt>
+  This parameter is no longer needed, and will be ignored.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
@@ -106,22 +99,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 </blockquote>
 
 
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL: <tt>distance_map(DistanceMap d_map)</tt> 
 <blockquote>
-  The shortest path weight from the source vertex <tt>s</tt> to each
-  vertex in the graph <tt>g</tt> is recorded in this property map. The
-  shortest path weight is the sum of the edge weights along the
-  shortest path.  The type <tt>DistanceMap</tt> must be a model of
-  \concept{ReadWritePropertyMap}. The vertex descriptor type of the
-  graph needs to be usable as the key type of the distance map. The
-  value type of the distance map must be <a
-  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
-  Comparable</a>.<br> 
-  <b>Default:</b> <a href="../../property_map/iterator_property_map.html">
-  <tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  This parameter is no longer needed, and will be ignored.
 </blockquote>
 
 IN: <tt>distance_compare(CompareFunction cmp)</tt> 
