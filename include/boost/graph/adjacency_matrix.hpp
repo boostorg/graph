@@ -196,7 +196,7 @@ namespace boost {
       void initialize(MatrixIter&) const{ }
 
       void increment(MatrixIter& i) {
-	increment_dispatch(i, Directed());
+        increment_dispatch(i, Directed());
       }
       void increment_dispatch(MatrixIter& i, directedS) {
         ++i;
@@ -362,19 +362,23 @@ namespace boost {
 
     typename Matrix::const_reference
     get_edge(vertex_descriptor u, vertex_descriptor v) const {
+      using namespace std; // to call swap unqualified
       if (Directed::is_directed)
         return m_matrix[u * m_vertex_set.size() + v];
       else {
-        if (v > u) std::swap(u, v);
+        if (v > u)
+          swap(u, v);
         return m_matrix[u * (u - 1)/2 + v];
       }
     }
     typename Matrix::reference
     get_edge(vertex_descriptor u, vertex_descriptor v) {
+      using namespace std; // to call swap unqualified
       if (Directed::is_directed)
         return m_matrix[u * m_vertex_set.size() + v];
       else {
-        if (v > u) std::swap(u, v);
+        if (v > u)
+          swap(u, v);
         return m_matrix[u * (u + 1)/2 + v];
       }
     }
@@ -703,13 +707,13 @@ namespace boost {
     struct adj_matrix_any_vertex_pa {
       template <class Tag, class Graph, class Property>
       struct bind {
-	typedef typename property_value<Property,Tag>::type Value;
-	typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-	
+        typedef typename property_value<Property,Tag>::type Value;
+        typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+        
         typedef adj_matrix_vertex_property_map<Graph*, Vertex, Value, Value&,
-	  Tag> type;
+          Tag> type;
         typedef adj_matrix_vertex_property_map<const Graph*, Vertex, Value, 
-	  const Value&, Tag> const_type;
+          const Value&, Tag> const_type;
       };
     };
     struct adj_matrix_id_vertex_pa {
