@@ -70,15 +70,13 @@ main(int , char* [])
   std::vector<Vertex> p(num_vertices(G));
   std::vector<int> d(num_vertices(G));
 
-  graph_traits<Graph>::vertex_iterator vi, vend;
-  for(tie(vi, vend) = vertices(G); vi != vend; ++vi)
-    p[*vi] = *vi;
   Vertex s = *(vertices(G).first);
 
   dijkstra_shortest_paths
     (G, s, distance_map(&d[0]).predecessor_map(&p[0]));
 
   std::cout << "distances from start vertex:" << std::endl;
+  graph_traits<Graph>::vertex_iterator vi, vend;
   for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
     std::cout << "distance(" << *vi << ") = " << d[*vi] << std::endl;
   std::cout << std::endl;
