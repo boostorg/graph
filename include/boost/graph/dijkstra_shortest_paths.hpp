@@ -211,7 +211,7 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()), 
                       std::less<D>()),
          choose_param(get_param(params, distance_combine_t()), 
-                      std::plus<D>()),
+                      closed_plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
                       generate_infinity<D>()),
          choose_param(get_param(params, distance_zero_t()), 

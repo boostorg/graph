@@ -157,9 +157,12 @@ namespace boost {
 	(g, N, weight, 
 	 choose_param(get_param(params, vertex_predecessor), dummy_pred),
 	 distance,
-	 choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
-	 choose_param(get_param(params, distance_compare_t()), std::less<D>()),
-	 choose_param(get_param(params, graph_visitor), null_vis)
+	 choose_param(get_param(params, distance_combine_t()),
+                      closed_plus<D>()),
+	 choose_param(get_param(params, distance_compare_t()),
+                      std::less<D>()),
+	 choose_param(get_param(params, graph_visitor),
+                       null_vis)
 	 );
     }
 
