@@ -30,7 +30,7 @@
 #include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/detail/yes_no_type.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 namespace boost {
 
@@ -334,8 +334,6 @@ namespace boost {
 
 #if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 #  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-#elif BOOST_WORKAROUND(__EDG_VERSION__, <= 238)
-#  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #endif
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
@@ -357,18 +355,8 @@ namespace boost {
   };
 
   namespace detail {
-    template<typename VertexBundle, typename EdgeBundle>
-	type_traits::yes_type is_vertex_bundle_helper(VertexBundle*);
-	
-    template<typename VertexBundle, typename EdgeBundle>
-	type_traits::no_type is_vertex_bundle_helper(EdgeBundle*);
-	
     template<typename VertexBundle, typename EdgeBundle, typename Bundle>
-	struct is_vertex_bundle
-	{
-	  BOOST_STATIC_CONSTANT(bool, value = ((sizeof(is_vertex_bundle_helper<VertexBundle, EdgeBundle>((Bundle*)0)) 
-									       == sizeof(type_traits::yes_type))));
-	};
+      struct is_vertex_bundle : is_convertible<Bundle*, VertexBundle*> {};
   }
   
   template <typename Graph, typename T, typename Bundle>
