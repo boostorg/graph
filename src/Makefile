@@ -51,10 +51,10 @@ libbgl-viz.so: $(OBJS)
 # and once for directed graphs with GRAPHVIZ_GRAPH=boost::GraphvizDigraph.
 
 graphviz_graph_parser.o: graphviz_graph_parser.cpp
-	$(CXX) -DGRAPHVIZ_GRAPH=boost::GraphvizGraph $(CXXFLAGS) -c graphviz_graph_parser.cpp -o graphviz_graph_parser.o
+	$(CXX) -DGRAPHVIZ_DIRECTED=0 $(CXXFLAGS) -c graphviz_graph_parser.cpp -o graphviz_graph_parser.o
 
 graphviz_digraph_parser.o: graphviz_digraph_parser.cpp
-	$(CXX) -DGRAPHVIZ_GRAPH=boost::GraphvizDigraph $(CXXFLAGS) -c graphviz_digraph_parser.cpp -o graphviz_digraph_parser.o
+	$(CXX) -DGRAPHVIZ_DIRECTED=1 $(CXXFLAGS) -c graphviz_digraph_parser.cpp -o graphviz_digraph_parser.o
 
 graphviz_graph_lex.o: graphviz_graph_lex.cpp graphviz_parser.h
 	$(CXX) $(CXXFLAGS) -c graphviz_graph_lex.cpp
