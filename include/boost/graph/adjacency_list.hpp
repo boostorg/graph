@@ -383,8 +383,11 @@ namespace boost {
       : Base(x), m_property(x.m_property) { }
 
     inline adjacency_list& operator=(const adjacency_list& x) {
-      Base::operator=(x);
-      m_property = x.m_property;
+      // TBD: probably should give the strong guarantee
+      if (&x != this) {
+	Base::operator=(x);
+	m_property = x.m_property;
+      }
       return *this;
     }
 
