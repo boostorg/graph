@@ -509,7 +509,7 @@ namespace boost {
   {
     typedef typename property_traits<WeightMap>::value_type weight_type;
     return kamada_kawai_spring_layout(g, position, weight, edge_or_side_length,
-                                      done, weigh_type(1)); 
+                                      done, weight_type(1)); 
   }
 
   /**
