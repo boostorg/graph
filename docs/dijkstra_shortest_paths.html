@@ -103,6 +103,15 @@ extensibility.
 <UL>
 <LI>The type <TT>VertexListGraph</TT> must be a model of <a href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
+<li>In version (1) of the algorithm, the graph must be a <a href="./PropertyGraph.html">PropertyGraph</a> with respect to <tt>vertex_color_t</tt>,
+ <tt>vertex_distance_t</tt>, <tt>edge_weight_t</tt>, and <tt>vertex_index_t</tt></li>
+
+<li>In version (2) of the algorithm, the graph must be a <a href="./PropertyGraph.html">PropertyGraph</a> with respect to <tt>vertex_color_t</tt>,
+ <tt>edge_weight_t</tt>, and <tt>vertex_index_t</tt></li>
+
+<li>In version (3) of the algorithm, the graph must be a <a href="./PropertyGraph.html">PropertyGraph</a> with respect to <tt>vertex_color_t</tt>,
+ <tt>edge_weight_t</tt>, and <tt>vertex_index_t</tt></li>
+
 <LI>The type <TT>UniformCostVisitor</TT> must be a model of <a href="./UniformCostVisitor.html">UniformCostVisitor</a>.
 </LI>
 <LI><a name="DistanceMap">The type <TT>DistanceMap</TT> must be a model of <a
