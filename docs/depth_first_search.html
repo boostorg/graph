@@ -51,12 +51,12 @@
 <P>
 <PRE>
 (1)
-template &lt;class VertexListGraph, class DFSVisitor&gt;
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>&gt;
 void depth_first_search(VertexListGraph&amp; G, DFSVisitor v);
 
 (2)
-template &lt;class VertexListGraph, class DFSVisitor, class ColorPMap&gt;
-void depth_first_search(VertexListGraph&amp; G, DFSVisitor v, ColorPMap c);
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
+void depth_first_search(VertexListGraph&amp; G, DFSVisitor v, ColorMap c);
 </PRE>
 
 <P>
@@ -71,20 +71,24 @@ vertices in the same connected component have been visited, another
 arbitrary unvisited vertex is choosen and the depth-first search
 resumes. A more detailed explanation of DFS is given in Section <A
 HREF="./graph_theory_review.html#sec:dfs-algorithm">Depth-First
-Search</A>.
+Search</A>. The depth-first exploration of each connected component is
+implemented by the function <a
+href="./depth_first_visit.html"><tt>depth_first_visit()</tt></a>.
 
-<!--
-<P>
-The notion of a depth-first search is 
+
+<p>
+The <tt>DFSVisitor</tt> supplied by the user determines what
+actions are taken at each event-point within the algorithm.
+
+<p>
+The <tt>ColorMap</tt> is used by the algorithm to keep track
+of which vertices have been visited.
 
 <P>
-The depth-first search algorithm 
--->
-
-<P>
-DFS is used as the kernel for several other graph
-algorithms, including topological sort and two of the connected
-component algorithms.
+DFS is used as the kernel for several other graph algorithms,
+including <a
+href="./topological_sort.html"><tt>topological_sort</tt></a> and two
+of the connected component algorithms.
 
 <P>
 
@@ -97,13 +101,13 @@ component algorithms.
     href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
 <LI>In version (1) of the algorithm the graph must be a model of <a
-    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    href="./PropertyGraph.html">PropertyGraph</a> for
     <TT>vertex_color</TT> and the color property map for the graph
-    must meet the same requirements as <TT>Color</TT>.
+    must meet the same requirements as <TT>ColorMap</TT>.
 </LI>
-<LI>The type <TT>ColorPMap</TT> must be a model of <a
-     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, and the value type of <TT>Color</TT> must be a model of
-     <a href="./ColorValue.html">ColorValue</a>.
+<LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The key type of <tt>ColorMap</tt> must be the vertex descriptor type for the graph and the value type of <TT>ColorMap</TT> must be a model of
+     <a href="./ColorValue.html">ColorValue</a>.</a>
 </LI>
 <LI>The <tt>DFSVisitor</tt> type must be a model of <a
 href="./DFSVisitor.html">DFSVisitor</a>.
@@ -196,6 +200,9 @@ order of finish: x y v u z w
 
 <P>
 
+<h3>See Also</h3>
+
+<a href="./depth_first_visit.html"><tt>depth_first_visit</tt></a>
 
 
 <br>

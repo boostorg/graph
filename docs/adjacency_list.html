@@ -512,12 +512,15 @@ the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
 then the edge will not be added and the flag will be <TT>false</TT>.
 When the flag is <TT>false</TT>, the edge descriptor is invalid and
 any use of it is undefined.  The placement of the edge in the out-edge
-list for <i>u</i> is unspecified. If the <TT>EdgeList</TT> selector is
-<TT>vecS</TT> then this operation will invalidate any iterators that
-point into the edge-list for vertex <i>u</i> or edge descriptors that
-have vertex <i>u</i> as the source. This also applies if the
-<TT>EdgeList</TT> is a user-defined container that invalidates its
-iterators when <TT>push(container, x)</TT> is invoked (see Section <A
+list for <i>u</i> is unspecified. 
+
+If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
+will <b>invalidate</b> any iterators that point into the edge-list for vertex
+<i>u</i>.
+<!-- or edge descriptors that have vertex <i>u</i> as the source. -->
+This also applies if the <TT>EdgeList</TT> is a user-defined
+container that invalidates its iterators when <TT>push(container,
+x)</TT> is invoked (see Section <A
 HREF="./using_adjacency_list.html#sec:custom-storage">Customizing the
 Adjacency List Storage</A>).
 
@@ -540,7 +543,9 @@ void remove_edge(adjacency_list&amp; g,
                  vertex_descriptor v, vertex_descriptor u)
 </pre>
 Removes the edge <i>(v,u)</i> from the graph.
-
+If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
+will <b>invalidate</b> any iterators that point into the edge-list for vertex
+<i>u</i>.
 <hr>
 
 <pre>
@@ -548,9 +553,9 @@ vertex_descriptor
 add_vertex(adjacency_list&amp; g)
 </pre>
 Adds a vertex to the graph and returns the vertex descriptor for the
-new vertex. This operation invalidates any iterators that point
-into the graph and any edge descriptor objects.
-
+new vertex. If the <TT>VertexList</TT> selector is <tt>vecS</tt> then
+this operation <b>invalidates</b> all iterators, vertex descriptors,
+and edge descriptors for the graph.
 <hr>
 
 <pre>
@@ -567,16 +572,16 @@ void remove_vertex(adjacency_list&amp; g, vertex_descriptor u)
 Remove vertex <i>u</i> from the vertex set of the graph. It is assumed
 that there are no edges to or from vertex <i>u</i> when it is removed.
 One way to make sure of this is to invoke <TT>clear_vertex()</TT>
-beforehand.
-If the <TT>VertexList</TT> template parameter of the
-<TT>adjacency_list</TT> was <TT>vecS</TT>, then all vertex descriptors,
-edge descriptors, and iterators for the graph are invalidated by this
-operation. The builtin ID property for each vertex is renumbered so
-that after the operation the vertex ID's still form a contiguous range
+beforehand.  If the <TT>VertexList</TT> template parameter of the
+<TT>adjacency_list</TT> was <TT>vecS</TT>, then all vertex
+descriptors, edge descriptors, and iterators for the graph are
+<b>invalidated</b> by this operation. The builtin
+<tt>vertex_index</tt> property for each vertex is renumbered so that
+after the operation the vertex indices still form a contiguous range
 <TT>[0, num_vertices(g))</TT>. If you are using external property
-storage based on the builtin vertex ID, then the external storage will
+storage based on the builtin vertex index, then the external storage will
 need to be adjusted. Another option is to not use the builtin vertex
-ID, and instead use a plugin to add your own vertex IDs. If you need
+index, and instead use a plugin to add your own vertex IDs. If you need
 to make frequent use of the <TT>remove_vertex()</TT> function the
 <TT>listS</TT> selector is a much better choice for the
 <TT>VertexList</TT> template parameter.
@@ -600,19 +605,23 @@ argument.
 <hr>
 
 <pre>
-template &lt;class Property&gt;
-property_map&lt;adjacency_list, Property&gt;::type
-get(Property, adjacency_list&amp; g)
-
-template &lt;class Property&gt;
-property_map&lt;adjacency_list, Property&gt;::const_type
-get(Property, const adjacency_list&amp; g)
+template &lt;class Property, class X&gt;
+typename property_traits&lt;property_map&lt;adjacency_list, Property&gt;::const_type&gt::value_type
+get(Property, const adjacency_list&amp; g, X x)
 </pre>
-Returns the property map object for the edge property specified by
-<TT>Property</TT>. The <TT>Property</TT> must match one of the
-properties specified in the graph's <TT>EdgePlugin</TT> template
-argument.
+This returns the property value for <tt>x</tt>, which is either
+a vertex or edge descriptor.
+<hr>
 
+<pre>
+template &lt;class Property, class X, class Value&gt;
+void
+put(Property, const adjacency_list&amp; g, X x, const Value& value)
+</pre>
+This sets the property value for <tt>x</tt> to
+<tt>value</tt>. <tt>x</tt> is either a vertex or edge descriptor.
+<tt>Value</tt> must be convertible to
+<tt>typename property_traits&lt;property_map&lt;adjacency_list, Property&gt;::type&gt::value_type</tt>
 <hr>
 
 

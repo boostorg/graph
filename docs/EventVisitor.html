@@ -21,13 +21,17 @@
 
 <H1>EventVisitor Concept</H1>
 
-This concept defines the interface for single-event visitors.  The
-visitor has a single apply member function (<tt>operator()</tt>).
-This function is invoked within the graph algorithm at the event-point
-specified by the <tt>event_filter</tt> typedef within the
-EventVisitor. The following is the list of event tags that can be
-invoked in BGL algorithms. Each tag corresponds to a member function
-of the visitor for an algorithm. For example, the <a
+This concept defines the interface for single-event visitors. An
+EventVisitor has an apply member function (<tt>operator()</tt>) which
+is invoked within the graph algorithm at the event-point specified by
+the <tt>event_filter</tt> typedef within the
+EventVisitor. EventVisitor's can be combined into an <a
+href="./EventVisitorList.html">EventVistorList</a>.
+
+<p>
+The following is the list of event tags that can be invoked in BGL
+algorithms. Each tag corresponds to a member function of the visitor
+for an algorithm. For example, the <a
 href="./BFSVisitor.html">BFSVisitor</a> of <a
 href="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>
 has a <tt>cycle_edge()</tt> member function. The corresponding tag is
@@ -53,76 +57,6 @@ namespace boost {
 } // namespace boost
 </pre>
 
-<h3>Creating an EventVisitorList</h3>
-
-Often times one would like to use multiple single-event vistors in a
-call to a particular algorithm. In the following example we will show
-how to combine event visitors into a list using <tt>std::pair</tt> and
-the algorithm's visitor adaptor class.
-
-<p>
-Suppose we would like to print out the parenthesis
-structure of the discover/finish times of vertices in a <a
-href="./graph_theory_review.html#sec:dfs-algorithm">depth-first
-search</a>. We can use the BGL algorithm <a
-href="./depth_first_search.html"><tt>depth_first_search()</tt></a> and
-two event visitors to accomplish this. The complete source code for
-the following example is in <a href="../examples/dfs_parenthesis.cpp">
-<tt>examples/dfs_parenthesis.cpp</tt></a>. First we define the two
-event visitors. We use <tt>on_discover_vertex</tt> and
-<tt>on_finish_vertex</tt> as the event points, selected from the list
-of event points specified in <a
-href="./DFSVisitor.html">DFSVisitor</a>.
-
-<pre>
-struct open_paren : public base_visitor&lt;open_paren&gt; {
-  typedef on_discover_vertex event_filter;
-  template &lt;class Vertex, class Graph&gt;
-  void operator()(Vertex v, Graph& G) {
-    std::cout &lt;&lt; "(" &lt;&lt; v;
-  }
-};
-struct close_paren : public base_visitor&lt;close_paren&gt; {
-  typedef on_finish_vertex event_filter;
-  template &lt;class Vertex, class Graph&gt;
-  void operator()(Vertex v, Graph& G) {
-    std::cout &lt;&lt; v &lt;&lt; ")";
-  }
-};
-</pre>
-
-Next we create two event visitor objects and make an EventVisitorList
-out of them using a <tt>std::pair</tt> which created by
-<tt>std::make_pair</tt>.
-
-<pre>
-std::make_pair(open_paren(), close_paren())
-</pre>
-
-Next we want to pass this list into <tt>depth_first_search()</tt>, but
-<tt>depth_first_search()</tt> is expecting a <a
-href="./DFSVisitor.html">DFSVisitor</a>, not a EventVisitorList.  We
-therefore use the <a
-href="./dfs_visitor.html"><tt>dfs_visitor</tt></a> adaptor which turns
-an EventVisitor list into a DFSVisitor. Like all of the visitor
-adaptors, <tt>dfs_visitor</tt> has a creation function called
-<tt>make_dfs_visitor()</tt>.
-
-<pre>
-make_dfs_visitor(std::make_pair(open_paren(), close_paren()))
-</pre>
-
-Now we can pass the resulting visitor object into
-<tt>depth_first_search()</tt> as follows.
-
-<pre>
-  // graph object G is created ...
-
-  std::vector&lt;default_color_type&gt; color(num_vertices(G));
-
-  depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), close_paren())),
-		     color.begin());
-</pre>
 
 <h3>Refinement of</h3>
 
@@ -210,8 +144,8 @@ either a vertex or edge descriptor of the graph.
 
 <h3>See Also</h3>
 
+<a href="./EventVisitorList.html">EventVisitorList</a>,
 <a href="./visitor_concepts.html">Visitor concepts</a>
-
 
 <br>
 <HR>

@@ -94,21 +94,19 @@ the value of the properties can be given.
 <table border>
 
 <tr>
-<td>Add Edge with Property Data </td>
-<TD><TT>add_edge(g, u, v, ep)</TT></TD>
-<TD><TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
+<TD><TT>add_edge(g,&nbsp;u,&nbsp;v,&nbsp;ep)</TT></TD>
 <TD>Inserts the edge <i>(u,v)</i> into the graph, and
-copies object <TT>ep</TT> into the property plugin for that edge.</TD>
+copies object <TT>ep</TT> into the property plugin for that edge.<br>
+Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
 </TR>
 
 <tr>
-<td>Add Vertex with Property Data </td>
-<TD><TT>add_vertex(g, vp)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
+<TD><TT>add_vertex(g,&nbsp;vp)</TT></TD>
 <TD>
 Add a new vertex to the graph and copy <TT>vp</TT> into the property
 plugin for the new vertex. The <TT>vertex_descriptor</TT> for the new
-vertex is returned.
+vertex is returned.<br>
+Return type: <TT>vertex_descriptor</TT>
 </TD>
 </TR>
 
@@ -121,9 +119,7 @@ vertex is returned.
 <LI><TT>adjacency_list</TT></LI>
 </UL>
 
-<H3><A NAME="SECTION0012112500000000000000">
-<I>Concept Checking Class</I></A>
-</H3>
+<H3>Concept Checking Class</H3>
 
 <P>
 <PRE>

@@ -65,13 +65,13 @@ namespace boost {
   }
 
   // Variant (2)
-  template <class VertexListGraph, class DFSVisitor, class ColorPA>
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
   void
-  depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorPA color)
+  depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
     REQUIRE2(DFSVisitor, VertexListGraph, DFSVisitor);
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    typename property_traits<ColorPA>::value_type c = get(color, Vertex());
+    typename property_traits<ColorMap>::value_type c = get(color, Vertex());
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
@@ -85,14 +85,14 @@ namespace boost {
       }
   }
 
-  template <class IncidenceGraph, class DFSVisitor, class ColorPA>
+  template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit(IncidenceGraph& g,
 	    typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-	    DFSVisitor& vis, ColorPA color)
+	    DFSVisitor& vis, ColorMap color)
   {
     REQUIRE(IncidenceGraph, IncidenceGraph);
     REQUIRE2(DFSVisitor, IncidenceGraph, DFSVisitor);
-    typename property_traits<ColorPA>::value_type c = get(color, u);
+    typename property_traits<ColorMap>::value_type c = get(color, u);
 
     put(color, u, gray(c));
     vis.discover_vertex(u, g);

@@ -95,19 +95,19 @@ namespace boost {
   }
 
   // Variant (2)
-  template <class EdgeListGraph, class Size, class WeightPA, class DistancePA,
+  template <class EdgeListGraph, class Size, class WeightMap, class DistanceMap,
             class BellmanFordVisitor>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
-                                   WeightPA weight, DistancePA distance, 
+                                   WeightMap weight, DistanceMap distance, 
 				   BellmanFordVisitor v)
   {
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
       Vertex;
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
-    typedef typename property_traits<DistancePA>::value_type D_value;
-    typedef typename property_traits<WeightPA>::value_type W_value;
+    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
+    typedef typename property_traits<DistanceMap>::value_type D_value;
+    typedef typename property_traits<WeightMap>::value_type W_value;
     REQUIRE(D_value, LessThanComparable);
     REQUIRE3(D_value, D_value, W_value, _OP_PLUS);
     std::plus<D_value> combine;
@@ -117,11 +117,11 @@ namespace boost {
   }
 
   // Variant (3)
-  template <class EdgeListGraph, class Size, class WeightPA, class DistancePA,
+  template <class EdgeListGraph, class Size, class WeightMap, class DistanceMap,
             class BinaryFunction, class BinaryPredicate,
             class BellmanFordVisitor>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
-                                   WeightPA weight, DistancePA distance, 
+                                   WeightMap weight, DistanceMap distance, 
 				   BinaryFunction combine, 
 				   BinaryPredicate compare,
 				   BellmanFordVisitor v)
@@ -129,10 +129,10 @@ namespace boost {
     REQUIRE(EdgeListGraph, EdgeListGraph);
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor Vertex;
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
-    typedef typename property_traits<DistancePA>::value_type D_value;
-    typedef typename property_traits<WeightPA>::value_type W_value;
+    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
+    typedef typename property_traits<DistanceMap>::value_type D_value;
+    typedef typename property_traits<WeightMap>::value_type W_value;
 
     typename graph_traits<EdgeListGraph>::edge_iterator i, end;
     

@@ -30,14 +30,21 @@
 
 namespace boost {
 
-  typedef short default_color_type;
-  default_color_type white_color = 0;
-  default_color_type gray_color = 1;
-  default_color_type black_color = -1;
+  enum default_color_type { white_color, gray_color, black_color };
 
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
   inline default_color_type black(default_color_type) { return black_color; }
+
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+  template <>
+  struct property_traits<default_color_type*> {
+    typedef default_color_type value_type;
+    typedef std::ptrdiff_t key_type;
+    typedef lvalue_property_map_tag;
+  };
+  // get/put already defined for T*
+#endif
 
   namespace detail {
     // These enum's are only necessary for a workaround for compilers that

@@ -53,9 +53,9 @@ main(int,char*[])
     REQUIRE3(Graph, Vertex, vertex_color, PropertyGraph);
     REQUIRE3(Graph, Edge, edge_weight, PropertyGraph);
     // the builtin id property is readable but not writable
-    typedef property_map<Graph, vertex_index>::const_type ID_PA;
+    typedef property_map<Graph, vertex_index>::const_type IndexMap;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
+    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
@@ -70,9 +70,9 @@ main(int,char*[])
     REQUIRE3(Graph, Vertex, vertex_color, PropertyGraph);
     REQUIRE3(Graph, Edge, edge_weight, PropertyGraph);
     // the builtin id property is readable but not writable
-    typedef property_map<Graph, vertex_index>::const_type ID_PA;
+    typedef property_map<Graph, vertex_index>::const_type IndexMap;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
+    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
   }
   {
     typedef adjacency_list< listS, listS, directedS, 

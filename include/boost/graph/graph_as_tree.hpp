@@ -63,7 +63,7 @@ namespace boost {
   };
   
   
-  template <class Graph, class ParentPA
+  template <class Graph, class ParentMap
           , class Node 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
              = typename graph_traits<Graph>::vertex_descriptor
@@ -75,20 +75,20 @@ namespace boost {
            >
   class graph_as_tree
     : public graph_as_tree_base<Graph, Node, ChIt, 
-	    graph_as_tree<Graph,ParentPA,Node,ChIt> >
+	    graph_as_tree<Graph,ParentMap,Node,ChIt> >
   {
     typedef graph_as_tree self;
     typedef graph_as_tree_base<Graph, Node, ChIt, self> super;
   public:
     graph_as_tree(Graph& g, Node root) : super(g, root) {  }
     
-    graph_as_tree(Graph& g, Node root, ParentPA p) : super(g, root), _p(p) { 
+    graph_as_tree(Graph& g, Node root, ParentMap p) : super(g, root), _p(p) { 
     std::vector<default_color_type> color(num_vertices(g));
     breadth_first_search(g, root, visit_predecessor(p), color.begin());
     }
-    ParentPA parent_pa() const { return _p; }
+    ParentMap parent_pa() const { return _p; }
   protected:
-    ParentPA _p;
+    ParentMap _p;
   };
   
 

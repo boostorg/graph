@@ -44,12 +44,12 @@ namespace boost {
   }
 
   // Variant (2)
-  template <class VertexListGraph, class DistancePA>
+  template <class VertexListGraph, class DistanceMap>
   inline void
   dijkstra_shortest_paths
     (VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-     DistancePA d)
+     DistanceMap d)
   {
     null_visitor null_vis;
     dijkstra_shortest_paths(g, s, d,
@@ -60,12 +60,12 @@ namespace boost {
   }
 
   // Variant (3)
-  template <class VertexListGraph, class DistancePA, class UniformCostVisitor>
+  template <class VertexListGraph, class DistanceMap, class UniformCostVisitor>
   inline void
   dijkstra_shortest_paths
     (VertexListGraph& g, 
      typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-     DistancePA d, UniformCostVisitor visit)
+     DistanceMap d, UniformCostVisitor visit)
   {
     dijkstra_shortest_paths(g, s, d, 
                             get(edge_weight(), g),
@@ -76,16 +76,16 @@ namespace boost {
 
   // Variant (4)
   template <class VertexListGraph, class UniformCostVisitor, 
-            class DistancePA, class WeightPA, class ColorPA, class ID_PA>
+            class DistanceMap, class WeightMap, class ColorMap, class IndexMap>
   inline void
   dijkstra_shortest_paths
     (VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-     DistancePA distance, WeightPA weight, ColorPA color, ID_PA id,
+     DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
      UniformCostVisitor vis)
   {
-    typedef typename property_traits<DistancePA>::value_type D;
-    typedef typename property_traits<WeightPA>::value_type W;
+    typedef typename property_traits<DistanceMap>::value_type D;
+    typedef typename property_traits<WeightMap>::value_type W;
     std::less<D> compare;
     std::plus<W> combine;
 

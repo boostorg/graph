@@ -47,16 +47,16 @@
     BFSVisitor vis);
 
   (2)
-  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorPMap">ColorPMap</a>&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-    BFSVisitor vis, ColorPMap color);
+    BFSVisitor vis, ColorMap color);
 
   (3)
-  template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorPMap">ColorPMap</a>&gt;
+  template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-    Buffer& Q, BFSVisitor vis, ColorPMap color)
+    Buffer& Q, BFSVisitor vis, ColorMap color)
 </PRE>
 
 <P>
@@ -76,15 +76,25 @@ used in a wide variety of places.  The way to customize the BFS
 algorithm to perform different operations is to supply a visitor,
 which is a function object with multiple functions. Each member
 function of the visitor gets invoked at special times during the
-algorithm. Also, visitors can be layered on top of each other so that
-one can do lots of things during a single run of BFS. See the <a
-href="./bfs_visitor.html">bfs_visitor</a> class and the <A
-HREF="./EventVisitor.html">EventVisitor</A> concept for more details.
+algorithm as specified by <a
+href="./BFSVisitor.html">BFSVisitor</a>. Also, visitors can be layered
+on top of each other so that one can do lots of things during a single
+run of BFS. See the <a href="./bfs_visitor.html">bfs_visitor</a> class
+and the <A HREF="./EventVisitor.html">EventVisitor</A> concept for
+more details.
 
 <P>
 Another way to customize the BFS algorithm is change the type of queue
 used. For instance, <TT>dijkstra_shortest_paths()</TT> uses a priority
 queue.
+
+<p>
+The <tt>ColorMap</tt> is used by BFS to keep track of which vertices
+have been visited. At the beginning of the algorithm all vertices are
+white. As the algorithm proceeds, vertices are colored gray as they
+are inserted into the queue, and then colored black when they are
+finished and removed from queue.
+
 
 <P>
 Version 1 of the algorithm takes only three arguments: the graph
@@ -99,14 +109,12 @@ accommodate the use of an external property map.
 
 <P>
 Version 3 of the algorithm is the most generalized. It adds a
-parameter for the queue. Version 1 and 2 of
-<TT>breadth_first_search()</TT> are implemented using this generalized
-version. This version does not initialize the color of all the
-vertices to white at the start of the algorithm or invoke the
-<tt>initialize_vertex()</tt> visitor method.
+parameter for the queue. This version does not initialize the color of
+all the vertices to white at the start of the algorithm or invoke the
+<tt>initialize_vertex()</tt> visitor method, so that must be taken
+care of before calling this versin of <tt>breadth_first_search()</tt>.
 
 <P>
-
 
 <H3>Where Defined</H3>
 
@@ -124,16 +132,15 @@ vertices to white at the start of the algorithm or invoke the
 </LI>
 <LI>The type <TT>VertexListGraph</TT> must be a model of <a href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
-<LI>The type <TT>Vertex</TT> must be convertible to type <TT>graph_traits&lt;VertexListGraph&gt;::vertex_descriptor</TT>.
-</LI>
 <LI>The type <TT>BFSVisitor</TT> must be a model of <a href="./BFSVisitor.html">BFSVisitor</a>.
 </LI>
 <LI>In version (1) of the algorithm the graph must be a model
-    of <a href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for <TT>vertex_color</TT> and
+    of <a href="./PropertyGraph.html">PropertyGraph</a> for
+    <TT>vertex_color</TT> and
     the color property map for the graph must meet the
-    same requirements as <TT>ColorPMap</TT>.
+    same requirements as <TT>ColorMap</TT>.
 </LI>
-<LI><a name="ColorPMap">The type <TT>ColorPMap</TT> must be a model of <a
+<LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of <a
    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>.
    A vertex descriptor must be usable as the key type of the map,
    and the value type of the map must be a model of <a

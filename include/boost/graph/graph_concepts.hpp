@@ -256,26 +256,26 @@ namespace boost {
   template <class G, class X, class Property>
   struct PropertyGraph_concept
   {
-    typedef typename property_map<G, Property>::type PMap;
-    typedef typename property_map<G, Property>::const_type const_PMap;
+    typedef typename property_map<G, Property>::type Map;
+    typedef typename property_map<G, Property>::const_type const_Map;
     void constraints() {
       REQUIRE(G, Graph);
-      REQUIRE2(PMap, X, ReadWritePropertyMap);
-      REQUIRE2(const_PMap, X, ReadablePropertyMap);
+      REQUIRE2(Map, X, ReadWritePropertyMap);
+      REQUIRE2(const_Map, X, ReadablePropertyMap);
 
-      PMap pmap = get(Property(), g);
+      Map pmap = get(Property(), g);
       pval = get(Property(), g, x);
       put(Property(), g, x, pval);
       ignore_unused_variable_warning(pmap);
     }
     void const_constraints(const G& g) {
-      const_PMap pmap = get(Property(), g);
+      const_Map pmap = get(Property(), g);
       pval = get(Property(), g, x);
       ignore_unused_variable_warning(pmap);
     }
     G g;
     X x;
-    typename property_traits<PMap>::value_type pval;
+    typename property_traits<Map>::value_type pval;
   };
 
   // This needs to move out of the graph library

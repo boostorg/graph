@@ -119,13 +119,13 @@ int main(int argc, char* argv[]) {
 
   boost::add_edge(G, 6, 8, 9);
 
-  typedef boost::property_map<Graph, boost::edge_index>::type EdgeID_PA;
-  EdgeID_PA edge_id = boost::get_map(boost::edge_index(), G);
+  typedef boost::property_map<Graph, boost::edge_index>::type EdgeIndexMap;
+  EdgeIndexMap edge_id = boost::get(boost::edge_index(), G);
 
   typedef boost::random_access_iterator_property_map
-    <int*, int, int&, EdgeID_PA> RA_PA;
+    <int*, int, int&, EdgeIndexMap> IterMap;
 
-  print_network(G, RA_PA(capacity, edge_id), RA_PA(flow, edge_id));
+  print_network(G, IterMap(capacity, edge_id), IterMap(flow, edge_id));
           
   return 0;
 }

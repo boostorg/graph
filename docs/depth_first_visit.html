@@ -50,17 +50,27 @@
 
 <P>
 <PRE>
-template &lt;class IncidenceGraph, class DFSVisitor, class ColorPMap&gt;
+template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./DFSVisitor.html">DFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
 void depth_first_visit(IncidenceGraph& g,
-	               typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor u, 
-	               DFSVisitor&amp; vis, ColorPMap color)
+  typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+  DFSVisitor&amp; vis, ColorMap color)
 </PRE>
 
 <P>
-This function is the recursive part of the depth-first search.  The
-main purpose of the function is for the implementation of
-<TT>depth_first_search()</TT> though sometimes it is useful on its
-own. 
+This function visits all of the vertices in the same connected
+component as the source vertex <tt>s</tt>, using the <a
+href="./graph_theory_review.html#sec:dfs-algorithm">depth-first
+pattern</a>. The main purpose of the function is for the
+implementation of <TT>depth_first_search()</TT> though sometimes it is
+useful on its own. 
+
+<p>
+The <tt>DFSVisitor</tt> supplied by the user determines what
+actions are taken at each event-point within the algorithm.
+
+<p>
+The <tt>ColorMap</tt> is used by the algorithm to keep track
+of which vertices have been visited.
 
 <P>
 
@@ -75,10 +85,11 @@ own.
 <LI>The type <TT>DFSVisitor</TT> must be a model of <a
 href="./DFSVisitor.html">DFSVisitor</a>.
 </LI>
-<LI>The type <TT>ColorPMap</TT> must be a model of <a
-     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, and the value type of <TT>Color</TT> must be a model of
-     <a href="./ColorValue.html">ColorValue</a>.
+<LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The key type of <tt>ColorMap</tt> must be the vertex descriptor type for the graph and the value type of <TT>ColorMap</TT> must be a model of
+     <a href="./ColorValue.html">ColorValue</a>.</a>
 </LI>
+
 </UL>
 
 <P>

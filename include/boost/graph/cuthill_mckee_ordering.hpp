@@ -54,7 +54,7 @@ namespace boost {
   //   int eccentricity() const;
   //   value_type spouse() const;
   // 
-  template < class Vertex, class DegreePA,
+  template < class Vertex, class DegreeMap,
              class Container = std::deque<Vertex> >
   class rcm_queue : public std::queue<Vertex, Container> {
     typedef std::queue<Vertex> base;
@@ -63,7 +63,7 @@ namespace boost {
     typedef typename base::size_type size_type;
 
     /* SGI queue has not had a contructor queue(const Container&) */
-    inline rcm_queue(DegreePA deg)
+    inline rcm_queue(DegreeMap deg)
       : _size(0), Qsize(1), eccen(-1), degree(deg) { }
     
     inline void pop() {
@@ -109,7 +109,7 @@ namespace boost {
     size_type Qsize;
     int eccen;
     mutable value_type w;
-    DegreePA degree;
+    DegreeMap degree;
   };
   
   // Compute Pseudo peripheral

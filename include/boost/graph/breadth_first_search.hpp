@@ -65,14 +65,14 @@ namespace boost {
   }
 
   // Variant (2)
-  template <class VertexListGraph, class BFSVisitor, class ColorPA>
+  template <class VertexListGraph, class BFSVisitor, class ColorMap>
   inline void breadth_first_search(VertexListGraph& g,
     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-    BFSVisitor vis, ColorPA color)
+    BFSVisitor vis, ColorMap color)
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     boost::queue<Vertex> Q;
-    typename property_traits<ColorPA>::value_type c = get(color, s);
+    typename property_traits<ColorMap>::value_type c = get(color, s);
 
     typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
@@ -84,17 +84,17 @@ namespace boost {
 
   // Variant (3)
   template <class IncidenceGraph, class Buffer, class BFSVisitor, 
-            class ColorPA>
+            class ColorMap>
   inline void breadth_first_search(IncidenceGraph& g, 
     typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
-    Buffer& Q, BFSVisitor vis, ColorPA color)
+    Buffer& Q, BFSVisitor vis, ColorMap color)
   {
     REQUIRE(IncidenceGraph, IncidenceGraph);
     typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
     typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
     REQUIRE2(BFSVisitor, IncidenceGraph, BFSVisitor);
-    REQUIRE2(ColorPA, Vertex, ReadWritePropertyMap);
-    typename property_traits<ColorPA>::value_type c = get(color, s);
+    REQUIRE2(ColorMap, Vertex, ReadWritePropertyMap);
+    typename property_traits<ColorMap>::value_type c = get(color, s);
 
     put(color, s, gray(c));
     vis.start_vertex(s, g);

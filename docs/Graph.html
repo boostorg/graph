@@ -52,9 +52,7 @@ so algorithms should pass graph objects by reference.
 
 <table border>
 <tr>
-<td>Vertex Descriptor Type </td>
-<td><TT>boost::graph_traits&lt;G&gt;::vertex_descriptor</TT></td> 
-<td>
+<td><pre>boost::graph_traits&lt;G&gt;::vertex_descriptor</pre>
 A vertex descriptor corresponds to a unique vertex in an abstract
 graph instance. A vertex descriptor must be
 <a
@@ -65,9 +63,7 @@ href="http://www.sgi.com/Technology/STL/DefaultConstructible.html">DefaultConstr
 </tr>
 
 <tr>
-<td>Edge Descriptor Type</td>
-<td><TT>boost::graph_traits&lt;G&gt;::edge_descriptor</TT></td> 
-<td>
+<td><pre>boost::graph_traits&lt;G&gt;::edge_descriptor</pre>
 An edge descriptor corresponds to a unique edge <i>(u,v)</i> in a
 graph.  An edge descriptor must be <a
 href="http://www.sgi.com/Technology/STL/DefaultConstructible.html">DefaultConstructible</I>,
@@ -78,17 +74,13 @@ and <a href="http://www.sgi.com/Technology/STL/EqualityComparable.html">Equality
 </tr>
 
 <tr>
-<td>Directed Category</td>
-<td><TT>boost::graph_traits&lt;G&gt;::directed_category</TT></td> 
-<td>
+<td><pre>boost::graph_traits&lt;G&gt;::directed_category</pre>
 The choices are <TT>directed_tag</TT> and <TT>undirected_tag</TT>.
 </td>
 </tr>
 
 <tr>
-<td>Parallel Edges</td>
-<td><TT>boost::graph_traits&lt;G&gt;::edge_parallel_category</TT></td> 
-<td>
+<td><pre>boost::graph_traits&lt;G&gt;::edge_parallel_category</pre>
 This describes whether the graph class allows the insertion of
 parallel edges (edges with the same source and target). The two tags
 are <TT>allow_parallel_edge_tag</TT> and <TT>disallow_parallel_edge_tag</TT>.

@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.13  2000/09/24 20:51:16  jsiek
+// PA -> Map name change and documentation cleanup/additions
+//
 // Revision 1.12  2000/09/24 00:41:39  jsiek
 // VC++ fixes
 //
@@ -1084,13 +1087,6 @@ namespace boost {
     }
     template <class Config, class Base, class Property>
     inline
-    typename boost::property_map<typename Config::graph_type, Property>::type
-    get_map(Property p, adj_list_helper<Config, Base>& g) {
-      typedef typename Property::kind Kind;
-      return detail::get_dispatch(g, p, Kind());
-    }
-    template <class Config, class Base, class Property>
-    inline
     typename boost::property_map<typename Config::graph_type, 
       Property>::const_type
     get(Property p, const adj_list_helper<Config, Base>& g) {
@@ -1114,8 +1110,8 @@ namespace boost {
 	const Key& key, const Value& value)
     {
       typedef typename Config::graph_type Graph;
-      typedef typename boost::property_map<Graph, Property>::type PMap;
-      PMap pmap = get(p, g);
+      typedef typename boost::property_map<Graph, Property>::type Map;
+      Map pmap = get(p, g);
       put(pmap, key, value);
     }
 

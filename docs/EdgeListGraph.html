@@ -34,14 +34,32 @@ edges in the graph.
 <a href="./Graph.html">Graph</a>
 
 
+<h3>Notation</h3>
+
+<Table>
+<TR>
+<TD><tt>G</tt></TD>
+<TD>A type that is a model of EdgeListGraph.</TD>
+</TR>
+
+<TR>
+<TD><tt>g</tt></TD>
+<TD>An object of type <tt>G</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>e</tt></TD>
+<TD>An object of type <tt>boost::graph_traits&lt;G&gt;::edge_descriptor</tt>.</TD>
+</TR>
+
+</table>
+
 <H3>Associated Types</H3>
 
 <table border>
 
 <tr>
-<td>Edge Iterator Type </td>
-<td><TT>boost::graph_traits&lt;G&gt;::edge_iterator</TT></td> 
-<td>
+<td><pre>boost::graph_traits&lt;G&gt;::edge_iterator</pre>
 An edge iterator (obtained via <TT>edges(g)</TT>) provides access to
 all of the edges in a graph. An edge iterator type must meet the
 requirements of <a
@@ -50,11 +68,9 @@ value type of the edge iterator must be the same as the edge
 descriptor of the graph.
 
 <tr>
-<td>Edges Size Type </td>
-<td><TT>boost::graph_traits&lt;G&gt;::edges_size_type</TT></td>
-<td>
-The unsigned integer type used to represent the number of edges
-    in the graph.
+<td><pre>boost::graph_traits&lt;G&gt;::edges_size_type</pre>
+The unsigned integer type used to represent the number of edges in the
+graph.
 </td>
 </tr>
 
@@ -65,36 +81,35 @@ The unsigned integer type used to represent the number of edges
 <table border>
 
 <tr>
-<td>Edge Set of the Graph </td>
 <TD><TT>edges(g)</TT></TD>
-<TD><TT>std::pair&lt;edge_iterator, edge_iterator&gt;</TT></TD>
 <TD>Returns an iterator-range providing access to all
-     the edges in the graph <TT>g</TT>.</TD>
+     the edges in the graph <TT>g</TT>.<br>
+Return type: <TT>std::pair&lt;edge_iterator, edge_iterator&gt;</TT>
+</td>
 </TR>
 
 <tr>
-<td>Number of Edges in the Graph </td>
 <TD><TT>num_edges(g)</TT></TD>
-<TD><TT>edges_size_type</TT></TD>
-<TD>Returns the number of edges in the graph <TT>g</TT>.</TD>
+<TD>Returns the number of edges in the graph <TT>g</TT>.<br>
+Return type: <TT>edges_size_type</TT>
+</td>
 </TR>
 
 <tr>
-<td>Source Vertex of an Edge </td>
 <TD><TT>source(e, g)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
 <TD>
 Returns the vertex descriptor for <i>u</i> of the edge <i>(u,v)</i>
-represented by <TT>e</TT>.
-</TD>
+represented by <TT>e</TT>.<br>
+Return type: <TT>vertex_descriptor</TT>
+</td>
+</tr>
 
 <tr>
-<td>Target Vertex of an Edge </td>
 <TD><TT>target(e, g)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
 <TD>
 Returns the vertex descriptor for 
-<i>v</i> of the edge <i>(u,v)</i> represented by  <TT>e</TT>.
+<i>v</i> of the edge <i>(u,v)</i> represented by  <TT>e</TT>.<br>
+Return type: <TT>vertex_descriptor</TT>
 </TD>
 </TR>
 
@@ -104,8 +119,8 @@ Returns the vertex descriptor for
 <H3>Models</H3>
 
 <UL>
-<LI><TT>adjacency_list</TT></LI>
-<LI><TT>edge_list</TT></LI>
+<LI><a href="./adjacency_list.html"><TT>adjacency_list</TT></a></LI>
+<LI><a href="./edge_list.html"><TT>edge_list</TT></a></LI>
 </UL>
 
 

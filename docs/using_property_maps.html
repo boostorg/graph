@@ -267,11 +267,11 @@ the flow and capacity values.
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_PMap;
-  EdgeID_PMap edge_id = get(edge_index(), G);
+  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_Map;
+  EdgeID_Map edge_id = get(edge_index(), G);
 
   boost::random_access_iterator_property_map
-    &lt;int*, int, int&amp;, EdgeID_PMap&gt; 
+    &lt;int*, int, int&amp;, EdgeID_Map&gt; 
       capacity(capacity_array, edge_id), 
       flow(flow_array, edge_id);
 
@@ -390,14 +390,14 @@ Constructing an Exterior Property Map
 
 <P>
 Implementing your own exterior property maps is not very
-difficult. You simply need to overload the three functions
-<TT>put()</TT>, <TT>get()</TT>, and <TT>at()</TT> (or just the <TT>put()</TT>
-and <TT>get()</TT> functions if your property map is not going to
-be an <I>LvaluePropertyMap</I>), and create a specialization
-of <TT>property_traits</TT> for your new property map type.
-Instead of specializing <TT>property_traits</TT>, you can also provide
-the three typedefs as nested types in your new property map
-class.
+difficult. You simply need to overload the functions required by the
+<a href="../property_map/property_map.html">property map concept</a>
+that you want your class to model. At most, this means overloading the
+<TT>put()</TT> and <TT>get()</TT> functions and implementing
+<TT>operator[]</TT>. Also, your property map class will need to have
+nested typedefs for all the types defined in <TT>property_traits</TT>,
+or you can create a specialization of <TT>property_traits</TT> for
+your new property map type.
 
 <P>
 The implementation of the
@@ -408,11 +408,11 @@ map. Here we present a simplified implementation of the
 which we will name <TT>iterator_pa</TT>.
 
 <P>
-We start with the definition of the <TT>iterator_pa</TT> class
+We start with the definition of the <TT>iterator_map</TT> class
 itself. This adaptor class is templated on the adapted <TT>Iterator</TT>
 type and the ID property map. The job of the ID property map
 is to map the key object (which will typically be a vertex or edge
-descriptor) to an integer offset. The <TT>iterator_pa</TT> class will
+descriptor) to an integer offset. The <TT>iterator_map</TT> class will
 need the three necessary typedefs for a property map:
 <TT>key_type</TT>, <TT>value_type</TT>, and <TT>category</TT>. We can use
 <TT>property_traits</TT> to find the key type of <TT>IDMap</TT>, and
@@ -424,14 +424,14 @@ since we plan on implementing the <TT>at()</TT> function.
 <P>
 <PRE>
   template &lt;class Iterator, class IDMap&gt;
-  class iterator_pa
+  class iterator_map
   {
   public:
     typedef typename boost::property_traits&lt;IDMap&gt;::key_type key_type; 
     typedef typename std::iterator_traits&lt;Iterator&gt;::value_type value_type;
     typedef boost::lvalue_property_map_tag category;
 
-    iterator_pa(Iterator i = Iterator(), 
+    iterator_map(Iterator i = Iterator(), 
                 const IDMap&amp; id = IDMap()) 
       : m_iter(i), m_id(id) { }
     Iterator m_iter;
@@ -450,14 +450,14 @@ to the random access iterator <TT>m_iter</TT>.
 <PRE>
   template &lt;class Iter, class ID&gt;
   typename std::iterator_traits&lt;Iter&gt;::value_type
-  get(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+  get(const iterator_map&lt;Iter,ID&gt;&amp; i,
       typename boost::property_traits&lt;ID&gt;::key_type key)
   {
     return i.m_iter[i.m_id[key]];
   }
   template &lt;class Iter, class ID&gt;
   void
-  put(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+  put(const iterator_map&lt;Iter,ID&gt;&amp; i,
       typename boost::property_traits&lt;ID&gt;::key_type key,
       const typename std::iterator_traits&lt;Iter&gt;::value_type&amp; value)
   {
@@ -465,7 +465,7 @@ to the random access iterator <TT>m_iter</TT>.
   }
   template &lt;class Iter, class ID&gt;
   typename std::iterator_traits&lt;Iter&gt;::reference
-  at(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+  at(const iterator_map&lt;Iter,ID&gt;&amp; i,
       typename boost::property_traits&lt;ID&gt;::key_type key)
   {
     return i.m_iter[i.m_id[key]];
@@ -473,7 +473,7 @@ to the random access iterator <TT>m_iter</TT>.
 </PRE>
 
 <P>
-That is it. The <TT>iterator_pa</TT> class is complete and could be
+That is it. The <TT>iterator_map</TT> class is complete and could be
 used just like the
 <TT>random_access_iterator_property_map</TT> in the
 previous section.

@@ -62,9 +62,7 @@ vertices, whereas in other contexts the edges are also important.
 <Table border>
 
 <TR>
-<TD>Adjacency Iterator Type </TD>
-<TD><TT>boost::graph_traits&lt;G&gt;::adjacency_iterator</TT></TD>
-<TD>
+<TD><pre>boost::graph_traits&lt;G&gt;::adjacency_iterator</pre>
 An adjacency iterator for a vertex <i>v</i> provides access to the
 vertices adjacent to <i>v</i>.  As such, the value type of an
 adjacency iterator is the vertex descriptor type of its graph. An
@@ -81,16 +79,11 @@ href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 <table border>
 
 <tr>
-<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
-</tr>
-
-<tr>
-<td>Adjacent Vertices </td>
-<td><TT>adjacent_vertices(v, g)</TT></TD>
-<TD><TT>std::pair&lt;adjacency_iterator, adjacency_iterator&gt;</TT></TD>
+<td><TT>adjacent_vertices(v,&nbsp;g)</TT></TD>
 <TD>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <TT>v</TT> in graph <TT>g</TT>. <a href="#1">[1]</a>
+vertex <TT>v</TT> in graph <TT>g</TT>. <a href="#1">[1]</a><br>
+Return type: <TT>std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;</TT>
 </TD>
 </TR>
 

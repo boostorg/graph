@@ -57,9 +57,9 @@ void topological_sort(VertexListGraph&amp; G, OutputIterator iter,
 
 (3)
 template &lt;class VertexListGraph, class OutputIterator, 
-          class ColorPMap, class DFSVisitor&gt;
+          class ColorMap, class DFSVisitor&gt;
 void topological_sort(VertexListGraph&amp; G, OutputIterator iter, 
-                      ColorPMap color, DFSVisitor visit)
+                      ColorMap color, DFSVisitor visit)
 </PRE>
 
 <P>
@@ -86,7 +86,7 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
 <LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
 </LI>
-<LI>The <TT>ColorPMap</TT> must be a <a
+<LI>The <TT>ColorMap</TT> must be a <a
     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
     and vertex descriptors from the graph must be usable as the
     map's key type.

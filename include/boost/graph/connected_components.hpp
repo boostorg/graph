@@ -74,12 +74,12 @@ namespace boost {
     comp_type& m_count;
   };
 
-  template <class DiscoverTimePA, class FinishTimePA, class TimeT, 
+  template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
     class DFSVisitor>
   class time_recorder : public DFSVisitor
   {
   public:
-    time_recorder(DiscoverTimePA d, FinishTimePA f, TimeT& t, DFSVisitor v)
+    time_recorder(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor v)
       : DFSVisitor(v), m_discover_time(d), m_finish_time(f), m_t(t) {}
 
     template <class Vertex, class Graph>
@@ -93,15 +93,15 @@ namespace boost {
       DFSVisitor::discover_vertex(u, g);
     }
   protected:
-    DiscoverTimePA m_discover_time;
-    FinishTimePA m_finish_time;
+    DiscoverTimeMap m_discover_time;
+    FinishTimeMap m_finish_time;
     TimeT m_t;
   };
-  template <class DiscoverTimePA, class FinishTimePA, class TimeT, 
+  template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
     class DFSVisitor>
-  time_recorder<DiscoverTimePA, FinishTimePA, TimeT, DFSVisitor>
-  record_times(DiscoverTimePA d, FinishTimePA f, TimeT& t, DFSVisitor vis) {
-    return time_recorder<DiscoverTimePA, FinishTimePA, TimeT, DFSVisitor>
+  time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
+  record_times(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor vis) {
+    return time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
       (d, f, t, vis);
   }
 

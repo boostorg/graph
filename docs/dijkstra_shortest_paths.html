@@ -30,7 +30,7 @@
 <TD ALIGN="LEFT">directed or undirected</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">color, distance, weight, vertex ID</TD>
+<TD ALIGN="LEFT">color, distance, weight, vertex index</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT"><i>O((V + E) log V)</i>
@@ -47,33 +47,33 @@
 <P>
 <PRE>
 (1)
-template &lt;class VertexListGraph&gt;
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g,
-                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s);
+  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s);
 
 (2)
-template &lt;class VertexListGraph, class DistancePMap&gt;
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="#DistanceMap">DistanceMap</a>&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g,
-                       typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                       DistancePMap d);
+  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+  DistanceMap d);
 
 (3)
-template &lt;class VertexListGraph, class DistancePMap, class UniformCostVisitor&gt;
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="#DistanceMap">DistanceMap</a>, class <a href="./UniformCostVisitor.html">UniformCostVisitor</a>&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g, 
-                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                        DistancePMap d, UniformCostVisitor visit);
+  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+  DistanceMap d, UniformCostVisitor visit);
 
 (4)
-template &lt;class VertexListGraph, class UniformCostVisitor, 
-          class DistancePMap, class WeightPMap, class ColorPMap, class VertexID_PMap&gt;
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./UniformCostVisitor.html">UniformCostVisitor</a>, 
+          class <a href="#DistanceMap">DistanceMap</a>, class <a href="#WeightMap">WeightMap</a>, class <a href="#ColorMap">ColorMap</a>, class <a href="#VertexIndexMap">VertexIndexMap</a>&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g,
-                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                        DistancePMap distance, WeightPMap weight, ColorPMap color, VertexID_PMap id,
-                        UniformCostVisitor vis);
+  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+  DistanceMap distance, WeightMap weight, ColorMap color, VertexIndexMap id,
+  UniformCostVisitor vis);
 </PRE>
 
 <P>
@@ -82,7 +82,7 @@ This is the modified Dijkstra algorithm&nbsp;[<A
  HREF="bibliography.html#clr90">8</A>] which solves the single-source
  shortest-paths problem on a weighted, directed graph for the case
  where all edge weights are nonnegative.  See Section <A
- HREF="#sec:shortest-path-algorithms">Shortest-Paths Algorithms</A>
+ HREF="graph_theory_review.html#sec:shortest-path-algorithms">Shortest-Paths Algorithms</A>
  for some background to the shortest-path problem. The priority queue
  used inside the algorithm is implemented with a heap for efficiency.
 
@@ -90,8 +90,9 @@ This is the modified Dijkstra algorithm&nbsp;[<A
 There are four versions of the algorithm to accommodate whether the
 necessary graph properties will be supplied by the graph object or
 externally via a argument to this function. The properties needed by
-the algorithm are distance, weight, and vertex ID. Version 4 of the
-algorithm also includes a visitor argument for added extensibility.
+the algorithm are distance, weight, color, and vertex index. Version 3
+and 4 of the algorithm also include a visitor argument for added
+extensibility.
 
 <P>
 
@@ -104,29 +105,31 @@ algorithm also includes a visitor argument for added extensibility.
 </LI>
 <LI>The type <TT>UniformCostVisitor</TT> must be a model of <a href="./UniformCostVisitor.html">UniformCostVisitor</a>.
 </LI>
-<LI>The type <TT>DistancePMap</TT> must be a model of <a
+<LI><a name="DistanceMap">The type <TT>DistanceMap</TT> must be a model of <a
     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     vertex descriptor type of the graph needs to be usable as the key
     type of the distance map. The value type of the distance
-    map must be <a href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.
+    map must be <a href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.</a>
 </LI>
-<LI>The type <TT>WeightPMap</TT> must be a model of <a
+<LI><a name="WeightMap">The type <TT>WeightMap</TT> must be a model of <a
      href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
      edge descriptor type of the graph needs to be usable as the key
      type for the weight map. The value type for the map
      must be <I>Addable</I> with the value type of the distance
-     map.
+     map.</a>
 </LI>
-<LI>The type <TT>ColorPMap</TT> must be a model of
+<LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of
      <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A vertex descriptor must be
      usable as the key type of the map, and the value type of the
-     map must be a model of <a href="./ColorValue.html">ColorValue</a>.
+     map must be a model of <a href="./ColorValue.html">ColorValue</a>.</a>
 </LI>
-<LI>The type <TT>VertexID_PMap</TT> must be a model of <a
+<LI><a name="VertexIndexMap">The type <TT>VertexIndexMap</TT> must be a model of <a
      href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
-     value type of <TT>VertexID_PMap</TT> must be an integer type. The vertex
+     value type of <TT>VertexIndexMap</TT> must be an integer type. The
+     integers must map vertex descriptors to the integers zero through
+     <tt>num_vertices(g) - 1</tt>. The vertex
      descriptor type of the graph needs to be usable as the key type
-     of the vertex ID map.
+     of the vertex index map.</a>
 </LI>
 </UL>
 

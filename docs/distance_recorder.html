@@ -21,7 +21,7 @@
 
 <H1>
 <pre>
-distance_recorder&lt;DistancePMap, EventTag&gt;
+distance_recorder&lt;DistanceMap, EventTag&gt;
 </pre>
 </H1>
 
@@ -65,7 +65,7 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>DistancePMap</TT></TD>
+<TR><TD><TT>DistanceMap</TT></TD>
 <TD>
 A <a
 href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
@@ -114,7 +114,7 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-distance_recorder(DistancePMap pa);
+distance_recorder(DistanceMap pa);
 </tt></td>
 <td>
 Construct a distance recorder object with distance property map
@@ -143,9 +143,9 @@ one plus the distance of <i>u</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class DistancePMap, class Tag&gt;<br>
-distance_recorder&lt;DistancePMap, Tag&gt; <br>
-record_distances(DistancePMap pa, Tag);
+template &lt;class DistanceMap, class Tag&gt;<br>
+distance_recorder&lt;DistanceMap, Tag&gt; <br>
+record_distances(DistanceMap pa, Tag);
 </tt></td><td>
 A convenient way to create a <tt>distance_recorder</tt>.
 </td></tr>
@@ -178,7 +178,7 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  DistancePMap EventTag EventVisitor map bfs dfs const Siek
+<!--  LocalWords:  DistanceMap EventTag EventVisitor map bfs dfs const Siek
  -->
 <!--  LocalWords:  EventVisitorList WritablePropertyMap Univ Quan
  -->

@@ -66,9 +66,7 @@ edges incident to the vertex.
 <Table border>
 
 <TR>
-<TD>In-Edge Iterator Type</TD>
-<TD><TT>boost::graph_traits&lt;G&gt;::in_edge_iterator</TT></TD>
-<TD>
+<TD><pre>boost::graph_traits&lt;G&gt;::in_edge_iterator</pre>
 An in-edge iterator for a vertex <i>v</i> provides access to the
 in-edges of <i>v</i>.  As such, the value type of an in-edge iterator
 is the edge descriptor type of its graph. An in-edge iterator must
@@ -83,36 +81,31 @@ meet the requirements of <a href="../../utility/MultiPassInputIterator.html">Mul
 <Table border>
 
 <tr>
-<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
-</tr>
-
-<tr>
-<td>In-Edges of a Vertex </td>
 <td><TT>in_edges(v, g)</TT></TD>
-<TD><TT>std::pair&lt;in_edge_iterator, in_edge_iterator&gt;</TT></TD>
-<TD>Returns an iterator-range providing access to the
+<TD>
+Returns an iterator-range providing access to the
 in-edges (for directed graphs) or incident edges (for
-undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.
+undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.<br>
+Return type: <TT>std::pair&lt;in_edge_iterator, in_edge_iterator&gt;</TT>
 </TD>
 </TR>
 
 <tr>
-<td>In-degree of a Vertex</td>
 <TD><TT>in_degree(v, g)</TT></TD>
-<TD><TT>degree_size_type</TT></TD>
-<TD>Returns the number of in-edges (for directed graphs) or the
+<TD>
+Returns the number of in-edges (for directed graphs) or the
 number of incident edges (for undirected graphs) of vertex <TT>v</TT>
-in graph <TT>g</TT>.
+in graph <TT>g</TT>.<br>
+Return type: <TT>degree_size_type</TT>
 </TD>
 </TR>
 
 <tr>
-<td>Degree of a Vertex</td>
 <TD><TT>degree(v, g)</TT></TD>
-<TD><TT>degree_size_type</TT></TD>
 <TD>Returns the number of in-edges plus out-edges (for directed graphs) or the
 number of incident edges (for undirected graphs) of vertex <TT>v</TT>
-in graph <TT>g</TT>.
+in graph <TT>g</TT>.<br>
+Return type: <TT>degree_size_type</TT>
 </TD>
 </TR>
 
@@ -121,8 +114,8 @@ in graph <TT>g</TT>.
 <H3>Models</H3>
 
 <ul>
-<li><tt>adjacency_list</tt> with <tt>Directed=bidirectionalS</tt></li>
-<li><tt>adjacency_list</tt> with <tt>Directed=undirectedS</tt></li>
+<li><a href="./adjacency_list.html"><tt>adjacency_list</tt></a> with <tt>Directed=bidirectionalS</tt></li>
+<li><a href="./adjacency_list.html"><tt>adjacency_list</tt></a> with <tt>Directed=undirectedS</tt></li>
 </ul>
 
 

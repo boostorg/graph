@@ -61,9 +61,8 @@ efficient access to the out-edges of each vertex in the graph.
 <Table border>
 
 <TR>
-<TD>Incidence Iterator Type </TD>
-<TD><TT>boost::graph_traits&lt;G&gt;::out_edge_iterator</TT></TD>
 <TD>
+<pre>boost::graph_traits&lt;G&gt;::out_edge_iterator</pre>
 An out-edge iterator for a vertex <i>v</i> provides access to the
 out-edges of the vertex.  As such, the value type of an out-edge
 iterator is the edge descriptor type of its graph. An out-edge
@@ -73,9 +72,7 @@ href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 </TR>
 
 <TR>
-<TD>Degree Size Type</TD>
-<TD><TT>boost::graph_traits&lt;G&gt;::degree_size_type</TT></TD>
-<TD>
+<TD><pre>boost::graph_traits&lt;G&gt;::degree_size_type</pre>
 The unsigned intergral type used for representing the number
 out-edges or incident edges of a vertex.
 </TD>
@@ -88,40 +85,34 @@ out-edges or incident edges of a vertex.
 <Table border>
 
 <tr>
-<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
-</tr>
-
-<tr>
-<td>Source Vertex</td>
 <td><TT>source(e, g)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
-<TD>Returns the vertex descriptor for <i>u</i> of the edge <i>(u,v)</i> represented by <TT>e</TT>.</TD>
-</TR>
-
-<tr>
-<td>Target Vertex</td>
-<td><TT>target(e, g)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
-<TD>Returns the vertex descriptor for <i>v</i> of the edge <i>(u,v)</i> represented by <TT>e</TT>.</TD>
-</TR>
-
-<tr>
-<td>Out-Edges of a Vertex </td>
-<td><TT>out_edges(v, g)</TT></TD>
-<TD><TT>std::pair&lt;out_edge_iterator, out_edge_iterator&gt;</TT></TD>
-<TD>Returns an iterator-range providing access to the
-out-edges (for directed graphs) or incident edges (for
-undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.
+<TD>Returns the vertex descriptor for <i>u</i> of the edge <i>(u,v)</i> represented by <TT>e</TT>.<br>
+Return type: <TT>vertex_descriptor</TT>
 </TD>
 </TR>
 
+
 <tr>
-<td>Out-degree of a Vertex</td>
+<td><TT>target(e, g)</TT></TD>
+<TD>Returns the vertex descriptor for <i>v</i> of the edge <i>(u,v)</i> represented by <TT>e</TT>.<br>
+Return type: <TT>vertex_descriptor</TT>
+</td></tr>
+
+<tr>
+<td><TT>out_edges(v, g)</TT></TD>
+<TD>Returns an iterator-range providing access to the
+out-edges (for directed graphs) or incident edges (for
+undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.<br>
+Return type: <TT>std::pair&lt;out_edge_iterator, out_edge_iterator&gt;</TT>
+</TD>
+</tr>
+
+<tr>
 <TD><TT>out_degree(v, g)</TT></TD>
-<TD><TT>degree_size_type</TT></TD>
 <TD>Returns the number of out-edges (for directed graphs) or the
 number of incident edges (for undirected graphs) of vertex <TT>v</TT>
-in graph <TT>g</TT>.
+in graph <TT>g</TT>.<br>
+Return type: <TT>degree_size_type</TT>
 </TD>
 </TR>
 

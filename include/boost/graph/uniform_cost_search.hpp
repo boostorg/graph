@@ -98,12 +98,12 @@ namespace boost {
   }
 
   // Variant (2)
-  template <class VertexListGraph, class DistancePA, class WeightPA,
+  template <class VertexListGraph, class DistanceMap, class WeightMap,
             class BinaryPredicate, class BinaryFunction>
   inline void
   uniform_cost_search(VertexListGraph& g,
               typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-	      DistancePA d, WeightPA w,
+	      DistanceMap d, WeightMap w,
 	      BinaryPredicate compare, BinaryFunction combine)
   {
     null_visitor null_vis;
@@ -114,11 +114,11 @@ namespace boost {
 
   namespace detail {
     template <class UniformCostVisitor, class UpdatableQueue,
-      class WeightPA, class DistancePA, 
+      class WeightMap, class DistanceMap, 
       class BinaryFunction, class BinaryPredicate>
     struct ucs_bfs_visitor {
       ucs_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
-		      WeightPA w, DistancePA d, 
+		      WeightMap w, DistanceMap d, 
 		      BinaryFunction combine, BinaryPredicate compare)
 	: m_vis(vis), m_Q(Q), m_weight(w), m_distance(d), 
 	m_combine(combine), m_compare(compare)  { }
@@ -157,8 +157,8 @@ namespace boost {
       }
       UniformCostVisitor m_vis;
       UpdatableQueue& m_Q;
-      WeightPA m_weight;
-      DistancePA m_distance;
+      WeightMap m_weight;
+      DistanceMap m_distance;
       BinaryFunction m_combine;
       BinaryPredicate m_compare;
       bool m_decreased;
@@ -167,46 +167,46 @@ namespace boost {
 
   // Variant (3)
   template <class VertexListGraph,
-            class DistancePA, class WeightPA, class ColorPA, class ID_PA,
+            class DistanceMap, class WeightMap, class ColorMap, class IndexMap,
             class BinaryPredicate, class BinaryFunction,
             class UniformCostVisitor>
   void
   uniform_cost_search(VertexListGraph& g,
               typename graph_traits<VertexListGraph>::vertex_descriptor  s,
-              DistancePA d, WeightPA w, ColorPA color, ID_PA id, 
+              DistanceMap d, WeightMap w, ColorMap color, IndexMap id, 
               BinaryPredicate compare, BinaryFunction combine,
               UniformCostVisitor vis)
   {
     REQUIRE(VertexListGraph, VertexListGraph);
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     typedef typename graph_traits<VertexListGraph>::edge_descriptor Edge;
-    REQUIRE2(ColorPA, Vertex, ReadWritePropertyMap);
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
-    typedef typename property_traits<DistancePA>::value_type D_value;
-    typedef typename property_traits<WeightPA>::value_type W_value;
-    typedef typename property_traits<ID_PA>::value_type ID_value;
-    typedef typename property_traits<ColorPA>::value_type Color_value;
+    REQUIRE2(ColorMap, Vertex, ReadWritePropertyMap);
+    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
+    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
+    typedef typename property_traits<DistanceMap>::value_type D_value;
+    typedef typename property_traits<WeightMap>::value_type W_value;
+    typedef typename property_traits<IndexMap>::value_type ID_value;
+    typedef typename property_traits<ColorMap>::value_type Color_value;
     REQUIRE(Color_value, ColorValue);
     REQUIRE3(BinaryPredicate, D_value, D_value, BinaryPredicate);
     REQUIRE4(BinaryFunction, D_value, D_value, W_value, BinaryFunction);
     REQUIRE(ID_value, Integer);
     REQUIRE2(UniformCostVisitor, VertexListGraph, UniformCostVisitor);
 
-    typedef indirect_cmp<DistancePA, BinaryPredicate> IndirectCmp;
+    typedef indirect_cmp<DistanceMap, BinaryPredicate> IndirectCmp;
     IndirectCmp icmp(d, compare);
 
-    typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, ID_PA>
+    typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
       MutableQueue;
 
     MutableQueue Q(num_vertices(g), icmp, id);
     
     detail::ucs_bfs_visitor<UniformCostVisitor, MutableQueue, 
-      WeightPA, DistancePA, BinaryFunction, BinaryPredicate>
+      WeightMap, DistanceMap, BinaryFunction, BinaryPredicate>
       visitor(vis, Q, w, d, combine, compare);
 
-    typename property_traits<ColorPA>::value_type c = get(color, s);
+    typename property_traits<ColorMap>::value_type c = get(color, s);
     typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       put(color, *ui, white(c));

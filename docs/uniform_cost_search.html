@@ -30,7 +30,7 @@
 <TD ALIGN="LEFT">directed</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">color, distance, weight, vertex ID</TD>
+<TD ALIGN="LEFT">color, distance, weight, vertex index</TD>
 </TR>
 
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
@@ -51,33 +51,33 @@
 <P>
 <PRE>
   (1)
-  template &lt;class VertexListGraph, class BinaryPredicate, 
-            class BinaryFunction&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, 
+            class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g, 
-                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                      BinaryPredicate compare, BinaryFunction combine);
+     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+     BinaryPredicate compare, BinaryFunction combine);
 
   (2)
-  template &lt;class VertexListGraph, class DistancePMap, class WeightPMap,
-            class BinaryPredicate, class BinaryFunction&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="#DistanceMap">DistanceMap</a>, class <a href="#WeightMap">WeightMap</a>,
+            class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g,
-                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-	              DistancePMap distance, WeightPMap weight,
-	              BinaryPredicate compare, BinaryFunction combine);
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+    DistanceMap distance, WeightMap weight,
+    BinaryPredicate compare, BinaryFunction combine);
 
   (3)
-  template &lt;class VertexListGraph,
-            class DistancePMap, class WeightPMap, class ColorPMap, class ID_PMap,
-            class BinaryPredicate, class BinaryFunction,
-            class UniformCostVisitor&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>,
+            class <a href="#DistanceMap">DistanceMap</a>, class <a href="#WeightMap">WeightMap</a>, class <a href="#ColorMap">ColorMap</a>, class <a href="#VertexIndexMap">VertexIndexMap</a>,
+            class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>,
+            class <a href="./UniformCostVisitor.html">UniformCostVisitor</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g,
-                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor  s,
-                      DistancePMap distance, WeightPMap weight, ColorPMap color, ID_PMap id, 
-                      BinaryPredicate compare, BinaryFunction combine,
-                      UniformCostVisitor vis);
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor  s,
+    DistanceMap distance, WeightMap weight, ColorMap color, VertexIndexMap id, 
+    BinaryPredicate compare, BinaryFunction combine,
+    UniformCostVisitor vis);
 </PRE>
 
 <P>
@@ -101,7 +101,7 @@ the distance properties prior to calling
 <TT>uniform_cost_search()</TT> .
 
 <pre>
-  typedef typename property_traits&lt;DistancePMap&gt;::value_type D;
+  typedef typename property_traits&lt;DistanceMap&gt;::value_type D;
   typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
   for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
     put(distance, *ui, std::numeric_limits&lt;D&gt;::max());
@@ -109,6 +109,14 @@ the distance properties prior to calling
   put(distance, s, D());
 </pre>
 
+<p>
+The <tt>ColorMap</tt> is used to keep track of which vertices have
+been visited. Traditionally, implementation of Dijkstra's algorithm do
+not use a color map and instead use the distance map for this purpose.
+When generalizing to a uniform-cost search, it is better to separate
+out the responsibilities.
+
+<p>
 The implementation of <TT>uniform_cost_search()</TT>
 consists mainly of a call to version (3) of <a
 href="./breadth_first_search.html"><TT>breadth_first_search()</TT></a>.
@@ -129,65 +137,65 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <LI>The <TT>BinaryPredicate</TT> type must be a model of <a
       href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>
       and have argument types that match the value type of the
-      <TT>DistancePMap</TT> property map.
+      <TT>DistanceMap</TT> property map.
 
 <P>
 </LI>
 <LI>The <TT>BinaryFunction</TT> type must be a model of <a
      href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
-      type of the <TT>DistancePMap</TT> property map and the second
-      argument type must match the value type of the <TT>WeightPMap</TT>
+      type of the <TT>DistanceMap</TT> property map and the second
+      argument type must match the value type of the <TT>WeightMap</TT>
       property map.  The result type must be the same type as the
       distance value type.
 
 <P>
 </LI>
 <LI>In version (1) the graph must be a <a
-    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    href="./PropertyGraph.html">PropertyGraph</a> for
     <TT>vertex_distance</TT> where the property map for the graph
-    meets the same requirements as for <TT>DistancePMap</TT>. The graph
+    meets the same requirements as for <TT>DistanceMap</TT>. The graph
     must also be a <a
-    href="./EdgePropertyGraph.html">EdgePropertyGraph</a> for
+    href="./PropertyGraph.html">PropertyGraph</a> for
     <TT>edge_weight</TT> where the property map for the grpah
-    meets the same requirements for <TT>WeightPMap</TT> below.
+    meets the same requirements for <TT>WeightMap</TT> below.
 
 <P>
 </LI>
 <LI>In version (1) and (2) the graph must be a <a
-    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    href="./PropertyGraph.html">PropertyGraph</a> for
     <TT>vertex_color</TT> and <TT>vertex_index</TT>, where the property
     map for the graph meet the same requirements as for
-    <TT>ColorPMap</TT> and <TT>ID_PMap</TT> below.
+    <TT>ColorMap</TT> and <TT>VertexIndexMap</TT> below.
 
 <P>
 </LI>
-<LI>The type <TT>DistancePMap</TT> must be a model of <a
+<LI><a name="DistanceMap">The type <TT>DistanceMap</TT> must be a model of <a
     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     vertex descriptor type of the graph needs to be usable as the key
-    type of the distance map.
+    type of the distance map.</a>
 
 <P>
 </LI>
-<LI>The type <TT>WeightPMap</TT> must be a model of <a
+<LI><a name="WeightMap">The type <TT>WeightMap</TT> must be a model of <a
      href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
      edge descriptor type of the graph needs to be usable as the key
-     type for the weight map.
+     type for the weight map.</a>
 
 <P>
 </LI>
-<LI>The type <TT>ColorPMap</TT> must be a model of <a
+<LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of <a
      href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A
      vertex descriptor must be usable as the key type of the map,
      and the value type of the map must be a model of
-     <a href="./ColorValue.html">ColorValue</a>.
+     <a href="./ColorValue.html">ColorValue</a>.</a>
 
 <P>
 </LI>
-<LI>The type <TT>ID_PMap</TT> must be a model of <a
+<LI><a name="VertexIndexMap>"The type <TT>VertexIndexMap</TT> must be a model of <a
      href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
-     value type of <TT>ID_PMap</TT> must be an integer type. The vertex
+     value type of <TT>VertexIndexMap</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
-     of the ID map.
+     of the index map.</a>
 
 <P>
 </LI>

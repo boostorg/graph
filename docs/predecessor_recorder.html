@@ -21,7 +21,7 @@
 
 <H1>
 <pre>
-predecessor_recorder&lt;PredecessorPMap, EventTag&gt;
+predecessor_recorder&lt;PredecessorMap, EventTag&gt;
 </pre>
 </H1>
 
@@ -64,7 +64,7 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PredecessorPMap</TT></TD>
+<TR><TD><TT>PredecessorMap</TT></TD>
 <TD>
 A <a
 href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
@@ -113,7 +113,7 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-predecessor_recorder(PredecessorPMap pa);
+predecessor_recorder(PredecessorMap pa);
 </tt></td>
 <td>
 Construct a predecessor recorder object with predecessor property map
@@ -142,9 +142,9 @@ predecessor (or parent) of <i>v</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class PredecessorPMap, class Tag&gt;<br>
-predecessor_recorder&lt;PredecessorPMap, Tag&gt; <br>
-record_predecessors(PredecessorPMap pa, Tag);
+template &lt;class PredecessorMap, class Tag&gt;<br>
+predecessor_recorder&lt;PredecessorMap, Tag&gt; <br>
+record_predecessors(PredecessorMap pa, Tag);
 </tt></td><td>
 A convenient way to create a <tt>predecessor_recorder</tt>.
 </td></tr>
@@ -177,7 +177,7 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  PredecessorPMap EventTag EventVisitor map bfs dfs const
+<!--  LocalWords:  PredecessorMap EventTag EventVisitor map bfs dfs const
  -->
 <!--  LocalWords:  EventVisitorList WritablePropertyMap Siek Univ Quan
  -->

@@ -43,15 +43,15 @@
 <PRE>
 (1)
 template &lt;class EdgeListGraph, class Size,
-          class WeightPMap, class DistancePMap&gt;
+          class WeightMap, class DistanceMap&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-                                 WeightPMap w, DistancePMap d)
+                                 WeightMap w, DistanceMap d)
 
 (2)
 template &lt;class EdgeListGraph, class Size, 
-          class WeightPMap, class DistancePMap, class BellmanFordVisitor&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightPMap w, 
-                                 DistancePMap d, BellmanFordVisitor visit)
+          class WeightMap, class DistanceMap, class BellmanFordVisitor&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightMap w, 
+                                 DistanceMap d, BellmanFordVisitor visit)
 </PRE>
 
 <P>

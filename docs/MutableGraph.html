@@ -59,75 +59,67 @@ edges and vertices.
 <H3>Valid Expressions</H3>
 
 <table border>
+
 <tr>
-<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
+<TD><TT>add_edge(g, u, v)</TT></TD>
+<TD>
+Inserts the edge <i>(u,v)</i> into the graph.<br>
+Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT>
+</TD>
 </tr>
 
 <tr>
-<td>Add Edge </td>
-<TD><TT>add_edge(g, u, v)</TT></TD>
-<TD><TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
-<TD>
-Inserts the edge <i>(u,v)</i> into the graph.
-</TD>
-
-<tr>
-<td>Remove Edge </td>
 <TD><TT>remove_edge(g, u, v)</TT></TD>
-<TD><TT>void</TT></TD>
 <TD>
 Remove the edge <i>(u,v)</i> from the graph. If the
 graph allows parallel edges this remove all occurances of
 <i>(u,v)</i>.<br>
-<b>Precondition:</b> <i>u</i> and <i>v</i> are vertices in the graph.<br>
-<b>Postcondition:</b> <i>(u,v)</i> is no longer in the edge set for
-<TT>g</TT>.
+Return type: <TT>void</TT><br>
+Precondition: <i>u</i> and <i>v</i> are vertices in the graph.<br>
+Postcondition: <i>(u,v)</i> is no longer in the edge set for
+<TT>g</TT>.<br>
 </TD>
 </TR>
 
 <tr>
-<td>Remove Edge </td>
 <TD><TT>remove_edge(g, e)</TT></TD>
-<TD><TT>void</TT></TD>
 <TD>Remove the edge <i>e</i> from the graph.<br>
-<b>Precondition:</b> <i>e</i> is an edge in the graph.<br>
-<b>Postcondition:</b> <i>e</i> is no longer in the edge set for <TT>g</TT>.
+Return type: <TT>void</TT><><br>
+Precondition: <i>e</i> is an edge in the graph.<br>
+Postcondition: <i>e</i> is no longer in the edge set for <TT>g</TT>.
 </TD>
 </TR>
 
 <tr>
-<td>Add Vertex</td>
 <TD><TT>add_vertex(g)</TT></TD>
-<TD><TT>vertex_descriptor</TT></TD>
 <TD>
 Add a new vertex to the graph. The <TT>vertex_descriptor</TT> for the
-new vertex is returned.
+new vertex is returned.<br>
+Return type: <TT>vertex_descriptor</TT>
 </TD>
 </TR>
 
 <tr>
-<td>Clear Vertex </td>
 <TD><TT>clear_vertex(g, u)</TT></TD>
-<TD><TT>void</TT></TD>
 <TD>
 Remove all edges to and from vertex <tt>u</tt> from the graph.<br>
-<b>Precondition:</b> <tt>u</tt> is a valid vertex descriptor of <TT>g</TT>.<br>
-<b>Postcondition:</b> <tt>u</tt> does not appear as a source or target of
+Return type: <TT>void</TT><br>
+Precondition: <tt>u</tt> is a valid vertex descriptor of <TT>g</TT>.<br>
+Postcondition: <tt>u</tt> does not appear as a source or target of
 any edge in <TT>g</TT>.
 </TD>
 </TR>
 
 <tr>
-<td>Remove Vertex </td>
 <TD><TT>remove_vertex(g, u)</TT></TD>
-<TD><TT>void</TT></TD>
 <TD>
 Remove <i>u</i> from the vertex set of the graph. Note that undefined
 behaviour may result if there are edges remaining in the graph who's
 target is <i>u</i>. Typically the <TT>clear_vertex()</TT> function
 should be called first.<br>
-<b>Precondition:</b> <TT>u</TT> is a valid vertex descriptor of <TT>g</TT>.<br>
-<b>Postcondition:</b> <TT>num_vertices(g)</TT> is one less, <TT>u</TT>
+Return type: <TT>void</TT><br>
+Precondition: <TT>u</TT> is a valid vertex descriptor of <TT>g</TT>.<br>
+Postcondition: <TT>num_vertices(g)</TT> is one less, <TT>u</TT>
 no longer appears in the vertex set of the graph and it
 is no longer a valid vertex descriptor.
 </TD>

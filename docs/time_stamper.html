@@ -21,7 +21,7 @@
 
 <H1>
 <pre>
-time_stamper&lt;TimePMap, TimeT, EventTag&gt;
+time_stamper&lt;TimeMap, TimeT, EventTag&gt;
 </pre>
 </H1>
 
@@ -75,7 +75,7 @@ href="../examples/bfs_basics.cpp"><tt>examples/bfs_basics.cpp</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>TimePMap</TT></TD>
+<TR><TD><TT>TimeMap</TT></TD>
 <TD>
 A <a
 href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
@@ -134,7 +134,7 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-time_stamper(TimePMap time_pa, TimeT& t);
+time_stamper(TimeMap time_pa, TimeT& t);
 </tt></td>
 <td>
 Construct a time stamper object with time property map
@@ -163,9 +163,9 @@ This increments the time count and &quot;stamps&quot; the time:<br>
 </tr>
 
 <tr><td><tt>
-template &lt;class TimePMap, class TimeT, class Tag&gt;<br>
-time_stamper&lt;TimePMap, TimeT, Tag&gt;<br>
-stamp_times(TimePMap pa, TimeT& t, Tag);
+template &lt;class TimeMap, class TimeT, class Tag&gt;<br>
+time_stamper&lt;TimeMap, TimeT, Tag&gt;<br>
+stamp_times(TimeMap pa, TimeT& t, Tag);
 </tt></td><td>
 A convenient way to create a <tt>time_stamper</tt>.
 </td></tr>
@@ -198,7 +198,7 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  TimePMap TimeT EventTag EventVisitor bfs dfs EventVisitorList
+<!--  LocalWords:  TimeMap TimeT EventTag EventVisitor bfs dfs EventVisitorList
  -->
 <!--  LocalWords:  cpp num dtime ftime int WritablePropertyMap map
  -->

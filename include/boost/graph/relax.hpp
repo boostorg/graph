@@ -40,16 +40,16 @@ namespace boost {
     // than the half of current max of the type, change the type of
     // weight to have more bytes.
     
-    template <class Graph, class WeightPA, class DistancePA, 
+    template <class Graph, class WeightMap, class DistanceMap, 
             class BinaryFunction, class BinaryPredicate>
     bool relax(typename graph_traits<Graph>::edge_descriptor e, 
-	       const Graph& g, WeightPA w, DistancePA d, 
+	       const Graph& g, WeightMap w, DistanceMap d, 
 	       BinaryFunction combine, BinaryPredicate compare)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex u = source(e, g), v = target(e, g);
-      typedef typename property_traits<DistancePA>::value_type D;
-      typedef typename property_traits<WeightPA>::value_type W;
+      typedef typename property_traits<DistanceMap>::value_type D;
+      typedef typename property_traits<WeightMap>::value_type W;
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
 
@@ -60,11 +60,11 @@ namespace boost {
 	return false;
     }
     
-    template <class Graph, class WeightPA, class DistancePA>
+    template <class Graph, class WeightMap, class DistanceMap>
     bool relax(typename graph_traits<Graph>::edge_descriptor e,
-	       const Graph& g, WeightPA w, DistancePA d)
+	       const Graph& g, WeightMap w, DistanceMap d)
     {
-      typedef typename property_traits<DistancePA>::value_type D;
+      typedef typename property_traits<DistanceMap>::value_type D;
       typedef std::plus<D> Combine;
       typedef std::less<D> Compare;
       return relax(e, g, w, d, Combine(), Compare());

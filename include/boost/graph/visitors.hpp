@@ -138,68 +138,68 @@ namespace boost {
   //========================================================================
   // predecessor_recorder
 
-  template <class PredecessorPA, class Tag>
+  template <class PredecessorMap, class Tag>
   struct predecessor_recorder
-    : public base_visitor<predecessor_recorder<PredecessorPA, Tag> >
+    : public base_visitor<predecessor_recorder<PredecessorMap, Tag> >
   {
     typedef Tag event_filter;
-    predecessor_recorder(PredecessorPA pa) : m_predecessor(pa) { }
+    predecessor_recorder(PredecessorMap pa) : m_predecessor(pa) { }
     template <class Edge, class Graph>
     void operator()(Edge e, const Graph& g) {
       put(m_predecessor, target(e, g), source(e, g));
     }
-    PredecessorPA m_predecessor;
+    PredecessorMap m_predecessor;
   };
-  template <class PredecessorPA, class Tag>
-  predecessor_recorder<PredecessorPA, Tag> 
-  record_predecessors(PredecessorPA pa, Tag) {
-    return predecessor_recorder<PredecessorPA, Tag> (pa);
+  template <class PredecessorMap, class Tag>
+  predecessor_recorder<PredecessorMap, Tag> 
+  record_predecessors(PredecessorMap pa, Tag) {
+    return predecessor_recorder<PredecessorMap, Tag> (pa);
   }
 
   //========================================================================
   // distance_recorder
 
-  template <class DistancePA, class Tag>
+  template <class DistanceMap, class Tag>
   struct distance_recorder
-    : public base_visitor<distance_recorder<DistancePA, Tag> >
+    : public base_visitor<distance_recorder<DistanceMap, Tag> >
   {
     typedef Tag event_filter;
-    distance_recorder(DistancePA pa) : m_distance(pa) { }
+    distance_recorder(DistanceMap pa) : m_distance(pa) { }
     template <class Edge, class Graph>
     void operator()(Edge e, const Graph& g) {
       typename graph_traits<Graph>::vertex_descriptor 
 	u = source(e, g), v = target(e, g);
       put(m_distance, v, get(m_distance, u) + 1);
     }
-    DistancePA m_distance;
+    DistanceMap m_distance;
   };
-  template <class DistancePA, class Tag>
-  distance_recorder<DistancePA, Tag> 
-  record_distances(DistancePA pa, Tag) {
-    return distance_recorder<DistancePA, Tag> (pa);
+  template <class DistanceMap, class Tag>
+  distance_recorder<DistanceMap, Tag> 
+  record_distances(DistanceMap pa, Tag) {
+    return distance_recorder<DistanceMap, Tag> (pa);
   }
 
   //========================================================================
   // time_stamper
 
   
-  template <class TimePA, class TimeT, class Tag>
+  template <class TimeMap, class TimeT, class Tag>
   struct time_stamper
-    : public base_visitor<time_stamper<TimePA, TimeT, Tag> >
+    : public base_visitor<time_stamper<TimeMap, TimeT, Tag> >
   {
     typedef Tag event_filter;
-    time_stamper(TimePA pa, TimeT& t) : m_time_pa(pa), m_time(t) { }
+    time_stamper(TimeMap pa, TimeT& t) : m_time_pa(pa), m_time(t) { }
     template <class Vertex, class Graph>
     void operator()(Vertex u, const Graph& g) {
       put(m_time_pa, u, ++m_time);
     }
-    TimePA m_time_pa;
+    TimeMap m_time_pa;
     TimeT& m_time;
   };
-  template <class TimePA, class TimeT, class Tag>
-  time_stamper<TimePA, TimeT, Tag> 
-  stamp_times(TimePA pa, TimeT& time_counter, Tag) {
-    return time_stamper<TimePA, TimeT, Tag>(pa, time_counter);
+  template <class TimeMap, class TimeT, class Tag>
+  time_stamper<TimeMap, TimeT, Tag> 
+  stamp_times(TimeMap pa, TimeT& time_counter, Tag) {
+    return time_stamper<TimeMap, TimeT, Tag>(pa, time_counter);
   }
 
   //========================================================================
