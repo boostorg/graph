@@ -38,7 +38,20 @@ best meets your needs. An <a
 href="graph_theory_review.html#sec:adjacency-list-representation">adjacency-list</a>
 is basically a two-dimensional structure, where each element of the
 first dimension represents a vertex, and each of the vertices contains
-a one-dimensional structure that is its edge list. The
+a one-dimensional structure that is its edge list. <a
+href="fig:adj-list-graph">Figure 1</a> shows an adjacency list
+representation of a directed graph.
+
+<P></P>
+<DIV ALIGN="center"><A NAME="fig:adj-list-graph"></A><A NAME="1509"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG> Adjacency List Representation of a Directed Graph.</CAPTION>
+<TR><TD><IMG SRC="./figs/adj-matrix-graph.gif" width="386" height="284"></TD>
+<TD><IMG SRC="./figs/adj-list.gif" width="62" height="122"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+The
 <TT>VertexList</TT> template parameter of the <TT>adjacency_list</TT>
 class controls what kind of container is used to represent the outer
 two-dimensional container. The <TT>EdgeList</TT> template parameter
@@ -55,7 +68,18 @@ The <TT>Directed</TT> template parameter controls whether the graph is
 directed, undirected, or directed with access to both the in-edges and
 out-edges (which we call bidirectional). The bidirectional graph takes
 up twice the space (per edge) of a directed graph since each edge will
-appear in both an out-edge and in-edge list.
+appear in both an out-edge and in-edge list. <a
+href="fig:undir-adj-list-graph">Figure 2</a> shows an adjacency list
+representation of an undirected graph.
+
+<P></P>
+<DIV ALIGN="center"><A NAME="fig:undir-adj-list-graph"></A><A NAME="1509"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG> Adjacency List Representation of an Undirected Graph.</CAPTION>
+<TR><TD><IMG SRC="./figs/undir-adj-matrix-graph.gif" width="2573" height="60929"></TD>
+<TD><IMG SRC="./figs/undir-adj-list.gif" width="62" height="122"></TD></TR>
+</TABLE>
+</DIV><P></P>
 
 <P>
 A tutorial on how to use the <TT>adjacency_list</TT> class is in
@@ -395,9 +419,9 @@ The type for the iterators returned by <TT>vertices()</TT>.
 
 When <tt>VertexList=vecS</tt> then the <tt>vertex_iterator</tt> models
 <a
-href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
+href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
 the <tt>vertex_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 <hr>
 
@@ -405,7 +429,7 @@ href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">Bidirectiona
 <br><br>
 The type for the iterators returned by <TT>edges()</TT>.
 The <tt>edge_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 
 <hr>
@@ -416,13 +440,13 @@ href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">Bidirectiona
 
 The type for the iterators returned by <TT>out_edges()</TT>.
 When <tt>EdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
-<a href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">
+<a href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">
 RandomAccessIterator</a>.  When <tt>EdgeList=slistS</tt> then the
 <tt>out_edge_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/ForwardIterator.html">
+href="http://www.sgi.com/tech/stl/ForwardIterator.html">
 ForwardIterator</a>.  Otherwise the <tt>out_edge_iterator</tt> models
 <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">
 BidirectionalIterator</a>.
 
 <hr>
@@ -540,7 +564,7 @@ adjacency_list(vertices_size_type&nbsp;n,
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> must be a model of <a
-href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -560,7 +584,7 @@ Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> and <tt>EdgePropertyIterator</tt> must be a
 model of <a
-href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -612,22 +636,24 @@ Returns an iterator-range providing access to the edge set of graph
 
 <pre>
 std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;
-adjacent_vertices(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
+adjacent_vertices(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <tt>v</tt> in graph <tt>g</tt>.
+vertex <tt>u</tt> in graph <tt>g</tt>.
 
 <hr>
 
 
 <pre>
 std::pair&lt;out_edge_iterator,&nbsp;out_edge_iterator&gt;
-out_edges(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
+out_edges(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
 Returns an iterator-range providing access to the out-edges of vertex
-<tt>v</tt> in graph <tt>g</tt>. If the graph is undirected, this
-iterator-range provides access to all edge incident on vertex
-<tt>v</tt>.
+<tt>u</tt> in graph <tt>g</tt>. If the graph is undirected, this
+iterator-range provides access to all edges incident on vertex
+<tt>u</tt>. For both directed and undirected graphs, for an out-edge
+<tt>e</tt>, <tt>source(e, g) == u</tt> and <tt>target(e, g) == v</tt>
+where <tt>v</tt> is a vertex adjacent to <tt>u</tt>.
 
 <hr>
 
@@ -638,7 +664,9 @@ in_edges(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
 Returns an iterator-range providing access to the in-edges of vertex
 <tt>v</tt> in graph <tt>g</tt>.  This operation is only available if
 <TT>bidirectionalS</TT> was specified for the <TT>Directed</TT>
-template parameter.
+template parameter. For an in-edge <tt>e</tt>, <tt>target(e, g) == v</tt>
+and <tt>source(e, g) == u</tt> for some vertex <tt>u</tt> that is
+adjacent to <tt>v</tt>, whether the graph is directed or undirected.
 
 <hr>
 
@@ -827,7 +855,7 @@ has time complexity <i>O(E/V)</i>.
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
                         adjacency_list&amp; g)
 </pre>
@@ -842,7 +870,7 @@ invoking <tt>remove_edge()</tt> on each of the removed edges.
 
 <pre>
 template &lt;class <a
-href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
                        adjacency_list&amp; g)
 </pre>
@@ -860,7 +888,7 @@ This operation is available for undirected and bidirectional
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy
