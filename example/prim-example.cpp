@@ -30,7 +30,7 @@ main()
 {
   using namespace boost;
   typedef adjacency_list < vecS, vecS, undirectedS,
-    property < vertex_distance_t, int, property < edge_weight_t, int >>>Graph;
+    property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
   typedef std::pair < int, int >E;
   const int num_nodes = 5;
   E edges[] = { E(0, 2), E(1, 1), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
@@ -39,16 +39,15 @@ main()
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1 };
   Graph g(num_nodes, edges, edges + sizeof(edges) / sizeof(E), weights);
   std::vector < graph_traits < Graph >::vertex_descriptor >
-    p(num_vertices(G));
+    p(num_vertices(g));
 
   prim_minimum_spanning_tree(g, &p[0]);
 
-  std::vector < Graph::vertex_descriptor >::iterator i;
-  for (i = p.begin(); i != p.end(); ++i)
-    cout << "parent[" << i - p.begin()
-      << "] = " << identity_property_map()[*i] << endl;
-  else
-  cout << "parent[" << i - p.begin() << "] = no parent" << endl;
+  for (std::size_t i = 0; i != p.size(); ++i)
+    if (p[i] != i)
+      std::cout << "parent[" << i << "] = " << p[i] << std::endl;
+    else
+      std::cout << "parent[" << i << "] = no parent" << std::endl;
 
   return EXIT_SUCCESS;
 }

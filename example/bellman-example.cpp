@@ -78,7 +78,7 @@ main()
   int weight[n_edges] = { -4, 8, 5, -2, 9, -3, 7, 2, 6, 7 };
 
   typedef adjacency_list < vecS, vecS, directedS,
-    no_property, property < edge_weight_t, int >>Graph;
+    no_property, property < edge_weight_t, int > > Graph;
   Graph g(edge_array.begin(), edge_array.end());
   graph_traits < Graph >::edge_iterator ei, ei_end;
   int i = 0;
@@ -86,7 +86,7 @@ main()
     get(edge_weight, g)[*ei] = weight[i];
 
   std::vector < int >distance(N, std::numeric_limits < short >::max());
-  std::vector < int >parent(N);
+  std::vector < std::size_t >parent(N);
   for (i = 0; i < N; ++i)
     parent[i] = i;
   distance[z] = 0;
@@ -103,10 +103,6 @@ main()
     std::cout << "negative cycle" << std::endl;
 
   std::ofstream dot_file("figs/bellman-eg.dot");
-#if 0
-  write_graphviz(dot_file, g, make_label_writer(name),
-                 make_edge_writer(g, &parent[0]));
-#else
   dot_file << "digraph D {\n"
     << "  rankdir=LR\n"
     << "  size=\"5,3\"\n"
@@ -129,6 +125,5 @@ main()
     }
   }
   dot_file << "}";
-#endif
   return EXIT_SUCCESS;
 }

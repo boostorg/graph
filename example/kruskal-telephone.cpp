@@ -35,7 +35,7 @@ main()
   read_graphviz("figs/telephone-network.dot", g_dot);
 
   typedef adjacency_list < vecS, vecS, undirectedS, no_property,
-    property < edge_weight_t, int >>Graph;
+    property < edge_weight_t, int > > Graph;
   Graph g(num_vertices(g_dot));
   property_map < GraphvizGraph, edge_attribute_t >::type
     edge_attr_map = get(edge_attribute, g_dot);

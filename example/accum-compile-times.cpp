@@ -48,82 +48,46 @@ namespace boost
 
 using namespace boost;
 
-typedef adjacency_list < listS, // Store out-edges of each vertex in a std::list
-  listS,                        // Store vertex set in a std::list
-  directedS,                    // The file dependency graph is directed
+typedef adjacency_list< listS, // Store out-edges of each vertex in a std::list
+  listS,                       // Store vertex set in a std::list
+  directedS,                   // The file dependency graph is directed
   // vertex properties
-  property < vertex_name_t,
-  std::string,
-  property <
-  vertex_compile_cost_t, float,
-  property <
-  vertex_distance_t, float,
-  property <
-  vertex_color_t,
-default_color_type > >>>,
+  property < vertex_name_t, std::string,
+  property < vertex_compile_cost_t, float,
+  property < vertex_distance_t, float,
+  property < vertex_color_t, default_color_type > > > >,
   // an edge property
-  property <
-edge_weight_t, float >>
+  property < edge_weight_t, float > >
   file_dep_graph2;
 
-typedef
-  graph_traits <
-  file_dep_graph2 >::vertex_descriptor
-  vertex_t;
-typedef
-  graph_traits <
-  file_dep_graph2 >::edge_descriptor
-  edge_t;
+typedef graph_traits<file_dep_graph2>::vertex_descriptor vertex_t;
+typedef graph_traits<file_dep_graph2>::edge_descriptor edge_t;
 
 int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef
-    graph_traits <
-    file_dep_graph2 >::vertices_size_type
-    size_type;
+  typedef graph_traits<file_dep_graph2>::vertices_size_type size_type;
   size_type
     n_vertices;
   file_in >> n_vertices;        // read in number of vertices
-  std::istream_iterator < std::pair < size_type,
-    size_type > >input_begin(file_in), input_end;
+  std::istream_iterator<std::pair<size_type, size_type> >
+    input_begin(file_in), input_end;
   file_dep_graph2
   g(input_begin, input_end, n_vertices);
 
-  typedef
-    property_map <
-    file_dep_graph2,
-    vertex_name_t >::type
-    name_map_t;
-  typedef
-    property_map <
-    file_dep_graph2,
-    vertex_compile_cost_t >::type
+  typedef property_map < file_dep_graph2, vertex_name_t >::type name_map_t;
+  typedef property_map < file_dep_graph2, vertex_compile_cost_t >::type
     compile_cost_map_t;
-  typedef
-    property_map <
-    file_dep_graph2,
-    vertex_distance_t >::type
+  typedef property_map <file_dep_graph2, vertex_distance_t >::type
     distance_map_t;
-  typedef
-    property_map <
-    file_dep_graph2,
-    vertex_color_t >::type
+  typedef property_map <file_dep_graph2, vertex_color_t >::type 
     color_map_t;
 
-  name_map_t
-    name_map =
-    get(vertex_name, g);
-  compile_cost_map_t
-    compile_cost_map =
-    get(vertex_compile_cost, g);
-  distance_map_t
-    distance_map =
-    get(vertex_distance, g);
-  color_map_t
-    color_map =
-    get(vertex_color, g);
+  name_map_t name_map = get(vertex_name, g);
+  compile_cost_map_t compile_cost_map = get(vertex_compile_cost, g);
+  distance_map_t distance_map = get(vertex_distance, g);
+  color_map_t color_map = get(vertex_color, g);
 
   std::ifstream name_in("makefile-target-names.dat");
   std::ifstream compile_cost_in("target-compile-costs.dat");

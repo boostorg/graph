@@ -32,7 +32,7 @@
 
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/neighbor_bfs.hpp>
 #include <boost/property_map.hpp>
 
 /*
@@ -142,7 +142,7 @@ int main(int , char* [])
   p[s] = s;
   boost::neighbor_breadth_first_search
     (G, s, 
-     boost::visitor(boost::make_bfs_visitor
+     boost::visitor(boost::make_neighbor_bfs_visitor
      (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
 		     boost::record_predecessors(&p[0], 
 						 boost::on_tree_edge())))));

@@ -53,28 +53,16 @@ typedef adjacency_list < listS, // Store out-edges of each vertex in a std::list
   listS,                        // Store vertex set in a std::list
   directedS,                    // The file dependency graph is directed
   // vertex properties
-  property < vertex_name_t,
-  std::string,
-  property <
-  vertex_compile_cost_t, float,
-  property <
-  vertex_distance_t, float,
-  property <
-  vertex_color_t,
-default_color_type > >>>,
+  property < vertex_name_t, std::string, 
+  property < vertex_compile_cost_t, float,
+  property < vertex_distance_t, float, 
+  property < vertex_color_t, default_color_type > > > >,
   // an edge property
-  property <
-edge_weight_t, float >>
+  property < edge_weight_t, float > >
   file_dep_graph2;
 
-typedef
-  graph_traits <
-  file_dep_graph2 >::vertex_descriptor
-  vertex_t;
-typedef
-  graph_traits <
-  file_dep_graph2 >::edge_descriptor
-  edge_t;
+typedef graph_traits<file_dep_graph2>::vertex_descriptor vertex_t;
+typedef graph_traits<file_dep_graph2>::edge_descriptor edge_t;
 
 
 template < typename Graph, typename ColorMap, typename Visitor > void
@@ -82,21 +70,11 @@ dfs_v2(const Graph & g,
        typename graph_traits < Graph >::vertex_descriptor u,
        ColorMap color, Visitor vis)
 {
-  typedef typename
-    property_traits <
-    ColorMap >::value_type
-    color_type;
-  typedef
-    color_traits <
-    color_type >
-    ColorT;
+  typedef typename property_traits < ColorMap >::value_type color_type;
+  typedef color_traits < color_type > ColorT;
   color[u] = ColorT::gray();
   vis.discover_vertex(u, g);
-  typename
-    graph_traits <
-    Graph >::out_edge_iterator
-    ei,
-    ei_end;
+  typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
     if (color[target(*ei, g)] == ColorT::white()) {
       vis.tree_edge(*ei, g);
@@ -139,9 +117,7 @@ template < typename OutputIterator > struct topo_visitor:
   topo_order(order)
   {
   }
-  template <
-    typename
-    Graph > void
+  template < typename Graph > void
   finish_vertex(typename graph_traits < Graph >::vertex_descriptor u,
                 const Graph &)
   {

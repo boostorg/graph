@@ -80,7 +80,7 @@ namespace boost
     typedef adjacency_list < vecS, vecS, directedS, no_property,
       property < edge_capacity_t, degree_size_type,
       property < edge_residual_capacity_t, degree_size_type,
-      property < edge_reverse_t, edge_descriptor > >>>FlowGraph;
+      property < edge_reverse_t, edge_descriptor > > > > FlowGraph;
 
     vertex_descriptor u, v, p, k;
     edge_descriptor e1, e2;

@@ -35,7 +35,7 @@ int
 main(int, char *[])
 {
   typedef adjacency_list < listS, vecS, directedS,
-    no_property, property < edge_weight_t, int >>graph_t;
+    no_property, property < edge_weight_t, int > > graph_t;
   typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
   typedef std::pair < int, int >Edge;
 

@@ -84,7 +84,7 @@ main()
 {
   typedef adjacency_list < listS, vecS, directedS,
     property < vertex_name_t, char >,
-    property < edge_weight_t, double >>graph_t;
+    property < edge_weight_t, double > > graph_t;
   graph_t g;
 
   property_map < graph_t, vertex_name_t >::type name_map =

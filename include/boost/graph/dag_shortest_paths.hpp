@@ -23,7 +23,7 @@ namespace boost {
        DistanceMap distance, WeightMap weight, ColorMap color,
        PredecessorMap pred,
        DijkstraVisitor vis, Compare compare, Combine combine, 
-       DistInf inf_gen, DistZero zero)
+       DistInf inf, DistZero zero)
     {
       typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
       std::vector<Vertex> rev_topo_order;
@@ -32,11 +32,11 @@ namespace boost {
 
       typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(distance, *ui, inf_gen());
+        put(distance, *ui, inf);
 	put(pred, *ui, *ui);
       }
 
-      put(distance, s, zero());
+      put(distance, s, zero);
       vis.discover_vertex(s, g);
       std::vector<Vertex>::reverse_iterator i;
       for (i = rev_topo_order.rbegin(); i != rev_topo_order.rend(); ++i) {
@@ -78,9 +78,9 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()), std::less<D>()),
          choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
-                      generate_infinity<D>()),
+                      std::numeric_limits<D>::max()),
          choose_param(get_param(params, distance_zero_t()), 
-                      generate_zero<D>()));
+                      D()));
     }
 
     // Handle DistanceMap and ColorMap defaults
