@@ -24,19 +24,19 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 //
-#ifndef BOOST_RVERSE_CUTHILL_MCKEE_HPP
-#define BOOST_RVERSE_CUTHILL_MCKEE_HPP
+#ifndef BOOST_GRAPH_CUTHILL_MCKEE_HPP
+#define BOOST_GRAPH_CUTHILL_MCKEE_HPP
+
+#include <boost/config.hpp>
 #include <vector>
 #include <queue>
-
-#include <assert.h>
-#include <boost/config.hpp>
+#include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/property_map.hpp>
-#include <boost/pending/fenced_priority_queue.hpp>
+#include <boost/detail/numeric_traits.hpp>
 
 /*
   (Reverse) Cuthill-McKee Algorithm for matrix reordering
@@ -162,51 +162,61 @@ namespace boost {
       return x;
     }
 
-    // Reverse Cuthill-McKee algorithm with a given starting Vertex.
-    //
-    // This algorithm requires user to provide a starting vertex to
-    // compute RCM ordering.
-
-
-    template <class OutputIterator>
-    class cuthill_mckee_visitor : public bfs_visitor<> {
-    public:
-      cuthill_mckee_visitor(OutputIterator inverse_permutation_)
-	: inverse_permutation(inverse_permutation_) {}
-
-      template <class Vertex, class Graph> 
-      void examine_vertex(const Vertex& u, Graph&) {
-	*inverse_permutation = u;
-	++inverse_permutation;
-      }
-    protected:
-      OutputIterator inverse_permutation;
-    };
-
   } // namespace detail  
 
-  template < class Graph, class Vertex, class OutputIterator, 
-             class ColorMap, class Degree >
-  inline void 
-  cuthill_mckee_ordering(Graph& G, 
-                         Vertex s,
+  // Reverse Cuthill-McKee algorithm with a given starting Vertex.
+  //
+  // This algorithm requires user to provide a starting vertex to
+  // compute RCM ordering.
+
+  template <class Graph, class OutputIterator,
+            class ColorMap, class DegreeMap>
+  void 
+  cuthill_mckee_ordering(Graph& g,
+                         typename graph_traits<Graph>::vertex_descriptor s,
                          OutputIterator inverse_permutation, 
-                         ColorMap color, Degree degree)
+                         ColorMap color, DegreeMap degree)
   {
-    typedef typename property_traits<Degree>::value_type DS;
+
+    typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
-    typedef indirect_cmp<Degree, std::greater<DS> > Compare;
-    Compare comp(degree);
-    fenced_priority_queue<Vertex, Compare > Q(comp);
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
-    typedef cuthill_mckee_visitor<OutputIterator>  CMVisitor;
-    CMVisitor cm_visitor(inverse_permutation);
-    
-    typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+    typename graph_traits<Graph>::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       put(color, *ui, Color::white());
-    breadth_first_search(G, s, Q, cm_visitor, color);
+
+    typedef indirect_cmp<DegreeMap, std::greater<DS> > Compare;
+    Compare comp(degree);
+
+    boost::queue<Vertex> bfs_queue;
+    std::priority_queue<Vertex, std::vector<Vertex>, Compare> 
+      degree_queue(comp);
+    Vertex u, v;
+
+    // Like BFS, except the adjacent vertices are visited
+    // in increasing order of degree.
+    
+    put(color, s, Color::gray());
+    bfs_queue.push(s);
+    while (! bfs_queue.empty()) {
+      u = bfs_queue.top(); bfs_queue.pop();
+      *inverse_permutation++ = u;
+      typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+	v = target(*ei, g);
+        if (get(color, v) == Color::white()) {
+          put(color, v, Color::gray());
+	  degree_queue.push(v);
+	}
+      }
+      while (!degree_queue.empty()) {
+	v = degree_queue.top(); degree_queue.pop();
+	bfs_queue.push(v);
+      }
+      put(color, u, Color::black());
+    } // while
   }  
   
   template < class Graph, class OutputIterator, 
@@ -220,7 +230,7 @@ namespace boost {
     VerIter ri = vertices(G).first;
     Vertex r = *ri;
 
-    Vertex s = find_starting_node(G, r, color, degree);
+    Vertex s = detail::find_starting_node(G, r, color, degree);
     cuthill_mckee_ordering(G, s, inverse_permutation, color, degree);
 
     //if G has several forests, how to let is cover all. ??
@@ -244,7 +254,50 @@ namespace boost {
     cuthill_mckee_ordering(G, inverse_permutation, get(vertex_color, G));
   }
 
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
+		const Graph& g,
+		VertexIndexMap index)
+  {
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename detail::numeric_traits<size_type>::difference_type d_type;
+    d_type b = 0;
+    typename graph_traits<Graph>::out_edge_iterator e, end;
+    for (tie(e, end) = out_edges(i, g); e != end; ++e) {
+      b = std::max(b, std::abs(d_type(get(index, i)) - 
+			       d_type(get(index, target(*e, g)))));
+    }
+    return b;
+  }
+
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
+		const Graph& g)
+  {
+    return ith_bandwidth(i, g, get(vertex_index, g));
+  }
+
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  bandwidth(const Graph& g, VertexIndexMap index)
+  {
+    typename graph_traits<Graph>::vertices_size_type b = 0;
+    typename graph_traits<Graph>::vertex_iterator i, end;
+    for (tie(i, end) = vertices(g); i != end; ++i)
+      b = std::max(b, ith_bandwidth(*i, g, index));
+    return b;
+  }
+
+  template <typename Graph>
+  typename graph_traits<Graph>::vertices_size_type
+  bandwidth(const Graph& g)
+  {
+    return bandwidth(g, get(vertex_index, g));
+  }
+
 } /*namespace matrix_ordering*/
 
 
-#endif /*BOOST_RVERSE_CUTHILL_MCKEE_K*/
+#endif // BOOST_GRAPH_CUTHILL_MCKEE_HPP
