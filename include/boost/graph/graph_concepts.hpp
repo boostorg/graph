@@ -308,6 +308,7 @@ namespace boost {
   {
     void constraints() {
       REQUIRE(C, EqualityComparable);
+      REQUIRE(C, DefaultConstructible);
 
       c = white(c);
       c = gray(c);

@@ -26,14 +26,16 @@ ColorValue
 
 <P>
 This concept describes the requirements for the type used for color
-values (as in for coloring a graph during a BFS, etc.). A ColorValue
-must be <a
-href="http://www.sgi.com/Technology/STL/EqualityComparable.html">EqualityComparable</a>
-and also the following functions must be defined. <TT>T</TT> is the
-type that is a model of ColorValue and <TT>c</TT> is an object of type
-<TT>T</TT>.
+values, as in for coloring a graph during a breath-first search to
+mark which vertices have been visited.
 
 <P>
+
+<h3>Refinement of</h3> <a
+href="http://www.sgi.com/Technology/STL/EqualityComparable.html">EqualityComparable</a>
+and <a
+href="http://www.sgi.com/Technology/STL/DefaultConstructible.html">DefaultConstructible</a>
+
 
 <h3>Notation</h3>
 

@@ -133,7 +133,7 @@ namespace boost {
                          FinishTime f, Color color, directed_tag)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      typename property_traits<Color>::value_type cc = get(color, Vertex());
+      typename property_traits<Color>::value_type cc;
       int time = 0;
       depth_first_search(G, record_times(d, f, time, v), color);
 

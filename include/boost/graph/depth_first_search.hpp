@@ -70,8 +70,7 @@ namespace boost {
   depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
     REQUIRE2(DFSVisitor, VertexListGraph, DFSVisitor);
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    typename property_traits<ColorMap>::value_type c = get(color, Vertex());
+    typename property_traits<ColorMap>::value_type c;
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
