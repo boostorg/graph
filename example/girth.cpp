@@ -69,10 +69,6 @@ public:
   diameter_and_girth_visitor(std::size_t& k_, std::size_t& girth_)
     : k(k_), girth(girth_) { }
 
-  void examine_edge(edge_descriptor e, Graph* g) {
-    assert(source(e, g) != target(e, g));
-  }
-
   void tree_edge(edge_descriptor e, Graph* g) {
     vertex_descriptor u = source(e, g), v = target(e, g);
     k = distance[u] + 1;
