@@ -808,7 +808,7 @@ isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
 
 @o isomorphism.hpp
 @{
-// Copyright (C) 2001 Jeremy Siek, Doug Gregor, Brian Osman
+// Copyright (C) 2001 Jeremy Siek, Douglas Gregor, Brian Osman
 //
 // Permission to copy, use, sell and distribute this software is granted
 // provided this copyright notice appears in all copies.

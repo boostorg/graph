@@ -1,6 +1,6 @@
 // Boost.Graph library isomorphism test
 
-// Copyright (C) 2001-4 Doug Gregor (dgregor at cs dot indiana dot edu)
+// Copyright (C) 2001-20044 Douglas Gregor (dgregor at cs dot indiana dot edu)
 //
 // Permission to copy, use, sell and distribute this software is granted
 // provided this copyright notice appears in all copies.
