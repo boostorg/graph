@@ -29,6 +29,8 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/reverse_graph.hpp>
+#include <boost/graph/copy.hpp>
 
 
 namespace boost {
@@ -36,34 +38,17 @@ namespace boost {
   template <class VertexListGraph, class MutableGraph> 
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T)
   {
-    transpose_graph(G, G_T, get(vertex_index, G));
+    copy_graph(make_reverse_graph(G), G_T);
   }
   
-  template <class VertexListGraph, class MutableGraph, class VertexIndexMap> 
+  template <class VertexListGraph, class MutableGraph, 
+    class P, class T, class R> 
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T,
-                       VertexIndexMap index)
+		       const bgl_named_params<P, T, R>& params)
   {
-    typedef graph_traits<VertexListGraph> Traits;
-    typedef typename Traits::vertex_iterator VerIter;
-    typedef typename Traits::out_edge_iterator OutEdgeIter;
-    typedef typename Traits::vertex_descriptor Vertex;
-    typedef typename Traits::edge_descriptor Edge;
-    
-    VerIter i, iend;
-    OutEdgeIter j, jend;
-    for (tie(i, iend) = vertices(G); i != iend; ++i) {
-      Vertex u = *i;
-      for (tie(j, jend) = out_edges(u, G); j != jend; ++j) {
-        Edge e = *j;
-        Vertex v = target(e, G);
-        add_edge(vertex(get(index, v), G_T), vertex(get(index, u), G_T), G_T);
-        // Hmmm, what to do about edge properties? Need to copy them
-	// to the new graph.
-      }
-    }
+    copy_graph(make_reverse_graph(G), G_T, params);
   }
 
+} // namespace boost
 
-}
-
-#endif /*BOOST_GRAPH_TRANSPOSE_H*/
+#endif // BOOST_GRAPH_TRANSPOSE_HPP
