@@ -60,7 +60,7 @@ namespace boost {
       //  protected:
       property_type* m_eproperty;
     };
-
+    
     template <class D, class V>
     inline bool
     operator==(const detail::edge_desc_impl<D,V>& a, 
