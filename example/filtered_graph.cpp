@@ -38,7 +38,7 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/filtered_edge_graph.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
 
 template <typename EdgeWeightMap>
@@ -72,7 +72,7 @@ int main()
   add_edge(E, C, 0, g);
   
   positive_edge_weight<EdgeWeightMap> filter(get(edge_weight, g));
-  filtered_edge_graph<Graph, positive_edge_weight<EdgeWeightMap> >
+  filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> >
     fg(g, filter);
 
   std::cout << "filtered edge set: ";

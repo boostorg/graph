@@ -26,7 +26,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/edge_list.hpp>
-#include <boost/graph/filtered_edge_graph.hpp>
+#include <boost/graph/filtered_graph.hpp>
 
 // Define the macro BOOST_USE_STANFORD_GRAPH_BASE if you have SGB
 // installed and want to check the BGL SGB adaptor.
@@ -301,12 +301,12 @@ main(int,char*[])
     function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
       edge_index_t> >();
   }
-  // Check filtered_edge_graph
+  // Check filtered_graph
   {
     typedef adjacency_list<vecS, vecS, directedS, 
       no_property, property<edge_residual_capacity_t, long> > Graph;
     typedef property_map<Graph, edge_residual_capacity_t>::type ResCapMap;
-    typedef filtered_edge_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
+    typedef filtered_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
     typedef graph_traits<ResGraph>::edge_descriptor Edge;
 
     function_requires< VertexAndEdgeListGraphConcept<ResGraph> >();
