@@ -413,6 +413,13 @@ The <tt>adjacency_iterator</tt> models the same iterator concept
 as <tt>out_edge_iterator</tt>.
 <hr>
 
+<tt>adjacency_list::inv_adjacency_iterator</tt>
+<br><br>
+The type for the iterators returned by <TT>inv_adjacent_vertices()</TT>.
+The <tt>inv_adjacency_iterator</tt> models the same iterator concept
+as <tt>out_edge_iterator</tt>.
+<hr>
+
 <tt>graph_traits&lt;adjacency_list&gt;::directed_category</tt><br>
 and<br>
 <tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::directed_category</tt>
@@ -596,7 +603,21 @@ std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;
 adjacent_vertices(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <tt>u</tt> in graph <tt>g</tt>.
+vertex <tt>u</tt> in graph <tt>g</tt>. For example, if <tt>u -> v</tt>
+is an edge in the graph, then <tt>v</tt> will be in this iterator-range.
+
+<hr>
+
+<pre>
+std::pair&lt;inv_adjacency_iterator,&nbsp;inv_adjacency_iterator&gt;
+inv_adjacent_vertices(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
+</pre>
+
+Returns an iterator-range providing access to the vertices in graph
+<tt>g</tt> to which <tt>u</tt> is adjacent. (<tt>inv</tt> is for
+inverse.) For example, if <tt>v -> u</tt> is an edge in the graph,
+then <tt>v</tt> will be in this iterator range. This function is only
+available for bidirectional and undirected <tt>adjacency_list</tt>'s.
 
 <hr>
 
