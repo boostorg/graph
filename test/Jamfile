@@ -14,11 +14,11 @@ compile adj_list_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 # unit-test adj_list_test : adj_list_test.cpp : <sysinclude>$(BOOST_ROOT)  ;
 compile adj_matrix_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
-unit-test bfs : bfs.cpp <lib>../../test/build/test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+unit-test bfs : bfs.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
 
 compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
-unit-test dfs : dfs.cpp <lib>../../test/build/test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+unit-test dfs : dfs.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
 
 compile dfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
@@ -40,8 +40,12 @@ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 compile stanford_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) 
    <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
 
-unit-test subgraph : subgraph.cpp <lib>../../test/build/test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+unit-test subgraph : subgraph.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
 
-unit-test isomorphism : isomorphism.cpp <lib>../../test/build/test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
+unit-test isomorphism : isomorphism.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
 
 compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
+
+compile copy.cpp : <sysinclude>$(BOOST_ROOT) ;
+
+
