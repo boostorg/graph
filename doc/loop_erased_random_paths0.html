@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Boost Graph Library: Loop-Erased Random Paths</title>
+  </head>
+  <body>
+    <h1><img src="../../../c++boost.gif" alt="C++ Boost" width="277" height="86" /><br /><tt>loop_erased_random_paths</tt></h1>
+
+<pre>// generic default version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename OutputPredecessorMap, typename UtilGraph&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig, OutputPredecessorMap out_pred_map, UtilGraph&amp; u_g)
+</pre>
+
+<pre>// generic named parameter version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename IP, typename IT, typename IR,
+          typename UP, typename UT, typename UR&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig, UtilGraph&amp; u_g,
+    const bgl_named_params&lt;IP, IT, IR&gt;&amp; in_params,
+    const bgl_named_params&lt;UP, UT, UR&gt;&amp; u_params)
+</pre>
+
+<pre>// generic kitchen-sink version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename OutputPredecessorMap, typename InputIndexMap,
+          typename InputColorMap, typename UtilGraph, typename UtilIndexMap,
+          typename UtilColorMap&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig, OutputPredecessorMap out_pred_map,
+    InputIndexMap in_index_map, InputColorMap in_color_map,
+    UtilGraph&amp; u_g, UtilIndexMap u_index_map, UtilColorMap u_color_map)
+</pre>
+
+<pre>// specialized default version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename OutputPredecessorMap&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig, OutputPredecessorMap out_pred_map)
+</pre>
+
+<pre>// specialized named parameter version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename IP, typename IT, typename IR&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig,
+    const bgl_named_params&lt;IP, IT, IR&gt;&amp; in_params)
+</pre>
+
+<pre>// specialized kitchen-sink version
+template &lt;typename InputGraph, typename RandomIndexGenerator,
+          typename OutputPredecessorMap, typename InputIndexMap,
+          typename InputColorMap&gt;
+bool loop_erased_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomIndexGenerator&amp; rig, OutputPredecessorMap out_pred_map,
+    InputIndexMap in_index_map, InputColorMap in_color_map)
+</pre>
+
+    <p>This algorithm creates random paths in the input graph, all from the specified source vertex, and places them in the output predecessor map.  The implementation is based on an algorithm by <a href="http://www.math.wisc.edu/~propp/">James Gary Propp</a> and <a href="http://dbwilson.com/">David Bruce Wilson</a>, located at <a href="http://dbwilson.com/ja/ja.ps.gz.ps">http://dbwilson.com/ja/ja.ps.gz.ps</a> on page 28.  (See <a href="http://dbwilson.com/ja/">http://dbwilson.com/ja/</a> for output formats other than Postscript.)</p>
+    <p>The output predecessor map may form a forest instead of a tree; the implementation returns <tt>false</tt> in this case.  How you deal with the result depends on whether you need all the paths (solved by <tt>while(!loop_erased_random_paths(...)){}</tt>) or just the path to a particular target vertex (see the <a href="../example/make_random_paths.cpp">example</a>).</p>
+    <p>The specialized versions of the algorithm (the ones that don't take in a utility graph parameter) will work (i.e. compile) if and only if the input graph is either undirected or bidirectional.</p>
+    <p>Because the generic versions of the algorithm requires two graphs, the named-parameter function variant requires two named-parameter arguments.</p>
+
+    <h3>Where Defined</h3>
+    <p><a href="../../../boost/graph/loop_erased_random_paths.hpp"><tt>boost/graph/loop_erased_random_paths.hpp</tt></a></p>
+
+    <h3>Parameters</h3>
+    <p>IN: <tt>InputGraph&amp; in_g</tt></p>
+    <blockquote>
+      <p>The input graph.  The type <tt>InputGraph</tt> must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a> and <a href="./AdjacencyGraph.html">Adjacency Graph</a>.</p>
+    </blockquote>
+    <p>IN: <tt>graph_traits&lt;InputGraph&gt;::vertex_descriptor source source</tt></p>
+    <blockquote>
+      <p>The source vertex.  The random paths tree will be rooted at this vertex.</p>
+    </blockquote>
+    <p>IN: <tt>RandomIndexGenerator&amp; rig</tt></p>
+    <blockquote>
+      <p>The base random number generator used to help choose random predecessors for vertices.  The type <tt>RandomIndexGenerator</tt> must be a model of <a href="http://www.sgi.com/tech/stl/RandomNumberGenerator.html">STL Random Number Generator</a>.  (You may use the <a href="http://www.boost.org/libs/random/random-misc.html"><tt>boost::random_number_generator</tt></a> for this purpose.)</p>
+    </blockquote>
+    <p>UTIL: <tt>UtilGraph&amp; u_g</tt></p>
+    <blockquote>
+      <p>The utility graph, used by the algorithm to create a transposed copy of the input graph in order to efficiently find random predecessors.  The type <tt>UtilGraph</tt> must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>, <a href="./AdjacencyGraph.html">Adjacency Graph</a>, and <tt>EdgeMutableGraphConcept</tt>.</p>
+      <p><b>Further preconditions:</b> <tt>u_g</tt> must contain no edges, and <tt>num_vertices(u_g) == num_vertices(in_g)</tt></p>
+      <p><b>Note:</b> The specialized versions of the algorithm do not take in this parameter.</p>
+    </blockquote>
+
+    <h3>InputGraph Named Parameters</h3>
+    <p>OUT: <tt>predecessor_map(OutputPredecessorMap out_pred_map)</tt></p>
+    <blockquote>
+      <p>The predecessor map records the edges in the random paths.  Upon completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i> are in the random paths.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex or a vertex that is not reachable from the source.  The <tt>PredecessorMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are <tt>graph_traits&lt;InputGraph&gt;::vertex_descriptor</tt>.</p>
+      <p><b>Default:</b> <tt>get(vertex_predecessor_t(), g)</tt></p>
+    </blockquote>
+    <p>IN: <tt>vertex_index_map(InputIndexMap in_index_map)</tt></p>
+    <blockquote>
+      <p>Aids in bidirectional mapping between the graphs' vertex sets.</p>
+      <p><b>Default:</b> <tt>get(vertex_index_t(), in_g)</tt></p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>color_map(InputColorMap in_color_map)</tt></p>
+    <blockquote>
+      <p>Used by the algorithm to mark a vertex as part of the random tree.</p>
+      <p><b>Default:</b> An <a href="../../property_map/iterator_property_map.html">iterator_property_map</a> created from a <tt><a href="http://www.sgi.com/tech/stl/Vector.html">std::vector</a>&lt;typename graph_traits&lt;InputGraph&gt;::vertex_descriptor&gt;</tt> of size <tt>num_vertices(in_g)</tt> and using <tt>in_index_map</tt> for the index map.</p>
+    </blockquote>
+
+    <h3>UtilGraph Named Parameters</h3>
+    <p>IN: <tt>vertex_index_map(UtilIndexMap in_index_map)</tt></p>
+    <blockquote>
+      <p>Aids in bidirectional mapping between the graphs' vertex sets.</p>
+      <p><b>Default:</b> <tt>get(vertex_index_t(), u_g)</tt></p>
+      <p><b>Note:</b> The specialized versions of the algorithm do not take in this parameter.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>color_map(UtilColorMap u_color_map)</tt></p>
+    <blockquote>
+      <p>Used by the algorithm to prevent loops from entering the random tree.</p>
+      <p><b>Default:</b> An <a href="../../property_map/iterator_property_map.html">iterator_property_map</a> created from a <tt><a href="http://www.sgi.com/tech/stl/Vector.html">std::vector</a>&lt;typename graph_traits&lt;UtilGraph&gt;::vertex_descriptor&gt;</tt> of size <tt>num_vertices(in_g)</tt> and using <tt>u_index_map</tt> for the index map.</p>
+      <p><b>Note:</b> The specialized versions of the algorithm do not take in this parameter.</p>
+    </blockquote>
+
+    <h3>Complexity</h3>
+    <p>The time complexity is <i>O(V + E)</i>.</p>
+
+    <h3>Visitor Event Points</h3>
+    <p>Should there be?</p>
+
+    <h3>Example</h3>
+    <p>See <a href="../example/make_random_paths.cpp"><tt>example/make_random_paths.cpp</tt></a> for an example of using the Loop-Erased Random Paths algorithm.</p>
+
+    <h3>Performance</h3>
+    <p>In terms of randomness, this is the library's best implementation so far.</p>
+
+    <h3>Test</h3>
+    <p>The test program <a href="../test/make_random_paths.cpp"><tt>test/make_random_paths.cpp</tt></a> can be used to verify that <tt>loop_erased_random_paths</tt> works as expected.</p>
+
+    <hr />
+    <table border="0">
+      <tr>
+        <td>Copyright &copy; 2004</td>
+        <td>Cromwell D. Enage</td>
+      </tr>
+    </table>
+    <p>Covered by the Boost Software License, Version 1.0.  (See accompanying file <a href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>).</p>
+  </body>
+</html>
+

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Boost Graph Library: Dijkstra-DAG Negative-Weighted Random Paths</title>
+  </head>
+  <body>
+    <h1><img src="../../../c++boost.gif" alt="C++ Boost" width="277" height="86" /><br />Dijkstra-DAG Negative-Weighted Random Paths</h1>
+
+<pre>// default version
+template &lt;typename InputGraph, typename RandomNumberGenerator,
+          typename OutputPredecessorMap, typename UtilGraph&gt;
+void ddnw_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight, OutputPredecessorMap out_pred_map,
+    UtilGraph&amp; dag)
+</pre>
+
+<pre>// named parameter version
+template &lt;typename InputGraph, typename RandomNumberGenerator,
+          typename IP, typename IT, typename IR,
+          typename UP, typename UT, typename UR&gt;
+void ddnw_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight, UtilGraph&amp; dag,
+    const bgl_named_params&lt;IP, IT, IR&gt;&amp; in_params,
+    const bgl_named_params&lt;UP, UT, UR&gt;&amp; u_params)
+</pre>
+
+<pre>// kitchen-sink version
+template &lt;typename InputGraph, typename RandomNumberGenerator,
+          typename OutputPredecessorMap, typename InputDistanceMap,
+          typename InputIndexMap, typename InputColorMap,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunctor</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunctor</a>,
+          typename DistanceInfinity, typename DistanceZero,
+          typename <a href="./EventVisitorList.html">InputEventVisitorList</a>, typename UtilGraph,
+          typename UtilPredecessorMap, typename UtilDistanceMap,
+          typename UtilIndexMap, typename UtilColorMap,
+          typename <a href="./EventVisitorList.html">UtilEventVisitorList</a>&gt;
+void ddnw_random_paths(
+    InputGraph&amp; in_g,
+    typename graph_traits&lt;InputGraph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight, OutputPredecessorMap out_pred_map,
+    InputDistanceMap in_dist_map, InputIndexMap in_index_map,
+    InputColorMap in_color_map, CompareFunctor compare, CombineFunctor combine,
+    DistanceInfinity infinity, DistanceZero zero, InputEventVisitorList in_vis,
+    UtilGraph&amp; dag, UtilPredecessorMap u_pred_map, UtilDistanceMap u_dist_map,
+    UtilIndexMap u_index_map, UtilColorMap u_color_map,
+    UtilEventVisitorList dag_vis)
+</pre>
+
+    <p>This algorithm creates random paths in the input graph, all from the specified source vertex, and places them in the output predecessor map.</p>
+    <p>The implementation carries out the following steps:</p>
+    <ol>
+      <li>Run <a href="./dijkstra_random_paths.html">Dijkstra's Random Paths algorithm</a> on the input graph.</li>
+      <li>For the utility graph, make copies of only the forward and cross edges with respect to the previous traversal.  This ensures that the utility graph is acyclic.</li>
+      <li>Negate the edge weights in the utility graph.</li>
+      <li>Run <a href="./dag_shortest_paths.html">dag_shortest_paths</a> on the utility graph.  Because of the previous negation, this essentially becomes a longest simple path algorithm.  In general, the LSP problem is NP-complete, but directed acyclic graphs make up a special case.</li>
+      <li>Put the resulting random paths in the output predecessor map.</li>
+    </ol>
+    <p>Because the algorithm requires two graphs, the named-parameter function variant requires two named-parameter arguments.  Furthermore, a default utility graph cannot be provided without defining a specific graph implementation (e.g. <a href="./adjacency_list.html">adjacency_list</a>).</p>
+
+    <h3>Where Defined</h3>
+    <p><a href="../../../boost/graph/ddnw_random_paths.hpp"><tt>boost/graph/ddnw_random_paths.hpp</tt></a></p>
+
+    <h3>Parameters</h3>
+    <p>IN: <tt>InputGraph&amp; in_g</tt></p>
+    <blockquote>
+      <p>The input graph.  The type <tt>InputGraph</tt> must be a model of <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a>, and <tt>edge_weight_t</tt> must be a <a href="./using_property_maps.html#interior-properties">read/write interior property</a> of the graph.</p>
+    </blockquote>
+    <p>IN: <tt>graph_traits&lt;InputGraph&gt;::vertex_descriptor source</tt></p>
+    <blockquote>
+      <p>The source vertex.  The random paths tree will be rooted at this vertex.</p>
+    </blockquote>
+    <p>IN: <tt>RandomNumberGenerator&amp; random_weight</tt></p>
+    <blockquote>
+      <p>The random number generator used to put random weights in the graph's internal weight map.  The type <tt>RandomNumberGenerator</tt> must also be a legal template argument in the <a href="./random.html#randomize_property">randomize_property</a> function.</p>
+    </blockquote>
+
+    <p>UTIL: <tt>UtilGraph&amp; dag</tt></p>
+    <blockquote>
+      <p>The utility graph.  The type <tt>UtilGraph</tt> must be a model of <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a> and <tt>EdgeMutableGraphConcept</tt>, the associated <a href="./graph_traits.html"><tt>directed_category</tt></a> type must be convertible to <tt>directed_tag</tt>, and <tt>edge_weight_t</tt> must be a <a href="./using_property_maps.html#interior-properties">read/write interior property</a> of the graph.  Furthermore, <tt>dag</tt> must contain no edges, and <tt>num_vertices(dag) == num_vertices(in_g)</tt>; the behavior of this algorithm is undefined otherwise.  Upon completion of the algorithm, <tt>dag</tt> will retain its original state.</p>
+    </blockquote>
+
+    <h3>InputGraph Named Parameters</h3>
+    <p>OUT: <tt>predecessor_map(OutputPredecessorMap out_pred_map)</tt></p>
+    <blockquote>
+      <p>The predecessor map records the edges in the random paths.  Upon completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i> are in the random paths.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex or a vertex that is not reachable from the source.  The <tt>PredecessorMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are <tt>graph_traits&lt;InputGraph&gt;::vertex_descriptor</tt>.<br /><b>Default:</b> <tt>get(vertex_predecessor_t(), g)</tt></p>
+    </blockquote>
+    <p>IN: <tt>vertex_index_map(InputIndexMap in_index_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>distance_map(InputDistanceMap in_dist_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_compare(CompareFunctor compare)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_combine(CombineFunctor combine)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_inf(D infinity)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_zero(D zero)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>color_map(InputColorMap in_color_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>OUT: <tt>visitor(InputEventVisitorList in_vis)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+
+    <h3>UtilGraph Named Parameters</h3>
+    <p>OUT: <tt>predecessor_map(UtilPredecessorMap u_pred_map)</tt></p>
+    <blockquote>
+      <p>The predecessor map records the edges in the random paths.  Upon completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i> are in the random paths.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex or a vertex that is not reachable from the source.  The <tt>PredecessorMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are the same as the vertex descriptor type of the graph.<br /><b>Default:</b> An <a href="../../property_map/property_map.html">associative property map</a> built on top of an <a href="http://www.sgi.com/tech/stl/Map.html">std::map</a> whose key and value types are <tt>graph_traits&lt;UtilGraph&gt;::vertex_descriptor</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>distance_map(UtilDistanceMap u_dist_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dag_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>vertex_index_map(UtilIndexMap in_index_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dag_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>color_map(UtilColorMap u_color_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dag_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>OUT: <tt>visitor(UtilEventVisitorList dag_vis)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dag_shortest_paths</tt>.</p>
+    </blockquote>
+
+    <h3>Complexity</h3>
+    <p>The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i> if all vertices are reachable from the source.</p>
+
+    <h3>Visitor Event Points</h3>
+    <p>The visitor event points for the input visitor are the same as in <tt>dijkstra_shortest_paths</tt>.  The visitor event points for the utility visitor are the same as in <tt>dag_shortest_paths</tt>.</p>
+
+    <h3>Example</h3>
+    <p>See <a href="../example/make_random_paths.cpp"><tt>example/make_random_paths.cpp</tt></a> for an example of using the Dijkstra-DAG Negative-Weighted Random Paths algorithm.</p>
+
+    <h3>Performance</h3>
+    <p>In terms of randomness, this algorithm fares better than Dijkstra's version, but not as well as the <a href="loop_erased_random_paths.html">Loop-Erased Random Paths algorithm</a>.</p>
+
+    <h3>Test</h3>
+    <p>The test program <a href="../test/make_random_paths.cpp"><tt>test/make_random_paths.cpp</tt></a> can be used to verify that <tt>ddnw_random_paths</tt> works as expected.</p>
+
+    <hr />
+    <table border="0">
+      <tr>
+        <td>Copyright &copy; 2004</td>
+        <td>Cromwell D. Enage</td>
+      </tr>
+    </table>
+    <p>Covered by the Boost Software License, Version 1.0.  (See accompanying file <a href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>).</p>
+  </body>
+</html>
+

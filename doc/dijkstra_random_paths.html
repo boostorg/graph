@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Boost Graph Library: Dijkstra's Random Paths</title>
+  </head>
+  <body>
+    <h1><img src="../../../c++boost.gif" alt="C++ Boost" width="277" height="86" /><br /><tt>dijkstra_random_paths</tt></h1>
+
+<pre>// default version
+template &lt;typename Graph, typename RandomNumberGenerator,
+          typename PredecessorMap&gt;
+void dijkstra_random_paths(
+    Graph&amp; g,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight, PredecessorMap pred_map)
+</pre>
+
+<pre>// named parameter version
+template &lt;typename Graph, typename RandomNumberGenerator,
+          typename Param, typename Tag, typename Rest&gt;
+void dijkstra_random_paths(
+    Graph&amp; g,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight,
+    const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params)
+</pre>
+
+<pre>// kitchen-sink version
+template &lt;typename Graph, typename RandomNumberGenerator,
+          typename PredecessorMap, typename DistanceMap,
+          typename VertexIndexMap, typename VertexColorMap,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunctor</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunctor</a>,
+          typename DistanceInfinity, typename DistanceZero,
+          typename <a href="./EventVisitorList.html">EventVisitorList</a>&gt;
+void dijkstra_random_paths(
+    Graph&amp; g,
+    typename graph_traits&lt;Graph&gt;::vertex_descriptor source,
+    RandomNumberGenerator&amp; random_weight, PredecessorMap pred_map,
+    DistanceMap dist_map, VertexIndexMap index_map, VertexColorMap color_map,
+    CompareFunctor compare, CombineFunctor combine, DistanceInfinity infinity,
+    DistanceZero zero, EventVisitorList vis)
+</pre>
+
+    <p>This algorithm creates random paths in the input graph, all from the specified source vertex, and places them in the output predecessor map.</p>
+    <p>The implementation runs on top of <a href="./dijkstra_shortest_paths.html">Dijkstra's shortest-pahts algorithm</a> using random edge weights; the resulting paths tend to be short as well.</p>
+
+    <h3>Where Defined</h3>
+    <p><a href="../../../boost/graph/dijkstra_random_paths.hpp"><tt>boost/graph/dijkstra_random_paths.hpp</tt></a></p>
+
+    <h3>Parameters</h3>
+    <p>IN: <tt>Graph&amp; g</tt></p>
+    <blockquote>
+      <p>The graph object on which the algorithm will be applied.  The type <tt>Graph</tt> must be a model of <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a>, and <tt>edge_weight_t</tt> must be a <a href="./using_property_maps.html#interior-properties">read/write interior property</a> of the graph.</p>
+    </blockquote>
+    <p>IN: <tt>graph_traits&lt;Graph&gt;::vertex_descriptor source</tt></p>
+    <blockquote>
+      <p>The source vertex.  All distances will be calculated from this vertex, and the random paths tree will be rooted at this vertex.</p>
+    </blockquote>
+
+    <h3>Named Parameters</h3>
+    <p>OUT: <tt>predecessor_map(PredecessorMap p_map)</tt></p>
+    <blockquote>
+      <p>The predecessor map records the edges in the random paths.  Upon completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i> are in the random paths.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex or a vertex that is not reachable from the source.  The <tt>PredecessorMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are the same as the vertex descriptor type of the graph.<br /><b>Default:</b> <tt>get(vertex_predecessor_t(), g)</tt></p>
+    </blockquote>
+    <p>IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_compare(CompareFunction cmp)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_combine(CombineFunction cmb)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_inf(D inf)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>IN: <tt>distance_zero(D zero)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>color_map(ColorMap c_map)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+    <p>OUT: <tt>visitor(EventVisitorList vis)</tt></p>
+    <blockquote>
+      <p>Serves the same function, has the same requirements, and uses the same default as in <tt>dijkstra_shortest_paths</tt>.</p>
+    </blockquote>
+
+    <h3>Complexity</h3>
+    <p>The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i> if all vertices are reachable from the source.</p>
+
+    <h3>Visitor Event Points</h3>
+    <p>Same as in <tt>dijkstra_shortest_paths</tt>.</p>
+
+    <h3>Example</h3>
+    <p>See <a href="../example/make_random_paths.cpp"><tt>example/make_random_paths.cpp</tt></a> for an example of using Dijkstra's Random Paths algorithm.</p>
+
+    <h3>Test</h3>
+    <p>The test program <a href="../test/make_random_paths.cpp"><tt>test/make_random_paths.cpp</tt></a> can be used to verify that <tt>dijkstra_random_paths</tt> works as expected.</p>
+
+    <hr />
+    <table border="0">
+      <tr>
+        <td>Copyright &copy; 2004</td>
+        <td>Cromwell D. Enage</td>
+      </tr>
+    </table>
+    <p>Covered by the Boost Software License, Version 1.0.  (See accompanying file <a href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>).</p>
+  </body>
+</html>
+

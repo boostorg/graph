@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Boost Graph Library: Tarjan's Offline Least Common Ancestor Algorithm</title>
+  </head>
+  <body>
+    <h1><img src="../../../c++boost.gif" alt="C++ Boost" width="277" height="86" /><br />Tarjan's Offline Least Common Ancestor Algorithm</h1>
+
+<pre>// default version
+template &lt;typename Graph, typename AncestorMatrix&gt;
+void tarjan_offline_lca(
+    const Graph&amp; in_g, typename graph_traits&lt;Graph&gt;::vertex_descriptor source,
+    AncestorMatrix&amp; ancestor_matrix)
+</pre>
+
+<pre>// kitchen-sink version
+template &lt;typename Graph, typename AncestorMatrix, typename DisjointSets,
+          typename PredecessorMap, typename VertexColorMap,
+          typename EventVisitorList&gt;
+void tarjan_offline_lca(
+    const Graph&amp; in_g, typename graph_traits&lt;Graph&gt;::vertex_descriptor source,
+    AncestorMatrix&amp; ancestor_matrix, DisjointSets dsets,
+    PredecessorMap ancestor_map, VertexColorMap color_map, EventVisitorList vis)
+</pre>
+
+    <p>The <strong>least common ancestor</strong> (LCA) of two vertices is the vertex that fulfills the following conditions:</p>
+    <ol>
+      <li>Both input vertices are its descendants.</li>
+      <li>None of its descendants fulfill the previous condition.</li>
+    </ol>
+    <p>This algorithm precalculates the LCA of all pairs of vertices in the graph and stores the results in the output ancestor matrix.</p>
+    <p><b>TODO:</b> Implement an output format that is more true to the original algorithm (i.e. only calculates the results for a specified set of vertex pairs) but is still generic.  The target time complexity is <i>O(N * V log V)</i>, where <i>N</i> is the (relatively small) size of the input set of vertex pairs for which the LCA actually needs to be calculated.</p>
+
+    <h3>Where Defined</h3>
+    <p><a href="../../../boost/graph/tarjan_offline_lca.hpp"><tt>boost/graph/tarjan_offline_lca.hpp</tt></a></p>
+
+    <h3>Parameters</h3>
+    <p>IN: <tt>Graph&amp; g</tt></p>
+    <blockquote>
+      <p>The input graph.</p>
+      <p><b>Preconditions:</b></p>
+      <ul>
+        <li>The type <tt>InputGraph</tt> must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a> and <a href="./AdjacencyGraph.html">Adjacency Graph</a>.</li>
+        <li>The graph must be directed.</li>
+        <li>The graph must be a tree.</li>
+      </ul>
+    </blockquote>
+    <p>IN: <tt>graph_traits&lt;Graph&gt;::vertex_descriptor source</tt></p>
+    <blockquote>
+      <p>The root of the tree graph.</p>
+    </blockquote>
+    <p>OUT: <tt>AncestorMatrix& ancestor_matrix</tt></p>
+    <blockquote>
+      <p>The output matrix that will store the results of the LCA calculations.</p>
+      <p><b>Preconditions:</b></p>
+      <ul>
+        <li>The type <tt>AncestorMatrix</tt> must implement the () operator, whose two arguments must be of type <tt>graph_traits&lt;Graph&gt;::vertex_descriptor</tt> and whose return type must also be <tt>graph_traits&lt;Graph&gt;::vertex_descriptor</tt>.</li>
+        <li>The matrix object must contain at least <tt>num_vertices(g)</tt> rows and at least <tt>num_vertices(g)</tt> columns of elements.</li>
+      </ul>
+      <p><b>Postcondition:</b> The LCA of vertices <tt>x</tt> and <tt>y</tt> in <tt>g</tt> is <tt>ancestor_matrix(x, y)</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt><a href="../../disjoint_sets/disjoint_sets.html">DisjointSets</a> dsets</tt></p>
+    <blockquote>
+      <p>The algorithm makes a set for each vertex during its discovery by the depth-first traversal.  During post-traversal of a vertex, it unionizes the vertex with all of its children so that, instead of making <i>X<sup>2</sup></i> LCA calculations for <i>X</i> children, at most <i>N</i> LCA calculations will be made.  Currently, <i>N</i> <tt>= num_vertices(g)</tt>; see the TODO above.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>predecessor_map(PredecessorMap out_pred_map)</tt></p>
+    <blockquote>
+      <p>The predecessor map records the edges in the tree.  Upon completion of the algorithm, the edges <i>(p[u],u)</i> for all <i>u in V</i> are in the tree.  If <i>p[u] = u</i> then <i>u</i> is either the source vertex or a vertex that is not reachable from the source.  The <tt>PredecessorMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are <tt>graph_traits&lt;Graph&gt;::vertex_descriptor</tt>.</p>
+      <p><b>Default:</b>  A dummy <tt>associative_property_map</tt>.</p>
+    </blockquote>
+    <p>UTIL/OUT: <tt>vertex_color_map(VertexColorMap color_map)</tt></p>
+    <blockquote>
+      <p>Used by the algorithm to mark a vertex as part of the tree.</p>
+      <p><b>Default:</b> An <a href="../../property_map/iterator_property_map.html">iterator_property_map</a> created from a <tt><a href="http://www.sgi.com/tech/stl/Vector.html">std::vector</a>&lt;typename graph_traits&lt;InputGraph&gt;::vertex_descriptor&gt;</tt> of size <tt>num_vertices(g)</tt> and using <tt>get(vertex_index_t(), g)</tt> for the index map.</p>
+    </blockquote>
+
+    <h3>Complexity</h3>
+    <p>The current time complexity is <i>O(V<sup>2</sup> log V)</i> until a better output format is implemented; see the TODO above.</p>
+
+    <h3>Visitor Event Points</h3>
+    <p>Same as in <a href="depth_first_search.html">depth_first_search</a>.</p>
+
+    <h3>Example</h3>
+    <p>See <a href="../example/tarjan_offline_lca.cpp"><tt>example/tarjan_offline_lca.cpp</tt></a> for an example of using Tarjan's Offline Least Common Ancestor Algorithm.</p>
+
+    <h3>Performance</h3>
+    <p>Recursion could be a problem, but the current absence of a post-traversal event filter (neither <tt>on_back_edge</tt> nor <tt>on_forward_or_cross_edge</tt> would fire if this <a href="../example/tarjan_offline_lca.cpp">example program</a> had used them) precludes usage of either the <a href="depth_first_search.html">depth_first_search</a> or <a href="undirected_dfs.html">undirected_dfs</a> built-in functions.</p>
+
+    <h3>Test</h3>
+    <p>The test program <a href="../test/tarjan_offline_lca.cpp"><tt>test/tarjan_offline_lca.cpp</tt></a> can be used to verify that <tt>tarjan_offline_lca</tt> works as expected.</p>
+
+    <hr />
+    <table border="0">
+      <tr>
+        <td>Copyright &copy; 2004</td>
+        <td>Cromwell D. Enage</td>
+      </tr>
+    </table>
+    <p>Covered by the Boost Software License, Version 1.0.  (See accompanying file <a href="../../../LICENSE_1_0.txt">LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>).</p>
+  </body>
+</html>
+
