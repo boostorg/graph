@@ -54,6 +54,18 @@ edges and vertices.
 <TD>are objects of type <tt>boost::graph_traits&lt;G&gt;::vertex_descriptor</tt>.</TD>
 </TR>
 
+<TR>
+<TD><tt>iter</tt></TD>
+<TD>is an object of type <tt>boost::graph_traits&lt;G&gt;::out_edge_iterator</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>p</tt></TD>
+<TD>is an object of a type that models <a
+href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>
+and whose argument type matches the edge descriptor type. 
+</TR>
+
 </table>
 
 <H3>Valid Expressions</H3>
@@ -81,6 +93,7 @@ Postcondition: <i>(u,v)</i> is no longer in the edge set for
 </TD>
 </TR>
 
+
 <tr>
 <TD><TT>remove_edge(e,&nbsp;g)</TT></TD>
 <TD>Remove the edge <i>e</i> from the graph.<br>
@@ -91,6 +104,46 @@ Postcondition: <i>e</i> is no longer in the edge set for <TT>g</TT>.
 </TR>
 
 <tr>
+<TD><TT>remove_edge(iter,&nbsp;g)</TT></TD>
+<TD>Remove the edge pointed to be <tt>iter</tt> from the graph.  This
+expression is only required when the graph also models <a
+href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
+Return type: <TT>void</TT><br>
+Precondition: <tt>*iter</tt> is an edge in the graph.<br>
+Postcondition: <tt>*iter</tt> is no longer in the edge set for <TT>g</TT>.
+</TD>
+</TR>
+
+<tr>
+<TD><TT>remove_edge_if(p,&nbsp;g)</TT></TD>
+<TD>Remove all the edges from graph <tt>g</tt> for which
+the predicate <tt>p</tt> returns true.<br>
+Return type: <TT>void</TT>
+</TD>
+</TR>
+
+<tr>
+<TD><TT>remove_out_edge_if(u,&nbsp;p,&nbsp;g)</TT></TD>
+<TD>Remove all the out-edges of vertex <tt>u</tt> for which the
+predicate <tt>p</tt> returns true. This expression is only required
+when the graph also models <a
+href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
+Return type: <TT>void</TT>
+</TD>
+</TR>
+
+<tr>
+<TD><TT>remove_in_edge_if(u,&nbsp;p,&nbsp;g)</TT></TD>
+<TD>Remove all the in-edges of vertex <tt>u</tt> for which the
+predicate <tt>p</tt> returns true. This expression is only required when the
+graph also models <a
+href="./BidirectionalGraph.html">BidirectionalGraph</a>.<br>
+Return type: <TT>void</TT>
+</TD>
+</TR>
+
+
+<tr>
 <TD><a name="sec:add-vertex"><TT>add_vertex(g)</TT></a></TD>
 <TD>
 Add a new vertex to the graph. The <TT>vertex_descriptor</TT> for the
@@ -98,6 +151,7 @@ new vertex is returned.<br>
 Return type: <TT>vertex_descriptor</TT>
 </TD>
 </TR>
+
 
 <tr>
 <TD><TT>clear_vertex(u,&nbsp;g)</TT></TD>
@@ -114,7 +168,7 @@ any edge in <TT>g</TT>.
 <TD><a name="sec:remove-vertex"><TT>remove_vertex(u,&nbsp;g)</TT></a></TD>
 <TD>
 Remove <i>u</i> from the vertex set of the graph. Note that undefined
-behaviour may result if there are edges remaining in the graph who's
+behavior may result if there are edges remaining in the graph who's
 target is <i>u</i>. Typically the <TT>clear_vertex()</TT> function
 should be called first.<br>
 Return type: <TT>void</TT><br>
@@ -160,23 +214,66 @@ is no longer a valid vertex descriptor.
 
 <PRE>
   template &lt;class G&gt;
-  struct MutableGraph_concept
+  struct MutableGraphConcept
   {
     typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     void constraints() {
       v = add_vertex(g);
       clear_vertex(v, g);
       remove_vertex(v, g);
-      p = add_edge(u, v, g);
+      e_b = add_edge(u, v, g);
       remove_edge(u, v, g);
       remove_edge(e, g);
-      remove_edge(iter, g);
     }
     G g;
     edge_descriptor e;
-    std::pair&lt;edge_descriptor, bool&gt; p;
+    std::pair&lt;edge_descriptor, bool&gt; e_b;
     typename boost::graph_traits&lt;G&gt;::vertex_descriptor u, v;
     typename boost::graph_traits&lt;G&gt;::out_edge_iterator iter;
+  };
+
+  template &lt;class edge_descriptor&gt;
+  struct dummy_edge_predicate {
+    bool operator()(const edge_descriptor& e) const {
+      return false;
+    }
+  };
+
+  template &lt;class G&gt;
+  struct MutableIncidenceGraphConcept
+  {
+    void constraints() {
+      function_requires&lt; MutableGraph&lt;G&gt; &gt;();
+      remove_edge(iter, g);
+      remove_out_edge_if(u, p, g);
+    }
+    G g;
+    dummy_edge_predicate&lt;edge_descriptor&gt; p;
+    typename boost::graph_traits&lt;G&gt;::vertex_descriptor u;
+    typename boost::graph_traits&lt;G&gt;::out_edge_iterator iter;
+  };
+
+  template &lt;class G&gt;
+  struct MutableBidirectionalGraphConcept
+  {
+    void constraints() {
+      function_requires&lt; MutableIncidenceGraph&lt;G&gt; &gt;();
+      remove_in_edge_if(u, p, g);
+    }
+    G g;
+    dummy_edge_predicate&lt;edge_descriptor&gt; p;
+    typename boost::graph_traits&lt;G&gt;::vertex_descriptor u;
+  };
+
+  template &lt;class G&gt;
+  struct MutableEdgeListGraphConcept
+  {
+    void constraints() {
+      function_requires&lt; MutableGraph&lt;G&gt; &gt;();
+      remove_edge_if(p, g);
+    }
+    G g;
+    dummy_edge_predicate&lt;edge_descriptor&gt; p;
   };
 </PRE>
 

@@ -393,25 +393,45 @@ The type for the edge descriptors associated with the
 <br><br>
 The type for the iterators returned by <TT>vertices()</TT>.
 
+When <tt>VertexList=vecS</tt> then the <tt>vertex_iterator</tt> models
+<a
+href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
+the <tt>vertex_iterator</tt> models <a
+href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+
 <hr>
 
 <tt>graph_traits&lt;adjacency_list&gt;::edge_iterator</tt>
 <br><br>
 The type for the iterators returned by <TT>edges()</TT>.
+The <tt>edge_iterator</tt> models <a
+href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+
 
 <hr>
 
 
 <tt>graph_traits&lt;adjacency_list&gt;::out_edge_iterator</tt>
 <br><br>
+
 The type for the iterators returned by <TT>out_edges()</TT>.
+When <tt>EdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
+<a href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">
+RandomAccessIterator</a>.  When <tt>EdgeList=slistS</tt> then the
+<tt>out_edge_iterator</tt> models <a
+href="http://www.sgi.com/Technology/STL/ForwardIterator.html">
+ForwardIterator</a>.  Otherwise the <tt>out_edge_iterator</tt> models
+<a
+href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">
+BidirectionalIterator</a>.
 
 <hr>
 
 <tt>graph_traits&lt;adjacency_list&gt;::adjacency_iterator</tt>
 <br><br>
 The type for the iterators returned by <TT>adjacent_vertices()</TT>.
-
+The <tt>adjacency_iterator</tt> models the same iterator concept
+as <tt>out_edge_iterator</tt>.
 <hr>
 
 <tt>graph_traits&lt;adjacency_list&gt;::directed_category</tt><br>
@@ -513,10 +533,12 @@ adjacency_list(vertices_size_type&nbsp;n,
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
-The value type of the <TT>EdgeIterator</TT> must be a <TT>std::pair</TT>,
-where the type in the pair is an integer type. The integers will
-correspond to vertices, and they must all fall in the range of
-<TT>[0, n)</TT>.
+The <tt>EdgeIterator</tt> must be a model of <a
+href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+The value type of the <TT>EdgeIterator</TT> must be a
+<TT>std::pair</TT>, where the type in the pair is an integer type. The
+integers will correspond to vertices, and they must all fall in the
+range of <TT>[0, n)</TT>.
 </a>
 
 <hr>
@@ -530,11 +552,14 @@ adjacency_list(vertices_size_type&nbsp;num_vertices,
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
-The value type of the <TT>EdgeIterator</TT> must be a <TT>std::pair</TT>,
-where the type in the pair is an integer type. The integers will
-correspond to vertices, and they must all fall in the range of
-<TT>[0, n)</TT>. The <TT>value_type</TT> of the <TT>ep_iter</TT> should
-be <TT>EdgeProperty</TT>.
+The <tt>EdgeIterator</tt> and <tt>EdgePropertyIterator</tt> must be a
+model of <a
+href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+The value type of the <TT>EdgeIterator</TT> must be a
+<TT>std::pair</TT>, where the type in the pair is an integer type. The
+integers will correspond to vertices, and they must all fall in the
+range of <TT>[0, n)</TT>. The <TT>value_type</TT> of the
+<TT>ep_iter</TT> should be <TT>EdgeProperty</TT>.
 
 <hr>
 
@@ -555,6 +580,9 @@ vertices, edges, and properties of graph <tt>x</tt>.
 <P>
 
 <H2>Non-Member Functions</H2>
+
+
+<h4>Structure Access</h4>
 
 <hr>
 
@@ -692,6 +720,10 @@ such a container.
 
 <hr>
 
+<h4>Structure Modification</h4>
+
+<hr>
+
 <pre>
 std::pair&lt;edge_descriptor, bool&gt;
 add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
@@ -806,7 +838,7 @@ invoking <tt>remove_edge()</tt> on each of the removed edges.
 template &lt;class <a
 href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
-adjacency_list&amp; g)
+                       adjacency_list&amp; g)
 </pre>
 Removes all in-edges of vertex <i>v</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
@@ -815,6 +847,9 @@ applied to an edge descriptor, then the edge is removed.
 The affect on descriptor and iterator stability is the
 same as that of invoking <tt>remove_edge()</tt> on each of the
 removed edges.
+<p>
+This operation is available for undirected and bidirectional
+<tt>adjacency_list</tt> graphs, but not for directed.
 
 <hr>
 
@@ -878,6 +913,10 @@ much better choice for the <TT>VertexList</TT> template parameter.
 
 <hr>
 
+<h4>Property Map Access</h4>
+
+<hr>
+
 <pre>
 template &lt;class <a href="./Property.html">Property</a>&gt;
 property_map&lt;adjacency_list, Property&gt;::type
@@ -899,7 +938,7 @@ template &lt;class <a href="./Property.html">Property</a>, class X&gt;
 typename property_traits&lt;property_map&lt;adjacency_list, Property&gt;::const_type&gt::value_type
 get(Property, const adjacency_list&amp; g, X x)
 </pre>
-This returns the property value for <tt>x</tt>, which is either
+This returns the property value for <tt>x</tt>, where <tt>x</tt> is either
 a vertex or edge descriptor.
 <hr>
 
