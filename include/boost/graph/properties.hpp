@@ -332,7 +332,7 @@ namespace boost {
     return make_iterator_vertex_map(c.begin());
   }
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION\
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template<typename Graph, typename Descriptor, typename Bundle, typename T>
   struct bundle_property_map
     : put_get_helper<T&, bundle_property_map<Graph, Descriptor, Bundle, T> >
