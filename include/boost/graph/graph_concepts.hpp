@@ -82,6 +82,7 @@ namespace boost {
       e = *p.first;
       u = source(e, g);
       v = target(e, g);
+      const_constraints(g);
     }
     void const_constraints(const G& g) {
       p = out_edges(v, g);
