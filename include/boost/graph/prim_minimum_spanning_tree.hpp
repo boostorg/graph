@@ -29,7 +29,7 @@
 
 #include <functional>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/graph/uniform_cost_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 namespace boost {
   
@@ -40,60 +40,37 @@ namespace boost {
     };
   }
 
-  // This is Prim's algorithm to calculate the Minimum Spanning Tree
-  // for an undirected graph with weighted edges.
+  namespace detail {
 
-  // Variant (1)
-  template <class Graph, class Vertex>
-  inline void
-  prim_minimum_spanning_tree(Graph& G, Vertex s)
+    // This is Prim's algorithm to calculate the Minimum Spanning Tree
+    // for an undirected graph with weighted edges.
+
+    template <class Graph, class P, class T, class R, class Weight>
+    inline void
+    prim_mst_impl(Graph& G,
+		  typename graph_traits<Graph>::vertex_descriptor s,
+		  const bgl_named_params<P,T,R>& params,
+		  Weight)
+    {
+      typedef typename property_traits<Weight>::value_type W;
+      std::less<W> compare;
+      detail::_project2nd<W,W> combine;
+      dijkstra_shortest_paths(G, s, params.distance_compare(compare).
+			      distance_combine(combine));    
+    }
+  } // namespace detail
+
+  template <class VertexListGraph, class P, class T, class R>
+  inline void prim_minimum_spanning_tree
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     const bgl_named_params<P,T,R>& params)
   {
-    prim_minimum_spanning_tree(G, s, get(vertex_distance, G));
+    detail::prim_mst_impl
+      (g, s, params,
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
 
-  // Variant (2)
-  template <class Graph, class Vertex, class Distance>
-  inline void
-  prim_minimum_spanning_tree(Graph& G, Vertex s, Distance d)
-  {
-    prim_minimum_spanning_tree(G, s, d, ucs_visitor<>());
-  }
-
-  // Variant (3)
-  template <class Graph, class Vertex, class Distance, 
-            class UniformCostVisitor>
-  inline void
-  prim_minimum_spanning_tree(Graph& G, Vertex s, Distance d, 
-                             UniformCostVisitor visit)
-  {
-    prim_minimum_spanning_tree(G, s, d, get(edge_weight, G), 
-                               get(vertex_color, G), 
-                               get(vertex_index, G), 
-                               visit);
-  }
-
-  // Variant (4)
-  template <class Graph, class Vertex, class UniformCostVisitor, 
-            class Distance, class Weight, class Color, class ID>
-  inline void
-  prim_minimum_spanning_tree(Graph& G, Vertex s,
-                             Distance distance, Weight weight, Color color, 
-                             ID id, UniformCostVisitor visit)
-  {
-    typedef typename property_traits<Distance>::value_type D;
-    typedef typename property_traits<Weight>::value_type W;
-    std::less<D> compare;
-    detail::_project2nd<W,W> combine;
-
-    typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-      put(distance, *ui, std::numeric_limits<D>::max());
-
-    put(distance, s, D());
-    uniform_cost_search(G, s, distance, weight, color, id, 
-                        compare, combine, visit);    
-  }
-
-} /*namespace*/
+} // namespace boost
 
 #endif /*BOOST_GRAPH_MST_PRIM_H*/
