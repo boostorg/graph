@@ -24,28 +24,43 @@
 </H2>
 
 <P>
+<DIV ALIGN="LEFT">
+<TABLE CELLPADDING=3 border>
+
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed and undirected</TD>
+</TR>
+
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">color</TD>
+</TR>
+
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT">time: <i>O(E)</i></TD>
+</TR>
+
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/depth_first_search.hpp"><TT>boost/graph/depth_first_search.hpp</TT></a>
+</TD>
+</TR>
+
+</TABLE>
+</DIV>
+
+<P>
 <PRE>
-template &lt;class IncidenceGraph, class Vertex, class Visitor&gt;
-void depth_first_visit(IncidenceGraph&amp; G, Vertex u, Visitor&amp; v);
+template &lt;class IncidenceGraph, class DFSVisitor, class ColorPA&gt;
+void depth_first_visit(IncidenceGraph& g,
+	               typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor u, 
+	               DFSVisitor&amp; vis, ColorPA color)
 </PRE>
 
 <P>
 This function is the recursive part of the depth-first search.  The
 main purpose of the function is for the implementation of
 <TT>depth_first_search()</TT> though sometimes it is useful on its
-own. The responsibility for coloring, etc. is left to the visitor.
-The visitor's <TT>explore()</TT> function returns <TT>bool</TT> which
-determines whether the target vertex will be explored (when it returns
-<TT>true</TT>) or not. The implementation of <TT>depth_first_search()</TT>
-uses the <TT>dfs_visitor</TT> in conjunction with this
-<TT>depth_first_visit()</TT> function.
-
-<P>
-
-<H3>Where Defined</H3>
-
-<P>
-<TT>boost/graph/depth_first_search.hpp</TT>
+own. 
 
 <P>
 
@@ -57,19 +72,14 @@ uses the <TT>dfs_visitor</TT> in conjunction with this
 <LI>The type <TT>IncidenceGraph</TT> must be a model of
     <a href="./IncidenceGraph.html">IncidenceGraph</a>.
 </LI>
-<LI>The type <TT>Vertex</TT> must be convertible to type <TT>boost::graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor</TT>.
+<LI>The type <TT>DFSVisitor</TT> must be a model of <a
+href="./DFSVisitor.html">DFSVisitor</a>.
 </LI>
-<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
+<LI>The type <TT>ColorPA</TT> must be a model of <a
+     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>, and the value type of <TT>Color</TT> must be a model of
+     <a href="./ColorValue.html">ColorValue</a>.
 </LI>
 </UL>
-
-<P>
-
-<H3>Complexity</H3>
-
-<P>
-The time complexity of this operation is <i>O(E)</i>. 
-The worst-case space complexity is .
 
 <P>
 
