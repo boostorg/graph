@@ -33,60 +33,47 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
-// This file adapts a Stanford GraphBase Graph pointer into a
-// VertexListGraph. Note that a graph adaptor class is not needed, the
-// Graph* is used as is. The VertexListGraph concept is fulfilled by
+// This file adapts a Stanford GraphBase (SGB) Graph pointer into a
+// VertexListGraph. Note that a graph adaptor class is not needed, 
+// SGB's Graph* is used as is. The VertexListGraph concept is fulfilled by
 // defining the appropriate non-member functions for Graph*.
-
+//
+// The PROTOTYPES change file extensions to SGB must be applied so
+// that the SGB functions have real prototypes which are necessary for
+// the C++ compiler. To apply the PROTOTYPES extensions, before you do
+// "make tests install" for SGB do "ln -s PROTOTYPES/* ." to the SGB
+// root directory (or just copy all the files from the PROTOTYPES
+// directory to the SGB root directory).
+//
 extern "C" {
-  // We do not include "gb_graph.h" because it contains C-style
-  // no-parameter extern defs for functions like gb_recycle :( Here we
-  // duplicate some of gb_graph.h.
-  typedef union{
-    struct vertex_struct*V;
-    struct arc_struct*A;
-    struct graph_struct*G;
-    char*S;
-    long I;
-  } util;
-  
-  typedef struct vertex_struct{
-    struct arc_struct*arcs;
-    char*name;
-    util u,v,w,x,y,z;
-  } Vertex;
-
-  typedef struct arc_struct{
-    struct vertex_struct*tip;
-    struct arc_struct*next;
-    long len;
-    util a,b;
-  } Arc;
-
-  struct area_pointers {
-    char*first;
-    struct area_pointers*next;
-  };
-
-  typedef struct area_pointers*Area[1];
-
-  typedef struct graph_struct {
-    Vertex*vertices;
-    long n;
-    long m;
-    char id[161]; // warning, this was ID_FIELD_SIZE
-    char util_types[15];
-    Area data;
-    Area aux_data;
-    util uu,vv,ww,xx,yy,zz;
-  } Graph;
-
-  // Some functions and globals in libgb
-  void gb_recycle(Graph*);
-  extern long verbose;
-  extern long panic_code;
-  Graph* miles(unsigned long,long,long,long,unsigned long,unsigned long,long);
-  Graph* restore_graph(char*);
+	// We include all global definitions for the general stuff
+	// of The Stanford GraphBase and its various graph generator
+	// functions by reading all SGB headerfiles as in section 2 of
+	// the "test_sample" program.
+#include <gb_graph.h> /* SGB data structures */
+#include <gb_io.h> /* SGB input/output routines */
+#include <gb_flip.h> /* random number generator */
+#include <gb_dijk.h> /* routines for shortest paths */
+#include <gb_basic.h> /* the basic graph operations */
+#undef empty /* avoid name clash with C++ standard library */
+	inline Graph* empty( long n ) /* and provide workaround */
+	{ return board(n,0L,0L,0L,2L,0L,0L); }
+#include <gb_books.h> /* graphs based on literature */
+#include <gb_econ.h> /* graphs based on economic data */
+#include <gb_games.h> /* graphs based on football scores */
+#include <gb_gates.h> /* graphs based on logic circuits */
+#undef val /* avoid name clash with g++ headerfile stl_tempbuf.h */
+	// val ==> Vertex::x.I
+#include <gb_lisa.h> /* graphs based on Mona Lisa */
+#include <gb_miles.h> /* graphs based on mileage data */
+#include <gb_plane.h> /* planar graphs */
+#include <gb_raman.h> /* Ramanujan graphs */
+#include <gb_rand.h> /* random graphs */
+#include <gb_roget.h> /* graphs based on Roget's Thesaurus */
+#include <gb_save.h> /* we save results in ASCII format */
+#include <gb_words.h> /* five-letter-word graphs */
+#undef weight /* avoid name clash with BGL parameter */
+	// weight ==> Vertex::u.I
 }
 
 namespace boost {
@@ -446,7 +433,6 @@ namespace boost {
   } // namespace detail
   template <class PropertyTag>
   struct property_map<Graph*, PropertyTag> {
-    //    typedef typename PropertyTag::kind Kind;
     typedef typename property_kind<PropertyTag>::type Kind;
     typedef typename detail::choose_property_map<Kind, PropertyTag>::type type;
   };
