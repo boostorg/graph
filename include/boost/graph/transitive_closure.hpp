@@ -1,7 +1,7 @@
 // Copyright (C) 2001 Vladimir Prus <ghost@cs.msu.su>
 // Copyright (C) 2001 Jeremy Siek <jsiek@cs.indiana.edu>
 // Permission to copy, use, modify, sell and distribute this software is
-// granted, provided this copyright notice appears in all copies and 
+// granted, provided this copyright notice appears in all copies and
 // modified version are clearly marked as such. This software is provided
 // "as is" without express or implied warranty, and with no claim as to its
 // suitability for any purpose.
@@ -13,7 +13,7 @@
 
 #include <vector>
 #include <functional>
-#include <boost/compose.hpp>
+#include <boost/bind.hpp>
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
@@ -41,6 +41,8 @@ namespace boost
       typename VT = typename Container::value_type >
       struct subscript_t:public std::unary_function < ST, VT >
     {
+      typedef VT& result_type;
+
       subscript_t(Container & c):container(&c)
       {
       }
@@ -124,9 +126,9 @@ namespace boost
 
     for (size_type i = 0; i < num_vertices(CG); ++i)
       std::sort(CG[i].begin(), CG[i].end(),
-                compose_f_gx_hy(std::less<cg_vertex>(),
-                                detail::subscript(topo_number),
-                                detail::subscript(topo_number)));
+                boost::bind(std::less<cg_vertex>(),
+                            boost::bind(detail::subscript(topo_number), _1),
+                            boost::bind(detail::subscript(topo_number), _2)));
 
     std::vector<std::vector<cg_vertex> > chains;
     {
@@ -167,7 +169,7 @@ namespace boost
     std::vector<std::vector<cg_vertex> > successors(num_vertices(CG),
                                                     std::vector<cg_vertex>
                                                     (chains.size(), inf));
-    for (typename std::vector<cg_vertex>::reverse_iterator 
+    for (typename std::vector<cg_vertex>::reverse_iterator
            i = topo_order.rbegin(); i != topo_order.rend(); ++i) {
       cg_vertex u = *i;
       typename graph_traits<CG_t>::adjacency_iterator adj, adj_last;
@@ -226,11 +228,11 @@ namespace boost
             add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
           }
 
-    // Find loopbacks in the original graph. 
+    // Find loopbacks in the original graph.
     // Need to add it to transitive closure.
     {
       vertex_iterator i, i_end;
-      for (tie(i, i_end) = vertices(g); i != i_end; ++i) 
+      for (tie(i, i_end) = vertices(g); i != i_end; ++i)
         {
           adjacency_iterator ab, ae;
           for (boost::tie(ab, ae) = adjacent_vertices(*i, g); ab != ae; ++ab)
@@ -328,12 +330,12 @@ namespace boost
     function_requires < AdjacencyMatrixConcept < G > >();
     function_requires < EdgeMutableGraphConcept < G > >();
 
-    // Make sure second loop will work  
+    // Make sure second loop will work
     if (num_vertices(g) == 0)
       return;
 
     // for i = 2 to n
-    //    for k = 1 to i - 1 
+    //    for k = 1 to i - 1
     //      if A[i,k]
     //        for j = 1 to n
     //          A[i,j] = A[i,j] | A[k,j]
