@@ -52,6 +52,7 @@ extension bgl
     ../../src/python/kamada_kawai_spring_layout.cpp
     ../../src/python/page_rank.cpp
     <lib>../../../python/build/boost_python # dependencies
+    <lib>../bgl-viz
     : # Default build
     <debug-symbols>off
     ;

@@ -654,10 +654,11 @@ class mutate_graph
  public:
   virtual ~mutate_graph() {}
   virtual bool is_directed() const = 0;
-  virtual void add_vertex(const node_t& node) = 0;
+  virtual void do_add_vertex(const node_t& node) = 0;
 
   virtual void 
-  add_edge(const edge_t& edge, const node_t& source, const node_t& target) = 0;
+  do_add_edge(const edge_t& edge, const node_t& source, const node_t& target)
+    = 0;
 
   virtual void 
   set_node_property(const id_t& key, const node_t& node, const id_t& value) = 0;
@@ -677,6 +678,8 @@ class mutate_graph_impl : public mutate_graph
                     std::string node_id_prop)
     : graph_(graph), dp_(dp), node_id_prop_(node_id_prop) { }
 
+  ~mutate_graph_impl() {}
+
   bool is_directed() const
   {
     return 
@@ -685,10 +688,10 @@ class mutate_graph_impl : public mutate_graph
         boost::directed_tag>::value;
   }
 
-  virtual void add_vertex(const node_t& node)
+  virtual void do_add_vertex(const node_t& node)
   {
     // Add the node to the graph.
-    bgl_vertex_t v = boost::add_vertex(graph_);
+    bgl_vertex_t v = add_vertex(graph_);
 
     // Set up a mapping from name to BGL vertex.
     bgl_nodes.insert(std::make_pair(node, v));
@@ -697,10 +700,11 @@ class mutate_graph_impl : public mutate_graph
     put(node_id_prop_, dp_, v, node);
   }
 
-  void add_edge(const edge_t& edge, const node_t& source, const node_t& target)
+  void 
+  do_add_edge(const edge_t& edge, const node_t& source, const node_t& target)
   {
     std::pair<bgl_edge_t, bool> result =
-      boost::add_edge(bgl_nodes[source], bgl_nodes[target], graph_);
+     add_edge(bgl_nodes[source], bgl_nodes[target], graph_);
     
     if(!result.second) {
       // In the case of no parallel edges allowed

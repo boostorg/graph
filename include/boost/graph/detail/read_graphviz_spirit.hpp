@@ -301,7 +301,7 @@ struct dot_grammar : public grammar<dot_grammar> {
 
       if(nodes.find(node) == nodes.end()) {
         nodes.insert(node);
-        self.graph_.add_vertex(node);
+        self.graph_.do_add_vertex(node);
 
         node_map.insert(std::make_pair(node,ids_t()));
 
@@ -345,7 +345,7 @@ struct dot_grammar : public grammar<dot_grammar> {
           edge_map.insert(std::make_pair(edge,ids_t()));
 
           // Add the real edge.
-          self.graph_.add_edge(edge, *i, *j);
+          self.graph_.do_add_edge(edge, *i, *j);
 
           // Set the default properties for this edge
           for(props_t::iterator k = edge_props.begin();
