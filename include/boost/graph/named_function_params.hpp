@@ -503,10 +503,11 @@ namespace boost {
     template <class Param, class Graph, class Tag>
     struct choose_pmap_helper {
       typedef typename choose_property_map<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, Graph, Tag> type;
-      typedef typename type::result_type result_type;
-      typedef typename type::const_result_type const_result_type;
-      typedef typename type::type result;
+      typedef typename Selector:: template bind<Param, Graph, Tag> Bind;
+      typedef Bind type;
+      typedef typename Bind::result_type result_type;
+      typedef typename Bind::const_result_type const_result_type;
+      typedef typename Bind::type result;
     };
 
     // used in the max-flow algorithms
