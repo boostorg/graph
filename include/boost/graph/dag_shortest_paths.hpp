@@ -49,8 +49,15 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     std::vector<Vertex> rev_topo_order;
     rev_topo_order.reserve(num_vertices(g));
-    topological_sort(g, std::back_inserter(rev_topo_order),
-                     color_map(color));
+
+    // Call 'depth_first_visit', not 'topological_sort', because we don't
+    // want to traverse the entire graph, only vertices reachable from 's',
+    // and 'topological_sort' will traverse everything. The logic below
+    // is the same as for 'topological_sort', only we call 'depth_first_visit'
+    // and 'topological_sort' calls 'depth_first_search'.
+    topo_sort_visitor<std::back_insert_iterator<std::vector<Vertex> > >
+        topo_visitor(std::back_inserter(rev_topo_order));
+    depth_first_visit(g, s, topo_visitor, color);
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
