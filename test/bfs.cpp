@@ -124,12 +124,12 @@ struct bfs_test
   typedef typename Traits::vertices_size_type
     vertices_size_type;
   static void go(vertices_size_type max_V) {
-    typedef Traits::vertex_descriptor vertex_descriptor;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
     typedef boost::color_traits<boost::default_color_type> Color;
 
     vertices_size_type i;
-    Traits::edges_size_type j;
-    Traits::vertex_iterator ui, ui_end;
+    typename Traits::edges_size_type j;
+    typename Traits::vertex_iterator ui, ui_end;
 
     boost::mt19937 gen;
 
