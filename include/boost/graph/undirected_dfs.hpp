@@ -60,11 +60,11 @@ namespace boost {
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
         ColorValue v_color = get(vertex_color, v);
+        EColorValue uv_color = get(edge_color, *ei);
+        put(edge_color, *ei, EColor::black());
         if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
-          put(edge_color, *ei, EColor::black());
           undir_dfv_impl(g, v, vis, vertex_color, edge_color);
-        } else if (v_color == Color::gray()
-		   && get(edge_color, *ei) == EColor::white())
+        } else if (v_color == Color::gray() && uv_color == EColor::white())
                                              vis.back_edge(*ei, g);
       }
       put(vertex_color, u, Color::black());  vis.finish_vertex(u, g);
