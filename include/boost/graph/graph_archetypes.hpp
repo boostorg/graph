@@ -6,12 +6,14 @@
 
 namespace boost { // should use a different namespace for this
   
-  //============================================================================
+  //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct incidence_graph_archetype
   {
+#if defined(BOOST_USE_NEW_GRAPH_TRAITS)
     typedef incidence_graph_tag traversal_category;
     typedef immutable_graph_tag mutability_category;
+#endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     struct edge_descriptor {
@@ -25,14 +27,12 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
-#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void adjacency_iterator;
     typedef void in_edge_iterator;
     typedef void vertex_iterator;
     typedef void vertices_size_type;
     typedef void edge_iterator;
     typedef void edges_size_type;
-#endif
   };
   template <typename V, typename D, typename P>
   V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor& ,
@@ -63,12 +63,14 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
-  //============================================================================
+  //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct adjacency_graph_archetype
   {
+#if defined(BOOST_USE_NEW_GRAPH_TRAITS)
     typedef adjacency_graph_tag traversal_category;
     typedef immutable_graph_tag mutability_category;
+#endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef void edge_descriptor;
@@ -77,14 +79,12 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
-#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void in_edge_iterator;
     typedef void out_edge_iterator;
     typedef void vertex_iterator;
     typedef void vertices_size_type;
     typedef void edge_iterator;
     typedef void edges_size_type;
-#endif
   };
   
   template <typename V, typename D, typename P>
@@ -103,7 +103,7 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
-  //============================================================================
+  //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct vertex_list_graph_archetype
     : public incidence_graph_archetype<Vertex, Directed, ParallelCategory>,
@@ -112,8 +112,10 @@ namespace boost { // should use a different namespace for this
     typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> Incidence;
     typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> Adjacency;
 
+#if defined(BOOST_NEW_GRAPH_TRAITS)
     typedef vertex_list_graph_tag traversal_category;
     typedef immutable_graph_tag mutability_category;
+#endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef typename Incidence::edge_descriptor edge_descriptor;
@@ -126,11 +128,9 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
-#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void in_edge_iterator;
     typedef void edge_iterator;
     typedef void edges_size_type;
-#endif
   };
   
   template <typename V, typename D, typename P>
@@ -157,7 +157,7 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
-  //============================================================================
+  //===========================================================================
 
   struct property_graph_archetype_tag { };
 
