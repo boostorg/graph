@@ -26,10 +26,12 @@
 
 
 <pre>
+// Output graph structure without properties.
 template &lt; typename VertexListGraph &gt;
 void 
 write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g);
 
+// Graph structure with customized property output
 template &lt; typename VertexListGraph, typename VertexPropertyWriter &gt;
 void 
 write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
@@ -55,6 +57,19 @@ void
 write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
                VertexPropertyWriter vpw, EdgePropertyWriter epw, 
                GraphPropertyWriter gpw, VertexID vertex_id);
+
+// Graph structure with dynamic property output
+template&lt;typename Graph&gt;
+void
+write_graphviz(std::ostream&amp; out, const Graph&amp; g,
+               const dynamic_properties&amp; dp, 
+               const std::string&amp; node_id = "node_id");
+
+template&lt;typename Graph, typename VertexID&gt;
+void
+write_graphviz(std::ostream&amp; out, const Graph&amp; g,
+               const dynamic_properties&amp; dp, const std::string&amp; node_id,
+               VertexID vertex_id);
 </pre>
 
 <p>
@@ -66,7 +81,7 @@ The first version with two parameters will write graph into an
 <tt>std::ostream</tt> where vertex is represented by numerical vertex
 IDs. If users have either interior or exterior properties for each vertex
 in the graph, the second version above provides a way to print those
-properties into the gaphviz format file. For example, if each vertex
+properties into the graphviz format file. For example, if each vertex
 in the graph has its label through property map object <tt>name</tt>,
 users can use the second version:
 <pre>
@@ -77,6 +92,18 @@ The utility function <tt>make_label_writer</tt> returns a predefined
 version and fourth version require edge <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>, edge
 <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> and graph <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>,
 respectively.
+
+<p> The final two overloads of <code>write_graphviz</code> will emit
+all of the properties stored in the <a
+href="../../property_map/doc/dynamic_property_map.html"><code>dynamic_properties</a></code>
+object, thereby retaining the properties that have been read in
+through the dual function <a
+href="read_graphviz.html"><code>read_graphviz</code></a>. With these
+overloads, <code>node_id</code> is the name of the property map that
+stores the IDs of each node for use in the output (if it is stored in
+the <code>dynamic_properties</code> structure); alternatively, one may
+provide an arbitrary property map for <code>vertex_id</code> giving the
+vertex identifiers.</p>
 
 <H3>Where Defined</H3>
 
@@ -178,10 +205,23 @@ vertex property writer as well.
 <b>Default</b>: <tt>default_writer()</tt>
 </blockquote>
 
+IN: <tt>dynamic_properties& dp</tt>
+<blockquote>
+  Contains all of the vertex and edge properties that should be
+  emitted by the GraphViz writer.
+</blockquote>
+
+IN: <tt>const std::string& node_id</tt>
+<blockquote>
+  The name of the property map that provides identifiers for the
+  vertices in the graph.<br>
+<b>Default</b>: <tt>"node_id"</tt>
+</blockquote>
+
 IN: <tt>VertexID vertex_id</tt>
 <blockquote>
   A property map that models <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. The value should be a unique descriptor that can be used to name a node in a Graphviz file (so it should not, for instance, have any spaces in it).<br>
-<b>Default</b>: <tt>get(vertex_index, g)</tt>
+<b>Default</b>: If no <code>dynamic_properties</code> object is provided, <tt>get(vertex_index, g)</tt>. Otherwise, a dynamic property map that accesses the property map named <code>node_id</code>.
 </blockquote>
 <H3>
 Example
@@ -277,10 +317,13 @@ edge[style="dotted"];
 }
 </pre>
 
+<p>The examples directory contains an <a
+href="../example/graphviz.cpp">example using
+<code>dynamic_properties</code></a>.</p>
 
 <h3>See Also</h3>
 
-<a href="./read-graphviz.html"><tt>read_graphviz</tt></a>
+<a href="./read_graphviz.html"><tt>read_graphviz</tt></a>
 
 <h3>Notes</h3>
 Note that you can use Graphviz dot file write facilities

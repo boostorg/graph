@@ -44,6 +44,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/dynamic_property_map.hpp>
 
 // TBD: this should be a real macro at some point...
 #ifndef BOOST_NO_SPIRIT
@@ -497,6 +498,116 @@ namespace boost {
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
   extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
+  class dynamic_properties_writer
+  {
+  public:
+    dynamic_properties_writer(const dynamic_properties& dp) : dp(&dp) { }
+
+    template<typename Descriptor>
+    void operator()(std::ostream& out, Descriptor key) const
+    {
+      bool first = true;
+      for (dynamic_properties::const_iterator i = dp->begin(); 
+           i != dp->end(); ++i) {
+        if (typeid(key) == i->second->key()) {
+          if (first) out << " [";
+          else out << ", ";
+          first = false;
+
+          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+        }
+      }
+
+      if (!first) out << "]";
+    }
+
+  private:
+    const dynamic_properties* dp;
+  };
+
+  class dynamic_vertex_properties_writer
+  {
+  public:
+    dynamic_vertex_properties_writer(const dynamic_properties& dp,
+                                     const std::string& node_id) 
+      : dp(&dp), node_id(&node_id) { }
+
+    template<typename Descriptor>
+    void operator()(std::ostream& out, Descriptor key) const
+    {
+      bool first = true;
+      for (dynamic_properties::const_iterator i = dp->begin(); 
+           i != dp->end(); ++i) {
+        if (typeid(key) == i->second->key()
+            && i->first != *node_id) {
+          if (first) out << " [";
+          else out << ", ";
+          first = false;
+
+          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+        }
+      }
+
+      if (!first) out << "]";
+    }
+
+  private:
+    const dynamic_properties* dp;
+    const std::string* node_id;
+  };
+
+  namespace graph { namespace detail {
+
+    template<typename Vertex>
+    struct node_id_property_map
+    {
+      typedef std::string value_type;
+      typedef value_type reference;
+      typedef Vertex key_type;
+      typedef readable_property_map_tag category;
+
+      node_id_property_map() {}
+
+      node_id_property_map(const dynamic_properties& dp,
+                           const std::string& node_id)
+        : dp(&dp), node_id(&node_id) { }
+
+      const dynamic_properties* dp;
+      const std::string* node_id;
+    };
+
+    template<typename Vertex>
+    inline std::string 
+    get(node_id_property_map<Vertex> pm, 
+        typename node_id_property_map<Vertex>::key_type v)
+    { return get(*pm.node_id, *pm.dp, v); }
+
+  } } // end namespace graph::detail
+
+  template<typename Graph>
+  inline void
+  write_graphviz(std::ostream& out, const Graph& g,
+                 const dynamic_properties& dp, 
+                 const std::string& node_id = "node_id")
+  {
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    write_graphviz(out, g, dp, node_id,
+                   graph::detail::node_id_property_map<Vertex>(dp, node_id));
+  }
+
+  template<typename Graph, typename VertexID>
+  void
+  write_graphviz(std::ostream& out, const Graph& g,
+                 const dynamic_properties& dp, const std::string& node_id,
+                 VertexID id)
+  {
+    write_graphviz
+      (out, g,
+       /*vertex_writer=*/dynamic_vertex_properties_writer(dp, node_id),
+       /*edge_writer=*/dynamic_properties_writer(dp),
+       /*graph_writer=*/default_writer(),
+       id);
+  }
 } // namespace boost
 
 #endif // BOOST_GRAPHVIZ_HPP

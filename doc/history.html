@@ -95,6 +95,8 @@ September 27, 2000.
   HREF="bibliography.html#driscoll88">61</A>] as its priority queue, improving its complexity to <em>O(V log V)</em> and improving real-world performance for larger graphs.</li>
       <li><a href="read_graphviz.html"><code>read_graphviz</code></a> now has a new, Spirit-based parser that works for all graph types and supports arbitrary properties on the graph, from Ron Garcia. The old, Bison-based GraphViz reader has been deprecated and will be removed in a future Boost release.</li>
       
+      <li><a href="write-graphviz.html"><code>write_graphviz</code></a> now supports output of dynamic properties (as read in through the new <code>read_graphviz</code>).</li>
+      
     </ul><br><b>Bug fixes</b><br>
     <ul>
       <li><a href="bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></a> now deals with unreachable vertices better.</li>
