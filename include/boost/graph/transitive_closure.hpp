@@ -90,10 +90,7 @@ namespace boost {
     int num_scc = strong_components(g, component_number,
       vertex_index_map(index_map));
     std::vector< std::vector<vertex> > components;
-    components.resize(num_scc);
-    vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-      components[component_number[*vi]].push_back(*vi);
+    build_component_lists(g, num_scc, component_number, components);
 
     // Construct the condensation graph   
     typedef std::vector< std::vector<cg_vertex> > CG_t;
