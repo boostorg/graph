@@ -337,15 +337,33 @@ namespace boost {
     return get_property_value(g.m_property, value_type(), Tag());
   }
 
-  template <class Directed, class Vertex, class Graph>
+  // dwa 09/25/00 - needed to be more explicit so reverse_graph would work.
+  template <class Directed, class Vertex,
+      class EdgeListS,
+      class VertexListS,
+      class DirectedS,
+      class VertexProperty,
+      class EdgeProperty,
+      class GraphProperty>
   inline Vertex
-  source(const detail::edge_base<Directed,Vertex>& e, Graph& )
+  source(const detail::edge_base<Directed,Vertex>& e,
+         const adjacency_list<EdgeListS, VertexListS, DirectedS,
+                        VertexProperty, EdgeProperty, GraphProperty>&)
   {
     return e.m_source;
   }
-  template <class Directed, class Vertex, class Graph>
+
+  template <class Directed, class Vertex,
+      class EdgeListS,
+      class VertexListS,
+      class DirectedS,
+      class VertexProperty,
+      class EdgeProperty,
+      class GraphProperty>
   inline Vertex
-  target(const detail::edge_base<Directed,Vertex>& e, Graph& )
+  target(const detail::edge_base<Directed,Vertex>& e,
+         const adjacency_list<EdgeListS, VertexListS, DirectedS,
+                        VertexProperty, EdgeProperty, GraphProperty>&)
   {
     return e.m_target;
   }
