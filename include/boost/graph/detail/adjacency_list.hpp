@@ -1321,7 +1321,11 @@ namespace boost {
                     boost::disallow_parallel_edge_tag) const
       {
         bool found;
-        typename Config::OutEdgeList::iterator 
+        /* According to the standard, this should be iterator, not const_iterator,
+           but the VC++ std::set::find() const returns const_iterator.
+           And since iterator should be convertible to const_iterator, the
+           following should work everywhere. -Jeremy */
+        typename Config::OutEdgeList::const_iterator 
           i = g.out_edge_list(u).find(StoredEdge(v)),
           end = g.out_edge_list(u).end();
         found = (i != end);
