@@ -127,6 +127,8 @@ namespace boost {
 
     size_type size() const { return c.size(); }
 
+    void clear() { c.clear(); }
+
 #if 0
         // dwa 2003/7/11 - I don't know what compiler is supposed to
         // be able to compile this, but is_heap is not standard!!
