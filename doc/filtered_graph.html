@@ -130,7 +130,7 @@ graph. The function object must model <a
 href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>. The
 argument type for the function object must be the edge descriptor type
 of the graph. Also, the predicate must be <a
-href="http://www.sgi.com/tech/stl/Predicate.html">DefaultConstructible</a>.</TD>
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
 <TD>&nbsp;</TD>
 </TR>
 
@@ -142,7 +142,7 @@ graph. The function object must model <a
 href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>. The
 argument type for the function object must be the vertex descriptor type
 of the graph. Also, the predicate must be <a
-href="http://www.sgi.com/tech/stl/Predicate.html">DefaultConstructible</a>.</TD>
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
 <TD><TT>keep_all</TT></TD>
 </TR>
 
@@ -464,6 +464,16 @@ This sets the property value for <tt>x</tt> to
 <a href="./property_map.html"><tt>property_map</tt></a>,
 <a href="./graph_traits.html"><tt>graph_traits</tt></a>
 
+<h3>Notes</h3>
+
+<p>
+<a name="1">[1]</a> The reason for requiring <a
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default
+Constructible</a> in the <tt>EdgePredicate</tt> and
+<tt>VertexPredicate</tt> types is that these predicates are stored
+by-value (for performance reasons) in the filter iterator adaptor, and
+iterators are required to be Default Constructible by the C++
+Standard.
 
 
 <br>
