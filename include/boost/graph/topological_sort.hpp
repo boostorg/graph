@@ -66,6 +66,7 @@ namespace boost {
   // consists mainly of a call to depth-first search.
   //
   // There are three overloaded versions of this function.
+#if 0
   template < class Graph, class OutputIterator, class Color, class DFSVisitor>
   inline void 
   topological_sort(Graph& G, OutputIterator iter, Color color, 
@@ -88,7 +89,49 @@ namespace boost {
   {
     topological_sort(G, iter, dfs_visitor<>());
   }
+#else
 
-  } /* namespace */
+  namespace detail {
+    template <class Graph, class OutputIterator, class Color, class DFSVisitor>
+    inline void 
+    topo_sort_helper(Graph& G, OutputIterator result, Color color, 
+		     DFSVisitor visit)
+    {
+      typedef topo_sort_visitor<OutputIterator, DFSVisitor> TopoVisitor;
+      depth_first_search
+	(G, visitor(TopoVisitor(result, visit)). color_map(color));
+    }
+  } // namespace detail
+
+  template <class VertexListGraph, class OutputIterator,
+    class P, class T, class R>
+  void topological_sort(VertexListGraph& g, OutputIterator result,
+			const bgl_named_params<P, T, R>& params)
+  {
+    // ColorMap default
+    typename graph_traits<VertexListGraph>::vertices_size_type
+      n = is_default_param(get_param(params, vertex_color)) ? 
+      num_vertices(g) : 0;
+    std::vector<default_color_type> color_map(n);
+    detail::topo_sort_helper
+      (g, result,
+       choose_param(get_param(params, vertex_color),
+		    make_iterator_property_map
+		    (color_map.begin(), 
+		     choose_pmap(get_param(params, vertex_index),
+				 g, vertex_index))),
+       choose_param(get_param(params, graph_visitor),
+                    make_dfs_visitor(null_visitor()))
+       );
+  }
+
+  template <class VertexListGraph, class OutputIterator>
+  void topological_sort(VertexListGraph& G, OutputIterator result)
+  {
+    return topological_sort(G, result, bgl_named_params<char, char>('x'));
+  }
+#endif
+
+} // namespace boost
 
 #endif /*BOOST_GRAPH_TOPOLOGICAL_SORT_H*/
