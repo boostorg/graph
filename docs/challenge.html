@@ -28,7 +28,8 @@
 <li>Polish up code/docs for pending items and champion the formal
 review. The pending items are:
   <ul>
-   <li><tt>container_traits.hpp</tt>
+   <li><tt>container_traits.hpp</tt> (this should also include
+     the work Matt Austern is doing on this topic)
 
    <li><tt>concept_checks.hpp</tt> 
 
@@ -82,7 +83,11 @@ polygons.
 
 <li>Add a check in the adjacency_list class to make sure
   all the vertex property template arguments have kind=vertex_property_tag
-  and all edge property template arguments have kind=edge_property_tag
+  and all edge property template arguments have kind=edge_property_tag.
+
+<li>Clean up the output functions in graph_utility.hpp to
+  use streams, and document all the utility functions. Replace
+  the random number stuff with calls to the boost random number generator.
 
 </ul>
 
