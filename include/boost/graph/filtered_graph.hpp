@@ -361,6 +361,18 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
+  typename filtered_graph<G, EP, VP>::degree_size_type
+  in_degree(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
+             const filtered_graph<G, EP, VP>& g)
+  {
+    typename filtered_graph<G, EP, VP>::degree_size_type n = 0;
+    typename filtered_graph<G, EP, VP>::in_edge_iterator f, l;
+    for (tie(f, l) = in_edges(u, g); f != l; ++f)
+      ++n;
+    return n;
+  }
+
+  template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::edge_descriptor, bool>
   edge(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
        typename filtered_graph<G, EP, VP>::vertex_descriptor v,
