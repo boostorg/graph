@@ -1,4 +1,5 @@
 // Copyright (c) Jeremy Siek 2001
+// Copyright (c) Douglas Gregor 2004
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -10,6 +11,7 @@
 #define BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP
 
 #include <stack>
+#include <vector>
 #include <algorithm> // for std::min and std::max
 #include <boost/config.hpp>
 #include <boost/limits.hpp>
@@ -21,16 +23,20 @@ namespace boost
 {
   namespace detail
   {
-    template < typename Graph, typename ComponentMap,
-      typename DiscoverTimeMap, typename LowPointMap, typename Stack >
-      void biconnect(typename graph_traits < Graph >::vertex_descriptor v,
-                     typename graph_traits < Graph >::vertex_descriptor u,
-                     bool at_top,
-                     const Graph & g,
-                     ComponentMap comp,
-                     std::size_t & c,
-                     DiscoverTimeMap d,
-                     std::size_t & dfs_time, LowPointMap lowpt, Stack & S)
+    template <typename Graph, typename ComponentMap, typename DiscoverTimeMap,
+	      typename LowPointMap, typename OutputIterator, typename Stack>
+    OutputIterator
+    biconnect(typename graph_traits < Graph >::vertex_descriptor v,
+	      typename graph_traits < Graph >::vertex_descriptor u,
+	      bool at_top, 
+	      bool& emitted_top,
+	      const Graph & g,
+	      ComponentMap comp,
+	      std::size_t & c,
+	      DiscoverTimeMap d,
+	      std::size_t & dfs_time, LowPointMap lowpt, 
+	      OutputIterator out, 
+	      Stack & S)
     {
       BOOST_USING_STD_MIN();
       typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
@@ -45,10 +51,20 @@ namespace boost
         if (get(d, w) == infinity)
         {
           S.push(*ei);
-          biconnect(w, v, false, g, comp, c, d, dfs_time, lowpt, S);
+          out = biconnect(w, v, false, emitted_top, g, comp, c, d, dfs_time, 
+			  lowpt, out, S);
           put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(lowpt, w)));
           if (get(lowpt, w) >= get(d, v))
           {
+	    if (at_top) {
+	      if (!emitted_top) {
+		emitted_top = true;
+		*out++ = v;
+	      }
+	    } else {
+	      *out++ = v;
+	    }
+
             while (d[source(S.top(), g)] >= d[w]) {
               put(comp, S.top(), c);
               S.pop();
@@ -64,19 +80,18 @@ namespace boost
           put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(d, w)));
         }
       }
+
+      return out;
     }
 
   }
 
-  template < typename Graph, typename ComponentMap,
-    typename DiscoverTimeMap, typename LowPointMap >
-    void biconnected_components
-    (typename graph_traits < Graph >::vertex_descriptor v,
-     typename graph_traits < Graph >::vertex_descriptor u,
-     const Graph & g,
-     ComponentMap comp,
-     std::size_t & num_components,
-     DiscoverTimeMap discover_time, LowPointMap lowpt)
+  template<typename Graph, typename ComponentMap, typename OutputIterator,
+	   typename DiscoverTimeMap, typename LowPointMap >
+  std::pair<std::size_t, OutputIterator>
+  biconnected_components(const Graph & g, ComponentMap comp, 
+			 OutputIterator out, DiscoverTimeMap discover_time, 
+			 LowPointMap lowpt)
   {
     typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
     typedef typename graph_traits < Graph >::edge_descriptor edge_t;
@@ -90,7 +105,7 @@ namespace boost
       vertex_t > >();
 
     typedef typename property_traits < DiscoverTimeMap >::value_type D;
-    num_components = 0;
+    std::size_t num_components = 0;
     std::size_t dfs_time = 0;
     std::stack < edge_t > S;
     typename graph_traits < Graph >::vertex_iterator wi, wi_end;
@@ -98,14 +113,68 @@ namespace boost
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
       put(discover_time, *wi, infinity);
 
+    bool emitted_top = false;
+
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
       if (get(discover_time, *wi) == (std::numeric_limits < D >::max)())
-        detail::biconnect(*wi, *wi, true,
-                          g, comp, num_components,
-                          discover_time, dfs_time, lowpt, S);
+        out = detail::biconnect(*wi, *wi, true, emitted_top,
+				g, comp, num_components,
+				discover_time, dfs_time, lowpt, out, S);
 
+    return std::pair<std::size_t, OutputIterator>(num_components, out);
   }
 
+  template < typename Graph, typename ComponentMap, typename OutputIterator>
+  std::pair<std::size_t, OutputIterator>
+  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
+  {
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+
+    std::vector<std::size_t> discover_time(num_vertices(g));
+    std::vector<vertex_t>    lowpt(num_vertices(g));
+
+    typename property_map<Graph, vertex_index_t>::const_type index_map 
+      = get(vertex_index, g);
+
+    return biconnected_components
+             (g, comp, out,
+	      make_iterator_property_map(discover_time.begin(), index_map),
+	      make_iterator_property_map(lowpt.begin(), index_map));
+  }
+
+  namespace graph_detail {
+    struct dummy_output_iterator
+    {
+      typedef std::output_iterator_tag iterator_category;
+      typedef void value_type;
+      typedef void pointer;
+      typedef void difference_type;
+
+      struct reference {
+	template<typename T>
+	reference& operator=(const T&) { return *this; }
+      };
+
+      reference operator*() const { return reference(); }
+      dummy_output_iterator& operator++() { return *this; }
+      dummy_output_iterator operator++(int) { return *this; }
+    };
+  } // end namespace graph_detail
+
+  template <typename Graph, typename ComponentMap>
+  std::size_t
+  biconnected_components(const Graph& g, ComponentMap comp)
+  {
+    return biconnected_components(g, comp, 
+				  graph_detail::dummy_output_iterator()).first;
+  }
+
+  template<typename Graph, typename OutputIterator>
+  OutputIterator
+  articulation_points(const Graph& g, OutputIterator out)
+  {
+    return biconnected_components(g, dummy_property_map(), out).second;
+  }
 }                               // namespace boost
 
 #endif  /* BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP */

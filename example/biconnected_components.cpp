@@ -26,7 +26,7 @@
 #include <list>
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
-
+#include <iterator>
 #include <iostream>
 
 namespace boost
@@ -47,6 +47,7 @@ main()
   typedef adjacency_list < vecS, vecS, undirectedS,
     no_property, property < edge_component_t, std::size_t > >graph_t;
   typedef graph_traits < graph_t >::vertex_descriptor vertex_t;
+#if 0
   graph_t g(9);
   add_edge(0, 5, g);
   add_edge(0, 1, g);
@@ -59,15 +60,40 @@ main()
   add_edge(6, 8, g);
   add_edge(6, 7, g);
   add_edge(7, 8, g);
+#else
+  graph_t g(11);
+  enum {A, B, C, D, E, F, G, H, I, J, K};
+  add_edge(A, B, g);
+  add_edge(A, H, g);
+  add_edge(A, D, g);
+  add_edge(A, K, g);
+  add_edge(B, C, g);
+  add_edge(C, D, g);
+  add_edge(C, E, g);
+  add_edge(C, G, g);
+  add_edge(E, F, g);
+  add_edge(E, G, g);
+  add_edge(F, G, g);
+  add_edge(H, I, g);
+  add_edge(H, J, g);
+  add_edge(I, J, g);
+  add_edge(J, K, g);
+#endif
 
-  std::size_t c = 0;
-  std::vector < std::size_t > discover_time(num_vertices(g));
-  std::vector < vertex_t > lowpt(num_vertices(g));
   property_map < graph_t, edge_component_t >::type
     component = get(edge_component, g);
-  biconnected_components(0, 8, g, component, c, &discover_time[0], &lowpt[0]);
+  std::size_t num_comps = biconnected_components(g, component);
+  std::cerr << "Found " << num_comps << " biconnected components.\n";
+
+  std::vector<vertex_t> art_points;
+  articulation_points(g, std::back_inserter(art_points));
+  std::cerr << "Found " << art_points.size() << " articulation points.\n";
 
   std::cout << "graph A {\n" << "  node[shape=\"circle\"]\n";
+
+  for (std::size_t i = 0; i < art_points.size(); ++i) {
+    std::cout << art_points[i] << " [ style=\"filled\" ];" << std::endl;
+  }
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
