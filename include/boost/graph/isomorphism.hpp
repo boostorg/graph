@@ -54,7 +54,7 @@ namespace boost {
       typedef typename std::vector<vertex1_t>::iterator vertex_iter;
       std::vector<int> dfs_num_vec;
       typedef safe_iterator_property_map<typename std::vector<int>::iterator,
-					 IndexMap1
+                                         IndexMap1
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
                                          , int, int&
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
@@ -130,9 +130,9 @@ namespace boost {
         in_S = make_safe_iterator_property_map
           (in_S_vec.begin(), in_S_vec.size(), index_map2
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
-	   , in_S_vec.front()
+           , in_S_vec.front()
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
-	   );
+           );
       }
     
       bool test_isomorphism()
@@ -163,11 +163,11 @@ namespace boost {
         
         std::vector<default_color_type> color_vec(num_vertices(G1));
         safe_iterator_property_map<std::vector<default_color_type>::iterator,
-	                           IndexMap1
+                                   IndexMap1
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
- 	                           , default_color_type, default_color_type&
+                                   , default_color_type, default_color_type&
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
-	                           >
+                                   >
           color_map(color_vec.begin(), color_vec.size(), index_map1);
         record_dfs_order dfs_visitor(dfs_vertices, ordered_edges);
         typedef color_traits<default_color_type> Color;
@@ -181,11 +181,11 @@ namespace boost {
         dfs_num_vec.resize(num_vertices(G1));
         dfs_num = make_safe_iterator_property_map(dfs_num_vec.begin(),
                                                   dfs_num_vec.size(), 
-						  index_map1
+                                                  index_map1
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
-						  , dfs_num_vec.front()
+                                                  , dfs_num_vec.front()
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
-						  );
+                                                  );
         size_type n = 0;
         for (vertex_iter v = dfs_vertices.begin(); v != dfs_vertices.end(); ++v)
           dfs_num[*v] = n++;
@@ -366,11 +366,11 @@ namespace boost {
     {
       std::vector<std::size_t> in_degree1_vec(num_vertices(G1));
       typedef safe_iterator_property_map<std::vector<std::size_t>::iterator,
-	                                 IndexMap1
+                                         IndexMap1
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
-	                                 , std::size_t, std::size_t&
+                                         , std::size_t, std::size_t&
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
-	                                 > InDeg1;
+                                         > InDeg1;
       InDeg1 in_degree1(in_degree1_vec.begin(), in_degree1_vec.size(), index_map1);
       compute_in_degree(G1, in_degree1);
 
@@ -378,7 +378,7 @@ namespace boost {
       typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, 
                                          IndexMap2
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
-	                                 , std::size_t, std::size_t&
+                                         , std::size_t, std::size_t&
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
                                          > InDeg2;
       InDeg2 in_degree2(in_degree2_vec.begin(), in_degree2_vec.size(), index_map2);
