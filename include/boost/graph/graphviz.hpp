@@ -28,7 +28,8 @@
 #include <boost/config.hpp>
 #include <string>
 #include <map>
-#include <iosfwd>
+#include <iostream>
+#include <fstream>
 #include <stdio.h> // for FILE
 #include <boost/property_map.hpp>
 #include <boost/utility.hpp>
