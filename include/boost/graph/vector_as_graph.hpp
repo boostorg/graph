@@ -38,6 +38,7 @@
 #include <cassert>
 #include <utility>
 #include <vector>
+#include <cstddef>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/integer_range.hpp>
@@ -234,30 +235,30 @@ namespace boost {
   remove_edge_if(Predicate p, 
                  std::vector<EdgeList, Allocator>& g)
   {
-    for (size_t u = 0; u < g.size(); ++u) { 
-      // Oops! gcc gets internal compiler error on compose_.......
+      for (std::size_t u = 0; u < g.size(); ++u) { 
+          // Oops! gcc gets internal compiler error on compose_.......
 
-      typedef typename EdgeList::iterator iterator;
-      iterator b = g[u].begin(), e = g[u].end();
+          typedef typename EdgeList::iterator iterator;
+          iterator b = g[u].begin(), e = g[u].end();
 
-      if (!g[u].empty()) {
+          if (!g[u].empty()) {
 
-        for(; b != e;) {
-          if (p(std::make_pair(u, *b))) {
-            --e;
-            if (b == e)
-              break;
-            else
-              iter_swap(b, e);            
-          } else {
-            ++b;
+              for(; b != e;) {
+                  if (p(std::make_pair(u, *b))) {
+                      --e;
+                      if (b == e)
+                          break;
+                      else
+                          iter_swap(b, e);            
+                  } else {
+                      ++b;
+                  }
+              }     
           }
-        }     
-      }
 
-      if (e != g[u].end())
-        g[u].erase(e, g[u].end());
-    }
+          if (e != g[u].end())
+              g[u].erase(e, g[u].end());
+      }
   }
 
   template<class EdgeList, class Allocator>
@@ -274,7 +275,7 @@ namespace boost {
                std::vector<EdgeList, Allocator>& g)
   {
     g[u].clear();
-    for (size_t i = 0; i < g.size(); ++i)
+    for (std::size_t i = 0; i < g.size(); ++i)
       remove_edge(i, u, g);
   }
 

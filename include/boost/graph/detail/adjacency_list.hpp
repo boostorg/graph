@@ -134,7 +134,7 @@ namespace boost {
             out_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
           , BaseIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , Difference
         >
@@ -143,7 +143,7 @@ namespace boost {
           out_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
         , BaseIter
         , EdgeDescriptor
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , EdgeDescriptor
         , Difference
       > super_t;
@@ -167,7 +167,7 @@ namespace boost {
             in_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
           , BaseIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , Difference
         >
@@ -176,7 +176,7 @@ namespace boost {
           in_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
         , BaseIter
         , EdgeDescriptor
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , EdgeDescriptor
         , Difference
       > super_t;
@@ -203,7 +203,7 @@ namespace boost {
             undirected_edge_iter<EdgeIter, EdgeDescriptor, Difference>
           , EdgeIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , Difference
         >
@@ -212,7 +212,7 @@ namespace boost {
           undirected_edge_iter<EdgeIter, EdgeDescriptor, Difference>
         , EdgeIter
         , EdgeDescriptor
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , EdgeDescriptor
         , Difference
       > super_t;

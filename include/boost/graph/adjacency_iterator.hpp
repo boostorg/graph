@@ -36,7 +36,7 @@ namespace boost
           adjacency_iterator<Graph,Vertex,OutEdgeIter,Difference>
         , OutEdgeIter
         , Vertex
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , Vertex
         , Difference
       >
@@ -45,7 +45,7 @@ namespace boost
           adjacency_iterator<Graph,Vertex,OutEdgeIter,Difference>
         , OutEdgeIter
         , Vertex
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , Vertex
         , Difference
       > super_t;
@@ -77,7 +77,7 @@ namespace boost
           inv_adjacency_iterator<Graph,Vertex,InEdgeIter,Difference>
         , Vertex
         , Vertex
-        , multi_pass_input_iterator_tag
+        , readable_iterator_tag
         , boost::use_default
         , Difference
       >

@@ -129,7 +129,7 @@ namespace boost {
             dir_adj_matrix_out_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         >
@@ -138,7 +138,7 @@ namespace boost {
             dir_adj_matrix_out_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         > super_t;
@@ -180,7 +180,7 @@ namespace boost {
             undir_adj_matrix_out_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         >
@@ -189,7 +189,7 @@ namespace boost {
             undir_adj_matrix_out_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         > super_t;
@@ -241,7 +241,7 @@ namespace boost {
             adj_matrix_edge_iter<Directed, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         >
@@ -250,7 +250,7 @@ namespace boost {
             adj_matrix_edge_iter<Directed, MatrixIter,  VerticesSizeType, EdgeDescriptor>
           , MatrixIter
           , EdgeDescriptor
-          , multi_pass_input_iterator_tag
+          , readable_iterator_tag
           , EdgeDescriptor
           , std::ptrdiff_t
         > super_t;

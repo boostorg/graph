@@ -152,7 +152,7 @@ namespace boost {
     G g;
   };
 
-#if !BOOST_WORKAROUND(__GNUC__, <= 2)
+#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
 // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
 // you want to use vector_as_graph, it is!  I'm sure the graph
 // library leaves these out all over the place.  Probably a
@@ -178,7 +178,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       function_requires< ConvertibleConcept<traversal_category,
         vertex_list_graph_tag> >();
 
-#if !BOOST_WORKAROUND(__GNUC__, <= 2)
+#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
       // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
@@ -191,7 +191,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       const_constraints(g);
     }
     void const_constraints(const G& g) {
-#if !BOOST_WORKAROUND(__GNUC__, <= 2)
+#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
       // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
