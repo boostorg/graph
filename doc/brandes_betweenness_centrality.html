@@ -12,33 +12,39 @@
     <p>
     <pre>
 <em>// named parameter versions</em>
-template&lt;typename Graph, typename CentralityMap,
-         typename Param, typename Tag, typename Rest&gt;
+template&lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
 void 
-brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
+brandes_betweenness_centrality(const Graph&amp; g,
                                const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
 
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
-brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality);
+brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
+
+template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap&gt;
+void 
+brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
+                               EdgeCentralityMap edge_centrality);
 
 <em>// non-named parameter versions</em>
-template&lt;typename Graph, typename CentralityMap, typename PredecessorsMap,
-         typename DistanceMap, typename DependencyMap, typename PathCountMap,
-         typename VertexIndexMap&gt;
+template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+         typename IncomingMap, typename DistanceMap, typename DependencyMap, 
+         typename PathCountMap, typename VertexIndexMap&gt;
 void 
-brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
-                               PredecessorsMap predecessors,
+brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
+                               EdgeCentralityMap edge_centrality,
+                               IncomingMap incoming,
                                DistanceMap distance, DependencyMap dependency,
                                PathCountMap path_count, 
                                VertexIndexMap vertex_index);
 
-template&lt;typename Graph, typename CentralityMap, typename PredecessorsMap,
-         typename DistanceMap, typename DependencyMap, typename PathCountMap,
-         typename VertexIndexMap, typename WeightMap&gt;    
+template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+         typename IncomingMap, typename DistanceMap, typename DependencyMap, 
+         typename PathCountMap, typename VertexIndexMap, typename WeightMap&gt;    
 void 
-brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
-                               PredecessorsMap predecessors, 
+brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
+                               EdgeCentralityMap edge_centrality,
+                               IncomingMap incoming, 
                                DistanceMap distance,  DependencyMap dependency,
                                PathCountMap path_count,      
                                VertexIndexMap vertex_index,
@@ -47,18 +53,19 @@ brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
 <em>// helper functions</em>
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
-relative_betweenness_centrality(const Graph&amp; g, CentralityMap centrality);
+relative_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map);
 
 template&lt;typename Graph, typename CentralityMap&gt;
 typename property_traits&lt;CentralityMap&gt;::value_type
-central_point_dominance(const Graph&amp; g, CentralityMap centrality);
+central_point_dominance(const Graph&amp; g, CentralityMap centrality_map);
     </pre>
 
 <p>This algorithm&nbsp;[<a href="bibliography.html#brandes01">54</a>]
 computes the <em>betweenness centrality</em>&nbsp;[<a
 href="bibliography.html#freeman77">55</a>,<a
-href="bibliography.html#anthonisse71">56</a>] of each vertex in the
-graph. The betweenness centrality of a vertex <em>v</em> is defined by
+href="bibliography.html#anthonisse71">56</a>] of each vertex or each
+edge in the graph. The betweenness centrality of a vertex <em>v</em>
+is defined by
 
 <p><img src="figs/betweenness_centrality.gif">,
 
@@ -68,6 +75,14 @@ is the number of shortest paths from vertex <em>s</em> to vertex
 <em>t</em> that pass through vertex <em>v</em>.
 
 <!-- \sum_{s \neq v \neq t}\frac{\sigma_{st}(v)}{\sigma_{st}} -->
+
+<p>The edge betweenness centrality indicates for each edge the
+betweenness centrality that was contributed to the target(s) of the
+edge (plural for undirected graphs). Similar to (vertex) betweenness
+centrality, edge betweenness centrality can be used to determine the
+edges through which most shortest paths must pass. A single invocation
+of this algorithm can compute either the vertex or edge centrality (or
+both).</p>
 
 <p>This algorithm can operate either on weighted graphs (if a suitable
 edge weight map is supplied) or unweighted graphs (if no edge weight
@@ -112,7 +127,7 @@ IN: <tt>const Graph&amp; g</tt>
   and <a href="IncidenceGraph.html">Incidence Graph</a>.
 </blockquote>
 
-OUT/UTIL: <tt>CentralityMap centrality</tt>
+OUT/UTIL: <tt>CentralityMap centrality_map</tt>
 <blockquote>
   This property map is used to accumulate the betweenness centrality
   of each vertex, and is the primary output of the algorithm. The type
@@ -121,22 +136,38 @@ OUT/UTIL: <tt>CentralityMap centrality</tt>
   Property Map</a>, with the graph's vertex descriptor type as its key
   type. The value type of this property map should be a floating-point
   or rational type.
+
+  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
+  work to compute and returns no answer.
 </blockquote>
 
-UTIL: <tt>PredecessorMap predecessors</tt> 
+OUT/UTIL: <tt>EdgeCentralityMap edge_centrality</tt>
 <blockquote>
-  The predecessor map records the edges in the minimum spanning trees
-  used by the algorithm. The <tt>PredecessorMap</tt> type must be a <a
+  This property map is used to accumulate the betweenness centrality
+  of each edge, and is a secondary form of output for the
+  algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>, with the graph's edge descriptor type as its key
+  type. The value type of this property map should be the same as the
+  value type of the <tt>CentralityMap</tt> property map.
+
+  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
+  work to compute and returns no answer.
+</blockquote>
+    
+UTIL: <tt>IncomingMap incoming</tt> 
+<blockquote>
+  This property map records the set of edges incoming to each vertex that comprise a shortest path from a particular source vertex through this vertex, and is used internally by the algorithm.The <tt>IncomingMap</tt> type must be a <a
   href="../../property_map/LvaluePropertyMap.html">Lvalue Property
   Map</a> whose key type is the same as the vertex descriptor type of
   the graph and whose value type is a Sequence (e.g., an
-  <tt>std::vector</tt>) containing vertex descriptors.<br>
+  <tt>std::vector</tt>) containing edge descriptors.<br>
 
   <b>Default:</b> <a
   href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
-  <tt>std::vector</tt> of <tt>std::vector&lt;Vertex&gt;</tt>, where
-  <tt>Vertex</tt> is the vertex descriptor type of the graph.
+  <tt>std::vector</tt> of <tt>std::vector&lt;Edge&gt;</tt>, where
+  <tt>Edge</tt> is the edge descriptor type of the graph.
 </blockquote>
 
 UTIL: <tt>DistanceMap distance_map</tt> 
@@ -236,6 +267,6 @@ is <em>O(VE)</em>.
 <A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University
 </TD></TR></TABLE>
 <!-- Created: Fri Jun  4 16:42:50 EST 2004 -->
-<!-- hhmts start -->Last modified: Sat Jul 31 04:03:28 EST 2004 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Sat Jul 31 15:53:55 EST 2004 <!-- hhmts end -->
   </body>
 </html>

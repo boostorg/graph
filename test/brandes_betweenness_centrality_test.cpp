@@ -13,7 +13,8 @@ using namespace boost;
 
 const double error_tolerance = 0.001;
 
-typedef property<edge_weight_t, double> EdgeProperties;
+typedef property<edge_weight_t, double,
+                 property<edge_index_t, std::size_t> > EdgeProperties;
 
 struct weighted_edge 
 {
@@ -52,8 +53,9 @@ run_weighted_test(Graph*, int V, weighted_edge edge_init[], int E,
   std::vector<double> centrality(V);
   brandes_betweenness_centrality(
     g,
-    make_iterator_property_map(centrality.begin(), get(vertex_index, g)),
-    vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
+    centrality_map(
+      make_iterator_property_map(centrality.begin(), get(vertex_index, g)))
+    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
 
 
   for (int v = 0; v < V; ++v) {
@@ -69,7 +71,8 @@ struct unweighted_edge
 template<typename Graph>
 void 
 run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
-                    double correct_centrality[])
+                    double correct_centrality[],
+                    double* correct_edge_centrality = 0)
 {
   Graph g(V);
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -92,20 +95,38 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
                         vertices[edge_init[e].target], 
                         g).first;
     put(edge_weight, g, edges[e], 1.0);
+    put(edge_index, g, edges[e], e);
   }
 
   std::vector<double> centrality(V);
+  std::vector<double> edge_centrality1(E);
+
   brandes_betweenness_centrality(
     g,
-    make_iterator_property_map(centrality.begin(), get(vertex_index, g)),
-    vertex_index_map(get(vertex_index, g)));
+    centrality_map(
+      make_iterator_property_map(centrality.begin(), get(vertex_index, g)))
+    .edge_centrality_map(
+       make_iterator_property_map(edge_centrality1.begin(), 
+                                  get(edge_index, g)))
+    .vertex_index_map(get(vertex_index, g)));
 
   std::vector<double> centrality2(V);
+  std::vector<double> edge_centrality2(E);
   brandes_betweenness_centrality(
     g,
-    make_iterator_property_map(centrality2.begin(), get(vertex_index, g)),
-    vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
+    vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g))
+    .centrality_map(
+       make_iterator_property_map(centrality2.begin(), get(vertex_index, g)))
+    .edge_centrality_map(
+       make_iterator_property_map(edge_centrality2.begin(), 
+                                  get(edge_index, g))));
 
+  std::vector<double> edge_centrality3(E);
+  brandes_betweenness_centrality(
+    g,
+    edge_centrality_map(
+      make_iterator_property_map(edge_centrality3.begin(), 
+                                 get(edge_index, g))));
 
   for (int v = 0; v < V; ++v) {
     BOOST_TEST(centrality[v] == centrality2[v]);
@@ -115,6 +136,25 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
       : fabs(centrality[v] - correct_centrality[v]) / correct_centrality[v];
     BOOST_TEST(relative_error < error_tolerance);
   }  
+
+  for (int e = 0; e < E; ++e) {
+    BOOST_TEST(edge_centrality1[e] == edge_centrality2[e]);
+    BOOST_TEST(edge_centrality1[e] == edge_centrality3[e]);
+
+    if (correct_edge_centrality) {
+      double relative_error = 
+        correct_edge_centrality[e] == 0.0? edge_centrality1[e]
+        : fabs(edge_centrality1[e] - correct_edge_centrality[e]) 
+        / correct_edge_centrality[e];
+      BOOST_TEST(relative_error < error_tolerance);
+
+      if (relative_error >= error_tolerance) {
+        std::cerr << "Edge " << e << " has edge centrality " 
+                  << edge_centrality1[e] << ", should be " 
+                  << correct_edge_centrality[e] << std::endl;
+      }
+    }
+  }
 }
 
 template<typename Graph>
@@ -141,14 +181,14 @@ run_wheel_test(Graph*, int V)
   std::vector<double> centrality(V);
   brandes_betweenness_centrality(
     g,
-    make_iterator_property_map(centrality.begin(), get(vertex_index, g)),
-    vertex_index_map(get(vertex_index, g)));
+    make_iterator_property_map(centrality.begin(), get(vertex_index, g)));
 
   std::vector<double> centrality2(V);
   brandes_betweenness_centrality(
     g,
-    make_iterator_property_map(centrality2.begin(), get(vertex_index, g)),
-    vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
+    centrality_map(
+      make_iterator_property_map(centrality2.begin(), get(vertex_index, g)))
+    .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
 
   relative_betweenness_centrality(
     g,
@@ -337,8 +377,9 @@ void random_unweighted_test(Graph*, int n)
     put(edge_weight, g, *ei, 1);
 
   brandes_betweenness_centrality(g, 
-    make_iterator_property_map(centrality3.begin(), get(vertex_index, g)),
-                                 weight_map(get(edge_weight, g)));
+    weight_map(get(edge_weight, g))
+    .centrality_map(
+       make_iterator_property_map(centrality3.begin(), get(vertex_index, g))));
   std::cout << "DONE.\n";
 
   BOOST_TEST(std::equal(centrality.begin(), centrality.end(),
@@ -389,7 +430,21 @@ int test_main(int, char*[])
     0.1428 * 28,
     0.1666 * 28
   };
-  run_unweighted_test((Graph*)0, 9, ud_edge_init2, 10, ud_centrality2);
+  double ud_edge_centrality2[10] = {
+    10.66666,
+    9.33333,
+    6.5,
+    6.5,
+    6.5,
+    6.5,
+    10.66666,
+    9.33333,
+    8.0,
+    8.0
+  };
+
+  run_unweighted_test((Graph*)0, 9, ud_edge_init2, 10, ud_centrality2,
+                      ud_edge_centrality2);
 
   weighted_edge dw_edge_init1[6] = {
     { 0, 1, 1.0 },
