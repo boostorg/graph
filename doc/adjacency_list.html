@@ -317,8 +317,8 @@ vertex descriptors have become invalid, the result is incorrect.
   std::vector&lt;Vertex&gt; parent(num_vertices(G));
   std::vector&lt;Vertex&gt; distance(num_vertices(G));
 
-  dijkstra_shortest_paths(G, s, &amp;distance[0], 
-    make_ucs_visitor(record_predecessors(&amp;parent[0], on_edge_relaxed())));
+  dijkstra_shortest_paths(G, s, distance_map(&amp;distance[0]).
+    predecessor_map(&amp;parent[0]));
 
   remove_vertex(s, G); <b>// Bad idea! Invalidates vertex descriptors in parent vector.</b>
 
