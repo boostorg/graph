@@ -1321,7 +1321,7 @@ namespace boost {
                     boost::disallow_parallel_edge_tag) const
       {
         bool found;
-        typename Config::OutEdgeList::const_iterator 
+        typename Config::OutEdgeList::iterator 
           i = g.out_edge_list(u).find(StoredEdge(v)),
           end = g.out_edge_list(u).end();
         found = (i != end);
