@@ -115,21 +115,20 @@ int main(int,char*[])
   fill(weights, weights + nedges, 1);
 
   typedef adjacency_list<vecS, vecS, directedS, 
-      plugin<color_tag,default_color_type>,
-      plugin<weight_tag,int>
+      plugin<color_tag, default_color_type>,
+      plugin<weight_tag, int>
     > Graph;
   Graph g(N, used_by, used_by + nedges, weights);
-  typedef Graph::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
-  typedef vertex_property_accessor<Graph,color_tag>::type Color;
+  typedef vertex_property_accessor<Graph, color_tag>::type Color;
   Color color = get_vertex_property_accessor(g, color_tag());
 
   // Determine ordering for a full recompilation
   {
     typedef list<Vertex> MakeOrder;
     MakeOrder make_order;
-    //    typedef front_insert_iterator< MakeOrder > OutputIterator;
-    topological_sort(g, front_inserter(make_order));
+    topological_sort(g, std::front_inserter(make_order));
     
     cout << "make ordering: ";
     for (MakeOrder::iterator i = make_order.begin();
@@ -145,22 +144,22 @@ int main(int,char*[])
     // Set up the necessary graph properties.
     vector<int> time(N, 0);
     typedef vector<int>::iterator Time;
-    typedef edge_property_accessor<Graph,weight_tag>::type Weight;
+    typedef edge_property_accessor<Graph, weight_tag>::type Weight;
     Weight weight = get_edge_property_accessor(g, weight_tag());
 
     // Calculate the in_degree for each vertex.
     vector<int> in_degree(N, 0);
-    Graph::vertex_iterator i, iend;
-    Graph::out_edge_iterator j, jend;
-    for (tie(i,iend) = vertices(g); i != iend; ++i)
-      for (tie(j,jend) = out_edges(*i,g); j != jend; ++j)
+    graph_traits<Graph>::vertex_iterator i, iend;
+    graph_traits<Graph>::out_edge_iterator j, jend;
+    for (tie(i, iend) = vertices(g); i != iend; ++i)
+      for (tie(j, jend) = out_edges(*i,g); j != jend; ++j)
         in_degree[target(*j,g)] += 1;
 
     std::greater<int> compare;
     std::plus<int> combine;
 
     // Run best-first-search from each vertex with zero in-degree.
-    for (tie(i,iend) = vertices(g); i != iend; ++i) {
+    for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0)
         uniform_cost_search(g, *i, time.begin(), weight, 
 			    compare, combine);
