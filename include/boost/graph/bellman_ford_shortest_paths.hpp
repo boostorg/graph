@@ -97,97 +97,70 @@ namespace boost {
     return bellman_visitor<Visitors>(vis);
   }
 
-  // Variant (1)
-  template <class EdgeListGraph, class Size, 
-            class Weight, class Distance>
-  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, Weight w, 
-                                   Distance d)
-  {
-    return bellman_ford_shortest_paths(g, N, w, d, bellman_visitor<>());
-  }
-
-  // Variant (2)
-  template <class EdgeListGraph, class Size, class WeightMap, class DistanceMap,
-            class BellmanFordVisitor>
-  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
-                                   WeightMap weight, DistanceMap distance, 
-                                   BellmanFordVisitor v)
-  {
-    typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
-    typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
-      Vertex;
-    function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
-    function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
-    typedef typename property_traits<DistanceMap>::value_type D_value;
-    typedef typename property_traits<WeightMap>::value_type W_value;
-    function_requires<ComparableConcept<D_value> >();
-    function_requires<PlusOpConcept<D_value, D_value, W_value> >();
-    std::plus<D_value> combine;
-    std::less<D_value> compare;
-    return bellman_ford_shortest_paths(g, N, weight, distance, 
-                                       combine, compare, v);
-  }
-
-  // Variant (3)
-  template <class EdgeListGraph, class Size, class WeightMap,
-            class DistanceMap,
-            class BinaryFunction, class BinaryPredicate,
-            class BellmanFordVisitor>
-  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
-                                   WeightMap weight, DistanceMap distance, 
-                                   BinaryFunction combine, 
-                                   BinaryPredicate compare,
-                                   BellmanFordVisitor v)
-  {
-    function_requires<EdgeListGraphConcept<EdgeListGraph> >();
-    typedef graph_traits<EdgeListGraph> GTraits;
-    typedef typename GTraits::edge_descriptor Edge;
-    typedef typename GTraits::vertex_descriptor Vertex;
-    function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
-    function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
-    typedef typename property_traits<DistanceMap>::value_type D_value;
-    typedef typename property_traits<WeightMap>::value_type W_value;
-
-    typename GTraits::edge_iterator i, end;
-    
-    for (Size k = 0; k < N; ++k)
-      for (tie(i, end) = edges(g); i != end; ++i) {
-        v.examine_edge(*i, g);
-        if (relax(*i, g, weight, distance, combine, compare))
-          v.edge_relaxed(*i, g);
-        else
-          v.edge_not_relaxed(*i, g);
-      }
-
-    for (tie(i, end) = edges(g); i != end; ++i)
-      if (compare(combine(get(distance, source(*i, g)), 
-                          get(weight, *i)),
-                  get(distance, target(*i,g))))
-      {
-        v.edge_not_minimized(*i, g);
-        return false;
-      } else
-        v.edge_minimized(*i, g);
-
-    return true;
-  }
-
   namespace detail {
 
     template <class EdgeListGraph, class Size, class WeightMap,
-	      class DistanceMap, class BellmanFordVisitor,
-              class P, class T, class R>
+	      class PredecessorMap, class DistanceMap,
+	      class BinaryFunction, class BinaryPredicate,
+	      class BellmanFordVisitor>
+    bool bellman_ford_impl(EdgeListGraph& g, Size N, 
+			   WeightMap weight, 
+			   PredecessorMap pred,
+			   DistanceMap distance, 
+			   BinaryFunction combine, 
+			   BinaryPredicate compare,
+			   BellmanFordVisitor v)
+    {
+      function_requires<EdgeListGraphConcept<EdgeListGraph> >();
+      typedef graph_traits<EdgeListGraph> GTraits;
+      typedef typename GTraits::edge_descriptor Edge;
+      typedef typename GTraits::vertex_descriptor Vertex;
+      function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
+      function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
+      typedef typename property_traits<DistanceMap>::value_type D_value;
+      typedef typename property_traits<WeightMap>::value_type W_value;
+
+      typename GTraits::edge_iterator i, end;
+
+      for (Size k = 0; k < N; ++k)
+	for (tie(i, end) = edges(g); i != end; ++i) {
+	  v.examine_edge(*i, g);
+	  if (relax(*i, g, weight, pred, distance, combine, compare))
+	    v.edge_relaxed(*i, g);
+	  else
+	    v.edge_not_relaxed(*i, g);
+	}
+
+      for (tie(i, end) = edges(g); i != end; ++i)
+	if (compare(combine(get(distance, source(*i, g)), 
+			    get(weight, *i)),
+		    get(distance, target(*i,g))))
+	{
+	  v.edge_not_minimized(*i, g);
+	  return false;
+	} else
+	  v.edge_minimized(*i, g);
+
+      return true;
+    }
+
+    template <class EdgeListGraph, class Size, class WeightMap,
+	      class DistanceMap, class P, class T, class R>
     bool bellman_dispatch(EdgeListGraph& g, Size N, 
 			  WeightMap weight, DistanceMap distance, 
-			  BellmanFordVisitor v,
 			  const bgl_named_params<P, T, R>& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
-      return bellman_ford_shortest_paths
-	(g, N, weight, distance,
+      bellman_visitor<> null_vis;
+      dummy_property_map dummy_pred;
+      return bellman_ford_impl
+	(g, N, weight, 
+	 choose_param(get_param(params, vertex_predecessor), dummy_pred),
+	 distance,
 	 choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
 	 choose_param(get_param(params, distance_compare_t()), std::less<D>()),
-	 v);
+	 choose_param(get_param(params, graph_visitor), null_vis)
+	 );
     }
 
   } // namespace detail
@@ -199,10 +172,16 @@ namespace boost {
   {				   
     return detail::bellman_dispatch
       (g, N,
-       choose_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
        choose_pmap(get_param(params, vertex_distance), g, vertex_distance),
-       get_param(params, graph_visitor),
        params);
+  }
+
+  template <class EdgeListGraph, class Size>
+  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N)
+  {				   
+    bgl_named_params<int,int> params(0);
+    return bellman_ford_shortest_paths(g, N, params);
   }
 
 } // namespace boost
