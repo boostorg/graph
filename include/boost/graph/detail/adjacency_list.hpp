@@ -1882,8 +1882,10 @@ namespace boost {
         typedef typename Graph::edge_parallel_category edge_parallel_category;
         g.m_vertices.erase(g.m_vertices.begin() + u);
         vertex_descriptor V = num_vertices(g);
-        for (vertex_descriptor v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+        if (u != V) {
+          for (vertex_descriptor v = 0; v < V; ++v)
+            reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+        }
       }
 
       template <class Graph, class vertex_descriptor>
@@ -1916,21 +1918,23 @@ namespace boost {
         g.m_vertices.erase(g.m_vertices.begin() + u);
         vertex_descriptor V = num_vertices(g);
         vertex_descriptor v;
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, 
-                            edge_parallel_category());
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(in_edge_list(g, v), u, 
-                            edge_parallel_category());
+        if (u != V) {
+          for (v = 0; v < V; ++v)
+            reindex_edge_list(g.out_edge_list(v), u, 
+                              edge_parallel_category());
+          for (v = 0; v < V; ++v)
+            reindex_edge_list(in_edge_list(g, v), u, 
+                              edge_parallel_category());
 
-        typedef typename Graph::EdgeContainer Container;
-        typedef typename Container::iterator Iter;
-        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
-        for (; ei != ei_end; ++ei) {
-          if (ei->m_source > u)
-            --ei->m_source;
-          if (ei->m_target > u)
-            --ei->m_target;
+          typedef typename Graph::EdgeContainer Container;
+          typedef typename Container::iterator Iter;
+          Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
+          for (; ei != ei_end; ++ei) {
+            if (ei->m_source > u)
+              --ei->m_source;
+            if (ei->m_target > u)
+              --ei->m_target;
+          }
         }
       }
 
