@@ -390,7 +390,7 @@ namespace boost {
   namespace detail {
     struct filtered_graph_property_selector {
       template <class FilteredGraph, class Property, class Tag>
-      struct bind {
+      struct bind_ {
 	typedef typename FilteredGraph::graph_type Graph;
 	typedef property_map<Graph, Tag> Map;
 	typedef typename Map::type type;

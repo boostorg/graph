@@ -491,26 +491,26 @@ namespace boost {
 
     struct choose_parameter {
       template <class P, class Graph, class Tag>
-      struct bind {
+      struct bind_ {
 	typedef const P& const_result_type;
 	typedef const P& result_type;
 	typedef P type;
       };
 
       template <class P, class Graph, class Tag>
-      static typename bind<P, Graph, Tag>::const_result_type
+      static typename bind_<P, Graph, Tag>::const_result_type
       const_apply(const P& p, const Graph&, Tag&) 
       { return p; }
 
       template <class P, class Graph, class Tag>
-      static typename bind<P, Graph, Tag>::result_type
+      static typename bind_<P, Graph, Tag>::result_type
       apply(const P& p, Graph&, Tag&) 
       { return p; }
     };
 
     struct choose_default_param {
       template <class P, class Graph, class Tag>
-      struct bind {
+      struct bind_ {
 	typedef typename property_map<Graph, Tag>::type 
 	  result_type;
 	typedef typename property_map<Graph, Tag>::const_type 
@@ -520,12 +520,12 @@ namespace boost {
       };
 
       template <class P, class Graph, class Tag>
-      static typename bind<P, Graph, Tag>::const_result_type
+      static typename bind_<P, Graph, Tag>::const_result_type
       const_apply(const P&, const Graph& g, Tag tag) { 
 	return get(tag, g); 
       }
       template <class P, class Graph, class Tag>
-      static typename bind<P, Graph, Tag>::result_type
+      static typename bind_<P, Graph, Tag>::result_type
       apply(const P&, Graph& g, Tag tag) { 
 	return get(tag, g); 
       }
@@ -543,7 +543,7 @@ namespace boost {
     template <class Param, class Graph, class Tag>
     struct choose_pmap_helper {
       typedef typename choose_property_map<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, Graph, Tag> Bind;
+      typedef typename Selector:: template bind_<Param, Graph, Tag> Bind;
       typedef Bind type;
       typedef typename Bind::result_type result_type;
       typedef typename Bind::const_result_type const_result_type;

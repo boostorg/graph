@@ -230,7 +230,7 @@ namespace boost {
     //-------------------------------------------------------------------------
     struct choose_copier_parameter {
       template <class P, class G1, class G2>
-      struct bind {
+      struct bind_ {
         typedef const P& result_type;
         static result_type apply(const P& p, const G1&, G2&)
         { return p; }
@@ -238,7 +238,7 @@ namespace boost {
     };
     struct choose_default_edge_copier {
       template <class P, class G1, class G2>
-      struct bind {
+      struct bind_ {
         typedef edge_copier<G1, G2> result_type;
         static result_type apply(const P&, const G1& g1, G2& g2) { 
           return result_type(g1, g2);
@@ -256,7 +256,7 @@ namespace boost {
     template <class Param, class G1, class G2>
     struct choose_edge_copier_helper {
       typedef typename choose_edge_copy<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, G1, G2> Bind;
+      typedef typename Selector:: template bind_<Param, G1, G2> Bind;
       typedef Bind type;
       typedef typename Bind::result_type result_type;
     };
@@ -272,7 +272,7 @@ namespace boost {
 
     struct choose_default_vertex_copier {
       template <class P, class G1, class G2>
-      struct bind {
+      struct bind_ {
         typedef vertex_copier<G1, G2> result_type;
         static result_type apply(const P&, const G1& g1, G2& g2) { 
           return result_type(g1, g2);
@@ -290,7 +290,7 @@ namespace boost {
     template <class Param, class G1, class G2>
     struct choose_vertex_copier_helper {
       typedef typename choose_vertex_copy<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, G1, G2> Bind;
+      typedef typename Selector:: template bind_<Param, G1, G2> Bind;
       typedef Bind type;
       typedef typename Bind::result_type result_type;
     };

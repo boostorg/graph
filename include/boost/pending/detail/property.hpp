@@ -140,7 +140,7 @@ namespace boost {
 
     struct recursive_extract {
       template <class TagValueAList, class Tag1>
-      struct bind {
+      struct bind_ {
         typedef typename TagValueAList::first_type AListFirst;
         typedef typename AListFirst::first_type Tag2;
         typedef typename AListFirst::second_type Value;
@@ -148,13 +148,13 @@ namespace boost {
         typedef typename TagValueAList::second_type Next;
         typedef typename ev_selector<Next>::type Extractor;
         typedef typename boost::ct_if< match, Value, 
-          typename Extractor::template bind<Next,Tag1>::type
+          typename Extractor::template bind_<Next,Tag1>::type
         >::type type;
       };
     };
     struct end_extract {
       template <class AList, class Tag1>
-      struct bind {
+      struct bind_ {
         typedef error_property_not_found type;
       };
     };

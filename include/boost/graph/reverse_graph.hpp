@@ -19,12 +19,12 @@ struct reverse_graph_tag { };
 
     template <bool isEdgeList> struct choose_rev_edge_iter { };
     template <> struct choose_rev_edge_iter<true> {
-      template <class G> struct bind {
+      template <class G> struct bind_ {
 	typedef typename graph_traits<G>::edge_iterator type;
       };
     };
     template <> struct choose_rev_edge_iter<false> {
-      template <class G> struct bind {
+      template <class G> struct bind_ {
         typedef void type;
       };
     };
@@ -67,7 +67,7 @@ class reverse_graph {
 	   edge_list_graph_tag>::value };
     typedef detail::choose_rev_edge_iter<is_edge_list> ChooseEdgeIter;
     typedef typename ChooseEdgeIter::
-      template bind<BidirectionalGraph>::type   edge_iterator;
+      template bind_<BidirectionalGraph>::type   edge_iterator;
     typedef typename Traits::vertices_size_type vertices_size_type;
     typedef typename Traits::edges_size_type edges_size_type;
     
@@ -204,7 +204,7 @@ namespace detail {
   
   struct reverse_graph_vertex_property_selector {
     template <class ReverseGraph, class Property, class Tag>
-    struct bind {
+    struct bind_ {
       typedef typename ReverseGraph::base_type Graph;
       typedef property_map<Graph, Tag> PMap;
       typedef typename PMap::type type;
@@ -214,7 +214,7 @@ namespace detail {
 
   struct reverse_graph_edge_property_selector {
     template <class ReverseGraph, class Property, class Tag>
-    struct bind {
+    struct bind_ {
       typedef typename ReverseGraph::base_type Graph;
       typedef property_map<Graph, Tag> PMap;
       typedef typename PMap::type type;

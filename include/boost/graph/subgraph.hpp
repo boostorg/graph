@@ -690,7 +690,7 @@ namespace boost {
 
     struct subgraph_property_generator {
       template <class SubGraph, class Property, class Tag>
-      class bind {
+      class bind_ {
         typedef typename SubGraph::graph_type Graph;
         typedef SubGraph* SubGraphPtr;
         typedef const SubGraph* const_SubGraphPtr;

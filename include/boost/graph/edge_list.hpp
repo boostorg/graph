@@ -138,7 +138,7 @@ namespace boost {
   };
   struct edge_list_edge_property_selector {
     template <class Graph, class Property, class Tag>
-    struct bind {
+    struct bind_ {
       typedef el_edge_property_map<typename Graph::edge_id,
           typename Graph::edge_descriptor> type;
       typedef type const_type;
@@ -227,7 +227,7 @@ namespace boost {
   };
   struct edge_list_ra_edge_property_selector {
     template <class Graph, class Property, class Tag>
-    struct bind {
+    struct bind_ {
       typedef el_ra_edge_property_map<typename Graph::edge_descriptor> type;
       typedef type const_type;
     };

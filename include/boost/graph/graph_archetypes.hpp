@@ -183,7 +183,7 @@ namespace boost { // should use a different namespace for this
 
   struct choose_edge_property_map_archetype {
     template <typename Graph, typename Property, typename Tag>
-    struct bind {
+    struct bind_ {
       typedef mutable_lvalue_property_map_archetype
         <typename Graph::edge_descriptor, Property> type;
       typedef lvalue_property_map_archetype
@@ -197,7 +197,7 @@ namespace boost { // should use a different namespace for this
   
   struct choose_vertex_property_map_archetype {
     template <typename Graph, typename Property, typename Tag>
-    struct bind {
+    struct bind_ {
       typedef mutable_lvalue_property_map_archetype
 	<typename Graph::vertex_descriptor, Property> type;
       typedef lvalue_property_map_archetype

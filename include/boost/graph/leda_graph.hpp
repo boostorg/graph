@@ -422,7 +422,7 @@ namespace boost {
   template <>
   struct leda_property_map<vertex_index_t> {
     template <class vtype, class etype>
-    struct bind {
+    struct bind_ {
       typedef leda_graph_id_map type;
       typedef leda_graph_id_map const_type;
     };
@@ -430,7 +430,7 @@ namespace boost {
   template <>
   struct leda_property_map<edge_index_t> {
     template <class vtype, class etype>
-    struct bind {
+    struct bind_ {
       typedef leda_graph_id_map type;
       typedef leda_graph_id_map const_type;
     };
@@ -457,7 +457,7 @@ namespace boost {
   template <>
   struct leda_property_map<vertex_all_t> {
     template <class vtype, class etype>
-    struct bind {
+    struct bind_ {
       typedef leda_graph_data_map<vtype, vtype&, GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<vtype, const vtype&, 
 	const GRAPH<vtype, etype>*> const_type;
@@ -481,7 +481,7 @@ namespace boost {
   template <>
   struct leda_property_map<edge_all_t> {
     template <class vtype, class etype>
-    struct bind {
+    struct bind_ {
       typedef leda_graph_data_map<etype, etype&, GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<etype, const etype&, 
 	const GRAPH<vtype, etype>*> const_type;
@@ -552,7 +552,7 @@ namespace boost {
   template <class vtype, class etype, class Tag>
   struct property_map<GRAPH<vtype, etype>, Tag> {
     typedef typename 
-      leda_property_map<Tag>::template bind<vtype, etype> map_gen;
+      leda_property_map<Tag>::template bind_<vtype, etype> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
   };

@@ -136,14 +136,14 @@ namespace boost {
 
     struct dummy_edge_property_selector {
       template <class Graph, class Property, class Tag>
-      struct bind {
+      struct bind_ {
         typedef identity_property_map type;
         typedef identity_property_map const_type;
       };
     };
     struct dummy_vertex_property_selector {
       template <class Graph, class Property, class Tag>
-      struct bind {
+      struct bind_ {
         typedef identity_property_map type;
         typedef identity_property_map const_type;
       };
@@ -170,7 +170,7 @@ namespace boost {
       typedef typename Graph::edge_property_type Property;
       typedef typename Graph::graph_tag graph_tag;
       typedef typename edge_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind<Graph,Property,PropertyTag>
+      typedef typename Selector::template bind_<Graph,Property,PropertyTag>
         Bind;
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
@@ -180,7 +180,7 @@ namespace boost {
       typedef typename Graph::vertex_property_type Property;
       typedef typename Graph::graph_tag graph_tag;
       typedef typename vertex_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind<Graph,Property,PropertyTag>
+      typedef typename Selector::template bind_<Graph,Property,PropertyTag>
         Bind;
     public:
       typedef typename Bind::type type;
@@ -194,13 +194,13 @@ namespace boost {
     // partial specialization.
     struct choose_vertex_property_map {
       template <class Graph, class Property>
-      struct bind {
+      struct bind_ {
         typedef vertex_property_map<Graph, Property> type;
       };
     };
     struct choose_edge_property_map {
       template <class Graph, class Property>
-      struct bind {
+      struct bind_ {
         typedef edge_property_map<Graph, Property> type;
       };
     };
@@ -223,7 +223,7 @@ namespace boost {
   private:
     typedef typename property_kind<Property>::type Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
-    typedef typename Selector::template bind<Graph, Property> Bind;
+    typedef typename Selector::template bind_<Graph, Property> Bind;
     typedef typename Bind::type Map;
   public:
     typedef typename Map::type type;

@@ -71,7 +71,7 @@ namespace boost {
 #else
     typedef typename detail::build_property_tag_value_alist<Property>::type AList;
     typedef typename detail::ev_selector<AList>::type Extractor;
-    typedef typename Extractor::template bind<AList,Tag>::type type;
+    typedef typename Extractor::template bind_<AList,Tag>::type type;
 #endif  
   };
 

@@ -124,46 +124,46 @@ namespace boost {
 #if !defined BOOST_NO_SLIST
   struct slistS {
     template <class T>
-    struct bind { typedef std::slist<T> type; };
+    struct bind_ { typedef std::slist<T> type; };
   };
 #endif
 
   struct vecS  {
     template <class T>
-    struct bind { typedef std::vector<T> type; };
+    struct bind_ { typedef std::vector<T> type; };
   };
 
   struct listS { 
     template <class T>
-    struct bind { typedef std::list<T> type; };
+    struct bind_ { typedef std::list<T> type; };
   };
 
   struct setS  { 
     template <class T>
-    struct bind { typedef std::set<T, std::less<T> > type; };
+    struct bind_ { typedef std::set<T, std::less<T> > type; };
   };
 
   struct multisetS  { 
     template <class T>
-    struct bind { typedef std::multiset<T, std::less<T> > type; };
+    struct bind_ { typedef std::multiset<T, std::less<T> > type; };
   };
 
 #if !defined BOOST_NO_HASH
   struct hash_setS { 
     template <class T>
-    struct bind { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
+    struct bind_ { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
   };
 #endif
 
   struct mapS  { 
     template <class T>
-    struct bind { typedef std::set<T, std::less<T> > type; };
+    struct bind_ { typedef std::set<T, std::less<T> > type; };
   };
 
 #if !defined BOOST_NO_HASH
   struct hash_mapS { 
     template <class T>
-    struct bind { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
+    struct bind_ { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
   };
 #endif
 
@@ -190,7 +190,7 @@ namespace boost {
   template <class Selector, class ValueType>
   struct container_gen {
     typedef typename container_selector<Selector>::type Select;
-    typedef typename Select:: template bind<ValueType>::type type;
+    typedef typename Select:: template bind_<ValueType>::type type;
   };
 
 #endif // !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
