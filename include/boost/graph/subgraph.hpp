@@ -607,8 +607,8 @@ namespace boost {
 
   template <typename GraphPtr, typename PropertyMap>
   class subgraph_property_map 
-    : public put_get_at_helper< 
-        typename property_traits<PropertyMap>::value_type,
+    : public put_get_helper< 
+        typename property_traits<PropertyMap>::reference,
         subgraph_property_map<GraphPtr, PropertyMap> >
   {
     typedef property_traits<PropertyMap> Traits;

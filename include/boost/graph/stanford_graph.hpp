@@ -248,13 +248,13 @@ namespace boost {
 
   // Vertex ID
   class sgb_vertex_id_map
-    : public boost::put_get_at_helper<long, sgb_vertex_id_map>
+    : public boost::put_get_helper<long, sgb_vertex_id_map>
   {
   public:
     typedef boost::readable_property_map_tag category;
     typedef long value_type;
-    typedef Vertex* key_type;
     typedef long reference;
+    typedef Vertex* key_type;
     sgb_vertex_id_map() : _g(0) { }
     sgb_vertex_id_map(sgb_graph_ptr g) : _g(g) { }
     long operator[](Vertex* v) const { return v - _g->vertices; }
@@ -267,13 +267,13 @@ namespace boost {
 
   // Vertex Name  
   class sgb_vertex_name_t_map
-    : public boost::put_get_at_helper<char*, sgb_vertex_name_t_map>
+    : public boost::put_get_helper<char*, sgb_vertex_name_t_map>
   {
   public:
     typedef boost::readable_property_map_tag category;
     typedef char* value_type;
-    typedef Vertex* key_type;
     typedef char* reference;
+    typedef Vertex* key_type;
     char* operator[](Vertex* v) const { return v->name; }
   };
   inline sgb_vertex_name_t_map get(vertex_name_t, sgb_graph_ptr) {
@@ -324,8 +324,7 @@ namespace boost {
   // Vertex Utility Map
   template <class Tag, class Ref>
   class sgb_vertex_util_map
-    : public boost::put_get_at_helper< typename Tag::type,
-        sgb_vertex_util_map<Tag, Ref> >
+    : public boost::put_get_helper<Ref, sgb_vertex_util_map<Tag, Ref> >
   {
   public:
     typedef boost::lvalue_property_map_tag category;
@@ -340,8 +339,7 @@ namespace boost {
   // Edge Utility Map
   template <class Tag, class Ref>
   class sgb_edge_util_map
-    : public boost::put_get_at_helper< typename Tag::type,
-        sgb_edge_util_map<Tag, Ref> >
+    : public boost::put_get_helper<Ref, sgb_edge_util_map<Tag, Ref> >
   {
   public:
     typedef boost::lvalue_property_map_tag category;
@@ -382,7 +380,7 @@ namespace boost {
   // Edge Length Access
   template <class Ref>
   class sgb_edge_length_map
-    : public boost::put_get_at_helper<long, sgb_edge_length_map<Ref> >
+    : public boost::put_get_helper<Ref, sgb_edge_length_map<Ref> >
   {
   public:
     typedef boost::lvalue_property_map_tag category;
