@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <vector>
 #include <algorithm>

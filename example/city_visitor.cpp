@@ -25,6 +25,7 @@
 //=======================================================================
 //
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -70,7 +71,8 @@ using namespace std;
 using namespace boost;
 
 
-struct city_arrival {
+struct city_arrival : public base_visitor<city_arrival>
+{
   city_arrival(string* n) : names(n) { }
   typedef on_discover_vertex event_filter;
   template <class Vertex, class Graph>
@@ -81,7 +83,8 @@ struct city_arrival {
   string* names;
 };
 
-struct neighbor_cities {
+struct neighbor_cities : public base_visitor<neighbor_cities>
+{
   neighbor_cities(string* n) : names(n) { }
   typedef on_examine_edge event_filter;
   template <class Edge, class Graph>
@@ -91,7 +94,8 @@ struct neighbor_cities {
   string* names;
 };
 
-struct finish_city {
+struct finish_city : public base_visitor<finish_city>
+{
   finish_city(string* n) : names(n) { }
   typedef on_finish_vertex event_filter;
   template <class Vertex, class Graph>

@@ -49,6 +49,7 @@
 //            <--(10,8)-- 6        
 
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map.hpp>

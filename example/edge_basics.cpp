@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>

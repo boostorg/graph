@@ -22,6 +22,7 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+#include <boost/config.hpp>
 #include <vector>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>

@@ -29,6 +29,7 @@
 //   and its minimum spanning tree has length 14467.
 //
 
+#include <boost/config.hpp>
 #include <string.h>
 #include <stdio.h>
 #include <boost/graph/stanford_graph.hpp>

@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
 #include <iostream>                         // for std::cout
 #include <utility>                         // for std::pair
 #include <algorithm>                         // for std::for_each

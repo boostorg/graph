@@ -22,13 +22,13 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+#include <boost/config.hpp>
 #include <vector>
-
 #include <iostream>
 #include <iterator>
-
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
+
 /*
 
   Sample output:

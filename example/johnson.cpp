@@ -36,6 +36,7 @@
 //    4 ->      inf     2       -1      -5      0       -2      
 //    5 ->      inf     8       5       1       6       0       
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <vector>
 #include <iomanip>
