@@ -357,7 +357,7 @@ namespace boost {
 	struct no_vertex_bundle {};
 	struct no_edge_bundle {};
   public:
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     typedef typename detail::retag_property_list<vertex_bundle_t, VertexProperty>::type
 	  vertex_property_type;
 	typedef typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type
@@ -466,7 +466,7 @@ namespace boost {
       m_vertex_properties(n_vertices),
       m_num_edges(0) { }
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 	// Directly access a vertex or edge bundle
     vertex_bundled& operator[](vertex_descriptor v)
     { return get(vertex_bundle, *this)[v]; }
@@ -1026,7 +1026,7 @@ namespace boost {
   }
 
   // Support for bundled properties
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template <typename Directed, typename VertexProperty, typename EdgeProperty, typename GraphProperty,
             typename Allocator, typename T, typename Bundle>
   inline

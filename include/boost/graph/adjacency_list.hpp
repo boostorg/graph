@@ -48,6 +48,7 @@
 #include <boost/graph/detail/edge.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/detail/workaround.hpp>
+#include <boost/graph/properties.hpp>
 
 namespace boost {
 
@@ -313,7 +314,7 @@ namespace boost {
       adjacency_list<OutEdgeListS,VertexListS,DirectedS,
                      VertexProperty,EdgeProperty,GraphProperty,EdgeListS>,
       VertexListS, OutEdgeListS, DirectedS, 
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
       typename detail::retag_property_list<vertex_bundle_t,
                                            VertexProperty>::type,
       typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type,
@@ -322,7 +323,7 @@ namespace boost {
 #endif
       GraphProperty, EdgeListS>::type
   {
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
     typedef typename detail::retag_property_list<vertex_bundle_t,
                                                  VertexProperty>::retagged
       maybe_vertex_bundled;
@@ -336,7 +337,7 @@ namespace boost {
      struct no_edge_bundle {};
 
   public:
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
     typedef typename detail::retag_property_list<vertex_bundle_t,
                                                  VertexProperty>::type
       vertex_property_type;
@@ -417,7 +418,7 @@ namespace boost {
       *this = tmp;
     }
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     // Directly access a vertex or edge bundle
     vertex_bundled& operator[](vertex_descriptor v)
     { return get(vertex_bundle, *this)[v]; }
@@ -489,7 +490,7 @@ namespace boost {
   }
 
   // Support for bundled properties
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
 		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
   inline
