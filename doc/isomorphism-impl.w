@@ -976,10 +976,14 @@ code parts into namespace \code{boost}.
 // "as is" without express or implied warranty, and with no claim as
 // to its suitability for any purpose.
 
+// See http://www.boost.org/libs/graph/doc/isomorphism-impl.pdf 
+// for a description of the implementation of the isomorphism function
+// defined in this header file.
+
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
-#include <algorithm> // for std::find
+#include <algorithm>
 #include <boost/graph/detail/set_adaptor.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/detail/permutation.hpp>
