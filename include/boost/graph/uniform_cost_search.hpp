@@ -43,7 +43,6 @@ namespace boost {
   template <class Visitor, class Graph>
   struct UniformCostVisitorConcept {
     void constraints() {
-      vis.start_vertex(u, g);
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_edge(e, g);
@@ -123,10 +122,6 @@ namespace boost {
       template <class Vertex, class Graph>
       void initialize_vertex(Vertex u, Graph& g) {
         m_vis.initialize_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void start_vertex(Vertex u, Graph& g) {
-        m_vis.start_vertex(u, g);
       }
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {

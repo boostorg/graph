@@ -42,7 +42,6 @@ namespace boost {
   struct BFSVisitorConcept {
     void constraints() {
       vis.initialize_vertex(u, g);
-      vis.start_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_edge(e, g);
       vis.tree_edge(e, g);
@@ -100,7 +99,7 @@ namespace boost {
     typename property_traits<ColorMap>::value_type c = get(color, s);
 
     put(color, s, gray(c));
-    vis.start_vertex(s, g);
+    vis.discover_vertex(v, g);
     Q.push(s);
     while (! Q.empty()) {
       Vertex u = Q.top();
@@ -137,10 +136,6 @@ namespace boost {
     template <class Vertex, class Graph>
     void initialize_vertex(Vertex u, Graph& g) {
       invoke_visitors(m_vis, u, g, on_initialize_vertex());      
-    }
-    template <class Vertex, class Graph>
-    void start_vertex(Vertex u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_start_vertex());      
     }
     template <class Vertex, class Graph>
     void discover_vertex(Vertex u, Graph& g) {
