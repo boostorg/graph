@@ -124,28 +124,13 @@ int num_scc = strong_components(g, component_number,
   vertex_index_map(index_map));
 
 std::vector< std::vector<vertex> > components;
-build_components_lists(g, num_scc, component_number, components);
+build_component_lists(g, num_scc, component_number, components);
 @}
 
 \noindent Later we will need efficient access to all vertices in the
 same SCC so we create a \code{std::vector} of vertices for each SCC
-and fill it in with the \code{build\_components\_lists()} function.
-
-@d Build a list of vertices for each strongly connected component
-@{
-template <class ComponentMap, class ComponentLists>
-void build_component_lists
-  (const Graph& g,
-   typename graph_traits<Graph>::vertices_size_type num_scc,
-   ComponentMap component_number,
-   ComponentLists& components)
-{
-  components.resize(num_scc);
-  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    components[component_number[*vi]].push_back(*vi);
-}
-@}
+and fill it in with the \code{build\_components\_lists()} function
+from \code{strong\_components.hpp}.
 
 The next step is to construct the condensation graph.  There will be
 one vertex in the CG for every strongly connected component in the
@@ -243,8 +228,8 @@ are the topological numbers for the vertices in the set.
 @{
 namespace detail {
   void union_successor_sets(const std::vector<std::size_t>& s1,
-			  const std::vector<std::size_t>& s2,
-			  std::vector<std::size_t>& s3)
+                          const std::vector<std::size_t>& s2,
+                          std::vector<std::size_t>& s3)
   {
     for (std::size_t k = 0; k < s1.size(); ++k)
       s3[k] = std::min(s1[k], s2[k]);
@@ -307,8 +292,8 @@ and its associated helper object generation function.
 namespace detail {
   template <typename Container, typename ST = std::size_t, 
     typename VT = typename Container::value_type>
-  struct subscript_t : std::unary_function<ST, VT> {
-    subscript_t(Container& c) : container(&c) {};
+  struct subscript_t : public std::unary_function<ST, VT> {
+    subscript_t(Container& c) : container(&c) { }
     VT& operator()(const ST& i) const { return (*container)[i]; }
   protected:
     Container *container;
@@ -481,8 +466,99 @@ for (size_type i = 0; i < components.size(); ++i)
       }
 @}
 
+\section{Appendix}
 
-@c transitive_closure.hpp -d
+@d Warshall Transitive Closure
+@{
+template <typename G>
+void warshall_transitive_closure(G& g)
+{
+  typedef typename graph_traits<G>::vertex_descriptor vertex;
+  typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
+
+  function_requires< AdjacencyMatrixConcept<G> >();
+  function_requires< EdgeMutableGraphConcept<G> >();
+
+  // Matrix form:
+  // for k
+  //  for i
+  //    if A[i,k]
+  //      for j
+  //        A[i,j] = A[i,j] | A[k,j]
+  vertex_iterator ki, ke, ii, ie, ji, je;
+  for (tie(ki, ke) = vertices(g); ki != ke; ++ki)
+    for (tie(ii, ie) = vertices(g); ii != ie; ++ii) 
+      if (edge(*ii, *ki, g).second)
+        for (tie(ji, je) = vertices(g); ji != je; ++ji)
+          if (!edge(*ii, *ji, g).second &&
+            edge(*ki, *ji, g).second)
+          {
+            add_edge(*ii, *ji, g);
+          }               
+}
+@}
+
+@d Warren Transitive Closure
+@{
+template <typename G>
+void warren_transitive_closure(G& g)
+{
+  using namespace boost;
+  typedef typename graph_traits<G>::vertex_descriptor vertex;
+  typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
+
+  function_requires< AdjacencyMatrixConcept<G> >();
+  function_requires< EdgeMutableGraphConcept<G> >();
+
+  // Make sure second loop will work  
+  if (num_vertices(g) == 0)
+    return;
+
+  // for i = 2 to n
+  //    for k = 1 to i - 1 
+  //      if A[i,k]
+  //        for j = 1 to n
+  //          A[i,j] = A[i,j] | A[k,j]
+
+  vertex_iterator ic, ie, jc, je, kc, ke;
+  for (tie(ic, ie) = vertices(g), ++ic; ic != ie; ++ic)
+    for (tie(kc, ke) = vertices(g); *kc != *ic; ++kc)
+      if (edge(*ic, *kc, g).second)
+        for (tie(jc, je) = vertices(g); jc != je; ++jc)
+          if (!edge(*ic, *jc, g).second &&
+            edge(*kc, *jc, g).second)
+          {
+            add_edge(*ic, *jc, g);
+          }
+
+  //  for i = 1 to n - 1
+  //    for k = i + 1 to n
+  //      if A[i,k]
+  //        for j = 1 to n
+  //          A[i,j] = A[i,j] | A[k,j]
+
+  for (tie(ic, ie) = vertices(g), --ie; ic != ie; ++ic)
+    for (kc = ic, ke = ie, ++kc; kc != ke; ++kc)
+      if (edge(*ic, *kc, g).second)
+        for (tie(jc, je) = vertices(g); jc != je; ++jc)
+          if (!edge(*ic, *jc, g).second &&
+            edge(*kc, *jc, g).second)
+          {
+            add_edge(*ic, *jc, g);
+          }                     
+}
+@}
+
+
+The following indent command was run on the output files before
+they were checked into the Boost CVS repository.
+
+@e indentation
+@{
+indent -nut -npcs -i2 -br -cdw -ce transitive_closure.hpp
+@}
+
+@o transitive_closure.hpp
 @{
 // Copyright (C) 2001 Vladimir Prus <ghost@@cs.msu.su>
 // Copyright (C) 2001 Jeremy Siek <jsiek@@cs.indiana.edu>
@@ -491,6 +567,8 @@ for (size_type i = 0; i < components.size(); ++i)
 // modified version are clearly marked as such. This software is provided
 // "as is" without express or implied warranty, and with no claim as to its
 // suitability for any purpose.
+
+// NOTE: this final is generated by libs/graph/doc/transitive_closure.w
 
 #ifndef BOOST_GRAPH_TRANSITIVE_CLOSURE_HPP
 #define BOOST_GRAPH_TRANSITIVE_CLOSURE_HPP
@@ -504,13 +582,71 @@ for (size_type i = 0; i < components.size(); ++i)
 #include <boost/graph/graph_concepts.hpp>
 
 namespace boost {
+
   @<Union of successor sets@>
   @<Subscript function object@>
-  @<Build a list of vertices for each strongly connected component@>
   @<Transitive Closure Function@>
+
+  @<Warshall Transitive Closure@>
+
+  @<Warren Transitive Closure@>
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_TRANSITIVE_CLOSURE_HPP
+@}
+
+@o transitive_closure.cpp
+@{
+// Copyright (c) Jeremy Siek 2001
+//
+// Permission to use, copy, modify, distribute and sell this software
+// and its documentation for any purpose is hereby granted without fee,
+// provided that the above copyright notice appears in all copies and
+// that both that copyright notice and this permission notice appear
+// in supporting documentation.  Silicon Graphics makes no
+// representations about the suitability of this software for any
+// purpose.  It is provided "as is" without express or implied warranty.
+
+// NOTE: this final is generated by libs/graph/doc/transitive_closure.w
+
+#include <boost/graph/transitive_closure.hpp>
+#include <boost/graph/graphviz.hpp>
+
+int main(int, char*[])
+{
+  using namespace boost;
+  typedef property<vertex_name_t, char> Name;
+  typedef property<vertex_index_t, std::size_t,
+    Name> Index;
+  typedef adjacency_list<listS, listS, directedS, Index> graph_t;
+  typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
+  graph_t G;
+  std::vector<vertex_t> verts(4);
+  for (int i = 0; i < 4; ++i)
+    verts[i] = add_vertex(Index(i, Name('a' + i)), G);
+  add_edge(verts[1], verts[2], G);
+  add_edge(verts[1], verts[3], G);
+  add_edge(verts[2], verts[1], G);
+  add_edge(verts[3], verts[2], G);
+  add_edge(verts[3], verts[0], G);
+
+  std::cout << "Graph G:" << std::endl;
+  print_graph(G, get(vertex_name, G));
+
+  adjacency_list<> TC;
+  transitive_closure(G, TC);
+
+  std::cout << std::endl << "Graph G+:" << std::endl;
+  char name[] = "abcd";
+  print_graph(TC, name);
+  std::cout << std::endl;
+
+  std::ofstream out("tc-out.dot");
+  write_graphviz(out, TC, make_label_writer(name));
+
+  return 0;
+}
 @}
 
 \bibliographystyle{abbrv}
