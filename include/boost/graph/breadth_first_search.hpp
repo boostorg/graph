@@ -192,7 +192,8 @@ namespace boost {
     void bfs_helper
       (VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       ColorMap color, BFSVisitor vis,
+       ColorMap color, 
+       BFSVisitor vis,
        const bgl_named_params<P, T, R>& params)
     {
       typedef graph_traits<VertexListGraph> Traits;
@@ -214,6 +215,47 @@ namespace boost {
 	 vis, color);
     }
 
+    //-------------------------------------------------------------------------
+    // Choose between default color and color parameters. Using
+    // function dispatching so that we don't require vertex index if
+    // the color default is not being used.
+
+    template <class VertexListGraph, class ColorMap,
+      class P, class T, class R>
+    void bfs_dispatch
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       const bgl_named_params<P, T, R>& params,
+       ColorMap color)
+    {
+      bfs_helper
+	(g, s, color,
+	 choose_param(get_param(params, graph_visitor),
+		      make_bfs_visitor(null_visitor())),
+	 params);
+    }
+
+    template <class VertexListGraph, class P, class T, class R>
+    void bfs_dispatch
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       const bgl_named_params<P, T, R>& params,
+       detail::error_property_not_found)
+    {
+      std::vector<default_color_type> color_vec(num_vertices(g));
+      null_visitor null_vis;
+
+      bfs_helper
+        (g, s, 
+	 make_iterator_property_map
+	 (color_vec.begin(), 
+	  choose_pmap(get_param(params, vertex_index), 
+		      g, vertex_index)),
+	 choose_param(get_param(params, graph_visitor),
+		      make_bfs_visitor(null_vis)),
+	 params);
+    }
+
   } // namespace detail
 
 
@@ -224,22 +266,7 @@ namespace boost {
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
-    // Color Default
-      typename std::vector<default_color_type>::size_type 
-	n = is_default_param(get_param(params, vertex_color)) ? 
-	num_vertices(g) : 0;
-    std::vector<default_color_type> color_map(n);
-
-    detail::bfs_helper
-      (g, s, 
-       choose_param(get_param(params, vertex_color),
-		    make_iterator_property_map
-		    (color_map.begin(), 
-		     choose_pmap(get_param(params, vertex_index), 
-				 g, vertex_index))),
-       choose_param(get_param(params, graph_visitor),
-		    make_bfs_visitor(null_visitor())),
-       params);
+    detail::bfs_dispatch(g, s, params, get_param(params, vertex_color));
   }
 
 
