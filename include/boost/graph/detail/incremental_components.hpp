@@ -25,6 +25,7 @@
 #define BOOST_GRAPH_DETAIL_INCREMENTAL_COMPONENTS_HPP
 
 #include <boost/operators.hpp>
+#include <boost/pending/disjoint_sets.hpp>
 
 namespace boost {
 
