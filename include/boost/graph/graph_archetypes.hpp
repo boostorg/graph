@@ -63,20 +63,6 @@ namespace boost { // should use a different namespace for this
     return 0;
   }
 
-  template <typename V, typename D, typename P>
-  typename incidence_graph_archetype<V,D,P>::vertices_size_type
-  num_vertices(const incidence_graph_archetype<V,D,P>& )
-  {
-    return 0;
-  }
-
-  template <typename V, typename D, typename P>
-  typename incidence_graph_archetype<V,D,P>::edges_size_type
-  num_edges(const incidence_graph_archetype<V,D,P>& )
-  {
-    return 0;
-  }
-
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct adjacency_graph_archetype
@@ -113,20 +99,6 @@ namespace boost { // should use a different namespace for this
   template <typename V, typename D, typename P>
   typename adjacency_graph_archetype<V,D,P>::degree_size_type
   out_degree(const V&, const adjacency_graph_archetype<V,D,P>& )
-  {
-    return 0;
-  }
-
-  template <typename V, typename D, typename P>
-  typename adjacency_graph_archetype<V,D,P>::vertices_size_type
-  num_vertices(const adjacency_graph_archetype<V,D,P>& )
-  {
-    return 0;
-  }
-
-  template <typename V, typename D, typename P>
-  typename adjacency_graph_archetype<V,D,P>::edges_size_type
-  num_edges(const adjacency_graph_archetype<V,D,P>& )
   {
     return 0;
   }
@@ -173,13 +145,6 @@ namespace boost { // should use a different namespace for this
   template <typename V, typename D, typename P>
   typename vertex_list_graph_archetype<V,D,P>::vertices_size_type
   num_vertices(const vertex_list_graph_archetype<V,D,P>& )
-  {
-    return 0;
-  }
-
-  template <typename V, typename D, typename P>
-  typename vertex_list_graph_archetype<V,D,P>::edges_size_type
-  num_edges(const vertex_list_graph_archetype<V,D,P>& )
   {
     return 0;
   }

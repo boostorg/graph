@@ -65,31 +65,6 @@ namespace boost {
   // be a directed acyclic graph (DAG). The implementation
   // consists mainly of a call to depth-first search.
   //
-  // There are three overloaded versions of this function.
-#if 0
-  template < class Graph, class OutputIterator, class Color, class DFSVisitor>
-  inline void 
-  topological_sort(Graph& G, OutputIterator iter, Color color, 
-                   DFSVisitor visit)
-  {
-    typedef topo_sort_visitor<OutputIterator, DFSVisitor> TopoVisitor;
-    depth_first_search(G, TopoVisitor(iter, visit), color);
-  }
-
-  template <class Graph, class OutputIterator, class DFSVisitor>
-  inline void 
-  topological_sort(Graph& G, OutputIterator iter, DFSVisitor visit)
-  {
-    topological_sort(G, iter, get(vertex_color, G), visit);
-  }
-
-  template <class Graph, class OutputIterator>
-  inline void 
-  topological_sort(Graph& G, OutputIterator iter)
-  {
-    topological_sort(G, iter, dfs_visitor<>());
-  }
-#else
 
   namespace detail {
     template <class Graph, class OutputIterator, class Color, class DFSVisitor>
@@ -130,7 +105,6 @@ namespace boost {
   {
     return topological_sort(G, result, bgl_named_params<char, char>('x'));
   }
-#endif
 
 } // namespace boost
 

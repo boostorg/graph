@@ -143,6 +143,7 @@ namespace boost {
                             m_combine, m_compare);
         if (m_decreased) {
           m_vis.edge_relaxed(e, g);
+	  put(m_predecessor, target(e, g), source(e, g));
         } else
           m_vis.edge_not_relaxed(e, g);
       }
@@ -169,6 +170,7 @@ namespace boost {
       UniformCostVisitor m_vis;
       UpdatableQueue& m_Q;
       WeightMap m_weight;
+      PredecessorMap m_predecessor;
       DistanceMap m_distance;
       BinaryFunction m_combine;
       BinaryPredicate m_compare;
@@ -218,13 +220,9 @@ namespace boost {
     
     detail::ucs_bfs_visitor<UniformCostVisitor, MutableQueue, 
       WeightMap, DistanceMap, BinaryFunction, BinaryPredicate>
-      visitor(vis, Q, w, d, combine, compare);
+      bfs_vis(vis, Q, w, d, combine, compare);
 
-    typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-      put(color, *ui, color_traits<Color_value>::white());
-
-    breadth_first_search(g, s, Q, visitor, color);
+    breadth_first_search(g, s, buffer(Q).visitor(bfs_vis).color_map(color));
   }
 
 

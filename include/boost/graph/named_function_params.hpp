@@ -60,94 +60,112 @@ namespace boost {
 
     template <typename WeightMap>
     bgl_named_params<WeightMap, edge_weight_t, self>
-    weight_map(const WeightMap& pmap) {
+    weight_map(const WeightMap& pmap) const {
       typedef bgl_named_params<WeightMap, edge_weight_t, self> Params;
       return Params(pmap, *this);
     }
 
     template <typename DistanceMap>
     bgl_named_params<DistanceMap, vertex_distance_t, self>
-    distance_map(const DistanceMap& pmap) {
+    distance_map(const DistanceMap& pmap) const {
       typedef bgl_named_params<DistanceMap, vertex_distance_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename PredecessorMap>
+    bgl_named_params<PredecessorMap, vertex_predecessor_t, self>
+    predecessor_map(const PredecessorMap& pmap) const {
+      typedef bgl_named_params<PredecessorMap, vertex_predecessor_t, self> 
+        Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename RankMap>
+    bgl_named_params<RankMap, vertex_rank_t, self>
+    rank_map(const RankMap& pmap) const {
+      typedef bgl_named_params<RankMap, vertex_rank_t, self> 
+        Params;
       return Params(pmap, *this);
     }
 
     template <typename ColorMap>
     bgl_named_params<ColorMap, vertex_color_t, self>
-    color_map(const ColorMap& pmap) {
+    color_map(const ColorMap& pmap) const {
       typedef bgl_named_params<ColorMap, vertex_color_t, self> Params;
       return Params(pmap, *this);
     }
 
     template <typename IndexMap>
     bgl_named_params<IndexMap, vertex_index_t, self>
-    vertex_index_map(const IndexMap& pmap) {
+    vertex_index_map(const IndexMap& pmap) const {
       typedef bgl_named_params<IndexMap, vertex_index_t, self> Params;
       return Params(pmap, *this);
     }
 
     template <typename Visitor>
     bgl_named_params<Visitor, graph_visitor_t, self>
-    visitor(const Visitor& vis) {
+    visitor(const Visitor& vis) const {
       typedef bgl_named_params<Visitor, graph_visitor_t, self> Params;
       return Params(vis, *this);
     }
 
     template <typename Compare>
     bgl_named_params<Compare, distance_compare_t, self>
-    distance_compare(const Compare& cmp) {
+    distance_compare(const Compare& cmp) const {
       typedef bgl_named_params<Compare, distance_compare_t, self> Params;
       return Params(cmp, *this);
     }
 
     template <typename Combine>
     bgl_named_params<Combine, distance_combine_t, self>
-    distance_combine(const Combine& cmb) {
+    distance_combine(const Combine& cmb) const {
       typedef bgl_named_params<Combine, distance_combine_t, self> Params;
       return Params(cmb, *this);
     }
 
     template <typename Init>
     bgl_named_params<Init, distance_inf_t, self>
-    distance_inf(const Init& init) {
+    distance_inf(const Init& init) const {
       typedef bgl_named_params<Init, distance_inf_t, self> Params;
       return Params(init, *this);
     }
 
     template <typename Init>
     bgl_named_params<Init, distance_zero_t, self>
-    distance_zero(const Init& init) {
+    distance_zero(const Init& init) const {
       typedef bgl_named_params<Init, distance_zero_t, self> Params;
       return Params(init, *this);
     }
 
     template <typename Buffer>
     bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self>
-    buffer(Buffer& b) {
-      typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self> Params;
+    buffer(Buffer& b) const {
+      typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self> 
+        Params;
       return Params(detail::wrap_ref<Buffer>(b), *this);
     }
 
     template <typename Copier>
     bgl_named_params<Copier, edge_copy_t, self>
-    edge_copy(const Copier& c) {
+    edge_copy(const Copier& c) const {
       typedef bgl_named_params<Copier, edge_copy_t, self> Params;
       return Params(c, *this);
     }
 
     template <typename Copier>
     bgl_named_params<Copier, vertex_copy_t, self>
-    vertex_copy(const Copier& c) {
+    vertex_copy(const Copier& c) const {
       typedef bgl_named_params<Copier, vertex_copy_t, self> Params;
       return Params(c, *this);
     }
 
     template <typename Orig2CopyMap>
     bgl_named_params<Orig2CopyMap, orig_to_copy_t, self>
-    orig_to_copy(const Orig2CopyMap& c) {
+    orig_to_copy(const Orig2CopyMap& c) const {
       typedef bgl_named_params<Orig2CopyMap, orig_to_copy_t, self> Params;
       return Params(c, *this);
     }
+
   };
 
   template <typename WeightMap>
@@ -161,6 +179,20 @@ namespace boost {
   bgl_named_params<DistanceMap, vertex_distance_t>
   distance_map(DistanceMap pmap) {
     typedef bgl_named_params<DistanceMap, vertex_distance_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename PredecessorMap>
+  bgl_named_params<PredecessorMap, vertex_predecessor_t>
+  predecessor_map(PredecessorMap pmap) {
+    typedef bgl_named_params<PredecessorMap, vertex_predecessor_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename RankMap>
+  bgl_named_params<RankMap, vertex_rank_t>
+  rank_map(RankMap pmap) {
+    typedef bgl_named_params<RankMap, vertex_rank_t> Params;
     return Params(pmap);
   }
 

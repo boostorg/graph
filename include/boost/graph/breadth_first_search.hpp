@@ -187,69 +187,59 @@ namespace boost {
 
   namespace detail {
 
-    template <class VertexListGraph, class BFSVisitor, class ColorMap,
-      class Buffer, class P, class T, class R>
+    template <class VertexListGraph, class ColorMap, class BFSVisitor,
+      class P, class T, class R>
     void bfs_helper
       (VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       Buffer& buffer, BFSVisitor vis, 
-       const bgl_named_params<P, T, R>&,
-       ColorMap color)
+       ColorMap color, BFSVisitor vis,
+       const bgl_named_params<P, T, R>& params)
     {
+      typedef graph_traits<VertexListGraph> Traits;
+      // Buffer default
+      typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+      queue_t Q;
+      detail::wrap_ref<queue_t> Qref(Q);
+      // Initialization
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
       typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
       for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
         put(color, *i, Color::white());
-        vis.initialize_vertex(*i, g); // Hmm, ditch this?
+        vis.initialize_vertex(*i, g);
       }
-      breadth_first_search(g, s, buffer, vis, color);
-    }
-
-    template <class IncidenceGraph, class BFSVisitor, class Buffer,
-      class P, class T, class R>
-    void bfs_helper
-      (IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor s,
-       Buffer& buffer, BFSVisitor vis, 
-       const bgl_named_params<P, T, R>& params,
-       const detail::error_property_not_found&)
-    {
-      typedef color_traits<default_color_type> Color;
-      std::vector<default_color_type> 
-	color_map(num_vertices(g), Color::white());
-
       breadth_first_search
-	(g, s, buffer, vis, 
-	 make_iterator_property_map
-	 (color_map.begin(), 
-	  choose_pmap(get_param(params, vertex_index), g, vertex_index)));
+	(g, s, 
+	 choose_param(get_param(params, buffer_param_t()), Qref).ref,
+	 vis, color);
     }
 
   } // namespace detail
 
 
   // Named Parameter Variant
-  template <class Graph, class P, class T, class R>
+  template <class VertexListGraph, class P, class T, class R>
   void breadth_first_search
-    (Graph& g,
-     typename graph_traits<Graph>::vertex_descriptor s,
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
-    typedef graph_traits<Graph> Traits;
-    // Buffer default
-    typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
-    queue_t Q;
-    detail::wrap_ref<queue_t> Qref(Q);
+    // Color Default
+      typename std::vector<default_color_type>::size_type 
+	n = is_default_param(get_param(params, vertex_color)) ? 
+	num_vertices(g) : 0;
+    std::vector<default_color_type> color_map(n);
 
     detail::bfs_helper
-      (g, s,
-       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+      (g, s, 
+       choose_param(get_param(params, vertex_color),
+		    make_iterator_property_map
+		    (color_map.begin(), 
+		     choose_pmap(get_param(params, vertex_index), 
+				 g, vertex_index))),
        choose_param(get_param(params, graph_visitor),
-                    make_bfs_visitor(null_visitor())),
-       params,
-       get_param(params, vertex_color)
-       );
+		    make_bfs_visitor(null_visitor())),
+       params);
   }
 
 
