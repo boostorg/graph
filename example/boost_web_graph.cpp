@@ -99,7 +99,7 @@ main()
   //===========================================================================
   // Declare the graph type and object, and some property maps.
 
-  typedef adjacency_list<vecS, vecS, undirectedS, 
+  typedef adjacency_list<vecS, vecS, directedS, 
     property<vertex_name_t, std::string, 
       property<vertex_color_t, default_color_type> >,
     property<edge_name_t, std::string, property<edge_weight_t, int> >
@@ -224,5 +224,5 @@ main()
     get(vertex_color, g)[*vi] = white_color;
   depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
   
-  return 0;
+  return EXIT_SUCCESS;
 }
