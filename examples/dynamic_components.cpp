@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
   cout << endl;
 
   typedef component_index<int> Components;
-  Components components(&parent[0], &parent[0]);
+  Components components(&parent[0], &parent[0] + parent.size());
 
   for (Components::size_type c = 0; c < components.size(); ++c) {
     cout << "component " << c << " contains: ";
