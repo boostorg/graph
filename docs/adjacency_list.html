@@ -680,7 +680,7 @@ in the out-edge list for <i>u</i> is unspecified. If the
 <tt>VertexList</tt> selector is <tt>vecS</tt>, and if either vertex
 descriptor <tt>u</tt> or <tt>v</tt> (which are integers) has a value
 greater than the current number of vertices in the graph, the graph is
-enlarged so that the number of vertices is <tt>std::max(u,v)</tt>.
+enlarged so that the number of vertices is <tt>std::max(u,v) + 1</tt>.
 
 <p>
 If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
