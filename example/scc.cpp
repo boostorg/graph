@@ -38,7 +38,7 @@ main()
   typedef graph_traits < GraphvizDigraph >::vertex_descriptor vertex_t;
   std::map < vertex_t, int >component;
 
-  int num_comp = strong_components(g, make_assoc_property_map(component));
+  strong_components(g, make_assoc_property_map(component));
 
   property_map < GraphvizDigraph, vertex_attribute_t >::type
     vertex_attr_map = get(vertex_attribute, g);
