@@ -370,6 +370,10 @@ namespace boost {
     typedef typename Base::degree_size_type degree_size_type;
     typedef typename Base::vertex_descriptor vertex_descriptor;
     typedef typename Base::edge_descriptor edge_descriptor;
+    typedef OutEdgeListS out_edge_list_selector;
+    typedef VertexListS vertex_list_selector;
+    typedef DirectedS directed_selector;
+    typedef EdgeListS edge_list_selector;
 
     typedef GraphProperty graph_property_type;
 
