@@ -301,7 +301,9 @@ namespace boost {
     public:
       typedef Property property_type;
       inline stored_edge_iter() { }
-      inline stored_edge_iter(Vertex v, Iter i = Iter(), void* = 0)
+      inline stored_edge_iter(Vertex v)
+        : stored_edge<Vertex>(v) { }
+      inline stored_edge_iter(Vertex v, Iter i, void* = 0)
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property& get_property() { return m_iter->get_property(); }
       inline const Property& get_property() const { 
