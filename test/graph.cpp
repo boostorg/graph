@@ -10,7 +10,11 @@
 
 #include <boost/utility.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/random.hpp>
 #include <boost/pending/indirect_cmp.hpp>
+
+#include <boost/random/mersenne_twister.hpp>
+
 
 enum vertex_id_t { vertex_id = 500 };
 enum edge_id_t { edge_id = 501 };

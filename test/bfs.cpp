@@ -25,9 +25,12 @@
 
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/random.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+
+#include <boost/random/mersenne_twister.hpp>
 
 template <typename DistanceMap, typename ParentMap, 
           typename Graph, typename ColorMap>
