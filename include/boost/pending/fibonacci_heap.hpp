@@ -39,7 +39,7 @@ public:
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
 #ifdef BOOST_MSVC
-      new_roots(log(float(n)) + 5) { }
+      new_roots(int(log(float(n))) + 5) { }
 #else
       new_roots(std::log(float(n)) + 5) { }
 #endif
