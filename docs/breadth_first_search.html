@@ -1,0 +1,250 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Breadth-First Search</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H1><A NAME="sec:bfs">
+<TT>breadth_first_search</TT>
+</H1>
+
+<P>
+<DIV ALIGN="LEFT">
+<TABLE CELLPADDING=3 border>
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed and undirected</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">color</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+<PRE>
+  (1)
+  template &lt;class VertexListGraph, class BFSVisitor&gt;
+  void breadth_first_search(VertexListGraph& G, 
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+    BFSVisitor vis);
+
+  (2)
+  template &lt;class VertexListGraph, class BFSVisitor, class ColorPA&gt;
+  void breadth_first_search(VertexListGraph& g, 
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+    BFSVisitor vis, ColorPA color);
+
+  (3)
+  template &lt;class VertexListGraph, class BFSVisitor, class ColorPA&gt;
+  void breadth_first_search(VertexListGraph& g, 
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+    Buffer& Q, BFSVisitor vis, ColorPA color)
+</PRE>
+
+<P>
+The breadth-first search (BFS) algorithm is not really an algorithm in
+the sense that it has a particular purpose.  Instead BFS is more like
+an algorithm <I>pattern</I>. One can do many different things with
+BFS. For example, the BFS pattern is used in the BGL to build several
+other algorithms: Dijkstra's shortest paths, Prim's Minimum Spanning
+Tree and best-first search. The definition of a <I>breadth-first
+ search</I> is given in Section&nbsp;<A HREF="./graph_theory_review.html#sec:bfs-algorithm"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+
+<P>
+The BGL BFS functions are highly
+parameterized so that they can be used in a wide variety of places.
+The way to customize the BFS algorithm to perform different operations
+is to supply a visitor, which is a function object with multiple
+functions. Each member function of the visitor gets invoked at special
+times during the algorithm. Also, visitors can be layered on top of
+each other so that one can do lots of things during a single run of
+BFS. See Chapter&nbsp;<A HREF="./visitor_classes.html"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> for more details.
+
+<P>
+Another way to customize the BFS algorithm is change the type of queue
+used. For instance, <TT>dijkstra_shortest_paths()</TT> uses a priority
+queue.
+
+<P>
+Version 1 of the algorithm takes only three arguments: the graph
+object, the source vertex, and a visitor to specify the actions to be
+taken during the graph search. The algorithm will need to use a color
+property which must be provided by the graph object (through a color
+plugin).
+
+<P>
+Version 2 of the algorithm adds a color property argument to
+accommodate the use of an external property accessor.
+
+<P>
+Version 3 of the algorithm is the most generalized. It adds a
+parameter for the queue. Version 1 and 2 of
+<TT>breadth_first_search()</TT> are implemented using this generalized
+version. This version does not initialize the color of all the
+vertices to white at the start of the algorithm or invoke the
+<tt>initialize_vertex()</tt> visitor method.
+
+<P>
+
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/breadth_first_search.hpp"><TT>boost/graph/breadth_first_search.hpp</TT></a>
+
+<P>
+
+<H3>Requirements on Types</H3>
+
+<P>
+
+<UL>
+<LI>The type <TT>IncidenceGraph</TT> must be a model of <a href="./IncidenceGraph.html">IncidenceGraph</a>.
+</LI>
+<LI>The type <TT>VertexListGraph</TT> must be a model of <a href="./VertexListGraph.html">VertexListGraph</a>.
+</LI>
+<LI>The type <TT>Vertex</TT> must be convertible to type <TT>graph_traits&lt;VertexListGraph&gt;::vertex_descriptor</TT>.
+</LI>
+<LI>The type <TT>BFSVisitor</TT> must be a model of <a href="./BFSVisitor.html">BFSVisitor</a>.
+</LI>
+<LI>In version (1) of the algorithm the graph must be a model
+    of <a href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for <TT>color_tag</TT> and
+    the color property accessor for the graph must meet the
+    same requirements as <TT>Color</TT>.
+</LI>
+<LI>The type <TT>Color</TT> must be a model of <a
+   href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>.
+   A vertex descriptor must be usable as the key type of the accessor,
+   and the value type of the accessor must be a model of <a
+   href="./ColorValue.html">ColorValue</a>.
+</LI>
+<LI>The type <TT>Buffer</TT> must be a model of <I>Buffer</I>.
+</LI>
+<LI>The <TT>VisitedFunc</TT> type is a functor with an apply
+     method that looks like this:
+<PRE>
+template &lt;class Visitor, class Buffer, class Vertex&gt;
+void operator()(Visitor v, Buffer&amp; Q, Vertex target);}
+</PRE>
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION001330300000000000000">
+Complexity</A>
+</H3>
+
+<P>
+The time complexity is <i>O(E + V)</i>. 
+
+<P>
+
+<H3><A NAME="SECTION001330400000000000000">
+Example</A>
+</H3>
+
+<P>
+This example demonstrates using the BGL Breadth-first search algorithm
+on the graph from Figure&nbsp;<A
+HREF="./graph_theory_review.html#fig:bfs-example"><IMG ALIGN="BOTTOM" BORDER="1"
+ALT="[*]"
+SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+The source code for this example is in <a
+href="../examples/bfs_basics.cpp"><TT>examples/bfs_basics.cpp</TT></a>.
+
+<P>
+<PRE>
+  // Select the graph type we wish to use
+  typedef adjacency_list&lt;vecS, undirectedS&gt; Graph;
+  // Set up the vertex ID's and names
+  enum { r, s, t, u, v, w, x, y, N };
+  char name[] = { 'r', 's', 't', 'u', 'v', 'w', 'x', 'y' };
+  // Specify the edges in the graph
+  typedef pair&lt;int,int&gt; E;
+  E edge_array[] = { E(r,s), E(r,v), E(s,w), E(w,r), E(w,t), 
+                     E(w,x), E(x,t), E(t,u), E(x,y), E(u,y) };
+  // Create the graph object
+  Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
+
+  // Some typedef's to save a little typing
+  typedef Graph::vertex_descriptor Vertex;
+  typedef std::vector&lt;Vertex&gt;::iterator Piter;
+  typedef std::vector&lt;Graph::size_type&gt;::iterator Iiter;
+
+  // vectors to hold color, discover time, and finish time properties
+  std::vector&lt;default_color_type&gt; color(num_vertices(G));
+  std::vector&lt;Graph::size_type&gt; dtime(num_vertices(G));
+  std::vector&lt;Graph::size_type&gt; ftime(num_vertices(G));
+
+  breadth_first_search(G, vertex(s,G),
+                       visit_timestamp(dtime.begin(), ftime.begin()),
+                       color.begin());
+
+  // Use std::sort to order the vertices by their discover time
+  vector&lt;Graph::size_type&gt; discover_order(N);
+  iota(discover_order.begin(), discover_order.end(), 0);
+  std::sort(discover_order.begin(), discover_order.end(),
+            indirect_cmp&lt;Iiter, std::less&lt;Graph::size_type&gt; &gt;(dtime.begin()));
+
+  cout &lt;&lt; "order of discovery: ";
+  for (int i = 0; i &lt; N; ++i)
+    cout &lt;&lt; name[ discover_order[i] ] &lt;&lt; " ";
+
+  vector&lt;Graph::size_type&gt; finish_order(N);
+  iota(finish_order.begin(), finish_order.end(), 0);
+  std::sort(finish_order.begin(), finish_order.end(),
+            indirect_cmp&lt;Iiter, std::less&lt;Graph::size_type&gt; &gt;(ftime.begin()));
+
+  cout &lt;&lt; endl &lt;&lt; "order of finish: ";
+  for (int i = 0; i &lt; N; ++i)
+    cout &lt;&lt; name[ finish_order[i] ] &lt;&lt; " ";
+  cout &lt;&lt; endl;
+</PRE>
+The output is:
+<PRE>
+  order of discovery: s r w v t x u y 
+  order of finish: s r w v t x u y
+</PRE>
+
+<P>
+
+<h3>See Also</h3>
+
+
+<a href="./graph_search.html"><tt>graph_search()</tt></a> and
+<a href="./depth_first_search.html"><tt>depth_first_search()</tt></a>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

@@ -1,0 +1,159 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>VertexPropertyGraph</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H2><A NAME="concept:VertexPropertyGraph"></A>
+VertexPropertyGraph
+</H2>
+
+A VertexPropertyGraph is a graph that has some property associated
+with each of the vertices in the graph. As a given graph may have
+several properties associated with each vertex, a tag is used to
+identity which property is being accessed.  The graph provides a
+function which returns a property accessor object.
+
+<P>
+
+<H3>Refinement of</H3>
+
+<a href="./Graph.html">Graph</a>
+
+<h3>Notation</h3>
+
+<Table>
+<TR>
+<TD><tt>G</tt></TD>
+<TD>A type that is a model of Graph.</TD>
+</TR>
+
+<TR>
+<TD><tt>g</tt></TD>
+<TD>An object of type <tt>G</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>Tag</tt></TD>
+<TD>An empty class used as a tag to specify the property.</TD>
+</TR>
+
+<TR>
+<TD><tt>tag</tt></TD>
+<TD>An object of type <tt>Tag</tt>.</td>
+</TR>
+
+</table>
+
+<H3>Associated types</H3>
+
+<table border>
+
+<tr>
+<td>Property Accessor Type </td>
+<td><TT>boost::vertex_property_accessor&lt;G, Tag&gt;::type</TT> </td>
+<td>
+The type of the property accessor for the property specified by
+<TT>Tag</TT>.  This type must be a model of <a
+href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>
+with a key type the same as the graph's vertex descriptor type.
+</td>
+</tr>
+
+<tr>
+<td>Const Property Accessor Type </td>
+<td><TT>boost::vertex_property_accessor&lt;G, Tag&gt;::const_type</TT> </td>
+<td>
+The type of the const property accessor for the property specified by
+<TT>Tag</TT>. This type must be a model of <a
+href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>
+with a key type the same as the graph's vertex descriptor type.
+</td>
+</tr>
+
+</table
+
+<h3>Valid Expressions</h3>
+
+<table border>
+<tr>
+<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
+</tr>
+
+<tr>
+<td>Get Vertex Property Accessor Object </td>
+<td> <TT>get_vertex_property_accessor(g, tag)</TT> </td>
+<TD><TT>boost::vertex_property_accessor&lt;G, Tag&gt;::type</TT> 
+      if <TT>g</TT> is mutable and <TT>boost::vertex_property_accessor&lt;G, Tag&gt;::const_type</TT> otherwise.</TD>
+<td>
+Returns the property accessor for the vertex property specified by the
+<tt>Tag</tt> type.
+</td>
+</TR>
+
+</TABLE>
+
+<H3>Complexity</H3>
+
+The <TT>get_vertex_property_accessor()</TT> function must be constant time.
+
+
+<H3>Models</H3>
+
+
+<UL>
+<LI><tt>adjacency_list</tt> with <tt>VertexPlugin=plugin&lt;distance_tag,int,plugin&lt;in_degree_tag,int&gt; &gt;</tt> and <tt>Tag=distance_tag</tt>.</li>
+<li><tt>adjacency_list</tt> with <tt>VertexPlugin=plugin&lt;distance_tag,int,plugin&lt;in_degree_tag,int&gt; &gt;</TT> and <tt>Tag=in_degree_tag</tt>.</li>
+</UL>
+
+
+<H3>Concept Checking Class</H3>
+
+<PRE>
+  template &lt;class G, class Tag&gt;
+  struct VertexPropertyGraph_concept
+  {
+    typedef typename boost::graph_traits&lt;G&gt;::vertex_descriptor Vertex;
+    typedef typename vertex_property_accessor&lt;G, Tag&gt;::type PA;
+    typedef typename vertex_property_accessor&lt;G, Tag&gt;::const_type const_PA;
+    void constraints() {
+      REQUIRE(G, Graph);
+      REQUIRE2(PA, Vertex, ReadWritePropertyAccessor);
+      REQUIRE2(const_PA, Vertex, ReadablePropertyAccessor);
+
+      PA pa = get_vertex_property_accessor(g, Tag());
+      ignore_unused_variable_warning(pa);
+    }
+    void const_constraints(const G&amp; g) {
+      const_PA pa = get_vertex_property_accessor(g, Tag());
+      ignore_unused_variable_warning(pa);
+    }
+    G g;
+  };
+</PRE>
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

@@ -1,0 +1,217 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  We make no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Depth-First Search</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H1><A NAME="sec:depth-first-search"></A>
+<TT>depth_first_search</TT>
+</H1>
+
+<P>
+<DIV ALIGN="LEFT">
+<TABLE CELLPADDING=3 border>
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed and undirected</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">color</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+<PRE>
+(1)
+template &lt;class VertexListGraph, class UserVisitor&gt;
+void depth_first_search(VertexListGraph&amp; G, UserVisitor v);
+
+(2)
+template &lt;class VertexListGraph, class UserVisitor, class Color&gt;
+void depth_first_search(VertexListGraph&amp; G, UserVisitor v, Color c);
+</PRE>
+
+<P>
+The <TT>depth_first_search()</TT> algorithm performs a depth-first
+search (DFS) on a graph, invoking the methods of the graph search
+visitor at the appropriate event-points. A depth-first search visits
+all the vertices in a graph, starting with some arbitrary vertex and
+then always choosing the next adjacent unvisited vertex. Once the DFS
+reaches a vertex with no unvisited neighbors it backtracks to one of
+the previous vertices and continues from there. Once all of the
+vertices in the same connected component have been visited, another
+arbitrary unvisited vertex is choosen and the depth-first search
+resumes. A more detailed explanation of DFS is given in
+Section&nbsp;<A HREF="./graph_theory_review.html#sec:dfs-algorithm"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+
+<!--
+<P>
+The notion of a depth-first search is 
+
+<P>
+The depth-first search algorithm 
+-->
+
+<P>
+DFS is used as the kernel for several other graph
+algorithms, including topological sort and two of the connected
+component algorithms.
+
+<P>
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/depth_first_search.hpp"><TT>boost/graph/depth_first_search.hpp</TT></a>
+
+<P>
+
+<H3><A NAME="SECTION001340200000000000000">
+Requirements on Types</A>
+</H3>
+
+<P>
+
+<UL>
+<LI>The type <TT>VertexListGraph</TT> must be a model of <a
+    href="./VertexListGraph.html">VertexListGraph</a>.
+</LI>
+<LI>In version (1) of the algorithm the graph must be a model of <a
+    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    <TT>color_tag</TT> and the color property accessor for the graph
+    must meet the same requirements as <TT>Color</TT>.
+</LI>
+<LI>The type <TT>Color</TT> must be a model of <a
+     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>, and the value type of <TT>Color</TT> must be a model of
+     <a href="./ColorValue.html">ColorValue</a>.
+</LI>
+<LI>The visitor type must be a model of <a
+href="./UserVisitor.html">UserVisitor</a>.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION001340300000000000000">
+Complexity</A>
+</H3>
+
+<P>
+The time complexity is <i>O(E + V)</i>.
+
+<P>
+
+<H3>Example</H3>
+
+<P>
+This example shows DFS applied to the graph in Figure&nbsp;<A
+ HREF="./graph_theory_review.html#fig:dfs-example"><IMG ALIGN="BOTTOM"
+ BORDER="1" ALT="[*]"
+ SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+ The source code for this example is in <a
+ href="../examples/dfs_basics.cpp"><TT>examples/dfs_basics.cpp</TT></a>.
+
+<P>
+<p></p>
+<DIV ALIGN="CENTER"><A NAME="fig:dfs-example"></A></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+Depth-first search spreading through a graph.
+</CAPTION>
+<TR><TD><IMG SRC="./figs/dfs_example.gif"></TD></TR>
+</TABLE>
+</DIV>
+<p></p>
+
+<P>
+<PRE>
+  // Select the graph type we wish to use
+  typedef boost::adjacency_list&lt;boost::vecS, boost::vecS, boost::directedS&gt; Graph;
+  // Set up the vertex names
+  enum { u, v, w, x, y, z, N };
+  char name[] = { 'u', 'v', 'w', 'x', 'y', 'z' };
+  // Specify the edges in the graph
+  typedef std::pair&lt;int,int&gt; E;
+  E edge_array[] = { E(u,v), E(u,x), E(x,v), E(y,x),
+                     E(v,y), E(w,y), E(w,z), E(z,z) };
+  Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
+
+  // Some typedef's to save a little typing
+  typedef boost::graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+  typedef boost::graph_traits&lt;Graph&gt;::vertices_size_type size_type;
+  typedef std::vector&lt;Vertex&gt;::iterator Piter;
+  typedef std::vector&lt;size_type&gt;::iterator Iiter;
+
+  // color, discover time, and finish time properties
+  std::vector&lt;default_color_type&gt; color(num_vertices(G));
+  std::vector&lt;size_type&gt; dtime(num_vertices(G));
+  std::vector&lt;size_type&gt; ftime(num_vertices(G));
+
+  boost::depth_first_search(G, boost::visit_timestamp(dtime.begin(), ftime.begin()), 
+                            color.begin());
+
+  // use std::sort to order the vertices by their discover time
+  std::vector&lt;size_type&gt; discover_order(N);
+  boost::iota(discover_order.begin(), discover_order.end(), 0);
+  std::sort(discover_order.begin(), discover_order.end(),
+    boost::indirect_cmp&lt;Iiter, std::less&lt;size_type&gt; &gt;(dtime.begin()));
+
+  std::cout &lt;&lt; "order of discovery: ";
+  for (int i = 0; i &lt; N; ++i)
+    std::cout &lt;&lt; name[ discover_order[i] ] &lt;&lt; " ";
+
+  std::vector&lt;size_type&gt; finish_order(N);
+  boost::iota(finish_order.begin(), finish_order.end(), 0);
+  std::sort(finish_order.begin(), finish_order.end(),
+    boost::indirect_cmp&lt;Iiter, std::less&lt;size_type&gt; &gt;(ftime.begin()));
+
+  std::cout &lt;&lt; endl &lt;&lt; "order of finish: ";
+  for (size_type i = 0; i &lt; N; ++i)
+    std::cout &lt;&lt; name[ finish_order[i] ] &lt;&lt; " ";
+  std::cout &lt;&lt; std::endl;
+</PRE>
+The output is:
+<PRE>
+order of discovery: u v y x w z 
+order of finish: x y v u z w
+</PRE>
+
+<P>
+
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~llee1>Lie-Quan Lee</A>, Univ.of Notre Dame (<A HREF="mailto:llee1@lsc.nd.edu">llee1@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~lums>Andrew Lumsdaine</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

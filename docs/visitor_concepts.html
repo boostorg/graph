@@ -1,0 +1,81 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine  2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  We make no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Visitor Concepts</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H2><A NAME="concept:Visitor"></A>
+Visitor
+</H2>
+
+<H1><A NAME="sec:visitor-concepts"></A>
+Visitor Concepts
+</H1>
+
+<P>
+The Visitor concept plays the same role in BGL as functors
+play in the STL. Functors provide a mechanism for extending an
+algorithm, for customizing what is done at each step of the algorithm.
+Visitors allow the user to insert their own operations at various
+steps within a graph algorithm.
+
+<P>
+The graph search algorithms include breadth and depth-first search,
+Dijkstra's, Prim's, topological sort, Prim's, and connected
+components.
+
+<P>
+There are two visitor concepts, Visitor and UserVisitor. The visitors
+that the user passes into most BGL algorithms should model
+UserVisitor.  The visitors used for some of the ``generalized''
+algorithms and also for many of the internal BGL functions must model
+Visitor.  We refer to these visitors as <I>foundation visitors</I>.
+There are two differences between user-level visitors and foundation
+visitors.  The first is that a foundation visitor will control the
+progress of a graph search through the return value (<TT>true</TT> or
+<TT>false</TT>) of its <TT>explore()</TT> method, which indicates
+whether the target vertex needs to be explored. The user-level visitor
+does <TT>explore()</TT> function has a <TT>void</TT> return type. The
+second difference is that the UserVisitor has the extra requirement
+for a category typedef which is explained in detail below. The
+foundation visitors have the responsibility for handling the
+user-level visitors, invoking them at the appropriate time based on
+the visitor's category.
+
+<ul>
+  <li> <a href="./Visitor.html">Visitor</a>
+  <li> <a href="./UserVisitor.html">UserVisitor</a>
+</ul>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~llee1>Lie-Quan Lee</A>, Univ.of Notre Dame (<A HREF="mailto:llee1@lsc.nd.edu">llee1@lsc.nd.edu</A>)<br>
+<A HREF=http://www.lsc.nd.edu/~lums>Andrew Lumsdaine</A>,
+Univ.of Notre Dame (<A
+HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

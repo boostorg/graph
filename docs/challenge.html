@@ -1,0 +1,87 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Challenge</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+
+<h2>Boost Graph Library Challenge and To-Do Items</h2>
+
+
+<ul>
+
+<li>Polish up code/docs for pending items and champion the formal
+review. The pending items are:
+  <ul>
+   <li><tt>container_traits.hpp</tt>
+
+   <li><tt>concept_checks.hpp</tt> 
+
+   <li><tt>plugin.hpp</tt>
+
+   <li>The queues and heaps: <tt>queue.hpp</tt>,
+     <tt>mutable_queue.hpp</tt>, <tt>fibonacci_heap.hpp</tt>.
+      Somehow merge implementation with Dietmer's heaps and queues.
+
+   <li><tt>iterator_adaptor.hpp</tt> (need to figure out
+    why this causes problems for VC++)
+
+   <li><tt>dijoint_sets</tt> 
+  </ul>
+
+<li>Construct a set of planar graph algorithms.</li>
+  <ul>
+   <li> Is the graph planar?
+   <li> &quot;Walk around the block&quot; and similar open and closed neighborhood 
+traversals. Note that edge traversals need to resolve to particular ends 
+and sides (see below), not just to the edge as a whole.
+   <li> Given a point, find the nearest vertex, edge, or bounded polygon. 
+Again, edges are viewed as having left and right sides.
+   <li> Given a line segment, find intersecting vertices, edges, or bounded 
+polygons.
+   <li> Given a polygon, find intersecting whatever...
+   <li> Various minimum bounding rectangle and clipping problems.
+   <li> Construct a planar embedding of a planar graph.
+   <li> Find a balanced separator of a graph.
+  </ul>
+
+<li>Finish and test Maximum Flow algorithm.</li>
+
+<li>Create an <tt>adjacency_matrix</tt> class that models
+ the <a href="./AdjacencyMatrix.html">AdjacencyMatrix</a>
+ concept.</li>
+
+<li>Floyd-Warshall algorithm.</li>
+
+<li>Rewrite the Qhull algorithm using the Boost Graph Library.</li>
+
+<li>Explore the use of Algorithm Objects as an alternative to
+  the current approach with visitors.
+
+</ul>
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

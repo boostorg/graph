@@ -1,0 +1,500 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Using Property Accessors</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+
+<H1><A NAME="sec:property-accessors"></A>
+Property Accessors
+</H1>
+
+<P>
+The main link between the abstract mathematical nature of graphs and
+the concrete problems they are used to solve is the properties that
+are attached to the vertices and edges of a graph, things like
+distance, capacity, weight, color, etc. There are many ways to attach
+properties to graph in terms of data-structure implementation, but
+graph algorithms should not have to deal with the implementation
+details of the properties. The <I>property accessor</I> interface
+defined in Section&nbsp;<A HREF="../../property_accessor/property_accessor.html"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> provides a generic
+method for accessing properties from graphs. This is the interface
+used in the BGL algorithms to access properties.
+
+<P>
+
+<H2>Property Accessor Interface</H2>
+
+<P>
+The property accessor interface specifies that each property is
+accessed using a separate property accessor object. In the following
+example we show an implementation of the <TT>relax()</TT> function used
+inside of Dijkstra's shortest paths algorithm.  In this function, we
+need to access the weight property of an edge, and the distance
+property of a vertex. We write <TT>relax()</TT> as a template function
+so that it can be used in many difference situations. Two of the
+arguments to the function, <TT>weight</TT> and <TT>distance</TT>, are the
+property accessor objects. In general, BGL algorithms explicitly pass
+property accessor objects for every property that a function will
+need. The property accessor interface defines several functions, two
+of which we use here: <TT>get()</TT> and <TT>put()</TT>. The <TT>get()</TT>
+function takes a property accessor object, such as <TT>distance</TT> and
+a <I>key</I> object. In the case of the distance property we are using
+the vertex objects <TT>u</TT> and <TT>v</TT> as keys. The <TT>get()</TT>
+function then returns the property value for the vertex.
+
+<P>
+<PRE>
+  template &lt;class Edge, class Graph,
+            class WeightPropertyAccessor, 
+            class DistancePropertyAccessor&gt;
+  bool relax(Edge e, const Graph&amp; g, 
+             WeightPropertyAccessor weight, 
+             DistancePropertyAccessor distance)
+  {
+    typedef typename graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+    Vertex u = source(e,g), v = target(e,g);
+    if ( get(distance, u) + get(weight, e) &lt; get(distance, v)) {
+      put(distance, v, get(distance, u) + get(weight, e));
+      return true;
+    } else
+      return false;
+  }
+</PRE>
+
+The function <TT>get()</TT> returns a copy of the property value.  There
+is a third function in the property accessor interface, <TT>at()</TT>,
+that returns a reference to the property value (a const reference if
+the accessor is not mutable).
+
+<P>
+Similar to the <TT>iterator_traits</TT> class of the STL, there is a
+<TT>property_traits</TT> class that can be used to deduce the types
+associated with a property accessor type: the key and value types, and
+the property accessor category (which is used to tell whether the
+accessor is readable, writeable, or both). In the <TT>relax()</TT>
+function we could have used <TT>property_traits</TT> to declare local
+variables of the distance property type.
+
+<P>
+<PRE>
+  {
+    typedef typename graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+    Vertex u = source(e,g), v = target(e,g);
+    typename property_traits&lt;DistancePropertyAccessor&gt;::value_type
+      du, dv; // local variables of the distance property type
+    du = get(distance, u);
+    dv = get(distance, v);
+    if (du + get(weight, e) &lt; dv) {
+      put(distance, v, du + get(weight, e));
+      return true;
+    } else
+      return false;
+  }
+</PRE>
+
+<P>
+There are two kinds of graph properties: internal and external. 
+
+<P>
+<DL>
+<DT><STRONG>Internal Properties</STRONG></DT>
+<DD>are stored ``inside'' the graph object
+in some way, and the lifetime of the property value objects is the
+same as that of the graph object. 
+
+<P>
+</DD>
+<DT><STRONG>External Properties</STRONG></DT>
+<DD>are stored ``outside'' of the graph
+object and the lifetime of the property value objects is independent
+of the graph. This is useful for properties that are only needed
+temporarily, perhaps for the duration of a particular algorithm such
+as the color property used in <TT>breadth_first_search()</TT>.  When
+using external properties with a BGL algorithm a property accessor
+object for the external property must be passed as an argument to the
+algorithm.
+</DD>
+</DL>
+
+<P>
+
+<H2><A NAME="sec:interior-properties"></A>
+Interior Properties
+</H2>
+
+<P>
+A graph type that supports internal property storage (such as
+<TT>adjacency_list</TT>) provides access to its property accessor
+objects through the interface defined in <I>VertexPropertyGraph</I>
+and <I>EdgePropertyGraph</I>.  There are two functions,
+<TT>get_vertex_property_accessor()</TT> and
+<TT>get_edge_property_accessor()</TT> that get property
+accessors from graph objects. The first argument to these functions is
+the graph object and the second argument is the tag to specify which
+property you want to access. A graph type must document which
+properties (and therefore tags) it provides access to.  The type of
+the property accessor depends on the type of graph and the property
+being accessed. Two traits classes are defined that provide a generic
+way to deduce the property accessor type,
+<TT>vertex_property_accessor</TT> and
+<TT>edge_property_accessor</TT>. The follow code shows how one can
+obtain the property accessor for the distance and weight properties of
+some graph type.
+
+<P>
+<PRE>
+  vertex_property_accessor&lt;Graph, distance_tag&gt;::type d
+    = get_vertex_property_accessor(g, distance_tag());
+
+  edge_property_accessor&lt;Graph, weight_tag&gt;::type w
+    = get_edge_property_accessor(g, weight_tag());
+</PRE>
+
+<P>
+In general, the BGL algorithms require all property accessors needed
+by the algorithm to be explicitly passed to the algorithm. For
+example, the BGL Dijkstra's shortest paths algorithm requires four
+property accessors: distance, weight, color, and vertex ID.
+
+<P>
+<PRE>
+  template &lt;class Graph, class Vertex, class Visitor, 
+            class DistanceAccessor, class WeightAccessor, 
+            class ColorAccessor, class VertexIDAccessor&gt;
+  void
+  dijkstra_shortest_paths(Graph&amp; G, Vertex s, 
+                          DistanceAccessor d, WeightAccessor w, 
+                          ColorAccessor c, VertexIDAccessor id,
+                          Visitor visit)
+</PRE>
+
+<P>
+Often times some or all of the properties will be internal to the
+graph, so one would call Dijkstra's algorithm in the following way
+(given some graph <TT>g</TT> and source vertex <TT>src</TT>).
+
+<P>
+<PRE>
+  dijkstra_shortest_paths(g, src, 
+    get_vertex_property_accessor(g, distance_tag()),
+    get_edge_property_accessor(g, weight_tag()),
+    get_vertex_property_accessor(g, color_tag()),
+    get_vertex_property_accessor(g, id_tag()),
+    null_visitor());
+</PRE>
+
+<P>
+Since it is somewhat cumbersome to specify all of the property
+accessors,  BGL provides several ``short-cut'' interfaces to each
+algorithm that assume some of the properties are internal and can be
+accessed via <TT>get_vertex_property_accessor()</TT> from the
+graph. Below we show a call to variant 1 of the
+<TT>dijkstra_shortest_paths</TT> algorithm, which assumes
+all of the properties are internal. This call is equivalent
+to the previous call to Dijkstra's algorithm.
+
+<P>
+<PRE>
+  dijkstra_shortest_paths(g, src);
+</PRE>
+
+<P>
+The next question is: how to internal properties become attached to a
+graph object in the first place? This depends on the graph class that
+you are using. The <TT>adjacency_list</TT> graph class of BGL uses a
+plugin mechanism (see Section&nbsp;<A
+HREF="using_adjacency_list.html#sec:adjacency-list-plugins"><IMG
+ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>)
+to allow an arbitrary number of properties to be stored on the edges
+and vertices of the graph.
+
+<P>
+
+<H2><A NAME="sec:exterior-properties"></A>
+Exterior Properties
+</H2>
+
+<P>
+In this section we will describe two methods for constructing exterior
+property accessors, however there is an unlimited number of ways that
+one could create exterior properties for a graph.
+
+<P>
+The first method uses the adaptor class
+<TT>random_access_iterator_property_accessor</TT>. This
+class wraps a random access iterator, creating a property accessor out
+of it. The random access iterator must point to the beginning of a
+range of property values, and the length of the range must be the
+number of vertices or edges in the graph (depending on whether it is a
+vertex or edge property accessor). The adaptor must also be supplied
+with an ID property accessor, which will be used to map the vertex or
+edge descriptor to the offset of the property value (offset from the
+random access iterator). The ID property accessor will typically be an
+interior property accessor of the graph.  The following example shows
+how the <TT>random_access_iterator_property_accessor</TT>
+can be used to create exterior property accessors for the capactity
+and flow properties, which are stored in arrays. The arrays are
+indexed by edge ID. The edge ID is added to the graph using a plugin,
+and the values of the ID's are given when each edge is added to the
+graph. The complete source code for this example is in
+<TT>examples/exterior_edge_properties.cpp</TT>. The
+<TT>print_network()</TT> function prints out the graph with
+the flow and capacity values.
+
+<P>
+<PRE>
+  typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
+    no_plugin, plugin&lt;id_tag, std::size_t&gt; &gt; Graph;
+
+  const int num_vertices = 9;
+  Graph G(num_vertices);
+
+  int capacity_array[] = { 10, 20, 20, 20, 40, 40, 20, 20, 20, 10 };
+  int flow_array[] = { 8, 12, 12, 12, 12, 12, 16, 16, 16, 8 };
+
+  // Add edges to the graph, and assign each edge an ID number.
+  add_edge(G, 0, 1, 0);
+  // ...
+
+  typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
+  typedef edge_property_accessor&lt;Graph,id_tag&gt;::type EdgeID_PA;
+  EdgeID_PA edge_id = get_edge_property_accessor(G, id_tag());
+
+  boost::random_access_iterator_property_accessor
+    &lt;int*, int, int&amp;, EdgeID_PA&gt; 
+      capacity(capacity_array, edge_id), 
+      flow(flow_array, edge_id);
+
+  print_network(G, capacity, flow);
+</PRE>
+
+<P>
+The second method uses a pointer type (a pointer to an array of
+property values) as a property accessor. This requires the key type to
+be an integer so that it can be used as an offset to the pointer. The
+<TT>adjacency_list</TT> class with template parameter
+<TT>VertexList=vecS</TT> uses integers for vertex descriptors (indexed
+from zero to the number of vertices in the graph), so they are
+suitable as the key type for a pointer property accessor. When the
+<TT>VertexList</TT> is not <TT>vecS</TT>, then the vertex descriptor is
+not an integer, and cannot be used with a pointer property accessor.
+Instead the method described above of using a
+<TT>random_access_iterator_property_accessor</TT> with an ID
+plugin must be used. The <TT>edge_list</TT> class may also use an
+integer type for the vertex descriptor, depending on how the adapted
+edge iterator is defined. The example in
+<TT>examples/bellman_ford.cpp</TT> shows <TT>edge_list</TT> being used
+with pointers as vertex property accessors.
+
+<P>
+The reason that pointers can be used as property accessors is that
+there are several overloaded functions and a specialization of
+<TT>property_traits</TT> in the header <a
+href="../../../boost/property_accessor.hpp"><TT>boost/property_accessor.hpp</TT></a>
+that implement the property accessor interface in terms of
+pointers. The definition of those functions is listed here.
+
+<P>
+<PRE>
+namespace boost {
+  template &lt;class T&gt;
+  struct property_traits&lt;T*&gt; {
+    typedef T value_type;
+    typedef ptrdiff_t key_type;
+    typedef lvalue_property_accessor_tag category;
+  };
+
+  template &lt;class T&gt;
+  void put(T* pa, std::ptrdiff_t key, const T&amp; value) { pa[key] = value;  }
+
+  template &lt;class T&gt;
+  const T&amp; get(const T* pa, std::ptrdiff_t key) { return pa[key]; }
+
+  template &lt;class T&gt;
+  const T&amp; at(const T* pa, std::ptrdiff_t key) { return pa[key]; }
+
+  template &lt;class T&gt;
+  T&amp; at(T* pa, std::ptrdiff_t key) { return pa[key]; }
+}
+</PRE>
+
+<P>
+In the following example, we use an array to store names of cities for
+each vertex in the graph, and a <TT>std::vector</TT> to store vertex
+colors which will be needed in a call to
+<TT>breadth_first_search()</TT>. Since the iterator of a
+<TT>std::vector</TT> (obtained with a call to <TT>begin()</TT>) is a
+pointer, the pointer property accessor method also works for
+<TT>std::vector::iterator</TT>. The complete source code for this
+examples is in <TT>examples/city_visitor.cpp</TT>.
+
+<P>
+<PRE>
+// Definition of city_visitor omitted...
+
+int main(int,char*[])
+{
+  enum { SanJose, SanFran, LA, SanDiego, Fresno, LosVegas, Reno,
+         Sacramento, SaltLake, Pheonix, N };
+
+  // An array of vertex name properties
+  std::string names[] = { "San Jose", "San Francisco",  "San Jose",
+                          "San Francisco", "Los Angeles", "San Diego", 
+                          "Fresno", "Los Vegas", "Reno", "Sacramento",
+                          "Salt Lake City", "Pheonix" };
+
+  // Specify all the connecting roads between cities.
+  typedef std::pair&lt;int,int&gt; E;
+  E edge_array[] = { E(Sacramento, Reno), ... };
+
+  // Specify the graph type.
+  typedef adjacency_list&lt;vecS, vecS, undirectedS&gt; Graph;
+  // Create the graph object, based on the edges in edge_array.
+  Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
+
+  // DFS and BFS need to "color" the vertices.
+  // Here we use std::vector as external property storage.
+  std::vector&lt;default_color_type&gt; colors(N);
+
+  cout &lt;&lt; "*** Depth First ***" &lt;&lt; endl;
+  depth_first_search(G, city_visitor(names), colors.begin());
+  cout &lt;&lt; endl;
+
+  // Get the source vertex
+  boost::graph_traits&lt;Graph&gt;::vertex_descriptor 
+    s = vertex(SanJose, G);
+
+  cout &lt;&lt; "*** Breadth First ***" &lt;&lt; endl;
+  breadth_first_search(G, s, city_visitor(names), colors.begin());
+
+  return 0;
+}
+</PRE>
+
+<P>
+
+<H2><A NAME="sec:custom-exterior-property-accessors"></A>
+Constructing an Exterior Property Accessor
+</H2>
+
+<P>
+Implementing your own exterior property accessors is not very
+difficult. You simply need to overload the three functions
+<TT>put()</TT>, <TT>get()</TT>, and <TT>at()</TT> (or just the <TT>put()</TT>
+and <TT>get()</TT> functions if your property accessor is not going to
+be an <I>LvaluePropertyAccessor</I>), and create a specialization
+of <TT>property_traits</TT> for your new property accessor type.
+Instead of specializing <TT>property_traits</TT>, you can also provide
+the three typedefs as nested types in your new property accessor
+class.
+
+<P>
+The implementation of the
+<TT>random_access_iterator_property_accessor</TT> class
+serves as a good example for how to build and external property
+accessor. Here we present a simplified implementation of the
+<TT>random_access_iterator_property_accessor</TT> class
+which we will name <TT>iterator_pa</TT>.
+
+<P>
+We start with the definition of the <TT>iterator_pa</TT> class
+itself. This adaptor class is templated on the adapted <TT>Iterator</TT>
+type and the ID property accessor. The job of the ID property accessor
+is to map the key object (which will typically be a vertex or edge
+descriptor) to an integer offset. The <TT>iterator_pa</TT> class will
+need the three necessary typedefs for a property accessor:
+<TT>key_type</TT>, <TT>value_type</TT>, and <TT>category</TT>. We can use
+<TT>property_traits</TT> to find the key type of <TT>IDAccessor</TT>, and
+we can use <TT>iterator_traits</TT> to determine the value type of
+<TT>Iterator</TT>.  We choose
+<TT>boost::lvalue_property_accessor_tag</TT> for the category
+since we plan on implementing the <TT>at()</TT> function.
+
+<P>
+<PRE>
+  template &lt;class Iterator, class IDAccessor&gt;
+  class iterator_pa
+  {
+  public:
+    typedef typename boost::property_traits&lt;IDAccessor&gt;::key_type key_type; 
+    typedef typename std::iterator_traits&lt;Iterator&gt;::value_type value_type;
+    typedef boost::lvalue_property_accessor_tag category;
+
+    iterator_pa(Iterator i = Iterator(), 
+                const IDAccessor&amp; id = IDAccessor()) 
+      : m_iter(i), m_id(id) { }
+    Iterator m_iter;
+    IDAccessor m_id;
+  };
+</PRE>
+
+<P>
+Next we implement the three property accessor functions, <TT>get()</TT>,
+<TT>put()</TT>, and <TT>at()</TT>. In each of the functions, the
+<TT>key</TT> object is converted to an integer offset using the
+<TT>m_id</TT> property accessor, and then that is used as an offset
+to the random access iterator <TT>m_iter</TT>.
+
+<P>
+<PRE>
+  template &lt;class Iter, class ID&gt;
+  typename std::iterator_traits&lt;Iter&gt;::value_type
+  get(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+      typename boost::property_traits&lt;ID&gt;::key_type key)
+  {
+    return i.m_iter[i.m_id[key]];
+  }
+  template &lt;class Iter, class ID&gt;
+  void
+  put(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+      typename boost::property_traits&lt;ID&gt;::key_type key,
+      const typename std::iterator_traits&lt;Iter&gt;::value_type&amp; value)
+  {
+    i.m_iter[i.m_id[key]] = value;
+  }
+  template &lt;class Iter, class ID&gt;
+  typename std::iterator_traits&lt;Iter&gt;::reference
+  at(const iterator_pa&lt;Iter,ID&gt;&amp; i,
+      typename boost::property_traits&lt;ID&gt;::key_type key)
+  {
+    return i.m_iter[i.m_id[key]];
+  }
+</PRE>
+
+<P>
+That is it. The <TT>iterator_pa</TT> class is complete and could be
+used just like the
+<TT>random_access_iterator_property_accessor</TT> in the
+previous section.
+
+<P>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

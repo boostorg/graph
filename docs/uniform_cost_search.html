@@ -1,0 +1,230 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Jeremy Siek makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Uniform Cost Search</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H1><A NAME="sec:uniform-cost-search"></A>
+<TT>uniform_cost_search</TT>
+</H1>
+
+<P>
+<DIV ALIGN="left">
+<TABLE CELLPADDING=3 border>
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">color, distance, weight, vertex ID</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT"><i>O((V + E) log V)</i>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+<PRE>
+(1)
+template &lt;class VertexListGraph, class Vertex, 
+          class BinaryPredicate, class BinaryFunction&gt;
+void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
+                         BinaryPredicate compare,
+                         BinaryFunction combine,
+                         bool init_graph = true)
+
+(2)
+template &lt;class VertexListGraph, class Vertex, 
+          class Distance, class Weight,
+          class BinaryPredicate, class BinaryFunction&gt;
+void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
+                         Distance d, Weight w, 
+                         BinaryPredicate compare, 
+                         BinaryFunction combine,
+                         bool init_graph = true)
+
+(3)
+template &lt;class VertexListGraph, class Vertex, 
+          class Distance, class Weight, class Color, class ID,
+          class BinaryPredicate, class BinaryFunction,
+          class Visitor&gt;
+void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
+                         Distance d, Weight w, Color c, ID id,
+                         BinaryPredicate compare, 
+                         BinaryFunction combine,
+                         Visitor visit, bool init_graph = true)
+</PRE>
+
+<P>
+This is a generalized version of Dijkstra's single-source shortest
+paths algorithm. In Dijkstra's algorithm the ``cost'' is the
+distance. With <TT>uniform_cost_search()</TT> the user supplies the
+meaning of ``cost'' through the <TT>compare</TT> function object. Also
+the idea of distance is generalized to mean any value that you want
+optimized.  The <TT>operator+()</TT> used to combine distances in
+Dijkstra's algorithm is replaced by the <TT>combine</TT> function
+object.
+
+<P>
+<TT>uniform_cost_search()</TT> does not initialize the distance
+properties of the graph, so they must be pre-initialized to a maximum
+value (with respect to the predicate). Typically
+<tt>std::numeric_limits&lt;D&gt;::max()</tt> is a good value. Also,
+the source vertex <tt>s</tt> must be initialized to have zero
+distance. The following code is an example of how one might initialize
+the distance properties prior to calling
+<TT>uniform_cost_search()</TT> .
+
+<pre>
+  typedef typename property_traits&lt;DistancePA&gt;::value_type D;
+  typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
+  for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+    put(distance, *ui, std::numeric_limits&lt;D&gt;::max());
+
+  put(distance, s, D());
+</pre>
+
+The implementation of <TT>uniform_cost_search()</TT>
+consists mainly of a call to version (3) of <a
+href="./breadth_first_search.html"><TT>breadth_first_search()</TT></a>.
+
+
+<P>
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/uniform_cost_search.hpp"><TT>boost/graph/uniform_cost_search.hpp</TT></a>
+
+<P>
+
+<H3>Requirements on Types</H3>
+
+<P>
+
+<UL>
+<LI>The graph type must be a model of <a
+href="./VertexListGraph.html">VertexListGraph</a>.
+
+<P>
+</LI>
+<LI>The type <TT>Vertex</TT> must be convertible to type <TT>boost::graph_traits&lt;Graph&gt;::vertex_descriptor</TT>.
+
+<P>
+</LI>
+<LI>The <TT>BinaryPredicate</TT> type must be a model of <a
+      href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>
+      and have argument types that match the value type of the
+      <TT>Distance</TT> property accessor.
+
+<P>
+</LI>
+<LI>The <TT>BinaryFunction</TT> type must be a model of <a
+      href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The
+      first argument type of the binary function must match the value
+      type of the <TT>Distance</TT> property accessor and the second
+      argument type must match the value type of the <TT>Weight</TT>
+      property accessor.  The result type must be the same type as the
+      distance value type.
+
+<P>
+</LI>
+<LI>In version (1) the graph must be a <a
+    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    <TT>distance_tag</TT> where the property accessor for the graph
+    meets the same requirements as for <TT>Distance</TT>. The graph
+    must also be a <a
+    href="./EdgePropertyGraph.html">EdgePropertyGraph</a> for
+    <TT>weight_tag</TT> where the property accessor for the grpah
+    meets the same requirements for <TT>Weight</TT> below.
+
+<P>
+</LI>
+<LI>In version (1) and (2) the graph must be a <a
+    href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
+    <TT>color_tag</TT> and <TT>id_tag</TT>, where the property
+    accessor for the graph meet the same requirements as for
+    <TT>Color</TT> and <TT>ID</TT> below.
+
+<P>
+</LI>
+<LI>The type <TT>Distance</TT> must be a model of <a
+    href="./ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+    vertex descriptor type of the graph needs to be usable as the key
+    type of the distance accessor.
+
+<P>
+</LI>
+<LI>The type <TT>Weight</TT> must be a model of <a
+     href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+     edge descriptor type of the graph needs to be usable as the key
+     type for the weight accessor.
+
+<P>
+</LI>
+<LI>The type <TT>Color</TT> must be a model of <a
+     href="./ReadWritePropertyAccessor">ReadWritePropertyAccessor</a>. A
+     vertex descriptor must be usable as the key type of the accessor,
+     and the value type of the accessor must be a model of
+     <a href="./ColorValue.html">ColorValue</a>.
+
+<P>
+</LI>
+<LI>The type <TT>ID</TT> must be a model of <a
+     href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+     value type of <TT>ID</TT> must be an integer type. The vertex
+     descriptor type of the graph needs to be usable as the key type
+     of the ID accessor.
+
+<P>
+</LI>
+<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
+</LI>
+</UL>
+
+<P>
+
+<H3>Complexity</H3>
+
+<P>
+The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i>
+if all vertices are reachable from the source.
+
+<P>
+
+<H3>Example</H3>
+
+<P>
+See the <A
+HREF="file_dependency_example.html#sec:parallel-compilation"> Parallel
+Compilation</A> section of the File Dependency Example.
+
+<P>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

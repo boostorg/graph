@@ -1,0 +1,86 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Depth-First Visit</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H2><A NAME="sec:dfs"></A>
+<TT>depth_first_visit</TT>
+</H2>
+
+<P>
+<PRE>
+template &lt;class IncidenceGraph, class Vertex, class Visitor&gt;
+void depth_first_visit(IncidenceGraph&amp; G, Vertex u, Visitor&amp; v);
+</PRE>
+
+<P>
+This function is the recursive part of the depth-first search.  The
+main purpose of the function is for the implementation of
+<TT>depth_first_search()</TT> though sometimes it is useful on its
+own. The responsibility for coloring, etc. is left to the visitor.
+The visitor's <TT>explore()</TT> function returns <TT>bool</TT> which
+determines whether the target vertex will be explored (when it returns
+<TT>true</TT>) or not. The implementation of <TT>depth_first_search()</TT>
+uses the <TT>dfs_visitor</TT> in conjunction with this
+<TT>depth_first_visit()</TT> function.
+
+<P>
+
+<H3>Where Defined</H3>
+
+<P>
+<TT>boost/graph/depth_first_search.hpp</TT>
+
+<P>
+
+<H3>Requirements on Types</H3>
+
+<P>
+
+<UL>
+<LI>The type <TT>IncidenceGraph</TT> must be a model of
+    <a href="./IncidenceGraph.html">IncidenceGraph</a>.
+</LI>
+<LI>The type <TT>Vertex</TT> must be convertible to type <TT>boost::graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor</TT>.
+</LI>
+<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
+</LI>
+</UL>
+
+<P>
+
+<H3>Complexity</H3>
+
+<P>
+The time complexity of this operation is <i>O(E)</i>. 
+The worst-case space complexity is .
+
+<P>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 
