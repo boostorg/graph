@@ -40,7 +40,7 @@ namespace boost {
   template <class T>
   struct MultiPassInputIteratorConcept {
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(T, InputIteratorConcept);
+      function_requires< InputIteratorConcept<T> >();
     }
   };
 
@@ -58,12 +58,12 @@ namespace boost {
     typedef typename graph_traits<G>::edge_parallel_category
       edge_parallel_category;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(vertex_descriptor, DefaultConstructibleConcept);
-      BOOST_FUNCTION_REQUIRES(vertex_descriptor, EqualityComparableConcept);
-      BOOST_FUNCTION_REQUIRES(vertex_descriptor, AssignableConcept);
-      BOOST_FUNCTION_REQUIRES(edge_descriptor, DefaultConstructibleConcept);
-      BOOST_FUNCTION_REQUIRES(edge_descriptor, EqualityComparableConcept);
-      BOOST_FUNCTION_REQUIRES(edge_descriptor, AssignableConcept);
+      function_requires< DefaultConstructibleConcept<vertex_descriptor> >();
+      function_requires< EqualityComparableConcept<vertex_descriptor> >();
+      function_requires< AssignableConcept<vertex_descriptor> >();
+      function_requires< DefaultConstructibleConcept<edge_descriptor> >();
+      function_requires< EqualityComparableConcept<edge_descriptor> >();
+      function_requires< AssignableConcept<edge_descriptor> >();
     }
     G g;
   };
@@ -74,8 +74,8 @@ namespace boost {
     typedef typename graph_traits<G>::out_edge_iterator
       out_edge_iterator;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
-      BOOST_FUNCTION_REQUIRES(out_edge_iterator, MultiPassInputIteratorConcept);
+      function_requires< GraphConcept<G> >();
+      function_requires< MultiPassInputIteratorConcept<out_edge_iterator> >();
 
       p = out_edges(v, g);
       e = *p.first;
@@ -100,8 +100,8 @@ namespace boost {
     typedef typename graph_traits<G>::in_edge_iterator
       in_edge_iterator;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, IncidenceGraphConcept);
-      BOOST_FUNCTION_REQUIRES(in_edge_iterator, MultiPassInputIteratorConcept);
+      function_requires< IncidenceGraphConcept<G> >();
+      function_requires< MultiPassInputIteratorConcept<in_edge_iterator> >();
 
       p = in_edges(v, g);
       e = *p.first;
@@ -123,8 +123,8 @@ namespace boost {
     typedef typename graph_traits<G>::adjacency_iterator
       adjacency_iterator;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
-      BOOST_FUNCTION_REQUIRES(adjacency_iterator, MultiPassInputIteratorConcept);
+      function_requires< GraphConcept<G> >();
+      function_requires< MultiPassInputIteratorConcept<adjacency_iterator> >();
 
       p = adjacent_vertices(v, g);
       v = *p.first;
@@ -144,9 +144,9 @@ namespace boost {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, AdjacencyGraphConcept);
-      BOOST_FUNCTION_REQUIRES(G, IncidenceGraphConcept);
-      BOOST_FUNCTION_REQUIRES(vertex_iterator, MultiPassInputIteratorConcept);
+      function_requires< AdjacencyGraphConcept<G> >();
+      function_requires< IncidenceGraphConcept<G> >();
+      function_requires< MultiPassInputIteratorConcept<vertex_iterator> >();
 
       p = vertices(g);
       v = *p.first;
@@ -169,8 +169,8 @@ namespace boost {
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
-      BOOST_FUNCTION_REQUIRES(edge_iterator, MultiPassInputIteratorConcept);
+      function_requires< GraphConcept<G> >();
+      function_requires< MultiPassInputIteratorConcept<edge_iterator> >();
 
       p = edges(g);
       e = *p.first;
@@ -196,8 +196,8 @@ namespace boost {
   struct VertexAndEdgeListGraphConcept
   {
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, VertexListGraphConcept);
-      BOOST_FUNCTION_REQUIRES(G, EdgeListGraphConcept);
+      function_requires< VertexListGraphConcept<G> >();
+      function_requires< EdgeListGraphConcept<G> >();
     }
   };
 
@@ -226,7 +226,7 @@ namespace boost {
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, MutableGraphConcept);
+      function_requires< MutableGraphConcept<G> >();
       v = add_vertex(vp, g);
       p = add_edge(u, v, ep, g);
     }
@@ -242,7 +242,7 @@ namespace boost {
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
+      function_requires< GraphConcept<G> >();
       
       p = edge(u, v, g);
       const_constraints(g);
@@ -261,9 +261,9 @@ namespace boost {
     typedef typename property_map<G, Property>::type Map;
     typedef typename property_map<G, Property>::const_type const_Map;
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
-      BOOST_FUNCTION_REQUIRES2(Map, X, ReadWritePropertyMapConcept);
-      BOOST_FUNCTION_REQUIRES2(const_Map, X, ReadablePropertyMapConcept);
+      function_requires< GraphConcept<G> >();
+      function_requires< ReadWritePropertyMapConcept<Map, X> >();
+      function_requires< ReadablePropertyMapConcept<const_Map, X> >();
 
       Map pmap = get(Property(), g);
       pval = get(Property(), g, x);
@@ -307,8 +307,8 @@ namespace boost {
   struct ColorValueConcept
   {
     void constraints() {
-      BOOST_FUNCTION_REQUIRES(C, EqualityComparableConcept);
-      BOOST_FUNCTION_REQUIRES(C, DefaultConstructibleConcept);
+      function_requires< EqualityComparableConcept<C> >();
+      function_requires< DefaultConstructibleConcept<C> >();
 
       c = white(c);
       c = gray(c);
