@@ -26,16 +26,16 @@
 <P>
 <PRE>
 <i>// named paramter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
-void breadth_first_search(VertexListGraph& G, 
-  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+template &lt;class Graph, class P, class T, class R&gt;
+void breadth_first_search(Graph& G, 
+  typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
-template &lt;class VertexListGraph, class Buffer, class BFSVisitor, 
+template &lt;class Graph, class Buffer, class BFSVisitor, 
 	  class ColorMap&gt;
-void breadth_first_search(const VertexListGraph&amp; g, 
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+void breadth_first_search(const Graph&amp; g, 
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
    Buffer&amp; Q, BFSVisitor vis, ColorMap color);
 </PRE>
 
@@ -153,10 +153,11 @@ event visitors.
 
 <h3>Parameters</h3>
 
-IN: <tt>VertexListGraph&amp; g</tt>
+IN: <tt>Graph&amp; g</tt>
 <blockquote>
   A directed or undirected graph. The graph type must
-  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt>
