@@ -66,19 +66,20 @@ an algorithm <I>pattern</I>. One can do many different things with
 BFS. For example, the BFS pattern is used in the BGL to build several
 other algorithms: Dijkstra's shortest paths, Prim's Minimum Spanning
 Tree and best-first search. The definition of a <I>breadth-first
- search</I> is given in Section&nbsp;<A HREF="./graph_theory_review.html#sec:bfs-algorithm"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+search</I> is given in Section <A
+HREF="./graph_theory_review.html#sec:bfs-algorithm">Breadth-First
+Search</A>.
 
 <P>
-The BGL BFS functions are highly
-parameterized so that they can be used in a wide variety of places.
-The way to customize the BFS algorithm to perform different operations
-is to supply a visitor, which is a function object with multiple
-functions. Each member function of the visitor gets invoked at special
-times during the algorithm. Also, visitors can be layered on top of
-each other so that one can do lots of things during a single run of
-BFS. See Chapter&nbsp;<A HREF="./visitor_classes.html"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> for more details.
+The BGL BFS functions are highly parameterized so that they can be
+used in a wide variety of places.  The way to customize the BFS
+algorithm to perform different operations is to supply a visitor,
+which is a function object with multiple functions. Each member
+function of the visitor gets invoked at special times during the
+algorithm. Also, visitors can be layered on top of each other so that
+one can do lots of things during a single run of BFS. See the <a
+href="./bfs_visitor.html">bfs_visitor</a> class and the <A
+HREF="./EventVisitor.html">EventVisitor</A> concept for more details.
 
 <P>
 Another way to customize the BFS algorithm is change the type of queue
@@ -168,11 +169,9 @@ Example</A>
 
 <P>
 This example demonstrates using the BGL Breadth-first search algorithm
-on the graph from Figure&nbsp;<A
-HREF="./graph_theory_review.html#fig:bfs-example"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
-The source code for this example is in <a
+on the graph from <A
+HREF="./graph_theory_review.html#fig:bfs-example">Figure 5</A>.  The
+source code for this example is in <a
 href="../examples/bfs_basics.cpp"><TT>examples/bfs_basics.cpp</TT></a>.
 
 <P>
@@ -233,7 +232,7 @@ The output is:
 
 <h3>See Also</h3>
 
-
+<a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>,
 <a href="./graph_search.html"><tt>graph_search()</tt></a> and
 <a href="./depth_first_search.html"><tt>depth_first_search()</tt></a>
 

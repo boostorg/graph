@@ -80,11 +80,9 @@ G = (V, E)
 
 
 <P>
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:directed-graph"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-gives a pictorial view of this graph.  The edge <i>(x,x)</i> is
-called a <I>self-loop</I>.  Edges <i>(b,y)</i> and <i>(b,y)</i> are
+<A HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A>
+gives a pictorial view of this graph.  The edge <i>(x,x)</i> is called
+a <I>self-loop</I>.  Edges <i>(b,y)</i> and <i>(b,y)</i> are
 <I>parallel edges</I>, which are allowed in a <I>multigraph</I> (but
 are normally not allowed in a directed or undirected graph).
 
@@ -93,17 +91,15 @@ are normally not allowed in a directed or undirected graph).
 <P></P>
 <DIV ALIGN="center"><A NAME="fig:directed-graph"></A><A NAME="1509"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 Example of a directed graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/digraph.gif"></TD></TR>
 </TABLE>
 </DIV><P></P>
 
 <P>
-Next we have a similar graph, though this time it is undirected.
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:undirected-graph"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
+Next we have a similar graph, though this time it is undirected.  <A
+HREF="graph_theory_review.html#fig:undirected-graph">Figure 2</A>
 gives the pictorial view.  Self loops are not allowed in undirected
 graphs. This graph is the <I>undirected</I> version of the the
 previous graph (minus the parallel edge <i>(b,y)</i>), meaning it has
@@ -129,7 +125,7 @@ G = (V, E)
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:undirected-graph"></A><A NAME="1524"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
 Example of an undirected graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/undigraph.gif"></TD></TR>
 </TABLE>
@@ -144,15 +140,11 @@ graph edge <i>(u,v)</i> is <I>incident on</I> vertices <i>u</i> and
 <i>v</i>.
 
 <P>
-In Figure&nbsp;<A HREF="graph_theory_review.html#fig:directed-graph"><IMG
- ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>,
+In <A HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A>,
  vertex <i>y</i> is adjacent to vertex <i>b</i> (but <i>b</i> is not
  adjacent to <i>y</i>). The edge <i>(b,y)</i> is an out-edge of
- <i>b</i> and an in-edge of <i>y</i>. In Figure&nbsp;<A
- HREF="graph_theory_review.html#fig:undirected-graph"><IMG ALIGN="BOTTOM" BORDER="1"
- ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>,
+ <i>b</i> and an in-edge of <i>y</i>. In <A
+ HREF="graph_theory_review.html#fig:undirected-graph">Figure 2</A>,
  <i>y</i> is adjacent to <i>b</i> and vice-versa. The edge
  <i>(y,b)</i> is incident on vertices <i>y</i> and <i>b</i>.
 
@@ -160,14 +152,10 @@ In Figure&nbsp;<A HREF="graph_theory_review.html#fig:directed-graph"><IMG
 In a directed graph, the number of out-edges of a vertex is its
 <I>out-degree</I> and the number of in-edges is its <I>in-degree</I>.
 For an undirected graph, the number of edges incident to a vertex is
-its <I>degree</I>. In Figure&nbsp;<A
-HREF="graph_theory_review.html#fig:directed-graph"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>,
-vertex <i>b</i> has an out-degree of 3 and an in-degree of zero. In
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:undirected-graph"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>,
+its <I>degree</I>. In <A
+HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A>,
+vertex <i>b</i> has an out-degree of 3 and an in-degree of zero. In <A
+HREF="graph_theory_review.html#fig:undirected-graph">Figure 2</A>,
 vertex <i>b</i> simply has a degree of 2.
 
 <P>
@@ -215,26 +203,22 @@ situations.
 An adjacency-matrix representation of a graph is a 2-dimensional <i>V
 x V</i> array. Each element in the array <i>a<sub>uv</sub></i> stores
 a boolean value saying whether the edge <i>(u,v)</i> is in the graph.
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:adj-matrix"><IMG ALIGN="BOTTOM"
-BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-depicts an adjacency matrix for the graph in Figure&nbsp;<A
-HREF="graph_theory_review.html#fig:directed-graph"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-(minus the parallel edge <i>(b,y)</i>).  The ammount of space
-required to store an adjacency-matrix is <i>O(V<sup>2</sup>)</i>. Any edge
-can be accessed, added, or removed in <i>O(1)</i> time.  To
-add or remove a vertex requires reallocating and copying the whole
-graph, an <i>O(V<sup>2</sup>)</i> operation.  The BGL does not include
-a graph class that uses the adjacency matrix representation.
+<A HREF="graph_theory_review.html#fig:adj-matrix">Figure 3</A> depicts
+an adjacency matrix for the graph in <A
+HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A> (minus
+the parallel edge <i>(b,y)</i>).  The ammount of space required to
+store an adjacency-matrix is <i>O(V<sup>2</sup>)</i>. Any edge can be
+accessed, added, or removed in <i>O(1)</i> time.  To add or remove a
+vertex requires reallocating and copying the whole graph, an
+<i>O(V<sup>2</sup>)</i> operation.  The BGL does not include a graph
+class that uses the adjacency matrix representation.
 
 <P>
 
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:adj-matrix"></A><A NAME="1701"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3:</STRONG>
 The Adjacency Matrix Graph Representation.</CAPTION>
 <TR><TD><IMG SRC="./figs/adj_matrix.gif"></TD></TR>
 </TABLE>
@@ -253,14 +237,10 @@ only <i>O(V + E)</i> memory is required. In addition, the out-edges
 for each vertex can be accessed more efficiently. Edge insertion is
 <i>O(1)</i>, though accessing any given edge is <i>O(alpha)</i>, where
 <i>alpha</i> is the sparsity factor of the matrix (which is equal to
-the maximum number of out-edges for any vertex in the graph).
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:adj-list"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-depicts an adjacency-list representation of the graph in
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:directed-graph"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>. The
+the maximum number of out-edges for any vertex in the graph).  <A
+HREF="graph_theory_review.html#fig:adj-list">Figure 4</A> depicts an
+adjacency-list representation of the graph in <A
+HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A>. The
 <a href="./adjacency_list.html"><TT>adjacency_list</TT></a> class is
 an implementation of the adjacency-list representation.
 
@@ -269,7 +249,7 @@ an implementation of the adjacency-list representation.
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:adj-list"></A><A NAME="1713"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 4:</STRONG>
 The Adjacency List Graph Representation.</CAPTION>
 <TR><TD><IMG SRC="./figs/adj_list.gif"></TD></TR>
 </TABLE>
@@ -283,14 +263,10 @@ The Adjacency List Graph Representation.</CAPTION>
 An edge-list representation of a graph is simply a sequence of edges,
 where each edge is represented as a pair of vertex ID's.  The memory
 required is only <i>O(E)</i>. Edge insertion is typically <i>O(1)</i>,
-though accessing a particular edge is <i>O(E)</i> (not efficient).
-Figure&nbsp;<A HREF="graph_theory_review.html#fig:edge-list"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-shows an edge-list representation of the graph in Figure&nbsp;<A
-HREF="graph_theory_review.html#fig:directed-graph"><IMG ALIGN="BOTTOM"
-BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>. The
+though accessing a particular edge is <i>O(E)</i> (not efficient).  <A
+HREF="graph_theory_review.html#fig:edge-list">Figure 5</A> shows an
+edge-list representation of the graph in <A
+HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A>. The
 <a href="./edge_list.html"><TT>edge_list</TT></a> adaptor class can be
 used to create implementations of the edge-list representation.
 
@@ -299,7 +275,7 @@ used to create implementations of the edge-list representation.
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:edge-list"></A><A NAME="1724"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5:</STRONG>
 The Edge List Graph Representation.</CAPTION>
 <TR><TD><IMG SRC="./figs/edge_list.gif"></TD></TR>
 </TABLE>
@@ -345,16 +321,16 @@ pool of water.  Vertices in the same ``wave'' are the same distance
 from the source vertex. A vertex is <I>discovered</I> the first time
 it is encountered by the algorithm. A vertex is <I>finished</I> after
 all of its neighbors are explored. Here's an example to help make this
-clear. A graph is shown in Figure&nbsp;<A HREF="graph_theory_review.html#fig:bfs-example"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> and the BFS
-discovery and finish order for the vertices is shown below.
+clear. A graph is shown in <A
+HREF="graph_theory_review.html#fig:bfs-example">Figure 6</A> and the
+BFS discovery and finish order for the vertices is shown below.
 
 <P>
 
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:bfs-example"></A><A NAME="1826"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6:</STRONG>
 Breadth-first search spreading through a graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/bfs_example.gif"></TD></TR>
 </TABLE>
@@ -410,12 +386,10 @@ One interesting property of depth-first search is that the discover
 and finish times for each vertex form a parenthesis structure.  If we
 use an open-parenthesis when a vertex is discovered, and a
 close-parenthesis when a vertex is finished, then the result is a
-properly nested set of parenthesis.  Figure&nbsp;<A
-HREF="./graph_theory_review.html#fig:dfs-example"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-shows DFS applied to an undirected graph, with the edges labeled in
-the order they were explored.  Below we list the vertices of the graph
+properly nested set of parenthesis.  <A
+HREF="./graph_theory_review.html#fig:dfs-example">Figure 7</A> shows
+DFS applied to an undirected graph, with the edges labeled in the
+order they were explored.  Below we list the vertices of the graph
 ordered by discover and finish time, as well as show the paranthesis
 structure.  DFS is used as the kernel for several other graph
 algorithms, including topological sort and two of the connected
@@ -426,9 +400,9 @@ section of the File Dependency Example).
 <P>
 
 <P></P>
-<DIV ALIGN="CENTER"><A NAME="fig:dfs"></A><A NAME="1841"></A>
+<DIV ALIGN="CENTER"><A NAME="fig:dfs-example"></A><A NAME="1841"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 7:</STRONG>
 Depth-first search on an undirected graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/dfs.gif"></TD></TR>
 </TABLE>

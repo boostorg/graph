@@ -120,14 +120,14 @@ Rverse Cuthill-McKee algorithm in terms of a graph:
 </OL>
 In the first step a good starting vertex needs to be determined. The
 study by George and Liu&nbsp;[<A
- HREF="bibliography.html#george81:__sparse_pos_def">14</A>] showed that a
-pair of vertices which are at maximum or near maximum ``distance'' apart
-are good ones. They also proposed an algorithm to find such a starting
-vertex in &nbsp;[<A
- HREF="bibliography.html#george81:__sparse_pos_def">14</A>], which we show 
-in Figure&nbsp;<A HREF="sparse_matrix_ordering.html#fig:ggcl_find_starting_vertex"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> implemented using
-the BGL interface.
+HREF="bibliography.html#george81:__sparse_pos_def">14</A>] showed that
+a pair of vertices which are at maximum or near maximum ``distance''
+apart are good ones. They also proposed an algorithm to find such a
+starting vertex in &nbsp;[<A
+HREF="bibliography.html#george81:__sparse_pos_def">14</A>], which we
+show in <A
+HREF="sparse_matrix_ordering.html#fig:ggcl_find_starting_vertex">Figure
+1</A> implemented using the BGL interface.
 
 <P>
 <P></P>
@@ -166,7 +166,7 @@ namespace boost {
 </td></tr></table>
 <CAPTION ALIGN="BOTTOM">
 <table><tr><td>
-<STRONG>Figure:</STRONG>
+<STRONG>Figure 1:</STRONG>
 The BGL implementation of <TT>find_starting_node</TT>. The key
 part <TT>pseudo_peripheral_pair</TT> is BFS with a custom queue
  type virtually.
@@ -175,16 +175,16 @@ part <TT>pseudo_peripheral_pair</TT> is BFS with a custom queue
 <P></P>
 
 The key part of step one is a custom queue type with BFS as shown in
-Figure&nbsp;<A HREF="sparse_matrix_ordering.html#fig:ggcl_find_starting_vertex"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.  The main Cuthill-McKee
-algorithm shown in Figure&nbsp;<A HREF="sparse_matrix_ordering.html#fig:cuthill-mckee"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> is a fenced priority
-queue with a generalized BFS. If <TT>inverse_permutation</TT> is a
-normal iterator, the result stored is the inverse permutation of
-original Cuthill-McKee ordering. On the other hand, if
-<TT>inverse_permutation</TT> is a reverse iterator, the result stored is
-the inverse permutation of reverse Cuthill-McKee ordering.
-Our implementation is quite concise because many components
+<A
+HREF="sparse_matrix_ordering.html#fig:ggcl_find_starting_vertex">Figure
+1</A>.  The main Cuthill-McKee algorithm shown in Figure&nbsp;<A
+HREF="sparse_matrix_ordering.html#fig:cuthill-mckee">Figure 2</A>
+is a fenced priority queue with a generalized BFS. If
+<TT>inverse_permutation</TT> is a normal iterator, the result stored
+is the inverse permutation of original Cuthill-McKee ordering. On the
+other hand, if <TT>inverse_permutation</TT> is a reverse iterator, the
+result stored is the inverse permutation of reverse Cuthill-McKee
+ordering.  Our implementation is quite concise because many components
 from GGCL can be reused.
 
 
@@ -216,7 +216,7 @@ from GGCL can be reused.
 </td></tr></table>
 <CAPTION ALIGN="BOTTOM">
 <TABLE>
-<TR><TD> <STRONG>Figure:</STRONG> The BGL implementation of
+<TR><TD> <STRONG>Figure 2:</STRONG> The BGL implementation of
 Cuthill-McKee algoithm.  </TD></TR> </TABLE></CAPTION> </DIV><P></P>
 <P>
 

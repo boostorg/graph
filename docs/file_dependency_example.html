@@ -34,21 +34,20 @@ Visual C++ to minimize the number of files that must be recompiled
 after some changes have been made.
 
 <P>
-Figure&nbsp;<A HREF="#fig:file-dep"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> shows a graph that has a vertex for each source
-file, object file, and library that is used in the <TT>killerapp</TT>
-program. The edges in the graph show which files are used in creating
-other files. The choice of which direction to point the arrows is
-somewhat arbitrary. As long as we are consistent in remembering that
-the arrows mean ``used by'' then things will work out. The opposite
-direction would mean ``depends on''.
+<A HREF="#fig:file-dep">Figure 1</A> shows a graph that has a vertex
+for each source file, object file, and library that is used in the
+<TT>killerapp</TT> program. The edges in the graph show which files
+are used in creating other files. The choice of which direction to
+point the arrows is somewhat arbitrary. As long as we are consistent
+in remembering that the arrows mean ``used by'' then things will work
+out. The opposite direction would mean ``depends on''.
 
 <P>
 
 <P></P>
 <DIV ALIGN="CENTER"><A NAME="fig:file-dep"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 A graph representing file dependencies.</CAPTION>
 <TR><TD><IMG SRC="./figs/file_dep.gif"></TD></TR>
 </TABLE>
@@ -76,11 +75,9 @@ number of questions:
 <P>
 In the following examples we will formulate each of these questions in
 terms of the dependency graph, and then find a graph algorithm to
-provide the solution. The graph in Figure&nbsp;<A
-HREF="#fig:file-dep"><IMG ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-will be used in all of the following examples. The source code for
-this example can be found in the file <a
+provide the solution. The graph in <A HREF="#fig:file-dep">Figure
+1</A> will be used in all of the following examples. The source code
+for this example can be found in the file <a
 href="../examples/file_dependencies.cpp"><TT>examples/file_dependencies.cpp</TT></a>.
 
 <P>
@@ -135,7 +132,7 @@ the following sections.
       plugin&lt;weight_tag, int&gt;
     &gt; Graph;
   Graph g(N, used_by, used_by + sizeof(used_by) / sizeof(Edge));
-  typedef Graph::vertex_descriptor Vertex;
+  typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
 </PRE>
 
 <P>
@@ -169,8 +166,7 @@ STL or custom-made container.
 <PRE>
   typedef std::list&lt;Vertex&gt; MakeOrder;
   MakeOrder make_order;
-  typedef std::front_insert_iterator&lt;MakeOrder&gt; OutputIterator;
-  boost::topological_sort(g, OutputIterator(make_order));
+  boost::topological_sort(g, std::front_inserter(make_order));
     
   std::cout &lt;&lt; "make ordering: ";
   for (MakeOrder::iterator i = make_order.begin();
@@ -334,41 +330,38 @@ depth-first search. The BGL graph search algorithms (which includes
 but it has several methods instead of just the one
 <TT>operator()</TT>.  The visitor's methods are called at certain
 points within the algorithm, thereby giving the user a way to extend
-the functionality of the graph search algorithms. See Section&nbsp;<A
-HREF="visitor_concepts.html"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
+the functionality of the graph search algorithms. See Section <A
+HREF="visitor_concepts.html">Visitor Concepts</A>
 for a detailed description of visitors.
 
 <P>
-We will create a visitor class and fill in the <TT>explore()</TT>
-method, which is the visitor method that is called when DFS explores a
-new edge. This is the place where we want to place the color check
-which will determine whether there are cyclic dependencies.
-Inheriting from <TT>null_visitor</TT> provides the visitor with empty
-versions of the other visitor methods.  Once our visitor is created,
-we can construct and object and pass it to the BGL algorithm.
-Visitor objects are passed by value inside of the BGL algorithms, so
-the <TT>has_cycle</TT> flag is stored by reference in this visitor.
+We will create a visitor class and fill in the <TT>back_edge()</TT>
+method, which is the <a href="./DFSVisitor.html">DFSVisitor</a> method
+that is called when DFS explores a new edge. This is the place where
+we want to place the color check which will determine whether there
+are cyclic dependencies.  Inheriting from <TT>dfs_visitor&lt;&gt;</TT>
+provides the visitor with empty versions of the other visitor methods.
+Once our visitor is created, we can construct and object and pass it
+to the BGL algorithm.  Visitor objects are passed by value inside of
+the BGL algorithms, so the <TT>has_cycle</TT> flag is stored by
+reference in this visitor.
 
 <P>
 <PRE>
   template &lt;class Color&gt;
-  class cycle_detector : public null_visitor 
+  struct cycle_detector : public dfs_visitor&lt;&gt;
   {
-  public:
     typedef typename boost::property_traits&lt;Color&gt;::value_type C;
 
-    cycle_detector(Color c, bool&amp; has_cycle) 
+    cycle_detector(Color c, bool& has_cycle) 
       : _has_cycle(has_cycle), color(c) { }
 
     template &lt;class Edge, class Graph&gt;
-    void explore(Edge e, Graph&amp; g) {
-      if (color[target(e, g)] == gray(C()))
-        _has_cycle = true;
+    void back_edge(Edge e, Graph& g) {
+      _has_cycle = true;
     }
   protected:
-    bool&amp; _has_cycle;
+    bool& _has_cycle;
     Color color;
   };
 </PRE>
@@ -386,11 +379,10 @@ algorithm and pass in the cycle detector visitor.
 </PRE>
 
 <P>
-The graph in Figure&nbsp;<A HREF="#fig:file-dep"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> (ignoring the dotted line) did
-not have any cycles, but if we add a dependency between <TT>bar.cpp</TT>
-and <TT>dax.h</TT> there there will be. Such a dependency would be
-flagged as a user error.
+The graph in <A HREF="#fig:file-dep">Figure 1</A> (ignoring the dotted
+line) did not have any cycles, but if we add a dependency between
+<TT>bar.cpp</TT> and <TT>dax.h</TT> there there will be. Such a
+dependency would be flagged as a user error.
 
 <P>
 <PRE>

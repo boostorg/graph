@@ -24,11 +24,18 @@ Visitor Concepts
 </H1>
 
 <P>
-The visitor concepts plays the same role in BGL as functors
+The visitor concepts plays the same role in BGL as <a
+href="http://www.sgi.com/Technology/STL/functors.html">functors</a>
 play in the STL. Functors provide a mechanism for extending an
-algorithm, for customizing what is done at each step of the algorithm.
+algorithm; for customizing what is done at each step of the algorithm.
 Visitors allow the user to insert their own operations at various
-steps within a graph algorithm.
+steps within a graph algorithm. Unlike the STL algorithms, graph
+algorithms typically have multiple event points where one may want to
+insert a call-back via a functor. Therefore visitors do not have a
+single <tt>operator()</tt> method like a functor, but instead have
+several methods that correspond to the various event points. Each
+algorithm has a different set of event points, which are described by
+the following visitor concepts:
 
 <ul>
   <li> <a href="./BFSVisitor.html">BFSVisitor</a>

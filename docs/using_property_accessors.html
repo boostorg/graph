@@ -32,10 +32,11 @@ distance, capacity, weight, color, etc. There are many ways to attach
 properties to graph in terms of data-structure implementation, but
 graph algorithms should not have to deal with the implementation
 details of the properties. The <I>property accessor</I> interface
-defined in Section&nbsp;<A HREF="../../property_accessor/property_accessor.html"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
- SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A> provides a generic
-method for accessing properties from graphs. This is the interface
-used in the BGL algorithms to access properties.
+defined in Section <A
+HREF="../../property_accessor/property_accessor.html">Property
+Accessor Concepts</A> provides a generic method for accessing
+properties from graphs. This is the interface used in the BGL
+algorithms to access properties.
 
 <P>
 
@@ -219,10 +220,8 @@ to the previous call to Dijkstra's algorithm.
 The next question is: how to internal properties become attached to a
 graph object in the first place? This depends on the graph class that
 you are using. The <TT>adjacency_list</TT> graph class of BGL uses a
-plugin mechanism (see Section&nbsp;<A
-HREF="using_adjacency_list.html#sec:adjacency-list-plugins"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>)
+plugin mechanism (see Section <A
+HREF="using_adjacency_list.html#sec:adjacency-list-plugins">Plugins</A>)
 to allow an arbitrary number of properties to be stored on the edges
 and vertices of the graph.
 

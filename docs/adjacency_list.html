@@ -45,10 +45,9 @@ controls what kind of container is used to represent the edge
 lists. The choices for <TT>EdgeList</TT> and <TT>VertexList</TT> will
 determine the space complexity of the graph structure, and will
 determine the time complexity of the various graph operations. The
-possible choices and tradeoffs are discussed in Section&nbsp;<A
-HREF="./using_adjacency_list.html#sec:choosing-graph-type"><IMG ALIGN="BOTTOM"
-BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+possible choices and tradeoffs are discussed in Section <A
+HREF="./using_adjacency_list.html#sec:choosing-graph-type">Choosing
+the <TT>Edgelist</TT> and <TT>VertexList</TT></A>.
 
 <P>
 The <TT>Directed</TT> template parameter controls whether the graph is
@@ -59,9 +58,8 @@ appear in both an out-edge and in-edge list.
 
 <P>
 A tutorial on how to use the <TT>adjacency_list</TT> class is in
-Section&nbsp;<A HREF="./using_adjacency_list.html"><IMG ALIGN="BOTTOM"
-BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>.
+Section <A HREF="./using_adjacency_list.html">Using
+<TT>adjacency_list</TT></A>.
 
 <P>
 
@@ -198,16 +196,13 @@ using plugins. The property values can be read from and written to via
 the property accessors provided by the graph. The property accessors
 are obtained via the <TT>get_vertex_property_accessor(g, tag)</TT> and
 <TT>get_edge_property_accessor(g, tag)</TT> functions.  How to use
-plugins is described in Section&nbsp;<A
-HREF="./using_adjacency_list.html#sec:adjacency-list-plugins"><IMG ALIGN="BOTTOM"
-BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>. The
-property accessors are objects that implement the interface defined in
-Section&nbsp;<A HREF="../../property_accessor/property_accessor.html"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>. The
-property accessors obtained from a const <TT>adjacency_list</TT> graph
-object are models of the <a
+plugins is described in Section <A
+HREF="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins
+</A>. The property accessors are objects that implement the interface
+defined in Section <A
+HREF="../../property_accessor/property_accessor.html">Property
+Accessor Concepts</A>. The property accessors obtained from a const
+<TT>adjacency_list</TT> graph object are models of the <a
 href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>
 concept. The property accessors obtained from a mutable graph object
 are models of the <a
@@ -528,28 +523,25 @@ Returns the edge connecting vertex <tt>u</tt> to vertex <tt>v</tt> in
 graph <tt>g</tt>.
 </td></tr>
 
-<tr><td><tt>
-std::pair&lt;edge_descriptor, bool&gt;<br>
-add_edge(adjacency_list&amp; g, vertex_descriptor u, vertex_descriptor v)
-</tt></td><td>
-Adds edge <i>(u,v)</i> to the graph and returns the edge descriptor
-for the new edge. For graphs that do not allow parallel edges, if the
-edge is already in the graph then a duplicate will not be added and
-the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
-<i>v</i> are descriptors for the same vertex (creating a self loop)
-then the edge will not be added and the flag will be <TT>false</TT>.
-When the flag is <TT>false</TT>, the edge descriptor is invalid and
-any use of it is undefined.  The placement of the edge in the out-edge
-list for <i>u</i> is unspecified. If the <TT>EdgeList</TT> selector is
-<TT>vecS</TT> then this operation will invalidate any iterators that
-point into the edge-list for vertex <i>u</i> or edge descriptors that
-have vertex <i>u</i> as the source. This also applies if the
-<TT>EdgeList</TT> is a user-defined container that invalidates its
-iterators when <TT>push(container, x)</TT> is invoked (see
-Section&nbsp;<A HREF="./using_adjacency_list.html#sec:custom-storage"><IMG
-ALIGN="BOTTOM" BORDER="1" ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>).
-</td></tr>
+<tr><td><tt> std::pair&lt;edge_descriptor, bool&gt;<br>
+add_edge(adjacency_list&amp; g, vertex_descriptor u, vertex_descriptor
+v) </tt></td><td> Adds edge <i>(u,v)</i> to the graph and returns the
+edge descriptor for the new edge. For graphs that do not allow
+parallel edges, if the edge is already in the graph then a duplicate
+will not be added and the <TT>bool</TT> flag will be
+<TT>false</TT>. Also, if <i>u</i> and <i>v</i> are descriptors for the
+same vertex (creating a self loop) then the edge will not be added and
+the flag will be <TT>false</TT>.  When the flag is <TT>false</TT>, the
+edge descriptor is invalid and any use of it is undefined.  The
+placement of the edge in the out-edge list for <i>u</i> is
+unspecified. If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then
+this operation will invalidate any iterators that point into the
+edge-list for vertex <i>u</i> or edge descriptors that have vertex
+<i>u</i> as the source. This also applies if the <TT>EdgeList</TT> is
+a user-defined container that invalidates its iterators when
+<TT>push(container, x)</TT> is invoked (see Section <A
+HREF="./using_adjacency_list.html#sec:custom-storage">Customizing the
+Adjacency List Storage</A>).  </td></tr>
 
 <tr><td><tt>
 std::pair&lt;edge_descriptor, bool&gt;<br>

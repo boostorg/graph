@@ -147,7 +147,7 @@ can be used to implement this mapping.
 
 <P>
 <PRE>
-  typedef Graph::vertex_descriptor Vertex;
+  typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
   typedef std::map&lt;string, Vertex&gt; NameVertexMap;
   NameVertexMap actors;
 </PRE>
@@ -217,22 +217,20 @@ will not be inserted into the graph.
 <H2>Applying Shortest Paths</H2>
 
 <P>
-The documentation for Dijkstra's algorithm (version 4 in Section <A
-HREF="./dijkstra_shortest_paths.html"><IMG ALIGN="BOTTOM" BORDER="1"
-ALT="[*]"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>)
-shows that we will need to provide several more property accessors for
-distance, color, and vertex ID. The distance will be the shortest
-distances from each actor to Kevin Bacon calculated by the
-algorithm. This distance has also been referred to as the ``Bacon
-Number'' in memory of the ``Erdos Number'' used to rank mathematicians
-according to how many publications separate them from Paul Erdos. We
-will use a vector to store the bacon numbers, and another vector to
-store the color property needed by Dijkstra's algorithm. The
-<TT>predecessor</TT> vector will be used to record the shortest path
-from each actor to Kevin. For each vertex, the <TT>predecessor</TT>
-vector will contain a pointer to the next vertex on the shortest path
-towards Kevin Bacon.
+The documentation for variant 4 of <A
+HREF="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths()</tt></a>
+algorithm shows that we will need to provide several more property
+accessors for distance, color, and vertex ID (edge weights are already
+on the graph) . The distance will be the shortest distances from each
+actor to Kevin Bacon calculated by the algorithm. This distance has
+also been referred to as the ``Bacon Number'' in memory of the ``Erdos
+Number'' used to rank mathematicians according to how many
+publications separate them from Paul Erdos. We will use a vector to
+store the bacon numbers, and another vector to store the color
+property needed by Dijkstra's algorithm. The <TT>predecessor</TT>
+vector will be used to record the shortest path from each actor to
+Kevin. For each vertex, the <TT>predecessor</TT> vector will contain a
+pointer to the next vertex on the shortest path towards Kevin Bacon.
 
 <P>
 <PRE>
@@ -252,12 +250,13 @@ predecessors, since this is not part of the basic algorithm.
 <PRE>
     Vertex src = actors["Kevin Bacon"];
     
-    boost::dijkstra_shortest_paths
+    dijkstra_shortest_paths
       (g, src, bacon_number.begin(),
        get_edge_property_accessor(g, weight_tag()),
        color.begin(),
        get_vertex_property_accessor(g, id_tag()),
-       record_predecessors(predecessor.begin()));
+       make_ucs_visitor(record_predecessors(predecessor.begin(), 
+					    on_edge_relaxed())));
 </PRE>
 
 <P>
@@ -267,7 +266,7 @@ through all the vertices in the graph and use them to index into the
 
 <P>
 <PRE>
-    Graph::vertex_iterator i, end;
+    graph_traits&lt;Graph&gt;::vertex_iterator i, end;
     for (boost::tie(i, end) = vertices(g); i != end; ++i)
       std::cout &lt;&lt; actor_name[*i] &lt;&lt; "'s bacon number is " 
                 &lt;&lt; bacon_number[*i] &lt;&lt; std::endl;

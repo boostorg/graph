@@ -28,13 +28,13 @@ interface used by STL is not sufficiently rich to encompass the
 numerous ways that graph algorithms may traverse a graph. Instead, we
 formulate an abstract interface that serves the same purpose for
 graphs that iterators do for basic containers (though iterators still
-play a large role).  The figure below depicts the analogy between the
-STL and the BGL.
+play a large role).  <A HREF="#fig:analogy">Figure 1</A> depicts
+the analogy between the STL and the BGL.
 
 <p></p>
 <DIV ALIGN="CENTER"><A NAME="fig:analogy"></A><A NAME="752"></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
 The analogy between the STL and the BGL.</CAPTION>
 <TR><TD><IMG SRC="./figs/analogy.gif"></TD></TR>
 </TABLE>
@@ -42,9 +42,8 @@ The analogy between the STL and the BGL.</CAPTION>
 <p></p>
 
 The graph abstraction consists of a set of vertices (or nodes), and a
-set of edges (or arcs) that connect the vertices.  Figure&nbsp;<A
-HREF="#fig:quick-start"><IMG ALIGN="BOTTOM" BORDER="1"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
+set of edges (or arcs) that connect the vertices.  <A
+HREF="#fig:quick-start">Figure 2</A>
 depicts a directed graph with five vertices (labeled 0 through 4) and
 11 edges. The edges leaving a vertex are called the <I>out-edges</I>
 of the vertex. The edges <tt>{(0,1),(0,2),(0,3),(0,4)}</tt> are all
@@ -55,7 +54,7 @@ are all in-edges of vertex 4.
 <p></p>
 <DIV ALIGN="CENTER"><A NAME="fig:quick-start"></A></A>
 <TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure:</STRONG>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
 An example of a directed graph.</CAPTION>
 <TR><TD><IMG SRC="./figs/quick_start.gif"></TD></TR>
 </TABLE>
@@ -93,13 +92,11 @@ to both out and in-edges. The other options for the third argument are
 and <TT>undirectedS</TT> which selects an undirected graph.
 
 <P>
-Once we have the graph type selected, we can create the graph in
-Figure&nbsp;<A HREF="#fig:quick-start"><IMG ALIGN="BOTTOM" BORDER="1"
-SRC="file:/usr/local/src/teTeX00/lib/latex2html/icons/crossref.gif"></A>
-by declaring a graph object and filling in edges using the
-<TT>add_edge()</TT> function.  We use the array of pairs
-<TT>edge_array</TT> merely as a convenient way to explicitly create
-the edges for this example.
+Once we have the graph type selected, we can create the graph in <A
+HREF="#fig:quick-start">Figure 2</A> by declaring a graph object and
+filling in edges using the <TT>add_edge()</TT> function.  We use the
+array of pairs <TT>edge_array</TT> merely as a convenient way to
+explicitly create the edges for this example.
 
 <P>
 <PRE>
@@ -462,8 +459,9 @@ separately from the graph object. The first kind of property is called
 an <I>internally stored property</I> while the second kind is called
 an <I>externally stored property</I>.  BGL uses a uniform mechanism to
 access both kinds of properties inside its graph algorithms called the
-<I>property accessor</I> interface, described in Section
-[property-accessors]. In addition, the <a
+<I>property accessor</I> interface, described in Section <a
+href="../../property_accessor.html">Property Accessor Concepts</a>. In
+addition, the <a
 href="./VertexPropertyGraph.html">VertexPropertyGraph</a> and <a
 href="./EdgePropertyGraph.html">EdgePropertyGraph</a> concepts define
 the interface for obtaining a property accessor object for an
@@ -472,13 +470,13 @@ internally property.
 <P>
 The BGL <TT>adjacency_list</TT> class allows users to specify
 internally stored properties through plug-in template parameters of
-the graph class. How to do this is discussed in detail in Section
-[plugins-and-interior-property-accessors].  Externally stored
-properties can be created in many different ways, although they are
-ultimately passed as separate arguments to the graph algorithms.  One
-straightforward way to store properties is to create an array indexed
-by vertex or edge ID. In the <TT>adjacency_list</TT> with
-<TT>vecS</TT> specified for the <TT>VertexList</TT> template
+the graph class. How to do this is discussed in detail in Section <a
+href="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins</a>.
+Externally stored properties can be created in many different ways,
+although they are ultimately passed as separate arguments to the graph
+algorithms.  One straightforward way to store properties is to create
+an array indexed by vertex or edge ID. In the <TT>adjacency_list</TT>
+with <TT>vecS</TT> specified for the <TT>VertexList</TT> template
 parameter, vertices are automatically assigned ID numbers, which can
 be accessed via the property accessor for the <TT>id_tag</TT>. Edges
 are not automatically assigned ID numbers. However the plugin
@@ -487,14 +485,11 @@ used to index into other externally stored properties.
 
 <P>
 In the following example, we construct a graph and apply <a
-href="./dijkstra_shortest_paths.html">Dijkstra's single-source
-shortest paths algorithm</a>. The complete source code for the example
-is in <a
+href="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths()</tt></a>.
+The complete source code for the example is in <a
 href="../examples/dijkstra.cpp"><TT>examples/dijkstra.cpp</TT></a>. Dijkstra's
 algorithm computes the shortest distance from the starting vertex to
-every other vertex in the graph. Section [dijkstra] gives the
-interface for the BGL template functions that implement Dijkstra's
-algorithm.
+every other vertex in the graph.
 
 <P>
 Dijkstra's algorithm requires that a weight property is associated
@@ -509,12 +504,14 @@ template argument for <TT>adjacency_list</TT>.
 <P>
 The <TT>listS</TT> and <TT>vecS</TT> types are selectors that
 determine the data structure used inside the <TT>adjacency_list</TT>
-(see Section [choosing-graph-type]). The <TT>directedS</TT> type
-specifies that the graph should be directed (versus undirected).  The
-following code shows the specification of the graph type and then the
-initialization of the graph. The edges and weights are passed to the
-graph constructor in the form of iterators (a pointer qualifies as a
-<a
+(see Section <a
+href="./using_adjacency_list.html#sec:choosing-graph-type">Choosing
+the <TT>Edgelist</TT> and <TT>VertexList</TT></a>). The
+<TT>directedS</TT> type specifies that the graph should be directed
+(versus undirected).  The following code shows the specification of
+the graph type and then the initialization of the graph. The edges and
+weights are passed to the graph constructor in the form of iterators
+(a pointer qualifies as a <a
 href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessIterator</a>).
 
 <P>
@@ -596,12 +593,12 @@ fulfilled by <I>visitors</I>.
 A visitor is like a functor, but instead of having just one
 &quot;apply&quot; method, it has several. Each of these methods get
 invoked at certain well-defined points within the algorithm. The
-visitor methods are explained in detail in Section
-[visitor-concepts]. The BGL provides a number of visitors for some
-common tasks including a predecessor recording visitor. The user is
-encouraged to write his or her own visitors as a way of extending the
-BGL. Here we will take a quick look at the implementation and use of
-the predecessor recorder.
+visitor methods are explained in detail in Section <a
+href="./visitor_concepts.html">Visitor Concepts</a>. The BGL provides
+a number of visitors for some common tasks including a predecessor
+recording visitor. The user is encouraged to write his or her own
+visitors as a way of extending the BGL. Here we will take a quick look
+at the implementation and use of the predecessor recorder.
 
 <P>
 The functionality of the predecessor recorder is separated into two
@@ -675,9 +672,9 @@ We are now ready to use the <TT>predecessor_recorder</TT> in
 Dijkstra's algorithm. Luckily, BGL's Dijkstra's algorithm is already
 equipped to handle visitors, so we just have to call the four argument
 version of the algorithm and pass in our new visitor. In this example
-we only need to use one visitor, but the BGL is also equipped to handle the
-use of multiple visitors in the same algorithm (see Section
-[visitor-concepts]).
+we only need to use one visitor, but the BGL is also equipped to
+handle the use of multiple visitors in the same algorithm (see Section
+<a href="./visitor_concepts.html">Visitor Concepts</a>).
 
 <P>
 <PRE>
