@@ -90,21 +90,22 @@ graph search.
 </tr>
 
 <tr>
-<td>Start Vertex</td>
-<td><tt>vis.start_vertex(s, g)</tt></td>
-<td><tt>void</tt></td>
-<td>
-This is invoked on the source vertex once before the start of the
-search.
-</td>
-</tr>
-
-<tr>
 <td>Discover Vertex</td>
 <td><tt>vis.discover_vertex(u, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
 This is invoked when a vertex is encountered for the first time.
+</td>
+</tr>
+
+<tr>
+<td>Examine Vertex</td>
+<td><tt>vis.examine_vertex(u, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+This is invoked on a vertex as it is popped from the queue. This
+happens immediately before <tt>examine_edge()</tt> is invoked
+on each of the out-edges of vertex <tt>u</tt>.
 </td>
 </tr>
 
