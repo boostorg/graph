@@ -279,7 +279,8 @@ namespace boost {
   {
     typedef graph_traits<IncidenceGraph> Traits;
     // Buffer default
-    typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    typedef boost::queue<vertex_descriptor> queue_t;
     queue_t Q;
     detail::wrap_ref<queue_t> Qref(Q);
 
