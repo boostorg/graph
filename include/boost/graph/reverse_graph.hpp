@@ -16,6 +16,7 @@ struct reverse_graph_tag { };
 template <class BidirectionalGraph, class GraphRef = const BidirectionalGraph&>
 class reverse_graph {
     typedef reverse_graph<BidirectionalGraph, GraphRef> Self;
+    typedef graph_traits<BidirectionalGraph> Traits;
  public:
     typedef BidirectionalGraph base_type;
 
@@ -23,36 +24,39 @@ class reverse_graph {
     reverse_graph(GraphRef g) : m_g(g) {}
         
     // Graph requirements
-    typedef typename graph_traits<BidirectionalGraph>::vertex_descriptor vertex_descriptor;
-    typedef typename graph_traits<BidirectionalGraph>::edge_descriptor edge_descriptor;
-    typedef typename graph_traits<BidirectionalGraph>::directed_category directed_category;
-    typedef typename graph_traits<BidirectionalGraph>::edge_parallel_category edge_parallel_category;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    typedef typename Traits::edge_descriptor edge_descriptor;
+    typedef typename Traits::directed_category directed_category;
+    typedef typename Traits::edge_parallel_category edge_parallel_category;
+    typedef typename Traits::traversal_category traversal_category;
 
     // IncidenceGraph requirements
-    typedef typename graph_traits<BidirectionalGraph>::in_edge_iterator out_edge_iterator;
-    typedef typename graph_traits<BidirectionalGraph>::degree_size_type degree_size_type;
+    typedef typename Traits::in_edge_iterator out_edge_iterator;
+    typedef typename Traits::degree_size_type degree_size_type;
 
     // BidirectionalGraph requirements
-    typedef typename graph_traits<BidirectionalGraph>::out_edge_iterator in_edge_iterator;
+    typedef typename Traits::out_edge_iterator in_edge_iterator;
 
     // AdjacencyGraph requirements
   typedef typename adjacency_iterator_generator<Self, 
     vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
     // VertexListGraph requirements
-    typedef typename graph_traits<BidirectionalGraph>::vertex_iterator vertex_iterator;
+    typedef typename Traits::vertex_iterator vertex_iterator;
 
     // Stuff that shouldn't be required according to the docs 
     // except that we don't have partial specialization support on all
     // compilers
 
     typedef void edge_iterator;
-    typedef typename graph_traits<BidirectionalGraph>::vertices_size_type vertices_size_type;
+    typedef typename Traits::vertices_size_type vertices_size_type;
     typedef void edges_size_type;
     
     // More typedefs used by detail::edge_property_map, vertex_property_map
-    typedef typename BidirectionalGraph::edge_property_type edge_property_type;
-    typedef typename BidirectionalGraph::vertex_property_type vertex_property_type;
+    typedef typename BidirectionalGraph::edge_property_type
+      edge_property_type;
+    typedef typename BidirectionalGraph::vertex_property_type
+      vertex_property_type;
     typedef reverse_graph_tag graph_tag;
     
 
