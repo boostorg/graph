@@ -51,11 +51,11 @@ namespace boost {
     
     const size_type num = num_vertices(G);
     
-    typedef typename vertex_property_accessor<VertexListGraph, id_tag>::type ID;
+    typedef typename vertex_property_accessor<VertexListGraph, vertex_index>::type ID;
     typedef bucket_sorter<size_type, Vertex, Degree, ID> BucketSorter;
     
     BucketSorter degree_bucket_sorter(num, num, degree,  
-				      get_vertex_property(G, id_tag()));
+				      get_vertex_property(G, vertex_index()));
 
     smallest_last_vertex_ordering(G, order, degree, marker, degree_bucket_sorter);
   }

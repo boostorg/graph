@@ -49,7 +49,7 @@ namespace boost {
   prim_minimum_spanning_tree(Graph& G, Vertex s)
   {
     prim_minimum_spanning_tree(G, s, 
-                    get_vertex_property_accessor(G, distance_tag()));
+                    get_vertex_property_accessor(G, vertex_distance()));
   }
 
   // Variant (2)
@@ -68,9 +68,9 @@ namespace boost {
                              UniformCostVisitor visit)
   {
     prim_minimum_spanning_tree(G, s, d, 
-                               get_edge_property_accessor(G, weight_tag()), 
-                               get_vertex_property_accessor(G, color_tag()), 
-                               get_vertex_property_accessor(G, id_tag()), 
+                               get_edge_property_accessor(G, edge_weight()), 
+                               get_vertex_property_accessor(G, vertex_color()), 
+                               get_vertex_property_accessor(G, vertex_index()), 
                                visit);
   }
 

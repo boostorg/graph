@@ -50,34 +50,40 @@ namespace boost {
   // The enum's are only necessary for a workaround for compilers that
   // don't do partial specialization (like VC++).
 
-  struct id_tag {
+  struct vertex_index {
     enum { num = detail::ID_PLUGIN_TAG };
   };
-  struct name_tag { 
+  struct graph_name { 
     enum { num = detail::NAME_PLUGIN_TAG };
   };
-  struct weight_tag { 
+  struct vertex_name { 
+    enum { num = detail::NAME_PLUGIN_TAG };
+  };
+  struct edge_name { 
+    enum { num = detail::NAME_PLUGIN_TAG };
+  };
+  struct edge_weight { 
     enum { num = detail::WEIGHT_PLUGIN_TAG };
   };
-  struct distance_tag { 
+  struct vertex_distance { 
     enum { num = detail::DISTANCE_PLUGIN_TAG };
   };
-  struct color_tag { 
+  struct vertex_color { 
     enum { num = detail::COLOR_PLUGIN_TAG };
   };
-  struct degree_tag { 
+  struct vertex_degree { 
     enum { num = detail::DEGREE_PLUGIN_TAG };
   };
-  struct out_degree_tag { 
+  struct vertex_out_degree { 
     enum { num = detail::OUT_DEGREE_PLUGIN_TAG };
   };
-  struct in_degree_tag { 
+  struct vertex_in_degree { 
     enum { num = detail::IN_DEGREE_PLUGIN_TAG };
   };
-  struct discover_time_tag { 
+  struct vertex_discover_time { 
     enum { num = detail::DISCOVER_TIME_PLUGIN_TAG };
   };
-  struct finish_time_tag { 
+  struct vertex_finish_time { 
     enum { num = detail::FINISH_TIME_PLUGIN_TAG };
   };
 

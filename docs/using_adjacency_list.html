@@ -365,16 +365,18 @@ predefined tags, and it is easy to add more.
 
 <P>
 <PRE>
-  struct id_tag { }
-  struct name_tag { } 
-  struct weight_tag { } 
-  struct distance_tag { } 
-  struct color_tag { } 
-  struct degree_tag { } 
-  struct out_degree_tag { } 
-  struct in_degree_tag { } 
-  struct discover_time_tag { } 
-  struct finish_time_tag { }
+  struct vertex_index { }
+  struct graph_name { } 
+  struct vertex_name { } 
+  struct edge_name { } 
+  struct edge_weight { } 
+  struct vertex_distance { } 
+  struct vertex_color { } 
+  struct vertex_degree { } 
+  struct vertex_out_degree { } 
+  struct vertex_in_degree { } 
+  struct vertex_discover_time { } 
+  struct vertex_finish_time { }
 </PRE>
 
 <P>
@@ -393,9 +395,9 @@ the edges of the graph.
 
 <P>
 <PRE>
-  typedef plugin&lt;distance_tag, float, 
-            plugin&lt;name_tag, std::string&gt; &gt; VertexPlugin;
-  typedef plugin&lt;weight_tag, float&gt; EdgePlugin;
+  typedef plugin&lt;vertex_distance, float, 
+            plugin&lt;vertex_name, std::string&gt; &gt; VertexPlugin;
+  typedef plugin&lt;edge_weight, float&gt; EdgePlugin;
 
   typedef adjacency_list&lt;mapS, vecS, undirectedS, 
                          VertexPlugin, EdgePlugin&gt; Graph;
@@ -472,7 +474,7 @@ in the graph.
 
 <P>
 <PRE>
-  struct first_name_tag { };
+  struct first_vertex_name { };
 </PRE>
 
 <P>
@@ -484,7 +486,7 @@ owes who''.
 
 <P>
 <PRE>
-  typedef plugin&lt;first_name_tag, std::string&gt; FirstNamePlugin;
+  typedef plugin&lt;first_vertex_name, std::string&gt; FirstNamePlugin;
   typedef adjacency_list&lt;vecS, vecS, directedS, 
                          FirstNamePlugin&gt; MyGraphType;
 
@@ -498,8 +500,8 @@ owes who''.
   for (int i = 0; i &lt; 11; ++i)
     add_edge(G, edge_array[i].first, edge_array[i].second);
 
-  vertex_property_accessor&lt;MyGraphType, first_name_tag&gt;::type
-    name = get_vertex_property_accessor(G, first_name_tag());
+  vertex_property_accessor&lt;MyGraphType, first_vertex_name&gt;::type
+    name = get_vertex_property_accessor(G, first_vertex_name());
     
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
@@ -530,8 +532,8 @@ other property value types.
   {
     // Access the propety acessor type for this graph
     typedef typename vertex_property_accessor&lt;Graph, 
-      first_name_tag&gt;::const_type NamePA;
-    NamePA name = get_vertex_property_accessor(G, first_name_tag());
+      first_vertex_name&gt;::const_type NamePA;
+    NamePA name = get_vertex_property_accessor(G, first_vertex_name());
 
     typedef typename boost::property_traits&lt;NamePA&gt;
       ::value_type NameType;

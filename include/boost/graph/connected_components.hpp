@@ -209,7 +209,7 @@ namespace boost {
 			 undirected_tag) 
     {
       return connected_components(G, v, c, 
-		   get_vertex_property_accessor(G, color_tag()), 
+		   get_vertex_property_accessor(G, vertex_color()), 
 		   undirected_tag());
     }
 
@@ -219,9 +219,9 @@ namespace boost {
 			  directed_tag)
     {
       return connected_components(G, v, c, 
-		     get_vertex_property_accessor(G, discover_time_tag()),
-		     get_vertex_property_accessor(G, finish_time_tag()),
-		     get_vertex_property_accessor(G, color_tag()),
+		     get_vertex_property_accessor(G, vertex_discover_time()),
+		     get_vertex_property_accessor(G, vertex_finish_time()),
+		     get_vertex_property_accessor(G, vertex_color()),
 		     directed_tag());
     }
 
@@ -234,8 +234,8 @@ namespace boost {
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       return connected_components(G, v, c, 
-		   get_vertex_property_accessor(G, discover_time_tag()),
-		   get_vertex_property_accessor(G, finish_time_tag()),
+		   get_vertex_property_accessor(G, vertex_discover_time()),
+		   get_vertex_property_accessor(G, vertex_finish_time()),
 		   color, directed_tag());
     }
   } // namespace detail

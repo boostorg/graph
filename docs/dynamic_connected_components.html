@@ -121,7 +121,7 @@ href="../examples/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</T
   ds.union_set(2,5);
     
   cout &lt;&lt; "An undirected graph:" &lt;&lt; endl;
-  print_graph(G, get_vertex_property(G,id_tag()));
+  print_graph(G, get_vertex_property(G,vertex_index()));
   cout &lt;&lt; endl;
     
   Graph::vertex_iterator i,end;

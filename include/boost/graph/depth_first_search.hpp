@@ -61,7 +61,7 @@ namespace boost {
   depth_first_search(Graph& g, DFSVisitor v)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    depth_first_search(g, v, get_vertex_property_accessor(g, color_tag()));
+    depth_first_search(g, v, get_vertex_property_accessor(g, vertex_color()));
   }
 
   // Variant (2)

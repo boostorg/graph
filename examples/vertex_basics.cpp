@@ -78,8 +78,8 @@ struct print_edge {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
   void operator()(Edge e) const
   {
-    typename boost::vertex_property_accessor<Graph,id_tag>::type 
-      id = get_vertex_property_accessor(G, id_tag());
+    typename boost::vertex_property_accessor<Graph,vertex_index>::type 
+      id = get_vertex_property_accessor(G, vertex_index());
 
     Vertex src = source(e, G);
     Vertex targ = target(e, G);
@@ -97,8 +97,8 @@ struct print_index {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
   void operator()(Vertex c) const
   {
-    typename boost::vertex_property_accessor<Graph,id_tag>::type 
-      id = get_vertex_property_accessor(G, id_tag());
+    typename boost::vertex_property_accessor<Graph,vertex_index>::type 
+      id = get_vertex_property_accessor(G, vertex_index());
     cout << id[c] << " ";
   }
 
@@ -114,8 +114,8 @@ struct exercise_vertex {
 
   void operator()(Vertex v) const
   {
-    typename boost::vertex_property_accessor<Graph,id_tag>::type 
-      id = get_vertex_property_accessor(g, id_tag());
+    typename boost::vertex_property_accessor<Graph,vertex_index>::type 
+      id = get_vertex_property_accessor(g, vertex_index());
 
     cout << "vertex id: " << id[v] << endl;
     
@@ -156,8 +156,8 @@ main()
   for (int i=0; i<11; ++i)
     add_edge(g, edge_array[i].first, edge_array[i].second);
 
-  boost::vertex_property_accessor<MyGraphType,id_tag>::type 
-    id = get_vertex_property_accessor(g, id_tag());
+  boost::vertex_property_accessor<MyGraphType,vertex_index>::type 
+    id = get_vertex_property_accessor(g, vertex_index());
 
   cout << "vertices(g) = ";
   boost::graph_traits<MyGraphType>::vertex_iterator vi;

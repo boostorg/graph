@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
   ds.union_set(2,5);
     
   cout << "An undirected graph:" << endl;
-  print_graph(G, get_vertex_property_accessor(G,id_tag()));
+  print_graph(G, get_vertex_property_accessor(G,vertex_index()));
   cout << endl;
     
   graph_traits<Graph>::vertex_iterator i,end;

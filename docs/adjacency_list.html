@@ -94,8 +94,8 @@ href="../examples/family_tree.cpp"><tt>examples/family_tree.cpp</tt></a>.
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::vertex_iterator i, end;
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::adjacency_iterator ai, a_end;
 
-  vertex_property_accessor< adjacency_list<>, id_tag>::type
-    id = get_vertex_property_accessor(G, id_tag());
+  vertex_property_accessor< adjacency_list<>, vertex_index>::type
+    id = get_vertex_property_accessor(G, vertex_index());
 
   for(tie(i,end) = vertices(G); i != end; ++i) {
     cout &lt;&lt; name[get(id, *i)];
@@ -211,7 +211,7 @@ concept.
 
 <P>
 If the <TT>VertexList</TT> of the graph is <TT>vecS</TT>, then the graph
-has a builtin ID vertex property accessed via the <TT>id_tag</TT>.  The
+has a builtin ID vertex property accessed via the <TT>vertex_index</TT>.  The
 ID numbers fall in the range <TT>[0,num_vertices(g))</TT> and are
 contiguous. When a vertex is removed the ID's are adjusted so that
 they retain these properties. Some care must be taken when using these

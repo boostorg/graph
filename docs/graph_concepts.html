@@ -450,8 +450,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in a directed graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    edge_property_accessor&lt;DirectedGraph, weight_tag&gt;::type
-      weight = get_edge_property(digraph, weight_tag());
+    edge_property_accessor&lt;DirectedGraph, edge_weight&gt;::type
+      weight = get_edge_property(digraph, edge_weight());
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }
@@ -467,8 +467,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in an undirected graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    edge_property_accessor&lt;UndirectedGraph, weight_tag&gt;::type
-      weight = get_edge_property(undigraph, weight_tag());
+    edge_property_accessor&lt;UndirectedGraph, edge_weight&gt;::type
+      weight = get_edge_property(undigraph, edge_weight());
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }

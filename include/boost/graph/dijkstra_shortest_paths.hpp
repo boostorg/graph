@@ -40,7 +40,7 @@ namespace boost {
                   typename graph_traits<VertexListGraph>::vertex_descriptor s)
   {
     dijkstra_shortest_paths(g, s, 
-                            get_vertex_property_accessor(G, distance_tag()));
+                            get_vertex_property_accessor(G, vertex_distance()));
   }
 
   // Variant (2)
@@ -52,9 +52,9 @@ namespace boost {
   {
     null_visitor null_vis;
     dijkstra_shortest_paths(g, s, d,
-                            get_edge_property_accessor(g, weight_tag()), 
-                            get_vertex_property_accessor(g, color_tag()), 
-                            get_vertex_property_accessor(g, id_tag()), 
+                            get_edge_property_accessor(g, edge_weight()), 
+                            get_vertex_property_accessor(g, vertex_color()), 
+                            get_vertex_property_accessor(g, vertex_index()), 
                             make_ucs_visitor(null_vis));
   }
 
@@ -66,9 +66,9 @@ namespace boost {
                   DistancePA d, UniformCostVisitor visit)
   {
     dijkstra_shortest_paths(g, s, d, 
-                            get_edge_property_accessor(g, weight_tag()), 
-                            get_vertex_property_accessor(g, color_tag()), 
-                            get_vertex_property_accessor(g, id_tag()), 
+                            get_edge_property_accessor(g, edge_weight()), 
+                            get_vertex_property_accessor(g, vertex_color()), 
+                            get_vertex_property_accessor(g, vertex_index()), 
                             visit);
   }
 

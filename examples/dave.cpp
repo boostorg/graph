@@ -82,10 +82,10 @@ b(14); d a
 
 */
 
-typedef plugin<color_tag, default_color_type, 
-         plugin<distance_tag,int> > VPlugin;
+typedef plugin<vertex_color, default_color_type, 
+         plugin<vertex_distance,int> > VPlugin;
 typedef int weight_t;
-typedef plugin<weight_tag,weight_t> EPlugin;
+typedef plugin<edge_weight,weight_t> EPlugin;
 
 typedef adjacency_list<vecS, vecS, directedS, VPlugin, EPlugin > Graph;
 
@@ -196,7 +196,7 @@ main(int argc, char* argv[])
   print(G, name);
 
   adjacency_list<listS, vecS, directedS, 
-    plugin<color_tag, default_color_type> > G_copy(N);
+    plugin<vertex_color, default_color_type> > G_copy(N);
 
   cout << "Starting graph:" << endl;
 

@@ -245,7 +245,7 @@ namespace boost {
     inline long operator[](Vertex* v) const { return v - _g->vertices; }
     Graph* _g;
   };
-  inline sgb_vertex_id_accessor get_vertex_property_accessor(Graph* g, id_tag) {
+  inline sgb_vertex_id_accessor get_vertex_property_accessor(Graph* g, vertex_index) {
     return sgb_vertex_id_accessor(g);
   }
 
@@ -258,7 +258,7 @@ namespace boost {
     typedef Vertex* key_type;
     inline char* operator[](Vertex* v) const { return v->name; }
   };
-  inline sgb_vertex_name_accessor get_vertex_property_accessor(Graph* g, name_tag) {
+  inline sgb_vertex_name_accessor get_vertex_property_accessor(Graph* g, vertex_name) {
     return sgb_vertex_name_accessor();
   }
 
@@ -374,11 +374,11 @@ namespace boost {
     typedef sgb_edge_length_accessor type;
   };
   template <>
-  struct vertex_property_accessor<Graph*,id_tag> {
+  struct vertex_property_accessor<Graph*,vertex_index> {
     typedef sgb_vertex_id_accessor type;
   };
   template <>
-  struct vertex_property_accessor<Graph*,name_tag> {
+  struct vertex_property_accessor<Graph*,vertex_name> {
     typedef sgb_vertex_name_accessor type;
   };
 #ifdef BOOST_GRAPH_PARTIAL_SPECIALIZATION  

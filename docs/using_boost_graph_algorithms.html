@@ -146,11 +146,11 @@ graph <TT>G</TT>.
 
 <P>
 <PRE>
-  boost::vertex_property_accessor&lt;Graph, distance_tag&gt;::type
-    d = get_vertex_property_accessor(G, distance_tag());
+  boost::vertex_property_accessor&lt;Graph, vertex_distance&gt;::type
+    d = get_vertex_property_accessor(G, vertex_distance());
 
-  boost::edge_property_accessor&lt;Graph, weight_tag&gt;::type
-    w = get_edge_property_accessor(G, weight_tag());
+  boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type
+    w = get_edge_property_accessor(G, edge_weight());
 </PRE>
 
 <P>
@@ -163,10 +163,10 @@ algorithm in the following way.
 <P>
 <PRE>
   boost::dijkstra_shortest_paths(G, s, 
-                                 get_vertex_property(G, distance_tag()),
-                                 get_edge_property(G, weight_tag()),
-                                 get_vertex_property(G, color_tag()),
-                                 get_vertex_property(G, id_tag()),
+                                 get_vertex_property(G, vertex_distance()),
+                                 get_edge_property(G, edge_weight()),
+                                 get_vertex_property(G, vertex_color()),
+                                 get_vertex_property(G, vertex_index()),
                                  null_visitor());
 </PRE>
 

@@ -228,7 +228,7 @@ namespace boost {
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     cuthill_mckee_ordering(G, inverse_permutation, color, 
-			   get_vertex_property_accessor(G, degree_tag()));
+			   get_vertex_property_accessor(G, vertex_degree()));
   }
   
   template <class Graph, class OutputIterator>
@@ -237,7 +237,7 @@ namespace boost {
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     cuthill_mckee_ordering(G, inverse_permutation, 
-			   get_vertex_property_accessor(G, color_tag()));
+			   get_vertex_property_accessor(G, vertex_color()));
   }
 
 } /*namespace matrix_ordering*/

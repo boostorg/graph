@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.5  2000/09/20 19:30:09  jsiek
+// changed the name of the property tags: name_tag -> vertex_name, etc.
+//
 // Revision 1.4  2000/09/19 01:58:00  jsiek
 // fixed some misuses of BOOST_NO_STD_ITERATOR_TRAITS, changing it
 // to BOOST_NO_ITERATOR_ADAPTORS, which is now always defined. Too
@@ -1571,7 +1574,7 @@ namespace boost {
       typedef vec_adj_list_any_vertex_pa type;
     };
     template <>
-    struct vec_adj_list_choose_vertex_pa_helper<id_tag> {
+    struct vec_adj_list_choose_vertex_pa_helper<vertex_index> {
       typedef vec_adj_list_id_vertex_pa type;
     };
 

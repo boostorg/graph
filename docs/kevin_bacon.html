@@ -96,12 +96,10 @@ of actors appearing together in a movie is symmetric.
 <P>
 <PRE>
   using namespace boost;
-  typedef plugin&lt;name_tag, string, 
-    plugin&lt;weight_tag, int&gt; &gt; EdgePlugin;
-  typedef plugin&lt;name_tag, string&gt; VertexPlugin;
   typedef adjacency_list&lt;vecS, vecS, undirectedS, 
-    VertexPlugin, EdgePlugin&gt; Graph;
-  Graph g;
+    plugin&lt;vertex_name, string&gt;,
+    plugin&lt;edge_name, string, plugin&lt;edge_weight, int&gt; &gt;
+  &gt; Graph;
 </PRE>
 
 <P>
@@ -110,12 +108,12 @@ objects from the graph. The following code shows how this is done.
 
 <P>
 <PRE>
-  boost::vertex_property_accessor&lt;Graph, name_tag&gt;::type 
-    actor_name = get_vertex_property_accessor(g, name_tag());
-  boost::edge_property_accessor&lt;Graph, name_tag&gt;::type 
-    connecting_movie = get_edge_property_accessor(g, name_tag());
-  boost::edge_property_accessor&lt;Graph, weight_tag&gt;::type 
-    weight = get_edge_property_accessor(g, weight_tag());
+  boost::vertex_property_accessor&lt;Graph, vertex_name&gt;::type 
+    actor_name = get_vertex_property_accessor(g, vertex_name());
+  boost::edge_property_accessor&lt;Graph, edge_name&gt;::type 
+    connecting_movie = get_edge_property_accessor(g, edge_name());
+  boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type 
+    weight = get_edge_property_accessor(g, edge_weight());
 </PRE>
 
 <P>
@@ -252,9 +250,9 @@ predecessors, since this is not part of the basic algorithm.
     
     dijkstra_shortest_paths
       (g, src, bacon_number.begin(),
-       get_edge_property_accessor(g, weight_tag()),
+       get_edge_property_accessor(g, edge_weight()),
        color.begin(),
-       get_vertex_property_accessor(g, id_tag()),
+       get_vertex_property_accessor(g, vertex_index()),
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 </PRE>
@@ -278,7 +276,7 @@ into vectors or arrays such as <TT>bacon_number</TT>. This is valid
 with the <TT>adjacency_list</TT> class with <TT>VertexList=vecS</TT>,
 but not with other variations of <TT>adjacency_list</TT>. A more
 generic way to index based on vertices is to use the ID property
-accessor (<TT>id_tag</TT>) in coordination with the <A
+accessor (<TT>vertex_index</TT>) in coordination with the <A
 HREF="../../property_accessor/random_access_iterator_property_accessor.html"><TT>random_access_iterator_property_accessor</TT></a>.
 
 <P>

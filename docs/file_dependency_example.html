@@ -128,8 +128,8 @@ the following sections.
 
   using namespace boost;
   typedef adjacency_list&lt;vecS, vecS, directedS, 
-      plugin&lt;color_tag, default_color_type&gt;,
-      plugin&lt;weight_tag, int&gt;
+      plugin&lt;vertex_color, default_color_type&gt;,
+      plugin&lt;edge_weight, int&gt;
     &gt; Graph;
   Graph g(N, used_by, used_by + sizeof(used_by) / sizeof(Edge));
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
@@ -227,9 +227,9 @@ accessor for the internal weight property.
 <PRE>
   std::vector&lt;int&gt; time(N, 0);
   typedef std::vector&lt;int&gt;::iterator Time;
-  using boost::weight_tag;
-  typedef boost::edge_property_accessor&lt;Graph, weight_tag&gt;::type Weight;
-  Weight weight = get_edge_property_accessor(g, weight_tag());
+  using boost::edge_weight;
+  typedef boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type Weight;
+  Weight weight = get_edge_property_accessor(g, edge_weight());
 </PRE>
 
 <P>

@@ -170,7 +170,7 @@ The following example prints out the ID for each of the vertices in
 the graph. All vertex and edge properties, including ID, are accessed
 via property accessor objects.  The <TT>vertex_property_accessor</TT>
 class is used to obtain the property accessor type for a specific
-property (specified by <TT>id_tag</TT>, one of the BGL predefined
+property (specified by <TT>vertex_index</TT>, one of the BGL predefined
 tags) and the <TT>get_vertex_property()</TT> function returns the
 actual property accessor object.
 
@@ -182,8 +182,8 @@ actual property accessor object.
     // ...
 
     // get the property accessor for vertex ID's
-    typedef vertex_property_accessor&lt;Graph, id_tag&gt;::type ID;
-    ID id = get_vertex_property(g, id_tag());
+    typedef vertex_property_accessor&lt;Graph, vertex_index&gt;::type ID;
+    ID id = get_vertex_property(g, vertex_index());
 
     std::cout &lt;&lt; "vertices(g) = ";
     typedef graph_traits&lt;Graph&gt;::vertex_iterator vertex_iter;
@@ -347,8 +347,8 @@ the source-target pairs for each out-edge of vertex <TT>v</TT>.
     void operator()(const Vertex&amp; v) const
     {
       typedef graph_traits&lt;Graph&gt; GraphTraits;
-      typename vertex_property_accessor&lt;Graph, id_tag&gt;::type 
-        id = get_vertex_property(g, id_tag());
+      typename vertex_property_accessor&lt;Graph, vertex_index&gt;::type 
+        id = get_vertex_property(g, vertex_index());
 
       std::cout &lt;&lt; "out-edges: ";
       typename GraphTraits::out_edge_iterator out_i, out_end;
@@ -478,7 +478,7 @@ algorithms.  One straightforward way to store properties is to create
 an array indexed by vertex or edge ID. In the <TT>adjacency_list</TT>
 with <TT>vecS</TT> specified for the <TT>VertexList</TT> template
 parameter, vertices are automatically assigned ID numbers, which can
-be accessed via the property accessor for the <TT>id_tag</TT>. Edges
+be accessed via the property accessor for the <TT>vertex_index</TT>. Edges
 are not automatically assigned ID numbers. However the plugin
 mechanism can be used to attach ID numbers to the edges which can be
 used to index into other externally stored properties.
@@ -497,7 +497,7 @@ with each edge and a distance property with each vertex.  Here we use
 an internal property for the weight and an external property for the
 distance. For the weight property we use the <TT>plugin</TT> class and
 specify <TT>int</TT> as the type used to represent weight values and
-<TT>weight_tag</TT> for the property tag (which is one of the BGL
+<TT>edge_weight</TT> for the property tag (which is one of the BGL
 predefined property tags).  The weight plugin is then used as a
 template argument for <TT>adjacency_list</TT>. 
 
@@ -517,7 +517,7 @@ href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessI
 <P>
 <PRE>
   typedef adjacency_list&lt;listS, vecS, directedS, 
-                         no_plugin, plugin&lt;weight_tag, int&gt; &gt; Graph;
+                         no_plugin, plugin&lt;edge_weight, int&gt; &gt; Graph;
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
   typedef std::pair&lt;int,int&gt; E;
 

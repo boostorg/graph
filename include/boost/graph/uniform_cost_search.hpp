@@ -94,8 +94,8 @@ namespace boost {
     typedef typename graph_traits<VertexListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor V;
     uniform_cost_search(g, s,
-                        get_vertex_property_accessor(G, distance_tag()), 
-                        get_edge_property_accessor(G, weight_tag()), 
+                        get_vertex_property_accessor(G, vertex_distance()), 
+                        get_edge_property_accessor(G, edge_weight()), 
                         compare, combine);
   }
 
@@ -110,8 +110,8 @@ namespace boost {
   {
     null_visitor null_vis;
     uniform_cost_search(g, s, d, w, 
-                        get_vertex_property_accessor(g, color_tag()),
-                        get_vertex_property_accessor(g, id_tag()),
+                        get_vertex_property_accessor(g, vertex_color()),
+                        get_vertex_property_accessor(g, vertex_index()),
                         compare, combine, make_ucs_visitor(null_vis));
   }
 

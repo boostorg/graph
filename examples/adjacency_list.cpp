@@ -56,22 +56,22 @@ int main(int argc, char* argv[])
   using namespace boost;
   using namespace std;
 
-  typedef plugin<name_tag, std::string> EdgePlugin;
-  typedef plugin<color_tag,default_color_type> ColorPlugin;
-  typedef plugin<id_tag, std::size_t, ColorPlugin> VertexPlugin;
-  typedef plugin<name_tag, std::string> GraphPlugin;
+  typedef plugin<edge_name, std::string> EdgePlugin;
+  typedef plugin<vertex_color,default_color_type> ColorPlugin;
+  typedef plugin<vertex_index, std::size_t, ColorPlugin> VertexPlugin;
+  typedef plugin<graph_name, std::string> GraphPlugin;
 
   typedef adjacency_list<vecS, listS, undirectedS, 
     VertexPlugin, EdgePlugin, GraphPlugin> Graph;
 
   const int V = 5;
   Graph g(V, GraphPlugin("foo"));
-  cout << "graph name: " << get_plugin(g, name_tag()) << endl;
-  vertex_property_accessor<Graph,id_tag>::type id
-    = get_vertex_property_accessor(g, id_tag());
+  cout << "graph name: " << get_plugin(g, graph_name()) << endl;
+  vertex_property_accessor<Graph,vertex_index>::type id
+    = get_vertex_property_accessor(g, vertex_index());
 
-  edge_property_accessor<Graph,name_tag>::type name
-    = get_edge_property_accessor(g, name_tag());
+  edge_property_accessor<Graph, edge_name>::type name
+    = get_edge_property_accessor(g, edge_name());
 
   boost::graph_traits<Graph>::vertex_iterator vi, viend;
   int vnum = 0;

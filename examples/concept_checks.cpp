@@ -43,36 +43,36 @@ main(int,char*[])
   using namespace boost;
   {
     typedef adjacency_list<vecS, vecS, directedS, 
-     plugin<color_tag,int>, plugin<weight_tag,int> > Graph;
+     plugin<vertex_color,int>, plugin<edge_weight,int> > Graph;
     REQUIRE(Graph, VertexAndEdgeListGraph);
     REQUIRE(Graph, MutableGraph);
-    REQUIRE2(Graph, color_tag, VertexPropertyGraph);
-    REQUIRE2(Graph, weight_tag, EdgePropertyGraph);
+    REQUIRE2(Graph, vertex_color, VertexPropertyGraph);
+    REQUIRE2(Graph, edge_weight, EdgePropertyGraph);
     // the builtin id property is readable but not writable
-    typedef vertex_property_accessor<Graph,id_tag>::const_type ID_PA;
+    typedef vertex_property_accessor<Graph,vertex_index>::const_type ID_PA;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
     REQUIRE2(ID_PA, Vertex, ReadablePropertyAccessor);
   }
   {
-    typedef adjacency_list<vecS, vecS, bidirectionalS, plugin<color_tag,int>,
-      plugin<weight_tag,int> > Graph;
+    typedef adjacency_list<vecS, vecS, bidirectionalS, plugin<vertex_color,int>,
+      plugin<edge_weight,int> > Graph;
     REQUIRE(Graph, VertexAndEdgeListGraph);
     REQUIRE(Graph, BidirectionalGraph);
     REQUIRE(Graph, MutableGraph);
-    REQUIRE2(Graph, color_tag, VertexPropertyGraph);
-    REQUIRE2(Graph, weight_tag, EdgePropertyGraph);
+    REQUIRE2(Graph, vertex_color, VertexPropertyGraph);
+    REQUIRE2(Graph, edge_weight, EdgePropertyGraph);
     // the builtin id property is readable but not writable
-    typedef vertex_property_accessor<Graph,id_tag>::const_type ID_PA;
+    typedef vertex_property_accessor<Graph,vertex_index>::const_type ID_PA;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
     REQUIRE2(ID_PA, Vertex, ReadablePropertyAccessor);
   }
   {
-    typedef adjacency_list< listS, listS, directedS, plugin<color_tag,int>, 
-      plugin<weight_tag,int> > Graph;
+    typedef adjacency_list< listS, listS, directedS, plugin<vertex_color,int>, 
+      plugin<edge_weight,int> > Graph;
     REQUIRE(Graph, VertexAndEdgeListGraph);
     REQUIRE(Graph, MutableGraph);
-    REQUIRE2(Graph, color_tag, VertexPropertyGraph);
-    REQUIRE2(Graph, weight_tag, EdgePropertyGraph);
+    REQUIRE2(Graph, vertex_color, VertexPropertyGraph);
+    REQUIRE2(Graph, edge_weight, EdgePropertyGraph);
   }
   {
     typedef std::pair<int,int> E;

@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 			      get_edge_property_accessor(g, length_tag()), 
 			      // Use the "y" utility field for color.
 			      get_vertex_property_accessor(g, y_tag<long>()),
-			      get_vertex_property_accessor(g, id_tag()), 
+			      get_vertex_property_accessor(g, vertex_index()), 
 			      length_vis);
 
    printf("  and its minimum spanning tree has length %ld.\n", sp_length);

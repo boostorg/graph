@@ -115,14 +115,14 @@ int main(int,char*[])
   fill(weights, weights + nedges, 1);
 
   typedef adjacency_list<vecS, vecS, directedS, 
-      plugin<color_tag, default_color_type>,
-      plugin<weight_tag, int>
+      plugin<vertex_color, default_color_type>,
+      plugin<edge_weight, int>
     > Graph;
   Graph g(N, used_by, used_by + nedges, weights);
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
-  typedef vertex_property_accessor<Graph, color_tag>::type Color;
-  Color color = get_vertex_property_accessor(g, color_tag());
+  typedef vertex_property_accessor<Graph, vertex_color>::type Color;
+  Color color = get_vertex_property_accessor(g, vertex_color());
 
   // Determine ordering for a full recompilation
   {
@@ -144,8 +144,8 @@ int main(int,char*[])
     // Set up the necessary graph properties.
     vector<int> time(N, 0);
     typedef vector<int>::iterator Time;
-    typedef edge_property_accessor<Graph, weight_tag>::type Weight;
-    Weight weight = get_edge_property_accessor(g, weight_tag());
+    typedef edge_property_accessor<Graph, edge_weight>::type Weight;
+    Weight weight = get_edge_property_accessor(g, edge_weight());
 
     // Calculate the in_degree for each vertex.
     vector<int> in_degree(N, 0);
@@ -199,8 +199,8 @@ int main(int,char*[])
 
   // are there any cycles in the graph?
   {
-    typedef vertex_property_accessor<Graph,color_tag>::type Color;
-    Color color = get_vertex_property_accessor(g, color_tag());
+    typedef vertex_property_accessor<Graph,vertex_color>::type Color;
+    Color color = get_vertex_property_accessor(g, vertex_color());
     bool has_cycle = false;
     cycle_detector<Color> vis(color, has_cycle);
     depth_first_search(g, vis);

@@ -46,11 +46,10 @@ main()
     return -1;
   }
 
-  typedef plugin<name_tag, string, 
-    plugin<weight_tag, int> > EdgePlugin;
-  typedef plugin<name_tag, string> VertexPlugin;
   typedef adjacency_list<vecS, vecS, undirectedS, 
-    VertexPlugin, EdgePlugin> Graph;
+    plugin<vertex_name, string>,
+    plugin<edge_name, string, plugin<edge_weight, int> >
+  > Graph;
 
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::edge_descriptor Edge;
@@ -59,14 +58,14 @@ main()
   NameVertexMap actors;
   Graph g;
 
-  vertex_property_accessor<Graph, name_tag>::type 
-    actor_name = get_vertex_property_accessor(g, name_tag());
-  vertex_property_accessor<Graph, id_tag>::type 
-    vertex_id = get_vertex_property_accessor(g, id_tag());
-  edge_property_accessor<Graph, name_tag>::type 
-    connecting_movie = get_edge_property_accessor(g, name_tag());
-  edge_property_accessor<Graph, weight_tag>::type 
-    weight = get_edge_property_accessor(g, weight_tag());
+  vertex_property_accessor<Graph, vertex_name>::type 
+    actor_name = get_vertex_property_accessor(g, vertex_name());
+  vertex_property_accessor<Graph, vertex_index>::type 
+    vertex_id = get_vertex_property_accessor(g, vertex_index());
+  edge_property_accessor<Graph, edge_name>::type 
+    connecting_movie = get_edge_property_accessor(g, edge_name());
+  edge_property_accessor<Graph, edge_weight>::type 
+    weight = get_edge_property_accessor(g, edge_weight());
   
   string line;
   while (getline(datafile,line)) {
@@ -127,9 +126,9 @@ main()
     
     dijkstra_shortest_paths
       (g, src, bacon_number.begin(),
-       get_edge_property_accessor(g, weight_tag()),
+       get_edge_property_accessor(g, edge_weight()),
        color.begin(),
-       get_vertex_property_accessor(g, id_tag()),
+       get_vertex_property_accessor(g, vertex_index()),
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 

@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
 {
   using namespace boost;
   typedef adjacency_list < vecS, vecS, undirectedS, 
-       plugin<color_tag, default_color_type,
-         plugin<distance_tag,int> >, plugin<weight_tag,int> > Graph;
+       plugin<vertex_color, default_color_type,
+         plugin<vertex_distance,int> >, plugin<edge_weight,int> > Graph;
   typedef std::pair<int,int> E;
   const int num_nodes = 5;
   E edges[] = { E(0,2), 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   std::vector<Graph::vertex_descriptor> p(num_vertices(G));
   prim_minimum_spanning_tree
     (G, *(vertices(G).first),
-     get_vertex_property_accessor(G, distance_tag()),
+     get_vertex_property_accessor(G, vertex_distance()),
      make_ucs_visitor(record_predecessors(p.begin(), on_edge_relaxed())));
 
   for ( std::vector<Graph::vertex_descriptor>::iterator i = p.begin();

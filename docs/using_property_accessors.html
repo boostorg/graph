@@ -161,11 +161,11 @@ some graph type.
 
 <P>
 <PRE>
-  vertex_property_accessor&lt;Graph, distance_tag&gt;::type d
-    = get_vertex_property_accessor(g, distance_tag());
+  vertex_property_accessor&lt;Graph, vertex_distance&gt;::type d
+    = get_vertex_property_accessor(g, vertex_distance());
 
-  edge_property_accessor&lt;Graph, weight_tag&gt;::type w
-    = get_edge_property_accessor(g, weight_tag());
+  edge_property_accessor&lt;Graph, edge_weight&gt;::type w
+    = get_edge_property_accessor(g, edge_weight());
 </PRE>
 
 <P>
@@ -194,10 +194,10 @@ graph, so one would call Dijkstra's algorithm in the following way
 <P>
 <PRE>
   dijkstra_shortest_paths(g, src, 
-    get_vertex_property_accessor(g, distance_tag()),
-    get_edge_property_accessor(g, weight_tag()),
-    get_vertex_property_accessor(g, color_tag()),
-    get_vertex_property_accessor(g, id_tag()),
+    get_vertex_property_accessor(g, vertex_distance()),
+    get_edge_property_accessor(g, edge_weight()),
+    get_vertex_property_accessor(g, vertex_color()),
+    get_vertex_property_accessor(g, vertex_index()),
     null_visitor());
 </PRE>
 
@@ -261,7 +261,7 @@ the flow and capacity values.
 <P>
 <PRE>
   typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
-    no_plugin, plugin&lt;id_tag, std::size_t&gt; &gt; Graph;
+    no_plugin, plugin&lt;vertex_index, std::size_t&gt; &gt; Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -274,8 +274,8 @@ the flow and capacity values.
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef edge_property_accessor&lt;Graph,id_tag&gt;::type EdgeID_PA;
-  EdgeID_PA edge_id = get_edge_property_accessor(G, id_tag());
+  typedef edge_property_accessor&lt;Graph,vertex_index&gt;::type EdgeID_PA;
+  EdgeID_PA edge_id = get_edge_property_accessor(G, vertex_index());
 
   boost::random_access_iterator_property_accessor
     &lt;int*, int, int&amp;, EdgeID_PA&gt; 

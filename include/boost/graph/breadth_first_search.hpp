@@ -62,7 +62,7 @@ namespace boost {
     BFSVisitor vis)
   {
     breadth_first_search(g, s, vis,
-			 get_vertex_property_accessor(g, color_tag()));
+			 get_vertex_property_accessor(g, vertex_color()));
   }
 
   // Variant (2)
