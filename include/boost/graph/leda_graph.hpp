@@ -38,6 +38,9 @@
 // treat a LEDA GRAPH object as a boost graph "as is". No
 // wrapper is needed for the GRAPH object.
 
+// Remember to define LEDA_PREFIX so that LEDA types such as
+// leda_edge show up as "leda_edge" and not just "edge".
+
 // Warning: this implementation relies on partial specialization
 // for the graph_traits class (so it won't compile with Visual C++)
 
@@ -47,7 +50,7 @@ namespace boost {
   
   struct leda_out_edge_iterator_policies
   {
-    static void initialize(edge& ) { }
+    static void initialize(leda_edge& ) { }
 
     template <typename Iter>
     static void increment(Iter& i)
@@ -58,7 +61,7 @@ namespace boost {
     { i.base() = Pred_Adj_Edge(i.base(), 0); }
 
     template <typename Iter>
-    static edge dereference(const Iter& i)
+    static leda_edge dereference(const Iter& i)
     { return i.base(); }
 
     template <typename Iter>
@@ -68,7 +71,7 @@ namespace boost {
 
   struct leda_in_edge_iterator_policies
   {
-    static void initialize(edge& ) { }
+    static void initialize(leda_edge& ) { }
 
     template <typename Iter>
     static void increment(Iter& i)
@@ -79,7 +82,7 @@ namespace boost {
     { i.bae() = Pred_Adj_Edge(i.base(), 1); }
 
     template <typename Iter>
-    static edge dereference(const Iter& i)
+    static leda_edge dereference(const Iter& i)
     { return i.base(); }
 
     template <typename Iter>
@@ -89,7 +92,7 @@ namespace boost {
 
   struct leda_adjacency_iterator_policies
   {
-    static void initialize(edge& ) { }
+    static void initialize(leda_edge& ) { }
 
     template <typename Iter>
     static void increment(Iter& i)
@@ -100,7 +103,7 @@ namespace boost {
     { i.base() = Pred_Adj_Edge(i.base(), 0); }
 
     template <typename Iter>
-    static node dereference(const Iter& i)
+    static leda_node dereference(const Iter& i)
     { return ::target(i.base()); }
 
     template <typename Iter>
@@ -114,7 +117,7 @@ namespace boost {
     leda_vertex_iterator_policies() { }
     leda_vertex_iterator_policies(const LedaGraph* g) : m_g(g) { }
 
-    void initialize(node& v) const { }
+    void initialize(leda_node& v) const { }
 
     template <typename Iter>
     void increment(Iter& i) const
@@ -125,7 +128,7 @@ namespace boost {
     { i.base() = m_g->pred_node(i.base()); }
 
     template <typename Iter>
-    node dereference(const Iter& i) const
+    leda_node dereference(const Iter& i) const
     { return i.base(); }
 
     template <typename Iter>
@@ -147,33 +150,33 @@ namespace boost {
 
   template <class vtype, class etype>
   struct graph_traits< GRAPH<vtype,etype> > {
-    typedef node vertex_descriptor;
-    typedef edge edge_descriptor;
+    typedef leda_node vertex_descriptor;
+    typedef leda_edge edge_descriptor;
 
-    typedef boost::iterator_adaptor<edge,
+    typedef boost::iterator_adaptor<leda_edge,
       boost::leda_adjacency_iterator_policies, 
-      node, node, const node*,
+      leda_node, leda_node, const leda_node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > adjacency_iterator;
 
-    typedef boost::iterator_adaptor<edge,
+    typedef boost::iterator_adaptor<leda_edge,
       boost::leda_out_edge_iterator_policies,
-      edge, const edge&, const edge*,
+      leda_edge, const leda_edge&, const leda_edge*,
       std::forward_iterator_tag,
       std::ptrdiff_t
     > out_edge_iterator;
 
-    typedef boost::iterator_adaptor<edge,
+    typedef boost::iterator_adaptor<leda_edge,
       boost::leda_in_edge_iterator_policies, 
-      edge, const edge&, const edge*,
+      leda_edge, const leda_edge&, const leda_edge*,
       std::forward_iterator_tag,
       std::ptrdiff_t
     > in_edge_iterator;
 
-    typedef boost::iterator_adaptor<node,
+    typedef boost::iterator_adaptor<leda_node,
       boost::leda_vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      node, node, const node*,
+      leda_node, leda_node, const leda_node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > vertex_iterator;
@@ -400,7 +403,7 @@ namespace boost {
     typedef readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
-    typedef node key_type;
+    typedef leda_node key_type;
     leda_graph_id_map() { }
     template <class T>
     long operator[](T x) const { return x->id(); }
@@ -511,10 +514,10 @@ namespace boost {
   public:
     typedef E value_type;
     typedef ERef reference;
-    typedef node key_type;
+    typedef leda_node key_type;
     typedef lvalue_property_map_tag category;
     leda_node_property_map(NodeMapPtr a) : m_array(a) { }
-    ERef operator[](node n) const { return (*m_array)[n]; }
+    ERef operator[](leda_node n) const { return (*m_array)[n]; }
   protected:
     NodeMapPtr m_array;
   };
