@@ -80,7 +80,7 @@ bool check_edge_added(Graph& g, Edge e,
     cerr << "    Failed, not in edge set."<< endl;
 #endif
     return false;
-  } else if (inserted && edge_id[e] != correct_id) {
+  } else if (edge_id[e] != correct_id) {
 #if VERBOSE
     cerr << "    Failed, invalid edge property."<< endl;
 #endif
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 #endif
       Edge e;
       bool inserted;
-      boost::tie(e,inserted) = add_edge(a, b, current_edge_id++, g);
+      boost::tie(e, inserted) = add_edge(a, b, current_edge_id++, g);
 #if VERBOSE
       std::cout << "inserted: " << inserted << std::endl;
       std::cout << "source(e,g)" << source(e,g) << endl;
