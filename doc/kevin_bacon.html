@@ -61,7 +61,7 @@ time than Dijkstra's).
 For this example we will use a much smaller graph than all movies and
 all actors. The full source code for this example is in <a
 href="../example/kevin-bacon.cpp"><TT>examples/kevin-bacon.cpp</TT></a>.
-We have supplied a file <TT>kevin_bacon.dat</TT> which contains a list
+We have supplied a file <TT>kevin-bacon.dat</TT> which contains a list
 of actor pairs who appeared in the same movie. Each line of the file
 contains an actor's name, a movie, and another actor that appeared in
 the movie. The ``|'' character is used as a separator. Here is an
@@ -78,9 +78,9 @@ it. We use a <TT>std::ifstream</TT> to input the file.
 
 <P>
 <PRE>
-  std::ifstream datafile("./kevin_bacon.dat");
+  std::ifstream datafile("./kevin-bacon.dat");
   if (!datafile) {
-    cerr &lt;&lt; "No ./kevin_bacon.dat file" &lt;&lt; endl;
+    cerr &lt;&lt; "No ./kevin-bacon.dat file" &lt;&lt; endl;
     return -1;
   }
 </PRE>
