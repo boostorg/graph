@@ -15,7 +15,7 @@
 #include <utility>
 #include <iterator>
 #include <vector>
-#include <limits>
+#include <boost/limits.hpp>
 #include <cmath>
 
 namespace boost {
