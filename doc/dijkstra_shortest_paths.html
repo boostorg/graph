@@ -221,13 +221,16 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   The shortest path weight from the source vertex <tt>s</tt> to each
   vertex in the graph <tt>g</tt> is recorded in this property map. The
   shortest path weight is the sum of the edge weights along the
-  shortest path.  The type <tt>DistanceMap</tt> must be a model of
-  \concept{ReadWritePropertyMap}. The vertex descriptor type of the
-  graph needs to be usable as the key type of the distance map. The
-  value type of the distance map must be <a
+  shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The vertex descriptor type of the graph needs to
+  be usable as the key type of the distance map. The value type of the
+  distance map must be <a
   href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
-  Comparable</a>.<br> 
-  <b>Default:</b> <a href="../../property_map/iterator_property_map.html">
+  Comparable</a>.<br>
+
+  <b>Default:</b> <a
+  href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -236,13 +239,16 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
 
 IN: <tt>distance_compare(CompareFunction cmp)</tt> 
 <blockquote>
-  This function is use to compare distances to determine
-  which vertex is closer to the source vertex.
-  The <tt>CompareFunction</tt> type must be a model of
-  \stlconcept{BinaryPredicate} and have argument types that
-  match the value type of the <tt>DistanceMap</tt> property map.<br>
-  <b>Default:</b> <tt>std::less&lt;D&gt;</tt> with
-  <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
+  This function is use to compare distances to determine which vertex
+  is closer to the source vertex.  The <tt>CompareFunction</tt> type
+  must be a model of <a
+  href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+  Predicate</a> and have argument types that match the value type of
+  the <tt>DistanceMap</tt> property map.<br>
+
+  <b>Default:</b>
+  <tt>std::less&lt;D&gt;</tt> with <tt>D=typename
+  property_traits&lt;DistanceMap&gt;::value_type</tt>
 </blockquote>
 
 IN: <tt>distance_combine(CombineFunction cmb)</tt> 
@@ -255,6 +261,7 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
   the second argument type must match the value type of the
   <tt>WeightMap</tt> property map.  The result type must be the same
   type as the distance value type.<br>
+
   <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
 </blockquote>
