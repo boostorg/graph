@@ -113,7 +113,7 @@ struct grid_force_pairs
 
       if (column >= columns) column = columns - 1;
       if (row >= rows) row = rows - 1;
-      buckets.at(row * columns + column).push_back(*v);
+      buckets[row * columns + column].push_back(*v);
     }
 
     typedef typename buckets_t::iterator buckets_iterator;
