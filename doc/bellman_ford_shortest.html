@@ -1,0 +1,180 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Bellman Ford Shortest Paths</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+<IMG SRC="../../../c++boost.gif" 
+     ALT="C++ Boost" width="277" height="86"> 
+
+<BR Clear>
+
+
+<H1><A NAME="sec:bellman-ford"></A>
+<TT>bellman_ford_shortest_paths</TT>
+</H1>
+
+<P>
+<DIV ALIGN="left">
+<TABLE CELLPADDING=3 border>
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed or undirected</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">distance, weight</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT"><i>O(V E)</i></TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/bellman_ford_shortest_paths.hpp"><TT>boost/graph/bellman_ford_shortest_paths.hpp</TT></a>
+</TD>
+</TR></TABLE>
+</DIV>
+
+<P>
+<PRE>
+(1)
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
+  WeightMap w, DistanceMap d)
+
+(2)
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap,
+          class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightMap w, 
+  DistanceMap d, BellmanFordVisitor visit)
+</PRE>
+
+<P>
+The Bellman-Ford algorithm&nbsp;[<A
+HREF="bibliography.html#bellman58">4</A>,<A
+HREF="bibliography.html#ford62:_flows">11</A>,<A
+HREF="bibliography.html#lawler76:_comb_opt">20</A>,<A
+HREF="bibliography.html#clr90">8</A>] solves the single-source
+shortest paths problem for a graph with both positive and negative
+edge weights. See Section <A
+HREF="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
+Algorithms</A> for a description of the single-source shortest paths
+problem. If a cycle with negative length is detected, the algorithm
+returns <TT>false</TT>. The argument <TT>N</TT> should be the number
+of vertices in the graph. The source vertex is indicated by
+initializing the distance of the source vertex to zero and the
+distances of the rest of the vertices to
+<TT>std::numeric_limits&lt;T&gt;::max()</TT>.
+
+<P>
+
+<H3>Requirements on Types</H3>
+
+<P>
+
+<UL>
+<LI>The type <TT>EdgeListGraph</TT> must be a model of
+     <a href="./EdgeListGraph.html">EdgeListGraph</a>.
+</LI>
+<LI>The type <TT>Distance</TT> must be a model of <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+    vertex descriptor type of the graph needs to be usable as the key
+    type of the distance map. The value type of the distance
+    map must be <a
+    href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.
+</LI>
+<LI>The <TT>Weight</TT> type must be a model of
+     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. 
+     The edge descriptor of the graph needs to be usable as the key
+     type for the weight map. The value type for the
+     weight map must be <I>Addable</I> with the
+     distance map's value type.
+</LI>
+<LI>The <TT>Parent</TT> type must be a model of <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+    value type and key type should be the graph's vertex descriptor
+    type.
+</LI>
+<LI>The type <TT>BellmanFordVisitor</TT> must be a model of <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>.
+</LI>
+</UL>
+
+<P>
+
+<H3>Complexity</H3>
+
+<P>
+The time complexity is <i>O(V E)</i>.
+
+<P>
+
+<H3>Example</H3>
+
+<P>
+The source code for this example is in <a
+href="../example/bellman_ford.cpp"><TT>examples/bellman_ford.cpp</TT></a>.
+
+<P>
+<PRE>
+  enum { u, v, x, y, z, N };
+  char name[] = { 'u', 'v', 'x', 'y', 'z' };
+
+  typedef std::pair&lt;int,int&gt; E;
+  E edges[] = { E(u,y), E(u,x), E(u,v),
+                E(v,u),
+                E(x,y), E(x,v),
+                E(y,v), E(y,z),
+                E(z,u), E(z,x) };
+  
+  int weight[] = { -4, 8, 5,
+                   -2,
+                   9, -3,
+                   7, 2,
+                   6, 7 };
+
+  typedef edge_list&lt;E*,E,ptrdiff_t&gt; Graph;
+  Graph g(edges, edges + sizeof(edges)/sizeof(E));
+    
+  vector&lt;int&gt; distance(N,std::numeric_limits&lt;short&gt;::max());
+  vector&lt;int&gt; parent(N,-1);
+  
+  distance[z] = 0;
+  parent[z] = z;
+  bool r = bellman_ford_shortest_paths(g, int(N), weight,
+                                       distance.begin(),
+                                       parent.begin());
+  if (r)  
+    for (int i = 0; i &lt; N; ++i)
+      std::cout &lt;&lt; name[i] &lt;&lt; ": " &lt;&lt; distance[i]
+                &lt;&lt; " " &lt;&lt; name[parent[i]] &lt;&lt; std::endl;
+  else
+    std::cout &lt;&lt; "negative cycle" &lt;&lt; std::endl;
+</PRE>
+The distance and predecessor for each vertex is:
+<PRE>
+  u: 2 v
+  v: 4 x
+  x: 7 z
+  y: -2 u
+  z: 0 z
+</PRE>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

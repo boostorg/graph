@@ -1,0 +1,139 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Jeremy Siek makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Topological Sort</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+<IMG SRC="../../../c++boost.gif" 
+     ALT="C++ Boost" width="277" height="86"> 
+
+<BR Clear>
+
+
+<H1><A NAME="sec:topological-sort">
+<TT>topological_sort</TT>
+</H1>
+
+<P>
+<DIV ALIGN="left">
+<TABLE CELLPADDING=3 border>
+<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
+<TD ALIGN="LEFT">directed acyclic</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
+<TD ALIGN="LEFT">color</TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
+<TD ALIGN="LEFT">time: <i>O(V + E)</i></TD>
+</TR>
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+<PRE>
+(1)
+template &lt;class VertexListGraph, class OutputIterator&gt;
+void topological_sort(VertexListGraph&amp; G, OutputIterator iter)
+
+(2)
+template &lt;class VertexListGraph, class OutputIterator, class Visitor&gt;
+void topological_sort(VertexListGraph&amp; G, OutputIterator iter,
+                      Visitor visit)
+
+(3)
+template &lt;class VertexListGraph, class OutputIterator, 
+          class ColorMap, class DFSVisitor&gt;
+void topological_sort(VertexListGraph&amp; G, OutputIterator iter, 
+                      ColorMap color, DFSVisitor visit)
+</PRE>
+
+<P>
+The topological sort algorithm creates a linear ordering of the
+vertices such that if edge <i>(u,v)</i> appears in the graph, then
+<i>u</i> comes before <i>v</i> in the ordering. The graph must be a
+directed acyclic graph (DAG). The implementation consists mainly of a
+call to <a
+href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
+
+<P>
+
+<H3>Requirements on Types</H3>
+
+<P>
+
+<UL>
+<LI>The graph type must be a model of <a
+href="./VertexListGraph.html">VertexListGraph</a>.
+</LI>
+<LI>Vertex descriptors of the graph will be output to the
+    <TT>OutputIterator</TT>, which must model <a
+    href="http://www.sgi.com/Technology/STL/OutputIterator.html">OutputIterator</a>.
+</LI>
+<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
+</LI>
+<LI>The <TT>ColorMap</TT> must be a <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
+    and vertex descriptors from the graph must be usable as the
+    map's key type.
+</LI>
+<LI>The <TT>DFSVisitor</TT> type must be a model of <a href="./DFSVisitor.html">DFSVisitor</a>.
+
+</UL>
+
+<P>
+
+<H3>Example</H3>
+
+<P>
+Calculate a topological ordering of the vertices.
+
+<P>
+<PRE>
+  typedef adjacency_list&lt; vecS, vecS, directedS, color_property&lt;&gt; &gt; Graph;
+  typedef boost::graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+  Pair edges[7] = { Pair(0,1), Pair(2,4),
+                    Pair(2,5),
+                    Pair(0,3), Pair(1,4),
+                    Pair(4,3), Pair(5,5) };
+  Graph G(6, edges, edges + 7);
+
+  typedef std::vector&lt; Vertex &gt; container;
+  container c;
+  topological_sort(G, std::back_inserter(c));
+
+  cout &lt;&lt; "A topological ordering: ";
+  for ( container::reverse_iterator ii=c.rbegin(); ii!=c.rend(); ++ii)
+    cout &lt;&lt; index(*ii) &lt;&lt; " ";
+  cout &lt;&lt; endl;
+</PRE>
+The output is:
+<PRE>
+  A topological ordering: 2 5 0 1 4 3
+</PRE>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 
