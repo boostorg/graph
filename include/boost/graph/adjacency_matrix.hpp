@@ -298,14 +298,16 @@ namespace boost {
       multi_pass_input_iterator_tag, std::ptrdiff_t> unfiltered_edge_iter;
     
     typedef filter_iterator_generator<detail::does_edge_exist,
-      unfiltered_out_edge_iter, edge_descriptor, edge_descriptor, edge_descriptor*,
-      multi_pass_input_iterator_tag, std::ptrdiff_t> OutEdgeFilterGen;
-    typedef typename OutEdgeFilterGen::policies_type FilteredOutEdgePolicy;
+      unfiltered_out_edge_iter, edge_descriptor, edge_descriptor,
+      edge_descriptor*, multi_pass_input_iterator_tag, std::ptrdiff_t>
+      OutEdgeFilterGen;
+    typedef typename OutEdgeFilterGen::type::policies_type
+      FilteredOutEdgePolicy;
 
     typedef filter_iterator_generator<detail::does_edge_exist,
       unfiltered_edge_iter, edge_descriptor, edge_descriptor, edge_descriptor*,
       multi_pass_input_iterator_tag, std::ptrdiff_t> EdgeFilterGen;
-    typedef typename EdgeFilterGen::policies_type FilteredEdgePolicy;
+    typedef typename EdgeFilterGen::type::policies_type FilteredEdgePolicy;
   public:
 
     // IncidenceGraph concept required types
