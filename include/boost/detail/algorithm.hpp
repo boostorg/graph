@@ -6,8 +6,8 @@
 
 
 #ifndef BOOST_ALGORITHM_HPP
-#define BOOST_ALGORITHM_HPP
-
+# define BOOST_ALGORITHM_HPP
+# include <boost/detail/iterator.hpp>
 // Algorithms on sequences
 //
 // The functions in this file have not yet gone through formal
@@ -26,7 +26,7 @@ namespace boost {
   Iter2 end(const std::pair<Iter1, Iter2>& p) { return p.second; }
 
   template <typename Iter1, typename Iter2>
-  typename std::iterator_traits<Iter1>::difference_type
+  typename boost::detail::iterator_traits<Iter1>::difference_type
   size(const std::pair<Iter1, Iter2>& p) {
     return std::distance(p.first, p.second);
   }
