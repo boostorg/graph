@@ -35,6 +35,7 @@
 #include <cassert>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/iterator_adaptors.hpp>
 
 namespace boost {
 
@@ -99,11 +100,18 @@ namespace boost {
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     { }
 
+    ~subgraph() {
+      for (std::list< subgraph<Graph>*>::iterator i = m_children.begin();
+	   i != m_children.end(); ++i)
+	delete *i;
+    }
+
+
     // Create a subgraph
     subgraph<Graph>& create_subgraph() {
-      m_children.push_back( subgraph<Graph>() );
-      m_children.back().m_parent = this;
-      return m_children.back();
+      m_children.push_back(new subgraph<Graph>());
+      m_children.back()->m_parent = this;
+      return *m_children.back();
     }
     
     // Create a subgraph with the specified vertex set.
@@ -111,11 +119,11 @@ namespace boost {
     subgraph<Graph>& create_subgraph(VertexIterator first,
 				     VertexIterator last)
     {
-      m_children.push_back( subgraph<Graph>() );
-      m_children.back().m_parent = this;
+      m_children.push_back(new subgraph<Graph>());
+      m_children.back()->m_parent = this;
       for (; first != last; ++first)
 	add_vertex(*first, m_children.back());
-      return m_children.back();
+      return *m_children.back();
     }
 
     // local <-> global descriptor conversion functions
@@ -132,12 +140,12 @@ namespace boost {
     }
     edge_descriptor local_to_global(edge_descriptor e_local) const
     {
-      return m_global_edge[get(edge_index, m_graph, e_local)];
+      return m_global_edge[get(get(edge_index, m_graph), e_local)];
     }
     edge_descriptor global_to_local(edge_descriptor e_global) const
     {
       return 
-	(*m_local_edge.find(get(edge_index, root().m_graph, e_global))).second;
+	(*m_local_edge.find(get(get(edge_index, root().m_graph), e_global))).second;
     }
 
     // Is vertex u (of the root graph) contained in this subgraph?
@@ -171,11 +179,16 @@ namespace boost {
     }
 
     // Return the children subgraphs of this graph/subgraph.
-    typedef std::list< subgraph<Graph> > ChildrenList;
-    typedef typename ChildrenList::const_iterator
-      const_children_iterator;
+    // Use a list of pointers because the VC++ std::list doesn't like
+    // storing incomplete type.
+    typedef std::list< subgraph<Graph>*> ChildrenList;
+    typedef typename indirect_iterator_generator<typename ChildrenList::iterator,
+      subgraph<Graph>, subgraph<Graph>&, subgraph<Graph>* >::type
+      children_iterator;
 
-    typedef typename ChildrenList::iterator children_iterator;
+    typedef typename indirect_iterator_generator<typename ChildrenList::const_iterator,
+       subgraph<Graph>, const subgraph<Graph>&, const subgraph<Graph>* >::type
+       const_children_iterator;
 
     std::pair<const_children_iterator, const_children_iterator>
     children() const
@@ -214,7 +227,7 @@ namespace boost {
       tie(e_local, inserted) = add_edge(u_local, v_local, m_graph);
       put(edge_index, m_graph, e_local, m_edge_counter++);
       m_global_edge.push_back(e_global);
-      m_local_edge[get(edge_index, this->root(), e_global)] = e_local;
+      m_local_edge[get(get(edge_index, this->root()), e_global)] = e_local;
       return e_local;
     }
 
@@ -381,9 +394,9 @@ namespace boost {
                            Children& c, subgraph<G>* orig)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i).find_vertex(u_global).second
-	    && (*i).find_vertex(v_global).second)
-          add_edge_recur_down(u_global, v_global, e_global, *i, orig);
+        if ((*i)->find_vertex(u_global).second
+	    && (*i)->find_vertex(v_global).second)
+          add_edge_recur_down(u_global, v_global, e_global, **i, orig);
     }
 
     template <typename Vertex, typename Edge, typename Graph>
@@ -470,9 +483,9 @@ namespace boost {
                               Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i).find_vertex(u_global).second
-	    && (*i).find_vertex(v_global).second)
-          remove_edge_recur_down(u_global, v_global, *i);
+        if ((*i)->find_vertex(u_global).second
+	    && (*i)->find_vertex(v_global).second)
+          remove_edge_recur_down(u_global, v_global, **i);
     }
     
     template <typename Vertex, typename Graph>
@@ -507,10 +520,10 @@ namespace boost {
     void children_remove_edge(Edge e_global, Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i).find_vertex(source(e_global, *i)).second
-	    && (*i).find_vertex(target(e_global, *i)).second)
-          remove_edge_recur_down(source(e_global, *i),
-				 target(e_global, *i), *i);
+        if ((*i)->find_vertex(source(e_global, **i)).second
+	    && (*i)->find_vertex(target(e_global, **i)).second)
+          remove_edge_recur_down(source(e_global, **i),
+				 target(e_global, **i), **i);
     }
 
     template <typename Edge, typename Graph>
