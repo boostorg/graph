@@ -24,52 +24,53 @@
 <TT>kruskal_minimum_spanning_tree</TT>
 </H1>
 
-<P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">undirected</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">rank, parent, weight</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(E log E)</i>
-</TD>
-</TR>
-</TABLE>
-</DIV>
-
-<P>
 <PRE>
-(1)
-template &lt;class VertexAndEdgeListGraph, class OutputIterator, 
-          class Rank, class Parent &gt;
-void kruskal_minimum_spanning_tree(VertexAndEdgeListGraph&amp; G, 
-                                   OutputIterator c, 
-                                   Rank rank, Parent p);
-
-(2)
-template &lt;class VertexAndEdgeListGraph, class OutputIterator, 
-          class Rank, class Parent, class Weight &gt;
-void kruskal_minimum_spanning_tree(VertexAndEdgeListGraph&amp; G, 
-                                   OutputIterator out, 
-                                   Rank rank, Parent p, Weight w);
+template &lt;class Graph, class OutputIterator, class P, class T, class R&gt;
+void kruskal_minimum_spanning_tree(Graph&amp; g, OutputIterator tree_edges, 
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </PRE>
 
 <P>
-This is Kruskal's
-algorithm&nbsp;[<A
- HREF="bibliography.html#kruskal56">18</A>,<A
- HREF="bibliography.html#clr90">8</A>,<A
- HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>,<A
- HREF="bibliography.html#graham85">15</A>]
-for solving the minimum spanning tree problem. This is a greedy
-algorithm to calculate the minimum spanning tree for an undirected
-graph with weighted edges. The output is a set of edges written to the
-<tt>OutputIterator</tt>.
+The <tt>kruskal_minimum_spanning_tree()</tt> function find a minimum
+spanning tree (MST) in an undirected graph with weighted. A MST is a
+set of edges that connects all the vertices in the graph where the
+total weight of the edges in the tree is minimized.  For more details,
+see section <a
+href="graph_theory_review.html#sec:minimum-spanning-tree">Minimum
+Spanning Tree Problem</a>.  The edges in the MST are output to the
+<tt>tree_edges</tt> output iterator.  This function uses Kruskal's
+algorithm to compute the MST&nbsp;[<A
+HREF="bibliography.html#kruskal56">18</A>,<A
+HREF="bibliography.html#clr90">8</A>,<A
+HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>,<A
+HREF="bibliography.html#graham85">15</A>].
+</p>
+<p>
+Kruskal's algorithm starts with each vertex in a tree by itself, and
+with no edges in the minimum spanning tree <i>T</i>. The algorithm
+then examines each edge in the graph in order of increasing edge
+weight. If an edge connects two vertices in different trees the
+algorithm merges the two trees into a single tree and adds the edge to
+<i>T</i>. We use the ``union by rank'' and ``path compression''
+heuristics to provide fast implementations of the disjoint set
+operations (<tt>MAKE-SET</tt>, <tt>FIND-SET</tt>, and
+<tt>UNION-SET</tt>).  The algorithm is as follows:
+</p>
 
-<P>
+<pre>
+KRUSKAL-MST(<i>G</i>, <i>w</i>) 
+  <i>T := &Oslash;</i> 
+  <b>for</b> each vertex <i>u in V</i> 
+    MAKE-SET(<i>DS</i>, <i>u</i>) 
+  <b>end for</b>
+  <b>for</b> each edge <i>(u,v) in E</i> in order of nondecreasing weight 
+    <b>if</b> FIND-SET(<i>DS</i>, <i>u</i>) != FIND-SET(<i>DS</i>, <i>v</i>) 
+      UNION-SET(<i>DS</i>, <i>u</i>, <i>v</i>) 
+      <i>T := T U {(u,v)}</i> 
+  <b>end for</b>
+  <b>return</b> <i>T</i>
+</pre>
+
 
 <H3>Where Defined</H3>
 
@@ -78,55 +79,83 @@ graph with weighted edges. The output is a set of edges written to the
 
 <P>
 
-<H3>Definitions</H3>
+<h3>Parameters</h3>
 
-<P>
-The <I>minimum-spanning-tree problem</I> is defined as follows: for a
-graph <i>G = (V,E)</i> find an acyclic subset <i>T</i> of <i>E</i>
-that connects all of the vertices in the graph and whose total weight
-is minimized, where the total weight is given by
+IN: <tt>const Graph&amp; g</tt> 
+<blockquote>
+  An undirected graph. The graph type must be a model of
+  <a href="./VertexListGraph.html">Vertex List Graph</a>
+  and <a href="./EdgeListGraph.html">Edge List Graph</a>.
+</blockquote>
 
-<P></P>
-<DIV ALIGN="left">
-<i>w(T)</i> = sum of <i>w(u,v)</i> over all <i>(u,v)</i> in <i>T</i>,
-where <i>w(u,v)</i> is the weight on the edge <i>(u,v)</i>
-</DIV>
-<BR CLEAR="ALL">
-<P></P>
-<i>T</i> is called the <I>spanning tree</I>.
+IN: <tt>OutputIterator spanning_tree_edges</tt>
+<blockquote>
+   The edges of the minimum spanning tree are output to this <a
+   href="http:www.sgi.com/tech/stl/OutputIterator.html">Output
+   Iterator</a>.
+</blockquote>
 
-<P>
 
-<H3>Requirements on Types</H3>
+<h3>Named Parameters</h3>
 
-<P>
+IN: <tt>weight_map(WeightMap w_map)</tt> 
+<blockquote>
+The weight or ``length'' of
+  each edge in the graph.  The <tt>WeightMap</tt> type must be a model
+  of <a href="../../property_map/ReadablePropertyMap.html">Readable
+  Property Map</a> and its value type must be <a
+  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
+  Comparable</a>. The key type of this map needs to be the graph's
+  edge descriptor type.<br>
+  <b>Default:</b> <tt>get(edge_weight, g)</tt>
+</blockquote>
 
-<UL>
-<LI>The graph type must be a model of <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>.
-</LI>
-<LI>The <TT>Rank</TT> type must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. <TT>Rank</TT>'s
-    value type must be an integer type. The graph's vertex descriptor
-    needs to be usable as the key type for the map.
-</LI>
-<LI>The <TT>Parent</TT> type must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
-    value type and key type should be the graph's vertex descriptor
-    type.
-</LI>
-<LI>The <TT>Weight</TT> type must be a model of <a
-     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
-     <TT>Weight</TT> map's value type must be <a
-     href="http://www.sgi.com/Technology/LessThanComparable.html">LessThanComparable</a>. The
-     key type of this map needs to be the graph's edge descriptor
-     type.
-</LI>
-<LI>The graph's edge descriptors will be output to the
-    <TT>OutputIterator</TT>, which must be a model of <a href="http://www.sgi.com/Technology/OutputIterator.html">OutputIterator</a>.
-</LI>
-</UL>
+UTIL: <tt>rank_map(RankMap r_map)</tt> 
+<blockquote>
+  This is used by the disjoint sets data structure.
+  The type <tt>RankMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The vertex descriptor type of the graph needs to
+  be usable as the key type of the rank map. The value type of the
+  rank map must be an integer type.<br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_propety_map.html">
+  <tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of the integers of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
 
-<P>
+UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+<blockquote>
+  This is used by the disjoint sets data structure, and is <b>not</b>
+  used for storing predecessors in the spanning tree.  The predecssors
+  of the spanning tree can be obtained from the spanning tree edges
+  output. The type <tt>PredecessorMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The key type value types of the predecessor map
+  must be the vertex descriptor type of the graph. <br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  <tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of vertex descriptors of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+  num_vertices(g))</tt>. This is only necessary if the default is used
+  for the rank or predecessor maps. The type <tt>VertexIndexMap</tt>
+  must be a model of <a
+  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  Map</a>. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key
+  type of the map.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+</blockquote>
+
 
 <H3>Complexity</H3>
 
@@ -136,55 +165,9 @@ The time complexity is <i>O(E log E)</i>
 <H3>Example</H3>
 
 <P>
-The source code for this example is in <a
-href="../example/kruskal.cpp"><TT>examples/kruskal.cpp</TT></a>.
-
-<P>
-<PRE>
-  typedef weight_property&lt;int&gt; weightp;
-  typedef adjacency_list&lt; vecS, vecS, undirectedS, 
-                off_vertex_default_property&lt;&gt;, weightp &gt; Graph;
-  typedef Graph::edge_descriptor Edge;
-  typedef Graph::vertex_descriptor Vertex;
-
-  typedef std::pair&lt;int,int&gt; E;
-  const int num_nodes = 5;
-  E edges[] = { E(0,2), 
-                E(1,1), E(1,3), E(1,4),
-                E(2,1), E(2,3), 
-                E(3,4),
-                E(4,0), E(4,1) };
-  int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
-
-  Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-  weight_property_map&lt;Graph&gt; weight = get_weight_map(G);
-
-  typedef std::vector&lt;Edge&gt; container;
-  std::vector&lt;Edge&gt; c;
-  c.reserve(num_vertices(G));
-  std::vector&lt;Vertex&gt; p(num_vertices(G));
-  std::vector&lt;int&gt; rank(num_vertices(G));
-
-  kruskal_minimum_spanning_tree(G, std::back_inserter(c), 
-                                rank.begin(), p.begin());
-  
-  cout &lt;&lt; "Print the edge in MST:" &lt;&lt; endl;
-  for (std::vector&lt;Edge&gt;::iterator ei = c.begin();
-       ei != c.end(); ++ei) {
-    cout &lt;&lt; index(source(*ei, G)) &lt;&lt; " &lt;--&gt; " 
-         &lt;&lt; index(target(*ei, G))
-         &lt;&lt; " with weight of " &lt;&lt; weight[*ei]
-         &lt;&lt; endl;
-    }
-</PRE>
-The output is:
-<PRE>
-  Print the edge in MST:
-  0 &lt;--&gt; 2 with weight of 1
-  1 &lt;--&gt; 3 with weight of 1
-  4 &lt;--&gt; 0 with weight of 1
-  4 &lt;--&gt; 3 with weight of 1
-</PRE>
+The file <a
+href="../example/kruskal.cpp"><TT>examples/kruskal.cpp</TT></a>
+contains an example of using Kruskal's algorithm.
 
 
 <br>
