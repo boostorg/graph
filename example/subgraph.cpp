@@ -64,7 +64,8 @@ int main(int,char*[])
   Graph G0(N);
   enum { A, B, C, D, E, F};	// for conveniently refering to vertices in G0
 
-  Graph G1(G0), G2(G0);
+  Graph& G1 = G0.create_subgraph();
+  Graph& G2 = G0.create_subgraph();
   enum { A1, B1, C1 };		// for conveniently refering to vertices in G1
   enum { A2, B2 };		// for conveniently refering to vertices in G2
 
