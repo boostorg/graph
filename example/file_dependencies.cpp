@@ -87,6 +87,8 @@ protected:
 };
 
 
+
+
 int main(int,char*[])
 {
     
@@ -166,23 +168,15 @@ int main(int,char*[])
 
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
-#ifdef BOOST_MSVC
       if (in_degree[*i] == 0) {
-	std::vector<graph_traits<Graph>::vertex_descriptor> pred(num_vertices(g));
-	property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
-        dijkstra_shortest_paths
+	std::vector<graph_traits<Graph>::vertex_descriptor> 
+	  pred(num_vertices(g));
+	property_map<Graph, vertex_index_t>::type 
+	  indexmap = get(vertex_index, g);
+        dijkstra_shortest_paths_no_init
 	  (g, *i, &pred[0], &time[0], weight, indexmap, 
 	   compare, combine, 0, 0, default_dijkstra_visitor());
       }
-#else
-      if (in_degree[*i] == 0)
-        dijkstra_shortest_paths(g, *i, 
-				distance_map(&time[0]). 
-				distance_compare(compare).
-				distance_combine(combine).
-				distance_inf(0).
-				weight_map(weight));
-#endif
     }
 
     cout << "parallel make ordering, " << endl
