@@ -243,7 +243,8 @@ fruchterman_reingold_force_directed_layout
                          RepulsiveForce, Dim, Graph>
     apply_force(position, displacement, repulsive_force, k, g);
   
-  while (Dim temp = cool()) {
+  Dim temp = cool();
+  if (temp) do {
     // Calculate repulsive forces
     vertex_iterator v, v_end;
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
@@ -279,7 +280,7 @@ fruchterman_reingold_force_directed_layout
       position[*v].x = min(width / 2, max(-width / 2, position[*v].x));
       position[*v].y = min(height / 2, max(-height / 2, position[*v].y));
     }
-  }
+  } while (temp = cool());
 }
 
 namespace detail {
