@@ -86,6 +86,7 @@ In some places we express a function as a set of pairs, so the set $f
 means $f(a_i) = b_i$ for $i=1,\ldots,n$.
 
 \section{Exhaustive Backtracking Search}
+\label{sec:backtracking}
 
 The algorithm used by the \code{isomorphism()} function is, at
 first approximation, an exhaustive search implemented via
@@ -101,19 +102,108 @@ with a different vertex choice. The process ends by either finding a
 complete mapping between $G_1$ and $G_2$ and return true, or by
 exhausting all possibilities and returning false.
 
-We are going to consider the vertices of $G_1$ in a specific order
-(more about this later), so assume that the vertices of $G_1$ are
-labeled $1,\ldots,N$ according to the order that we plan to add them
-to the subgraph.  Let $G_1[k]$ denote the subgraph of $G_1$ induced by
-the first $k$ vertices, with $G_1[0]$ being an empty graph. At each
-stage of the recursion we start with an isomorphism $f_{k-1}$ between
-$G_1[k-1]$ and a subgraph of $G_2$, which we denote by $G_2[S]$, so
-$G_1[k-1] \isomorphic G_2[S]$. The vertex set $S$ is the subset of
-$V_2$ that corresponds via $f_{k-1}$ to the first $k-1$ vertices in
-$G_1$. We try to extend the isomorphism by finding a vertex $v \in V_2
-- S$ that matches with vertex $k$. If a matching vertex is found, we
-have a new isomorphism $f_k$ with $G_1[k] \isomorphic G_2[S \union \{
-v \}]$.
+We consider the vertices of $G_1$ for addition to the matched subgraph
+in a specific order, so assume that the vertices of $G_1$ are labeled
+$1,\ldots,N$ according to that order. As we will see later, a good
+ordering of the vertices is by DFS discover time.  Let $G_1[k]$ denote
+the subgraph of $G_1$ induced by the first $k$ vertices, with $G_1[0]$
+being an empty graph. We also consider the edges of $G_1$ in a
+specific order. We always examine edges in the current subgraph
+$G_1[k]$ first, that is, edges $(u,v)$ where both $u \leq k$ and $v
+\leq k$. This ordering of edges can be acheived by sorting the edges
+according to number of the larger of the source and target vertex.
+
+Each step of the backtracking search examines an edge $(u,v)$ of $G_1$
+and decides whether to continue or go back. There are three cases to
+consider:
+
+\begin{enumerate}
+
+\item $i \leq k \Land j \leq k$. Both $i$ and $j$ are in $G_1[k]$.  We
+check to make sure the $(f(i),f(j)) \in E_2[S]$.
+
+\item $i \leq k \Land j > k$. $i$ is in the matched subgraph $G_1[k]$,
+but $j$ is not. We are about to increment $k$ try to grow the matched
+subgraph to include $j$. However, first we need to finalize our check
+of the isomorphism between subgraphs $G_1[k]$ and $G_2[S]$.  At this
+point we are guaranteed to have seen all the edges to and from vertex $k$
+(because the edges are sorted), and in previous steps we have checked
+that for each edge incident on $k$ in $G_1[k]$ there is a matching
+edge in $G_2[S]$.  However we have not checked that for each edge
+incident on $f(k)$ in $E_2[S]$, there is a matching edge in $E_1[k]$
+(we need to check the ``only if'' part of the ``if and only if'').
+Therefore we scan through all the edges $(u,v)$ incident on $f(k)$ and
+make sure that $(f^{-1}(u),f^{-1}(v)) \in E_1[k]$. Once this check has
+been performed, we add $f(k)$ to $S$, we increment $k$ (so now $k=j$),
+and then try assigning the new $k$ to any of the eligible vertices in
+$V_2 - S$. More about what ``eligible'' means later.
+
+\item $i > k \Land j \leq k$. This case will not occur due to the DFS
+numbering of the vertices. There is an edge $(i,j)$ so $i$ must be
+less than $j$.
+
+\item $i > k \Land j > k$. Neither $i$ or $j$ is in the matched
+subgraph $G_1[k]$. This situation only happens at the very beginning
+of the search, or when $i$ and $j$ are not reachable from any of the
+vertices in $G_1[k]$. This means the smaller of $i$ and $j$ must be
+the root of a DFS tree. We assign $r$ to any of the eligible vertices
+in $V_2 - S$, and then proceed as if we were in Case 2.
+
+\end{enumerate}
+
+
+
+@d Match function
+@{
+bool match(edge_iter iter)
+{
+if (iter != ordered_edges.end()) {
+    ordered_edge edge = *iter;
+    size_type k_num = edge.k_num;
+    vertex1_t k = dfs_vertices[k_num];
+    vertex1_t u;
+    if (edge.source != -1) // might be a ficticious edge
+        u = dfs_vertices[edge.source];
+    vertex1_t v = dfs_vertices[edge.target];
+    if (edge.source == -1) { // root node
+        @<$v$ is a DFS tree root@>
+    } else if (f_assigned[v] == false) {
+        @<$v$ is an unmatched vertex, $(u,v)$ is a tree edge@>
+    } else {
+        @<Check to see if there is an edge in $G_2$ to match $(u,v)$@>
+    }
+} else 
+    return true;
+return false;
+} // match()
+@}
+
+
+
+
+
+
+The basic idea will be to examine $G_1$ one edge at a time, trying to
+create a vertex mapping such that each edge matches one in $G_2$.  We
+are going to consider the edges of $G_1$ in a specific order, so we
+will label the edges $0,\ldots,|E_1|-1$.
+
+At each stage of the recursion we
+start with an isomorphism $f_{k-1}$ between $G_1[k-1]$ and a subgraph
+of $G_2$, which we denote by $G_2[S]$, so $G_1[k-1] \isomorphic
+G_2[S]$. The vertex set $S$ is the subset of $V_2$ that corresponds
+via $f_{k-1}$ to the first $k-1$ vertices in $G_1$.
+
+We also order the edges of $G_1$
+
+
+
+We try to extend the isomorphism by finding a vertex $v \in V_2 - S$
+that matches with vertex $k$. If a matching vertex is found, we have a
+new isomorphism $f_k$ with $G_1[k] \isomorphic G_2[S \union \{ v \}]$.
+
+
+
 
 \begin{tabbing}
 IS\=O\=M\=O\=RPH($k$, $S$, $f_{k-1}$) $\equiv$ \\
@@ -444,12 +534,71 @@ struct compare_multiplicity
 };
 @}
 
+\subsection{Backtracking Search and Matching}
+
+
+
+
+
+
 \subsection{Ordering by DFS Discover Time}
 
 To implement the ``visit adjacent vertices first'' heuristic, we order
-the vertices according to DFS discover time.  
+the vertices according to DFS discover time. This will give us the
+order that the subgraph $G_1[k]$ will be expanded. As described in
+\S\ref{sec:backtracking}, when trying to match $k$ with some vertex
+$v$ in $V_2 - S$, we need to examine the edges in $E_1[k] -
+E_1[k-1]$. It would be nice if we had the edges of $G_1$ arranged so
+that when we are interested in vertex $k$, the edges in $E_1[k] -
+E_1[k-1]$ are easy to find. This can be achieved by creating an array
+of edges sorted by the DFS number of the larger of the source and
+target vertex. The following array of ordered edges corresponds
+to the graph in Figure~\ref{fig:edge-order}.
 
-Discuss the edge ordering. ficticious edges, etc.
+\begin{tabular}{cccccccccc}
+      &0&1&2&3&4&5&6&7&8\\ \hline
+source&0&1&1&3&3&4&4&5&6\\
+target&1&2&3&1&2&3&5&6&4
+\end{tabular}
+
+The backtracking algorithm will scan through the edge array from left
+to right to extend isomorphic subgraphs, and move back to the right
+when a match fails. We will want to 
+
+
+
+
+
+
+
+
+
+
+For example, suppose we have already matched the vertices
+\{0,1,2\}, and 
+
+
+
+\vizfig{edge-order}{Vertices with DFS numbering. The DFS trees are the solid edges.}
+
+@c edge-order.dot
+@{
+digraph G {
+size="3,2"
+ratio=fill
+node[shape=circle]
+0 -> 1[style=bold]
+1 -> 2[style=bold]
+1 -> 3[style=bold]
+3 -> 1[style=dashed]
+3 -> 2[style=dashed]
+4 -> 3[style=dashed]
+4 -> 5[style=bold]
+5 -> 6[style=bold]
+6 -> 4[style=dashed]
+}
+@}
+
 
 
 
@@ -670,30 +819,6 @@ struct ordered_edge {
 \subsection{Recursive Match Function}
 
 
-@d Match function
-@{
-bool match(edge_iter iter)
-{
-if (iter != ordered_edges.end()) {
-    ordered_edge edge = *iter;
-    size_type k_num = edge.k_num;
-    vertex1_t k = dfs_vertices[k_num];
-    vertex1_t u;
-    if (edge.source != -1) // might be a ficticious edge
-        u = dfs_vertices[edge.source];
-    vertex1_t v = dfs_vertices[edge.target];
-    if (edge.source == -1) { // root node
-        @<$v$ is a DFS tree root@>
-    } else if (f_assigned[v] == false) {
-        @<$v$ is an unmatched vertex, $(u,v)$ is a tree edge@>
-    } else {
-        @<Check to see if there is an edge in $G_2$ to match $(u,v)$@>
-    }
-} else 
-    return true;
-return false;
-} // match()
-@}
 
 
 
@@ -723,7 +848,6 @@ if (num_edges_incident_on_k != 0)
     return false;
 @<Assign $v$ to some vertex in $V_2 - S$@>
 @}
-
 @d Count out-edges of $f(k)$ in $G_2[S]$
 @{
 BGL_FORALL_ADJACENT_T(f[k], w, G2, Graph2)
