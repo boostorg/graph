@@ -43,6 +43,7 @@
 #endif
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_selectors.hpp>
 #include <boost/property_map.hpp>
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/detail/edge.hpp>
@@ -252,23 +253,6 @@ namespace boost {
   } // namespace detail
 
 
-  //===========================================================================
-  // Selectors for the Directed template parameter of adjacency_list.
-
-  struct directedS { enum { is_directed = true, is_bidir = false }; 
-    typedef true_type is_directed_t; 
-    typedef false_type is_bidir_t;
-  };
-  struct undirectedS { 
-    enum { is_directed = false, is_bidir = false }; 
-    typedef false_type is_directed_t;
-    typedef false_type is_bidir_t;
-  };
-  struct bidirectionalS { 
-    enum { is_directed = true, is_bidir = true }; 
-    typedef true_type is_directed_t;
-    typedef true_type is_bidir_t;
-  };
 
   //===========================================================================
   // The adjacency_list_traits class, which provides a way to access
