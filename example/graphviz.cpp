@@ -31,19 +31,19 @@
 
 #include <boost/graph/graphviz.hpp>
 
-using boost::GraphvizGraph;
+using boost::GraphvizDigraph;
 
 template <class Vertex>
 const std::string& 
-vertex_label(const Vertex& u, const GraphvizGraph& g) {
-  boost::property_map<GraphvizGraph, boost::vertex_attribute_t>::const_type
+vertex_label(const Vertex& u, const GraphvizDigraph& g) {
+  boost::property_map<GraphvizDigraph, boost::vertex_attribute_t>::const_type
     va = boost::get(boost::vertex_attribute, g); 
   return (*(va[u].find("label"))).second;
 }
 
 
-void print(GraphvizGraph& g) {
-  typedef GraphvizGraph Graph;
+void print(GraphvizDigraph& g) {
+  typedef GraphvizDigraph Graph;
   boost::graph_traits<Graph>::vertex_iterator i, end;
   boost::graph_traits<Graph>::out_edge_iterator ei, edge_end;
   for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
   if ( argc > 1 )
     filename = argv[1];
   
-  GraphvizGraph g;
+  GraphvizDigraph g;
 
   boost::read_graphviz(filename, g);
 
