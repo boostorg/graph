@@ -406,7 +406,7 @@ the edges of the graph.
 The property values are then read from and written to using property
 maps. See Section <A HREF="#sec:interior-properties">Interior
 Properties</A> for a description of how to obtain property maps
-from a graph, and read Section ;<A
+from a graph, and read Section <A
 HREF="./using_property_maps.html">Property Maps</A> for how
 to use property maps.
 
@@ -417,16 +417,31 @@ Custom Edge Properties
 </H3>
 
 <P>
-Creating a your own property types and properties is easy; just define a
-tag class for your new property.  Here we define a tag class for
-capacity and flow properties which we will be attaching to the edges
-on the graph.
+Creating a your own property types and properties is easy; just define
+a tag class for your new property. The property tag class will need to
+define <tt>num</tt> with a unique integer ID, and <tt>kind</tt> which
+should be either <tt>edge_property_tag</tt>,
+<tt>vertex_property_tag</tt>, or <tt>graph_property_tag</tt>,.
 
 <P>
 <PRE>
-  struct capacity_tag { };
-  struct flow_tag { };
+struct flow_t {
+  enum { num = 100 };
+  typedef edge_property_tag kind;
+};
+
+struct capacity_t { 
+  enum { num = 101 };
+  typedef edge_property_tag kind;
+};
 </PRE>
+
+<p>
+You can also use enum's instead of struct's to create tag types.  See
+<a
+href="../example/edge_property.cpp"><tt>example/edge_property.cpp</tt></a>
+for an example of this.
+
 
 <P>
 Now you can use your new property tag in the definition of properties
@@ -434,8 +449,8 @@ just as you would one of the builtin tags.
 
 <P>
 <PRE>
-  typedef property&lt;capacity_tag, int&gt; Cap;
-  typedef property&lt;flow_tag, int, Cap&gt; EdgeProperty;
+  typedef property&lt;capacity_t, int&gt; Cap;
+  typedef property&lt;flow_t, int, Cap&gt; EdgeProperty;
   typedef adjacency_list&lt;vecS, vecS, no_property, EdgeProperty&gt; Graph;
 </PRE>
 
@@ -447,9 +462,9 @@ obtained from the graph via the
 <P>
 <PRE>
   property_map&lt;Graph, capacity_tag&gt;::type capacity
-    = get(capacity_tag(), G);
+    = get(capacity_t(), G);
   property_map&lt;Graph, flow_tag&gt;::type flow
-    = get(flow_tag(), G);
+    = get(flow_t(), G);
 </PRE>
 
 <P>
@@ -471,7 +486,10 @@ in the graph.
 
 <P>
 <PRE>
-  struct first_vertex_name_t { };
+  struct first_vertex_name_t {
+    enum { num = 201 };
+    typedef vertex_property_tag kind;
+  };
 </PRE>
 
 <P>
