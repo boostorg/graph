@@ -71,16 +71,23 @@ namespace boost {
   };
 
   template <class Name>
-  class labeled_vertex_writer {
+  class label_writer {
   public:
-    labeled_vertex_writer(Name _name) : name(_name) {}
-    template <class Vertex, class Graph>
-    void operator()(std::ostream& out, const Vertex& v, const Graph&) const {
-      out << v << " [label=\"" << name[v] << "\"];" << std::endl;
+    label_writer(Name _name) : name(_name) {}
+    template <class VertexOrEdge, class Graph>
+    void operator()(std::ostream& out, const VertexOrEdge& v, 
+                    const Graph&) const {
+      out << "[label=\"" << name[v] << "\"]";
     }
   private:
     Name name;
   };
+  template <class Name>
+  inline label_writer<Name>
+  make_label_writer(Name n) {
+    return label_writer<Name>(n);
+  }
+
 
   enum edge_attribute_t        { edge_attribute        = 1111 };
   enum vertex_attribute_t      { vertex_attribute      = 2222 };
@@ -96,27 +103,17 @@ namespace boost {
 
 
   template <class Attribute>
-  inline void write_attribute(const Attribute& attr, std::ostream& out) {
+  inline void write_attributes(const Attribute& attr, std::ostream& out) {
     typename Attribute::const_iterator i, iend;
     i    = attr.begin();
     iend = attr.end();
     
-    bool need_print_pre_post = false;
-    if ( i != iend ) 
-      need_print_pre_post = true;
-
-    if ( need_print_pre_post )
-      out << "[";
-    
     while ( i != iend ) {
-      out << i->first << "=" << i->second;
+      out << i->first << "=\"" << i->second << "\"";
       ++i;
       if ( i != iend ) 
         out << ", ";
     }
-    
-    if ( need_print_pre_post )
-      out << "]";
   }
 
   template <typename GraphGraphAttributes,
@@ -125,8 +122,8 @@ namespace boost {
   struct graph_attributes_writer
   {
     graph_attributes_writer(GraphGraphAttributes gg,
-                           GraphNodeAttributes gn,
-                           GraphEdgeAttributes ge)
+                            GraphNodeAttributes gn,
+                            GraphEdgeAttributes ge)
       : g_attributes(gg), n_attributes(gn), e_attributes(ge) { }
 
     void operator()(std::ostream& out) const {
@@ -136,9 +133,9 @@ namespace boost {
         gend = g_attributes.end();
 
       if ( gi != gend ) {
-        out << "graph ";
-        write_attribute(g_attributes, out);
-        out << ";" << std::endl;
+        out << "graph [";
+        write_attributes(g_attributes, out);
+        out << "];" << std::endl;
       }
 
       //write node [......]; if need
@@ -147,9 +144,9 @@ namespace boost {
         nend = n_attributes.end();
 
       if ( ni != nend ) {
-        out << "node ";
-        write_attribute(n_attributes, out);
-        out << ";" << std::endl;
+        out << "node [";
+        write_attributes(n_attributes, out);
+        out << "];" << std::endl;
       }
 
       //write edge[....]; if need
@@ -158,9 +155,9 @@ namespace boost {
         eend = e_attributes.end();
 
       if ( ei != eend ) {
-        out << "edge ";
-        write_attribute(e_attributes, out);
-        out << ";" << std::endl;
+        out << "edge [";
+        write_attributes(e_attributes, out);
+        out << "];" << std::endl;
       }
     }
     GraphGraphAttributes g_attributes;
@@ -196,58 +193,40 @@ namespace boost {
        get_property(g, graph_edge_attribute));
   }
 
-  template <typename EdgeAttributeMap>
-  struct edge_attributes_writer {
-    edge_attributes_writer(EdgeAttributeMap e_attr)
-      : e_attributes(e_attr) { }
+  template <typename AttributeMap>
+  struct attributes_writer {
+    attributes_writer(AttributeMap attr)
+      : attributes(attr) { }
 
-    template <class Edge>
-    void operator()(std::ostream& out, const Edge& e) const {
-      write_attribute(e_attributes[e], out);
+    template <class VorE>
+    void operator()(std::ostream& out, const VorE& e) const {
+      if (!attributes[e].empty()) {
+        out << "[";
+        write_attributes(attributes[e], out);
+        out << "]";
+      }
     }
-    EdgeAttributeMap e_attributes;
+    AttributeMap attributes;
   };
 
   template <typename Graph>
-  edge_attributes_writer
+  attributes_writer
     <typename property_map<Graph, edge_attribute_t>::const_type>
   make_edge_attributes_writer(const Graph& g)
   {
     typedef typename property_map<Graph, edge_attribute_t>::const_type
       EdgeAttributeMap;
-    return edge_attributes_writer<EdgeAttributeMap>(get(edge_attribute, g));
+    return attributes_writer<EdgeAttributeMap>(get(edge_attribute, g));
   }
 
-  template <typename VertexAttributeMap>
-  struct vertex_attributes_writer {
-    vertex_attributes_writer(VertexAttributeMap v_attr)
-      : v_attributes(v_attr) { }
-
-    template <class Vertex>
-    void operator()(std::ostream& out, const Vertex& v) const {
-      typename property_traits<VertexAttributeMap>::value_type::const_iterator 
-        v_a_i = v_attributes[v].begin(),
-        v_a_end = v_attributes[v].end();
-
-      if ( v_a_i !=  v_a_end ) {
-        //print attribute of the vertex
-        out << v;
-        write_attribute(v_attributes[v], out);
-        out << ";" << std::endl;
-      }
-    }
-    VertexAttributeMap v_attributes;
-  };
-
   template <typename Graph>
-  vertex_attributes_writer
+  attributes_writer
     <typename property_map<Graph, vertex_attribute_t>::const_type>
   make_vertex_attributes_writer(const Graph& g)
   {
     typedef typename property_map<Graph, vertex_attribute_t>::const_type 
       VertexAttributeMap;
-    return vertex_attributes_writer<VertexAttributeMap>
-      (get(vertex_attribute, g));
+    return attributes_writer<VertexAttributeMap>(get(vertex_attribute, g));
   }
 
   template <typename Graph, typename VertexPropertiesWriter,
@@ -258,37 +237,26 @@ namespace boost {
                              EdgePropertiesWriter epw,
                              GraphPropertiesWriter gpw) {
     
-    typedef typename boost::graph_traits<Graph>::directed_category CAT;
-    typedef graphviz_io_traits<CAT> Traits;
-    std::string function_name = "G";
-    out << Traits::name() << " " << function_name << " {" << std::endl;
+    typedef typename boost::graph_traits<Graph>::directed_category cat_type;
+    typedef graphviz_io_traits<cat_type> Traits;
+    std::string name = "G";
+    out << Traits::name() << " " << name << " {" << std::endl;
 
-    gpw(out, g); //print graph properties
+    gpw(out); //print graph properties
    
     typename boost::graph_traits<Graph>::vertex_iterator i, end;
-    typename boost::graph_traits<Graph>::out_edge_iterator ei, edge_end;
 
     for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
-      boost::tie(ei,edge_end) = out_edges(*i, g);
-      bool node_need_printing = false;
-      
-      if (ei == edge_end )
-        node_need_printing = true;
-
-      while ( ei != edge_end ) {
-        out << *i << " " << Traits::delimiter() << " " << target(*ei, g);
-        epw(out, *ei, g); //print edge properties
-        out << ";" << std::endl;
-        ++ei;
-      }
-
-      if ( node_need_printing )
-        out << *i << ";" << std::endl;
-
-      vpw(out, *i, g); //print vertex properties 
-    } // the loop for vertices
-    
-
+      out << *i;
+      vpw(out, *i, g); //print vertex attributes 
+      out << ";" << std::endl;
+    }
+    typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
+    for(boost::tie(ei, edge_end) = boost::edges(g); ei != edge_end; ++ei) {
+      out << source(*ei, g) << Traits::delimiter() << target(*ei, g) << " ";
+      epw(out, *ei, g); //print edge attributes 
+      out << ";" << std::endl;
+    }
     out << "}" << std::endl;
   }
 
@@ -320,24 +288,22 @@ namespace boost {
 
     template <class Graph_, class RandomAccessIterator>
     void write_graphviz_subgraph (std::ostream& out, 
-				  const subgraph<Graph_>& g, 
-				  const subgraph<Graph_>& root,
-				  RandomAccessIterator vertex_marker,
-				  RandomAccessIterator edge_marker)
+                                  const subgraph<Graph_>& g, 
+                                  RandomAccessIterator vertex_marker,
+                                  RandomAccessIterator edge_marker)
     {
       typedef subgraph<Graph_> Graph;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename boost::graph_traits<Graph>::directed_category cat_type;
       typedef graphviz_io_traits<cat_type> Traits;
 
-      graph_property<Graph, graph_name_t>::type&
-	g_name = const_cast<graph_property<Graph, graph_name_t>::type&>
-	( get_property(g, graph_name));
+      typedef typename graph_property<Graph, graph_name_t>::type NameType;
+      const NameType& g_name = get_property(g, graph_name);
 
-      if ( &g == &root )
-	out << Traits::name() ;
+      if ( g.is_root() )
+        out << Traits::name() ;
       else
-	out << "subgraph";
+        out << "subgraph";
 
       out << " " << g_name << " {" << std::endl;
 
@@ -348,38 +314,34 @@ namespace boost {
 
       //print subgraph
       for ( boost::tie(i_child,j_child) = g.children();
-	    i_child != j_child; ++i_child )
-	write_graphviz_subgraph(out, *i_child, root, 
-				vertex_marker, edge_marker);
+            i_child != j_child; ++i_child )
+        write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker);
 
-      //print the lefted 
+      // Print out vertices and edges not in the subgraphs.
+
       typename boost::graph_traits<Graph>::vertex_iterator i, end;
-      typename boost::graph_traits<Graph>::out_edge_iterator ei, edge_end;
+      typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
 
       for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
-	boost::tie(ei,edge_end) = out_edges(*i, g);
-
-	Vertex source = g.local_to_global(*i);
-
-	while ( ei != edge_end ) {
-	  int pos = get(get(edge_index, root), g.local_to_global(*ei));
-	  if ( edge_marker[pos] ) {
-	    edge_marker[pos] = false;
-	    out << source << " " << Traits::delimiter()
-		<< " " << g.local_to_global(target(*ei, g));
-	    make_edge_attributes_writer(g)(out, *ei); //print edge properties
-	    out << ";" << std::endl;
-	  }
-	  ++ei;
-	}
-
-	int pos = get(get(vertex_index, root), source);
-	if ( vertex_marker[pos] ) {
-	  vertex_marker[pos] = false;
-	  out << source << ";" << std::endl;
-	  //print vertex properties 	  
-	  make_vertex_attributes_writer(root)(out, source);
-	}
+        Vertex v = g.local_to_global(*i);
+        int pos = get(get(vertex_index, g.root()), v);
+        if ( vertex_marker[pos] ) {
+          vertex_marker[pos] = false;
+          out << v;
+          make_vertex_attributes_writer(g.root())(out, v);
+          out << ";" << std::endl;
+        }
+      }
+      for (boost::tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
+        Vertex u = g.local_to_global(source(*ei,g)),
+          v = g.local_to_global(target(*ei, g));
+        int pos = get(get(edge_index, g.root()), g.local_to_global(*ei));
+        if ( edge_marker[pos] ) {
+          edge_marker[pos] = false;
+          out << u << " " << Traits::delimiter() << " " << v;
+          make_edge_attributes_writer(g)(out, *ei); //print edge properties
+          out << ";" << std::endl;
+        }
       }
       out << "}" << std::endl;
     }
@@ -392,8 +354,8 @@ namespace boost {
     std::vector<bool> vertex_marker(num_vertices(g), true);
 
     detail::write_graphviz_subgraph(out, g, g,
-				    vertex_marker.begin(),
-				    edge_marker.begin());
+                                    vertex_marker.begin(),
+                                    edge_marker.begin());
   }
   
   template <typename Graph>

@@ -143,7 +143,7 @@ namespace boost {
     std::pair<vertex_descriptor, bool>
     find_vertex(vertex_descriptor u_global) const
     {
-      std::map<vertex_descriptor, vertex_descriptor>::const_iterator
+      typename std::map<vertex_descriptor, vertex_descriptor>::const_iterator
 	i = m_local_vertex.find(u_global);
       return std::make_pair((*i).second, i != m_local_vertex.end());
     }
