@@ -25,7 +25,12 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/edge_list.hpp>
+
+// Define the macro BOOST_USE_STANFORD_GRAPH_BASE if you have SGB
+// installed and want to check the BGL SGB adaptor.
+#ifdef BOOST_USE_STANFORD_GRAPH_BASE
 #include <boost/graph/stanford_graph.hpp>
+#endif
 
 //
 // These concept checks verify that the BGL classes implement the
@@ -106,9 +111,11 @@ main(int,char*[])
     typedef edge_list<E*,E,ptrdiff_t> EdgeList;
     function_requires< EdgeListGraphConcept<EdgeList> >();
   }
+#ifdef BOOST_USE_STANFORD_GRAPH_BASE
   { // Stanford GraphBase Graph
     typedef Graph* Graph;
     function_requires< VertexListGraphConcept<Graph> >();
   }
+#endif
   return 0;
 }
