@@ -42,7 +42,19 @@ bool check_vertex_cleared(Graph& g, Vertex v, ID id)
     typename graph_traits<Graph>::adjacency_iterator ai, aiend, found;
     boost::tie(ai, aiend) = adjacent_vertices(*vi, g);
     boost::indirect_cmp<ID, std::equal_to<std::size_t> > cmp(id);
+
+#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+    // seeing internal compiler errors when using std::find_if()
+    found = aiend;
+    for ( ; ai != aiend; ++ai)
+      if (cmp(*ai, v)) {
+	found = ai;
+	break;
+      }
+#else
     found = std::find_if(ai, aiend, std::bind1st(cmp,v));
+#endif
+
     if ( found != aiend ) {
 #if VERBOSE
       std::cerr << "should not have found vertex " << id[*found] << std::endl;
@@ -224,9 +236,7 @@ int main(int, char* [])
       cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
 #endif
       graph_traits<Graph>::edges_size_type old_E = num_edges(g);
-#if 1
       remove_edge(e, g);
-#endif    
 
 #if VERBOSE
       print_graph(g, vertex_id_map);
@@ -283,6 +293,7 @@ int main(int, char* [])
 	break;
       }
     }
+
     // make sure the vertices do not have any out edges yet
     {
       graph_traits<Graph>::out_edge_iterator e, e_end;
@@ -305,6 +316,7 @@ int main(int, char* [])
 	break;
       }
     }
+
     // make sure the vertices do not yet appear in any of the edges
     {
       graph_traits<Graph>::edge_iterator e, e_end;
@@ -327,7 +339,6 @@ int main(int, char* [])
 	}
       }
     }
-
     // Make sure num_vertices(g) has been updated
     N = num_vertices(g);
     if ( (N - 2) != old_N ) {
@@ -445,9 +456,9 @@ int main(int, char* [])
       cerr << "           Passed."<< endl;      
 #endif
     }
-
   }
   if (ret == 0)
     std::cout << "tests passed" << std::endl;
+
   return ret;
 }
