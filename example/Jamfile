@@ -1,5 +1,8 @@
 subproject libs/graph/example ;
 
+SGB = /u/jsiek/sgb ;
+LEDA = /u/jsiek/LEDA-4.1 ;
+
 exe accum-compile-times : accum-compile-times.cpp : <include>$(BOOST_ROOT) ;
 exe adjacency_list : adjacency_list.cpp : <include>$(BOOST_ROOT) ;
 exe adjacency_list_io : adjacency_list_io.cpp : <include>$(BOOST_ROOT) ;
@@ -47,7 +50,8 @@ exe fibonacci_heap : fibonacci_heap.cpp : <include>$(BOOST_ROOT) ;
 exe file_dependencies : file_dependencies.cpp : <include>$(BOOST_ROOT) ;
 exe filtered_graph : filtered_graph.cpp : <include>$(BOOST_ROOT) ;
 exe gerdemann : gerdemann.cpp : <include>$(BOOST_ROOT) ;
-exe girth : girth.cpp : <include>$(BOOST_ROOT) ;
+exe girth : girth.cpp : <include>$(BOOST_ROOT) <include>$(SGB) 
+  <library-file>$(SGB)/libgb.a ;
 exe graph-assoc-types : graph-assoc-types.cpp : <include>$(BOOST_ROOT) ;
 exe graph : graph.cpp : <include>$(BOOST_ROOT) ;
 exe graph-property-iter-eg : graph-property-iter-eg.cpp : <include>$(BOOST_ROOT) ;
@@ -66,12 +70,16 @@ exe koenig-lookup : koenig-lookup.cpp : <include>$(BOOST_ROOT) ;
 exe kruskal-example : kruskal-example.cpp : <include>$(BOOST_ROOT) ;
 exe kruskal-telephone : kruskal-telephone.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) ;
 exe last-mod-time : last-mod-time.cpp : <include>$(BOOST_ROOT) ;
-exe leda-concept-check : leda-concept-check.cpp : <include>$(BOOST_ROOT) ;
-exe leda-graph-eg : leda-graph-eg.cpp : <include>$(BOOST_ROOT) ;
+exe leda-concept-check : leda-concept-check.cpp : <include>$(BOOST_ROOT) 
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a ;
+exe leda-graph-eg : leda-graph-eg.cpp : <include>$(BOOST_ROOT) 
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a ;
 exe loops_dfs : loops_dfs.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) ;
 exe max_flow : max_flow.cpp : <include>$(BOOST_ROOT) ;
-exe miles_span : miles_span.cpp : <include>$(BOOST_ROOT) ;
-exe minimum_degree_ordering : minimum_degree_ordering.cpp : <include>$(BOOST_ROOT) ;
+exe miles_span : miles_span.cpp : <include>$(BOOST_ROOT) <include>$(SGB) 
+   <library-file>$(SGB)/libgb.a ;
+exe minimum_degree_ordering : minimum_degree_ordering.cpp iohb.c : <include>$(BOOST_ROOT) ;
 exe min_max_paths : min_max_paths.cpp : <include>$(BOOST_ROOT) ;
 exe modify_graph : modify_graph.cpp : <include>$(BOOST_ROOT) ;
 exe neighbor_bfs : neighbor_bfs.cpp : <include>$(BOOST_ROOT) ;
@@ -97,19 +105,20 @@ exe remove_edge_if_dir : remove_edge_if_dir.cpp : <include>$(BOOST_ROOT) ;
 exe remove_edge_if_undir : remove_edge_if_undir.cpp : <include>$(BOOST_ROOT) ;
 exe reverse_graph : reverse_graph.cpp : <include>$(BOOST_ROOT) ;
 exe reverse-graph-eg : reverse-graph-eg.cpp : <include>$(BOOST_ROOT) ;
-exe roget_components : roget_components.cpp : <include>$(BOOST_ROOT) ;
+exe roget_components : roget_components.cpp : <include>$(BOOST_ROOT) 
+  <include>$(SGB) <library-file>$(SGB)/libgb.a ;
 exe scc : scc.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) ;
-exe strong_components : strong_components.cpp : <include>$(BOOST_ROOT) ;
+exe strong_components : strong_components.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) ;
 exe strong-components : strong-components.cpp : <include>$(BOOST_ROOT) ;
 exe subgraph : subgraph.cpp : <include>$(BOOST_ROOT) ;
-exe test-adj-list : test-adj-list.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort1 : topo-sort1.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort2 : topo-sort2.cpp : <include>$(BOOST_ROOT) ;
 exe topo_sort : topo_sort.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort-file-dep2 : topo-sort-file-dep2.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort-file-dep : topo-sort-file-dep.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort-with-leda : topo-sort-with-leda.cpp : <include>$(BOOST_ROOT) ;
-exe topo-sort-with-sgb : topo-sort-with-sgb.cpp : <include>$(BOOST_ROOT) ;
+exe topo-sort-with-sgb : topo-sort-with-sgb.cpp : <include>$(BOOST_ROOT) 
+   <include>$(SGB) <library-file>$(SGB)/libgb.a ;
 exe transitive_closure : transitive_closure.cpp : <include>$(BOOST_ROOT) ;
 exe transpose-example : transpose-example.cpp : <include>$(BOOST_ROOT) ;
 exe undirected : undirected.cpp : <include>$(BOOST_ROOT) ;

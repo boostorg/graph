@@ -27,6 +27,7 @@
 int
 main()
 {
+  using namespace boost;
   typedef GRAPH < int, int >Graph;
   function_requires < VertexListGraphConcept < Graph > >();
   function_requires < BidirectionalGraphConcept < Graph > >();

@@ -112,7 +112,7 @@ main()
   graph_traits < graph_type >::vertex_iterator i, end;
   tie(i, end) = vertices(g);
   typedef property_map < graph_type, vertex_name_t >::type name_map_t;
-  name_equals < name_map_t > predicate("dax.h", get(vertex_name, g));
+  name_equals_t < name_map_t > predicate("dax.h", get(vertex_name, g));
   i = std::find_if(i, end, predicate);
   output_out_edges(std::cout, g, *i, get(vertex_name, g));
 

@@ -63,6 +63,6 @@ main()
   typedef foo::iterator_property_map < vec_t::iterator,
     boost::identity_property_map > pmap_t;
   using namespace boost;
-  function_requires < Mutable_LvaluePropertyMapConcept < pmap_t, int >>();
+  function_requires < Mutable_LvaluePropertyMapConcept < pmap_t, int > >();
   return 0;
 }

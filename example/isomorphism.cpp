@@ -68,7 +68,7 @@ main()
   std::cout << "isomorphic? " << ret << std::endl;
 
   std::cout << "f: ";
-  for (int v = 0; v != f.size(); ++v)
+  for (std::size_t v = 0; v != f.size(); ++v)
     std::cout << get(vertex_index, g2, f[v]) << " ";
   std::cout << std::endl;
   
