@@ -5,5 +5,5 @@ SOURCES = graphviz_graph_lex graphviz_digraph_lex
 
 lib libbgl-viz : ../src/$(SOURCES).cpp 
 	: <include>$(BOOST_ROOT)
-	: debug release
+	: debug
 	;
