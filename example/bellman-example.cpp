@@ -61,6 +61,10 @@ make_edge_writer(const Graph & g, const Parent & p)
   return edge_writer < Graph, Parent > (g, p);
 }
 
+struct EdgeProperties {
+  int weight;
+};
+
 int
 main()
 {
@@ -73,7 +77,7 @@ main()
   int weight[n_edges] = { -4, 8, 5, -2, 9, -3, 7, 2, 6, 7 };
 
   typedef adjacency_list < vecS, vecS, directedS,
-    no_property, property < edge_weight_t, int > > Graph;
+    no_property, EdgeProperties> Graph;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph g(N);
@@ -83,7 +87,8 @@ main()
   Graph g(edge_array, edge_array + n_edges, N);
 #endif
   graph_traits < Graph >::edge_iterator ei, ei_end;
-  property_map<Graph, edge_weight_t>::type weight_pmap = get(edge_weight, g);
+  property_map<Graph, int EdgeProperties::*>::type 
+    weight_pmap = get(&EdgeProperties::weight, g);
   int i = 0;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
@@ -126,7 +131,7 @@ main()
       // VC++ doesn't like the 3-argument get function, so here
       // we workaround by using 2-nested get()'s.
       dot_file << name[u] << " -> " << name[v]
-        << "[label=\"" << get(get(edge_weight, g), e) << "\"";
+        << "[label=\"" << get(get(&EdgeProperties::weight, g), e) << "\"";
       if (parent[v] == u)
         dot_file << ", color=\"black\"";
       else
