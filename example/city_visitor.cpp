@@ -134,10 +134,11 @@ int main(int, char*[])
 
   cout << "*** Depth First ***" << endl;
   depth_first_search
-    (G, make_dfs_visitor(boost::make_list(city_arrival(names),
-                                          neighbor_cities(names),
-                                          finish_city(names))),
-     &colors[0]);
+    (G, 
+     visitor(make_dfs_visitor(boost::make_list(city_arrival(names),
+					       neighbor_cities(names),
+					       finish_city(names)))).
+     color_map(&colors[0]));
   cout << endl;
 
   /* Get the source vertex */
