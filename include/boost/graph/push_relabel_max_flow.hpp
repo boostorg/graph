@@ -196,9 +196,10 @@ namespace boost {
 
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
-          if (u == sink)
+          if (u == sink) {
             distance[u] = 0;
-          else if (u == src && !overflow_detected)
+            continue;
+          } else if (u == src && !overflow_detected)
             distance[u] = n;
           else
             distance[u] = 1;
@@ -228,7 +229,7 @@ namespace boost {
         color[sink] = ColorTraits::gray();
         distance[sink] = 0;
         
-        for (distance_size_type l = 0; l != max_distance; ++l) {
+        for (distance_size_type l = 0; l <= max_distance; ++l) {
           layers[l].active_vertices.clear();
           layers[l].inactive_vertices.clear();
         }
