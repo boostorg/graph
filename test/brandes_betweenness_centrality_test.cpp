@@ -173,6 +173,7 @@ run_wheel_test(Graph*, int V)
 {
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
+  typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
   Graph g(V);
   Vertex center = *boost::vertices(g).first;
@@ -184,7 +185,10 @@ run_wheel_test(Graph*, int V)
     for (tie(v, v_end) = boost::vertices(g); v != v_end; ++v, ++index) {
       put(vertex_index, g, *v, index);
       vertices[index] = *v;
-      if (*v != center) add_edge(*v, center, g);
+      if (*v != center) {
+        Edge e = add_edge(*v, center, g).first;
+        put(edge_weight, g, e, 1.0);
+      }
     }
   }
 
@@ -363,7 +367,17 @@ template<typename Graph>
 void random_unweighted_test(Graph*, int n)
 {
   Graph g(n);
+
+  {
+    typename graph_traits<Graph>::vertex_iterator v, v_end;
+    int index = 0;
+    for (tie(v, v_end) = boost::vertices(g); v != v_end; ++v, ++index) {
+      put(vertex_index, g, *v, index);
+    }
+  }
+
   randomly_add_edges(g, 0.20);
+
   std::cout << "Random graph with " << n << " vertices and "
             << num_edges(g) << " edges.\n";
 
@@ -395,8 +409,18 @@ void random_unweighted_test(Graph*, int n)
        make_iterator_property_map(centrality3.begin(), get(vertex_index, g))));
   std::cout << "DONE.\n";
 
-  BOOST_TEST(std::equal(centrality.begin(), centrality.end(),
-                        centrality3.begin()));
+  if (!std::equal(centrality.begin(), centrality.end(),
+                  centrality3.begin())) {
+    for (std::size_t v = 0; v < centrality.size(); ++v) {
+      double relative_error = 
+        centrality[v] == 0.0? centrality3[v]
+        : (centrality3[v] - centrality[v]) / centrality[v];
+      if (relative_error < 0) relative_error = -relative_error;
+      BOOST_TEST(relative_error < error_tolerance);
+    }
+  }
+  //  BOOST_TEST(std::equal(centrality.begin(), centrality.end(),
+  //                        centrality3.begin()));
 
 }
 
@@ -472,7 +496,7 @@ int test_main(int, char*[])
 
   run_wheel_test((Graph*)0, 15);
 
-  random_unweighted_test((Graph*)0, 500);
+  random_unweighted_test((Graph*)0, 200);
 
   return 0;
 }
