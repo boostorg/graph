@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
   // a built-in array here just for variety. This will also be used as
   // a Decorator.  
   boost::graph_traits<Graph>::vertices_size_type d[5];
+  std::fill_n(d, 5, 0);
 
   // The source vertex
   Vertex s = *(vertices(G).first);
