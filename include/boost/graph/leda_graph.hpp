@@ -123,6 +123,11 @@ namespace boost {
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 namespace boost {
+
+  struct leda_graph_traversal_category : 
+    public virtual bidirectional_graph_tag,
+    public virtual vertex_list_graph_tag { };
+
   template <class vtype, class etype>
   struct graph_traits< GRAPH<vtype,etype> > {
     typedef node vertex_descriptor;
@@ -158,6 +163,7 @@ namespace boost {
 
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category; // not sure here
+    typedef leda_graph_traversal_category traversal_category;
     typedef int vertices_size_type;
     typedef int edges_size_type;
     typedef int degree_size_type;

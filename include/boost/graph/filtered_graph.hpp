@@ -33,7 +33,7 @@
 
 namespace boost {
 
-  //===========================================================================
+  //=========================================================================
   // Some predicate classes.
 
   struct keep_all {
@@ -155,24 +155,12 @@ namespace boost {
     filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp)
       : m_g(g), m_edge_pred(ep), m_vertex_pred(vp) { }
 
-#if 0
-    filtered_graph(const self& x) 
-      : m_g(x.m_g), m_edge_pred(x.m_edge_pred), 
-	m_vertex_pred(x.m_vertex_pred) { }
-
-    self& operator=(const self& x) {
-      m_g = x.m_g;
-      m_edge_pred = x.m_edge_pred;
-      m_vertex_pred = x.m_vertex_pred;
-      return *this;
-    }
-#endif
-
     // Graph requirements
     typedef typename Traits::vertex_descriptor          vertex_descriptor;
     typedef typename Traits::edge_descriptor            edge_descriptor;
     typedef typename Traits::directed_category          directed_category;
     typedef typename Traits::edge_parallel_category     edge_parallel_category;
+    typedef typename Traits::traversal_category         traversal_category;
 
     // IncidenceGraph requirements
     typedef filter_iterator_generator<OutEdgePred,

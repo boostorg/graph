@@ -68,6 +68,7 @@ namespace boost {
     typedef typename integer_range<V>::iterator vertex_iterator;
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
+    typedef vertex_list_graph_tag traversal_category;
     typedef typename std::vector<EdgeList>::size_type vertices_size_type;
     typedef void edges_size_type;
     typedef typename EdgeList::size_type degree_size_type;

@@ -98,6 +98,7 @@ namespace boost {
     typedef long edge_size_type;
     typedef long degree_size_type;
     typedef directed_tag directed_category;
+    typedef vertex_list_graph_tag traversal_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
   };
 }
