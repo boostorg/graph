@@ -28,6 +28,7 @@
 
 #include <boost/config.hpp>
 #include <vector>
+#include <boost/pending/queue.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -96,6 +97,7 @@ namespace boost {
        ColorMap color, 
        PredEdgeMap pred)
     {
+      typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
 
@@ -107,10 +109,11 @@ namespace boost {
 
       color[sink] = Color::gray();
       while (color[sink] != Color::white()) {
+	boost::queue<vertex_t> Q;
 	breadth_first_search
-	  (detail::residual_graph(g, res), src,
-	   visitor(make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge()))).
-	   color_map(color));
+	  (detail::residual_graph(g, res), src, Q,
+	   make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
+	   color);
 	if (color[sink] != Color::white())
 	  detail::augment(g, src, sink, pred, res, rev);
       } // while
