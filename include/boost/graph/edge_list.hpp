@@ -32,6 +32,7 @@
 #include <boost/pending/ct_if.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 
 namespace boost {
 
@@ -53,23 +54,27 @@ namespace boost {
   // convertible to an Integral type.
   // 
 
+  struct edge_list_tag { };
+
   // The implementation class for edge_list.
   template <class G, class EdgeIter, class T, class D>
   class edge_list_impl
   {
   public:
-    typedef D Eid;
+    typedef D edge_id;
     typedef T Vpair;
     typedef typename Vpair::first_type V;
     typedef V vertex_descriptor;
+    typedef edge_list_tag graph_tag;
+    typedef void edge_property_type;
 
     struct edge_descriptor
     {
       edge_descriptor() { }
-      edge_descriptor(EdgeIter p, Eid id) : _ptr(p), _id(id) { }
-      operator Eid() { return _id; }
+      edge_descriptor(EdgeIter p, edge_id id) : _ptr(p), _id(id) { }
+      operator edge_id() { return _id; }
       EdgeIter _ptr;
-      Eid _id;
+      edge_id _id;
     };
     typedef edge_descriptor E;
 
@@ -89,7 +94,7 @@ namespace boost {
       bool operator==(const self& x) { return _iter == x._iter; }
       bool operator!=(const self& x) { return _iter != x._iter; }
       EdgeIter _iter;
-      Eid _i;
+      edge_id _i;
     };
     typedef void out_edge_iterator;
     typedef void in_edge_iterator;
@@ -118,21 +123,56 @@ namespace boost {
     return (*e._ptr).second;
   }
 
+  template <class D, class E>
+  class el_edge_property_map
+    : public put_get_at_helper<D, el_edge_property_map<D,E> >{
+  public:
+    typedef E key_type;
+    typedef D value_type;
+    typedef readable_property_map_tag category;
 
+    value_type operator[](key_type e) const {
+      return e._i;
+    }
+  };
+  struct edge_list_edge_property_selector {
+    template <class Graph, class Property, class Tag>
+    struct bind {
+      typedef el_edge_property_map<typename Graph::edge_id,
+          typename Graph::edge_descriptor> type;
+      typedef type const_type;
+    };
+  };
+  template <>  
+  struct edge_property_selector<edge_list_tag> {
+    typedef edge_list_edge_property_selector type;
+  };
+
+  template <class G, class EI, class T, class D>
+  typename property_map< edge_list_impl<G,EI,T,D>, edge_index_t>::type
+  get(edge_index_t, edge_list_impl<G,EI,T,D>& g) {
+    typedef typename property_map< edge_list_impl<G,EI,T,D>, 
+      edge_index_t>::type EdgeIndexMap;
+    return EdgeIndexMap();
+  }
 
   // A specialized implementation for when the iterators are random access.
+
+  struct edge_list_ra_tag { };
 
   template <class G, class EdgeIter, class T, class D>
   class edge_list_impl_ra
   {
   public:
-    typedef D E;
+    typedef D edge_id;
     typedef T Vpair;
     typedef typename Vpair::first_type V;
+    typedef edge_list_ra_tag graph_tag;
+    typedef void edge_property_type;
 
-    typedef E edge_descriptor;
+    typedef edge_id edge_descriptor;
     typedef V vertex_descriptor;
-    typedef typename boost::integer_range<E>::iterator edge_iterator;
+    typedef typename boost::integer_range<edge_id>::iterator edge_iterator;
     typedef void out_edge_iterator;
     typedef void in_edge_iterator;
     typedef void adjacency_iterator;
@@ -163,6 +203,36 @@ namespace boost {
   {
     const G& g = static_cast<const G&>(g_);
     return g._first[e].second;
+  }
+  template <class E>
+  class el_ra_edge_property_map
+    : public put_get_at_helper<E, el_ra_edge_property_map<E> >{
+  public:
+    typedef E key_type;
+    typedef E value_type;
+    typedef readable_property_map_tag category;
+
+    value_type operator[](key_type e) const {
+      return e;
+    }
+  };
+  struct edge_list_ra_edge_property_selector {
+    template <class Graph, class Property, class Tag>
+    struct bind {
+      typedef el_ra_edge_property_map<typename Graph::edge_descriptor> type;
+      typedef type const_type;
+    };
+  };
+  template <>  
+  struct edge_property_selector<edge_list_ra_tag> {
+    typedef edge_list_ra_edge_property_selector type;
+  };
+  template <class G, class EI, class T, class D>
+  typename property_map< edge_list_impl_ra<G,EI,T,D>, edge_index_t>::type
+  get(edge_index_t, edge_list_impl_ra<G,EI,T,D>& g) {
+    typedef typename property_map< edge_list_impl_ra<G,EI,T,D>, 
+      edge_index_t>::type EdgeIndexMap;
+    return EdgeIndexMap();
   }
 
   // Some helper classes for determining if the iterators are random access
