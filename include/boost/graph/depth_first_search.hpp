@@ -92,7 +92,7 @@ namespace boost {
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
     void depth_first_visit_impl
       (const IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       typename graph_traits<IncidenceGraph>::vertex_descriptor u,
        DFSVisitor& vis,
        ColorMap color)
     {
@@ -335,6 +335,7 @@ namespace boost {
      typename graph_traits<IncidenceGraph>::vertex_descriptor u,
      DFSVisitor vis, ColorMap color)
   {
+    vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color);
   }
 
