@@ -48,39 +48,22 @@ int main(int , char* [])
 {
   using namespace boost;
   typedef adjacency_list<vecS, vecS, undirectedS, 
-       property<vertex_color_t, default_color_type,
-         property<vertex_distance_t,int> >, property<edge_weight_t,int> > 
-    Graph;
+       no_property, property<edge_weight_t,int> > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::pair<int,int> E;
   const int num_nodes = 9;
   char name[] = "abcdefghi";
   enum { a, b, c, d, e, f, g, h, i }; 
-  E edges[] = { E(a,b), E(a,h),
-                E(b,h), E(b,c),
-		E(c,d), E(c,f), E(c,i),
-		E(d,e), E(d,f),
-		E(e,f), 
-		E(f,g),
-		E(g,i), E(g,h),
-		E(h,i) };
-  int weights[] = { 4, 8,
-		    11, 8,
-		    7, 4, 2,
-		    9, 14,
-		    10,
-		    2,
-		    6, 1,
-		    7 };
+  E edges[] = { E(a,b), E(a,h), E(b,h), E(b,c), E(c,d), E(c,f), E(c,i),
+		E(d,e), E(d,f), E(e,f), E(f,g), E(g,i), E(g,h), E(h,i) };
+  int weights[] = { 4, 8, 11, 8, 7, 4, 2, 9, 14, 10, 2, 6, 1, 7 };
 		    
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
 
   std::vector<Vertex> p(num_vertices(G));
   Vertex src = *(vertices(G).first);
   p[src] = src;
-  prim_minimum_spanning_tree
-    (G, src, get(vertex_distance, G),
-     make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
+  prim_minimum_spanning_tree(G, src, predecessor_map(&p[0]));
 
   for ( std::vector<Vertex>::iterator vi = p.begin();
         vi != p.end(); ++vi)
