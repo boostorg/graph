@@ -21,8 +21,19 @@
 
 <h1>Frequently Asked Questions</h1>
 
-
 <ol>
+
+<li>
+How do I perform an early exit from an algorithm such as BFS?<br>
+
+<p>
+Create a visitor that throws an exception when you want to cut off the
+search, then put your call to <tt>breadth_first_search</tt> inside of
+an appropriate try/catch block. This strikes many programmers as a
+misuse of exceptions, however, much thought was put into the decision
+to have exceptions has the preferred way to exit early. See boost
+email discussions for more details.
+</p>
 
 <li>
 Why is the visitor parameter passed by value rather than reference
@@ -137,5 +148,9 @@ argument to the algorithm.</li>
 
 
 </ol>
-<!--  LocalWords:  gif ALT BGL std const STL GraphBase LEDA
+<!--  LocalWords:  gif ALT BGL std const STL GraphBase LEDA BFS stanford hpp OO
+ -->
+<!--  LocalWords:  leda cpp VertexList vecS listS undirectedS num cnt struct
+ -->
+<!--  LocalWords:  enum
  -->
