@@ -26,6 +26,14 @@
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+// Sample output:
+//  r: inifinity
+//  s: 0
+//  t: 2
+//  u: 6
+//  v: 5
+//  x: 3
+
 int main()
 {
   using namespace boost;
@@ -33,6 +41,7 @@ int main()
     property<vertex_distance_t, int>, property<edge_weight_t, int> > graph_t;
   graph_t g(6);
   enum verts { r, s, t, u, v, x };
+  char name[] = "rstuvx";
   add_edge(r, s, 5, g);
   add_edge(r, t, 3, g);
   add_edge(s, t, 2, g);
@@ -64,6 +73,9 @@ int main()
 
   graph_traits<graph_t>::vertex_iterator vi , vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    std::cout << *vi << ": " << d_map[*vi] << std::endl;
+    if (d_map[*vi] == std::numeric_limits<int>::max())
+      std::cout << name[*vi] << ": inifinity\n";
+    else
+      std::cout << name[*vi] << ": " << d_map[*vi] << '\n';
   return 0;
 }
