@@ -327,7 +327,7 @@ isomorphic.
 @d Quick return with false if $|V_1| \neq |V_2|$
 @{
 if (num_vertices(g1) != num_vertices(g2))
-  return true;
+  return false;
 @}
 
 
@@ -1128,7 +1128,6 @@ namespace boost {
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
     typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
     std::vector<vertex2_t> f(num_vertices(g1));
-    vertex2_t x;
 
     // Compute the in-degrees
     std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
@@ -1150,8 +1149,38 @@ namespace boost {
       invariant2(in_degree_map, g2);
 
     return isomorphism
-      (g1, g2, make_iterator_property_map(f.begin(), get(vertex_index, g1), x),
+      (g1, g2, make_iterator_property_map(f.begin(), get(vertex_index, g1), vertex2_t()),
        invariant1, invariant2, get(vertex_index, g1), get(vertex_index, g2));
+  }
+
+  // Verify that the given mapping iso_map from the vertices of g1 to the
+  // vertices of g2 describes an isomorphism.
+  // Note: this could be made much faster by specializing based on the graph
+  // concepts modeled, but since we're verifying an O(n^(lg n)) algorithm,
+  // O(n^4) won't hurt us.
+  template<typename Graph1, typename Graph2, typename IsoMap>
+  inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
+				 IsoMap iso_map)
+  {
+    if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
+      return false;
+
+    for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
+	 e1 != edges(g1).second; ++e1) {
+      bool found_edge = false;
+      for (typename graph_traits<Graph2>::edge_iterator e2 = edges(g2).first;
+	   e2 != edges(g2).second && !found_edge; ++e2) {
+	if (source(*e2, g2) == get(iso_map, source(*e1, g1)) &&
+	    target(*e2, g2) == get(iso_map, target(*e1, g1))) {
+	  found_edge = true;
+	}
+      }
+
+      if (!found_edge)
+	return false;
+    }
+
+    return true;
   }
 
 } // namespace boost
