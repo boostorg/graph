@@ -513,7 +513,7 @@ then the edge will not be added and the flag will be <TT>false</TT>.
 When the flag is <TT>false</TT>, the edge descriptor is invalid and
 any use of it is undefined.  The placement of the edge in the out-edge
 list for <i>u</i> is unspecified. 
-
+<p>
 If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
 will <b>invalidate</b> any iterators that point into the edge-list for vertex
 <i>u</i>.
@@ -545,8 +545,9 @@ void remove_edge(vertex_descriptor v, vertex_descriptor u,
 Removes the edge <i>(v,u)</i> from the graph.  If the
 <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation will
 <b>invalidate</b> any iterators that point into the edge-list for
-vertex <i>u</i> and for vertex <i>v</i> in the undirected and
-bidirectional case.
+vertex <i>u</i> and also for vertex <i>v</i> in the undirected and
+bidirectional case. Also, for directed graphs this <b>invalidates</b>
+any <tt>edge_iterator</tt>.
 
 <hr>
 
@@ -557,11 +558,10 @@ Removes the edge <tt>e</tt> from the graph. This differs from the
 <tt>remove_edge(u, v, g)</tt> function in the case of a
 multigraph. This <tt>remove_edge(e, g)</tt> function removes a single
 edge, whereas the <tt>remove_edge(u, v, g)</tt> function removes all
-edges <i>(u,v)</i>.  If the <TT>EdgeList</TT> selector is
-<TT>vecS</TT> then this operation will <b>invalidate</b> any iterators
-that point into the edge-list for vertex <i>u</i> and for vertex
-<i>v</i> in the undirected and bidirectional case.
-
+edges <i>(u,v)</i>.  This operation will <b>invalidate</b> any iterators
+that point into the edge-list for target vertex of edge <tt>e</tt>.
+Also, for directed graphs this <b>invalidates</b>
+any <tt>edge_iterator</tt>.
 
 <hr>
 
@@ -581,7 +581,8 @@ void remove_out_edge_if(vertex_descriptor v, Predicate predicate,
 </pre>
 Removes all out-edges of vertex <i>v</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to the edge, then the edge is removed.
+applied to the edge, then the edge is removed. This operation
+<b>invalidates</b> out-edge iterators for vertex <i>v</i>.
 
 <hr>
 
@@ -592,7 +593,19 @@ void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
 </pre>
 Removes all in-edges of vertex <i>v</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to the edge, then the edge is removed.
+applied to the edge, then the edge is removed. This operation
+<b>invalidates</b> in-edge iterators for vertex <i>v</i>.
+
+<hr>
+
+<pre>
+template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
+void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
+</pre>
+Removes all edges from the graph that satisfy
+the <tt>predicate</tt>. That is, if the predicate returns true when
+applied to the edge, then the edge is removed. This operation
+<b>invalidates</b> all edge, out-edge, and in-edge iterators for graph.
 
 <hr>
 

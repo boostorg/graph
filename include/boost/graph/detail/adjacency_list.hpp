@@ -237,6 +237,8 @@ namespace boost {
       }
       inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
       inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
+      EdgeIter& iter() { return m_iter; }
+      const EdgeIter& iter() const { return m_iter; }
       EdgeIter m_iter;
     };
 #endif
@@ -346,6 +348,10 @@ namespace boost {
                                            g.vertex_set().end(), g) );
     }
     namespace detail {
+      // need to make sure remove_edge_if_dispatch works for 
+      // undirected & bidirectional
+      // and add tests for it in test/graph.cpp
+
       template <class EdgeList, class Predicate>
       inline void
       remove_edge_if_dispatch(EdgeList& el, Predicate pred,
@@ -370,9 +376,9 @@ namespace boost {
       }
     } // namespace detail
 
-    template <class Config, class vertex_descriptor, class Predicate>
+    template <class Config, class Predicate>
     inline void
-    remove_out_edge_if(vertex_descriptor v, Predicate pred,
+    remove_out_edge_if(typename Config::vertex_descriptor v, Predicate pred,
                        directed_edges_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
@@ -381,9 +387,9 @@ namespace boost {
       detail::remove_edge_if_dispatch(g.out_edge_list(v), pred,
                                       edge_parallel_category());
     }
-    template <class Config, class vertex_descriptor, class Predicate>
+    template <class Config, class Predicate>
     inline void
-    remove_in_edge_if(vertex_descriptor v, Predicate pred,
+    remove_in_edge_if(typename Config::vertex_descriptor v, Predicate pred,
                       directed_edges_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
@@ -392,9 +398,6 @@ namespace boost {
       detail::remove_edge_if_dispatch(g.in_edge_list(v), pred,
                                       edge_parallel_category());
     }
-
-    // need to make sure remove_edge_if works for undirected & bidirectional
-    // and add tests for it in test/graph.cpp
 
     template <class Config>
     struct directed_graph_helper : public directed_edges_helper<Config> { };
@@ -413,6 +416,17 @@ namespace boost {
       boost::erase(el, StoredEdge(v));
     }
 
+    template <class Config, class Predicate>
+    inline void
+    remove_edge_if(Predicate pred, directed_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      typename Config::vertex_iterator vi, vi_end;
+      for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+	remove_out_edge_if(*vi, pred, g);
+    }    
 
     namespace detail {
 
@@ -594,6 +608,17 @@ namespace boost {
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.out_edge_list(v), StoredEdge(u));
+    }
+
+    template <class Predicate, class Config>
+    void
+    remove_edge_if(Predicate pred, undirected_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typename Config::edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+	remove_edge(*ei, g);
     }
 
     namespace detail {
@@ -817,6 +842,18 @@ namespace boost {
       }
     };
 
+    template <class Predicate, class Config>
+    void
+    remove_edge_if(Predicate pred,
+		   bidirectional_graph_helper_with_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typename Config::edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+	remove_edge(*ei, g);
+    }
+
     // O(E/V) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
@@ -965,6 +1002,18 @@ namespace boost {
 	this->remove_edge(*iter);
       }
     };
+
+    template <class Predicate, class Config>
+    void
+    remove_edge_if(Predicate pred,
+		   bidirectional_graph_helper_without_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typename Config::edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+	remove_edge(*ei, g);
+    }
 
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
