@@ -71,7 +71,9 @@ namespace boost {
       remove(x);
       (*this)[bucket[x]].push(x);
     }
-  private:
+    //  private: 
+    //    with KCC, the nested stack class is having access problems
+    //    despite the friend decl.
     static size_type invalid_value(size_type) {
       return std::numeric_limits<size_type>::max();
     }
