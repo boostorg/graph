@@ -62,9 +62,9 @@ int test_main(int argc, char* argv[])
     while (verts.size() < Nsub)
       verts.insert(random_vertex(g, gen));
 
-    for (std::set<vertex_t>::iterator i = verts.begin();
-        i != verts.end(); ++i) {
-      vertex_t v_global = *i;
+    for (std::set<vertex_t>::iterator it = verts.begin();
+        it != verts.end(); ++it) {
+      vertex_t v_global = *it;
       vertex_t v = add_vertex(v_global, g_s);
       sub_vertex_set.push_back(v);
       sub_global_map.push_back(v_global);

@@ -30,6 +30,10 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/mersenne_twister.hpp>
 
+#ifndef BOOST_NO_STDC_NAMESPACE
+namespace std { using ::atoi; using ::atof; }
+#endif
+
 using namespace boost;
 
 template <typename Generator>
@@ -159,8 +163,8 @@ int test_main(int argc, char* argv[])
   using std::atoi;
   using std::atof;
 #endif
-  int n = atoi(argv[1]);
-  double edge_prob = atof(argv[2]);
+  int n = std::atoi(argv[1]);
+  double edge_prob = std::atof(argv[2]);
   test_isomorphism(n, edge_prob);
 
   return 0;
