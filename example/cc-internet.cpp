@@ -37,7 +37,7 @@ main()
 
   std::vector<int> component(num_vertices(g));
 
-  int num_comp = connected_components
+  connected_components
     (g, make_iterator_property_map(component.begin(),
                                    get(vertex_index, g), component[0]));
 
