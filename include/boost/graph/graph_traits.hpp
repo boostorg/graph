@@ -55,6 +55,17 @@ namespace boost {
   struct undirected_tag { };
   struct bidirectional_tag : public directed_tag { };
 
+  namespace detail {
+    bool is_directed(directed_tag) { return true; }
+    bool is_directed(undirected_tag) { return false; }
+  }
+
+  template <typename Graph>
+  bool is_directed(const Graph&) { 
+    typedef typename graph_traits<Graph>::directed_category Cat;
+    return detail::is_directed(Cat());
+  }
+
   // edge_parallel_category tags
   struct allow_parallel_edge_tag {};
   struct disallow_parallel_edge_tag {};
