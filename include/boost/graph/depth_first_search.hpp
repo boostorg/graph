@@ -93,9 +93,11 @@ namespace boost {
     }
   } // namespace detail
 
-  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  template <class VertexListGraph, class DFSVisitor, class ColorMap, 
+            class Vertex>
   void
-  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
+                     Vertex start_vertex)
   {
     function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typedef typename property_traits<ColorMap>::value_type ColorValue;
@@ -106,6 +108,12 @@ namespace boost {
       put(color, *ui, Color::white());
       vis.initialize_vertex(*ui, g);
     }
+
+    if (start_vertex != *vertices(g).first) {
+      vis.start_vertex(start_vertex, g);
+      detail::depth_first_visit_impl(g, start_vertex, vis, color);
+    }
+
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(color, *ui);
       if (u_color == Color::white()) {
@@ -115,28 +123,34 @@ namespace boost {
     }
   }
 
-  namespace detail {
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  void
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  {
+    depth_first_search(g, vis, color, *vertices(g).first);
+  }
 
+  namespace detail {
     template <class ColorMap>
     struct dfs_dispatch {
 
-      template <class VertexListGraph, class DFSVisitor, class P, class T, 
-        class R>
+      template <class VertexListGraph, class Vertex, class DFSVisitor, 
+                class P, class T, class R>
       static void
-      apply(const VertexListGraph& g, DFSVisitor vis, 
+      apply(const VertexListGraph& g, DFSVisitor vis, Vertex start_vertex,
             const bgl_named_params<P, T, R>&,
             ColorMap color)
       {
-        depth_first_search(g, vis, color);
+        depth_first_search(g, vis, color, start_vertex);
       }
     };
 
     template <>
     struct dfs_dispatch<detail::error_property_not_found> {
-      template <class VertexListGraph, class DFSVisitor,
-        class P, class T, class R>
+      template <class VertexListGraph, class Vertex, class DFSVisitor,
+                class P, class T, class R>
       static void
-      apply(const VertexListGraph& g, DFSVisitor vis,
+      apply(const VertexListGraph& g, DFSVisitor vis, Vertex start_vertex,
             const bgl_named_params<P, T, R>& params,
             detail::error_property_not_found)
       {
@@ -146,7 +160,8 @@ namespace boost {
           (g, vis, make_iterator_property_map
            (color_vec.begin(),
             choose_const_pmap(get_param(params, vertex_index),
-                              g, vertex_index), c) );
+                              g, vertex_index), c), 
+           start_vertex);
       }
     };
 
@@ -165,6 +180,8 @@ namespace boost {
       (g,
        choose_param(get_param(params, graph_visitor),
                     make_dfs_visitor(null_visitor())),
+       choose_param(get_param(params, root_vertex_t()),
+                    *vertices(g).first),
        params,
        get_param(params, vertex_color)
        );
