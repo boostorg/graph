@@ -260,7 +260,8 @@ and then by DFS order. The last step is the call to the
 @d Isomorphism Function Body
 @{
 {
-  isomorphism_algo<Graph1, Graph2, IndexMap1, IndexMap2, IndexMapping, 
+  @<Concept checking@>
+  detail::isomorphism_algo<Graph1, Graph2, IndexMap1, IndexMap2, IndexMapping, 
     VertexInvariant1, VertexInvariant2>
   algo(g1, g2, index_map1, index_map2, f, invariant1, invariant2);
 
@@ -268,36 +269,6 @@ and then by DFS order. The last step is the call to the
 }
 @}
 
-
-@d Isomorphism Function Body (old)
-@{
-{
-  @<Some type definitions and iterator declarations@>
-  @<Concept checking@>
-  @<Quick return with false if $|V_1| \neq |V_2|$@>
-  @<Compute vertex invariants@>
-  @<Quick return if the graph's invariants do not match@>
-  @<Compute invariant multiplicity@>
-  @<Sort vertices by invariant multiplicity@>
-  @<Order the vertices by DFS discover time@>
-  @<Order the edges by DFS discover time@>
-  @<Invoke recursive \code{isomorph} function@>
-}
-@}
-
-There are some types that will be used throughout the function, which
-we create shortened names for here. We will also need vertex
-iterators for \code{g1} and \code{g2} in several places, so we define
-them here.
-
-@d Some type definitions and iterator declarations
-@{
-typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
-typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
-typedef typename graph_traits<Graph1>::vertices_size_type size_type;
-typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
-typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
-@}
 
 We use the Boost Concept Checking Library to make sure that the type
 arguments to the function fulfill there requirements. The
@@ -318,6 +289,10 @@ function_requires< VertexListGraphConcept<Graph1> >();
 function_requires< EdgeListGraphConcept<Graph1> >();
 function_requires< VertexListGraphConcept<Graph2> >();
 function_requires< BidirectionalGraphConcept<Graph2> >();
+
+typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
+typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
+typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 
 // Property map requirements
 function_requires< ReadWritePropertyMapConcept<IndexMapping, vertex1_t> >();
@@ -359,61 +334,26 @@ function objects should follow the same pattern.
 template <typename InDegreeMap, typename Graph>
 class degree_vertex_invariant
 {
+  typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+  typedef typename graph_traits<Graph>::degree_size_type size_type;
 public:
-  typedef typename graph_traits<Graph>::vertex_descriptor argument_type;
-  typedef typename graph_traits<Graph>::degree_size_type result_type;
-
+  typedef vertex_t argument_type;
+  typedef size_type result_type;
+  
   degree_vertex_invariant(const InDegreeMap& in_degree_map, const Graph& g)
-    : m_in_degree_map(in_degree_map), m_g(g) { }
+    : in_degree_map(in_degree_map), g(g) { }
 
-  result_type operator()(argument_type v) const {
-    return (num_vertices(m_g) + 1) * out_degree(v, m_g)
-      + get(m_in_degree_map, v);
+  size_type operator()(vertex_t v) const {
+    return (num_vertices(g) + 1) * out_degree(v, g) + get(in_degree_map, v);
   }
-  // The largest possible vertex invariant number
+  // The largest possible vertex invariant number, should move this out
   result_type max() const { 
-    return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
+    return num_vertices(g) * num_vertices(g) + num_vertices(g);
   }
 private:
-  InDegreeMap m_in_degree_map;
-  const Graph& m_g;
+  InDegreeMap in_degree_map;
+  const Graph& g;
 };
-@}
-
-Since the invariant function may be expensive to compute, we
-pre-compute the invariant numbers for every vertex in the two
-graphs. The variables \code{invar1} and \code{invar2} are property
-maps for accessing the stored invariants, which are described next.
-
-@d Store vertex invariants
-@{
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-  invar1[*i1] = invariant1(*i1);
-for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
-  invar2[*i2] = invariant2(*i2);
-@}
-
-\noindent We store the invariants in two vectors, indexed by the vertex indices
-of the two graphs. We then create property maps for accessing these
-two vectors in a more convenient fashion (they go directly from vertex
-to invariant, instead of vertex to index to invariant).
-
-@d Setup storage for vertex invariants
-@{
-typedef typename VertexInvariant1::result_type InvarValue1;
-typedef typename VertexInvariant2::result_type InvarValue2;
-typedef std::vector<InvarValue1> invar_vec1_t;
-typedef std::vector<InvarValue2> invar_vec2_t;
-invar_vec1_t invar1_vec(num_vertices(g1));
-invar_vec2_t invar2_vec(num_vertices(g2));
-typedef typename invar_vec1_t::iterator vec1_iter;
-typedef typename invar_vec2_t::iterator vec2_iter;
-typedef iterator_property_map<vec1_iter, IndexMap1, InvarValue1, InvarValue1&>
-  Invar1;
-Invar1Map invar1(invar1_vec.begin(), index_map1);
-typedef iterator_property_map<vec2_iter, IndexMap2, InvarValue2, InvarValue2&>
-  Invar2;
-Invar2 invar2(invar2_vec.begin(), index_map2);
 @}
 
 As discussed in \S\ref{sec:vertex-invariants}, we can quickly rule out
@@ -428,10 +368,10 @@ invariants, and then check to see if they are equal.
   std::vector<InvarValue1> invar1_tmp;
   typedef typename Invariant2::result_type InvarValue2;
   std::vector<InvarValue2> invar2_tmp;
-  BGL_FORALL_VERTICES(v, g1, Graph1) 
+  BGL_FORALL_VERTICES_T(v, g1, Graph1) 
     invar1_tmp.push_back(ADEG(v));
-  BGL_FORALL_VERTICES(v, g2, Graph2)
-    invar1_tmp.push_back(ADEG(*vi));
+  BGL_FORALL_VERTICES_T(v, g2, Graph2)
+    invar2_tmp.push_back(BDEG(v));
   std::sort(invar1_tmp.begin(), invar1_tmp.end());
   std::sort(invar2_tmp.begin(), invar2_tmp.end());
   if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), invar2_tmp.begin()))
@@ -446,9 +386,9 @@ graph to record the multiplicity.
 
 @d Compute invariant multiplicity
 @{
-std::vector<std::size_t> invar_mult(invariant1.max(), 0);
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)      
-  ++invar_mult[invar1[*i1]];
+std::vector<std::size_t> invar_mult(ADEG.max(), 0);
+BGL_FORALL_VERTICES_T(i, g1, Graph1)
+  ++invar_mult[ADEG(i)];
 @}
 
 \noindent We then order the vertices by their invariant multiplicity.
@@ -465,11 +405,9 @@ the graph, which we store in the \code{g1\_vertices} vector.
 integer_range<size_type> range(0, num_vertices(g1));
 std::copy(range.begin(), range.end(), std::back_inserter(perm));
 std::sort(perm.begin(), perm.end(),
-          detail::compare_invariant_multiplicity(invar1_vec.begin(),
-                                                 invar_mult.begin()));
-
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-  g1_vertices.push_back(*i1);
+    detail::compare_invariant_multiplicity(ADEG, invar_mult.begin()));
+BGL_FORALL_VERTICES_T(i, g1, Graph1)
+  g1_vertices.push_back(i);
 permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 @}
 
@@ -480,23 +418,23 @@ is shown below. This predicate provides the glue that binds
 @d Compare multiplicity predicate
 @{
 namespace detail {
-  template <typename InvarMap, typename MultMap>
+  template <typename InvarFun, typename MultMap>
   struct compare_invariant_multiplicity_predicate
   {
-    compare_invariant_multiplicity_predicate(InvarMap i, MultMap m)
-      : m_invar(i), m_mult(m) { }
+    compare_invariant_multiplicity_predicate(InvarFun i, MultMap m)
+      : invar(i), mult(m) { }
 
     template <typename Vertex>
     bool operator()(const Vertex& x, const Vertex& y) const
-      { return m_mult[m_invar[x]] < m_mult[m_invar[x]]; }
+      { return mult[invar(x)] < mult[invar(y)]; }
 
-    InvarMap m_invar;
-    MultMap m_mult;
+    InvarFun invar;
+    MultMap mult;
   };
-  template <typename InvarMap, typename MultMap>
-  compare_invariant_multiplicity_predicate<InvarMap, MultMap>
-  compare_invariant_multiplicity(InvarMap i, MultMap m) {
-    return compare_invariant_multiplicity_predicate<InvarMap, MultMap>(i,m);
+  template <typename InvarFun, typename MultMap>
+  compare_invariant_multiplicity_predicate<InvarFun, MultMap>
+  compare_invariant_multiplicity(InvarFun i, MultMap m) {
+    return compare_invariant_multiplicity_predicate<InvarFun, MultMap>(i,m);
   }
 } // namespace detail
 @}
@@ -515,8 +453,8 @@ to sort the vertices of graph \code{g1}.
   perm.clear();
   @<Compute DFS discover times@>
   g1_vertices.clear();
-  for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-    g1_vertices.push_back(*i1);
+  BGL_FORALL_VERTICES_T(i, g1, Graph1)
+    g1_vertices.push_back(i);
   permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 }
 @}
@@ -531,15 +469,14 @@ the order in which DFS discovers the vertices.
 @d Compute DFS discover times
 @{
 std::vector<default_color_type> color_vec(num_vertices(g1));
+typedef color_traits<default_color_type> Color;
 for (typename std::vector<vertex1_t>::iterator ui = g1_vertices.begin();
      ui != g1_vertices.end(); ++ui) {
-  if (color_vec[get(index_map1, *ui)] 
-      == color_traits<default_color_type>::white()) {
-    depth_first_visit
-      (g1, *ui, detail::record_dfs_order<Graph1, IndexMap1>(perm, 
-                                                       index_map1), 
-       make_iterator_property_map(&color_vec[0], index_map1, 
-                                  color_vec[0]));
+  if (color_vec[get(index_map1, *ui)] == Color::white()) {
+    depth_first_visit(g1, *ui, 
+       detail::record_dfs_order<Graph1, IndexMap1>(perm, index_map1), 
+       make_safe_iterator_property_map(&color_vec[0], color_vec.size(),
+         index_map1, color_vec[0]));
   }
 }
 @}
@@ -555,12 +492,12 @@ namespace detail {
   template <typename Graph1, typename IndexMap1>
   struct record_dfs_order : public default_dfs_visitor {
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
-    typedef typename graph_traits<Graph1>::vertex_descriptor vertex;
+    typedef typename graph_traits<Graph1>::vertex_descriptor vertex_t;
 
     record_dfs_order(std::vector<size_type>& dfs_order, IndexMap1 index) 
       : dfs_order(dfs_order), index(index) { }
 
-    void discover_vertex(vertex v, const Graph1& g) const {
+    void discover_vertex(vertex_t v, const Graph1& g) const {
       dfs_order.push_back(get(index, v));
     }
     std::vector<size_type>& dfs_order; 
@@ -584,44 +521,55 @@ function object is described next.
 @d Order the edges by DFS discover time
 @{
 std::copy(edges(g1).first, edges(g1).second, std::back_inserter(edge_set));
-std::sort(edge_set.begin(), edge_set.end(), 
-          detail::edge_ordering
-          (make_iterator_property_map(perm.begin(), index_map1, perm[0]), g1));
+perm_map = PermMap(&perm[0], perm.size(), index_map1);
+edge_order = edge_order_fun<PermMap, Graph1>(perm_map, g1);
+std::sort(edge_set.begin(), edge_set.end(), detail::edge_cmp(edge_order));
+std::cout << "edge set = ";
+for (edge_iter_t e = edge_set.begin(); e != edge_set.end(); ++e) {
+  std::cout << "(" << get(perm_map, source(*e, g1)) << ","
+    << get(perm_map, target(*e, g1)) << ") ";
+}
+std::cout << std::endl;
 @}
 
-\noindent The \code{edge\_order} function computes the ordering number
-for an edge, which for edge $e=(u,v)$ is $\max(u,v)$. The
-\code{edge\_\-ordering\_\-fun} function object simply returns
-comparison of two edge's ordering numbers.
+\noindent The function object created by \code{edge\_cmp} compares the
+ordering number for an edge, which for edge $e=(u,v)$ is
+$\max(u,v)$. The \code{edge\_\-order\_\-fun} computes the ordering
+number.
 
-@d Isomorph edge ordering predicate
+@d Isomorph edge ordering function and predicate
 @{
 namespace detail {
 
   template <typename VertexIndexMap, typename Graph>
-  std::size_t edge_order(const typename graph_traits<Graph>::edge_descriptor e,
-                         VertexIndexMap index_map, const Graph& g) {
-    return std::max(get(index_map, source(e, g)), get(index_map, target(e, g)));    
+  class edge_order_fun {
+    typedef typename graph_traits<Graph>::edge_descriptor edge_t;
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
+  public:
+    typedef edge_t argument_type;
+    typedef size_type result_type;
+
+    edge_order_fun() { }
+    edge_order_fun(VertexIndexMap vim, const Graph& g)
+      : index_map(vim), g(&g) { }
+
+    size_type operator()(const edge_t& e) const {
+      return std::max(get(index_map, source(e, *g)), 
+                      get(index_map, target(e, *g)));    
+    }
+    VertexIndexMap index_map;
+    const Graph* g;
+  };
+
+  // edge_cmp(x,y) = order(x) < order(y)
+  template <typename EdgeOrder>
+  compose_f_gx_hy_t< std::less<typename EdgeOrder::result_type>,
+                     EdgeOrder, EdgeOrder >
+  edge_cmp(const EdgeOrder& order) {
+    std::less<typename EdgeOrder::result_type> cmp;
+    return compose_f_gx_hy(cmp, order, order);
   }
 
-  template <typename VertexIndexMap, typename Graph>
-  class edge_ordering_fun {
-  public:
-    edge_ordering_fun(VertexIndexMap vip, const Graph& g)
-      : m_index_map(vip), m_g(g) { }
-    template <typename Edge>
-    bool operator()(const Edge& e1, const Edge& e2) const {
-      return edge_order(e1, m_index_map, m_g) < edge_order(e2, m_index_map, m_g);
-    }
-    VertexIndexMap m_index_map;
-    const Graph& m_g;
-  };
-  template <class VertexIndexMap, class G>
-  inline edge_ordering_fun<VertexIndexMap,G>
-  edge_ordering(VertexIndexMap vip, const G& g)
-  {
-    return edge_ordering_fun<VertexIndexMap,G>(vip, g);
-  }
 } // namespace detail
 @}
 
@@ -635,18 +583,6 @@ vertices of graph \code{g1}. We represent $V_2 - S$ with a bitset.  We
 use \code{std::vector} instead of \code{boost::dyn\_bitset} for speed
 instead of space.
 
-@d Invoke recursive \code{isomorph} function
-@{
-std::vector<char> not_in_S_vec(num_vertices(g2), true);
-iterator_property_map<char*, IndexMap2, char, char&>
-  not_in_S(&not_in_S_vec[0], index_map2);
-
-return detail::isomorph(g1_vertices.begin(), g1_vertices.end(), 
-      edge_set.begin(), edge_set.end(), g1, g2,
-      make_iterator_property_map(perm.begin(), index_map1, perm[0]),
-      index_map2, f, invar1, invar2, not_in_S);
-@}
-
 
 \subsection{Implementation of ISOMORPH}
 
@@ -659,6 +595,8 @@ The mapping is recorded in the parameter \code{f}.
 
 @d Isomorphism algorithm class
 @{
+namespace detail {
+
 template <typename Graph1, typename Graph2,
   typename IndexMap1, typename IndexMap2, typename IndexMapping, 
   typename Invariant1, typename Invariant2>
@@ -669,7 +607,7 @@ struct isomorphism_algo
   typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
   typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 
-  // External
+  // External, these are parameters to the isomorphism function
   const Graph1& g1;
   const Graph2& g2;
   IndexMap1 index_map1;
@@ -678,47 +616,52 @@ struct isomorphism_algo
   Invariant2 BDEG;
   IndexMapping APAIR;
 
-  //Internal
-
-  std::vector<vertex1_t> BPAIR_vec; // B -> A
-  typedef iterator_property_map<vertex1_t*, IndexMap2 ,vertex1_t, vertex1_t&> 
-     IndexMapping2;
-  IndexMapping2 BPAIR;
-  std::vector<char> APAIR_assigned_vec;
-  std::vector<char> BPAIR_assigned_vec;
-  iterator_property_map<char*, IndexMap1 ,char, char&> APAIR_assigned;
-  iterator_property_map<char*, IndexMap2 ,char, char&> BPAIR_assigned;
-
-  // internal stuff
+  // Internal
   std::vector<vertex1_t> g1_vertices;
   std::vector<size_type> perm;
   std::vector<edge1_t> edge_set;
   typedef typename std::vector<edge1_t>::iterator edge_iter_t;
   size_type mc; // number of edges in S
 
+  typedef safe_iterator_property_map<size_type*, IndexMap1, size_type, size_type&>
+    PermMap;
+  PermMap perm_map;
+  edge_order_fun<PermMap, Graph1> edge_order;
+
+  std::vector<vertex1_t> BPAIR_vec; // B -> A
+  typedef safe_iterator_property_map<vertex1_t*,IndexMap2,vertex1_t,vertex1_t&> 
+     IndexMapping2;
+  IndexMapping2 BPAIR;
+  std::vector<char> APAIR_assigned_vec;
+  std::vector<char> BPAIR_assigned_vec;
+  safe_iterator_property_map<char*, PermMap, char, char&> APAIR_assigned;
+  safe_iterator_property_map<char*, IndexMap2 ,char, char&> BPAIR_assigned;
+
   isomorphism_algo(const Graph1& g1, const Graph2& g2,
       IndexMap1 index_map1, IndexMap2 index_map2,
       IndexMapping f, Invariant1 invariant1, Invariant2 invariant2) 
-        : g1(g1), g2(g2),
+        : g1(g1), g2(g2), index_map1(index_map1), index_map2(index_map2),
           ADEG(invariant1), BDEG(invariant2), APAIR(f),
           BPAIR_vec(num_vertices(g1)),
-          APAIR_assigned_vec(num_vertices(g1)),
-          BPAIR_assigned_vec(num_vertices(g2))
+          APAIR_assigned_vec(num_vertices(g1), false),
+          BPAIR_assigned_vec(num_vertices(g2), false)
   {
-    BPAIR = make_iterator_property_map(&BPAIR_vec[0],index_map2,BPAIR_vec[0]);
-    APAIR_assgigned = make_iterator_property_map(&APAIR_assigned_vec[0], 
-        index_map1, char());
-    BPAIR_assgigned = make_iterator_property_map(&BPAIR_assigned_vec[0], 
-        index_map2, char());
+    BPAIR = make_safe_iterator_property_map(&BPAIR_vec[0], BPAIR_vec.size(),
+                index_map2, BPAIR_vec[0]);
+    APAIR_assigned = make_safe_iterator_property_map(&APAIR_assigned_vec[0],
+        APAIR_assigned_vec.size(), perm_map, char());
+    BPAIR_assigned = make_safe_iterator_property_map(&BPAIR_assigned_vec[0], 
+        BPAIR_assigned_vec.size(), index_map2, char());
   }
 
   bool isomorphism()
   {
     @<Quick return if the graph's invariants do not match@>
+    @<Compute invariant multiplicity@>
     @<Sort vertices by invariant multiplicity@>
     @<Order the vertices by DFS discover time@>
     @<Order the edges by DFS discover time@>
-    match(edge_set.begin());    
+    return this->match(edge_set.begin());
   }
 
   bool match(edge_iter_t edge_iter)
@@ -727,11 +670,16 @@ struct isomorphism_algo
       edge1_t edge = *edge_iter;
       vertex1_t u = source(edge, g1);
       vertex1_t v = target(edge, g1);
-      if (get(index_map1, u) == 0) { // root node
+      std::cout << "edge: (" << get(perm_map, u) 
+         << "," << get(perm_map, v) << ")"<< std::endl;
+      if (get(perm_map, u) == 0) { // root node
          // Try all possible mappings
-        BGL_FORALL_VERTICES(y, g2, Graph2) {
+        BGL_FORALL_VERTICES_T(y, g2, Graph2) {
+          std::cout << "y: " << get(index_map2, y) << std::endl;
           if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
             APAIR[v] = y; APAIR_assigned[v] = true;
+            std::cout << "f(" << get(perm_map, v) << ")="
+              << get(index_map2, y) << std::endl;
             BPAIR[y] = v; BPAIR_assigned[y] = true;
             mc = 0;
             if (match(next(edge_iter)))
@@ -741,14 +689,18 @@ struct isomorphism_algo
           }
         }
       } else if (APAIR_assigned[v] == false) {
-        vertex2_t z = APAIR[edge_order(edge, index_map1, g1)];
-        BGL_FORALL_ADJACENT(z, w, g2, Graph2) {
+        std::cout << "edge_order(edge)=" << edge_order(edge) << std::endl;
+        std::cout << "APAIR_assigned[edge_order(edge)]="
+          << (APAIR_assigned[edge_order(edge)] == 1) << std::endl;
+        vertex2_t z = APAIR[edge_order(edge)];
+        std::cout << "z: " << get(index_map2, z) << std::endl;
+        BGL_FORALL_ADJACENT_T(z, w, g2, Graph2) {
           if (BPAIR_assigned[w] == true)
             --mc;
         }
-        for (std::size_t ji = 0; ji <= edge_order(edge, index_map1, g1); ++ji){
+        for (std::size_t ji = 0; ji <= edge_order(edge); ++ji) {
           vertex1_t j = g1_vertices[ji];
-          BGL_FORALL_ADJACENT(APAIR[j], w, g2, Graph2) {
+          BGL_FORALL_ADJACENT_T(APAIR[j], w, g2, Graph2) {
              if (w == z)
               --mc;
           }
@@ -756,7 +708,8 @@ struct isomorphism_algo
         if (mc != 0)
           return false;
 
-        BGL_FORALL_ADJACENT(APAIR[u], y, g2, Graph2) {
+        BGL_FORALL_ADJACENT_T(APAIR[u], y, g2, Graph2) {
+          std::cout << "y: " << get(index_map2, y) << std::endl;
           if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
             APAIR[v] = y; APAIR_assigned[v] = true;
             BPAIR[y] = v; BPAIR_assigned[y] = true;
@@ -769,7 +722,8 @@ struct isomorphism_algo
         }
       } else {
         bool verify = false;
-        BGL_FORALL_ADJACENT(APAIR[u], y, g2, Graph2) {
+        BGL_FORALL_ADJACENT_T(APAIR[u], y, g2, Graph2) {
+          std::cout << "y: " << get(index_map2, y) << std::endl;
           if (y == APAIR[v])
             verify = true;
         }
@@ -784,143 +738,11 @@ struct isomorphism_algo
     return false;
   } // match()
 };
+
+} // namespace detail
 @}
 
 
-\noindent The steps for this function are as follows.
-
-@d Body of the isomorph function (old)
-@{
-{
-  @<Some typedefs and variable declarations@>
-  @<Return true if matching is complete@>
-  @<Create a copy of $f_{k-1}$ which will become $f_k$@>
-  @<Compute $M$, the potential matches for $k$@>
-  @<Invoke isomorph for each vertex in $M$@>
-}
-@}
-
-\noindent Here we create short names for some often-used types
-and declare some variables.
-
-@d Some typedefs and variable declarations
-@{
-typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
-typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
-typedef typename graph_traits<Graph1>::vertices_size_type size_type;
-
-vertex1_t k = *k_iter;
-@}
-
-\noindent We have completed creating an isomorphism if \code{k\_iter == last}.
-
-@d Return true if matching is complete
-@{
-if (k_iter == last) 
-  return true;
-@}
-
-
-In the pseudo-code for ISOMORPH, we iterate through each vertex in $v
-\in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
-approach is to directly iterate through the potential matches for $k$,
-for this often is many fewer vertices than $V_2 - S$. Let $M$ be the
-set of potential matches for $k$. $M$ consists of all the vertices $v
-\in V_2 - S$ such that if $(k,j)$ or $(j,k) \in E_1[k] - E_1[k-1]$
-then $(v,f(j)$ or $(f(j),v) \in E_2$ with $i(v) = i(k)$. Note that
-this means if there are no edges in $E_1[k] - E_1[k-1]$ then $M = V_2
-- S$. In the case where there are edges in $E_1[k] - E_1[k-1]$ we
-break the computation of $M$ into two parts, computing $out$ sets
-which are vertices that can match according to an out-edge of $k$, and
-computing $in$ sets which are vertices that can match according to an
-in-edge of $k$.
-
-The implementation consists of a loop through the edges of $E_1[k] -
-E_1[k-1]$. The straightforward implementation would initialize $M
-\leftarrow V_2 - S$, and then intersect $M$ with the $out$ or $in$ set
-for each edge. However, to reduce the cost of the intersection
-operation, we start with $M \leftarrow \emptyset$, and on the first
-iteration of the loop we do $M \leftarrow out$ or $M \leftarrow in$
-instead of an intersection operation.
-
-@d Compute $M$, the potential matches for $k$
-@{
-std::vector<vertex2_t> potential_matches;
-bool some_edges = false;
-
-for (; edge_iter != edge_iter_end; ++edge_iter) {
-  if (get(index_map1, k) != edge_order(*edge_iter, index_map1, g1))
-    break;      
-  if (k == source(*edge_iter, g1)) { // (k,j)
-    @<Compute the $out$ set@>
-    if (some_edges == false) {
-      @<Perform $M \leftarrow out$@>
-    } else {
-      @<Perform $M \leftarrow M \intersect out$@>
-    }
-    some_edges = true;
-  } else { // (j,k)
-    @<Compute the $in$ set@>
-    if (some_edges == false) {
-      @<Perform $M \leftarrow in$@>
-    } else {
-      @<Perform $M \leftarrow M \intersect in$@>
-    }
-    some_edges = true;
-  }
-  if (potential_matches.empty())
-    break;
-} // for edge_iter
-if (some_edges == false) {
-  @<Perform $M \leftarrow V_2 - S$@>
-}
-@}
-
-To compute the $out$ set, we iterate through the out-edges $(k,j)$ of
-$k$, and for each $j$ we iterate through the in-edges $(v,f(j))$ of
-$f(j)$, putting all of the $v$'s in $out$ that have the same vertex
-invariant as $k$, and which are in $V_2 - S$. Figure~\ref{fig:out}
-depicts the computation of the $out$ set. The implementation is as
-follows.
-
-@d Compute the $out$ set
-@{
-vertex1_t j = target(*edge_iter, g1);
-std::vector<vertex2_t> out;
-typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
-for (tie(ei, ei_end) = in_edges(get(f, j), g2); ei != ei_end; ++ei) {
-  vertex2_t v = source(*ei, g2); // (v,f[j])
-  if (invar1[k] == invar2[v] && not_in_S[v])
-    out.push_back(v);
-}
-@}
-
-\noindent Here initialize $M$ with the $out$ set. Since we are
-representing sets with sorted vectors, we sort \code{out} before
-copying to \code{potential\_matches}.
-
-@d Perform $M \leftarrow out$
-@{
-indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
-std::sort(out.begin(), out.end(), cmp);
-std::copy(out.begin(), out.end(), std::back_inserter(potential_matches));
-@}
-
-\noindent We use \code{std::set\_intersection} to implement $M
-\leftarrow M \intersect out$. Since there is no version of
-\code{std::set\_intersection} that works in-place, we create a
-temporary for the result and then swap.
-
-@d Perform $M \leftarrow M \intersect out$
-@{
-indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
-std::sort(out.begin(), out.end(), cmp);
-std::vector<vertex2_t> tmp_matches;
-std::set_intersection(out.begin(), out.end(),
-                      potential_matches.begin(), potential_matches.end(),
-                      std::back_inserter(tmp_matches), cmp);
-std::swap(potential_matches, tmp_matches);
-@}
 
 % Shoot, there is some problem with f(j). Could have to do with the
 % change from the edge set to just using out_edges and in_edges.
@@ -966,49 +788,6 @@ digraph G {
 }
 @}
 
-The $in$ set is is constructed by iterating through the in-edges
-$(j,k)$ of $k$, and for each $j$ we iterate through the out-edges
-$(f(j),v)$ of $f(j)$. We put all of the $v$'s in $in$ that have the
-same vertex invariant as $k$, and which are in $V_2 -
-S$. Figure~\ref{fig:in} depicts the computation of the $in$ set.  The
-following code computes the $in$ set.
-
-@d Compute the $in$ set
-@{
-vertex1_t j = source(*edge_iter, g1);
-std::vector<vertex2_t> in;
-typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
-for (tie(ei, ei_end) = out_edges(get(f, j), g2); ei != ei_end; ++ei) {
-  vertex2_t v = target(*ei, g2); // (f[j],v)
-  if (invar1[k] == invar2[v] && not_in_S[v])
-    in.push_back(v);
-}
-@}
-
-\noindent Here initialize $M$ with the $in$ set. Since we are
-representing sets with sorted vectors, we sort \code{in} before
-copying to \code{potential\_matches}.
-
-@d Perform $M \leftarrow in$
-@{
-indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
-std::sort(in.begin(), in.end(), cmp);
-std::copy(in.begin(), in.end(), std::back_inserter(potential_matches));
-@}
-
-\noindent Again we use \code{std::set\_intersection} on
-sorted vectors to implement $M \leftarrow M \intersect in$.
-
-@d Perform $M \leftarrow M \intersect in$
-@{
-indirect_cmp<IndexMap2, std::less<std::size_t> > cmp(index_map2);
-std::sort(in.begin(), in.end(), cmp);
-std::vector<vertex2_t> tmp_matches;
-std::set_intersection(in.begin(), in.end(),
-                      potential_matches.begin(), potential_matches.end(),
-                      std::back_inserter(tmp_matches), cmp);
-std::swap(potential_matches, tmp_matches);
-@}
 
 \vizfig{in}{Computing the $in$ set.}
 
@@ -1042,72 +821,6 @@ digraph G {
 }
 @}
 
-In the case where there were no edges in $E_1[k] - E_1[k-1]$, then $M
-= V_2 - S$, so here we insert all the vertices from $V_2$ that are not
-in $S$.
-
-@d Perform $M \leftarrow V_2 - S$
-@{
-typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
-for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi)
-  if (not_in_S[*vi])
-    potential_matches.push_back(*vi);
-@}
-
-For each vertex $v$ in the potential matches $M$, we will create an
-extended isomorphism $f_k = f_{k-1} \union \pair{k}{v}$. First
-we create a local copy of $f_{k-1}$.
-
-@d Create a copy of $f_{k-1}$ which will become $f_k$
-@{
-std::vector<vertex2_t> my_f_vec(num_vertices(g1));
-typedef typename std::vector<vertex2_t>::iterator vec_iter;
-iterator_property_map<vec_iter,  IndexMap1, vertex2_t, vertex2_t&>
-  my_f(my_f_vec.begin(), index_map1);
-
-typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
-for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-  my_f[*i1] = get(f, *i1);
-@}
-
-Next we enter the loop through every vertex $v$ in $M$, and extend the
-isomorphism with $\pair{k}{v}$. We then update the set $S$ (by
-removing $v$ from $V_2 - S$) and make the recursive call to
-\code{isomorph}. If \code{isomorph} returns successfully, we have
-found an isomorphism for the complete graph, so we copy our local
-mapping into the mapping from the previous calling function.
-
-@d Invoke isomorph for each vertex in $M$
-@{
-for (std::size_t j = 0; j < potential_matches.size(); ++j) {
-  my_f[k] = potential_matches[j];
-  @<Perform $S' = S - \{ v \}$@>
-  if (isomorph(boost::next(k_iter), last, edge_iter, edge_iter_end, g1, g2, 
-               index_map1, index_map2, 
-               my_f, invar1, invar2, my_not_in_S)) {
-    for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
-      put(f, *i1, my_f[*i1]);
-    return true;
-  }
-}
-return false;
-@}
-
-We need to create the new set $S' = S - \{ v \}$, which will be the
-$S$ for the next invocation to \code{isomorph}. As before, we
-represent $V_2 - S'$ instead of $S'$ and use a bitset.
-
-@d Perform $S' = S - \{ v \}$
-@{
-std::vector<char> my_not_in_S_vec(num_vertices(g2));
-iterator_property_map<char*, IndexMap2, char, char&>
-  my_not_in_S(&my_not_in_S_vec[0], index_map2);
-typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
-for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi)
-  my_not_in_S[*vi] = not_in_S[*vi];;
-my_not_in_S[potential_matches[j]] = false;
-@}
-
 
 \section{Appendix}
 
@@ -1117,12 +830,15 @@ code parts into namespace \code{boost}.
 
 @o isomorphism-v2.hpp -d
 @{
-
-// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
-// sell and distribute this software is granted provided this
-// copyright notice appears in all copies. This software is provided
-// "as is" without express or implied warranty, and with no claim as
-// to its suitability for any purpose.
+// Copyright (C) 2001 Jeremy Siek (jsiek@@osl.iu.edu), 
+//                    Doug Gregor (gregod@@cs.rpi.edu), and 
+//                    Brian Osman (osmanb@@acm.org).
+//
+// Permission to copy, use, modify, sell and distribute this software
+// is granted provided this copyright notice appears in all
+// copies. This software is provided "as is" without express or
+// implied warranty, and with no claim as to its suitability for any
+// purpose.
 
 // See http://www.boost.org/libs/graph/doc/isomorphism-impl.pdf 
 // for a description of the implementation of the isomorphism function
@@ -1142,16 +858,15 @@ code parts into namespace \code{boost}.
 #include <boost/limits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/graph/depth_first_search.hpp>
-
-
-
+#include <boost/graph/iteration_macros.hpp>
+#include <boost/compose.hpp>
 
 namespace boost {
 
   @<Degree vertex invariant@>
   @<Record DFS ordering visitor@>
   @<Compare multiplicity predicate@>
-  @<Isomorph edge ordering predicate@>
+  @<Isomorph edge ordering function and predicate@>
 
   @<Isomorphism algorithm class@>
 
@@ -1202,17 +917,19 @@ namespace boost {
 
       // Compute the in-degrees
       std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
-      typedef iterator_property_map<size_type*, IndexMap1, 
+      typedef safe_iterator_property_map<size_type*, IndexMap1, 
          size_type, size_type&> InDegreeMap1;
-      InDegreeMap1 in_degree_map1(&in_degree_vec1[0], index_map1);
+      InDegreeMap1 in_degree_map1(&in_degree_vec1[0], in_degree_vec1.size(),
+                                  index_map1);
       detail::compute_in_degree(g1, in_degree_map1);
       degree_vertex_invariant<InDegreeMap1, Graph1> 
         default_invar1(in_degree_map1, g1);
 
       std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
-      typedef iterator_property_map<size_type*, IndexMap2, 
+      typedef safe_iterator_property_map<size_type*, IndexMap2, 
          size_type, size_type&> InDegreeMap2;
-      InDegreeMap2 in_degree_map2(&in_degree_vec2[0], index_map2);
+      InDegreeMap2 in_degree_map2(&in_degree_vec2[0], in_degree_vec2.size(),
+                                  index_map2);
       detail::compute_in_degree(g2, in_degree_map2);
       degree_vertex_invariant<InDegreeMap2, Graph2>
          default_invar2(in_degree_map2, g2);
@@ -1240,7 +957,7 @@ namespace boost {
     return detail::isomorphism_impl
       (g1, g2, 
        choose_param(get_param(params, vertex_isomorphism_t()),
-          make_iterator_property_map(f.begin(), 
+          make_safe_iterator_property_map(f.begin(), f.size(),
             choose_const_pmap(get_param(params, vertex_index1),
                         g1, vertex_index), x)),
        choose_const_pmap(get_param(params, vertex_index1),
@@ -1262,7 +979,7 @@ namespace boost {
     // Compute the in-degrees
     std::vector<size_type> in_degree_vec1(num_vertices(g1), 0);
     typedef typename property_map<Graph1,vertex_index_t>::const_type IndexMap1;
-    typedef iterator_property_map<size_type*, IndexMap1, 
+    typedef safe_iterator_property_map<size_type*, IndexMap1, 
        size_type, size_type&> InDegreeMap1;
     InDegreeMap1 in_degree_map1(&in_degree_vec1[0], get(vertex_index, g1));
     detail::compute_in_degree(g1, in_degree_map1);
@@ -1271,7 +988,7 @@ namespace boost {
 
     std::vector<size_type> in_degree_vec2(num_vertices(g2), 0);
     typedef typename property_map<Graph2,vertex_index_t>::const_type IndexMap2;
-    typedef iterator_property_map<size_type*, IndexMap2, 
+    typedef safe_iterator_property_map<size_type*, IndexMap2, 
        size_type, size_type&> InDegreeMap2;
     InDegreeMap2 in_degree_map2(&in_degree_vec2[0], get(vertex_index, g2));
     detail::compute_in_degree(g2, in_degree_map2);
@@ -1279,11 +996,14 @@ namespace boost {
       invariant2(in_degree_map, g2);
 
     return isomorphism
-      (g1, g2, make_iterator_property_map(f.begin(), get(vertex_index, g1), x),
+      (g1, g2, make_safe_iterator_property_map(f.begin(), f.size(),
+                      get(vertex_index, g1), x),
        invariant1, invariant2, get(vertex_index, g1), get(vertex_index, g2));
   }
 
 } // namespace boost
+
+#include <boost/graph/iteration_macros_undef.hpp>
 
 #endif // BOOST_GRAPH_ISOMORPHISM_HPP
 @}
@@ -1301,6 +1021,6 @@ namespace boost {
 % LocalWords:  iterators VertexListGraph EdgeListGraph BidirectionalGraph tmp
 % LocalWords:  ReadWritePropertyMap VertexListGraphConcept EdgeListGraphConcept
 % LocalWords:  BidirectionalGraphConcept ReadWritePropertyMapConcept indices ei
-% LocalWords:  IndexMappingValue ReadablePropertyMapConcept namespace InvarMap
+% LocalWords:  IndexMappingValue ReadablePropertyMapConcept namespace InvarFun
 % LocalWords:  MultMap vip inline bitset typedefs fj hpp ifndef adaptor params
 % LocalWords:  bgl param pmap endif
