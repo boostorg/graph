@@ -6,7 +6,7 @@
 namespace boost {
 
   struct bad_graph : public invalid_argument {
-    bad_graph(const string& what_arg) : invalid_argument(what_arg) { }
+    bad_graph(const std::string& what_arg) : invalid_argument(what_arg) { }
   };
 
   struct not_a_dag : public bad_graph {
