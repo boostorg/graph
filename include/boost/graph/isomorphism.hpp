@@ -106,8 +106,8 @@ namespace boost {
           : G1(G1), dfs_num(dfs_num) { }
         bool operator()(const edge1_t& e1, const edge1_t& e2) const {
           using namespace std;
-          vertex1_t u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
-          vertex1_t u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
+          int u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
+          int u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
           int m1 = max(u1, v1);
           int m2 = max(u2, v2);
           // lexicographical comparison 
