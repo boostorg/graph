@@ -259,8 +259,7 @@ namespace boost {
   get(Tag property_tag,
       const detail::stored_edge_property<Vertex, Property>& e)
   {
-    typedef typename property_value<Property,Tag>::type value_type;
-    return get_property_value(e.get_property(), value_type(), property_tag);
+    return get_property_value(e.get_property(), property_tag);
   }
 
   template <class Tag, class Vertex, class Iter, class Property>
@@ -268,8 +267,7 @@ namespace boost {
   get(Tag property_tag,
       const detail::stored_edge_iter<Vertex, Iter, Property>& e)
   {
-    typedef typename property_value<Property,Tag>::type value_type;
-    return get_property_value(e.get_property(), value_type(), property_tag);
+    return get_property_value(e.get_property(), property_tag);
   }
     
     //=========================================================================
@@ -2053,7 +2051,7 @@ namespace boost {
       inline adj_list_vertex_property_map(Graph&) { }
       inline Reference operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
-        return get_property_value(sv->m_property, value_type(), Tag());
+        return get_property_value(sv->m_property, Tag());
       }
     };
 
@@ -2088,8 +2086,7 @@ namespace boost {
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
       inline Reference operator[](key_type v) const {
-        return get_property_value(m_g.m_vertices[v].m_property, 
-                                value_type(), Tag());
+        return get_property_value(m_g.m_vertices[v].m_property,  Tag());
       }
       GraphRef m_g;
     };
@@ -2236,7 +2233,7 @@ namespace boost {
       typedef boost::lvalue_property_map_tag category;
       inline Ref operator[](key_type e) const {
         Property& p = *(Property*)e.get_property();
-        return get_property_value(p, value_type(), Tag());
+        return get_property_value(p, Tag());
       }
     };
 
