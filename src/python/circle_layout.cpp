@@ -40,6 +40,13 @@ void export_circle_graph_layout()
        arg("position") = 
          (vector_property_map<point2d, Graph::VertexIndexMap>*)0,
        arg("radius") = 250.0));
+
+  def("circle_graph_layout", 
+      &circle_graph_layout<Digraph>,
+      (arg("graph"), 
+       arg("position") = 
+         (vector_property_map<point2d, Digraph::VertexIndexMap>*)0,
+       arg("radius") = 250.0));
 }
 
 } } } // end namespace boost::graph::python

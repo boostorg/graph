@@ -17,8 +17,7 @@ namespace boost { namespace graph { namespace python {
 
 extern void export_Graph();
 extern void export_Digraph();
-extern void export_betweenness_centrality();
-extern void export_page_rank();
+extern void export_graphviz();
 extern void export_breadth_first_search();
 extern void export_depth_first_search();
 extern void export_dijkstra_shortest_paths();
@@ -30,7 +29,7 @@ template<typename Graph> void export_depth_first_search_in_graph();
 template<typename Graph> void export_dijkstra_shortest_paths_in_graph();
 template<typename Graph> void export_dag_shortest_paths_in_graph();
 template<typename Graph> void export_bellman_ford_shortest_paths_in_graph();
-  template<typename Graph> void export_prim_minimum_spanning_tree_in_graph();
+template<typename Graph> void export_prim_minimum_spanning_tree_in_graph();
 extern void export_connected_components();
 extern void export_strong_components();
 extern void export_biconnected_components();
@@ -39,6 +38,8 @@ extern void export_topological_sort();
 extern void export_cuthill_mckee_ordering();
   //extern void export_minimum_degree_ordering();
 extern void export_sequential_vertex_coloring();
+extern void export_betweenness_centrality();
+extern void export_page_rank();
 extern void export_circle_graph_layout();
 extern void export_fruchterman_reingold_force_directed_layout();
 extern void export_kamada_kawai_spring_layout();
@@ -99,8 +100,7 @@ BOOST_PYTHON_MODULE(bgl)
 
   export_Graph();
   export_Digraph();
-  export_betweenness_centrality();
-  export_page_rank();
+  export_graphviz();
   // Core Algorithm Patterns
   export_breadth_first_search();
   export_depth_first_search();
@@ -125,6 +125,8 @@ BOOST_PYTHON_MODULE(bgl)
   export_topological_sort();
   export_transitive_closure();
   export_sequential_vertex_coloring();
+  export_betweenness_centrality();
+  export_page_rank();
 
   // Layout Algorithms
   export_circle_graph_layout();

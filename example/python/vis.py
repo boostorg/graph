@@ -36,8 +36,8 @@ class GraphCanvas(ogl.ShapeCanvas):
         self.position_map = position_map
         self.property_maps = property_maps
         self.vertex_position_rect = self.compute_rect()
-        self.vertex_to_shape = graph.get_vertex_object_map("shape")
-        self.edge_to_shape = graph.get_edge_object_map("shape")
+        self.vertex_to_shape = graph.get_vertex_object_map("__stored_shape")
+        self.edge_to_shape = graph.get_edge_object_map("__stored_shape")
         self.shape_to_vertex = {}
 
         for v in graph.vertices:
@@ -611,7 +611,10 @@ class GraphEditorWindow(wx.Frame):
             defaultFile="", wildcard=wildcard, style=wx.OPEN | wx.CHANGE_DIR)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            graph = bgl.Graph(path, bgl.file_kind.graphviz)
+            try:
+              graph = bgl.Graph(path, bgl.file_kind.graphviz)
+            except bgl.directed_graph_error:
+              graph = bgl.Digraph(path, bgl.file_kind.graphviz)
             needs_layout = not graph.has_vertex_map("position")
             position_map = graph.get_vertex_point2d_map("position")
             if needs_layout:
