@@ -348,11 +348,11 @@ namespace boost {
            bgl_first_9 = vertices(g).first, bgl_last_9 = vertices(g).second;
        bgl_first_9 != bgl_last_9; bgl_first_9 = bgl_last_9)
     for (typename boost::graph_traits<Graph>::vertex_descriptor v;
-         bgl_first_9 != bgl_last ? (v = *bgl_first_9, true) : false;
+         bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
          ++bgl_first_9) {
       //BGL_FORALL_VERTICES_T(v, g, Graph) {
         typename property_traits<const_Map>::value_type 
-          pval1 = get(pmap, x), pval2 = get(Property(), g, x);
+          pval1 = get(pmap, x), pval2 = get(PropertyTag(), g, x);
         BOOST_TEST(pval1 == pval2);
         BOOST_TEST(pval1 == *i++);
       }
@@ -369,7 +369,7 @@ namespace boost {
            bgl_first_9 = vertices(g).first, bgl_last_9 = vertices(g).second;
        bgl_first_9 != bgl_last_9; bgl_first_9 = bgl_last_9)
     for (typename boost::graph_traits<Graph>::vertex_descriptor v;
-         bgl_first_9 != bgl_last ? (v = *bgl_first_9, true) : false;
+         bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
          ++bgl_first_9)
       //      BGL_FORALL_VERTICES_T(v, g, Graph)
         put(pmap, x, *i++);
@@ -381,7 +381,7 @@ namespace boost {
       
       typename std::vector<PropVal>::const_iterator j = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(Property(), g, x, *j++);
+        put(PropertyTag(), g, x, *j++);
       
       test_readable_vertex_property_graph(vertex_prop, tag, g);      
     }
