@@ -6,8 +6,8 @@
 #include <queue>
 #include <boost/property_map.hpp>
 #include <boost/test/minimal.hpp>
-#include <stdlib.h>
-#include <math.h>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 using namespace boost;
 
@@ -219,6 +219,9 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
   const bool is_undirected = 
     is_same<directed_category, undirected_tag>::value;
 
+  minstd_rand gen;
+  uniform_01<minstd_rand, double> rand_gen(gen);
+
   typedef typename graph_traits<MutableGraph>::vertex_descriptor vertex;
   typename graph_traits<MutableGraph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
@@ -228,7 +231,7 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
     while (wi != vi_end) {
       vertex w = *wi++;
       if (v != w) {
-        if (drand48() < edge_probability) add_edge(v, w, g);
+        if (rand_gen() < edge_probability) add_edge(v, w, g);
       }
     }
   }
@@ -458,11 +461,6 @@ int test_main(int, char*[])
   run_weighted_test((Digraph*)0, 5, dw_edge_init1, 6, dw_centrality1);
 
   run_wheel_test((Graph*)0, 15);
-
-
-  long seed = time(0);
-  std::cout << "Random seed = " << seed << std::endl;
-  srand48(seed);
 
   random_unweighted_test((Graph*)0, 500);
 

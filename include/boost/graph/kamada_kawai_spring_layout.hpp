@@ -16,6 +16,7 @@
 #include <iterator>
 #include <vector>
 #include <limits>
+#include <cmath>
 
 namespace boost {
   namespace detail { namespace graph {
@@ -103,6 +104,8 @@ namespace boost {
       deriv_type
       compute_partial_derivative(vertex_descriptor m, vertex_descriptor i)
       {
+        using std::sqrt;
+
         deriv_type result(0, 0);
         if (i != m) {
           weight_type x_diff = position[m].x - position[i].x;
@@ -140,6 +143,8 @@ namespace boost {
       // The actual Kamada-Kawai spring layout algorithm implementation
       bool run()
       {
+        using std::sqrt;
+
         // Compute d_{ij} and place it in the distance matrix
         if (!johnson_all_pairs_shortest_paths(g, distance, index, weight, 
                                               weight_type(0)))
