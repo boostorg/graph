@@ -1146,8 +1146,8 @@ namespace boost {
       for (; in_ei != in_ei_end; ++in_ei) {
         detail::erase_from_incidence_list
           (g.out_edge_list((*in_ei).get_target()), u, Cat());
-        g.m_edges.erase((*in_ei).get_iter());
-      }      
+        g.m_edges.erase((*in_ei).get_iter());   
+      }
       g.out_edge_list(u).clear();
       g.in_edge_list(u).clear();
     }
@@ -1170,8 +1170,8 @@ namespace boost {
       typename Config::EdgeContainer::iterator p_iter 
         = boost::prior(g.m_edges.end());
       typename Config::OutEdgeList::iterator i;
-      boost::tie(i,inserted) = boost::push(g.out_edge_list(u), 
-                                           StoredEdge(v, p_iter));
+      boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
+                                            StoredEdge(v, p_iter));
       if (inserted) {
         boost::push(g.in_edge_list(v), StoredEdge(u, p_iter));
         return std::make_pair(edge_descriptor(u, v, &p_iter->m_property), 
@@ -1238,8 +1238,8 @@ namespace boost {
       remove_edge(typename Config::out_edge_iterator iter)
       {
         typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-	out_el.erase(iter);
-	typename Config::edge_descriptor e = *iter;
+        out_el.erase(iter);
+        typename Config::edge_descriptor e = *iter;
         typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
         typename Config::InEdgeList::iterator in_i = in_el.begin();
         for (; in_i != in_el.end(); ++in_i)
@@ -2071,7 +2071,8 @@ namespace boost {
         // that doesn't get used -JGS
 
         typedef typename boost::ct_if_t<DirectedT,
-          typename boost::ct_if_t< typename ct_and<BidirectionalT,has_edge_property>::type,
+          typename boost::ct_if_t< typename ct_and<BidirectionalT,
+                                                   has_edge_property>::type,
             BidirEdgeList,
             no_property
           >::type,
@@ -2082,7 +2083,8 @@ namespace boost {
         >::type EdgeContainer;
 
         typedef typename boost::ct_if_t<DirectedT,
-          typename boost::ct_if_t<typename ct_and<BidirectionalT,has_edge_property>::type,
+          typename boost::ct_if_t<typename ct_and<BidirectionalT,
+                                                  has_edge_property>::type,
             typename BidirEdgeList::size_type,
             std::size_t
           >::type,
@@ -2093,7 +2095,8 @@ namespace boost {
         >::type edges_size_type;
 
         typedef typename boost::ct_if_t< DirectedT,
-          typename boost::ct_if_t<typename ct_and<BidirectionalT, has_edge_property>::type,
+          typename boost::ct_if_t<typename ct_and<BidirectionalT,
+                                                  has_edge_property>::type,
             typename BidirEdgeList::iterator,
             typename BidirEdgeList::iterator // bogus, not used
           >::type,
@@ -2103,7 +2106,8 @@ namespace boost {
           >::type
         >::type EdgeIter;
 
-        typedef typename ct_and<DirectedT, typename ct_not<BidirectionalT>::type>::type on_edge_storage;
+        typedef typename ct_and<DirectedT, 
+             typename ct_not<BidirectionalT>::type >::type on_edge_storage;
         typedef typename boost::ct_if_t<on_edge_storage,
           typename boost::ct_if_t<has_edge_property,
             stored_edge_property<vertex_descriptor, EdgeProperty>,  
