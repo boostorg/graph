@@ -33,6 +33,9 @@ static std::string literal;
 static void begin_literal();
 static void add_string(const char* str);
 static void end_literal();
+
+#include "yystype.h"
+#define YY_DECL   int yylex(YYSTYPE* lvalp)
 %}
 
 %x Comment
@@ -58,9 +61,9 @@ ID        {VARIABLE}|{NUMBER}
 "strict"        ;
 "subgraph"      { return SUBGRAPH_T; }
 "->"|"--"       { return EDGEOP_T; }
-{ID}            { yylval.ptr = (void*)(new std::string(yytext)); return ID_T; }
+{ID}            { lvalp->ptr = (void*)(new std::string(yytext)); return ID_T; }
 ["]             { BEGIN Literal; begin_literal();  }
-<Literal>["]     { BEGIN INITIAL; end_literal(); yylval.ptr = (void*)(new std::string(literal)); return ID_T; }
+<Literal>["]     { BEGIN INITIAL; end_literal(); lvalp->ptr = (void*)(new std::string(literal)); return ID_T; }
 <Literal>[\\][\n]     ;
 <Literal>([^"\\]*|[\\].)  { add_string(yytext); }
 [ \t]           ;
