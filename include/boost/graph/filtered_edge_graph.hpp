@@ -31,6 +31,9 @@
 
 namespace boost {
 
+  //===========================================================================
+  // Filtered Edge Graph
+
   template <class Graph, class Predicate>
   class filtered_edge_graph {
     typedef graph_traits<Graph> Traits;
@@ -86,6 +89,9 @@ namespace boost {
     typedef filter_iterator_policies<Predicate, 
       typename Traits::edge_iterator> edge_iter_policy;
   };
+
+  //===========================================================================
+  // Non-member functions for the Filtered Edge Graph
 
   // Helper function
   template <class Graph, class Predicate>
@@ -211,6 +217,20 @@ namespace boost {
   {
     put(p, g.m_g, k, val);
   }
+
+  //===========================================================================
+  // An example predicate. (used in maximum-flow algorithms)
+
+  template <class ResidualCapacityEdgeMap>
+  struct is_residual_edge {
+    is_residual_edge() { }
+    is_residual_edge(ResidualCapacityEdgeMap rcap) : m_rcap(rcap) { }
+    template <class Edge>
+    bool operator()(const Edge& e) const {
+      return 0 < get(m_rcap, e);
+    }
+    ResidualCapacityEdgeMap m_rcap;
+  };
 
 } // namespace boost
 
