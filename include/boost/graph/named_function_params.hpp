@@ -405,7 +405,7 @@ namespace boost {
 
   template <typename Orig2CopyMap>
   bgl_named_params<Orig2CopyMap, orig_to_copy_t>
-  copy_to_orig(const Orig2CopyMap& c) {
+  orig_to_copy(const Orig2CopyMap& c) {
     typedef bgl_named_params<Orig2CopyMap, orig_to_copy_t> Params;
     return Params(c);
   }
