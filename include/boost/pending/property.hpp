@@ -37,12 +37,12 @@ namespace boost {
 
   template <class P>
   struct has_property { 
-    enum { value = true }; 
+    BOOST_STATIC_CONSTANT(bool, value = true);
     typedef true_type type;
   };
   template <>
   struct has_property<no_property> { 
-    enum { value = false }; 
+    BOOST_STATIC_CONSTANT(bool, value = false); 
     typedef false_type type; 
   };
 
@@ -67,7 +67,8 @@ namespace boost {
   template <class Tag1, class Tag2, class T1, class Base>
   inline typename property_value<property<Tag1,T1,Base>, Tag2>::type& 
   get_property_value(property<Tag1,T1,Base>& p, Tag2 tag2) {
-    enum { match = detail::same_property<Tag1,Tag2>::value };
+    BOOST_STATIC_CONSTANT(bool, 
+                          match = (detail::same_property<Tag1,Tag2>::value));
     typedef property<Tag1,T1,Base> Prop;
     typedef typename property_value<Prop, Tag2>::type T2;
     T2* t2 = 0;
@@ -78,7 +79,8 @@ namespace boost {
   inline
   const typename property_value<property<Tag1,T1,Base>, Tag2>::type& 
   get_property_value(const property<Tag1,T1,Base>& p, Tag2 tag2) {
-    enum { match = detail::same_property<Tag1,Tag2>::value };
+    BOOST_STATIC_CONSTANT(bool, 
+                          match = (detail::same_property<Tag1,Tag2>::value));
     typedef property<Tag1,T1,Base> Prop;
     typedef typename property_value<Prop, Tag2>::type T2;
     T2* t2 = 0;
