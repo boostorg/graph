@@ -9,6 +9,7 @@ rule graph-test ( sources + : requirements * )
 }
 
 graph-test remove_edge_if_bidir.cpp  ;
+graph-test undirected_dfs.cpp  ;
 graph-test remove_edge_if_dir.cpp  ;
 graph-test remove_edge_if_undir.cpp  ;
 graph-test reverse-graph-eg.cpp  ;
