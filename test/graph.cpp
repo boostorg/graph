@@ -6,7 +6,7 @@
 #include <utility>
 #include <algorithm>
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 #include <boost/utility.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -157,7 +157,6 @@ int main(int, char* [])
 #endif
     for (i=0; i < 6; ++i) {
       Vertex a, b;
-      std::cout << "getting random vertex" << std::endl;
       a = random_vertex(g, gen);
       do {
 	b = random_vertex(g, gen);
@@ -183,7 +182,6 @@ int main(int, char* [])
 	ret = -1;
 	break;
       }
-      std::cout << "finished check" << std::endl;
       ++E;
     }
 
