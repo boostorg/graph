@@ -165,7 +165,7 @@ int test_main(int, char*[]) {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),0.0)
       (make_pair("c","d"),7.7)(make_pair("e","f"),6.66);
-    gs_t gs("graph { a -- b edge [weight = 7.7] "
+    gs_t gs("graph { a -- b eDge [weight = 7.7] "
             "c -- d e -- f [weight = 6.66] }");
     BOOST_CHECK((test_graph<undirectedS,vecS>(gs,mass_map_t(),weights)));
   }
@@ -174,7 +174,7 @@ int test_main(int, char*[]) {
   {
     mass_map_t masses;
     insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
-    gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
+    gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
       test_graph<directedS,vecS>(gs,masses,weight_map_t());
     } catch (boost::undirected_graph_error&) {}
@@ -195,7 +195,7 @@ int test_main(int, char*[]) {
   {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),7.7);
-    gs_t gs("digraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
+    gs_t gs("diGraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
     try {
       test_graph<directedS,setS>(gs,mass_map_t(),weights);
       BOOST_ERROR("Failed to throw boost::bad_parallel_edge.");

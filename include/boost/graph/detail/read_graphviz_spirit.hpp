@@ -186,13 +186,13 @@ struct dot_grammar : public grammar<dot_grammar> {
              [phoenix::bind(&definition::memoize_node)(var(*this))];
 
       attr_stmt
-          = (keyword_p("graph")
+          = (as_lower_d[keyword_p("graph")]
              >> attr_list(actor_t(phoenix::bind(&definition::default_graph_prop)
                                      (var(*this),arg1,arg2))))
-          | (keyword_p("node")
+          | (as_lower_d[keyword_p("node")]
              >> attr_list(actor_t(phoenix::bind(&definition::default_node_prop)
                                      (var(*this),arg1,arg2))))
-          | (keyword_p("edge")
+          | (as_lower_d[keyword_p("edge")]
              >> attr_list(actor_t(phoenix::bind(&definition::default_edge_prop)
                                      (var(*this),arg1,arg2))))
           ;
@@ -247,7 +247,7 @@ struct dot_grammar : public grammar<dot_grammar> {
       stmt_list = *( stmt >> !ch_p(';') );
 
       subgraph
-          = !(  keyword_p("subgraph")
+          = !(  as_lower_d[keyword_p("subgraph")]
                 >> (!ID[(subgraph.name = arg1), 
                         (subgraph.nodes = (var(subgraph_nodes))[arg1]),
                         (subgraph.edges = (var(subgraph_edges))[arg1])])
@@ -258,17 +258,17 @@ struct dot_grammar : public grammar<dot_grammar> {
                       [(var(subgraph_nodes))[subgraph.name] = subgraph.nodes]
                       [(var(subgraph_edges))[subgraph.name] = subgraph.edges]
                      
-          | keyword_p("subgraph")
+          | as_lower_d[keyword_p("subgraph")]
                 >> ID[(subgraph.nodes = (var(subgraph_nodes))[arg1]),
                       (subgraph.edges = (var(subgraph_edges))[arg1])]
           ;
 
       the_grammar
-          = (!keyword_p("strict"))
-            >>  ( keyword_p("graph")[
+          = (!as_lower_d[keyword_p("strict")])
+            >>  ( as_lower_d[keyword_p("graph")][
                    (var(edge_head) = '-'),
                    (phoenix::bind(&definition::check_undirected)(var(*this)))]
-                | keyword_p("digraph")[
+                | as_lower_d[keyword_p("digraph")][
                    (var(edge_head) = '>'),
                    (phoenix::bind(&definition::check_directed)(var(*this)))]
                 )
