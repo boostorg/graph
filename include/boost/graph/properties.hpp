@@ -69,7 +69,8 @@ namespace boost {
       edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
       vertex_all_num, edge_all_num, graph_all_num, graph_visitor_num,
       distance_compare_num, distance_combine_num, distance_inf_num,
-      distance_zero_num, buffer_param_num,
+      distance_zero_num, buffer_param_num, edge_copy_num, vertex_copy_num,
+      orig_to_copy_num,
       last_property_num
     };
   } // namespace detail
