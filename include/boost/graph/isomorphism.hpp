@@ -112,8 +112,8 @@ namespace boost {
           int m1 = (max)(u1, v1);
           int m2 = (max)(u2, v2);
           // lexicographical comparison 
-          return make_pair(m1, make_pair(u1, v1))
-            < make_pair(m2, make_pair(u2, v2));
+          return std::make_pair(m1, std::make_pair(u1, v1))
+            < std::make_pair(m2, std::make_pair(u2, v2));
         }
         const Graph1& G1;
         DFSNumMap dfs_num;
