@@ -1,4 +1,4 @@
-<HTML>
+HTML>
 <!--
   -- Copyright (c) Jeremy Siek 2000
   --
@@ -26,7 +26,7 @@
 
 <P>
 <PRE>
-<i>// named paramter version</i>
+<i>// named parameter version</i>
 template &lt;typename <a href="./VertexListGraph.html">VertexListGraph</a>, typename P, typename T, typename R&gt;
 void
 dijkstra_shortest_paths(VertexListGraph&amp; g,
@@ -229,7 +229,7 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   not reachable from the source.  The <tt>PredecessorMap</tt> type
   must be a <a
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> which key and vertex types the same as the vertex
+  Property Map</a> whose key and value types are the same as the vertex
   descriptor type of the graph.<br>
   <b>Default:</b> <tt>dummy_property_map</tt>
 </blockquote>
@@ -245,7 +245,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   be usable as the key type of the distance map. 
 
   The value type of the distance map is the element type of a <a
-  href="./Monoid.html">Monoid</tt> formed with the <tt>combine</tt>
+  href="./Monoid.html">Monoid</a> formed with the <tt>combine</tt>
   function object and the <tt>zero</tt> object for the identity
   element. Also the distance value type must have a <a
   href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html">
