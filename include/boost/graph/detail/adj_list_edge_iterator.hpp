@@ -28,6 +28,7 @@
 #define BOOST_GRAPH_DETAIL_ADJ_LIST_EDGE_ITERATOR_HPP
 
 #include <iterator>
+#include <boost/optional.hpp>
 
 namespace boost {
 
@@ -48,7 +49,7 @@ namespace boost {
 
       inline adj_list_edge_iterator(const self& x) 
       : vBegin(x.vBegin), vCurr(x.vCurr), vEnd(x.vEnd),
-        eCurr(x.eCurr), eEnd(x.eEnd), m_g(x.m_g) { }
+        edges(x.edges), m_g(x.m_g) { }
 
       template <class G>
       inline adj_list_edge_iterator(VertexIterator b, 
@@ -60,7 +61,7 @@ namespace boost {
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
           if ( vCurr != vEnd )
-            tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
+            edges = out_edges(*vCurr, *m_g);
         }
       }
 
@@ -69,13 +70,13 @@ namespace boost {
         For undirected graphs, one edge go through twice.
       */
       inline self& operator++() {
-        ++eCurr;
-        if ( eCurr == eEnd ) {
+        ++edges->first;
+        if ( edges->first == edges->second ) {
           ++vCurr;
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
           if ( vCurr != vEnd )
-            tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
+            edges = out_edges(*vCurr, *m_g);
         }
         return *this;
       }
@@ -84,19 +85,19 @@ namespace boost {
         ++(*this);
         return tmp;
       }
-      inline value_type operator*() const { return *eCurr; } 
+      inline value_type operator*() const { return *edges->first; } 
       inline bool operator==(const self& x) const {
-        return vCurr == x.vCurr && (vCurr == vEnd || eCurr == x.eCurr);
+        return vCurr == x.vCurr && (vCurr == vEnd || edges->first == x.edges->first);
       }
       inline bool operator!=(const self& x) const {
-        return vCurr != x.vCurr || (vCurr != vEnd && eCurr != x.eCurr);
+        return vCurr != x.vCurr || (vCurr != vEnd && edges->first != x.edges->first);
       }
     protected:
       VertexIterator vBegin;
       VertexIterator vCurr;
       VertexIterator vEnd;
-      OutEdgeIterator eCurr;
-      OutEdgeIterator eEnd;
+      boost::optional<std::pair<OutEdgeIterator, OutEdgeIterator> >
+        edges;
       const Graph* m_g;
     };
 
