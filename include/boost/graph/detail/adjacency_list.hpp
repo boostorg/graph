@@ -767,6 +767,24 @@ namespace boost {
       }
     };
 
+    // Had to make these non-members to avoid accidental instantiation
+    // on SGI MIPSpro C++
+    template <class C>
+    inline typename C::InEdgeList& 
+    in_edge_list(undirected_graph_helper<C>&, 
+                 typename C::vertex_descriptor v)
+    {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_out_edges;
+    }
+    template <class C>
+    inline const typename C::InEdgeList& 
+    in_edge_list(const undirected_graph_helper<C>&,
+                 typename C::vertex_descriptor v) {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_out_edges;
+    }
+
     // O(E/V)
     template <class EdgeOrIter, class Config>
     inline void
@@ -964,6 +982,24 @@ namespace boost {
       typedef bidir_adj_list_traversal_tag traversal_category;
     };
 
+    // Had to make these non-members to avoid accidental instantiation
+    // on SGI MIPSpro C++
+    template <class C>
+    inline typename C::InEdgeList& 
+    in_edge_list(bidirectional_graph_helper<C>&, 
+                 typename C::vertex_descriptor v)
+    {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_in_edges;
+    }
+    template <class C>
+    inline const typename C::InEdgeList& 
+    in_edge_list(const bidirectional_graph_helper<C>&,
+                 typename C::vertex_descriptor v) {
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
+      return sv->m_in_edges;
+    }
+
     template <class Predicate, class Config>
     inline void
     remove_edge_if(Predicate pred, bidirectional_graph_helper<Config>& g_)
@@ -1019,8 +1055,14 @@ namespace boost {
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
       
+      // O(E/V) or O(log(E/V))
       void
-      remove_edge(typename Config::edge_descriptor e);
+      remove_edge(typename Config::edge_descriptor e)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+        boost::remove_edge(source(e, g), target(e, g), *this);
+      }
 
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
@@ -1044,15 +1086,6 @@ namespace boost {
       detail::erase_from_incidence_list(in_edge_list(g, v), u, Cat());
     }
 
-    // O(E/V) or O(log(E/V))
-    template <class Config>
-    inline void
-    bidirectional_graph_helper_with_property<Config>::remove_edge(typename Config::edge_descriptor e)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(*this);
-      boost::remove_edge(source(e, g), target(e, g), *this);
-    }
     // O(E/V) or O(log(E/V))
     template <class EdgeOrIter, class Config>
     inline void
@@ -1667,24 +1700,6 @@ namespace boost {
       typename Config::EdgeContainer m_edges;
       StoredVertexList m_vertices;
     };
-    // Had to make these non-members to avoid accidental instantiation
-    // on SGI MIPSpro C++
-    template <class D, class C, class B>
-    inline typename C::InEdgeList& 
-    in_edge_list(adj_list_impl<D,C,B>&, 
-                 typename C::vertex_descriptor v)
-    {
-      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
-      return sv->m_in_edges;
-    }
-    template <class D, class C, class B>
-    inline const typename C::InEdgeList& 
-    in_edge_list(const adj_list_impl<D,C,B>&,
-                 typename C::vertex_descriptor v) {
-      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
-      return sv->m_in_edges;
-    }
-
 
     // O(1)
     template <class Derived, class Config, class Base>
