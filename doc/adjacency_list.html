@@ -483,7 +483,7 @@ and<br>
 The property map type for vertex or edge properties in the graph. The
 specific property is specified by the <TT>Property</TT> template argument,
 and must match one of the properties specified in the
-<TT>VertexProperty</TT> or <TT>EdgeProperty</TT> for the graph.
+<TT>VertexProperties</TT> or <TT>EdgeProperties</TT> for the graph.
 
 <hr>
 
@@ -559,7 +559,7 @@ The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
 range of <TT>[0, n)</TT>. The <TT>value_type</TT> of the
-<TT>ep_iter</TT> should be <TT>EdgeProperty</TT>.
+<TT>ep_iter</TT> should be <TT>EdgeProperties</TT>.
 
 <hr>
 
@@ -768,7 +768,7 @@ then <tt>add_edge()</tt> also invalidates any <tt>edge_iterator</tt>.
 <pre>
 std::pair&lt;edge_descriptor,&nbsp;bool&gt;
 add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
-         const&nbsp;EdgeProperty&amp;&nbsp;p,
+         const&nbsp;EdgeProperties&amp;&nbsp;p,
          adjacency_list&amp;&nbsp;g)
 </pre>
 Adds edge <i>(u,v)</i> to the graph and attaches <TT>p</TT> as the
@@ -873,6 +873,17 @@ add_vertex(adjacency_list&amp; g)
 </pre>
 Adds a vertex to the graph and returns the vertex descriptor for the
 new vertex. 
+</a>
+
+<hr>
+
+<pre>
+vertex_descriptor
+add_vertex(const&nbsp;VertexProperties&amp;&nbsp;p,
+           adjacency_list&amp; g)
+</pre>
+Adds a vertex to the graph with the specified properties. Returns the
+vertex descriptor for the new vertex.
 </a>
 
 <hr>
@@ -1005,7 +1016,7 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  gif ALT EdgeList VertexList html VertexProperty EdgeProperty
+<!--  LocalWords:  gif ALT EdgeList VertexList html VertexProperties EdgeProperties
  -->
 <!--  LocalWords:  GraphProperty cpp enum ai cout endl VertexAndEdgeListGraph
  -->
