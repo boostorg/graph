@@ -85,8 +85,8 @@ namespace boost {
     
     graph_as_tree(Graph& g, Node root, ParentMap p) : super(g, root), _p(p) { 
       breadth_first_search(g, root, 
-			   visitor(make_bfs_visitor
-		   (record_predecessors(p, boost::on_tree_edge()))));
+                           visitor(make_bfs_visitor
+                   (record_predecessors(p, boost::on_tree_edge()))));
     }
     ParentMap parent_pa() const { return _p; }
     typedef graph_as_tree_tag graph_tag; // for property_map

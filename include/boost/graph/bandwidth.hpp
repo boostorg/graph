@@ -50,7 +50,7 @@ namespace boost {
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-	b = std::max(b, ith_bandwidth(*i, g, index));
+        b = std::max(b, ith_bandwidth(*i, g, index));
     return b;
   }
 

@@ -76,8 +76,8 @@ namespace boost {
             typename Vertex>
   void
   undirected_dfs(const Graph& g, DFSVisitor vis, 
-		 VertexColorMap vertex_color, EdgeColorMap edge_color,
-		 Vertex start_vertex)
+                 VertexColorMap vertex_color, EdgeColorMap edge_color,
+                 Vertex start_vertex)
   {
     function_requires<DFSVisitorConcept<DFSVisitor, Graph> >();
       function_requires<EdgeListGraphConcept<Graph> >();
@@ -109,7 +109,7 @@ namespace boost {
     typename EdgeColorMap>
   void
   undirected_dfs(const Graph& g, DFSVisitor vis, 
-		 VertexColorMap vertex_color, EdgeColorMap edge_color)
+                 VertexColorMap vertex_color, EdgeColorMap edge_color)
   {
     undirected_dfs(g, vis, vertex_color, edge_color, *vertices(g).first);
   }
@@ -119,7 +119,7 @@ namespace boost {
     struct udfs_dispatch {
 
       template <typename Graph, typename Vertex, 
-	        typename DFSVisitor, typename EdgeColorMap,
+                typename DFSVisitor, typename EdgeColorMap,
                 typename P, typename T, typename R>
       static void
       apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
@@ -134,7 +134,7 @@ namespace boost {
     template <>
     struct udfs_dispatch<detail::error_property_not_found> {
       template <typename Graph, typename Vertex, typename DFSVisitor,
-	        typename EdgeColorMap,
+                typename EdgeColorMap,
                 typename P, typename T, typename R>
       static void
       apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
@@ -149,7 +149,7 @@ namespace boost {
            (color_vec.begin(),
             choose_const_pmap(get_param(params, vertex_index),
                               g, vertex_index), c),
-	   edge_color,
+           edge_color,
            start_vertex);
       }
     };
@@ -161,7 +161,7 @@ namespace boost {
   template <typename Graph, typename P, typename T, typename R>
   void
   undirected_dfs(const Graph& g, 
-		 const bgl_named_params<P, T, R>& params)
+                 const bgl_named_params<P, T, R>& params)
   {
     typedef typename property_value< bgl_named_params<P, T, R>, 
       vertex_color_t>::type C;

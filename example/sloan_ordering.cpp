@@ -109,7 +109,7 @@ int main(int , char* [])
   typedef std::pair<std::size_t, std::size_t> Pair;
   
   Pair edges[14] = { Pair(0,3), //a-d
-	             Pair(0,5),  //a-f
+                     Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e
                      Pair(1,6),  //b-g
@@ -183,20 +183,20 @@ int main(int , char* [])
     for (size_type c = 0; c != sloan_order.size(); ++c)
       perm[index_map[sloan_order[c]]] = c;
     std::cout << "  bandwidth: " 
-	      << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-	      << std::endl;
+              << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << std::endl;
     std::cout << "  profile: " 
-	      << profile(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-	      << std::endl;
+              << profile(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << std::endl;
     std::cout << "  max_wavefront: " 
-	      << max_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-	      << std::endl;
+              << max_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << std::endl;
     std::cout << "  aver_wavefront: " 
-	      << aver_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-	      << std::endl;
+              << aver_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << std::endl;
     std::cout << "  rms_wavefront: " 
-	      << rms_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-	      << std::endl;
+              << rms_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << std::endl;
   }
   
 
@@ -209,34 +209,34 @@ int main(int , char* [])
     {
       //sloan_ordering
       sloan_ordering(G, sloan_order.begin(), 
-			get(vertex_color, G),
-			make_degree_map(G), 
-			get(vertex_priority, G) );
+                        get(vertex_color, G),
+                        make_degree_map(G), 
+                        get(vertex_priority, G) );
       
       cout << endl << "Sloan ordering without a start-vertex:" << endl;
       cout << "  ";
       for (std::vector<Vertex>::const_iterator i=sloan_order.begin();
-	   i != sloan_order.end(); ++i)
-	cout << index_map[*i] << " ";
+           i != sloan_order.end(); ++i)
+        cout << index_map[*i] << " ";
       cout << endl;
       
       for (size_type c = 0; c != sloan_order.size(); ++c)
-	perm[index_map[sloan_order[c]]] = c;
+        perm[index_map[sloan_order[c]]] = c;
       std::cout << "  bandwidth: " 
-		<< bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-		<< std::endl;
+                << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+                << std::endl;
       std::cout << "  profile: " 
-		<< profile(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-		<< std::endl;
+                << profile(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+                << std::endl;
       std::cout << "  max_wavefront: " 
-		<< max_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-		<< std::endl;
+                << max_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+                << std::endl;
       std::cout << "  aver_wavefront: " 
-		<< aver_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-		<< std::endl;
+                << aver_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+                << std::endl;
       std::cout << "  rms_wavefront: " 
-		<< rms_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-		<< std::endl;
+                << rms_wavefront(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+                << std::endl;
     }
   
 

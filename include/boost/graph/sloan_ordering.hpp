@@ -28,9 +28,9 @@
 #ifndef BOOST_GRAPH_SLOAN_HPP
 #define BOOST_GRAPH_SLOAN_HPP
 
-#define WEIGHT1 1      		//default weight for the distance in the Sloan algorithm
-#define WEIGHT2 2     		//default weight for the degree in the Sloan algorithm
-#define MAXINT 2147483647  	//Maximum value for a 32bit integer
+#define WEIGHT1 1               //default weight for the distance in the Sloan algorithm
+#define WEIGHT2 2               //default weight for the degree in the Sloan algorithm
+#define MAXINT 2147483647       //Maximum value for a 32bit integer
 
 #include <boost/config.hpp>
 #include <vector>
@@ -56,7 +56,7 @@
 ////////////////////////////////////////////////////////////
 
 namespace boost {
-	
+        
   /////////////////////////////////////////////////////////////////////////
   // Function that returns the maximum depth of 
   // a rooted level strucutre (RLS)
@@ -70,10 +70,10 @@ namespace boost {
     
     for (iter = d.begin(); iter != d.end(); ++iter)
       {
-	if(*iter > h_s)
-	  {
-	    h_s = *iter;
-	  }
+        if(*iter > h_s)
+          {
+            h_s = *iter;
+          }
       }
     
     return h_s;
@@ -98,12 +98,12 @@ namespace boost {
       
       for (iter = d.begin(); iter != d.end(); ++iter)
       {
-	  dummy_width[*iter]++;
+          dummy_width[*iter]++;
       }
       
       for(my_it = dummy_width.begin(); my_it != dummy_width.end(); ++my_it)
       {
-	  if(*my_it > w_max) w_max = *my_it;
+          if(*my_it > w_max) w_max = *my_it;
       }
       
       return w_max;
@@ -120,9 +120,9 @@ namespace boost {
   template <class Graph, class ColorMap, class DegreeMap> 
   typename graph_traits<Graph>::vertex_descriptor 
   sloan_start_end_vertices(Graph& G, 
-			   typename graph_traits<Graph>::vertex_descriptor &s, 
-			   ColorMap color, 
-			   DegreeMap degree)
+                           typename graph_traits<Graph>::vertex_descriptor &s, 
+                           ColorMap color, 
+                           DegreeMap degree)
   {
     typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -162,13 +162,13 @@ namespace boost {
       
       if(dummy < my_degree)
       {
-	my_degree = dummy;
-	s = *ui;
+        my_degree = dummy;
+        s = *ui;
       }
       
       if(dummy > maximum_degree)
       {
-	maximum_degree = dummy;
+        maximum_degree = dummy;
       }
     }
     //end 1
@@ -182,11 +182,11 @@ namespace boost {
       
       //generating the RLS (rooted level structure)
       breadth_first_search
-	(G, s, visitor
-	 (
-	   make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
-	   )
-	  );
+        (G, s, visitor
+         (
+           make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+           )
+          );
       
       //end 2
       
@@ -199,13 +199,13 @@ namespace boost {
       std::vector<bool> shrink_trace(maximum_degree, false);
       for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       {
-	dummy = get(degree, *ui);
-	
-	if( (dist[index_map[*ui]] == h_s ) && ( !shrink_trace[ dummy ] ) )
-	{
-	  degree_queue.push(*ui);
-	  shrink_trace[ dummy ] = true;
-	}
+        dummy = get(degree, *ui);
+        
+        if( (dist[index_map[*ui]] == h_s ) && ( !shrink_trace[ dummy ] ) )
+        {
+          degree_queue.push(*ui);
+          shrink_trace[ dummy ] = true;
+        }
       }
       
       //end 3 & 4
@@ -221,39 +221,39 @@ namespace boost {
       //Testing for termination
       while( !degree_queue.empty() )
       {
-	i = degree_queue.top();       //getting the node with the lowest degree from the degree queue
-	degree_queue.pop();           //ereasing the node with the lowest degree from the degree queue
-	
-	//generating a RLS	    
-	for(typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
-	
-	breadth_first_search
-	  (G, i, boost::visitor
-	   (
-	     make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
-	     )
-	    );
-	
-	//Calculating depth and width of the rooted level
-	h_i = RLS_depth(dist);
-	w_i = RLS_max_width(dist, h_i);
-	
-	//Testing for termination
-	if( (h_i > h_s) && (w_i < w_e) ) 
-	{
-	  h_s = h_i;
-	  s = i;
-	  while(!degree_queue.empty()) degree_queue.pop();
-	  new_start = true;	    
-	}
-	else if(w_i < w_e)
-	{ 
-	  w_e = w_i;
-	  e = i;
-	}
+        i = degree_queue.top();       //getting the node with the lowest degree from the degree queue
+        degree_queue.pop();           //ereasing the node with the lowest degree from the degree queue
+        
+        //generating a RLS          
+        for(typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
+        
+        breadth_first_search
+          (G, i, boost::visitor
+           (
+             make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+             )
+            );
+        
+        //Calculating depth and width of the rooted level
+        h_i = RLS_depth(dist);
+        w_i = RLS_max_width(dist, h_i);
+        
+        //Testing for termination
+        if( (h_i > h_s) && (w_i < w_e) ) 
+        {
+          h_s = h_i;
+          s = i;
+          while(!degree_queue.empty()) degree_queue.pop();
+          new_start = true;         
+        }
+        else if(w_i < w_e)
+        { 
+          w_e = w_i;
+          e = i;
+        }
       }
       //end 6
-	
+        
     }while(new_start);
     
     return e;
@@ -267,17 +267,17 @@ namespace boost {
   //////////////////////////////////////////////////////////////////////////
   template <class Graph, class OutputIterator,
             class ColorMap, class DegreeMap,
-	    class PriorityMap, class Weight>
+            class PriorityMap, class Weight>
   OutputIterator
   sloan_ordering(Graph& g,
-		 typename graph_traits<Graph>::vertex_descriptor s,
-		 typename graph_traits<Graph>::vertex_descriptor e,
-		 OutputIterator permutation, 
-		 ColorMap color, 
-		 DegreeMap degree, 
-		 PriorityMap priority, 
-		 Weight W1, 
-		 Weight W2)
+                 typename graph_traits<Graph>::vertex_descriptor s,
+                 typename graph_traits<Graph>::vertex_descriptor e,
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority, 
+                 Weight W1, 
+                 Weight W2)
   {
     //typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename property_traits<PriorityMap>::value_type DS;
@@ -299,8 +299,8 @@ namespace boost {
     breadth_first_search
       (g, e, visitor
        (
-	   make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
-	)
+           make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+        )
        );
     
     //Creating a property_map for the indices of a vertex
@@ -311,9 +311,9 @@ namespace boost {
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
-	put(color, *ui, Color::white());
-	cdeg=get(degree, *ui)+1;
-	put(priority, *ui, W1*dist[index_map[*ui]]-W2*cdeg );  
+        put(color, *ui, Color::white());
+        cdeg=get(degree, *ui)+1;
+        put(priority, *ui, W1*dist[index_map[*ui]]-W2*cdeg );  
     }
     
     //Priority list
@@ -337,19 +337,19 @@ namespace boost {
       
       if(get(color, u) == Color::green() )
       {
-	//for-loop over all out-edges of vertex u
-	for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) 
-	{
-	  v = target(*ei, g);
-	  
-	  put( priority, v, get(priority, v) + W2 ); //updates the priority
-	  
-	  if (get(color, v) == Color::white() )      //test if the vertex is inactive
-	  {
-	    put(color, v, Color::green() );        //giving the vertex a preactive status
-	    priority_list.push_front(v);                     //writing the vertex in the priority_queue
-	  }	      
-	}
+        //for-loop over all out-edges of vertex u
+        for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) 
+        {
+          v = target(*ei, g);
+          
+          put( priority, v, get(priority, v) + W2 ); //updates the priority
+          
+          if (get(color, v) == Color::white() )      //test if the vertex is inactive
+          {
+            put(color, v, Color::green() );        //giving the vertex a preactive status
+            priority_list.push_front(v);                     //writing the vertex in the priority_queue
+          }           
+        }
       }
       
       //Here starts step 8
@@ -358,35 +358,35 @@ namespace boost {
       
       //for loop over all the adjacent vertices of u
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-	
-	v = target(*ei, g);	
-	
-	if (get(color, v) == Color::green() ) {      //tests if the vertex is inactive
-	  
-	  put(color, v, Color::red() );        //giving the vertex an active status
-	  put(priority, v, get(priority, v)+W2);  //updates the priority	
-	  
-	  //for loop over alll adjacent vertices of v
-	  for (tie(ei2, ei2_end) = out_edges(v, g); ei2 != ei2_end; ++ei2) {
-	    w = target(*ei2, g);
-	    
-	    if(get(color, w) != Color::black() ) {     //tests if vertex is postactive
-	      
-	      put(priority, w, get(priority, w)+W2);  //updates the priority
-	      
-	      if(get(color, w) == Color::white() ){
-		
-		put(color, w, Color::green() );   // gives the vertex a preactive status
-		priority_list.push_front(w);           // puts the vertex into the priority queue
-		
-	      } //end if
-	      
-	    } //end if
-	    
-	  } //end for
-	  
-	} //end if
-	
+        
+        v = target(*ei, g);     
+        
+        if (get(color, v) == Color::green() ) {      //tests if the vertex is inactive
+          
+          put(color, v, Color::red() );        //giving the vertex an active status
+          put(priority, v, get(priority, v)+W2);  //updates the priority        
+          
+          //for loop over alll adjacent vertices of v
+          for (tie(ei2, ei2_end) = out_edges(v, g); ei2 != ei2_end; ++ei2) {
+            w = target(*ei2, g);
+            
+            if(get(color, w) != Color::black() ) {     //tests if vertex is postactive
+              
+              put(priority, w, get(priority, w)+W2);  //updates the priority
+              
+              if(get(color, w) == Color::white() ){
+                
+                put(color, w, Color::green() );   // gives the vertex a preactive status
+                priority_list.push_front(w);           // puts the vertex into the priority queue
+                
+              } //end if
+              
+            } //end if
+            
+          } //end for
+          
+        } //end if
+        
       } //end for
       
     } //end while
@@ -399,15 +399,15 @@ namespace boost {
   // Same algorithm as before, but without the weights given (taking default weights
   template <class Graph, class OutputIterator,
             class ColorMap, class DegreeMap,
-	    class PriorityMap>
+            class PriorityMap>
   OutputIterator
   sloan_ordering(Graph& g,
-		 typename graph_traits<Graph>::vertex_descriptor s,
-		 typename graph_traits<Graph>::vertex_descriptor e,
-		 OutputIterator permutation, 
-		 ColorMap color, 
-		 DegreeMap degree, 
-		 PriorityMap priority)
+                 typename graph_traits<Graph>::vertex_descriptor s,
+                 typename graph_traits<Graph>::vertex_descriptor e,
+                 OutputIterator permutation, 
+                 ColorMap color, 
+                 DegreeMap degree, 
+                 PriorityMap priority)
   {
     return sloan_ordering(g, s, e, permutation, color, degree, priority, WEIGHT1, WEIGHT2); 
   }
@@ -424,15 +424,15 @@ namespace boost {
 
   template < class Graph, class OutputIterator, 
              class Color, class Degree,
-	     class Priority, class Weight>
+             class Priority, class Weight>
   inline OutputIterator
   sloan_ordering(Graph& G, 
-		 OutputIterator permutation, 
-		 Color color, 
-		 Degree degree, 
-		 Priority priority, 
-		 Weight W1, 
-		 Weight W2 )
+                 OutputIterator permutation, 
+                 Color color, 
+                 Degree degree, 
+                 Priority priority, 
+                 Weight W1, 
+                 Weight W2 )
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     
@@ -446,13 +446,13 @@ namespace boost {
   // Same as before, but without given weights (default weights are taken instead)
   template < class Graph, class OutputIterator, 
              class Color, class Degree,
-	     class Priority >
+             class Priority >
   inline OutputIterator
   sloan_ordering(Graph& G, 
-		 OutputIterator permutation, 
-		 Color color, 
-		 Degree degree, 
-		 Priority priority)
+                 OutputIterator permutation, 
+                 Color color, 
+                 Degree degree, 
+                 Priority priority)
   { 
     return sloan_ordering(G, permutation, color, degree, priority, WEIGHT1, WEIGHT2);
   }

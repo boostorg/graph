@@ -76,9 +76,9 @@ namespace boost {
         put(p, v, u);
         return true;
       } else if (is_undirected && compare(combine(d_v, w_e), d_u)) {
-	put(d, u, combine(d_v, w_e));
+        put(d, u, combine(d_v, w_e));
         put(p, u, v);
-	return true;
+        return true;
       } else
         return false;
     }

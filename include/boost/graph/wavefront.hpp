@@ -53,19 +53,19 @@ namespace boost {
       typename graph_traits<Graph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       {
-	v = *ui;
-	  if(index[v] <= index_i)
-	    {
-	      for (tie(edge_it2, edge_it2_end) = out_edges(v, g); edge_it2 != edge_it2_end; ++edge_it2)
-	      {
-		w = target(*edge_it2, g);
-		if( (index[w] >= index_i) && (!rows_active[index[w]]) )
-		  {
-		    b++;
-		    rows_active[index[w]] = true;
-		  }
-	      }
-	    }
+        v = *ui;
+          if(index[v] <= index_i)
+            {
+              for (tie(edge_it2, edge_it2_end) = out_edges(v, g); edge_it2 != edge_it2_end; ++edge_it2)
+              {
+                w = target(*edge_it2, g);
+                if( (index[w] >= index_i) && (!rows_active[index[w]]) )
+                  {
+                    b++;
+                    rows_active[index[w]] = true;
+                  }
+              }
+            }
       }
  
     return b;

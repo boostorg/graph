@@ -49,11 +49,11 @@
 namespace boost {
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
-	    class VertexID, class Weight, class DistanceZero>
+            class VertexID, class Weight, class DistanceZero>
   bool
   johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
-	       DistanceMatrix& D,
-	       VertexID id1, Weight w1, DistanceZero zero)
+               DistanceMatrix& D,
+               VertexID id1, Weight w1, DistanceZero zero)
   {
     typedef graph_traits<VertexAndEdgeListGraph> Traits1;
     typedef typename property_traits<Weight>::value_type DT;
@@ -88,22 +88,22 @@ namespace boost {
       typename Traits1::vertex_iterator v, v_end;
       int i = 1;
       for (tie(v, v_end) = vertices(g1); v != v_end; ++v, ++i) {
-	typename Traits2::edge_descriptor e; bool z;
-	tie(e, z) = add_edge(s, id1[*v] + 1, g2);
-	w[e] = zero;
-	verts1[i] = *v;
+        typename Traits2::edge_descriptor e; bool z;
+        tie(e, z) = add_edge(s, id1[*v] + 1, g2);
+        w[e] = zero;
+        verts1[i] = *v;
       }
       typename Traits1::edge_iterator e, e_end;
       for (tie(e, e_end) = edges(g1); e != e_end; ++e) {
-	typename Traits2::edge_descriptor e2; bool z;
-	tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
-			     id1[target(*e, g1)] + 1, g2);
-	w[e2] = w1[*e];
-	if (is_undirected) {
-	  tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
-				id1[source(*e, g1)] + 1, g2);
-	  w[e2] = w1[*e];
-	}
+        typename Traits2::edge_descriptor e2; bool z;
+        tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
+                             id1[target(*e, g1)] + 1, g2);
+        w[e2] = w1[*e];
+        if (is_undirected) {
+          tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
+                                id1[source(*e, g1)] + 1, g2);
+          w[e2] = w1[*e];
+        }
       }
     }
     typename Traits2::vertex_iterator v, v_end, u, u_end;
@@ -122,26 +122,26 @@ namespace boost {
     dummy_property_map pred; closed_plus<DT> combine;
     std::less<DT> compare; bellman_visitor<> bvis;
     if (bellman_ford_shortest_paths
-	(g2, num_vertices(g2), w, pred, d, combine, compare, bvis)) {
+        (g2, num_vertices(g2), w, pred, d, combine, compare, bvis)) {
       for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
-	put(h, *v, get(d, *v));
+        put(h, *v, get(d, *v));
       // Reweight the edges to remove negatives
       for (tie(e, e_end) = edges(g2); e != e_end; ++e) {
-	typename Traits2::vertex_descriptor a = source(*e, g2),
-	  b = target(*e, g2);
-	put(w_hat, *e, get(w, *e) + get(h, a) - get(h, b));
+        typename Traits2::vertex_descriptor a = source(*e, g2),
+          b = target(*e, g2);
+        put(w_hat, *e, get(w, *e) + get(h, a) - get(h, b));
       }
       for (tie(u, u_end) = vertices(g2); u != u_end; ++u) {
-	dijkstra_visitor<> dvis;
-	dijkstra_shortest_paths
-	  (g2, *u, pred, d, w_hat, id2, compare, combine, inf, zero,dvis);
-	for (tie(v, v_end) = vertices(g2); v != v_end; ++v) {
-	  if (*u != s && *v != s) {
-	    typename Traits1::vertex_descriptor u1, v1;
-	    u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
-	    D[u1][v1] = get(d, *v) + get(h, *v) - get(h, *u);
-	  }
-	}
+        dijkstra_visitor<> dvis;
+        dijkstra_shortest_paths
+          (g2, *u, pred, d, w_hat, id2, compare, combine, inf, zero,dvis);
+        for (tie(v, v_end) = vertices(g2); v != v_end; ++v) {
+          if (*u != s && *v != s) {
+            typename Traits1::vertex_descriptor u1, v1;
+            u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
+            D[u1][v1] = get(d, *v) + get(h, *v) - get(h, *u);
+          }
+        }
       }
       return true;
     } else

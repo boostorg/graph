@@ -144,7 +144,7 @@ namespace boost
             tie(adj_first, adj_last) = adjacent_vertices(v, CG);
             typename graph_traits<CG_t>::adjacency_iterator next
               = std::find_if(adj_first, adj_last,
-			     not1(detail::subscript(in_a_chain)));
+                             not1(detail::subscript(in_a_chain)));
             if (next != adj_last)
               v = *next;
             else
@@ -165,10 +165,10 @@ namespace boost
 
     cg_vertex inf = std::numeric_limits < cg_vertex >::max();
     std::vector<std::vector<cg_vertex> > successors(num_vertices(CG),
-						    std::vector<cg_vertex>
-						    (chains.size(), inf));
+                                                    std::vector<cg_vertex>
+                                                    (chains.size(), inf));
     for (typename std::vector<cg_vertex>::reverse_iterator 
-	   i = topo_order.rbegin(); i != topo_order.rend(); ++i) {
+           i = topo_order.rbegin(); i != topo_order.rend(); ++i) {
       cg_vertex u = *i;
       typename graph_traits<CG_t>::adjacency_iterator adj, adj_last;
       for (tie(adj, adj_last) = adjacent_vertices(u, CG);

@@ -98,7 +98,7 @@ namespace boost {
       dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
                            WeightMap w, PredecessorMap p, DistanceMap d, 
                            BinaryFunction combine, BinaryPredicate compare,
-			   D zero)
+                           D zero)
         : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d), 
           m_combine(combine), m_compare(compare), m_zero(zero)  { }
 

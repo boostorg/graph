@@ -511,10 +511,10 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[],
 int readHB_newmat_double(const char* filename, int* M, int* N, int* nonzeros, 
                          int** colptr, int** rowind, double** val)
 {
-	int Nrhs;
+        int Nrhs;
         char *Type;
 
-	readHB_info(filename, M, N, nonzeros, &Type, &Nrhs);
+        readHB_info(filename, M, N, nonzeros, &Type, &Nrhs);
 
         *colptr = (int *)malloc((*N+1)*sizeof(int));
         if ( *colptr == NULL ) IOHBTerminate("Insufficient memory for colptr.\n");
@@ -535,7 +535,7 @@ int readHB_newmat_double(const char* filename, int* M, int* N, int* nonzeros,
              if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
            }
         }  /* No val[] space needed if pattern only */
-	return readHB_mat_double(filename, *colptr, *rowind, *val);
+        return readHB_mat_double(filename, *colptr, *rowind, *val);
 
 }
 
@@ -709,7 +709,7 @@ int readHB_newaux_double(const char* filename, const char AuxType, double** b)
         int Nrhs,M,N,nonzeros;
         char *Type;
 
-	readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
+        readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
         if ( Nrhs <= 0 ) {
           fprintf(stderr,"Warn: Requested read of aux vector(s) when none are present.\n");
           return 0;
@@ -723,7 +723,7 @@ int readHB_newaux_double(const char* filename, const char AuxType, double** b)
           } else {
             *b = (double *)malloc(M*Nrhs*sizeof(double));
             if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
-	    return readHB_aux_double(filename, AuxType, *b);
+            return readHB_aux_double(filename, AuxType, *b);
           }
         }
 }
@@ -1099,7 +1099,7 @@ int readHB_newmat_char(const char* filename, int* M, int* N, int* nonzeros, int*
              if ( *val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
            }
         }  /* No val[] space needed if pattern only */
-	return readHB_mat_char(filename, *colptr, *rowind, *val, *Valfmt);
+        return readHB_mat_char(filename, *colptr, *rowind, *val, *Valfmt);
 
 }
 
@@ -1302,11 +1302,11 @@ int readHB_newaux_char(const char* filename, const char AuxType, char** b, char*
             fprintf(stderr, "         Real and imaginary parts will be interlaced in b[].");
             *b = (char *)malloc(Nrow*Nrhs*Rhswidth*sizeof(char)*2);
             if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
-	    return readHB_aux_char(filename, AuxType, *b);
+            return readHB_aux_char(filename, AuxType, *b);
           } else {
             *b = (char *)malloc(Nrow*Nrhs*Rhswidth*sizeof(char));
             if ( *b == NULL ) IOHBTerminate("Insufficient memory for rhs.\n");
-	    return readHB_aux_char(filename, AuxType, *b);
+            return readHB_aux_char(filename, AuxType, *b);
           }
         } 
 }
