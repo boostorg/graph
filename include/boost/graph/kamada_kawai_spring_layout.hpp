@@ -472,7 +472,8 @@ namespace boost {
         g, position, weight, edge_or_side_length, done, spring_constant, index,
         distance.begin(),
         spring_strength.begin(),
-        make_iterator_property_map(partial_derivatives.begin(), index));
+        make_iterator_property_map(partial_derivatives.begin(), index,
+                                   std::pair<weight_type, weight_type>()));
   }
 
   /**
