@@ -71,6 +71,8 @@ main(int,char*[])
       allow_parallel_edge_tag> Graph3;
     function_requires< VertexListGraphConcept<Graph3> >();
 
+    function_requires< ColorValueConcept<color_value_archetype> >();
+
     typedef incidence_graph_archetype<Vertex, directed_tag, allow_parallel_edge_tag> G;
     typedef property_graph_archetype<G, vertex_color_t, color_value_archetype>
       Graph4;
@@ -349,8 +351,6 @@ main(int,char*[])
     typedef std::vector< std::list<int> > Graph;
     function_requires< VertexListGraphConcept<Graph> >();
   }
-#endif
-
 #endif
   return 0;
 }
