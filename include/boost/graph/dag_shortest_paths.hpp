@@ -36,7 +36,7 @@ namespace boost {
 
     put(distance, s, zero);
     vis.discover_vertex(s, g);
-    std::vector<Vertex>::reverse_iterator i;
+    typename std::vector<Vertex>::reverse_iterator i;
     for (i = rev_topo_order.rbegin(); i != rev_topo_order.rend(); ++i) {
       Vertex u = *i;
       vis.examine_vertex(u, g);
