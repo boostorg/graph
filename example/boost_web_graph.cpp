@@ -222,8 +222,7 @@ main()
     tree_printer(node_name, &dfs_distances[0]);
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
-  depth_first_visit(search_tree, src, boost::visitor(tree_printer).
-		    color_map(get(vertex_color, g)));
+  depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
   
   return 0;
 }
