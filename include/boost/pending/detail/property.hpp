@@ -40,10 +40,12 @@ namespace boost {
         return p.m_value; 
       }
     };
-    template <>
-    struct property_value_dispatch<0> {
 
-      template <class Property, class T, class Tag>
+    template <class Property>
+    struct property_value_end {
+      template <class T> class result { typedef T type; };
+
+      template <class T, class Tag>
       static T& get_value(Property& p, T* t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
@@ -51,7 +53,7 @@ namespace boost {
         return property_value_dispatch<match>
           ::get_value(static_cast<Next&>(p), t, tag);
       }
-      template <class Property, class T, class Tag>
+      template <class T, class Tag>
       static const T& const_get_value(const Property& p, T* t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
@@ -59,6 +61,11 @@ namespace boost {
         return property_value_dispatch<match>
           ::const_get_value(static_cast<const Next&>(p), t, tag);
       }
+    };
+    template <>
+    struct property_value_end<no_property> {
+      template <class T> class result { typedef detail::error_property_not_found type; };
+
       // Stop the recursion and return error
       template <class T, class Tag>
       static detail::error_property_not_found&
@@ -71,6 +78,20 @@ namespace boost {
       const_get_value(const no_property&, T* t, Tag tag) {
 	static error_property_not_found s_prop_not_found;
         return s_prop_not_found;
+      }
+    };
+
+    template <>
+    struct property_value_dispatch<0> {
+      template <class Property, class T, class Tag>
+      static typename property_value_end<Property>::template result<T>::type&
+      get_value(Property& p, T* t, Tag tag) {
+	return property_value_end<Property>::get_value(p, t, tag);
+      }
+      template <class Property, class T, class Tag>
+      static const typename property_value_end<Property>::template result<T>::type&
+      const_get_value(const Property& p, T* t, Tag tag) {
+	return property_value_end<Property>::const_get_value(p, t, tag);
       }
     };
 

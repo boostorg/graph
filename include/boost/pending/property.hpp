@@ -9,6 +9,8 @@ namespace boost {
     typedef no_property tag_type;
     typedef no_property next_type;
     typedef no_property value_type;
+    enum { num = 0 };
+    typedef void kind;
   };
   template <class Tag, class T, class Base = no_property>
   struct property : public Base {
