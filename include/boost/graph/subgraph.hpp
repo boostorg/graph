@@ -186,7 +186,8 @@ namespace boost {
     {
       typename std::map<vertex_descriptor, vertex_descriptor>::const_iterator
         i = m_local_vertex.find(u_global);
-      return std::make_pair((*i).second, i != m_local_vertex.end());
+      bool valid = i != m_local_vertex.end();
+      return std::make_pair((valid ? (*i).second : null_vertex()), valid);
     }
 
     // Return the parent graph.
