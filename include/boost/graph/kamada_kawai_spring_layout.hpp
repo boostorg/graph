@@ -242,7 +242,7 @@ namespace boost {
           } while (!done(delta_p, p, g, false));
 
           // Select new p by updating each partial derivative and delta
-          vertex_descriptor old_p;
+          vertex_descriptor old_p = p;
           for (ui = vertices(g).first; ui != end; ++ui) {
             deriv_type old_deriv_p = p_partials[get(index, *ui)];
             deriv_type old_p_partial = 
