@@ -52,7 +52,8 @@ namespace boost {
 
       template <typename Iter>
       typename Iter::reference dereference(const Iter& i) const { 
-        return R(*p.base().first, *p.base().second); 
+	typedef typename Iter::reference R;
+	return R(*i.base().first, *i.base().second); 
       }
       template <typename Iter>
       bool equal(const Iter& p1, const Iter& p2) const { 
@@ -81,6 +82,16 @@ namespace boost {
 
   template <typename IterA, typename IterB>
   struct shadow_iterator_generator {
+    
+    // To use the iterator_adaptor we can't derive from
+    // random_access_iterator because we don't have a real reference.
+    // However, we want the STL algorithms to treat the shadow
+    // iterator like a random access iterator.
+    struct shadow_iterator_tag : public std::input_iterator_tag {
+      operator std::random_access_iterator_tag() {
+	return std::random_access_iterator_tag();
+      };
+    };
     typedef typename std::iterator_traits<IterA>::value_type Aval;
     typedef typename std::iterator_traits<IterB>::value_type Bval;
     typedef typename std::iterator_traits<IterA>::reference Aref;
@@ -89,9 +100,15 @@ namespace boost {
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
     typedef iterator_adaptor< std::pair<IterA, IterB>,
+<<<<<<< shadow_iterator.hpp
+			      detail::shadow_iterator_policies,
+			      V, R, V*, shadow_iterator_tag,
+			      D> type;
+=======
                               detail::shadow_iterator_policies,
                               V, R, V*, std::random_access_iterator_tag,
                               D> type;
+>>>>>>> 1.5
   };
 
   // short cut for creating a shadow iterator
