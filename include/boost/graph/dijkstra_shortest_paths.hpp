@@ -159,14 +159,14 @@ namespace boost {
   template <class VertexListGraph, class DijkstraVisitor, 
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine, 
-            class DistInf, class DistZero>
+            class DistZero>
   inline void
   dijkstra_shortest_paths_no_init
     (const VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s, 
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
      IndexMap index_map,
-     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
   {
     typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
