@@ -823,14 +823,14 @@ namespace boost {
   inline
   typename graph_property<G, Tag>::type&
   get_property(subgraph<G>& g, Tag tag) {
-    return get_property(g->root().m_graph, tag);
+    return get_property(g.root().m_graph, tag);
   }
 
   template <typename G, typename Tag>
   inline
   const typename graph_property<G, Tag>::type&
   get_property(const subgraph<G>& g, Tag tag) {
-    return get_property(g->root().m_graph, tag);
+    return get_property(g.root().m_graph, tag);
   }
 
   //===========================================================================
