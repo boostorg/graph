@@ -51,7 +51,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/uniform_cost_search.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/visitors.hpp>
 
 using namespace std;
@@ -155,8 +155,11 @@ int main(int,char*[])
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0)
-        uniform_cost_search(g, *i, &time[0], weight, 
-                            compare, combine);
+        dijkstra_shortest_paths(g, *i, 
+				distance_map(&time[0]). 
+				weight_map(weight). 
+				distance_compare(compare).
+				distance_combine(combine));
     }
 
     cout << "parallel make ordering, " << endl
@@ -170,7 +173,7 @@ int main(int,char*[])
   {
     cout << "A change to yow.h will cause what to be re-made?" << endl;
     print_visitor vis;
-    breadth_first_search(g, vertex(yow_h, g), vis);
+    breadth_first_search(g, vertex(yow_h, g), visitor(vis));
     cout << endl;
   }
   cout << endl;
@@ -179,7 +182,7 @@ int main(int,char*[])
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, vis);
+    depth_first_search(g, visitor(vis));
     cout << "The graph has a cycle? " << has_cycle << endl;
   }
   cout << endl;
@@ -196,7 +199,7 @@ int main(int,char*[])
     typedef property_map<Graph,vertex_color_t>::type Color;
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, vis);
+    depth_first_search(g, visitor(vis));
     cout << "The graph has a cycle now? " << has_cycle << endl;
   }
 
