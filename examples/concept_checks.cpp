@@ -87,6 +87,18 @@ main(int,char*[])
     REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
   }
   {
+    typedef adjacency_list< listS, listS, undirectedS, 
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
+    > Graph;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
+    REQUIRE(Graph, VertexAndEdgeListGraph);
+    REQUIRE(Graph, MutableGraph);
+    REQUIRE3(Graph, Vertex, vertex_color_t, PropertyGraph);
+    REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
+  }
+  {
     typedef std::pair<int,int> E;
     typedef edge_list<E*,E,ptrdiff_t> EdgeList;
     REQUIRE(EdgeList, EdgeListGraph);

@@ -49,11 +49,11 @@ int main(int argc, char* argv[])
   const int num_vertices = 5;
   Graph g(num_vertices);
 
-  add_edge(g, 0, 1);
-  add_edge(g, 1, 2);
-  add_edge(g, 1, 3);
-  add_edge(g, 2, 4);
-  add_edge(g, 3, 4);
+  add_edge(0, 1, g);
+  add_edge(1, 2, g);
+  add_edge(1, 3, g);
+  add_edge(2, 4, g);
+  add_edge(3, 4, g);
 
   boost::graph_traits<Graph>::vertex_iterator i, end;
   boost::graph_traits<Graph>::in_edge_iterator ei, edge_end;

@@ -94,8 +94,8 @@ href="../examples/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</T
   typedef Graph::vertex_descriptor Vertex;
   const int N = 6;
   Graph G(N);
-  add_edge(G, 0, 1);
-  add_edge(G, 1, 4);
+  add_edge(0, 1, G);
+  add_edge(1, 4, G);
 
   // create the disjoint-sets structure, which requires
   // rank and parent vertex properties
@@ -114,10 +114,10 @@ href="../examples/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</T
   bool flag;
 
   // Add a couple more edges and update the disjoint-sets
-  tie(e,flag) = add_edge(G, 4, 0);
+  tie(e,flag) = add_edge(4, 0, G);
   ds.union_set(4,0);
 
-  tie(e,flag) = add_edge(G, 2, 5);
+  tie(e,flag) = add_edge(2, 5, G);
   ds.union_set(2,5);
     
   cout &lt;&lt; "An undirected graph:" &lt;&lt; endl;

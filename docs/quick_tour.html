@@ -116,7 +116,7 @@ convenient way to explicitly create the edges for this example.
 
     // add the edges to the graph object
     for (int i = 0; i &lt; num_edges; ++i)
-      add_edge(g, edge_array[i].first, edge_array[i].second);
+      add_edge(edge_array[i].first, edge_array[i].second, g);
     ...
     return 0;
   }

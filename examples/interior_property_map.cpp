@@ -104,7 +104,7 @@ main()
     
     MyGraphType G(5);
     for (int i=0; i<11; ++i)
-      add_edge(G, edge_array[i].first, edge_array[i].second);
+      add_edge(edge_array[i].first, edge_array[i].second, G);
 
     property_map<MyGraphType, vertex_first_name_t>::type name
       = get(vertex_first_name, G);

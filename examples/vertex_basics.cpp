@@ -154,7 +154,7 @@ main()
   /* Construct a graph using the edge_array*/
   MyGraphType g(5);
   for (int i=0; i<11; ++i)
-    add_edge(g, edge_array[i].first, edge_array[i].second);
+    add_edge(edge_array[i].first, edge_array[i].second, g);
 
   boost::property_map<MyGraphType, vertex_index_t>::type 
     id = get(vertex_index, g);

@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   
   Graph G(10);
   for (int i=0; i<14; ++i)
-    add_edge(G, edges[i].first, edges[i].second);
+    add_edge(edges[i].first, edges[i].second, G);
 
 
   Graph::vertex_iterator ui, uiend;

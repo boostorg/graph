@@ -178,14 +178,14 @@ href="../examples/connected_components.cpp"><tt>examples/connected_components.cp
   typedef discover_time_property&lt; finish_time_property
                                 &lt; color_property&lt;&gt; &gt; &gt; VertexProperty;
   typedef adjacency_list &lt;vecS, vecS, undirectedS, VertexProperty&gt; Graph;
-  typedef Graph::vertex_descriptor Vertex;
+  typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
 
   const int N = 6;
   Graph G(N);
-  add_edge(G, 0, 1);
-  add_edge(G, 1, 4);
-  add_edge(G, 4, 0);
-  add_edge(G, 2, 5);
+  add_edge(0, 1, G);
+  add_edge(1, 4, G);
+  add_edge(4, 0, G);
+  add_edge(2, 5, G);
     
   std::vector&lt;int&gt; c(num_vertices(G));
   int num = connected_components(G, c.begin(), 
@@ -218,16 +218,16 @@ Calculating the strongly connected components of a directed graph.
     typedef adjacency_list&lt; vecS, vecS, directedS, VertexProperty &gt;  Graph;
     const int N = 6;
     Graph G(N);
-    add_edge(G, 0, 1);
-    add_edge(G, 1, 1);
-    add_edge(G, 1, 3);
-    add_edge(G, 1, 4);
-    add_edge(G, 4, 3);
-    add_edge(G, 3, 4);
-    add_edge(G, 3, 0);
-    add_edge(G, 5, 2);
+    add_edge(0, 1, G);
+    add_edge(1, 1, G);
+    add_edge(1, 3, G);
+    add_edge(1, 4, G);
+    add_edge(4, 3, G);
+    add_edge(3, 4, G);
+    add_edge(3, 0, G);
+    add_edge(5, 2, G);
 
-    typedef Graph::vertex_descriptor Vertex;
+    typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
     
     std::vector&lt;int&gt; c(N);
     int num = connected_components(G, c.begin(), 

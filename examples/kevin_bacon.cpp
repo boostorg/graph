@@ -95,7 +95,7 @@ main()
       v = pos->second;
 
     Edge e;
-    tie(e, inserted) = add_edge(g, u, v);
+    tie(e, inserted) = add_edge(u, v, g);
     if (inserted) {
       put(connecting_movie, e, movie_name);
       put(weight, e, 1);

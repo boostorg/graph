@@ -66,8 +66,8 @@ main(int, char*[])
     graph_traits<DirectedGraph>::vertex_descriptor u, v;
     u = vertex(0, digraph);
     v = vertex(1, digraph);
-    add_edge(digraph, u, v, Weight(1.2));
-    add_edge(digraph, v, u, Weight(2.4));
+    add_edge(u, v, Weight(1.2), digraph);
+    add_edge(v, u, Weight(2.4), digraph);
     graph_traits<DirectedGraph>::edge_descriptor e1, e2;
     bool found;
     tie(e1,found) = edge(u, v, digraph);
@@ -84,7 +84,7 @@ main(int, char*[])
     graph_traits<UndirectedGraph>::vertex_descriptor u, v;
     u = vertex(0, undigraph);
     v = vertex(1, undigraph);
-    add_edge(undigraph, u, v, Weight(3.1));
+    add_edge(u, v, Weight(3.1), undigraph);
     graph_traits<UndirectedGraph>::edge_descriptor e1, e2;
     bool found;
     tie(e1,found) = edge(u, v, undigraph);

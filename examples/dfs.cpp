@@ -100,15 +100,15 @@ main(int argc, char* argv[])
   typedef adjacency_list<> Graph;
   
   Graph G(5);
-  add_edge(G, 0, 2);
-  add_edge(G, 1, 1);
-  add_edge(G, 1, 3);
-  add_edge(G, 2, 1);
-  add_edge(G, 2, 3);
-  add_edge(G, 3, 1);
-  add_edge(G, 3, 4);
-  add_edge(G, 4, 0);
-  add_edge(G, 4, 1);
+  add_edge(0, 2, G);
+  add_edge(1, 1, G);
+  add_edge(1, 3, G);
+  add_edge(2, 1, G);
+  add_edge(2, 3, G);
+  add_edge(3, 1, G);
+  add_edge(3, 4, G);
+  add_edge(4, 0, G);
+  add_edge(4, 1, G);
 
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::vertices_size_type size_type;

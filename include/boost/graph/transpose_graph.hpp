@@ -56,7 +56,7 @@ namespace boost {
       for (boost::tie(j,jend) = out_edges(u, G); j !=jend; ++j) {
         Edge e = *j;
         Vertex v = target(e, G);
-        add_edge(G_T, vertex(get(index,v), G_T), vertex(get(index,u), G_T));
+        add_edge(vertex(get(index,v), G_T), vertex(get(index,u), G_T), G_T);
         // hmmm, what to do about edge properties?  should have an
         // add-edge(g,e) function, and have a templated edge
         // constructor -JGS

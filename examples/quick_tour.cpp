@@ -100,7 +100,7 @@ int main(int,char*[])
 
   // add the edges to the graph object
   for (int i = 0; i < num_edges; ++i)
-    add_edge(g, edge_array[i].first, edge_array[i].second);
+    add_edge(edge_array[i].first, edge_array[i].second, g);
   
   std::cout << "vertices(g) = ";
   typedef graph_traits<Graph>::vertex_iterator vertex_iter;

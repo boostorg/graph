@@ -139,7 +139,7 @@ struct graph_copier
 
   template <class Edge, class Graph>
   void operator()(Edge e, Graph& g) {
-    add_edge(new_g, source(e, g), target(e, g));
+    add_edge(source(e, g), target(e, g), new_g);
   }
 private:
   NewGraph& new_g;
@@ -197,7 +197,7 @@ main(int argc, char* argv[])
                    1, 2 };
 
   for (int i = 0; i < 12; ++i)
-    add_edge(G, edges[i].first, edges[i].second, weight[i]);
+    add_edge(edges[i].first, edges[i].second, weight[i], G);
 
   print(G, name);
 

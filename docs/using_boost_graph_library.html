@@ -485,7 +485,7 @@ owes who''.
     
   MyGraphType G(5);
   for (int i = 0; i &lt; 11; ++i)
-    add_edge(G, edge_array[i].first, edge_array[i].second);
+    add_edge(edge_array[i].first, edge_array[i].second, G);
 
   property_map&lt;MyGraphType, first_vertex_name_t&gt;::type
     name = get(first_vertex_name, G);

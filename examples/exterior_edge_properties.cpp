@@ -104,20 +104,20 @@ int main(int argc, char* argv[]) {
 
   // insert edges into the graph, and assign each edge an ID number
   // to index into the property arrays
-  boost::add_edge(G, 0, 1, 0);
+  boost::add_edge(0, 1, 0, G);
 
-  boost::add_edge(G, 1, 4, 1);
-  boost::add_edge(G, 4, 7, 2);
-  boost::add_edge(G, 7, 6, 3);
+  boost::add_edge(1, 4, 1, G);
+  boost::add_edge(4, 7, 2, G);
+  boost::add_edge(7, 6, 3, G);
 
-  boost::add_edge(G, 1, 3, 4);
-  boost::add_edge(G, 3, 6, 5);
+  boost::add_edge(1, 3, 4, G);
+  boost::add_edge(3, 6, 5, G);
 
-  boost::add_edge(G, 6, 5, 6);
-  boost::add_edge(G, 5, 2, 7);
-  boost::add_edge(G, 2, 1, 8);
+  boost::add_edge(6, 5, 6, G);
+  boost::add_edge(5, 2, 7, G);
+  boost::add_edge(2, 1, 8, G);
 
-  boost::add_edge(G, 6, 8, 9);
+  boost::add_edge(6, 8, 9, G);
 
   typedef boost::property_map<Graph, boost::edge_index_t>::type EdgeIndexMap;
   EdgeIndexMap edge_id = boost::get(boost::edge_index, G);

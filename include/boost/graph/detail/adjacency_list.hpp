@@ -143,6 +143,10 @@ namespace boost {
       inline bool operator==(const self& x) const { return i == x.i; }
 
       inline self* operator->() { return this; }
+
+      OutEdgeIter& iter() { return i; }
+      const OutEdgeIter& iter() const { return i; }
+
       /*    protected: */
       OutEdgeIter i;
       Graph* g;
@@ -246,6 +250,7 @@ namespace boost {
         boost::less_than_comparable1< stored_edge<Vertex> > >
     {
     public:
+      typedef no_property property_type;
       inline stored_edge(Vertex target, const no_property& = no_property())
         : m_target(target) { }
       inline Vertex& get_target() { return m_target; }
@@ -262,6 +267,7 @@ namespace boost {
     template <class Vertex, class Property>
     class stored_edge_property : public stored_edge<Vertex> {
     public:
+      typedef Property property_type;
       inline stored_edge_property(Vertex target, const Property& p = Property())
         : stored_edge<Vertex>(target), m_property(p) { }
       inline Property* get_property() { return &m_property; }
@@ -271,15 +277,17 @@ namespace boost {
     };
 
     template <class Vertex, class Iter, class Property>
-    class se_iter // having symbol length problems with VC++
-      : public stored_edge<Vertex> // there is some redundant storage
-      // of the target vertex, but it is difficult to remove...
+    class stored_edge_with_iter
+      : public stored_edge<Vertex>
     {
     public:
-      inline se_iter(Vertex v, Iter i = Iter())
+      typedef Property property_type;
+      inline stored_edge_with_iter(Vertex v, Iter i = Iter())
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property* get_property() { return m_iter->get_property(); }
-      inline const Property* get_property() const { return m_iter->get_property(); }
+      inline const Property* get_property() const { 
+        return m_iter->get_property();
+      }
       inline Iter get_iter() const { return m_iter; }
     protected:
       Iter m_iter;
@@ -310,50 +318,54 @@ namespace boost {
                                            g.vertex_set().end(),
                                            g.vertex_set().end(), g) );
     }
-    template <class Config, class vertex_descriptor, class Predicate>
-    inline void
-    remove_out_edge_if(directed_edges_helper<Config>& g_, 
-                       vertex_descriptor v, Predicate pred)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-      typedef typename Config::edge_parallel_category edge_parallel_category;
-      remove_edge_if_dispatch(g.out_edge_list(v), pred,
-                              edge_parallel_category());
-    }
-    template <class Config, class vertex_descriptor, class Predicate>
-    inline void
-    remove_in_edge_if(directed_edges_helper<Config>& g_, 
-                      vertex_descriptor v, Predicate pred)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(g_);
-      typedef typename Config::edge_parallel_category edge_parallel_category;
-      remove_edge_if_dispatch(g.in_edge_list(v), pred,
-                              edge_parallel_category());
-    }
-    template <class EdgeList, class Predicate>
-    inline void
-    remove_edge_if_dispatch(EdgeList& el, Predicate pred,
-                            boost::allow_parallel_edge_tag)
-    {
-      typename EdgeList::iterator
-        pos = std::remove_if(el.begin(), el.end(), pred);
-      el.erase(pos, el.end());
-    }
-    template <class EdgeList, class Predicate>
-    inline void
-    remove_edge_if_dispatch(EdgeList& el, Predicate pred,
-                            boost::disallow_parallel_edge_tag)
-    {
-      typename EdgeList::iterator pos = el.begin(), next = el.begin(), 
-        end = el.end();
-      for (; pos != end; pos = next) {
-        ++next;
-        if (pred(*pos))
-          el.erase(pred);
+    namespace detail {
+      template <class EdgeList, class Predicate>
+      inline void
+      remove_edge_if_dispatch(EdgeList& el, Predicate pred,
+                              boost::allow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator
+          pos = std::remove_if(el.begin(), el.end(), pred);
+        el.erase(pos, el.end());
       }
+      template <class EdgeList, class Predicate>
+      inline void
+      remove_edge_if_dispatch(EdgeList& el, Predicate pred,
+                              boost::disallow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator pos = el.begin(), next = el.begin(), 
+          end = el.end();
+        for (; pos != end; pos = next) {
+          ++next;
+          if (pred(*pos))
+            el.erase(pred);
+        }
+      }
+    } // namespace detail
+
+    template <class Config, class vertex_descriptor, class Predicate>
+    inline void
+    remove_out_edge_if(vertex_descriptor v, Predicate pred,
+                       directed_edges_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typedef typename Config::edge_parallel_category edge_parallel_category;
+      detail::remove_edge_if_dispatch(g.out_edge_list(v), pred,
+                                      edge_parallel_category());
     }
+    template <class Config, class vertex_descriptor, class Predicate>
+    inline void
+    remove_in_edge_if(vertex_descriptor v, Predicate pred,
+                      directed_edges_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typedef typename Config::edge_parallel_category edge_parallel_category;
+      detail::remove_edge_if_dispatch(g.in_edge_list(v), pred,
+                                      edge_parallel_category());
+    }
+
     // need to make sure remove_edge_if works for undirected & bidirectional
     // and add tests for it in test/graph.cpp
 
@@ -363,9 +375,9 @@ namespace boost {
     // O(E/V) or O(log(E/V)) depending on OutEdgeList type
     template <class Config>
     inline void
-    remove_edge(directed_graph_helper<Config>& g_, 
-                typename Config::vertex_descriptor u, 
-                typename Config::vertex_descriptor v)
+    remove_edge(typename Config::vertex_descriptor u,
+                typename Config::vertex_descriptor v,
+                directed_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -374,12 +386,71 @@ namespace boost {
       boost::erase(el, StoredEdge(v));
     }
 
+
+    namespace detail {
+
+      // O(E/V)
+      template <class edge_descriptor, class EdgeList, class StoredProperty>
+      inline void
+      remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
+                                    StoredProperty* p)
+      {
+        typename EdgeList::iterator i = el.begin();
+        for (; i != el.end(); ++i)
+          if ((*i).get_property() == p) {
+            el.erase(i);
+            return;
+          }
+      }
+
+      // O(E/V)
+      template <class edge_descriptor, class EdgeList, class StoredProperty>
+      inline void
+      remove_directed_edge_dispatch(edge_descriptor e, EdgeList& el,
+                                    no_property*)
+      {
+        typename EdgeList::iterator i = el.begin();
+        for (; i != el.end(); ++i)
+          if ((*i).get_target() == e.m_target) {
+            el.erase(i);
+            return;
+          }
+      }
+
+    } // namespace detail
+
+    // O(E/V)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::edge_descriptor e,
+                directed_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
+      typedef typename Config::OutEdgeList::value_type::property_type PType;
+      detail::remove_directed_edge_dispatch(e, el, (PType*)e.get_property());
+    }
+
+    // O(1)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::out_edge_iterator iter,
+                directed_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+      typename Config::edge_descriptor e = *iter;
+      typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
+      el.erase(iter.iter());
+    }
+
     // O(V + E) for allow_parallel_edges
     // O(V * log(E/V)) for disallow_parallel_edges
     template <class Config>
     inline void 
-    clear_vertex(directed_graph_helper<Config>& g_, 
-                 typename Config::vertex_descriptor u)
+    clear_vertex(typename Config::vertex_descriptor u,
+                 directed_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -409,10 +480,10 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(directed_graph_helper<Config>& g_, 
-             typename Config::vertex_descriptor u, 
+    add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
-             const typename Config::edge_property_type& p)
+             const typename Config::edge_property_type& p, 
+             directed_graph_helper<Config>& g_)
     {
       typedef typename Config::edge_descriptor edge_descriptor;
       typedef typename Config::graph_type graph_type;
@@ -429,12 +500,12 @@ namespace boost {
     // causes Visual C++ to get confused.
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(directed_graph_helper<Config>& g_, 
-             typename Config::vertex_descriptor u, 
-             typename Config::vertex_descriptor v)
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v,
+             directed_graph_helper<Config>& g_)
     {
       typename Config::edge_property_type p;
-      return add_edge(g_, u, v, p);
+      return add_edge(u, v, p, g_);
     }
     //=========================================================================
     // Undirected Graph Helper Class
@@ -443,6 +514,7 @@ namespace boost {
     struct undir_edge // short name due to VC++ truncation and linker problems
       : public boost::detail::edge_base<boost::undirected_tag, Vertex>
     {
+      typedef EdgeProperty property_type;
       typedef boost::detail::edge_base<boost::undirected_tag, Vertex> Base;
       undir_edge(Vertex u, Vertex v, const EdgeProperty& p = EdgeProperty())
         : Base(u, v), m_property(p) { }
@@ -452,13 +524,16 @@ namespace boost {
     };
 
     template <class Vertex>
-    struct undir_edge_no_p  // short name due to VC++ truncation and linker problems
-      : public boost::detail::edge_base<boost::undirected_tag, Vertex> {
+    struct undir_edge_no_p
+      // short name due to VC++ truncation and linker problems
+      : public boost::detail::edge_base<boost::undirected_tag, Vertex>
+    {
+      typedef no_property property_type;
       typedef boost::detail::edge_base<boost::undirected_tag, Vertex> Base;
       template <class EdgeProperty>
       undir_edge_no_p (Vertex u, Vertex v, const EdgeProperty& )
         : Base(u, v) { }
-      boost::no_property* get_property() { return 0; }
+      no_property* get_property() { return 0; }
       const boost::no_property* get_property() const { return 0; }
     };
 
@@ -481,9 +556,9 @@ namespace boost {
     // O(E/V) or O(log(E/V))
     template <class Config>
     void
-    remove_edge(undirected_graph_helper<Config>& g_, 
-                typename Config::vertex_descriptor u, 
-                typename Config::vertex_descriptor v)
+    remove_edge(typename Config::vertex_descriptor u, 
+                typename Config::vertex_descriptor v, 
+                undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -491,6 +566,79 @@ namespace boost {
       typedef typename Config::edge_parallel_category Cat;
       remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.out_edge_list(v), StoredEdge(u));
+    }
+
+    namespace detail {
+      // O(E/V)
+      template <class edge_descriptor, class Config, class StoredProperty>
+      inline void
+      remove_undirected_edge_dispatch(edge_descriptor e, 
+                                      undirected_graph_helper<Config>& g_, 
+                                      StoredProperty* p)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(g_);
+
+        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+        typename Config::OutEdgeList::iterator out_i = out_el.begin();
+        for (; out_i != out_el.end(); ++out_i)
+          if ((*out_i).get_property() == p) {
+            g.m_edges.erase((*out_i).get_iter());
+            out_el.erase(out_i);
+            break;
+          }
+        typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+        typename Config::OutEdgeList::iterator in_i = in_el.begin();
+        for (; in_i != in_el.end(); ++in_i)
+          if ((*in_i).get_property() == p) {
+            in_el.erase(in_i);
+            return;
+          }
+      }
+      // O(E/V)
+      template <class edge_descriptor, class Config>
+      inline void
+      remove_undirected_edge_dispatch(edge_descriptor e,
+                                      undirected_graph_helper<Config>& g_,
+                                      no_property*)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(g_);
+
+        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+        typename Config::OutEdgeList::iterator out_i = out_el.begin();
+        for (; out_i != out_el.end(); ++out_i)
+          if ((*out_i).get_target() == target(e, g)) {
+            g.m_edges.erase((*out_i).get_iter());
+            out_el.erase(out_i);
+            break;
+          }
+        typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+        typename Config::OutEdgeList::iterator in_i = in_el.begin();
+        for (; in_i != in_el.end(); ++in_i)
+          if ((*in_i).get_target() == source(e, g)) {
+            in_el.erase(in_i);
+            return;
+          }
+      }
+    } // namespace detail
+
+    // O(E/V)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::edge_descriptor e,
+                undirected_graph_helper<Config>& g)
+    {
+      typedef typename Config::OutEdgeList::value_type::property_type PType;
+      detail::remove_undirected_edge_dispatch(e, g, (PType*)e.get_property());
+    }
+    // O(E/V)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::out_edge_iterator iter,
+                undirected_graph_helper<Config>& g_)
+    {
+      remove_edge(*iter, g_);
     }
     // O(1)
     template <class Config>
@@ -504,8 +652,8 @@ namespace boost {
     // O(E/V * E/V) or O(E/V * log(E/V))
     template <class Config>
     inline void 
-    clear_vertex(undirected_graph_helper<Config>& g_, 
-                 typename Config::vertex_descriptor u)
+    clear_vertex(typename Config::vertex_descriptor u,
+                 undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -523,10 +671,10 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(undirected_graph_helper<Config>& g_, 
-             typename Config::vertex_descriptor u, 
+    add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v, 
-             const typename Config::edge_property_type& p)
+             const typename Config::edge_property_type& p,
+             undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::StoredEdge StoredEdge;
       typedef typename Config::edge_descriptor edge_descriptor;
@@ -554,12 +702,12 @@ namespace boost {
     }
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(undirected_graph_helper<Config>& g_, 
-             typename Config::vertex_descriptor u, 
-             typename Config::vertex_descriptor v)
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v, 
+             undirected_graph_helper<Config>& g_)
     {
       typename Config::edge_property_type p;
-      return add_edge(g_, u, v, p);
+      return add_edge(u, v, p, g_);
     }
     // O(1)
     template <class Config>
@@ -569,32 +717,34 @@ namespace boost {
     {
       return out_degree(u, g);
     }
-    // O(E/V)
-    template <class Graph, class EdgeList, class Vertex>
-    inline void
-    remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
-                           boost::allow_parallel_edge_tag)
-    {
-      typedef typename EdgeList::value_type StoredEdge;
-      typename EdgeList::iterator i = el.begin(), end = el.end();
-      for (; i != end; ++i)
-        if ((*i).get_target() == v)
-          g.m_edges.erase((*i).get_iter());
-      boost::erase(el, StoredEdge(v));
-    }
-    // O(log(E/V))
-    template <class Graph, class EdgeList, class Vertex>
-    inline void
-    remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
-                           boost::disallow_parallel_edge_tag)
-    {
-      typedef typename EdgeList::value_type StoredEdge;
-      typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
-      if (i != end) {
-        g.m_edges.erase((*i).get_iter());
-        el.erase(i);
+    namespace detail {
+      // O(E/V)
+      template <class Graph, class EdgeList, class Vertex>
+      inline void
+      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
+                             boost::allow_parallel_edge_tag)
+      {
+        typedef typename EdgeList::value_type StoredEdge;
+        typename EdgeList::iterator i = el.begin(), end = el.end();
+        for (; i != end; ++i)
+          if ((*i).get_target() == v)
+            g.m_edges.erase((*i).get_iter());
+        boost::erase(el, StoredEdge(v));
       }
-    }
+      // O(log(E/V))
+      template <class Graph, class EdgeList, class Vertex>
+      inline void
+      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
+                             boost::disallow_parallel_edge_tag)
+      {
+        typedef typename EdgeList::value_type StoredEdge;
+        typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
+        if (i != end) {
+          g.m_edges.erase((*i).get_iter());
+          el.erase(i);
+        }
+      }
+    } // namespace detail
 
     //=========================================================================
     // Bidirectional Graph Helper Class (with edge properties)
@@ -616,17 +766,54 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    remove_edge(bidirectional_graph_helper_with_property<Config>& g_, 
-                typename Config::vertex_descriptor u, 
-                typename Config::vertex_descriptor v)
+    remove_edge(typename Config::vertex_descriptor u, 
+                typename Config::vertex_descriptor v, 
+                bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
-      remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
+      detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.in_edge_list(v), StoredEdge(u));
     }
+    // O(E/V)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::edge_descriptor e,
+                bidirectional_graph_helper_with_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      typedef typename Config::OutEdgeList::value_type::property_type PType;
+      PType* p = (PType*) e.get_property();
+
+      typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+      typename Config::OutEdgeList::iterator out_i = out_el.begin();
+      for (; out_i != out_el.end(); ++out_i)
+        if ((*out_i).get_property() == p) {
+          g.m_edges.erase((*out_i).get_iter());
+          out_el.erase(out_i);
+          break;
+        }
+      typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
+      typename Config::InEdgeList::iterator in_i = in_el.begin();
+      for (; in_i != in_el.end(); ++in_i)
+        if ((*in_i).get_property() == p) {
+          in_el.erase(in_i);
+          break;
+        }
+    }
+
+    template <class Config>
+    inline void
+    remove_edge(typename Config::out_edge_iterator iter,
+                bidirectional_graph_helper_with_property<Config>& g_)
+    {
+      remove_edge(*iter, g_);
+    }
+
     // O(1)
     template <class Config>
     inline typename Config::edges_size_type
@@ -640,8 +827,8 @@ namespace boost {
     // O(E/V * log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    clear_vertex(bidirectional_graph_helper_with_property<Config>& g_, 
-                 typename Config::vertex_descriptor u)
+    clear_vertex(typename Config::vertex_descriptor u,
+                 bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -667,10 +854,10 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_with_property<Config>& g_,
-             typename Config::vertex_descriptor u,
+    add_edge(typename Config::vertex_descriptor u,
              typename Config::vertex_descriptor v, 
-             const typename Config::edge_property_type& p)
+             const typename Config::edge_property_type& p,
+             bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
@@ -694,12 +881,12 @@ namespace boost {
     }
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_with_property<Config>& g_,
-             typename Config::vertex_descriptor u,
-             typename Config::vertex_descriptor v)
+    add_edge(typename Config::vertex_descriptor u,
+             typename Config::vertex_descriptor v,
+             bidirectional_graph_helper_with_property<Config>& g_)
     {
       typename Config::edge_property_type p;
-      return add_edge(g_, u, v, p);
+      return add_edge(u, v, p, g_);
     }
     // O(1)
     template <class Config>
@@ -723,9 +910,9 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_without_property<Config>& g_, 
-             typename Config::vertex_descriptor u, 
-             typename Config::vertex_descriptor v)
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v,
+             bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -745,15 +932,40 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    remove_edge(bidirectional_graph_helper_without_property<Config>& g_,
-                typename Config::vertex_descriptor u,
-                typename Config::vertex_descriptor v)
+    remove_edge(typename Config::vertex_descriptor u,
+                typename Config::vertex_descriptor v,
+                bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
       graph_type& g = static_cast<graph_type&>(g_);
       boost::erase(g.out_edge_list(u), StoredEdge(v));
       boost::erase(g.in_edge_list(v), StoredEdge(u));
+    }
+    // O(E/V)
+    template <class Config>
+    inline void
+    remove_edge(typename Config::edge_descriptor e,
+                bidirectional_graph_helper_without_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+      typename Config::OutEdgeList::iterator out_i = out_el.begin();
+      for (; out_i != out_el.end(); ++i)
+        if ((*out_i).get_target() == target(e, g)) {
+          g.m_edges.erase((*out_i).get_iter());
+          out_el.erase(*out_i);
+          break;
+        }
+      typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
+      typename Config::InEdgeList::iterator in_i = in_el.begin();
+      for (; in_i != in_el.end(); ++i)
+        if ((*in_i).get_target() == source(e, g)) {
+          in_el.erase(*in_i);
+          break;
+        }
     }
     // O(V), could do better...
     template <class Config>
@@ -772,8 +984,8 @@ namespace boost {
     // O(E/V * log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void 
-    clear_vertex(bidirectional_graph_helper_without_property<Config>& g_, 
-                 typename Config::vertex_descriptor u)
+    clear_vertex(typename Config::vertex_descriptor u,
+                 bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
@@ -1078,7 +1290,7 @@ namespace boost {
           v[i] = add_vertex(static_cast<Derived&>(*this));
 
         while (first != last) {
-          add_edge(*this, v[(*first).first], v[(*first).second]);
+          add_edge(v[(*first).first], v[(*first).second], *this);
           ++first;
         }
         delete [] v;
@@ -1093,7 +1305,7 @@ namespace boost {
           v[i] = add_vertex(static_cast<Derived&>(*this));
 
         while (first != last) {
-          add_edge(*this, v[(*first).first], v[(*first).second], *ep_iter);
+          add_edge(v[(*first).first], v[(*first).second], *ep_iter, *this);
           ++first;
           ++ep_iter;
         }
@@ -1139,8 +1351,8 @@ namespace boost {
     }
     // O(1)
     template <class Derived, class Config, class Base>
-    inline void remove_vertex(adj_list_impl<Derived, Config, Base>& g_,
-                              typename Config::vertex_descriptor u)
+    inline void remove_vertex(typename Config::vertex_descriptor u,
+                              adj_list_impl<Derived, Config, Base>& g_)
     {
       typedef typename Config::stored_vertex stored_vertex;
       Derived& g = static_cast<Derived&>(g_);
@@ -1196,8 +1408,8 @@ namespace boost {
         : m_vertices(num_vertices)
       {
         while (first != last) {
-          add_edge(static_cast<Graph&>(*this), 
-                   (*first).first, (*first).second);
+          add_edge((*first).first, (*first).second, 
+                   static_cast<Graph&>(*this));
           ++first;
         }
       }
@@ -1208,8 +1420,8 @@ namespace boost {
         : m_vertices(num_vertices)
       {
         while (first != last) {
-          add_edge(static_cast<Graph&>(*this), 
-                   (*first).first, (*first).second, *ep_iter);
+          add_edge((*first).first, (*first).second, *ep_iter, 
+                   static_cast<Graph&>(*this));
           ++first;
           ++ep_iter;
         }
@@ -1244,97 +1456,100 @@ namespace boost {
     }
     // O(V + E)
     template <class Graph, class Config, class Base>
-    inline void remove_vertex(vec_adj_list_impl<Graph, Config, Base>& g_,
-                              typename Config::vertex_descriptor v) {
-      typedef typename Config::directed_category Cat;
-      Graph& g = static_cast<Graph&>(g_);
-      remove_vertex_dispatch(g, v, Cat());
-    }
-    // O(1)
-    template <class Graph, class Config, class Base>
-    inline typename Config::vertex_descriptor 
-    vertex(typename Config::vertices_size_type n, 
-           const vec_adj_list_impl<Graph, Config, Base>&)
-    {
-      return n;
-    }
-
-    template <class Graph, class vertex_descriptor>
-    inline void 
-    remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                           boost::directed_tag)
-    {
-      typedef typename Graph::edge_parallel_category edge_parallel_category;
-      g.m_vertices.erase(g.m_vertices.begin() + u);
-      vertex_descriptor V = num_vertices(g);
-      for (vertex_descriptor v = 0; v < V; ++v)
-        reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
-    }
-    template <class Graph, class vertex_descriptor>
-    inline void 
-    remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                           boost::undirected_tag)
-    {
-      typedef typename Graph::edge_parallel_category edge_parallel_category;
-      g.m_vertices.erase(g.m_vertices.begin() + u);
-      vertex_descriptor V = num_vertices(g);
-      for (vertex_descriptor v = 0; v < V; ++v)
-        reindex_edge_list(g.out_edge_list(v), u, 
-                          edge_parallel_category());
-
-      typename Graph::EdgeContainer::iterator 
-        ei = g.m_edges.begin(),
-        ei_end = g.m_edges.end();
-      for (; ei != ei_end; ++ei) {
-        if (ei->m_source > u)
-          --ei->m_source;
-        if (ei->m_target > u)
-          --ei->m_target;
+    inline void remove_vertex(typename Config::vertex_descriptor v,
+                                vec_adj_list_impl<Graph, Config, Base>& g_) {
+        typedef typename Config::directed_category Cat;
+        Graph& g = static_cast<Graph&>(g_);
+        detail::remove_vertex_dispatch(g, v, Cat());
       }
-    }
-    template <class Graph, class vertex_descriptor>
-    inline void 
-    remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                           boost::bidirectional_tag)
-    {
-      typedef typename Graph::edge_parallel_category edge_parallel_category;
-      g.m_vertices.erase(g.m_vertices.begin() + u);
-      vertex_descriptor V = num_vertices(g);
-      vertex_descriptor v;
-      for (v = 0; v < V; ++v)
-        reindex_edge_list(g.out_edge_list(v), u, 
-                          edge_parallel_category());
-      for (v = 0; v < V; ++v)
-        reindex_edge_list(g.in_edge_list(v), u, 
-                          edge_parallel_category());
-    }
+      // O(1)
+      template <class Graph, class Config, class Base>
+      inline typename Config::vertex_descriptor 
+      vertex(typename Config::vertices_size_type n, 
+             const vec_adj_list_impl<Graph, Config, Base>&)
+      {
+        return n;
+      }
 
-    template <class EdgeList, class vertex_descriptor>
-    inline void
-    reindex_edge_list(EdgeList& el, vertex_descriptor u, 
-                      boost::allow_parallel_edge_tag)
-    {
-      typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-      for (; ei != e_end; ++ei)
-        if ((*ei).get_target() > u)
-          --(*ei).get_target();
-    }
-    template <class EdgeList, class vertex_descriptor>
-    inline void
-    reindex_edge_list(EdgeList& el, vertex_descriptor u, 
-                      boost::disallow_parallel_edge_tag)
-    {
-      typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-      while (ei != e_end) {
-        typename EdgeList::value_type ce = *ei;
-        ++ei;
-        if (ce.get_target() > u) {
-          el.erase(ce);
-          --ce.get_target();
-          el.insert(ce);
+    namespace detail {
+
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::directed_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        for (vertex_descriptor v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+      }
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::undirected_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        for (vertex_descriptor v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, 
+                            edge_parallel_category());
+
+        typename Graph::EdgeContainer::iterator 
+          ei = g.m_edges.begin(),
+          ei_end = g.m_edges.end();
+        for (; ei != ei_end; ++ei) {
+          if (ei->m_source > u)
+            --ei->m_source;
+          if (ei->m_target > u)
+            --ei->m_target;
         }
       }
-    }
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::bidirectional_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        vertex_descriptor v;
+        for (v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, 
+                            edge_parallel_category());
+        for (v = 0; v < V; ++v)
+          reindex_edge_list(g.in_edge_list(v), u, 
+                            edge_parallel_category());
+      }
+
+      template <class EdgeList, class vertex_descriptor>
+      inline void
+      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
+                        boost::allow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
+        for (; ei != e_end; ++ei)
+          if ((*ei).get_target() > u)
+            --(*ei).get_target();
+      }
+      template <class EdgeList, class vertex_descriptor>
+      inline void
+      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
+                        boost::disallow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
+        while (ei != e_end) {
+          typename EdgeList::value_type ce = *ei;
+          ++ei;
+          if (ce.get_target() > u) {
+            el.erase(ce);
+            --ce.get_target();
+            el.insert(ce);
+          }
+        }
+      }
+    } // namespace detail
 
   namespace detail {
 
@@ -1426,7 +1641,7 @@ namespace boost {
             stored_edge_property<vertex_descriptor, EdgeProperty>,  
             stored_edge<vertex_descriptor>
           >::type,
-          se_iter<vertex_descriptor, EdgeIter, EdgeProperty>
+          stored_edge_with_iter<vertex_descriptor, EdgeIter, EdgeProperty>
         >::type StoredEdge;
 
         // Adjacency Types

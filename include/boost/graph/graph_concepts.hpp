@@ -207,16 +207,18 @@ namespace boost {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
       v = add_vertex(g);
-      clear_vertex(g, v);
-      remove_vertex(g, v);
-      p = add_edge(g, u, v);
-      remove_edge(g, u, v);
-      //remove_edge(g, e); // needs to be implemented -JGS
+      clear_vertex(v, g);
+      remove_vertex(v, g);
+      p = add_edge(u, v, g);
+      remove_edge(u, v, g);
+      remove_edge(e, g);
+      remove_edge(iter, g);
     }
     G g;
     edge_descriptor e;
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
+    typename graph_traits<G>::out_edge_iterator iter;
   };
 
   template <class G>
@@ -225,8 +227,8 @@ namespace boost {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
       REQUIRE(G, MutableGraph);
-      v = add_vertex(g, vp);
-      p = add_edge(g, u, v, ep);
+      v = add_vertex(vp, g);
+      p = add_edge(u, v, ep, g);
     }
     G g;
     std::pair<edge_descriptor, bool> p;

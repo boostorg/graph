@@ -200,7 +200,7 @@ will not be inserted into the graph.
 <P>
 <PRE>
   Edge e;
-  boost::tie(e, inserted) = add_edge(g, u, v);
+  boost::tie(e, inserted) = add_edge(u, v, g);
   if (inserted) {
     connecting_movie[e] = movie_name;
     weight[e] = 1;

@@ -84,16 +84,16 @@ int main(int argc, char* argv[])
 
   graph_traits<Graph>::edge_descriptor e;
   bool flag;
-  boost::tie(e,flag) = add_edge(G, 0, 1);
+  boost::tie(e,flag) = add_edge(0, 1, G);
   ds.union_set(0,1);
 
-  boost::tie(e,flag) = add_edge(G, 1, 4);
+  boost::tie(e,flag) = add_edge(1, 4, G);
   ds.union_set(1,4);
 
-  boost::tie(e,flag) = add_edge(G, 4, 0);
+  boost::tie(e,flag) = add_edge(4, 0, G);
   ds.union_set(4,0);
 
-  boost::tie(e,flag) = add_edge(G, 2, 5);
+  boost::tie(e,flag) = add_edge(2, 5, G);
   ds.union_set(2,5);
     
   cout << "An undirected graph:" << endl;

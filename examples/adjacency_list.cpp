@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   using namespace std;
 
   typedef property<edge_name_t, std::string> EdgeProperty;
-  typedef property<vertex_color_t,default_color_type> ColorProperty;
+  typedef property<vertex_color_t, default_color_type> ColorProperty;
   typedef property<vertex_index_t, std::size_t, ColorProperty> VertexProperty;
 
   typedef adjacency_list<vecS, listS, undirectedS, 
@@ -76,14 +76,14 @@ int main(int argc, char* argv[])
   for (boost::tie(vi,viend) = vertices(g); vi != viend; ++vi)
     id[*vi] = vnum++;
 
-  add_edge(g, vertex(0,g), vertex(1,g), EdgeProperty("joe"));
-  add_edge(g, vertex(1,g), vertex(2,g), EdgeProperty("curly"));
-  add_edge(g, vertex(1,g), vertex(3,g), EdgeProperty("dick"));
-  add_edge(g, vertex(2,g), vertex(4,g), EdgeProperty("tom"));
-  add_edge(g, vertex(3,g), vertex(4,g), EdgeProperty("harry"));
+  add_edge(vertex(0,g), vertex(1,g), EdgeProperty("joe"), g);
+  add_edge(vertex(1,g), vertex(2,g), EdgeProperty("curly"), g);
+  add_edge(vertex(1,g), vertex(3,g), EdgeProperty("dick"), g);
+  add_edge(vertex(2,g), vertex(4,g), EdgeProperty("tom"), g);
+  add_edge(vertex(3,g), vertex(4,g), EdgeProperty("harry"), g);
 
-  Graph::vertex_iterator i, end;
-  Graph::out_edge_iterator ei, edge_end;
+  graph_traits<Graph>::vertex_iterator i, end;
+  graph_traits<Graph>::out_edge_iterator ei, edge_end;
   for (boost::tie(i,end) = vertices(g); i != end; ++i) {
     cout << id[*i] << " ";
     for (boost::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
@@ -93,7 +93,12 @@ int main(int argc, char* argv[])
   print_edges(g, id);
 
   cout << endl << "removing edge (1,3): " << endl;  
-  remove_edge(g, vertex(1,g), vertex(3,g));
+  remove_edge(vertex(1,g), vertex(3,g), g);
+
+  ei = out_edges(vertex(1, g), g).first;
+  cout << "removing edge (" << id[source(*ei,g)] 
+       << "," << id[target(*ei,g)] << ")" << endl;
+  remove_edge(ei, g);
 
   for(boost::tie(i,end) = vertices(g); i != end; ++i) {
     cout << id[*i] << " ";

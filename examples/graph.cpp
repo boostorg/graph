@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     while ( a == b ) b = myrand(N);
     cout << "edge edge (" << a << "," << b <<")" << endl;
     //add edges
-    add_edge(g, a, b);
+    add_edge(a, b, g);
     is_failed =  is_failed || (! check_edge(g, a, b) );
   }
   
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     size_t a = myrand(N), b = myrand(N);
     while ( a == b ) b = myrand(N);
     cout << "remove edge (" << a << "," << b <<")" << endl;
-    remove_edge(g, a, b);
+    remove_edge(a, b, g);
     is_failed = is_failed || check_edge(g, a, b);
   }
   if ( is_failed )
@@ -131,8 +131,8 @@ int main(int argc, char* argv[])
     while ( b == vidp1 ) b = myrand(N);
     cout << "add edge (" << vid << "," << a <<")" << endl;
     cout << "add edge (" << vid << "," << vidp1 <<")" << endl;
-    add_edge(g, vid, a);
-    add_edge(g, b, vidp1);
+    add_edge(vid, a, g);
+    add_edge(b, vidp1, g);
     is_failed = is_failed || ! check_edge(g, vid, a);
     is_failed = is_failed || ! check_edge(g, b, vidp1);
   }
@@ -145,13 +145,13 @@ int main(int argc, char* argv[])
   // clear_vertex
   size_t c = myrand(N);
   is_failed = false;
-  clear_vertex(g, c);
+  clear_vertex(c, g);
 
   if ( out_degree(c, g) != 0 )
     is_failed = true;
 
   cout << "Removing vertex " << c << endl;
-  remove_vertex(g, c);
+  remove_vertex(c, g);
   
   old_N = N;
   N = num_vertices(g);

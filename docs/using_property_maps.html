@@ -254,7 +254,7 @@ the flow and capacity values.
 <P>
 <PRE>
   typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
-    no_property, property&lt;vertex_index_t, std::size_t&gt; &gt; Graph;
+    no_property, property&lt;edge_index_t, std::size_t&gt; &gt; Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -263,11 +263,11 @@ the flow and capacity values.
   int flow_array[] = { 8, 12, 12, 12, 12, 12, 16, 16, 16, 8 };
 
   // Add edges to the graph, and assign each edge an ID number.
-  add_edge(G, 0, 1, 0);
+  add_edge(0, 1, 0, G);
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef property_map&lt;Graph,vertex_index_t&gt;::type EdgeID_Map;
+  typedef property_map&lt;Graph, edge_index_t&gt;::type EdgeID_Map;
   EdgeID_Map edge_id = get(edge_index, G);
 
   boost::random_access_iterator_property_map

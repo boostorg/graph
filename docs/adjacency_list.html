@@ -84,12 +84,12 @@ href="../examples/family_tree.cpp"><tt>examples/family_tree.cpp</tt></a>.
   name[Benjamin] = "Benjamin";
 
   adjacency_list&lt;&gt;  G(N);
-  add_edge(G, Jeanie, Debbie);
-  add_edge(G, Jeanie, Rick);
-  add_edge(G, Jeanie, John);
-  add_edge(G, Debbie, Amanda);
-  add_edge(G, Rick, Margaret);
-  add_edge(G, John, Benjamin);
+  add_edge(Jeanie, Debbie, G);
+  add_edge(Jeanie, Rick, G);
+  add_edge(Jeanie, John, G);
+  add_edge(Debbie, Amanda, G);
+  add_edge(Rick, Margaret, G);
+  add_edge(John, Benjamin, G);
 
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::vertex_iterator i, end;
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::adjacency_iterator ai, a_end;
@@ -501,8 +501,8 @@ graph <tt>g</tt>.
 
 <pre>
 std::pair&lt;edge_descriptor, bool&gt;
-add_edge(adjacency_list&amp; g, 
-         vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v)
+add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
+         adjacency_list&amp; g)
 </pre>
 Adds edge <i>(u,v)</i> to the graph and returns the edge descriptor
 for the new edge. For graphs that do not allow parallel edges, if the
@@ -528,9 +528,9 @@ Adjacency List Storage</A>).
 
 <pre>
 std::pair&lt;edge_descriptor,&nbsp;bool&gt;
-add_edge(adjacency_list&amp;&nbsp;g,
-         vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
-         const&nbsp;EdgeProperty&amp;&nbsp;p)
+add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
+         const&nbsp;EdgeProperty&amp;&nbsp;p,
+         adjacency_list&amp;&nbsp;g)
 </pre>
 Adds edge <i>(u,v)</i> to the graph and attaches <TT>p</TT> as the
 value of the edge's internal property storage.  Also see the previous
@@ -539,13 +539,61 @@ value of the edge's internal property storage.  Also see the previous
 <hr>
 
 <pre>
-void remove_edge(adjacency_list&amp; g,
-                 vertex_descriptor v, vertex_descriptor u)
+void remove_edge(vertex_descriptor v, vertex_descriptor u, 
+                 adjacency_list&amp; g)
 </pre>
-Removes the edge <i>(v,u)</i> from the graph.
-If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
-will <b>invalidate</b> any iterators that point into the edge-list for vertex
-<i>u</i>.
+Removes the edge <i>(v,u)</i> from the graph.  If the
+<TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation will
+<b>invalidate</b> any iterators that point into the edge-list for
+vertex <i>u</i> and for vertex <i>v</i> in the undirected and
+bidirectional case.
+
+<hr>
+
+<pre>
+void remove_edge(edge_descriptor e, adjacency_list&amp; g)
+</pre>
+Removes the edge <tt>e</tt> from the graph. This differs from the
+<tt>remove_edge(u, v, g)</tt> function in the case of a
+multigraph. This <tt>remove_edge(e, g)</tt> function removes a single
+edge, whereas the <tt>remove_edge(u, v, g)</tt> function removes all
+edges <i>(u,v)</i>.  If the <TT>EdgeList</TT> selector is
+<TT>vecS</TT> then this operation will <b>invalidate</b> any iterators
+that point into the edge-list for vertex <i>u</i> and for vertex
+<i>v</i> in the undirected and bidirectional case.
+
+
+<hr>
+
+<pre>
+void remove_edge(out_edge_iterator iter, adjacency_list&amp; g)
+</pre>
+This has the same effect as <tt>remove_edge(*iter, g)</tt>. The
+difference is that this function has constant time complexity
+in the case of directed graphs.
+
+<hr>
+
+<pre>
+template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
+void remove_out_edge_if(vertex_descriptor v, Predicate predicate,
+                        adjacency_list&amp; g)
+</pre>
+Removes all out-edges of vertex <i>v</i> from the graph that satisfy
+the <tt>predicate</tt>. That is, if the predicate returns true when
+applied to the edge, then the edge is removed.
+
+<hr>
+
+<pre>
+template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
+void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
+                       adjacency_list&amp; g)
+</pre>
+Removes all in-edges of vertex <i>v</i> from the graph that satisfy
+the <tt>predicate</tt>. That is, if the predicate returns true when
+applied to the edge, then the edge is removed.
+
 <hr>
 
 <a name="sec:add-vertex">
@@ -570,7 +618,7 @@ in the vertex set of the graph.
 <hr>
 
 <pre>
-void remove_vertex(adjacency_list&amp; g, vertex_descriptor u)
+void remove_vertex(vertex_descriptor u, adjacency_list&amp; g)
 </pre>
 Remove vertex <i>u</i> from the vertex set of the graph. It is assumed
 that there are no edges to or from vertex <i>u</i> when it is removed.

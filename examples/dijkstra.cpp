@@ -89,7 +89,7 @@ main(int argc, char* argv[])
   adjacency_list<> tree(num_nodes);
   tie(vi,vend) = vertices(G);
   for(++vi; vi != vend; ++vi)
-    add_edge(tree, p[*vi], *vi);
+    add_edge(p[*vi], *vi, tree);
 
   print_graph(tree);
 

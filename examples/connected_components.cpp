@@ -77,10 +77,10 @@ int main(int argc, char* argv[])
 
     const int N = 6;
     Graph G(N);
-    add_edge(G, 0, 1);
-    add_edge(G, 1, 4);
-    add_edge(G, 4, 0);
-    add_edge(G, 2, 5);
+    add_edge(0, 1, G);
+    add_edge(1, 4, G);
+    add_edge(4, 0, G);
+    add_edge(2, 5, G);
     
     
     std::vector<int> c(num_vertices(G));
@@ -104,14 +104,14 @@ int main(int argc, char* argv[])
     typedef adjacency_list< vecS, vecS, directedS, VertexProperty >  Graph;
     const int N = 6;
     Graph G(N);
-    add_edge(G, 0, 1);
-    add_edge(G, 1, 1);
-    add_edge(G, 1, 3);
-    add_edge(G, 1, 4);
-    add_edge(G, 4, 3);
-    add_edge(G, 3, 4);
-    add_edge(G, 3, 0);
-    add_edge(G, 5, 2);
+    add_edge(0, 1, G);
+    add_edge(1, 1, G);
+    add_edge(1, 3, G);
+    add_edge(1, 4, G);
+    add_edge(4, 3, G);
+    add_edge(3, 4, G);
+    add_edge(3, 0, G);
+    add_edge(5, 2, G);
 
     typedef Graph::vertex_descriptor Vertex;
     

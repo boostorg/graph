@@ -93,7 +93,7 @@ main()
   // specifying the number of vertices as 5
   MyGraph G(5);
   for (int i=0; i<8; ++i)
-    add_edge(G, edge_array[i].first, edge_array[i].second);
+    add_edge(edge_array[i].first, edge_array[i].second, G);
 
   // Use the STL for_each algorithm to "exercise" all of the edges in
   // the graph

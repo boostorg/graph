@@ -192,7 +192,7 @@ int main(int,char*[])
   // add a dependency going from bar.cpp to dax.h
   {
     cout << "adding edge bar_cpp -> dax_h" << endl;
-    add_edge(g, bar_cpp, dax_h);
+    add_edge(bar_cpp, dax_h, g);
   }
   cout << endl;
 

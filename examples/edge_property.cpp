@@ -96,20 +96,20 @@ int main(int argc, char* argv[])
              4----->7
    */
 
-  add_edge(G, 0, 1, Flow(10, Cap(8)));
+  add_edge(0, 1, Flow(10, Cap(8)), G);
 
-  add_edge(G, 1, 4, Flow(20, Cap(12)));
-  add_edge(G, 4, 7, Flow(20, Cap(12)));
-  add_edge(G, 7, 6, Flow(20, Cap(12)));
+  add_edge(1, 4, Flow(20, Cap(12)), G);
+  add_edge(4, 7, Flow(20, Cap(12)), G);
+  add_edge(7, 6, Flow(20, Cap(12)), G);
 
-  add_edge(G, 1, 3, Flow(40, Cap(12)));
-  add_edge(G, 3, 6, Flow(40, Cap(12)));
+  add_edge(1, 3, Flow(40, Cap(12)), G);
+  add_edge(3, 6, Flow(40, Cap(12)), G);
 
-  add_edge(G, 6, 5, Flow(20, Cap(16)));
-  add_edge(G, 5, 2, Flow(20, Cap(16)));
-  add_edge(G, 2, 1, Flow(20, Cap(16)));
+  add_edge(6, 5, Flow(20, Cap(16)), G);
+  add_edge(5, 2, Flow(20, Cap(16)), G);
+  add_edge(2, 1, Flow(20, Cap(16)), G);
 
-  add_edge(G, 6, 8, Flow(10, Cap(8)));
+  add_edge(6, 8, Flow(10, Cap(8)), G);
 
   typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
       flow[*e] = ++f;
   cout << endl << endl;
 
-  remove_edge(G, 6, 8);
+  remove_edge(6, 8, G);
 
   print_network(G, capacity, flow);
 

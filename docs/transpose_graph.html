@@ -59,7 +59,7 @@ no edges. The edges will be added by <tt>transpose_graph()</tt> by
 calling <tt>add_edge</tt> as follows for each edge <i>(u,v)</i> in
 <tt>G</tt>:
 <pre>
-add_edge(G_T, vertex(get(index, v), G_T), vertex(get(index, u), G_T));
+add_edge(vertex(get(index, v), G_T), vertex(get(index, u), G_T), G_T);
 </pre>
 
 

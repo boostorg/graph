@@ -70,12 +70,12 @@ int main(int argc, char* argv[])
   name[Benjamin] = "Benjamin";
 
   adjacency_list<>  G(N);
-  add_edge(G, Jeanie, Debbie);
-  add_edge(G, Jeanie, Rick);
-  add_edge(G, Jeanie, John);
-  add_edge(G, Debbie, Amanda);
-  add_edge(G, Rick, Margaret);
-  add_edge(G, John, Benjamin);
+  add_edge(Jeanie, Debbie, G);
+  add_edge(Jeanie, Rick, G);
+  add_edge(Jeanie, John, G);
+  add_edge(Debbie, Amanda, G);
+  add_edge(Rick, Margaret, G);
+  add_edge(John, Benjamin, G);
 
   graph_traits<adjacency_list<> >::vertex_iterator i, end;
   graph_traits<adjacency_list<> >::adjacency_iterator ai, a_end;

@@ -101,7 +101,7 @@ main(int, char*[])
 
     MyGraphType G(5);
     for (int i=0; i<11; ++i)
-      add_edge(G, edge_array[i].first, edge_array[i].second);
+      add_edge(edge_array[i].first, edge_array[i].second, G);
 
   who_owes_who(edges(G).first, edges(G).second, G, names);
 

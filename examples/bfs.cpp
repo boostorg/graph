@@ -92,7 +92,7 @@ struct graph_copier
 
   template <class Edge, class Graph>
   void operator()(Edge e, Graph& g) {
-    boost::add_edge(new_g, boost::source(e, g), boost::target(e, g));
+    boost::add_edge(boost::source(e, g), boost::target(e, g), new_g);
   }
 private:
   NewGraph& new_g;
@@ -115,17 +115,17 @@ int main(int argc, char* argv[])
   > Graph;
   
   Graph G(5);
-  boost::add_edge(G, 0, 2);
-  boost::add_edge(G, 1, 1);
-  boost::add_edge(G, 1, 3);
-  boost::add_edge(G, 1, 4);
-  boost::add_edge(G, 2, 1);
-  boost::add_edge(G, 2, 3);
-  boost::add_edge(G, 2, 4);
-  boost::add_edge(G, 3, 1);
-  boost::add_edge(G, 3, 4);
-  boost::add_edge(G, 4, 0);
-  boost::add_edge(G, 4, 1);
+  boost::add_edge(0, 2, G);
+  boost::add_edge(1, 1, G);
+  boost::add_edge(1, 3, G);
+  boost::add_edge(1, 4, G);
+  boost::add_edge(2, 1, G);
+  boost::add_edge(2, 3, G);
+  boost::add_edge(2, 4, G);
+  boost::add_edge(3, 1, G);
+  boost::add_edge(3, 4, G);
+  boost::add_edge(4, 0, G);
+  boost::add_edge(4, 1, G);
 
   typedef Graph::vertex_descriptor Vertex;
 

@@ -92,6 +92,11 @@ each of the concepts. The notation used in the table is as follows.
 </TR>
 
 <TR>
+<TD><tt>e_iter</tt></TD>
+<TD>An object of type <tt>boost::graph_traits&lt;G&gt;::out_edge_iterator</tt>.</TD>
+</TR>
+
+<TR>
 <TD><tt>u,v</tt></TD>
 <TD>Are objects of type <tt>boost::graph_traits&lt;G&gt;::vertex_descriptor</tt>.</TD>
 </TR>
@@ -288,23 +293,27 @@ number of edges in the graph. </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT">  
-<TT>clear_vertex(g, v)</TT> </TD>
+<TT>clear_vertex(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT">  
-<TT>remove_vertex(g, v)</TT> </TD>
+<TT>remove_vertex(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>add_edge(g, u, v)</TT> </TD>
+<TT>add_edge(u, v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_descriptor, bool&gt;</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>remove_edge(g, u, v)</TT> </TD>
+<TT>remove_edge(u, v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>remove_edge(g, e)</TT> </TD>
+<TT>remove_edge(e, g)</TT> </TD>
+<TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
+</TR>
+<TR><TD ALIGN="LEFT"> 
+<TT>remove_edge(e_iter, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
@@ -313,11 +322,11 @@ number of edges in the graph. </TD>
   Graph</TD>
 </TR>
 <TR><TD ALIGN="LEFT">  
-<TT>add_vertex(g, vp)</TT> </TD>
+<TT>add_vertex(vp, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>add_edge(g, u, v, ep)</TT> </TD>
+<TT>add_edge(u, v, ep, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_descriptor,
   bool&gt;</TT> </TD>
 </TR>
