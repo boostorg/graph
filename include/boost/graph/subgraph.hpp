@@ -165,9 +165,7 @@ namespace boost {
     typedef subgraph<Graph>* inner_iter;
     typedef typename std::list<inner_iter>::const_iterator outer_iter;
     typedef typename boost::indirect_iterator_generator<outer_iter, inner_iter,
-      boost::iterator<std::input_iterator_tag, const subgraph<Graph> >,
-      boost::iterator<std::input_iterator_tag, inner_iter, std::ptrdiff_t,
-                      inner_iter*, inner_iter>
+      boost::iterator<std::input_iterator_tag, const subgraph<Graph> >
     >::type children_iterator;
 
     std::pair<children_iterator, children_iterator>
