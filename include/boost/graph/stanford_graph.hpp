@@ -141,7 +141,7 @@ namespace boost {
   class sgb_out_edge_iterator
     : public boost::forward_iterator_helper<
         sgb_out_edge_iterator, boost::sgb_edge, 
-        ptrdiff_t, boost::sgb_edge*, boost::sgb_edge>
+        std::ptrdiff_t, boost::sgb_edge*, boost::sgb_edge>
   {
     typedef sgb_out_edge_iterator self;
   public:
@@ -158,7 +158,7 @@ namespace boost {
 
   class sgb_adj_iterator
     : public boost::forward_iterator_helper<
-        sgb_adj_iterator, Vertex*, ptrdiff_t, Vertex**,Vertex*>
+        sgb_adj_iterator, Vertex*, std::ptrdiff_t, Vertex**,Vertex*>
   {
   public:
     typedef sgb_adj_iterator self;
@@ -178,7 +178,7 @@ namespace boost {
   // by value and how that interacts with the sgb_vertex_id_map.
   class sgb_vertex_iterator
     : public boost::forward_iterator_helper<
-        sgb_vertex_iterator, Vertex*, ptrdiff_t, Vertex**, Vertex*>
+        sgb_vertex_iterator, Vertex*, std::ptrdiff_t, Vertex**, Vertex*>
   {
   public:
     typedef sgb_vertex_iterator self;
@@ -204,7 +204,7 @@ namespace boost {
   }
 
   inline std::pair<sgb_out_edge_iterator,sgb_out_edge_iterator>
-  out_edges(Vertex* u, Graph* g)
+  out_edges(Vertex* u, Graph*)
   {
     return std::make_pair( sgb_out_edge_iterator(u, u->arcs),
                            sgb_out_edge_iterator(u, 0) );
@@ -213,7 +213,7 @@ namespace boost {
   // in_edges?
 
   inline std::pair<sgb_adj_iterator,sgb_adj_iterator>
-  adjacent_vertices(Vertex* u, Graph* g)
+  adjacent_vertices(Vertex* u, Graph*)
   {
     return std::make_pair( sgb_adj_iterator(u->arcs),
                            sgb_adj_iterator(0) );
@@ -263,7 +263,7 @@ namespace boost {
     typedef Vertex* key_type;
     inline char* operator[](Vertex* v) const { return v->name; }
   };
-  inline sgb_vertex_name_t_map get(vertex_name_t, Graph* g) {
+  inline sgb_vertex_name_t_map get(vertex_name_t, Graph*) {
     return sgb_vertex_name_t_map();
   }
 
@@ -373,7 +373,7 @@ namespace boost {
     }
   };
   inline sgb_edge_length_map
-  get(edge_length, Graph* g) { 
+  get(edge_length, Graph*) { 
     return sgb_edge_length_map(); 
   }
   
@@ -454,7 +454,7 @@ namespace boost {
 
 #define SGB_VERTEX_UTIL_ACCESSOR(TAG,TYPE) \
   inline sgb_vertex_util_map< TAG<TYPE> > \
-  get(TAG<TYPE>, Graph* g) { \
+  get(TAG<TYPE>, Graph*) { \
     return sgb_vertex_util_map< TAG<TYPE> >(); \
   } \
   template <> struct property_map<Graph*, TAG<TYPE> > { \

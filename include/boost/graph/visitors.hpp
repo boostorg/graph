@@ -200,7 +200,7 @@ namespace boost {
     typedef Tag event_filter;
     time_stamper(TimeMap pa, TimeT& t) : m_time_pa(pa), m_time(t) { }
     template <class Vertex, class Graph>
-    void operator()(Vertex u, const Graph& g) {
+    void operator()(Vertex u, const Graph&) {
       put(m_time_pa, u, ++m_time);
     }
     TimeMap m_time_pa;
@@ -224,7 +224,7 @@ namespace boost {
     property_writer(PA pa, OutputIterator out) : m_pa(pa), m_out(out) { }
 
     template <class T, class Graph>
-    void operator()(T x, Graph& g) { *m_out++ = get(m_pa, x); }
+    void operator()(T x, Graph&) { *m_out++ = get(m_pa, x); }
     PA m_pa;
     OutputIterator m_out;
   };

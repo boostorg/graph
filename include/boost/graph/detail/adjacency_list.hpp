@@ -326,16 +326,16 @@ namespace boost {
     
   template <class Tag, class Vertex, class Property>
   const typename property_value<Property,Tag>::type&
-  get(Tag p, const detail::stored_edge_property<Vertex, Property>& e) {
+  get(Tag property_tag, const detail::stored_edge_property<Vertex, Property>& e) {
     typedef typename property_value<Property,Tag>::type value_type;
-    return get_property_value(e.get_property(), value_type(), Tag());
+    return get_property_value(e.get_property(), value_type(), property_tag);
   }
 
   template <class Tag, class Vertex, class Iter, class Property>
   const typename property_value<Property,Tag>::type&
-  get(Tag p, const detail::stored_edge_iter<Vertex, Iter, Property>& e) {
+  get(Tag property_tag, const detail::stored_edge_iter<Vertex, Iter, Property>& e) {
     typedef typename property_value<Property,Tag>::type value_type;
-    return get_property_value(e.get_property(), value_type(), Tag());
+    return get_property_value(e.get_property(), value_type(), property_tag);
   }
     
     //=========================================================================

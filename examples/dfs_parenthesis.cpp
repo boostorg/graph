@@ -45,14 +45,14 @@ using namespace std;
 struct open_paren : public base_visitor<open_paren> {
   typedef on_discover_vertex event_filter;
   template <class Vertex, class Graph>
-  void operator()(Vertex v, Graph& G) {
+  void operator()(Vertex v, Graph&) {
     std::cout << "(" << v;
   }
 };
 struct close_paren : public base_visitor<close_paren> {
   typedef on_finish_vertex event_filter;
   template <class Vertex, class Graph>
-  void operator()(Vertex v, Graph& G) {
+  void operator()(Vertex v, Graph&) {
     std::cout << v << ")";
   }
 };

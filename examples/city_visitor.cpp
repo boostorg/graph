@@ -101,7 +101,7 @@ struct finish_city {
   string* names;
 };
 
-int main(int argc, char* argv[]) 
+int main(int, char*[]) 
 {
 
   enum { SanJose, SanFran, LA, SanDiego, Fresno, LosVegas, Reno,

@@ -72,7 +72,7 @@ bool check_edge(Graph& g, size_t a, size_t b) {
   return true;
 }
 
-int main(int argc, char* argv[])
+int main(int, char*[])
 {
   size_t N = 5;
 

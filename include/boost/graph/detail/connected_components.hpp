@@ -58,8 +58,8 @@ namespace boost {
     
     // Pushes x onto the front of the list. The list is represented in
     // an array.
-    template <class Next, class T>
-    inline void push_front(Next next, T& head, T x)
+    template <class Next, class T, class V>
+    inline void push_front(Next next, T& head, V x)
     {
       T tmp = head;
       head = x;

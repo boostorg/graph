@@ -72,7 +72,7 @@ main(int,char*)
                    7, 2,
                    6, 7 };
 
-  typedef boost::edge_list<E*, E, ptrdiff_t> Graph;
+  typedef boost::edge_list<E*, E, std::ptrdiff_t> Graph;
   Graph g(edges, edges + sizeof(edges) / sizeof(E));
     
   std::vector<int> distance(N, std::numeric_limits<short>::max());
