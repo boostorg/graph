@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <string>
 #include <boost/pending/ct_if.hpp>
+#include <boost/graph/detail/bitset_adaptor.hpp>
 
 // This provides versions of std::bitset with both static and dynamic size.
 
@@ -57,6 +58,8 @@ namespace boost {
     //=========================================================================
     template <class WordTraits, class SizeType, class Derived>
     class bitset_base
+      : public bitset_adaptor< SizeType, 
+                               bitset_base<WordTraits, SizeType, Derived> >
     {
       //    private:
     public:
@@ -314,6 +317,12 @@ namespace boost {
         return static_cast<Derived&>(*this);
       }
 
+      // this wasn't working, why?
+      int compare_3way(const Derived& x) const {
+        return std::lexicographical_compare_3way
+          (data(), data() + num_words(), x.data(), x.data() + x.num_words());
+      }
+
       // less-than compare
       bool operator<(const Derived& x) const {
         return std::lexicographical_compare
@@ -378,6 +387,14 @@ namespace boost {
       D result(static_cast<const D&>(x));
       result -= static_cast<const D&>(y);
       return result;
+    }
+
+    template <class W, class S, class D>
+    inline int compare_3way(const bitset_base<W,S,D>& x,
+			    const bitset_base<W,S,D>& y) {
+      return std::lexicographical_compare_3way
+	(x.data(), x.data() + x.num_words(), 
+	 y.data(), y.data() + y.num_words());
     }
 
 
@@ -468,7 +485,7 @@ namespace boost {
         (const basic_string<CharT,Traits,Alloc>& s,
          std::size_t pos = 0,
          std::size_t n = size_t(basic_string<CharT,Traits,Alloc>::npos),
-	 const Allocator& alloc = Allocator())
+         const Allocator& alloc = Allocator())
         : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
           m_size(n), m_num_words((n + word_size - 1) / word_size),
           m_alloc(alloc)
@@ -480,8 +497,8 @@ namespace boost {
       template <typename InputIterator>
       explicit dyn_size_bitset
         (InputIterator first, InputIterator last,
-	 size_type n,  // size of the set's "universe"
-	 const Allocator& alloc = Allocator())
+         size_type n,  // size of the set's "universe"
+         const Allocator& alloc = Allocator())
         : m_data(alloc.allocate((n + word_size - 1) / word_size)), 
           m_size(N), m_num_words((n + word_size - 1) / word_size),
           m_alloc(alloc)
