@@ -43,14 +43,18 @@ public:
 };
 
 
+struct VertexProps {
+  boost::default_color_type color;
+  std::size_t discover_time;
+};
+
 int
 main()
 {
   using namespace boost;
   // Select the graph type we wish to use
   typedef adjacency_list < listS, listS, undirectedS,
-    property<vertex_color_t, default_color_type,
-     property<vertex_discover_time_t, std::size_t> > > graph_t;
+    VertexProps> graph_t;
   // Set up the vertex IDs and names
   enum { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
@@ -80,10 +84,10 @@ main()
   typedef Size* Iiter;
 
   Size time = 0;
-  typedef property_map<graph_t, vertex_discover_time_t>::type dtime_map_t;
-  dtime_map_t dtime_map = get(vertex_discover_time, g);
+  typedef property_map<graph_t, std::size_t VertexProps::*>::type dtime_map_t;
+  dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
-  breadth_first_search(g, vertex(s, g), color_map(get(vertex_color, g)).
+  breadth_first_search(g, vertex(s, g), color_map(get(&VertexProps::color, g)).
     visitor(vis));
 
   // a vector to hold the discover time property for each vertex
