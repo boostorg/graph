@@ -38,6 +38,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
+#include <boost/graph/depth_first_search.hpp>
 
 namespace boost {
 
@@ -320,6 +321,20 @@ namespace boost {
       return true;
     else
       return is_descendant(p[x], y, p);
+  }
+
+  // is y reachable from x?
+  template <typename Graph, typename ColorMap>
+  inline bool is_reachable
+    (typename graph_traits<Graph>::vertex_descriptor x,
+     typename graph_traits<Graph>::vertex_descriptor y,
+     const Graph& g,
+     ColorMap color) // should be white for every vertex
+  {
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    dfs_visitor<> vis;
+    depth_first_visit(g, x, vis, color);
+    return get(color, y) != color_traits<ColorValue>::white();
   }
 
   template <class T1, class T2>
