@@ -130,7 +130,7 @@ int read_dimacs_max_flow(Graph& g,
      -  does service functions
   */
 
-  while (std::getline(cin, in_line)) {
+  while (std::getline(std::cin, in_line)) {
     ++no_lines;
 
     switch (in_line[0]) {
@@ -161,10 +161,11 @@ int read_dimacs_max_flow(Graph& g,
       if ( n <= 0  || m <= 0 )
         /*wrong value of no of arcs or nodes*/
         { err_no = EN4; goto error; }
-      
-      for (long vi = 0; vi < n; ++vi)
-        verts.push_back(add_vertex(g));
-      
+
+      {
+	for (long vi = 0; vi < n; ++vi)
+	  verts.push_back(add_vertex(g));
+      }
       break;
       
     case 'n':                    /* source(s) description */
