@@ -119,7 +119,8 @@ namespace boost {
   inline void 
   invoke_visitors(std::pair<Visitor, Rest>& vlist, T x, Graph& g, Tag tag) {
     typedef typename Visitor::event_filter Category;
-    typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
+    typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
+      IsSameTag;
     detail::invoke_dispatch(vlist.first, x, g, IsSameTag());
     invoke_visitors(vlist.second, x, g, tag);
   }
@@ -128,7 +129,8 @@ namespace boost {
   inline void 
   invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
-    typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
+    typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
+      IsSameTag;
     Visitor& v = static_cast<Visitor&>(vis);
     detail::invoke_dispatch(v, x, g, IsSameTag());
   }
@@ -137,7 +139,8 @@ namespace boost {
   inline void 
   invoke_visitors(Visitor& v, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
-    typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
+    typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
+      IsSameTag;
     detail::invoke_dispatch(v, x, g, IsSameTag());
   }
 #endif

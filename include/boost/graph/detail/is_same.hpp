@@ -31,7 +31,7 @@ namespace boost {
   struct false_tag;
   struct true_tag;
 
-  namespace detail {
+  namespace graph_detail {
     
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     template <class U, class V>
@@ -50,7 +50,7 @@ namespace boost {
                boost::true_tag, boost::false_tag>::type is_same_tag;
     };
 #endif
-  } // namespace detail
+  } // namespace graph_detail
 } // namespace boost
 
 #endif
