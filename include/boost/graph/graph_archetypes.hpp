@@ -10,6 +10,8 @@ namespace boost { // should use a different namespace for this
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct incidence_graph_archetype
   {
+    typedef incidence_graph_tag traversal_category;
+    typedef immutable_graph_tag mutability_category;
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     struct edge_descriptor {
@@ -23,12 +25,14 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
+#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void adjacency_iterator;
     typedef void in_edge_iterator;
     typedef void vertex_iterator;
     typedef void vertices_size_type;
     typedef void edge_iterator;
     typedef void edges_size_type;
+#endif
   };
   template <typename V, typename D, typename P>
   V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor& ,
@@ -63,6 +67,8 @@ namespace boost { // should use a different namespace for this
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct adjacency_graph_archetype
   {
+    typedef adjacency_graph_tag traversal_category;
+    typedef immutable_graph_tag mutability_category;
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef void edge_descriptor;
@@ -71,12 +77,14 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
+#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void in_edge_iterator;
     typedef void out_edge_iterator;
     typedef void vertex_iterator;
     typedef void vertices_size_type;
     typedef void edge_iterator;
     typedef void edges_size_type;
+#endif
   };
   
   template <typename V, typename D, typename P>
@@ -88,6 +96,13 @@ namespace boost { // should use a different namespace for this
     return std::make_pair(Iter(), Iter());
   }
 
+  template <typename V, typename D, typename P>
+  typename adjacency_graph_archetype<V,D,P>::degree_size_type
+  out_degree(const V&, const adjacency_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
   //============================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory>
   struct vertex_list_graph_archetype
@@ -96,6 +111,9 @@ namespace boost { // should use a different namespace for this
   {
     typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> Incidence;
     typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> Adjacency;
+
+    typedef vertex_list_graph_tag traversal_category;
+    typedef immutable_graph_tag mutability_category;
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef typename Incidence::edge_descriptor edge_descriptor;
@@ -108,9 +126,11 @@ namespace boost { // should use a different namespace for this
     typedef Directed directed_category;
     typedef ParallelCategory edge_parallel_category;
 
+#if defined(BOOST_USE_OLD_GRAPH_TRAITS)
     typedef void in_edge_iterator;
     typedef void edge_iterator;
     typedef void edges_size_type;
+#endif
   };
   
   template <typename V, typename D, typename P>
@@ -128,7 +148,15 @@ namespace boost { // should use a different namespace for this
   {
     return 0;
   }
-  
+
+  // ambiguously inherited from incidence graph and adjacency graph
+  template <typename V, typename D, typename P>
+  typename vertex_list_graph_archetype<V,D,P>::degree_size_type
+  out_degree(const V&, const vertex_list_graph_archetype<V,D,P>& )
+  {
+    return 0;
+  }
+
   //============================================================================
 
   struct property_graph_archetype_tag { };
@@ -213,7 +241,20 @@ namespace boost { // should use a different namespace for this
     static color_value_archetype black()
       { return color_value_archetype(dummy_cons); }
   };
-  
+
+  template <typename T>
+  class buffer_archetype {
+  public:
+    void push(const T&) {}
+    void pop() {}
+    T& top() { return s_top; }
+    const T& top() const { return s_top; }
+    bool empty() const { return true; }
+  private:
+    static T s_top;
+  };
+  template <typename T>
+  T buffer_archetype<T>::s_top(dummy_cons);
   
 } // namespace boost
 
