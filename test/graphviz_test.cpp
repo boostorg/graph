@@ -19,7 +19,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/dynamic_property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/test/test_tools.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 #include <algorithm>
 #include <string>
 #include <iostream>
@@ -92,17 +93,7 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
         float ref_mass = masses.find(node_name)->second;
         //  - compare the mass to the result in the table
 
-        if(node_mass != ref_mass) {
-          result = false;
-          std::cerr << node_name << " mass mismatch: "
-                    << node_mass << " vs. " << ref_mass << "\n";
-        }
-#ifdef BLAB_GOODNESS
-        else {
-          std::cerr << node_name << "mass goodness: "
-                    << node_mass << " vs. " << ref_mass << "\n";
-        }
-#endif
+        BOOST_CHECK_CLOSE(node_mass, ref_mass, 0.01f);
       }
     }
     // check weights
@@ -119,19 +110,7 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
         double edge_weight = get(weight,*i);
         double ref_weight = weights.find(edge_name)->second;
         // - compare the weight to teh result in the table
-        if(edge_weight != ref_weight) {
-          result = false;
-          std::cerr << "(" << edge_name.first << "," << edge_name.second << ")"
-                    << " weight mismatch: "
-                    << edge_weight << " vs. " << ref_weight << "\n";
-        }
-#ifdef BLAB_GOODNESS
-        else {
-          std::cerr << "(" << edge_name.first << "," << edge_name.second << ")"
-                    << " weight goodness: "
-                    << edge_weight << " vs. " << ref_weight << "\n";
-        }
-#endif
+        BOOST_CHECK_CLOSE(edge_weight, ref_weight, 0.01);
       }          
     }
 
@@ -143,7 +122,7 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
 
   return result;
   }
-
+  
 int test_main(int, char*[]) {
 
   typedef istringstream gs_t;
@@ -231,5 +210,5 @@ int test_main(int, char*[]) {
     BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weights)));
   }
 
-  return boost::exit_success;
+  return 0;
 }
