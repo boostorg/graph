@@ -60,17 +60,17 @@ main(int , char* [])
     property<vertex_color_t, default_color_type> > Graph;
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-  Pair edges[7] = { Pair(0,1), Pair(2,4),
+  Pair edges[6] = { Pair(0,1), Pair(2,4),
                     Pair(2,5),
                     Pair(0,3), Pair(1,4),
-                    Pair(4,3), Pair(5,5) };
+                    Pair(4,3) };
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph G(6);
-  for (std::size_t j = 0; j < 7; ++j)
+  for (std::size_t j = 0; j < 6; ++j)
     add_edge(edges[j].first, edges[j].second, G);
 #else
-  Graph G(edges, edges + 7, 6);
+  Graph G(edges, edges + 6, 6);
 #endif
 
   boost::property_map<Graph, vertex_index_t>::type id = get(vertex_index, G);

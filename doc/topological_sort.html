@@ -34,7 +34,7 @@ void topological_sort(VertexListGraph&amp; g, OutputIterator result,
 <P>
 The topological sort algorithm creates a linear ordering of the
 vertices such that if edge <i>(u,v)</i> appears in the graph, then
-<i>u</i> comes before <i>v</i> in the ordering. The graph must be a
+<i>v</i> comes before <i>u</i> in the ordering. The graph must be a
 directed acyclic graph (DAG). The implementation consists mainly of a
 call to <a
 href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
@@ -110,11 +110,11 @@ Calculate a topological ordering of the vertices.
 <PRE>
   typedef adjacency_list&lt; vecS, vecS, directedS, color_property&lt;&gt; &gt; Graph;
   typedef boost::graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
-  Pair edges[7] = { Pair(0,1), Pair(2,4),
+  Pair edges[6] = { Pair(0,1), Pair(2,4),
                     Pair(2,5),
                     Pair(0,3), Pair(1,4),
-                    Pair(4,3), Pair(5,5) };
-  Graph G(6, edges, edges + 7);
+                    Pair(4,3) };
+  Graph G(6, edges, edges + 6);
 
   typedef std::vector&lt; Vertex &gt; container;
   container c;
