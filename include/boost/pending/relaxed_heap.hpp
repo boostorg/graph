@@ -167,6 +167,8 @@ public:
     return !smallest_value || (smallest_value->kind == largest_key);
   }
 
+  bool contains(const value_type& x) const { return groups[get(id, x)]; }
+
   void pop()
   {
     // Fill in smallest_value. This is the group x.
