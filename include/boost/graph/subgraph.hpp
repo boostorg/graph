@@ -711,7 +711,7 @@ namespace boost {
       : m_g(g) { }
 
     inline reference operator[](key_type e_local) const {
-      PropertyMap pmap = get(Tag(), m_g);
+      PropertyMap pmap = get(Tag(), *m_g);
       return pmap[e_local];
     }
     GraphPtr m_g;
