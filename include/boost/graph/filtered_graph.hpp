@@ -180,7 +180,9 @@ namespace boost {
 
     typedef filter_iterator_policies<OutEdgePred,
       typename Traits::out_edge_iterator> out_edge_iter_policy;
-    typedef filter_iterator_policies<EdgePredicate,
+    typedef filter_iterator_policies<InEdgePred,
+      typename Traits::in_edge_iterator> in_edge_iter_policy;
+    typedef filter_iterator_policies<EdgePred,
       typename Traits::edge_iterator> edge_iter_policy;
   };
 
