@@ -115,7 +115,7 @@ namespace boost {
     inline void
     set_property(EdgeProxy, const EdgeProperty&) { }
     
-    //=========================================================================
+    //=======================================================================
     // Directed Out Edge Iterator
 
     template <typename VertexDescriptor, typename MatrixIter, 
@@ -143,7 +143,7 @@ namespace boost {
       VerticesSizeType m_n;
     };
 
-    //=========================================================================
+    //=======================================================================
     // Undirected Out Edge Iterator
 
     template <typename VertexDescriptor, typename MatrixIter, 
@@ -180,7 +180,7 @@ namespace boost {
       VerticesSizeType m_n;
     };
 
-    //=========================================================================
+    //=======================================================================
     // Edge Iterator
 
     template <typename Directed, typename MatrixIter, 
@@ -229,7 +229,7 @@ namespace boost {
 
   } // namespace detail
 
-  //===========================================================================
+  //=========================================================================
   // Adjacency Matrix Traits
   template <typename Directed = directedS>
   class adjacency_matrix_traits {
@@ -251,9 +251,13 @@ namespace boost {
       vertex_descriptor> edge_descriptor;
   };
 
-  struct adjacency_matrix_tag { };
+  struct adjacency_matrix_class_tag { };
+
+  struct adj_matrix_traversal_tag :
+    public virtual adjacency_matrix_tag,
+    public virtual vertex_and_edge_list_graph_tag { };
   
-  //===========================================================================
+  //=========================================================================
   // Adjacency Matrix Class
   template <typename Directed = directedS,
             typename VertexProperty = no_property,
@@ -276,6 +280,7 @@ namespace boost {
     typedef typename Traits::edge_descriptor edge_descriptor;
     typedef typename Traits::directed_category directed_category;
     typedef typename Traits::edge_parallel_category edge_parallel_category;
+    typedef adj_matrix_traversal_tag traversal_category;
 
     //private: if friends worked, these would be private
 
@@ -334,7 +339,7 @@ namespace boost {
     // PropertyGraph required types
     typedef EdgeProperty edge_property_type;
     typedef VertexProperty vertex_property_type;
-    typedef adjacency_matrix_tag graph_tag;
+    typedef adjacency_matrix_class_tag graph_tag;
 
     // Constructor required by MutableGraph
     adjacency_matrix(vertices_size_type n_vertices) 
@@ -371,7 +376,7 @@ namespace boost {
     std::vector<VertexProperty> m_vertex_properties;
   };
   
-  //===========================================================================
+  //=========================================================================
   // Functions required by the AdjacencyMatrix concept 
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
@@ -387,7 +392,7 @@ namespace boost {
     return std::make_pair(e, exists);
   }
 
-  //===========================================================================
+  //=========================================================================
   // Functions required by the IncidenceGraph concept 
 
   // O(1)
@@ -466,7 +471,7 @@ namespace boost {
     return e.m_target;
   }
 
-  //===========================================================================
+  //=========================================================================
   // Functions required by the AdjacencyGraph concept 
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
@@ -486,7 +491,7 @@ namespace boost {
                             adjacency_iterator(last, &g));
   }
 
-  //===========================================================================
+  //=========================================================================
   // Functions required by the VertexListGraph concept 
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
@@ -504,7 +509,7 @@ namespace boost {
     return g.m_vertex_set.size();
   }
   
-  //===========================================================================
+  //=========================================================================
   // Functions required by the EdgeListGraph concept 
   
   template <typename D, typename VP, typename EP, typename GP, typename A>
@@ -538,7 +543,7 @@ namespace boost {
     return num_e;
   }
   
-  //===========================================================================
+  //=========================================================================
   // Functions required by the MutableGraph concept 
 
   // O(1)
@@ -646,7 +651,7 @@ namespace boost {
       remove_edge(u, *vi, g);
   }
 
-  //===========================================================================
+  //=========================================================================
   // Vertex Property Map
   
   template <typename Graph, typename Property, typename Tag> 
@@ -731,11 +736,11 @@ namespace boost {
   } // namespace detail
 
   template <>
-  struct vertex_property_selector<adjacency_matrix_tag> {
+  struct vertex_property_selector<adjacency_matrix_class_tag> {
     typedef detail::adj_matrix_vertex_property_selector type;
   };
   
-  //===========================================================================
+  //=========================================================================
   // Edge Property Map
 
   template <typename Directed, typename Property, 
@@ -767,11 +772,11 @@ namespace boost {
     };
   };
   template <>
-  struct edge_property_selector<adjacency_matrix_tag> {
+  struct edge_property_selector<adjacency_matrix_class_tag> {
     typedef adj_matrix_edge_property_selector type;
   };
 
-  //===========================================================================
+  //=========================================================================
   // Functions required by PropertyGraph
 
   namespace detail {
@@ -869,7 +874,7 @@ namespace boost {
     put(pmap, key, value);
   }
   
-  //===========================================================================
+  //=========================================================================
   // Other Functions
 
   template <typename D, typename VP, typename EP, typename GP, typename A>  

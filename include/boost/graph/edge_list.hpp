@@ -286,6 +286,7 @@ namespace boost {
   public:
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
+    typedef edge_list_graph_tag traversal_category;
     typedef std::size_t edges_size_type;
     typedef std::size_t vertices_size_type;
     typedef std::size_t degree_size_type;
