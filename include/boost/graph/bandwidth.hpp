@@ -18,7 +18,7 @@ namespace boost {
     for (tie(e, end) = out_edges(i, g); e != end; ++e) {
       int f_i = get(index, i);
       int f_j = get(index, target(*e, g));
-      using namespace std;
+      using namespace std; // to call abs() unqualified
       b = std::max(b, size_type(abs(f_i - f_j)));
     }
     return b;
@@ -61,7 +61,8 @@ namespace boost {
     for (tie(i, end) = edges(g); i != end; ++i) {
       diff_t f_u = get(index_map, source(*i, g));
       diff_t f_v = get(index_map, target(*i, g));
-      sum += std::abs(f_u - f_v);
+      using namespace std; // to call abs() unqualified
+      sum += abs(f_u - f_v);
     }
     return sum;
   }

@@ -48,8 +48,10 @@ namespace boost {
     struct closed_plus
     {
       T operator()(const T& a, const T& b) const {
-	T inf = std::numeric_limits<T>::max();
-	if (b > 0 && std::abs(inf - a) < b)
+	using namespace std;
+	T inf = numeric_limits<T>::max();
+	// make sure to call abs() unqualified.
+	if (b > 0 && abs(inf - a) < b)
 	  return inf;
 	return a + b;
       }
