@@ -31,6 +31,8 @@
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/graph_utility.hpp>
 
+// This program reads the graph data files from stdin.
+
 int
 main()
 {
@@ -56,9 +58,7 @@ main()
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  long flow;
-  flow = edmunds_karp_max_flow(g, s, t, capacity, residual_capacity,
-			       rev, get(vertex_index, g));
+  long flow = edmunds_karp_max_flow(g, s, t);
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
