@@ -13,8 +13,6 @@ graph-test undirected_dfs.cpp  ;
 graph-test remove_edge_if_dir.cpp  ;
 graph-test remove_edge_if_undir.cpp  ;
 graph-test reverse-graph-eg.cpp  ;
-graph-test roget_components.cpp  :  
-  <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
 graph-test scc.cpp <lib>../build/bgl-viz ;
 graph-test strong_components.cpp <lib>../build/bgl-viz ;
 graph-test strong-components.cpp  ;
@@ -25,11 +23,6 @@ graph-test topo-sort2.cpp  ;
 graph-test topo_sort.cpp  ;
 graph-test topo-sort-file-dep2.cpp  ;
 graph-test topo-sort-file-dep.cpp  ;
-graph-test topo-sort-with-leda.cpp  :  
-  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
-  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
-graph-test topo-sort-with-sgb.cpp  :  
-   <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
 graph-test transitive_closure.cpp  ;
 graph-test transpose-example.cpp  ;
 graph-test undirected.cpp  ;
@@ -85,8 +78,6 @@ graph-test file_dependencies.cpp  ;
 graph-test filtered_graph.cpp  ;
 graph-test filtered_vec_as_graph.cpp  ;
 graph-test gerdemann.cpp  ;
-graph-test girth.cpp  :  <include>$(SGB) 
-  <library-file>$(SGB)/libgb.a  ;
 graph-test graph-assoc-types.cpp  ;
 graph-test graph.cpp  ;
 graph-test graph-property-iter-eg.cpp  ;
@@ -103,15 +94,8 @@ graph-test knights-tour.cpp  ;
 graph-test kruskal-example.cpp  ;
 graph-test kruskal-telephone.cpp <lib>../build/bgl-viz ;
 graph-test last-mod-time.cpp  ;
-graph-test leda-concept-check.cpp  :  
-  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
-graph-test leda-graph-eg.cpp  :  
-  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
-  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
 graph-test loops_dfs.cpp <lib>../build/bgl-viz ;
 graph-test max_flow.cpp  ;
-graph-test miles_span.cpp  :  <include>$(SGB) 
-   <library-file>$(SGB)/libgb.a  ;
 graph-test minimum_degree_ordering.cpp iohb.c ;
 graph-test min_max_paths.cpp  ;
 graph-test modify_graph.cpp  ;
@@ -133,4 +117,20 @@ graph-test quick_tour.cpp  ;
 graph-test quick-tour.cpp  ;
 graph-test reachable-loop-head.cpp <lib>../build/bgl-viz ;
 graph-test reachable-loop-tail.cpp <lib>../build/bgl-viz ;
+graph-test roget_components.cpp  :  
+  <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+graph-test topo-sort-with-leda.cpp  :  
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test topo-sort-with-sgb.cpp  :  
+   <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+graph-test leda-concept-check.cpp  :  
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test leda-graph-eg.cpp  :  
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test girth.cpp  :  <include>$(SGB) 
+  <library-file>$(SGB)/libgb.a  ;
+graph-test miles_span.cpp  :  <include>$(SGB) 
+   <library-file>$(SGB)/libgb.a  ;
 
