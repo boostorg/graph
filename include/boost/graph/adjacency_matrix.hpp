@@ -214,10 +214,14 @@ namespace boost {
             {
                 ++this->base_reference();
             }
-            else
+            else if (m_targ < m_n - 1)
             {                  // second half
                 ++m_inc;
                 this->base_reference() += m_inc;
+            }
+            else
+            {                  // past-the-end
+                this->base_reference() += m_n - m_src;
             }
             ++m_targ;
         }
@@ -490,7 +494,7 @@ namespace boost {
       else {
         if (v > u)
           std::swap(u, v);
-        return m_matrix[u * (u - 1)/2 + v];
+        return m_matrix[u * (u + 1)/2 + v];
       }
     }
     typename Matrix::reference
@@ -564,7 +568,7 @@ namespace boost {
     Graph& g = const_cast<Graph&>(g_);
     typename Graph::vertices_size_type offset = u * (u + 1) / 2;
     typename Graph::MatrixIter f = g.m_matrix.begin() + offset;
-    typename Graph::MatrixIter l = f + u;
+    typename Graph::MatrixIter l = g.m_matrix.end();
 
     typename Graph::unfiltered_out_edge_iter
         first(f, u, g.m_vertex_set.size())
