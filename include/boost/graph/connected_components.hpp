@@ -49,14 +49,14 @@ namespace boost {
         : m_component(c), m_count(c_count) {}
 
       template <class Vertex, class Graph>
-      void start_vertex(Vertex u, Graph& g) {
+      void start_vertex(Vertex, Graph&) {
         if (m_count == std::numeric_limits<comp_type>::max())
           m_count = 0; // start counting components at zero
         else
           ++m_count;
       }
       template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) {
+      void discover_vertex(Vertex u, Graph&) {
         put(m_component, u, m_count);
       }
     protected:

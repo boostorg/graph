@@ -461,7 +461,7 @@ namespace boost {
     struct choose_param_helper {
       template <class Default> struct result { typedef Param type; };
       template <typename Default>
-      static const Param& apply(const Param& p, const Default& d) { return p; }
+      static const Param& apply(const Param& p, const Default&) { return p; }
     };
     template <>
     struct choose_param_helper<error_property_not_found> {
@@ -518,12 +518,12 @@ namespace boost {
 
       template <class P, class Graph, class Tag>
       static typename bind<P, Graph, Tag>::const_result_type
-      const_apply(const P& p, const Graph& g, Tag tag) { 
+      const_apply(const P&, const Graph& g, Tag tag) { 
 	return get(tag, g); 
       }
       template <class P, class Graph, class Tag>
       static typename bind<P, Graph, Tag>::result_type
-      apply(const P& p, Graph& g, Tag tag) { 
+      apply(const P&, Graph& g, Tag tag) { 
 	return get(tag, g); 
       }
     };

@@ -29,6 +29,7 @@
 #define BOOST_GRAPH_RELAX_HPP
 
 #include <functional>
+#include <boost/limits.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map.hpp>
 

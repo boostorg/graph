@@ -121,7 +121,7 @@ namespace boost {
         class R>
       static void
       apply(const VertexListGraph& g, DFSVisitor vis, 
-	    const bgl_named_params<P, T, R>& params,                
+	    const bgl_named_params<P, T, R>&,
 	    ColorMap color)
       {
 	dfs_impl(g, vis, color);

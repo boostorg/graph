@@ -103,11 +103,11 @@ namespace boost {
       stored_edge.second = ep;
     }
 
-    const no_property& get_property(const bool& stored_edge) {
+    const no_property& get_property(const bool&) {
       static no_property s_prop;
       return s_prop;
     }
-    no_property& get_property(bool& stored_edge) {
+    no_property& get_property(bool&) {
       static no_property s_prop;
       return s_prop;
     }
@@ -466,7 +466,7 @@ namespace boost {
     typename Dir, typename Vertex>  
   typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
   source(const detail::matrix_edge_desc_impl<Dir,Vertex>& e,
-         const adjacency_matrix<D,VP,EP,GP,A>& g)
+         const adjacency_matrix<D,VP,EP,GP,A>&)
   {
     return e.m_source;
   }
@@ -476,7 +476,7 @@ namespace boost {
     typename Dir, typename Vertex>  
   typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
   target(const detail::matrix_edge_desc_impl<Dir,Vertex>& e,
-         const adjacency_matrix<D,VP,EP,GP,A>& g)
+         const adjacency_matrix<D,VP,EP,GP,A>&)
   {
     return e.m_target;
   }
