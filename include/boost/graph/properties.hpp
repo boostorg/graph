@@ -244,6 +244,17 @@ namespace boost {
       Property>::type type;
   };
 
+  template <class Graph>
+  class vertex_property {
+  public:
+    typedef typename Graph::vertex_property_type type;
+  };
+  template <class Graph>
+  class edge_property {
+  public:
+    typedef typename Graph::edge_property_type type;
+  };
+
   template <typename Graph>
   class degree_property_map 
     : public put_get_helper<typename graph_traits<Graph>::degree_size_type,
