@@ -15,7 +15,7 @@
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
-     ALT="C++ Boost"> 
+     ALT="C++ Boost" width="277" height="86"> 
 
 <BR Clear>
 
@@ -23,6 +23,7 @@
 
 <pre>
 error C2784: 'T __cdecl source(struct std::pair<T,T>,const G &)' : could not deduce template argument for 'struct std::pair<_T1,_T1>' from 'class boost::detail::bidir_edge<struct boost::bidirectional_tag,unsigned int>'
+
 </pre>
 
 VC++ does not support Koenig Lookup, therefore you need to refer to functions defined in the boost namespace
