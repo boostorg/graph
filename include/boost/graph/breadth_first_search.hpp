@@ -105,7 +105,6 @@ namespace boost {
     while (! Q.empty()) {
       Vertex u = Q.top();
       Q.pop(); // pop before push to avoid problem if Q is priority_queue.
-      vis.discover_vertex(u, g);
       typename GTraits::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Edge e = *ei;
@@ -113,16 +112,17 @@ namespace boost {
         Vertex v = target(e, g);
         if (get(color, v) == white(c)) {
           put(color, v, gray(c));
+          vis.discover_vertex(u, g);
           vis.tree_edge(e, g);
           Q.push(v);
         } else {
           vis.cycle_edge(e, g);
 
-	  if (get(color, v) == gray(c))
-	    vis.gray_target(e, g);
-	  else
-	    vis.black_target(e, g);
-	}
+          if (get(color, v) == gray(c))
+            vis.gray_target(e, g);
+          else
+            vis.black_target(e, g);
+        }
       } // for 
       put(color, u, black(c));
       vis.finish_vertex(u, g);
