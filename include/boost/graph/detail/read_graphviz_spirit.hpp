@@ -362,14 +362,14 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
     //
 
     void check_undirected() {
-      if(!boost::is_same<
+      if(!boost::is_convertible<
            typename boost::graph_traits<MutableGraph>::directed_category,
            boost::undirected_tag>::value) 
         throw boost::undirected_graph_error();
     }
 
     void check_directed() {
-      if(!boost::is_same<
+      if(!boost::is_convertible<
            typename boost::graph_traits<MutableGraph>::directed_category,
            boost::directed_tag>::value) 
         throw boost::directed_graph_error();
