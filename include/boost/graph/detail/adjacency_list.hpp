@@ -517,58 +517,68 @@ namespace boost {
       public virtual bidirectional_graph_tag { };
 
     namespace detail {
-      // O(E/V)
-      template <class edge_descriptor, class Config, class StoredProperty>
-      inline void
-      remove_undirected_edge_dispatch(edge_descriptor e, 
-                                      undirected_graph_helper<Config>& g_, 
-                                      StoredProperty& p)
-      {
-        typedef typename Config::graph_type graph_type;
-        graph_type& g = static_cast<graph_type&>(g_);
 
-        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-        typename Config::OutEdgeList::iterator out_i = out_el.begin();
-        for (; out_i != out_el.end(); ++out_i)
-          if (&(*out_i).get_property() == &p) {
-            g.m_edges.erase((*out_i).get_iter());
-            out_el.erase(out_i);
-            break;
-          }
-        typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
-        typename Config::OutEdgeList::iterator in_i = in_el.begin();
-        for (; in_i != in_el.end(); ++in_i)
-          if (&(*in_i).get_property() == &p) {
-            in_el.erase(in_i);
-            return;
-          }
-      }
-      // O(E/V)
-      template <class edge_descriptor, class Config>
-      inline void
-      remove_undirected_edge_dispatch(edge_descriptor e,
-                                      undirected_graph_helper<Config>& g_,
-                                      no_property&)
-      {
-        typedef typename Config::graph_type graph_type;
-        graph_type& g = static_cast<graph_type&>(g_);
+      // using class with specialization for dispatch is a VC++ workaround.
+      template <class StoredProperty>
+      struct remove_undirected_edge_dispatch {
 
-        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-        typename Config::OutEdgeList::iterator out_i = out_el.begin();
-        for (; out_i != out_el.end(); ++out_i)
+	// O(E/V)
+	template <class edge_descriptor, class Config>
+	static void
+	apply(edge_descriptor e, 
+	      undirected_graph_helper<Config>& g_, 
+	      StoredProperty& p)
+	{
+	  typedef typename Config::graph_type graph_type;
+	  graph_type& g = static_cast<graph_type&>(g_);
+	  
+	  typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+	  typename Config::OutEdgeList::iterator out_i = out_el.begin();
+	  for (; out_i != out_el.end(); ++out_i)
+	    if (&(*out_i).get_property() == &p) {
+	      g.m_edges.erase((*out_i).get_iter());
+	      out_el.erase(out_i);
+	      break;
+	    }
+	  typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+	  typename Config::OutEdgeList::iterator in_i = in_el.begin();
+	  for (; in_i != in_el.end(); ++in_i)
+	    if (&(*in_i).get_property() == &p) {
+	      in_el.erase(in_i);
+	      return;
+	    }
+	}
+      };
+
+      template <>
+      struct remove_undirected_edge_dispatch<no_property> {
+	// O(E/V)
+	template <class edge_descriptor, class Config>
+	static void
+	apply(edge_descriptor e,
+	      undirected_graph_helper<Config>& g_,
+	      no_property&)
+	{
+	  typedef typename Config::graph_type graph_type;
+	  graph_type& g = static_cast<graph_type&>(g_);
+	  
+	  typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+	  typename Config::OutEdgeList::iterator out_i = out_el.begin();
+	  for (; out_i != out_el.end(); ++out_i)
           if (&(*out_i).get_property() == (no_property*)e.get_property()) {
             g.m_edges.erase((*out_i).get_iter());
             out_el.erase(out_i);
             break;
           }
-        typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
-        typename Config::OutEdgeList::iterator in_i = in_el.begin();
-        for (; in_i != in_el.end(); ++in_i)
-          if (&(*in_i).get_property() == (no_property*)e.get_property()) {
-            in_el.erase(in_i);
-            return;
-          }
-      }
+	  typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
+	  typename Config::OutEdgeList::iterator in_i = in_el.begin();
+	  for (; in_i != in_el.end(); ++in_i)
+	    if (&(*in_i).get_property() == (no_property*)e.get_property()) {
+	      in_el.erase(in_i);
+	      return;
+	    }
+	}
+      };
 
       // O(E/V)
       template <class Graph, class EdgeList, class Vertex>
@@ -630,7 +640,7 @@ namespace boost {
       remove_edge(typename Config::edge_descriptor e)
       {
         typedef typename Config::OutEdgeList::value_type::property_type PType;
-        detail::remove_undirected_edge_dispatch
+        detail::remove_undirected_edge_dispatch<PType>::apply
           (e, *this, *(PType*)e.get_property());
       }
       // O(E/V)
