@@ -210,12 +210,11 @@ is that we want to use the maximum of the neighbors' values instead of
 the minimum.  In addition, we do not have a single source
 vertex. Instead we will want to treat all vertices with in-degree of
 zero as sources (i.e., vertices with no edges coming into them). So we
-can not use Dijkstra's algorithm, but we can use a generalized version
-of Dijkstra's algorithm which is called <a
-href="./uniform_cost_search.html"><TT>uniform_cost_search()</TT></a>.
+use Dijkstra's algorithm with several extra parameters instead
+of relying on the defaults.
 
 <P>
-To use <TT>uniform_cost_search()</TT>, we must first set up the vertex
+To use <TT>dijkstra_shortest_paths()</TT>, we must first set up the vertex
 and edge properties that will be used in the algorithm.  We will need
 a time property (replacing the distance property of Dijkstra's
 algorithm) and an edge weight property. We will use a
@@ -270,8 +269,11 @@ if the vertex has zero in-degree.
 <PRE>
   for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
     if (in_degree[*i] == 0)
-      boost::uniform_cost_search(g, *i, time.begin(), 
-                                 weight, compare, combine);
+      boost::dijkstra_shortest_paths(g, *i, 
+				     distance_map(&amp;time[0]). 
+				     weight_map(weight). 
+				     distance_compare(compare).
+				     distance_combine(combine));
 </PRE>
 
 <P>
@@ -374,7 +376,7 @@ algorithm and pass in the cycle detector visitor.
 <PRE>
   bool has_cycle = false;
   cycle_detector&lt;Color&gt; vis(color, has_cycle);
-  boost::depth_first_search(g, vis);
+  boost::depth_first_search(g, visitor(vis));
   std::cout &lt;&lt; "The graph has a cycle? " &lt;&lt; has_cycle &lt;&lt; std::endl;
 </PRE>
 
