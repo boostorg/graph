@@ -53,24 +53,32 @@
 
  */
 
+struct EdgeProperties {
+  EdgeProperties(const std::string& n) : name(n) { }
+  std::string name;
+};
+
+struct VertexProperties {
+  std::size_t index;
+  boost::default_color_type color;
+};
+
+
 int main(int , char* [])
 {
   using namespace boost;
   using namespace std;
 
-  typedef property<edge_name_t, std::string> EdgeProperty;
-  typedef property<vertex_color_t, default_color_type> ColorProperty;
-  typedef property<vertex_index_t, std::size_t, ColorProperty> VertexProperty;
-
   typedef adjacency_list<vecS, listS, undirectedS, 
-    VertexProperty, EdgeProperty> Graph;
+    VertexProperties, EdgeProperties> Graph;
 
   const int V = 5;
   Graph g(V);
 
-  property_map<Graph, vertex_index_t>::type id = get(vertex_index, g);
-
-  property_map<Graph, edge_name_t>::type name = get(edge_name, g);
+  property_map<Graph, std::size_t VertexProperties::*>::type 
+    id = get(&VertexProperties::index, g);
+  property_map<Graph, std::string EdgeProperties::*>::type 
+    name = get(&EdgeProperties::name, g);
 
   boost::graph_traits<Graph>::vertex_iterator vi, viend;
   int vnum = 0;
@@ -78,11 +86,11 @@ int main(int , char* [])
   for (boost::tie(vi,viend) = vertices(g); vi != viend; ++vi)
     id[*vi] = vnum++;
 
-  add_edge(vertex(0, g), vertex(1, g), EdgeProperty("joe"), g);
-  add_edge(vertex(1, g), vertex(2, g), EdgeProperty("curly"), g);
-  add_edge(vertex(1, g), vertex(3, g), EdgeProperty("dick"), g);
-  add_edge(vertex(2, g), vertex(4, g), EdgeProperty("tom"), g);
-  add_edge(vertex(3, g), vertex(4, g), EdgeProperty("harry"), g);
+  add_edge(vertex(0, g), vertex(1, g), EdgeProperties("joe"), g);
+  add_edge(vertex(1, g), vertex(2, g), EdgeProperties("curly"), g);
+  add_edge(vertex(1, g), vertex(3, g), EdgeProperties("dick"), g);
+  add_edge(vertex(2, g), vertex(4, g), EdgeProperties("tom"), g);
+  add_edge(vertex(3, g), vertex(4, g), EdgeProperties("harry"), g);
 
   graph_traits<Graph>::vertex_iterator i, end;
   graph_traits<Graph>::out_edge_iterator ei, edge_end;
