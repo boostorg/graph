@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.16  2000/09/25 05:17:49  jsiek
+// fixed mistake in put function
+//
 // Revision 1.15  2000/09/25 04:05:40  jsiek
 // fixed some function lookup problems due to VC++ no Koenig
 //
@@ -1106,10 +1109,7 @@ namespace boost {
       typename boost::property_map<typename Config::graph_type, 
         Property>::const_type
     >::value_type
-    get(Property p, const adj_list_helper<Config, Base>& g_, 
-	const Key& key) {
-      typedef typename Config::graph_type Graph;
-      const Graph& g = static_cast<const Graph&>(g_);
+    get(Property p, const adj_list_helper<Config, Base>& g, const Key& key) {
       return get(get(p, g), key);
     }
 
@@ -1771,11 +1771,11 @@ namespace boost {
     }
     template <class D, class P, class Vertex, class Tag, class K, class V>
     inline void
-    put(adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& k,
+    put(adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& e,
 	const V& val)
     {
       typedef typename plugin_value<P,Tag>::type value_type;
-      const P* p = (P*)e.get_plugin();
+      P* p = (P*)e.get_plugin();
       get_plugin_value(*p, value_type(), Tag()) = val;
     }
 
