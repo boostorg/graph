@@ -222,7 +222,8 @@ UTIL: <tt>buffer(Buffer&amp; Q)</tt>
   can be used, but the traversal order will be different.
   For example Dijkstra's algorithm can be implemented
   using a priority queue. The type <tt>Buffer</tt> must be a model of
-  <a href="./Buffer.html">Buffer</a>.<br>
+  <a href="./Buffer.html">Buffer</a>.<br> The <tt>value_type</tt>
+  of the buffer must be the <tt>vertex_descriptor</tt> type for the graph.
   <b>Default:</b> <tt>boost::queue</tt>
 </blockquote>  
 
