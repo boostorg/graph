@@ -44,6 +44,17 @@ namespace boost {
   };
 #endif
 
+    template <class P>
+    struct has_property { 
+      enum { value = true }; 
+      typedef true_type type;
+    };
+    template <>
+    struct has_property<no_property> { 
+      enum { value = false }; 
+      typedef false_type type; 
+    };
+
 } // namespace boost
 
 #include <boost/pending/detail/property.hpp>
