@@ -31,12 +31,12 @@ void undirected_dfs(Graph&amp; G, const bgl_named_params&lt;P, T, R&gt;&amp; par
 
 <i>// non-named parameter version</i>
 template &lt;typename Graph, typename <a href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
-void undirected_dfs(const VertexListGraph&amp; g, DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
+void undirected_dfs(const Graph&amp; g, DFSVisitor vis, VertexColorMap vertex_color, EdgeColorMap edge_color)
 
-template &lt;typename <a href="./VertexListGraph.html">VertexListGraph</a>, typename <a href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
-void undirected_dfs(const VertexListGraph&amp; g, DFSVisitor vis,
+template &lt;typename Graph, typename <a href="DFSVisitor.html">DFSVisitor</a>, typename VertexColorMap, typename EdgeColorMap&gt;
+void undirected_dfs(const Graph&amp; g, DFSVisitor vis,
                     VertexColorMap vertex_color, EdgeColorMap edge_color,
-                    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)
+                    typename graph_traits&lt;Graph&gt;::vertex_descriptor start)
 
 </PRE>
 
@@ -171,10 +171,12 @@ finish vertex <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>VertexListGraph&amp; g</tt>
+IN: <tt>Graph&amp; g</tt>
 <blockquote>
-  A directed or undirected graph. The graph type must
-  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  An undirected graph. The graph type must
+  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>,
+  <a href="./VertexListGraph.html">Vertex List Graph</a>,
+  and <a href="./EdgeListGraph.html">Edge List Graph</a>.
 </blockquote>
 
 
