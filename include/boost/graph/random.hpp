@@ -225,112 +225,62 @@ namespace boost {
         (g, rg, Property(), typename property_kind<Property>::type());
   }
 
-  template<typename SizeType, typename Probability, 
-           typename RandomGenerator = minstd_rand>
-  class erdos_renyi_random_iterator
-    : public iterator_facade<
-             erdos_renyi_random_iterator<SizeType,Probability,RandomGenerator>
-             , std::pair<SizeType, SizeType> 
-             , std::input_iterator_tag
-             , std::pair<SizeType, SizeType> 
-             >
+  template<typename MutableGraph, typename Real, typename RandomNumGen>
+  void 
+  erdos_renyi_random_graph
+    (MutableGraph& g, 
+     typename graph_traits<MutableGraph>::vertices_size_type n,
+     Real edge_probability,
+     bool allow_self_loops,
+     RandomNumGen& gen)
   {
-    typedef erdos_renyi_random_iterator self_type;
-    typedef iterator_facade<
-               erdos_renyi_random_iterator<SizeType,Probability,RandomGenerator>
-             , std::pair<SizeType, SizeType> 
-             , std::input_iterator_tag
-             , std::pair<SizeType, SizeType> 
-             > inherited;
-  public:
-    typedef typename inherited::reference reference;
-    typedef typename inherited::value_type value_type;
+    typedef typename graph_traits<MutableGraph>::vertex_iterator
+      vertex_iterator;
+    typedef typename graph_traits<MutableGraph>::vertex_descriptor
+      vertex_descriptor;
+    typedef typename graph_traits<MutableGraph>::vertices_size_type
+      vertices_size_type;
+    typedef typename graph_traits<MutableGraph>::edges_size_type
+      edges_size_type;
+
+    // Determine if the graph is undirected
+    typedef typename graph_traits<MutableGraph>::directed_category
+      directed_category;
+    const bool is_undirected = 
+      is_convertible<directed_category*, undirected_tag*>::value;
     
-    // Starting iterator for n vertices with probability p using gen
-    // as the random number generator.
-    erdos_renyi_random_iterator(SizeType n, Probability p, 
-                                RandomGenerator& gen, bool directed,
-                                bool self_edges = false)
-      : n(n), p(p), 
-        random_(new uniform_01<RandomGenerator, Probability>(gen)), 
-        directed(directed), self_edges(self_edges),
-        current_edge(static_cast<SizeType>(0), static_cast<SizeType>(0))
-    {
-      for (/* no init */; current_edge.first < n; ++current_edge.first)
-      {
-        if (directed) current_edge.second = static_cast<SizeType>(0);
-        else current_edge.second = current_edge.first;
-        for (/* no init */; current_edge.second < n; ++current_edge.second) {
-          // When we hit the first edge, break out
-          if ((self_edges || current_edge.first != current_edge.second)
-              && (*random_)() < p) {
-            return;
-          }
-        }
+    typedef uniform_int<vertices_size_type> distrib_t;
+
+    // Add random edges
+    edges_size_type edges_added = 0;
+    while (edges_added < num_vertices(g) * num_vertices(g)  * edge_probability) {
+      vertex_iterator ui = vertices(g).first;
+      std::advance(ui, distrib_t(0, num_vertices(g)-1)(gen));
+      vertex_descriptor u = *ui;
+      vertex_descriptor v = vertex(distrib_t(0, n-1)(gen), g);
+
+      if ((u != v || allow_self_loops)
+          && find(adjacent_vertices(u, g).first, 
+                  adjacent_vertices(u, g).second,
+                  v) == adjacent_vertices(u, g).second) {
+        add_edge(u, v, g);
+        ++edges_added;
       }
     }
 
-    // Past-the-end iterator
-    erdos_renyi_random_iterator(SizeType n) : n(n), current_edge(n, n) { }
-
-  private:
-    reference dereference() const { return current_edge; }
-    
-    bool equal(const self_type& other) const 
-    { return current_edge == other.current_edge; }
-
-    void increment()
-    {
-      do {
-        if (++current_edge.second == n) {
-          if (++current_edge.first == n) break;
-          if (directed) current_edge.second = static_cast<SizeType>(0);
-          else current_edge.second = current_edge.first;
-        }
-      } while ((!self_edges && current_edge.first == current_edge.second)
-               || (*random_)() >= p);
-    }
-                                
-    SizeType    n;
-    Probability p;
-    shared_ptr<uniform_01<RandomGenerator, Probability> > random_;
-    bool        directed : 1;
-    bool        self_edges : 1;
-    value_type  current_edge;
-    friend class iterator_core_access;
-  };
-
-  template<typename SizeType, typename Probability, typename RandomGenerator>
-  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
-  make_erdos_renyi_random_iterator(SizeType n, Probability p, 
-                                   RandomGenerator& gen,
-                                   directed_tag,
-                                   bool self_edges = false)
-  {
-    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
-      result_type;
-    return result_type(n, p, gen, true, self_edges);
+    // TBD: synchronize
   }
 
-  template<typename SizeType, typename Probability, typename RandomGenerator>
-  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
-  make_erdos_renyi_random_iterator(SizeType n, Probability p, 
-                                   RandomGenerator& gen,
-                                   undirected_tag,
-                                   bool self_edges = false)
+  template<typename MutableGraph, typename Real, typename RandomNumGen>
+  void 
+  erdos_renyi_random_graph
+    (MutableGraph& g, 
+     typename graph_traits<MutableGraph>::vertices_size_type n,
+     Real edge_probability,
+     bool allow_self_loops = false)
   {
-    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
-      result_type;
-    return result_type(n, p, gen, false, self_edges);
-  }
-
-  template<typename SizeType, typename Probability, typename RandomGenerator>
-  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
-  make_erdos_renyi_random_iterator(SizeType n, Probability, RandomGenerator&)
-  {
-    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
-      result_type;
-    return result_type(n);
+    minstd_rand gen;
+    erdos_renyi_random_graph(g, n, edge_probability, allow_self_loops, gen);
   }
 }
 
