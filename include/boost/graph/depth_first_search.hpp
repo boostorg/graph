@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+// Copyright 2003 Bruce Barr
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -9,15 +10,6 @@
 
 // Nonrecursive implementation of depth_first_visit_impl submitted by
 // Bruce Barr, schmoost <at> yahoo.com, May/June 2003.
-//
-// (C) Copyright Bruce Barr, 2003
-// Permission to copy, use, modify, sell and distribute this software
-// is granted provided this copyright notice appears in all copies.
-// This software is provided "as is" without express or implied
-// warranty, and with no claim as to its suitability for any purpose.
-
-
-
 #ifndef BOOST_GRAPH_RECURSIVE_DFS_HPP
 #define BOOST_GRAPH_RECURSIVE_DFS_HPP
 
