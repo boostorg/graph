@@ -61,8 +61,8 @@ namespace boost {
   inline 
   std::pair<typename graph_traits<Graph>::out_edge_iterator,
             typename graph_traits<Graph>::out_edge_iterator>
-  incident_on(typename graph_traits<Graph>::vertex_descriptor u,
-              Graph& g)
+  incident_edges(typename graph_traits<Graph>::vertex_descriptor u,
+                 Graph& g)
   {
     return out_edges(u, g);
   }
@@ -132,8 +132,8 @@ namespace boost {
   };
   template <typename Vertex, typename Graph>
   inline incident_on_predicate<Vertex, Graph>
-  incident_on(Vertex u, Vertex v, const Graph& g) {
-    return incident_on_predicate<Vertex, Graph>(u, v, g);
+  incident_on(Vertex u, const Graph& g) {
+    return incident_on_predicate<Vertex, Graph>(u, g);
   }
   
   template <typename Vertex, typename Graph>
