@@ -64,8 +64,8 @@ namespace boost {
               typename CopyVertex, typename CopyEdge, 
               typename Orig2CopyVertexIndexMap>
     void copy_graph_impl(const Graph& g_in, MutableGraph& g_out, 
-			 CopyVertex copy_vertex, CopyEdge copy_edge,
-			 Orig2CopyVertexIndexMap orig2copy)
+                         CopyVertex copy_vertex, CopyEdge copy_edge,
+                         Orig2CopyVertexIndexMap orig2copy)
     {
       // assert Graph::directed_category == MutableGraph::directed_category
       // or allow conversions? 
@@ -95,18 +95,18 @@ namespace boost {
     struct choose_copier_parameter {
       template <class P, class G1, class G2>
       struct bind {
-	typedef const P& result_type;
-	static result_type apply(const P& p, const G1&, G2&)
-	{ return p; }
+        typedef const P& result_type;
+        static result_type apply(const P& p, const G1&, G2&)
+        { return p; }
       };
     };
     struct choose_default_edge_copier {
       template <class P, class G1, class G2>
       struct bind {
-	typedef edge_copier<G1, G2> result_type;
-	static result_type apply(const P& p, const G1& g1, G2& g2) { 
-	  return result_type(g1, g2);
-	}
+        typedef edge_copier<G1, G2> result_type;
+        static result_type apply(const P& p, const G1& g1, G2& g2) { 
+          return result_type(g1, g2);
+        }
       };
     };
     template <class Param>
@@ -128,7 +128,7 @@ namespace boost {
     choose_edge_copier(const Param& params, const G1& g_in, G2& g_out)
     {
       typedef typename 
-	detail::choose_edge_copier_helper<Param,G1,G2>::type Choice;
+        detail::choose_edge_copier_helper<Param,G1,G2>::type Choice;
       return Choice::apply(p, g1, g2);
     }
 
@@ -136,10 +136,10 @@ namespace boost {
     struct choose_default_vertex_copier {
       template <class P, class G1, class G2>
       struct bind {
-	typedef vertex_copier<G1, G2> result_type;
-	static result_type apply(const P& p, const G1& g1, G2& g2) { 
-	  return result_type(g1, g2);
-	}
+        typedef vertex_copier<G1, G2> result_type;
+        static result_type apply(const P& p, const G1& g1, G2& g2) { 
+          return result_type(g1, g2);
+        }
       };
     };
     template <class Param>
@@ -161,7 +161,7 @@ namespace boost {
     choose_vertex_copier(const Param& params, const G1& g_in, G2& g_out)
     {
       typedef typename 
-	detail::choose_vertex_copier_helper<Param,G1,G2>::type Choice;
+        detail::choose_vertex_copier_helper<Param,G1,G2>::type Choice;
       return Choice::apply(p, g1, g2);
     }
 
@@ -178,7 +178,7 @@ namespace boost {
        make_vertex_copier(g_in, g_out), 
        make_edge_copier(g_in, g_out), 
        make_iterator_property_map(orig2copy.begin(), 
-				  get(vertex_index, g_in)));
+                                  get(vertex_index, g_in)));
   }
 
   template <typename Graph, typename MutableGraph, class P, class T, class R>
@@ -187,21 +187,21 @@ namespace boost {
   {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
-	? num_vertices(g_in) : 0;
+        ? num_vertices(g_in) : 0;
     std::vector<typename graph_traits<Graph>::vertex_descriptor> 
       orig2copy(n);
     
     detail::copy_graph_impl
       (g_in, g_out,
        detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
-				    g_in, g_out),
+                                    g_in, g_out),
        detail::choose_edge_copier(get_param(params, edge_copy_t()), 
-				  g_in, g_out),
+                                  g_in, g_out),
        choose_param(get_param(params, orig_to_copy_t()),
-		    make_iterator_property_map
-		    (orig2copy.begin(), 
-		     choose_pmap(get_param(params, vertex_index), 
-				 g, vertex_index)))
+                    make_iterator_property_map
+                    (orig2copy.begin(), 
+                     choose_pmap(get_param(params, vertex_index), 
+                                 g, vertex_index)))
        );
   }
 
@@ -212,8 +212,8 @@ namespace boost {
     struct graph_copy_visitor : public bfs_visitor<>
     {
       graph_copy_visitor(NewGraph& graph, Copy2OrigIndexMap c,
-			 CopyVertex cv, CopyEdge ce)
-	: g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
+                         CopyVertex cv, CopyEdge ce)
+        : g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
 
       template <class Vertex, class Graph>
       void examine_vertex(Vertex u, const Graph& g_in) const {
@@ -251,7 +251,7 @@ namespace boost {
        const Params& params)
     {
       graph_copy_visitor<MutableGraph, Orig2CopyVertexIndexMap, 
-	CopyVertex, CopyEdge> vis(g_out, orig2copy, copy_vertex, copy_edge);
+        CopyVertex, CopyEdge> vis(g_out, orig2copy, copy_vertex, copy_edge);
       breadth_first_search(g_in, src, params.visitor(vis));
     }
 
@@ -265,30 +265,30 @@ namespace boost {
            typename P, typename T, typename R>
   typename graph_traits<IncidenceGraph>::vertex_descriptor
   copy_component(IncidenceGraph& g_in, 
-		 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
-		 MutableGraph& g_out, 
-		 const bgl_named_params<P, T, R>& params)
+                 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
+                 MutableGraph& g_out, 
+                 const bgl_named_params<P, T, R>& params)
   {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
-	? num_vertices(g_in) : 0;
+        ? num_vertices(g_in) : 0;
     std::vector<typename graph_traits<IncidenceGraph>::vertex_descriptor> 
       orig2copy(n);
     
     return detail::copy_component_impl
       (g_in, src, g_out,
        detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
-				    g_in, g_out),
+                                    g_in, g_out),
        detail::choose_edge_copier(get_param(params, edge_copy_t()), 
-				  g_in, g_out),
+                                  g_in, g_out),
        choose_param(get_param(params, orig_to_copy_t()),
-		    make_iterator_property_map
-		    (orig2copy.begin(), 
-		     choose_pmap(get_param(params, vertex_index), 
-				 g, vertex_index)))
+                    make_iterator_property_map
+                    (orig2copy.begin(), 
+                     choose_pmap(get_param(params, vertex_index), 
+                                 g, vertex_index)))
        );
   }
-  
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_COPY_HPP
