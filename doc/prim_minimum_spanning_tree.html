@@ -26,42 +26,11 @@
 </H1>
 
 <P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">undirected</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">distance, weight, color, vertex id</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(E log V)</i></TD>
-</TR>
-</TABLE>
-</DIV>
-
-<P>
 <PRE>
-(1)
-template &lt;class VertexListGraph, class Vertex&gt;
-void prim_minimum_spanning_tree(VertexListGraph&amp; G, Vertex s);
-
-(2)
-template &lt;class VertexListGraph, class Vertex, class Distance&gt;
-void prim_minimum_spanning_tree(VertexListGraph&amp; G, Vertex s, Distance d);
-
-(3)
-template &lt;class VertexListGraph, class Vertex,
-          class Distance, class Visitor&gt;
-void prim_minimum_spanning_tree(VertexListGraph&amp; G, Vertex s, 
-                                Distance d, Visitor visit);
-
-(4)
-template &lt;class VertexListGraph, class Vertex, class Visitor, 
-          class Distance, class Weight, class Color, class ID&gt;
-void prim_minimum_spanning_tree(VertexListGraph&amp; G, Vertex s, 
-                                Distance d, Weight w, Color c, ID id,
-                                Visitor visit);
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
+void prim_minimum_spanning_tree(VertexListGraph&amp; g,
+  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+  const bgl_named_params&lt;P, T, R&gt;&amp; params);
 </PRE>
 
 <P>
@@ -75,7 +44,7 @@ Section <A
 HREF="graph_theory_review.html#sec:minimum-spanning-tree">Minimum
 Spanning Tree Algorithms</A> for a definition of the minimum spanning
 tree problem. The implementation is simply a call to <a
-href="./uniform_cost_search.html"><TT>uniform_cost_search()</TT></a>
+href="./dijkstra_shortest_paths.html"><TT>dijkstra_shortest_paths()</TT></a>
 with the appropriate choice of comparison and combine functors.
 
 <P>
@@ -87,42 +56,106 @@ with the appropriate choice of comparison and combine functors.
 
 <P>
 
-<H3>Requirements on Types</H3>
+<h3>Parameters</h3>
 
-<P>
+IN: <tt>const VertexListGraph&amp; g</tt> 
+<blockquote>
+  An undirected graph. The type <tt>VertexListGraph</tt> must be a
+  model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+</blockquote>
 
-<UL>
-<LI>The type <TT>VertexListGraph</TT> must be a model of <a href="./VertexListGraph.html">VertexListGraph</a>.
-</LI>
-<LI>The type <TT>Vertex</TT> must be convertible to type <TT>boost::graph_traits&lt;VertexListGraph&gt;::vertex_descriptor</TT>.
-</LI>
-<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
-</LI>
-<LI>The type <TT>Distance</TT> must be a model of
-    <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The vertex descriptor type of
-     the graph needs to be usable as the key type of the distance
-     map. The value type of the distance map must be
-     <I>LessThanComparable</I>.
-</LI>
-<LI>The type <TT>Weight</TT> must be a model of
-     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The edge descriptor type of
-     the graph needs to be usable as the key type for the weight
-     map. The value type for the map must be
-     <I>Addable</I> with the value type of the distance map.
-</LI>
-<LI>The type <TT>Color</TT> must be a model of
-     <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A vertex descriptor must be
-     usable as the key type of the map, and the value type of the
-     map must be a model of <I>ColorValue</I>.
-</LI>
-<LI>The type <TT>ID</TT> must be a model of
-     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The value type of <TT>ID</TT>
-     must be an integer type. The vertex descriptor type of the graph
-     needs to be usable as the key type of the ID map.
-</LI>
-</UL>
+IN: <tt>vertex_descriptor s</tt> 
+<blockquote>
+  The source vertex. All distance will be calculated from this vertex,
+  and the shortest paths tree will be rooted at this vertex.
+</blockquote>
 
-<P>
+<h3>Named Parameters</h3>
+
+IN: <tt>weight_map(WeightMap w_map)</tt>   
+<blockquote>
+  The weight or ``length'' of each edge in the graph.
+  The type <tt>WeightMap</tt> must be a model of
+  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
+  the graph needs to be usable as the key type for the weight
+  map. The value type for the map must be
+  <i>Addable</i> with the value type of the distance map.<br>
+  <b>Default:</b>  <tt>get(edge_weight, g)</tt>
+</blockquote>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+    num_vertices(g))</tt>. This is necessary for efficient updates of the
+  heap data structure when an edge is relaxed.  The type
+  <tt>VertexIndexMap</tt> must be a model of
+  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  integer type. The vertex descriptor type of the graph needs to be
+  usable as the key type of the map.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+</blockquote>
+
+OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+<blockquote>
+  The predecessor map records the edges in the minimum spanning
+  tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
+  for all <i>u in V</i> are in the minimum spanning tree. If <i>p[u] =
+  u</i> then <i>u</i> is either the source vertex or a vertex that is
+  not reachable from the source.  The <tt>PredecessorMap</tt> type
+  must be a <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> which key and vertex types the same as the vertex
+  descriptor type of the graph.<br>
+  <b>Default:</b> <tt>dummy_property_map</tt>
+</blockquote>
+
+UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
+<blockquote>
+  The shortest path weight from the source vertex <tt>s</tt> to each
+  vertex in the graph <tt>g</tt> is recorded in this property map. The
+  shortest path weight is the sum of the edge weights along the
+  shortest path.  The type <tt>DistanceMap</tt> must be a model of
+  <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The vertex descriptor type of the
+  graph needs to be usable as the key type of the distance map. The
+  value type of the distance map must be <a
+  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
+  Comparable</a>.<br> 
+  <b>Default:</b> <a href="../../property_map/iterator_property_map.html">
+  <tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
+
+UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
+<blockquote>
+  This is used during the execution of the algorithm to mark the
+  vertices. The vertices start out white and become gray when they are
+  inserted in the queue. They then turn black when they are removed
+  from the queue. At the end of the algorithm, vertices reachable from
+  the source vertex will have been colored black. All other vertices
+  will still be white. The type <tt>ColorMap</tt> must be a model of
+  <a href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. A vertex descriptor must be usable as the key type
+  of the map, and the value type of the map must be a model of
+  <a href="./ColorValue.html">Color Value</a>.<br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  <tt>iterator_property_map</tt></a> created from a <tt>std::vector</tt>
+  of <tt>default_color_type</tt> of size <tt>num_vertices(g)</tt> and
+  using the <tt>i_map</tt> for the index map.
+</blockquote>
+  
+OUT: <tt>visitor(Vis v)</tt>  
+<blockquote>
+  Use this to specify actions that you would like to happen
+  during certain event points within the algorithm.
+  The type <tt>Vis</tt> must be a model of
+  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a>. <br>
+  <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt>
+</blockquote>
 
 <H3>Complexity</H3>
 
@@ -134,69 +167,9 @@ The time complexity is <i>O(E log V)</i>.
 <H3>Example</H3>
 
 <P>
-The source code for this example is in <a
-href="../example/prim.cpp"><TT>examples/prim.cpp</TT></a>.
-
-<P>
-<PRE>
-  int main(int , char* [])
-  {
-    using namespace boost;
-    typedef adjacency_list&lt;vecS, vecS, undirectedS, 
-	 property&lt;vertex_color_t, default_color_type,
-	   property&lt;vertex_distance_t,int&gt; &gt;, property&lt;edge_weight_t,int&gt; &gt; 
-      Graph;
-    typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
-    typedef std::pair&lt;int,int&gt; E;
-    const int num_nodes = 9;
-    char name[] = &quot;abcdefghi&quot;;
-    enum { a, b, c, d, e, f, g, h, i }; 
-    E edges[] = { E(a,b), E(a,h),
-		  E(b,h), E(b,c),
-		  E(c,d), E(c,f), E(c,i),
-		  E(d,e), E(d,f),
-		  E(e,f), 
-		  E(f,g),
-		  E(g,i), E(g,h),
-		  E(h,i) };
-    int weights[] = { 4, 8,
-		      11, 8,
-		      7, 4, 2,
-		      9, 14,
-		      10,
-		      2,
-		      6, 1,
-		      7 };
-
-    Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-
-    std::vector&lt;Vertex&gt; p(num_vertices(G));
-    Vertex src = *(vertices(G).first);
-    p[src] = src;
-    prim_minimum_spanning_tree
-      (G, src, get(vertex_distance, G),
-       make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
-
-    for ( std::vector&lt;Vertex&gt;::iterator vi = p.begin();
-	  vi != p.end(); ++vi)
-      std::cout &lt;&lt; &quot;parent[&quot; &lt;&lt; name[vi - p.begin()]
-		&lt;&lt; &quot;] = &quot; &lt;&lt; name[*vi] &lt;&lt; std::endl;
-    return 0;
-  }
-</PRE>
-The output is:
-<PRE>
-  parent[a] = a
-  parent[b] = a
-  parent[c] = f
-  parent[d] = c
-  parent[e] = d
-  parent[f] = g
-  parent[g] = h
-  parent[h] = a
-  parent[i] = c
-</PRE>
-
+The file <a
+href="../example/prim.cpp"><TT>examples/prim.cpp</TT></a>
+contains an example of using Prim's algorithm.
 
 
 <br>
