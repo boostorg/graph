@@ -50,8 +50,8 @@ efficient access to the out-edges of each vertex in the graph.
 </TR>
 
 <TR>
-<TD><tt>v</tt></TD>
-<TD>An object of type <tt>boost::graph_traits&lt;G&gt;::vertex_descriptor</tt>.</TD>
+<TD><tt>u, v</tt></TD>
+<TD>Are objects of type <tt>boost::graph_traits&lt;G&gt;::vertex_descriptor</tt>.</TD>
 </TR>
 
 </table>
@@ -99,18 +99,23 @@ Return type: <TT>vertex_descriptor</TT>
 </td></tr>
 
 <tr>
-<td><a name="sec:out-edges"><TT>out_edges(v, g)</TT></a></TD>
-<TD>Returns an iterator-range providing access to the
-out-edges (for directed graphs) or incident edges (for
-undirected graphs) of vertex <TT>v</TT> in graph <TT>g</TT>.<br>
+<td><a name="sec:out-edges"><TT>out_edges(u, g)</TT></a></TD>
+<TD>Returns an iterator-range providing access to the out-edges (for
+directed graphs) or incident edges (for undirected graphs) of vertex
+<TT>u</TT> in graph <TT>g</TT>.  The source vertex of an edge obtained
+via and out edge iterator is guaranteed (for both directed and
+undirected graphs) to be the vertex <tt>u</tt> used in the call to
+<tt>out_edges(u, g)</tt> and the target vertex must the a vertex
+adjacent to <tt>u</tt>.<a href="">[1]</a>
+<br>
 Return type: <TT>std::pair&lt;out_edge_iterator, out_edge_iterator&gt;</TT>
 </TD>
 </tr>
 
 <tr>
-<TD><TT>out_degree(v, g)</TT></TD>
+<TD><TT>out_degree(u, g)</TT></TD>
 <TD>Returns the number of out-edges (for directed graphs) or the
-number of incident edges (for undirected graphs) of vertex <TT>v</TT>
+number of incident edges (for undirected graphs) of vertex <TT>u</TT>
 in graph <TT>g</TT>.<br>
 Return type: <TT>degree_size_type</TT>
 </TD>
@@ -132,6 +137,19 @@ function must be linear in the number of out-edges.
 <H3>See Also</H3>
 
 <a href="./graph_concepts.html">Graph concepts</a>
+
+<H3>Notes</H3>
+
+<a name="1">[1]</a> For undirected graphs, the edge <tt>(u,v)</tt> is
+the same as edge <tt>(v,u)</tt>, so without some extra guarantee an
+implementation would be free use any ordering for the pair of vertices
+in an out-edge. For example, if you call <tt>out_edges(u, g)</tt>, and
+<tt>v</tt> is one of the vertices adjacent to <tt>u</tt>, then the
+implementation would be free to return <tt>(v,u)</tt> as an out-edge
+which would be non-intuitive and cause trouble for algorithms.
+Therefore, the extra requirement is added that the out-edge connecting
+<tt>u</tt> and <tt>v</tt> must be given as <tt>(u,v)</tt> and not
+<tt>(v,u)</tt>.
 
 <H3>Concept Checking Class</H3>
 
