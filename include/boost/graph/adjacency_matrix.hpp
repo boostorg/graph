@@ -28,7 +28,6 @@
 
 #include <boost/config.hpp>
 #include <vector>
-#include <cmath>
 #include <memory>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
