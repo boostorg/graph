@@ -314,13 +314,13 @@ namespace boost {
 
   // is x a descendant of y?
   template <typename Node, typename ParentMap>
-  inline bool is_descendant(Node x, Node y, ParentMap p) {
-    if (p[x] == x) // x is the root of the tree
+  inline bool is_descendant(Node x, Node y, ParentMap parent) {
+    if (get(parent, x) == x) // x is the root of the tree
       return false;
-    else if (p[x] == y)
+    else if (get(parent, x) == y)
       return true;
     else
-      return is_descendant(p[x], y, p);
+      return is_descendant(get(parent, x), y, parent);
   }
 
   // is y reachable from x?
