@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: UniformCostVisitor</Title>
+<Title>Boost Graph Library: Uniform Cost Visitor</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1>UniformCostVisitor Concept</H1>
+<H1>Uniform Cost Visitor Concept</H1>
 
 This concept defines the visitor interface for <a
 href="./uniform_cost_search.html"><tt>uniform_cost_search()</tt></a>
@@ -30,15 +30,16 @@ search.
 
 <h3>Refinement of</h3>
 
-none
-<p>
+<a href="../../utility/CopyConstructible.html">Copy Constructible</a>
+(copying a visitor should be a lightweight operation).
+
 
 <h3>Notation</h3>
 
 <Table>
 <TR>
 <TD><tt>V</tt></TD>
-<TD>A type that is a model of UniformCostVisitor.</TD>
+<TD>A type that is a model of Uniform Cost Visitor.</TD>
 </TR>
 
 <TR>
