@@ -1,4 +1,5 @@
 // Copyright (C) 2001 Vladimir Prus <ghost@cs.msu.su>
+// Copyright (C) 2001 Jeremy Siek <jsiek@cs.indiana.edu>
 // Permission to copy, use, modify, sell and distribute this software is
 // granted, provided this copyright notice appears in all copies and 
 // modified version are clearly marked as such. This software is provided
@@ -13,6 +14,7 @@
 
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 #include <cstdlib>
 #include <ctime>
@@ -20,8 +22,7 @@
 using namespace std;
 using namespace boost;
 
-void generate_graph(int n, double p, vector< vector<int> >& r1,
-          vector<vector<bool> >& r2)
+void generate_graph(int n, double p, vector< vector<int> >& r1)
 {
   static class {
   public:
@@ -29,64 +30,34 @@ void generate_graph(int n, double p, vector< vector<int> >& r1,
       return double(rand())/RAND_MAX;
     }
   } gen;  
-
   r1.clear();
-  r2.clear();
-
   r1.resize(n);
-  r2.resize(n, vector<bool>(n));
-
   for (int i = 0; i < n; ++i)
     for (int j = 0; j < n; ++j) 
-      if (gen() < p) {
+      if (gen() < p)
         r1[i].push_back(j);
-        r2[i][j] = true;
-      }   
 }
 
-bool compare_graphs(const vector< vector<int> >& g1,
-            const vector< vector<bool> >& g2)
+// (i,j) is in E' if j is reachable from i
+// This does not differentiate self edges
+template <typename Graph, typename GraphTC>
+bool check_transitive_closure(Graph& g, GraphTC& tc)
 {
-  int ne1(0);
-  {
-    for (size_t i = 0; i < g1.size(); ++i)
-      ne1 += g1[i].size();      
+  std::vector<default_color_type> color_map_vec(num_vertices(g));
+  typename graph_traits<GraphTC>::vertex_iterator i, i_end;
+  for (tie(i, i_end) = vertices(tc); i != i_end; ++i) {
+    typename graph_traits<GraphTC>::out_edge_iterator j, j_end;
+    for (tie(j, j_end) = out_edges(*i, tc); j != j_end; ++j)
+      if (!is_reachable(source(*j, g), target(*j, g), g, &color_map_vec[0]))
+	return false;
   }
-  int ne2(0);
-  {
-    for (size_t i = 0; i < g2.size(); ++i)
-      for (size_t j = 0; j < g2.size(); ++j)
-        if (g2[i][j])
-          ++ne2;
-  }
-  if (ne1 == ne2) {
-
-    for (size_t i = 0; i < g1.size(); ++i)
-      for (size_t j = 0; j < g1[i].size(); ++j)
-        if (!g2[i][g1[i][j]])
-          return false;
-
-  } else {
-    return false;
-  }
-  return true;    
-}
-
-void warshall_transitive_closure(vector< vector<bool> >& g)
-{
-  for (size_t k = 0; k < g.size(); ++k)
-    for (size_t i = 0; i < g.size(); ++i)
-      for (size_t j = 0; j < g.size(); ++j) 
-        g[i][j] = g[i][j] || (g[i][k] && g[k][j]);        
+  return true;
 }
 
 bool test(int n, double p)
 {
-  vector< vector<int> > g1;
-  vector< vector<bool> > g2;
-
-
-  generate_graph(n, p, g1, g2);
+  vector< vector<int> > g1, g1_tc;
+  generate_graph(n, p, g1);
   cout << "Created graph with " << n << " vertices.\n";
 
   vector< vector<int> > g1_c(g1);
@@ -94,12 +65,10 @@ bool test(int n, double p)
   {
     progress_timer t;
     cout << "transitive_closure" << endl;
-    transitive_closure(g1);
-    cout << "warshall_transitive_closure" << endl;
-    warshall_transitive_closure(g2);
+    transitive_closure(g1, g1_tc, identity_property_map());
   }
 
-  if(compare_graphs(g1, g2))
+  if(check_transitive_closure(g1, g1_tc))
     return true;
   else {
     //cout << "Original graph was " << multiline << g1_c << endl;
