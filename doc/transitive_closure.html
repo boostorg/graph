@@ -61,11 +61,7 @@ IN/OUT: <tt>Graph&amp; g</tt>
 
 <h3>Complexity</h3>
 
-The time complexity (worst-case) is <i>O(|V||E|)</i>. The average
-complexity on <i>G(n, p)</i> graphs is <i>O(n ln(np)/p)</i>.  A
-<i>G(n, p)</i> graph is a random graph with <i>n</i> vertices and
-where there is probability <i>p</i> of any single edge <i>(u,v)</i>
-being in the graph.
+The time complexity (worst-case) is <i>O(|V||E|)</i>.
 
 <h3>Example</h3>
 
@@ -146,7 +142,8 @@ component of <i>u</i> to any of the vertices in the component of
    href="bibliography.html#simon86">52</a>]. The vertices of <i>G</i>
    are partitioned into chains <i>Z<sub>1</sub>, ...,
    Z<sub>k</sub></i>, where each chain <i>Z<sub>i</sub></i> is a path
-   in <i>G</i>. A successor set <i>S</i> is then represented by a
+   in <i>G</i> and the vertices in a chain have increasing topological
+   number.  A successor set <i>S</i> is then represented by a
    collection of intersections with the chains, i.e., <i>S =
    U<sub>i=1...k</sub> (Z<sub>i</sub> &amp; S)</i>. Each intersection
    can be represented by the first vertex in the path
