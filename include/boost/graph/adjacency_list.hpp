@@ -47,6 +47,7 @@
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/detail/edge.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/detail/workaround.hpp>
 
 namespace boost {
 
@@ -340,7 +341,6 @@ namespace boost {
     typedef typename ct_if<(is_same<maybe_vertex_bundled, no_property>::value),
                            no_vertex_bundle,
                            maybe_vertex_bundled>::type vertex_bundled;
-
     typedef typename ct_if<(is_same<maybe_edge_bundled, no_property>::value),
                            no_edge_bundle,
                            maybe_edge_bundled>::type edge_bundled;
@@ -417,6 +417,61 @@ namespace boost {
     const edge_bundled& operator[](edge_descriptor e) const
     { return get(edge_bundle, *this)[e]; }
 
+#if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1301))
+    // This disgusting hack works around a problem where MSVC 7.1 can't deal 
+    // with typedefs in templates that must be class types.
+    template<typename T, typename Class>
+    bundle_property_map<
+      self, 
+      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                     vertex_descriptor,
+                     edge_descriptor>::type,
+      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                     vertex_bundled,
+                     edge_bundled>::type,
+      T>
+    operator->*(T Class::* pm)
+    {
+      typedef 
+        bundle_property_map<
+          self, 
+          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                         vertex_descriptor,
+                         edge_descriptor>::type,
+          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                         vertex_bundled,
+                         edge_bundled>::type,
+          T>
+        result_type;
+      return result_type(this, pm);
+    }
+
+    template<typename T, typename Class>
+    bundle_property_map<
+      const self, 
+      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                     vertex_descriptor,
+                     edge_descriptor>::type,
+      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                     vertex_bundled,
+                     edge_bundled>::type,
+      const T>
+    operator->*(T Class::* pm) const
+    {
+      typedef 
+        bundle_property_map<
+          const self, 
+          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                         vertex_descriptor,
+                         edge_descriptor>::type,
+          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
+                         vertex_bundled,
+                         edge_bundled>::type,
+          const T>
+        result_type;
+      return result_type(this, pm);
+    }
+#else
     // Generate property maps from bundles given a member pointer
     template<typename T>
     bundle_property_map<self, vertex_descriptor, vertex_bundled, T>
@@ -453,6 +508,7 @@ namespace boost {
                                   const T> result_type;
       return result_type(this, pm);
     }
+#endif
 
     //  protected:  (would be protected if friends were more portable)
     GraphProperty m_property;
