@@ -107,10 +107,12 @@ struct dfs_test
     Traits::edges_size_type j;
     Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
+    boost::mt19937 gen;
+
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
         Graph g;
-        generate_random_graph(g, i, j);
+        generate_random_graph(g, i, j, gen);
 
         ColorMap color = get(boost::vertex_color, g);
         std::vector<vertex_descriptor> parent(num_vertices(g));
