@@ -25,16 +25,20 @@
 
 <P>
 <PRE>
-template &lt;class Graph&gt;
-void transitive_closure(Graph&amp; g)
+template &lt;typename Graph, typename GraphTC&gt;
+void transitive_closure(const Graph&amp; g, GraphTC&amp; tc)
+
+template &lt;typename Graph, typename GraphTC, typename VertexIndexMap&gt;
+void transitive_closure(const Graph&amp; g, GraphTC&amp; tc, VertexIndexMap index_map)
 </PRE>
 
 The transitive closure of a graph <i>G = (V,E)</i> is a graph <i>G* =
 (V,E*)</i> such that <i>E*</i> contains an edge <i>(u,v)</i> if and
 only if <i>G</i> contains a <a
-href="graph_theory_review.html#def:path">path</a> from <i>u</i> to
-<i>v</i>. The <tt>transitive_closure()</tt> function transforms the
-input graph <tt>g</tt> into the transitive closure of itself.
+href="graph_theory_review.html#def:path">path</a> (of at least one
+edge) from <i>u</i> to <i>v</i>. The <tt>transitive_closure()</tt>
+function transforms the input graph <tt>g</tt> into the transitive
+closure graph <tt>tc</tt>.
 
 <p>
 Thanks to Vladimir Prus for the implementation of this algorithm!
@@ -48,14 +52,32 @@ Thanks to Vladimir Prus for the implementation of this algorithm!
 
 <h3>Parameters</h3>
 
-IN/OUT: <tt>Graph&amp; g</tt>
+IN: <tt>const Graph&amp; g</tt>
 <blockquote>
  A directed graph, where the <tt>Graph</tt> type must model the
  <a href="./VertexListGraph.html">Vertex List Graph</a>
+ and <a href="./AdjacencyGraph.html">Adjacency Graph</a> concepts.
+</blockquote>
+
+OUT: <tt>GraphTC&amp; tc</tt>
+<blockquote>
+ A directed graph, where the <tt>GraphTC</tt> type must model the
+ <a href="./VertexMutableGraph.html">Vertex Mutable Graph</a> 
  and <a href="./EdgeMutableGraph.html">Edge Mutable Graph</a> concepts.
- In addition, the <tt>vertex_descriptor</tt> type of the graph
- must be an unsigned integer. Hopefully future versions of this
- function will remove that restriction.
+</blockquote>
+
+IN: <tt>VertexIndexMap&amp; index_map</tt>
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+  num_vertices(g))</tt>. This parameter is only necessary when the
+  default color property map is used. The type <tt>VertexIndexMap</tt>
+  must be a model of <a
+  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  Map</a>. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key
+  type of the map.<br>
+
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
 </blockquote>
 
 
