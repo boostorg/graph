@@ -207,8 +207,7 @@ namespace boost {
       typedef typename property_traits<DistanceMap>::value_type D;
       detail::dijkstra_impl
         (g, s, 
-         //choose_param(get_param(params, vertex_predecessor), p_map),
-	 p_map,
+         choose_param(get_param(params, vertex_predecessor), p_map),
          distance, weight, index_map, 
          choose_param(get_param(params, distance_compare_t()), 
                       std::less<D>()),
