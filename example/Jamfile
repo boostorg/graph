@@ -3,7 +3,7 @@ subproject libs/graph/example ;
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
 
-local rule graph-test ( sources + : requirements * )
+rule graph-test ( sources + : requirements * )
 {
     unit-test $(sources[1]:S=) : $(sources) : $(requirements) <include>$(BOOST_ROOT) : debug <inlining>on ;
 }
