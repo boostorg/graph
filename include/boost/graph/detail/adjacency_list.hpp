@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.14  2000/09/24 22:59:22  david_abrahams
+// untabify so I can read it!
+//
 // Revision 1.13  2000/09/24 20:51:16  jsiek
 // PA -> Map name change and documentation cleanup/additions
 //
@@ -1001,7 +1004,7 @@ namespace boost {
     edge(typename Config::vertex_descriptor u, 
 	 typename Config::vertex_descriptor v, 
 	 const adj_list_helper<Config, Base>& g_)
-   {
+    {
       typedef typename Config::graph_type Graph;
       typedef typename Config::edge_parallel_category Cat;
       const Graph& g = static_cast<const Graph&>(g_);
