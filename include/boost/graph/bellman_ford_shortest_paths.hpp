@@ -40,6 +40,7 @@ namespace boost {
   template <class Visitor, class Graph>
   struct BellmanFordVisitor_concept {
     void constraints() {
+      vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
       vis.edge_not_relaxed(e, g);
       vis.edge_minimized(e, g);

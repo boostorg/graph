@@ -76,14 +76,12 @@ main(int argc, char* argv[])
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
   
-  std::vector<default_color_type> c(num_vertices(G));
-  std::vector<size_type> d(num_vertices(G));  
-  std::vector<size_type> f(num_vertices(G));
+  std::vector<default_color_type> color(num_vertices(G));
 
   std::cout << "DFS parenthesis:" << std::endl;
   depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), 
 							close_paren())),
-		     c.begin());
+		     color.begin());
   std::cout << std::endl;
   return 0;
 }
