@@ -74,7 +74,7 @@ main()
 
   typedef adjacency_list < vecS, vecS, directedS,
     no_property, property < edge_weight_t, int > > Graph;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph g(N);
   for (std::size_t j = 0; j < n_edges; ++j)
@@ -94,7 +94,7 @@ main()
     parent[i] = i;
   distance[z] = 0;
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   bool r = bellman_ford_shortest_paths
     (g, int(N), weight_pmap, &parent[0], &distance[0], 
      closed_plus<int>(), std::less<int>(), default_bellman_visitor());

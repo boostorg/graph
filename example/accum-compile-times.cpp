@@ -70,7 +70,7 @@ main()
   typedef graph_traits<file_dep_graph2>::vertices_size_type size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // std::istream_iterator causes trouble with VC++
   std::vector<vertex_t> id2vertex;
   file_dep_graph2 g;

@@ -128,7 +128,7 @@ namespace boost {
     detail::invoke_dispatch(vlist.first, x, g, IsSameTag());
     invoke_visitors(vlist.second, x, g, tag);
   }
-#if defined(BOOST_MSVC) 
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   template <class Visitor, class T, class Graph, class Tag>
   inline void 
   invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag) {

@@ -2,7 +2,7 @@
 
 #include <boost/config.hpp>
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
 #error adjacency_list_io.hpp has not been ported to work with VC++
 #endif
 

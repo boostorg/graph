@@ -281,7 +281,7 @@ namespace boost {
   public: // should be private
     typedef typename ct_if_t<typename has_property<EdgeProperty>::type,
       std::pair<bool, EdgeProperty>, char>::type StoredEdge;
-#if defined(BOOST_MSVC)
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     typedef std::vector<StoredEdge> Matrix;
 #else
     // This causes internal compiler error for MSVC

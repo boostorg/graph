@@ -264,7 +264,7 @@ namespace boost {
     out << "}" << std::endl;
   }
 
-#ifndef BOOST_MSVC
+#if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
   // ambiguous overload problem with VC++
   template <typename Graph>
   inline void 
@@ -317,7 +317,7 @@ namespace boost {
       typename Graph::const_children_iterator i_child, j_child;
 
       //print graph/node/edge attributes
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
       typedef typename graph_property<Graph, graph_graph_attribute_t>::type 
         GAttrMap;
       typedef typename graph_property<Graph, graph_vertex_attribute_t>::type
@@ -352,7 +352,7 @@ namespace boost {
         if ( vertex_marker[pos] ) {
           vertex_marker[pos] = false;
           out << v;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, vertex_attribute_t>::const_type 
             VertexAttributeMap;
           attributes_writer<VertexAttributeMap> vawriter(get(vertex_attribute, 
@@ -372,7 +372,7 @@ namespace boost {
         if ( edge_marker[pos] ) {
           edge_marker[pos] = false;
           out << u << " " << Traits::delimiter() << " " << v;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, edge_attribute_t>::const_type
             EdgeAttributeMap;
           attributes_writer<EdgeAttributeMap> eawriter(get(edge_attribute, g));
