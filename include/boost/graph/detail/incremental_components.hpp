@@ -55,7 +55,8 @@ namespace boost {
       // Make the non-representative vertices point to their component
       Parent1 representative = component;
       for (Integer v = 0; v != num_nodes; ++v)
-        if (component[v] >= num_components || header[component[v]] != v)
+        if (component[v] >= num_components
+	    || header[component[v]] != v)
           component[v] = component[representative[v]];
       
       // initialize the "head" of the lists to "NULL"
@@ -73,13 +74,14 @@ namespace boost {
     void
     construct_component_index(IndexContainer& index, HeaderContainer& header)
     {
+      typedef typename IndexContainer::value_type Integer;
       build_components_header(index.begin(), 
                               std::back_inserter(header),
-                              index.end() - index.begin());
+                              Integer(index.end() - index.begin()));
       
       link_components(index.begin(), header.begin(),
-                      index.end() - index.begin(), 
-                      header.end() - header.begin());
+                      Integer(index.end() - index.begin()), 
+                      Integer(header.end() - header.begin()));
     }
     
     
