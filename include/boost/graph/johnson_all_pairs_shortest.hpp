@@ -67,7 +67,7 @@ namespace boost {
       typedef typename std::vector<DT>::iterator iter_t;
       iterator_property_map<iter_t, VertexID, DT, DT&> h(h_vec.begin(), id);
 
-      put(d, s, zero());
+      put(d, s, zero);
       if (bellman_ford_shortest_paths(g, num_vertices(g), params)) {
 	for (tie(v, v_end) = vertices(g); v != v_end; ++v)
 	  put(h, *v, get(d, *v));
@@ -107,7 +107,7 @@ namespace boost {
 	 w,
 	 choose_pmap(get_param(params, edge_weight2), g, edge_weight2),
 	 choose_param(get_param(params, distance_zero_t()), 
-                      generate_zero<WT>()) );
+                      WT()) );
     }
 
   } // namespace detail
