@@ -119,7 +119,7 @@ namespace boost {
        UniformCostVisitor vis)
     {
       typedef typename property_traits<WeightMap>::value_type T;
-      std::vector<T>::size_type n;
+      typename std::vector<T>::size_type n;
       n = is_default_param(distance) ? num_vertices(g) : 0;
       std::vector<T> distance_map(n);
       n = is_default_param(color) ? num_vertices(g) : 0;
@@ -134,24 +134,24 @@ namespace boost {
   }
 
   // Named Parameter Variant
-  template <class VertexListGraph, class W, class D, class C, class I, class V>
+  template <class VertexListGraph, class Param, class Tag, class Rest>
   inline void
   dijkstra_shortest_paths
     (VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
-     const bgl_named_params<W,D,C,I,V>& params)
+     const bgl_named_params<Param,Tag,Rest>& params)
   {
     // Default for edge weight and vertex index map is to ask for them
     // from the graph.  Default for the visitor is null_visitor.
     null_visitor null_vis;
     detail::dijkstra_dispatch(g, s, 
-			      params.m_dist_map,
-			      choose_param(params.m_weight_map,
+			      get_param(params, vertex_distance),
+			      choose_param(get_param(params, edge_weight),
 					   get(edge_weight, g)),
-			      params.m_color_map,
-			      choose_param(params.m_vertex_index_map,
+			      get_param(params, vertex_color),
+			      choose_param(get_param(params, vertex_index),
 					   get(vertex_index, g)),
-			      choose_param(params.m_visitor,
+			      choose_param(get_param(params, graph_visitor),
 					   make_ucs_visitor(null_vis)));
   }
 
