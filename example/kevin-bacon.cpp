@@ -34,16 +34,16 @@
 
 using namespace boost;
 
-template < typename DistanceMap > class bacon_number_recorder:public default_bfs_visitor
+template <typename DistanceMap>
+class bacon_number_recorder : public default_bfs_visitor
 {
 public:
-bacon_number_recorder(DistanceMap dist):d(dist) {
-  }
+  bacon_number_recorder(DistanceMap dist) : d(dist) { }
 
-  template < typename Edge, typename Graph >
-    void tree_edge(Edge e, const Graph & g) const
+  template <typename Edge, typename Graph>
+  void tree_edge(Edge e, const Graph& g) const
   {
-    typename graph_traits < Graph >::vertex_descriptor
+    typename graph_traits<Graph>::vertex_descriptor
       u = source(e, g), v = target(e, g);
       d[v] = d[u] + 1;
   }
@@ -53,7 +53,8 @@ private:
 
 // Convenience function
 template < typename DistanceMap >
-  bacon_number_recorder < DistanceMap > record_bacon_number(DistanceMap d)
+bacon_number_recorder<DistanceMap>
+record_bacon_number(DistanceMap d)
 {
   return bacon_number_recorder < DistanceMap > (d);
 }
