@@ -199,9 +199,9 @@ namespace boost {
       void write_attribute(std::ostream& out, 
                            const AttributeSequence& seq) const
       {
-        if (!attributes[e].empty()) {
+        if (!seq.empty()) {
           out << "[";
-          write_attributes(attributes[e], out);
+          write_attributes(seq, out);
           out << "]";
         }      
       }
