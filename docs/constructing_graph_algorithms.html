@@ -91,16 +91,16 @@ Checking</A> for more details about concept checking).
 Next we need to think about what vertex or edge properties will be
 used in the algorithm. In this case, the only property is vertex
 color. The most flexible way to specify access to vertex color is to
-use the propery accessor interface. This gives the user of the
+use the propery map interface. This gives the user of the
 algorithm the ability to decide how they want to store the properties.
 Since we will need to both read and write the colors we specify the
 requirements as <a
-href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
-<TT>key_type</TT> of the color accessor must be the
+href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+<TT>key_type</TT> of the color map must be the
 <TT>vertex_descriptor</TT> from the graph, and the <TT>value_type</TT>
 must be some kind of integer. We also specify the interface for the
-<TT>order</TT> parameter as a property accessor, in this case a <a
-href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. For
+<TT>order</TT> parameter as a property map, in this case a <a
+href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. For
 order, the <TT>key_type</TT> is an integer offset and the
 <TT>value_type</TT> is a <TT>vertex_descriptor</TT>. Again we enforce
 these requirements with concept checks. The return value of this
@@ -127,9 +127,9 @@ namespace boost {
     typedef typename property_traits&lt;Order&gt;::value_type OrderType;
 
     REQUIRE(VertexListGraph, VertexListGraph);
-    REQUIRE2(Color, vertex_descriptor, ReadWritePropertyAccessor);
+    REQUIRE2(Color, vertex_descriptor, ReadWritePropertyMap);
     REQUIRE(ColorType, Integer);
-    REQUIRE(Order, size_type, ReadablePropertyAccessor);
+    REQUIRE(Order, size_type, ReadablePropertyMap);
     REQUIRE_SAME_TYPE(OrderType, vertex_descriptor);
     
     size_type max_color = 0;

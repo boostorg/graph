@@ -21,7 +21,7 @@
 
 <H1>
 <pre>
-property_writer&lt;PropertyAccessor, OutputIterator, EventTag&gt;
+property_writer&lt;PropertyMap, OutputIterator, EventTag&gt;
 </pre>
 </H1>
 
@@ -75,10 +75,10 @@ href="../examples/dave.cpp"><tt>examples/dave.cpp</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PropertyAccessor</TT></TD>
+<TR><TD><TT>PropertyMap</TT></TD>
 <TD>
 A <a
-href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>,
+href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>,
 where the <tt>key_type</tt> is the vertex descriptor type or edge
 descriptor of the graph (depending on the kind of event tag), and
 the <tt>value_type</tt> of the property is convertible
@@ -135,10 +135,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-property_writer(PropertyAccessor pa, OutputIterator out);
+property_writer(PropertyMap pa, OutputIterator out);
 </tt></td>
 <td>
-Construct a property writer object with the property accessor
+Construct a property writer object with the property map
 <tt>pa</tt> and output iterator <tt>out</tt>.
 </td>
 </tr>
@@ -164,9 +164,9 @@ This writs the property value for <tt>x</tt> to the output iterator.<br>
 </tr>
 
 <tr><td><tt>
-template &lt;class PropertyAccessor, class OutputIterator, class Tag&gt;<br>
-property_writer&lt;PropertyAccessor, OutputIterator, Tag&gt;<br>
-write_property(PropertyAccessor pa, OutputIterator out, Tag);
+template &lt;class PropertyMap, class OutputIterator, class Tag&gt;<br>
+property_writer&lt;PropertyMap, OutputIterator, Tag&gt;<br>
+write_property(PropertyMap pa, OutputIterator out, Tag);
 </tt></td><td>
 A convenient way to create a <tt>property_writer</tt>.
 </td></tr>
@@ -199,9 +199,9 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  PropertyAccessor OutputIterator EventTag EventVisitor bfs dfs EventVisitorList
+<!--  LocalWords:  PropertyMap OutputIterator EventTag EventVisitor bfs dfs EventVisitorList
  -->
-<!--  LocalWords:  cpp num dtime ftime int WritablePropertyAccessor accessor
+<!--  LocalWords:  cpp num dtime ftime int WritablePropertyMap map
  -->
 <!--  LocalWords:  const Siek Univ Quan Lumsdaine
  -->

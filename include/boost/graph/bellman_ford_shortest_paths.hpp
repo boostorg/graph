@@ -104,8 +104,8 @@ namespace boost {
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
       Vertex;
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyAccessor);
+    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
     typedef typename property_traits<DistancePA>::value_type D_value;
     typedef typename property_traits<WeightPA>::value_type W_value;
     REQUIRE(D_value, LessThanComparable);
@@ -129,8 +129,8 @@ namespace boost {
     REQUIRE(EdgeListGraph, EdgeListGraph);
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor Vertex;
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyAccessor);
+    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
     typedef typename property_traits<DistancePA>::value_type D_value;
     typedef typename property_traits<WeightPA>::value_type W_value;
 

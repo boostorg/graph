@@ -40,7 +40,7 @@ function which returns a property map object.
 <Table>
 <TR>
 <TD><tt>G</tt></TD>
-<TD>A type that is a model of Graph.</TD>
+<TD>A type that is a model of PropertyGraph.</TD>
 </TR>
 
 <TR>
@@ -69,7 +69,7 @@ function which returns a property map object.
 </TR>
 
 <TR>
-<TD><tt>property</tt></TD>
+<TD><tt>p</tt></TD>
 <TD>An object of type <tt>Property</tt>.</td>
 </TR>
 
@@ -85,7 +85,7 @@ function which returns a property map object.
 <td>
 The type of the property map for the property specified by
 <TT>Property</TT>.  This type must be a model of <a
-href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a> with a key type the same as the graph's vertex or descriptor type.
+href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a> with a key type the same as the graph's vertex or descriptor type.
 </td>
 </tr>
 
@@ -95,7 +95,7 @@ href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyA
 <td>
 The type of the const property map for the property specified by
 <TT>Property</TT>. This type must be a model of <a
-href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>
+href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
 with a key type the same as the graph's vertex or edge descriptor type.
 </td>
 </tr>
@@ -112,22 +112,24 @@ with a key type the same as the graph's vertex or edge descriptor type.
 
 <tr>
 <td>Get Property Map</td>
-<td> <TT>get(property, g)</TT> </td>
+<td> <TT>get(p, g)</TT> </td>
 <TD><TT>boost::property_map&lt;G, Property&gt;::type</TT> 
       if <TT>g</TT> is mutable and <TT>boost::property_map&lt;G, Property&gt;::const_type</TT> otherwise.</TD>
 <td>
 Returns the property map object for the property specified by the
-<tt>Property</tt> type.
+<tt>Property</tt> type. The object <tt>p</tt> is only used to
+carry the type.
 </td>
 </TR>
 
 <tr>
 <td>Get Property</td>
-<td> <TT>get(property, g, x)</TT> </td>
+<td> <TT>get(p, g, x)</TT> </td>
 <TD><TT>boost::property_traits&lt;boost::property_map&lt;G, Property&gt;::type&gt;::value_type</TT></TD>
 <td>
 Returns the property (specified by the <tt>Property</tt> type)
 associated with object <tt>x</tt> (a vertex or edge).
+The object <tt>p</tt> is only used to carry the type.
 This function is equivalent to:<br>
 <tt>get(get(property, g), x)</tt>
 </td>
@@ -140,7 +142,7 @@ This function is equivalent to:<br>
 <td>
 Set the property (specified by the <tt>Property</tt> type)
 associated with object <tt>x</tt> (a vertex or edge) to
-the value <tt>v</tt>.
+the value <tt>v</tt>. The object <tt>p</tt> is only used to carry the type.
 This function is equivalent to:<br>
 <tt>put(get(property, g), x, v)</tt>
 </td>
@@ -183,7 +185,7 @@ The <tt>get()</tt> property map function must be constant time.
       ignore_unused_variable_warning(pmap);
     }
     void const_constraints(const G&amp; g) {
-      const_PA pmap = get(Property(), g);
+      const_PMap pmap = get(Property(), g);
       pval = get(Property(), g, x);
       ignore_unused_variable_warning(pmap);
     }

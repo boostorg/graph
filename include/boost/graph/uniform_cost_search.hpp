@@ -180,10 +180,10 @@ namespace boost {
     REQUIRE(VertexListGraph, VertexListGraph);
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     typedef typename graph_traits<VertexListGraph>::edge_descriptor Edge;
-    REQUIRE2(ColorPA, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(DistancePA, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(WeightPA, Edge, ReadablePropertyAccessor);
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyAccessor);
+    REQUIRE2(ColorPA, Vertex, ReadWritePropertyMap);
+    REQUIRE2(DistancePA, Vertex, ReadWritePropertyMap);
+    REQUIRE2(WeightPA, Edge, ReadablePropertyMap);
+    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
     typedef typename property_traits<DistancePA>::value_type D_value;
     typedef typename property_traits<WeightPA>::value_type W_value;
     typedef typename property_traits<ID_PA>::value_type ID_value;

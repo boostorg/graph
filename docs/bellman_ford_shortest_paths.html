@@ -43,15 +43,15 @@
 <PRE>
 (1)
 template &lt;class EdgeListGraph, class Size,
-          class WeightPA, class DistancePA&gt;
+          class WeightPMap, class DistancePMap&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-                                 WeightPA w, DistancePA d)
+                                 WeightPMap w, DistancePMap d)
 
 (2)
 template &lt;class EdgeListGraph, class Size, 
-          class WeightPA, class DistancePA, class BellmanFordVisitor&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightPA w, 
-                                 DistancePA d, BellmanFordVisitor visit)
+          class WeightPMap, class DistancePMap, class BellmanFordVisitor&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightPMap w, 
+                                 DistancePMap d, BellmanFordVisitor visit)
 </PRE>
 
 <P>
@@ -89,21 +89,21 @@ distances of the rest of the vertices to
      <a href="./EdgeListGraph.html">EdgeListGraph</a>.
 </LI>
 <LI>The type <TT>Distance</TT> must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     vertex descriptor type of the graph needs to be usable as the key
-    type of the distance accessor. The value type of the distance
-    accessor must be <a
+    type of the distance map. The value type of the distance
+    map must be <a
     href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.
 </LI>
 <LI>The <TT>Weight</TT> type must be a model of
-     <a href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. 
+     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. 
      The edge descriptor of the graph needs to be usable as the key
-     type for the weight accessor. The value type for the
-     weight accessor must be <I>Addable</I> with the
-     distance accessor's value type.
+     type for the weight map. The value type for the
+     weight map must be <I>Addable</I> with the
+     distance map's value type.
 </LI>
 <LI>The <TT>Parent</TT> type must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     value type and key type should be the graph's vertex descriptor
     type.
 </LI>

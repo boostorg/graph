@@ -193,19 +193,19 @@ The output is:
 Properties such as color, distance, weight, and user-defined
 properties can be attached to the vertices and edges of the graph
 using plugins. The property values can be read from and written to via
-the property accessors provided by the graph. The property accessors
+the property maps provided by the graph. The property maps
 are obtained via the <TT>get(property, g)</TT> function.  How to use
 plugins is described in Section <A
 HREF="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins
-</A>. The property accessors are objects that implement the interface
+</A>. The property maps are objects that implement the interface
 defined in Section <A
-HREF="../../property_accessor/property_accessor.html">Property
-Accessor Concepts</A>. The property accessors obtained from a const
+HREF="../../property_map/property_map.html">Property
+Map Concepts</A>. The property maps obtained from a const
 <TT>adjacency_list</TT> graph object are models of the <a
-href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>
-concept. The property accessors obtained from a mutable graph object
+href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
+concept. The property maps obtained from a mutable graph object
 are models of the <a
-href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>
+href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
 concept.
 
 <P>

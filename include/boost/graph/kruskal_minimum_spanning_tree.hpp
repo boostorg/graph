@@ -39,7 +39,7 @@
 #include <queue>
 #include <functional>
 
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/pending/indirect_cmp.hpp>
@@ -78,9 +78,9 @@ namespace boost {
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
     REQUIRE(Graph, VertexAndEdgeListGraph);
     REQUIRE2(OutputIterator, Edge, OutputIterator);
-    REQUIRE2(Rank, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(Parent, Vertex, ReadWritePropertyAccessor);
-    REQUIRE2(Weight, Edge, ReadablePropertyAccessor);
+    REQUIRE2(Rank, Vertex, ReadWritePropertyMap);
+    REQUIRE2(Parent, Vertex, ReadWritePropertyMap);
+    REQUIRE2(Weight, Edge, ReadablePropertyMap);
     typedef typename property_traits<Weight>::value_type W_value;
     typedef typename property_traits<Rank>::value_type R_value;
     typedef typename property_traits<Parent>::value_type P_value;

@@ -51,7 +51,7 @@
 
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 
 template <class Graph, class Capacity, class Flow>
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
   typedef boost::property_map<Graph, boost::edge_index>::type EdgeID_PA;
   EdgeID_PA edge_id = get(boost::edge_index(), G);
 
-  typedef boost::random_access_iterator_property_accessor
+  typedef boost::random_access_iterator_property_map
     <int*, int, int&, EdgeID_PA> RA_PA;
 
   print_network(G, RA_PA(capacity, edge_id), RA_PA(flow, edge_id));

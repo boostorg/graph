@@ -1,0 +1,91 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Property</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="../../../c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H2><A NAME="concept:Property"></A>
+Property
+</H2>
+
+A Property type is a type used to name or identity properties that are
+attached to the vertices and edges of a graph. A Property type is not
+the type of the actual property values. Objects of the Property type
+are not used except to carry the type information which specifies the
+property.
+
+<h3>Associated Types</h3>
+
+<table border>
+
+<tr>
+<td>Property Kind </td>
+<td><TT>Property::kind</TT> </td>
+<td>
+This specifies whether the property is a vertex property
+(<tt>vertex_property_tag</tt>), an edge property
+(<tt>edge_property_tag</tt>), or a property attached to the graph
+object itself (<tt>graph_property_tag</tt>). The tags are defined in
+<a
+href="../../../boost/graph/properties.hpp"><tt>boost/graph/properties.hpp</tt></a>
+</td>
+</tr>
+
+</table>
+
+
+<h3>Models</h3>
+
+<ul>
+  <li><tt>vertex_index</tt></li>
+  <li><tt>edge_index</tt></li>
+  <li><tt>graph_name</tt></li>
+  <li><tt>vertex_name</tt></li>
+  <li><tt>edge_name</tt></li>
+  <li><tt>edge_weight</tt></li>
+  <li><tt>vertex_distance</tt></li>
+  <li><tt>vertex_color</tt></li>
+  <li><tt>vertex_degree</tt></li>
+  <li><tt>vertex_out_degree</tt></li>
+  <li><tt>vertex_in_degree</tt></li>
+  <li><tt>vertex_discover_time</tt></li>
+  <li><tt>vertex_finish_time</tt></li>
+</ul>
+
+<h3>See Also</h3>
+
+<a href="./PropertyGraph.html">PropertyGraph</a>
+and
+<a href="../../property_map/property_map.html">Property Map Concepts</a>
+
+<h3>Notes</h3>
+
+On compilers that do not support partial specialization, each Property
+type is also required to contain an enum name <tt>num</tt> whose value
+uniquely identifies the property type.
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

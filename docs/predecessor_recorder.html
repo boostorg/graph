@@ -21,13 +21,13 @@
 
 <H1>
 <pre>
-predecessor_recorder&lt;PredecessorPA, EventTag&gt;
+predecessor_recorder&lt;PredecessorPMap, EventTag&gt;
 </pre>
 </H1>
 
 This is an <a href="./EventVisitor.html">EventVisitor</a> that records
 the predecessor (or parent) of a vertex in a predecessor property
-accessor. This is particularly useful in graph search algorithms where
+map. This is particularly useful in graph search algorithms where
 recording the predecessors is an efficient way to encode the search
 tree that was traversed during the search. The predecessor recorder is
 typically used with the <tt>on_tree_edge</tt> or
@@ -64,10 +64,10 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PredecessorPA</TT></TD>
+<TR><TD><TT>PredecessorPMap</TT></TD>
 <TD>
 A <a
-href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
+href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
 where the key type and the value type are the vertex descriptor type
 of the graph.
 </TD>
@@ -113,10 +113,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-predecessor_recorder(PredecessorPA pa);
+predecessor_recorder(PredecessorPMap pa);
 </tt></td>
 <td>
-Construct a predecessor recorder object with predecessor property accessor
+Construct a predecessor recorder object with predecessor property map
 <tt>pa</tt>.
 </td>
 </tr>
@@ -142,9 +142,9 @@ predecessor (or parent) of <i>v</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class PredecessorPA, class Tag&gt;<br>
-predecessor_recorder&lt;PredecessorPA, Tag&gt; <br>
-record_predecessors(PredecessorPA pa, Tag);
+template &lt;class PredecessorPMap, class Tag&gt;<br>
+predecessor_recorder&lt;PredecessorPMap, Tag&gt; <br>
+record_predecessors(PredecessorPMap pa, Tag);
 </tt></td><td>
 A convenient way to create a <tt>predecessor_recorder</tt>.
 </td></tr>
@@ -177,9 +177,9 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  PredecessorPA EventTag EventVisitor accessor bfs dfs const
+<!--  LocalWords:  PredecessorPMap EventTag EventVisitor map bfs dfs const
  -->
-<!--  LocalWords:  EventVisitorList WritablePropertyAccessor Siek Univ Quan
+<!--  LocalWords:  EventVisitorList WritablePropertyMap Siek Univ Quan
  -->
 <!--  LocalWords:  Lumsdaine
  -->

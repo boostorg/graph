@@ -30,7 +30,7 @@
 
 // A visitor class for accumulating the total length of the minimum
 // spanning tree. The Distance template parameter is for a
-// PropertyAccessor.
+// PropertyMap.
 template <class Distance>
 struct total_length_visitor : public boost::ucs_visitor<> {
   typedef typename boost::property_traits<Distance>::value_type D;

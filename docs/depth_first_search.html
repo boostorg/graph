@@ -55,8 +55,8 @@ template &lt;class VertexListGraph, class DFSVisitor&gt;
 void depth_first_search(VertexListGraph&amp; G, DFSVisitor v);
 
 (2)
-template &lt;class VertexListGraph, class DFSVisitor, class ColorPA&gt;
-void depth_first_search(VertexListGraph&amp; G, DFSVisitor v, ColorPA c);
+template &lt;class VertexListGraph, class DFSVisitor, class ColorPMap&gt;
+void depth_first_search(VertexListGraph&amp; G, DFSVisitor v, ColorPMap c);
 </PRE>
 
 <P>
@@ -98,11 +98,11 @@ component algorithms.
 </LI>
 <LI>In version (1) of the algorithm the graph must be a model of <a
     href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
-    <TT>vertex_color</TT> and the color property accessor for the graph
+    <TT>vertex_color</TT> and the color property map for the graph
     must meet the same requirements as <TT>Color</TT>.
 </LI>
-<LI>The type <TT>ColorPA</TT> must be a model of <a
-     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>, and the value type of <TT>Color</TT> must be a model of
+<LI>The type <TT>ColorPMap</TT> must be a model of <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, and the value type of <TT>Color</TT> must be a model of
      <a href="./ColorValue.html">ColorValue</a>.
 </LI>
 <LI>The <tt>DFSVisitor</tt> type must be a model of <a

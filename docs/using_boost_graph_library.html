@@ -394,11 +394,11 @@ the edges of the graph.
 
 <P>
 The property values are then read from and written to using property
-accessors. See Section <A HREF="#sec:interior-properties">Interior
-Properties</A> for a description of how to obtain property accessors
+maps. See Section <A HREF="#sec:interior-properties">Interior
+Properties</A> for a description of how to obtain property maps
 from a graph, and read Section <A
-HREF="./using_property_accessors.html">Property Accessors</A> for how
-to use property accessors.
+HREF="./using_property_maps.html">Property Maps</A> for how
+to use property maps.
 
 <P>
 
@@ -430,7 +430,7 @@ just as you would one of the builtin tags.
 </PRE>
 
 <P>
-Just as before, the property accessors for these properties can be
+Just as before, the property maps for these properties can be
 obtained from the graph via the
 <TT>get(Plugin, g)</TT> function.
 
@@ -503,10 +503,10 @@ owes who''.
 The <TT>who_owes_who()</TT> function written for this example was
 implemented in a generic style. The input is templated so we do not
 know the actual graph type. To find out the type of the property
-accessor for our first name property, we need to use the
+map for our first name property, we need to use the
 <TT>property_map</TT> traits class. The <TT>const_type</TT>
 is used since the graph parameter is const. Once we have the property
-accessor type, we can deduce the value type of the property using the
+map type, we can deduce the value type of the property using the
 <TT>property_traits</TT> class. In this example, we know that the
 property's value type will be <TT>std::string</TT>, but written in this
 generic fashion the <TT>who_owes_who()</TT> function could work with
@@ -519,10 +519,10 @@ other property value types.
   {
     // Access the propety acessor type for this graph
     typedef typename property_map&lt;Graph, 
-      first_vertex_name&gt;::const_type NamePA;
-    NamePA name = get(first_vertex_name(), G);
+      first_vertex_name&gt;::const_type NamePMap;
+    NamePMap name = get(first_vertex_name(), G);
 
-    typedef typename boost::property_traits&lt;NamePA&gt;
+    typedef typename boost::property_traits&lt;NamePMap&gt;
       ::value_type NameType;
 
     NameType src_name, targ_name;
@@ -552,7 +552,7 @@ Kinis owes Rich some money
 </PRE>
 
 The complete source code to this example is in the file
-<TT>interior_property_accessor.cpp</TT>.
+<TT>interior_property_map.cpp</TT>.
 
 <P>
 

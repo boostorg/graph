@@ -30,7 +30,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/pending/mutable_heap.hpp>
 #include <boost/pending/is_heap.hpp>
 #include <boost/graph/detail/array_binary_tree.hpp>
@@ -53,7 +53,7 @@ namespace boost {
   template <class IndexedType, 
             class RandomAccessContainer = std::vector<IndexedType>, 
             class Comp = std::less<typename RandomAccessContainer::value_type>,
-            class ID = identity_property_accessor >
+            class ID = identity_property_map >
   class mutable_queue {
   public:
     typedef IndexedType value_type;

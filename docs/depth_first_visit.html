@@ -50,10 +50,10 @@
 
 <P>
 <PRE>
-template &lt;class IncidenceGraph, class DFSVisitor, class ColorPA&gt;
+template &lt;class IncidenceGraph, class DFSVisitor, class ColorPMap&gt;
 void depth_first_visit(IncidenceGraph& g,
 	               typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor u, 
-	               DFSVisitor&amp; vis, ColorPA color)
+	               DFSVisitor&amp; vis, ColorPMap color)
 </PRE>
 
 <P>
@@ -75,8 +75,8 @@ own.
 <LI>The type <TT>DFSVisitor</TT> must be a model of <a
 href="./DFSVisitor.html">DFSVisitor</a>.
 </LI>
-<LI>The type <TT>ColorPA</TT> must be a model of <a
-     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>, and the value type of <TT>Color</TT> must be a model of
+<LI>The type <TT>ColorPMap</TT> must be a model of <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, and the value type of <TT>Color</TT> must be a model of
      <a href="./ColorValue.html">ColorValue</a>.
 </LI>
 </UL>

@@ -171,7 +171,7 @@ graph type, the <TT>graph_traits</TT> class will provide access to the
 The following example prints out the ID for each of the vertices in
 the graph. All vertex and edge properties, including ID, are accessed
 via property map objects.  The <TT>property_map</TT>
-class is used to obtain the property accessor type for a specific
+class is used to obtain the property map type for a specific
 property (specified by <TT>vertex_index</TT>, one of the BGL
 predefined tags) and function call <TT>get(vertex_index(), g)</TT>
 returns the actual property map object.
@@ -183,7 +183,7 @@ returns the actual property map object.
   {
     // ...
 
-    // get the property accessor for vertex ID's
+    // get the property map for vertex ID's
     typedef property_map&lt;Graph, vertex_index&gt;::type ID;
     ID id = get(vertex_index(), g);
 
@@ -301,7 +301,7 @@ difference is hidden underneath the &quot;black-box&quot; of the vertex
 descriptor object. The vertex descriptor is something provided by each
 graph type that can be used to access information about the graph via
 the <TT>out_edges()</TT>, <TT>in_edges()</TT>,
-<TT>adjacent_vertices()</TT>, and property accessor functions that are
+<TT>adjacent_vertices()</TT>, and property map functions that are
 described in the following sections. The <TT>vertex_descriptor</TT>
 type is obtained through the <TT>graph_traits</TT> class. The
 <TT>typename</TT> keyword used below is necessary because the type on
@@ -461,12 +461,12 @@ separately from the graph object. The first kind of property is called
 an <I>internally stored property</I> while the second kind is called
 an <I>externally stored property</I>.  BGL uses a uniform mechanism to
 access both kinds of properties inside its graph algorithms called the
-<I>property accessor</I> interface, described in Section <a
-href="../../property_accessor.html">Property Accessor Concepts</a>. In
+<I>property map</I> interface, described in Section <a
+href="../../property_map.html">Property Map Concepts</a>. In
 addition, the <a
 href="./VertexPropertyGraph.html">VertexPropertyGraph</a> and <a
 href="./EdgePropertyGraph.html">EdgePropertyGraph</a> concepts define
-the interface for obtaining a property accessor object for an
+the interface for obtaining a property map object for an
 internally property.
 
 <P>
@@ -480,7 +480,7 @@ algorithms.  One straightforward way to store properties is to create
 an array indexed by vertex or edge ID. In the <TT>adjacency_list</TT>
 with <TT>vecS</TT> specified for the <TT>VertexList</TT> template
 parameter, vertices are automatically assigned ID numbers, which can
-be accessed via the property accessor for the <TT>vertex_index</TT>. Edges
+be accessed via the property map for the <TT>vertex_index</TT>. Edges
 are not automatically assigned ID numbers. However the plugin
 mechanism can be used to attach ID numbers to the edges which can be
 used to index into other externally stored properties.
@@ -538,7 +538,7 @@ href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessI
 <P>
 For the external distance property we will use a <TT>std::vector</TT>
 for storage. BGL algorithms treat random access iterators as property
-accessors, so we can just pass the beginning iterator of the distance
+maps, so we can just pass the beginning iterator of the distance
 vector to Dijkstra's algorithm. Continuing the above example, the
 following code shows the creation of the distance vector, the call to
 Dijkstra's algorithm (implicitly using the internal edge weight
@@ -610,24 +610,24 @@ href="./UniformCostVisitor.html">UniformCostVisitor</a>).
 The functionality of the <tt>record_predecessors</tt> visitor is
 separated into two parts. For the storage and access of the
 predecessor property, we will use a <a
-href="../../property_accessor/property_accessor.html">property
-accessor</a>. The predecessor visitor will then only be responsible
+href="../../property_map/property_map.html">property
+map</a>. The predecessor visitor will then only be responsible
 for what parent to record.  To implement this, we create a
 <TT>record_predecessors</TT> class and template it on the predecessor
-property accessor <TT>PredecessorAccessor</TT>. Since this visitor
+property map <TT>PredecessorMap</TT>. Since this visitor
 will only be filling in one of the visitor methods, we will inherit
 from <a href="./ucs_visitor.html"><TT>ucs_visitor</TT></a> which will
 provide empty methods for the rest.  The constructor of the
-<TT>predecessor_recorder</TT> will take the property accessor object
+<TT>predecessor_recorder</TT> will take the property map object
 and save it away in a data member.
 
 <P>
 <PRE>
-  template &lt;class PredecessorAccessor&gt;
+  template &lt;class PredecessorMap&gt;
   class record_predecessors : public ucs_visitor&lt;&gt;
   {
   public:
-    record_predecessors(PredecessorAccessor p)
+    record_predecessors(PredecessorMap p)
       : m_predecessor(p) { }
 
     template &lt;class Edge, class Graph&gt;
@@ -636,7 +636,7 @@ and save it away in a data member.
       put(m_predecessor, target(e, g), source(e, g));
     }
   protected:
-    PredecessorAccessor m_predecessor;
+    PredecessorMap m_predecessor;
   };
 </PRE>
 
@@ -646,7 +646,7 @@ algorithm relaxes an edge (potentially adding it to the shortest-paths
 tree) we record the source vertex as the predecessor of the target
 vertex. Later, if the edge is relaxed again the predecessor property
 will be overwritten by the new predecessor. Here we use the
-<TT>put()</TT> function associated with the property accessor to
+<TT>put()</TT> function associated with the property map to
 record the predecessor. The <TT>edge_filter</TT> of the visitor tells
 the algorithm when to invoke the <TT>explore()</TT> method. In this
 case we only want to be notified about edges in the shortest-paths
@@ -659,10 +659,10 @@ helper function like this.
 
 <P>
 <PRE>
-  template &lt;class PredecessorAccessor&gt;
-  record_predecessors&lt;PredecessorAccessor&gt;
-  make_predecessor_recorder(PredecessorAccessor p) {
-    return record_predecessors&lt;PredecessorAccessor&gt;(p);
+  template &lt;class PredecessorMap&gt;
+  record_predecessors&lt;PredecessorMap&gt;
+  make_predecessor_recorder(PredecessorMap p) {
+    return record_predecessors&lt;PredecessorMap&gt;(p);
   }
 </PRE>
 
@@ -716,7 +716,7 @@ The output is:
 </HTML> 
 <!--  LocalWords:  STL BGL cpp vecS bidirectionalS directedS undirectedS hpp vp
  -->
-<!--  LocalWords:  iostream namespace ggcl int const num sizeof accessor ID's
+<!--  LocalWords:  iostream namespace ggcl int const num sizeof map ID's
  -->
 <!--  LocalWords:  iter ei interoperability struct typename GraphTraits src ai
  -->

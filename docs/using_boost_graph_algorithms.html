@@ -110,13 +110,13 @@ descriptor object.
 
 <P>
 
-<H2>The Property Accessor Parameters</H2>
+<H2>The Property Map Parameters</H2>
 
 <P>
 The next four parameters to Dijkstra's algorithm are property
-accessors. Much of the flexibility of BGL comes from property
-accessors, so this deserves some discussion. As the name implies, a
-property accessor provides a mechanism for reading and writing to
+maps. Much of the flexibility of BGL comes from property
+maps, so this deserves some discussion. As the name implies, a
+property map provides a mechanism for reading and writing to
 properties that are attached to vertices or edges of a graph.
 <I>Internal</I> properties are stored inside of a graph object
 while <I>external</I> properties are not. 
@@ -128,16 +128,16 @@ Internal Properties</A>
 </H3>
 
 <P>
-Property accessors for internal properties are always obtained via the
+Property maps for internal properties are always obtained via the
 interface defined in <a href="./PropertyGraph.html">PropertyGraph</a>.
 This interface defines a traits class <TT>property_map</TT> and a
 function <TT>get(property, g)</TT> which returns a property map
 object.  The traits classes are used to obtain the <I>type</I> of the
-property accessor given some graph type and a property tag. The
+property map given some graph type and a property tag. The
 property tag determines which property will be accessed (more than one
 property can be attached to the vertices or edges of the graph). The
-functions are used to obtain the property accessor <I>objects</I>.
-The following code snippet shows how to create a property accessor for
+functions are used to obtain the property map <I>objects</I>.
+The following code snippet shows how to create a property map for
 the distance and weight properties of graph <TT>G</TT>.
 
 <P>
@@ -195,15 +195,15 @@ reason (yes, programs can and do have histories!).
 
 <P>
 For the most part, it is up to the user to create the appropriate
-property accessor for their extrnal properties. A typical property
-accessor class requires only a few lines of code, so this is not
+property map for their extrnal properties. A typical property
+map class requires only a few lines of code, so this is not
 difficult to do.
 
 <P>
-BGL does provide one builtin external property accessor, the
-<TT>random_access_iterator_property_accessor</TT>
+BGL does provide one builtin external property map, the
+<TT>random_access_iterator_property_map</TT>
 which provides a convient way to wrap up a random access iterator for
-use as a property accessor. This adaptor uses the vertex or edge ID
+use as a property map. This adaptor uses the vertex or edge ID
 property as an index with the random access iterator. Normal builtin
 arrays and pointers to arrays are examples of storage that naturally
 have random access iterators. Many of the BGL examples use arrays for

@@ -10,7 +10,7 @@
 #include <vector>
 #include <functional>
 #include <boost/config.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 //
 // An adaptation of Knuth's Fibonacci heap implementation
@@ -22,7 +22,7 @@ namespace boost {
 
 template <class T, 
           class Compare = std::less<T>,
-          class ID = identity_property_accessor>
+          class ID = identity_property_map>
 class fibonacci_heap
 {
   typedef typename boost::property_traits<ID>::value_type size_type;
@@ -35,7 +35,7 @@ public:
 
   fibonacci_heap(size_type n, 
 		 const Compare& cmp, 
-		 const ID& id = identity_property_accessor())
+		 const ID& id = identity_property_map())
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
 #ifdef BOOST_MSVC

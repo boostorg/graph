@@ -59,23 +59,23 @@
                       BinaryPredicate compare, BinaryFunction combine);
 
   (2)
-  template &lt;class VertexListGraph, class DistancePA, class WeightPA,
+  template &lt;class VertexListGraph, class DistancePMap, class WeightPMap,
             class BinaryPredicate, class BinaryFunction&gt;
   void
   uniform_cost_search(VertexListGraph& g,
                       typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-	              DistancePA distance, WeightPA weight,
+	              DistancePMap distance, WeightPMap weight,
 	              BinaryPredicate compare, BinaryFunction combine);
 
   (3)
   template &lt;class VertexListGraph,
-            class DistancePA, class WeightPA, class ColorPA, class ID_PA,
+            class DistancePMap, class WeightPMap, class ColorPMap, class ID_PMap,
             class BinaryPredicate, class BinaryFunction,
             class UniformCostVisitor&gt;
   void
   uniform_cost_search(VertexListGraph& g,
                       typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor  s,
-                      DistancePA distance, WeightPA weight, ColorPA color, ID_PA id, 
+                      DistancePMap distance, WeightPMap weight, ColorPMap color, ID_PMap id, 
                       BinaryPredicate compare, BinaryFunction combine,
                       UniformCostVisitor vis);
 </PRE>
@@ -101,7 +101,7 @@ the distance properties prior to calling
 <TT>uniform_cost_search()</TT> .
 
 <pre>
-  typedef typename property_traits&lt;DistancePA&gt;::value_type D;
+  typedef typename property_traits&lt;DistancePMap&gt;::value_type D;
   typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
   for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
     put(distance, *ui, std::numeric_limits&lt;D&gt;::max());
@@ -129,65 +129,65 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <LI>The <TT>BinaryPredicate</TT> type must be a model of <a
       href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>
       and have argument types that match the value type of the
-      <TT>DistancePA</TT> property accessor.
+      <TT>DistancePMap</TT> property map.
 
 <P>
 </LI>
 <LI>The <TT>BinaryFunction</TT> type must be a model of <a
      href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
-      type of the <TT>DistancePA</TT> property accessor and the second
-      argument type must match the value type of the <TT>WeightPA</TT>
-      property accessor.  The result type must be the same type as the
+      type of the <TT>DistancePMap</TT> property map and the second
+      argument type must match the value type of the <TT>WeightPMap</TT>
+      property map.  The result type must be the same type as the
       distance value type.
 
 <P>
 </LI>
 <LI>In version (1) the graph must be a <a
     href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
-    <TT>vertex_distance</TT> where the property accessor for the graph
-    meets the same requirements as for <TT>DistancePA</TT>. The graph
+    <TT>vertex_distance</TT> where the property map for the graph
+    meets the same requirements as for <TT>DistancePMap</TT>. The graph
     must also be a <a
     href="./EdgePropertyGraph.html">EdgePropertyGraph</a> for
-    <TT>edge_weight</TT> where the property accessor for the grpah
-    meets the same requirements for <TT>WeightPA</TT> below.
+    <TT>edge_weight</TT> where the property map for the grpah
+    meets the same requirements for <TT>WeightPMap</TT> below.
 
 <P>
 </LI>
 <LI>In version (1) and (2) the graph must be a <a
     href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
     <TT>vertex_color</TT> and <TT>vertex_index</TT>, where the property
-    accessor for the graph meet the same requirements as for
-    <TT>ColorPA</TT> and <TT>ID_PA</TT> below.
+    map for the graph meet the same requirements as for
+    <TT>ColorPMap</TT> and <TT>ID_PMap</TT> below.
 
 <P>
 </LI>
-<LI>The type <TT>DistancePA</TT> must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+<LI>The type <TT>DistancePMap</TT> must be a model of <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     vertex descriptor type of the graph needs to be usable as the key
-    type of the distance accessor.
+    type of the distance map.
 
 <P>
 </LI>
-<LI>The type <TT>WeightPA</TT> must be a model of <a
-     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+<LI>The type <TT>WeightPMap</TT> must be a model of <a
+     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
      edge descriptor type of the graph needs to be usable as the key
-     type for the weight accessor.
+     type for the weight map.
 
 <P>
 </LI>
-<LI>The type <TT>ColorPA</TT> must be a model of <a
-     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. A
-     vertex descriptor must be usable as the key type of the accessor,
-     and the value type of the accessor must be a model of
+<LI>The type <TT>ColorPMap</TT> must be a model of <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A
+     vertex descriptor must be usable as the key type of the map,
+     and the value type of the map must be a model of
      <a href="./ColorValue.html">ColorValue</a>.
 
 <P>
 </LI>
-<LI>The type <TT>ID_PA</TT> must be a model of <a
-     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
-     value type of <TT>ID_PA</TT> must be an integer type. The vertex
+<LI>The type <TT>ID_PMap</TT> must be a model of <a
+     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
+     value type of <TT>ID_PMap</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
-     of the ID accessor.
+     of the ID map.
 
 <P>
 </LI>

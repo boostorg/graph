@@ -45,7 +45,7 @@
 #include <utility>
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 #define SAW_SENTINAL -1
 
@@ -419,11 +419,11 @@ namespace boost {
 
   template <class Tri, class HList, class Iter>
   inline 
-  SAW_visitor< random_access_iterator_property_accessor<Tri*,Tri,Tri&>,
-    HList, random_access_iterator_property_accessor<Iter*,Iter,Iter&> >
+  SAW_visitor< random_access_iterator_property_map<Tri*,Tri,Tri&>,
+    HList, random_access_iterator_property_map<Iter*,Iter,Iter&> >
   visit_SAW_ptr(Tri* t, HList hl, Iter* i) {
-    typedef random_access_iterator_property_accessor<Tri*,Tri,Tri&> TriD;
-    typedef random_access_iterator_property_accessor<Iter*,Iter,Iter&> IterD;
+    typedef random_access_iterator_property_map<Tri*,Tri,Tri&> TriD;
+    typedef random_access_iterator_property_map<Iter*,Iter,Iter&> IterD;
     return SAW_visitor<TriD, HList, IterD>(t, hl, i);
   }
 

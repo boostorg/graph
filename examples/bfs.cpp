@@ -31,7 +31,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 /*
   

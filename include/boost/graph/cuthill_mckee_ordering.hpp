@@ -35,7 +35,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/indirect_cmp.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/pending/fenced_priority_queue.hpp>
 
 /*

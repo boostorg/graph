@@ -93,7 +93,7 @@ namespace boost {
     typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
     typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
     REQUIRE2(BFSVisitor, IncidenceGraph, BFSVisitor);
-    REQUIRE2(ColorPA, Vertex, ReadWritePropertyAccessor);
+    REQUIRE2(ColorPA, Vertex, ReadWritePropertyMap);
     typename property_traits<ColorPA>::value_type c = get(color, s);
 
     put(color, s, gray(c));

@@ -29,7 +29,7 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/concept_checks.hpp>
 
@@ -260,8 +260,8 @@ namespace boost {
     typedef typename property_map<G, Property>::const_type const_PMap;
     void constraints() {
       REQUIRE(G, Graph);
-      REQUIRE2(PMap, X, ReadWritePropertyAccessor);
-      REQUIRE2(const_PMap, X, ReadablePropertyAccessor);
+      REQUIRE2(PMap, X, ReadWritePropertyMap);
+      REQUIRE2(const_PMap, X, ReadablePropertyMap);
 
       PMap pmap = get(Property(), g);
 #if 0
@@ -291,8 +291,8 @@ namespace boost {
     typedef typename property_map<G, Property>::const_type const_PA;
     void constraints() {
       REQUIRE(G, Graph);
-      REQUIRE2(PA, Vertex, ReadWritePropertyAccessor);
-      REQUIRE2(const_PA, Vertex, ReadablePropertyAccessor);
+      REQUIRE2(PA, Vertex, ReadWritePropertyMap);
+      REQUIRE2(const_PA, Vertex, ReadablePropertyMap);
 
       PA pa = get(Property(), g);
       ignore_unused_variable_warning(pa);
@@ -312,8 +312,8 @@ namespace boost {
     typedef typename property_map<G, Property>::const_type const_PA;
     void constraints() {
       REQUIRE(G, Graph);
-      REQUIRE2(PA, Edge, ReadWritePropertyAccessor);
-      REQUIRE2(const_PA, Edge, ReadablePropertyAccessor);
+      REQUIRE2(PA, Edge, ReadWritePropertyMap);
+      REQUIRE2(const_PA, Edge, ReadablePropertyMap);
 
       PA pa = get(Property(), g);
     }

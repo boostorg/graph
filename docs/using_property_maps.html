@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: Using Property Accessors</Title>
+<Title>Boost Graph Library: Using Property Maps</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -20,8 +20,8 @@
 <BR Clear>
 
 
-<H1><A NAME="sec:property-accessors"></A>
-Property Accessors
+<H1><A NAME="sec:property-maps"></A>
+Property Maps
 </H1>
 
 <P>
@@ -31,31 +31,31 @@ are attached to the vertices and edges of a graph, things like
 distance, capacity, weight, color, etc. There are many ways to attach
 properties to graph in terms of data-structure implementation, but
 graph algorithms should not have to deal with the implementation
-details of the properties. The <I>property accessor</I> interface
+details of the properties. The <I>property map</I> interface
 defined in Section <A
-HREF="../../property_accessor/property_accessor.html">Property
-Accessor Concepts</A> provides a generic method for accessing
+HREF="../../property_map/property_map.html">Property
+Map Concepts</A> provides a generic method for accessing
 properties from graphs. This is the interface used in the BGL
 algorithms to access properties.
 
 <P>
 
-<H2>Property Accessor Interface</H2>
+<H2>Property Map Interface</H2>
 
 <P>
-The property accessor interface specifies that each property is
-accessed using a separate property accessor object. In the following
+The property map interface specifies that each property is
+accessed using a separate property map object. In the following
 example we show an implementation of the <TT>relax()</TT> function used
 inside of Dijkstra's shortest paths algorithm.  In this function, we
 need to access the weight property of an edge, and the distance
 property of a vertex. We write <TT>relax()</TT> as a template function
 so that it can be used in many difference situations. Two of the
 arguments to the function, <TT>weight</TT> and <TT>distance</TT>, are the
-property accessor objects. In general, BGL algorithms explicitly pass
-property accessor objects for every property that a function will
-need. The property accessor interface defines several functions, two
+property map objects. In general, BGL algorithms explicitly pass
+property map objects for every property that a function will
+need. The property map interface defines several functions, two
 of which we use here: <TT>get()</TT> and <TT>put()</TT>. The <TT>get()</TT>
-function takes a property accessor object, such as <TT>distance</TT> and
+function takes a property map object, such as <TT>distance</TT> and
 a <I>key</I> object. In the case of the distance property we are using
 the vertex objects <TT>u</TT> and <TT>v</TT> as keys. The <TT>get()</TT>
 function then returns the property value for the vertex.
@@ -63,11 +63,11 @@ function then returns the property value for the vertex.
 <P>
 <PRE>
   template &lt;class Edge, class Graph,
-            class WeightPropertyAccessor, 
-            class DistancePropertyAccessor&gt;
+            class WeightPropertyMap, 
+            class DistancePropertyMap&gt;
   bool relax(Edge e, const Graph&amp; g, 
-             WeightPropertyAccessor weight, 
-             DistancePropertyAccessor distance)
+             WeightPropertyMap weight, 
+             DistancePropertyMap distance)
   {
     typedef typename graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
     Vertex u = source(e,g), v = target(e,g);
@@ -80,16 +80,16 @@ function then returns the property value for the vertex.
 </PRE>
 
 The function <TT>get()</TT> returns a copy of the property value.  There
-is a third function in the property accessor interface, <TT>at()</TT>,
+is a third function in the property map interface, <TT>at()</TT>,
 that returns a reference to the property value (a const reference if
-the accessor is not mutable).
+the map is not mutable).
 
 <P>
 Similar to the <TT>iterator_traits</TT> class of the STL, there is a
 <TT>property_traits</TT> class that can be used to deduce the types
-associated with a property accessor type: the key and value types, and
-the property accessor category (which is used to tell whether the
-accessor is readable, writeable, or both). In the <TT>relax()</TT>
+associated with a property map type: the key and value types, and
+the property map category (which is used to tell whether the
+map is readable, writeable, or both). In the <TT>relax()</TT>
 function we could have used <TT>property_traits</TT> to declare local
 variables of the distance property type.
 
@@ -98,7 +98,7 @@ variables of the distance property type.
   {
     typedef typename graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
     Vertex u = source(e,g), v = target(e,g);
-    typename property_traits&lt;DistancePropertyAccessor&gt;::value_type
+    typename property_traits&lt;DistancePropertyMap&gt;::value_type
       du, dv; // local variables of the distance property type
     du = get(distance, u);
     dv = get(distance, v);
@@ -128,7 +128,7 @@ object and the lifetime of the property value objects is independent
 of the graph. This is useful for properties that are only needed
 temporarily, perhaps for the duration of a particular algorithm such
 as the color property used in <TT>breadth_first_search()</TT>.  When
-using exterior properties with a BGL algorithm a property accessor
+using exterior properties with a BGL algorithm a property map
 object for the exterior property must be passed as an argument to the
 algorithm.
 </DD>
@@ -142,7 +142,7 @@ Interior Properties
 
 <P>
 A graph type that supports interior property storage (such as
-<TT>adjacency_list</TT>) provides access to its property accessor
+<TT>adjacency_list</TT>) provides access to its property map
 objects through the interface defined in <a
 href="./PropertyGraph.html">PropertyGraph</a>.  There is a function
 <TT>get(Property, g)</TT> that get property map objectgs from a
@@ -166,20 +166,20 @@ type.
 </PRE>
 
 <P>
-In general, the BGL algorithms require all property accessors needed
+In general, the BGL algorithms require all property maps needed
 by the algorithm to be explicitly passed to the algorithm. For
 example, the BGL Dijkstra's shortest paths algorithm requires four
-property accessors: distance, weight, color, and vertex ID.
+property maps: distance, weight, color, and vertex ID.
 
 <P>
 <PRE>
   template &lt;class Graph, class Vertex, class Visitor, 
-            class DistanceAccessor, class WeightAccessor, 
-            class ColorAccessor, class VertexIDAccessor&gt;
+            class DistanceMap, class WeightMap, 
+            class ColorMap, class VertexIDMap&gt;
   void
   dijkstra_shortest_paths(Graph&amp; G, Vertex s, 
-                          DistanceAccessor d, WeightAccessor w, 
-                          ColorAccessor c, VertexIDAccessor id,
+                          DistanceMap d, WeightMap w, 
+                          ColorMap c, VertexIDMap id,
                           Visitor visit)
 </PRE>
 
@@ -197,7 +197,7 @@ graph, so one would call Dijkstra's algorithm in the following way
 
 <P>
 Since it is somewhat cumbersome to specify all of the property
-accessors, BGL provides several ``short-cut'' interfaces to each
+maps, BGL provides several ``short-cut'' interfaces to each
 algorithm that assume some of the properties are interior and can be
 accessed via <TT>get(Property, g)</TT> from the graph. Below we show a
 call to variant 1 of the <TT>dijkstra_shortest_paths</TT> algorithm,
@@ -226,23 +226,23 @@ Exterior Properties
 
 <P>
 In this section we will describe two methods for constructing exterior
-property accessors, however there is an unlimited number of ways that
+property maps, however there is an unlimited number of ways that
 one could create exterior properties for a graph.
 
 <P>
 The first method uses the adaptor class
-<TT>random_access_iterator_property_accessor</TT>. This
-class wraps a random access iterator, creating a property accessor out
+<TT>random_access_iterator_property_map</TT>. This
+class wraps a random access iterator, creating a property map out
 of it. The random access iterator must point to the beginning of a
 range of property values, and the length of the range must be the
 number of vertices or edges in the graph (depending on whether it is a
-vertex or edge property accessor). The adaptor must also be supplied
-with an ID property accessor, which will be used to map the vertex or
+vertex or edge property map). The adaptor must also be supplied
+with an ID property map, which will be used to map the vertex or
 edge descriptor to the offset of the property value (offset from the
-random access iterator). The ID property accessor will typically be an
-interior property accessor of the graph.  The following example shows
-how the <TT>random_access_iterator_property_accessor</TT>
-can be used to create exterior property accessors for the capactity
+random access iterator). The ID property map will typically be an
+interior property map of the graph.  The following example shows
+how the <TT>random_access_iterator_property_map</TT>
+can be used to create exterior property maps for the capactity
 and flow properties, which are stored in arrays. The arrays are
 indexed by edge ID. The edge ID is added to the graph using a plugin,
 and the values of the ID's are given when each edge is added to the
@@ -267,11 +267,11 @@ the flow and capacity values.
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_PA;
-  EdgeID_PA edge_id = get(edge_index(), G);
+  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_PMap;
+  EdgeID_PMap edge_id = get(edge_index(), G);
 
-  boost::random_access_iterator_property_accessor
-    &lt;int*, int, int&amp;, EdgeID_PA&gt; 
+  boost::random_access_iterator_property_map
+    &lt;int*, int, int&amp;, EdgeID_PMap&gt; 
       capacity(capacity_array, edge_id), 
       flow(flow_array, edge_id);
 
@@ -280,28 +280,28 @@ the flow and capacity values.
 
 <P>
 The second method uses a pointer type (a pointer to an array of
-property values) as a property accessor. This requires the key type to
+property values) as a property map. This requires the key type to
 be an integer so that it can be used as an offset to the pointer. The
 <TT>adjacency_list</TT> class with template parameter
 <TT>VertexList=vecS</TT> uses integers for vertex descriptors (indexed
 from zero to the number of vertices in the graph), so they are
-suitable as the key type for a pointer property accessor. When the
+suitable as the key type for a pointer property map. When the
 <TT>VertexList</TT> is not <TT>vecS</TT>, then the vertex descriptor is
-not an integer, and cannot be used with a pointer property accessor.
+not an integer, and cannot be used with a pointer property map.
 Instead the method described above of using a
-<TT>random_access_iterator_property_accessor</TT> with an ID
+<TT>random_access_iterator_property_map</TT> with an ID
 plugin must be used. The <TT>edge_list</TT> class may also use an
 integer type for the vertex descriptor, depending on how the adapted
 edge iterator is defined. The example in
 <TT>examples/bellman_ford.cpp</TT> shows <TT>edge_list</TT> being used
-with pointers as vertex property accessors.
+with pointers as vertex property maps.
 
 <P>
-The reason that pointers can be used as property accessors is that
+The reason that pointers can be used as property maps is that
 there are several overloaded functions and a specialization of
 <TT>property_traits</TT> in the header <a
-href="../../../boost/property_accessor.hpp"><TT>boost/property_accessor.hpp</TT></a>
-that implement the property accessor interface in terms of
+href="../../../boost/property_map.hpp"><TT>boost/property_map.hpp</TT></a>
+that implement the property map interface in terms of
 pointers. The definition of those functions is listed here.
 
 <P>
@@ -311,7 +311,7 @@ namespace boost {
   struct property_traits&lt;T*&gt; {
     typedef T value_type;
     typedef ptrdiff_t key_type;
-    typedef lvalue_property_accessor_tag category;
+    typedef lvalue_property_map_tag category;
   };
 
   template &lt;class T&gt;
@@ -334,7 +334,7 @@ each vertex in the graph, and a <TT>std::vector</TT> to store vertex
 colors which will be needed in a call to
 <TT>breadth_first_search()</TT>. Since the iterator of a
 <TT>std::vector</TT> (obtained with a call to <TT>begin()</TT>) is a
-pointer, the pointer property accessor method also works for
+pointer, the pointer property map method also works for
 <TT>std::vector::iterator</TT>. The complete source code for this
 examples is in <a
 href="../examples/city_visitor.cpp"><TT>examples/city_visitor.cpp</TT></a>.
@@ -384,66 +384,66 @@ int main(int,char*[])
 
 <P>
 
-<H2><A NAME="sec:custom-exterior-property-accessors"></A>
-Constructing an Exterior Property Accessor
+<H2><A NAME="sec:custom-exterior-property-maps"></A>
+Constructing an Exterior Property Map
 </H2>
 
 <P>
-Implementing your own exterior property accessors is not very
+Implementing your own exterior property maps is not very
 difficult. You simply need to overload the three functions
 <TT>put()</TT>, <TT>get()</TT>, and <TT>at()</TT> (or just the <TT>put()</TT>
-and <TT>get()</TT> functions if your property accessor is not going to
-be an <I>LvaluePropertyAccessor</I>), and create a specialization
-of <TT>property_traits</TT> for your new property accessor type.
+and <TT>get()</TT> functions if your property map is not going to
+be an <I>LvaluePropertyMap</I>), and create a specialization
+of <TT>property_traits</TT> for your new property map type.
 Instead of specializing <TT>property_traits</TT>, you can also provide
-the three typedefs as nested types in your new property accessor
+the three typedefs as nested types in your new property map
 class.
 
 <P>
 The implementation of the
-<TT>random_access_iterator_property_accessor</TT> class
+<TT>random_access_iterator_property_map</TT> class
 serves as a good example for how to build and exterior property
-accessor. Here we present a simplified implementation of the
-<TT>random_access_iterator_property_accessor</TT> class
+map. Here we present a simplified implementation of the
+<TT>random_access_iterator_property_map</TT> class
 which we will name <TT>iterator_pa</TT>.
 
 <P>
 We start with the definition of the <TT>iterator_pa</TT> class
 itself. This adaptor class is templated on the adapted <TT>Iterator</TT>
-type and the ID property accessor. The job of the ID property accessor
+type and the ID property map. The job of the ID property map
 is to map the key object (which will typically be a vertex or edge
 descriptor) to an integer offset. The <TT>iterator_pa</TT> class will
-need the three necessary typedefs for a property accessor:
+need the three necessary typedefs for a property map:
 <TT>key_type</TT>, <TT>value_type</TT>, and <TT>category</TT>. We can use
-<TT>property_traits</TT> to find the key type of <TT>IDAccessor</TT>, and
+<TT>property_traits</TT> to find the key type of <TT>IDMap</TT>, and
 we can use <TT>iterator_traits</TT> to determine the value type of
 <TT>Iterator</TT>.  We choose
-<TT>boost::lvalue_property_accessor_tag</TT> for the category
+<TT>boost::lvalue_property_map_tag</TT> for the category
 since we plan on implementing the <TT>at()</TT> function.
 
 <P>
 <PRE>
-  template &lt;class Iterator, class IDAccessor&gt;
+  template &lt;class Iterator, class IDMap&gt;
   class iterator_pa
   {
   public:
-    typedef typename boost::property_traits&lt;IDAccessor&gt;::key_type key_type; 
+    typedef typename boost::property_traits&lt;IDMap&gt;::key_type key_type; 
     typedef typename std::iterator_traits&lt;Iterator&gt;::value_type value_type;
-    typedef boost::lvalue_property_accessor_tag category;
+    typedef boost::lvalue_property_map_tag category;
 
     iterator_pa(Iterator i = Iterator(), 
-                const IDAccessor&amp; id = IDAccessor()) 
+                const IDMap&amp; id = IDMap()) 
       : m_iter(i), m_id(id) { }
     Iterator m_iter;
-    IDAccessor m_id;
+    IDMap m_id;
   };
 </PRE>
 
 <P>
-Next we implement the three property accessor functions, <TT>get()</TT>,
+Next we implement the three property map functions, <TT>get()</TT>,
 <TT>put()</TT>, and <TT>at()</TT>. In each of the functions, the
 <TT>key</TT> object is converted to an integer offset using the
-<TT>m_id</TT> property accessor, and then that is used as an offset
+<TT>m_id</TT> property map, and then that is used as an offset
 to the random access iterator <TT>m_iter</TT>.
 
 <P>
@@ -475,7 +475,7 @@ to the random access iterator <TT>m_iter</TT>.
 <P>
 That is it. The <TT>iterator_pa</TT> class is complete and could be
 used just like the
-<TT>random_access_iterator_property_accessor</TT> in the
+<TT>random_access_iterator_property_map</TT> in the
 previous section.
 
 <P>

@@ -21,13 +21,13 @@
 
 <H1>
 <pre>
-distance_recorder&lt;DistancePA, EventTag&gt;
+distance_recorder&lt;DistancePMap, EventTag&gt;
 </pre>
 </H1>
 
 This is an <a href="./EventVisitor.html">EventVisitor</a> that records
 the distance of a vertex (using a <a
-href="../../property_accessor.html">property accessor</a>) from some
+href="../../property_map.html">property map</a>) from some
 source vertex during a graph search. When applied to edge <i>e =
 (u,v)</i>, the distance of <i>v</i> is recorded to be one more than
 the distance of <i>u</i>. The distance recorder is typically used with
@@ -65,10 +65,10 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>DistancePA</TT></TD>
+<TR><TD><TT>DistancePMap</TT></TD>
 <TD>
 A <a
-href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
+href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
 where the key type and the value type are the vertex descriptor type
 of the graph.
 </TD>
@@ -114,10 +114,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-distance_recorder(DistancePA pa);
+distance_recorder(DistancePMap pa);
 </tt></td>
 <td>
-Construct a distance recorder object with distance property accessor
+Construct a distance recorder object with distance property map
 <tt>pa</tt>.
 </td>
 </tr>
@@ -143,9 +143,9 @@ one plus the distance of <i>u</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class DistancePA, class Tag&gt;<br>
-distance_recorder&lt;DistancePA, Tag&gt; <br>
-record_distances(DistancePA pa, Tag);
+template &lt;class DistancePMap, class Tag&gt;<br>
+distance_recorder&lt;DistancePMap, Tag&gt; <br>
+record_distances(DistancePMap pa, Tag);
 </tt></td><td>
 A convenient way to create a <tt>distance_recorder</tt>.
 </td></tr>
@@ -178,9 +178,9 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  DistancePA EventTag EventVisitor accessor bfs dfs const Siek
+<!--  LocalWords:  DistancePMap EventTag EventVisitor map bfs dfs const Siek
  -->
-<!--  LocalWords:  EventVisitorList WritablePropertyAccessor Univ Quan
+<!--  LocalWords:  EventVisitorList WritablePropertyMap Univ Quan
  -->
 <!--  LocalWords:  Lumsdaine
  -->

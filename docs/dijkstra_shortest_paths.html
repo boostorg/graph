@@ -53,26 +53,26 @@ dijkstra_shortest_paths(VertexListGraph& g,
                         typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s);
 
 (2)
-template &lt;class VertexListGraph, class DistancePA&gt;
+template &lt;class VertexListGraph, class DistancePMap&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g,
                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                       DistancePA d);
+                       DistancePMap d);
 
 (3)
-template &lt;class VertexListGraph, class DistancePA, class UniformCostVisitor&gt;
+template &lt;class VertexListGraph, class DistancePMap, class UniformCostVisitor&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g, 
                         typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                        DistancePA d, UniformCostVisitor visit);
+                        DistancePMap d, UniformCostVisitor visit);
 
 (4)
 template &lt;class VertexListGraph, class UniformCostVisitor, 
-          class DistancePA, class WeightPA, class ColorPA, class VertexID_PA&gt;
+          class DistancePMap, class WeightPMap, class ColorPMap, class VertexID_PMap&gt;
 void
 dijkstra_shortest_paths(VertexListGraph& g,
                         typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-                        DistancePA distance, WeightPA weight, ColorPA color, VertexID_PA id,
+                        DistancePMap distance, WeightPMap weight, ColorPMap color, VertexID_PMap id,
                         UniformCostVisitor vis);
 </PRE>
 
@@ -104,29 +104,29 @@ algorithm also includes a visitor argument for added extensibility.
 </LI>
 <LI>The type <TT>UniformCostVisitor</TT> must be a model of <a href="./UniformCostVisitor.html">UniformCostVisitor</a>.
 </LI>
-<LI>The type <TT>DistancePA</TT> must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+<LI>The type <TT>DistancePMap</TT> must be a model of <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     vertex descriptor type of the graph needs to be usable as the key
-    type of the distance accessor. The value type of the distance
-    accessor must be <a href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.
+    type of the distance map. The value type of the distance
+    map must be <a href="http://www.sgi.com/Technology/STL/LessThanComparable.html">LessThanComparable</a>.
 </LI>
-<LI>The type <TT>WeightPA</TT> must be a model of <a
-     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
+<LI>The type <TT>WeightPMap</TT> must be a model of <a
+     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
      edge descriptor type of the graph needs to be usable as the key
-     type for the weight accessor. The value type for the accessor
+     type for the weight map. The value type for the map
      must be <I>Addable</I> with the value type of the distance
-     accessor.
+     map.
 </LI>
-<LI>The type <TT>ColorPA</TT> must be a model of
-     <a href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. A vertex descriptor must be
-     usable as the key type of the accessor, and the value type of the
-     accessor must be a model of <a href="./ColorValue.html">ColorValue</a>.
+<LI>The type <TT>ColorPMap</TT> must be a model of
+     <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A vertex descriptor must be
+     usable as the key type of the map, and the value type of the
+     map must be a model of <a href="./ColorValue.html">ColorValue</a>.
 </LI>
-<LI>The type <TT>VertexID_PA</TT> must be a model of <a
-     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
-     value type of <TT>VertexID_PA</TT> must be an integer type. The vertex
+<LI>The type <TT>VertexID_PMap</TT> must be a model of <a
+     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
+     value type of <TT>VertexID_PMap</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
-     of the vertex ID accessor.
+     of the vertex ID map.
 </LI>
 </UL>
 

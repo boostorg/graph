@@ -28,7 +28,7 @@
 #define BOOST_GRAPH_TOPOLOGICAL_SORT_HPP
 
 #include <boost/config.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 

@@ -54,7 +54,7 @@ main(int,char*[])
     // the builtin id property is readable but not writable
     typedef property_map<Graph,vertex_index>::const_type ID_PA;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyAccessor);
+    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
@@ -71,7 +71,7 @@ main(int,char*[])
     // the builtin id property is readable but not writable
     typedef property_map<Graph, vertex_index>::const_type ID_PA;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(ID_PA, Vertex, ReadablePropertyAccessor);
+    REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
   }
   {
     typedef adjacency_list< listS, listS, directedS, 

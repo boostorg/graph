@@ -41,8 +41,11 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.7  2000/09/21 18:34:53  jsiek
+// more property accessor -> property map changes
+//
 // Revision 1.6  2000/09/21 03:31:19  jsiek
-// property accessor interface changes
+// property map interface changes
 //
 // Revision 1.5  2000/09/20 19:30:09  jsiek
 // changed the name of the property tags: name_tag -> vertex_name, etc.
@@ -84,7 +87,7 @@
 #define BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
 
 #include <boost/config.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/operators.hpp>
 #include <boost/pending/integer_range.hpp>
 
@@ -1489,20 +1492,20 @@ namespace boost {
 
 
     //=========================================================================
-    // Vertex Property Accessors
+    // Vertex Property Maps
 
     template <class Graph, class Plugin, class Tag>
-    struct adj_list_vertex_property_accessor
+    struct adj_list_vertex_property_map
       : public boost::detail::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
-          adj_list_vertex_property_accessor<Graph, Plugin, Tag>
+          adj_list_vertex_property_map<Graph, Plugin, Tag>
         >
     {
       typedef typename Graph::stored_vertex StoredVertex;
       typedef typename plugin_value<Plugin, Tag>::type value_type;
       typedef typename Graph::vertex_descriptor key_type;
-      typedef boost::lvalue_op_bracket_tag category;
-      inline adj_list_vertex_property_accessor(Graph&) { }
+      typedef boost::lvalue_property_map_tag category;
+      inline adj_list_vertex_property_map(Graph&) { }
       inline value_type& operator[](key_type v) {
 	StoredVertex* sv = (StoredVertex*)v;
         return get_plugin_value(sv->m_plugin, value_type(), Tag());
@@ -1514,16 +1517,16 @@ namespace boost {
     };
 
     template <class Graph, class GraphRef, class Plugin, class Tag>
-    struct vec_adj_list_vertex_property_accessor
+    struct vec_adj_list_vertex_property_map
       : public boost::detail::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
-          vec_adj_list_vertex_property_accessor<Graph,GraphRef,Plugin,Tag>
+          vec_adj_list_vertex_property_map<Graph,GraphRef,Plugin,Tag>
         >
     {
       typedef typename plugin_value<Plugin,Tag>::type value_type;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
-      typedef boost::lvalue_op_bracket_tag category;
-      vec_adj_list_vertex_property_accessor(GraphRef g) : m_g(g) { }
+      typedef boost::lvalue_property_map_tag category;
+      vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
       inline value_type& operator[](key_type v) {
         return get_plugin_value(m_g.m_vertices[v].m_plugin, 
                                 value_type(), Tag());
@@ -1536,25 +1539,25 @@ namespace boost {
     };
 
     template <class Plugin, class Vertex>
-    struct vec_adj_list_vertex_id_accessor
+    struct vec_adj_list_vertex_id_map
       : public boost::detail::put_get_at_helper<
-          Vertex, vec_adj_list_vertex_id_accessor<Plugin, Vertex>
+          Vertex, vec_adj_list_vertex_id_map<Plugin, Vertex>
         >
     {
       typedef Vertex value_type;
       typedef Vertex key_type;
-      typedef boost::lvalue_op_bracket_tag category;
+      typedef boost::lvalue_property_map_tag category;
       template <class Graph>
-      inline vec_adj_list_vertex_id_accessor(const Graph&) { }
+      inline vec_adj_list_vertex_id_map(const Graph&) { }
       inline value_type operator[](key_type v) const { return v; }
     };
 
     struct vec_adj_list_any_vertex_pa {
       template <class Tag, class Graph, class Plugin>
       struct bind {
-        typedef detail::vec_adj_list_vertex_property_accessor
+        typedef detail::vec_adj_list_vertex_property_map
           <Graph, Graph&, Plugin, Tag> type;
-        typedef detail::vec_adj_list_vertex_property_accessor
+        typedef detail::vec_adj_list_vertex_property_map
           <Graph, const Graph&, Plugin, Tag> const_type;
       };
     };
@@ -1562,8 +1565,8 @@ namespace boost {
       template <class Tag, class Graph, class Plugin>
       struct bind {
         typedef typename Graph::vertex_descriptor Vertex;
-        typedef vec_adj_list_vertex_id_accessor<Plugin, Vertex> type;
-        typedef vec_adj_list_vertex_id_accessor<Plugin, Vertex> const_type;
+        typedef vec_adj_list_vertex_id_map<Plugin, Vertex> type;
+        typedef vec_adj_list_vertex_id_map<Plugin, Vertex> const_type;
       };
     };
     template <class Tag>
@@ -1585,18 +1588,18 @@ namespace boost {
     
 
     //=========================================================================
-    // Edge Property Accessor
+    // Edge Property Map
 
     template <class Directed, class Plugin, class Vertex, class Tag>
-    struct adj_list_edge_property_accessor
+    struct adj_list_edge_property_map
       : public boost::detail::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
-          adj_list_edge_property_accessor<Directed,Plugin,Vertex,Tag>
+          adj_list_edge_property_map<Directed,Plugin,Vertex,Tag>
         >
     {
       typedef typename plugin_value<Plugin,Tag>::type value_type;
       typedef detail::bidir_edge<Directed, Vertex> key_type;
-      typedef boost::lvalue_op_bracket_tag category;
+      typedef boost::lvalue_property_map_tag category;
       inline value_type& operator[](key_type e) {
 	Plugin* p = (Plugin*)e.get_plugin();
         return get_plugin_value(*p, value_type(), Tag());
@@ -1610,12 +1613,12 @@ namespace boost {
 
   } // namespace detail
 
-  // Edge Property Accessors
+  // Edge Property Maps
 
   struct adj_list_edge_property_selector {
     template <class Graph, class Plugin, class Tag>
     struct bind {
-      typedef detail::adj_list_edge_property_accessor
+      typedef detail::adj_list_edge_property_map
          <typename Graph::directed_category, Plugin, 
           typename Graph::vertex_descriptor,Tag> type;
       typedef type const_type;
@@ -1630,12 +1633,12 @@ namespace boost {
     typedef adj_list_edge_property_selector type;
   };
 
-  // Vertex Property Accessors
+  // Vertex Property Maps
 
   struct adj_list_vertex_property_selector {
     template <class Graph, class Plugin, class Tag>
     struct bind {
-      typedef detail::adj_list_vertex_property_accessor<Graph,Plugin,Tag> type;
+      typedef detail::adj_list_vertex_property_map<Graph,Plugin,Tag> type;
       typedef type const_type;
     };
   };

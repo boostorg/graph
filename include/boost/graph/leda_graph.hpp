@@ -334,7 +334,7 @@ namespace boost {
   {
     g.del_edge(e);
   }
-  // property accessors...
+  // property maps...
   
   
 } // namespace boost

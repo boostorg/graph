@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 {
   using namespace boost;
   using namespace std;
-  identity_property_accessor id;
+  identity_property_map id;
   typedef adjacency_list<vecS, vecS, undirectedS, 
      plugin< vertex_color, default_color_type,
        plugin<vertex_degree,int> > > Graph;

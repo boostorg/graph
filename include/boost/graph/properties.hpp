@@ -26,7 +26,7 @@
 #define BOOST_GRAPH_PROPERTIES_HPP
 
 #include <boost/config.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 namespace boost {
 

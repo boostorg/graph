@@ -47,16 +47,16 @@
     BFSVisitor vis);
 
   (2)
-  template &lt;class VertexListGraph, class BFSVisitor, class ColorPA&gt;
+  template &lt;class VertexListGraph, class BFSVisitor, class ColorPMap&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-    BFSVisitor vis, ColorPA color);
+    BFSVisitor vis, ColorPMap color);
 
   (3)
-  template &lt;class VertexListGraph, class BFSVisitor, class ColorPA&gt;
+  template &lt;class VertexListGraph, class BFSVisitor, class ColorPMap&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-    Buffer& Q, BFSVisitor vis, ColorPA color)
+    Buffer& Q, BFSVisitor vis, ColorPMap color)
 </PRE>
 
 <P>
@@ -95,7 +95,7 @@ plugin).
 
 <P>
 Version 2 of the algorithm adds a color property argument to
-accommodate the use of an external property accessor.
+accommodate the use of an external property map.
 
 <P>
 Version 3 of the algorithm is the most generalized. It adds a
@@ -130,13 +130,13 @@ vertices to white at the start of the algorithm or invoke the
 </LI>
 <LI>In version (1) of the algorithm the graph must be a model
     of <a href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for <TT>vertex_color</TT> and
-    the color property accessor for the graph must meet the
+    the color property map for the graph must meet the
     same requirements as <TT>Color</TT>.
 </LI>
 <LI>The type <TT>Color</TT> must be a model of <a
-   href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>.
-   A vertex descriptor must be usable as the key type of the accessor,
-   and the value type of the accessor must be a model of <a
+   href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>.
+   A vertex descriptor must be usable as the key type of the map,
+   and the value type of the map must be a model of <a
    href="./ColorValue.html">ColorValue</a>.
 </LI>
 <LI>The type <TT>Buffer</TT> must be a model of <I>Buffer</I>.

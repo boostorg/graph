@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
   edge_list<Edge*,Edge,ptrdiff_t> g(edgelist, edgelist + E);
   cout << "An undirected graph (edge list):" << endl;
-  print_edges(g, identity_property_accessor());
+  print_edges(g, identity_property_map());
   cout << endl;
 
   disjoint_sets_with_storage<> ds;

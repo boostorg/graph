@@ -26,16 +26,16 @@
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <string>
 
 using namespace std;
 using namespace boost;
 
 /*
-  Interior Property Accessor Basics
+  Interior Property Map Basics
 
-  An interior property accessor is a way of associating properties
+  An interior property map is a way of associating properties
   with the vertices or edges of a graph. The "interior" part means
   that the properties are stored inside the graph object. This can be
   convenient when the need for the properties is somewhat permanent,

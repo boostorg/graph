@@ -28,7 +28,7 @@
 #include <string>
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 /*
   Sample Output

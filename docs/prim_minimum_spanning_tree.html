@@ -99,26 +99,26 @@ with the appropriate choice of comparison and combine functors.
 <LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
 </LI>
 <LI>The type <TT>Distance</TT> must be a model of
-    <a href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The vertex descriptor type of
+    <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The vertex descriptor type of
      the graph needs to be usable as the key type of the distance
-     accessor. The value type of the distance accessor must be
+     map. The value type of the distance map must be
      <I>LessThanComparable</I>.
 </LI>
 <LI>The type <TT>Weight</TT> must be a model of
-     <a href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The edge descriptor type of
+     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The edge descriptor type of
      the graph needs to be usable as the key type for the weight
-     accessor. The value type for the accessor must be
-     <I>Addable</I> with the value type of the distance accessor.
+     map. The value type for the map must be
+     <I>Addable</I> with the value type of the distance map.
 </LI>
 <LI>The type <TT>Color</TT> must be a model of
-     <a href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. A vertex descriptor must be
-     usable as the key type of the accessor, and the value type of the
-     accessor must be a model of <I>ColorValue</I>.
+     <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A vertex descriptor must be
+     usable as the key type of the map, and the value type of the
+     map must be a model of <I>ColorValue</I>.
 </LI>
 <LI>The type <TT>ID</TT> must be a model of
-     <a href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The value type of <TT>ID</TT>
+     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The value type of <TT>ID</TT>
      must be an integer type. The vertex descriptor type of the graph
-     needs to be usable as the key type of the ID accessor.
+     needs to be usable as the key type of the ID map.
 </LI>
 </UL>
 
@@ -159,7 +159,7 @@ href="../examples/prim.cpp"><TT>examples/prim.cpp</TT></a>.
         i != p.end(); ++i)
     if (*i != Graph::vertex_descriptor() ) 
       cout &lt;&lt; "parent[" &lt;&lt; i - p.begin() 
-           &lt;&lt; "] = " &lt;&lt; id_property_accessor()[*i] &lt;&lt; endl;
+           &lt;&lt; "] = " &lt;&lt; id_property_map()[*i] &lt;&lt; endl;
     else
       cout &lt;&lt; "parent[" &lt;&lt; i - p.begin() &lt;&lt; "] = no parent" &lt;&lt; endl;
 </PRE>

@@ -105,20 +105,20 @@ where <i>w(u,v)</i> is the weight on the edge <i>(u,v)</i>
 <LI>The graph type must be a model of <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>.
 </LI>
 <LI>The <TT>Rank</TT> type must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. <TT>Rank</TT>'s
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. <TT>Rank</TT>'s
     value type must be an integer type. The graph's vertex descriptor
-    needs to be usable as the key type for the accessor.
+    needs to be usable as the key type for the map.
 </LI>
 <LI>The <TT>Parent</TT> type must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
     value type and key type should be the graph's vertex descriptor
     type.
 </LI>
 <LI>The <TT>Weight</TT> type must be a model of <a
-     href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
-     <TT>Weight</TT> accessor's value type must be <a
+     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
+     <TT>Weight</TT> map's value type must be <a
      href="http://www.sgi.com/Technology/LessThanComparable.html">LessThanComparable</a>. The
-     key type of this accessor needs to be the graph's edge descriptor
+     key type of this map needs to be the graph's edge descriptor
      type.
 </LI>
 <LI>The graph's edge descriptors will be output to the
@@ -157,7 +157,7 @@ href="../examples/kruskal.cpp"><TT>examples/kruskal.cpp</TT></a>.
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
 
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-  weight_property_accessor&lt;Graph&gt; weight = get_weight_accessor(G);
+  weight_property_map&lt;Graph&gt; weight = get_weight_map(G);
 
   typedef std::vector&lt;Edge&gt; container;
   std::vector&lt;Edge&gt; c;

@@ -26,7 +26,7 @@
 #define BOOST_GRAPH_JOHNSON_HPP
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 

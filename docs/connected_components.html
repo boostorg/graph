@@ -93,15 +93,15 @@ undirected.
 
 <P>
 The output of the algorithm is recorded in the component property
-accessor <TT>c</TT>, which will contain numbers giving the component ID
+map <TT>c</TT>, which will contain numbers giving the component ID
 assigned to each vertex. The number of components is the return value
 of the function.
 
 <P>
-The algorithm requires the use of several property accessors: color,
+The algorithm requires the use of several property maps: color,
 discover time, and finish time. There are several versions of this
 algorithm to accommodate whether you wish to use interior or exterior
-property accessors.
+property maps.
 
 <P>
 
@@ -136,19 +136,19 @@ href="./VertexListGraph.html">VertexListGraph</a>.
  
 </LI>
 <LI><TT>DiscoverTime</TT> and <TT>FinishTime</TT> must be models of <a
- href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>
+ href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>
  and their value type must be an integer type. Vertex descriptors from
- the graph should be usable as the key type for these accessors.
+ the graph should be usable as the key type for these maps.
 </LI>
-<LI>The <TT>Color</TT> accessor must be a <a
-     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>
+<LI>The <TT>Color</TT> map must be a <a
+     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
      and the graph's vertex descriptor type should be usable as the
-     accessor's key type. The value type of the accessor must be a
+     map's key type. The value type of the map must be a
      model of <I>ColorValue</I>.
 </LI>
 <LI>The <TT>Components</TT> type must be a model of <a
-    href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
-    value type of the <TT>Components</TT> property accessor should be
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+    value type of the <TT>Components</TT> property map should be
     an integer type, preferably the same as the <TT>size_type</TT> of
     the graph. The key type should be the graph's vertex descriptor
     type.
@@ -189,7 +189,7 @@ href="../examples/connected_components.cpp"><tt>examples/connected_components.cp
     
   std::vector&lt;int&gt; c(num_vertices(G));
   int num = connected_components(G, c.begin(), 
-              get_color_accessor(G), null_visitor());
+              get_color_map(G), null_visitor());
     
   cout &lt;&lt; endl;
   std::vector&lt;int&gt;::iterator i;
@@ -231,7 +231,7 @@ Calculating the strongly connected components of a directed graph.
     
     std::vector&lt;int&gt; c(N);
     int num = connected_components(G, c.begin(), 
-      get_color_accessor(G), null_visitor());
+      get_color_map(G), null_visitor());
     
     cout &lt;&lt; endl;
     cout &lt;&lt; "Total number of components: " &lt;&lt; num &lt;&lt; endl;

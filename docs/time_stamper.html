@@ -21,7 +21,7 @@
 
 <H1>
 <pre>
-time_stamper&lt;TimePA, TimeT, EventTag&gt;
+time_stamper&lt;TimePMap, TimeT, EventTag&gt;
 </pre>
 </H1>
 
@@ -75,14 +75,14 @@ href="../examples/bfs_basics.cpp"><tt>examples/bfs_basics.cpp</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>TimePA</TT></TD>
+<TR><TD><TT>TimePMap</TT></TD>
 <TD>
 A <a
-href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
+href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>,
 where the <tt>key_type</tt> is the vertex descriptor type or edge
 descriptor of the graph (depending on the kind of event tag), and
 where the <tt>TimeT</tt> type is convertible to the
-<tt>value_type</tt> of the time property accessor.
+<tt>value_type</tt> of the time property map.
 </TD>
 <TD>&nbsp;</TD>
 </TR>
@@ -90,7 +90,7 @@ where the <tt>TimeT</tt> type is convertible to the
 <TR><TD><TT>TimeT</TT></TD>
 <TD>
 The type for the time counter, which should be convertible to the
-<tt>value_type</tt> of the time property accessor
+<tt>value_type</tt> of the time property map
 </TD>
 <TD>&nbsp;</TD>
 </TR>
@@ -134,10 +134,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-time_stamper(TimePA time_pa, TimeT& t);
+time_stamper(TimePMap time_pa, TimeT& t);
 </tt></td>
 <td>
-Construct a time stamper object with time property accessor
+Construct a time stamper object with time property map
 <tt>time_pa</tt> and time counter <tt>t</tt>.
 </td>
 </tr>
@@ -163,9 +163,9 @@ This increments the time count and &quot;stamps&quot; the time:<br>
 </tr>
 
 <tr><td><tt>
-template &lt;class TimePA, class TimeT, class Tag&gt;<br>
-time_stamper&lt;TimePA, TimeT, Tag&gt;<br>
-stamp_times(TimePA pa, TimeT& t, Tag);
+template &lt;class TimePMap, class TimeT, class Tag&gt;<br>
+time_stamper&lt;TimePMap, TimeT, Tag&gt;<br>
+stamp_times(TimePMap pa, TimeT& t, Tag);
 </tt></td><td>
 A convenient way to create a <tt>time_stamper</tt>.
 </td></tr>
@@ -198,9 +198,9 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  TimePA TimeT EventTag EventVisitor bfs dfs EventVisitorList
+<!--  LocalWords:  TimePMap TimeT EventTag EventVisitor bfs dfs EventVisitorList
  -->
-<!--  LocalWords:  cpp num dtime ftime int WritablePropertyAccessor accessor
+<!--  LocalWords:  cpp num dtime ftime int WritablePropertyMap map
  -->
 <!--  LocalWords:  const Siek Univ Quan Lumsdaine
  -->

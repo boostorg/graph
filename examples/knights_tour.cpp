@@ -29,7 +29,7 @@
 #include <boost/operators.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
-#include <boost/property_accessor.hpp>
+#include <boost/property_map.hpp>
 
 typedef std::pair<int,int> Position;
 
@@ -122,11 +122,11 @@ struct compare_first {
 };
 
 
-template <class Graph, class TimePropertyAccessor>
+template <class Graph, class TimePropertyMap>
 bool backtracking_search
   (Graph& g, 
    typename boost::graph_traits<Graph>::vertex_descriptor x, 
-   TimePropertyAccessor time_pa)
+   TimePropertyMap time_pa)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::pair<int, Vertex> P;
@@ -166,11 +166,11 @@ bool backtracking_search
 }
 
 
-template <class Graph, class TimePropertyAccessor>
+template <class Graph, class TimePropertyMap>
 bool warnsdorff
   (Graph& g, 
    typename boost::graph_traits<Graph>::vertex_descriptor src, 
-   TimePropertyAccessor time_pa)
+   TimePropertyMap time_pa)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::pair<int, Vertex> P;
@@ -217,27 +217,27 @@ bool warnsdorff
 }
 
 
-struct board_accessor {
+struct board_map {
   typedef int value_type;
   typedef Position key_type;
-  typedef boost::read_write_property_accessor_tag category;
-  board_accessor(int* b, int n) : m_board(b), m_size(n) { }
-  friend int get(const board_accessor& ba, Position p);
-  friend void put(const board_accessor& ba, Position p, int v);
-  friend std::ostream& operator<<(std::ostream& os, const board_accessor& ba);
+  typedef boost::read_write_property_map_tag category;
+  board_map(int* b, int n) : m_board(b), m_size(n) { }
+  friend int get(const board_map& ba, Position p);
+  friend void put(const board_map& ba, Position p, int v);
+  friend std::ostream& operator<<(std::ostream& os, const board_map& ba);
 private:
   int* m_board;
   int m_size;
 };
 
-int get(const board_accessor& ba, Position p) {
+int get(const board_map& ba, Position p) {
   return ba.m_board[p.first * ba.m_size + p.second];
 }
-void put(const board_accessor& ba, Position p, int v) {
+void put(const board_map& ba, Position p, int v) {
   ba.m_board[p.first * ba.m_size + p.second] = v;
 }
 
-std::ostream& operator<<(std::ostream& os, const board_accessor& ba) {
+std::ostream& operator<<(std::ostream& os, const board_map& ba) {
   for (int i = 0; i < ba.m_size; ++i) {
     for (int j = 0; j < ba.m_size; ++j)
       os << get(ba, Position(i,j)) << "\t";
@@ -258,7 +258,7 @@ main(int argc, char* argv[])
   knights_tour_graph g(N);
   int* board = new int[num_vertices(g) * num_vertices(g)];
 
-  board_accessor chessboard(board, num_vertices(g));
+  board_map chessboard(board, num_vertices(g));
 
   for (int i = 0; i < num_vertices(g); ++i)
     for (int j = 0; j < num_vertices(g); ++j)
