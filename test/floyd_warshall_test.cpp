@@ -10,6 +10,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/test/minimal.hpp>
+#include <algorithm>
 
 template <typename T>
 struct inf_plus{
