@@ -36,6 +36,8 @@ int main(int,char*[])
   {
     typedef std::vector< std::list<int> > Graph;
     function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
   }
   return 0;
 }
