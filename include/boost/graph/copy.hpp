@@ -240,7 +240,7 @@ namespace boost {
       template <class P, class G1, class G2>
       struct bind {
         typedef edge_copier<G1, G2> result_type;
-        static result_type apply(const P& p, const G1& g1, G2& g2) { 
+        static result_type apply(const P&, const G1& g1, G2& g2) { 
           return result_type(g1, g2);
         }
       };
@@ -266,7 +266,7 @@ namespace boost {
     {
       typedef typename 
         detail::choose_edge_copier_helper<Param,G1,G2>::type Choice;
-      return Choice::apply(p, g1, g2);
+      return Choice::apply(params, g_in, g_out);
     }
 
 
@@ -274,7 +274,7 @@ namespace boost {
       template <class P, class G1, class G2>
       struct bind {
         typedef vertex_copier<G1, G2> result_type;
-        static result_type apply(const P& p, const G1& g1, G2& g2) { 
+        static result_type apply(const P&, const G1& g1, G2& g2) { 
           return result_type(g1, g2);
         }
       };
@@ -300,7 +300,7 @@ namespace boost {
     {
       typedef typename 
         detail::choose_vertex_copier_helper<Param,G1,G2>::type Choice;
-      return Choice::apply(p, g1, g2);
+      return Choice::apply(params, g_in, g_out);
     }
 
   } // namespace detail
@@ -346,8 +346,8 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index), orig2copy[0])),
-       choose_pmap(get_param(params, vertex_index), g, vertex_index)
+                                 g_in, vertex_index), orig2copy[0])),
+       choose_pmap(get_param(params, vertex_index), g_in, vertex_index)
        );
   }
 
