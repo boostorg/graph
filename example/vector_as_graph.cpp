@@ -47,17 +47,17 @@ int main()
   typedef std::vector< std::vector<int> > Graph;
   Graph g(N);
 
-  g[s].push_back(r);
+  add_edge(s, r, g);
 
-  g[s].push_back(r);
-  g[r].push_back(v);
-  g[s].push_back(w);
-  g[w].push_back(t);
-  g[w].push_back(x);
-  g[t].push_back(x);
-  g[u].push_back(t); 
-  g[x].push_back(y);
-  g[y].push_back(u);
+  add_edge(s, r, g);
+  add_edge(r, v, g);
+  add_edge(s, w, g);
+  add_edge(w, t, g);
+  add_edge(w, x, g);
+  add_edge(t, x, g);
+  add_edge(u, t, g); 
+  add_edge(x, y, g);
+  add_edge(y, u, g);
 
   vector<default_color_type> color(N, white(default_color_type()));
   vector<Graph::size_type> discover(N), finish(N);
