@@ -152,7 +152,7 @@ edge(const typename BidirectionalGraph::vertex_descriptor u,
      const typename BidirectionalGraph::vertex_descriptor v,
      const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return edge(v, u, g);
+    return edge(v, u, g.m_g);
 }
 
 template <class BidirectionalGraph, class GRef>
