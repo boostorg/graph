@@ -531,11 +531,11 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short yyrline[] =
 {
-       0,   254,   254,   257,   260,   270,   270,   273,   273,   276,
-     276,   279,   279,   282,   283,   286,   293,   294,   295,   298,
-     298,   301,   311,   311,   311,   314,   314,   314,   314,   317,
-     325,   336,   336,   339,   354,   357,   376,   421,   425,   425,
-     428,   437,   448,   456,   456,   470,   491,   491
+       0,   254,   254,   257,   260,   274,   274,   277,   277,   280,
+     280,   283,   283,   286,   287,   290,   297,   298,   299,   302,
+     302,   305,   315,   315,   315,   318,   318,   318,   318,   321,
+     329,   340,   340,   343,   358,   361,   380,   425,   429,   429,
+     432,   441,   452,   460,   460,   474,   495,   495
 };
 #endif
 
@@ -1282,6 +1282,10 @@ yyreduce:
   case 4:
 #line 261 "graphviz_parser.yy"
     {
+    graphviz::vlist.clear();
+    graphviz::attributes.clear();
+    graphviz::subgraphs.clear();
+    graphviz::nodes.clear();
     std::string* name = static_cast<std::string*>(yyvsp[0].ptr);
     graphviz::previous_graph = static_cast<graphviz::Subgraph*>(g);
     graphviz::current_graph = static_cast<graphviz::Subgraph*>(g);
@@ -1291,17 +1295,17 @@ yyreduce:
     break;
 
   case 7:
-#line 273 "graphviz_parser.yy"
+#line 277 "graphviz_parser.yy"
     {yyval.ptr = yyvsp[0].ptr; ;}
     break;
 
   case 8:
-#line 273 "graphviz_parser.yy"
+#line 277 "graphviz_parser.yy"
     {yyval.ptr=(void*)(new std::string("G")); ;}
     break;
 
   case 15:
-#line 287 "graphviz_parser.yy"
+#line 291 "graphviz_parser.yy"
     { 
     graphviz::set_attribute(*graphviz::current_graph,
 			  graphviz::attribute_state); 
@@ -1309,22 +1313,22 @@ yyreduce:
     break;
 
   case 16:
-#line 293 "graphviz_parser.yy"
+#line 297 "graphviz_parser.yy"
     { graphviz::attribute_state = GRAPH_GRAPH_A; ;}
     break;
 
   case 17:
-#line 294 "graphviz_parser.yy"
+#line 298 "graphviz_parser.yy"
     { graphviz::attribute_state = GRAPH_NODE_A; ;}
     break;
 
   case 18:
-#line 295 "graphviz_parser.yy"
+#line 299 "graphviz_parser.yy"
     { graphviz::attribute_state = GRAPH_EDGE_A; ;}
     break;
 
   case 21:
-#line 302 "graphviz_parser.yy"
+#line 306 "graphviz_parser.yy"
     { 
     std::string* name  = static_cast<std::string*>(yyvsp[-2].ptr);
     std::string* value = static_cast<std::string*>(yyvsp[0].ptr);
@@ -1335,12 +1339,12 @@ yyreduce:
     break;
 
   case 28:
-#line 314 "graphviz_parser.yy"
+#line 318 "graphviz_parser.yy"
     { yyval.i = 0; ;}
     break;
 
   case 29:
-#line 318 "graphviz_parser.yy"
+#line 322 "graphviz_parser.yy"
     { 
     graphviz::set_attribute(
          *static_cast<graphviz::Subgraph*>(graphviz::current_graph),
@@ -1349,7 +1353,7 @@ yyreduce:
     break;
 
   case 30:
-#line 326 "graphviz_parser.yy"
+#line 330 "graphviz_parser.yy"
     { 
     graphviz::Vertex* temp   = static_cast<graphviz::Vertex*>(yyvsp[-1].ptr); 
     graphviz::current_vertex = *temp;
@@ -1361,17 +1365,17 @@ yyreduce:
     break;
 
   case 31:
-#line 336 "graphviz_parser.yy"
+#line 340 "graphviz_parser.yy"
     { yyval.i=0; ;}
     break;
 
   case 32:
-#line 336 "graphviz_parser.yy"
+#line 340 "graphviz_parser.yy"
     { yyval.i=0; ;}
     break;
 
   case 33:
-#line 340 "graphviz_parser.yy"
+#line 344 "graphviz_parser.yy"
     {
     std::string* name  = static_cast<std::string*>(yyvsp[0].ptr);
     std::pair<graphviz::Iter, bool> result = graphviz::lookup(*name); 
@@ -1389,12 +1393,12 @@ yyreduce:
     break;
 
   case 34:
-#line 354 "graphviz_parser.yy"
+#line 358 "graphviz_parser.yy"
     { yyval.ptr=yyvsp[0].ptr; ;}
     break;
 
   case 35:
-#line 358 "graphviz_parser.yy"
+#line 362 "graphviz_parser.yy"
     {
     //consider port as a special properties ?? --need work here
     std::string* name = static_cast<std::string*>(yyvsp[-2].ptr);
@@ -1414,7 +1418,7 @@ yyreduce:
     break;
 
   case 36:
-#line 377 "graphviz_parser.yy"
+#line 381 "graphviz_parser.yy"
     {
 
     typedef std::pair<void*, bool>* Ptr;
@@ -1460,12 +1464,12 @@ yyreduce:
     break;
 
   case 37:
-#line 422 "graphviz_parser.yy"
+#line 426 "graphviz_parser.yy"
     { graphviz::vlist.push_back(static_cast<std::pair<void*, bool>*>(yyvsp[0].ptr)); ;}
     break;
 
   case 40:
-#line 429 "graphviz_parser.yy"
+#line 433 "graphviz_parser.yy"
     { 
     std::pair<void*, bool>* temp = new std::pair<void*, bool>;
     temp->first = yyvsp[0].ptr;
@@ -1477,7 +1481,7 @@ yyreduce:
     break;
 
   case 41:
-#line 438 "graphviz_parser.yy"
+#line 442 "graphviz_parser.yy"
     { 
     std::pair<void*, bool>* temp = new std::pair<void*, bool>;
     temp->first = yyvsp[0].ptr;
@@ -1489,7 +1493,7 @@ yyreduce:
     break;
 
   case 42:
-#line 449 "graphviz_parser.yy"
+#line 453 "graphviz_parser.yy"
     {
     if ( yyvsp[0].i )
       graphviz::current_graph = &graphviz::current_graph->parent();
@@ -1499,7 +1503,7 @@ yyreduce:
     break;
 
   case 43:
-#line 456 "graphviz_parser.yy"
+#line 460 "graphviz_parser.yy"
     {
     graphviz::previous_graph = graphviz::current_graph;
     std::string name = graphviz::random_string();
@@ -1512,14 +1516,14 @@ yyreduce:
     break;
 
   case 44:
-#line 465 "graphviz_parser.yy"
+#line 469 "graphviz_parser.yy"
     {
     graphviz::current_graph = &graphviz::current_graph->parent();
   ;}
     break;
 
   case 45:
-#line 471 "graphviz_parser.yy"
+#line 475 "graphviz_parser.yy"
     {
     //lookup ID_T if it is already in the subgraph,
     //if it is not, add a new subgraph
@@ -1541,12 +1545,12 @@ yyreduce:
     break;
 
   case 46:
-#line 491 "graphviz_parser.yy"
+#line 495 "graphviz_parser.yy"
     {yyval.i = 1; ;}
     break;
 
   case 47:
-#line 491 "graphviz_parser.yy"
+#line 495 "graphviz_parser.yy"
     { yyval.i = 0; ;}
     break;
 
@@ -1554,7 +1558,7 @@ yyreduce:
     }
 
 /* Line 999 of yacc.c.  */
-#line 1558 "graphviz_graph_parser.cpp"
+#line 1562 "graphviz_graph_parser.cpp"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1748,7 +1752,7 @@ yyreturn:
 }
 
 
-#line 493 "graphviz_parser.yy"
+#line 497 "graphviz_parser.yy"
 
 
 namespace boost {

@@ -259,6 +259,10 @@ graph_body:  '{' stmt_list '}' {$$=0;}
 
 graph_header: graph_type graph_name
   {
+    graphviz::vlist.clear();
+    graphviz::attributes.clear();
+    graphviz::subgraphs.clear();
+    graphviz::nodes.clear();
     std::string* name = static_cast<std::string*>($2);
     graphviz::previous_graph = static_cast<graphviz::Subgraph*>(g);
     graphviz::current_graph = static_cast<graphviz::Subgraph*>(g);
