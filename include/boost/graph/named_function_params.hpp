@@ -26,123 +26,124 @@
 #ifndef BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 #define BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 
+#include <boost/graph/properties.hpp>
+
 namespace boost {
 
-  namespace bgl_detail {
-    struct default_param {
-      default_param() { }
-      template <typename T>
-      default_param(const T&) { }
-    };
+  template <typename T, typename Tag, typename Base = no_property>
+  struct bgl_named_params : public Base
+  {
+    typedef bgl_named_params self;
+    typedef Base next_type;
+    typedef Tag tag_type;
+    typedef T value_type;
+    bgl_named_params(const T& v) : m_value(v) { }
+    bgl_named_params(const T& v, const Base& b) : Base(b), m_value(v) { }
+    T m_value;
+
+    template <typename WeightMap>
+    bgl_named_params<WeightMap, edge_weight_t, self>
+    weight_map(const WeightMap& pmap) {
+      typedef bgl_named_params<WeightMap, edge_weight_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename DistanceMap>
+    bgl_named_params<DistanceMap, vertex_distance_t, self>
+    distance_map(const DistanceMap& pmap) {
+      typedef bgl_named_params<DistanceMap, vertex_distance_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename ColorMap>
+    bgl_named_params<ColorMap, vertex_color_t, self>
+    color_map(const ColorMap& pmap) {
+      typedef bgl_named_params<ColorMap, vertex_color_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename IndexMap>
+    bgl_named_params<IndexMap, vertex_index_t, self>
+    vertex_index_map(const IndexMap& pmap) {
+      typedef bgl_named_params<IndexMap, vertex_index_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename Visitor>
+    bgl_named_params<Visitor, graph_visitor_t, self>
+    visitor(const Visitor& vis) {
+      typedef bgl_named_params<Visitor, graph_visitor_t, self> Params;
+      return Params(vis, *this);
+    }
+
+  };
+
+  template <typename WeightMap>
+  bgl_named_params<WeightMap, edge_weight_t>
+  weight_map(const WeightMap& pmap) {
+    typedef bgl_named_params<WeightMap, edge_weight_t> Params;
+    return Params(pmap);
   }
 
-  // Choose the parameter or the default.
+  template <typename DistanceMap>
+  bgl_named_params<DistanceMap, vertex_distance_t>
+  distance_map(const DistanceMap& pmap) {
+    typedef bgl_named_params<DistanceMap, vertex_distance_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename ColorMap>
+  bgl_named_params<ColorMap, vertex_color_t>
+  color_map(const ColorMap& pmap) {
+    typedef bgl_named_params<ColorMap, vertex_color_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename IndexMap>
+  bgl_named_params<IndexMap, vertex_index_t>
+  vertex_index_map(const IndexMap& pmap) {
+    typedef bgl_named_params<IndexMap, vertex_index_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename Visitor>
+  bgl_named_params<Visitor, graph_visitor_t>
+  visitor(const Visitor& vis) {
+    typedef bgl_named_params<Visitor, graph_visitor_t> Params;
+    return Params(vis);
+  }
+
+
+  //===========================================================================
+  // Functions for extracting parameters from bgl_named_params
+
+  template <class Tag1, class Tag2, class T1, class Base>
+  inline
+  typename property_value< bgl_named_params<T1,Tag1,Base>, Tag2>::type
+  get_param(const bgl_named_params<T1,Tag1,Base>& p, Tag2 tag2)
+  {
+    enum { match = detail::same_property<Tag1,Tag2>::value };
+    typedef typename
+      property_value< bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
+    T2* t2 = 0;
+    typedef detail::property_value_dispatch<match> Dispatcher;
+    return Dispatcher::const_get_value(p, t2, tag2);
+  }
+
   template <typename Default>
   const Default& 
-  choose_param(const bgl_detail::default_param&, const Default& d)
+  choose_param(const detail::error_property_not_found&, const Default& d)
     { return d; }
+
   template <class P, class Default> 
   const P&
   choose_param(const P& param, const Default&) { return param; }
 
-  bool is_default_param(const bgl_detail::default_param&) { return true; }
   template <typename T>
-  bool is_default_param(const T&) { return false; }
-  
-  template <typename WeightMap = bgl_detail::default_param,
-            typename DistanceMap = bgl_detail::default_param,
-            typename ColorMap = bgl_detail::default_param,
-            typename IndexMap = bgl_detail::default_param,
-            typename Visitor = bgl_detail::default_param>
-  struct bgl_named_params
-  {
-    bgl_named_params(const WeightMap& wm, const DistanceMap& dm,
-		     const ColorMap& cm, const IndexMap& im, 
-		     const Visitor& v)
-      : m_weight_map(wm), m_dist_map(dm), m_color_map(cm),
-	m_vertex_index_map(im), m_visitor(v) { }
-    
-    template <typename WMap>
-    bgl_named_params<WMap,DistanceMap,ColorMap,IndexMap,Visitor>
-    weight_map(const WMap& w_map) {
-      return bgl_named_params<WMap,DistanceMap,ColorMap,IndexMap,Visitor>
-	(w_map, m_dist_map, m_color_map, m_vertex_index_map, m_visitor);
-    }
-    template <typename DMap>
-    bgl_named_params<WeightMap,DMap,ColorMap,IndexMap,Visitor>
-    distance_map(const DMap& d_map) {
-      return bgl_named_params<WeightMap,DMap,ColorMap,IndexMap,Visitor>
-	(m_weight_map, d_map, m_color_map, m_vertex_index_map, m_visitor);
-    }
-    template <typename CMap>
-    bgl_named_params<WeightMap,DistanceMap,CMap,IndexMap,Visitor>
-    color_map(const CMap& c_map) {
-      return bgl_named_params<WeightMap,DistanceMap,CMap,IndexMap,Visitor>
-	(m_weight_map, distance_map, c_map, m_vertex_index_map, m_visitor);
-    }
-    template <typename IMap>
-    bgl_named_params<WeightMap,DistanceMap,ColorMap,IMap,Visitor>
-    vertex_index_map(const IMap& i_map) {
-      return bgl_named_params<WeightMap,DistanceMap,ColorMap,IMap,Visitor>
-	(m_weight_map, distance_map, color_map, i_map, m_visitor);
-    }
-    template <typename Vis>
-    bgl_named_params<WeightMap,DistanceMap,ColorMap,IndexMap,Vis>
-    visitor(const Vis& vis) {
-      return bgl_named_params<WeightMap,DistanceMap,ColorMap,IndexMap,Vis>
-	(m_weight_map, m_dist_map, m_color_map, m_vertex_index_map, vis);
-    }
-    const WeightMap& m_weight_map;
-    const DistanceMap& m_dist_map;
-    const ColorMap& m_color_map;
-    const IndexMap& m_vertex_index_map;
-    const Visitor& m_visitor;
-  };
-  
-  
-  template <typename WeightMap>
-  bgl_named_params<WeightMap>
-  weight_map(const WeightMap& w_map) {
-    return bgl_named_params<WeightMap>(w_map);
-  }
-  template <typename DistMap>
-  bgl_named_params<bgl_detail::default_param, DistMap>
-  distance_map(const DistMap& d_map)
-  {
-    bgl_detail::default_param def;
-    return bgl_named_params<bgl_detail::default_param, DistMap>
-      (def, d_map, def, def, def);
-  }
-  template <typename ColorMap>
-  bgl_named_params<bgl_detail::default_param, bgl_detail::default_param, 
-    ColorMap>
-  color_map(const ColorMap& c_map)
-  {
-    bgl_detail::default_param def;
-    return bgl_named_params<bgl_detail::default_param, 
-      bgl_detail::default_param, ColorMap>(def, def, c_map, def, def);
-  }
-  template <typename IndexMap>
-  bgl_named_params<bgl_detail::default_param, bgl_detail::default_param, 
-    bgl_detail::default_param, IndexMap>
-  vertex_index_map(const IndexMap& i_map)
-  {
-    bgl_detail::default_param def;
-    return bgl_named_params<bgl_detail::default_param, 
-      bgl_detail::default_param, bgl_detail::default_param, IndexMap>
-      (def, def, def, i_map, def);
-  }
-  template <typename Visitor>
-  bgl_named_params<bgl_detail::default_param, bgl_detail::default_param, 
-    bgl_detail::default_param, bgl_detail::default_param, Visitor>
-  visitor(const Visitor& vis)
-  {
-    bgl_detail::default_param def;
-    return bgl_named_params<bgl_detail::default_param, 
-      bgl_detail::default_param, bgl_detail::default_param, 
-      bgl_detail::default_param, Visitor>
-      (def, def, def, def, vis);
-  }
+  inline bool is_default_param(const T&) { return false; }
+
+  inline bool is_default_param(const detail::error_property_not_found&)
+    { return true; }
 
 } // namespace boost
 
