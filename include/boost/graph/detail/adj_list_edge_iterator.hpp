@@ -57,10 +57,9 @@ namespace boost {
                                     G& g) 
         : vBegin(b), vCurr(c), vEnd(e), m_g(&g) {
         if ( vCurr != vEnd ) {
-          while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
+          while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
-          eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(), *vCurr);
-          eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
+	  tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
         }
       }
 
@@ -72,13 +71,10 @@ namespace boost {
         ++eCurr;
         if ( eCurr == eEnd ) {
           ++vCurr;
-          while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
+          while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
-          if ( vCurr != vEnd ) {
-            eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(),
-                                    *vCurr);
-            eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
-          }
+          if ( vCurr != vEnd )
+	    tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
         }
         return *this;
       }
