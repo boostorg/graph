@@ -43,6 +43,8 @@ namespace boost {
   template <class Visitor, class Graph>
   struct UniformCostVisitor_concept {
     void constraints() {
+      vis.start_vertex(u, g);
+      vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
@@ -69,10 +71,6 @@ namespace boost {
       invoke_visitors(m_vis, e, g, on_edge_not_relaxed());      
     }
   private:
-    template <class Vertex, class Graph>
-    void initialize_vertex(Vertex u, Graph& g) { }
-    template <class Vertex, class Graph>
-    void start_vertex(Vertex u, Graph& g) { }
     template <class Edge, class Graph>
     void tree_edge(Edge u, Graph& g) { }
   };
@@ -123,10 +121,13 @@ namespace boost {
         m_combine(combine), m_compare(compare)  { }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex, Graph&) { }
+      void initialize_vertex(Vertex, Graph&) {
+        m_vis.initalize_vertex(u, g);
+      }
       template <class Vertex, class Graph>
-      void start_vertex(Vertex, Graph&) { }
-
+      void start_vertex(Vertex, Graph&) {
+        m_vis.start_vertex(u, g);
+      }
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {
         m_vis.discover_vertex(u, g);

@@ -44,7 +44,7 @@ namespace boost {
       vis.edge_relaxed(e, g);
       vis.edge_not_relaxed(e, g);
       vis.edge_minimized(e, g);
-      vis.edge_non_minimized(e, g);
+      vis.edge_not_minimized(e, g);
     }
     Visitor vis;
     Graph g;

@@ -34,9 +34,11 @@
 #include <boost/pending/integer_range.hpp>
 
 
-#ifdef BOOST_MSVC
-// Having linking troubles due to long symbol names getting
-// truncated on VC++.
+#if 0
+// Was having trouble with internal compiler errors from VC++.
+// Fixed by templating counting_iterator_policies and removing
+// its member template function. Once we are more confident
+// in the iterator adaptors for VC++, we can remove this macro.
 #define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
 #endif
 

@@ -69,6 +69,7 @@ namespace boost {
     template <class Graph, 
               class EdgeCapacityMap,    // integer value type
               class ResidualCapacityEdgeMap,
+              class ReverseEdgeMap,
               class VertexIndexMap,     // vertex_descriptor -> integer
               class FlowValue>
     class push_relabel
@@ -120,6 +121,7 @@ namespace boost {
       push_relabel(Graph& g_, 
                    EdgeCapacityMap cap,
                    ResidualCapacityEdgeMap res,
+                   ReverseEdgeMap rev,
                    vertex_descriptor src_, 
                    vertex_descriptor sink_,
                    VertexIndexMap idx)
@@ -130,7 +132,7 @@ namespace boost {
           current(num_vertices(g_)),
           distance(num_vertices(g_)),
           color(num_vertices(g_)),
-          reverse_edge(get(edge_reverse, g_)),
+          reverse_edge(rev),
           residual_capacity(res),
           layers(num_vertices(g_)),
           work_since_last_update(0)
@@ -553,7 +555,7 @@ namespace boost {
           if (u != src && u != sink && excess_flow[u] != sum)
             return false;
         }
-	return true;
+        return true;
       } // is_flow()
 
       bool is_optimal() {
@@ -600,18 +602,19 @@ namespace boost {
   
   template <class Graph, 
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-            class VertexIndexMap, class FlowValue>
-  void maximum_flow(Graph& g, 
-                    typename graph_traits<Graph>::vertex_descriptor src,
-                    typename graph_traits<Graph>::vertex_descriptor sink,
-                    CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
-                    VertexIndexMap index_map,
-                    FlowValue& flow)
+            class ReverseEdgeMap, class VertexIndexMap>
+  typename property_traits<CapacityEdgeMap>::value_type
+  maximum_flow(Graph& g, 
+               typename graph_traits<Graph>::vertex_descriptor src,
+               typename graph_traits<Graph>::vertex_descriptor sink,
+               CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+               ReverseEdgeMap rev, VertexIndexMap index_map)
   {
     detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
-      VertexIndexMap, FlowValue> algo(g, cap, res, src, sink, index_map);
+      VertexIndexMap, FlowValue> algo(g, cap, res, rev, src, sink, index_map);
 
-    flow = algo.maximum_preflow();
+    typename property_traits<CapacityEdgeMap>::value_type
+      flow = algo.maximum_preflow();
 
     algo.convert_preflow_to_flow();
 
@@ -620,6 +623,7 @@ namespace boost {
     assert(algo.is_optimal());
 #endif
 
+    return flow;
   } // maximum_flow()
 
 } // namespace boost
