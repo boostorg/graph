@@ -396,7 +396,7 @@ Returns the number of edges entering vertex <tt>u</tt>.
 vertices_size_type
 num_vertices(const filtered_graph&amp; g)
 </pre>
-Returns the number of vertices in the graph <tt>g</tt>.
+Returns the number of vertices in the underlying graph <a href="#2">[2]</a>. 
 
 <hr>
 
@@ -474,6 +474,17 @@ Constructible</a> in the <tt>EdgePredicate</tt> and
 by-value (for performance reasons) in the filter iterator adaptor, and
 iterators are required to be Default Constructible by the C++
 Standard.
+
+<p>
+<a name="2">[2]</a> It would be nicer to return the number of
+vertices remaining after the filter has been applied, but
+this has two problems. The first is that it would take longer
+to calculate, and the second is that it would interact badly
+with the underlying vertex index mapping. The index mapping
+would no longer fall in the range <tt>[0,num_vertices(g))</tt>
+which is assumed in many of the algorithms. We are working
+on a solution that will remove that assumption from the
+algorithms.
 
 
 <br>
