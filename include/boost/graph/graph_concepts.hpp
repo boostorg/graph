@@ -46,10 +46,7 @@ namespace boost {
   template <class G>
   struct GraphConcept
   {
-    typedef typename graph_traits<G>
-      ::vertex_descriptor vertex_descriptor;
-    typedef typename graph_traits<G>
-      ::edge_descriptor edge_descriptor;
+    typedef typename graph_traits<G>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<G>::directed_category directed_category;
     typedef typename graph_traits<G>::edge_parallel_category
       edge_parallel_category;
@@ -57,9 +54,6 @@ namespace boost {
       function_requires< DefaultConstructibleConcept<vertex_descriptor> >();
       function_requires< EqualityComparableConcept<vertex_descriptor> >();
       function_requires< AssignableConcept<vertex_descriptor> >();
-      function_requires< DefaultConstructibleConcept<edge_descriptor> >();
-      function_requires< EqualityComparableConcept<edge_descriptor> >();
-      function_requires< AssignableConcept<edge_descriptor> >();
     }
     G g;
   };
@@ -67,11 +61,15 @@ namespace boost {
   template <class G>
   struct IncidenceGraphConcept
   {
+    typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::out_edge_iterator
       out_edge_iterator;
     void constraints() {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<out_edge_iterator> >();
+      function_requires< DefaultConstructibleConcept<edge_descriptor> >();
+      function_requires< EqualityComparableConcept<edge_descriptor> >();
+      function_requires< AssignableConcept<edge_descriptor> >();
 
       p = out_edges(v, g);
       n = out_degree(v, g);
@@ -168,11 +166,15 @@ namespace boost {
   template <class G>
   struct EdgeListGraphConcept
   {
+    typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     void constraints() {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<edge_iterator> >();
+      function_requires< DefaultConstructibleConcept<edge_descriptor> >();
+      function_requires< EqualityComparableConcept<edge_descriptor> >();
+      function_requires< AssignableConcept<edge_descriptor> >();
 
       p = edges(g);
       e = *p.first;
@@ -373,9 +375,9 @@ namespace boost {
       function_requires< EqualityComparableConcept<C> >();
       function_requires< DefaultConstructibleConcept<C> >();
 
-      c = white(c);
-      c = gray(c);
-      c = black(c);
+      c = color_traits<C>::white();
+      c = color_traits<C>::gray();
+      c = color_traits<C>::black();
     }
     C c;
   };
