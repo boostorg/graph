@@ -134,14 +134,14 @@ namespace boost {
 
     template <typename Compare>
     bgl_named_params<Compare, distance_compare_t, self>
-    distance_compare(const Compare& cmp) const {
+    distance_compare(Compare cmp) const {
       typedef bgl_named_params<Compare, distance_compare_t, self> Params;
       return Params(cmp, *this);
     }
 
     template <typename Combine>
     bgl_named_params<Combine, distance_combine_t, self>
-    distance_combine(const Combine& cmb) const {
+    distance_combine(Combine cmb) const {
       typedef bgl_named_params<Combine, distance_combine_t, self> Params;
       return Params(cmb, *this);
     }
@@ -277,14 +277,14 @@ namespace boost {
 
   template <typename Compare>
   bgl_named_params<Compare, distance_compare_t>
-  distance_compare(const Compare& cmp) {
+  distance_compare(Compare cmp) {
     typedef bgl_named_params<Compare, distance_compare_t> Params;
     return Params(cmp);
   }
 
   template <typename Combine>
   bgl_named_params<Combine, distance_combine_t>
-  distance_combine(const Combine& cmb) {
+  distance_combine(Combine cmb) {
     typedef bgl_named_params<Combine, distance_combine_t> Params;
     return Params(cmb);
   }
