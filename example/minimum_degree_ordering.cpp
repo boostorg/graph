@@ -30,6 +30,14 @@
   Important Note: This implementation requires the BGL graph to be
   directed.  Therefore, nonzero entry (i, j) in a symmetrical matrix
   A coresponds to two directed edges (i->j and j->i).
+
+  The bcsstk01.rsa is an example graph in Harwell-Boeing format,
+  and bcsstk01 is the ordering produced by Liu's MMD implementation.
+  Link this file with iohb.c to get the harwell-boeing I/O functions.
+  To run this example, type:
+
+  ./minimum_degree_ordering bcsstk01.rsa bcsstk01
+
 */
 
 #include <fstream>
@@ -116,7 +124,7 @@ int main(int argc, char* argv[])
 
   int n = hbs.nrows();
 
-  cout << " n is " << n << endl;
+  cout << "n is " << n << endl;
 
   Graph G(n);
 
@@ -130,7 +138,7 @@ int main(int argc, char* argv[])
 	num_edge++;
       }
 
-  cout << " number of off-diagnal elements: " << num_edge << endl;
+  cout << "number of off-diagnal elements: " << num_edge << endl;
  
   typedef std::vector<int> Vector;
 
