@@ -441,19 +441,8 @@ namespace boost {
   }
 
 
-#if 0
-  template <typename Default>
-  const Default& 
-  choose_param(const detail::error_property_not_found&, const Default& d)
-    { return d; }
-
-  template <class P, class Default> 
-  const P&
-  choose_param(const P& param, const Default&) { return param; }
-#else
-  // MSVC++ workaround
-
   namespace detail {
+    // MSVC++ workaround
     template <class Param>
     struct choose_param_helper {
       template <class Default> struct result { typedef Param type; };
@@ -474,7 +463,6 @@ namespace boost {
   choose_param(const P& param, const Default& d) { 
     return detail::choose_param_helper<P>::apply(param, d);
   }
-#endif
 
   template <typename T>
   inline bool is_default_param(const T&) { return false; }
