@@ -6,9 +6,12 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
+#include <boost/graph/fruchterman_reingold.hpp>
+#include <boost/graph/random_layout.hpp>
 #include <boost/graph/kamada_kawai_spring_layout.hpp>
 #include <boost/graph/circle_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/random/linear_congruential.hpp>
 #include <boost/test/minimal.hpp>
 #include <iostream>
 #include <boost/limits.hpp>
@@ -149,7 +152,7 @@ test_triangle(Graph*)
                                        side_length(50.0));
   BOOST_TEST(ok);
 
-  std::cout << "Triangle layout.\n";
+  std::cout << "Triangle layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
 }
 
@@ -191,10 +194,32 @@ test_cube(Graph*)
                                        kamada_kawai_done());
   BOOST_TEST(ok);
 
-  std::cout << "Cube layout.\n";
+  std::cout << "Cube layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
 
   dump_graph_layout("cube", g, get(vertex_position, g));
+
+  minstd_rand gen;
+  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+                      gen);
+
+  std::vector<point> displacements(num_vertices(g));
+  fruchterman_reingold_force_directed_layout
+    (g,
+     get(vertex_position, g),
+     50.0,
+     50.0,
+     square_distance_attractive_force(),
+     square_distance_repulsive_force(),
+     all_force_pairs(),
+     linear_cooling<double>(100),
+     make_iterator_property_map(displacements.begin(),
+                                get(vertex_index, g)));
+
+  std::cout << "Cube layout (Fruchterman-Reingold).\n";
+  print_graph_layout(g, get(vertex_position, g));
+
+  dump_graph_layout("cube-fr", g, get(vertex_position, g));
 }
 
 template<typename Graph>
@@ -235,10 +260,88 @@ test_triangular(Graph*)
                                        kamada_kawai_done());
   BOOST_TEST(ok);
 
-  std::cout << "Triangular layout.\n";
+  std::cout << "Triangular layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
 
-  dump_graph_layout("triangular", g, get(vertex_position, g));
+  dump_graph_layout("triangular-kk", g, get(vertex_position, g));
+
+  minstd_rand gen;
+  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+                      gen);
+
+  dump_graph_layout("random", g, get(vertex_position, g));
+
+  std::vector<point> displacements(num_vertices(g));
+  fruchterman_reingold_force_directed_layout
+    (g,
+     get(vertex_position, g),
+     50.0,
+     50.0,
+     attractive_force(square_distance_attractive_force()).
+     cooling(linear_cooling<double>(100)));
+
+  std::cout << "Triangular layout (Fruchterman-Reingold).\n";
+  print_graph_layout(g, get(vertex_position, g));
+
+  dump_graph_layout("triangular-fr", g, get(vertex_position, g));
+}
+
+template<typename Graph>
+void
+test_disconnected(Graph*)
+{
+  enum {A, B, C, D, E, F, G, H};
+  simple_edge triangular_edges[13] = {
+    {A, B}, {B, C}, {C, A}, 
+    {D, E}, {E, F}, {F, G}, {G, H}, {H, D},
+    {D, F}, {F, H}, {H, E}, {E, G}, {G, D}
+  };
+
+  Graph g(&triangular_edges[0], &triangular_edges[13], 8);
+  
+  typedef typename graph_traits<Graph>::edge_iterator edge_iterator;
+  typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
+
+  vertex_iterator vi, vi_end;
+  int i = 0;
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    put(vertex_index, g, *vi, i++);
+
+  edge_iterator ei, ei_end;
+  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    put(edge_weight, g, *ei, 1.0);
+    std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
+              << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
+              << ") ";
+  }
+  std::cerr << std::endl;
+
+  circle_graph_layout(g, get(vertex_position, g), 25.0);
+
+  bool ok = kamada_kawai_spring_layout(g, 
+                                       get(vertex_position, g),
+                                       get(edge_weight, g),
+                                       side_length(50.0),
+                                       kamada_kawai_done());
+  BOOST_TEST(!ok);
+
+  minstd_rand gen;
+  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+                      gen);
+
+  std::vector<point> displacements(num_vertices(g));
+  fruchterman_reingold_force_directed_layout
+    (g,
+     get(vertex_position, g),
+     50.0,
+     50.0,
+     attractive_force(square_distance_attractive_force()).
+     cooling(linear_cooling<double>(50)));
+
+  std::cout << "Disconnected layout (Fruchterman-Reingold).\n";
+  print_graph_layout(g, get(vertex_position, g));
+
+  dump_graph_layout("disconnected-fr", g, get(vertex_position, g));
 }
 
 int test_main(int, char*[])
@@ -253,6 +356,6 @@ int test_main(int, char*[])
   test_circle_layout((Graph*)0, 5);
   test_cube((Graph*)0);
   test_triangular((Graph*)0);
-
+  test_disconnected((Graph*)0);
   return 0;
 }
