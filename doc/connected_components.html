@@ -32,7 +32,7 @@
 <TD ALIGN="LEFT">see below</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">components, color, discover time, finish time</TD>
+<TD ALIGN="LEFT">components, color</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT"><i>O(V + E)</i></TD>
@@ -42,58 +42,33 @@
 
 <P>
 <PRE>
-(1)
-template &lt;class VertexListGraph, class Visitor, 
-          class Components&gt;
-typename property_traits&lt; Components &gt;::value_type
-connected_components(VertexListGraph&amp; G, Components c,
-                     Visitor v);
+(2)
+template &lt;class VertexListGraph, class ComponentMap, class ColorMap&gt;
+typename property_traits&lt;ComponentMap&gt;::value_type
+connected_components(VertexListGraph&amp; G, ComponentMap comp, ColorMap color);
 
 (2)
-template &lt;class VertexListGraph, class Visitor, 
-          class Components, class Color&gt;
-typename property_traits&lt;Components&gt;::value_type
-connected_components(VertexListGraph&amp; G, Components c, 
-                     Color color, Visitor v);
-
-(3)
-template &lt;class VertexListGraph, class Visitor, 
-          class Components, class DiscoverTime, 
-          class FinishTime, class Color&gt;
-typename property_traits&lt;Components&gt;::value_type
-connected_components(VertexListGraph&amp; G, Components c, 
-                     DiscoverTime d, FinishTime f, 
-                     Color color, Visitor v);
+template &lt;class VertexListGraph, 
+          class ComponentMap, class ColorMap, class DFSVisitor&gt;
+typename property_traits&lt;ComponentMap&gt;::value_type
+connected_components(VertexListGraph&amp; G, ComponentMap comp, ColorMap color,
+  DFSVisitor v);
 </PRE>
 
 <P>
-The <TT>connected_component()</TT> function dispatches to two different
-algorithms depending on whether the graph in question is directed or
-undirected.
-
-<P>
-
-<UL>
-<LI>Computes the strongly connected components of a directed graph
-    using the DFS/transpose/DFS algorithm&nbsp;[<A
- HREF="bibliography.html#aho83:_data_struct_algo">1</A>,<A
- HREF="bibliography.html#clr90">8</A>].
-
-<P>
-</LI>
-<LI>Computes the connected components of an undirected graph using
-    a DFS-based approach. If the connected-components are to be
-    calculated over and over while a graph is changing the disjoint-set
-    based approach of function
-    <TT>dynamic_connected_components()</TT> is faster. For
-    ``static'' graphs this DFS-based approach is faster&nbsp;[<A
- HREF="bibliography.html#clr90">8</A>].
+The <TT>connected_components()</TT> functions compute the connected
+components of an undirected graph using a DFS-based approach. If the
+connected-components are to be calculated over and over while a graph
+is changing the disjoint-set based approach of function
+<TT>dynamic_connected_components()</TT> is faster. For ``static''
+graphs this DFS-based approach is faster&nbsp;[<A
+HREF="bibliography.html#clr90">8</A>].
 </LI>
 </UL>
 
 <P>
 The output of the algorithm is recorded in the component property
-map <TT>c</TT>, which will contain numbers giving the component ID
+map <TT>comp</TT>, which will contain numbers giving the component ID
 assigned to each vertex. The number of components is the return value
 of the function.
 
@@ -115,14 +90,8 @@ property maps.
 <H3>Definitions</H3>
 
 <P>
-A <I>connected component</I> of an undirected graph is a set of
-vertices that are all reachable from each other.  A <I>strongly
-connected component</I> of a directed graph <i>G=(V,E)</i> is a
-maximal set of vertices <i>U</i> which is in <i>V</i> such that for
-every pair of vertices <i>u</i> and <i>v</i> in <i>U</i>, we have both
-a path from <i>u</i> to <i>v</i> and path from <i>v</i> to
-<i>u</i>. That is to say that <i>u</i> and <i>v</i> are reachable from
-each other.
+A <b><I>connected component</I></b> of an undirected graph is a set of
+vertices that are all reachable from each other.  
 
 <P>
 
@@ -135,23 +104,18 @@ each other.
 href="./VertexListGraph.html">VertexListGraph</a>.
  
 </LI>
-<LI><TT>DiscoverTime</TT> and <TT>FinishTime</TT> must be models of <a
- href="../../property_map/WritablePropertyMap.html">WritablePropertyMap</a>
- and their value type must be an integer type. Vertex descriptors from
- the graph should be usable as the key type for these maps.
+<LI>The <TT>ComponentMap</TT> type must be a model of <a
+    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+    value type of the <TT>ComponentMap</TT> property map should be
+    an integer type, preferably the same as the <TT>size_type</TT> of
+    the graph. The key type should be the graph's vertex descriptor
+    type.
 </LI>
-<LI>The <TT>Color</TT> map must be a <a
+<LI>The <TT>ColorMap</TT> map must be a <a
      href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
      and the graph's vertex descriptor type should be usable as the
      map's key type. The value type of the map must be a
      model of <I>ColorValue</I>.
-</LI>
-<LI>The <TT>Components</TT> type must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
-    value type of the <TT>Components</TT> property map should be
-    an integer type, preferably the same as the <TT>size_type</TT> of
-    the graph. The key type should be the graph's vertex descriptor
-    type.
 </LI>
 </UL>
 
@@ -160,11 +124,15 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <H3>Complexity</H3>
 
 <P>
-The time complexity for the strongly connected components algorithm is
-<i>O(V + E)</i>.  The time complexity for the connected components
-algorithm is also <i>O(V + E)</i>.
+The time complexity for the connected components algorithm is also
+<i>O(V + E)</i>.
 
 <P>
+
+<h3>See Also</h3>
+
+<a href="./strong_components.html"><tt>strong_components()</tt></a>
+and <a href="./dynamic_components.html"><tt>dynamic_components()</tt></a>
 
 <H3>Example</H3>
 
@@ -208,48 +176,6 @@ The output is:
   Vertex 3 is in component 3
   Vertex 4 is in component 1
   Vertex 5 is in component 2
-</PRE>
-
-<P>
-Calculating the strongly connected components of a directed graph.
-<PRE>
-    typedef discover_time_property&lt; finish_time_property
-                                  &lt; color_property&lt;&gt; &gt; &gt; VertexProperty;
-    typedef adjacency_list&lt; vecS, vecS, directedS, VertexProperty &gt;  Graph;
-    const int N = 6;
-    Graph G(N);
-    add_edge(0, 1, G);
-    add_edge(1, 1, G);
-    add_edge(1, 3, G);
-    add_edge(1, 4, G);
-    add_edge(4, 3, G);
-    add_edge(3, 4, G);
-    add_edge(3, 0, G);
-    add_edge(5, 2, G);
-
-    typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
-    
-    std::vector&lt;int&gt; c(N);
-    int num = connected_components(G, c.begin(), 
-      get_color_map(G), null_visitor());
-    
-    cout &lt;&lt; endl;
-    cout &lt;&lt; "Total number of components: " &lt;&lt; num &lt;&lt; endl;
-    std::vector&lt;int&gt;::iterator i;
-    for (i = c.begin(); i != c.end(); ++i)
-      cout &lt;&lt; "Vertex " &lt;&lt; i - c.begin() 
-           &lt;&lt; " is in component " &lt;&lt; *i &lt;&lt; endl;
-  }
-</PRE>
-The output is:
-<PRE>
-  Total number of components: 3
-  Vertex 0 is in component 3
-  Vertex 1 is in component 3
-  Vertex 2 is in component 2
-  Vertex 3 is in component 3
-  Vertex 4 is in component 3
-  Vertex 5 is in component 1
 </PRE>
 
 <P>
