@@ -56,6 +56,7 @@ namespace boost {
   struct property_traits<default_color_type*> {
     typedef default_color_type value_type;
     typedef std::ptrdiff_t key_type;
+    typedef default_color_type& reference;
     typedef lvalue_property_map_tag category;
   };
   // get/put already defined for T*
