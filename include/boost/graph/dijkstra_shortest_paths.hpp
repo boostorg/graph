@@ -145,11 +145,45 @@ namespace boost {
 
   } // namespace detail
 
-  // Initalize distances and call uniform cost search
+  // Initalize distances and call breadth first search
   template <class VertexListGraph, class DijkstraVisitor, 
-	    class PredecessorMap, class DistanceMap,
-	    class WeightMap, class IndexMap, class Compare, class Combine, 
-	    class DistInf, class DistZero>
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine, 
+            class DistInf, class DistZero>
+  inline void
+  dijkstra_shortest_paths_no_init
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis)
+  {
+    typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
+    IndirectCmp icmp(distance, compare);
+
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
+      MutableQueue;
+
+    MutableQueue Q(num_vertices(g), icmp, index_map);
+
+    detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
+      PredecessorMap, DistanceMap, Combine, Compare>
+        bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
+
+    std::vector<default_color_type> color(num_vertices(g));
+    default_color_type c = white_color;
+    breadth_first_visit(g, s, Q, bfs_vis,
+      make_iterator_property_map(&color[0], index_map, c));
+  }
+
+
+  // Initalize distances and call breadth first search
+  template <class VertexListGraph, class DijkstraVisitor, 
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine, 
+            class DistInf, class DistZero>
   inline void
   dijkstra_shortest_paths
     (const VertexListGraph& g,
@@ -166,23 +200,8 @@ namespace boost {
     }
     put(distance, s, zero);
 
-    typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
-    IndirectCmp icmp(distance, compare);
-
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
-      MutableQueue;
-
-    MutableQueue Q(num_vertices(g), icmp, index_map);
-
-    detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
-      PredecessorMap, DistanceMap, Combine, Compare>
-	bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
-
-    std::vector<default_color_type> color(num_vertices(g));
-    default_color_type c = white_color;
-    breadth_first_visit(g, s, Q, bfs_vis,
-      make_iterator_property_map(&color[0], index_map, c));
+    dijkstra_shortest_paths(g, s, predecessor, distance, weight,
+			    index_map, compare, combine, inf, zero, vis);
   }
 
   namespace detail {
