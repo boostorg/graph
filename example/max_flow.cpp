@@ -81,8 +81,6 @@ main()
     rev = get(edge_reverse, g);
   property_map<Graph, edge_residual_capacity_t>::type 
     residual_capacity = get(edge_residual_capacity, g);
-  property_map<Graph, vertex_index_t>::type 
-    indexmap = get(vertex_index, g);
 
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
@@ -90,6 +88,8 @@ main()
   long flow;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // Use non-named parameter version
+  property_map<Graph, vertex_index_t>::type 
+    indexmap = get(vertex_index, g);
   flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev, indexmap);
 #else
   flow = push_relabel_max_flow(g, s, t);
