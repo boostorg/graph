@@ -68,7 +68,7 @@ namespace boost {
 
   // Variant (2)
   template <class VertexListGraph, class BFSVisitor, class ColorMap>
-  inline void breadth_first_search(VertexListGraph& g,
+  inline void breadth_first_search(const VertexListGraph& g,
     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
     BFSVisitor vis, ColorMap color)
   {
@@ -87,7 +87,7 @@ namespace boost {
   // Variant (3)
   template <class IncidenceGraph, class Buffer, class BFSVisitor, 
             class ColorMap>
-  inline void breadth_first_search(IncidenceGraph& g, 
+  inline void breadth_first_search(const IncidenceGraph& g, 
     typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
     Buffer& Q, BFSVisitor vis, ColorMap color)
   {
