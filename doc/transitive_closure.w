@@ -429,7 +429,7 @@ the transitive closure of the condensation graph $G'^+$. We do this in
 two steps. First we add edges between all the vertices in one SCC to
 all the vertices in another SCC when the two SCCs are adjacent in the
 condensation graph. Second we add edges to connect each vertex in a
-SCC to every other vertex in the SCC (other than itself).
+SCC to every other vertex in the SCC.
 
 @d Build transitive closure of the original graph
 @{
@@ -461,8 +461,7 @@ for (size_type i = 0; i < components.size(); ++i)
     for (size_type k = 0; k < components[i].size(); ++k)
       for (size_type l = 0; l < components[i].size(); ++l) {
         vertex u = components[i][k], v = components[i][l];
-        if (u != v)
-          add_edge(to_tc[u], to_tc[v], tc);
+        add_edge(to_tc[u], to_tc[v], tc);
       }
 @}
 
