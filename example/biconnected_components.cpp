@@ -47,7 +47,6 @@ main()
   typedef adjacency_list < vecS, vecS, undirectedS,
     no_property, property < edge_component_t, std::size_t > >graph_t;
   typedef graph_traits < graph_t >::vertex_descriptor vertex_t;
-#if 0
   graph_t g(9);
   add_edge(0, 5, g);
   add_edge(0, 1, g);
@@ -60,28 +59,10 @@ main()
   add_edge(6, 8, g);
   add_edge(6, 7, g);
   add_edge(7, 8, g);
-#else
-  graph_t g(11);
-  enum {A, B, C, D, E, F, G, H, I, J, K};
-  add_edge(A, B, g);
-  add_edge(A, H, g);
-  add_edge(A, D, g);
-  add_edge(A, K, g);
-  add_edge(B, C, g);
-  add_edge(C, D, g);
-  add_edge(C, E, g);
-  add_edge(C, G, g);
-  add_edge(E, F, g);
-  add_edge(E, G, g);
-  add_edge(F, G, g);
-  add_edge(H, I, g);
-  add_edge(H, J, g);
-  add_edge(I, J, g);
-  add_edge(J, K, g);
-#endif
 
   property_map < graph_t, edge_component_t >::type
     component = get(edge_component, g);
+
   std::size_t num_comps = biconnected_components(g, component);
   std::cerr << "Found " << num_comps << " biconnected components.\n";
 

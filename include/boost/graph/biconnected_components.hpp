@@ -29,7 +29,6 @@ namespace boost
     biconnect(typename graph_traits < Graph >::vertex_descriptor v,
 	      typename graph_traits < Graph >::vertex_descriptor u,
 	      bool at_top, 
-	      bool& emitted_top,
 	      const Graph & g,
 	      ComponentMap comp,
 	      std::size_t & c,
@@ -42,28 +41,24 @@ namespace boost
       typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
       typedef typename property_traits < DiscoverTimeMap >::value_type D;
       D infinity = (std::numeric_limits < D >::max)();
-        put(d, v, ++dfs_time);
-        put(lowpt, v, get(d, v));
+      put(d, v, ++dfs_time);
+      put(lowpt, v, get(d, v));
+
+      bool is_art_point = false;
+      std::size_t visited_children = 0;
       typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei)
       {
         vertex_t w = target(*ei, g);
         if (get(d, w) == infinity)
         {
+	  ++visited_children;
           S.push(*ei);
-          out = biconnect(w, v, false, emitted_top, g, comp, c, d, dfs_time, 
-			  lowpt, out, S);
+          out = biconnect(w, v, false, g, comp, c, d, dfs_time, lowpt, out, S);
           put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(lowpt, w)));
           if (get(lowpt, w) >= get(d, v))
           {
-	    if (at_top) {
-	      if (!emitted_top) {
-		emitted_top = true;
-		*out++ = v;
-	      }
-	    } else {
-	      *out++ = v;
-	    }
+	    if (!at_top) is_art_point = true;
 
             while (d[source(S.top(), g)] >= d[w]) {
               put(comp, S.top(), c);
@@ -80,6 +75,11 @@ namespace boost
           put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(d, w)));
         }
       }
+
+      if (at_top && visited_children > 1)
+	is_art_point = true;
+      if (is_art_point)
+	*out++ = v;
 
       return out;
     }
@@ -113,12 +113,9 @@ namespace boost
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
       put(discover_time, *wi, infinity);
 
-    bool emitted_top = false;
-
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
       if (get(discover_time, *wi) == (std::numeric_limits < D >::max)())
-        out = detail::biconnect(*wi, *wi, true, emitted_top,
-				g, comp, num_components,
+        out = detail::biconnect(*wi, *wi, true, g, comp, num_components,
 				discover_time, dfs_time, lowpt, out, S);
 
     return std::pair<std::size_t, OutputIterator>(num_components, out);

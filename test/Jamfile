@@ -61,6 +61,9 @@ test-suite graph :
     [ run floyd_warshall_test.cpp ]
 
     [ run astar_search_test.cpp ]
+
+    [ run biconnected_components_test.cpp ]
+
     ;
 
 # Run SDB tests only when -sSDB= is set.
