@@ -53,7 +53,7 @@ public:
   // 33
   void push(const T& d) {
     ++_n;
-    size_type v = _id[d];
+    size_type v = get(_id, d);
     _key[v] = d;
     _p[v] = nil();
     _degree[v] = 0;
@@ -169,8 +169,8 @@ public:
 
   // 34
   void update(const T& d) {
-    size_type v = _id[d];
-    assert(_compare(d, _key[v]));
+    size_type v = get(_id, d);
+    assert(!_compare(_key[v], d));
     _key[v] = d;
     size_type p = _p[v];
     if (p != nil()) {
