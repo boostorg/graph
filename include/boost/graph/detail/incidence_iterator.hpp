@@ -69,10 +69,10 @@ namespace boost {
       Vertex _src;
     protected:
       inline reference deref_helper(out_edge_tag) const {
-        return edge_type( _src, (*i).get_target(), (*i).get_property() );
+        return edge_type( _src, (*i).get_target(), &(*i).get_property() );
       }
       inline reference deref_helper(in_edge_tag) const {
-        return edge_type((*i).get_target(), _src, (*i).get_property() );
+        return edge_type((*i).get_target(), _src, &(*i).get_property() );
       }
     };
 
