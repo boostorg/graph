@@ -318,7 +318,7 @@ namespace boost {
             typename subgraph<G>::adjacency_iterator>
   adjacent_vertices(typename subgraph<G>::vertex_descriptor u_local,
                     const subgraph<G>& g) 
-    { return adjacent_vertices(u, g.m_graph); }
+    { return adjacent_vertices(u_local, g.m_graph); }
 
   //===========================================================================
   // Functions required by the VertexListGraph concept 
