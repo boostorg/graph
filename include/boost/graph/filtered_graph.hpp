@@ -378,11 +378,28 @@ namespace boost {
        typename filtered_graph<G, EP, VP>::vertex_descriptor v,
        const filtered_graph<G, EP, VP>& g)
   {
-    typename G::edge_descriptor e;
+    typename graph_traits<G>::edge_descriptor e;
     bool exists;
     tie(e, exists) = edge(u, v, g.m_g);
     return std::make_pair(e, exists && g.m_edge_pred(e));
   }
+
+  template <typename G, typename EP, typename VP>
+  std::pair<typename filtered_graph<G, EP, VP>::out_edge_iterator,
+            typename filtered_graph<G, EP, VP>::out_edge_iterator>
+  edge_range(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
+             typename filtered_graph<G, EP, VP>::vertex_descriptor v,
+             const filtered_graph<G, EP, VP>& g)
+  {
+    typedef filtered_graph<G, EP, VP> Graph;
+    typename Graph::OutEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
+    typedef typename Graph::out_edge_iter_policy Pol;
+    typedef typename Graph::out_edge_iterator iter;
+    typename graph_traits<G>::out_edge_iterator f, l;
+    tie(f, l) = edge_range(u, v, g.m_g);
+    return std::make_pair(iter(f, Pol(pred, l)), iter(l, Pol(pred, l)));
+  }
+
 
   //===========================================================================
   // Property map
