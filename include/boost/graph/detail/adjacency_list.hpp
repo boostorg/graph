@@ -2053,6 +2053,9 @@ namespace boost {
         StoredVertex* sv = (StoredVertex*)v;
         return get_property_value(sv->m_property, Tag());
       }
+      inline Reference operator()(key_type v) const {
+	return this->operator[](v);
+      }
     };
 
     template <class Graph, class Property, class PropRef>
@@ -2069,6 +2072,9 @@ namespace boost {
       inline PropRef operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
         return sv->m_property;
+      }
+      inline PropRef operator()(key_type v) const {
+	return this->operator[](v);
       }
     };
 
@@ -2088,6 +2094,9 @@ namespace boost {
       inline Reference operator[](key_type v) const {
         return get_property_value(m_g.m_vertices[v].m_property,  Tag());
       }
+      inline Reference operator()(key_type v) const {
+        return this->operator[](v);
+      }
       GraphRef m_g;
     };
 
@@ -2104,6 +2113,9 @@ namespace boost {
       vec_adj_list_vertex_all_properties_map(GraphRef g) : m_g(g) { }
       inline PropertyRef operator[](key_type v) const {
         return m_g.m_vertices[v].m_property;
+      }
+      inline PropertyRef operator()(key_type v) const {
+        return this->operator[](v);
       }
       GraphRef m_g;
     };
@@ -2144,6 +2156,7 @@ namespace boost {
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
       inline value_type operator[](key_type v) const { return v; }
+      inline value_type operator()(key_type v) const { return v; }
     };
 
     struct vec_adj_list_any_vertex_pa {
@@ -2235,6 +2248,9 @@ namespace boost {
         Property& p = *(Property*)e.get_property();
         return get_property_value(p, Tag());
       }
+      inline Ref operator()(key_type e) const {
+	return this->operator[](e);
+      }
     };
 
     template <class Directed, class Property, class PropRef, class PropPtr,
@@ -2250,6 +2266,9 @@ namespace boost {
       typedef boost::lvalue_property_map_tag category;
       inline PropRef operator[](key_type e) const {
         return *(PropPtr)e.get_property();
+      }
+      inline PropRef operator()(key_type e) const {
+        return this->operator[](e);
       }
     };
 
