@@ -39,9 +39,9 @@ public:
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
 #if defined(BOOST_MSVC) || defined(__ICL) // need a new macro?
-      new_roots(int(log(float(n))) + 5) { }
+      new_roots(size_type(log(float(n))) + 5) { }
 #else
-      new_roots(std::log(float(n)) + 5) { }
+      new_roots(size_type(std::log(float(n))) + 5) { }
 #endif
 
   // 33
