@@ -203,12 +203,12 @@ in the graph.
 
 <hr>
 
-<tt>property_map&lt;reverse_graph, Property&gt;::type</tt><br>
+<tt>property_map&lt;reverse_graph, PropertyTag&gt;::type</tt><br>
 and<br>
-<tt>property_map&lt;reverse_graph, Property&gt;::const_type</tt>
+<tt>property_map&lt;reverse_graph, PropertyTag&gt;::const_type</tt>
 <br><br>
 The property map type for vertex or edge properties in the graph. The
-specific property is specified by the <TT>Property</TT> template argument,
+specific property is specified by the <TT>PropertyTag</TT> template argument,
 and must match one of the properties specified in the
 <TT>VertexProperty</TT> or <TT>EdgeProperty</TT> for the graph.
 
@@ -338,48 +338,48 @@ graph <tt>g</tt>.
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>&gt;
-property_map&lt;reverse_graph, Property&gt;::type
-get(Property, reverse_graph&amp; g)
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
+property_map&lt;reverse_graph, PropertyTag&gt;::type
+get(PropertyTag, reverse_graph&amp; g)
 
-template &lt;class <a href="./Property.html">Property</a>&gt;
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
 property_map&lt;reverse_graph, Tag&gt;::const_type
-get(Property, const reverse_graph&amp; g)
+get(PropertyTag, const reverse_graph&amp; g)
 </pre>
 Returns the property map object for the vertex property specified by
-<TT>Property</TT>. The <TT>Property</TT> must match one of the
+<TT>PropertyTag</TT>. The <TT>PropertyTag</TT> must match one of the
 properties specified in the graph's <TT>VertexProperty</TT> template
 argument.
 
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>, class X&gt;
-typename property_traits&lt;property_map&lt;reverse_graph, Property&gt;::const_type&gt::value_type
-get(Property, const reverse_graph&amp; g, X x)
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X&gt;
+typename property_traits&lt;property_map&lt;reverse_graph, PropertyTag&gt;::const_type&gt::value_type
+get(PropertyTag, const reverse_graph&amp; g, X x)
 </pre>
 This returns the property value for <tt>x</tt>, which is either
 a vertex or edge descriptor.
 <hr>
 
 <pre>
-template &lt;class <a href="./Property.html">Property</a>, class X, class Value&gt;
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X, class Value&gt;
 void
-put(Property, const reverse_graph&amp; g, X x, const Value& value)
+put(PropertyTag, const reverse_graph&amp; g, X x, const Value& value)
 </pre>
 This sets the property value for <tt>x</tt> to
 <tt>value</tt>. <tt>x</tt> is either a vertex or edge descriptor.
 <tt>Value</tt> must be convertible to
-<tt>typename property_traits&lt;property_map&lt;reverse_graph, Property&gt;::type&gt::value_type</tt>
+<tt>typename property_traits&lt;property_map&lt;reverse_graph, PropertyTag&gt;::type&gt::value_type</tt>
 
 <hr>
 
 <pre>
-template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
-typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
-get_property(reverse_graph&amp; g, GraphProperty);
+template &lt;class GraphProperties, class <a href="./PropertyTag.html#GraphPropertyTag">GraphPropertyTag</a>&gt;
+typename property_value&lt;GraphProperties, GraphPropertyTag&gt;::type&amp;
+get_property(reverse_graph&amp; g, GraphPropertyTag);
 </pre>
-Return the property specified by <tt>GraphProperty</tt> that is
+Return the property specified by <tt>GraphPropertyTag</tt> that is
 attached to the graph object <tt>g</tt>. The <tt>property_value</tt>
 traits class is defined in <a
 href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.
@@ -387,11 +387,11 @@ href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></
 <hr>
 
 <pre>
-template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
-const typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
-get_property(const reverse_graph&amp; g, GraphProperty);
+template &lt;class GraphProperties, class <a href="./PropertyTag.html#GraphPropertyTag">GraphPropertyTag</a>&gt;
+const typename property_value&lt;GraphProperties, GraphPropertyTag&gt;::type&amp;
+get_property(const reverse_graph&amp; g, GraphPropertyTag);
 </pre>
-Return the property specified by <tt>GraphProperty</tt> that is
+Return the property specified by <tt>GraphPropertyTag</tt> that is
 attached to the graph object <tt>g</tt>.  The <tt>property_value</tt>
 traits class is defined in <a
 href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.

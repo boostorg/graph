@@ -23,19 +23,19 @@
 
 <H1><A NAME=""></A>
 <pre>
-property_map&lt;<a href="./PropertyGraph.html">PropertyGraph</a>, <a href="./Property.html">Property</a>&gt;
+property_map&lt;<a href="./PropertyGraph.html">PropertyGraph</a>, <a href="./PropertyTag.html">PropertyTag</a>&gt;
 </pre>
 </H1>
 
 This is the traits class that produces the type for a <a
 href="../../property_map/property_map.html">property map</a> object
 for a particular graph type. The property is specified by the <a
-href="./Property.html">Property</a> template parameter.  Graph classes
+href="./PropertyTag.html">PropertyTag</a> template parameter.  Graph classes
 must specialize this traits class to provide their own implementation
 for property maps.
 
 <pre>
-  template &lt;class Graph, class Property&gt;
+  template &lt;class Graph, class PropertyTag&gt;
   struct property_map {
     typedef ... type;
     typedef ... const_type;
@@ -56,7 +56,7 @@ for property maps.
 <td>
 The (mutable) property map type for mapping vertex or edge desriptors of
 the graph to their associated property values, where the property is
-specified by <tt>Property</tt>. This type is a <a
+specified by <tt>PropertyTag</tt>. This type is a <a
 href="../../property_map/property_map.html">property map</a>.
 </tr>
 
@@ -66,7 +66,7 @@ href="../../property_map/property_map.html">property map</a>.
 <td>
 The (non-mutable) property map type for mapping vertex or edge
 desriptors of the graph to their associated property values, where the
-property is specified by <tt>Property</tt>. This type is a <a
+property is specified by <tt>PropertyTag</tt>. This type is a <a
 href="../../property_map/property_map.html">property map</a>.
 </tr>
 
