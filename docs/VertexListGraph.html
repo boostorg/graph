@@ -104,8 +104,8 @@ The <TT>vertices()</TT> function must return in constant time.
     typedef typename boost::graph_traits&lt;G&gt;::vertex_iterator 
       vertex_iterator;
     void constraints() {
-      function_requires&lt; AdjacencyGraph&lt;G&gt; &gt;();
-      function_requires&lt; MultiPassInputIterator&lt;vertex_iterator&gt; &gt;();
+      function_requires&lt; AdjacencyGraphConcept&lt;G&gt; &gt;();
+      function_requires&lt; MultiPassInputIteratorConcept&lt;vertex_iterator&gt; &gt;();
 
       p = vertices(g);
       V = num_vertices(g);

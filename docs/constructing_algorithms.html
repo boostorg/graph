@@ -126,10 +126,10 @@ namespace boost {
     typedef typename property_traits&lt;Color&gt;::value_type ColorType;
     typedef typename property_traits&lt;Order&gt;::value_type OrderType;
 
-    function_requires&lt; VertexListGraph&lt;VertexListGraph&gt; &gt;();
-    function_requires&lt; ReadWritePropertyMap&lt;Color, vertex_descriptor&gt; &gt;();
-    function_requires&lt; Integer&lt;ColorType&gt; &gt;();
-    function_requires&lt; size_type, ReadablePropertyMap&lt;Order&gt; &gt;();
+    function_requires&lt; VertexListGraphConcept&lt;VertexListGraph&gt; &gt;();
+    function_requires&lt; ReadWritePropertyMapConcept&lt;Color, vertex_descriptor&gt; &gt;();
+    function_requires&lt; IntegerConcept&lt;ColorType&gt; &gt;();
+    function_requires&lt; size_type, ReadablePropertyMapConcept&lt;Order&gt; &gt;();
     typedef typename same_type&lt;OrderType, vertex_descriptor&gt;::type req_same;
     
     size_type max_color = 0;

@@ -106,12 +106,12 @@ None required.
     typedef typename boost::graph_traits&lt;G&gt;::edge_parallel_category edge_parallel_category;
 
     void constraints() {
-      function_requires&lt; DefaultConstructible&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; EqualityComparable&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; Assignable&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; DefaultConstructible&lt;edge_descriptor&gt; &gt;();
-      function_requires&lt; EqualityComparable&lt;edge_descriptor&gt; &gt;();
-      function_requires&lt; Assignable&lt;edge_descriptor&gt; &gt;();
+      function_requires&lt; DefaultConstructibleConcept&lt;vertex_descriptor&gt; &gt;();
+      function_requires&lt; EqualityComparableConcept&lt;vertex_descriptor&gt; &gt;();
+      function_requires&lt; AssignableConcept&lt;vertex_descriptor&gt; &gt;();
+      function_requires&lt; DefaultConstructibleConcept&lt;edge_descriptor&gt; &gt;();
+      function_requires&lt; EqualityComparableConcept&lt;edge_descriptor&gt; &gt;();
+      function_requires&lt; AssignableConcept&lt;edge_descriptor&gt; &gt;();
     }
     G g;
   };

@@ -55,8 +55,8 @@ requirements are added.
   struct VertexAndEdgeListGraph
   {
     void constraints() {
-      function_requires&lt; VertexListGraph&lt;G&gt; &gt;();
-      function_requires&lt; EdgeListGraph&lt;G&gt; &gt;();
+      function_requires&lt; VertexListGraphConcept&lt;G&gt; &gt;();
+      function_requires&lt; EdgeListGraphConcept&lt;G&gt; &gt;();
     }
   };
 </PRE>
