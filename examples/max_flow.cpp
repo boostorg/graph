@@ -61,8 +61,8 @@ main()
 
   print_graph(g);
   
-  maximum_flow(g, s, t, capacity, get(edge_residual_capacity, g),
-               get(vertex_index, g), flow);
+  flow = maximum_flow(g, s, t, capacity, get(edge_residual_capacity, g),
+		      get(edge_reverse, g), get(vertex_index, g));
   
   std::cout << "flow: " << flow << std::endl;
   

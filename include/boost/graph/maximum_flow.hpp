@@ -86,15 +86,25 @@ namespace boost {
       typedef typename Traits::vertices_size_type vertices_size_type;
       typedef typename Traits::edges_size_type edges_size_type;
 
-      typedef typename property_map<Graph, edge_reverse_t>::type
-        ReverseEdgeMap;
-
       typedef preflow_layer<vertex_descriptor> Layer;
       typedef std::vector< Layer > LayerArray;
       typedef typename LayerArray::iterator layer_iterator;
       typedef typename LayerArray::size_type distance_size_type;
 
       typedef color_traits<default_color_type> ColorTraits;
+
+      //=======================================================================
+      // Some helper predicates
+
+      inline bool is_admissible(vertex_descriptor u, vertex_descriptor v) {
+	return distance[u] == distance[v] + 1;
+      }
+      inline bool is_residual_edge(edge_descriptor a) {
+	return residual_capacity[a] > 0;
+      }
+      inline bool is_saturated(edge_descriptor a) {
+	return residual_capacity[a] == 0;
+      }
 
       //=======================================================================
       // Layer List Management Functions
@@ -223,7 +233,7 @@ namespace boost {
             edge_descriptor a = *ai;
             vertex_descriptor j = target(a, g);
             if (color[j] == ColorTraits::white()
-                && residual_capacity[reverse_edge[a]] > 0 ) {
+                && is_residual_edge(reverse_edge[a])) {
               distance[j] = j_distance;
               color[j] = ColorTraits::gray();
               current[j] = out_edges(j, g).first;
@@ -251,9 +261,9 @@ namespace boost {
           for (ai = current[u], ai_end = out_edges(u, g).second;
                ai != ai_end; ++ai) {
             edge_descriptor a = *ai;
-            if (residual_capacity[a] > 0) {
+            if (is_residual_edge(a)) {
               vertex_descriptor v = target(a, g);
-              if (distance[u] == distance[v] + 1) { // if (u,v) is admissible
+              if (is_admissible(u, v)) {
                 if (v != sink && excess_flow[v] == 0) {
                   remove_from_inactive_list(v);
                   add_to_active_list(v, layers[distance[v]]);
@@ -268,7 +278,7 @@ namespace boost {
           Layer& layer = layers[distance[u]];
 
           if (ai == ai_end) {   // i must be relabeled
-            relabel(u);
+            relabel_distance(u);
             if (layer.active_vertices.empty()
                 && layer.inactive_vertices.empty())
               gap(distance[u]);
@@ -309,7 +319,7 @@ namespace boost {
       // distance[t] = 0
       // distance[u] <= distance[v] + 1   for every residual edge (u,v)
       //
-      distance_size_type relabel(vertex_descriptor i)
+      distance_size_type relabel_distance(vertex_descriptor i)
       {
         distance_size_type min_distance = num_vertices(g);
         distance[i] = min_distance;
@@ -320,12 +330,11 @@ namespace boost {
         for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
           edge_descriptor a = *ai;
           vertex_descriptor j = target(a, g);
-          if (residual_capacity[a] > 0 && distance[j] < min_distance) {
+          if (is_residual_edge(a) && distance[j] < min_distance) {
               min_distance = distance[j];
               min_edge_iter = ai;
           }
         }
-
         ++min_distance;
         if (min_distance < n) {
           distance[i] = min_distance;     // this is the main action
@@ -333,7 +342,7 @@ namespace boost {
           max_distance = std::max(min_distance, max_distance);
         }
         return min_distance;
-      } // relabel()
+      } // relabel_distance()
 
       //=======================================================================
       // cleanup beyond the gap
@@ -432,7 +441,7 @@ namespace boost {
             while (1) {
               for (; current[i] != out_edges(i, g).second; ++current[i]) {
                 edge_descriptor a = *current[i];
-                if ( capacity[a] == 0 && residual_capacity[a]) {
+                if (capacity[a] == 0 && is_residual_edge(a)) {
                   vertex_descriptor j = target(a, g);
                   if (color[j] == ColorTraits::white()) {
                     color[j] = ColorTraits::gray();
@@ -464,8 +473,8 @@ namespace boost {
                     restart = i;
                     for (j = target(*current[i], g); j != i; j = target(a, g)){
                       a = *current[j];
-                      if (color[j] == ColorTraits::white() || 
-                          residual_capacity[a] == 0) {
+                      if (color[j] == ColorTraits::white() 
+			  || is_saturated(a)) {
                         color[target(*current[j], g)] = ColorTraits::white();
                         if (color[j] != ColorTraits::white())
                           restart = j;
@@ -510,7 +519,7 @@ namespace boost {
             ai = out_edges(i, g).first;
             a = *ai;
             while (excess_flow[i] > 0) {
-              if (capacity[a] == 0 && residual_capacity[a] > 0)
+              if (capacity[a] == 0 && is_residual_edge(a))
                 push_flow(a);
               ++ai;
             }
@@ -520,7 +529,7 @@ namespace boost {
           ai = out_edges(i, g).first;
           while (excess_flow[i] > 0) {
             a = *ai;
-            if (capacity[a] == 0 && residual_capacity[a] > 0)
+            if (capacity[a] == 0 && is_residual_edge(a))
               push_flow(a);
             ++ai;
           }
@@ -612,11 +621,13 @@ namespace boost {
                CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
                ReverseEdgeMap rev, VertexIndexMap index_map)
   {
-    detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
-      VertexIndexMap, FlowValue> algo(g, cap, res, rev, src, sink, index_map);
+    typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
 
-    typename property_traits<CapacityEdgeMap>::value_type
-      flow = algo.maximum_preflow();
+    detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
+      ReverseEdgeMap, VertexIndexMap, FlowValue>
+    algo(g, cap, res, rev, src, sink, index_map);
+
+    FlowValue flow = algo.maximum_preflow();
 
     algo.convert_preflow_to_flow();
 
