@@ -55,7 +55,7 @@ namespace boost {
   // and edge properties are copied.
   template <typename Graph, typename MutableGraph, 
             typename CopyVertex, typename CopyEdge, 
-            typename VertexIndexMap, typename Old2NewVertexMap>
+            typename OrigVertexIndexMap, typename Copy2OrigVertexIndexMap>
   void copy_graph(Graph& g_in, MutableGraph& g_out, 
                   CopyVertex copy_vertex, CopyEdge copy_edge,
                   OrigVertexIndexMap v_index,
