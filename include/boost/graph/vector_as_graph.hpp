@@ -225,6 +225,19 @@ namespace boost {
   }
 
   template<class EdgeList, class Allocator>
+  typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
+  edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
+       std::vector<EdgeList, Allocator>& g)
+  {
+    typedef typename detail::val_edge<EdgeList>::type edge_type;
+    typename EdgeList::iterator i = g[u].begin(), end = g[u].end();
+    for (; i != end; ++i)
+      if (*i == v)
+	return std::make_pair(edge_type(u, v), true);
+    return std::make_pair(edge_type(), false);
+  }
+
+  template<class EdgeList, class Allocator>
   void
   remove_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
               std::vector<EdgeList, Allocator>& g)
