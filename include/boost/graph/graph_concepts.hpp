@@ -160,8 +160,7 @@ namespace boost {
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
     void constraints() {
-      function_requires< AdjacencyGraphConcept<G> >();
-      function_requires< IncidenceGraphConcept<G> >();
+      function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<vertex_iterator> >();
       function_requires< ConvertibleConcept<traversal_category,
 	vertex_list_graph_tag> >();
@@ -216,19 +215,6 @@ namespace boost {
     typename graph_traits<G>::edge_descriptor e;
     edges_size_type E;
     G g;
-  };
-
-  template <class G>
-  struct VertexAndEdgeListGraphConcept
-  {
-    typedef typename graph_traits<G>::traversal_category
-      traversal_category;
-    void constraints() {
-      function_requires< VertexListGraphConcept<G> >();
-      function_requires< EdgeListGraphConcept<G> >();
-      function_requires< ConvertibleConcept<traversal_category,
-	vertex_and_edge_list_graph_tag> >();
-    }
   };
 
   // Where to put the requirement for this constructor?

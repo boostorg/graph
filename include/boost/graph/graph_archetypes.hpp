@@ -7,8 +7,9 @@
 namespace boost { // should use a different namespace for this
   
   //===========================================================================
-  template <typename Vertex, typename Directed, typename ParallelCategory>
-  struct incidence_graph_archetype
+  template <typename Vertex, typename Directed, typename ParallelCategory,
+    typename Base = null_archetype<> >
+  struct incidence_graph_archetype : public Base
   {
     typedef incidence_graph_tag traversal_category;
 #if 0
@@ -34,43 +35,41 @@ namespace boost { // should use a different namespace for this
     typedef void vertex_iterator;
     typedef void edge_iterator;
   };
-  template <typename V, typename D, typename P>
-  V source(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
-	   const incidence_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  V source(const typename incidence_graph_archetype<V,D,P,B>::edge_descriptor&,
+	   const incidence_graph_archetype<V,D,P,B>& )
   {
     return V(static_object<detail::dummy_constructor>::get());
   }
-  template <typename V, typename D, typename P>
-  V target(const typename incidence_graph_archetype<V, D, P>::edge_descriptor&,
-	   const incidence_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  V target(const typename incidence_graph_archetype<V,D,P,B>::edge_descriptor&,
+	   const incidence_graph_archetype<V,D,P,B>& )
   {
     return V(static_object<detail::dummy_constructor>::get());
   }
   
-  template <typename V, typename D, typename P>
-  std::pair<typename incidence_graph_archetype<V,D,P>::out_edge_iterator,
-            typename incidence_graph_archetype<V,D,P>::out_edge_iterator>
-  out_edges(const V&, const incidence_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  std::pair<typename incidence_graph_archetype<V,D,P,B>::out_edge_iterator,
+            typename incidence_graph_archetype<V,D,P,B>::out_edge_iterator>
+  out_edges(const V&, const incidence_graph_archetype<V,D,P,B>& )
   {
-    typedef typename incidence_graph_archetype<V,D,P>::out_edge_iterator Iter;
+    typedef typename incidence_graph_archetype<V,D,P,B>::out_edge_iterator Iter;
     return std::make_pair(Iter(), Iter());
   }
   
-  template <typename V, typename D, typename P>
-  typename incidence_graph_archetype<V,D,P>::degree_size_type
-  out_degree(const V&, const incidence_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  typename incidence_graph_archetype<V,D,P,B>::degree_size_type
+  out_degree(const V&, const incidence_graph_archetype<V,D,P,B>& )
   {
     return 0;
   }
 
   //===========================================================================
-  template <typename Vertex, typename Directed, typename ParallelCategory>
-  struct adjacency_graph_archetype
+  template <typename Vertex, typename Directed, typename ParallelCategory,
+    typename Base = null_archetype<> >
+  struct adjacency_graph_archetype : public Base
   {
     typedef adjacency_graph_tag traversal_category;
-#if 0
-    typedef immutable_graph_tag mutability_category;
-#endif
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef unsigned int vertices_size_type;
@@ -87,30 +86,31 @@ namespace boost { // should use a different namespace for this
     typedef void edge_iterator;
   };
   
-  template <typename V, typename D, typename P>
-  std::pair<typename adjacency_graph_archetype<V,D,P>::adjacency_iterator,
-            typename adjacency_graph_archetype<V,D,P>::adjacency_iterator>
-  adjacent_vertices(const V&, const adjacency_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  std::pair<typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator,
+            typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator>
+  adjacent_vertices(const V&, const adjacency_graph_archetype<V,D,P,B>& )
   {
-    typedef typename adjacency_graph_archetype<V,D,P>::adjacency_iterator Iter;
+    typedef typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator Iter;
     return std::make_pair(Iter(), Iter());
   }
 
-  template <typename V, typename D, typename P>
-  typename adjacency_graph_archetype<V,D,P>::degree_size_type
-  out_degree(const V&, const adjacency_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  typename adjacency_graph_archetype<V,D,P,B>::degree_size_type
+  out_degree(const V&, const adjacency_graph_archetype<V,D,P,B>& )
   {
     return 0;
   }
 
   //===========================================================================
-  template <typename Vertex, typename Directed, typename ParallelCategory>
-  struct vertex_list_graph_archetype
-    : public incidence_graph_archetype<Vertex, Directed, ParallelCategory>,
-      public adjacency_graph_archetype<Vertex, Directed, ParallelCategory>
+  template <typename Vertex, typename Directed, typename ParallelCategory,
+    typename Base = null_archetype<> >
+  struct vertex_list_graph_archetype : public Base
   {
-    typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> Incidence;
-    typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> Adjacency;
+    typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> 
+      Incidence;
+    typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> 
+      Adjacency;
 
     typedef vertex_list_graph_tag traversal_category;
 #if 0
@@ -133,26 +133,26 @@ namespace boost { // should use a different namespace for this
     typedef void edge_iterator;
   };
   
-  template <typename V, typename D, typename P>
-  std::pair<typename vertex_list_graph_archetype<V,D,P>::vertex_iterator,
-            typename vertex_list_graph_archetype<V,D,P>::vertex_iterator>
-  vertices(const vertex_list_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  std::pair<typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator,
+            typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator>
+  vertices(const vertex_list_graph_archetype<V,D,P,B>& )
   {
-    typedef typename vertex_list_graph_archetype<V,D,P>::vertex_iterator Iter;
+    typedef typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator Iter;
     return std::make_pair(Iter(), Iter());
   }
 
-  template <typename V, typename D, typename P>
-  typename vertex_list_graph_archetype<V,D,P>::vertices_size_type
-  num_vertices(const vertex_list_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  typename vertex_list_graph_archetype<V,D,P,B>::vertices_size_type
+  num_vertices(const vertex_list_graph_archetype<V,D,P,B>& )
   {
     return 0;
   }
 
   // ambiguously inherited from incidence graph and adjacency graph
-  template <typename V, typename D, typename P>
-  typename vertex_list_graph_archetype<V,D,P>::degree_size_type
-  out_degree(const V&, const vertex_list_graph_archetype<V,D,P>& )
+  template <typename V, typename D, typename P, typename B>
+  typename vertex_list_graph_archetype<V,D,P,B>::degree_size_type
+  out_degree(const V&, const vertex_list_graph_archetype<V,D,P,B>& )
   {
     return 0;
   }
