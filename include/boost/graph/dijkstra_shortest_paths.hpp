@@ -85,15 +85,6 @@ namespace boost {
 
   namespace detail {
 
-    template <typename D>
-    struct generate_infinity {
-      D operator()() const { return std::numeric_limits<D>::max(); }
-    };
-    template <typename D>
-    struct generate_zero {
-      D operator()() const { return D(); }
-    };
-
     template <class UniformCostVisitor, class UpdatableQueue,
       class WeightMap, class PredecessorMap, class DistanceMap,
       class BinaryFunction, class BinaryPredicate>
@@ -162,16 +153,16 @@ namespace boost {
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
        IndexMap index_map,
-       Compare compare, Combine combine, DistInf init, DistZero zero,
+       Compare compare, Combine combine, DistInf inf, DistZero zero,
        DijkstraVisitor vis, 
        const bgl_named_params<P, T, R>& params)
     {
       typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(distance, *ui, init());
+        put(distance, *ui, inf);
         put(predecessor, *ui, *ui);
       }
-      put(distance, s, zero());
+      put(distance, s, zero);
       
       typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
       IndirectCmp icmp(distance, compare);
@@ -213,9 +204,9 @@ namespace boost {
          choose_param(get_param(params, distance_combine_t()), 
                       closed_plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
-                      generate_infinity<D>()),
+                      std::numeric_limits<D>::max()),
          choose_param(get_param(params, distance_zero_t()), 
-                      generate_zero<D>()),
+                      D()),
          choose_param(get_param(params, graph_visitor),
                       make_dijkstra_visitor(null_visitor())),
          params);
