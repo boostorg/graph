@@ -25,9 +25,59 @@ null_visitor
 </pre>
 </H1>
 
+This is an <a href="./EventVisitor.html">EventVisitor</a> that
+does nothing.
+
 <h3>Model of</h3>
 
 <a href="./EventVisitor.html">EventVisitor</a>
+
+<H2>Associated Types</H2>
+
+<table border>
+
+<tr>
+<th>Type</th><th>Description</th>
+</tr>
+
+<tr>
+<td><tt>null_visitor::event_filter</tt></td>
+<td>
+This type is <tt>void</tt>
+</td>
+</tr>
+
+</table>
+
+<h3>Member Functions</h3>
+
+<p>
+
+<table border>
+<tr>
+<th>Member</th><th>Description</th>
+</tr>
+
+<tr>
+<td><tt>
+null_visitor();
+</tt></td>
+<td>
+Default constructor.
+</td>
+</tr>
+
+<tr>
+<td><tt>
+template &lt;class X, class Graph&gt;<br>
+void operator()(X x, const Graph& g);
+</tt></td>
+<td>
+This does nothing.
+</td>
+</tr>
+
+</table>
 
 
 <br>

@@ -42,7 +42,7 @@ interface.
 <P>
 The BGL graph interface and graph components are <I>generic</I> in the
 same sense as the the Standard Template Library (STL)&nbsp;[<A
-HREF="node18.html#austern99:_gener_progr_stl">2</A>].
+HREF="bibliography.html#austern99:_gener_progr_stl">2</A>].
 
 In the following sections
 we review the role that generic programming plays in the STL and
@@ -137,7 +137,7 @@ of their graph algorithms.
 <P>
 In contrast, custom-made (or even legacy) graph structures can be used
 as-is with the generic graph algorithms of BGL using <I>external
-adaptation</I> (see Section<A HREF="./leda_conversion.html">How to
+adaptation</I> (see Section <A HREF="./leda_conversion.html">How to
 Convert Existing Graphs to BGL</A>).  External adaptation wraps a new
 interface around a data-structure without copying and without placing
 the data inside adaptor objects.  The BGL interface was carefully
@@ -155,13 +155,11 @@ notion of a <I>visitor</I> which is just a function object with
 multiple methods.  In graph algorithms there are often several key
 ``event points'' at which it is useful to insert user-defined
 operations. The visitor object has a different method that is invoked
-at each event point. These methods include <TT>initialize()</TT>,
-<TT>start()</TT>, <TT>discover()</TT>, <TT>explore()</TT>, and
-<TT>finish()</TT>. In addition, several of the graph algorithms
-naturally separate the edges of the graph into categories such as
-forward and back edges. These categories can be used to obtain finer
-grained control over when the <TT>process()</TT> method will be
-invoked.
+at each event point. The particular event points and corresponding
+visitor methods depend on the particular algorithm.  They often
+include methods like <TT>start_vertex()</TT>,
+<TT>discover_vertex()</TT>, <TT>examine_edge()</TT>,
+<tt>tree_edge()</tt> and <TT>finish_vertex()</TT>.
 
 <P>
 
@@ -208,8 +206,6 @@ algorithms. The core algorithm patterns are
 </LI>
 <LI>Uniform Cost Search
 </LI>
-<LI>Generalized Graph Initialization
-</LI>
 </UL>
 
 <P>
@@ -221,28 +217,19 @@ include
 <P>
 
 <UL>
-<LI>Dijkstra's Shortest Paths
-</LI>
-<LI>Bellman-Ford Shortest Paths
-</LI>
-<LI>Johnson's All-Pairs Shortest Paths
-</LI>
-<LI>Kruskal's Minimum Spanning Tree
-</LI>
-<LI>Prim's Minimum Spanning Tree
-</LI>
-<LI>Connected Components 
-</LI>
-<LI>Strongly Connected Components
-</LI>
-<LI>Dynamic Connected Components (using Disjoint Sets)
-</LI>
-<LI>Topological Sort
-</LI>
-<LI>Transpose
-</LI>
-<LI>Reverse Cuthill Mckee Ordering
-</LI>
+<LI>Dijkstra's Shortest Paths</LI>
+<LI>Bellman-Ford Shortest Paths</LI>
+<LI>Johnson's All-Pairs Shortest Paths</LI>
+<LI>Kruskal's Minimum Spanning Tree</LI>
+<LI>Prim's Minimum Spanning Tree</LI>
+<LI>Connected Components</LI>
+<LI>Strongly Connected Components</LI>
+<LI>Dynamic Connected Components (using Disjoint Sets)</LI>
+<LI>Topological Sort</LI>
+<LI>Transpose</LI>
+<LI>Reverse Cuthill Mckee Ordering</LI>
+<LI>Smallest Last Vertex Ordering</LI>
+<LI>Sequential Vertex Coloring</LI>
 </UL>
 
 <P>

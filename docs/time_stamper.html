@@ -27,8 +27,8 @@ time_stamper&lt;TimePA, TimeT, EventTag&gt;
 
 This is an <a href="./EventVisitor.html">EventVisitor</a> that can be
 used to &quot;stamp&quot; a time at some event-point within an
-algorithm. An example of this is recording the discover or finish
-time of a vertex during a graph search.
+algorithm. An example of this is recording the discover or finish time
+of a vertex during a graph search.
 
 <p>
 <tt>time_stamper</tt> can be used with graph algorithms by
@@ -79,17 +79,27 @@ href="../examples/bfs_basics.cpp"><tt>examples/bfs_basics.cpp</tt></a>.
 <TD>
 A <a
 href="../../property_accessor/WritablePropertyAccessor.html">WritablePropertyAccessor</a>,
-where the key type and the value type are the vertex descriptor type
-of the graph.
+where the <tt>key_type</tt> is the vertex descriptor type or edge
+descriptor of the graph (depending on the kind of event tag), and
+where the <tt>TimeT</tt> type is convertible to the
+<tt>value_type</tt> of the time property accessor.
 </TD>
 <TD>&nbsp;</TD>
 </TR>
 
+<TR><TD><TT>TimeT</TT></TD>
+<TD>
+The type for the time counter, which should be convertible to the
+<tt>value_type</tt> of the time property accessor
+</TD>
+<TD>&nbsp;</TD>
+</TR>
+
+
 <TR><TD><TT>EventTag</TT></TD>
 <TD>
 The tag to specify when the <tt>time_stamper</tt> should be
-applied during the graph algorithm. <tt>EventTag</tt> must be an
-edge event.
+applied during the graph algorithm.
 </TD>
 <TD>&nbsp;</TD>
 </TR>
@@ -134,12 +144,12 @@ Construct a time stamper object with time property accessor
 
 <tr>
 <td><tt>
-template &lt;class Vertex, class Graph&gt;
-void operator()(Vertex u, const Graph& g);
+template &lt;class X, class Graph&gt;
+void operator()(X x, const Graph& g);
 </tt></td>
 <td>
 This increments the time count and &quot;stamps&quot; the time:<br>
-<tt>put(time_pa, u, ++t);</tt>
+<tt>put(time_pa, x, ++t);</tt>
 </td>
 </tr>
 
@@ -153,11 +163,11 @@ This increments the time count and &quot;stamps&quot; the time:<br>
 </tr>
 
 <tr><td><tt>
-template &lt;class TimePA, class Tag&gt;<br>
-time_stamper&lt;TimePA, Tag&gt; <br>
-record_predecessors(TimePA pa, Tag);
+template &lt;class TimePA, class TimeT, class Tag&gt;<br>
+time_stamper&lt;TimePA, TimeT, Tag&gt;<br>
+stamp_times(TimePA pa, TimeT& t, Tag);
 </tt></td><td>
-A convenient wat to create a <tt>time_stamper</tt>.
+A convenient way to create a <tt>time_stamper</tt>.
 </td></tr>
 
 </table>
@@ -188,3 +198,9 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
+<!--  LocalWords:  TimePA TimeT EventTag EventVisitor bfs dfs EventVisitorList
+ -->
+<!--  LocalWords:  cpp num dtime ftime int WritablePropertyAccessor accessor
+ -->
+<!--  LocalWords:  const Siek Univ Quan Lumsdaine
+ -->

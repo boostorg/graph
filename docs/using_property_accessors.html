@@ -111,25 +111,25 @@ variables of the distance property type.
 </PRE>
 
 <P>
-There are two kinds of graph properties: internal and external. 
+There are two kinds of graph properties: interior and exterior. 
 
 <P>
 <DL>
-<DT><STRONG>Internal Properties</STRONG></DT>
+<DT><STRONG>Interior Properties</STRONG></DT>
 <DD>are stored ``inside'' the graph object
 in some way, and the lifetime of the property value objects is the
 same as that of the graph object. 
 
 <P>
 </DD>
-<DT><STRONG>External Properties</STRONG></DT>
+<DT><STRONG>Exterior Properties</STRONG></DT>
 <DD>are stored ``outside'' of the graph
 object and the lifetime of the property value objects is independent
 of the graph. This is useful for properties that are only needed
 temporarily, perhaps for the duration of a particular algorithm such
 as the color property used in <TT>breadth_first_search()</TT>.  When
-using external properties with a BGL algorithm a property accessor
-object for the external property must be passed as an argument to the
+using exterior properties with a BGL algorithm a property accessor
+object for the exterior property must be passed as an argument to the
 algorithm.
 </DD>
 </DL>
@@ -141,7 +141,7 @@ Interior Properties
 </H2>
 
 <P>
-A graph type that supports internal property storage (such as
+A graph type that supports interior property storage (such as
 <TT>adjacency_list</TT>) provides access to its property accessor
 objects through the interface defined in <I>VertexPropertyGraph</I>
 and <I>EdgePropertyGraph</I>.  There are two functions,
@@ -187,7 +187,7 @@ property accessors: distance, weight, color, and vertex ID.
 </PRE>
 
 <P>
-Often times some or all of the properties will be internal to the
+Often times some or all of the properties will be interior to the
 graph, so one would call Dijkstra's algorithm in the following way
 (given some graph <TT>g</TT> and source vertex <TT>src</TT>).
 
@@ -204,11 +204,11 @@ graph, so one would call Dijkstra's algorithm in the following way
 <P>
 Since it is somewhat cumbersome to specify all of the property
 accessors,  BGL provides several ``short-cut'' interfaces to each
-algorithm that assume some of the properties are internal and can be
+algorithm that assume some of the properties are interior and can be
 accessed via <TT>get_vertex_property_accessor()</TT> from the
 graph. Below we show a call to variant 1 of the
 <TT>dijkstra_shortest_paths</TT> algorithm, which assumes
-all of the properties are internal. This call is equivalent
+all of the properties are interior. This call is equivalent
 to the previous call to Dijkstra's algorithm.
 
 <P>
@@ -217,7 +217,7 @@ to the previous call to Dijkstra's algorithm.
 </PRE>
 
 <P>
-The next question is: how to internal properties become attached to a
+The next question is: how to interior properties become attached to a
 graph object in the first place? This depends on the graph class that
 you are using. The <TT>adjacency_list</TT> graph class of BGL uses a
 plugin mechanism (see Section <A
@@ -343,7 +343,8 @@ colors which will be needed in a call to
 <TT>std::vector</TT> (obtained with a call to <TT>begin()</TT>) is a
 pointer, the pointer property accessor method also works for
 <TT>std::vector::iterator</TT>. The complete source code for this
-examples is in <TT>examples/city_visitor.cpp</TT>.
+examples is in <a
+href="../examples/city_visitor.cpp"><TT>examples/city_visitor.cpp</TT></a>.
 
 <P>
 <PRE>
@@ -370,7 +371,7 @@ int main(int,char*[])
   Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
 
   // DFS and BFS need to "color" the vertices.
-  // Here we use std::vector as external property storage.
+  // Here we use std::vector as exterior property storage.
   std::vector&lt;default_color_type&gt; colors(N);
 
   cout &lt;&lt; "*** Depth First ***" &lt;&lt; endl;
@@ -408,7 +409,7 @@ class.
 <P>
 The implementation of the
 <TT>random_access_iterator_property_accessor</TT> class
-serves as a good example for how to build and external property
+serves as a good example for how to build and exterior property
 accessor. Here we present a simplified implementation of the
 <TT>random_access_iterator_property_accessor</TT> class
 which we will name <TT>iterator_pa</TT>.
