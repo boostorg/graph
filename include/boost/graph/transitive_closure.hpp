@@ -64,6 +64,8 @@ namespace boost
                             G_to_TC_VertexMap g_to_tc_map,
                             VertexIndexMap index_map)
   {
+    if (num_vertices(g) == 0)
+      return;
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
     typedef typename graph_traits < Graph >::edge_descriptor edge;
     typedef typename graph_traits < Graph >::vertex_iterator vertex_iterator;
@@ -232,6 +234,8 @@ namespace boost
   template < typename Graph, typename GraphTC >
     void transitive_closure(const Graph & g, GraphTC & tc)
   {
+    if (num_vertices(g) == 0)
+      return;
     typedef typename property_map < Graph, vertex_index_t >::const_type
       VertexIndexMap;
     VertexIndexMap index_map = get(vertex_index, g);
@@ -271,13 +275,11 @@ namespace boost
     void transitive_closure(const Graph & g, GraphTC & tc,
                             const bgl_named_params < P, T, R > &params)
   {
-    detail::transitive_closure_dispatch(g, tc,
-                                        get_param(params, orig_to_copy),
-                                        choose_const_pmap(get_param
-                                                          (params,
-                                                           vertex_index), g,
-                                                          vertex_index)
-      );
+    if (num_vertices(g) == 0)
+      return;
+    detail::transitive_closure_dispatch
+      (g, tc, get_param(params, orig_to_copy_t()),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index) );
   }
 
 
