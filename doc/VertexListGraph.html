@@ -25,17 +25,22 @@ VertexListGraph
 </H2>
 
 The <I>VertexListGraph</I> concept refines the <a
-href="./AdjacencyGraph.html">AdjacencyGraph</a> concept, and adds the
-requirement for efficient traversal of all the vertices in the graph.
+href="./Graph.html">Graph</a> concept, and adds the requirement for
+efficient traversal of all the vertices in the graph.
 
 <H3>Refinement of</H3>
 
-<a href="./IncidenceGraph.html">IncidenceGraph</a>
-and <a href="./AdjacencyGraph.html">AdjacencyGraph</a>
+<a href="./Graph.html">Graph</a>
 
 <H3>Associated Types</H3>
 
 <Table border>
+
+<tr>
+<td><tt>boost::graph_traits&lt;G&gt;::traversal_category</tt><br><br>
+ This tag type must be convertible to <tt>vertex_list_graph_tag</tt>.
+</td>
+</tr>
 
 <TR>
 <TD><tt>boost::graph_traits&lt;G&gt;::vertex_iterator</tt><br><br>

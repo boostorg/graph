@@ -153,7 +153,7 @@ target: &1&2&3&3&2&4&6&4&7
 edges are the solid lines. Nodes $0$ and $5$ are DFS tree root nodes.}
 
 Each step of the backtracking search moves from left to right though
-the ordered edges. At each step it examines an edge $(u,v)$ of $G_1$
+the ordered edges. At each step it examines an edge $(i,j)$ of $G_1$
 and decides whether to continue to the left or to go back. There are
 three cases to consider:
 
@@ -167,7 +167,7 @@ three cases to consider:
 $i$ is not in the matched subgraph $G_1[k]$. This situation only
 happens at the very beginning of the search, or when $i$ is not
 reachable from any of the vertices in $G_1[k]$.  This means that we
-are finished with $G_1[k]$.  We increment $k$ and find match for it
+are finished with $G_1[k]$.  We increment $k$ and find a match for it
 amongst any of the eligible vertices in $V_2 - S$. We then proceed to
 Case 2. It is usually the case that $i$ is equal to the new $k$, but
 when there is another DFS root $r$ with no in-edges or out-edges
@@ -405,7 +405,16 @@ $E_1[k]$. We continue by calling \code{match} on the next edge.
 
 @d Check to see if $(f(i),f(j)) \in E_2[S]$ and continue
 @{
-if (contains(adjacent_vertices(f[i], G2), f[j])) {
+edge2_t e2;
+bool fi_fj_exists = false;
+typename graph_traits<Graph2>::out_edge_iterator io, io_end;
+for (tie(io, io_end) = out_edges(f[i], G2); io != io_end; ++io)
+  if (target(*io, G2) == f[j]) {
+    fi_fj_exists = true;
+    e2 = *io;
+  }
+
+if (fi_fj_exists && edge_compare(e2, *iter)) {
     ++num_edges_on_k;
     if (match(next(iter), dfs_num_k))
          return true;
@@ -432,11 +441,11 @@ The requirements on the template parameters are described below in the
 @d Isomorphism function interface
 @{
 template <typename Graph1, typename Graph2, typename IsoMapping, 
-          typename Invariant1, typename Invariant2,
+          typename Invariant1, typename Invariant2, typename EdgeCompare,
           typename IndexMap1, typename IndexMap2>
 bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f, 
                  Invariant1 invariant1, Invariant2 invariant2, 
-                 std::size_t max_invariant,
+                 std::size_t max_invariant, EdgeCompare edge_compare,
                  IndexMap1 index_map1, IndexMap2 index_map2)
 @}
 
@@ -459,8 +468,9 @@ of global variables (non-reentrant, etc.).
     @<Concept checking@>
     @<Quick return based on size@>
     detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1,
-        Invariant2, IndexMap1, IndexMap2> 
+        Invariant2, EdgeCompare, IndexMap1, IndexMap2> 
         algo(G1, G2, f, invariant1, invariant2, max_invariant, 
+             edge_compare,
              index_map1, index_map2);
     return algo.test_isomorphism();
 }
@@ -538,7 +548,7 @@ structures.
 @d Isomorphism algorithm class
 @{
 template <typename Graph1, typename Graph2, typename IsoMapping,
-    typename Invariant1, typename Invariant2,
+    typename Invariant1, typename Invariant2, typename EdgeCompare,
     typename IndexMap1, typename IndexMap2>
 class isomorphism_algo
 {
@@ -558,7 +568,7 @@ private:
 @}
 
 The interesting parts of this class are the \code{test\_isomorphism}
-function and the \code{match} function. We focus on those in in the
+function and the \code{match} function. We focus on those in the
 following sections, and leave the other parts of the class to the
 Appendix.
 
@@ -740,6 +750,7 @@ struct edge_cmp {
 typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
 typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
 typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
+typedef typename graph_traits<Graph2>::edge_descriptor edge2_t;
 typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 typedef typename Invariant1::result_type invar1_value;
 typedef typename Invariant2::result_type invar2_value;
@@ -753,6 +764,7 @@ IsoMapping f;
 Invariant1 invariant1;
 Invariant2 invariant2;
 std::size_t max_invariant;
+EdgeCompare edge_compare;
 IndexMap1 index_map1;
 IndexMap2 index_map2;
 @}
@@ -760,12 +772,13 @@ IndexMap2 index_map2;
 @d Internal data structures
 @{
 std::vector<vertex1_t> dfs_vertices;
-typedef std::vector<vertex1_t>::iterator vertex_iter;
+typedef typename std::vector<vertex1_t>::iterator vertex_iter;
 std::vector<int> dfs_num_vec;
-typedef safe_iterator_property_map<typename std::vector<int>::iterator, IndexMap1> DFSNumMap;
+typedef safe_iterator_property_map<typename std::vector<int>::iterator, 
+  IndexMap1> DFSNumMap;
 DFSNumMap dfs_num;
 std::vector<edge1_t> ordered_edges;
-typedef std::vector<edge1_t>::iterator edge_iter;
+typedef typename std::vector<edge1_t>::iterator edge_iter;
 
 std::vector<char> in_S_vec;
 typedef safe_iterator_property_map<typename std::vector<char>::iterator,
@@ -778,10 +791,12 @@ int num_edges_on_k;
 @d Isomorphism algorithm constructor
 @{
 isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
-                 Invariant1 invariant1, Invariant2 invariant2, std::size_t max_invariant,
+                 Invariant1 invariant1, Invariant2 invariant2, 
+                 std::size_t max_invariant,
+                 EdgeCompare edge_compare,
                  IndexMap1 index_map1, IndexMap2 index_map2)
     : G1(G1), G2(G2), f(f), invariant1(invariant1), invariant2(invariant2),
-      max_invariant(max_invariant),
+      max_invariant(max_invariant), edge_compare(edge_compare),
       index_map1(index_map1), index_map2(index_map2)
 {
     in_S_vec.resize(num_vertices(G1));
@@ -842,6 +857,11 @@ void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
 @<Isomorphism function body@>
 
 namespace detail {
+
+struct default_edge_compare {
+   template <typename Edge1, typename Edge2>
+   bool operator()(Edge1 e1, Edge2 e2) const { return true; }
+};
   
 template <typename Graph1, typename Graph2, 
           typename IsoMapping, 
@@ -852,22 +872,27 @@ bool isomorphism_impl(const Graph1& G1, const Graph2& G2,
                       const bgl_named_params<P,T,R>& params)
 {
   std::vector<std::size_t> in_degree1_vec(num_vertices(G1));
-  typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, IndexMap1> InDeg1;
+  typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, 
+    IndexMap1> InDeg1;
   InDeg1 in_degree1(in_degree1_vec.begin(), in_degree1_vec.size(), index_map1);
   compute_in_degree(G1, in_degree1);
 
   std::vector<std::size_t> in_degree2_vec(num_vertices(G2));
-  typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, IndexMap2> InDeg2;
+  typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, 
+    IndexMap2> InDeg2;
   InDeg2 in_degree2(in_degree2_vec.begin(), in_degree2_vec.size(), index_map2);
   compute_in_degree(G2, in_degree2);
 
   degree_vertex_invariant<InDeg1, Graph1> invariant1(in_degree1, G1);
   degree_vertex_invariant<InDeg2, Graph2> invariant2(in_degree2, G2);
+  default_edge_compare edge_cmp;
 
   return isomorphism(G1, G2, f,
         choose_param(get_param(params, vertex_invariant1_t()), invariant1),
         choose_param(get_param(params, vertex_invariant2_t()), invariant2),
-        choose_param(get_param(params, vertex_max_invariant_t()), invariant2.max()),
+        choose_param(get_param(params, vertex_max_invariant_t()), 
+                     invariant2.max()),
+        choose_param(get_param(params, edge_compare_t()), edge_cmp),
         index_map1, index_map2
         );  
 }  
