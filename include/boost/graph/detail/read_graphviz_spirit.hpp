@@ -471,7 +471,7 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
     }
 
     // default_graph_prop - Just ignore graph properties.
-    void default_graph_prop(id_t const& key, id_t const& value) { }
+    void default_graph_prop(id_t const&, id_t const&) { }
 
     // default_node_prop - declare default properties for any future new nodes
     void default_node_prop(id_t const& key, id_t const& value) {
@@ -660,6 +660,9 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
 
   iterator_t first(make_multi_pass(is_t(in)));
   iterator_t last(make_multi_pass(is_t()));
+
+  // Turn off white space skipping on the stream
+  in.unsetf(std::ios::skipws);
 
   return read_graphviz(first, last, graph, dp, node_id);
 }
