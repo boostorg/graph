@@ -38,7 +38,7 @@ test-suite graph :
 
     [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
 
-    [ run layout_test.cpp ]
+    [ run layout_test.cpp : : : <test-info>always_show_run_output ]
 
     [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
 
@@ -57,6 +57,7 @@ test-suite graph :
     [ compile property_iter.cpp : <sysinclude>$(BOOST_ROOT) ]    
 
     [ run bundled_properties.cpp ]
+
     ;
 
 # Run SDB tests only when -sSDB= is set.
