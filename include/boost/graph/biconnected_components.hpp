@@ -18,107 +18,159 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/property_map.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 namespace boost
 {
   namespace detail
   {
-    template <typename Graph, typename ComponentMap, typename DiscoverTimeMap,
-	      typename LowPointMap, typename OutputIterator, typename Stack>
-    OutputIterator
-    biconnect(typename graph_traits < Graph >::vertex_descriptor v,
-	      typename graph_traits < Graph >::vertex_descriptor u,
-	      bool at_top, 
-	      const Graph & g,
-	      ComponentMap comp,
-	      std::size_t & c,
-	      DiscoverTimeMap d,
-	      std::size_t & dfs_time, LowPointMap lowpt, 
-	      OutputIterator out, 
-	      Stack & S)
+    template <typename ComponentMap, typename DiscoverTimeMap,
+        typename LowPointMap, typename PredecessorMap,
+        typename OutputIterator, typename Stack>
+    struct biconnected_components_visitor : public dfs_visitor<>
     {
-      BOOST_USING_STD_MIN();
-      typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
-      typedef typename property_traits < DiscoverTimeMap >::value_type D;
-      D infinity = (std::numeric_limits < D >::max)();
-      put(d, v, ++dfs_time);
-      put(lowpt, v, get(d, v));
+      biconnected_components_visitor
+        (ComponentMap comp, std::size_t& c, DiscoverTimeMap dtm,
+         std::size_t& dfs_time, LowPointMap lowpt, PredecessorMap pred,
+         OutputIterator out, Stack& S)
+          : comp(comp), c(c), dtm(dtm), dfs_time(dfs_time), lowpt(lowpt),
+            pred(pred), out(out), S(S) { }
 
-      bool is_art_point = false;
-      std::size_t visited_children = 0;
-      typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
-      for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei)
+      template <typename Vertex, typename Graph>
+      void start_vertex(const Vertex& u, Graph&)
       {
-        vertex_t w = target(*ei, g);
-        if (get(d, w) == infinity)
-        {
-	  ++visited_children;
-          S.push(*ei);
-          out = biconnect(w, v, false, g, comp, c, d, dfs_time, lowpt, out, S);
-          put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(lowpt, w)));
-          if (get(lowpt, w) >= get(d, v))
-          {
-	    if (!at_top) is_art_point = true;
+        put(pred, u, u);
+      }
 
-            while (d[source(S.top(), g)] >= d[w]) {
+      template <typename Vertex, typename Graph>
+      void discover_vertex(const Vertex& u, Graph&)
+      {
+        put(dtm, u, ++dfs_time);
+        put(lowpt, u, get(dtm, u));
+      }
+
+      template <typename Edge, typename Graph>
+      void tree_edge(const Edge& e, Graph& g)
+      {
+        S.push(e);
+        put(pred, target(e, g), source(e, g));
+      }
+
+      template <typename Edge, typename Graph>
+      void back_edge(const Edge& e, Graph& g)
+      {
+        BOOST_USING_STD_MIN();
+
+        if ( target(e, g) != get(pred, source(e, g)) ) {
+          S.push(e);
+          put(lowpt, source(e, g),
+              min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, source(e, g)),
+                                                   get(dtm, target(e, g))));
+        }
+      }
+
+      template <typename Vertex, typename Graph>
+      void finish_vertex(const Vertex& u, Graph& g)
+      {
+        BOOST_USING_STD_MIN();
+        Vertex parent = get(pred, u);
+        bool is_art_point = false;
+        if ( get(dtm, parent) > get(dtm, u) ) {
+          parent = get(pred, parent);
+          is_art_point = true;
+        }
+
+        if ( parent == u ) { // at top
+          if ( get(dtm, u) + 1 == get(dtm, get(pred, u)) )
+            is_art_point = false;
+        } else {
+          put(lowpt, parent,
+              min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, parent),
+                                                   get(lowpt, u)));
+
+          if (get(lowpt, u) >= get(dtm, parent)) {
+            if ( get(dtm, parent) > get(dtm, get(pred, parent)) ) {
+              put(pred, u, get(pred, parent));
+              put(pred, parent, u);
+            }
+
+            while ( get(dtm, source(S.top(), g)) >= get(dtm, u) ) {
               put(comp, S.top(), c);
               S.pop();
             }
             put(comp, S.top(), c);
               S.pop();
             ++c;
-
+            if ( S.empty() ) {
+              put(pred, u, parent);
+              put(pred, parent, u);
+            }
           }
-        } else if (get(d, w) < get(d, v) && (!at_top && w != u))
-        {
-          S.push(*ei);
-          put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(d, w)));
         }
+        if ( is_art_point )
+          *out++ = u;
       }
 
-      if (at_top && visited_children > 1)
-	is_art_point = true;
-      if (is_art_point)
-	*out++ = v;
-
-      return out;
-    }
-
-  }
+      ComponentMap comp;
+      std::size_t& c;
+      DiscoverTimeMap dtm;
+      std::size_t& dfs_time;
+      LowPointMap lowpt;
+      PredecessorMap pred;
+      OutputIterator out;
+      Stack& S;
+    };
+  } // namespace detail
 
   template<typename Graph, typename ComponentMap, typename OutputIterator,
-	   typename DiscoverTimeMap, typename LowPointMap >
+           typename DiscoverTimeMap, typename LowPointMap,
+           typename PredecessorMap>
   std::pair<std::size_t, OutputIterator>
-  biconnected_components(const Graph & g, ComponentMap comp, 
-			 OutputIterator out, DiscoverTimeMap discover_time, 
-			 LowPointMap lowpt)
+  biconnected_components(const Graph & g, ComponentMap comp,
+                         OutputIterator out, DiscoverTimeMap discover_time,
+                         LowPointMap lowpt, PredecessorMap pred)
   {
-    typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
-    typedef typename graph_traits < Graph >::edge_descriptor edge_t;
-    function_requires < VertexListGraphConcept < Graph > >();
-    function_requires < IncidenceGraphConcept < Graph > >();
-    function_requires < WritablePropertyMapConcept < ComponentMap,
-      edge_t > >();
-    function_requires < ReadWritePropertyMapConcept < DiscoverTimeMap,
-      vertex_t > >();
-    function_requires < ReadWritePropertyMapConcept < LowPointMap,
-      vertex_t > >();
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename graph_traits<Graph>::edge_descriptor edge_t;
+    function_requires<VertexListGraphConcept<Graph> >();
+    function_requires<IncidenceGraphConcept<Graph> >();
+    function_requires<WritablePropertyMapConcept<ComponentMap, edge_t> >();
+    function_requires<ReadWritePropertyMapConcept<DiscoverTimeMap,
+                                                  vertex_t> >();
+    function_requires<ReadWritePropertyMapConcept<LowPointMap, vertex_t > >();
+    function_requires<ReadWritePropertyMapConcept<PredecessorMap,
+                                                  vertex_t> >();
 
-    typedef typename property_traits < DiscoverTimeMap >::value_type D;
     std::size_t num_components = 0;
     std::size_t dfs_time = 0;
     std::stack < edge_t > S;
-    typename graph_traits < Graph >::vertex_iterator wi, wi_end;
-    std::size_t infinity = (std::numeric_limits < std::size_t >::max)();
-    for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
-      put(discover_time, *wi, infinity);
 
-    for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
-      if (get(discover_time, *wi) == (std::numeric_limits < D >::max)())
-        out = detail::biconnect(*wi, *wi, true, g, comp, num_components,
-				discover_time, dfs_time, lowpt, out, S);
+    detail::biconnected_components_visitor<ComponentMap, DiscoverTimeMap,
+          iterator_property_map<typename std::vector<vertex_t>::iterator,
+                                typename property_map<Graph, vertex_index_t>
+                                  ::type,
+                                vertex_t, vertex_t&>,
+          LowPointMap, OutputIterator, std::stack<edge_t> >
+      vis(comp, num_components, discover_time, dfs_time, lowpt, pred, out, S);
 
-    return std::pair<std::size_t, OutputIterator>(num_components, out);
+    depth_first_search(g, visitor(vis));
+
+    return std::pair<std::size_t, OutputIterator>(num_components, vis.out);
+  }
+
+  template<typename Graph, typename ComponentMap, typename OutputIterator,
+           typename DiscoverTimeMap, typename LowPointMap >
+  std::pair<std::size_t, OutputIterator>
+  biconnected_components(const Graph & g, ComponentMap comp,
+                         OutputIterator out, DiscoverTimeMap discover_time,
+                         LowPointMap lowpt)
+  {
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    std::vector<vertex_t> pred(num_vertices(g));
+
+    return biconnected_components(g, comp, out, discover_time, lowpt,
+        make_iterator_property_map(pred.begin(), get(vertex_index, g)));
   }
 
   template < typename Graph, typename ComponentMap, typename OutputIterator>
@@ -132,13 +184,13 @@ namespace boost
     std::vector<vertices_size_type> discover_time(num_vertices(g));
     std::vector<vertex_t>    lowpt(num_vertices(g));
 
-    typename property_map<Graph, vertex_index_t>::const_type index_map 
+    typename property_map<Graph, vertex_index_t>::const_type index_map
       = get(vertex_index, g);
 
     return biconnected_components
              (g, comp, out,
-	      make_iterator_property_map(discover_time.begin(), index_map),
-	      make_iterator_property_map(lowpt.begin(), index_map));
+              make_iterator_property_map(discover_time.begin(), index_map),
+              make_iterator_property_map(lowpt.begin(), index_map));
   }
 
   namespace graph_detail {
@@ -150,8 +202,8 @@ namespace boost
       typedef void difference_type;
 
       struct reference {
-	template<typename T>
-	reference& operator=(const T&) { return *this; }
+        template<typename T>
+        reference& operator=(const T&) { return *this; }
       };
 
       reference operator*() const { return reference(); }
@@ -164,8 +216,8 @@ namespace boost
   std::size_t
   biconnected_components(const Graph& g, ComponentMap comp)
   {
-    return biconnected_components(g, comp, 
-				  graph_detail::dummy_output_iterator()).first;
+    return biconnected_components(g, comp,
+                                  graph_detail::dummy_output_iterator()).first;
   }
 
   template<typename Graph, typename OutputIterator>
