@@ -55,7 +55,6 @@ main(int,char*[])
 {
   using namespace boost;
 
-#if 0
   // Check graph concept archetypes
   {
     typedef default_constructible_archetype<
@@ -328,7 +327,6 @@ main(int,char*[])
     function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
       edge_index_t> >();
   }
-#endif
   // Check const reverse_graph
   {
     typedef adjacency_list< vecS, vecS, bidirectionalS, 
@@ -355,7 +353,6 @@ main(int,char*[])
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
-#if 0
   // Check filtered_graph
   {
     typedef adjacency_list<vecS, vecS, directedS, 
@@ -386,7 +383,6 @@ main(int,char*[])
     typedef std::vector< std::list<int> > Graph;
     function_requires< VertexListGraphConcept<Graph> >();
   }
-#endif
 #endif
   return 0;
 }
