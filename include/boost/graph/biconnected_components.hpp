@@ -173,24 +173,30 @@ namespace boost
         make_iterator_property_map(pred.begin(), get(vertex_index, g)));
   }
 
-  template < typename Graph, typename ComponentMap, typename OutputIterator>
+  template<typename Graph, typename ComponentMap, typename OutputIterator,
+           typename VertexIndexMap>
   std::pair<std::size_t, OutputIterator>
-  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
+  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out,
+                         VertexIndexMap index_map)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
 
     std::vector<vertices_size_type> discover_time(num_vertices(g));
-    std::vector<vertex_t>    lowpt(num_vertices(g));
-
-    typename property_map<Graph, vertex_index_t>::const_type index_map
-      = get(vertex_index, g);
+    std::vector<vertices_size_type> lowpt(num_vertices(g));
 
     return biconnected_components
              (g, comp, out,
               make_iterator_property_map(discover_time.begin(), index_map),
               make_iterator_property_map(lowpt.begin(), index_map));
+  }
+
+  template < typename Graph, typename ComponentMap, typename OutputIterator>
+  std::pair<std::size_t, OutputIterator>
+  biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
+  {
+    return biconnected_components(g, comp, out, get(vertex_index, g));
   }
 
   namespace graph_detail {
@@ -220,12 +226,23 @@ namespace boost
                                   graph_detail::dummy_output_iterator()).first;
   }
 
+  template<typename Graph, typename OutputIterator, typename VertexIndexMap>
+  OutputIterator
+  articulation_points(const Graph& g, OutputIterator out, 
+                      VertexIndexMap index_map)
+  {
+    return biconnected_components(g, dummy_property_map(), out, 
+                                  index_map).second;
+  }
+
   template<typename Graph, typename OutputIterator>
   OutputIterator
   articulation_points(const Graph& g, OutputIterator out)
   {
-    return biconnected_components(g, dummy_property_map(), out).second;
+    return biconnected_components(g, dummy_property_map(), out, 
+                                  get(vertex_index, g)).second;
   }
+
 }                               // namespace boost
 
 #endif  /* BOOST_GRAPH_BICONNECTED_COMPONENTS_HPP */
