@@ -46,7 +46,8 @@ main()
       fibonacci_heap<int, std::less<int> > Q(N, std::less<int>());
       std::vector<int> v, w(N);
 
-      iota(w.begin(), w.end(), 0);
+      for (int c = 0; c < w.size(); ++c)
+        w[c] = c;
       std::random_shuffle(w.begin(), w.end());
       
       for (i = 0; i < N; ++i)
