@@ -366,13 +366,6 @@ namespace boost {
     GraphProperty m_property;
   };
 
-  template <class Graph, class Property>
-  class graph_property {
-  public:
-    typedef typename property_value<typename Graph::graph_property_type, 
-      Property>::type type;
-  };
-
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
   typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
