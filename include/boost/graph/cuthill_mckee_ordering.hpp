@@ -133,7 +133,7 @@ namespace boost {
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       put(color, *ui, Color::white());
-    breadth_first_search(G, u, Q, bfs_visitor<>(), color);
+    breadth_first_search(G, u, buffer(Q).color_map(color));
 
     ecc = Q.eccentricity(); 
     return Q.spouse();

@@ -13,13 +13,13 @@ namespace boost {
 		VertexIndexMap index)
   {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
-    typedef typename detail::numeric_traits<size_type>::difference_type diff_t;
     size_type b = 0;
     typename graph_traits<Graph>::out_edge_iterator e, end;
     for (tie(e, end) = out_edges(i, g); e != end; ++e) {
-      diff_t f_i = get(index, i);
-      diff_t f_j = get(index, target(*e, g));
-      b = std::max(b, size_type(std::abs(f_i - f_j)));
+      int f_i = get(index, i);
+      int f_j = get(index, target(*e, g));
+      using namespace std;
+      b = std::max(b, size_type(abs(f_i - f_j)));
     }
     return b;
   }

@@ -372,9 +372,7 @@ namespace boost {
 
   template <typename G, typename EP, typename VP, typename Property,
             typename Key>
-  typename property_traits<
-    typename property_map<G, Property>::const_type
-  >::value_type
+  typename property_map_value<G, Property>::type
   get(Property p, const filtered_graph<G, EP, VP>& g, const Key& k)
   {
     return get(p, (const G&)g.m_g, k);

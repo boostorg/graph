@@ -239,12 +239,16 @@ namespace boost {
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
   void breadth_first_search
-    (VertexListGraph& g,
+    (const VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
+    // The graph is passed by *const* reference so that graph adaptors (temporaries)
+    // can be passed into this function. However, the graph is not really const
+    // since we may write to property maps of the graph.
+    VertexListGraph& ng = const_cast<VertexListGraph&>(g);
     typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
-    detail::bfs_dispatch<C>::apply(g, s, params, get_param(params, vertex_color));
+    detail::bfs_dispatch<C>::apply(ng, s, params, get_param(params, vertex_color));
   }
 
 

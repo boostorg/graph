@@ -384,7 +384,7 @@ namespace boost {
 
   template <typename Buffer>
   bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t>
-  buffer(const Buffer& b) {
+  buffer(Buffer& b) {
     typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t> Params;
     return Params(detail::wrap_ref<Buffer>(b));
   }

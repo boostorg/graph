@@ -228,6 +228,14 @@ namespace boost {
     typedef typename Map::const_type const_type;
   };
 
+  // shortcut for accessing the value type of the property map
+  template <class Graph, class Property>
+  class property_map_value {
+    typedef typename property_map<Graph, Property>::const_type PMap;
+  public:
+    typedef typename property_traits<PMap>::value_type type;
+  };
+
   template <class Graph, class Property>
   class graph_property {
   public:
