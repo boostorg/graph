@@ -36,19 +36,7 @@
 #include <memory>
 #include <algorithm>
 
-#if 0
-// Was having trouble with internal compiler errors from VC++.
-// Fixed by templating counting_iterator_policies and removing
-// its member template function. Once we are more confident
-// in the iterator adaptors for VC++, we can remove this macro.
-#define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
-#endif
-
-#ifndef BOOST_NO_ITERATOR_ADAPTORS
-#include <boost/pending/iterator_adaptors.hpp>
-#else
-#include <boost/graph/detail/incidence_iterator.hpp>
-#endif
+#include <boost/iterator_adaptors.hpp>
 
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -56,7 +44,7 @@
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/property.hpp>
-#include <boost/graph/detail/adjacency_iterator.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 
 // Symbol truncation problems with MSVC, trying to shorten names.
 #define edge_iter_traits eit_
@@ -139,7 +127,6 @@ namespace boost {
     //=========================================================================
     // Out-Edge and In-Edge Iterator Implementation
 
-#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
     template <class EdgeDescriptor, class EdgeIterCat, class EdgeIterDiff>
     struct edge_iter_traits {
       typedef EdgeDescriptor value_type;
@@ -177,12 +164,10 @@ namespace boost {
       }
       VertexDescriptor m_src;
     };
-#endif
 
     //=========================================================================
     // Undirected Edge Iterator Implementation
 
-#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
     struct undirected_edge_iter_policies
       : public boost::default_iterator_policies
     {
@@ -192,33 +177,6 @@ namespace boost {
         return EdgeDescriptor((*i).m_source, (*i).m_target, &i->get_property());
       }
     };
-#else
-    template <class EdgeIter, class Edge>
-    struct undirected_edge_iter
-    {
-      typedef undirected_edge_iter Self;
-      typedef Edge value_type;
-      typedef Edge reference;
-      typedef Edge* pointer;
-      typedef std::ptrdiff_t difference_type;
-      typedef std::bidirectional_iterator_tag iterator_category;
-      inline undirected_edge_iter() { }
-      inline undirected_edge_iter(const EdgeIter& i) : m_iter(i) { }
-      inline Self& operator++() { ++m_iter; return *this; }
-      inline Self operator++(int) { Self t=*this; ++m_iter; return t; }
-      inline Self& operator--() { --m_iter; return *this; }
-      inline Self operator--(int) { Self t=*this; --m_iter; return t; }
-      inline Edge operator*() const {
-        return Edge(m_iter->m_source, m_iter->m_target, 
-                    &m_iter->get_property());
-      }
-      inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
-      inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
-      EdgeIter& iter() { return m_iter; }
-      const EdgeIter& iter() const { return m_iter; }
-      EdgeIter m_iter;
-    };
-#endif
 
     //=========================================================================
     // Edge Storage Types (stored in the out-edge/in-edge lists)
@@ -2184,66 +2142,39 @@ namespace boost {
           OutEdgeList;
         typedef typename OutEdgeList::size_type degree_size_type;
         typedef typename OutEdgeList::iterator OutEdgeIter;
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
-        typedef std::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
+
+        typedef boost::detail::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
         typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
         typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
-#else
-        typedef boost::multi_pass_input_iterator_tag OutEdgeIterCat;
-        typedef std::ptrdiff_t OutEdgeIterDiff;
-#endif
 
-#if defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef detail::bidir_incidence_iterator<vertex_descriptor,
-         edge_descriptor, OutEdgeIter, detail::out_edge_tag> out_edge_iterator;
-#else
         typedef iterator_adaptor<OutEdgeIter, 
           out_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, OutEdgeIterCat, OutEdgeIterDiff>
         > out_edge_iterator;
-#endif
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef typename adjacency_iterator<graph_type, vertex_descriptor,
-          out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
-#else
-        typedef bidir_adj_iter<vertex_descriptor,out_edge_iterator,
-                graph_type> adjacency_iterator;
-#endif
+        typedef typename adjacency_iterator_generator<graph_type,
+           vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
         typedef OutEdgeList InEdgeList;
         typedef OutEdgeIter InEdgeIter;
         typedef OutEdgeIterCat InEdgeIterCat;
         typedef OutEdgeIterDiff InEdgeIterDiff;
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, InEdgeIterCat, InEdgeIterDiff>
         > in_edge_iterator;
-#else
-        typedef detail::bidir_incidence_iterator<vertex_descriptor,
-           edge_descriptor, InEdgeIter, detail::in_edge_tag> in_edge_iterator;
-#endif
 
         // Edge Iterator
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
-        typedef std::iterator_traits<EdgeIter> EdgeIterTraits;
+
+        typedef boost::detail::iterator_traits<EdgeIter> EdgeIterTraits;
         typedef typename EdgeIterTraits::iterator_category EdgeIterCat;
         typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
-#else
-        typedef OutEdgeIterCat EdgeIterCat;
-        typedef OutEdgeIterDiff EdgeIterDiff;
-#endif
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef boost::iterator_adaptor<EdgeIter,
               undirected_edge_iter_policies,
               edge_iter_traits<edge_descriptor, EdgeIterCat, EdgeIterDiff> > 
           UndirectedEdgeIter;
-#else
-        typedef undirected_edge_iter<EdgeIter,edge_descriptor> UndirectedEdgeIter;
-#endif
 
         typedef adj_list_edge_iterator<vertex_iterator, out_edge_iterator, 
            graph_type> DirectedEdgeIter;
