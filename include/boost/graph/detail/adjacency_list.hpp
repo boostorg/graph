@@ -2244,6 +2244,7 @@ namespace boost {
       typedef PropertyRef reference;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
+      vec_adj_list_vertex_all_properties_map() { }
       vec_adj_list_vertex_all_properties_map(GraphPtr g) : m_g(g) { }
       inline PropertyRef operator[](key_type v) const {
         return m_g->m_vertices[v].m_property;
@@ -2288,6 +2289,7 @@ namespace boost {
       typedef Vertex key_type;
       typedef Vertex reference;
       typedef boost::read_write_property_map_tag category;
+      inline vec_adj_list_vertex_id_map() { }
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
       inline value_type operator[](key_type v) const { return v; }
