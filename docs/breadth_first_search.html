@@ -41,19 +41,19 @@
 <P>
 <PRE>
   (1)
-  template &lt;class VertexListGraph, class BFSVisitor&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>&gt;
   void breadth_first_search(VertexListGraph& G, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     BFSVisitor vis);
 
   (2)
-  template &lt;class VertexListGraph, class BFSVisitor, class ColorPMap&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorPMap">ColorPMap</a>&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     BFSVisitor vis, ColorPMap color);
 
   (3)
-  template &lt;class VertexListGraph, class BFSVisitor, class ColorPMap&gt;
+  template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorPMap">ColorPMap</a>&gt;
   void breadth_first_search(VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     Buffer& Q, BFSVisitor vis, ColorPMap color)
@@ -131,24 +131,15 @@ vertices to white at the start of the algorithm or invoke the
 <LI>In version (1) of the algorithm the graph must be a model
     of <a href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for <TT>vertex_color</TT> and
     the color property map for the graph must meet the
-    same requirements as <TT>Color</TT>.
+    same requirements as <TT>ColorPMap</TT>.
 </LI>
-<LI>The type <TT>Color</TT> must be a model of <a
+<LI><a name="ColorPMap">The type <TT>ColorPMap</TT> must be a model of <a
    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>.
    A vertex descriptor must be usable as the key type of the map,
    and the value type of the map must be a model of <a
-   href="./ColorValue.html">ColorValue</a>.
+   href="./ColorValue.html">ColorValue</a>.</a>
 </LI>
-<LI>The type <TT>Buffer</TT> must be a model of <I>Buffer</I>.
-</LI>
-<LI>The <TT>VisitedFunc</TT> type is a functor with an apply
-     method that looks like this:
-<PRE>
-template &lt;class Visitor, class Buffer, class Vertex&gt;
-void operator()(Visitor v, Buffer&amp; Q, Vertex target);}
-</PRE>
-
-<P>
+<LI>The type <TT>Buffer</TT> must be a model of <a href="./Buffer.html">Buffer</a>.
 </LI>
 </UL>
 
