@@ -24,7 +24,9 @@ namespace boost {
 
   } // namespace detail
 
-  template <class Graph, class Vertex, class OutEdgeIter>
+  template <class Graph,
+            class Vertex = typename graph_traits<Graph>::vertex_descriptor,
+            class OutEdgeIter=typename graph_traits<Graph>::out_edge_iterator>
   class adjacency_iterator_generator {
     typedef typename boost::detail::iterator_traits<OutEdgeIter>
       ::difference_type difference_type;

@@ -82,14 +82,15 @@ href="./IncidenceGraph.html">Incidence Graph</a>.</TD>
 this is a template parameter is that the primary use of
 <tt>adjacency_iterator_generator</tt> is <b><i>inside</i></b> the
 definition of the graph class, and in that context we can not use
-<tt>graph_traits</tt> on the not yet fully defined graph class.
-</TD>
+<tt>graph_traits</tt> on the not yet fully defined graph class.<br>
+<b>Default:</b> <tt>graph_traits&lt;Graph&gt;::vertex_descriptor</tt></TD>
 </TR>
 
 <TR>
 <TD><tt>OutEdgeIter</tt></TD>
 <TD>This must be the same type as
-<tt>graph_traits&lt;Graph&gt;::out_edge_iterator</tt>.
+<tt>graph_traits&lt;Graph&gt;::out_edge_iterator</tt>.<br>
+<b>Default:</b> <tt>graph_traits&lt;Graph&gt;::out_edge_iterator
 </TD>
 </TR>
 
