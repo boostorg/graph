@@ -28,6 +28,7 @@
 
 #include <vector>
 #include <list>
+#include <iostream> // needed by graph_utility. -Jeremy
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
 
