@@ -101,6 +101,10 @@ namespace boost {
     subgraph<Graph>& create_subgraph() {
       m_children.push_back( subgraph<Graph>() );
       m_children.back().m_parent = this;
+      m_children.back().m_vertex_membership = 
+	std::vector<bool>(num_vertices(*this), false);
+      m_children.back().m_local_vertex = 
+	std::vector<vertex_descriptor>(num_vertices(*this));
       return m_children.back();
     }
     
@@ -111,6 +115,10 @@ namespace boost {
     {
       m_children.push_back( subgraph<Graph>() );
       m_children.back().m_parent = this;
+      m_children.back().m_vertex_membership = 
+	std::vector<bool>(num_vertices(*this), false);
+      m_children.back().m_local_vertex = 
+	std::vector<vertex_descriptor>(num_vertices(*this));
       for (; first != last; ++first)
 	add_vertex(*first, m_children.back());
       return m_children.back();
