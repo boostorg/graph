@@ -32,7 +32,7 @@ namespace boost {
       Vertex, difference_type, Vertex*, Vertex> Traits;
   public:
     typedef boost::iterator_adaptor<OutEdgeIter, 
-      adjacency_iterator_policies<Graph>, Traits> type;
+      detail::adjacency_iterator_policies<Graph>, Traits> type;
   };
 
 } // namespace boost
