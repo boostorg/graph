@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.9  2000/09/21 22:24:57  jsiek
+// moved adjacency_list_traits out of the detail directory
+//
 // Revision 1.8  2000/09/21 18:45:52  jsiek
 // removed some obsolete files
 //
@@ -109,7 +112,6 @@
 #endif
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/detail/edge.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
 #include <boost/graph/properties.hpp>
@@ -216,10 +218,6 @@ namespace boost {
     struct has_plugin { enum { value = true }; };
     template <>
     struct has_plugin<no_plugin> { enum { value = false }; };
-
-    template <class Directed> struct is_random_access { enum { value = false}; };
-    template <>
-    struct is_random_access<vecS> { enum { value = true }; };
 
 
     //=========================================================================
@@ -1248,30 +1246,6 @@ namespace boost {
 #ifdef __GNUC__
 namespace boost {
 #endif
-
-  template <class EdgeListS = vecS,
-            class VertexListS = vecS,
-            class DirectedS = directedS>
-  struct adjacency_list_traits
-  {
-    enum { is_rand_access = detail::is_random_access<VertexListS>::value };
-
-    typedef typename boost::ct_if<DirectedS::is_bidir,
-      bidirectional_tag,
-      typename boost::ct_if<DirectedS::is_directed,
-        directed_tag, undirected_tag
-      >::type
-    >::type directed_category;
-
-    typedef typename parallel_edge_traits<EdgeListS>::type
-      edge_parallel_category;
-
-    typedef void* vertex_ptr;
-    typedef typename boost::ct_if<is_rand_access,
-      std::size_t, vertex_ptr>::type vertex_descriptor;
-
-    typedef detail::bidir_edge<directed_category, vertex_descriptor> edge_descriptor;
-  };
 
   namespace detail {
 

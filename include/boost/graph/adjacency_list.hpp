@@ -35,10 +35,6 @@
   vertex descriptor type
   
  */
-#include <boost/config.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/property_map.hpp>
-
 #include <vector>
 #include <list>
 #include <set>
@@ -53,9 +49,13 @@
 #include <slist>
 #endif
 
+#include <boost/config.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/property_map.hpp>
+#include <boost/pending/ct_if.hpp>
+#include <boost/graph/detail/edge.hpp>
 
 namespace boost {
-
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
@@ -225,6 +225,42 @@ namespace boost {
     typedef disallow_parallel_edge_tag type; 
   };
 #endif
+
+  namespace detail {
+    template <class Directed> struct is_random_access { 
+      enum { value = false}; 
+    };
+    template <>
+    struct is_random_access<vecS> { 
+      enum { value = true }; 
+    };
+
+  } // namespace detail
+
+
+  template <class EdgeListS = vecS,
+            class VertexListS = vecS,
+            class DirectedS = directedS>
+  struct adjacency_list_traits
+  {
+    enum { is_rand_access = detail::is_random_access<VertexListS>::value };
+
+    typedef typename boost::ct_if<DirectedS::is_bidir,
+      bidirectional_tag,
+      typename boost::ct_if<DirectedS::is_directed,
+        directed_tag, undirected_tag
+      >::type
+    >::type directed_category;
+
+    typedef typename parallel_edge_traits<EdgeListS>::type
+      edge_parallel_category;
+
+    typedef void* vertex_ptr;
+    typedef typename boost::ct_if<is_rand_access,
+      std::size_t, vertex_ptr>::type vertex_descriptor;
+
+    typedef detail::bidir_edge<directed_category, vertex_descriptor> edge_descriptor;
+  };
 
 } // namespace boost
 
