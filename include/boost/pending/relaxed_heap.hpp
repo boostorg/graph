@@ -11,7 +11,7 @@
 
 #include <functional>
 #include <boost/property_map.hpp>
-#include <math.h>
+#include <cmath>
 #include <boost/optional.hpp>
 #include <vector>
 
@@ -89,14 +89,17 @@ public:
     : compare(compare), id(id), root(smallest_key), groups(n), 
       smallest_value(0)
   {
+#ifndef BOOST_NO_STDC_NAMESPACE
+    using std::log;
+#endif // BOOST_NO_STDC_NAMESPACE
+
     if (n == 0) return;
 
-    // TBD: log2 is C99 only. We'll need to supply our own
-    log_n = static_cast<size_type>(log2(n));
+    log_n = static_cast<size_type>(log((double)n) / log(2.0));
     if (log_n == 0) log_n = 1;
     size_type g = n / log_n;
     if (n % log_n > 0) ++g;
-    size_type log_g = static_cast<size_type>(log2(g));
+    size_type log_g = static_cast<size_type>(log((double)g) / log(2.0));
     size_type r = log_g;
 
     // Reserve an appropriate amount of space for data structures, so
@@ -112,7 +115,8 @@ public:
     while (idx < g) {
       root.children[r] = &index_to_group[idx];
       idx = build_tree(root, idx, r, log_g + 1);
-      if (idx != g) r = static_cast<size_type>(log2(g - idx));
+      if (idx != g) 
+        r = static_cast<size_type>(log((double)(g - idx)) / log(2.0));
     }
   }
 
