@@ -6,11 +6,13 @@
 // suitability for any purpose.
 
 #include <vector>
+#include <functional>
 #include <boost/compose.hpp>
+#include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-namespace boost { namespace graph {
+namespace boost {
 
   namespace detail {
     // These classes really don't belong here!
@@ -83,13 +85,13 @@ namespace boost { namespace graph {
     /** Makes adjacencent vertices of any given vertex to appear in
       topological order.
     */
-    void topologically_sort_edges(vector< vector<int> >& g, 
-                    const vector<int> top_num)
+    template <class Vertex>
+    void topologically_sort_edges(std::vector< std::vector<Vertex> >& g, 
+                    const std::vector<Vertex>& top_num)
     {
       for (size_t i = 0; i < g.size(); ++i) {
-
         sort(g[i].begin(), g[i].end(), 
-           compose_f_gx_hy(less<int>(),
+           compose_f_gx_hy(std::less<Vertex>(),
                    subscript(top_num),
                    subscript(top_num)));    
       }
@@ -100,26 +102,27 @@ namespace boost { namespace graph {
       in them in topological order. The averange number of chains
       for this algorithm in G(n, p) graphs is O(ln(np)/p).      
     */
-    void compute_chains(const vector< vector<int> >& g,
-              const vector<int>& top_order,
-              vector< vector<int> >& chains)
+    template <class Vertex>
+    void compute_chains(const std::vector< std::vector<Vertex> >& g,
+              const std::vector<Vertex>& top_order,
+              std::vector< std::vector<Vertex> >& chains)
     {
-      vector<bool> in_chains(g.size());
+      std::vector<bool> in_chains(g.size());
 
       for (size_t i = 0; i < top_order.size(); ++i) {
 
-        int v = top_order[i];
+        Vertex v = top_order[i];
         if (!in_chains[v]) {
 
           chains.resize(chains.size()+1);
-          vector<int>& chain = chains.back();
+          std::vector<Vertex>& chain = chains.back();
 
           for(;;) {
             
             chain.push_back(v);
             in_chains[v] = true;
 
-            vector<int>::const_iterator next;
+            std::vector<Vertex>::const_iterator next;
             next = find_if(g[v].begin(), g[v].end(),
                      not1(subscript(in_chains)));
             if (next != g[v].end())
@@ -131,7 +134,8 @@ namespace boost { namespace graph {
       }
     }
 
-    void acyclic_closure(vector< vector<int> >& g)
+    template <class Vertex>
+    void acyclic_closure(std::vector< std::vector<Vertex> >& g)
     {
       // The simplest algorithm would be
       //  for u \in reverse_topological_order
@@ -149,31 +153,29 @@ namespace boost { namespace graph {
       //  be a vector, telling for each chain index of element
       //  of chain with the smallest topological number.
 
-      using namespace boost;
-      using namespace std;
-
-      vector<int> top_order;
-      vector<int> top_num(g.size());
+      std::vector<Vertex> top_order;
+      std::vector<Vertex> top_num(g.size());
+      typedef typename std::vector<Vertex>::size_type size_type;
       {
         identity_property_map id;
         topological_sort(g, back_inserter(top_order), 
-                 vertex_index_map(id));
-        reverse(top_order.begin(), top_order.end());
+			 vertex_index_map(id));
+        std::reverse(top_order.begin(), top_order.end());
 
-        for (size_t i = 0; i < top_order.size(); ++i)
+        for (size_type i = 0; i < top_order.size(); ++i)
           top_num[top_order[i]] = i;
       }
 
       topologically_sort_edges(g, top_num);
 
-      vector< vector<int> > chains;
-      vector<int> chain_no(g.size()), index_in_chain(g.size());
+      std::vector< std::vector<Vertex> > chains;
+      std::vector<Vertex> chain_no(g.size()), index_in_chain(g.size());
       {
         compute_chains(g, top_order, chains);
 
-        for (size_t i = 0; i < chains.size(); ++i)
-          for (size_t j = 0; j < chains[i].size(); ++j) {
-            int v = chains[i][j];
+        for (size_type i = 0; i < chains.size(); ++i)
+          for (size_type j = 0; j < chains[i].size(); ++j) {
+            Vertex v = chains[i][j];
             chain_no[v] = i;
             index_in_chain[v] = j;
           }                         
@@ -183,22 +185,22 @@ namespace boost { namespace graph {
       cout << "Chains found are :\n" << multiline << chains << endl;
 #endif
 
-      int inf = numeric_limits<int>::max();
-      vector< vector<int> > successors;
+      Vertex inf = std::numeric_limits<Vertex>::max();
+      std::vector< std::vector<Vertex> > successors;
       {
-        successors.resize(g.size(), vector<int>(chains.size(), inf));
+        successors.resize(g.size(), std::vector<Vertex>(chains.size(), inf));
 
-        for (int i = top_order.size()-1; i >= 0; --i) {
-          int v = top_order[i];
+	for (std::vector<Vertex>::reverse_iterator i = top_order.rbegin();
+	     i != top_order.rend(); ++i) {
+          Vertex v = *i;
 
-
-          for (size_t j = 0; j < g[v].size(); ++j) {
-            int av = g[v][j];
+          for (size_type j = 0; j < g[v].size(); ++j) {
+            Vertex av = g[v][j];
 
             if (top_num[av] < successors[v][chain_no[av]]) {
               
-              for (size_t k = 0; k < chains.size(); ++k)
-                successors[v][k] = min(successors[v][k],
+              for (size_type k = 0; k < chains.size(); ++k)
+                successors[v][k] = std::min(successors[v][k],
                              successors[av][k]);
               successors[v][chain_no[av]] = top_num[av];
             }
@@ -211,16 +213,16 @@ namespace boost { namespace graph {
 #endif
 
 
-      for (size_t i = 0; i < g.size(); ++i)
+      for (size_type i = 0; i < g.size(); ++i)
         g[i].clear();
 
-      for (size_t i = 0; i < g.size(); ++i) 
-        for (size_t j = 0; j < chains.size(); ++j) {
-          int s = successors[i][j];
+      for (size_type i = 0; i < g.size(); ++i) 
+        for (size_type j = 0; j < chains.size(); ++j) {
+          Vertex s = successors[i][j];
 
           if (s < inf) {
-            int v = top_order[s];
-            for (size_t k = index_in_chain[v]; k < chains[j].size(); ++k)
+            Vertex v = top_order[s];
+            for (size_type k = index_in_chain[v]; k < chains[j].size(); ++k)
               g[i].push_back(chains[j][k]);
           }
         }
@@ -247,14 +249,15 @@ namespace boost { namespace graph {
     typedef typename graph_traits<G>::adjacency_iterator adjacency_iterator;
 
     //  Find SCCs
-    vector<vertex> component_no(g.size());
-    vector< vector<vertex> > components;
+    std::vector<vertex> component_no(num_vertices(g));
+    std::vector< std::vector<vertex> > components;
+    typedef typename std::vector< std::vector<vertex> >::size_type size_type;
     {
       // AAA!
       identity_property_map id;
       int n = strong_components(g, &component_no[0], vertex_index_map(id)); 
       components.resize(n);
-      for (size_t i = 0; i < g.size(); ++i)
+      for (size_type i = 0; i < num_vertices(g); ++i)
         components[component_no[i]].push_back(i);
     }
 
@@ -267,23 +270,26 @@ namespace boost { namespace graph {
     // V' -- set of strong components in G
     // E' = { (s_1, s_2) : \exists (u \in s_1, v \in s_2) : (u,v) \in E }
     // Note that G' is acyclic
-    vector< vector<vertex> > cg(components.size());
+    std::vector< std::vector<vertex> > cg(components.size());
     {
-      for (size_t i = 0; i < components.size(); ++i) {
+      for (size_type i = 0; i < components.size(); ++i) {
         
-        vector<vertex> targets;
+        std::vector<vertex> targets;
         {
-          for (size_t j = 0; j < components[i].size(); ++j) {
-            int v = components[i][j];
-            for (size_t k = 0; k < g[v].size(); ++k) {
-              int t = component_no[g[v][k]];
+          for (size_type j = 0; j < components[i].size(); ++j) {
+            vertex v = components[i][j];
+
+	    adjacency_iterator k, k_end;
+	    for (tie(k, k_end) = adjacent_vertices(v, g); k != k_end; ++k) {
+              vertex t = component_no[*k];
               if (t != i) // Avoid loops in the condensation graph
                 targets.push_back(t);
             }
           }
         }
         sort(targets.begin(), targets.end());
-        vector<vertex>::iterator di = unique(targets.begin(), targets.end());
+        std::vector<vertex>::iterator 
+	  di = std::unique(targets.begin(), targets.end());
         if (di != targets.end())
           targets.erase(di, targets.end());        
         
@@ -306,14 +312,12 @@ namespace boost { namespace graph {
     // want *reflexive* transitive closure to be computed, but rather
     // ordinary one.    
     
-    vector<vertex> looped_vertices;
+    std::vector<vertex> looped_vertices;
     {
       vertex_iterator vb, ve;
       for (boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {  
         adjacency_iterator ab, ae;
-        for (boost::tie(ab, ae) = adjacent_vertices(*vb, g); 
-           ab != ae; 
-           ++ab)
+        for (boost::tie(ab, ae) = adjacent_vertices(*vb, g); ab != ae; ++ab)
           if (*vb == *ab)
             looped_vertices.push_back(*vb);       
       }
@@ -321,23 +325,23 @@ namespace boost { namespace graph {
 
     remove_edge_if(truth<edge>(), g);
 
-    for (size_t i = 0; i < cg.size(); ++i)
-      for (size_t j = 0; j < cg[i].size(); ++j) {
-        int s = i;
-        int t = cg[i][j];
-        for (size_t k = 0; k < components[s].size(); ++k)
-          for (size_t l = 0; l < components[t].size(); ++l)
+    for (size_type i = 0; i < cg.size(); ++i)
+      for (size_type j = 0; j < cg[i].size(); ++j) {
+        vertex s = i;
+        vertex t = cg[i][j];
+        for (size_type k = 0; k < components[s].size(); ++k)
+          for (size_type l = 0; l < components[t].size(); ++l)
             add_edge(components[s][k], components[t][l], g);
       }
   
     // Since cg's closure is not reflexive closure, we need to process SCC's
-    for (size_t i = 0; i < components.size(); ++i)
+    for (size_type i = 0; i < components.size(); ++i)
       if (components[i].size() > 1)
-        for (size_t k = 0; k < components[i].size(); ++k)
-          for (size_t l = 0; l < components[i].size(); ++l)
+        for (size_type k = 0; k < components[i].size(); ++k)
+          for (size_type l = 0; l < components[i].size(); ++l)
             add_edge(components[i][k], components[i][l], g);
 
-    for (size_t i = 0; i < looped_vertices.size(); ++i) {
+    for (size_type i = 0; i < looped_vertices.size(); ++i) {
       vertex v = looped_vertices[i];
       if (components[component_no[v]].size() == 1)
         add_edge(v, v, g);
@@ -420,8 +424,7 @@ namespace boost { namespace graph {
             }                     
   }
     
-} 
-}
+} // namespace boost
 
 
 
