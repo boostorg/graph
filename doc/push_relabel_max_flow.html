@@ -42,18 +42,13 @@
 
 <P>
 <PRE>
-  template &lt;typename VertexListGraph, 
-            typename CapacityEdgeMap, typename ResidualCapacityEdgeMap,
-            typename ReverseEdgeMap, typename VertexIndexMap&gt;
-  typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-  push_relabel_max_flow
-    (VertexListGraph& g, 
-     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor src,
-     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor sink,
-     CapacityEdgeMap cap, 
-     ResidualCapacityEdgeMap res,
-     ReverseEdgeMap rev, 
-     VertexIndexMap index_map)
+template &lt;class Graph, class P, class T, class R&gt;
+typename property_traits&lt;CapacityEdgeMap&gt;::value_type
+push_relabel_max_flow
+  (Graph&amp; g, 
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
+   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 </PRE>
 
 <P>
@@ -92,46 +87,62 @@ href="./bibliography.html#goldberg85:_new_max_flow_algor">Goldberg</a>.
 
 <h3>Parameters</h3>
 
-<ul>
-
-<li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br> 
+IN: <tt>VertexListGraph&amp; g</tt>
+<blockquote>
   A directed graph. The
   graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a>. For each edge
+  href="./VertexListGraph.html">Vertex List Graph</a>. For each edge
   <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also
   be in the graph.
+</blockquote>
 
-<li> <tt>vertex_descriptor src</tt> &nbsp(IN) <br>
+IN: <tt>vertex_descriptor src</tt>
+<blockquote>
   The source vertex for the flow network graph.
+</blockquote>
   
-<li> <tt>vertex_descriptor sink</tt> &nbsp(IN) <br>
+IN: <tt>vertex_descriptor sink</tt>
+<blockquote>
   The sink vertex for the flow network graph.
+</blockquote>
+
+<h3>Named Parameters</h3>
   
-<li> <tt>CapacityEdgeMap cap</tt> &nbsp(IN) <br> 
+IN: <tt>capacity_map(EdgeCapacityMap cap)</tt>
+<blockquote>
   The edge capacity property map. The type must be a model of a
   constant <a
-  href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
-  key type of the map must be the graph's edge descriptor type.
+  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  key type of the map must be the graph's edge descriptor type.<br>
+  <b>Default:</b> <tt>get(edge_capacity, g)</tt>
   
-<li> <tt>ResidualCapacityEdgeMap res</tt> &nbsp;(OUT) <br> 
+OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
+<blockquote>
   The edge residual capacity property map. The type must be a model of
   a mutable <a
-  href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
-  key type of the map must be the graph's edge descriptor type.
+  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  key type of the map must be the graph's edge descriptor type.<br>
+  <b>Default:</b> <tt>get(edge_residual_capacity, g)</tt>
+</blockquote>
   
-<li> <tt>ReverseEdgeMap rev</tt> &nbsp;(OUT) <br>
+IN: <tt>reverse_edge_map(ReverseEdgeMap rev)</tt>
+<blockquote>
   An edge property map that maps every edge <i>(u,v)</i> in the graph
   to the reverse edge <i>(v,u)</i>. The map must be a model of
   constant <a
-  href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
-  key type of the map must be the graph's edge descriptor type.
+  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  key type of the map must be the graph's edge descriptor type.<br>
+  <b>Default:</b> <tt>get(edge_reverse, g)</tt>
+</blockquote>
    
-<li> <tt>VertexIndexMap index_map</tt> &nbsp(IN) <br>
+IN: <tt>vertex_index_map(VertexIndexMap index_map)</tt>
+<blockquote>
   Maps each vertex of the graph to a unique integer in the range
   <tt>[0, num_vertices(g))</tt>. The map must be a model of constant <a
   href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
-  key type of the map must be the graph's vertex descriptor type.
-</ul>
+  key type of the map must be the graph's vertex descriptor type.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+</blockquote>
 
 
 <h3>Example</h3>
@@ -175,8 +186,7 @@ main()
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity,
-                               rev, get(vertex_index, g));
+  flow = push_relabel_max_flow(g, s, t);
 
   std::cout &lt;&lt; "c  The total flow:" &lt;&lt; std::endl;
   std::cout &lt;&lt; "s " &lt;&lt; flow &lt;&lt; std::endl &lt;&lt; std::endl;
