@@ -76,9 +76,9 @@ namespace boost {
 
   namespace detail {
 
-    struct truth2 {
+    struct nontruth2 {
       template<class T, class T2>
-      bool operator()(const T&, const T2&) const { return true; }
+      bool operator()(const T&, const T2&) const { return false; }
     };
 
 
@@ -127,7 +127,7 @@ namespace boost {
       put(color, u, Color::gray());
       vis.discover_vertex(u, g);
       tie(ei, ei_end) = out_edges(u, g);
-      if (static_cast<TF&>(func)(u, g)) {          
+      if (static_cast<TF&>(func)(u, g)) {
           // If this vertex terminates the search, we push empty range
           stack.push_back(std::make_pair(u, std::make_pair(ei_end, ei_end)));
       } else {
@@ -166,7 +166,7 @@ namespace boost {
     }
 
 #else // BOOST_RECURSIVE_DFS is defined
-  
+
     template <class IncidenceGraph, class DFSVisitor, class ColorMap,
               class TerminatorFunc>
     void depth_first_visit_impl
@@ -219,14 +219,14 @@ namespace boost {
     }
 
     if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
-      detail::depth_first_visit_impl(g, start_vertex, vis, color, 
-                                     detail::truth2());
+      detail::depth_first_visit_impl(g, start_vertex, vis, color,
+                                     detail::nontruth2());
     }
 
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(color, *ui);
       if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-        detail::depth_first_visit_impl(g, *ui, vis, color, detail::truth2());
+        detail::depth_first_visit_impl(g, *ui, vis, color, detail::nontruth2());
       }
     }
   }
@@ -360,14 +360,14 @@ namespace boost {
      DFSVisitor vis, ColorMap color)
   {
     vis.start_vertex(u, g);
-    detail::depth_first_visit_impl(g, u, vis, color, detail::truth2());
+    detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
   }
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap,
             class TerminatorFunc>
   void depth_first_visit
     (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
      DFSVisitor vis, ColorMap color, TerminatorFunc func = TerminatorFunc())
   {
     vis.start_vertex(u, g);
