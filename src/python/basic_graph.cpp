@@ -7,6 +7,7 @@
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
 #include "basic_graph.hpp"
+#include <boost/graph/iteration_macros.hpp>
 
 namespace boost { 
 
@@ -129,7 +130,11 @@ basic_graph<DirectedS>::basic_graph(const std::string& filename,
 template<typename DirectedS>
 basic_graph<DirectedS>::basic_graph(erdos_renyi er, int seed)
   : stored_minstd_rand(seed), 
-    inherited(er_iterator(this->gen, er.n, er.p), er_iterator(), er.n) { }
+    inherited(er_iterator(this->gen, er.n, er.p), er_iterator(), er.n) 
+{ 
+  renumber_vertices();
+  renumber_edges();
+}
 
 template<typename DirectedS>
 basic_graph<DirectedS>::basic_graph(power_law_out_degree plod, int seed)
@@ -137,13 +142,19 @@ basic_graph<DirectedS>::basic_graph(power_law_out_degree plod, int seed)
     inherited(sf_iterator(this->gen, plod.n, plod.alpha, plod.beta), 
               sf_iterator(),
               plod.n)
-{ }
+{ 
+  renumber_vertices();
+  renumber_edges();
+}
 
 template<typename DirectedS>
 basic_graph<DirectedS>::basic_graph(small_world sw, int seed)
   : stored_minstd_rand(seed), 
     inherited(sw_iterator(this->gen, sw.n, sw.k, sw.p), sw_iterator(), sw.n)
-{ }
+{ 
+  renumber_vertices();
+  renumber_edges();
+}
 
 // ----------------------------------------------------------
 // Incidence basic_graph<DirectedS> concept
@@ -489,6 +500,28 @@ basic_graph<DirectedS>::edges() const
   return std::make_pair(edges_begin(), edges_end());
 }
 
+template<typename DirectedS>
+void basic_graph<DirectedS>::renumber_vertices()
+{
+  using boost::vertices;
+
+  BGL_FORALL_VERTICES_T(v, base(), inherited) {
+    put(vertex_index, base(), v, index_to_vertex.size());
+    index_to_vertex.push_back(v);
+  }
+}
+
+template<typename DirectedS>
+void basic_graph<DirectedS>::renumber_edges()
+{
+  using boost::edges;
+
+  BGL_FORALL_EDGES_T(e, base(), inherited) {
+    put(edge_index, base(), e, index_to_edge.size());
+    index_to_edge.push_back(e);
+  }
+}
+
 template<typename Graph> void export_in_graph();
 
 template<typename DirectedS>
@@ -551,7 +584,7 @@ void export_basic_graph(const char* name)
         .def("get_vertex_object_map", &Graph::get_vertex_object_map)
         .def("get_vertex_point2d_map", &Graph::get_vertex_point2d_map)
         // Edge property maps
-        .def("has_edge_map", &Graph::has_vertex_map)
+        .def("has_edge_map", &Graph::has_edge_map)
         .def("get_edge_index_map", &Graph::get_edge_index_map)
         .def("get_edge_color_map", &Graph::get_edge_color_map)
         .def("get_edge_double_map", &Graph::get_edge_double_map)

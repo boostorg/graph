@@ -27,8 +27,12 @@ basic_graph<DirectedS>::write_graphviz(const std::string& filename,
                                        const std::string& node_id)
 {
   std::ofstream out(filename.c_str());
-  boost::write_graphviz(out, *this, dp, node_id, 
-                        get_vertex_map<std::string>("node_id"));
+
+  if (has_vertex_map(node_id))
+    boost::write_graphviz(out, *this, dp, node_id, 
+                          get_vertex_map<std::string>(node_id));
+  else
+    boost::write_graphviz(out, *this, dp, node_id, get_vertex_index_map());
 }
 
 // Explicit instantiations

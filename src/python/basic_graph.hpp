@@ -348,7 +348,11 @@ class basic_graph
   inherited&       base()       { return *this; }
   const inherited& base() const { return *this; }
   
- private:
+protected:
+  void renumber_vertices();
+  void renumber_edges();
+  
+private:
   std::vector<vertex_descriptor> index_to_vertex;
   std::vector<edge_descriptor>   index_to_edge;
   dynamic_properties dp;
