@@ -324,9 +324,8 @@ the system will need to report an error to the user so that the cycles
 can be removed. One easy way to detect a cycle is to run a <a
 href="./depth_first_search.html">depth-first search</a>, and if the
 search runs into an already discovered vertex (of the current search
-tree), then there is a cycle. An already discovered vertex will have
-been colored gray, so we can insert a check for this color in the
-depth-first search. The BGL graph search algorithms (which includes
+tree), then there is a cycle. The BGL graph search algorithms (which
+includes 
 <TT>depth_first_search()</TT>) are all extensible via the
 <I>visitor</I> mechanism. A visitor is similar to a function object,
 but it has several methods instead of just the one
@@ -339,9 +338,9 @@ for a detailed description of visitors.
 <P>
 We will create a visitor class and fill in the <TT>back_edge()</TT>
 method, which is the <a href="./DFSVisitor.html">DFSVisitor</a> method
-that is called when DFS explores a new edge. This is the place where
-we want to place the color check which will determine whether there
-are cyclic dependencies.  Inheriting from <TT>dfs_visitor&lt;&gt;</TT>
+that is called when DFS explores an edge to an already discovered
+vertex. A call to this method indicates the existence of a
+cycle. Inheriting from <TT>dfs_visitor&lt;&gt;</TT> 
 provides the visitor with empty versions of the other visitor methods.
 Once our visitor is created, we can construct and object and pass it
 to the BGL algorithm.  Visitor objects are passed by value inside of
@@ -350,21 +349,17 @@ reference in this visitor.
 
 <P>
 <PRE>
-  template &lt;class Color&gt;
   struct cycle_detector : public dfs_visitor&lt;&gt;
   {
-    typedef typename boost::property_traits&lt;Color&gt;::value_type C;
-
-    cycle_detector(Color c, bool& has_cycle) 
-      : _has_cycle(has_cycle), color(c) { }
+    cycle_detector( bool&amp; has_cycle) 
+      : _has_cycle(has_cycle) { }
 
     template &lt;class Edge, class Graph&gt;
-    void back_edge(Edge e, Graph& g) {
+    void back_edge(Edge, Graph&amp;) {
       _has_cycle = true;
     }
   protected:
-    bool& _has_cycle;
-    Color color;
+    bool&amp; _has_cycle;
   };
 </PRE>
 
@@ -375,7 +370,7 @@ algorithm and pass in the cycle detector visitor.
 <P>
 <PRE>
   bool has_cycle = false;
-  cycle_detector&lt;Color&gt; vis(color, has_cycle);
+  cycle_detector vis(has_cycle);
   boost::depth_first_search(g, visitor(vis));
   std::cout &lt;&lt; "The graph has a cycle? " &lt;&lt; has_cycle &lt;&lt; std::endl;
 </PRE>
