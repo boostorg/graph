@@ -184,10 +184,11 @@ namespace boost {
 namespace boost {
 #endif
 
-  inline std::pair<Vertex*,Vertex*>
+  inline std::pair<sgb_vertex_iterator,sgb_vertex_iterator>
   vertices(Graph* g)
   {
-    return std::make_pair( g->vertices, g->vertices + g->n );
+    return std::make_pair(sgb_vertex_iterator(g->vertices),
+			  sgb_vertex_iterator(g->vertices + g->n));
   }
 
   inline std::pair<sgb_out_edge_iterator,sgb_out_edge_iterator>
@@ -308,6 +309,7 @@ namespace boost {
 
   GET_VERTEX_UTIL_FIELD(u)
   GET_VERTEX_UTIL_FIELD(v)
+  GET_VERTEX_UTIL_FIELD(w)
   GET_VERTEX_UTIL_FIELD(x)
   GET_VERTEX_UTIL_FIELD(y)
   GET_VERTEX_UTIL_FIELD(z)
