@@ -104,7 +104,9 @@ namespace boost {
       deriv_type
       compute_partial_derivative(vertex_descriptor m, vertex_descriptor i)
       {
+#ifndef BOOST_NO_STDC_NAMESPACE
         using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
 
         deriv_type result(0, 0);
         if (i != m) {
@@ -124,7 +126,9 @@ namespace boost {
       deriv_type 
       compute_partial_derivatives(vertex_descriptor m)
       {
+#ifndef BOOST_NO_STDC_NAMESPACE
         using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
 
         deriv_type result(0, 0);
 
@@ -143,7 +147,9 @@ namespace boost {
       // The actual Kamada-Kawai spring layout algorithm implementation
       bool run()
       {
+#ifndef BOOST_NO_STDC_NAMESPACE
         using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
 
         // Compute d_{ij} and place it in the distance matrix
         if (!johnson_all_pairs_shortest_paths(g, distance, index, weight, 
