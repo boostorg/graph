@@ -84,7 +84,9 @@ int main(int argc, char* argv[])
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
   typedef std::vector<Vertex>::iterator Piter;
-  typedef std::vector<size_type>::pointer Iiter;
+  // VC++ version of std::vector has no ::pointer, so
+  // I use ::value_type* instead.
+  typedef std::vector<size_type>::value_type* Iiter;
 
   // color, discover time, and finish time properties
   std::vector<default_color_type> color(num_vertices(G));

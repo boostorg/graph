@@ -73,8 +73,10 @@ int main(int argc, char* argv[])
 
   std::vector<Vertex> rank(num_vertices(G));
   std::vector<Vertex> parent(num_vertices(G));
-  typedef std::vector<size_type>::pointer Rank;
-  typedef std::vector<Vertex>::pointer Parent;
+  // VC++ version of std::vector has no ::pointer, so
+  // I use ::value_type* instead.
+  typedef std::vector<size_type>::value_type* Rank;
+  typedef std::vector<Vertex>::value_type* Parent;
   disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
   initialize_dynamic_components(G, ds);

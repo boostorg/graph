@@ -131,7 +131,9 @@ int main(int argc, char* argv[])
   // Array to store predecessor (parent) of each vertex. This will be
   // used as a Decorator (actually, its iterator will be).
   std::vector<Vertex> p(boost::num_vertices(G));
-  typedef std::vector<Vertex>::pointer Piter;
+  // VC++ version of std::vector has no ::pointer, so
+  // I use ::value_type* instead.
+  typedef std::vector<Vertex>::value_type* Piter;
 
   // Array to store distances from the source to each vertex .  We use
   // a built-in array here just for variety. This will also be used as
