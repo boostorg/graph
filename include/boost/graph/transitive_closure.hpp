@@ -18,15 +18,17 @@
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost
 {
 
   namespace detail
   {
-    void union_successor_sets(const std::vector < std::size_t > &s1,
-                              const std::vector < std::size_t > &s2,
-                              std::vector < std::size_t > &s3)
+    inline void
+      union_successor_sets(const std::vector < std::size_t > &s1,
+                           const std::vector < std::size_t > &s2,
+                           std::vector < std::size_t > &s3)
     {
       for (std::size_t k = 0; k < s1.size(); ++k)
         s3[k] = std::min(s1[k], s2[k]);
@@ -55,8 +57,11 @@ namespace boost
     }
   }                             // namespace detail
 
-  template < typename Graph, typename GraphTC, typename VertexIndexMap >
+  template < typename Graph, typename GraphTC,
+    typename G_to_TC_VertexMap,
+    typename VertexIndexMap >
     void transitive_closure(const Graph & g, GraphTC & tc,
+                            G_to_TC_VertexMap g_to_tc_map,
                             VertexIndexMap index_map)
   {
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
@@ -195,13 +200,10 @@ namespace boost
 
     // Add vertices to the transitive closure graph
     typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
-    std::vector < tc_vertex > to_tc_vec(num_vertices(g));
-    iterator_property_map < tc_vertex *, VertexIndexMap >
-      to_tc(&to_tc_vec[0], index_map);
     {
       vertex_iterator i, i_end;
       for (tie(i, i_end) = vertices(g); i != i_end; ++i)
-        to_tc[*i] = add_vertex(tc);
+        g_to_tc_map[*i] = add_vertex(tc);
     }
     // Add edges between all the vertices in two adjacent SCCs
     graph_traits < CG_t >::vertex_iterator si, si_end;
@@ -212,7 +214,8 @@ namespace boost
         cg_vertex t = *i;
         for (size_type k = 0; k < components[s].size(); ++k)
           for (size_type l = 0; l < components[t].size(); ++l)
-            add_edge(to_tc[components[s][k]], to_tc[components[t][l]], tc);
+            add_edge(g_to_tc_map[components[s][k]],
+                     g_to_tc_map[components[t][l]], tc);
       }
     }
     // Add edges connecting all vertices in a SCC
@@ -221,15 +224,60 @@ namespace boost
         for (size_type k = 0; k < components[i].size(); ++k)
           for (size_type l = 0; l < components[i].size(); ++l) {
             vertex u = components[i][k], v = components[i][l];
-            add_edge(to_tc[u], to_tc[v], tc);
+            add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
           }
 
   }
-  // Alternate interface with default vertex index map
+
   template < typename Graph, typename GraphTC >
     void transitive_closure(const Graph & g, GraphTC & tc)
   {
-    transitive_closure(g, tc, get(vertex_index, g));
+    typedef typename property_map < Graph, vertex_index_t >::const_type
+      VertexIndexMap;
+    VertexIndexMap index_map = get(vertex_index, g);
+
+    typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
+    std::vector < tc_vertex > to_tc_vec(num_vertices(g));
+    iterator_property_map < tc_vertex *, VertexIndexMap >
+      g_to_tc_map(&to_tc_vec[0], index_map);
+
+    transitive_closure(g, tc, g_to_tc_map, index_map);
+  }
+
+  namespace detail
+  {
+    template < typename Graph, typename GraphTC,
+      typename G_to_TC_VertexMap,
+      typename VertexIndexMap >
+      void transitive_closure_dispatch
+      (const Graph & g, GraphTC & tc,
+       G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map)
+    {
+      typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
+      typename std::vector < tc_vertex >::size_type
+        n = is_default_param(index_map) ? num_vertices(g) : 1;
+        std::vector < tc_vertex > to_tc_vec(n);
+
+        transitive_closure
+        (g, tc,
+         choose_param(g_to_tc_map, make_iterator_property_map
+                      (to_tc_vec.begin(), index_map, to_tc_vec[0])),
+         index_map);
+    }
+  }                             // namespace detail
+
+  template < typename Graph, typename GraphTC,
+    typename P, typename T, typename R >
+    void transitive_closure(const Graph & g, GraphTC & tc,
+                            const bgl_named_params < P, T, R > &params)
+  {
+    detail::transitive_closure_dispatch(g, tc,
+                                        get_param(params, orig_to_copy),
+                                        choose_const_pmap(get_param
+                                                          (params,
+                                                           vertex_index), g,
+                                                          vertex_index)
+      );
   }
 
 
