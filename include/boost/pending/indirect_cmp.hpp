@@ -56,7 +56,7 @@ namespace boost {
     template <class A, class B>
     inline bool 
     operator()(const A& u, const B& v) const {
-      T du = d[u], dv = d[v];
+      T du = get(d, u), dv = get(d, v);
       return cmp(du, dv);
     }
   protected:
