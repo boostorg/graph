@@ -1529,7 +1529,11 @@ namespace boost {
         }
         delete [] v;
       }
-
+      ~adj_list_impl() {
+	for (typename StoredVertexList::iterator i = m_vertices.begin();
+	     i != m_vertices.end(); ++i)
+	  delete (stored_vertex*)*i;
+      }
       //    protected:
       inline OutEdgeList& out_edge_list(vertex_descriptor v) {
         stored_vertex* sv = (stored_vertex*)v;
