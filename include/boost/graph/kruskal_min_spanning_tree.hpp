@@ -84,7 +84,7 @@ namespace boost {
     typedef typename property_traits<Weight>::value_type W_value;
     typedef typename property_traits<Rank>::value_type R_value;
     typedef typename property_traits<Parent>::value_type P_value;
-    function_requires<LessThanComparableConcept<W_value> >();
+    function_requires<ComparableConcept<W_value> >();
     function_requires<ConvertibleConcept<P_value, Vertex> >();
     function_requires<IntegerConcept<R_value> >();
 
