@@ -29,6 +29,7 @@
 #include <cassert>
 #include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 namespace boost {
 
