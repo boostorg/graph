@@ -95,11 +95,11 @@ int main(int, char*[])
   std::vector<size_type> ftime(num_vertices(G));
   int t = 0;
   depth_first_search
-    (G, make_dfs_visitor(make_pair(stamp_times(&dtime[0], t, 
+    (G, visitor(make_dfs_visitor(make_pair(stamp_times(&dtime[0], t, 
                                                on_discover_vertex()),
                                    stamp_times(&ftime[0], t, 
-                                               on_finish_vertex()))),
-     &color[0]);
+                                               on_finish_vertex())))).
+     color_map(&color[0]));
 
   // use std::sort to order the vertices by their discover time
   vector<size_type> discover_order(N);
