@@ -12,12 +12,14 @@ lib libbgl-viz
 	;
 
 obj graphviz_graph_lex : graphviz_lex.ll 
-    : <flex.prefix>bgl_undir_ <define>GRAPHVIZ_DIRECTED=0 <dependency>graphviz_graph_parser ;
+    : <flex.prefix>bgl_undir_ <define>GRAPHVIZ_DIRECTED=0 
+      <implicit-dependency>graphviz_graph_parser ;
 obj graphviz_graph_parser : graphviz_parser.yy 
     : <bison.prefix>bgl_undir_ 	<define>GRAPHVIZ_DIRECTED=0 ;    
     
     
 obj graphviz_digraph_lex : graphviz_lex.ll 
-    : <flex.prefix>bgl_dir_ <define>GRAPHVIZ_DIRECTED=1 <dependency>graphviz_digraph_parser ;
+    : <flex.prefix>bgl_dir_ <define>GRAPHVIZ_DIRECTED=1 
+      <implicit-dependency>graphviz_digraph_parser ;
 obj graphviz_digraph_parser : graphviz_parser.yy 
     : <bison.prefix>bgl_dir_ 	<define>GRAPHVIZ_DIRECTED=1 ;
