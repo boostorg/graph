@@ -303,7 +303,12 @@ namespace boost {
   void erase_if_dispatch(Sequence& c, Predicate p,
                          sequence_tag, IteratorStability)
   {
+#if 0
     c.erase(std::remove_if(c.begin(), c.end(), p), c.end());
+#else
+    if (! c.empty())
+      c.erase(std::remove_if(c.begin(), c.end(), p), c.end());
+#endif
   }
   template <class AssociativeContainer, class Predicate>
   void erase_if_dispatch(AssociativeContainer& c, Predicate p,
@@ -357,14 +362,16 @@ namespace boost {
 
   template <class AssociativeContainer, class T>
   std::pair<typename AssociativeContainer::iterator, bool>
-  push_dispatch(AssociativeContainer& c, const T& v, unique_associative_container_tag)
+  push_dispatch(AssociativeContainer& c, const T& v, 
+                unique_associative_container_tag)
   {
     return c.insert(v);
   }
 
   template <class AssociativeContainer, class T>
   std::pair<typename AssociativeContainer::iterator, bool>
-  push_dispatch(AssociativeContainer& c, const T& v, multiple_associative_container_tag)
+  push_dispatch(AssociativeContainer& c, const T& v,
+                multiple_associative_container_tag)
   {
     return std::make_pair(c.insert(v), true);
   }
