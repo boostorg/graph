@@ -43,7 +43,7 @@ using namespace boost;
 // O(n^4) won't hurt us.
 template<typename Graph1, typename Graph2, typename IsoMap>
 inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
-			       IsoMap iso_map)
+                               IsoMap iso_map)
 {
   if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
     return false;
@@ -52,10 +52,10 @@ inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2,
        e1 != edges(g1).second; ++e1) {
     bool found_edge = false;
     for (typename graph_traits<Graph2>::edge_iterator e2 = edges(g2).first;
-	 e2 != edges(g2).second && !found_edge; ++e2) {
+         e2 != edges(g2).second && !found_edge; ++e2) {
       if (source(*e2, g2) == get(iso_map, source(*e1, g1)) &&
-	  target(*e2, g2) == get(iso_map, target(*e1, g1))) {
-	found_edge = true;
+          target(*e2, g2) == get(iso_map, target(*e1, g1))) {
+        found_edge = true;
       }
     }
     
@@ -125,7 +125,6 @@ void generate_random_digraph(Graph& g, double edge_probability)
 void test_isomorphism(int n, double edge_probability) 
 {
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph1;
-  //  typedef graph1 graph2;
   typedef adjacency_list<listS, listS, bidirectionalS,
                          property<vertex_index_t, int> > graph2;
 
@@ -143,29 +142,44 @@ void test_isomorphism(int n, double edge_probability)
   std::map<graph1::vertex_descriptor, graph2::vertex_descriptor> mapping;
 
   bool isomorphism_correct;
+  clock_t start = clock();
   BOOST_TEST(isomorphism_correct = isomorphism
                (g1, g2, isomorphism_map(make_assoc_property_map(mapping))));
+  clock_t end = clock();
+
+  std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
 
   bool verify_correct;
   BOOST_TEST(verify_correct = 
              verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 
   if (!isomorphism_correct || !verify_correct) {
-    // Output the graph
-    std::ofstream out("isomorphism_failure.bgl");
-    out << num_vertices(g1) << std::endl;
-    for (graph1::edge_iterator e = edges(g1).first; 
-         e != edges(g1).second; ++e) {
-      out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
-          << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
+    // Output graph 1
+    {
+      std::ofstream out("isomorphism_failure.bg1");
+      out << num_vertices(g1) << std::endl;
+      for (graph1::edge_iterator e = edges(g1).first; 
+           e != edges(g1).second; ++e) {
+        out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
+            << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
+      }
+    }
+
+    // Output graph 2
+    {
+      std::ofstream out("isomorphism_failure.bg2");
+      out << num_vertices(g2) << std::endl;
+      for (graph2::edge_iterator e = edges(g2).first; 
+           e != edges(g2).second; ++e) {
+        out << get(vertex_index_t(), g2, source(*e, g2)) << ' '
+            << get(vertex_index_t(), g2, target(*e, g2)) << std::endl;
+      }
     }
   }
 }
 
 int test_main(int argc, char* argv[])
 {
-  typedef adjacency_list<vecS, vecS, bidirectionalS> graph;
-
   if (argc < 3) {
     test_isomorphism(30, 0.45);
     return 0;
