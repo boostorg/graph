@@ -101,7 +101,7 @@ main()
 
   std::vector < vertex_t > order(num_vertices(g));
   topo_sort(g, &order[0] + num_vertices(g));
-  for (int i = 0; i < num_vertices(g); ++i)
+  for (size_type i = 0; i < num_vertices(g); ++i)
     std::cout << name[order[i]] << std::endl;
 
   return 0;
