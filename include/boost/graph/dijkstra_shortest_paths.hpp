@@ -259,12 +259,11 @@ namespace boost {
   {
     // Default for edge weight and vertex index map is to ask for them
     // from the graph.  Default for the visitor is null_visitor.
-    null_visitor null_vis;
     detail::dijkstra_dispatch1
       (g, s, 
        get_param(params, vertex_distance),
-       choose_pmap(get_param(params, edge_weight), g, edge_weight),
-       choose_pmap(get_param(params, vertex_index), g, vertex_index),
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
        params);
   }
 
