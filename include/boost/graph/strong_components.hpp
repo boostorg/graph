@@ -31,6 +31,8 @@
 #include <stack>
 #include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/type_traits/conversion_traits.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 
@@ -223,7 +225,8 @@ namespace boost {
                const bgl_named_params<P, T, R>& params,
                RootMap r_map)
     {
-      return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params, r_map);
+      return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params,
+                                                           r_map);
     }
 
   } // namespace detail 
@@ -235,8 +238,9 @@ namespace boost {
                     const bgl_named_params<P, T, R>& params)
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
-    typedef typename require_same<DirCat, directed_tag>::type req1;
-    return detail::scc_helper1(g, comp, params, get_param(params, vertex_root_t()));
+    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
+    return detail::scc_helper1(g, comp, params, 
+                               get_param(params, vertex_root_t()));
   }
 
   template <class Graph, class ComponentMap>
@@ -244,7 +248,7 @@ namespace boost {
   strong_components(const Graph& g, ComponentMap comp)
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
-    typedef typename require_same<DirCat, directed_tag>::type req1;
+    BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
     bgl_named_params<int, int> params(0);
     return strong_components(g, comp, params);
   }
