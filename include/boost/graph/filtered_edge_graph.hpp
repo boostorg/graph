@@ -6,41 +6,6 @@
 
 namespace boost {
 
-  template <class Predicate, class Iterator>
-  class filter_iterator_policies : public default_iterator_policies {
-  public:
-    filter_iterator_policies() { }
-
-    filter_iterator_policies(const Predicate& p, const Iterator& end) 
-      : m_predicate(p), m_end(end) { }
-
-    void initialize(Iterator& x) {
-      while (!m_predicate(*x) && x != m_end)
-        ++x;
-    }
-    void increment(Iterator& x) {
-      ++x;
-      while (!m_predicate(*x) && x != m_end)
-        ++x;
-    }
-  private:
-    Predicate m_predicate;
-    Iterator m_end;
-  };
-  
-  template <class Predicate, class Iterator, 
-#ifndef BOOST_NO_STD_ITERATOR_TRAITS
-            class Traits = std::iterator_traits<Iterator>
-#else
-            class Traits
-#endif
-           >
-  class filter_iterator {
-    typedef filter_iterator_policies<Predicate, Iterator> Policies;
-  public:
-    typedef iterator_adaptor<Iterator, Policies, Traits> type;
-  };
-  
   template <class Graph, class Predicate>
   class filtered_edge_graph {
     typedef graph_traits<Graph> Traits;
