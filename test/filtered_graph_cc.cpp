@@ -38,7 +38,10 @@ int main(int,char*[])
     typedef filtered_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
     typedef graph_traits<ResGraph>::edge_descriptor Edge;
 
-    function_requires< VertexAndEdgeListGraphConcept<ResGraph> >();
+    function_requires< VertexListGraphConcept<ResGraph> >();
+    function_requires< EdgeListGraphConcept<ResGraph> >();
+    function_requires< IncidenceGraphConcept<ResGraph> >();
+    function_requires< AdjacencyGraphConcept<ResGraph> >();
     function_requires< PropertyGraphConcept<ResGraph, Edge, 
       edge_residual_capacity_t> >();
   }

@@ -91,13 +91,8 @@ namespace boost {
   struct adjacency_graph_tag { };
   struct bidirectional_graph_tag : 
     public virtual incidence_graph_tag { };
-  struct vertex_list_graph_tag : 
-    public virtual incidence_graph_tag,
-    public virtual adjacency_graph_tag { };
+  struct vertex_list_graph_tag { };
   struct edge_list_graph_tag { };
-  struct vertex_and_edge_list_graph_tag : 
-    public virtual edge_list_graph_tag,
-    public virtual vertex_list_graph_tag { };
   struct adjacency_matrix_tag { };
 
   //?? not the right place ?? Lee

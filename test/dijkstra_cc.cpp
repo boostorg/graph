@@ -23,9 +23,11 @@ int main()
     sgi_assignable_archetype<
     equality_comparable_archetype<> > > vertex_t;
   {
+    typedef incidence_graph_archetype<vertex_t, directed_tag, 
+      allow_parallel_edge_tag> IncidenceGraph;
     typedef vertex_list_graph_archetype<vertex_t, directed_tag, 
-      allow_parallel_edge_tag> graph_t;
-    graph_t g;
+      allow_parallel_edge_tag, IncidenceGraph> graph_t;
+    graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     typedef graph_traits<graph_t>::edge_descriptor edge_t;
     readable_property_map_archetype<edge_t, std::size_t> weight;
@@ -37,22 +39,30 @@ int main()
 			    distance_map(distance));
   }
   {
+    typedef incidence_graph_archetype<vertex_t, directed_tag, 
+      allow_parallel_edge_tag> IncidenceGraph;
     typedef vertex_list_graph_archetype<vertex_t, directed_tag, 
-      allow_parallel_edge_tag> graph_t;
+      allow_parallel_edge_tag, IncidenceGraph> Graph;
     vertex_t s;
-    typedef graph_traits<graph_t>::edge_descriptor edge_t;
+    typedef graph_traits<Graph>::edge_descriptor edge_t;
     readable_property_map_archetype<edge_t, std::size_t> weight;
-    property_graph_archetype<graph_t, vertex_index_t, std::size_t> g;
+    typedef property_graph_archetype<Graph, vertex_index_t, std::size_t> 
+      graph_t;
+    graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     dijkstra_shortest_paths(g, s,
 			    predecessor_map(pred).
 			    weight_map(weight));
   }
   {
+    typedef incidence_graph_archetype<vertex_t, directed_tag, 
+      allow_parallel_edge_tag> IncidenceGraph;
     typedef vertex_list_graph_archetype<vertex_t, directed_tag, 
-      allow_parallel_edge_tag> graph_t;
+      allow_parallel_edge_tag, IncidenceGraph> Graph;
     vertex_t s;
-    property_graph_archetype<graph_t, edge_weight_t, std::size_t> g;
+    typedef property_graph_archetype<Graph, edge_weight_t, std::size_t> 
+      graph_t;
+    graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     readable_property_map_archetype<vertex_t, int> index;
     dijkstra_shortest_paths(g, s,
@@ -60,9 +70,11 @@ int main()
 			    vertex_index_map(index));
   }
   {
+    typedef incidence_graph_archetype<vertex_t, directed_tag, 
+      allow_parallel_edge_tag> IncidenceGraph;
     typedef vertex_list_graph_archetype<vertex_t, directed_tag, 
-      allow_parallel_edge_tag> graph_t;
-    graph_t g;
+      allow_parallel_edge_tag, IncidenceGraph> graph_t;
+    graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     typedef graph_traits<graph_t>::edge_descriptor edge_t;
     readable_property_map_archetype<edge_t, dist_value> weight;

@@ -37,7 +37,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -55,7 +58,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
@@ -74,7 +80,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -92,7 +101,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -111,7 +123,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
@@ -130,7 +145,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -148,7 +166,10 @@ int main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -164,7 +185,10 @@ int main(int,char*[])
     typedef adjacency_list<vecS, vecS, directedS > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
@@ -175,7 +199,10 @@ int main(int,char*[])
     typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
@@ -186,7 +213,10 @@ int main(int,char*[])
     typedef adjacency_list< listS, listS, directedS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
   }
@@ -194,7 +224,10 @@ int main(int,char*[])
     typedef adjacency_list< listS, listS, undirectedS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
   }
@@ -203,7 +236,10 @@ int main(int,char*[])
     typedef adjacency_list<setS, vecS, bidirectionalS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
@@ -214,7 +250,6 @@ int main(int,char*[])
     typedef adjacency_list< setS, listS, directedS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
   }
@@ -222,7 +257,10 @@ int main(int,char*[])
     typedef adjacency_list< setS, listS, undirectedS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
   }

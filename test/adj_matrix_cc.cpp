@@ -32,13 +32,19 @@ int main(int,char*[])
   // Check adjacency_matrix without properties
   {
     typedef adjacency_matrix<directedS> Graph;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
   }
   {
     typedef adjacency_matrix<undirectedS> Graph;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< MutableGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
   }
@@ -49,7 +55,10 @@ int main(int,char*[])
       property<edge_weight_t, float> > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
     function_requires< ReadablePropertyGraphConcept<Graph, 
@@ -63,7 +72,10 @@ int main(int,char*[])
       property<edge_weight_t, float> > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< EdgeListGraphConcept<Graph> >();
+    function_requires< IncidenceGraphConcept<Graph> >();
+    function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< AdjacencyMatrixConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
     function_requires< ReadablePropertyGraphConcept<Graph, 
