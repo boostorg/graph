@@ -112,7 +112,7 @@ namespace boost {
     typedef typename Graph::edge_plugin_type Plugin;
     typedef typename Graph::graph_tag graph_tag;
     typedef typename edge_property_selector<graph_tag>::type Selector;
-    typedef typename Selector::BOOST_TEMPLATE bind<Graph,Plugin,PropertyTag>
+    typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
       Bind;
     typedef typename Bind::type type;
     typedef typename Bind::const_type const_type;
@@ -122,90 +122,13 @@ namespace boost {
     typedef typename Graph::vertex_plugin_type Plugin;
     typedef typename Graph::graph_tag graph_tag;
     typedef typename vertex_property_selector<graph_tag>::type Selector;
-    typedef typename Selector::BOOST_TEMPLATE bind<Graph,Plugin,PropertyTag>
+    typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
       Bind;
   public:
     typedef typename Bind::type type;
     typedef typename Bind::const_type const_type;
   };
 
-#if 0 // UNDER CONSTRUCTION
-
-  struct white_type { };
-  struct gray_type { };
-  struct black_type { };
-
-  template <class T> white_type white(proxy) { return white_type(); }
-  template <class T> gray_type gray(proxy) { return gray_type(); }
-  template <class T> black_type black(proxy) { return black_type(); }
-
-  template <class ColorAccessor>
-  class color_reseting_adaptor
-  {
-    typedef typename property_traits<ColorAccessor>::value_type value_type;
-    typedef typename property_traits<ColorAccessor>::key_type key_type;
-
-    class proxy
-    {
-      proxy(default_color_type& c, const default_color_type& index)
-	: m_color(c), m_color_index(index) { }
-
-      proxy& operator=(const white_type&) {
-	m_color = m_color_index - 1;
-	return *this;
-      }
-      proxy& operator=(const gray_type&) {
-	m_color = m_color_index;
-	return *this;
-      }
-      proxy& operator=(const black_type&) {
-	m_color = m_color_index + 1;
-	return *this;
-      }
-      default_color_type& m_color;
-      default_color_type m_color_index;
-    };
-
-    proxy operator[](const key_type& key) const {
-      return proxy(get(m_color, key), m_color_index);
-    }
-
-    void reset() { ++m_color_index; }
-    void set_index(const ColorValue& cv) { m_color_index = cv; }
-
-    ColorAccessor m_color;
-    ColorValue m_color_index;
-  };
-
-  inline bool operator==(proxy p, white_type)
-  {
-    return p.m_color < p.m_color_index;
-  }
-  inline bool operator==(white_type, proxy p)
-  {
-    return p.m_color < p.m_color_index;
-  }
-
-  inline bool operator==(proxy p, gray_type)
-  {
-    return p.m_color == p.m_color_index;
-  }
-  inline bool operator==(proxy p, black_type)
-  {
-    return p.m_color > p.m_color_index;
-  }
-
-  template <class ColorAccessor>
-  struct ResetableColorAccessor_concept
-  {
-    void constraints() {
-      REQUIRES(ColorAccessor, ReadWritePropertyAccessor);
-      color.reset();
-    }
-    ColorAccessor color;
-  };
-
-#endif
 
 } // namespace boost
 
