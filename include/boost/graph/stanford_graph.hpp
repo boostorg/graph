@@ -446,7 +446,8 @@ namespace boost {
   } // namespace detail
   template <class PropertyTag>
   struct property_map<Graph*, PropertyTag> {
-    typedef typename PropertyTag::kind Kind;
+    //    typedef typename PropertyTag::kind Kind;
+    typedef typename property_kind<PropertyTag>::type Kind;
     typedef typename detail::choose_property_map<Kind, PropertyTag>::type type;
   };
 #else

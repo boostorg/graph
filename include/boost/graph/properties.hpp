@@ -51,10 +51,10 @@ namespace boost {
     // don't do partial specialization (like VC++).
     enum property_tag_num
     {
-      NO_PLUGIN_TAG, ID_PLUGIN_TAG, NAME_PLUGIN_TAG, WEIGHT_PLUGIN_TAG, 
-      DISTANCE_PLUGIN_TAG, COLOR_PLUGIN_TAG, DEGREE_PLUGIN_TAG,
-      OUT_DEGREE_PLUGIN_TAG, IN_DEGREE_PLUGIN_TAG, DISCOVER_TIME_PLUGIN_TAG,
-      FINISH_TIME_PLUGIN_TAG
+      no_property_num, vertex_index_num, edge_index_num, vertex_name_num,
+      edge_name_num, graph_name_num, edge_weight_num, vertex_distance_num,
+      vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
+      vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num
     };
   } // namespace detail
 
@@ -63,83 +63,30 @@ namespace boost {
   struct vertex_property_tag { };
   struct edge_property_tag { };
 
-  struct vertex_index_t {
-    typedef vertex_property_tag kind;
-    enum { num = detail::ID_PLUGIN_TAG };
-  };
-  static const vertex_index_t vertex_index = { };
+  template <class Property>
+  struct property_kind { typedef void type; };
 
-  struct edge_index_t {
-    typedef edge_property_tag kind;
-    enum { num = detail::ID_PLUGIN_TAG };
-  };
-  static const edge_index_t edge_index = { };
+#define BOOST_DEFINE_PROPERTY(KIND, NAME) \
+  enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
+  template <> struct property_kind<KIND##_##NAME##_t> { \
+    typedef KIND##_property_tag type; \
+  }
 
-  struct graph_name_t { 
-    typedef graph_property_tag kind;
-    enum { num = detail::NAME_PLUGIN_TAG };
-  };
-  static const graph_name_t graph_name = { };
+  BOOST_DEFINE_PROPERTY(vertex, index);
+  BOOST_DEFINE_PROPERTY(edge, index);
+  BOOST_DEFINE_PROPERTY(edge, name);
+  BOOST_DEFINE_PROPERTY(edge, weight);
+  BOOST_DEFINE_PROPERTY(vertex, name);
+  BOOST_DEFINE_PROPERTY(graph, name);
+  BOOST_DEFINE_PROPERTY(vertex, distance);
+  BOOST_DEFINE_PROPERTY(vertex, color);
+  BOOST_DEFINE_PROPERTY(vertex, degree);
+  BOOST_DEFINE_PROPERTY(vertex, in_degree);
+  BOOST_DEFINE_PROPERTY(vertex, out_degree);
+  BOOST_DEFINE_PROPERTY(vertex, discover_time);
+  BOOST_DEFINE_PROPERTY(vertex, finish_time);
 
-  struct vertex_name_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::NAME_PLUGIN_TAG };
-  };
-  static const vertex_name_t vertex_name = { };
-
-  struct edge_name_t { 
-    typedef edge_property_tag kind;
-    enum { num = detail::NAME_PLUGIN_TAG };
-  };
-  static const edge_name_t edge_name = { };
-
-  struct edge_weight_t { 
-    typedef edge_property_tag kind;
-    enum { num = detail::WEIGHT_PLUGIN_TAG };
-  };
-  static const edge_weight_t edge_weight = { };
-
-  struct vertex_distance_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::DISTANCE_PLUGIN_TAG };
-  };
-  static const vertex_distance_t vertex_distance = { };
-
-  struct vertex_color_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::COLOR_PLUGIN_TAG };
-  };
-  static const vertex_color_t vertex_color = { };
-
-  struct vertex_degree_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::DEGREE_PLUGIN_TAG };
-  };
-  static const vertex_degree_t vertex_degree = { };
-
-  struct vertex_out_degree_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::OUT_DEGREE_PLUGIN_TAG };
-  };
-  static const vertex_out_degree_t vertex_out_degree = { };
-
-  struct vertex_in_degree_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::IN_DEGREE_PLUGIN_TAG };
-  };
-  static const vertex_in_degree_t vertex_in_degree = { };
-
-  struct vertex_discover_time_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::DISCOVER_TIME_PLUGIN_TAG };
-  };
-  static const vertex_discover_time_t vertex_discover_time = { };
-
-  struct vertex_finish_time_t { 
-    typedef vertex_property_tag kind;
-    enum { num = detail::FINISH_TIME_PLUGIN_TAG };
-  };
-  static const vertex_finish_time_t vertex_finish_time = { };
+#undef BOOST_DEFINE_PROPERTY
 
   namespace detail {
 
@@ -231,7 +178,8 @@ namespace boost {
   template <class Graph, class Property>
   struct property_map {
   private:
-    typedef typename Property::kind Kind;
+    //    typedef typename Property::kind Kind;
+    typedef typename property_kind<Property>::type Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
     typedef typename Selector::template bind<Graph, Property> Bind;
     typedef typename Bind::type Map;
