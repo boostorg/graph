@@ -29,6 +29,7 @@
 #include <string>
 #include <map>
 #include <iosfwd>
+#include <stdio.h> // for FILE
 #include <boost/property_map.hpp>
 #include <boost/utility.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -315,6 +316,92 @@ namespace boost {
     write_graphviz(out, g, vw, ew, gw);
   }
 
+  namespace detail {
+
+    template <class Graph_, class RandomAccessIterator>
+    void write_graphviz_subgraph (std::ostream& out, 
+				  const subgraph<Graph_>& g, 
+				  const subgraph<Graph_>& root,
+				  RandomAccessIterator vertex_marker,
+				  RandomAccessIterator edge_marker)
+    {
+      typedef subgraph<Graph_> Graph;
+      typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename boost::graph_traits<Graph>::directed_category cat_type;
+      typedef graphviz_io_traits<cat_type> Traits;
+
+      graph_property<Graph, graph_name_t>::type&
+	g_name = const_cast<graph_property<Graph, graph_name_t>::type&>
+	( get_property(g, graph_name));
+
+      if ( &g == &root )
+	out << Traits::name() ;
+      else
+	out << "subgraph";
+
+      out << " " << g_name << " {" << std::endl;
+
+      typename Graph::const_children_iterator i_child, j_child;
+
+      //print graph/node/edge attributes
+      make_graph_attributes_writer(g)(out);
+
+      //print subgraph
+      for ( boost::tie(i_child,j_child) = g.children();
+	    i_child != j_child; ++i_child )
+	write_graphviz_subgraph(out, *i_child, root, 
+				vertex_marker, edge_marker);
+
+      //print the lefted 
+      typename boost::graph_traits<Graph>::vertex_iterator i, end;
+      typename boost::graph_traits<Graph>::out_edge_iterator ei, edge_end;
+
+      for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
+	boost::tie(ei,edge_end) = out_edges(*i, g);
+
+	Vertex source = g.local_to_global(*i);
+
+	while ( ei != edge_end ) {
+	  int pos = get(get(edge_index, root), g.local_to_global(*ei));
+	  if ( edge_marker[pos] ) {
+	    edge_marker[pos] = false;
+	    out << source << " " << Traits::delimiter()
+		<< " " << g.local_to_global(target(*ei, g));
+	    make_edge_attributes_writer(g)(out, *ei); //print edge properties
+	    out << ";" << std::endl;
+	  }
+	  ++ei;
+	}
+
+	int pos = get(get(vertex_index, root), source);
+	if ( vertex_marker[pos] ) {
+	  vertex_marker[pos] = false;
+	  out << source << ";" << std::endl;
+	  //print vertex properties 	  
+	  make_vertex_attributes_writer(root)(out, source);
+	}
+      }
+      out << "}" << std::endl;
+    }
+  } // namespace detail
+
+  // requires graph_name graph property
+  template <typename Graph>
+  void write_graphviz(std::ostream& out, const subgraph<Graph>& g) {
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g, g,
+				    vertex_marker.begin(),
+				    edge_marker.begin());
+  }
+  
+  template <typename Graph>
+  void write_graphviz(const std::string& filename, const subgraph<Graph>& g) {
+    std::ofstream out(filename.c_str());
+    write_graphviz(out, g);
+  }
+
   typedef std::map<std::string, std::string> GraphvizAttrList;
   typedef boost::subgraph<boost::adjacency_list<boost::vecS, 
     boost::vecS, boost::directedS, 
@@ -327,8 +414,10 @@ namespace boost {
     boost::property<boost::graph_name_t, std::string> > > > > >
   GraphvizGraph;
 
-  extern void read_graphviz(GraphvizGraph& g, const std::string& file);
-  extern void write_graphviz(const GraphvizGraph& g, const std::string& file);
+  // These two require linking the BGL-Graphviz library: libbgl-viz.a
+  // from the /src directory.
+  extern void read_graphviz(const std::string& file, GraphvizGraph& g);
+  extern void read_graphviz(FILE* filem, GraphvizGraph& g);
 
 } //namespace boost
   
