@@ -30,7 +30,8 @@ requirement for efficient traversal of all the vertices in the graph.
 
 <H3>Refinement of</H3>
 
-<a href="./AdjacencyGraph.html">AdjacencyGraph</a>
+<a href="./IncidenceGraph.html">IncidenceGraph</a>
+and <a href="./AdjacencyGraph.html">AdjacencyGraph</a>
 
 <H3>Associated Types</H3>
 
@@ -104,6 +105,7 @@ The <TT>vertices()</TT> function must return in constant time.
     typedef typename boost::graph_traits&lt;G&gt;::vertex_iterator 
       vertex_iterator;
     void constraints() {
+      function_requires&lt; IncidenceGraphConcept&lt;G&gt; &gt;();
       function_requires&lt; AdjacencyGraphConcept&lt;G&gt; &gt;();
       function_requires&lt; MultiPassInputIteratorConcept&lt;vertex_iterator&gt; &gt;();
 
