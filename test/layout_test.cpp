@@ -11,7 +11,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/test/minimal.hpp>
 #include <iostream>
-#include <limits>
+#include <boost/limits.hpp>
 #include <fstream>
 #include <string>
 using namespace boost;
