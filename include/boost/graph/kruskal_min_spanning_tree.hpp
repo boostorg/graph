@@ -41,6 +41,7 @@
 
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/named_function_params.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 
