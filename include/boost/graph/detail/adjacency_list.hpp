@@ -2003,13 +2003,8 @@ namespace boost {
       }
       inline void clear() {
         m_vertices.clear();
-        clear_dispatch(edge_property_type());
-      }
-      template <typename Property>
-      inline void clear_dispatch(const Property&) {
         m_edges.clear();
       }
-      inline void clear_dispatch(const no_property&) { }
 
       inline vec_adj_list_impl(vertices_size_type _num_vertices)
         : m_vertices(_num_vertices) { }
