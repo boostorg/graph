@@ -60,7 +60,7 @@ namespace boost {
   struct default_writer {
     void operator()(std::ostream&) const {
     }
-    template <class VorE, class Graph>
+    template <class VorE>
     void operator()(std::ostream&, const VorE&) const {
     }
   };
