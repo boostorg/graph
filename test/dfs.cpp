@@ -48,14 +48,15 @@ public:
   
   template <class Vertex, class Graph>
   void initialize_vertex(Vertex u, Graph& g) {
-    BOOST_TEST( get(m_color, u) == Color::white() );
+    BOOST_TEST( boost::get(m_color, u) == Color::white() );
   }
   template <class Vertex, class Graph>
   void start_vertex(Vertex u, Graph& g) {
-    BOOST_TEST( get(m_color, u) == Color::white() );
+    BOOST_TEST( boost::get(m_color, u) == Color::white() );
   }
   template <class Vertex, class Graph>
   void discover_vertex(Vertex u, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, u) == Color::gray() );
     BOOST_TEST( get(m_color, get(m_parent, u)) == Color::gray() );
 
@@ -63,24 +64,29 @@ public:
   }
   template <class Edge, class Graph>
   void examine_edge(Edge e, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, source(e, g)) == Color::gray() );
   }
   template <class Edge, class Graph>
   void tree_edge(Edge e, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, target(e, g)) == Color::white() );
     
     put(m_parent, target(e, g), source(e, g));
   }
   template <class Edge, class Graph>
   void back_edge(Edge e, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, target(e, g)) == Color::gray() );
   }
   template <class Edge, class Graph>
   void forward_or_cross_edge(Edge e, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, target(e, g)) == Color::black() );
   }
   template <class Vertex, class Graph>
   void finish_vertex(Vertex u, Graph& g) {
+    using namespace boost;
     BOOST_TEST( get(m_color, u) == Color::black() );
     
     put(m_finish_time, u, m_time++);
@@ -101,7 +107,7 @@ struct dfs_test
     vertices_size_type;
 
   static void go(vertices_size_type max_V) {
-
+    using namespace boost;
     typedef typename Traits::vertex_descriptor vertex_descriptor;
     typedef typename boost::property_map<Graph, 
       boost::vertex_color_t>::type ColorMap;
