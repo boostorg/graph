@@ -142,43 +142,48 @@ namespace boost {
       bool m_decreased;
     };
 
-    // Initalize distances and call uniform cost search
-    template <class VertexListGraph, class DijkstraVisitor, 
-              class PredecessorMap, class DistanceMap,
-              class WeightMap, class IndexMap, class Compare, class Combine, 
-              class DistInf, class DistZero, class P, class T, class R>
-    inline void
-    dijkstra_impl
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-       PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-       IndexMap index_map,
-       Compare compare, Combine combine, DistInf inf, DistZero zero,
-       DijkstraVisitor vis, 
-       const bgl_named_params<P, T, R>& params)
-    {
-      typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(distance, *ui, inf);
-        put(predecessor, *ui, *ui);
-      }
-      put(distance, s, zero);
-      
-      typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
-      IndirectCmp icmp(distance, compare);
+  } // namespace detail
 
-      typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-      typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
-        MutableQueue;
-      
-      MutableQueue Q(num_vertices(g), icmp, index_map);
-      
-      dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
-        PredecessorMap, DistanceMap, Combine, Compare>
-          bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
-
-      breadth_first_search(g, s, params.buffer(Q).visitor(bfs_vis));
+  // Initalize distances and call uniform cost search
+  template <class VertexListGraph, class DijkstraVisitor, 
+	    class PredecessorMap, class DistanceMap,
+	    class WeightMap, class IndexMap, class Compare, class Combine, 
+	    class DistInf, class DistZero>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis)
+  {
+    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      put(distance, *ui, inf);
+      put(predecessor, *ui, *ui);
     }
+    put(distance, s, zero);
+
+    typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
+    IndirectCmp icmp(distance, compare);
+
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
+      MutableQueue;
+
+    MutableQueue Q(num_vertices(g), icmp, index_map);
+
+    detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
+      PredecessorMap, DistanceMap, Combine, Compare>
+	bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
+
+    std::vector<default_color_type> color(num_vertices(g));
+    breadth_first_visit(g, s, Q, bfs_vis,
+      make_iterator_property_map(&color[0], index_map));
+  }
+
+  namespace detail {
 
     // Handle defaults for PredecessorMap and 
     // Distance Compare, Combine, Inf and Zero
@@ -195,7 +200,7 @@ namespace boost {
       dummy_property_map p_map;
 
       typedef typename property_traits<DistanceMap>::value_type D;
-      detail::dijkstra_impl
+      dijkstra_shortest_paths
         (g, s, 
          choose_param(get_param(params, vertex_predecessor), p_map),
          distance, weight, index_map, 
@@ -208,8 +213,7 @@ namespace boost {
          choose_param(get_param(params, distance_zero_t()), 
                       D()),
          choose_param(get_param(params, graph_visitor),
-                      make_dijkstra_visitor(null_visitor())),
-         params);
+                      make_dijkstra_visitor(null_visitor())));
     }
 
     template <class VertexListGraph, class DistanceMap, class WeightMap, 

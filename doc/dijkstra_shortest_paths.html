@@ -31,6 +31,18 @@ void
 dijkstra_shortest_paths(VertexListGraph&amp; g,
   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+template &lt;class VertexListGraph, class DijkstraVisitor, 
+	  class PredecessorMap, class DistanceMap,
+	  class WeightMap, class IndexMap, class Compare, class Combine, 
+	  class DistInf, class DistZero&gt;
+void dijkstra_shortest_paths
+  (const VertexListGraph&amp; g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+   IndexMap index_map,
+   Compare compare, Combine combine, DistInf inf, DistZero zero,
+   DijkstraVisitor vis)
 </PRE>
 
 <P>
