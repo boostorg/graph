@@ -259,10 +259,10 @@ namespace boost
     {
       typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
       typename std::vector < tc_vertex >::size_type
-        n = is_default_param(index_map) ? num_vertices(g) : 1;
-        std::vector < tc_vertex > to_tc_vec(n);
+        n = is_default_param(g_to_tc_map) ? num_vertices(g) : 1;
+      std::vector < tc_vertex > to_tc_vec(n);
 
-        transitive_closure
+      transitive_closure
         (g, tc,
          choose_param(g_to_tc_map, make_iterator_property_map
                       (to_tc_vec.begin(), index_map, to_tc_vec[0])),
