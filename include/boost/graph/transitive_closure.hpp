@@ -82,15 +82,17 @@ namespace boost {
 
     // Compute strongly connected components of the graph
     typedef size_type cg_vertex;
-    std::vector<cg_vertex> component_number(num_vertices(g));
-    int num_scc = strong_components(g, 
-      make_iterator_property_map(&component_number[0], index_map),
+    std::vector<cg_vertex> component_number_vec(num_vertices(g));
+    iterator_property_map<cg_vertex*, VertexIndexMap> 
+      component_number(&component_number_vec[0], index_map);
+
+    int num_scc = strong_components(g, component_number,
       vertex_index_map(index_map));
     std::vector< std::vector<vertex> > components;
     components.resize(num_scc);
     vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-      components[component_number[get(index_map, *vi)]].push_back(*vi);
+      components[component_number[*vi]].push_back(*vi);
 
     // Construct the condensation graph   
     typedef std::vector< std::vector<cg_vertex> > CG_t;
@@ -101,7 +103,7 @@ namespace boost {
         vertex u = components[s][i];
         adjacency_iterator v, v_end;
         for (tie(v, v_end) = adjacent_vertices(u, g); v != v_end; ++v) {
-          cg_vertex t = component_number[get(index_map, *v)];
+          cg_vertex t = component_number[*v];
           if (s != t) // Avoid loops in the condensation graph
             adj.push_back(t);
         }
