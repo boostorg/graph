@@ -139,7 +139,7 @@ namespace boost {
           if (*u != s && *v != s) {
             typename Traits1::vertex_descriptor u1, v1;
             u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
-            D[id2[*u]][id2[*v]] = get(d, *v) + get(h, *v) - get(h, *u);
+            D[id2[*u]-1][id2[*v]-1] = get(d, *v) + get(h, *v) - get(h, *u);
           }
         }
       }
