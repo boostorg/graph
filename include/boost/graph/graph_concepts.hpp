@@ -205,12 +205,16 @@ namespace boost {
     }
   };
 
+  // Where to put the requirement for this constructor?
+  //      G g(n_vertices);
+  // Not in mutable graph, then LEDA graph's can't be models of
+  // MutableGraph.
+
   template <class G>
   struct MutableGraphConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      G g(n_vertices);
       v = add_vertex(g);
       clear_vertex(v, g);
       remove_vertex(v, g);
