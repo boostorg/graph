@@ -15,11 +15,15 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/utility.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
+
+#ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
+#define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
+#include <boost/graph/iteration_macros.hpp>
+#endif
 
 namespace boost {
 
@@ -419,6 +423,9 @@ namespace boost {
 
 } // namespace boost
 
+#ifdef BOOST_ISO_INCLUDED_ITER_MACROS
+#undef BOOST_ISO_INCLUDED_ITER_MACROS
 #include <boost/graph/iteration_macros_undef.hpp>
+#endif
 
 #endif // BOOST_GRAPH_ISOMORPHISM_HPP
