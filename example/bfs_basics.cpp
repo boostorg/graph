@@ -107,10 +107,12 @@ int main(int, char*[])
   // and a 5 argument version (adds an argument for the queue).
   int time = 0;
   boost::breadth_first_search
-    (G, vertex(s, G), make_bfs_visitor(
-     std::make_pair(stamp_times(discover, time, on_discover_vertex()),
-                    stamp_times(finish, time, on_finish_vertex()))),
-     make_iterator_property_map(color.begin(), vertex_id, color[0]));
+    (G, vertex(s, G), 
+     visitor(make_bfs_visitor
+	     (std::make_pair(stamp_times(discover, time, on_discover_vertex()),
+			     stamp_times(finish, time, on_finish_vertex())))).
+     color_map(make_iterator_property_map(color.begin(), 
+					  vertex_id, color[0])));
 
   cout << "order of discovery: ";
 
