@@ -676,7 +676,11 @@ the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
 then the edge will not be added and the flag will be <TT>false</TT>.
 When the flag is <TT>false</TT>, the edge descriptor is invalid and
 any use of it is undefined.  The location of the placement of the edge
-in the out-edge list for <i>u</i> is unspecified.
+in the out-edge list for <i>u</i> is unspecified. If the
+<tt>VertexList</tt> selector is <tt>vecS</tt>, and if either vertex
+descriptor <tt>u</tt> or <tt>v</tt> (which are integers) has a value
+greater than the current number of vertices in the graph, the graph is
+enlarged so that the number of vertices is <tt>std::max(u,v)</tt>.
 
 <p>
 If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation

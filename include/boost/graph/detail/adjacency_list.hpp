@@ -371,32 +371,32 @@ namespace boost {
       template <class incidence_iterator, class EdgeList, class Predicate>
       inline void
       remove_directed_edge_if_dispatch(incidence_iterator first,
-				       incidence_iterator last, 
-				       EdgeList& el, Predicate pred,
+                                       incidence_iterator last, 
+                                       EdgeList& el, Predicate pred,
                                        boost::allow_parallel_edge_tag)
       {
-	// remove_if
-	while (first != last && !pred(*first))
-	  ++first;
-	incidence_iterator i = first;
-	if (first != last)
-	  for (; i != last; ++i)
-	    if (!pred(*i)) {
-	      *first.iter() = *i.iter();
-	      ++first;
-	    }
+        // remove_if
+        while (first != last && !pred(*first))
+          ++first;
+        incidence_iterator i = first;
+        if (first != last)
+          for (; i != last; ++i)
+            if (!pred(*i)) {
+              *first.iter() = *i.iter();
+              ++first;
+            }
         el.erase(first.iter(), el.end());
       }
       template <class incidence_iterator, class EdgeList, class Predicate>
       inline void
       remove_directed_edge_if_dispatch(incidence_iterator first,
-				       incidence_iterator last, 
-				       EdgeList& el, 
-				       Predicate pred,
-				       boost::disallow_parallel_edge_tag)
+                                       incidence_iterator last, 
+                                       EdgeList& el, 
+                                       Predicate pred,
+                                       boost::disallow_parallel_edge_tag)
       {
         for (incidence_iterator next = first;
-	     first != end; first = next) {
+             first != end; first = next) {
           ++next;
           if (pred(*first))
             el.erase( first.iter() );
@@ -680,7 +680,7 @@ namespace boost {
           detail::remove_directed_edge_dispatch
             (*out_i, g.out_edge_list(v), (PropT*)(*out_i).get_property());
           g.m_edges.erase( (*out_i.iter()).get_iter() );
-	}
+        }
       // Now remove the edges from this out-edge list.
       typename Config::out_edge_iterator first, last;
       tie(first, last) = out_edges(u, g);
@@ -707,8 +707,8 @@ namespace boost {
       tie(ei, ei_end) = edges(g);
       for (next = ei; ei != ei_end; ei = next) {
         ++next;
-	if (pred(*ei))
-	  remove_edge(*ei, g);
+        if (pred(*ei))
+          remove_edge(*ei, g);
       }
     }
 
@@ -860,9 +860,9 @@ namespace boost {
       typename Config::edge_iterator ei, ei_end, next;
       tie(ei, ei_end) = edges(g);
       for (next = ei; ei != ei_end; ei = next) {
-	++next;
-	if (pred(*ei))
-	  remove_edge(*ei, g);
+        ++next;
+        if (pred(*ei))
+          remove_edge(*ei, g);
       }
     }
 
@@ -1470,16 +1470,16 @@ namespace boost {
       inline adj_list_impl() { }
 
       inline adj_list_impl(const adj_list_impl& x) {
-	copy_impl(x);
+        copy_impl(x);
       }
       inline adj_list_impl& operator=(const adj_list_impl& x) {
-	this->clear();
-	copy_impl(x);
-	return *this;
+        this->clear();
+        copy_impl(x);
+        return *this;
       }
       inline void clear() {
-	m_vertices.clear();
-	m_edges.clear();
+        m_vertices.clear();
+        m_edges.clear();
       }
       inline adj_list_impl(vertices_size_type num_vertices) {
         for (vertices_size_type i = 0; i < num_vertices; ++i)
@@ -1538,32 +1538,32 @@ namespace boost {
 
       inline void copy_impl(const adj_list_impl& x_) 
       {
-	const Derived& x = static_cast<const Derived&>(x_);
+        const Derived& x = static_cast<const Derived&>(x_);
 
-	// Would be better to have a constant time way to get from
-	// vertices in x to the corresponding vertices in *this.
-	std::map<stored_vertex*,stored_vertex*> vertex_map;
+        // Would be better to have a constant time way to get from
+        // vertices in x to the corresponding vertices in *this.
+        std::map<stored_vertex*,stored_vertex*> vertex_map;
 
-	// Copy the stored vertex objects by adding each vertex
-	// and copying its property object.
-	vertex_iterator vi, vi_end;
+        // Copy the stored vertex objects by adding each vertex
+        // and copying its property object.
+        vertex_iterator vi, vi_end;
         for (tie(vi, vi_end) = vertices(x); vi != vi_end; ++vi) {
           stored_vertex* v = (stored_vertex*)add_vertex(*this);
-	  v->m_property = ((stored_vertex*)*vi)->m_property;
-	  vertex_map[(stored_vertex*)*vi] = v;
-	}
-	// Copy the edges by adding each edge and copying its
-	// property object.
-	edge_iterator ei, ei_end;
-	for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
-	  edge_descriptor e;
-	  bool inserted; 
-	  vertex_descriptor s = source(*ei,x), t = target(*ei,x);
-	  tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s], 
-				      vertex_map[(stored_vertex*)t], *this);
-	  *((edge_property_type*)e.m_eproperty)
-	    = *((edge_property_type*)(*ei).m_eproperty);
-	}
+          v->m_property = ((stored_vertex*)*vi)->m_property;
+          vertex_map[(stored_vertex*)*vi] = v;
+        }
+        // Copy the edges by adding each edge and copying its
+        // property object.
+        edge_iterator ei, ei_end;
+        for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+          edge_descriptor e;
+          bool inserted; 
+          vertex_descriptor s = source(*ei,x), t = target(*ei,x);
+          tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s], 
+                                      vertex_map[(stored_vertex*)t], *this);
+          *((edge_property_type*)e.m_eproperty)
+            = *((edge_property_type*)(*ei).m_eproperty);
+        }
       }
 
 
@@ -1637,16 +1637,16 @@ namespace boost {
       inline vec_adj_list_impl() { }
 
       inline vec_adj_list_impl(const vec_adj_list_impl& x) {
-	copy_impl(x);
+        copy_impl(x);
       }
       inline vec_adj_list_impl& operator=(const vec_adj_list_impl& x) {
-	this->clear();
-	copy_impl(x);
-	return *this;
+        this->clear();
+        copy_impl(x);
+        return *this;
       }
       inline void clear() {
-	m_vertices.clear();
-	m_edges.clear();
+        m_vertices.clear();
+        m_edges.clear();
       }
       inline vec_adj_list_impl(vertices_size_type _num_vertices)
         : m_vertices(_num_vertices) { }
@@ -1694,23 +1694,23 @@ namespace boost {
       }
       inline void copy_impl(const vec_adj_list_impl& x_) 
       {
-	const Graph& x = static_cast<const Graph&>(x_);
-	// Copy the stored vertex objects by adding each vertex
-	// and copying its property object.
+        const Graph& x = static_cast<const Graph&>(x_);
+        // Copy the stored vertex objects by adding each vertex
+        // and copying its property object.
         for (vertices_size_type i = 0; i < num_vertices(x); ++i) {
           vertex_descriptor v = add_vertex(*this);
-	  m_vertices[v].m_property = x.m_vertices[i].m_property;
-	}
-	// Copy the edges by adding each edge and copying its
-	// property object.
-	edge_iterator ei, ei_end;
-	for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
-	  edge_descriptor e;
-	  bool inserted; 
-	  tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
-	  *((edge_property_type*)e.m_eproperty)
-	    = *((edge_property_type*)(*ei).m_eproperty);
-	}
+          m_vertices[v].m_property = x.m_vertices[i].m_property;
+        }
+        // Copy the edges by adding each edge and copying its
+        // property object.
+        edge_iterator ei, ei_end;
+        for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+          edge_descriptor e;
+          bool inserted; 
+          tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
+          *((edge_property_type*)e.m_eproperty)
+            = *((edge_property_type*)(*ei).m_eproperty);
+        }
       }
       typename Config::EdgeContainer m_edges;
       StoredVertexList m_vertices;
@@ -1723,22 +1723,51 @@ namespace boost {
       g.m_vertices.resize(g.m_vertices.size() + 1);
       return g.m_vertices.size() - 1;
     }
+
+    // Here we override the directed_graph_helper add_edge() function
+    // so that the number of vertices is automatically changed if
+    // either u or v is greater than the number of vertices.
+    template <class Graph, class Config, class Base>
+    inline std::pair<typename Config::edge_descriptor, bool>
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v,
+             const typename Config::edge_property_type& p,
+	     vec_adj_list_impl<Graph, Config, Base>& g_)
+    {
+      typename Config::vertex_descriptor x = std::max(u, v);
+      if (x >= num_vertices(g_))
+	g_.m_vertices.resize(x + 1);
+      Base& g = g_;
+      return add_edge(u, v, p, g);
+    }
+    template <class Graph, class Config, class Base>
+    inline std::pair<typename Config::edge_descriptor, bool>
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v,
+	     vec_adj_list_impl<Graph, Config, Base>& g_)
+    {
+      typename Config::edge_property_type p;
+      return add_edge(u, v, p, g_);
+    }
+
+
     // O(V + E)
     template <class Graph, class Config, class Base>
     inline void remove_vertex(typename Config::vertex_descriptor v,
-                                vec_adj_list_impl<Graph, Config, Base>& g_) {
-        typedef typename Config::directed_category Cat;
-        Graph& g = static_cast<Graph&>(g_);
-        detail::remove_vertex_dispatch(g, v, Cat());
-      }
-      // O(1)
-      template <class Graph, class Config, class Base>
-      inline typename Config::vertex_descriptor 
-      vertex(typename Config::vertices_size_type n, 
-             const vec_adj_list_impl<Graph, Config, Base>&)
-      {
-        return n;
-      }
+                              vec_adj_list_impl<Graph, Config, Base>& g_)
+    {
+      typedef typename Config::directed_category Cat;
+      Graph& g = static_cast<Graph&>(g_);
+      detail::remove_vertex_dispatch(g, v, Cat());
+    }
+    // O(1)
+    template <class Graph, class Config, class Base>
+    inline typename Config::vertex_descriptor 
+    vertex(typename Config::vertices_size_type n, 
+           const vec_adj_list_impl<Graph, Config, Base>&)
+    {
+      return n;
+    }
 
     namespace detail {
 
