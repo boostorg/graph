@@ -23,7 +23,6 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#define BOOST_INCLUDE_MAIN
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>

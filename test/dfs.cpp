@@ -24,7 +24,6 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#define BOOST_INCLUDE_MAIN
 #include <boost/test/test_tools.hpp>
 #include <stdlib.h>
 
