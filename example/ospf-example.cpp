@@ -33,7 +33,7 @@ main()
   read_graphviz("figs/ospf-graph.dot", g_dot);
 
   typedef adjacency_list < vecS, vecS, directedS, no_property,
-    property < edge_weight_t, int >>Graph;
+    property < edge_weight_t, int > > Graph;
   typedef graph_traits < Graph >::vertex_descriptor vertex_descriptor;
   Graph g(num_vertices(g_dot));
   property_map < GraphvizDigraph, edge_attribute_t >::type
