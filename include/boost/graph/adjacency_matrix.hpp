@@ -665,12 +665,10 @@ namespace boost {
     typedef boost::lvalue_property_map_tag category;
     adj_matrix_vertex_property_map(Graph& g) : m_g(g) { }
     inline value_type& operator[](key_type v) {
-      return get_property_value(m_g.m_vertex_properties[v], 
-                                value_type(), Tag());
+      return get_property_value(m_g.m_vertex_properties[v], Tag());
     }
     inline const value_type& operator[](key_type v) const {
-      return get_property_value(m_g.m_vertex_properties[v], 
-                                value_type(), Tag());
+      return get_property_value(m_g.m_vertex_properties[v], Tag());
     }
     Graph& m_g;
   };
@@ -756,11 +754,11 @@ namespace boost {
 
     inline value_type& operator[](key_type e) {
       Property& p = *(Property*)e.get_property();
-      return get_property_value(p, value_type(), Tag());
+      return get_property_value(p, Tag());
     }
     inline const value_type& operator[](key_type e) const {
       const Property& p = *(const Property*)e.get_property();
-      return get_property_value(p, value_type(), Tag());
+      return get_property_value(p, Tag());
     }
   };
   struct adj_matrix_edge_property_selector {

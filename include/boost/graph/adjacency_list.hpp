@@ -382,16 +382,14 @@ namespace boost {
   inline
   typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
   get_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
-    typedef typename property_value<GP, Tag>::type value_type;
-    return get_property_value(g.m_property, value_type(), Tag());
+    return get_property_value(g.m_property, Tag());
   }
 
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
   const typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
   get_property(const adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
-    typedef typename property_value<GP, Tag>::type value_type;
-    return get_property_value(g.m_property, value_type(), Tag());
+    return get_property_value(g.m_property, Tag());
   }
 
   // dwa 09/25/00 - needed to be more explicit so reverse_graph would work.
