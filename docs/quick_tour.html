@@ -95,7 +95,6 @@ convenient way to explicitly create the edges for this example.
   #include &lt;boost/graph/graph_traits.hpp&gt;
   #include &lt;boost/graph/adjacency_list.hpp&gt;
 
-  using namespace ggcl;
   using namespace boost;
   
   int main(int,char*[])
@@ -127,7 +126,6 @@ constructor</a> of the graph. This is typically more efficient than using <tt>ad
 Pointers to the <tt>edge_array</tt> can be viewed as iterators, so we can call
 the iterator constructor by passing pointers to the beginning and end of the
 array.
-<p>&nbsp;
 <pre>
     Graph g(num_vertices, edge_array,
       edge_array + sizeof(edge_array) / sizeof(E));
@@ -598,7 +596,7 @@ The output is:
 </html>
 <!--  LocalWords:  STL BGL cpp vecS bidirectionalS directedS undirectedS hpp vp
  -->
-<!--  LocalWords:  iostream namespace ggcl int const num sizeof map ID's
+<!--  LocalWords:  iostream namespace int const num sizeof map ID's
  -->
 <!--  LocalWords:  iter ei interoperability struct typename GraphTraits src ai
  -->

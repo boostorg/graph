@@ -590,7 +590,7 @@ example of how the class is specialized for the <TT>listS</TT> selector.
 
 <P>
 <PRE>
-namespace ggcl {
+namespace boost {
   template &lt;class Selector, class ValueType&gt;
   struct container_gen { };
 
@@ -610,7 +610,7 @@ for your selector.
 <PRE>
   struct custom_containerS { }; // your selector
 
-  namespace ggcl {
+  namespace boost {
     // the specialization for your selector
     template &lt;class ValueType&gt;
     struct container_gen&lt;custom_containerS, ValueType&gt; {
@@ -634,7 +634,7 @@ to be used with the <TT>std::list</TT>.
   template &lt;class Allocator&gt;
   struct list_with_allocatorS { };
 
-  namespace ggcl {
+  namespace boost {
     template &lt;class Alloc, class ValueType&gt;
     struct container_gen&lt;list_with_allocatorS&lt;Alloc&gt;, ValueType&gt;
     {
