@@ -88,12 +88,17 @@ namespace boost {
 }
 
 
-template <class Graph, class Capacity, class Flow>
-void print_network(Graph& G, Capacity capacity, Flow flow)
+template <class Graph>
+void print_network(const Graph& G)
 {
   typedef typename boost::graph_traits<Graph>::vertex_iterator    Viter;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
   typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
+
+  property_map<Graph, edge_mycapacity_t>::const_type
+    capacity = get(edge_mycapacity, G);
+  property_map<Graph, edge_myflow_t>::const_type
+    flow = get(edge_myflow, G);
 
   Viter ui, uiend;
   boost::tie(ui, uiend) = vertices(G);
@@ -157,12 +162,10 @@ int main(int , char* [])
 
   typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
-  property_map<Graph, edge_mycapacity_t>::type
-    capacity = get(edge_mycapacity, G);
+  print_network(G);
+
   property_map<Graph, edge_myflow_t>::type
     flow = get(edge_myflow, G);
-
-  print_network(G, capacity, flow);
 
   boost::graph_traits<Graph>::vertex_iterator v, v_end;
   boost::graph_traits<Graph>::out_edge_iterator e, e_end;
@@ -174,7 +177,7 @@ int main(int , char* [])
 
   remove_edge(6, 8, G);
 
-  print_network(G, capacity, flow);
+  print_network(G);
 
           
   return 0;
