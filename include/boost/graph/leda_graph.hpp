@@ -53,7 +53,7 @@ namespace boost {
 
     template <class Reference>
     static Reference dereference(boost::type<Reference>, const edge& e)
-    { return const_cast<Reference>(e); }
+    { return e; }
 
     static bool equal(const edge& x, const edge& y)
     { return x == y; }
@@ -71,7 +71,7 @@ namespace boost {
 
     template <class Reference>
     static Reference dereference(boost::type<Reference>, const edge& e)
-    { return const_cast<Reference>(e); }
+    { return e; }
 
     static bool equal(const edge& x, const edge& y)
     { return x == y; }
@@ -111,7 +111,7 @@ namespace boost {
 
     template <class Reference>
     Reference dereference(boost::type<Reference>, const node& v) const
-    { return const_cast<Reference>(v); }
+    { return v; }
 
     static bool equal(const node& x, const node& y)
     { return x == y; }
@@ -135,28 +135,28 @@ namespace boost {
 
     typedef boost::iterator_adaptor<edge,
       boost::leda_adjacency_iterator_policies, 
-      node, node, node*,
+      node, const node&, const node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > adjacency_iterator;
 
     typedef boost::iterator_adaptor<edge,
       boost::leda_out_edge_iterator_policies,
-      edge, edge&, edge*,
+      edge, const edge&, const edge*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > out_edge_iterator;
 
     typedef boost::iterator_adaptor<edge,
       boost::leda_in_edge_iterator_policies, 
-      edge, edge&, edge*,
+      edge, const edge&, const edge*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > in_edge_iterator;
 
     typedef boost::iterator_adaptor<node,
       boost::leda_vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      node, node&, node*,
+      node, const node&, const node*,
       boost::multi_pass_input_iterator_tag,
       std::ptrdiff_t
     > vertex_iterator;
