@@ -62,7 +62,7 @@
 \section{Introduction}
 
 This paper documents the implementation of the
-\code{simple\-\_isomorphism()} function of the Boost Graph Library.
+\code{isomorphism()} function of the Boost Graph Library.
 This function answers the question, ``are these two graphs equal?''
 By \emph{equal}, we mean the two graphs have the same structure---the
 vertices and edges are connected in the same way. The mathematical
@@ -93,7 +93,7 @@ means $f(a_i) = b_i$ for $i=1,\ldots,n$.
 
 \section{Exhaustive Backtracking Search}
 
-The algorithm used by the \code{simple\_isomorphism()} function is, at
+The algorithm used by the \code{isomorphism()} function is, at
 first approximation, an exhaustive search implemented via
 backtracking.  The backtracking algorithm is a recursive function. At
 each stage we will try to extend the match that we have found so far.
@@ -245,13 +245,13 @@ bool isomorphism(const Graph1& g1, const Graph2& g2,
                  IndexMap1 index_map1, IndexMap2 index_map2)
 @}
 
-The main outline of the \code{simple\_isomorphism} function is as
+The main outline of the \code{isomorphism} function is as
 follows. Most of the steps in this function are for setting up the
 vertex ordering, first ordering the vertices by invariant multiplicity
 and then by DFS order. The last step is the call to the
 \code{isomorph} function which starts the backtracking search.
 
-@d Simple Isomorphism Function Body
+@d Isomorphism Function Body
 @{
 {
   @<Some type definitions and iterator declarations@>
@@ -1009,7 +1009,7 @@ namespace boost {
   @<Isomorph edge ordering predicate@>
 
   @<Isomorphism Function Interface@>
-  @<Simple Isomorphism Function Body@>
+  @<Isomorphism Function Body@>
 
   // Named parameter interface
   template <typename Graph1, typename Graph2, class P, class T, class R>
