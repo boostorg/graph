@@ -47,8 +47,8 @@ public:
                  Graph& g)
   {
     typename boost::graph_traits<Graph>::vertex_descriptor u, v;
-    u = source(e, g);
-    v = target(e, g);
+    u = boost::source(e, g);
+    v = boost::target(e, g);
     distance[v] = distance[u] + 1;
   }
 private:
@@ -77,7 +77,7 @@ public:
   void tree_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
                  Graph& g)
   {
-    distance[target(e, g)] = distance[source(e, g)] + 1;
+    distance[boost::target(e, g)] = distance[boost::source(e, g)] + 1;
   }  
 
 private:
@@ -121,7 +121,7 @@ main()
   // Read the data file and construct the graph.
   
   std::string line;
-  while (getline(datafile,line)) {
+  while (std::getline(datafile,line)) {
 
     std::list<std::string> line_toks;
     boost::stringtok(line_toks, line, "|");
@@ -132,7 +132,7 @@ main()
 
     std::list<std::string>::iterator i = line_toks.begin();
 
-    tie(pos, inserted) = name2vertex.insert(make_pair(*i, Vertex()));
+    tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       put(node_name, u, *i);
@@ -143,7 +143,7 @@ main()
 
     std::string hyperlink_name = *i++;
       
-    tie(pos, inserted) = name2vertex.insert(make_pair(*i, Vertex()));
+    tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       v = add_vertex(g);
       put(node_name, v, *i);
