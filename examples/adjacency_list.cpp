@@ -76,11 +76,11 @@ int main(int , char* [])
   for (boost::tie(vi,viend) = vertices(g); vi != viend; ++vi)
     id[*vi] = vnum++;
 
-  add_edge(vertex(0,g), vertex(1,g), EdgeProperty("joe"), g);
-  add_edge(vertex(1,g), vertex(2,g), EdgeProperty("curly"), g);
-  add_edge(vertex(1,g), vertex(3,g), EdgeProperty("dick"), g);
-  add_edge(vertex(2,g), vertex(4,g), EdgeProperty("tom"), g);
-  add_edge(vertex(3,g), vertex(4,g), EdgeProperty("harry"), g);
+  add_edge(vertex(0, g), vertex(1, g), EdgeProperty("joe"), g);
+  add_edge(vertex(1, g), vertex(2, g), EdgeProperty("curly"), g);
+  add_edge(vertex(1, g), vertex(3, g), EdgeProperty("dick"), g);
+  add_edge(vertex(2, g), vertex(4, g), EdgeProperty("tom"), g);
+  add_edge(vertex(3, g), vertex(4, g), EdgeProperty("harry"), g);
 
   graph_traits<Graph>::vertex_iterator i, end;
   graph_traits<Graph>::out_edge_iterator ei, edge_end;
@@ -93,11 +93,11 @@ int main(int , char* [])
   print_edges(g, id);
 
   cout << endl << "removing edge (1,3): " << endl;  
-  remove_edge(vertex(1,g), vertex(3,g), g);
+  remove_edge(vertex(1, g), vertex(3, g), g);
 
   ei = out_edges(vertex(1, g), g).first;
-  cout << "removing edge (" << id[source(*ei,g)] 
-       << "," << id[target(*ei,g)] << ")" << endl;
+  cout << "removing edge (" << id[source(*ei, g)] 
+       << "," << id[target(*ei, g)] << ")" << endl;
   remove_edge(ei, g);
 
   for(boost::tie(i,end) = vertices(g); i != end; ++i) {
