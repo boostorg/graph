@@ -148,14 +148,14 @@ namespace boost {
 
     template <typename Init>
     bgl_named_params<Init, distance_inf_t, self>
-    distance_inf(const Init& init) const {
+    distance_inf(Init init) const {
       typedef bgl_named_params<Init, distance_inf_t, self> Params;
       return Params(init, *this);
     }
 
     template <typename Init>
     bgl_named_params<Init, distance_zero_t, self>
-    distance_zero(const Init& init) const {
+    distance_zero(Init init) const {
       typedef bgl_named_params<Init, distance_zero_t, self> Params;
       return Params(init, *this);
     }
@@ -291,14 +291,14 @@ namespace boost {
 
   template <typename Init>
   bgl_named_params<Init, distance_inf_t>
-  distance_inf(const Init& init) {
+  distance_inf(Init init) {
     typedef bgl_named_params<Init, distance_inf_t> Params;
     return Params(init);
   }
 
   template <typename Init>
   bgl_named_params<Init, distance_zero_t>
-  distance_zero(const Init& init) {
+  distance_zero(Init init) {
     typedef bgl_named_params<Init, distance_zero_t> Params;
     return Params(init);
   }
