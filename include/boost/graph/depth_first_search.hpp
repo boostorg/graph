@@ -108,7 +108,6 @@ namespace boost {
       else
         vis.forward_or_cross_edge(*ei, g);
     }
-
     put(color, u, black(c));
     vis.finish_vertex(u, g);
   }
