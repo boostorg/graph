@@ -30,10 +30,10 @@
 
 template <class Integral>
 struct trivial_id {
-  size_t operator[](Integral i) {
+  std::size_t operator[](Integral i) {
     return i;
   }
-  size_t operator[](Integral i) const {
+  std::size_t operator[](Integral i) const {
     return i;
   }
 };
@@ -43,23 +43,24 @@ int main() {
   using namespace std;
   using boost::bucket_sorter;
   
-  const size_t N = 10;
+  const std::size_t N = 10;
 
-  vector<size_t> bucket(N);
-  for (size_t i=0; i<N; i++) {
+  vector<std::size_t> bucket(N);
+  for (std::size_t i=0; i<N; i++) {
     bucket[i] = rand() % N;
     cout.width(6);
     cout << "Number " << i << " has its bucket "  << bucket[i] << endl;
   }
 
   typedef trivial_id<int> ID;
-  typedef bucket_sorter<size_t, int, vector<size_t>::iterator, ID> BS;
+  typedef bucket_sorter<std::size_t, int, 
+    vector<std::size_t>::iterator, ID> BS;
   BS my_bucket_sorter(N, N, bucket.begin());
 
-  for (int ii=0; ii<N; ii++)
+  for (std::size_t ii=0; ii<N; ii++)
     my_bucket_sorter.push(ii);
     
-  size_t j;
+  std::size_t j;
   for (j=0; j<N; j++) {
     cout << "The bucket " << j;
     if ( ! my_bucket_sorter[j].empty() ) {
@@ -75,7 +76,7 @@ int main() {
     }
   }
 
-  for (int k=0; k<N; k++)
+  for (std::size_t k=0; k<N; k++)
     my_bucket_sorter.push(k);
 
   my_bucket_sorter.remove(5);
@@ -98,9 +99,9 @@ int main() {
     }
   }
 
-  int iii;
+  std::size_t iii;
   for (iii=0; iii<N; iii++) {
-    size_t current = rand() % N;
+    std::size_t current = rand() % N;
     if ( ! my_bucket_sorter[current].empty() ) {
       int v = my_bucket_sorter[current].top();
       my_bucket_sorter[current].pop();
@@ -110,7 +111,7 @@ int main() {
   }
 
   for (iii=0; iii<N; iii++) {
-    size_t current = rand() % N;
+    std::size_t current = rand() % N;
     if ( ! my_bucket_sorter[current].empty() ) {
       int v = my_bucket_sorter[current].top();
       bucket[v] = rand() % N;
