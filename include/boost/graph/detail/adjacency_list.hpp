@@ -115,20 +115,20 @@ namespace boost {
     };
 #else
     template <class Vertex, class OutEdgeIter, class Graph>
-    struct bidir_adjacency_iterator
+    struct bidir_adj_iter
       : public boost::iterator<std::forward_iterator_tag, Vertex,
                                std::ptrdiff_t, Vertex*, Vertex>
     {
     private:
-      typedef bidir_adjacency_iterator self;
+      typedef bidir_adj_iter self;
     public:
       typedef std::ptrdiff_t difference_type;
       typedef std::forward_iterator_tag iterator_category;
       typedef Vertex* pointer;
       typedef Vertex reference;
       typedef Vertex value_type;
-      inline bidir_adjacency_iterator() { }
-          inline bidir_adjacency_iterator(OutEdgeIter ii, Graph* _g)
+      inline bidir_adj_iter() { }
+          inline bidir_adj_iter(OutEdgeIter ii, Graph* _g)
         : i(ii), g(_g) {}
 
       inline self& operator++() { ++i; return *this; }
@@ -279,12 +279,12 @@ namespace boost {
     };
 
     template <class Vertex, class Iter, class Property>
-    class stored_edge_with_iter
+    class stored_edge_iter
       : public stored_edge<Vertex>
     {
     public:
       typedef Property property_type;
-      inline stored_edge_with_iter(Vertex v, Iter i = Iter())
+      inline stored_edge_iter(Vertex v, Iter i = Iter())
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property* get_property() { return m_iter->get_property(); }
       inline const Property* get_property() const { 
@@ -1951,7 +1951,7 @@ namespace boost {
             stored_edge_property<vertex_descriptor, EdgeProperty>,  
             stored_edge<vertex_descriptor>
           >::type,
-          stored_edge_with_iter<vertex_descriptor, EdgeIter, EdgeProperty>
+          stored_edge_iter<vertex_descriptor, EdgeIter, EdgeProperty>
         >::type StoredEdge;
 
         // Adjacency Types
@@ -1988,7 +1988,7 @@ namespace boost {
         typedef typename adjacency_iterator<graph_type, vertex_descriptor,
           out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
 #else
-        typedef bidir_adjacency_iterator<vertex_descriptor,out_edge_iterator,
+        typedef bidir_adj_iter<vertex_descriptor,out_edge_iterator,
                 graph_type> adjacency_iterator;
 #endif
 
