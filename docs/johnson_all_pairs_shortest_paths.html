@@ -84,8 +84,8 @@ HREF="bibliography.html#clr90">8</A>]. The resulting distance matrix
 
 <P>
 <PRE>
-  typedef adjacency_list&lt;vecS,vecS,directedS,no_plugin,
-    plugin&lt;edge_weight,int&gt; &gt; Graph;
+  typedef adjacency_list&lt;vecS,vecS,directedS,no_property,
+    property&lt;edge_weight_t,int&gt; &gt; Graph;
   const int V = 6;
 
   typedef std::pair&lt;int,int&gt; Edge;
@@ -101,7 +101,7 @@ HREF="bibliography.html#clr90">8</A>]. The resulting distance matrix
 
   Graph g(V, edge_array, edge_array + E);
 
-  property_map&lt;Graph,edge_weight&gt;::type w = get(edge_weight(), g);
+  property_map&lt;Graph,edge_weight_t&gt;::type w = get(edge_weight, g);
 
   int weights[] = { 0, 0, 0, 0, 0,
                     3, -4, 8,
@@ -122,7 +122,7 @@ HREF="bibliography.html#clr90">8</A>]. The resulting distance matrix
   int D[V][V];
 
   johnson_all_pairs_shortest_paths
-    (g, D, d.begin(), h.begin(), w, c.begin(), get(vertex_index(), g));
+    (g, D, d.begin(), h.begin(), w, c.begin(), get(vertex_index, g));
 
   // output matrix D ...
 </PRE>

@@ -144,14 +144,14 @@ namespace boost {
   namespace detail {
 
     struct dummy_edge_property_selector {
-      template <class Graph, class Plugin, class Tag>
+      template <class Graph, class Property, class Tag>
       struct bind {
         typedef identity_property_map type;
         typedef identity_property_map const_type;
       };
     };
     struct dummy_vertex_property_selector {
-      template <class Graph, class Plugin, class Tag>
+      template <class Graph, class Property, class Tag>
       struct bind {
         typedef identity_property_map type;
         typedef identity_property_map const_type;
@@ -177,20 +177,20 @@ namespace boost {
     template <class Graph, class PropertyTag>
     struct edge_property_map {
       typedef typename Graph::directed_category Directed;
-      typedef typename Graph::edge_plugin_type Plugin;
+      typedef typename Graph::edge_property_type Property;
       typedef typename Graph::graph_tag graph_tag;
       typedef typename edge_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
+      typedef typename Selector::template bind<Graph,Property,PropertyTag>
         Bind;
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
     };
     template <class Graph, class PropertyTag>
     class vertex_property_map {
-      typedef typename Graph::vertex_plugin_type Plugin;
+      typedef typename Graph::vertex_property_type Property;
       typedef typename Graph::graph_tag graph_tag;
       typedef typename vertex_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
+      typedef typename Selector::template bind<Graph,Property,PropertyTag>
         Bind;
     public:
       typedef typename Bind::type type;

@@ -52,13 +52,13 @@ main(int, char*[])
 
   const int V = 2;
 
-  typedef plugin<edge_weight_t, float> Weight;
+  typedef property<edge_weight_t, float> Weight;
   typedef adjacency_list<vecS, vecS, undirectedS,
-                        no_plugin, Weight> UndirectedGraph;
+                        no_property, Weight> UndirectedGraph;
   UndirectedGraph undigraph(V);
 
   typedef adjacency_list<vecS, vecS, directedS,
-                         no_plugin, Weight> DirectedGraph;
+                         no_property, Weight> DirectedGraph;
   DirectedGraph digraph(V);
 
 

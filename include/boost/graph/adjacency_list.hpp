@@ -30,7 +30,7 @@
   Implementation Variation Points
 
   directed / undirected
-  plugin/no plugin
+  property/no property
   persistent/invalidating iterators 
   vertex descriptor type
   
@@ -272,20 +272,20 @@ namespace boost {
   template <class EdgeListS = vecS,   // a Sequence or an AssociativeContainer
             class VertexListS = vecS, // a Sequence or a RandomAccessContainer
             class DirectedS = directedS,
-            class VertexPlugin = no_plugin,
-            class EdgePlugin = no_plugin,
-            class GraphPlugin = no_plugin >
+            class VertexProperty = no_property,
+            class EdgeProperty = no_property,
+            class GraphProperty = no_property >
   class adjacency_list
     : public detail::adjacency_list_generator<
       adjacency_list<EdgeListS,VertexListS,DirectedS,
-                     VertexPlugin,EdgePlugin,GraphPlugin>,
+                     VertexProperty,EdgeProperty,GraphProperty>,
       VertexListS, EdgeListS, DirectedS, 
-      VertexPlugin, EdgePlugin, GraphPlugin>::type
+      VertexProperty, EdgeProperty, GraphProperty>::type
   {
     typedef adjacency_list self;
     typedef typename detail::adjacency_list_generator<
       self, VertexListS, EdgeListS, DirectedS, 
-      VertexPlugin, EdgePlugin, GraphPlugin
+      VertexProperty, EdgeProperty, GraphProperty
     >::type Base;
   public:
     typedef typename Base::stored_vertex stored_vertex;
@@ -294,47 +294,47 @@ namespace boost {
     typedef typename Base::edges_size_type edges_size_type;
     typedef typename Base::degree_size_type degree_size_type;
 
-    typedef EdgePlugin edge_plugin_type;
-    typedef VertexPlugin vertex_plugin_type;
+    typedef EdgeProperty edge_property_type;
+    typedef VertexProperty vertex_property_type;
 
-    inline adjacency_list(const GraphPlugin& p = GraphPlugin()) 
-      : m_plugin(p) { }
+    inline adjacency_list(const GraphProperty& p = GraphProperty()) 
+      : m_property(p) { }
 
     inline adjacency_list(vertices_size_type num_vertices, 
-                          const GraphPlugin& p = GraphPlugin())
-      : Base(num_vertices), m_plugin(p) { }
+                          const GraphProperty& p = GraphProperty())
+      : Base(num_vertices), m_property(p) { }
 
     template <class EdgeIterator>
     inline adjacency_list(vertices_size_type num_vertices,
                           EdgeIterator first, EdgeIterator last,
-                          const GraphPlugin& p = GraphPlugin())
-      : Base(num_vertices, first, last), m_plugin(p) { }
+                          const GraphProperty& p = GraphProperty())
+      : Base(num_vertices, first, last), m_property(p) { }
 
     template <class EdgeIterator, class EdgePropertyIterator>
     inline adjacency_list(vertices_size_type num_vertices,
                           EdgeIterator first, EdgeIterator last,
                           EdgePropertyIterator ep_iter,
-                          const GraphPlugin& p = GraphPlugin())
-      : Base(num_vertices, first, last, ep_iter), m_plugin(p) { }
+                          const GraphProperty& p = GraphProperty())
+      : Base(num_vertices, first, last, ep_iter), m_property(p) { }
 
     //  protected:  (would be protected if friends were more portable)
-    GraphPlugin m_plugin;
+    GraphProperty m_property;
   };
 
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
-  typename plugin_value<GP, Tag>::type&
-  get_plugin(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
-    typedef typename plugin_value<GP, Tag>::type value_type;
-    return get_plugin_value(g.m_plugin, value_type(), Tag());
+  typename property_value<GP, Tag>::type&
+  get_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
+    typedef typename property_value<GP, Tag>::type value_type;
+    return get_property_value(g.m_property, value_type(), Tag());
   }
 
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
-  const typename plugin_value<GP, Tag>::type&
-  get_plugin(const adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
-    typedef typename plugin_value<GP, Tag>::type value_type;
-    return get_plugin_value(g.m_plugin, value_type(), Tag());
+  const typename property_value<GP, Tag>::type&
+  get_property(const adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
+    typedef typename property_value<GP, Tag>::type value_type;
+    return get_property_value(g.m_property, value_type(), Tag());
   }
 
   template <class Directed, class Vertex, class Graph>

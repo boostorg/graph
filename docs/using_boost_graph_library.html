@@ -330,21 +330,21 @@ overhead per edge, which is why <TT>in_edges()</TT> is optional.
 
 <P>
 
-<H2><A NAME="sec:adjacency-list-plugins"></A>
-Plugins (Internal Properties)
+<H2><A NAME="sec:adjacency-list-properties"></A>
+Internal Properties
 </H2>
 
 <P>
 Properties can be attached to the vertices or edges of an
-<TT>adjacency_list</TT> graph via the plugin interface.  The template
-parameters <TT>VertexPlugin</TT> and <TT>EdgePlugin</TT> of the
-<TT>adjacency_list</TT> class are meant to be filled by the plugin
+<TT>adjacency_list</TT> graph via the property interface.  The template
+parameters <TT>VertexProperty</TT> and <TT>EdgeProperty</TT> of the
+<TT>adjacency_list</TT> class are meant to be filled by the property
 class, which is declared as follows.
 
 <P>
 <PRE>
-template &lt;class PropertyTag, class T, class NextPlugin = no_plugin&gt;
-struct plugin;
+template &lt;class PropertyTag, class T, class NextProperty = no_property&gt;
+struct property;
 </PRE>
 
 <P>
@@ -354,26 +354,26 @@ predefined tags, and it is easy to add more.
 
 <P>
 <PRE>
-  struct vertex_index { }
-  struct vertex_name { } 
-  struct edge_weight { } 
-  struct vertex_distance { } 
-  struct vertex_color { } 
-  struct vertex_degree { } 
-  struct vertex_out_degree { } 
-  struct vertex_in_degree { } 
-  struct vertex_discover_time { } 
-  struct vertex_finish_time { }
+  struct vertex_index_t { }
+  struct vertex_name_t { } 
+  struct edge_weight_t { } 
+  struct vertex_distance_t { } 
+  struct vertex_color_t { } 
+  struct vertex_degree_t { } 
+  struct vertex_out_degree_t { } 
+  struct vertex_in_degree_t { } 
+  struct vertex_discover_time_t { } 
+  struct vertex_finish_time_t { }
 </PRE>
 
 <P>
-The <TT>T</TT> parameter of <TT>plugin</TT> specifies the type of the
-property values.  The <TT>NextPlugin</TT> parameter allows <TT>plugin</TT>
+The <TT>T</TT> parameter of <TT>property</TT> specifies the type of the
+property values.  The <TT>NextProperty</TT> parameter allows <TT>property</TT>
 types to be nested, so that an arbitrary number of properties can be
 attached to the same graph.
 
 <P>
-The following code shows how a vertex and edge plugin type can be
+The following code shows how a vertex and edge property type can be
 assembled and used to create a graph type. We have attached a distance
 property with values of type <TT>float</TT> and a name property with
 values of type <TT>std::string</TT> to the vertices of the graph.  We
@@ -382,12 +382,12 @@ the edges of the graph.
 
 <P>
 <PRE>
-  typedef plugin&lt;vertex_distance, float, 
-            plugin&lt;vertex_name, std::string&gt; &gt; VertexPlugin;
-  typedef plugin&lt;edge_weight, float&gt; EdgePlugin;
+  typedef property&lt;vertex_distance_t, float, 
+            property&lt;vertex_name_t, std::string&gt; &gt; VertexProperty;
+  typedef property&lt;edge_weight_t, float&gt; EdgeProperty;
 
   typedef adjacency_list&lt;mapS, vecS, undirectedS, 
-                         VertexPlugin, EdgePlugin&gt; Graph;
+                         VertexProperty, EdgeProperty&gt; Graph;
 
   Graph g(num_vertices); // construct a graph object
 </PRE>
@@ -402,12 +402,12 @@ to use property maps.
 
 <P>
 
-<H3><A NAME="sec:custom-edge-plugins"></A>
-Custom Edge Plugins
+<H3><A NAME="sec:custom-edge-properties"></A>
+Custom Edge Properties
 </H3>
 
 <P>
-Creating a your own property types and plugins is easy; just define a
+Creating a your own property types and properties is easy; just define a
 tag class for your new property.  Here we define a tag class for
 capacity and flow properties which we will be attaching to the edges
 on the graph.
@@ -419,20 +419,20 @@ on the graph.
 </PRE>
 
 <P>
-Now you can use your new property tag in the definition of plugins
+Now you can use your new property tag in the definition of properties
 just as you would one of the builtin tags.
 
 <P>
 <PRE>
-  typedef plugin&lt;capacity_tag, int&gt; Cap;
-  typedef plugin&lt;flow_tag, int, Cap&gt; EdgePlugin;
-  typedef adjacency_list&lt;vecS, vecS, no_plugin, EdgePlugin&gt; Graph;
+  typedef property&lt;capacity_tag, int&gt; Cap;
+  typedef property&lt;flow_tag, int, Cap&gt; EdgeProperty;
+  typedef adjacency_list&lt;vecS, vecS, no_property, EdgeProperty&gt; Graph;
 </PRE>
 
 <P>
 Just as before, the property maps for these properties can be
 obtained from the graph via the
-<TT>get(Plugin, g)</TT> function.
+<TT>get(Property, g)</TT> function.
 
 <P>
 <PRE>
@@ -443,15 +443,15 @@ obtained from the graph via the
 </PRE>
 
 <P>
-The file <TT>edge_plugin.cpp</TT> shows the complete source
+The file <TT>edge_property.cpp</TT> shows the complete source
 code for this example.
 
 <P>
 
 <H3><A NAME="SECTION00833200000000000000"></A>
-<A NAME="sec:custom-vertex-plugins"></A>
+<A NAME="sec:custom-vertex-properties"></A>
 <BR>
-Custom Vertex Plugins
+Custom Vertex Properties
 </H3>
 
 <P>
@@ -461,11 +461,11 @@ in the graph.
 
 <P>
 <PRE>
-  struct first_vertex_name { };
+  struct first_vertex_name_t { };
 </PRE>
 
 <P>
-Now we can use the new tag in the <TT>plugin</TT> class and use that in
+Now we can use the new tag in the <TT>property</TT> class and use that in
 the assembly of a graph type. The following code shows creating the
 graph type, and then creating the graph object. We fill in the edges
 and also assign names to the vertices. The edges will represent ``who
@@ -473,9 +473,9 @@ owes who''.
 
 <P>
 <PRE>
-  typedef plugin&lt;first_vertex_name, std::string&gt; FirstNamePlugin;
+  typedef property&lt;first_vertex_name_t, std::string&gt; FirstNameProperty;
   typedef adjacency_list&lt;vecS, vecS, directedS, 
-                         FirstNamePlugin&gt; MyGraphType;
+                         FirstNameProperty&gt; MyGraphType;
 
   typedef pair&lt;int,int&gt; Pair;
   Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), 
@@ -487,8 +487,8 @@ owes who''.
   for (int i = 0; i &lt; 11; ++i)
     add_edge(G, edge_array[i].first, edge_array[i].second);
 
-  property_map&lt;MyGraphType, first_vertex_name&gt;::type
-    name = get(first_vertex_name(), G);
+  property_map&lt;MyGraphType, first_vertex_name_t&gt;::type
+    name = get(first_vertex_name, G);
     
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
@@ -519,8 +519,8 @@ other property value types.
   {
     // Access the propety acessor type for this graph
     typedef typename property_map&lt;Graph, 
-      first_vertex_name&gt;::const_type NameMap;
-    NameMap name = get(first_vertex_name(), G);
+      first_vertex_name_t&gt;::const_type NameMap;
+    NameMap name = get(first_vertex_name, G);
 
     typedef typename boost::property_traits&lt;NameMap&gt;
       ::value_type NameType;

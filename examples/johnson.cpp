@@ -48,8 +48,8 @@ main()
 {
   using namespace boost;
 
-  typedef adjacency_list<vecS, vecS, directedS, no_plugin,
-    plugin<edge_weight_t,int> > Graph;
+  typedef adjacency_list<vecS, vecS, directedS, no_property,
+    property<edge_weight_t,int> > Graph;
   const int V = 6;
 
   typedef std::pair<int,int> Edge;

@@ -78,10 +78,10 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 
 int main(int argc, char* argv[])
 {
-  typedef plugin<edge_capacity, int> Cap;
-  typedef plugin<edge_flow, int, Cap> Flow;
+  typedef property<edge_capacity, int> Cap;
+  typedef property<edge_flow, int, Cap> Flow;
   typedef adjacency_list<vecS, vecS, bidirectionalS, 
-     no_plugin, Flow> Graph;
+     no_property, Flow> Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);

@@ -158,11 +158,11 @@ type.
 
 <P>
 <PRE>
-  property_map&lt;Graph, vertex_distance&gt;::type d
-    = get(vertex_distance(), g);
+  property_map&lt;Graph, vertex_distance_t&gt;::type d
+    = get(vertex_distance, g);
 
-  property_map&lt;Graph, edge_weight&gt;::type w
-    = get(edge_weight(), g);
+  property_map&lt;Graph, edge_weight_t&gt;::type w
+    = get(edge_weight, g);
 </PRE>
 
 <P>
@@ -190,9 +190,9 @@ graph, so one would call Dijkstra's algorithm in the following way
 
 <P>
 <PRE>
-  dijkstra_shortest_paths(g, src,  get(vertex_distance(), g),
-    get(edge_weight(), g), get(vertex_color(), g),
-    get(vertex_index(), g),  ucs_visitor&lt;&gt;());
+  dijkstra_shortest_paths(g, src,  get(vertex_distance, g),
+    get(edge_weight, g), get(vertex_color, g),
+    get(vertex_index, g),  ucs_visitor&lt;&gt;());
 </PRE>
 
 <P>
@@ -213,10 +213,10 @@ equivalent to the previous call to Dijkstra's algorithm.
 The next question is: how to interior properties become attached to a
 graph object in the first place? This depends on the graph class that
 you are using. The <TT>adjacency_list</TT> graph class of BGL uses a
-plugin mechanism (see Section <A
-HREF="using_adjacency_list.html#sec:adjacency-list-plugins">Plugins</A>)
-to allow an arbitrary number of properties to be stored on the edges
-and vertices of the graph.
+property mechanism (see Section <A
+HREF="using_adjacency_list.html#sec:adjacency-list-properties">Internal
+Properties</A>) to allow an arbitrary number of properties to be
+stored on the edges and vertices of the graph.
 
 <P>
 
@@ -244,7 +244,7 @@ interior property map of the graph.  The following example shows
 how the <TT>random_access_iterator_property_map</TT>
 can be used to create exterior property maps for the capactity
 and flow properties, which are stored in arrays. The arrays are
-indexed by edge ID. The edge ID is added to the graph using a plugin,
+indexed by edge ID. The edge ID is added to the graph using a property,
 and the values of the ID's are given when each edge is added to the
 graph. The complete source code for this example is in
 <TT>examples/exterior_edge_properties.cpp</TT>. The
@@ -254,7 +254,7 @@ the flow and capacity values.
 <P>
 <PRE>
   typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
-    no_plugin, plugin&lt;vertex_index, std::size_t&gt; &gt; Graph;
+    no_property, property&lt;vertex_index_t, std::size_t&gt; &gt; Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -267,8 +267,8 @@ the flow and capacity values.
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_Map;
-  EdgeID_Map edge_id = get(edge_index(), G);
+  typedef property_map&lt;Graph,vertex_index_t&gt;::type EdgeID_Map;
+  EdgeID_Map edge_id = get(edge_index, G);
 
   boost::random_access_iterator_property_map
     &lt;int*, int, int&amp;, EdgeID_Map&gt; 
@@ -290,7 +290,7 @@ suitable as the key type for a pointer property map. When the
 not an integer, and cannot be used with a pointer property map.
 Instead the method described above of using a
 <TT>random_access_iterator_property_map</TT> with an ID
-plugin must be used. The <TT>edge_list</TT> class may also use an
+property must be used. The <TT>edge_list</TT> class may also use an
 integer type for the vertex descriptor, depending on how the adapted
 edge iterator is defined. The example in
 <TT>examples/bellman_ford.cpp</TT> shows <TT>edge_list</TT> being used

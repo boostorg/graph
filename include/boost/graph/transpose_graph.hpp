@@ -90,7 +90,7 @@ namespace boost {
         Edge e = *j;
         Vertex v = target(e, G1);
         add_edge(G2, id[v], id[u]);
-        // hmmm, what to do about edge plugins?  should have an
+        // hmmm, what to do about edge properties?  should have an
         // add-edge(g,e) function, and have a templated edge
         // constructor -JGS
       }

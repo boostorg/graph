@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.23  2000/09/25 17:58:50  jsiek
+// plugin -> property name change
+//
 // Revision 1.22  2000/09/25 17:29:32  jsiek
 // changes tabs to spaces
 //
@@ -157,7 +160,7 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/pending/plugin.hpp>
+#include <boost/pending/property.hpp>
 
 // The helper classes are defined at global namespace scope to
 // avoid a g++ bug in dealing with friend functions in namespaces.
@@ -259,9 +262,9 @@ namespace boost {
 #endif
 
     template <class P>
-    struct has_plugin { enum { value = true }; };
+    struct has_property { enum { value = true }; };
     template <>
-    struct has_plugin<no_plugin> { enum { value = false }; };
+    struct has_property<no_property> { enum { value = false }; };
 
 
     //=========================================================================
@@ -287,7 +290,7 @@ namespace boost {
       template <class EdgeDescriptor, class OutEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const OutEdgeIter& i) const {
-        return EdgeDescriptor(m_src, (*i).get_target(), (*i).get_plugin());
+        return EdgeDescriptor(m_src, (*i).get_target(), (*i).get_property());
       }
       VertexDescriptor m_src;
     };
@@ -301,7 +304,7 @@ namespace boost {
       template <class EdgeDescriptor, class InEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).get_target(), m_src, i->get_plugin());
+        return EdgeDescriptor((*i).get_target(), m_src, i->get_property());
       }
       VertexDescriptor m_src;
     };
@@ -317,7 +320,7 @@ namespace boost {
       template <class EdgeDescriptor, class InEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).m_source, (*i).m_target, i->get_plugin());
+        return EdgeDescriptor((*i).m_source, (*i).m_target, i->get_property());
       }
     };
 #else
@@ -337,7 +340,7 @@ namespace boost {
       inline Self& operator--() { --m_iter; return *this; }
       inline Self operator--(int) { Self t=*this; --m_iter; return t; }
       inline Edge operator*() const {
-        return Edge(m_iter->m_source, m_iter->m_target, m_iter->get_plugin());
+        return Edge(m_iter->m_source, m_iter->m_target, m_iter->get_property());
       }
       inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
       inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
@@ -354,11 +357,11 @@ namespace boost {
         boost::less_than_comparable1< stored_edge<Vertex> > >
     {
     public:
-      inline stored_edge(Vertex target, const no_plugin& = no_plugin())
+      inline stored_edge(Vertex target, const no_property& = no_property())
         : m_target(target) { }
       inline Vertex& get_target() { return m_target; }
       inline const Vertex& get_target() const { return m_target; }
-      inline const no_plugin* get_plugin() const { return 0; }
+      inline const no_property* get_property() const { return 0; }
       inline bool operator==(const stored_edge& x) const
         { return m_target == x.get_target(); }
       inline bool operator<(const stored_edge& x) const
@@ -367,18 +370,18 @@ namespace boost {
       Vertex m_target;
     };
 
-    template <class Vertex, class Plugin>
-    class stored_edge_plugin : public stored_edge<Vertex> {
+    template <class Vertex, class Property>
+    class stored_edge_property : public stored_edge<Vertex> {
     public:
-      inline stored_edge_plugin(Vertex target, const Plugin& p = Plugin())
-        : stored_edge<Vertex>(target), m_plugin(p) { }
-      inline Plugin* get_plugin() { return &m_plugin; }
-      inline const Plugin* get_plugin() const { return &m_plugin; }
+      inline stored_edge_property(Vertex target, const Property& p = Property())
+        : stored_edge<Vertex>(target), m_property(p) { }
+      inline Property* get_property() { return &m_property; }
+      inline const Property* get_property() const { return &m_property; }
     protected:
-      Plugin m_plugin;
+      Property m_property;
     };
 
-    template <class Vertex, class Iter, class Plugin>
+    template <class Vertex, class Iter, class Property>
     class stored_edge_iter 
       : public stored_edge<Vertex> // there is some redundant storage
       // of the target vertex, but it is difficult to remove...
@@ -386,8 +389,8 @@ namespace boost {
     public:
       inline stored_edge_iter(Vertex v, Iter i = Iter())
         : stored_edge<Vertex>(v), m_iter(i) { }
-      inline Plugin* get_plugin() { return m_iter->get_plugin(); }
-      inline const Plugin* get_plugin() const { return m_iter->get_plugin(); }
+      inline Property* get_property() { return m_iter->get_property(); }
+      inline const Property* get_property() const { return m_iter->get_property(); }
       inline Iter get_iter() const { return m_iter; }
     protected:
       Iter m_iter;
@@ -520,7 +523,7 @@ namespace boost {
     add_edge(directed_graph_helper<Config>& g_, 
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
-             const typename Config::edge_plugin_type& p)
+             const typename Config::edge_property_type& p)
     {
       typedef typename Config::edge_descriptor edge_descriptor;
       typedef typename Config::graph_type graph_type;
@@ -530,7 +533,7 @@ namespace boost {
       bool inserted;
       boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
                                             StoredEdge(v, p));
-      return std::make_pair(edge_descriptor(u, v, (*i).get_plugin()), 
+      return std::make_pair(edge_descriptor(u, v, (*i).get_property()), 
                             inserted);
     }
     // Did not use default argument here because that
@@ -541,33 +544,33 @@ namespace boost {
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v)
     {
-      typename Config::edge_plugin_type p;
+      typename Config::edge_property_type p;
       return add_edge(g_, u, v, p);
     }
     //=========================================================================
     // Undirected Graph Helper Class
 
-    template <class Vertex, class EdgePlugin>
+    template <class Vertex, class EdgeProperty>
     struct undirected_edge
       : public boost::detail::edge_base<boost::undirected_tag, Vertex>
     {
       typedef boost::detail::edge_base<boost::undirected_tag, Vertex> Base;
-      undirected_edge(Vertex u, Vertex v, const EdgePlugin& p = EdgePlugin())
-        : Base(u, v), m_plugin(p) { }
-      EdgePlugin* get_plugin() { return &m_plugin; }
-      const EdgePlugin* get_plugin() const { return &m_plugin; }
-      EdgePlugin m_plugin;
+      undirected_edge(Vertex u, Vertex v, const EdgeProperty& p = EdgeProperty())
+        : Base(u, v), m_property(p) { }
+      EdgeProperty* get_property() { return &m_property; }
+      const EdgeProperty* get_property() const { return &m_property; }
+      EdgeProperty m_property;
     };
 
     template <class Vertex>
-    struct undirected_edge_no_plugin 
+    struct undirected_edge_no_property 
       : public boost::detail::edge_base<boost::undirected_tag, Vertex> {
       typedef boost::detail::edge_base<boost::undirected_tag, Vertex> Base;
-      template <class EdgePlugin>
-      undirected_edge_no_plugin (Vertex u, Vertex v, const EdgePlugin& )
+      template <class EdgeProperty>
+      undirected_edge_no_property (Vertex u, Vertex v, const EdgeProperty& )
         : Base(u, v) { }
-      boost::no_plugin* get_plugin() { return 0; }
-      const boost::no_plugin* get_plugin() const { return 0; }
+      boost::no_property* get_property() { return 0; }
+      const boost::no_property* get_property() const { return 0; }
     };
 
     template <class Config>
@@ -597,7 +600,7 @@ namespace boost {
       typedef typename Config::StoredEdge StoredEdge;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
-      remove_edge_and_plugin(g, g.out_edge_list(u), v, Cat());
+      remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.out_edge_list(v), StoredEdge(u));
     }
     // O(1)
@@ -634,7 +637,7 @@ namespace boost {
     add_edge(undirected_graph_helper<Config>& g_, 
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v, 
-             const typename Config::edge_plugin_type& p)
+             const typename Config::edge_property_type& p)
     {
       typedef typename Config::StoredEdge StoredEdge;
       typedef typename Config::edge_descriptor edge_descriptor;
@@ -652,7 +655,7 @@ namespace boost {
         if (inserted) {
           boost::push(g.out_edge_list(v), StoredEdge(u, p_iter));
           return std::make_pair(edge_descriptor(u, v, 
-                                                p_iter->get_plugin()),true);
+                                                p_iter->get_property()),true);
         } else {
           g.m_edges.erase(p_iter);
           return std::make_pair(edge_descriptor(u, v), false);
@@ -666,7 +669,7 @@ namespace boost {
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v)
     {
-      typename Config::edge_plugin_type p;
+      typename Config::edge_property_type p;
       return add_edge(g_, u, v, p);
     }
     // O(1)
@@ -680,7 +683,7 @@ namespace boost {
     // O(E/V)
     template <class Graph, class EdgeList, class Vertex>
     inline void
-    remove_edge_and_plugin(Graph& g, EdgeList& el, Vertex v, 
+    remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
                            boost::allow_parallel_edge_tag)
     {
       typedef typename EdgeList::value_type StoredEdge;
@@ -693,7 +696,7 @@ namespace boost {
     // O(log(E/V))
     template <class Graph, class EdgeList, class Vertex>
     inline void
-    remove_edge_and_plugin(Graph& g, EdgeList& el, Vertex v, 
+    remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
                            boost::disallow_parallel_edge_tag)
     {
       typedef typename EdgeList::value_type StoredEdge;
@@ -705,26 +708,26 @@ namespace boost {
     }
 
     //=========================================================================
-    // Bidirectional Graph Helper Class (with edge plugins)
+    // Bidirectional Graph Helper Class (with edge properties)
 
-    template <class EdgePlugin>
+    template <class EdgeProperty>
     struct bidirectional_edge {
-      bidirectional_edge(const EdgePlugin& p)
-        : m_plugin(p) { }
-      EdgePlugin* get_plugin() { return &m_plugin; }
-      const EdgePlugin* get_plugin() const { return &m_plugin; }
-      EdgePlugin m_plugin;
+      bidirectional_edge(const EdgeProperty& p)
+        : m_property(p) { }
+      EdgeProperty* get_property() { return &m_property; }
+      const EdgeProperty* get_property() const { return &m_property; }
+      EdgeProperty m_property;
     };
 
     template <class Config>
-    struct bidirectional_graph_helper_with_plugin
+    struct bidirectional_graph_helper_with_property
       : public directed_edges_helper<Config> { };
 
     // O(E/V) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    remove_edge(bidirectional_graph_helper_with_plugin<Config>& g_, 
+    remove_edge(bidirectional_graph_helper_with_property<Config>& g_, 
                 typename Config::vertex_descriptor u, 
                 typename Config::vertex_descriptor v)
     {
@@ -732,13 +735,13 @@ namespace boost {
       typedef typename Config::StoredEdge StoredEdge;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
-      remove_edge_and_plugin(g, g.out_edge_list(u), v, Cat());
+      remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.in_edge_list(v), StoredEdge(u));
     }
     // O(1)
     template <class Config>
     inline typename Config::edges_size_type
-    num_edges(const bidirectional_graph_helper_with_plugin<Config>& g_) 
+    num_edges(const bidirectional_graph_helper_with_property<Config>& g_) 
     {
       typedef typename Config::graph_type graph_type;
       const graph_type& g = static_cast<const graph_type&>(g_);
@@ -748,7 +751,7 @@ namespace boost {
     // O(E/V * log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    clear_vertex(bidirectional_graph_helper_with_plugin<Config>& g_, 
+    clear_vertex(bidirectional_graph_helper_with_property<Config>& g_, 
                  typename Config::vertex_descriptor u)
     {
       typedef typename Config::graph_type graph_type;
@@ -775,10 +778,10 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_with_plugin<Config>& g_,
+    add_edge(bidirectional_graph_helper_with_property<Config>& g_,
              typename Config::vertex_descriptor u,
              typename Config::vertex_descriptor v, 
-             const typename Config::edge_plugin_type& p)
+             const typename Config::edge_property_type& p)
     {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
@@ -793,7 +796,7 @@ namespace boost {
                                            StoredEdge(v, p_iter));
       if (inserted) {
         boost::push(g.in_edge_list(v), StoredEdge(u, p_iter));
-        return std::make_pair(edge_descriptor(u, v, &p_iter->m_plugin), 
+        return std::make_pair(edge_descriptor(u, v, &p_iter->m_property), 
                               true);
       } else {
         g.m_edges.erase(p_iter);
@@ -802,18 +805,18 @@ namespace boost {
     }
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_with_plugin<Config>& g_,
+    add_edge(bidirectional_graph_helper_with_property<Config>& g_,
              typename Config::vertex_descriptor u,
              typename Config::vertex_descriptor v)
     {
-      typename Config::edge_plugin_type p;
+      typename Config::edge_property_type p;
       return add_edge(g_, u, v, p);
     }
     // O(1)
     template <class Config>
     inline typename Config::degree_size_type
     degree(typename Config::vertex_descriptor u, 
-           const bidirectional_graph_helper_with_plugin<Config>& g_)
+           const bidirectional_graph_helper_with_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       const graph_type& g = static_cast<const graph_type&>(g_);
@@ -821,17 +824,17 @@ namespace boost {
     }
 
     //=========================================================================
-    // Bidirectional Graph Helper Class (without edge plugins)
+    // Bidirectional Graph Helper Class (without edge properties)
 
     template <class Config>
-    struct bidirectional_graph_helper_without_plugin
+    struct bidirectional_graph_helper_without_property
       : public directed_edges_helper<Config> { };
 
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline std::pair<typename Config::edge_descriptor, bool>
-    add_edge(bidirectional_graph_helper_without_plugin<Config>& g_, 
+    add_edge(bidirectional_graph_helper_without_property<Config>& g_, 
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v)
     {
@@ -853,7 +856,7 @@ namespace boost {
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void
-    remove_edge(bidirectional_graph_helper_without_plugin<Config>& g_,
+    remove_edge(bidirectional_graph_helper_without_property<Config>& g_,
                 typename Config::vertex_descriptor u,
                 typename Config::vertex_descriptor v)
     {
@@ -866,7 +869,7 @@ namespace boost {
     // O(V), could do better...
     template <class Config>
     inline typename Config::edges_size_type
-    num_edges(const bidirectional_graph_helper_without_plugin<Config>& g_) 
+    num_edges(const bidirectional_graph_helper_without_property<Config>& g_) 
     {
       typedef typename Config::graph_type graph_type;
       const graph_type& g = static_cast<const graph_type&>(g_);
@@ -880,7 +883,7 @@ namespace boost {
     // O(E/V * log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
     inline void 
-    clear_vertex(bidirectional_graph_helper_without_plugin<Config>& g_, 
+    clear_vertex(bidirectional_graph_helper_without_property<Config>& g_, 
                  typename Config::vertex_descriptor u)
     {
       typedef typename Config::graph_type graph_type;
@@ -903,7 +906,7 @@ namespace boost {
     template <class Config>
     inline typename Config::degree_size_type
     degree(typename Config::vertex_descriptor u, 
-           const bidirectional_graph_helper_without_plugin<Config>& g_)
+           const bidirectional_graph_helper_without_property<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       const graph_type& g = static_cast<const graph_type&>(g_);
@@ -930,7 +933,7 @@ namespace boost {
       typedef typename Config::edges_size_type edges_size_type;
       typedef typename Config::degree_size_type degree_size_type;
       typedef typename Config::StoredEdge StoredEdge;
-      typedef typename Config::edge_plugin_type edge_plugin_type;
+      typedef typename Config::edge_property_type edge_property_type;
 
       //    protected:
 
@@ -946,7 +949,7 @@ namespace boost {
           i = std::find(el.begin(), el.end(), StoredEdge(v));
         found = (i != g.out_edge_list(u).end());
         if (found)
-          return std::make_pair(edge_descriptor(u, v, (*i).get_plugin()),
+          return std::make_pair(edge_descriptor(u, v, (*i).get_property()),
                                 true);
         else
           return std::make_pair(edge_descriptor(u, v), false);
@@ -963,7 +966,7 @@ namespace boost {
           end = g.out_edge_list(u).end();
         found = (i != end);
         if (found)
-          return std::make_pair(edge_descriptor(u, v, (*i).get_plugin()),
+          return std::make_pair(edge_descriptor(u, v, (*i).get_property()),
                                 true);
         else
           return std::make_pair(edge_descriptor(u, v), false);
@@ -1448,21 +1451,21 @@ namespace boost {
     // Adjacency List Generator
 
     template <class Graph, class VertexListS, class EdgeListS,
-              class DirectedS, class VertexPlugin, class EdgePlugin, 
-              class GraphPlugin>
+              class DirectedS, class VertexProperty, class EdgeProperty, 
+              class GraphProperty>
     struct adjacency_list_generator
     {
       enum { is_rand_access = detail::is_random_access<VertexListS>::value,
-             has_edge_plugin = has_plugin<EdgePlugin>::value,
+             has_edge_property = has_property<EdgeProperty>::value,
              Directed = DirectedS::is_directed,
              Bidirectional = DirectedS::is_bidir };
 
       struct config
       {
         typedef Graph graph_type;
-        typedef EdgePlugin edge_plugin_type;
-        typedef VertexPlugin vertex_plugin_type;
-        typedef GraphPlugin graph_plugin_type;
+        typedef EdgeProperty edge_property_type;
+        typedef VertexProperty vertex_property_type;
+        typedef GraphProperty graph_property_type;
         typedef std::size_t vertices_size_type;
 
         typedef adjacency_list_traits<EdgeListS, VertexListS, DirectedS> 
@@ -1485,54 +1488,54 @@ namespace boost {
         typedef typename VertexList::iterator vertex_iterator;
 
         // EdgeContainer and StoredEdge
-        typedef std::list< bidirectional_edge<EdgePlugin> > BidirEdgeList;
-        typedef std::list< undirected_edge<vertex_descriptor,EdgePlugin> >
+        typedef std::list< bidirectional_edge<EdgeProperty> > BidirEdgeList;
+        typedef std::list< undirected_edge<vertex_descriptor,EdgeProperty> >
           UndirEdgeList;
-        typedef std::list< undirected_edge_no_plugin<vertex_descriptor> >
-          UndirEdgeNoPluginList;
+        typedef std::list< undirected_edge_no_property<vertex_descriptor> >
+          UndirEdgeNoPropertyList;
 
         // need to reorganize this to avoid instantiating stuff
         // that doesn't get used -JGS
 
         typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_plugin,
+          typename boost::ct_if< Bidirectional && has_edge_property,
             BidirEdgeList,
-            no_plugin
+            no_property
           >::type,
-          typename boost::ct_if< has_edge_plugin,
+          typename boost::ct_if< has_edge_property,
             UndirEdgeList,
-            UndirEdgeNoPluginList
+            UndirEdgeNoPropertyList
           >::type
         >::type EdgeContainer;
 
         typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_plugin,
+          typename boost::ct_if< Bidirectional && has_edge_property,
             typename BidirEdgeList::size_type,
             std::size_t
           >::type,
-          typename boost::ct_if< has_edge_plugin,
+          typename boost::ct_if< has_edge_property,
             typename UndirEdgeList::size_type,
-            typename UndirEdgeNoPluginList::size_type
+            typename UndirEdgeNoPropertyList::size_type
           >::type
         >::type edges_size_type;
 
         typedef typename boost::ct_if< Directed,
-          typename boost::ct_if< Bidirectional && has_edge_plugin,
+          typename boost::ct_if< Bidirectional && has_edge_property,
             typename BidirEdgeList::iterator,
             typename BidirEdgeList::iterator // bogus, not used
           >::type,
-          typename boost::ct_if< has_edge_plugin,
+          typename boost::ct_if< has_edge_property,
             typename UndirEdgeList::iterator,
-            typename UndirEdgeNoPluginList::iterator
+            typename UndirEdgeNoPropertyList::iterator
           >::type
         >::type EdgeIter;
 
         typedef typename boost::ct_if< Directed && !Bidirectional,
-          typename boost::ct_if< has_edge_plugin,
-            stored_edge_plugin<vertex_descriptor, EdgePlugin>,  
+          typename boost::ct_if< has_edge_property,
+            stored_edge_property<vertex_descriptor, EdgeProperty>,  
             stored_edge<vertex_descriptor>
           >::type,
-          stored_edge_iter<vertex_descriptor, EdgeIter, EdgePlugin>
+          stored_edge_iter<vertex_descriptor, EdgeIter, EdgeProperty>
         >::type StoredEdge;
 
         // Adjacency Types
@@ -1612,23 +1615,23 @@ namespace boost {
           SeqStoredVertexList;
         struct seq_stored_vertex {
           OutEdgeList m_out_edges;
-          VertexPlugin m_plugin;
+          VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct bidir_seq_stored_vertex {
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
-          VertexPlugin m_plugin;
+          VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct rand_stored_vertex {
           OutEdgeList m_out_edges;
-          VertexPlugin m_plugin;
+          VertexProperty m_property;
         };
         struct bidir_rand_stored_vertex {
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
-          VertexPlugin m_plugin;
+          VertexProperty m_property;
         };
         typedef typename boost::ct_if< is_rand_access,
           typename boost::ct_if< Bidirectional,
@@ -1645,9 +1648,9 @@ namespace boost {
       };
 
       typedef typename boost::ct_if< Bidirectional,
-        typename boost::ct_if< has_edge_plugin,
-          bidirectional_graph_helper_with_plugin<config>,
-          bidirectional_graph_helper_without_plugin<config>
+        typename boost::ct_if< has_edge_property,
+          bidirectional_graph_helper_with_property<config>,
+          bidirectional_graph_helper_without_property<config>
         >::type,
         typename boost::ct_if< Directed,
           directed_graph_helper<config>,
@@ -1667,54 +1670,54 @@ namespace boost {
     //=========================================================================
     // Vertex Property Maps
 
-    template <class Graph, class Plugin, class Tag>
+    template <class Graph, class Property, class Tag>
     struct adj_list_vertex_property_map
       : public boost::put_get_at_helper<
-          typename plugin_value<Plugin,Tag>::type,
-          adj_list_vertex_property_map<Graph, Plugin, Tag>
+          typename property_value<Property,Tag>::type,
+          adj_list_vertex_property_map<Graph, Property, Tag>
         >
     {
       typedef typename Graph::stored_vertex StoredVertex;
-      typedef typename plugin_value<Plugin, Tag>::type value_type;
+      typedef typename property_value<Property, Tag>::type value_type;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       inline adj_list_vertex_property_map(Graph&) { }
       inline value_type& operator[](key_type v) {
         StoredVertex* sv = (StoredVertex*)v;
-        return get_plugin_value(sv->m_plugin, value_type(), Tag());
+        return get_property_value(sv->m_property, value_type(), Tag());
       }
       inline const value_type& operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
-        return get_plugin_value(sv->m_plugin, value_type(), Tag());
+        return get_property_value(sv->m_property, value_type(), Tag());
       }
     };
 
-    template <class Graph, class GraphRef, class Plugin, class Tag>
+    template <class Graph, class GraphRef, class Property, class Tag>
     struct vec_adj_list_vertex_property_map
       : public boost::put_get_at_helper<
-          typename plugin_value<Plugin,Tag>::type,
-          vec_adj_list_vertex_property_map<Graph,GraphRef,Plugin,Tag>
+          typename property_value<Property,Tag>::type,
+          vec_adj_list_vertex_property_map<Graph,GraphRef,Property,Tag>
         >
     {
-      typedef typename plugin_value<Plugin,Tag>::type value_type;
+      typedef typename property_value<Property,Tag>::type value_type;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
       inline value_type& operator[](key_type v) {
-        return get_plugin_value(m_g.m_vertices[v].m_plugin, 
+        return get_property_value(m_g.m_vertices[v].m_property, 
                                 value_type(), Tag());
       }
       inline const value_type& operator[](key_type v) const {
-        return get_plugin_value(m_g.m_vertices[v].m_plugin, 
+        return get_property_value(m_g.m_vertices[v].m_property, 
                                 value_type(), Tag());
       }
       GraphRef m_g;
     };
 
-    template <class Plugin, class Vertex>
+    template <class Property, class Vertex>
     struct vec_adj_list_vertex_id_map
       : public boost::put_get_at_helper<
-          Vertex, vec_adj_list_vertex_id_map<Plugin, Vertex>
+          Vertex, vec_adj_list_vertex_id_map<Property, Vertex>
         >
     {
       typedef Vertex value_type;
@@ -1726,20 +1729,20 @@ namespace boost {
     };
 
     struct vec_adj_list_any_vertex_pa {
-      template <class Tag, class Graph, class Plugin>
+      template <class Tag, class Graph, class Property>
       struct bind {
         typedef vec_adj_list_vertex_property_map
-          <Graph, Graph&, Plugin, Tag> type;
+          <Graph, Graph&, Property, Tag> type;
         typedef vec_adj_list_vertex_property_map
-          <Graph, const Graph&, Plugin, Tag> const_type;
+          <Graph, const Graph&, Property, Tag> const_type;
       };
     };
     struct vec_adj_list_id_vertex_pa {
-      template <class Tag, class Graph, class Plugin>
+      template <class Tag, class Graph, class Property>
       struct bind {
         typedef typename Graph::vertex_descriptor Vertex;
-        typedef vec_adj_list_vertex_id_map<Plugin, Vertex> type;
-        typedef vec_adj_list_vertex_id_map<Plugin, Vertex> const_type;
+        typedef vec_adj_list_vertex_id_map<Property, Vertex> type;
+        typedef vec_adj_list_vertex_id_map<Property, Vertex> const_type;
       };
     };
   namespace detail {
@@ -1752,10 +1755,10 @@ namespace boost {
       typedef vec_adj_list_id_vertex_pa type;
     };
 
-    template <class Tag, class Graph, class Plugin>
+    template <class Tag, class Graph, class Property>
     struct vec_adj_list_choose_vertex_pa {
       typedef typename vec_adj_list_choose_vertex_pa_helper<Tag>::type Helper;
-      typedef typename Helper::template bind<Tag,Graph,Plugin> Bind;
+      typedef typename Helper::template bind<Tag,Graph,Property> Bind;
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
     };
@@ -1764,19 +1767,19 @@ namespace boost {
     //=========================================================================
     // Edge Property Map
 
-    template <class Directed, class Plugin, class Vertex, class Tag>
+    template <class Directed, class Property, class Vertex, class Tag>
     struct adj_list_edge_property_map
     {
-      typedef typename plugin_value<Plugin,Tag>::type value_type;
+      typedef typename property_value<Property,Tag>::type value_type;
       typedef detail::bidir_edge<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
       inline value_type& operator[](key_type e) {
-        Plugin* p = (Plugin*)e.get_plugin();
-        return get_plugin_value(*p, value_type(), Tag());
+        Property* p = (Property*)e.get_property();
+        return get_property_value(*p, value_type(), Tag());
       }
       inline const value_type& operator[](key_type e) const {
-        const Plugin* p = (Plugin*)e.get_plugin();
-        return get_plugin_value(*p, value_type(), Tag());
+        const Property* p = (Property*)e.get_property();
+        return get_property_value(*p, value_type(), Tag());
       }
     };
     // Very strange VC++ bug appears when I use put_get_at helper
@@ -1786,28 +1789,28 @@ namespace boost {
     inline typename adj_list_edge_property_map<D,P,Vertex,Tag>::value_type
     get(const adj_list_edge_property_map<D,P,Vertex,Tag>&, const K& e)
     {
-      typedef typename plugin_value<P,Tag>::type value_type;
-      const P* p = (P*)e.get_plugin();
-      return get_plugin_value(*p, value_type(), Tag());
+      typedef typename property_value<P,Tag>::type value_type;
+      const P* p = (P*)e.get_property();
+      return get_property_value(*p, value_type(), Tag());
     }
     template <class D, class P, class Vertex, class Tag, class K, class V>
     inline void
     put(adj_list_edge_property_map<D,P,Vertex,Tag>&, const K& e,
         const V& val)
     {
-      typedef typename plugin_value<P,Tag>::type value_type;
-      P* p = (P*)e.get_plugin();
-      get_plugin_value(*p, value_type(), Tag()) = val;
+      typedef typename property_value<P,Tag>::type value_type;
+      P* p = (P*)e.get_property();
+      get_property_value(*p, value_type(), Tag()) = val;
     }
 
 
   // Edge Property Maps
 
   struct adj_list_edge_property_selector {
-    template <class Graph, class Plugin, class Tag>
+    template <class Graph, class Property, class Tag>
     struct bind {
       typedef adj_list_edge_property_map
-         <typename Graph::directed_category, Plugin, 
+         <typename Graph::directed_category, Property, 
           typename Graph::vertex_descriptor,Tag> type;
       typedef type const_type;
     };
@@ -1824,9 +1827,9 @@ namespace boost {
   // Vertex Property Maps
 
   struct adj_list_vertex_property_selector {
-    template <class Graph, class Plugin, class Tag>
+    template <class Graph, class Property, class Tag>
     struct bind {
-      typedef adj_list_vertex_property_map<Graph,Plugin,Tag> type;
+      typedef adj_list_vertex_property_map<Graph,Property,Tag> type;
       typedef type const_type;
     };
   };
@@ -1836,9 +1839,9 @@ namespace boost {
   };
 
   struct vec_adj_list_vertex_property_selector {
-    template <class Graph, class Plugin, class Tag>
+    template <class Graph, class Property, class Tag>
     struct bind {
-      typedef detail::vec_adj_list_choose_vertex_pa<Tag,Graph,Plugin> Choice;
+      typedef detail::vec_adj_list_choose_vertex_pa<Tag,Graph,Property> Choice;
       typedef typename Choice::type type;
       typedef typename Choice::const_type const_type;
     };

@@ -104,7 +104,7 @@ Calculate a topological ordering of the vertices.
 
 <P>
 <PRE>
-  typedef adjacency_list&lt; vecS, vecS, directedS, color_plugin&lt;&gt; &gt; Graph;
+  typedef adjacency_list&lt; vecS, vecS, directedS, color_property&lt;&gt; &gt; Graph;
   typedef boost::graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
   Pair edges[7] = { Pair(0,1), Pair(2,4),
                     Pair(2,5),

@@ -75,8 +75,6 @@ main(int argc, char* argv[])
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
-  boost::property_map<Graph, vertex_index_t>::type 
-    vertex_id = get(vertex_index, G);
   
   std::vector<default_color_type> color(num_vertices(G));
 

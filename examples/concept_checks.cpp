@@ -43,8 +43,8 @@ main(int,char*[])
   using namespace boost;
   {
     typedef adjacency_list<vecS, vecS, directedS, 
-      plugin<vertex_color_t, int>,
-      plugin<edge_weight_t, int>
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
@@ -59,8 +59,8 @@ main(int,char*[])
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
-      plugin<vertex_color_t, int>,
-      plugin<edge_weight_t, int>
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
@@ -76,8 +76,8 @@ main(int,char*[])
   }
   {
     typedef adjacency_list< listS, listS, directedS, 
-      plugin<vertex_color_t, int>,
-      plugin<edge_weight_t, int>
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;

@@ -101,7 +101,7 @@ Version 1 of the algorithm takes only three arguments: the graph
 object, the source vertex, and a visitor to specify the actions to be
 taken during the graph search. The algorithm will need to use a color
 property which must be provided by the graph object (through a color
-plugin).
+property).
 
 <P>
 Version 2 of the algorithm adds a color property argument to
@@ -136,7 +136,7 @@ care of before calling this versin of <tt>breadth_first_search()</tt>.
 </LI>
 <LI>In version (1) of the algorithm the graph must be a model
     of <a href="./PropertyGraph.html">PropertyGraph</a> for
-    <TT>vertex_color</TT> and
+    <TT>vertex_color_t</TT> and
     the color property map for the graph must meet the
     same requirements as <TT>ColorMap</TT>.
 </LI>

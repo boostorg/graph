@@ -32,14 +32,14 @@
 using namespace boost;
 using namespace std;
 
-typedef plugin<vertex_color_t, default_color_type,
-    plugin<vertex_distance_t,int,
-      plugin<vertex_degree_t,int,
-        plugin<vertex_in_degree_t, int,
-          plugin<vertex_out_degree_t,int> > > > > VertexPlugin;
-typedef plugin<edge_weight_t,int> EdgePlugin;
+typedef property<vertex_color_t, default_color_type,
+    property<vertex_distance_t,int,
+      property<vertex_degree_t,int,
+        property<vertex_in_degree_t, int,
+          property<vertex_out_degree_t,int> > > > > VertexProperty;
+typedef property<edge_weight_t,int> EdgeProperty;
 typedef adjacency_list<vecS, vecS, bidirectionalS, 
-                       VertexPlugin, EdgePlugin> Graph;
+                       VertexProperty, EdgeProperty> Graph;
 
 template <class Graph>
 void print(Graph& g) {

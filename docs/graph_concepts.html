@@ -97,11 +97,11 @@ each of the concepts. The notation used in the table is as follows.
 </TR>
 
 <TR>
-<TD><TT>ep</TT></TD><TD>is an object of type <TT>G::edge_plugin_type</TT></TD>
+<TD><TT>ep</TT></TD><TD>is an object of type <TT>G::edge_property_type</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>vp</TT></TD><TD>is an object of type <TT>G::vertex_plugin_type</TT></TD>
+<TD><TT>vp</TT></TD><TD>is an object of type <TT>G::vertex_property_type</TT></TD>
 </TR>
 
 <TR>
@@ -427,8 +427,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in a directed graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    property_map&lt;DirectedGraph, edge_weight&gt;::type
-      weight = get(edge_weight(), digraph);
+    property_map&lt;DirectedGraph, edge_weight_t&gt;::type
+      weight = get(edge_weight, digraph);
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }
@@ -444,8 +444,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in an undirected graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    property_map&lt;UndirectedGraph, edge_weight&gt;::type
-      weight = get(edge_weight(), undigraph);
+    property_map&lt;UndirectedGraph, edge_weight_t&gt;::type
+      weight = get(edge_weight, undigraph);
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }

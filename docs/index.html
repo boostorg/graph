@@ -173,8 +173,8 @@ a property).  In addition, it will often be necessary to associate
 multiple properties with each vertex and edge, which is what we mean
 by multi-parameterization. Similar to how the <TT>std::list&lt;T&gt;</TT>
 class has the parameter <TT>T</TT> for its element type, BGL graph
-classes have template parameters for vertex and edge ``plugins''. A
-plugin specifies the parameterized type of the property and also assigns
+classes have template parameters for vertex and edge ``properties''. A
+property specifies the parameterized type of the property and also assigns
 an identifying tag to the property, which is used to distinguish
 between the multiple properties. The property value attached to a
 particular vertex or edge can be obtained via a <I>property

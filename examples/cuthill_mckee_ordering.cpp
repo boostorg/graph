@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
   using namespace std;
   identity_property_map id;
   typedef adjacency_list<vecS, vecS, undirectedS, 
-     plugin< vertex_color_t, default_color_type,
-       plugin<vertex_degree_t,int> > > Graph;
+     property< vertex_color_t, default_color_type,
+       property<vertex_degree_t,int> > > Graph;
   typedef Graph::vertex_descriptor Vertex;
 
   typedef std::pair<size_t, size_t> Pair;

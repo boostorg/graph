@@ -46,9 +46,9 @@ int main(int argc, char* argv[])
   using namespace boost;
   using namespace std;
 
-  typedef plugin<edge_weight_t,int> weightp;
+  typedef property<edge_weight_t,int> weightp;
   typedef adjacency_list< vecS, vecS, undirectedS, 
-                no_plugin, weightp > Graph;
+                no_property, weightp > Graph;
   typedef Graph::edge_descriptor Edge;
   typedef Graph::vertex_descriptor Vertex;
 

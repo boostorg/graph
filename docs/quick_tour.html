@@ -172,8 +172,8 @@ The following example prints out the ID for each of the vertices in
 the graph. All vertex and edge properties, including ID, are accessed
 via property map objects.  The <TT>property_map</TT>
 class is used to obtain the property map type for a specific
-property (specified by <TT>vertex_index</TT>, one of the BGL
-predefined tags) and function call <TT>get(vertex_index(), g)</TT>
+property (specified by <TT>vertex_index_t</TT>, one of the BGL
+predefined tags) and function call <TT>get(vertex_index, g)</TT>
 returns the actual property map object.
 
 <P>
@@ -184,8 +184,8 @@ returns the actual property map object.
     // ...
 
     // get the property map for vertex ID's
-    typedef property_map&lt;Graph, vertex_index&gt;::type ID;
-    ID id = get(vertex_index(), g);
+    typedef property_map&lt;Graph, vertex_index_t&gt;::type ID;
+    ID id = get(vertex_index, g);
 
     std::cout &lt;&lt; "vertices(g) = ";
     typedef graph_traits&lt;Graph&gt;::vertex_iterator vertex_iter;
@@ -349,8 +349,8 @@ the source-target pairs for each out-edge of vertex <TT>v</TT>.
     void operator()(const Vertex&amp; v) const
     {
       typedef graph_traits&lt;Graph&gt; GraphTraits;
-      typename property_map&lt;Graph, vertex_index&gt;::type 
-        id = get(vertex_index(), g);
+      typename property_map&lt;Graph, vertex_index_t&gt;::type 
+        id = get(vertex_index, g);
 
       std::cout &lt;&lt; "out-edges: ";
       typename GraphTraits::out_edge_iterator out_i, out_end;
@@ -473,17 +473,18 @@ internally property.
 The BGL <TT>adjacency_list</TT> class allows users to specify
 internally stored properties through plug-in template parameters of
 the graph class. How to do this is discussed in detail in Section <a
-href="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins</a>.
-Externally stored properties can be created in many different ways,
-although they are ultimately passed as separate arguments to the graph
-algorithms.  One straightforward way to store properties is to create
-an array indexed by vertex or edge ID. In the <TT>adjacency_list</TT>
-with <TT>vecS</TT> specified for the <TT>VertexList</TT> template
-parameter, vertices are automatically assigned ID numbers, which can
-be accessed via the property map for the <TT>vertex_index</TT>. Edges
-are not automatically assigned ID numbers. However the plugin
-mechanism can be used to attach ID numbers to the edges which can be
-used to index into other externally stored properties.
+href="./using_adjacency_list.html#sec:adjacency-list-properties">Internal
+Properties</a>.  Externally stored properties can be created in many
+different ways, although they are ultimately passed as separate
+arguments to the graph algorithms.  One straightforward way to store
+properties is to create an array indexed by vertex or edge ID. In the
+<TT>adjacency_list</TT> with <TT>vecS</TT> specified for the
+<TT>VertexList</TT> template parameter, vertices are automatically
+assigned ID numbers, which can be accessed via the property map for
+the <TT>vertex_index_t</TT>. Edges are not automatically assigned ID
+numbers. However the property mechanism can be used to attach ID
+numbers to the edges which can be used to index into other externally
+stored properties.
 
 <P>
 In the following example, we construct a graph and apply <a
@@ -497,10 +498,10 @@ every other vertex in the graph.
 Dijkstra's algorithm requires that a weight property is associated
 with each edge and a distance property with each vertex.  Here we use
 an internal property for the weight and an external property for the
-distance. For the weight property we use the <TT>plugin</TT> class and
+distance. For the weight property we use the <TT>property</TT> class and
 specify <TT>int</TT> as the type used to represent weight values and
-<TT>edge_weight</TT> for the property tag (which is one of the BGL
-predefined property tags).  The weight plugin is then used as a
+<TT>edge_weight_t</TT> for the property tag (which is one of the BGL
+predefined property tags).  The weight property is then used as a
 template argument for <TT>adjacency_list</TT>. 
 
 <P>
@@ -519,7 +520,7 @@ href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessI
 <P>
 <PRE>
   typedef adjacency_list&lt;listS, vecS, directedS, 
-                         no_plugin, plugin&lt;edge_weight, int&gt; &gt; Graph;
+                         no_property, property&lt;edge_weight_t, int&gt; &gt; Graph;
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
   typedef std::pair&lt;int,int&gt; E;
 
@@ -720,7 +721,7 @@ The output is:
  -->
 <!--  LocalWords:  iter ei interoperability struct typename GraphTraits src ai
  -->
-<!--  LocalWords:  targ VertexPropertyGraph EdgePropertyGraph Plugins plugin
+<!--  LocalWords:  targ VertexPropertyGraph EdgePropertyGraph Properties property
  -->
 <!--  LocalWords:  VertexList dijkstra listS Edgelist RandomAccessIterator
  -->

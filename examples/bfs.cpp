@@ -37,7 +37,7 @@
   
   This examples shows how to use the breadth_first_search() GGCL
   algorithm, specifically the 3 argument variant of bfs that assumes
-  the graph has a color property (plugin) stored internally.
+  the graph has a color property (property) stored internally.
 
   Two pre-defined visitors are used to record the distance of each
   vertex from the source vertex, and also to record the parent of each
@@ -106,10 +106,10 @@ int main(int argc, char* argv[])
 {
   typedef boost::adjacency_list< 
     boost::mapS, boost::vecS, boost::bidirectionalS,
-    boost::plugin<boost::vertex_color_t, boost::default_color_type,
-        boost::plugin<boost::vertex_degree_t, int,
-          boost::plugin<boost::vertex_in_degree_t, int,
-    boost::plugin<boost::vertex_out_degree_t, int> > > >
+    boost::property<boost::vertex_color_t, boost::default_color_type,
+        boost::property<boost::vertex_degree_t, int,
+          boost::property<boost::vertex_in_degree_t, int,
+    boost::property<boost::vertex_out_degree_t, int> > > >
   > Graph;
   
   Graph G(5);

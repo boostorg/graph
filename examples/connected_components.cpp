@@ -69,10 +69,10 @@ int main(int argc, char* argv[])
   // First example: the connected components of an undirected graph
   using namespace boost;
   {
-    typedef plugin<vertex_discover_time_t, int,
-      plugin< vertex_finish_time_t, int,
-        plugin< vertex_color_t, default_color_type > > > VertexPlugin;
-    typedef adjacency_list <vecS, vecS, undirectedS, VertexPlugin> Graph;
+    typedef property<vertex_discover_time_t, int,
+      property< vertex_finish_time_t, int,
+        property< vertex_color_t, default_color_type > > > VertexProperty;
+    typedef adjacency_list <vecS, vecS, undirectedS, VertexProperty> Graph;
     typedef Graph::vertex_descriptor Vertex;
 
     const int N = 6;
@@ -98,10 +98,10 @@ int main(int argc, char* argv[])
   // Second example: the strongly connected components of a directed
   // graph
   {
-    typedef plugin<vertex_discover_time_t, int,
-      plugin< vertex_finish_time_t, int,
-        plugin< vertex_color_t, default_color_type > > > VertexPlugin;
-    typedef adjacency_list< vecS, vecS, directedS, VertexPlugin >  Graph;
+    typedef property<vertex_discover_time_t, int,
+      property< vertex_finish_time_t, int,
+        property< vertex_color_t, default_color_type > > > VertexProperty;
+    typedef adjacency_list< vecS, vecS, directedS, VertexProperty >  Graph;
     const int N = 6;
     Graph G(N);
     add_edge(G, 0, 1);

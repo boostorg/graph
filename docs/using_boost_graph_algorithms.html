@@ -142,27 +142,27 @@ the distance and weight properties of graph <TT>G</TT>.
 
 <P>
 <PRE>
-  boost::property_map&lt;Graph, vertex_distance&gt;::type
-    d = get(vertex_distance(), G);
+  boost::property_map&lt;Graph, vertex_distance_t&gt;::type
+    d = get(vertex_distance, G);
 
-  boost::property_map&lt;Graph, edge_weight&gt;::type
-    w = get(edge_weight(), G);
+  boost::property_map&lt;Graph, edge_weight_t&gt;::type
+    w = get(edge_weight, G);
 </PRE>
 
 <P>
-The  BGL graph classes all have <TT>VertexPlugin</TT> and
-<TT>EdgePlugin</TT> template parameters that let the user specify
-internal properties. If the graph <TT>G</TT> has plugins for all four of
+The  BGL graph classes all have <TT>VertexProperty</TT> and
+<TT>EdgeProperty</TT> template parameters that let the user specify
+internal properties. If the graph <TT>G</TT> has properties for all four of
 the properties needed by Dijksta's algorithm, then we could invoke the
 algorithm in the following way.
 
 <P>
 <PRE>
   boost::dijkstra_shortest_paths(G, s, 
-                                 get(vertex_distance(), G),
-                                 get(edge_weight(), G),
-                                 get(vertex_color(), G),
-                                 get(vertex_index(), G),
+                                 get(vertex_distance, G),
+                                 get(edge_weight, G),
+                                 get(vertex_color, G),
+                                 get(vertex_index, G),
                                  null_visitor());
 </PRE>
 

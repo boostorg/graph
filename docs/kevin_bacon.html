@@ -88,7 +88,7 @@ it. We use a <TT>std::ifstream</TT> to input the file.
 We will want to attach the actor's names to the vertices in the graph,
 and the movie names to the edges. In addition, Dijkstra's algorithm
 will expect edges to have a weight property (we will just set the
-weights to one). We use the <TT>plugin</TT> class to specify the
+weights to one). We use the <TT>property</TT> class to specify the
 addition of these vertex and edge properties to the graph.
 We choose to use an undirected graph, because the relationship
 of actors appearing together in a movie is symmetric.
@@ -97,8 +97,8 @@ of actors appearing together in a movie is symmetric.
 <PRE>
   using namespace boost;
   typedef adjacency_list&lt;vecS, vecS, undirectedS, 
-    plugin&lt;vertex_name, string&gt;,
-    plugin&lt;edge_name, string, plugin&lt;edge_weight, int&gt; &gt;
+    property&lt;vertex_name_t, string&gt;,
+    property&lt;edge_name_t, string, property&lt;edge_weight_t, int&gt; &gt;
   &gt; Graph;
 </PRE>
 
@@ -108,9 +108,9 @@ objects from the graph. The following code shows how this is done.
 
 <P>
 <PRE>
-  boost::property_map&lt;Graph, vertex_name&gt;::type actor_name = get(vertex_name(), g);
-  boost::property_map&lt;Graph, edge_name&gt;::type connecting_movie = get(edge_name(), g);
-  boost::property_map&lt;Graph, edge_weight&gt;::type weight = get(edge_weight(), g);
+  boost::property_map&lt;Graph, vertex_name_t&gt;::type actor_name = get(vertex_name, g);
+  boost::property_map&lt;Graph, edge_name_t&gt;::type connecting_movie = get(edge_name, g);
+  boost::property_map&lt;Graph, edge_weight_t&gt;::type weight = get(edge_weight, g);
 </PRE>
 
 <P>
@@ -247,7 +247,7 @@ predecessors, since this is not part of the basic algorithm.
     
     dijkstra_shortest_paths
       (g, src, bacon_number.begin(),
-       get(edge_weight(), g), color.begin(), get(vertex_index(), g),
+       get(edge_weight, g), color.begin(), get(vertex_index, g),
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 </PRE>
@@ -271,7 +271,7 @@ into vectors or arrays such as <TT>bacon_number</TT>. This is valid
 with the <TT>adjacency_list</TT> class with <TT>VertexList=vecS</TT>,
 but not with other variations of <TT>adjacency_list</TT>. A more
 generic way to index based on vertices is to use the ID property
-map (<TT>vertex_index</TT>) in coordination with the <A
+map (<TT>vertex_index_t</TT>) in coordination with the <A
 HREF="../../property_map/random_access_iterator_property_map.html"><TT>random_access_iterator_property_map</TT></a>.
 
 <P>

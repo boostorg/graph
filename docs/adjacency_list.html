@@ -24,7 +24,7 @@
 <H1><A NAME="sec:adjacency-list-class"></A>
 <pre>
 adjacency_list&lt;EdgeList, VertexList, Directed,
-               VertexPlugin, EdgePlugin, GraphPlugin&gt;
+               VertexProperty, EdgeProperty, GraphProperty&gt;
 </pre>
 </H1>
 
@@ -94,8 +94,8 @@ href="../examples/family_tree.cpp"><tt>examples/family_tree.cpp</tt></a>.
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::vertex_iterator i, end;
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::adjacency_iterator ai, a_end;
 
-  property_map&lt;adjacency_list&lt;&gt;, vertex_index&gt;::type
-    id = get(vertex_index(), G);
+  property_map&lt;adjacency_list&lt;&gt;, vertex_index_t&gt;::type
+    id = get(vertex_index, G);
 
   for(tie(i,end) = vertices(G); i != end; ++i) {
     cout &lt;&lt; name[get(id, *i)];
@@ -150,21 +150,21 @@ The output is:
 </TR>
 
 <TR>
-<TD><TT>VertexPlugin</TT></TD>
+<TD><TT>VertexProperty</TT></TD>
 <TD>for specifying internal property storage.</TD>
-<TD><TT>no_plugin</TT></TD>
+<TD><TT>no_property</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>EdgePlugin</TT></TD>
+<TD><TT>EdgeProperty</TT></TD>
 <TD>for specifying internal property storage.</TD>
-<TD><TT>no_plugin</TT></TD>
+<TD><TT>no_property</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>GraphPlugin</TT></TD>
+<TD><TT>GraphProperty</TT></TD>
 <TD>for specifying property storage for the graph object.</TD>
-<TD><TT>no_plugin</TT></TD>
+<TD><TT>no_property</TT></TD>
 </TR>
 
 </TABLE>
@@ -187,16 +187,16 @@ The output is:
 
 <P>
 
-<H2>Vertex and Edge Plugins</H2>
+<H2>Vertex and Edge Properties</H2>
 
 <P>
 Properties such as color, distance, weight, and user-defined
 properties can be attached to the vertices and edges of the graph
-using plugins. The property values can be read from and written to via
+using properties. The property values can be read from and written to via
 the property maps provided by the graph. The property maps
 are obtained via the <TT>get(property, g)</TT> function.  How to use
-plugins is described in Section <A
-HREF="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins
+properties is described in Section <A
+HREF="./using_adjacency_list.html#sec:adjacency-list-properties">Properties
 </A>. The property maps are objects that implement the interface
 defined in Section <A
 HREF="../../property_map/property_map.html">Property
@@ -211,7 +211,7 @@ concept.
 <P>
 If the <TT>VertexList</TT> of the graph is <TT>vecS</TT>, then the
 graph has a builtin vertex indices accessed via the property map for
-the <TT>vertex_index</TT> property.  The indices fall in the range
+the <TT>vertex_index_t</TT> property.  The indices fall in the range
 <TT>[0, num_vertices(g))</TT> and are contiguous. When a vertex is
 removed the indices are adjusted so that they retain these
 properties. Some care must be taken when using these indices to access
@@ -316,7 +316,7 @@ and<br>
 The property map type for vertex or edge properties in the graph. The
 specific property is specified by the <TT>Property</TT> template argument,
 and must match one of the properties specified in the
-<TT>VertexPlugin</TT> or <TT>EdgePlugin</TT> for the graph.
+<TT>VertexProperty</TT> or <TT>EdgeProperty</TT> for the graph.
 
 <hr>
 
@@ -326,7 +326,7 @@ and must match one of the properties specified in the
 <hr>
 
 <pre>
-adjacency_list(const&nbsp;GraphPlugin&amp;&nbsp;p = GraphPlugin())
+adjacency_list(const&nbsp;GraphProperty&amp;&nbsp;p = GraphProperty())
 </pre>
 Default constructor. Creates an empty graph object with zero vertices
 and zero edges.
@@ -335,7 +335,7 @@ and zero edges.
 
 <pre>
 adjacency_list(vertices_size_type&nbsp;n, 
-               const&nbsp;GraphPlugin&amp;&nbsp;p = GraphPlugin())
+               const&nbsp;GraphProperty&amp;&nbsp;p = GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and zero edges.
 
@@ -345,7 +345,7 @@ Creates a graph object with <TT>n</TT> vertices and zero edges.
 template &lt;class&nbsp;EdgeIterator&gt;
 adjacency_list(vertices_size_type&nbsp;n, 
                EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
-               const&nbsp;GraphPlugin&amp;&nbsp;p&nbsp;=&nbsp;GraphPlugin())
+               const&nbsp;GraphProperty&amp;&nbsp;p&nbsp;=&nbsp;GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
@@ -361,7 +361,7 @@ template &lt;class&nbsp;EdgeIterator, class&nbsp;EdgePropertyIterator&gt;
 adjacency_list(vertices_size_type&nbsp;num_vertices,
                EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
                EdgePropertyIterator&nbsp;ep_iter,
-               const&nbsp;GraphPlugin&amp;&nbsp;p&nbsp;=&nbsp;GraphPlugin())
+               const&nbsp;GraphProperty&amp;&nbsp;p&nbsp;=&nbsp;GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
@@ -369,7 +369,7 @@ The value type of the <TT>EdgeIterator</TT> must be a <TT>std::pair</TT>,
 where the type in the pair is an integer type. The integers will
 correspond to vertices, and they must all fall in the range of
 <TT>[0, n)</TT>. The <TT>value_type</TT> of the <TT>ep_iter</TT> should
-be <TT>EdgePlugin</TT>.
+be <TT>EdgeProperty</TT>.
 
 <hr>
 
@@ -530,7 +530,7 @@ Adjacency List Storage</A>).
 std::pair&lt;edge_descriptor,&nbsp;bool&gt;
 add_edge(adjacency_list&amp;&nbsp;g,
          vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
-         const&nbsp;EdgePlugin&amp;&nbsp;p)
+         const&nbsp;EdgeProperty&amp;&nbsp;p)
 </pre>
 Adds edge <i>(u,v)</i> to the graph and attaches <TT>p</TT> as the
 value of the edge's internal property storage.  Also see the previous
@@ -576,12 +576,12 @@ beforehand.  If the <TT>VertexList</TT> template parameter of the
 <TT>adjacency_list</TT> was <TT>vecS</TT>, then all vertex
 descriptors, edge descriptors, and iterators for the graph are
 <b>invalidated</b> by this operation. The builtin
-<tt>vertex_index</tt> property for each vertex is renumbered so that
+<tt>vertex_index_t</tt> property for each vertex is renumbered so that
 after the operation the vertex indices still form a contiguous range
 <TT>[0, num_vertices(g))</TT>. If you are using external property
 storage based on the builtin vertex index, then the external storage will
 need to be adjusted. Another option is to not use the builtin vertex
-index, and instead use a plugin to add your own vertex IDs. If you need
+index, and instead use a property to add your own vertex IDs. If you need
 to make frequent use of the <TT>remove_vertex()</TT> function the
 <TT>listS</TT> selector is a much better choice for the
 <TT>VertexList</TT> template parameter.
@@ -599,7 +599,7 @@ get(Property, const adjacency_list&amp; g)
 </pre>
 Returns the property map object for the vertex property specified by
 <TT>Property</TT>. The <TT>Property</TT> must match one of the
-properties specified in the graph's <TT>VertexPlugin</TT> template
+properties specified in the graph's <TT>VertexProperty</TT> template
 argument.
 
 <hr>

@@ -115,8 +115,8 @@ int main(int,char*[])
   fill(weights, weights + nedges, 1);
 
   typedef adjacency_list<vecS, vecS, directedS, 
-      plugin<vertex_color_t, default_color_type>,
-      plugin<edge_weight_t, int>
+      property<vertex_color_t, default_color_type>,
+      property<edge_weight_t, int>
     > Graph;
   Graph g(N, used_by, used_by + nedges, weights);
   typedef graph_traits<Graph>::vertex_descriptor Vertex;

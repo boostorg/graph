@@ -62,11 +62,11 @@ the value of the properties can be given.
 </TR>
 
 <TR>
-<TD><TT>ep</TT></TD><TD>is an object of type <TT>G::edge_plugin_type</TT></TD>
+<TD><TT>ep</TT></TD><TD>is an object of type <TT>G::edge_property_type</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>vp</TT></TD><TD>is an object of type <TT>G::vertex_plugin_type</TT></TD>
+<TD><TT>vp</TT></TD><TD>is an object of type <TT>G::vertex_property_type</TT></TD>
 </TR>
 
 </TABLE>
@@ -78,13 +78,13 @@ the value of the properties can be given.
 <table border>
 
 <tr>
-<td>Edge Plugin Type </td>
-<td><TT>graph_traits&lt;G&gt;::edge_plugin_type</TT></td>
+<td>Edge Property Type </td>
+<td><TT>graph_traits&lt;G&gt;::edge_property_type</TT></td>
 </tr>
 
 <tr>
-<td>Vertex Plugin Type </td>
-<td><TT>graph_traits&lt;G&gt;::vertex_plugin_type</TT> </td>
+<td>Vertex Property Type </td>
+<td><TT>graph_traits&lt;G&gt;::vertex_property_type</TT> </td>
 </tr>
 
 </table>
@@ -96,7 +96,7 @@ the value of the properties can be given.
 <tr>
 <TD><TT>add_edge(g,&nbsp;u,&nbsp;v,&nbsp;ep)</TT></TD>
 <TD>Inserts the edge <i>(u,v)</i> into the graph, and
-copies object <TT>ep</TT> into the property plugin for that edge.<br>
+copies object <TT>ep</TT> into the property property for that edge.<br>
 Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
 </TR>
 
@@ -104,7 +104,7 @@ Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
 <TD><TT>add_vertex(g,&nbsp;vp)</TT></TD>
 <TD>
 Add a new vertex to the graph and copy <TT>vp</TT> into the property
-plugin for the new vertex. The <TT>vertex_descriptor</TT> for the new
+property for the new vertex. The <TT>vertex_descriptor</TT> for the new
 vertex is returned.<br>
 Return type: <TT>vertex_descriptor</TT>
 </TD>
@@ -135,8 +135,8 @@ Return type: <TT>vertex_descriptor</TT>
     G g;
     std::pair&lt;edge_descriptor, bool&gt; p;
     typename boost::graph_traits&lt;G&gt;::vertex_descriptor u, v;
-    typename boost::graph_traits&lt;G&gt;::vertex_plugin_type vp;
-    typename boost::graph_traits&lt;G&gt;::edge_plugin_type ep;
+    typename boost::graph_traits&lt;G&gt;::vertex_property_type vp;
+    typename boost::graph_traits&lt;G&gt;::edge_property_type ep;
   };
 </PRE>
 

@@ -69,18 +69,18 @@ namespace boost {
       typedef bidir_edge                              self;
       typedef edge_base<Directed,Vertex> Base;
     public: 
-      typedef void                              plugin_type;
+      typedef void                              property_type;
       
-      inline bidir_edge() : m_eplugin(0) {} 
+      inline bidir_edge() : m_eproperty(0) {} 
       
-      inline bidir_edge(Vertex s, Vertex d, const plugin_type* eplug = 0)
-        : Base(s,d), m_eplugin(const_cast<plugin_type*>(eplug)) { }
+      inline bidir_edge(Vertex s, Vertex d, const property_type* eplug = 0)
+        : Base(s,d), m_eproperty(const_cast<property_type*>(eplug)) { }
       
-      plugin_type* get_plugin() { return m_eplugin; }
-      const plugin_type* get_plugin() const { return m_eplugin; }
+      property_type* get_property() { return m_eproperty; }
+      const property_type* get_property() const { return m_eproperty; }
       
       //  protected:
-      plugin_type* m_eplugin;
+      property_type* m_eproperty;
     };
     
 

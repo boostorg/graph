@@ -56,12 +56,12 @@ int main(int argc, char* argv[])
   using namespace boost;
   using namespace std;
 
-  typedef plugin<edge_name_t, std::string> EdgePlugin;
-  typedef plugin<vertex_color_t,default_color_type> ColorPlugin;
-  typedef plugin<vertex_index_t, std::size_t, ColorPlugin> VertexPlugin;
+  typedef property<edge_name_t, std::string> EdgeProperty;
+  typedef property<vertex_color_t,default_color_type> ColorProperty;
+  typedef property<vertex_index_t, std::size_t, ColorProperty> VertexProperty;
 
   typedef adjacency_list<vecS, listS, undirectedS, 
-    VertexPlugin, EdgePlugin> Graph;
+    VertexProperty, EdgeProperty> Graph;
 
   const int V = 5;
   Graph g(V);
@@ -76,11 +76,11 @@ int main(int argc, char* argv[])
   for (boost::tie(vi,viend) = vertices(g); vi != viend; ++vi)
     id[*vi] = vnum++;
 
-  add_edge(g, vertex(0,g), vertex(1,g), EdgePlugin("joe"));
-  add_edge(g, vertex(1,g), vertex(2,g), EdgePlugin("curly"));
-  add_edge(g, vertex(1,g), vertex(3,g), EdgePlugin("dick"));
-  add_edge(g, vertex(2,g), vertex(4,g), EdgePlugin("tom"));
-  add_edge(g, vertex(3,g), vertex(4,g), EdgePlugin("harry"));
+  add_edge(g, vertex(0,g), vertex(1,g), EdgeProperty("joe"));
+  add_edge(g, vertex(1,g), vertex(2,g), EdgeProperty("curly"));
+  add_edge(g, vertex(1,g), vertex(3,g), EdgeProperty("dick"));
+  add_edge(g, vertex(2,g), vertex(4,g), EdgeProperty("tom"));
+  add_edge(g, vertex(3,g), vertex(4,g), EdgeProperty("harry"));
 
   Graph::vertex_iterator i, end;
   Graph::out_edge_iterator ei, edge_end;

@@ -47,8 +47,8 @@ main()
   }
 
   typedef adjacency_list<vecS, vecS, undirectedS, 
-    plugin<vertex_name_t, string>,
-    plugin<edge_name_t, string, plugin<edge_weight_t, int> >
+    property<vertex_name_t, string>,
+    property<edge_name_t, string, property<edge_weight_t, int> >
   > Graph;
 
   typedef graph_traits<Graph>::vertex_descriptor Vertex;

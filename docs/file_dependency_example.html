@@ -93,7 +93,7 @@ list of files and to set-up the dependencies. We use the
 <TT>vecS</TT> selector means that a <TT>std::vector</TT> will be used
 to represent each edge-list, which provides efficient traversal. The
 <TT>directedS</TT> selector means we want a directed graph, and the
-<TT>color_plugin</TT> attaches a color property to each vertex of the
+<TT>color_property</TT> attaches a color property to each vertex of the
 graph. The color property will be used in several of the algorithms in
 the following sections.
 
@@ -128,8 +128,8 @@ the following sections.
 
   using namespace boost;
   typedef adjacency_list&lt;vecS, vecS, directedS, 
-      plugin&lt;vertex_color, default_color_type&gt;,
-      plugin&lt;edge_weight, int&gt;
+      property&lt;vertex_color_t, default_color_type&gt;,
+      property&lt;edge_weight_t, int&gt;
     &gt; Graph;
   Graph g(N, used_by, used_by + sizeof(used_by) / sizeof(Edge));
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
@@ -227,9 +227,9 @@ map for the internal weight property.
 <PRE>
   std::vector&lt;int&gt; time(N, 0);
   typedef std::vector&lt;int&gt;::iterator Time;
-  using boost::edge_weight;
-  typedef boost::property_map&lt;Graph, edge_weight&gt;::type Weight;
-  Weight weight = get(edge_weight(), g);
+  using boost::edge_weight_t;
+  typedef boost::property_map&lt;Graph, edge_weight_t&gt;::type Weight;
+  Weight weight = get(edge_weight, g);
 </PRE>
 
 <P>

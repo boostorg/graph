@@ -23,9 +23,9 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 //
-// This example is similar to the one in edge_plugin.cpp.
+// This example is similar to the one in edge_property.cpp.
 // The only difference is that this example uses exterior
-// property storage instead of interior (plugins).
+// property storage instead of interior (properties).
 //
 //  Sample output:
 //
@@ -82,8 +82,8 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 int main(int argc, char* argv[]) {
 
   typedef boost::adjacency_list<boost::vecS, boost::vecS, 
-    boost::bidirectionalS, boost::no_plugin, 
-    boost::plugin<boost::edge_index_t, std::size_t> > Graph;
+    boost::bidirectionalS, boost::no_property, 
+    boost::property<boost::edge_index_t, std::size_t> > Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);

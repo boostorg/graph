@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
 {
   using namespace boost;
   typedef adjacency_list < vecS, vecS, undirectedS, 
-       plugin<vertex_color_t, default_color_type,
-         plugin<vertex_distance_t,int> >, plugin<edge_weight_t,int> > Graph;
+       property<vertex_color_t, default_color_type,
+         property<vertex_distance_t,int> >, property<edge_weight_t,int> > Graph;
   typedef std::pair<int,int> E;
   const int num_nodes = 5;
   E edges[] = { E(0,2), 

@@ -53,10 +53,10 @@ main(int argc, char* argv[])
   using namespace boost;
 
   /* Topological sort will need to color the graph.  Here we use an
-     internal decorator, so we "plugin" the color to the graph.
+     internal decorator, so we "property" the color to the graph.
      */
   typedef adjacency_list<vecS, vecS, directedS, 
-    plugin<vertex_color_t, default_color_type> > Graph;
+    property<vertex_color_t, default_color_type> > Graph;
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   Pair edges[7] = { Pair(0,1), Pair(2,4),

@@ -43,7 +43,7 @@ namespace boost {
     struct bidir_incidence_iterator {
       typedef bidir_incidence_iterator self;
       typedef Edge edge_type;
-      typedef typename Edge::plugin_type EdgePlugin;
+      typedef typename Edge::property_type EdgeProperty;
     public:
       typedef int difference_type;
       typedef std::forward_iterator_tag iterator_category;
@@ -68,10 +68,10 @@ namespace boost {
       Vertex _src;
     protected:
       inline reference deref_helper(out_edge_tag) const {
-        return edge_type( _src, (*i).get_target(), (*i).get_plugin() );
+        return edge_type( _src, (*i).get_target(), (*i).get_property() );
       }
       inline reference deref_helper(in_edge_tag) const {
-        return edge_type((*i).get_target(), _src, (*i).get_plugin() );
+        return edge_type((*i).get_target(), _src, (*i).get_property() );
       }
     };
     

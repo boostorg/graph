@@ -62,17 +62,17 @@ namespace boost {
  
   typedef triple<int, int, int> Triple;
 
-  /* Define a vertex plugin which has a triangle inside. Triangle is
+  /* Define a vertex property which has a triangle inside. Triangle is
     represented by a triple.  */
   struct triangle_tag { enum { num = 100 }; };
-  typedef plugin<triangle_tag,Triple> triangle_plugin;
+  typedef property<triangle_tag,Triple> triangle_property;
 
-  /* Define an edge plugin with a line. A line is represented by a
+  /* Define an edge property with a line. A line is represented by a
     pair.  This is not required for SAW though.
   */
   struct line_tag { enum { num = 101 }; };
-  template <class T> struct line_plugin
-    : public plugin<line_tag, std::pair<T,T> > { };
+  template <class T> struct line_property
+    : public property<line_tag, std::pair<T,T> > { };
 
   /*Precondition: Points in a Triangle are in order */
   template <class Triangle, class Line>

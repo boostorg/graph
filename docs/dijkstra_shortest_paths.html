@@ -149,9 +149,9 @@ href="../examples/dijkstra.cpp"><TT>examples/dijkstra.cpp</TT></a>.
 
 <P>
 <PRE>
-  typedef weight_plugin&lt;int&gt; weightp;
+  typedef weight_property&lt;int&gt; weightp;
   typedef adjacency_list&lt; listS, vecS, directedS, 
-                          no_vertex_plugin, weightp &gt; Graph;
+                          no_vertex_property, weightp &gt; Graph;
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
 
   typedef std::pair&lt;int,int&gt; E;

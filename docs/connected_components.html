@@ -175,9 +175,9 @@ href="../examples/connected_components.cpp"><tt>examples/connected_components.cp
 
 <P>
 <PRE>
-  typedef discover_time_plugin&lt; finish_time_plugin
-                                &lt; color_plugin&lt;&gt; &gt; &gt; VertexPlugin;
-  typedef adjacency_list &lt;vecS, vecS, undirectedS, VertexPlugin&gt; Graph;
+  typedef discover_time_property&lt; finish_time_property
+                                &lt; color_property&lt;&gt; &gt; &gt; VertexProperty;
+  typedef adjacency_list &lt;vecS, vecS, undirectedS, VertexProperty&gt; Graph;
   typedef Graph::vertex_descriptor Vertex;
 
   const int N = 6;
@@ -213,9 +213,9 @@ The output is:
 <P>
 Calculating the strongly connected components of a directed graph.
 <PRE>
-    typedef discover_time_plugin&lt; finish_time_plugin
-                                  &lt; color_plugin&lt;&gt; &gt; &gt; VertexPlugin;
-    typedef adjacency_list&lt; vecS, vecS, directedS, VertexPlugin &gt;  Graph;
+    typedef discover_time_property&lt; finish_time_property
+                                  &lt; color_property&lt;&gt; &gt; &gt; VertexProperty;
+    typedef adjacency_list&lt; vecS, vecS, directedS, VertexProperty &gt;  Graph;
     const int N = 6;
     Graph G(N);
     add_edge(G, 0, 1);
