@@ -219,7 +219,10 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
 IN: <tt>visitor(BellmanFordVisitor v)</tt>
 <blockquote>
   The visitor object, whose type must be a model of
-  <a href="./BellmanFordVisitor.html">Bellman-Ford Visitor</a>.<br>
+  <a href="./BellmanFordVisitor.html">Bellman-Ford Visitor</a>.
+  The visitor object is passed by value <a
+  href="#1">[1]</a>.
+<br>
   <b>Default:</b> <tt>bellman_visitor&lt;null_visitor&gt;</tt>
 </blockquote>
 
@@ -277,6 +280,15 @@ The time complexity is <i>O(V E)</i>.
 <P>
 An example of using the Bellman-Ford algorithm is in <a
 href="../example/bellman_ford.cpp"><TT>examples/bellman_ford.cpp</TT></a>.
+
+<h3>Notes</h3>
+
+<p><a name="1">[1]</a> 
+  Since the visitor parameter is passed by value, if your visitor
+  contains state then any changes to the state during the algorithm
+  will be made to a copy of the visitor object, not the visitor object
+  passed in. Therefore you may want the visitor to hold this state by
+  pointer or reference.
 
 <br>
 <HR>

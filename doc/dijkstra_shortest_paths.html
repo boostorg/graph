@@ -310,12 +310,14 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   using the <tt>i_map</tt> for the index map.
 </blockquote>
   
-OUT: <tt>visitor(Vis v)</tt>  
+OUT: <tt>visitor(DijkstraVisitor v)</tt>  
 <blockquote>
   Use this to specify actions that you would like to happen
   during certain event points within the algorithm.
-  The type <tt>Vis</tt> must be a model of
-  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a>. <br>
+  The type <tt>DijkstraVisitor</tt> must be a model of the
+  <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept. 
+ The visitor object is passed by value <a
+  href="#2">[2]</a>.<br>
   <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt>
 </blockquote>
 
@@ -373,6 +375,13 @@ The algorithm used here saves a little space by not putting all <i>V -
 S</i> vertices in the priority queue at once, but instead only those
 vertices in <i>V - S</i> that are discovered and therefore have a
 distance less than infinity.
+
+<p><a name="2">[2]</a> 
+  Since the visitor parameter is passed by value, if your visitor
+  contains state then any changes to the state during the algorithm
+  will be made to a copy of the visitor object, not the visitor object
+  passed in. Therefore you may want the visitor to hold this state by
+  pointer or reference.
 
 <br>
 <HR>
