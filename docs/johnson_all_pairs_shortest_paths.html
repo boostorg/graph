@@ -30,7 +30,7 @@
 <TD ALIGN="LEFT">directed or undirected</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">distance matrix, distance, weight, color, vertex id</TD>
+<TD ALIGN="LEFT">distance matrix, distance, weight, color, vertex index</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT">
@@ -42,12 +42,14 @@
 
 <P>
 <PRE>
-template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
-          class Distance, class Weight, class Color, class VertexID&gt;
-bool johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g, 
-                                      DistanceMatrix&amp; D,
-                                      Distance d, Distance h,
-                                      Weight w, Color c, VertexID id)
+template &lt;class <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class DistanceMatrix,
+          class DistanceMap, class WeightMap, class ColorMap,
+          class VertexIndexMap&gt;
+bool
+johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g, 
+  DistanceMatrix&amp; D,
+  DistanceMap d, DistanceMap h,
+  WeightMap w, ColorMap c, VertexIndexMap id)
 </PRE>
 
 <P>
