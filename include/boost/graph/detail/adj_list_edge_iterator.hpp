@@ -59,7 +59,8 @@ namespace boost {
         if ( vCurr != vEnd ) {
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
-	  tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
+	  if ( vCurr != vEnd )
+	    tie(eCurr, eEnd) = out_edges(*vCurr, *m_g);
         }
       }
 
