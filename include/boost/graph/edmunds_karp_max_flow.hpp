@@ -82,16 +82,6 @@ namespace boost {
       } while (u != src);
     }
 
-    template <class Graph, class P, class T, class R>
-    struct edge_capacity_value
-    {
-      typedef bgl_named_params<P, T, R> Params;
-      typedef typename property_value< Params, edge_capacity_t>::type Param;
-      typedef typename detail::choose_pmap_helper<Param, Graph,
-	edge_capacity_t>::result CapacityEdgeMap;
-      typedef typename property_traits<CapacityEdgeMap>::value_type type;
-    };
-
     template <class Graph, 
 	      class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	      class ReverseEdgeMap, class ColorMap, class PredEdgeMap>

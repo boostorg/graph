@@ -35,6 +35,7 @@
 #include <boost/pending/queue.hpp>
 #include <boost/limits.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -667,34 +668,66 @@ namespace boost {
       long work_since_last_update;
     };
 
+    template <class Graph, 
+	      class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+	      class ReverseEdgeMap, class VertexIndexMap>
+    typename property_traits<CapacityEdgeMap>::value_type
+    push_relabel_max_flow_impl
+      (Graph& g, 
+       typename graph_traits<Graph>::vertex_descriptor src,
+       typename graph_traits<Graph>::vertex_descriptor sink,
+       CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+       ReverseEdgeMap rev, VertexIndexMap index_map)
+    {
+      typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
+
+      detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
+	ReverseEdgeMap, VertexIndexMap, FlowValue>
+      algo(g, cap, res, rev, src, sink, index_map);
+
+      FlowValue flow = algo.maximum_preflow();
+
+      algo.convert_preflow_to_flow();
+
+      assert(algo.is_flow());
+      assert(algo.is_optimal());
+
+      return flow;
+    } // push_relabel_max_flow_impl()
+
   } // namespace detail
   
-  template <class Graph, 
-            class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-            class ReverseEdgeMap, class VertexIndexMap>
-  typename property_traits<CapacityEdgeMap>::value_type
+
+  template <class Graph, class P, class T, class R>
+  typename detail::edge_capacity_value<Graph, P, T, R>::type
   push_relabel_max_flow
     (Graph& g, 
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink,
-     CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
-     ReverseEdgeMap rev, VertexIndexMap index_map)
+     const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
+    return detail::push_relabel_max_flow_impl
+      (g, src, sink,
+       choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
+       choose_pmap(get_param(params, edge_residual_capacity), 
+		   g, edge_residual_capacity),
+       choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
+       );
+  }
 
-    detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
-      ReverseEdgeMap, VertexIndexMap, FlowValue>
-    algo(g, cap, res, rev, src, sink, index_map);
-
-    FlowValue flow = algo.maximum_preflow();
-
-    algo.convert_preflow_to_flow();
-
-    assert(algo.is_flow());
-    assert(algo.is_optimal());
-
-    return flow;
-  } // maximum_flow()
+  template <class Graph>
+  typename property_traits<
+    typename property_map<Graph, edge_capacity_t>::const_type
+  >::value_type
+  push_relabel_max_flow
+    (Graph& g, 
+     typename graph_traits<Graph>::vertex_descriptor src,
+     typename graph_traits<Graph>::vertex_descriptor sink)
+  {
+    bgl_named_params<int,int> params(0);
+    return push_relabel_max_flow(g, src, sink, params);
+  }
 
 } // namespace boost
 
