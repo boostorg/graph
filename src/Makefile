@@ -29,22 +29,30 @@ LDFLAAGS	=
 LIBS		=
 
 
-default: libbgl-viz.a
+default: libbgl-viz.a libbgl-viz.so
 
 .SUFFIXES: .cpp .o .l .y .c
 
-libbgl-viz.a: graphviz_graph_parser.o graphviz_digraph_parser.o  graphviz_lex.o
-	ar -rc libbgl-viz.a graphviz_graph_parser.o graphviz_digraph_parser.o graphviz_lex.o
+OBJS = graphviz_lex.o graphviz_digraph_parser.o graphviz_graph_parser.o
+
+libbgl-viz.a: $(OBJS)
+	ar -rc libbgl-viz.a $(OBJS)
+
+GRAPH_SONAME_VERSION = 1
+
+libbgl-viz.so: $(OBJS)
+	$(CXX) -shared -Wl,-soname -Wl,$@.$(GRAPH_SONAME_VERSION) -o $@.$(GRAPH_SONAME_VERSION) $(OBJS)
+	ln -s $@.$(GRAPH_SONAME_VERSION) $@ 
 
 # this next part is a bit strange. We compile graphviz_parser.cpp twice.
 # Once with for undirected graphs with GRAPHVIZ_GRAPH=boost::GraphvizGraph 
 # and once for directed graphs with GRAPHVIZ_GRAPH=boost::GraphvizDigraph.
 
-graphviz_graph_parser.o: graphviz_parser.cpp
-	$(CXX) -DGRAPHVIZ_GRAPH=boost::GraphvizGraph $(CXXFLAGS) -c graphviz_parser.cpp -o graphviz_graph_parser.o
+graphviz_graph_parser.o: graphviz_graph_parser.cpp
+	$(CXX) -DGRAPHVIZ_GRAPH=boost::GraphvizGraph $(CXXFLAGS) -c graphviz_graph_parser.cpp -o graphviz_graph_parser.o
 
-graphviz_digraph_parser.o: graphviz_parser.cpp
-	$(CXX) -DGRAPHVIZ_GRAPH=boost::GraphvizDigraph $(CXXFLAGS) -c graphviz_parser.cpp -o graphviz_digraph_parser.o
+graphviz_digraph_parser.o: graphviz_digraph_parser.cpp
+	$(CXX) -DGRAPHVIZ_DIRECTED -DGRAPHVIZ_GRAPH=boost::GraphvizDigraph $(CXXFLAGS) -c graphviz_digraph_parser.cpp -o graphviz_digraph_parser.o
 
 graphviz_lex.o: graphviz_lex.cpp graphviz_parser.h
 	$(CXX) $(CXXFLAGS) -c graphviz_lex.cpp
@@ -53,9 +61,15 @@ graphviz_lex.cpp: graphviz_lex.l
 	$(LEX) graphviz_lex.l
 	$(MV) lex.yy.c graphviz_lex.cpp
 
-graphviz_parser.cpp: graphviz_parser.y
-	$(YACC) -d -v graphviz_parser.y
-	$(MV) graphviz_parser.tab.c graphviz_parser.cpp
+graphviz_graph_parser.cpp: graphviz_parser.y
+	$(YACC) -p bgl_undir_ -d -v graphviz_parser.y
+	$(MV) graphviz_parser.tab.c graphviz_graph_parser.cpp
+
+graphviz_digraph_parser.cpp: graphviz_parser.y
+	$(YACC) -p bgl_dir_ -d -v graphviz_parser.y
+	$(MV) graphviz_parser.tab.c graphviz_digraph_parser.cpp
+
+graphviz_parser.h: graphviz_digraph_parser.cpp
 	$(MV) graphviz_parser.tab.h graphviz_parser.h
 
 dist:
@@ -76,4 +90,4 @@ dist:
 
 
 clean:
-	/bin/rm -rf	*.o *.a *.output graphviz_parser.cpp graphviz_lex.cpp graphviz_parser.h
+	/bin/rm -rf	*.o *.a *.so* *.output graphviz_digraph_parser.cpp graphviz_graph_parser.cpp graphviz_lex.cpp graphviz_parser.h
