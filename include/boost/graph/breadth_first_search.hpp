@@ -1,3 +1,5 @@
+Warning: Kerberos authentication disabled in SUID client.
+Executing ssh-askpass to query the password...
 //
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
@@ -210,9 +212,9 @@ namespace boost {
         vis.initialize_vertex(*i, g);
       }
       breadth_first_search
-	(g, s, 
-	 choose_param(get_param(params, buffer_param_t()), Qref).ref,
-	 vis, color);
+        (g, s, 
+         choose_param(get_param(params, buffer_param_t()), Qref).ref,
+         vis, color);
     }
 
     //-------------------------------------------------------------------------
@@ -229,10 +231,10 @@ namespace boost {
        ColorMap color)
     {
       bfs_helper
-	(g, s, color,
-	 choose_param(get_param(params, graph_visitor),
-		      make_bfs_visitor(null_visitor())),
-	 params);
+        (g, s, color,
+         choose_param(get_param(params, graph_visitor),
+                      make_bfs_visitor(null_visitor())),
+         params);
     }
 
     template <class VertexListGraph, class P, class T, class R>
@@ -247,13 +249,13 @@ namespace boost {
 
       bfs_helper
         (g, s, 
-	 make_iterator_property_map
-	 (color_vec.begin(), 
-	  choose_pmap(get_param(params, vertex_index), 
-		      g, vertex_index)),
-	 choose_param(get_param(params, graph_visitor),
-		      make_bfs_visitor(null_vis)),
-	 params);
+         make_iterator_property_map
+         (color_vec.begin(), 
+          choose_pmap(get_param(params, vertex_index), 
+                      g, vertex_index)),
+         choose_param(get_param(params, graph_visitor),
+                      make_bfs_visitor(null_vis)),
+         params);
     }
 
   } // namespace detail
@@ -295,5 +297,5 @@ namespace boost {
 
 } // namespace boost
 
-#endif /* BOOST_GRAPH_BFS_H */
+#endif // BOOST_GRAPH_BREADTH_FIRST_SEARCH_HPP
 
