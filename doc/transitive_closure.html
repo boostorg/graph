@@ -1,0 +1,66 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2001
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>Boost Graph Library: Transitive Closure</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+<IMG SRC="../../../c++boost.gif" 
+     ALT="C++ Boost" width="277" height="86"> 
+
+<BR Clear>
+
+<H1><A NAME="sec:bfs">
+<TT>transitive_closure</TT>
+</H1>
+
+<P>
+<PRE>
+template &lt;class Graph&gt;
+void transitive_closure(Graph&amp; g)
+</PRE>
+
+The transitive closure of a graph <i>G = (V,E)</i> is a graph <i>G' =
+(V,E')</i> such that <i>E'</i> contains an edge <i>(u,v)</i> if and
+only if <i>G</i> contains a <a
+href="graph_theory_review.html#def:path">path</a> from <i>u</i> to
+<i>v</i>. The <tt>transitive_closure()</tt> function transforms the
+input graph <tt>g</tt> into the transitive closure of itself.
+
+
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/transitive_closure.hpp"><TT>boost/graph/transitive_closure.hpp</TT></a>
+
+<h3>Parameters</h3>
+
+IN/OUT: <tt>Graph&amp; g</tt>
+<blockquote>
+ A directed graph, where the <tt>Graph</tt> type must model the
+ <a href="./VertexListGraph.html">Vertex List Graph</a>
+ and <a href="./EdgeMutableGraph.html">Edge Mutable Graph</a> concepts.
+
+</blockquote>
+
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 
