@@ -6,8 +6,8 @@
 // suitability for any purpose.
 
 
-#include "vector_as_graph_plug.hpp"
-#include "transitive_closure.hpp"
+#include <boost/graph/vector_as_graph.hpp>
+#include <boost/graph/transitive_closure.hpp>
 
 #include <iostream>
 
@@ -18,10 +18,7 @@
 #include <ctime>
 #include <boost/progress.hpp>
 using namespace std;
-
 using namespace boost;
-using namespace boost::graph;
-
 
 void generate_graph(int n, double p, vector< vector<int> >& r1,
           vector<vector<bool> >& r2)
@@ -82,37 +79,6 @@ void warshall_transitive_closure(vector< vector<bool> >& g)
       for (size_t j = 0; j < g.size(); ++j) 
         g[i][j] = g[i][j] || (g[i][k] && g[k][j]);        
 }
-
-
-
-void matrix_strong_components(const vector< vector<bool> >& g, vector<int>& scc_no)
-{
-    // SCCs are equivalence classes for equivivalence relation defined as
-    // u ~ v <==> (v is reachable from u) & (u is reachable from v)
-    
-    vector< vector<bool> > reachable(g);
-    warshall_transitive_closure(reachable);
-    
-    vector< vector<int> > ec;
-    for (size_t i = 0; i < g.size(); ++i) { 
-    size_t j;
-    for (j = 0; j < ec.size(); ++j) {
-      int representative = ec[j][0];
-      if (reachable[i][representative] && reachable[representative][i])
-        ec[j].push_back(i); 
-    }
-    if (j == ec.size()) {
-      ec.resize(ec.size()+1);
-      ec.back().push_back(i); 
-    }            
-    } 
-    
-    for (size_t i = 0; i < ec.size(); ++i)
-    for (size_t j = 0; j < ec[i].size(); ++j)
-      scc_no[ec[i][j]] = i;
-} 
-
-
 
 bool test(int n, double p)
 {
