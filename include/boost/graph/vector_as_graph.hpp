@@ -190,7 +190,7 @@ namespace boost {
   }
 
   template<class EdgeList, class Allocator>
-  typename std::pair<detail::val_edge<EdgeList>::type, bool>
+  typename std::pair<typename detail::val_edge<EdgeList>::type, bool>
   add_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
            std::vector<EdgeList, Allocator>& g)
   {
