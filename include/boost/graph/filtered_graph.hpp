@@ -143,6 +143,9 @@ namespace boost {
   // pairs in graph_traits.hpp. I feel dirty. -JGS
   template <class G>
   struct filtered_graph_base {
+    typedef graph_traits<G> Traits;
+    typedef typename Traits::vertex_descriptor          vertex_descriptor;
+    typedef typename Traits::edge_descriptor            edge_descriptor;
     filtered_graph_base(const G& g) : m_g(g) { }
     //protected:
     const G& m_g;
@@ -281,17 +284,17 @@ namespace boost {
     return num_edges(g.m_g);
   }
   
-  template <typename G, typename EP, typename VP>
-  typename filtered_graph<G, EP, VP>::vertex_descriptor
-  source(typename filtered_graph<G, EP, VP>::edge_descriptor e,
+  template <typename G>
+  typename filtered_graph_base<G>::vertex_descriptor
+  source(typename filtered_graph_base<G>::edge_descriptor e,
          const filtered_graph_base<G>& g)
   {
     return source(e, g.m_g);
   }
 
-  template <typename G, typename EP, typename VP>
-  typename filtered_graph<G, EP, VP>::vertex_descriptor
-  target(typename filtered_graph<G, EP, VP>::edge_descriptor e,
+  template <typename G>
+  typename filtered_graph_base<G>::vertex_descriptor
+  target(typename filtered_graph_base<G>::edge_descriptor e,
          const filtered_graph_base<G>& g)
   {
     return target(e, g.m_g);
