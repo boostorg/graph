@@ -250,6 +250,7 @@ namespace boost {
   // Kevin Vanhorn. (see also the property map generating functions
   // in boost/property_map.hpp)
 
+#if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
   // A helper function for creating a vertex property map out of a
   // random access iterator and the internal vertex index map from a
   // graph.
@@ -281,6 +282,7 @@ namespace boost {
   {
     return make_iterator_property_map(iter, identity_property_map());
   }      
+#endif
 
   template <class PropertyGraph, class RandomAccessContainer>
   inline
