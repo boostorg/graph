@@ -1,5 +1,3 @@
-Warning: Kerberos authentication disabled in SUID client.
-Executing ssh-askpass to query the password...
 //
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
@@ -251,8 +249,8 @@ namespace boost {
         (g, s, 
          make_iterator_property_map
          (color_vec.begin(), 
-          choose_pmap(get_param(params, vertex_index), 
-                      g, vertex_index)),
+          choose_const_pmap(get_param(params, vertex_index), 
+			    g, vertex_index)),
          choose_param(get_param(params, graph_visitor),
                       make_bfs_visitor(null_vis)),
          params);
