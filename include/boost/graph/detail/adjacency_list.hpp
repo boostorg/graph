@@ -2374,7 +2374,7 @@ namespace boost {
     {
       typedef Vertex value_type;
       typedef Vertex key_type;
-      typedef boost::lvalue_property_map_tag category;
+      typedef boost::read_write_property_map_tag category;
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
       inline value_type operator[](key_type v) const { return v; }
