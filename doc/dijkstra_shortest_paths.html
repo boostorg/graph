@@ -213,7 +213,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is necessary for efficient updates of the
-  heap data structure when an edge is relaxed.  The type
+  heap data structure&nbsp;[<A
+  HREF="bibliography.html#driscoll88">61</A>] when an edge is relaxed.
+  The type 
   <tt>VertexIndexMap</tt> must be a model of
   <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
@@ -341,8 +343,8 @@ OUT: <tt>visitor(DijkstraVisitor v)</tt>
 <H3>Complexity</H3>
 
 <P>
-The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i>
-if all vertices are reachable from the source.
+The time complexity is <i>O(V log V)</i>.
+
 
 <h3>Visitor Event Points</h3>
 
