@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
   
   GraphvizGraph g;
 
-  boost::read_graphviz(g, filename);
+  boost::read_graphviz(filename, g);
 
   print(g);
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
   if ( argc > 2 ) 
     dot = argv[2];
 
-  boost::write_graphviz(g, dot);
+  boost::write_graphviz(dot, g);
   
   return 0;
 }
