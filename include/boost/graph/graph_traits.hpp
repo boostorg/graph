@@ -28,6 +28,7 @@
 
 #include <iterator>
 #include <boost/utility.hpp>
+#include <boost/pending/ct_if.hpp>
 
 namespace boost {
   
@@ -54,6 +55,17 @@ namespace boost {
   struct undirected_tag { };
   struct bidirectional_tag : public directed_tag { };
 
+  namespace detail {
+    inline bool is_directed(directed_tag) { return true; }
+    inline bool is_directed(undirected_tag) { return false; }
+  }
+
+  template <typename Graph>
+  bool is_directed(const Graph&) { 
+    typedef typename graph_traits<Graph>::directed_category Cat;
+    return detail::is_directed(Cat());
+  }
+
   // edge_parallel_category tags
   struct allow_parallel_edge_tag {};
   struct disallow_parallel_edge_tag {};
@@ -69,5 +81,15 @@ T source(std::pair<T,T> p, const G&) { return p.first; }
 
 template <class T, class G>
 T target(std::pair<T,T> p, const G&) { return p.second; }
+
+#if defined(__GNUC__) && defined(__SGI_STL_PORT)
+// For some reason g++ with STLport does not see the above definition
+// of source() and target() unless we bring them into the boost
+// namespace.
+namespace boost {
+  using ::source;
+  using ::target;
+}
+#endif
 
 #endif /* BOOST_GRAPH_TRAITS_HPP*/
