@@ -111,12 +111,12 @@ int main(int argc, char* argv[])
       std::cout << std::endl;
   }
 
-  // Next we print out the graph of components, that is, we consider
-  // each component to be a vertex in this new graph and there is an
-  // edge connecting one component to another if there is one or more
-  // edges connecting any of the vertices from the first component to
-  // any of the vertices in the second. We use the name of the representative
-  // vertex as the name of the component.
+  // Next we print out the "component graph" or "condensation", that
+  // is, we consider each component to be a vertex in a new graph
+  // where there is an edge connecting one component to another if there
+  // is one or more edges connecting any of the vertices from the
+  // first component to any of the vertices in the second. We use the
+  // name of the representative vertex as the name of the component.
 
   printf("\nLinks between components:\n");
 
