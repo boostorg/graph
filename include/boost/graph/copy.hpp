@@ -335,7 +335,7 @@ namespace boost {
         ? num_vertices(g_in) : 1;
     if (n == 0)
       return;
-    std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor> 
+    std::vector<typename graph_traits<MutableGraph>::vertex_descriptor> 
       orig2copy(n);
 
     typedef typename detail::choose_graph_copy<VertexListGraph>::type 
@@ -349,9 +349,9 @@ namespace boost {
        choose_param(get_param(params, orig_to_copy_t()),
                     make_iterator_property_map
                     (orig2copy.begin(), 
-                     choose_pmap(get_param(params, vertex_index), 
+                     choose_const_pmap(get_param(params, vertex_index), 
                                  g_in, vertex_index), orig2copy[0])),
-       choose_pmap(get_param(params, vertex_index), g_in, vertex_index)
+       choose_const_pmap(get_param(params, vertex_index), g_in, vertex_index)
        );
   }
 
