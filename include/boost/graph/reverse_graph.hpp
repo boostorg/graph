@@ -37,6 +37,12 @@ class reverse_graph {
     typedef typename graph_traits<BidirectionalGraph>::edge_iterator          edge_iterator;
     typedef typename graph_traits<BidirectionalGraph>::vertices_size_type     vertices_size_type;
     typedef typename graph_traits<BidirectionalGraph>::edges_size_type        edges_size_type;
+    
+    // More of the same [?] used by detail::edge_property_map, vertex_property_map
+    typedef typename BidirectionalGraph::edge_property_type edge_property_type;
+    typedef typename BidirectionalGraph::vertex_property_type vertex_property_type;
+    typedef typename BidirectionalGraph::graph_tag graph_tag;
+    
 
     // would be private, but template friends aren't portable enough.
  // private:
@@ -132,8 +138,8 @@ edge(const typename BidirectionalGraph::vertex_descriptor u,
 }
 
 template <class BidirectionalGraph>
-inline std::pair<typename BidirectionalGraph::in_edge_iterator, 
-    typename BidirectionalGraph::in_edge_iterator>
+inline std::pair<typename BidirectionalGraph::out_edge_iterator, 
+    typename BidirectionalGraph::out_edge_iterator>
 in_edges(const typename BidirectionalGraph::vertex_descriptor u,
          const reverse_graph<BidirectionalGraph>& g)
 {
@@ -146,6 +152,20 @@ in_degree(const typename BidirectionalGraph::vertex_descriptor u,
           const reverse_graph<BidirectionalGraph>& g)
 {
     return out_degree(u, g.m_g);
+}
+
+template <class Edge, class BidirectionalGraph>
+inline typename graph_traits<BidirectionalGraph>::vertex_descriptor
+source(const Edge& e, const reverse_graph<BidirectionalGraph>& g)
+{
+    return target(e, g.m_g);
+}
+
+template <class Edge, class BidirectionalGraph>
+inline typename graph_traits<BidirectionalGraph>::vertex_descriptor
+target(const Edge& e, const reverse_graph<BidirectionalGraph>& g)
+{
+    return source(e, g.m_g);
 }
 
 } // namespace boost
