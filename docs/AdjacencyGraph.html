@@ -106,8 +106,8 @@ The <TT>adjacent_vertices()</TT> function must return in constant time.
     typedef typename boost::graph_traits&lt;G&gt;::adjacency_iterator
       adjacency_iterator;
     void constraints() {
-      REQUIRE(G, IncidenceGraph);
-      REQUIRE(adjacency_iterator, MultiPassInputIterator);
+      function_requires&lt; IncidenceGraph&lt;G&gt; &gt;();
+      function_requires&lt; MultiPassInputIterator&lt;adjacency_iterator&gt; &gt;();
 
       p = adjacent_vertices(v, g);
       v = *p.first;

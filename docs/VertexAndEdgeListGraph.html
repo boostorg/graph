@@ -54,9 +54,10 @@ requirements are added.
   template &lt;class G&gt;
   struct VertexAndEdgeListGraph
   {
-    CLASS_REQUIRES(G, VertexListGraph);
-    CLASS_REQUIRES(G, EdgeListGraph);
-    void constraints() { }
+    void constraints() {
+      function_requires&lt; VertexListGraph&lt;G&gt; &gt;();
+      function_requires&lt; EdgeListGraph&lt;G&gt; &gt;();
+    }
   };
 </PRE>
 

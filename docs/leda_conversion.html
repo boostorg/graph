@@ -240,9 +240,9 @@ href="../test/graph.cpp"><TT>test/graph.cpp</TT></a>.
   main(int,char*[])
   {
     typedef GRAPH&lt;int,int&gt; Graph;
-    REQUIRE(Graph, VertexListGraph);
-    REQUIRE(Graph, BidirectionalGraph);
-    REQUIRE(Graph, MutableGraph);
+    function_requires&lt; VertexListGraph&lt;Graph&gt; &gt;();
+    function_requires&lt; BidirectionalGraph&lt;Graph&gt; &gt;();
+    function_requires&lt; MutableGraph&lt;Graph&gt; &gt;();
     return 0;
   }
 </PRE>

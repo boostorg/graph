@@ -139,8 +139,8 @@ undirected graphs).
     typedef typename boost::graph_traits&lt;G&gt;::in_edge_iterator
       in_edge_iterator;
     void constraints() {
-      REQUIRE(G, IncidenceGraph);
-      REQUIRE(in_edge_iterator, MultiPassInputIterator);
+      function_requires&lt; IncidenceGraph&lt;G&gt; &gt;();
+      function_requires&lt; MultiPassInputIterator&lt;in_edge_iterator&gt; &gt;();
 
       p = in_edges(v, g);
       e = *p.first;

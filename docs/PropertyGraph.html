@@ -176,9 +176,9 @@ The <tt>get()</tt> property map function must be constant time.
     typedef typename property_map&lt;G, Property&gt;::type Map;
     typedef typename property_map&lt;G, Property&gt;::const_type const_Map;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE2(Map, X, ReadWritePropertyMap);
-      REQUIRE2(const_Map, X, ReadablePropertyMap);
+      function_requires&lt; Graph&lt;G&gt; &gt;();
+      function_requires&lt; ReadWritePropertyMap&lt;Map, X&gt; &gt;();
+      function_requires&lt; ReadablePropertyMap&lt;const_Map, X&gt; &gt;();
 
       Map pmap = get(Property(), g);
       pval = get(Property(), g, x);

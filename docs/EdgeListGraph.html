@@ -144,8 +144,8 @@ must all return in constant time.
     typedef typename boost::graph_traits&lt;G&gt;::edge_iterator 
       edge_iterator;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE(edge_iterator, MultiPassInputIterator);
+      function_requires&lt; Graph&lt;G&gt; &gt;();
+      function_requires&lt; MultiPassInputIterator&lt;edge_iterator&gt; &gt;();
 
       p = edges(g);
       E = num_edges(g);
