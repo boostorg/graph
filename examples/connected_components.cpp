@@ -75,8 +75,7 @@ int main(int argc, char* argv[])
     typedef adjacency_list <vecS, vecS, undirectedS, VertexProperty> Graph;
     typedef Graph::vertex_descriptor Vertex;
 
-    const int N = 6;
-    Graph G(N);
+    Graph G;
     add_edge(0, 1, G);
     add_edge(1, 4, G);
     add_edge(4, 0, G);
@@ -102,8 +101,7 @@ int main(int argc, char* argv[])
       property< vertex_finish_time_t, int,
         property< vertex_color_t, default_color_type > > > VertexProperty;
     typedef adjacency_list< vecS, vecS, directedS, VertexProperty >  Graph;
-    const int N = 6;
-    Graph G(N);
+    Graph G;
     add_edge(0, 1, G);
     add_edge(1, 1, G);
     add_edge(1, 3, G);
