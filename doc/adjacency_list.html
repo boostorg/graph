@@ -745,10 +745,8 @@ add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
 Adds edge <i>(u,v)</i> to the graph and returns the edge descriptor
 for the new edge. For graphs that do not allow parallel edges, if the
 edge is already in the graph then a duplicate will not be added and
-the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
-<i>v</i> are descriptors for the same vertex (creating a self loop)
-and the graph is undirected, then the edge will not be added and the
-flag will be <TT>false</TT>.  When the flag is <TT>false</TT>, the
+the <TT>bool</TT> flag will be <TT>false</TT>. When the flag is
+<TT>false</TT>, the
 returned edge descriptor points to the already existing edge.
 
 <p>
