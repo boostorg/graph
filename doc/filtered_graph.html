@@ -52,13 +52,13 @@ weight. We will keep all edges with positive edge weight.
 First, we create a predicate function object.
 
 <PRE>
-template <typename EdgeWeightMap>
+template &lt;typename EdgeWeightMap&gt;
 struct positive_edge_weight {
   positive_edge_weight() { }
   positive_edge_weight(EdgeWeightMap weight) : m_weight(weight) { }
-  template <typename Edge>
+  template &lt;typename Edge&gt;
   bool operator()(const Edge& e) const {
-    return 0 < get(m_weight, e);
+    return 0 &lt; get(m_weight, e);
   }
   EdgeWeightMap m_weight;
 };
