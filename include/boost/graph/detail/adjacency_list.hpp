@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.19  2000/09/25 15:57:46  jsiek
+// some stlport debug mode fixes and some added docs
+//
 // Revision 1.18  2000/09/25 14:49:48  david_abrahams
 // remove unused args to suppress warnings
 //
@@ -211,11 +214,13 @@ namespace boost {
 
 #else
     template <class Vertex, class OutEdgeIter, class Graph>
-    struct bidir_adjacency_iterator {
+    struct bidir_adjacency_iterator
+      : public boost::iterator<std::forward_iterator_tag, Vertex, std::ptrdiff_t, Vertex*, Vertex>
+    {
     private:
       typedef bidir_adjacency_iterator self;
     public:
-      typedef ptrdiff_t difference_type;
+      typedef std::ptrdiff_t difference_type;
       typedef std::forward_iterator_tag iterator_category;
       typedef Vertex* pointer;
       typedef Vertex reference;
