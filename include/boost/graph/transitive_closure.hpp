@@ -145,8 +145,8 @@ namespace boost {
       //  where succ(v) is the set of all transitive succesors of v
       //  if succ union takes linear time, this is clearly
       //  0(n*e) algorithm.
-      //  Different representation for succ impvored averange
-      //  performance, but not worst case behaviour.
+      //  Different representations for succ improve average
+      //  performance, but not the worst case behaviour.
       //  In this case, chain decomposition is used -- division
       //  of V into disjoint pathes C, where vertices in each
       //  path are topologically ordered. So, succ(u) will
@@ -232,7 +232,7 @@ namespace boost {
 
   /** Computes transitive closure of graph g. The algorithm used has
     worst-case complexity 0(ne) and averange complexity on G(n, p) 
-    graphs is O(n ln(np)/p). Note: algorithm temporary removed all
+    graphs is O(n^2 ln(np)). Note: algorithm temporary removed all
     the edges, so any information assosiated with edges is lost.
   */
   template<class G>
@@ -307,7 +307,7 @@ namespace boost {
     cout << "Its transitive closure is\n" << multiline << cg << endl;
 #endif
 
-    // Create needed edges in original graph.
+    // Create needed edges in the original graph.
     // The complexity of the following code is due to fact that we don't
     // want *reflexive* transitive closure to be computed, but rather
     // ordinary one.    
