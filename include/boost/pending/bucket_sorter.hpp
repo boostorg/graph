@@ -40,12 +40,12 @@ namespace boost {
     typedef typename std::vector<value_type>::size_type size_type;
     
     bucket_sorter(size_type _length, bucket_type _max_bucket, 
-		  const Bucket& _bucket = Bucket(), const ID& _id = ID()) 
+                  const Bucket& _bucket = Bucket(), const ID& _id = ID()) 
       : head(_max_bucket, invalid_value(size_type())),
-	next(_length, invalid_value(value_type())), 
-	prev(_length, invalid_value(value_type())),
-	id_to_value(_length),
-	bucket(_bucket), id(_id) { }
+        next(_length, invalid_value(value_type())), 
+        prev(_length, invalid_value(value_type())),
+        id_to_value(_length),
+        bucket(_bucket), id(_id) { }
     
     void remove(const value_type& x) {
       const size_type i = id[x];
@@ -54,12 +54,12 @@ namespace boost {
     
       //check if i is the end of the bucket list 
       if ( next_node != invalid_value(size_type()) )
-	prev[next_node] = prev_node; 
+        prev[next_node] = prev_node; 
       //check if i is the begin of the bucket list
       if ( prev_node != invalid_value(size_type()) )
-	next[prev_node] = next_node;
+        next[prev_node] = next_node;
       else //need update head of current bucket list
-	head[ bucket[x] ] = next_node;
+        head[ bucket[x] ] = next_node;
     }
 
     void push(const value_type& x) {
@@ -87,36 +87,36 @@ namespace boost {
     class stack {
     public:
       stack(bucket_type _bucket_id, Iter h, Iter n, Iter p, IterV v,
-	    const ID& _id = ID() )
+            const ID& _id = ID() )
       : bucket_id(_bucket_id), head(h), next(n), prev(p), value(v), id(_id) {}
       
       void push(const value_type& x) {
-	const size_type new_head = id[x];
-	const size_type current = head[bucket_id];
-	if ( current != invalid_value(size_type()) )
-	  prev[current] = new_head;
-	prev[new_head] = invalid_value(size_type());
-	next[new_head] = current;
-	head[bucket_id] = new_head;
+        const size_type new_head = id[x];
+        const size_type current = head[bucket_id];
+        if ( current != invalid_value(size_type()) )
+          prev[current] = new_head;
+        prev[new_head] = invalid_value(size_type());
+        next[new_head] = current;
+        head[bucket_id] = new_head;
       }
       
       void pop() {
-	size_type current = head[bucket_id];
-	size_type next_node = next[current];
-	head[bucket_id] = next_node;
-	if ( next_node != invalid_value(next_node) )
-	  prev[next_node] = invalid_value(next_node);
+        size_type current = head[bucket_id];
+        size_type next_node = next[current];
+        head[bucket_id] = next_node;
+        if ( next_node != invalid_value(next_node) )
+          prev[next_node] = invalid_value(next_node);
       }
       
       value_type& top() {
-	return value[ head[bucket_id] ];
+        return value[ head[bucket_id] ];
       }
       const value_type& top() const {
-	return value[ head[bucket_id] ];
+        return value[ head[bucket_id] ];
       }
       
       bool empty() const {
-	return head[bucket_id] == invalid_value(size_type());
+        return head[bucket_id] == invalid_value(size_type());
       }
       
     private:
@@ -130,7 +130,7 @@ namespace boost {
     
     stack operator[](const bucket_type& i) {
       return stack(i, head.begin(), next.begin(), prev.begin(),
-		   id_to_value.begin(), id );
+                   id_to_value.begin(), id );
     }
     
   protected:

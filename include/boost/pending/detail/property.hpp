@@ -14,30 +14,30 @@ namespace boost {
     struct property_value_dispatch<1> {
       template <class Property, class T, class Tag>
       static T& get_value(Property& p, T, Tag) {
-	return p.m_value; 
+        return p.m_value; 
       }
       template <class Property, class T, class Tag>
       static const T& const_get_value(const Property& p, T, Tag) {
-	return p.m_value; 
+        return p.m_value; 
       }
     };
     template <>
     struct property_value_dispatch<0> {
       template <class Property, class T, class Tag>
       static T& get_value(Property& p, T t, Tag tag) {
-	typedef typename Property::next_type Next;
-	typedef typename Next::tag_type Next_tag;
-	enum { match = int(Next_tag::num) == int(Tag::num) };
-	return property_value_dispatch<match>
-	  ::get_value(static_cast<Next&>(p), t, tag);
+        typedef typename Property::next_type Next;
+        typedef typename Next::tag_type Next_tag;
+        enum { match = int(Next_tag::num) == int(Tag::num) };
+        return property_value_dispatch<match>
+          ::get_value(static_cast<Next&>(p), t, tag);
       }
       template <class Property, class T, class Tag>
       static const T& const_get_value(const Property& p, T t, Tag tag) {
-	typedef typename Property::next_type Next;
-	typedef typename Next::tag_type Next_tag;
-	enum { match = int(Next_tag::num) == int(Tag::num) };
-	return property_value_dispatch<match>
-	  ::const_get_value(static_cast<const Next&>(p), t, tag);
+        typedef typename Property::next_type Next;
+        typedef typename Next::tag_type Next_tag;
+        enum { match = int(Next_tag::num) == int(Tag::num) };
+        return property_value_dispatch<match>
+          ::const_get_value(static_cast<const Next&>(p), t, tag);
       }
     };
 
@@ -90,22 +90,22 @@ namespace boost {
     struct recursive_extract {
       template <class TagValueAList, class Tag1>
       struct bind {
-	typedef typename TagValueAList::first_type AListFirst;
-	typedef typename AListFirst::first_type Tag2;
-	typedef typename AListFirst::second_type Value;
-	enum { tag1 = Tag1::num, tag2 = Tag2::num };
+        typedef typename TagValueAList::first_type AListFirst;
+        typedef typename AListFirst::first_type Tag2;
+        typedef typename AListFirst::second_type Value;
+        enum { tag1 = Tag1::num, tag2 = Tag2::num };
 
-	typedef typename TagValueAList::second_type Next;
-	typedef typename ev_selector<Next>::type Extractor;
-	typedef typename boost::ct_if< tag1==tag2, Value, 
-	  typename Extractor::template bind<Next,Tag1>::type
-	>::type type;
+        typedef typename TagValueAList::second_type Next;
+        typedef typename ev_selector<Next>::type Extractor;
+        typedef typename boost::ct_if< tag1==tag2, Value, 
+          typename Extractor::template bind<Next,Tag1>::type
+        >::type type;
       };
     };
     struct end_extract {
       template <class AList, class Tag1>
       struct bind {
-	typedef error_property_not_found type;
+        typedef error_property_not_found type;
       };
     };
 #endif //!defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION

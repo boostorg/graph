@@ -191,7 +191,7 @@ namespace boost {
 
   template <class AssociativeContainer, class T>
   void erase_dispatch(AssociativeContainer& c, const T& x, 
-		      associative_container_tag)
+                      associative_container_tag)
   {
     c.erase(x);
   }

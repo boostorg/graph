@@ -34,8 +34,8 @@ protected:
 public:
 
   fibonacci_heap(size_type n, 
-		 const Compare& cmp, 
-		 const ID& id = identity_property_map())
+                 const Compare& cmp, 
+                 const ID& id = identity_property_map())
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
 #ifdef BOOST_NO_STDC_NAMESPACE
@@ -75,45 +75,45 @@ public:
       if (_degree[_root] == 0) {
         v = _right[_root];
       } else {
-	w = _child[_root];
-	v = _right[w];
-	_right[w] = _right[_root];
-	for (w = v; w != _right[_root]; w = _right[w])
-	  _p[w] = nil();
+        w = _child[_root];
+        v = _right[w];
+        _right[w] = _right[_root];
+        for (w = v; w != _right[_root]; w = _right[w])
+          _p[w] = nil();
       }
       while (v != _root) {
-	w = _right[v];
-	add_tree_to_new_roots(v, new_roots.begin(), h);
-	v = w;
+        w = _right[v];
+        add_tree_to_new_roots(v, new_roots.begin(), h);
+        v = w;
       }
       rebuild_root_list(new_roots.begin(), h);
     }
   }
   // 39
   inline void add_tree_to_new_roots(size_type v, 
-				    LinkIter new_roots,
-				    int& h)
+                                    LinkIter new_roots,
+                                    int& h)
   {
     int r;
     size_type u;
     r = _degree[v];
     while (1) {
       if (h < r) {
-	do { 
-	  ++h; 
-	  new_roots[h] = (h == r ? v : nil());
-	} while (h < r);
-	break;
+        do { 
+          ++h; 
+          new_roots[h] = (h == r ? v : nil());
+        } while (h < r);
+        break;
       }
       if (new_roots[r] == nil()) {
-	new_roots[r] = v;
-	break;
+        new_roots[r] = v;
+        break;
       }
       u = new_roots[r];
       new_roots[r] = nil();
       if (_compare(_key[u], _key[v])) {
-	_degree[v] = r;
-	std::swap(u, v);
+        _degree[v] = r;
+        std::swap(u, v);
       }
       make_child(u, v, r);
       ++r;
@@ -147,15 +147,15 @@ public:
       _root = u;
       for (h--; h >= 0; --h)
         if (new_roots[h] != nil()) {
-	  w = new_roots[h];
-	  _left[w] = v;
-	  _right[v] = w;
-	  if (_compare(_key[w], d)) {
-	    _root = w;
-	    d = _key[w];
-	  }
-	  v = w;
-	}
+          w = new_roots[h];
+          _left[w] = v;
+          _right[v] = w;
+          if (_compare(_key[w], d)) {
+            _root = w;
+            d = _key[w];
+          }
+          v = w;
+        }
       _right[v] = u;
       _left[u] = v;
     }
@@ -172,22 +172,22 @@ public:
         _root = v;
     } else if (_compare(d, _key[_root]))
       while (1) {
-	size_type r = _degree[p];
-	if (r >= 2)
-	  remove_from_family(v, p);
-	insert_into_forest(v, d);
-	size_type pp = _p[p];
-	if (pp == nil()) {
-	  --_degree[p];
-	  break;
-	}
-	if (_mark[p] == false) {
-	  _mark[p] = true;
-	  break;
-	} else
-	  --_degree[p];
-	v = p;
-	p = pp;
+        size_type r = _degree[p];
+        if (r >= 2)
+          remove_from_family(v, p);
+        insert_into_forest(v, d);
+        size_type pp = _p[p];
+        if (pp == nil()) {
+          --_degree[p];
+          break;
+        }
+        if (_mark[p] == false) {
+          _mark[p] = true;
+          break;
+        } else
+          --_degree[p];
+        v = p;
+        p = pp;
       }
   }
 
@@ -199,8 +199,8 @@ public:
       size_type i = _root;
       do {
         print_recur(i, os);
-	os << endl;
-	i = _right[i];
+        os << endl;
+        i = _right[i];
       } while (i != _root);
     }
   }
@@ -230,13 +230,13 @@ protected:
     if (x != nil()) {
       os << x;
       if (_child[x] != nil()) {
-	os << "(";
-	size_type i = _child[x];
-	do {
-	  print_recur(i, os); os << " ";
-	  i = _right[i];
-	} while (i != _child[x]);
-	os << ")";
+        os << "(";
+        size_type i = _child[x];
+        do {
+          print_recur(i, os); os << " ";
+          i = _right[i];
+        } while (i != _child[x]);
+        os << ")";
       }
     }
   }
