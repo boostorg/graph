@@ -72,40 +72,27 @@
 </PRE>
 
 <P>
-
 The <tt>edmunds_karp_flow()</tt> function calculates the maximum flow
 of a network. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  The calculate
+Flow Algorithms</a> for a description of maximum flow.  The calculated
 maximum flow will be the return value of the function. The function
 also calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. A flow network is shown in <a
-href="#fig:max-flow">Figure 1</a>. Vertex <i>A</i> is the source
-vertex and <i>H</i> is the target vertex.
+<i>r(u,v) = c(u,v) - f(u,v)</i>. 
 
-<P></P>
-<DIV ALIGN="center"><A NAME="fig:max-flow"></A><A NAME="1509"></A>
-<TABLE>
-<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG> A Maximum Flow
-Network. Edges are labeled with the flow and capacity
-values.</CAPTION>
-<TR><TD><IMG SRC="./figs/max-flow.gif"></TD></TR>
-</TABLE>
-</DIV><P></P>
-
+<p>
 There are several special requirements on the input graph and property
 map parameters for this algorithm. First, the directed graph
 <i>G=(V,E)</i> that represents the network must be augmented to
 include the reverse edge for every edge in <i>E</i>.  That is, the
-input graph should be <i>G<sub>in</sub> = (V,{E U E^T})</i>. The
-<tt>ReverseEdgeMap</tt> argument <tt>rev</tt> must map each edge in the
-original graph to its reverse edge, that is <i>(u,v) -> (v,u)</i> for
-all <i>(u,v)</i> in <i>E</i>. The <tt>CapacityEdgeMap</tt> argument
-<tt>cap</tt> must map each edge in <i>E</i> to a positive number, and
-each edge in <i>E<sup>T</sup></i> to 0.  Another words, the capacity map
-should satisfy these constraints: <i>c(u,v) > 0</i> and <i>c(v,u) =
-0</i> for each <i>(u,v)</i> in <i>E</i>.
+input graph should be <i>G<sub>in</sub> = (V,{E U
+E<sup>T</sup>})</i>. The <tt>ReverseEdgeMap</tt> argument <tt>rev</tt>
+must map each edge in the original graph to its reverse edge, that is
+<i>(u,v) -> (v,u)</i> for all <i>(u,v)</i> in <i>E</i>. The
+<tt>CapacityEdgeMap</tt> argument <tt>cap</tt> must map each edge in
+<i>E</i> to a positive number, and each edge in <i>E<sup>T</sup></i>
+to 0.
 
 <H3>Where Defined</H3>
 
@@ -175,7 +162,7 @@ following):
   the value type must be a model of <a
   href="./ColorValue.html">ColorValue</a>.</li>
 
- <li> <tt>PredEdgeMap pred</tt> &nbsp:(WORK) <br>
+ <li> <tt>PredEdgeMap pred</tt> &nbsp;(WORK) <br>
   Use by the algorithm to store augmenting paths. The map must be a
   model of mutable <a
   href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>.
@@ -189,7 +176,8 @@ following):
 
 This reads in an example maximum flow problem (a graph with edge
 capacities) from a file in the DIMACS format. The source for this
-example can be found in <tt>examples/edmunds_karp_max_flow.cpp</tt>.
+example can be found in <a
+href="../example/edmunds_karp_max_flow.cpp"><tt>example/edmunds_karp_max_flow.cpp</tt></a>.
 
 <pre>
 #include &lt;boost/config.hpp&gt;
@@ -275,3 +263,19 @@ f 6 7 1
 
 </BODY>
 </HTML> 
+<!--  LocalWords:  HTML Siek Edmunds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
+ -->
+<!--  LocalWords:  gif ALT BR sec edmunds karp TT DIV CELLPADDING TR TD PRE lt
+ -->
+<!--  LocalWords:  typename VertexListGraph CapacityEdgeMap ReverseEdgeMap gt
+ -->
+<!--  LocalWords:  ResidualCapacityEdgeMap VertexIndexMap src rev ColorMap pred
+ -->
+<!--  LocalWords:  PredEdgeMap tt href html hpp ul li nbsp br LvaluePropertyMap
+ -->
+<!--  LocalWords:  num ColorValue DIMACS cpp pre config iostream dimacs int std
+ -->
+<!--  LocalWords:  namespace vecS directedS cout endl iter ei HR valign nowrap
+ -->
+<!--  LocalWords:  jeremy siek htm Univ mailto jsiek lsc edu
+ -->
