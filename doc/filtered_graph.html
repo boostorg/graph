@@ -41,7 +41,9 @@ original graph. The lifetime of the original graph must extend past
 any use of the filtered graph. The filtered graph does not change the
 structure of the original graph, though vertex and edge properties of
 the original graph can be changed through property maps of the
-filtered graph.
+filtered graph. Vertex and edge descriptors of the filtered graph are
+the same as, and interchangeable with, the vertex and edge descriptors
+of the original graph.
 <P>
 
 <H3>Example</H3>
@@ -174,15 +176,19 @@ smaller concepts than these, then so does the filtered graph.
 
 <tt>graph_traits&lt;filtered_graph&gt;::vertex_descriptor</tt>
 <br><br>
+
 The type for the vertex descriptors associated with the
-<TT>filtered_graph</TT>.
+<TT>filtered_graph</TT>, which is the same type as the
+<tt>vertex_descriptor</tt> for the original <tt>Graph</tt>.
+
 
 <hr>
 
 <tt>graph_traits&lt;filtered_graph&gt;::edge_descriptor</tt><br>
 <br><br>
 The type for the edge descriptors associated with the
-<TT>filtered_graph</TT>.
+<TT>filtered_graph</TT>, which is the same type as the
+<tt>edge_descriptor</tt> for the original <tt>Graph</tt>.
 
 <hr>
 
