@@ -204,8 +204,9 @@ namespace boost {
   template <typename Graph1, typename Graph2>
   bool is_isomorphic(const Graph1& g1, const Graph2& g2)
   {
-    std::vector<int> f;
-    return isomorphism(g1, g2, f);
+    typedef typename graph_traits<Graph1>::vertices_size_type size_type;
+    std::vector<int> f(num_vertices(g1));
+    return isomorphism(g1, g2, f.begin());
   }
 
 
