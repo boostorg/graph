@@ -65,8 +65,7 @@ main(int argc, char* argv[])
                     Pair(4,3), Pair(5,5) };
   Graph G(6, edges, edges + 7);
 
-  boost::vertex_property_accessor<Graph,vertex_index>::type 
-    id = get_vertex_property_accessor(G, vertex_index());
+  boost::property_map<Graph, vertex_index>::type id = get(vertex_index(), G);
 
   typedef std::vector< Vertex > container;
   container c;

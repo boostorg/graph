@@ -121,8 +121,8 @@ int main(int,char*[])
   Graph g(N, used_by, used_by + nedges, weights);
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
-  typedef vertex_property_accessor<Graph, vertex_color>::type Color;
-  Color color = get_vertex_property_accessor(g, vertex_color());
+  typedef property_map<Graph, vertex_color>::type Color;
+  Color color = get(vertex_color(), g);
 
   // Determine ordering for a full recompilation
   {
@@ -144,8 +144,7 @@ int main(int,char*[])
     // Set up the necessary graph properties.
     vector<int> time(N, 0);
     typedef vector<int>::iterator Time;
-    typedef edge_property_accessor<Graph, edge_weight>::type Weight;
-    Weight weight = get_edge_property_accessor(g, edge_weight());
+    property_map<Graph, edge_weight>::type weight = get(edge_weight(), g);
 
     // Calculate the in_degree for each vertex.
     vector<int> in_degree(N, 0);
@@ -199,8 +198,8 @@ int main(int,char*[])
 
   // are there any cycles in the graph?
   {
-    typedef vertex_property_accessor<Graph,vertex_color>::type Color;
-    Color color = get_vertex_property_accessor(g, vertex_color());
+    typedef property_map<Graph,vertex_color>::type Color;
+    Color color = get(vertex_color(), g);
     bool has_cycle = false;
     cycle_detector<Color> vis(color, has_cycle);
     depth_first_search(g, vis);

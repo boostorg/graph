@@ -64,8 +64,9 @@ An example of a directed graph.</CAPTION>
 <P>
 In the following sections we will use the BGL to construct this
 example graph and manipulate it in various ways. The complete source
-code for this example can be found in <TT>quick_tour.cpp</TT>.  Each
-of the following sections discusses a &quot;slice&quot; of this
+code for this example can be found in <a
+href="../examples/quick_tour.cpp"><TT>examples/quick_tour.cpp</TT></a>.
+Each of the following sections discusses a &quot;slice&quot; of this
 example file.  Excerpts from the output of the example program will
 also be listed.
 
@@ -83,9 +84,10 @@ parameters, though here we only fill in the first three parameters and
 use the defaults for the remaining three.  The first two template
 arguments (<TT>vecS, vecS</TT>) determine the data structure used to
 represent the out-edges for each vertex in the graph and the data
-structure used to represent the graph's vertex set (see section
-[choosing-graph-type] for information about the tradeoffs of the
-different data structures). The third argument,
+structure used to represent the graph's vertex set (see section <a
+href="using_adjacency_list.html#sec:choosing-graph-type">Choosing the
+<TT>Edgelist</TT> and <TT>VertexList</TT></a> for information about
+the tradeoffs of the different data structures). The third argument,
 <TT>bidirectionalS</TT>, selects a directed graph that provides access
 to both out and in-edges. The other options for the third argument are
 <TT>directedS</TT> which selects a directed graph with only out-edges,
@@ -168,11 +170,11 @@ graph type, the <TT>graph_traits</TT> class will provide access to the
 <P>
 The following example prints out the ID for each of the vertices in
 the graph. All vertex and edge properties, including ID, are accessed
-via property accessor objects.  The <TT>vertex_property_accessor</TT>
+via property map objects.  The <TT>property_map</TT>
 class is used to obtain the property accessor type for a specific
-property (specified by <TT>vertex_index</TT>, one of the BGL predefined
-tags) and the <TT>get_vertex_property()</TT> function returns the
-actual property accessor object.
+property (specified by <TT>vertex_index</TT>, one of the BGL
+predefined tags) and function call <TT>get(vertex_index(), g)</TT>
+returns the actual property map object.
 
 <P>
 <PRE>
@@ -182,8 +184,8 @@ actual property accessor object.
     // ...
 
     // get the property accessor for vertex ID's
-    typedef vertex_property_accessor&lt;Graph, vertex_index&gt;::type ID;
-    ID id = get_vertex_property(g, vertex_index());
+    typedef property_map&lt;Graph, vertex_index&gt;::type ID;
+    ID id = get(vertex_index(), g);
 
     std::cout &lt;&lt; "vertices(g) = ";
     typedef graph_traits&lt;Graph&gt;::vertex_iterator vertex_iter;
@@ -347,8 +349,8 @@ the source-target pairs for each out-edge of vertex <TT>v</TT>.
     void operator()(const Vertex&amp; v) const
     {
       typedef graph_traits&lt;Graph&gt; GraphTraits;
-      typename vertex_property_accessor&lt;Graph, vertex_index&gt;::type 
-        id = get_vertex_property(g, vertex_index());
+      typename property_map&lt;Graph, vertex_index&gt;::type 
+        id = get(vertex_index(), g);
 
       std::cout &lt;&lt; "out-edges: ";
       typename GraphTraits::out_edge_iterator out_i, out_end;

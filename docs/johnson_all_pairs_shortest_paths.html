@@ -99,8 +99,7 @@ HREF="bibliography.html#clr90">8</A>]. The resulting distance matrix
 
   Graph g(V, edge_array, edge_array + E);
 
-  edge_property_accessor&lt;Graph,edge_weight&gt;::type
-    w = get_edge_property(g, edge_weight());
+  property_map&lt;Graph,edge_weight&gt;::type w = get(edge_weight(), g);
 
   int weights[] = { 0, 0, 0, 0, 0,
                     3, -4, 8,
@@ -121,8 +120,7 @@ HREF="bibliography.html#clr90">8</A>]. The resulting distance matrix
   int D[V][V];
 
   johnson_all_pairs_shortest_paths
-    (g, D, d.begin(), h.begin(), w, c.begin(), 
-     get_vertex_property(g, vertex_index()));
+    (g, D, d.begin(), h.begin(), w, c.begin(), get(vertex_index(), g));
 
   // output matrix D ...
 </PRE>

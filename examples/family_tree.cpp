@@ -77,13 +77,13 @@ int main(int argc, char* argv[])
   add_edge(G, Rick, Margaret);
   add_edge(G, John, Benjamin);
 
-  graph_traits< adjacency_list<> >::vertex_iterator i, end;
-  graph_traits< adjacency_list<> >::adjacency_iterator ai, a_end;
+  graph_traits<adjacency_list<> >::vertex_iterator i, end;
+  graph_traits<adjacency_list<> >::adjacency_iterator ai, a_end;
 
-  vertex_property_accessor< adjacency_list<>, vertex_index>::type
-    id = get_vertex_property_accessor(G, vertex_index());
+  property_map<adjacency_list<>, vertex_index>::type
+    id = get(vertex_index(), G);
 
-  for(tie(i,end) = vertices(G); i != end; ++i) {
+  for(tie(i, end) = vertices(G); i != end; ++i) {
     cout << name[get(id, *i)];
     tie(ai, a_end) = adjacent_vertices(*i, G);
     if (ai == a_end)

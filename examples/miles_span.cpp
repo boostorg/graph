@@ -106,16 +106,16 @@ int main(int argc, char* argv[])
    long sp_length = 0;
 
    // Use the "z" utility field for distance.
-   typedef vertex_property_accessor<Graph*, z_tag<long> >::type Distance;
-   Distance d = get_vertex_property_accessor(g, z_tag<long>());
+   typedef property_map<Graph*, z_property<long> >::type Distance;
+   Distance d = get(z_property<long>(), g);
    total_length_visitor<Distance> length_vis(sp_length, d);
 
    prim_minimum_spanning_tree(g, vertex(0,g), 
-			      get_vertex_property_accessor(g, z_tag<long>()),
-			      get_edge_property_accessor(g, length_tag()), 
+			      get(z_property<long>(), g),
+			      get(edge_length(), g), 
 			      // Use the "y" utility field for color.
-			      get_vertex_property_accessor(g, y_tag<long>()),
-			      get_vertex_property_accessor(g, vertex_index()), 
+			      get(y_property<long>(), g),
+			      get(vertex_index(), g), 
 			      length_vis);
 
    printf("  and its minimum spanning tree has length %ld.\n", sp_length);

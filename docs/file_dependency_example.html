@@ -228,8 +228,8 @@ accessor for the internal weight property.
   std::vector&lt;int&gt; time(N, 0);
   typedef std::vector&lt;int&gt;::iterator Time;
   using boost::edge_weight;
-  typedef boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type Weight;
-  Weight weight = get_edge_property_accessor(g, edge_weight());
+  typedef boost::property_map&lt;Graph, edge_weight&gt;::type Weight;
+  Weight weight = get(edge_weight(), g);
 </PRE>
 
 <P>

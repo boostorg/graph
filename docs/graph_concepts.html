@@ -105,13 +105,13 @@ each of the concepts. The notation used in the table is as follows.
 </TR>
 
 <TR>
-<TD><tt>Tag</tt></TD>
-<TD>An empty class used as a tag to specify the property.</TD>
+<TD><tt>Property</tt></TD>
+<TD>A type used to specify a vertex or edge property.</TD>
 </TR>
 
 <TR>
-<TD><tt>tag</tt></TD>
-<TD>An object of type <tt>Tag</tt>.</td>
+<TD><tt>property</tt></TD>
+<TD>An object of type <tt>Property</tt>.</td>
 </TR>
 
 </table>
@@ -323,44 +323,21 @@ number of edges in the graph. </TD>
 </TR>
 <!---------------------------------------------------------------->
 <TR><TD ALIGN="LEFT" COLSPAN=2>  
-<a href="./VertexPropertyGraph.html">VertexPropertyGraph</a> refines
+<a href="./PropertyGraph.html">PropertyGraph</a> refines
   Graph</TD>
 </TR>
 <TR><TD ALIGN="LEFT">  
-<TT>boost::vertex_property_accessor&lt;G,Tag&gt;::type</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Type for mutable
-  vertex property accessors. </TD>
+<TT>boost::property_map&lt;G, Property&gt;::type</TT> </TD>
+<TD ALIGN="LEFT" VALIGN="TOP">Type for a mutable property map.</TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>boost::vertex_property_accessor&lt;G,Tag&gt;::const_type</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Type for
-  non-mutable vertex property accessors. </TD>
+<TT>boost::property_map&lt;G, Property&gt;::const_type</TT> </TD>
+<TD ALIGN="LEFT" VALIGN="TOP">Type for a non-mutable property map.</TD>
 </TR>
 <TR><TD ALIGN="LEFT"> 
-<TT>get_vertex_property_accessor(g, tag)</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Function to get
-  a vertex property accessor. </TD>
+<TT>get(property, g)</TT> </TD>
+<TD ALIGN="LEFT" VALIGN="TOP"> Function to get a property map. </TD>
 </TR>
-<!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
-<a href="./EdgePropertyGraph.html">EdgePropertyGraph</a> refines Graph</TD>
-</TR>
-<TR><TD ALIGN="LEFT">  
-<TT>boost::edge_property_accessor&lt;G,Tag&gt;::type</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Type for mutable
-  edge property accessors. </TD>
-</TR>
-<TR><TD ALIGN="LEFT"> 
-<TT>boost::edge_property_accessor&lt;G,Tag&gt;::const_type</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Type for
-  non-mutable edge property accessors. </TD>
-</TR>
-<TR><TD ALIGN="LEFT"> 
-<TT>get_edge_property_accessor(g, tag)</TT> </TD>
-<TD ALIGN="LEFT" VALIGN="TOP"> Function to get an
-  edge property accessor. </TD>
-</TR>
-</TABLE>
   
 </TD></TR>
 </TABLE>
@@ -450,8 +427,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in a directed graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    edge_property_accessor&lt;DirectedGraph, edge_weight&gt;::type
-      weight = get_edge_property(digraph, edge_weight());
+    property_map&lt;DirectedGraph, edge_weight&gt;::type
+      weight = get(edge_weight(), digraph);
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }
@@ -467,8 +444,8 @@ of <i>(v,u)</i> since they are the same edge.
     std::cout &lt;&lt; "in an undirected graph is ";
     std::cout &lt;&lt; "(u,v) == (v,u) ? " &lt;&lt; (e1 == e2) &lt;&lt; std::endl;
 
-    edge_property_accessor&lt;UndirectedGraph, edge_weight&gt;::type
-      weight = get_edge_property(undigraph, edge_weight());
+    property_map&lt;UndirectedGraph, edge_weight&gt;::type
+      weight = get(edge_weight(), undigraph);
     cout &lt;&lt; "weight[(u,v)] = " &lt;&lt; get(weight, e1) &lt;&lt; endl;
     cout &lt;&lt; "weight[(v,u)] = " &lt;&lt; get(weight, e2) &lt;&lt; endl;
   }

@@ -61,15 +61,18 @@ using namespace boost;
 
 // create a tag for our new property
 // the "num" is only needed for a VC++ workaround
-struct first_vertex_name { enum { num = 300 }; };
+struct vertex_first_name { 
+  typedef vertex_property_tag kind;
+  enum { num = 300 }; 
+};
 
 template <class EdgeIter, class Graph>
 void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
 {
   // Access the propety acessor type for this graph
-  typedef typename vertex_property_accessor<Graph, first_vertex_name>
+  typedef typename property_map<Graph, vertex_first_name>
     ::const_type NamePA;
-  NamePA name = get_vertex_property_accessor(G, first_vertex_name());
+  NamePA name = get(vertex_first_name(), G);
 
   typedef typename boost::property_traits<NamePA>::value_type NameType;
 
@@ -88,10 +91,10 @@ int
 main()
 {
   {
-    // Create the plugin type. We will use std::string to store the 
-    // first name's.
-    typedef plugin<first_vertex_name,std::string> FirstNamePlugin;
-    typedef adjacency_list<vecS, vecS, directedS, FirstNamePlugin> MyGraphType;
+    // Create the graph, and specify that we will use std::string to
+    // store the first name's.
+    typedef adjacency_list<vecS, vecS, directedS, 
+      plugin<vertex_first_name, std::string> > MyGraphType;
     
     typedef pair<int,int> Pair;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
@@ -102,8 +105,8 @@ main()
     for (int i=0; i<11; ++i)
       add_edge(G, edge_array[i].first, edge_array[i].second);
 
-    vertex_property_accessor<MyGraphType,first_vertex_name>::type name
-      = get_vertex_property_accessor(G, first_vertex_name());
+    property_map<MyGraphType, vertex_first_name>::type name
+      = get(vertex_first_name(), G);
     
     boost::put(name, 0, "Jeremy");
     boost::put(name, 1, "Rich");

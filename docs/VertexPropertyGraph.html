@@ -23,8 +23,8 @@
 VertexPropertyGraph
 </H2>
 
-A VertexPropertyGraph is a graph that has some property associated
-with each of the vertices in the graph. As a given graph may have
+A PropertyGraph is a graph that has some property associated with each
+of the vertices or edges in the graph. As a given graph may have
 several properties associated with each vertex, a tag is used to
 identity which property is being accessed.  The graph provides a
 function which returns a property accessor object.
@@ -49,13 +49,13 @@ function which returns a property accessor object.
 </TR>
 
 <TR>
-<TD><tt>Tag</tt></TD>
-<TD>An empty class used as a tag to specify the property.</TD>
+<TD><tt>Property</tt></TD>
+<TD>A type that models the <a href="./Property.html">Property</a> concept.</TD>
 </TR>
 
 <TR>
-<TD><tt>tag</tt></TD>
-<TD>An object of type <tt>Tag</tt>.</td>
+<TD><tt>property</tt></TD>
+<TD>An object of type <tt>Property</tt>.</td>
 </TR>
 
 </table>
@@ -97,12 +97,12 @@ with a key type the same as the graph's vertex descriptor type.
 
 <tr>
 <td>Get Vertex Property Accessor Object </td>
-<td> <TT>get_vertex_property_accessor(g, tag)</TT> </td>
-<TD><TT>boost::vertex_property_accessor&lt;G, Tag&gt;::type</TT> 
-      if <TT>g</TT> is mutable and <TT>boost::vertex_property_accessor&lt;G, Tag&gt;::const_type</TT> otherwise.</TD>
+<td> <TT>get(property, g)</TT> </td>
+<TD><TT>boost::property_map&lt;G, Property&gt;::type</TT> 
+      if <TT>g</TT> is mutable and <TT>boost::property_map&lt;G, Property&gt;::const_type</TT> otherwise.</TD>
 <td>
-Returns the property accessor for the vertex property specified by the
-<tt>Tag</tt> type.
+Returns the property map object for the vertex property specified by the
+<tt>VertexProperty</tt> type.
 </td>
 </TR>
 

@@ -58,14 +58,10 @@ main()
   NameVertexMap actors;
   Graph g;
 
-  vertex_property_accessor<Graph, vertex_name>::type 
-    actor_name = get_vertex_property_accessor(g, vertex_name());
-  vertex_property_accessor<Graph, vertex_index>::type 
-    vertex_id = get_vertex_property_accessor(g, vertex_index());
-  edge_property_accessor<Graph, edge_name>::type 
-    connecting_movie = get_edge_property_accessor(g, edge_name());
-  edge_property_accessor<Graph, edge_weight>::type 
-    weight = get_edge_property_accessor(g, edge_weight());
+  property_map<Graph, vertex_name>::type actor_name = get(vertex_name(), g);
+  property_map<Graph, vertex_index>::type vertex_id = get(vertex_index(), g);
+  property_map<Graph, edge_name>::type connecting_movie = get(edge_name(), g);
+  property_map<Graph, edge_weight>::type weight = get(edge_weight(), g);
   
   string line;
   while (getline(datafile,line)) {
@@ -125,10 +121,8 @@ main()
     Vertex src = actors["Kevin Bacon"];
     
     dijkstra_shortest_paths
-      (g, src, bacon_number.begin(),
-       get_edge_property_accessor(g, edge_weight()),
-       color.begin(),
-       get_vertex_property_accessor(g, vertex_index()),
+      (g, src, bacon_number.begin(), get(edge_weight(), g),
+       color.begin(), get(vertex_index(), g),
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 

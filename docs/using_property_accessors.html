@@ -143,29 +143,26 @@ Interior Properties
 <P>
 A graph type that supports interior property storage (such as
 <TT>adjacency_list</TT>) provides access to its property accessor
-objects through the interface defined in <I>VertexPropertyGraph</I>
-and <I>EdgePropertyGraph</I>.  There are two functions,
-<TT>get_vertex_property_accessor()</TT> and
-<TT>get_edge_property_accessor()</TT> that get property
-accessors from graph objects. The first argument to these functions is
-the graph object and the second argument is the tag to specify which
-property you want to access. A graph type must document which
-properties (and therefore tags) it provides access to.  The type of
-the property accessor depends on the type of graph and the property
-being accessed. Two traits classes are defined that provide a generic
-way to deduce the property accessor type,
-<TT>vertex_property_accessor</TT> and
-<TT>edge_property_accessor</TT>. The follow code shows how one can
-obtain the property accessor for the distance and weight properties of
-some graph type.
+objects through the interface defined in <a
+href="./PropertyGraph.html">PropertyGraph</a>.  There is a function
+<TT>get(Property, g)</TT> that get property map objectgs from a
+graph. The first argument is the property type to specify which
+property you want to access and the second argument is the graph
+object.. A graph type must document which properties (and therefore
+tags) it provides access to.  The type of the property map depends on
+the type of graph and the property being mapped. A trait class is
+defined that provides a generic way to deduce the property map type:
+<TT>property_map</TT>. The following code shows how one can obtain the
+property map for the distance and weight properties of some graph
+type.
 
 <P>
 <PRE>
-  vertex_property_accessor&lt;Graph, vertex_distance&gt;::type d
-    = get_vertex_property_accessor(g, vertex_distance());
+  property_map&lt;Graph, vertex_distance&gt;::type d
+    = get(vertex_distance(), g);
 
-  edge_property_accessor&lt;Graph, edge_weight&gt;::type w
-    = get_edge_property_accessor(g, edge_weight());
+  property_map&lt;Graph, edge_weight&gt;::type w
+    = get(edge_weight(), g);
 </PRE>
 
 <P>
@@ -193,23 +190,19 @@ graph, so one would call Dijkstra's algorithm in the following way
 
 <P>
 <PRE>
-  dijkstra_shortest_paths(g, src, 
-    get_vertex_property_accessor(g, vertex_distance()),
-    get_edge_property_accessor(g, edge_weight()),
-    get_vertex_property_accessor(g, vertex_color()),
-    get_vertex_property_accessor(g, vertex_index()),
-    null_visitor());
+  dijkstra_shortest_paths(g, src,  get(vertex_distance(), g),
+    get(edge_weight(), g), get(vertex_color(), g),
+    get(vertex_index(), g),  ucs_visitor&lt;&gt;());
 </PRE>
 
 <P>
 Since it is somewhat cumbersome to specify all of the property
-accessors,  BGL provides several ``short-cut'' interfaces to each
+accessors, BGL provides several ``short-cut'' interfaces to each
 algorithm that assume some of the properties are interior and can be
-accessed via <TT>get_vertex_property_accessor()</TT> from the
-graph. Below we show a call to variant 1 of the
-<TT>dijkstra_shortest_paths</TT> algorithm, which assumes
-all of the properties are interior. This call is equivalent
-to the previous call to Dijkstra's algorithm.
+accessed via <TT>get(Property, g)</TT> from the graph. Below we show a
+call to variant 1 of the <TT>dijkstra_shortest_paths</TT> algorithm,
+which assumes all of the properties are interior. This call is
+equivalent to the previous call to Dijkstra's algorithm.
 
 <P>
 <PRE>
@@ -274,8 +267,8 @@ the flow and capacity values.
   // ...
 
   typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
-  typedef edge_property_accessor&lt;Graph,vertex_index&gt;::type EdgeID_PA;
-  EdgeID_PA edge_id = get_edge_property_accessor(G, vertex_index());
+  typedef property_map&lt;Graph,vertex_index&gt;::type EdgeID_PA;
+  EdgeID_PA edge_id = get(edge_index(), G);
 
   boost::random_access_iterator_property_accessor
     &lt;int*, int, int&amp;, EdgeID_PA&gt; 

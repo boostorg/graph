@@ -55,8 +55,7 @@ int main(int argc, char* argv[])
 
   std::vector<Graph::vertex_descriptor> p(num_vertices(G));
   prim_minimum_spanning_tree
-    (G, *(vertices(G).first),
-     get_vertex_property_accessor(G, vertex_distance()),
+    (G, *(vertices(G).first), get(vertex_distance(), G),
      make_ucs_visitor(record_predecessors(p.begin(), on_edge_relaxed())));
 
   for ( std::vector<Graph::vertex_descriptor>::iterator i = p.begin();

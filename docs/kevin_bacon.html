@@ -108,12 +108,9 @@ objects from the graph. The following code shows how this is done.
 
 <P>
 <PRE>
-  boost::vertex_property_accessor&lt;Graph, vertex_name&gt;::type 
-    actor_name = get_vertex_property_accessor(g, vertex_name());
-  boost::edge_property_accessor&lt;Graph, edge_name&gt;::type 
-    connecting_movie = get_edge_property_accessor(g, edge_name());
-  boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type 
-    weight = get_edge_property_accessor(g, edge_weight());
+  boost::property_map&lt;Graph, vertex_name&gt;::type actor_name = get(vertex_name(), g);
+  boost::property_map&lt;Graph, edge_name&gt;::type connecting_movie = get(edge_name(), g);
+  boost::property_map&lt;Graph, edge_weight&gt;::type weight = get(edge_weight(), g);
 </PRE>
 
 <P>
@@ -250,9 +247,7 @@ predecessors, since this is not part of the basic algorithm.
     
     dijkstra_shortest_paths
       (g, src, bacon_number.begin(),
-       get_edge_property_accessor(g, edge_weight()),
-       color.begin(),
-       get_vertex_property_accessor(g, vertex_index()),
+       get(edge_weight(), g), color.begin(), get(vertex_index(), g),
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 </PRE>

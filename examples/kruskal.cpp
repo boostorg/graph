@@ -66,8 +66,7 @@ int main(int argc, char* argv[])
 		    1, 1};
 
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-  edge_property_accessor<Graph,edge_weight>::type weight
-    = get_edge_property_accessor(G, edge_weight());
+  property_map<Graph, edge_weight>::type weight = get(edge_weight(), G);
 
   typedef std::vector<Edge> container;
   std::vector<Edge> spanning_tree_edges;

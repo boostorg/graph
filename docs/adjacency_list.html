@@ -94,8 +94,8 @@ href="../examples/family_tree.cpp"><tt>examples/family_tree.cpp</tt></a>.
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::vertex_iterator i, end;
   graph_traits&lt; adjacency_list&lt;&gt; &gt;::adjacency_iterator ai, a_end;
 
-  vertex_property_accessor< adjacency_list<>, vertex_index>::type
-    id = get_vertex_property_accessor(G, vertex_index());
+  property_map&lt;adjacency_list&lt;&gt;, vertex_index&gt;::type
+    id = get(vertex_index(), G);
 
   for(tie(i,end) = vertices(G); i != end; ++i) {
     cout &lt;&lt; name[get(id, *i)];
@@ -194,8 +194,7 @@ Properties such as color, distance, weight, and user-defined
 properties can be attached to the vertices and edges of the graph
 using plugins. The property values can be read from and written to via
 the property accessors provided by the graph. The property accessors
-are obtained via the <TT>get_vertex_property_accessor(g, tag)</TT> and
-<TT>get_edge_property_accessor(g, tag)</TT> functions.  How to use
+are obtained via the <TT>get(property, g)</TT> function.  How to use
 plugins is described in Section <A
 HREF="./using_adjacency_list.html#sec:adjacency-list-plugins">Plugins
 </A>. The property accessors are objects that implement the interface
@@ -210,12 +209,13 @@ href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyA
 concept.
 
 <P>
-If the <TT>VertexList</TT> of the graph is <TT>vecS</TT>, then the graph
-has a builtin ID vertex property accessed via the <TT>vertex_index</TT>.  The
-ID numbers fall in the range <TT>[0,num_vertices(g))</TT> and are
-contiguous. When a vertex is removed the ID's are adjusted so that
-they retain these properties. Some care must be taken when using these
-ID's to access external property storage.
+If the <TT>VertexList</TT> of the graph is <TT>vecS</TT>, then the
+graph has a builtin vertex indices accessed via the property map for
+the <TT>vertex_index</TT> property.  The indices fall in the range
+<TT>[0, num_vertices(g))</TT> and are contiguous. When a vertex is
+removed the indices are adjusted so that they retain these
+properties. Some care must be taken when using these indices to access
+exterior property storage.
 
 <P>
 
@@ -317,26 +317,15 @@ in the graph.
 </tr>
 
 <tr>
-<td><tt>vertex_property_accessor&lt;adjacency_list,
-Tag&gt;::type <br> vertex_property_accessor&lt;adjacency_list,
-Tag&gt;::const_type</tt></td>
-<td>
-The accessor type for vertex properties in the graph. The specific
-property is specified by the <TT>Tag</TT> template argument, and must
-match one of the properties specified in the <TT>VertexPlugin</TT>
-for the graph.
-</td>
-</tr>
-
-<tr>
 <td><tt>
-edge_property_accessor&lt;adjacency_list, Tag&gt;::type
-<br>edge_property_accessor&lt;adjacency_list, Tag&gt;::const_type</tt></td>
+property_map&lt;adjacency_list, Property&gt;::type
+<br>property_map&lt;adjacency_list, Property&gt;::const_type</tt></td>
 <td>
-The accessor type for edge properties in the graph. The specific
-property is specified by the <TT>Tag</TT> template argument, and must
-match one of the properties specified in the <TT>EdgePlugin</TT> for the
-graph.
+
+The property map type for vertex or edge properties in the graph. The
+specific property is specified by the <TT>Property</TT> template argument,
+and must match one of the properties specified in the
+<TT>VertexPlugin</TT> or <TT>EdgePlugin</TT> for the graph.
 </td>
 </tr>
 
@@ -598,32 +587,36 @@ to make frequent use of the <TT>remove_vertex()</TT> function the
 </td></tr>
 
 <tr><td><tt>
-template &lt;class Tag&gt;<br>
-vertex_property_accessor&lt;adjacency_list, Tag&gt;::type<br>
-get_vertex_property(adjacency_list&amp; g, Tag)<br>
+template &lt;class Property&gt;<br>
+property_map&lt;adjacency_list, Property&gt;::type<br>
+get(Property, adjacency_list&amp; g)<br>
 <br>
-template &lt;class Tag&gt;<br>
-vertex_property_accessor&lt;adjacency_list, Tag&gt;::const_type<br>
-get_vertex_property(const adjacency_list&amp; g, Tag)
+template &lt;class Property&gt;<br>
+property_map&lt;adjacency_list, Tag&gt;::const_type<br>
+get(Property, const adjacency_list&amp; g)
 </tt></td><td>
-Returns the property accessor object for the vertex property specified
-by <TT>Tag</TT>. The <TT>Tag</TT> must match one of the properties specified
-in the graph's <TT>VertexPlugin</TT> template argument.
+Returns the property map object for the vertex property specified by
+<TT>Property</TT>. The <TT>Property</TT> must match one of the
+properties specified in the graph's <TT>VertexPlugin</TT> template
+argument.
 </td></tr>
 
 <tr><td><tt>
-template &lt;class Tag&gt;<br>
-edge_property_accessor&lt;adjacency_list, Tag&gt;::type<br>
-get_edge_property(adjacency_list&amp; g, Tag)<br>
+template &lt;class Property&gt;<br>
+property_map&lt;adjacency_list, Property&gt;::type<br>
+get(Property, adjacency_list&amp; g)<br>
 <br>
-template &lt;class Tag&gt;<br>
-edge_property_accessor&lt;adjacency_list, Tag&gt;::const_type<br>
-get_edge_property(const adjacency_list&amp; g, Tag)
+template &lt;class Property&gt;<br>
+property_map&lt;adjacency_list, Property&gt;::const_type<br>
+get(Property, const adjacency_list&amp; g)
 </tt></td><td>
-Returns the property accessor object for the edge property specified
-by <TT>Tag</TT>. The <TT>Tag</TT> must match one of the properties specified
-in the graph's <TT>EdgePlugin</TT> template argument.
+Returns the property map object for the edge property specified by
+<TT>Property</TT>. The <TT>Property</TT> must match one of the
+properties specified in the graph's <TT>EdgePlugin</TT> template
+argument.
 </td></tr>
+
+<!-- add the shortcut property functions -->
 
 </table>
 

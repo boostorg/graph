@@ -95,11 +95,11 @@ int main(int argc, char* argv[])
   ds.union_set(2,5);
     
   cout << "An undirected graph:" << endl;
-  print_graph(G, get_vertex_property_accessor(G,vertex_index()));
+  print_graph(G, get(vertex_index(), G));
   cout << endl;
     
   graph_traits<Graph>::vertex_iterator i,end;
-  for (boost::tie(i,end) = vertices(G); i != end; ++i)
+  for (boost::tie(i, end) = vertices(G); i != end; ++i)
     cout << "representative[" << *i << "] = " << 
       ds.find_set(*i) << endl;;
   cout << endl;

@@ -73,8 +73,7 @@ int main(int argc, char* argv[])
 
   Graph::vertex_iterator ui, uiend;
 
-  vertex_property_accessor<Graph,vertex_degree>::type deg
-    = get_vertex_property_accessor(G, vertex_degree());
+  property_map<Graph,vertex_degree>::type deg = get(vertex_degree(), G);
   cout << "degree: " << endl;
   for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
     deg[*ui] = out_degree(*ui, G);
@@ -86,12 +85,11 @@ int main(int argc, char* argv[])
   {
     Vertex s = vertex(6, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), 
-			   get_vertex_property_accessor(G, vertex_color()), 
-			   get_vertex_property_accessor(G, vertex_degree()));
+    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color(), G), 
+			   get(vertex_degree(), G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
     
-    for (std::vector<Vertex>::const_iterator i=iperm.begin();
+    for (std::vector<Vertex>::const_iterator i = iperm.begin();
 	 i != iperm.end(); ++i)
       cout << id[*i] << " ";
     cout << endl;
@@ -99,9 +97,8 @@ int main(int argc, char* argv[])
   {
     Vertex s = vertex(0, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), 
-			   get_vertex_property_accessor(G, vertex_color()),
-			   get_vertex_property_accessor(G, vertex_degree()));
+    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color(), G),
+			   get(vertex_degree(), G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
 
     for (std::vector<Vertex>::const_iterator i=iperm.begin();

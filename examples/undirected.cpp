@@ -75,8 +75,8 @@ main(int, char*[])
     cout << "in a directed graph is ";
     cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
 
-    edge_property_accessor<DirectedGraph, edge_weight>::type
-      weight = get_edge_property_accessor(digraph, edge_weight());
+    property_map<DirectedGraph, edge_weight>::type
+      weight = get(edge_weight(), digraph);
     cout << "weight[(u,v)] = " << get(weight, e1) << endl;
     cout << "weight[(v,u)] = " << get(weight, e2) << endl;
   }
@@ -92,8 +92,8 @@ main(int, char*[])
     cout << "in an undirected graph is ";
     cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
 
-    edge_property_accessor<UndirectedGraph, edge_weight>::type
-      weight = get_edge_property_accessor(undigraph, edge_weight());
+    property_map<UndirectedGraph, edge_weight>::type
+      weight = get(edge_weight(), undigraph);
     cout << "weight[(u,v)] = " << get(weight, e1) << endl;
     cout << "weight[(v,u)] = " << get(weight, e2) << endl;
   }

@@ -67,11 +67,9 @@ int main(int argc, char* argv[])
   const int V = 5;
   Graph g(V, GraphPlugin("foo"));
   cout << "graph name: " << get_plugin(g, graph_name()) << endl;
-  vertex_property_accessor<Graph,vertex_index>::type id
-    = get_vertex_property_accessor(g, vertex_index());
+  property_map<Graph, vertex_index>::type id = get(vertex_index(), g);
 
-  edge_property_accessor<Graph, edge_name>::type name
-    = get_edge_property_accessor(g, edge_name());
+  property_map<Graph, edge_name>::type name = get(edge_name(), g);
 
   boost::graph_traits<Graph>::vertex_iterator vi, viend;
   int vnum = 0;

@@ -84,9 +84,8 @@ int main(int argc, char* argv[])
     
     
     std::vector<int> c(num_vertices(G));
-    int num = connected_components
-      (G, c.begin(), get_vertex_property_accessor(G,vertex_color()), 
-       dfs_visitor<>());
+    int num = connected_components(G, c.begin(), get(vertex_color(), G), 
+				   dfs_visitor<>());
     
     cout << "An undirected graph:" << endl;
     cout << endl;
@@ -117,9 +116,8 @@ int main(int argc, char* argv[])
     typedef Graph::vertex_descriptor Vertex;
     
     std::vector<int> c(N);
-    int num = connected_components
-      (G, c.begin(), get_vertex_property_accessor(G, vertex_color()),
-       dfs_visitor<>());
+    int num = connected_components(G, c.begin(), get(vertex_color(), G),
+				   dfs_visitor<>());
     
     cout << "A directed graph:" << endl;
     cout << endl;

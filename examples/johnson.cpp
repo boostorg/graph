@@ -63,8 +63,7 @@ main()
 
   Graph g(V, edge_array, edge_array + E);
 
-  edge_property_accessor<Graph,edge_weight>::type
-    w = get_edge_property_accessor(g, edge_weight());
+  property_map<Graph,edge_weight>::type w = get(edge_weight(), g);
 
   int weights[] = { 0, 0, 0, 0, 0,
                     3, -4, 8,
@@ -86,7 +85,7 @@ main()
   std::vector<std::vector<int> > D(6, std::vector<int>(6)); 
 
   johnson_all_pairs_shortest_paths(g, D, d.begin(), h.begin(), w, c.begin(), 
-                                   get_vertex_property_accessor(g, vertex_index()));
+                                   get(vertex_index(), g));
 
   std::cout << "\t";
   for (int k = 0; k < V; ++k) 

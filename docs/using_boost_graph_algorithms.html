@@ -129,28 +129,24 @@ Internal Properties</A>
 
 <P>
 Property accessors for internal properties are always obtained via the
-interface defined in <a
-href="./VertexPropertyGraph.html">VertexPropertyGraph</a> and <a
-href="./EdgePropertyGraph.html">EdgePropertyGraph</a>.  This interface
-defines a pair of traits classes: <TT>vertex_property_accessor</TT>
-and <TT>edge_property_accessor</TT>, and a pair of functions:
-<TT>get_vertex_property_accessor()</TT> and
-<TT>get_edge_property_accessor()</TT>.  The traits classes are used to
-obtain the <I>type</I> of the property accessor given some graph type
-and a property tag. The property tag determines which property will be
-accessed (more than one property can be attached to the vertices or
-edges of the graph). The functions are used to obtain the property
-accessor <I>objects</I>.  The following code snippet shows how to
-create a property accessor for the distance and weight properties of
-graph <TT>G</TT>.
+interface defined in <a href="./PropertyGraph.html">PropertyGraph</a>.
+This interface defines a traits class <TT>property_map</TT> and a
+function <TT>get(property, g)</TT> which returns a property map
+object.  The traits classes are used to obtain the <I>type</I> of the
+property accessor given some graph type and a property tag. The
+property tag determines which property will be accessed (more than one
+property can be attached to the vertices or edges of the graph). The
+functions are used to obtain the property accessor <I>objects</I>.
+The following code snippet shows how to create a property accessor for
+the distance and weight properties of graph <TT>G</TT>.
 
 <P>
 <PRE>
-  boost::vertex_property_accessor&lt;Graph, vertex_distance&gt;::type
-    d = get_vertex_property_accessor(G, vertex_distance());
+  boost::property_map&lt;Graph, vertex_distance&gt;::type
+    d = get(vertex_distance(), G);
 
-  boost::edge_property_accessor&lt;Graph, edge_weight&gt;::type
-    w = get_edge_property_accessor(G, edge_weight());
+  boost::property_map&lt;Graph, edge_weight&gt;::type
+    w = get(edge_weight(), G);
 </PRE>
 
 <P>
@@ -163,10 +159,10 @@ algorithm in the following way.
 <P>
 <PRE>
   boost::dijkstra_shortest_paths(G, s, 
-                                 get_vertex_property(G, vertex_distance()),
-                                 get_edge_property(G, edge_weight()),
-                                 get_vertex_property(G, vertex_color()),
-                                 get_vertex_property(G, vertex_index()),
+                                 get(vertex_distance(), G),
+                                 get(edge_weight(), G),
+                                 get(vertex_color(), G),
+                                 get(vertex_index(), G),
                                  null_visitor());
 </PRE>
 

@@ -63,18 +63,21 @@ column have a nonzero in the same row position.
 <P>
 However, coloring a general graph with the minimum number of colors
 (the cardinality of set <i>S</i>) is known to be an NP-complete
-problem&nbsp;[<a href="bibliography.html#garey79:computers-and-intractability">30</a>].  One often relies on heuristics to find a solution. A
-widely-used general greedy based approach is starting from an ordered
-vertex enumeration <i>v<sub>1</sub>, ..., v<sub>n</sub></i> of <i>G</i>,
-to assign <i>v<sub>i</sub></i> to the smallest possible color for
-<i>i</i> from <i>1</i> to <i>n</i>.  In section&nbsp; we have shown how
-to construct this algorithm in the generic programming
-paradigm. However, the ordering of the vertices dramatically affects
-the coloring.  The arbitrary order may perform very poorly while
-another ordering may produces an optimal coloring.  Several ordering
-algorithms have been studied to help the greedy coloring heuristics
-including largest-first ordering, smallest-last ordering and incidence
-degree ordering.
+problem&nbsp;[<a
+href="bibliography.html#garey79:computers-and-intractability">30</a>].
+One often relies on heuristics to find a solution. A widely-used
+general greedy based approach is starting from an ordered vertex
+enumeration <i>v<sub>1</sub>, ..., v<sub>n</sub></i> of <i>G</i>, to
+assign <i>v<sub>i</sub></i> to the smallest possible color for
+<i>i</i> from <i>1</i> to <i>n</i>.  In section <a
+href="constructing_graph_algorithms.html">Constructing graph
+algorithms with BGL</a> we have shown how to write this algorithm in
+the generic programming paradigm. However, the ordering of the
+vertices dramatically affects the coloring.  The arbitrary order may
+perform very poorly while another ordering may produces an optimal
+coloring.  Several ordering algorithms have been studied to help the
+greedy coloring heuristics including largest-first ordering,
+smallest-last ordering and incidence degree ordering.
 
 <P>
 In the BGL framework,  the process of constructing/prototyping such a

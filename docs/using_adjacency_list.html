@@ -445,14 +445,14 @@ just as you would one of the builtin tags.
 <P>
 Just as before, the property accessors for these properties can be
 obtained from the graph via the
-<TT>get_edge_property_accessor()</TT> function.
+<TT>get(Property, g)</TT> function.
 
 <P>
 <PRE>
-  edge_property_accessor&lt;Graph, capacity_tag&gt;::type capacity
-    = get_edge_property_accessor(G, capacity_tag());
-  edge_property_accessor&lt;Graph, flow_tag&gt;::type flow
-    = get_edge_property_accessor(G, flow_tag());
+  property_map&lt;Graph, capacity_tag&gt;::type capacity
+    = get(capacity_tag(), G);
+  property_map&lt;Graph, flow_tag&gt;::type flow
+    = get(flow_tag(), G);
 </PRE>
 
 <P>
@@ -500,8 +500,8 @@ owes who''.
   for (int i = 0; i &lt; 11; ++i)
     add_edge(G, edge_array[i].first, edge_array[i].second);
 
-  vertex_property_accessor&lt;MyGraphType, first_vertex_name&gt;::type
-    name = get_vertex_property_accessor(G, first_vertex_name());
+  property_map&lt;MyGraphType, first_vertex_name&gt;::type
+    name = get(first_vertex_name(), G);
     
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
@@ -517,7 +517,7 @@ The <TT>who_owes_who()</TT> function written for this example was
 implemented in a generic style. The input is templated so we do not
 know the actual graph type. To find out the type of the property
 accessor for our first name property, we need to use the
-<TT>vertex_property_accessor</TT> traits class. The <TT>const_type</TT>
+<TT>property_map</TT> traits class. The <TT>const_type</TT>
 is used since the graph parameter is const. Once we have the property
 accessor type, we can deduce the value type of the property using the
 <TT>property_traits</TT> class. In this example, we know that the
@@ -531,9 +531,9 @@ other property value types.
   void who_owes_who(EdgeIter first, EdgeIter last, const Graph&amp; G)
   {
     // Access the propety acessor type for this graph
-    typedef typename vertex_property_accessor&lt;Graph, 
+    typedef typename property_map&lt;Graph, 
       first_vertex_name&gt;::const_type NamePA;
-    NamePA name = get_vertex_property_accessor(G, first_vertex_name());
+    NamePA name = get(first_vertex_name(), G);
 
     typedef typename boost::property_traits&lt;NamePA&gt;
       ::value_type NameType;
