@@ -926,80 +926,6 @@ namespace boost {
       }
     }
 
-    template <class Config, class Predicate>
-    inline void
-    remove_out_edge_if(typename Config::vertex_descriptor u, Predicate pred,
-                      bidirectional_graph_helper<Config>& g_)
-    {
-      typedef typename Config::graph_type graph_type;
-      typedef typename Config::OutEdgeList::value_type::property_type PropT;
-      graph_type& g = static_cast<graph_type&>(g_);
-
-      typedef std::vector<typename Config::EdgeIter> Garbage;
-      Garbage garbage;
-
-      // First remove the edges from the targets' in-edge lists and
-      // from the graph's edge set list.
-      typename Config::out_edge_iterator out_i, out_end;
-      for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
-        if (pred(*out_i)) {
-          detail::remove_directed_edge_dispatch
-            (*out_i, in_edge_list(g, target(*out_i, g)),
-             *(PropT*)(*out_i).get_property());
-          // Put in garbage to delete later. Will need the properties
-          // for the remove_if of the out-edges.
-          garbage.push_back((*out_i.iter()).get_iter());
-        }
-
-      // Now remove the edges from this out-edge list.
-      typename Config::out_edge_iterator first, last;
-      tie(first, last) = out_edges(u, g);
-      typedef typename Config::edge_parallel_category Cat;
-      detail::remove_directed_edge_if_dispatch
-        (first, last, g.out_edge_list(u), pred, Cat());
-
-      // Now delete the edge properties from the g.m_edges list
-      for (typename Garbage::iterator i = garbage.begin();
-           i != garbage.end(); ++i)
-        g.m_edges.erase(*i);
-    }
-    template <class Config, class Predicate>
-    inline void
-    remove_in_edge_if(typename Config::vertex_descriptor v, Predicate pred,
-                      bidirectional_graph_helper<Config>& g_)
-    {
-      typedef typename Config::graph_type graph_type;
-      typedef typename Config::OutEdgeList::value_type::property_type PropT;
-      graph_type& g = static_cast<graph_type&>(g_);
-
-      typedef std::vector<typename Config::EdgeIter> Garbage;
-      Garbage garbage;
-
-      // First remove the edges from the sources' out-edge lists and
-      // from the graph's edge set list.
-      typename Config::in_edge_iterator in_i, in_end;
-      for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
-        if (pred(*in_i)) {
-          typename Config::vertex_descriptor u = source(*in_i, g);
-          detail::remove_directed_edge_dispatch
-            (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
-          // Put in garbage to delete later. Will need the properties
-          // for the remove_if of the out-edges.
-          garbage.push_back((*in_i.iter()).get_iter());
-        }
-      // Now remove the edges from this in-edge list.
-      typename Config::in_edge_iterator first, last;
-      tie(first, last) = in_edges(v, g);
-      typedef typename Config::edge_parallel_category Cat;
-      detail::remove_directed_edge_if_dispatch
-        (first, last, in_edge_list(g, v), pred, Cat());
-
-      // Now delete the edge properties from the g.m_edges list
-      for (typename Garbage::iterator i = garbage.begin();
-           i != garbage.end(); ++i)
-        g.m_edges.erase(*i);
-    }
-
     template <class Config>
     inline std::pair<typename Config::in_edge_iterator, 
                      typename Config::in_edge_iterator>
@@ -1081,6 +1007,81 @@ namespace boost {
     {
       g_.remove_edge(e);
     }
+
+    template <class Config, class Predicate>
+    inline void
+    remove_out_edge_if(typename Config::vertex_descriptor u, Predicate pred,
+                       bidirectional_graph_helper_with_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::OutEdgeList::value_type::property_type PropT;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      typedef std::vector<typename Config::EdgeIter> Garbage;
+      Garbage garbage;
+
+      // First remove the edges from the targets' in-edge lists and
+      // from the graph's edge set list.
+      typename Config::out_edge_iterator out_i, out_end;
+      for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
+        if (pred(*out_i)) {
+          detail::remove_directed_edge_dispatch
+            (*out_i, in_edge_list(g, target(*out_i, g)),
+             *(PropT*)(*out_i).get_property());
+          // Put in garbage to delete later. Will need the properties
+          // for the remove_if of the out-edges.
+          garbage.push_back((*out_i.iter()).get_iter());
+        }
+
+      // Now remove the edges from this out-edge list.
+      typename Config::out_edge_iterator first, last;
+      tie(first, last) = out_edges(u, g);
+      typedef typename Config::edge_parallel_category Cat;
+      detail::remove_directed_edge_if_dispatch
+        (first, last, g.out_edge_list(u), pred, Cat());
+
+      // Now delete the edge properties from the g.m_edges list
+      for (typename Garbage::iterator i = garbage.begin();
+           i != garbage.end(); ++i)
+        g.m_edges.erase(*i);
+    }
+    template <class Config, class Predicate>
+    inline void
+    remove_in_edge_if(typename Config::vertex_descriptor v, Predicate pred,
+                      bidirectional_graph_helper_with_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::OutEdgeList::value_type::property_type PropT;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      typedef std::vector<typename Config::EdgeIter> Garbage;
+      Garbage garbage;
+
+      // First remove the edges from the sources' out-edge lists and
+      // from the graph's edge set list.
+      typename Config::in_edge_iterator in_i, in_end;
+      for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+        if (pred(*in_i)) {
+          typename Config::vertex_descriptor u = source(*in_i, g);
+          detail::remove_directed_edge_dispatch
+            (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
+          // Put in garbage to delete later. Will need the properties
+          // for the remove_if of the out-edges.
+          garbage.push_back((*in_i.iter()).get_iter());
+        }
+      // Now remove the edges from this in-edge list.
+      typename Config::in_edge_iterator first, last;
+      tie(first, last) = in_edges(v, g);
+      typedef typename Config::edge_parallel_category Cat;
+      detail::remove_directed_edge_if_dispatch
+        (first, last, in_edge_list(g, v), pred, Cat());
+
+      // Now delete the edge properties from the g.m_edges list
+      for (typename Garbage::iterator i = garbage.begin();
+           i != garbage.end(); ++i)
+        g.m_edges.erase(*i);
+    }
+
     // O(1)
     template <class Config>
     inline typename Config::edges_size_type
@@ -1212,7 +1213,7 @@ namespace boost {
 
         typename Config::edge_descriptor e = *iter;
         typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-        out_el.erase(iter);
+        out_el.erase(iter.base());
         typename Config::InEdgeList& in_el = in_edge_list(g, target(e, g));
         typename Config::InEdgeList::iterator in_i = in_el.begin();
         for (; in_i != in_el.end(); ++in_i)
@@ -1222,6 +1223,58 @@ namespace boost {
           }
       }
     };
+
+    template <class Config, class Predicate>
+    inline void
+    remove_out_edge_if(typename Config::vertex_descriptor u, Predicate pred,
+                       bidirectional_graph_helper_without_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::OutEdgeList::value_type::property_type PropT;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      // First remove the edges from the targets' in-edge lists and
+      // from the graph's edge set list.
+      typename Config::out_edge_iterator out_i, out_end;
+      for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
+        if (pred(*out_i))
+          detail::remove_directed_edge_dispatch
+            (*out_i, in_edge_list(g, target(*out_i, g)),
+             *(PropT*)(*out_i).get_property());
+
+      // Now remove the edges from this out-edge list.
+      typename Config::out_edge_iterator first, last;
+      tie(first, last) = out_edges(u, g);
+      typedef typename Config::edge_parallel_category Cat;
+      detail::remove_directed_edge_if_dispatch
+        (first, last, g.out_edge_list(u), pred, Cat());
+    }
+
+    template <class Config, class Predicate>
+    inline void
+    remove_in_edge_if(typename Config::vertex_descriptor v, Predicate pred,
+                      bidirectional_graph_helper_without_property<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::OutEdgeList::value_type::property_type PropT;
+      graph_type& g = static_cast<graph_type&>(g_);
+
+      // First remove the edges from the sources' out-edge lists and
+      // from the graph's edge set list.
+      typename Config::in_edge_iterator in_i, in_end;
+      for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+        if (pred(*in_i))
+          detail::remove_directed_edge_dispatch
+            (*in_i, g.out_edge_list(source(*in_i, g)),
+	     *(PropT*)(*in_i).get_property());
+
+      // Now remove the edges from this in-edge list.
+      typename Config::in_edge_iterator first, last;
+      tie(first, last) = in_edges(v, g);
+      typedef typename Config::edge_parallel_category Cat;
+      detail::remove_directed_edge_if_dispatch
+        (first, last, in_edge_list(g, v), pred, Cat());
+    }
 
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
