@@ -2460,12 +2460,12 @@ namespace boost {
 } // namespace boost
 
 #if !defined(BOOST_NO_HASH) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-namespace std {
+namespace BOOST_STD_EXTENSION_NAMESPACE {
 
   template <typename V, typename P>
   struct hash< boost::detail::stored_edge_property <V,P> > 
   {
-    size_t operator()(const boost::detail::stored_edge_property<V,P>& e) const
+    std::size_t operator()(const boost::detail::stored_edge_property<V,P>& e) const
     {
       return hash<V>()(e.m_target);
     }
