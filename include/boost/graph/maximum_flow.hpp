@@ -28,6 +28,8 @@
 
 // UNDER CONSTRUCTION
 
+#include <boost/config.hpp>
+#include <assert.h>
 #include <vector>
 #include <list>
 
@@ -36,9 +38,9 @@
 
 namespace boost {
 
-  enum edge_reverse_t { edge_reverse };
-  enum edge_residual_capacity_t { edge_residual_capacity };
-  enum edge_capacity_t { edge_capacity };
+  enum edge_reverse_t { edge_reverse = 51 };
+  enum edge_residual_capacity_t { edge_residual_capacity = 52 };
+  enum edge_capacity_t { edge_capacity = 53 };
 
   BOOST_INSTALL_PROPERTY(edge, reverse);
   BOOST_INSTALL_PROPERTY(edge, capacity);
