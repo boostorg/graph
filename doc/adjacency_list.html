@@ -504,8 +504,9 @@ Creates a graph object with <TT>n</TT> vertices and zero edges.
 <a name="sec:iterator-constructor">
 <pre>
 template &lt;class&nbsp;EdgeIterator&gt;
-adjacency_list(vertices_size_type&nbsp;n, 
-               EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
+adjacency_list(EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
+               vertices_size_type&nbsp;n, 
+               edges_size_type&nbsp;m = 0, 
                const&nbsp;GraphProperty&amp;&nbsp;p&nbsp;=&nbsp;GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
@@ -522,9 +523,10 @@ range of <TT>[0, n)</TT>.
 
 <pre>
 template &lt;class&nbsp;EdgeIterator, class&nbsp;EdgePropertyIterator&gt;
-adjacency_list(vertices_size_type&nbsp;num_vertices,
-               EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
+adjacency_list(EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
                EdgePropertyIterator&nbsp;ep_iter,
+               vertices_size_type&nbsp;n,
+               vertices_size_type&nbsp;m = 0,
                const&nbsp;GraphProperty&amp;&nbsp;p&nbsp;=&nbsp;GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges

@@ -126,7 +126,14 @@ int main(int, char*[])
 
   /* Create the graph type we want. */
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;
-  Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
+#ifdef BOOST_MSVC
+  // VC++ has trouble with the edge iterator constructor
+  Graph G(N);
+  for (std::size_t j = 0; j < sizeof(edge_array)/sizeof(E); ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, G);
+#else
+  Graph G(edge_array, edge_array + sizeof(edge_array)/sizeof(E), N);
+#endif
 
   cout << "*** Depth First ***" << endl;
   depth_first_search

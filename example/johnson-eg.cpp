@@ -44,8 +44,15 @@ main()
     Edge(1, 2), Edge(1, 5), Edge(1, 3), Edge(2, 4), Edge(2, 5),
     Edge(3, 2), Edge(4, 3), Edge(4, 1), Edge(5, 4)
   };
-  const int E = sizeof(edge_array) / sizeof(Edge);
-  Graph g(V, edge_array, edge_array + E);
+  const std::size_t E = sizeof(edge_array) / sizeof(Edge);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  Graph g(V);
+  for (std::size_t j = 0; j < E; ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, g);
+#else
+  Graph g(edge_array, edge_array + E, V);
+#endif
 
   property_map < Graph, edge_weight_t >::type w = get(edge_weight, g);
   int weights[] = { 0, 0, 0, 0, 0, 3, -4, 8, 1, 7, 4, -5, 2, 6 };

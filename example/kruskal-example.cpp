@@ -41,7 +41,7 @@ main()
   };
   int weights[] = { 1, 1, 2, 7, 3, 1, 1, 1 };
   int num_edges = sizeof(edge_array) / sizeof(E);
-  Graph g(num_nodes, edge_array, edge_array + num_edges, weights);
+  Graph g(edge_array, edge_array + num_edges, weights, num_nodes);
   property_map < Graph, edge_weight_t >::type weight = get(edge_weight, g);
   std::vector < Edge > spanning_tree;
 

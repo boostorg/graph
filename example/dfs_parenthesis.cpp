@@ -67,12 +67,18 @@ main(int, char*[])
   
   typedef adjacency_list<> Graph;
   typedef std::pair<int,int> E;
-  E edges[] = { E(0, 2),
+  E edge_array[] = { E(0, 2),
                 E(1, 1), E(1, 3),
                 E(2, 1), E(2, 3),
                 E(3, 1), E(3, 4),
                 E(4, 0), E(4, 1) };  
-  Graph G(5, edges, edges + sizeof(edges)/sizeof(E));
+#ifdef BOOST_MSVC
+  Graph G(5);
+  for (std::size_t j = 0; j < sizeof(edge_array) / sizeof(E); ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, G);
+#else
+  Graph G(edge_array, edge_array + sizeof(edge_array)/sizeof(E), 5);
+#endif
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;

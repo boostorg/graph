@@ -37,7 +37,16 @@ main()
     E(3, 4), E(4, 0)
   };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1 };
-  Graph g(num_nodes, edges, edges + sizeof(edges) / sizeof(E), weights);
+#ifdef BOOST_MSVC
+  Graph g(num_nodes);
+  for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
+    graph_traits<Graph>::edge_descriptor e; bool inserted;
+    tie(e, inserted) = add_edge(edges[j].first, edges[j].second, g);
+    get(edge_weight, g)[e] = weights[j];
+  }
+#else
+  Graph g(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+#endif
   std::vector < graph_traits < Graph >::vertex_descriptor >
     p(num_vertices(g));
 

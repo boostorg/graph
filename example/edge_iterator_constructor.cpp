@@ -117,8 +117,17 @@ main()
   f >> size_V >> size_E;
 
   edge_stream_iterator edge_iter(f), end;
-
-  IteratorConstructibleGraph G(size_V, edge_iter, end);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  IteratorConstructibleGraph G(size_V);
+  while (edge_iter != end) {
+    int i, j;
+    boost::tie(i, j) = *edge_iter++;
+    boost::add_edge(i, j, G);
+  }
+#else
+  IteratorConstructibleGraph G(edge_iter, end, size_V);
+#endif
   boost::print_graph(G);
 
   return 0;

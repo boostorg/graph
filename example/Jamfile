@@ -62,6 +62,7 @@ exe default-constructor2 : default-constructor2.cpp : <include>$(BOOST_ROOT) : d
 exe default-constructor : default-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dfs : dfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dfs-example : dfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
+exe dfs_parenthesis : dfs_parenthesis.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dfs-parenthesis : dfs-parenthesis.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe dijkstra-example : dijkstra-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
 exe edge_basics : edge_basics.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;

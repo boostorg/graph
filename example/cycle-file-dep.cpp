@@ -85,8 +85,18 @@ main()
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
-    size_type > >input_begin(file_in), input_end;
+    size_type > > input_begin(file_in), input_end;
+#ifdef BOOST_MSVC
+  // VC++ has trouble with the edge iterator constructor
+  file_dep_graph g(n_vertices);
+  while (input_begin != input_end) {
+    size_type i, j;
+    tie(i, j) = *input_begin++;
+    add_edge(i, j, g);
+  }
+#else
   file_dep_graph g(input_begin, input_end, n_vertices);
+#endif
 
   std::vector < std::string > name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");

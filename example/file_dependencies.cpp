@@ -107,7 +107,7 @@ int main(int,char*[])
     Edge(zag_o, libzigzag_a),
     Edge(libzigzag_a, killerapp)
   };
-  const int nedges = sizeof(used_by)/sizeof(Edge);
+  const std::size_t nedges = sizeof(used_by)/sizeof(Edge);
   int weights[nedges];
   fill(weights, weights + nedges, 1);
 
@@ -115,7 +115,17 @@ int main(int,char*[])
       property<vertex_color_t, default_color_type>,
       property<edge_weight_t, int>
     > Graph;
-  Graph g(N, used_by, used_by + nedges, weights);
+#if 1//#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  Graph g(N);
+  for (std::size_t j = 0; j < nedges; ++j) {
+    graph_traits<Graph>::edge_descriptor e; bool inserted;
+    tie(e, inserted) = add_edge(used_by[j].first, used_by[j].second, g);
+    get(edge_weight, g)[e] = weights[j];
+  }
+#else
+  Graph g(used_by, used_by + nedges, weights, N);
+#endif
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
   typedef property_map<Graph, vertex_color_t>::type Color;

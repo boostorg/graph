@@ -25,12 +25,12 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/pending/integer_range.hpp>
+
 using namespace boost;
 template < typename TimeMap > class bfs_time_visitor:public default_bfs_visitor {
   typedef typename property_traits < TimeMap >::value_type T;
 public:
-bfs_time_visitor(TimeMap tmap, T & t):m_timemap(tmap), m_time(t) {
-  }
+  bfs_time_visitor(TimeMap tmap, T & t):m_timemap(tmap), m_time(t) { }
   template < typename Vertex, typename Graph >
     void discover_vertex(Vertex u, const Graph & g) const
   {
@@ -48,8 +48,7 @@ main()
   // Select the graph type we wish to use
   typedef adjacency_list < vecS, vecS, undirectedS > graph_t;
   // Set up the vertex IDs and names
-  enum
-  { r, s, t, u, v, w, x, y, N };
+  enum { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
   // Specify the edges in the graph
   typedef std::pair < int, int >E;
@@ -58,7 +57,15 @@ main()
   };
   // Create the graph object
   const int n_edges = sizeof(edge_array) / sizeof(E);
-  graph_t g(edge_array, edge_array + n_edges, N);
+#ifdef BOOST_MSVC
+  // VC++ has trouble with the edge iterator constructor
+  graph_t g(N);
+  for (std::size_t j = 0; j < n_edges; ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, g);
+#else
+  typedef graph_traits<graph_t>::vertices_size_type v_size_t;
+  graph_t g(edge_array, edge_array + n_edges, v_size_t(N));
+#endif
 
   // Typedefs
   typedef graph_traits < graph_t >::vertex_descriptor Vertex;
@@ -84,5 +91,6 @@ main()
   for (int i = 0; i < N; ++i)
     std::cout << name[discover_order[i]] << " ";
   std::cout << std::endl;
+
   return EXIT_SUCCESS;
 }

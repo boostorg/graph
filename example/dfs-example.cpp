@@ -63,7 +63,13 @@ main()
   E edge_array[] = { E(u, v), E(u, x), E(x, v), E(y, x),
     E(v, y), E(w, y), E(w, z), E(z, z)
   };
-  graph_t g(N, edge_array, edge_array + sizeof(edge_array) / sizeof(E));
+#ifdef BOOST_MSVC
+  graph_t g(N);  
+  for (std::size_t j = 0; j < sizeof(edge_array) / sizeof(E); ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, g);
+#else
+  graph_t g(edge_array, edge_array + sizeof(edge_array) / sizeof(E), N);
+#endif
 
   // Typedefs
   typedef boost::graph_traits < graph_t >::vertex_descriptor Vertex;

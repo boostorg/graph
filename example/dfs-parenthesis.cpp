@@ -48,10 +48,8 @@ struct parenthesis_visitor : public boost::default_dfs_visitor
 int
 main()
 {
-  using namespace
-    boost;
-  GraphvizGraph
-    g;
+  using namespace boost;
+  GraphvizGraph g;
   read_graphviz("figs/dfs-example.dot", g);
   graph_traits < GraphvizGraph >::edge_iterator e, e_end;
   for (tie(e, e_end) = edges(g); e != e_end; ++e)
