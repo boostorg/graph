@@ -36,6 +36,37 @@ namespace boost {
     > type;
   };
 
+  namespace detail {
+
+    template <class Graph>
+    struct inv_adjacency_iterator_policies : 
+      public boost::default_iterator_policies
+    {
+      inline inv_adjacency_iterator_policies() { }
+      inline inv_adjacency_iterator_policies(Graph* g) : m_g(g) { }
+
+      template <class Reference, class Iterator>
+      inline Reference
+      dereference(boost::type<Reference>, const Iterator& i) const
+        { return source(*i, *m_g); }
+
+      Graph* m_g;
+    };
+
+  } // namespace detail
+
+  template <class Graph, class Vertex, class InEdgeIter>
+  class inv_adjacency_iterator_generator {
+    typedef typename boost::detail::iterator_traits<InEdgeIter>
+      ::difference_type difference_type;
+  public:
+    typedef boost::iterator_adaptor<InEdgeIter, 
+      detail::inv_adjacency_iterator_policies<Graph>,
+      Vertex, Vertex, Vertex*, boost::multi_pass_input_iterator_tag,
+      difference_type
+    > type;
+  };
+
 } // namespace boost
 
 #endif // BOOST_DETAIL_ADJACENCY_ITERATOR_HPP
