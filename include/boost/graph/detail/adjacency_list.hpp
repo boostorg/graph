@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.8  2000/09/21 18:45:52  jsiek
+// removed some obsolete files
+//
 // Revision 1.7  2000/09/21 18:34:53  jsiek
 // more property accessor -> property map changes
 //
@@ -1496,7 +1499,7 @@ namespace boost {
 
     template <class Graph, class Plugin, class Tag>
     struct adj_list_vertex_property_map
-      : public boost::detail::put_get_at_helper<
+      : public boost::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
           adj_list_vertex_property_map<Graph, Plugin, Tag>
         >
@@ -1518,7 +1521,7 @@ namespace boost {
 
     template <class Graph, class GraphRef, class Plugin, class Tag>
     struct vec_adj_list_vertex_property_map
-      : public boost::detail::put_get_at_helper<
+      : public boost::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
           vec_adj_list_vertex_property_map<Graph,GraphRef,Plugin,Tag>
         >
@@ -1540,7 +1543,7 @@ namespace boost {
 
     template <class Plugin, class Vertex>
     struct vec_adj_list_vertex_id_map
-      : public boost::detail::put_get_at_helper<
+      : public boost::put_get_at_helper<
           Vertex, vec_adj_list_vertex_id_map<Plugin, Vertex>
         >
     {
@@ -1592,7 +1595,7 @@ namespace boost {
 
     template <class Directed, class Plugin, class Vertex, class Tag>
     struct adj_list_edge_property_map
-      : public boost::detail::put_get_at_helper<
+      : public boost::put_get_at_helper<
           typename plugin_value<Plugin,Tag>::type,
           adj_list_edge_property_map<Directed,Plugin,Vertex,Tag>
         >
