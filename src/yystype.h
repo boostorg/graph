@@ -1,10 +1,10 @@
 #ifndef BOOST_GRAPH_YYSTYPE_H
 #define BOOST_GRAPH_YYSTYPE_H
 
-union YYSTYPE {
+union yystype {
   int         i;
   void*       ptr;
 };
-#define YYSTYPE_IS_DECLARED 1
+#define YYSTYPE yystype
 
 #endif // BOOST_GRAPH_YYSTYPE_H
