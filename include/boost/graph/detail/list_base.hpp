@@ -1,7 +1,7 @@
 #ifndef BOOST_LIST_BASE_HPP
 #define BOOST_LIST_BASE_HPP
 
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/iterator_adaptors.hpp>
 
 // Perhaps this should go through formal review, and move to <boost/>.
 
