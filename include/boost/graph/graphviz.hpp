@@ -249,7 +249,7 @@ namespace boost {
                              GraphPropertiesWriter gpw)
   {
     typedef typename property_map<Graph, vertex_index_t>::const_type vimap_t;
-    vimap_t vertex_index = get(g, vertex_index_t());
+    vimap_t vertex_index = get(vertex_index_t(), g);
     typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
     std::string name = "G";
