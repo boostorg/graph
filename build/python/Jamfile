@@ -43,6 +43,10 @@ extension bgl
 #    ../../src/python/transpose_graph.cpp Need copy_graph to work, first
     ../../src/python/isomorphism.cpp
     ../../src/python/betweenness_centrality.cpp
+    ../../src/python/sequential_vertex_coloring.cpp
+    # Sparse Matrix Ordering
+    ../../src/python/cuthill_mckee_ordering.cpp
+#    ../../src/python/minimum_degree_ordering.cpp
     ../../src/python/circle_layout.cpp
     ../../src/python/fruchterman_reingold.cpp
     ../../src/python/kamada_kawai_spring_layout.cpp
