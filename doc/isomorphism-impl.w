@@ -1,7 +1,14 @@
 \documentclass[11pt]{report}
 
 %\input{defs}
+\usepackage{math}
+\usepackage{jweb}
+\usepackage{lgrind}
+\usepackage{times}
+\usepackage{fullpage}
 
+\newcommand{\myhyperref}[2]{#2}
+\newcommand{\code}[1]{\textit{\textbf{#1}}}
 
 \setlength\overfullrule{5pt}
 \tolerance=10000
@@ -21,70 +28,88 @@
 
 \section{Introduction}
 
-This paper documents the implementation of the \texttt{simple\_isomorphism()}
-function of the Boost Graph Library.
+This paper documents the implementation of the
+\code{simple\-\_isomorphism()} function of the Boost Graph Library.
 
 An \emph{isomorphism} is a one-to-one mapping of the vertices in one
 graph to the vertices of another graph such that adjacency is
 preserved. Another words, given graphs $G_{1} = (V_{1},E_{1})$ and
 $G_{2} = (V_{2},E_{2})$, an isomorphism is a function $f$ such that
 for all pairs of vertices $a,b$ in $V_{1}$, edge $(a,b)$ is in $E_{1}$
-if and only if edge $(f(a),f(b))$ is in $E_{2}$. Both graphs must
-be the same size, so let $N = |V_1| = |V_2|$. The graph $G_1$
-is \emph{isomorphic} to $G_2$ if an isomorphism exists between
-the to graphs, which we denote by $G_1 \isomorphic G_2$.
+if and only if edge $(f(a),f(b))$ is in $E_{2}$.
+
+Both graphs must be the same size, so let $N = |V_1| = |V_2|$. The
+graph $G_1$ is \emph{isomorphic} to $G_2$ if an isomorphism exists
+between the to graphs, which we denote by $G_1 \isomorphic G_2$.
+
+In the following discussion we will need to use several notions from
+graph theory. The graph $G_s=(V_s,E_s)$ is a \emph{subgraph} of graph
+$G=(V,E)$ if $V_s \subseteq V$ and $E_s \subseteq E$.  An
+\emph{induced subgraph}, denoted by $G[V_s]$, of a graph $G=(V,E)$
+consists of the vertices in $V_s$, which is a subset of $V$, and every
+edge $(u,v) \in E$ such that both $u$ and $v$ are in $V_s$.  We use
+the notation $E[V_s]$ to mean the edges in $G[V_s]$.
+
+In some places we express a function as a set of pairs, so the set $f
+= \{ (a_1,b_1), (a_2, b_2), \ldots (a_n,b_n) \}$ means $f(a_i) =
+b_i$ for $i=1,\ldots,n$.
 
 \section{Exhaustive Backtracking Search}
 
-The algorithm used by the \texttt{simple\_isomorphism()} function is,
+The algorithm used by the \code{simple\_isomorphism()} function is,
 at first approximation, an exhaustive search implemented via
 backtracking.  The backtracking algorithm is a recursive function. At
 each stage we will try to extend the match that we have found so far.
-So we have two subgraphs $S_1 \subseteq G_1$ and $S_2 \subseteq G_2$,
-and suppose we have already determined that $S_1 \isomorphic S_2$. We
-then try to add a vertex to $S_1$ and $S_2$ such that the new
-subgraphs are still isomorphic to one another.
+So suppose that we have already determined that some subgraph of $G_1$
+is isomorphic to a subgraph of $G_2$.  We then try to add a vertex to
+each subgraph such that the new subgraphs are still isomorphic to one
+another.
 
-The vertices of $G_1$ are labelled $\{1,\ldots,N\}$ and the subgraphs
-$S_1$ that we will be considering will consist of increasing numbers
-of vertices from $G_1$ in order of their label.  Let $S_1(k)$ denote
-the subgraph of $G_1$ induced by the first $k$ vertices, and $S_1(0)$
-is an empty graph.  At each stage we will try to extend the match from
-$S_1(k)$ to $S_1(k+1)$ by finding a vertex in $G_2 - S_2$ that matches
-(has the same adjacency structure as) the $k+1$st vertex of $G_1$.
+We are going to consider the vertices of $G_1$ in a specific order
+(more about this later), so assume that the vertices of $G_1$ are
+labeled $1,\ldots,N$ according to the order that we plan to add them
+to the subgraph.  Let $G_1[k]$ denote the subgraph of $G_1$ induced by
+the first $k$ vertices, with $G_1[0]$ being an empty graph. At each
+stage of the recursion we start with an isomorphism $f_k$ between
+$G_1[k]$ and a subgraph of $G_2$, which we denote by $G_2[S]$, so
+$G_1[k] \isomorphic G_2[S]$. The vertex set $S$ is the subset of $V_2$
+that corresponds via $f_k$ to the first $k$ vertices in $G_1$. We try
+to extend the isomorphism by finding a vertex $v \in V_2 - S$ that
+matches with vertex $k+1$. If a matching vertex is found, we have a
+new isomorphism $f_{k+1}$ with $G_1[k+1] \isomorphic G_2[S \union \{ v
+\}]$.
 
 \begin{tabbing}
-IS\=OM\=OR\=PH\=($k$, $G_1$, $S_2$, $G_2$, $f$) $\equiv$ \\
-\>\textbf{if} ($S_2 = G_2$) \\
+IS\=OM\=OR\=PH\=($k$, $S$, $f_k$) $\equiv$ \\
+\>\textbf{if} ($S = V_2$) \\
 \>\>\textbf{return} true \\
-\>\textbf{for} each vertex $v \in G_2 - S_2$ \\
+\>\textbf{for} each vertex $v \in V_2 - S$ \\
 \>\>\textbf{if} (MATCH($k+1$, $v$)) \\
-\>\>\>$f(k+1) \leftarrow v$ \\
-\>\>\>ISOMORPH($k+1$, $G_1$, $S_2 \cup \{ v \}$, $G_2$)\\
+\>\>\>$f_{k+1} = f_k \union (k+1,v)$ \\
+\>\>\>ISOMORPH($k+1$, $S \union \{ v \}$, $f_{k+1}$)\\
 \>\>\textbf{else}\\
-\>\>\>\textbf{return} false
-\\
-ISOMORPH($0$, $G_1$, $\emptyset$, $G_2$)
+\>\>\>\textbf{return} false \\
 \end{tabbing}
 
-The MATCH operation is as follows. The basic idea is to check to see
-if the adjacency structure of $v_1$ is the same as the adjacency
-structure of $v_2$. For each edge $(v_1,w) \in G_1$ we check to see if
-$(v_2, f(w)) \in G_2$ and for each edge $(w,v_1) \in G_1$ we check to
-see if $(f(w), v_2) \in G_2$. Note that so far we have only defined
-the mapping $f$ for vertices with labels equal to or smaller than
-$v_1$, so we do not look at edges that are incident on vertices with
-larger labels. Those edges will be examined in later stages.
+%ISOMORPH($0$, $G_1$, $\emptyset$, $G_2$)
+
+The basic idea of the match operation is to check whether $G_1[k+1]$
+is isomorphic to $G_2[S \union \{ v \}]$. We already know that $G_1[k]
+\isomorphic G_2[S]$ with the mapping $f_k$, so all we need to do is
+verify that the out-edges and in-edges of $k+1$ and $v$ connect to
+vertices in $G_1[k]$ and $S$ that corresponding to one another. To
+state this more precisely, we need to show that $(k+1,w) \in E_1[k+1]$
+if and only if $(v,f_k(w)) \in E_2[S \union \{ v \}]$ and that
+$(w,k+1) \in E_1[k+1]$ if and only if $(v,f_k(w)) \in E_2[S \union \{
+v \}]$.
 
 \begin{tabbing}
-MA\=TC\=H(\=$v_1$\=, $v_2$, $G_1$, $G_2$, $f$) $\equiv$ \\
-\>\textbf{for} each out edge $(v_1, w) \in G_1$ \\
-\>\>\textbf{if} ($w < v_1$) \\
-\>\>\>\textbf{if} ( $(v_2,f(w)) \notin G_2$ ) \\
+MA\=TC\=H(\=$k+1$\=, $v$) $\equiv$ \\
+\>\textbf{for} each out edge $(k+1, j) \in E_1[k+1]$ \\
+\>\>\>\textbf{if} ( $(v,f_k(j)) \notin E_2[S \union \{ v \}]$ ) \\
 \>\>\>\>\textbf{return} false\\
-\>\textbf{for} each in edge $(w, v_1) \in G_1$ \\
-\>\>\textbf{if} ($w < v_1$) \\
-\>\>\>\textbf{if} ($(f(w),v_2) \notin G_2$) \\
+\>\textbf{for} each in edge $(j, k+1) \in E_1[k+1]$ \\
+\>\>\>\textbf{if} ($(f_k(j),v) \notin E_2[S \union \{ v \}]$) \\
 \>\>\>\>\textbf{return} false \\
 \>\textbf{return} true
 \end{tabbing}
@@ -101,36 +126,36 @@ techniques described in
 One way to reduce the search space is through the use of \emph{vertex
 invariants}. The idea is to compute a number for each vertex $i(v)$
 such that $i(v) = i(v')$ if there exists some isomorphism $f$ where
-$f(v) = v'$. Therefore, when looking for a match to some vertex $v$,
-we only need to consider those vertices that have the same vertex
-invariant number. The number of vertices in a graph $g$ with the same
-vertex invariant number $i$ is called the \emph{invariant
-multiplicity} of $i$ in $g$.  In this implementation, by default we
-use the out-degree of the vertex as the vertex invariant, though the
-user can also supply there own invariant function. The ability of the
-invariant function to prune the search space varies widely with the
-type of graph.
+$f(v) = v'$. Then when we look for a match to some vertex $v$, we only
+need to consider those vertices that have the same vertex invariant
+number. The number of vertices in a graph with the same vertex
+invariant number $i$ is called the \emph{invariant multiplicity} for
+$i$.  In this implementation, by default we use the out-degree of the
+vertex as the vertex invariant, though the user can also supply there
+own invariant function. The ability of the invariant function to prune
+the search space varies widely with the type of graph.
 
-As a first check to see if there is no possibility of matching the two
-graphs, one create a list of computed vertex invariants for the
-vertices in each graph, sort the two lists, and then compare them.  If
-the two lists are different then the two graphs are not isomorphic.
-If the two lists are the same then the two graphs may be isomorphic.
+As a first check to rule out graphs that have no possibility of
+matching, one can create a list of computed vertex invariant numbers
+for the vertices in each graph, sort the two lists, and then compare
+them.  If the two lists are different then the two graphs are not
+isomorphic.  If the two lists are the same then the two graphs may be
+isomorphic.
 
 
 \section{Vertex Order}
 
 A good choice of the labeling for the vertices (which determines the
-order in which the subgraph $S_1$ is grown) can also reduce the search
-space. In the following we discuss two labeling heuristics.
+order in which the subgraph $G_1[k]$ is grown) can also reduce the
+search space. In the following we discuss two labeling heuristics.
 
 \subsection{Most Constrained First}
 
 Consider the most constrained vertices first.  That is, examine
 lower-degree vertices before higher-degree vertices. This reduces the
 search space because it chops off a trunk before the trunk has a
-chance to blossom out. We can generalize this a bit to use vertex
-invariants, so we examine vertices with low invariant multiplicilty
+chance to blossom out. We can generalize this to use vertex
+invariants. We examine vertices with low invariant multiplicilty
 before examining vertices with high invariant multiplicity.
 
 \subsection{Adjacent First}
@@ -141,16 +166,330 @@ weed out vertices that are adjacent to vertices that have already been
 matched. Therefore, when choosing the next vertex to examine, it is
 desirable to choose one that is adjacent a vertex already in $S_1$.
 
-\subsection{DFS Order, Starting with Lowest Degree}
+\subsection{DFS Order, Starting with Lowest Multiplicity}
 
 For this implementation, we combine the above two heuristics in the
 following way. To implement the ``adjacent first'' heuristic we apply
 DFS to the graph, and use the DFS discovery order as our vertex
 order. To comply with the ``most constrained first'' heuristic we
-start the DFS at the vertex with the lowest degree, and each time we
-restart the DFS, we choose the undiscovered vertex with lowest degree.
+start the DFS at the vertex with the lowest invariant multiplicity,
+and each time we restart the DFS, we choose the undiscovered vertex
+with lowest invariant multiplicity.
+
+\section{Implementation}
 
 
+@d Isomorphism Function Interface
+@{
+template <typename Graph1, typename Graph2, 
+          typename IndexMapping, typename VertexInvariant,
+          typename VertexIndexMap1, typename VertexIndexMap2>
+bool simple_isomorphism(const Graph1& g1, const Graph2& g2,
+    IndexMapping f, VertexInvariant invariant,
+    VertexIndexMap1 v1_index_map, VertexIndexMap2 v2_index_map)
+@}
+
+
+@d Simple Isomorphism Function Outline
+@{
+{
+  @<Concept checking@>
+  @<Some type definitions and iterator declarations@>
+  @<Quick return with false if $|V_1| \neq |V_2|$@>
+  @<Compute vertex invariants@>
+  @<Quick return if the graph's invariants do not match@>
+  @<Compute invariant multiplicity@>
+  @<Sort vertices by invariant multiplicity@>
+  @<Order the vertices by DFS discover time@>
+  @<Order the edge set by DFS discover time@>
+  @<Perform backtracking searches, trying each vertex in $G_2$ as the start@>
+}
+@}
+
+
+@d Concept checking
+@{
+
+@}
+
+@d Some type definitions and iterator declarations
+@{
+typedef typename graph_traits<Graph2>::vertex_descriptor VertexG2;
+typedef typename property_traits<VertexIndexMap2>::value_type V2Idx;
+typedef typename graph_traits<Graph1>::vertices_size_type size_type;
+typedef typename VertexInvariant::template result<Graph1>::type InvarValue1;
+typedef typename VertexInvariant::template result<Graph2>::type InvarValue2;
+
+typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
+typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
+@}
+
+
+
+
+@d Degree vertex invariant
+@{
+struct degree_vertex_invariant {
+  template <typename Graph> struct result {
+    typedef typename graph_traits<Graph>::degree_size_type type;
+  };
+  template <typename Graph>
+  typename graph_traits<Graph>::degree_size_type
+  operator()(typename graph_traits<Graph>::vertex_descriptor v, const Graph& g)
+  {
+    return out_degree(v, g);
+  }
+};
+@}
+
+
+
+@d Quick return with false if $|V_1| \neq |V_2|$
+@{
+if (num_vertices(g1) != num_vertices(g2))
+  return false;
+@}
+
+
+
+@d Compute vertex invariants
+@{
+@<Setup storage for vertex invariants@>
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+  invar1[*i1] = invariant(*i1, g1);
+for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
+  invar2[*i2] = invariant(*i2, g2);
+@}
+
+
+@d Setup storage for vertex invariants
+@{
+typedef std::vector<InvarValue1> invar_vec1_t;
+typedef std::vector<InvarValue2> invar_vec2_t;
+typedef typename invar_vec1_t::iterator vec1_iter;
+typedef typename invar_vec2_t::iterator vec2_iter;
+invar_vec1_t invar1_vec(num_vertices(g1));
+invar_vec2_t invar2_vec(num_vertices(g2));
+
+// Provide Property Map interface for invariants
+iterator_property_map<vec1_iter, V1Map, InvarValue1, InvarValue1&>
+  invar1(invar1_vec.begin(), v1_index_map);
+iterator_property_map<vec2_iter, V2Map, InvarValue2, InvarValue2&>
+  invar2(invar2_vec.begin(), v2_index_map);
+@}
+
+
+@d Quick return if the graph's invariants do not match
+@{
+{
+  invar_vec1_t invar1_tmp(invar1_vec);
+  invar_vec2_t invar2_tmp(invar2_vec);
+  std::sort(invar1_tmp.begin(), invar1_tmp.end());
+  std::sort(invar2_tmp.begin(), invar2_tmp.end());
+  if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), invar2_tmp.begin()))
+    return false;
+}
+@}
+
+
+@d Compute invariant multiplicity
+@{
+std::vector<std::size_t> invar_mult(num_vertices(g1), 0);
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)      
+  ++invar_mult[invar1[*i1]];
+@}
+
+@d Sort vertices by invariant multiplicity
+@{
+std::vector<size_type> perm;
+integer_range<size_type> range(0, num_vertices(g1));
+std::copy(range.begin(), range.end(), std::back_inserter(perm));
+std::sort(perm.begin(), perm.end(),
+          detail::compare_invariant_multiplicity(invar1_vec.begin(),
+                                                 invar_mult.begin()));
+
+typedef typename graph_traits<Graph1>::vertex_descriptor VertexG1;
+std::vector<VertexG1> g1_vertices;
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+  g1_vertices.push_back(*i1);
+permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
+@}
+
+
+@d Order the vertices by DFS discover time
+@{
+{
+  perm.clear();
+  @<Compute DFS discover times@>
+  g1_vertices.clear();
+  for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+    g1_vertices.push_back(*i1);
+  permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
+}
+@}
+
+
+@d Compute DFS discover times
+@{
+std::vector<default_color_type> color_vec(num_vertices(g1));
+for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
+     ui != g1_vertices.end(); ++ui) {
+  if (color_vec[get(v1_index_map, *ui)] 
+      == color_traits<default_color_type>::white()) {
+    depth_first_visit
+      (g1, *ui, detail::record_dfs_order<Graph1, V1Map>(perm, 
+						       v1_index_map), 
+       make_iterator_property_map(&color_vec[0], v1_index_map, 
+				  color_vec[0]));
+  }
+}
+@}
+
+
+@d Order the edge set by DFS discover time
+@{
+typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
+std::vector<edge1_t> edge_set;
+std::copy(edges(g1).first, edges(g1).second, 
+          std::back_inserter(edge_set));
+
+std::sort(edge_set.begin(), edge_set.end(), 
+          detail::isomorph_edge_ordering
+          (make_iterator_property_map(perm.begin(), v1_index_map, 
+                                      perm[0]), g1));
+@}
+
+
+
+@d Perform backtracking searches, trying each vertex in $G_2$ as the start
+@{
+typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
+for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
+  f[*first] = *vi; // S = { *vi }
+  @<Construct $V_2 - S$, calling it \code{not\_in\_S}@>
+  @<Attempt to extend $S$ to the whole of $V_2$@>
+}
+@}
+
+
+@d Construct $V_2 - S$, calling it \code{not\_in\_S}
+@{
+typedef indirect_cmp<V2Map, std::less<V2Idx> >  Cmp;
+Cmp cmp(v2_index_map);
+std::set<VertexG2, Cmp> not_in_S(cmp);
+for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
+  set_insert(not_in_S, *i2);
+set_remove(not_in_S, *vi);
+@}
+
+
+
+@d Attempt to extend $S$ to the whole of $V_2$
+@{
+if(detail::isomorph(boost::next(first), g1_vertices.end(), 
+    edge_set.begin(), edge_set.end(), g1, g2,
+    make_iterator_property_map(perm.begin(), v1_index_map, perm[0]),
+    v2_index_map, f, invar1, invar2, not_in_S))
+  return true;
+@}
+
+
+@d Signature for the recursive isomorph function
+@{
+template <class VertexIter, class EdgeIter, class Graph1, class Graph2,
+  class V1IndexMap, class V2IndexMap, class IndexMapping, 
+  class Invar1, class Invar2, class Set>
+bool isomorph(VertexIter k, VertexIter last,
+	      EdgeIter edge_iter, EdgeIter edge_iter_end,
+	      const Graph1& g1, const Graph2& g2,
+	      V1IndexMap v1_index_map,
+	      V2IndexMap v2_index_map,
+	      IndexMapping f, Invar1 invar1, Invar2 invar2,
+	      const Set& not_in_S)
+@}
+
+
+
+@d Outline for the isomorph function
+@{
+@<Return true if matching is complete@>
+@<Create a local copy of the mapping $f_k$@>
+@<Find potential matches for $k$ in $V_2 - S$@>
+@}
+
+@d Return true if matching is complete
+@{
+if (k == last) 
+  return true;
+@}
+
+@d Create a local copy of the mapping $f_k$
+@{
+typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
+std::vector<v2_desc_t> my_f_vec(num_vertices(g1));
+typedef typename std::vector<v2_desc_t>::iterator vec_iter;
+iterator_property_map<vec_iter,  V1IndexMap, v2_desc_t, v2_desc_t&>
+  my_f(my_f_vec.begin(), v1_index_map);
+
+typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
+for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+  my_f[*i1] = f[*i1];
+@}
+
+Let $C$ be the set of vertices that have the same connectivity
+structure as $k$ with respect to the vertices that have already been
+mapped, and which have the same vertex invariant. It is the
+intersection of the vertices in $C$ with the vertices in $V_2 - S_2$
+that are potential matches for $k$, which we denote $P$.
+
+introduce notion of partial isomorphism?
+
+@d Find potential matches for $k$ in $V_2 - S$
+@{
+@<Let $P = V_2 - S$@>
+for (; edge_iter != edge_iter_end
+       && (k_id == std::max(get(v1_index_map, source(*edge_iter, g1)),
+			    get(v1_index_map, target(*edge_iter, g1))));
+     ++edge_iter) {
+  std::vector<v2_desc_t> tmp, adj;
+  e = *edge_iter;
+  @<Construct $C$, the vertices that are partially isomorphic to $k$@>  
+  @<Perform $P = P \intersect C$@>
+}
+@}
+
+@d Let $P = V_2 - S$
+@{
+std::vector<v2_desc_t> vertex_set;
+std::copy(not_in_S.begin(), not_in_S.end(), std::back_inserter(vertex_set));
+@}
+
+@d Construct $C$, the vertices that are partially isomorphic to $k$
+@{
+
+@}
+
+@d Perform $P = P \intersect C$
+@{
+
+@}
+
+Let $P_2$ be the vertices from $V_2 - S$ that have the same
+connectivity with respect to vertex $k$ and the same vertex invariant
+as $k$.
+
+% P_2 = V_2 - S_2
+
+% (k, v_1)
+% v_2 = f(v_1)
+% A = {}
+% for all (u,v_2) \in E_2
+%   if (i(k) = i(u))
+%     A = A U { u }
+
+% P_2 <- P_2 \intersect A
+
+% same connectivity and same vertex invariant
 
 
 \end{document}
