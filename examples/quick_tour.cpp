@@ -38,8 +38,8 @@ template <class Graph> struct exercise_vertex {
   void operator()(const Vertex& v) const
   {
     using namespace boost;
-    typename property_map<Graph, vertex_index>::type 
-      vertex_id = get(vertex_index(), g);
+    typename property_map<Graph, vertex_index_t>::type 
+      vertex_id = get(vertex_index, g);
     std::cout << "vertex: " << get(vertex_id, v) << std::endl;
 
     // Write out the outgoing edges
@@ -95,8 +95,8 @@ int main(int,char*[])
   // declare a graph object
   Graph g(num_vertices);
 
-  boost::property_map<Graph, vertex_index>::type 
-    vertex_id = get(vertex_index(), g);
+  boost::property_map<Graph, vertex_index_t>::type 
+    vertex_id = get(vertex_index, g);
 
   // add the edges to the graph object
   for (int i = 0; i < num_edges; ++i)

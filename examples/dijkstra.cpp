@@ -52,9 +52,9 @@ main(int argc, char* argv[])
 {
   using namespace boost;
 
-  typedef plugin<edge_weight, int> weightp;
+  typedef plugin<edge_weight_t, int> weightp;
   typedef adjacency_list< listS, vecS, directedS, 
-                      plugin<vertex_color,default_color_type>, weightp > Graph;
+                      plugin<vertex_color_t,default_color_type>, weightp > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
   typedef std::pair<int,int> E;

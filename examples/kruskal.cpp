@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   using namespace boost;
   using namespace std;
 
-  typedef plugin<edge_weight,int> weightp;
+  typedef plugin<edge_weight_t,int> weightp;
   typedef adjacency_list< vecS, vecS, undirectedS, 
                 no_plugin, weightp > Graph;
   typedef Graph::edge_descriptor Edge;
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 		    1, 1};
 
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-  property_map<Graph, edge_weight>::type weight = get(edge_weight(), G);
+  property_map<Graph, edge_weight_t>::type weight = get(edge_weight, G);
 
   typedef std::vector<Edge> container;
   std::vector<Edge> spanning_tree_edges;

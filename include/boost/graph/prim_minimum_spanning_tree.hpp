@@ -48,7 +48,7 @@ namespace boost {
   inline void
   prim_minimum_spanning_tree(Graph& G, Vertex s)
   {
-    prim_minimum_spanning_tree(G, s, get(vertex_distance(), G));
+    prim_minimum_spanning_tree(G, s, get(vertex_distance, G));
   }
 
   // Variant (2)
@@ -66,9 +66,9 @@ namespace boost {
   prim_minimum_spanning_tree(Graph& G, Vertex s, Distance d, 
                              UniformCostVisitor visit)
   {
-    prim_minimum_spanning_tree(G, s, d, get(edge_weight(), G), 
-                               get(vertex_color(), G), 
-                               get(vertex_index(), G), 
+    prim_minimum_spanning_tree(G, s, d, get(edge_weight, G), 
+                               get(vertex_color, G), 
+                               get(vertex_index, G), 
                                visit);
   }
 

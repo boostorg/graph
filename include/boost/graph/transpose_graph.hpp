@@ -53,7 +53,7 @@ namespace boost {
   template <class Graph1, class Graph2> 
   void transpose_graph(const Graph1& G1, Graph2& G2)
   {
-    transpose_graph(G1, G2, get(vertex_index(), G1));
+    transpose_graph(G1, G2, get(vertex_index, G1));
   }
   
 

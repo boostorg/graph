@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   ds.union_set(2,5);
     
   cout << "An undirected graph:" << endl;
-  print_graph(G, get(vertex_index(), G));
+  print_graph(G, get(vertex_index, G));
   cout << endl;
     
   graph_traits<Graph>::vertex_iterator i,end;

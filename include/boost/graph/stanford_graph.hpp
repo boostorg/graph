@@ -249,13 +249,13 @@ namespace boost {
     inline long operator[](Vertex* v) const { return v - _g->vertices; }
     Graph* _g;
   };
-  inline sgb_vertex_id_map get(vertex_index, Graph* g) {
+  inline sgb_vertex_id_map get(vertex_index_t, Graph* g) {
     return sgb_vertex_id_map(g);
   }
 
   // Vertex Name  
-  class sgb_vertex_name_map
-    : public boost::put_get_at_helper<char*, sgb_vertex_name_map>
+  class sgb_vertex_name_t_map
+    : public boost::put_get_at_helper<char*, sgb_vertex_name_t_map>
   {
   public:
     typedef boost::readable_property_map_tag category;
@@ -263,8 +263,8 @@ namespace boost {
     typedef Vertex* key_type;
     inline char* operator[](Vertex* v) const { return v->name; }
   };
-  inline sgb_vertex_name_map get(vertex_name, Graph* g) {
-    return sgb_vertex_name_map();
+  inline sgb_vertex_name_t_map get(vertex_name_t, Graph* g) {
+    return sgb_vertex_name_t_map();
   }
 
   // Vertex Property Tags
@@ -424,12 +424,12 @@ namespace boost {
     typedef sgb_edge_length_map type;
   };
   template <>
-  struct property_map<Graph*, vertex_index> {
+  struct property_map<Graph*, vertex_index_t> {
     typedef sgb_vertex_id_map type;
   };
   template <>
-  struct property_map<Graph*, vertex_name> {
-    typedef sgb_vertex_name_map type;
+  struct property_map<Graph*, vertex_name_t> {
+    typedef sgb_vertex_name_t_map type;
   };
 #ifdef BOOST_GRAPH_PARTIAL_SPECIALIZATION  
   namespace detail {

@@ -41,6 +41,11 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.21  2000/09/25 17:25:59  jsiek
+// vertex_index() -> vertex_index
+// vertex_index -> vertex_index_t
+// etc.
+//
 // Revision 1.20  2000/09/25 16:27:22  jsiek
 // forgot to delete default argument
 //
@@ -88,7 +93,7 @@
 // property map interface changes
 //
 // Revision 1.5  2000/09/20 19:30:09  jsiek
-// changed the name of the property tags: name_tag -> vertex_name, etc.
+// changed the name of the property tags: name_tag -> vertex_name_t, etc.
 //
 // Revision 1.4  2000/09/19 01:58:00  jsiek
 // fixed some misuses of BOOST_NO_STD_ITERATOR_TRAITS, changing it
@@ -1740,7 +1745,7 @@ namespace boost {
       typedef vec_adj_list_any_vertex_pa type;
     };
     template <>
-    struct vec_adj_list_choose_vertex_pa_helper<vertex_index> {
+    struct vec_adj_list_choose_vertex_pa_helper<vertex_index_t> {
       typedef vec_adj_list_id_vertex_pa type;
     };
 

@@ -52,7 +52,7 @@ main(int, char*[])
 
   const int V = 2;
 
-  typedef plugin<edge_weight, float> Weight;
+  typedef plugin<edge_weight_t, float> Weight;
   typedef adjacency_list<vecS, vecS, undirectedS,
                         no_plugin, Weight> UndirectedGraph;
   UndirectedGraph undigraph(V);
@@ -75,8 +75,8 @@ main(int, char*[])
     cout << "in a directed graph is ";
     cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
 
-    property_map<DirectedGraph, edge_weight>::type
-      weight = get(edge_weight(), digraph);
+    property_map<DirectedGraph, edge_weight_t>::type
+      weight = get(edge_weight, digraph);
     cout << "weight[(u,v)] = " << get(weight, e1) << endl;
     cout << "weight[(v,u)] = " << get(weight, e2) << endl;
   }
@@ -92,8 +92,8 @@ main(int, char*[])
     cout << "in an undirected graph is ";
     cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
 
-    property_map<UndirectedGraph, edge_weight>::type
-      weight = get(edge_weight(), undigraph);
+    property_map<UndirectedGraph, edge_weight_t>::type
+      weight = get(edge_weight, undigraph);
     cout << "weight[(u,v)] = " << get(weight, e1) << endl;
     cout << "weight[(v,u)] = " << get(weight, e2) << endl;
   }

@@ -56,7 +56,7 @@ main(int argc, char* argv[])
      internal decorator, so we "plugin" the color to the graph.
      */
   typedef adjacency_list<vecS, vecS, directedS, 
-    plugin<vertex_color, default_color_type> > Graph;
+    plugin<vertex_color_t, default_color_type> > Graph;
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   Pair edges[7] = { Pair(0,1), Pair(2,4),
@@ -65,7 +65,7 @@ main(int argc, char* argv[])
                     Pair(4,3), Pair(5,5) };
   Graph G(6, edges, edges + 7);
 
-  boost::property_map<Graph, vertex_index>::type id = get(vertex_index(), G);
+  boost::property_map<Graph, vertex_index_t>::type id = get(vertex_index, G);
 
   typedef std::vector< Vertex > container;
   container c;

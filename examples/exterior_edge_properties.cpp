@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 
   typedef boost::adjacency_list<boost::vecS, boost::vecS, 
     boost::bidirectionalS, boost::no_plugin, 
-    boost::plugin<boost::edge_index, std::size_t> > Graph;
+    boost::plugin<boost::edge_index_t, std::size_t> > Graph;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -119,8 +119,8 @@ int main(int argc, char* argv[]) {
 
   boost::add_edge(G, 6, 8, 9);
 
-  typedef boost::property_map<Graph, boost::edge_index>::type EdgeIndexMap;
-  EdgeIndexMap edge_id = boost::get(boost::edge_index(), G);
+  typedef boost::property_map<Graph, boost::edge_index_t>::type EdgeIndexMap;
+  EdgeIndexMap edge_id = boost::get(boost::edge_index, G);
 
   typedef boost::random_access_iterator_property_map
     <int*, int, int&, EdgeIndexMap> IterMap;

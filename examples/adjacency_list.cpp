@@ -56,9 +56,9 @@ int main(int argc, char* argv[])
   using namespace boost;
   using namespace std;
 
-  typedef plugin<edge_name, std::string> EdgePlugin;
-  typedef plugin<vertex_color,default_color_type> ColorPlugin;
-  typedef plugin<vertex_index, std::size_t, ColorPlugin> VertexPlugin;
+  typedef plugin<edge_name_t, std::string> EdgePlugin;
+  typedef plugin<vertex_color_t,default_color_type> ColorPlugin;
+  typedef plugin<vertex_index_t, std::size_t, ColorPlugin> VertexPlugin;
 
   typedef adjacency_list<vecS, listS, undirectedS, 
     VertexPlugin, EdgePlugin> Graph;
@@ -66,9 +66,9 @@ int main(int argc, char* argv[])
   const int V = 5;
   Graph g(V);
 
-  property_map<Graph, vertex_index>::type id = get(vertex_index(), g);
+  property_map<Graph, vertex_index_t>::type id = get(vertex_index, g);
 
-  property_map<Graph, edge_name>::type name = get(edge_name(), g);
+  property_map<Graph, edge_name_t>::type name = get(edge_name, g);
 
   boost::graph_traits<Graph>::vertex_iterator vi, viend;
   int vnum = 0;

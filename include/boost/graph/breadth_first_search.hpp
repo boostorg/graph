@@ -61,7 +61,7 @@ namespace boost {
     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
     BFSVisitor vis)
   {
-    breadth_first_search(g, s, vis, get(vertex_color(), g));
+    breadth_first_search(g, s, vis, get(vertex_color, g));
   }
 
   // Variant (2)

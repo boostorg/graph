@@ -69,9 +69,9 @@ int main(int argc, char* argv[])
   // First example: the connected components of an undirected graph
   using namespace boost;
   {
-    typedef plugin<vertex_discover_time, int,
-      plugin< vertex_finish_time, int,
-        plugin< vertex_color, default_color_type > > > VertexPlugin;
+    typedef plugin<vertex_discover_time_t, int,
+      plugin< vertex_finish_time_t, int,
+        plugin< vertex_color_t, default_color_type > > > VertexPlugin;
     typedef adjacency_list <vecS, vecS, undirectedS, VertexPlugin> Graph;
     typedef Graph::vertex_descriptor Vertex;
 
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     
     
     std::vector<int> c(num_vertices(G));
-    int num = connected_components(G, &c[0], get(vertex_color(), G), 
+    int num = connected_components(G, &c[0], get(vertex_color, G), 
 				   dfs_visitor<>());
     
     cout << "An undirected graph:" << endl;
@@ -98,9 +98,9 @@ int main(int argc, char* argv[])
   // Second example: the strongly connected components of a directed
   // graph
   {
-    typedef plugin<vertex_discover_time, int,
-      plugin< vertex_finish_time, int,
-        plugin< vertex_color, default_color_type > > > VertexPlugin;
+    typedef plugin<vertex_discover_time_t, int,
+      plugin< vertex_finish_time_t, int,
+        plugin< vertex_color_t, default_color_type > > > VertexPlugin;
     typedef adjacency_list< vecS, vecS, directedS, VertexPlugin >  Graph;
     const int N = 6;
     Graph G(N);
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     typedef Graph::vertex_descriptor Vertex;
     
     std::vector<int> c(N);
-    int num = connected_components(G, &c[0], get(vertex_color(), G),
+    int num = connected_components(G, &c[0], get(vertex_color, G),
 				   dfs_visitor<>());
     
     cout << "A directed graph:" << endl;

@@ -63,58 +63,83 @@ namespace boost {
   struct vertex_property_tag { };
   struct edge_property_tag { };
 
-  struct vertex_index {
+  struct vertex_index_t {
     typedef vertex_property_tag kind;
     enum { num = detail::ID_PLUGIN_TAG };
   };
-  struct edge_index {
+  static const vertex_index_t vertex_index = { };
+
+  struct edge_index_t {
     typedef edge_property_tag kind;
     enum { num = detail::ID_PLUGIN_TAG };
   };
-  struct graph_name { 
+  static const edge_index_t edge_index = { };
+
+  struct graph_name_t { 
     typedef graph_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
-  struct vertex_name { 
+  static const graph_name_t graph_name = { };
+
+  struct vertex_name_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
-  struct edge_name { 
+  static const vertex_name_t vertex_name = { };
+
+  struct edge_name_t { 
     typedef edge_property_tag kind;
     enum { num = detail::NAME_PLUGIN_TAG };
   };
-  struct edge_weight { 
+  static const edge_name_t edge_name = { };
+
+  struct edge_weight_t { 
     typedef edge_property_tag kind;
     enum { num = detail::WEIGHT_PLUGIN_TAG };
   };
-  struct vertex_distance { 
+  static const edge_weight_t edge_weight = { };
+
+  struct vertex_distance_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::DISTANCE_PLUGIN_TAG };
   };
-  struct vertex_color { 
+  static const vertex_distance_t vertex_distance = { };
+
+  struct vertex_color_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::COLOR_PLUGIN_TAG };
   };
-  struct vertex_degree { 
+  static const vertex_color_t vertex_color = { };
+
+  struct vertex_degree_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::DEGREE_PLUGIN_TAG };
   };
-  struct vertex_out_degree { 
+  static const vertex_degree_t vertex_degree = { };
+
+  struct vertex_out_degree_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::OUT_DEGREE_PLUGIN_TAG };
   };
-  struct vertex_in_degree { 
+  static const vertex_out_degree_t vertex_out_degree = { };
+
+  struct vertex_in_degree_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::IN_DEGREE_PLUGIN_TAG };
   };
-  struct vertex_discover_time { 
+  static const vertex_in_degree_t vertex_in_degree = { };
+
+  struct vertex_discover_time_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::DISCOVER_TIME_PLUGIN_TAG };
   };
-  struct vertex_finish_time { 
+  static const vertex_discover_time_t vertex_discover_time = { };
+
+  struct vertex_finish_time_t { 
     typedef vertex_property_tag kind;
     enum { num = detail::FINISH_TIME_PLUGIN_TAG };
   };
+  static const vertex_finish_time_t vertex_finish_time = { };
 
   namespace detail {
 

@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
   using namespace std;
   identity_property_map id;
   typedef adjacency_list<vecS, vecS, undirectedS, 
-     plugin< vertex_color, default_color_type,
-       plugin<vertex_degree,int> > > Graph;
+     plugin< vertex_color_t, default_color_type,
+       plugin<vertex_degree_t,int> > > Graph;
   typedef Graph::vertex_descriptor Vertex;
 
   typedef std::pair<size_t, size_t> Pair;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
   Graph::vertex_iterator ui, uiend;
 
-  property_map<Graph,vertex_degree>::type deg = get(vertex_degree(), G);
+  property_map<Graph,vertex_degree_t>::type deg = get(vertex_degree, G);
   cout << "degree: " << endl;
   for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
     deg[*ui] = out_degree(*ui, G);
@@ -85,8 +85,8 @@ int main(int argc, char* argv[])
   {
     Vertex s = vertex(6, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color(), G), 
-			   get(vertex_degree(), G));
+    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G), 
+			   get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
     
     for (std::vector<Vertex>::const_iterator i = iperm.begin();
@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
   {
     Vertex s = vertex(0, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color(), G),
-			   get(vertex_degree(), G));
+    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G),
+			   get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
 
     for (std::vector<Vertex>::const_iterator i=iperm.begin();

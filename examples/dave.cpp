@@ -82,10 +82,10 @@ b(14); d a
 
 */
 
-typedef plugin<vertex_color, default_color_type, 
-         plugin<vertex_distance,int> > VPlugin;
+typedef plugin<vertex_color_t, default_color_type, 
+         plugin<vertex_distance_t,int> > VPlugin;
 typedef int weight_t;
-typedef plugin<edge_weight,weight_t> EPlugin;
+typedef plugin<edge_weight_t,weight_t> EPlugin;
 
 typedef adjacency_list<vecS, vecS, directedS, VPlugin, EPlugin > Graph;
 
@@ -173,8 +173,8 @@ main(int argc, char* argv[])
   enum { a, b, c, d, e, f, g, N};
 
   Graph G(N);
-  boost::property_map<Graph, vertex_index>::type 
-    vertex_id = get(vertex_index(), G);
+  boost::property_map<Graph, vertex_index_t>::type 
+    vertex_id = get(vertex_index, G);
 
   std::vector<weight_t> distance(N, numeric_limits<weight_t>::max());
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
@@ -202,7 +202,7 @@ main(int argc, char* argv[])
   print(G, name);
 
   adjacency_list<listS, vecS, directedS, 
-    plugin<vertex_color, default_color_type> > G_copy(N);
+    plugin<vertex_color_t, default_color_type> > G_copy(N);
 
   cout << "Starting graph:" << endl;
 

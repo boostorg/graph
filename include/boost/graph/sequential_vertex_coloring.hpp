@@ -48,7 +48,7 @@
 namespace boost {
   template <class VertexListGraph, class OrderPA, class ColorMap>
   typename graph_traits<VertexListGraph>::size_type
-  sequential_vertex_coloring(const VertexListGraph& G, OrderPA order, 
+  sequential_vertex_color_ting(const VertexListGraph& G, OrderPA order, 
 			     ColorMap color)
   {
     using graph_traits;

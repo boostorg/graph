@@ -49,7 +49,7 @@ main()
   using namespace boost;
 
   typedef adjacency_list<vecS, vecS, directedS, no_plugin,
-    plugin<edge_weight,int> > Graph;
+    plugin<edge_weight_t,int> > Graph;
   const int V = 6;
 
   typedef std::pair<int,int> Edge;
@@ -63,7 +63,7 @@ main()
 
   Graph g(V, edge_array, edge_array + E);
 
-  property_map<Graph,edge_weight>::type w = get(edge_weight(), g);
+  property_map<Graph,edge_weight_t>::type w = get(edge_weight, g);
 
   int weights[] = { 0, 0, 0, 0, 0,
                     3, -4, 8,
@@ -85,7 +85,7 @@ main()
   std::vector<std::vector<int> > D(6, std::vector<int>(6)); 
 
   johnson_all_pairs_shortest_paths(g, D, &d[0], &h[0], w, &c[0], 
-                                   get(vertex_index(), g));
+                                   get(vertex_index, g));
 
   std::cout << "\t";
   for (int k = 0; k < V; ++k) 

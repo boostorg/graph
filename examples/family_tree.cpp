@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
   graph_traits<adjacency_list<> >::vertex_iterator i, end;
   graph_traits<adjacency_list<> >::adjacency_iterator ai, a_end;
 
-  property_map<adjacency_list<>, vertex_index>::type
-    id = get(vertex_index(), G);
+  property_map<adjacency_list<>, vertex_index_t>::type
+    id = get(vertex_index, G);
 
   for(tie(i, end) = vertices(G); i != end; ++i) {
     cout << name[get(id, *i)];

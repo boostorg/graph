@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
   // color property needed in breadth-first search
   std::vector<default_color_type> color(num_vertices(G));
 
-  typedef boost::property_map<Graph, vertex_index>::type IndexMap;
-  IndexMap vertex_id = get(vertex_index(), G);
+  typedef boost::property_map<Graph, vertex_index_t>::type IndexMap;
+  IndexMap vertex_id = get(vertex_index, G);
 
   // discover time property
   std::vector<size_type> dtime(num_vertices(G));

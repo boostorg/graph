@@ -117,7 +117,7 @@ namespace boost {
   }
   template <class IncidenceGraph>
   void print_graph(const IncidenceGraph& G) {
-    print_graph(G, get(vertex_index(), G));
+    print_graph(G, get(vertex_index, G));
   }
 
   template <class EdgeListGraph, class Name>

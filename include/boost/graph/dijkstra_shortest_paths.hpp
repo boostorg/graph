@@ -40,7 +40,7 @@ namespace boost {
     (VertexListGraph& g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s)
   {
-    dijkstra_shortest_paths(g, s, get(vertex_distance(), g));
+    dijkstra_shortest_paths(g, s, get(vertex_distance, g));
   }
 
   // Variant (2)
@@ -53,9 +53,9 @@ namespace boost {
   {
     null_visitor null_vis;
     dijkstra_shortest_paths(g, s, d,
-                            get(edge_weight(), g), 
-                            get(vertex_color(), g), 
-                            get(vertex_index(), g), 
+                            get(edge_weight, g), 
+                            get(vertex_color, g), 
+                            get(vertex_index, g), 
                             make_ucs_visitor(null_vis));
   }
 
@@ -68,9 +68,9 @@ namespace boost {
      DistanceMap d, UniformCostVisitor visit)
   {
     dijkstra_shortest_paths(g, s, d, 
-                            get(edge_weight(), g),
-                            get(vertex_color(), g),
-                            get(vertex_index(), g),
+                            get(edge_weight, g),
+                            get(vertex_color, g),
+                            get(vertex_index, g),
                             visit);
   }
 

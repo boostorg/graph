@@ -106,10 +106,10 @@ int main(int argc, char* argv[])
 {
   typedef boost::adjacency_list< 
     boost::mapS, boost::vecS, boost::bidirectionalS,
-    boost::plugin<boost::vertex_color, boost::default_color_type,
-        boost::plugin<boost::vertex_degree, int,
-          boost::plugin<boost::vertex_in_degree, int,
-    boost::plugin<boost::vertex_out_degree, int> > > >
+    boost::plugin<boost::vertex_color_t, boost::default_color_type,
+        boost::plugin<boost::vertex_degree_t, int,
+          boost::plugin<boost::vertex_in_degree_t, int,
+    boost::plugin<boost::vertex_out_degree_t, int> > > >
   > Graph;
   
   Graph G(5);

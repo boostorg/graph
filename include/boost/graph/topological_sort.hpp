@@ -79,7 +79,7 @@ namespace boost {
   inline void 
   topological_sort(Graph& G, OutputIterator iter, DFSVisitor visit)
   {
-    topological_sort(G, iter, get(vertex_color(), G), visit);
+    topological_sort(G, iter, get(vertex_color, G), visit);
   }
 
   template <class Graph, class OutputIterator>

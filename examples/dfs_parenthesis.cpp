@@ -75,16 +75,17 @@ main(int argc, char* argv[])
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
-  boost::property_map<Graph, vertex_index>::type 
-    vertex_id = get(vertex_index(), G);
+  boost::property_map<Graph, vertex_index_t>::type 
+    vertex_id = get(vertex_index, G);
   
   std::vector<default_color_type> color(num_vertices(G));
 
   std::cout << "DFS parenthesis:" << std::endl;
   depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), 
-							close_paren())),
-		     make_iterator_property_map(color.begin(), 
-						vertex_id, color[0]));
+                                                        close_paren())),
+                     make_iterator_property_map(color.begin(), 
+                                                get(vertex_index, G), 
+                                                color[0]));
   std::cout << std::endl;
   return 0;
 }
