@@ -41,11 +41,19 @@ namespace std { using ::abs; }
 
 namespace boost {
 
-    // warning: when weight of e is size_t and weight of e is
-    // close to max of size_t, du + wuv will overflow. To avoid
-    // this, be careful about the value of weight. If it is larger
-    // than the half of current max of the type, change the type of
-    // weight to have more bytes.
+    // The following version of the plus functor prevents
+    // problems due to overflow at positive infinity.
+
+    template <class T>
+    struct closed_plus
+    {
+      T operator()(const T& a, const T& b) const {
+	T inf = std::numeric_limits<T>::max();
+	if (b > 0 && std::abs(inf - a) < b)
+	  return inf;
+	return a + b;
+      }
+    };
     
     template <class Graph, class WeightMap, 
             class PredecessorMap, class DistanceMap, 
@@ -61,10 +69,6 @@ namespace boost {
       typedef typename property_traits<WeightMap>::value_type W;
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
-
-      // workaround overflow problem, don't relax if d_u is close to inf
-      if (w_e > 0 && std::abs(std::numeric_limits<D>::max() - d_u) < w_e)
-	return false;
       
       if ( compare(combine(d_u, w_e), d_v) ) {
         put(d, v, combine(d_u, w_e));
@@ -80,7 +84,7 @@ namespace boost {
                const Graph& g, WeightMap w, PredecessorMap p, DistanceMap d)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
-      typedef std::plus<D> Combine;
+      typedef closed_plus<D> Combine;
       typedef std::less<D> Compare;
       return relax(e, g, w, p, d, Combine(), Compare());
     }
