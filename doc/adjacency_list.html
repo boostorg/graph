@@ -37,7 +37,7 @@ href="graph_theory_review.html#sec:adjacency-list-representation">adjacency-list
 is basically a two-dimensional structure, where each element of the
 first dimension represents a vertex, and each of the vertices contains
 a one-dimensional structure that is its edge list. <a
-href="fig:adj-list-graph">Figure 1</a> shows an adjacency list
+href="#fig:adj-list-graph">Figure 1</a> shows an adjacency list
 representation of a directed graph.
 
 <P></P>
@@ -67,7 +67,7 @@ directed, undirected, or directed with access to both the in-edges and
 out-edges (which we call bidirectional). The bidirectional graph takes
 up twice the space (per edge) of a directed graph since each edge will
 appear in both an out-edge and in-edge list. <a
-href="fig:undir-adj-list-graph">Figure 2</a> shows an adjacency list
+href="#fig:undir-adj-list-graph">Figure 2</a> shows an adjacency list
 representation of an undirected graph.
 
 <P></P>
@@ -257,7 +257,7 @@ The stability issue also affects vertex and edge descriptors.  For
 example, suppose you use vector of vertex descriptors to keep track of
 the parents (or predecessors) of vertices in a shortest paths tree
 (see <a
-href="../example/dijkstra.cpp"><tt>examples/dijkstra.cpp</tt></a>).
+href="../example/dijkstra-example.cpp"><tt>examples/dijkstra-example.cpp</tt></a>).
 You create the parent vector with a call to
 <tt>dijkstra_shortest_paths()</tt>, and then remove a vertex from the
 graph. Subsequently you try to use the parent vector, but since all
