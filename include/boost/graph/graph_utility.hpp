@@ -40,6 +40,8 @@
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int.hpp>
 
 namespace boost {
 
@@ -249,39 +251,37 @@ namespace boost {
       *__first++ = __value++;
   }
 
-  inline std::size_t random_number(std::size_t N) {
-    std::size_t ret = rand() % N; 
-    return ret;
-  }
-
   // grab a random vertex from the graph's vertex set
-  template <class Graph>
+  template <class Graph, class RandomNumGen>
   typename graph_traits<Graph>::vertex_descriptor
-  random_vertex(Graph& g)
+  random_vertex(Graph& g, RandomNumGen& gen)
   {
-    std::size_t n = random_number(num_vertices(g));
+    uniform_int<RandomNumGen> rand_gen(gen, 0, num_vertices(g)-1);
+    std::size_t n = rand_gen();
     typename graph_traits<Graph>::vertex_iterator
       i = vertices(g).first;
     while (n-- > 0) ++i; // std::advance not VC++ portable
     return *i;
   }
 
-  template <class Graph>
+  template <class Graph, class RandomNumGen>
   typename graph_traits<Graph>::edge_descriptor
-  random_edge(Graph& g) {
-    typename graph_traits<Graph>::edges_size_type E = num_edges(g), n;
-    n = random_number(E);
+  random_edge(Graph& g, RandomNumGen& gen) {
+    uniform_int<RandomNumGen> rand_gen(gen, 0, num_edges(g)-1);
+    typename graph_traits<Graph>::edges_size_type 
+      n = rand_gen();
     typename graph_traits<Graph>::edge_iterator
       i = edges(g).first;
     while (n-- > 0) ++i; // std::advance not VC++ portable
     return *i;
   }
 
-  template <typename MutableGraph>
+  template <typename MutableGraph, class RandNumGen>
   void generate_random_graph
     (MutableGraph& g, 
      typename graph_traits<MutableGraph>::vertices_size_type V,
      typename graph_traits<MutableGraph>::vertices_size_type E,
+     RandNumGen& gen,
      bool self_edges = false)
   {
     typedef graph_traits<MutableGraph> Traits;
@@ -293,9 +293,9 @@ namespace boost {
       add_vertex(g);
 
     for (e_size_t j = 0; j < E; ++j) {
-      vertex_descriptor a = random_vertex(g), b;
+      vertex_descriptor a = random_vertex(g, gen), b;
       do {
-        b = random_vertex(g);
+        b = random_vertex(g, gen);
       } while (self_edges == false && a == b);
       add_edge(a, b, g);
     }
