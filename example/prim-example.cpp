@@ -34,10 +34,10 @@ main()
     property<vertex_distance_t, int>, property < edge_weight_t, int > > Graph;
   typedef std::pair < int, int >E;
   const int num_nodes = 5;
-  E edges[] = { E(0, 2), E(1, 1), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
+  E edges[] = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
     E(3, 4), E(4, 0)
   };
-  int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1 };
+  int weights[] = { 1, 1, 2, 7, 3, 1, 1 };
 #ifdef BOOST_MSVC
   Graph g(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g); 
