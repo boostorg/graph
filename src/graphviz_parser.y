@@ -47,6 +47,9 @@
 
   enum AttrState {GRAPH_GRAPH_A, GRAPH_NODE_A, GRAPH_EDGE_A, NODE_A, EDGE_A};
 
+  using boost::GraphvizGraph;
+  using boost::GraphvizAttrList;
+
   namespace graphviz {
 
     typedef boost::graph_traits<GraphvizGraph>::vertex_descriptor Vertex;
@@ -110,8 +113,8 @@
     }
 
     
-    void set_attribute(AttrType& p, const AttrType& attr) {
-      AttrType::const_iterator i, end;
+    void set_attribute(GraphvizAttrList& p, const GraphvizAttrList& attr) {
+      GraphvizAttrList::const_iterator i, end;
       for ( i=attr.begin(), end=attr.end(); i!=end; ++i)
 	p[i->first]=i->second;
     }
@@ -468,91 +471,17 @@ opt_graph_body: graph_body |  { $$ = 0; }
 
 namespace boost {
   
-  void read_graphviz(GraphvizGraph& g, const std::string& filename) {
+  void read_graphviz(const std::string& filename, GraphvizGraph& g) {
     FILE* file = fopen(filename.c_str(), "r");
     yyin = static_cast<void*>(file);
 
     yyparse(static_cast<void*>(&g));
   }
-  
 
-  template <class Indexer, class Key>
-  int get_index(Indexer indexer, const Key& u) {
-    return indexer[u];
+  void read_graphviz(FILE* file, GraphvizGraph& g) {
+    yyin = static_cast<void*>(file);
+    yyparse(static_cast<void*>(&g));
   }
-  
-  template <class Graph, class RandomAccessIterator>
-    void write_graphviz_subgraph (std::ostream& out, const Graph& g, 
-				  const GraphvizGraph& root,
-				  RandomAccessIterator vertex_marker,
-				  RandomAccessIterator edge_marker) {
-    typedef typename boost::graph_traits<Graph>::directed_category CAT;
-    typedef graphviz_io_traits<CAT> Traits;
-
-    graph_property<Graph, graph_name_t>::type&
-      g_name = const_cast<graph_property<Graph, graph_name_t>::type&>( get_property(g, graph_name));
-
-    if ( &g == &root )
-      out << Traits::name() ;
-    else
-      out << "subgraph";
-
-    out << " " << g_name << " {" << std::endl;
-
-    typename Graph::const_children_iterator i_child, j_child;
     
-    //print graph/node/edge attributes
-    make_graph_attributes_writer(g)(out);
-
-    //print subgraph
-    for ( boost::tie(i_child,j_child) = g.children();
-	  i_child != j_child; ++i_child )
-      write_graphviz_subgraph(out, *i_child, root, vertex_marker, edge_marker);
-
-    //print the lefted 
-    typename boost::graph_traits<Graph>::vertex_iterator i, end;
-    typename boost::graph_traits<Graph>::out_edge_iterator ei, edge_end;
-
-    for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
-      boost::tie(ei,edge_end) = out_edges(*i, g);
-
-      graphviz::Vertex source = g.local_to_global(*i);
-
-      while ( ei != edge_end ) {
-	int pos = get_index(get(edge_index, root), g.local_to_global(*ei));
-	if ( edge_marker[pos] ) {
-	  edge_marker[pos] = false;
-	  out << source << " " << Traits::delimiter()
-	      << " " << g.local_to_global(target(*ei, g));
-	  make_edge_attributes_writer(g)(out, *ei); //print edge properties
-	  out << ";" << std::endl;
-	}
-	++ei;
-      }
-      
-      int pos = get_index(get(vertex_index, root), source);
-      if ( vertex_marker[pos] ) {
-	vertex_marker[pos] = false;
-	out << source << ";" << std::endl;
-	make_vertex_attributes_writer(root)(out, source); //print vertex properties 
-      }
-    }
-    out << "}" << std::endl;
-    
-  }
-
-  void write_graphviz(const GraphvizGraph& g, 
-		      const std::string& filename) {
-    std::ofstream out(filename.c_str());
-    typedef GraphvizGraph Graph;
-
-    std::vector<bool> edge_marker(num_edges(g), true);
-    std::vector<bool> vertex_marker(num_vertices(g), true);
-
-    write_graphviz_subgraph(out, g, g,
-			    vertex_marker.begin(),
-			    edge_marker.begin());
-  }
-  
 }
 
