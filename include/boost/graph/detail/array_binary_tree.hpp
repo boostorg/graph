@@ -154,8 +154,8 @@ public:
     value_type tmp = x.value();
 
     /*swap external data*/
-    edata[ id[tmp] ]     = i;
-    edata[ id[value()] ] = x.i;
+    edata[ get(id, tmp) ]     = i;
+    edata[ get(id, value()) ] = x.i;
 
     x.value() = value();
     value() = tmp;
