@@ -57,6 +57,7 @@ namespace boost {
   template <typename Graph>
   class subgraph {
     typedef graph_traits<Graph> Traits;
+    typedef std::list<subgraph<Graph>*> ChildrenList;
   public:
     // Graph requirements
     typedef typename Traits::vertex_descriptor         vertex_descriptor;
@@ -114,14 +115,14 @@ namespace boost {
       m_global_vertex(x.m_global_vertex)
     {
       // Do a deep copy
-      for (std::list< subgraph<Graph>*>::iterator i = x.m_children.begin();
+      for (typename ChildrenList::const_iterator i = x.m_children.begin();
 	   i != x.m_children.end(); ++i)
 	m_children.push_back(new subgraph<Graph>( **i ));
     }
 
 
     ~subgraph() {
-      for (std::list< subgraph<Graph>*>::iterator i = m_children.begin();
+      for (typename ChildrenList::iterator i = m_children.begin();
 	   i != m_children.end(); ++i)
 	delete *i;
     }
@@ -201,7 +202,6 @@ namespace boost {
     // Return the children subgraphs of this graph/subgraph.
     // Use a list of pointers because the VC++ std::list doesn't like
     // storing incomplete type.
-    typedef std::list< subgraph<Graph>*> ChildrenList;
     typedef typename indirect_iterator_generator<typename ChildrenList::iterator,
       subgraph<Graph>, subgraph<Graph>&, std::bidirectional_iterator_tag, 
       subgraph<Graph>* >::type children_iterator;
@@ -227,18 +227,17 @@ namespace boost {
     std::size_t num_children() const { return m_children.size(); }
 
     //  private:
-    Graph m_graph;
-    subgraph<Graph>* m_parent;
-    ChildrenList m_children;
-    std::vector<vertex_descriptor> m_global_vertex; // local -> global
-    std::map<vertex_descriptor, vertex_descriptor> m_local_vertex;  // global -> local
-
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
 
+    Graph m_graph;
+    subgraph<Graph>* m_parent;
+    edge_index_type m_edge_counter; // for generating unique edge indices
+    ChildrenList m_children;
+    std::vector<vertex_descriptor> m_global_vertex; // local -> global
+    std::map<vertex_descriptor, vertex_descriptor> m_local_vertex;  // global -> local
     std::vector<edge_descriptor> m_global_edge;              // local -> global
     std::map<edge_index_type, edge_descriptor> m_local_edge; // global -> local
-    edge_index_type m_edge_counter; // for generating unique edge indices
 
     edge_descriptor
     local_add_edge(vertex_descriptor u_local, vertex_descriptor v_local,  

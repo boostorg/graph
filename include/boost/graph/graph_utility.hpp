@@ -302,6 +302,38 @@ namespace boost {
     }
   }
 
+  template <typename MutableGraph, typename RandNumGen,
+            typename VertexOutputIterator, typename EdgeOutputIterator>
+  void generate_random_graph
+    (MutableGraph& g, 
+     typename graph_traits<MutableGraph>::vertices_size_type V,
+     typename graph_traits<MutableGraph>::vertices_size_type E,
+     RandNumGen& gen,
+     VertexOutputIterator vertex_out,
+     EdgeOutputIterator edge_out,
+     bool self_edges = false)
+  {
+    typedef graph_traits<MutableGraph> Traits;
+    typedef typename Traits::vertices_size_type v_size_t;
+    typedef typename Traits::edges_size_type e_size_t;
+    typedef typename Traits::vertex_descriptor vertex_t;
+    typedef typename Traits::edge_descriptor edge_t;
+
+    for (v_size_t i = 0; i < V; ++i)
+      *vertex_out++ = add_vertex(g);
+
+    for (e_size_t j = 0; j < E; ++j) {
+      vertex_t a = random_vertex(g, gen), b;
+      do {
+        b = random_vertex(g, gen);
+      } while (self_edges == false && a == b);
+      edge_t e; bool inserted;
+      tie(e, inserted) = add_edge(a, b, g);
+      if (inserted)
+	*edge_out++ = std::make_pair(source(e, g), target(e, g));
+    }
+  }
+
   template <class Graph, class Vertex>
   bool is_adj_dispatch(Graph& g, Vertex a, Vertex b, bidirectional_tag)
   {

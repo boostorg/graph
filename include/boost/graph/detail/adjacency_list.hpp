@@ -354,8 +354,8 @@ namespace boost {
       remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
                                     StoredProperty& p)
       {
-        typename EdgeList::iterator i = el.begin();
-        for (; i != el.end(); ++i)
+        for (typename EdgeList::iterator i = el.begin();
+             i != el.end(); ++i)
           if (&(*i).get_property() == &p) {
             el.erase(i);
             return;
@@ -368,8 +368,8 @@ namespace boost {
       remove_directed_edge_dispatch(edge_descriptor e, EdgeList& el,
                                     no_property&)
       {
-        typename EdgeList::iterator i = el.begin();
-        for (; i != el.end(); ++i)
+        for (typename EdgeList::iterator i = el.begin();
+             i != el.end(); ++i)
           if ((*i).get_target() == e.m_target) {
             el.erase(i);
             return;

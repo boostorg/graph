@@ -80,23 +80,25 @@ namespace boost {
 
     void test_bidirectional_graph
       (const std::vector<vertex_t>& vertex_set,
-       const std::vector<edge_t>& edge_set,
+       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set,
        const Graph& g)
     {
       typedef typename std::vector<vertex_t>::const_iterator vertex_iter;
-      typedef typename std::vector<edge_t>::const_iterator edge_iter;
+      typedef typename std::vector< std::pair<vertex_t, vertex_t> >
+        ::const_iterator edge_iter;
       typedef typename graph_traits<Graph>::in_edge_iterator in_edge_iter;
 
       for (vertex_iter vi = vertex_set.begin(); vi != vertex_set.end(); ++vi) {
 	vertex_t v = *vi;
 	std::vector<vertex_t> inv_adj;
 	for (edge_iter e = edge_set.begin(); e != edge_set.end(); ++e)
-	  if (target(*e, g) == v)
-	    inv_adj.push_back(source(*e, g));
+	  if (e->second == v)
+	    inv_adj.push_back(e->first);
 
 	std::pair<in_edge_iter, in_edge_iter> p = in_edges(v, g);
 	BOOST_TEST(in_degree(v, g) == inv_adj.size());
-	BOOST_TEST(std::distance(p.first, p.second) == in_degree(v, g));
+	BOOST_TEST(deg_size_t(std::distance(p.first, p.second))
+                   == in_degree(v, g));
 	for (; p.first != p.second; ++p.first) {
 	  edge_t e = *p.first;
 	  BOOST_TEST(target(e, g) == v);
@@ -167,23 +169,25 @@ namespace boost {
 
     void test_adjacency_matrix
       (const std::vector<vertex_t>& vertex_set, 
-       const std::vector<edge_t>& edge_set, 
+       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set, 
        const Graph& g)
     {
       std::pair<edge_t, bool> p;
-      for (typename std::vector<edge_t>::const_iterator i = edge_set.begin();
+      for (typename std::vector<std::pair<vertex_t, vertex_t> >
+             ::const_iterator i = edge_set.begin();
 	   i != edge_set.end(); ++i) {
-	p = edge(source(*i, g), target(*i, g), g);
+	p = edge(i->first, i->second, g);
 	BOOST_TEST(p.second == true);
-	BOOST_TEST(source(p.first, g) == source(*i, g));
-	BOOST_TEST(target(p.first, g) == target(*i, g));
+	BOOST_TEST(source(p.first, g) == i->first);
+	BOOST_TEST(target(p.first, g) == i->second);
       }
       typename std::vector<vertex_t>::const_iterator j, k;
       for (j = vertex_set.begin(); j != vertex_set.end(); ++j)
 	for (k = vertex_set.begin(); k != vertex_set.end(); ++k) {
 	  p = edge(*j, *k, g);
 	  if (p.second == true)
-	    BOOST_TEST(contains(edge_set, p.first) == true);
+	    BOOST_TEST(any_if(edge_set, 
+              connects(source(p.first, g), target(p.first, g), g)) == true);
 	}
     }
     
