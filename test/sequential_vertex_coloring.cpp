@@ -34,11 +34,11 @@ int test_main(int, char*[])
     color(&color_vec.front(), get(vertex_index, g));
   vertices_size_type num_colors = sequential_vertex_coloring(g, color);
   BOOST_TEST(num_colors == 3);
-  BOOST_TEST(get(color, A) == 0);
-  BOOST_TEST(get(color, B) == 0);
-  BOOST_TEST(get(color, C) == 1);
-  BOOST_TEST(get(color, D) == 2);
-  BOOST_TEST(get(color, E) == 1);
+  BOOST_TEST(get(color, (vertices_size_type)A) == 0);
+  BOOST_TEST(get(color, (vertices_size_type)B) == 0);
+  BOOST_TEST(get(color, (vertices_size_type)C) == 1);
+  BOOST_TEST(get(color, (vertices_size_type)D) == 2);
+  BOOST_TEST(get(color, (vertices_size_type)E) == 1);
   return 0;
 }
 
