@@ -51,6 +51,8 @@ test-suite graph :
     [ compile copy.cpp : <sysinclude>$(BOOST_ROOT) ]
     
     [ compile property_iter.cpp : <sysinclude>$(BOOST_ROOT) ]    
+
+    [ run bundled_properties.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.

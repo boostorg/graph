@@ -113,6 +113,10 @@ namespace boost {
   BOOST_DEF_PROPERTY(edge, residual_capacity);
   BOOST_DEF_PROPERTY(graph, visitor);
 
+  // For internal use only: these tags are used for property bundles
+  BOOST_DEF_PROPERTY(vertex, bundle);
+  BOOST_DEF_PROPERTY(edge, bundle);
+
 #undef BOOST_DEF_PROPERTY
 
   namespace detail {
@@ -326,6 +330,23 @@ namespace boost {
   {
     return make_iterator_vertex_map(c.begin());
   }
+
+  template<typename Graph, typename Descriptor, typename Bundle, typename T>
+  struct bundle_property_map
+    : put_get_helper<T&, bundle_property_map<Graph, Descriptor, Bundle, T> >
+  {
+    typedef Descriptor key_type;
+    typedef T value_type;
+    typedef T& reference;
+    typedef lvalue_property_map_tag category;
+
+    bundle_property_map(Graph* g, T Bundle::* pm) : g(g), pm(pm) {}
+
+    reference operator[](key_type k) const { return (*g)[k].*pm; }
+  private:
+    Graph* g;
+    T Bundle::* pm;
+  };
 
 } // namespace boost
 

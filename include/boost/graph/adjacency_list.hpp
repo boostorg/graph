@@ -46,6 +46,7 @@
 #include <boost/property_map.hpp>
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/detail/edge.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace boost {
 
@@ -311,21 +312,54 @@ namespace boost {
       adjacency_list<OutEdgeListS,VertexListS,DirectedS,
                      VertexProperty,EdgeProperty,GraphProperty,EdgeListS>,
       VertexListS, OutEdgeListS, DirectedS, 
-      VertexProperty, EdgeProperty, GraphProperty, EdgeListS>::type
+      typename detail::retag_property_list<vertex_bundle_t,
+                                           VertexProperty>::type,
+      typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type,
+      GraphProperty, EdgeListS>::type
   {
+    typedef typename detail::retag_property_list<vertex_bundle_t,
+                                                 VertexProperty>::retagged
+      maybe_vertex_bundled;
+
+     typedef typename detail::retag_property_list<edge_bundle_t,
+                                                  EdgeProperty>::retagged
+      maybe_edge_bundled;
+
+     struct no_vertex_bundle {};
+     struct no_edge_bundle {};
+
+  public:
+    typedef typename detail::retag_property_list<vertex_bundle_t,
+                                                 VertexProperty>::type
+      vertex_property_type;
+    typedef typename detail::retag_property_list<edge_bundle_t,
+                                                 EdgeProperty>::type
+      edge_property_type;
+
+    // The types that are actually bundled
+    typedef typename ct_if<(is_same<maybe_vertex_bundled, no_property>::value),
+                           no_vertex_bundle,
+                           maybe_vertex_bundled>::type vertex_bundled;
+
+    typedef typename ct_if<(is_same<maybe_edge_bundled, no_property>::value),
+                           no_edge_bundle,
+                           maybe_edge_bundled>::type edge_bundled;
+
+  private:
     typedef adjacency_list self;
     typedef typename detail::adj_list_gen<
       self, VertexListS, OutEdgeListS, DirectedS, 
-      VertexProperty, EdgeProperty, GraphProperty, EdgeListS
+      vertex_property_type, edge_property_type, GraphProperty, EdgeListS
     >::type Base;
+
   public:
     typedef typename Base::stored_vertex stored_vertex;
     typedef typename Base::vertices_size_type vertices_size_type;
     typedef typename Base::edges_size_type edges_size_type;
     typedef typename Base::degree_size_type degree_size_type;
+    typedef typename Base::vertex_descriptor vertex_descriptor;
+    typedef typename Base::edge_descriptor edge_descriptor;
 
-    typedef EdgeProperty edge_property_type;
-    typedef VertexProperty vertex_property_type;
     typedef GraphProperty graph_property_type;
 
     inline adjacency_list(const GraphProperty& p = GraphProperty()) 
@@ -368,6 +402,56 @@ namespace boost {
       adjacency_list tmp(x);
       x = *this;
       *this = tmp;
+    }
+
+    // Directly access a vertex or edge bundle
+    vertex_bundled& operator[](vertex_descriptor v)
+    { return get(vertex_bundle, *this)[v]; }
+
+    const vertex_bundled& operator[](vertex_descriptor v) const
+    { return get(vertex_bundle, *this)[v]; }
+
+    edge_bundled& operator[](edge_descriptor e)
+    { return get(edge_bundle, *this)[e]; }
+
+    const edge_bundled& operator[](edge_descriptor e) const
+    { return get(edge_bundle, *this)[e]; }
+
+    // Generate property maps from bundles given a member pointer
+    template<typename T>
+    bundle_property_map<self, vertex_descriptor, vertex_bundled, T>
+    operator->*(T vertex_bundled::* pm)
+    {
+      typedef bundle_property_map<self, vertex_descriptor, vertex_bundled, T>
+        result_type;
+      return result_type(this, pm);
+    }
+
+    template<typename T>
+    bundle_property_map<const self, vertex_descriptor, vertex_bundled, const T>
+    operator->*(T vertex_bundled::* pm) const
+    {
+      typedef bundle_property_map<const self, vertex_descriptor,
+                                  vertex_bundled, const T> result_type;
+      return result_type(this, pm);
+    }
+
+    template<typename T>
+    bundle_property_map<self, edge_descriptor, edge_bundled, T>
+    operator->*(T edge_bundled::* pm)
+    {
+      typedef bundle_property_map<self, edge_descriptor, edge_bundled, T>
+        result_type;
+      return result_type(this, pm);
+    }
+
+    template<typename T>
+    bundle_property_map<const self, edge_descriptor, edge_bundled, const T>
+    operator->*(T edge_bundled::* pm) const
+    {
+      typedef bundle_property_map<const self, edge_descriptor, edge_bundled,
+                                  const T> result_type;
+      return result_type(this, pm);
     }
 
     //  protected:  (would be protected if friends were more portable)

@@ -88,6 +88,41 @@ namespace boost {
     return Dispatcher::const_get_value(p, t2, tag2);
   }
 
+ namespace detail {
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+   template<typename FinalTag, typename FinalType>
+   struct retag_property_list
+   {
+     typedef property<FinalTag, FinalType> type;
+     typedef FinalType retagged;
+   };
+
+   template<typename FinalTag, typename Tag, typename T, typename Base>
+   struct retag_property_list<FinalTag, property<Tag, T, Base> >
+   {
+   private:
+     typedef retag_property_list<FinalTag, Base> next;
+
+   public:
+     typedef property<Tag, T, typename next::type> type;
+     typedef typename next::retagged retagged;
+   };
+
+   template<typename FinalTag>
+   struct retag_property_list<FinalTag, no_property>
+   {
+     typedef no_property type;
+     typedef no_property retagged;
+   };
+#else
+  template<typename FinalTag, typename Property>
+  struct retag_property_list
+  {
+    typedef Property property;
+    typedef no_property retagged;
+  };
+#endif
+  }
 } // namesapce boost
 
 #endif /* BOOST_PROPERTY_HPP */
