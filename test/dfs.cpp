@@ -89,6 +89,68 @@ private:
   typename boost::property_traits<DiscoverTimeMap>::value_type m_time;
 };
 
+template <typename Graph>
+struct dfs_test
+{
+  typedef boost::graph_traits<Graph> Traits;
+  typedef typename Traits::vertices_size_type
+    vertices_size_type;
+
+  static void go(vertices_size_type max_V) {
+
+    typedef Traits::vertex_descriptor vertex_descriptor;
+    typedef boost::property_map<Graph, boost::vertex_color_t>::type ColorMap;
+    typedef boost::property_traits<ColorMap>::value_type ColorValue;
+    typedef boost::color_traits<ColorValue> Color;
+
+    vertices_size_type i, k;
+    Traits::edges_size_type j;
+    Traits::vertex_iterator vi, vi_end, ui, ui_end;
+
+    for (i = 0; i < max_V; ++i)
+      for (j = 0; j < i*i; ++j) {
+        Graph g;
+        generate_random_graph(g, i, j);
+
+        ColorMap color = get(boost::vertex_color, g);
+        std::vector<vertex_descriptor> parent(num_vertices(g));
+        for (k = 0; k < num_vertices(g); ++k)
+          parent[k] = k;
+        std::vector<int> discover_time(num_vertices(g)),
+          finish_time(num_vertices(g));
+
+        dfs_test_visitor<ColorMap, vertex_descriptor*,
+          int*, int*> visitor(color, &parent[0], 
+                              &discover_time[0], &finish_time[0]);
+
+        boost::depth_first_search(g, visitor);
+
+        // all vertices should be black
+        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+          BOOST_TEST_VERIFY(get(color, *vi) == Color::black());
+
+        // check parenthesis structure of discover/finish times
+        // See CLR p.480
+        for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+          for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+            vertex_descriptor u = *ui, v = *vi;
+            if (u != v) {
+              BOOST_TEST_VERIFY( finish_time[u] < discover_time[v]
+                                 || finish_time[v] < discover_time[u]
+                                 || (discover_time[v] < discover_time[u]
+                                     && finish_time[u] < finish_time[v]
+                                     && boost::is_descendant(u, v, &parent[0]))
+                                 || (discover_time[u] < discover_time[v]
+                                     && finish_time[v] < finish_time[u]
+                                     && boost::is_descendant(v, u, &parent[0]))
+                                 );
+            }
+          }
+      }
+
+  }
+};
+
 
 // usage: dfs.exe [max-vertices=15]
 
@@ -112,63 +174,19 @@ int test_main(int argc, char* argv[])
       boost::color_value_archetype > color_map;
     boost::depth_first_search(g_arch2, boost::dfs_visitor<>(), color_map());
   }
-  
-  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
-    boost::property<boost::vertex_color_t, boost::default_color_type> > Graph;
-  typedef boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-  typedef boost::property_map<Graph, boost::vertex_color_t>::type ColorMap;
-  typedef boost::property_traits<ColorMap>::value_type ColorValue;
-  typedef boost::color_traits<ColorValue> Color;
 
-  boost::graph_traits<Graph>::vertices_size_type max_V = 15;
-  boost::graph_traits<Graph>::vertices_size_type i, k;
-  boost::graph_traits<Graph>::edges_size_type j;
-  
-  boost::graph_traits<Graph>::vertex_iterator vi, vi_end, ui, ui_end;
-
+  int max_V = 15;
   if (argc > 1)
     max_V = atoi(argv[1]);
 
-  for (i = 0; i < max_V; ++i)
-    for (j = 0; j < i*i; ++j) {
-      Graph g;
-      generate_random_graph(g, i, j);
-
-      ColorMap color = get(boost::vertex_color, g);
-      std::vector<vertex_descriptor> parent(num_vertices(g));
-      for (k = 0; k < num_vertices(g); ++k)
-        parent[k] = k;
-      std::vector<int> discover_time(num_vertices(g)),
-        finish_time(num_vertices(g));
-
-      dfs_test_visitor<ColorMap, vertex_descriptor*,
-        int*, int*> visitor(color, &parent[0], 
-                            &discover_time[0], &finish_time[0]);
-
-      boost::depth_first_search(g, visitor);
-
-      // all vertices should be black
-      for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-        BOOST_TEST_VERIFY(get(color, *vi) == Color::black());
-      
-      // check parenthesis structure of discover/finish times
-      // See CLR p.480
-      for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-        for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-          vertex_descriptor u = *ui, v = *vi;
-          if (u != v) {
-            BOOST_TEST_VERIFY( finish_time[u] < discover_time[v]
-                               || finish_time[v] < discover_time[u]
-                               || (discover_time[v] < discover_time[u]
-                                   && finish_time[u] < finish_time[v]
-                                   && boost::is_descendant(u, v, &parent[0]))
-                               || (discover_time[u] < discover_time[v]
-                                   && finish_time[v] < finish_time[u]
-                                   && boost::is_descendant(v, u, &parent[0]))
-                               );
-          }
-        }
-    }
+  // Test directed graphs.
+  dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+           boost::property<boost::vertex_color_t, boost::default_color_type> > 
+    >::go(max_V);
+  // Test undirected graphs.
+  dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
+           boost::property<boost::vertex_color_t, boost::default_color_type> >
+    >::go(max_V);
 
   return 0;
 }
