@@ -76,7 +76,7 @@ public:
     ++distance_list[k];
     predecessor[v] = u;
   }
-  void non_tree_edge(edge_descriptor e, Graph* g) {
+  void cycle_edge(edge_descriptor e, Graph* g) {
     vertex_descriptor u = source(e, g), v = target(e, g);
     k = distance[u] + 1;
     if (distance[v] + k < girth && v != predecessor[u])
