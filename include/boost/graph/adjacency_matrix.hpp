@@ -255,7 +255,8 @@ namespace boost {
 
   struct adj_matrix_traversal_tag :
     public virtual adjacency_matrix_tag,
-    public virtual vertex_and_edge_list_graph_tag { };
+    public virtual vertex_list_graph_tag,
+    public virtual edge_list_graph_tag { };
   
   //=========================================================================
   // Adjacency Matrix Class
