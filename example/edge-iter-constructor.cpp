@@ -38,21 +38,15 @@ template < typename T >
 int
 main()
 {
-  typedef
-    adjacency_list <
-    listS,                      // Store out-edges of each vertex in a std::list
-    vecS,                       // Store vertex set in a std::vector
-    directedS                   // The graph is directed
-    >
-    graph_type;
+  typedef adjacency_list <
+    listS,                     // Store out-edges of each vertex in a std::list
+    vecS,                      // Store vertex set in a std::vector
+    directedS                  // The graph is directed
+    > graph_type;
 
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef
-    graph_traits <
-    graph_type >::vertices_size_type
-    size_type;
-  size_type
-    n_vertices;
+  typedef graph_traits < graph_type >::vertices_size_type size_type;
+  size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
 
   graph_type

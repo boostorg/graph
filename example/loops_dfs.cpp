@@ -86,7 +86,7 @@ compute_loop_extent(typename graph_traits <
   typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
   typedef color_traits < default_color_type > Color;
 
-  Vertex loop_head, loop_tail, u, v;
+  Vertex loop_head, loop_tail;
   loop_tail = source(back_edge, g);
   loop_head = target(back_edge, g);
 
