@@ -11,12 +11,12 @@
 
 namespace boost {
 
-template <class BidirectionalGraph>
+template <class BidirectionalGraph, class GraphRef = const BidirectionalGraph&>
 class reverse_graph {
     typedef reverse_graph<BidirectionalGraph> Self;
  public:
     // Constructor
-    reverse_graph(BidirectionalGraph& g) : m_g(g) {}
+    reverse_graph(GraphRef g) : m_g(g) {}
         
     // Graph requirements
     typedef typename graph_traits<BidirectionalGraph>::vertex_descriptor vertex_descriptor;
@@ -33,8 +33,8 @@ class reverse_graph {
 
     // AdjacencyGraph requirements
 #if !defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef typename detail::adjacency_iterator<reverse_graph, vertex_descriptor,
-          out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
+        typedef typename adjacency_iterator_generator<reverse_graph, vertex_descriptor,
+          out_edge_iterator>::type adjacency_iterator;
 #else
         typedef detail::bidir_adj_iter<vertex_descriptor, out_edge_iterator,
                 reverse_graph> adjacency_iterator;
@@ -59,14 +59,21 @@ class reverse_graph {
 
     // would be private, but template friends aren't portable enough.
  // private:
-    BidirectionalGraph& m_g;
+    GraphRef m_g;
 };
 
 template <class BidirectionalGraph>
 inline reverse_graph<BidirectionalGraph>
-make_reverse_graph(BidirectionalGraph& g)
+make_reverse_graph(const BidirectionalGraph& g)
 {
     return reverse_graph<BidirectionalGraph>(g);
+}
+
+template <class BidirectionalGraph>
+inline reverse_graph<BidirectionalGraph, BidirectionalGraph&>
+make_reverse_graph(BidirectionalGraph& g)
+{
+    return reverse_graph<BidirectionalGraph, BidirectionalGraph&>(g);
 }
 
 template <class BidirectionalGraph, class Property>
