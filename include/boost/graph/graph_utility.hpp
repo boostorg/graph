@@ -65,6 +65,18 @@ namespace boost {
       return Edge(); // ?
   }
 
+  // Provide an undirected graph interface alternative
+  // to the out_edges() function.
+  template <class Graph>
+  inline 
+  std::pair<typename graph_traits<Graph>::out_edge_iterator,
+            typename graph_traits<Graph>::out_edge_iterator>
+  incident_on(typename graph_traits<Graph>::vertex_descriptor u,
+              Graph& g)
+  {
+    return out_edges(u, g);
+  }
+
   // Need to convert all of these printing functions to take an ostream object
   // -JGS
 
