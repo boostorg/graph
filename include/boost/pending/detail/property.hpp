@@ -27,10 +27,7 @@ namespace boost {
     struct error_property_not_found { };
 
     template <int TagMatched>
-    struct property_value_dispatch { };
-
-    template <>
-    struct property_value_dispatch<1> {
+    struct property_value_dispatch {
       template <class Property, class T, class Tag>
       static T& get_value(Property& p, T*, Tag) {
         return p.m_value; 
@@ -64,7 +61,9 @@ namespace boost {
     };
     template <>
     struct property_value_end<no_property> {
-      template <class T> class result { typedef detail::error_property_not_found type; };
+      template <class T> class result { 
+	typedef detail::error_property_not_found type; 
+      };
 
       // Stop the recursion and return error
       template <class T, class Tag>
