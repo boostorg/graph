@@ -11,6 +11,7 @@
 #include "digraph.hpp"
 #include <boost/python.hpp>
 #include "point2d.hpp"
+#include "generators.hpp"
 
 namespace boost { namespace graph { namespace python {
 
@@ -61,6 +62,9 @@ BOOST_PYTHON_MODULE(bgl)
 {
   using boost::python::class_;
   using boost::python::enum_;
+  using boost::python::no_init;
+  using boost::python::init;
+  using boost::python::arg;
 
   enum_<graph_file_kind>("file_kind")
     .value("adjlist", gfk_adjlist)
@@ -76,6 +80,21 @@ BOOST_PYTHON_MODULE(bgl)
   class_<point2d>("Point2D")
     .def_readwrite("x", &point2d::x)
     .def_readwrite("y", &point2d::y)
+    ;
+
+  class_<erdos_renyi>("ErdosRenyi", no_init)
+    .def(init<std::size_t, double>(
+           (arg("n"), arg("probability") = 1)))
+    ;
+
+  class_<power_law_out_degree>("PowerLawOutDegree", no_init)
+    .def(init<std::size_t, double, double>(
+           (arg("n"), arg("alpha"), arg("beta"))))
+    ;
+
+  class_<small_world>("SmallWorld", no_init)
+    .def(init<std::size_t, std::size_t, double>
+           ((arg("n"), arg("k"), arg("probability"))))
     ;
 
   export_Graph();

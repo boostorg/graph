@@ -14,8 +14,13 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/vector_property_map.hpp>
 #include <boost/dynamic_property_map.hpp>
+#include <boost/random/linear_congruential.hpp>
+#include <boost/graph/erdos_renyi_generator.hpp>
+#include <boost/graph/plod_generator.hpp>
+#include <boost/graph/small_world_generator.hpp>
 #include <boost/python.hpp>
 #include "point2d.hpp"
+#include "generators.hpp"
 
 namespace boost { namespace graph { namespace python {
 
@@ -157,9 +162,17 @@ get(const basic_index_map<Key, IndexMap>& pm,
 
 enum graph_file_kind { gfk_adjlist, gfk_graphviz };
 
+struct stored_minstd_rand
+{
+  stored_minstd_rand(int seed = 1) : gen(seed) { }
+
+  minstd_rand gen;
+};
+
 template<typename DirectedS>
 class basic_graph
-  : public adjacency_list<listS, listS, DirectedS,
+  : public stored_minstd_rand,
+    public adjacency_list<listS, listS, DirectedS,
                           property<vertex_index_t, std::size_t>,
                           property<edge_index_t, std::size_t> >
 {
@@ -180,6 +193,13 @@ class basic_graph
   typedef typename traits::vertex_descriptor         base_vertex_descriptor;
   typedef typename traits::edge_descriptor           base_edge_descriptor;
 
+  typedef erdos_renyi_iterator<minstd_rand, basic_graph<DirectedS> >
+    er_iterator;
+  typedef plod_iterator<minstd_rand, basic_graph<DirectedS> >
+    sf_iterator;
+  typedef small_world_iterator<minstd_rand, basic_graph<DirectedS> >
+    sw_iterator;
+  
  public:
   typedef basic_descriptor<base_vertex_descriptor, DirectedS>
                                                      Vertex;
@@ -209,6 +229,9 @@ class basic_graph
 
   basic_graph();
   basic_graph(const std::string& filename, graph_file_kind kind); 
+  basic_graph(erdos_renyi, int seed);
+  basic_graph(power_law_out_degree, int seed);
+  basic_graph(small_world, int seed);
 
   bool is_directed() const
   { return is_convertible<directed_category, directed_tag>::value; }

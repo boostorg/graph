@@ -126,6 +126,25 @@ basic_graph<DirectedS>::basic_graph(const std::string& filename,
   }
 }
 
+template<typename DirectedS>
+basic_graph<DirectedS>::basic_graph(erdos_renyi er, int seed)
+  : stored_minstd_rand(seed), 
+    inherited(er_iterator(this->gen, er.n, er.p), er_iterator(), er.n) { }
+
+template<typename DirectedS>
+basic_graph<DirectedS>::basic_graph(power_law_out_degree plod, int seed)
+  : stored_minstd_rand(seed), 
+    inherited(sf_iterator(this->gen, plod.n, plod.alpha, plod.beta), 
+              sf_iterator(),
+              plod.n)
+{ }
+
+template<typename DirectedS>
+basic_graph<DirectedS>::basic_graph(small_world sw, int seed)
+  : stored_minstd_rand(seed), 
+    inherited(sw_iterator(this->gen, sw.n, sw.k, sw.p), sw_iterator(), sw.n)
+{ }
+
 // ----------------------------------------------------------
 // Incidence basic_graph<DirectedS> concept
 // ----------------------------------------------------------
@@ -481,6 +500,7 @@ void export_basic_graph(const char* name)
   using boost::python::range;
   using boost::python::scope;
   using boost::python::self;
+  using boost::python::arg;
 
   typedef basic_graph<DirectedS> Graph;
   typedef typename Graph::Vertex Vertex;
@@ -493,6 +513,12 @@ void export_basic_graph(const char* name)
       class_<basic_graph<DirectedS> >(name)
         // Constructors
         .def(init<std::string, graph_file_kind>())
+        .def(init<erdos_renyi, std::size_t>(
+               (arg("generator"), arg("seed") = 1)))
+        .def(init<power_law_out_degree, std::size_t>(
+               (arg("generator"), arg("seed") = 1)))
+        .def(init<small_world, std::size_t>(
+               (arg("generator"), arg("seed") = 1)))
         .def("is_directed", &Graph::is_directed)
         // Vertex List Graph concept
         .def("num_vertices", &Graph::num_vertices)
