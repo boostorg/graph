@@ -1055,26 +1055,34 @@ namespace boost {
     {
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
-      
+
       // O(E/V) or O(log(E/V))
       void
       remove_edge(typename Config::edge_descriptor e)
       {
-        typedef typename Config::graph_type graph_type;
+	typedef typename Config::graph_type graph_type;
+	typedef typename Config::out_edge_iterator out_edge_iterator;
         graph_type& g = static_cast<graph_type&>(*this);
-        typename Config::OutEdgeList& oel = g.out_edge_list(source(e, g));
-        typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
-        typedef typename Config::OutEdgeList::value_type::property_type PType;
-        PType& p = *(PType*)e.get_property();
-        detail::remove_directed_edge_dispatch(e, oel, p);
-        detail::remove_directed_edge_dispatch(e, iel, p);
-        detail::remove_directed_edge_dispatch(e, g.m_edges, p);
+	std::pair<out_edge_iterator, out_edge_iterator> rng = 
+	  edge_range(source(e, g), target(e, g), g);
+	rng.first = std::find(rng.first, rng.second, e);
+	if (rng.first != rng.second)
+	  remove_edge(rng.first);
       }
 
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
       {
-        this->remove_edge(*iter);
+	typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+	typename Config::edge_descriptor e = *iter;
+        typename Config::OutEdgeList& oel = g.out_edge_list(source(e, g));
+        typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        PType& p = *(PType*)e.get_property();
+        detail::remove_directed_edge_dispatch(*iter, iel, p);
+	g.m_edges.erase(iter.base()->get_iter());
+	oel.erase(iter.base());
       }
     };
 
@@ -1473,7 +1481,11 @@ namespace boost {
       typedef typename Config::out_edge_iterator out_edge_iterator;
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator first, last;
-      tie(first, last) = std::equal_range(el.begin(), el.end(), StoredEdge(v));
+      typename Config::EdgeContainer fake_edge_container;
+      tie(first, last) = 
+	std::equal_range(el.begin(), el.end(), 
+			 StoredEdge(v, fake_edge_container.end(),
+				    &fake_edge_container));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
