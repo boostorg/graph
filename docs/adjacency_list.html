@@ -219,6 +219,29 @@ exterior property storage.
 
 <P>
 
+
+<h2><tt>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;</tt>
+
+This class provides an alternate method for accessing some of the
+associated types of the <tt>adjacency_list</tt> class. The main reason
+for this class is that sometimes one would like to create graph
+properties whose values are vertex or edge descriptors. If you try to
+use <tt>graph_traits</tt> for this you will run into a problem with
+mutually recursive types. To get around this problem, the
+<tt>adjacency_list_traits</tt> class is provided, which gives the user
+access to the descriptor types without requiring the user to provide
+the plugin types for the graph.
+
+<pre>
+template <class EdgeList, class VertexList, class Directed>
+struct adjacency_list_traits {
+  typedef ... directed_category;
+  typedef ... edge_parallel_category;
+  typedef ... vertex_descriptor;
+  typedef ... edge_descriptor;
+};
+</pre>
+
 <H2>Associated Types</H2>
 
 <table border>
@@ -330,6 +353,7 @@ and must match one of the properties specified in the
 </tr>
 
 </table>
+
 
 <H2>Member Functions</H2>
 
