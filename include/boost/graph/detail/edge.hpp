@@ -96,8 +96,8 @@ namespace std {
   }
 #else
   template <class Char, class Traits, class D, class V>
-  std::ostream<Char, Traits>& 
-  operator<<(std::ostream<Char, Traits>& os,
+  std::basic_ostream<Char, Traits>& 
+  operator<<(std::basic_ostream<Char, Traits>& os,
              const boost::detail::edge_desc_impl<D,V>& e)
   {
     return os << "(" << e.m_source << "," << e.m_target << ")";
