@@ -12,7 +12,7 @@
 
 \begin{document}
 
-\title{An Implementation of Transitive Closure}
+\title{A Generic Programming Implementation of Transitive Closure}
 \author{Jeremy G. Siek}
 
 \maketitle
@@ -21,7 +21,8 @@
 
 This paper documents the implementation of the
 \code{transitive\_closure()} function of the Boost Graph Library.  The
-function was implemented by Vladimir Prus.
+function was implemented by Vladimir Prus and some editing was done by
+Jeremy Siek.
 
 The algorithm used to implement the \code{transitive\_closure()}
 function is based on the detection of strong components
@@ -29,7 +30,7 @@ function is based on the detection of strong components
 main ideas of the algorithm and some relevant background theory.
 
 The \keyword{transitive closure} of a graph $G = (V,E)$ is a graph $G^+
-= (V,E*)$ such that $E^+$ contains an edge $(u,v)$ if and only if $G$
+= (V,E^+)$ such that $E^+$ contains an edge $(u,v)$ if and only if $G$
 contains a path (of at least one edge) from $u$ to $v$.  A
 \keyword{successor set} of a vertex $v$, denoted by $Succ(v)$, is the
 set of vertices that are reachable from vertex $v$. The set of
@@ -57,9 +58,11 @@ The following is the interface and outline of the function:
 @d Transitive Closure Function
 @{
 template <typename Graph, typename GraphTC, typename VertexIndexMap>
-void transitive_closure(const Graph& g, GraphTC& tc, VertexIndexMap index_map)
+void transitive_closure(const Graph& g, GraphTC& tc,
+  VertexIndexMap index_map)
 {
   @<Some type definitions@>
+  @<Concept checking@>
   @<Compute strongly connected components of the graph@>
   @<Construct the condensation graph (version 2)@>
   @<Compute transitive closure on the condensation graph@>
@@ -71,6 +74,22 @@ void transitive_closure(const Graph& g, GraphTC& tc)
 {
   transitive_closure(g, tc, get(vertex_index, g));
 }
+@}
+
+The parameter \code{g} is the input graph and the parameter \code{tc}
+is the output graph that will contain the transitive closure of
+\code{g}. The \code{index\_map} maps vertices in the input graph to
+the integers zero to \code{num\_vertices(g) - 1}. The following
+statements check to make sure that the template parameters
+\emph{model} the concepts that are required for this algorithm.
+
+@d Concept checking
+@{
+function_requires< VertexListGraphConcept<Graph> >();
+function_requires< AdjacencyGraphConcept<Graph> >();
+function_requires< VertexMutableGraphConcept<GraphTC> >();
+function_requires< EdgeMutableGraphConcept<GraphTC> >();
+function_requires< ReadablePropertyMapConcept<VertexIndexMap, vertex> >();
 @}
 
 \noindent To simplify the code in the rest of the function we make the
@@ -88,10 +107,10 @@ typedef typename graph_traits<Graph>::adjacency_iterator adjacency_iterator;
 The first step of the algorithm is to compute which vertices are in
 each strongly connected component (SCC) of the graph. This is done
 with the \code{strong\_components()} function. The result of this
-function is stored in the \code{component\_num} array which maps each
-vertex to the number of the SCC to which it belongs (the components
-are numbered zero through \code{num\_scc}). Later we will need
-efficient access to all vertices in the same SCC so we create a
+function is stored in the \code{component\_number} array which maps
+each vertex to the number of the SCC to which it belongs (the
+components are numbered zero through \code{num\_scc}). Later we will
+need efficient access to all vertices in the same SCC so we create a
 \code{std::vector} of vertices for each SCC. Later we will use the SCC
 numbers for vertices in the condensation graph (CG), so we use the
 same integer type \code{cg\_vertex} for both.
@@ -99,15 +118,17 @@ same integer type \code{cg\_vertex} for both.
 @d Compute strongly connected components of the graph
 @{
 typedef size_type cg_vertex;
-std::vector<cg_vertex> component_number(num_vertices(g));
-int num_scc = strong_components(g, 
-  make_iterator_property_map(&component_number[0], index_map),
+std::vector<cg_vertex> component_number_vec(num_vertices(g));
+iterator_property_map<cg_vertex*, VertexIndexMap> 
+  component_number(&component_number_vec[0], index_map);
+
+int num_scc = strong_components(g, component_number,
   vertex_index_map(index_map));
 std::vector< std::vector<vertex> > components;
 components.resize(num_scc);
 vertex_iterator vi, vi_end;
 for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-  components[component_number[get(index_map, *vi)]].push_back(*vi);
+  components[component_number[*vi]].push_back(*vi);
 @}
 
 The next step is to construct the condensation graph.  There will be
@@ -130,7 +151,7 @@ for (cg_vertex s = 0; s < components.size(); ++s) {
     vertex u = components[s][i];
     adjacency_iterator vi, vi_end;
     for (tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi) {
-      cg_vertex t = component_number[get(index_map, *vi)];
+      cg_vertex t = component_number[*vi];
       if (s != t) // Avoid loops in the condensation graph
         CG[s].insert(t); // add edge (s,t) to the condensation graph
     }
@@ -154,7 +175,7 @@ for (cg_vertex s = 0; s < components.size(); ++s) {
     vertex u = components[s][i];
     adjacency_iterator v, v_end;
     for (tie(v, v_end) = adjacent_vertices(u, g); v != v_end; ++v) {
-      cg_vertex t = component_number[get(index_map, *v)];
+      cg_vertex t = component_number[*v];
       if (s != t) // Avoid loops in the condensation graph
         adj.push_back(t);
     }
@@ -167,12 +188,12 @@ for (cg_vertex s = 0; s < components.size(); ++s) {
 }
 @}
 
-Now we compute the transitive closure of the condensation graph.  The
+Next we compute the transitive closure of the condensation graph.  The
 basic outline of the algorithm is below. The vertices are considered
 in reverse topological order to ensure that the when computing the
 successor set for a vertex $u$, the successor set for each vertex in
 $Adj[u]$ has already been computed. The successor set for a vertex $u$
-can then be constructing by taking the union of the successor sets for
+can then be constructed by taking the union of the successor sets for
 all of its adjacent vertices together with the adjacent vertices
 themselves.
 
@@ -194,7 +215,7 @@ collection of intersections with the chains, i.e., $S =
 by the first vertex in the path $Z_i$ that is also in $S$, since the
 rest of the path is guaranteed to also be in $S$. The collection of
 intersections is therefore represented by a vector of length $k$ where
-the ith element of the vector stores the first vertex in the
+the $i$th element of the vector stores the first vertex in the
 intersection of $S$ with $Z_i$.
 
 Computing the union of two successor sets, $S_3 = S_1 \cup S_2$, can
@@ -353,8 +374,8 @@ write the main loop for computing the transitive closure of the
 condensation graph. The output of this will be a successor set for
 each vertex. Remember that the successor set is stored as a collection
 of intersections with the chains. Each successor set is represented by
-a vector where the ith element is the representative vertex for the
-intersection of the set with the ith chain. We compute the successor
+a vector where the $i$th element is the representative vertex for the
+intersection of the set with the $i$th chain. We compute the successor
 sets for every vertex in decreasing topological order. The successor
 set for each vertex is the union of the successor sets of the adjacent
 vertex plus the adjacent vertices themselves.
@@ -447,7 +468,7 @@ for (size_type i = 0; i < components.size(); ++i)
 @}
 
 
-@c transitive_closure.hpp
+@c transitive_closure.hpp -d
 @{
 // Copyright (C) 2001 Vladimir Prus <ghost@@cs.msu.su>
 // Copyright (C) 2001 Jeremy Siek <jsiek@@cs.indiana.edu>
@@ -466,6 +487,7 @@ for (size_type i = 0; i < components.size(); ++i)
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 namespace boost {
   @<Union of successor sets@>
