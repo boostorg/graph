@@ -35,7 +35,11 @@ namespace boost {
   // the bottom of this file.
 
   struct degree_vertex_invariant {
-    template <typename Graph>  
+    template <typename Graph> struct result {
+      typedef typename graph_traits<Graph>::degree_size_type type;
+    };
+
+    template <typename Graph>
     typename graph_traits<Graph>::degree_size_type
     operator()(typename graph_traits<Graph>::vertex_descriptor v,
                const Graph& g)
@@ -112,7 +116,7 @@ namespace boost {
         my_f[*i1] = f[*i1];
       
       // Collect the potential vertices
-      int k_id = get(v1_index_map, *k);
+      std::size_t k_id = get(v1_index_map, *k);
       std::vector<v2_desc_t> vertex_set;
       std::copy(not_in_S.begin(), not_in_S.end(), 
                 std::back_inserter(vertex_set));
@@ -148,7 +152,7 @@ namespace boost {
         if (vertex_set.empty())
           break;
       }
-      for (int j = 0; j < vertex_set.size(); ++j) {
+      for (std::size_t j = 0; j < vertex_set.size(); ++j) {
         my_f[*k] = vertex_set[j];
         Set my_not_in_S(not_in_S);
         set_remove(my_not_in_S, vertex_set[j]);
@@ -181,12 +185,17 @@ namespace boost {
       if (num_vertices(g1) != num_vertices(g2))
         return false;
 
-      typedef typename VertexInvariant::result_type InvarValue;
-      typedef std::vector<InvarValue> invar_vec;
-      invar_vec invar1_vec(num_vertices(g1)), invar2_vec(num_vertices(g2));
-      iterator_property_map<typename invar_vec::iterator, V1Map>
+      typedef typename VertexInvariant::template result<Graph1>::type
+	InvarValue1;
+      typedef typename VertexInvariant::template result<Graph2>::type
+	InvarValue2;
+      typedef std::vector<InvarValue1> invar_vec1_t;
+      typedef std::vector<InvarValue2> invar_vec2_t;
+      invar_vec1_t invar1_vec(num_vertices(g1));
+      invar_vec2_t invar2_vec(num_vertices(g2));
+      iterator_property_map<typename invar_vec1_t::iterator, V1Map>
         invar1(invar1_vec.begin(), v1_index_map);
-      iterator_property_map<typename invar_vec::iterator, V2Map>
+      iterator_property_map<typename invar_vec2_t::iterator, V2Map>
         invar2(invar2_vec.begin(), v2_index_map);
 
       for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
@@ -196,7 +205,8 @@ namespace boost {
         invar2[*i2] = invariant(*i2, g2);
 
       { // check if the graph's invariants do not match
-        invar_vec invar1_tmp(invar1_vec), invar2_tmp(invar2_vec);
+        invar_vec1_t invar1_tmp(invar1_vec);
+	invar_vec2_t invar2_tmp(invar2_vec);
         std::sort(invar1_tmp.begin(), invar1_tmp.end());
         std::sort(invar2_tmp.begin(), invar2_tmp.end());
         if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), 
