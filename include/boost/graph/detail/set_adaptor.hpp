@@ -60,7 +60,7 @@ namespace boost {
 
     template <class K, class C, class A, class T>
     void set_remove(std::set<K,C,A>& x, const T& a) {
-      x.remove(a);
+      x.erase(a);
     }
     
     template <class K, class C, class A>
