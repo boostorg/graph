@@ -112,9 +112,10 @@ struct kamada_kawai_done
                   bool global)
   {
     if (global) {
-      double diff = fabs(last_delta - delta_p);
+      double diff = last_delta - delta_p;
+      if (diff < 0) diff = -diff;
       last_delta = delta_p;
-      return fabs(diff) < 0.01;
+      return diff < 0.01;
     } else {
       return delta_p < 0.01;
     }

@@ -1,3 +1,11 @@
+// Copyright 2004 The Trustees of Indiana University.
+
+// Use, modification and distribution is subject to the Boost Software
+// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+//  Authors: Douglas Gregor
+//           Andrew Lumsdaine
 #include <boost/graph/brandes_betweenness_centrality.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -6,8 +14,8 @@
 #include <queue>
 #include <boost/property_map.hpp>
 #include <boost/test/minimal.hpp>
-#include <stdlib.h>
-#include <math.h>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 using namespace boost;
 
@@ -133,7 +141,8 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
 
     double relative_error = 
       correct_centrality[v] == 0.0? centrality[v]
-      : fabs(centrality[v] - correct_centrality[v]) / correct_centrality[v];
+      : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
+    if (relative_error < 0) relative_error = -relative_error;
     BOOST_TEST(relative_error < error_tolerance);
   }  
 
@@ -144,8 +153,9 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
     if (correct_edge_centrality) {
       double relative_error = 
         correct_edge_centrality[e] == 0.0? edge_centrality1[e]
-        : fabs(edge_centrality1[e] - correct_edge_centrality[e]) 
+        : (edge_centrality1[e] - correct_edge_centrality[e]) 
         / correct_edge_centrality[e];
+      if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
 
       if (relative_error >= error_tolerance) {
@@ -219,6 +229,9 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
   const bool is_undirected = 
     is_same<directed_category, undirected_tag>::value;
 
+  minstd_rand gen;
+  uniform_01<minstd_rand, double> rand_gen(gen);
+
   typedef typename graph_traits<MutableGraph>::vertex_descriptor vertex;
   typename graph_traits<MutableGraph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
@@ -228,7 +241,7 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
     while (wi != vi_end) {
       vertex w = *wi++;
       if (v != w) {
-        if (drand48() < edge_probability) add_edge(v, w, g);
+        if (rand_gen() < edge_probability) add_edge(v, w, g);
       }
     }
   }
@@ -458,11 +471,6 @@ int test_main(int, char*[])
   run_weighted_test((Digraph*)0, 5, dw_edge_init1, 6, dw_centrality1);
 
   run_wheel_test((Graph*)0, 15);
-
-
-  long seed = time(0);
-  std::cout << "Random seed = " << seed << std::endl;
-  srand48(seed);
 
   random_unweighted_test((Graph*)0, 500);
 
