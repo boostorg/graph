@@ -35,7 +35,10 @@ namespace boost {
   struct distance_inf_t { enum { num = detail::distance_inf_num }; };
   struct distance_zero_t { enum { num = detail::distance_zero_num }; };
   struct buffer_param_t { enum { num = detail::buffer_param_num }; };
-
+  struct edge_copy_t { enum { num = detail::edge_copy_num }; };
+  struct vertex_copy_t { enum { num = detail::vertex_copy_num }; };
+  struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
+  
   namespace detail {
     template <class T>
     struct wrap_ref {
@@ -124,6 +127,27 @@ namespace boost {
       typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self> Params;
       return Params(detail::wrap_ref<Buffer>(b), *this);
     }
+
+    template <typename Copier>
+    bgl_named_params<Copier, edge_copy_t, self>
+    edge_copy(const Copier& c) {
+      typedef bgl_named_params<Copier, edge_copy_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename Copier>
+    bgl_named_params<Copier, vertex_copy_t, self>
+    vertex_copy(const Copier& c) {
+      typedef bgl_named_params<Copier, vertex_copy_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename Orig2CopyMap>
+    bgl_named_params<Orig2CopyMap, orig_to_copy_t, self>
+    orig_to_copy(const Orig2CopyMap& c) {
+      typedef bgl_named_params<Orig2CopyMap, orig_to_copy_t, self> Params;
+      return Params(c, *this);
+    }
   };
 
   template <typename WeightMap>
@@ -194,6 +218,27 @@ namespace boost {
   buffer(const Buffer& b) {
     typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t> Params;
     return Params(detail::wrap_ref<Buffer>(b));
+  }
+
+  template <typename Copier>
+  bgl_named_params<Copier, edge_copy_t>
+  edge_copy(const Copier& c) {
+    typedef bgl_named_params<Copier, edge_copy_t> Params;
+    return Params(c);
+  }
+
+  template <typename Copier>
+  bgl_named_params<Copier, vertex_copy_t>
+  vertex_copy(const Copier& c) {
+    typedef bgl_named_params<Copier, vertex_copy_t> Params;
+    return Params(c);
+  }
+
+  template <typename Orig2CopyMap>
+  bgl_named_params<Orig2CopyMap, orig_to_copy_t>
+  copy_to_orig(const Orig2CopyMap& c) {
+    typedef bgl_named_params<Orig2CopyMap, orig_to_copy_t> Params;
+    return Params(c);
   }
 
   //===========================================================================
@@ -276,6 +321,7 @@ namespace boost {
       typedef typename type::result_type result_type;
       typedef typename type::const_result_type const_result_type;
     };
+
 
   } // namespace detail
   
