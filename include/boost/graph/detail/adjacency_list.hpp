@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.10  2000/09/22 04:18:50  jsiek
+// changes for visual c++ port
+//
 // Revision 1.9  2000/09/21 22:24:57  jsiek
 // moved adjacency_list_traits out of the detail directory
 //
@@ -914,8 +917,8 @@ namespace boost {
       inline
       typename boost::property_map<typename Config::graph_type,
 	Property>::type
-      get(adj_list_helper<Config,Base>&, Property, 
-	  boost::edge_property_tag) {
+      get_dispatch(adj_list_helper<Config,Base>&, Property, 
+		   boost::edge_property_tag) {
 	typedef typename Config::graph_type Graph;
 	typedef typename boost::property_map<Graph, Property>::type PA;
 	return PA();
@@ -924,8 +927,8 @@ namespace boost {
       inline
       typename boost::property_map<typename Config::graph_type, 
         Property>::const_type
-      get(const adj_list_helper<Config,Base>&, Property, 
-	  boost::edge_property_tag) {
+      get_dispatch(const adj_list_helper<Config,Base>&, Property, 
+		   boost::edge_property_tag) {
 	typedef typename Config::graph_type Graph;
 	typedef typename boost::property_map<Graph, Property>::const_type PA;
 	return PA();
@@ -935,8 +938,8 @@ namespace boost {
       inline
       typename boost::property_map<typename Config::graph_type, 
         Property>::type
-      get(adj_list_helper<Config,Base>& g, Property, 
-	  boost::vertex_property_tag) {
+      get_dispatch(adj_list_helper<Config,Base>& g, Property, 
+		   boost::vertex_property_tag) {
 	typedef typename Config::graph_type Graph;
 	typedef typename boost::property_map<Graph, Property>::type PA;
 	return PA(static_cast<Graph&>(g));
@@ -945,28 +948,49 @@ namespace boost {
       inline
       typename boost::property_map<typename Config::graph_type,
         Property>::const_type
-      get(const adj_list_helper<Config,Base>& g, Property, 
-	  boost::vertex_property_tag) {
+      get_dispatch(const adj_list_helper<Config, Base>& g, Property, 
+		   boost::vertex_property_tag) {
 	typedef typename Config::graph_type Graph;
 	typedef typename boost::property_map<Graph, Property>::const_type PA;
-	return PA(static_cast<const Graph&>(g));
+	const Graph& cg = static_cast<const Graph&>(g);
+	return PA(const_cast<Graph&>(cg));
       }
     } // namespace detail
 
+    // Implementation of the PropertyGraph interface
     template <class Config, class Base, class Property>
     inline
     typename boost::property_map<typename Config::graph_type, Property>::type
-    get(Property t, adj_list_helper<Config,Base>& g) {
+    get(Property p, adj_list_helper<Config, Base>& g) {
       typedef typename Property::kind Kind;
-      return detail::get(g, t, Kind());
+      return detail::get_dispatch(g, p, Kind());
     }
     template <class Config, class Base, class Property>
     inline
     typename boost::property_map<typename Config::graph_type,Property>::const_type
-    get(Property t, const adj_list_helper<Config,Base>& g) {
+    get(Property p, const adj_list_helper<Config, Base>& g) {
       typedef typename Property::kind Kind;
-      return detail::get(g, t, Kind());
+      return detail::get_dispatch(g, p, Kind());
     }
+
+    template <class Config, class Base, class Property, class Key>
+    inline
+    typename boost::property_traits<
+      typename boost::property_map<typename Config::graph_type, Property>::const_type
+    >::value_type
+    get(Property p, const adj_list_helper<Config, Base>& g, const Key& key) {
+      typedef typename Property::kind Kind;
+      return get(get(p, g), key);
+    }
+    template <class Config, class Base, class Property, class Key, class Value>
+    inline void
+    put(Property p, adj_list_helper<Config, Base>& g, const Key& key, const Value& value) {
+      typedef typename Config::graph_type Graph;
+      typedef typename boost::property_map<Graph, Property>::type PMap;
+      PMap pmap = get(p, g);
+      put(pmap, key, value);
+    }
+
 
     //=========================================================================
     // Generalize Adjacency List Implementation

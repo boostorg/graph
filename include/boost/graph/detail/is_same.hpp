@@ -25,6 +25,8 @@
 #ifndef BOOST_GRAPH_DETAIL_IS_SAME_HPP
 #define BOOST_GRAPH_DETAIL_IS_SAME_HPP
 
+#include <boost/pending/ct_if.hpp>
+
 namespace boost {
   struct false_tag;
   struct true_tag;

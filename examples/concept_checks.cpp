@@ -43,7 +43,8 @@ main(int,char*[])
   using namespace boost;
   {
     typedef adjacency_list<vecS, vecS, directedS, 
-     plugin<vertex_color,int>, plugin<edge_weight,int>
+      plugin<vertex_color, int>,
+      plugin<edge_weight, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
@@ -52,14 +53,14 @@ main(int,char*[])
     REQUIRE3(Graph, Vertex, vertex_color, PropertyGraph);
     REQUIRE3(Graph, Edge, edge_weight, PropertyGraph);
     // the builtin id property is readable but not writable
-    typedef property_map<Graph,vertex_index>::const_type ID_PA;
+    typedef property_map<Graph, vertex_index>::const_type ID_PA;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
     REQUIRE2(ID_PA, Vertex, ReadablePropertyMap);
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
-      plugin<vertex_color,int>,
-      plugin<edge_weight,int>
+      plugin<vertex_color, int>,
+      plugin<edge_weight, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
@@ -75,8 +76,8 @@ main(int,char*[])
   }
   {
     typedef adjacency_list< listS, listS, directedS, 
-      plugin<vertex_color,int>, 
-      plugin<edge_weight,int>
+      plugin<vertex_color, int>,
+      plugin<edge_weight, int>
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;

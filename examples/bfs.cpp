@@ -90,7 +90,7 @@ struct graph_copier
 
   template <class Edge, class Graph>
   void operator()(Edge e, Graph& g) {
-    add_edge(new_g, source(e, g), target(e, g));
+    boost::add_edge(new_g, boost::source(e, g), boost::target(e, g));
   }
 private:
   NewGraph& new_g;
@@ -113,24 +113,24 @@ int main(int argc, char* argv[])
   > Graph;
   
   Graph G(5);
-  add_edge(G, 0, 2);
-  add_edge(G, 1, 1);
-  add_edge(G, 1, 3);
-  add_edge(G, 1, 4);
-  add_edge(G, 2, 1);
-  add_edge(G, 2, 3);
-  add_edge(G, 2, 4);
-  add_edge(G, 3, 1);
-  add_edge(G, 3, 4);
-  add_edge(G, 4, 0);
-  add_edge(G, 4, 1);
+  boost::add_edge(G, 0, 2);
+  boost::add_edge(G, 1, 1);
+  boost::add_edge(G, 1, 3);
+  boost::add_edge(G, 1, 4);
+  boost::add_edge(G, 2, 1);
+  boost::add_edge(G, 2, 3);
+  boost::add_edge(G, 2, 4);
+  boost::add_edge(G, 3, 1);
+  boost::add_edge(G, 3, 4);
+  boost::add_edge(G, 4, 0);
+  boost::add_edge(G, 4, 1);
 
   typedef Graph::vertex_descriptor Vertex;
 
   Graph G_copy(5);
   // Array to store predecessor (parent) of each vertex. This will be
   // used as a Decorator (actually, its iterator will be).
-  std::vector<Vertex> p(num_vertices(G));
+  std::vector<Vertex> p(boost::num_vertices(G));
   typedef std::vector<Vertex>::iterator Piter;
 
   // Array to store distances from the source to each vertex .  We use
@@ -140,19 +140,19 @@ int main(int argc, char* argv[])
   std::fill_n(d, 5, 0);
 
   // The source vertex
-  Vertex s = *(vertices(G).first);
+  Vertex s = *(boost::vertices(G).first);
 
   boost::breadth_first_search(G, s, 
-   make_bfs_visitor(
+   boost::make_bfs_visitor(
     std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
     std::make_pair(boost::record_predecessors(p.begin(), 
 					      boost::on_tree_edge()),
 		   copy_graph(G_copy, boost::on_examine_edge())))) );
 
-  print_graph(G);
-  print_graph(G_copy);
+  boost::print_graph(G);
+  boost::print_graph(G_copy);
 
-  if (num_vertices(G) < 11) {
+  if (boost::num_vertices(G) < 11) {
     std::cout << "distances: ";
 #ifdef BOOST_OLD_STREAM_ITERATORS
     std::copy(d, d + 5, std::ostream_iterator<int, char>(std::cout, " "));
@@ -161,8 +161,8 @@ int main(int argc, char* argv[])
 #endif
     std::cout << std::endl;
 
-    for_each(vertices(G).first, vertices(G).second, 
-             print_parent<Piter>(p.begin()));
+    std::for_each(boost::vertices(G).first, boost::vertices(G).second, 
+		  print_parent<Piter>(p.begin()));
   }
 
   return 0;

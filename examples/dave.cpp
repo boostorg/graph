@@ -92,7 +92,9 @@ typedef adjacency_list<vecS, vecS, directedS, VPlugin, EPlugin > Graph;
 
 
 template <class Tag>
-struct endl_printer {
+struct endl_printer
+  : public boost::base_visitor< endl_printer<Tag> >
+{
   typedef Tag event_filter;
   endl_printer(std::ostream& os) : m_os(os) { }
   template <class T, class Graph>
@@ -105,7 +107,9 @@ endl_printer<Tag> print_endl(std::ostream& os, Tag) {
 }
 
 template <class PA, class Tag>
-struct edge_printer {
+struct edge_printer
+ : public boost:;base_visitor< edge_printer<PA, Tag> >
+{
   typedef Tag event_filter;
 
   edge_printer(PA pa, std::ostream& os) : m_pa(pa), m_os(os) { }

@@ -24,6 +24,7 @@
 //=======================================================================
 #include <boost/graph/adjacency_list.hpp>
 
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
 template <class Allocator>
 struct list_with_allocatorS { };
@@ -51,3 +52,12 @@ int main(int, char*[])
   
   return 0;
 }
+
+#else
+
+int main(int, char*[])
+{
+  return 0;
+}
+
+#endif

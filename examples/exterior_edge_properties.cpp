@@ -53,7 +53,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map.hpp>
 
-
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
 {
@@ -62,19 +61,19 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
   typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
 
   Viter ui, uiend;
-  for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
+  for (boost::tie(ui, uiend) = boost::vertices(G); ui != uiend; ++ui) {
     OutEdgeIter out, out_end;
     std::cout << *ui << "\t";
 
-    for(boost::tie(out, out_end) = out_edges(*ui, G); out != out_end; ++out)
-      std::cout << "--(" << get(capacity, *out) << ", " 
-	   << get(flow, *out) << ")--> " << target(*out,G) << "\t";
+    for(boost::tie(out, out_end) = boost::out_edges(*ui, G); out != out_end; ++out)
+      std::cout << "--(" << boost::get(capacity, *out) << ", " 
+	   << boost::get(flow, *out) << ")--> " << boost::target(*out,G) << "\t";
     std::cout << std::endl << "\t";
 
     InEdgeIter in, in_end;    
-    for(boost::tie(in, in_end) = in_edges(*ui, G); in != in_end; ++in)
-      std::cout << "<--(" << get(capacity, *in) << "," << get(flow, *in) << ")-- "
-           << source(*in,G) << "\t";
+    for(boost::tie(in, in_end) = boost::in_edges(*ui, G); in != in_end; ++in)
+      std::cout << "<--(" << boost::get(capacity, *in) << "," << boost::get(flow, *in) << ")-- "
+           << boost::source(*in, G) << "\t";
     std::cout << std::endl;
   }
 }
@@ -103,25 +102,25 @@ int main(int argc, char* argv[]) {
   int capacity[] = { 10, 20, 20, 20, 40, 40, 20, 20, 20, 10 };
   int flow[] = { 8, 12, 12, 12, 12, 12, 16, 16, 16, 8 };
 
-  // add edges to the graph, and assign each edge an ID number
+  // insert edges into the graph, and assign each edge an ID number
   // to index into the property arrays
-  add_edge(G, 0, 1, 0);
+  boost::add_edge(G, 0, 1, 0);
 
-  add_edge(G, 1, 4, 1);
-  add_edge(G, 4, 7, 2);
-  add_edge(G, 7, 6, 3);
+  boost::add_edge(G, 1, 4, 1);
+  boost::add_edge(G, 4, 7, 2);
+  boost::add_edge(G, 7, 6, 3);
 
-  add_edge(G, 1, 3, 4);
-  add_edge(G, 3, 6, 5);
+  boost::add_edge(G, 1, 3, 4);
+  boost::add_edge(G, 3, 6, 5);
 
-  add_edge(G, 6, 5, 6);
-  add_edge(G, 5, 2, 7);
-  add_edge(G, 2, 1, 8);
+  boost::add_edge(G, 6, 5, 6);
+  boost::add_edge(G, 5, 2, 7);
+  boost::add_edge(G, 2, 1, 8);
 
-  add_edge(G, 6, 8, 9);
+  boost::add_edge(G, 6, 8, 9);
 
   typedef boost::property_map<Graph, boost::edge_index>::type EdgeID_PA;
-  EdgeID_PA edge_id = get(boost::edge_index(), G);
+  EdgeID_PA edge_id = boost::get(boost::edge_index(), G);
 
   typedef boost::random_access_iterator_property_map
     <int*, int, int&, EdgeID_PA> RA_PA;

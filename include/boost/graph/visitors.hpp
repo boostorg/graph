@@ -43,22 +43,34 @@ namespace boost {
   //========================================================================
   // Event Tags
 
-  // graph_search
-  struct on_initialize_vertex { };
-  struct on_start_vertex { };
-  struct on_discover_vertex { };
-  struct on_examine_edge { };
-  struct on_tree_edge { };
-  struct on_cycle_edge { };
-  struct on_finish_vertex { };
-  
-  struct on_forward_or_cross_edge { };
-  struct on_back_edge { };
+  namespace detail {
+    // For partial specialization workaround
+    enum event_visitor_enum { ON_NO_EVENT, 
+			      ON_INITIALIZE_VERTEX, ON_START_VERTEX, 
+			      ON_DISCOVER_VERTEX, ON_FINISH_VERTEX,
+			      ON_EXAMINE_EDGE, ON_TREE_EDGE, ON_CYCLE_EDGE, 
+			      ON_FORWARD_OR_CROSS_EDGE, ON_BACK_EDGE,
+			      ON_EDGE_RELAXED, ON_EDGE_NOT_RELAXED,
+			      ON_EDGE_MINIMIZED, ON_EDGE_NOT_MINIMIZED };
+  } // namespace detail
 
-  struct on_edge_relaxed { };
-  struct on_edge_not_relaxed { };
-  struct on_edge_minimized { };
-  struct on_edge_not_minimized { };
+  struct on_no_event { enum { num = detail::ON_NO_EVENT }; };
+
+  struct on_initialize_vertex { enum { num = detail::ON_INITIALIZE_VERTEX }; };
+  struct on_start_vertex { enum { num = detail::ON_START_VERTEX }; };
+  struct on_discover_vertex { enum { num = detail::ON_DISCOVER_VERTEX }; };
+  struct on_finish_vertex { enum { num = detail::ON_FINISH_VERTEX }; };
+  
+  struct on_examine_edge { enum { num = detail::ON_EXAMINE_EDGE }; };
+  struct on_tree_edge { enum { num = detail::ON_TREE_EDGE }; };
+  struct on_cycle_edge { enum { num = detail::ON_CYCLE_EDGE }; };
+  struct on_forward_or_cross_edge { enum { num = detail::ON_FORWARD_OR_CROSS_EDGE }; };
+  struct on_back_edge { enum { num = detail::ON_BACK_EDGE }; };
+
+  struct on_edge_relaxed { enum { num = detail::ON_EDGE_RELAXED }; };
+  struct on_edge_not_relaxed { enum { num = detail::ON_EDGE_NOT_RELAXED }; };
+  struct on_edge_minimized { enum { num = detail::ON_EDGE_MINIMIZED }; };
+  struct on_edge_not_minimized { enum { num = detail::ON_EDGE_NOT_MINIMIZED }; };
 
   enum { FALSE_TAG, TRUE_TAG };
 
@@ -66,17 +78,18 @@ namespace boost {
   struct false_tag { enum { num = FALSE_TAG }; };
 
   //========================================================================
-  // null_visitor and base_visitor
+  // base_visitor and null_visitor
 
-  struct null_visitor {
-    typedef void event_filter;
-    template <class T, class Graph>
-    void operator()(T, Graph&) { }
-  };
   // needed for MSVC workaround
   template <class Visitor>
   struct base_visitor {
-    typedef void event_filter;
+    typedef on_no_event event_filter;
+    template <class T, class Graph>
+    void operator()(T, Graph&) { }
+  };
+
+  struct null_visitor : public base_visitor<null_visitor> {
+    typedef on_no_event event_filter;
     template <class T, class Graph>
     void operator()(T, Graph&) { }
   };
@@ -106,7 +119,7 @@ namespace boost {
 #if (defined BOOST_MSVC) 
   template <class Visitor, class T, class Graph, class Tag>
   inline void 
-  invoke_visitors(base_visitor<Visitor>& v, T x, Graph& g, Tag tag) {
+  invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename detail::is_same<Category, Tag>::is_same_tag IsSameTag;
     Visitor& v = static_cast<Visitor&>(vis);

@@ -81,8 +81,8 @@ main(int,char*)
   distance[z] = 0;
   parent[z] = z;
   bool r = boost::bellman_ford_shortest_paths
-    (g, int(N), weight, distance.begin(), make_bellman_visitor(
-     record_predecessors(parent.begin(), boost::on_edge_relaxed())));
+    (g, int(N), weight, distance.begin(), boost::make_bellman_visitor(
+     boost::record_predecessors(parent.begin(), boost::on_edge_relaxed())));
 
   if (r)  
     for (int i = 0; i < N; ++i)

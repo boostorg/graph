@@ -264,116 +264,19 @@ namespace boost {
       REQUIRE2(const_PMap, X, ReadablePropertyMap);
 
       PMap pmap = get(Property(), g);
-#if 0
       pval = get(Property(), g, x);
       put(Property(), g, x, pval);
-#endif
       ignore_unused_variable_warning(pmap);
     }
     void const_constraints(const G& g) {
       const_PMap pmap = get(Property(), g);
-#if 0
       pval = get(Property(), g, x);
-#endif
       ignore_unused_variable_warning(pmap);
     }
     G g;
     X x;
     typename property_traits<PMap>::value_type pval;
   };
-
-#if 0
-  template <class G, class Property>
-  struct VertexPropertyGraph_concept
-  {
-    typedef typename graph_traits<G>::vertex_descriptor Vertex;
-    typedef typename property_map<G, Property>::type PA;
-    typedef typename property_map<G, Property>::const_type const_PA;
-    void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE2(PA, Vertex, ReadWritePropertyMap);
-      REQUIRE2(const_PA, Vertex, ReadablePropertyMap);
-
-      PA pa = get(Property(), g);
-      ignore_unused_variable_warning(pa);
-    }
-    void const_constraints(const G& g) {
-      const_PA pa = get(Property(), g);
-      ignore_unused_variable_warning(pa);
-    }
-    G g;
-  };
-
-  template <class G, class Property>
-  struct EdgePropertyGraph_concept
-  {
-    typedef typename graph_traits<G>::edge_descriptor Edge;
-    typedef typename property_map<G, Property>::type PA;
-    typedef typename property_map<G, Property>::const_type const_PA;
-    void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE2(PA, Edge, ReadWritePropertyMap);
-      REQUIRE2(const_PA, Edge, ReadablePropertyMap);
-
-      PA pa = get(Property(), g);
-    }
-    void const_constraints(const G& g) {
-      const_PA pa = get(Property(), g);
-    }
-    G g;
-  };
-#endif
-
-#if 0
-  template <class V, class Vertex, class Edge, class Graph>
-  struct Visitor_concept
-  {
-    void constraints() {
-      v.initialize(u);
-      v.start(u);
-      v.discover(u);
-      bool b = v.explore(e, g);
-      v.finish(u);
-      ignore_unused_variable_warning(b);
-    }
-    V v;
-    Vertex u;
-    Edge e;
-    Graph g;
-  };
-
-  template <class V, class Vertex, class Edge, class Graph>
-  struct UserVisitor_concept
-  {
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-    typedef typename V::edge_filter_category Category;
-    void constraints() {
-      v.initialize(u);
-      v.start(u);
-      v.discover(u);
-      v.explore(e, g);
-      v.finish(u);
-    }
-    V v;
-    Vertex u;
-    Edge e;
-    Graph g;
-#else
-    void constraints() { }
-#endif
-  };
-
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-  template <class V1, class V2, class Vertex, class Edge, class Graph>
-  struct UserVisitor_concept< std::pair<V1,V2>, Vertex,Edge,Graph>
-  {
-    void constraints() {
-      REQUIRE4(V1, Vertex, Edge, Graph, UserVisitor);
-      REQUIRE4(V2, Vertex, Edge, Graph, UserVisitor);
-    }
-  };
-#endif
-#endif
 
   // This needs to move out of the graph library
   template <class B>
