@@ -12,12 +12,21 @@
 // and with no claim as to its suitability for any purpose.
 
 // For more information, see http://www.boost.org
+//
+// Revision History:
+//
+// 29 Nov 2001    Jeremy Siek
+//      Changed to use Boost.Random.
+// 29 Nov 2001    Doug Gregor
+//      Initial checkin.
 
 #define BOOST_INCLUDE_MAIN
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/property_map.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <iostream>
 #include <map>
 #include <algorithm>
@@ -56,6 +65,16 @@ inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2,
   return true;
 }
 
+template <typename Generator>
+struct random_functor {
+  random_functor(Generator& g) : g(g) { }
+  std::size_t operator()(std::size_t n) {
+    boost::uniform_int<boost::mt19937, std::size_t> x(g, 0, n-1);
+    return x();
+  }
+  Generator& g;
+};
+
 template<typename Graph1, typename Graph2>
 void randomly_permute_graph(const Graph1& g1, Graph2& g2)
 {
@@ -67,9 +86,12 @@ void randomly_permute_graph(const Graph1& g1, Graph2& g2)
   typedef typename graph_traits<Graph2>::vertex_descriptor vertex2;
   typedef typename graph_traits<Graph1>::edge_iterator edge_iterator;
 
+  boost::mt19937 gen;
+  random_functor<boost::mt19937> rand_fun(gen);
+
   // Decide new order
   std::vector<vertex1> orig_vertices(vertices(g1).first, vertices(g1).second);
-  std::random_shuffle(orig_vertices.begin(), orig_vertices.end());
+  std::random_shuffle(orig_vertices.begin(), orig_vertices.end(), rand_fun);
   std::map<vertex1, vertex2> vertex_map;
 
   for (std::size_t i = 0; i < num_vertices(g1); ++i) {
@@ -85,12 +107,15 @@ template<typename Graph>
 void generate_random_digraph(Graph& g, double edge_probability)
 {
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
+  boost::mt19937 random_gen;
+  boost::uniform_real<boost::mt19937, double> 
+    random_dist(random_gen, 0.0, 1.0);
 
   for (vertex_iterator u = vertices(g).first; u != vertices(g).second; ++u) {
     vertex_iterator v = u;
     ++v;
     for (; v != vertices(g).second; ++v) {
-      if (drand48() <= edge_probability)
+      if (random_dist() <= edge_probability)
         add_edge(*u, *v, g);
     }
   }
@@ -125,8 +150,6 @@ void test_isomorphism(int n, double edge_probability)
 
 int test_main(int argc, char* argv[])
 {
-  srandom(std::time(0));
-  srand48(std::time(0));
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph;
 
   if (argc < 3) {
