@@ -373,12 +373,39 @@ namespace boost {
     queue_t Q;
     detail::wrap_ref<queue_t> Qref(Q);
 
-    breadth_first_search
+    typename graph_traits<IncidenceGraph>::directed_category directedness;
+
+    detail::bfs_impl
       (g, s,
        choose_param(get_param(params, buffer_param_t()), Qref).ref,
        choose_param(get_param(params, graph_visitor),
                     make_bfs_visitor(null_visitor())),
-       choose_pmap(get_param(params, vertex_color), g, vertex_color)
+       choose_pmap(get_param(params, vertex_color), g, vertex_color),
+       directedness, detail::normal_bfs_tag()
+       );
+  }
+
+  template <class IncidenceGraph, class P, class T, class R>
+  void neighbor_breadth_first_visit
+    (IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor s,
+     const bgl_named_params<P, T, R>& params)
+  {
+    typedef graph_traits<IncidenceGraph> Traits;
+    // Buffer default
+    typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+    queue_t Q;
+    detail::wrap_ref<queue_t> Qref(Q);
+
+    typename graph_traits<IncidenceGraph>::directed_category directedness;
+
+    detail::bfs_impl
+      (g, s,
+       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+       choose_param(get_param(params, graph_visitor),
+                    make_bfs_visitor(null_visitor())),
+       choose_pmap(get_param(params, vertex_color), g, vertex_color),
+       directedness, detail::neighbor_bfs_tag()
        );
   }
 
