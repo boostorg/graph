@@ -41,6 +41,13 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.4  2000/09/19 01:58:00  jsiek
+// fixed some misuses of BOOST_NO_STD_ITERATOR_TRAITS, changing it
+// to BOOST_NO_ITERATOR_ADAPTORS, which is now always defined. Too
+// many problems:
+// 1. internal compiler errors on VC++
+// 2. warning from is_convertible under g++
+//
 // Revision 1.3  2000/09/19 01:25:14  jsiek
 // changed #include iterator_adaptors to #include integer_range
 //
@@ -75,9 +82,11 @@
 #include <boost/operators.hpp>
 #include <boost/pending/integer_range.hpp>
 
-// The iterator adaptors cause internal compiler errors for VC++,
+// 1. The iterator adaptors cause internal compiler errors for VC++,
 // and efforts to track down the cause have not yet been successful.
-#ifdef BOOST_MSVC
+// 2. The iterators adaptors use is_convertible (indirectly) which
+// causes a warning under g++.
+#if 1 //#ifdef BOOST_MSVC
 #define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
 #endif
 
@@ -1371,7 +1380,7 @@ namespace boost {
         };
 #endif
 
-#if defined BOOST_NO_ITERATOR_ADAPTORS || defined BOOST_NO_STD_ITERATOR_TRAITS
+#if defined BOOST_NO_ITERATOR_ADAPTORS
 	typedef detail::bidir_incidence_iterator<vertex_descriptor,
          edge_descriptor, OutEdgeIter, detail::out_edge_tag> out_edge_iterator;
 #else
@@ -1393,7 +1402,7 @@ namespace boost {
         typedef OutEdgeIter InEdgeIter;
         typedef OutEdgeIterTraits InEdgeIterTraits;
 
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, InEdgeIterTraits>
@@ -1410,7 +1419,7 @@ namespace boost {
 	typedef OutEdgeIterTraits EdgeIterTraits;
 #endif
 
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
 	typedef typename boost::iterator_adaptor<EdgeIter,
               undirected_edge_iter_policies,
               edge_iter_traits<edge_descriptor, EdgeIterTraits> > 
