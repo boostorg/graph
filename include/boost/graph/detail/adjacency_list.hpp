@@ -1572,6 +1572,7 @@ namespace boost {
         for (vertex_descriptor v = 0; v < V; ++v)
           reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
       }
+
       template <class Graph, class vertex_descriptor>
       inline void 
       remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
@@ -1608,6 +1609,16 @@ namespace boost {
         for (v = 0; v < V; ++v)
           reindex_edge_list(in_edge_list(g, v), u, 
                             edge_parallel_category());
+
+        typedef typename Graph::EdgeContainer Container;
+        typedef typename Container::iterator Iter;
+        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
+        for (; ei != ei_end; ++ei) {
+          if (ei->m_source > u)
+            --ei->m_source;
+          if (ei->m_target > u)
+            --ei->m_target;
+        }
       }
 
       template <class EdgeList, class vertex_descriptor>
