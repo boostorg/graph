@@ -56,8 +56,8 @@ namespace boost {
   struct bidirectional_tag : public directed_tag { };
 
   namespace detail {
-    bool is_directed(directed_tag) { return true; }
-    bool is_directed(undirected_tag) { return false; }
+    inline bool is_directed(directed_tag) { return true; }
+    inline bool is_directed(undirected_tag) { return false; }
   }
 
   template <typename Graph>
