@@ -48,6 +48,7 @@
 
  */
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>

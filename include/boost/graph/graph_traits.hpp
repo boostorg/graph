@@ -26,6 +26,7 @@
 #ifndef BOOST_GRAPH_TRAITS_HPP
 #define BOOST_GRAPH_TRAITS_HPP
 
+#include <boost/config.hpp>
 #include <iterator>
 #include <boost/tuple/tuple.hpp>
 #include <boost/pending/ct_if.hpp>

@@ -64,6 +64,7 @@
 //   8	
 //
 	
+#include <boost/config.hpp>
 #include <iostream>
 
 #include <boost/utility.hpp>

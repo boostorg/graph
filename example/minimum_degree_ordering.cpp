@@ -40,6 +40,7 @@
 
 */
 
+#include <boost/config.hpp>
 #include <fstream>
 #include <iostream>
 #include "boost/graph/adjacency_list.hpp"

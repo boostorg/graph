@@ -21,6 +21,7 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+#include <boost/config.hpp>
 #include <iostream>
 #include <string>
 #include <boost/graph/push_relabel_max_flow.hpp>

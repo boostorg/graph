@@ -21,6 +21,7 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+#include <boost/config.hpp>
 #include <algorithm>
 #include <utility>
 #include <boost/graph/edmunds_karp_max_flow.hpp>
