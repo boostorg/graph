@@ -44,7 +44,7 @@ struct total_length_visitor : public boost::ucs_visitor<> {
     : _total_length(len), _distance(d) { }
   template <class Vertex, class Graph>
   inline void finish_vertex(Vertex s, Graph& g) {
-    _total_length += get(_distance, s); 
+    _total_length += boost::get(_distance, s); 
   }
   D& _total_length;
   Distance _distance;

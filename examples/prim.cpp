@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
        property<vertex_color_t, default_color_type,
          property<vertex_distance_t,int> >, property<edge_weight_t,int> > 
     Graph;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::pair<int,int> E;
   const int num_nodes = 9;
   char name[] = "abcdefghix";
@@ -73,15 +74,15 @@ int main(int argc, char* argv[])
 		    
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
 
-  std::vector<Graph::vertex_descriptor> p(num_vertices(G), x);
+  std::vector<Vertex> p(num_vertices(G), x);
   prim_minimum_spanning_tree
     (G, *(vertices(G).first), get(vertex_distance, G),
      make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
-  for ( std::vector<Graph::vertex_descriptor>::iterator i = p.begin();
-        i != p.end(); ++i)
-    std::cout << "parent[" << name[i - p.begin()]
-              << "] = " << name[*i] << std::endl;
+  for ( std::vector<Vertex>::iterator vi = p.begin();
+        vi != p.end(); ++vi)
+    std::cout << "parent[" << name[vi - p.begin()]
+              << "] = " << name[*vi] << std::endl;
   return 0;
 }
 
