@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>DFSVisitor</Title>
+<Title>DFS Visitor</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -19,25 +19,25 @@
 
 <BR Clear>
 
-<H1>DFSVisitor Concept</H1>
+<H1>DFS Visitor Concept</H1>
 
 This concept defines the visitor interface for <a
 href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
-Users can define a class with the DFSVisitor interface and pass and
+Users can define a class with the DFS Visitor interface and pass and
 object of the class to <tt>depth_first_search()</tt>, thereby
 augmenting the actions taken during the graph search.
 
 <h3>Refinement of</h3>
 
-none
-<p>
+<a href="../../utility/CopyConstructible.html">Copy Constructible</a>
+(copying a visitor should be a lightweight operation).
 
 <h3>Notation</h3>
 
 <Table>
 <TR>
 <TD><tt>V</tt></TD>
-<TD>A type that is a model of DFSVisitor.</TD>
+<TD>A type that is a model of DFS Visitor.</TD>
 </TR>
 
 <TR>
