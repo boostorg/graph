@@ -255,8 +255,9 @@ namespace boost {
     template <class Param, class G1, class G2>
     struct choose_edge_copier_helper {
       typedef typename choose_edge_copy<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, G1, G2> type;
-      typedef typename type::result_type result_type;
+      typedef typename Selector:: template bind<Param, G1, G2> Bind;
+      typedef Bind type;
+      typedef typename Bind::result_type result_type;
     };
     template <typename Param, typename G1, typename G2>
     typename detail::choose_edge_copier_helper<Param,G1,G2>::result_type
@@ -288,8 +289,9 @@ namespace boost {
     template <class Param, class G1, class G2>
     struct choose_vertex_copier_helper {
       typedef typename choose_vertex_copy<Param>::type Selector;
-      typedef typename Selector:: template bind<Param, G1, G2> type;
-      typedef typename type::result_type result_type;
+      typedef typename Selector:: template bind<Param, G1, G2> Bind;
+      typedef Bind type;
+      typedef typename Bind::result_type result_type;
     };
     template <typename Param, typename G1, typename G2>
     typename detail::choose_vertex_copier_helper<Param,G1,G2>::result_type
