@@ -21,51 +21,22 @@
 
 <H1><TT>transpose_graph</TT></H1>
 
-<P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">directed (and not undirected)</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">vertex index</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(V + E)</i></TD>
-</TR>
-</TABLE>
-</DIV>
-
-<P>
 <PRE>
-(1)
 template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>&gt; 
-void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T);
-
-(2)
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>, class VertexIndexMap&gt; 
-void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T, 
-                     VertexIndexMap index);
+void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 </PRE>
 
 <P>
 This function computes the transpose of a directed graph. The
 transpose of a directed graph <i>G = (V, E)</i>is the graph
-<i>G<sub>T</sub> = (V, E<sub>T</sub>)</i> , where <i>E<sub>T</sub> =
-{(v, u) in V x V: (u, v) in E}</i> . i.e., <i>G<sub>T</sub></i> is
+<i>G<sup>T</sup> = (V, E<sup>T</sup>)</i> , where <i>E<sup>T</sup> =
+{(v, u) in V x V: (u, v) in E}</i> . i.e., <i>G<sup>T</sup></i> is
 <i>G</i> with all its edges reversed.  Graph <TT>G_T</TT> passed into
 the algorithm must have the same number of vertices as <TT>G</TT> and
 no edges. The edges will be added by <tt>transpose_graph()</tt> by
 calling <tt>add_edge</tt> as follows for each edge <i>(u,v)</i> in
-<tt>G</tt>:
-<pre>
-add_edge(vertex(get(index, v), G_T), vertex(get(index, u), G_T), G_T);
-</pre>
-
-
-
-
-<P>
+<tt>G</tt>.
 
 <H3>Where Defined</H3>
 
@@ -74,34 +45,63 @@ add_edge(vertex(get(index, v), G_T), vertex(get(index, u), G_T), G_T);
 
 <P>
 
-<H3>Requirements on Types</H3>
+<H3>Parameters</H3>
 
-<P>
+IN: <tt>const VertexListGraph&amp; G</tt>
+<blockquote>
+A directed graph. The graph type must be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+</blockquote>
 
-<UL>
-<LI>The graph type for argument <TT>G</TT> must be a model of <a
- href="./VertexListGraph.html">VertexListGraph</a>.
-</LI>
+OUT: <tt>const MutableGraph&amp; G_T</tt>
+<blockquote>
+The transposed graph.  The graph type must be a model of <a
+href="./MutableGraph.html">Mutable Graph</a>.
+</blockquote>
 
-<LI>In version (1), the graph <TT>G</TT> must be a <a
- href="./PropertyGraph.html">PropertyGraph</a> with respect to the
- <tt>vertex_index_t</tt> property.
-</LI>
+<h3>Named Parameters</h3>
+
+IN: <tt>vertex_copy(VertexCopier vc)</tt>
+<blockquote>
+This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of a vertex in the original graph
+into the corresponding vertex in the copy.<br>
+
+<b>Default:</b> <tt>vertex_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
+which uses the property tag <tt>vertex_all</tt> to access a property
+map from the graph.
+</blockquote>
+
+IN: <tt>edge_copy(EdgeCopier ec)</tt>
+<blockquote>
+This is a <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a> that copies the properties of an edge in the original graph
+into the corresponding edge in the copy.<br>
+
+<b>Default:</b> <tt>edge_copier&lt;VertexListGraph, MutableGraph&gt;</tt>
+which uses the property tag <tt>edge_all</tt> to access a property
+map from the graph.
+</blockquote>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
+<blockquote>
+The vertex index map type must be a model of <a
+href="../../property_map/ReadablePropertyMap.html">Readable Property
+Map</a> and must map the vertex descriptors of <tt>G</tt> to the
+integers from 0 to <tt>num_vertices(G)</tt>.<br>
+
+<b>Default:</b> <tt>get(vertex_index, G)</tt>
+</blockquote>
 
 
-<LI>The graph type for argument <TT>G_T</TT> must be a model of
-     <a href="./MutableGraph.html">MutableGraph</a>.
-</LI>
+UTIL/OUT: <tt>orig_to_copy(Orig2CopyMap c)</tt>
+<blockquote>
+This maps vertices in the original graph to vertices in the copy.
 
-<LI>The <tt>VertexIndexMap</tt> is a <a
-href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
-that must map the vertex descriptors of <tt>G</tt> to the integers
-from 0 to <tt>num_vertices(G)</tt>.
-</LI>
-
-</UL>
-
-<P>
+<b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of the output graph's vertex descriptor type of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
 
 <H3>Complexity</H3>
 
