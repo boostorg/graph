@@ -86,11 +86,13 @@ struct all_force_pairs
 template<typename Dim, typename PositionMap>
 struct grid_force_pairs
 {
-  explicit grid_force_pairs(Dim width, Dim height, PositionMap position) 
+  template<typename Graph>
+  explicit 
+  grid_force_pairs(Dim width, Dim height, PositionMap position, const Graph& g)
     : width(width), height(height), position(position)
   { 
     using std::sqrt;
-    two_k = Dim(2) * sqrt(width*height);
+    two_k = Dim(2) * sqrt(width*height / num_vertices(g));
   }
 
   template<typename Graph, typename ApplyForce >
@@ -102,11 +104,15 @@ struct grid_force_pairs
     typedef std::vector<bucket_t> buckets_t;
 
     std::size_t columns = std::size_t(width / two_k);
-    buckets_t buckets(num_vertices(g) / 4);
+    std::size_t rows = std::size_t(height / two_k);
+    buckets_t buckets(rows * columns);
     vertex_iterator v, v_end;
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
       std::size_t column = std::size_t((position[*v].x - width  / 2) / two_k);
       std::size_t row    = std::size_t((position[*v].y - height / 2) / two_k);
+
+      if (column >= columns) column = columns - 1;
+      if (row >= rows) row = rows - 1;
       buckets.at(row * columns + column).push_back(*v);
     }
 
@@ -128,10 +134,11 @@ struct grid_force_pairs
   Dim two_k;
 };
 
-template<typename Dim, typename PositionMap>
+template<typename Dim, typename PositionMap, typename Graph>
 inline grid_force_pairs<Dim, PositionMap>
-make_grid_force_pairs(Dim width, Dim height, const PositionMap& position)
-{ return grid_force_pairs<Dim, PositionMap>(width, height, position); }
+make_grid_force_pairs(Dim width, Dim height, const PositionMap& position,
+		      const Graph& g)
+{ return grid_force_pairs<Dim, PositionMap>(width, height, position, g); }
 
 template<typename Graph, typename PositionMap, typename Dim>
 void
@@ -353,7 +360,7 @@ fruchterman_reingold_force_directed_layout
      choose_param(get_param(params, repulsive_force_t()),
 		  square_distance_repulsive_force()),
      choose_param(get_param(params, force_pairs_t()),
-		  make_grid_force_pairs(width, height, position)),
+		  make_grid_force_pairs(width, height, position, g)),
      choose_param(get_param(params, cooling_t()),
 		  linear_cooling<double>(100)),
      get_param(params, vertex_displacement_t()),

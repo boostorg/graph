@@ -16,6 +16,8 @@
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/progress.hpp>
+#include <boost/shared_ptr.hpp>
 
 using namespace boost;
 
@@ -49,6 +51,26 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
     i = names.insert(std::make_pair(name, add_vertex(name, g))).first;
   return i->second;
 }
+
+class progress_cooling : public linear_cooling<double>
+{
+  typedef linear_cooling<double> inherited;
+
+ public:
+  explicit progress_cooling(std::size_t iterations) : inherited(iterations) 
+  {
+    display.reset(new progress_display(iterations + 1, std::cerr));
+  }
+
+  double operator()()
+  {
+    ++(*display);
+    return inherited::operator()();
+  }
+
+ private:
+  shared_ptr<boost::progress_display> display;
+};
 
 int main(int argc, char* argv[])
 {
@@ -99,7 +121,7 @@ int main(int argc, char* argv[])
   random_graph_layout(g, position, -width/2, width/2, -height/2, height/2, gen);
   fruchterman_reingold_force_directed_layout
     (g, position, width, height,
-     cooling(linear_cooling<double>(iterations)));
+     cooling(progress_cooling(iterations)));
 
   graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {

@@ -147,10 +147,10 @@ the display area and only computes repulsive forces among vertices
 within each rectangle in the grid. The grid variant can be more
 efficient than the basic formulation and tends to produce better
 layouts for disconnected graphs, but is not better overall: pass
-<tt>make_grid_force_pairs(width, height, position)</tt> as this
+<tt>make_grid_force_pairs(width, height, position, g)</tt> as this
 parameter to use the grid variant. Other enumeration strategies may
 yield better results for particular graphs. <br>
-<b>Default:</b> <tt>make_grid_force_pairs(width, height, position)</tt>
+<b>Default:</b> <tt>make_grid_force_pairs(width, height, position, g)</tt>
 </blockquote>
 
 IN: <tt>cooling(Cooling cool)</tt>
