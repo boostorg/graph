@@ -42,7 +42,7 @@ void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap c
 
 <p>
 The <tt>depth_first_search()</tt> function performs a depth-first
-traversal of the vertices in a directed or undirected graph.  When
+traversal of the vertices in a directed graph.  When
 possible, a depth-first traversal chooses a vertex adjacent to the
 current vertex to visit next. If all adjacent vertices have already
 been discovered, or there are no adjacent vertices, then the algorithm
@@ -162,7 +162,7 @@ finish vertex <i>u</i>
 
 IN: <tt>VertexListGraph&amp; g</tt>
 <blockquote>
-  A directed or undirected graph. The graph type must
+  A directed graph. The graph type must
   be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
 </blockquote>
 
@@ -249,14 +249,7 @@ The time complexity is <i>O(E + V)</i>.
   wish to record predecessors, do so at this event point.
   
 <li><b><tt>vis.back_edge(e, g)</tt></b> is invoked on the back edges in
-  the graph. For an undirected graph there is some ambiguity
-  between tree edges and back edges since the edge <i>(u,v)</i>
-  and <i>(v,u)</i> are the same edge, but both the <tt>tree_edge()</tt>
-  and <tt>back_edge()</tt> functions will be invoked. One way to
-  resolve this ambiguity is to record the tree edges, and then
-  disregard the back-edges that are already marked as tree edges.
-  An easy way to record tree edges is to record predecessors at the
-  <tt>tree_edge</tt> event point.
+  the graph.
   
 <li><b><tt>vis.forward_or_cross_edge(e, g)</tt></b> is invoked on
   forward or cross edges in the graph. In an undirected graph this
@@ -280,6 +273,7 @@ The example in <a href="../example/dfs-example.cpp">
 <h3>See Also</h3>
 
 <a href="./depth_first_visit.html"><tt>depth_first_visit</tt></a>
+<a href="./undirected_dfs.html"><tt>undirected_dfs</tt></a>
 
 <h3>Notes</h3>
 
