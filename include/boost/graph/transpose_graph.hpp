@@ -41,25 +41,24 @@ namespace boost {
   
   template <class VertexListGraph, class MutableGraph, class VertexIndexMap> 
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T,
-                       VertexIndexMap index )
+                       VertexIndexMap index)
   {
-    typedef typename graph_traits<VertexListGraph>::vertex_iterator VerIter;
-    typedef typename graph_traits<VertexListGraph>::
-      out_edge_iterator OutEdgeIter;
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<VertexListGraph>::edge_descriptor Edge;
+    typedef graph_traits<VertexListGraph> Traits;
+    typedef typename Traits::vertex_iterator VerIter;
+    typedef typename Traits::out_edge_iterator OutEdgeIter;
+    typedef typename Traits::vertex_descriptor Vertex;
+    typedef typename Traits::edge_descriptor Edge;
     
     VerIter i, iend;
     OutEdgeIter j, jend;
-    for ( boost::tie(i, iend) = vertices(G); i!=iend; ++i) {
+    for (tie(i, iend) = vertices(G); i != iend; ++i) {
       Vertex u = *i;
-      for (boost::tie(j,jend) = out_edges(u, G); j !=jend; ++j) {
+      for (tie(j, jend) = out_edges(u, G); j != jend; ++j) {
         Edge e = *j;
         Vertex v = target(e, G);
-        add_edge(vertex(get(index,v), G_T), vertex(get(index,u), G_T), G_T);
-        // hmmm, what to do about edge properties?  should have an
-        // add-edge(g,e) function, and have a templated edge
-        // constructor -JGS
+        add_edge(vertex(get(index, v), G_T), vertex(get(index, u), G_T), G_T);
+        // Hmmm, what to do about edge properties? Need to copy them
+	// to the new graph.
       }
     }
   }
