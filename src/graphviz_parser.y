@@ -325,9 +325,11 @@ node_id:      ID_T
   {
     std::string* name  = static_cast<std::string*>($1);
     std::pair<graphviz::Iter, bool> result = graphviz::lookup(*name); 
-    if (result.second) 
+    if (result.second) {
       graphviz::current_vertex = result.first->second; 
-    else
+      if (! graphviz::current_graph->is_root())
+	boost::add_vertex(graphviz::current_vertex, *graphviz::current_graph);
+    } else
       graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM)) ; 
     graphviz::Vertex* temp = new graphviz::Vertex(graphviz::current_vertex);
     $$ = (void *)temp;
