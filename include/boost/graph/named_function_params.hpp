@@ -41,6 +41,7 @@ namespace boost {
   struct vertex_invariant_t { };
   struct vertex_invariant1_t { };
   struct vertex_invariant2_t { };
+  struct edge_compare_t { };
   struct vertex_max_invariant_t { };
   struct orig_to_copy_t { };
   struct root_vertex_t { };
@@ -120,6 +121,20 @@ namespace boost {
     bgl_named_params<ColorMap, vertex_color_t, self>
     color_map(const ColorMap& pmap) const {
       typedef bgl_named_params<ColorMap, vertex_color_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename ColorMap>
+    bgl_named_params<ColorMap, vertex_color_t, self>
+    vertex_color_map(const ColorMap& pmap) const {
+      typedef bgl_named_params<ColorMap, vertex_color_t, self> Params;
+      return Params(pmap, *this);
+    }
+
+    template <typename ColorMap>
+    bgl_named_params<ColorMap, edge_color_t, self>
+    edge_color_map(const ColorMap& pmap) const {
+      typedef bgl_named_params<ColorMap, edge_color_t, self> Params;
       return Params(pmap, *this);
     }
 
