@@ -297,7 +297,7 @@ namespace boost {
   struct MutableEdgeListGraphConcept
   {
     void constraints() {
-      function_requires< MutableGraphConcept<G> >();
+      function_requires< EdgeMutableGraphConcept<G> >();
       remove_edge_if(p, g);
     }
     G g;
@@ -306,18 +306,28 @@ namespace boost {
   };
 
   template <class G>
-  struct MutablePropertyGraphConcept
+  struct VertexMutablePropertyGraphConcept
+  {
+    void constraints() {
+      function_requires< VertexMutableGraphConcept<G> >();
+      v = add_vertex(vp, g);
+    }
+    G g;
+    typename graph_traits<G>::vertex_descriptor v;
+    typename G::vertex_property_type vp;
+  };
+
+  template <class G>
+  struct EdgeMutablePropertyGraphConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      function_requires< MutableGraphConcept<G> >();
-      v = add_vertex(vp, g);
+      function_requires< EdgeMutableGraphConcept<G> >();
       p = add_edge(u, v, ep, g);
     }
     G g;
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
-    typename G::vertex_property_type vp;
     typename G::edge_property_type ep;
   };
 
