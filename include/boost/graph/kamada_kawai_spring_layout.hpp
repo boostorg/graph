@@ -162,6 +162,8 @@ namespace boost {
           vertex_iterator vi = ui;
           for (++vi; vi != end; ++vi) {
             weight_type dij = distance[get(index, *ui)][get(index, *vi)];
+            if (dij == std::numeric_limits<weight_type>::max())
+              return false;
             distance[get(index, *ui)][get(index, *vi)] = edge_length * dij;
             distance[get(index, *vi)][get(index, *ui)] = edge_length * dij;
             spring_strength[get(index, *ui)][get(index, *vi)] = K/(dij*dij);
