@@ -333,9 +333,6 @@ namespace boost {
       maybe_edge_bundled;
 #endif
 
-     struct no_vertex_bundle {};
-     struct no_edge_bundle {};
-
   public:
 #if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
     typedef typename detail::retag_property_list<vertex_bundle_t,

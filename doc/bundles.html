@@ -149,7 +149,20 @@ dijkstra_shortest_paths(map, from,
 	respectively. For instance, the property map returned by <code>get(vertex_bundle, map)</code> is
 	an <a href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a> providing access to the
 	<code>City</code> values stored in each vertex.
-	
+
+    <h2>Getting the type of bundled properties</h2>
+
+    <p>To get the type of the vertex or edge bundle for a given graph
+    type <tt>Graph</tt>, you can use the trait
+    classes <tt>vertex_bundle_type</tt>
+    and <tt>edge_bundle_type</tt>. The
+    type <tt>vertex_bundle_type&lt;Graph&gt;::type</tt> will be the
+    type bundled with vertices (or <tt>no_vertex_bundle</tt> if the
+    graph supports bundles but no vertex bundle
+    exists). Likewise, <tt>edge_bundle_type&lt;Graph&gt;::type</tt>
+    will be the type bundled with edges (or <tt>no_edge_bundle</tt> if
+    no edge bundle exists).</p>
+
     <h2>Compatibility</h2> <p>Bundled properties will only work
     properly on compilers that support class template partial
     specialization.</p>

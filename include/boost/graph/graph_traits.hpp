@@ -124,6 +124,20 @@ namespace boost {
     typedef typename G::graph_property_type type;
   };
 
+  struct no_vertex_bundle {};
+  struct no_edge_bundle {};
+
+  template<typename G>
+  struct vertex_bundle_type
+  {
+    typedef typename G::vertex_bundled type;
+  };
+
+  template<typename G>
+  struct edge_bundle_type
+  {
+    typedef typename G::edge_bundled type;
+  };
 } // namespace boost
 
 // Since pair is in namespace std, Koenig lookup will find source and

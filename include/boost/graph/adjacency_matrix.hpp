@@ -358,8 +358,6 @@ namespace boost {
     typedef adjacency_matrix self;
     typedef adjacency_matrix_traits<Directed> Traits;
     
-    struct no_vertex_bundle {};
-    struct no_edge_bundle {};
   public:
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     typedef typename detail::retag_property_list<vertex_bundle_t, VertexProperty>::type
