@@ -23,6 +23,7 @@
 //=======================================================================
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <iostream>
 #include <fstream>
 
 int
@@ -40,7 +41,7 @@ main()
     E(3, 4), E(4, 0), E(4, 1)
   };
   int weights[] = { 1, 1, 2, 7, 3, 1, 1, 1 };
-  int num_edges = sizeof(edge_array) / sizeof(E);
+  std::size_t num_edges = sizeof(edge_array) / sizeof(E);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);

@@ -48,16 +48,17 @@ main()
   }
 
   std::vector < graph_traits < Graph >::edge_descriptor > mst;
+  typedef std::vector < graph_traits < Graph >::edge_descriptor >::size_type size_type;
   kruskal_minimum_spanning_tree(g, std::back_inserter(mst));
 
   property_map < Graph, edge_weight_t >::type weight = get(edge_weight, g);
   int total_weight = 0;
-  for (int e = 0; e < mst.size(); ++e)
+  for (size_type e = 0; e < mst.size(); ++e)
     total_weight += get(weight, mst[e]);
   std::cout << "total weight: " << total_weight << std::endl;
 
   typedef graph_traits < Graph >::vertex_descriptor Vertex;
-  for (int i = 0; i < mst.size(); ++i) {
+  for (size_type i = 0; i < mst.size(); ++i) {
     Vertex u = source(mst[i], g), v = target(mst[i], g);
     edge_attr_map[edge(u, v, g_dot).first]["color"] = "black";
   }
