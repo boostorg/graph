@@ -35,8 +35,7 @@ main()
   typedef adjacency_list < vecS, vecS, bidirectionalS,
     property < vertex_name_t, char > > graph_t;
 
-  enum
-  { a, b, c, d, e, f, g, N };
+  enum { a, b, c, d, e, f, g, N };
   graph_t G(N);
   property_map < graph_t, vertex_name_t >::type
     name_map = get(vertex_name, G);

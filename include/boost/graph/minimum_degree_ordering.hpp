@@ -407,8 +407,9 @@ namespace boost {
         typename Workspace::stack element_neighbor = work_space.make_stack();
 
         // Create two function objects for edge removal
+	typedef typename Workspace::stack WorkStack;
         predicateRemoveEdge1<Graph, MarkerP, NumberingD, 
-                             typename Workspace::stack, VertexIndexMap>
+                             WorkStack, VertexIndexMap>
           p(G, marker, numbering, element_neighbor, vertex_index_map);
 
         predicate_remove_tagged_edges<Graph, MarkerP> p2(G, marker);
@@ -588,7 +589,8 @@ namespace boost {
                              PermutationMap prev) 
       {
         // collect the permutation info
-        for (size_type i = 0; i < n; ++i) {
+	size_type i;
+        for (i = 0; i < n; ++i) {
           diff_t size = supernode_size[index_vertex_map[i]];
           if ( size <= 0 ) {
             prev[i] = next[i];
@@ -597,7 +599,7 @@ namespace boost {
           } else
             prev[i] = - next[i];
         }
-        for (size_type i = 1; i < n + 1; ++i) {
+        for (i = 1; i < n + 1; ++i) {
           if ( prev[i-1] > 0 )
             continue;
           diff_t parent = i;
@@ -618,7 +620,7 @@ namespace boost {
             next_node = - prev[parent - 1];
           }
         }
-        for (size_type i = 0; i < n; i++) {
+        for (i = 0; i < n; i++) {
           diff_t num = - next[i] - 1;
           next[i] = num;
           prev[num] = i;

@@ -89,7 +89,7 @@ main()
     NameVertexMap::iterator pos;
     bool inserted;
     Vertex u, v;
-    tie(pos, inserted) = actors.insert(make_pair(actors_name, Vertex()));
+    tie(pos, inserted) = actors.insert(std::make_pair(actors_name, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       actor_name[u] = actors_name;
@@ -99,7 +99,7 @@ main()
 
     std::string movie_name = *i++;
 
-    tie(pos, inserted) = actors.insert(make_pair(*i, Vertex()));
+    tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       v = add_vertex(g);
       actor_name[v] = *i;

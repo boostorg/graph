@@ -154,10 +154,10 @@ int main(int argc, char* argv[])
 
   minimum_degree_ordering
     (G,
-     make_iterator_property_map(degree.begin(), id),
+     make_iterator_property_map(degree.begin(), id, degree[0]),
      &inverse_perm[0],
      &perm[0],
-     make_iterator_property_map(supernode_sizes.begin(), id), 
+     make_iterator_property_map(supernode_sizes.begin(), id, supernode_sizes[0]), 
      delta, id);
 
   if ( argc >= 3 ) {
@@ -168,7 +168,8 @@ int main(int argc, char* argv[])
     }
     int comp;
     bool is_correct = true;
-    for ( int i=0; i<n; i++ ) {
+    int i;
+    for ( i=0; i<n; i++ ) {
       input >> comp;
       if ( comp != inverse_perm[i]+1 ) {
 	cout << "at i= " << i << ": " << comp
@@ -176,7 +177,7 @@ int main(int argc, char* argv[])
 	is_correct = false;
       }      
     }
-    for ( int i=0; i<n; i++ ) {
+    for ( i=0; i<n; i++ ) {
       input >> comp;
       if ( comp != perm[i]+1 ) {
 	cout << "at i= " << i << ": " << comp

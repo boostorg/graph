@@ -125,69 +125,105 @@ namespace boost {
     //-------------------------------------------------------------------------
     // The dispatch functions handle the defaults for the rank and discover
     // time property maps.
+    // dispatch with class specialization to avoid VC++ bug
+
+    template <class DiscoverTimeMap>
+    struct strong_comp_dispatch2 {
+      template <class Graph, class ComponentMap, class RootMap, class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+	    ComponentMap comp,
+	    RootMap r_map,
+	    const bgl_named_params<P, T, R>& params,
+	    DiscoverTimeMap time_map)
+      {
+	return strong_components_impl(g, comp, r_map, time_map, params);
+      }
+    };
+
+
+    template <>
+    struct strong_comp_dispatch2<detail::error_property_not_found> {
+      template <class Graph, class ComponentMap, class RootMap,
+		class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+	    ComponentMap comp,
+	    RootMap r_map,
+	    const bgl_named_params<P, T, R>& params,
+	    detail::error_property_not_found)
+      {
+	typedef typename graph_traits<Graph>::vertices_size_type size_type;
+	size_type	n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+	std::vector<size_type> time_vec(n);
+	return strong_components_impl
+	  (g, comp, r_map,
+	   make_iterator_property_map(time_vec.begin(), choose_const_pmap
+				      (get_param(params, vertex_index),
+				       g, vertex_index), time_vec[0]),
+	   params);
+      }
+    };
 
     template <class Graph, class ComponentMap, class RootMap,
-              class P, class T, class R>
+	      class P, class T, class R, class DiscoverTimeMap>
     inline typename property_traits<ComponentMap>::value_type
-    strong_comp_dispatch2(const Graph& g,
-                          ComponentMap comp,
-                          RootMap r_map,
-                          const bgl_named_params<P, T, R>& params,
-                          detail::error_property_not_found)
+    scc_helper2(const Graph& g,
+		ComponentMap comp,
+		RootMap r_map,
+		const bgl_named_params<P, T, R>& params,
+		DiscoverTimeMap time_map)
     {
-      typedef typename graph_traits<Graph>::vertices_size_type size_type;
-      size_type	n = num_vertices(g) > 0 ? num_vertices(g) : 1;
-      std::vector<size_type> time_vec(n);
-      return strong_components_impl
-        (g, comp, r_map,
-         make_iterator_property_map(time_vec.begin(), choose_const_pmap
-                                    (get_param(params, vertex_index),
-                                     g, vertex_index), time_vec[0]),
-         params);
-    }
-    template <class Graph, class ComponentMap, class RootMap,
-              class P, class T, class R, class DiscoverTimeMap>
-    inline typename property_traits<ComponentMap>::value_type
-    strong_comp_dispatch2(const Graph& g,
-                          ComponentMap comp,
-                          RootMap r_map,
-                          const bgl_named_params<P, T, R>& params,
-                          DiscoverTimeMap time_map)
-    {
-      return strong_components_impl(g, comp, r_map, time_map, params);
+      return strong_comp_dispatch2<DiscoverTimeMap>::apply(g, comp, r_map, params, time_map);
     }
 
-    template <class Graph, class ComponentMap, 
-              class P, class T, class R>
-    inline typename property_traits<ComponentMap>::value_type
-    strong_comp_dispatch1(const Graph& g,
-                          ComponentMap comp,
-                          const bgl_named_params<P, T, R>& params,
-                          detail::error_property_not_found)
-    {
-      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      typename std::vector<Vertex>::size_type
-	n = num_vertices(g) > 0 ? num_vertices(g) : 1;
-      std::vector<Vertex> root_vec(n);
-      return strong_comp_dispatch2
-        (g, comp, 
-         make_iterator_property_map(root_vec.begin(), choose_const_pmap
-                                    (get_param(params, vertex_index),
-                                     g, vertex_index), root_vec[0]),
-         params, 
-         get_param(params, vertex_discover_time));
-    }
+    template <class RootMap>
+    struct strong_comp_dispatch1 {
+
+      template <class Graph, class ComponentMap, class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+	    ComponentMap comp,
+	    const bgl_named_params<P, T, R>& params,
+	    RootMap r_map)
+      {
+	return scc_helper2(g, comp, r_map, params, get_param(params, vertex_discover_time));
+      }
+    };
+    template <>
+    struct strong_comp_dispatch1<detail::error_property_not_found> {
+
+      template <class Graph, class ComponentMap, 
+		class P, class T, class R>
+      inline static typename property_traits<ComponentMap>::value_type
+      apply(const Graph& g,
+	    ComponentMap comp,
+	    const bgl_named_params<P, T, R>& params,
+	    detail::error_property_not_found)
+      {
+	typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+	typename std::vector<Vertex>::size_type
+	  n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+	std::vector<Vertex> root_vec(n);
+	return scc_helper2
+	  (g, comp, 
+	   make_iterator_property_map(root_vec.begin(), choose_const_pmap
+				      (get_param(params, vertex_index),
+				       g, vertex_index), root_vec[0]),
+	   params, 
+	   get_param(params, vertex_discover_time));
+      }
+    };
 
     template <class Graph, class ComponentMap, class RootMap,
-              class P, class T, class R>
+	      class P, class T, class R>
     inline typename property_traits<ComponentMap>::value_type
-    strong_comp_dispatch1(const Graph& g,
-                          ComponentMap comp,
-                          const bgl_named_params<P, T, R>& params,
-                          RootMap r_map)
+    scc_helper1(const Graph& g,
+	       ComponentMap comp,
+	       const bgl_named_params<P, T, R>& params,
+	       RootMap r_map)
     {
-      return strong_comp_dispatch2(g, comp, r_map, params,
-                                   get_param(params, vertex_discover_time));
+      return detail::strong_comp_dispatch1<RootMap>::apply(g, comp, params, r_map);
     }
 
   } // namespace detail 
@@ -200,8 +236,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     typedef typename require_same<DirCat, directed_tag>::type req1;
-    return detail::strong_comp_dispatch1
-      (g, comp, params, get_param(params, vertex_root_t()));
+    return detail::scc_helper1(g, comp, params, get_param(params, vertex_root_t()));
   }
 
   template <class Graph, class ComponentMap>

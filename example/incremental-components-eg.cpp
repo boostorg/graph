@@ -61,10 +61,10 @@ main(int, char *[])
   tie(e, flag) = add_edge(2, 5, G);
   ds.union_set(2, 5);
 
-  graph_traits < Graph >::vertex_iterator i, end;
-  for (tie(i, end) = vertices(G); i != end; ++i)
-    std::cout << "representative[" << *i << "] = " <<
-      ds.find_set(*i) << std::endl;;
+  graph_traits < Graph >::vertex_iterator iter, end;
+  for (tie(iter, end) = vertices(G); iter != end; ++iter)
+    std::cout << "representative[" << *iter << "] = " <<
+      ds.find_set(*iter) << std::endl;;
   std::cout << std::endl;
 
   typedef component_index < unsigned int >Components;

@@ -80,7 +80,7 @@ main()
   std::vector < time_t > last_mod_vec(num_vertices(g));
   // Create nickname for the property map type
   typedef iterator_property_map < std::vector < time_t >::iterator,
-    property_map < graph_type, vertex_index_t >::type > iter_map_t;
+    property_map < graph_type, vertex_index_t >::type, time_t, time_t&> iter_map_t;
   // Create last modified time property map
   iter_map_t mod_time_map(last_mod_vec.begin(), get(vertex_index, g));
 

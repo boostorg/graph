@@ -50,12 +50,13 @@ main(int argc, char *argv[])
 
   graph_traits < GraphvizDigraph >::vertex_descriptor loop_tail = 6;
   typedef color_traits < default_color_type > Color;
+  default_color_type c;
 
   std::vector < default_color_type > reachable_to_tail(num_vertices(g));
   reverse_graph < Graph > reverse_g(g);
   depth_first_visit(reverse_g, loop_tail, default_dfs_visitor(),
                     make_iterator_property_map(reachable_to_tail.begin(),
-                                               get(vertex_index, g)));
+                                               get(vertex_index, g), c));
 
 
   std::ofstream loops_out(argv[2]);

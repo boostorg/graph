@@ -29,7 +29,7 @@ main()
 {
   using namespace boost;
   double x[] = { 0.2, 4.5, 3.2 };
-  iterator_property_map < double *, identity_property_map > pmap(x);
+  iterator_property_map < double *, identity_property_map, double, double& > pmap(x);
   std::cout << "x[1] = " << get(pmap, 1) << std::endl;
   put(pmap, 0, 1.7);
   std::cout << "x[0] = " << pmap[0] << std::endl;

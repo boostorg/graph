@@ -24,7 +24,9 @@
 #include <boost/config.hpp>
 #include <fstream>
 #include <string>
+#ifndef BOOST_MSVCP
 #include <unistd.h>
+#endif
 #include <boost/graph/adjacency_list.hpp>
 
 using namespace boost;

@@ -3,10 +3,8 @@
 #include <boost/config.hpp>
 
 #ifdef BOOST_MSVC
-
 #error adjacency_list_io.hpp has not been ported to work with VC++
-
-#else
+#endif
 
 #include <boost/graph/adjacency_list_io.hpp>
 #include <fstream>
@@ -93,4 +91,4 @@ main()
 	return 0;
 }
 
-#endif
+

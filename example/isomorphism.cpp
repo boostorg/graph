@@ -64,12 +64,12 @@ main()
 
   bool ret = isomorphism(g1, g2, 
                          isomorphism_map(make_iterator_property_map
-                                         (f.begin(), v1_index_map)));
+                                         (f.begin(), v1_index_map, f[0])));
   std::cout << "isomorphic? " << ret << std::endl;
 
   std::cout << "f: ";
   for (std::size_t v = 0; v != f.size(); ++v)
-    std::cout << get(vertex_index, g2, f[v]) << " ";
+    std::cout << get(get(vertex_index, g2), f[v]) << " ";
   std::cout << std::endl;
   
   return 0;

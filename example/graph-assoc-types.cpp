@@ -81,8 +81,8 @@ foo(Digraph & digraph,
     typename graph_traits < Digraph >::vertex_descriptor u,
     typename graph_traits < Digraph >::vertex_descriptor v)
 {
-  std::pair < typename graph_traits < Digraph >::edge_descriptor, bool > e1,
-    e2;
+  typedef typename graph_traits < Digraph >::edge_descriptor edge_t;
+  std::pair<edge_t, bool> e1, e2;
   e1 = edge(u, v, digraph);
   e2 = edge(v, u, digraph);
   assert(e1.first != e2.first);
@@ -92,8 +92,8 @@ bar(Undigraph & undigraph,
     typename graph_traits < Undigraph >::vertex_descriptor u,
     typename graph_traits < Undigraph >::vertex_descriptor v)
 {
-  std::pair < typename graph_traits < Undigraph >::edge_descriptor, bool > e1,
-    e2;
+  typedef typename graph_traits < Undigraph >::edge_descriptor edge_t;
+  std::pair<edge_t, bool> e1, e2;
   e1 = edge(u, v, undigraph);
   e2 = edge(v, u, undigraph);
   assert(e1.first == e2.first);

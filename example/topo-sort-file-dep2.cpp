@@ -24,37 +24,16 @@
 #include <boost/config.hpp>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-// can't do using namespace boost because then
-// we get conflict with boost::default_dfs_visitor.
-using
-  boost::graph_traits;
-using
-  boost::listS;
-using
-  boost::vecS;
-using
-  boost::directedS;
-using
-  boost::adjacency_list;
-using
-  boost::default_color_type;
-using
-  boost::white_color;
-using
-  boost::gray_color;
-using
-  boost::black_color;
+using namespace boost;
 
-namespace
-  std
+namespace std
 {
-  template <
-    typename
-    T >
-    std::istream &
+  template < typename T >
+  std::istream &
   operator >> (std::istream & in, std::pair < T, T > &p)
   {
     in >> p.first >> p.second;
@@ -63,22 +42,14 @@ namespace
   }
 }
 
-typedef
-  adjacency_list <
+typedef adjacency_list <
   listS,                        // Store out-edges of each vertex in a std::list
   vecS,                         // Store vertex set in a std::vector
   directedS                     // The file dependency graph is directed
-  >
-  file_dep_graph;
+  > file_dep_graph;
 
-typedef
-  graph_traits <
-  file_dep_graph >::vertex_descriptor
-  vertex_t;
-typedef
-  graph_traits <
-  file_dep_graph >::edge_descriptor
-  edge_t;
+typedef graph_traits <file_dep_graph >::vertex_descriptor vertex_t;
+typedef graph_traits <file_dep_graph >::edge_descriptor edge_t;
 
 template < typename Visitor > void
 dfs_v1(const file_dep_graph & g, vertex_t u, default_color_type * color,
@@ -111,7 +82,7 @@ generic_dfs_v1(const file_dep_graph & g, Visitor vis)
   }
 }
 
-struct default_dfs_visitor
+struct dfs_visitor_default
 {
   template <
     typename
@@ -147,12 +118,9 @@ struct default_dfs_visitor
   }
 };
 
-struct topo_visitor:
-  public
-  default_dfs_visitor
+struct topo_visitor : public dfs_visitor_default
 {
-  topo_visitor(vertex_t * &order):
-  topo_order(order)
+  topo_visitor(vertex_t * &order) : topo_order(order)
   {
   }
   void
@@ -160,15 +128,13 @@ struct topo_visitor:
   {
     *--topo_order = u;
   }
-  vertex_t *&
-    topo_order;
+  vertex_t*&  topo_order;
 };
 
 void
 topo_sort(const file_dep_graph & g, vertex_t * topo_order)
 {
-  topo_visitor
-  vis(topo_order);
+  topo_visitor vis(topo_order);
   generic_dfs_v1(g, vis);
 }
 
@@ -177,12 +143,8 @@ int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef
-    graph_traits <
-    file_dep_graph >::vertices_size_type
-    size_type;
-  size_type
-    n_vertices;
+  typedef graph_traits<file_dep_graph>::vertices_size_type size_type;
+  size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;

@@ -255,6 +255,8 @@ namespace boost {
     out << "}" << std::endl;
   }
 
+#ifndef BOOST_MSVC
+  // ambiguous overload problem with VC++
   template <typename Graph>
   inline void 
   write_graphviz(std::ostream& out, const Graph& g) {
@@ -262,6 +264,7 @@ namespace boost {
     default_writer gw;
     write_graphviz(out, g, dw, dw, gw);
   }
+#endif
 
   template <typename Graph, typename VertexWriter>
   inline void 

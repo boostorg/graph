@@ -45,9 +45,10 @@ main(int argc, char *argv[])
 
   std::vector < default_color_type >
     reachable_from_head(num_vertices(g), Color::white());
+  default_color_type c;
   depth_first_visit(g, loop_head, default_dfs_visitor(),
                     make_iterator_property_map(reachable_from_head.begin(),
-                                               get(vertex_index, g)));
+                                               get(vertex_index, g), c));
 
 
   graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;

@@ -54,8 +54,14 @@ main()
   std::cout << "original graph:" << std::endl;
   print_graph(G, get(vertex_index, G));
 
+
   std::cout << std::endl << "reversed graph:" << std::endl;
+#ifdef BOOST_MSVC  // avoid VC++ bug...
+  reverse_graph<Graph> R(G);
+  print_graph(R, get(vertex_index, G));
+#else
   print_graph(make_reverse_graph(G), get(vertex_index, G));
+#endif
 
   return EXIT_SUCCESS;
 }

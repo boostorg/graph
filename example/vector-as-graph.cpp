@@ -21,6 +21,11 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#error The vector_as_graph.hpp header requires partial specialization
+#endif
+
 #include <vector>
 #include <list>
 #include <boost/graph/vector_as_graph.hpp>

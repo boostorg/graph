@@ -9,6 +9,7 @@
 
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace boost {
 

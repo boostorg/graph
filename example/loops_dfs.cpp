@@ -68,10 +68,11 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry, const Graph
   depth_first_visit(g, entry,
                     make_back_edge_recorder(std::back_inserter(back_edges)),
                     make_iterator_property_map(color_map.begin(),
-                                               get(vertex_index, g)));
+                                               get(vertex_index, g), color_map[0]));
 
   for (std::vector < Edge >::size_type i = 0; i < back_edges.size(); ++i) {
-    loops.push_back(typename Loops::value_type());
+    typename Loops::value_type x;
+    loops.push_back(x);
     compute_loop_extent(back_edges[i], g, loops.back());
   }
 
@@ -92,15 +93,16 @@ compute_loop_extent(typename graph_traits <
 
   std::vector < default_color_type >
     reachable_from_head(num_vertices(g), Color::white());
+  default_color_type c;
   depth_first_visit(g, loop_head, default_dfs_visitor(),
                     make_iterator_property_map(reachable_from_head.begin(),
-                                               get(vertex_index, g)));
+                                               get(vertex_index, g), c));
 
   std::vector < default_color_type > reachable_to_tail(num_vertices(g));
   reverse_graph < Graph > reverse_g(g);
   depth_first_visit(reverse_g, loop_tail, default_dfs_visitor(),
                     make_iterator_property_map(reachable_to_tail.begin(),
-                                               get(vertex_index, g)));
+                                               get(vertex_index, g), c));
 
   typename graph_traits < Graph >::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)

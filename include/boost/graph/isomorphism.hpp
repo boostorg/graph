@@ -108,8 +108,9 @@ namespace boost {
         return true;
 
       std::vector<v2_desc_t> my_f_vec(num_vertices(g1));
-      iterator_property_map<typename std::vector<v2_desc_t>::iterator,
-        V1IndexMap> my_f(my_f_vec.begin(), v1_index_map);
+      typedef typename std::vector<v2_desc_t>::iterator vec_iter;
+      iterator_property_map<vec_iter,  V1IndexMap, v2_desc_t, v2_desc_t&>
+	my_f(my_f_vec.begin(), v1_index_map);
 
       typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
       for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
@@ -193,9 +194,11 @@ namespace boost {
       typedef std::vector<InvarValue2> invar_vec2_t;
       invar_vec1_t invar1_vec(num_vertices(g1));
       invar_vec2_t invar2_vec(num_vertices(g2));
-      iterator_property_map<typename invar_vec1_t::iterator, V1Map>
+      typedef typename invar_vec1_t::iterator vec1_iter;
+      typedef typename invar_vec2_t::iterator vec2_iter;
+      iterator_property_map<vec1_iter, V1Map, InvarValue1, InvarValue1&>
         invar1(invar1_vec.begin(), v1_index_map);
-      iterator_property_map<typename invar_vec2_t::iterator, V2Map>
+      iterator_property_map<vec2_iter, V2Map, InvarValue2, InvarValue2&>
         invar2(invar2_vec.begin(), v2_index_map);
 
       for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
@@ -234,7 +237,8 @@ namespace boost {
         g1_vertices.push_back(*i1);
       permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
 
-      std::vector<typename graph_traits<Graph1>::edge_descriptor> edge_set;
+      typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
+      std::vector<edge1_t> edge_set;
       std::copy(edges(g1).first, edges(g1).second, 
                 std::back_inserter(edge_set));
 

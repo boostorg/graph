@@ -18,7 +18,12 @@ namespace boost {
 template <class Iter1, class Iter2>
 void permute_serial(Iter1 permuter, Iter1 last, Iter2 result)
 {
+#ifdef BOOST_NO_STD_ITERATOR_TRAITS
+  typedef std::ptrdiff_t D:
+#else
   typedef typename std::iterator_traits<Iter1>::difference_type D;
+#endif
+
   D n = 0;
   while (permuter != last) {
     std::swap(result[n], result[*permuter]);
@@ -30,17 +35,22 @@ void permute_serial(Iter1 permuter, Iter1 last, Iter2 result)
 template <class InIter, class RandIterP, class RandIterR>
 void permute_copy(InIter first, InIter last, RandIterP p, RandIterR result)
 {
+#ifdef BOOST_NO_STD_ITERATOR_TRAITS
+  typedef std::ptrdiff_t i = 0;
+#else
   typename std::iterator_traits<RandIterP>::difference_type i = 0;
+#endif
   for (; first != last; ++first, ++i)
     result[p[i]] = *first;
 }
 
-template <class RandIter, class RandIterPerm>
-void permute(RandIter first, RandIter last, RandIterPerm p)
+namespace detail {
+
+template <class RandIter, class RandIterPerm, class D, class T>
+void permute_helper(RandIter first, RandIter last, RandIterPerm p, D, T)
 {
-  typename std::iterator_traits<RandIterPerm>::difference_type 
-    i = 0, pi, n = last - first, cycle_start;
-  typename std::iterator_traits<RandIter>::value_type tmp;
+  D i = 0, pi, n = last - first, cycle_start;
+  T tmp;
   std::vector<int> visited(n, false);
 
   while (i != n) { // continue until all elements have been processed
@@ -60,6 +70,14 @@ void permute(RandIter first, RandIter last, RandIterPerm p)
   }
 }
 
+} // namespace detail
+
+template <class RandIter, class RandIterPerm>
+void permute(RandIter first, RandIter last, RandIterPerm p)
+{
+  detail::permute_helper(first, last, p, last - first, *first);
+}
+
 
 // Knuth 1.3.3, Vol. 1 p 176
 // modified for zero-based arrays
@@ -68,7 +86,11 @@ void permute(RandIter first, RandIter last, RandIterPerm p)
 template <class PermIter>
 void invert_permutation(PermIter X, PermIter Xend)
 {
+#ifdef BOOST_NO_STD_ITERATOR_TRAITS
+  typedef std::ptrdiff_t T:
+#else
   typedef typename std::iterator_traits<PermIter>::value_type T;
+#endif
   T n = Xend - X;
   T m = n;
   T j = -1;
@@ -95,9 +117,15 @@ void invert_permutation(PermIter X, PermIter Xend)
 template <class Iter1, class Iter2, class Iter3>
 inline void serialize_permutation(Iter1 q, Iter1 q_end, Iter2 q_inv, Iter3 p)
 {
+#ifdef BOOST_NO_STD_ITERATOR_TRAITS
+  typedef std::ptrdiff_t P1;
+  typedef std::ptrdiff_t P2;
+  typedef std::ptrdiff_t D;
+#else
   typedef typename std::iterator_traits<Iter1>::value_type P1;
   typedef typename std::iterator_traits<Iter2>::value_type P2;
   typedef typename std::iterator_traits<Iter1>::difference_type D;
+#endif
   D n = q_end - q;
   for (D i = 0; i < n; ++i) {
     P1 qi = q[i];
