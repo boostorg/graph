@@ -393,7 +393,7 @@ namespace boost {
                           const GraphProperty& p = GraphProperty())
       : Base(num_vertices), m_property(p) { }
 
-#if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
+#if !defined(BOOST_MSVC) || BOOST_MSVC >= 1300
     // Required by Iterator Constructible Graph
     template <class EdgeIterator>
     inline adjacency_list(EdgeIterator first, EdgeIterator last,
