@@ -256,24 +256,30 @@ namespace boost {
   typename graph_traits<Graph>::vertex_descriptor
   random_vertex(Graph& g, RandomNumGen& gen)
   {
-    uniform_int<RandomNumGen> rand_gen(gen, 0, num_vertices(g)-1);
-    std::size_t n = rand_gen();
-    typename graph_traits<Graph>::vertex_iterator
-      i = vertices(g).first;
-    while (n-- > 0) ++i; // std::advance not VC++ portable
-    return *i;
+    if (num_vertices(g) > 1) {
+      uniform_int<RandomNumGen> rand_gen(gen, 0, num_vertices(g)-1);
+      std::size_t n = rand_gen();
+      typename graph_traits<Graph>::vertex_iterator
+	i = vertices(g).first;
+      while (n-- > 0) ++i; // std::advance not VC++ portable
+      return *i;
+    } else
+      return *vertices(g).first;
   }
 
   template <class Graph, class RandomNumGen>
   typename graph_traits<Graph>::edge_descriptor
   random_edge(Graph& g, RandomNumGen& gen) {
-    uniform_int<RandomNumGen> rand_gen(gen, 0, num_edges(g)-1);
-    typename graph_traits<Graph>::edges_size_type 
-      n = rand_gen();
-    typename graph_traits<Graph>::edge_iterator
-      i = edges(g).first;
-    while (n-- > 0) ++i; // std::advance not VC++ portable
-    return *i;
+    if (num_edges(g) > 1) {
+      uniform_int<RandomNumGen> rand_gen(gen, 0, num_edges(g)-1);
+      typename graph_traits<Graph>::edges_size_type 
+	n = rand_gen();
+      typename graph_traits<Graph>::edge_iterator
+	i = edges(g).first;
+      while (n-- > 0) ++i; // std::advance not VC++ portable
+      return *i;
+    } else
+      return *edges(g).first;
   }
 
   template <typename MutableGraph, class RandNumGen>
