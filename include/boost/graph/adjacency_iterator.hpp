@@ -78,7 +78,7 @@ namespace boost
         , InEdgeIter
         , Vertex
         , use_default
-        , use_default
+        , Vertex
         , Difference
       >
     {
@@ -87,7 +87,7 @@ namespace boost
                 , InEdgeIter
                 , Vertex
                 , use_default
-                , use_default
+                , Vertex
                 , Difference
               > super_t;
 
