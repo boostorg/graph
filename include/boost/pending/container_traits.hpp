@@ -5,6 +5,8 @@
 // instead of pulling in all the headers. Too bad that
 // is not legal. There ought to be a standard <stlfwd> header. -JGS 
 
+#include <boost/next_prior.hpp>
+
 #include <algorithm>   // for std::remove
 #include <vector>
 #include <list>
