@@ -54,6 +54,10 @@
 #include <utility>
 #include <string>
 
+#ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
+#error stupid fuckers!
+#endif
+
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>

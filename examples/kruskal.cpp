@@ -28,7 +28,7 @@
 #include <iterator>
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/kruskal_minimum_spanning_tree.hpp>
+#include <boost/graph/kruskal_min_spanning_tree.hpp>
 /*
 
   Sample output:

@@ -41,7 +41,7 @@
 #include <iomanip>
 #include <boost/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/johnson_all_pairs_shortest_paths.hpp>
+#include <boost/graph/johnson_all_pairs_shortest.hpp>
 
 int
 main()
