@@ -33,7 +33,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/concept_check.hpp>
 
-// where to put out_degree(v,g)?
 
 namespace boost {
 
@@ -43,9 +42,6 @@ namespace boost {
       function_requires< InputIteratorConcept<T> >();
     }
   };
-
-  // not sure about iterator requirements...
-  // add directed_category in a couple places
 
   template <class G>
   struct GraphConcept
@@ -78,12 +74,14 @@ namespace boost {
       function_requires< MultiPassInputIteratorConcept<out_edge_iterator> >();
 
       p = out_edges(v, g);
+      n = out_degree(v, g);
       e = *p.first;
       u = source(e, g);
       v = target(e, g);
     }
     void const_constraints(const G& g) {
       p = out_edges(v, g);
+      n = out_degree(v, g);
       e = *p.first;
       u = source(e, g);
       v = target(e, g);
@@ -91,6 +89,7 @@ namespace boost {
     std::pair<out_edge_iterator, out_edge_iterator> p;
     typename graph_traits<G>::vertex_descriptor u, v;
     typename graph_traits<G>::edge_descriptor e;
+    typename graph_traits<G>::degree_size_type n;
     G g;
   };
 
@@ -104,16 +103,19 @@ namespace boost {
       function_requires< MultiPassInputIteratorConcept<in_edge_iterator> >();
 
       p = in_edges(v, g);
+      n = in_degree(v, g);
       e = *p.first;
       const_constraints(g);
     }
     void const_constraints(const G& g) {
       p = in_edges(v, g);
+      n = in_degree(v, g);
       e = *p.first;
     }
     std::pair<in_edge_iterator, in_edge_iterator> p;
     typename graph_traits<G>::vertex_descriptor v;
     typename graph_traits<G>::edge_descriptor e;
+    typename graph_traits<G>::degree_size_type n;
     G g;
   };
 
@@ -210,7 +212,7 @@ namespace boost {
       clear_vertex(v, g);
       remove_vertex(v, g);
       p = add_edge(u, v, g);
-      remove_edge(u, v, g); // Hmm, maybe this shouldn't be here...
+      remove_edge(u, v, g);
       remove_edge(e, g);
     }
     G g;
