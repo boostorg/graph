@@ -34,33 +34,28 @@
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-int
-main()
+int main()
 {
-  typedef boost::adjacency_list< 
-    boost::vecS, boost::vecS, boost::bidirectionalS
-  > Graph;
+  using namespace boost;
+  typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
   
   Graph G(5);
-  boost::add_edge(0, 2, G);
-  boost::add_edge(1, 1, G);
-  boost::add_edge(1, 3, G);
-  boost::add_edge(1, 4, G);
-  boost::add_edge(2, 1, G);
-  boost::add_edge(2, 3, G);
-  boost::add_edge(2, 4, G);
-  boost::add_edge(3, 1, G);
-  boost::add_edge(3, 4, G);
-  boost::add_edge(4, 0, G);
-  boost::add_edge(4, 1, G);
+  add_edge(0, 2, G);
+  add_edge(1, 1, G);
+  add_edge(1, 3, G);
+  add_edge(1, 4, G);
+  add_edge(2, 1, G);
+  add_edge(2, 3, G);
+  add_edge(2, 4, G);
+  add_edge(3, 1, G);
+  add_edge(3, 4, G);
+  add_edge(4, 0, G);
+  add_edge(4, 1, G);
 
   std::cout << "original graph:" << std::endl;
-  boost::print_graph(G, boost::get(boost::vertex_index, G));
+  print_graph(G, get(vertex_index, G));
 
   std::cout << std::endl << "reversed graph:" << std::endl;
-  boost::print_graph(boost::make_reverse_graph(G), 
-                     boost::get(boost::vertex_index, G));
-
-
+  print_graph(make_reverse_graph(G), get(vertex_index, G));
   return 0;
 }
