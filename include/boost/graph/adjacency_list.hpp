@@ -126,7 +126,7 @@ namespace boost {
 #if !defined BOOST_NO_SLIST
   struct slistS {
     template <class T>
-    struct gen { typedef std::slist<T> type; };
+    struct bind { typedef std::slist<T> type; };
   };
 #endif
 
