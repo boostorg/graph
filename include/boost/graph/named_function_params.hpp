@@ -67,6 +67,13 @@ namespace boost {
       return Params(pmap, *this);
     }
 
+    template <typename WeightMap>
+    bgl_named_params<WeightMap, edge_weight2_t, self>
+    weight_map2(const WeightMap& pmap) const {
+      typedef bgl_named_params<WeightMap, edge_weight2_t, self> Params;
+      return Params(pmap, *this);
+    }
+
     template <typename DistanceMap>
     bgl_named_params<DistanceMap, vertex_distance_t, self>
     distance_map(const DistanceMap& pmap) const {
@@ -202,6 +209,13 @@ namespace boost {
   bgl_named_params<WeightMap, edge_weight_t>
   weight_map(WeightMap pmap) {
     typedef bgl_named_params<WeightMap, edge_weight_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename WeightMap>
+  bgl_named_params<WeightMap, edge_weight2_t>
+  weight_map2(WeightMap pmap) {
+    typedef bgl_named_params<WeightMap, edge_weight2_t> Params;
     return Params(pmap);
   }
 
@@ -368,10 +382,10 @@ namespace boost {
       template <class P, class Graph, class Tag>
       struct bind {
 	typedef const P& const_result_type;
-	typedef P& result_type;
+	typedef const P& result_type;
 	static const_result_type const_apply(const P& p, const Graph&, Tag&)
 	{ return p; }
-	static result_type apply(P& p, Graph&, Tag&)
+	static result_type apply(const P& p, Graph&, Tag&)
 	{ return p; }
       };
     };
@@ -389,7 +403,7 @@ namespace boost {
 	}
 
 	static result_type
-	apply(P& p, Graph& g, Tag tag) { 
+	apply(const P& p, Graph& g, Tag tag) { 
 	  return get(tag, g); 
 	}
       };
@@ -430,7 +444,7 @@ namespace boost {
 
   template <typename Param, typename Graph, typename PropertyTag>
   typename detail::choose_pmap_helper<Param,Graph,PropertyTag>::result_type
-  choose_pmap(Param& p, Graph& g, PropertyTag tag)
+  choose_pmap(const Param& p, Graph& g, PropertyTag tag)
   { 
     typedef typename 
       detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
