@@ -43,7 +43,7 @@ bool check_vertex_cleared(Graph& g, Vertex v, ID id)
     boost::tie(ai, aiend) = adjacent_vertices(*vi, g);
     boost::indirect_cmp<ID, std::equal_to<std::size_t> > cmp(id);
 
-#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+#if (defined(BOOST_MSVC) && BOOST_MSVC <= 1300) && defined(__SGI_STL_PORT)
     // seeing internal compiler errors when using std::find_if()
     found = aiend;
     for ( ; ai != aiend; ++ai)
