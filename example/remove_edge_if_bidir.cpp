@@ -59,16 +59,6 @@ using namespace boost;
 typedef adjacency_list<vecS, vecS, bidirectionalS, 
   no_property, property<edge_weight_t, int> > Graph;
 
-struct has_target {
-  has_target(graph_traits<Graph>::vertex_descriptor v,
-	     Graph& g_) : targ(v), g(g_) { }
-  bool operator()(graph_traits<Graph>::edge_descriptor e) {
-    return target(e, g) == targ;
-  }
-  graph_traits<Graph>::vertex_descriptor targ;
-  Graph& g;
-};
-
 struct has_weight_greater_than {
   has_weight_greater_than(int w_, Graph& g_) : w(w_), g(g_) { }
   bool operator()(graph_traits<Graph>::edge_descriptor e) {
@@ -107,7 +97,7 @@ main()
   std::cout << std::endl;
 
   std::cout << "removing edges connecting 0 to 3" << std::endl;
-  remove_out_edge_if(vertex(0,g), has_target(vertex(3,g), g), g);
+  remove_out_edge_if(vertex(0,g), incident_to(vertex(3,g), g), g);
   print_graph(g, get(vertex_index, g));
   print_edges2(g, get(vertex_index, g), get(edge_weight, g));
 

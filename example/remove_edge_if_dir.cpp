@@ -54,15 +54,6 @@ using namespace boost;
 
 typedef adjacency_list<vecS, vecS, directedS> Graph;
 
-struct has_target {
-  has_target(graph_traits<Graph>::vertex_descriptor v,
-	     Graph& g_) : targ(v), g(g_) { }
-  bool operator()(graph_traits<Graph>::edge_descriptor e) {
-    return target(e, g) == targ;
-  }
-  graph_traits<Graph>::vertex_descriptor targ;
-  Graph& g;
-};
 
 int
 main()
@@ -80,11 +71,11 @@ main()
   std::cout << std::endl;
 
   std::cout << "removing edges (0,3)" << std::endl;
-  remove_out_edge_if(vertex(0,g), has_target(vertex(3,g), g), g);
+  remove_out_edge_if(vertex(0,g), incident_to(vertex(3,g), g), g);
   print_graph(g, get(vertex_index, g));
 
   std::cout << "removing edge (0,2) and (3, 2)" << std::endl;
-  remove_edge_if(has_target(vertex(2,g), g), g);
+  remove_edge_if(incident_to(vertex(2,g), g), g);
   print_graph(g, get(vertex_index, g));
 
   return 0;
