@@ -82,8 +82,6 @@ namespace boost {
                             visit);
   }
 
-#endif // BOOST_GRAPH_NO_DEPRECATED
-
   // Variant (4)
   template <class VertexListGraph, class UniformCostVisitor, 
             class DistanceMap, class WeightMap, class ColorMap, class IndexMap>
@@ -108,20 +106,74 @@ namespace boost {
                         compare, combine, vis);
   }
 
+#endif // BOOST_GRAPH_NO_DEPRECATED
 
   namespace detail {
 
-    // Default for distance and color is to use an algorithm-internal
-    // property map.
+    template <typename D>
+    struct generate_infinity {
+      D operator()() const { return std::numeric_limits<D>::max(); }
+    };
+    template <typename D>
+    struct generate_zero {
+      D operator()() const { return D(); }
+    };
+
+    // Initalize distances and call uniform cost search
     template <class VertexListGraph, class UniformCostVisitor, 
-              class DistanceMap, class WeightMap, class ColorMap,
-              class IndexMap>
+              class DistanceMap, class WeightMap, class ColorMap, 
+              class IndexMap, class Compare, class Combine, 
+              class DistInf, class DistZero>
     inline void
-    dijkstra_dispatch
+    dijkstra_dispatch3
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
-       UniformCostVisitor vis)
+       UniformCostVisitor vis, Compare compare, Combine combine, 
+       DistInf init, DistZero zero)
+    {
+      typename boost::graph_traits<VertexListGraph>::vertex_iterator
+        ui, ui_end;
+      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+        put(distance, *ui, init());
+
+      put(distance, s, zero());
+      uniform_cost_search(g, s, distance, weight, color, id,
+                          compare, combine, vis);
+    }
+
+    // Handle Distance Compare, Combine, Inf and Zero defaults
+    template <class VertexListGraph, class UniformCostVisitor, 
+              class DistanceMap, class WeightMap, class ColorMap,
+              class IndexMap, class Params>
+    inline void
+    dijkstra_dispatch2
+      (const VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+       DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
+       UniformCostVisitor vis, const Params& params)
+    {
+      typedef typename property_traits<DistanceMap>::value_type D;
+      detail::dijkstra_dispatch3
+        (g, s, distance, weight, color, id, vis, 
+         choose_param(get_param(params, distance_compare_t()), std::less<D>()),
+         choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
+         choose_param(get_param(params, distance_inf_t()), 
+                      generate_infinity<D>()),
+         choose_param(get_param(params, distance_zero_t()), 
+                      generate_zero<D>()));
+    }
+
+    // Handle DistanceMap and ColorMap defaults
+    template <class VertexListGraph, class UniformCostVisitor, 
+              class DistanceMap, class WeightMap, class ColorMap,
+              class IndexMap, class Params>
+    inline void
+    dijkstra_dispatch1
+      (const VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+       DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
+       UniformCostVisitor vis, const Params& params)
     {
       typedef typename property_traits<WeightMap>::value_type T;
       typename std::vector<T>::size_type n;
@@ -129,14 +181,16 @@ namespace boost {
       std::vector<T> distance_map(n);
       n = is_default_param(color) ? num_vertices(g) : 0;
       std::vector<default_color_type> color_map(n);
-      dijkstra_shortest_paths
-        (g, s, choose_param(distance, 
-                    make_iterator_property_map(distance_map.begin(), id)),
-         weight, choose_param(color,
-                    make_iterator_property_map(color_map.begin(), id)),
-         id, vis);
+      dijkstra_dispatch2
+        (g, s, 
+         choose_param(distance, 
+                      make_iterator_property_map(distance_map.begin(), id)),
+         weight, 
+         choose_param(color,
+                      make_iterator_property_map(color_map.begin(), id)),
+         id, vis, params);
     }
-  }
+  } // namespace detail
 
   // Named Parameter Variant
   template <class VertexListGraph, class Param, class Tag, class Rest>
@@ -149,29 +203,16 @@ namespace boost {
     // Default for edge weight and vertex index map is to ask for them
     // from the graph.  Default for the visitor is null_visitor.
     null_visitor null_vis;
-    detail::dijkstra_dispatch(g, s, 
-                              get_param(params, vertex_distance),
-                              choose_pmap(get_param(params, edge_weight),
-                                          g, edge_weight),
-                              get_param(params, vertex_color),
-                              choose_pmap(get_param(params, vertex_index),
-                                          g, vertex_index),
-                              choose_param(get_param(params, graph_visitor),
-                                           make_ucs_visitor(null_vis)));
+    detail::dijkstra_dispatch1
+      (g, s, 
+       get_param(params, vertex_distance),
+       choose_pmap(get_param(params, edge_weight), g, edge_weight),
+       get_param(params, vertex_color),
+       choose_pmap(get_param(params, vertex_index), g, vertex_index),
+       choose_param(get_param(params, graph_visitor),
+                    make_ucs_visitor(null_vis)),
+       params);
   }
-
-#ifdef BOOST_GRAPH_NO_DEPRECATED
-  // Variant (1), version 2
-  // This has different defaults than the previous version of Variant (1)
-  template <class VertexListGraph>
-  inline void
-  dijkstra_shortest_paths
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s)
-  {
-    dijkstra_shortest_paths(g, s, no_property());
-  }
-#endif
 
 } // namespace boost
 
