@@ -44,6 +44,8 @@ test-suite graph :
     [ run isomorphism.cpp <lib>../../test/build/boost_test_exec_monitor 
         : : : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run adjacency_matrix_test.cpp : <sysinclude>$(BOOST_ROOT) ]    
+
     [ compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
     [ compile copy.cpp : <sysinclude>$(BOOST_ROOT) ]
