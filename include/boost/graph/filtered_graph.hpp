@@ -67,6 +67,39 @@ namespace boost {
       VertexPredicate m_vertex_pred;
       const Graph* m_g;
     };
+
+    template <typename EdgePredicate, typename VertexPredicate, typename Graph>
+    struct in_edge_predicate {
+      in_edge_predicate() { }
+      in_edge_predicate(EdgePredicate ep, VertexPredicate vp, 
+                         const Graph& g)
+        : m_edge_pred(ep), m_vertex_pred(vp), m_g(&g) { }
+
+      template <typename Edge>
+      bool operator()(const Edge& e) const {
+        return m_edge_pred(e) && m_vertex_pred(source(e, *m_g));
+      }
+      EdgePredicate m_edge_pred;
+      VertexPredicate m_vertex_pred;
+      const Graph* m_g;
+    };
+
+    template <typename EdgePredicate, typename VertexPredicate, typename Graph>
+    struct edge_predicate {
+      edge_predicate() { }
+      edge_predicate(EdgePredicate ep, VertexPredicate vp, 
+		     const Graph& g)
+        : m_edge_pred(ep), m_vertex_pred(vp), m_g(&g) { }
+
+      template <typename Edge>
+      bool operator()(const Edge& e) const {
+        return m_edge_pred(e)
+	  && m_vertex_pred(source(e, *m_g)) && m_vertex_pred(target(e, *m_g));
+      }
+      EdgePredicate m_edge_pred;
+      VertexPredicate m_vertex_pred;
+      const Graph* m_g;
+    };
   } // namespace detail
 
 
@@ -82,6 +115,10 @@ namespace boost {
   public:
     typedef detail::out_edge_predicate<EdgePredicate, 
       VertexPredicate, self> OutEdgePred;
+    typedef detail::in_edge_predicate<EdgePredicate, 
+      VertexPredicate, self> InEdgePred;
+    typedef detail::edge_predicate<EdgePredicate, 
+      VertexPredicate, self> EdgePred;
 
     // Constructors
     filtered_graph(Graph& g, EdgePredicate ep)
@@ -109,6 +146,13 @@ namespace boost {
        self, vertex_descriptor, out_edge_iterator, 
        out_edge_iterator>::type                        adjacency_iterator;
 
+    // BidirectionalGraph requirements
+    typedef typename filter_iterator<InEdgePred,
+      typename Traits::in_edge_iterator,
+      boost::iterator<multi_pass_input_iterator_tag, 
+        edge_descriptor, std::ptrdiff_t, 
+        edge_descriptor*, edge_descriptor> >::type     in_edge_iterator;
+
     // VertexListGraph requirements
     typedef typename filter_iterator<VertexPredicate,
       typename Traits::vertex_iterator,
@@ -118,14 +162,12 @@ namespace boost {
     typedef typename Traits::vertices_size_type        vertices_size_type;
 
     // EdgeListGraph requirements
-    typedef typename filter_iterator<EdgePredicate,
+    typedef typename filter_iterator<EdgePred,
       typename Traits::edge_iterator,
       boost::iterator<multi_pass_input_iterator_tag, 
         edge_descriptor, std::ptrdiff_t,
         edge_descriptor*, edge_descriptor> >::type     edge_iterator;
     typedef typename Traits::edges_size_type edges_size_type;
-
-    typedef void in_edge_iterator;
 
     typedef typename Graph::edge_property_type edge_property_type;
     typedef typename Graph::vertex_property_type vertex_property_type;
@@ -170,11 +212,12 @@ namespace boost {
   edges(const filtered_graph<G, EP, VP>& g) {
     typedef filtered_graph<G, EP, VP> Graph;
     typedef typename Graph::edge_iter_policy Pol;
+    typename Graph::EdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typename graph_traits<G>::edge_iterator f, l;
     tie(f, l) = edges(g.m_g);
     typedef typename Graph::edge_iterator iter;
-    return std::make_pair(iter(f, Pol(g.m_edge_pred, l)), 
-                          iter(l, Pol(g.m_edge_pred, l)));
+    return std::make_pair(iter(f, Pol(pred, l)), 
+                          iter(l, Pol(pred, l)));
   }
 
   template <typename G, typename EP, typename VP>  
@@ -246,6 +289,33 @@ namespace boost {
                           adjacency_iterator(l, const_cast<Graph*>(&g)));
   }
   
+  template <typename G, typename EP, typename VP>
+  std::pair<typename filtered_graph<G, EP, VP>::in_edge_iterator,
+            typename filtered_graph<G, EP, VP>::in_edge_iterator>
+  in_edges(typename graph_traits<G>::vertex_descriptor u,
+            const filtered_graph<G, EP, VP>& g)
+  {
+    typedef filtered_graph<G, EP, VP> Graph;
+    typename Graph::InEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
+    typedef typename Graph::in_edge_iter_policy Pol;
+    typedef typename Graph::in_edge_iterator iter;
+    typename graph_traits<G>::in_edge_iterator f, l;
+    tie(f, l) = in_edges(u, g.m_g);
+    return std::make_pair(iter(f, Pol(pred, l)), iter(l, Pol(pred, l)));
+  }
+
+  template <typename G, typename EP, typename VP>
+  std::pair<typename filtered_graph<G, EP, VP>::edge_descriptor, bool>
+  edge(typename graph_traits<G>::vertex_descriptor u,
+       typename graph_traits<G>::vertex_descriptor v,
+       const filtered_graph<G, EP, VP>& g)
+  {
+    typename G::edge_descriptor e;
+    bool exists;
+    tie(e, exists) = edge(u, v, g.m_g);
+    return std::make_pair(e, exists && g.m_edge_pred(e));
+  }
+
   template <typename G, typename EP, typename VP, typename Property>
   typename property_map<G, Property>::type
   get(Property p, filtered_graph<G, EP, VP>& g)
