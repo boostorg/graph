@@ -19,8 +19,11 @@
 
 <BR Clear>
 
-
 <H1>Using the BGL Algorithms</H1>
+
+<p>
+This material is out of date and needs to be rewritten!!
+</p>
 
 <P>
 All of the BGL algorithms have a lot in common when it comes to the
@@ -35,12 +38,13 @@ the declaration of the algorithm.
 <P>
 <PRE>
 namespace boost {
-  template &lt;class VertexListGraph, class Vertex, 
-            class Distance, class Weight, class Color, 
-            class ID, class Visitor&gt;
-  void dijkstra_shortest_paths(VertexListGraph&amp; G, Vertex s, 
-                               Distance d, Weight w, Color c, ID id,
-                               Visitor visit);
+
+  template &lt;class VertexListGraph, class P, class T, class R&gt;
+  void
+  dijkstra_shortest_paths(VertexListGraph&amp; g,
+    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
 }
 </PRE>
 
@@ -50,7 +54,7 @@ namespace boost {
 
 <P>
 Of course the most important parameter of the function is the graph
-object <TT>G</TT>. The name of the template type
+object <TT>g</TT>. The name of the template type
 <TT>VertexListGraph</TT> is used to remind the user that graph classes
 used with Dijkstra's algorithm must model the <a
 href="./VertexListGraph.html">VertexListGraph</a> concept. This
@@ -66,7 +70,8 @@ supported by the graph.
 It is also important to note whether the algorithm works on only
 undirected graphs or whether it also applies to directed graphs
 (undirected graphs are a special kind of directed graph). This
-information always appears at the top the algorithm description.
+information always appears in the description of the graph parameter
+in the reference section for the algorithm.
 
 <P>
 
@@ -110,15 +115,19 @@ descriptor object.
 
 <P>
 
+<h2>Named Parameters</h2>
+
+
+
+
 <H2>The Property Map Parameters</H2>
 
 <P>
-The next four parameters to Dijkstra's algorithm are property
-maps. Much of the flexibility of BGL comes from property
+Much of the flexibility of BGL comes from property
 maps, so this deserves some discussion. As the name implies, a
 property map provides a mechanism for reading and writing to
 properties that are attached to vertices or edges of a graph.
-<I>Internal</I> properties are stored inside of a graph object
+<I>internal</I> properties are stored inside of a graph object
 while <I>external</I> properties are not. 
 
 <P>
@@ -159,10 +168,10 @@ algorithm in the following way.
 <P>
 <PRE>
   boost::dijkstra_shortest_paths(G, s, 
-                                 get(vertex_distance, G),
-                                 get(edge_weight, G),
-                                 get(vertex_color, G),
-                                 get(vertex_index, G),
+                                 distance_map(get(vertex_distance, G)),
+                                 weight_map(get(edge_weight, G)),
+                                 color_map(get(vertex_color, G)),
+                                 vertex_index_map(get(vertex_index, G)),
                                  null_visitor());
 </PRE>
 
