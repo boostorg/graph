@@ -135,7 +135,7 @@ namespace boost {
   template <typename Visitor>
   bgl_named_params<bgl_detail::default_param, bgl_detail::default_param, 
     bgl_detail::default_param, bgl_detail::default_param, Visitor>
-  use_visitor(const Visitor& vis)
+  visitor(const Visitor& vis)
   {
     bgl_detail::default_param def;
     return bgl_named_params<bgl_detail::default_param, 
