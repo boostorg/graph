@@ -736,9 +736,9 @@ namespace boost {
     template <class Config, class Predicate>
     void
     remove_in_edge_if(typename Config::vertex_descriptor u, Predicate pred,
-                       undirected_graph_helper<Config>& g_)
+                      undirected_graph_helper<Config>& g_)
     {
-      remove_out_edge_if(u, pref, g_);
+      remove_out_edge_if(u, pred, g_);
     }
 
     // O(E/V * E) or O(log(E/V) * E)
@@ -957,7 +957,7 @@ namespace boost {
         if (pred(*in_i)) {
           typename Config::vertex_descriptor u = source(*in_i, g);
           detail::remove_directed_edge_dispatch
-            (*in_i, g.out_edge_list(u), (PropT&)(*in_i).get_property());
+            (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
           g.m_edges.erase( (*in_i.iter()).get_iter() );
         }
       // Now remove the edges from this in-edge list.
