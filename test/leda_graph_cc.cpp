@@ -31,7 +31,7 @@ main(int,char*[])
 {
   using namespace boost;
   {
-    typedef GRAPH<int,int> Graph;
+    typedef leda::GRAPH<int,int> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexListGraphConcept<Graph> >();
