@@ -26,10 +26,11 @@
 #ifndef BOOST_FILTERED_GRAPH_HPP
 #define BOOST_FILTERED_GRAPH_HPP
 
-#include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/iterator/filter_iterator.hpp>
 
 namespace boost {
 
@@ -166,12 +167,10 @@ namespace boost {
     typedef typename Traits::traversal_category         traversal_category;
 
     // IncidenceGraph requirements
-    typedef filter_iterator_generator<OutEdgePred,
-      typename Traits::out_edge_iterator,
-      edge_descriptor, edge_descriptor, edge_descriptor*,
-      multi_pass_input_iterator_tag, std::ptrdiff_t
-    > OutEdgeIterGen;
-    typedef typename OutEdgeIterGen::type              out_edge_iterator;
+    typedef filter_iterator<
+        OutEdgePred, typename Traits::out_edge_iterator
+    > out_edge_iterator;
+      
     typedef typename Traits::degree_size_type          degree_size_type;
 
     // AdjacencyGraph requirements
@@ -179,28 +178,20 @@ namespace boost {
       vertex_descriptor, out_edge_iterator>::type      adjacency_iterator;
 
     // BidirectionalGraph requirements
-    typedef filter_iterator_generator<InEdgePred,
-      typename Traits::in_edge_iterator,
-       edge_descriptor, edge_descriptor, edge_descriptor*,
-       multi_pass_input_iterator_tag, std::ptrdiff_t
-    > InEdgeIterGen;
-    typedef typename InEdgeIterGen::type               in_edge_iterator;
+    typedef filter_iterator<
+        InEdgePred, typename Traits::in_edge_iterator
+    > in_edge_iterator;
 
     // VertexListGraph requirements
-    typedef filter_iterator_generator<VertexPredicate,
-      typename Traits::vertex_iterator,
-      vertex_descriptor, vertex_descriptor, vertex_descriptor*,
-      multi_pass_input_iterator_tag, std::ptrdiff_t> VertexIterGen;
-    typedef typename VertexIterGen::type               vertex_iterator;
+    typedef filter_iterator<
+        VertexPredicate, typename Traits::vertex_iterator
+    > vertex_iterator;
     typedef typename Traits::vertices_size_type        vertices_size_type;
 
     // EdgeListGraph requirements
-    typedef filter_iterator_generator<EdgePred,
-      typename Traits::edge_iterator,
-        edge_descriptor, edge_descriptor, edge_descriptor*,
-        multi_pass_input_iterator_tag, std::ptrdiff_t
-    > EdgeIterGen;
-    typedef typename EdgeIterGen::type                 edge_iterator;
+    typedef filter_iterator<
+        EdgePred, typename Traits::edge_iterator
+    > edge_iterator;
     typedef typename Traits::edges_size_type           edges_size_type;
 
     typedef typename Graph::edge_property_type         edge_property_type;
@@ -211,11 +202,6 @@ namespace boost {
     const Graph& m_g;
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
-
-    typedef typename out_edge_iterator::policies_type out_edge_iter_policy;
-    typedef typename in_edge_iterator::policies_type in_edge_iter_policy;
-    typedef typename edge_iterator::policies_type edge_iter_policy;
-    typedef typename vertex_iterator::policies_type vertex_iter_policy;
   };
 
   //===========================================================================
@@ -241,11 +227,9 @@ namespace boost {
     typedef filtered_graph<G, EP, VP> Graph;    
     typename graph_traits<G>::vertex_iterator f, l;
     tie(f, l) = vertices(g.m_g);
-    typedef typename Graph::vertex_iter_policy Pol;
-    Pol pol(g.m_vertex_pred, l);
     typedef typename Graph::vertex_iterator iter;
-    return std::make_pair(iter(f, pol), 
-                          iter(l, pol));
+    return std::make_pair(iter(g.m_vertex_pred, f, l), 
+                          iter(g.m_vertex_pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>
@@ -254,13 +238,11 @@ namespace boost {
   edges(const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;
-    typedef typename Graph::edge_iter_policy Pol;
     typename Graph::EdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
     typename graph_traits<G>::edge_iterator f, l;
     tie(f, l) = edges(g.m_g);
     typedef typename Graph::edge_iterator iter;
-    Pol pol(pred, l);
-    return std::make_pair(iter(f, pol), iter(l, pol));
+    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
   }
 
   // An alternative for num_vertices() and num_edges() would be to
@@ -312,11 +294,10 @@ namespace boost {
   {
     typedef filtered_graph<G, EP, VP> Graph;
     typename Graph::OutEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
-    typedef typename Graph::out_edge_iter_policy Pol;
     typedef typename Graph::out_edge_iterator iter;
     typename graph_traits<G>::out_edge_iterator f, l;
     tie(f, l) = out_edges(u, g.m_g);
-    return std::make_pair(iter(f, Pol(pred, l)), iter(l, Pol(pred, l)));
+    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>
@@ -353,11 +334,10 @@ namespace boost {
   {
     typedef filtered_graph<G, EP, VP> Graph;
     typename Graph::InEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
-    typedef typename Graph::in_edge_iter_policy Pol;
     typedef typename Graph::in_edge_iterator iter;
     typename graph_traits<G>::in_edge_iterator f, l;
     tie(f, l) = in_edges(u, g.m_g);
-    return std::make_pair(iter(f, Pol(pred, l)), iter(l, Pol(pred, l)));
+    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>
@@ -393,11 +373,10 @@ namespace boost {
   {
     typedef filtered_graph<G, EP, VP> Graph;
     typename Graph::OutEdgePred pred(g.m_edge_pred, g.m_vertex_pred, g);
-    typedef typename Graph::out_edge_iter_policy Pol;
     typedef typename Graph::out_edge_iterator iter;
     typename graph_traits<G>::out_edge_iterator f, l;
     tie(f, l) = edge_range(u, v, g.m_g);
-    return std::make_pair(iter(f, Pol(pred, l)), iter(l, Pol(pred, l)));
+    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
   }
 
 

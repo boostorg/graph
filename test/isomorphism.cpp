@@ -159,8 +159,8 @@ int test_main(int argc, char* argv[])
     return 0;
   }
 
-  int n = atoi(argv[1]);
-  double edge_prob = atof(argv[2]);
+  int n = std::atoi(argv[1]);
+  double edge_prob = std::atof(argv[2]);
   test_isomorphism(n, edge_prob);
 
   return 0;

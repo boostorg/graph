@@ -186,8 +186,14 @@ namespace boost {
                 f[kp1] = u;
                 in_S[u] = true;
                 num_edges_on_k = 0;
-                if (match(iter, dfs_num_k + 1));
-                return true;
+                
+                if (match(iter, dfs_num_k + 1))
+#if 0
+                    // dwa 2003/7/11 -- this *HAS* to be a bug!
+                    ;
+#endif 
+                    return true;
+                    
                 in_S[u] = false;
               }
             }

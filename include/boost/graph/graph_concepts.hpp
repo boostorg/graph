@@ -152,6 +152,18 @@ namespace boost {
     G g;
   };
 
+// dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+// you want to use vector_as_graph, it is!  I'm sure the graph
+// library leaves these out all over the place.  Probably a
+// redesign involving specializing a template with a static
+// member function is in order :(
+//
+// It is needed in order to allow us to write using boost::vertices as
+// needed for ADL when using vector_as_graph below.
+template <class T>
+typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
+      
+
   template <class G>
   struct VertexListGraphConcept
   {
@@ -165,11 +177,25 @@ namespace boost {
       function_requires< ConvertibleConcept<traversal_category,
         vertex_list_graph_tag> >();
 
+      // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+      // you want to use vector_as_graph, it is!  I'm sure the graph
+      // library leaves these out all over the place.  Probably a
+      // redesign involving specializing a template with a static
+      // member function is in order :(
+      using boost::vertices;
+      
       p = vertices(g);
       v = *p.first;
       const_constraints(g);
     }
     void const_constraints(const G& g) {
+      // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+      // you want to use vector_as_graph, it is!  I'm sure the graph
+      // library leaves these out all over the place.  Probably a
+      // redesign involving specializing a template with a static
+      // member function is in order :(
+      using boost::vertices;
+      
       p = vertices(g);
       v = *p.first;
       V = num_vertices(g);

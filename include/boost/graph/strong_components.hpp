@@ -330,7 +330,7 @@ namespace boost {
     tie(i, iend) = vertices(G_T);
     tie(j, jend) = vertices(G);
     for ( ; i != iend; ++i, ++j) {
-      put(f, *i, get(finish_time, *j));
+      put(finish_time, *i, get(finish_time, *j));
        Q.push(*i);
     }
 

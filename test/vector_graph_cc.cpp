@@ -25,9 +25,14 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <list>
+
+// THIS FILE MUST PRECEDE ALL OTHER BOOST GRAPH FILES
+// Due to ADL nastiness involving the vertices() function
+#include <boost/graph/vector_as_graph.hpp>
+// THIS FILE MUST PRECEDE ALL OTHER BOOST GRAPH FILES
+
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
-#include <boost/graph/vector_as_graph.hpp>
 
 int main(int,char*[])
 {

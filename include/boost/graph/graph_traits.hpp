@@ -30,6 +30,8 @@
 #include <iterator>
 #include <boost/tuple/tuple.hpp>
 #include <boost/pending/ct_if.hpp>
+#include <boost/iterator/iterator_categories.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 namespace boost {
   
@@ -97,7 +99,12 @@ namespace boost {
   struct adjacency_matrix_tag { };
 
   //?? not the right place ?? Lee
-  struct multi_pass_input_iterator_tag : std::input_iterator_tag { };
+  struct multi_pass_input_iterator_tag
+    : boost::iterator_tag<
+          boost::readable_iterator_tag
+        , boost::forward_traversal_tag
+      >
+  { };
 
 } // namespace boost
 

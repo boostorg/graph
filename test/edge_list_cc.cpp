@@ -25,18 +25,24 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/edge_list.hpp>
+#include <cstddef>
 
 int main(int,char*[])
 {
-  using namespace boost;
-  // Check edge_list
-  {
-    typedef std::pair<int,int> E;
-    typedef edge_list<E*,E,ptrdiff_t> EdgeList;
-    typedef graph_traits<EdgeList>::edge_descriptor Edge;
-    function_requires< EdgeListGraphConcept<EdgeList> >();
-    function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
-      edge_index_t> >();
-  }
-  return 0;
+    // Check edge_list
+    {
+        using namespace boost;
+        
+        typedef std::pair<int,int> E;
+    
+        typedef edge_list<E*,E,std::ptrdiff_t> EdgeList;
+    
+        typedef graph_traits<EdgeList>::edge_descriptor Edge;
+    
+        function_requires< EdgeListGraphConcept<EdgeList> >();
+    
+        function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
+            edge_index_t> >();
+    }
+    return 0;
 }

@@ -35,7 +35,7 @@
 #include <cassert>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/iterator_adaptors.hpp>
+#include <boost/iterator/indirect_iterator.hpp>
 
 namespace boost {
 
@@ -202,13 +202,19 @@ namespace boost {
     // Return the children subgraphs of this graph/subgraph.
     // Use a list of pointers because the VC++ std::list doesn't like
     // storing incomplete type.
-    typedef typename indirect_iterator_generator<typename ChildrenList::iterator,
-      subgraph<Graph>, subgraph<Graph>&, std::bidirectional_iterator_tag, 
-      subgraph<Graph>* >::type children_iterator;
+    typedef typename indirect_iterator<
+        typename ChildrenList::const_iterator
+      , subgraph<Graph>
+      , std::bidirectional_iterator_tag
+    >
+    children_iterator;
 
-    typedef typename indirect_iterator_generator<typename ChildrenList::const_iterator,
-       subgraph<Graph>, const subgraph<Graph>&, std::bidirectional_iterator_tag, 
-       const subgraph<Graph>* >::type const_children_iterator;
+    typedef typename indirect_iterator<
+        typename ChildrenList::const_iterator
+      , subgraph<Graph> const
+      , std::bidirectional_iterator_tag
+    >
+    const_children_iterator;
 
     std::pair<const_children_iterator, const_children_iterator>
     children() const
