@@ -1,5 +1,14 @@
+// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
+// sell and distribute this software is granted provided this
+// copyright notice appears in all copies. This software is provided
+// "as is" without express or implied warranty, and with no claim as
+// to its suitability for any purpose.
+
+
 #ifndef BOOST_ALGORITHM_HPP
 #define BOOST_ALGORITHM_HPP
+
+// Algorithms on sequences
 
 #include <algorithm>
 
@@ -60,6 +69,18 @@ namespace boost {
   size(const std::vector<T>& c) { return c.size(); }
 #endif
   
+  template <class ForwardIterator, class T>
+  void iota(ForwardIterator first, ForwardIterator last, T value)
+  {
+    for (; first != last; ++first, ++value)
+      *first = value;
+  }
+  template <typename Container, typename T>
+  void iota(Container& c, const T& value)
+  {
+    iota(begin(c), end(c), value);
+  }
+ 
   // Also do version with 2nd container?
   template <typename Container, typename OutIter>
   OutIter copy(const Container& c, OutIter result) {
@@ -90,18 +111,52 @@ namespace boost {
     std::stable_sort(begin(c), end(c), p);
   }
 
+  template <typename InputIterator, typename Predicate>
+  bool any_if(InputIterator first, InputIterator last, Predicate p)
+  {
+    return std::find_if(first, last, p) != last;
+  }
+  template <typename Container, typename Predicate>
+  bool any_if(const Container& c, Predicate p)
+  {
+    return any_if(begin(c), end(c), p);
+  }
+
   template <typename InputIterator, typename T>
-  bool any_equal(InputIterator first, InputIterator last, T value)
+  bool contains(InputIterator first, InputIterator last, T value)
   {
     return std::find(first, last, value) != last;
   }
-
   template <typename Container, typename T>
-  bool any_equal(const Container& c, const T& value)
+  bool contains(const Container& c, const T& value)
   {
-    return any_equal(begin(c), end(c), value);
+    return contains(begin(c), end(c), value);
   }
 
+  template <typename InputIterator, typename Predicate>
+  bool all(InputIterator first, InputIterator last, Predicate p)
+  {
+    for (; first != last; ++first)
+      if (!p(*first))
+        return false;
+    return true;
+  }
+  template <typename Container, typename Predicate>
+  bool all(const Container& c, Predicate p)
+  {
+    return all(begin(c), end(c), p);
+  }
+
+  template <typename InputIterator, typename Predicate>
+  bool none(InputIterator first, InputIterator last, Predicate p)
+  {
+    return std::find_if(first, last, p) == last;
+  }
+  template <typename Container, typename Predicate>
+  bool none(const Container& c, Predicate p)
+  {
+    return none(begin(c), end(c), p);
+  }
 
   template <typename Container, typename T>
   std::size_t count(const Container& c, const T& value)
