@@ -392,13 +392,13 @@ namespace boost {
     
     template <class Iterator>
     component_index(Iterator first, Iterator last) 
-#ifdef BOOST_HAVE_STL_ITERATOR_CONSTRUCTORS
+#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
       : index(first, last)
 #else
     : index(last - first)
 #endif
     { 
-#ifndef BOOST_HAVE_STL_ITERATOR_CONSTRUCTORS
+#ifdef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
       std::copy(first, last, index.begin());
 #endif
       detail::construct_component_index(index, header);
