@@ -127,7 +127,9 @@ namespace boost {
       put(color, u, Color::gray());
       vis.discover_vertex(u, g);
       tie(ei, ei_end) = out_edges(u, g);
-      if (static_cast<TF&>(func)(u, g)) {
+      // Variable is needed to workaround a borland bug.
+      TF& fn(static_cast<TF&>(func));
+      if (fn(u, g)) {
           // If this vertex terminates the search, we push empty range
           stack.push_back(std::make_pair(u, std::make_pair(ei_end, ei_end)));
       } else {
@@ -149,7 +151,7 @@ namespace boost {
             put(color, u, Color::gray());
             vis.discover_vertex(u, g);
             tie(ei, ei_end) = out_edges(u, g);
-            if (static_cast<TF&>(func)(u, g)) {
+            if (fn(u, g)) {
                 ei = ei_end;
             }
           } else if (v_color == Color::gray()) {
@@ -187,7 +189,9 @@ namespace boost {
       put(color, u, Color::gray());          vis.discover_vertex(u, g);
 
       typedef typename unwrap_reference<TerminatorFunc>::type TF;
-      if (!static_cast<TF&>(func)(u, g))
+      // Variable is needed to workaround a borland bug.
+      TF& fn(static_cast<TF&>(func));
+      if (!fn(u, g))
         for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
           Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
           ColorValue v_color = get(color, v);
