@@ -34,6 +34,10 @@ void depth_first_search(VertexListGraph&amp; G,
 template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
 void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap color)
 
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
+void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap color, 
+                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)
+
 </PRE>
 
 <p>
@@ -89,6 +93,8 @@ DFS(<i>G</i>)
     <i>p[u] = u</i> 
   <b>end for</b>
   <i>time := 0</i>
+  <b>if</b> there is a starting vertex <i>s</i>
+    <b>call</b> DFS-VISIT(<i>G</i>, <i>s</i>)
   <b>for</b> each vertex <i>u in V</i> 
     <b>if</b> <i>color[u] =</i> WHITE
       <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
@@ -118,6 +124,8 @@ initialize vertex <i>u</i>
 
 
 
+
+start vertex <i>s</i>
 
 
 start vertex <i>u</i> 
@@ -184,6 +192,15 @@ UTIL/OUT: <tt>color_map(ColorMap color)</tt>
   <tt>std::vector</tt> of <tt>default_color_type</tt> of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
   map.
+</blockquote>
+
+IN: <tt>root_vertex(typename
+graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)</tt>
+<blockquote>
+  This specifies the vertex that the depth-first search should
+  originate from. The type is the type of a vertex descriptor for the
+  given graph.<br>
+  <b>Default:</b> <tt>*vertices(g).first</tt>
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
