@@ -33,6 +33,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -91,6 +92,9 @@ namespace boost {
 
   }
   
+#if 0
+  // Deprecated
+
   // Variant (1)
   template <class Graph, class DFSVisitor>
   inline void
@@ -99,6 +103,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     depth_first_search(g, v, get(vertex_color, g));
   }
+#endif
 
   // Variant (2)
   template <class VertexListGraph, class DFSVisitor, class ColorMap>
@@ -120,6 +125,29 @@ namespace boost {
         detail::internal_depth_first_visit(g, *ui, vis, color);
       }
   }
+
+  // Named Parameter Variant
+  template <class VertexListGraph, class P, class T, class R>
+  void
+  depth_first_search(const VertexListGraph& g, 
+		     const bgl_named_params<P, T, R>& params)
+  {
+    // ColorMap default
+    typename graph_traits<VertexListGraph>::vertices_size_type
+      n = is_default_param(get_param(params, vertex_color)) ? 
+      num_vertices(g) : 0;
+    std::vector<default_color_type> color_map(n);
+
+    depth_first_search
+      (g,
+       choose_param(get_param(params, graph_visitor),
+                    make_dfs_visitor(null_visitor())),
+       choose_param(get_param(params, vertex_color),
+         make_iterator_property_map(color_map.begin(), 
+	   choose_pmap(get_param(params, vertex_index), g, vertex_index)))
+       );
+  }
+  
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit

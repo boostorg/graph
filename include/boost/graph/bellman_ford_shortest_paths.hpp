@@ -34,6 +34,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -118,7 +119,8 @@ namespace boost {
   }
 
   // Variant (3)
-  template <class EdgeListGraph, class Size, class WeightMap, class DistanceMap,
+  template <class EdgeListGraph, class Size, class WeightMap,
+            class DistanceMap,
             class BinaryFunction, class BinaryPredicate,
             class BellmanFordVisitor>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
@@ -160,6 +162,39 @@ namespace boost {
     return true;
   }
 
+  namespace detail {
+
+    template <class EdgeListGraph, class Size, class WeightMap,
+	      class DistanceMap, class BellmanFordVisitor,
+              class P, class T, class R>
+    bool bellman_dispatch(EdgeListGraph& g, Size N, 
+			  WeightMap weight, DistanceMap distance, 
+			  BellmanFordVisitor v,
+			  const bgl_named_params<P, T, R>& params)
+    {
+      typedef typename property_traits<DistanceMap>::value_type D;
+      return bellman_ford_shortest_paths
+	(g, N, weight, distance,
+	 choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
+	 choose_param(get_param(params, distance_compare_t()), std::less<D>()),
+	 v);
+    }
+
+  } // namespace detail
+
+  template <class EdgeListGraph, class Size, class P, class T, class R>
+  bool bellman_ford_shortest_paths
+    (EdgeListGraph& g, Size N, 
+     const bgl_named_params<P, T, R>& params)
+  {				   
+    return detail::bellman_dispatch
+      (g, N,
+       choose_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_pmap(get_param(params, vertex_distance), g, vertex_distance),
+       //       get_param(params, vertex_distance),
+       get_param(params, graph_visitor),
+       params);
+  }
 
 } /* namespace boost */
 
