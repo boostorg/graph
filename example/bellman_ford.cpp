@@ -82,9 +82,10 @@ main(int,char*)
   distance[z] = 0;
   parent[z] = z;
   bool r = boost::bellman_ford_shortest_paths
-    (g, int(N), boost::weight_map(weight).distance_map(&distance[0]).
-     visitor(boost::make_bellman_visitor(
-     boost::record_predecessors(&parent[0], boost::on_edge_relaxed()))));
+    (g, int(N), 
+     boost::weight_map(weight).
+     distance_map(&distance[0]).
+     predecessor_map(&parent[0]));
 
   if (r)  
     for (int i = 0; i < N; ++i)
