@@ -139,13 +139,13 @@ namespace boost {
     //-------------------------------------------------------------------------
     // The Algorithm
 
-    tie(p, delta) = min_degree_vertex(g);
+    tie(p, delta) = detail::min_degree_vertex(g);
     S_star.push_back(p);
     alpha_star = delta;
     S.insert(p);
     neighbor_S.insert(p);
-    neighbors(g, S.begin(), S.end(), 
-	      std::inserter(neighbor_S, neighbor_S.begin()));
+    detail::neighbors(g, S.begin(), S.end(), 
+		      std::inserter(neighbor_S, neighbor_S.begin()));
 
     std::set_difference(vertices(g).first, vertices(g).second,
 			neighbor_S.begin(), neighbor_S.end(),
@@ -164,7 +164,7 @@ namespace boost {
       }
       S.insert(k);
       neighbor_S.insert(k);
-      neighbors(g, k, std::inserter(neighbor_S, neighbor_S.begin()));
+      detail::neighbors(g, k, std::inserter(neighbor_S, neighbor_S.begin()));
       non_neighbor_S.clear();
       std::set_difference(vertices(g).first, vertices(g).second,
 			  neighbor_S.begin(), neighbor_S.end(),
