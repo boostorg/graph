@@ -135,7 +135,6 @@ main()
 
     vertex_descriptor s = *boost::vertices(g).first;
 
-    // Call Variant 2 of BFS
     boost::breadth_first_search(g, s, visitor(vis).color_map(c_map));
 
     std::cout << "Starting at any given vertex, there are" << std::endl;
