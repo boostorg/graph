@@ -29,6 +29,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 
+using namespace boost;
+
 // Predicate Function for use in remove if 
 template <class NamePropertyMap>
 struct name_equals_predicate
@@ -53,15 +55,15 @@ name_equals(const std::string& str, NamePropertyMap name) {
 template <class MutableGraph>
 void modify_demo(MutableGraph& g)
 {
-  typedef boost::graph_traits<MutableGraph> GraphTraits;
+  typedef graph_traits<MutableGraph> GraphTraits;
   typedef typename GraphTraits::vertices_size_type size_type;
   typedef typename GraphTraits::edge_descriptor edge_descriptor;
   size_type n = 0;
   typename GraphTraits::edges_size_type m = 0;
   typename GraphTraits::vertex_descriptor u, v, w;
   edge_descriptor e, e1, e2;
-  typename boost::property_map<MutableGraph, boost::edge_name_t>::type
-    name_map = get(boost::edge_name, g);
+  typename property_map<MutableGraph, edge_name_t>::type
+    name_map = get(edge_name, g);
   bool added;
   typename GraphTraits::vertex_iterator vi, vi_end;
 
@@ -95,12 +97,12 @@ void modify_demo(MutableGraph& g)
                                  in_edges(v, g).second, p.first));
   }
   {
-    // use boost::tie() for convenience, avoid using the std::pair
+    // use tie() for convenience, avoid using the std::pair
     
     u = add_vertex(g);
     v = add_vertex(g);
     
-    boost::tie(e, added) = add_edge(u, v, g);
+    tie(e, added) = add_edge(u, v, g);
 
     assert(num_edges(g) == m + 2);
     assert(added == true); // edge should have been added
@@ -116,14 +118,14 @@ void modify_demo(MutableGraph& g)
 
     assert(num_edges(g) == m + 1);
     bool exists;
-    boost::tie(e, exists) = edge(u, v, g);
+    tie(e, exists) = edge(u, v, g);
     assert(exists == false);
     assert(out_degree(u, g) == 0);
     assert(in_degree(v, g) == 0);
   }
   {
     e = *edges(g).first;
-    boost::tie(u, v) = incident(e, g);
+    tie(u, v) = incident(e, g);
 
     remove_edge(e, g);
 
@@ -135,7 +137,7 @@ void modify_demo(MutableGraph& g)
     add_edge(u, v, g);
 
     typename GraphTraits::out_edge_iterator iter, iter_end;
-    boost::tie(iter, iter_end) = out_edges(u, g);
+    tie(iter, iter_end) = out_edges(u, g);
 
     remove_edge(iter, g);
     
@@ -145,13 +147,13 @@ void modify_demo(MutableGraph& g)
   }
   {
     w = add_vertex(g);
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(v, w, g);
+    tie(e1, added) = add_edge(u, v, g);
+    tie(e2, added) = add_edge(v, w, g);
     name_map[e1] = "I-5";
     name_map[e2] = "Route 66";
     
     typename GraphTraits::out_edge_iterator iter, iter_end;
-    boost::tie(iter, iter_end) = out_edges(u, g);
+    tie(iter, iter_end) = out_edges(u, g);
 
     remove_edge_if(name_equals("Route 66", name_map), g);
     
@@ -166,8 +168,8 @@ void modify_demo(MutableGraph& g)
     assert(in_degree(w, g) == 0);
   }
   {
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(u, w, g);
+    tie(e1, added) = add_edge(u, v, g);
+    tie(e2, added) = add_edge(u, w, g);
     name_map[e1] = "foo";
     name_map[e2] = "foo";
     
@@ -177,8 +179,8 @@ void modify_demo(MutableGraph& g)
     assert(out_degree(u, g) == 0);
   }
   {
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(w, v, g);
+    tie(e1, added) = add_edge(u, v, g);
+    tie(e2, added) = add_edge(w, v, g);
     name_map[e1] = "bar";
     name_map[e2] = "bar";
     
@@ -197,9 +199,9 @@ void modify_demo(MutableGraph& g)
     
     assert(out_degree(u, g) == 0);
     
-    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
       typename GraphTraits::adjacency_iterator ai, ai_end;
-      for (boost::tie(ai, ai_end) = adjacent_vertices(*vi, g);
+      for (tie(ai, ai_end) = adjacent_vertices(*vi, g);
 	   ai != ai_end; ++ai)
 	assert(*ai != u);
     }
@@ -209,8 +211,8 @@ void modify_demo(MutableGraph& g)
 int
 main()
 {
-  boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS,
-    boost::no_property, boost::property<boost::edge_name_t, std::string> > g;
+  adjacency_list<listS, vecS, bidirectionalS,
+    no_property, property<edge_name_t, std::string> > g;
 
   modify_demo(g);
   return 0;

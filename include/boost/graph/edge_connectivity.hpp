@@ -95,10 +95,11 @@ namespace boost {
     typedef color_traits<default_color_type> Color;
 
     typedef adjacency_list_traits<vecS, vecS, directedS> Tr;
+    typedef typename Tr::edge_descriptor Tr_edge_desc;
     typedef adjacency_list<vecS, vecS, directedS, no_property, 
       property<edge_capacity_t, degree_size_type,
 	property<edge_residual_capacity_t, degree_size_type,
-	  property<edge_reverse_t, typename Tr::edge_descriptor> > > > 
+	  property<edge_reverse_t, Tr_edge_desc> > > > 
       FlowGraph;
     typedef typename graph_traits<FlowGraph>::edge_descriptor edge_descriptor;
 

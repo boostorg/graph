@@ -994,7 +994,8 @@ namespace boost {
       typedef typename Config::OutEdgeList::value_type::property_type PropT;
       graph_type& g = static_cast<graph_type&>(g_);
 
-      typedef std::vector<typename Config::EdgeIter> Garbage;
+      typedef typename Config::EdgeIter EdgeIter;
+      typedef std::vector<EdgeIter> Garbage;
       Garbage garbage;
 
       // First remove the edges from the sources' out-edge lists and
