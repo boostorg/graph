@@ -59,36 +59,36 @@
     typedef boost::graph_traits<GRAPHVIZ_GRAPH>::edge_descriptor   Edge;
     typedef GRAPHVIZ_GRAPH Subgraph;
 
-    Vertex current_vertex;
-    Edge   current_edge;
-    Subgraph* current_graph = NULL;
-    Subgraph* previous_graph = NULL;
+    static Vertex current_vertex;
+    static Edge   current_edge;
+    static Subgraph* current_graph = NULL;
+    static Subgraph* previous_graph = NULL;
 
-    std::vector< std::pair<void*, bool>* > vlist;//store a list of rhs 
+    static std::vector< std::pair<void*, bool>* > vlist;//store a list of rhs 
 
-    std::map<std::string,std::string> attributes;//store attributes temporarily
-    AttrState attribute_state;
+    static std::map<std::string,std::string> attributes;//store attributes temporarily
+    static AttrState attribute_state;
 
-    std::map<std::string, Subgraph*> subgraphs;  //store the names of subgraphs
-    std::map<std::string, Vertex> nodes;         //store the names of nodes
+    static std::map<std::string, Subgraph*> subgraphs;  //store the names of subgraphs
+    static std::map<std::string, Vertex> nodes;         //store the names of nodes
 
     typedef std::map<std::string, Subgraph*>::iterator It; 
     typedef std::map<std::string, Vertex>::iterator Iter; 
 
-    const std::string& get_graph_name(const Subgraph& g) {
+    static const std::string& get_graph_name(const Subgraph& g) {
       const boost::graph_property<Subgraph, boost::graph_name_t>::type&
 	name = boost::get_property(g, boost::graph_name);
       return name; 
     }
 
-    std::pair<Iter, bool> lookup(const std::string& name) {
+    static std::pair<Iter, bool> lookup(const std::string& name) {
       //lookup in the top level
       Iter it = nodes.find(name);
       bool found = (it != nodes.end() );
       return std::make_pair(it, found);
     }
     
-    Vertex add_name(const std::string& name, GRAPHVIZ_GRAPH& g) {
+    static Vertex add_name(const std::string& name, GRAPHVIZ_GRAPH& g) {
       Vertex v = boost::add_vertex(*current_graph);
       v = current_graph->local_to_global(v);
 
@@ -102,13 +102,13 @@
       return v;
     }
 
-    std::pair<It, bool> lookup_subgraph(const std::string& name) {
+    static std::pair<It, bool> lookup_subgraph(const std::string& name) {
       It it = subgraphs.find(name);
       bool found = (it != subgraphs.end() );
       return std::make_pair(it, found);
     }
     
-    Subgraph* create_subgraph(const std::string& name) { 
+    static Subgraph* create_subgraph(const std::string& name) { 
 
       Subgraph* new_subgraph = &(current_graph->create_subgraph()); 
 
@@ -117,14 +117,15 @@
     }
 
     
-    void set_attribute(GraphvizAttrList& p, const GraphvizAttrList& attr) {
+    static void set_attribute(GraphvizAttrList& p,
+			      const GraphvizAttrList& attr) {
       GraphvizAttrList::const_iterator i, end;
       for ( i=attr.begin(), end=attr.end(); i!=end; ++i)
 	p[i->first]=i->second;
     }
   
-    void set_attribute(Subgraph& g,
-		       AttrState s, bool clear_attribute = true) {
+    static void set_attribute(Subgraph& g,
+			      AttrState s, bool clear_attribute = true) {
       typedef Subgraph Graph;
       switch ( s ) {
       case GRAPH_GRAPH_A: 
@@ -168,12 +169,14 @@
     }
 
 
-    void add_edges(const Vertex& u, const Vertex& v, GRAPHVIZ_GRAPH& g) {
+    static void add_edges(const Vertex& u,
+			  const Vertex& v, GRAPHVIZ_GRAPH& g) {
       graphviz::current_edge = boost::add_edge(u, v, g).first; 
       graphviz::set_attribute(g, EDGE_A, false);
     }
     
-    void add_edges(Subgraph* G1, Subgraph* G2, GRAPHVIZ_GRAPH& g) {
+    static void add_edges(Subgraph* G1, Subgraph* G2,
+			  GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j, m, n;
       for ( boost::tie(i, j) = boost::vertices(*G1); i != j; ++i) {
 	for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
@@ -183,21 +186,21 @@
       }
     }
 
-    void add_edges(Subgraph* G, const Vertex& v, GRAPHVIZ_GRAPH& g) {
+    static void add_edges(Subgraph* G, const Vertex& v, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
 	graphviz::add_edges(G->local_to_global(*i), v, g);
       }
     }
 
-    void add_edges(const Vertex& u, Subgraph* G, GRAPHVIZ_GRAPH& g) {
+    static void add_edges(const Vertex& u, Subgraph* G, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
 	graphviz::add_edges(u, G->local_to_global(*i), g);
       }
     }
 
-    std::string random_string() {
+    static std::string random_string() {
       static int i=0;
 #if defined BOOST_NO_STRINGSTREAM
       std::strstream out;
@@ -210,7 +213,7 @@
     }
 
 
-    void set_graph_name(const std::string& name) {
+    static void set_graph_name(const std::string& name) {
       boost::graph_property<Subgraph, boost::graph_name_t>::type&
 	gea = boost::get_property(*current_graph, boost::graph_name);
       gea = name;
@@ -233,7 +236,6 @@
 %type<i>    graph_body edge_rhs_one edge_rhs graph_attr opt_graph_body
 %type<ptr>  graph_name
 %type<ptr>  edge_endpoint node_id  node_port subgraph subgraph_header
-
 
 %%
 graph:        graph_header graph_body

@@ -30,10 +30,9 @@
 #include <iostream>
 
 static std::string literal;
-void begin_literal();
-void add_string(const char* str);
-void end_literal();
-
+static void begin_literal();
+static void add_string(const char* str);
+static void end_literal();
 %}
 
 %x Comment
