@@ -61,7 +61,17 @@ main()
   for (size_type p = 0; p < num_vertices(g); ++p)
     parent[p] = p;
 
+#ifdef BOOST_MSVC
+  std::vector<int> distance(num_vertices(g));
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
+  property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
+  dijkstra_shortest_paths
+    (g, router_six, &parent[0], &distance[0], weightmap,
+     indexmap, std::less<int>(), closed_plus<int>(), 
+     std::numeric_limits<int>::max(), 0, default_dijkstra_visitor());
+#else
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
+#endif
 
   graph_traits < GraphvizDigraph >::edge_descriptor e;
   for (size_type i = 0; i < num_vertices(g); ++i)
@@ -70,10 +80,16 @@ main()
       edge_attr_map[e]["color"] = "black";
     }
 
+#ifdef BOOST_MSVC
+  // VC++ can't handle write_graphviz :(
+  // The workaround is to do the same thing that we did in loops_dfs.cpp
+  // which is to write out write_graphviz by hand.
+#else
   graph_property < GraphvizDigraph, graph_edge_attribute_t >::type &
     graph_edge_attr_map = get_property(g_dot, graph_edge_attribute);
   graph_edge_attr_map["color"] = "grey";
   write_graphviz("figs/ospf-sptree.dot", g_dot);
+#endif
 
   std::ofstream rtable("routing-table.dat");
   rtable << "Dest    Next Hop    Total Cost" << std::endl;

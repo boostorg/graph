@@ -66,7 +66,6 @@ main()
   int D[V][V];
   johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
-
   std::cout << "        ";
   for (int k = 0; k < V; ++k)
     std::cout << k << "    ";

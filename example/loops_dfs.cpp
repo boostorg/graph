@@ -35,13 +35,14 @@
 
 using namespace boost;
 
-template < typename OutputIterator > class back_edge_recorder:public default_dfs_visitor
+template < typename OutputIterator > 
+class back_edge_recorder : public default_dfs_visitor
 {
 public:
-back_edge_recorder(OutputIterator out):m_out(out) {
-  }
+  back_edge_recorder(OutputIterator out):m_out(out) { }
+
   template < typename Edge, typename Graph >
-    void back_edge(Edge e, const Graph &)
+  void back_edge(Edge e, const Graph &)
   {
     *m_out++ = e;
   }
@@ -51,14 +52,16 @@ private:
 
 // object generator function
 template < typename OutputIterator >
-  back_edge_recorder < OutputIterator >
+back_edge_recorder < OutputIterator >
 make_back_edge_recorder(OutputIterator out)
 {
   return back_edge_recorder < OutputIterator > (out);
 }
 
 template < typename Graph, typename Loops > void
-find_loops(typename graph_traits < Graph >::vertex_descriptor entry, const Graph & g, Loops & loops)    // A container of sets of vertices
+find_loops(typename graph_traits < Graph >::vertex_descriptor entry, 
+	   const Graph & g, 
+	   Loops & loops)    // A container of sets of vertices
 {
   function_requires < BidirectionalGraphConcept < Graph > >();
   typedef typename graph_traits < Graph >::edge_descriptor Edge;
@@ -75,7 +78,6 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry, const Graph
     loops.push_back(x);
     compute_loop_extent(back_edges[i], g, loops.back());
   }
-
 }
 
 template < typename Graph, typename Set > void
@@ -109,7 +111,6 @@ compute_loop_extent(typename graph_traits <
     if (reachable_from_head[*vi] != Color::white()
         && reachable_to_tail[*vi] != Color::white())
       loop_set.insert(*vi);
-
 }
 
 
@@ -129,39 +130,75 @@ main(int argc, char *argv[])
   typedef graph_traits < Graph >::vertex_descriptor Vertex;
 
   Graph g;
+#ifndef BOOST_MSVC
+  // VC++ has trouble with the get_property() function
   get_property(g, graph_name) = "loops";
+#endif
+
   copy_graph(g_in, g);
 
   typedef std::set < Vertex > set_t;
   typedef std::list < set_t > list_of_sets_t;
   list_of_sets_t loops;
-
   Vertex entry = *vertices(g).first;
 
   find_loops(entry, g, loops);
 
+  property_map<Graph, vertex_attribute_t>::type vattr_map = get(vertex_attribute, g);
+  property_map<Graph, edge_attribute_t>::type eattr_map = get(edge_attribute, g);
+  graph_traits < Graph >::edge_iterator ei, ei_end;
+
   for (list_of_sets_t::iterator i = loops.begin(); i != loops.end(); ++i) {
     std::vector < bool > in_loop(num_vertices(g), false);
     for (set_t::iterator j = (*i).begin(); j != (*i).end(); ++j) {
-      get(vertex_attribute, g)[*j]["color"] = "gray";
+      vattr_map[*j]["color"] = "gray";
       in_loop[*j] = true;
     }
-    graph_traits < Graph >::edge_iterator ei, ei_end;
     for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
       if (in_loop[source(*ei, g)] && in_loop[target(*ei, g)])
-        get(edge_attribute, g)[*ei]["color"] = "gray";
+        eattr_map[*ei]["color"] = "gray";
   }
 
+  std::ofstream loops_out(argv[2]);
+#ifdef BOOST_MSVC
+  // VC++ has trouble with the get_property() functions
+  loops_out << "digraph loops {\n"
+	    << "size=\"3,3\"\n"
+	    << "ratio=\"fill\"\n"
+	    << "shape=\"box\"\n";
+  graph_traits<Graph>::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+    loops_out << *vi << "[";
+    for (std::map<std::string,std::string>::iterator ai = vattr_map[*vi].begin();
+	 ai != vattr_map[*vi].end(); ++ai) {
+      loops_out << ai->first << "=" << ai->second;
+      if (next(ai) != vattr_map[*vi].end())
+	loops_out << ", ";
+    }
+    loops_out<< "]";
+  }
+
+  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
+    std::map<std::string,std::string>& attr_map = eattr_map[*ei];
+    for (std::map<std::string,std::string>::iterator eai = attr_map.begin();
+	 eai != attr_map.end(); ++eai) {
+      loops_out << eai->first << "=" << eai->second;
+      if (next(eai) != attr_map.end())
+	loops_out << ", ";
+    }
+    loops_out<< "]";
+  }
+  loops_out << "}\n";
+#else
   get_property(g, graph_graph_attribute)["size"] = "3,3";
   get_property(g, graph_graph_attribute)["ratio"] = "fill";
   get_property(g, graph_vertex_attribute)["shape"] = "box";
 
-  std::ofstream loops_out(argv[2]);
   write_graphviz(loops_out, g,
                  make_vertex_attributes_writer(g),
                  make_edge_attributes_writer(g),
                  make_graph_attributes_writer(g));
-
-
+#endif
   return 0;
 }

@@ -182,10 +182,11 @@ namespace boost {
       NAttrMap;
     typedef typename graph_property<Graph, graph_edge_attribute_t>::type
       EAttrMap;
-    return graph_attributes_writer<GAttrMap, NAttrMap, EAttrMap>
-      (get_property(g, graph_graph_attribute),
-       get_property(g, graph_vertex_attribute),
-       get_property(g, graph_edge_attribute));
+    GAttrMap gam = get_property(g, graph_graph_attribute);
+    NAttrMap nam = get_property(g, graph_vertex_attribute);
+    EAttrMap eam = get_property(g, graph_edge_attribute);
+    graph_attributes_writer<GAttrMap, NAttrMap, EAttrMap> writer(gam, nam, eam);
+    return writer;
   }
 
   template <typename AttributeMap>
@@ -308,7 +309,21 @@ namespace boost {
       typename Graph::const_children_iterator i_child, j_child;
 
       //print graph/node/edge attributes
+#ifdef BOOST_MSVC
+      typedef typename graph_property<Graph, graph_graph_attribute_t>::type 
+	GAttrMap;
+      typedef typename graph_property<Graph, graph_vertex_attribute_t>::type
+	NAttrMap;
+      typedef typename graph_property<Graph, graph_edge_attribute_t>::type
+	EAttrMap;
+      GAttrMap gam = get_property(g, graph_graph_attribute);
+      NAttrMap nam = get_property(g, graph_vertex_attribute);
+      EAttrMap eam = get_property(g, graph_edge_attribute);
+      graph_attributes_writer<GAttrMap, NAttrMap, EAttrMap> writer(gam, nam, eam);
+      writer(out);
+#else
       make_graph_attributes_writer(g)(out);
+#endif
 
       //print subgraph
       for ( boost::tie(i_child,j_child) = g.children();
@@ -320,16 +335,28 @@ namespace boost {
       typename boost::graph_traits<Graph>::vertex_iterator i, end;
       typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
 
+      typename property_map<Graph, vertex_index_t>::const_type 
+	indexmap = get(vertex_index, g.root());
+
       for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
-        int pos = get(get(vertex_index, g.root()), v);
+        int pos = get(indexmap, v);
         if ( vertex_marker[pos] ) {
           vertex_marker[pos] = false;
           out << v;
+#ifdef BOOST_MSVC
+	  typedef typename property_map<Graph, vertex_attribute_t>::const_type 
+	    VertexAttributeMap;
+	  attributes_writer<VertexAttributeMap> vawriter(get(vertex_attribute, 
+							     g.root()));
+	  vawriter(out, v);
+#else
           make_vertex_attributes_writer(g.root())(out, v);
+#endif
           out << ";" << std::endl;
         }
       }
+
       for (boost::tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
         Vertex u = g.local_to_global(source(*ei,g)),
           v = g.local_to_global(target(*ei, g));
@@ -337,7 +364,14 @@ namespace boost {
         if ( edge_marker[pos] ) {
           edge_marker[pos] = false;
           out << u << " " << Traits::delimiter() << " " << v;
+#ifdef BOOST_MSVC
+	  typedef typename property_map<Graph, edge_attribute_t>::const_type
+	    EdgeAttributeMap;
+	  attributes_writer<EdgeAttributeMap> eawriter(get(edge_attribute, g));
+	  eawriter(out, *ei);
+#else
           make_edge_attributes_writer(g)(out, *ei); //print edge properties
+#endif
           out << ";" << std::endl;
         }
       }

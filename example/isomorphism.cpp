@@ -62,9 +62,15 @@ main()
 
   std::vector<graph_traits<graph_t>::vertex_descriptor> f(n);
 
-  bool ret = isomorphism(g1, g2, 
-                         isomorphism_map(make_iterator_property_map
-                                         (f.begin(), v1_index_map, f[0])));
+#ifdef BOOST_MSVC
+  bool ret = isomorphism
+    (g1, g2, make_iterator_property_map(f.begin(), v1_index_map, f[0]),
+     degree_vertex_invariant(), get(vertex_index, g1), get(vertex_index, g2));
+#else
+  bool ret = isomorphism
+    (g1, g2, isomorphism_map
+     (make_iterator_property_map(f.begin(), v1_index_map, f[0])));
+#endif
   std::cout << "isomorphic? " << ret << std::endl;
 
   std::cout << "f: ";

@@ -725,7 +725,7 @@ namespace boost {
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink)
   {
-    bgl_named_params<int,int> params(0);
+    bgl_named_params<int, buffer_param_t> params(0); // bogus empty param
     return push_relabel_max_flow(g, src, sink, params);
   }
 

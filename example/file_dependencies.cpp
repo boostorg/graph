@@ -109,19 +109,20 @@ int main(int,char*[])
   };
   const std::size_t nedges = sizeof(used_by)/sizeof(Edge);
   int weights[nedges];
-  fill(weights, weights + nedges, 1);
+  std::fill(weights, weights + nedges, 1);
 
   typedef adjacency_list<vecS, vecS, directedS, 
       property<vertex_color_t, default_color_type>,
       property<edge_weight_t, int>
     > Graph;
-#if 1//#ifdef BOOST_MSVC
+#ifdef BOOST_MSVC
   // VC++ can't handle the iterator constructor
   Graph g(N);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < nedges; ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
     tie(e, inserted) = add_edge(used_by[j].first, used_by[j].second, g);
-    get(edge_weight, g)[e] = weights[j];
+    weightmap[e] = weights[j];
   }
 #else
   Graph g(used_by, used_by + nedges, weights, N);
@@ -165,6 +166,15 @@ int main(int,char*[])
 
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
+#ifdef BOOST_MSVC
+      if (in_degree[*i] == 0) {
+	std::vector<graph_traits<Graph>::vertex_descriptor> pred(num_vertices(g));
+	property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
+        dijkstra_shortest_paths
+	  (g, *i, &pred[0], &time[0], weight, indexmap, 
+	   compare, combine, 0, 0, default_dijkstra_visitor());
+      }
+#else
       if (in_degree[*i] == 0)
         dijkstra_shortest_paths(g, *i, 
 				distance_map(&time[0]). 
@@ -172,6 +182,7 @@ int main(int,char*[])
 				distance_combine(combine).
 				distance_inf(0).
 				weight_map(weight));
+#endif
     }
 
     cout << "parallel make ordering, " << endl

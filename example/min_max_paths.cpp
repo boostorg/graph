@@ -70,13 +70,15 @@ main(int , char* [])
 #ifdef BOOST_MSVC
   // VC++ can't handle iterator constructors
   Graph G(num_nodes);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, G);
   for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
     tie(e, inserted) = add_edge(edges[j].first, edges[j].second, G);
-    get(edge_weight, G)[e] = weights[j];
+    weightmap[e] = weights[j];
   }
 #else
   Graph G(edges, edges + n_edges, weights, num_nodes);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, G);
 #endif
 
   std::vector<Vertex> p(num_vertices(G));
@@ -84,10 +86,17 @@ main(int , char* [])
 
   Vertex s = *(vertices(G).first);
 
+#ifdef BOOST_MSVC
+  dijkstra_shortest_paths
+    (G, s, &p[0], &d[0], weightmap, get(vertex_index, G),
+     std::greater<int>(), closed_plus<int>(), std::numeric_limits<int>::max(), 0,
+     default_dijkstra_visitor());
+#else
   dijkstra_shortest_paths
     (G, s, distance_map(&d[0]).
      predecessor_map(&p[0]).
      distance_compare(std::greater<int>()));
+#endif
 
   std::cout << "distances from start vertex:" << std::endl;
   graph_traits<Graph>::vertex_iterator vi, vend;

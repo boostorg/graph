@@ -57,7 +57,10 @@ main()
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
   long flow;
+#ifdef BOOST_MSVC
+#else
   flow = push_relabel_max_flow(g, s, t);
+#endif
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;

@@ -369,6 +369,13 @@ namespace boost {
     GraphProperty m_property;
   };
 
+  template <class EL, class VL, class DS, class VP,class EP,class GP,
+            class Tag, class Value>
+  inline void
+  set_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag, const Value& value) {
+    get_property_value(g.m_property, Tag()) = value;;
+  }
+
   template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
   inline
   typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
