@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <boost/limits.hpp>
 
-#include <boost/iterator_adaptors.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -135,7 +135,7 @@ namespace boost {
             out_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
           , BaseIter
           , EdgeDescriptor
-          , readable_iterator_tag
+          , use_default
           , EdgeDescriptor
           , Difference
         >
@@ -144,7 +144,7 @@ namespace boost {
           out_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
         , BaseIter
         , EdgeDescriptor
-        , readable_iterator_tag
+        , use_default
         , EdgeDescriptor
         , Difference
       > super_t;
@@ -168,7 +168,7 @@ namespace boost {
             in_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
           , BaseIter
           , EdgeDescriptor
-          , readable_iterator_tag
+          , use_default
           , EdgeDescriptor
           , Difference
         >
@@ -177,7 +177,7 @@ namespace boost {
           in_edge_iter<BaseIter, VertexDescriptor, EdgeDescriptor, Difference>
         , BaseIter
         , EdgeDescriptor
-        , readable_iterator_tag
+        , use_default
         , EdgeDescriptor
         , Difference
       > super_t;
@@ -204,7 +204,7 @@ namespace boost {
             undirected_edge_iter<EdgeIter, EdgeDescriptor, Difference>
           , EdgeIter
           , EdgeDescriptor
-          , readable_iterator_tag
+          , use_default
           , EdgeDescriptor
           , Difference
         >
@@ -213,7 +213,7 @@ namespace boost {
           undirected_edge_iter<EdgeIter, EdgeDescriptor, Difference>
         , EdgeIter
         , EdgeDescriptor
-        , readable_iterator_tag
+        , use_default
         , EdgeDescriptor
         , Difference
       > super_t;

@@ -24,7 +24,7 @@
 #ifndef BOOST_ADJACENCY_ITERATOR_HPP
 #define BOOST_ADJACENCY_ITERATOR_HPP
 
-#include <boost/iterator_adaptors.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 namespace boost
@@ -36,7 +36,7 @@ namespace boost
           adjacency_iterator<Graph,Vertex,OutEdgeIter,Difference>
         , OutEdgeIter
         , Vertex
-        , readable_iterator_tag
+        , use_default
         , Vertex
         , Difference
       >
@@ -45,7 +45,7 @@ namespace boost
           adjacency_iterator<Graph,Vertex,OutEdgeIter,Difference>
         , OutEdgeIter
         , Vertex
-        , readable_iterator_tag
+        , use_default
         , Vertex
         , Difference
       > super_t;
@@ -77,8 +77,8 @@ namespace boost
           inv_adjacency_iterator<Graph,Vertex,InEdgeIter,Difference>
         , Vertex
         , Vertex
-        , readable_iterator_tag
-        , boost::use_default
+        , use_default
+        , use_default
         , Difference
       >
     {
