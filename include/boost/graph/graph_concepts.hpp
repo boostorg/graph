@@ -404,7 +404,6 @@ namespace boost {
     void constraints() {
       function_requires< ReadablePropertyGraphConcept<G, X, Property> >();
       function_requires< LvaluePropertyMapConcept<const_Map, X> >();
-      function_requires< Mutable_LvaluePropertyMapConcept<Map, X> >();
 
       pval = get(Property(), g, x);
       put(Property(), g, x, pval);
