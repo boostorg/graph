@@ -30,7 +30,7 @@
 #include <vector>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/pending/integer_range.hpp>
 
 /*
   This module implements the VertexListGraph concept using a
