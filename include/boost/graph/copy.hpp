@@ -90,15 +90,16 @@ namespace boost {
     std::vector<typename graph_traits<Graph>::vertex_descriptor> 
       vertex_map(num_vertices(g_in));
     copy_graph(g_in, g_out, 
-	       make_vertex_copier(g_in, g_out), 
-	       make_edge_copier(g_in, g_out), 
+               make_vertex_copier(g_in, g_out), 
+               make_edge_copier(g_in, g_out), 
                get(vertex_index, g_in), 
                make_iterator_property_map(vertex_map.begin(), 
                                           get(vertex_index, g_in)));
   }
 
   template <typename Graph, typename MutableGraph, typename Old2NewVertexMap>
-  void copy_graph(Graph& g_in, MutableGraph& g_out, Old2NewVertexMap& vertex_map)
+  void copy_graph(Graph& g_in, MutableGraph& g_out, 
+                  Old2NewVertexMap& vertex_map)
   {
     copy_graph(g_in, g_out, default_copier(), default_copier(), 
                get(vertex_index, g), vertex_map);
