@@ -108,6 +108,7 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, index);
   BOOST_DEF_PROPERTY(vertex, index1);
   BOOST_DEF_PROPERTY(vertex, index2);
+  BOOST_DEF_PROPERTY(vertex, root);
   BOOST_DEF_PROPERTY(edge, index);
   BOOST_DEF_PROPERTY(edge, name);
   BOOST_DEF_PROPERTY(edge, weight);
