@@ -51,41 +51,41 @@ CXXFLAGS	= $(OPT) $(INCLUDES)
 	$(CXX) $(CXXFLAGS) $< -c
 
 
-JWEB	= isomorphism-impl.w isomorphism-impl-v2.w
-DOT	= out.dot in.dot edge-order.dot
+JWEB	= isomorphism-impl.w isomorphism-impl-v3.w
+DOT	= out.dot in.dot edge-order.dot iso-eg.dot
 EPS_GEN	= $(DOT:.dot=.eps)
 WEBTEX	= $(JWEB:.w=.tex)
 PDFPICT	= $(EPS_GEN:.eps=.pdf)
 
-default: isomorphism-impl-v2.$(RESULT)
+default: isomorphism-impl-v3.$(RESULT)
 
-final: isomorphism-impl-v2.$(RESULT)
-	$(LATEX) isomorphism-impl-v2
+final: isomorphism-impl-v3.$(RESULT)
+	$(LATEX) isomorphism-impl-v3
 	csh ./mungeaux.csh *.aux
-	$(LATEX) isomorphism-impl-v2
+	$(LATEX) isomorphism-impl-v3
 
 #isomorphism-impl.dvi: $(EPS_GEN) $(WEBTEX)
 #isomorphism-impl.ps: isomorphism-impl.dvi
 #isomorphism-impl.pdf: $(EPS_GEN) $(PDFPICT) $(WEBTEX)
 #isomorphism.hpp: isomorphism-impl.w isomorphism-impl.tex
 
-isomorphism-impl-v2.dvi: $(EPS_GEN) $(WEBTEX)
-isomorphism-impl-v2.ps: isomorphism-impl-v2.dvi
-isomorphism-impl-v2.pdf: $(EPS_GEN) $(PDFPICT) $(WEBTEX)
+isomorphism-impl-v3.dvi: $(DOT) $(EPS_GEN) $(WEBTEX)
+isomorphism-impl-v3.ps: isomorphism-impl-v3.dvi
+isomorphism-impl-v3.pdf: $(EPS_GEN) $(PDFPICT) $(WEBTEX)
 
-isomorphism-v2.hpp: isomorphism-impl-v2.w isomorphism-impl-v2.tex
+isomorphism-v3.hpp: isomorphism-impl-v3.w isomorphism-impl-v3.tex
 
 out.dot: isomorphism-impl.tex
 in.dot: isomorphism-impl.tex
-edge-order.dot: isomorphism-impl-v2.tex
+edge-order.dot: isomorphism-impl-v3.tex
 
-isomorphism.o: isomorphism-v2.hpp isomorphism-impl-v2.w
+isomorphism.o: isomorphism-v3.hpp isomorphism-impl-v3.w
 
 isomorphism: isomorphism.o
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
 
-isomorphism-v2.hpp: isomorphism-impl-v2.tex isomorphism-impl-v2.w
-eg1-iso.o: isomorphism-impl-v2.tex isomorphism-impl-v2.w
+isomorphism-v3.hpp: isomorphism-impl-v3.tex isomorphism-impl-v3.w
+eg1-iso.o: isomorphism-impl-v3.tex isomorphism-impl-v3.w
 
 eg1-iso: eg1-iso.o
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
