@@ -1,6 +1,6 @@
 //
 //=======================================================================
-// Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+// Copyright 1997-2001 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
 // This file is part of the Boost Graph Library
@@ -39,28 +39,25 @@ namespace boost {
     // This visitor is used both in the connected_components algorithm
     // and in the kosaraju strong components algorithm during the
     // second DFS traversal.
-    template <class ComponentsMap, class DFSVisitor>
-    class components_recorder : public DFSVisitor
+    template <class ComponentsMap>
+    class components_recorder : public dfs_visitor<>
     {
       typedef typename property_traits<ComponentsMap>::value_type comp_type;
     public:
       components_recorder(ComponentsMap c, 
-			  comp_type& c_count, 
-			  DFSVisitor v)
-	: DFSVisitor(v), m_component(c), m_count(c_count) {}
+                          comp_type& c_count)
+        : m_component(c), m_count(c_count) {}
 
       template <class Vertex, class Graph>
       void start_vertex(Vertex u, Graph& g) {
-	if (m_count == std::numeric_limits<comp_type>::max())
-	  m_count = 0; // start counting components at zero
-	else
-	  ++m_count;
-	DFSVisitor::start_vertex(u, g);
+        if (m_count == std::numeric_limits<comp_type>::max())
+          m_count = 0; // start counting components at zero
+        else
+          ++m_count;
       }
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {
-	put(m_component, u, m_count);
-	DFSVisitor::discover_vertex(u, g);
+        put(m_component, u, m_count);
       }
     protected:
       ComponentsMap m_component;
@@ -69,36 +66,38 @@ namespace boost {
 
   } // namespace detail
 
-  // These functions compute the connected components of an undirected
-  // graphs using a single application of depth first search.
+  // This function computes the connected components of an undirected
+  // graph using a single application of depth first search.
 
-  // Version (2)
-  template <class Graph, class ComponentsMap, class ColorMap, class DFSVisitor>
-  inline typename property_traits<ComponentsMap>::value_type
-  connected_components(const Graph& g, ComponentsMap c, 
-		       ColorMap color, DFSVisitor v)
+  template <class Graph, class ComponentMap, class P, class T, class R>
+  inline typename property_traits<ComponentMap>::value_type
+  connected_components(const Graph& g, ComponentMap c, 
+                       const bgl_named_params<P, T, R>& params)
   {
-    function_requires< VertexListGraphConcept<Graph> >();
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
-    function_requires< WritablePropertyMapConcept<ComponentsMap, Vertex> >();
-    function_requires< DFSVisitorConcept<DFSVisitor, Graph> >();
-    // ...
-    typedef typename property_traits<ComponentsMap>::value_type comp_type;
+    function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
+    typedef typename property_traits<ComponentMap>::value_type comp_type;
     // c_count initialized to "nil" (with nil represented by max())
     comp_type c_count(std::numeric_limits<comp_type>::max());
-    detail::components_recorder<ComponentsMap, DFSVisitor> vis(c, c_count, v);
-    depth_first_search(g, vis, color);
+    detail::components_recorder<ComponentMap> vis(c, c_count);
+    depth_first_search(g, params.visitor(vis));
     return c_count + 1;
   }
-  
-  // Version (1)
-  template <class Graph, class Components, class ColorMap>
-  inline typename property_traits<Components>::value_type
-  connected_components(const Graph& g, Components c, ColorMap color)
+
+  template <class Graph, class ComponentMap>
+  inline typename property_traits<ComponentMap>::value_type
+  connected_components(const Graph& g, ComponentMap c)
   {
-    return connected_components(g, c, color, dfs_visitor<>());
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
+    typedef typename property_traits<ComponentMap>::value_type comp_type;
+    // c_count initialized to "nil" (with nil represented by max())
+    comp_type c_count(std::numeric_limits<comp_type>::max());
+    detail::components_recorder<ComponentMap> vis(c, c_count);
+    depth_first_search(g, visitor(vis));
+    return c_count + 1;
   }
+
   
 } // namespace boost
 
