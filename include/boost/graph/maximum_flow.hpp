@@ -63,8 +63,6 @@ namespace boost {
    // has positive excess flow and its distance is less than n (it is
    // not blocked).
 
-   // need to write a DIMACS graph format reader...
-
     template <class Vertex>
     struct preflow_layer {
       std::list<Vertex> active_vertices;
@@ -102,7 +100,7 @@ namespace boost {
         return distance[u] == distance[v] + 1;
       }
       inline bool is_residual_edge(edge_descriptor a) {
-        return residual_capacity[a] > 0;
+        return 0 < residual_capacity[a];
       }
       inline bool is_saturated(edge_descriptor a) {
         return residual_capacity[a] == 0;
@@ -114,6 +112,7 @@ namespace boost {
       typedef typename std::list<vertex_descriptor>::iterator list_iterator;
 
       void add_to_active_list(vertex_descriptor u, Layer& layer) {
+	cout << "add " << u << " to active list" << endl;
         layer.active_vertices.push_front(u);
         max_active = std::max(distance[u], max_active);
         min_active = std::min(distance[u], min_active);
@@ -124,6 +123,7 @@ namespace boost {
       }
 
       void add_to_inactive_list(vertex_descriptor u, Layer& layer) {
+	cout << "add " << u << " to inactive list" << endl;
         layer.inactive_vertices.push_front(u);
         layer_list_ptr[u] = layer.inactive_vertices.begin();
       }
@@ -160,8 +160,9 @@ namespace boost {
         // the residual capacity to equal the capacity.
         out_edge_iterator ei, e_end;
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
             residual_capacity[*ei] = capacity[*ei];
+	  }
 
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
@@ -184,8 +185,25 @@ namespace boost {
         else {
           excess_flow[src] = 0;
           for (tie(a_iter, a_end) = out_edges(src, g); 
-               a_iter != a_end; ++a_iter)
-            push_flow(*a_iter);
+               a_iter != a_end; ++a_iter) {
+            edge_descriptor a = *a_iter;
+            if (target(a, g) != src) {
+              FlowValue delta = residual_capacity[a];
+	      cout << "pushing delta " << delta
+		   << " to " << target(a, g) << endl;
+              residual_capacity[a] -= delta;
+              residual_capacity[reverse_edge[a]] += delta;
+              excess_flow[target(a, g)] += delta;
+
+	      cout << "rcap" << a << " = " << residual_capacity[a] << endl;
+	      cout << "rcap" << reverse_edge[a] << " = " 
+		   << residual_capacity[reverse_edge[a]] << endl;
+
+	      cout << "&prop" << a << " = " << a.get_property() << endl;
+	      cout << "&prop" << reverse_edge[a] << " = " 
+		   << reverse_edge[a].get_property() << endl;
+            }
+          }
         }
         max_distance = num_vertices(g) - 1;
         max_active = 0;
@@ -205,6 +223,17 @@ namespace boost {
           else if (distance[u] < n)
             add_to_inactive_list(u, layers[1]);
         }       
+
+        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
+	    cout << "rcap" << *ei << " = " << residual_capacity[*ei] << endl;
+	  }
+
+        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
+	    cout << "&prop" << *ei << " = " << (*ei).get_property() << endl;
+	  }
+
       } // push_relabel constructor
 
       //=======================================================================
@@ -215,6 +244,7 @@ namespace boost {
       // Goldberg's implementation abused "distance" for the coloring.
       void global_distance_update()
       {
+	cout << "global update" << endl;
         vertex_iterator u_iter, u_end;
         for (tie(u_iter,u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           color[*u_iter] = ColorTraits::white();
@@ -265,14 +295,19 @@ namespace boost {
       void discharge(vertex_descriptor u)
       {
         assert(excess_flow[u] > 0);
+	cout << "discharge" << endl;
         while (1) {
           out_edge_iterator ai, ai_end;
           for (ai = current[u], ai_end = out_edges(u, g).second;
                ai != ai_end; ++ai) {
             edge_descriptor a = *ai;
+	    cout << "(" << source(a, g) << "," << target(a,g) << ")" << endl;
+	    cout << "residual_capacity[a]=" << residual_capacity[a] << endl;
             if (is_residual_edge(a)) {
+	      cout << "residual edge" << endl;
               vertex_descriptor v = target(a, g);
               if (is_admissible(u, v)) {
+		cout << "admissible edge" << endl;
                 if (v != sink && excess_flow[v] == 0) {
                   remove_from_inactive_list(v);
                   add_to_active_list(v, layers[distance[v]]);
@@ -280,8 +315,10 @@ namespace boost {
                 push_flow(a);
                 if (excess_flow[u] == 0)
                   break;
-              }
-            }
+              } else
+		cout << "not admissible" << endl;
+            } else
+	      cout << "saturated edge" << endl;
           } // for out_edges of i starting from current
 
           Layer& layer = layers[distance[u]];
@@ -333,6 +370,8 @@ namespace boost {
         distance_size_type min_distance = num_vertices(g);
         distance[u] = min_distance;
 
+	cout << "relabel " << distance[u] << endl;
+
         // Examine the residual out-edges of vertex i, choosing the
         // edge whose target vertex has the minimal distance.
         out_edge_iterator ai, a_end, min_edge_iter;
@@ -340,8 +379,8 @@ namespace boost {
           edge_descriptor a = *ai;
           vertex_descriptor v = target(a, g);
           if (is_residual_edge(a) && distance[v] < min_distance) {
-              min_distance = distance[v];
-              min_edge_iter = ai;
+            min_distance = distance[v];
+            min_edge_iter = ai;
           }
         }
         ++min_distance;
@@ -359,6 +398,8 @@ namespace boost {
       {
         distance_size_type r; // distance of layer before the current layer
         r = empty_distance - 1;
+
+	cout << "gap r=" << r << endl;
 
         // Set the distance for the vertices beyond the gap to "infinity".
         for (layer_iterator l = layers.begin() + empty_distance + 1;
@@ -379,7 +420,12 @@ namespace boost {
       {
         work_since_last_update = 0;
 
+        std::cout << "calculating maximum_preflow" << std::endl;
+
         while (max_active >= min_active) { // "main" loop
+
+          std::cout << "stage one iteration max_active: " << max_active
+                    << " min_active: " << min_active << std::endl;
 
           Layer& layer = layers[max_active];
           list_iterator u_iter = layer.active_vertices.begin();
