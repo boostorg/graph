@@ -69,11 +69,11 @@ namespace boost {
 
     template <class Edge, class Graph>
     void edge_relaxed(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_edge_relaxed());      
+      invoke_visitors(this->m_vis, e, g, on_edge_relaxed());      
     }
     template <class Edge, class Graph>
     void edge_not_relaxed(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_edge_not_relaxed());      
+      invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());      
     }
   private:
     template <class Edge, class Graph>
