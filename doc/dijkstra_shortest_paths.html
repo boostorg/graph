@@ -27,17 +27,17 @@
 <P>
 <PRE>
 <i>// named paramter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
+template &lt;typename <a href="./VertexListGraph.html">VertexListGraph</a>, typename P, typename T, typename R&gt;
 void
 dijkstra_shortest_paths(VertexListGraph&amp; g,
   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
-	  class PredecessorMap, class DistanceMap,
-	  class WeightMap, class IndexMap, class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Compare</a>, class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Combine</a>, 
-	  class DistInf, class DistZero&gt;
+template &lt;typename <a href="./VertexListGraph.html">VertexListGraph</a>, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
+	  typename PredecessorMap, typename DistanceMap,
+	  typename WeightMap, typename IndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Compare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Combine</a>, 
+	  typename DistInf, typename DistZero&gt;
 void dijkstra_shortest_paths
   (const VertexListGraph&amp; g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
@@ -195,12 +195,15 @@ IN: <tt>vertex_descriptor s</tt>
 
 IN: <tt>weight_map(WeightMap w_map)</tt>   
 <blockquote>
-  The weight or ``length'' of each edge in the graph.
+  The weight or ``length'' of each edge in the graph. The weights
+  must all be non-negative, and the algorithm will throw a
+  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
+  exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
   <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the weight
-  map. The value type for the map must be
-  <i>Addable</i> with the value type of the distance map.<br>
+  map. The value type for this map must be
+  the same as the value type of the distance map.<br>
   <b>Default:</b>  <tt>get(edge_weight, g)</tt>
 </blockquote>
 

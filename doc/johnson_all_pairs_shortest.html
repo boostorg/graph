@@ -25,7 +25,7 @@
 
 <PRE>
 <i>// named parameter version</i>
-template &lt;class Graph, class DistanceMatrix, class P, class T, class R&gt;
+template &lt;typename Graph, typename DistanceMatrix, typename P, typename T, typename R&gt;
 bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 

@@ -99,8 +99,7 @@ DFS(<i>G</i>)
     <b>if</b> <i>color[u] =</i> WHITE
       <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
-  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) 
- 
+  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br>
 DFS-VISIT(<i>G</i>, <i>u</i>) 
   <i>color[u] :=</i> GRAY
   <i>d_time[u] := time := time + 1</i> 
@@ -119,33 +118,34 @@ DFS-VISIT(<i>G</i>, <i>u</i>)
 </td>
 <td valign="top">
 <pre>
-
+-
+-
 initialize vertex <i>u</i>
-
-
-
-
+-
+-
+-
+-
 start vertex <i>s</i>
-
-
-start vertex <i>u</i> 
-
-
-
-
-
-discover vertex <i>u</i> 
-
+-
+-
+start vertex <i>u</i>
+-
+-
+-
+-
+discover vertex <i>u</i>
+-
 examine edge <i>(u,v)</i>
+-
 <i>(u,v)</i> is a tree edge
-
-
-
-<i>(u,v)</i> is a back edge 
-
-<i>(u,v)</i> is a cross or forward edge 
-
+-
+-
+<i>(u,v)</i> is a back edge
+-
+<i>(u,v)</i> is a cross or forward edge
+-
 finish vertex <i>u</i>
+-
 </pre>
 </td>
 </tr>

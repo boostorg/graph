@@ -31,6 +31,7 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/graph/exception.hpp>
 
 namespace boost { 
 
@@ -45,14 +46,18 @@ namespace boost {
   // front_insert_iterator, the recorded order is the topological
   // order.
   //
-  template <class OutputIterator>
+  template <typename OutputIterator>
   struct topo_sort_visitor : public dfs_visitor<>
   {
     topo_sort_visitor(OutputIterator _iter)
       : m_iter(_iter) { }
-
-    template <class Vertex, class Graph> 
+    
+    template <typename Edge, typename Graph>
+    void back_edge(Edge& u, Graph&) { throw not_a_dag(); }
+    
+    template <typename Vertex, typename Graph> 
     void finish_vertex(Vertex& u, Graph&) { *m_iter++ = u; }
+    
     OutputIterator m_iter;
   };
 
@@ -66,8 +71,8 @@ namespace boost {
   // consists mainly of a call to depth-first search.
   //
 
-  template <class VertexListGraph, class OutputIterator,
-    class P, class T, class R>
+  template <typename VertexListGraph, typename OutputIterator,
+    typename P, typename T, typename R>
   void topological_sort(VertexListGraph& g, OutputIterator result,
                         const bgl_named_params<P, T, R>& params)
   {
@@ -75,7 +80,7 @@ namespace boost {
     depth_first_search(g, params.visitor(TopoVisitor(result)));
   }
 
-  template <class VertexListGraph, class OutputIterator>
+  template <typename VertexListGraph, typename OutputIterator>
   void topological_sort(VertexListGraph& g, OutputIterator result)
   {
     topological_sort(g, result, 

@@ -39,6 +39,7 @@
 #include <boost/pending/mutable_queue.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/pending/indirect_cmp.hpp>
+#include <boost/graph/exception.hpp>
 
 namespace boost {
 
@@ -128,7 +129,11 @@ namespace boost {
       template <class Vertex, class Graph>
       void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
       template <class Edge, class Graph>
-      void examine_edge(Edge e, Graph& g) { m_vis.examine_edge(e, g); }
+      void examine_edge(Edge e, Graph& g) { 
+	if (get(m_weight, e) < 0)
+	  throw negative_edge();
+	m_vis.examine_edge(e, g);
+      }
       template <class Edge, class Graph>
       void black_target(Edge, Graph&) { }
       template <class Vertex, class Graph>

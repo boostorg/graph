@@ -49,6 +49,9 @@ namespace boost {
       vertex_t s; vertex_t t; const Graph& g;
     };
 
+    //=========================================================================
+    // Traversal Operations
+
     void test_incidence_graph
        (const std::vector<vertex_t>& vertex_set,
         const std::vector< std::pair<vertex_t, vertex_t> >& edge_set,
@@ -190,7 +193,10 @@ namespace boost {
               connects(source(p.first, g), target(p.first, g), g)) == true);
         }
     }
-    
+
+    //=========================================================================
+    // Mutating Operations
+
     void test_add_vertex(Graph& g)
     {
       Graph cpy;
@@ -305,9 +311,51 @@ namespace boost {
                    iso_map)));
     }
 
+    //=========================================================================
+    // Property Map
+
+    template <typename PropVal, typename PropertyTag>
+    void test_readable_vertex_property_graph
+      (const std::vector<PropVal>& vertex_prop, PropertyTag, Graph& g)
+    {
+      typedef typename property_map<G, PropertyTag>::const_type const_Map;
+      const_Map pmap = get(PropertyTag(), g);
+      typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
+      BGL_FORALL_VERTICES_T(v, g, Graph) {
+	typename property_traits<const_Map>::value_type 
+	  pval1 = get(pmap, x), pval2 = get(Property(), g, x);
+	BOOST_TEST(pval1 == pval2);
+	BOOST_TEST(pval1 == *i++);
+      }
+    }
+
+    template <typename PropVal, typename PropertyTag>
+    void test_vertex_property_graph
+      (const std::vector<PropVal>& vertex_prop, PropertyTag tag, Graph& g)
+    {
+      typedef typename property_map<G, PropertyTag>::type PMap;
+      PMap pmap = get(PropertyTag(), g);
+      typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
+      BGL_FORALL_VERTICES_T(v, g, Graph)
+	put(pmap, x, *i++);
+
+      test_readable_vertex_property_graph(vertex_prop, tag, g);
+
+      BGL_FORALL_VERTICES_T(v, g, Graph)
+	put(pmap, x, vertex_prop[0]);
+      
+      typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
+      BGL_FORALL_VERTICES_T(v, g, Graph)
+	put(Property(), g, x, *i++);
+      
+      test_readable_vertex_property_graph(vertex_prop, tag, g);      
+    }
+    
+    
   };
-  
-}// namespace boost
+
+
+} // namespace boost
 
 #include <boost/graph/iteration_macros_undef.hpp>
 
