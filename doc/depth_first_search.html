@@ -25,43 +25,119 @@
 
 <P>
 <PRE>
-(1)
 template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class class P, class T, class R&gt;
-void depth_first_search(VertexListGraph&amp; G, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+void depth_first_search(VertexListGraph&amp; G,
+  const bgl_named_params&lt;P, T, R&gt;&amp; params);
 </PRE>
 
-<P>
-The <TT>depth_first_search()</TT> algorithm performs a depth-first
-search (DFS) on a graph, invoking the methods of the graph search
-visitor at the appropriate event-points. A depth-first search visits
-all the vertices in a graph, starting with some arbitrary vertex and
-then always choosing the next adjacent unvisited vertex. Once the DFS
-reaches a vertex with no unvisited neighbors it backtracks to one of
-the previous vertices and continues from there. Once all of the
-vertices in the same connected component have been visited, another
-arbitrary unvisited vertex is choosen and the depth-first search
-resumes. A more detailed explanation of DFS is given in Section <A
-HREF="./graph_theory_review.html#sec:dfs-algorithm">Depth-First
-Search</A>. The depth-first exploration of each connected component is
-implemented by the function <a
-href="./depth_first_visit.html"><tt>depth_first_visit()</tt></a>.
-
+<p>
+The <tt>depth_first_search()</tt> function performs a depth-first
+traversal of the vertices in a directed or undirected graph.  When
+possible, a depth-first traversal chooses a vertex adjacent to the
+current vertex to visit next. If all adjacent vertices have already
+been discovered, or there are no adjacent vertices, then the algorithm
+backtracks to the last vertex that had undiscovered neighbors. Once
+all reachable vertices have been visited, the algorithm selects from
+any remaining undiscovered vertices and continues the traversal. The
+algorithm finishes when all vertices have been visited. Depth-first
+search is useful for categorizing edges in a graph, and for imposing
+an ordering on the vertices. Section <a
+href="./graph_theory_review.html#sec:dfs-algorithm">Depth-First
+Search</a> describes the various properties of DFS and walks through
+an example.
+</p>
 
 <p>
-The <tt>DFSVisitor</tt> supplied by the user determines what
-actions are taken at each event-point within the algorithm.
+Similar to BFS, color markers are used to keep track of which vertices
+have been discovered. White marks vertices that have yet to be
+discovered, gray marks a vertex that is discovered but still has
+vertices adjacent to it that are undiscovered. A black vertex is
+discovered vertex that is not adjacent to any white vertices.
+<p>
 
 <p>
-The <tt>ColorMap</tt> is used by the algorithm to keep track
-of which vertices have been visited.
+The <tt>depth_first_search()</tt> function invokes user-defined
+actions at certain event-points within the algorithm. This provides a
+mechanism for adapting the generic DFS algorithm to the many
+situations in which it can be used.  In the pseudo-code below, the
+event points for DFS are indicated in by the triangles and labels on
+the right. The user-defined actions must be provided in the form of a
+visitor object, that is, an object whose type meets the requirements
+for a <a href="./DFSVisitor.html">DFS Visitor</a>. In the pseudo-code
+we show the algorithm computing predecessors <i>p</i>, discover time
+<i>d</i> and finish time <i>t</i>.  By default, the
+<tt>depth_first_search()</tt> function does not compute these
+properties, however there are pre-defined visitors such as <a
+href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
+and <a href="./time_stamper.html"><tt>time_stamper</tt></a> that can
+be used to do this.
+</p>
 
-<P>
-DFS is used as the kernel for several other graph algorithms,
-including <a
-href="./topological_sort.html"><tt>topological_sort</tt></a> and two
-of the connected component algorithms.
+<table>
+<tr>
+<td valign="top">
+<pre>
+DFS(<i>G</i>)
+  <b>for</b> each vertex <i>u in V</i> 
+    <i>color[u] :=</i> WHITE
+    <i>p[u] = u</i> 
+  <b>end for</b>
+  <i>time := 0</i>
+  <b>for</b> each vertex <i>u in V</i> 
+    <b>if</b> <i>color[u] =</i> WHITE
+      <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
+  <b>end for</b>
+  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) 
+ 
+DFS-VISIT(<i>G</i>, <i>u</i>) 
+  <i>color[u] :=</i> GRAY
+  <i>d_time[u] := time := time + 1</i> 
+  <b>for</b> each <i>v in Adj[u]</i> 
+    <b>if</b> (<i>color[v] =</i> WHITE)
+      <i>p[v] = u</i> 
+      <b>call</b> DFS-VISIT(<i>G</i>, <i>v</i>)
+    <b>else if</b> (<i>color[v] =</i> GRAY) 
+      <i>...</i>
+    <b>else if</b> (<i>color[v] =</i> BLACK) 
+      <i>...</i>
+  <b>end for</b>
+  <i>color[u] :=</i> BLACK
+  <i>f_time[u] := time := time + 1</i> 
+<pre>
+</td>
+<td valign="top">
+<pre>
 
-<P>
+initialize vertex <i>u</i>
+
+
+
+
+
+start vertex <i>u</i> 
+
+
+
+
+
+discover vertex <i>u</i> 
+
+examine edge <i>(u,v)</i>
+<i>(u,v)</i> is a tree edge
+
+
+
+<i>(u,v)</i> is a back edge 
+
+<i>(u,v)</i> is a cross or forward edge 
+
+finish vertex <i>u</i>
+</pre>
+</td>
+</tr>
+</table>
+
+
 
 <H3>Where Defined</H3>
 
@@ -128,10 +204,45 @@ The time complexity is <i>O(E + V)</i>.
 
 <P>
 
+<h3>Visitor Event Points</h3>
+
+<ul>
+
+<li><b><tt>vis.initialize_vertex(s, g)</tt></b> is invoked on every
+  vertex of the graph before the start of the graph search.
+
+<li><b><tt>vis.start_vertex(s, g)</tt></b> is invoked on the source
+  vertex once before the start of the search.
+  
+<li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked when a vertex
+  is encountered for the first time.
+  
+<li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
+  of each vertex after it is discovered.
+
+<li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked on each edge as it
+  becomes a member of the edges that form the search tree. If you
+  wish to record predecessors, do so at this event point.
+  
+<li><b><tt>vis.back_edge(e, g)</tt></b> is invoked on the back edges in
+  the graph.
+  
+<li><b><tt>vis.forward_or_cross_edge(e, g)</tt></b> is invoked on
+  forward or cross edges in the graph. In an undirected graph this
+  method is never called.
+  
+<li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked on a vertex after
+  all of its out edges have been added to the search tree and all of
+  the adjacent vertices have been discovered (but before their
+  out-edges have been examined).
+
+</ul>
+
+
 <H3>Example</H3>
 
 <P>
-The example is in <a href="../example/dfs_basics.cpp">
+The example in <a href="../example/dfs_basics.cpp">
 <TT>examples/dfs_basics.cpp</TT></a> shows DFS applied to the graph in
 <A HREF="./graph_theory_review.html#fig:dfs-example">Figure 1</A>.
 
