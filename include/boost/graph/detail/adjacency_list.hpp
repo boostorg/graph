@@ -1322,8 +1322,7 @@ namespace boost {
       {
         bool found;
         typename Config::OutEdgeList::const_iterator 
-          i = std::find(g.out_edge_list(u).begin(),
-                        g.out_edge_list(u).end(), StoredEdge(v)),
+          i = g.out_edge_list(u).find(StoredEdge(v)),
           end = g.out_edge_list(u).end();
         found = (i != end);
         if (found)
