@@ -82,6 +82,7 @@ graph-test family-tree-eg.cpp  ;
 graph-test fibonacci_heap.cpp  ;
 graph-test file_dependencies.cpp  ;
 graph-test filtered_graph.cpp  ;
+graph-test filtered_vec_as_graph.cpp  ;
 graph-test gerdemann.cpp  ;
 graph-test girth.cpp  :  <include>$(SGB) 
   <library-file>$(SGB)/libgb.a  ;
