@@ -8,67 +8,73 @@
 //           Andrew Lumsdaine
 #include "digraph.hpp"
 #include <boost/graph/page_rank.hpp>
-#include "done.hpp"
 
 namespace boost { namespace graph { namespace python {
 
-
-
 template<typename Graph>
 void 
-page_rank_ri
+page_rank_iterations
   (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& rank,
+   const vector_property_map<double, typename Graph::VertexIndexMap>* in_rank,
    int iterations)
 {
-  boost::graph::page_rank(g, rank, graph::n_iterations(20));
-}
+  typedef vector_property_map<double, typename Graph::VertexIndexMap> 
+    RankMap;
 
-template<typename Graph>
-void 
-page_rank_i(Graph& g, int iterations)
-{
-  boost::graph::page_rank(g, g.template get_vertex_map<double>("rank"),
-                          graph::n_iterations(20));
+  RankMap rank = 
+    in_rank? *in_rank : g.template get_vertex_map<double>("pagerank");
+
+  boost::graph::page_rank(g, rank, graph::n_iterations(20));
 }
 
 struct page_rank_wrap_done
 {
-  page_rank_wrap_done(const done& d) : d(d) { }
+  page_rank_wrap_done(boost::python::object done) : done(done) { }
 
   template<typename RankMap, typename Graph>
   bool
-  operator()(const RankMap&, const Graph&) const
+  operator()(const RankMap& rank, const Graph& g) const
   { 
-    return d();
+    using boost::python::extract;
+    return extract<bool>(done(rank, g));
   }
 
-  const done& d;
+private:
+  boost::python::object done;
 };
+
 
 template<typename Graph>
 void 
-page_rank_rd
+page_rank_done
   (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& rank,
-   const done& d)
+   const vector_property_map<double, typename Graph::VertexIndexMap>* in_rank,
+   boost::python::object done)
 {
-  boost::graph::page_rank(g, rank, page_rank_wrap_done(d));
-}
+  typedef vector_property_map<double, typename Graph::VertexIndexMap> 
+    RankMap;
 
-template<typename Graph>
-void page_rank_d(Graph& g, const done& d)
-{
-  boost::graph::page_rank(g, g.template get_vertex_map<double>("rank"), 
-                          page_rank_wrap_done(d));
+  RankMap rank = 
+    in_rank? *in_rank : g.template get_vertex_map<double>("pagerank");
+
+  boost::graph::page_rank(g, rank, wrap_pr_done(done));
 }
 
 void export_page_rank()
 {
-  def("page_rank", &page_rank_i<Digraph>);
-  def("page_rank", &page_rank_ri<Digraph>);
-  def("page_rank", &page_rank_rd<Digraph>);
-  def("page_rank", &page_rank_d<Digraph>);
+  using boost::python::arg;
+  using boost::python::def;
+
+  def("page_rank", &page_rank_iterations<Digraph>,
+      (arg("graph"), 
+       arg("rank_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0,
+       arg("iterations") = 20));
+  def("page_rank", &page_rank_iterations<Digraph>,
+      (arg("graph"), 
+       arg("rank_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0,
+       arg("done")));
 }
 
 

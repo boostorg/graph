@@ -20,9 +20,9 @@ class BGL_PYTHON_VISITOR
 #define BGL_PYTHON_EVENT(Name,Descriptor)                               \
     void Name(Descriptor x, const Graph& g) const                       \
     {                                                                   \
-      if (override f = this->get_override(#Name))                       \
+      if (boost::python::override f = this->get_override(#Name))        \
         f(x, boost::cref(g));                                           \
-      else BGL_PYTHON_VISITOR<Graph>::Name(x, g);                              \
+      else BGL_PYTHON_VISITOR<Graph>::Name(x, g);                       \
     }                                                                   \
                                                                         \
     void default_##Name(Descriptor x, const Graph& g)  const            \
@@ -62,6 +62,15 @@ class BGL_PYTHON_VISITOR
 
   static void declare(const char* name, const char* default_name)
   {
+    using boost::python::class_;
+    using boost::python::bases;
+    using boost::python::no_init;
+    using boost::python::objects::registered_class_object;
+    using boost::python::type_id;
+    
+    if (registered_class_object(type_id<wrap>()).get() != 0)
+      return;
+
 #define BGL_PYTHON_EVENT(Name, Descriptor)                              \
       .def(#Name, &BGL_PYTHON_VISITOR<Graph>::Name, &wrap::default_##Name)
     class_<wrap, boost::noncopyable>(name)

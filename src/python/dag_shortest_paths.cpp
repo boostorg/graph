@@ -6,7 +6,7 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/dag_shortest_paths.hpp>
 #include "graph.hpp"
 #include "digraph.hpp"
 #include <boost/python.hpp>
@@ -16,7 +16,7 @@ namespace boost { namespace graph { namespace python {
 
 template<typename Graph>
 void
-dijkstra_shortest_paths
+dag_shortest_paths
   (Graph& g, typename Graph::Vertex s,
    const vector_property_map<typename Graph::Vertex,
                              typename Graph::VertexIndexMap>* in_predecessor,
@@ -47,7 +47,7 @@ dijkstra_shortest_paths
   bool has_default_visitor = dynamic_cast<const default_visitor*>(&visitor);
 
   if (!has_default_visitor) {
-    boost::dijkstra_shortest_paths
+    boost::dag_shortest_paths
       (g, s, 
        vertex_index_map(g.get_vertex_index_map()).
        visitor(typename dijkstra_visitor<Graph>::ref(visitor)).
@@ -55,7 +55,7 @@ dijkstra_shortest_paths
        distance_map(distance).
        weight_map(weight));
   } else {
-    boost::dijkstra_shortest_paths
+    boost::dag_shortest_paths
       (g, s, 
        vertex_index_map(g.get_vertex_index_map()).
        predecessor_map(predecessor).
@@ -65,18 +65,18 @@ dijkstra_shortest_paths
 }
 
 template<typename Graph>
-void export_dijkstra_shortest_paths_in_graph()
+void export_dag_shortest_paths_in_graph()
 {
   dijkstra_visitor<Graph>::declare("DijkstraVisitor", 
                                    "DefaultDijkstraVisitor");
 }
 
-void export_dijkstra_shortest_paths()
+void export_dag_shortest_paths()
 {
   using boost::python::arg;
   using boost::python::def;
 
-  def("dijkstra_shortest_paths", &dijkstra_shortest_paths<Graph>,
+  def("dag_shortest_paths", &dag_shortest_paths<Graph>,
       (arg("graph"), arg("root_vertex"),
        arg("predecessor_map") = 
          (vector_property_map<Graph::Vertex, Graph::VertexIndexMap>*)0,
@@ -86,7 +86,7 @@ void export_dijkstra_shortest_paths()
          (vector_property_map<double, Graph::EdgeIndexMap>*)0,
        arg("visitor") = dijkstra_visitor<Graph>::default_arg()));
 
-  def("dijkstra_shortest_paths", &dijkstra_shortest_paths<Digraph>,
+  def("dag_shortest_paths", &dag_shortest_paths<Digraph>,
       (arg("graph"), arg("root_vertex"),
        arg("predecessor_map") = 
          (vector_property_map<Digraph::Vertex, Digraph::VertexIndexMap>*)0,
@@ -97,7 +97,7 @@ void export_dijkstra_shortest_paths()
        arg("visitor") = dijkstra_visitor<Digraph>::default_arg()));
 }
 
-template void export_dijkstra_shortest_paths_in_graph<Graph>();
-template void export_dijkstra_shortest_paths_in_graph<Digraph>();
+template void export_dag_shortest_paths_in_graph<Graph>();
+template void export_dag_shortest_paths_in_graph<Digraph>();
 
 } } } // end namespace boost::graph::python

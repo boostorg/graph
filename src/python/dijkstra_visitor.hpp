@@ -6,18 +6,15 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
-#ifndef BOOST_GRAPH_PYTHON_DONE_HPP
-#define BOOST_GRAPH_PYTHON_DONE_HPP
-
+#ifndef BOOST_GRAPH_PYTHON_DIJKSTRA_VISITOR_HPP
+#define BOOST_GRAPH_PYTHON_DIJKSTRA_VISITOR_HPP
 namespace boost { namespace graph { namespace python {
 
-class done
-{
- public:
-  virtual ~done() { }
-  virtual bool operator()() const = 0;
-};
+#define BGL_PYTHON_VISITOR dijkstra_visitor
+#define BGL_PYTHON_EVENTS_HEADER "dijkstra_events.hpp"
+#include "visitor.hpp"
+#undef BGL_PYTHON_EVENTS_HEADER
+#undef BGL_PYTHON_VISITOR
 
 } } } // end namespace boost::graph::python
-
-#endif // BOOST_GRAPH_PYTHON_DONE_HPP
+#endif BOOST_GRAPH_PYTHON_DIJKSTRA_VISITOR_HPP

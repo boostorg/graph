@@ -52,6 +52,7 @@ articulation_points(const Graph& g)
 void export_biconnected_components()
 {
   using boost::python::arg;
+  using boost::python::def;
 
   def("biconnected_components", &biconnected_components<Graph>,
       (arg("graph"), 

@@ -18,11 +18,12 @@
 
 namespace boost { namespace graph { namespace python {
 
-using namespace boost::python;
-
 template<typename T> bool type_already_registered()
 {
-  return objects::registered_class_object(python::type_id<T>()).get() != 0;
+  using boost::python::objects::registered_class_object;
+  using boost::python::type_id;
+
+  return registered_class_object(type_id<T>()).get() != 0;
 }
 
 template<typename Iterator>
@@ -34,15 +35,20 @@ public:
 
   typename std::iterator_traits<Iterator>::value_type next() 
   { 
-    if (first == last) objects::stop_iteration_error();
+    using boost::python::objects::stop_iteration_error;
+
+    if (first == last) stop_iteration_error();
     return *first++;
   }
 
   static void declare(const char* name)
   {
+    using boost::python::class_;
+    using boost::python::no_init;
+    using boost::python::objects::identity_function;
     if (!type_already_registered<simple_python_iterator>())
       class_<simple_python_iterator<Iterator> >(name, no_init)
-        .def("__iter__", objects::identity_function())
+        .def("__iter__", identity_function())
         .def("next", &simple_python_iterator<Iterator>::next)
       ;
   }
@@ -63,6 +69,9 @@ struct declare_readable_property_map
 
   static void declare(const char* name)
   {
+    using boost::python::class_;
+    using boost::python::no_init;
+
     if (!type_already_registered<PropertyMap>())
       class_<PropertyMap>(name, no_init)
         .def("__getitem__", &getitem)
@@ -85,6 +94,9 @@ struct declare_property_map
 
   static void declare(const char* name)
   {
+    using boost::python::class_;
+    using boost::python::no_init;
+
     if (!type_already_registered<PropertyMap>())
       class_<PropertyMap>(name, no_init)
         .def("__getitem__", &getitem)
@@ -130,7 +142,6 @@ struct basic_index_map
   typedef typename property_traits<IndexMap>::reference  reference;
   typedef typename property_traits<IndexMap>::category   category;
 
-  basic_index_map() {}
   basic_index_map(const IndexMap& id = IndexMap())
     : id(id) { }
 
@@ -371,6 +382,7 @@ get(edge_index_t, const basic_graph<DirectedS>& g)
 } } } // end namespace boost::graph::python
 
 #if 0
+// Triggers bugs in GCC
 namespace boost {
   template<typename DirectedS>
   struct property_map<graph::python::basic_graph<DirectedS>, vertex_index_t>

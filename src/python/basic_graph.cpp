@@ -476,6 +476,13 @@ template<typename Graph> void export_in_graph();
 template<typename DirectedS>
 void export_basic_graph(const char* name)
 {
+  using boost::python::class_;
+  using boost::python::init;
+  using boost::python::object;
+  using boost::python::range;
+  using boost::python::scope;
+  using boost::python::self;
+
   typedef basic_graph<DirectedS> Graph;
   typedef typename Graph::Vertex Vertex;
   typedef typename Graph::Edge Edge;

@@ -43,9 +43,14 @@ class python_queue
 
   static void declare(const char* name, const char* default_name)
   {
-    using namespace boost::python;
+    using boost::python::objects::registered_class_object;
+    using boost::python::type_id;
+    using boost::python::class_;
+    using boost::python::bases;
+    using boost::python::no_init;
+    using boost::python::pure_virtual;
 
-    if (objects::registered_class_object(type_id<wrap>()).get() == 0) {
+    if (registered_class_object(type_id<wrap>()).get() == 0) {
       class_<wrap, boost::noncopyable>(name)
         .def("empty", pure_virtual(&python_queue<T>::empty))
         .def("top", pure_virtual(&python_queue<T>::top))
@@ -54,7 +59,7 @@ class python_queue
         ;
      }
 
-    if (objects::registered_class_object(type_id<default_queue>()).get() == 0)
+    if (registered_class_object(type_id<default_queue>()).get() == 0)
     {
       class_<default_queue, bases<python_queue> >(default_name, no_init);
     }

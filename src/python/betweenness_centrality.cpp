@@ -14,121 +14,120 @@ namespace boost { namespace graph { namespace python {
 
 template<typename Graph>
 void 
-brandes_betweenness_centrality_ve
+brandes_betweenness_centrality
   (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& vertex_centrality,
-   const vector_property_map<double, typename Graph::EdgeIndexMap>& edge_centrality)
+   const vector_property_map<double, typename Graph::VertexIndexMap>* in_vertex_centrality,
+   const vector_property_map<double, typename Graph::EdgeIndexMap>* in_edge_centrality,
+   const vector_property_map<double, typename Graph::EdgeIndexMap>* weight)
 {
-  brandes_betweenness_centrality
-    (g, 
-     centrality_map(vertex_centrality).
-     edge_centrality_map(edge_centrality).
-     vertex_index_map(g.get_vertex_index_map()));
-}
+  typedef vector_property_map<double, typename Graph::VertexIndexMap> 
+    VertexCentralityMap;
 
-template<typename Graph>
-inline void 
-brandes_betweenness_centrality_v
-  (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& vertex_centrality)
-{ 
-  brandes_betweenness_centrality_ve(g, vertex_centrality,
-                                    g.template get_edge_map<double>("centrality"));
-}
+  typedef vector_property_map<double, typename Graph::EdgeIndexMap> 
+    EdgeCentralityMap;
 
-template<typename Graph>
-void 
-brandes_betweenness_centrality_wve
-  (Graph& g, 
-   const vector_property_map<double, typename Graph::EdgeIndexMap>& weight,
-   const vector_property_map<double, typename Graph::VertexIndexMap>& vertex_centrality,
-   const vector_property_map<double, typename Graph::EdgeIndexMap>& edge_centrality)
-{
-  brandes_betweenness_centrality
-    (g, 
-     weight_map(weight).
-     centrality_map(vertex_centrality).
-     edge_centrality_map(edge_centrality).
-     vertex_index_map(g.get_vertex_index_map()));
-}
+  VertexCentralityMap vertex_centrality = 
+    in_vertex_centrality? *in_vertex_centrality 
+    : g.template get_vertex_map<double>("centrality");
 
-template<typename Graph>
-inline void 
-brandes_betweenness_centrality_wv
-  (Graph& g, 
-   const vector_property_map<double, typename Graph::EdgeIndexMap>& weight,
-   const vector_property_map<double, typename Graph::VertexIndexMap>& vertex_centrality)
-{
-  brandes_betweenness_centrality_wve(g, weight, vertex_centrality,
-                                     g.template get_edge_map<double>("centrality"));
-}
+  EdgeCentralityMap edge_centrality = 
+    in_edge_centrality? *in_edge_centrality 
+    : g.template get_edge_map<double>("centrality");
 
-template<typename Graph>
-inline void 
-brandes_betweenness_centrality_w
-  (Graph& g, 
-   const vector_property_map<double, typename Graph::EdgeIndexMap>& weight)
-{
-  brandes_betweenness_centrality_wv(g, weight, 
-                                    g.template get_vertex_map<double>("centrality"));
-}
-
-template<typename Graph>
-inline void 
-brandes_betweenness_centrality(Graph& g)
-{ 
-  brandes_betweenness_centrality_v(g, g.template get_vertex_map<double>("centrality")); 
+  if (weight) {
+    boost::brandes_betweenness_centrality
+      (g, 
+       weight_map(*weight).
+       centrality_map(vertex_centrality).
+       edge_centrality_map(edge_centrality).
+       vertex_index_map(g.get_vertex_index_map()));
+  } else {
+    boost::brandes_betweenness_centrality
+      (g, 
+       centrality_map(vertex_centrality).
+       edge_centrality_map(edge_centrality).
+       vertex_index_map(g.get_vertex_index_map()));
+  }
 }
 
 template<typename Graph>
 void 
 relative_betweenness_centrality
   (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& centrality)
-{ relative_betweenness_centrality(g, centrality); }
+   const vector_property_map<double, typename Graph::VertexIndexMap>* in_centrality)
+{ 
+  typedef vector_property_map<double, typename Graph::VertexIndexMap> 
+    CentralityMap;
+
+  CentralityMap centrality = 
+    in_centrality? *in_centrality 
+    : g.template get_vertex_map<double>("centrality");
+
+  relative_betweenness_centrality(g, centrality); 
+}
 
 template<typename Graph>
 double
 central_point_dominance
   (Graph& g, 
-   const vector_property_map<double, typename Graph::VertexIndexMap>& centrality)
-{ return boost::central_point_dominance(g, centrality); }
+   const vector_property_map<double, typename Graph::VertexIndexMap>* in_centrality)
+{ 
+  typedef vector_property_map<double, typename Graph::VertexIndexMap> 
+    CentralityMap;
+
+  CentralityMap centrality = 
+    in_centrality? *in_centrality 
+    : g.template get_vertex_map<double>("centrality");
+
+  return boost::central_point_dominance(g, centrality); 
+}
 
 void export_betweenness_centrality()
 {
+  using boost::python::arg;
+  using boost::python::def;
+
   // Graph
   def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality<Graph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_v<Graph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_ve<Graph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_w<Graph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_wv<Graph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_wve<Graph>);
+      &brandes_betweenness_centrality<Graph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0,
+       arg("edge_centrality_map") =
+         (vector_property_map<double, Digraph::EdgeIndexMap>*)0,
+       arg("weight_map") = 
+         (vector_property_map<double, Digraph::EdgeIndexMap>*)0));
   def("relative_betweenness_centrality", 
-      &relative_betweenness_centrality<Graph>);
-  def("central_point_dominance", &central_point_dominance<Graph>);
+      &relative_betweenness_centrality<Graph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Graph::VertexIndexMap>*)0));
+  def("central_point_dominance",
+      &central_point_dominance<Graph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Graph::VertexIndexMap>*)0));
 
   // Digraph
   def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality<Digraph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_v<Digraph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_ve<Digraph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_w<Digraph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_wv<Digraph>);
-  def("brandes_betweenness_centrality", 
-      &brandes_betweenness_centrality_wve<Digraph>);
+      &brandes_betweenness_centrality<Digraph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0,
+       arg("edge_centrality_map") =
+         (vector_property_map<double, Digraph::EdgeIndexMap>*)0,
+       arg("weight_map") = 
+         (vector_property_map<double, Digraph::EdgeIndexMap>*)0));
   def("relative_betweenness_centrality", 
-      &relative_betweenness_centrality<Digraph>);
-  def("central_point_dominance", &central_point_dominance<Digraph>);
+      &relative_betweenness_centrality<Digraph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0));
+  def("central_point_dominance",
+      &central_point_dominance<Digraph>,
+      (arg("graph"),
+       arg("vertex_centrality_map") = 
+         (vector_property_map<double, Digraph::VertexIndexMap>*)0));
 }
 
 } } } // end namespace boost::graph::python
