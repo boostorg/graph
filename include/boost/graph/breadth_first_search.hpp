@@ -109,6 +109,7 @@ namespace boost {
   make_bfs_visitor(Visitors vis) {
     return bfs_visitor<Visitors>(vis);
   }
+  typedef bfs_visitor<> default_bfs_visitor;
 
   template <class IncidenceGraph, class Buffer, class BFSVisitor, 
             class ColorMap>
