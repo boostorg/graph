@@ -36,19 +36,7 @@
 #include <memory>
 #include <algorithm>
 
-#if 0
-// Was having trouble with internal compiler errors from VC++.
-// Fixed by templating counting_iterator_policies and removing
-// its member template function. Once we are more confident
-// in the iterator adaptors for VC++, we can remove this macro.
-#define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
-#endif
-
-#ifndef BOOST_NO_ITERATOR_ADAPTORS
-#include <boost/pending/iterator_adaptors.hpp>
-#else
-#include <boost/graph/detail/incidence_iterator.hpp>
-#endif
+#include <boost/iterator_adaptors.hpp>
 
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -56,10 +44,9 @@
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/property.hpp>
-#include <boost/graph/detail/adjacency_iterator.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 
 // Symbol truncation problems with MSVC, trying to shorten names.
-#define edge_iter_traits eit_
 #define out_edge_iter_policies oeip_
 #define in_edge_iter_policies ieip_
 #define stored_edge se_
@@ -139,16 +126,6 @@ namespace boost {
     //=========================================================================
     // Out-Edge and In-Edge Iterator Implementation
 
-#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
-    template <class EdgeDescriptor, class EdgeIterCat, class EdgeIterDiff>
-    struct edge_iter_traits {
-      typedef EdgeDescriptor value_type;
-      typedef value_type reference;
-      typedef value_type* pointer;
-      typedef boost::multi_pass_input_iterator_tag iterator_category;
-      typedef EdgeIterDiff difference_type;
-    };
-
     template <class VertexDescriptor>
     struct out_edge_iter_policies : public boost::default_iterator_policies
     {
@@ -177,48 +154,20 @@ namespace boost {
       }
       VertexDescriptor m_src;
     };
-#endif
 
     //=========================================================================
     // Undirected Edge Iterator Implementation
 
-#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
     struct undirected_edge_iter_policies
       : public boost::default_iterator_policies
     {
       template <class EdgeDescriptor, class InEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).m_source, (*i).m_target, &i->get_property());
+        return EdgeDescriptor((*i).m_source, (*i).m_target,
+                              &i->get_property());
       }
     };
-#else
-    template <class EdgeIter, class Edge>
-    struct undirected_edge_iter
-    {
-      typedef undirected_edge_iter Self;
-      typedef Edge value_type;
-      typedef Edge reference;
-      typedef Edge* pointer;
-      typedef std::ptrdiff_t difference_type;
-      typedef std::bidirectional_iterator_tag iterator_category;
-      inline undirected_edge_iter() { }
-      inline undirected_edge_iter(const EdgeIter& i) : m_iter(i) { }
-      inline Self& operator++() { ++m_iter; return *this; }
-      inline Self operator++(int) { Self t=*this; ++m_iter; return t; }
-      inline Self& operator--() { --m_iter; return *this; }
-      inline Self operator--(int) { Self t=*this; --m_iter; return t; }
-      inline Edge operator*() const {
-        return Edge(m_iter->m_source, m_iter->m_target, 
-                    &m_iter->get_property());
-      }
-      inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
-      inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
-      EdgeIter& iter() { return m_iter; }
-      const EdgeIter& iter() const { return m_iter; }
-      EdgeIter m_iter;
-    };
-#endif
 
     //=========================================================================
     // Edge Storage Types (stored in the out-edge/in-edge lists)
@@ -1934,8 +1883,14 @@ namespace boost {
       }
       inline void clear() {
         m_vertices.clear();
+	clear_dispatch(edge_property_type());
+      }
+      template <typename Property>
+      inline void clear_dispatch(const Property&) {
         m_edges.clear();
       }
+      inline void clear_dispatch(const no_property&) { }
+
       inline vec_adj_list_impl(vertices_size_type _num_vertices)
         : m_vertices(_num_vertices) { }
 
@@ -2079,17 +2034,6 @@ namespace boost {
 
   namespace detail {
 
-    template <class P>
-    struct has_property { 
-      enum { value = true }; 
-      typedef true_type type;
-    };
-    template <>
-    struct has_property<no_property> { 
-      enum { value = false }; 
-      typedef false_type type; 
-    };
-
     //=========================================================================
     // Adjacency List Generator
 
@@ -2195,66 +2139,45 @@ namespace boost {
           OutEdgeList;
         typedef typename OutEdgeList::size_type degree_size_type;
         typedef typename OutEdgeList::iterator OutEdgeIter;
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
-        typedef std::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
+
+        typedef boost::detail::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
         typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
         typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
-#else
-        typedef boost::multi_pass_input_iterator_tag OutEdgeIterCat;
-        typedef std::ptrdiff_t OutEdgeIterDiff;
-#endif
 
-#if defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef detail::bidir_incidence_iterator<vertex_descriptor,
-         edge_descriptor, OutEdgeIter, detail::out_edge_tag> out_edge_iterator;
-#else
         typedef iterator_adaptor<OutEdgeIter, 
           out_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, OutEdgeIterCat, OutEdgeIterDiff>
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          OutEdgeIterDiff
         > out_edge_iterator;
-#endif
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
-        typedef typename adjacency_iterator<graph_type, vertex_descriptor,
-          out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
-#else
-        typedef bidir_adj_iter<vertex_descriptor,out_edge_iterator,
-                graph_type> adjacency_iterator;
-#endif
+        typedef typename adjacency_iterator_generator<graph_type,
+           vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
         typedef OutEdgeList InEdgeList;
         typedef OutEdgeIter InEdgeIter;
         typedef OutEdgeIterCat InEdgeIterCat;
         typedef OutEdgeIterDiff InEdgeIterDiff;
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, InEdgeIterCat, InEdgeIterDiff>
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          InEdgeIterDiff
         > in_edge_iterator;
-#else
-        typedef detail::bidir_incidence_iterator<vertex_descriptor,
-           edge_descriptor, InEdgeIter, detail::in_edge_tag> in_edge_iterator;
-#endif
 
         // Edge Iterator
-#if !defined BOOST_NO_STD_ITERATOR_TRAITS
-        typedef std::iterator_traits<EdgeIter> EdgeIterTraits;
+
+        typedef boost::detail::iterator_traits<EdgeIter> EdgeIterTraits;
         typedef typename EdgeIterTraits::iterator_category EdgeIterCat;
         typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
-#else
-        typedef OutEdgeIterCat EdgeIterCat;
-        typedef OutEdgeIterDiff EdgeIterDiff;
-#endif
 
-#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef boost::iterator_adaptor<EdgeIter,
-              undirected_edge_iter_policies,
-              edge_iter_traits<edge_descriptor, EdgeIterCat, EdgeIterDiff> > 
-          UndirectedEdgeIter;
-#else
-        typedef undirected_edge_iter<EdgeIter,edge_descriptor> UndirectedEdgeIter;
-#endif
+          undirected_edge_iter_policies,
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          EdgeIterDiff          
+        > UndirectedEdgeIter;
 
         typedef adj_list_edge_iterator<vertex_iterator, out_edge_iterator, 
            graph_type> DirectedEdgeIter;
@@ -2355,6 +2278,27 @@ namespace boost {
       }
     };
 
+    template <class Graph, class Property>
+    struct adj_list_vertex_all_properties_map
+      : public boost::put_get_at_helper<Property,
+          adj_list_vertex_all_properties_map<Graph, Property>
+        >
+    {
+      typedef typename Graph::stored_vertex StoredVertex;
+      typedef Property value_type;
+      typedef typename Graph::vertex_descriptor key_type;
+      typedef boost::lvalue_property_map_tag category;
+      inline adj_list_vertex_all_properties_map(Graph&) { }
+      inline value_type& operator[](key_type v) {
+        StoredVertex* sv = (StoredVertex*)v;
+        return sv->m_property;
+      }
+      inline const value_type& operator[](key_type v) const {
+        StoredVertex* sv = (StoredVertex*)v;
+        return sv->m_property;
+      }
+    };
+
     template <class Graph, class GraphRef, class Property, class Tag>
     struct vec_adj_list_vertex_property_map
       : public boost::put_get_at_helper<
@@ -2377,6 +2321,43 @@ namespace boost {
       GraphRef m_g;
     };
 
+    template <class Graph, class GraphRef, class Property>
+    struct vec_adj_list_vertex_all_properties_map
+      : public boost::put_get_at_helper<Property,
+          vec_adj_list_vertex_all_properties_map<Graph,GraphRef,Property>
+        >
+    {
+      typedef Property value_type;
+      typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
+      typedef boost::lvalue_property_map_tag category;
+      vec_adj_list_vertex_all_properties_map(GraphRef g) : m_g(g) { }
+      inline value_type& operator[](key_type v) {
+        return m_g.m_vertices[v].m_property;
+      }
+      inline const value_type& operator[](key_type v) const {
+        return m_g.m_vertices[v].m_property;
+      }
+      GraphRef m_g;
+    };
+
+    struct adj_list_any_vertex_pa {
+      template <class Tag, class Graph, class Property>
+      struct bind {
+        typedef adj_list_vertex_property_map
+          <Graph, Property, Tag> type;
+        typedef adj_list_vertex_property_map
+          <Graph, Property, Tag> const_type;
+      };
+    };
+    struct adj_list_all_vertex_pa {
+      template <class Tag, class Graph, class Property>
+      struct bind {
+        typedef typename Graph::vertex_descriptor Vertex;
+        typedef adj_list_vertex_all_properties_map<Graph,Property> type;
+        typedef adj_list_vertex_all_properties_map<Graph,Property> const_type;
+      };
+    };
+
     template <class Property, class Vertex>
     struct vec_adj_list_vertex_id_map
       : public boost::put_get_at_helper<
@@ -2385,7 +2366,7 @@ namespace boost {
     {
       typedef Vertex value_type;
       typedef Vertex key_type;
-      typedef boost::lvalue_property_map_tag category;
+      typedef boost::read_write_property_map_tag category;
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
       inline value_type operator[](key_type v) const { return v; }
@@ -2408,7 +2389,34 @@ namespace boost {
         typedef vec_adj_list_vertex_id_map<Property, Vertex> const_type;
       };
     };
+    struct vec_adj_list_all_vertex_pa {
+      template <class Tag, class Graph, class Property>
+      struct bind {
+        typedef typename Graph::vertex_descriptor Vertex;
+        typedef vec_adj_list_vertex_all_properties_map
+	  <Graph, Graph&, Property> type;
+        typedef vec_adj_list_vertex_all_properties_map
+	  <Graph, const Graph&, Property> const_type;
+      };
+    };
   namespace detail {
+    template <class Tag>
+    struct adj_list_choose_vertex_pa_helper {
+      typedef adj_list_any_vertex_pa type;
+    };
+    template <>
+    struct adj_list_choose_vertex_pa_helper<vertex_all_t> {
+      typedef adj_list_all_vertex_pa type;
+    };
+    template <class Tag, class Graph, class Property>
+    struct adj_list_choose_vertex_pa {
+      typedef typename adj_list_choose_vertex_pa_helper<Tag>::type Helper;
+      typedef typename Helper::template bind<Tag,Graph,Property> Bind;
+      typedef typename Bind::type type;
+      typedef typename Bind::const_type const_type;
+    };
+
+
     template <class Tag>
     struct vec_adj_list_choose_vertex_pa_helper {
       typedef vec_adj_list_any_vertex_pa type;
@@ -2417,7 +2425,10 @@ namespace boost {
     struct vec_adj_list_choose_vertex_pa_helper<vertex_index_t> {
       typedef vec_adj_list_id_vertex_pa type;
     };
-
+    template <>
+    struct vec_adj_list_choose_vertex_pa_helper<vertex_all_t> {
+      typedef vec_adj_list_all_vertex_pa type;
+    };
     template <class Tag, class Graph, class Property>
     struct vec_adj_list_choose_vertex_pa {
       typedef typename vec_adj_list_choose_vertex_pa_helper<Tag>::type Helper;
@@ -2450,24 +2461,77 @@ namespace boost {
       }
     };
 
+    template <class Directed, class Property, class Vertex>
+    struct adj_list_edge_all_properties_map
+      : public put_get_at_helper<Property,
+          adj_list_edge_all_properties_map<Directed, Property, Vertex>
+        >
+    {
+      typedef Property value_type;
+      typedef detail::edge_desc_impl<Directed, Vertex> key_type;
+      typedef boost::lvalue_property_map_tag category;
+      inline value_type& operator[](key_type e) {
+        return *(Property*)e.get_property();
+      }
+      inline const value_type& operator[](key_type e) const {
+        return *(const Property*)e.get_property();
+      }
+    };
+
   // Edge Property Maps
 
-  struct adj_list_edge_property_selector {
-    template <class Graph, class Property, class Tag>
-    struct bind {
-      typedef adj_list_edge_property_map
-         <typename Graph::directed_category, Property, 
-          typename Graph::vertex_descriptor,Tag> type;
-      typedef type const_type;
+  namespace detail {
+    struct adj_list_any_edge_pmap {
+      template <class Graph, class Property, class Tag>
+      struct bind {
+	typedef adj_list_edge_property_map
+	   <typename Graph::directed_category, Property, 
+	    typename Graph::vertex_descriptor,Tag> type;
+	typedef type const_type;
+      };
     };
-  };
+    struct adj_list_all_edge_pmap {
+      template <class Graph, class Property, class Tag>
+      struct bind {
+	typedef adj_list_edge_all_properties_map
+	   <typename Graph::directed_category, Property, 
+	    typename Graph::vertex_descriptor> type;
+	typedef type const_type;
+      };
+    };
+
+    template <class Tag>
+    struct adj_list_choose_edge_pmap_helper {
+      typedef adj_list_any_edge_pmap type;
+    };
+    template <>
+    struct adj_list_choose_edge_pmap_helper<edge_all_t> {
+      typedef adj_list_all_edge_pmap type;
+    };
+    template <class Tag, class Graph, class Property>
+    struct adj_list_choose_edge_pmap {
+      typedef typename adj_list_choose_edge_pmap_helper<Tag>::type Helper;
+      typedef typename Helper::template bind<Graph,Property,Tag> Bind;
+      typedef typename Bind::type type;
+      typedef typename Bind::const_type const_type;
+    };
+    struct adj_list_edge_property_selector {
+      template <class Graph, class Property, class Tag>
+      struct bind {
+	typedef adj_list_choose_edge_pmap<Tag,Graph,Property> Choice;
+	typedef typename Choice::type type;
+	typedef typename Choice::const_type const_type;
+      };
+    };
+  } // namespace detail
+
   template <>  
   struct edge_property_selector<adj_list_tag> {
-    typedef adj_list_edge_property_selector type;
+    typedef detail::adj_list_edge_property_selector type;
   };
   template <>  
   struct edge_property_selector<vec_adj_list_tag> {
-    typedef adj_list_edge_property_selector type;
+    typedef detail::adj_list_edge_property_selector type;
   };
 
   // Vertex Property Maps
@@ -2475,8 +2539,9 @@ namespace boost {
   struct adj_list_vertex_property_selector {
     template <class Graph, class Property, class Tag>
     struct bind {
-      typedef adj_list_vertex_property_map<Graph,Property,Tag> type;
-      typedef type const_type;
+      typedef detail::adj_list_choose_vertex_pa<Tag,Graph,Property> Choice;
+      typedef typename Choice::type type;
+      typedef typename Choice::const_type const_type;
     };
   };
   template <>  
@@ -2502,7 +2567,6 @@ namespace boost {
 #undef stored_edge
 #undef stored_edge_property
 #undef stored_edge_iter
-#undef edge_iter_traits
 #undef out_edge_iter_policies
 #undef in_edge_iter_policies
 
