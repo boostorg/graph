@@ -145,7 +145,7 @@ namespace boost {
           m_vis.edge_not_relaxed(e, g);
       }
       template <class Edge, class Graph>
-      void cycle_edge(Edge e, Graph& g) { }
+      void cycle_edge(Edge, Graph&) { }
 
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
@@ -158,7 +158,7 @@ namespace boost {
           m_vis.edge_not_relaxed(e, g);
       }
       template <class Edge, class Graph>
-      void black_target(Edge e, Graph& g) { }
+      void black_target(Edge, Graph&) { }
 
       template <class Vertex, class Graph>
       void finish_vertex(Vertex u, Graph& g) {
