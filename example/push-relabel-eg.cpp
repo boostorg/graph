@@ -81,7 +81,7 @@ main()
 #ifdef BOOST_MSVC
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
   long flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev,
-				    indexmap);
+                                    indexmap);
 #else
   long flow = push_relabel_max_flow(g, s, t);
 #endif

@@ -149,7 +149,7 @@ int main(int,char*[])
                         make_label_writer(name),
                         make_label_writer(trans_delay),
                         make_graph_attributes_writer(graph_attr, vertex_attr, 
-						     edge_attr));
+                                                     edge_attr));
   
   return 0;
 }

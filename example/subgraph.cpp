@@ -63,12 +63,12 @@ int main(int,char*[])
 
   const int N = 6;
   Graph G0(N);
-  enum { A, B, C, D, E, F};	// for conveniently refering to vertices in G0
+  enum { A, B, C, D, E, F};     // for conveniently refering to vertices in G0
 
   Graph& G1 = G0.create_subgraph();
   Graph& G2 = G0.create_subgraph();
-  enum { A1, B1, C1 };		// for conveniently refering to vertices in G1
-  enum { A2, B2 };		// for conveniently refering to vertices in G2
+  enum { A1, B1, C1 };          // for conveniently refering to vertices in G1
+  enum { A2, B2 };              // for conveniently refering to vertices in G2
 
   add_vertex(C, G1); // global vertex C becomes local A1 for G1
   add_vertex(E, G1); // global vertex E becomes local B1 for G1

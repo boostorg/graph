@@ -87,20 +87,20 @@ main()
 {
   std::cout <<
     "This program explores the girth and diameter of Ramanujan graphs." 
-	    << std::endl;
+            << std::endl;
   std::cout <<
     "The bipartite graphs have q^3-q vertices, and the non-bipartite" 
-	    << std::endl;
+            << std::endl;
   std::cout << 
     "graphs have half that number. Each vertex has degree p+1." 
-	    << std::endl;
+            << std::endl;
   std::cout << "Both p and q should be odd prime numbers;" << std::endl;
   std::cout << "  or you can try p = 2 with q = 17 or 43." << std::endl;
 
   while (1) {
 
     std::cout << std::endl
-	      << "Choose a branching factor, p: ";
+              << "Choose a branching factor, p: ";
     long p = 0, q = 0;
     std::cin >> p;
     if (p == 0)
@@ -114,7 +114,7 @@ main()
     g = raman(p, q, 0L, 0L);
     if (g == 0) {
       std::cerr << " Sorry, I couldn't make that graph (error code "
-	<< panic_code << ")" << std::endl;
+        << panic_code << ")" << std::endl;
       continue;
     }
     distance_list.clear();
@@ -141,11 +141,11 @@ main()
 
     for (long d = 1; distance_list[d] != 0; ++d)
       std::cout << distance_list[d] << " vertices at distance " << d
-		<< (distance_list[d+1] != 0 ? "," : ".") << std::endl;
+                << (distance_list[d+1] != 0 ? "," : ".") << std::endl;
 
     std::cout << "So the diameter is " << k - 1
-	      << ", and the girth is " << girth
-	      << "." << std::endl;
+              << ", and the girth is " << girth
+              << "." << std::endl;
   } // end while
 
   return 0;

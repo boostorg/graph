@@ -51,7 +51,7 @@ bool check_transitive_closure(Graph& g, GraphTC& tc)
     typename graph_traits<GraphTC>::out_edge_iterator j, j_end;
     for (tie(j, j_end) = out_edges(*i, tc); j != j_end; ++j)
       if (!is_reachable(source(*j, g), target(*j, g), g, &color_map_vec[0]))
-	return false;
+        return false;
   }
   return true;
 }

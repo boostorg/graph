@@ -68,9 +68,9 @@ main(int, char *[])
   // VC++ has trouble with the named parameters mechanism
   property_map<graph_t, vertex_index_t>::type indexmap = get(vertex_index, g);
   dijkstra_shortest_paths(g, s, &p[0], &d[0], weightmap, indexmap, 
-			  std::less<int>(), closed_plus<int>(), 
-			  std::numeric_limits<int>::max(), 0,
-			  default_dijkstra_visitor());
+                          std::less<int>(), closed_plus<int>(), 
+                          std::numeric_limits<int>::max(), 0,
+                          default_dijkstra_visitor());
 #else
   dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 #endif

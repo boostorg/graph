@@ -75,15 +75,15 @@ int main(int, char*[])
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
   int num = strong_components(G, &component[0], 
-			      root_map(&root[0]).
-			      color_map(&color[0]).
-			      discover_time_map(&discover_time[0]));
+                              root_map(&root[0]).
+                              color_map(&color[0]).
+                              discover_time_map(&discover_time[0]));
     
   std::cout << "Total number of components: " << num << std::endl;
   std::vector<int>::size_type i;
   for (i = 0; i != component.size(); ++i)
     std::cout << "Vertex " << name[i]
-	 <<" is in component " << component[i] << std::endl;
+         <<" is in component " << component[i] << std::endl;
     
   return 0;
 }

@@ -60,9 +60,9 @@ main()
 {
   typedef std::pair<std::size_t,std::size_t> Edge;
   Edge edges[6] = { Edge(0,3), Edge(0,2), Edge(0, 3),
-		    Edge(1,3),
-		    Edge(2, 0),
-		    Edge(3, 2) };
+                    Edge(1,3),
+                    Edge(2, 0),
+                    Edge(3, 2) };
 
 #ifdef BOOST_MSVC
   // VC++ can't handle iterator constructor

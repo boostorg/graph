@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   g = (filename ? restore_graph(filename) : roget(n, d, p, s));
   if (g == NULL) {
     fprintf(stderr, "Sorry, can't create the graph! (error code %ld)\n",
-	    panic_code);
+            panic_code);
     return -1;
   }
   printf("Reachability analysis of %s\n\n", g->id);
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
     if (strong_comp[c].size() > 1) {
       std::cout << " also includes:\n";
       for (i = 1; i < strong_comp[c].size(); ++i)
-	std::cout << " " << specs(strong_comp[c][i]) << std::endl;
+        std::cout << " " << specs(strong_comp[c][i]) << std::endl;
     } else
       std::cout << std::endl;
   }
@@ -134,14 +134,14 @@ int main(int argc, char* argv[])
       vertex_t v = strong_comp[c][i];
       graph_traits<Graph*>::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
-	vertex_t x = target(*ei, g);
-	int comp_x = comp[index_map[x]];
-	if (comp_x != c && mark[comp_x] != c) {
-	  mark[comp_x] = c;
-	  vertex_t w = strong_comp[comp_x][0];
-	  std::cout << specs(u) << " -> " << specs(w)
-		    << " (e.g., " << specs(v) << " -> " << specs(x) << ")\n";
-	} // if
+        vertex_t x = target(*ei, g);
+        int comp_x = comp[index_map[x]];
+        if (comp_x != c && mark[comp_x] != c) {
+          mark[comp_x] = c;
+          vertex_t w = strong_comp[comp_x][0];
+          std::cout << specs(u) << " -> " << specs(w)
+                    << " (e.g., " << specs(v) << " -> " << specs(x) << ")\n";
+        } // if
       } // for
     } // for
   } // for

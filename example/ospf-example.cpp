@@ -85,17 +85,17 @@ main()
   {
     std::ofstream out("figs/ospf-sptree.dot");
     out << "digraph loops {\n"
-	<< "size=\"3,3\"\n"
-	<< "ratio=\"fill\"\n"
-	<< "shape=\"box\"\n";
+        << "size=\"3,3\"\n"
+        << "ratio=\"fill\"\n"
+        << "shape=\"box\"\n";
     graph_traits<Graph>::vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
       out << *vi << "[";
       for (std::map<std::string,std::string>::iterator ai = vattr_map[*vi].begin();
-	   ai != vattr_map[*vi].end(); ++ai) {
-	out << ai->first << "=" << ai->second;
-	if (next(ai) != vattr_map[*vi].end())
-	  out << ", ";
+           ai != vattr_map[*vi].end(); ++ai) {
+        out << ai->first << "=" << ai->second;
+        if (next(ai) != vattr_map[*vi].end())
+          out << ", ";
       }
       out<< "]";
     }
@@ -104,10 +104,10 @@ main()
       out << source(*ei, g) << " -> " << target(*ei, g) << "[";
       std::map<std::string,std::string>& attr_map = eattr_map[*ei];
       for (std::map<std::string,std::string>::iterator eai = attr_map.begin();
-	   eai != attr_map.end(); ++eai) {
-	out << eai->first << "=" << eai->second;
-	if (next(eai) != attr_map.end())
-	  out << ", ";
+           eai != attr_map.end(); ++eai) {
+        out << eai->first << "=" << eai->second;
+        if (next(eai) != attr_map.end())
+          out << ", ";
       }
       out<< "]";
     }

@@ -124,7 +124,7 @@ struct dfs_test
 
         dfs_test_visitor<ColorMap, vertex_descriptor*,
           int*, int*> vis(color, &parent[0], 
-			  &discover_time[0], &finish_time[0]);
+                          &discover_time[0], &finish_time[0]);
 
         boost::depth_first_search(g, visitor(vis).color_map(color));
 

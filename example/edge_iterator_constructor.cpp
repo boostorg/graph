@@ -88,17 +88,17 @@ protected:
     m_end_marker = (*m_stream) ? true : false;
   }
   friend bool operator==(const edge_stream_iterator& x,
-			 const edge_stream_iterator& y);
+                         const edge_stream_iterator& y);
 
 };
 bool operator==(const edge_stream_iterator& x,
-		const edge_stream_iterator& y)
+                const edge_stream_iterator& y)
 {
   return (x.m_stream == y.m_stream && x.m_end_marker == y.m_end_marker) 
     || x.m_end_marker == false && y.m_end_marker == false;
 }
 bool operator!=(const edge_stream_iterator& x,
-		const edge_stream_iterator& y)
+                const edge_stream_iterator& y)
 {
   return !(x == y);
 }

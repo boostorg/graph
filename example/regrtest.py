@@ -85,7 +85,7 @@ def compile( program ):
 
   elif sys.platform == "sunos5":
     if compiler_arg == "*" or compiler_arg =="suncc":
-	invoke("Sun WorkShop 6 2000/04/07 C++ 5.1", 'CC -c -I' + path + ' ' + fullpath )
+        invoke("Sun WorkShop 6 2000/04/07 C++ 5.1", 'CC -c -I' + path + ' ' + fullpath )
     if compiler_arg == "*" or compiler_arg == "gcc":
       invoke( "GCC 2.95.2", 'g++ -Wall -pedantic -ftemplate-depth-30 -Wno-long-long -c -I' + path + ' ' + fullpath )
     if compiler_arg == "*" or compiler_arg == "kcc":
@@ -151,9 +151,9 @@ def library():
 
   #if compiler_arg=="*" or compiler_arg=="vc":
   #  command='cl /nologo /MDd /W3 /GR /GX /Zi /Od /GZ /I "' + path + '" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB /c"'
-  #	command=command + " " + path + "/libs/" + ...
+  #     command=command + " " + path + "/libs/" + ...
   #  invoke( "VC++ with MS library", command )
-	      
+              
 #    invoke( "MS Lib with MS library", 'lib /nologo /out:"boost_vc.lib" boost_timer_vc.obj boost_prg_timer_vc.obj boost_prg_display_vc.obj' )
 
   #if compiler_arg=="*" or compiler_arg=="vcstlport":

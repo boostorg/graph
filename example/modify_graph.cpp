@@ -202,8 +202,8 @@ void modify_demo(MutableGraph& g)
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
       typename GraphTraits::adjacency_iterator ai, ai_end;
       for (tie(ai, ai_end) = adjacent_vertices(*vi, g);
-	   ai != ai_end; ++ai)
-	assert(*ai != u);
+           ai != ai_end; ++ai)
+        assert(*ai != u);
     }
   }
 }

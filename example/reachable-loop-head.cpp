@@ -64,17 +64,17 @@ main(int argc, char *argv[])
 #ifdef BOOST_MSVC
   // VC++ has trouble with the get_property() functions
   loops_out << "digraph G  {\n"
-	    << "size=\"3,3\"\n"
-	    << "ratio=\"fill\"\n"
-	    << "shape=\"box\"\n";
+            << "size=\"3,3\"\n"
+            << "ratio=\"fill\"\n"
+            << "shape=\"box\"\n";
   graph_traits<GraphvizDigraph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     loops_out << *vi << "[";
     for (std::map<std::string,std::string>::iterator ai = vattr_map[*vi].begin();
-	 ai != vattr_map[*vi].end(); ++ai) {
+         ai != vattr_map[*vi].end(); ++ai) {
       loops_out << ai->first << "=" << ai->second;
       if (next(ai) != vattr_map[*vi].end())
-	loops_out << ", ";
+        loops_out << ", ";
     }
     loops_out<< "]";
   }
@@ -85,10 +85,10 @@ main(int argc, char *argv[])
     loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
     std::map<std::string,std::string>& attr_map = eattr_map[*ei];
     for (std::map<std::string,std::string>::iterator eai = attr_map.begin();
-	 eai != attr_map.end(); ++eai) {
+         eai != attr_map.end(); ++eai) {
       loops_out << eai->first << "=" << eai->second;
       if (next(eai) != attr_map.end())
-	loops_out << ", ";
+        loops_out << ", ";
     }
     loops_out<< "]";
   }

@@ -49,7 +49,7 @@ void print(GraphvizDigraph& g) {
   for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
     std::cout << vertex_label(*i, g) << " --> ";
     for (boost::tie(ei,edge_end) = boost::out_edges(*i, g); 
-	 ei != edge_end; ++ei)
+         ei != edge_end; ++ei)
       std::cout << vertex_label(boost::target(*ei, g), g) << "  ";
     std::cout << std::endl;
   }
@@ -63,18 +63,18 @@ void print(GraphvizDigraph& g) {
 
 int main(int argc, char* argv[]) {
   std::cout << "This is an example to demonstrate how to read graphviz file"
-	    << std::endl 
-	    << "and how to write graph to graphviz format."
-	    << std::endl 
-	    << std::endl 
-    	    << std::endl;
+            << std::endl 
+            << "and how to write graph to graphviz format."
+            << std::endl 
+            << std::endl 
+            << std::endl;
 
   std::cout << "Usage: " << argv[0] << "  <input>.dot  <output>.dot " 
-	    << std::endl;
+            << std::endl;
   std::cout << "If only have one xxx.dot in command line," << std::endl 
-	    << "the second dot is graphviz_test_new.dot by default." << std::endl
-	    << "If there is no input and output dot file in command line, "
-	    << "input is graphviz_test.dot and output graphviz_test_new.dot." << std::endl;
+            << "the second dot is graphviz_test_new.dot by default." << std::endl
+            << "If there is no input and output dot file in command line, "
+            << "input is graphviz_test.dot and output graphviz_test_new.dot." << std::endl;
 
   std::string filename = "graphviz_test.dot";
 

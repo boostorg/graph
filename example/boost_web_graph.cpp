@@ -64,7 +64,7 @@ public:
   template <class Graph>
   void 
   discover_vertex(typename boost::graph_traits<Graph>::vertex_descriptor v,
-	    Graph&)
+            Graph&)
   {
     typedef typename boost::property_traits<DistanceMap>::value_type Dist;
     // indentation based on depth
@@ -203,7 +203,7 @@ main()
   breadth_first_search
     (g, src, 
      boost::visitor(make_bfs_visitor(record_predecessors(&parent[0],
-							 on_tree_edge()))));
+                                                         on_tree_edge()))));
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));

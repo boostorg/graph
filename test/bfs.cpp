@@ -156,8 +156,8 @@ struct bfs_test
           vis(start, &distance[0], &parent[0], &color[0]);
 
         boost::breadth_first_search(g, start, 
-				    visitor(vis).
-				    color_map(&color[0]));
+                                    visitor(vis).
+                                    color_map(&color[0]));
         
         // All white vertices should be unreachable from the source.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)

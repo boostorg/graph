@@ -37,9 +37,9 @@ int main()
     readable_property_map_archetype<vertex_t, int> index;
     read_write_property_map_archetype<vertex_t, std::size_t> distance;
     dijkstra_shortest_paths(g, s, 
-			    vertex_index_map(index).
-			    weight_map(weight).
-			    distance_map(distance));
+                            vertex_index_map(index).
+                            weight_map(weight).
+                            distance_map(distance));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -54,8 +54,8 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     dijkstra_shortest_paths(g, s,
-			    predecessor_map(pred).
-			    weight_map(weight));
+                            predecessor_map(pred).
+                            weight_map(weight));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -69,8 +69,8 @@ int main()
     read_write_property_map_archetype<vertex_t, vertex_t> pred;
     readable_property_map_archetype<vertex_t, int> index;
     dijkstra_shortest_paths(g, s,
-			    predecessor_map(pred).
-			    vertex_index_map(index));
+                            predecessor_map(pred).
+                            vertex_index_map(index));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -93,12 +93,12 @@ int main()
     dijkstra_visitor<> vis;
 
     dijkstra_shortest_paths(g, s, color_map(color).
-			    vertex_index_map(index).
-			    weight_map(weight).
-			    distance_map(distance).
-			    distance_combine(combine).
-			    distance_compare(compare).
-			    visitor(vis));
+                            vertex_index_map(index).
+                            weight_map(weight).
+                            distance_map(distance).
+                            distance_combine(combine).
+                            distance_compare(compare).
+                            visitor(vis));
   }
   return 0;
 }

@@ -144,8 +144,8 @@ int main(int , char* [])
     (G, s, 
      boost::visitor(boost::make_neighbor_bfs_visitor
      (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
-		     boost::record_predecessors(&p[0], 
-						 boost::on_tree_edge())))));
+                     boost::record_predecessors(&p[0], 
+                                                 boost::on_tree_edge())))));
 
   boost::print_graph(G);
 

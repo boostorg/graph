@@ -108,9 +108,9 @@ main(int, char*[])
   cout << "DFS categorized directed graph" << endl;
   depth_first_search(G, visitor(make_dfs_visitor(
       make_list(print_edge("tree", on_tree_edge()),
-		print_edge("back", on_back_edge()),
-		print_edge("forward or cross", on_forward_or_cross_edge())
-		))));
+                print_edge("back", on_back_edge()),
+                print_edge("forward or cross", on_forward_or_cross_edge())
+                ))));
 
   cout << endl << "BFS categorized directed graph" << endl;
   boost::breadth_first_search

@@ -53,8 +53,8 @@ int test_main(int argc, char* argv[])
     std::vector<vertex_t> vertex_set;
     std::vector< std::pair<vertex_t, vertex_t> > edge_set;
     generate_random_graph(g, N, N * 2, gen, 
-			  std::back_inserter(vertex_set),
-			  std::back_inserter(edge_set));
+                          std::back_inserter(vertex_set),
+                          std::back_inserter(edge_set));
 
     graph_test< subgraph_t > gt;
 
@@ -80,7 +80,7 @@ int test_main(int argc, char* argv[])
       verts.insert(random_vertex(g, gen));
 
     for (std::set<vertex_t>::iterator i = verts.begin();
-	i != verts.end(); ++i) {
+        i != verts.end(); ++i) {
       vertex_t v_global = *i;
       vertex_t v = add_vertex(v_global, g_s);
       sub_vertex_set.push_back(v);
@@ -91,9 +91,9 @@ int test_main(int argc, char* argv[])
     // compute induced edges
     BGL_FORALL_EDGES(e, g, subgraph_t)
       if (contains(sub_global_map, source(e, g))
-	  && contains(sub_global_map, target(e, g)))
-	sub_edge_set.push_back(std::make_pair(global_sub_map[source(e, g)],
-					      global_sub_map[target(e, g)]));
+          && contains(sub_global_map, target(e, g)))
+        sub_edge_set.push_back(std::make_pair(global_sub_map[source(e, g)],
+                                              global_sub_map[target(e, g)]));
 
     gt.test_incidence_graph(sub_vertex_set, sub_edge_set, g_s);
     gt.test_bidirectional_graph(sub_vertex_set, sub_edge_set, g_s);

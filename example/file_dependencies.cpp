@@ -169,13 +169,13 @@ int main(int,char*[])
     // Run best-first-search from each vertex with zero in-degree.
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0) {
-	std::vector<graph_traits<Graph>::vertex_descriptor> 
-	  pred(num_vertices(g));
-	property_map<Graph, vertex_index_t>::type 
-	  indexmap = get(vertex_index, g);
+        std::vector<graph_traits<Graph>::vertex_descriptor> 
+          pred(num_vertices(g));
+        property_map<Graph, vertex_index_t>::type 
+          indexmap = get(vertex_index, g);
         dijkstra_shortest_paths_no_init
-	  (g, *i, &pred[0], &time[0], weight, indexmap, 
-	   compare, combine, 0, 0, default_dijkstra_visitor());
+          (g, *i, &pred[0], &time[0], weight, indexmap, 
+           compare, combine, 0, 0, default_dijkstra_visitor());
       }
     }
 

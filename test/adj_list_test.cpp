@@ -41,8 +41,8 @@ main()
         system("rm -f graph.exe graph.o graph.obj");
         // the following system call should be replaced by a
         // portable "compile" command.
-	const char* compile = "g++ -I.. -O2 -Wall -Wno-long-long -ftemplate-depth-30 ../libs/graph/test/graph.cpp -o graph.exe";
-	std::cout << compile << std::endl;
+        const char* compile = "g++ -I.. -O2 -Wall -Wno-long-long -ftemplate-depth-30 ../libs/graph/test/graph.cpp -o graph.exe";
+        std::cout << compile << std::endl;
         rc = system(compile);
         if (rc != 0) {
           std::cerr << "compile failed for " << container_types[i] << " "
