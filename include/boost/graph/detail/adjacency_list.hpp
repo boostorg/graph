@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.2  2000/09/18 09:32:27  jsiek
+// few typos
+//
 // Revision 1.1  2000/09/18 08:17:13  jsiek
 // new files for boost graph library
 //
@@ -68,6 +71,12 @@
 #include <boost/property_accessor.hpp>
 #include <boost/operators.hpp>
 #include <boost/pending/iterator_adaptors.hpp>
+
+// The iterator adaptors cause internal compiler errors for VC++,
+// and efforts to track down the cause have not yet been successful.
+#ifdef BOOST_MSVC
+#define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
+#endif
 
 #ifndef BOOST_NO_ITERATOR_ADAPTORS
 #include <boost/pending/iterator_adaptors.hpp>
@@ -1557,7 +1566,7 @@ namespace boost {
     template <class Tag, class Graph, class Plugin>
     struct vec_adj_list_choose_vertex_pa {
       typedef typename vec_adj_list_choose_vertex_pa_helper<Tag>::type Helper;
-      typedef typename Helper::BOOST_TEMPLATE bind<Tag,Graph,Plugin> Bind;
+      typedef typename Helper::template bind<Tag,Graph,Plugin> Bind;
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
     };
@@ -1638,5 +1647,9 @@ namespace boost {
 
 
 } // namespace boost
+
+#ifdef BOOST_NO_ITERATOR_ADAPTORS
+#undef BOOST_NO_ITERATOR_ADAPTORS
+#endif
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
