@@ -24,15 +24,15 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 //
-#ifndef BOOST_GRAPH_DETAIL_EDGE_H
-#define BOOST_GRAPH_DETAIL_EDGE_H
+#ifndef BOOST_GRAPH_DETAIL_EDGE_HPP
+#define BOOST_GRAPH_DETAIL_EDGE_HPP
 
 #include <iosfwd>
 
 namespace boost {
 
-
   namespace  detail {
+
     template <class Directed, class Vertex>
     struct edge_base {
       inline edge_base() {} 
@@ -42,29 +42,6 @@ namespace boost {
       Vertex m_target;
     };
 
-    template <class Edge>
-    inline bool edge_equal(const Edge& a, const Edge& b, directed_tag) {
-      return a.m_source == b.m_source && a.m_target == b.m_target;
-    }
-    template <class Edge>
-    inline bool edge_equal(const Edge& a, const Edge& b, undirected_tag) {
-      return a.m_source == b.m_source && a.m_target == b.m_target
-        || a.m_source == b.m_target && a.m_target == b.m_source;
-    }
-    
-    template <class Edge>
-    inline bool edge_less(const Edge& a, const Edge& b, directed_tag) {
-      return a.m_source < b.m_source && a.m_target < b.m_target;
-    }
-    // yes, this is a bit weird to define less than for an undirected
-    // edge, but we need it to for putting the edges in std::set.
-    // Perhaps should just make a specialized functor to pass to set...
-    template <class Edge>
-    inline bool edge_less(const Edge& a, const Edge& b, undirected_tag) {
-      return !edge_equal(a, b, undirected_tag()) 
-            && edge_less(a, b, directed_tag());
-    }
-    
     template <class Directed, class Vertex>
     class edge_desc_impl  : public edge_base<Directed,Vertex> {
       typedef edge_desc_impl                              self;
@@ -74,7 +51,7 @@ namespace boost {
       
       inline edge_desc_impl() : m_eproperty(0) {} 
       
-      inline edge_desc_impl(Vertex s, Vertex d, const property_type* eplug = 0)
+      inline edge_desc_impl(Vertex s, Vertex d, const property_type* eplug)
         : Base(s,d), m_eproperty(const_cast<property_type*>(eplug)) { }
       
       property_type* get_property() { return m_eproperty; }
@@ -83,27 +60,21 @@ namespace boost {
       //  protected:
       property_type* m_eproperty;
     };
-    
 
-  template <class D, class V>
-  inline bool
-  operator==(const detail::edge_base<D,V>& a, const detail::edge_base<D,V>& b)
-  {
-    return detail::edge_equal(a, b, D());
-  }
-  template <class D, class V>
-  inline bool
-  operator!=(const detail::edge_base<D,V>& a, const detail::edge_base<D,V>& b)
-  {
-    return ! detail::edge_equal(a, b, D());
-  }
-  template <class D, class V>
-  inline bool
-  operator<(const detail::edge_base<D,V>& a, const detail::edge_base<D,V>& b)
-  {
-    return detail::edge_less(a, b, D());
-  }
-
+    template <class D, class V>
+    inline bool
+    operator==(const detail::edge_desc_impl<D,V>& a, 
+               const detail::edge_desc_impl<D,V>& b)
+    {
+      return a.get_property() == b.get_property();
+    }
+    template <class D, class V>
+    inline bool
+    operator!=(const detail::edge_desc_impl<D,V>& a, 
+               const detail::edge_desc_impl<D,V>& b)
+    {
+      return ! (a.get_property() == b.get_property());
+    }
 
   } //namespace detail
   
@@ -117,4 +88,4 @@ operator<<(std::ostream& os, const boost::detail::edge_desc_impl<D,V>& e)
 }
 
 
-#endif /*BOOST_GRAPH_DETAIL_DETAIL::EDGE_H*/
+#endif // BOOST_GRAPH_DETAIL_DETAIL_EDGE_HPP
