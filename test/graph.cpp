@@ -447,5 +447,7 @@ int main(int, char* [])
     }
 
   }
+  if (ret == 0)
+    std::cout << "tests passed" << std::endl;
   return ret;
 }
