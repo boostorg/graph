@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <string>
-#include <boost/graph/maximum_flow.hpp>
+#include <boost/graph/push_relabel_max_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -56,19 +56,20 @@ main()
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
   long flow;
-  flow = maximum_flow(g, s, t, capacity, residual_capacity,
-		      rev, get(vertex_index, g));
-  
-  std::cout << "total flow: " << flow << std::endl;
+  flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity,
+			       rev, get(vertex_index, g));
 
-  std::cout << "flow values:" << std::endl;
+  std::cout << "c  The total flow:" << std::endl;
+  std::cout << "s " << flow << std::endl << std::endl;
+
+  std::cout << "c flow values:" << std::endl;
   graph_traits<Graph>::vertex_iterator u_iter, u_end;
   graph_traits<Graph>::out_edge_iterator ei, e_end;
   for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
     for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] > 0)
-	std::cout << "flow(" << *u_iter << "," << target(*ei, g) << ") = " 
-		  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
+        std::cout << "f " << *u_iter << " " << target(*ei, g) << " " 
+                  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
   
   return 0;
 }

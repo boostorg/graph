@@ -1,13 +1,15 @@
-total flow: 4
-flow values:
-flow(0,1) = 4
-flow(1,2) = 4
-flow(2,3) = 2
-flow(2,4) = 2
-flow(3,1) = 0
-flow(3,6) = 2
-flow(4,5) = 3
-flow(5,6) = 0
-flow(5,7) = 3
-flow(6,4) = 1
-flow(6,7) = 1
+c  The total flow:
+s 4
+
+c flow values:
+f 0 1 4
+f 1 2 4
+f 2 3 2
+f 2 4 2
+f 3 1 0
+f 3 6 2
+f 4 5 3
+f 5 6 0
+f 5 7 3
+f 6 4 1
+f 6 7 1
