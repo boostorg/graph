@@ -229,7 +229,7 @@ Provides information about whether the graph is directed
 <br><br>
 This describes whether the graph class allows the insertion of
 parallel edges (edges with the same source and target). The two tags
-are <TT>allow_parallel_edge-_tag</TT> and
+are <TT>allow_parallel_edge_tag</TT> and
 <TT>disallow_parallel_edge_tag</TT>.
 
 <hr>
@@ -270,16 +270,16 @@ in the filtered graph.
 <pre>
 filtered_graph(Graph&amp;&nbsp;g, EdgePredicate&nbsp;ep, VertexPredicate&nbsp;vp)
 </pre>
-Create a filtered graph based on the graph \coe{g} and the
-edge filter \code{ep} and vertex filter \code{vp}.
+Create a filtered graph based on the graph <i>g</i> and the
+edge filter <i>ep</i> and vertex filter <i>vp</i>.
 
 <hr>
 
 <pre>
 filtered_graph(Graph&amp;&nbsp;g, EdgePredicate&nbsp;ep)
 </pre>
-Create a filtered graph based on the graph \coe{g} and the
-edge filter \code{ep}. All vertices from the original graph
+Create a filtered graph based on the graph <i>g</i> and the
+edge filter <i>ep</i>. All vertices from the original graph
 are retained.
 
 <hr>
@@ -287,7 +287,7 @@ are retained.
 filtered_graph(const&nbsp;filtered_graph&amp;&nbsp;x)
 </pre>
 This creates a filtered graph for the same underlying graph
-as \code{x}. Anotherwords, this is a shallow copy.
+as <i>x</i>. Anotherwords, this is a shallow copy.
 
 <hr>
 
@@ -295,7 +295,7 @@ as \code{x}. Anotherwords, this is a shallow copy.
 filtered_graph&amp; operator=(const&nbsp;filtered_graph&amp;&nbsp;x)
 </pre>
 This creates a filtered graph for the same underlying graph
-as \code{x}. Anotherwords, this is a shallow copy.
+as <i>x</i>. Anotherwords, this is a shallow copy.
 
 <hr>
 
