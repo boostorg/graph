@@ -24,9 +24,9 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#include <iostream>                         // for std::cout
-#include <utility>                         // for std::pair
-#include <algorithm>                         // for std::for_each
+#include <iostream>                      // for std::cout
+#include <utility>                       // for std::pair
+#include <algorithm>                     // for std::for_each
 #include <boost/utility.hpp>             // for boost::tie
 #include <boost/graph/graph_traits.hpp>  // for boost::graph_traits
 #include <boost/graph/adjacency_list.hpp>
@@ -129,19 +129,17 @@ int main(int,char*[])
   std::for_each(vertices(g).first, vertices(g).second,
                 exercise_vertex<Graph>(g));
   
-  std::ofstream out("quick-tour.dot");
-
   std::map<std::string,std::string> graph_attr, vertex_attr, edge_attr;
   graph_attr["size"] = "3,3";
   graph_attr["rankdir"] = "LR";
   graph_attr["ratio"] = "fill";
   vertex_attr["shape"] = "circle";
 
-  boost::write_graphviz(out, g, 
-                        make_vertex_label_writer(name),
-                        make_edge_label_writer(trans_delay),
-                        make_graph_attr_writer(graph_attr, vertex_attr, 
-                                               edge_attr));
+  boost::write_graphviz(std::cout, g, 
+                        make_label_writer(name),
+                        make_label_writer(trans_delay),
+                        make_graph_attributes_writer(graph_attr, vertex_attr, 
+						     edge_attr));
   
   return 0;
 }
