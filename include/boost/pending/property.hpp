@@ -33,7 +33,6 @@ namespace boost {
     typedef typename Property::kind type;
   };
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZAATION
   // The property_num is only needed for no partial spec. workaround
   // in detail::same_property.
 
@@ -41,7 +40,6 @@ namespace boost {
   struct property_num {
     enum { value = Property::num };
   };
-#endif
 
 
 } // namespace boost
