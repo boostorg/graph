@@ -19,6 +19,7 @@ graph-test scc.cpp <lib>../build/bgl-viz ;
 graph-test strong_components.cpp <lib>../build/bgl-viz ;
 graph-test strong-components.cpp  ;
 graph-test subgraph.cpp  ;
+graph-test subgraph_properties.cpp  ;
 graph-test topo-sort1.cpp  ;
 graph-test topo-sort2.cpp  ;
 graph-test topo_sort.cpp  ;
