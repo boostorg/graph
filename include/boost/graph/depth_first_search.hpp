@@ -207,11 +207,10 @@ namespace boost {
 
   } // namespace detail
 
-  template <class VertexListGraph, class DFSVisitor, class ColorMap,
-            class Vertex>
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
-                     Vertex start_vertex)
+                     typename graph_traits<VertexListGraph>::vertex_descriptor start_vertex)
   {
     function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typedef typename property_traits<ColorMap>::value_type ColorValue;
