@@ -57,8 +57,7 @@ main()
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
   long flow;
-  flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity,
-                               rev, get(vertex_index, g));
+  flow = push_relabel_max_flow(g, s, t);
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
