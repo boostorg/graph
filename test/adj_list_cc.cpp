@@ -41,13 +41,12 @@ int main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
@@ -61,12 +60,12 @@ int main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef adjacency_list< listS, listS, directedS, 
@@ -79,10 +78,12 @@ int main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires< 
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef adjacency_list< listS, listS, undirectedS, 
@@ -95,10 +96,12 @@ int main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   // Checking adjacency_list with EdgeList=setS
   {
@@ -113,12 +116,12 @@ int main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef adjacency_list< setS, listS, directedS, 
@@ -131,10 +134,12 @@ int main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef adjacency_list< setS, listS, undirectedS, 
@@ -147,10 +152,12 @@ int main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires<
+      LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   // Check adjacency_list without any properties
   {
@@ -161,11 +168,8 @@ int main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
@@ -175,10 +179,8 @@ int main(int,char*[])
     function_requires< BidirectionalGraphConcept<Graph> >();
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
+    function_requires<
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
   }
   {
     typedef adjacency_list< listS, listS, directedS> Graph;
@@ -207,8 +209,6 @@ int main(int,char*[])
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< ReadablePropertyGraphConcept<Graph, 
       Vertex, vertex_index_t> >();
-    typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
-    function_requires< ReadablePropertyMapConcept<IndexMap, Vertex> >();
   }
   {
     typedef adjacency_list< setS, listS, directedS> Graph;
