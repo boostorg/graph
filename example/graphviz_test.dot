@@ -1,14 +1,14 @@
 digraph G {
 
-  
   subgraph cluster0 {  //subgraph<Graph>
     node [style=filled color=white];
     style = filled;
-    color = lightgrey;
+    bgcolor = lightgrey;
 
     subgraph inner { //subgraph<Graph> or subgraph of subgraph
 	node [color = green];
 	a1 -> a2 -> a3 
+
     };
 
     a0 -> subgraph inner;
@@ -17,14 +17,13 @@ digraph G {
   }
 
   subgraph cluster1 {
-    node [style=filled];
+    node [style=filled color=white];
     b0 -> b1 -> b2 -> b3;
     label = "process #2";
-    color = blue
-     b1  -> subgraph inner[style=dotted]; //this is odd, but it is allowed
+    bgcolor = lightgrey
   }
 
-  subgraph cluster1 -> subgraph cluster0 [style=dotted]
+  subgraph cluster1 -> subgraph cluster0 [style=dashed color=red]
 
   start -> subgraph inner[style=dotted];
 
