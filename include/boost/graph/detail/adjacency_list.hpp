@@ -27,6 +27,7 @@
 #ifndef BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
 #define BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
 
+#include <map> // for vertex_map in copy_impl
 #include <boost/config.hpp>
 #include <boost/property_map.hpp>
 #include <boost/operators.hpp>
@@ -1457,6 +1458,7 @@ namespace boost {
       typedef typename Config::EdgeContainer EdgeContainer;
       typedef typename Config::vertex_descriptor vertex_descriptor;
       typedef typename Config::vertex_iterator vertex_iterator;
+      typedef typename Config::edge_iterator edge_iterator;
       typedef typename Config::edge_parallel_category edge_parallel_category;
       typedef typename Config::vertices_size_type vertices_size_type;
       typedef typename Config::edges_size_type edges_size_type;
@@ -1465,6 +1467,18 @@ namespace boost {
 
       inline adj_list_impl() { }
 
+      inline adj_list_impl(const adj_list_impl& x) {
+	copy_impl(x);
+      }
+      inline adj_list_impl& operator=(const adj_list_impl& x) {
+	this->clear();
+	copy_impl(x);
+	return *this;
+      }
+      inline void clear() {
+	m_vertices.clear();
+	m_edges.clear();
+      }
       inline adj_list_impl(vertices_size_type num_vertices) {
         for (vertices_size_type i = 0; i < num_vertices; ++i)
           add_vertex(static_cast<Derived&>(*this));
@@ -1519,6 +1533,36 @@ namespace boost {
       }
       inline StoredVertexList& vertex_set() { return m_vertices; }
       inline const StoredVertexList& vertex_set() const { return m_vertices; }
+
+      inline void copy_impl(const adj_list_impl& x_) 
+      {
+	const Derived& x = static_cast<const Derived&>(x_);
+
+	// Would be better to have a constant time way to get from
+	// vertices in x to the corresponding vertices in *this.
+	std::map<stored_vertex*,stored_vertex*> vertex_map;
+
+	// Copy the stored vertex objects by adding each vertex
+	// and copying its property object.
+	vertex_iterator vi, vi_end;
+        for (tie(vi, vi_end) = vertices(x); vi != vi_end; ++vi) {
+          stored_vertex* v = (stored_vertex*)add_vertex(*this);
+	  v->m_property = ((stored_vertex*)*vi)->m_property;
+	  vertex_map[(stored_vertex*)*vi] = v;
+	}
+	// Copy the edges by adding each edge and copying its
+	// property object.
+	edge_iterator ei, ei_end;
+	for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+	  edge_descriptor e;
+	  bool inserted; 
+	  vertex_descriptor s = source(*ei,x), t = target(*ei,x);
+	  tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s], 
+				      vertex_map[(stored_vertex*)t], *this);
+	  e.m_eproperty = (*ei).m_eproperty;
+	}
+      }
+
 
       typename Config::EdgeContainer m_edges;
       StoredVertexList m_vertices;
@@ -1576,6 +1620,7 @@ namespace boost {
       typedef typename Config::vertex_descriptor vertex_descriptor;
       typedef typename Config::edge_descriptor edge_descriptor;
       typedef typename Config::out_edge_iterator out_edge_iterator;
+      typedef typename Config::edge_iterator edge_iterator;
       typedef typename Config::directed_category directed_category;
       typedef typename Config::vertices_size_type vertices_size_type;
       typedef typename Config::edges_size_type edges_size_type;
@@ -1587,6 +1632,18 @@ namespace boost {
 
       inline vec_adj_list_impl() { }
 
+      inline vec_adj_list_impl(const vec_adj_list_impl& x) {
+	copy_impl(x);
+      }
+      inline vec_adj_list_impl& operator=(const vec_adj_list_impl& x) {
+	this->clear();
+	copy_impl(x);
+	return *this;
+      }
+      inline void clear() {
+	m_vertices.clear();
+	m_edges.clear();
+      }
       inline vec_adj_list_impl(vertices_size_type _num_vertices)
         : m_vertices(_num_vertices) { }
 
@@ -1630,6 +1687,25 @@ namespace boost {
       }
       inline const InEdgeList& in_edge_list(vertex_descriptor v) const {
         return m_vertices[v].m_in_edges;
+      }
+      inline void copy_impl(const vec_adj_list_impl& x_) 
+      {
+	const Derived& x = static_cast<const Derived&>(x_);
+	// Copy the stored vertex objects by adding each vertex
+	// and copying its property object.
+        for (vertices_size_type i = 0; i < num_vertices(x); ++i) {
+          vertex_descriptor v = add_vertex(*this);
+	  m_vertices[v] = x.m_vertices[i].m_property;
+	}
+	// Copy the edges by adding each edge and copying its
+	// property object.
+	edge_iterator ei, ei_end;
+	for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+	  edge_descriptor e;
+	  bool inserted; 
+	  tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
+	  e.m_eproperty = (*ei).m_eproperty;
+	}
       }
       typename Config::EdgeContainer m_edges;
       StoredVertexList m_vertices;

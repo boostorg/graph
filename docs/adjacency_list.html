@@ -480,6 +480,22 @@ and zero edges.
 <hr>
 
 <pre>
+adjacency_list(const&nbsp;adjacency_list&amp;&nbsp;x)
+</pre>
+Copy constructor. Creates a new graph that is a copy of graph
+<tt>x</tt>, including the edges, vertices, and properties.
+
+<hr>
+
+<pre>
+adjacency_list&amp; operator=(const&nbsp;adjacency_list&amp;&nbsp;x)
+</pre>
+Assignment operator. Makes this graph a copy of graph
+<tt>x</tt>, including the edges, vertices, and properties.
+
+<hr>
+
+<pre>
 adjacency_list(vertices_size_type&nbsp;n, 
                const&nbsp;GraphProperty&amp;&nbsp;p = GraphProperty())
 </pre>

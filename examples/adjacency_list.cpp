@@ -108,5 +108,6 @@ int main(int argc, char* argv[])
   }
 
   print_edges(g, id);
+
   return 0;
 }

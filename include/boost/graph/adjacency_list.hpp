@@ -26,15 +26,6 @@
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
 #define BOOST_GRAPH_ADJACENCY_LIST_HPP
 
-/*
-  Implementation Variation Points
-
-  directed / undirected
-  property/no property
-  persistent/invalidating iterators 
-  vertex descriptor type
-  
- */
 #include <vector>
 #include <list>
 #include <set>
@@ -57,6 +48,15 @@
 #include <boost/graph/detail/edge.hpp>
 
 namespace boost {
+
+  //===========================================================================
+  // Selectors for the VertexList and EdgeList template parameters of
+  // adjacency_list, and the container_gen traits class which is used
+  // to map the selectors to the container type used to implement the
+  // graph.
+  //
+  // The main container_gen traits class uses partial specialization,
+  // so we also include a workaround.
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
@@ -183,10 +183,6 @@ namespace boost {
 
 #endif // !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
-  struct directedS { enum { is_directed = true, is_bidir = false }; };
-  struct undirectedS { enum { is_directed = false, is_bidir = false }; };
-  struct bidirectionalS { enum { is_directed = true, is_bidir = true }; };
-
   template <class StorageSelector>
   struct parallel_edge_traits { };
 
@@ -239,6 +235,20 @@ namespace boost {
   } // namespace detail
 
 
+  //===========================================================================
+  // Selectors for the Directed template parameter of adjacency_list.
+
+  struct directedS { enum { is_directed = true, is_bidir = false }; };
+  struct undirectedS { enum { is_directed = false, is_bidir = false }; };
+  struct bidirectionalS { enum { is_directed = true, is_bidir = true }; };
+
+  //===========================================================================
+  // The adjacency_list_traits class, which provides a way to access
+  // some of the associated types of an adjacency_list type without
+  // having to first create the adjacency_list type. This is useful
+  // when trying to create interior vertex or edge properties who's
+  // value type is a vertex or edge descriptor.
+
   template <class EdgeListS = vecS,
             class VertexListS = vecS,
             class DirectedS = directedS>
@@ -260,7 +270,8 @@ namespace boost {
     typedef typename boost::ct_if<is_rand_access,
       std::size_t, vertex_ptr>::type vertex_descriptor;
 
-    typedef detail::edge_desc_impl<directed_category, vertex_descriptor> edge_descriptor;
+    typedef detail::edge_desc_impl<directed_category, vertex_descriptor>
+      edge_descriptor;
   };
 
 } // namespace boost
@@ -268,6 +279,10 @@ namespace boost {
 #include <boost/graph/detail/adjacency_list.hpp>
 
 namespace boost {
+
+  //===========================================================================
+  // The adjacency_list class.
+  //
 
   template <class EdgeListS = vecS,   // a Sequence or an AssociativeContainer
             class VertexListS = vecS, // a Sequence or a RandomAccessContainer
@@ -299,6 +314,15 @@ namespace boost {
 
     inline adjacency_list(const GraphProperty& p = GraphProperty()) 
       : m_property(p) { }
+
+    inline adjacency_list(const adjacency_list& x)
+      : Base(x), m_property(x.m_property) { }
+
+    inline adjacency_list& operator=(const adjacency_list& x) {
+      Base::operator=(x);
+      m_property = x.m_property;
+      return *this;
+    }
 
     inline adjacency_list(vertices_size_type num_vertices, 
                           const GraphProperty& p = GraphProperty())
