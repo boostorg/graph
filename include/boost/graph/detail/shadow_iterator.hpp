@@ -100,15 +100,9 @@ namespace boost {
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
     typedef iterator_adaptor< std::pair<IterA, IterB>,
-<<<<<<< shadow_iterator.hpp
 			      detail::shadow_iterator_policies,
 			      V, R, V*, shadow_iterator_tag,
 			      D> type;
-=======
-                              detail::shadow_iterator_policies,
-                              V, R, V*, std::random_access_iterator_tag,
-                              D> type;
->>>>>>> 1.5
   };
 
   // short cut for creating a shadow iterator
