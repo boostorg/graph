@@ -2,6 +2,20 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 
+typedef boost::default_constructible_archetype<
+  boost::sgi_assignable_archetype<> > dist_value;
+
+// So generate_infinity works...
+namespace std {
+  template <>
+  class numeric_limits<dist_value> {
+  public:
+    static dist_value max() {
+      return boost::static_object<dist_value>::get(); 
+    }
+  };
+}
+
 int main()
 {
   using namespace boost;
@@ -50,8 +64,6 @@ int main()
       allow_parallel_edge_tag> graph_t;
     graph_t g;
     vertex_t s;
-    typedef default_constructible_archetype<
-      sgi_assignable_archetype<> > dist_value;
     typedef graph_traits<graph_t>::edge_descriptor edge_t;
     readable_property_map_archetype<edge_t, dist_value> weight;
     readable_property_map_archetype<vertex_t, int> index;
