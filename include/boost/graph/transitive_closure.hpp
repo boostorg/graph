@@ -241,7 +241,7 @@ namespace boost {
     using namespace detail;
 
     function_requires< AdjacencyGraphConcept<G> >();
-    function_requires< MutableGraphConcept<G> >();
+    function_requires< EdgeMutableGraphConcept<G> >();
      
     typedef typename graph_traits<G>::vertex_descriptor vertex;
     typedef typename graph_traits<G>::edge_descriptor edge;
@@ -356,7 +356,7 @@ namespace boost {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
 
     function_requires< AdjacencyMatrixConcept<G> >();
-    function_requires< MutableGraphConcept<G> >();
+    function_requires< EdgeMutableGraphConcept<G> >();
 
     // Matrix form:
     // for k
@@ -384,7 +384,7 @@ namespace boost {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
 
     function_requires< AdjacencyMatrixConcept<G> >();
-    function_requires< MutableGraphConcept<G> >();
+    function_requires< EdgeMutableGraphConcept<G> >();
 
     // Make sure second loop will work  
     if (num_vertices(g) == 0)
