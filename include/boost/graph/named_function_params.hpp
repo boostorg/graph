@@ -30,20 +30,20 @@
 
 namespace boost {
 
-  struct distance_compare_t { enum { num = detail::distance_compare_num }; };
-  struct distance_combine_t { enum { num = detail::distance_combine_num};  };
-  struct distance_inf_t { enum { num = detail::distance_inf_num }; };
-  struct distance_zero_t { enum { num = detail::distance_zero_num }; };
-  struct buffer_param_t { enum { num = detail::buffer_param_num }; };
-  struct edge_copy_t { enum { num = detail::edge_copy_num }; };
-  struct vertex_copy_t { enum { num = detail::vertex_copy_num }; };
-  struct vertex_isomorphism_t { enum { num =detail::vertex_isomorphism_num}; };
-  struct vertex_invariant_t { enum { num =detail::vertex_invariant_num}; };
-  struct vertex_invariant1_t { enum { num =detail::vertex_invariant1_num}; };
-  struct vertex_invariant2_t { enum { num =detail::vertex_invariant2_num}; };
-  struct vertex_max_invariant_t { enum { num =detail::vertex_max_invariant_num}; };
-  struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
-  struct root_vertex_t { enum { num = detail::root_vertex_num }; };
+  struct distance_compare_t { };
+  struct distance_combine_t { };
+  struct distance_inf_t { };
+  struct distance_zero_t { };
+  struct buffer_param_t { };
+  struct edge_copy_t { };
+  struct vertex_copy_t { };
+  struct vertex_isomorphism_t { };
+  struct vertex_invariant_t { };
+  struct vertex_invariant1_t { };
+  struct vertex_invariant2_t { };
+  struct vertex_max_invariant_t { };
+  struct orig_to_copy_t { };
+  struct root_vertex_t { };
   
   namespace detail {
     template <class T>

@@ -76,12 +76,8 @@ using namespace boost;
 using namespace std;
 
 
-// The unique numbers (using 100 and 101 here) are only needed for use
-// in a workaround when the compiler does not do partial
-// specialization.
-
-enum edge_myflow_t { edge_myflow = 100 };
-enum edge_mycapacity_t { edge_mycapacity = 101 };
+enum edge_myflow_t { edge_myflow };
+enum edge_mycapacity_t { edge_mycapacity };
 
 namespace boost {
   BOOST_INSTALL_PROPERTY(edge, myflow);

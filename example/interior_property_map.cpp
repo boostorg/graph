@@ -61,9 +61,8 @@ using namespace boost;
  */
 
 // create a tag for our new property
-// the "num" is only needed for a VC++ workaround
 
-enum vertex_first_name_t { vertex_first_name = 300 };
+enum vertex_first_name_t { vertex_first_name };
 namespace boost {
   BOOST_INSTALL_PROPERTY(vertex, first_name);
 }

@@ -57,29 +57,6 @@ namespace boost {
   // get/put already defined for T*
 #endif
 
-  namespace detail {
-    // These enum's are only necessary for a workaround for compilers that
-    // don't do partial specialization (like VC++).
-    enum property_tag_num
-    {
-      vertex_index_num = 1, vertex_index1_num, vertex_index2_num,
-      edge_index_num, vertex_name_num,
-      edge_name_num, graph_name_num, edge_weight_num, edge_weight2_num, 
-      vertex_distance_num, vertex_root_num, root_vertex_num,
-      vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
-      vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
-      edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
-      vertex_all_num, edge_all_num, graph_all_num, graph_visitor_num,
-      distance_compare_num, distance_combine_num, distance_inf_num,
-      distance_zero_num, buffer_param_num, edge_copy_num, vertex_copy_num,
-      orig_to_copy_num, vertex_rank_num, vertex_predecessor_num,
-      vertex_isomorphism_num, vertex_invariant_num,
-      vertex_invariant1_num, vertex_invariant2_num, vertex_max_invariant_num,
-      last_property_num
-    };
-  } // namespace detail
-
-
   struct graph_property_tag { };
   struct vertex_property_tag { };
   struct edge_property_tag { };
@@ -87,8 +64,6 @@ namespace boost {
 #ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   // See examples/edge_property.cpp for how to use this.
 #define BOOST_INSTALL_PROPERTY(KIND, NAME) \
-  template <> struct property_num<KIND##_##NAME##_t> { \
-    enum { value = KIND##_##NAME }; }; \
   template <> struct property_kind<KIND##_##NAME##_t> { \
     typedef KIND##_property_tag type; \
   }
@@ -100,7 +75,7 @@ namespace boost {
 #endif
 
 #define BOOST_DEF_PROPERTY(KIND, NAME) \
-  enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
+  enum KIND##_##NAME##_t { KIND##_##NAME }; \
   BOOST_INSTALL_PROPERTY(KIND, NAME)
 
   BOOST_DEF_PROPERTY(vertex, all);

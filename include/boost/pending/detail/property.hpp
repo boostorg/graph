@@ -2,27 +2,16 @@
 #define BOOST_DETAIL_PROPERTY_HPP
 
 #include <utility> // for std::pair
+#include <boost/type_traits/same_traits.hpp> // for is_same
 
 namespace boost {
 
   namespace detail {
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     template <class Property1, class Property2>
     struct same_property {
-      enum { value = int(property_num<Property1>::value) 
-             == int(property_num<Property2>::value) };
+      enum { value = is_same<Property1,Property2>::value };
     };
-#else
-    template <class Property1, class Property2>
-    struct same_property {
-      enum { value = false };
-    };
-    template <class Property>
-    struct same_property<Property,Property> {
-      enum { value = true };
-    };
-#endif
 
     struct error_property_not_found { };
 

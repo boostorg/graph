@@ -362,35 +362,35 @@ add more.
 
 <P>
 <PRE>
-  struct vertex_index_t { ... };
-  struct vertex_index1_t { ... };
-  struct vertex_index2_t { ... };
-  struct edge_index_t { ... };
-  struct graph_name_t { ... };
-  struct vertex_name_t { ... };
-  struct edge_name_t { ... };
-  struct edge_weight_t { ... };
-  struct edge_weight2_t { ... };
-  struct edge_capacity_t { ... };
-  struct edge_residual_capacity_t { ... };
-  struct edge_reverse_t { ... };
-  struct vertex_distance_t { ... };
-  struct vertex_root_t { ... };
-  struct vertex_all_t { ... };
-  struct edge_all_t { ... };
-  struct graph_all_t { ... };
-  struct vertex_color_t { ... };
-  struct vertex_rank_t { ... };
-  struct vertex_predecessor_t { ... };
-  struct vertex_isomorphism_t { ... };
-  struct vertex_invariant_t { ... };
-  struct vertex_invariant1_t { ... };
-  struct vertex_invariant2_t { ... };
-  struct vertex_degree_t { ... };
-  struct vertex_out_degree_t { ... };
-  struct vertex_in_degree_t { ... };
-  struct vertex_discover_time_t { ... };
-  struct vertex_finish_time_t { ... };
+  struct vertex_index_t { };
+  struct vertex_index1_t { };
+  struct vertex_index2_t { };
+  struct edge_index_t { };
+  struct graph_name_t { };
+  struct vertex_name_t { };
+  struct edge_name_t { };
+  struct edge_weight_t { };
+  struct edge_weight2_t { };
+  struct edge_capacity_t { };
+  struct edge_residual_capacity_t { };
+  struct edge_reverse_t { };
+  struct vertex_distance_t { };
+  struct vertex_root_t { };
+  struct vertex_all_t { };
+  struct edge_all_t { };
+  struct graph_all_t { };
+  struct vertex_color_t { };
+  struct vertex_rank_t { };
+  struct vertex_predecessor_t { };
+  struct vertex_isomorphism_t { };
+  struct vertex_invariant_t { };
+  struct vertex_invariant1_t { };
+  struct vertex_invariant2_t { };
+  struct vertex_degree_t { };
+  struct vertex_out_degree_t { };
+  struct vertex_in_degree_t { };
+  struct vertex_discover_time_t { };
+  struct vertex_finish_time_t { };
 </PRE>
 
 <P>
@@ -453,12 +453,10 @@ should be either <tt>edge_property_tag</tt>,
 <P>
 <PRE>
 struct flow_t {
-  enum { num = 100 };
   typedef edge_property_tag kind;
 };
 
 struct capacity_t { 
-  enum { num = 101 };
   typedef edge_property_tag kind;
 };
 </PRE>
@@ -469,12 +467,11 @@ Create an enum type for each property. The first part of the name of
 the enum type must be <tt>edge</tt>, <tt>vertex</tt>, or
 <tt>graph</tt> followed by an underscore, with a <tt>_t</tt> at the
 end. Inside the enum, define a value with the same name minus the
-<tt>_t</tt> and with a unique integer value. Then invoke the
-<tt>BOOST_INSTALL_PROPERTY</tt> macro.
+<tt>_t</tt>. Then invoke the <tt>BOOST_INSTALL_PROPERTY</tt> macro.
 
 <pre>
-enum edge_myflow_t { edge_myflow = 100 };
-enum edge_mycapacity_t { edge_mycapacity = 101 };
+enum edge_myflow_t { edge_myflow };
+enum edge_mycapacity_t { edge_mycapacity };
 
 namespace boost {
   BOOST_INSTALL_PROPERTY(edge, myflow);
@@ -526,7 +523,6 @@ in the graph.
 <P>
 <PRE>
   struct first_vertex_name_t {
-    enum { num = 201 };
     typedef vertex_property_tag kind;
   };
 </PRE>

@@ -43,9 +43,8 @@ namespace std
 
 namespace boost
 {
-  enum vertex_compile_cost_t
-  { vertex_compile_cost = 111 };        // a unique #
-    BOOST_INSTALL_PROPERTY(vertex, compile_cost);
+  enum vertex_compile_cost_t { vertex_compile_cost };
+  BOOST_INSTALL_PROPERTY(vertex, compile_cost);
 }
 
 using namespace boost;

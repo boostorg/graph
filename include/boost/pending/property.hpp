@@ -35,27 +35,16 @@ namespace boost {
     typedef typename Property::kind type;
   };
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-  // The property_num is only needed for no partial spec. workaround
-  // in detail::same_property. Also reffered to in properties.hpp,
-  // in the BOOST_INSTALL_PROPERTY macro definition.
-
-  template <class Property>
-  struct property_num {
-    enum { value = Property::num };
+  template <class P>
+  struct has_property { 
+    enum { value = true }; 
+    typedef true_type type;
   };
-#endif
-
-    template <class P>
-    struct has_property { 
-      enum { value = true }; 
-      typedef true_type type;
-    };
-    template <>
-    struct has_property<no_property> { 
-      enum { value = false }; 
-      typedef false_type type; 
-    };
+  template <>
+  struct has_property<no_property> { 
+    enum { value = false }; 
+    typedef false_type type; 
+  };
 
 } // namespace boost
 
