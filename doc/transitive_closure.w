@@ -57,8 +57,11 @@ The following is the interface and outline of the function:
 
 @d Transitive Closure Function
 @{
-template <typename Graph, typename GraphTC, typename VertexIndexMap>
+template <typename Graph, typename GraphTC,
+          typename G_to_TC_VertexMap,
+          typename VertexIndexMap>
 void transitive_closure(const Graph& g, GraphTC& tc,
+  G_to_TC_VertexMap g_to_tc_map,
   VertexIndexMap index_map)
 {
   @<Some type definitions@>
@@ -68,20 +71,89 @@ void transitive_closure(const Graph& g, GraphTC& tc,
   @<Compute transitive closure on the condensation graph@>
   @<Build transitive closure of the original graph@>
 }
-// Alternate interface with default vertex index map
-template <typename Graph, typename GraphTC>
-void transitive_closure(const Graph& g, GraphTC& tc)
-{
-  transitive_closure(g, tc, get(vertex_index, g));
-}
 @}
 
 The parameter \code{g} is the input graph and the parameter \code{tc}
 is the output graph that will contain the transitive closure of
-\code{g}. The \code{index\_map} maps vertices in the input graph to
-the integers zero to \code{num\_vertices(g) - 1}. The following
-statements check to make sure that the template parameters
-\emph{model} the concepts that are required for this algorithm.
+\code{g}. The \code{g\_to\_tc\_map} maps vertices in the input graph
+to the new vertices in the output transitive closure.  The
+\code{index\_map} maps vertices in the input graph to the integers
+zero to \code{num\_vertices(g) - 1}.
+
+There are two alternate interfaces for the transitive closure
+function. The following is the version where defaults are used for
+both the \code{g\_to\_tc\_map} and the \code{index\_map}.
+
+@d The All Defaults Interface
+@{
+template <typename Graph, typename GraphTC>
+void transitive_closure(const Graph& g, GraphTC& tc)
+{
+  typedef typename property_map<Graph, vertex_index_t>::const_type
+    VertexIndexMap;
+  VertexIndexMap index_map = get(vertex_index, g);
+
+  typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+  std::vector<tc_vertex> to_tc_vec(num_vertices(g));
+  iterator_property_map<tc_vertex*, VertexIndexMap> 
+    g_to_tc_map(&to_tc_vec[0], index_map);
+
+  transitive_closure(g, tc, g_to_tc_map, index_map);
+}
+@}
+
+\noindent The following alternate interface uses the named parameter
+trick for specifying the parameters. The named parameter functions to
+use in creating the \code{params} argument are
+\code{vertex\_index(VertexIndexMap index\_map)} and
+\code{orig\_to\_copy(G\_to\_TC\_VertexMap g\_to\_tc\_map)}.
+
+@d The Named Parameter Interface
+@{
+template <typename Graph, typename GraphTC,
+  typename P, typename T, typename R>
+void transitive_closure(const Graph& g, GraphTC& tc,
+  const bgl_named_params<P, T, R>& params)
+{
+  detail::transitive_closure_dispatch(g, tc, 
+    get_param(params, orig_to_copy),
+    choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
+  );
+}
+@}
+
+\noindent This dispatch function is used to handle the logic for
+deciding between a user-provided graph to transitive closure vertex
+mapping or to use the default, a vector, to map between the two.
+
+@d Construct Default G to TC Vertex Mapping
+@{
+namespace detail {
+  template <typename Graph, typename GraphTC, 
+          typename G_to_TC_VertexMap,
+          typename VertexIndexMap>
+  void transitive_closure_dispatch
+    (const Graph& g, GraphTC& tc,
+     G_to_TC_VertexMap g_to_tc_map,
+     VertexIndexMap index_map)
+  {
+    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+    typename std::vector<tc_vertex>::size_type 
+      n = is_default_param(index_map) ? num_vertices(g) : 1;
+    std::vector<tc_vertex> to_tc_vec(n);
+
+    transitive_closure
+      (g, tc,
+       choose_param(g_to_tc_map, make_iterator_property_map
+                                 (to_tc_vec.begin(), index_map, to_tc_vec[0])),
+       index_map);
+  }
+} // namespace detail
+@}
+
+The following statements check to make sure that the template
+parameters \emph{model} the concepts that are required for this
+algorithm.
 
 @d Concept checking
 @{
@@ -227,9 +299,10 @@ are the topological numbers for the vertices in the set.
 @d Union of successor sets
 @{
 namespace detail {
-  void union_successor_sets(const std::vector<std::size_t>& s1,
-                          const std::vector<std::size_t>& s2,
-                          std::vector<std::size_t>& s3)
+  inline void
+  union_successor_sets(const std::vector<std::size_t>& s1,
+                       const std::vector<std::size_t>& s2,
+                       std::vector<std::size_t>& s3)
   {
     for (std::size_t k = 0; k < s1.size(); ++k)
       s3[k] = std::min(s1[k], s2[k]);
@@ -436,13 +509,10 @@ SCC to every other vertex in the SCC.
 @{
 // Add vertices to the transitive closure graph
 typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
-std::vector<tc_vertex> to_tc_vec(num_vertices(g));
-iterator_property_map<tc_vertex*, VertexIndexMap> 
-  to_tc(&to_tc_vec[0], index_map);
 {
   vertex_iterator i, i_end;
   for (tie(i, i_end) = vertices(g); i != i_end; ++i)
-    to_tc[*i] = add_vertex(tc);
+    g_to_tc_map[*i] = add_vertex(tc);
 }
 // Add edges between all the vertices in two adjacent SCCs
 graph_traits<CG_t>::vertex_iterator si, si_end;
@@ -453,7 +523,8 @@ for (tie(si, si_end) = vertices(CG); si != si_end; ++si) {
     cg_vertex t = *i;
     for (size_type k = 0; k < components[s].size(); ++k)
       for (size_type l = 0; l < components[t].size(); ++l)
-        add_edge(to_tc[components[s][k]], to_tc[components[t][l]], tc);
+        add_edge(g_to_tc_map[components[s][k]],
+                 g_to_tc_map[components[t][l]], tc);
   }
 }
 // Add edges connecting all vertices in a SCC
@@ -462,7 +533,7 @@ for (size_type i = 0; i < components.size(); ++i)
     for (size_type k = 0; k < components[i].size(); ++k)
       for (size_type l = 0; l < components[i].size(); ++l) {
         vertex u = components[i][k], v = components[i][l];
-        add_edge(to_tc[u], to_tc[v], tc);
+        add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
       }
 @}
 
@@ -580,12 +651,16 @@ indent -nut -npcs -i2 -br -cdw -ce transitive_closure.hpp
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
   @<Union of successor sets@>
   @<Subscript function object@>
   @<Transitive Closure Function@>
+  @<The All Defaults Interface@>
+  @<Construct Default G to TC Vertex Mapping@>
+  @<The Named Parameter Interface@>
 
   @<Warshall Transitive Closure@>
 

@@ -25,11 +25,16 @@
 
 <P>
 <PRE>
-template &lt;typename Graph, typename GraphTC&gt;
-void transitive_closure(const Graph&amp; g, GraphTC&amp; tc)
+template &lt;typename Graph, typename GraphTC,
+  typename P, typename T, typename R&gt;
+void transitive_closure(const Graph&amp; g, GraphTC&amp; tc,
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 
-template &lt;typename Graph, typename GraphTC, typename VertexIndexMap&gt;
-void transitive_closure(const Graph&amp; g, GraphTC&amp; tc, VertexIndexMap index_map)
+template &lt;typename Graph, typename GraphTC,
+  typename G_to_TC_VertexMap, typename VertexIndexMap&gt;
+void transitive_closure(const Graph&amp; g, GraphTC&amp; tc,
+			 G_to_TC_VertexMap g_to_tc_map,
+			 VertexIndexMap index_map)
 </PRE>
 
 The transitive closure of a graph <i>G = (V,E)</i> is a graph <i>G* =
@@ -66,7 +71,15 @@ OUT: <tt>GraphTC&amp; tc</tt>
  and <a href="./EdgeMutableGraph.html">Edge Mutable Graph</a> concepts.
 </blockquote>
 
-IN: <tt>VertexIndexMap&amp; index_map</tt>
+<h3>Named Parameters</h3>
+
+UTIL/OUT: <tt>orig_to_copy(G_to_TC_VertexMap g_to_tc_map)</tt>
+<blockquote>
+  This maps each vertex in the input graph to the new matching
+  vertices in the output transitive closure graph.
+</blockquote>
+
+IN: <tt>vertex_index(VertexIndexMap&amp; index_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
   num_vertices(g))</tt>. This parameter is only necessary when the
