@@ -268,7 +268,7 @@ namespace boost {
     typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
     std::vector<v2_desc_t>::size_type
       n = is_default_param(get_param(params, vertex_isomorphism_t()))
-        ? num_vertices(g1) : 0;
+        ? num_vertices(g1) : 1;
     std::vector<v2_desc_t> f(n);
     degree_vertex_invariant default_invar;
     return detail::isomorphism_impl

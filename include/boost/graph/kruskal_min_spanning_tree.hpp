@@ -137,10 +137,10 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typename graph_traits<Graph>::vertices_size_type n;
     n = is_default_param(get_param(params, vertex_rank))
-                                   ? num_vertices(g) : 0;
+                                   ? num_vertices(g) : 1;
     std::vector<size_type> rank_map(n);
     n = is_default_param(get_param(params, vertex_predecessor))
-                                   ? num_vertices(g) : 0;
+                                   ? num_vertices(g) : 1;
     std::vector<vertex_t> pred_map(n);
     
     detail::kruskal_mst_impl

@@ -96,7 +96,7 @@ namespace boost {
       typedef typename property_traits<Weight>::value_type WT;
       typename std::vector<WT>::size_type 
 	n = is_default_param(get_param(params, vertex_distance))
-	? num_vertices(g) : 0;
+	? num_vertices(g) : 1;
       std::vector<WT> distance_map(n);
       
       return detail::johnson_impl

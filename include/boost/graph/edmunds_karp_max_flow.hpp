@@ -161,7 +161,7 @@ namespace boost {
 	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 	typedef typename graph_traits<Graph>::vertices_size_type size_type;
 	size_type n = is_default_param(get_param(params, vertex_color)) ?
-	  num_vertices(g) : 0;
+	  num_vertices(g) : 1;
 	std::vector<default_color_type> color_vec(n);
 	return edmunds_karp_max_flow_impl
 	  (g, src, sink, 
@@ -193,7 +193,7 @@ namespace boost {
 	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 	typedef typename graph_traits<Graph>::vertices_size_type size_type;
 	size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
-	  num_vertices(g) : 0;
+	  num_vertices(g) : 1;
 	std::vector<edge_descriptor> pred_vec(n);
 	
 	typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
@@ -216,7 +216,7 @@ namespace boost {
 	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 	typedef typename graph_traits<Graph>::vertices_size_type size_type;
 	size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
-	  num_vertices(g) : 0;
+	  num_vertices(g) : 1;
 	std::vector<edge_descriptor> pred_vec(n);
 	
 	typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;

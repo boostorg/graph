@@ -110,9 +110,9 @@ namespace boost {
     {
       typedef typename property_traits<WeightMap>::value_type T;
       typename std::vector<T>::size_type n;
-      n = is_default_param(distance) ? num_vertices(g) : 0;
+      n = is_default_param(distance) ? num_vertices(g) : 1;
       std::vector<T> distance_map(n);
-      n = is_default_param(color) ? num_vertices(g) : 0;
+      n = is_default_param(color) ? num_vertices(g) : 1;
       std::vector<default_color_type> color_map(n);
       dag_sp_dispatch2
         (g, s, 

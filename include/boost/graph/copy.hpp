@@ -329,7 +329,7 @@ namespace boost {
   {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
-        ? num_vertices(g_in) : 0;
+        ? num_vertices(g_in) : 1;
     std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor> 
       orig2copy(n);
 
@@ -418,7 +418,7 @@ namespace boost {
   {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
-        ? num_vertices(g_in) : 0;
+        ? num_vertices(g_in) : 1;
     std::vector<typename graph_traits<IncidenceGraph>::vertex_descriptor> 
       orig2copy(n);
     
