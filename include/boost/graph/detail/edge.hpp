@@ -23,18 +23,23 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
-//
+
 #ifndef BOOST_GRAPH_DETAIL_EDGE_HPP
 #define BOOST_GRAPH_DETAIL_EDGE_HPP
 
+#if __GNUC__ < 3
+#include <iostream>
+#else
 #include <iosfwd>
+#endif
 
 namespace boost {
 
   namespace  detail {
 
-    template <class Directed, class Vertex>
-    struct edge_base {
+    template <typename Directed, typename Vertex>
+    struct edge_base
+    {
       inline edge_base() {} 
       inline edge_base(Vertex s, Vertex d)
         : m_source(s), m_target(d) { }
@@ -42,7 +47,7 @@ namespace boost {
       Vertex m_target;
     };
 
-    template <class Directed, class Vertex>
+    template <typename Directed, typename Vertex>
     class edge_desc_impl  : public edge_base<Directed,Vertex> {
       typedef edge_desc_impl                              self;
       typedef edge_base<Directed,Vertex> Base;
@@ -82,12 +87,22 @@ namespace boost {
 
 namespace std {
 
+#if __GNUC__ < 3
   template <class D, class V>
   std::ostream& 
   operator<<(std::ostream& os, const boost::detail::edge_desc_impl<D,V>& e)
   {
     return os << "(" << e.m_source << "," << e.m_target << ")";
   }
+#else
+  template <class Char, class Traits, class D, class V>
+  std::ostream<Char, Traits>& 
+  operator<<(std::ostream<Char, Traits>& os,
+             const boost::detail::edge_desc_impl<D,V>& e)
+  {
+    return os << "(" << e.m_source << "," << e.m_target << ")";
+  }
+#endif
 
 }
 
