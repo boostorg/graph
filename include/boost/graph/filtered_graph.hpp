@@ -134,6 +134,8 @@ namespace boost {
   //===========================================================================
   // Filtered Graph
 
+  struct filtered_graph_tag { };
+
   template <typename Graph, 
             typename EdgePredicate,
             typename VertexPredicate = keep_all>
@@ -141,6 +143,7 @@ namespace boost {
     typedef graph_traits<Graph> Traits;
     typedef filtered_graph self;
   public:
+    typedef Graph graph_type;
     typedef detail::out_edge_predicate<EdgePredicate, 
       VertexPredicate, self> OutEdgePred;
     typedef detail::in_edge_predicate<EdgePredicate, 
@@ -202,7 +205,7 @@ namespace boost {
 
     typedef typename Graph::edge_property_type         edge_property_type;
     typedef typename Graph::vertex_property_type       vertex_property_type;
-    typedef typename Graph::graph_tag graph_tag;
+    typedef filtered_graph_tag graph_tag;
 
     //private:
     Graph& m_g;
@@ -368,6 +371,30 @@ namespace boost {
     tie(e, exists) = edge(u, v, g.m_g);
     return std::make_pair(e, exists && g.m_edge_pred(e));
   }
+
+  //===========================================================================
+  // Property map
+
+  namespace detail {
+    struct filtered_graph_property_selector {
+      template <class FilteredGraph, class Property, class Tag>
+      struct bind {
+	typedef typename FilteredGraph::graph_type Graph;
+	typedef property_map<Graph, Tag> Map;
+	typedef typename Map::type type;
+	typedef typename Map::const_type const_type;
+      };
+    };    
+  } // namespace detail
+
+  template <>  
+  struct vertex_property_selector<filtered_graph_tag> {
+    typedef detail::filtered_graph_property_selector type;
+  };
+  template <>  
+  struct edge_property_selector<filtered_graph_tag> {
+    typedef detail::filtered_graph_property_selector type;
+  };
 
   template <typename G, typename EP, typename VP, typename Property>
   typename property_map<G, Property>::type
