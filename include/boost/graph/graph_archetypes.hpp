@@ -199,7 +199,10 @@ namespace boost { // should use a different namespace for this
   }
 
   struct color_value_archetype {
+    color_value_archetype() { }
     color_value_archetype(detail::dummy_constructor) { }
+    bool operator==(const color_value_archetype& ) const { return true; }
+    bool operator!=(const color_value_archetype& ) const { return true; }
   };
   template <>
   struct color_traits<color_value_archetype> {
