@@ -36,7 +36,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
-#include <boost/pending/limits.hpp>
+#include <boost/limits.hpp>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>

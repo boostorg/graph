@@ -22,7 +22,10 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
-
+//
+// Revision History:
+//   01 April 2001: Modified to use new <boost/limits.hpp> header. (JMaddock)
+//
 #ifndef BOOST_GRAPH_GRAPH_SEARCH_VISITORS_HPP
 #define BOOST_GRAPH_GRAPH_SEARCH_VISITORS_HPP
 
@@ -30,7 +33,7 @@
 #include <boost/config.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/pending/limits.hpp>
+#include <boost/limits.hpp>
 #include <boost/graph/detail/is_same.hpp>
 
 namespace boost {

@@ -24,11 +24,15 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 //
+//
+// Revision History:
+//   01 April 2001: Modified to use new <boost/limits.hpp> header. (JMaddock)
+//
 #ifndef BOOST_GRAPH_DIJKSTRA_HPP
 #define BOOST_GRAPH_DIJKSTRA_HPP
 
 #include <functional>
-#include <boost/pending/limits.hpp>
+#include <boost/limits.hpp>
 #include <boost/graph/uniform_cost_search.hpp>
 
 namespace boost {
