@@ -124,9 +124,9 @@ namespace boost {
 	m_combine(combine), m_compare(compare)  { }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g) { }
+      void initialize_vertex(Vertex, Graph&) { }
       template <class Vertex, class Graph>
-      void start_vertex(Vertex u, Graph& g) { }
+      void start_vertex(Vertex, Graph&) { }
 
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {
@@ -143,7 +143,7 @@ namespace boost {
 	m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
-      void tree_edge(Edge e, Graph& g) { }
+      void tree_edge(Edge, Graph&) { }
 
       template <class Edge, class Graph>
       void cycle_edge(Edge e, Graph& g) {
