@@ -341,6 +341,13 @@ namespace boost {
                           const GraphProperty& p = GraphProperty())
       : Base(num_vertices, first, last, ep_iter), m_property(p) { }
 
+    void swap(adjacency_list& x) {
+      // Is there a more efficient way to do this?
+      adjacency_list tmp(x);
+      x = *this;
+      *this = tmp;
+    }
+
     //  protected:  (would be protected if friends were more portable)
     GraphProperty m_property;
   };
