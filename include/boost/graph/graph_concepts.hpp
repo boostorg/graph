@@ -314,7 +314,7 @@ namespace boost {
     }
     G g;
     typename graph_traits<G>::vertex_descriptor v;
-    typename G::vertex_property_type vp;
+    typename vertex_property<G>::type vp;
   };
 
   template <class G>
@@ -328,7 +328,7 @@ namespace boost {
     G g;
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
-    typename G::edge_property_type ep;
+    typename edge_property<G>::type ep;
   };
 
   template <class G>
