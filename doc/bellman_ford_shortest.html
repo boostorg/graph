@@ -25,36 +25,10 @@
 </H1>
 
 <P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">directed or undirected</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">distance, weight</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT"><i>O(V E)</i></TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
-<TD ALIGN="LEFT">
-<a href="../../../boost/graph/bellman_ford_shortest_paths.hpp"><TT>boost/graph/bellman_ford_shortest_paths.hpp</TT></a>
-</TD>
-</TR></TABLE>
-</DIV>
-
-<P>
 <PRE>
-(1)
-template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap&gt;
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-  WeightMap w, DistanceMap d)
-
-(2)
-template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap,
-          class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightMap w, 
-  DistanceMap d, BellmanFordVisitor visit)
+  const bgl_named_params&lt;P, T, R&gt;&amp; params)
 </PRE>
 
 <P>
@@ -64,48 +38,194 @@ HREF="bibliography.html#ford62:_flows">11</A>,<A
 HREF="bibliography.html#lawler76:_comb_opt">20</A>,<A
 HREF="bibliography.html#clr90">8</A>] solves the single-source
 shortest paths problem for a graph with both positive and negative
-edge weights. See Section <A
+edge weights. For the definition of the shortest paths problem see
+Section <A
 HREF="./graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
-Algorithms</A> for a description of the single-source shortest paths
-problem. If a cycle with negative length is detected, the algorithm
-returns <TT>false</TT>. The argument <TT>N</TT> should be the number
-of vertices in the graph. The source vertex is indicated by
-initializing the distance of the source vertex to zero and the
-distances of the rest of the vertices to
-<TT>std::numeric_limits&lt;T&gt;::max()</TT>.
+Algorithms</A>. 
+If you only need to solve the shortest paths problem for positive edge
+weights, Dijkstra's algorithm provides a more efficient
+alternative. If all the edge weights are equal to one, breadth-first
+search provides an even more efficient alternative.
+</p>
+
+<p>
+Before calling the <tt>bellman_ford_shortest_paths()</tt> function,
+the user must assign the source vertex a distance of zero and all
+other vertices a distance of infinity. The Bellman-Ford algorithm
+proceeds by looping through all of the edges in the graph, applying
+the relaxation operation to each edge. In the following pseudo-code,
+<i>v</i> is a vertex adjacent to <i>u</i>, <i>w</i> maps edges to
+their weight, and <i>d</i> is a distance map that records the length
+of the shortest path to each vertex seen so far. <i>p</i> is a
+predecessor map which records the parent of each vertex, which will
+ultimately be the parent in the shortest paths tree
+</p>
+
+<table>
+<tr>
+<td valign="top">
+<pre>
+RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
+  <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>) 
+    <i>d[v] := w(u,v) + d[u]</i>
+    <i>p[v] := u</i>
+  <b>else</b>
+    ...
+</pre>
+</td>
+<td valign="top">
+<pre>
+
+
+relax edge <i>(u,v)</i>
+
+
+edge <i>(u,v)</i> is not relaxed 
+</pre>
+</td>
+</tr>
+</table>
+
+<p>
+The algorithm repeats this loop <i>|V|</i> times after which it is
+guaranteed that the distances to each vertex have been reduced to the
+minimum possible unless there is a negative cycle in the graph. If
+there is a negative cycle, then there will be edges in the graph that
+were not properly minimized. That is, there will be edges <i>(u,v)</i> such
+that <i>w(u,v) + d[u] < d[v]</i>.  The algorithm loops over the edges in
+the graph one final time to check if all the edges were minimized,
+returning <tt>true</tt> if they were and returning <tt>false</tt>
+otherwise.
+</p>
+
+<table>
+<tr>
+<td valign="top">
+<pre>
+BELLMAN-FORD(<i>G</i>)
+  <b>for</b> each vertex <i>u in V</i> 
+    <i>d[u] := infinity</i>
+    <i>p[u] := u</i> 
+  <b>end for</b>
+  <b>for</b> <i>i := 1</i> <b>to</b> <i>|V|-1</i> 
+    <b>for</b> each edge <i>(u,v) in E</i> 
+      RELAX(<i>u</i>, <i>v</i>, <i>w</i>, <i>d</i>, <i>p</i>)
+    <b>end for</b>
+  <b>end for</b>
+  <b>for</b> each edge <i>(u,v) in E</i> 
+    <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>)
+      <b>return</b> (false, , )
+    <b>else</b> 
+      ...
+  <b>end for</b>
+  <b>return</b> (true, <i>p</i>, <i>d</i>)
+</pre>
+</td>
+<td valign="top">
+<pre>
+
+initialize vertex <i>u</i> 
+
+
+
+
+examine edge <i>(u,v)</i>
+
+
+
+
+
+edge <i>(u,v)</i> was not minimized 
+
+edge <i>(u,v)</i> was minimized 
+</pre>
+</td>
+</tr>
+</table>
+
+There are two main options for obtaining output from the
+<tt>bellman_ford_shortest_paths()</tt> function. If the user provides
+a distance property map through the <tt>distance_map()</tt> parameter
+then the shortest distance from the source vertex to every other
+vertex in the graph will be recorded in the distance map (provided the
+function returns <tt>true</tt>). Alternatively, the user can record
+the shortest paths tree using the <a
+href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
+for the <tt>visitor()</tt> parameter. The predecessor recorder should
+be registered at the ``edge relaxed'' event point (see below).  In
+addition to these two options, the user can provide there own
+custom-made visitor that can takes actions during any of the
+algorithm's event points.
 
 <P>
 
-<H3>Requirements on Types</H3>
+<h3>Parameters</h3>
 
-<P>
 
-<UL>
-<LI>The type <TT>EdgeListGraph</TT> must be a model of
-     <a href="./EdgeListGraph.html">EdgeListGraph</a>.
-</LI>
-<LI>The type <TT>Distance</TT> must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
-    vertex descriptor type of the graph needs to be usable as the key
-    type of the distance map. The value type of the distance
-    map must be <a
-    href="http://www.sgi.com/tech/stl/LessThanComparable.html">LessThanComparable</a>.
-</LI>
-<LI>The <TT>Weight</TT> type must be a model of
-     <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. 
-     The edge descriptor of the graph needs to be usable as the key
-     type for the weight map. The value type for the
-     weight map must be <I>Addable</I> with the
-     distance map's value type.
-</LI>
-<LI>The <TT>Parent</TT> type must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
-    value type and key type should be the graph's vertex descriptor
-    type.
-</LI>
-<LI>The type <TT>BellmanFordVisitor</TT> must be a model of <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>.
-</LI>
-</UL>
+IN: <tt>EdgeListGraph&amp; g</tt> 
+<blockquote>
+  A directed or undirected graph whose type must be a model of
+  <a href="./EdgeListGraph.html">Edge List Graph</a>.
+</blockquote>
+
+IN: <tt>Size N</tt>
+<blockquote>
+  The number of vertices in the graph. The type <tt>Size</tt> must
+  be an integer type.
+</blockquote>
+
+
+<h3>Named Parameters</h3>
+
+IN: <tt>weight_map(WeightMap w)</tt>
+<blockquote>
+  The weight (also know as ``length'' or ``cost'') of each edge in the
+  graph.  The <tt>WeightMap</tt> type must be a model of <a
+  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  Map</a>.  The key type for this property map must be the edge
+  descriptor of the graph.  The value type for the weight map must be
+  <i>Addable</i> with the distance map's value type. <br>
+  <b>Default:</b> <tt>get(edge_weight, g)</tt>
+</blockquote>
+
+IN/OUT: <tt>distance_map(DistanceMap d)</tt> 
+<blockquote>
+  The shortest path weight from the source vertex to each vertex in
+  the graph <tt>g</tt> is recorded in this property map.  The type
+  <tt>DistanceMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The key type of the property map must be the
+  vertex descriptor type of the graph, and the value type of the
+  distance map must be \stlconcept{LessThanComparable}.<br>
+  <b>Default:</b> <tt>get(vertex_distance, g)</tt>
+</blockquote>
+
+IN: <tt>visitor(BellmanFordVisitor v)</tt>
+<blockquote>
+  The visitor object, whose type must be a model of
+  <a href="./BellmanFordVisitor.html">Bellman-Ford Visitor</a>.<br>
+  <b>Default:</b> <tt>bellman_visitor&lt;null_visitor&gt;</tt>
+</blockquote>
+
+IN: <tt>distance_combine(BinaryFunction combine)</tt>
+<blockquote>
+  This function object replaces the role of addition in the relaxation
+  step. The first argument type must match the distance map's value
+  type and the second argument type must match the weight map's value
+  type.  The result type must be the same as the distance map's value
+  type.<br>
+  <b>Default:</b><tt>std::plus&lt;D&gt;</tt>
+  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.
+</blockquote>
+
+IN: <tt>distance_compare(BinaryPredicate compare)</tt>
+<blockquote>
+  This function object replaces the role of the less-than operator
+  that compares distances in the relaxation step. The argument types
+  must match the distance map's value type.<br>
+  <b>Default:</b> <tt>std::less&lt;D&gt;</tt>
+  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.
+</blockquote>
 
 <P>
 
@@ -114,65 +234,39 @@ distances of the rest of the vertices to
 <P>
 The time complexity is <i>O(V E)</i>.
 
-<P>
+
+<h3>Visitor Event Points</h3>
+
+<ul>
+<li><b><tt>vis.examine_edge(e, g)</tt></b>  is invoked on every edge in
+  the graph <i>|V|</i> times.
+<li><b><tt>vis.edge_relaxed(e, g)</tt></b>  is invoked when the distance
+  label for the target vertex is decreased. The edge <i>(u,v)</i> that 
+  participated in the last relaxation for vertex <i>v</i> is an edge in the
+  shortest paths tree. 
+<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>  is invoked if the distance label
+  for the target vertex is not decreased. 
+<li><b><tt>vis.edge_minimized(e, g)</tt></b>  is invoked during the
+  second stage of the algorithm, during the test of whether each edge
+  was minimized. If the edge is minimized then this function
+  is invoked.
+<li><b><tt>vis.edge_not_minimized(e, g)</tt></b>  is also invoked during the
+  second stage of the algorithm, during the test of whether each edge
+  was minimized.  If the edge was not minimized, this function is
+  invoked.  This happens when there is a negative cycle in the graph.
+</ul>
 
 <H3>Example</H3>
 
 <P>
-The source code for this example is in <a
+An example of using the Bellman-Ford algorithm is in <a
 href="../example/bellman_ford.cpp"><TT>examples/bellman_ford.cpp</TT></a>.
-
-<P>
-<PRE>
-  enum { u, v, x, y, z, N };
-  char name[] = { 'u', 'v', 'x', 'y', 'z' };
-
-  typedef std::pair&lt;int,int&gt; E;
-  E edges[] = { E(u,y), E(u,x), E(u,v),
-                E(v,u),
-                E(x,y), E(x,v),
-                E(y,v), E(y,z),
-                E(z,u), E(z,x) };
-  
-  int weight[] = { -4, 8, 5,
-                   -2,
-                   9, -3,
-                   7, 2,
-                   6, 7 };
-
-  typedef edge_list&lt;E*,E,ptrdiff_t&gt; Graph;
-  Graph g(edges, edges + sizeof(edges)/sizeof(E));
-    
-  vector&lt;int&gt; distance(N,std::numeric_limits&lt;short&gt;::max());
-  vector&lt;int&gt; parent(N,-1);
-  
-  distance[z] = 0;
-  parent[z] = z;
-  bool r = bellman_ford_shortest_paths(g, int(N), weight,
-                                       distance.begin(),
-                                       parent.begin());
-  if (r)  
-    for (int i = 0; i &lt; N; ++i)
-      std::cout &lt;&lt; name[i] &lt;&lt; ": " &lt;&lt; distance[i]
-                &lt;&lt; " " &lt;&lt; name[parent[i]] &lt;&lt; std::endl;
-  else
-    std::cout &lt;&lt; "negative cycle" &lt;&lt; std::endl;
-</PRE>
-The distance and predecessor for each vertex is:
-<PRE>
-  u: 2 v
-  v: 4 x
-  x: 7 z
-  y: -2 u
-  z: 0 z
-</PRE>
-
 
 <br>
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000</TD><TD>
+<TD nowrap>Copyright &copy; 2000</TD><TD>
 <A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
 </TD></TR></TABLE>
 
