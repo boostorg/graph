@@ -261,7 +261,7 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
-                PropertyPrinter<Graph, V> printNode(graph);
+                PropertyPrinter<Graph, V> printNode(this->graph);
                 out << "v"<<std::endl;
                 graph_traits<Graph>::vertex_iterator vi;
                 for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
