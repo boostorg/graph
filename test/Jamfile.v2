@@ -3,7 +3,7 @@
 
 import modules ;
 
-test-suite graph : 
+test-suite graph_test : 
 
     [ run transitive_closure_test.cpp ]
              
