@@ -20,6 +20,20 @@
 
   Use the _T versions when the graph type is a template parameter
   or dependent on a template parameter.
+  
+  WARNING: Be careful NOT to use the BGL_FORALL macros in 
+  single-statement contexts, like this:
+  
+  if (sky_is_blue)
+    BGL_FORALL_VERTICES(v, g, graph_t) {
+        bar(v);
+    }
+  
+  It is OK to use single statements after the macro:
+  
+  BGL_FORALL_VERTICES(v, g, graph_t)
+    foo(v);
+  
  */
 
 
