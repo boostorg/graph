@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: BFSVisitor</Title>
+<Title>Boost Graph Library: BellmanFordVisitor</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -19,13 +19,13 @@
 
 <BR Clear>
 
-<H1>BFSVisitor Concept</H1>
+<H1>BellmanFordVisitor Concept</H1>
 
 This concept defines the visitor interface for <a
-href="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>.
-Users can define a class with the BFSVisitor interface and pass and
-object of the class to <tt>breadth_first_search()</tt>, thereby
-augmenting the actions taken during the graph search.
+href="./bellman_ford_shortest_paths.html"><tt>bellman_ford_shortest_paths()</tt></a>.
+Users can define a class with the BellmanFordVisitor interface and
+pass and object of the class to <tt>bellman_ford_shortest_paths()</tt>,
+thereby augmenting the actions taken during the graph search.
 
 <h3>Refinement of</h3>
 
@@ -37,7 +37,7 @@ none
 <Table>
 <TR>
 <TD><tt>V</tt></TD>
-<TD>A type that is a model of BFSVisitor.</TD>
+<TD>A type that is a model of BellmanFordVisitor.</TD>
 </TR>
 
 <TR>
@@ -90,63 +90,63 @@ graph search.
 </tr>
 
 <tr>
-<td>Start Vertex</td>
-<td><tt>vis.start_vertex(s, g)</tt></td>
-<td><tt>void</tt></td>
-<td>
-This is invoked on the source vertex once before the start of the
-search.
-</td>
-</tr>
-
-<tr>
-<td>Discover Vertex</td>
-<td><tt>vis.discover_vertex(u, g)</tt></td>
-<td><tt>void</tt></td>
-<td>
-This is invoked when a vertex is encountered for the first time.
-</td>
-</tr>
-
-<tr>
 <td>Examine Edge</td>
 <td><tt>vis.examine_edge(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on every out-edge of each vertex after it is discovered.
+This is invoked on every edge in the graph <tt>num_vertices(g)</tt> times.
 </td>
 </tr>
 
 
 <tr>
-<td>Tree Edge</td>
-<td><tt>vis.tree_edge(e, g)</tt></td>
+<td>Edge Relaxed</td>
+<td><tt>vis.edge_relaxed(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on each edge as it becomes a member of the edges that
-form the search tree.</td>
-</tr>
-
-<tr>
-<td>Cycle Edge</td>
-<td><tt>cycle_edge(e, g)</tt></td>
-<td><tt>void</tt></td>
-<td>
-This is invoked on back or cross edges for directed graphs and cross
-edges for undirected graphs.
+Upon examination, if the following condition holds then the edge
+is relaxed (its distance is reduced), and this method is invoked.<br>
+<tt>
+tie(u,v) = incident(e, g);<br>
+D d_u = get(d, u), d_v = get(d, v);<br>
+W w_e = get(w, e);<br>
+assert(compare(combine(d_u, w_e), d_v));<br>
+</tt>
 </td>
 </tr>
 
 <tr>
-<td>Finish Vertex</td>
-<td><tt>vis.finish_vertex(u, g)</tt></td>
+<td>Edge Not Relaxed</td>
+<td><tt>edge_not_relaxed(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This invoked on a vertex after all of its out edges have been added to the
-search tree and all of the adjacent vertices have been discovered
-(but before their out-edges have been examined).
+Upon examination, if the edge is not relaxed (see above) then
+this method is invoked.
 </td>
 </tr>
+
+<tr>
+<td>Edge Minimized</td>
+<td><tt>vis.edge_minimized(e, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+After the <tt>num_vertices(g)</tt> iterations through the edge set
+of the graph is complete, one last iteration is made to test whether
+each edge was minimized. If the edge is minimized then this function
+is invoked.
+</td>
+</tr>
+
+<tr>
+<td>Edge Not Minimized</td>
+<td><tt>edge_not_minimized(e, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+If the edge is not minimized, this function is invoked. This happens
+when there is a negative cycle in the graph.
+</td>
+</tr>
+
 
 </table>
 

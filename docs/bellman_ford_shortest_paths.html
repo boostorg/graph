@@ -43,15 +43,15 @@
 <PRE>
 (1)
 template &lt;class EdgeListGraph, class Size,
-          class Weight, class Distance&gt;
+          class WeightPA, class DistancePA&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-                                 Weight w, Distance d)
+                                 WeightPA w, DistancePA d)
 
 (2)
 template &lt;class EdgeListGraph, class Size, 
-          class Weight, class Distance, class Visitor&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, Weight w, 
-                                 Distance d, Visitor visit)
+          class WeightPA, class DistancePA, class BellmanFordVisitor&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightPA w, 
+                                 DistancePA d, BellmanFordVisitor visit)
 </PRE>
 
 <P>
@@ -107,6 +107,8 @@ rest of the vertices to <TT>std::numeric_limits&lt;T&gt;::max()</TT>.
     href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
     value type and key type should be the graph's vertex descriptor
     type.
+</LI>
+<LI>The type <TT>BellmanFordVisitor</TT> must be a model of <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>.
 </LI>
 </UL>
 

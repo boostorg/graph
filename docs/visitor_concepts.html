@@ -19,47 +19,23 @@
 
 <BR Clear>
 
-<H2><A NAME="concept:Visitor"></A>
-Visitor
-</H2>
-
 <H1><A NAME="sec:visitor-concepts"></A>
 Visitor Concepts
 </H1>
 
 <P>
-The Visitor concept plays the same role in BGL as functors
+The visitor concepts plays the same role in BGL as functors
 play in the STL. Functors provide a mechanism for extending an
 algorithm, for customizing what is done at each step of the algorithm.
 Visitors allow the user to insert their own operations at various
 steps within a graph algorithm.
 
-<P>
-The graph search algorithms include breadth and depth-first search,
-Dijkstra's, Prim's, topological sort, Prim's, and connected
-components.
-
-<P>
-There are two visitor concepts, Visitor and UserVisitor. The visitors
-that the user passes into most BGL algorithms should model
-UserVisitor.  The visitors used for some of the ``generalized''
-algorithms and also for many of the internal BGL functions must model
-Visitor.  We refer to these visitors as <I>foundation visitors</I>.
-There are two differences between user-level visitors and foundation
-visitors.  The first is that a foundation visitor will control the
-progress of a graph search through the return value (<TT>true</TT> or
-<TT>false</TT>) of its <TT>explore()</TT> method, which indicates
-whether the target vertex needs to be explored. The user-level visitor
-does <TT>explore()</TT> function has a <TT>void</TT> return type. The
-second difference is that the UserVisitor has the extra requirement
-for a category typedef which is explained in detail below. The
-foundation visitors have the responsibility for handling the
-user-level visitors, invoking them at the appropriate time based on
-the visitor's category.
-
 <ul>
-  <li> <a href="./Visitor.html">Visitor</a>
-  <li> <a href="./UserVisitor.html">UserVisitor</a>
+  <li> <a href="./BFSVisitor.html">BFSVisitor</a>
+  <li> <a href="./DFSVisitor.html">DFSVisitor</a>
+  <li> <a href="./UniformCostVisitor.html">UniformCostVisitor</a>
+  <li> <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>
+  <li> <a href="./EventVisitor.html">EventVisitor</a>
 </ul>
 
 
