@@ -34,11 +34,9 @@ namespace boost {
   // used in "nauty" by Brendan McKay, the beginnings of which is at
   // the bottom of this file.
 
-  template <typename Graph>  
   struct degree_vertex_invariant {
-    typedef typename graph_traits<Graph>::degree_size_type result_type;
-
-    result_type
+    template <typename Graph>  
+    typename graph_traits<Graph>::degree_size_type
     operator()(typename graph_traits<Graph>::vertex_descriptor v,
                const Graph& g)
     {
@@ -272,7 +270,7 @@ namespace boost {
       n = is_default_param(get_param(params, vertex_isomorphism_t()))
         ? num_vertices(g1) : 0;
     std::vector<v2_desc_t> f(n);
-    degree_vertex_invariant<Graph1> default_invar;
+    degree_vertex_invariant default_invar;
     return detail::isomorphism_impl
       (g1, g2, 
        choose_param
@@ -296,7 +294,7 @@ namespace boost {
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
     typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
     std::vector<v2_desc_t> f(num_vertices(g1));
-    degree_vertex_invariant<Graph1> invariant;
+    degree_vertex_invariant invariant;
     return detail::isomorphism_impl
       (g1, g2,
        make_iterator_property_map(f.begin(),
