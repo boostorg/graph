@@ -1,7 +1,6 @@
 subproject libs/graph/test ;
 
-SEARCH on testing.jam = $(BOOST_BUILD_PATH) ;
-include testing.jam ;
+import testing ;
 
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
