@@ -661,22 +661,23 @@ namespace boost {
   //=========================================================================
   // Vertex Property Map
   
-  template <typename GraphRef, typename Vertex, typename T, typename R, 
+  template <typename GraphPtr, typename Vertex, typename T, typename R, 
     typename Tag> 
   class adj_matrix_vertex_property_map 
     : public put_get_helper<R,
-         adj_matrix_vertex_property_map<GraphRef, Vertex, T, R, Tag> >
+         adj_matrix_vertex_property_map<GraphPtr, Vertex, T, R, Tag> >
   {
   public:
     typedef T value_type;
     typedef R reference;
     typedef Vertex key_type;
     typedef boost::lvalue_property_map_tag category;
-    adj_matrix_vertex_property_map(GraphRef g) : m_g(g) { }
+    adj_matrix_vertex_property_map() { }
+    adj_matrix_vertex_property_map(GraphPtr g) : m_g(g) { }
     inline reference operator[](key_type v) const {
-      return get_property_value(m_g.m_vertex_properties[v], Tag());
+      return get_property_value(m_g->m_vertex_properties[v], Tag());
     }
-    GraphRef m_g;
+    GraphPtr m_g;
   };
 
   template <class Property, class Vertex>
@@ -688,6 +689,7 @@ namespace boost {
     typedef Vertex reference;
     typedef Vertex key_type;
     typedef boost::readable_property_map_tag category;
+     adj_matrix_vertex_id_map() { }
     template <class Graph>
     inline adj_matrix_vertex_id_map(const Graph&) { }
     inline value_type operator[](key_type v) const { return v; }
@@ -701,9 +703,9 @@ namespace boost {
 	typedef typename property_value<Property,Tag>::type Value;
 	typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
 	
-        typedef adj_matrix_vertex_property_map<Graph&, Vertex, Value, Value&,
+        typedef adj_matrix_vertex_property_map<Graph*, Vertex, Value, Value&,
 	  Tag> type;
-        typedef adj_matrix_vertex_property_map<const Graph&, Vertex, Value, 
+        typedef adj_matrix_vertex_property_map<const Graph*, Vertex, Value, 
 	  const Value&, Tag> const_type;
       };
     };
@@ -800,7 +802,7 @@ namespace boost {
       typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
       typedef typename boost::property_map<adjacency_matrix<D,VP,EP,GP,A>, 
         Property>::type PA;
-      return PA(const_cast<Graph&>(g));
+      return PA(&g);
     }
     template <typename Property, typename D, typename VP, typename EP, 
               typename GP, typename A>
@@ -823,7 +825,7 @@ namespace boost {
       typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
       typedef typename boost::property_map<adjacency_matrix<D,VP,EP,GP,A>, 
         Property>::const_type PA;
-      return PA(const_cast<Graph&>(g));
+      return PA(&g);
     }
     template <typename Property, typename D, typename VP, typename EP, 
               typename GP, typename A>
