@@ -202,14 +202,14 @@ namespace boost {
     // Return the children subgraphs of this graph/subgraph.
     // Use a list of pointers because the VC++ std::list doesn't like
     // storing incomplete type.
-    typedef typename indirect_iterator<
+    typedef indirect_iterator<
         typename ChildrenList::const_iterator
       , subgraph<Graph>
       , std::bidirectional_iterator_tag
     >
     children_iterator;
 
-    typedef typename indirect_iterator<
+    typedef indirect_iterator<
         typename ChildrenList::const_iterator
       , subgraph<Graph> const
       , std::bidirectional_iterator_tag
