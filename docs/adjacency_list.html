@@ -24,7 +24,8 @@
 <H1><A NAME="sec:adjacency-list-class"></A>
 <pre>
 adjacency_list&lt;EdgeList, VertexList, Directed,
-              <a href="./Property.html#VertexProperty">VertexProperty</a>, <a href="./Property.html#EdgeProperty">EdgeProperty</a>, <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
+               VertexProperties, EdgeProperties,
+               GraphProperties&gt;
 </pre>
 </H1>
 
@@ -150,19 +151,19 @@ The output is:
 </TR>
 
 <TR>
-<TD><TT>VertexProperty</TT></TD>
+<TD><TT>VertexProperties</TT></TD>
 <TD>for specifying internal property storage.</TD>
 <TD><TT>no_property</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>EdgeProperty</TT></TD>
+<TD><TT>EdgeProperties</TT></TD>
 <TD>for specifying internal property storage.</TD>
 <TD><TT>no_property</TT></TD>
 </TR>
 
 <TR>
-<TD><TT>GraphProperty</TT></TD>
+<TD><TT>GraphProperties</TT></TD>
 <TD>for specifying property storage for the graph object.</TD>
 <TD><TT>no_property</TT></TD>
 </TR>
@@ -190,19 +191,19 @@ The output is:
 <P>
 Properties such as color, distance, weight, and user-defined
 properties can be attached to the vertices and edges of the graph
-using properties. The property values can be read from and written to via
-the property maps provided by the graph. The property maps
-are obtained via the <TT>get(property, g)</TT> function.  How to use
+using properties. The property values can be read from and written to
+via the property maps provided by the graph. The property maps are
+obtained via the <TT>get(property, g)</TT> function.  How to use
 properties is described in Section <A
-HREF="./using_adjacency_list.html#sec:adjacency-list-properties">Properties
-</A>. The property maps are objects that implement the interface
-defined in Section <A
-HREF="../../property_map/property_map.html">Property
-Map Concepts</A>. The property maps obtained from a const
+HREF="./using_adjacency_list.html#sec:adjacency-list-properties">Internal
+Properties </A>. The property maps are objects that implement the
+interface defined in Section <A
+HREF="../../property_map/property_map.html">Property Map
+Concepts</A>. The property maps obtained from a const
 <TT>adjacency_list</TT> graph object are models of the <a
 href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
-concept. The property maps obtained from a mutable graph object
-are models of the <a
+concept. The property maps obtained from a mutable graph object are
+models of the <a
 href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
 concept.
 
@@ -893,22 +894,26 @@ This sets the property value for <tt>x</tt> to
 <hr>
 
 <pre>
-template &lt;class GraphProperties, class GraphProperty&gt;
+template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
 typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
 get_property(adjacency_list&amp; g, GraphProperty);
 </pre>
 Return the property specified by <tt>GraphProperty</tt> that is
-attached to the graph object <tt>g</tt>.
+attached to the graph object <tt>g</tt>. The <tt>property_value</tt>
+traits class is defined in <a
+href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.
 
 <hr>
 
 <pre>
-template &lt;class GraphProperties, class GraphProperty&gt;
+template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
 const typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
 get_property(const adjacency_list&amp; g, GraphProperty);
 </pre>
 Return the property specified by <tt>GraphProperty</tt> that is
-attached to the graph object <tt>g</tt>.
+attached to the graph object <tt>g</tt>.  The <tt>property_value</tt>
+traits class is defined in <a
+href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.
 
 <hr>
 
