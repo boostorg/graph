@@ -1,4 +1,11 @@
 //=======================================================================
+// (C) Copyright Jeremy Siek 2003.
+// Permission to copy, use, modify,
+// sell and distribute this software is granted provided this
+// copyright notice appears in all copies. This software is provided
+// "as is" without express or implied warranty, and with no claim as
+// to its suitability for any purpose.
+//=======================================================================
 // Copyright 2001 University of Notre Dame.
 // Author: Lie-Quan Lee
 //
@@ -50,7 +57,7 @@ namespace boost {
     }  };
 
   template <>  
-  struct graphviz_io_traits <boost::undirected_tag> {
+  struct graphviz_io_traits <undirected_tag> {
     static std::string name() {
       return "graph";
     }
@@ -239,24 +246,26 @@ namespace boost {
   inline void write_graphviz(std::ostream& out, const Graph& g,
                              VertexPropertiesWriter vpw,
                              EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw) {
-    
-    typedef typename boost::graph_traits<Graph>::directed_category cat_type;
+                             GraphPropertiesWriter gpw)
+  {
+    typedef typename property_map<Graph, vertex_index_t>::const_type vimap_t;
+    vimap_t vertex_index = get(g, vertex_index_t());
+    typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
     std::string name = "G";
     out << Traits::name() << " " << name << " {" << std::endl;
 
     gpw(out); //print graph properties
    
-    typename boost::graph_traits<Graph>::vertex_iterator i, end;
+    typename graph_traits<Graph>::vertex_iterator i, end;
 
-    for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
-      out << *i;
+    for(tie(i,end) = vertices(g); i != end; ++i) {
+      out << get(vertex_index, *i);
       vpw(out, *i); //print vertex attributes 
       out << ";" << std::endl;
     }
-    typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
-    for(boost::tie(ei, edge_end) = boost::edges(g); ei != edge_end; ++ei) {
+    typename graph_traits<Graph>::edge_iterator ei, edge_end;
+    for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
       out << source(*ei, g) << Traits::delimiter() << target(*ei, g) << " ";
       epw(out, *ei); //print edge attributes 
       out << ";" << std::endl;
@@ -300,8 +309,8 @@ namespace boost {
                                   RandomAccessIterator edge_marker)
     {
       typedef subgraph<Graph_> Graph;
-      typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-      typedef typename boost::graph_traits<Graph>::directed_category cat_type;
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename graph_traits<Graph>::directed_category cat_type;
       typedef graphviz_io_traits<cat_type> Traits;
 
       typedef typename graph_property<Graph, graph_name_t>::type NameType;
@@ -334,24 +343,24 @@ namespace boost {
 #endif
 
       //print subgraph
-      for ( boost::tie(i_child,j_child) = g.children();
+      for ( tie(i_child,j_child) = g.children();
             i_child != j_child; ++i_child )
         write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker);
 
       // Print out vertices and edges not in the subgraphs.
 
-      typename boost::graph_traits<Graph>::vertex_iterator i, end;
-      typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
+      typename graph_traits<Graph>::vertex_iterator i, end;
+      typename graph_traits<Graph>::edge_iterator ei, edge_end;
 
       typename property_map<Graph, vertex_index_t>::const_type 
         indexmap = get(vertex_index, g.root());
 
-      for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
+      for(tie(i,end) = vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
         int pos = get(indexmap, v);
         if ( vertex_marker[pos] ) {
           vertex_marker[pos] = false;
-          out << v;
+          out << pos;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, vertex_attribute_t>::const_type 
             VertexAttributeMap;
@@ -365,13 +374,14 @@ namespace boost {
         }
       }
 
-      for (boost::tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
+      for (tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
         Vertex u = g.local_to_global(source(*ei,g)),
           v = g.local_to_global(target(*ei, g));
         int pos = get(get(edge_index, g.root()), g.local_to_global(*ei));
         if ( edge_marker[pos] ) {
           edge_marker[pos] = false;
-          out << u << " " << Traits::delimiter() << " " << v;
+          out << get(indexmap, u) << " " << Traits::delimiter()
+	      << " " << get(indexmap, v);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, edge_attribute_t>::const_type
             EdgeAttributeMap;
@@ -411,28 +421,28 @@ namespace boost {
 
   typedef std::map<std::string, std::string> GraphvizAttrList;
 
-  typedef property<boost::vertex_attribute_t, GraphvizAttrList> 
+  typedef property<vertex_attribute_t, GraphvizAttrList> 
           GraphvizVertexProperty;
 
-  typedef property<boost::edge_attribute_t, GraphvizAttrList, 
-                   property<boost::edge_index_t, int> >
+  typedef property<edge_attribute_t, GraphvizAttrList, 
+                   property<edge_index_t, int> >
           GraphvizEdgeProperty;
   
-  typedef property<boost::graph_graph_attribute_t, GraphvizAttrList, 
-                   property<boost::graph_vertex_attribute_t, GraphvizAttrList, 
-                   property<boost::graph_edge_attribute_t, GraphvizAttrList, 
-                   property<boost::graph_name_t, std::string> > > >
+  typedef property<graph_graph_attribute_t, GraphvizAttrList, 
+                   property<graph_vertex_attribute_t, GraphvizAttrList, 
+                   property<graph_edge_attribute_t, GraphvizAttrList, 
+                   property<graph_name_t, std::string> > > >
           GraphvizGraphProperty;
     
-  typedef subgraph<adjacency_list<boost::vecS, 
-                   boost::vecS, boost::directedS, 
+  typedef subgraph<adjacency_list<vecS, 
+                   vecS, directedS, 
                    GraphvizVertexProperty,
                    GraphvizEdgeProperty,
                    GraphvizGraphProperty> >
           GraphvizDigraph;
 
-  typedef subgraph<adjacency_list<boost::vecS, 
-                   boost::vecS, boost::undirectedS, 
+  typedef subgraph<adjacency_list<vecS, 
+                   vecS, undirectedS, 
                    GraphvizVertexProperty,
                    GraphvizEdgeProperty,
                    GraphvizGraphProperty> >
