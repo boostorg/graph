@@ -146,12 +146,14 @@ int main(int , char* [])
   // The source vertex
   Vertex s = *(boost::vertices(G).first);
   p[s] = s;
-  boost::breadth_first_search(G, s, 
-   boost::make_bfs_visitor(
-    std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
-    std::make_pair(boost::record_predecessors(&p[0], 
-                                              boost::on_tree_edge()),
-                   copy_graph(G_copy, boost::on_examine_edge())))) );
+  boost::breadth_first_search
+    (G, s, 
+     boost::visitor(boost::make_bfs_visitor
+     (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
+		     std::make_pair
+		     (boost::record_predecessors(&p[0], 
+						 boost::on_tree_edge()),
+		      copy_graph(G_copy, boost::on_examine_edge())))) ));
 
   boost::print_graph(G);
   boost::print_graph(G_copy);
