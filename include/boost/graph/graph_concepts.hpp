@@ -208,6 +208,7 @@ namespace boost {
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
+      G g(n_vertices);
       v = add_vertex(g);
       clear_vertex(v, g);
       remove_vertex(v, g);
@@ -220,6 +221,7 @@ namespace boost {
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
     typename graph_traits<G>::out_edge_iterator iter;
+    typename graph_traits<G>::vertices_size_type n_vertices;
   };
 
   template <class edge_descriptor>
