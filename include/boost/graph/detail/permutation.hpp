@@ -28,7 +28,7 @@ void permute_serial(Iter1 permuter, Iter1 last, Iter2 result)
 }
 
 template <class InIter, class RandIterP, class RandIterR>
-void permute(InIter first, InIter last, RandIterP p, RandIterR result)
+void permute_copy(InIter first, InIter last, RandIterP p, RandIterR result)
 {
   typename std::iterator_traits<RandIterP>::difference_type i = 0;
   for (; first != last; ++first, ++i)
@@ -36,7 +36,7 @@ void permute(InIter first, InIter last, RandIterP p, RandIterR result)
 }
 
 template <class RandIter, class RandIterPerm>
-void inplace_permute(RandIter first, RandIter last, RandIterPerm p)
+void permute(RandIter first, RandIter last, RandIterPerm p)
 {
   typename std::iterator_traits<RandIterPerm>::difference_type 
     i = 0, pi, n = last - first, cycle_start;
