@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.15  2000/09/25 04:05:40  jsiek
+// fixed some function lookup problems due to VC++ no Koenig
+//
 // Revision 1.14  2000/09/24 22:59:22  david_abrahams
 // untabify so I can read it!
 //
@@ -1103,18 +1106,21 @@ namespace boost {
       typename boost::property_map<typename Config::graph_type, 
         Property>::const_type
     >::value_type
-    get(Property p, const adj_list_helper<Config, Base>& g, const Key& key) {
-      typedef typename Property::kind Kind;
+    get(Property p, const adj_list_helper<Config, Base>& g_, 
+	const Key& key) {
+      typedef typename Config::graph_type Graph;
+      const Graph& g = static_cast<const Graph&>(g_);
       return get(get(p, g), key);
     }
-    template <class Config, class Base, class Property, class Key, class Value>
+
+    template <class Config, class Base, class Property, class Key,class Value>
     inline void
     put(Property p, adj_list_helper<Config, Base>& g, 
 	const Key& key, const Value& value)
     {
       typedef typename Config::graph_type Graph;
       typedef typename boost::property_map<Graph, Property>::type Map;
-      Map pmap = get(p, g);
+      Map pmap = get(p, static_cast<Graph&>(g));
       put(pmap, key, value);
     }
 
@@ -1635,6 +1641,7 @@ namespace boost {
 
     };
 
+  } // namespace detail
 
     //=========================================================================
     // Vertex Property Maps
@@ -1700,9 +1707,9 @@ namespace boost {
     struct vec_adj_list_any_vertex_pa {
       template <class Tag, class Graph, class Plugin>
       struct bind {
-        typedef detail::vec_adj_list_vertex_property_map
+        typedef vec_adj_list_vertex_property_map
           <Graph, Graph&, Plugin, Tag> type;
-        typedef detail::vec_adj_list_vertex_property_map
+        typedef vec_adj_list_vertex_property_map
           <Graph, const Graph&, Plugin, Tag> const_type;
       };
     };
@@ -1714,6 +1721,7 @@ namespace boost {
         typedef vec_adj_list_vertex_id_map<Plugin, Vertex> const_type;
       };
     };
+  namespace detail {
     template <class Tag>
     struct vec_adj_list_choose_vertex_pa_helper {
       typedef vec_adj_list_any_vertex_pa type;
@@ -1730,17 +1738,13 @@ namespace boost {
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
     };
+  } // namespace detail
     
-
     //=========================================================================
     // Edge Property Map
 
     template <class Directed, class Plugin, class Vertex, class Tag>
     struct adj_list_edge_property_map
-      : public boost::put_get_at_helper<
-          typename plugin_value<Plugin,Tag>::type,
-          adj_list_edge_property_map<Directed,Plugin,Vertex,Tag>
-        >
     {
       typedef typename plugin_value<Plugin,Tag>::type value_type;
       typedef detail::bidir_edge<Directed, Vertex> key_type;
@@ -1754,16 +1758,34 @@ namespace boost {
         return get_plugin_value(*p, value_type(), Tag());
       }
     };
+    // Very strange VC++ bug appears when I use put_get_at helper
+    // so I explicitly write out get and put. Also, didn't just
+    // call operator[] because that also causes the problem!
+    template <class D, class P, class Vertex, class Tag, class K>
+    inline typename adj_list_edge_property_map<D,P,Vertex,Tag>::value_type
+    get(const adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& e)
+    {
+      typedef typename plugin_value<P,Tag>::type value_type;
+      const P* p = (P*)e.get_plugin();
+      return get_plugin_value(*p, value_type(), Tag());
+    }
+    template <class D, class P, class Vertex, class Tag, class K, class V>
+    inline void
+    put(adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& k,
+	const V& val)
+    {
+      typedef typename plugin_value<P,Tag>::type value_type;
+      const P* p = (P*)e.get_plugin();
+      get_plugin_value(*p, value_type(), Tag()) = val;
+    }
 
-
-  } // namespace detail
 
   // Edge Property Maps
 
   struct adj_list_edge_property_selector {
     template <class Graph, class Plugin, class Tag>
     struct bind {
-      typedef detail::adj_list_edge_property_map
+      typedef adj_list_edge_property_map
          <typename Graph::directed_category, Plugin, 
           typename Graph::vertex_descriptor,Tag> type;
       typedef type const_type;
@@ -1783,7 +1805,7 @@ namespace boost {
   struct adj_list_vertex_property_selector {
     template <class Graph, class Plugin, class Tag>
     struct bind {
-      typedef detail::adj_list_vertex_property_map<Graph,Plugin,Tag> type;
+      typedef adj_list_vertex_property_map<Graph,Plugin,Tag> type;
       typedef type const_type;
     };
   };
@@ -1804,7 +1826,6 @@ namespace boost {
   struct vertex_property_selector<vec_adj_list_tag> {
     typedef vec_adj_list_vertex_property_selector type;
   };
-
 
 } // namespace boost
 

@@ -63,7 +63,8 @@ class reverse_graph {
 };
 
 template <class BidirectionalGraph>
-inline reverse_graph<BidirectionalGraph> make_reverse_graph(BidirectionalGraph& g)
+inline reverse_graph<BidirectionalGraph>
+make_reverse_graph(BidirectionalGraph& g)
 {
     return reverse_graph<BidirectionalGraph>(g);
 }
@@ -80,6 +81,23 @@ typename property_map<BidirectionalGraph, Property>::const_type
 get(Property p, const reverse_graph<BidirectionalGraph>& g)
 {
   return get(p, g.m_g);
+}
+
+template <class BidirectionalGraph, class Property, class Key>
+typename property_traits<
+  typename property_map<BidirectionalGraph, Property>::const_type
+>::value_type
+get(Property p, const reverse_graph<BidirectionalGraph>& g, const Key& k)
+{
+  return get(p, g.m_g, k);
+}
+
+template <class BidirectionalGraph, class Property, class Key, class Value>
+void
+put(Property p, const reverse_graph<BidirectionalGraph>& g, const Key& k,
+    const Value& val)
+{
+  put(p, g.m_g, k, val);
 }
 
 template <class BidirectionalGraph>
@@ -148,6 +166,6 @@ in_degree(const typename BidirectionalGraph::vertex_descriptor u,
     return out_degree(u, g.m_g);
 }
 
-}
+} // namespace boost
 
 #endif

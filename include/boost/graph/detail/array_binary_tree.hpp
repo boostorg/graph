@@ -57,7 +57,7 @@ public:
 
   struct children_type {
     struct iterator
-        : std::iterator<std::bidirectional_iterator_tag, array_binary_tree_node,
+        : boost::iterator<std::bidirectional_iterator_tag, array_binary_tree_node,
                        difference_type, array_binary_tree_node*, array_binary_tree_node&>
     { // replace with iterator_adaptor implementation -JGS
         
