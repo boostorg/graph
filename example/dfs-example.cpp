@@ -73,8 +73,7 @@ main()
 
   // Typedefs
   typedef boost::graph_traits < graph_t >::vertex_descriptor Vertex;
-  typedef std::vector < Vertex >::iterator Piter;
-  typedef std::vector < size_type >::iterator Iiter;
+  typedef size_type* Iiter;
 
   // discover time and finish time properties
   std::vector < size_type > dtime(num_vertices(g));
@@ -89,7 +88,7 @@ main()
   integer_range < size_type > r(0, N);
   std::copy(r.begin(), r.end(), discover_order.begin());
   std::sort(discover_order.begin(), discover_order.end(),
-            indirect_cmp < Iiter, std::less < size_type > >(dtime.begin()));
+            indirect_cmp < Iiter, std::less < size_type > >(&dtime[0]));
   std::cout << "order of discovery: ";
   int i;
   for (i = 0; i < N; ++i)
@@ -98,7 +97,7 @@ main()
   std::vector < size_type > finish_order(N);
   std::copy(r.begin(), r.end(), finish_order.begin());
   std::sort(finish_order.begin(), finish_order.end(),
-            indirect_cmp < Iiter, std::less < size_type > >(ftime.begin()));
+            indirect_cmp < Iiter, std::less < size_type > >(&ftime[0]));
   std::cout << std::endl << "order of finish: ";
   for (i = 0; i < N; ++i)
     std::cout << name[finish_order[i]] << " ";

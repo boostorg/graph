@@ -70,8 +70,7 @@ main()
   // Typedefs
   typedef graph_traits < graph_t >::vertex_descriptor Vertex;
   typedef graph_traits < graph_t >::vertices_size_type Size;
-  typedef std::vector < Vertex >::iterator Piter;
-  typedef std::vector < Size >::iterator Iiter;
+  typedef Size* Iiter;
 
   // a vector to hold the discover time property for each vertex
   std::vector < Size > dtime(num_vertices(g));
@@ -85,7 +84,7 @@ main()
   integer_range < int >range(0, N);
   std::copy(range.begin(), range.end(), discover_order.begin());
   std::sort(discover_order.begin(), discover_order.end(),
-            indirect_cmp < Iiter, std::less < Size > >(dtime.begin()));
+            indirect_cmp < Iiter, std::less < Size > >(&dtime[0]));
 
   std::cout << "order of discovery: ";
   for (int i = 0; i < N; ++i)

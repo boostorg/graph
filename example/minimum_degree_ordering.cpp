@@ -154,10 +154,10 @@ int main(int argc, char* argv[])
 
   minimum_degree_ordering
     (G,
-     make_iterator_property_map(degree.begin(), id, degree[0]),
+     make_iterator_property_map(&degree[0], id, degree[0]),
      &inverse_perm[0],
      &perm[0],
-     make_iterator_property_map(supernode_sizes.begin(), id, supernode_sizes[0]), 
+     make_iterator_property_map(&supernode_sizes[0], id, supernode_sizes[0]), 
      delta, id);
 
   if ( argc >= 3 ) {

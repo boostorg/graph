@@ -44,10 +44,9 @@ main(int, char *[])
   // create the disjoint-sets object, which requires rank and parent vertex properties
   std::vector < Vertex > rank(num_vertices(G));
   std::vector < Vertex > parent(num_vertices(G));
-  typedef std::vector < graph_traits <
-    Graph >::vertices_size_type >::iterator Rank;
-  typedef std::vector < Vertex >::iterator Parent;
-  disjoint_sets < Rank, Parent > ds(rank.begin(), parent.begin());
+  typedef graph_traits<Graph>::vertices_size_type* Rank;
+  typedef Vertex* Parent;
+  disjoint_sets < Rank, Parent > ds(&rank[0], &parent[0]);
 
   // determine the connected components, storing the results in the disjoint-sets object
   initialize_incremental_components(G, ds);
