@@ -35,7 +35,7 @@ int main(int, char*[])
   adjacency_list<> TC;
   transitive_closure(G, TC);
 
-  std::cout << std::endl << "Graph G*:" << std::endl;
+  std::cout << std::endl << "Graph G+:" << std::endl;
   char name[] = "abcd";
   print_graph(TC, name);
   std::cout << std::endl;
