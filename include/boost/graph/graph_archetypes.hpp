@@ -201,13 +201,15 @@ namespace boost { // should use a different namespace for this
   template <typename G, typename P, typename V>
   typename property_map<property_graph_archetype<G, P, V>, P>::type
   get(P, property_graph_archetype<G, P, V>&) {
-    return typename property_map<property_graph_archetype<G, P, V>, P>::type();
+    typename property_map<property_graph_archetype<G, P, V>, P>::type pmap;
+    return pmap;
   }
 
   template <typename G, typename P, typename V>
   typename property_map<property_graph_archetype<G, P, V>, P>::const_type
   get(P, const property_graph_archetype<G, P, V>&) {
-    return typename property_map<property_graph_archetype<G, P, V>, P>::const_type();
+    typename property_map<property_graph_archetype<G, P, V>, P>::const_type pmap;
+    return pmap;
   }
 
   template <typename G, typename P, typename K, typename V>
@@ -247,14 +249,10 @@ namespace boost { // should use a different namespace for this
   public:
     void push(const T&) {}
     void pop() {}
-    T& top() { return s_top; }
-    const T& top() const { return s_top; }
+    T& top() { return static_object<T>::get(); }
+    const T& top() const { return static_object<T>::get(); }
     bool empty() const { return true; }
-  private:
-    static T s_top;
   };
-  template <typename T>
-  T buffer_archetype<T>::s_top(dummy_cons);
   
 } // namespace boost
 
