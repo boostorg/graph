@@ -177,8 +177,9 @@ main()
   }
 
   size_type diameter = 0;
+  BOOST_USING_STD_MAX();
   for (i = 0; i < num_vertices(g); ++i)
-    diameter = std_max(diameter, *std::max_element(d_matrix[i].begin(), 
+    diameter = max BOOST_PREVENT_MACRO_SUBSTITUTION(diameter, *std::max_element(d_matrix[i].begin(), 
                                                     d_matrix[i].end()));
   
   std::cout << "The diameter of the boost web-site graph is " << diameter

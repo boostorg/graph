@@ -69,7 +69,8 @@ namespace boost {
       FlowValue delta = (std::numeric_limits<FlowValue>::max)();
       e = p[sink];
       do {
-        delta = std_min(delta, residual_capacity[e]);
+        BOOST_USING_STD_MIN();
+        delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[e]);
         u = source(e, g);
         e = p[u];
       } while (u != src);

@@ -31,8 +31,9 @@ namespace boost
                            const std::vector < std::size_t > &s2,
                            std::vector < std::size_t > &s3)
     {
+      BOOST_USING_STD_MIN();
       for (std::size_t k = 0; k < s1.size(); ++k)
-        s3[k] = std_min(s1[k], s2[k]);
+        s3[k] = min BOOST_PREVENT_MACRO_SUBSTITUTION(s1[k], s2[k]);
     }
   }                             // namespace detail
 

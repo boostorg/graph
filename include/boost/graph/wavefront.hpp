@@ -86,10 +86,11 @@ namespace boost {
   typename graph_traits<Graph>::vertices_size_type
   max_wavefront(const Graph& g, VertexIndexMap index)
   {
+    BOOST_USING_STD_MAX();
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      b = std_max(b, ith_wavefront(*i, g, index));
+      b = max BOOST_PREVENT_MACRO_SUBSTITUTION(b, ith_wavefront(*i, g, index));
     return b;
   }
 

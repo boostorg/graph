@@ -240,7 +240,8 @@ namespace boost {
                 f[j] = v;
                 in_S[v] = true;
                 num_edges_on_k = 1;
-                int next_k = std_max(dfs_num_k, std_max(dfs_num[i], dfs_num[j]));
+                BOOST_USING_STD_MAX();
+                int next_k = max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num_k, max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num[i], dfs_num[j]));
                 if (match(next(iter), next_k))
                   return true;
                 in_S[v] = false;

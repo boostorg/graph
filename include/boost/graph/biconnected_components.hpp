@@ -35,6 +35,7 @@ namespace boost
                      DiscoverTimeMap d,
                      std::size_t & dfs_time, LowPointMap lowpt, Stack & S)
     {
+      BOOST_USING_STD_MIN();
       typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
       typedef typename property_traits < DiscoverTimeMap >::value_type D;
       D infinity = (std::numeric_limits < D >::max)();
@@ -48,7 +49,7 @@ namespace boost
         {
           S.push(*ei);
           biconnect(w, v, false, g, comp, c, d, dfs_time, lowpt, S);
-          put(lowpt, v, std_min(get(lowpt, v), get(lowpt, w)));
+          put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(lowpt, w)));
           if (get(lowpt, w) >= get(d, v))
           {
             while (d[source(S.top(), g)] >= d[w]) {
@@ -63,7 +64,7 @@ namespace boost
         } else if (get(d, w) < get(d, v) && (!at_top && w != u))
         {
           S.push(*ei);
-          put(lowpt, v, std_min(get(lowpt, v), get(d, w)));
+          put(lowpt, v, min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, v), get(d, w)));
         }
       }
     }

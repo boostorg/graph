@@ -2005,7 +2005,8 @@ namespace boost {
              const typename Config::edge_property_type& p,
              vec_adj_list_impl<Graph, Config, Base>& g_)
     {
-      typename Config::vertex_descriptor x = std_max(u, v);
+      BOOST_USING_STD_MAX();
+      typename Config::vertex_descriptor x = max BOOST_PREVENT_MACRO_SUBSTITUTION(u, v);
       if (x >= num_vertices(g_))
         g_.m_vertices.resize(x + 1);
       adj_list_helper<Config, Base>& g = g_;
