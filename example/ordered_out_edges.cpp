@@ -58,20 +58,34 @@ struct order_by_name
       < std::make_pair(e2.get_target(), boost::get(boost::edge_name, e2));
   }
 };
-struct ordered_set_by_nameS { };
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+struct ordered_set_by_nameS { };
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
     typedef std::multiset<ValueType, order_by_name<ValueType> > type;
   };
+}
+#else
+struct ordered_set_by_nameS {
+  template <class T>
+  struct bind_ { typedef std::multiset<T, order_by_name<T> > type; };
+};
+namespace boost {
+  template <> struct container_selector<ordered_set_by_nameS>  {
+    typedef ordered_set_by_nameS type;
+  };
+}
+#endif
+
+namespace boost {
   template <>
   struct parallel_edge_traits<ordered_set_by_nameS> { 
     typedef allow_parallel_edge_tag type;
   };
 }
-#endif
+
 int
 main()
 {
