@@ -2359,10 +2359,6 @@ namespace boost {
 
 } // namespace boost
 
-#ifdef BOOST_NO_ITERATOR_ADAPTORS
-#undef BOOST_NO_ITERATOR_ADAPTORS
-#endif
-
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
 
 /*

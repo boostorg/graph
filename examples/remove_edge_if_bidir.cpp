@@ -46,7 +46,12 @@ struct has_target {
 struct has_weight_greater_than {
   has_weight_greater_than(int w_, Graph& g_) : w(w_), g(g_) { }
   bool operator()(graph_traits<Graph>::edge_descriptor e) {
+#ifdef BOOST_MSVC
+    return get(get(edge_weight, g), e) > w;
+#else
+    // This version of get() breaks VC++
     return get(edge_weight, g, e) > w;
+#endif
   }
   int w;
   Graph& g;

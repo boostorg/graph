@@ -21,14 +21,28 @@
 
     <h1>Trouble Shooting</h1>
 
+<hr>
 <pre>
-error C2784: 'T __cdecl source(struct std::pair<T,T>,const G &)' : could not deduce template argument for 'struct std::pair<_T1,_T1>' from 'class boost::detail::bidir_edge<struct boost::bidirectional_tag,unsigned int>'
-
+error C2784: 'T __cdecl source(struct std::pair<T,T>,const G &)' : 
+could not deduce template argument for 'struct std::pair<_T1,_T1>' from
+ 'class boost::detail::bidir_edge<struct boost::bidirectional_tag,unsigned int>'
 </pre>
 
 VC++ does not support Koenig Lookup, therefore you need to refer to functions defined in the boost namespace
 using the <tt>boost::</tt> prefix, i.e., <tt>boost::source(e, g)</tt> instead of <tt>source(e, g)</tt>.
 
+<hr>
+<pre>
+../../..\boost/property_map.hpp(283) : error C2678: binary '[' : no operator defined
+ which takes a left-hand operand of type 'const struct boost::adj_list_edge_property_map<struct
+ boost::bidirectional_tag,struct boost::property<enum boost::edge_weight_t,int,struct 
+ boost::no_property>,unsigned int,enum boost::edge_weight_t>' (or there is no acceptable conversion)
+</pre>
+
+There is a VC++ bug that appears when using <tt>get(property, graph, edge)</tt>. A workaround is to use
+<tt>get(get(property, graph), edge)</tt> instead.
+
+<hr>
 
 <br>
 <HR>

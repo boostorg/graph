@@ -59,7 +59,7 @@ struct order_by_name
 };
 struct ordered_set_by_nameS { };
 
-
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
@@ -70,10 +70,13 @@ namespace boost {
     typedef allow_parallel_edge_tag type;
   };
 }
-
+#endif
 int
 main()
 {
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+  std::cout << "This program requires partial specialization" << std::endl;
+#else
   using namespace boost;
   typedef property<edge_name_t, std::string> EdgeProperty;
   typedef adjacency_list<ordered_set_by_nameS, vecS, undirectedS,
@@ -116,6 +119,6 @@ main()
   tie(e_first, e_last) = edge_range(0, 1, g);
   while (e_first != e_last)
     std::cout << "name(0,1) = " << name[*e_first++] << std::endl;
-
+#endif
   return 0;
 }
