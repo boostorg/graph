@@ -37,22 +37,65 @@
 int test_main(int argc, char* argv[])
 {
   using namespace boost;
-  typedef adjacency_list<vecS, vecS, directedS,
+  typedef adjacency_list<vecS, vecS, bidirectionalS,
     no_property, property<edge_index_t, std::size_t> > graph_t;
   typedef subgraph<graph_t> subgraph_t;
+  typedef graph_traits<subgraph_t>::vertex_descriptor vertex_t;
+  typedef graph_traits<subgraph_t>::edge_descriptor edge_t;
 
   mt19937 gen;
-  for (int t = 0; t < 100; t += 5) {
+  for (int t = 0; t < 25; t += 5) {
     subgraph_t g;
     int N = t + 2;
-    generate_random_graph(g, N, N * 2, gen);
+    std::vector<vertex_t> vertex_set;
+    std::vector< std::pair<vertex_t, vertex_t> > edge_set;
+    generate_random_graph(g, N, N * 2, gen, 
+			  std::back_inserter(vertex_set),
+			  std::back_inserter(edge_set));
 
     graph_test< subgraph_t > gt;
+
+    gt.test_incidence_graph(vertex_set, edge_set, g);
+    gt.test_bidirectional_graph(vertex_set, edge_set, g);
+    gt.test_adjacency_graph(vertex_set, edge_set, g);
+    gt.test_vertex_list_graph(vertex_set, g);
+    gt.test_edge_list_graph(vertex_set, edge_set, g);
+    gt.test_adjacency_matrix(vertex_set, edge_set, g);
+
     gt.test_add_vertex(g);
     gt.test_add_edge(random_vertex(g, gen), random_vertex(g, gen), g);
     gt.test_remove_edge(random_vertex(g, gen), random_vertex(g, gen), g);
     gt.test_remove_edge(random_edge(g, gen), g);
     gt.test_clear_vertex(random_vertex(g, gen), g);
+
+    std::vector<vertex_t> sub_vertex_set;
+    std::vector<vertex_t> sub_global_map;
+    std::vector< std::pair<vertex_t, vertex_t> > sub_edge_set;
+
+    subgraph_t& g_s = g.create_subgraph();
+    
+    for (int i = 0; i < N/2; ++i) {
+      vertex_t v_global = random_vertex(g, gen);
+      vertex_t v = add_vertex(v_global, g_s);
+      sub_vertex_set.push_back(v);
+      sub_global_map.push_back(v_global);
+    }
+    // compute induced edges
+    for (int j = 0; j < N; ++j)
+      for (int k = 0; k < N; ++k) {
+	edge_t e; bool exists;
+	tie(e, exists) = edge(sub_global_map[j], sub_global_map[k], g);
+	if (exists)
+	  sub_edge_set.push_back(std::make_pair(source(e, g), target(e, g)));
+      }
+    
+    gt.test_incidence_graph(sub_vertex_set, sub_edge_set, g_s);
+    gt.test_bidirectional_graph(sub_vertex_set, sub_edge_set, g_s);
+    gt.test_adjacency_graph(sub_vertex_set, sub_edge_set, g_s);
+    gt.test_vertex_list_graph(sub_vertex_set, g_s);
+    gt.test_edge_list_graph(sub_vertex_set, sub_edge_set, g_s);
+    gt.test_adjacency_matrix(sub_vertex_set, sub_edge_set, g_s);
+    
   }  
   return 0;
 }
