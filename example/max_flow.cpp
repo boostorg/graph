@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
 #include <iostream>
 #include <string>
 #include <boost/graph/push_relabel_max_flow.hpp>
@@ -57,7 +58,7 @@ main()
 
   long flow;
   flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity,
-			       rev, get(vertex_index, g));
+                               rev, get(vertex_index, g));
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
