@@ -76,6 +76,8 @@ namespace boost {
   connected_components(const Graph& g, ComponentMap c, 
                        const bgl_named_params<P, T, R>& params)
   {
+    if (num_vertices(g) == 0) return 0;
+
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
     typedef typename boost::graph_traits<Graph>::directed_category directed;
@@ -93,6 +95,8 @@ namespace boost {
   inline typename property_traits<ComponentMap>::value_type
   connected_components(const Graph& g, ComponentMap c)
   {
+    if (num_vertices(g) == 0) return 0;
+
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
     typedef typename boost::graph_traits<Graph>::directed_category directed;
