@@ -26,13 +26,14 @@ namespace boost {
   // property_num, and use enum's for the Property type (see
   // graph/properties.hpp), but the user may want to use a class
   // instead with a nested kind type and num.  Also, we may want to
-  // switch BGL back to using class types for properties.
+  // switch BGL back to using class types for properties at some point.
 
   template <class Property>
   struct property_kind {
     typedef typename Property::kind type;
   };
 
+#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZAATION
   // The property_num is only needed for no partial spec. workaround
   // in detail::same_property.
 
@@ -40,6 +41,7 @@ namespace boost {
   struct property_num {
     enum { value = Property::num };
   };
+#endif
 
 
 } // namespace boost

@@ -59,8 +59,8 @@ namespace boost {
   // Do mutating operations such as insert/erase/resize invalidate all
   // outstanding iterators?
 
-  struct stable_iterator_tag { };
-  struct unstable_iterator_tag { };
+  struct stable_tag { };
+  struct unstable_tag { };
 
   //======================================================================
   // Container Traits Class and container_category() function
@@ -74,6 +74,9 @@ namespace boost {
   };
 #endif
 
+  // Use this as a compile-time assertion that X is stable
+  inline void require_stable(stable_tag) { }
+
   // std::vector
   struct vector_tag :
     virtual public random_access_container_tag,
@@ -84,14 +87,14 @@ namespace boost {
     { return vector_tag(); }
 
   template <class T, class Alloc>
-  unstable_iterator_tag iterator_stability(const std::vector<T,Alloc>&)
-    { return unstable_iterator_tag(); }
+  unstable_tag iterator_stability(const std::vector<T,Alloc>&)
+    { return unstable_tag(); }
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class T, class Alloc>
   struct container_traits< std::vector<T,Alloc> > {
     typedef vector_tag category;
-    typedef unstable_iterator_tag iterator_stability;
+    typedef unstable_tag iterator_stability;
   };
 #endif
 
@@ -108,14 +111,14 @@ namespace boost {
     { return list_tag(); }
 
   template <class T, class Alloc>
-  stable_iterator_tag iterator_stability(const std::list<T,Alloc>&)
-    { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const std::list<T,Alloc>&)
+    { return stable_tag(); }
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class T, class Alloc>
   struct container_traits< std::list<T,Alloc> > {
     typedef list_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
 
@@ -126,7 +129,7 @@ namespace boost {
   template <class T, class Alloc>
   struct container_traits<BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc> > {
     typedef front_insertion_sequence_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
   template <class T, class Alloc>
@@ -136,9 +139,9 @@ namespace boost {
     { return front_insertion_sequence_tag(); }
 
   template <class T, class Alloc>
-  stable_iterator_tag iterator_stability(
+  stable_tag iterator_stability(
   const BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc>&)
-    { return stable_iterator_tag(); }
+    { return stable_tag(); }
 #endif
 
 
@@ -154,14 +157,14 @@ namespace boost {
   { return set_tag(); }
 
   template <class Key, class Cmp, class Alloc> 
-  stable_iterator_tag iterator_stability(const std::set<Key,Cmp,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const std::set<Key,Cmp,Alloc>&)
+  { return stable_tag(); }
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Cmp, class Alloc> 
   struct container_traits< std::set<Key,Cmp,Alloc> > {
     typedef set_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
 
@@ -177,14 +180,14 @@ namespace boost {
   { return multiset_tag(); }
 
   template <class Key, class Cmp, class Alloc> 
-  stable_iterator_tag iterator_stability(const std::multiset<Key,Cmp,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const std::multiset<Key,Cmp,Alloc>&)
+  { return stable_tag(); }
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Cmp, class Alloc> 
   struct container_traits< std::multiset<Key,Cmp,Alloc> > {
     typedef multiset_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
 
@@ -201,7 +204,7 @@ namespace boost {
   template <class Key, class T, class Cmp, class Alloc> 
   struct container_traits< std::map<Key,T,Cmp,Alloc> > {
     typedef map_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
 
@@ -210,8 +213,8 @@ namespace boost {
   { return map_tag(); }
 
   template <class Key, class T, class Cmp, class Alloc> 
-  stable_iterator_tag iterator_stability(const std::map<Key,T,Cmp,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const std::map<Key,T,Cmp,Alloc>&)
+  { return stable_tag(); }
 
   // std::multimap
   struct multimap_tag :
@@ -224,7 +227,7 @@ namespace boost {
   template <class Key, class T, class Cmp, class Alloc> 
   struct container_traits< std::multimap<Key,T,Cmp,Alloc> > {
     typedef multimap_tag category;
-    typedef stable_iterator_tag iterator_stability;
+    typedef stable_tag iterator_stability;
   };
 #endif
 
@@ -233,8 +236,8 @@ namespace boost {
   { return multimap_tag(); }
 
   template <class Key, class T, class Cmp, class Alloc> 
-  stable_iterator_tag iterator_stability(const std::multimap<Key,T,Cmp,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const std::multimap<Key,T,Cmp,Alloc>&)
+  { return stable_tag(); }
 
 
  // hash_set, hash_map
@@ -244,12 +247,12 @@ namespace boost {
   template <class Key, class Eq, class Hash, class Alloc> 
   struct container_traits< BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc> > {
     typedef set_tag category;
-    typedef stable_iterator_tag iterator_stability; // is this right?
+    typedef stable_tag iterator_stability; // is this right?
   };
   template <class Key, class T, class Eq, class Hash, class Alloc>
   struct container_traits< BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc> > {
     typedef map_tag category;
-    typedef stable_iterator_tag iterator_stability; // is this right?
+    typedef stable_tag iterator_stability; // is this right?
   };
 #endif
   template <class Key, class Eq, class Hash, class Alloc>
@@ -261,12 +264,12 @@ namespace boost {
   { return map_tag(); }
 
   template <class Key, class Eq, class Hash, class Alloc>
-  stable_iterator_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc>&)
+  { return stable_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  stable_iterator_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc>&)
-  { return stable_iterator_tag(); }
+  stable_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc>&)
+  { return stable_tag(); }
 #endif
 
 
@@ -304,7 +307,7 @@ namespace boost {
   }
   template <class AssociativeContainer, class Predicate>
   void erase_if_dispatch(AssociativeContainer& c, Predicate p,
-                         associative_container_tag, stable_iterator_tag)
+                         associative_container_tag, stable_tag)
   {
     typename AssociativeContainer::iterator i, next;
     for (i = next = c.begin(); next != c.end(); i = next) {
@@ -315,7 +318,7 @@ namespace boost {
   }
   template <class AssociativeContainer, class Predicate>
   void erase_if_dispatch(AssociativeContainer& c, Predicate p,
-                         associative_container_tag, unstable_iterator_tag)
+                         associative_container_tag, unstable_tag)
   {
     // This method is really slow, so hopefully we won't have any
     // associative containers with unstable iterators!
