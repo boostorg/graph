@@ -31,7 +31,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/pending/concept_checks.hpp>
+#include <boost/concept_check.hpp>
 
 // where to put out_degree(v,g)?
 
