@@ -56,7 +56,7 @@ namespace boost {
       W w_e = get(w, e);
 
       // workaround overflow problem, don't relax if d_u is close to inf
-      if (std::abs(std::numeric_limits<D>::max() - d_u) < std::abs(w_e))
+      if (w_e > 0 && std::abs(std::numeric_limits<D>::max() - d_u) < w_e)
 	return false;
       
       if ( compare(combine(d_u, w_e), d_v) ) {
