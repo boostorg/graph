@@ -310,7 +310,7 @@ concerned with the invalidation of iterators and descriptors that are
 <b>not directly affected</b> by the operation. For example, performing
 <tt>remove_edge(u, v, g)</tt> will always invalidate any edge
 descriptor for <i>(u,v)</i> or edge iterator pointing to <i>(u,v)</i>,
-regardless of the kind <tt>adjacency_list</tt>.  In these discussions
+regardless of the kind <tt>adjacency_list</tt>.  In this discussion
 of iterator and descriptor invalidation, we are only concerned with the
 affect of <tt>remove_edge(u, v, g)</tt> on edge descriptors and
 iterators that point to other edges (not <i>(u,v)</i>).
