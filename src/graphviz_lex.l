@@ -25,12 +25,21 @@
 //=======================================================================
 
 
+// Include this first, since it declares YYSTYPE which will
+// be defined in "*parser.h" if not previosly declared here.
 
+
+#include "yystype.h"
+#define YY_DECL   int yylex(YYSTYPE* lvalp)
+
+// When GRAPHVIZ_DIRECTED is declared it means Boost.Build is used.
+// Headers for directed and undirected graphs are both generated, and
+// have different names.
 #ifdef GRAPHVIZ_DIRECTED
     #if GRAPHVIZ_DIRECTED == 0
         #define yyerror bgl_undir_error
         #include "graphviz_graph_parser.h"
-    #else GRAPHIVZ == 1
+    #else
         #define yyerror bgl_dir_error
         #include "graphviz_digraph_parser.h"
     #endif
@@ -47,8 +56,6 @@ static void begin_literal();
 static void add_string(const char* str);
 static void end_literal();
 
-#include "yystype.h"
-#define YY_DECL   int yylex(YYSTYPE* lvalp)
 %}
 
 %option noyywrap
