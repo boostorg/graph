@@ -21,9 +21,9 @@
 
 <H1><A NAME="sec:adjacency-list-class"></A>
 <pre>
-adjacency_list&lt;EdgeList, VertexList, Directed,
+adjacency_list&lt;OutEdgeList, VertexList, Directed,
                VertexProperties, EdgeProperties,
-               GraphProperties&gt;
+               GraphProperties, EdgeList&gt;
 </pre>
 </H1>
 
@@ -52,9 +52,9 @@ representation of a directed graph.
 The
 <TT>VertexList</TT> template parameter of the <TT>adjacency_list</TT>
 class controls what kind of container is used to represent the outer
-two-dimensional container. The <TT>EdgeList</TT> template parameter
+two-dimensional container. The <TT>OutEdgeList</TT> template parameter
 controls what kind of container is used to represent the edge
-lists. The choices for <TT>EdgeList</TT> and <TT>VertexList</TT> will
+lists. The choices for <TT>OutEdgeList</TT> and <TT>VertexList</TT> will
 determine the space complexity of the graph structure, and will
 determine the time complexity of the various graph operations. The
 possible choices and tradeoffs are discussed in Section <A
@@ -101,7 +101,7 @@ shows how to represent a family tree with a graph.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>EdgeList</TT></TD>
+<TR><TD><TT>OutEdgeList</TT></TD>
 <TD>The selector for the container used to represent the
   edge-list for each of the vertices.</TD>
 <TD><TT>vecS</TT></TD>
@@ -136,6 +136,12 @@ shows how to represent a family tree with a graph.
 <TD><TT>GraphProperties</TT></TD>
 <TD>for specifying property storage for the graph object.</TD>
 <TD><TT>no_property</TT></TD>
+</TR>
+
+<TR><TD><TT>EdgeList</TT></TD>
+<TD>The selector for the container used to represent the
+  edge-list for the graph.</TD>
+<TD><TT>vecS</TT></TD>
 </TR>
 
 </TABLE>
@@ -292,16 +298,16 @@ iterators that point to other edges (not <i>(u,v)</i>).
 <p>
 In general, if you want your vertex and edge descriptors to be stable
 (never invalidated) then use <tt>listS</tt> or <tt>setS</tt> for the
-<tt>VertexList</tt> and <tt>EdgeList</tt> template parameters of
+<tt>VertexList</tt> and <tt>OutEdgeList</tt> template parameters of
 <tt>adjacency_list</tt>. If you are not as concerned about descriptor
 and iterator stability, and are more concerned about memory
 consumption and graph traversal speed, use <tt>vecS</tt> for the
-<tt>VertexList</tt> and/or <tt>EdgeList</tt> template parameters.
+<tt>VertexList</tt> and/or <tt>OutEdgeList</tt> template parameters.
 
 <p>
 The following table summarizes which operations cause descriptors and
 iterators to become invalid. In the table, <tt>EL</tt> is an
-abbreviation for <tt>EdgeList</tt> and <tt>VL</tt> means
+abbreviation for <tt>OutEdgeList</tt> and <tt>VL</tt> means
 <tt>VertexList</tt>. The <b>Adj Iter</b> category includes the
 <tt>out_edge_iterator</tt>, <tt>in_edge_iterator</tt>, and
 <tt>adjacency_iterator</tt> types. A more detailed description of
@@ -346,7 +352,7 @@ align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
 <br>
 and
 <br>
-<tt>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;::vertex_descriptor</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::vertex_descriptor</tt>
 <br><br>
 The type for the vertex descriptors associated with the
 <TT>adjacency_list</TT>.
@@ -355,7 +361,7 @@ The type for the vertex descriptors associated with the
 
 <tt>graph_traits&lt;adjacency_list&gt;::edge_descriptor</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;::edge_descriptor</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::edge_descriptor</tt>
 <br><br>
 The type for the edge descriptors associated with the
 <TT>adjacency_list</TT>.
@@ -388,9 +394,9 @@ href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalItera
 <br><br>
 
 The type for the iterators returned by <TT>out_edges()</TT>.
-When <tt>EdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
+When <tt>OutEdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
 <a href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">
-RandomAccessIterator</a>.  When <tt>EdgeList=slistS</tt> then the
+RandomAccessIterator</a>.  When <tt>OutEdgeList=slistS</tt> then the
 <tt>out_edge_iterator</tt> models <a
 href="http://www.sgi.com/tech/stl/ForwardIterator.html">
 ForwardIterator</a>.  Otherwise the <tt>out_edge_iterator</tt> models
@@ -409,7 +415,7 @@ as <tt>out_edge_iterator</tt>.
 
 <tt>graph_traits&lt;adjacency_list&gt;::directed_category</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;::directed_category</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::directed_category</tt>
 <br><br>
 Provides information about whether the graph is
 directed (<TT>directed_tag</TT>) or undirected
@@ -419,7 +425,7 @@ directed (<TT>directed_tag</TT>) or undirected
 
 <tt>graph_traits&lt;adjacency_list&gt;::edge_parallel_category</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;EdgeList, VertexList, Directed&gt;::edge_parallel_category</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::edge_parallel_category</tt>
 <br><br>
 This describes whether the graph class allows the insertion of
 parallel edges (edges with the same source and target). The two tags
@@ -697,7 +703,7 @@ edge_range(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
 </pre>
 Returns a pair of out-edge iterators that give the range for
 all the parallel edges from <tt>u</tt> to <tt>v</tt>. This
-function only works when the <tt>EdgeList</tt> for the
+function only works when the <tt>OutEdgeList</tt> for the
 <tt>adjacency_list</tt> is a container that sorts the
 out edges according to target vertex, and allows for
 parallel edges. The <tt>multisetS</tt> selector chooses
@@ -726,7 +732,7 @@ returned edge descriptor points to the already existing edge.
 <p>
 The placement of the new edge in the out-edge list is in general
 unspecified, though ordering of the out-edge list can be accomplished
-through the choice of <tt>EdgeList</tt>. 
+through the choice of <tt>OutEdgeList</tt>. 
 
 If the <tt>VertexList</tt> selector is
 <tt>vecS</tt>, and if either vertex descriptor <tt>u</tt> or
@@ -735,9 +741,9 @@ number of vertices in the graph, the graph is enlarged so that the
 number of vertices is <tt>std::max(u,v) + 1</tt>.
 
 <p>
-If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
+If the <TT>OutEdgeList</TT> selector is <TT>vecS</TT> then this operation
 will invalidate any <tt>out_edge_iterator</tt> for vertex
-<i>u</i>. This also applies if the <TT>EdgeList</TT> is a user-defined
+<i>u</i>. This also applies if the <TT>OutEdgeList</TT> is a user-defined
 container that invalidates its iterators when <TT>push(container,
 x)</TT> is invoked (see Section <A
 HREF="./using_adjacency_list.html#sec:custom-storage">Customizing the
@@ -770,7 +776,7 @@ Removes the edge <i>(u,v)</i> from the graph.
 <p>
 This operation causes any outstanding edge descriptors or iterators
 that point to edge <i>(u,v)</i> to become invalid.  In addition, if
-the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
+the <TT>OutEdgeList</TT> selector is <TT>vecS</TT> then this operation
 will invalidate any iterators that point into the edge-list for vertex
 <i>u</i> and also for vertex <i>v</i> in the undirected and
 bidirectional case. Also, for directed graphs this invalidates any
@@ -1030,7 +1036,7 @@ HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  gif ALT EdgeList VertexList html VertexProperties EdgeProperties
+<!--  LocalWords:  gif ALT OutEdgeList EdgeList VertexList html VertexProperties EdgeProperties
  -->
 <!--  LocalWords:  GraphPropertyTag cpp enum ai cout endl VertexAndEdgeListGraph
  -->
