@@ -272,7 +272,7 @@ namespace boost {
         diff_t;
       typedef typename Traits::vertex_descriptor vertex_t;
       typedef typename Traits::adjacency_iterator adj_iter;
-      typedef iterator_property_map<typename std::vector<vertex_t>::iterator, 
+      typedef iterator_property_map<vertex_t*, 
         identity_property_map, vertex_t, vertex_t&> IndexVertexMap;
       typedef detail::Stacks<diff_t> Workspace;
       typedef bucket_sorter<size_type, vertex_t, DegreeMap, VertexIndexMap> 
