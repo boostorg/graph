@@ -217,6 +217,15 @@ namespace boost {
     G g;
   };
 
+  template <class G>
+  struct VertexAndEdgeListGraphConcept
+  {
+    void constraints() {
+      function_requires< VertexListGraphConcept<G> >();    
+      function_requires< EdgeListGraphConcept<G> >();
+    }
+  };
+
   // Where to put the requirement for this constructor?
   //      G g(n_vertices);
   // Not in mutable graph, then LEDA graph's can't be models of
