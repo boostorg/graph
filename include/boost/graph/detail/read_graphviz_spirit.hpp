@@ -518,7 +518,12 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
 
     void call_prop_actor(std::string const& lhs, std::string const& rhs) {
       actor_t& actor = attr_list.prop_actor();
-      actor(lhs,rhs);
+      // If first and last characters of the rhs are double-quotes,
+      // remove them.
+      if (!rhs.empty() && rhs[0] == '"' && rhs[rhs.size() - 1] == '"')
+        actor(lhs, rhs.substr(1, rhs.size()-2));
+      else
+        actor(lhs,rhs);
     }
 
     void set_node_property(node_t const& node, id_t const& key,
@@ -656,7 +661,7 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
   iterator_t first(make_multi_pass(is_t(in)));
   iterator_t last(make_multi_pass(is_t()));
 
-  return read_graphviz(first,last,graph,dp);
+  return read_graphviz(first, last, graph, dp, node_id);
 }
 
 template <typename MultiPassIterator, typename MutableGraph>
