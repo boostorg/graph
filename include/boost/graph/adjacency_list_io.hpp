@@ -145,7 +145,7 @@ struct GraphParser
                         else if( c== 'v' ) state = PARSE_VERTEX;
                         else if( c== 'e' ) state = PARSE_EDGE;
                         else if( c== '\n' ) numLine++;
-                        else if( !isspace(c) ){
+                        else if( !std::isspace(c) ){
                                 in.putback(c);
                                 if( state == PARSE_VERTEX ){
                                         VertexPropertySubset readProp;
@@ -289,7 +289,7 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
                 PropertyPrinter<Graph, V> printNode(this->graph);
                 out << "v"<<std::endl;
                 typename graph_traits<Graph>::vertex_iterator vi;
-                for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
+                for (vi = vertices(this->graph).first; vi != vertices(this->graph).second; ++vi){
                         printNode(out,vi); 
                         out << std::endl;
                 }
@@ -309,7 +309,7 @@ struct GraphPrinter<Graph,no_property,E>
         
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
-                out << "n "<< num_vertices(graph) << std::endl;
+                out << "n "<< num_vertices(this->graph) << std::endl;
                 EdgePrinter<Graph,E>::operator ()( out );
                 return (*this);
         }
