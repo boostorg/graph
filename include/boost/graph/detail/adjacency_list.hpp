@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.3  2000/09/19 01:25:14  jsiek
+// changed #include iterator_adaptors to #include integer_range
+//
 // Revision 1.2  2000/09/18 09:32:27  jsiek
 // few typos
 //
@@ -70,7 +73,7 @@
 #include <boost/config.hpp>
 #include <boost/property_accessor.hpp>
 #include <boost/operators.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/pending/integer_range.hpp>
 
 // The iterator adaptors cause internal compiler errors for VC++,
 // and efforts to track down the cause have not yet been successful.
