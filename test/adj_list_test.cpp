@@ -37,7 +37,7 @@ main()
         system("rm -f graph.exe graph.o graph.obj");
 	// the following system call should be replaced by a
 	// portable "compile" command.
-        rc = system("g++ -I../../.. graph.cpp -o graph.exe");
+        rc = system("g++ -I../../.. -O2 -Wall -Wno-long-long -ftemplate-depth-30 graph.cpp -o graph.exe");
         if (rc != 0) {
           std::cerr << "compile failed for " << container_types[i] << " "
                     << container_types[j] << " " << directed_types[k]

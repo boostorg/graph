@@ -26,12 +26,13 @@
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
 #define BOOST_GRAPH_ADJACENCY_LIST_HPP
 
+
+#include <boost/config.hpp>
+
 #include <vector>
 #include <list>
 #include <set>
 #include <map>
-
-#include <boost/config.hpp>
 
 #if !defined BOOST_NO_HASH
 #include <hash_set>

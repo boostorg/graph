@@ -60,13 +60,15 @@ namespace boost {
 
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
     void internal_depth_first_visit
-      (IncidenceGraph& g,
+      (const IncidenceGraph& g,
        typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-       DFSVisitor& vis, ColorMap color)
+       DFSVisitor& vis,  // pass-by-reference here, important!
+       ColorMap color)
     {
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
       function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
       typedef typename property_traits<ColorMap>::value_type ColorValue;
+      function_requires< ColorValueConcept<ColorValue> >();
       typedef color_traits<ColorValue> Color;
 
       put(color, u, Color::gray());
@@ -100,7 +102,7 @@ namespace boost {
   // Variant (2)
   template <class VertexListGraph, class DFSVisitor, class ColorMap>
   void
-  depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
     function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typedef typename property_traits<ColorMap>::value_type ColorValue;
@@ -119,9 +121,10 @@ namespace boost {
   }
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
-  void depth_first_visit(IncidenceGraph& g,
-			 typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-			 DFSVisitor vis, ColorMap color)
+  void depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     DFSVisitor vis, ColorMap color)
   {
     detail::internal_depth_first_visit(g, u, vis, color);
   }

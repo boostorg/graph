@@ -26,7 +26,6 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <vector>
-
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -37,8 +36,12 @@ int main(int, char*[])
   using namespace boost;
   const char* name = "abcdefghij";
 
-  GraphvizGraph G;
+  GraphvizDigraph G;
   read_graphviz("scc.dot", G);
+
+  std::cout << "A directed graph:" << std::endl;
+  print_graph(G, name);
+  std::cout << std::endl;
 
   typedef graph_traits<GraphvizGraph>::vertex_descriptor Vertex;
     
@@ -48,9 +51,6 @@ int main(int, char*[])
   int num = strong_components(G, &component[0], &root[0], &color[0], 
 			      &discover_time[0]);
     
-  std::cout << "A directed graph:" << std::endl;
-  print_graph(G, name);
-  std::cout << std::endl;
   std::cout << "Total number of components: " << num << std::endl;
   std::vector<int>::size_type i;
   for (i = 0; i != component.size(); ++i)

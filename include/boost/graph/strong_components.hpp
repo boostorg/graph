@@ -54,27 +54,29 @@ namespace boost {
         : c(c_), comp(comp_map), root(r), discover_time(d),
           dfs_time(time_type()), s(s_) { }
 
-      template <typename Vertex, typename Graph>
-      void discover_vertex(Vertex v, Graph& g) {
-        root[v] = v;
-        comp[v] = std::numeric_limits<comp_type>::max();
-        discover_time[v] = dfs_time++;
+      template <typename Graph>
+      void discover_vertex(typename graph_traits<Graph>::vertex_descriptor v,
+			   const Graph& g) {
+        put(root, v, v);
+        put(comp, v, std::numeric_limits<comp_type>::max());
+        put(discover_time, v, dfs_time++);
         s.push(v);
 	DFSVisitor::discover_vertex(v, g);
       }
-      template <typename Vertex, typename Graph>
-      void finish_vertex(Vertex v, Graph& g) {
-        Vertex w;
+      template <typename Graph>
+      void finish_vertex(typename graph_traits<Graph>::vertex_descriptor v,
+			 const Graph& g) {
+        typename graph_traits<Graph>::vertex_descriptor w;
         typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
         for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
           w = target(*ei, g);
-          if (comp[w] == std::numeric_limits<comp_type>::max())
-            root[v] = this->min_discover_time(root[v], root[w]);
+          if (get(comp, w) == std::numeric_limits<comp_type>::max())
+            put(root, v, this->min_discover_time(get(root,v), get(root,w)));
         }
-        if (root[v] == v) {
+        if (get(root, v) == v) {
           do {
             w = s.top(); s.pop();
-            comp[w] = c;
+            put(comp, w, c);
           } while (w != v);
           ++c;
         }
@@ -83,7 +85,7 @@ namespace boost {
     private:
       template <typename Vertex>
       Vertex min_discover_time(Vertex u, Vertex v) {
-        return discover_time[u] < discover_time[v] ? u : v;
+        return get(discover_time, u) < get(discover_time,v) ? u : v;
       }
 
       comp_type& c;
@@ -101,17 +103,23 @@ namespace boost {
   template <typename Graph, typename ComponentMap, typename RootMap,
             typename ColorMap, typename DiscoverTime, typename DFSVisitor>
   typename property_traits<ComponentMap>::value_type
-  strong_components(Graph& g,          // Input
+  strong_components(const Graph& g,    // Input
                     ComponentMap comp, // Output
                     // Internal record keeping
                     RootMap root, ColorMap color, DiscoverTime discover_time,
 		    DFSVisitor v)
   {
-    function_requires< VertexListGraphConcept<Graph> >();
-    // ...
-
-    typename property_traits<ComponentMap>::value_type total = 0;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename property_traits<ColorMap>::value_type ColorV;
+    function_requires< ColorValueConcept<ColorV> >();
+    function_requires< ReadWritePropertyMapConcept<ComponentMap, Vertex> >();
+    function_requires< ReadWritePropertyMapConcept<RootMap, Vertex> >();
+    typedef typename property_traits<RootMap>::value_type RootV;
+    function_requires< ConvertibleConcept<RootV, Vertex> >();
+    function_requires< ReadWritePropertyMapConcept<DiscoverTime, Vertex> >();
+    
+    typename property_traits<ComponentMap>::value_type total = 0;
+    
     std::stack<Vertex> s;
     detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
       std::stack<Vertex>, DFSVisitor > 
@@ -124,7 +132,7 @@ namespace boost {
   template <typename Graph, typename ComponentMap, typename RootMap,
             typename ColorMap, typename DiscoverTime>
   inline typename property_traits<ComponentMap>::value_type
-  strong_components(Graph& g,          // Input
+  strong_components(const Graph& g,    // Input
                     ComponentMap comp, // Output
                     // Internal record keeping
                     RootMap root, ColorMap color, DiscoverTime d)

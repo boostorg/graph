@@ -39,6 +39,10 @@
 #include <sstream>
 #endif
 
+#ifndef GRAPHVIZ_GRAPH
+#error Need to define the GRAPHVIZ_GRAPH macro to either GraphvizGraph or GraphvizDigraph.
+#endif 
+
 #define YYPARSE_PARAM g
 
   extern void yyerror(char* str);
@@ -47,14 +51,13 @@
 
   enum AttrState {GRAPH_GRAPH_A, GRAPH_NODE_A, GRAPH_EDGE_A, NODE_A, EDGE_A};
 
-  using boost::GraphvizGraph;
   using boost::GraphvizAttrList;
 
   namespace graphviz {
 
-    typedef boost::graph_traits<GraphvizGraph>::vertex_descriptor Vertex;
-    typedef boost::graph_traits<GraphvizGraph>::edge_descriptor   Edge;
-    typedef GraphvizGraph Subgraph;
+    typedef boost::graph_traits<GRAPHVIZ_GRAPH>::vertex_descriptor Vertex;
+    typedef boost::graph_traits<GRAPHVIZ_GRAPH>::edge_descriptor   Edge;
+    typedef GRAPHVIZ_GRAPH Subgraph;
 
     Vertex current_vertex;
     Edge   current_edge;
@@ -85,12 +88,12 @@
       return std::make_pair(it, found);
     }
     
-    Vertex add_name(const std::string& name, GraphvizGraph& g) {
+    Vertex add_name(const std::string& name, GRAPHVIZ_GRAPH& g) {
       Vertex v = boost::add_vertex(*current_graph);
       v = current_graph->local_to_global(v);
 
       //set the label of vertex, it could be overwritten later.
-      boost::property_map<GraphvizGraph, boost::vertex_attribute_t>::type
+      boost::property_map<GRAPHVIZ_GRAPH, boost::vertex_attribute_t>::type
 	va = boost::get(boost::vertex_attribute, g); 
       va[v]["label"] = name; 
       
@@ -165,12 +168,12 @@
     }
 
 
-    void add_edges(const Vertex& u, const Vertex& v, GraphvizGraph& g) {
+    void add_edges(const Vertex& u, const Vertex& v, GRAPHVIZ_GRAPH& g) {
       graphviz::current_edge = boost::add_edge(u, v, g).first; 
       graphviz::set_attribute(g, EDGE_A, false);
     }
     
-    void add_edges(Subgraph* G1, Subgraph* G2, GraphvizGraph& g) {
+    void add_edges(Subgraph* G1, Subgraph* G2, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j, m, n;
       for ( boost::tie(i, j) = boost::vertices(*G1); i != j; ++i) {
 	for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
@@ -180,14 +183,14 @@
       }
     }
 
-    void add_edges(Subgraph* G, const Vertex& v, GraphvizGraph& g) {
+    void add_edges(Subgraph* G, const Vertex& v, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
 	graphviz::add_edges(G->local_to_global(*i), v, g);
       }
     }
 
-    void add_edges(const Vertex& u, Subgraph* G, GraphvizGraph& g) {
+    void add_edges(const Vertex& u, Subgraph* G, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
 	graphviz::add_edges(u, G->local_to_global(*i), g);
@@ -308,7 +311,7 @@ node_stmt:    node_id opt_attr
   { 
     graphviz::Vertex* temp   = static_cast<graphviz::Vertex*>($1); 
     graphviz::current_vertex = *temp;
-    graphviz::set_attribute(*static_cast<GraphvizGraph*>(YYPARSE_PARAM),
+    graphviz::set_attribute(*static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM),
 			    NODE_A); 
     delete temp;
     $$ = 0;
@@ -325,7 +328,7 @@ node_id:      ID_T
     if (result.second) 
       graphviz::current_vertex = result.first->second; 
     else
-      graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GraphvizGraph*>(YYPARSE_PARAM)) ; 
+      graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM)) ; 
     graphviz::Vertex* temp = new graphviz::Vertex(graphviz::current_vertex);
     $$ = (void *)temp;
     graphviz::attribute_state = NODE_A;  
@@ -344,7 +347,7 @@ node_port:    ID_T ':' ID_T
     if (result.second) 
       graphviz::current_vertex = result.first->second; 
     else
-      graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GraphvizGraph*>(YYPARSE_PARAM)) ; 
+      graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM)) ; 
     graphviz::Vertex* temp = new graphviz::Vertex(graphviz::current_vertex);
     $$ = (void *)temp;
     graphviz::attribute_state = NODE_A;  
@@ -365,21 +368,21 @@ edge_stmt:    edge_endpoint edge_rhs opt_attr
 	if ( (*it)->second )
 	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
 			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GraphvizGraph*>(YYPARSE_PARAM));
+			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
 	else
 	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
 			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GraphvizGraph*>(YYPARSE_PARAM));
+			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
       } else {
 	graphviz::Vertex* temp = static_cast<graphviz::Vertex*>(source->first);
 	if ( (*it)->second )
 	  graphviz::add_edges(*temp,
 			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GraphvizGraph*>(YYPARSE_PARAM));
+			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
 	else
 	  graphviz::add_edges(*temp,
 			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GraphvizGraph*>(YYPARSE_PARAM));
+			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
 	delete temp;
       }
 
@@ -474,14 +477,14 @@ opt_graph_body: graph_body {$$ = 1; } |  { $$ = 0; }
 
 namespace boost {
   
-  void read_graphviz(const std::string& filename, GraphvizGraph& g) {
+  void read_graphviz(const std::string& filename, GRAPHVIZ_GRAPH& g) {
     FILE* file = fopen(filename.c_str(), "r");
     yyin = static_cast<void*>(file);
 
     yyparse(static_cast<void*>(&g));
   }
 
-  void read_graphviz(FILE* file, GraphvizGraph& g) {
+  void read_graphviz(FILE* file, GRAPHVIZ_GRAPH& g) {
     yyin = static_cast<void*>(file);
     yyparse(static_cast<void*>(&g));
   }

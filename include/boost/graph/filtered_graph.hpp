@@ -201,8 +201,8 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
-  std::pair<typename graph_traits<G>::vertex_iterator,
-            typename graph_traits<G>::vertex_iterator>
+  std::pair<typename filtered_graph<G, EP, VP>::vertex_iterator,
+            typename filtered_graph<G, EP, VP>::vertex_iterator>
   vertices(const filtered_graph<G, EP, VP>& g) {
     return vertices(g.m_g);
   }
@@ -222,28 +222,28 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>  
-  typename graph_traits<G>::vertices_size_type
+  typename filtered_graph<G, EP, VP>::vertices_size_type
   num_vertices(const filtered_graph<G, EP, VP>& g) {
     return num_vertices(g);
   }
 
   template <typename G, typename EP, typename VP>  
-  typename graph_traits<G>::edges_size_type
+  typename filtered_graph<G, EP, VP>::edges_size_type
   num_edges(const filtered_graph<G, EP, VP>& g) {
     return num_edges(g);
   }
   
   template <typename G, typename EP, typename VP>
-  typename graph_traits<G>::vertex_descriptor
-  source(typename graph_traits<G>::edge_descriptor e,
+  typename filtered_graph<G, EP, VP>::vertex_descriptor
+  source(typename filtered_graph<G, EP, VP>::edge_descriptor e,
          const filtered_graph<G, EP, VP>& g)
   {
     return source(e, g.m_g);
   }
 
   template <typename G, typename EP, typename VP>
-  typename graph_traits<G>::vertex_descriptor
-  target(typename graph_traits<G>::edge_descriptor e,
+  typename filtered_graph<G, EP, VP>::vertex_descriptor
+  target(typename filtered_graph<G, EP, VP>::edge_descriptor e,
          const filtered_graph<G, EP, VP>& g)
   {
     return target(e, g.m_g);
@@ -252,7 +252,7 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::out_edge_iterator,
             typename filtered_graph<G, EP, VP>::out_edge_iterator>
-  out_edges(typename graph_traits<G>::vertex_descriptor u,
+  out_edges(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
             const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;
@@ -265,11 +265,11 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
-  typename graph_traits<G>::degree_size_type
-  out_degree(typename graph_traits<G>::vertex_descriptor u,
+  typename filtered_graph<G, EP, VP>::degree_size_type
+  out_degree(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
              const filtered_graph<G, EP, VP>& g)
   {
-    typename graph_traits<G>::degree_size_type n = 0;
+    typename filtered_graph<G, EP, VP>::degree_size_type n = 0;
     typename filtered_graph<G, EP, VP>::out_edge_iterator f, l;
     for (tie(f, l) = out_edges(u, g); f != l; ++f)
       ++n;
@@ -279,7 +279,7 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::adjacency_iterator,
             typename filtered_graph<G, EP, VP>::adjacency_iterator>
-  adjacent_vertices(typename graph_traits<G>::vertex_descriptor u,
+  adjacent_vertices(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
                     const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;
@@ -293,7 +293,7 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::in_edge_iterator,
             typename filtered_graph<G, EP, VP>::in_edge_iterator>
-  in_edges(typename graph_traits<G>::vertex_descriptor u,
+  in_edges(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
             const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;
@@ -307,8 +307,8 @@ namespace boost {
 
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::edge_descriptor, bool>
-  edge(typename graph_traits<G>::vertex_descriptor u,
-       typename graph_traits<G>::vertex_descriptor v,
+  edge(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
+       typename filtered_graph<G, EP, VP>::vertex_descriptor v,
        const filtered_graph<G, EP, VP>& g)
   {
     typename G::edge_descriptor e;

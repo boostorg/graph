@@ -1,6 +1,8 @@
 #ifndef BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
 #define BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
 
+#include <boost/operators.hpp>
+
 namespace boost {
 
   namespace detail {
@@ -34,7 +36,7 @@ namespace boost {
     // Pushes x onto the front of the list. The list is represented in
     // an array.
     template <class Next, class T, class V>
-    inline void push_front(Next next, T& head, V x)
+    inline void array_push_front(Next next, T& head, V x)
     {
       T tmp = head;
       head = x;
@@ -62,7 +64,7 @@ namespace boost {
       // Add each vertex to the linked list for its component
       Parent1 next = component;
       for (Integer k = 0; k != num_nodes; ++k)
-        push_front(next, header[component[k]], k);
+        array_push_front(next, header[component[k]], k);
     }
     
 

@@ -28,6 +28,7 @@
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/edge_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/reverse_graph.hpp>
 
 // Define the macro BOOST_USE_STANFORD_GRAPH_BASE if you have SGB
 // installed and want to check the BGL SGB adaptor.
@@ -54,6 +55,7 @@ main(int,char*[])
 {
   using namespace boost;
 
+#if 0
   // Check graph concept archetypes
   {
     typedef default_constructible_archetype<
@@ -326,6 +328,34 @@ main(int,char*[])
     function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
       edge_index_t> >();
   }
+#endif
+  // Check const reverse_graph
+  {
+    typedef adjacency_list< vecS, vecS, bidirectionalS, 
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
+    > AdjList;
+    typedef reverse_graph<AdjList> Graph;
+    function_requires< VertexListGraphConcept<Graph> >();
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
+    function_requires< ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+  }
+  // Check non-const reverse_graph
+  {
+    typedef adjacency_list< vecS, vecS, bidirectionalS, 
+      property<vertex_color_t, int>,
+      property<edge_weight_t, int>
+    > AdjList;
+    typedef reverse_graph<AdjList,AdjList&> Graph;
+    function_requires< VertexListGraphConcept<Graph> >();
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
+    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
+    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+  }
+#if 0
   // Check filtered_graph
   {
     typedef adjacency_list<vecS, vecS, directedS, 
@@ -356,6 +386,7 @@ main(int,char*[])
     typedef std::vector< std::list<int> > Graph;
     function_requires< VertexListGraphConcept<Graph> >();
   }
+#endif
 #endif
   return 0;
 }

@@ -79,6 +79,10 @@ namespace boost {
 		       ColorMap color, DFSVisitor v)
   {
     function_requires< VertexListGraphConcept<Graph> >();
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
+    function_requires< WritablePropertyMapConcept<ComponentsMap, Vertex> >();
+    function_requires< DFSVisitorConcept<DFSVisitor, Graph> >();
     // ...
     typedef typename property_traits<ComponentsMap>::value_type comp_type;
     // c_count initialized to "nil" (with nil represented by max())
