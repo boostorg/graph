@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.20  2000/09/25 16:27:22  jsiek
+// forgot to delete default argument
+//
 // Revision 1.19  2000/09/25 15:57:46  jsiek
 // some stlport debug mode fixes and some added docs
 //
@@ -623,8 +626,7 @@ namespace boost {
     add_edge(undirected_graph_helper<Config>& g_, 
              typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v, 
-             const typename Config::edge_plugin_type& p 
-             = typename Config::edge_plugin_type())
+             const typename Config::edge_plugin_type& p)
     {
       typedef typename Config::StoredEdge StoredEdge;
       typedef typename Config::edge_descriptor edge_descriptor;
