@@ -49,19 +49,13 @@ typedef Traits::vertex_iterator vertex_iterator;
 std::vector<std::size_t> distance_list;
 
 typedef boost::v_property<long> dist_t;
-boost::property_map<Graph*, dist_t>::type distance;
+boost::property_map<Graph*, dist_t>::type distance_map;
 
 typedef boost::u_property<vertex_descriptor> pred_t;
-boost::property_map<Graph*, pred_t>::type predecessor;
+boost::property_map<Graph*, pred_t>::type predecessor_map;
 
 typedef boost::w_property<long> color_t;
-boost::property_map<Graph*, color_t>::type color;
-
-namespace boost {
-  long white(long) { return 0; } // "unseen"
-  long gray(long) { return 2; }  // "seen"
-  long black(long) { return 1; } // "known"
-}
+boost::property_map<Graph*, color_t>::type color_map;
 
 class diameter_and_girth_visitor : public boost::bfs_visitor<>
 {
@@ -71,16 +65,16 @@ public:
 
   void tree_edge(edge_descriptor e, Graph* g) {
     vertex_descriptor u = source(e, g), v = target(e, g);
-    k = distance[u] + 1;
-    distance[v] = k;
+    k = distance_map[u] + 1;
+    distance_map[v] = k;
     ++distance_list[k];
-    predecessor[v] = u;
+    predecessor_map[v] = u;
   }
   void non_tree_edge(edge_descriptor e, Graph* g) {
     vertex_descriptor u = source(e, g), v = target(e, g);
-    k = distance[u] + 1;
-    if (distance[v] + k < girth && v != predecessor[u])
-      girth = distance[v]+ k;
+    k = distance_map[u] + 1;
+    if (distance_map[v] + k < girth && v != predecessor_map[u])
+      girth = distance_map[v]+ k;
   }
 private:
   std::size_t& k;
@@ -127,13 +121,13 @@ main()
     distance_list.resize(boost::num_vertices(g), 0);
 
     // obtain property maps
-    distance = get(dist_t(), g);
-    predecessor = get(pred_t(), g);
-    color = get(color_t(), g);
+    distance_map = get(dist_t(), g);
+    predecessor_map = get(pred_t(), g);
+    color_map = get(color_t(), g);
 
     vertex_iterator i, end;
     for (boost::tie(i, end) = boost::vertices(g); i != end; ++i)
-      distance[*i] = 0;
+      distance_map[*i] = 0;
 
     std::size_t k = 0;
     std::size_t girth = std::numeric_limits<std::size_t>::max();
@@ -142,7 +136,7 @@ main()
     vertex_descriptor s = *boost::vertices(g).first;
 
     // Call Variant 2 of BFS
-    boost::breadth_first_search(g, s, visitor, color);
+    boost::breadth_first_search(g, s, visitor, color_map);
 
     std::cout << "Starting at any given vertex, there are" << std::endl;
 
