@@ -419,9 +419,9 @@ The type for the iterators returned by <TT>vertices()</TT>.
 
 When <tt>VertexList=vecS</tt> then the <tt>vertex_iterator</tt> models
 <a
-href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
+href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
 the <tt>vertex_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 <hr>
 
@@ -429,7 +429,7 @@ href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">Bidirectiona
 <br><br>
 The type for the iterators returned by <TT>edges()</TT>.
 The <tt>edge_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 
 <hr>
@@ -440,13 +440,13 @@ href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">Bidirectiona
 
 The type for the iterators returned by <TT>out_edges()</TT>.
 When <tt>EdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
-<a href="http://www.sgi.com/Technology/STL/RandomAccessIterator.html">
+<a href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">
 RandomAccessIterator</a>.  When <tt>EdgeList=slistS</tt> then the
 <tt>out_edge_iterator</tt> models <a
-href="http://www.sgi.com/Technology/STL/ForwardIterator.html">
+href="http://www.sgi.com/tech/stl/ForwardIterator.html">
 ForwardIterator</a>.  Otherwise the <tt>out_edge_iterator</tt> models
 <a
-href="http://www.sgi.com/Technology/STL/BidirectionalIterator.html">
+href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">
 BidirectionalIterator</a>.
 
 <hr>
@@ -564,7 +564,7 @@ adjacency_list(vertices_size_type&nbsp;n,
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> must be a model of <a
-href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -584,7 +584,7 @@ Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> and <tt>EdgePropertyIterator</tt> must be a
 model of <a
-href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>.
+href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -855,7 +855,7 @@ has time complexity <i>O(E/V)</i>.
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
                         adjacency_list&amp; g)
 </pre>
@@ -870,7 +870,7 @@ invoking <tt>remove_edge()</tt> on each of the removed edges.
 
 <pre>
 template &lt;class <a
-href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
                        adjacency_list&amp; g)
 </pre>
@@ -888,7 +888,7 @@ This operation is available for undirected and bidirectional
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
 void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy

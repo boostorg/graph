@@ -51,8 +51,8 @@
 <P>
 <PRE>
   (1)
-  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, 
-            class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>&gt;
+  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>, 
+            class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g, 
      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
@@ -60,7 +60,7 @@
 
   (2)
   template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="#DistanceMap">DistanceMap</a>, class <a href="#WeightMap">WeightMap</a>,
-            class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>&gt;
+            class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g,
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
@@ -70,7 +70,7 @@
   (3)
   template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>,
             class <a href="#DistanceMap">DistanceMap</a>, class <a href="#WeightMap">WeightMap</a>, class <a href="#ColorMap">ColorMap</a>, class <a href="#VertexIndexMap">VertexIndexMap</a>,
-            class <a href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>,
+            class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>, class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>,
             class <a href="./UniformCostVisitor.html">UniformCostVisitor</a>&gt;
   void
   uniform_cost_search(VertexListGraph& g,
@@ -135,14 +135,14 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <P>
 </LI>
 <LI>The <TT>BinaryPredicate</TT> type must be a model of <a
-      href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>
+      href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>
       and have argument types that match the value type of the
       <TT>DistanceMap</TT> property map.
 
 <P>
 </LI>
 <LI>The <TT>BinaryFunction</TT> type must be a model of <a
-     href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
+     href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
       type of the <TT>DistanceMap</TT> property map and the second
       argument type must match the value type of the <TT>WeightMap</TT>
       property map.  The result type must be the same type as the
