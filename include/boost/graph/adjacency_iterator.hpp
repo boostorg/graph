@@ -13,14 +13,14 @@ namespace boost {
       public boost::default_iterator_policies
     {
       inline adjacency_iterator_policies() { }
-      inline adjacency_iterator_policies(Graph* g) : m_g(g) { }
+      inline adjacency_iterator_policies(const Graph* g) : m_g(g) { }
 
       template <class Iterator>
       inline typename Iterator::reference
       dereference(const Iterator& i) const
         { return target(*i.base(), *m_g); }
 
-      Graph* m_g;
+      const Graph* m_g;
     };
 
   } // namespace detail
