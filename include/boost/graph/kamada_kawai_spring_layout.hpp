@@ -487,12 +487,29 @@ namespace boost {
     WeightMap weight, 
     detail::graph::edge_or_side<EdgeOrSideLength, T> edge_or_side_length,
     Done done,
-    typename property_traits<WeightMap>::value_type spring_constant = 
-      typename property_traits<WeightMap>::value_type(1))
+    typename property_traits<WeightMap>::value_type spring_constant)
   {
     return kamada_kawai_spring_layout(g, position, weight, edge_or_side_length,
                                       done, spring_constant, 
                                       get(vertex_index, g));
+  }
+
+  /**
+   * \overload
+   */
+  template<typename Graph, typename PositionMap, typename WeightMap,
+           typename T, bool EdgeOrSideLength, typename Done>
+  bool 
+  kamada_kawai_spring_layout(
+    const Graph& g, 
+    PositionMap position,
+    WeightMap weight, 
+    detail::graph::edge_or_side<EdgeOrSideLength, T> edge_or_side_length,
+    Done done)
+  {
+    typedef typename property_traits<WeightMap>::value_type weight_type;
+    return kamada_kawai_spring_layout(g, position, weight, edge_or_side_length,
+                                      done, weigh_type(1)); 
   }
 
   /**
