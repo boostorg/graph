@@ -58,9 +58,9 @@ namespace boost {
             class PredecessorMap, class DistanceMap, 
             class BinaryFunction, class BinaryPredicate>
     bool relax(typename graph_traits<Graph>::edge_descriptor e, 
-               const Graph& g, WeightMap w, 
-               PredecessorMap p, DistanceMap d, 
-               BinaryFunction combine, BinaryPredicate compare)
+               const Graph& g, const WeightMap& w, 
+               PredecessorMap& p, DistanceMap& d, 
+               const BinaryFunction& combine, const BinaryPredicate& compare)
     {
       typedef typename graph_traits<Graph>::directed_category DirCat;
       bool is_undirected = is_same<DirCat, undirected_tag>::value;
