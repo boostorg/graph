@@ -158,6 +158,24 @@ namespace boost {
     } // while
   }
     
+  template <class VertexListGraph, class Buffer, class BFSVisitor, 
+            class ColorMap>
+  void breadth_first_search
+    (const VertexListGraph& g, 
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     Buffer& Q, BFSVisitor vis, ColorMap color)
+  {
+    // Initialization
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+    typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
+    for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
+      put(color, *i, Color::white());
+      vis.initialize_vertex(*i, g);
+    }
+    breadth_first_visit(g, s, Q, vis, color);
+  }
+
   namespace detail {
 
     template <class VertexListGraph, class ColorMap, class BFSVisitor,
@@ -175,14 +193,6 @@ namespace boost {
       typedef boost::queue<Vertex> queue_t;
       queue_t Q;
       detail::wrap_ref<queue_t> Qref(Q);
-      // Initialization
-      typedef typename property_traits<ColorMap>::value_type ColorValue;
-      typedef color_traits<ColorValue> Color;
-      typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
-      for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
-        put(color, *i, Color::white());
-        vis.initialize_vertex(*i, g);
-      }
       breadth_first_search
         (g, s, 
          choose_param(get_param(params, buffer_param_t()), Qref).ref,
