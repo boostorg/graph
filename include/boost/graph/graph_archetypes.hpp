@@ -201,6 +201,7 @@ namespace boost { // should use a different namespace for this
   struct color_value_archetype {
     color_value_archetype(detail::dummy_constructor) { }
   };
+  template <>
   struct color_traits<color_value_archetype> {
     static color_value_archetype white()
       { return color_value_archetype(dummy_cons); }
