@@ -96,7 +96,7 @@ namespace boost {
     // Create the main graph, the root of the subgraph tree
     subgraph(vertices_size_type n, 
 	     const graph_property_type& p = graph_property_type()) 
-      : m_graph(n, p), m_parent(0), m_edge_counter(0)
+      : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     { }
 
     // Create a subgraph
