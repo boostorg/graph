@@ -72,7 +72,7 @@ int test_main(int argc, char* argv[])
 
     subgraph_t& g_s = g.create_subgraph();
     
-    const int Nsub = N/2;
+    const std::set<vertex_t>::size_type Nsub = N/2;
 
     // Collect a set of random vertices to put in the subgraph
     std::set<vertex_t> verts;
