@@ -27,6 +27,7 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <boost/graph/graph_utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/graph/incremental_components.hpp>
