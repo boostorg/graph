@@ -81,8 +81,9 @@ void permute(RandIter first, RandIter last, RandIterPerm p)
 
 // Knuth 1.3.3, Vol. 1 p 176
 // modified for zero-based arrays
-// time ?
+// time complexity?
 //
+// WARNING: T must be a signed integer!
 template <class PermIter>
 void invert_permutation(PermIter X, PermIter Xend)
 {
