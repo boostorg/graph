@@ -23,8 +23,8 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#ifndef BOOST_MAXIMUM_FLOW_HPP
-#define BOOST_MAXIMUM_FLOW_HPP
+#ifndef BOOST_PUSH_RELABEL_MAX_FLOW_HPP
+#define BOOST_PUSH_RELABEL_MAX_FLOW_HPP
 
 #include <boost/config.hpp>
 #include <cassert>
@@ -37,6 +37,7 @@
 
 namespace boost {
 
+#if 0
   enum edge_reverse_t { edge_reverse = 51 };
   enum edge_residual_capacity_t { edge_residual_capacity = 52 };
   enum edge_capacity_t { edge_capacity = 53 };
@@ -44,6 +45,7 @@ namespace boost {
   BOOST_INSTALL_PROPERTY(edge, reverse);
   BOOST_INSTALL_PROPERTY(edge, capacity);
   BOOST_INSTALL_PROPERTY(edge, residual_capacity);
+#endif
 
   namespace detail {
     
@@ -147,12 +149,12 @@ namespace boost {
           reverse_edge(rev),
           residual_capacity(res),
           layers(num_vertices(g_)),
-	  push_count(0), update_count(0), relabel_count(0), 
-	  gap_count(0), gap_node_count(0),
+          push_count(0), update_count(0), relabel_count(0), 
+          gap_count(0), gap_node_count(0),
           work_since_last_update(0)
       {
         vertex_iterator u_iter, u_end;
-	// Don't count the reverse edges
+        // Don't count the reverse edges
         edges_size_type m = num_edges(g) / 2;
         nm = alpha() * n + m;
 
@@ -162,7 +164,7 @@ namespace boost {
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
           for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
             residual_capacity[*ei] = capacity[*ei];
-	  }
+          }
 
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
@@ -188,7 +190,7 @@ namespace boost {
                a_iter != a_end; ++a_iter) {
             edge_descriptor a = *a_iter;
             if (target(a, g) != src) {
-	      ++push_count;
+              ++push_count;
               FlowValue delta = residual_capacity[a];
               residual_capacity[a] -= delta;
               residual_capacity[reverse_edge[a]] += delta;
@@ -225,7 +227,7 @@ namespace boost {
       // Goldberg's implementation abused "distance" for the coloring.
       void global_distance_update()
       {
-	++update_count;
+        ++update_count;
         vertex_iterator u_iter, u_end;
         for (tie(u_iter,u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           color[*u_iter] = ColorTraits::white();
@@ -284,7 +286,7 @@ namespace boost {
             if (is_residual_edge(a)) {
               vertex_descriptor v = target(a, g);
               if (is_admissible(u, v)) {
-		++push_count;
+                ++push_count;
                 if (v != sink && excess_flow[v] == 0) {
                   remove_from_inactive_list(v);
                   add_to_active_list(v, layers[distance[v]]);
@@ -297,7 +299,7 @@ namespace boost {
           } // for out_edges of i starting from current
 
           Layer& layer = layers[distance[u]];
-	  distance_size_type du = distance[u];
+          distance_size_type du = distance[u];
 
           if (ai == ai_end) {   // i must be relabeled
             relabel_distance(u);
@@ -343,8 +345,8 @@ namespace boost {
       //
       distance_size_type relabel_distance(vertex_descriptor u)
       {
-	++relabel_count;
-	work_since_last_update += beta();
+        ++relabel_count;
+        work_since_last_update += beta();
 
         distance_size_type min_distance = num_vertices(g);
         distance[u] = min_distance;
@@ -353,7 +355,7 @@ namespace boost {
         // edge whose target vertex has the minimal distance.
         out_edge_iterator ai, a_end, min_edge_iter;
         for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) {
-	  ++work_since_last_update;
+          ++work_since_last_update;
           edge_descriptor a = *ai;
           vertex_descriptor v = target(a, g);
           if (is_residual_edge(a) && distance[v] < min_distance) {
@@ -374,7 +376,7 @@ namespace boost {
       // cleanup beyond the gap
       void gap(distance_size_type empty_distance)
       {
-	++gap_count;
+        ++gap_count;
 
         distance_size_type r; // distance of layer before the current layer
         r = empty_distance - 1;
@@ -386,8 +388,8 @@ namespace boost {
           for (i = l->inactive_vertices.begin(); 
                i != l->inactive_vertices.end(); ++i) {
             distance[*i] = n;
-	    ++gap_node_count;
-	  }
+            ++gap_node_count;
+          }
           l->inactive_vertices.clear();
         }
         max_distance = r;
@@ -441,11 +443,12 @@ namespace boost {
         vertex_descriptor r, restart, u;
         edge_descriptor a;
 
-        vertex_descriptor tos, bos;
-        bool bos_null = true;
-
         std::vector<vertex_descriptor> parent(n);
         std::vector<vertex_descriptor> topo_next(n);
+
+        vertex_descriptor tos(parent[0]), 
+          bos(parent[0]); // bogus initialization, just to avoid warning
+        bool bos_null = true;
 
         // handle self-loops
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
@@ -573,42 +576,42 @@ namespace boost {
         vertex_iterator u_iter, u_end;
         out_edge_iterator ai, a_end;
 
-	// check edge flow values
+        // check edge flow values
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           for (tie(ai, a_end) = out_edges(*u_iter, g); ai != a_end; ++ai) {
             edge_descriptor a = *ai;
             if (capacity[a] > 0)
-	      if ((residual_capacity[a] + residual_capacity[reverse_edge[a]]
-		   != capacity[a])
-		  || (residual_capacity[a] < 0)
-		  || (residual_capacity[reverse_edge[a]] < 0))
+              if ((residual_capacity[a] + residual_capacity[reverse_edge[a]]
+                   != capacity[a])
+                  || (residual_capacity[a] < 0)
+                  || (residual_capacity[reverse_edge[a]] < 0))
               return false;
           }
         }
-	
-	// check conservation
-        FlowValue sum;	
-	for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
-	  vertex_descriptor u = *u_iter;
-	  if (u != src && u != sink) {
+        
+        // check conservation
+        FlowValue sum;  
+        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+          vertex_descriptor u = *u_iter;
+          if (u != src && u != sink) {
 #if 0 // CUT_ONLY
-	    if (excess_flow[u] < 0)
-	      return false;
+            if (excess_flow[u] < 0)
+              return false;
 #else
-	    if (excess_flow[u] != 0)
-	      return false;
+            if (excess_flow[u] != 0)
+              return false;
 #endif
-	    sum = 0;
-	    for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) 
-	      if (capacity[*ai] > 0)
-		sum -= capacity[*ai] - residual_capacity[*ai];
-	      else
-		sum += residual_capacity[*ai];
+            sum = 0;
+            for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) 
+              if (capacity[*ai] > 0)
+                sum -= capacity[*ai] - residual_capacity[*ai];
+              else
+                sum += residual_capacity[*ai];
 
-	    if (excess_flow[u] != sum)
-	      return false;
-	  }
-	}
+            if (excess_flow[u] != sum)
+              return false;
+          }
+        }
 
         return true;
       } // is_flow()
@@ -620,24 +623,24 @@ namespace boost {
       }
 
       void print_statistics(std::ostream& os) const {
-	os << "pushes:     " << push_count << std::endl
-	   << "relabels:   " << relabel_count << std::endl
-	   << "updates:    " << update_count << std::endl
-	   << "gaps:       " << gap_count << std::endl
-	   << "gap nodes:  " << gap_node_count << std::endl
-	   << std::endl;
+        os << "pushes:     " << push_count << std::endl
+           << "relabels:   " << relabel_count << std::endl
+           << "updates:    " << update_count << std::endl
+           << "gaps:       " << gap_count << std::endl
+           << "gap nodes:  " << gap_node_count << std::endl
+           << std::endl;
       }
 
       void print_flow_values(std::ostream& os) const {
-	os << "flow values" << std::endl;
+        os << "flow values" << std::endl;
         vertex_iterator u_iter, u_end;
         out_edge_iterator ei, e_end;
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
           for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-	    if (capacity[*ei] > 0)
-	      os << *u_iter << " " << target(*ei, g) << " " 
-		 << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
-	os << std::endl;
+            if (capacity[*ei] > 0)
+              os << *u_iter << " " << target(*ei, g) << " " 
+                 << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
+        os << std::endl;
       }
 
       //=======================================================================
@@ -687,11 +690,12 @@ namespace boost {
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
             class ReverseEdgeMap, class VertexIndexMap>
   typename property_traits<CapacityEdgeMap>::value_type
-  maximum_flow(Graph& g, 
-               typename graph_traits<Graph>::vertex_descriptor src,
-               typename graph_traits<Graph>::vertex_descriptor sink,
-               CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
-               ReverseEdgeMap rev, VertexIndexMap index_map)
+  push_relabel_max_flow
+    (Graph& g, 
+     typename graph_traits<Graph>::vertex_descriptor src,
+     typename graph_traits<Graph>::vertex_descriptor sink,
+     CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+     ReverseEdgeMap rev, VertexIndexMap index_map)
   {
     typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
 
@@ -711,5 +715,5 @@ namespace boost {
 
 } // namespace boost
 
-#endif // BOOST_MAXIMUM_FLOW_HPP
+#endif // BOOST_PUSH_RELABEL_MAX_FLOW_HPP
 

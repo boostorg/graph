@@ -67,6 +67,7 @@ namespace boost {
       edge_name_num, graph_name_num, edge_weight_num, vertex_distance_num,
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
       vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
+      edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
       last_property_num
     };
   } // namespace detail
@@ -108,6 +109,9 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, out_degree);
   BOOST_DEF_PROPERTY(vertex, discover_time);
   BOOST_DEF_PROPERTY(vertex, finish_time);
+  BOOST_DEF_PROPERTY(edge, reverse);
+  BOOST_DEF_PROPERTY(edge, capacity);
+  BOOST_DEF_PROPERTY(edge, residual_capacity);
 
 #undef BOOST_DEF_PROPERTY
 

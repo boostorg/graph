@@ -7,7 +7,7 @@
 #ifndef REVERSE_GRAPH_DWA092300_H_
 # define REVERSE_GRAPH_DWA092300_H_
 
-#include <boost/graph/detail/adjacency_list.hpp> // for adjacency_iterator or bidir_adj_iter
+#include <boost/graph/detail/adjacency_iterator.hpp>
 
 namespace boost {
 
