@@ -267,6 +267,11 @@ namespace boost {
   // for algorithms allocating property storage in an array. We could
   // try to create a mapping to new recalibrated indices, but I don't
   // see an efficient way to do this.
+  //
+  // However, the current solution is still unsatisfactory because
+  // the following semantic constraints no longer hold:
+  // tie(vi, viend) = vertices(g);
+  // assert(std::distance(vi, viend) == num_vertices(g));
 
   template <typename G, typename EP, typename VP>  
   typename filtered_graph<G, EP, VP>::vertices_size_type
