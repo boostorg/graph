@@ -28,7 +28,7 @@
 <PRE>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-  const bgl_named_params&lt;P, T, R&gt;&amp; params)
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 </PRE>
 
 <P>
@@ -148,11 +148,11 @@ There are two main options for obtaining output from the
 a distance property map through the <tt>distance_map()</tt> parameter
 then the shortest distance from the source vertex to every other
 vertex in the graph will be recorded in the distance map (provided the
-function returns <tt>true</tt>). Alternatively, the user can record
-the shortest paths tree using the <a
-href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
-for the <tt>visitor()</tt> parameter. The predecessor recorder should
-be registered at the ``edge relaxed'' event point (see below).  In
+function returns <tt>true</tt>). The second option is recording the
+shortest paths tree in the <tt>predecessor_map()</tt>. For each vertex
+<i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in the
+shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
+either the source vertex or a vertex unreachable from the source).  In
 addition to these two options, the user can provide there own
 custom-made visitor that can takes actions during any of the
 algorithm's event points.
@@ -188,6 +188,20 @@ IN: <tt>weight_map(WeightMap w)</tt>
   <b>Default:</b> <tt>get(edge_weight, g)</tt>
 </blockquote>
 
+OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+<blockquote>
+  The predecessor map records the edges in the minimum spanning
+  tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
+  for all <i>u in V</i> are in the minimum spanning tree. If <i>p[u] =
+  u</i> then <i>u</i> is either the source vertex or a vertex that is
+  not reachable from the source.  The <tt>PredecessorMap</tt> type
+  must be a <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> which key and vertex types the same as the vertex
+  descriptor type of the graph.<br>
+  <b>Default:</b> <tt>dummy_property_map</tt>
+</blockquote>
+
 IN/OUT: <tt>distance_map(DistanceMap d)</tt> 
 <blockquote>
   The shortest path weight from the source vertex to each vertex in
@@ -196,8 +210,10 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The key type of the property map must be the
   vertex descriptor type of the graph, and the value type of the
-  distance map must be \stlconcept{LessThanComparable}.<br>
-  <b>Default:</b> <tt>get(vertex_distance, g)</tt>
+  distance map must be <a
+  href="http://www.sgi.com/tech/stl/LessThanComparable.html"> Less
+  Than Comparable</a>.<br> <b>Default:</b> <tt>get(vertex_distance,
+  g)</tt>
 </blockquote>
 
 IN: <tt>visitor(BellmanFordVisitor v)</tt>
