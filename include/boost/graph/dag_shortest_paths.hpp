@@ -71,7 +71,7 @@ namespace boost {
     {
       typedef typename property_traits<DistanceMap>::value_type D;
       dummy_property_map p_map;
-      detail::dag_shortest_paths_impl
+      dag_shortest_paths
         (g, s, distance, weight, color, 
 	 choose_param(get_param(params, vertex_predecessor), p_map),
 	 vis, 
