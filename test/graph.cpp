@@ -126,10 +126,8 @@ int main(int argc, char* argv[])
 
   property_map<Graph, edge_id_t>::type edge_id_map = get(edge_id, g);
 
-  for (std::size_t k = 0; k < N; ++k) {
-    Vertex v = add_vertex(g);
-    vertex_id_map[v] = current_vertex_id++;
-  }
+  for (std::size_t k = 0; k < N; ++k)
+    add_vertex(current_vertex_id++, g);
 
   // also need to test EdgeIterator graph constructor -JGS
 
