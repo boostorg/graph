@@ -223,13 +223,12 @@ HREF="./using_adjacency_list.html#sec:adjacency-list-properties">Internal
 Properties </A>. The property maps are objects that implement the
 interface defined in Section <A
 HREF="../../property_map/property_map.html">Property Map
-Concepts</A>. The property maps obtained from a const
-<TT>adjacency_list</TT> graph object are models of the <a
-href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
-concept. The property maps obtained from a mutable graph object are
-models of the <a
-href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
-concept.
+Concepts</A>. The property maps obtained from the
+<TT>adjacency_list</TT> class are models of the <a
+href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+Map</a> concept. If the <TT>adjacency_list</TT> is const,
+then the property map is constant, otherwise the property
+map is mutable.
 
 <P>
 If the <TT>VertexList</TT> of the graph is <TT>vecS</TT>, then the
@@ -238,7 +237,9 @@ the <TT>vertex_index_t</TT> property.  The indices fall in the range
 <TT>[0, num_vertices(g))</TT> and are contiguous. When a vertex is
 removed the indices are adjusted so that they retain these
 properties. Some care must be taken when using these indices to access
-exterior property storage.
+exterior property storage. The property map for vertex index is a
+model of <a href="../../property_map/ReadablePropertyMap.html">Readable
+Property Map</a>.
 
 <P>
 
