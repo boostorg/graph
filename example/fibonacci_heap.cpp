@@ -57,10 +57,10 @@ main()
         Q.push(i);
 
       for (i = 0; i < N; ++i) {
-	int u = rand_gen();
-	float r = rand_gen(); r /= 2.0;
-	w[u] = w[u] - r;
-	Q.update(u);
+        int u = rand_gen();
+        float r = rand_gen(); r /= 2.0;
+        w[u] = w[u] - r;
+        Q.update(u);
       }
 
       for (i = 0; i < N; ++i) {

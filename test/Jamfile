@@ -21,7 +21,7 @@ test-suite graph :
 
     [ compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-    [ run brandes_betweenness_centrality_test.cpp ] 
+    [ run betweenness_centrality_test.cpp ] 
 
     [ run dfs.cpp <lib>../../test/build/boost_test_exec_monitor 
         : : : <sysinclude>$(BOOST_ROOT) ]
