@@ -20,56 +20,20 @@
 // 29 Nov 2001    Doug Gregor
 //      Initial checkin.
 
-#define BOOST_INCLUDE_MAIN
-#include <boost/test/test_tools.hpp>
-#include <boost/graph/adjacency_list.hpp>
-//#include <boost/graph/isomorphism.hpp>
-//#include <boost/graph/ddl_isomorphism.hpp>
-#include "../doc/isomorphism.hpp"
-//#include "../doc/isomorphism-v2.hpp"
-#include <boost/property_map.hpp>
-#include <boost/random/uniform_real.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <algorithm>
 #include <cstdlib>
 #include <time.h> // clock used without std:: qualifier?
+#include <boost/test/test_tools.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/isomorphism.hpp>
+#include <boost/property_map.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/mersenne_twister.hpp>
 
 using namespace boost;
-
-// Verify that the given mapping iso_map from the vertices of g1 to the
-// vertices of g2 describes an isomorphism.
-// Note: this could be made much faster by specializing based on the graph
-// concepts modeled, but since we're verifying an O(n^(lg n)) algorithm,
-// O(n^4) won't hurt us.
-/*
-template<typename Graph1, typename Graph2, typename IsoMap>
-inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
-                               IsoMap iso_map)
-{
-  if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
-    return false;
-  
-  for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
-       e1 != edges(g1).second; ++e1) {
-    bool found_edge = false;
-    for (typename graph_traits<Graph2>::edge_iterator e2 = edges(g2).first;
-         e2 != edges(g2).second && !found_edge; ++e2) {
-      if (source(*e2, g2) == get(iso_map, source(*e1, g1)) &&
-          target(*e2, g2) == get(iso_map, target(*e1, g1))) {
-        found_edge = true;
-      }
-    }
-    
-    if (!found_edge)
-      return false;
-  }
-  
-  return true;
-}
-*/
 
 template <typename Generator>
 struct random_functor {
