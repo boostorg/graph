@@ -17,7 +17,7 @@ main()
       for (k = 0; k < D; ++k) {
 
         std::string file_name = "graph_type.hpp";
-        ofstream header(file_name.c_str());
+        std::ofstream header(file_name.c_str());
         if (!header) {
           std::cerr << "could not open file " << file_name << std::endl;
           return -1;
@@ -37,7 +37,7 @@ main()
         system("rm -f graph.exe graph.o graph.obj");
 	// the following system call should be replaced by a
 	// portable "compile" command.
-        rc = system("make graph.exe");
+        rc = system("g++ -I../../.. graph.cpp -o graph.exe");
         if (rc != 0) {
           std::cerr << "compile failed for " << container_types[i] << " "
                     << container_types[j] << " " << directed_types[k]
@@ -50,7 +50,7 @@ main()
                       << container_types[j] << " " << directed_types[k]
                       << std::endl;
             ret = -1;
-          }
+          } 
         }
       }
   
