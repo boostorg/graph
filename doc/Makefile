@@ -49,6 +49,12 @@ default: isomorphism-impl.$(LATEXOUT)
 isomorphism-impl.dvi: $(EPS_GEN) $(WEBTEX)
 isomorphism-impl.ps: isomorphism-impl.dvi
 isomorphism-impl.pdf: $(PDFPICT) $(WEBTEX)
+isomorphism.hpp: isomorphism-impl.w isomorphism-impl.tex
+
+isomorphism-impl-v2.dvi: $(EPS_GEN) $(WEBTEX)
+isomorphism-impl-v2.ps: isomorphism-impl-v2.dvi
+isomorphism-impl-v2.pdf: $(PDFPICT) $(WEBTEX)
+isomorphism-v2.hpp: isomorphism-impl-v2.w isomorphism-impl-v2.tex
 
 out.dot: isomorphism-impl.w
 in.dot: isomorphism-impl.w
