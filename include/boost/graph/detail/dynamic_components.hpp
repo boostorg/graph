@@ -1,102 +1,9 @@
-//=======================================================================
-// Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
-//
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
-//=======================================================================
-#ifndef BOOST_GRAPH_DETAIL_CONNECTED_COMPONENTS_HPP
-#define BOOST_GRAPH_DETAIL_CONNECTED_COMPONENTS_HPP
-
-#if defined(__sgi) && !defined(__GNUC__)
-#pragma set woff 1234
-#endif
-
-#include <boost/operators.hpp>
+#ifndef BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
+#define BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
 
 namespace boost {
 
   namespace detail {
-
-    //=========================================================================
-    // Implementation details of connected_components
-
-    // This is used both in the connected_components algorithm and in
-    // the kosaraju strong components algorithm during the second DFS
-    // traversal.
-    template <class ComponentsPA, class DFSVisitor>
-    class components_recorder : public DFSVisitor
-    {
-      typedef typename property_traits<ComponentsPA>::value_type comp_type;
-    public:
-      components_recorder(ComponentsPA c, 
-			  comp_type& c_count, 
-			  DFSVisitor v)
-	: DFSVisitor(v), m_component(c), m_count(c_count) {}
-
-      template <class Vertex, class Graph>
-      void start_vertex(Vertex u, Graph& g) {
-	++m_count;
-	DFSVisitor::start_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) {
-	put(m_component, u, m_count);
-	DFSVisitor::discover_vertex(u, g);
-      }
-    protected:
-      ComponentsPA m_component;
-      comp_type& m_count;
-    };
-
-    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
-      class DFSVisitor>
-    class time_recorder : public DFSVisitor
-    {
-    public:
-      time_recorder(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor v)
-	: DFSVisitor(v), m_discover_time(d), m_finish_time(f), m_t(t) {}
-
-      template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) {
-	put(m_discover_time, u, ++m_t);
-	DFSVisitor::discover_vertex(u, g);
-      }
-      template <class Vertex, class Graph>
-      void finish_vertex(Vertex u, Graph& g) {
-	put(m_finish_time, u, ++m_t);
-	DFSVisitor::discover_vertex(u, g);
-      }
-    protected:
-      DiscoverTimeMap m_discover_time;
-      FinishTimeMap m_finish_time;
-      TimeT m_t;
-    };
-    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
-      class DFSVisitor>
-    time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
-    record_times(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor vis)
-    {
-      return time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
-	(d, f, t, vis);
-    }
 
     //=========================================================================
     // Implementation detail of dynamic_components
@@ -217,8 +124,4 @@ namespace boost {
   
 } // namespace detail
 
-#if defined(__sgi) && !defined(__GNUC__)
-#pragma reset woff 1234
-#endif
-
-#endif 
+#endif // BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
