@@ -6,9 +6,13 @@
 \usepackage{lgrind}
 %\usepackage{times}
 \usepackage{fullpage}
+\usepackage{graphicx}
 
 \newcommand{\myhyperref}[2]{#2}
 \newcommand{\code}[1]{{\small{\em \textbf{#1}}}}
+
+%\newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.pdf}}\caption{#2}\label{fig:#1}\end{figure}}
+\newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.eps}}\caption{#2}\label{fig:#1}\end{figure}}
 
 \setlength\overfullrule{5pt}
 \tolerance=10000
@@ -79,49 +83,49 @@ We are going to consider the vertices of $G_1$ in a specific order
 labeled $1,\ldots,N$ according to the order that we plan to add them
 to the subgraph.  Let $G_1[k]$ denote the subgraph of $G_1$ induced by
 the first $k$ vertices, with $G_1[0]$ being an empty graph. At each
-stage of the recursion we start with an isomorphism $f_k$ between
-$G_1[k]$ and a subgraph of $G_2$, which we denote by $G_2[S]$, so
-$G_1[k] \isomorphic G_2[S]$. The vertex set $S$ is the subset of $V_2$
-that corresponds via $f_k$ to the first $k$ vertices in $G_1$. We try
-to extend the isomorphism by finding a vertex $v \in V_2 - S$ that
-matches with vertex $k+1$. If a matching vertex is found, we have a
-new isomorphism $f_{k+1}$ with $G_1[k+1] \isomorphic G_2[S \union \{ v
-\}]$.
+stage of the recursion we start with an isomorphism $f_{k-1}$ between
+$G_1[k-1]$ and a subgraph of $G_2$, which we denote by $G_2[S]$, so
+$G_1[k-1] \isomorphic G_2[S]$. The vertex set $S$ is the subset of
+$V_2$ that corresponds via $f_{k-1}$ to the first $k-1$ vertices in
+$G_1$. We try to extend the isomorphism by finding a vertex $v \in V_2
+- S$ that matches with vertex $k$. If a matching vertex is found, we
+have a new isomorphism $f_k$ with $G_1[k] \isomorphic G_2[S \union \{
+v \}]$.
 
 \begin{tabbing}
-IS\=O\=M\=O\=RPH($k$, $S$, $f_k$) $\equiv$ \\
+IS\=O\=M\=O\=RPH($k$, $S$, $f_{k-1}$) $\equiv$ \\
 \>\textbf{if} ($S = V_2$) \\
 \>\>\textbf{return} true \\
 \>\textbf{for} each vertex $v \in V_2 - S$ \\
-\>\>\textbf{if} (MATCH($k+1$, $v$)) \\
-\>\>\>$f_{k+1} = f_k \union \pair{k+1}{v}$ \\
-\>\>\>ISOMORPH($k+1$, $S \union \{ v \}$, $f_{k+1}$)\\
+\>\>\textbf{if} (MATCH($k$, $v$)) \\
+\>\>\>$f_k = f_{k-1} \union \pair{k}{v}$ \\
+\>\>\>ISOMORPH($k+1$, $S \union \{ v \}$, $f_k$)\\
 \>\>\textbf{else}\\
 \>\>\>\textbf{return} false \\
 \end{tabbing}
 
 %ISOMORPH($0$, $G_1$, $\emptyset$, $G_2$)
 
-The basic idea of the match operation is to check whether $G_1[k+1]$
-is isomorphic to $G_2[S \union \{ v \}]$. We already know that $G_1[k]
-\isomorphic G_2[S]$ with the mapping $f_k$, so all we need to do is
-verify that the edges in $E_1[k+1] - E_1[k]$ connect vertices that
+The basic idea of the match operation is to check whether $G_1[k]$ is
+isomorphic to $G_2[S \union \{ v \}]$. We already know that $G_1[k-1]
+\isomorphic G_2[S]$ with the mapping $f_{k-1}$, so all we need to do
+is verify that the edges in $E_1[k] - E_1[k-1]$ connect vertices that
 correspond to the vertices connected by the edges in $E_2[S \union \{
-v \}] - E_2[S]$. The edges in $E_1[k+1] - E_1[k]$ of course are all
-the out-edges and in-edges of $k+1$, and $E_2[S \union \{ v \}] -
+v \}] - E_2[S]$. The edges in $E_1[k] - E_1[k-1]$ of course are all
+the out-edges and in-edges of $k$, and $E_2[S \union \{ v \}] -
 E_2[S]$ consists of all the out-edges and in-edges of $v$.  We denote
 the out-edges of a given vertex $u$ by $Out[u]$ and the in-edges of a
 vertex $u$ by $In[u]$. Then we state the MATCH operation more
 precisely as follows.
 
 \begin{tabbing}
-M\=ATCH($i$, $u$) $\equiv$ \\
-\>$out \leftarrow \forall (i,j) \in Out[i] \Big( (u,f(j)) \in Out[u] \Big)$ \\
-\>$in \leftarrow \forall (j,i) \in In[i] \Big( (f(j),u) \in In[u]) \Big)$ \\
+M\=ATCH($k$, $v$) $\equiv$ \\
+\>$out \leftarrow \forall (k,j) \in Out[k] \Big( (v,f(j)) \in Out[v] \Big)$ \\
+\>$in \leftarrow \forall (j,k) \in In[k] \Big( (f(j),v) \in In[v]) \Big)$ \\
 \>\textbf{return} $out \Land in$ 
 \end{tabbing}
 
-
+% For MATCH, do we have check going from G_2 to G_1 as well?
 
 % \begin{tabbing}
 % MA\=TC\=H(\=$i$\=, $v$) $\equiv$ \\
@@ -145,8 +149,8 @@ techniques described in
 \section{Vertex Invariants}
 
 One way to reduce the search space is through the use of \emph{vertex
-invariants}. The idea is to compute a number for each vertex $invar(v)$
-such that $invar(v) = invar(v')$ if there exists some isomorphism $f$ where
+invariants}. The idea is to compute a number for each vertex $i(v)$
+such that $i(v) = i(v')$ if there exists some isomorphism $f$ where
 $f(v) = v'$. Then when we look for a match to some vertex $v$, we only
 need to consider those vertices that have the same vertex invariant
 number. The number of vertices in a graph with the same vertex
@@ -167,9 +171,9 @@ Also, we extend the MATCH operation to use the vertex invariants to
 help rule out vertices.
 
 \begin{tabbing}
-M\=A\=T\=C\=H-INVAR($i$, $v$) $\equiv$ \\
-\>$out \leftarrow \forall (i,j) \in Out[i] \Big( (u,f(j)) \in Out[u] \Land invar(j) = invar(f(j)) \Big)$ \\
-\>$in \leftarrow \forall (j,i) \in In[i] \Big( (f(j),u) \in In[u]) \Land invar(j) = invar(f(j)) \Big)$ \\
+M\=A\=T\=C\=H-INVAR($k$, $v$) $\equiv$ \\
+\>$out \leftarrow \forall (k,j) \in Out[k] \Big( (v,f(j)) \in Out[v] \Land i(j) = i(f(j)) \Big)$ \\
+\>$in \leftarrow \forall (j,k) \in In[k] \Big( (f(j),v) \in In[v]) \Land i(j) = i(f(j)) \Big)$ \\
 \>\textbf{return} $out \Land in$ 
 \end{tabbing}
 
@@ -368,9 +372,9 @@ for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
       == color_traits<default_color_type>::white()) {
     depth_first_visit
       (g1, *ui, detail::record_dfs_order<Graph1, V1Map>(perm, 
-						       v1_index_map), 
+                                                       v1_index_map), 
        make_iterator_property_map(&color_vec[0], v1_index_map, 
-				  color_vec[0]));
+                                  color_vec[0]));
   }
 }
 @}
@@ -430,12 +434,12 @@ template <class VertexIter, class EdgeIter, class Graph1, class Graph2,
   class V1IndexMap, class V2IndexMap, class IndexMapping, 
   class Invar1, class Invar2, class Set>
 bool isomorph(VertexIter k, VertexIter last,
-	      EdgeIter edge_iter, EdgeIter edge_iter_end,
-	      const Graph1& g1, const Graph2& g2,
-	      V1IndexMap v1_index_map,
-	      V2IndexMap v2_index_map,
-	      IndexMapping f, Invar1 invar1, Invar2 invar2,
-	      const Set& not_in_S)
+              EdgeIter edge_iter, EdgeIter edge_iter_end,
+              const Graph1& g1, const Graph2& g2,
+              V1IndexMap v1_index_map,
+              V2IndexMap v2_index_map,
+              IndexMapping f, Invar1 invar1, Invar2 invar2,
+              const Set& not_in_S)
 @}
 
 
@@ -467,18 +471,135 @@ for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
 @}
 
 In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
-\in V_2 - S$ and check if $k+1$ and $v$ can match.  A more efficient
+\in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
 approach is to directly iterate through all the potential matches for
-$k+1$. Let $M$ be the set of vertices that can be potentially matched
-to $k+1$. Then we can define $M$ as follows:
-
+$k$. Let $M$ be the set of vertices that can be potentially matched to
+$k$. We define $M$ as follows:
+%
 \begin{align*}
-M &= \{ v \st out \lor in \} \\
-out &= (k+1,j) \in E_1[k+1] \land (v,f(j)) \in E_2[V_2 - S] \\
-in &= (j,k) \in E_1[k+1] \land (f(j),v) \in E_2[V_2 - S])
+M &= out \intersect in \\ 
+out &= \Big\{ v \st \forall (k,j) \in Out[k] \Big( (v,f(j)) \in In[f(j)] \Land i(j) = i(f(j)) \Land v \in V_2 - S \Big) \Big\} \\
+in &= \Big\{ v \st \forall (j,k) \in In[k] \Big( (f(j),v) \in Out[f(j)] \Land i(j) = i(f(j)) \Land v \in V_2 - S \Big) \Big\}
 \end{align*}
 
 
+@d Compute $M$, the potential matches for $k$
+@{
+ std::vector<vertex2_t> M, out, in;
+@<Compute the $out$ set@>
+@<Compute the $in$ set@>
+ std::set_intersection(out.begin(), out.end(), in.begin(), in.end(),
+     std::back_inserter(M), cmp);
+@}
+
+To compute the $out$ set, we iterate through the out-edges $(k,j)$ of
+$k$, and for each $j$ we iterate through the in-edges $(v,f(j))$ of
+$f(j)$, putting all of the $v$'s in $out$ that have the same vertex
+invariant as $k$, and which are in $V_2 - S$.
+
+\vizfig{out}{Computing the $out$ set.}
+
+@c out.dot
+@{
+digraph G {
+  node[shape=circle]
+  size="5,3"
+  ratio="fill"
+
+  subgraph cluster0 { label="G_1"
+    k -> j_1 
+    k -> j_2 
+    k -> j_3
+  }
+
+  subgraph cluster1 { label="G_2"
+
+    subgraph cluster2 { label="out" v_1 v_2 v_3 v_4 v_5 v_6 }
+
+    v_1 -> fj_1
+    v_2 -> fj_1
+    v_3 -> fj_1
+
+    v_4 -> fj_2
+
+    v_5 -> fj_3
+    v_6 -> fj_3
+
+    fj_1[label="f(j_1)"]
+    fj_2[label="f(j_2)"]
+    fj_3[label="f(j_3)"]
+  }
+
+  j_1 -> fj_1[style=dotted]
+  j_2 -> fj_2[style=dotted]
+  j_3 -> fj_3[style=dotted]
+}
+@}
+
+
+\vizfig{in}{Computing the $in$ set.}
+
+@c in.dot
+@{
+digraph G {
+  node[shape=circle]
+  size="3,2"
+  ratio="fill"
+  subgraph cluster0 { label="G1"
+    j_1 -> k
+    j_2 -> k
+  }
+
+  subgraph cluster1 { label="G2"
+
+    subgraph cluster2 { label="in" v_1 v_2 v_3 }
+
+    v_1 -> fj_1
+    v_2 -> fj_1
+
+    v_3 -> fj_2
+
+    fj_1[label="f(j_1)"]
+    fj_2[label="f(j_2)"]
+  }
+
+  j_1 -> fj_1[style=dotted]
+  j_2 -> fj_2[style=dotted]
+
+}
+@}
+
+
+The set $V_2 - S$ is represented with a bitset named
+\code{not\_in\_S}. The bitset is accessed here through the property
+map interface. The implementation for computing the $out$ set is as
+follows.
+
+
+@d Compute the $out$ set
+@{
+ for (tie(k_j, k_j_end) = out_edges(k, g1); k_j != k_j_end; ++k_j) {
+     vertex1_t j = target(*k_j, g1);
+     for (tie(v_fj, v_fj_end) = in_edges(get(f, j), g2); v_fj != v_fj_end; ++v_fj) {
+         vertex2_t v = source(*v_fj, g2);
+         if ((get(invar1, j) == get(invar2, get(f, j))) && get(not_in_S, v))
+             out.push_back(v);
+     }
+ }
+@}
+
+
+@d Compute the $in$ set
+@{
+ for (tie(j_k, j_k_end) = in_edges(k, g1); j_k != j_k_end; ++j_k) {
+     j = source(*j_k, g1);
+     for (tie(fj_v, fj_v_end) = out_edges(get(f, j), g2); fj_v != fj_v_end; ++fj_v) {
+         v = target(*fj_v, g2);
+         if ((get(invar1, j) == get(invar2, get(f, j))) && get(not_in_S, v))
+             in.push_back(v);
+     }
+ }
+@}
 
 
 %(k,j)
@@ -493,34 +614,6 @@ intersection of the vertices in $C$ with the vertices in $V_2 - S_2$
 that are potential matches for $k$, which we denote $P$.
 
 introduce notion of partial isomorphism?
-
-@d foo
-@{
-for (tie(kj, kj_end) = out_edges(k, g1); kj != kj_end; ++kj) {
-  j = target(*kj, g1);
-  vertex2_t v = get(f, j);
-  for (tie(uv, uv_end) = in_edges(v, g2); uv != uv_end; ++uv) {
-    u = source(*uv, g2);
-    if (get(not_in_S, u) && (get(invar1, j) == get(invar2, v))) {
-      isomorph();
-    }
-  }
-}
-@}
-
-@d bar
-@{
-for (tie(jk, jk_end) = in_edges(k, g1); jk != jk_end; ++jk) {
-  j = source(*jk, g1);
-  vertex2_t v = get(f, j);
-  for (tie(vu, vu_end) = out_edges(v, g2); vu != vu_end; ++vu) {
-    u = target(*vu, g2);
-    if (get(not_in_S, u) && (get(invar1, j) == get(invar2, u))) {
-      isomorph();
-    }
-  }
-}
-@}
 
 
 
