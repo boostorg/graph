@@ -467,10 +467,11 @@ namespace boost {
 
     template <typename Vertex, typename Children>
     void children_remove_edge(Vertex u_global, Vertex v_global,
-                              const Children& c)
+                              Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i).find_vertex(u_global).second && (*i).find_vertex(v_global).second)
+        if ((*i).find_vertex(u_global).second
+	    && (*i).find_vertex(v_global).second)
           remove_edge_recur_down(u_global, v_global, *i);
     }
     
@@ -503,12 +504,13 @@ namespace boost {
     void remove_edge_recur_down(Edge e_global, subgraph<Graph>& g);
 
     template <typename Edge, typename Children>
-    void children_remove_edge(Edge e_global, const Children& c)
+    void children_remove_edge(Edge e_global, Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
         if ((*i).find_vertex(source(e_global, *i)).second
 	    && (*i).find_vertex(target(e_global, *i)).second)
-          remove_edge_recur_down(u_global, v_global, *i);
+          remove_edge_recur_down(source(e_global, *i),
+				 target(e_global, *i), *i);
     }
 
     template <typename Edge, typename Graph>
@@ -537,7 +539,7 @@ namespace boost {
               subgraph<G>& g)
   {
     if (g.is_root())
-      detail::remove_edge_recur_up(u_local, v_local, g.m_graph);
+      detail::remove_edge_recur_up(u_local, v_local, g);
     else
       detail::remove_edge_recur_up(g.local_to_global(u_local),
                                    g.local_to_global(v_local), g);
@@ -549,9 +551,26 @@ namespace boost {
               subgraph<G>& g)
   {
     if (g.is_root())
-      detail::remove_edge_recur_up(e_local, g.m_graph);
+      detail::remove_edge_recur_up(e_local, g);
     else
-      detail::remove_edge_recur_up(get(edge_global, g.m_graph, e_local), g);
+      detail::remove_edge_recur_up(g.local_to_global(e_local), g);
+  }
+
+  template <typename Predicate, typename G>
+  void
+  remove_edge_if(Predicate p, subgraph<G>& g)
+  {
+    // This is wrong...
+    remove_edge_if(p, g.m_graph);
+  }
+
+  template <typename G>
+  void
+  clear_vertex(typename subgraph<G>::vertex_descriptor v_local,
+	       subgraph<G>& g)
+  {
+    // this is wrong...
+    clear_vertex(v_local, g.m_graph);
   }
 
   namespace detail {
