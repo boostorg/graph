@@ -28,7 +28,7 @@
 #include <LEDA/graph.h>
 
 #include <boost/config.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/iterator_adaptors.hpp>
 
 // The functions and classes in this file allows the user to
 // treat a LEDA GRAPH object as a boost graph "as is". No
@@ -41,8 +41,10 @@
 
 namespace boost {
   
-  struct out_edge_iterator_policies
+  struct leda_out_edge_iterator_policies
   {
+    static void initialize(edge& ) { }
+
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,0); }
 
@@ -57,8 +59,10 @@ namespace boost {
     { return x == y; }
   };
 
-  struct in_edge_iterator_policies
+  struct leda_in_edge_iterator_policies
   {
+    static void initialize(edge& ) { }
+
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,1); }
 
@@ -73,8 +77,10 @@ namespace boost {
     { return x == y; }
   };
 
-  struct adjacency_iterator_policies
+  struct leda_adjacency_iterator_policies
   {
+    static void initialize(edge& ) { }
+
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,0); }
 
@@ -90,10 +96,12 @@ namespace boost {
   };
 
   template <class LedaGraph>
-  struct vertex_iterator_policies
+  struct leda_vertex_iterator_policies
   {
-    vertex_iterator_policies() { }
-    vertex_iterator_policies(const LedaGraph* g) : m_g(g) { }
+    leda_vertex_iterator_policies() { }
+    leda_vertex_iterator_policies(const LedaGraph* g) : m_g(g) { }
+
+    void initialize(node& v) const { }
 
     void increment(node& v) const
     { v = m_g->succ_node(v); }
@@ -121,29 +129,38 @@ namespace boost {
     typedef edge edge_descriptor;
 
     typedef boost::iterator_adaptor<edge,
-      boost::adjacency_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,
-        node, std::ptrdiff_t, node*, node>
+      boost::leda_adjacency_iterator_policies, 
+      node, node, node*,
+      boost::multi_pass_input_iterator_tag,
+      std::ptrdiff_t
     > adjacency_iterator;
 
     typedef boost::iterator_adaptor<edge,
-      boost::out_edge_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,edge>
+      boost::leda_out_edge_iterator_policies,
+      edge, edge&, edge*,
+      boost::multi_pass_input_iterator_tag,
+      std::ptrdiff_t
     > out_edge_iterator;
 
     typedef boost::iterator_adaptor<edge,
-      boost::in_edge_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,edge>
+      boost::leda_in_edge_iterator_policies, 
+      edge, edge&, edge*,
+      boost::multi_pass_input_iterator_tag,
+      std::ptrdiff_t
     > in_edge_iterator;
 
     typedef boost::iterator_adaptor<node,
-      boost::vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      boost::iterator<std::bidirectional_iterator_tag,node>
+      boost::leda_vertex_iterator_policies< GRAPH<vtype,etype> >, 
+      node, node&, node*,
+      boost::multi_pass_input_iterator_tag,
+      std::ptrdiff_t
     > vertex_iterator;
 
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category; // not sure here
-    typedef int size_type;
+    typedef int vertices_size_type;
+    typedef int edges_size_type;
+    typedef int degree_size_type;
   };
 } // namespace boost
 #endif
@@ -209,40 +226,31 @@ namespace boost {
   inline std::pair<
     typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator,
     typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator >  
-  adjacent_vertices(typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, const GRAPH<vtype,etype>& g)
+  adjacent_vertices(
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
+    const GRAPH<vtype,etype>& g)
   {
     typedef typename graph_traits< GRAPH<vtype,etype> >
       ::adjacency_iterator Iter;
     return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
   }
 
-  // deprecated
   template <class vtype, class etype>
-  inline std::pair<
-    typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator,
-    typename graph_traits< GRAPH<vtype,etype> >::adjacency_iterator >  
-  adj(typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-      const GRAPH<vtype,etype>& g)
-  {
-    return adjacent_vertices(u, g);
-  }
-
-  template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::size_type
+  typename graph_traits< GRAPH<vtype,etype> >::vertices_size_type
   num_vertices(const GRAPH<vtype,etype>& g)
   {
     return g.number_of_nodes();
   }  
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::size_type
+  typename graph_traits< GRAPH<vtype,etype> >::edges_size_type
   num_edges(const GRAPH<vtype,etype>& g)
   {
     return g.number_of_edges();
   }  
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::size_type
+  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
   out_degree(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
     const GRAPH<vtype,etype>&)
@@ -251,7 +259,7 @@ namespace boost {
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::size_type
+  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
   in_degree(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
     const GRAPH<vtype,etype>&)
@@ -260,7 +268,7 @@ namespace boost {
   }
 
   template <class vtype, class etype>
-  typename graph_traits< GRAPH<vtype,etype> >::size_type
+  typename graph_traits< GRAPH<vtype,etype> >::degree_size_type
   degree(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u, 
     const GRAPH<vtype,etype>&)
@@ -278,15 +286,17 @@ namespace boost {
   // Hmm, LEDA doesn't have the equivalent of clear_vertex() -JGS
   // need to write an implementation
   template <class vtype, class etype>
-  void clear_vertex(GRAPH<vtype,etype>& g,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u)
+  void clear_vertex(
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
+    GRAPH<vtype,etype>& g)
   {
     g.del_node(u);
   }
 
   template <class vtype, class etype>
-  void remove_vertex(GRAPH<vtype,etype>& g,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u)
+  void remove_vertex(
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
+    GRAPH<vtype,etype>& g)
   {
     g.del_node(u);
   }
@@ -295,9 +305,10 @@ namespace boost {
   std::pair<
     typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor,
     bool>
-  add_edge(GRAPH<vtype,etype>& g,
+  add_edge(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v)
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
+    GRAPH<vtype,etype>& g)
   {
     return std::make_pair(g.new_edge(u, v), true);
   }
@@ -306,19 +317,21 @@ namespace boost {
   std::pair<
     typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor,
     bool>
-  add_edge(GRAPH<vtype,etype>& g,
+  add_edge(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
-    const etype& et)
+    const etype& et, 
+    GRAPH<vtype,etype>& g)
   {
     return std::make_pair(g.new_edge(u, v, et), true);
   }
 
   template <class vtype, class etype>
   void
-  remove_edge(GRAPH<vtype,etype>& g,
+  remove_edge(
     typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor u,
-    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v)
+    typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor v,
+    GRAPH<vtype,etype>& g)
   {
     typename graph_traits< GRAPH<vtype,etype> >::out_edge_iterator 
       i,iend;
@@ -329,8 +342,9 @@ namespace boost {
 
   template <class vtype, class etype>
   void
-  remove_edge(GRAPH<vtype,etype>& g,
-    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e)
+  remove_edge(
+    typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
+    GRAPH<vtype,etype>& g)
   {
     g.del_edge(e);
   }

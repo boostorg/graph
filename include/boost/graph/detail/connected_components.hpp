@@ -35,6 +35,74 @@ namespace boost {
 
   namespace detail {
 
+    //=========================================================================
+    // Implementation details of connected_components
+
+    // This is used both in the connected_components algorithm and in
+    // the kosaraju strong components algorithm during the second DFS
+    // traversal.
+    template <class ComponentsPA, class DFSVisitor>
+    class components_recorder : public DFSVisitor
+    {
+      typedef typename property_traits<ComponentsPA>::value_type comp_type;
+    public:
+      components_recorder(ComponentsPA c, 
+			  comp_type& c_count, 
+			  DFSVisitor v)
+	: DFSVisitor(v), m_component(c), m_count(c_count) {}
+
+      template <class Vertex, class Graph>
+      void start_vertex(Vertex u, Graph& g) {
+	++m_count;
+	DFSVisitor::start_vertex(u, g);
+      }
+      template <class Vertex, class Graph>
+      void discover_vertex(Vertex u, Graph& g) {
+	put(m_component, u, m_count);
+	DFSVisitor::discover_vertex(u, g);
+      }
+    protected:
+      ComponentsPA m_component;
+      comp_type& m_count;
+    };
+
+    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
+      class DFSVisitor>
+    class time_recorder : public DFSVisitor
+    {
+    public:
+      time_recorder(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor v)
+	: DFSVisitor(v), m_discover_time(d), m_finish_time(f), m_t(t) {}
+
+      template <class Vertex, class Graph>
+      void discover_vertex(Vertex u, Graph& g) {
+	put(m_discover_time, u, ++m_t);
+	DFSVisitor::discover_vertex(u, g);
+      }
+      template <class Vertex, class Graph>
+      void finish_vertex(Vertex u, Graph& g) {
+	put(m_finish_time, u, ++m_t);
+	DFSVisitor::discover_vertex(u, g);
+      }
+    protected:
+      DiscoverTimeMap m_discover_time;
+      FinishTimeMap m_finish_time;
+      TimeT m_t;
+    };
+    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
+      class DFSVisitor>
+    time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
+    record_times(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor vis)
+    {
+      return time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
+	(d, f, t, vis);
+    }
+
+    //=========================================================================
+    // Implementation detail of dynamic_components
+
+
+    //-------------------------------------------------------------------------
     // Helper functions for the component_index class
     
     // Record the representative vertices in the header array.

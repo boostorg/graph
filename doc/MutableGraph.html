@@ -62,7 +62,7 @@ edges and vertices.
 <TR>
 <TD><tt>p</tt></TD>
 <TD>is an object of a type that models <a
-href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>
+href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>
 and whose argument type matches the <tt>edge_descriptor</tt> type. 
 </TR>
 
@@ -76,10 +76,17 @@ and whose argument type matches the <tt>edge_descriptor</tt> type.
 <TD><a name="sec:add-edge"><TT>add_edge(u,&nbsp;v,&nbsp;g)</TT></a></TD>
 <TD>
 Inserts the edge <i>(u,v)</i> into the graph, and returns an edge
-descriptor pointing to the new edge. If the graph disallows
-parallel edges, and the edge <i>(u,v)</i> is already in the graph,
-then the <tt>bool</tt> flag returned is <tt>false</tt> and the
-returned edge descriptor points to the already existing edge.<br>
+descriptor pointing to the new edge. If the graph disallows parallel
+edges, and the edge <i>(u,v)</i> is already in the graph, then the
+<tt>bool</tt> flag returned is <tt>false</tt> and the returned edge
+descriptor points to the already existing edge.  Note that for
+undirected graphs, <i>(u,v)</i> is the same edge as <i>(v,u)</i>, so
+after a call to the function <tt>add_edge()</tt>, this implies that
+edge <i>(u,v)</i> will appear in the out-edges of <i>u</i> and
+<i>(u,v)</i> (or equivalently <i>(v,u)</i>) will appear in the
+out-edges of <i>v</i>.  Put another way, <i>v</i> will be adjacent to
+<i>u</i> and <i>u</i> will be adjacent to <i>v</i>.
+<br>
 Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT>
 </TD>
 </tr>
