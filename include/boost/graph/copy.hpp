@@ -315,8 +315,8 @@ namespace boost {
       copy_impl;
     copy_impl::apply
       (g_in, g_out, 
-       make_vertex_copier(g_in, g_out), 
-       make_edge_copier(g_in, g_out), 
+       detail::make_vertex_copier(g_in, g_out), 
+       detail::make_edge_copier(g_in, g_out), 
        make_iterator_property_map(orig2copy.begin(), 
                                   get(vertex_index, g_in), orig2copy[0]),
        get(vertex_index, g_in)

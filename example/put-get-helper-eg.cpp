@@ -22,6 +22,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 #include <vector>
+#include <string>
 #include <boost/property_map.hpp>
 
 namespace foo

@@ -64,12 +64,12 @@ main()
 {
   std::ifstream datafile("./kevin-bacon.dat");
   if (!datafile) {
-    cerr << "No ./kevin-bacon.dat file" << endl;
+    std::cerr << "No ./kevin-bacon.dat file" << std::endl;
     return EXIT_FAILURE;
   }
 
   typedef adjacency_list < vecS, vecS, undirectedS, property < vertex_name_t,
-    string >, property < edge_name_t, string > >Graph;
+    std::string >, property < edge_name_t, std::string > > Graph;
   Graph g;
 
   typedef property_map < Graph, vertex_name_t >::type actor_name_map_t;
@@ -78,7 +78,7 @@ main()
   movie_name_map_t connecting_movie = get(edge_name, g);
 
   typedef graph_traits < Graph >::vertex_descriptor Vertex;
-  typedef std::map < string, Vertex > NameVertexMap;
+  typedef std::map < std::string, Vertex > NameVertexMap;
   NameVertexMap actors;
 
   for (std::string line; std::getline(datafile, line);) {

@@ -24,6 +24,7 @@
 #include <deque>                // to store the vertex ordering
 #include <vector>
 #include <list>
+#include <iostream>
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/topological_sort.hpp>
 

@@ -59,7 +59,7 @@ main()
   { u, v, w, x, y, z, N };
   char name[] = { 'u', 'v', 'w', 'x', 'y', 'z' };
   // Specify the edges in the graph
-  typedef pair < int, int >E;
+  typedef std::pair < int, int >E;
   E edge_array[] = { E(u, v), E(u, x), E(x, v), E(y, x),
     E(v, y), E(w, y), E(w, z), E(z, z)
   };
@@ -88,13 +88,13 @@ main()
   for (int i = 0; i < N; ++i)
     std::cout << name[discover_order[i]] << " ";
 
-  vector < size_type > finish_order(N);
+  std::vector < size_type > finish_order(N);
   std::copy(r.begin(), r.end(), finish_order.begin());
   std::sort(finish_order.begin(), finish_order.end(),
             indirect_cmp < Iiter, std::less < size_type > >(ftime.begin()));
   std::cout << std::endl << "order of finish: ";
   for (int i = 0; i < N; ++i)
-    cout << name[finish_order[i]] << " ";
+    std::cout << name[finish_order[i]] << " ";
   std::cout << std::endl;
 
   return EXIT_SUCCESS;

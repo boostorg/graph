@@ -79,8 +79,9 @@ namespace boost {
       return edge_proxy;
     }
     template <typename EdgeProxy>
-    void set_edge_exists(EdgeProxy edge_proxy, bool flag) {
+    EdgeProxy set_edge_exists(EdgeProxy edge_proxy, bool flag) {
       edge_proxy = flag;
+      return edge_proxy; // just to avoid never used warning
     }
 
 
@@ -103,11 +104,11 @@ namespace boost {
       stored_edge.second = ep;
     }
 
-    const no_property& get_property(const bool&) {
+    const no_property& get_property(const char&) {
       static no_property s_prop;
       return s_prop;
     }
-    no_property& get_property(bool&) {
+    no_property& get_property(char&) {
       static no_property s_prop;
       return s_prop;
     }
@@ -272,7 +273,7 @@ namespace boost {
     typedef adjacency_matrix_traits<Directed> Traits;
   public: // should be private
     typedef typename ct_if_t<typename has_property<EdgeProperty>::type,
-      std::pair<bool, EdgeProperty>, bool>::type StoredEdge;
+      std::pair<bool, EdgeProperty>, char>::type StoredEdge;
 #if defined(BOOST_MSVC)
     typedef std::vector<StoredEdge> Matrix;
 #else
