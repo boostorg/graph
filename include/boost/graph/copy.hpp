@@ -309,6 +309,8 @@ namespace boost {
   template <typename VertexListGraph, typename MutableGraph>
   void copy_graph(const VertexListGraph& g_in, MutableGraph& g_out)
   {
+    if (num_vertices(g_in) == 0)
+      return;
     typedef typename graph_traits<MutableGraph>::vertex_descriptor vertex_t;
     std::vector<vertex_t> orig2copy(num_vertices(g_in));
     typedef typename detail::choose_graph_copy<VertexListGraph>::type 
@@ -331,6 +333,8 @@ namespace boost {
     typename std::vector<T>::size_type n;
       n = is_default_param(get_param(params, orig_to_copy_t()))
         ? num_vertices(g_in) : 1;
+    if (n == 0)
+      return;
     std::vector<typename graph_traits<VertexListGraph>::vertex_descriptor> 
       orig2copy(n);
 
