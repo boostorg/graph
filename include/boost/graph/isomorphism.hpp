@@ -215,7 +215,7 @@ namespace boost {
                 
           }
           else {
-            if (any_equal(adjacent_vertices(f[i], G2), f[j])) {
+            if (contains(adjacent_vertices(f[i], G2), f[j])) {
               ++num_edges_on_k;
               if (match(next(iter), dfs_num_k))
                 return true;

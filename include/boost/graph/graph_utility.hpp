@@ -42,6 +42,8 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
+// iota moved to detail/algorithm.hpp
+#include <boost/detail/algorithm.hpp>
 
 namespace boost {
 
@@ -242,13 +244,6 @@ namespace boost {
     for (tie(vi,vi_end) = vertices(G); vi != vi_end; ++vi)
       std::cout << get(name,*vi) << " ";
     std::cout << std::endl;
-  }
-
-  template <class _ForwardIter, class _Tp>
-  void iota(_ForwardIter __first, _ForwardIter __last, _Tp __value)
-  {
-    while (__first != __last)
-      *__first++ = __value++;
   }
 
   // grab a random vertex from the graph's vertex set
