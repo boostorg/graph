@@ -152,10 +152,10 @@ namespace boost {
       VertexPredicate, self> EdgePred;
 
     // Constructors
-    filtered_graph(Graph& g, EdgePredicate ep)
+    filtered_graph(const Graph& g, EdgePredicate ep)
       : m_g(g), m_edge_pred(ep) { }
 
-    filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp)
+    filtered_graph(const Graph& g, EdgePredicate ep, VertexPredicate vp)
       : m_g(g), m_edge_pred(ep), m_vertex_pred(vp) { }
 
     // Graph requirements
@@ -208,7 +208,7 @@ namespace boost {
     typedef filtered_graph_tag graph_tag;
 
     //private:
-    Graph& m_g;
+    const Graph& m_g;
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
 
@@ -436,7 +436,7 @@ namespace boost {
   put(Property p, const filtered_graph<G, EP, VP>& g, const Key& k,
       const Value& val)
   {
-    put(p, g.m_g, k, val);
+    put(p, const_cast<G&>(g.m_g), k, val);
   }
 
   //===========================================================================
