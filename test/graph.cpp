@@ -4,7 +4,7 @@
 #include <utility>
 #include <algorithm>
 
-#define VERBOSE 1
+#define VERBOSE 0
 
 #include <boost/utility.hpp>
 #include <boost/graph/graph_utility.hpp>

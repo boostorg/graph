@@ -575,37 +575,39 @@ in the case of directed graphs.
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
-void remove_out_edge_if(vertex_descriptor v, Predicate predicate,
+template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
                         adjacency_list&amp; g)
 </pre>
-Removes all out-edges of vertex <i>v</i> from the graph that satisfy
+Removes all out-edges of vertex <i>u</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to the edge, then the edge is removed. This operation
-<b>invalidates</b> out-edge iterators for vertex <i>v</i>.
+applied to an edge descriptor, then the edge is removed. This
+operation <b>invalidates</b> out-edge iterators for vertex <i>u</i>.
 
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
                        adjacency_list&amp; g)
 </pre>
 Removes all in-edges of vertex <i>v</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to the edge, then the edge is removed. This operation
-<b>invalidates</b> in-edge iterators for vertex <i>v</i>.
+applied to an edge descriptor, then the edge is removed. This operation
+<b>invalidates</b> in-edge iterators for vertex <i>v</i>. This
+operation is available for the undirected and bidirectional versions of
+<tt>adjacency_list</tt>, but not for directed.
 
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
 void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to the edge, then the edge is removed. This operation
-<b>invalidates</b> all edge, out-edge, and in-edge iterators for graph.
+applied to an edge descriptor, then the edge is removed. This operation
+<b>invalidates</b> all edge, out-edge, and in-edge iterators for the graph.
 
 <hr>
 

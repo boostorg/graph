@@ -26,23 +26,23 @@
 <ul>
 
 <li>Polish up code/docs for pending items and champion the formal
-review. The pending items are:
+review. The pending items are:</li>
   <ul>
    <li><tt>container_traits.hpp</tt> (this should also include
-     the work Matt Austern is doing on this topic)
+     the work Matt Austern is doing on this topic)</li>
 
-   <li><tt>concept_checks.hpp</tt> 
+   <li><tt>concept_checks.hpp</tt> </li>
 
-   <li><tt>property.hpp</tt>
+   <li><tt>property.hpp</tt></li>
 
    <li>The queues and heaps: <tt>queue.hpp</tt>,
      <tt>mutable_queue.hpp</tt>, <tt>fibonacci_heap.hpp</tt>.
-      Somehow merge implementation with Dietmer's heaps and queues.
+      Somehow merge implementation with Dietmer's heaps and queues.</li>
 
    <li><tt>iterator_adaptor.hpp</tt> (need to figure out
-    why this causes problems for VC++)
+    why this causes problems for VC++)</li>
 
-   <li><tt>disjoint_sets</tt> 
+   <li><tt>disjoint_sets</tt> </li>
   </ul>
 
 <li>Port the graph library to Borland C++</li>
@@ -51,18 +51,20 @@ review. The pending items are:
 
 <li>Construct a set of planar graph algorithms.</li>
   <ul>
-   <li> Is the graph planar?
+   <li> Is the graph planar?</li>
    <li> &quot;Walk around the block&quot; and similar open and closed neighborhood 
 traversals. Note that edge traversals need to resolve to particular ends 
-and sides (see below), not just to the edge as a whole.
+and sides (see below), not just to the edge as a whole.</li>
    <li> Given a point, find the nearest vertex, edge, or bounded polygon. 
-Again, edges are viewed as having left and right sides.
+Again, edges are viewed as having left and right sides.</li>
    <li> Given a line segment, find intersecting vertices, edges, or bounded 
-polygons.
-   <li> Given a polygon, find intersecting whatever...
-   <li> Various minimum bounding rectangle and clipping problems.
-   <li> Construct a planar embedding of a planar graph.
-   <li> Find a balanced separator of a graph.
+polygons.</li>
+   <li> Given a polygon, find intersecting whatever...</li>
+   <li> Various minimum bounding rectangle and clipping problems.</li>
+   <li> Construct a planar embedding of a planar graph.</li>
+   <li> Find a balanced separator of a graph.</li>
+   <li> Modify adjacency_list so that the out-edges can be ordered
+    according to a user defined comparison object.</li>
   </ul>
 
 <li>Finish and test Maximum Flow algorithm.</li>
@@ -76,18 +78,24 @@ polygons.
 <li>Rewrite the Qhull algorithm using the Boost Graph Library.</li>
 
 <li>Explore the use of Algorithm Objects as an alternative to
-  the current approach with visitors.
+  the current approach with visitors.</li>
 
 <li>Analyze the algorithms that do not yet have visitors, and
   come up with visitor interfaces for them.</li>
 
 <li>Add a check in the adjacency_list class to make sure
   all the vertex property template arguments have kind=vertex_property_tag
-  and all edge property template arguments have kind=edge_property_tag.
+  and all edge property template arguments have kind=edge_property_tag.</li>
 
 <li>Clean up the output functions in graph_utility.hpp to
   use streams, and document all the utility functions. Replace
-  the random number stuff with calls to the boost random number generator.
+  the random number stuff with calls to the boost random number generator.</li>
+
+<li>Modularize the tests in test/graph.cpp to apply to particular
+  concepts. Make sure there are run-time tests for every BGL concept.</li>
+
+<li>Write tests for the BGL algorithms. Currently the examples
+  are used as a sanity check, but they do not constitute a real test. </li>
 
 </ul>
 
