@@ -295,19 +295,14 @@ namespace boost {
 
   /** 
    * \brief Determines when to terminate layout of a particular graph based
-   * on a given tolerance. 
-   *
-   * For local movements, where a single vertex is being moved toward
-   * a local minima the tolerance is taken as an absolute tolerance;
-   * for global movements, layout terminates when moving individual
-   * particles results in changes in the maximum vertex energy less
-   * than the tolerance.
+   * on a given relative tolerance. 
    */
   template<typename T = double>
   struct layout_tolerance
   {
-    layout_tolerance(const T& tolerance = T(0.01))
-      : tolerance(tolerance), last_energy(std::numeric_limits<T>::max()) { }
+    layout_tolerance(const T& tolerance = T(0.001))
+      : tolerance(tolerance), last_energy(std::numeric_limits<T>::max()),
+        last_local_energy(std::numeric_limits<T>::max()) { }
 
     template<typename Graph>
     bool 
@@ -317,18 +312,33 @@ namespace boost {
                bool global)
     {
       if (global) {
-        double diff = last_energy - delta_p;
+        if (last_energy == std::numeric_limits<T>::max()) {
+          last_energy = delta_p;
+          return false;
+        }
+          
+        T diff = last_energy - delta_p;
         if (diff < T(0)) diff = -diff;
+        bool done = (delta_p == T(0) || diff / last_energy < tolerance);
         last_energy = delta_p;
-        return diff < tolerance;
+        return done;
       } else {
-        return delta_p < tolerance;
+        if (last_local_energy == std::numeric_limits<T>::max()) {
+          last_local_energy = delta_p;
+          return false;
+        }
+          
+        T diff = last_local_energy - delta_p;
+        bool done = (delta_p == T(0) || diff / last_local_energy < tolerance);
+        last_local_energy = delta_p;
+        return done;
       }
     }
 
   private:
     T tolerance;
     T last_energy;
+    T last_local_energy;
   };
 
   /** \brief Kamada-Kawai spring layout for undirected graphs.
