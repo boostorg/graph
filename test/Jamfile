@@ -21,6 +21,8 @@ test-suite graph :
 
     [ compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
+    [ run brandes_betweenness_centrality_test.cpp ] 
+
     [ run dfs.cpp <lib>../../test/build/boost_test_exec_monitor 
         : : : <sysinclude>$(BOOST_ROOT) ]
 
@@ -35,6 +37,8 @@ test-suite graph :
     [ run graph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
+
+    [ run layout_test.cpp ]
 
     [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
 

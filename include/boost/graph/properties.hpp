@@ -109,9 +109,11 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, finish_time);
   BOOST_DEF_PROPERTY(vertex, predecessor);
   BOOST_DEF_PROPERTY(vertex, rank);
+  BOOST_DEF_PROPERTY(vertex, centrality);
   BOOST_DEF_PROPERTY(edge, reverse);
   BOOST_DEF_PROPERTY(edge, capacity);
   BOOST_DEF_PROPERTY(edge, residual_capacity);
+  BOOST_DEF_PROPERTY(edge, centrality);
   BOOST_DEF_PROPERTY(graph, visitor);
 
   // These tags are used for property bundles
