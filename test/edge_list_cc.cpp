@@ -26,6 +26,7 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/edge_list.hpp>
 #include <cstddef>
+#include <iterator>
 
 int main(int,char*[])
 {
@@ -35,7 +36,7 @@ int main(int,char*[])
         
         typedef std::pair<int,int> E;
     
-        typedef edge_list<E*,E,std::ptrdiff_t> EdgeList;
+        typedef edge_list<E*,E,std::ptrdiff_t,std::random_access_iterator_tag> EdgeList;
     
         typedef graph_traits<EdgeList>::edge_descriptor Edge;
     

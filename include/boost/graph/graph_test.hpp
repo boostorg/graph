@@ -64,7 +64,6 @@ namespace boost {
       edge_t e;
     };
     struct ignore_edges {
-      ignore_edges() { }
       ignore_edges(vertex_t s, vertex_t t, const Graph& g) 
         : s(s), t(t), g(g) { }
       bool operator()(edge_t x) const { 
