@@ -35,6 +35,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <memory>
 #include <algorithm>
+#include <limits>
 
 #include <boost/iterator_adaptors.hpp>
 
@@ -1568,6 +1569,11 @@ namespace boost {
       typedef typename Config::edge_property_type edge_property_type;
       typedef adj_list_tag graph_tag;
 
+      static vertex_descriptor null_vertex()
+      {
+        return 0;
+      }
+
       inline adj_list_impl() { }
 
       inline adj_list_impl(const adj_list_impl& x) {
@@ -1857,6 +1863,11 @@ namespace boost {
       typedef typename Config::EdgeContainer EdgeContainer;
       typedef typename Config::edge_property_type edge_property_type;
       typedef vec_adj_list_tag graph_tag;
+
+      static vertex_descriptor null_vertex()
+      {
+        return std::numeric_limits<vertex_descriptor>::max();
+      }
 
       inline vec_adj_list_impl() { }
 

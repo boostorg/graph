@@ -52,6 +52,11 @@ namespace boost {
     typedef typename G::vertices_size_type     vertices_size_type;
     typedef typename G::edges_size_type        edges_size_type;
     typedef typename G::degree_size_type       degree_size_type;
+
+    static vertex_descriptor null_vertex()
+    {
+        return G::null_vertex();
+    }
   };
 
   // directed_category tags

@@ -101,7 +101,18 @@ graph can be visited. The choices are <TT>incidence_graph_tag</TT>,
 
 <H3>Valid Expressions</H3>
 
-None required.
+<table border>
+
+<tr>
+<td><pre>boost::graph_traits&lt;G&gt;::null_vertex()</pre></td></TD>
+<td>
+Returns a special <tt>vertex_descriptor</tt> object which does not refer to
+any vertex of graph object which type is <tt>G</tt>.
+<td>
+</tr>
+</table>
+
+
 
 <H3>Concept Checking Class</H3>
 

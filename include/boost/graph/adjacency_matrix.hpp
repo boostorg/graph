@@ -30,6 +30,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
+#include <limits>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
@@ -368,6 +369,11 @@ namespace boost {
     typedef typename Traits::directed_category directed_category;
     typedef typename Traits::edge_parallel_category edge_parallel_category;
     typedef adj_matrix_traversal_tag traversal_category;
+
+    static vertex_descriptor null_vertex()
+    {
+      return std::numeric_limits<vertex_descriptor>::max();
+    }  
 
     //private: if friends worked, these would be private
 
