@@ -37,7 +37,36 @@
 
 namespace boost
 {
-  
+  namespace detail {
+    template<typename VertexListGraph, typename DistanceMatrix, 
+      typename BinaryPredicate, typename BinaryFunction,
+      typename Infinity, typename Zero>
+    bool floyd_warshall_dispatch(const VertexListGraph& g, 
+      DistanceMatrix& d, const BinaryPredicate &compare, 
+      const BinaryFunction &combine, const Infinity& inf, 
+      const Zero& zero)
+    {
+      typename graph_traits<VertexListGraph>::vertex_iterator 
+        i, lasti, j, lastj, k, lastk;
+    
+      
+      for (tie(k, lastk) = vertices(g); k != lastk; k++)
+        for (tie(i, lasti) = vertices(g); i != lasti; i++)
+          for (tie(j, lastj) = vertices(g); j != lastj; j++)
+          {
+            d[*i][*j] = std::min(d[*i][*j], 
+              inf_combine(d[*i][*k], d[*k][*j], inf, combine, 
+              compare), compare);
+          }
+      
+    
+      for (tie(i, lasti) = vertices(g); i != lasti; i++)
+        if (compare(d[*i][*i], zero))
+          return false;
+      return true;
+    }
+  }
+
   template <typename VertexListGraph, typename DistanceMatrix, 
     typename BinaryPredicate, typename BinaryFunction,
     typename Infinity, typename Zero>
@@ -114,37 +143,7 @@ namespace boost
   }
   
 
-  namespace detail {    
-    template<typename VertexListGraph, typename DistanceMatrix, 
-      typename BinaryPredicate, typename BinaryFunction,
-      typename Infinity, typename Zero>
-    bool floyd_warshall_dispatch(const VertexListGraph& g, 
-      DistanceMatrix& d, const BinaryPredicate &compare, 
-      const BinaryFunction &combine, const Infinity& inf, 
-      const Zero& zero)
-    {
-      typename graph_traits<VertexListGraph>::vertex_iterator 
-        i, lasti, j, lastj, k, lastk;
-    
-      
-      for (tie(k, lastk) = vertices(g); k != lastk; k++)
-        for (tie(i, lasti) = vertices(g); i != lasti; i++)
-          for (tie(j, lastj) = vertices(g); j != lastj; j++)
-          {
-            d[*i][*j] = std::min(d[*i][*j], 
-              inf_combine(d[*i][*k], d[*k][*j], inf, combine, 
-              compare), compare);
-          }
-      
-    
-      for (tie(i, lasti) = vertices(g); i != lasti; i++)
-        if (compare(d[*i][*i], zero))
-          return false;
-      return true;
-    }
-    
-
-    
+  namespace detail {        
     template <class VertexListGraph, class DistanceMatrix, 
       class WeightMap, class P, class T, class R>
     bool floyd_warshall_init_dispatch(const VertexListGraph& g, 
