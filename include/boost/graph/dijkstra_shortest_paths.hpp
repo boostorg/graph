@@ -202,18 +202,13 @@ namespace boost {
        const Params& params)
     {
       // Default for predecessor map
-      typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-      typename std::vector<Vertex>::size_type 
-        n = is_default_param(get_param(params, vertex_predecessor)) ?
-                             num_vertices(g) : 1;
-      std::vector<Vertex> p_map(n);
+      dummy_property_map p_map;
 
       typedef typename property_traits<DistanceMap>::value_type D;
       detail::dijkstra_impl
         (g, s, 
-         choose_param(get_param(params, vertex_predecessor),
-                      make_iterator_property_map(p_map.begin(), index_map, 
-                                                 p_map[0])),
+         //choose_param(get_param(params, vertex_predecessor), p_map),
+	 p_map,
          distance, weight, index_map, 
          choose_param(get_param(params, distance_compare_t()), 
                       std::less<D>()),
