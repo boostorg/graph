@@ -130,7 +130,7 @@ struct GraphParser
         
         GraphParser& operator () ( std::istream& in )
         {
-                typedef graph_traits<Graph>::vertex_descriptor Vertex;
+                typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
                 std::vector<Vertex> nodes;
 
                 typedef enum{ PARSE_NUM_NODES, PARSE_VERTEX, PARSE_EDGE } State;
@@ -215,7 +215,7 @@ struct PropertyPrinter
         template<class Iterator>
         PropertyPrinter& operator () ( std::ostream& out, Iterator it )
         {
-                property_map<Graph,Tag>::type ps = get(Tag(), *graph);
+                typename property_map<Graph,Tag>::type ps = get(Tag(), *graph);
                 out << ps[ *it ] <<" ";
                 PropertyPrinter<Graph,Next> print(*graph);
                 print(out, it);
@@ -253,7 +253,7 @@ struct EdgePrinter
                 // assign indices to vertices
                 std::map<Vertex,int> indices;
                 int num = 0;
-                graph_traits<Graph>::vertex_iterator vi;
+                typename graph_traits<Graph>::vertex_iterator vi;
                 for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
                         indices[*vi] = num++;
                 }
@@ -261,7 +261,7 @@ struct EdgePrinter
                 // write edges
                 PropertyPrinter<Graph, EdgeProperty> print_Edge(graph);
                 out << "e" << std::endl;
-                graph_traits<Graph>::edge_iterator ei;
+                typename graph_traits<Graph>::edge_iterator ei;
                 for (ei = edges(graph).first; ei != edges(graph).second; ++ei){
                         out << indices[source(*ei,graph)] <<  " " << indices[target(*ei,graph)] << "  "; 
                         print_Edge(out,ei); 
@@ -288,7 +288,7 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         {
                 PropertyPrinter<Graph, V> printNode(this->graph);
                 out << "v"<<std::endl;
-                graph_traits<Graph>::vertex_iterator vi;
+                typename graph_traits<Graph>::vertex_iterator vi;
                 for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
                         printNode(out,vi); 
                         out << std::endl;

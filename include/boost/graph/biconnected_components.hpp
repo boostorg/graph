@@ -79,8 +79,8 @@ namespace boost
      std::size_t & num_components,
      DiscoverTimeMap discover_time, LowPointMap lowpt)
   {
-    typedef graph_traits < Graph >::vertex_descriptor vertex_t;
-    typedef graph_traits < Graph >::edge_descriptor edge_t;
+    typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
+    typedef typename graph_traits < Graph >::edge_descriptor edge_t;
     function_requires < VertexListGraphConcept < Graph > >();
     function_requires < IncidenceGraphConcept < Graph > >();
     function_requires < WritablePropertyMapConcept < ComponentMap,
