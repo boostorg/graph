@@ -1,11 +1,13 @@
 #ifndef BOOST_GRAPH_TEST_HPP
 #define BOOST_GRAPH_TEST_HPP
 
+#include <vector>
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/graph/copy.hpp>
+#include <boost/graph/graph_utility.hpp> // for connects
 
 // UNDER CONSTRUCTION 
 
@@ -19,9 +21,11 @@ namespace boost {
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef typename graph_traits<Graph>::degree_size_type deg_size_t;
+    typedef typename graph_traits<Graph>::edges_size_type e_size_t;
     typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iter;
     typedef typename property_map<Graph, vertex_index_t>::type index_map_t;
-    typedef iterator_property_map<typename std::vector<vertex_t>::iterator,index_map_t,vertex_t,vertex_t&> IsoMap;
+    typedef iterator_property_map<typename std::vector<vertex_t>::iterator,
+      index_map_t,vertex_t,vertex_t&> IsoMap;
 
     struct ignore_vertex {
       ignore_vertex() { }
@@ -45,6 +49,144 @@ namespace boost {
       vertex_t s; vertex_t t; const Graph& g;
     };
 
+    void test_incidence_graph
+       (const std::vector<vertex_t>& vertex_set,
+	const std::vector< std::pair<vertex_t, vertex_t> >& edge_set,
+	const Graph& g)
+    {
+      typedef typename std::vector<vertex_t>::const_iterator vertex_iter;
+      typedef typename std::vector< std::pair<vertex_t, vertex_t> >
+	::const_iterator edge_iter;
+      typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iter;
+
+      for (vertex_iter ui = vertex_set.begin(); ui != vertex_set.end(); ++ui) {
+	vertex_t u = *ui;
+	std::vector<vertex_t> adj;
+	for (edge_iter e = edge_set.begin(); e != edge_set.end(); ++e)
+	  if (e->first == u)
+	    adj.push_back(e->second);
+	
+	std::pair<out_edge_iter, out_edge_iter> p = out_edges(u, g);
+	BOOST_TEST(out_degree(u, g) == adj.size());
+	BOOST_TEST(deg_size_t(std::distance(p.first, p.second))
+                   == out_degree(u, g));
+	for (; p.first != p.second; ++p.first) {
+	  edge_t e = *p.first;
+	  BOOST_TEST(source(e, g) == u);
+	  BOOST_TEST(contains(adj, target(e, g)) == true);
+	}
+      }
+    }
+
+    void test_bidirectional_graph
+      (const std::vector<vertex_t>& vertex_set,
+       const std::vector<edge_t>& edge_set,
+       const Graph& g)
+    {
+      typedef typename std::vector<vertex_t>::const_iterator vertex_iter;
+      typedef typename std::vector<edge_t>::const_iterator edge_iter;
+      typedef typename graph_traits<Graph>::in_edge_iterator in_edge_iter;
+
+      for (vertex_iter vi = vertex_set.begin(); vi != vertex_set.end(); ++vi) {
+	vertex_t v = *vi;
+	std::vector<vertex_t> inv_adj;
+	for (edge_iter e = edge_set.begin(); e != edge_set.end(); ++e)
+	  if (target(*e, g) == v)
+	    inv_adj.push_back(source(*e, g));
+
+	std::pair<in_edge_iter, in_edge_iter> p = in_edges(v, g);
+	BOOST_TEST(in_degree(v, g) == inv_adj.size());
+	BOOST_TEST(std::distance(p.first, p.second) == in_degree(v, g));
+	for (; p.first != p.second; ++p.first) {
+	  edge_t e = *p.first;
+	  BOOST_TEST(target(e, g) == v);
+	  BOOST_TEST(contains(inv_adj, source(e, g)) == true);
+	}
+      }
+    }
+
+    void test_adjacency_graph
+      (const std::vector<vertex_t>& vertex_set,
+       const std::vector< std::pair<vertex_t,vertex_t> >& edge_set,
+       const Graph& g)
+    {
+      typedef typename std::vector<vertex_t>::const_iterator vertex_iter;
+      typedef typename std::vector<std::pair<vertex_t,vertex_t> >
+        ::const_iterator edge_iter;
+      typedef typename graph_traits<Graph>::adjacency_iterator adj_iter;
+
+      for (vertex_iter ui = vertex_set.begin(); ui != vertex_set.end(); ++ui) {
+	vertex_t u = *ui;
+	std::vector<vertex_t> adj;
+	for (edge_iter e = edge_set.begin(); e != edge_set.end(); ++e)
+	  if (e->first == u)
+	    adj.push_back(e->second);
+
+	std::pair<adj_iter, adj_iter> p = adjacent_vertices(u, g);
+	BOOST_TEST(deg_size_t(std::distance(p.first, p.second)) == adj.size());
+	for (; p.first != p.second; ++p.first) {
+	  vertex_t v = *p.first;
+	  BOOST_TEST(contains(adj, v) == true);
+	}
+      }
+    }      
+
+    void test_vertex_list_graph
+      (const std::vector<vertex_t>& vertex_set, const Graph& g)
+    {
+      typedef typename graph_traits<Graph>::vertex_iterator v_iter;
+      std::pair<v_iter, v_iter> p = vertices(g);
+      BOOST_TEST(num_vertices(g) == vertex_set.size());
+      v_size_t n = 0;
+      std::distance(p.first, p.second, n);
+      BOOST_TEST(n == num_vertices(g));
+      for (; p.first != p.second; ++p.first) {
+	vertex_t v = *p.first;
+	BOOST_TEST(contains(vertex_set, v) == true);
+      }
+    }
+
+    void test_edge_list_graph
+      (const std::vector<vertex_t>& vertex_set, 
+       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set, 
+       const Graph& g)
+    {
+      typedef typename graph_traits<Graph>::edge_iterator e_iter;
+      std::pair<e_iter, e_iter> p = edges(g);
+      BOOST_TEST(num_edges(g) == edge_set.size());
+      e_size_t m = 0;
+      std::distance(p.first, p.second, m);
+      BOOST_TEST(m == num_edges(g));
+      for (; p.first != p.second; ++p.first) {
+	edge_t e = *p.first;
+	BOOST_TEST(any_if(edge_set, connects(source(e, g), target(e, g), g)));
+	BOOST_TEST(contains(vertex_set, source(e, g)) == true);
+	BOOST_TEST(contains(vertex_set, target(e, g)) == true);
+      }
+    }
+
+    void test_adjacency_matrix
+      (const std::vector<vertex_t>& vertex_set, 
+       const std::vector<edge_t>& edge_set, 
+       const Graph& g)
+    {
+      std::pair<edge_t, bool> p;
+      for (typename std::vector<edge_t>::const_iterator i = edge_set.begin();
+	   i != edge_set.end(); ++i) {
+	p = edge(source(*i, g), target(*i, g), g);
+	BOOST_TEST(p.second == true);
+	BOOST_TEST(source(p.first, g) == source(*i, g));
+	BOOST_TEST(target(p.first, g) == target(*i, g));
+      }
+      typename std::vector<vertex_t>::const_iterator j, k;
+      for (j = vertex_set.begin(); j != vertex_set.end(); ++j)
+	for (k = vertex_set.begin(); k != vertex_set.end(); ++k) {
+	  p = edge(*j, *k, g);
+	  if (p.second == true)
+	    BOOST_TEST(contains(edge_set, p.first) == true);
+	}
+    }
+    
     void test_add_vertex(Graph& g)
     {
       Graph cpy;
