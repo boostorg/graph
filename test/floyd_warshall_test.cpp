@@ -26,6 +26,7 @@ struct inf_plus{
 template<typename Graph>
 bool acceptance_test(Graph& g, int vec, int e)
 {
+  BOOST_USING_STD_MIN();
   boost::minstd_rand ran(vec);
 
   {
@@ -84,8 +85,9 @@ bool acceptance_test(Graph& g, int vec, int e)
       if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
       {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  std::min(boost::get(local_edge_map, *first),
-		   matrix[boost::source(*first, g)][boost::target(*first, g)]);
+	  min BOOST_PREVENT_MACRO_SUBSTITUTION
+            (boost::get(local_edge_map, *first),
+             matrix[boost::source(*first, g)][boost::target(*first, g)]);
       } else {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] =
 	  boost::get(local_edge_map, *first);
@@ -99,8 +101,9 @@ bool acceptance_test(Graph& g, int vec, int e)
 	if (matrix[boost::target(*first, g)][boost::source(*first, g)] != int_inf)
         {
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    std::min(boost::get(local_edge_map, *first),
-		     matrix[boost::target(*first, g)][boost::source(*first, g)]);
+	    min BOOST_PREVENT_MACRO_SUBSTITUTION
+              (boost::get(local_edge_map, *first),
+               matrix[boost::target(*first, g)][boost::source(*first, g)]);
 	} else {
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
 	    boost::get(local_edge_map, *first);
@@ -204,6 +207,8 @@ bool acceptance_test(Graph& g, int vec, int e)
 template<typename Graph>
 bool acceptance_test2(Graph& g, int vec, int e)
 {
+  BOOST_USING_STD_MIN();
+
   boost::minstd_rand ran(vec);
 
   {
@@ -259,8 +264,9 @@ bool acceptance_test2(Graph& g, int vec, int e)
       if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
       {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  std::min(boost::get(local_edge_map, *first),
-		   matrix[boost::source(*first, g)][boost::target(*first, g)]);
+	  min BOOST_PREVENT_MACRO_SUBSTITUTION
+            (boost::get(local_edge_map, *first),
+             matrix[boost::source(*first, g)][boost::target(*first, g)]);
       } else {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] =
 	  boost::get(local_edge_map, *first);
@@ -274,8 +280,9 @@ bool acceptance_test2(Graph& g, int vec, int e)
 	if (matrix[boost::target(*first, g)][boost::source(*first, g)]
 	    != int_inf){
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    std::min(boost::get(local_edge_map, *first),
-		     matrix[boost::target(*first, g)][boost::source(*first, g)]);
+	    min BOOST_PREVENT_MACRO_SUBSTITUTION
+              (boost::get(local_edge_map, *first),
+               matrix[boost::target(*first, g)][boost::source(*first, g)]);
 	} else {
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
 	    boost::get(local_edge_map, *first);
