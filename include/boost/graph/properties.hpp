@@ -246,12 +246,13 @@ namespace boost {
 
   template <typename Graph>
   class degree_property_map 
-    : public put_get_at_helper< typename graph_traits<Graph>::degree_size_type,
-                                degree_property_map<Graph> >                  
+    : public put_get_helper<typename graph_traits<Graph>::degree_size_type,
+                            degree_property_map<Graph> >                  
   {
   public:
     typedef typename graph_traits<Graph>::vertex_descriptor key_type;
     typedef typename graph_traits<Graph>::degree_size_type value_type;
+    typedef value_type reference;
     typedef readable_property_map_tag category;
     degree_property_map(const Graph& g) : m_g(g) { }
     value_type operator[](const key_type& v) const {
