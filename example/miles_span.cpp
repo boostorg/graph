@@ -103,9 +103,12 @@ int main(int argc, char* argv[])
    // Use the "z" utility field for distance.
    typedef property_map<Graph*, z_property<long> >::type Distance;
    Distance d = get(z_property<long>(), g);
+   // Use the "w" property for parent
+   typedef property_map<Graph*, w_property<Vertex*> >::type Parent;
+   Parent p = get(w_property<Vertex*>(), g);
    total_length_visitor<Distance> length_vis(sp_length, d);
 
-   prim_minimum_spanning_tree(g, vertex(0,g), 
+   prim_minimum_spanning_tree(g, p,
                               distance_map(get(z_property<long>(), g)).
                               weight_map(get(edge_length_t(), g)). 
                               // Use the "y" utility field for color
