@@ -72,11 +72,11 @@ graphviz_digraph_lex.cpp: graphviz_lex.l
 
 graphviz_graph_parser.cpp: graphviz_parser.y
 	$(YACC) -p bgl_undir_ -d -v graphviz_parser.y
-	$(MV) graphviz_parser.tab.c graphviz_graph_parser.cpp
+	sed -f ./sed-undir graphviz_parser.tab.c > graphviz_graph_parser.cpp
 
 graphviz_digraph_parser.cpp: graphviz_parser.y
 	$(YACC) -p bgl_dir_ -d -v graphviz_parser.y
-	$(MV) graphviz_parser.tab.c graphviz_digraph_parser.cpp
+	sed -f ./sed-dir graphviz_parser.tab.c > graphviz_digraph_parser.cpp
 
 graphviz_parser.h: graphviz_digraph_parser.cpp
 	$(MV) graphviz_parser.tab.h graphviz_parser.h
