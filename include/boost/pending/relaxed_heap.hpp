@@ -14,7 +14,6 @@
 #include <cmath>
 #include <boost/optional.hpp>
 #include <vector>
-#include <algorithm> // for std::swap
 
 #ifdef BOOST_RELAXED_HEAP_DEBUG
 #  include <iostream>
@@ -57,7 +56,7 @@ private:
      *  eliminated when @c value_type is a model of
      *  DefaultConstructible.
      */
-    optional<value_type> value;
+    ::boost::optional<value_type> value;
 
     /**
      * The kind of key stored at this group. This may be @c
@@ -400,10 +399,9 @@ private:
 
   group* combine(group* a1, group* a2)
   {
-    using std::swap;
     rank_type r = a1->rank;
     assert(r == a2->rank);
-    if (do_compare(a2, a1)) swap(a1, a2);
+    if (do_compare(a2, a1)) do_swap(a1, a2);
     a1->children[a1->rank++] = a2;
     a2->parent = a1;
     clean(a1);
@@ -469,10 +467,9 @@ private:
 
     // Note: a, ap, p, pp all have rank r
     if (do_compare(pp, p)) {
-      using std::swap;
-      swap(a, ap);
-      swap(p, pp);
-      swap(g, gp);
+      do_swap(a, ap);
+      do_swap(p, pp);
+      do_swap(g, gp);
     }
 
     // Assuming k(p) <= k(p')
@@ -573,6 +570,13 @@ private:
     }
   }
 
+  static void do_swap(group*& x, group*& y)
+  {
+    group* tmp = x;
+    x = y;
+    y = tmp;
+  }
+
   /// Function object that compares two values in the heap
   Compare compare;
 
@@ -596,7 +600,7 @@ private:
    *  are each log_n long, with the last group potentially being
    *  smaller.
    */
-  std::vector<optional<value_type> > groups;
+  std::vector<::boost::optional<value_type> > groups;
 
   /** The list of active groups, indexed by rank. When A[r] is null,
    *  there is no active group of rank r. Otherwise, A[r] is the active
