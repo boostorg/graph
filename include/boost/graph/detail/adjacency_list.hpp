@@ -247,8 +247,7 @@ namespace boost {
     public:
       typedef Property property_type;
       inline stored_edge_iter() { }
-      template <typename EdgeList>
-      inline stored_edge_iter(Vertex v, Iter i, EdgeList&)
+      inline stored_edge_iter(Vertex v, Iter i = Iter(), void* = 0)
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property& get_property() { return m_iter->get_property(); }
       inline const Property& get_property() const { 
@@ -270,8 +269,9 @@ namespace boost {
     public:
       typedef Property property_type;
       inline stored_ra_edge_iter() { }
-      inline stored_ra_edge_iter(Vertex v, Iter i, EdgeVec& edge_vec)
-        : stored_edge<Vertex>(v), m_i(i - edge_vec.begin()), m_vec(&edge_vec){ }
+      inline stored_ra_edge_iter(Vertex v, Iter i = Iter(), 
+				 EdgeVec* edge_vec = 0)
+        : stored_edge<Vertex>(v), m_i(i - edge_vec->begin()), m_vec(edge_vec){ }
       inline Property& get_property() { return (*m_vec)[m_i].get_property(); }
       inline const Property& get_property() const { 
         return (*m_vec)[m_i].get_property();
@@ -849,9 +849,9 @@ namespace boost {
 	= boost::prior(g.m_edges.end());
       typename Config::OutEdgeList::iterator i;
       boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
-				    StoredEdge(v, p_iter, g.m_edges));
+				    StoredEdge(v, p_iter, &g.m_edges));
       if (inserted) {
-	boost::push(g.out_edge_list(v), StoredEdge(u, p_iter, g.m_edges));
+	boost::push(g.out_edge_list(v), StoredEdge(u, p_iter, &g.m_edges));
 	return std::make_pair(edge_descriptor(u, v, &p_iter->get_property()),
 			      true);
       } else {
@@ -1195,15 +1195,15 @@ namespace boost {
         = boost::prior(g.m_edges.end());
       typename Config::OutEdgeList::iterator i;
       boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
-                                        StoredEdge(v, p_iter, g.m_edges));
+                                        StoredEdge(v, p_iter, &g.m_edges));
       if (inserted) {
-        boost::push(in_edge_list(g, v), StoredEdge(u, p_iter, g.m_edges));
+        boost::push(in_edge_list(g, v), StoredEdge(u, p_iter, &g.m_edges));
         return std::make_pair(edge_descriptor(u, v, &p_iter->m_property), 
                               true);
       } else {
         g.m_edges.erase(p_iter);
         return std::make_pair(edge_descriptor(u, v, 
-                                              &i->get_iter()->get_property()), 
+                                     &i->get_iter()->get_property()), 
                               false);
       }
     }
