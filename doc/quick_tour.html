@@ -100,16 +100,20 @@ convenient way to explicitly create the edges for this example.
   
   int main(int,char*[])
   {
-    typedef std::pair&lt;int, int&gt; E;
-    const int num_edges = 11;
-    // writing out the edges in the graph
-    E edge_array[num_edges] = { E(0,1), E(0,2), E(0,3), E(0,4), 
-                                E(2,0), E(3,0), E(2,4), E(3,1), 
-                                E(3,4), E(4,0), E(4,1) };
-    const int num_vertices = 5;
-    
     // create a typedef for the Graph type
     typedef adjacency_list&lt;vecS, vecS, bidirectionalS&gt; Graph;
+
+    // Make convenient labels for the vertices
+    enum { A, B, C, D, E, N };
+    const int num_vertices = N;
+    const char* name = "ABCDE";
+
+    // writing out the edges in the graph
+    typedef std::pair&lt;int, int&gt; Edge;
+    Edge edge_array[] = 
+    { Edge(A,B), Edge(A,D), Edge(C,A), Edge(D,C),
+      Edge(C,E), Edge(B,D), Edge(D,E), };
+    const int num_edges = sizeof(edge_array)/sizeof(edge_array[0]);
 
     // declare a graph object
     Graph g(num_vertices);
