@@ -62,7 +62,8 @@ namespace boost {
   template <class Visitors = null_visitor>
   class dijkstra_visitor : public bfs_visitor<Visitors> {
   public:
-    dijkstra_visitor(Visitors vis = Visitors())
+    dijkstra_visitor() { }
+    dijkstra_visitor(Visitors vis)
       : bfs_visitor<Visitors>(vis) { }
 
     template <class Edge, class Graph>

@@ -66,6 +66,7 @@ namespace boost {
   template <class Visitors = null_visitor>
   class bellman_visitor {
   public:
+    bellman_visitor() { }
     bellman_visitor(Visitors vis = Visitors()) : m_vis(vis) { }
 
     template <class Edge, class Graph>
