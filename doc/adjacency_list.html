@@ -612,22 +612,24 @@ Returns an iterator-range providing access to the edge set of graph
 
 <pre>
 std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;
-adjacent_vertices(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
+adjacent_vertices(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <tt>v</tt> in graph <tt>g</tt>.
+vertex <tt>u</tt> in graph <tt>g</tt>.
 
 <hr>
 
 
 <pre>
 std::pair&lt;out_edge_iterator,&nbsp;out_edge_iterator&gt;
-out_edges(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
+out_edges(vertex_descriptor&nbsp;u, const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
 Returns an iterator-range providing access to the out-edges of vertex
-<tt>v</tt> in graph <tt>g</tt>. If the graph is undirected, this
-iterator-range provides access to all edge incident on vertex
-<tt>v</tt>.
+<tt>u</tt> in graph <tt>g</tt>. If the graph is undirected, this
+iterator-range provides access to all edges incident on vertex
+<tt>u</tt>. For both directed and undirected graphs, for an out-edge
+<tt>e</tt>, <tt>source(e, g) == u</tt> and <tt>target(e, g) == v</tt>
+where <tt>v</tt> is a vertex adjacent to <tt>u</tt>.
 
 <hr>
 
@@ -638,7 +640,9 @@ in_edges(vertex_descriptor&nbsp;v, const&nbsp;adjacency_list&amp;&nbsp;g)
 Returns an iterator-range providing access to the in-edges of vertex
 <tt>v</tt> in graph <tt>g</tt>.  This operation is only available if
 <TT>bidirectionalS</TT> was specified for the <TT>Directed</TT>
-template parameter.
+template parameter. For an in-edge <tt>e</tt>, <tt>target(e, g) == v</tt>
+and <tt>source(e, g) == u</tt> for some vertex <tt>u</tt> that is
+adjacent to <tt>v</tt>, whether the graph is directed or undirected.
 
 <hr>
 
