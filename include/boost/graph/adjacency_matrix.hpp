@@ -79,7 +79,7 @@ namespace boost {
       return edge_proxy;
     }
     template <typename EdgeProxy>
-    EdgeProxy set_edge_exists(EdgeProxy edge_proxy, bool flag) {
+    EdgeProxy& set_edge_exists(EdgeProxy& edge_proxy, bool flag) {
       edge_proxy = flag;
       return edge_proxy; // just to avoid never used warning
     }
@@ -104,11 +104,11 @@ namespace boost {
       stored_edge.second = ep;
     }
 
-    const no_property& get_property(const char&) {
+    inline const no_property& get_property(const char&) {
       static no_property s_prop;
       return s_prop;
     }
-    no_property& get_property(char&) {
+    inline no_property& get_property(char&) {
       static no_property s_prop;
       return s_prop;
     }
