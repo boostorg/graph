@@ -148,7 +148,7 @@ href="./PropertyGraph.html">PropertyGraph</a>.  There is a function
 <TT>get(Property, g)</TT> that get property map objects from a
 graph. The first argument is the property type to specify which
 property you want to access and the second argument is the graph
-object.. A graph type must document which properties (and therefore
+object. A graph type must document which properties (and therefore
 tags) it provides access to.  The type of the property map depends on
 the type of graph and the property being mapped. A trait class is
 defined that provides a generic way to deduce the property map type:
@@ -172,37 +172,29 @@ example, the BGL Dijkstra's shortest paths algorithm requires four
 property maps: distance, weight, color, and vertex ID.
 
 <P>
-<PRE>
-  template &lt;class Graph, class Vertex, class Visitor, 
-            class DistanceMap, class WeightMap, 
-            class ColorMap, class VertexIDMap&gt;
-  void
-  dijkstra_shortest_paths(Graph&amp; G, Vertex s, 
-                          DistanceMap d, WeightMap w, 
-                          ColorMap c, VertexIDMap id,
-                          Visitor visit)
-</PRE>
-
-<P>
 Often times some or all of the properties will be interior to the
 graph, so one would call Dijkstra's algorithm in the following way
 (given some graph <TT>g</TT> and source vertex <TT>src</TT>).
 
 <P>
 <PRE>
-  dijkstra_shortest_paths(g, src,  get(vertex_distance, g),
-    get(edge_weight, g), get(vertex_color, g),
-    get(vertex_index, g),  ucs_visitor&lt;&gt;());
+  dijkstra_shortest_paths(g, src,  
+    distance_map(get(vertex_distance, g)).
+    weight_map(get(edge_weight, g)).
+    color_map(get(vertex_color, g)).
+    vertex_index_map(get(vertex_index, g)));
 </PRE>
 
 <P>
-Since it is somewhat cumbersome to specify all of the property
-maps, BGL provides several ``short-cut'' interfaces to each
-algorithm that assume some of the properties are interior and can be
-accessed via <TT>get(Property, g)</TT> from the graph. Below we show a
-call to variant 1 of the <TT>dijkstra_shortest_paths</TT> algorithm,
-which assumes all of the properties are interior. This call is
-equivalent to the previous call to Dijkstra's algorithm.
+Since it is somewhat cumbersome to specify all of the property maps,
+BGL provides defaults that assume some of the properties are interior
+and can be accessed via <TT>get(Property, g)</TT> from the graph, or
+if the property map is only used internally, then the algorithm will
+create a property map for itself out of an array and using the graph's
+vertex index map as the offset into the array. Below we show a call to
+<TT>dijkstra_shortest_paths</TT> algorithm using all defaults for the
+named parameters. This call is equivalent to the previous call to
+Dijkstra's algorithm.
 
 <P>
 <PRE>

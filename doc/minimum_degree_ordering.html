@@ -24,24 +24,6 @@
 </H1>
 
 
-<P>
-<DIV ALIGN="LEFT">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">directed</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">out degree</TD>
-</TR>
-<!--
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT">time: <i>O(log(m)|E|)</i> where <i>m = max { degree(v) | v in V }</i> </TD>
-</TR>
--->
-</TABLE>
-</DIV>
-
-
 <pre>
   template &lt;class AdjacencyGraph, class OutDegreeMap,
            class InversePermutationMap, 
@@ -54,22 +36,33 @@
      SuperNodeSizeMap supernode_size, int delta, VertexIndexMap id) 
 </pre>
 
-The minimum degree ordering algorithm &nbsp; [<A
+<p>The minimum degree ordering algorithm&nbsp;[<A
 HREF="bibliography.html#LIU:MMD">21</A>, <A
 href="bibliography.html#George:evolution">35</a>] is a fill-in
-reduction reordering algorithm.  It chooses the vertex with minimum
-degree in the graph at each step of simulating Gaussian elimination
-process. This implementation provided a number of enhancements
-including mass elimination, incomplete degree update, multiple
-elimination, and external degree. See&nbsp;[<A
-href="bibliography.html#George:evolution">35</a>] for a historical
-survey of the minimum degree algorithm.
+reduction matrix reordering algorithm.  When solving a system of
+equations such as <i>A x = b</i> using a sparse version of Cholesky
+factorization (which is a variant of Gaussian elimination for
+symmetric matrices), often times elements in the matrix that were once
+zero become non-zero due to the elimination process. This is what is
+referred to as &quot;fill-in&quot;, and fill-in is bad because it
+makes the matrix less sparse and therefore consume more time and space
+in later stages of the elimintation and in computations that use the
+resulting factorization. Now it turns out that reordering the rows of
+a matrix can have a dramatic affect on the amount of fill-in that
+occurs. So instead of solving <i>A x = b</i>, we instead solve the
+reordered (but equivalent) system <i>(P A P<sup>T</sup>)(P x) = P
+b</i>. Finding the optimal ordering is an NP-complete problem (e.i.,
+it can not be solved in a reasonable amount of time) so instead we
+just find an ordering that is &quot;good enough&quot; using
+heuristics. The minimum degree ordering algorithm is one such
+approach.
 
 <p>
-The graph <TT>G</TT> corresponding to a symmetric matrix <TT>A</TT>
-should be directed one instead of a undirected graph in this
-implementation. Therefore, nonzero entry <TT>A(i, j)</TT> corresponds
-two directed edges (<TT>e(i,j)</TT> and <TT>e(j,i)</TT>) in <TT>G</TT>.
+A symmetric matrix <TT>A</TT> is typically represented with an
+undirected graph, however for this function we require the input to be
+a directed graph.  Each nonzero matrix entry <TT>A(i, j)</TT> must be
+represented by two directed edges (<TT>e(i,j)</TT> and
+<TT>e(j,i)</TT>) in <TT>G</TT>.
 
 <p>
 The output of the algorithm are the vertices in the new ordering.
@@ -97,7 +90,7 @@ The output of the algorithm are the vertices in the new ordering.
   href="./VertexListGraph.html">Vertex List Graph</a>,
   and <a href="./MutableIncidenceGraph.html">Mutable Incidence Graph</a>.
   In addition, the functions <tt>num_vertices()</tt> and
-  <TT>out_degree()<TT> are required.
+  <TT>out_degree()</TT> are required.
 
 <li> <tt>OutDegreeMap outdegree</tt> &nbsp(WORK) <br>
   This is used internally to store the out degree of vertices.  This
@@ -144,6 +137,22 @@ The output of the algorithm are the vertices in the new ordering.
 
 See <a
 href="../example/minimum_degree_ordering.cpp"><tt>example/minimum_degree_ordering.cpp</tt></a>.
+
+
+<h3>Implementation Notes</h3>
+
+<p>UNDER CONSTRUCTION
+
+<p>It chooses the vertex with minimum degree in the graph at each step of
+simulating Gaussian elimination process.
+
+<p>This implementation provided a number of enhancements
+including mass elimination, incomplete degree update, multiple
+elimination, and external degree. See&nbsp;[<A
+href="bibliography.html#George:evolution">35</a>] for a historical
+survey of the minimum degree algorithm.
+
+
 
 <br>
 <HR>

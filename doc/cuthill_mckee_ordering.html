@@ -94,7 +94,7 @@ Either way, storing the output into a vector gives you the
 permutation from the new ordering to the old ordering.
 
 <pre>
-  inv_perm[new_index[u]] == old_index[u]
+  inv_perm[new_index[u]] == u
 </pre>
 
 <p>
@@ -104,7 +104,7 @@ computed in the following way.
 
 <pre>
   for (size_type i = 0; i != inv_perm.size(); ++i)
-    perm[inv_perm[i]] = i;
+    perm[old_index[inv_perm[i]]] = i;
 </pre>
 
 

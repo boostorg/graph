@@ -44,16 +44,14 @@ represents the data for this game. Then the problem of finding a trail
 of actors to Kevin Bacon becomes a traditional graph problem: that of
 finding a <I>path</I> between two vertices. Since we wish to find a
 path that is shorter than six steps, ideally we would find the
-<I>shortest path</I> between the vertices. Now it turns out that there
-are no algorithms for finding the shortest path between a pair of
-vertices that are asymptotically faster than the algorithms for
-finding the shortest path from one vertex to all other vertices in the
-graph.  For this reason we do not have algorithms for finding a
-shortest path between a pair of vertices in  BGL.  There are two
-single-source shortest paths algorithms implemented in BGL:
-Dijkstra's and the Bellman-Ford algorithm. In the following example we
-will show how to use Dijkstra's algorithm to calculate shortest paths
-to Kevin Bacon.
+<I>shortest path</I> between the vertices. One might think to apply
+Dijkstra's shortest path algorithm to this problem, but that would be
+overkill since Dijkstra's algorithm is meant for situations when each
+edge has an associated length (or weight) and the goal is to find the
+path with the shortest cumulative length. Since we are only concerned
+with finding the shortest paths in terms of the number of edges the
+breadth-first search algorithm will solve the problem (and use less
+time than Dijkstra's).
 
 <P>
 
@@ -89,12 +87,10 @@ it. We use a <TT>std::ifstream</TT> to input the file.
 
 <P>
 We will want to attach the actor's names to the vertices in the graph,
-and the movie names to the edges. In addition, Dijkstra's algorithm
-will expect edges to have a weight property (we will just set the
-weights to one). We use the <TT>property</TT> class to specify the
-addition of these vertex and edge properties to the graph.
-We choose to use an undirected graph, because the relationship
-of actors appearing together in a movie is symmetric.
+and the movie names to the edgesWe use the <TT>property</TT> class to
+specify the addition of these vertex and edge properties to the graph.
+We choose to use an undirected graph, because the relationship of
+actors appearing together in a movie is symmetric.
 
 <P>
 <PRE>
@@ -212,23 +208,24 @@ will not be inserted into the graph.
 
 <P>
 
-<H2>Applying Shortest Paths</H2>
+<H2>Applying Breadth-First Search</H2>
 
 <P>
-The documentation for variant 4 of <A
-HREF="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths()</tt></a>
-algorithm shows that we will need to provide several more property
-maps for distance, color, and vertex ID (edge weights are already
-on the graph) . The distance will be the shortest distances from each
-actor to Kevin Bacon calculated by the algorithm. This distance has
-also been referred to as the ``Bacon Number'' in memory of the ``Erdos
-Number'' used to rank mathematicians according to how many
-publications separate them from Paul Erdos. We will use a vector to
-store the bacon numbers, and another vector to store the color
-property needed by Dijkstra's algorithm. The <TT>predecessor</TT>
-vector will be used to record the shortest path from each actor to
-Kevin. For each vertex, the <TT>predecessor</TT> vector will contain a
-pointer to the next vertex on the shortest path towards Kevin Bacon.
+The documentation for <A
+HREF="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>
+algorithm shows that we will need to provide property maps for color
+and vertex ID. In addition, we will be using visitors to record
+predecessors and distances so we will need property maps for these as
+well. The distance will be the shortest distances from each actor to
+Kevin Bacon calculated by the algorithm. This distance has also been
+referred to as the ``Bacon Number'' in memory of the ``Erdos Number''
+used to rank mathematicians according to how many publications
+separate them from Paul Erdos. We will use a vector to store the bacon
+numbers, and another vector to store the color property needed by
+the BFS algorithm. The <TT>predecessor</TT> vector will be used to
+record the shortest path from each actor to Kevin. For each vertex,
+the <TT>predecessor</TT> vector will contain a pointer to the next
+vertex on the shortest path towards Kevin Bacon.
 
 <P>
 <PRE>
@@ -238,11 +235,14 @@ pointer to the next vertex on the shortest path towards Kevin Bacon.
 </PRE>
 
 <P>
-Dijkstra's algorithm also requires a source vertex as input; of
-course this will be Kevin Bacon. We now call the  BGL Dijkstra
-algorithm, passing in the graph, source vertex, and all the property
-maps. We use the <TT>predecessor_visitor</TT> to record the
-predecessors, since this is not part of the basic algorithm.
+The BFS algorithm also requires a source vertex as input; of course
+this will be Kevin Bacon. We now call the BGL BFS algorithm, passing
+in the graph, source vertex, the property maps, and a visitor composed
+of a predecessor and distance recorder. We use the <a
+href="./predecessor_recorder.html"><TT>predecessor_recorder</TT></a>
+to record the predecessors and the <a
+href="./distance_recorder.html"><tt>distance_recorder</tt></a> to
+record distances.
 
 <P>
 <PRE>

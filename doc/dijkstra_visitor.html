@@ -45,14 +45,14 @@ by Dijkstra's algorithm.
 
   Vertex s = *(vertices(G).first);
   
-  dijkstra_shortest_paths(G, s, d.begin(), 
-    make_dijkstra_visitor(record_predecessors(p.begin(), on_edge_relaxed())));
+  dijkstra_shortest_paths(G, s, distance_map(&amp;d[0]). 
+    visitor(make_dijkstra_visitor(record_predecessors(&amp;p[0], on_edge_relaxed()))));
 </pre>
 
 
 <h3>Model of</h3>
 
-<a href="./DijkstraVisitor.html">DijkstraVisitor</a>
+<a href="./DijkstraVisitor.html">Dijkstra Visitor</a>
 
 <H3>Template Parameters</H3>
 
