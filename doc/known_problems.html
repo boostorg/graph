@@ -22,6 +22,24 @@
     <h1>Known Problems</h1>
 
 <ol>
+  <li>The <code>subgraph</code> adaptor has several known problems:
+    <ul>
+      <li>Each instance of subgraph has its own copy of internal
+      vertex and edge properties. Only at the root subgraph are the
+      properties valid. </li>
+    
+      <li>Edge and vertex removal functions are unimplemented.</li>
+
+      <li>The graph is required to have vertex descriptors of integral
+      type (that are the same as the vertex index). Practically
+      speaking, that means subgraph only applies to adjacency lists
+      with <code>VertexListS</code> = <code>vecS</code>.</li>
+    </ul></li>
+
+  <li>The <code>EdgeListS</code> parameter to the adjacency list is
+  essentially fixed to <code>listS</code>: other selectors are
+  unlikely to work.</li>
+
   <li>Using a GraphProperty with adjacency_list may cause a VC++ internal compiler error.</li>
   <li>Using get(property, graph, edge) may cause a VC++ internal compiler error.</li>
   <li>&quot;using boost::tie;&quot; may cause VC++ internal compiler error.  
