@@ -39,6 +39,8 @@ main(int,char*[])
     function_requires< AdjacencyGraphConcept<Graph> >();
     function_requires< VertexMutableGraphConcept<Graph> >();
     function_requires< EdgeMutableGraphConcept<Graph> >();
+    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
+    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
     function_requires<
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
     function_requires<
