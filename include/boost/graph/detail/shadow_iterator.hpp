@@ -36,7 +36,7 @@ namespace boost {
       inline self& operator|=(const self& x) { return *this; } // JGS
       inline self& operator^=(const self& x) { return *this; } // JGS
       inline friend D operator-(const self& x, const self& y) {
-	return x.a - y.a;
+        return x.a - y.a;
       } 
       inline bool operator==(const self& x) const { return a == x.a;  }
       inline bool operator<(const self& x) const { return a < x.a;  }
@@ -52,11 +52,11 @@ namespace boost {
 
       template <typename Iter>
       typename Iter::reference dereference(const Iter& i) const { 
-	return R(*p.base().first, *p.base().second); 
+        return R(*p.base().first, *p.base().second); 
       }
       template <typename Iter>
       bool equal(const Iter& p1, const Iter& p2) const { 
-	return p1.base().first == p2.base().first;  
+        return p1.base().first == p2.base().first;  
       }
       template <typename Iter>
       void increment(Iter& i) { ++i.base().first; ++i.base().second; }
@@ -66,12 +66,12 @@ namespace boost {
 
       template <typename Iter>
       bool less(const Iter& x, const Iter& y) const { 
-	return x.base().first < y.base().first;  
+        return x.base().first < y.base().first;  
       }
       template <typename Iter>
       typename Iter::difference_type
       distance(const Iter& x, const Iter& y) const { 
-	return y.base().first - x.base().first; 
+        return y.base().first - x.base().first; 
       }
       template <typename D, typename Iter>
       void advance(Iter& p, D n) { p.base().first += n; p.base().second += n; }
@@ -89,9 +89,9 @@ namespace boost {
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
     typedef iterator_adaptor< std::pair<IterA, IterB>,
-			      detail::shadow_iterator_policies,
-			      V, R, V*, std::random_access_iterator_tag,
-			      D> type;
+                              detail::shadow_iterator_policies,
+                              V, R, V*, std::random_access_iterator_tag,
+                              D> type;
   };
 
   // short cut for creating a shadow iterator
@@ -117,9 +117,9 @@ namespace boost {
 
 namespace std {
   template <class A1, class B1, class D1,
-	    class A2, class B2, class D2>
+            class A2, class B2, class D2>
   void swap(boost::detail::shadow_proxy<A1&,B1&,D1> x,
-	    boost::detail::shadow_proxy<A2&,B2&,D2> y)
+            boost::detail::shadow_proxy<A2&,B2&,D2> y)
   {
     std::swap(x.a, y.a);
     std::swap(x.b, y.b);

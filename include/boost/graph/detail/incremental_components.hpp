@@ -56,7 +56,7 @@ namespace boost {
       Parent1 representative = component;
       for (Integer v = 0; v != num_nodes; ++v)
         if (component[v] >= num_components
-	    || header[component[v]] != v)
+            || header[component[v]] != v)
           component[v] = component[representative[v]];
       
       // initialize the "head" of the lists to "NULL"

@@ -48,7 +48,7 @@ namespace boost {
     
     bucket_sorter(size_type _length, bucket_type _max_bucket, 
                   const Bucket& _bucket = Bucket(), 
-		  const ValueIndexMap& _id = ValueIndexMap()) 
+                  const ValueIndexMap& _id = ValueIndexMap()) 
       : head(_max_bucket, invalid_value()),
         next(_length, invalid_value()), 
         prev(_length, invalid_value()),

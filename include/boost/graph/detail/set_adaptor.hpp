@@ -30,17 +30,17 @@ namespace boost {
                       const std::set<K,C,A>& y)
     {
       typename std::set<K,C,A>::iterator
-	xi = x.begin(), yi = y.begin(), xend = x.end(), yend = y.end();
+        xi = x.begin(), yi = y.begin(), xend = x.end(), yend = y.end();
       for (; xi != xend && yi != yend; ++xi, ++yi) {
-	if (*xi < *yi)
-	  return 1;
-	else if (*yi < *xi)
-	  return -1;
+        if (*xi < *yi)
+          return 1;
+        else if (*yi < *xi)
+          return -1;
       }
       if (xi == xend)
-	return (yi == yend) ? 0 : -1;
+        return (yi == yend) ? 0 : -1;
       else
-	return 1;
+        return 1;
     }
 
     template <class K, class C, class A>
@@ -70,8 +70,8 @@ namespace boost {
     {
       z.clear();
       std::set_intersection(x.begin(), x.end(),
-			    y.begin(), y.end(),
-			    std::inserter(z));
+                            y.begin(), y.end(),
+                            std::inserter(z));
     }
 
     template <class K, class C, class A>
@@ -81,8 +81,8 @@ namespace boost {
     {
       z.clear();
       std::set_union(x.begin(), x.end(),
-		     y.begin(), y.end(),
-		     std::inserter(z));
+                     y.begin(), y.end(),
+                     std::inserter(z));
     }
 
     template <class K, class C, class A>
@@ -92,8 +92,8 @@ namespace boost {
     {
       z.clear();
       std::set_difference(x.begin(), x.end(),
-			  y.begin(), y.end(),
-			  std::inserter(z));
+                          y.begin(), y.end(),
+                          std::inserter(z));
     }
 
     // Shit, can't implement this without knowing the size of the

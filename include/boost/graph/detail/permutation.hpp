@@ -66,7 +66,7 @@ void permute_helper(RandIter first, RandIter last, RandIterPerm p, D, T)
     // find the next cycle
     for (i = 0; i < n; ++i)
       if (visited[i] == false)
-	break;
+        break;
   }
 }
 
@@ -99,10 +99,10 @@ void invert_permutation(PermIter X, PermIter Xend)
     T i = X[m-1] + 1;
     if (i > 0) {
       do {
-	X[m-1] = j - 1;
-	j = -m;
-	m = i;
-	i = X[m-1] + 1;
+        X[m-1] = j - 1;
+        j = -m;
+        m = i;
+        i = X[m-1] + 1;
       } while (i > 0);
       i = j;
     }
@@ -161,8 +161,8 @@ inline void sortp(Iter first, Iter last, IterP p, Cmp cmp, Alloc alloc)
   for (D i = 0; i < n; ++i) 
     q[i] = i;
   std::sort(make_shadow_iter(first, q.begin()),
-	    make_shadow_iter(last, q.end()),
-	    shadow_cmp<Cmp>(cmp));
+            make_shadow_iter(last, q.end()),
+            shadow_cmp<Cmp>(cmp));
   invert_permutation(q.begin(), q.end());
   std::copy(q.begin(), q.end(), p);
 }
@@ -192,8 +192,8 @@ inline void sortv(Iter first, Iter last, IterP p, Cmp cmp, Alloc alloc)
   for (D i = 0; i < n; ++i) 
     q_inv[i] = i;
   std::sort(make_shadow_iter(first, q_inv.begin()), 
-	    make_shadow_iter(last, q_inv.end()), 
-	    shadow_cmp<Cmp>(cmp));
+            make_shadow_iter(last, q_inv.end()), 
+            shadow_cmp<Cmp>(cmp));
   std::copy(q_inv, q_inv.end(), q.begin());
   invert_permutation(q.begin(), q.end());
   serialize_permutation(q.begin(), q.end(), q_inv.end(), p);

@@ -78,13 +78,13 @@ namespace boost {
 
     template <class V, class E, class Iter, class Dir>
     inline bool operator==(const bidir_incidence_iterator<V,E,Iter,Dir>& x,
-			   const bidir_incidence_iterator<V,E,Iter,Dir>& y)
+                           const bidir_incidence_iterator<V,E,Iter,Dir>& y)
     {
       return x.i == y.i;
     }
     template <class V, class E, class Iter, class Dir>
     inline bool operator!=(const bidir_incidence_iterator<V,E,Iter,Dir>& x,
-			   const bidir_incidence_iterator<V,E,Iter,Dir>& y)
+                           const bidir_incidence_iterator<V,E,Iter,Dir>& y)
     {
       return x.i != y.i;
     }

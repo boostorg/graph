@@ -391,10 +391,10 @@ namespace boost {
 
     template <class W, class S, class D>
     inline int compare_3way(const bitset_base<W,S,D>& x,
-			    const bitset_base<W,S,D>& y) {
+                            const bitset_base<W,S,D>& y) {
       return std::lexicographical_compare_3way
-	(x.data(), x.data() + x.num_words(), 
-	 y.data(), y.data() + y.num_words());
+        (x.data(), x.data() + x.num_words(), 
+         y.data(), y.data() + y.num_words());
     }
 
 

@@ -11,7 +11,7 @@ namespace boost {
     template <class Property1, class Property2>
     struct same_property {
       enum { value = int(property_num<Property1>::value) 
-	     == int(property_num<Property2>::value) };
+             == int(property_num<Property2>::value) };
     };
 #else
     template <class Property1, class Property2>
@@ -62,20 +62,20 @@ namespace boost {
     template <>
     struct property_value_end<no_property> {
       template <class T> struct result { 
-	typedef detail::error_property_not_found type; 
+        typedef detail::error_property_not_found type; 
       };
 
       // Stop the recursion and return error
       template <class T, class Tag>
       inline static detail::error_property_not_found&
       get_value(no_property&, T*, Tag) {
-	static error_property_not_found s_prop_not_found;
+        static error_property_not_found s_prop_not_found;
         return s_prop_not_found;
       }
       template <class T, class Tag>
       inline static const detail::error_property_not_found&
       const_get_value(const no_property&, T*, Tag) {
-	static error_property_not_found s_prop_not_found;
+        static error_property_not_found s_prop_not_found;
         return s_prop_not_found;
       }
     };
@@ -85,12 +85,12 @@ namespace boost {
       template <class Property, class T, class Tag>
       inline static typename property_value_end<Property>::template result<T>::type&
       get_value(Property& p, T* t, Tag tag) {
-	return property_value_end<Property>::get_value(p, t, tag);
+        return property_value_end<Property>::get_value(p, t, tag);
       }
       template <class Property, class T, class Tag>
       inline static const typename property_value_end<Property>::template result<T>::type&
       const_get_value(const Property& p, T* t, Tag tag) {
-	return property_value_end<Property>::const_get_value(p, t, tag);
+        return property_value_end<Property>::const_get_value(p, t, tag);
       }
     };
 
