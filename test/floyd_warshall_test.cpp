@@ -14,7 +14,7 @@
 template <typename T>
 struct inf_plus{
   T operator()(const T& a, const T& b) const {
-    T inf = std::numeric_limits<T>::max();
+    T inf = std::numeric_limits<T>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
     if (a == inf || b == inf){
       return inf;
     }
@@ -57,7 +57,8 @@ bool acceptance_test(Graph& g, int vec, int e)
       }
     }
         
-        
+    int int_inf = 
+      std::numeric_limits<int>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_des;
     std::map<vertex_des,int> matrixRow;
     std::map<vertex_des, std::map<vertex_des ,int> > matrix;
@@ -66,8 +67,8 @@ bool acceptance_test(Graph& g, int vec, int e)
     distance_type distance_row = boost::get(boost::vertex_distance, g);
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv; 
 	firstv++){
-      boost::put(distance_row, *firstv, std::numeric_limits<int>::max());
-      matrixRow[*firstv] = std::numeric_limits<int>::max();
+      boost::put(distance_row, *firstv, int_inf);
+      matrixRow[*firstv] = int_inf;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv; 
 	firstv++){
@@ -80,8 +81,8 @@ bool acceptance_test(Graph& g, int vec, int e)
     std::map<vertex_des, std::map<vertex_des, int> > matrix3(matrix);
     std::map<vertex_des, std::map<vertex_des, int> > matrix4(matrix);
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
-      if (matrix[boost::source(*first, g)][boost::target(*first, g)] 
-	  != std::numeric_limits<int>::max()){
+      if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
+      {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] = 
 	  std::min(boost::get(local_edge_map, *first), 
 		   matrix[boost::source(*first, g)][boost::target(*first, g)]);
@@ -95,8 +96,8 @@ bool acceptance_test(Graph& g, int vec, int e)
       boost::undirected_tag>::value;
     if (is_undirected){
       for(boost::tie(first, last) = boost::edges(g); first != last; first++){
-	if (matrix[boost::target(*first, g)][boost::source(*first, g)] 
-	    != std::numeric_limits<int>::max()){
+	if (matrix[boost::target(*first, g)][boost::source(*first, g)] != int_inf)
+        {
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] = 
 	    std::min(boost::get(local_edge_map, *first), 
 		     matrix[boost::target(*first, g)][boost::source(*first, g)]);
@@ -116,14 +117,14 @@ bool acceptance_test(Graph& g, int vec, int e)
         (g, 
 	 matrix, weight_map(boost::get(boost::edge_weight, g)). 
 	 distance_compare(compare). distance_combine(combine). 
-	 distance_inf(std::numeric_limits<int>::max()). distance_zero(0));
+	 distance_inf(int_inf). distance_zero(0));
     
     floyd2 = 
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
 	 weight_map(local_edge_map).  distance_compare(compare). 
 	 distance_combine(combine). 
-	 distance_inf(std::numeric_limits<int>::max()). distance_zero(0));
+	 distance_inf(int_inf). distance_zero(0));
     
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
         
@@ -143,7 +144,7 @@ bool acceptance_test(Graph& g, int vec, int e)
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2; 
 	  firstv2++){
 	matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
-	boost::put(distance_row, *firstv2, std::numeric_limits<int>::max());
+	boost::put(distance_row, *firstv2, int_inf);
       }
       if(bellman == false){
 	break;
@@ -231,7 +232,8 @@ bool acceptance_test2(Graph& g, int vec, int e)
       }
     }
         
-        
+    int int_inf = 
+      std::numeric_limits<int>::max BOOST_PREVENT_MACRO_SUBSTITUTION();        
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_des;
     std::map<vertex_des,int> matrixRow;
     std::map<vertex_des, std::map<vertex_des ,int> > matrix;
@@ -240,8 +242,8 @@ bool acceptance_test2(Graph& g, int vec, int e)
     distance_type distance_row = boost::get(boost::vertex_distance, g);
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv; 
 	firstv++){
-      boost::put(distance_row, *firstv, std::numeric_limits<int>::max());
-      matrixRow[*firstv] = std::numeric_limits<int>::max();
+      boost::put(distance_row, *firstv, int_inf);
+      matrixRow[*firstv] = int_inf;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv; 
 	firstv++){
@@ -254,8 +256,8 @@ bool acceptance_test2(Graph& g, int vec, int e)
     std::map<vertex_des, std::map<vertex_des, int> > matrix3(matrix);
     std::map<vertex_des, std::map<vertex_des, int> > matrix4(matrix);
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
-      if (matrix[boost::source(*first, g)][boost::target(*first, g)] 
-	  != std::numeric_limits<int>::max()){
+      if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
+      {
 	matrix[boost::source(*first, g)][boost::target(*first, g)] = 
 	  std::min(boost::get(local_edge_map, *first), 
 		   matrix[boost::source(*first, g)][boost::target(*first, g)]);
@@ -270,7 +272,7 @@ bool acceptance_test2(Graph& g, int vec, int e)
     if (is_undirected){
       for(boost::tie(first, last) = boost::edges(g); first != last; first++){
 	if (matrix[boost::target(*first, g)][boost::source(*first, g)] 
-	    != std::numeric_limits<int>::max()){
+	    != int_inf){
 	  matrix[boost::target(*first, g)][boost::source(*first, g)] = 
 	    std::min(boost::get(local_edge_map, *first), 
 		     matrix[boost::target(*first, g)][boost::source(*first, g)]);
@@ -290,14 +292,14 @@ bool acceptance_test2(Graph& g, int vec, int e)
         (g, 
 	 matrix, weight_map(boost::get(boost::edge_weight, g)). 
 	 distance_compare(compare). distance_combine(combine). 
-	 distance_inf(std::numeric_limits<int>::max()). distance_zero(0));
+	 distance_inf(int_inf). distance_zero(0));
     
     floyd2 = 
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
 	 weight_map(local_edge_map).  distance_compare(compare). 
 	 distance_combine(combine). 
-	 distance_inf(std::numeric_limits<int>::max()). distance_zero(0));
+	 distance_inf(int_inf). distance_zero(0));
     
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
         
@@ -317,7 +319,7 @@ bool acceptance_test2(Graph& g, int vec, int e)
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2; 
 	  firstv2++){
 	matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
-	boost::put(distance_row, *firstv2, std::numeric_limits<int>::max());
+	boost::put(distance_row, *firstv2, int_inf);
       }
       if(bellman == false){
 	break;
