@@ -1,0 +1,10 @@
+graph G {
+  A -- C [weight="1.0"]
+  B -- D [weight="1.0"]
+  B -- E [weight="2.0"]
+  C -- B [weight="7.0"]
+  C -- D [weight="3.0"]
+  D -- E [weight="1.0"]
+  E -- A [weight="1.0"]
+  E -- B [weight="1.0"]
+} 
