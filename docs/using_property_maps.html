@@ -145,7 +145,7 @@ A graph type that supports interior property storage (such as
 <TT>adjacency_list</TT>) provides access to its property map
 objects through the interface defined in <a
 href="./PropertyGraph.html">PropertyGraph</a>.  There is a function
-<TT>get(Property, g)</TT> that get property map objectgs from a
+<TT>get(Property, g)</TT> that get property map objects from a
 graph. The first argument is the property type to specify which
 property you want to access and the second argument is the graph
 object.. A graph type must document which properties (and therefore
@@ -242,8 +242,7 @@ edge descriptor to the offset of the property value (offset from the
 random access iterator). The ID property map will typically be an
 interior property map of the graph.  The following example shows
 how the <TT>random_access_iterator_property_map</TT>
-can be used to create exterior property maps for the capactity
-and flow properties, which are stored in arrays. The arrays are
+can be used to create exterior property maps for the capacity and flow properties, which are stored in arrays. The arrays are
 indexed by edge ID. The edge ID is added to the graph using a property,
 and the values of the ID's are given when each edge is added to the
 graph. The complete source code for this example is in
@@ -349,10 +348,10 @@ int main(int,char*[])
          Sacramento, SaltLake, Pheonix, N };
 
   // An array of vertex name properties
-  std::string names[] = { "San Jose", "San Francisco",  "San Jose",
-                          "San Francisco", "Los Angeles", "San Diego", 
-                          "Fresno", "Los Vegas", "Reno", "Sacramento",
-                          "Salt Lake City", "Pheonix" };
+  std::string names[] = { &quot;San Jose&quot;, &quot;San Francisco&quot;,  &quot;San Jose&quot;,
+                          &quot;San Francisco&quot;, &quot;Los Angeles&quot;, &quot;San Diego&quot;, 
+                          &quot;Fresno&quot;, &quot;Los Vegas&quot;, &quot;Reno&quot;, &quot;Sacramento&quot;,
+                          &quot;Salt Lake City&quot;, &quot;Pheonix&quot; };
 
   // Specify all the connecting roads between cities.
   typedef std::pair&lt;int,int&gt; E;
@@ -363,11 +362,11 @@ int main(int,char*[])
   // Create the graph object, based on the edges in edge_array.
   Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
 
-  // DFS and BFS need to "color" the vertices.
+  // DFS and BFS need to &quot;color&quot; the vertices.
   // Here we use std::vector as exterior property storage.
   std::vector&lt;default_color_type&gt; colors(N);
 
-  cout &lt;&lt; "*** Depth First ***" &lt;&lt; endl;
+  cout &lt;&lt; &quot;*** Depth First ***&quot; &lt;&lt; endl;
   depth_first_search(G, city_visitor(names), colors.begin());
   cout &lt;&lt; endl;
 
@@ -375,7 +374,7 @@ int main(int,char*[])
   boost::graph_traits&lt;Graph&gt;::vertex_descriptor 
     s = vertex(SanJose, G);
 
-  cout &lt;&lt; "*** Breadth First ***" &lt;&lt; endl;
+  cout &lt;&lt; &quot;*** Breadth First ***&quot; &lt;&lt; endl;
   breadth_first_search(G, s, city_visitor(names), colors.begin());
 
   return 0;

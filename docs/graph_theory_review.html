@@ -37,7 +37,7 @@ by Cormen, Leiserson, and Rivest.
 <H1>The Graph Abstraction</H1>
 
 <P>
-A graph is a mathematical abstraction that is usefull for solving many
+A graph is a mathematical abstraction that is useful for solving many
 kinds of problems. Fundamentally, a graph consists of a set of
 vertices, and a set of edges, where an edge is something that connects
 two vertices in the graph. More precisely, a <I>graph</I> is a pair
@@ -45,7 +45,7 @@ two vertices in the graph. More precisely, a <I>graph</I> is a pair
 relation on <i>V</i>. <i>V</i> is called a <I>vertex set</I> whose
 elements are called <I>vertices</I>.  <iE</i> is a collection of
 edges, where an <I>edge</I> is a pair <i>(u,v)</i> with <i>u,v</i> in
-V</i>.  In a <I>directed graph</I>, edges are ordered pairs,
+V.  In a <I>directed graph</I>, edges are ordered pairs,
 connecting a <I>source</I> vertex to a <I>target</I> vertex. In an
 <I>undirected graph</I> edges are unordered pairs and connect the two
 vertices in both directions, hence in an undirected graph <i>(u,v)</i>
@@ -57,13 +57,12 @@ say what a vertex or edge represents. They could be cities with
 connecting roads, or web-pages with hyperlinks. These details are left
 out of the definition of a graph for an important reason; they are not
 a necessary part of the graph <I>abstraction</I>. By leaving out the
-details we can contruct a theory that is reusable, that can help us
+details we can construct a theory that is reusable, that can help us
 solve lots of different kinds of problems.
 
 <P>
 Back to the definition: a graph is a set of vertices and edges.  For
-purposes of demonstration, let us consider a graph where we have
-labelled the vertices with letters, and we write an edge simply as a
+purposes of demonstration, let us consider a graph where we have labeled the vertices with letters, and we write an edge simply as a
 pair of letters. Now we can write down an example of a directed graph
 as follows:
 
@@ -169,9 +168,9 @@ in the path are the same. A graph with no cycles is <I>acyclic</I>.
 
 <P>
 A <I>planar graph</I> is a graph that can be drawn on a plane without
-any of the edges crossing over eachother. Such a drawing is called a
+any of the edges crossing over each other. Such a drawing is called a
 <I>plane graph</I>. A <I>face</I> of a plane graph is a connected
-region of the plane surounded by edges. An important property of
+region of the plane surrounded by edges. An important property of
 planar graphs is that the number of faces, edges, and vertices are
 related through Euler's formula: <i>|F| - |E| + |V| = 2</i>. This
 means that a simple planar graph has at most <i>O(|V|)</i> edges.
@@ -202,7 +201,7 @@ situations.
 <P>
 An adjacency-matrix representation of a graph is a 2-dimensional <i>V
 x V</i> array. Each element in the array <i>a<sub>uv</sub></i> stores
-a boolean value saying whether the edge <i>(u,v)</i> is in the graph.
+a Boolean value saying whether the edge <i>(u,v)</i> is in the graph.
 <A HREF="graph_theory_review.html#fig:adj-matrix">Figure 3</A> depicts
 an adjacency matrix for the graph in <A
 HREF="graph_theory_review.html#fig:directed-graph">Figure 1</A> (minus
@@ -231,7 +230,7 @@ Adjacency List Representation
 </H2>
 
 <P>
-An adjacency-list reprepresentation of a graph stores an out-edge
+An adjacency-list representation of a graph stores an out-edge
 sequence for each vertex. For sparse graphs this saves space since
 only <i>O(V + E)</i> memory is required. In addition, the out-edges
 for each vertex can be accessed more efficiently. Edge insertion is
@@ -390,8 +389,7 @@ properly nested set of parenthesis.  <A
 HREF="./graph_theory_review.html#fig:dfs-example">Figure 7</A> shows
 DFS applied to an undirected graph, with the edges labeled in the
 order they were explored.  Below we list the vertices of the graph
-ordered by discover and finish time, as well as show the paranthesis
-structure.  DFS is used as the kernel for several other graph
+ordered by discover and finish time, as well as show the parenthesis structure.  DFS is used as the kernel for several other graph
 algorithms, including topological sort and two of the connected
 component algorithms. It can also be used to detect cycles (see the <A
 HREF="file_dependency_example.html#sec:cycles">Cylic Dependencies </a>
@@ -453,14 +451,14 @@ This is Prim's algorithm&nbsp;[<A
 
 <P>
 
-<H2><a name="sec:shortest-paths-algorithms">Shortest-Paths Algorithms</H2>
+<H2><a name="sec:shortest-paths-algorithms">Shortest-Paths Algorithms</a></H2>
 
 <P>
 One of the classic problems in graph theory is to find the shortest
 path between two vertices in a graph. Formally, a <I>path</I> is a
 sequence of vertices <i>&lt;v<sub>0</sub>,v<sub>1</sub>,...,v<sub>k</sub>&gt;</i>
 in a graph <i>G = (V, E)</i> such that each vertex is connected to the
-next vertex in the sequense (the edges
+next vertex in the sequence (the edges
 <i>(v<sub>i</sub>,v<sub>i+1</sub>)</i> for <i>i=0,1,...,k-1</i> are in
 the edge set <i>E</i>). In the shortest-path problem, each edge is
 given a real-valued weight. We can therefore talk about the <I>weight
