@@ -23,7 +23,8 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#include <boost/test_framework.hpp>
+#define BOOST_INCLUDE_MAIN
+#include <boost/test/test_tools.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graph_archetypes.hpp>
@@ -44,45 +45,45 @@ public:
     : current_distance(0), distance(d), parent(p), color(c), src(s) { }
 
   void initialize_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST_ASSERT(get(color, u) == Color::white());
+    BOOST_TEST(get(color, u) == Color::white());
   }
   void examine_vertex(const Vertex& u, const Graph& ) const {
     current_vertex = u;
     // Ensure that the distances monotonically increase.
-    BOOST_TEST_ASSERT( distance[u] == current_distance
+    BOOST_TEST( distance[u] == current_distance
                        || distance[u] == current_distance + 1 );
     if (distance[u] == current_distance + 1) // new level
       ++current_distance;
   }
   void discover_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST_ASSERT( get(color, u) == Color::gray() );
+    BOOST_TEST( get(color, u) == Color::gray() );
     if (u == src) {
       current_vertex = src;
     } else {
-      BOOST_TEST_ASSERT( parent[u] == current_vertex );
-      BOOST_TEST_ASSERT( distance[u] == current_distance + 1 );
-      BOOST_TEST_ASSERT( distance[u] == distance[parent[u]] + 1 );
+      BOOST_TEST( parent[u] == current_vertex );
+      BOOST_TEST( distance[u] == current_distance + 1 );
+      BOOST_TEST( distance[u] == distance[parent[u]] + 1 );
     }
   }
   void examine_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST_ASSERT( source(e, g) == current_vertex );
+    BOOST_TEST( source(e, g) == current_vertex );
   }
   void tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST_ASSERT( get(color, target(e, g)) == Color::white() );
+    BOOST_TEST( get(color, target(e, g)) == Color::white() );
     Vertex u = source(e, g), v = target(e, g);
-    BOOST_TEST_ASSERT( distance[u] == current_distance );
+    BOOST_TEST( distance[u] == current_distance );
     parent[v] = u;
     distance[v] = distance[u] + 1;
   }
   void non_tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST_ASSERT( color[target(e, g)] != Color::white() );
+    BOOST_TEST( color[target(e, g)] != Color::white() );
 
     if (boost::is_directed(g))
       // cross or back edge
-      BOOST_TEST_ASSERT(distance[target(e, g)] <= distance[source(e, g)] + 1);
+      BOOST_TEST(distance[target(e, g)] <= distance[source(e, g)] + 1);
     else {
       // cross edge (or going backwards on a tree edge)
-      BOOST_TEST_ASSERT(distance[target(e, g)] == distance[source(e, g)] 
+      BOOST_TEST(distance[target(e, g)] == distance[source(e, g)] 
                         || distance[target(e, g)] == distance[source(e, g)] + 1
                         || distance[target(e, g)] == distance[source(e, g)] - 1
                         );
@@ -90,20 +91,20 @@ public:
   }
 
   void gray_target(const Edge& e, const Graph& g) const {
-    BOOST_TEST_ASSERT( color[target(e, g)] == Color::gray() );
+    BOOST_TEST( color[target(e, g)] == Color::gray() );
   }
   
   void black_target(const Edge& e, const Graph& g) const {
-    BOOST_TEST_ASSERT( color[target(e, g)] == Color::black() );
+    BOOST_TEST( color[target(e, g)] == Color::black() );
 
     // All vertices adjacent to a black vertex must already be discovered
     typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g); 
          ai != ai_end; ++ai)
-      BOOST_TEST_ASSERT( color[*ai] != Color::white() );
+      BOOST_TEST( color[*ai] != Color::white() );
   }
   void finish_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST_ASSERT( color[u] == Color::black() );
+    BOOST_TEST( color[u] == Color::black() );
     
   }
 private:
@@ -162,14 +163,14 @@ struct bfs_test
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
           if (color[*ui] == Color::white()) {
             std::vector<boost::default_color_type> color2(i, Color::white());
-            BOOST_TEST_ASSERT(!boost::is_reachable(start, *ui, g, &color2[0]));
+            BOOST_TEST(!boost::is_reachable(start, *ui, g, &color2[0]));
           }
 
         // The shortest path to a child should be one longer than
         // shortest path to the parent.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
           if (parent[*ui] != *ui) // *ui not the root of the bfs tree
-            BOOST_TEST_ASSERT(distance[*ui] == distance[parent[*ui]] + 1);
+            BOOST_TEST(distance[*ui] == distance[parent[*ui]] + 1);
       }
   }
 };
