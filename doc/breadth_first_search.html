@@ -31,44 +31,110 @@
     const bgl_named_params&lt;P, T, R&gt;&amp; params);
 </PRE>
 
-<P>
-The breadth-first search (BFS) algorithm is not really an algorithm in
-the sense that it has a particular purpose.  Instead BFS is more like
-an algorithm <I>pattern</I>. One can do many different things with
-BFS. For example, the BFS pattern is used in the BGL to build several
-other algorithms: Dijkstra's shortest paths, Prim's Minimum Spanning
-Tree and best-first search. The definition of a <I>breadth-first
-search</I> is given in Section <A
-HREF="./graph_theory_review.html#sec:bfs-algorithm">Breadth-First
-Search</A>.
-
-<P>
-The BGL BFS functions are highly parameterized so that they can be
-used in a wide variety of places.  The way to customize the BFS
-algorithm to perform different operations is to supply a visitor,
-which is a function object with multiple functions. Each member
-function of the visitor gets invoked at special times during the
-algorithm as specified by the <a href="./BFSVisitor.html">BFS
-Visitor</a> concept. Also, visitors can be layered on top of each
-other so that one can do lots of things during a single run of
-BFS. See the <a href="./bfs_visitor.html">bfs_visitor</a> class and
-the <A HREF="./EventVisitor.html">EventVisitor</A> concept for more
-details.
-
-<P>
-Another way to customize the BFS algorithm is change the type of queue
-used. For instance, <a
-href="./dijkstra_shortest_paths.html"><TT>dijkstra_shortest_paths()</TT></a>
-uses a priority queue.
 
 <p>
-The <tt>ColorMap</tt> is used by BFS to keep track of which vertices
-have been visited. At the beginning of the algorithm all vertices are
-white. As the algorithm proceeds, vertices are colored gray as they
-are inserted into the queue, and then colored black when they are
-finished and removed from queue.
+The <tt>breadth_first_search()</tt> function performs a breadth-first
+traversal [<a href="./bibliography.html#moore59">49</a>] of a directed
+or undirected graph.  A breadth-first traversal visits vertices that
+are closer to the source before visiting vertices that are further
+away. In this context ``distance'' is defined as the number of edges
+in the shortest path from the source vertex. The
+<tt>breadth_first_search()</tt> function can be used to compute the
+shortest path from the source to all reachable vertices and the
+resulting shortest-path distances. For more definitions related to BFS
+see section <a href="./graph_theory_review.html#sec:bfs-algorithm">
+Breadth-First Search</a>.
+</p>
 
-<P>
+<p>
+BFS uses two data structures to to implement the traversal: a color
+marker for each vertex and a queue. White vertices are undiscovered
+while gray vertices are discovered but have undiscovered adjacent
+vertices. Black vertices are discovered and are adjacent to only other
+black or gray vertices.  The algorithm proceeds by removing a vertex
+</i>u</i> from the queue and examining each out-edge <i>(u,v)</i>. If an
+adjacent vertex <i>v</i> is not already discovered, it is colored gray and
+placed in the queue. After all of the out-edges are examined, vertex
+<i>u</i> is colored black and the process is repeated.  Pseudo-code for the
+BFS algorithm is a listed below.
+</p>
+
+<table>
+<tr>
+<td valign="top">
+<pre>
+BFS(<i>G</i>, <i>s</i>)
+  <b>for</b> each vertex <i>u in V[G]</i>
+    <i>color[u] :=</i> WHITE 
+    <i>d[u] := infinity</i> 
+    <i>p[u] := u</i> 
+  <b>end for</b>
+  <i>color[s] :=</i> GRAY 
+  <i>d[s] := 0</i> 
+  ENQUEUE(<i>Q</i>, <i>s</i>)
+  <b>while</b> (<i>Q != &Oslash;</i>) 
+    <i>u :=</i> DEQUEUE(Q)
+    <b>for</b> each vertex <i>v in Adj[u]</i>
+      <b>if</b> (<i>color[v] =</i> WHITE)
+        <i>color[v] :=</i> GRAY 
+        <i>d[v] := d[u] + 1</i>  
+        <i>p[v] := u</i>  
+        ENQUEUE(<i>Q</i>, <i>v</i>)
+      <b>else</b>
+        <b>if</b> (<i>color[v] =</i> GRAY) 
+          ...
+        <b>else</b> 
+          ...
+    <b>end for</b>
+    <i>color[u] :=</i> BLACK
+  <b>end while</b>
+  return (<i>d</i>, <i>p</i>)
+</pre>
+</td>
+<td valign="top">
+<pre>
+
+initialize vertex <i>u</i> 
+
+
+
+
+
+
+discover vertex <i>s</i> 
+
+examine vertex <i>u</i> 
+examine edge <i>(u,v)</i>
+<i>(u,v)</i> is a tree edge 
+
+
+
+discover vertex <i>v</i> 
+<i>(u,v)</i> is a non-tree edge
+
+<i>(u,v)</i> has a gray target 
+
+<i>(u,v)</i> has a black target 
+
+finish vertex <i>u</i> 
+</pre>
+</tr>
+</table>
+
+The <tt>breadth_first_search()</tt> function can be extended with
+user-defined actions that will be called a certain event points. The
+actions must be provided in the form of a visitor object, that is, an
+object who's type meets the requirements for a <a
+href="./BFSVisitor.html">BFS Visitor</a>. In the above pseudo-code,
+the event points are the labels on the right. Also a description of
+each event point is given below. By default, the
+<tt>breadth_first_search()</tt> function does not carry out any
+actions, not even recording distances or predecessors. However these
+can be easily added using the <a
+href="./distance_recorder.html"><tt>distance_recorder</tt></a> and <a
+href="./predecessor_recorder.html"><tt>predecessor_recorder</tt></a>
+event visitors.
+
 
 <H3>Where Defined</H3>
 
@@ -152,6 +218,46 @@ Complexity</A>
 The time complexity is <i>O(E + V)</i>. 
 
 <P>
+
+<h3>Visitor Event Points</h3>
+
+<ul>
+<li><b><tt>vis.initialize_vertex(v, g)</tt></b> is invoked on every vertex
+  before the start of the search. 
+
+<li><b><tt>vis.examine_vertex(u, g)</tt></b>r is invoked in each
+  vertex as it is removed from the queue.
+
+<li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
+  of each vertex immediately after the vertex is removed from the queue. 
+
+<li><tt>vis.tree_edge(e, g)</tt></b> is invoked (in addition to
+  <tt>examine_edge()</tt>) if the edge is a tree edge. The
+  target vertex of edge <tt>e</tt> is discovered at this time.
+
+<li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked the first time the
+  algorithm encounters vertex <i>u</i>. All vertices closer to the
+  source vertex have been discovered, and vertices further from the
+  source have not yet been discovered. 
+
+<li><b><tt>vis.non_tree_edge(e, g)</tt></b> is invoked (in addition to
+  <tt>examine_edge()</tt>) if the edge is not a tree edge. 
+
+<li><b><tt>vis.gray_target(e, g)</tt></b> is invoked (in addition to
+  <tt>non_tree_edge()</tt>) if the target vertex is colored gray at the
+  time of examination. The color gray indicates that
+  the vertex is currently in the queue. 
+
+<li><b><tt>vis.black_target(e, g)</tt></b> is invoked (in addition to
+  <tt>non_tree_edge()</tt>) if the target vertex is colored black at the
+  time of examination. The color black indicates that the
+  vertex is no longer in the queue. 
+
+<li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked after all of the out
+  edges of <i>u</i> have been examined and all of the adjacent vertices
+  have been discovered.
+
+</ul>
 
 <H3><A NAME="SECTION001330400000000000000">
 Example</A>
