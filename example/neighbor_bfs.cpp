@@ -32,7 +32,7 @@
 
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/neighbor_bfs.hpp>
 #include <boost/property_map.hpp>
 
 /*
@@ -64,7 +64,7 @@ struct print_parent {
 };
 
 template <class DistanceMap, class PredecessorMap, class ColorMap>
-class distance_and_pred_visitor : public boost::bfs_visitor<>
+class distance_and_pred_visitor : public boost::neighbor_bfs_visitor<>
 {
   typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
   typedef boost::color_traits<ColorValue> Color;
@@ -73,18 +73,22 @@ public:
     : m_distance(d), m_predecessor(p), m_color(c) { }
 
   template <class Edge, class Graph>
-  void tree_edge(Edge e, const Graph& g) const
+  void tree_out_edge(Edge e, const Graph& g) const
   {
     typename boost::graph_traits<Graph>::vertex_descriptor 
       u = source(e, g), v = target(e, g);
-    if (get(m_color, v) == Color::white()) {
-      put(m_distance, v, get(m_distance, u) + 1);
-      put(m_predecessor, v, u);
-    } else if (get(m_color, u) == Color::white()) {
-      put(m_distance, u, get(m_distance, v) + 1);
-      put(m_predecessor, u, v);
-    }
+    put(m_distance, v, get(m_distance, u) + 1);
+    put(m_predecessor, v, u);
   }
+  template <class Edge, class Graph>
+  void tree_in_edge(Edge e, const Graph& g) const
+  {
+    typename boost::graph_traits<Graph>::vertex_descriptor 
+      u = source(e, g), v = target(e, g);
+    put(m_distance, u, get(m_distance, v) + 1);
+    put(m_predecessor, u, v);
+  }
+
   DistanceMap m_distance;
   PredecessorMap m_predecessor;
   ColorMap m_color;
