@@ -205,7 +205,7 @@ namespace boost {
           , const VertexDescriptor& src
           , const VerticesSizeType& n
         )
-          : super_t(i), m_src(src), m_targ(0), m_n(n), m_inc(src)
+          : super_t(i), m_src(src), m_inc(src), m_targ(0), m_n(n)
         {}
 
         void increment()
