@@ -128,8 +128,7 @@ Pointers to the <tt>edge_array</tt> can be viewed as iterators, so we can call
 the iterator constructor by passing pointers to the beginning and end of the
 array.
 <pre>
-    Graph g(num_vertices, edge_array,
-      edge_array + sizeof(edge_array) / sizeof(E));
+    Graph g(edge_array, edge_array + sizeof(edge_array) / sizeof(E), num_vertices);
 </pre>
 <p>Instead of creating a graph with a certain number of vertices to begin with,
 it is also possible to add and remove vertices with the <a href="MutableGraph.html#sec:add-vertex"><tt>add_vertex()</tt></a>
