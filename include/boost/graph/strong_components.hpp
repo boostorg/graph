@@ -56,7 +56,7 @@ namespace boost {
 
       template <typename Graph>
       void discover_vertex(typename graph_traits<Graph>::vertex_descriptor v,
-                           const Graph& g) {
+                           const Graph&) {
         put(root, v, v);
         put(comp, v, std::numeric_limits<comp_type>::max());
         put(discover_time, v, dfs_time++);
