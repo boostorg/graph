@@ -56,9 +56,9 @@ so algorithms should pass graph objects by reference.
 A vertex descriptor corresponds to a unique vertex in an abstract
 graph instance. A vertex descriptor must be
 <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">DefaultConstructible</a>,
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</a>,
 <a href="http://www.sgi.com/tech/stl/Assignable.html">Assignable</a>, and
-<a href="http://www.sgi.com/tech/stl/EqualityComparable.html">EqualityComparable</a>.
+<a href="http://www.sgi.com/tech/stl/EqualityComparable.html">Equality Comparable</a>.
 </td>
 </tr>
 
@@ -66,10 +66,10 @@ href="http://www.sgi.com/tech/stl/DefaultConstructible.html">DefaultConstructibl
 <td><pre>boost::graph_traits&lt;G&gt;::edge_descriptor</pre>
 An edge descriptor corresponds to a unique edge <i>(u,v)</i> in a
 graph.  An edge descriptor must be <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">DefaultConstructible</I>,
+href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</I>,
 <a
 href="http://www.sgi.com/tech/stl/Assignable.html">Assignable</a>,
-and <a href="http://www.sgi.com/tech/stl/EqualityComparable.html">EqualityComparable</a>.
+and <a href="http://www.sgi.com/tech/stl/EqualityComparable.html">Equality Comparable</a>.
 </td>
 </tr>
 
@@ -87,6 +87,12 @@ are <TT>allow_parallel_edge_tag</TT> and <TT>disallow_parallel_edge_tag</TT>.
 </td>
 </tr>
 
+<tr>
+<td><pre>boost::graph_traits&lt;G&gt;::traversal_category</pre>
+This describes the ways in which the vertices and edges of the
+graph can be visited.
+</td>
+</tr>
 
 </table>
 
@@ -104,6 +110,7 @@ None required.
     typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     typedef typename boost::graph_traits&lt;G&gt;::directed_category directed_category;
     typedef typename boost::graph_traits&lt;G&gt;::edge_parallel_category edge_parallel_category;
+    typedef typename boost::graph_traits&lt;G&gt;::traversal_category traversal_category;
 
     void constraints() {
       function_requires&lt; DefaultConstructibleConcept&lt;vertex_descriptor&gt; &gt;();

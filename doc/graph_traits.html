@@ -52,6 +52,7 @@ class.
 
     typedef typename Graph::directed_category      directed_category;
     typedef typename Graph::edge_parallel_category edge_parallel_category;
+    typedef typename Graph::traversal_category     traversal_category;
 
     typedef typename Graph::vertices_size_type     vertices_size_type;
     typedef typename Graph::edges_size_type        edges_size_type;
@@ -187,6 +188,21 @@ edge_parallel_category
 This says whether the graph allows parallel edges to be inserted
 (<tt>allow_parallel_edge_tag</tt>) or if it automatically removes
 parallel edges (<tt>disallow_parallel_edge_tag</tt>).
+</td>
+</tr>
+
+<tr>
+<td><tt>
+traversal_category
+</tt></td>
+<td>
+The ways in which the vertices in the graph can be traversed.
+The traversal category tags are: 
+<tt>incidence_graph_tag, adjacency_graph_tag,
+bidirectional_graph_tag, vertex_list_graph_tag,
+edge_list_graph_tag, vertex_and_edge_list_graph_tag,
+adjacency_matrix_tag</tt>. You can also create your own
+tag which should inherit from one of the above. 
 </td>
 </tr>
 
