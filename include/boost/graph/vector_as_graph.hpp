@@ -87,6 +87,8 @@ namespace boost {
     typedef typename EdgeList::const_iterator adjacency_iterator;
     typedef typename detail::val_out_edge_iter<EdgeList>::type
       out_edge_iterator;
+    typedef void in_edge_iterator;
+    typedef void edge_iterator;
     typedef typename integer_range<V>::iterator vertex_iterator;
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
@@ -94,6 +96,21 @@ namespace boost {
     typedef typename std::vector<EdgeList>::size_type vertices_size_type;
     typedef void edges_size_type;
     typedef typename EdgeList::size_type degree_size_type;
+  };
+  template <class EdgeList>
+  struct edge_property_type< std::vector<EdgeList> >
+  {
+    typedef void type;
+  };
+  template <class EdgeList>
+  struct vertex_property_type< std::vector<EdgeList> >
+  {
+    typedef void type;
+  };
+  template <class EdgeList>
+  struct graph_property_type< std::vector<EdgeList> >
+  {
+    typedef void type;
   };
 }
 #endif
@@ -114,14 +131,15 @@ namespace boost {
     // need rewrite this using boost::iterator_adaptor
     template <class V, class Iter>
     class val_out_edge_iterator
-      : public boost::iterator<std::input_iterator_tag, std::pair<V,V> >
+      : public boost::iterator<std::input_iterator_tag, std::pair<V,V>,
+         std::ptrdiff_t, std::pair<V,V>*, const std::pair<V,V> >
     {
       typedef val_out_edge_iterator self;
       typedef std::pair<V,V> Edge;
     public:
       val_out_edge_iterator() { }
       val_out_edge_iterator(V s, Iter i) : _source(s), _iter(i) { }
-      Edge operator*() { return Edge(_source, *_iter); }
+      Edge operator*() const { return Edge(_source, *_iter); }
       self& operator++() { ++_iter; return *this; }
       self operator++(int) { self t = *this; ++_iter; return t; }
       bool operator==(const self& x) const { return _iter == x._iter; }

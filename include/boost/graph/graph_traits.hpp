@@ -35,7 +35,7 @@
 #include <boost/detail/workaround.hpp>
 
 namespace boost {
-  
+
   template <typename G>
   struct graph_traits {
     typedef typename G::vertex_descriptor      vertex_descriptor;
@@ -115,6 +115,19 @@ namespace boost {
         , boost::forward_traversal_tag
       >
   { };
+
+  template <typename G>
+  struct edge_property_type {
+    typedef typename G::edge_property_type type;
+  };
+  template <typename G>
+  struct vertex_property_type {
+    typedef typename G::vertex_property_type type;
+  };
+  template <typename G>
+  struct graph_property_type {
+    typedef typename G::graph_property_type type;
+  };
 
 } // namespace boost
 

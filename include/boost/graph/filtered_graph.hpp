@@ -137,10 +137,22 @@ namespace boost {
 
   struct filtered_graph_tag { };
 
+  // This base class is a stupid hack to change overload resolution
+  // rules for the source and target functions so that they are a
+  // worse match than the source and target functions defined for
+  // pairs in graph_traits.hpp. I feel dirty. -JGS
+  template <class G>
+  struct filtered_graph_base {
+    filtered_graph_base(const G& g) : m_g(g) { }
+    //protected:
+    const G& m_g;
+  };
+
   template <typename Graph, 
             typename EdgePredicate,
             typename VertexPredicate = keep_all>
-  class filtered_graph {
+  class filtered_graph : public filtered_graph_base<Graph> {
+    typedef filtered_graph_base<Graph> Base;
     typedef graph_traits<Graph> Traits;
     typedef filtered_graph self;
   public:
@@ -154,10 +166,10 @@ namespace boost {
 
     // Constructors
     filtered_graph(const Graph& g, EdgePredicate ep)
-      : m_g(g), m_edge_pred(ep) { }
+      : Base(g), m_edge_pred(ep) { }
 
     filtered_graph(const Graph& g, EdgePredicate ep, VertexPredicate vp)
-      : m_g(g), m_edge_pred(ep), m_vertex_pred(vp) { }
+      : Base(g), m_edge_pred(ep), m_vertex_pred(vp) { }
 
     // Graph requirements
     typedef typename Traits::vertex_descriptor          vertex_descriptor;
@@ -194,12 +206,11 @@ namespace boost {
     > edge_iterator;
     typedef typename Traits::edges_size_type           edges_size_type;
 
-    typedef typename Graph::edge_property_type         edge_property_type;
-    typedef typename Graph::vertex_property_type       vertex_property_type;
+    typedef typename edge_property_type<Graph>::type   edge_property_type;
+    typedef typename vertex_property_type<Graph>::type vertex_property_type;
     typedef filtered_graph_tag graph_tag;
 
     //private:
-    const Graph& m_g;
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
   };
@@ -273,7 +284,7 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   typename filtered_graph<G, EP, VP>::vertex_descriptor
   source(typename filtered_graph<G, EP, VP>::edge_descriptor e,
-         const filtered_graph<G, EP, VP>& g)
+         const filtered_graph_base<G>& g)
   {
     return source(e, g.m_g);
   }
@@ -281,7 +292,7 @@ namespace boost {
   template <typename G, typename EP, typename VP>
   typename filtered_graph<G, EP, VP>::vertex_descriptor
   target(typename filtered_graph<G, EP, VP>::edge_descriptor e,
-         const filtered_graph<G, EP, VP>& g)
+         const filtered_graph_base<G>& g)
   {
     return target(e, g.m_g);
   }
