@@ -260,7 +260,7 @@ namespace boost {
   // when trying to create interior vertex or edge properties who's
   // value type is a vertex or edge descriptor.
 
-  template <class EdgeListS = vecS,
+  template <class OutEdgeListS = vecS,
             class VertexListS = vecS,
             class DirectedS = directedS>
   struct adjacency_list_traits
@@ -277,7 +277,7 @@ namespace boost {
       >::type
     >::type directed_category;
 
-    typedef typename parallel_edge_traits<EdgeListS>::type
+    typedef typename parallel_edge_traits<OutEdgeListS>::type
       edge_parallel_category;
 
     typedef void* vertex_ptr;
@@ -297,23 +297,24 @@ namespace boost {
   // The adjacency_list class.
   //
 
-  template <class EdgeListS = vecS,   // a Sequence or an AssociativeContainer
+  template <class OutEdgeListS = vecS, // a Sequence or an AssociativeContainer
             class VertexListS = vecS, // a Sequence or a RandomAccessContainer
             class DirectedS = directedS,
             class VertexProperty = no_property,
             class EdgeProperty = no_property,
-            class GraphProperty = no_property>
+            class GraphProperty = no_property,
+            class EdgeListS = listS>
   class adjacency_list
     : public detail::adj_list_gen<
-      adjacency_list<EdgeListS,VertexListS,DirectedS,
-                     VertexProperty,EdgeProperty,GraphProperty>,
-      VertexListS, EdgeListS, DirectedS, 
-      VertexProperty, EdgeProperty, GraphProperty>::type
+      adjacency_list<OutEdgeListS,VertexListS,DirectedS,
+                     VertexProperty,EdgeProperty,GraphProperty,EdgeListS>,
+      VertexListS, OutEdgeListS, DirectedS, 
+      VertexProperty, EdgeProperty, GraphProperty, EdgeListS>::type
   {
     typedef adjacency_list self;
     typedef typename detail::adj_list_gen<
-      self, VertexListS, EdgeListS, DirectedS, 
-      VertexProperty, EdgeProperty, GraphProperty
+      self, VertexListS, OutEdgeListS, DirectedS, 
+      VertexProperty, EdgeProperty, GraphProperty, EdgeListS
     >::type Base;
   public:
     typedef typename Base::stored_vertex stored_vertex;
@@ -369,54 +370,54 @@ namespace boost {
     GraphProperty m_property;
   };
 
-  template <class EL, class VL, class DS, class VP,class EP,class GP,
-            class Tag, class Value>
+  template <class OEL, class VL, class DS, class VP,class EP, class GP,
+            class EL, class Tag, class Value>
   inline void
-  set_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag, const Value& value) {
+  set_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag,
+               const Value& value) {
     get_property_value(g.m_property, Tag()) = value;;
   }
 
-  template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
+  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+            class Tag, class EL>
   inline
-  typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
-  get_property(adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
+  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
+  get_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 
-  template <class EL, class VL, class DS, class VP,class EP,class GP,class Tag>
+  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+            class Tag, class EL>
   inline
-  const typename graph_property<adjacency_list<EL,VL,DS,VP,EP,GP>, Tag>::type&
-  get_property(const adjacency_list<EL,VL,DS,VP,EP,GP>& g, Tag) {
+  const
+  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
+  get_property(const adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 
   // dwa 09/25/00 - needed to be more explicit so reverse_graph would work.
   template <class Directed, class Vertex,
-      class EdgeListS,
+      class OutEdgeListS,
       class VertexListS,
       class DirectedS,
       class VertexProperty,
       class EdgeProperty,
-      class GraphProperty>
+      class GraphProperty, class EdgeListS>
   inline Vertex
   source(const detail::edge_base<Directed,Vertex>& e,
-         const adjacency_list<EdgeListS, VertexListS, DirectedS,
-                        VertexProperty, EdgeProperty, GraphProperty>&)
+         const adjacency_list<OutEdgeListS, VertexListS, DirectedS,
+                 VertexProperty, EdgeProperty, GraphProperty, EdgeListS>&)
   {
     return e.m_source;
   }
 
-  template <class Directed, class Vertex,
-      class EdgeListS,
-      class VertexListS,
-      class DirectedS,
-      class VertexProperty,
-      class EdgeProperty,
-      class GraphProperty>
+  template <class Directed, class Vertex, class OutEdgeListS,
+      class VertexListS, class DirectedS, class VertexProperty,
+      class EdgeProperty, class GraphProperty, class EdgeListS>
   inline Vertex
   target(const detail::edge_base<Directed,Vertex>& e,
-         const adjacency_list<EdgeListS, VertexListS, DirectedS,
-                        VertexProperty, EdgeProperty, GraphProperty>&)
+         const adjacency_list<OutEdgeListS, VertexListS, DirectedS,
+              VertexProperty, EdgeProperty, GraphProperty, EdgeListS>&)
   {
     return e.m_target;
   }
