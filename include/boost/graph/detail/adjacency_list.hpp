@@ -694,6 +694,34 @@ namespace boost {
             return;
           }
       }
+
+      // O(E/V)
+      template <class Graph, class EdgeList, class Vertex>
+      inline void
+      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
+                               boost::allow_parallel_edge_tag cat)
+      {
+        typedef typename EdgeList::value_type StoredEdge;
+        typename EdgeList::iterator i = el.begin(), end = el.end();
+        for (; i != end; ++i)
+          if ((*i).get_target() == v)
+            g.m_edges.erase((*i).get_iter());
+        detail::erase_from_incidence_list(el, v, cat);
+      }
+      // O(log(E/V))
+      template <class Graph, class EdgeList, class Vertex>
+      inline void
+      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
+                               boost::disallow_parallel_edge_tag)
+      {
+        typedef typename EdgeList::value_type StoredEdge;
+        typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
+        if (i != end) {
+          g.m_edges.erase((*i).get_iter());
+          el.erase(i);
+        }
+      }
+
     } // namespace detail
 
     template <class Vertex, class EdgeProperty>
@@ -926,35 +954,6 @@ namespace boost {
       const Graph& g = static_cast<const Graph&>(g_);
       return out_degree(u, g);
     }
-
-    namespace detail {
-      // O(E/V)
-      template <class Graph, class EdgeList, class Vertex>
-      inline void
-      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
-                               boost::allow_parallel_edge_tag cat)
-      {
-        typedef typename EdgeList::value_type StoredEdge;
-        typename EdgeList::iterator i = el.begin(), end = el.end();
-        for (; i != end; ++i)
-          if ((*i).get_target() == v)
-            g.m_edges.erase((*i).get_iter());
-        detail::erase_from_incidence_list(el, v, cat);
-      }
-      // O(log(E/V))
-      template <class Graph, class EdgeList, class Vertex>
-      inline void
-      remove_edge_and_property(Graph& g, EdgeList& el, Vertex v, 
-                               boost::disallow_parallel_edge_tag)
-      {
-        typedef typename EdgeList::value_type StoredEdge;
-        typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
-        if (i != end) {
-          g.m_edges.erase((*i).get_iter());
-          el.erase(i);
-        }
-      }
-    } // namespace detail
 
     template <class Config>
     inline std::pair<typename Config::in_edge_iterator, 
@@ -1848,6 +1847,85 @@ namespace boost {
     //=========================================================================
     // Vector-Backbone Adjacency List Implementation
 
+    namespace detail {
+
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::directed_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        for (vertex_descriptor v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
+      }
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::undirected_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        for (vertex_descriptor v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, 
+                            edge_parallel_category());
+        typedef typename Graph::EdgeContainer Container;
+        typedef typename Container::iterator Iter;
+        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
+        for (; ei != ei_end; ++ei) {
+          if (ei->m_source > u)
+            --ei->m_source;
+          if (ei->m_target > u)
+            --ei->m_target;
+        }
+      }
+      template <class Graph, class vertex_descriptor>
+      inline void 
+      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
+                             boost::bidirectional_tag)
+      {
+        typedef typename Graph::edge_parallel_category edge_parallel_category;
+        g.m_vertices.erase(g.m_vertices.begin() + u);
+        vertex_descriptor V = num_vertices(g);
+        vertex_descriptor v;
+        for (v = 0; v < V; ++v)
+          reindex_edge_list(g.out_edge_list(v), u, 
+                            edge_parallel_category());
+        for (v = 0; v < V; ++v)
+          reindex_edge_list(in_edge_list(g, v), u, 
+                            edge_parallel_category());
+      }
+
+      template <class EdgeList, class vertex_descriptor>
+      inline void
+      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
+                        boost::allow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
+        for (; ei != e_end; ++ei)
+          if ((*ei).get_target() > u)
+            --(*ei).get_target();
+      }
+      template <class EdgeList, class vertex_descriptor>
+      inline void
+      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
+                        boost::disallow_parallel_edge_tag)
+      {
+        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
+        while (ei != e_end) {
+          typename EdgeList::value_type ce = *ei;
+          ++ei;
+          if (ce.get_target() > u) {
+            el.erase(ce);
+            --ce.get_target();
+            el.insert(ce);
+          }
+        }
+      }
+    } // namespace detail
+
     struct vec_adj_list_tag { };
     
     template <class Graph, class Config, class Base>
@@ -2026,84 +2104,6 @@ namespace boost {
       return n;
     }
 
-    namespace detail {
-
-      template <class Graph, class vertex_descriptor>
-      inline void 
-      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                             boost::directed_tag)
-      {
-        typedef typename Graph::edge_parallel_category edge_parallel_category;
-        g.m_vertices.erase(g.m_vertices.begin() + u);
-        vertex_descriptor V = num_vertices(g);
-        for (vertex_descriptor v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, edge_parallel_category());
-      }
-      template <class Graph, class vertex_descriptor>
-      inline void 
-      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                             boost::undirected_tag)
-      {
-        typedef typename Graph::edge_parallel_category edge_parallel_category;
-        g.m_vertices.erase(g.m_vertices.begin() + u);
-        vertex_descriptor V = num_vertices(g);
-        for (vertex_descriptor v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, 
-                            edge_parallel_category());
-        typedef typename Graph::EdgeContainer Container;
-        typedef typename Container::iterator Iter;
-        Iter ei = g.m_edges.begin(), ei_end = g.m_edges.end();
-        for (; ei != ei_end; ++ei) {
-          if (ei->m_source > u)
-            --ei->m_source;
-          if (ei->m_target > u)
-            --ei->m_target;
-        }
-      }
-      template <class Graph, class vertex_descriptor>
-      inline void 
-      remove_vertex_dispatch(Graph& g, vertex_descriptor u, 
-                             boost::bidirectional_tag)
-      {
-        typedef typename Graph::edge_parallel_category edge_parallel_category;
-        g.m_vertices.erase(g.m_vertices.begin() + u);
-        vertex_descriptor V = num_vertices(g);
-        vertex_descriptor v;
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(g.out_edge_list(v), u, 
-                            edge_parallel_category());
-        for (v = 0; v < V; ++v)
-          reindex_edge_list(in_edge_list(g, v), u, 
-                            edge_parallel_category());
-      }
-
-      template <class EdgeList, class vertex_descriptor>
-      inline void
-      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
-                        boost::allow_parallel_edge_tag)
-      {
-        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-        for (; ei != e_end; ++ei)
-          if ((*ei).get_target() > u)
-            --(*ei).get_target();
-      }
-      template <class EdgeList, class vertex_descriptor>
-      inline void
-      reindex_edge_list(EdgeList& el, vertex_descriptor u, 
-                        boost::disallow_parallel_edge_tag)
-      {
-        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-        while (ei != e_end) {
-          typename EdgeList::value_type ce = *ei;
-          ++ei;
-          if (ce.get_target() > u) {
-            el.erase(ce);
-            --ce.get_target();
-            el.insert(ce);
-          }
-        }
-      }
-    } // namespace detail
 
   namespace detail {
 
