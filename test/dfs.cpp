@@ -24,7 +24,7 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 #include <stdlib.h>
 
 #include <boost/graph/depth_first_search.hpp>
@@ -43,9 +43,9 @@ class dfs_test_visitor {
 public:
   dfs_test_visitor(ColorMap color, ParentMap p, DiscoverTimeMap d,
                    FinishTimeMap f)
-    : m_color(color), m_parent(p), 
+    : m_color(color), m_parent(p),
     m_discover_time(d), m_finish_time(f), m_time(0) { }
-  
+
   template <class Vertex, class Graph>
   void initialize_vertex(Vertex u, Graph& g) {
     BOOST_TEST( boost::get(m_color, u) == Color::white() );
@@ -71,7 +71,7 @@ public:
   void tree_edge(Edge e, Graph& g) {
     using namespace boost;
     BOOST_TEST( get(m_color, target(e, g)) == Color::white() );
-    
+
     put(m_parent, target(e, g), source(e, g));
   }
   template <class Edge, class Graph>
@@ -88,7 +88,7 @@ public:
   void finish_vertex(Vertex u, Graph& g) {
     using namespace boost;
     BOOST_TEST( get(m_color, u) == Color::black() );
-    
+
     put(m_finish_time, u, m_time++);
   }
 private:
@@ -109,7 +109,7 @@ struct dfs_test
   static void go(vertices_size_type max_V) {
     using namespace boost;
     typedef typename Traits::vertex_descriptor vertex_descriptor;
-    typedef typename boost::property_map<Graph, 
+    typedef typename boost::property_map<Graph,
       boost::vertex_color_t>::type ColorMap;
     typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
     typedef typename boost::color_traits<ColorValue> Color;
@@ -133,7 +133,7 @@ struct dfs_test
           finish_time(num_vertices(g));
 
         dfs_test_visitor<ColorMap, vertex_descriptor*,
-          int*, int*> vis(color, &parent[0], 
+          int*, int*> vis(color, &parent[0],
                           &discover_time[0], &finish_time[0]);
 
         boost::depth_first_search(g, visitor(vis).color_map(color));
@@ -175,7 +175,7 @@ int test_main(int argc, char* argv[])
 
   // Test directed graphs.
   dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
-           boost::property<boost::vertex_color_t, boost::default_color_type> > 
+           boost::property<boost::vertex_color_t, boost::default_color_type> >
     >::go(max_V);
   // Test undirected graphs.
   dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,

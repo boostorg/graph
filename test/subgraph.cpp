@@ -1,12 +1,11 @@
-//  (C) Copyright Jeremy Siek 2004 
+//  (C) Copyright Jeremy Siek 2004
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
 #include <set>
 
-#define BOOST_INCLUDE_MAIN
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -16,14 +15,14 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
-// UNDER CONSTRUCTION 
+// UNDER CONSTRUCTION
 
 int test_main(int argc, char* argv[])
 {
   using namespace boost;
   typedef adjacency_list<vecS, vecS, bidirectionalS,
-    property<vertex_color_t, int>, 
-    property<edge_index_t, std::size_t, property<edge_weight_t, int> > 
+    property<vertex_color_t, int>,
+    property<edge_index_t, std::size_t, property<edge_weight_t, int> >
   > graph_t;
   typedef subgraph<graph_t> subgraph_t;
   typedef graph_traits<subgraph_t>::vertex_descriptor vertex_t;
@@ -35,7 +34,7 @@ int test_main(int argc, char* argv[])
     int N = t + 2;
     std::vector<vertex_t> vertex_set;
     std::vector< std::pair<vertex_t, vertex_t> > edge_set;
-    generate_random_graph(g, N, N * 2, gen, 
+    generate_random_graph(g, N, N * 2, gen,
                           std::back_inserter(vertex_set),
                           std::back_inserter(edge_set));
 
@@ -54,7 +53,7 @@ int test_main(int argc, char* argv[])
     std::vector< std::pair<vertex_t, vertex_t> > sub_edge_set;
 
     subgraph_t& g_s = g.create_subgraph();
-    
+
     const std::set<vertex_t>::size_type Nsub = N/2;
 
     // Collect a set of random vertices to put in the subgraph
@@ -84,7 +83,7 @@ int test_main(int argc, char* argv[])
     gt.test_vertex_list_graph(sub_vertex_set, g_s);
     gt.test_edge_list_graph(sub_vertex_set, sub_edge_set, g_s);
     gt.test_adjacency_matrix(sub_vertex_set, sub_edge_set, g_s);
-    
+
     if (num_vertices(g_s) == 0)
       return 0;
     std::vector<int> weights;
@@ -103,7 +102,7 @@ int test_main(int argc, char* argv[])
         add_edge(v1, v2, g);
 
         subgraph_t sub = g.create_subgraph(vertices(g).first, vertices(g).second);
-        
+
         graph_t::edge_iterator ei, ee;
         for (tie(ei, ee) = edges(sub); ei != ee; ++ei) {
             // This used to segfault.
@@ -111,6 +110,6 @@ int test_main(int argc, char* argv[])
         }
     }
 
-  }  
+  }
   return 0;
 }

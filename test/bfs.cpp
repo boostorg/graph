@@ -23,7 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -36,7 +36,7 @@
 using namespace boost;
 #endif
 
-template <typename DistanceMap, typename ParentMap, 
+template <typename DistanceMap, typename ParentMap,
           typename Graph, typename ColorMap>
 class bfs_testing_visitor
 {
@@ -89,7 +89,7 @@ public:
       BOOST_TEST(distance[target(e, g)] <= distance[source(e, g)] + 1);
     else {
       // cross edge (or going backwards on a tree edge)
-      BOOST_TEST(distance[target(e, g)] == distance[source(e, g)] 
+      BOOST_TEST(distance[target(e, g)] == distance[source(e, g)]
                         || distance[target(e, g)] == distance[source(e, g)] + 1
                         || distance[target(e, g)] == distance[source(e, g)] - 1
                         );
@@ -99,23 +99,23 @@ public:
   void gray_target(const Edge& e, const Graph& g) const {
     BOOST_TEST( color[target(e, g)] == Color::gray() );
   }
-  
+
   void black_target(const Edge& e, const Graph& g) const {
     BOOST_TEST( color[target(e, g)] == Color::black() );
 
     // All vertices adjacent to a black vertex must already be discovered
     typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
-    for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g); 
+    for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g);
          ai != ai_end; ++ai)
       BOOST_TEST( color[*ai] != Color::white() );
   }
   void finish_vertex(const Vertex& u, const Graph& ) const {
     BOOST_TEST( color[u] == Color::black() );
-    
+
   }
 private:
   mutable Vertex current_vertex;
-  mutable typename boost::property_traits<DistanceMap>::value_type 
+  mutable typename boost::property_traits<DistanceMap>::value_type
     current_distance;
   DistanceMap distance;
   ParentMap parent;
@@ -158,13 +158,13 @@ struct bfs_test
 
         // Create the testing visitor.
         bfs_testing_visitor<int*,vertex_descriptor*,Graph,
-          boost::default_color_type*> 
+          boost::default_color_type*>
           vis(start, &distance[0], &parent[0], &color[0]);
 
-        boost::breadth_first_search(g, start, 
+        boost::breadth_first_search(g, start,
                                     visitor(vis).
                                     color_map(&color[0]));
-        
+
         // All white vertices should be unreachable from the source.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
           if (color[*ui] == Color::white()) {

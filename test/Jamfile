@@ -16,8 +16,7 @@ test-suite graph :
     # unit-test adj_list_test : adj_list_test.cpp : <sysinclude>$(BOOST_ROOT)  ;
     [ compile adj_matrix_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
-    [ run bfs.cpp <lib>../../test/build/boost_test_exec_monitor 
-        : : : <sysinclude>$(BOOST_ROOT) ]
+    [ run bfs.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
@@ -25,8 +24,7 @@ test-suite graph :
 
     [ run betweenness_centrality_test.cpp ] 
 
-    [ run dfs.cpp <lib>../../test/build/boost_test_exec_monitor 
-        : : : <sysinclude>$(BOOST_ROOT) ]
+    [ run dfs.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ compile dfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
@@ -51,11 +49,9 @@ test-suite graph :
 
     [ run sequential_vertex_coloring.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
-    [ run subgraph.cpp <lib>../../test/build/boost_test_exec_monitor 
-        : : : <sysinclude>$(BOOST_ROOT) ]
+    [ run subgraph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
-    [ run isomorphism.cpp <lib>../../test/build/boost_test_exec_monitor 
-        : : : <sysinclude>$(BOOST_ROOT) ]
+    [ run isomorphism.cpp  : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run adjacency_matrix_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]    
 
