@@ -573,7 +573,7 @@ namespace boost {
             edge_descriptor a = *ai;
             if (capacity[a] > 0)
               if ((residual_capacity[a] + residual_capacity[reverse_edge[a]]
-                   != capacity[a])
+                   != capacity[a] + capacity[reverse_edge[a]])
                   || (residual_capacity[a] < 0)
                   || (residual_capacity[reverse_edge[a]] < 0))
               return false;
