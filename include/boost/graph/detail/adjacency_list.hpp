@@ -40,7 +40,7 @@
 
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/graph_utility.hpp>
+#include <boost/pending/container_traits.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/property.hpp>
