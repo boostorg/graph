@@ -260,24 +260,24 @@ namespace boost {
     return std::make_pair(iter(f, pol), iter(l, pol));
   }
 
+  // An alternative for num_vertices() and num_edges() would be to
+  // count the number in the filtered graph. This is problematic
+  // because of the interaction with the vertex indices...  they would
+  // no longer go from 0 to num_vertices(), which would cause trouble
+  // for algorithms allocating property storage in an array. We could
+  // try to create a mapping to new recalibrated indices, but I don't
+  // see an efficient way to do this.
+
   template <typename G, typename EP, typename VP>  
   typename filtered_graph<G, EP, VP>::vertices_size_type
   num_vertices(const filtered_graph<G, EP, VP>& g) {
-    typename filtered_graph<G, EP, VP>::vertices_size_type n = 0;
-    typename filtered_graph<G, EP, VP>::vertex_iterator f, l;
-    for (tie(f, l) = vertices(g); f != l; ++f)
-      ++n;
-    return n;
+    return num_vertices(g.m_g);
   }
 
   template <typename G, typename EP, typename VP>  
   typename filtered_graph<G, EP, VP>::edges_size_type
   num_edges(const filtered_graph<G, EP, VP>& g) {
-    typename filtered_graph<G, EP, VP>::edges_size_type n = 0;
-    typename filtered_graph<G, EP, VP>::edge_iterator f, l;
-    for (tie(f, l) = edges(g); f != l; ++f)
-      ++n;
-    return n;
+    return num_edges(g.m_g);
   }
   
   template <typename G, typename EP, typename VP>
