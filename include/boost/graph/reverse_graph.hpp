@@ -7,6 +7,8 @@
 #ifndef REVERSE_GRAPH_DWA092300_H_
 # define REVERSE_GRAPH_DWA092300_H_
 
+#include <boost/graph/detail/adjacency_list.hpp> // for adjacency_iterator or bidir_adj_iter
+
 namespace boost {
 
 template <class BidirectionalGraph>
@@ -29,16 +31,27 @@ class reverse_graph {
     // BidirectionalGraph requirements
     typedef typename graph_traits<BidirectionalGraph>::out_edge_iterator in_edge_iterator;
 
-    // Stuff that shouldn't be required according to the docs [is this right,
-    // Jeremy?] except that we don't have partial specialization support on all
-    // compilers
-    typedef typename graph_traits<BidirectionalGraph>::adjacency_iterator     adjacency_iterator;
+    // AdjacencyGraph requirements
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
+        typedef typename detail::adjacency_iterator<reverse_graph, vertex_descriptor,
+          out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
+#else
+        typedef detail::bidir_adj_iter<vertex_descriptor, out_edge_iterator,
+                reverse_graph> adjacency_iterator;
+#endif
+
+    // VertexListGraph requirements
     typedef typename graph_traits<BidirectionalGraph>::vertex_iterator        vertex_iterator;
-    typedef typename graph_traits<BidirectionalGraph>::edge_iterator          edge_iterator;
+
+    // Stuff that shouldn't be required according to the docs 
+    // except that we don't have partial specialization support on all
+    // compilers
+
+    typedef void edge_iterator;
     typedef typename graph_traits<BidirectionalGraph>::vertices_size_type     vertices_size_type;
-    typedef typename graph_traits<BidirectionalGraph>::edges_size_type        edges_size_type;
+    typedef void edges_size_type;
     
-    // More of the same [?] used by detail::edge_property_map, vertex_property_map
+    // More typedefs used by detail::edge_property_map, vertex_property_map
     typedef typename BidirectionalGraph::edge_property_type edge_property_type;
     typedef typename BidirectionalGraph::vertex_property_type vertex_property_type;
     typedef typename BidirectionalGraph::graph_tag graph_tag;
@@ -96,15 +109,6 @@ vertices(const reverse_graph<BidirectionalGraph>& g)
 }
 
 template <class BidirectionalGraph>
-inline std::pair<typename BidirectionalGraph::adjacency_iterator, 
-                 typename BidirectionalGraph::adjacency_iterator>
-adjacent_vertices(const typename BidirectionalGraph::vertex_descriptor u,
-                  const reverse_graph<BidirectionalGraph>& g)
-{
-    return adjacent_vertices(u, g.m_g);
-}
-
-template <class BidirectionalGraph>
 inline std::pair<typename BidirectionalGraph::in_edge_iterator, 
                  typename BidirectionalGraph::in_edge_iterator>
 out_edges(const typename BidirectionalGraph::vertex_descriptor u,
@@ -144,6 +148,20 @@ in_edges(const typename BidirectionalGraph::vertex_descriptor u,
          const reverse_graph<BidirectionalGraph>& g)
 {
     return out_edges(u, g.m_g);
+}
+
+template <class BidirectionalGraph>
+inline std::pair<typename reverse_graph<BidirectionalGraph>::adjacency_iterator, 
+    typename reverse_graph<BidirectionalGraph>::adjacency_iterator>
+adjacent_vertices(const typename BidirectionalGraph::vertex_descriptor u,
+                  const reverse_graph<BidirectionalGraph>& g)
+{
+    typedef reverse_graph<BidirectionalGraph> Graph;
+    typename Graph::out_edge_iterator first, last;
+    tie(first, last) = out_edges(u, g);
+    typedef typename Graph::adjacency_iterator adjacency_iterator;
+    return std::make_pair(adjacency_iterator(first, const_cast<Graph*>(&g)),
+                          adjacency_iterator(last, const_cast<Graph*>(&g)));
 }
 
 template <class BidirectionalGraph>
