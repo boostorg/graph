@@ -49,22 +49,23 @@ namespace boost {
       function_requires<ReadWritePropertyMapConcept<VertexColorMap,Vertex> >();
       function_requires<ReadWritePropertyMapConcept<EdgeColorMap,Edge> >();
       typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+      typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
       function_requires< ColorValueConcept<ColorValue> >();
+      function_requires< ColorValueConcept<EColorValue> >();
       typedef color_traits<ColorValue> Color;
+      typedef color_traits<EColorValue> EColor;
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
 
       put(vertex_color, u, Color::gray());   vis.discover_vertex(u, g);
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
-        ColorValue v_color = get(vertex_color, v),
-	  uv_color = get(edge_color, *ei);
-	if (uv_color == Color::white())
-          put(edge_color, *ei, Color::black());
+        ColorValue v_color = get(vertex_color, v);
         if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
+          put(edge_color, *ei, EColor::black());
           undir_dfv_impl(g, v, vis, vertex_color, edge_color);
-        } else if (v_color == Color::gray() && uv_color == Color::white())
+        } else if (v_color == Color::gray()
+		   && get(edge_color, *ei) == EColor::white())
                                              vis.back_edge(*ei, g);
-        else                                 vis.forward_or_cross_edge(*ei, g);
       }
       put(vertex_color, u, Color::black());  vis.finish_vertex(u, g);
     }
