@@ -38,6 +38,8 @@ test-suite graph :
 
     [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run layout_test.cpp ]
+
     [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
 
     [ run subgraph.cpp <lib>../../test/build/boost_test_exec_monitor 

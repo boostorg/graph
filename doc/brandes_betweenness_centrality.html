@@ -126,34 +126,6 @@ IN: <tt>const Graph&amp; g</tt>
   <a href="VertexListGraph.html">Vertex List Graph</a>
   and <a href="IncidenceGraph.html">Incidence Graph</a>.
 </blockquote>
-
-OUT/UTIL: <tt>CentralityMap centrality_map</tt>
-<blockquote>
-  This property map is used to accumulate the betweenness centrality
-  of each vertex, and is the primary output of the algorithm. The type
-  <tt>CentralityMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>, with the graph's vertex descriptor type as its key
-  type. The value type of this property map should be a floating-point
-  or rational type.
-
-  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
-  work to compute and returns no answer.
-</blockquote>
-
-OUT/UTIL: <tt>EdgeCentralityMap edge_centrality</tt>
-<blockquote>
-  This property map is used to accumulate the betweenness centrality
-  of each edge, and is a secondary form of output for the
-  algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>, with the graph's edge descriptor type as its key
-  type. The value type of this property map should be the same as the
-  value type of the <tt>CentralityMap</tt> property map.
-
-  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
-  work to compute and returns no answer.
-</blockquote>
     
 UTIL: <tt>IncomingMap incoming</tt> 
 <blockquote>
@@ -218,7 +190,7 @@ UTIL: <tt>PathCountMap path_count</tt>
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the dependency map. The value type of
   the dependency map must be an integral type large enough to store
-  the number of paths in the graph.
+  the number of paths in the graph.<br>
 
   <b>Default:</b> <a
   href="../../property_map/iterator_property_map.html">
@@ -229,6 +201,34 @@ UTIL: <tt>PathCountMap path_count</tt>
 </blockquote>
 
 <h3>Named parameters</h3>
+OUT/UTIL: <tt>CentralityMap centrality_map</tt>
+<blockquote>
+  This property map is used to accumulate the betweenness centrality
+  of each vertex, and is the primary output of the algorithm. The type
+  <tt>CentralityMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>, with the graph's vertex descriptor type as its key
+  type. The value type of this property map should be a floating-point
+  or rational type.<br>
+
+  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
+  work to compute and returns no answer.
+</blockquote>
+
+OUT/UTIL: <tt>EdgeCentralityMap edge_centrality</tt>
+<blockquote>
+  This property map is used to accumulate the betweenness centrality
+  of each edge, and is a secondary form of output for the
+  algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>, with the graph's edge descriptor type as its key
+  type. The value type of this property map should be the same as the
+  value type of the <tt>CentralityMap</tt> property map.<br>
+
+  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
+  work to compute and returns no answer.
+</blockquote>
+
 IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt> 
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
@@ -267,6 +267,6 @@ is <em>O(VE)</em>.
 <A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University
 </TD></TR></TABLE>
 <!-- Created: Fri Jun  4 16:42:50 EST 2004 -->
-<!-- hhmts start -->Last modified: Sat Jul 31 15:53:55 EST 2004 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Sat Jul 31 16:16:51 EST 2004 <!-- hhmts end -->
   </body>
 </html>
