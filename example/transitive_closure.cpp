@@ -14,20 +14,34 @@
 int main(int, char*[])
 {
   using namespace boost;
-  char name[] = "abcd";
-  GraphvizDigraph G;
-  read_graphviz("tc.dot", G);
+  typedef property<vertex_name_t, char> Name;
+  typedef property<vertex_index_t, std::size_t,
+    Name> Index;
+  typedef adjacency_list<listS, listS, directedS, Index> graph_t;
+  typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
+  graph_t G;
+  std::vector<vertex_t> verts(4);
+  for (int i = 0; i < 4; ++i)
+    verts[i] = add_vertex(Index(i, Name('a' + i)), G);
+  add_edge(verts[1], verts[2], G);
+  add_edge(verts[1], verts[3], G);
+  add_edge(verts[2], verts[1], G);
+  add_edge(verts[3], verts[2], G);
+  add_edge(verts[3], verts[0], G);
 
   std::cout << "Graph G:" << std::endl;
-  print_graph(G, name);
+  print_graph(G, get(vertex_name, G));
 
-  transitive_closure(G);
+  adjacency_list<> TC;
+  transitive_closure(G, TC);
 
   std::cout << std::endl << "Graph G*:" << std::endl;
-  print_graph(G, name);
+  char name[] = "abcd";
+  print_graph(TC, name);
   std::cout << std::endl;
 
-  write_graphviz("tc-out.dot", G);
+  std::ofstream out("tc-out.dot");
+  write_graphviz(out, TC, make_label_writer(name));
 
   return 0;
 }
