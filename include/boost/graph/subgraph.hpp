@@ -665,10 +665,10 @@ namespace boost {
   // Functions required by the PropertyGraph concept 
 
   template <typename GraphPtr, typename PropertyMap>
-  class subgraph_property_map 
+  class subgraph_global_property_map 
     : public put_get_helper< 
         typename property_traits<PropertyMap>::reference,
-        subgraph_property_map<GraphPtr, PropertyMap> >
+        subgraph_global_property_map<GraphPtr, PropertyMap> >
   {
     typedef property_traits<PropertyMap> Traits;
   public:
@@ -677,9 +677,9 @@ namespace boost {
     typedef typename Traits::key_type key_type;
     typedef typename Traits::reference reference;
 
-    subgraph_property_map() { }
+    subgraph_global_property_map() { }
 
-    subgraph_property_map(GraphPtr g, PropertyMap pmap)
+    subgraph_global_property_map(GraphPtr g, PropertyMap pmap)
       : m_g(g), m_pmap(pmap) { }
     
     inline reference operator[](key_type e_local) const {
@@ -692,10 +692,35 @@ namespace boost {
     PropertyMap m_pmap;
   };
 
+  template <typename GraphPtr, typename PropertyMap>
+  class subgraph_local_property_map 
+    : public put_get_helper< 
+        typename property_traits<PropertyMap>::reference,
+        subgraph_local_property_map<GraphPtr, PropertyMap> >
+  {
+    typedef property_traits<PropertyMap> Traits;
+  public:
+    typedef typename Traits::category category;
+    typedef typename Traits::value_type value_type;
+    typedef typename Traits::key_type key_type;
+    typedef typename Traits::reference reference;
+
+    subgraph_local_property_map() { }
+
+    subgraph_local_property_map(GraphPtr g, PropertyMap pmap)
+      : m_g(g), m_pmap(pmap) { }
+    
+    inline reference operator[](key_type e_local) const {
+      return m_pmap[e_local];
+    }
+    GraphPtr m_g;
+    PropertyMap m_pmap;
+  };
+
   namespace detail {
 
-    struct subgraph_property_generator {
-      template <class SubGraph, class Property, class Tag>
+    struct subgraph_any_pmap {
+      template <class Tag, class SubGraph, class Property>
       class bind_ {
         typedef typename SubGraph::graph_type Graph;
         typedef SubGraph* SubGraphPtr;
@@ -703,9 +728,46 @@ namespace boost {
         typedef typename property_map<Graph, Tag>::type PMap;
         typedef typename property_map<Graph, Tag>::const_type const_PMap;
       public:   
-        typedef subgraph_property_map<SubGraphPtr, PMap> type;
-        typedef subgraph_property_map<const_SubGraphPtr, const_PMap> 
+        typedef subgraph_global_property_map<SubGraphPtr, PMap> type;
+        typedef subgraph_global_property_map<const_SubGraphPtr, const_PMap> 
           const_type;
+      };
+    };
+    struct subgraph_id_pmap {
+      template <class Tag, class SubGraph, class Property>
+      struct bind_ {
+        typedef typename SubGraph::graph_type Graph;
+        typedef SubGraph* SubGraphPtr;
+        typedef const SubGraph* const_SubGraphPtr;
+        typedef typename property_map<Graph, Tag>::type PMap;
+        typedef typename property_map<Graph, Tag>::const_type const_PMap;
+      public:   
+        typedef subgraph_local_property_map<SubGraphPtr, PMap> type;
+        typedef subgraph_local_property_map<const_SubGraphPtr, const_PMap> 
+          const_type;
+      };
+    };
+    template <class Tag>
+    struct subgraph_choose_pmap_helper {
+      typedef subgraph_any_pmap type;
+    };
+    template <>
+    struct subgraph_choose_pmap_helper<vertex_index_t> {
+      typedef subgraph_id_pmap type;
+    };
+    template <class Tag, class Graph, class Property>
+    struct subgraph_choose_pmap {
+      typedef typename subgraph_choose_pmap_helper<Tag>::type Helper;
+      typedef typename Helper::template bind_<Tag, Graph, Property> Bind;
+      typedef typename Bind::type type;
+      typedef typename Bind::const_type const_type;
+    };
+    struct subgraph_property_generator {
+      template <class SubGraph, class Property, class Tag>
+      class bind_ {
+	typedef subgraph_choose_pmap<Tag, SubGraph, Property> Choice;
+        typedef typename Choice::type type;
+        typedef typename Choice::const_type const_type;	
       };
     };
 
