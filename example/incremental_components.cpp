@@ -74,10 +74,8 @@ int main(int , char* [])
 
   std::vector<size_type> rank(num_vertices(G));
   std::vector<Vertex> parent(num_vertices(G));
-  // VC++ version of std::vector has no ::pointer, so
-  // I use ::value_type* instead.
-  typedef std::vector<size_type>::value_type* Rank;
-  typedef std::vector<Vertex>::value_type* Parent;
+  typedef size_type* Rank;
+  typedef Vertex* Parent;
   disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
   initialize_incremental_components(G, ds);
