@@ -136,7 +136,8 @@ namespace boost {
                           detail::error_property_not_found)
     {
       typedef typename graph_traits<Graph>::vertices_size_type size_type;
-      std::vector<size_type> time_vec(num_vertices(g));
+      size_type	n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+      std::vector<size_type> time_vec(n);
       return strong_components_impl
         (g, comp, r_map,
          make_iterator_property_map(time_vec.begin(), choose_const_pmap
@@ -165,7 +166,9 @@ namespace boost {
                           detail::error_property_not_found)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      std::vector<Vertex> root_vec(num_vertices(g));
+      typename std::vector<Vertex>::size_type
+	n = num_vertices(g) > 0 ? num_vertices(g) : 1;
+      std::vector<Vertex> root_vec(n);
       return strong_comp_dispatch2
         (g, comp, 
          make_iterator_property_map(root_vec.begin(), choose_const_pmap
