@@ -209,7 +209,10 @@ class basic_graph
 
   basic_graph();
   basic_graph(const std::string& filename, graph_file_kind kind); 
-  
+
+  bool is_directed() const
+  { return is_convertible<directed_category, directed_tag>::value; }
+
   Vertex add_vertex();
   void clear_vertex(Vertex vertex);
   void remove_vertex(Vertex vertex);

@@ -493,6 +493,7 @@ void export_basic_graph(const char* name)
       class_<basic_graph<DirectedS> >(name)
         // Constructors
         .def(init<std::string, graph_file_kind>())
+        .def("is_directed", &Graph::is_directed)
         // Vertex List Graph concept
         .def("num_vertices", &Graph::num_vertices)
         .add_property("vertices", range(&Graph::vertices_begin, 
