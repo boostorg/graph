@@ -74,6 +74,9 @@ test-suite graph :
 
     [ run biconnected_components_test.cpp ]
 
+    [ run cuthill_mckee_ordering.cpp ]
+
+    [ run king_ordering.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
