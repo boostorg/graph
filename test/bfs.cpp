@@ -41,7 +41,7 @@ class bfs_testing_visitor
 public:
 
   bfs_testing_visitor(Vertex s, DistanceMap d, ParentMap p, ColorMap c)
-    : current_distance(0), distance(d) , parent(p), color(c), src(s) { }
+    : current_distance(0), distance(d), parent(p), color(c), src(s) { }
 
   void initialize_vertex(const Vertex& u, const Graph& ) const {
     BOOST_TEST_ASSERT(get(color, u) == Color::white());
@@ -110,8 +110,8 @@ private:
   mutable Vertex current_vertex;
   mutable typename boost::property_traits<DistanceMap>::value_type 
     current_distance;
-  ParentMap parent;
   DistanceMap distance;
+  ParentMap parent;
   ColorMap color;
   Vertex src;
 };
@@ -129,7 +129,7 @@ struct bfs_test
 
     vertices_size_type i;
     Traits::edges_size_type j;
-    Traits::vertex_iterator vi, vi_end, ui, ui_end;
+    Traits::vertex_iterator ui, ui_end;
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
@@ -150,7 +150,7 @@ struct bfs_test
         // Create the testing visitor.
         bfs_testing_visitor<int*,vertex_descriptor*,Graph,
           boost::default_color_type*> 
-          visitor(start, distance.begin(), parent.begin(), color.begin());
+          visitor(start, &distance[0], &parent[0], &color[0]);
 
         boost::breadth_first_search(g, start, visitor, &color[0]);
         
