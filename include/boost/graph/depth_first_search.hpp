@@ -70,26 +70,23 @@ namespace boost {
     {
       function_requires<IncidenceGraphConcept<IncidenceGraph> >();
       function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
+      typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
+      function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       function_requires< ColorValueConcept<ColorValue> >();
       typedef color_traits<ColorValue> Color;
-
-      put(color, u, Color::gray());
-      vis.discover_vertex(u, g);
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
+
+      put(color, u, Color::gray());          vis.discover_vertex(u, g);
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-        vis.examine_edge(*ei, g);
-        ColorValue v_color = get(color, target(*ei, g));
-        if (v_color == Color::white()) {
-          vis.tree_edge(*ei, g);
-          depth_first_visit_impl(g, target(*ei, g), vis, color);
-        } else if (v_color == Color::gray())
-          vis.back_edge(*ei, g);
-        else
-          vis.forward_or_cross_edge(*ei, g);
+        Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
+        ColorValue v_color = get(color, v);
+        if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
+          depth_first_visit_impl(g, v, vis, color);
+        } else if (v_color == Color::gray()) vis.back_edge(*ei, g);
+        else                                 vis.forward_or_cross_edge(*ei, g);
       }
-      put(color, u, Color::black());
-      vis.finish_vertex(u, g);
+      put(color, u, Color::black());         vis.finish_vertex(u, g);
     }
   } // namespace detail
 
@@ -105,19 +102,16 @@ namespace boost {
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      put(color, *ui, Color::white());
-      vis.initialize_vertex(*ui, g);
+      put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
     }
 
-    if (start_vertex != *vertices(g).first) {
-      vis.start_vertex(start_vertex, g);
+    if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
       detail::depth_first_visit_impl(g, start_vertex, vis, color);
     }
 
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(color, *ui);
-      if (u_color == Color::white()) {
-        vis.start_vertex(*ui, g);
+      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
         detail::depth_first_visit_impl(g, *ui, vis, color);
       }
     }
