@@ -3,129 +3,131 @@ subproject libs/graph/example ;
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
 
+local rule graph-test ( sources + : requirements * )
+{
+    unit-test $(sources[1]:S=) : $(sources) : $(requirements) <include>$(BOOST_ROOT) : debug <inlining>on ;
+}
 
-exe remove_edge_if_bidir : remove_edge_if_bidir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe remove_edge_if_dir : remove_edge_if_dir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe remove_edge_if_undir : remove_edge_if_undir.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe reverse-graph-eg : reverse-graph-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe roget_components : roget_components.cpp : <include>$(BOOST_ROOT) 
-  <include>$(SGB) <library-file>$(SGB)/libgb.a : debug <inlining>on ;
-exe scc : scc.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe strong_components : strong_components.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe strong-components : strong-components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe subgraph : subgraph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo-sort1 : topo-sort1.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo-sort2 : topo-sort2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo_sort : topo_sort.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo-sort-file-dep2 : topo-sort-file-dep2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo-sort-file-dep : topo-sort-file-dep.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe topo-sort-with-leda : topo-sort-with-leda.cpp : <include>$(BOOST_ROOT) 
+graph-test remove_edge_if_bidir.cpp  ;
+graph-test remove_edge_if_dir.cpp  ;
+graph-test remove_edge_if_undir.cpp  ;
+graph-test reverse-graph-eg.cpp  ;
+graph-test roget_components.cpp  :  
+  <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+graph-test scc.cpp <lib>../build/libbgl-viz ;
+graph-test strong_components.cpp <lib>../build/libbgl-viz ;
+graph-test strong-components.cpp  ;
+graph-test subgraph.cpp  ;
+graph-test topo-sort1.cpp  ;
+graph-test topo-sort2.cpp  ;
+graph-test topo_sort.cpp  ;
+graph-test topo-sort-file-dep2.cpp  ;
+graph-test topo-sort-file-dep.cpp  ;
+graph-test topo-sort-with-leda.cpp  :  
   <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
-  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a : debug <inlining>on ;
-exe topo-sort-with-sgb : topo-sort-with-sgb.cpp : <include>$(BOOST_ROOT) 
-   <include>$(SGB) <library-file>$(SGB)/libgb.a : debug <inlining>on ;
-exe transitive_closure : transitive_closure.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe transpose-example : transpose-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe undirected : undirected.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe vector-as-graph : vector-as-graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe vertex_basics : vertex_basics.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe vertex-name-property : vertex-name-property.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe visitor : visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-
-
-exe accum-compile-times : accum-compile-times.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe adjacency_list : adjacency_list.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe adjacency_list_io : adjacency_list_io.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe adjacency_matrix : adjacency_matrix.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bellman-example : bellman-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bellman-ford-internet : bellman-ford-internet.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bfs : bfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bfs-example : bfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bfs-name-printer : bfs-name-printer.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bfs_neighbor : bfs_neighbor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe biconnected_components : biconnected_components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe boost_web_graph : boost_web_graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe bucket_sorter : bucket_sorter.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe cc-internet : cc-internet.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe city_visitor : city_visitor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe components_on_edgelist : components_on_edgelist.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe connected_components : connected_components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe connected-components : connected-components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe container_gen : container_gen.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe copy-example : copy-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe cycle-file-dep2 : cycle-file-dep2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe cycle-file-dep : cycle-file-dep.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dag_shortest_paths : dag_shortest_paths.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dave : dave.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe default-constructor2 : default-constructor2.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe default-constructor : default-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dfs : dfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dfs-example : dfs-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dfs_parenthesis : dfs_parenthesis.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dfs-parenthesis : dfs-parenthesis.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe dijkstra-example : dijkstra-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge_basics : edge_basics.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge_connectivity : edge_connectivity.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge-connectivity : edge-connectivity.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge-function : edge-function.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge_iterator_constructor : edge_iterator_constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge-iter-constructor : edge-iter-constructor.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edge_property : edge_property.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe edmunds-karp-eg : edmunds-karp-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe exterior_properties : exterior_properties.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe exterior_property_map : exterior_property_map.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe family-tree-eg : family-tree-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe fibonacci_heap : fibonacci_heap.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe file_dependencies : file_dependencies.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe filtered_graph : filtered_graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe gerdemann : gerdemann.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe girth : girth.cpp : <include>$(BOOST_ROOT) <include>$(SGB) 
-  <library-file>$(SGB)/libgb.a : debug <inlining>on ;
-exe graph-assoc-types : graph-assoc-types.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe graph : graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe graph-property-iter-eg : graph-property-iter-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe graphviz : graphviz.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe incremental_components : incremental_components.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe incremental-components-eg : incremental-components-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe in_edges : in_edges.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe interior_property_map : interior_property_map.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe isomorphism : isomorphism.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe iterator-property-map-eg : iterator-property-map-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe johnson-eg : johnson-eg.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe kevin-bacon : kevin-bacon.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe knights-tour : knights-tour.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe kruskal-example : kruskal-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe kruskal-telephone : kruskal-telephone.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe last-mod-time : last-mod-time.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe leda-concept-check : leda-concept-check.cpp : <include>$(BOOST_ROOT) 
-  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a : debug <inlining>on ;
-exe leda-graph-eg : leda-graph-eg.cpp : <include>$(BOOST_ROOT) 
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test topo-sort-with-sgb.cpp  :  
+   <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+graph-test transitive_closure.cpp  ;
+graph-test transpose-example.cpp  ;
+graph-test undirected.cpp  ;
+graph-test vector-as-graph.cpp  ;
+graph-test vertex_basics.cpp  ;
+graph-test vertex-name-property.cpp  ;
+graph-test visitor.cpp  ;
+graph-test accum-compile-times.cpp  ;
+graph-test adjacency_list.cpp  ;
+graph-test adjacency_list_io.cpp  ;
+graph-test adjacency_matrix.cpp  ;
+graph-test bellman-example.cpp  ;
+graph-test bellman-ford-internet.cpp  ;
+graph-test bfs.cpp  ;
+graph-test bfs-example.cpp  ;
+graph-test bfs-name-printer.cpp  ;
+graph-test bfs_neighbor.cpp  ;
+graph-test biconnected_components.cpp  ;
+graph-test boost_web_graph.cpp  ;
+graph-test bucket_sorter.cpp  ;
+graph-test cc-internet.cpp <lib>../build/libbgl-viz ;
+graph-test city_visitor.cpp  ;
+graph-test components_on_edgelist.cpp  ;
+graph-test connected_components.cpp  ;
+graph-test connected-components.cpp  ;
+graph-test container_gen.cpp  ;
+graph-test copy-example.cpp  ;
+graph-test cuthill_mckee_ordering.cpp  ;
+graph-test cycle-file-dep2.cpp  ;
+graph-test cycle-file-dep.cpp  ;
+graph-test dag_shortest_paths.cpp  ;
+graph-test dave.cpp  ;
+graph-test default-constructor2.cpp  ;
+graph-test default-constructor.cpp  ;
+graph-test dfs.cpp  ;
+graph-test dfs-example.cpp  ;
+graph-test dfs_parenthesis.cpp <lib>../build/libbgl-viz ;
+graph-test dfs-parenthesis.cpp <lib>../build/libbgl-viz ;
+graph-test dijkstra-example.cpp  ;
+graph-test edge_basics.cpp  ;
+graph-test edge_connectivity.cpp  ;
+graph-test edge-connectivity.cpp <lib>../build/libbgl-viz ;
+graph-test edge-function.cpp  ;
+graph-test edge_iterator_constructor.cpp  ;
+graph-test edge-iter-constructor.cpp  ;
+graph-test edge_property.cpp  ;
+graph-test edmunds-karp-eg.cpp  ;
+graph-test exterior_properties.cpp  ;
+graph-test exterior_property_map.cpp  ;
+graph-test family-tree-eg.cpp  ;
+graph-test fibonacci_heap.cpp  ;
+graph-test file_dependencies.cpp  ;
+graph-test filtered_graph.cpp  ;
+graph-test gerdemann.cpp  ;
+graph-test girth.cpp  :  <include>$(SGB) 
+  <library-file>$(SGB)/libgb.a  ;
+graph-test graph-assoc-types.cpp  ;
+graph-test graph.cpp  ;
+graph-test graph-property-iter-eg.cpp  ;
+graph-test graphviz.cpp <lib>../build/libbgl-viz ;
+graph-test incremental_components.cpp  ;
+graph-test incremental-components-eg.cpp  ;
+graph-test in_edges.cpp  ;
+graph-test interior_property_map.cpp  ;
+graph-test isomorphism.cpp  ;
+graph-test iterator-property-map-eg.cpp  ;
+graph-test johnson-eg.cpp <lib>../build/libbgl-viz ;
+graph-test kevin-bacon.cpp  ;
+graph-test knights-tour.cpp  ;
+graph-test kruskal-example.cpp  ;
+graph-test kruskal-telephone.cpp <lib>../build/libbgl-viz ;
+graph-test last-mod-time.cpp  ;
+graph-test leda-concept-check.cpp  :  
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test leda-graph-eg.cpp  :  
   <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
-  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a : debug <inlining>on ;
-exe loops_dfs : loops_dfs.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe max_flow : max_flow.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe miles_span : miles_span.cpp : <include>$(BOOST_ROOT) <include>$(SGB) 
-   <library-file>$(SGB)/libgb.a : debug <inlining>on ;
-exe minimum_degree_ordering : minimum_degree_ordering.cpp iohb.c : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe min_max_paths : min_max_paths.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe modify_graph : modify_graph.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe neighbor_bfs : neighbor_bfs.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe ordered_out_edges : ordered_out_edges.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe ospf-example : ospf-example.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe parallel-compile-time : parallel-compile-time.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe prim-example : prim-example.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe prim-telephone : prim-telephone.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe print-adjacent-vertices : print-adjacent-vertices.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe print-edges : print-edges.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe print-in-edges : print-in-edges.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe print-out-edges : print-out-edges.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe property_iterator : property_iterator.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe property-map-traits-eg : property-map-traits-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe push-relabel-eg : push-relabel-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe put-get-helper-eg : put-get-helper-eg.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe quick_tour : quick_tour.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe quick-tour : quick-tour.cpp : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe reachable-loop-head : reachable-loop-head.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
-exe reachable-loop-tail : reachable-loop-tail.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) : debug <inlining>on ;
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a  ;
+graph-test loops_dfs.cpp <lib>../build/libbgl-viz ;
+graph-test max_flow.cpp  ;
+graph-test miles_span.cpp  :  <include>$(SGB) 
+   <library-file>$(SGB)/libgb.a  ;
+graph-test minimum_degree_ordering.cpp iohb.c ;
+graph-test min_max_paths.cpp  ;
+graph-test modify_graph.cpp  ;
+graph-test neighbor_bfs.cpp  ;
+graph-test ordered_out_edges.cpp  ;
+graph-test ospf-example.cpp <lib>../build/libbgl-viz ;
+graph-test parallel-compile-time.cpp  ;
+graph-test prim-example.cpp  ;
+graph-test prim-telephone.cpp <lib>../build/libbgl-viz ;
+graph-test print-adjacent-vertices.cpp  ;
+graph-test print-edges.cpp  ;
+graph-test print-in-edges.cpp  ;
+graph-test print-out-edges.cpp  ;
+graph-test property_iterator.cpp  ;
+graph-test property-map-traits-eg.cpp  ;
+graph-test push-relabel-eg.cpp  ;
+graph-test put-get-helper-eg.cpp  ;
+graph-test quick_tour.cpp  ;
+graph-test quick-tour.cpp  ;
+graph-test reachable-loop-head.cpp <lib>../build/libbgl-viz ;
+graph-test reachable-loop-tail.cpp <lib>../build/libbgl-viz ;
 
