@@ -40,6 +40,7 @@ namespace boost {
   template <class Visitor, class Graph>
   struct BellmanFordVisitorConcept {
     void constraints() {
+      function_requires< CopyConstructibleConcept<Visitor> >();
       vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
       vis.edge_not_relaxed(e, g);
