@@ -23,7 +23,10 @@
 #define BOOST_INCLUDE_MAIN
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/isomorphism.hpp>
+//#include <boost/graph/isomorphism.hpp>
+//#include <boost/graph/ddl_isomorphism.hpp>
+#include "../doc/isomorphism.hpp"
+//#include "../doc/isomorphism-v2.hpp"
 #include <boost/property_map.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/mersenne_twister.hpp>

@@ -41,7 +41,8 @@ main()
         system("rm -f graph.exe graph.o graph.obj");
         // the following system call should be replaced by a
         // portable "compile" command.
-        const char* compile = "g++ -I.. -O2 -Wall -Wno-long-long -ftemplate-depth-30 ../libs/graph/test/graph.cpp -o graph.exe";
+        //const char* compile = "g++ -I.. -O2 -Wall -Wno-long-long -ftemplate-depth-30 ../libs/graph/test/graph.cpp -o graph.exe";
+	const char* compile = "g++ -I/u/jsiek/STLport-4.5.3/stlport -L/u/jsiek/STLport-4.5.3/lib -lstlport_gcc_stldebug -lpthread -I/u/jsiek/boost -D_STLP_DEBUG ../libs/graph/test/graph.cpp -o graph.exe";
         std::cout << compile << std::endl;
         rc = system(compile);
         if (rc != 0) {
