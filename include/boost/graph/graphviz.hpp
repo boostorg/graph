@@ -47,7 +47,8 @@ namespace boost {
     static std::string delimiter() {
       return "->";
     }  };
-  
+
+  template <>  
   struct graphviz_io_traits <boost::undirected_tag> {
     static std::string name() {
       return "graph";
