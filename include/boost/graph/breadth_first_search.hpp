@@ -122,7 +122,7 @@ namespace boost {
           else
             vis.black_target(e, g);
         }
-      } // for 
+      } // for
       put(color, u, black(c));
       vis.finish_vertex(u, g);
     } // while
