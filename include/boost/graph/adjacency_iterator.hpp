@@ -101,7 +101,9 @@ namespace boost
       const Graph* m_g;
     };
 
-  template <class Graph, class Vertex, class InEdgeIter>
+  template <class Graph,
+            class Vertex = typename graph_traits<Graph>::vertex_descriptor,
+            class InEdgeIter = typename graph_traits<Graph>::in_edge_iterator>
   class inv_adjacency_iterator_generator {
     typedef typename boost::detail::iterator_traits<InEdgeIter>
       ::difference_type difference_type;
