@@ -46,7 +46,6 @@ namespace boost {
   struct DijkstraVisitorConcept {
     void constraints() {
       function_requires< CopyConstructibleConcept<Visitor> >();
-      vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
@@ -171,7 +170,6 @@ namespace boost {
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
         put(distance, *ui, init());
         put(predecessor, *ui, *ui);
-	vis.initialize(*ui, g);
       }
       put(distance, s, zero());
       
