@@ -39,7 +39,9 @@ void generate_graph(int n, double p, vector< vector<int> >& r1)
 }
 
 // (i,j) is in E' if j is reachable from i
-// This does not differentiate self edges
+// Hmm, is_reachable does not detect when there is a non-trivial path
+// from i to i. It always returns true for is_reachable(i,i).
+// This needs to be fixed/worked around.
 template <typename Graph, typename GraphTC>
 bool check_transitive_closure(Graph& g, GraphTC& tc)
 {
