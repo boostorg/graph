@@ -1,3 +1,5 @@
+#include <boost/config.hpp>
+
 #include <iostream>
 #include <vector>
 #include <set>
