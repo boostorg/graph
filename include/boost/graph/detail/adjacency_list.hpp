@@ -2508,14 +2508,43 @@ namespace boost {
 #if !defined(BOOST_NO_HASH) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 namespace BOOST_STD_EXTENSION_NAMESPACE {
 
-  template <typename V, typename P>
-  struct hash< boost::detail::stored_edge_property <V,P> > 
+  template <>
+  struct hash< void* > // Need this when vertex_descriptor=void*
   {
-    std::size_t operator()(const boost::detail::stored_edge_property<V,P>& e) const
+    std::size_t
+    operator()(void* v) const { return (std::size_t)v; }
+  };
+
+  template <typename V>
+  struct hash< boost::detail::stored_edge<V> > 
+  {
+    std::size_t
+    operator()(const boost::detail::stored_edge<V>& e) const
     {
       return hash<V>()(e.m_target);
     }
   };
+
+  template <typename V, typename P>
+  struct hash< boost::detail::stored_edge_property <V,P> > 
+  {
+    std::size_t
+    operator()(const boost::detail::stored_edge_property<V,P>& e) const
+    {
+      return hash<V>()(e.m_target);
+    }
+  };
+
+  template <typename V, typename I, typename P>
+  struct hash< boost::detail::stored_edge_iter<V,I, P> > 
+  {
+    std::size_t
+    operator()(const boost::detail::stored_edge_iter<V,I,P>& e) const
+    {
+      return hash<V>()(e.m_target);
+    }
+  };
+
 }
 #endif
 
