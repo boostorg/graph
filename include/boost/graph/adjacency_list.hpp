@@ -83,7 +83,7 @@ namespace boost {
 #if !defined BOOST_NO_SLIST
   template <class ValueType>
   struct container_gen<slistS, ValueType> {
-    typedef std::slist<ValueType> type;
+    typedef BOOST_STD_EXTENSION_NAMESPACE::slist<ValueType> type;
   };
 #endif
   template <class ValueType>
@@ -104,12 +104,12 @@ namespace boost {
 #if !defined BOOST_NO_HASH
   template <class ValueType>
   struct container_gen<hash_mapS, ValueType> {
-    typedef std::hash_set<ValueType> type;
+    typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<ValueType> type;
   };
 
   template <class ValueType>
   struct container_gen<hash_setS, ValueType> {
-    typedef std::hash_set<ValueType> type;
+    typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<ValueType> type;
   };
 #endif
 
