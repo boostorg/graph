@@ -30,6 +30,10 @@
 
 namespace boost {
 
+  struct distance_compare_t { enum { num = detail::distance_compare_num }; };
+  struct distance_combine_t { enum { num = detail::distance_combine_num};  };
+  struct distance_init_t { enum { num = detail::distance_init_num }; };
+
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params : public Base
   {
@@ -37,8 +41,8 @@ namespace boost {
     typedef Base next_type;
     typedef Tag tag_type;
     typedef T value_type;
-    bgl_named_params(const T& v) : m_value(v) { }
-    bgl_named_params(const T& v, const Base& b) : Base(b), m_value(v) { }
+    bgl_named_params(T v) : m_value(v) { }
+    bgl_named_params(T v, const Base& b) : Base(b), m_value(v) { }
     T m_value;
 
     template <typename WeightMap>
@@ -76,32 +80,53 @@ namespace boost {
       return Params(vis, *this);
     }
 
+    template <typename Compare>
+    bgl_named_params<Compare, distance_compare_t, self>
+    distance_compare(const Compare& cmp) {
+      typedef bgl_named_params<Compare, distance_compare_t, self> Params;
+      return Params(cmp, *this);
+    }
+
+    template <typename Combine>
+    bgl_named_params<Combine, distance_combine_t, self>
+    distance_combine(const Combine& cmb) {
+      typedef bgl_named_params<Combine, distance_combine_t, self> Params;
+      return Params(cmb, *this);
+    }
+
+    template <typename Init>
+    bgl_named_params<Init, distance_init_t, self>
+    distance_init(const Init& init) {
+      typedef bgl_named_params<Init, distance_init_t, self> Params;
+      return Params(init, *this);
+    }
+
   };
 
   template <typename WeightMap>
   bgl_named_params<WeightMap, edge_weight_t>
-  weight_map(const WeightMap& pmap) {
+  weight_map(WeightMap pmap) {
     typedef bgl_named_params<WeightMap, edge_weight_t> Params;
     return Params(pmap);
   }
 
   template <typename DistanceMap>
   bgl_named_params<DistanceMap, vertex_distance_t>
-  distance_map(const DistanceMap& pmap) {
+  distance_map(DistanceMap pmap) {
     typedef bgl_named_params<DistanceMap, vertex_distance_t> Params;
     return Params(pmap);
   }
 
   template <typename ColorMap>
   bgl_named_params<ColorMap, vertex_color_t>
-  color_map(const ColorMap& pmap) {
+  color_map(ColorMap pmap) {
     typedef bgl_named_params<ColorMap, vertex_color_t> Params;
     return Params(pmap);
   }
 
   template <typename IndexMap>
   bgl_named_params<IndexMap, vertex_index_t>
-  vertex_index_map(const IndexMap& pmap) {
+  vertex_index_map(IndexMap pmap) {
     typedef bgl_named_params<IndexMap, vertex_index_t> Params;
     return Params(pmap);
   }
@@ -113,6 +138,26 @@ namespace boost {
     return Params(vis);
   }
 
+  template <typename Compare>
+  bgl_named_params<Compare, distance_compare_t>
+  distance_compare(const Compare& cmp) {
+    typedef bgl_named_params<Compare, distance_compare_t> Params;
+    return Params(cmp);
+  }
+
+  template <typename Combine>
+  bgl_named_params<Combine, distance_combine_t>
+  distance_combine(const Combine& cmb) {
+    typedef bgl_named_params<Combine, distance_combine_t> Params;
+    return Params(cmb);
+  }
+
+  template <typename Init>
+  bgl_named_params<Init, distance_init_t>
+  distance_init(const Init& init) {
+    typedef bgl_named_params<Init, distance_init_t> Params;
+    return Params(init);
+  }
 
   //===========================================================================
   // Functions for extracting parameters from bgl_named_params
@@ -145,24 +190,79 @@ namespace boost {
   inline bool is_default_param(const detail::error_property_not_found&)
     { return true; }
 
+  namespace detail {
+
+    struct choose_parameter {
+      template <class P, class Graph, class Tag>
+      struct bind {
+	typedef const P& const_result_type;
+	typedef P& result_type;
+	static const_result_type apply(const P& p, const Graph&, Tag&)
+	{ return p; }
+	static result_type apply(P& p, Graph&, Tag&)
+	{ return p; }
+      };
+    };
+    struct choose_default_param {
+      template <class P, class Graph, class Tag>
+      struct bind {
+	typedef typename property_map<Graph, Tag>::type 
+	  result_type;
+	typedef typename property_map<Graph, Tag>::const_type 
+	  const_result_type;
+
+	static const_result_type
+	apply(const P& p, const Graph& g, Tag tag) { 
+	  return get(tag, g); 
+	}
+
+	static result_type
+	apply(const P& p, Graph& g, Tag tag) { 
+	  return get(tag, g); 
+	}
+      };
+    };
+
+    template <class Param>
+    struct choose_property_map {
+      typedef choose_parameter type;
+    };
+    template <>
+    struct choose_property_map<detail::error_property_not_found> {
+      typedef choose_default_param type;
+    };
+
+    template <class Param, class Graph, class Tag>
+    struct choose_pmap_helper {
+      typedef typename choose_property_map<Param>::type Selector;
+      typedef typename Selector:: template bind<Param, Graph, Tag> type;
+      typedef typename type::result_type result_type;
+      typedef typename type::const_result_type const_result_type;
+    };
+
+  } // namespace detail
+  
+
   // Use this function instead of choose_param() when you want
   // to avoid requiring get(tag, g) when it is not used. 
-  template <typename Graph, typename PropertyTag>
-  typename property_map<Graph, PropertyTag>::const_type
-  choose_pmap(const detail::error_property_not_found&, 
-	      const Graph& g, PropertyTag tag)
-    { return get(tag, g); }
+  template <typename Param, typename Graph, typename PropertyTag>
+  typename
+    detail::choose_pmap_helper<Param,Graph,PropertyTag>::const_result_type
+  choose_pmap(const Param& p, const Graph& g, PropertyTag tag)
+  { 
+    typedef typename 
+      detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
+    return Choice::apply(p, g, tag);
+  }
 
-  template <typename Graph, typename PropertyTag>
-  typename property_map<Graph, PropertyTag>::type
-  choose_pmap(const detail::error_property_not_found&, 
-	      Graph& g, PropertyTag tag)
-    { return get(tag, g); }
-
-  template <class P, class Graph, class Tag> 
-  const P&
-  choose_pmap(const P& param, const Graph&, Tag) { return param; }
-
+  template <typename Param, typename Graph, typename PropertyTag>
+  typename detail::choose_pmap_helper<Param,Graph,PropertyTag>::result_type
+  choose_pmap(Param& p, Graph& g, PropertyTag tag)
+  { 
+    typedef typename 
+      detail::choose_pmap_helper<Param,Graph,PropertyTag>::type Choice;
+    return Choice::apply(p, g, tag);
+  }
 
 } // namespace boost
 
