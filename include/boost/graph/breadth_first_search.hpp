@@ -46,7 +46,7 @@ namespace boost {
       vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
       vis.tree_edge(e, g);
-      vis.cycle_edge(e, g);
+      vis.non_tree_edge(e, g);
       vis.gray_target(e, g);
       vis.black_target(e, g);
       vis.finish_vertex(u, g);
@@ -117,7 +117,7 @@ namespace boost {
           vis.discover_vertex(v, g);
           Q.push(v);
         } else {
-          vis.cycle_edge(e, g);
+          vis.non_tree_edge(e, g);
 
           if (get(color, v) == gray(c))
             vis.gray_target(e, g);
@@ -156,8 +156,8 @@ namespace boost {
       invoke_visitors(m_vis, e, g, on_tree_edge());      
     }
     template <class Edge, class Graph>
-    void cycle_edge(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_cycle_edge());
+    void non_tree_edge(Edge e, Graph& g) {
+      invoke_visitors(m_vis, e, g, on_non_tree_edge());
     }
     template <class Edge, class Graph>
     void gray_target(Edge e, Graph& g) {

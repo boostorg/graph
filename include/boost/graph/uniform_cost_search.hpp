@@ -146,7 +146,7 @@ namespace boost {
           m_vis.edge_not_relaxed(e, g);
       }
       template <class Edge, class Graph>
-      void cycle_edge(Edge, Graph&) { }
+      void non_tree_edge(Edge, Graph&) { }
 
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
