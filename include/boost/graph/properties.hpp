@@ -43,7 +43,7 @@ namespace boost {
     static default_color_type red() { return red_color; }
     static default_color_type black() { return black_color; }
   };
-
+  
   // These functions are now obsolete, replaced by color_traits.
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
@@ -93,6 +93,7 @@ namespace boost {
   BOOST_DEF_PROPERTY(edge, name);
   BOOST_DEF_PROPERTY(edge, weight);
   BOOST_DEF_PROPERTY(edge, weight2);
+  BOOST_DEF_PROPERTY(edge, color);
   BOOST_DEF_PROPERTY(vertex, name);
   BOOST_DEF_PROPERTY(graph, name);
   BOOST_DEF_PROPERTY(vertex, distance);
