@@ -68,6 +68,9 @@ namespace boost {
     typedef typename integer_range<V>::iterator vertex_iterator;
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
+    typedef typename std::vector<EdgeList>::size_type vertices_size_type;
+    typedef void edges_size_type;
+    typedef typename EdgeList::size_type degree_size_type;
   };
 }
 #endif
@@ -133,22 +136,20 @@ namespace boost {
   }
 
   template <class EdgeList, class Alloc>
+  typename EdgeList::size_type
+  out_degree(typename EdgeList::value_type v, 
+             const std::vector<EdgeList, Alloc>& g)
+  {
+    return g[v].size();
+  }
+
+  template <class EdgeList, class Alloc>
   std::pair<typename EdgeList::const_iterator,
             typename EdgeList::const_iterator>
   adjacent_vertices(typename EdgeList::value_type v, 
                     const std::vector<EdgeList, Alloc>& g)
   {
     return std::make_pair(g[v].begin(), g[v].end());
-  }
-
-  // deprecated
-  template <class EdgeList, class Alloc>
-  std::pair<typename EdgeList::const_iterator,
-            typename EdgeList::const_iterator>
-  adj(typename EdgeList::value_type v, 
-      const std::vector<EdgeList, Alloc>& g)
-  {
-    return adjacent_vertices(v, g);
   }
 
   // source() and target() already provided for pairs in graph_traits.hpp
@@ -163,6 +164,13 @@ namespace boost {
     typedef typename boost::integer_range<typename EdgeList::value_type>
       ::iterator Iter;
     return std::make_pair(Iter(0), Iter(v.size()));
+  }
+
+  template <class EdgeList, class Alloc>
+  typename std::vector<EdgeList, Alloc>::size_type
+  num_vertices(const std::vector<EdgeList, Alloc>& v)
+  {
+    return v.size();
   }
 
 } // namespace boost
