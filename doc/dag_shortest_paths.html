@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: Dijkstra's Shortest Paths</Title>
+<Title>Boost Graph Library: Directed Acyclic Graph Shortest Paths</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -19,50 +19,47 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:dijkstra"></A>
-<TT>dijkstra_shortest_paths</TT>
+<H1><A NAME="sec:dag_shortest_paths"></A>
+<TT>dag_shortest_paths</TT>
 </H1>
 
 
 <P>
 <PRE>
 <i>// named paramter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
-void
-dijkstra_shortest_paths(VertexListGraph&amp; g,
-  typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
+template &lt;class VertexListGraph, class Param, class Tag, class Rest&gt;
+void dag_shortest_paths(const VertexListGraph&amp; g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params)
 
 <i>// non-named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
-	  class PredecessorMap, class DistanceMap,
-	  class WeightMap, class IndexMap, class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Compare</a>, class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">Combine</a>, 
+template &lt;class VertexListGraph, class DijkstraVisitor, 
+	  class DistanceMap, class WeightMap, class ColorMap, 
+	  class PredecessorMap,
+	  class Compare, class Combine, 
 	  class DistInf, class DistZero&gt;
-void dijkstra_shortest_paths
-  (const VertexListGraph&amp; g,
+void dag_shortest_paths(const VertexListGraph&amp; g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
-   IndexMap index_map,
-   Compare compare, Combine combine, DistInf inf, DistZero zero,
-   DijkstraVisitor vis)
+   DistanceMap distance, WeightMap weight, ColorMap color,
+   PredecessorMap pred, DijkstraVisitor vis, 
+   Compare compare, Combine combine, DistInf inf, DistZero zero)
 </PRE>
 
 <P>
-This algorithm&nbsp;[<A HREF="bibliography.html#dijkstra59">10</A>,<A
-HREF="bibliography.html#clr90">8</A>] solves the single-source
-shortest-paths problem on a weighted, directed or undirected graph for
-the case where all edge weights are nonnegative.  Use the Bellman-Ford
-algorithm for the case when some edge weights are negative.  Use
-breadth-first search instead of Dijkstra's algorithm when all edge
-weights are equal to one.  For the definition of the shortest-path
-problem see Section <A
+This algorithm&nbsp;[<A HREF="bibliography.html#clr90">8</A>] solves
+the single-source shortest-paths problem on a weighted, directed 
+acyclic graph (DAG). This algorithm is more efficient for DAG's
+than either the Dijkstra or Bellman-Ford algorithm.
+Use breadth-first search instead of this algorithm
+when all edge weights are equal to one.  For the definition of the
+shortest-path problem see Section <A
 HREF="graph_theory_review.html#sec:shortest-path-algorithms">Shortest-Paths
 Algorithms</A> for some background to the shortest-path problem.
 </P>
 
 <P>
 There are two main options for obtaining output from the
-<tt>dijkstra_shortest_paths()</tt> function. If you provide a
+<tt>dag_shortest_paths()</tt> function. If you provide a
 distance property map through the <tt>distance_map()</tt> parameter
 then the shortest distance from the source vertex to every other
 vertex in the graph will be recorded in the distance map. Also you can
@@ -74,108 +71,9 @@ addition to these two options, the user can provide there own
 custom-made visitor that can takes actions during any of the
 algorithm's event points.</P>
 
-<P>
-Dijkstra's algorithm finds all the shortest paths from the source
-vertex to every other vertex by iteratively ``growing'' the set of
-vertices <i>S</i> to which it knows the shortest path. At each step of
-the algorithm, the next vertex added to <i>S</i> is determined by a
-priority queue.  The queue contains the vertices in <i>V - S</i><a
-href="#1">[1]</a> prioritized by their distance label, which is the
-length of the shortest path seen so far for each vertex. The vertex
-<i>u</i> at the top of the priority queue is then added to <i>S</i>,
-and each of its out-edges is relaxed: if the distance to <i>u</i> plus
-the weight of the out-edge <i>(u,v)</i> is less than the distance
-label for <i>v</i> then the estimated distance for vertex <i>v</i> is
-reduced.  The algorithm then loops back, processing the next vertex at
-the top of the priority queue. The algorithm finishes when the
-priority queue is empty.
-</P>
-<P>
-The algorithm uses color markers (white, gray, and black) to keep
-track of which set each vertex is in. Vertices colored black are in
-<i>S</i>. Vertices colored white or gray are in <i>V-S</i>. White vertices have
-not yet been discovered and gray vertices are in the priority queue.
-By default, the algorithm will allocate an array to store a color
-marker for each vertex in the graph. You can provide you own storage
-and access for colors with the <tt>color_map()</tt> parameter.
-</P>
-<p>
-The following is the pseudo-code for Dijkstra's single-source shortest
-paths algorithm. <i>w</i> is the edge weight, <i>d</i> is the distance label,
-and <i>p</i> is the predecessor of each vertex which is used to encode
-the shortest paths tree. <i>Q</i> is a priority queue that supports the
-DECREASE-KEY operation.  The visitor event points for the algorithm are
-indicated by the labels on the right.
-</p>
-
-<table>
-<tr>
-<td valign="top">
-<pre>
-DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u in V</i>
-    <i>d[u] := infinity</i> 
-    <i>p[u] := u</i> 
-    <i>color[u] :=</i> WHITE
-  <b>end for</b>
-  <i>color[s] := </i>GRAY 
-  <i>d[s] := 0</i> 
-  INSERT(<i>Q</i>, <i>s</i>)
-  <b>while</b> (<i>Q != &Oslash;</i>)
-    <i>u :=</i> EXTRACT-MIN(<i>Q</i>)
-    <i>S := S U { u }</i>
-    <b>for</b> each vertex <i>v in Adj[u]</i>
-      <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>)
-        <i>d[v] := w(u,v) + d[u]</i>
-        <i>p[v] := u</i> 
-        <b>if</b> (<i>color[v] =</i> WHITE) 
-          <i>color[v] :=</i> GRAY
-          INSERT(<i>Q</i>, <i>v</i>) 
-        <b>else if</b> (<i>color[v] =</i> GRAY)
-          DECREASE-KEY(<i>Q</i>, <i>v</i>)
-      <b>else</b>
-        <i>...</i>
-    <b>end for</b>
-    <i>color[u] :=</i> BLACK
-  <b>end while</b>
-  return (<i>d</i>, <i>p</i>)
-</pre>
-</td>
-<td valign="top">
-<pre>
-
-initialize vertex <i>u</i>
-
-
-
-
-
-
-discover vertex <i>s</i>
-
-examine vertex <i>u</i>
-
-examine edge <i>(u,v)</i>
-
-edge <i>(u,v)</i> relaxed
-
-
-
-discover vertex <i>v</i>
-
-
-
-edge <i>(u,v)</i> not relaxed
-
-finish vertex <i>u</i>
-</pre>
-</td>
-</tr>
-</table>
-
 <h3>Where Defined</h3>
 
-<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
+<a href="../../../boost/graph/dag_shortest_paths.hpp"><tt>boost/graph/dag_shortest_paths.hpp</tt></a>
 
 <h3>Parameters</h3>
 
@@ -327,7 +225,7 @@ OUT: <tt>visitor(DijkstraVisitor v)</tt>
   The type <tt>DijkstraVisitor</tt> must be a model of the
   <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept. 
  The visitor object is passed by value <a
-  href="#2">[2]</a>.<br>
+  href="#1">[1]</a>.<br>
   <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt>
 </blockquote>
 
@@ -335,8 +233,7 @@ OUT: <tt>visitor(DijkstraVisitor v)</tt>
 <H3>Complexity</H3>
 
 <P>
-The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i>
-if all vertices are reachable from the source.
+The time complexity is <i>O(V + E)</i>.
 
 <h3>Visitor Event Points</h3>
 
@@ -345,8 +242,8 @@ if all vertices are reachable from the source.
   is invoked on each vertex in the graph before the start of the
   algorithm.
 <li><b><tt>vis.examine_vertex(u, g)</tt></b>
-  is invoked on a vertex as it is removed from the priority queue
-  and added to set <i>S</i>. At this point we know that <i>(p[u],u)</i>
+  is invoked on a vertex as it is added to set <i>S</i>. 
+  At this point we know that <i>(p[u],u)</i>
   is a shortest-paths tree edge so 
   <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
   of the examined vertices is monotonically increasing
@@ -362,8 +259,7 @@ if all vertices are reachable from the source.
   is invoked on vertex <i>v</i> when the edge 
   <i>(u,v)</i> is examined and <i>v</i> is WHITE. Since
   a vertex is colored GRAY when it is discovered,
-  each reacable vertex is discovered exactly once. This
-  is also when the vertex is inserted into the priority queue.
+  each reacable vertex is discovered exactly once.
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
   is invoked if the edge is not relaxed (see above).
 <li><b><tt>vis.finish_vertex(u, g)</tt></b>
@@ -374,19 +270,13 @@ if all vertices are reachable from the source.
 <H3>Example</H3>
 
 <P>
-See <a href="../example/dijkstra-example.cpp">
-<TT>example/dijkstra-example.cpp</TT></a> for an example of using Dijkstra's
+See <a href="../example/dag_shortest_paths.cpp">
+<TT>example/dag_shortest_paths.cpp</TT></a> for an example of using this
 algorithm.
 
 <H3>Notes</H3>
 
-<a name="1">[1]</a>
-The algorithm used here saves a little space by not putting all <i>V -
-S</i> vertices in the priority queue at once, but instead only those
-vertices in <i>V - S</i> that are discovered and therefore have a
-distance less than infinity.
-
-<p><a name="2">[2]</a> 
+<p><a name="1">[1]</a> 
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -403,3 +293,4 @@ distance less than infinity.
 
 </BODY>
 </HTML> 
+

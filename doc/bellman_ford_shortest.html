@@ -26,9 +26,19 @@
 
 <P>
 <PRE>
+<i>// named paramter version</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
+
+<i>// non-named parameter version</i>
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap,
+	  class PredecessorMap, class DistanceMap,
+	  class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>,
+	  class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
+bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
+  WeightMap weight, PredecessorMap pred, DistanceMap distance, 
+  BinaryFunction combine, BinaryPredicate compare, BellmanFordVisitor v)
 </PRE>
 
 <P>

@@ -56,8 +56,7 @@ int main()
   std::less<int> compare;
   closed_plus<int> combine;
   property_map<graph_t, edge_weight_t>::type w_map = get(edge_weight, g);
-  detail::dag_shortest_paths_impl
-    (g, s, d_map, w_map, &color[0], &pred[0], 
+  dag_shortest_paths(g, s, d_map, w_map, &color[0], &pred[0], 
      vis, compare, combine, std::numeric_limits<int>::max(), 0);
 #else
   dag_shortest_paths(g, s, distance_map(d_map));

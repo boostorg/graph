@@ -25,9 +25,15 @@
 
 <P>
 <PRE>
+<i>// named parameter version</i>
 template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class class P, class T, class R&gt;
 void depth_first_search(VertexListGraph&amp; G,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+<i>// non-named parameter version</i>
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
+void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap color)
+
 </PRE>
 
 <p>

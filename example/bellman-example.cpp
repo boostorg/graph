@@ -95,7 +95,7 @@ main()
   distance[z] = 0;
 
 #ifdef BOOST_MSVC
-  bool r = detail::bellman_ford_impl
+  bool r = bellman_ford_shortest_paths
     (g, int(N), weight_pmap, &parent[0], &distance[0], 
      closed_plus<int>(), std::less<int>(), default_bellman_visitor());
 #else

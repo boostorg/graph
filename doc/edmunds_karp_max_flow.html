@@ -24,13 +24,24 @@
 </H1>
 
 <PRE>
-  template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
-  typename detail::edge_capacity_value&lt;VertexListGraph, P, T, R&gt;::value_type
-  edmunds_karp_max_flow
-    (VertexListGraph& g, 
-     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor src,
-     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor sink,
-     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
+<i>// named paramter version</i>
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
+typename detail::edge_capacity_value&lt;VertexListGraph, P, T, R&gt;::value_type
+edmunds_karp_max_flow(VertexListGraph& g, 
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor src,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor sink,
+   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
+
+<i>// non-named parameter version</i>
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, 
+	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+	  class ReverseEdgeMap, class ColorMap, class PredEdgeMap&gt;
+typename property_traits&lt;CapacityEdgeMap&gt;::value_type
+edmunds_karp_max_flow(VertexListGraph&amp; g, 
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
+   CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev, 
+   ColorMap color, PredEdgeMap pred)
 </PRE>
 
 <P>

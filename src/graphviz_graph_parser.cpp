@@ -1,4 +1,3 @@
-#define GRAPHVIZ_GRAPH boost::GraphvizGraph
 
 /*  A Bison parser, made from graphviz_parser.y
     by GNU Bison version 1.28  */

@@ -26,10 +26,13 @@
 </H1>
 
 <PRE>
+<i>// named parameter version</i>
 template &lt;class VertexListGraph, class ComponentMap, class P, class T, class R&gt;
 typename property_traits&lt;ComponentMap&gt;::value_type
 connected_components(VertexListGraph&amp; G, ComponentMap comp,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+
+<i>// there is not a non-named parameter version of this function</i>
 </PRE>
 
 <P>

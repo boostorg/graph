@@ -25,15 +25,18 @@
 
 
 <PRE>
-(1)
-template &lt;class Graph1, class Graph2&gt;
-bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2)
-
-(2)
+<i>// named parameter version</i>
 template &lt;class Graph1, class Graph2, class P, class T, class R&gt;
-bool isomorphism(const Graph1&amp; g1,
-                 const Graph2&amp; g2,
-                 const bgl_named_params&lt;P,T,R&gt;&amp; params)
+bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
+                 const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>)
+
+<i>// non-named parameter version</i>
+template &lt;typename Graph1, typename Graph2, 
+	  typename IndexMapping, typename VertexInvariant,
+	  typename V1Map, typename V2Map&gt;
+bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
+		 IsoMap f, VertexInvariant invariant,
+		 VertexIndex1Map i1_map, VertexIndex2Map i2_map)
 </pre>
 
 <p>
