@@ -56,19 +56,23 @@ public:
   typedef difference_type size_type;
 
   struct children_type {
-    struct iterator { // replace with iterator_adaptor implementation -JGS
+    struct iterator
+        : std::iterator<std::bidirectional_iterator_tag, array_binary_tree_node,
+                       difference_type, array_binary_tree_node*, array_binary_tree_node&>
+    { // replace with iterator_adaptor implementation -JGS
+        
       inline iterator() : i(0), n(0) { }
       inline iterator(const iterator& x) : r(x.r), i(x.i), n(x.n), id(x.id) { }
       inline iterator& operator=(const iterator& x) {
-	r = x.r; i = x.i; n = x.n; 
-	/*egcs generate a warning*/
-	id = x.id; 
-	return *this;
+        r = x.r; i = x.i; n = x.n; 
+        /*egcs generate a warning*/
+        id = x.id; 
+        return *this;
       }
       inline iterator(rep_iterator rr, 
-		      size_type ii, 
-		      size_type nn, 
-		      const ID& _id) : r(rr), i(ii), n(nn), id(_id) { }
+                      size_type ii, 
+                      size_type nn, 
+                      const ID& _id) : r(rr), i(ii), n(nn), id(_id) { }
       inline array_binary_tree_node operator*() { return array_binary_tree_node(r, i, n, id); }
       inline iterator& operator++() { ++i; return *this; }
       inline iterator operator++(int)
@@ -91,9 +95,9 @@ public:
       return *this;
     }
     inline children_type(rep_iterator rr,
-			 size_type ii, 
-			 size_type nn,
-			 const ID& _id) : r(rr), i(ii), n(nn), id(_id) { }
+                         size_type ii, 
+                         size_type nn,
+                         const ID& _id) : r(rr), i(ii), n(nn), id(_id) { }
     inline iterator begin() { return iterator(r, 2 * i + 1, n, id); }
     inline iterator end() { return iterator(r, 2 * i + 1 + size(), n, id); }
     inline size_type size() const {
@@ -121,12 +125,12 @@ public:
     return *this;
   }
   inline array_binary_tree_node(rep_iterator start, 
-			 rep_iterator end, 
-			 rep_iterator pos, const ID& _id)
+                         rep_iterator end, 
+                         rep_iterator pos, const ID& _id)
     : r(start), i(pos - start), n(end - start), id(_id) { }
   inline array_binary_tree_node(rep_iterator rr, 
-			 size_type ii, 
-			 size_type nn, const ID& _id) 
+                         size_type ii, 
+                         size_type nn, const ID& _id) 
     : r(rr), i(ii), n(nn), id(_id) { }
   inline value_type& value() { return *(r + i); }
   inline const value_type& value() const { return *(r + i); }
