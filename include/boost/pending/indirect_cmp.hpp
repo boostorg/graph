@@ -65,9 +65,36 @@ namespace boost {
   };
 
   template <typename Compare, typename ReadablePropertyMap>
-  make_indirect_cmp(const Compare& cmp, ReadablePropertyMap map) {
-    return indirect_cmp<ReadablePropertyMap, Compare>(map, cmp);
+  indirect_cmp<ReadablePropertyMap, Compare>
+  make_indirect_cmp(const Compare& cmp, ReadablePropertyMap pmap) {
+    indirect_cmp<ReadablePropertyMap, Compare> p(pmap, cmp);
+    return p;
   }
+
+  template <class ReadablePropertyMap>
+  class indirect_pmap {
+  public:
+    typedef typename boost::property_traits<ReadablePropertyMap>::value_type T;
+    typedef typename boost::property_traits<ReadablePropertyMap>::key_type K;
+    typedef K argument_type;
+    typedef T result_type;
+    inline indirect_pmap(const ReadablePropertyMap& df)
+      : d(df) { }
+
+    inline bool operator()(const K& u) const {
+      return get(d, u);
+    }
+  protected:
+    ReadablePropertyMap d;
+  };
+
+  template <typename ReadablePropertyMap>
+  indirect_pmap<ReadablePropertyMap>
+  make_indirect_pmap(ReadablePropertyMap pmap) {
+    indirect_pmap<ReadablePropertyMap> f(pmap);
+    return f;
+  }
+
 
 } // namespace boost
 
