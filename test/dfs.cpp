@@ -98,14 +98,15 @@ struct dfs_test
 
   static void go(vertices_size_type max_V) {
 
-    typedef Traits::vertex_descriptor vertex_descriptor;
-    typedef boost::property_map<Graph, boost::vertex_color_t>::type ColorMap;
-    typedef boost::property_traits<ColorMap>::value_type ColorValue;
-    typedef boost::color_traits<ColorValue> Color;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    typedef typename boost::property_map<Graph, 
+      boost::vertex_color_t>::type ColorMap;
+    typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
+    typedef typename boost::color_traits<ColorValue> Color;
 
     vertices_size_type i, k;
-    Traits::edges_size_type j;
-    Traits::vertex_iterator vi, vi_end, ui, ui_end;
+    typename Traits::edges_size_type j;
+    typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
 
     boost::mt19937 gen;
 
