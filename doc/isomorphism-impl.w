@@ -471,7 +471,7 @@ namespace detail {
 
     template <typename Vertex>
     bool operator()(const Vertex& x, const Vertex& y) const
-      { return m_mult[m_invar[x]] < m_mult[m_invar[x]]; }
+      { return m_mult[m_invar[x]] < m_mult[m_invar[y]]; }
 
     InvarMap m_invar;
     MultMap m_mult;
