@@ -25,10 +25,14 @@
 #ifndef BOOST_GRAPH_LEDA_HPP
 #define BOOST_GRAPH_LEDA_HPP
 
-#include <LEDA/graph.h>
-
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
+#include <LEDA/graph.h>
+#include <LEDA/node_array.h>
+#include <LEDA/node_map.h>
 
 // The functions and classes in this file allows the user to
 // treat a LEDA GRAPH object as a boost graph "as is". No
@@ -355,9 +359,189 @@ namespace boost {
   {
     g.del_edge(e);
   }
-  // property maps...
+
+  //===========================================================================
+  // property maps
   
+  class leda_graph_id_map
+    : public put_get_helper<int, leda_graph_id_map>
+  {
+  public:
+    typedef readable_property_map_tag category;
+    typedef int value_type;
+    typedef int reference;
+    typedef node key_type;
+    leda_graph_id_map() { }
+    template <class T>
+    long operator[](T x) const { return x->id(); }
+  };
+  template <class vtype, class etype>
+  inline leda_graph_id_map
+  get(vertex_index_t, const GRAPH<vtype, etype>& g) {
+    return leda_graph_id_map();
+  }
+  template <class vtype, class etype>
+  inline leda_graph_id_map
+  get(edge_index_t, const GRAPH<vtype, etype>& g) {
+    return leda_graph_id_map();
+  }
+
+  template <class Tag>
+  struct leda_property_map { };
+
+  template <>
+  struct leda_property_map<vertex_index_t> {
+    template <class vtype, class etype>
+    struct bind {
+      typedef leda_graph_id_map type;
+      typedef leda_graph_id_map const_type;
+    };
+  };
+  template <>
+  struct leda_property_map<edge_index_t> {
+    template <class vtype, class etype>
+    struct bind {
+      typedef leda_graph_id_map type;
+      typedef leda_graph_id_map const_type;
+    };
+  };
+
+
+  template <class Data, class DataRef, class GraphPtr>
+  class leda_graph_data_map
+    : public put_get_helper<DataRef, 
+                            leda_graph_data_map<Data,DataRef,GraphPtr> >
+  {
+  public:
+    typedef Data value_type;
+    typedef DataRef reference;
+    typedef void key_type;
+    typedef lvalue_property_map_tag category;
+    leda_graph_data_map(GraphPtr g) : m_g(g) { }
+    template <class NodeOrEdge>
+    DataRef operator[](NodeOrEdge x) const { return (*m_g)[x]; }
+  protected:
+    GraphPtr m_g;
+  };
+
+  template <>
+  struct leda_property_map<vertex_all_t> {
+    template <class vtype, class etype>
+    struct bind {
+      typedef leda_graph_data_map<vtype, vtype&, GRAPH<vtype, etype>*> type;
+      typedef leda_graph_data_map<vtype, const vtype&, 
+	const GRAPH<vtype, etype>*> const_type;
+    };
+  };  
+  template <class vtype, class etype >
+  inline typename property_map< GRAPH<vtype, etype>, vertex_all_t>::type
+  get(vertex_all_t, GRAPH<vtype, etype>& g) {
+    typedef typename property_map< GRAPH<vtype, etype>, vertex_all_t>::type 
+      pmap_type;
+    return pmap_type(&g);
+  }
+  template <class vtype, class etype >
+  inline typename property_map< GRAPH<vtype, etype>, vertex_all_t>::const_type
+  get(vertex_all_t, const GRAPH<vtype, etype>& g) {
+    typedef typename property_map< GRAPH<vtype, etype>, 
+      vertex_all_t>::const_type pmap_type;
+    return pmap_type(&g);
+  }
+
+  template <>
+  struct leda_property_map<edge_all_t> {
+    template <class vtype, class etype>
+    struct bind {
+      typedef leda_graph_data_map<etype, etype&, GRAPH<vtype, etype>*> type;
+      typedef leda_graph_data_map<etype, const etype&, 
+	const GRAPH<vtype, etype>*> const_type;
+    };
+  };
+  template <class vtype, class etype >
+  inline typename property_map< GRAPH<vtype, etype>, edge_all_t>::type
+  get(edge_all_t, GRAPH<vtype, etype>& g) {
+    typedef typename property_map< GRAPH<vtype, etype>, edge_all_t>::type 
+      pmap_type;
+    return pmap_type(&g);
+  }
+  template <class vtype, class etype >
+  inline typename property_map< GRAPH<vtype, etype>, edge_all_t>::const_type
+  get(edge_all_t, const GRAPH<vtype, etype>& g) {
+    typedef typename property_map< GRAPH<vtype, etype>, 
+      edge_all_t>::const_type pmap_type;
+    return pmap_type(&g);
+  }
+
+  // property map interface to the LEDA node_array class
+
+  template <class E, class ERef, class NodeMapPtr>
+  class leda_node_property_map
+    : public put_get_helper<ERef, leda_node_property_map<E, ERef, NodeMapPtr> >
+  {
+  public:
+    leda_node_property_map(NodeMapPtr a) : m_array(a) { }
+    ERef operator[](node n) const { return (*m_array)[n]; }
+  protected:
+    NodeMapPtr m_array;
+  };
+  template <class E>
+  leda_node_property_map<E, const E&, const node_array<E>*>
+  make_leda_node_property_map(const node_array<E>& a)
+  {
+    typedef leda_node_property_map<E,const E&,const node_array<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+  template <class E>
+  leda_node_property_map<E, E&, node_array<E>*>
+  make_leda_node_property_map(node_array<E>& a)
+  {
+    typedef leda_node_property_map<E, E&, node_array<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+
+  template <class E>
+  leda_node_property_map<E, const E&, const node_map<E>*>
+  make_leda_node_property_map(const node_map<E>& a)
+  {
+    typedef leda_node_property_map<E,const E&,const node_map<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+  template <class E>
+  leda_node_property_map<E, E&, node_map<E>*>
+  make_leda_node_property_map(node_map<E>& a)
+  {
+    typedef leda_node_property_map<E, E&, node_map<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+
+  // g++ 'enumeral_type' in template unification not implemented workaround
+  template <class vtype, class etype, class Tag>
+  struct property_map<GRAPH<vtype, etype>, Tag> {
+    typedef typename 
+      leda_property_map<Tag>::template bind<vtype, etype> map_gen;
+    typedef typename map_gen::type type;
+    typedef typename map_gen::const_type const_type;
+  };
+
+  template <class vtype, class etype, class PropertyTag, class Key>
+  inline
+  typename boost::property_traits<
+    typename boost::property_map<GRAPH<vtype, etype>,PropertyTag>::const_type
+  >::value_type
+  get(PropertyTag p, const GRAPH<vtype, etype>& g, const Key& key) {
+    return get(get(p, g), key);
+  }
   
+  template <class vtype, class etype, class PropertyTag, class Key,class Value>
+  inline void
+  put(PropertyTag p, GRAPH<vtype, etype>& g, 
+      const Key& key, const Value& value)
+  {
+    typedef typename property_map<GRAPH<vtype, etype>, PropertyTag>::type Map;
+    Map pmap = get(p, g);
+    put(pmap, key, value);
+  }
+
 } // namespace boost
 
 
