@@ -13,7 +13,7 @@
 <Head>
 <Title>Boost Graph Library: EventVisitorList</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-	ALINK="#ff0000"> 
+        ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
      ALT="C++ Boost"> 
 
@@ -92,7 +92,7 @@ Now we can pass the resulting visitor object into
   std::vector&lt;default_color_type&gt; color(num_vertices(G));
 
   depth_first_search(G, make_dfs_visitor(std::make_pair(open_paren(), close_paren())),
-		     color.begin());
+                     color.begin());
 </pre>
 
 For creating a list of more than two event visitors, nest calls to

@@ -48,7 +48,7 @@ namespace boost {
   inline T2& 
   get_property_value(property<Tag1,T1,Base>& p, T2 t2, Tag2 tag2) {
     enum { match = int(property_num<Tag1>::value)
-	   == int(property_num<Tag2>::value) };
+           == int(property_num<Tag2>::value) };
     typedef detail::property_value_dispatch<match> Dispatcher;
     return Dispatcher::get_value(p, t2, tag2);
   }
@@ -56,7 +56,7 @@ namespace boost {
   inline const T2& 
   get_property_value(const property<Tag1,T1,Base>& p, T2 t2, Tag2 tag2) {
     enum { match = int(property_num<Tag1>::value) 
-	   == int(property_num<Tag2>::value) };
+           == int(property_num<Tag2>::value) };
     typedef detail::property_value_dispatch<match> Dispatcher;
     return Dispatcher::const_get_value(p, t2, tag2);
   }

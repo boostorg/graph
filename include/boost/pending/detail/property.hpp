@@ -28,7 +28,7 @@ namespace boost {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = int(property_num<Next_tag>::value) 
-	       ==  int(property_num<Tag>::value) };
+               ==  int(property_num<Tag>::value) };
         return property_value_dispatch<match>
           ::get_value(static_cast<Next&>(p), t, tag);
       }
@@ -37,7 +37,7 @@ namespace boost {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = int(property_num<Next_tag>::value) 
-	       == int(property_num<Tag>::value) };
+               == int(property_num<Tag>::value) };
         return property_value_dispatch<match>
           ::const_get_value(static_cast<const Next&>(p), t, tag);
       }
@@ -96,7 +96,7 @@ namespace boost {
         typedef typename AListFirst::first_type Tag2;
         typedef typename AListFirst::second_type Value;
         enum { tag1 = property_num<Tag1>::value, 
-	       tag2 = property_num<Tag2>::value };
+               tag2 = property_num<Tag2>::value };
         typedef typename TagValueAList::second_type Next;
         typedef typename ev_selector<Next>::type Extractor;
         typedef typename boost::ct_if< (tag1==tag2), Value, 
