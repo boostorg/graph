@@ -170,9 +170,9 @@ main()
 
   size_type i;
   for (i = 0; i < num_vertices(g); ++i) {
-    calc_distance_visitor<size_type*> visitor(&d_matrix[i][0]);
+    calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
-    breadth_first_search(g, src, visitor);
+    breadth_first_search(g, src, boost::visitor(vis));
   }
 
   size_type diameter = 0;
@@ -200,9 +200,10 @@ main()
   // Do a BFS starting at the home page, recording the parent of each
   // vertex (where parent is with respect to the search tree).
   Traits::vertex_descriptor src = vertices(g).first[0];
-  breadth_first_search(g, src, 
-		       make_bfs_visitor(record_predecessors(&parent[0],
-							    on_tree_edge())));
+  breadth_first_search
+    (g, src, 
+     boost::visitor(make_bfs_visitor(record_predecessors(&parent[0],
+							 on_tree_edge()))));
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));
@@ -221,7 +222,8 @@ main()
     tree_printer(node_name, &dfs_distances[0]);
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
-  depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
+  depth_first_visit(search_tree, src, boost::visitor(tree_printer).
+		    color_map(get(vertex_color, g)));
   
   return 0;
 }
