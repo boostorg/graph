@@ -43,7 +43,7 @@ visitor.
   // Construct graph G and obtain the source vertex s ...
 
   boost::breadth_first_search(G, s, 
-   make_bfs_visitor(
+   boost::make_bfs_visitor(
     std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
     std::make_pair(boost::record_predecessors(p.begin(), 
                                               boost::on_tree_edge()),
