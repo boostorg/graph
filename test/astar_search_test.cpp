@@ -169,7 +169,7 @@ int main(int argc, char **argv)
   
   
   // pick random start/goal
-  mt19937 gen(time(0));
+  minstd_rand gen(time(0));
   vertex start = random_vertex(g, gen);
   vertex goal = random_vertex(g, gen);
   
