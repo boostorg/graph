@@ -678,6 +678,21 @@ graph <tt>g</tt>.
 <hr>
 
 <pre>
+std::pair&lt;out_edge_iterator, out_edge_iterator&gt;
+edge_range(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
+           const&nbsp;adjacency_list&amp;&nbsp;g)
+</pre>
+Returns a pair of out-edge iterators that give the range for
+all the parallel edges from <tt>u</tt> to <tt>v</tt>. This
+function only works when the <tt>EdgeList</tt> for the
+<tt>adjacency_list</tt> is a container that sorts the
+out edges according to target vertex, and allows for
+parallel edges. The <tt>multisetS</tt> selector chooses
+such a container.
+
+<hr>
+
+<pre>
 std::pair&lt;edge_descriptor, bool&gt;
 add_edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
          adjacency_list&amp; g)

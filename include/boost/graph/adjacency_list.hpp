@@ -67,6 +67,7 @@ namespace boost {
   struct vecS  { };
   struct listS { };
   struct setS { };
+  struct multisetS { };
   struct mapS  { };
 #if !defined BOOST_NO_HASH
   struct hash_mapS { };
@@ -99,6 +100,11 @@ namespace boost {
   template <class ValueType>
   struct container_gen<setS, ValueType> {
     typedef std::set<ValueType> type;
+  };
+
+  template <class ValueType>
+  struct container_gen<multisetS, ValueType> {
+    typedef std::multiset<ValueType> type;
   };
 
 #if !defined BOOST_NO_HASH
@@ -135,6 +141,11 @@ namespace boost {
   struct setS  { 
     template <class T>
     struct bind { typedef std::set<T, std::less<T> > type; };
+  };
+
+  struct multisetS  { 
+    template <class T>
+    struct bind { typedef std::multiset<T, std::less<T> > type; };
   };
 
 #if !defined BOOST_NO_HASH
@@ -203,6 +214,10 @@ namespace boost {
   template <>
   struct parallel_edge_traits<setS> { 
     typedef disallow_parallel_edge_tag type; };
+
+  template <>
+  struct parallel_edge_traits<multisetS> { 
+    typedef allow_parallel_edge_tag type; };
 
 #if !defined BOOST_NO_HASH
   template <>
