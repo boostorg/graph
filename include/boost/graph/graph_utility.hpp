@@ -71,12 +71,13 @@ namespace boost {
            typename graph_traits<Graph>::vertex_descriptor v,
            const Graph& g)
   {
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     if (v == source(e, g))
       return target(e, g);
     else if (v == target(e, g))
       return source(e, g);
     else
-      return Edge(); // ?
+      return vertex_descriptor();
   }
 
   // Need to convert all of these printing functions to take an ostream object
