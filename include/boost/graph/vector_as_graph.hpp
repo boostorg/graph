@@ -35,6 +35,7 @@
 #ifndef BOOST_VECTOR_AS_GRAPH_HPP
 #define BOOST_VECTOR_AS_GRAPH_HPP
 
+#include <cassert>
 #include <utility>
 #include <vector>
 #include <boost/iterator.hpp>
