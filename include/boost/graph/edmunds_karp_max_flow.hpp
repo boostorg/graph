@@ -88,7 +88,7 @@ namespace boost {
       typedef bgl_named_params<P, T, R> Params;
       typedef typename property_value< Params, edge_capacity_t>::type Param;
       typedef typename detail::choose_pmap_helper<Param, Graph,
-	edge_capacity_t>::const_result_type CapacityEdgeMap;
+	edge_capacity_t>::result CapacityEdgeMap;
       typedef typename property_traits<CapacityEdgeMap>::value_type type;
     };
 
