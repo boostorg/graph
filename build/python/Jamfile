@@ -1,0 +1,16 @@
+subproject libs/graph/build/python ;
+
+    SEARCH on python.jam = $(BOOST_BUILD_PATH) ;
+    include python.jam ;
+
+    extension bgl          
+    :   ../../src/python/graph.cpp              # sources
+        ../../src/python/digraph.cpp
+        ../../src/python/graphviz.cpp
+        ../../src/python/module.cpp
+        ../../src/python/betweenness_centrality.cpp
+        ../../src/python/page_rank.cpp
+        ../../src/python/done.cpp
+        ../../src/python/breadth_first_search.cpp
+        <dll>../../../python/build/boost_python # dependencies
+        ;
