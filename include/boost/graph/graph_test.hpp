@@ -143,8 +143,7 @@ namespace boost {
       typedef typename graph_traits<Graph>::vertex_iterator v_iter;
       std::pair<v_iter, v_iter> p = vertices(g);
       BOOST_TEST(num_vertices(g) == vertex_set.size());
-      v_size_t n = 0;
-      std::distance(p.first, p.second, n);
+      v_size_t n = std::distance(p.first, p.second);
       BOOST_TEST(n == num_vertices(g));
       for (; p.first != p.second; ++p.first) {
         vertex_t v = *p.first;
@@ -160,8 +159,7 @@ namespace boost {
       typedef typename graph_traits<Graph>::edge_iterator e_iter;
       std::pair<e_iter, e_iter> p = edges(g);
       BOOST_TEST(num_edges(g) == edge_set.size());
-      e_size_t m = 0;
-      std::distance(p.first, p.second, m);
+      e_size_t m = std::distance(p.first, p.second);
       BOOST_TEST(m == num_edges(g));
       for (; p.first != p.second; ++p.first) {
         edge_t e = *p.first;
