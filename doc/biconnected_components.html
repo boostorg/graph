@@ -1,0 +1,174 @@
+<HTML>
+<!--
+  -- Copyright 2001-2004 The Trustees of Indiana University.
+  --
+  -- Use, modification and distribution is subject to the Boost Software
+  -- License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
+  --
+  --  Authors: Douglas Gregor
+  --           Jeremy Siek
+  --           Andrew Lumsdaine
+  -->
+<Head>
+<Title>Boost Graph Library: Biconnected Components and Articulation Points</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+<IMG SRC="../../../boost.png" 
+     ALT="C++ Boost" width="277" height="86"> 
+
+<BR Clear>
+
+
+<A NAME="sec:biconnected-components">
+
+<PRE>
+template&lt;typename Graph, typename ComponentMap, typename OutputIterator,
+	   typename DiscoverTimeMap, typename LowPointMap&gt;
+std::pair&lt;std::size_t, OutputIterator&gt;
+biconnected_components(const Graph& g, ComponentMap comp, 
+		       OutputIterator out, DiscoverTimeMap discover_time, 
+		       LowPointMap lowpt);
+
+template &lt;typename Graph, typename ComponentMap, typename OutputIterator&gt;
+std::pair&lt;std::size_t, OutputIterator&gt;
+biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out);
+
+template &lt;typename Graph, typename ComponentMap&gt;
+std::size_t biconnected_components(const Graph& g, ComponentMap comp);
+
+<a name="sec:articulation_points">
+template&lt;typename Graph, typename OutputIterator&gt;
+OutputIterator articulation_points(const Graph& g, OutputIterator out);
+</PRE>
+
+<P>
+A connected graph is <i>biconnected</i> if the removal of any single
+vertex (and all edges incident on that vertex) can not disconnect the
+graph. More generally, the biconnected components of a graph are the
+maximal subsets of vertices such that the removal of a vertex from a
+particular component will not disconnect the component. Unlike
+connected components, vertices may belong to multiple biconnected
+components: those vertices that belong to more than one biconnected
+component are called <em>articulation points</em> or, equivalently,
+<em>cut vertices</em>. Articulation points are vertices whose removal
+would increase the number of connected components in the graph. Thus,
+a graph without articulation points is biconnected. The following
+figure illustrates the articulation points and biconnected components
+of a small graph:
+
+<p><center><img src="figs/biconnected.png"></center>
+
+<p>Vertices can be present in multiple biconnected components, but each
+edge can only be contained in a single biconnected component. The
+output of the <tt>biconnected_components</tt> algorithm records the
+biconnected component number of each edge in the property map
+<tt>comp</tt>. Articulation points will be emitted to the (optional)
+output iterator argument to <tt>biconnected_components</tt>, or can be
+computed without the use of a biconnected component number map via
+<tt>articulation_points</tt>. These functions return the number of
+biconnected components, the articulation point output iterator, or a
+pair of these quantities, depending on what information was
+recorded.
+
+<p>The algorithm implemented is due to Tarjan [<a href="bibliography.html#tarjan72:dfs_and_linear_algo">41</a>].
+
+<H3>Where Defined</H3>
+
+<P>
+<a href="../../../boost/graph/biconnected_components.hpp"><TT>boost/graph/biconnected_components.hpp</TT></a>
+
+
+<h3>Parameters</h3>
+
+IN: <tt>const Graph&amp; g</tt>
+<blockquote>
+An undirected graph. The graph type must be a model of <a
+href="VertexListGraph.html">Vertex List Graph</a> and <a
+href="IncidenceGraph.html">Incidence Graph</a>.
+</blockquote>
+
+OUT: <tt>ComponentMap c</tt>
+<blockquote>
+The algorithm computes how many biconnected components are in the graph,
+and assigning each component an integer label. The algorithm then
+records which component each edge in the graph belongs to by
+recording the component number in the component property map. The
+<tt>ComponentMap</tt> type must be a model of <a
+href="../../property_map/WritablePropertyMap.html">Writable Property
+Map</a>. The value type shouch be an integer type, preferably the same
+as the <tt>edges_size_type</tt> of the graph. The key type must be
+the graph's edge descriptor type.<br>
+<b>Default</b>: <tt>dummy_property_map</tt>.
+</blockquote>
+
+
+OUT: <tt>OutputIterator out</tt>
+<blockquote>
+The algorithm writes articulation points via this output
+iterator and returns the resulting iterator.<br>
+<b>Default</b>: a dummy iterator that ignores values written to it.
+</blockquote>
+
+UTIL/OUT: <tt>DiscoverTimeMap discover_time</tt>
+<blockquote>
+  The discovery time of each vertex in the depth-first search. The
+  type <tt>DiscoverTimeMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The value type of the map must be an integer
+  type. The vertex descriptor type of the graph needs to be usable as
+  the key type of the map.<br>
+<b>Default</b>: an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
+  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
+  the index map.
+</blockquote>
+
+UTIL/OUT: <tt>LowPointMap lowpt</tt>
+<blockquote>
+  The low point of each vertex in the depth-first search, which is the
+  smallest vertex reachable from a given vertex with at most one back
+  edge.  The type <tt>LowPointMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>. The value type of the map must be an integer
+  type. The vertex descriptor type of the graph needs to be usable as
+  the key type of the map.<br>
+<b>Default</b>: an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
+  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
+  the index map.
+</blockquote>
+
+<H3>Complexity</H3>
+
+<P>
+The time complexity for the biconnected components and articulation
+points algorithms
+<i>O(V + E)</i>.
+
+<P>
+
+<H3>Example</H3>
+
+<P> The file <a
+href="../example/biconnected_components.cpp"><tt>examples/biconnected_components.cpp</tt></a>
+contains an example of calculating the biconnected components and
+articulation points of an undirected graph.
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000-2004</TD><TD>
+<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana
+University (<A
+HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
+<a href="../../../people/doug_gregor.html">Doug Gregor</a>, Indiana University
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 

@@ -126,8 +126,10 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename graph_traits<Graph>::vertices_size_type
+      vertices_size_type;
 
-    std::vector<std::size_t> discover_time(num_vertices(g));
+    std::vector<vertices_size_type> discover_time(num_vertices(g));
     std::vector<vertex_t>    lowpt(num_vertices(g));
 
     typename property_map<Graph, vertex_index_t>::const_type index_map 

@@ -73,13 +73,16 @@ main()
   std::cout << "graph A {\n" << "  node[shape=\"circle\"]\n";
 
   for (std::size_t i = 0; i < art_points.size(); ++i) {
-    std::cout << art_points[i] << " [ style=\"filled\" ];" << std::endl;
+    std::cout << (char)(art_points[i] + 'A') 
+	      << " [ style=\"filled\", fillcolor=\"red\" ];" 
+	      << std::endl;
   }
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << source(*ei, g) << " -- " << target(*ei, g)
-      << "[label=\"" << component[*ei] << "\"]\n";
+    std::cout << (char)(source(*ei, g) + 'A') << " -- " 
+	      << (char)(target(*ei, g) + 'A')
+	      << "[label=\"" << component[*ei] << "\"]\n";
   std::cout << "}\n";
 
   return 0;
