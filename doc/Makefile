@@ -4,9 +4,9 @@ LATEX		= latex
 LATEXOUT	= dvi
 RESULT		= ps
 
-#LATEX		= pdflatex
-#LATEXOUT	= pdf
-#RESULT		= pdf
+LATEX		= pdflatex
+LATEXOUT	= pdf
+RESULT		= pdf
 
 .SUFFIXES: .tex .dvi .ps .pdf .c .lg .eps .fig .gif .dot .w .cpp .o .exe
 
@@ -40,11 +40,12 @@ RESULT		= ps
 .w.tex: /afs/nd.edu/user11/jsiek/.jweb
 	jweb -np $*.w
 
-BOOST		= ../../..
+BOOST		= $(HOME)/boost
+BOOST_ALGO	= $(HOME)/boost.algorithm
 CXX		= c++
-INCLUDES	= -I$(BOOST)
+INCLUDES	= -I$(BOOST) -I$(BOOST_ALGO)
 #OPT		= +K2 --display_error_number --diag_suppress=186
-OPT		= -Wall -Wno-long-long -ftemplate-depth-30
+OPT		= -Wall -Wno-long-double -ftemplate-depth-30
 CXXFLAGS	= $(OPT) $(INCLUDES)
 
 .cpp.o:
@@ -52,7 +53,7 @@ CXXFLAGS	= $(OPT) $(INCLUDES)
 
 
 JWEB	= isomorphism-impl.w isomorphism-impl-v3.w
-DOT	= out.dot in.dot edge-order.dot iso-eg.dot
+DOT	= out.dot in.dot iso-eg.dot iso-eg2.dot
 EPS_GEN	= $(DOT:.dot=.eps)
 WEBTEX	= $(JWEB:.w=.tex)
 PDFPICT	= $(EPS_GEN:.eps=.pdf)
@@ -77,7 +78,6 @@ isomorphism-v3.hpp: isomorphism-impl-v3.w isomorphism-impl-v3.tex
 
 out.dot: isomorphism-impl.tex
 in.dot: isomorphism-impl.tex
-edge-order.dot: isomorphism-impl-v3.tex
 
 isomorphism.o: isomorphism-v3.hpp isomorphism-impl-v3.w
 

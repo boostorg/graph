@@ -4,7 +4,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
-                size = "3,2"
+                size = "4,2.5"
                 ratio = "fill"
 	]
 	node [
@@ -20,7 +20,7 @@ digraph "g" {
 		fontcolor = "black"
 		color = "black"
 	]
-	"0" [
+	"c (0)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -29,7 +29,7 @@ digraph "g" {
 		fontcolor = "black"
                 peripheries = 2
 	]
-	"1" [
+	"a (1)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -37,7 +37,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"2" [
+	"b (2)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -45,7 +45,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"3" [
+	"d (3)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -53,7 +53,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"4" [
+	"e (4)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -61,7 +61,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"5" [
+	"f (5)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -70,7 +70,7 @@ digraph "g" {
 		fontcolor = "black"
                 peripheries = 2
 	]
-	"6" [
+	"g (6)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -78,7 +78,7 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"7" [
+	"h (7)" [
 		label = "\N"
 		color = "black"
 		width = "0.833333"
@@ -86,70 +86,70 @@ digraph "g" {
 		fontname = "Times-Roman"
 		fontcolor = "black"
 	]
-	"0" -> "1" [
+	"c (0)" -> "a (1)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"1" -> "2" [
+	"a (1)" -> "b (2)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"1" -> "3" [
+	"a (1)" -> "d (3)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"0" -> "4" [
+	"c (0)" -> "e (4)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"5" -> "6" [
+	"f (5)" -> "g (6)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"6" -> "7" [
+	"g (6)" -> "h (7)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "bold"
 	]
-	"3" -> "2" [
+	"d (3)" -> "b (2)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "dashed"
 	]
-	"0" -> "3" [
+	"c (0)" -> "d (3)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "dashed"
 	]
-	"6" -> "4" [
+	"g (6)" -> "e (4)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
 		color = "black"
 		style = "dashed"
 	]
-	"7" -> "5" [
+	"h (7)" -> "f (5)" [
 		fontsize = "14"
 		fontname = "Times-Roman"
 		fontcolor = "black"
