@@ -47,8 +47,8 @@ namespace boost {
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T,
 		       const bgl_named_params<P, T, R>& params)
   {
-    reverse_graph<VertexListGraph> R(G);
-    copy_graph(R, G_T, params);
+    reverse_graph<VertexListGraph> Rev(G);
+    copy_graph(Rev, G_T, params);
   }
 
 } // namespace boost

@@ -69,8 +69,13 @@ directed_graph_demo()
   tie(e1, found) = edge(u, v, digraph);
   tie(e2, found) = edge(v, u, digraph);
   std::cout << "in a directed graph is ";
+#ifdef __GNUC__
+  // no boolalpha
+  std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;
+#else
   std::cout << "(u,v) == (v,u) ? "
     << std::boolalpha << (e1 == e2) << std::endl;
+#endif
   std::cout << "weight[(u,v)] = " << get(weight, e1) << std::endl;
   std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
 }
@@ -93,8 +98,12 @@ undirected_graph_demo2()
   tie(e1, found) = edge(u, v, undigraph);
   tie(e2, found) = edge(v, u, undigraph);
   std::cout << "in an undirected graph is ";
+#ifdef __GNUC__
+  std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;
+#else
   std::cout << "(u,v) == (v,u) ? "
     << std::boolalpha << (e1 == e2) << std::endl;
+#endif
   std::cout << "weight[(u,v)] = " << get(weight, e1) << std::endl;
   std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
 }

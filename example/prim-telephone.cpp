@@ -48,9 +48,16 @@ main()
 
   typedef graph_traits < Graph >::vertex_descriptor Vertex;
   std::vector < Vertex > parent(num_vertices(g));
-  prim_minimum_spanning_tree(g, &parent[0]);
-
   property_map < Graph, edge_weight_t >::type weight = get(edge_weight, g);
+#ifdef BOOST_MSVC
+  property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);  
+  std::vector<std::size_t> distance(num_vertices(g));
+  prim_minimum_spanning_tree(g, *vertices(g).first, &parent[0], &distance[0],
+			     weight, indexmap, default_dijkstra_visitor());
+#else
+  prim_minimum_spanning_tree(g, &parent[0]);
+#endif
+
   int total_weight = 0;
   for (int v = 0; v < num_vertices(g); ++v)
     if (parent[v] != v)

@@ -60,6 +60,25 @@ namespace boost {
     }
   } // namespace detail
 
+  template <class VertexListGraph, class DijkstraVisitor, 
+	    class PredecessorMap, class DistanceMap,
+	    class WeightMap, class IndexMap>
+  inline void
+  prim_minimum_spanning_tree
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+     IndexMap index_map,
+     DijkstraVisitor vis)
+  {
+    typedef typename property_traits<WeightMap>::value_type W;
+    std::less<W> compare;
+    detail::_project2nd<W,W> combine;
+    dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
+			    compare, combine, std::numeric_limits<W>::max(), 0,
+			    vis);
+  }
+
   template <class VertexListGraph, class PredecessorMap,
             class P, class T, class R>
   inline void prim_minimum_spanning_tree

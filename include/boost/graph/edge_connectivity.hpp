@@ -154,13 +154,9 @@ namespace boost {
 
     while (!non_neighbor_S.empty()) { // at most n - 1 times
       k = non_neighbor_S.front();
+
       alpha_S_k = edmunds_karp_max_flow
-	(flow_g, p, k, 
-	 capacity_map(cap). 
-	 residual_capacity_map(res_cap).
-	 reverse_edge_map(rev_edge).
-	 color_map(&color[0]).
-	 predecessor_map(&pred[0]));
+	(flow_g, p, k, cap, res_cap, rev_edge, &color[0], &pred[0]);
 
       if (alpha_S_k < alpha_star) {
 	alpha_star = alpha_S_k;

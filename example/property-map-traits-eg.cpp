@@ -21,6 +21,7 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
+#include <string>
 #include <boost/graph/adjacency_list.hpp>
 int
 main()

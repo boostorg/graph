@@ -39,18 +39,28 @@ main()
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1 };
 #ifdef BOOST_MSVC
   Graph g(num_nodes);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g); 
   for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
     tie(e, inserted) = add_edge(edges[j].first, edges[j].second, g);
-    get(edge_weight, g)[e] = weights[j];
+    weightmap[e] = weights[j];
   }
 #else
   Graph g(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
 #endif
   std::vector < graph_traits < Graph >::vertex_descriptor >
     p(num_vertices(g));
 
+#ifdef BOOST_MSVC
+  property_map<Graph, vertex_distance_t>::type distance = get(vertex_distance, g);
+  property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
+  prim_minimum_spanning_tree
+    (g, *vertices(g).first, &p[0], distance, weightmap, indexmap, 
+     default_dijkstra_visitor());
+#else
   prim_minimum_spanning_tree(g, &p[0]);
+#endif
 
   for (std::size_t i = 0; i != p.size(); ++i)
     if (p[i] != i)

@@ -25,6 +25,11 @@
 #include <string>
 #include <boost/property_map.hpp>
 
+#ifdef BOOST_NO_STD_ITERATOR_TRAITS
+#error This examples requires a compiler that provides a working std::iterator_traits
+#endif
+
+
 namespace foo
 {
   using namespace boost;

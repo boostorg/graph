@@ -668,36 +668,35 @@ namespace boost {
       long work_since_last_update;
     };
 
-    template <class Graph, 
-	      class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-	      class ReverseEdgeMap, class VertexIndexMap>
-    typename property_traits<CapacityEdgeMap>::value_type
-    push_relabel_max_flow_impl
-      (Graph& g, 
-       typename graph_traits<Graph>::vertex_descriptor src,
-       typename graph_traits<Graph>::vertex_descriptor sink,
-       CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
-       ReverseEdgeMap rev, VertexIndexMap index_map)
-    {
-      typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
-
-      detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
-	ReverseEdgeMap, VertexIndexMap, FlowValue>
-      algo(g, cap, res, rev, src, sink, index_map);
-
-      FlowValue flow = algo.maximum_preflow();
-
-      algo.convert_preflow_to_flow();
-
-      assert(algo.is_flow());
-      assert(algo.is_optimal());
-
-      return flow;
-    } // push_relabel_max_flow_impl()
-
   } // namespace detail
   
-
+  template <class Graph, 
+	    class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+	    class ReverseEdgeMap, class VertexIndexMap>
+  typename property_traits<CapacityEdgeMap>::value_type
+  push_relabel_max_flow
+    (Graph& g, 
+     typename graph_traits<Graph>::vertex_descriptor src,
+     typename graph_traits<Graph>::vertex_descriptor sink,
+     CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
+     ReverseEdgeMap rev, VertexIndexMap index_map)
+  {
+    typedef typename property_traits<CapacityEdgeMap>::value_type FlowValue;
+    
+    detail::push_relabel<Graph, CapacityEdgeMap, ResidualCapacityEdgeMap, 
+      ReverseEdgeMap, VertexIndexMap, FlowValue>
+      algo(g, cap, res, rev, src, sink, index_map);
+    
+    FlowValue flow = algo.maximum_preflow();
+    
+    algo.convert_preflow_to_flow();
+    
+    assert(algo.is_flow());
+    assert(algo.is_optimal());
+    
+    return flow;
+  } // push_relabel_max_flow()
+  
   template <class Graph, class P, class T, class R>
   typename detail::edge_capacity_value<Graph, P, T, R>::type
   push_relabel_max_flow
@@ -706,7 +705,7 @@ namespace boost {
      typename graph_traits<Graph>::vertex_descriptor sink,
      const bgl_named_params<P, T, R>& params)
   {
-    return detail::push_relabel_max_flow_impl
+    return push_relabel_max_flow
       (g, src, sink,
        choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
        choose_pmap(get_param(params, edge_residual_capacity), 

@@ -46,7 +46,13 @@ main()
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
+#ifdef BOOST_MSVC
+  property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
+  long flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev,
+				    indexmap);
+#else
   long flow = push_relabel_max_flow(g, s, t);
+#endif
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;

@@ -106,10 +106,11 @@ int main(int,char*[])
 #ifdef BOOST_MSVC
   // VC++ can't handle the iterator constructor
   Graph g(num_vertices);
+  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
     tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
-    get(edge_weight, g)[e] = transmission_delay[j];
+    weightmap[e] = transmission_delay[j];
   }
 #else
   Graph g(edge_array, edge_array + num_edges,

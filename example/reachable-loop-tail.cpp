@@ -58,15 +58,16 @@ main(int argc, char *argv[])
                     make_iterator_property_map(reachable_to_tail.begin(),
                                                get(vertex_index, g), c));
 
-
   std::ofstream loops_out(argv[2]);
   loops_out << "digraph G {\n"
     << "  graph [ratio=\"fill\",size=\"3,3\"];\n"
     << "  node [shape=\"box\"];\n" << "  edge [style=\"bold\"];\n";
 
+  property_map<Graph, vertex_attribute_t>::type
+    vattr_map = get(vertex_attribute, g);
   graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;
   for (tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
-    loops_out << *i << "[label=\"" << get(vertex_attribute, g)[*i]["label"]
+    loops_out << *i << "[label=\"" << vattr_map[*i]["label"]
       << "\"";
     if (reachable_to_tail[*i] != Color::white()) {
       loops_out << ", color=\"gray\", style=\"filled\"";

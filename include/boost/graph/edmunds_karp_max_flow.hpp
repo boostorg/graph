@@ -124,7 +124,7 @@ namespace boost {
     for (tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
       flow += (cap[*ei] - res[*ei]);
     return flow;
-  } // edmunds_karp_max_flow_impl()
+  } // edmunds_karp_max_flow()
   
   namespace detail {
     //-------------------------------------------------------------------------
@@ -143,7 +143,7 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        ColorMap color)
       {
-	return edmunds_karp_max_flow_impl
+	return edmunds_karp_max_flow
 	  (g, src, sink, 
 	   choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
 	   choose_pmap(get_param(params, edge_residual_capacity), 
@@ -169,7 +169,7 @@ namespace boost {
 	size_type n = is_default_param(get_param(params, vertex_color)) ?
 	  num_vertices(g) : 1;
 	std::vector<default_color_type> color_vec(n);
-	return edmunds_karp_max_flow_impl
+	return edmunds_karp_max_flow
 	  (g, src, sink, 
 	   choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
 	   choose_pmap(get_param(params, edge_residual_capacity), 
