@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <iosfwd>
+#include <algorithm>
 #include <assert.h>
 #include <boost/config.hpp>
 #include <boost/utility.hpp>
@@ -257,19 +258,39 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::edge_descriptor 
       edge_descriptor;
-    typename Graph::adjacency_iterator vi, viend, found;
+    typename graph_traits<Graph>::adjacency_iterator vi, viend, found;
     boost::tie(vi, viend) = adjacent_vertices(a, g);
+#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+    // Getting internal compiler error with std::find()
+    found = viend;
+    for (; vi != viend; ++vi)
+      if (*vi == b) {
+	found = vi;
+	break;
+      }
+#else
     found = std::find(vi, viend, b);
+#endif
     if ( found == viend )
-      return false;  
+      return false;
 
     typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
+
+#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+    // Getting internal compiler error with std::find()
+    out_found = oiend;
+    for (; oi != oiend; ++oi)
+      if (*oi == edge_descriptor(a,b)) {
+	out_found = oi;
+	break;
+      }
+#else
     out_found = std::find(oi, oiend, edge_descriptor(a,b));
+#endif
     if (out_found == oiend)
       return false;
-
     return true;
   }
   template <class Graph, class Vertex>
