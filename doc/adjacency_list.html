@@ -934,6 +934,35 @@ the edges that have <tt>u</tt> as the source or target.
 <hr>
 
 <pre>
+void clear_out_edges(vertex_descriptor u, adjacency_list&amp; g)
+</pre>
+Removes all out-edges from vertex <i>u</i>. The vertex still appears
+in the vertex set of the graph.
+<p>
+The affect on descriptor and iterator stability is the
+same as that of invoking <tt>remove_edge()</tt> for all of
+the edges that have <tt>u</tt> as the source.
+<p>
+This operation is not applicable to undirected graphs
+(use <tt>clear_vertex()</tt> instead).
+
+<hr>
+
+<pre>
+void clear_in_edges(vertex_descriptor u, adjacency_list&amp; g)
+</pre>
+Removes all in-edges from vertex <i>u</i>. The vertex still appears
+in the vertex set of the graph.
+<p>
+The affect on descriptor and iterator stability is the
+same as that of invoking <tt>remove_edge()</tt> for all of
+the edges that have <tt>u</tt> as the target.
+<p>
+This operation is only applicable to bidirectional graphs.
+
+<hr>
+
+<pre>
 void remove_vertex(vertex_descriptor u, adjacency_list&amp; g)
 </pre>
 Remove vertex <i>u</i> from the vertex set of the graph. It is assumed
