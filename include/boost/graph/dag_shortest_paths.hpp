@@ -8,53 +8,53 @@
 
 namespace boost {
 
-  namespace detail {
+  // Initalize distances and call depth first search
+  template <class VertexListGraph, class DijkstraVisitor, 
+	    class DistanceMap, class WeightMap, class ColorMap, 
+	    class PredecessorMap,
+	    class Compare, class Combine, 
+	    class DistInf, class DistZero>
+  inline void
+  dag_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     DistanceMap distance, WeightMap weight, ColorMap color,
+     PredecessorMap pred,
+     DijkstraVisitor vis, Compare compare, Combine combine, 
+     DistInf inf, DistZero zero)
+  {
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    std::vector<Vertex> rev_topo_order;
+    rev_topo_order.reserve(num_vertices(g));
+    topological_sort(g, std::back_inserter(rev_topo_order));
 
-    // Initalize distances and call depth first search
-    template <class VertexListGraph, class DijkstraVisitor, 
-              class DistanceMap, class WeightMap, class ColorMap, 
-              class PredecessorMap,
-              class Compare, class Combine, 
-              class DistInf, class DistZero>
-    inline void
-    dag_shortest_paths_impl
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-       DistanceMap distance, WeightMap weight, ColorMap color,
-       PredecessorMap pred,
-       DijkstraVisitor vis, Compare compare, Combine combine, 
-       DistInf inf, DistZero zero)
-    {
-      typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-      std::vector<Vertex> rev_topo_order;
-      rev_topo_order.reserve(num_vertices(g));
-      topological_sort(g, std::back_inserter(rev_topo_order));
-
-      typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(distance, *ui, inf);
-	put(pred, *ui, *ui);
-      }
-
-      put(distance, s, zero);
-      vis.discover_vertex(s, g);
-      std::vector<Vertex>::reverse_iterator i;
-      for (i = rev_topo_order.rbegin(); i != rev_topo_order.rend(); ++i) {
-        Vertex u = *i;
-        vis.examine_vertex(u, g);
-        typename graph_traits<VertexListGraph>::out_edge_iterator e, e_end;
-        for (tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
-          vis.discover_vertex(target(*e, g), g);
-          bool decreased = relax(*e, g, weight, pred, distance, 
-				 combine, compare);
-          if (decreased)
-            vis.edge_relaxed(*e, g);
-          else
-            vis.edge_not_relaxed(*e, g);
-        }
-        vis.finish_vertex(u, g);      
-      }
+    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      put(distance, *ui, inf);
+      put(pred, *ui, *ui);
     }
+
+    put(distance, s, zero);
+    vis.discover_vertex(s, g);
+    std::vector<Vertex>::reverse_iterator i;
+    for (i = rev_topo_order.rbegin(); i != rev_topo_order.rend(); ++i) {
+      Vertex u = *i;
+      vis.examine_vertex(u, g);
+      typename graph_traits<VertexListGraph>::out_edge_iterator e, e_end;
+      for (tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
+	vis.discover_vertex(target(*e, g), g);
+	bool decreased = relax(*e, g, weight, pred, distance, 
+			       combine, compare);
+	if (decreased)
+	  vis.edge_relaxed(*e, g);
+	else
+	  vis.edge_not_relaxed(*e, g);
+      }
+      vis.finish_vertex(u, g);      
+    }
+  }
+
+  namespace detail {
 
     // Defaults are the same as Dijkstra's algorithm
 

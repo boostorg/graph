@@ -79,7 +79,7 @@ namespace boost {
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         vis.examine_edge(*ei, g);
-	ColorValue v_color = get(color, target(*ei, g));
+        ColorValue v_color = get(color, target(*ei, g));
         if (v_color == Color::white()) {
           vis.tree_edge(*ei, g);
           depth_first_visit_impl(g, target(*ei, g), vis, color);
@@ -91,28 +91,31 @@ namespace boost {
       put(color, u, Color::black());
       vis.finish_vertex(u, g);
     }
+  } // namespace detail
 
-    template <class VertexListGraph, class DFSVisitor, class ColorMap>
-    void
-    dfs_impl(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
-    {
-      function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
-      typedef typename property_traits<ColorMap>::value_type ColorValue;
-      typedef color_traits<ColorValue> Color;
-      
-      typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(color, *ui, Color::white());
-        vis.initialize_vertex(*ui, g);
-      }
-      for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-	ColorValue u_color = get(color, *ui);
-        if (u_color == Color::white()) {
-          vis.start_vertex(*ui, g);
-          detail::depth_first_visit_impl(g, *ui, vis, color);
-        }
+  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  void
+  depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
+  {
+    function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+
+    typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      put(color, *ui, Color::white());
+      vis.initialize_vertex(*ui, g);
+    }
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      ColorValue u_color = get(color, *ui);
+      if (u_color == Color::white()) {
+        vis.start_vertex(*ui, g);
+        detail::depth_first_visit_impl(g, *ui, vis, color);
       }
     }
+  }
+
+  namespace detail {
 
     template <class ColorMap>
     struct dfs_dispatch {
@@ -121,29 +124,29 @@ namespace boost {
         class R>
       static void
       apply(const VertexListGraph& g, DFSVisitor vis, 
-	    const bgl_named_params<P, T, R>&,
-	    ColorMap color)
+            const bgl_named_params<P, T, R>&,
+            ColorMap color)
       {
-	dfs_impl(g, vis, color);
+        depth_first_search(g, vis, color);
       }
     };
 
     template <>
     struct dfs_dispatch<detail::error_property_not_found> {
       template <class VertexListGraph, class DFSVisitor,
-	class P, class T, class R>
+        class P, class T, class R>
       static void
       apply(const VertexListGraph& g, DFSVisitor vis,
-	    const bgl_named_params<P, T, R>& params,
-	    detail::error_property_not_found)
+            const bgl_named_params<P, T, R>& params,
+            detail::error_property_not_found)
       {
-	std::vector<default_color_type> color_vec(num_vertices(g));
-	default_color_type c = white_color; // avoid warning about un-init
-	dfs_impl(g, vis,
-		 make_iterator_property_map
-		 (color_vec.begin(),
-		  choose_const_pmap(get_param(params, vertex_index),
-				    g, vertex_index), c) );
+        std::vector<default_color_type> color_vec(num_vertices(g));
+        default_color_type c = white_color; // avoid warning about un-init
+        depth_first_search
+          (g, vis, make_iterator_property_map
+           (color_vec.begin(),
+            choose_const_pmap(get_param(params, vertex_index),
+                              g, vertex_index), c) );
       }
     };
 
