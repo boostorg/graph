@@ -23,6 +23,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/edge_list.hpp>
@@ -53,6 +54,28 @@ main(int,char*[])
 {
   using namespace boost;
 
+  // Check graph concept archetypes
+  {
+    typedef default_constructible_archetype<
+      sgi_assignable_archetype< equality_comparable_archetype<> > > Vertex;
+
+    typedef incidence_graph_archetype<Vertex, directed_tag, 
+      allow_parallel_edge_tag> Graph1;
+    function_requires< IncidenceGraphConcept<Graph1> >();
+
+    typedef adjacency_graph_archetype<Vertex, directed_tag, 
+      allow_parallel_edge_tag> Graph2;
+    function_requires< AdjacencyGraphConcept<Graph2> >();
+
+    typedef vertex_list_graph_archetype<Vertex, directed_tag, 
+      allow_parallel_edge_tag> Graph3;
+    function_requires< VertexListGraphConcept<Graph3> >();
+
+    typedef incidence_graph_archetype<Vertex, directed_tag, allow_parallel_edge_tag> G;
+    typedef property_graph_archetype<G, vertex_color_t, color_value_archetype>
+      Graph4;
+    function_requires< PropertyGraphConcept<Graph4, Vertex, vertex_color_t> >();
+  }
   // Check adjacency_matrix without properties
   {
     typedef adjacency_matrix<directedS> Graph;
@@ -326,6 +349,8 @@ main(int,char*[])
     typedef std::vector< std::list<int> > Graph;
     function_requires< VertexListGraphConcept<Graph> >();
   }
+#endif
+
 #endif
   return 0;
 }
