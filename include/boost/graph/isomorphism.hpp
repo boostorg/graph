@@ -248,7 +248,7 @@ namespace boost {
 	      detail::isomorph_edge_ordering
 	      (make_iterator_property_map(perm.begin(), v1_index_map, perm[0]), g1));
     
-    std::vector<VertexG1>::iterator first = g1_vertices.begin();
+    typename std::vector<VertexG1>::iterator first = g1_vertices.begin();
     typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
       f[*first] = *vi;
@@ -279,7 +279,7 @@ namespace boost {
                    const bgl_named_params<P,T,R>& params)
   {
     typedef typename graph_traits<Graph2>::vertex_descriptor v2_desc_t;
-    std::vector<v2_desc_t>::size_type
+    typename std::vector<v2_desc_t>::size_type
       n = is_default_param(get_param(params, vertex_isomorphism_t()))
         ? num_vertices(g1) : 1;
     std::vector<v2_desc_t> f(n);
