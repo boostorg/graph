@@ -173,6 +173,7 @@ namespace boost {
     std::size_t ret = rand() % N; 
 #else
     std::size_t ret = 0;
+    (void)N; // suppress unused argument warning.
 #endif
     return ret;
   }
