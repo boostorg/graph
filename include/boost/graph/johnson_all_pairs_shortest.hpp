@@ -98,11 +98,11 @@ namespace boost {
         typename Traits2::edge_descriptor e2; bool z;
         tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
                              id1[target(*e, g1)] + 1, g2);
-        w[e2] = w1[*e];
+        w[e2] = get(w1, *e);
         if (is_undirected) {
           tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
                                 id1[source(*e, g1)] + 1, g2);
-          w[e2] = w1[*e];
+          w[e2] = get(w1, *e);
         }
       }
     }
