@@ -1405,10 +1405,11 @@ namespace boost {
     {
       typedef typename Config::graph_type Graph;
       typedef typename Config::StoredEdge StoredEdge;
-      const Graph& g = static_cast<const Graph&>(g_);
+      const Graph& cg = static_cast<const Graph&>(g_);
+      Graph& g = const_cast<Graph&>(cg);
       typedef typename Config::out_edge_iterator out_edge_iterator;
-      const typename Config::OutEdgeList& el = g.out_edge_list(u);
-      typename Config::OutEdgeList::const_iterator first, last;
+      typename Config::OutEdgeList& el = g.out_edge_list(u);
+      typename Config::OutEdgeList::iterator first, last;
       tie(first, last) = std::equal_range(el.begin(), el.end(), StoredEdge(v));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
