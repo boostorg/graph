@@ -43,6 +43,7 @@ namespace boost {
     void constraints() {
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
+      vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
       vis.tree_edge(e, g);
       vis.cycle_edge(e, g);
@@ -104,6 +105,7 @@ namespace boost {
     while (! Q.empty()) {
       Vertex u = Q.top();
       Q.pop(); // pop before push to avoid problem if Q is priority_queue.
+      vis.examine_vertex(u, g);
       typename GTraits::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Edge e = *ei;
@@ -140,6 +142,10 @@ namespace boost {
     template <class Vertex, class Graph>
     void discover_vertex(Vertex u, Graph& g) {
       invoke_visitors(m_vis, u, g, on_discover_vertex());      
+    }
+    template <class Vertex, class Graph>
+    void examine_vertex(Vertex u, Graph& g) {
+      invoke_visitors(m_vis, u, g, on_examine_vertex());
     }
     template <class Edge, class Graph>
     void examine_edge(Edge e, Graph& g) {
