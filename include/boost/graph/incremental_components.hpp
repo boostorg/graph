@@ -72,7 +72,7 @@ namespace boost {
   {
     typename graph_traits<EdgeListGraph>::edge_iterator e, end;
     for (tie(e,end) = edges(g); e != end; ++e)
-      ds.link(source(*e,g),target(*e,g));
+      ds.union_set(source(*e,g),target(*e,g));
   }
   
   template <class ParentIterator>
