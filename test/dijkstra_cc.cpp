@@ -16,6 +16,9 @@ namespace std {
   };
 }
 
+dist_value abs(const dist_value& x) { return x; }
+std::size_t abs(std::size_t x) { return x; }
+
 int main()
 {
   using namespace boost;
@@ -84,7 +87,8 @@ int main()
     typedef binary_function_archetype<dist_value, dist_value, dist_value> 
       Combine;
     Combine combine = static_object<Combine>::get();
-    typedef binary_predicate_archetype<dist_value, dist_value> Compare;
+    typedef binary_predicate_archetype<dist_value, dist_value>
+      Compare;
     Compare compare = static_object<Compare>::get();
     dijkstra_visitor<> vis;
 
