@@ -313,11 +313,16 @@ namespace boost {
       adjacency_list<OutEdgeListS,VertexListS,DirectedS,
                      VertexProperty,EdgeProperty,GraphProperty,EdgeListS>,
       VertexListS, OutEdgeListS, DirectedS, 
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
       typename detail::retag_property_list<vertex_bundle_t,
                                            VertexProperty>::type,
       typename detail::retag_property_list<edge_bundle_t, EdgeProperty>::type,
+#else
+      VertexProperty, EdgeProperty,
+#endif
       GraphProperty, EdgeListS>::type
   {
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     typedef typename detail::retag_property_list<vertex_bundle_t,
                                                  VertexProperty>::retagged
       maybe_vertex_bundled;
@@ -325,11 +330,13 @@ namespace boost {
      typedef typename detail::retag_property_list<edge_bundle_t,
                                                   EdgeProperty>::retagged
       maybe_edge_bundled;
+#endif
 
      struct no_vertex_bundle {};
      struct no_edge_bundle {};
 
   public:
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     typedef typename detail::retag_property_list<vertex_bundle_t,
                                                  VertexProperty>::type
       vertex_property_type;
@@ -344,6 +351,12 @@ namespace boost {
     typedef typename ct_if<(is_same<maybe_edge_bundled, no_property>::value),
                            no_edge_bundle,
                            maybe_edge_bundled>::type edge_bundled;
+#else
+    typedef VertexProperty vertex_property_type;
+    typedef EdgeProperty edge_property_type;
+    typedef no_vertex_bundle vertex_bundled;
+    typedef no_edge_bundle edge_bundled;
+#endif
 
   private:
     typedef adjacency_list self;
@@ -418,6 +431,8 @@ namespace boost {
     { return get(edge_bundle, *this)[e]; }
 
 #if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1301))
+#  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+#  else
     // This disgusting hack works around a problem where MSVC 7.1 can't deal 
     // with typedefs in templates that must be class types.
     template<typename T, typename Class>
@@ -471,6 +486,7 @@ namespace boost {
         result_type;
       return result_type(this, pm);
     }
+#  endif
 #else
     // Generate property maps from bundles given a member pointer
     template<typename T>

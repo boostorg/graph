@@ -114,13 +114,6 @@ namespace boost {
      typedef no_property type;
      typedef no_property retagged;
    };
-#else
-  template<typename FinalTag, typename Property>
-  struct retag_property_list
-  {
-    typedef Property property;
-    typedef no_property retagged;
-  };
 #endif
   }
 } // namesapce boost
