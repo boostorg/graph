@@ -48,13 +48,13 @@
 
   (2)
   template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
-  void breadth_first_search(VertexListGraph& g, 
+  void breadth_first_search(const VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     BFSVisitor vis, ColorMap color);
 
   (3)
   template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, <a href="./BFSVisitor.html">BFSVisitor</a>, class <a href="#ColorMap">ColorMap</a>&gt;
-  void breadth_first_search(VertexListGraph& g, 
+  void breadth_first_search(const VertexListGraph& g, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     Buffer& Q, BFSVisitor vis, ColorMap color)
 </PRE>
