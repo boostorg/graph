@@ -265,6 +265,22 @@ namespace boost {
     return make_iterator_property_map(iter, get(vertex_index, g));
   }  
   
+  // Use this next function when vertex_descriptor is known to be an
+  // integer type, with values ranging from 0 to num_vertices(g).
+  //
+  template <class RandomAccessIterator>
+  inline
+  iterator_property_map<
+    RandomAccessIterator,
+    identity_property_map,
+    typename std::iterator_traits<RandomAccessIterator>::value_type,
+    typename std::iterator_traits<RandomAccessIterator>::reference
+  >
+  make_iterator_vertex_map(RandomAccessIterator iter)
+  {
+    return make_iterator_property_map(iter, identity_property_map());
+  }      
+
   template <class PropertyGraph, class RandomAccessContainer>
   inline
   iterator_property_map<
@@ -276,9 +292,20 @@ namespace boost {
   make_container_vertex_map(RandomAccessContainer& c, const PropertyGraph& g)
   {
     assert(c.size() >= num_vertices(g));
-    return it_to_vertex_map(c.begin(), g);
+    return make_iterator_vertex_map(c.begin(), g);
   }   
 
+  template <class RandomAccessContainer> inline
+  iterator_property_map<
+    typename RandomAccessContainer::iterator,
+    identity_property_map,
+    typename RandomAccessContainer::value_type,
+    typename RandomAccessContainer::reference
+  >
+  make_container_vertex_map(RandomAccessContainer& c)
+  {
+    return make_iterator_vertex_map(c.begin());
+  }
 
 } // namespace boost
 
