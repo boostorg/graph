@@ -121,10 +121,12 @@ paths include; see <a href="#Fig1">Fig. 1</a>). Let <img src="figs/v_star.gif"> 
 <h3>Parameters</h3>
 IN: <tt>const Graph&amp; g</tt>
 <blockquote>
-  The graph object on which the algorithm will be applied. 
-  The type <tt>Graph</tt> must be a model of 
-  <a href="VertexListGraph.html">Vertex List Graph</a>
-  and <a href="IncidenceGraph.html">Incidence Graph</a>.
+  The graph object on which the algorithm will be applied.  The type
+  <tt>Graph</tt> must be a model of <a
+  href="VertexListGraph.html">Vertex List Graph</a> and <a
+  href="IncidenceGraph.html">Incidence Graph</a>. When an edge
+  centrality map is supplied, it must also model <a
+  href="EdgeListGraph.html">Edge List Graph</a>.
 </blockquote>
     
 UTIL: <tt>IncomingMap incoming</tt> 
@@ -261,12 +263,16 @@ The time complexity is <em>O(VE)</em> for unweighted graphs and
 is <em>O(VE)</em>.
 
     <hr>
+
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University
+<TD nowrap>Copyright &copy 2004</TD><TD>
+<A HREF="../../../people/doug_gregor.html">Douglas Gregor</A>, Indiana University (dgregor@cs.indiana.edu</A>)<br>
+<A HREF=http://www.osl.iu.edu/~lums>Andrew Lumsdaine</A>,
+Indiana University (<A
+HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 <!-- Created: Fri Jun  4 16:42:50 EST 2004 -->
-<!-- hhmts start -->Last modified: Sat Jul 31 16:16:51 EST 2004 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Wed Aug  4 17:41:44 EST 2004 <!-- hhmts end -->
   </body>
 </html>
