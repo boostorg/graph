@@ -58,9 +58,15 @@ function which returns a property map object.
 <TD>An object of type <tt>X</tt>.</TD>
 </TR>
 
+
+<TR>
+<TD><tt>PMap</tt></TD>
+<TD>The type <tt>boost::property_map&lt;G, Property&gt;::const_type</tt>.</TD>
+</TR>
+
 <TR>
 <TD><tt>v</tt></TD>
-<TD>An object of type <tt>property_traits&lt;property_map&lt;G, Property&gt;::type&gt;::value_type</tt>.</TD>
+<TD>An object of type <tt>boost::property_traits&lt;PMap&gt;::value_type</tt>.</TD>
 </TR>
 
 <TR>
@@ -71,6 +77,11 @@ function which returns a property map object.
 <TR>
 <TD><tt>p</tt></TD>
 <TD>An object of type <tt>Property</tt>.</td>
+</TR>
+
+<TR>
+<TD><tt>pmap</tt></TD>
+<TD>An object of type <tt>PMap</tt>.</td>
 </TR>
 
 </table>
@@ -125,26 +136,31 @@ carry the type.
 <tr>
 <td>Get Property</td>
 <td> <TT>get(p, g, x)</TT> </td>
-<TD><TT>boost::property_traits&lt;boost::property_map&lt;G, Property&gt;::type&gt;::value_type</TT></TD>
+<TD><tt>
+boost::property_traits&lt;PMap&gt;::value_type
+</tt></TD>
 <td>
 Returns the property (specified by the <tt>Property</tt> type)
 associated with object <tt>x</tt> (a vertex or edge).
 The object <tt>p</tt> is only used to carry the type.
 This function is equivalent to:<br>
-<tt>get(get(property, g), x)</tt>
+<tt>get(get(p, g), x)</tt>
 </td>
 </TR>
 
 <tr>
 <td>Put Property</td>
-<td> <TT>put(property, g, x, v)</TT> </td>
+<td> <TT>put(p, g, x, v)</TT> </td>
 <TD><TT>void</TT></TD>
 <td>
 Set the property (specified by the <tt>Property</tt> type)
 associated with object <tt>x</tt> (a vertex or edge) to
 the value <tt>v</tt>. The object <tt>p</tt> is only used to carry the type.
 This function is equivalent to:<br>
-<tt>put(get(property, g), x, v)</tt>
+<tt>
+pmap = get(p, g);<br>
+put(pmap, x, v)
+</tt>
 </td>
 </TR>
 
@@ -194,6 +210,11 @@ The <tt>get()</tt> property map function must be constant time.
     typename property_traits&lt;PMap&gt;::value_type pval;
   };
 </PRE>
+
+
+<h3>See Also</h3>
+
+<a href="./property_map.html"><tt>property_map</tt></a>
 
 <br>
 <HR>
