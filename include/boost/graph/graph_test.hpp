@@ -3,6 +3,9 @@
 
 #include <boost/test/test_tools.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/isomorphism.hpp>
+#include <boost/graph/copy.hpp>
 
 namespace boost {
 
@@ -12,17 +15,21 @@ namespace boost {
   
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
-    typedef typename graph_traits<Graph>::vertices_size_t v_size_t;
+    typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iter;
+    typedef typename property_map<Graph, vertex_index_t>::const_type index_map_t;
+    typedef iterator_property_map<typename std::vector<vertex_t>::iterator,index_map_t,vertex_t,vertex_t&> IsoMap;
 
     struct ignore_vertex {
+      ignore_vertex() { }
       ignore_vertex(vertex_t v) : v(v) { }
-      bool operator()(vertex_t x) { return x != v; }
+      bool operator()(vertex_t x) const { return x != v; }
       vertex_t v;
     };
     struct ignore_edge {
+      ignore_edge() { }
       ignore_edge(edge_t e) : e(e) { }
-      bool operator()(edge_t x) { return x != e; }
+      bool operator()(edge_t x) const { return x != e; }
       edge_t e;
     };
 
@@ -30,8 +37,11 @@ namespace boost {
     void test_add_vertex(const Graph& orig)
     {
       Graph g;
-      std::vector<vertex_t> iso_map;
-      copy_graph(orig, g, iso_map);
+      std::vector<vertex_t> iso_vec(num_vertices(orig));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, orig));
+      copy_graph(orig, g, orig_to_copy(iso_map));
+
+      assert((verify_isomorphism(orig, g, iso_map)));
 
       vertex_t v = add_vertex(g);
       
@@ -41,16 +51,16 @@ namespace boost {
 
       // Make sure the rest of the graph stayed the same
       BOOST_TEST((verify_isomorphism
-		  (make_filtered_graph(g, keep_all(), ignore_vertex(v)),
-		   orig, iso_map)));
+		  (orig, make_filtered_graph(g, keep_all(), ignore_vertex(v)),
+		   iso_map)));
     }
     
     void test_add_edge(vertex_t u, vertex_t v, const Graph& orig)
     {
       Graph g;
-      std::vector<vertex_t> iso_map;
-      copy_graph(orig, g, 
-		 make_iterator_property_map(iso_map, get(vertex_index, g)));
+      std::vector<vertex_t> iso_vec(num_vertices(orig));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, orig));
+      copy_graph(orig, g, orig_to_copy(iso_map));
       
       bool parallel_edge_exists	= contains(adjacent_vertices(u, g), v);
       
@@ -67,13 +77,12 @@ namespace boost {
 	BOOST_TEST(added == true);
 
       if (p.second == true) { // edge added
-	BOOST_TEST(num_edges(g) == num_edge(orig) + 1);
+	BOOST_TEST(num_edges(g) == num_edges(orig) + 1);
 	
-	BOOST_TEST(contains(out_edge(u, g), e) == true);
+	BOOST_TEST(contains(out_edges(u, g), e) == true);
 	
 	BOOST_TEST((verify_isomorphism
-		    (make_filtered_graph(g, ignore_edge(e)),
-		     orig, iso_map)));
+		    (orig, make_filtered_graph(g, ignore_edge(e)), iso_map)));
       }
       else { // edge not added
 

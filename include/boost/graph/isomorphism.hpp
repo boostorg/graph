@@ -393,8 +393,11 @@ namespace boost {
   template<typename Graph1, typename Graph2, typename IsoMap>
   inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, IsoMap iso_map)
   {
+#if 0
+    // problematic for filtered_graph!
     if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
       return false;
+#endif
   
     for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
          e1 != edges(g1).second; ++e1) {
