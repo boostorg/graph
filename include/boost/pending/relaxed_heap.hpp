@@ -133,6 +133,7 @@ public:
     if (!a->value
         || *a->value == x
         || compare(x, *a->value)) {
+      if (a != smallest_value) smallest_value = 0;
       a->kind = stored_key;
       a->value = x;
       promote(a);
@@ -390,17 +391,12 @@ private:
         if (A[r + 1] == s) active_sibling_transform(a, s);
         else good_sibling_transform(a, s);
       }
-
-      if (smallest_value && smallest_value != a
-          && do_compare(a, smallest_value))
-        smallest_value = a;
     }
   }
 
   group* combine(group* a1, group* a2)
   {
-    rank_type r = a1->rank;
-    assert(r == a2->rank);
+    assert(a1->rank == a2->rank);
     if (do_compare(a2, a1)) do_swap(a1, a2);
     a1->children[a1->rank++] = a2;
     a2->parent = a1;
