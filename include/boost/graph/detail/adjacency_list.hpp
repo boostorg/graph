@@ -396,7 +396,9 @@ namespace boost {
 
     template <class Config>
     struct directed_graph_helper
-      : public directed_edges_helper<Config> { };
+      : public directed_edges_helper<Config> { 
+      typedef vertex_and_edge_list_graph_tag traversal_category;
+    };
 
     // O(E/V)
     template <class Config>
@@ -512,6 +514,10 @@ namespace boost {
     template <class Config>
     struct undirected_graph_helper;
 
+    struct undir_adj_list_traversal_tag : 
+      public virtual vertex_and_edge_list_graph_tag,
+      public virtual bidirectional_graph_tag { };
+
     namespace detail {
       // O(E/V)
       template <class edge_descriptor, class Config, class StoredProperty>
@@ -615,6 +621,8 @@ namespace boost {
 
     template <class Config>
     struct undirected_graph_helper {
+
+      typedef undir_adj_list_traversal_tag traversal_category;
 
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
@@ -821,9 +829,15 @@ namespace boost {
     //=========================================================================
     // Bidirectional Graph Helper Class
 
+    struct bidir_adj_list_traversal_tag : 
+      public virtual vertex_and_edge_list_graph_tag,
+      public virtual bidirectional_graph_tag { };
+
     template <class Config>
     struct bidirectional_graph_helper
-      : public directed_edges_helper<Config> { };
+      : public directed_edges_helper<Config> {
+      typedef bidir_adj_list_traversal_tag traversal_category;
+    };
 
     template <class Predicate, class Config>
     inline void
