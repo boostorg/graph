@@ -50,10 +50,10 @@ This section focuses on how to decide which version of the <a
 href="./adjacency_list.html"><TT>adjacency_list</TT></a> class to use
 in different situations. The <TT>adjacency_list</TT> is like a
 swiss-army knife in that it can be configured in many ways. The
-parameters that we will focus on in this section are <TT>EdgeList</TT>
+parameters that we will focus on in this section are <TT>OutEdgeList</TT>
 and <TT>VertexList</TT>, which control the underlying data structures
 that will be used to represent the graph.  The choice of
-<TT>EdgeList</TT> and <TT>VertexList</TT> affects the time complexity
+<TT>OutEdgeList</TT> and <TT>VertexList</TT> affects the time complexity
 of many of the graph operations and the space complexity of the graph
 object.
 
@@ -65,7 +65,7 @@ and <a href="http://www.sgi.com/tech/stl/set.html"><TT>std::set</TT></a>
 to represent the set of vertices and the adjacency structure
 (out-edges and in-edges) of the graph.  There are several selector
 types that are used to specify the choice of container for
-<TT>EdgeList</TT> and <TT>VertexList</TT>.
+<TT>OutEdgeList</TT> and <TT>VertexList</TT>.
 
 <P>
 
@@ -146,11 +146,11 @@ This operation is constant time for <TT>vecS</TT> and  for
 <P>
 
 <H3><A NAME="SECTION00831200000000000000">
-Choosing the <TT>EdgeList</TT> type</A>
+Choosing the <TT>OutEdgeList</TT> type</A>
 </H3>
 
 <P>
-The <TT>EdgeList</TT> parameter determines what kind of container will
+The <TT>OutEdgeList</TT> parameter determines what kind of container will
 be used to store the out-edges (and possibly in-edges) for each vertex
 in the graph. The containers used for edge lists must either satisfy
 the requirements for <a
@@ -160,7 +160,7 @@ href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContaine
 
 <P>
 One of the first things to consider when choosing the
-<TT>EdgeList</TT> is whether you want <TT>adjacency_list</TT> to
+<TT>OutEdgeList</TT> is whether you want <TT>adjacency_list</TT> to
 enforce the absence of parallel edges in the graph (that is, enforce
 that the graph not become a multi-graph). If you want this enforced
 then use the <TT>setS</TT> or <TT>hash_setS</TT> selectors.  If you
@@ -178,7 +178,7 @@ number of edges.  Operations not discussed here are constant time.
 <H4>Space Complexity</H4>
 
 <P>
-The selection of the <TT>EdgeList</TT> affects the amount of space
+The selection of the <TT>OutEdgeList</TT> affects the amount of space
 overhead per edge in the graph object. In the order of least space to
 most space, the selectors are <TT>vecS</TT>, <TT>slistS</TT>,
 <TT>listS</TT>, and <TT>setS</TT>.
@@ -205,18 +205,18 @@ considered a constant.
 <PRE>
 add_edge()
 </PRE>
-When the <TT>EdgeList</TT> is a <a
+When the <TT>OutEdgeList</TT> is a <a
 href="http://www.sgi.com/tech/stl/UniqueAssociativeContainer.html">UniqueAssociativeContainer</a>
 like <TT>std::set</TT> the absence of parallel edges is enforced when
 an edge is added. The extra lookup involved has time complexity
-<i>O(log(E/V))</i>. The <TT>EdgeList</TT> types that model <a
+<i>O(log(E/V))</i>. The <TT>OutEdgeList</TT> types that model <a
 href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> do
 not perform this check and therefore <TT>add_edge()</TT> is amortized
 constant time.  This means that it if you don't care whether the graph
 has parallel edges, or know that the input to the graph does not
 contain them, then it is better to use the sequence-based
-<TT>EdgeList</TT>. The <TT>add_edge()</TT> for the sequence-based
-<TT>EdgeList</TT> is implemented with <TT>push_front()</TT> or
+<TT>OutEdgeList</TT>. The <TT>add_edge()</TT> for the sequence-based
+<TT>OutEdgeList</TT> is implemented with <TT>push_front()</TT> or
 <TT>push_back()</TT>.  However, for <TT>std::list</TT> and
 <TT>std::slist</TT> this operation will typically be faster than with
 <TT>std::vector</TT> which occasionally reallocates and copies all
@@ -227,9 +227,9 @@ elements.
 <PRE>
 remove_edge()
 </PRE>
-For sequence-based <TT>EdgeList</TT> types this operation is
+For sequence-based <TT>OutEdgeList</TT> types this operation is
 implemented with <TT>std::remove_if()</TT> which means the average
-time is <i>E/V</i>. For set-based <TT>EdgeList</TT> types this is
+time is <i>E/V</i>. For set-based <TT>OutEdgeList</TT> types this is
 implemented with the <TT>erase()</TT> member function, which has
 average time <i>log(E/V)</i>.
 <p></p>
@@ -239,9 +239,9 @@ average time <i>log(E/V)</i>.
 edge()
 </PRE>
 The time complexity for this operation is <i>O(E/V)</i> when the
-<TT>EdgeList</TT> type is a <a
+<TT>OutEdgeList</TT> type is a <a
 href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> and it
-is <i>O(log(E/V))</i> when the <TT>EdgeList</TT> type is an <a
+is <i>O(log(E/V))</i> when the <TT>OutEdgeList</TT> type is an <a
 href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContainer</a>.
 <p></p>
 
@@ -249,9 +249,9 @@ href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContaine
 <PRE>
 clear_vertex()
 </PRE>
-For directed graphs with sequence-based <TT>EdgeList</TT> types the time
+For directed graphs with sequence-based <TT>OutEdgeList</TT> types the time
 complexity is <i>O(V + E)</i>, while for associative container based
-<TT>EdgeList</TT> types the operation is faster, with time complexity
+<TT>OutEdgeList</TT> types the operation is faster, with time complexity
 <i>O(V log(E/V))</i>.  For undirected graphs this operation is
 <i>O(E<sup>2</sup>/V<sup>2</sup>)</i> or <i>O(E/V log(E/V))</i>.
 <p></p>
@@ -261,7 +261,7 @@ complexity is <i>O(V + E)</i>, while for associative container based
 remove_vertex()
 </PRE>
 The time complexity for this operation is <i>O(V + E)</i> regardless of the
-<TT>EdgeList</TT> type.
+<TT>OutEdgeList</TT> type.
 <p></p>
 
 <li>
@@ -283,7 +283,7 @@ in_edge_iterator::operator++()
 </PRE>
 This operation is constant time and exhibits a similar speed
 ordering as the <TT>out_edge_iterator</TT> with respect to
-the <TT>EdgeList</TT> selection.
+the <TT>OutEdgeList</TT> selection.
 <p></p>
 
 <li>
@@ -300,7 +300,7 @@ this operation.
 edge_iterator::operator++()
 </PRE>
 This operation is constant time and exhibits a similar speed ordering
-as the <TT>out_edge_iterator</TT> with respect to the <TT>EdgeList</TT>
+as the <TT>out_edge_iterator</TT> with respect to the <TT>OutEdgeList</TT>
 selection. Traversing through the whole edge set is <i>O(V + E)</i>.
 <p></p>
 
@@ -310,7 +310,7 @@ adjacency_iterator::operator++()
 </PRE>
 This operation is constant time and exhibits a similar speed
 ordering as the <TT>out_edge_iterator</TT> with respect to
-the <TT>EdgeList</TT> selection.
+the <TT>OutEdgeList</TT> selection.
 <p></p>
 
 </ul>
@@ -631,7 +631,7 @@ potentially in-edge list) for each vertex. BGLprovides selector
 classes that allow the user to choose between several of the container
 from the STL. It is also possible to use your own container types.
 When customizing the <TT>VertexList</TT> you need to define a container
-generator as described below. When customizing the <TT>EdgeList</TT> you
+generator as described below. When customizing the <TT>OutEdgeList</TT> you
 will need to define a container generator and the parallel edge
 traits. The file <TT>container_gen.cpp</TT> has an example of
 how to use a custom storage types.
@@ -644,7 +644,7 @@ Container Generator</A>
 
 <P>
 The <TT>adjacency_list</TT> class uses a traits class called
-<TT>container_gen</TT> to map the <TT>EdgeList</TT> and <TT>VertexList</TT>
+<TT>container_gen</TT> to map the <TT>OutEdgeList</TT> and <TT>VertexList</TT>
 selectors to the actual container types used for the graph storage.
 The default version of the traits class is listed below, along with an
 example of how the class is specialized for the <TT>listS</TT> selector.
