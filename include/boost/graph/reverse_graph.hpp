@@ -8,6 +8,7 @@
 # define REVERSE_GRAPH_DWA092300_H_
 
 #include <boost/graph/adjacency_iterator.hpp>
+#include <boost/graph/properties.hpp>
 
 namespace boost {
 
