@@ -42,5 +42,13 @@ int main(int,char*[])
     function_requires< PropertyGraphConcept<ResGraph, Edge, 
       edge_residual_capacity_t> >();
   }
+  // Check filtered_graph with bidirectional adjacency_list
+  {
+    typedef adjacency_list<vecS, vecS, bidirectionalS, 
+      no_property, property<edge_residual_capacity_t, long> > Graph;
+    typedef property_map<Graph, edge_residual_capacity_t>::type ResCapMap;
+    typedef filtered_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
+    function_requires< BidirectionalGraphConcept<ResGraph> >();
+  }
   return 0;
 }
