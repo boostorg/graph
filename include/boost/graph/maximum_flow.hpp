@@ -154,6 +154,12 @@ namespace boost {
         edges_size_type m = num_edges(g);
         nm = alpha() * n + m;
 
+	out_edge_iterator ei, e_end;
+	for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+	  for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+	    // f[e] = 0 and r[e] = c[e] - f[e]
+	    residual_capacity[*ei] = capacity[*ei];
+
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           excess_flow[u] = 0;
@@ -552,20 +558,21 @@ namespace boost {
               f_uv = capacity[uv] - residual_capacity[uv],
               f_vu = capacity[uv] - residual_capacity[reverse_edge[uv]];
 
-            // check capacity constraint and skew symmetry
-            if (capacity[uv] > 0 && (f_uv > capacity[uv] || f_uv != -f_vu))
+            if (capacity[uv] > 0 
+		&& (f_uv > capacity[uv]	// capacity constraint
+		    || f_uv != -f_vu))  // skew symmetry
               return false;
-
-            if (capacity[uv] > 0)
-              sum -= f_uv;
-            else
-              sum += residual_capacity[uv];
+	    
+	    sum -= f_uv;
           }
           vertex_descriptor u = *u_iter;
           // check flow conservation
-          if (u != src && u != sink && excess_flow[u] != sum)
+          if (u != src && u != sink && sum != 0)
             return false;
         }
+	if (excess_flow[src] != excess_flow[sink])
+	  return false;
+
         return true;
       } // is_flow()
 

@@ -38,10 +38,9 @@
 
 namespace boost {
 
-template <class Graph, class CapacityMap, class ResidualCapacityMap, 
-          class ReverseEdgeMap>
-int read_dimacs_max_flow(Graph& g, CapacityMap capacity, 
-                         ResidualCapacityMap residual_capacity,
+template <class Graph, class CapacityMap, class ReverseEdgeMap>
+int read_dimacs_max_flow(Graph& g,
+                         CapacityMap capacity, 
                          ReverseEdgeMap reverse_edge,
                          typename graph_traits<Graph>::vertex_descriptor& src,
                          typename graph_traits<Graph>::vertex_descriptor& sink)
@@ -58,18 +57,18 @@ int read_dimacs_max_flow(Graph& g, CapacityMap capacity,
   
   std::vector<vertex_descriptor> verts;
 
-  long m, n,			/*  number of edges and nodes */
+  long m, n,                    /*  number of edges and nodes */
     i, head, tail, cap;
 
-  long no_lines=0,		/* no of current input line */
+  long no_lines=0,              /* no of current input line */
     no_plines=0,                /* no of problem-lines */
     no_nslines=0,               /* no of node-source-lines */
     no_nklines=0,               /* no of node-source-lines */
     no_alines=0;                /* no of arc-lines */
   
-  std::string in_line;		/* for reading input line */
-  char pr_type[3];		/* for reading type of the problem */
-  char nd;			/* source (s) or sink (t) */
+  std::string in_line;          /* for reading input line */
+  char pr_type[3];              /* for reading type of the problem */
+  char nd;                      /* source (s) or sink (t) */
   
   int k,                        /* temporary */
     err_no;                     /* no of detected error */
@@ -239,19 +238,19 @@ int read_dimacs_max_flow(Graph& g, CapacityMap capacity,
         { err_no = EN17; goto error; }
 
       {      
-	edge_descriptor e1, e2; 
-	bool in1, in2;
-	tie(e1, in1) = add_edge(verts[head], verts[tail], g);
-	tie(e2, in2) = add_edge(verts[tail], verts[head], g);
-	if (!in1 || !in2) {
-	  std::cerr << "unable to add edge (" << head << "," << tail << ")" 
-		    << std::endl;
-	  return -1;
-	}
-	residual_capacity[e1] = cap;
-	residual_capacity[e2] = 0;
-	reverse_edge[e1] = e2;
-	reverse_edge[e2] = e1;
+        edge_descriptor e1, e2; 
+        bool in1, in2;
+        tie(e1, in1) = add_edge(verts[head], verts[tail], g);
+        tie(e2, in2) = add_edge(verts[tail], verts[head], g);
+        if (!in1 || !in2) {
+          std::cerr << "unable to add edge (" << head << "," << tail << ")" 
+                    << std::endl;
+          return -1;
+        }
+        capacity[e1] = cap;
+        capacity[e2] = 0;
+        reverse_edge[e1] = e2;
+        reverse_edge[e2] = e1;
       }
       ++no_alines;
       break;
