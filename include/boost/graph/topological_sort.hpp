@@ -78,7 +78,7 @@ namespace boost {
   template <class VertexListGraph, class OutputIterator>
   void topological_sort(VertexListGraph& g, OutputIterator result)
   {
-    return topological_sort(g, result, bgl_named_params<int, int>(0));
+    topological_sort(g, result, bgl_named_params<int, int>(0));
   }
 
 } // namespace boost
