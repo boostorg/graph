@@ -20,7 +20,7 @@ struct reverse_graph_tag { };
     template <bool isEdgeList> struct choose_rev_edge_iter { };
     template <> struct choose_rev_edge_iter<true> {
       template <class G> struct bind_ {
-	typedef typename graph_traits<G>::edge_iterator type;
+        typedef typename graph_traits<G>::edge_iterator type;
       };
     };
     template <> struct choose_rev_edge_iter<false> {
@@ -64,7 +64,7 @@ class reverse_graph {
 
     // EdgeListGraph requirements
     enum { is_edge_list = is_convertible<traversal_category, 
-	   edge_list_graph_tag>::value };
+           edge_list_graph_tag>::value };
     typedef detail::choose_rev_edge_iter<is_edge_list> ChooseEdgeIter;
     typedef typename ChooseEdgeIter::
       template bind_<BidirectionalGraph>::type   edge_iterator;

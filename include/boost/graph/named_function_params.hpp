@@ -134,8 +134,8 @@ namespace boost {
     bgl_named_params<Residual_CapacityMap, edge_residual_capacity_t, self>
     residual_capacity_map(Residual_CapacityMap pmap) {
       typedef bgl_named_params<Residual_CapacityMap, 
-	edge_residual_capacity_t, self>
-	Params;
+        edge_residual_capacity_t, self>
+        Params;
       return Params(pmap, *this);
     }
 
@@ -143,8 +143,8 @@ namespace boost {
     bgl_named_params<ReverseMap, edge_reverse_t, self>
     reverse_edge_map(ReverseMap pmap) {
       typedef bgl_named_params<ReverseMap, 
-	edge_reverse_t, self>
-	Params;
+        edge_reverse_t, self>
+        Params;
       return Params(pmap, *this);
     }
 
@@ -152,7 +152,7 @@ namespace boost {
     bgl_named_params<DiscoverTimeMap, vertex_discover_time_t, self>
     discover_time_map(const DiscoverTimeMap& pmap) const {
       typedef bgl_named_params<DiscoverTimeMap, vertex_discover_time_t, self>
-	Params;
+        Params;
       return Params(pmap, *this);
     }
 
@@ -492,9 +492,9 @@ namespace boost {
     struct choose_parameter {
       template <class P, class Graph, class Tag>
       struct bind_ {
-	typedef const P& const_result_type;
-	typedef const P& result_type;
-	typedef P type;
+        typedef const P& const_result_type;
+        typedef const P& result_type;
+        typedef P type;
       };
 
       template <class P, class Graph, class Tag>
@@ -511,23 +511,23 @@ namespace boost {
     struct choose_default_param {
       template <class P, class Graph, class Tag>
       struct bind_ {
-	typedef typename property_map<Graph, Tag>::type 
-	  result_type;
-	typedef typename property_map<Graph, Tag>::const_type 
-	  const_result_type;
-	typedef typename property_map<Graph, Tag>::const_type 
-	  type;
+        typedef typename property_map<Graph, Tag>::type 
+          result_type;
+        typedef typename property_map<Graph, Tag>::const_type 
+          const_result_type;
+        typedef typename property_map<Graph, Tag>::const_type 
+          type;
       };
 
       template <class P, class Graph, class Tag>
       static typename bind_<P, Graph, Tag>::const_result_type
       const_apply(const P&, const Graph& g, Tag tag) { 
-	return get(tag, g); 
+        return get(tag, g); 
       }
       template <class P, class Graph, class Tag>
       static typename bind_<P, Graph, Tag>::result_type
       apply(const P&, Graph& g, Tag tag) { 
-	return get(tag, g); 
+        return get(tag, g); 
       }
     };
 
@@ -557,7 +557,7 @@ namespace boost {
       typedef bgl_named_params<P, T, R> Params;
       typedef typename property_value< Params, edge_capacity_t>::type Param;
       typedef typename detail::choose_pmap_helper<Param, Graph,
-	edge_capacity_t>::result CapacityEdgeMap;
+        edge_capacity_t>::result CapacityEdgeMap;
       typedef typename property_traits<CapacityEdgeMap>::value_type type;
     };
 

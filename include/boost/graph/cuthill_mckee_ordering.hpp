@@ -56,7 +56,7 @@ namespace boost {
     //   value_type spouse() const;
     // 
     template < class Vertex, class DegreeMap,
-	       class Container = std::deque<Vertex> >
+               class Container = std::deque<Vertex> >
     class rcm_queue : public std::queue<Vertex, Container> {
       typedef std::queue<Vertex> base;
     public:
@@ -65,36 +65,36 @@ namespace boost {
 
       /* SGI queue has not had a contructor queue(const Container&) */
       inline rcm_queue(DegreeMap deg)
-	: _size(0), Qsize(1), eccen(-1), degree(deg) { }
+        : _size(0), Qsize(1), eccen(-1), degree(deg) { }
 
       inline void pop() {
-	if ( !_size ) 
-	  Qsize = base::size();
+        if ( !_size ) 
+          Qsize = base::size();
 
-	base::pop();
-	if ( _size == Qsize-1 ) {
-	  _size = 0;
-	  ++eccen;
-	} else 
-	  ++_size;
+        base::pop();
+        if ( _size == Qsize-1 ) {
+          _size = 0;
+          ++eccen;
+        } else 
+          ++_size;
 
       }
 
       inline value_type& front() {
-	value_type& u =  base::front();
-	if ( _size == 0 ) 
-	  w = u;
-	else if (get(degree,u) < get(degree,w) )
-	  w = u;
-	return u;
+        value_type& u =  base::front();
+        if ( _size == 0 ) 
+          w = u;
+        else if (get(degree,u) < get(degree,w) )
+          w = u;
+        return u;
       }
       inline const value_type& front() const {
-	const value_type& u =  base::front();
-	if ( _size == 0 ) 
-	  w = u;
-	else if (get(degree,u) < get(degree,w) )
-	  w = u;
-	return u;
+        const value_type& u =  base::front();
+        if ( _size == 0 ) 
+          w = u;
+        else if (get(degree,u) < get(degree,w) )
+          w = u;
+        return u;
       }
 
       inline value_type& top() { return front(); }
@@ -123,7 +123,7 @@ namespace boost {
   template <class Graph, class Vertex, class ColorMap, class DegreeMap>
   Vertex 
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
-			 ColorMap color, DegreeMap degree)
+                         ColorMap color, DegreeMap degree)
   {
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
@@ -204,15 +204,15 @@ namespace boost {
       *inverse_permutation++ = u;
       typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-	v = target(*ei, g);
+        v = target(*ei, g);
         if (get(color, v) == Color::white()) {
           put(color, v, Color::gray());
-	  degree_queue.push(v);
-	}
+          degree_queue.push(v);
+        }
       }
       while (!degree_queue.empty()) {
-	v = degree_queue.top(); degree_queue.pop();
-	bfs_queue.push(v);
+        v = degree_queue.top(); degree_queue.pop();
+        bfs_queue.push(v);
       }
       put(color, u, Color::black());
     } // while

@@ -46,11 +46,11 @@ namespace boost {
       inline X my_abs(const X& x) const { return x < 0 ? -x : x; }
 
       T operator()(const T& a, const T& b) const {
-	using namespace std;
-	T inf = numeric_limits<T>::max();
-	if (b > 0 && my_abs(inf - a) < b)
-	  return inf;
-	return a + b;
+        using namespace std;
+        T inf = numeric_limits<T>::max();
+        if (b > 0 && my_abs(inf - a) < b)
+          return inf;
+        return a + b;
       }
     };
     
@@ -59,7 +59,7 @@ namespace boost {
             class BinaryFunction, class BinaryPredicate>
     bool relax(typename graph_traits<Graph>::edge_descriptor e, 
                const Graph& g, WeightMap w, 
-	       PredecessorMap p, DistanceMap d, 
+               PredecessorMap p, DistanceMap d, 
                BinaryFunction combine, BinaryPredicate compare)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -71,7 +71,7 @@ namespace boost {
 
       if ( compare(combine(d_u, w_e), d_v) ) {
         put(d, v, combine(d_u, w_e));
-	put(p, v, u);
+        put(p, v, u);
         return true;
       } else
         return false;

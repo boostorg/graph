@@ -232,7 +232,7 @@ namespace boost {
        detail::error_property_not_found)
       {
         std::vector<default_color_type> color_vec(num_vertices(g));
-	default_color_type c = white_color;
+        default_color_type c = white_color;
         null_visitor null_vis;
         
         bfs_helper

@@ -9,8 +9,8 @@ namespace boost {
   template <typename Graph, typename VertexIndexMap>
   typename graph_traits<Graph>::vertices_size_type
   ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
-		const Graph& g,
-		VertexIndexMap index)
+                const Graph& g,
+                VertexIndexMap index)
   {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
     size_type b = 0;
@@ -27,7 +27,7 @@ namespace boost {
   template <typename Graph>
   typename graph_traits<Graph>::vertices_size_type
   ith_bandwidth(typename graph_traits<Graph>::vertex_descriptor i,
-		const Graph& g)
+                const Graph& g)
   {
     return ith_bandwidth(i, g, get(vertex_index, g));
   }

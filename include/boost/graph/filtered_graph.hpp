@@ -115,13 +115,13 @@ namespace boost {
     struct edge_predicate {
       edge_predicate() { }
       edge_predicate(EdgePredicate ep, VertexPredicate vp, 
-		     const Graph& g)
+                     const Graph& g)
         : m_edge_pred(ep), m_vertex_pred(vp), m_g(&g) { }
 
       template <typename Edge>
       bool operator()(const Edge& e) const {
         return m_edge_pred(e)
-	  && m_vertex_pred(source(e, *m_g)) && m_vertex_pred(target(e, *m_g));
+          && m_vertex_pred(source(e, *m_g)) && m_vertex_pred(target(e, *m_g));
       }
       EdgePredicate m_edge_pred;
       VertexPredicate m_vertex_pred;
@@ -245,7 +245,7 @@ namespace boost {
     Pol pol(g.m_vertex_pred, l);
     typedef typename Graph::vertex_iterator iter;
     return std::make_pair(iter(f, pol), 
-			  iter(l, pol));
+                          iter(l, pol));
   }
 
   template <typename G, typename EP, typename VP>
@@ -391,10 +391,10 @@ namespace boost {
     struct filtered_graph_property_selector {
       template <class FilteredGraph, class Property, class Tag>
       struct bind_ {
-	typedef typename FilteredGraph::graph_type Graph;
-	typedef property_map<Graph, Tag> Map;
-	typedef typename Map::type type;
-	typedef typename Map::const_type const_type;
+        typedef typename FilteredGraph::graph_type Graph;
+        typedef property_map<Graph, Tag> Map;
+        typedef typename Map::type type;
+        typedef typename Map::const_type const_type;
       };
     };    
   } // namespace detail

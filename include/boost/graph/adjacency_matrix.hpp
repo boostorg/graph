@@ -138,7 +138,7 @@ namespace boost {
       inline typename Iter::value_type
       dereference(const Iter& i) const 
       {
-	typedef typename Iter::value_type EdgeDescriptor;
+        typedef typename Iter::value_type EdgeDescriptor;
         return EdgeDescriptor(get_edge_exists(*i.base()), m_src, m_targ, 
                               &get_property(*i.base()));
       }
@@ -174,7 +174,7 @@ namespace boost {
       inline typename Iter::value_type
       dereference(const Iter& i) const 
       {
-	typedef typename Iter::value_type EdgeDescriptor;
+        typedef typename Iter::value_type EdgeDescriptor;
         return EdgeDescriptor(get_edge_exists(*i.base()), m_src, m_targ,
                               &get_property(*i.base()));
       }
@@ -226,7 +226,7 @@ namespace boost {
       inline typename Iter::value_type
       dereference(const Iter& i) const 
       {
-	typedef typename Iter::value_type EdgeDescriptor;
+        typedef typename Iter::value_type EdgeDescriptor;
         return EdgeDescriptor(get_edge_exists(*i.base()), m_src, m_targ,
                               &get_property(*i.base()));
       }

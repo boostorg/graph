@@ -1,4 +1,3 @@
-//
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
@@ -48,21 +47,21 @@ namespace boost {
     template <class Graph, class P, class T, class R, class Weight>
     inline void
     prim_mst_impl(const Graph& G,
-		  typename graph_traits<Graph>::vertex_descriptor s,
-		  const bgl_named_params<P,T,R>& params,
-		  Weight)
+                  typename graph_traits<Graph>::vertex_descriptor s,
+                  const bgl_named_params<P,T,R>& params,
+                  Weight)
     {
       typedef typename property_traits<Weight>::value_type W;
       std::less<W> compare;
       detail::_project2nd<W,W> combine;
       dijkstra_shortest_paths(G, s, params.distance_compare(compare).
-			      distance_combine(combine));
+                              distance_combine(combine));
     }
   } // namespace detail
 
   template <class VertexListGraph, class DijkstraVisitor, 
-	    class PredecessorMap, class DistanceMap,
-	    class WeightMap, class IndexMap>
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap>
   inline void
   prim_minimum_spanning_tree
     (const VertexListGraph& g,
@@ -75,8 +74,8 @@ namespace boost {
     std::less<W> compare;
     detail::_project2nd<W,W> combine;
     dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
-			    compare, combine, std::numeric_limits<W>::max(), 0,
-			    vis);
+                            compare, combine, std::numeric_limits<W>::max(), 0,
+                            vis);
   }
 
   template <class VertexListGraph, class PredecessorMap,

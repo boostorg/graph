@@ -75,7 +75,7 @@ namespace boost {
       function_requires< EqualityComparableConcept<edge_descriptor> >();
       function_requires< AssignableConcept<edge_descriptor> >();
       function_requires< ConvertibleConcept<traversal_category,
-	incidence_graph_tag> >();
+        incidence_graph_tag> >();
 
       p = out_edges(v, g);
       n = out_degree(v, g);
@@ -108,7 +108,7 @@ namespace boost {
       function_requires< IncidenceGraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<in_edge_iterator> >();
       function_requires< ConvertibleConcept<traversal_category,
-	bidirectional_graph_tag> >();
+        bidirectional_graph_tag> >();
 
       p = in_edges(v, g);
       n = in_degree(v, g);
@@ -138,7 +138,7 @@ namespace boost {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<adjacency_iterator> >();
       function_requires< ConvertibleConcept<traversal_category,
-	adjacency_graph_tag> >();
+        adjacency_graph_tag> >();
 
       p = adjacent_vertices(v, g);
       v = *p.first;
@@ -163,7 +163,7 @@ namespace boost {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<vertex_iterator> >();
       function_requires< ConvertibleConcept<traversal_category,
-	vertex_list_graph_tag> >();
+        vertex_list_graph_tag> >();
 
       p = vertices(g);
       v = *p.first;
@@ -195,7 +195,7 @@ namespace boost {
       function_requires< EqualityComparableConcept<edge_descriptor> >();
       function_requires< AssignableConcept<edge_descriptor> >();
       function_requires< ConvertibleConcept<traversal_category,
-	edge_list_graph_tag> >();
+        edge_list_graph_tag> >();
 
       p = edges(g);
       e = *p.first;

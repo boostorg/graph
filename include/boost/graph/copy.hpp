@@ -222,8 +222,8 @@ namespace boost {
       typedef typename Graph::directed_category Dr;
       enum { algo = 
              (is_convertible<Trv, vertex_list_graph_tag>::value
-	      && is_convertible<Trv, edge_list_graph_tag>::value)
-	     ? 0 : is_convertible<Dr, directed_tag>::value ? 1 : 2 };
+              && is_convertible<Trv, edge_list_graph_tag>::value)
+             ? 0 : is_convertible<Dr, directed_tag>::value ? 1 : 2 };
       typedef copy_graph_impl<algo> type;
     };
 

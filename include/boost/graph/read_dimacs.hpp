@@ -163,8 +163,8 @@ int read_dimacs_max_flow(Graph& g,
         { err_no = EN4; goto error; }
 
       {
-	for (long vi = 0; vi < n; ++vi)
-	  verts.push_back(add_vertex(g));
+        for (long vi = 0; vi < n; ++vi)
+          verts.push_back(add_vertex(g));
       }
       break;
       

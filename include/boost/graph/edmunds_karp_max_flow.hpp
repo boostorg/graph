@@ -86,8 +86,8 @@ namespace boost {
   } // namespace detail
 
   template <class Graph, 
-	    class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-	    class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
+            class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+            class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
   typename property_traits<CapacityEdgeMap>::value_type
   edmunds_karp_max_flow
     (Graph& g, 
@@ -107,17 +107,17 @@ namespace boost {
     typename graph_traits<Graph>::out_edge_iterator ei, e_end;
     for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
       for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-	res[*ei] = cap[*ei];
+        res[*ei] = cap[*ei];
     
     color[sink] = Color::gray();
     while (color[sink] != Color::white()) {
       boost::queue<vertex_t> Q;
       breadth_first_search
-	(detail::residual_graph(g, res), src, Q,
-	 make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
-	 color);
+        (detail::residual_graph(g, res), src, Q,
+         make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
+         color);
       if (color[sink] != Color::white())
-	detail::augment(g, src, sink, pred, res, rev);
+        detail::augment(g, src, sink, pred, res, rev);
     } // while
     
     typename property_traits<CapacityEdgeMap>::value_type flow = 0;
@@ -143,13 +143,13 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        ColorMap color)
       {
-	return edmunds_karp_max_flow
-	  (g, src, sink, 
-	   choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
-	   choose_pmap(get_param(params, edge_residual_capacity), 
-		       g, edge_residual_capacity),
-	   choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
-	   color, pred);
+        return edmunds_karp_max_flow
+          (g, src, sink, 
+           choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
+           choose_pmap(get_param(params, edge_residual_capacity), 
+                       g, edge_residual_capacity),
+           choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
+           color, pred);
       }
     };
     template<>
@@ -164,21 +164,21 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        detail::error_property_not_found)
       {
-	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-	typedef typename graph_traits<Graph>::vertices_size_type size_type;
-	size_type n = is_default_param(get_param(params, vertex_color)) ?
-	  num_vertices(g) : 1;
-	std::vector<default_color_type> color_vec(n);
-	return edmunds_karp_max_flow
-	  (g, src, sink, 
-	   choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
-	   choose_pmap(get_param(params, edge_residual_capacity), 
-		       g, edge_residual_capacity),
-	   choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
-	   make_iterator_property_map(color_vec.begin(), choose_const_pmap
-				      (get_param(params, vertex_index),
-				       g, vertex_index), color_vec[0]),
-	   pred);
+        typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
+        typedef typename graph_traits<Graph>::vertices_size_type size_type;
+        size_type n = is_default_param(get_param(params, vertex_color)) ?
+          num_vertices(g) : 1;
+        std::vector<default_color_type> color_vec(n);
+        return edmunds_karp_max_flow
+          (g, src, sink, 
+           choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
+           choose_pmap(get_param(params, edge_residual_capacity), 
+                       g, edge_residual_capacity),
+           choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
+           make_iterator_property_map(color_vec.begin(), choose_const_pmap
+                                      (get_param(params, vertex_index),
+                                       g, vertex_index), color_vec[0]),
+           pred);
       }
     };
 
@@ -191,20 +191,20 @@ namespace boost {
       template <class Graph, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
       apply(Graph& g,
-	    typename graph_traits<Graph>::vertex_descriptor src,
-	    typename graph_traits<Graph>::vertex_descriptor sink,
-	    const bgl_named_params<P, T, R>& params,
-	    PredMap pred)
+            typename graph_traits<Graph>::vertex_descriptor src,
+            typename graph_traits<Graph>::vertex_descriptor sink,
+            const bgl_named_params<P, T, R>& params,
+            PredMap pred)
       {
-	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-	typedef typename graph_traits<Graph>::vertices_size_type size_type;
-	size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
-	  num_vertices(g) : 1;
-	std::vector<edge_descriptor> pred_vec(n);
-	
-	typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
-	return edmunds_karp_dispatch2<C>::apply
-	  (g, src, sink, pred, params, get_param(params, vertex_color));
+        typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
+        typedef typename graph_traits<Graph>::vertices_size_type size_type;
+        size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
+          num_vertices(g) : 1;
+        std::vector<edge_descriptor> pred_vec(n);
+        
+        typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+        return edmunds_karp_dispatch2<C>::apply
+          (g, src, sink, pred, params, get_param(params, vertex_color));
       }
     };
     template<>
@@ -219,20 +219,20 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        detail::error_property_not_found)
       {
-	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-	typedef typename graph_traits<Graph>::vertices_size_type size_type;
-	size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
-	  num_vertices(g) : 1;
-	std::vector<edge_descriptor> pred_vec(n);
-	
-	typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
-	return edmunds_karp_dispatch2<C>::apply
-	  (g, src, sink, 
-	   make_iterator_property_map(pred_vec.begin(), choose_const_pmap
-				      (get_param(params, vertex_index),
-				       g, vertex_index), pred_vec[0]),
-	   params, 
-	   get_param(params, vertex_color));
+        typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
+        typedef typename graph_traits<Graph>::vertices_size_type size_type;
+        size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
+          num_vertices(g) : 1;
+        std::vector<edge_descriptor> pred_vec(n);
+        
+        typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+        return edmunds_karp_dispatch2<C>::apply
+          (g, src, sink, 
+           make_iterator_property_map(pred_vec.begin(), choose_const_pmap
+                                      (get_param(params, vertex_index),
+                                       g, vertex_index), pred_vec[0]),
+           params, 
+           get_param(params, vertex_color));
       }
     };
     

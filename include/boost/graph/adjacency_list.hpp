@@ -347,17 +347,17 @@ namespace boost {
     // Required by Iterator Constructible Graph
     template <class EdgeIterator>
     inline adjacency_list(EdgeIterator first, EdgeIterator last,
-			  vertices_size_type n,
-			  edges_size_type m = 0,
+                          vertices_size_type n,
+                          edges_size_type m = 0,
                           const GraphProperty& p = GraphProperty())
       : Base(n, first, last), m_property(p) { }
 
     template <class EdgeIterator, class EdgePropertyIterator>
     inline adjacency_list(EdgeIterator first, EdgeIterator last,
                           EdgePropertyIterator ep_iter,
-			  vertices_size_type n,
-			  edges_size_type m = 0,
-			  const GraphProperty& p = GraphProperty())
+                          vertices_size_type n,
+                          edges_size_type m = 0,
+                          const GraphProperty& p = GraphProperty())
       : Base(n, first, last, ep_iter), m_property(p) { }
 
     void swap(adjacency_list& x) {

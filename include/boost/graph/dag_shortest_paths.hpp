@@ -10,10 +10,10 @@ namespace boost {
 
   // Initalize distances and call depth first search
   template <class VertexListGraph, class DijkstraVisitor, 
-	    class DistanceMap, class WeightMap, class ColorMap, 
-	    class PredecessorMap,
-	    class Compare, class Combine, 
-	    class DistInf, class DistZero>
+            class DistanceMap, class WeightMap, class ColorMap, 
+            class PredecessorMap,
+            class Compare, class Combine, 
+            class DistInf, class DistZero>
   inline void
   dag_shortest_paths
     (const VertexListGraph& g,
@@ -42,13 +42,13 @@ namespace boost {
       vis.examine_vertex(u, g);
       typename graph_traits<VertexListGraph>::out_edge_iterator e, e_end;
       for (tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
-	vis.discover_vertex(target(*e, g), g);
-	bool decreased = relax(*e, g, weight, pred, distance, 
-			       combine, compare);
-	if (decreased)
-	  vis.edge_relaxed(*e, g);
-	else
-	  vis.edge_not_relaxed(*e, g);
+        vis.discover_vertex(target(*e, g), g);
+        bool decreased = relax(*e, g, weight, pred, distance, 
+                               combine, compare);
+        if (decreased)
+          vis.edge_relaxed(*e, g);
+        else
+          vis.edge_not_relaxed(*e, g);
       }
       vis.finish_vertex(u, g);      
     }
@@ -73,8 +73,8 @@ namespace boost {
       dummy_property_map p_map;
       dag_shortest_paths
         (g, s, distance, weight, color, 
-	 choose_param(get_param(params, vertex_predecessor), p_map),
-	 vis, 
+         choose_param(get_param(params, vertex_predecessor), p_map),
+         vis, 
          choose_param(get_param(params, distance_compare_t()), std::less<D>()),
          choose_param(get_param(params, distance_combine_t()), closed_plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
@@ -110,7 +110,7 @@ namespace boost {
          choose_param(color,
                       make_iterator_property_map(color_map.begin(), id, 
                                                  color_map[0])),
-	 id, vis, params);
+         id, vis, params);
     }
     
   } // namespace detail 

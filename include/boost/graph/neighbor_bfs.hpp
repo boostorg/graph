@@ -153,7 +153,7 @@ namespace boost {
       typedef typename GTraits::vertex_descriptor Vertex;
       typedef typename GTraits::edge_descriptor Edge;
       function_requires< 
-	NeighborBFSVisitorConcept<BFSVisitor, BidirectionalGraph> >();
+        NeighborBFSVisitorConcept<BFSVisitor, BidirectionalGraph> >();
       function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
@@ -256,11 +256,11 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        ColorMap color)
       {
-	neighbor_bfs_helper
-	  (g, s, color,
-	   choose_param(get_param(params, graph_visitor),
-			make_neighbor_bfs_visitor(null_visitor())),
-	   params);
+        neighbor_bfs_helper
+          (g, s, color,
+           choose_param(get_param(params, graph_visitor),
+                        make_neighbor_bfs_visitor(null_visitor())),
+           params);
       }
     };
 
@@ -273,18 +273,18 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        detail::error_property_not_found)
       {
-	std::vector<default_color_type> color_vec(num_vertices(g));
-	null_visitor null_vis;
-	
-	neighbor_bfs_helper
-	  (g, s, 
-	   make_iterator_property_map
-	   (color_vec.begin(), 
-	    choose_const_pmap(get_param(params, vertex_index), 
-			      g, vertex_index), color_vec[0]),
-	   choose_param(get_param(params, graph_visitor),
-			make_neighbor_bfs_visitor(null_vis)),
-	   params);
+        std::vector<default_color_type> color_vec(num_vertices(g));
+        null_visitor null_vis;
+        
+        neighbor_bfs_helper
+          (g, s, 
+           make_iterator_property_map
+           (color_vec.begin(), 
+            choose_const_pmap(get_param(params, vertex_index), 
+                              g, vertex_index), color_vec[0]),
+           choose_param(get_param(params, graph_visitor),
+                        make_neighbor_bfs_visitor(null_vis)),
+           params);
       }
     };
 
@@ -306,7 +306,7 @@ namespace boost {
     typedef typename property_value< bgl_named_params<P,T,R>, 
       vertex_color_t>::type C;
     detail::neighbor_bfs_dispatch<C>::apply(ng, s, params, 
-					    get_param(params, vertex_color));
+                                            get_param(params, vertex_color));
   }
 
 

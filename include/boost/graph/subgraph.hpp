@@ -99,7 +99,7 @@ namespace boost {
       : m_graph(p), m_parent(0), m_edge_counter(0)
     { }
     subgraph(vertices_size_type n, 
-	     const graph_property_type& p = graph_property_type()) 
+             const graph_property_type& p = graph_property_type()) 
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     {
       typename Graph::vertex_iterator v, v_end;
@@ -116,15 +116,15 @@ namespace boost {
     {
       // Do a deep copy
       for (typename ChildrenList::const_iterator i = x.m_children.begin();
-	   i != x.m_children.end(); ++i)
-	m_children.push_back(new subgraph<Graph>( **i ));
+           i != x.m_children.end(); ++i)
+        m_children.push_back(new subgraph<Graph>( **i ));
     }
 
 
     ~subgraph() {
       for (typename ChildrenList::iterator i = m_children.begin();
-	   i != m_children.end(); ++i)
-	delete *i;
+           i != m_children.end(); ++i)
+        delete *i;
     }
 
 
@@ -138,12 +138,12 @@ namespace boost {
     // Create a subgraph with the specified vertex set.
     template <typename VertexIterator>
     subgraph<Graph>& create_subgraph(VertexIterator first,
-				     VertexIterator last)
+                                     VertexIterator last)
     {
       m_children.push_back(new subgraph<Graph>());
       m_children.back()->m_parent = this;
       for (; first != last; ++first)
-	add_vertex(*first, *m_children.back());
+        add_vertex(*first, *m_children.back());
       return *m_children.back();
     }
 
@@ -166,7 +166,7 @@ namespace boost {
     edge_descriptor global_to_local(edge_descriptor e_global) const
     {
       return 
-	(*m_local_edge.find(get(get(edge_index, root().m_graph), e_global))).second;
+        (*m_local_edge.find(get(get(edge_index, root().m_graph), e_global))).second;
     }
 
     // Is vertex u (of the root graph) contained in this subgraph?
@@ -175,7 +175,7 @@ namespace boost {
     find_vertex(vertex_descriptor u_global) const
     {
       typename std::map<vertex_descriptor, vertex_descriptor>::const_iterator
-	i = m_local_vertex.find(u_global);
+        i = m_local_vertex.find(u_global);
       return std::make_pair((*i).second, i != m_local_vertex.end());
     }
 
@@ -188,15 +188,15 @@ namespace boost {
     // Return the root graph of the subgraph tree.
     subgraph& root() {
       if (this->is_root())
-	return *this;
+        return *this;
       else
-	return m_parent->root();
+        return m_parent->root();
     }
     const subgraph& root() const {
       if (this->is_root())
-	return *this;
+        return *this;
       else
-	return m_parent->root();
+        return m_parent->root();
     }
 
     // Return the children subgraphs of this graph/subgraph.
@@ -214,14 +214,14 @@ namespace boost {
     children() const
     {
       return std::make_pair(const_children_iterator(m_children.begin()), 
-			    const_children_iterator(m_children.end()));
+                            const_children_iterator(m_children.end()));
     }
 
     std::pair<children_iterator, children_iterator>
     children() 
     {
       return std::make_pair(children_iterator(m_children.begin()), 
-			    children_iterator(m_children.end()));
+                            children_iterator(m_children.end()));
     }
 
     std::size_t num_children() const { return m_children.size(); }
@@ -241,7 +241,7 @@ namespace boost {
 
     edge_descriptor
     local_add_edge(vertex_descriptor u_local, vertex_descriptor v_local,  
-		   edge_descriptor e_global)
+                   edge_descriptor e_global)
     {
       edge_descriptor e_local; 
       bool inserted;
@@ -276,25 +276,25 @@ namespace boost {
     {
       typename subgraph<G>::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u_global, r); 
-	   ei != ei_end; ++ei) {
-	e_global = *ei;
-	v_global = target(e_global, r);
-	if (g.find_vertex(v_global).second == true)
-	  g.local_add_edge(u_local, g.global_to_local(v_global), e_global);
+           ei != ei_end; ++ei) {
+        e_global = *ei;
+        v_global = target(e_global, r);
+        if (g.find_vertex(v_global).second == true)
+          g.local_add_edge(u_local, g.global_to_local(v_global), e_global);
       }
     }
     if (is_directed(g)) { // not necessary for undirected graph
       typename subgraph<G>::vertex_iterator vi, vi_end;
       typename subgraph<G>::out_edge_iterator ei, ei_end;
       for (tie(vi, vi_end) = vertices(r); vi != vi_end; ++vi) {
-	v_global = *vi;
-	if (g.find_vertex(v_global).second)
-	  for (tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
-	    e_global = *ei;
-	    uu_global = target(e_global, r);
-	    if (uu_global == u_global && g.find_vertex(v_global).second) 
-	      g.local_add_edge(g.global_to_local(v_global), u_local, e_global);
-	  }
+        v_global = *vi;
+        if (g.find_vertex(v_global).second)
+          for (tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
+            e_global = *ei;
+            uu_global = target(e_global, r);
+            if (uu_global == u_global && g.find_vertex(v_global).second) 
+              g.local_add_edge(g.global_to_local(v_global), u_local, e_global);
+          }
       }
     }
 
@@ -416,7 +416,7 @@ namespace boost {
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
         if ((*i)->find_vertex(u_global).second
-	    && (*i)->find_vertex(v_global).second)
+            && (*i)->find_vertex(v_global).second)
           add_edge_recur_down(u_global, v_global, e_global, **i, orig);
     }
 
@@ -426,13 +426,13 @@ namespace boost {
        subgraph<Graph>* orig)
     {
       if (&g != orig ) { 
-	// add local edge only if u_global and v_global are in subgraph g
+        // add local edge only if u_global and v_global are in subgraph g
         Vertex u_local, v_local;
-	bool u_in_subgraph, v_in_subgraph;
-	tie(u_local, u_in_subgraph) = g.find_vertex(u_global);
-	tie(v_local, v_in_subgraph) = g.find_vertex(v_global);
-	if (u_in_subgraph && v_in_subgraph)
-	  g.local_add_edge(u_local, v_local, e_global);
+        bool u_in_subgraph, v_in_subgraph;
+        tie(u_local, u_in_subgraph) = g.find_vertex(u_global);
+        tie(v_local, v_in_subgraph) = g.find_vertex(v_global);
+        if (u_in_subgraph && v_in_subgraph)
+          g.local_add_edge(u_local, v_local, e_global);
       }
       children_add_edge(u_global, v_global, e_global, g.m_children, orig);
     }
@@ -447,8 +447,8 @@ namespace boost {
         typename subgraph<Graph>::edge_descriptor e_global;
         bool inserted;
         tie(e_global, inserted) = add_edge(u_global, v_global, ep, g.m_graph);
-	put(edge_index, g.m_graph, e_global, g.m_edge_counter++);
-	g.m_global_edge.push_back(e_global);
+        put(edge_index, g.m_graph, e_global, g.m_edge_counter++);
+        g.m_global_edge.push_back(e_global);
         children_add_edge(u_global, v_global, e_global, g.m_children, orig);
         return std::make_pair(e_global, inserted);
       } else
@@ -505,7 +505,7 @@ namespace boost {
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
         if ((*i)->find_vertex(u_global).second
-	    && (*i)->find_vertex(v_global).second)
+            && (*i)->find_vertex(v_global).second)
           remove_edge_recur_down(u_global, v_global, **i);
     }
     
@@ -542,9 +542,9 @@ namespace boost {
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
         if ((*i)->find_vertex(source(e_global, **i)).second
-	    && (*i)->find_vertex(target(e_global, **i)).second)
+            && (*i)->find_vertex(target(e_global, **i)).second)
           remove_edge_recur_down(source(e_global, **i),
-				 target(e_global, **i), **i);
+                                 target(e_global, **i), **i);
     }
 
     template <typename Edge, typename Graph>
@@ -601,7 +601,7 @@ namespace boost {
   template <typename G>
   void
   clear_vertex(typename subgraph<G>::vertex_descriptor v_local,
-	       subgraph<G>& g)
+               subgraph<G>& g)
   {
     // this is wrong...
     clear_vertex(v_local, g.m_graph);
@@ -678,9 +678,9 @@ namespace boost {
     
     inline reference operator[](key_type e_local) const {
       if (m_g->m_parent == 0)
-	return m_pmap[e_local];
+        return m_pmap[e_local];
       else
-	return m_pmap[m_g->local_to_global(e_local)];
+        return m_pmap[m_g->local_to_global(e_local)];
     }
     GraphPtr m_g;
     PropertyMap m_pmap;

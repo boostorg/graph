@@ -57,11 +57,11 @@ namespace boost {
   namespace detail {
 
     template <class Graph, class OutputIterator, 
-	      class Rank, class Parent, class Weight>
+              class Rank, class Parent, class Weight>
     void
     kruskal_mst_impl(const Graph& G, 
-		     OutputIterator spanning_tree_edges, 
-		     Rank rank, Parent parent, Weight weight)
+                     OutputIterator spanning_tree_edges, 
+                     Rank rank, Parent parent, Weight weight)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
@@ -82,7 +82,7 @@ namespace boost {
 
       typename graph_traits<Graph>::vertex_iterator ui, uiend;
       for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui)
-	dset.make_set(*ui);
+        dset.make_set(*ui);
 
       typedef indirect_cmp<Weight, std::greater<W_value> > weight_greater;
       weight_greater wl(weight);
@@ -90,17 +90,17 @@ namespace boost {
       /*push all edge into Q*/
       typename graph_traits<Graph>::edge_iterator ei, eiend;
       for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei) 
-	Q.push(*ei);
+        Q.push(*ei);
 
       while (! Q.empty()) {
-	Edge e = Q.top();
-	Q.pop();
-	Vertex u = dset.find_set(source(e, G));
-	Vertex v = dset.find_set(target(e, G));
-	if ( u != v ) {
-	  *spanning_tree_edges++ = e;
-	  dset.link(u, v);
-	}
+        Edge e = Q.top();
+        Q.pop();
+        Vertex u = dset.find_set(source(e, G));
+        Vertex v = dset.find_set(target(e, G));
+        if ( u != v ) {
+          *spanning_tree_edges++ = e;
+          dset.link(u, v);
+        }
       }
     }
 
@@ -148,15 +148,15 @@ namespace boost {
       (g, spanning_tree_edges, 
        choose_param
        (get_param(params, vertex_rank), 
-	make_iterator_property_map
-	(rank_map.begin(), 
-	 choose_pmap(get_param(params, vertex_index), g, vertex_index), rank_map[0])),
+        make_iterator_property_map
+        (rank_map.begin(), 
+         choose_pmap(get_param(params, vertex_index), g, vertex_index), rank_map[0])),
        choose_param
        (get_param(params, vertex_predecessor), 
-	make_iterator_property_map
-	(pred_map.begin(), 
-	 choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
-	 pred_map[0])),
+        make_iterator_property_map
+        (pred_map.begin(), 
+         choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
+         pred_map[0])),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
     

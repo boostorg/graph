@@ -255,7 +255,7 @@ namespace boost {
       uniform_int<RandomNumGen> rand_gen(gen, 0, num_vertices(g)-1);
       std::size_t n = rand_gen();
       typename graph_traits<Graph>::vertex_iterator
-	i = vertices(g).first;
+        i = vertices(g).first;
       while (n-- > 0) ++i; // std::advance not VC++ portable
       return *i;
     } else
@@ -268,9 +268,9 @@ namespace boost {
     if (num_edges(g) > 1) {
       uniform_int<RandomNumGen> rand_gen(gen, 0, num_edges(g)-1);
       typename graph_traits<Graph>::edges_size_type 
-	n = rand_gen();
+        n = rand_gen();
       typename graph_traits<Graph>::edge_iterator
-	i = edges(g).first;
+        i = edges(g).first;
       while (n-- > 0) ++i; // std::advance not VC++ portable
       return *i;
     } else
@@ -330,7 +330,7 @@ namespace boost {
       edge_t e; bool inserted;
       tie(e, inserted) = add_edge(a, b, g);
       if (inserted)
-	*edge_out++ = std::make_pair(source(e, g), target(e, g));
+        *edge_out++ = std::make_pair(source(e, g), target(e, g));
     }
   }
 

@@ -47,24 +47,24 @@
 // directory to the SGB root directory).
 //
 extern "C" {
-	// We include all global definitions for the general stuff
-	// of The Stanford GraphBase and its various graph generator
-	// functions by reading all SGB headerfiles as in section 2 of
-	// the "test_sample" program.
+        // We include all global definitions for the general stuff
+        // of The Stanford GraphBase and its various graph generator
+        // functions by reading all SGB headerfiles as in section 2 of
+        // the "test_sample" program.
 #include <gb_graph.h> /* SGB data structures */
 #include <gb_io.h> /* SGB input/output routines */
 #include <gb_flip.h> /* random number generator */
 #include <gb_dijk.h> /* routines for shortest paths */
 #include <gb_basic.h> /* the basic graph operations */
 #undef empty /* avoid name clash with C++ standard library */
-	inline Graph* empty( long n ) /* and provide workaround */
-	{ return board(n,0L,0L,0L,2L,0L,0L); }
+        inline Graph* empty( long n ) /* and provide workaround */
+        { return board(n,0L,0L,0L,2L,0L,0L); }
 #include <gb_books.h> /* graphs based on literature */
 #include <gb_econ.h> /* graphs based on economic data */
 #include <gb_games.h> /* graphs based on football scores */
 #include <gb_gates.h> /* graphs based on logic circuits */
 #undef val /* avoid name clash with g++ headerfile stl_tempbuf.h */
-	// val ==> Vertex::x.I
+        // val ==> Vertex::x.I
 #include <gb_lisa.h> /* graphs based on Mona Lisa */
 #include <gb_miles.h> /* graphs based on mileage data */
 #include <gb_plane.h> /* planar graphs */
@@ -74,7 +74,7 @@ extern "C" {
 #include <gb_save.h> /* we save results in ASCII format */
 #include <gb_words.h> /* five-letter-word graphs */
 #undef weight /* avoid name clash with BGL parameter */
-	// weight ==> Vertex::u.I
+        // weight ==> Vertex::u.I
 }
 
 namespace boost {
@@ -219,7 +219,7 @@ namespace boost {
   vertices(sgb_const_graph_ptr g)
   {
     return std::make_pair(sgb_vertex_iterator(g->vertices),
-			  sgb_vertex_iterator(g->vertices + g->n));
+                          sgb_vertex_iterator(g->vertices + g->n));
   }
 
   inline std::pair<sgb_out_edge_iterator,sgb_out_edge_iterator>

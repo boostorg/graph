@@ -460,7 +460,7 @@ namespace boost {
     struct bind_ {
       typedef leda_graph_data_map<vtype, vtype&, GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<vtype, const vtype&, 
-	const GRAPH<vtype, etype>*> const_type;
+        const GRAPH<vtype, etype>*> const_type;
     };
   };  
   template <class vtype, class etype >
@@ -484,7 +484,7 @@ namespace boost {
     struct bind_ {
       typedef leda_graph_data_map<etype, etype&, GRAPH<vtype, etype>*> type;
       typedef leda_graph_data_map<etype, const etype&, 
-	const GRAPH<vtype, etype>*> const_type;
+        const GRAPH<vtype, etype>*> const_type;
     };
   };
   template <class vtype, class etype >

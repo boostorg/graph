@@ -671,8 +671,8 @@ namespace boost {
   } // namespace detail
   
   template <class Graph, 
-	    class CapacityEdgeMap, class ResidualCapacityEdgeMap,
-	    class ReverseEdgeMap, class VertexIndexMap>
+            class CapacityEdgeMap, class ResidualCapacityEdgeMap,
+            class ReverseEdgeMap, class VertexIndexMap>
   typename property_traits<CapacityEdgeMap>::value_type
   push_relabel_max_flow
     (Graph& g, 
@@ -709,7 +709,7 @@ namespace boost {
       (g, src, sink,
        choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
        choose_pmap(get_param(params, edge_residual_capacity), 
-		   g, edge_residual_capacity),
+                   g, edge_residual_capacity),
        choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
        choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
        );

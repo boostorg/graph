@@ -41,7 +41,7 @@ namespace boost {
     template <class Graph>
     inline
     std::pair<typename graph_traits<Graph>::vertex_descriptor,
-	      typename graph_traits<Graph>::degree_size_type>
+              typename graph_traits<Graph>::degree_size_type>
     min_degree_vertex(Graph& g)
     {
       typedef graph_traits<Graph> Traits;
@@ -51,30 +51,30 @@ namespace boost {
 
       typename Traits::vertex_iterator i, iend;
       for (tie(i, iend) = vertices(g); i != iend; ++i)
-	if (degree(*i, g) < delta) {
-	  delta = degree(*i, g);
-	  p = *i;
-	}
+        if (degree(*i, g) < delta) {
+          delta = degree(*i, g);
+          p = *i;
+        }
       return std::make_pair(p, delta);
     }
 
     template <class Graph, class OutputIterator>
     void neighbors(const Graph& g, 
-		   typename graph_traits<Graph>::vertex_descriptor u,
-		   OutputIterator result)
+                   typename graph_traits<Graph>::vertex_descriptor u,
+                   OutputIterator result)
     {
       typename graph_traits<Graph>::adjacency_iterator ai, aend;
       for (tie(ai, aend) = adjacent_vertices(u, g); ai != aend; ++ai)
-	*result++ = *ai;
+        *result++ = *ai;
     }
 
     template <class Graph, class VertexIterator, class OutputIterator>
     void neighbors(const Graph& g, 
-		   VertexIterator first, VertexIterator last,
-		   OutputIterator result)
+                   VertexIterator first, VertexIterator last,
+                   OutputIterator result)
     {
       for (; first != last; ++first)
-	neighbors(g, *first, result);
+        neighbors(g, *first, result);
     }
 
   } // namespace detail
@@ -98,8 +98,8 @@ namespace boost {
     typedef typename Tr::edge_descriptor Tr_edge_desc;
     typedef adjacency_list<vecS, vecS, directedS, no_property, 
       property<edge_capacity_t, degree_size_type,
-	property<edge_residual_capacity_t, degree_size_type,
-	  property<edge_reverse_t, Tr_edge_desc> > > > 
+        property<edge_residual_capacity_t, degree_size_type,
+          property<edge_reverse_t, Tr_edge_desc> > > > 
       FlowGraph;
     typedef typename graph_traits<FlowGraph>::edge_descriptor edge_descriptor;
 
@@ -146,32 +146,32 @@ namespace boost {
     S.insert(p);
     neighbor_S.insert(p);
     detail::neighbors(g, S.begin(), S.end(), 
-		      std::inserter(neighbor_S, neighbor_S.begin()));
+                      std::inserter(neighbor_S, neighbor_S.begin()));
 
     std::set_difference(vertices(g).first, vertices(g).second,
-			neighbor_S.begin(), neighbor_S.end(),
-			std::back_inserter(non_neighbor_S));
+                        neighbor_S.begin(), neighbor_S.end(),
+                        std::back_inserter(non_neighbor_S));
 
     while (!non_neighbor_S.empty()) { // at most n - 1 times
       k = non_neighbor_S.front();
 
       alpha_S_k = edmunds_karp_max_flow
-	(flow_g, p, k, cap, res_cap, rev_edge, &color[0], &pred[0]);
+        (flow_g, p, k, cap, res_cap, rev_edge, &color[0], &pred[0]);
 
       if (alpha_S_k < alpha_star) {
-	alpha_star = alpha_S_k;
-	S_star.clear();
-	for (tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
-	  if (color[*vi] != Color::white())
-	    S_star.push_back(*vi);
+        alpha_star = alpha_S_k;
+        S_star.clear();
+        for (tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
+          if (color[*vi] != Color::white())
+            S_star.push_back(*vi);
       }
       S.insert(k);
       neighbor_S.insert(k);
       detail::neighbors(g, k, std::inserter(neighbor_S, neighbor_S.begin()));
       non_neighbor_S.clear();
       std::set_difference(vertices(g).first, vertices(g).second,
-			  neighbor_S.begin(), neighbor_S.end(),
-			  std::back_inserter(non_neighbor_S));
+                          neighbor_S.begin(), neighbor_S.end(),
+                          std::back_inserter(non_neighbor_S));
     }
     //-------------------------------------------------------------------------
     // Compute edges of the cut [S*, ~S*]
@@ -184,10 +184,10 @@ namespace boost {
     for (si = S_star.begin(); si != S_star.end(); ++si) {
       out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
-	if (!in_S_star[target(*ei, g)]) {
-	  *disconnecting_set++ = *ei;
-	  ++c;
-	}
+        if (!in_S_star[target(*ei, g)]) {
+          *disconnecting_set++ = *ei;
+          ++c;
+        }
     }
     return c;
   }

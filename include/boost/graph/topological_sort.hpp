@@ -69,7 +69,7 @@ namespace boost {
   template <class VertexListGraph, class OutputIterator,
     class P, class T, class R>
   void topological_sort(VertexListGraph& g, OutputIterator result,
-			const bgl_named_params<P, T, R>& params)
+                        const bgl_named_params<P, T, R>& params)
   {
     typedef topo_sort_visitor<OutputIterator> TopoVisitor;
     depth_first_search(g, params.visitor(TopoVisitor(result)));
@@ -79,7 +79,7 @@ namespace boost {
   void topological_sort(VertexListGraph& g, OutputIterator result)
   {
     topological_sort(g, result, 
-		     bgl_named_params<int, buffer_param_t>(0)); // bogus
+                     bgl_named_params<int, buffer_param_t>(0)); // bogus
   }
 
 } // namespace boost

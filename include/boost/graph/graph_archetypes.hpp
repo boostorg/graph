@@ -45,13 +45,13 @@ namespace boost { // should use a different namespace for this
   };
   template <typename V, typename D, typename P, typename B>
   V source(const typename incidence_graph_archetype<V,D,P,B>::edge_descriptor&,
-	   const incidence_graph_archetype<V,D,P,B>& )
+           const incidence_graph_archetype<V,D,P,B>& )
   {
     return V(static_object<detail::dummy_constructor>::get());
   }
   template <typename V, typename D, typename P, typename B>
   V target(const typename incidence_graph_archetype<V,D,P,B>::edge_descriptor&,
-	   const incidence_graph_archetype<V,D,P,B>& )
+           const incidence_graph_archetype<V,D,P,B>& )
   {
     return V(static_object<detail::dummy_constructor>::get());
   }
@@ -199,9 +199,9 @@ namespace boost { // should use a different namespace for this
     template <typename Graph, typename Property, typename Tag>
     struct bind_ {
       typedef mutable_lvalue_property_map_archetype
-	<typename Graph::vertex_descriptor, Property> type;
+        <typename Graph::vertex_descriptor, Property> type;
       typedef lvalue_property_map_archetype
-	<typename Graph::vertex_descriptor, Property> const_type;
+        <typename Graph::vertex_descriptor, Property> const_type;
     };
   };
 
@@ -251,17 +251,17 @@ namespace boost { // should use a different namespace for this
     static color_value_archetype white()
     { 
       return color_value_archetype
-	(static_object<detail::dummy_constructor>::get()); 
+        (static_object<detail::dummy_constructor>::get()); 
     }
     static color_value_archetype gray()
     {
       return color_value_archetype
-	(static_object<detail::dummy_constructor>::get()); 
+        (static_object<detail::dummy_constructor>::get()); 
     }
     static color_value_archetype black()
     {
       return color_value_archetype
-	(static_object<detail::dummy_constructor>::get()); 
+        (static_object<detail::dummy_constructor>::get()); 
     }
   };
 
