@@ -122,10 +122,10 @@ namespace boost {
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
                          ColorMap color, DegreeMap degree)
   {
-    typedef typename property_traits<Color>::value_type ColorValue;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
 
-    rcm_queue<Vertex, Degree> Q(degree);
+    rcm_queue<Vertex, DegreeMap> Q(degree);
     
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
