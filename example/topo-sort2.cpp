@@ -24,6 +24,7 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <deque>
+#include <iostream>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/adjacency_list.hpp>
 int
