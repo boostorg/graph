@@ -58,15 +58,18 @@ public:
     _p[v] = nil();
     _degree[v] = 0;
     _mark[v] = false;
-    if (_root == nil())
+    _child[v] = nil();
+    if (_root == nil()) {
       _root = _left[v] = _right[v] = v;
-    else {
+      //std::cout << "root added" << std::endl;
+    } else {
       size_type u = _left[_root];
       _left[v] = u;
       _right[v] = _root;
       _left[_root] = _right[u] = v;
       if (_compare(d, _key[_root]))
         _root = v;
+      //std::cout << "non-root node added" << std::endl;
     }
   }
   T& top() { return _key[_root]; }
@@ -173,7 +176,7 @@ public:
     assert(!_compare(_key[v], d));
     _key[v] = d;
     size_type p = _p[v];
-    if (p != nil()) {
+    if (p == nil()) {
       if (_compare(d, _key[_root]))
         _root = v;
     } else if (_compare(d, _key[_root]))
@@ -205,7 +208,7 @@ public:
       size_type i = _root;
       do {
         print_recur(i, os);
-        os << endl;
+        os << std::endl;
         i = _right[i];
       } while (i != _root);
     }
