@@ -28,15 +28,15 @@ namespace boost {
       visitor.inorder(v, t);
       while (i != end)
         traverse_tree(*i++, t, visitor);
-      visitor.postorder(v, t);
     } else
       visitor.inorder(v, t);
+    visitor.postorder(v, t);
   }
 
   struct null_tree_visitor {
     template <typename Node, typename Tree> void preorder(Node, Tree&) { }
     template <typename Node, typename Tree> void inorder(Node, Tree&) { }
-    template <typename Node, typenae Tree> void postorder(Node, Tree&) { }
+    template <typename Node, typename Tree> void postorder(Node, Tree&) { }
   };
 
 } /* namespace boost */
