@@ -3,10 +3,12 @@
 
 // UNDER CONSTRUCTION
 
+#include <boost/graph/detail/list_base.hpp>
+
 namespace boost {
 
   enum edge_sister_t { edge_sister };
-  enum edge_rcap_t { edge_sister };
+  enum edge_residual_capacity_t { edge_residual_capacity };
 
   namespace detail {
     
@@ -15,26 +17,72 @@ namespace boost {
       "On Implementing Push-Relabel Method for the Maximum Flow Problem"
       by B.V. Cherkassky and A.V. Goldberg, IPCO '95, 157--171.
 
+      Also based on the h_prf.c code written by the above authors.
+
       This implements the highest-label version of the push-relabel method
       with the global relabeling and gap relabeling heuristics.
 
       need to write a DIMACS graph format reader...
+
+      The "rank" or layers used here and in Goldberg's implementation
+      is the reverse of the distance discussed in the paper.
+
+      Each layer consists of all active nodes with the same rank.
+        An active node has positive excess flow and its
+        distance is less than n (it is not blocked).
      */
+
+    template <class T>
+    struct list_node {
+      explicit list_node(const T& x)
+        : m_data(x), m_next(*this), m_prev(*this) { }
+      T m_data;
+      list_node<T>* m_next;
+      list_node<T>* m_prev;
+    };
+    template <class T>
+    struct list_node_next {
+      T& operator()(list_node<T>* x) { return x->m_next; }
+      const T& operator()(const list_node<T>* x) { return x->m_next; }
+    };
+    template <class T>
+    struct list_node_prev {
+      T& operator()(list_node<T>* x) { return x->m_prev; }
+      const T& operator()(const list_node<T>* x) { return x->m_prev; }
+    };
+    template <class T>
+    struct delete_node {
+      void operator()(const list_node<T>* x) { delete x; }
+    };
 
     template <class Vertex>
     struct preflow_layer {
-      typedef std::list<Vertex> list_type;
-      typedef typename layer_list_type::iterator list_iterator;
-      LayerList push_list;              // nodes with positive excess
-      LayerList trans_list;             // nodes with zero excess
+      preflow_layer()
+        : push_list(new list_node<Vertex>()),
+          transit_list(new list_node<Vertex>()) 
+        { }
+      ~preflow_layer() { 
+        dlist_clear(push_list, delete_node<Vertex>());
+        delete push_list; 
+        dlist_clear(transit_list, delete_node<Vertex>()); 
+        delete transit_list;
+      }
+      typedef list_node<Vertex> list_node;
+      list_node<Vertex>* push_list;     // nodes with positive excess
+      list_node<Vertex>* transit_list;  // nodes with zero excess
+
+      // push_list and transit_list point to the dummy node of the dlist.
+      // next(push_list) is the first node of the push list.
+      // next(transit_list) is the first node of the transit list.
     };
 
     // Graph must have edge_sister and edge_rcap properties
     template <class Graph, 
               class EdgeCapacityMap,    // integer value type
-              class VertexIndexMap,
+              class VertexIndexMap,     // vertex_descriptor -> integer
               class FlowValue>
-    class preflow_push {
+    class push_relabel
+    {
     public:
       typedef graph_traits<Graph> Traits;
       typedef typename Traits::vertex_descriptor vertex_descriptor;
@@ -52,32 +100,46 @@ namespace boost {
       typedef typename LayerArray::iterator layer_iterator;
       typedef typename LayerArray::size_type rank_size_type;
 
+      typedef color_traits<default_color_type> ColorTraits;
+
+      typedef list_node<vertex_descriptor> list_node;
+
       //=======================================================================
-      preflow_push(Graph& g_, 
+      push_relabel(Graph& g_, 
                    EdgeCapacityMap cap_,
                    vertex_descriptor src_, 
                    vertex_descriptor sink_,
                    VertexIndexMap idx_)
         : g(g_), n(num_vertices(g_)), capacity(cap_), src(src_), sink(sink_), 
           index(idx_),
-          sister(get(edge_sister, g_)), 
-          residual_capacity(get(edge_rcap, g_))
+          excess_flow(num_vertices(g_)),
+          layer_list_ptr(num_vertices(g_)),
+          current(num_vertices(g_)),
+          rank(num_vertices(g_)),
+          color(num_vertices(g_)),
+          sister(get(edge_sister, g_)),
+          residual_capacity(get(edge_residual_capacity, g_))
       {
         vertex_iterator i_iter, end;
         for (tie(i_iter, end) = vertices(g); i_iter != end; ++i_iter)
-          excess_flow[*i_iter] = FlowValue();
+          excess_flow[*i_iter] = 0;
         
         excess_flow[src] = std::numeric_limits<FlowValue>::max();
         lmax = num_vertices(g) - 1;
       }
 
       //=======================================================================
+      // This is a breadth-first search over the residual graph
+      // (well, actually the reverse of the residual graph).
+      // Would be cool to have a graph view adaptor for hiding certain
+      // edges, like the saturated (non-residual) edges in this case.
+      // Goldberg's implementation abused "rank" for the coloring.
       void global_rank_update()
       {
         vertex_iterator i_iter, i_end;
         for (tie(i_iter,i_end) = vertices(g); i_iter != i_end; ++i_iter) {
-          rank[*i_iter] = n;
-        rank[sink] = 0;
+          color[*i_iter] = ColorTraits::white();
+        color[sink] = ColorTraits::gray();
 
         Q.push(sink);
         lmax = lmax_push = 0;
@@ -92,20 +154,24 @@ namespace boost {
           for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
             edge_descriptor a = *ai;
             vertex_descriptor j = target(a, g);
-            if ( rank[j] == n && residual_capacity[sister[a]] > 0 ) {
+            if ( color[j] == ColorTraits::white()
+                 && residual_capacity[sister[a]] > 0 ) {
               rank[j] = j_rank;
+              color[j] = ColorTraits::gray();
               current[j] = out_edges(j, g).first;
               Layer& layer = layers[j_rank];
               lmax = std::max(j_rank, lmax);
 
               if (excess_flow[j] > 0) {
-                layer.push_list.push_front(j);
-                layer_list_iter[j] = layer.push_list.begin();
+                list_node* pj = new list_node(j);
+                dlist_insert_before(next(layer.push_list), pj, next, prev);
+                layer_list_ptr[j] = pj;
                 lmax_push = std::max(j_rank, lmax_push);
                 lmin_push = std::min(j_rank, lmin_push);
               } else {
-                layer.transit_list.push_front(j);
-                layer_list_iter[j] = layer.transit_list.begin();
+                list_node* pj = new list_node(j);
+                dlist_insert_before(next(layer.transit_list), pj, next, prev);
+                layer_list_ptr[j] = pj;
               }
               Q.push(j);
             } // if (rank[j] == n && ...)
@@ -114,7 +180,9 @@ namespace boost {
       } // global_rank_update()
 
       //=======================================================================
-      bool push(vertex_descriptor i)
+      // This function is called "push" in Goldberg's implementation,
+      // but it is called "discharge" in the paper.
+      bool discharge(vertex_descriptor i)
       {
         rank_size_type next_layer_rank = rank[i] - 1;
 
@@ -124,34 +192,50 @@ namespace boost {
           edge_descriptor a = *ai;
           vertex_descriptor j = target(a, g);
 
-          if (rank[j] == next_layer_rank) {
+          if (rank[j] == next_layer_rank) { // if j belongs to the next layer
 
-            flow_delta = std::min(excess_flow[i], residual_capacity[a]);
-
-            residual_capacity[a] -= flow_delta;
-            residual_capacity[sister[a]] += flow_delta;
-
-            if (next_layer_rank > 0) {
+           if (next_layer_rank > 0) {
               next_layer = layers[next_layer_rank];
-              if (excess_flow[j] == 0) {
-                next_layer.transit_list.erase( layer_list_iter[j] );
-                next_layer.push_list.push_front(j);
+
+              if (excess_flow[j] == 0) { // j already had zero excess flow
+                dlist_remove(layer_list_ptr[j], next, prev);
+                dlist_insert_before(next(next_layer.push_list), 
+                                    layer_list_ptr[j], next, prev);
                 lmin_push = std::min(next_layer_rank, lmin_push);
               } // if (excess_flow[j] == 0)
+
             } // if (next_layer_rank > 0)
 
-            excess_flow[j] += flow_delta;
-            excess_flow[i] -= flow_delta;
+            push(a);
 
-            if (excess_flow[i] == 0) 
+            if (excess_flow[i] == 0)
               break;
 
-          } // if (rank[j] == next_layer_rank)
+          } // if (i,j) is admissible
         } // for out_edges of i from current
 
         current[i] = ai;
-        return ai == out_edges(i,g).second ? true : false;
-      } // push()
+        return ai == out_edges(i,g).second ? true : false; // end of list?
+      } // discharge()
+
+      //=======================================================================
+      // This corresponds to the "push" update operation of the paper,
+      // not the "push" function in Goldberg's implementation.
+      void push(edge_descriptor u_v)
+      {
+        vertex_descriptor
+          u = source(u_v, g),
+          v = target(u_v, g);
+        
+        FlowValue flow_delta
+          = std::min(excess_flow[u], residual_capacity[u_v]);
+
+        residual_capacity[u_v] -= flow_delta;
+        residual_capacity[sister[u_v]] += flow_delta;
+
+        excess_flow[u] -= flow_delta;
+        excess_flow[v] += flow_delta;
+      }
 
       //=======================================================================
       rank_size_type relabel(vertex_descriptor i)
@@ -159,31 +243,34 @@ namespace boost {
         rank_size_type j_rank = num_vertices(g);
         rank[i] = j_rank;
 
+        // Examine the residual out-edges of vertex i, choosing the
+        // edge whose target vertex has the minimal rank.
+        // This is the highest-label or "HL" optimization.
         out_edge_iterator ai, a_end, a_j;
         for (tie(ai, a_end) = out_edges(i, g); ai != a_end; ++ai) {
           edge_descriptor a = *ai;
-          if (residual_capacity[a] > 0) {
-            vertex_descriptor j = target(a, g);
-            if (rank[j] < j_rank) {
+          vertex_descriptor j = target(a, g);
+          if (residual_capacity[a] > 0 && rank[j] < j_rank) {
               j_rank = rank[j];
               a_j = ai;
-            }
           }
         } // for all out edges of i
 
         ++j_rank;
         if (j_rank < n) {
-          rank[i] = j_rank;
+          rank[i] = j_rank;     // this is the main action
           current[i] = a_j;
           Layer& layer = layers[j_rank];
           if (excess_flow[i] > 0) {
-            layer.push_list.push_front(, i);
-            layer_list_iter[i] = layer.push_list.begin();
+            list_node* pi = new list_node(i);
+            dlist_insert_before(next(layer.push_list), pi, next, prev);
+            layer_list_ptr[i] = pi;
             lmax_push = std::max(j_rank, lmax_push);
             lmin_mush = std::min(j_rank, lmin_push);
           } else {
-            layer.transit_list.push_front(i);
-            layer_list_iter[i] = layer.transit_list.begin();
+            list_node* pi = new list_node(i);
+            dlist_insert_before(next(layer.transit_list), pi, next, prev);
+            layer_list_ptr[i] = pi;
           } // if (excess_flow[i] > 0)
           lmax = std::max(j_rank, lmax);
         } // (j_rank < n)
@@ -200,16 +287,15 @@ namespace boost {
 
         for (layer_iterator l = empty_layer + 1;
              l != layers.begin() + lmax; ++l) {
-          for (typename Layer::list_iterator i = l->push_list.begin();
-               i != l->push_list.end(); ++i)
-            rank[*i] = n;
+          list_node* i;
+          for (i = next(l->push_list); i != l->push_list; i = next(i))
+            rank[i->m_data] = n;
 
-          for (typename Layer::list_iterator i = l->trans_list.begin();
-               i != l->push_list.end(); ++i)
-            rank[*i] = n;
+          for (i = next(l->transit_list);  i != l->transit_list; i = next(i))
+            rank[i->m_data] = n;
 
-          l->push_list.clear();
-          l->trans_list.clear();
+          dlist_clear(l->push_list);
+          dlist_clear(l->trans_list);
         }
         lmax = r;
         lmax_push = r;
@@ -225,19 +311,17 @@ namespace boost {
       // Unlike the prefl_to_flow() implementation, we use
       //   "color" instead of "rank" for the DFS labels
       //   "parent" instead of nl_prev for the DFS tree
-      //   "topo_order" instead of nl_next for the topological ordering
+      //   "topo_next" instead of nl_next for the topological ordering
       void convert_preflow_to_flow()
       {
         vertex_iterator i_iter, i_end;
         out_edge_iterator ai, a_end;
 
-	// tos, bos, restart, r: vertex_iterator or vertex_descriptor?
+        vertex_descriptor r, restart;
+        vertex_iterator tos, bos;
 
-	std::vector<default_color_type> color(n);
-	typedef color_traits<default_color_type> ColorTr;
-
-	std::vector<vertex_descriptor> parent(n);
-	std::vector<vertex_descriptor> topo_order;
+        std::vector<vertex_descriptor> parent(n);
+        std::vector<vertex_descriptor> topo_next(n);
 
         // handle self-loops
         for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter)
@@ -248,30 +332,31 @@ namespace boost {
         // initialize
         for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter) {
           i = *i_iter;
-          color[i] = ColorTr::white();
+          color[i] = ColorTraits::white();
+          parent[i] = i;
           current[i] = out_edges(i, g).first;
-	  parent[i] = i;
         }
 
-        for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i) {
+        for (tie(i_iter, i_end) = vertices(g); i_iter != i_end; ++i_iter) {
           i = *i_iter;
-          if ( color[i] == ColorTr::white() && excess_flow[i] > 0
-               && i != src && i != sink ) {
+          if (color[i] == ColorTraits::white() 
+              && excess_flow[i] > 0
+              && i != src && i != sink ) {
             r = i;
-            color[r] = ColorTr::gray();
-	    while (1) {
+            color[r] = ColorTraits::gray();
+            while (1) {
               for (; current[i] != out_edges(i, g).second; ++current[i]) {
                 a = current[i];
                 if ( capacity[a] == 0 && residual_capacity[a] > 0
                      && target(a, g) != src && target(a, g) != sink ) {
                   j = target(a, g);
-                  if (color[j] == ColorTr::white()) {
-                    color[j] = ColorTr::gray();
-		    parent[j] = i;
-                    i = j; // ??
+                  if (color[j] == ColorTraits::white()) {
+                    color[j] = ColorTraits::gray();
+                    parent[j] = i;
+                    i = j;
                     break;
-                  } else if (color[j] == ColorTr::gray()) {
-		    // find minimum flow on the cycle
+                  } else if (color[j] == ColorTraits::gray()) {
+                    // find minimum flow on the cycle
                     delta = residual_capacity[a];
                     while (1) {
                       delta = std::min(delta, residual_capacity[*current[j]]);
@@ -280,25 +365,25 @@ namespace boost {
                       else
                         j = target(*current[j], g);
                     }
-		    // remove delta flow units
-		    j = i;
-		    while (1) {
-		      a = *current[j];
-		      residual_capacity[a] -= delta;
-		      residual_capacity[sister[a]] += delta;
-		      j = target(a, g);
-		      if (j == i)
-			break;
-		    }
+                    // remove delta flow units
+                    j = i;
+                    while (1) {
+                      a = *current[j];
+                      residual_capacity[a] -= delta;
+                      residual_capacity[sister[a]] += delta;
+                      j = target(a, g);
+                      if (j == i)
+                        break;
+                    }
 
                     // back-out DFS to the first zeroed edge
                     restart = i;
-                    for (j = target(*current[i], g); j != i; j = target(a, g)) {
+                    for (j = target(*current[i], g); j != i; j = target(a, g)){
                       a = current[j];
-                      if (color[j] == ColorTr::white() || 
-			  residual_capacity[a] == 0) {
-                        color[target(*current[j], g)] = ColorTr::white();
-                        if (color[j] != ColorTr::white())
+                      if (color[j] == ColorTraits::white() || 
+                          residual_capacity[a] == 0) {
+                        color[target(*current[j], g)] = ColorTraits::white();
+                        if (color[j] != ColorTraits::white())
                           restart = j;
                       }
                     } // for
@@ -307,54 +392,52 @@ namespace boost {
                       ++current[i];
                       break;
                     }
-                  } // else if (color[j] == ColorTr::gray())
+                  } // else if (color[j] == ColorTraits::gray())
                 } // if (capacity[a] == 0 ...
-              } // for
+              } // for out_edges(i, g)  (though "i" changes during loop)
 
               if (current[i] == out_edges(i, g).second) {
-		// scan of i is complete
-                color[i] = ColorTr::black();
+                // scan of i is complete
+                color[i] = ColorTraits::black();
                 if (i != src) {
                   if (bos == NULL) { 
                     bos = i_iter;
                     tos = i_iter;
                   } else {
-                    layer_list_iter[i] = tos;
+                    topo_next[i] = *tos;
                     tos = i_iter;
                   }
                 }
-                if (i != r)
-                  layer.push_or_transit_list.erase(layer_list_iter[i]); // ??
-                else
+                if (i != r) {
+		  i = topo_next[i];
+		  ++current[i];
+                } else
                   break;
               }
             } // while (1)
-          } // if
-        } // for 
+          } // if color == white ...
 
-        if (bos != NULL) {
+          i_iter = vertices(g).first + i;
+        } // for all vertices in g
+
+        if (bos != vertices(g).second) {
           i_iter = tos;
           do {
             i = *i_iter;
             ai = out_edges(i, g).first;
             a = *ai;
-            while (excess_flow[i] > 0) {
-              if (capacity[a] == 0 && residual_capacity[a] > 0) {
-                delta = std::min(excess_flow[i], residual_capacity[a]);
-                residual_capacity[a] -= delta;
-                residual_capacity[sister[a]] += delta;
-                excess_flow[i] -= delta;
-                excess_flow[target(a, g)] += delta;
-              }
+            while (excess_flow[i] > 0 && ai != out_edges(i, g).second) {
+              if (capacity[a] == 0 && residual_capacity[a] > 0)
+		push(a);
               ++ai;
-            } // while (excess_flow[i] > 0)
-            if (i == bos)
+            }
+            if (i == *bos)
               break;
             else
-              ++i_iter;
+              i = topo_next[i];
           } while ( 1 );
         }
-
+       	
       } // convert_preflow_to_flow()
 
       //=======================================================================
@@ -368,9 +451,10 @@ namespace boost {
 
       // need to use random_access_property_map with these
       std::vector< FlowValue > excess_flow;
-      std::vector< typename Layer::list_iterator > layer_list_iter;
+      std::vector< list_node* > layer_list_ptr;
       std::vector< out_edge_iterator > current;
       std::vector< rank_size_type > rank;
+      std::vector<default_color_type> color;
 
       // Edge Property Maps that must be interior to the graph
       SisterMap sister;
@@ -382,7 +466,10 @@ namespace boost {
       rank_size_type lmin_push;         // minimal layer with excess node
       std::queue<vertex_descriptor> Q;
 
-      enum { global_update_frequency = 1 };
+      inline double global_update_frequency() { return 1.0; }
+
+      list_node_next<T> next;
+      list_node_prev<T> prev;
     };
 
   } // namespace detail
@@ -396,33 +483,39 @@ namespace boost {
                     EdgeCapacityMap cap, VertexIndexMap index_map,
                     FlowValue& flow)
   {
-    detail::preflow_push<Graph, EdgeCapacityMap, VertexIndexMap, FlowValue> 
+    detail::push_relabel<Graph, EdgeCapacityMap, VertexIndexMap, FlowValue> 
       algo(g, cap, src, sink, index_map);
 
     algo.global_rank_update();
-    num_relabels = 0;
+    typename graph_traits<Graph>::vertices_size_type 
+      num_relabels = 0, n = num_vertices(g);
 
     while (algo.lmax_push >= algo.lmin_push) {
 
       Layer& layer = algo.layers[algo.lmax_push];
       
-      typename List::list_iterator i_iter = layer.push_list.begin();
-      if (i_iter == layer.push_list.end())
+      list_node* i_node = next(layer.push_list);
+      if (i_node == layer.push_list)
         --algo.lmax_push;
       else {
-        layer.push_list.pop_front();
-        if (algo.push(*i_iter)) { // i must be relabelled
-          algo.relabel(*i_iter);
+        dlist_remove(next(layer.push_list), next, prev);
+        if (algo.discharge(*i_node)) { // returns true if done with out-edges
+          algo.relabel(*i_node);
           ++num_relabels;
-          if (layer.push_list.empty() && layer.transit_list.empty())
+
+          // Gap relabelling heuristic
+          if (dlist_empty(layer.push_list) && dlist_empty(layer.transit_list))
             algo.gap(layer);
-          
-          if (n_r > global_update_frequency * n) {
+
+          // Global relabelling heuristic
+          if (num_relabels > algo.global_update_frequency() * n) {
             algo.global_rank_update();
             num_relabels = 0;
           }
+
         } else {
-          layer.transit_list.erase(i_iter);
+          dlist_remove(i_node, next, prev);
+          delete i_node;
         }
       }
       
@@ -495,7 +588,7 @@ namespace boost {
 
     // Vertex Properties:
     //
-    // layer_list_iter[v]  points into push_list or trans_list
+    // layer_list_ptr[v]  points into push_list or trans_list
     // current[v]  (value_type == out_edge_iterator)
     // rank[v]    also known as label
     // excess_flow[v]
