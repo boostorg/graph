@@ -22,6 +22,18 @@
     <h1>Trouble Shooting</h1>
 
 <hr>
+
+With GNU C++, if you see the following error message:
+<pre>
+boost/type_traits/arithmetic_traits.hpp:243: template instantiation depth exceeds maximum of 17
+boost/type_traits/arithmetic_traits.hpp:243:  (use -ftemplate-depth-NN to increase the maximum)
+</pre>
+then you need to do as the error message advises and increase the
+template instantiation depth. Passing the flag
+<tt>-ftemplate-depth-30</tt> to g++ usually does the trick.
+
+
+<hr>
 <pre>
 error C2784: 'T __cdecl source(struct std::pair<T,T>,const G &)' : 
 could not deduce template argument for 'struct std::pair<_T1,_T1>' from
