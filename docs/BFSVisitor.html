@@ -138,6 +138,28 @@ edges for undirected graphs.
 </tr>
 
 <tr>
+<td>Gray Target</td>
+<td><tt>vis.gray_target(e, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+This is invoked on the subset of cycle edges who's target vertex is
+colored gray at the time of examination. The color gray indicates
+that the vertex is currently in the queue. 
+</td>
+</tr>
+
+<tr>
+<td>Black Target</td>
+<td><tt>vis.black_target(e, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+This is invoked on the subset of cycle edges who's target vertex is
+colored black at the time of examination. The color black indicates
+that the vertex has been removed from the queue.
+</td>
+</tr>
+
+<tr>
 <td>Finish Vertex</td>
 <td><tt>vis.finish_vertex(u, g)</tt></td>
 <td><tt>void</tt></td>

@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
     typedef Graph::vertex_descriptor Vertex;
     
-    std::vector<int> c(N);
+    std::vector<int> c(num_vertices(G));
     int num = connected_components(G, &c[0], get(vertex_color, G),
                                    dfs_visitor<>());
     

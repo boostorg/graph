@@ -28,40 +28,60 @@
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 #include <boost/graph/visitors.hpp>
 
+// The graph from p. 508 of CLR.
+//
 // Sample output
 //
-//  parent[0] = 0
-//  parent[1] = 3
-//  parent[2] = 0
-//  parent[3] = 4
-//  parent[4] = 0
-
+//  parent[a] = x
+//  parent[b] = a
+//  parent[c] = f
+//  parent[d] = c
+//  parent[e] = d
+//  parent[f] = g
+//  parent[g] = h
+//  parent[h] = a
+//  parent[i] = c
+//
 
 int main(int argc, char* argv[])
 {
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS, 
+  typedef adjacency_list<vecS, vecS, undirectedS, 
        property<vertex_color_t, default_color_type,
-         property<vertex_distance_t,int> >, property<edge_weight_t,int> > Graph;
+         property<vertex_distance_t,int> >, property<edge_weight_t,int> > 
+    Graph;
   typedef std::pair<int,int> E;
-  const int num_nodes = 5;
-  E edges[] = { E(0,2), 
-                E(1,1), E(1,3), E(1,4),
-                E(2,1), E(2,3),
-                E(3,4),
-                E(4,0) };
-  int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1};
+  const int num_nodes = 9;
+  char name[] = "abcdefghix";
+  enum { a, b, c, d, e, f, g, h, i, x }; 
+  E edges[] = { E(a,b), E(a,h),
+                E(b,h), E(b,c),
+		E(c,d), E(c,f), E(c,i),
+		E(d,e), E(d,f),
+		E(e,f), 
+		E(f,g),
+		E(g,i), E(g,h),
+		E(h,i) };
+  int weights[] = { 4, 8,
+		    11, 8,
+		    7, 4, 2,
+		    9, 14,
+		    10,
+		    2,
+		    6, 1,
+		    7 };
+		    
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
 
-  std::vector<Graph::vertex_descriptor> p(num_vertices(G));
+  std::vector<Graph::vertex_descriptor> p(num_vertices(G), x);
   prim_minimum_spanning_tree
     (G, *(vertices(G).first), get(vertex_distance, G),
      make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
   for ( std::vector<Graph::vertex_descriptor>::iterator i = p.begin();
         i != p.end(); ++i)
-    std::cout << "parent[" << i - p.begin() 
-              << "] = " << *i << std::endl;
+    std::cout << "parent[" << name[i - p.begin()]
+              << "] = " << name[*i] << std::endl;
   return 0;
 }
 

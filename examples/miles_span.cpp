@@ -23,6 +23,12 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+// Sample output:
+//
+//  The graph miles(100,0,0,0,0,10,0) has 405 edges,
+//   and its minimum spanning tree has length 14467.
+//
+
 #include <string.h>
 #include <stdio.h>
 #include <boost/graph/stanford_graph.hpp>

@@ -50,6 +50,7 @@ namespace boost {
       on_initialize_vertex_num, on_start_vertex_num, 
       on_discover_vertex_num, on_finish_vertex_num,
       on_examine_edge_num, on_tree_edge_num, on_cycle_edge_num, 
+      on_gray_target_num, on_black_target_num, 
       on_forward_or_cross_edge_num, on_back_edge_num,
       on_edge_relaxed_num, on_edge_not_relaxed_num,
       on_edge_minimized_num, on_edge_not_minimized_num
@@ -67,6 +68,8 @@ namespace boost {
   struct on_examine_edge { enum { num = detail::on_examine_edge_num }; };
   struct on_tree_edge { enum { num = detail::on_tree_edge_num }; };
   struct on_cycle_edge { enum { num = detail::on_cycle_edge_num }; };
+  struct on_gray_target { enum { num = detail::on_gray_target_num }; };
+  struct on_black_target { enum { num = detail::on_black_target_num }; };
   struct on_forward_or_cross_edge { 
     enum { num = detail::on_forward_or_cross_edge_num }; };
   struct on_back_edge { enum { num = detail::on_back_edge_num }; };

@@ -1134,6 +1134,15 @@ namespace boost {
       } else
         return std::make_pair(edge_descriptor(u, v), false);
     }
+    template <class Config>
+    inline std::pair<typename Config::edge_descriptor, bool>
+    add_edge(typename Config::vertex_descriptor u, 
+             typename Config::vertex_descriptor v,
+	     const no_property&,
+             bidirectional_graph_helper_without_property<Config>& g_)
+    {
+      return add_edge(u, v, g_);
+    }
     // O(E/V) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
@@ -1737,7 +1746,7 @@ namespace boost {
       typename Config::vertex_descriptor x = std::max(u, v);
       if (x >= num_vertices(g_))
 	g_.m_vertices.resize(x + 1);
-      Base& g = g_;
+      adj_list_helper<Config, Base>& g = g_;
       return add_edge(u, v, p, g);
     }
     template <class Graph, class Config, class Base>

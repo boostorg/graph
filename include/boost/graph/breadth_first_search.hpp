@@ -47,6 +47,8 @@ namespace boost {
       vis.examine_edge(e, g);
       vis.tree_edge(e, g);
       vis.cycle_edge(e, g);
+      vis.gray_target(e, g);
+      vis.black_target(e, g);
       vis.finish_vertex(u, g);
     }
     Visitor vis;
@@ -101,7 +103,7 @@ namespace boost {
     Q.push(s);
     while (! Q.empty()) {
       Vertex u = Q.top();
-      Q.pop(); /*pop before push to avoid problem if Q is priority_queue.*/
+      Q.pop(); // pop before push to avoid problem if Q is priority_queue.
       vis.discover_vertex(u, g);
       typename boost::graph_traits<IncidenceGraph>::out_edge_iterator
         ei, ei_end;
@@ -110,12 +112,19 @@ namespace boost {
         vis.examine_edge(e, g);
         Vertex v = target(e, g);
         if (get(color, v) == white(c)) {
-          vis.tree_edge(e, g);
           put(color, v, gray(c));
+          vis.tree_edge(e, g);
           Q.push(v);
-        } else
+        } else {
           vis.cycle_edge(e, g);
+
+	  if (get(color, v) == gray(c))
+	    vis.gray_target(e, g);
+	  else
+	    vis.black_target(e, g);
+	}
       } // for 
+      put(color, u, black(c));
       vis.finish_vertex(u, g);
     } // while
   }
@@ -148,6 +157,14 @@ namespace boost {
     template <class Edge, class Graph>
     void cycle_edge(Edge e, Graph& g) {
       invoke_visitors(m_vis, e, g, on_cycle_edge());
+    }
+    template <class Edge, class Graph>
+    void gray_target(Edge e, Graph& g) {
+      invoke_visitors(m_vis, e, g, on_gray_target());
+    }
+    template <class Edge, class Graph>
+    void black_target(Edge e, Graph& g) {
+      invoke_visitors(m_vis, e, g, on_black_target());
     }
     template <class Vertex, class Graph>
     void finish_vertex(Vertex u, Graph& g) {

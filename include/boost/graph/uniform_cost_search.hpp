@@ -47,7 +47,6 @@ namespace boost {
       vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
       vis.edge_not_relaxed(e, g);
-      vis.cycle_edge(e, g);
       vis.finish_vertex(u, g);
     }
     Visitor vis;
@@ -134,23 +133,33 @@ namespace boost {
       }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) { 
-        m_decreased = relax(e, g, m_weight, m_distance, 
-                            m_combine, m_compare);
-        if (m_decreased)
-          m_vis.edge_relaxed(e, g);
-        else
-          m_vis.edge_not_relaxed(e, g);
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
-      void tree_edge(Edge, Graph&) { }
+      void tree_edge(Edge e, Graph& g) {
+        m_decreased = relax(e, g, m_weight, m_distance, 
+                            m_combine, m_compare);
+        if (m_decreased) {
+          m_vis.edge_relaxed(e, g);
+        } else
+          m_vis.edge_not_relaxed(e, g);
+      }
+      template <class Edge, class Graph>
+      void cycle_edge(Edge e, Graph& g) { }
 
       template <class Edge, class Graph>
-      void cycle_edge(Edge e, Graph& g) {
-        if (m_decreased)
+      void gray_target(Edge e, Graph& g) {
+        m_decreased = relax(e, g, m_weight, m_distance, 
+                            m_combine, m_compare);
+        if (m_decreased) {
           m_Q.update(target(e, g));
-        m_vis.cycle_edge(e, g);
+          m_vis.edge_relaxed(e, g);
+        } else
+          m_vis.edge_not_relaxed(e, g);
       }
+      template <class Edge, class Graph>
+      void black_target(Edge e, Graph& g) { }
+
       template <class Vertex, class Graph>
       void finish_vertex(Vertex u, Graph& g) {
         m_vis.finish_vertex(u, g);
