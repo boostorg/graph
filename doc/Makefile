@@ -35,6 +35,15 @@ LATEXOUT	= pdf
 .w.tex: /afs/nd.edu/user11/jsiek/.jweb
 	jweb -np $*.w
 
+BOOST		= ../../..
+CXX		= c++
+INCLUDES	= -I$(BOOST)
+CXXFLAGS	= -Wall -g -Wno-long-double -ftemplate-depth-30 $(INCLUDES)
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $< -c
+
+
 JWEB	= isomorphism-impl.w
 DOT	= out.dot in.dot
 EPS_GEN	= $(DOT:.dot=.eps)
@@ -58,6 +67,11 @@ isomorphism-v2.hpp: isomorphism-impl-v2.w isomorphism-impl-v2.tex
 
 out.dot: isomorphism-impl.w
 in.dot: isomorphism-impl.w
+
+isomorphism.o: isomorphism-v2.hpp
+
+isomorphism: isomorphism.o
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
 
 clean:
 	rm *.aux *.dvi $(EPS_GEN) $(PDFPICT)
