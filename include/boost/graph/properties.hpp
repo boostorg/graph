@@ -34,10 +34,7 @@ namespace boost {
   enum default_color_type { white_color, gray_color, black_color };
 
   template <class ColorValue>
-  struct color_traits { };
-
-  template <>
-  struct color_traits<default_color_type> {
+  struct color_traits {
     static default_color_type white() { return white_color; }
     static default_color_type gray() { return gray_color; }
     static default_color_type black() { return black_color; }
