@@ -64,7 +64,7 @@ namespace boost {
     template <class IncidenceGraph, class DFSVisitor, class ColorMap>
     void depth_first_visit_impl
       (const IncidenceGraph& g,
-       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       typename graph_traits<IncidenceGraph>::vertex_descriptor u,
        DFSVisitor& vis,  // pass-by-reference here, important!
        ColorMap color)
     {
@@ -90,7 +90,7 @@ namespace boost {
     }
   } // namespace detail
 
-  template <class VertexListGraph, class DFSVisitor, class ColorMap, 
+  template <class VertexListGraph, class DFSVisitor, class ColorMap,
             class Vertex>
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
@@ -128,7 +128,7 @@ namespace boost {
     template <class ColorMap>
     struct dfs_dispatch {
 
-      template <class VertexListGraph, class Vertex, class DFSVisitor, 
+      template <class VertexListGraph, class Vertex, class DFSVisitor,
                 class P, class T, class R>
       static void
       apply(const VertexListGraph& g, DFSVisitor vis, Vertex start_vertex,
@@ -154,13 +154,12 @@ namespace boost {
           (g, vis, make_iterator_property_map
            (color_vec.begin(),
             choose_const_pmap(get_param(params, vertex_index),
-                              g, vertex_index), c), 
+                              g, vertex_index), c),
            start_vertex);
       }
     };
-
   } // namespace detail
-  
+
 
   template <class Visitors = null_visitor>
   class dfs_visitor {
@@ -170,36 +169,46 @@ namespace boost {
 
     template <class Vertex, class Graph>
     void initialize_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_initialize_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
     }
     template <class Vertex, class Graph>
     void start_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_start_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_start_vertex());
     }
     template <class Vertex, class Graph>
     void discover_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_discover_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_discover_vertex());
     }
     template <class Edge, class Graph>
     void examine_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_examine_edge());
+      invoke_visitors(m_vis, u, g, ::boost::on_examine_edge());
     }
     template <class Edge, class Graph>
     void tree_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_tree_edge());      
+      invoke_visitors(m_vis, u, g, ::boost::on_tree_edge());
     }
     template <class Edge, class Graph>
     void back_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_back_edge());
+      invoke_visitors(m_vis, u, g, ::boost::on_back_edge());
     }
     template <class Edge, class Graph>
     void forward_or_cross_edge(Edge u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_forward_or_cross_edge());
+      invoke_visitors(m_vis, u, g, ::boost::on_forward_or_cross_edge());
     }
     template <class Vertex, class Graph>
     void finish_vertex(Vertex u, const Graph& g) {
-      invoke_visitors(m_vis, u, g, on_finish_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
     }
+
+    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_start_vertex,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_discover_vertex,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_examine_edge,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_tree_edge,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_back_edge,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_forward_or_cross_edge,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_finish_vertex,dfs)
+
   protected:
     Visitors m_vis;
   };
@@ -214,10 +223,10 @@ namespace boost {
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
   void
-  depth_first_search(const VertexListGraph& g, 
+  depth_first_search(const VertexListGraph& g,
                      const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_value< bgl_named_params<P, T, R>, 
+    typedef typename property_value< bgl_named_params<P, T, R>,
       vertex_color_t>::type C;
     detail::dfs_dispatch<C>::apply
       (g,
@@ -229,12 +238,12 @@ namespace boost {
        get_param(params, vertex_color)
        );
   }
-  
+
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit
     (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u,
      DFSVisitor vis, ColorMap color)
   {
     detail::depth_first_visit_impl(g, u, vis, color);

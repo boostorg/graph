@@ -49,40 +49,48 @@ namespace boost {
   namespace detail {
     // For partial specialization workaround
     enum event_visitor_enum
-    { on_no_event_num, 
-      on_initialize_vertex_num, on_start_vertex_num, 
+    { on_no_event_num,
+      on_initialize_vertex_num, on_start_vertex_num,
       on_discover_vertex_num, on_finish_vertex_num, on_examine_vertex_num,
-      on_examine_edge_num, on_tree_edge_num, on_non_tree_edge_num, 
-      on_gray_target_num, on_black_target_num, 
+      on_examine_edge_num, on_tree_edge_num, on_non_tree_edge_num,
+      on_gray_target_num, on_black_target_num,
       on_forward_or_cross_edge_num, on_back_edge_num,
       on_edge_relaxed_num, on_edge_not_relaxed_num,
       on_edge_minimized_num, on_edge_not_minimized_num
     };
+
+    template<typename Event, typename Visitor>
+    struct functor_to_visitor : Visitor
+    {
+      typedef Event event_filter;
+      functor_to_visitor(const Visitor& visitor) : Visitor(visitor) {}
+    };
+
   } // namespace detail
 
   struct on_no_event { enum { num = detail::on_no_event_num }; };
 
-  struct on_initialize_vertex { 
+  struct on_initialize_vertex {
     enum { num = detail::on_initialize_vertex_num }; };
   struct on_start_vertex { enum { num = detail::on_start_vertex_num }; };
   struct on_discover_vertex { enum { num = detail::on_discover_vertex_num }; };
   struct on_examine_vertex { enum { num = detail::on_examine_vertex_num }; };
   struct on_finish_vertex { enum { num = detail::on_finish_vertex_num }; };
-  
+
   struct on_examine_edge { enum { num = detail::on_examine_edge_num }; };
   struct on_tree_edge { enum { num = detail::on_tree_edge_num }; };
   struct on_non_tree_edge { enum { num = detail::on_non_tree_edge_num }; };
   struct on_gray_target { enum { num = detail::on_gray_target_num }; };
   struct on_black_target { enum { num = detail::on_black_target_num }; };
-  struct on_forward_or_cross_edge { 
+  struct on_forward_or_cross_edge {
     enum { num = detail::on_forward_or_cross_edge_num }; };
   struct on_back_edge { enum { num = detail::on_back_edge_num }; };
 
   struct on_edge_relaxed { enum { num = detail::on_edge_relaxed_num }; };
-  struct on_edge_not_relaxed { 
+  struct on_edge_not_relaxed {
     enum { num = detail::on_edge_not_relaxed_num }; };
   struct on_edge_minimized { enum { num = detail::on_edge_minimized_num }; };
-  struct on_edge_not_minimized { 
+  struct on_edge_not_minimized {
     enum { num = detail::on_edge_not_minimized_num }; };
 
   struct true_tag { enum { num = true }; };
@@ -120,7 +128,7 @@ namespace boost {
   } // namespace detail
 
   template <class Visitor, class Rest, class T, class Graph, class Tag>
-  inline void 
+  inline void
   invoke_visitors(std::pair<Visitor, Rest>& vlist, T x, Graph& g, Tag tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
@@ -130,7 +138,7 @@ namespace boost {
   }
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   template <class Visitor, class T, class Graph, class Tag>
-  inline void 
+  inline void
   invoke_visitors(base_visitor<Visitor>& vis, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
@@ -140,7 +148,7 @@ namespace boost {
   }
 #else
   template <class Visitor, class T, class Graph, class Tag>
-  inline void 
+  inline void
   invoke_visitors(Visitor& v, T x, Graph& g, Tag) {
     typedef typename Visitor::event_filter Category;
     typedef typename graph_detail::is_same<Category, Tag>::is_same_tag
@@ -165,7 +173,7 @@ namespace boost {
     PredecessorMap m_predecessor;
   };
   template <class PredecessorMap, class Tag>
-  predecessor_recorder<PredecessorMap, Tag> 
+  predecessor_recorder<PredecessorMap, Tag>
   record_predecessors(PredecessorMap pa, Tag) {
     return predecessor_recorder<PredecessorMap, Tag> (pa);
   }
@@ -186,7 +194,7 @@ namespace boost {
     PredEdgeMap m_predecessor;
   };
   template <class PredEdgeMap, class Tag>
-  edge_predecessor_recorder<PredEdgeMap, Tag> 
+  edge_predecessor_recorder<PredEdgeMap, Tag>
   record_edge_predecessors(PredEdgeMap pa, Tag) {
     return edge_predecessor_recorder<PredEdgeMap, Tag> (pa);
   }
@@ -202,14 +210,14 @@ namespace boost {
     distance_recorder(DistanceMap pa) : m_distance(pa) { }
     template <class Edge, class Graph>
     void operator()(Edge e, const Graph& g) {
-      typename graph_traits<Graph>::vertex_descriptor 
+      typename graph_traits<Graph>::vertex_descriptor
         u = source(e, g), v = target(e, g);
       put(m_distance, v, get(m_distance, u) + 1);
     }
     DistanceMap m_distance;
   };
   template <class DistanceMap, class Tag>
-  distance_recorder<DistanceMap, Tag> 
+  distance_recorder<DistanceMap, Tag>
   record_distances(DistanceMap pa, Tag) {
     return distance_recorder<DistanceMap, Tag> (pa);
   }
@@ -217,7 +225,7 @@ namespace boost {
   //========================================================================
   // time_stamper
 
-  
+
   template <class TimeMap, class TimeT, class Tag>
   struct time_stamper
     : public base_visitor<time_stamper<TimeMap, TimeT, Tag> >
@@ -232,7 +240,7 @@ namespace boost {
     TimeT& m_time;
   };
   template <class TimeMap, class TimeT, class Tag>
-  time_stamper<TimeMap, TimeT, Tag> 
+  time_stamper<TimeMap, TimeT, Tag>
   stamp_times(TimeMap pa, TimeT& time_counter, Tag) {
     return time_stamper<TimeMap, TimeT, Tag>(pa, time_counter);
   }
@@ -258,6 +266,19 @@ namespace boost {
   write_property(PA pa, OutputIterator out, Tag) {
     return property_writer<PA, OutputIterator, Tag>(pa, out);
   }
+
+#define BOOST_GRAPH_EVENT_STUB(Event,Kind)                                 \
+    typedef ::boost::Event Event##_type;                                   \
+    template<typename Visitor>                                             \
+    Kind##_visitor<std::pair<detail::functor_to_visitor<Event##_type,      \
+                                                     Visitor>, Visitors> > \
+    do_##Event(Visitor visitor)                                            \
+    {                                                                      \
+      typedef std::pair<detail::functor_to_visitor<Event##_type, Visitor>, \
+                        Visitors> visitor_list;                            \
+      typedef Kind##_visitor<visitor_list> result_type;                    \
+      return result_type(visitor_list(visitor, m_vis));                    \
+    }
 
 } /* namespace boost */
 

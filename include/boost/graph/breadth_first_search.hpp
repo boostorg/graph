@@ -61,11 +61,11 @@ namespace boost {
   };
 
 
-  template <class IncidenceGraph, class Buffer, class BFSVisitor, 
+  template <class IncidenceGraph, class Buffer, class BFSVisitor,
             class ColorMap>
   void breadth_first_visit
-    (const IncidenceGraph& g, 
-     typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor s,
      Buffer& Q, BFSVisitor vis, ColorMap color)
   {
     function_requires< IncidenceGraphConcept<IncidenceGraph> >();
@@ -97,12 +97,12 @@ namespace boost {
     } // end while
   } // breadth_first_visit
 
-    
-  template <class VertexListGraph, class Buffer, class BFSVisitor, 
+
+  template <class VertexListGraph, class Buffer, class BFSVisitor,
             class ColorMap>
   void breadth_first_search
-    (const VertexListGraph& g, 
-     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
      Buffer& Q, BFSVisitor vis, ColorMap color)
   {
     // Initialization
@@ -125,40 +125,51 @@ namespace boost {
 
     template <class Vertex, class Graph>
     void initialize_vertex(Vertex u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_initialize_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
     }
     template <class Vertex, class Graph>
     void discover_vertex(Vertex u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_discover_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_discover_vertex());
     }
     template <class Vertex, class Graph>
     void examine_vertex(Vertex u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_examine_vertex());
+      invoke_visitors(m_vis, u, g, ::boost::on_examine_vertex());
     }
     template <class Edge, class Graph>
     void examine_edge(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_examine_edge());
+      invoke_visitors(m_vis, e, g, ::boost::on_examine_edge());
     }
     template <class Edge, class Graph>
     void tree_edge(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_tree_edge());      
+      invoke_visitors(m_vis, e, g, ::boost::on_tree_edge());
     }
     template <class Edge, class Graph>
     void non_tree_edge(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_non_tree_edge());
+      invoke_visitors(m_vis, e, g, ::boost::on_non_tree_edge());
     }
     template <class Edge, class Graph>
     void gray_target(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_gray_target());
+      invoke_visitors(m_vis, e, g, ::boost::on_gray_target());
     }
     template <class Edge, class Graph>
     void black_target(Edge e, Graph& g) {
-      invoke_visitors(m_vis, e, g, on_black_target());
+      invoke_visitors(m_vis, e, g, ::boost::on_black_target());
     }
     template <class Vertex, class Graph>
     void finish_vertex(Vertex u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_finish_vertex());      
+      invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
     }
+
+    BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_discover_vertex,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_examine_vertex,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_examine_edge,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_tree_edge,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_non_tree_edge,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_gray_target,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_black_target,bfs)
+    BOOST_GRAPH_EVENT_STUB(on_finish_vertex,bfs)
+
   protected:
     Visitors m_vis;
   };
@@ -177,7 +188,7 @@ namespace boost {
     void bfs_helper
       (VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       ColorMap color, 
+       ColorMap color,
        BFSVisitor vis,
        const bgl_named_params<P, T, R>& params)
     {
@@ -188,7 +199,7 @@ namespace boost {
       queue_t Q;
       detail::wrap_ref<queue_t> Qref(Q);
       breadth_first_search
-        (g, s, 
+        (g, s,
          choose_param(get_param(params, buffer_param_t()), Qref).ref,
          vis, color);
     }
@@ -227,12 +238,12 @@ namespace boost {
         std::vector<default_color_type> color_vec(num_vertices(g));
         default_color_type c = white_color;
         null_visitor null_vis;
-        
+
         bfs_helper
-          (g, s, 
+          (g, s,
            make_iterator_property_map
-           (color_vec.begin(), 
-            choose_const_pmap(get_param(params, vertex_index), 
+           (color_vec.begin(),
+            choose_const_pmap(get_param(params, vertex_index),
                               g, vertex_index), c),
            choose_param(get_param(params, graph_visitor),
                         make_bfs_visitor(null_vis)),
@@ -255,9 +266,9 @@ namespace boost {
     // graph is not really const since we may write to property maps
     // of the graph.
     VertexListGraph& ng = const_cast<VertexListGraph&>(g);
-    typedef typename property_value< bgl_named_params<P,T,R>, 
+    typedef typename property_value< bgl_named_params<P,T,R>,
       vertex_color_t>::type C;
-    detail::bfs_dispatch<C>::apply(ng, s, params, 
+    detail::bfs_dispatch<C>::apply(ng, s, params,
                                    get_param(params, vertex_color));
   }
 
