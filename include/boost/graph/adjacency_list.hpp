@@ -440,28 +440,28 @@ namespace boost {
     GraphProperty m_property;
   };
 
-  template <class OEL, class VL, class DS, class VP,class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP,class EP, class GP,
             class EL, class Tag, class Value>
   inline void
-  set_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag,
+  set_property(adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag,
                const Value& value) {
     get_property_value(g.m_property, Tag()) = value;;
   }
 
-  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP, class EP, class GP,
             class Tag, class EL>
   inline
-  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
-  get_property(adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
+  typename graph_property<adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>, Tag>::type&
+  get_property(adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 
-  template <class OEL, class VL, class DS, class VP, class EP, class GP,
+  template <class OEL, class VL, class DirS, class VP, class EP, class GP,
             class Tag, class EL>
   inline
   const
-  typename graph_property<adjacency_list<OEL,VL,DS,VP,EP,GP,EL>, Tag>::type&
-  get_property(const adjacency_list<OEL,VL,DS,VP,EP,GP,EL>& g, Tag) {
+  typename graph_property<adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>, Tag>::type&
+  get_property(const adjacency_list<OEL,VL,DirS,VP,EP,GP,EL>& g, Tag) {
     return get_property_value(g.m_property, Tag());
   }
 

@@ -177,7 +177,7 @@ namespace boost {
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
   {
-    typedef typename property_traits<DegreeMap>::value_type DS;
+    typedef typename property_traits<DegreeMap>::value_type Degree;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -186,7 +186,7 @@ namespace boost {
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       put(color, *ui, Color::white());
 
-    typedef indirect_cmp<DegreeMap, std::greater<DS> > Compare;
+    typedef indirect_cmp<DegreeMap, std::greater<Degree> > Compare;
     Compare comp(degree);
 
     boost::queue<Vertex> bfs_queue;
