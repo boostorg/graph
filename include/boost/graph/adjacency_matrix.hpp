@@ -205,7 +205,7 @@ namespace boost {
           , const VertexDescriptor& src
           , const VerticesSizeType& n
         )
-          : super_t(i), m_src(src), m_targ(0), m_n(n)
+          : super_t(i), m_src(src), m_targ(0), m_n(n), m_inc(src)
         {}
 
         void increment()
@@ -519,7 +519,7 @@ namespace boost {
     typename Graph::vertices_size_type offset = u * (u + 1) / 2;
     typename Graph::MatrixIter f = g.m_matrix.begin() + offset;
     typename Graph::MatrixIter l = g.m_matrix.end() + u;
-    
+
     typename Graph::unfiltered_out_edge_iter
         first(f, u, g.m_vertex_set.size())
       , last(l, u, g.m_vertex_set.size());
