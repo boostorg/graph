@@ -67,7 +67,7 @@ std::istream& operator >> ( std::istream& in, property<Tag,Value,no_property>& p
         return in;
 }
 
-std::istream& operator >> ( std::istream& in, no_property& )
+inline std::istream& operator >> ( std::istream& in, no_property& )
 {
         return in;
 }
@@ -109,7 +109,7 @@ void getSubset
         get( p, s.m_value, Stag() );
 }
 
-void getSubset
+inline void getSubset
 ( no_property& p, const no_property& s )
 {
 }
