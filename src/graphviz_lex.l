@@ -50,7 +50,7 @@ ID        {VARIABLE}|{NUMBER}
 <Comment>"*/"   { BEGIN INITIAL; }
 <Comment>.*     ;
 "//".*$         ;
-'#'.*$          ;
+"#".*$          ;
 "digraph"       { return DIGRAPH_T; }
 "graph"         { return GRAPH_T; }
 "node"          { return NODE_T; }
