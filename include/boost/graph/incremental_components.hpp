@@ -25,19 +25,20 @@
 //=======================================================================
 //
 
-#ifndef BOOST_DYNAMIC_COMPONENTS_HPP
-#define BOOST_DYNAMIC_COMPONENTS_HPP
+#ifndef BOOST_INCREMENTAL_COMPONENTS_HPP
+#define BOOST_INCREMENTAL_COMPONENTS_HPP
 
 #include <boost/detail/iterator.hpp>
-#include <boost/graph/detail/dynamic_components.hpp>
+#include <boost/graph/detail/incremental_components.hpp>
 
 namespace boost {
 
   // A connected component algorithm for the case when dynamically
-  // adding edges is common.  This is a preparing operation. Call
+  // adding (but not removing) edges is common.  The
+  // incremental_components() function is a preparing operation. Call
   // same_component to check whether two vertices are in the same
-  // component, or use disjoint_set::find_set to determine
-  // the representative for a vertex. 
+  // component, or use disjoint_set::find_set to determine the
+  // representative for a vertex.
 
   // This version of connected components does not require a full
   // Graph. Instead, it just needs an edge list, where the vertices of
@@ -51,9 +52,12 @@ namespace boost {
   // index container will map each vertex to the representative
   // vertex of the component to which it belongs.
   //
-  // Adapted from an implementation by Alex Stepanov, with parts
-  // inspired by Tarjan's "Data Structures and Network Algorithms"
-  
+  // Adapted from an implementation by Alex Stepanov. The disjoint
+  // sets data structure is from Tarjan's "Data Structures and Network
+  // Algorithms", and the application to connected components is
+  // similar to the algorithm described in Ch. 22 of "Intro to
+  // Algorithms" by Cormen, et. all.
+  //  
   // RankContainer is a random accessable container (operator[] is
   // defined) with a value type that can represent an integer part of
   // a binary log of the value type of the corresponding
@@ -64,7 +68,7 @@ namespace boost {
   // boost/pending/disjoint_sets.hpp
   
   template <class EdgeListGraph, class DisjointSets>
-  void dynamic_components(EdgeListGraph& g, DisjointSets& ds)
+  void incremental_components(EdgeListGraph& g, DisjointSets& ds)
   {
     typename graph_traits<EdgeListGraph>::edge_iterator e, end;
     for (tie(e,end) = edges(g); e != end; ++e)
@@ -99,7 +103,7 @@ namespace boost {
   }
   
   template <class VertexListGraph, class DisjointSets> 
-  void initialize_dynamic_components(VertexListGraph& G, DisjointSets& ds)
+  void initialize_incremental_components(VertexListGraph& G, DisjointSets& ds)
   {
     typename graph_traits<VertexListGraph>
       ::vertex_iterator v, vend;
@@ -179,4 +183,4 @@ namespace boost {
 
 } // namespace boost
 
-#endif // BOOST_DYNAMIC_COMPONENTS_HPP
+#endif // BOOST_INCREMENTAL_COMPONENTS_HPP

@@ -110,16 +110,14 @@ namespace boost {
   class sgb_edge {
     typedef sgb_edge self;
   public:
-    inline sgb_edge() : _arc(0), _src(0) { }
-    inline sgb_edge(Arc* a, Vertex* s) : _arc(a), _src(s) { }
+    sgb_edge() : _arc(0), _src(0) { }
+    sgb_edge(Arc* a, Vertex* s) : _arc(a), _src(s) { }
     friend Vertex* source(self& e, Graph*) { return e._src; }
     friend Vertex* target(self& e, Graph*) { return e._arc->tip; }
     friend bool operator==(const self& a, const self& b) {
-      return a._arc == b._arc;
-    }
+      return a._arc == b._arc; }
     friend bool operator!=(const self& a, const self& b) {
-      return a._arc != b._arc;
-    }
+      return a._arc != b._arc; }
 #if !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
     friend class sgb_edge_length_map;
     template <class Tag> friend class sgb_edge_util_map;
@@ -277,7 +275,7 @@ namespace boost {
     typedef edge_property_tag kind;
   };
 
-  // Vertex Utility Map
+  // Various Utility Maps
 
   // helpers
   inline Vertex*& get_util(util& u, Vertex*) { return u.V; }
@@ -301,6 +299,7 @@ namespace boost {
   SGB_GET_UTIL_FIELD(Arc, a)
   SGB_GET_UTIL_FIELD(Arc, b)
 
+  // Vertex Utility Map
   template <class Tag>
   class sgb_vertex_util_map
     : public boost::put_get_at_helper< typename Tag::type,
@@ -317,13 +316,49 @@ namespace boost {
       return get_util_field(v, Tag()); 
     }
   };
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+
+  // Edge Utility Map
+  template <class Tag>
+  class sgb_edge_util_map
+    : public boost::put_get_at_helper< typename Tag::type,
+        sgb_edge_util_map<Tag> >
+  {
+  public:
+    typedef boost::lvalue_property_map_tag category;
+    typedef typename Tag::type value_type;
+    typedef Vertex* key_type;
+    value_type& operator[](const sgb_edge& e) {
+      return get_util_field(e._arc, Tag()); 
+    }
+    const value_type& operator[](const sgb_edge& e) const {
+      return get_util_field(e._arc, Tag()); 
+    }
+  };
+
+#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION  
+
   template <class Tag>
   inline sgb_vertex_util_map<Tag>
   get_property_map(Tag, const Graph* g, vertex_property_tag) {
     return sgb_vertex_util_map<Tag>();
   }
-#endif
+  template <class Tag>
+  inline sgb_edge_util_map<Tag> 
+  get_property_map(Tag, const Graph* g, edge_property_tag) {
+    return sgb_edge_util_map<Tag>();
+  }
+
+  template <class Tag, class Kind>  
+  struct sgb_util_map { };
+
+  template <class Tag> struct sgb_util_map<Tag, vertex_property_tag> {
+    typedef typename sgb_vertex_util_map<Tag>::type type;
+  };
+  template <class Tag> struct sgb_util_map<Tag, edge_property_tag> {
+    typedef typename sgb_edge_util_map<Tag>::type type;
+  };
+
+#endif // ! BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
   // Edge Length Access
   class sgb_edge_length_map
@@ -348,47 +383,14 @@ namespace boost {
   get(edge_length_t, const Graph*, const sgb_edge_length_map::key_type& key) {
     return sgb_edge_length_map()[key];
   }
-  inline  void
+  inline void
   put(edge_length_t, Graph*, const sgb_edge_length_map::key_type& key,
       const sgb_edge_length_map::value_type& value)
   {
     sgb_edge_length_map()[key] = value;
   }
-  
-  template <class Tag>
-  class sgb_edge_util_map
-    : public boost::put_get_at_helper< typename Tag::type,
-        sgb_edge_util_map<Tag> >
-  {
-  public:
-    typedef boost::lvalue_property_map_tag category;
-    typedef typename Tag::type value_type;
-    typedef Vertex* key_type;
-    value_type& operator[](const sgb_edge& e) {
-      return get_util_field(e._arc, Tag()); 
-    }
-    const value_type& operator[](const sgb_edge& e) const {
-      return get_util_field(e._arc, Tag()); 
-    }
-  };
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION  
-  template <class Tag>
-  inline sgb_edge_util_map<Tag> 
-  get_property_map(Tag, const Graph* g, edge_property_tag) {
-    return sgb_edge_util_map<Tag>();
-  }
-  template <class Tag, class Kind>  
-  struct sgb_util_map { };
-  template <class Tag> struct sgb_util_map<Tag, vertex_property_tag> {
-    typedef typename sgb_vertex_util_map<Tag>::type type;
-  };
-  template <class Tag> struct sgb_util_map<Tag, edge_property_tag> {
-    typedef typename sgb_edge_util_map<Tag>::type type;
-  };
-#endif
 
   // Property Map Traits Classes
-
   template <>
   struct property_map<Graph*, edge_length_t> {
     typedef sgb_edge_length_map type;
@@ -402,7 +404,7 @@ namespace boost {
   template <>
   struct property_map<Graph*, vertex_name_t> {
     typedef sgb_vertex_name_t_map type;
-    typedef sgb_vertex_name_t_map consts_type;
+    typedef sgb_vertex_name_t_map const_type;
   };
 
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)

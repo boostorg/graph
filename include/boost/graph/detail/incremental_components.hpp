@@ -1,5 +1,5 @@
-#ifndef BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
-#define BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
+#ifndef BOOST_GRAPH_DETAIL_INCREMENTAL_COMPONENTS_HPP
+#define BOOST_GRAPH_DETAIL_INCREMENTAL_COMPONENTS_HPP
 
 #include <boost/operators.hpp>
 
@@ -8,7 +8,7 @@ namespace boost {
   namespace detail {
 
     //=========================================================================
-    // Implementation detail of dynamic_components
+    // Implementation detail of incremental_components
 
 
     //-------------------------------------------------------------------------
@@ -126,4 +126,4 @@ namespace boost {
   
 } // namespace detail
 
-#endif // BOOST_GRAPH_DETAIL_DYNAMIC_COMPONENTS_HPP
+#endif // BOOST_GRAPH_DETAIL_INCREMENTAL_COMPONENTS_HPP
