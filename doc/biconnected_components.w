@@ -16,6 +16,22 @@ not in $T$ connects a vertex to one of its ancestors in $T$.
 \end{enumerate}
 
 
+\paragraph{Facts about DFS}
+Let $T$ by the DFS-tree formed by applying DFS to a connected undirected
+graph $G$.
+\begin{enumerate}
+\item If $(u,v) \in T$ then $dfsnum[u] < dfsnum[v]$.
+\item If $(u,v)$ is a back edge then $dfsnum[v] < dfsnum[u]$.
+\item Let $T_u \subset T$ be the subtree rooted at $u$. Then
+  for all $v \in T_u$ we have $dfsnum[u] < dfsnum[v]$
+  and for all $w \notin T_u$ we haven $dfsnum[w] < dfsnum[u]$.
+\item If $(u,v)$ is a cross edge then $dfsnum[v] < dfsnum[u]$
+ (cross edges do not occur in a connected graph).
+\item Any path $p: v \stackrel{*}{\rightarrow} w$ contains a vertex that is
+an ancestor of both $v$ and $w$ in $T$.
+\end{enumerate}
+
+
 \paragraph{Definition.} An undirected graph $G = (V,E)$ is \emph{biconnected}
 if for each triple of distinct vertices $v, w, a \in V$ there is a 
 path $p : v \stackrel{*}{\rightarrow} w$ such that $a$ is not on the
@@ -46,19 +62,32 @@ If $u$ is an ancestor or $v$ in the spanning tree $T$ of $P$, then
 $dfsnum[u] < dfsnum[v]$. Define $LOWPT(v)$ to be the vertex with the
 smallest DFS number in the set $\{v\} \cup \{w|v
 \stackrel{*}\rightarrow \hookrightarrow w\}$. That is, $LOWPT(V)$ is
-the smallest vertex reachable from $v$ by traversing zero or more DFS
-tree arcs followed by at most one back edge.
+the smallest vertex reachable from $v$ by traversing zero or more
+DFS-tree arcs followed by at most one back edge.
 
-\paragraph{Lemma.} Let $G$ be a connected undirected graph. Let $P$ be
-a palm tree formed by directing the edges of $G$, and let $T$ be the
-spanning tree of $P$. Suppose $a, v, w$ are distinct vertices of $G$
-such that $(a,v) \in T$, and suppose $w$ is not a descendant of $v \in
-T$. If $dfsnum[LOWPT(v)] \geq dfsnum[a]$, then $a$ is an articulation
-point of $P$ and removal of $a$ disconnects $v$ and $w$. Conversely,
-if $a$ is an articulation point of $G$ then there exists vertices
-$a,v,w$ with $(a,v) \in T$, $w$ is not a descendant of $v$, and
+\paragraph{Lemma.} Given a DFS-tree $T$ of a connected undirected graph
+$G$, suppose $a,v,w$ are distinct vertices in $G$ such that $(a,v)$ is
+in of $G$ and $w$ is not a descendant of $v$ in $T$.  If
+$dfsnum[LOWPT(v)] \geq dfsnum[a]$, then $a$ is an articulation point
+of $P$ and removal of $a$ disconnects $v$ and $w$. Conversely, if $a$
+is an articulation point of $G$ then there exists vertices $a,v,w$
+with $(a,v) \in T$, $w$ is not a descendant of $v$, and
 $dfsnum[LOWPT(v)] \geq dfsnum[a]$.
 
+Lemma. If $(a, v) \in G$ and $dfsnum[LOWPT(v)] \geq dfsnum[a]$
+we know that any path from $v$ not passing through $a$ remains in
+the subtree $T_v$.
+
+Proof by contradiction.  Because $u \notin T_v$ we know
+that $dfsnum[u] < dfsnum[v]$.
+
+Assume that $u \notin T_v$ and $p : v
+\rightsquigarrow u$ with $a$ not on the path $p$. 
+
+
+
+
+Also the subtree does not contain vertex $w$.
 
 \end{document}
 
