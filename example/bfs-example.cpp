@@ -26,6 +26,8 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/pending/integer_range.hpp>
 
+#include <iostream>
+
 using namespace boost;
 template < typename TimeMap > class bfs_time_visitor:public default_bfs_visitor {
   typedef typename property_traits < TimeMap >::value_type T;
