@@ -345,8 +345,20 @@ Internal Properties
 Properties can be attached to the vertices or edges of an
 <TT>adjacency_list</TT> graph via the property interface.  The template
 parameters <TT>VertexProperty</TT> and <TT>EdgeProperty</TT> of the
-<TT>adjacency_list</TT> class are meant to be filled by the property
-class, which is declared as follows.
+<TT>adjacency_list</TT> class are meant to be filled by these interior
+ properties.
+
+<p><b>NOTE</b>: The Boost Graph Library supports two interchangeable methods for 
+specifying interior properties: <a href="bundles.html">bundled properties</a> 
+and property lists. The former is easier to use and requires less effort, 
+whereas the latter is compatible with older, broken compilers and is 
+backward-compatible with Boost versions prior to 1.32.0. If you absolutely
+require these compatibility features, read on to learn about property lists. 
+Otherwise, we strongly suggest that you read about the <a href="bundles.html">bundled
+properties</a> mechanism.
+
+<p>One may specify internal properties via property lists, which are build from instances of the 
+property class declared as follows.
 
 <P>
 <PRE>

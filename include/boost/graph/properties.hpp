@@ -30,6 +30,7 @@
 #include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/type_traits/detail/yes_no_type.hpp>
 
 namespace boost {
 
@@ -113,7 +114,7 @@ namespace boost {
   BOOST_DEF_PROPERTY(edge, residual_capacity);
   BOOST_DEF_PROPERTY(graph, visitor);
 
-  // For internal use only: these tags are used for property bundles
+  // These tags are used for property bundles
   BOOST_DEF_PROPERTY(vertex, bundle);
   BOOST_DEF_PROPERTY(edge, bundle);
 
@@ -331,6 +332,7 @@ namespace boost {
     return make_iterator_vertex_map(c.begin());
   }
 
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION\
   template<typename Graph, typename Descriptor, typename Bundle, typename T>
   struct bundle_property_map
     : put_get_helper<T&, bundle_property_map<Graph, Descriptor, Bundle, T> >
@@ -347,6 +349,39 @@ namespace boost {
     Graph* g;
     T Bundle::* pm;
   };
+
+  namespace detail {
+    template<typename VertexBundle, typename EdgeBundle>
+	type_traits::yes_type is_vertex_bundle_helper(VertexBundle*);
+	
+    template<typename VertexBundle, typename EdgeBundle>
+	type_traits::no_type is_vertex_bundle_helper(EdgeBundle*);
+	
+    template<typename VertexBundle, typename EdgeBundle, typename Bundle>
+	struct is_vertex_bundle
+	{
+	  BOOST_STATIC_CONSTANT(bool, value = ((sizeof(is_vertex_bundle_helper<VertexBundle, EdgeBundle>((Bundle*)0)) 
+									       == sizeof(type_traits::yes_type))));
+	};
+  }
+  
+  template <typename Graph, typename T, typename Bundle>
+  struct property_map<Graph, T Bundle::*>  
+  {
+  private:
+    typedef graph_traits<Graph> traits;
+	typedef typename Graph::vertex_bundled vertex_bundled;
+	typedef typename Graph::edge_bundled edge_bundled;
+    typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+				       typename traits::vertex_descriptor,
+				       typename traits::edge_descriptor>::type
+	  descriptor;
+	
+  public:
+    typedef bundle_property_map<Graph, descriptor, Bundle, T> type;
+	typedef bundle_property_map<const Graph, descriptor, Bundle, const T> const_type;
+  };
+#endif
 
 } // namespace boost
 

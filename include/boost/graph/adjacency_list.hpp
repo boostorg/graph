@@ -417,6 +417,7 @@ namespace boost {
       *this = tmp;
     }
 
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
     // Directly access a vertex or edge bundle
     vertex_bundled& operator[](vertex_descriptor v)
     { return get(vertex_bundle, *this)[v]; }
@@ -429,101 +430,6 @@ namespace boost {
 
     const edge_bundled& operator[](edge_descriptor e) const
     { return get(edge_bundle, *this)[e]; }
-
-#if BOOST_WORKAROUND(BOOST_MSVC, BOOST_TESTED_AT(1301))
-#  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
-#  else
-    // This disgusting hack works around a problem where MSVC 7.1 can't deal 
-    // with typedefs in templates that must be class types.
-    template<typename T, typename Class>
-    bundle_property_map<
-      self, 
-      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                     vertex_descriptor,
-                     edge_descriptor>::type,
-      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                     vertex_bundled,
-                     edge_bundled>::type,
-      T>
-    operator->*(T Class::* pm)
-    {
-      typedef 
-        bundle_property_map<
-          self, 
-          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                         vertex_descriptor,
-                         edge_descriptor>::type,
-          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                         vertex_bundled,
-                         edge_bundled>::type,
-          T>
-        result_type;
-      return result_type(this, pm);
-    }
-
-    template<typename T, typename Class>
-    bundle_property_map<
-      const self, 
-      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                     vertex_descriptor,
-                     edge_descriptor>::type,
-      typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                     vertex_bundled,
-                     edge_bundled>::type,
-      const T>
-    operator->*(T Class::* pm) const
-    {
-      typedef 
-        bundle_property_map<
-          const self, 
-          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                         vertex_descriptor,
-                         edge_descriptor>::type,
-          typename ct_if<(is_convertible<vertex_bundled*, Class*>::value),
-                         vertex_bundled,
-                         edge_bundled>::type,
-          const T>
-        result_type;
-      return result_type(this, pm);
-    }
-#  endif
-#else
-    // Generate property maps from bundles given a member pointer
-    template<typename T>
-    bundle_property_map<self, vertex_descriptor, vertex_bundled, T>
-    operator->*(T vertex_bundled::* pm)
-    {
-      typedef bundle_property_map<self, vertex_descriptor, vertex_bundled, T>
-        result_type;
-      return result_type(this, pm);
-    }
-
-    template<typename T>
-    bundle_property_map<const self, vertex_descriptor, vertex_bundled, const T>
-    operator->*(T vertex_bundled::* pm) const
-    {
-      typedef bundle_property_map<const self, vertex_descriptor,
-                                  vertex_bundled, const T> result_type;
-      return result_type(this, pm);
-    }
-
-    template<typename T>
-    bundle_property_map<self, edge_descriptor, edge_bundled, T>
-    operator->*(T edge_bundled::* pm)
-    {
-      typedef bundle_property_map<self, edge_descriptor, edge_bundled, T>
-        result_type;
-      return result_type(this, pm);
-    }
-
-    template<typename T>
-    bundle_property_map<const self, edge_descriptor, edge_bundled, const T>
-    operator->*(T edge_bundled::* pm) const
-    {
-      typedef bundle_property_map<const self, edge_descriptor, edge_bundled,
-                                  const T> result_type;
-      return result_type(this, pm);
-    }
 #endif
 
     //  protected:  (would be protected if friends were more portable)
@@ -581,6 +487,59 @@ namespace boost {
   {
     return e.m_target;
   }
+
+  // Support for bundled properties
+#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+  template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
+		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
+  inline
+  typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+						               GraphProperty, EdgeListS>, T Bundle::*>::type
+  get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+                                    GraphProperty, EdgeListS>& g)
+  {
+    typedef typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, 
+	                                             EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::type
+	  result_type;
+	return result_type(&g, p);
+  }
+  
+  template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
+		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle>
+  inline
+  typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+						               GraphProperty, EdgeListS>, T Bundle::*>::const_type
+  get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+                                    GraphProperty, EdgeListS> const & g)
+  {
+    typedef typename property_map<adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, 
+	                                             EdgeProperty, GraphProperty, EdgeListS>, T Bundle::*>::const_type
+	  result_type;
+	return result_type(&g, p);
+  }
+
+  template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
+		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
+		   typename Key>
+  inline T
+  get(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+                                    GraphProperty, EdgeListS> const & g, const Key& key)
+  {
+    return get(get(p, g), key);
+  }									
+
+  template<typename OutEdgeListS, typename VertexListS, typename DirectedS, typename VertexProperty,
+		   typename EdgeProperty, typename GraphProperty, typename EdgeListS, typename T, typename Bundle,
+		   typename Key>
+  inline void
+  put(T Bundle::* p, adjacency_list<OutEdgeListS, VertexListS, DirectedS, VertexProperty, EdgeProperty,
+                                    GraphProperty, EdgeListS>& g, const Key& key, const T& value)
+  {
+    put(get(p, g), key, value);
+  }						
+									
+#endif
+
 
 } // namespace boost
 

@@ -18,20 +18,22 @@
       ALT="C++ Boost" width="277" height="86"/> 
     <h1>Bundled Properties</h1>
 
-      <p>Class template <code><a
-      href="adjacency_list.html">adjacency_list</a></code> supports
+      <p>Class templates <code><a
+      href="adjacency_list.html">adjacency_list</a></code> and 
+	  <code><a href="adjacency_matrix.html">adjacency_matrix</a></code> support
       the introduction of named properties via <a
       href="using_adjacency_list.html#sec:adjacency-list-properties">internal
       properties</a>. However, this method is cumbersome in many uses,
       where it would be more intuitive to just specify a structure or
       class that contains internal properties for edges or
       vertices. Bundled properties allow one to use
-      <code>adjacency_list</code> in this manner, providing a simple
+      <code>adjacency_list</code> and <code>adjacency_matrix</code> in this 
+	  manner, providing a simple
       way to introduce and access any number of internal properties
-      for vertices and edges with little effort.</p>
+      for vertices and edges.</p>
 
       <p>One can introduce bundled properties into an
-      <code>adjacency_list</code> by providing a user-defined class
+      either graph type by providing a user-defined class
       type for the <code>VertexProperties</code> or
       <code>EdgeProperties</code> template arguments. The user-defined
       class may alternatively be placed at the end of a
@@ -127,18 +129,27 @@ dijkstra_shortest_paths(map, from,
                                                get(vertex_index, map))));
     </pre>
 
-    <p>With bundled properties, we instead use the overloaded
-      <code>-&gt;*</code> operator, giving it a pointer to the member
-      data we wish to use for the property map. The equivalent example
+    <p>With bundled properties, we can just pass a <em>member pointer</em>
+	  as the property for <code>get</code>. The equivalent example
       using bundled properties is:</p>
     <pre>
 vector&lt;double&gt; distances(num_vertices(map));
 dijkstra_shortest_paths(map, from,
-      weight_map(<font color="#ff0000">map-&gt;*&amp;Highway::miles</font>)
+      weight_map(get(<font color="#ff0000">&amp;Highway::miles</font>, map))
       .distance_map(make_iterator_property_map(distances.begin(),
                                                get(vertex_index, map))));
     </pre>
 
+    <p>The type of the returned property map is <code>property_map&lt;Map, int Highway::*&gt;::type</code> 
+	or <code>property_map&lt;Map, int Highway::*&gt;::const_type</code>, depending on whether the graph 
+	<code>map</code> is non-constant or constant.
+	
+    <p> You may also access the entire vertex or edge bundle as a property map 
+	using the <code>vertex_bundle</code> or <code>edge_bundle</code> properties,
+	respectively. For instance, the property map returned by <code>get(vertex_bundle, map)</code> is
+	an <a href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a> providing access to the
+	<code>City</code> values stored in each vertex.
+	
     <h2>Compatibility</h2> <p>Bundled properties will only work
     properly on compilers that support class template partial
     specialization.</p>

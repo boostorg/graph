@@ -220,7 +220,7 @@ and must match one of the properties specified in the
 <hr>
 
 <pre>
-reverse_graph(BidirectoinalGraph&amp;&nbsp;g)
+reverse_graph(BidirectionalGraph&amp;&nbsp;g)
 </pre>
 Constructor. Create a reversed (transposed) view of the graph <tt>g</tt>.
 
@@ -231,9 +231,14 @@ Constructor. Create a reversed (transposed) view of the graph <tt>g</tt>.
 <hr>
 
 <pre>
-template <class BidirectionalGraph>
-reverse_graph<BidirectionalGraph>
-make_reverse_graph(BidirectionalGraph&amp; g)
+template &lt;class BidirectionalGraph&gt;
+reverse_graph&lt;BidirectionalGraph, BidirectionalGraph&amp;&gt;
+make_reverse_graph(BidirectionalGraph&amp; g);
+
+template &lt;class BidirectionalGraph&gt;
+reverse_graph&lt;BidirectionalGraph, const BidirectionalGraph&amp;&gt;
+make_reverse_graph(const BidirectionalGraph&amp; g)
+
 </pre>
 Helper function for creating a <tt>reverse_graph</tt>.
 
