@@ -62,7 +62,7 @@ namespace {
     inline bool
     isws (char c, char const * const wstr)
     {
-        return (strchr(wstr,c) != NULL);
+        return (std::strchr(wstr,c) != NULL);
     }
 }
 

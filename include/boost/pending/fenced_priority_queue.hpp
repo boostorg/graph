@@ -105,7 +105,7 @@ namespace boost {
   }
 
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline fenced_priority_queue<T, Compare, implicit_fence, Buffer>::size_type 
+  inline typename fenced_priority_queue<T, Compare, implicit_fence, Buffer>::size_type 
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   size(void) const {
     // Returns the size of the queue (both parts together).
