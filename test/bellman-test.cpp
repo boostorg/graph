@@ -18,8 +18,9 @@ B: 2147483647 B
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/cstdlib.hpp>
+#include <boost/test/minimal.hpp>
 
-int main()
+int test_main(int, char*[])
 {
   using namespace boost;
 
@@ -69,5 +70,32 @@ int main()
   } else {
     std::cout << "negative cycle" << std::endl;
   }
+
+  graph_traits<Graph>::vertex_descriptor s = vertex(A, g);
+  std::vector<int> parent2(numVertex);
+  std::vector<int> distance2(numVertex, 17);
+  bool const r2 = bellman_ford_shortest_paths
+                    (g, 
+		     weight_map(weight_pmap).distance_map(&distance2[0]).
+		     predecessor_map(&parent2[0]).root_vertex(s));
+  if (r2) {
+    for(int i = 0; i < numVertex; ++i) {
+      std::cout << name[i] << ": ";
+      if (distance2[i] == inf)
+        std::cout  << std::setw(3) << "inf";
+      else
+        std::cout << std::setw(3) << distance2[i];
+      std::cout << " " << name[parent2[i]] << std::endl;
+    }
+  } else {
+    std::cout << "negative cycle" << std::endl;
+  }
+
+  BOOST_TEST(r == r2);
+  if (r && r2) {
+    BOOST_TEST(parent == parent2);
+    BOOST_TEST(distance == distance2);
+  }
+
   return boost::exit_success;
 }

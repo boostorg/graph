@@ -512,7 +512,7 @@ int test_main(int, char*[])
 
   run_wheel_test((Graph*)0, 15);
 
-  random_unweighted_test((Graph*)0, 200);
+  random_unweighted_test((Graph*)0, 500);
 
   return 0;
 }

@@ -21,6 +21,8 @@ test-suite graph :
 
     [ compile bfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
+    [ run bellman-test.cpp : <sysinclude>$(BOOST_ROOT ]
+
     [ run betweenness_centrality_test.cpp ] 
 
     [ run dfs.cpp <lib>../../test/build/boost_test_exec_monitor 

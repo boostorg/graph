@@ -28,8 +28,12 @@
 <PRE>
 <i>// named paramter version</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class P, class T, class R&gt;
-bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
+bool bellman_ford_shortest_paths(const EdgeListGraph&amp; g, Size N, 
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
+
+template &lt;class <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, class P, class T, class R&gt;
+bool bellman_ford_shortest_paths(const VertexAndEdgeListGraph&amp; g,
+  const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 
 <i>// non-named parameter version</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap,
@@ -61,7 +65,8 @@ search provides an even more efficient alternative.
 <p>
 Before calling the <tt>bellman_ford_shortest_paths()</tt> function,
 the user must assign the source vertex a distance of zero and all
-other vertices a distance of infinity. The Bellman-Ford algorithm
+other vertices a distance of infinity <i>unless</i> you are providing
+a starting vertex. The Bellman-Ford algorithm
 proceeds by looping through all of the edges in the graph, applying
 the relaxation operation to each edge. In the following pseudo-code,
 <i>v</i> is a vertex adjacent to <i>u</i>, <i>w</i> maps edges to
@@ -113,6 +118,7 @@ otherwise.
 <td valign="top">
 <pre>
 BELLMAN-FORD(<i>G</i>)
+  <i>// Optional initialization</i>
   <b>for</b> each vertex <i>u in V</i> 
     <i>d[u] := infinity</i>
     <i>p[u] := u</i> 
@@ -134,7 +140,8 @@ BELLMAN-FORD(<i>G</i>)
 <td valign="top">
 <pre>
 
-initialize vertex <i>u</i> 
+
+
 
 
 
@@ -175,13 +182,16 @@ algorithm's event points.
 IN: <tt>EdgeListGraph&amp; g</tt> 
 <blockquote>
   A directed or undirected graph whose type must be a model of
-  <a href="./EdgeListGraph.html">Edge List Graph</a>.
+  <a href="./EdgeListGraph.html">Edge List Graph</a>. If a root vertex is
+  provided, then the graph must also model
+  <a href="./VertexListGraph.html">Vertex List Graph</a>. 
 </blockquote>
 
 IN: <tt>Size N</tt>
 <blockquote>
   The number of vertices in the graph. The type <tt>Size</tt> must
-  be an integer type.
+  be an integer type.<br>
+  <b>Default:</b> <tt>num_vertices(g)</tt>.
 </blockquote>
 
 
@@ -224,6 +234,17 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
   href="http://www.sgi.com/tech/stl/LessThanComparable.html"> Less
   Than Comparable</a>.<br> <b>Default:</b> <tt>get(vertex_distance,
   g)</tt>
+</blockquote>
+
+IN: <tt>root_vertex(Vertex s)</tt>
+<blockquote>
+  The starting (or "root") vertex from which shortest paths will be
+  computed. When provided, the distance map need not be initialized
+  (the algorithm will perform the initialization itself). However, the
+  graph must model <a href="./VertexListGraph.html">Vertex List
+  Graph</a> when this parameter is provided.<br>
+  <b>Default:</b> None; if omitted, the user must initialize the
+  distance map.
 </blockquote>
 
 IN: <tt>visitor(BellmanFordVisitor v)</tt>
