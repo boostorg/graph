@@ -24,6 +24,7 @@
 //=======================================================================
 
 #include <stdio.h>
+#include <iostream>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/strong_components.hpp>
 
