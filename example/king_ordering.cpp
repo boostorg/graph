@@ -28,7 +28,7 @@
 #include <vector>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/cuthill_mckee_ordering.hpp>
+#include <boost/graph/king_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
 
@@ -90,10 +90,10 @@ int main(int , char* [])
   std::vector<size_type> perm(num_vertices(G));
   {
     Vertex s = vertex(6, G);
-    //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
-                           get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
+    //king_ordering
+    king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
+                  get(vertex_degree, G));
+    cout << "King ordering starting at: " << s << endl;
     cout << "  ";    
     for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
          i != inv_perm.end(); ++i)
@@ -108,10 +108,10 @@ int main(int , char* [])
   }
   {
     Vertex s = vertex(0, G);
-    //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
-                           get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
+    //king_ordering
+    king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
+                  get(vertex_degree, G));
+    cout << "King ordering starting at: " << s << endl;
     cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
        i != inv_perm.end(); ++i)
@@ -126,11 +126,11 @@ int main(int , char* [])
   }
 
   {
-    //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
-                           make_degree_map(G));
+    //king_ordering
+    king_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
+                  make_degree_map(G));
     
-    cout << "Reverse Cuthill-McKee ordering:" << endl;
+    cout << "King ordering:" << endl;
     cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
        i != inv_perm.end(); ++i)

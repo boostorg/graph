@@ -1,18 +1,19 @@
 <HTML>
-
-<!--   Copyright (c) Jeremy Siek 2000 -->
+<!--
+  ~~ Copyright (c) Jeremy Siek 2000
+  ~~
+  ~~ Permission to use, copy, modify, distribute and sell this software
+  ~~ and its documentation for any purpose is hereby granted without fee,
+  ~~ provided that the above copyright notice appears in all copies and
+  ~~ that both that copyright notice and this permission notice appear
+  ~~ in supporting documentation.  Silicon Graphics makes no
+  ~~ representations about the suitability of this software for any
+  ~~ purpose.  It is provided "as is" without express or implied warranty.
+-->
   
-<!--   Permission to use, copy, modify, distribute and sell this software -->
-<!--   and its documentation for any purpose is hereby granted without fee, -->
-<!--   provided that the above copyright notice appears in all copies and -->
-<!--   that both that copyright notice and this permission notice appear -->
-<!--   in supporting documentation.  Silicon Graphics makes no -->
-<!--   representations about the suitability of this software for any -->
-<!--   purpose.  It is provided "as is" without express or implied warranty. -->
-
+  
 <Head> 
-<Title>Boost Graph Library: Cuthill-Mckee Ordering</Title>
-</Head>
+<Title>Boost Graph Library: King Ordering</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -21,7 +22,7 @@
 <BR Clear>
 
 <H1><A NAME="sec:bfs">
-<TT>cuthill_mckee_ordering</TT>
+<TT>king_ordering</TT>
 </H1>
 
 
@@ -35,7 +36,7 @@
 <TD ALIGN="LEFT">color, degree</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT">time: <i>O(m log(m)|V|)</i> where <i>m = max { degree(v) | v in V }</i> </TD>
+<TD ALIGN="LEFT">time: <i>O(m<sup>2</sup>log(m)|E|)</i> where <i>m = max { degree(v) | v in V }</i> </TD>
 </TR>
 </TABLE>
 </DIV>
@@ -46,7 +47,7 @@
   template &lt;class IncidenceGraph, class OutputIterator,
             class ColorMap, class DegreeMap&gt;
   void 
-  cuthill_mckee_ordering(IncidenceGraph&amp; g,
+  king_ordering(IncidenceGraph&amp; g,
                          typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
@@ -55,60 +56,44 @@
   template &lt;class VertexListGraph, class OutputIterator, 
             class ColorMap, class DegreeMap&gt;
   void 
-  cuthill_mckee_ordering(VertexListGraph&amp; G, OutputIterator inverse_permutation, 
+  king_ordering(VertexListGraph&amp; G, OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
                          
   (3)
   template &lt;class IncidenceGraph, class OutputIterator,
             class ColorMap, class DegreeMap&gt;
   void 
-  cuthill_mckee_ordering(IncidenceGraph&amp; g,
+  king_ordering(IncidenceGraph&amp; g,
     			 std::deque&lt; typename
 			 graph_traits&lt;Graph&gt;::vertex_descriptor &gt; vertex_queue,
-                         OutputIterator inverse_permutation, 
+                         OutputIterator permutation, 
                          ColorMap color, DegreeMap degree)
 </pre>
 
-The goal of the Cuthill-Mckee (and reverse Cuthill-Mckee) ordering
-algorithm[<A
-HREF="bibliography.html#george81:__sparse_pos_def">14</A>, <A
-HREF="bibliography.html#cuthill69:reducing_bandwith">43</A>, <a
-href="bibliography.html#liu75:rcm">44</a>, <a
-href="bibliography.html#george71:fem">45</a> ] is to reduce the <a
+<!-- King, I.P. An automatic reordering scheme for simultaneous equations derived from network analysis. Int. J. Numer. Methods Engrg. 2 (1970), 523-533 -->
+
+The goal of the King ordering
+algorithm [<a href="bibliography.html#king70">62</a>]is to reduce the <a
 href="./bandwidth.html">bandwidth</a> of a graph by reordering the
-indices assigned to each vertex.  The Cuthill-Mckee ordering algorithm
+indices assigned to each vertex.  The King ordering algorithm
 works by a local minimization of the i-th bandwidths. The vertices are
 basically assigned a breadth-first search order, except that at each
 step, the adjacent vertices are placed in the queue in order of
-increasing degree.
+increasing pseudo-degree, where pseudo-degree is defined as the number of 
+outgoing edges with white endpoints (vertices yet to be examined).
 
 <p>
 Version 1 of the algorithm lets the user choose the ``starting
 vertex'', version 2 finds a good starting vertex using the
 pseudo-peripheral pair heuristic (among each component), while version 3 
-contains the starting nodes for each vertex in the deque.  The choice of the 
-``starting vertex'' can have a significant effect on the quality of the 
-ordering.  For versions 2 and 3, <tt>find_starting_vertex</tt> will be called 
-for each component in the graph, increasing run time significantly.
+contains the starting nodes for each vertex in the deque.  The choice of the ``starting
+vertex'' can have a significant effect on the quality of the ordering.
 </p>
 
 <p>
 The output of the algorithm are the vertices in the new ordering.
-Depending on what kind of output iterator you use, you can get either
-the Cuthill-Mckee ordering or the reverse Cuthill-McKee ordering.  For
-example, if you store the output into a vector using the vector's
-reverse iterator, then you get the reverse Cuthill-McKee ordering.
-</p>
-
-<pre>
-  std::vector&lt;vertex_descriptor&gt; inv_perm(num_vertices(G));
-  cuthill_mckee_ordering(G, inv_perm.rbegin(), ...);
-</pre>
-
-<p>
-Either way, storing the output into a vector gives you the
+Storing the output into a vector gives you the
 permutation from the new ordering to the old ordering.
-</p>
 
 <pre>
   inv_perm[new_index[u]] == u
@@ -140,7 +125,7 @@ For version 1:
 <li> <tt>vertex_descriptor s</tt> &nbsp(IN) <br>
   The starting vertex.
 
-<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br> 
+<li> <tt>OutputIterator permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the <a
   href="http://www.sgi.com/tech/stl/OutputIterator.html">output
   iterator</a> in their new order. 
@@ -164,7 +149,7 @@ For version 2:
   href="./VertexListGraph.html">VertexListGraph</a>.
 
 <li> <tt><a href="http://www.sgi.com/tech/stl/OutputIterator.html">
-  OutputIterator</a> inverse_permutation</tt> &nbsp(OUT) <br> 
+  OutputIterator</a> permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the
   output iterator in their new order.
 
@@ -189,7 +174,7 @@ For version 3:
 <li> <tt> std::deque&lt; typename graph_traits&lt;Graph&gt;::vertex_descriptor &gt; vertex_queue </tt> &nbsp(IN) <br>
   The deque containing the starting vertices for each component.
 
-<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br> 
+<li> <tt>OutputIterator permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the <a
   href="http://www.sgi.com/tech/stl/OutputIterator.html">output
   iterator</a> in their new order. 
@@ -208,7 +193,7 @@ For version 3:
 <h3>Example</h3>
 
 See <a
-href="../example/cuthill_mckee_ordering.cpp"><tt>example/cuthill_mckee_ordering.cpp</tt></a>.
+href="../example/king_ordering.cpp"><tt>example/king_ordering.cpp</tt></a>.
 
 <h3>See Also</h3>
 
@@ -219,7 +204,7 @@ and <tt>degree_property_map</tt> in <tt>boost/graph/properties.hpp</tt>.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 

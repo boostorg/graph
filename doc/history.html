@@ -87,9 +87,11 @@ September 27, 2000.
       <LI><A href="fruchterman_reingold.html"><TT>fruchterman_reingold_force_directed_layout</TT></A>, from Doug Gregor and Indiana University.</a></LI>
       <LI><A href="biconnected_components.html"><tt>biconnected_components</tt> and <tt>articulation_points</tt></a>, from Indiana University.</a></li>
       <li><a href="gursoy_atun_layout.html"><tt>gursoy_atun_layout</tt></a>, from Jeremiah Willcock and Doug Gregor of Indiana University.</li>
-      <li><a href="erdos_renyi_generator.html"><tt>erdos_renyi_iterator</tt></li>
-      <li><a href="plod_generator.html"><tt>plod_iterator</tt></li>
-      <li><a href="small_world_generator.html"><tt>small_world_iterator</tt></li>      
+      <li><a href="king_ordering.html"><tt>king_ordering</tt></a>, from
+      D. Kevin McGrath of Indiana University.</li>
+      <li><a href="erdos_renyi_generator.html"><tt>erdos_renyi_iterator</tt></a></li>
+      <li><a href="plod_generator.html"><tt>plod_iterator</tt></a></li>
+      <li><a href="small_world_generator.html"><tt>small_world_iterator</tt></a></li>
     </ul><br><b>Enhancements to existing algorithms</b><br>
     <ul>
       <li><a href="bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></a> now permits one to specify the starting vertex, so that it will perform its own initialization.</li>
@@ -98,7 +100,16 @@ September 27, 2000.
   HREF="bibliography.html#driscoll88">61</A>] as its priority queue, improving its complexity to <em>O(V log V)</em> and improving real-world performance for larger graphs.</li>
       <li><a href="read_graphviz.html"><code>read_graphviz</code></a> now has a new, Spirit-based parser that works for all graph types and supports arbitrary properties on the graph, from Ron Garcia. The old, Bison-based GraphViz reader has been deprecated and will be removed in a future Boost release.</li>
       
-      <li><a href="write-graphviz.html"><code>write_graphviz</code></a> now supports output of dynamic properties (as read in through the new <code>read_graphviz</code>).</li>
+      <li><a
+      href="write-graphviz.html"><code>write_graphviz</code></a> now
+      supports output of dynamic properties (as read in through the
+      new <code>read_graphviz</code>).</li>
+
+      <li><a
+      href="cuthill_mckee_ordering.html"><tt>cuthill_mckee_ordering</tt></a>
+      has been recast as an invocation of
+      <tt>breadth_first_search</tt> and now supports graphs with
+      multiple components.</li>
       
     </ul><br><b>Bug fixes</b><br>
     <ul>
