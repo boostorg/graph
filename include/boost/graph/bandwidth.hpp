@@ -13,12 +13,13 @@ namespace boost {
 		VertexIndexMap index)
   {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
-    typedef typename detail::numeric_traits<size_type>::difference_type d_type;
-    d_type b = 0;
+    typedef typename detail::numeric_traits<size_type>::difference_type diff_t;
+    size_type b = 0;
     typename graph_traits<Graph>::out_edge_iterator e, end;
     for (tie(e, end) = out_edges(i, g); e != end; ++e) {
-      b = std::max(b, std::abs(d_type(get(index, i)) - 
-			       d_type(get(index, target(*e, g)))));
+      diff_t f_i = get(index, i);
+      diff_t f_j = get(index, target(*e, g));
+      b = std::max(b, size_type(std::abs(f_i - f_j)));
     }
     return b;
   }
@@ -49,6 +50,22 @@ namespace boost {
     return bandwidth(g, get(vertex_index, g));
   }
 
+  template <typename Graph, typename VertexIndexMap>
+  typename graph_traits<Graph>::vertices_size_type
+  edgesum(const Graph& g, VertexIndexMap index_map)
+  {
+    typedef typename graph_traits<Graph>::vertices_size_type size_type;
+    typedef typename detail::numeric_traits<size_type>::difference_type diff_t;
+    size_type sum = 0;
+    typename graph_traits<Graph>::edge_iterator i, end;
+    for (tie(i, end) = edges(g); i != end; ++i) {
+      diff_t f_u = get(index_map, source(*i, g));
+      diff_t f_v = get(index_map, target(*i, g));
+      sum += std::abs(f_u - f_v);
+    }
+    return sum;
+  }
+  
 } // namespace boost
 
 #endif // BOOST_GRAPH_BANDWIDTH_HPP
