@@ -61,7 +61,8 @@ namespace boost {
     // Perhaps should just make a specialized functor to pass to set...
     template <class Edge>
     inline bool edge_less(const Edge& a, const Edge& b, undirected_tag) {
-      return !edge_equal(a, v) && edge_less(a,b,directed_tag());
+      return !edge_equal(a, b, undirected_tag()) 
+            && edge_less(a, b, directed_tag());
     }
     
     template <class Directed, class Vertex>
