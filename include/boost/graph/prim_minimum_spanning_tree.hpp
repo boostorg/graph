@@ -47,7 +47,7 @@ namespace boost {
 
     template <class Graph, class P, class T, class R, class Weight>
     inline void
-    prim_mst_impl(Graph& G,
+    prim_mst_impl(const Graph& G,
 		  typename graph_traits<Graph>::vertex_descriptor s,
 		  const bgl_named_params<P,T,R>& params,
 		  Weight)

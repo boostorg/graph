@@ -33,6 +33,7 @@
 #include <iosfwd>
 
 #include <boost/pending/queue.hpp>
+#include <boost/limits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 
 namespace boost {

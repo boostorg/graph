@@ -16,14 +16,14 @@ int main()
     breadth_first_search(g, s, color_map(color));
   }
   {
-    incidence_graph_archetype<vertex_t, directed_tag, 
+    vertex_list_graph_archetype<vertex_t, directed_tag, 
       allow_parallel_edge_tag> g;
     vertex_t s;
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
     breadth_first_search(g, s, vertex_index_map(v_index));
   }
   {
-    typedef incidence_graph_archetype<vertex_t, undirected_tag, 
+    typedef vertex_list_graph_archetype<vertex_t, undirected_tag, 
       allow_parallel_edge_tag> Graph;
     property_graph_archetype<Graph, vertex_index_t, std::size_t> g;
     vertex_t s;

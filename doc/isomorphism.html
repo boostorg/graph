@@ -105,8 +105,11 @@ some isomorphism that maps <i>v</i> onto <i>v'</i> then <i>i(v) ==
 i(v')</i>. The <tt>VertexInvariant</tt> type must be a <a
 href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>
 where the first argument is a vertex descriptor, the second argument is a
-graph, and the result type is an integer.<br>
-<b>Default:</b> <tt>degree_vertex_invariant&lt;Graph1&gt;</tt>
+graph, and the result type is an integer. The vertex invariant must
+work with the types for both graph 1 and graph 2 and therefore may need
+to have a templated <tt>operator()</tt>.
+<br>
+<b>Default:</b> <tt>degree_vertex_invariant</tt>
 </blockquote>
 
 IN: <tt>vertex_index1_map(VertexIndex1Map i1_map)</tt>
