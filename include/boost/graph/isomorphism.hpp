@@ -1,4 +1,4 @@
-// Copyright (C) 2001 Jeremy Siek, Doug Gregor, Brian Osman
+// Copyright (C) 2001 Jeremy Siek, Douglas Gregor, Brian Osman
 //
 // Permission to copy, use, sell and distribute this software is granted
 // provided this copyright notice appears in all copies.
