@@ -294,10 +294,10 @@ namespace boost {
         if (first != last)
           for (; i != last; ++i)
             if (!pred(*i)) {
-              *first.iter() = *i.iter();
+              *first.base() = *i.base();
               ++first;
             }
-        el.erase(first.iter(), el.end());
+        el.erase(first.base(), el.end());
       }
       template <class incidence_iterator, class EdgeList, class Predicate>
       inline void
@@ -311,7 +311,7 @@ namespace boost {
              first != last; first = next) {
           ++next;
           if (pred(*first))
-            el.erase( first.iter() );
+            el.erase( first.base() );
         }
       }
 
@@ -371,7 +371,7 @@ namespace boost {
         graph_type& g = static_cast<graph_type&>(*this);
         typename Config::edge_descriptor e = *iter;
         typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
-        el.erase(iter.iter());
+        el.erase(iter.base());
       }
 
     };
@@ -719,7 +719,7 @@ namespace boost {
           typename Config::vertex_descriptor v = target(*out_i, g);
           detail::remove_directed_edge_dispatch
             (*out_i, g.out_edge_list(v), *(PropT*)(*out_i).get_property());
-          g.m_edges.erase( (*out_i.iter()).get_iter() );
+          g.m_edges.erase( (*out_i.base()).get_iter() );
         }
       // Now remove the edges from this out-edge list.
       typename Config::out_edge_iterator first, last;
@@ -1012,7 +1012,7 @@ namespace boost {
              *(PropT*)(*out_i).get_property());
           // Put in garbage to delete later. Will need the properties
           // for the remove_if of the out-edges.
-          garbage.push_back((*out_i.iter()).get_iter());
+          garbage.push_back((*out_i.base()).get_iter());
         }
 
       // Now remove the edges from this out-edge list.
@@ -1050,7 +1050,7 @@ namespace boost {
             (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
           // Put in garbage to delete later. Will need the properties
           // for the remove_if of the out-edges.
-          garbage.push_back((*in_i.iter()).get_iter());
+          garbage.push_back((*in_i.base()).get_iter());
         }
       // Now remove the edges from this in-edge list.
       typename Config::in_edge_iterator first, last;
