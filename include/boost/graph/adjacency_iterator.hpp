@@ -15,10 +15,10 @@ namespace boost {
       inline adjacency_iterator_policies() { }
       inline adjacency_iterator_policies(Graph* g) : m_g(g) { }
 
-      template <class Reference, class Iterator>
-      inline Reference
-      dereference(boost::type<Reference>, const Iterator& i) const
-        { return target(*i, *m_g); }
+      template <class Iterator>
+      inline typename Iterator::reference
+      dereference(const Iterator& i) const
+        { return target(*i.base(), *m_g); }
 
       Graph* m_g;
     };
@@ -48,10 +48,10 @@ namespace boost {
       inline inv_adjacency_iterator_policies() { }
       inline inv_adjacency_iterator_policies(Graph* g) : m_g(g) { }
 
-      template <class Reference, class Iterator>
-      inline Reference
-      dereference(boost::type<Reference>, const Iterator& i) const
-        { return source(*i, *m_g); }
+      template <class Iterator>
+      inline typename Iterator::reference
+      dereference(const Iterator& i) const
+        { return source(*i.base(), *m_g); }
 
       Graph* m_g;
     };

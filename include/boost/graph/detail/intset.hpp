@@ -1,3 +1,5 @@
+Executing ssh-askpass to query the password...
+Warning: Remote host denied X11 forwarding, perhaps xauth program could not be run on the server side.
 // (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
 // sell and distribute this software is granted provided this
 // copyright notice appears in all copies. This software is provided

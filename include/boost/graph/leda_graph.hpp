@@ -49,54 +49,63 @@ namespace boost {
   {
     static void initialize(edge& ) { }
 
-    static void increment(edge& e)
-    { e = Succ_Adj_Edge(e,0); }
+    template <typename Iter>
+    static void increment(Iter& i)
+    { i.base() = Succ_Adj_Edge(i.base(), 0); }
 
-    static void decrement(edge& e)
-    { e = Pred_Adj_Edge(e,0); }
+    template <typename Iter>
+    static void decrement(Iter& i)
+    { i.base() = Pred_Adj_Edge(i.base(), 0); }
 
-    template <class Reference>
-    static Reference dereference(boost::type<Reference>, const edge& e)
-    { return e; }
+    template <typename Iter>
+    static edge dereference(const Iter& i)
+    { return i.base(); }
 
-    static bool equal(const edge& x, const edge& y)
-    { return x == y; }
+    template <typename Iter>
+    static bool equal(const Iter& x, const Iter& y)
+    { return x.base() == y.base(); }
   };
 
   struct leda_in_edge_iterator_policies
   {
     static void initialize(edge& ) { }
 
-    static void increment(edge& e)
-    { e = Succ_Adj_Edge(e,1); }
+    template <typename Iter>
+    static void increment(Iter& i)
+    { i.base() = Succ_Adj_Edge(i.base(), 1); }
 
-    static void decrement(edge& e)
-    { e = Pred_Adj_Edge(e,1); }
+    template <typename Iter>
+    static void decrement(Iter& i)
+    { i.bae() = Pred_Adj_Edge(i.base(), 1); }
 
-    template <class Reference>
-    static Reference dereference(boost::type<Reference>, const edge& e)
-    { return e; }
+    template <typename Iter>
+    static edge dereference(const Iter& i)
+    { return i.base(); }
 
-    static bool equal(const edge& x, const edge& y)
-    { return x == y; }
+    template <typename Iter>
+    static bool equal(const Iter& x, const Iter& y)
+    { return x.base() == y.base(); }
   };
 
   struct leda_adjacency_iterator_policies
   {
     static void initialize(edge& ) { }
 
-    static void increment(edge& e)
-    { e = Succ_Adj_Edge(e,0); }
+    template <typename Iter>
+    static void increment(Iter& i)
+    { i.base() = Succ_Adj_Edge(i.base(), 0); }
 
-    static void decrement(edge& e)
-    { e = Pred_Adj_Edge(e,0); }
+    template <typename Iter>
+    static void decrement(Iter& i)
+    { i.base() = Pred_Adj_Edge(i.base(), 0); }
 
-    template <class Reference>
-    static node dereference(boost::type<Reference>, const edge& e)
-    { return ::target(e); }
+    template <typename Iter>
+    static node dereference(const Iter& i)
+    { return ::target(i.base()); }
 
-    static bool equal(const edge& x, const edge& y)
-    { return x == y; }
+    template <typename Iter>
+    static bool equal(const Iter& x, const Iter& y)
+    { return x.base() == y.base(); }
   };
 
   template <class LedaGraph>
@@ -107,18 +116,21 @@ namespace boost {
 
     void initialize(node& v) const { }
 
-    void increment(node& v) const
-    { v = m_g->succ_node(v); }
+    template <typename Iter>
+    void increment(Iter& i) const
+    { i.base() = m_g->succ_node(i.base()); }
 
-    void decrement(node& v) const
-    { v = m_g->pred_node(v); }
+    template <typename Iter>
+    void decrement(Iter& i) const
+    { i.base() = m_g->pred_node(i.base()); }
 
-    template <class Reference>
-    Reference dereference(boost::type<Reference>, const node& v) const
-    { return v; }
+    template <typename Iter>
+    node dereference(const Iter& i) const
+    { return i.base(); }
 
-    static bool equal(const node& x, const node& y)
-    { return x == y; }
+    template <typename Iter>
+    static bool equal(const Iter& x, const Iter& y)
+    { return x.base() == y.base(); }
 
     const LedaGraph* m_g;
   };

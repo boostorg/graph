@@ -137,10 +137,12 @@ namespace boost {
       inline out_edge_iter_policies(const VertexDescriptor& src)
         : m_src(src) { }
 
-      template <class EdgeDescriptor, class OutEdgeIter>
-      inline EdgeDescriptor
-      dereference(boost::type<EdgeDescriptor>, const OutEdgeIter& i) const {
-        return EdgeDescriptor(m_src, (*i).get_target(), &(*i).get_property());
+      template <class OutEdgeIter>
+      inline typename OutEdgeIter::value_type
+      dereference(const OutEdgeIter& i) const {
+	typedef typename OutEdgeIter::value_type EdgeDescriptor;
+        return EdgeDescriptor(m_src, (*i.base()).get_target(), 
+			      &(*i.base()).get_property());
       }
       VertexDescriptor m_src;
     };
@@ -151,10 +153,12 @@ namespace boost {
       inline in_edge_iter_policies(const VertexDescriptor& src) 
         : m_src(src) { }
 
-      template <class EdgeDescriptor, class InEdgeIter>
-      inline EdgeDescriptor
-      dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).get_target(), m_src, &i->get_property());
+      template <class InEdgeIter>
+      inline typename InEdgeIter::value_type
+      dereference(const InEdgeIter& i) const {
+	typedef typename InEdgeIter::value_type EdgeDescriptor;
+        return EdgeDescriptor((*i.base()).get_target(), m_src,
+			      &i.base()->get_property());
       }
       VertexDescriptor m_src;
     };
@@ -165,11 +169,12 @@ namespace boost {
     struct undirected_edge_iter_policies
       : public boost::default_iterator_policies
     {
-      template <class EdgeDescriptor, class InEdgeIter>
-      inline EdgeDescriptor
-      dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).m_source, (*i).m_target,
-                              &i->get_property());
+      template <class EdgeIter>
+      inline typename EdgeIter::value_type
+      dereference(const EdgeIter& i) const {
+	typedef typename EdgeIter::value_type EdgeDescriptor;
+        return EdgeDescriptor((*i.base()).m_source, (*i.base()).m_target,
+                              &i.base()->get_property());
       }
     };
 
