@@ -53,15 +53,18 @@ having a time complexity of <i>O(V E log V)</i>.
 IN: <tt>Graph&amp; g</tt>
 <blockquote>
 A directed or undirected graph. The graph type must be a model of
-<a href="VertexListGraph">Vertex List Graph</a>,
-<a href="EdgeListGraph">Edge List Graph</a>,
-and <a href="IncidenceGraph">Incidence Graph</a>.
+<a href="VertexListGraph.html">Vertex List Graph</a>,
+<a href="EdgeListGraph.html">Edge List Graph</a>,
+and <a href="IncidenceGraph.html">Incidence Graph</a>.
 </blockquote>
 
 OUT: <tt>DistanceMatrix&amp; D</tt>
 <blockquote>
-The length of the shortest path between each pair of vertices <i>u,v</i> in the
-graph is stored in <tt>D[u][v]</tt>.
+The length of the shortest path between each pair of vertices
+<i>u,v</i> in the graph is stored in <tt>D[u][v]</tt>. The set of
+types {<tt>DistanceMatrix, vertex_descriptor, D</tt>} must be a model
+of <a href="BasicMatrix.html">BasicMatrix</a> where <tt>D</tt> is the
+value type of the <tt>DistanceMap</tt>.
 </blockquote>
 
 
