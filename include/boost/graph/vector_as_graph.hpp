@@ -56,6 +56,12 @@ namespace boost {
 
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 namespace boost {
+
+  struct vector_as_graph_traversal_tag
+    : public vertex_list_graph_tag,
+      public adjacency_graph_tag,
+      public incidence_graph_tag { };
+
   template <class EdgeList>
   struct graph_traits< std::vector<EdgeList> >
   {
@@ -68,7 +74,7 @@ namespace boost {
     typedef typename integer_range<V>::iterator vertex_iterator;
     typedef directed_tag directed_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
-    typedef vertex_list_graph_tag traversal_category;
+    typedef vector_as_graph_traversal_tag traversal_category;
     typedef typename std::vector<EdgeList>::size_type vertices_size_type;
     typedef void edges_size_type;
     typedef typename EdgeList::size_type degree_size_type;
