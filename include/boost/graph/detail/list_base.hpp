@@ -153,8 +153,8 @@ namespace boost {
     dlist_clear(Node dummy, Delete del)
     {
       Node i, tmp;
-      i = next(head);
-      while (i != head) {
+      i = next(dummy);
+      while (i != dummy) {
 	tmp = i;
 	i = next(i)
 	del(tmp);
