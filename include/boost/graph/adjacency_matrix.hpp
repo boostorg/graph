@@ -433,7 +433,8 @@ namespace boost {
                  (n_vertices * n_vertices)
                  : (n_vertices * (n_vertices + 1) / 2)),
       m_vertex_set(0, n_vertices),
-      m_vertex_properties(n_vertices) { }
+      m_vertex_properties(n_vertices),
+      m_num_edges(0) { }
 
 
     //private: if friends worked, these would be private
@@ -462,6 +463,7 @@ namespace boost {
     Matrix m_matrix;
     VertexList m_vertex_set;
     std::vector<VertexProperty> m_vertex_properties;
+    size_type m_num_edges;
   };
   
   //=========================================================================
@@ -623,16 +625,12 @@ namespace boost {
                           edge_iterator(pred, last, last));
   }
 
+  // O(1)
   template <typename D, typename VP, typename EP, typename GP, typename A>
   typename adjacency_matrix<D,VP,EP,GP,A>::edges_size_type
   num_edges(const adjacency_matrix<D,VP,EP,GP,A>& g)
   {
-    typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
-    typename Graph::edges_size_type num_e = 0;
-    typename Graph::vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-      num_e += out_degree(*vi, g);
-    return num_e;
+    return g.m_num_edges;
   }
   
   //=========================================================================
@@ -649,6 +647,7 @@ namespace boost {
     typedef typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor 
       edge_descriptor;
     if (detail::get_edge_exists(g.get_edge(u,v), 0) == false) {
+      ++(g.m_num_edges);
       detail::set_property(g.get_edge(u,v), ep, 0);
       detail::set_edge_exists(g.get_edge(u,v), true, 0);
       return std::make_pair
@@ -677,6 +676,7 @@ namespace boost {
               typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor v,
               adjacency_matrix<D,VP,EP,GP,A>& g)
   {
+    --(g.m_num_edges);
     detail::set_edge_exists(g.get_edge(u,v), false, 0);
   }
 
