@@ -47,6 +47,8 @@ test-suite graph :
     [ compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
     [ compile copy.cpp : <sysinclude>$(BOOST_ROOT) ]
+    
+    [ compile property_iter.cpp : <sysinclude>$(BOOST_ROOT) ]    
     ;
 
 # Run SDB tests only when -sSDB= is set.
