@@ -258,27 +258,27 @@ namespace boost {
   template <typename G>
   std::pair<typename graph_traits<G>::out_edge_iterator,
             typename graph_traits<G>::out_edge_iterator>
-  out_edges(typename graph_traits<G>::vertex_descriptor u,
+  out_edges(typename graph_traits<G>::vertex_descriptor u_local,
             const subgraph<G>& g) 
-    { return out_edges(u, g.m_graph); }
+    { return out_edges(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::degree_size_type
-  out_degree(typename graph_traits<G>::vertex_descriptor u,
+  out_degree(typename graph_traits<G>::vertex_descriptor u_local,
              const subgraph<G>& g) 
-    { return out_degree(u, g.m_graph); }
+    { return out_degree(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::vertex_descriptor
-  source(typename graph_traits<G>::edge_descriptor e,
+  source(typename graph_traits<G>::edge_descriptor e_local,
          const subgraph<G>& g) 
-    { return source(e, g.m_graph); }
+    { return source(e_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::vertex_descriptor
-  target(typename graph_traits<G>::edge_descriptor e,
+  target(typename graph_traits<G>::edge_descriptor e_local,
          const subgraph<G>& g) 
-    { return target(e, g.m_graph); }
+    { return target(e_local, g.m_graph); }
 
   //===========================================================================
   // Functions required by the AdjacencyGraph concept 
@@ -286,7 +286,7 @@ namespace boost {
   template <typename G>
   std::pair<typename subgraph<G>::adjacency_iterator,
             typename subgraph<G>::adjacency_iterator>
-  adjacent_vertices(typename subgraph<G>::vertex_descriptor u,
+  adjacent_vertices(typename subgraph<G>::vertex_descriptor u_local,
                     const subgraph<G>& g) 
     { return adjacent_vertices(u, g.m_graph); }
 
@@ -317,6 +317,18 @@ namespace boost {
   typename subgraph<G>::edges_size_type
   num_edges(const subgraph<G>& g) 
     { return num_edges(g.m_graph); }
+
+  //===========================================================================
+  // Functions required by the AdjacencyMatrix concept 
+
+  template <typename G>
+  std::pair<typename subgraph<G>::edge_descriptor, bool>
+  edge(typename subgraph<G>::vertex_descriptor u_local,
+       typename subgraph<G>::vertex_descriptor v_local,
+       const subgraph<G>& g)
+  {
+    return edge(u_local, v_local, g.m_graph);
+  }
 
   //===========================================================================
   // Functions required by the MutableGraph concept 
