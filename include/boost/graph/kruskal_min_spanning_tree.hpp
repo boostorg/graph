@@ -54,69 +54,59 @@ namespace boost {
   // set of edges.
   //
 
-  // Variant (1)
-  template <class Graph, class OutputIterator, 
-            class Rank, class Parent>
-  inline void 
-  kruskal_minimum_spanning_tree(const Graph& G, 
-                                OutputIterator spanning_tree_edges, 
-                                Rank rank, Parent parent)
-  {
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
-    kruskal_minimum_spanning_tree(G, spanning_tree_edges, rank, parent, 
-                                  get(edge_weight, G));
-  }
+  namespace detail {
 
-  // Variant (2)
-  template <class Graph, class OutputIterator, 
-            class Rank, class Parent, class Weight>
-  void
-  kruskal_minimum_spanning_tree(const Graph& G, 
-                                OutputIterator spanning_tree_edges, 
-                                Rank rank, Parent parent, Weight weight)
-  {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
-    function_requires<VertexAndEdgeListGraphConcept<Graph> >();
-    function_requires<OutputIteratorConcept<OutputIterator, Edge> >();
-    function_requires<ReadWritePropertyMapConcept<Rank, Vertex> >();
-    function_requires<ReadWritePropertyMapConcept<Parent, Vertex> >();
-    function_requires<ReadablePropertyMapConcept<Weight, Edge> >();
-    typedef typename property_traits<Weight>::value_type W_value;
-    typedef typename property_traits<Rank>::value_type R_value;
-    typedef typename property_traits<Parent>::value_type P_value;
-    function_requires<ComparableConcept<W_value> >();
-    function_requires<ConvertibleConcept<P_value, Vertex> >();
-    function_requires<IntegerConcept<R_value> >();
+    template <class Graph, class OutputIterator, 
+	      class Rank, class Parent, class Weight>
+    void
+    kruskal_mst_impl(const Graph& G, 
+		     OutputIterator spanning_tree_edges, 
+		     Rank rank, Parent parent, Weight weight)
+    {
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename graph_traits<Graph>::edge_descriptor Edge;
+      function_requires<VertexAndEdgeListGraphConcept<Graph> >();
+      function_requires<OutputIteratorConcept<OutputIterator, Edge> >();
+      function_requires<ReadWritePropertyMapConcept<Rank, Vertex> >();
+      function_requires<ReadWritePropertyMapConcept<Parent, Vertex> >();
+      function_requires<ReadablePropertyMapConcept<Weight, Edge> >();
+      typedef typename property_traits<Weight>::value_type W_value;
+      typedef typename property_traits<Rank>::value_type R_value;
+      typedef typename property_traits<Parent>::value_type P_value;
+      function_requires<ComparableConcept<W_value> >();
+      function_requires<ConvertibleConcept<P_value, Vertex> >();
+      function_requires<IntegerConcept<R_value> >();
 
-    disjoint_sets<Rank, Parent>  dset(rank, parent);
-    
-    typename graph_traits<Graph>::vertex_iterator ui, uiend;
-    for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui)
-      dset.make_set(*ui);
+      disjoint_sets<Rank, Parent>  dset(rank, parent);
 
-    typedef indirect_cmp<Weight, std::greater<W_value> > weight_greater;
-    weight_greater wl(weight);
-    std::priority_queue<Edge, std::vector<Edge>, weight_greater> Q(wl);
-    /*push all edge into Q*/
-    typename graph_traits<Graph>::edge_iterator ei, eiend;
-    for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei) 
-      Q.push(*ei);
-    
-    while (! Q.empty()) {
-      Edge e = Q.top();
-      Q.pop();
-      Vertex u = dset.find_set(source(e, G));
-      Vertex v = dset.find_set(target(e, G));
-      if ( u != v ) {
-	*spanning_tree_edges++ = e;
-	dset.link(u, v);
+      typename graph_traits<Graph>::vertex_iterator ui, uiend;
+      for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui)
+	dset.make_set(*ui);
+
+      typedef indirect_cmp<Weight, std::greater<W_value> > weight_greater;
+      weight_greater wl(weight);
+      std::priority_queue<Edge, std::vector<Edge>, weight_greater> Q(wl);
+      /*push all edge into Q*/
+      typename graph_traits<Graph>::edge_iterator ei, eiend;
+      for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei) 
+	Q.push(*ei);
+
+      while (! Q.empty()) {
+	Edge e = Q.top();
+	Q.pop();
+	Vertex u = dset.find_set(source(e, G));
+	Vertex v = dset.find_set(target(e, G));
+	if ( u != v ) {
+	  *spanning_tree_edges++ = e;
+	  dset.link(u, v);
+	}
       }
     }
-  }
+
+  } // namespace detail 
 
   // Named Parameters Variants
-  // (1)
+
   template <class Graph, class OutputIterator>
   inline void 
   kruskal_minimum_spanning_tree(const Graph& g,
@@ -130,14 +120,13 @@ namespace boost {
     std::vector<size_type> rank_map(n);
     std::vector<vertex_t> pred_map(n);
 
-    kruskal_minimum_spanning_tree
+    detail::kruskal_mst_impl
       (g, spanning_tree_edges, 
        make_iterator_property_map(rank_map.begin(), get(vertex_index, g)),
        make_iterator_property_map(pred_map.begin(), get(vertex_index, g)),
        get(edge_weight, g));
   }
 
-  // (2)
   template <class Graph, class OutputIterator, class P, class T, class R>
   inline void
   kruskal_minimum_spanning_tree(const Graph& g,
@@ -154,7 +143,7 @@ namespace boost {
                                    ? num_vertices(g) : 0;
     std::vector<vertex_t> pred_map(n);
     
-    kruskal_minimum_spanning_tree
+    detail::kruskal_mst_impl
       (g, spanning_tree_edges, 
        choose_param
        (get_param(params, vertex_rank), 
@@ -164,9 +153,9 @@ namespace boost {
        choose_param
        (get_param(params, vertex_predecessor), 
 	make_iterator_property_map
-	(predecessor_map.begin(), 
-	 choose_pmap(get_param(params, vertex_index), g, vertex_index))),
-       choose_pmap(get_param(params, edge_weight), g, edge_weight));
+	(pred_map.begin(), 
+	 choose_const_pmap(get_param(params, vertex_index), g, vertex_index))),
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
     
 } // namespace boost
