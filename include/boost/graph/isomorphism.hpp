@@ -21,7 +21,6 @@
 
 namespace boost {
 
-
   //===========================================================================
   //A simple but slow implementation based on description of the
   //direct isomorphism algorithm in "The Graph Isomorphism Problem" by
@@ -110,62 +109,130 @@ namespace boost {
       if (k == last) 
         return true;
 
+#if 0
+      {
+	std::cout << "remaining in G_1 = ";
+	for (VertexIter i = k; i != last; ++i)
+	  std::cout << get(v1_index_map, *i) << " ";
+	std::cout << std::endl;
+      }
+#endif
+
       std::vector<v2_desc_t> my_f_vec(num_vertices(g1));
       typedef typename std::vector<v2_desc_t>::iterator vec_iter;
       iterator_property_map<vec_iter,  V1IndexMap, v2_desc_t, v2_desc_t&>
-	my_f(my_f_vec.begin(), v1_index_map);
+        my_f(my_f_vec.begin(), v1_index_map);
 
       typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
       for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
         my_f[*i1] = f[*i1];
       
       std::size_t k_id = get(v1_index_map, *k);
-
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      std::cout << "k: " << k_id << std::endl;
+#endif
       // Collect the potential vertices
       std::vector<v2_desc_t> vertex_set;
       std::copy(not_in_S.begin(), not_in_S.end(), 
                 std::back_inserter(vertex_set));
       // not_in_S is already sorted, so we don't need to sort vertex_set here
-
-      // Weed out vertices that do not have the same connectivity as k
-      for (; edge_iter != edge_iter_end 
-             && (k_id == std::max(get(v1_index_map, source(*edge_iter, g1)),
-                                  get(v1_index_map, target(*edge_iter, g1))));
-           ++edge_iter) {
-        std::vector<v2_desc_t> tmp, adj;
-        if (k_id == get(v1_index_map, source(*edge_iter, g1))) {
-          v2_desc_t v = f[target(*edge_iter, g1)];
-	  typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
-	  for (tie(ei, ei_end) = in_edges(v, g2); ei != ei_end; ++ei)
-	    if (invar1[*k] == invar2[source(*ei, g2)])
-	      adj.push_back(source(*ei, g2));
-
-	  // set_intersection requires sorted ranges
-	  std::sort(adj.begin(), adj.end());
-          std::set_intersection(adj.begin(), adj.end(),
-                                vertex_set.begin(), vertex_set.end(),
-                                std::back_inserter(tmp),
-                                not_in_S.key_comp());
-        } else {
-          v2_desc_t v = f[source(*edge_iter, g1)];
-	  typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
-	  for (tie(ei, ei_end) = out_edges(v, g2); ei != ei_end; ++ei)
-	    if (invar1[*k] == invar2[target(*ei, g2)])
-	      adj.push_back(target(*ei, g2));
-
-	  // set_intersection requires sorted ranges
-	  std::sort(adj.begin(), adj.end());
-          std::set_intersection(adj.begin(), adj.end(),
-                                vertex_set.begin(), vertex_set.end(),
-                                std::back_inserter(tmp), 
-                                not_in_S.key_comp());
-        }
-        std::swap(vertex_set, tmp);
-        if (vertex_set.empty())
-          break;
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      {
+	std::cout << "not_in_S = ";
+	for (typename Set::iterator i = not_in_S.begin(); 
+	     i != not_in_S.end(); ++i)
+	  std::cout << get(v2_index_map, *i) << " ";
+	std::cout << std::endl;
       }
+#endif
+      // Weed out vertices that do not have the same connectivity as k
+      for (; edge_iter != edge_iter_end
+	     && (k_id == std::max(get(v1_index_map, source(*edge_iter, g1)),
+				  get(v1_index_map, target(*edge_iter, g1))))
+	     ; ++edge_iter) {
+#ifdef BOOST_ISOMORPHISM_DEBUG
+	std::cout << "examining edge (" 
+		  << get(v1_index_map, source(*edge_iter, g1))
+		  << "," << get(v1_index_map, target(*edge_iter, g1)) << ")"
+		  << std::endl;
+#endif
+	  std::vector<v2_desc_t> tmp, adj;
+	  if (k_id == get(v1_index_map, source(*edge_iter, g1))) {
+	    v2_desc_t v = f[target(*edge_iter, g1)];
+#ifdef BOOST_ISOMORPHISM_DEBUG
+	    std::cout << "v: " << get(v2_index_map, v) << std::endl;
+#endif
+	    typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
+	    for (tie(ei, ei_end) = in_edges(v, g2); ei != ei_end; ++ei)
+	      if (invar1[*k] == invar2[source(*ei, g2)])
+		adj.push_back(source(*ei, g2));
+
+	    // set_intersection requires sorted ranges
+	    indirect_cmp<V2IndexMap, std::less<std::size_t> > cmp(v2_index_map);
+	    std::sort(adj.begin(), adj.end(), cmp);
+#ifdef BOOST_ISOMORPHISM_DEBUG
+	    {
+	      std::cout << std::endl;
+	      std::cout << "adj = ";
+	      for (std::vector<v2_desc_t>::iterator i = adj.begin(); 
+		   i != adj.end(); ++i)
+		std::cout << get(v2_index_map, *i) << " ";
+	      std::cout << std::endl;
+	    }
+#endif
+	    std::set_intersection(adj.begin(), adj.end(),
+				  vertex_set.begin(), vertex_set.end(),
+				  std::back_inserter(tmp),
+				  not_in_S.key_comp());
+	  } else {
+	    v2_desc_t v = f[source(*edge_iter, g1)];
+#ifdef BOOST_ISOMORPHISM_DEBUG
+	    std::cout << "v: " << get(v2_index_map, v) << std::endl;
+#endif
+	    typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
+	    for (tie(ei, ei_end) = out_edges(v, g2); ei != ei_end; ++ei)
+	      if (invar1[*k] == invar2[target(*ei, g2)])
+		adj.push_back(target(*ei, g2));
+
+	    // set_intersection requires sorted ranges
+	    indirect_cmp<V2IndexMap, std::less<std::size_t> > cmp(v2_index_map);
+	    std::sort(adj.begin(), adj.end(), cmp);
+#ifdef BOOST_ISOMORPHISM_DEBUG
+	    {
+	      std::cout << std::endl;
+	      std::cout << "adj = ";
+	      for (std::vector<v2_desc_t>::iterator i = adj.begin(); 
+		   i != adj.end(); ++i)
+		std::cout << get(v2_index_map, *i) << " ";
+	      std::cout << std::endl;
+	    }
+#endif
+	    std::set_intersection(adj.begin(), adj.end(),
+				  vertex_set.begin(), vertex_set.end(),
+				  std::back_inserter(tmp), 
+				  not_in_S.key_comp());
+	  }
+	  std::swap(vertex_set, tmp);
+	  if (vertex_set.empty())
+	    break;
+
+      } // for edge_iter
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      {
+	std::cout << std::endl;
+	std::cout << "potential vertices = ";
+	for (std::vector<v2_desc_t>::iterator i = vertex_set.begin(); 
+	     i != vertex_set.end(); ++i)
+	  std::cout << get(v2_index_map, *i) << " ";
+	std::cout << std::endl;
+      }
+#endif
       for (std::size_t j = 0; j < vertex_set.size(); ++j) {
         my_f[*k] = vertex_set[j];
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      std::cout << "my_f(" << get(v1_index_map, *k)
+		<< ")=" << get(v2_index_map, vertex_set[j]) << std::endl;
+#endif      
         Set my_not_in_S(not_in_S);
         set_remove(my_not_in_S, vertex_set[j]);
         if (isomorph(boost::next(k), last, edge_iter, edge_iter_end, g1, g2, 
@@ -179,17 +246,34 @@ namespace boost {
       return false;
     }
 
+#if 1
+    template <typename Graph1, typename V1Map>
+    struct record_dfs_order : public default_dfs_visitor {
+      typedef typename graph_traits<Graph1>::vertices_size_type size_type;
+      typedef typename graph_traits<Graph1>::vertex_descriptor vertex;
+
+      record_dfs_order(std::vector<size_type>& dfs_order, V1Map index) 
+        : dfs_order(dfs_order), index(index) { }
+      
+      void discover_vertex(vertex v, const Graph1& g) const {
+        dfs_order.push_back(get(index, v));
+      }
+      std::vector<size_type>& dfs_order; 
+      V1Map index;
+    };
+#endif
+
   } // namespace detail
 
   template <typename Graph1, typename Graph2, 
             typename IndexMapping, typename VertexInvariant,
             typename V1Map, typename V2Map>
   bool isomorphism(const Graph1& g1,
-		   const Graph2& g2,
-		   IndexMapping f,
-		   VertexInvariant invariant,
-		   V1Map v1_index_map,
-		   V2Map v2_index_map)
+                   const Graph2& g2,
+                   IndexMapping f,
+                   VertexInvariant invariant,
+                   V1Map v1_index_map,
+                   V2Map v2_index_map)
   {
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
     typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
@@ -226,8 +310,8 @@ namespace boost {
       std::sort(invar1_tmp.begin(), invar1_tmp.end());
       std::sort(invar2_tmp.begin(), invar2_tmp.end());
       if (! std::equal(invar1_tmp.begin(), invar1_tmp.end(), 
-		       invar2_tmp.begin()))
-	return false;
+                       invar2_tmp.begin()))
+        return false;
     }
     
     // compute invariant multiplicity
@@ -241,8 +325,8 @@ namespace boost {
     integer_range<size_type> range(0, num_vertices(g1));
     std::copy(range.begin(), range.end(), std::back_inserter(perm));
     std::sort(perm.begin(), perm.end(),
-	      detail::compare_invariant_multiplicity(invar1_vec.begin(),
-						     invar_mult.begin()));
+              detail::compare_invariant_multiplicity(invar1_vec.begin(),
+                                                     invar_mult.begin()));
     
     typedef typename graph_traits<Graph1>::vertex_descriptor VertexG1;
     std::vector<VertexG1> g1_vertices;
@@ -250,36 +334,83 @@ namespace boost {
       g1_vertices.push_back(*i1);
     permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
     
+#if 1
+    { // compute DFS order, store results in perm
+      perm.clear();
+      std::vector<default_color_type> color_vec(num_vertices(g1));
+      for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
+           ui != g1_vertices.end(); ++ui) {
+        if (color_vec[get(v1_index_map, *ui)] 
+            == color_traits<default_color_type>::white()) {
+          depth_first_visit
+            (g1, *ui, detail::record_dfs_order<Graph1, V1Map>(perm, 
+                                                             v1_index_map), 
+             make_iterator_property_map(&color_vec[0], v1_index_map, 
+                                        color_vec[0]));
+        }
+      }
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      std::cout << "perm = ";
+      std::copy(perm.begin(), perm.end(),
+		std::ostream_iterator<size_type>(std::cout, " "));
+      std::cout << std::endl;
+#endif
+      // Re-permute the vertices of g1
+      g1_vertices.clear();
+      for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
+        g1_vertices.push_back(*i1);
+      permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      std::cout << "g1_vertices = ";
+      for (typename std::vector<VertexG1>::iterator 
+	     first = g1_vertices.begin(); first != g1_vertices.end(); ++first)
+	std::cout << get(v1_index_map, *first) << " ";
+      std::cout << std::endl;
+#endif
+    }
+#endif
+
     typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
     std::vector<edge1_t> edge_set;
     std::copy(edges(g1).first, edges(g1).second, 
-	      std::back_inserter(edge_set));
+              std::back_inserter(edge_set));
     
     std::sort(edge_set.begin(), edge_set.end(), 
-	      detail::isomorph_edge_ordering
-	      (make_iterator_property_map(perm.begin(), v1_index_map, perm[0]), g1));
+              detail::isomorph_edge_ordering
+              (make_iterator_property_map(perm.begin(), v1_index_map, perm[0]), g1));
 
+#ifdef BOOST_ISOMORPHISM_DEBUG
+    {
+      std::cout << "edge_set = ";
+      for (std::size_t e = 0; e < edge_set.size(); ++e)
+	std::cout << edge_set[e] << " ";
+      std::cout << std::endl;
+    }
+#endif
     typename std::vector<VertexG1>::iterator first = g1_vertices.begin();
     typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
       f[*first] = *vi;
-      
+#ifdef BOOST_ISOMORPHISM_DEBUG
+      std::cout << "f(" << get(v1_index_map, *first)
+		<< ")=" << get(v2_index_map, *vi) << std::endl;
+#endif      
       typedef typename graph_traits<Graph2>::vertex_descriptor VertexG2;
       typedef typename property_traits<V2Map>::value_type V2Idx;
       typedef indirect_cmp<V2Map, std::less<V2Idx> >  Cmp;
       Cmp cmp(v2_index_map);
       std::set<VertexG2, Cmp> not_in_S(cmp);
       for (tie(i2, i2_end) = vertices(g2); i2 != i2_end; ++i2)
-	set_insert(not_in_S, *i2);
+        set_insert(not_in_S, *i2);
       set_remove(not_in_S, *vi);
       
       if(detail::isomorph
-	 (boost::next(first), g1_vertices.end(), 
-	  edge_set.begin(), edge_set.end(), 
-	  g1, g2,
+         (boost::next(first), g1_vertices.end(), 
+          edge_set.begin(), edge_set.end(), 
+          g1, g2,
 	  make_iterator_property_map(perm.begin(), v1_index_map, perm[0]),
-	  v2_index_map, f, invar1, invar2, not_in_S))
-	return true;
+          v2_index_map, f, invar1, invar2, not_in_S))
+        return true;
     }
     return false;
   }
