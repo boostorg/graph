@@ -32,7 +32,7 @@
 #include <boost/operators.hpp>
 #include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
-
+#include <memory>
 
 #if 0
 // Was having trouble with internal compiler errors from VC++.
@@ -297,15 +297,27 @@ namespace boost {
 
     template <class Vertex, class Property>
     class stored_edge_property : public stored_edge<Vertex> {
+      typedef stored_edge_property self;
+      typedef stored_edge<Vertex> Base;
     public:
       typedef Property property_type;
       inline stored_edge_property(Vertex target,
                                   const Property& p = Property())
-        : stored_edge<Vertex>(target), m_property(p) { }
-      inline Property& get_property() { return m_property; }
-      inline const Property& get_property() const { return m_property; }
+        : stored_edge<Vertex>(target), m_property(new Property(p)) { }
+      stored_edge_property(const self& x) 
+        : Base(x), m_property(const_cast<self&>(x).m_property) { }
+      self& operator=(const self& x) {
+	Base::operator=(x);
+	m_property = const_cast<self&>(x).m_property; 
+	return *this;
+      }
+      inline Property& get_property() { return *m_property; }
+      inline const Property& get_property() const { return *m_property; }
     protected:
-      Property m_property;
+      // Holding the property by-value causes edge-descriptor
+      // invalidation for add_edge() with EdgeList=vecS. Instead we
+      // hold a pointer to the property.
+      std::auto_ptr<Property> m_property;
     };
 
     template <class Vertex, class Iter, class Property>
@@ -395,7 +407,8 @@ namespace boost {
     // Directed Graph Helper Class
 
     template <class Config>
-    struct directed_graph_helper : public directed_edges_helper<Config> { };
+    struct directed_graph_helper
+      : public directed_edges_helper<Config> { };
 
     // O(E/V)
     template <class Config>
@@ -897,8 +910,7 @@ namespace boost {
 
     template <class Config>
     struct bidirectional_graph_helper
-      : public directed_edges_helper<Config>
-    { };
+      : public directed_edges_helper<Config> { };
 
     template <class Predicate, class Config>
     inline void
@@ -1983,6 +1995,8 @@ namespace boost {
 
       struct config
       {
+	typedef EdgeListS edgelist_selector;
+
         typedef Graph graph_type;
         typedef EdgeProperty edge_property_type;
         typedef VertexProperty vertex_property_type;
