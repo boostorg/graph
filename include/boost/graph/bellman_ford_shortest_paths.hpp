@@ -67,7 +67,7 @@ namespace boost {
   class bellman_visitor {
   public:
     bellman_visitor() { }
-    bellman_visitor(Visitors vis = Visitors()) : m_vis(vis) { }
+    bellman_visitor(Visitors vis) : m_vis(vis) { }
 
     template <class Edge, class Graph>
     void examine_edge(Edge u, Graph& g) {
@@ -122,14 +122,19 @@ namespace boost {
 
     typename GTraits::edge_iterator i, end;
 
-    for (Size k = 0; k < N; ++k)
+    for (Size k = 0; k < N; ++k) {
+      bool at_least_one_edge_relaxed = false;
       for (tie(i, end) = edges(g); i != end; ++i) {
         v.examine_edge(*i, g);
-        if (relax(*i, g, weight, pred, distance, combine, compare))
+        if (relax(*i, g, weight, pred, distance, combine, compare)) {
+          at_least_one_edge_relaxed = true;
           v.edge_relaxed(*i, g);
-        else
+        } else
           v.edge_not_relaxed(*i, g);
       }
+      if (!at_least_one_edge_relaxed)
+        break;
+    }
 
     for (tie(i, end) = edges(g); i != end; ++i)
       if (compare(combine(get(distance, source(*i, g)), 
