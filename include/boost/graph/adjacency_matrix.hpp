@@ -39,7 +39,7 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/utility.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace boost {
   

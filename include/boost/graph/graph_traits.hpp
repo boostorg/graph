@@ -27,7 +27,7 @@
 #define BOOST_GRAPH_TRAITS_HPP
 
 #include <iterator>
-#include <boost/utility.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/pending/ct_if.hpp>
 
 namespace boost {

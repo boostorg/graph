@@ -32,7 +32,7 @@
 #include <fstream>
 #include <stdio.h> // for FILE
 #include <boost/property_map.hpp>
-#include <boost/utility.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>

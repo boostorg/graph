@@ -32,7 +32,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <boost/config.hpp>
-#include <boost/utility.hpp>
+#include <boost/tuple/tuple.hpp>
 #ifndef BOOST_NO_SLIST
 #  include <slist> // shouldn't have to include this... -JGS
 #endif
