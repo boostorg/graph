@@ -62,12 +62,12 @@ bool check_edge_added(Graph& g, Edge e,
 {
   if (! (source(e, g) == a)) {
 #if VERBOSE
-    cerr << "    Failed, vertex " << id[a] << " not source of e."<< endl;
+    cerr << "    Failed, vertex a not source of e."<< endl;
 #endif
     return false;
   } else if (! (target(e, g) == b)) {
 #if VERBOSE
-    cerr << "    Failed, vertex " << id[b] << " not source of e."<< endl;
+    cerr << "    Failed, vertex b not source of e."<< endl;
 #endif
     return false;
   } else if (! is_adjacent(g, a, b)) {
