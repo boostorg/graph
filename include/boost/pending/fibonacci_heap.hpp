@@ -38,7 +38,7 @@ public:
 		 const ID& id = identity_property_map())
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
-#ifdef BOOST_MSVC
+#ifdef BOOST_NO_STDC_NAMESPACE
       new_roots(int(log(float(n))) + 5) { }
 #else
       new_roots(std::log(float(n)) + 5) { }
