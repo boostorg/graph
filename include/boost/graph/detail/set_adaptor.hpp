@@ -8,6 +8,7 @@
 #define BOOST_SET_ADAPTOR_HPP
 
 #include <set>
+#include <iterator>
 
 namespace boost {
 
@@ -93,7 +94,7 @@ namespace boost {
       z.clear();
       std::set_difference(x.begin(), x.end(),
                           y.begin(), y.end(),
-                          std::inserter(z));
+                          std::inserter(z, z.begin()));
     }
 
     template <class K, class C, class A>
