@@ -117,18 +117,19 @@ namespace boost {
   // To compute an approximated peripheral for a given vertex. 
   // Used in <tt>reverse_cuthill_mckee_ordering</tt> algorithm.
   //
-  template <class Graph, class Vertex, class Color, class Degree>
+  template <class Graph, class Vertex, class ColorMap, class DegreeMap>
   Vertex 
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
-                         Color color, Degree degree)
+                         ColorMap color, DegreeMap degree)
   {
-    typename property_traits<Color>::value_type c = get(color, u);
+    typedef typename property_traits<Color>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
 
     rcm_queue<Vertex, Degree> Q(degree);
     
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-      put(color, *ui, white(c));
+      put(color, *ui, Color::white());
     breadth_first_search(G, u, Q, bfs_visitor<>(), color);
 
     ecc = Q.eccentricity(); 
@@ -182,15 +183,16 @@ namespace boost {
   
 
   template < class Graph, class Vertex, class OutputIterator, 
-             class Color, class Degree >
+             class ColorMap, class Degree >
   inline void 
   cuthill_mckee_ordering(Graph& G, 
                          Vertex s,
                          OutputIterator inverse_permutation, 
-                         Color color, Degree degree)
+                         ColorMap color, Degree degree)
   {
     typedef typename property_traits<Degree>::value_type DS;
-    typename property_traits<Color>::value_type c = get(color, s);
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
     typedef indirect_cmp<Degree, std::greater<DS> > Compare;
     Compare comp(degree);
     fenced_priority_queue<Vertex, Compare > Q(comp);
@@ -200,7 +202,7 @@ namespace boost {
     
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-      put(color, *ui, white(c));
+      put(color, *ui, Color::white());
     breadth_first_search(G, s, Q, cm_visitor, color);
   }  
   

@@ -127,14 +127,14 @@ namespace boost {
     /* a directed graph */
     template <class Graph, class DFSVisitor, class Components,
               class DiscoverTime, class FinishTime,
-              class Color>
+              class ColorMap>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c, DiscoverTime d,
-                         FinishTime f, Color color, directed_tag)
+                         FinishTime f, ColorMap color, directed_tag)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      typename property_traits<Color>::value_type 
-        cc = get(color, *vertices(G).first);
+      typedef typename property_traits<ColorMap>::value_type ColorValue;
+      typedef color_traits<ColorValue> Color;
       int time = 0;
       depth_first_search(G, record_times(d, f, time, v), color);
 
@@ -150,7 +150,7 @@ namespace boost {
       // initialize G_T
       typename graph_traits<Graph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(G_T); ui != ui_end; ++ui)
-        put(color, *ui, white(cc));
+        put(color, *ui, Color::white());
 
       typedef typename property_traits<FinishTime>::value_type D;
       typedef indirect_cmp< FinishTime, std::less<D> > Compare;
@@ -169,7 +169,7 @@ namespace boost {
       while ( !Q.empty() ) {
         Vertex u = Q.top();
         Q.pop();
-        if  (get(color, u) == white(cc)) {
+        if  (get(color, u) == Color::white()) {
           depth_first_visit(G_T, u, vis, color);
           ++c_count; 
         }
@@ -180,13 +180,13 @@ namespace boost {
   // Variant (3)
   template <class Graph, class Components,
             class DiscoverTime, class FinishTime,
-            class Color, class DFSVisitor>
+            class ColorMap, class DFSVisitor>
   inline typename property_traits<Components>::value_type
   connected_components(Graph& G,
                        Components c,
                        DiscoverTime d, 
                        FinishTime f,
-                       Color color, DFSVisitor v) {
+                       ColorMap color, DFSVisitor v) {
 
     typedef typename graph_traits<Graph>::directed_category Cat;
     return detail::connected_components(G, v, c, d, f, color, Cat());
@@ -194,10 +194,10 @@ namespace boost {
  
   // Variant (2)
   template <class Graph, class Components,
-            class Color, class DFSVisitor>
+            class ColorMap, class DFSVisitor>
   inline typename property_traits<Components>::value_type
   connected_components(Graph& G, Components c,
-                       Color color, DFSVisitor v) {
+                       ColorMap color, DFSVisitor v) {
     typedef typename graph_traits<Graph>::directed_category Cat;
     return detail::connected_components(G, v, c, color, Cat());
   }
@@ -227,10 +227,10 @@ namespace boost {
 
     template <class Graph, class DFSVisitor,
               class Components,
-              class Color>
+              class ColorMap>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c,
-                         Color color, directed_tag)
+                         ColorMap color, directed_tag)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       return connected_components(G, v, c, 

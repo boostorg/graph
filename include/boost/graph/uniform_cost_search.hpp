@@ -219,10 +219,9 @@ namespace boost {
       WeightMap, DistanceMap, BinaryFunction, BinaryPredicate>
       visitor(vis, Q, w, d, combine, compare);
 
-    typename property_traits<ColorMap>::value_type c = get(color, s);
     typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-      put(color, *ui, white(c));
+      put(color, *ui, color_traits<Color_value>::white());
 
     breadth_first_search(g, s, Q, visitor, color);
   }
