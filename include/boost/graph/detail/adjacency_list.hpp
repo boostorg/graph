@@ -837,6 +837,7 @@ namespace boost {
       typename Config::edge_property_type p;
       return add_edge(u, v, p, g_);
     }
+
     // O(1)
     template <class Config>
     inline typename Config::degree_size_type
@@ -1410,6 +1411,31 @@ namespace boost {
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
+    namespace detail {
+      template <class Graph, class Directed>
+      inline std::pair<typename Graph::in_edge_iterator, 
+		       typename Graph::in_edge_iterator>
+      in_edges_dispatch(typename Graph::vertex_descriptor u, 
+			Graph& g, Directed)
+      {
+	typedef typename Graph::in_edge_iterator in_edge_iterator;
+	return
+	  std::make_pair(in_edge_iterator(g.in_edge_list(u).begin(), u),
+			 in_edge_iterator(g.in_edge_list(u).end(), u));
+      }
+      template <class Graph>
+      inline std::pair<typename Graph::in_edge_iterator, 
+		       typename Graph::in_edge_iterator>
+      in_edges_dispatch(typename Graph::vertex_descriptor u, 
+			Graph& g, undirected_tag)
+      {
+	typedef typename Graph::in_edge_iterator in_edge_iterator;
+	return
+	  std::make_pair(in_edge_iterator(g.out_edge_list(u).begin(), u),
+			 in_edge_iterator(g.out_edge_list(u).end(), u));
+      }
+    } // namespace detail
+  
     template <class Config, class Base>
     inline std::pair<typename Config::in_edge_iterator, 
                      typename Config::in_edge_iterator>
@@ -1419,9 +1445,8 @@ namespace boost {
       typedef typename Config::graph_type Graph;
       const Graph& cg = static_cast<const Graph&>(g_);
       Graph& g = const_cast<Graph&>(cg);
-      typedef typename Config::in_edge_iterator in_edge_iterator;
-      return std::make_pair( in_edge_iterator(g.in_edge_list(u).begin(),u),
-                             in_edge_iterator(g.in_edge_list(u).end(),u) );
+      typedef typename Config::directed_category Cat;
+      return detail::in_edges_dispatch(u, g, Cat());
     }
     template <class Config, class Base>
     inline typename Config::degree_size_type
