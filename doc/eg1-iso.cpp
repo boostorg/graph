@@ -81,10 +81,10 @@ void test_isomorphism()
   
 
   std::vector<std::size_t> in_degree_A(num_vertices(Ga));
-  compute_in_degree(Ga, &in_degree_A[0]);
+  boost::detail::compute_in_degree(Ga, &in_degree_A[0]);
 
   std::vector<std::size_t> in_degree_B(num_vertices(Gb));
-  compute_in_degree(Gb, &in_degree_B[0]);
+  boost::detail::compute_in_degree(Gb, &in_degree_B[0]);
 
   degree_vertex_invariant<std::size_t*, GraphA> 
     invariantA(&in_degree_A[0], Ga);
