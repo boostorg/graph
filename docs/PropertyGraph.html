@@ -1,0 +1,205 @@
+<HTML>
+<!--
+  -- Copyright (c) Jeremy Siek 2000
+  --
+  -- Permission to use, copy, modify, distribute and sell this software
+  -- and its documentation for any purpose is hereby granted without fee,
+  -- provided that the above copyright notice appears in all copies and
+  -- that both that copyright notice and this permission notice appear
+  -- in supporting documentation.  Silicon Graphics makes no
+  -- representations about the suitability of this software for any
+  -- purpose.  It is provided "as is" without express or implied warranty.
+  -->
+<Head>
+<Title>PropertyGraph</Title>
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+	ALINK="#ff0000"> 
+<IMG SRC="../../../c++boost.gif" 
+     ALT="C++ Boost"> 
+
+<BR Clear>
+
+<H2><A NAME="concept:PropertyGraph"></A>
+PropertyGraph
+</H2>
+
+A PropertyGraph is a graph that has some property associated with each
+of the vertices or edges in the graph. As a given graph may have
+several properties associated with each vertex or edge, a tag is used
+to identity which property is being accessed.  The graph provides a
+function which returns a property map object.
+
+<P>
+
+<H3>Refinement of</H3>
+
+<a href="./Graph.html">Graph</a>
+
+<h3>Notation</h3>
+
+<Table>
+<TR>
+<TD><tt>G</tt></TD>
+<TD>A type that is a model of Graph.</TD>
+</TR>
+
+<TR>
+<TD><tt>g</tt></TD>
+<TD>An object of type <tt>G</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>X</tt></TD>
+<TD>Either the vertex or edge descriptor type for <tt>G</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>x</tt></TD>
+<TD>An object of type <tt>X</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>v</tt></TD>
+<TD>An object of type <tt>property_traits&lt;property_map&lt;G, Property&gt;::type&gt;::value_type</tt>.</TD>
+</TR>
+
+<TR>
+<TD><tt>Property</tt></TD>
+<TD>A type that models the <a href="./Property.html">Property</a> concept.</TD>
+</TR>
+
+<TR>
+<TD><tt>property</tt></TD>
+<TD>An object of type <tt>Property</tt>.</td>
+</TR>
+
+</table>
+
+<H3>Associated types</H3>
+
+<table border>
+
+<tr>
+<td>Property Map Type </td>
+<td><TT>boost::property_map&lt;G, Property&gt;::type</TT> </td>
+<td>
+The type of the property map for the property specified by
+<TT>Property</TT>.  This type must be a model of <a
+href="../../property_accessor/ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a> with a key type the same as the graph's vertex or descriptor type.
+</td>
+</tr>
+
+<tr>
+<td>Const Property Map Type </td>
+<td><TT>boost::property_map&lt;G, Property&gt;::const_type</TT> </td>
+<td>
+The type of the const property map for the property specified by
+<TT>Property</TT>. This type must be a model of <a
+href="../../property_accessor/ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>
+with a key type the same as the graph's vertex or edge descriptor type.
+</td>
+</tr>
+
+</table
+
+<h3>Valid Expressions</h3>
+
+<table border>
+<tr>
+<th>Name</th><th>Expression</th><th>Return Type</th><th>Description</th>
+</tr>
+
+
+<tr>
+<td>Get Property Map</td>
+<td> <TT>get(property, g)</TT> </td>
+<TD><TT>boost::property_map&lt;G, Property&gt;::type</TT> 
+      if <TT>g</TT> is mutable and <TT>boost::property_map&lt;G, Property&gt;::const_type</TT> otherwise.</TD>
+<td>
+Returns the property map object for the property specified by the
+<tt>Property</tt> type.
+</td>
+</TR>
+
+<tr>
+<td>Get Property</td>
+<td> <TT>get(property, g, x)</TT> </td>
+<TD><TT>boost::property_traits&lt;boost::property_map&lt;G, Property&gt;::type&gt;::value_type</TT></TD>
+<td>
+Returns the property (specified by the <tt>Property</tt> type)
+associated with object <tt>x</tt> (a vertex or edge).
+This function is equivalent to:<br>
+<tt>get(get(property, g), x)</tt>
+</td>
+</TR>
+
+<tr>
+<td>Put Property</td>
+<td> <TT>put(property, g, x, v)</TT> </td>
+<TD><TT>void</TT></TD>
+<td>
+Set the property (specified by the <tt>Property</tt> type)
+associated with object <tt>x</tt> (a vertex or edge) to
+the value <tt>v</tt>.
+This function is equivalent to:<br>
+<tt>put(get(property, g), x, v)</tt>
+</td>
+</TR>
+
+
+
+</TABLE>
+
+<H3>Complexity</H3>
+
+The <tt>get()</tt> property map function must be constant time.
+
+
+<H3>Models</H3>
+
+
+<UL>
+<LI><tt>adjacency_list</tt> with <tt>VertexPlugin=plugin&lt;vertex_distance,int,plugin&lt;vertex_in_degree,int&gt; &gt;</tt> and <tt>Property=vertex_distance</tt>.</li>
+<li><tt>adjacency_list</tt> with <tt>VertexPlugin=plugin&lt;vertex_distance,int,plugin&lt;vertex_in_degree,int&gt; &gt;</TT> and <tt>Property=vertex_in_degree</tt>.</li>
+</UL>
+
+
+<H3>Concept Checking Class</H3>
+
+<PRE>
+  template &lt;class Graph, class X, class Property&gt;
+  struct PropertyGraph_concept
+  {
+    typedef typename property_map&lt;G, Property&gt;::type PMap;
+    typedef typename property_map&lt;G, Property&gt;::const_type const_PMap;
+    void constraints() {
+      REQUIRE(G, Graph);
+      REQUIRE2(PMap, X, ReadWritePropertyMap);
+      REQUIRE2(const_PMap, X, ReadablePropertyMap);
+
+      PMap pmap = get(Property(), g);
+      pval = get(Property(), g, x);
+      put(Property(), g, x, pval);
+      ignore_unused_variable_warning(pmap);
+    }
+    void const_constraints(const G&amp; g) {
+      const_PA pmap = get(Property(), g);
+      pval = get(Property(), g, x);
+      ignore_unused_variable_warning(pmap);
+    }
+    G g;
+    X x;
+    typename property_traits&lt;PMap&gt;::value_type pval;
+  };
+</PRE>
+
+<br>
+<HR>
+<TABLE>
+<TR valign=top>
+<TD nowrap>Copyright &copy 2000</TD><TD>
+<A HREF=http://www.boost.org/people/jeremy_siek.htm>Jeremy Siek</A>, Univ.of Notre Dame (<A HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)
+</TD></TR></TABLE>
+
+</BODY>
+</HTML> 
