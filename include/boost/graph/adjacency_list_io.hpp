@@ -299,12 +299,12 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         }
 };
 
-template<class G, class E>
-struct GraphPrinter<G,no_property,E> 
-  : public EdgePrinter<G,E>
+template<class Graph, class E>
+struct GraphPrinter<Graph,no_property,E> 
+  : public EdgePrinter<Graph,E>
 {
-        GraphPrinter( G& g )
-          : EdgePrinter<G,E>(g)
+        GraphPrinter( Graph& g )
+          : EdgePrinter<Graph,E>(g)
         {}
         
         const GraphPrinter& operator () ( std::ostream& out ) const
