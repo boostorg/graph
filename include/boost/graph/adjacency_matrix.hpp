@@ -661,33 +661,33 @@ namespace boost {
   //=========================================================================
   // Vertex Property Map
   
-  template <typename Graph, typename Property, typename Tag> 
+  template <typename GraphRef, typename Vertex, typename T, typename R, 
+    typename Tag> 
   class adj_matrix_vertex_property_map 
-    : public put_get_at_helper<typename property_value<Property,Tag>::type,
-         adj_matrix_vertex_property_map<Graph, Property, Tag> >
+    : public put_get_helper<R,
+         adj_matrix_vertex_property_map<GraphRef, Vertex, T, R, Tag> >
   {
   public:
-    typedef typename property_value<Property,Tag>::type value_type;
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
-    typedef boost::lvalue_property_map_tag category;
-    adj_matrix_vertex_property_map(Graph& g) : m_g(g) { }
-    inline value_type& operator[](key_type v) {
-      return get_property_value(m_g.m_vertex_properties[v], Tag());
-    }
-    inline const value_type& operator[](key_type v) const {
-      return get_property_value(m_g.m_vertex_properties[v], Tag());
-    }
-    Graph& m_g;
-  };
-  template <class Property, class Vertex>
-  struct adj_matrix_vertex_id_map
-    : public boost::put_get_at_helper<
-        Vertex, adj_matrix_vertex_id_map<Property, Vertex>
-      >
-  {
-    typedef Vertex value_type;
+    typedef T value_type;
+    typedef R reference;
     typedef Vertex key_type;
     typedef boost::lvalue_property_map_tag category;
+    adj_matrix_vertex_property_map(GraphRef g) : m_g(g) { }
+    inline reference operator[](key_type v) const {
+      return get_property_value(m_g.m_vertex_properties[v], Tag());
+    }
+    GraphRef m_g;
+  };
+
+  template <class Property, class Vertex>
+  struct adj_matrix_vertex_id_map
+    : public boost::put_get_helper<Vertex,
+        adj_matrix_vertex_id_map<Property, Vertex> >
+  {
+    typedef Vertex value_type;
+    typedef Vertex reference;
+    typedef Vertex key_type;
+    typedef boost::readable_property_map_tag category;
     template <class Graph>
     inline adj_matrix_vertex_id_map(const Graph&) { }
     inline value_type operator[](key_type v) const { return v; }
@@ -698,9 +698,13 @@ namespace boost {
     struct adj_matrix_any_vertex_pa {
       template <class Tag, class Graph, class Property>
       struct bind {
-        typedef adj_matrix_vertex_property_map<Graph, Property, Tag> type;
-        typedef adj_matrix_vertex_property_map<Graph, Property, Tag> 
-          const_type;
+	typedef typename property_value<Property,Tag>::type Value;
+	typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+	
+        typedef adj_matrix_vertex_property_map<Graph&, Vertex, Value, Value&,
+	  Tag> type;
+        typedef adj_matrix_vertex_property_map<const Graph&, Vertex, Value, 
+	  const Value&, Tag> const_type;
       };
     };
     struct adj_matrix_id_vertex_pa {
@@ -748,32 +752,32 @@ namespace boost {
   //=========================================================================
   // Edge Property Map
 
-  template <typename Directed, typename Property, 
-            typename Vertex, typename Tag> 
+
+  template <typename Directed, typename Property, typename Vertex, 
+    typename T, typename R, typename Tag> 
   class adj_matrix_edge_property_map 
-    : public put_get_at_helper<typename property_value<Property,Tag>::type,
-         adj_matrix_edge_property_map<Directed, Property, Vertex, Tag> >
+    : public put_get_helper<R,
+         adj_matrix_edge_property_map<Directed, Property, Vertex, T, R, Tag> >
   {
   public:
-    typedef typename property_value<Property,Tag>::type value_type;
+    typedef T value_type;
+    typedef R reference;
     typedef detail::matrix_edge_desc_impl<Directed, Vertex> key_type;
     typedef boost::lvalue_property_map_tag category;
-
-    inline value_type& operator[](key_type e) {
+    inline reference operator[](key_type e) const {
       Property& p = *(Property*)e.get_property();
-      return get_property_value(p, Tag());
-    }
-    inline const value_type& operator[](key_type e) const {
-      const Property& p = *(const Property*)e.get_property();
       return get_property_value(p, Tag());
     }
   };
   struct adj_matrix_edge_property_selector {
     template <class Graph, class Property, class Tag>
     struct bind {
+      typedef typename property_value<Property,Tag>::type T;
+      typedef typename Graph::vertex_descriptor Vertex;
       typedef adj_matrix_edge_property_map<typename Graph::directed_category,
-       Property, typename Graph::vertex_descriptor, Tag> type;
-      typedef type const_type;
+        Property, Vertex, T, T&, Tag> type;
+      typedef adj_matrix_edge_property_map<typename Graph::directed_category,
+        Property, Vertex, T, const T&, Tag> const_type;
     };
   };
   template <>
@@ -870,7 +874,7 @@ namespace boost {
   template <typename Property, typename D, typename VP, typename EP, 
             typename GP, typename A, typename Key, typename Value>
   inline void
-  put(Property p, const adjacency_matrix<D,VP,EP,GP,A>& g,
+  put(Property p, adjacency_matrix<D,VP,EP,GP,A>& g,
       const Key& key, const Value& value)
   {
     typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
