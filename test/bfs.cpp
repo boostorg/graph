@@ -131,13 +131,15 @@ struct bfs_test
     Traits::edges_size_type j;
     Traits::vertex_iterator ui, ui_end;
 
+    boost::mt19937 gen;
+
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
         Graph g;
-        generate_random_graph(g, i, j);
+        generate_random_graph(g, i, j, gen);
 
         // declare the "start" variable
-        vertex_descriptor start = boost::random_vertex(g);
+        vertex_descriptor start = boost::random_vertex(g, gen);
 
         // vertex properties
         std::vector<int> distance(i, std::numeric_limits<int>::max());
