@@ -64,6 +64,7 @@ namespace boost {
           } else
             if (edge(f[*i], j, g2).second)
               return false;
+      return true;
     }
 
 
