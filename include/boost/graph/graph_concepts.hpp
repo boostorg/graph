@@ -153,7 +153,7 @@ namespace boost {
     G g;
   };
 
-// dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+// dwa 2003/7/11 -- This clearly shouldn't be necessary, but if
 // you want to use vector_as_graph, it is!  I'm sure the graph
 // library leaves these out all over the place.  Probably a
 // redesign involving specializing a template with a static
@@ -186,7 +186,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
         vertex_list_graph_tag> >();
 
 #ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
-      // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+      // dwa 2003/7/11 -- This clearly shouldn't be necessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
       // redesign involving specializing a template with a static
@@ -199,7 +199,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     }
     void const_constraints(const G& cg) {
 #ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
-      // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
+      // dwa 2003/7/11 -- This clearly shouldn't be necessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
       // redesign involving specializing a template with a static
