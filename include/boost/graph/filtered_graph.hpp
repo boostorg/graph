@@ -26,8 +26,8 @@
 #ifndef BOOST_FILTERED_GRAPH_HPP
 #define BOOST_FILTERED_GRAPH_HPP
 
-#include <boost/pending/iterator_adaptors.hpp>
-#include <boost/graph/detail/adjacency_iterator.hpp>
+#include <boost/iterator_adaptors.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 
 namespace boost {
 
@@ -134,43 +134,45 @@ namespace boost {
     typedef typename Traits::edge_parallel_category     edge_parallel_category;
 
     // IncidenceGraph requirements
-    typedef typename filter_iterator<OutEdgePred,
+    typedef filter_iterator_generator<OutEdgePred,
       typename Traits::out_edge_iterator,
-      boost::iterator<multi_pass_input_iterator_tag, 
-        edge_descriptor, std::ptrdiff_t, 
-        edge_descriptor*, edge_descriptor> >::type     out_edge_iterator;
+      edge_descriptor, edge_descriptor, edge_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t
+    > OutEdgeIterGen;
+    typedef typename OutEdgeIterGen::type              out_edge_iterator;
     typedef typename Traits::degree_size_type          degree_size_type;
 
     // AdjacencyGraph requirements
-    typedef typename detail::adjacency_iterator<
-       self, vertex_descriptor, out_edge_iterator, 
-       out_edge_iterator>::type                        adjacency_iterator;
+    typedef typename adjacency_iterator_generator<self,
+      vertex_descriptor, out_edge_iterator>::type      adjacency_iterator;
 
     // BidirectionalGraph requirements
-    typedef typename filter_iterator<InEdgePred,
+    typedef filter_iterator_generator<InEdgePred,
       typename Traits::in_edge_iterator,
-      boost::iterator<multi_pass_input_iterator_tag, 
-        edge_descriptor, std::ptrdiff_t, 
-        edge_descriptor*, edge_descriptor> >::type     in_edge_iterator;
+       edge_descriptor, edge_descriptor, edge_descriptor*,
+       multi_pass_input_iterator_tag, std::ptrdiff_t
+    > InEdgeIterGen;
+    typedef typename InEdgeIterGen::type               in_edge_iterator;
 
     // VertexListGraph requirements
-    typedef typename filter_iterator<VertexPredicate,
+    typedef filter_iterator_generator<VertexPredicate,
       typename Traits::vertex_iterator,
-      boost::iterator<multi_pass_input_iterator_tag,
-      vertex_descriptor, std::ptrdiff_t,
-      vertex_descriptor*, vertex_descriptor> >::type   vertex_iterator;
+      vertex_descriptor, vertex_descriptor, vertex_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t> VertexIterGen;
+    typedef typename VertexIterGen::type               vertex_iterator;
     typedef typename Traits::vertices_size_type        vertices_size_type;
 
     // EdgeListGraph requirements
-    typedef typename filter_iterator<EdgePred,
+    typedef filter_iterator_generator<EdgePred,
       typename Traits::edge_iterator,
-      boost::iterator<multi_pass_input_iterator_tag, 
-        edge_descriptor, std::ptrdiff_t,
-        edge_descriptor*, edge_descriptor> >::type     edge_iterator;
-    typedef typename Traits::edges_size_type edges_size_type;
+        edge_descriptor, edge_descriptor, edge_descriptor*,
+        multi_pass_input_iterator_tag, std::ptrdiff_t
+    > EdgeIterGen;
+    typedef typename EdgeIterGen::type                 edge_iterator;
+    typedef typename Traits::edges_size_type           edges_size_type;
 
-    typedef typename Graph::edge_property_type edge_property_type;
-    typedef typename Graph::vertex_property_type vertex_property_type;
+    typedef typename Graph::edge_property_type         edge_property_type;
+    typedef typename Graph::vertex_property_type       vertex_property_type;
     typedef typename Graph::graph_tag graph_tag;
 
     //private:
@@ -178,12 +180,9 @@ namespace boost {
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
 
-    typedef filter_iterator_policies<OutEdgePred,
-      typename Traits::out_edge_iterator> out_edge_iter_policy;
-    typedef filter_iterator_policies<InEdgePred,
-      typename Traits::in_edge_iterator> in_edge_iter_policy;
-    typedef filter_iterator_policies<EdgePred,
-      typename Traits::edge_iterator> edge_iter_policy;
+    typedef typename OutEdgeIterGen::policies_type out_edge_iter_policy;
+    typedef typename InEdgeIterGen::policies_type in_edge_iter_policy;
+    typedef typename EdgeIterGen::policies_type edge_iter_policy;
   };
 
   //===========================================================================
