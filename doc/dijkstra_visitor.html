@@ -34,19 +34,17 @@ href="./DijkstraVisitor.html">DijkstraVisitor</a>.
 <h3>Example</h3>
 
 This is an excerpt from <a
-href="../example/dijkstra.cpp"><tt>examples/dijkstra.cpp</tt></a>
-where the <tt>predecessor_recorder</tt> single-event visitor
-is used to record the shortest-paths search-tree calculated
+href="../example/dave.cpp"><tt>examples/dave.cpp</tt></a>
+where the <tt>copy_graph</tt> single-event visitor
+is used to create a copy the shortest-paths search-tree calculated
 by Dijkstra's algorithm.
 
 <pre>
-  std::vector&lt;Vertex&gt; p(num_vertices(G));
-  std::vector&lt;int&gt; d(num_vertices(G));
-
-  Vertex s = *(vertices(G).first);
-  
-  dijkstra_shortest_paths(G, s, distance_map(&amp;d[0]). 
-    visitor(make_dijkstra_visitor(record_predecessors(&amp;p[0], on_edge_relaxed()))));
+boost::dijkstra_shortest_paths
+  (G, vertex(a, G), 
+   distance_map(make_iterator_property_map(distance.begin(), vertex_id, distance[0])).
+   predecessor_map(make_iterator_property_map(parent.begin(), vertex_id, parent[0])).
+   visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
 </pre>
 
 
