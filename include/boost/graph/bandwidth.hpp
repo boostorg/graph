@@ -1,3 +1,13 @@
+// Copyright (c) Jeremy Siek 2001, Marc Wintermantel 2002
+//
+// Permission to use, copy, modify, distribute and sell this software
+// and its documentation for any purpose is hereby granted without fee,
+// provided that the above copyright notice appears in all copies and
+// that both that copyright notice and this permission notice appear
+// in supporting documentation.  Silicon Graphics makes no
+// representations about the suitability of this software for any
+// purpose.  It is provided "as is" without express or implied warranty.
+
 #ifndef BOOST_GRAPH_BANDWIDTH_HPP
 #define BOOST_GRAPH_BANDWIDTH_HPP
 
@@ -19,7 +29,8 @@ namespace boost {
       int f_i = get(index, i);
       int f_j = get(index, target(*e, g));
       using namespace std; // to call abs() unqualified
-      b = std::max(b, size_type(abs(f_i - f_j)));
+      if(f_i > f_j)
+      b = std::max(b, size_type(f_i - f_j));
     }
     return b;
   }
@@ -39,7 +50,7 @@ namespace boost {
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      b = std::max(b, ith_bandwidth(*i, g, index));
+	b = std::max(b, ith_bandwidth(*i, g, index));
     return b;
   }
 

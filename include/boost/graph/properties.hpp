@@ -33,18 +33,22 @@
 
 namespace boost {
 
-  enum default_color_type { white_color, gray_color, black_color };
+  enum default_color_type { white_color, gray_color, green_color, red_color, black_color };
 
   template <class ColorValue>
   struct color_traits {
     static default_color_type white() { return white_color; }
     static default_color_type gray() { return gray_color; }
+    static default_color_type green() { return green_color; }
+    static default_color_type red() { return red_color; }
     static default_color_type black() { return black_color; }
   };
-
+  
   // These functions are now obsolete, replaced by color_traits.
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
+  inline default_color_type green(default_color_type) { return green_color; }
+  inline default_color_type red(default_color_type) { return red_color; } 
   inline default_color_type black(default_color_type) { return black_color; }
 
 #ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
@@ -97,6 +101,8 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, degree);
   BOOST_DEF_PROPERTY(vertex, in_degree);
   BOOST_DEF_PROPERTY(vertex, out_degree);
+  BOOST_DEF_PROPERTY(vertex, current_degree);
+  BOOST_DEF_PROPERTY(vertex, priority); 
   BOOST_DEF_PROPERTY(vertex, discover_time);
   BOOST_DEF_PROPERTY(vertex, finish_time);
   BOOST_DEF_PROPERTY(vertex, predecessor);
