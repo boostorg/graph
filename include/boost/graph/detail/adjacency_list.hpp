@@ -988,22 +988,33 @@ namespace boost {
       typedef typename Config::OutEdgeList::value_type::property_type PropT;
       graph_type& g = static_cast<graph_type&>(g_);
 
+      typedef std::vector<typename Config::EdgeIter> Garbage;
+      Garbage garbage;
+
       // First remove the edges from the targets' in-edge lists and
       // from the graph's edge set list.
       typename Config::out_edge_iterator out_i, out_end;
       for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
         if (pred(*out_i)) {
-          typename Config::vertex_descriptor v = target(*out_i, g);
           detail::remove_directed_edge_dispatch
-            (*out_i, g.in_edge_list(v), *(PropT*)(*out_i).get_property());
-          g.m_edges.erase( (*out_i.iter()).get_iter() );
+            (*out_i, g.in_edge_list(target(*out_i, g)),
+	     *(PropT*)(*out_i).get_property());
+	  // Put in garbage to delete later. Will need the properties
+	  // for the remove_if of the out-edges.
+	  garbage.push_back((*out_i.iter()).get_iter());
         }
+
       // Now remove the edges from this out-edge list.
       typename Config::out_edge_iterator first, last;
       tie(first, last) = out_edges(u, g);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_directed_edge_if_dispatch
         (first, last, g.out_edge_list(u), pred, Cat());
+
+      // Now delete the edge properties from the g.m_edges list
+      for (typename Garbage::iterator i = garbage.begin();
+	   i != garbage.end(); ++i)
+	g.m_edges.erase(*i);
     }
     template <class Config, class Predicate>
     inline void
@@ -1014,6 +1025,9 @@ namespace boost {
       typedef typename Config::OutEdgeList::value_type::property_type PropT;
       graph_type& g = static_cast<graph_type&>(g_);
 
+      typedef std::vector<typename Config::EdgeIter> Garbage;
+      Garbage garbage;
+
       // First remove the edges from the sources' out-edge lists and
       // from the graph's edge set list.
       typename Config::in_edge_iterator in_i, in_end;
@@ -1022,7 +1036,9 @@ namespace boost {
           typename Config::vertex_descriptor u = source(*in_i, g);
           detail::remove_directed_edge_dispatch
             (*in_i, g.out_edge_list(u), *(PropT*)(*in_i).get_property());
-          g.m_edges.erase( (*in_i.iter()).get_iter() );
+	  // Put in garbage to delete later. Will need the properties
+	  // for the remove_if of the out-edges.
+	  garbage.push_back((*in_i.iter()).get_iter());
         }
       // Now remove the edges from this in-edge list.
       typename Config::in_edge_iterator first, last;
@@ -1030,6 +1046,11 @@ namespace boost {
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_directed_edge_if_dispatch
         (first, last, g.in_edge_list(v), pred, Cat());
+
+      // Now delete the edge properties from the g.m_edges list
+      for (typename Garbage::iterator i = garbage.begin();
+	   i != garbage.end(); ++i)
+	g.m_edges.erase(*i);
     }
 
     template <class Config>
