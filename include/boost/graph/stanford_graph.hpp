@@ -412,20 +412,21 @@ namespace boost {
 
   namespace detail {
     template <class Kind, class PropertyTag>
-    struct choose_property_map { };
+    struct sgb_choose_property_map { };
     template <class PropertyTag>
-    struct choose_property_map<vertex_property_tag, PropertyTag> {
+    struct sgb_choose_property_map<vertex_property_tag, PropertyTag> {
       typedef sgb_vertex_util_map<PropertyTag> type;
     };
     template <class PropertyTag>
-    struct choose_property_map<edge_property_tag, PropertyTag> {
+    struct sgb_choose_property_map<edge_property_tag, PropertyTag> {
       typedef sgb_edge_util_map<PropertyTag> type;
     };
   } // namespace detail
   template <class PropertyTag>
   struct property_map<Graph*, PropertyTag> {
     typedef typename property_kind<PropertyTag>::type Kind;
-    typedef typename detail::choose_property_map<Kind, PropertyTag>::type type;
+    typedef typename detail::sgb_choose_property_map<Kind, 
+      PropertyTag>::type type;
     typedef type const_type;
   };
 
