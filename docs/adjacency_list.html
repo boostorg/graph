@@ -891,10 +891,29 @@ This sets the property value for <tt>x</tt> to
 <tt>typename property_traits&lt;property_map&lt;adjacency_list, Property&gt;::type&gt::value_type</tt>
 <hr>
 
+<hr>
+
+<pre>
+  template &lt;class GraphProperties, class GraphProperty&gt;
+  typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
+  get_property(adjacency_list&amp; g, GraphProperty);
+</pre>
+Return the property specified by <tt>GraphProperty</tt> that is
+attached to the graph object <tt>g</tt>.
+
+<hr>
+
+<pre>
+  template &lt;class GraphProperties, class GraphProperty&gt;
+  const typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
+  get_property(const adjacency_list&amp; g, GraphProperty);
+</pre>
+Return the property specified by <tt>GraphProperty</tt> that is
+attached to the graph object <tt>g</tt>.
+
+<hr>
 
 <!-- add the shortcut property functions -->
-
-
 
 
 <h3>See Also</h3>

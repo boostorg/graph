@@ -1417,7 +1417,6 @@ namespace boost {
     inline
     typename boost::property_map<typename Config::graph_type, Property>::type
     get(Property p, adj_list_helper<Config, Base>& g) {
-      //      typedef typename Property::kind Kind;
       typedef typename property_kind<Property>::type Kind;
       return detail::get_dispatch(g, p, Kind());
     }
@@ -1426,7 +1425,6 @@ namespace boost {
     typename boost::property_map<typename Config::graph_type, 
       Property>::const_type
     get(Property p, const adj_list_helper<Config, Base>& g) {
-      //      typedef typename Property::kind Kind;
       typedef typename property_kind<Property>::type Kind;
       return detail::get_dispatch(g, p, Kind());
     }
