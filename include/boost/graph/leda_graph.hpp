@@ -497,6 +497,10 @@ namespace boost {
     : public put_get_helper<ERef, leda_node_property_map<E, ERef, NodeMapPtr> >
   {
   public:
+    typedef E value_type;
+    typedef ERef reference;
+    typedef node key_type;
+    typedef lvalue_property_map_tag category;
     leda_node_property_map(NodeMapPtr a) : m_array(a) { }
     ERef operator[](node n) const { return (*m_array)[n]; }
   protected:
