@@ -26,17 +26,17 @@
 <P>
 <PRE>
 <i>// named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class class P, class T, class R&gt;
-void depth_first_search(VertexListGraph&amp; G,
+template &lt;class Graph, class class P, class T, class R&gt;
+void depth_first_search(Graph&amp; G,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
 <i>// non-named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap color)
+template &lt;class Graph, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
+void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color)
 
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
-void depth_first_search(const VertexListGraph&amp; g, DFSVisitor vis, ColorMap color, 
-                        typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)
+template &lt;class Graph, class <a href="DFSVisitor.html">DFSVisitor</a>, class ColorMap&gt;
+void depth_first_search(const Graph&amp; g, DFSVisitor vis, ColorMap color, 
+                        typename graph_traits&lt;Graph&gt;::vertex_descriptor start)
 
 </PRE>
 
@@ -160,10 +160,11 @@ finish vertex <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>VertexListGraph&amp; g</tt>
+IN: <tt>Graph&amp; g</tt>
 <blockquote>
   A directed graph. The graph type must
-  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>
+  and <a href="./VertexListGraph.html">Vertex List Graph</a>.
 </blockquote>
 
 
