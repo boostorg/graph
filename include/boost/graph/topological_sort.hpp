@@ -45,11 +45,11 @@ namespace boost {
   // front_insert_iterator, the recorded order is the topological
   // order.
   //
-  template <class OutputIterator, class DFSVisitor>
-  struct topo_sort_visitor : public DFSVisitor
+  template <class OutputIterator>
+  struct topo_sort_visitor : public dfs_visitor<>
   {
-    topo_sort_visitor(OutputIterator _iter, DFSVisitor v)
-      : DFSVisitor(v), m_iter(_iter) { }
+    topo_sort_visitor(OutputIterator _iter)
+      : m_iter(_iter) { }
 
     template <class Vertex, class Graph> 
     void finish_vertex(Vertex& u, Graph&) { *m_iter++ = u; }
@@ -66,44 +66,19 @@ namespace boost {
   // consists mainly of a call to depth-first search.
   //
 
-  namespace detail {
-    template <class Graph, class OutputIterator, class Color, class DFSVisitor>
-    inline void 
-    topo_sort_helper(Graph& G, OutputIterator result, Color color, 
-		     DFSVisitor visit)
-    {
-      typedef topo_sort_visitor<OutputIterator, DFSVisitor> TopoVisitor;
-      depth_first_search
-	(G, visitor(TopoVisitor(result, visit)). color_map(color));
-    }
-  } // namespace detail
-
   template <class VertexListGraph, class OutputIterator,
     class P, class T, class R>
   void topological_sort(VertexListGraph& g, OutputIterator result,
 			const bgl_named_params<P, T, R>& params)
   {
-    // ColorMap default
-    typename graph_traits<VertexListGraph>::vertices_size_type
-      n = is_default_param(get_param(params, vertex_color)) ? 
-      num_vertices(g) : 0;
-    std::vector<default_color_type> color_map(n);
-    detail::topo_sort_helper
-      (g, result,
-       choose_param(get_param(params, vertex_color),
-		    make_iterator_property_map
-		    (color_map.begin(), 
-		     choose_pmap(get_param(params, vertex_index),
-				 g, vertex_index))),
-       choose_param(get_param(params, graph_visitor),
-                    make_dfs_visitor(null_visitor()))
-       );
+    typedef topo_sort_visitor<OutputIterator> TopoVisitor;
+    depth_first_search(g, params.visitor(TopoVisitor(result)));
   }
 
   template <class VertexListGraph, class OutputIterator>
-  void topological_sort(VertexListGraph& G, OutputIterator result)
+  void topological_sort(VertexListGraph& g, OutputIterator result)
   {
-    return topological_sort(G, result, bgl_named_params<char, char>('x'));
+    return topological_sort(g, result, bgl_named_params<int, int>(0));
   }
 
 } // namespace boost
