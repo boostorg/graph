@@ -9,7 +9,7 @@
 #ifndef BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP
 #define BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP
 
-#include <boost/graph/brandes_betweenness_centrality.hpp>
+#include <boost/graph/betweenness_centrality.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <algorithm>
