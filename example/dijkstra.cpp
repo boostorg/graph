@@ -48,6 +48,9 @@
   4 --> 1 
 */
 
+struct bar { };
+void foo(bar) { }
+
 int 
 main(int , char* [])
 {
@@ -73,15 +76,16 @@ main(int , char* [])
   std::vector<Vertex> p(num_vertices(G));
   std::vector<int> d(num_vertices(G));
 
+  graph_traits<Graph>::vertex_iterator vi, vend;
+  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+    p[*vi] = *vi;
   Vertex s = *(vertices(G).first);
-  p[s] = s;
   dijkstra_shortest_paths
     (G, s, distance_map(&d[0]).visitor(make_ucs_visitor
 				       (record_predecessors
 					(&p[0], on_edge_relaxed()))));
 
   std::cout << "distances from start vertex:" << std::endl;
-  graph_traits<Graph>::vertex_iterator vi, vend;
   for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
     std::cout << "distance(" << *vi << ") = " << d[*vi] << std::endl;
   std::cout << std::endl;
