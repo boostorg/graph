@@ -60,17 +60,30 @@ namespace boost {
     }
   } // namespace detail
 
-  template <class VertexListGraph, class P, class T, class R>
+  template <class VertexListGraph, class PredecessorMap,
+            class P, class T, class R>
   inline void prim_minimum_spanning_tree
     (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap p_map,
      const bgl_named_params<P,T,R>& params)
   {
     detail::prim_mst_impl
-      (g, s, params,
+      (g, 
+       choose_param(get_param(params, root_vertex_t()), *vertices(g).first), 
+       params.predecessor_map(p_map),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
+  }
+
+  template <class VertexListGraph, class PredecessorMap>
+  inline void prim_minimum_spanning_tree
+    (const VertexListGraph& g, PredecessorMap p_map)
+  {
+    detail::prim_mst_impl
+      (g, *vertices(g).first, predecessor_map(p_map).
+       weight_map(get(edge_weight, g)),
+       get(edge_weight, g));
   }
 
 } // namespace boost
 
-#endif /*BOOST_GRAPH_MST_PRIM_H*/
+#endif // BOOST_GRAPH_MST_PRIM_HPP
