@@ -43,7 +43,9 @@ int test_main(int argc, char* argv[])
 {
   using namespace boost;
   typedef adjacency_list<vecS, vecS, bidirectionalS,
-    no_property, property<edge_index_t, std::size_t> > graph_t;
+    property<vertex_color_t, int>, 
+    property<edge_index_t, std::size_t, property<edge_weight_t, int> > 
+  > graph_t;
   typedef subgraph<graph_t> subgraph_t;
   typedef graph_traits<subgraph_t>::vertex_descriptor vertex_t;
   typedef graph_traits<subgraph_t>::edge_descriptor edge_t;
@@ -103,6 +105,33 @@ int test_main(int argc, char* argv[])
     gt.test_vertex_list_graph(sub_vertex_set, g_s);
     gt.test_edge_list_graph(sub_vertex_set, sub_edge_set, g_s);
     gt.test_adjacency_matrix(sub_vertex_set, sub_edge_set, g_s);
+    
+    if (num_vertices(g_s) == 0)
+	return 0;
+    std::vector<int> weights;
+    for (unsigned i = 0; i < num_vertices(g_s); ++i)
+    weights.push_back(i*2);
+    gt.test_vertex_property_graph(weights, vertex_color_t(), g_s);
+
+    // A regression test: the copy constructor of subgraph did not
+    // copy one of the members, so local_edge->global_edge mapping
+    // was broken.
+    {
+        subgraph_t g;
+        graph_t::vertex_descriptor v1, v2;
+        v1 = add_vertex(g);
+        v2 = add_vertex(g);
+        add_edge(v1, v2, g);
+
+        subgraph_t sub = g.create_subgraph(vertices(g).first, vertices(g).second);
+        
+        graph_t::edge_iterator ei, ee;
+        for (tie(ei, ee) = edges(sub); ei != ee; ++ei) {
+            // This used to segfault.
+            get(edge_weight, sub, *ei);
+        }
+    }
+		    
   }  
   return 0;
 }

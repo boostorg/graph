@@ -37,6 +37,9 @@
 #include <boost/graph/properties.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
+
 namespace boost {
 
   struct subgraph_tag { };
@@ -118,7 +121,8 @@ namespace boost {
     subgraph(const subgraph& x)
       : m_graph(x.m_graph), m_parent(x.m_parent),
       m_edge_counter(x.m_edge_counter),
-      m_global_vertex(x.m_global_vertex)
+      m_global_vertex(x.m_global_vertex),
+      m_global_edge(x.m_global_edge)
     {
       // Do a deep copy
       for (typename ChildrenList::const_iterator i = x.m_children.begin();
@@ -241,6 +245,8 @@ namespace boost {
     //  private:
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
+    BOOST_STATIC_ASSERT((!is_same<edge_index_type, 
+                        boost::detail::error_property_not_found>::value));
 
     Graph m_graph;
     subgraph<Graph>* m_parent;
