@@ -1053,6 +1053,35 @@ namespace boost {
     struct bidirectional_graph_helper_with_property
       : public bidirectional_graph_helper<Config>
     {
+      typedef typename Config::graph_type graph_type;
+      typedef typename Config::out_edge_iterator out_edge_iterator;
+      
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+				const graph_type& g,
+				void*)
+      { return out_edges(source(e, g), g); }
+
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+				const graph_type& g,
+				setS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+				const graph_type& g,
+				multisetS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+
+#if !defined BOOST_NO_HASH
+      std::pair<out_edge_iterator, out_edge_iterator>
+      get_parallel_edge_sublist(typename Config::edge_descriptor e,
+				const graph_type& g,
+				hash_setS*)
+      { return edge_range(source(e, g), target(e, g), g); }
+#endif
+
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
 
@@ -1060,14 +1089,15 @@ namespace boost {
       void
       remove_edge(typename Config::edge_descriptor e)
       {
-	typedef typename Config::graph_type graph_type;
-	typedef typename Config::out_edge_iterator out_edge_iterator;
         graph_type& g = static_cast<graph_type&>(*this);
+
+	typedef typename Config::edgelist_selector OutEdgeListS;
+
 	std::pair<out_edge_iterator, out_edge_iterator> rng = 
-	  edge_range(source(e, g), target(e, g), g);
+	  get_parallel_edge_sublist(e, g, (OutEdgeListS*)(0));
 	rng.first = std::find(rng.first, rng.second, e);
-	if (rng.first != rng.second)
-	  remove_edge(rng.first);
+	assert(rng.first != rng.second);
+	remove_edge(rng.first);
       }
 
       inline void
