@@ -48,7 +48,7 @@ namespace boost {
     enum event_visitor_enum
     { on_no_event_num, 
       on_initialize_vertex_num, on_start_vertex_num, 
-      on_discover_vertex_num, on_finish_vertex_num,
+      on_discover_vertex_num, on_finish_vertex_num, on_examine_vertex_num,
       on_examine_edge_num, on_tree_edge_num, on_cycle_edge_num, 
       on_gray_target_num, on_black_target_num, 
       on_forward_or_cross_edge_num, on_back_edge_num,
@@ -63,6 +63,7 @@ namespace boost {
     enum { num = detail::on_initialize_vertex_num }; };
   struct on_start_vertex { enum { num = detail::on_start_vertex_num }; };
   struct on_discover_vertex { enum { num = detail::on_discover_vertex_num }; };
+  struct on_examine_vertex { enum { num = detail::on_examine_vertex_num }; };
   struct on_finish_vertex { enum { num = detail::on_finish_vertex_num }; };
   
   struct on_examine_edge { enum { num = detail::on_examine_edge_num }; };
