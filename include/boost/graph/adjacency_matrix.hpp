@@ -564,7 +564,7 @@ namespace boost {
     Graph& g = const_cast<Graph&>(g_);
     typename Graph::vertices_size_type offset = u * (u + 1) / 2;
     typename Graph::MatrixIter f = g.m_matrix.begin() + offset;
-    typename Graph::MatrixIter l = g.m_matrix.end() + u;
+    typename Graph::MatrixIter l = f + u;
 
     typename Graph::unfiltered_out_edge_iter
         first(f, u, g.m_vertex_set.size())
