@@ -1927,6 +1927,16 @@ namespace boost {
       return g.m_vertices.size() - 1;
     }
 
+    template <class Graph, class Config, class Base>
+    inline typename Config::vertex_descriptor
+    add_vertex(const typename Config::vertex_property_type& p,
+               vec_adj_list_impl<Graph, Config, Base>& g_) {
+      Graph& g = static_cast<Graph&>(g_);
+      typedef typename Config::stored_vertex stored_vertex;
+      g.m_vertices.push_back(stored_vertex(p));
+      return g.m_vertices.size() - 1;
+    }
+
     // Here we override the directed_graph_helper add_edge() function
     // so that the number of vertices is automatically changed if
     // either u or v is greater than the number of vertices.
