@@ -49,7 +49,8 @@ main(int,char*[])
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexAndEdgeListGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
+    function_requires< MutableIncidenceGraphConcept<Graph> >();
+    function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
     // the builtin id property is readable but not writable
@@ -66,7 +67,8 @@ main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexAndEdgeListGraphConcept<Graph> >();
     function_requires< BidirectionalGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
+    function_requires< MutableBidirectionalGraphConcept<Graph> >();
+    function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
     // the builtin id property is readable but not writable
@@ -81,7 +83,8 @@ main(int,char*[])
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexAndEdgeListGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
+    function_requires< MutableIncidenceGraphConcept<Graph> >();
+    function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
@@ -93,7 +96,8 @@ main(int,char*[])
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexAndEdgeListGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
+    function_requires< MutableBidirectionalGraphConcept<Graph> >();
+    function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }

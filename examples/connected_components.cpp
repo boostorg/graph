@@ -73,7 +73,7 @@ int main(int , char* [])
       property< vertex_finish_time_t, int,
         property< vertex_color_t, default_color_type > > > VertexProperty;
     typedef adjacency_list <vecS, vecS, undirectedS, VertexProperty> Graph;
-    typedef Graph::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
     Graph G;
     add_edge(0, 1, G);
@@ -111,7 +111,7 @@ int main(int , char* [])
     add_edge(3, 0, G);
     add_edge(5, 2, G);
 
-    typedef Graph::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
     
     std::vector<int> c(num_vertices(G));
     int num = connected_components(G, &c[0], get(vertex_color, G),

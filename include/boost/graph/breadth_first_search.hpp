@@ -39,7 +39,7 @@
 namespace boost {
 
   template <class Visitor, class Graph>
-  struct BFSVisitor_concept {
+  struct BFSVisitorConcept {
     void constraints() {
       vis.initialize_vertex(u, g);
       vis.start_vertex(u, g);
@@ -91,12 +91,12 @@ namespace boost {
     typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
     Buffer& Q, BFSVisitor vis, ColorMap color)
   {
-    BOOST_FUNCTION_REQUIRES(IncidenceGraph, IncidenceGraphConcept);
+    function_requires< IncidenceGraphConcept<IncidenceGraph> >();
     typedef graph_traits<IncidenceGraph> GTraits;
     typedef typename GTraits::vertex_descriptor Vertex;
     typedef typename GTraits::edge_descriptor Edge;
-    BOOST_FUNCTION_REQUIRES2(BFSVisitor, IncidenceGraph, BFSVisitorConcept);
-    BOOST_FUNCTION_REQUIRES2(ColorMap, Vertex, ReadWritePropertyMapConcept);
+    function_requires< BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
+    function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
     typename property_traits<ColorMap>::value_type c = get(color, s);
 
     put(color, s, gray(c));
@@ -106,8 +106,7 @@ namespace boost {
       Vertex u = Q.top();
       Q.pop(); // pop before push to avoid problem if Q is priority_queue.
       vis.discover_vertex(u, g);
-      typename boost::GTraits::out_edge_iterator
-        ei, ei_end;
+      typename GTraits::out_edge_iterator ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Edge e = *ei;
         vis.examine_edge(e, g);

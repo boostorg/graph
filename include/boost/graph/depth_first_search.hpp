@@ -37,7 +37,7 @@
 namespace boost {
 
   template <class Visitor, class Graph>
-  class DFSVisitor_concept {
+  class DFSVisitorConcept {
   public:
     void constraints() {
       vis.initialize_vertex(u, g);
@@ -70,7 +70,7 @@ namespace boost {
   void
   depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
-    BOOST_FUNCTION_REQUIRES2(DFSVisitor, VertexListGraph, DFSVisitorConcept);
+    function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typename property_traits<ColorMap>::value_type 
       c = get(color, *vertices(g).first); // value of c not used, just type
 
@@ -91,8 +91,8 @@ namespace boost {
             typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
             DFSVisitor& vis, ColorMap color)
   {
-    BOOST_FUNCTION_REQUIRES(IncidenceGraph, IncidenceGraphConcept);
-    BOOST_FUNCTION_REQUIRES2(DFSVisitor, IncidenceGraph, DFSVisitorConcept);
+    function_requires<IncidenceGraphConcept<IncidenceGraph> >();
+    function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
     typename property_traits<ColorMap>::value_type c = get(color, u);
 
     put(color, u, gray(c));

@@ -73,7 +73,7 @@ main()
                     6 };
   int* wp = weights;
   
-  Graph::edge_iterator e,e_end;
+  graph_traits<Graph>::edge_iterator e,e_end;
   for (boost::tie(e,e_end) = edges(g); e != e_end; ++e)
     w[*e] = *wp++;
 

@@ -38,7 +38,7 @@
 namespace boost {
 
   template <class Visitor, class Graph>
-  struct BellmanFordVisitor_concept {
+  struct BellmanFordVisitorConcept {
     void constraints() {
       vis.examine_edge(e, g);
       vis.edge_relaxed(e, g);
@@ -104,12 +104,12 @@ namespace boost {
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
       Vertex;
-    BOOST_FUNCTION_REQUIRES2(DistanceMap, Vertex, ReadWritePropertyMapConcept);
-    BOOST_FUNCTION_REQUIRES2(WeightMap, Edge, ReadablePropertyMapConcept);
+    function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
+    function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
-    BOOST_FUNCTION_REQUIRES(D_value, ComparableConcept);
-    BOOST_FUNCTION_REQUIRES3(D_value, D_value, W_value, PlusOpConcept);
+    function_requires<ComparableConcept<D_value> >();
+    function_requires<PlusOpConcept<D_value, D_value, W_value> >();
     std::plus<D_value> combine;
     std::less<D_value> compare;
     return bellman_ford_shortest_paths(g, N, weight, distance, 
@@ -126,12 +126,12 @@ namespace boost {
                                    BinaryPredicate compare,
                                    BellmanFordVisitor v)
   {
-    BOOST_FUNCTION_REQUIRES(EdgeListGraph, EdgeListGraphConcept);
+    function_requires<EdgeListGraphConcept<EdgeListGraph> >();
     typedef graph_traits<EdgeListGraph> GTraits;
     typedef typename GTraits::edge_descriptor Edge;
     typedef typename GTraits::vertex_descriptor Vertex;
-    BOOST_FUNCTION_REQUIRES2(DistanceMap, Vertex, ReadWritePropertyMapConcept);
-    BOOST_FUNCTION_REQUIRES2(WeightMap, Edge, ReadablePropertyMapConcept);
+    function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
+    function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
 

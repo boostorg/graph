@@ -110,15 +110,15 @@ main()
 {
   typedef boost::adjacency_list<> IteratorConstructibleGraph;
   typedef boost::graph_traits<IteratorConstructibleGraph> Traits;
-  Traits::vertices_size_type V;
-  Traits::edges_size_type E;
+  Traits::vertices_size_type size_V;
+  Traits::edges_size_type size_E;
 
   std::ifstream f("edge_iterator_constructor.dat");
-  f >> V >> E;
+  f >> size_V >> size_E;
 
   edge_stream_iterator edge_iter(f), end;
 
-  IteratorConstructibleGraph G(V, edge_iter, end);
+  IteratorConstructibleGraph G(size_V, edge_iter, end);
   boost::print_graph(G);
 
   return 0;

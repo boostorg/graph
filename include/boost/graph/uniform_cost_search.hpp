@@ -41,7 +41,7 @@
 namespace boost {
 
   template <class Visitor, class Graph>
-  struct UniformCostVisitor_concept {
+  struct UniformCostVisitorConcept {
     void constraints() {
       vis.start_vertex(u, g);
       vis.initialize_vertex(u, g);
@@ -125,7 +125,7 @@ namespace boost {
         m_vis.initialize_vertex(u, g);
       }
       template <class Vertex, class Graph>
-      void start_vertex(Vertex v, Graph& g) {
+      void start_vertex(Vertex u, Graph& g) {
         m_vis.start_vertex(u, g);
       }
       template <class Vertex, class Graph>
@@ -187,22 +187,25 @@ namespace boost {
               BinaryPredicate compare, BinaryFunction combine,
               UniformCostVisitor vis)
   {
-    REQUIRE(VertexListGraph, VertexListGraph);
+    function_requires<VertexListGraphConcept<VertexListGraph> >();
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     typedef typename graph_traits<VertexListGraph>::edge_descriptor Edge;
-    REQUIRE2(ColorMap, Vertex, ReadWritePropertyMap);
-    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
-    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
+    function_requires<ReadWritePropertyMapConcept<ColorMap, Vertex> >();
+    function_requires<ReadWritePropertyMapConcept<DistanceMap, Vertex> >();
+    function_requires<ReadablePropertyMapConcept<WeightMap, Edge> >();
+    function_requires<ReadablePropertyMapConcept<IndexMap, Vertex> >();
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
     typedef typename property_traits<IndexMap>::value_type ID_value;
     typedef typename property_traits<ColorMap>::value_type Color_value;
-    REQUIRE(Color_value, ColorValue);
-    REQUIRE3(BinaryPredicate, D_value, D_value, BinaryPredicate);
-    REQUIRE4(BinaryFunction, D_value, D_value, W_value, BinaryFunction);
-    REQUIRE(ID_value, Integer);
-    REQUIRE2(UniformCostVisitor, VertexListGraph, UniformCostVisitor);
+    function_requires<ColorValueConcept<Color_value> >();
+    function_requires<BinaryPredicateConcept
+      <BinaryPredicate, D_value, D_value> >();
+    function_requires<BinaryFunctionConcept
+      <BinaryFunction, D_value, D_value, W_value> >();
+    function_requires<IntegerConcept<ID_value> >();
+    function_requires<UniformCostVisitorConcept
+      <UniformCostVisitor, VertexListGraph> >();
 
     typedef indirect_cmp<DistanceMap, BinaryPredicate> IndirectCmp;
     IndirectCmp icmp(d, compare);

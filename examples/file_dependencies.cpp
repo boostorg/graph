@@ -75,21 +75,15 @@ struct print_visitor : public bfs_visitor<> {
 };
 
 
-template <class Color>
 struct cycle_detector : public dfs_visitor<>
 {
-  typedef typename boost::property_traits<Color>::value_type C;
-
-  cycle_detector(Color c, bool& has_cycle) 
-    : _has_cycle(has_cycle), color(c) { }
+  cycle_detector(bool& has_cycle) 
+    : m_has_cycle(has_cycle) { }
 
   template <class Edge, class Graph>
-  void back_edge(Edge e, Graph& g) {
-    _has_cycle = true;
-  }
+  void back_edge(Edge e, Graph& g) { m_has_cycle = true; }
 protected:
-  bool& _has_cycle;
-  Color color;
+  bool& m_has_cycle;
 };
 
 int main(int,char*[])
@@ -124,7 +118,6 @@ int main(int,char*[])
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
   typedef property_map<Graph, vertex_color_t>::type Color;
-  Color color = get(vertex_color, g);
 
   // Determine ordering for a full recompilation
   {
@@ -185,7 +178,7 @@ int main(int,char*[])
   // are there any cycles in the graph?
   {
     bool has_cycle = false;
-    cycle_detector<Color> vis(color, has_cycle);
+    cycle_detector vis(has_cycle);
     depth_first_search(g, vis);
     cout << "The graph has a cycle? " << has_cycle << endl;
   }
@@ -201,9 +194,8 @@ int main(int,char*[])
   // are there any cycles in the graph?
   {
     typedef property_map<Graph,vertex_color_t>::type Color;
-    Color color = get(vertex_color, g);
     bool has_cycle = false;
-    cycle_detector<Color> vis(color, has_cycle);
+    cycle_detector vis(has_cycle);
     depth_first_search(g, vis);
     cout << "The graph has a cycle now? " << has_cycle << endl;
   }

@@ -76,17 +76,17 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
-    REQUIRE(Graph, VertexAndEdgeListGraph);
-    REQUIRE2(OutputIterator, Edge, OutputIterator);
-    REQUIRE2(Rank, Vertex, ReadWritePropertyMap);
-    REQUIRE2(Parent, Vertex, ReadWritePropertyMap);
-    REQUIRE2(Weight, Edge, ReadablePropertyMap);
+    function_requires<VertexAndEdgeListGraphConcept<Graph> >();
+    function_requires<OutputIteratorConcept<OutputIterator, Edge> >();
+    function_requires<ReadWritePropertyMapConcept<Rank, Vertex> >();
+    function_requires<ReadWritePropertyMapConcept<Parent, Vertex> >();
+    function_requires<ReadablePropertyMapConcept<Weight, Edge> >();
     typedef typename property_traits<Weight>::value_type W_value;
     typedef typename property_traits<Rank>::value_type R_value;
     typedef typename property_traits<Parent>::value_type P_value;
-    REQUIRE(W_value, LessThanComparable);
-    REQUIRE2(P_value, Vertex, Convertible);
-    REQUIRE(R_value, Integer);
+    function_requires<LessThanComparableConcept<W_value> >();
+    function_requires<ConvertibleConcept<P_value, Vertex> >();
+    function_requires<IntegerConcept<R_value> >();
 
     disjoint_sets<Rank, Parent>  dset(rank, parent);
     

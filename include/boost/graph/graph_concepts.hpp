@@ -210,15 +210,61 @@ namespace boost {
       clear_vertex(v, g);
       remove_vertex(v, g);
       p = add_edge(u, v, g);
-      remove_edge(u, v, g);
+      remove_edge(u, v, g); // Hmm, maybe this shouldn't be here...
       remove_edge(e, g);
-      remove_edge(iter, g);
     }
     G g;
     edge_descriptor e;
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
     typename graph_traits<G>::out_edge_iterator iter;
+  };
+
+  template <class edge_descriptor>
+  struct dummy_edge_predicate {
+    bool operator()(const edge_descriptor& e) const {
+      return false;
+    }
+  };
+
+  template <class G>
+  struct MutableIncidenceGraphConcept
+  {
+    void constraints() {
+      function_requires< MutableGraphConcept<G> >();
+      remove_edge(iter, g);
+      remove_out_edge_if(u, p, g);
+    }
+    G g;
+    typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
+    typename boost::graph_traits<G>::vertex_descriptor u;
+    typename boost::graph_traits<G>::out_edge_iterator iter;
+  };
+
+  template <class G>
+  struct MutableBidirectionalGraphConcept
+  {
+    void constraints() {
+      function_requires< MutableIncidenceGraphConcept<G> >();
+      remove_in_edge_if(u, p, g);
+    }
+    G g;
+    typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
+    typename boost::graph_traits<G>::vertex_descriptor u;
+  };
+
+  template <class G>
+  struct MutableEdgeListGraphConcept
+  {
+    void constraints() {
+      function_requires< MutableGraphConcept<G> >();
+      remove_edge_if(p, g);
+    }
+    G g;
+    typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
+    dummy_edge_predicate<edge_descriptor> p;
   };
 
   template <class G>
