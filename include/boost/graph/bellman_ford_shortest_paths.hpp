@@ -101,13 +101,14 @@ namespace boost {
 
     template <class EdgeListGraph, class Size, class WeightMap,
 	      class PredecessorMap, class DistanceMap,
-	      class BinaryFunction, class BinaryPredicate,
-	      class BellmanFordVisitor>
+	      class BinaryFunctionExt, class BinaryFunctionSum,
+              class BinaryPredicate, class BellmanFordVisitor>
     bool bellman_ford_impl(EdgeListGraph& g, Size N, 
 			   WeightMap weight, 
 			   PredecessorMap pred,
 			   DistanceMap distance, 
-			   BinaryFunction combine, 
+			   BinaryFunctionExt extend, 
+			   BinaryFunctionSum summarize, 
 			   BinaryPredicate compare,
 			   BellmanFordVisitor v)
     {
@@ -125,15 +126,15 @@ namespace boost {
       for (Size k = 0; k < N; ++k)
 	for (tie(i, end) = edges(g); i != end; ++i) {
 	  v.examine_edge(*i, g);
-	  if (relax(*i, g, weight, pred, distance, combine, compare))
+	  if (relax(*i, g, weight, pred, distance, extend, summarize))
 	    v.edge_relaxed(*i, g);
 	  else
 	    v.edge_not_relaxed(*i, g);
 	}
 
       for (tie(i, end) = edges(g); i != end; ++i)
-	if (compare(combine(get(distance, source(*i, g)), 
-			    get(weight, *i)),
+	if (compare(extend(get(distance, source(*i, g)), 
+			   get(weight, *i)),
 		    get(distance, target(*i,g))))
 	{
 	  v.edge_not_minimized(*i, g);
@@ -157,8 +158,12 @@ namespace boost {
 	(g, N, weight, 
 	 choose_param(get_param(params, vertex_predecessor), dummy_pred),
 	 distance,
-	 choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
-	 choose_param(get_param(params, distance_compare_t()), std::less<D>()),
+	 choose_param(get_param(params, distance_extend_t()), 
+		      detail::closed_plus()),
+	 choose_param(get_param(params, distance_summarize_t()), 
+		      detail::min_operation()),
+	 choose_param(get_param(params, distance_compare_t()), 
+		      std::less<D>()),
 	 choose_param(get_param(params, graph_visitor), null_vis)
 	 );
     }

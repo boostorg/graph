@@ -41,19 +41,13 @@ namespace std { using ::abs; }
 
 namespace boost {
 
-    // warning: when weight of e is size_t and weight of e is
-    // close to max of size_t, du + wuv will overflow. To avoid
-    // this, be careful about the value of weight. If it is larger
-    // than the half of current max of the type, change the type of
-    // weight to have more bytes.
-    
     template <class Graph, class WeightMap, 
             class PredecessorMap, class DistanceMap, 
-            class BinaryFunction, class BinaryPredicate>
+            class BinaryFunctionExt, class BinaryFunctionSum>
     bool relax(typename graph_traits<Graph>::edge_descriptor e, 
                const Graph& g, WeightMap w, 
 	       PredecessorMap p, DistanceMap d, 
-               BinaryFunction combine, BinaryPredicate compare)
+               BinaryFunctionExt extend, BinaryFunctionSum summarize)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex u = source(e, g), v = target(e, g);
@@ -62,27 +56,49 @@ namespace boost {
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
 
-      // workaround overflow problem, don't relax if d_u is close to inf
-      if (w_e > 0 && std::abs(std::numeric_limits<D>::max() - d_u) < w_e)
+      D d_e = extend(d_u, w_e);
+      if (summarize(d_e, d_v) == d_v)
 	return false;
-      
-      if ( compare(combine(d_u, w_e), d_v) ) {
-        put(d, v, combine(d_u, w_e));
+      else if (summarize(d_e, d_v) == d_e) {
+        put(d, v, d_e);
 	put(p, v, u);
         return true;
       } else
-        return false;
+	assert(false);
     }
-    
+
+    namespace detail {
+      struct min_operation
+      {
+	template <class T>
+	T operator()(const T& a, const T& b) const {
+	  return std::min(a, b);
+	}
+      };
+      struct closed_plus {
+	template <class T>
+	T operator()(const T& a, const T& b) const
+	{
+	  // Don't want to exceed infinity and overflow
+	  // and inf should be the annihilator for +
+	  T inf = std::numeric_limits<T>::max();
+	  T dist_to_inf = std::abs(inf - a);
+	  if (b > 0 && dist_to_inf < b)
+	    return std::numeric_limits<T>::max();
+	  return a + b;
+	}
+      };
+    } // namespace detail
+
     template <class Graph, class WeightMap, 
       class PredecessorMap, class DistanceMap>
     bool relax(typename graph_traits<Graph>::edge_descriptor e,
                const Graph& g, WeightMap w, PredecessorMap p, DistanceMap d)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
-      typedef std::plus<D> Combine;
-      typedef std::less<D> Compare;
-      return relax(e, g, w, p, d, Combine(), Compare());
+      detail::closed_plus extend;
+      detail::min_operation summarize;
+      return relax(e, g, w, p, d, extend, summarize);
     }
 
 } // namespace boost

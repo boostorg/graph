@@ -53,10 +53,10 @@ namespace boost {
 		  Weight)
     {
       typedef typename property_traits<Weight>::value_type W;
-      std::less<W> compare;
-      detail::_project2nd<W,W> combine;
-      dijkstra_shortest_paths(G, s, params.distance_compare(compare).
-			      distance_combine(combine));    
+      detail::min_operation summarize;
+      detail::_project2nd<W,W> extend;
+      dijkstra_shortest_paths(G, s, params.distance_summarize(summarize).
+			      distance_extend(extend));
     }
   } // namespace detail
 

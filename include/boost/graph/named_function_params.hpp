@@ -30,8 +30,9 @@
 
 namespace boost {
 
+  struct distance_summarize_t { enum { num = detail::distance_summarize_num }; };
   struct distance_compare_t { enum { num = detail::distance_compare_num }; };
-  struct distance_combine_t { enum { num = detail::distance_combine_num};  };
+  struct distance_extend_t { enum { num = detail::distance_extend_num};  };
   struct distance_inf_t { enum { num = detail::distance_inf_num }; };
   struct distance_zero_t { enum { num = detail::distance_zero_num }; };
   struct buffer_param_t { enum { num = detail::buffer_param_num }; };
@@ -181,17 +182,24 @@ namespace boost {
       return Params(vis, *this);
     }
 
-    template <typename Compare>
-    bgl_named_params<Compare, distance_compare_t, self>
-    distance_compare(Compare cmp) const {
-      typedef bgl_named_params<Compare, distance_compare_t, self> Params;
+    template <typename Summarize>
+    bgl_named_params<Summarize, distance_summarize_t, self>
+    distance_summarize(Summarize cmp) const {
+      typedef bgl_named_params<Summarize, distance_summarize_t, self> Params;
       return Params(cmp, *this);
     }
 
-    template <typename Combine>
-    bgl_named_params<Combine, distance_combine_t, self>
-    distance_combine(Combine cmb) const {
-      typedef bgl_named_params<Combine, distance_combine_t, self> Params;
+    template <typename Extend>
+    bgl_named_params<Extend, distance_extend_t, self>
+    distance_extend(Extend cmb) const {
+      typedef bgl_named_params<Extend, distance_extend_t, self> Params;
+      return Params(cmb, *this);
+    }
+
+    template <typename Compare>
+    bgl_named_params<Compare, distance_compare_t, self>
+    distance_compare(Compare cmb) const {
+      typedef bgl_named_params<Compare, distance_compare_t, self> Params;
       return Params(cmb, *this);
     }
 
@@ -368,17 +376,24 @@ namespace boost {
     return Params(vis);
   }
 
-  template <typename Compare>
-  bgl_named_params<Compare, distance_compare_t>
-  distance_compare(Compare cmp) {
-    typedef bgl_named_params<Compare, distance_compare_t> Params;
+  template <typename Summarize>
+  bgl_named_params<Summarize, distance_summarize_t>
+  distance_summarize(Summarize cmp) {
+    typedef bgl_named_params<Summarize, distance_summarize_t> Params;
     return Params(cmp);
   }
 
-  template <typename Combine>
-  bgl_named_params<Combine, distance_combine_t>
-  distance_combine(Combine cmb) {
-    typedef bgl_named_params<Combine, distance_combine_t> Params;
+  template <typename Extend>
+  bgl_named_params<Extend, distance_extend_t>
+  distance_extend(Extend cmb) {
+    typedef bgl_named_params<Extend, distance_extend_t> Params;
+    return Params(cmb);
+  }
+
+  template <typename Compare>
+  bgl_named_params<Compare, distance_compare_t>
+  distance_compare(Compare cmb) {
+    typedef bgl_named_params<Compare, distance_compare_t> Params;
     return Params(cmb);
   }
 
