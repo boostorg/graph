@@ -270,8 +270,13 @@ namespace boost {
   public: // should be private
     typedef typename ct_if_t<typename has_property<EdgeProperty>::type,
       std::pair<bool, EdgeProperty>, bool>::type StoredEdge;
+#if defined(BOOST_MSVC)
+    typedef std::vector<StoredEdge> Matrix;
+#else
+    // This causes internal compiler error for MSVC
     typedef typename Allocator::template rebind<StoredEdge>::other Alloc;
     typedef std::vector<StoredEdge, Alloc> Matrix;
+#endif
     typedef typename Matrix::iterator MatrixIter;
     typedef typename Matrix::size_type size_type;
   public:
@@ -454,18 +459,20 @@ namespace boost {
   }
 
   // O(1)
-  template <typename D, typename VP, typename EP, typename GP, typename A>  
+  template <typename D, typename VP, typename EP, typename GP, typename A,
+    typename Dir, typename Vertex>  
   typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
-  source(typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor e,
+  source(const detail::matrix_edge_desc_impl<Dir,Vertex>& e,
          const adjacency_matrix<D,VP,EP,GP,A>& g)
   {
     return e.m_source;
   }
 
   // O(1)
-  template <typename D, typename VP, typename EP, typename GP, typename A>  
+  template <typename D, typename VP, typename EP, typename GP, typename A,
+    typename Dir, typename Vertex>  
   typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
-  target(typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor e,
+  target(const detail::matrix_edge_desc_impl<Dir,Vertex>& e,
          const adjacency_matrix<D,VP,EP,GP,A>& g)
   {
     return e.m_target;
