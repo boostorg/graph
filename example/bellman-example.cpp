@@ -74,7 +74,14 @@ main()
 
   typedef adjacency_list < vecS, vecS, directedS,
     no_property, property < edge_weight_t, int > > Graph;
-  Graph g(edge_array, edge_array + n_edges);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  Graph g(N);
+  for (std::size_t j = 0; j < n_edges; ++j)
+    add_edge(edge_array[j].first, edge_array[j].second, g);
+#else
+  Graph g(edge_array, edge_array + n_edges, N);
+#endif
   graph_traits < Graph >::edge_iterator ei, ei_end;
   property_map<Graph, edge_weight_t>::type weight_pmap = get(edge_weight, g);
   int i = 0;
@@ -87,9 +94,15 @@ main()
     parent[i] = i;
   distance[z] = 0;
 
+#ifdef BOOST_MSVC
+  bool r = detail::bellman_ford_impl
+    (g, int(N), weight_pmap, &parent[0], &distance[0], 
+     std::plus<int>(), std::less<int>(), default_bellman_visitor());
+#else
   bool r = bellman_ford_shortest_paths
     (g, int (N), weight_map(weight_pmap).distance_map(&distance[0]).
      predecessor_map(&parent[0]));
+#endif
 
   if (r)
     for (i = 0; i < N; ++i)
@@ -106,13 +119,14 @@ main()
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
   {
-    graph_traits < Graph >::edge_iterator ei, ei_end;
     for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       graph_traits < Graph >::edge_descriptor e = *ei;
       graph_traits < Graph >::vertex_descriptor
         u = source(e, g), v = target(e, g);
+      // VC++ doesn't like the 3-argument get function, so here
+      // we workaround by using 2-nested get()'s.
       dot_file << name[u] << " -> " << name[v]
-        << "[label=\"" << get(edge_weight, g, e) << "\"";
+        << "[label=\"" << get(get(edge_weight, g), e) << "\"";
       if (parent[v] == u)
         dot_file << ", color=\"black\"";
       else

@@ -17,7 +17,7 @@ namespace boost {
               class Compare, class Combine, 
               class DistInf, class DistZero>
     inline void
-    dag_sp_dispatch3
+    dag_shortest_paths_impl
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        DistanceMap distance, WeightMap weight, ColorMap color,
@@ -71,12 +71,12 @@ namespace boost {
     {
       typedef typename property_traits<DistanceMap>::value_type D;
       dummy_property_map p_map;
-      detail::dag_sp_dispatch3
+      detail::dag_shortest_paths_impl
         (g, s, distance, weight, color, 
 	 choose_param(get_param(params, vertex_predecessor), p_map),
 	 vis, 
          choose_param(get_param(params, distance_compare_t()), std::less<D>()),
-         choose_param(get_param(params, distance_combine_t()), std::plus<D>()),
+         choose_param(get_param(params, distance_combine_t()), closed_plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
                       std::numeric_limits<D>::max()),
          choose_param(get_param(params, distance_zero_t()), 

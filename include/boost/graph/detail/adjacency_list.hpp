@@ -402,6 +402,7 @@ namespace boost {
     template <class Config>
     struct directed_graph_helper
       : public directed_edges_helper<Config> { 
+      typedef typename Config::edge_descriptor edge_descriptor;
       typedef adj_list_dir_traversal_tag traversal_category;
     };
 
@@ -498,7 +499,7 @@ namespace boost {
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
     template <class Config>
-    inline std::pair<typename Config::edge_descriptor, bool>
+    inline std::pair<typename directed_graph_helper<Config>::edge_descriptor, bool>
     add_edge(typename Config::vertex_descriptor u, 
              typename Config::vertex_descriptor v,
              const typename Config::edge_property_type& p, 
