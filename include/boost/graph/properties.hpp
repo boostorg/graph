@@ -89,6 +89,7 @@ namespace boost {
   BOOST_DEF_PROPERTY(edge, name);
   BOOST_DEF_PROPERTY(edge, weight);
   BOOST_DEF_PROPERTY(edge, weight2);
+  BOOST_DEF_PROPERTY(edge, color);
   BOOST_DEF_PROPERTY(vertex, name);
   BOOST_DEF_PROPERTY(graph, name);
   BOOST_DEF_PROPERTY(vertex, distance);
