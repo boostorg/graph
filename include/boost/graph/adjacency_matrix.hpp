@@ -29,6 +29,7 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <memory>
+#include <cassert>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
@@ -592,6 +593,7 @@ namespace boost {
   inline typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
   add_vertex(adjacency_matrix<D,VP,EP,GP,A>& g) {
     // UNDER CONSTRUCTION
+    assert(false);
     return *vertices(g).first;
   }
 
@@ -599,6 +601,7 @@ namespace boost {
   inline typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
   add_vertex(const VP& vp, adjacency_matrix<D,VP,EP,GP,A>& g) {
     // UNDER CONSTRUCTION
+    assert(false);
     return *vertices(g).first;
   }
 
@@ -608,6 +611,7 @@ namespace boost {
                 adjacency_matrix<D,VP,EP,GP,A>& g)
   {
     // UNDER CONSTRUCTION
+    assert(false);
   }
 
   // O(V)
