@@ -82,4 +82,14 @@ T source(std::pair<T,T> p, const G&) { return p.first; }
 template <class T, class G>
 T target(std::pair<T,T> p, const G&) { return p.second; }
 
+#if defined(__GNUC__) && defined(__SGI_STL_PORT)
+// For some reason g++ with STLport does not see the above definition
+// of source() and target() unless we bring them into the boost
+// namespace.
+namespace boost {
+  using ::source;
+  using ::target;
+}
+#endif
+
 #endif /* BOOST_GRAPH_TRAITS_HPP*/
