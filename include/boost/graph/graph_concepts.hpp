@@ -302,23 +302,36 @@ namespace boost {
   };
 
   template <class G, class X, class Property>
-  struct PropertyGraphConcept
+  struct ReadablePropertyGraphConcept
   {
-    typedef typename property_map<G, Property>::type Map;
     typedef typename property_map<G, Property>::const_type const_Map;
     void constraints() {
       function_requires< GraphConcept<G> >();
-      function_requires< ReadWritePropertyMapConcept<Map, X> >();
       function_requires< ReadablePropertyMapConcept<const_Map, X> >();
 
-      Map pmap = get(Property(), g);
-      pval = get(Property(), g, x);
-      put(Property(), g, x, pval);
-      ignore_unused_variable_warning(pmap);
+      const_constraints(g);
     }
     void const_constraints(const G& g) {
       const_Map pmap = get(Property(), g);
       pval = get(Property(), g, x);
+      ignore_unused_variable_warning(pmap);
+    }
+    G g;
+    X x;
+    typename property_traits<const_Map>::value_type pval;
+  };
+
+  template <class G, class X, class Property>
+  struct PropertyGraphConcept
+  {
+    typedef typename property_map<G, Property>::type Map;
+    void constraints() {
+      function_requires< ReadablePropertyGraphConcept<G, X, Property> >();
+      function_requires< ReadWritePropertyMapConcept<Map, X> >();
+
+      Map pmap = get(Property(), g);
+      pval = get(Property(), g, x);
+      put(Property(), g, x, pval);
       ignore_unused_variable_warning(pmap);
     }
     G g;

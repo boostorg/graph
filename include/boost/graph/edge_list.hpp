@@ -150,10 +150,17 @@ namespace boost {
 
   template <class G, class EI, class T, class D>
   typename property_map< edge_list_impl<G,EI,T,D>, edge_index_t>::type
-  get(edge_index_t, edge_list_impl<G,EI,T,D>& g) {
+  get(edge_index_t, const edge_list_impl<G,EI,T,D>&) {
     typedef typename property_map< edge_list_impl<G,EI,T,D>, 
       edge_index_t>::type EdgeIndexMap;
     return EdgeIndexMap();
+  }
+
+  template <class G, class EI, class T, class D>
+  inline D
+  get(edge_index_t, const edge_list_impl<G,EI,T,D>&,
+      typename edge_list_impl<G,EI,T,D>::edge_descriptor e) {
+    return e._i;
   }
 
   // A specialized implementation for when the iterators are random access.
@@ -228,12 +235,21 @@ namespace boost {
     typedef edge_list_ra_edge_property_selector type;
   };
   template <class G, class EI, class T, class D>
+  inline 
   typename property_map< edge_list_impl_ra<G,EI,T,D>, edge_index_t>::type
-  get(edge_index_t, edge_list_impl_ra<G,EI,T,D>& g) {
+  get(edge_index_t, const edge_list_impl_ra<G,EI,T,D>&) {
     typedef typename property_map< edge_list_impl_ra<G,EI,T,D>, 
       edge_index_t>::type EdgeIndexMap;
     return EdgeIndexMap();
   }
+
+  template <class G, class EI, class T, class D>
+  inline D
+  get(edge_index_t, const edge_list_impl_ra<G,EI,T,D>&, 
+      typename edge_list_impl_ra<G,EI,T,D>::edge_descriptor e) {
+    return e;
+  }
+
 
   // Some helper classes for determining if the iterators are random access
   template <class Cat>
