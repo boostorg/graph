@@ -210,7 +210,7 @@ namespace boost {
     VertexPredicate m_vertex_pred;
 
     typedef typename out_edge_iterator::policies_type out_edge_iter_policy;
-    typedef typename out_edge_iterator::policies_type in_edge_iter_policy;
+    typedef typename in_edge_iterator::policies_type in_edge_iter_policy;
     typedef typename edge_iterator::policies_type edge_iter_policy;
     typedef typename vertex_iterator::policies_type vertex_iter_policy;
   };
