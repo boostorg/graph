@@ -8,40 +8,40 @@ namespace boost {
 
   namespace detail {
 
-    template <class Property1, class Property2>
+    template <class PropertyTag1, class PropertyTag2>
     struct same_property {
-      enum { value = is_same<Property1,Property2>::value };
+      enum { value = is_same<PropertyTag1,PropertyTag2>::value };
     };
 
     struct error_property_not_found { };
 
     template <int TagMatched>
     struct property_value_dispatch {
-      template <class Property, class T, class Tag>
-      inline static T& get_value(Property& p, T*, Tag) {
+      template <class PropertyTag, class T, class Tag>
+      inline static T& get_value(PropertyTag& p, T*, Tag) {
         return p.m_value; 
       }
-      template <class Property, class T, class Tag>
-      inline static const T& const_get_value(const Property& p, T*, Tag) {
+      template <class PropertyTag, class T, class Tag>
+      inline static const T& const_get_value(const PropertyTag& p, T*, Tag) {
         return p.m_value; 
       }
     };
 
-    template <class Property>
+    template <class PropertyList>
     struct property_value_end {
       template <class T> struct result { typedef T type; };
 
       template <class T, class Tag>
-      inline static T& get_value(Property& p, T* t, Tag tag) {
-        typedef typename Property::next_type Next;
+      inline static T& get_value(PropertyList& p, T* t, Tag tag) {
+        typedef typename PropertyList::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = same_property<Next_tag,Tag>::value };
         return property_value_dispatch<match>
           ::get_value(static_cast<Next&>(p), t, tag);
       }
       template <class T, class Tag>
-      inline static const T& const_get_value(const Property& p, T* t, Tag tag) {
-        typedef typename Property::next_type Next;
+      inline static const T& const_get_value(const PropertyList& p, T* t, Tag tag) {
+        typedef typename PropertyList::next_type Next;
         typedef typename Next::tag_type Next_tag;
         enum { match = same_property<Next_tag,Tag>::value };
         return property_value_dispatch<match>
@@ -71,24 +71,24 @@ namespace boost {
 
     template <>
     struct property_value_dispatch<0> {
-      template <class Property, class T, class Tag>
-      inline static typename property_value_end<Property>::template result<T>::type&
-      get_value(Property& p, T* t, Tag tag) {
-        return property_value_end<Property>::get_value(p, t, tag);
+      template <class PropertyList, class T, class Tag>
+      inline static typename property_value_end<PropertyList>::template result<T>::type&
+      get_value(PropertyList& p, T* t, Tag tag) {
+        return property_value_end<PropertyList>::get_value(p, t, tag);
       }
-      template <class Property, class T, class Tag>
-      inline static const typename property_value_end<Property>::template result<T>::type&
-      const_get_value(const Property& p, T* t, Tag tag) {
-        return property_value_end<Property>::const_get_value(p, t, tag);
+      template <class PropertyList, class T, class Tag>
+      inline static const typename property_value_end<PropertyList>::template result<T>::type&
+      const_get_value(const PropertyList& p, T* t, Tag tag) {
+        return property_value_end<PropertyList>::const_get_value(p, t, tag);
       }
     };
 
-    template <class Property>
+    template <class PropertyList>
     struct build_property_tag_value_alist
     {
-      typedef typename Property::next_type NextProperty;
-      typedef typename Property::value_type Value;
-      typedef typename Property::tag_type Tag;
+      typedef typename PropertyList::next_type NextProperty;
+      typedef typename PropertyList::value_type Value;
+      typedef typename PropertyList::tag_type Tag;
       typedef typename build_property_tag_value_alist<NextProperty>::type Next;
       typedef std::pair< std::pair<Tag,Value>, Next> type;
     };

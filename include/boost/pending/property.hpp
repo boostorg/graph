@@ -30,9 +30,9 @@ namespace boost {
   // instead with a nested kind type and num.  Also, we may want to
   // switch BGL back to using class types for properties at some point.
 
-  template <class Property>
+  template <class PropertyTag>
   struct property_kind {
-    typedef typename Property::kind type;
+    typedef typename PropertyTag::kind type;
   };
 
   template <class P>
@@ -52,13 +52,13 @@ namespace boost {
 
 namespace boost {
 
-  template <class Property, class Tag>
+  template <class PropertyList, class Tag>
   struct property_value {
 #if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-    typedef typename detail::build_property_tag_value_alist<Property>::type AList;
+    typedef typename detail::build_property_tag_value_alist<PropertyList>::type AList;
     typedef typename detail::extract_value<AList,Tag>::type type;
 #else
-    typedef typename detail::build_property_tag_value_alist<Property>::type AList;
+    typedef typename detail::build_property_tag_value_alist<PropertyList>::type AList;
     typedef typename detail::ev_selector<AList>::type Extractor;
     typedef typename Extractor::template bind_<AList,Tag>::type type;
 #endif  
