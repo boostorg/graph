@@ -147,7 +147,7 @@ namespace boost {
 	 choose_const_pmap(get_param(params, edge_reverse), g, edge_reverse),
 	 make_iterator_property_map(color_vec.begin(), choose_const_pmap
 				      (get_param(params, vertex_index),
-				       g, vertex_index)),
+				       g, vertex_index), color_vec[0]),
 	 pred);
     }
 
@@ -193,7 +193,7 @@ namespace boost {
 	(g, src, sink, 
 	 make_iterator_property_map(pred_vec.begin(), choose_const_pmap
 				    (get_param(params, vertex_index),
-				     g, vertex_index)),
+				     g, vertex_index), pred_vec[0]),
 	 params, 
 	 get_param(params, vertex_color));
     }

@@ -128,17 +128,12 @@ int main(int, char*[])
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;
   Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
 
-  /* DFS and BFS need to "color" the vertices */
-  typedef vector<default_color_type> colors_t;
-  colors_t colors(N);
-
   cout << "*** Depth First ***" << endl;
   depth_first_search
     (G, 
      visitor(make_dfs_visitor(boost::make_list(city_arrival(names),
-					       neighbor_cities(names),
-					       finish_city(names)))).
-     color_map(&colors[0]));
+                                               neighbor_cities(names),
+                                               finish_city(names)))));
   cout << endl;
 
   /* Get the source vertex */
@@ -147,10 +142,9 @@ int main(int, char*[])
 
   cout << "*** Breadth First ***" << endl;
   breadth_first_search
-    (G, s, make_bfs_visitor(boost::make_list(city_arrival(names), 
-                                             neighbor_cities(names), 
-                                             finish_city(names))),
-     &colors[0]);
+    (G, s, visitor(make_bfs_visitor(boost::make_list(city_arrival(names), 
+                                                     neighbor_cities(names), 
+                                                     finish_city(names)))));
   
   return 0;
 }

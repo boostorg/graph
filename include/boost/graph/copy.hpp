@@ -315,7 +315,7 @@ namespace boost {
        make_vertex_copier(g_in, g_out), 
        make_edge_copier(g_in, g_out), 
        make_iterator_property_map(orig2copy.begin(), 
-                                  get(vertex_index, g_in)),
+                                  get(vertex_index, g_in), orig2copy[0]),
        get(vertex_index, g_in)
        );
   }
@@ -343,7 +343,7 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index))),
+                                 g, vertex_index), orig2copy[0])),
        choose_pmap(get_param(params, vertex_index), g, vertex_index)
        );
   }
@@ -430,7 +430,7 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index))),
+                                 g, vertex_index), orig2copy[0])),
        params
        );
   }
@@ -449,7 +449,7 @@ namespace boost {
        make_vertex_copier(g_in, g_out), 
        make_edge_copier(g_in, g_out), 
        make_iterator_property_map(orig2copy.begin(), 
-                                  get(vertex_index, g_in)),
+                                  get(vertex_index, g_in), orig2copy[0]),
        bgl_named_params<char,char>('x') // dummy param object
        );
   }

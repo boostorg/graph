@@ -212,7 +212,7 @@ namespace boost {
       detail::dijkstra_impl
         (g, s, 
 	 choose_param(get_param(params, vertex_predecessor),
-		      make_iterator_property_map(p_map.begin(), index_map)),
+		      make_iterator_property_map(p_map.begin(), index_map, p_map[0])),
 	 distance, weight, index_map, 
          choose_param(get_param(params, distance_compare_t()), 
 		      std::less<D>()),
@@ -244,7 +244,7 @@ namespace boost {
 
       detail::dijkstra_dispatch2
 	(g, s, choose_param(distance, make_iterator_property_map
-			    (distance_map.begin(), index_map)),
+			    (distance_map.begin(), index_map, distance_map[0])),
 	 weight, index_map, params);
     }
   } // namespace detail

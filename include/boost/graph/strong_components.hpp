@@ -141,7 +141,7 @@ namespace boost {
         (g, comp, r_map,
          make_iterator_property_map(time_vec.begin(), choose_const_pmap
                                     (get_param(params, vertex_index),
-                                     g, vertex_index)),
+                                     g, vertex_index), time_vec[0]),
          params);
     }
     template <class Graph, class ComponentMap, class RootMap,
@@ -170,7 +170,7 @@ namespace boost {
         (g, comp, 
          make_iterator_property_map(root_vec.begin(), choose_const_pmap
                                     (get_param(params, vertex_index),
-                                     g, vertex_index)),
+                                     g, vertex_index), root_vec[0]),
          params, 
          get_param(params, vertex_discover_time));
     }

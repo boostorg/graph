@@ -111,30 +111,36 @@ namespace boost {
         }
     }
 
-    template <class VertexListGraph, class DFSVisitor, class ColorMap,
-              class P, class T, class R>
-    void
-    dfs_dispatch(const VertexListGraph& g, DFSVisitor vis, 
-                 const bgl_named_params<P, T, R>& params,                
-                 ColorMap color)
-    {
-      dfs_impl(g, vis, color);
-    }
+    template <class ColorMap>
+    struct dfs_dispatch {
 
-    template <class VertexListGraph, class DFSVisitor,
-              class P, class T, class R>
-    void
-    dfs_dispatch(const VertexListGraph& g, DFSVisitor vis,
-                 const bgl_named_params<P, T, R>& params,
-                 detail::error_property_not_found)
-    {
-      std::vector<default_color_type> color_vec(num_vertices(g));
-      dfs_impl(g, vis,
-               make_iterator_property_map
-               (color_vec.begin(), 
-                choose_const_pmap(get_param(params, vertex_index), 
-                                  g, vertex_index)) );
-    }
+      template <class VertexListGraph, class DFSVisitor, class P, class T, class R>
+      static void
+      apply(const VertexListGraph& g, DFSVisitor vis, 
+	    const bgl_named_params<P, T, R>& params,                
+	    ColorMap color)
+      {
+	dfs_impl(g, vis, color);
+      }
+    };
+
+    template <>
+    struct dfs_dispatch<detail::error_property_not_found> {
+      template <class VertexListGraph, class DFSVisitor,
+	class P, class T, class R>
+      static void
+      apply(const VertexListGraph& g, DFSVisitor vis,
+	    const bgl_named_params<P, T, R>& params,
+	    detail::error_property_not_found)
+      {
+	std::vector<default_color_type> color_vec(num_vertices(g));
+	dfs_impl(g, vis,
+		 make_iterator_property_map
+		 (color_vec.begin(), 
+		  choose_const_pmap(get_param(params, vertex_index), 
+				    g, vertex_index), color_vec[0]) );
+      }
+    };
 
   } // namespace detail
   
@@ -145,13 +151,8 @@ namespace boost {
   depth_first_search(const VertexListGraph& g, 
                      const bgl_named_params<P, T, R>& params)
   {
-    // ColorMap default
-    typename graph_traits<VertexListGraph>::vertices_size_type
-      n = is_default_param(get_param(params, vertex_color)) ? 
-      num_vertices(g) : 0;
-    std::vector<default_color_type> color_map(n);
-
-    detail::dfs_dispatch
+    typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+    detail::dfs_dispatch<C>::apply
       (g,
        choose_param(get_param(params, graph_visitor),
                     make_dfs_visitor(null_visitor())),

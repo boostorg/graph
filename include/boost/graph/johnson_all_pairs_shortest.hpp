@@ -64,8 +64,8 @@ namespace boost {
       typedef typename property_traits<Distance>::value_type DT;
       
       std::vector<DT> h_vec(num_vertices(g));
-      iterator_property_map<typename std::vector<DT>::iterator, VertexID>
-	h(h_vec.begin(), id);
+      typedef typename std::vector<DT>::iterator iter_t;
+      iterator_property_map<iter_t, VertexID, DT, DT&> h(h_vec.begin(), id);
 
       put(d, s, zero());
       if (bellman_ford_shortest_paths(g, num_vertices(g), params)) {
@@ -103,7 +103,7 @@ namespace boost {
 	(g, D, params, id,
 	 choose_param(get_param(params, vertex_distance),
 		      make_iterator_property_map
-		      (distance_map.begin(), id)),
+		      (distance_map.begin(), id, distance_map[0])),
 	 w,
 	 choose_pmap(get_param(params, edge_weight2), g, edge_weight2),
 	 choose_param(get_param(params, distance_zero_t()), 

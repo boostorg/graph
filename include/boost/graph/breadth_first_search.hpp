@@ -60,81 +60,6 @@ namespace boost {
     typename graph_traits<Graph>::edge_descriptor e;
   };
 
-  // Variant (1)
-  template <class VertexListGraph, class BFSVisitor>
-  inline void breadth_first_search(VertexListGraph& g,
-    typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-    BFSVisitor vis)
-  {
-    breadth_first_search(g, s, vis, get(vertex_color, g));
-  }
-
-  // Variant (2)
-  template <class VertexListGraph, class BFSVisitor, class ColorMap>
-  inline void breadth_first_search(const VertexListGraph& g,
-    typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-    BFSVisitor vis, ColorMap color)
-  {
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
-    boost::queue<Vertex> Q;
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      put(color, *ui, Color::white());
-      vis.initialize_vertex(*ui, g);
-    }
-    breadth_first_search(g, s, Q, vis, color);
-  }
-
-  // Variant (3)
-  template <class IncidenceGraph, class Buffer, class BFSVisitor, 
-            class ColorMap>
-  inline void breadth_first_search(const IncidenceGraph& g, 
-    typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
-    Buffer& Q, BFSVisitor vis, ColorMap color)
-  {
-    function_requires< IncidenceGraphConcept<IncidenceGraph> >();
-    typedef graph_traits<IncidenceGraph> GTraits;
-    typedef typename GTraits::vertex_descriptor Vertex;
-    typedef typename GTraits::edge_descriptor Edge;
-    function_requires< BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
-    function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    put(color, s, Color::gray());
-    vis.discover_vertex(s, g);
-    Q.push(s);
-    while (! Q.empty()) {
-      Vertex u = Q.top();
-      Q.pop(); // pop before push to avoid problem if Q is priority_queue.
-      vis.examine_vertex(u, g);
-      typename GTraits::out_edge_iterator ei, ei_end;
-      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-        Edge e = *ei;
-        vis.examine_edge(e, g);
-        Vertex v = target(e, g);
-        if (get(color, v) == Color::white()) {
-          vis.tree_edge(e, g);
-          put(color, v, Color::gray());
-          vis.discover_vertex(v, g);
-          Q.push(v);
-        } else {
-          vis.non_tree_edge(e, g);
-
-          if (get(color, v) == Color::gray())
-            vis.gray_target(e, g);
-          else
-            vis.black_target(e, g);
-        }
-      } // for
-      put(color, u, Color::black());
-      vis.finish_vertex(u, g);
-    } // while
-  }
-
   template <class Visitors = null_visitor>
   class bfs_visitor {
   public:
@@ -187,6 +112,52 @@ namespace boost {
 
   namespace detail {
 
+    template <class IncidenceGraph, class Buffer, class BFSVisitor, 
+              class ColorMap>
+    void bfs_impl(const IncidenceGraph& g, 
+		  typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
+		  Buffer& Q, BFSVisitor vis, ColorMap color)
+    {
+      function_requires< IncidenceGraphConcept<IncidenceGraph> >();
+      typedef graph_traits<IncidenceGraph> GTraits;
+      typedef typename GTraits::vertex_descriptor Vertex;
+      typedef typename GTraits::edge_descriptor Edge;
+      function_requires< BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
+      function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
+      typedef typename property_traits<ColorMap>::value_type ColorValue;
+      typedef color_traits<ColorValue> Color;
+      
+      put(color, s, Color::gray());
+      vis.discover_vertex(s, g);
+      Q.push(s);
+      while (! Q.empty()) {
+	Vertex u = Q.top();
+	Q.pop(); // pop before push to avoid problem if Q is priority_queue.
+	vis.examine_vertex(u, g);
+	typename GTraits::out_edge_iterator ei, ei_end;
+	for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+	  Edge e = *ei;
+	  vis.examine_edge(e, g);
+	  Vertex v = target(e, g);
+	  if (get(color, v) == Color::white()) {
+	    vis.tree_edge(e, g);
+	    put(color, v, Color::gray());
+	    vis.discover_vertex(v, g);
+	    Q.push(v);
+	  } else {
+	    vis.non_tree_edge(e, g);
+	    
+	    if (get(color, v) == Color::gray())
+	      vis.gray_target(e, g);
+	    else
+	      vis.black_target(e, g);
+	  }
+	} // for
+	put(color, u, Color::black());
+	vis.finish_vertex(u, g);
+      } // while
+    }
+    
     template <class VertexListGraph, class ColorMap, class BFSVisitor,
       class P, class T, class R>
     void bfs_helper
@@ -198,7 +169,8 @@ namespace boost {
     {
       typedef graph_traits<VertexListGraph> Traits;
       // Buffer default
-      typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+      typedef typename Traits::vertex_descriptor Vertex;
+      typedef boost::queue<Vertex> queue_t;
       queue_t Q;
       detail::wrap_ref<queue_t> Qref(Q);
       // Initialization
@@ -209,7 +181,7 @@ namespace boost {
         put(color, *i, Color::white());
         vis.initialize_vertex(*i, g);
       }
-      breadth_first_search
+      bfs_impl
         (g, s, 
          choose_param(get_param(params, buffer_param_t()), Qref).ref,
          vis, color);
@@ -220,41 +192,46 @@ namespace boost {
     // function dispatching so that we don't require vertex index if
     // the color default is not being used.
 
-    template <class VertexListGraph, class ColorMap,
-      class P, class T, class R>
-    void bfs_dispatch
+    template <class ColorMap>
+    struct bfs_dispatch {
+      template <class VertexListGraph, class P, class T, class R>
+      static void apply
       (VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        const bgl_named_params<P, T, R>& params,
        ColorMap color)
-    {
-      bfs_helper
-        (g, s, color,
-         choose_param(get_param(params, graph_visitor),
-                      make_bfs_visitor(null_visitor())),
-         params);
-    }
+      {
+	bfs_helper
+	  (g, s, color,
+	   choose_param(get_param(params, graph_visitor),
+			make_bfs_visitor(null_visitor())),
+	   params);
+      }
+    };
 
-    template <class VertexListGraph, class P, class T, class R>
-    void bfs_dispatch
+    template <>
+    struct bfs_dispatch<detail::error_property_not_found> {
+      template <class VertexListGraph, class P, class T, class R>
+      static void apply
       (VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        const bgl_named_params<P, T, R>& params,
        detail::error_property_not_found)
-    {
-      std::vector<default_color_type> color_vec(num_vertices(g));
-      null_visitor null_vis;
-
-      bfs_helper
-        (g, s, 
-         make_iterator_property_map
-         (color_vec.begin(), 
-          choose_const_pmap(get_param(params, vertex_index), 
-			    g, vertex_index)),
-         choose_param(get_param(params, graph_visitor),
-                      make_bfs_visitor(null_vis)),
-         params);
-    }
+      {
+	std::vector<default_color_type> color_vec(num_vertices(g));
+	null_visitor null_vis;
+	
+	bfs_helper
+	  (g, s, 
+	   make_iterator_property_map
+	   (color_vec.begin(), 
+	    choose_const_pmap(get_param(params, vertex_index), 
+			      g, vertex_index), color_vec[0]),
+	   choose_param(get_param(params, graph_visitor),
+			make_bfs_visitor(null_vis)),
+	   params);
+      }
+    };
 
   } // namespace detail
 
@@ -266,7 +243,8 @@ namespace boost {
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
-    detail::bfs_dispatch(g, s, params, get_param(params, vertex_color));
+    typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+    detail::bfs_dispatch<C>::apply(g, s, params, get_param(params, vertex_color));
   }
 
 

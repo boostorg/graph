@@ -154,8 +154,8 @@ public:
     value_type tmp = x.value();
 
     /*swap external data*/
-    edata[ get(id, tmp) ]     = i;
-    edata[ get(id, value()) ] = x.i;
+    edata[ boost::get(id, tmp) ]     = i;
+    edata[ boost::get(id, value()) ] = x.i;
 
     x.value() = value();
     value() = tmp;

@@ -230,7 +230,7 @@ namespace boost {
 
       std::sort(edge_set.begin(), edge_set.end(), 
                 detail::isomorph_edge_ordering
-                (make_iterator_property_map(perm.begin(), v1_index_map), g1));
+                (make_iterator_property_map(perm.begin(), v1_index_map, perm[0]), g1));
 
       std::vector<VertexG1>::iterator first = g1_vertices.begin();
       typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
@@ -250,7 +250,7 @@ namespace boost {
            (boost::next(first), g1_vertices.end(), 
             edge_set.begin(), edge_set.end(), 
             g1, g2,
-            make_iterator_property_map(perm.begin(), v1_index_map),
+            make_iterator_property_map(perm.begin(), v1_index_map, perm[0]),
             v2_index_map, f, invar1, invar2, not_in_S))
           return true;
       }
@@ -278,7 +278,7 @@ namespace boost {
         make_iterator_property_map
         (f.begin(), 
          choose_const_pmap(get_param(params, vertex_index1),
-                     g1, vertex_index))),
+                     g1, vertex_index), f[0])),
        choose_param(get_param(params, vertex_invariant_t()),
                     default_invar),
        choose_const_pmap(get_param(params, vertex_index1),
@@ -297,8 +297,7 @@ namespace boost {
     degree_vertex_invariant invariant;
     return detail::isomorphism_impl
       (g1, g2,
-       make_iterator_property_map(f.begin(),
-                                  get(vertex_index, g1)),
+       make_iterator_property_map(f.begin(), get(vertex_index, g1), f[0]),
        invariant,
        get(vertex_index, g1),
        get(vertex_index, g2)

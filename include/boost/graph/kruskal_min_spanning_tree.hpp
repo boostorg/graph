@@ -122,8 +122,8 @@ namespace boost {
 
     detail::kruskal_mst_impl
       (g, spanning_tree_edges, 
-       make_iterator_property_map(rank_map.begin(), get(vertex_index, g)),
-       make_iterator_property_map(pred_map.begin(), get(vertex_index, g)),
+       make_iterator_property_map(rank_map.begin(), get(vertex_index, g), rank_map[0]),
+       make_iterator_property_map(pred_map.begin(), get(vertex_index, g), pred_map[0]),
        get(edge_weight, g));
   }
 
@@ -149,12 +149,13 @@ namespace boost {
        (get_param(params, vertex_rank), 
 	make_iterator_property_map
 	(rank_map.begin(), 
-	 choose_pmap(get_param(params, vertex_index), g, vertex_index))),
+	 choose_pmap(get_param(params, vertex_index), g, vertex_index), rank_map[0])),
        choose_param
        (get_param(params, vertex_predecessor), 
 	make_iterator_property_map
 	(pred_map.begin(), 
-	 choose_const_pmap(get_param(params, vertex_index), g, vertex_index))),
+	 choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
+	 pred_map[0])),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
     

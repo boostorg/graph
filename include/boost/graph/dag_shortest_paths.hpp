@@ -117,10 +117,11 @@ namespace boost {
       dag_sp_dispatch2
         (g, s, 
          choose_param(distance, 
-                      make_iterator_property_map(distance_map.begin(), id)),
+                      make_iterator_property_map(distance_map.begin(), id,
+						 distance_map[0])),
          weight, 
          choose_param(color,
-                      make_iterator_property_map(color_map.begin(), id)),
+                      make_iterator_property_map(color_map.begin(), id, color_map[0])),
          vis, params);
     }
     
