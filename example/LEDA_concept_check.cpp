@@ -32,9 +32,9 @@ main(int,char*[])
   using namespace boost;
   {
     typedef GRAPH<int,int> Graph;
-    REQUIRE(Graph, VertexListGraph);
-    REQUIRE(Graph, BidirectionalGraph);
-    REQUIRE(Graph, MutableGraph);
+    function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< BidirectionalGraphConcept<Graph> >();
+    function_requires< MutableGraphConcept<Graph> >();
   }
   return 0;
 }
