@@ -103,9 +103,18 @@ int main(int,char*[])
   float transmission_delay[] = { 1.2, 4.5, 2.6, 0.4, 5.2, 1.8, 3.3, 9.1 };
 
   // declare a graph object, adding the edges and edge properties
-  Graph g(num_vertices, 
-          edge_array, edge_array + num_edges,
-          transmission_delay);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  Graph g(num_vertices);
+  for (std::size_t j = 0; j < num_edges; ++j) {
+    graph_traits<Graph>::edge_descriptor e; bool inserted;
+    tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    get(edge_weight, g)[e] = transmission_delay[j];
+  }
+#else
+  Graph g(edge_array, edge_array + num_edges,
+          transmission_delay, num_vertices);
+#endif
 
   boost::property_map<Graph, vertex_index_t>::type 
     vertex_id = get(vertex_index, g);

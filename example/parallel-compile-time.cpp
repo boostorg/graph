@@ -91,17 +91,9 @@ dfs_v2(const Graph & g,
 template < typename Graph, typename Visitor, typename ColorMap > void
 generic_dfs_v2(const Graph & g, Visitor vis, ColorMap color)
 {
-  typedef
-    color_traits <
-    typename
-    property_traits <
-    ColorMap >::value_type >
-    ColorT;
-  typename
-    graph_traits <
-    Graph >::vertex_iterator
-    vi,
-    vi_end;
+  typedef typename property_traits <ColorMap >::value_type ColorValue;
+  typedef color_traits < ColorValue >  ColorT;
+  typename graph_traits < Graph >::vertex_iterator  vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     color[*vi] = ColorT::white();
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
@@ -110,9 +102,8 @@ generic_dfs_v2(const Graph & g, Visitor vis, ColorMap color)
 }
 
 
-template < typename OutputIterator > struct topo_visitor:
-  public
-  default_dfs_visitor
+template < typename OutputIterator > 
+struct topo_visitor: public default_dfs_visitor
 {
   topo_visitor(OutputIterator & order):
   topo_order(order)
@@ -135,43 +126,37 @@ topo_sort(const Graph & g, OutputIterator topo_order, ColorMap color)
 }
 
 
-typedef
-  property_map <
-  file_dep_graph2,
-  vertex_name_t >::type
-  name_map_t;
-typedef
-  property_map <
-  file_dep_graph2,
-  vertex_compile_cost_t >::type
+typedef property_map < file_dep_graph2, vertex_name_t >::type name_map_t;
+typedef property_map < file_dep_graph2, vertex_compile_cost_t >::type
   compile_cost_map_t;
-typedef
-  property_map <
-  file_dep_graph2,
-  vertex_distance_t >::type
-  distance_map_t;
-typedef
-  property_map <
-  file_dep_graph2,
-  vertex_color_t >::type
-  color_map_t;
+typedef property_map < file_dep_graph2, vertex_distance_t >::type distance_map_t;
+typedef property_map < file_dep_graph2, vertex_color_t >::type color_map_t;
 
 
 int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef
-    graph_traits <
-    file_dep_graph2 >::vertices_size_type
-    size_type;
-  size_type
-    n_vertices;
+  typedef graph_traits < file_dep_graph2 >::vertices_size_type size_type;
+  size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;
-  file_dep_graph2
-  g(input_begin, input_end, n_vertices);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  file_dep_graph2 g;
+  typedef graph_traits<file_dep_graph2 >::vertex_descriptor vertex_t;
+  std::vector<vertex_t> id2vertex;
+  for (std::size_t v = 0; v < n_vertices; ++v)
+    id2vertex.push_back(add_vertex(g));
+  while (input_begin != input_end) {
+    size_type i, j;
+    tie(i, j) = *input_begin++;
+    add_edge(id2vertex[i], id2vertex[j], g);
+  }
+#else
+  file_dep_graph2 g(input_begin, input_end, n_vertices);
+#endif
 
   name_map_t
     name_map =

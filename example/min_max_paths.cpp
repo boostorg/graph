@@ -67,7 +67,17 @@ main(int , char* [])
                 E(3,4), E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
   const int n_edges = sizeof(edges)/sizeof(E);
-  Graph G(num_nodes, edges, edges + n_edges, weights);
+#ifdef BOOST_MSVC
+  // VC++ can't handle iterator constructors
+  Graph G(num_nodes);
+  for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
+    graph_traits<Graph>::edge_descriptor e; bool inserted;
+    tie(e, inserted) = add_edge(edges[j].first, edges[j].second, G);
+    get(edge_weight, G)[e] = weights[j];
+  }
+#else
+  Graph G(edges, edges + n_edges, weights, num_nodes);
+#endif
 
   std::vector<Vertex> p(num_vertices(G));
   std::vector<int> d(num_vertices(G));

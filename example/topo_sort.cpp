@@ -64,7 +64,14 @@ main(int , char* [])
                     Pair(2,5),
                     Pair(0,3), Pair(1,4),
                     Pair(4,3), Pair(5,5) };
-  Graph G(6, edges, edges + 7);
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  Graph G(6);
+  for (std::size_t j = 0; j < 7; ++j)
+    add_edge(edges[j].first, edges[j].second, G);
+#else
+  Graph G(edges, edges + 7, 6);
+#endif
 
   boost::property_map<Graph, vertex_index_t>::type id = get(vertex_index, G);
 

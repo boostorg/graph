@@ -84,20 +84,12 @@ generic_dfs_v1(const file_dep_graph & g, Visitor vis)
 
 struct dfs_visitor_default
 {
-  template <
-    typename
-    V,
-    typename
-    G > void
+  template < typename V, typename G > void
   discover_vertex(V, const G &)
   {
   }
 
-  template <
-    typename
-    E,
-    typename
-    G > void
+  template < typename E, typename G > void
   tree_edge(E, const G &)
   {
   }
@@ -148,8 +140,18 @@ main()
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;
-  file_dep_graph
-  g(input_begin, input_end, n_vertices);
+
+#ifdef BOOST_MSVC
+  // VC++ can't handle the iterator constructor
+  file_dep_graph g(n_vertices);
+  while (input_begin != input_end) {
+    size_type i, j;
+    tie(i, j) = *input_begin++;
+    add_edge(i, j, g);
+  }
+#else
+  file_dep_graph g(input_begin, input_end, n_vertices);
+#endif
 
   std::vector < std::string > name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");

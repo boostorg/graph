@@ -64,7 +64,14 @@ main()
 		    Edge(2, 0),
 		    Edge(3, 2) };
 
-  Graph g(4, edges, edges + 6);
+#ifdef BOOST_MSVC
+  // VC++ can't handle iterator constructor
+  Graph g(4);
+  for (std::size_t j = 0; j < 6; ++j)
+    add_edge(edges[j].first, edges[j].second, g);
+#else
+  Graph g(edges, edges + 6, 4);
+#endif
 
   std::cout << "original graph:" << std::endl;
   print_graph(g, get(vertex_index, g));
