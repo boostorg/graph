@@ -48,6 +48,7 @@
 #include "yystype.h"
 
   extern void yyerror(char* str);
+  extern void yyrestart(FILE* str);
   extern int yylex(YYSTYPE* lvalp);
 
   enum AttrState {GRAPH_GRAPH_A, GRAPH_NODE_A, GRAPH_EDGE_A, NODE_A, EDGE_A};
@@ -482,21 +483,15 @@ namespace boost {
   
   void read_graphviz(const std::string& filename, GRAPHVIZ_GRAPH& g) {
     FILE* file = fopen(filename.c_str(), "r");
+    yyrestart(file);
     void* in = static_cast<void*>(file);
-#if defined(GRAPHVIZ_DIRECTED)
-    bgl_dir_parse(static_cast<void*>(&g));
-#else
-    bgl_undir_parse(static_cast<void*>(&g));
-#endif
+    yyparse(static_cast<void*>(&g));
   }
 
   void read_graphviz(FILE* file, GRAPHVIZ_GRAPH& g) {
     void* in = static_cast<void*>(file);
-#if defined(GRAPHVIZ_DIRECTED)
-    bgl_dir_parse(static_cast<void*>(&g));
-#else
-    bgl_undir_parse(static_cast<void*>(&g));
-#endif
+    yyrestart(file);
+    yyparse(static_cast<void*>(&g));
   }
     
 }
