@@ -202,15 +202,17 @@ situations.
 An adjacency-matrix representation of a graph is a 2-dimensional <i>V
 x V</i> array. Each element in the array <i>a<sub>uv</sub></i> stores
 a Boolean value saying whether the edge <i>(u,v)</i> is in the graph.
-<A HREF="#fig:adj-matrix">Figure 3</A> depicts
-an adjacency matrix for the graph in <A
-HREF="#fig:directed-graph">Figure 1</A> (minus
-the parallel edge <i>(b,y)</i>).  The ammount of space required to
-store an adjacency-matrix is <i>O(V<sup>2</sup>)</i>. Any edge can be
+<A HREF="#fig:adj-matrix">Figure 3</A> depicts an adjacency matrix for
+the graph in <A HREF="#fig:directed-graph">Figure 1</A> (minus the
+parallel edge <i>(b,y)</i>).  The ammount of space required to store
+an adjacency-matrix is <i>O(V<sup>2</sup>)</i>. Any edge can be
 accessed, added, or removed in <i>O(1)</i> time.  To add or remove a
 vertex requires reallocating and copying the whole graph, an
-<i>O(V<sup>2</sup>)</i> operation.  The BGL does not include a graph
-class that uses the adjacency matrix representation.
+<i>O(V<sup>2</sup>)</i> operation.  The <a
+href="./adjacency_matrix.html"><tt>adjacency_matrix</tt></a> class
+implements the BGL graph interface in terms of the adjacency-matrix
+data-structure.
+
 
 <P>
 
