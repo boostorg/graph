@@ -87,10 +87,12 @@ class sgb_vertex_iterator;
 
 namespace boost {
   typedef Graph* sgb_graph_ptr;
+  typedef const Graph* sgb_const_graph_ptr;
 
   struct sgb_traversal_tag :
     public virtual vertex_list_graph_tag,
-    public virtual incidence_graph_tag { };
+    public virtual incidence_graph_tag,
+    public virtual adjacency_graph_tag { };
 
   template <> struct graph_traits<sgb_graph_ptr> {
     typedef Vertex* vertex_descriptor;
@@ -107,7 +109,7 @@ namespace boost {
     typedef sgb_traversal_tag traversal_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
   };
-  template <> struct graph_traits<const sgb_graph_ptr> {
+  template <> struct graph_traits<sgb_const_graph_ptr> {
     typedef Vertex* vertex_descriptor;
     typedef boost::sgb_edge edge_descriptor;
     typedef sgb_out_edge_iterator out_edge_iterator;
@@ -148,6 +150,7 @@ namespace boost {
     template <class Ref> friend class sgb_edge_length_map;
     template <class Tag, class Ref> friend class sgb_edge_util_map;
     friend long get(edge_length_t, const sgb_graph_ptr&, const sgb_edge& key);
+    friend long get(edge_length_t, const sgb_const_graph_ptr&, const sgb_edge& key);
     friend void put(edge_length_t, sgb_graph_ptr&, const sgb_edge& key, long value);
   protected:
 #endif
@@ -213,21 +216,21 @@ namespace boost {
 namespace boost {
 
   inline std::pair<sgb_vertex_iterator,sgb_vertex_iterator>
-  vertices(sgb_graph_ptr g)
+  vertices(sgb_const_graph_ptr g)
   {
     return std::make_pair(sgb_vertex_iterator(g->vertices),
 			  sgb_vertex_iterator(g->vertices + g->n));
   }
 
   inline std::pair<sgb_out_edge_iterator,sgb_out_edge_iterator>
-  out_edges(Vertex* u, sgb_graph_ptr)
+  out_edges(Vertex* u, sgb_const_graph_ptr)
   {
     return std::make_pair( sgb_out_edge_iterator(u, u->arcs),
                            sgb_out_edge_iterator(u, 0) );
   }
 
   inline boost::graph_traits<sgb_graph_ptr>::degree_size_type
-  out_degree(Vertex* u, sgb_graph_ptr g)
+  out_degree(Vertex* u, sgb_const_graph_ptr g)
   {
     boost::graph_traits<sgb_graph_ptr>::out_edge_iterator i, i_end;
     boost::tie(i, i_end) = out_edges(u, g);
@@ -237,16 +240,17 @@ namespace boost {
   // in_edges?
 
   inline std::pair<sgb_adj_iterator,sgb_adj_iterator>
-  adjacent_vertices(Vertex* u, sgb_graph_ptr)
+  adjacent_vertices(Vertex* u, sgb_const_graph_ptr)
   {
     return std::make_pair( sgb_adj_iterator(u->arcs),
                            sgb_adj_iterator(0) );
   }
 
-  inline long num_vertices(sgb_graph_ptr g) { return g->n; }
-  inline long num_edges(sgb_graph_ptr g) { return g->m; }
+  inline long num_vertices(sgb_const_graph_ptr g) { return g->n; }
+  inline long num_edges(sgb_const_graph_ptr g) { return g->m; }
 
-  inline Vertex* vertex(long v, sgb_graph_ptr g) { return g->vertices + v; }
+  inline Vertex* vertex(long v, sgb_const_graph_ptr g)
+    { return g->vertices + v; }
 
   // Various Property Maps
 
@@ -400,12 +404,20 @@ namespace boost {
   get(edge_length_t, const sgb_graph_ptr&) { 
     return sgb_edge_length_map<const long&>(); 
   }
+  inline sgb_edge_length_map<const long&>
+  get(edge_length_t, const sgb_const_graph_ptr&) { 
+    return sgb_edge_length_map<const long&>(); 
+  }
   inline sgb_edge_length_map<long&>
   get(edge_length_t, sgb_graph_ptr&) { 
     return sgb_edge_length_map<long&>(); 
   }
   inline long
   get(edge_length_t, const sgb_graph_ptr&, const sgb_edge& key) {
+    return key._arc->len;
+  }
+  inline long
+  get(edge_length_t, const sgb_const_graph_ptr&, const sgb_edge& key) {
     return key._arc->len;
   }
   inline void
@@ -428,6 +440,19 @@ namespace boost {
   template <>
   struct property_map<sgb_graph_ptr, vertex_name_t> {
     typedef sgb_vertex_name_t_map type;
+    typedef sgb_vertex_name_t_map const_type;
+  };
+
+  template <>
+  struct property_map<sgb_const_graph_ptr, edge_length_t> {
+    typedef sgb_edge_length_map<const long&> const_type;
+  };
+  template <>
+  struct property_map<sgb_const_graph_ptr, vertex_index_t> {
+    typedef sgb_vertex_id_map const_type;
+  };
+  template <>
+  struct property_map<sgb_const_graph_ptr, vertex_name_t> {
     typedef sgb_vertex_name_t_map const_type;
   };
 
@@ -456,6 +481,12 @@ namespace boost {
     typedef typename Choice::type type;
     typedef typename Choice::const_type const_type;
   };
+  template <class PropertyTag>
+  struct property_map<sgb_const_graph_ptr, PropertyTag> {
+    typedef typename property_kind<PropertyTag>::type Kind;
+    typedef detail::sgb_choose_property_map<Kind, PropertyTag> Choice;
+    typedef typename Choice::const_type const_type;
+  };
 
 #define SGB_UTIL_ACCESSOR(KIND,X) \
   template <class T> \
@@ -468,10 +499,21 @@ namespace boost {
   get(X##_property<T>, const sgb_graph_ptr&) { \
     return sgb_##KIND##_util_map< X##_property<T>, const T&>(); \
   } \
+  template <class T> \
+  inline sgb_##KIND##_util_map< X##_property<T>, const T&> \
+  get(X##_property<T>, const sgb_const_graph_ptr&) { \
+    return sgb_##KIND##_util_map< X##_property<T>, const T&>(); \
+  } \
   template <class T, class Key> \
   inline typename \
   sgb_##KIND##_util_map< X##_property<T>, const T&>::value_type \
   get(X##_property<T>, const sgb_graph_ptr&, const Key& key) { \
+    return sgb_##KIND##_util_map< X##_property<T>, const T&>()[key]; \
+  } \
+  template <class T, class Key> \
+  inline typename \
+  sgb_##KIND##_util_map< X##_property<T>, const T&>::value_type \
+  get(X##_property<T>, const sgb_const_graph_ptr&, const Key& key) { \
     return sgb_##KIND##_util_map< X##_property<T>, const T&>()[key]; \
   } \
   template <class T, class Key, class Value> \
@@ -491,9 +533,18 @@ namespace boost {
   get(TAG<TYPE>, const sgb_graph_ptr&) { \
     return sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >(); \
   } \
+  inline sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& > \
+  get(TAG<TYPE>, const sgb_const_graph_ptr&) { \
+    return sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >(); \
+  } \
   template <class Key> \
   inline typename sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >::value_type \
   get(TAG<TYPE>, const sgb_graph_ptr&, const Key& key) { \
+    return sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >()[key]; \
+  } \
+  template <class Key> \
+  inline typename sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >::value_type \
+  get(TAG<TYPE>, const sgb_const_graph_ptr&, const Key& key) { \
     return sgb_##KIND##_util_map< TAG<TYPE>, const TYPE& >()[key]; \
   } \
   template <class Key, class Value> \
