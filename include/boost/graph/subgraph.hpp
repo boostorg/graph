@@ -89,12 +89,13 @@ namespace boost {
     // Constructors
 
     // Create the main graph, the root of the subgraph tree
-    subgraph() 
-      : m_parent(0), m_edge_counter(0)
+    subgraph(const graph_property_type& p = graph_property_type()) 
+      : m_graph(p), m_parent(0), m_edge_counter(0)
     { }
     // Create the main graph, the root of the subgraph tree
-    subgraph(vertices_size_type n) 
-      : m_graph(n), m_parent(0), m_edge_counter(0)
+    subgraph(vertices_size_type n, 
+	     const graph_property_type& p = graph_property_type()) 
+      : m_graph(n, p), m_parent(0), m_edge_counter(0)
     { }
 
     // Create a subgraph
@@ -292,6 +293,22 @@ namespace boost {
   target(typename graph_traits<G>::edge_descriptor e_local,
          const subgraph<G>& g) 
     { return target(e_local, g.m_graph); }
+
+  //===========================================================================
+  // Functions required by the BidirectionalGraph concept 
+
+  template <typename G>
+  std::pair<typename graph_traits<G>::in_edge_iterator,
+            typename graph_traits<G>::in_edge_iterator>
+  in_edges(typename graph_traits<G>::vertex_descriptor u_local,
+            const subgraph<G>& g) 
+    { return in_edges(u_local, g.m_graph); }
+
+  template <typename G>
+  typename graph_traits<G>::degree_size_type
+  in_degree(typename graph_traits<G>::vertex_descriptor u_local,
+             const subgraph<G>& g) 
+    { return in_degree(u_local, g.m_graph); }
 
   //===========================================================================
   // Functions required by the AdjacencyGraph concept 

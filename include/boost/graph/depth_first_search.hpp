@@ -55,6 +55,38 @@ namespace boost {
     typename graph_traits<Graph>::vertex_descriptor u;
     typename graph_traits<Graph>::edge_descriptor e;
   };
+
+  namespace detail {
+
+    template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+    void internal_depth_first_visit
+      (IncidenceGraph& g,
+       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       DFSVisitor& vis, ColorMap color)
+    {
+      function_requires<IncidenceGraphConcept<IncidenceGraph> >();
+      function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
+      typedef typename property_traits<ColorMap>::value_type ColorValue;
+      typedef color_traits<ColorValue> Color;
+
+      put(color, u, Color::gray());
+      vis.discover_vertex(u, g);
+      typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+	vis.examine_edge(*ei, g);
+	if (get(color, target(*ei, g)) == Color::white()) {
+	  vis.tree_edge(*ei, g);
+	  internal_depth_first_visit(g, target(*ei, g), vis, color);
+	} else if (get(color, target(*ei, g)) == Color::gray())
+	  vis.back_edge(*ei, g);
+	else
+	  vis.forward_or_cross_edge(*ei, g);
+      }
+      put(color, u, Color::black());
+      vis.finish_vertex(u, g);
+    }
+
+  }
   
   // Variant (1)
   template <class Graph, class DFSVisitor>
@@ -82,35 +114,16 @@ namespace boost {
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       if (get(color, *ui) == Color::white()) {
         vis.start_vertex(*ui, g);
-        depth_first_visit(g, *ui, vis, color);
+        detail::internal_depth_first_visit(g, *ui, vis, color);
       }
   }
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit(IncidenceGraph& g,
-            typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-            DFSVisitor& vis, ColorMap color)
+			 typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+			 DFSVisitor vis, ColorMap color)
   {
-    function_requires<IncidenceGraphConcept<IncidenceGraph> >();
-    function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
-    typedef typename property_traits<ColorMap>::value_type ColorValue;
-    typedef color_traits<ColorValue> Color;
-
-    put(color, u, Color::gray());
-    vis.discover_vertex(u, g);
-    typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-      vis.examine_edge(*ei, g);
-      if (get(color, target(*ei, g)) == Color::white()) {
-        vis.tree_edge(*ei, g);
-        depth_first_visit(g, target(*ei, g), vis, color);
-      } else if (get(color, target(*ei, g)) == Color::gray())
-        vis.back_edge(*ei, g);
-      else
-        vis.forward_or_cross_edge(*ei, g);
-    }
-    put(color, u, Color::black());
-    vis.finish_vertex(u, g);
+    detail::internal_depth_first_visit(g, u, vis, color);
   }
 
 

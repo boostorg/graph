@@ -68,6 +68,7 @@ namespace boost {
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
       vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
       edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
+      vertex_all_num, edge_all_num, graph_all_num,
       last_property_num
     };
   } // namespace detail
@@ -96,6 +97,9 @@ namespace boost {
   enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
   BOOST_INSTALL_PROPERTY(KIND, NAME)
 
+  BOOST_DEF_PROPERTY(vertex, all);
+  BOOST_DEF_PROPERTY(edge, all);
+  BOOST_DEF_PROPERTY(graph, all);
   BOOST_DEF_PROPERTY(vertex, index);
   BOOST_DEF_PROPERTY(edge, index);
   BOOST_DEF_PROPERTY(edge, name);
