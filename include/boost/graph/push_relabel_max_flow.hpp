@@ -37,16 +37,6 @@
 
 namespace boost {
 
-#if 0
-  enum edge_reverse_t { edge_reverse = 51 };
-  enum edge_residual_capacity_t { edge_residual_capacity = 52 };
-  enum edge_capacity_t { edge_capacity = 53 };
-
-  BOOST_INSTALL_PROPERTY(edge, reverse);
-  BOOST_INSTALL_PROPERTY(edge, capacity);
-  BOOST_INSTALL_PROPERTY(edge, residual_capacity);
-#endif
-
   namespace detail {
     
    // This implementation is based on Goldberg's 
@@ -441,7 +431,6 @@ namespace boost {
         out_edge_iterator ai, a_end;
 
         vertex_descriptor r, restart, u;
-        edge_descriptor a;
 
         std::vector<vertex_descriptor> parent(n);
         std::vector<vertex_descriptor> topo_next(n);
@@ -550,10 +539,9 @@ namespace boost {
         if (! bos_null) {
           for (u = tos; u != bos; u = topo_next[u]) {
             ai = out_edges(u, g).first;
-            a = *ai;
-            while (excess_flow[u] > 0) {
-              if (capacity[a] == 0 && is_residual_edge(a))
-                push_flow(a);
+            while (excess_flow[u] > 0 && ai != out_edges(u, g).second) {
+              if (capacity[*ai] == 0 && is_residual_edge(*ai))
+                push_flow(*ai);
               ++ai;
             }
           }
@@ -561,9 +549,8 @@ namespace boost {
           u = bos;
           ai = out_edges(u, g).first;
           while (excess_flow[u] > 0) {
-            a = *ai;
-            if (capacity[a] == 0 && is_residual_edge(a))
-              push_flow(a);
+            if (capacity[*ai] == 0 && is_residual_edge(*ai))
+              push_flow(*ai);
             ++ai;
           }
         }
@@ -594,13 +581,8 @@ namespace boost {
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           if (u != src && u != sink) {
-#if 0 // CUT_ONLY
-            if (excess_flow[u] < 0)
-              return false;
-#else
             if (excess_flow[u] != 0)
               return false;
-#endif
             sum = 0;
             for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) 
               if (capacity[*ai] > 0)
