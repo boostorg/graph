@@ -44,12 +44,12 @@ visitor can be combined with other event visitors using
 <p>
 Algorithms such as Dijkstra's and breadth-first search will not assign
 a predecessor to the source vertex (which is the root of the search
-tree). Often times it is useful to initialize the predecessor of the
-source vertex to itself, thereby identifying the root vertex as the
-only vertex which is its own parent. When using an algorithm like
-depth-first search that create a forest (multiple search trees), it is
-useful to intialize the predecessor of every vertex to itself, so that
-all the root nodes can be distinguished.
+tree). Often times it is useful to initialize the source vertex's
+predecessor to itself, thereby identifying the root vertex as the only
+vertex which is its own parent. When using an algorithm like
+depth-first search that creates a forest (multiple search trees), it
+is useful to intialize the predecessor of every vertex to itself, so
+that all the root nodes can be distinguished.
 
 
 <h3>Example</h3>
