@@ -101,10 +101,10 @@ namespace boost {
     struct dijkstra_bfs_visitor
     {
       dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
-			   WeightMap w, PredecessorMap p, DistanceMap d, 
-			   BinaryFunction combine, BinaryPredicate compare)
+                           WeightMap w, PredecessorMap p, DistanceMap d, 
+                           BinaryFunction combine, BinaryPredicate compare)
         : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d), 
-	  m_combine(combine), m_compare(compare)  { }
+          m_combine(combine), m_compare(compare)  { }
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
@@ -128,7 +128,7 @@ namespace boost {
 
       template <class Vertex, class Graph>
       void initialize_vertex(Vertex u, Graph& g)
-	{ m_vis.initialize_vertex(u, g); }
+        { m_vis.initialize_vertex(u, g); }
       template <class Edge, class Graph>
       void non_tree_edge(Edge, Graph&) { }
       template <class Vertex, class Graph>
@@ -170,7 +170,7 @@ namespace boost {
       typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
         put(distance, *ui, init());
-	put(predecessor, *ui, *ui);
+        put(predecessor, *ui, *ui);
       }
       put(distance, s, zero());
       
@@ -179,13 +179,13 @@ namespace boost {
 
       typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
       typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
-	MutableQueue;
+        MutableQueue;
       
       MutableQueue Q(num_vertices(g), icmp, index_map);
       
       dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
-	PredecessorMap, DistanceMap, Combine, Compare>
-	  bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
+        PredecessorMap, DistanceMap, Combine, Compare>
+          bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
 
       breadth_first_search(g, s, params.buffer(Q).visitor(bfs_vis));
     }
@@ -204,27 +204,28 @@ namespace boost {
       // Default for predecessor map
       typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
       typename std::vector<Vertex>::size_type 
-	n = is_default_param(get_param(params, vertex_predecessor)) ?
-			     num_vertices(g) : 0;
+        n = is_default_param(get_param(params, vertex_predecessor)) ?
+                             num_vertices(g) : 1;
       std::vector<Vertex> p_map(n);
 
       typedef typename property_traits<DistanceMap>::value_type D;
       detail::dijkstra_impl
         (g, s, 
-	 choose_param(get_param(params, vertex_predecessor),
-		      make_iterator_property_map(p_map.begin(), index_map, p_map[0])),
-	 distance, weight, index_map, 
+         choose_param(get_param(params, vertex_predecessor),
+                      make_iterator_property_map(p_map.begin(), index_map, 
+                                                 p_map[0])),
+         distance, weight, index_map, 
          choose_param(get_param(params, distance_compare_t()), 
-		      std::less<D>()),
+                      std::less<D>()),
          choose_param(get_param(params, distance_combine_t()), 
-		      std::plus<D>()),
+                      std::plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
                       generate_infinity<D>()),
          choose_param(get_param(params, distance_zero_t()), 
                       generate_zero<D>()),
-	 choose_param(get_param(params, graph_visitor),
-		      make_dijkstra_visitor(null_visitor())),
-	 params);
+         choose_param(get_param(params, graph_visitor),
+                      make_dijkstra_visitor(null_visitor())),
+         params);
     }
 
     template <class VertexListGraph, class DistanceMap, class WeightMap, 
@@ -239,13 +240,14 @@ namespace boost {
       // Default for distance map
       typedef typename property_traits<WeightMap>::value_type D;
       typename std::vector<D>::size_type 
-	n = is_default_param(distance) ? num_vertices(g) : 0;
+        n = is_default_param(distance) ? num_vertices(g) : 1;
       std::vector<D> distance_map(n);
 
       detail::dijkstra_dispatch2
-	(g, s, choose_param(distance, make_iterator_property_map
-			    (distance_map.begin(), index_map, distance_map[0])),
-	 weight, index_map, params);
+        (g, s, choose_param(distance, make_iterator_property_map
+                            (distance_map.begin(), index_map, 
+                             distance_map[0])),
+         weight, index_map, params);
     }
   } // namespace detail
 
@@ -269,4 +271,4 @@ namespace boost {
 
 } // namespace boost
 
-#endif /* BOOST_GRAPH_DIJKSTRA_HPP*/
+#endif // BOOST_GRAPH_DIJKSTRA_HPP
