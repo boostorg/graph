@@ -398,15 +398,14 @@ BGL_FORALL_ADJ_T(f[i], v, G2, Graph2)
 @}
 
 \paragraph{Case 3: both $i$ and $j$ are in $G_1[k]$.} 
-Our goal is to check whether $(f(i),f(j)) \in E_2[S]$.
-We examine the vertices $Adj[f(i)]$ to see if any of them is equal to
-$f(j)$. If so, then we have a match for the edge $(i,j)$, and can
+Our goal is to check whether $(f(i),f(j)) \in E_2[S]$.  If $f(j)$ is
+in $Adj[f(i)]$ then we have a match for the edge $(i,j)$, and can
 increment the counter for the number of edges incident on $k$ in
 $E_1[k]$. We continue by calling \code{match} on the next edge.
 
 @d Check to see if $(f(i),f(j)) \in E_2[S]$ and continue
 @{
-if (any_equal(adjacent_vertices(f[i], G2), f[j])) {
+if (contains(adjacent_vertices(f[i], G2), f[j])) {
     ++num_edges_on_k;
     if (match(next(iter), dfs_num_k))
          return true;
