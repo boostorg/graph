@@ -15,7 +15,7 @@
 // This program mimics the BC clustering algorithm program implemented
 // by Shashikant Penumarthy for JUNG, so that we may compare results
 // and timings.
-#include <boost/graph/betweenness_centrality_clustering.hpp>
+#include <boost/graph/bc_clustering.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <fstream>

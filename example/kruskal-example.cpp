@@ -77,9 +77,11 @@ main()
     fout << source(*eiter, g) << " -- " << target(*eiter, g);
     if (std::find(spanning_tree.begin(), spanning_tree.end(), *eiter)
         != spanning_tree.end())
-      fout << "[color=\"black\"]\n";
+      fout << "[color=\"black\", label=\"" << get(edge_weight, g, *eiter)
+	   << "\"];\n";
     else
-      fout << "[color=\"gray\"]\n";
+      fout << "[color=\"gray\", label=\"" << get(edge_weight, g, *eiter)
+	   << "\"];\n";
   }
   fout << "}\n";
   return EXIT_SUCCESS;
