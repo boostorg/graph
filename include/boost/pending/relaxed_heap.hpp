@@ -412,7 +412,7 @@ private:
 
   void clean(group* q)
   {
-    if (q->rank < 2) return;
+    if (2 > q->rank) return;
     group* qp = q->children[q->rank-1];
     rank_type s = q->rank - 2;
     group* x = q->children[s];
