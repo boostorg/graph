@@ -174,7 +174,7 @@ namespace boost
       for (tie(adj, adj_last) = adjacent_vertices(u, CG);
            adj != adj_last; ++adj) {
         cg_vertex v = *adj;
-        if (topo_number[v] < successors[v][chain_number[v]]) {
+        if (topo_number[v] < successors[u][chain_number[v]]) {
           // Succ(u) = Succ(u) U Succ(v)
           detail::union_successor_sets(successors[u], successors[v],
                                        successors[u]);
@@ -226,6 +226,21 @@ namespace boost
             add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
           }
 
+    // Find loopbacks in the original graph. 
+    // Need to add it to transitive closure.
+    {
+      vertex_iterator i, i_end;
+      for (tie(i, i_end) = vertices(g); i != i_end; ++i) 
+	{
+          adjacency_iterator ab, ae;
+          for (boost::tie(ab, ae) = adjacent_vertices(*i, g); ab != ae; ++ab)
+	    {
+              if (*ab == *i)
+		if (components[component_number[*i]].size() == 1)
+		  add_edge(g_to_tc_map[*i], g_to_tc_map[*i], tc);
+	    }
+	}
+    }
   }
 
   template <typename Graph, typename GraphTC>
