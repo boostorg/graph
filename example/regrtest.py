@@ -191,7 +191,7 @@ f=open( "cs-" + sys.platform + ".html", "w" )
 
 f.write( "<html>\n<head>\n<title>\nCompiler Status: " + platform + "\n</title>\n</head>" )
 f.write( "<body bgcolor=\"#FFFFFF\" text=\"#000000\">\n" )
-f.write( "<h1><img border=\"0\" src=\"../c++boost.gif\" width=\"277\" height=\"86\"></h1>\n" )
+f.write( "<h1><img border=\"0\" src=\"../../c++boost.gif\" width=\"277\" height=\"86\"></h1>\n" )
 f.write( "<h1>Compiler Status: " + platform + "</h1>\n" )
 f.write( "<p><b>Run Date:</b> " + time.strftime("%d %b %Y %H:%M GMT", time.gmtime(time.time())) + "</p>\n" )
 f.write( "<p>\n" )
