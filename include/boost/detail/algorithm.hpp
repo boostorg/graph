@@ -9,6 +9,11 @@
 #define BOOST_ALGORITHM_HPP
 
 // Algorithms on sequences
+//
+// The functions in this file have not yet gone through formal
+// review, and are subject to change. This is a work in progress.
+// They have been checked into the detail directory because
+// there are some graph algorithms that use these functions.
 
 #include <algorithm>
 
