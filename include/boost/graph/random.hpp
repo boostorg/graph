@@ -36,6 +36,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/random/uniform_int.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #include <boost/pending/property.hpp>
 #include <boost/graph/properties.hpp>
@@ -55,7 +56,8 @@ namespace boost {
   random_vertex(Graph& g, RandomNumGen& gen)
   {
     if (num_vertices(g) > 1) {
-      uniform_int<RandomNumGen> rand_gen(gen, 0, num_vertices(g)-1);
+      uniform_int<> distrib(0, num_vertices(g)-1);
+      variate_generator<RandomNumGen&, uniform_int<> > rand_gen(gen, distrib);
       std::size_t n = rand_gen();
       typename graph_traits<Graph>::vertex_iterator
         i = vertices(g).first;
@@ -69,7 +71,8 @@ namespace boost {
   typename graph_traits<Graph>::edge_descriptor
   random_edge(Graph& g, RandomNumGen& gen) {
     if (num_edges(g) > 1) {
-      uniform_int<RandomNumGen> rand_gen(gen, 0, num_edges(g)-1);
+      uniform_int<> distrib(0, num_edges(g)-1);
+      variate_generator<RandomNumGen&, uniform_int<> > rand_gen(gen, distrib);
       typename graph_traits<Graph>::edges_size_type 
         n = rand_gen();
       typename graph_traits<Graph>::edge_iterator

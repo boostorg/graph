@@ -30,6 +30,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/property_map.hpp>
+#include <boost/random/variate_generator.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -40,7 +41,9 @@ template <typename Generator>
 struct random_functor {
   random_functor(Generator& g) : g(g) { }
   std::size_t operator()(std::size_t n) {
-    boost::uniform_int<boost::mt19937, std::size_t> x(g, 0, n-1);
+    boost::uniform_int<std::size_t> distrib(0, n-1);
+    boost::variate_generator<boost::mt19937&, boost::uniform_int<std::size_t> >
+      x(g, distrib);
     return x();
   }
   Generator& g;
@@ -79,9 +82,10 @@ void generate_random_digraph(Graph& g, double edge_probability)
 {
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
   boost::mt19937 random_gen;
-  boost::uniform_real<boost::mt19937, double> 
-    random_dist(random_gen, 0.0, 1.0);
-
+  boost::uniform_real<double> distrib(0.0, 1.0);
+  boost::variate_generator<boost::mt19937&, boost::uniform_real<double> >
+    random_dist(random_gen, distrib);
+  
   for (vertex_iterator u = vertices(g).first; u != vertices(g).second; ++u) {
     vertex_iterator v = u;
     ++v;
