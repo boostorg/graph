@@ -93,11 +93,14 @@ namespace boost {
       class BinaryFunction, class BinaryPredicate>
     struct dijkstra_bfs_visitor
     {
+      typedef typename property_traits<DistanceMap>::value_type D;
+
       dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
                            WeightMap w, PredecessorMap p, DistanceMap d, 
-                           BinaryFunction combine, BinaryPredicate compare)
+                           BinaryFunction combine, BinaryPredicate compare,
+			   D zero)
         : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d), 
-          m_combine(combine), m_compare(compare)  { }
+          m_combine(combine), m_compare(compare), m_zero(zero)  { }
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
@@ -130,7 +133,7 @@ namespace boost {
       void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) { 
-        if (get(m_weight, e) < 0)
+        if (m_compare(get(m_weight, e), m_zero))
           throw negative_edge();
         m_vis.examine_edge(e, g);
       }
@@ -147,6 +150,7 @@ namespace boost {
       BinaryFunction m_combine;
       BinaryPredicate m_compare;
       bool m_decreased;
+      D m_zero;
     };
 
   } // namespace detail
@@ -176,7 +180,7 @@ namespace boost {
 
     detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
       PredecessorMap, DistanceMap, Combine, Compare>
-        bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
+        bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
 
     std::vector<default_color_type> color(num_vertices(g));
     default_color_type c = white_color;
