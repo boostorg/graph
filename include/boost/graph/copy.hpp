@@ -335,7 +335,7 @@ namespace boost {
         ? num_vertices(g_in) : 1;
     if (n == 0)
       return;
-    std::vector<typename graph_traits<MutableGraph>::vertex_descriptor> 
+    std::vector<BOOST_DEDUCED_TYPENAME graph_traits<MutableGraph>::vertex_descriptor> 
       orig2copy(n);
 
     typedef typename detail::choose_graph_copy<VertexListGraph>::type 

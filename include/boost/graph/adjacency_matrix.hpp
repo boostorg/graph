@@ -67,21 +67,24 @@ namespace boost {
     };
 
     template <typename EdgeProperty>
-    bool get_edge_exists(const std::pair<bool, EdgeProperty>& stored_edge) {
+    bool get_edge_exists(const std::pair<bool, EdgeProperty>& stored_edge, int) {
       return stored_edge.first;
     }
     template <typename EdgeProperty>
-    void set_edge_exists(std::pair<bool, EdgeProperty>& stored_edge, 
-                         bool flag) {
+    void set_edge_exists(
+        std::pair<bool, EdgeProperty>& stored_edge, 
+        bool flag,
+        int
+        ) {
       stored_edge.first = flag;
     }
 
     template <typename EdgeProxy>
-    bool get_edge_exists(const EdgeProxy& edge_proxy) {
+    bool get_edge_exists(const EdgeProxy& edge_proxy, ...) {
       return edge_proxy;
     }
     template <typename EdgeProxy>
-    EdgeProxy& set_edge_exists(EdgeProxy& edge_proxy, bool flag) {
+    EdgeProxy& set_edge_exists(EdgeProxy& edge_proxy, bool flag, ...) {
       edge_proxy = flag;
       return edge_proxy; // just to avoid never used warning
     }
@@ -102,7 +105,7 @@ namespace boost {
     template <typename EdgeProperty>
     inline void
     set_property(std::pair<bool, EdgeProperty>& stored_edge, 
-                 const EdgeProperty& ep) {
+                 const EdgeProperty& ep, int) {
       stored_edge.second = ep;
     }
 
@@ -116,7 +119,7 @@ namespace boost {
     }
     template <typename EdgeProxy, typename EdgeProperty>
     inline void
-    set_property(EdgeProxy, const EdgeProperty&) { }
+    set_property(EdgeProxy, const EdgeProperty&, ...) { }
     
     //=======================================================================
     // Directed Out Edge Iterator
@@ -162,7 +165,7 @@ namespace boost {
         inline EdgeDescriptor
         dereference() const 
         {
-            return EdgeDescriptor(get_edge_exists(*this->base()), m_src, m_targ, 
+            return EdgeDescriptor(get_edge_exists(*this->base(), 0), m_src, m_targ, 
                                   &get_property(*this->base()));
         }
         VertexDescriptor m_src, m_targ;
@@ -223,7 +226,7 @@ namespace boost {
         dereference() const 
         {
             return EdgeDescriptor(
-                get_edge_exists(*this->base()), m_src, m_targ
+                get_edge_exists(*this->base(), 0), m_src, m_targ
               , &get_property(*this->base())
             );
         }
@@ -299,7 +302,7 @@ namespace boost {
         {
             return EdgeDescriptor(
                 get_edge_exists(
-                    *this->base()), m_src, m_targ, &get_property(*this->base())
+                    *this->base(), 0), m_src, m_targ, &get_property(*this->base())
             );
         }
       
@@ -471,7 +474,7 @@ namespace boost {
        typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor v,
        const adjacency_matrix<D,VP,EP,GP,A>& g)
   {
-    bool exists = detail::get_edge_exists(g.get_edge(u,v));
+    bool exists = detail::get_edge_exists(g.get_edge(u,v), 0);
     typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor
       e(exists, u, v, &detail::get_property(g.get_edge(u,v)));
     return std::make_pair(e, exists);
@@ -645,9 +648,9 @@ namespace boost {
   {
     typedef typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor 
       edge_descriptor;
-    if (detail::get_edge_exists(g.get_edge(u,v)) == false) {
-      detail::set_property(g.get_edge(u,v), ep);
-      detail::set_edge_exists(g.get_edge(u,v), true);
+    if (detail::get_edge_exists(g.get_edge(u,v), 0) == false) {
+      detail::set_property(g.get_edge(u,v), ep, 0);
+      detail::set_edge_exists(g.get_edge(u,v), true, 0);
       return std::make_pair
         (edge_descriptor(true, u, v, &detail::get_property(g.get_edge(u,v))), 
          true);
@@ -674,7 +677,7 @@ namespace boost {
               typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor v,
               adjacency_matrix<D,VP,EP,GP,A>& g)
   {
-    detail::set_edge_exists(g.get_edge(u,v), false);
+    detail::set_edge_exists(g.get_edge(u,v), false, 0);
   }
 
   // O(1)
