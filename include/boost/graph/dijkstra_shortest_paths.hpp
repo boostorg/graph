@@ -211,7 +211,7 @@ namespace boost {
     put(distance, s, zero);
 
     dijkstra_shortest_paths_no_init(g, s, predecessor, distance, weight,
-                            index_map, compare, combine, inf, zero, vis);
+                            index_map, compare, combine, zero, vis);
   }
 
   namespace detail {
