@@ -41,6 +41,7 @@ namespace boost {
   struct vertex_invariant_t { enum { num =detail::vertex_invariant_num}; };
   struct vertex_root_t { enum { num =detail::vertex_root_num}; };
   struct orig_to_copy_t { enum { num = detail::orig_to_copy_num }; };
+  struct root_vertex_t { enum { num = detail::root_vertex_num }; };
   
   namespace detail {
     template <class T>
@@ -104,6 +105,13 @@ namespace boost {
       typedef bgl_named_params<RootMap, vertex_root_t, self> 
         Params;
       return Params(pmap, *this);
+    }
+
+    template <typename Vertex>
+    bgl_named_params<Vertex, root_vertex_t, self>
+    root_vertex(const Vertex& r) const {
+      typedef bgl_named_params<Vertex, root_vertex_t, self> Params;
+      return Params(r, *this);
     }
 
     template <typename ColorMap>
@@ -287,6 +295,13 @@ namespace boost {
   root_map(RootMap pmap) {
     typedef bgl_named_params<RootMap, vertex_root_t> Params;
     return Params(pmap);
+  }
+
+  template <typename Vertex>
+  bgl_named_params<Vertex, root_vertex_t>
+  root_vertex(const Vertex& r) {
+    typedef bgl_named_params<Vertex, root_vertex_t> Params;
+    return Params(r);
   }
 
   template <typename ColorMap>
