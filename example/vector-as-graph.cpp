@@ -32,7 +32,7 @@ main()
   enum
   { r, s, t, u, v, w, x, y, N };
   char name[] = "rstuvwxy";
-  typedef std::vector < std::list < int >>Graph;
+  typedef std::vector < std::list < int > > Graph;
   Graph g(N);
   g[r].push_back(v);
   g[s].push_back(r);

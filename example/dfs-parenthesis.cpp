@@ -26,28 +26,19 @@
 
 char name[] = "abcdefghij";
 
-struct parenthesis_visitor:public
-  boost::default_dfs_visitor
+struct parenthesis_visitor : public boost::default_dfs_visitor
 {
-  template <
-    class
-    Vertex,
-    class
-    Graph > void
+  template <class Vertex, class Graph> void
   start_vertex(Vertex v, const Graph &)
   {
     std::cout << ' ';
   }
-  template <
-    class
-    Vertex,
-    class
-    Graph > void
+  template <class Vertex, class Graph> void
   discover_vertex(Vertex v, const Graph &)
   {
     std::cout << "(" << name[v] << ' ';
   }
-  template < class Vertex, class Graph > void
+  template <class Vertex, class Graph> void
   finish_vertex(Vertex v, const Graph &)
   {
     std::cout << ' ' << name[v] << ")";

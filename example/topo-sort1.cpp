@@ -42,7 +42,7 @@ main()
   };
   const int n_tasks = sizeof(tasks) / sizeof(char *);
 
-  std::vector < std::list < int >>g(n_tasks);
+  std::vector < std::list < int > > g(n_tasks);
   g[0].push_back(3);
   g[1].push_back(3);
   g[1].push_back(4);
