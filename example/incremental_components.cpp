@@ -107,7 +107,7 @@ int main(int , char* [])
       ds.find_set(*i) << endl;;
   cout << endl;
 
-  typedef component_index<int> Components;
+  typedef component_index<unsigned int> Components;
   Components components(&parent[0], &parent[0] + parent.size());
 
   for (Components::size_type c = 0; c < components.size(); ++c) {

@@ -1,19 +1,18 @@
 //=======================================================================
-// Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright 2001 Jeremy G. Siek, Andrew Lumsdaine, Lie-Quan Lee, 
 //
 // This file is part of the Boost Graph Library
 //
 // You should have received a copy of the License Agreement for the
 // Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
+// If not, contact Office of Research, Indiana University,
+// Bloomington, IN 47405.
 //
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
+// Permission to modify the code and to distribute the code is
+// granted, provided the text of this NOTICE is retained, a notice if
+// the code was modified is included with the above COPYRIGHT NOTICE
+// and with the COPYRIGHT NOTICE in the LICENSE file, and that the
+// LICENSE file is distributed with the modified code.
 //
 // LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
 // By way of example, but not limitation, Licensor MAKES NO
@@ -22,95 +21,95 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
-#include <boost/config.hpp>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_map.hpp>
-#include <boost/utility.hpp>
+using namespace boost;
 
-/*
-  This example demonstrates the differences between directed and
-  undirected graphs.
+template < typename UndirectedGraph > void
+undirected_graph_demo1()
+{
+  const int V = 3;
+  UndirectedGraph undigraph(V);
+  typename graph_traits < UndirectedGraph >::vertex_descriptor zero, one, two;
+  typename graph_traits < UndirectedGraph >::out_edge_iterator out, out_end;
+  typename graph_traits < UndirectedGraph >::in_edge_iterator in, in_end;
 
-  Sample Output
-  
-  in a directed graph is (u,v) == (v,u) ? 0
-  weight[(u,v)] = 1.2
-  weight[(v,u)] = 2.4
-  in an undirected graph is (u,v) == (v,u) ? 1
-  weight[(u,v)] = 3.1
-  weight[(v,u)] = 3.1
-  the edges incident to v: (0,1)
-  
+  zero = vertex(0, undigraph);
+  one = vertex(1, undigraph);
+  two = vertex(2, undigraph);
+  add_edge(zero, one, undigraph);
+  add_edge(zero, two, undigraph);
+  add_edge(one, two, undigraph);
 
- */
+  std::cout << "out_edges(0): ";
+  for (tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
+    std::cout << *out;
+  std::cout << std::endl << "in_edges(0): ";
+  for (tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
+    std::cout << *in;
+  std::cout << std::endl;
+}
+
+template < typename DirectedGraph > void
+directed_graph_demo()
+{
+  const int V = 2;
+  DirectedGraph digraph(V);
+  typename graph_traits < DirectedGraph >::vertex_descriptor u, v;
+  typedef typename DirectedGraph::edge_property_type Weight;
+  typename property_map < DirectedGraph, edge_weight_t >::type
+    weight = get(edge_weight, digraph);
+  typename graph_traits < DirectedGraph >::edge_descriptor e1, e2;
+  bool found;
+
+  u = vertex(0, digraph);
+  v = vertex(1, digraph);
+  add_edge(u, v, Weight(1.2), digraph);
+  add_edge(v, u, Weight(2.4), digraph);
+  tie(e1, found) = edge(u, v, digraph);
+  tie(e2, found) = edge(v, u, digraph);
+  std::cout << "in a directed graph is ";
+  std::cout << "(u,v) == (v,u) ? "
+    << std::boolalpha << (e1 == e2) << std::endl;
+  std::cout << "weight[(u,v)] = " << get(weight, e1) << std::endl;
+  std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
+}
+
+template < typename UndirectedGraph > void
+undirected_graph_demo2()
+{
+  const int V = 2;
+  UndirectedGraph undigraph(V);
+  typename graph_traits < UndirectedGraph >::vertex_descriptor u, v;
+  typedef typename UndirectedGraph::edge_property_type Weight;
+  typename property_map < UndirectedGraph, edge_weight_t >::type
+    weight = get(edge_weight, undigraph);
+  typename graph_traits < UndirectedGraph >::edge_descriptor e1, e2;
+  bool found;
+
+  u = vertex(0, undigraph);
+  v = vertex(1, undigraph);
+  add_edge(u, v, Weight(3.1), undigraph);
+  tie(e1, found) = edge(u, v, undigraph);
+  tie(e2, found) = edge(v, u, undigraph);
+  std::cout << "in an undirected graph is ";
+  std::cout << "(u,v) == (v,u) ? "
+    << std::boolalpha << (e1 == e2) << std::endl;
+  std::cout << "weight[(u,v)] = " << get(weight, e1) << std::endl;
+  std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
+}
+
 
 int
-main(int, char*[])
+main()
 {
-  using namespace boost;
-  using namespace std;
-
-  const int V = 2;
-
-  typedef property<edge_weight_t, double> Weight;
-  typedef adjacency_list<vecS, vecS, undirectedS,
-                        no_property, Weight> UndirectedGraph;
-  UndirectedGraph undigraph(V);
-
-  typedef adjacency_list<vecS, vecS, directedS,
-                         no_property, Weight> DirectedGraph;
-  DirectedGraph digraph(V);
-
-
-  {
-    graph_traits<DirectedGraph>::vertex_descriptor u, v;
-    u = vertex(0, digraph);
-    v = vertex(1, digraph);
-    add_edge(u, v, Weight(1.2), digraph);
-    add_edge(v, u, Weight(2.4), digraph);
-    graph_traits<DirectedGraph>::edge_descriptor e1, e2;
-    bool found;
-    tie(e1,found) = edge(u, v, digraph);
-    tie(e2,found) = edge(v, u, digraph);
-    cout << "in a directed graph is ";
-    cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
-
-    property_map<DirectedGraph, edge_weight_t>::type
-      weight = get(edge_weight, digraph);
-    cout << "weight[(u,v)] = " << get(weight, e1) << endl;
-    cout << "weight[(v,u)] = " << get(weight, e2) << endl;
-  }
-  {
-    graph_traits<UndirectedGraph>::vertex_descriptor u, v;
-    u = vertex(0, undigraph);
-    v = vertex(1, undigraph);
-    add_edge(u, v, Weight(3.1), undigraph);
-    graph_traits<UndirectedGraph>::edge_descriptor e1, e2;
-    bool found;
-    tie(e1,found) = edge(u, v, undigraph);
-    tie(e2,found) = edge(v, u, undigraph);
-    cout << "in an undirected graph is ";
-    cout << "(u,v) == (v,u) ? " << (e1 == e2) << endl;
-
-    property_map<UndirectedGraph, edge_weight_t>::type
-      weight = get(edge_weight, undigraph);
-    cout << "weight[(u,v)] = " << get(weight, e1) << endl;
-    cout << "weight[(v,u)] = " << get(weight, e2) << endl;
-  }
-
-  // Vertices in undirected graphs don't have "out-edges", they have
-  // "incident" edges, but we still use the out_edge() function.
-  // Similarly, "in" and "out" have no meaning in undirected graphs
-  // but we still use source() and target() to access the unordered
-  // pair of vertices connected by the edge.
-  cout << "the edges incident to v: ";
-  graph_traits<UndirectedGraph>::out_edge_iterator e, e_end;
-  graph_traits<UndirectedGraph>::vertex_descriptor 
-    s = vertex(0, undigraph);
-  for (tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
-    cout << "(" << source(*e, undigraph) 
-              << "," << target(*e, undigraph) << ")" << endl;
-
+  typedef property < edge_weight_t, double >Weight;
+  typedef adjacency_list < vecS, vecS, undirectedS,
+    no_property, Weight > UndirectedGraph;
+  typedef adjacency_list < vecS, vecS, directedS,
+    no_property, Weight > DirectedGraph;
+  undirected_graph_demo1 < UndirectedGraph > ();
+  undirected_graph_demo2 < UndirectedGraph > ();
+  directed_graph_demo < DirectedGraph > ();
   return 0;
 }
