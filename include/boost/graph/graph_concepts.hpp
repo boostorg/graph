@@ -152,7 +152,6 @@ namespace boost {
     G g;
   };
 
-#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
 // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
 // you want to use vector_as_graph, it is!  I'm sure the graph
 // library leaves these out all over the place.  Probably a
@@ -161,6 +160,13 @@ namespace boost {
 //
 // It is needed in order to allow us to write using boost::vertices as
 // needed for ADL when using vector_as_graph below.
+#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
+ && !BOOST_WORKAROUND(__GNUC__, <= 2)
+ && !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
+# define BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
+#endif 
+
+#ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
 template <class T>
 typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
 #endif      
@@ -178,7 +184,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       function_requires< ConvertibleConcept<traversal_category,
         vertex_list_graph_tag> >();
 
-#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
+#ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
       // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
@@ -191,7 +197,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       const_constraints(g);
     }
     void const_constraints(const G& g) {
-#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP) && !BOOST_WORKAROUND(__GNUC__, <= 2)
+#ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
       // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
       // library leaves these out all over the place.  Probably a
