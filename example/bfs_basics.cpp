@@ -96,8 +96,8 @@ int main(int, char*[])
   std::vector<size_type> ftime(num_vertices(G));
 
   typedef std::vector<size_type>::iterator RAIter;
-  typedef random_access_iterator_property_map<RAIter, size_type, 
-    size_type&, IndexMap> IterMap;
+  typedef iterator_property_map<RAIter, IndexMap, size_type, 
+    size_type&> IterMap;
 
   IterMap discover(dtime.begin(), vertex_id);
   IterMap finish(ftime.begin(), vertex_id);

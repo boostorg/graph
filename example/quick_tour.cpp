@@ -24,12 +24,13 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#include <iostream>                         // for std::cout
-#include <utility>                         // for std::pair
-#include <algorithm>                         // for std::for_each
+#include <iostream>                      // for std::cout
+#include <utility>                       // for std::pair
+#include <algorithm>                     // for std::for_each
 #include <boost/utility.hpp>             // for boost::tie
 #include <boost/graph/graph_traits.hpp>  // for boost::graph_traits
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graphviz.hpp>
 
 using namespace boost;
 
@@ -82,43 +83,63 @@ template <class Graph> struct exercise_vertex {
 
 int main(int,char*[])
 {
-  typedef std::pair<int,int> E;
-  const int num_edges = 11;
-  // writing out the edges in the graph
-  E edge_array[num_edges] = { E(0,1), E(0,2), E(0,3), E(0,4), 
-                              E(2,0), E(3,0), E(2,4), E(3,1), 
-                              E(3,4), E(4,0), E(4,1) };
-  const int num_vertices = 5;
-
   // create a typedef for the Graph type
-  typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
+  typedef adjacency_list<vecS, vecS, bidirectionalS,
+     no_property, property<edge_weight_t, float> > Graph;
 
-  // declare a graph object
-  Graph g(num_vertices);
+  // Make convenient labels for the vertices
+  enum { A, B, C, D, E, N };
+  const int num_vertices = N;
+  const char* name = "ABCDE";
+
+  // writing out the edges in the graph
+  typedef std::pair<int,int> Edge;
+  Edge edge_array[] = 
+  { Edge(A,B), Edge(A,D), Edge(C,A), Edge(D,C),
+    Edge(C,E), Edge(B,D), Edge(D,E), };
+  const int num_edges = sizeof(edge_array)/sizeof(Edge);
+
+  // average transmission delay (in milliseconds) for each connection
+  float transmission_delay[] = { 1.2, 4.5, 2.6, 0.4, 5.2, 1.8, 3.3, 9.1 };
+
+  // declare a graph object, adding the edges and edge properties
+  Graph g(num_vertices, 
+          edge_array, edge_array + num_edges,
+          transmission_delay);
 
   boost::property_map<Graph, vertex_index_t>::type 
     vertex_id = get(vertex_index, g);
+  boost::property_map<Graph, edge_weight_t>::type
+    trans_delay = get(edge_weight, g);
 
-  // add the edges to the graph object
-  for (int i = 0; i < num_edges; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, g);
-  
   std::cout << "vertices(g) = ";
   typedef graph_traits<Graph>::vertex_iterator vertex_iter;
   std::pair<vertex_iter, vertex_iter> vp;
   for (vp = vertices(g); vp.first != vp.second; ++vp.first)
-    std::cout << get(vertex_id, *vp.first) <<  " ";
+    std::cout << name[get(vertex_id, *vp.first)] <<  " ";
   std::cout << std::endl;
   
   std::cout << "edges(g) = ";
   graph_traits<Graph>::edge_iterator ei, ei_end;
   for (tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << "(" << get(vertex_id, source(*ei, g)) 
-              << "," << get(vertex_id, target(*ei, g)) << ") ";
+    std::cout << "(" << name[get(vertex_id, source(*ei, g))]
+              << "," << name[get(vertex_id, target(*ei, g))] << ") ";
   std::cout << std::endl;
   
   std::for_each(vertices(g).first, vertices(g).second,
                 exercise_vertex<Graph>(g));
+  
+  std::map<std::string,std::string> graph_attr, vertex_attr, edge_attr;
+  graph_attr["size"] = "3,3";
+  graph_attr["rankdir"] = "LR";
+  graph_attr["ratio"] = "fill";
+  vertex_attr["shape"] = "circle";
+
+  boost::write_graphviz(std::cout, g, 
+                        make_label_writer(name),
+                        make_label_writer(trans_delay),
+                        make_graph_attributes_writer(graph_attr, vertex_attr, 
+						     edge_attr));
   
   return 0;
 }

@@ -30,7 +30,8 @@ requirement for efficient traversal of all the vertices in the graph.
 
 <H3>Refinement of</H3>
 
-<a href="./AdjacencyGraph.html">AdjacencyGraph</a>
+<a href="./IncidenceGraph.html">IncidenceGraph</a>
+and <a href="./AdjacencyGraph.html">AdjacencyGraph</a>
 
 <H3>Associated Types</H3>
 
@@ -94,6 +95,21 @@ The <TT>vertices()</TT> function must return in constant time.
 <a href="./graph_concepts.html">Graph concepts</a>
 
 
+<H3>Design Rationale</H3>
+
+One issue in the design of this concept is whether to include the
+refinement from the <a href="./IncidenceGraph.html">IncidenceGraph</a>
+and <a href="./AdjacencyGraph.html">AdjacencyGraph</a> concepts.  The
+ability to traverse the vertices of a graph is orthogonal to
+traversing out-edges, so it would make sense to have a VertexListGraph
+concept that only includes vertex traversal. However, such a concept
+would no longer really be a graph, but would just be a set, and the
+STL already has concepts for dealing with such things. However, there
+are many BGL algorithms that need to traverse the vertices and
+out-edges of a graph, so for convenience a concept is needed that
+groups these requirements together, hence the VertexListGraph concept.
+
+
 <H3>Concept Checking Class</H3>
 
 <P>
@@ -104,6 +120,7 @@ The <TT>vertices()</TT> function must return in constant time.
     typedef typename boost::graph_traits&lt;G&gt;::vertex_iterator 
       vertex_iterator;
     void constraints() {
+      function_requires&lt; IncidenceGraphConcept&lt;G&gt; &gt;();
       function_requires&lt; AdjacencyGraphConcept&lt;G&gt; &gt;();
       function_requires&lt; MultiPassInputIteratorConcept&lt;vertex_iterator&gt; &gt;();
 

@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <utility>
 #include <boost/graph/edge_list.hpp>
-#include <boost/graph/connected_components.hpp>
+#include <boost/graph/incremental_components.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/utility.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -85,7 +85,7 @@ int main(int , char* [])
   cout << endl;
 
   disjoint_sets_with_storage<> ds;
-  dynamic_connected_components(g, ds);
+  incremental_components(g, ds);
   
   component_index<int> components(&ds.parents()[0], 
                                   &ds.parents()[0] + ds.parents().size());

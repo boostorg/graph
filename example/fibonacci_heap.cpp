@@ -25,6 +25,9 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <vector>
+#ifdef __GNUC__
+#define __STL_NO_DRAND48
+#endif
 #include <algorithm>
 #include <boost/pending/fibonacci_heap.hpp>
 #include <boost/graph/graph_utility.hpp>

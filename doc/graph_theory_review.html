@@ -505,10 +505,64 @@ result of a single-source algorithm is a shortest-paths tree.
 
 <P>
 
-<H2>Network Algorithms</H2>
+<H2><a name="sec:network-flow-algorithms">Network Flow Algorithms</H2>
 
-<P>
-Maximum flow.
+<p>
+A flow network is a directed graph <i>G=(V,E)</i> with a
+<b><i>source</i></b> vertex <i>s</i> and a <b><i>sink</i></b> vertex
+<i>t</i>. Each edge has a positive real valued <b><i>capacity</i></b>
+function <i>c</i> and there is a <b><i>flow</i></b> function <i>f</i>
+defined over every vertex pair. The flow function must satisfy three
+contraints:
+
+<p>
+<i>f(u,v) <= c(u,v) for all (u,v) in V x V</i> (Capacity constraint) <br>
+<i>f(u,v) = - f(v,u) for all (u,v) in V x V</i> (Skew symmetry)<br>
+<i>sum<sub>v in V</sub> f(u,v) = 0 for all u in V - {s,t}</i> (Flow conservation)
+
+<p>
+The <b><i>flow</i></b> of the network is the net flow entering the
+sink vertex <i>t</i> (which is equal to the net flow leaving the
+source vertex <i>s</i>).<p>
+
+<i>|f| = sum<sub>u in V</sub> f(u,t) = sum<sub>v in V</sub> f(s,v)</i>
+
+<p>
+The <b><i>residual capacity</i></b> of an edge is <i>r(u,v) = c(u,v) -
+f(u,v)</i>. The edges with <i>r(u,v) > 0</i> are residual edges
+<i>E<sub>f</sub></i> which induce the residual graph <i>G<sub>f</sub>
+= (V, E<sub>f</sub>)</i>. An edge with <i>r(u,v) = 0</i> is
+<b><i>saturated</i></b>.
+
+<p>
+The <b><i>maximum flow problem</i></b> is to determine the maximum
+possible value for <i>|f|</i> and the corresponding flow values for
+every vertex pair in the graph.
+
+<p>
+A flow network is shown in <a href="#fig:max-flow">Figure
+8</a>. Vertex <i>A</i> is the source vertex and <i>H</i> is the target
+vertex.
+
+<P></P>
+<DIV ALIGN="center"><A NAME="fig:max-flow"></A><A NAME="1509"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 8:</STRONG> A Maximum Flow
+Network.<br> Edges are labeled with the flow and capacity
+values.</CAPTION>
+<TR><TD><IMG SRC="./figs/max-flow.gif" width="578" height="240"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+<p>
+There is a long history of algorithms for solving the maximum flow
+problem, with the first algorithm due to <a
+href="./bibliography.html#ford56:_maxim">Ford and Fulkerson</a>. The
+best general purpose algorithm to date is the push-relabel algorithm
+of <a
+href="./bibliography.html#goldberg85:_new_max_flow_algor">Goldberg</a>
+which is based on the notion of a <b><i>preflow</i></b> introduced by
+<a href="./bibliography.html#karzanov74:_deter">Karzanov</a>.
 
 
 <br>

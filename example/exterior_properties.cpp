@@ -123,8 +123,7 @@ int main(int , char* []) {
   typedef boost::property_map<Graph, boost::edge_index_t>::type EdgeIndexMap;
   EdgeIndexMap edge_id = boost::get(boost::edge_index, G);
 
-  typedef boost::random_access_iterator_property_map
-    <int*, int, int&, EdgeIndexMap> IterMap;
+  typedef boost::iterator_property_map<int*, EdgeIndexMap, int, int&> IterMap;
 
   print_network(G, IterMap(capacity, edge_id), IterMap(flow, edge_id));
           

@@ -51,18 +51,6 @@ struct total_length_visitor : public boost::ucs_visitor<> {
   Distance _distance;
 };
 
-// We will use the "y" utility field for keeping track of the state
-// (color) of each vertex during the algorithm. The algorithm will
-// need to access constants for white, gray, and black of the
-// appropriate type (the type must match the type of the "y" utility
-// field, which in this case is long), hence the following function
-// definitions. The choice of constants is arbitrary.
-namespace boost {
-  long white(long) { return 0; } // "unseen"
-  long gray(long) { return 2; }  // "seen"
-  long black(long) { return 1; } // "known"
-}
-
 int main(int argc, char* argv[])
 {
   using namespace boost;
@@ -119,7 +107,7 @@ int main(int argc, char* argv[])
 
    prim_minimum_spanning_tree(g, vertex(0,g), 
                               get(z_property<long>(), g),
-                              get(edge_length(), g), 
+                              get(edge_length_t(), g), 
                               // Use the "y" utility field for color.
                               get(y_property<long>(), g),
                               get(vertex_index, g), 

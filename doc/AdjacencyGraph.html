@@ -82,8 +82,11 @@ href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 <td><a name="sec:adjacent-vertices"><TT>adjacent_vertices(v,&nbsp;g)</TT></a></TD>
 <TD>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <TT>v</TT> in graph <TT>g</TT>. <a href="adjacencygraph.html#1">[1]</a><br>
-Return type: <TT>std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;</TT>
+vertex <TT>v</TT> in graph <TT>g</TT>.<a
+href="adjacencygraph.html#1">[1]</a>
+
+<br> Return type:
+<TT>std::pair&lt;adjacency_iterator,&nbsp;adjacency_iterator&gt;</TT>
 </TD>
 </TR>
 
@@ -122,6 +125,17 @@ The <TT>adjacent_vertices()</TT> function must return in constant time.
   };
 </PRE>
 
+<h3>Design Rationale</h3>
+
+The AdjacencyGraph concept is somewhat frivolous since <a
+href="./IncidenceGraph.html">IncidenceGraph</a> really covers the same
+functionality (and more).  The AdjacencyGraph concept exists because
+there are situations when <tt>adjacent_vertices()</tt> is more
+convenient to use than <tt>out_edges()</tt>. If you are constructing a
+graph class and do not want to put in the extra work of creating an
+adjacency iterator, have no fear. There is an adaptor class in
+<tt>boost/graph/detail/adjacency_iterator.hpp</tt> that you can use to
+create an adjacency iterator out of an out-edge iterator.
 
 <h3>Notes</h3>
 

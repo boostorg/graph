@@ -66,8 +66,9 @@ public:
   discover_vertex(typename boost::graph_traits<Graph>::vertex_descriptor v,
 	    Graph&)
   {
+    typedef typename boost::property_traits<DistanceMap>::value_type Dist;
     // indentation based on depth
-    for (int i = 0; i < distance[v]; ++i)
+    for (Dist i = 0; i < distance[v]; ++i)
       std::cout << "  ";
     std::cout << name[v] << std::endl;
   }
@@ -114,7 +115,6 @@ main()
 
   typedef property_map<Graph, vertex_name_t>::type NameMap;
   NameMap node_name  = get(vertex_name, g);
-  property_map<Graph, vertex_index_t>::type node_id = get(vertex_index, g);
   property_map<Graph, edge_name_t>::type link_name = get(edge_name, g);
 
   //===========================================================================

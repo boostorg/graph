@@ -29,6 +29,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/bandwidth.hpp>
 
   /*
     Sample Output
@@ -40,6 +41,7 @@
     9 1 4 6 7 2 8 5 3 0 
     Reverse Cuthill-McKee ordering: //choose vertex 9
     0 8 5 7 3 6 4 2 1 9 
+
  */
 int main(int , char* [])
 {
@@ -49,7 +51,8 @@ int main(int , char* [])
   typedef adjacency_list<vecS, vecS, undirectedS, 
      property< vertex_color_t, default_color_type,
        property<vertex_degree_t,int> > > Graph;
-  typedef Graph::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::vertices_size_type size_type;
 
   typedef std::pair<size_t, size_t> Pair;
   Pair edges[14] = { Pair(0,3), //a-d
@@ -68,56 +71,66 @@ int main(int , char* [])
                      Pair(6,7) }; //g-h 
   
   Graph G(10);
-  for (int i=0; i<14; ++i)
+  for (int i = 0; i < 14; ++i)
     add_edge(edges[i].first, edges[i].second, G);
 
-
-  Graph::vertex_iterator ui, uiend;
+  graph_traits<Graph>::vertex_iterator ui, ui_end;
 
   property_map<Graph,vertex_degree_t>::type deg = get(vertex_degree, G);
-  cout << "degree: " << endl;
-  for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
-    deg[*ui] = out_degree(*ui, G);
-    cout << deg[*ui] << " ";
-  }
-  cout << endl;
+  for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+    deg[*ui] = degree(*ui, G);
 
-  std::vector<Vertex> iperm(num_vertices(G));
+  std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
+
+  std::vector<Vertex> inv_perm(num_vertices(G)), perm(num_vertices(G));
   {
     Vertex s = vertex(6, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G), 
+    cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
-    
-    for (std::vector<Vertex>::const_iterator i = iperm.begin();
-         i != iperm.end(); ++i)
+    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
+    cout << "  ";    
+    for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
+         i != inv_perm.end(); ++i)
       cout << id[*i] << " ";
     cout << endl;
+
+    for (size_type c = 0; c != inv_perm.size(); ++c)
+      perm[inv_perm[c]] = c;
+    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
   }
   {
     Vertex s = vertex(0, G);
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G),
+    cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
-
-    for (std::vector<Vertex>::const_iterator i=iperm.begin();
-       i != iperm.end(); ++i)
+    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
+    cout << "  ";
+    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
+       i != inv_perm.end(); ++i)
       cout << id[*i] << " ";
     cout << endl;
+
+    for (size_type c = 0; c != inv_perm.size(); ++c)
+      perm[inv_perm[c]] = c;
+    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
   }
 
   {
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, iperm.rbegin());
+    cuthill_mckee_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
+			   make_degree_map(G));
     
     cout << "Reverse Cuthill-McKee ordering:" << endl;
-    
-    for (std::vector<Vertex>::const_iterator i=iperm.begin();
-       i != iperm.end(); ++i)
+    cout << "  ";
+    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
+       i != inv_perm.end(); ++i)
       cout << id[*i] << " ";
     cout << endl;
+
+    for (size_type c = 0; c != inv_perm.size(); ++c)
+      perm[inv_perm[c]] = c;
+    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
   }
   return 0;
 }

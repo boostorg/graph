@@ -90,21 +90,22 @@ graph search.
 </tr>
 
 <tr>
-<td>Start Vertex</td>
-<td><tt>vis.start_vertex(s, g)</tt></td>
-<td><tt>void</tt></td>
-<td>
-This is invoked on the source vertex once before the start of the
-search.
-</td>
-</tr>
-
-<tr>
 <td>Discover Vertex</td>
 <td><tt>vis.discover_vertex(u, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
 This is invoked when a vertex is encountered for the first time.
+</td>
+</tr>
+
+<tr>
+<td>Examine Vertex</td>
+<td><tt>vis.examine_vertex(u, g)</tt></td>
+<td><tt>void</tt></td>
+<td>
+This is invoked on a vertex as it is popped from the queue. This
+happens immediately before <tt>examine_edge()</tt> is invoked
+on each of the out-edges of vertex <tt>u</tt>.
 </td>
 </tr>
 
@@ -128,8 +129,8 @@ form the search tree.</td>
 </tr>
 
 <tr>
-<td>Cycle Edge</td>
-<td><tt>vis.cycle_edge(e, g)</tt></td>
+<td>Non-Tree Edge</td>
+<td><tt>vis.non_tree_edge(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
 This is invoked on back or cross edges for directed graphs and cross
@@ -142,7 +143,7 @@ edges for undirected graphs.
 <td><tt>vis.gray_target(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on the subset of cycle edges who's target vertex is
+This is invoked on the subset of non-tree edges who's target vertex is
 colored gray at the time of examination. The color gray indicates
 that the vertex is currently in the queue. 
 </td>
@@ -153,7 +154,7 @@ that the vertex is currently in the queue.
 <td><tt>vis.black_target(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on the subset of cycle edges who's target vertex is
+This is invoked on the subset of non-tree edges who's target vertex is
 colored black at the time of examination. The color black indicates
 that the vertex has been removed from the queue.
 </td>
