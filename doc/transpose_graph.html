@@ -33,10 +33,10 @@ transpose of a directed graph <i>G = (V, E)</i>is the graph
 <i>G<sup>T</sup> = (V, E<sup>T</sup>)</i> , where <i>E<sup>T</sup> =
 {(v, u) in V x V: (u, v) in E}</i> . i.e., <i>G<sup>T</sup></i> is
 <i>G</i> with all its edges reversed.  Graph <TT>G_T</TT> passed into
-the algorithm must have the same number of vertices as <TT>G</TT> and
-no edges. The edges will be added by <tt>transpose_graph()</tt> by
-calling <tt>add_edge</tt> as follows for each edge <i>(u,v)</i> in
-<tt>G</tt>.
+the algorithm must have no vertices and
+no edges. The vertices and edges will be added by <tt>transpose_graph()</tt> by
+calling <tt>add_vertex</tt> and  <tt>add_edge</tt> as follows for each edge
+<i>(u,v)</i> in <tt>G</tt>.
 
 <H3>Example</H3>
 
