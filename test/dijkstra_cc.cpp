@@ -69,10 +69,11 @@ int main()
     readable_property_map_archetype<vertex_t, int> index;
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
     read_write_property_map_archetype<vertex_t, dist_value> distance;
-    binary_function_archetype<dist_value, dist_value, dist_value> 
-      combine(dummy_cons);
-    binary_predicate_archetype<dist_value, dist_value> 
-      compare(dummy_cons);
+    typedef binary_function_archetype<dist_value, dist_value, dist_value> 
+      Combine;
+    Combine combine = static_object<Combine>::get();
+    typedef binary_predicate_archetype<dist_value, dist_value> Compare;
+    Compare compare = static_object<Compare>::get();
     dijkstra_visitor<> vis;
 
     dijkstra_shortest_paths(g, s, color_map(color).
