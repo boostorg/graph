@@ -28,7 +28,7 @@
 #include <LEDA/graph.h>
 
 #include <boost/config.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/iterator_adaptors.hpp>
 
 // The functions and classes in this file allows the user to
 // treat a LEDA GRAPH object as a boost graph "as is". No
@@ -41,7 +41,7 @@
 
 namespace boost {
   
-  struct out_edge_iterator_policies
+  struct leda_out_edge_iterator_policies
   {
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,0); }
@@ -57,7 +57,7 @@ namespace boost {
     { return x == y; }
   };
 
-  struct in_edge_iterator_policies
+  struct leda_in_edge_iterator_policies
   {
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,1); }
@@ -73,7 +73,7 @@ namespace boost {
     { return x == y; }
   };
 
-  struct adjacency_iterator_policies
+  struct leda_adjacency_iterator_policies
   {
     static void increment(edge& e)
     { e = Succ_Adj_Edge(e,0); }
@@ -90,7 +90,7 @@ namespace boost {
   };
 
   template <class LedaGraph>
-  struct vertex_iterator_policies
+  struct leda_vertex_iterator_policies
   {
     vertex_iterator_policies() { }
     vertex_iterator_policies(const LedaGraph* g) : m_g(g) { }
@@ -122,23 +122,30 @@ namespace boost {
 
     typedef boost::iterator_adaptor<edge,
       boost::adjacency_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,
-        node, std::ptrdiff_t, node*, node>
+      node, node, node*,
+      std::bidirectional_iterator_tag,
+      std::ptrdiff_t
     > adjacency_iterator;
 
     typedef boost::iterator_adaptor<edge,
-      boost::out_edge_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,edge>
+      boost::out_edge_iterator_policies,
+      edge, edge&, edge*,
+      std::bidirectional_iterator_tag,
+      std::ptrdiff_t
     > out_edge_iterator;
 
     typedef boost::iterator_adaptor<edge,
       boost::in_edge_iterator_policies, 
-      boost::iterator<std::bidirectional_iterator_tag,edge>
+      edge, edge&, edge*,
+      std::bidirectional_iterator_tag,
+      std::ptrdiff_t
     > in_edge_iterator;
 
     typedef boost::iterator_adaptor<node,
       boost::vertex_iterator_policies< GRAPH<vtype,etype> >, 
-      boost::iterator<std::bidirectional_iterator_tag,node>
+      node, node&, node*,
+      std::bidirectional_iterator_tag,
+      std::ptrdiff_t
     > vertex_iterator;
 
     typedef directed_tag directed_category;
