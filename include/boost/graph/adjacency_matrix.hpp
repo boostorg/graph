@@ -195,13 +195,25 @@ namespace boost {
       void initialize(MatrixIter&) const{ }
 
       void increment(MatrixIter& i) {
+	increment_dispatch(i, Directed());
+      }
+      void increment_dispatch(MatrixIter& i, directedS) {
         ++i;
-        if (m_src == m_targ) {
+        if (m_targ == m_n - 1) {
           m_targ = 0;
           ++m_src;
         } else
           ++m_targ;
       }
+      void increment_dispatch(MatrixIter& i, undirectedS) {
+        ++i;
+        if (m_targ == m_src) {
+          m_targ = 0;
+          ++m_src;
+        } else
+          ++m_targ;
+      }
+
       template <typename EdgeDescriptor>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const MatrixIter& i) const 
@@ -446,7 +458,7 @@ namespace boost {
   target(typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor e,
          const adjacency_matrix<D,VP,EP,GP,A>& g)
   {
-    return e.m_source;
+    return e.m_target;
   }
 
   //===========================================================================
@@ -849,6 +861,18 @@ namespace boost {
     put(pmap, key, value);
   }
   
+  //===========================================================================
+  // Other Functions
+
+  template <typename D, typename VP, typename EP, typename GP, typename A>  
+  typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
+  vertex(typename adjacency_matrix<D,VP,EP,GP,A>::vertices_size_type n,
+         const adjacency_matrix<D,VP,EP,GP,A>& g)
+  {
+    return n;
+  }
+
+
 } // namespace boost
 
 #endif // BOOST_ADJACENCY_MATRIX_HPP
