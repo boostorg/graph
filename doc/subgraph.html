@@ -152,14 +152,21 @@ add_edge(A1, C1, G1); // (A1,C1) is subgraph G1 local indices
 <!----------------------------->
 <h3>Template Parameters</h3>
 
-\begin{tempparams}
-  <tt>Graph</tt> & A graph type modeling <a href="VertexMutableGraph.html">VertexMutableGraph</a>
+<P>
+<TABLE border>
+<TR>
+<th>Parameter</th><th>Description</th>
+</tr>
+<tr><td><tt>Graph</tt> </td>
+<td> A graph type modeling <a href="VertexMutableGraph.html">VertexMutableGraph</a>
   and <a href="EdgeMutableGraph.html">EdgeMutableGraph</a>. Also
   the graph must have internal <tt>vertex_index</tt> and
   <tt>edge_index</tt> properties. The vertex indices must be maintained
   automatically by the graph, whereas the edge indices will be
-  assigned by the <tt>subgraph</tt> class implementation.   \\
-\end{tempparams}
+  assigned by the <tt>subgraph</tt> class implementation. </td>
+</tr>
+</table>
+
 
 <!----------------------------->
 <h3>Model Of</h3>
