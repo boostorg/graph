@@ -1333,7 +1333,7 @@ namespace boost {
                    boost::vertex_property_tag) {
         typedef typename Config::graph_type Graph;
         typedef typename boost::property_map<Graph, Property>::type PA;
-        return PA(static_cast<Graph&>(g));
+        return PA(&static_cast<Graph&>(g));
       }
       template <class Config, class Base, class Property>
       inline
@@ -1344,7 +1344,7 @@ namespace boost {
         typedef typename Config::graph_type Graph;
         typedef typename boost::property_map<Graph, Property>::const_type PA;
         const Graph& cg = static_cast<const Graph&>(g);
-        return PA(const_cast<Graph&>(cg));
+        return PA(&cg);
       }
 
     } // namespace detail
@@ -2092,12 +2092,12 @@ namespace boost {
       }
     };
 
-    template <class Graph, class GraphRef, class ValueType, class Reference,
+    template <class Graph, class GraphPtr, class ValueType, class Reference,
               class Tag>
     struct vec_adj_list_vertex_property_map
       : public boost::put_get_helper<
           Reference,
-          vec_adj_list_vertex_property_map<Graph,GraphRef,ValueType,Reference,
+          vec_adj_list_vertex_property_map<Graph,GraphPtr,ValueType,Reference,
              Tag>
         >
     {
@@ -2105,20 +2105,21 @@ namespace boost {
       typedef Reference reference;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
-      vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
+      vec_adj_list_vertex_property_map() { }
+      vec_adj_list_vertex_property_map(GraphPtr g) : m_g(g) { }
       inline Reference operator[](key_type v) const {
-        return get_property_value(m_g.m_vertices[v].m_property,  Tag());
+        return get_property_value(m_g->m_vertices[v].m_property,  Tag());
       }
       inline Reference operator()(key_type v) const {
         return this->operator[](v);
       }
-      GraphRef m_g;
+      GraphPtr m_g;
     };
 
-    template <class Graph, class GraphRef, class Property, class PropertyRef>
+    template <class Graph, class GraphPtr, class Property, class PropertyRef>
     struct vec_adj_list_vertex_all_properties_map
       : public boost::put_get_helper<PropertyRef,
-          vec_adj_list_vertex_all_properties_map<Graph,GraphRef,Property,
+          vec_adj_list_vertex_all_properties_map<Graph,GraphPtr,Property,
             PropertyRef>
         >
     {
@@ -2126,14 +2127,14 @@ namespace boost {
       typedef PropertyRef reference;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
-      vec_adj_list_vertex_all_properties_map(GraphRef g) : m_g(g) { }
+      vec_adj_list_vertex_all_properties_map(GraphPtr g) : m_g(g) { }
       inline PropertyRef operator[](key_type v) const {
-        return m_g.m_vertices[v].m_property;
+        return m_g->m_vertices[v].m_property;
       }
       inline PropertyRef operator()(key_type v) const {
         return this->operator[](v);
       }
-      GraphRef m_g;
+      GraphPtr m_g;
     };
 
     struct adj_list_any_vertex_pa {
@@ -2184,9 +2185,9 @@ namespace boost {
 	typedef const value_type& const_reference;
 
         typedef vec_adj_list_vertex_property_map
-          <Graph, Graph&, value_type, reference, Tag> type;
+          <Graph, Graph*, value_type, reference, Tag> type;
         typedef vec_adj_list_vertex_property_map
-          <Graph, const Graph&, value_type, const_reference, Tag> const_type;
+          <Graph, const Graph*, value_type, const_reference, Tag> const_type;
       };
     };
     struct vec_adj_list_id_vertex_pa {
@@ -2202,9 +2203,9 @@ namespace boost {
       struct bind {
         typedef typename Graph::vertex_descriptor Vertex;
         typedef vec_adj_list_vertex_all_properties_map
-	  <Graph, Graph&, Property, Property&> type;
+	  <Graph, Graph*, Property, Property&> type;
         typedef vec_adj_list_vertex_all_properties_map
-	  <Graph, const Graph&, Property, const Property&> const_type;
+	  <Graph, const Graph*, Property, const Property&> const_type;
       };
     };
   namespace detail {
