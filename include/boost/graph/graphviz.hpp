@@ -111,6 +111,30 @@ namespace boost {
     }
   }
 
+  template<typename Attributes>
+  inline void write_all_attributes(Attributes attributes, 
+                                   const std::string& name,
+                                   std::ostream& out)
+  {
+    typename Attributes::const_iterator i = attributes.begin(),
+                                        end = attributes.end();
+    if (i != end) {
+      out << name << " [\n";
+      write_attributes(attributes, out);
+      out << "];\n";
+    }
+  }
+
+  inline void write_all_attributes(detail::error_property_not_found,
+                                   const std::string&,
+                                   std::ostream&)
+  {
+    // Do nothing - no attributes exist
+  }
+
+
+
+
   template <typename GraphGraphAttributes,
             typename GraphNodeAttributes,
             typename GraphEdgeAttributes>
@@ -122,38 +146,9 @@ namespace boost {
       : g_attributes(gg), n_attributes(gn), e_attributes(ge) { }
 
     void operator()(std::ostream& out) const {
-      
-      typename GraphGraphAttributes::const_iterator
-        gi = g_attributes.begin(),
-        gend = g_attributes.end();
-
-      if ( gi != gend ) {
-        out << "graph [";
-        write_attributes(g_attributes, out);
-        out << "];" << std::endl;
-      }
-
-      //write node [......]; if need
-      typename GraphNodeAttributes::const_iterator
-        ni = n_attributes.begin(),
-        nend = n_attributes.end();
-
-      if ( ni != nend ) {
-        out << "node [";
-        write_attributes(n_attributes, out);
-        out << "];" << std::endl;
-      }
-
-      //write edge[....]; if need
-      typename GraphEdgeAttributes::const_iterator 
-        ei = e_attributes.begin(),
-        eend = e_attributes.end();
-
-      if ( ei != eend ) {
-        out << "edge [";
-        write_attributes(e_attributes, out);
-        out << "];" << std::endl;
-      }
+      write_all_attributes(g_attributes, "graph", out);
+      write_all_attributes(n_attributes, "node", out);
+      write_all_attributes(e_attributes, "edge", out);
     }
     GraphGraphAttributes g_attributes;
     GraphNodeAttributes n_attributes;
@@ -196,12 +191,25 @@ namespace boost {
 
     template <class VorE>
     void operator()(std::ostream& out, const VorE& e) const {
-      if (!attributes[e].empty()) {
-        out << "[";
-        write_attributes(attributes[e], out);
-        out << "]";
-      }
+      this->write_attribute(out, attributes[e]);
     }
+
+    private:
+      template<typename AttributeSequence> 
+      void write_attribute(std::ostream& out, 
+                           const AttributeSequence& seq) const
+      {
+        if (!attributes[e].empty()) {
+          out << "[";
+          write_attributes(attributes[e], out);
+          out << "]";
+        }      
+      }
+  
+      void write_attribute(std::ostream&, 
+                           detail::error_property_not_found) const
+      {
+      }
     AttributeMap attributes;
   };
 
@@ -311,11 +319,11 @@ namespace boost {
       //print graph/node/edge attributes
 #ifdef BOOST_MSVC
       typedef typename graph_property<Graph, graph_graph_attribute_t>::type 
-	GAttrMap;
+        GAttrMap;
       typedef typename graph_property<Graph, graph_vertex_attribute_t>::type
-	NAttrMap;
+        NAttrMap;
       typedef typename graph_property<Graph, graph_edge_attribute_t>::type
-	EAttrMap;
+        EAttrMap;
       GAttrMap gam = get_property(g, graph_graph_attribute);
       NAttrMap nam = get_property(g, graph_vertex_attribute);
       EAttrMap eam = get_property(g, graph_edge_attribute);
@@ -336,7 +344,7 @@ namespace boost {
       typename boost::graph_traits<Graph>::edge_iterator ei, edge_end;
 
       typename property_map<Graph, vertex_index_t>::const_type 
-	indexmap = get(vertex_index, g.root());
+        indexmap = get(vertex_index, g.root());
 
       for(boost::tie(i,end) = boost::vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
@@ -345,11 +353,11 @@ namespace boost {
           vertex_marker[pos] = false;
           out << v;
 #ifdef BOOST_MSVC
-	  typedef typename property_map<Graph, vertex_attribute_t>::const_type 
-	    VertexAttributeMap;
-	  attributes_writer<VertexAttributeMap> vawriter(get(vertex_attribute, 
-							     g.root()));
-	  vawriter(out, v);
+          typedef typename property_map<Graph, vertex_attribute_t>::const_type 
+            VertexAttributeMap;
+          attributes_writer<VertexAttributeMap> vawriter(get(vertex_attribute, 
+                                                             g.root()));
+          vawriter(out, v);
 #else
           make_vertex_attributes_writer(g.root())(out, v);
 #endif
@@ -365,10 +373,10 @@ namespace boost {
           edge_marker[pos] = false;
           out << u << " " << Traits::delimiter() << " " << v;
 #ifdef BOOST_MSVC
-	  typedef typename property_map<Graph, edge_attribute_t>::const_type
-	    EdgeAttributeMap;
-	  attributes_writer<EdgeAttributeMap> eawriter(get(edge_attribute, g));
-	  eawriter(out, *ei);
+          typedef typename property_map<Graph, edge_attribute_t>::const_type
+            EdgeAttributeMap;
+          attributes_writer<EdgeAttributeMap> eawriter(get(edge_attribute, g));
+          eawriter(out, *ei);
 #else
           make_edge_attributes_writer(g)(out, *ei); //print edge properties
 #endif
@@ -407,27 +415,27 @@ namespace boost {
           GraphvizVertexProperty;
 
   typedef property<boost::edge_attribute_t, GraphvizAttrList, 
-		   property<boost::edge_index_t, int> >
+                   property<boost::edge_index_t, int> >
           GraphvizEdgeProperty;
   
   typedef property<boost::graph_graph_attribute_t, GraphvizAttrList, 
-		   property<boost::graph_vertex_attribute_t, GraphvizAttrList, 
-		   property<boost::graph_edge_attribute_t, GraphvizAttrList, 
-		   property<boost::graph_name_t, std::string> > > >
+                   property<boost::graph_vertex_attribute_t, GraphvizAttrList, 
+                   property<boost::graph_edge_attribute_t, GraphvizAttrList, 
+                   property<boost::graph_name_t, std::string> > > >
           GraphvizGraphProperty;
     
   typedef subgraph<adjacency_list<boost::vecS, 
-		   boost::vecS, boost::directedS, 
-		   GraphvizVertexProperty,
-		   GraphvizEdgeProperty,
-		   GraphvizGraphProperty> >
+                   boost::vecS, boost::directedS, 
+                   GraphvizVertexProperty,
+                   GraphvizEdgeProperty,
+                   GraphvizGraphProperty> >
           GraphvizDigraph;
 
   typedef subgraph<adjacency_list<boost::vecS, 
-		   boost::vecS, boost::undirectedS, 
-		   GraphvizVertexProperty,
-		   GraphvizEdgeProperty,
-		   GraphvizGraphProperty> >
+                   boost::vecS, boost::undirectedS, 
+                   GraphvizVertexProperty,
+                   GraphvizEdgeProperty,
+                   GraphvizGraphProperty> >
           GraphvizGraph;
   
 
@@ -439,6 +447,6 @@ namespace boost {
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
   extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
-} //namespace boost
+} // namespace boost
   
 #endif // BOOST_GRAPHVIZ_HPP
