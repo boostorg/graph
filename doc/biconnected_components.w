@@ -263,7 +263,7 @@ S.pop();
 
 \section{Appendix}
 
-@o biconnected-components.hpp -d
+@o biconnected-components.hpp
 @{
 // Copyright (c) Jeremy Siek 2001
 //
@@ -305,11 +305,11 @@ the algorithm.
 \end{figure}
 
 
-@o biconnected-components.cpp -d
+@o biconnected-components.cpp
 @{
 #include <vector>
 #include <list>
-#include "biconnected_components.hpp"
+#include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
 namespace boost {
