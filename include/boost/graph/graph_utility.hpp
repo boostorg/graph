@@ -176,7 +176,7 @@ namespace boost {
   template <class Graph>
   typename graph_traits<Graph>::edge_descriptor
   random_edge(Graph& g) {
-    typename Graph::size_type E = num_edges(g), n;
+    typename graph_traits<Graph>::edges_size_type E = num_edges(g), n;
     n = random_number(E);
     typename graph_traits<Graph>::edge_iterator
       i = edges(g).first;
@@ -218,7 +218,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::edge_descriptor 
       edge_descriptor;
     typename Graph::adjacency_iterator vi, viend, found;
-    boost::tie(vi, viend) = adjacenc_vertices(a, g);
+    boost::tie(vi, viend) = adjacent_vertices(a, g);
     found = std::find(vi, viend, b);
     if ( found == viend )
       return false;  

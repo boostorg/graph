@@ -1,17 +1,4 @@
 // -*- c++ -*-
-//===========================================================================
-//  CVS Information:                                                         
-//                                                                           
-//     $RCSfile$  $Revision$  $State$ 
-//     $Author$  $Date$ 
-//     $Locker$ 
-//---------------------------------------------------------------------------
-//                                                                           
-// DESCRIPTION                                                               
-//                                                                           
-//---------------------------------------------------------------------------
-//                                                                           
-// LICENSE AGREEMENT                                                         
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
@@ -36,111 +23,6 @@
 // OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
 // OR OTHER RIGHTS.
 //=======================================================================
-//---------------------------------------------------------------------------
-//                                                                           
-// REVISION HISTORY:                                                         
-//                                                                           
-// $Log$
-// Revision 1.25  2000/09/26 07:29:12  jsiek
-// completed conversion of properties to use _t and enums.
-// Also noticed that problems regarding iterator_adaptor has
-// gone away, so I've removed the ifdef's that took it out.
-//
-// Revision 1.24  2000/09/25 21:49:05  jsiek
-// changed to enums for propertyies
-//
-// Revision 1.23  2000/09/25 17:58:50  jsiek
-// plugin -> property name change
-//
-// Revision 1.22  2000/09/25 17:29:32  jsiek
-// changes tabs to spaces
-//
-// Revision 1.21  2000/09/25 17:25:59  jsiek
-// vertex_index() -> vertex_index
-// vertex_index -> vertex_index_t
-// etc.
-//
-// Revision 1.20  2000/09/25 16:27:22  jsiek
-// forgot to delete default argument
-//
-// Revision 1.19  2000/09/25 15:57:46  jsiek
-// some stlport debug mode fixes and some added docs
-//
-// Revision 1.18  2000/09/25 14:49:48  david_abrahams
-// remove unused args to suppress warnings
-//
-// Revision 1.17  2000/09/25 11:59:48  david_abrahams
-// keep untabified
-//
-// Revision 1.16  2000/09/25 05:17:49  jsiek
-// fixed mistake in put function
-//
-// Revision 1.15  2000/09/25 04:05:40  jsiek
-// fixed some function lookup problems due to VC++ no Koenig
-//
-// Revision 1.14  2000/09/24 22:59:22  david_abrahams
-// untabify so I can read it!
-//
-// Revision 1.13  2000/09/24 20:51:16  jsiek
-// PA -> Map name change and documentation cleanup/additions
-//
-// Revision 1.12  2000/09/24 00:41:39  jsiek
-// VC++ fixes
-//
-// Revision 1.11  2000/09/22 07:11:07  jsiek
-// reorganized graph/detail/adjacency_list.hpp to handle g++
-// inline friend in namespace bug and VC++ no Koenig lookup
-//
-// Revision 1.10  2000/09/22 04:18:50  jsiek
-// changes for visual c++ port
-//
-// Revision 1.9  2000/09/21 22:24:57  jsiek
-// moved adjacency_list_traits out of the detail directory
-//
-// Revision 1.8  2000/09/21 18:45:52  jsiek
-// removed some obsolete files
-//
-// Revision 1.7  2000/09/21 18:34:53  jsiek
-// more property accessor -> property map changes
-//
-// Revision 1.6  2000/09/21 03:31:19  jsiek
-// property map interface changes
-//
-// Revision 1.5  2000/09/20 19:30:09  jsiek
-// changed the name of the property tags: name_tag -> vertex_name_t, etc.
-//
-// Revision 1.4  2000/09/19 01:58:00  jsiek
-// fixed some misuses of BOOST_NO_STD_ITERATOR_TRAITS, changing it
-// to BOOST_NO_ITERATOR_ADAPTORS, which is now always defined. Too
-// many problems:
-// 1. internal compiler errors on VC++
-// 2. warning from is_convertible under g++
-//
-// Revision 1.3  2000/09/19 01:25:14  jsiek
-// changed #include iterator_adaptors to #include integer_range
-//
-// Revision 1.2  2000/09/18 09:32:27  jsiek
-// few typos
-//
-// Revision 1.1  2000/09/18 08:17:13  jsiek
-// new files for boost graph library
-//
-// Revision 1.12  2000/09/13 05:03:53  jsiek
-//  work on visitors
-//
-// Revision 1.11  2000/09/12 01:25:44  jsiek
-// size_type -> vertices_size_type, etc.
-//
-// Revision 1.10  2000/09/06 22:54:45  llee1
-// *** empty log message ***
-//
-// Revision 1.9  2000/09/05 21:05:57  llee1
-// *** empty log message ***
-//
-// Revision 1.8  2000/09/05 20:36:44  llee1
-// change library name in the header comment
-//
-//===========================================================================
 
 #ifndef BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
 #define BOOST_GRAPH_DETAIL_ADJACENCY_LIST_HPP
@@ -150,7 +32,18 @@
 #include <boost/operators.hpp>
 #include <boost/pending/integer_range.hpp>
 
+#ifdef BOOST_MSVC
+// Having linking troubles due to long symbol names getting
+// truncated on VC++.
+#define BOOST_NO_ITERATOR_ADAPTORS // local macro to this header
+#endif
+
+#ifndef BOOST_NO_ITERATOR_ADAPTORS
 #include <boost/pending/iterator_adaptors.hpp>
+#else
+#include <boost/graph/detail/incidence_iterator.hpp>
+#endif
+
 #include <boost/pending/ct_if.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -183,6 +76,7 @@ namespace boost {
       typedef bidirectional_tag directed_category;
     };
 
+#ifndef BOOST_NO_ITERATOR_ADAPTORS
     template <class Vertex, class Traits>
     struct adjacency_iterator_traits {
       typedef Vertex value_type;
@@ -220,6 +114,41 @@ namespace boost {
         adjacency_iterator_traits<Vertex, Traits> 
       > type;
     };
+#else
+    template <class Vertex, class OutEdgeIter, class Graph>
+    struct bidir_adjacency_iterator
+      : public boost::iterator<std::forward_iterator_tag, Vertex,
+                               std::ptrdiff_t, Vertex*, Vertex>
+    {
+    private:
+      typedef bidir_adjacency_iterator self;
+    public:
+      typedef std::ptrdiff_t difference_type;
+      typedef std::forward_iterator_tag iterator_category;
+      typedef Vertex* pointer;
+      typedef Vertex reference;
+      typedef Vertex value_type;
+      inline bidir_adjacency_iterator() { }
+          inline bidir_adjacency_iterator(OutEdgeIter ii, Graph* _g)
+        : i(ii), g(_g) {}
+
+      inline self& operator++() { ++i; return *this; }
+      inline self operator++(int) { self tmp = *this; ++(*this); return tmp; }
+      inline reference operator*() const { return target(*i, *g); }
+      /* Attention: */
+      /* Even if two iterators are not equal, they could be the same vertex! */
+      /* i.e.  i != j does not mean *i != *j */
+
+      inline bool operator!=(const self& x) const { return i != x.i; }
+      inline bool operator==(const self& x) const { return i == x.i; }
+
+      inline self* operator->() { return this; }
+      /*    protected: */
+      OutEdgeIter i;
+      Graph* g;
+    protected:
+    };
+#endif
 
     template <class P>
     struct has_property { enum { value = true }; };
@@ -230,6 +159,7 @@ namespace boost {
     //=========================================================================
     // Out-Edge and In-Edge Iterator Implementation
 
+#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
     template <class EdgeDescriptor, class EdgeIterTraits>
     struct edge_iter_traits {
       typedef EdgeDescriptor value_type;
@@ -267,10 +197,12 @@ namespace boost {
       }
       VertexDescriptor m_src;
     };
+#endif
 
     //=========================================================================
     // Undirected Edge Iterator Implementation
 
+#if !defined(BOOST_NO_ITERATOR_ADAPTORS)
     struct undirected_edge_iter_policies
       : public boost::default_iterator_policies
     {
@@ -280,6 +212,30 @@ namespace boost {
         return EdgeDescriptor((*i).m_source, (*i).m_target, i->get_property());
       }
     };
+#else
+    template <class EdgeIter, class Edge>
+    struct undirected_edge_iter
+    {
+      typedef undirected_edge_iter Self;
+      typedef Edge value_type;
+      typedef Edge reference;
+      typedef Edge* pointer;
+      typedef std::ptrdiff_t difference_type;
+      typedef std::bidirectional_iterator_tag iterator_category;
+      inline undirected_edge_iter() { }
+      inline undirected_edge_iter(const EdgeIter& i) : m_iter(i) { }
+      inline Self& operator++() { ++m_iter; return *this; }
+      inline Self operator++(int) { Self t=*this; ++m_iter; return t; }
+      inline Self& operator--() { --m_iter; return *this; }
+      inline Self operator--(int) { Self t=*this; --m_iter; return t; }
+      inline Edge operator*() const {
+        return Edge(m_iter->m_source, m_iter->m_target, m_iter->get_property());
+      }
+      inline bool operator==(const Self& x) const { return m_iter == x.m_iter;}
+      inline bool operator!=(const Self& x) const { return m_iter != x.m_iter;}
+      EdgeIter m_iter;
+    };
+#endif
 
     //=========================================================================
     // Edge Storage Types (stored in the out-edge/in-edge lists)
@@ -315,12 +271,12 @@ namespace boost {
     };
 
     template <class Vertex, class Iter, class Property>
-    class stored_edge_iter 
+    class se_iter // having symbol length problems with VC++
       : public stored_edge<Vertex> // there is some redundant storage
       // of the target vertex, but it is difficult to remove...
     {
     public:
-      inline stored_edge_iter(Vertex v, Iter i = Iter())
+      inline se_iter(Vertex v, Iter i = Iter())
         : stored_edge<Vertex>(v), m_iter(i) { }
       inline Property* get_property() { return m_iter->get_property(); }
       inline const Property* get_property() const { return m_iter->get_property(); }
@@ -1470,7 +1426,7 @@ namespace boost {
             stored_edge_property<vertex_descriptor, EdgeProperty>,  
             stored_edge<vertex_descriptor>
           >::type,
-          stored_edge_iter<vertex_descriptor, EdgeIter, EdgeProperty>
+          se_iter<vertex_descriptor, EdgeIter, EdgeProperty>
         >::type StoredEdge;
 
         // Adjacency Types
@@ -1493,22 +1449,37 @@ namespace boost {
         };
 #endif
 
+#if defined BOOST_NO_ITERATOR_ADAPTORS
+        typedef detail::bidir_incidence_iterator<vertex_descriptor,
+         edge_descriptor, OutEdgeIter, detail::out_edge_tag> out_edge_iterator;
+#else
         typedef iterator_adaptor<OutEdgeIter, 
           out_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, OutEdgeIterTraits>
         > out_edge_iterator;
+#endif
 
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename adjacency_iterator<graph_type, vertex_descriptor,
           out_edge_iterator, out_edge_iterator>::type adjacency_iterator;
+#else
+        typedef bidir_adjacency_iterator<vertex_descriptor,out_edge_iterator,
+                graph_type> adjacency_iterator;
+#endif
 
         typedef OutEdgeList InEdgeList;
         typedef OutEdgeIter InEdgeIter;
         typedef OutEdgeIterTraits InEdgeIterTraits;
 
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
           edge_iter_traits<edge_descriptor, InEdgeIterTraits>
         > in_edge_iterator;
+#else
+        typedef detail::bidir_incidence_iterator<vertex_descriptor,
+           edge_descriptor, InEdgeIter, detail::in_edge_tag> in_edge_iterator;
+#endif
 
         // Edge Iterator
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
@@ -1517,10 +1488,14 @@ namespace boost {
         typedef OutEdgeIterTraits EdgeIterTraits;
 #endif
 
+#if !defined BOOST_NO_ITERATOR_ADAPTORS
         typedef typename boost::iterator_adaptor<EdgeIter,
               undirected_edge_iter_policies,
               edge_iter_traits<edge_descriptor, EdgeIterTraits> > 
           UndirectedEdgeIter;
+#else
+        typedef undirected_edge_iter<EdgeIter,edge_descriptor> UndirectedEdgeIter;
+#endif
 
         typedef adj_list_edge_iterator<vertex_iterator, out_edge_iterator, 
            graph_type> DirectedEdgeIter;
@@ -1752,6 +1727,10 @@ namespace boost {
   };
 
 } // namespace boost
+
+#ifdef BOOST_NO_ITERATOR_ADAPTORS
+#undef BOOST_NO_ITERATOR_ADAPTORS
+#endif
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
 
