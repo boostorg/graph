@@ -173,6 +173,17 @@ namespace boost {
     typedef int edges_size_type;
     typedef int degree_size_type;
   };
+
+  template <class vtype, class etype>
+  struct vertex_property< GRAPH<vtype,etype> > {
+    typedef vtype type;
+  };
+
+  template <class vtype, class etype>
+  struct edge_property< GRAPH<vtype,etype> > {
+    typedef etype type;
+  };
+
 } // namespace boost
 #endif
 
@@ -292,6 +303,13 @@ namespace boost {
   add_vertex(GRAPH<vtype,etype>& g)
   {
     return g.new_node();
+  }
+
+  template <class vtype, class etype>
+  typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
+  add_vertex(const vtype& vp, GRAPH<vtype,etype>& g)
+  {
+    return g.new_node(vp);
   }
 
   // Hmm, LEDA doesn't have the equivalent of clear_vertex() -JGS
