@@ -213,6 +213,13 @@ namespace boost {
     typedef typename Map::const_type const_type;
   };
 
+  template <class Graph, class Property>
+  class graph_property {
+  public:
+    typedef typename property_value<typename Graph::graph_property_type, 
+      Property>::type type;
+  };
+
 } // namespace boost
 
 #endif /* BOOST_GRAPH_PROPERTIES_HPPA */
