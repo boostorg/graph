@@ -55,15 +55,15 @@ namespace boost {
     }
 
     //=========================================================================
-    template <typename Set1, typename Set2, typename Permutation>
-    void permutation_set(const Set1& set1, 
+    template <typename Range, typename Set2, typename Permutation>
+    void permutation_set(const Range& set1, 
                          Set2& set2, 
                          const Permutation& perm)
     {
-      clear(set2);
-      for (typename set_traits<Set1>::iterator i = begin(set1);
+      set_clear(set2);
+      for (typename container_traits<Range>::iterator i = begin(set1);
            i != end(set1); ++i)
-        insert(set2, perm[*i]);
+        set_insert(set2, perm[*i]);
     }
     
     //=========================================================================
@@ -112,34 +112,35 @@ namespace boost {
     int test_canonical_labeling(const Graph1& g, const Graph2& canonical_g,
                                 const Labeling1& g_labeling, 
                                 const Labeling2& canonical_g_labeling, 
-				int& samerows)
+				int& same_rows)
     {
-      
       int i, j;
       set *ph;
       
       permutation_type work_perm(n);
-      set_type work_set(m);
+      set_type work_i_set(m), canon_i_set(m);
       
       for (i = 0; i < n; ++i)
         work_perm[labeling[i]] = i;
 
       //for (i = 0, ph = canong; i < n; ++i, ph += M) {
       for (tie(i, i_end) = vertices(canonical_g); i != i_end; ++i) {
-        
-        adjacent_vertices_set<Graph1>::type i_set(labeling[*i], g);
-        adjacent_vertices_set<Graph2>::type ph(*i, canonical_g);
-        permutation_set(i_set, work_set, work_perm);
+	
+        permutation_set(adjacent_vertices(g_labeling[*i], g),
+			work_i_set, work_perm);
 
-        int g_num = subset_number<int>(i_set, make_permuted_map(g_labeling, 
-								work_perm));
-	int cg_num = subset_number<int>(ph, canonical_g_labeling);
-	if (g_num < cg_num)
-	  return -1;
-	else if (g_num > cg_num)
-	  return 1;
+	// Or perhaps canonical_g should be stored with ordered out-edges
+        permutation_set(adjacent_vertices(*i, canonical_g),
+			canon_i_set, canonical_g_labeling);
+	
+	int cmp = set_lex_compare(work_i_set, canon_i_set);
+
+	if (cmp != 0) {
+	  same_rows = i;
+	  return cmp;
+	}
       }
-      *samerows = n;
+      same_rows = n;
       return 0;
     }
     
