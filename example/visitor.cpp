@@ -95,27 +95,22 @@ main(int, char*[])
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
-  boost::property_map<Graph, vertex_index_t>::type 
-    vertex_id = get(vertex_index, G);
   
-  std::vector<default_color_type> c(num_vertices(G));
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
 
   cout << "DFS categorized directed graph" << endl;
-  depth_first_search(G, make_dfs_visitor(
-      std::make_pair(print_edge("tree", on_tree_edge()),
-      std::make_pair(print_edge("back", on_back_edge()),
-                     print_edge("forward or cross", on_forward_or_cross_edge())
-                     ))),
-    make_iterator_property_map(c.begin(), vertex_id, c[0]));
+  depth_first_search(G, visitor(make_dfs_visitor(
+      make_list(print_edge("tree", on_tree_edge()),
+		print_edge("back", on_back_edge()),
+		print_edge("forward or cross", on_forward_or_cross_edge())
+		))));
 
   cout << endl << "BFS categorized directed graph" << endl;
   boost::breadth_first_search
-    (G, vertex(0, G), make_bfs_visitor(
+    (G, vertex(0, G), visitor(make_bfs_visitor(
      std::make_pair(print_edge("tree", on_tree_edge()),
-                    print_edge("cycle", on_non_tree_edge()))), 
-     make_iterator_property_map(c.begin(), vertex_id, c[0]));
+                    print_edge("cycle", on_non_tree_edge())))));
 
   return 0;
 }
