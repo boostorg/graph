@@ -24,6 +24,42 @@
 
 <ol>
 
+<li>Why does the BGL interface use friend functions (or free functions)
+  instead of member functions?<br>
+<p>
+For the most part, the differences between member functions and free
+functions are syntactic, and not very important, though people can get
+religious about them. However, we had one technical reason for
+favoring free functions. A programmer can overload a free function for
+a type coming from a 3rd party without modifying the source
+code/definition of that type. There are several uses of this in the
+BGL. For example, Stanford GraphBase and LEDA graphs can both be used
+in BGL algorithms because of overloads in <tt>stanford_graph.hpp</tt>
+and <tt>leda_graph.hpp</tt>. One can even use
+<tt>std::vector&lt;std::list&gt;</tt> as a graph due to the overloads
+in <tt>vector_as_graph.hpp</tt>.
+</p>
+<p>
+Of course, there is way to adapt 3rd party classes into an interface
+with member functions. You create an adaptor class. However, the
+disadvantage of an adaptor class (compared to overloaded functions) is
+that one has to physically wrap and unwrap the objects as they go
+into/out of BGL algorithms. So the overloaded function route is more
+convenient.  Granted, this is not a huge difference, but since there
+weren't other strong reasons, it was enough for me to choose member
+functions.
+</p>
+ 
+<p> 
+Our religious reason for choosing free functions is to send the message
+that BGL is a generic library, and not a traditional object-oriented
+library. OO was hip in the 80s and 90s, but its time we moved beyond!
+</p>
+</li>
+
+
+
+
 <li>How do I create a graph where the edges are sorted/ordered?  The
   example <a href="../example/ordered_out_edges.cpp">
   <tt>ordered_out_edges.cpp</tt></a> shows how to do this.
