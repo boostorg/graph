@@ -160,8 +160,8 @@ namespace boost {
 //
 // It is needed in order to allow us to write using boost::vertices as
 // needed for ADL when using vector_as_graph below.
-#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
- && !BOOST_WORKAROUND(__GNUC__, <= 2)
+#if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)            \
+ && !BOOST_WORKAROUND(__GNUC__, <= 2)                       \
  && !BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))
 # define BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
 #endif 
