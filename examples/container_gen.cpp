@@ -24,7 +24,7 @@
 //=======================================================================
 #include <boost/graph/adjacency_list.hpp>
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) && !defined(BOOST_NO_STD_ALLOCATOR)
 
 template <class Allocator>
 struct list_with_allocatorS { };
