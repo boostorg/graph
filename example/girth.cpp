@@ -97,7 +97,7 @@ main()
       continue;
     }
     distance_list.clear();
-    distance_list.resize(boost::num_vertices(g) * boost::num_edges(g));
+    distance_list.resize(boost::num_vertices(g));
     
     distance = get(dist_t(), g);
     predecessor = get(pred_t(), g);
