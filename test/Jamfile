@@ -31,13 +31,8 @@ unit-test graph : graph.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
 compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
-compile leda_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) : 
-  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a ;
-
 compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 
-compile stanford_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) 
-   <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
 
 unit-test subgraph : subgraph.cpp <lib>../../test/build/boost_test_exec_monitor : <sysinclude>$(BOOST_ROOT)  ;
 
@@ -48,3 +43,24 @@ compile vector_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  ;
 compile copy.cpp : <sysinclude>$(BOOST_ROOT) ;
 
 
+# Run SDB tests only when -sSDB= is set.
+if $(SDB) != ""
+{
+    local SDB_DEPENDCIES =
+        <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+
+    compile stanford_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) 
+        $(SDB_DEPENDCIES)  ;
+}
+
+# Run LEDA tests only when -sLEDA= is set.
+if $(LEDA) != ""
+{
+     local LEDA_DEPENDENCIES = 
+        <include>$(LEDA)/incl 
+        <library-file>$(LEDA)/libG.a
+        ;
+
+    compile leda_graph_cc.cpp : <sysinclude>$(BOOST_ROOT)  
+       $(LEDA_DEPENDENCIES) ;
+}
