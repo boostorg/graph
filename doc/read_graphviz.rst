@@ -12,11 +12,14 @@ __ ../../../index.htm
 
   template <typename MutableGraph>
   bool read_graphviz(std::istream& in, MutableGraph& graph,
-		     dynamic_properties& dp);
+		     dynamic_properties& dp, 
+                     const std::string& node_id = "node_id");
 
+  // Only available if BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS is defined
   template <typename MultiPassIterator, typename MutableGraph>
   bool read_graphviz(MultiPassIterator begin, MultiPassIterator end,
-		     MutableGraph& graph, dynamic_properties& dp);
+		     MutableGraph& graph, dynamic_properties& dp, 
+                     const std::string& node_id = "node_id");
 
   // Deprecated GraphViz readers
   void read_graphviz(const std::string& file, GraphvizDigraph& g);
@@ -28,7 +31,11 @@ __ ../../../index.htm
 The ``read_graphviz`` function interprets a graph described using the
 GraphViz_ DOT language and builds a BGL graph that captures that
 description.  Using this function, you can initialize a graph using
-data stored as text.
+data stored as text. To use the iterator version of ``read_graphviz``,
+you will need to define the macro BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+before including the header ``<boost/graph/graphviz.hpp>``. Doing so
+may greatly increase the amount of time required to compile the
+GraphViz reader.
 
 The DOT language can specify both directed and undirected graphs, and
 ``read_graphviz`` differentiates between the two. One must pass
@@ -42,8 +49,7 @@ takes a dynamic_properties_ object and operates on its collection of
 property maps.  The reader passes all the properties encountered to
 this object, using the GraphViz string keys as the property keys.
 Furthermore, ``read_graphviz`` stores node identifier names under the
-property key "node_id". The deprecated reading functions do not
-support properties.
+vertex property map named node_id. 
 
 Requirements:
  - The type of the graph must model the `Mutable Graph`_ concept.
@@ -112,26 +118,18 @@ graph is undirected, as indicated by the ``graph`` keyword in the DOT
 language.
 
 
-Using the Deprecated GraphViz Readers
--------------------------------------
+Building the GraphViz Readers
+-----------------------------
+To use the GraphViz readers, you will need to build and link against
+the "bgl-viz" library. The library can be built by following the
+`Boost Jam Build Instructions`_ for the subdirectory ``libs/graph/build``.
 
+Deprecated Readers
+------------------
 The deprecated readers do not provide exceptions on error (they
 abort), they require the use of one of the predefined graph types
 (``GraphvizDigraph`` or ``GraphvizGraph``), and they do not support
 arbitrary properties. They will be removed in a future Boost version.
-
-To use the deprecated GraphViz readers, you will need to build and
-link against the "bgl-viz" library. The library can be built in two
-ways:
-
-  1. Follow the `Boost Jam Build Instructions`_ for the subdirectory
-     ``libs/graph/build``.
-
-  2. In the directory ``libs/graph/src``, use the provided Makefile
-     (for Unix-like systems).
-
-Alternatively, you can just include the source files in
-``libs/graph/src`` in your project or makefile.
 
 
 Notes

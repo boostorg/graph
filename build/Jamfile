@@ -1,7 +1,9 @@
 subproject libs/graph/build ;
 
 SOURCES = graphviz_graph_lex graphviz_digraph_lex
-    graphviz_graph_parser graphviz_digraph_parser ;
+    graphviz_graph_parser graphviz_digraph_parser 
+    read_graphviz_spirit 
+    ;
 
 GRAPHVIZ_DEFS(graphviz_graph_lex) =
     GRAPHVIZ_DIRECTED=0
@@ -35,6 +37,7 @@ GRAPHVIZ_DEFS(graphviz_digraph_parser) =
         : ../src/$(SOURCES).cpp 
         : <sysinclude>$(BOOST_ROOT) <define>YY_NO_UNISTD_H
         : debug <inlining>on #inlining prevents linker name clashes due to truncation! 
+          <debug-symbols>off # Debugging symbols become HUGE 
         ;
 
 }

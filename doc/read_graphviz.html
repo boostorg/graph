@@ -12,11 +12,14 @@
 <pre class="literal-block">
 template &lt;typename MutableGraph&gt;
 bool read_graphviz(std::istream&amp; in, MutableGraph&amp; graph,
-                   dynamic_properties&amp; dp);
+                   dynamic_properties&amp; dp, 
+                   const std::string&amp; node_id = &quot;node_id&quot;);
 
+// Only available if BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS is defined
 template &lt;typename MultiPassIterator, typename MutableGraph&gt;
 bool read_graphviz(MultiPassIterator begin, MultiPassIterator end,
-                   MutableGraph&amp; graph, dynamic_properties&amp; dp);
+                   MutableGraph&amp; graph, dynamic_properties&amp; dp, 
+                   const std::string&amp; node_id = &quot;node_id&quot;);
 
 // Deprecated GraphViz readers
 void read_graphviz(const std::string&amp; file, GraphvizDigraph&amp; g);
@@ -27,7 +30,11 @@ void read_graphviz(FILE* file, GraphvizGraph&amp; g);
 <p>The <tt class="literal"><span class="pre">read_graphviz</span></tt> function interprets a graph described using the
 <a class="reference" href="http://graphviz.org/">GraphViz</a> DOT language and builds a BGL graph that captures that
 description.  Using this function, you can initialize a graph using
-data stored as text.</p>
+data stored as text. To use the iterator version of <tt class="literal"><span class="pre">read_graphviz</span></tt>,
+you will need to define the macro BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+before including the header <tt class="literal"><span class="pre">&lt;boost/graph/graphviz.hpp&gt;</span></tt>. Doing so
+may greatly increase the amount of time required to compile the
+GraphViz reader.</p>
 <p>The DOT language can specify both directed and undirected graphs, and
 <tt class="literal"><span class="pre">read_graphviz</span></tt> differentiates between the two. One must pass
 <tt class="literal"><span class="pre">read_graphviz</span></tt> an undirected graph when reading an undirected graph;
@@ -39,8 +46,7 @@ takes a <a class="reference" href="../../property_map/doc/dynamic_property_map.h
 property maps.  The reader passes all the properties encountered to
 this object, using the GraphViz string keys as the property keys.
 Furthermore, <tt class="literal"><span class="pre">read_graphviz</span></tt> stores node identifier names under the
-property key &quot;node_id&quot;. The deprecated reading functions do not
-support properties.</p>
+vertex property map named node_id.</p>
 <dl>
 <dt>Requirements:</dt>
 <dd><ul class="first last simple">
@@ -56,10 +62,11 @@ concept.</li>
 <ul class="simple">
 <li><a class="reference" href="#where-defined" id="id2" name="id2">Where Defined</a></li>
 <li><a class="reference" href="#exceptions" id="id3" name="id3">Exceptions</a></li>
-<li><a class="reference" href="#using-the-deprecated-graphviz-readers" id="id4" name="id4">Using the Deprecated GraphViz Readers</a></li>
-<li><a class="reference" href="#notes" id="id5" name="id5">Notes</a></li>
-<li><a class="reference" href="#see-also" id="id6" name="id6">See Also</a></li>
-<li><a class="reference" href="#future-work" id="id7" name="id7">Future Work</a></li>
+<li><a class="reference" href="#building-the-graphviz-readers" id="id4" name="id4">Building the GraphViz Readers</a></li>
+<li><a class="reference" href="#deprecated-readers" id="id5" name="id5">Deprecated Readers</a></li>
+<li><a class="reference" href="#notes" id="id6" name="id6">Notes</a></li>
+<li><a class="reference" href="#see-also" id="id7" name="id7">See Also</a></li>
+<li><a class="reference" href="#future-work" id="id8" name="id8">Future Work</a></li>
 </ul>
 </div>
 <div class="section" id="where-defined">
@@ -113,28 +120,21 @@ type is passed to <tt class="literal"><span class="pre">read_graph</span></tt> b
 graph is undirected, as indicated by the <tt class="literal"><span class="pre">graph</span></tt> keyword in the DOT
 language.</p>
 </div>
-<div class="section" id="using-the-deprecated-graphviz-readers">
-<h1><a class="toc-backref" href="#id4" name="using-the-deprecated-graphviz-readers">Using the Deprecated GraphViz Readers</a></h1>
+<div class="section" id="building-the-graphviz-readers">
+<h1><a class="toc-backref" href="#id4" name="building-the-graphviz-readers">Building the GraphViz Readers</a></h1>
+<p>To use the GraphViz readers, you will need to build and link against
+the &quot;bgl-viz&quot; library. The library can be built by following the
+<a class="reference" href="../../../more/getting_started.html#Build_Install">Boost Jam Build Instructions</a> for the subdirectory <tt class="literal"><span class="pre">libs/graph/build</span></tt>.</p>
+</div>
+<div class="section" id="deprecated-readers">
+<h1><a class="toc-backref" href="#id5" name="deprecated-readers">Deprecated Readers</a></h1>
 <p>The deprecated readers do not provide exceptions on error (they
 abort), they require the use of one of the predefined graph types
 (<tt class="literal"><span class="pre">GraphvizDigraph</span></tt> or <tt class="literal"><span class="pre">GraphvizGraph</span></tt>), and they do not support
 arbitrary properties. They will be removed in a future Boost version.</p>
-<p>To use the deprecated GraphViz readers, you will need to build and
-link against the &quot;bgl-viz&quot; library. The library can be built in two
-ways:</p>
-<blockquote>
-<ol class="arabic simple">
-<li>Follow the <a class="reference" href="../../../more/getting_started.html#Build_Install">Boost Jam Build Instructions</a> for the subdirectory
-<tt class="literal"><span class="pre">libs/graph/build</span></tt>.</li>
-<li>In the directory <tt class="literal"><span class="pre">libs/graph/src</span></tt>, use the provided Makefile
-(for Unix-like systems).</li>
-</ol>
-</blockquote>
-<p>Alternatively, you can just include the source files in
-<tt class="literal"><span class="pre">libs/graph/src</span></tt> in your project or makefile.</p>
 </div>
 <div class="section" id="notes">
-<h1><a class="toc-backref" href="#id5" name="notes">Notes</a></h1>
+<h1><a class="toc-backref" href="#id6" name="notes">Notes</a></h1>
 <blockquote>
 <ul class="simple">
 <li>The <tt class="literal"><span class="pre">read_graphviz</span></tt> function does not use any code from the
@@ -166,11 +166,11 @@ that property map value types are default constructible.</strong></li>
 </blockquote>
 </div>
 <div class="section" id="see-also">
-<h1><a class="toc-backref" href="#id6" name="see-also">See Also</a></h1>
+<h1><a class="toc-backref" href="#id7" name="see-also">See Also</a></h1>
 <p><a class="reference" href="write-graphviz.html">write_graphviz</a></p>
 </div>
 <div class="section" id="future-work">
-<h1><a class="toc-backref" href="#id7" name="future-work">Future Work</a></h1>
+<h1><a class="toc-backref" href="#id8" name="future-work">Future Work</a></h1>
 <blockquote>
 <ul class="simple">
 <li>Currently the parser relies upon lowercase language keywords
@@ -186,7 +186,7 @@ identifier(so-called &quot;ID&quot; in the source) is required to support this.<
 </div>
 <hr class="footer" />
 <div class="footer">
-Generated on: 2005-02-08 18:51 UTC.
+Generated on: 2005-03-23 18:37 UTC.
 </div>
 </body>
 </html>

@@ -1,3 +1,4 @@
+#define GRAPHVIZ_DIRECTED 1
 #line 2 "graphviz_digraph_lex.cpp"
 
 #line 4 "graphviz_digraph_lex.cpp"

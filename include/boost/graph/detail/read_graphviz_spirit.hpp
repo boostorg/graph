@@ -51,7 +51,7 @@
 #include <set>
 #include <utility>
 #include <map>
-
+#include <boost/graph/graphviz.hpp>
 
 namespace phoenix {
 // Workaround:  std::map::operator[] uses a different return type than all
@@ -66,53 +66,6 @@ struct binary_operator<index_op, std::map<TK,T0>, T1>
 } // namespace phoenix
 
 namespace boost {
-
-/////////////////////////////////////////////////////////////////////////////
-// Graph reader exceptions
-/////////////////////////////////////////////////////////////////////////////
-
-struct graph_exception : public std::exception {
-  virtual ~graph_exception() throw() {}
-  virtual const char* what() const throw() = 0;
-};
-
-struct bad_parallel_edge : public graph_exception {
-  std::string from;
-  std::string to;
-  mutable std::string statement;
-  bad_parallel_edge(const std::string& i, const std::string& j) :
-    from(i), to(j) {}
-
-  virtual ~bad_parallel_edge() throw() {}
-  const char* what() const throw() {
-    if(statement.empty())
-      statement =
-        std::string("Failed to add parallel edge: (")
-        + from +  "," + to + ")\n";
-
-    return statement.c_str();
-  }
-};
-  
-struct directed_graph_error : public graph_exception {
-  virtual ~directed_graph_error() throw() {}
-  virtual const char* what() const throw() {
-    return
-      "read_graphviz: "
-      "Tried to read a directed graph into an undirected graph.";
-  }
-};
-
-struct undirected_graph_error : public graph_exception {
-  virtual ~undirected_graph_error() throw() {}
-  virtual const char* what() const throw() {
-    return
-      "read_graphviz: "
-      "Tried to read an undirected graph into a directed graph.";
-  }
-};
-
-
 namespace detail {
 namespace graph {
 
@@ -124,27 +77,6 @@ using namespace phoenix;
 /////////////////////////////////////////////////////////////////////////////
 // Application-specific type definitions
 /////////////////////////////////////////////////////////////////////////////
-
-typedef std::string id_t;
-typedef id_t node_t;
-
-// edges are not uniquely determined by adjacent nodes
-class edge_t {
-  int idx_;
-  explicit edge_t(int i) : idx_(i) {}
-public:
-  static edge_t new_edge() {
-    static int idx = 0;
-    return edge_t(idx++);
-  };
-  
-  bool operator==(const edge_t& rhs) const {
-    return idx_ == rhs.idx_;
-  }
-  bool operator<(const edge_t& rhs) const {
-    return idx_ < rhs.idx_;
-  }
-};
 
 typedef std::set<edge_t> edges_t;
 typedef std::set<node_t> nodes_t;
@@ -202,17 +134,9 @@ struct subgraph_closure : boost::spirit::closure<subgraph_closure,
 /////////////////////////////////////////////////////////////////////////////
 
 // Grammar for a dot file.
-template <typename MutableGraph>
-struct dot_grammar : public grammar< dot_grammar<MutableGraph> > { 
-
-
-  MutableGraph& graph_;
-  dynamic_properties& dp_;
-  std::string node_id_prop_;
-  dot_grammar(MutableGraph& graph, dynamic_properties& dp,
-              std::string const& node_id_prop) :
-    graph_(graph), dp_(dp), node_id_prop_(node_id_prop) { }
-
+struct dot_grammar : public grammar<dot_grammar> { 
+  mutate_graph& graph_;
+  explicit dot_grammar(mutate_graph& graph) : graph_(graph) { }
 
   template <class ScannerT>
   struct definition {
@@ -362,16 +286,12 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
     //
 
     void check_undirected() {
-      if(!boost::is_convertible<
-           typename boost::graph_traits<MutableGraph>::directed_category,
-           boost::undirected_tag>::value) 
+      if(self.graph_.is_directed())
         throw boost::undirected_graph_error();
     }
 
     void check_directed() {
-      if(!boost::is_convertible<
-           typename boost::graph_traits<MutableGraph>::directed_category,
-           boost::directed_tag>::value) 
+      if(!self.graph_.is_directed())
         throw boost::directed_graph_error();
     }
     
@@ -381,15 +301,10 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
 
       if(nodes.find(node) == nodes.end()) {
         nodes.insert(node);
+        self.graph_.add_vertex(node);
+
         node_map.insert(std::make_pair(node,ids_t()));
-        // Add the node to the graph.
-        bgl_vertex_t v = add_vertex(self.graph_);
-        // Set up a mapping from name to BGL vertex.
 
-        bgl_nodes.insert(std::make_pair(node,v));
-
-        // node_id_prop_ allows the caller to see the real id names for nodes.
-        put(self.node_id_prop_,self.dp_,v,node);
 #ifdef BOOST_GRAPH_DEBUG
         std::cout << "Add new node " << node << std::endl;
 #endif // BOOST_GRAPH_DEBUG
@@ -428,27 +343,21 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
           edge_stack.push_back(edge);
           edges.insert(edge);
           edge_map.insert(std::make_pair(edge,ids_t()));
-          // Add the real edge.
-          std::pair<bgl_edge_t, bool> result =
-            add_edge(bgl_nodes[*i],bgl_nodes[*j],self.graph_);
 
-          if(!result.second) {
-            // In the case of no parallel edges allowed
-            throw bad_parallel_edge(*i,*j);
-          } else {
-            bgl_edges.insert(std::make_pair(edge,result.first));
-            // Set the default properties for this edge
-            for(props_t::iterator k = edge_props.begin();
-                k != edge_props.end(); ++k) {
+          // Add the real edge.
+          self.graph_.add_edge(edge, *i, *j);
+
+          // Set the default properties for this edge
+          for(props_t::iterator k = edge_props.begin();
+              k != edge_props.end(); ++k) {
+            set_edge_property(edge,k->first,k->second);
+          }
+          if(subgraph_depth > 0) {
+            subgraph.edges().insert(edge);
+            // Set the subgraph's default properties as well
+            props_t& props = subgraph_edge_props[subgraph.name()];
+            for(props_t::iterator k = props.begin(); k != props.end(); ++k) {
               set_edge_property(edge,k->first,k->second);
-            }
-            if(subgraph_depth > 0) {
-              subgraph.edges().insert(edge);
-              // Set the subgraph's default properties as well
-              props_t& props = subgraph_edge_props[subgraph.name()];
-              for(props_t::iterator k = props.begin(); k != props.end(); ++k) {
-                set_edge_property(edge,k->first,k->second);
-              }
             }
           }
         }
@@ -532,7 +441,7 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
       // Add the property key to the "set" table to avoid default overwrite
       node_map[node].insert(key);
       // Set the user's property map
-      put(key,self.dp_,bgl_nodes[node],value);
+      self.graph_.set_node_property(key, node, value);
 #ifdef BOOST_GRAPH_DEBUG
       // Tell the world
       std::cout << node << ": " << key << " = " << value << std::endl;
@@ -545,7 +454,7 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
       // Add the property key to the "set" table to avoid default overwrite
       edge_map[edge].insert(key);
       // Set the user's property map
-      put(key,self.dp_,bgl_edges[edge],value);
+      self.graph_.set_edge_property(key, edge, value);
 #ifdef BOOST_GRAPH_DEBUG
       // Tell the world
       std::cout << "(" << edge.first << "," << edge.second << "): "
@@ -602,14 +511,6 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
     props_t default_edge_props;  // global default edge properties
     subgraph_props_t subgraph_node_props;  // per-subgraph default node properties
     subgraph_props_t subgraph_edge_props;  // per-subgraph default edge properties
-
-    // BGL graph related tables
-    typedef typename
-    graph_traits < MutableGraph >::vertex_descriptor bgl_vertex_t;
-    typedef typename
-    graph_traits < MutableGraph >::edge_descriptor bgl_edge_t;
-    std::map<node_t,bgl_vertex_t> bgl_nodes;
-    std::map<edge_t,bgl_edge_t> bgl_edges;
   }; // struct definition
 }; // struct dot_grammar
 
@@ -647,26 +548,6 @@ struct dot_skipper : public grammar<dot_skipper>
 } // namespace graph
 } // namespace detail
 
-
-// Parse the passed stream as a GraphViz dot file.
-template <typename MutableGraph>
-bool read_graphviz(std::istream& in, MutableGraph& graph,
-                   dynamic_properties& dp,
-                   std::string const& node_id = "node_id") {
-  using namespace boost::spirit;
-
-  typedef std::istream_iterator<char> is_t;
-  typedef multi_pass<is_t> iterator_t;
-
-  iterator_t first(make_multi_pass(is_t(in)));
-  iterator_t last(make_multi_pass(is_t()));
-
-  // Turn off white space skipping on the stream
-  in.unsetf(std::ios::skipws);
-
-  return read_graphviz(first, last, graph, dp, node_id);
-}
-
 template <typename MultiPassIterator, typename MutableGraph>
 bool read_graphviz(MultiPassIterator begin, MultiPassIterator end,
                    MutableGraph& graph, dynamic_properties& dp,
@@ -680,7 +561,9 @@ bool read_graphviz(MultiPassIterator begin, MultiPassIterator end,
   typedef scanner_policies<iter_policy_t> scanner_policies_t;
   typedef scanner<iterator_t, scanner_policies_t> scanner_t;
 
-  boost::detail::graph::dot_grammar<MutableGraph> p(graph,dp,node_id);
+  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
+
+  boost::detail::graph::dot_grammar p(m_graph);
   boost::detail::graph::dot_skipper skip_p;
 
   iter_policy_t iter_policy(skip_p);

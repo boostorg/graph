@@ -46,11 +46,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/dynamic_property_map.hpp>
 
-// TBD: this should be a real macro at some point...
-#ifndef BOOST_NO_SPIRIT
-#  include <boost/graph/detail/read_graphviz_spirit.hpp>
-#endif // BOOST_NO_SPIRIT
-
 namespace boost {
 
   template <typename directed_category>
@@ -608,6 +603,173 @@ namespace boost {
        /*graph_writer=*/default_writer(),
        id);
   }
+
+/////////////////////////////////////////////////////////////////////////////
+// Graph reader exceptions
+/////////////////////////////////////////////////////////////////////////////
+struct graph_exception : public std::exception {
+  virtual ~graph_exception() throw() {}
+  virtual const char* what() const throw() = 0;
+};
+
+struct bad_parallel_edge : public graph_exception {
+  std::string from;
+  std::string to;
+  mutable std::string statement;
+  bad_parallel_edge(const std::string& i, const std::string& j) :
+    from(i), to(j) {}
+
+  virtual ~bad_parallel_edge() throw() {}
+  const char* what() const throw() {
+    if(statement.empty())
+      statement =
+        std::string("Failed to add parallel edge: (")
+        + from +  "," + to + ")\n";
+
+    return statement.c_str();
+  }
+};
+
+struct directed_graph_error : public graph_exception {
+  virtual ~directed_graph_error() throw() {}
+  virtual const char* what() const throw() {
+    return
+      "read_graphviz: "
+      "Tried to read a directed graph into an undirected graph.";
+  }
+};
+
+struct undirected_graph_error : public graph_exception {
+  virtual ~undirected_graph_error() throw() {}
+  virtual const char* what() const throw() {
+    return
+      "read_graphviz: "
+      "Tried to read an undirected graph into a directed graph.";
+  }
+};
+
+namespace detail { namespace graph {
+
+typedef std::string id_t;
+typedef id_t node_t;
+
+// edges are not uniquely determined by adjacent nodes
+class edge_t {
+  int idx_;
+  explicit edge_t(int i) : idx_(i) {}
+public:
+  static edge_t new_edge() {
+    static int idx = 0;
+    return edge_t(idx++);
+  };
+  
+  bool operator==(const edge_t& rhs) const {
+    return idx_ == rhs.idx_;
+  }
+  bool operator<(const edge_t& rhs) const {
+    return idx_ < rhs.idx_;
+  }
+};
+
+class mutate_graph
+{
+ public:
+  virtual ~mutate_graph() {}
+  virtual bool is_directed() const = 0;
+  virtual void add_vertex(const node_t& node) = 0;
+
+  virtual void 
+  add_edge(const edge_t& edge, const node_t& source, const node_t& target) = 0;
+
+  virtual void 
+  set_node_property(const id_t& key, const node_t& node, const id_t& value) = 0;
+
+  virtual void 
+  set_edge_property(const id_t& key, const edge_t& edge, const id_t& value) = 0;
+};
+
+template<typename MutableGraph>
+class mutate_graph_impl : public mutate_graph
+{
+  typedef typename graph_traits<MutableGraph>::vertex_descriptor bgl_vertex_t;
+  typedef typename graph_traits<MutableGraph>::edge_descriptor   bgl_edge_t;
+
+ public:
+  mutate_graph_impl(MutableGraph& graph, dynamic_properties& dp,
+                    std::string node_id_prop)
+    : graph_(graph), dp_(dp), node_id_prop_(node_id_prop) { }
+
+  bool is_directed() const
+  {
+    return 
+      boost::is_convertible<
+        typename boost::graph_traits<MutableGraph>::directed_category,
+        boost::directed_tag>::value;
+  }
+
+  virtual void add_vertex(const node_t& node)
+  {
+    // Add the node to the graph.
+    bgl_vertex_t v = boost::add_vertex(graph_);
+
+    // Set up a mapping from name to BGL vertex.
+    bgl_nodes.insert(std::make_pair(node, v));
+    
+    // node_id_prop_ allows the caller to see the real id names for nodes.
+    put(node_id_prop_, dp_, v, node);
+  }
+
+  void add_edge(const edge_t& edge, const node_t& source, const node_t& target)
+  {
+    std::pair<bgl_edge_t, bool> result =
+      boost::add_edge(bgl_nodes[source], bgl_nodes[target], graph_);
+    
+    if(!result.second) {
+      // In the case of no parallel edges allowed
+      throw bad_parallel_edge(source, target);
+    } else {
+      bgl_edges.insert(std::make_pair(edge, result.first));
+    }
+  }
+
+  void
+  set_node_property(const id_t& key, const node_t& node, const id_t& value)
+  {
+    put(key, dp_, bgl_nodes[node], value);
+  }
+
+  void
+  set_edge_property(const id_t& key, const edge_t& edge, const id_t& value)
+  {
+    put(key, dp_, bgl_edges[edge], value);
+  }
+
+ protected:
+  MutableGraph& graph_;
+  dynamic_properties& dp_;
+  std::string node_id_prop_;
+  std::map<node_t, bgl_vertex_t> bgl_nodes;
+  std::map<edge_t, bgl_edge_t> bgl_edges;
+};
+
+bool read_graphviz(std::istream& in, mutate_graph& graph);
+
+} } // end namespace detail::graph
+
+// Parse the passed stream as a GraphViz dot file.
+template <typename MutableGraph>
+bool read_graphviz(std::istream& in, MutableGraph& graph,
+                   dynamic_properties& dp,
+                   std::string const& node_id = "node_id") 
+{
+  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
+  return detail::graph::read_graphviz(in, m_graph);
+}
+
 } // namespace boost
+
+#ifdef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#  include <boost/graph/detail/read_graphviz_spirit.hpp>
+#endif // BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 
 #endif // BOOST_GRAPHVIZ_HPP

@@ -67,10 +67,17 @@ graphviz_digraph_lex.cpp: graphviz_lex.ll
 
 graphviz_graph_parser.cpp graphviz_graph_parser.hpp: graphviz_parser.yy
 	$(YACC) -p bgl_undir_ -d -v -o graphviz_graph_parser.cpp graphviz_parser.yy
+	mv graphviz_graph_parser.cpp tmp_graphviz_graph_parser.cpp 
+	echo "#define GRAPHVIZ_DIRECTED 0" > graphviz_graph_parser.cpp
+	cat tmp_graphviz_graph_parser.cpp >> graphviz_graph_parser.cpp
+	rm tmp_graphviz_graph_parser.cpp
 
 graphviz_digraph_parser.cpp graphviz_digraph_parser.hpp: graphviz_parser.yy
 	$(YACC) -p bgl_dir_ -d -v -o graphviz_digraph_parser.cpp graphviz_parser.yy
-
+	mv graphviz_digraph_parser.cpp tmp_graphviz_digraph_parser.cpp 
+	echo "#define GRAPHVIZ_DIRECTED 1" > graphviz_digraph_parser.cpp
+	cat tmp_graphviz_digraph_parser.cpp >> graphviz_digraph_parser.cpp
+	rm tmp_graphviz_digraph_parser.cpp
 
 clean:
 	/bin/rm -rf	*.o *.a *.so* *.output graphviz_digraph_parser.cpp graphviz_digraph_parser.hpp graphviz_graph_parser.cpp graphviz_graph_parser.hpp graphviz_digraph_lex.cpp graphviz_graph_lex.cpp

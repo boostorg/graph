@@ -11,6 +11,8 @@
 
 // Author: Ronald Garcia
 
+//#define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#define BOOST_GRAPHVIZ_USE_ISTREAM
 #include <boost/graph/graphviz.hpp>
 #include <boost/assign/std/map.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -27,7 +29,10 @@
 
 using namespace std;
 using namespace boost;
+
+#ifndef BOOST_GRAPHVIZ_USE_ISTREAM
 using namespace boost::spirit;
+#endif
 using namespace boost::assign;
 
 typedef std::string node_t;

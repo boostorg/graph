@@ -1,3 +1,4 @@
+#define GRAPHVIZ_DIRECTED 0
 
 /*  A Bison parser, made from graphviz_parser.yy
     by GNU Bison version 1.28  */
