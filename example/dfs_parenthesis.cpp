@@ -72,7 +72,7 @@ main(int, char*[])
                 E(2, 1), E(2, 3),
                 E(3, 1), E(3, 4),
                 E(4, 0), E(4, 1) };  
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph G(5);
   for (std::size_t j = 0; j < sizeof(edge_array) / sizeof(E); ++j)
     add_edge(edge_array[j].first, edge_array[j].second, G);

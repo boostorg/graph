@@ -88,7 +88,7 @@ main()
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
   long flow;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // Use non-named parameter version
   flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev, indexmap);
 #else

@@ -24,9 +24,6 @@
 #include <boost/config.hpp>
 #include <fstream>
 #include <string>
-#ifndef BOOST_MSVC
-#include <unistd.h>
-#endif
 #include <boost/graph/adjacency_list.hpp>
 
 using namespace boost;
@@ -100,12 +97,18 @@ main()
    >graph_type;
 
   graph_type g;                 // use default constructor to create empty graph
-  std::ifstream file_in("makefile-dependencies.dat"),
-    name_in("makefile-target-names.dat");
+  const char* dep_file_name = "makefile-dependencies.dat";
+  const char* target_file_name = "makefile-target-names.dat";
+  std::ifstream file_in(dep_file_name), name_in(target_file_name);
   if (!file_in) {
-    std::cerr << "** Error: could not open file makefile-target-names.dat"
+    std::cerr << "** Error: could not open file " << dep_file_name
       << std::endl;
-    exit(-1);
+    return -1;
+  }
+  if (!name_in) {
+    std::cerr << "** Error: could not open file " << target_file_name
+      << std::endl;
+    return -1;
   }
   // Obtain internal property map from the graph
   property_map < graph_type, vertex_name_t >::type name_map =

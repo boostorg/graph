@@ -61,7 +61,7 @@ typedef adjacency_list<vecS, vecS, undirectedS,
 struct has_weight_greater_than {
   has_weight_greater_than(int w_, Graph& g_) : w(w_), g(g_) { }
   bool operator()(graph_traits<Graph>::edge_descriptor e) {
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     property_map<Graph, edge_weight_t>::type weight = get(edge_weight, g);
     return get(weight, e) > w;
 #else
@@ -82,7 +82,7 @@ main()
                     Edge(2, 0),
                     Edge(3, 2) };
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(4);
   for (std::size_t j = 0; j < 5; ++j)
     add_edge(edge_array[j].first, edge_array[j].second, g);

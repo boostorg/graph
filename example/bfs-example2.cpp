@@ -59,7 +59,7 @@ main()
   };
   // Create the graph object
   const int n_edges = sizeof(edge_array) / sizeof(E);
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   graph_t g;
   std::vector<graph_traits<graph_t>::vertex_descriptor> verts;

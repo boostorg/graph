@@ -41,7 +41,7 @@ main()
   };
   int weights[] = { 1, 1, 2, 7, 3, 1, 1, 1 };
   int num_edges = sizeof(edge_array) / sizeof(E);
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {

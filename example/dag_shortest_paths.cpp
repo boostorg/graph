@@ -58,7 +58,7 @@ int main()
   property_map<graph_t, vertex_distance_t>::type
     d_map = get(vertex_distance, g);
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the named-parameter mechanism, so
   // we make a direct call to the underlying implementation function.
   std::vector<default_color_type> color(num_vertices(g));

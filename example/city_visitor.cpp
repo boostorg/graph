@@ -126,7 +126,7 @@ int main(int, char*[])
 
   /* Create the graph type we want. */
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   Graph G(N);
   for (std::size_t j = 0; j < sizeof(edge_array)/sizeof(E); ++j)

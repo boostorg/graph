@@ -63,7 +63,7 @@ main()
 
   std::vector<graph_traits<graph_t>::vertex_descriptor> f(n);
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   bool ret = isomorphism
     (g1, g2, make_iterator_property_map(f.begin(), v1_index_map, f[0]),
      degree_vertex_invariant(), get(vertex_index, g1), get(vertex_index, g2));

@@ -61,7 +61,7 @@ main()
   for (size_type p = 0; p < num_vertices(g); ++p)
     parent[p] = p;
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   std::vector<int> distance(num_vertices(g));
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
@@ -80,7 +80,7 @@ main()
       edge_attr_map[e]["color"] = "black";
     }
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle write_graphviz :(
   {
     std::ofstream out("figs/ospf-sptree.dot");

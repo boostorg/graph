@@ -141,7 +141,7 @@ main()
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   file_dep_graph2 g;
   typedef graph_traits<file_dep_graph2 >::vertex_descriptor vertex_t;

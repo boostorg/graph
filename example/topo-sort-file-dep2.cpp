@@ -141,7 +141,7 @@ main()
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   file_dep_graph g(n_vertices);
   while (input_begin != input_end) {

@@ -117,7 +117,7 @@ main()
   f >> size_V >> size_E;
 
   edge_stream_iterator edge_iter(f), end;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   IteratorConstructibleGraph G(size_V);
   while (edge_iter != end) {

@@ -64,7 +64,7 @@ main()
                     Edge(2, 0),
                     Edge(3, 2) };
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle iterator constructor
   Graph g(4);
   for (std::size_t j = 0; j < 6; ++j)

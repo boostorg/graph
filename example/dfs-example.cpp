@@ -63,7 +63,7 @@ main()
   E edge_array[] = { E(u, v), E(u, x), E(x, v), E(y, x),
     E(v, y), E(w, y), E(w, z), E(z, z)
   };
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   graph_t g(N);  
   for (std::size_t j = 0; j < sizeof(edge_array) / sizeof(E); ++j)
     add_edge(edge_array[j].first, edge_array[j].second, g);

@@ -130,7 +130,7 @@ main(int argc, char *argv[])
   typedef graph_traits < Graph >::vertex_descriptor Vertex;
 
   Graph g;
-#ifndef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the get_property() function
   get_property(g, graph_name) = "loops";
 #endif
@@ -160,7 +160,7 @@ main(int argc, char *argv[])
   }
 
   std::ofstream loops_out(argv[2]);
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the get_property() functions
   loops_out << "digraph loops {\n"
             << "size=\"3,3\"\n"

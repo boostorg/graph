@@ -78,7 +78,7 @@ main()
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
   long flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev,
                                     indexmap);

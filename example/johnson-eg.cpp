@@ -45,7 +45,7 @@ main()
     Edge(3, 2), Edge(4, 3), Edge(4, 1), Edge(5, 4)
   };
   const std::size_t E = sizeof(edge_array) / sizeof(Edge);
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph g(V);
   for (std::size_t j = 0; j < E; ++j)

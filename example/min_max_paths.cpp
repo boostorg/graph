@@ -67,7 +67,7 @@ main(int , char* [])
                 E(3,4), E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
   const int n_edges = sizeof(edges)/sizeof(E);
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle iterator constructors
   Graph G(num_nodes);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, G);
@@ -86,7 +86,7 @@ main(int , char* [])
 
   Vertex s = *(vertices(G).first);
 
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   dijkstra_shortest_paths
     (G, s, &p[0], &d[0], weightmap, get(vertex_index, G),
      std::greater<int>(), closed_plus<int>(), std::numeric_limits<int>::max(), 0,

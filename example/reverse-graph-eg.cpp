@@ -56,7 +56,7 @@ main()
 
 
   std::cout << std::endl << "reversed graph:" << std::endl;
-#ifdef BOOST_MSVC  // avoid VC++ bug...
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300  // avoid VC++ bug...
   reverse_graph<Graph> R(G);
   print_graph(R, get(vertex_index, G));
 #else

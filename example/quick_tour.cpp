@@ -103,7 +103,7 @@ int main(int,char*[])
   float transmission_delay[] = { 1.2, 4.5, 2.6, 0.4, 5.2, 1.8, 3.3, 9.1 };
 
   // declare a graph object, adding the edges and edge properties
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph g(num_vertices);
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);

@@ -143,7 +143,7 @@ main()
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;
-#ifdef BOOST_MSVC
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   file_dep_graph g(n_vertices);
   while (input_begin != input_end) {
