@@ -39,6 +39,21 @@ void generate_graph(int n, double p, vector< vector<int> >& r1)
         r1[i].push_back(j);
 }
 
+template <class Graph>
+typename graph_traits<Graph>::degree_size_type
+num_incident(typename graph_traits<Graph>::vertex_descriptor u,
+             typename graph_traits<Graph>::vertex_descriptor v,
+             const Graph& g)
+{
+  typename graph_traits<Graph>::degree_size_type d = 0;
+  typename graph_traits<Graph>::out_edge_iterator i, i_end;
+  for (tie(i, i_end) = out_edges(u, g); i != i_end; ++i)
+    if (target(*i, g) == v)
+      ++d;
+  return d;
+}
+
+
 // (i,j) is in E' iff j is reachable from i
 // Hmm, is_reachable does not detect when there is a non-trivial path
 // from i to i. It always returns true for is_reachable(i,i).
@@ -46,29 +61,37 @@ void generate_graph(int n, double p, vector< vector<int> >& r1)
 template <typename Graph, typename GraphTC>
 bool check_transitive_closure(Graph& g, GraphTC& tc)
 {
-  {
-    typename graph_traits<GraphTC>::vertex_iterator i, i_end;
-    for (tie(i, i_end) = vertices(tc); i != i_end; ++i) {
-      typename graph_traits<GraphTC>::out_edge_iterator j, j_end;
-      for (tie(j, j_end) = out_edges(*i, tc); j != j_end; ++j) {
-	std::vector<default_color_type> color_map_vec(num_vertices(g));
-	if (!is_reachable(source(*j, g), target(*j, g), g, &color_map_vec[0]))
-	  return false;
-      }
-    }
-  }
-  {
-    typename graph_traits<GraphTC>::vertex_iterator i, i_end;
-    for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
-      typename graph_traits<GraphTC>::vertex_iterator j, j_end;
-      for (tie(j, j_end) = vertices(g); j != j_end; ++j) {
-	std::vector<default_color_type> color_map_vec(num_vertices(g));
-	if (i != j && is_reachable(*i, *j, g, &color_map_vec[0])) {
-	  typename graph_traits<GraphTC>::edge_descriptor e;
-	  bool b;
-	  tie (e, b) = edge(*i, *j, tc);
-	  if (!b) return false;
-	}
+  typename graph_traits<GraphTC>::vertex_iterator i, i_end;
+  for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
+    typename graph_traits<GraphTC>::vertex_iterator j, j_end;
+    for (tie(j, j_end) = vertices(g); j != j_end; ++j) {
+      bool g_has_edge;
+      typename graph_traits<Graph>::edge_descriptor e_g;
+      typename graph_traits<GraphTC>::degree_size_type num_tc;
+      tie (e_g, g_has_edge) = edge(*i, *j, g);
+      num_tc = num_incident(*i, *j, tc);
+      if (*i == *j) {
+        if (g_has_edge) {
+          if (num_tc != 1) {
+            return false;
+          }
+        } else {
+          std::vector<default_color_type> color_map_vec(num_vertices(g));
+          if (num_tc != 0 && !is_reachable(*i, *j, g, &color_map_vec[0])) {
+            return false;
+          }
+        }
+      } else {
+        std::vector<default_color_type> color_map_vec(num_vertices(g));
+        if (is_reachable(*i, *j, g, &color_map_vec[0])) {
+          if (num_tc != 1) {
+            return false;
+          }
+        } else {
+          if (num_tc != 0) {
+            return false;
+          }
+        }
       }
     }
   }
