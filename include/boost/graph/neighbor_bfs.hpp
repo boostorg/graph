@@ -324,7 +324,7 @@ namespace boost {
     queue_t Q;
     detail::wrap_ref<queue_t> Qref(Q);
 
-    neighbor_breadth_first_search
+    detail::neighbor_bfs_impl
       (g, s,
        choose_param(get_param(params, buffer_param_t()), Qref).ref,
        choose_param(get_param(params, graph_visitor),
