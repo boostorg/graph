@@ -80,7 +80,12 @@ bool check_edge_added(Graph& g, Edge e,
     cerr << "    Failed, not in edge set."<< endl;
 #endif
     return false;
-  } else if (edge_id[e] != correct_id) {
+  } else if (inserted && edge_id[e] != correct_id) {
+#if VERBOSE
+    cerr << "    Failed, invalid edge property."<< endl;
+#endif
+    return false;
+  } else if (!inserted && edge_id[e] != edge_id[edge(a, b, g).first]) {
 #if VERBOSE
     cerr << "    Failed, invalid edge property."<< endl;
 #endif
