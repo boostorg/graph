@@ -28,14 +28,27 @@
 #include <boost/test/test_tools.hpp>
 
 #include <boost/graph/subgraph.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graph_test.hpp>
 
 
 int test_main(int argc, char* argv[])
 {
-  typedef adjacency_list<> graph_t;
-  const int N = 5;
-  subgraph<graph_t> g(N);
-  
-  
+  using namespace boost;
+  typedef adjacency_list<vecS, vecS, directedS,
+    no_property, property<edge_index_t, std::size_t> > graph_t;
+
+  mt19937 gen;
+  for (int t = 0; t < 10; ++t) {
+    subgraph<graph_t> g;
+    int N = t + 2;
+    generate_random_graph(g, N, N * 2, gen);
+
+    graph_test< subgraph<graph_t> > gt;
+
+    gt.test_add_vertex(g);
+    gt.test_add_edge(random_vertex(g, gen), random_vertex(g, gen), g);
+  }  
   return 0;
 }
