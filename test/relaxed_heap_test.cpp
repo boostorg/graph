@@ -112,10 +112,10 @@ void interactive_test()
           if (boost::optional<double> min_value = get_min_value()) {
             cout << "Top value is (" << heap.top() << ", "
                  << *values[heap.top()] << ").\n";
-            BOOST_TEST(*min_value == *values[heap.top()]);
+            BOOST_CHECK(*min_value == *values[heap.top()]);
           } else {
             cout << "Queue is empty.\n";
-            BOOST_TEST(heap.empty());
+            BOOST_CHECK(heap.empty());
           }
         }
         break;
@@ -126,14 +126,14 @@ void interactive_test()
             unsigned victim = heap.top();
             double value = *values[victim];
             cout << "Removed top value (" << victim << ", " << value << ")\n";
-            BOOST_TEST(*min_value == value);
+            BOOST_CHECK(*min_value == value);
 
             heap.pop();
             heap.dump_tree();
             values[victim].reset();
           } else {
             cout << "Queue is empty.\n";
-            BOOST_TEST(heap.empty());
+            BOOST_CHECK(heap.empty());
           }
         }
         break;
@@ -197,7 +197,7 @@ void random_test(int n, int iterations, int seed)
           // Delete minimum value in the queue.
           victim = heap.top();
           double top_value = *values[victim];
-          BOOST_TEST(*get_min_value() == top_value);
+          BOOST_CHECK(*get_min_value() == top_value);
           if (*get_min_value() != top_value) return;
 #if BOOST_RELAXED_HEAP_DEBUG > 0
           cout << "d" << std::endl;
@@ -225,7 +225,7 @@ void random_test(int n, int iterations, int seed)
 
       default:
         cout << "Random number generator failed." << endl;
-        BOOST_TEST(false);
+        BOOST_CHECK(false);
         return;
         break;
       }

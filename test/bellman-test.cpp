@@ -91,10 +91,10 @@ int test_main(int, char*[])
     std::cout << "negative cycle" << std::endl;
   }
 
-  BOOST_TEST(r == r2);
+  BOOST_CHECK(r == r2);
   if (r && r2) {
-    BOOST_TEST(parent == parent2);
-    BOOST_TEST(distance == distance2);
+    BOOST_CHECK(parent == parent2);
+    BOOST_CHECK(distance == distance2);
   }
 
   return boost::exit_success;

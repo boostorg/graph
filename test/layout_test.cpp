@@ -150,7 +150,7 @@ test_triangle(Graph*)
                                        get(vertex_position, g),
                                        get(edge_weight, g),
                                        side_length(50.0));
-  BOOST_TEST(ok);
+  BOOST_CHECK(ok);
 
   std::cout << "Triangle layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
@@ -192,7 +192,7 @@ test_cube(Graph*)
                                        get(edge_weight, g),
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_TEST(ok);
+  BOOST_CHECK(ok);
 
   std::cout << "Cube layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
@@ -258,7 +258,7 @@ test_triangular(Graph*)
                                        get(edge_weight, g),
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_TEST(ok);
+  BOOST_CHECK(ok);
 
   std::cout << "Triangular layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
@@ -323,7 +323,7 @@ test_disconnected(Graph*)
                                        get(edge_weight, g),
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_TEST(!ok);
+  BOOST_CHECK(!ok);
 
   minstd_rand gen;
   random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 

@@ -391,14 +391,14 @@ int test_main(int, char*[])
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Digraph;
   Digraph adjlist_digraph;
-  BOOST_TEST(acceptance_test2(adjlist_digraph, 100, 2000));
+  BOOST_CHECK(acceptance_test2(adjlist_digraph, 100, 2000));
 
   typedef boost::adjacency_matrix<boost::undirectedS,
             boost::property<boost::vertex_distance_t, int,
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Graph;
   Graph matrix_graph(100);
-  BOOST_TEST(acceptance_test(matrix_graph, 100, 2000));
+  BOOST_CHECK(acceptance_test(matrix_graph, 100, 2000));
 
   return 0;
 }

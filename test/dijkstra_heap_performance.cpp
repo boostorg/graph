@@ -147,7 +147,7 @@ int test_main(int argc, char* argv[])
             << "Speedup = " << (binary_heap_time / relaxed_heap_time) << ".\n";
 
   // Verify that the results are equivalent
-  BOOST_TEST(binary_heap_distances == relaxed_heap_distances);
+  BOOST_CHECK(binary_heap_distances == relaxed_heap_distances);
 
   return 0;
 }

@@ -156,14 +156,14 @@ int test_main(int, char*[])
 
    for (boost::tie(vi1, vend1) = boost::vertices(g1), boost::tie(vi2, vend2) =boost::vertices(g2); vi1 != vend1; ++vi1, ++vi2)
    {
-      BOOST_TEST(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
+      BOOST_CHECK(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
 
       for (boost::tie(ai1, aend1) = boost::adjacent_vertices(*vi1, g1),
              boost::tie(ai2, aend2) = boost::adjacent_vertices(*vi2, g2);
            ai1 != aend1;
            ++ai1, ++ai2)
       {
-        BOOST_TEST(boost::get(index_map1, *ai1) == boost::get(index_map2, *ai2));
+        BOOST_CHECK(boost::get(index_map1, *ai1) == boost::get(index_map2, *ai2));
       }
    }
 
@@ -173,14 +173,14 @@ int test_main(int, char*[])
    for (boost::tie(vi1, vend1) = boost::vertices(g1),
           boost::tie(vi2, vend2) = boost::vertices(g2); vi1 != vend1; ++vi1, ++vi2)
    {
-      BOOST_TEST(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
+      BOOST_CHECK(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
 
       for (boost::tie(ei1, eend1) = boost::out_edges(*vi1, g1), 
              boost::tie(ei2, eend2) = boost::out_edges(*vi2, g2);
            ei1 != eend1;
            ++ei1, ++ei2)
       {
-        BOOST_TEST(boost::get(index_map1, boost::target(*ei1, g1)) == boost::get(index_map2, boost::target(*ei2, g2)));
+        BOOST_CHECK(boost::get(index_map1, boost::target(*ei1, g1)) == boost::get(index_map2, boost::target(*ei2, g2)));
       }
    }
 

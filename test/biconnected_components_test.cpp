@@ -60,7 +60,7 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   std::sort(art_points.begin(), art_points.end());
   std::sort(art_points_check.begin(), art_points_check.end());
 
-  BOOST_TEST(art_points == art_points_check);
+  BOOST_CHECK(art_points == art_points_check);
   if (art_points != art_points_check) {
     std::cerr << "ERROR!" << std::endl;
     std::cerr << "\tComputed: ";

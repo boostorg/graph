@@ -114,14 +114,14 @@ void test_isomorphism(int n, double edge_probability)
 
   bool isomorphism_correct;
   clock_t start = clock();
-  BOOST_TEST(isomorphism_correct = isomorphism
+  BOOST_CHECK(isomorphism_correct = isomorphism
                (g1, g2, isomorphism_map(make_assoc_property_map(mapping))));
   clock_t end = clock();
 
   std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
 
   bool verify_correct;
-  BOOST_TEST(verify_correct =
+  BOOST_CHECK(verify_correct =
              verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 
   if (!isomorphism_correct || !verify_correct) {
