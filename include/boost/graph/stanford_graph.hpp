@@ -140,8 +140,8 @@ namespace boost {
   public:
     sgb_edge() : _arc(0), _src(0) { }
     sgb_edge(Arc* a, Vertex* s) : _arc(a), _src(s) { }
-    friend Vertex* source(self e, sgb_graph_ptr) { return e._src; }
-    friend Vertex* target(self e, sgb_graph_ptr) { return e._arc->tip; }
+    friend Vertex* source(self e, sgb_const_graph_ptr) { return e._src; }
+    friend Vertex* target(self e, sgb_const_graph_ptr) { return e._arc->tip; }
     friend bool operator==(const self& a, const self& b) {
       return a._arc == b._arc; }
     friend bool operator!=(const self& a, const self& b) {
