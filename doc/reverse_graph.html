@@ -18,10 +18,10 @@
 
 
 <H1><A NAME="sec:reverse-graph-adaptor"></A>
+</h1>
 <pre>
 reverse_graph&lt;<a href="./BidirectionalGraph.html">BidirectionalGraph</a>, GraphReference&gt;
 </pre>
-</H1>
 
 The <tt>reverse_graph</tt> adaptor flips the in-edges and out-edges of
 a <a href="./BidirectionalGraph.html">BidirectionalGraph</a>,
@@ -39,9 +39,9 @@ href="../example/reverse_graph.cpp"><tt>examples/reverse_graph.cpp</tt></a>.
 int
 main()
 {
-  typedef boost::adjacency_list< 
+  typedef boost::adjacency_list&lt; 
     boost::vecS, boost::vecS, boost::bidirectionalS,
-  > Graph;
+  &gt; Graph;
   
   Graph G(5);
   boost::add_edge(0, 2, G);
@@ -56,10 +56,10 @@ main()
   boost::add_edge(4, 0, G);
   boost::add_edge(4, 1, G);
 
-  std::cout << "original graph:" << std::endl;
+  std::cout &lt;&lt; &quot;original graph:&quot; &lt;&lt; std::endl;
   boost::print_graph(G, boost::get(boost::vertex_index, G));
 
-  std::cout << std::endl << "reversed graph:" << std::endl;
+  std::cout &lt;&lt; std::endl &lt;&lt; &quot;reversed graph:&quot; &lt;&lt; std::endl;
   boost::print_graph(boost::make_reverse_graph(G), 
                      boost::get(boost::vertex_index, G));
 
@@ -70,18 +70,18 @@ main()
 The output is:
 <pre>
 original graph:
-0 --> 2 
-1 --> 1 3 4 
-2 --> 1 3 4 
-3 --> 1 4 
-4 --> 0 1 
+0 --&gt; 2 
+1 --&gt; 1 3 4 
+2 --&gt; 1 3 4 
+3 --&gt; 1 4 
+4 --&gt; 0 1 
 
 reversed graph:
-0 --> 4 
-1 --> 1 2 3 4 
-2 --> 0 
-3 --> 1 2 
-4 --> 1 2 3 
+0 --&gt; 4 
+1 --&gt; 1 2 3 4 
+2 --&gt; 0 
+3 --&gt; 1 2 
+4 --&gt; 1 2 3 
 </pre>
 
 <H3>Template Parameters</H3>
@@ -233,7 +233,7 @@ Constructor. Create a reversed (transposed) view of the graph <tt>g</tt>.
 <pre>
 template <class BidirectionalGraph>
 reverse_graph<BidirectionalGraph>
-make_reverse_graph(BidirectionalGraph& g)
+make_reverse_graph(BidirectionalGraph&amp; g)
 </pre>
 Helper function for creating a <tt>reverse_graph</tt>.
 
@@ -355,7 +355,7 @@ argument.
 
 <pre>
 template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X&gt;
-typename property_traits&lt;property_map&lt;reverse_graph, PropertyTag&gt;::const_type&gt::value_type
+typename property_traits&lt;property_map&lt;reverse_graph, PropertyTag&gt;::const_type&gt;::value_type
 get(PropertyTag, const reverse_graph&amp; g, X x)
 </pre>
 This returns the property value for <tt>x</tt>, which is either
@@ -365,7 +365,7 @@ a vertex or edge descriptor.
 <pre>
 template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X, class Value&gt;
 void
-put(PropertyTag, const reverse_graph&amp; g, X x, const Value& value)
+put(PropertyTag, const reverse_graph&amp; g, X x, const Value&amp; value)
 </pre>
 This sets the property value for <tt>x</tt> to
 <tt>value</tt>. <tt>x</tt> is either a vertex or edge descriptor.
@@ -403,7 +403,7 @@ href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2000</TD><TD>
-<A HREF=file:///c:/boost/site/people/dave_abrahams.htm>Dave Abrahams</A>,
+<a HREF="../../../people/dave_abrahams.htm">Dave Abrahams</a>,
 Univ.of Notre Dame (<A
 HREF="mailto:jsiek@lsc.nd.edu">jsiek@lsc.nd.edu</A>)<br>
 <A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>,
