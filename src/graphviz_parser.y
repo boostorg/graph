@@ -59,6 +59,7 @@
     Vertex current_vertex;
     Edge   current_edge;
     Subgraph* current_graph = NULL;
+    Subgraph* previous_graph = NULL;
 
     std::vector< std::pair<void*, bool>* > vlist;//store a list of rhs 
 
@@ -71,9 +72,9 @@
     typedef std::map<std::string, Subgraph*>::iterator It; 
     typedef std::map<std::string, Vertex>::iterator Iter; 
 
-    const std::string& print_name(const Subgraph& g) {
+    const std::string& get_graph_name(const Subgraph& g) {
       const boost::graph_property<Subgraph, boost::graph_name_t>::type&
-	name = boost::get_property(*current_graph, boost::graph_name);
+	name = boost::get_property(g, boost::graph_name);
       return name; 
     }
 
@@ -241,6 +242,7 @@ graph_body:  '{' stmt_list '}' {$$=0;}
 graph_header: graph_type graph_name
   {
     std::string* name = static_cast<std::string*>($2);
+    graphviz::previous_graph = static_cast<graphviz::Subgraph*>(g);
     graphviz::current_graph = static_cast<graphviz::Subgraph*>(g);
     graphviz::set_graph_name(*name);
     delete name;
@@ -425,12 +427,14 @@ edge_endpoint:   node_id
 
 subgraph:    subgraph_header opt_graph_body 
   {
-#ifndef DEBUG_SUBGRAPH
-    graphviz::current_graph = &graphviz::current_graph->parent(); 
-#endif
+    if ( $2 )
+      graphviz::current_graph = &graphviz::current_graph->parent();
+    else
+      graphviz::current_graph = graphviz::previous_graph;
   }
              |
   {
+    graphviz::previous_graph = graphviz::current_graph;
     std::string name = graphviz::random_string();
     graphviz::Subgraph* temp = graphviz::create_subgraph(name);
     graphviz::current_graph = temp;
@@ -439,9 +443,7 @@ subgraph:    subgraph_header opt_graph_body
     $$ = (void *) graphviz::current_graph;
   } graph_body
   {
-#ifndef DEBUG_SUBGRAPH
-    graphviz::current_graph = &graphviz::current_graph->parent(); 
-#endif
+    graphviz::current_graph = &graphviz::current_graph->parent();
   }
               ;
 
@@ -453,9 +455,10 @@ subgraph_header: SUBGRAPH_T ID_T
 
     std::pair<graphviz::It, bool> temp = graphviz::lookup_subgraph(*name);
 
-    if ( temp.second )  //found 
+    graphviz::previous_graph = graphviz::current_graph;
+    if ( temp.second )  {//found 
       graphviz::current_graph = (temp.first)->second;
-    else {
+    } else {
       graphviz::current_graph = graphviz::create_subgraph(*name);
       graphviz::set_graph_name(*name);
     }
@@ -465,7 +468,7 @@ subgraph_header: SUBGRAPH_T ID_T
   }
               ;
 
-opt_graph_body: graph_body |  { $$ = 0; }
+opt_graph_body: graph_body {$$ = 1; } |  { $$ = 0; }
               ;
 %%
 
