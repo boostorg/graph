@@ -169,6 +169,7 @@ namespace boost {
       typename graph_traits<VertexAndEdgeListGraph>::vertex_iterator v, v_end;
       for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
 	put(distance, *v, std::numeric_limits<weight_type>::max());
+	put(pred, *v, *v);
       }
       put(distance, s, weight_type(0));
       return bellman_ford_shortest_paths
