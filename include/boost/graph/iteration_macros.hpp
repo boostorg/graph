@@ -28,6 +28,27 @@
     BGL_FORALL_VERTICES(v, g, graph_t) {
         bar(v);
     }
+
+  Instead write this:
+
+  if (sky_is_blue) {
+    BGL_FORALL_VERTICES(v, g, graph_t) {
+        bar(v);
+    }
+  }
+
+  Another example of what NOT to write:
+
+  BGL_FORALL_VERTICES(u, g, graph_t)
+    BGL_FORALL_VERTICES(u, v, g, graph_t)
+      foo(u, v);
+
+  Instead write this
+
+  BGL_FORALL_VERTICES(u, g, graph_t) {
+    BGL_FORALL_VERTICES(u, v, g, graph_t)
+      foo(u, v);
+  }
   
   It is OK to use single statements after the macro:
   
