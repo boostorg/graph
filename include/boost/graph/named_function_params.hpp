@@ -32,7 +32,8 @@ namespace boost {
 
   struct distance_compare_t { enum { num = detail::distance_compare_num }; };
   struct distance_combine_t { enum { num = detail::distance_combine_num};  };
-  struct distance_init_t { enum { num = detail::distance_init_num }; };
+  struct distance_inf_t { enum { num = detail::distance_inf_num }; };
+  struct distance_zero_t { enum { num = detail::distance_zero_num }; };
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params : public Base
@@ -95,12 +96,18 @@ namespace boost {
     }
 
     template <typename Init>
-    bgl_named_params<Init, distance_init_t, self>
-    distance_init(const Init& init) {
-      typedef bgl_named_params<Init, distance_init_t, self> Params;
+    bgl_named_params<Init, distance_inf_t, self>
+    distance_inf(const Init& init) {
+      typedef bgl_named_params<Init, distance_inf_t, self> Params;
       return Params(init, *this);
     }
 
+    template <typename Init>
+    bgl_named_params<Init, distance_zero_t, self>
+    distance_zero(const Init& init) {
+      typedef bgl_named_params<Init, distance_zero_t, self> Params;
+      return Params(init, *this);
+    }
   };
 
   template <typename WeightMap>
@@ -153,9 +160,16 @@ namespace boost {
   }
 
   template <typename Init>
-  bgl_named_params<Init, distance_init_t>
-  distance_init(const Init& init) {
-    typedef bgl_named_params<Init, distance_init_t> Params;
+  bgl_named_params<Init, distance_inf_t>
+  distance_inf(const Init& init) {
+    typedef bgl_named_params<Init, distance_inf_t> Params;
+    return Params(init);
+  }
+
+  template <typename Init>
+  bgl_named_params<Init, distance_zero_t>
+  distance_zero(const Init& init) {
+    typedef bgl_named_params<Init, distance_zero_t> Params;
     return Params(init);
   }
 
@@ -217,7 +231,7 @@ namespace boost {
 	}
 
 	static result_type
-	apply(const P& p, Graph& g, Tag tag) { 
+	apply(P& p, Graph& g, Tag tag) { 
 	  return get(tag, g); 
 	}
       };
