@@ -95,18 +95,19 @@ It is currently difficult to use from a C++ program.
 <li>Modularize the tests in test/graph.cpp to apply to particular
   concepts. Make sure there are run-time tests for every BGL concept.</li>
 
-<li>Write tests for the BGL algorithms. Currently the examples
-  are used as a sanity check, but they do not constitute a real test. </li>
+<li>Write tests for the BGL algorithms. There are a few, but
+   more are needed. The example provide a sanity check but do not
+   provide full coverage.</li>
 
 <li>Write up the examples from Knuth's <i>Stanford GraphBase</i> using
   the BGL. The file <a
   href="../example/miles_span.cpp"><tt>examples/miles_span.cpp</tt></a>
-  is a start.
+  is a start.</li>
 
-<li>Create a class to support sub-graph views of a graph, where a
- sub-graph behaves just like a graph, but shares vertex and edge
- properties with the original graph. Perhaps even support sub-graphs
- of sub-graphs, etc.
+<li>Further testing of the <tt>subgraph</tt> class and add more
+   features.</li>
+
+<li>Implement a minimum-cost maximum-flow algorithm.</li>
 
 </ul>
 
