@@ -48,29 +48,34 @@ namespace boost {
   namespace detail {
 
     template <class VertexAndEdgeListGraph, class DistanceMatrix,
-	      class Distance, class Weight, class Color, class VertexID>
+	      class P, class T, class R, class VertexID, class Distance,
+              class Weight, class Weight2, class DistanceZero>
     bool
-    johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g, 
-				     DistanceMatrix& D,
-				     Distance d, Distance h,
-				     Weight w, Color c, VertexID id)
+    johnson_impl(VertexAndEdgeListGraph& g, 
+		 DistanceMatrix& D,
+		 const bgl_named_params<P, T, R>& params,
+		 VertexID id, Distance d, Weight w, Weight2 w_hat,
+		 DistanceZero zero)
     {
       typedef graph_traits<VertexAndEdgeListGraph> Traits;
       typename Traits::vertex_iterator v, v_end, u, u_end;
       typename Traits::edge_iterator e, e_end;
       typename Traits::vertex_descriptor s = *vertices(g).first;
       typedef typename property_traits<Distance>::value_type DT;
+      
+      std::vector<DT> h_vec(num_vertices(g));
+      iterator_property_map<typename std::vector<DT>::iterator, VertexID>
+	h(h_vec.begin(), id);
 
-      put(d, s, DT()); // initialize distance of source vertex to zero
-      if (bellman_ford_shortest_paths(g, num_vertices(g), 
-				      weight_map(w).distance_map(d))) {
+      put(d, s, zero());
+      if (bellman_ford_shortest_paths(g, num_vertices(g), params)) {
 	for (tie(v, v_end) = vertices(g); v != v_end; ++v)
 	  put(h, *v, get(d, *v));
 	for (tie(e, e_end) = edges(g); e != e_end; ++e)
-	  put(w, *e, get(w, *e) + get(h, source(*e,g)) - get(h, target(*e,g)));
+	  put(w_hat, *e, 
+	      get(w, *e) + get(h, source(*e,g)) - get(h, target(*e,g)));
 	for (tie(u, u_end) = vertices(g); u != u_end; ++u) {
-	  dijkstra_shortest_paths(g, *u, distance_map(d).weight_map(w).
-				  color_map(c).vertex_index_map(id));
+	  dijkstra_shortest_paths(g, *u, params.weight_map(w_hat));
 	  for (tie(v, v_end) = vertices(g); v != v_end; ++v)
 	    D[*u][*v] = get(d, *v) + get(h, *v) - get(h, *u);
 	}
@@ -78,6 +83,33 @@ namespace boost {
       } else
 	return false;
     }
+    
+    template <class VertexAndEdgeListGraph, class DistanceMatrix,
+	      class P, class T, class R, class Weight, 
+              class VertexID>
+    bool
+    johnson_dispatch(VertexAndEdgeListGraph& g, 
+		     DistanceMatrix& D,
+		     const bgl_named_params<P, T, R>& params,
+		     Weight w, VertexID id)
+    {
+      typedef typename property_traits<Weight>::value_type WT;
+      typename std::vector<WT>::size_type 
+	n = is_default_param(get_param(params, vertex_distance))
+	? num_vertices(g) : 0;
+      std::vector<WT> distance_map(n);
+      
+      return detail::johnson_impl
+	(g, D, params, id,
+	 choose_param(get_param(params, vertex_distance),
+		      make_iterator_property_map
+		      (distance_map.begin(), id)),
+	 w,
+	 choose_pmap(get_param(params, edge_weight2), g, edge_weight2),
+	 choose_param(get_param(params, distance_zero_t()), 
+                      generate_zero<WT>()) );
+    }
+
   } // namespace detail
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
@@ -88,8 +120,21 @@ namespace boost {
      DistanceMatrix& D,
      const bgl_named_params<P, T, R>& params)
   {
+    return detail::johnson_dispatch
+      (g, D, params,
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
+       );
+  }
 
-    detail::johnson_impl();
+  template <class VertexAndEdgeListGraph, class DistanceMatrix>
+  bool
+  johnson_all_pairs_shortest_paths
+    (VertexAndEdgeListGraph& g, DistanceMatrix& D)
+  {
+    bgl_named_params<int,int> params(1);
+    return detail::johnson_dispatch
+      (g, D, params, get(edge_weight, g), get(vertex_index, g));
   }
 
 
