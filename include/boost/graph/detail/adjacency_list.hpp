@@ -57,6 +57,16 @@ namespace boost {
 
   namespace detail {
 
+    template <class Vertex>
+    struct target_is {
+      target_is(const Vertex& v) : m_target(v) { }
+      template <class StoredEdge>
+      bool operator()(const StoredEdge& e) const {
+        return e.get_target() == m_target;
+      }
+      Vertex m_target;
+    };
+
     template <typename DirectedS>
     struct directed_category_traits {
       typedef directed_tag directed_category;
@@ -260,8 +270,7 @@ namespace boost {
       typedef no_property property_type;
       inline stored_edge(Vertex target, const no_property& = no_property())
         : m_target(target) { }
-      inline Vertex& get_target() { return m_target; }
-      inline const Vertex& get_target() const { return m_target; }
+      inline Vertex& get_target() const { return m_target; }
       inline const no_property& get_property() const { return s_prop; }
       inline bool operator==(const stored_edge& x) const
         { return m_target == x.get_target(); }
@@ -269,7 +278,9 @@ namespace boost {
         { return m_target < x.get_target(); }
     protected:
       static no_property s_prop;
-      Vertex m_target;
+      // Sometimes target not used as key in the set, and in that case
+      // it is ok to change the target.
+      mutable Vertex m_target;
     };
     template <class Vertex>
     no_property stored_edge<Vertex>::s_prop;
@@ -376,7 +387,7 @@ namespace boost {
     template <class Config>
     struct directed_graph_helper : public directed_edges_helper<Config> { };
 
-    // O(E/V) or O(log(E/V)) depending on OutEdgeList type
+    // O(E/V)
     template <class Config>
     inline void
     remove_edge(typename Config::vertex_descriptor u,
@@ -385,9 +396,10 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList& el = g.out_edge_list(u);
-      boost::erase(el, StoredEdge(v));
+      boost::erase_if(el, detail::target_is<Vertex>(v));
     }
 
     namespace detail {
@@ -502,10 +514,11 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::vertex_iterator vi, viend;
       for (boost::tie(vi, viend) = vertices(g); vi != viend; ++vi)
-        boost::erase(g.out_edge_list(*vi), StoredEdge(u));
+        boost::erase_if(g.out_edge_list(*vi), detail::target_is<Vertex>(u));
       g.out_edge_list(u).clear();
       // clear() should be a req of Sequence and AssociativeContainer,
       // or maybe just Container
@@ -682,10 +695,11 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
-      boost::erase(g.out_edge_list(v), StoredEdge(u));
+      boost::erase_if(g.out_edge_list(v), detail::target_is<Vertex>(u));
     }
   
     template <class Config, class Predicate>
@@ -760,7 +774,7 @@ namespace boost {
       const graph_type& g = static_cast<const graph_type&>(g_);
       return g.m_edges.size();
     }
-    // O(E/V * E/V) or O(E/V * log(E/V))
+    // O(E/V * E/V)
     template <class Config>
     inline void 
     clear_vertex(typename Config::vertex_descriptor u,
@@ -768,12 +782,14 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator 
         ei = el.begin(), ei_end = el.end();
       for (; ei != ei_end; ++ei) {
-        boost::erase(g.out_edge_list((*ei).get_target()), StoredEdge(u));
+        boost::erase_if(g.out_edge_list((*ei).get_target()), 
+			detail::target_is<Vertex>(u));
         g.m_edges.erase((*ei).get_iter());
       }
       g.out_edge_list(u).clear();
@@ -803,7 +819,7 @@ namespace boost {
         if (inserted) {
           boost::push(g.out_edge_list(v), StoredEdge(u, p_iter));
           return std::make_pair(edge_descriptor(u, v, &p_iter->get_property()),
-				true);
+                                true);
         } else {
           g.m_edges.erase(p_iter);
           return std::make_pair(edge_descriptor(u, v), false);
@@ -843,7 +859,7 @@ namespace boost {
         for (; i != end; ++i)
           if ((*i).get_target() == v)
             g.m_edges.erase((*i).get_iter());
-        boost::erase(el, StoredEdge(v));
+        boost::erase_if(el, target_is<Vertex>(v));
       }
       // O(log(E/V))
       template <class Graph, class EdgeList, class Vertex>
@@ -1002,10 +1018,11 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
-      boost::erase(g.in_edge_list(v), StoredEdge(u));
+      boost::erase_if(g.in_edge_list(v), detail::target_is<Vertex>(u));
     }
     // O(E/V)
     template <class EdgeOrIter, class Config>
@@ -1033,19 +1050,22 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator 
         ei = el.begin(), ei_end = el.end();
       for (; ei != ei_end; ++ei) {
-        boost::erase(g.in_edge_list((*ei).get_target()), StoredEdge(u));
+        boost::erase_if(g.in_edge_list((*ei).get_target()), 
+			detail::target_is<Vertex>(u));
         g.m_edges.erase((*ei).get_iter());
       }      
       typename Config::InEdgeList& in_el = g.in_edge_list(u);
       typename Config::InEdgeList::iterator 
         in_ei = in_el.begin(), in_ei_end = in_el.end();
       for (; in_ei != in_ei_end; ++in_ei) {
-        boost::erase(g.out_edge_list((*in_ei).get_target()), StoredEdge(u));
+        boost::erase_if(g.out_edge_list((*in_ei).get_target()), 
+			detail::target_is<Vertex>(u));
         g.m_edges.erase((*in_ei).get_iter());
       }      
       g.out_edge_list(u).clear();
@@ -1183,9 +1203,10 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
-      boost::erase(g.out_edge_list(u), StoredEdge(v));
-      boost::erase(g.in_edge_list(v), StoredEdge(u));
+      boost::erase_if(g.out_edge_list(u), detail::target_is<Vertex>(v));
+      boost::erase_if(g.in_edge_list(v), detail::target_is<Vertex>(u));
     }
     // O(E/V)
     template <class EdgeOrIter, class Config>
@@ -1208,8 +1229,7 @@ namespace boost {
         num_e += out_degree(*vi, g);
       return num_e;
     }
-    // O(E/V * E/V) for allow_parallel_edge_tag
-    // O(E/V * log(E/V)) for disallow_parallel_edge_tag
+    // O(E/V * E/V)
     template <class Config>
     inline void 
     clear_vertex(typename Config::vertex_descriptor u,
@@ -1217,16 +1237,19 @@ namespace boost {
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::StoredEdge StoredEdge;
+      typedef typename Config::vertex_descriptor Vertex;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::out_edge_iterator out_ei, out_ei_end;
       for (boost::tie(out_ei, out_ei_end) = out_edges(u, g); 
            out_ei != out_ei_end; ++out_ei)
-        boost::erase(g.in_edge_list(target(*out_ei,g)), StoredEdge(u));
+        boost::erase_if(g.in_edge_list(target(*out_ei,g)),
+                        detail::target_is<Vertex>(u));
       
       typename Config::in_edge_iterator in_ei, in_ei_end;
       for (boost::tie(in_ei, in_ei_end) = in_edges(u, g); 
            in_ei != in_ei_end; ++in_ei)
-        boost::erase(g.out_edge_list(source(*in_ei,g)), StoredEdge(u));
+        boost::erase_if(g.out_edge_list(source(*in_ei,g)),
+                        detail::target_is<Vertex>(u));
       
       g.out_edge_list(u).clear();
       g.in_edge_list(u).clear();
@@ -1278,7 +1301,8 @@ namespace boost {
         bool found;
         const typename Config::OutEdgeList& el = g.out_edge_list(u);
         typename Config::OutEdgeList::const_iterator 
-          i = std::find(el.begin(), el.end(), StoredEdge(v));
+          i = std::find_if(el.begin(), el.end(), 
+                           detail::target_is<vertex_descriptor>(v));
         found = (i != g.out_edge_list(u).end());
         if (found)
           return std::make_pair(edge_descriptor(u, v, &(*i).get_property()),
@@ -1371,6 +1395,23 @@ namespace boost {
       typedef typename Config::edge_parallel_category Cat;
       const Graph& g = static_cast<const Graph&>(g_);
       return g_.edge_dispatch(g, u, v, Cat());
+    }
+    template <class Config, class Base>
+    inline std::pair<typename Config::out_edge_iterator,
+                     typename Config::out_edge_iterator>
+    edge_range(typename Config::vertex_descriptor u,
+               typename Config::vertex_descriptor v,
+               const adj_list_helper<Config, Base>& g_)
+    {
+      typedef typename Config::graph_type Graph;
+      typedef typename Config::StoredEdge StoredEdge;
+      const Graph& g = static_cast<const Graph&>(g_);
+      typedef typename Config::out_edge_iterator out_edge_iterator;
+      const typename Config::OutEdgeList& el = g.out_edge_list(u);
+      typename Config::OutEdgeList::const_iterator first, last;
+      tie(first, last) = std::equal_range(el.begin(), el.end(), StoredEdge(v));
+      return std::make_pair(out_edge_iterator(first, u),
+                            out_edge_iterator(last, u));
     }
     template <class Config, class Base>
     inline std::pair<typename Config::in_edge_iterator, 

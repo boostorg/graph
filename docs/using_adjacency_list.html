@@ -70,16 +70,11 @@ types that are used to specify the choice of container for
 <P>
 
 <UL>
-<LI><TT>vecS</TT> selects <TT>std::vector</TT>
-</LI>
-<LI><TT>listS</TT> selects <TT>std::list</TT>
-</LI>
-<LI><TT>slistS</TT> selects <TT>std::slist</TT>.
-</LI>
-<LI><TT>setS</TT> selects <TT>std::set</TT>.
-</LI>
-<LI><TT>hash_setS</TT> selects <TT>std::hash_set</TT>.
-</LI>
+<LI><TT>vecS</TT> selects <TT>std::vector</TT>.</LI>
+<LI><TT>listS</TT> selects <TT>std::list</TT>.</LI>
+<LI><TT>slistS</TT> selects <TT>std::slist</TT>.</LI>
+<LI><TT>setS</TT> selects <TT>std::set</TT>.</LI>
+<LI><TT>hash_setS</TT> selects <TT>std::hash_set</TT>.</LI>
 </UL>
 
 <P>
@@ -171,8 +166,8 @@ then use the <TT>setS</TT> or <TT>hash_setS</TT> selectors.  If you
 want to represent a multi-graph, or know that you will not be
 inserting parallel edges into the graph, then choose one of the <a
 href="http://www.sgi.com/Technology/STL/Sequence.html">Sequence</a>
-types: <TT>vecS</TT>, <TT>listS</TT>, or <TT>slistS</TT>. In addition,
-you will want to take into account the differences in time and space
+types: <TT>vecS</TT>, <TT>listS</TT>, or <TT>slistS</TT>. 
+You will also want to take into account the differences in time and space
 complexity for the various graph operations. Below we use <i>V</i> for
 the total number of vertices in the graph and <i>E</i> for the total
 number of edges.  Operations not discussed here are constant time.
@@ -723,6 +718,11 @@ standard containers.
     erase_dispatch(c, x, container_category(c));
   }
 </PRE>
+
+
+<!--
+Give an explanation based on ordered_out_edges.cpp
+-->
 
 
 <br>

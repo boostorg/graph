@@ -1,3 +1,4 @@
+// -*- c++ -*-
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
@@ -23,47 +24,73 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 #include <iostream>
-#include <functional>
-#include <string>
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/properties.hpp>
+
+/*
+  Thanks to Dale Gerdemann for this example, which inspired some
+  changes to adjacency_list to make this work properly.
+ */
 
 /*
   Sample output:
 
-  0  --chandler--> 1   --joe--> 1  
-  1  --chandler--> 0   --joe--> 0   --curly--> 2   --dick--> 3   --dick--> 3  
-  2  --curly--> 1   --tom--> 4  
-  3  --dick--> 1   --dick--> 1   --harry--> 4  
-  4  --tom--> 2   --harry--> 3  
+  0  --c--> 1   --j--> 1   --c--> 2   --x--> 2  
+  1  --c--> 2   --d--> 3  
+  2  --t--> 4  
+  3  --h--> 4  
+  4 
 
-  name(0,1) = chandler
+  merging vertex 1 into vertex 0
 
-  name(0,1) = chandler
-  name(0,1) = joe
-
+  0  --c--> 0   --j--> 0   --c--> 1   --x--> 1   --d--> 2  
+  1  --t--> 3  
+  2  --h--> 3  
+  3 
  */
+
+// merge_vertex(u,v,g):
+// incoming/outgoing edges for v become incoming/outgoing edges for u
+// v is deleted
+template <class Graph, class GetEdgeProperties>
+void merge_vertex
+  (typename boost::graph_traits<Graph>::vertex_descriptor u,
+   typename boost::graph_traits<Graph>::vertex_descriptor v,
+   Graph& g, GetEdgeProperties getp)
+{
+  typedef boost::graph_traits<Graph> Traits;
+  typename Traits::edge_descriptor e;
+  typename Traits::out_edge_iterator out_i, out_end;
+  for (tie(out_i, out_end) = out_edges(v, g); out_i != out_end; ++out_i) {
+    e = *out_i;
+    typename Traits::vertex_descriptor targ = target(e, g);
+    add_edge(u, targ, getp(e), g);
+  }
+  typename Traits::in_edge_iterator in_i, in_end;
+  for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i) {
+    e = *in_i;
+    typename Traits::vertex_descriptor src = source(e, g);
+    add_edge(src, u, getp(e), g);
+  }
+  clear_vertex(v, g);
+  remove_vertex(v, g);
+}
 
 template <class StoredEdge>
 struct order_by_name
   : public std::binary_function<StoredEdge,StoredEdge,bool> 
 {
   bool operator()(const StoredEdge& e1, const StoredEdge& e2) const {
-    // Order by target vertex, then by name. 
-    // std::pair's operator< does a nice job of implementing
-    // lexicographical compare on tuples.
     return std::make_pair(e1.get_target(), boost::get(boost::edge_name, e1))
       < std::make_pair(e2.get_target(), boost::get(boost::edge_name, e2));
   }
 };
 struct ordered_set_by_nameS { };
 
-
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
-    typedef std::multiset<ValueType, order_by_name<ValueType> > type;
+    typedef std::set<ValueType, order_by_name<ValueType> > type;
   };
   template <>
   struct parallel_edge_traits<ordered_set_by_nameS> { 
@@ -71,28 +98,43 @@ namespace boost {
   };
 }
 
+template <class Graph>
+struct get_edge_name {
+  get_edge_name(const Graph& g_) : g(g_) { }
+
+  template <class Edge>
+  boost::property<boost::edge_name_t, char> operator()(Edge e) const {
+    return boost::property<boost::edge_name_t, char>(boost::get(boost::edge_name, g, e));
+  }
+  const Graph& g;
+};
+
 int
 main()
 {
   using namespace boost;
-  typedef property<edge_name_t, std::string> EdgeProperty;
-  typedef adjacency_list<ordered_set_by_nameS, vecS, undirectedS,
+  typedef property<edge_name_t, char> EdgeProperty;
+  typedef adjacency_list<ordered_set_by_nameS, vecS, bidirectionalS,
     no_property, EdgeProperty> graph_type;
-  graph_type g;
-  
-  add_edge(0, 1, EdgeProperty("joe"), g);
-  add_edge(1, 2, EdgeProperty("curly"), g);
-  add_edge(1, 3, EdgeProperty("dick"), g);
-  add_edge(1, 3, EdgeProperty("dick"), g);
-  add_edge(2, 4, EdgeProperty("tom"), g);
-  add_edge(3, 4, EdgeProperty("harry"), g);
-  add_edge(0, 1, EdgeProperty("chandler"), g);
 
+  graph_type g;
+
+  add_edge(0, 1, EdgeProperty('j'), g);
+  add_edge(0, 2, EdgeProperty('c'), g);
+  add_edge(0, 2, EdgeProperty('x'), g);
+  add_edge(1, 3, EdgeProperty('d'), g);
+  add_edge(1, 2, EdgeProperty('c'), g);
+  add_edge(1, 3, EdgeProperty('d'), g);
+  add_edge(2, 4, EdgeProperty('t'), g);
+  add_edge(3, 4, EdgeProperty('h'), g);
+  add_edge(0, 1, EdgeProperty('c'), g);
+  
   property_map<graph_type, vertex_index_t>::type id = get(vertex_index, g);
   property_map<graph_type, edge_name_t>::type name = get(edge_name, g);
 
   graph_traits<graph_type>::vertex_iterator i, end;
   graph_traits<graph_type>::out_edge_iterator ei, edge_end;
+
   for (boost::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << id[*i] << " ";
     for (boost::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
@@ -101,21 +143,16 @@ main()
   }
   std::cout << std::endl;
 
-  bool found;
-  typedef graph_traits<graph_type> Traits;
-  Traits::edge_descriptor e;
-  Traits::out_edge_iterator e_first, e_last;
-
-  tie(e, found) = edge(0, 1, g);
-  if (found)
-    std::cout << "name(0,1) = " << name[e] << std::endl;
-  else
-    std::cout << "not found" << std::endl;
+  std::cout << "merging vertex 1 into vertex 0" << std::endl << std::endl;
+  merge_vertex(0, 1, g, get_edge_name<graph_type>(g));
+  
+  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
+    std::cout << id[*i] << " ";
+    for (boost::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
+      std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
+    std::cout << std::endl;
+  }
   std::cout << std::endl;
-
-  tie(e_first, e_last) = edge_range(0, 1, g);
-  while (e_first != e_last)
-    std::cout << "name(0,1) = " << name[*e_first++] << std::endl;
-
+  
   return 0;
 }
