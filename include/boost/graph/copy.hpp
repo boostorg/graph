@@ -5,137 +5,288 @@
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map.hpp>
+#include <boost/graph/named_function_params.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 
 // UNDER CONSTRUCTION
 
 namespace boost {
 
-  template <typename Graph1, typename Graph2>
-  struct edge_copier {
-    edge_copier(const Graph1& g1, Graph2& g2)
-      : edge_all_map1(get(edge_all, g1)), edge_all_map2(get(edge_all, g2)) { }
-    
-    template <typename Edge1, typename Edge2>
-    void operator()(const Edge1& e1, Edge2& e2) const {
-      put(edge_all_map2, e2, get(edge_all_map1, e1));
-    }
-    typename property_map<Graph1, edge_all_t>::const_type edge_all_map1;
-    mutable typename property_map<Graph2, edge_all_t>::type edge_all_map2;
-  };
-  template <typename Graph1, typename Graph2>
-  inline edge_copier<Graph1,Graph2>
-  make_edge_copier(const Graph1& g1, Graph2& g2)
-  {
-    return edge_copier<Graph1,Graph2>(g1, g2);
-  }
+  namespace detail {
 
-  template <typename Graph1, typename Graph2>
-  struct vertex_copier {
-    vertex_copier(const Graph1& g1, Graph2& g2)
-      : vertex_all_map1(get(vertex_all, g1)), 
-      vertex_all_map2(get(vertex_all, g2)) { }
-    
-    template <typename Vertex1, typename Vertex2>
-    void operator()(const Vertex1& v1, Vertex2& v2) const {
-      put(vertex_all_map2, v2, get(vertex_all_map1, v1));
-    }
-    typename property_map<Graph1, vertex_all_t>::const_type vertex_all_map1;
-    mutable typename property_map<Graph2, vertex_all_t>::type vertex_all_map2;
-  };
-  template <typename Graph1, typename Graph2>
-  inline vertex_copier<Graph1,Graph2>
-  make_vertex_copier(const Graph1& g1, Graph2& g2)
-  {
-    return vertex_copier<Graph1,Graph2>(g1, g2);
-  }
+    // Default edge and vertex property copiers
 
+    template <typename Graph1, typename Graph2>
+    struct edge_copier {
+      edge_copier(const Graph1& g1, Graph2& g2)
+        : edge_all_map1(get(edge_all, g1)), 
+          edge_all_map2(get(edge_all, g2)) { }
 
-  // Copy all the vertices and edges of graph g_in into graph g_out.
-  // The copy_vertex and copy_edge function objects control how vertex
-  // and edge properties are copied.
-  template <typename Graph, typename MutableGraph, 
-            typename CopyVertex, typename CopyEdge, 
-            typename OrigVertexIndexMap, typename Copy2OrigVertexIndexMap>
-  void copy_graph(Graph& g_in, MutableGraph& g_out, 
-                  CopyVertex copy_vertex, CopyEdge copy_edge,
-                  OrigVertexIndexMap v_index,
-                  Copy2OrigVertexIndexMap vertex_map)
-  {
-    // assert Graph::directed_category == MutableGraph::directed_category
-    // or allow conversions? 
-
-    // dispatch based on directed_category and traversal_category...
-
-    typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
-      typename graph_traits<MutableGraph>::vertex_descriptor
-        new_v = add_vertex(g_out);
-      put(vertex_map, *vi, new_v);
-      copy_vertex(*vi, new_v);
+      template <typename Edge1, typename Edge2>
+      void operator()(const Edge1& e1, Edge2& e2) const {
+        put(edge_all_map2, e2, get(edge_all_map1, e1));
+      }
+      typename property_map<Graph1, edge_all_t>::const_type edge_all_map1;
+      mutable typename property_map<Graph2, edge_all_t>::type edge_all_map2;
+    };
+    template <typename Graph1, typename Graph2>
+    inline edge_copier<Graph1,Graph2>
+    make_edge_copier(const Graph1& g1, Graph2& g2)
+    {
+      return edge_copier<Graph1,Graph2>(g1, g2);
     }
 
-    typename graph_traits<Graph>::edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
-      typename graph_traits<MutableGraph>::edge_descriptor new_e;
-      bool inserted;
-      tie(new_e, inserted) = add_edge(get(vertex_map, source(*ei, g_in)), 
-                                      get(vertex_map, target(*ei, g_in)),
-                                      g_out);
-      copy_edge(*ei, new_e);
+    template <typename Graph1, typename Graph2>
+    struct vertex_copier {
+      vertex_copier(const Graph1& g1, Graph2& g2)
+        : vertex_all_map1(get(vertex_all, g1)), 
+          vertex_all_map2(get(vertex_all, g2)) { }
+
+      template <typename Vertex1, typename Vertex2>
+      void operator()(const Vertex1& v1, Vertex2& v2) const {
+        put(vertex_all_map2, v2, get(vertex_all_map1, v1));
+      }
+      typename property_map<Graph1, vertex_all_t>::const_type vertex_all_map1;
+      mutable typename property_map<Graph2, vertex_all_t>::type
+        vertex_all_map2;
+    };
+    template <typename Graph1, typename Graph2>
+    inline vertex_copier<Graph1,Graph2>
+    make_vertex_copier(const Graph1& g1, Graph2& g2)
+    {
+      return vertex_copier<Graph1,Graph2>(g1, g2);
     }
-  }
+
+    // Copy all the vertices and edges of graph g_in into graph g_out.
+    // The copy_vertex and copy_edge function objects control how vertex
+    // and edge properties are copied.
+    template <typename Graph, typename MutableGraph, 
+              typename CopyVertex, typename CopyEdge, 
+              typename Orig2CopyVertexIndexMap>
+    void copy_graph_impl(const Graph& g_in, MutableGraph& g_out, 
+			 CopyVertex copy_vertex, CopyEdge copy_edge,
+			 Orig2CopyVertexIndexMap orig2copy)
+    {
+      // assert Graph::directed_category == MutableGraph::directed_category
+      // or allow conversions? 
+
+      // dispatch based on directed_category and traversal_category...
+
+      typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+      for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        typename graph_traits<MutableGraph>::vertex_descriptor
+          new_v = add_vertex(g_out);
+        put(orig2copy, *vi, new_v);
+        copy_vertex(*vi, new_v);
+      }
+
+      typename graph_traits<Graph>::edge_iterator ei, ei_end;
+      for (tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
+        typename graph_traits<MutableGraph>::edge_descriptor new_e;
+        bool inserted;
+        tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
+                                        get(orig2copy, target(*ei, g_in)),
+                                        g_out);
+        copy_edge(*ei, new_e);
+      }
+    }
+
+    //-------------------------------------------------------------------------
+    struct choose_copier_parameter {
+      template <class P, class G1, class G2>
+      struct bind {
+	typedef const P& result_type;
+	static result_type apply(const P& p, const G1&, G2&)
+	{ return p; }
+      };
+    };
+    struct choose_default_edge_copier {
+      template <class P, class G1, class G2>
+      struct bind {
+	typedef edge_copier<G1, G2> result_type;
+	static result_type apply(const P& p, const G1& g1, G2& g2) { 
+	  return result_type(g1, g2);
+	}
+      };
+    };
+    template <class Param>
+    struct choose_edge_copy {
+      typedef choose_copier_parameter type;
+    };
+    template <>
+    struct choose_edge_copy<detail::error_property_not_found> {
+      typedef choose_default_edge_copier type;
+    };
+    template <class Param, class G1, class G2>
+    struct choose_edge_copier_helper {
+      typedef typename choose_edge_copy<Param>::type Selector;
+      typedef typename Selector:: template bind<Param, G1, G2> type;
+      typedef typename type::result_type result_type;
+    };
+    template <typename Param, typename G1, typename G2>
+    typename detail::choose_edge_copier_helper<Param,G1,G2>::result_type
+    choose_edge_copier(const Param& params, const G1& g_in, G2& g_out)
+    {
+      typedef typename 
+	detail::choose_edge_copier_helper<Param,G1,G2>::type Choice;
+      return Choice::apply(p, g1, g2);
+    }
+
+
+    struct choose_default_vertex_copier {
+      template <class P, class G1, class G2>
+      struct bind {
+	typedef vertex_copier<G1, G2> result_type;
+	static result_type apply(const P& p, const G1& g1, G2& g2) { 
+	  return result_type(g1, g2);
+	}
+      };
+    };
+    template <class Param>
+    struct choose_vertex_copy {
+      typedef choose_copier_parameter type;
+    };
+    template <>
+    struct choose_vertex_copy<detail::error_property_not_found> {
+      typedef choose_default_vertex_copier type;
+    };
+    template <class Param, class G1, class G2>
+    struct choose_vertex_copier_helper {
+      typedef typename choose_vertex_copy<Param>::type Selector;
+      typedef typename Selector:: template bind<Param, G1, G2> type;
+      typedef typename type::result_type result_type;
+    };
+    template <typename Param, typename G1, typename G2>
+    typename detail::choose_vertex_copier_helper<Param,G1,G2>::result_type
+    choose_vertex_copier(const Param& params, const G1& g_in, G2& g_out)
+    {
+      typedef typename 
+	detail::choose_vertex_copier_helper<Param,G1,G2>::type Choice;
+      return Choice::apply(p, g1, g2);
+    }
+
+  } // namespace detail
+
+
   template <typename Graph, typename MutableGraph>
-  void copy_graph(Graph& g_in, MutableGraph& g_out)
+  void copy_graph(const Graph& g_in, MutableGraph& g_out)
   {
     std::vector<typename graph_traits<Graph>::vertex_descriptor> 
-      vertex_map(num_vertices(g_in));
-    copy_graph(g_in, g_out, 
-               make_vertex_copier(g_in, g_out), 
-               make_edge_copier(g_in, g_out), 
-               get(vertex_index, g_in), 
-               make_iterator_property_map(vertex_map.begin(), 
-                                          get(vertex_index, g_in)));
+      orig2copy(num_vertices(g_in));
+    detail::copy_graph_impl
+      (g_in, g_out, 
+       make_vertex_copier(g_in, g_out), 
+       make_edge_copier(g_in, g_out), 
+       make_iterator_property_map(orig2copy.begin(), 
+				  get(vertex_index, g_in)));
   }
 
-  template <typename Graph, typename MutableGraph, typename Old2NewVertexMap>
-  void copy_graph(Graph& g_in, MutableGraph& g_out, 
-                  Old2NewVertexMap& vertex_map)
+  template <typename Graph, typename MutableGraph, class P, class T, class R>
+  void copy_graph(const Graph& g_in, MutableGraph& g_out, 
+                  const bgl_named_params<P, T, R>& params)
   {
-    copy_graph(g_in, g_out, default_copier(), default_copier(), 
-               get(vertex_index, g), vertex_map);
+    typename std::vector<T>::size_type n;
+      n = is_default_param(get_param(params, orig_to_copy_t()))
+	? num_vertices(g_in) : 0;
+    std::vector<typename graph_traits<Graph>::vertex_descriptor> 
+      orig2copy(n);
+    
+    detail::copy_graph_impl
+      (g_in, g_out,
+       detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
+				    g_in, g_out),
+       detail::choose_edge_copier(get_param(params, edge_copy_t()), 
+				  g_in, g_out),
+       choose_param(get_param(params, orig_to_copy_t()),
+		    make_iterator_property_map
+		    (orig2copy.begin(), 
+		     choose_pmap(get_param(params, vertex_index), 
+				 g, vertex_index)))
+       );
   }
+
+  namespace detail {
+    
+    template <class NewGraph, class Copy2OrigIndexMap, 
+      class CopyVertex, class CopyEdge>
+    struct graph_copy_visitor : public bfs_visitor<>
+    {
+      graph_copy_visitor(NewGraph& graph, Copy2OrigIndexMap c,
+			 CopyVertex cv, CopyEdge ce)
+	: g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
+
+      template <class Vertex, class Graph>
+      void examine_vertex(Vertex u, const Graph& g_in) const {
+        typename graph_traits<NewGraph>::vertex_descriptor
+          new_u = add_vertex(g_out);
+        put(orig2copy, u, new_u);
+        copy_vertex(u, new_u);
+      }
+      
+      template <class Edge, class Graph>
+      void examine_edge(Edge e, const Graph& g_in) const {
+        typename graph_traits<NewGraph>::edge_descriptor new_e;
+        bool inserted;
+        tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
+                                        get(orig2copy, target(e, g_in)),
+                                        g_out);
+        copy_edge(e, new_e);
+      }
+    private:
+      NewGraph& g_out;
+      Copy2OrigIndexMap orig2copy;
+      CopyVertex copy_vertex;
+      CopyEdge copy_edge;
+    };
+
+    template <typename Graph, typename MutableGraph, 
+              typename CopyVertex, typename CopyEdge, 
+              typename Orig2CopyVertexIndexMap, typename Params>
+    void copy_component_impl
+      (const Graph& g_in, 
+       typename graph_traits<Graph>::vertex_descriptor src,
+       MutableGraph& g_out, 
+       CopyVertex copy_vertex, CopyEdge copy_edge,
+       Orig2CopyVertexIndexMap orig2copy,
+       const Params& params)
+    {
+      graph_copy_visitor<MutableGraph, Orig2CopyVertexIndexMap, 
+	CopyVertex, CopyEdge> vis(g_out, orig2copy, copy_vertex, copy_edge);
+      breadth_first_search(g_in, src, params.visitor(vis));
+    }
+
+  } // namespace detail
+  
   
   // Copy all the vertices and edges of graph g_in that are reachable
   // from the source vertex into graph g_out. Return the vertex
   // in g_out that matches the source vertex of g_in.
-  template <typename Graph, typename MutableGraph, 
-           typename CopyVertex, typename CopyEdge>
-  typename graph_traits<Graph>::vertex_descriptor
-  copy_graph(typename graph_traits<Graph>::vertex_descriptor src,
-             Graph& g_in, 
-             MutableGraph& g_out, 
-             CopyVertex copy_vertex, CopyEdge copy_edge)
+  template <typename IncidenceGraph, typename MutableGraph, 
+           typename P, typename T, typename R>
+  typename graph_traits<IncidenceGraph>::vertex_descriptor
+  copy_component(IncidenceGraph& g_in, 
+		 typename graph_traits<IncidenceGraph>::vertex_descriptor src,
+		 MutableGraph& g_out, 
+		 const bgl_named_params<P, T, R>& params)
   {
-    // dispatch based on directed_category and traversal_category...
+    typename std::vector<T>::size_type n;
+      n = is_default_param(get_param(params, orig_to_copy_t()))
+	? num_vertices(g_in) : 0;
+    std::vector<typename graph_traits<IncidenceGraph>::vertex_descriptor> 
+      orig2copy(n);
     
-  }
-  template <typename Graph, typename MutableGraph, 
-           typename CopyVertex>
-  typename graph_traits<Graph>::vertex_descriptor
-  copy_graph(typename graph_traits<Graph>::vertex_descriptor src,
-             Graph& g_in, 
-             MutableGraph& g_out, 
-             CopyVertex copy_vertex)
-  {
-    return copy_graph(src, g_in, g_out, copy_vertex, default_copier());
-  }
-  template <typename Graph, typename MutableGraph>
-  typename graph_traits<Graph>::vertex_descriptor
-  copy_graph(typename graph_traits<Graph>::vertex_descriptor src,
-             Graph& g_in, 
-             MutableGraph& g_out)
-  {
-    return copy_graph(src, g_in, g_out, default_copier(), default_copier());
+    return detail::copy_component_impl
+      (g_in, src, g_out,
+       detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
+				    g_in, g_out),
+       detail::choose_edge_copier(get_param(params, edge_copy_t()), 
+				  g_in, g_out),
+       choose_param(get_param(params, orig_to_copy_t()),
+		    make_iterator_property_map
+		    (orig2copy.begin(), 
+		     choose_pmap(get_param(params, vertex_index), 
+				 g, vertex_index)))
+       );
   }
   
 } // namespace boost
