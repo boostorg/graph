@@ -30,6 +30,7 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/detail/sparse_ordering.hpp>
+#include <algorithm>
 
 
 /*
@@ -55,6 +56,7 @@ namespace boost {
       }
       template <class Vertex, class Graph>
       void finish_vertex(Vertex, Graph&) {
+        using std::sort;
 
 	typedef typename property_traits<DegreeMap>::value_type DS;
 

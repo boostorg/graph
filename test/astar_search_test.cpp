@@ -170,8 +170,8 @@ int main(int argc, char **argv)
   
   // pick random start/goal
   minstd_rand gen(time(0));
-  vertex start = random_vertex(g, gen);
-  vertex goal = random_vertex(g, gen);
+  vertex start = gen() % num_vertices(g);
+  vertex goal = gen() % num_vertices(g);
   
   
   cout << "Start vertex: " << name[start] << endl;

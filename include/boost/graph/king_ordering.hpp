@@ -229,7 +229,7 @@ namespace boost {
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename property_map<Graph, vertex_index_t>::const_type VertexIndexMap;
-    typedef iterator_property_map<typename std::vector<DS>::iterator, VertexIndexMap> PseudoDegreeMap;
+    typedef iterator_property_map<typename std::vector<DS>::iterator, VertexIndexMap, DS, DS&> PseudoDegreeMap;
     typedef indirect_cmp<PseudoDegreeMap, std::less<DS> > Compare;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
     typedef typename detail::bfs_king_visitor<OutputIterator, queue, Compare,             

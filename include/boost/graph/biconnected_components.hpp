@@ -166,10 +166,10 @@ namespace boost
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     std::vector<vertex_t> pred(num_vertices(g));
-
+    vertex_t vert = graph_traits<Graph>::null_vertex();
     return biconnected_components
              (g, comp, out, discover_time, lowpt,
-              make_iterator_property_map(pred.begin(), index_map),
+              make_iterator_property_map(pred.begin(), index_map, vert),
               index_map);
   }
 
@@ -186,10 +186,12 @@ namespace boost
     std::vector<vertices_size_type> discover_time(num_vertices(g));
     std::vector<vertices_size_type> lowpt(num_vertices(g));
 
+    vertices_size_type vst(0);
+
     return biconnected_components
              (g, comp, out,
-              make_iterator_property_map(discover_time.begin(), index_map),
-              make_iterator_property_map(lowpt.begin(), index_map),
+              make_iterator_property_map(discover_time.begin(), index_map, vst),
+              make_iterator_property_map(lowpt.begin(), index_map, vst),
               index_map);
   }
 

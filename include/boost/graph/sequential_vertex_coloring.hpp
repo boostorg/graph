@@ -105,7 +105,8 @@ namespace boost {
     return sequential_vertex_coloring
              (G, 
               make_iterator_property_map
-                (order.begin(), identity_property_map()), 
+              (order.begin(), identity_property_map(), 
+               graph_traits<VertexListGraph>::null_vertex()), 
               color);
   }
 }

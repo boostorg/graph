@@ -15,6 +15,7 @@
 #include <boost/graph/simple_point.hpp>
 #include <vector>
 #include <list>
+#include <algorithm> // for std::min and std::max
 
 namespace boost {
 
@@ -91,7 +92,9 @@ struct grid_force_pairs
   grid_force_pairs(Dim width, Dim height, PositionMap position, const Graph& g)
     : width(width), height(height), position(position)
   {
+#ifndef BOOST_NO_STDC_NAMESPACE
     using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
     two_k = Dim(2) * sqrt(width*height / num_vertices(g));
   }
 
@@ -161,12 +164,12 @@ scale_graph(const Graph& g, PositionMap position,
   Dim minY = position[*vertices(g).first].y, maxY = minY;
   vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    using std::min; // TBD: eric's tricks
-    using std::max;
-    minX = min(minX, position[*vi].x);
-    maxX = max(maxX, position[*vi].x);
-    minY = min(minY, position[*vi].y);
-    maxY = max(maxY, position[*vi].y);
+    BOOST_USING_STD_MIN();
+    BOOST_USING_STD_MAX();
+    minX = min BOOST_PREVENT_MACRO_SUBSTITUTION (minX, position[*vi].x);
+    maxX = max BOOST_PREVENT_MACRO_SUBSTITUTION (maxX, position[*vi].x);
+    minY = min BOOST_PREVENT_MACRO_SUBSTITUTION (minY, position[*vi].y);
+    maxY = max BOOST_PREVENT_MACRO_SUBSTITUTION (maxY, position[*vi].y);
   }
 
   // Scale to bounding box provided
@@ -194,9 +197,10 @@ namespace detail {
 
     void operator()(vertex_descriptor u, vertex_descriptor v)
     {
+#ifndef BOOST_NO_STDC_NAMESPACE
+      using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
       if (u != v) {
-        using std::sqrt;
-
         Dim delta_x = position[v].x - position[u].x;
         Dim delta_y = position[v].y - position[u].y;
         Dim dist = sqrt(delta_x * delta_x + delta_y * delta_y);
@@ -235,7 +239,9 @@ fruchterman_reingold_force_directed_layout
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits<Graph>::edge_iterator     edge_iterator;
 
+#ifndef BOOST_NO_STDC_NAMESPACE
   using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
 
   Dim area = width * height;
   // assume positions are initialized randomly
@@ -273,14 +279,22 @@ fruchterman_reingold_force_directed_layout
 
     // Update positions
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
-      using std::min; // TBD: use Eric's crazy hacks here
-      using std::max; // TBD: use Eric's crazy hacks here
+      BOOST_USING_STD_MIN();
+      BOOST_USING_STD_MAX();
       Dim disp_size = sqrt(displacement[*v].x * displacement[*v].x
                            + displacement[*v].y * displacement[*v].y);
-      position[*v].x += displacement[*v].x / disp_size * min(disp_size, temp);
-      position[*v].y += displacement[*v].y / disp_size * min(disp_size, temp);
-      position[*v].x = min(width / 2, max(-width / 2, position[*v].x));
-      position[*v].y = min(height / 2, max(-height / 2, position[*v].y));
+      position[*v].x += displacement[*v].x / disp_size 
+                     * min BOOST_PREVENT_MACRO_SUBSTITUTION (disp_size, temp);
+      position[*v].y += displacement[*v].y / disp_size 
+                     * min BOOST_PREVENT_MACRO_SUBSTITUTION (disp_size, temp);
+      position[*v].x = min BOOST_PREVENT_MACRO_SUBSTITUTION 
+                         (width / 2, 
+                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-width / 2, 
+                                                               position[*v].x));
+      position[*v].y = min BOOST_PREVENT_MACRO_SUBSTITUTION
+                         (height / 2, 
+                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-height / 2, 
+                                                               position[*v].y));
     }
   } while (temp = cool());
 }
@@ -337,7 +351,8 @@ namespace detail {
          make_iterator_property_map
          (displacements.begin(),
           choose_const_pmap(get_param(params, vertex_index), g,
-                            vertex_index)));
+                            vertex_index),
+          simple_point<double>()));
     }
   };
 

@@ -59,7 +59,7 @@ namespace boost
           {
             d[*i][*j] = min BOOST_PREVENT_MACRO_SUBSTITUTION(d[*i][*j], 
               inf_combine(d[*i][*k], d[*k][*j], inf, combine, 
-              compare), compare);
+              compare));
           }
       
     

@@ -30,7 +30,8 @@ int test_main(int, char*[])
 
   // Test with the normal order
   std::vector<vertices_size_type> color_vec(num_vertices(g));
-  iterator_property_map<vertices_size_type*, vertex_index_map>
+  iterator_property_map<vertices_size_type*, vertex_index_map, 
+                        vertices_size_type, vertices_size_type&>
     color(&color_vec.front(), get(vertex_index, g));
   vertices_size_type num_colors = sequential_vertex_coloring(g, color);
   BOOST_CHECK(num_colors == 3);

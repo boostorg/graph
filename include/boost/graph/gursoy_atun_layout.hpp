@@ -141,13 +141,15 @@ gursoy_atun_step
   vertex_iterator i, iend;
   std::vector<double> distance_from_input_vector(num_vertices(graph));
   typedef boost::iterator_property_map<std::vector<double>::iterator, 
-				       VertexIndexMap>
+                                       VertexIndexMap,
+                                       double, double&>
     DistanceFromInputMap;
   DistanceFromInputMap distance_from_input(distance_from_input_vector.begin(),
 					   vertex_index_map);
   std::vector<double> node_distance_map_vector(num_vertices(graph));
   typedef boost::iterator_property_map<std::vector<double>::iterator, 
-				       VertexIndexMap>
+                                       VertexIndexMap,
+                                       double, double&>
     NodeDistanceMap;
   NodeDistanceMap node_distance(node_distance_map_vector.begin(),
 				vertex_index_map);
@@ -212,12 +214,14 @@ void gursoy_atun_refine(const VertexListAndIncidenceGraph& graph,
     learning_constant_final / learning_constant_initial;
   std::vector<double> distance_from_input_vector(num_vertices(graph));
   typedef boost::iterator_property_map<std::vector<double>::iterator, 
-				       VertexIndexMap>
+                                       VertexIndexMap,
+                                       double, double&>
     DistanceFromInputMap;
   DistanceFromInputMap distance_from_input(distance_from_input_vector.begin(),
 					   vertex_index_map);
   std::vector<int> node_distance_map_vector(num_vertices(graph));
-  typedef boost::iterator_property_map<std::vector<int>::iterator, VertexIndexMap>
+  typedef boost::iterator_property_map<std::vector<int>::iterator, 
+                                       VertexIndexMap, double, double&>
     NodeDistanceMap;
   NodeDistanceMap node_distance(node_distance_map_vector.begin(),
 				vertex_index_map);

@@ -214,7 +214,8 @@ test_cube(Graph*)
      all_force_pairs(),
      linear_cooling<double>(100),
      make_iterator_property_map(displacements.begin(),
-                                get(vertex_index, g)));
+                                get(vertex_index, g),
+                                point()));
 
   std::cout << "Cube layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g));
