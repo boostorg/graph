@@ -4,6 +4,31 @@
 // "as is" without express or implied warranty, and with no claim as
 // to its suitability for any purpose.
 
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Hewlett-Packard Company makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ *
+ *
+ * Copyright (c) 1996
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without fee,
+ * provided that the above copyright notice appear in all copies and
+ * that both that copyright notice and this permission notice appear
+ * in supporting documentation.  Silicon Graphics makes no
+ * representations about the suitability of this software for any
+ * purpose.  It is provided "as is" without express or implied warranty.
+ */
 
 #ifndef BOOST_ALGORITHM_HPP
 # define BOOST_ALGORITHM_HPP
@@ -16,6 +41,7 @@
 // there are some graph algorithms that use these functions.
 
 #include <algorithm>
+#include <vector>
 
 namespace boost {
 
@@ -173,6 +199,49 @@ namespace boost {
   std::size_t count_if(const Container& c, Predicate p)
   {
     return std::count_if(begin(c), end(c), p);
+  }
+
+  template <typename ForwardIterator>
+  bool is_sorted(ForwardIterator first, ForwardIterator last)
+  {
+    if (first == last)
+      return true;
+
+    ForwardIterator next = first;
+    for (++next; next != last; first = next, ++next) {
+      if (*next < *first)
+	return false;
+    }
+
+    return true;
+  }
+
+  template <typename ForwardIterator, typename StrictWeakOrdering>
+  bool is_sorted(ForwardIterator first, ForwardIterator last,
+		 StrictWeakOrdering comp)
+  {
+    if (first == last)
+      return true;
+
+    ForwardIterator next = first;
+    for (++next; next != last; first = next, ++next) {
+      if (comp(*next, *first))
+	return false;
+    }
+
+    return true;
+  }
+
+  template <typename Container>
+  bool is_sorted(const Container& c)
+  {
+    return is_sorted(begin(c), end(c));
+  }
+
+  template <typename Container, typename StrictWeakOrdering>
+  bool is_sorted(const Container& c, StrictWeakOrdering comp)
+  {
+    return is_sorted(begin(c), end(c), comp);
   }
 
 } // namespace boost
