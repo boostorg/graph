@@ -230,7 +230,7 @@ namespace boost {
   template <typename Graph, typename EdgePredicate, typename VertexPredicate>
   inline filtered_graph<Graph, EdgePredicate, VertexPredicate>
   make_filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp) {
-    return filtered_graph<Graph, EdgePredicate>(g, ep, vp);
+    return filtered_graph<Graph, EdgePredicate, VertexPredicate>(g, ep, vp);
   }
 
   template <typename G, typename EP, typename VP>
