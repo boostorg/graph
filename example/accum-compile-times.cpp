@@ -25,14 +25,15 @@
 #include <fstream>
 #include <iostream>
 #include <numeric>
+#include <iterator>
+#include <string>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graph_utility.hpp>
 #include <boost/graph/property_iter_range.hpp>
 
 namespace std
 {
   template < typename T >
-    std::istream & operator >> (std::istream & in, std::pair < T, T > &p)
+  std::istream& operator >> (std::istream& in, std::pair < T, T > &p)
   {
     in >> p.first >> p.second;
     return in;
@@ -68,13 +69,22 @@ main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
   typedef graph_traits<file_dep_graph2>::vertices_size_type size_type;
-  size_type
-    n_vertices;
+  size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
+#ifdef BOOST_MSVC
+  // std::istream_iterator causes trouble with VC++
+  std::vector<vertex_t> id2vertex;
+  file_dep_graph2 g;
+  for (std::size_t i = 0; i < n_vertices; ++i)
+    id2vertex.push_back(add_vertex(g));
+  std::pair<size_type, size_type> p;
+  while (file_in >> p) 
+    add_edge(id2vertex[p.first], id2vertex[p.second], g);
+#else
   std::istream_iterator<std::pair<size_type, size_type> >
     input_begin(file_in), input_end;
-  file_dep_graph2
-  g(input_begin, input_end, n_vertices);
+  file_dep_graph2 g(input_begin, input_end, n_vertices);
+#endif
 
   typedef property_map < file_dep_graph2, vertex_name_t >::type name_map_t;
   typedef property_map < file_dep_graph2, vertex_compile_cost_t >::type
@@ -105,3 +115,4 @@ main()
 
   return 0;
 }
+

@@ -20,31 +20,13 @@
 
 #include <boost/property_map_iterator.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/pending/ct_if.hpp>
+#include <boost/type_traits/same_traits.hpp>
 
 namespace boost {
 
 //======================================================================
 // graph property iterator range
-
-  namespace detail {
-
-    template <class PropertyKind>
-    struct choose_graph_iterator { };
-
-    template <>
-    struct choose_graph_iterator<vertex_property_tag> {
-      template <class Graph> struct bind {
-        typedef typename graph_traits<Graph>::vertex_iterator type;
-      };
-    };
-    template <>
-    struct choose_graph_iterator<edge_property_tag> {
-      template <class Graph> struct bind {
-        typedef typename graph_traits<Graph>::edge_iterator type;
-      };
-    };
-    
-  } // namespace detail
 
   template <class Graph, class PropertyTag>
   class graph_property_iter_range {
@@ -52,8 +34,9 @@ namespace boost {
     typedef typename property_map<Graph, PropertyTag>::const_type 
       const_map_type;
     typedef typename property_kind<PropertyTag>::type Kind;
-    typedef typename detail::choose_graph_iterator<Kind>
-      ::template bind<Graph>::type iter;
+    typedef typename ct_if<is_same<Kind, vertex_property_tag>::value,
+       typename graph_traits<Graph>::vertex_iterator,
+       typename graph_traits<Graph>::edge_iterator>::type iter;
   public:
     typedef typename property_map_iterator_generator<map_type, iter>::type 
       iterator;

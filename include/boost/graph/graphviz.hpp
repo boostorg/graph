@@ -84,7 +84,6 @@ namespace boost {
     return label_writer<Name>(n);
   }
 
-
   enum edge_attribute_t        { edge_attribute        = 1111 };
   enum vertex_attribute_t      { vertex_attribute      = 2222 };
   enum graph_graph_attribute_t { graph_graph_attribute = 3333 };
