@@ -13,10 +13,10 @@
     <pre>
 <em>// named parameter versions</em>
 template&lt;typename Graph, typename CentralityMap,
-	 typename Param, typename Tag, typename Rest&gt;
+         typename Param, typename Tag, typename Rest&gt;
 void 
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
-			       const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
+                               const bgl_named_params&lt;Param,Tag,Rest&gt;&amp; params);
 
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
@@ -24,24 +24,24 @@ brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality);
 
 <em>// non-named parameter versions</em>
 template&lt;typename Graph, typename CentralityMap, typename PredecessorsMap,
-	 typename DistanceMap, typename DependencyMap, typename PathCountMap,
-	 typename VertexIndexMap&gt;
+         typename DistanceMap, typename DependencyMap, typename PathCountMap,
+         typename VertexIndexMap&gt;
 void 
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
-			       PredecessorsMap predecessors,
+                               PredecessorsMap predecessors,
                                DistanceMap distance, DependencyMap dependency,
-			       PathCountMap path_count, 
+                               PathCountMap path_count, 
                                VertexIndexMap vertex_index);
 
 template&lt;typename Graph, typename CentralityMap, typename PredecessorsMap,
-	 typename DistanceMap, typename DependencyMap, typename PathCountMap,
-	 typename VertexIndexMap, typename WeightMap&gt;    
+         typename DistanceMap, typename DependencyMap, typename PathCountMap,
+         typename VertexIndexMap, typename WeightMap&gt;    
 void 
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality,
-			       PredecessorsMap predecessors, 
-			       DistanceMap distance,  DependencyMap dependency,
-			       PathCountMap path_count,      
-			       VertexIndexMap vertex_index,
+                               PredecessorsMap predecessors, 
+                               DistanceMap distance,  DependencyMap dependency,
+                               PathCountMap path_count,      
+                               VertexIndexMap vertex_index,
                                WeightMap weight_map);
 
 <em>// helper functions</em>
@@ -56,8 +56,8 @@ central_point_dominance(const Graph&amp; g, CentralityMap centrality);
 
 <p>This algorithm&nbsp;[<a href="bibliography.html#brandes01">54</a>]
 computes the <em>betweenness centrality</em>&nbsp;[<a
-href="bibliography.html#anthonisse71">56</a>,<a
-href="bibliography.html#freeman77">55</a>] of each vertex in the
+href="bibliography.html#freeman77">55</a>,<a
+href="bibliography.html#anthonisse71">56</a>] of each vertex in the
 graph. The betweenness centrality of a vertex <em>v</em> is defined by
 
 <p><img src="figs/betweenness_centrality.gif">,
@@ -89,14 +89,14 @@ paths include; see <a href="#Fig1">Fig. 1</a>). Let <img src="figs/v_star.gif"> 
 <p><a name="Fig1">
     <table border="1">
       <thead>
-	<tr>
-	  <th>Fig. 1: A wheel graph, where every path travels through the central node. <br>The central point dominance of this graph is 1.</td>
-	</tr>
+        <tr>
+          <th>Fig. 1: A wheel graph, where every path travels through the central node. <br>The central point dominance of this graph is 1.</td>
+        </tr>
       </thead>
       <tbody>
-	<tr>
-	  <td align="center"><img src="figs/wheel_graph.gif"></td>
-	</tr>
+        <tr>
+          <td align="center"><img src="figs/wheel_graph.gif"></td>
+        </tr>
       </tbody>
     </table>
 
@@ -233,9 +233,9 @@ is <em>O(VE)</em>.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University
+<A HREF="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</A>, Indiana University
 </TD></TR></TABLE>
 <!-- Created: Fri Jun  4 16:42:50 EST 2004 -->
-<!-- hhmts start -->Last modified: Wed Jul 14 23:28:13 EST 2004 <!-- hhmts end -->
+<!-- hhmts start -->Last modified: Sat Jul 31 04:03:28 EST 2004 <!-- hhmts end -->
   </body>
 </html>
