@@ -35,9 +35,9 @@ int main(int,char*[])
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< VertexListGraphConcept<Graph> >();
+    function_requires< PropertyGraphConcept<Graph, Edge, edge_length_t > >();
     function_requires< PropertyGraphConcept<Graph, Vertex, u_property<Vertex> > >();
     function_requires< PropertyGraphConcept<Graph, Edge, a_property<Vertex> > >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_length_t > >();
   }
   return 0;
 }
