@@ -99,10 +99,10 @@ namespace boost {
 	     const graph_property_type& p = graph_property_type()) 
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     {
-      std::vector<vertex_descriptor>::iterator b = m_global_vertex.begin();
-      std::vector<vertex_descriptor>::iterator e = m_global_vertex.end();
-      for(vertices_size_type i = 0; b != e; ++b)
-        *b = i++;
+      typename Graph::vertex_iterator v, v_end;
+      vertices_size_type i = 0;
+      for (tie(v, v_end) = vertices(m_graph); v != v_end; ++v)
+        m_global_vertex[i++] = *v;
     }
 
     // copy constructor
