@@ -40,6 +40,7 @@ namespace boost {
   class DFSVisitorConcept {
   public:
     void constraints() {
+      function_requires< CopyConstructibleConcept<Visitor> >();
       vis.initialize_vertex(u, g);
       vis.start_vertex(u, g);
       vis.discover_vertex(u, g);

@@ -41,6 +41,7 @@ namespace boost {
   template <class Visitor, class Graph>
   struct BFSVisitorConcept {
     void constraints() {
+      function_requires< CopyConstructibleConcept<Visitor> >();
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);
