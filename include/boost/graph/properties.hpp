@@ -34,10 +34,7 @@ namespace boost {
   enum default_color_type { white_color, gray_color, black_color };
 
   template <class ColorValue>
-  struct color_traits { };
-
-  template <>
-  struct color_traits<default_color_type> {
+  struct color_traits {
     static default_color_type white() { return white_color; }
     static default_color_type gray() { return gray_color; }
     static default_color_type black() { return black_color; }
@@ -68,6 +65,7 @@ namespace boost {
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
       vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
       edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
+      vertex_all_num, edge_all_num, graph_all_num,
       last_property_num
     };
   } // namespace detail
@@ -96,6 +94,9 @@ namespace boost {
   enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
   BOOST_INSTALL_PROPERTY(KIND, NAME)
 
+  BOOST_DEF_PROPERTY(vertex, all);
+  BOOST_DEF_PROPERTY(edge, all);
+  BOOST_DEF_PROPERTY(graph, all);
   BOOST_DEF_PROPERTY(vertex, index);
   BOOST_DEF_PROPERTY(edge, index);
   BOOST_DEF_PROPERTY(edge, name);
@@ -212,6 +213,37 @@ namespace boost {
     typedef typename Map::type type;
     typedef typename Map::const_type const_type;
   };
+
+  template <class Graph, class Property>
+  class graph_property {
+  public:
+    typedef typename property_value<typename Graph::graph_property_type, 
+      Property>::type type;
+  };
+
+  template <typename Graph>
+  class degree_property_map 
+    : public put_get_at_helper< typename graph_traits<Graph>::degree_size_type,
+                                degree_property_map<Graph> >                  
+  {
+  public:
+    typedef typename graph_traits<Graph>::vertex_descriptor key_type;
+    typedef typename graph_traits<Graph>::degree_size_type value_type;
+    typedef readable_property_map_tag category;
+    degree_property_map(const Graph& g) : m_g(g) { }
+    value_type operator[](const key_type& v) const {
+      return degree(v, m_g);
+    }
+  private:
+    const Graph& m_g;
+  };
+  template <typename Graph>
+  inline degree_property_map<Graph>
+  make_degree_map(const Graph& g) {
+    return degree_property_map<Graph>(g);
+  }
+
+
 
 } // namespace boost
 
