@@ -62,9 +62,7 @@
 #include <sstream>
 #endif
 
-#ifndef GRAPHVIZ_GRAPH
-#error Need to define the GRAPHVIZ_GRAPH macro to either GraphvizGraph or GraphvizDigraph.
-#endif 
+#define GRAPHVIZ_GRAPH boost::GraphvizGraph
 
 #define YYPARSE_PARAM g
 
