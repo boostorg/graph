@@ -79,12 +79,12 @@ using namespace std;
 // in a workaround when the compiler does not do partial
 // specialization.
 
-enum edge_flow_t { edge_flow = 100 };
-enum edge_capacity_t { edge_capacity = 101 };
+enum edge_myflow_t { edge_myflow = 100 };
+enum edge_mycapacity_t { edge_mycapacity = 101 };
 
 namespace boost {
-  BOOST_INSTALL_PROPERTY(edge, flow);
-  BOOST_INSTALL_PROPERTY(edge, capacity);
+  BOOST_INSTALL_PROPERTY(edge, myflow);
+  BOOST_INSTALL_PROPERTY(edge, mycapacity);
 }
 
 
@@ -121,8 +121,8 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 
 int main(int , char* [])
 {
-  typedef property<edge_capacity_t, int> Cap;
-  typedef property<edge_flow_t, int, Cap> Flow;
+  typedef property<edge_mycapacity_t, int> Cap;
+  typedef property<edge_myflow_t, int, Cap> Flow;
   typedef adjacency_list<vecS, vecS, bidirectionalS, 
      no_property, Flow> Graph;
 
@@ -157,10 +157,10 @@ int main(int , char* [])
 
   typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
-  property_map<Graph, edge_capacity_t>::type
-    capacity = get(edge_capacity, G);
-  property_map<Graph, edge_flow_t>::type
-    flow = get(edge_flow, G);
+  property_map<Graph, edge_mycapacity_t>::type
+    capacity = get(edge_mycapacity, G);
+  property_map<Graph, edge_myflow_t>::type
+    flow = get(edge_myflow, G);
 
   print_network(G, capacity, flow);
 
