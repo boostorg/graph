@@ -1,9 +1,15 @@
 # -*- makefile -*-
 
-.SUFFIXES:  .fig .gif
+.SUFFIXES:  .fig .gif .tif .jpeg
 
 .fig.gif:
 	fig2dev -L gif $*.fig > $*.gif
+
+.fig.tif:
+	fig2dev -L tiff $*.fig > $*.tif
+
+.fig.jpeg:
+	fig2dev -L jpeg $*.fig > $*.jpg
 
 
 
@@ -20,11 +26,15 @@ search_states.fig graph_search.fig
 
 
 GIF	= $(FIG:.fig=.gif)
+TIFF	= $(FIG:.fig=.tif)
+JPEG	= $(FIG:.fig=.jpg)
 
 gifs: $(GIF)
+tiffs: $(TIFF)
+jpegs: $(JPEG)
 
 clean:
-	/bin/rm -f *.gif
+	/bin/rm -f *.gif *.tif *.jpg
 
 
 
