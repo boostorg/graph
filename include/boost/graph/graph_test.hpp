@@ -318,7 +318,7 @@ namespace boost {
     void test_readable_vertex_property_graph
       (const std::vector<PropVal>& vertex_prop, PropertyTag, Graph& g)
     {
-      typedef typename property_map<G, PropertyTag>::const_type const_Map;
+      typedef typename property_map<Graph, PropertyTag>::const_type const_Map;
       const_Map pmap = get(PropertyTag(), g);
       typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph) {
@@ -333,7 +333,7 @@ namespace boost {
     void test_vertex_property_graph
       (const std::vector<PropVal>& vertex_prop, PropertyTag tag, Graph& g)
     {
-      typedef typename property_map<G, PropertyTag>::type PMap;
+      typedef typename property_map<Graph, PropertyTag>::type PMap;
       PMap pmap = get(PropertyTag(), g);
       typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph)
@@ -344,9 +344,9 @@ namespace boost {
       BGL_FORALL_VERTICES_T(v, g, Graph)
         put(pmap, x, vertex_prop[0]);
       
-      typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
+      typename std::vector<PropVal>::const_iterator j = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph)
-        put(Property(), g, x, *i++);
+        put(Property(), g, x, *j++);
       
       test_readable_vertex_property_graph(vertex_prop, tag, g);      
     }
