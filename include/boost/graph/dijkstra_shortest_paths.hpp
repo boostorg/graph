@@ -85,22 +85,30 @@ namespace boost {
 
   namespace detail {
 
+    template <typename D>
+    struct generate_infinity {
+      D operator()() const { return std::numeric_limits<D>::max(); }
+    };
+    template <typename D>
+    struct generate_zero {
+      D operator()() const { return D(); }
+    };
+
     template <class UniformCostVisitor, class UpdatableQueue,
       class WeightMap, class PredecessorMap, class DistanceMap,
-      class BinaryFunctionExt, class BinaryFunctionSum>
+      class BinaryFunction, class BinaryPredicate>
     struct dijkstra_bfs_visitor
     {
       dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
                            WeightMap w, PredecessorMap p, DistanceMap d, 
-                           BinaryFunctionExt extend, 
-			   BinaryFunctionSum summarize)
+                           BinaryFunction combine, BinaryPredicate compare)
         : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d), 
-          m_extend(extend), m_summarize(summarize)  { }
+          m_combine(combine), m_compare(compare)  { }
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance, 
-                            m_extend, m_summarize);
+                            m_combine, m_compare);
         if (m_decreased)
           m_vis.edge_relaxed(e, g);
         else
@@ -109,7 +117,7 @@ namespace boost {
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance, 
-                            m_extend, m_summarize);
+                            m_combine, m_compare);
         if (m_decreased) {
           m_Q.update(target(e, g));
           m_vis.edge_relaxed(e, g);
@@ -138,15 +146,15 @@ namespace boost {
       WeightMap m_weight;
       PredecessorMap m_predecessor;
       DistanceMap m_distance;
-      BinaryFunctionExt m_extend;
-      BinaryFunctionSum m_summarize;
+      BinaryFunction m_combine;
+      BinaryPredicate m_compare;
       bool m_decreased;
     };
 
     // Initalize distances and call uniform cost search
     template <class VertexListGraph, class DijkstraVisitor, 
               class PredecessorMap, class DistanceMap,
-              class WeightMap, class IndexMap, class Summarize, class Extend, 
+              class WeightMap, class IndexMap, class Compare, class Combine, 
               class DistInf, class DistZero, class P, class T, class R>
     inline void
     dijkstra_impl
@@ -154,19 +162,19 @@ namespace boost {
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
        PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
        IndexMap index_map,
-       Summarize summarize, Extend extend, DistInf init, DistZero zero,
+       Compare compare, Combine combine, DistInf init, DistZero zero,
        DijkstraVisitor vis, 
        const bgl_named_params<P, T, R>& params)
     {
       typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-        put(distance, *ui, init);
+        put(distance, *ui, init());
         put(predecessor, *ui, *ui);
       }
-      put(distance, s, zero);
+      put(distance, s, zero());
       
-      typedef indirect_cmp<DistanceMap, Summarize> IndirectCmp;
-      IndirectCmp icmp(distance, summarize);
+      typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
+      IndirectCmp icmp(distance, compare);
 
       typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
       typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
@@ -175,14 +183,14 @@ namespace boost {
       MutableQueue Q(num_vertices(g), icmp, index_map);
       
       dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
-        PredecessorMap, DistanceMap, Extend, Summarize>
-          bfs_vis(vis, Q, weight, predecessor, distance, extend, summarize);
+        PredecessorMap, DistanceMap, Combine, Compare>
+          bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
 
       breadth_first_search(g, s, params.buffer(Q).visitor(bfs_vis));
     }
 
     // Handle defaults for PredecessorMap and 
-    // Distance Summarize, Extend, Inf and Zero
+    // Distance Compare, Combine, Inf and Zero
     template <class VertexListGraph, class DistanceMap, class WeightMap,
               class IndexMap, class Params>
     inline void
@@ -200,14 +208,14 @@ namespace boost {
         (g, s, 
          choose_param(get_param(params, vertex_predecessor), p_map),
          distance, weight, index_map, 
-         choose_param(get_param(params, distance_summarize_t()), 
-                      detail::min_operation()),
-         choose_param(get_param(params, distance_extend_t()), 
-                      detail::closed_plus()),
+         choose_param(get_param(params, distance_compare_t()), 
+                      std::less<D>()),
+         choose_param(get_param(params, distance_combine_t()), 
+                      std::plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
-                      std::numeric_limits<D>::max()),
+                      generate_infinity<D>()),
          choose_param(get_param(params, distance_zero_t()), 
-                      D()),
+                      generate_zero<D>()),
          choose_param(get_param(params, graph_visitor),
                       make_dijkstra_visitor(null_visitor())),
          params);

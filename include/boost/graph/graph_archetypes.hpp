@@ -5,13 +5,21 @@
 #include <boost/concept_archetype.hpp>
 
 namespace boost { // should use a different namespace for this
+
+  namespace detail {
+    struct null_graph_archetype : public null_archetype<> {
+      struct traversal_category { }; 
+    };
+  }
   
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory,
-    typename Base = null_archetype<> >
+    typename Base = detail::null_graph_archetype >
   struct incidence_graph_archetype : public Base
   {
-    typedef incidence_graph_tag traversal_category;
+    typedef typename Base::traversal_category base_trav_cat;
+    struct traversal_category
+      : public incidence_graph_tag, public base_trav_cat { };
 #if 0
     typedef immutable_graph_tag mutability_category;
 #endif
@@ -66,10 +74,12 @@ namespace boost { // should use a different namespace for this
 
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory,
-    typename Base = null_archetype<> >
+    typename Base = detail::null_graph_archetype >
   struct adjacency_graph_archetype : public Base
   {
-    typedef adjacency_graph_tag traversal_category;
+    typedef typename Base::traversal_category base_trav_cat;
+    struct traversal_category
+      : public adjacency_graph_tag, public base_trav_cat { };
     typedef Vertex vertex_descriptor;
     typedef unsigned int degree_size_type;
     typedef unsigned int vertices_size_type;
@@ -104,7 +114,7 @@ namespace boost { // should use a different namespace for this
 
   //===========================================================================
   template <typename Vertex, typename Directed, typename ParallelCategory,
-    typename Base = null_archetype<> >
+    typename Base = detail::null_graph_archetype >
   struct vertex_list_graph_archetype : public Base
   {
     typedef incidence_graph_archetype<Vertex, Directed, ParallelCategory> 
@@ -112,7 +122,9 @@ namespace boost { // should use a different namespace for this
     typedef adjacency_graph_archetype<Vertex, Directed, ParallelCategory> 
       Adjacency;
 
-    typedef vertex_list_graph_tag traversal_category;
+    typedef typename Base::traversal_category base_trav_cat;
+    struct traversal_category
+      : public vertex_list_graph_tag, public base_trav_cat { };
 #if 0
     typedef immutable_graph_tag mutability_category;
 #endif
