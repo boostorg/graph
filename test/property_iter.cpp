@@ -1,24 +1,15 @@
 //=======================================================================
-// Copyright 2002 Indiana University.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// This file is part of the Boost Graph Library
+//  Copyright (c) 2003 Institute of Transport, 
+//                     Railway Construction and Operation, 
+//                     University of Hanover, Germany
 //
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
+//  Author: Jürgen Hunold
 //
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
+//  Use, modification and distribution are subject to the 
+//  Boost Software License, Version 1.0. (See accompanying file 
+//  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
 //=======================================================================
 
 #include <boost/config.hpp>
@@ -82,7 +73,6 @@ int main(int, char* [])
   for (std::size_t k = 0; k < N; ++k)
     add_vertex(current_vertex_id++, g);
 
-  // also need to test EdgeIterator graph constructor -JGS
   mt19937 gen;
 
   for (j=0; j < 10; ++j) {
@@ -111,7 +101,6 @@ int main(int, char* [])
       print_edges2(g, vertex_id_map, edge_id_map);
       print_graph(g, vertex_id_map);
       std::cout << "finished printing" << std::endl;
-      //      print_in_edges(g, vertex_id_map);
 #endif
       }
       ++E;
