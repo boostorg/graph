@@ -1457,12 +1457,14 @@ namespace boost {
       typedef typename Config::stored_vertex stored_vertex;
       typedef typename Config::EdgeContainer EdgeContainer;
       typedef typename Config::vertex_descriptor vertex_descriptor;
+      typedef typename Config::edge_descriptor edge_descriptor;
       typedef typename Config::vertex_iterator vertex_iterator;
       typedef typename Config::edge_iterator edge_iterator;
       typedef typename Config::edge_parallel_category edge_parallel_category;
       typedef typename Config::vertices_size_type vertices_size_type;
       typedef typename Config::edges_size_type edges_size_type;
       typedef typename Config::degree_size_type degree_size_type;
+      typedef typename Config::edge_property_type edge_property_type;
       typedef adj_list_tag graph_tag;
 
       inline adj_list_impl() { }
@@ -1559,7 +1561,8 @@ namespace boost {
 	  vertex_descriptor s = source(*ei,x), t = target(*ei,x);
 	  tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s], 
 				      vertex_map[(stored_vertex*)t], *this);
-	  e.m_eproperty = (*ei).m_eproperty;
+	  *((edge_property_type*)e.m_eproperty)
+	    = *((edge_property_type*)(*ei).m_eproperty);
 	}
       }
 
@@ -1628,6 +1631,7 @@ namespace boost {
       typedef typename Config::StoredEdge StoredEdge;
       typedef typename Config::stored_vertex stored_vertex;
       typedef typename Config::EdgeContainer EdgeContainer;
+      typedef typename Config::edge_property_type edge_property_type;
       typedef vec_adj_list_tag graph_tag;
 
       inline vec_adj_list_impl() { }
@@ -1690,12 +1694,12 @@ namespace boost {
       }
       inline void copy_impl(const vec_adj_list_impl& x_) 
       {
-	const Derived& x = static_cast<const Derived&>(x_);
+	const Graph& x = static_cast<const Graph&>(x_);
 	// Copy the stored vertex objects by adding each vertex
 	// and copying its property object.
         for (vertices_size_type i = 0; i < num_vertices(x); ++i) {
           vertex_descriptor v = add_vertex(*this);
-	  m_vertices[v] = x.m_vertices[i].m_property;
+	  m_vertices[v].m_property = x.m_vertices[i].m_property;
 	}
 	// Copy the edges by adding each edge and copying its
 	// property object.
@@ -1704,7 +1708,8 @@ namespace boost {
 	  edge_descriptor e;
 	  bool inserted; 
 	  tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
-	  e.m_eproperty = (*ei).m_eproperty;
+	  *((edge_property_type*)e.m_eproperty)
+	    = *((edge_property_type*)(*ei).m_eproperty);
 	}
       }
       typename Config::EdgeContainer m_edges;
