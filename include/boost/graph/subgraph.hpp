@@ -47,7 +47,7 @@ namespace boost {
   //   - If edge e=(u,v) is in the root graph, then edge e
   //     is also in any subgraph that contains both vertex u and v.
 
-  // The Graph template parameter must have a vertex_index 
+  // The Graph template parameter must have a vertex_index
   // and edge_index internal property. It is assumed that
   // the vertex indices are assigned automatically by the
   // graph during a call to add_vertex(). It is not
@@ -88,18 +88,18 @@ namespace boost {
     typedef subgraph_tag                               graph_tag;
     typedef Graph                                      graph_type;
     typedef typename Graph::graph_property_type        graph_property_type;
-    
+
     // Constructors
 
     // Create the main graph, the root of the subgraph tree
     subgraph()
       : m_parent(0), m_edge_counter(0)
     { }
-    subgraph(const graph_property_type& p) 
+    subgraph(const graph_property_type& p)
       : m_graph(p), m_parent(0), m_edge_counter(0)
     { }
-    subgraph(vertices_size_type n, 
-             const graph_property_type& p = graph_property_type()) 
+    subgraph(vertices_size_type n,
+             const graph_property_type& p = graph_property_type())
       : m_graph(n, p), m_parent(0), m_edge_counter(0), m_global_vertex(n)
     {
       typename Graph::vertex_iterator v, v_end;
@@ -110,7 +110,7 @@ namespace boost {
 
     // copy constructor
     subgraph(const subgraph& x)
-      : m_graph(x.m_graph), m_parent(x.m_parent), 
+      : m_graph(x.m_graph), m_parent(x.m_parent),
       m_edge_counter(x.m_edge_counter),
       m_global_vertex(x.m_global_vertex)
     {
@@ -134,7 +134,7 @@ namespace boost {
       m_children.back()->m_parent = this;
       return *m_children.back();
     }
-    
+
     // Create a subgraph with the specified vertex set.
     template <typename VertexIterator>
     subgraph<Graph>& create_subgraph(VertexIterator first,
@@ -165,7 +165,7 @@ namespace boost {
     }
     edge_descriptor global_to_local(edge_descriptor e_global) const
     {
-      return 
+      return
         (*m_local_edge.find(get(get(edge_index, root().m_graph), e_global))).second;
     }
 
@@ -184,7 +184,7 @@ namespace boost {
     const subgraph& parent() const { return *m_parent; }
 
     bool is_root() const { return m_parent == 0; }
-    
+
     // Return the root graph of the subgraph tree.
     subgraph& root() {
       if (this->is_root())
@@ -219,14 +219,14 @@ namespace boost {
     std::pair<const_children_iterator, const_children_iterator>
     children() const
     {
-      return std::make_pair(const_children_iterator(m_children.begin()), 
+      return std::make_pair(const_children_iterator(m_children.begin()),
                             const_children_iterator(m_children.end()));
     }
 
     std::pair<children_iterator, children_iterator>
-    children() 
+    children()
     {
-      return std::make_pair(children_iterator(m_children.begin()), 
+      return std::make_pair(children_iterator(m_children.begin()),
                             children_iterator(m_children.end()));
     }
 
@@ -246,10 +246,10 @@ namespace boost {
     std::map<edge_index_type, edge_descriptor> m_local_edge; // global -> local
 
     edge_descriptor
-    local_add_edge(vertex_descriptor u_local, vertex_descriptor v_local,  
+    local_add_edge(vertex_descriptor u_local, vertex_descriptor v_local,
                    edge_descriptor e_global)
     {
-      edge_descriptor e_local; 
+      edge_descriptor e_local;
       bool inserted;
       tie(e_local, inserted) = add_edge(u_local, v_local, m_graph);
       put(edge_index, m_graph, e_local, m_edge_counter++);
@@ -275,13 +275,13 @@ namespace boost {
     u_local = add_vertex(g.m_graph);
     g.m_global_vertex.push_back(u_global);
     g.m_local_vertex[u_global] = u_local;
-    
+
     subgraph<G>& r = g.root();
 
     // remember edge global and local maps
     {
       typename subgraph<G>::out_edge_iterator ei, ei_end;
-      for (tie(ei, ei_end) = out_edges(u_global, r); 
+      for (tie(ei, ei_end) = out_edges(u_global, r);
            ei != ei_end; ++ei) {
         e_global = *ei;
         v_global = target(e_global, r);
@@ -298,105 +298,105 @@ namespace boost {
           for (tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
             e_global = *ei;
             uu_global = target(e_global, r);
-            if (uu_global == u_global && g.find_vertex(v_global).second) 
+            if (uu_global == u_global && g.find_vertex(v_global).second)
               g.local_add_edge(g.global_to_local(v_global), u_local, e_global);
           }
       }
     }
 
     return u_local;
-  }  
+  }
 
   //===========================================================================
-  // Functions required by the IncidenceGraph concept 
+  // Functions required by the IncidenceGraph concept
 
   template <typename G>
   std::pair<typename graph_traits<G>::out_edge_iterator,
             typename graph_traits<G>::out_edge_iterator>
   out_edges(typename graph_traits<G>::vertex_descriptor u_local,
-            const subgraph<G>& g) 
+            const subgraph<G>& g)
     { return out_edges(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::degree_size_type
   out_degree(typename graph_traits<G>::vertex_descriptor u_local,
-             const subgraph<G>& g) 
+             const subgraph<G>& g)
     { return out_degree(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::vertex_descriptor
   source(typename graph_traits<G>::edge_descriptor e_local,
-         const subgraph<G>& g) 
+         const subgraph<G>& g)
     { return source(e_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::vertex_descriptor
   target(typename graph_traits<G>::edge_descriptor e_local,
-         const subgraph<G>& g) 
+         const subgraph<G>& g)
     { return target(e_local, g.m_graph); }
 
   //===========================================================================
-  // Functions required by the BidirectionalGraph concept 
+  // Functions required by the BidirectionalGraph concept
 
   template <typename G>
   std::pair<typename graph_traits<G>::in_edge_iterator,
             typename graph_traits<G>::in_edge_iterator>
   in_edges(typename graph_traits<G>::vertex_descriptor u_local,
-            const subgraph<G>& g) 
+            const subgraph<G>& g)
     { return in_edges(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::degree_size_type
   in_degree(typename graph_traits<G>::vertex_descriptor u_local,
-             const subgraph<G>& g) 
+             const subgraph<G>& g)
     { return in_degree(u_local, g.m_graph); }
 
   template <typename G>
   typename graph_traits<G>::degree_size_type
   degree(typename graph_traits<G>::vertex_descriptor u_local,
-             const subgraph<G>& g) 
+             const subgraph<G>& g)
     { return degree(u_local, g.m_graph); }
 
   //===========================================================================
-  // Functions required by the AdjacencyGraph concept 
+  // Functions required by the AdjacencyGraph concept
 
   template <typename G>
   std::pair<typename subgraph<G>::adjacency_iterator,
             typename subgraph<G>::adjacency_iterator>
   adjacent_vertices(typename subgraph<G>::vertex_descriptor u_local,
-                    const subgraph<G>& g) 
+                    const subgraph<G>& g)
     { return adjacent_vertices(u_local, g.m_graph); }
 
   //===========================================================================
-  // Functions required by the VertexListGraph concept 
+  // Functions required by the VertexListGraph concept
 
   template <typename G>
   std::pair<typename subgraph<G>::vertex_iterator,
             typename subgraph<G>::vertex_iterator>
-  vertices(const subgraph<G>& g) 
+  vertices(const subgraph<G>& g)
     { return vertices(g.m_graph); }
 
   template <typename G>
   typename subgraph<G>::vertices_size_type
-  num_vertices(const subgraph<G>& g) 
+  num_vertices(const subgraph<G>& g)
     { return num_vertices(g.m_graph); }
 
   //===========================================================================
-  // Functions required by the EdgeListGraph concept 
-  
+  // Functions required by the EdgeListGraph concept
+
   template <typename G>
   std::pair<typename subgraph<G>::edge_iterator,
             typename subgraph<G>::edge_iterator>
-  edges(const subgraph<G>& g) 
+  edges(const subgraph<G>& g)
     { return edges(g.m_graph); }
 
   template <typename G>
   typename subgraph<G>::edges_size_type
-  num_edges(const subgraph<G>& g) 
+  num_edges(const subgraph<G>& g)
     { return num_edges(g.m_graph); }
 
   //===========================================================================
-  // Functions required by the AdjacencyMatrix concept 
+  // Functions required by the AdjacencyMatrix concept
 
   template <typename G>
   std::pair<typename subgraph<G>::edge_descriptor, bool>
@@ -408,7 +408,7 @@ namespace boost {
   }
 
   //===========================================================================
-  // Functions required by the MutableGraph concept 
+  // Functions required by the MutableGraph concept
 
   namespace detail {
 
@@ -431,7 +431,7 @@ namespace boost {
       (Vertex u_global, Vertex v_global, Edge e_global, subgraph<Graph>& g,
        subgraph<Graph>* orig)
     {
-      if (&g != orig ) { 
+      if (&g != orig ) {
         // add local edge only if u_global and v_global are in subgraph g
         Vertex u_local, v_local;
         bool u_in_subgraph, v_in_subgraph;
@@ -502,7 +502,7 @@ namespace boost {
     // implementation of remove_edge(u,v,g)
 
     template <typename Vertex, typename Graph>
-    void remove_edge_recur_down(Vertex u_global, Vertex v_global, 
+    void remove_edge_recur_down(Vertex u_global, Vertex v_global,
                                 subgraph<Graph>& g);
 
     template <typename Vertex, typename Children>
@@ -514,9 +514,9 @@ namespace boost {
             && (*i)->find_vertex(v_global).second)
           remove_edge_recur_down(u_global, v_global, **i);
     }
-    
+
     template <typename Vertex, typename Graph>
-    void remove_edge_recur_down(Vertex u_global, Vertex v_global, 
+    void remove_edge_recur_down(Vertex u_global, Vertex v_global,
                                 subgraph<Graph>& g)
     {
       Vertex u_local, v_local;
@@ -527,7 +527,7 @@ namespace boost {
     }
 
     template <typename Vertex, typename Graph>
-    void remove_edge_recur_up(Vertex u_global, Vertex v_global, 
+    void remove_edge_recur_up(Vertex u_global, Vertex v_global,
                               subgraph<Graph>& g)
     {
       if (g.is_root()) {
@@ -584,7 +584,7 @@ namespace boost {
       detail::remove_edge_recur_up(g.local_to_global(u_local),
                                    g.local_to_global(v_local), g);
   }
-  
+
   template <typename G>
   void
   remove_edge(typename subgraph<G>::edge_descriptor e_local,
@@ -614,24 +614,24 @@ namespace boost {
   }
 
   namespace detail {
-    
+
     template <typename G>
     typename subgraph<G>::vertex_descriptor
     add_vertex_recur_up(subgraph<G>& g)
     {
       typename subgraph<G>::vertex_descriptor u_local, u_global;
       if (g.is_root()) {
-        u_global = add_vertex(g.m_graph);       
+        u_global = add_vertex(g.m_graph);
         g.m_global_vertex.push_back(u_global);
       } else {
         u_global = add_vertex_recur_up(*g.m_parent);
         u_local = add_vertex(g.m_graph);
         g.m_global_vertex.push_back(u_global);
-        g.m_local_vertex[u_global] = u_local; 
+        g.m_local_vertex[u_global] = u_local;
       }
       return u_global;
     }
-    
+
   } // namespace detail
 
   template <typename G>
@@ -662,11 +662,11 @@ namespace boost {
 
 
   //===========================================================================
-  // Functions required by the PropertyGraph concept 
+  // Functions required by the PropertyGraph concept
 
   template <typename GraphPtr, typename PropertyMap>
-  class subgraph_global_property_map 
-    : public put_get_helper< 
+  class subgraph_global_property_map
+    : public put_get_helper<
         typename property_traits<PropertyMap>::reference,
         subgraph_global_property_map<GraphPtr, PropertyMap> >
   {
@@ -681,7 +681,7 @@ namespace boost {
 
     subgraph_global_property_map(GraphPtr g, PropertyMap pmap)
       : m_g(g), m_pmap(pmap) { }
-    
+
     inline reference operator[](key_type e_local) const {
       if (m_g->m_parent == 0)
         return m_pmap[e_local];
@@ -693,8 +693,8 @@ namespace boost {
   };
 
   template <typename GraphPtr, typename PropertyMap>
-  class subgraph_local_property_map 
-    : public put_get_helper< 
+  class subgraph_local_property_map
+    : public put_get_helper<
         typename property_traits<PropertyMap>::reference,
         subgraph_local_property_map<GraphPtr, PropertyMap> >
   {
@@ -709,7 +709,7 @@ namespace boost {
 
     subgraph_local_property_map(GraphPtr g, PropertyMap pmap)
       : m_g(g), m_pmap(pmap) { }
-    
+
     inline reference operator[](key_type e_local) const {
       return m_pmap[e_local];
     }
@@ -727,9 +727,9 @@ namespace boost {
         typedef const SubGraph* const_SubGraphPtr;
         typedef typename property_map<Graph, Tag>::type PMap;
         typedef typename property_map<Graph, Tag>::const_type const_PMap;
-      public:   
+      public:
         typedef subgraph_global_property_map<SubGraphPtr, PMap> type;
-        typedef subgraph_global_property_map<const_SubGraphPtr, const_PMap> 
+        typedef subgraph_global_property_map<const_SubGraphPtr, const_PMap>
           const_type;
       };
     };
@@ -741,9 +741,9 @@ namespace boost {
         typedef const SubGraph* const_SubGraphPtr;
         typedef typename property_map<Graph, Tag>::type PMap;
         typedef typename property_map<Graph, Tag>::const_type const_PMap;
-      public:   
+      public:
         typedef subgraph_local_property_map<SubGraphPtr, PMap> type;
-        typedef subgraph_local_property_map<const_SubGraphPtr, const_PMap> 
+        typedef subgraph_local_property_map<const_SubGraphPtr, const_PMap>
           const_type;
       };
     };
@@ -765,9 +765,9 @@ namespace boost {
     struct subgraph_property_generator {
       template <class SubGraph, class Property, class Tag>
       struct bind_ {
-	typedef subgraph_choose_pmap<Tag, SubGraph, Property> Choice;
+        typedef subgraph_choose_pmap<Tag, SubGraph, Property> Choice;
         typedef typename Choice::type type;
-        typedef typename Choice::const_type const_type;	
+        typedef typename Choice::const_type const_type;
       };
     };
 

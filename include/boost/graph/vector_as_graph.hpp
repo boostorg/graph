@@ -27,7 +27,7 @@
 
 // Copyright (C) 2001 Vladimir Prus <ghost@cs.msu.su>
 // Permission to copy, use, modify, sell and distribute this software is
-// granted, provided this copyright notice appears in all copies and 
+// granted, provided this copyright notice appears in all copies and
 // modified version are clearly marked as such. This software is provided
 // "as is" without express or implied warranty, and with no claim as to its
 // suitability for any purpose.
@@ -168,7 +168,7 @@ namespace boost {
 
   template <class EdgeList, class Alloc>
   typename detail::val_out_edge_ret<EdgeList>::type
-  out_edges(typename EdgeList::value_type v, 
+  out_edges(typename EdgeList::value_type v,
             const std::vector<EdgeList, Alloc>& g)
   {
     typedef typename detail::val_out_edge_iter<EdgeList>::type Iter;
@@ -178,7 +178,7 @@ namespace boost {
 
   template <class EdgeList, class Alloc>
   typename EdgeList::size_type
-  out_degree(typename EdgeList::value_type v, 
+  out_degree(typename EdgeList::value_type v,
              const std::vector<EdgeList, Alloc>& g)
   {
     return g[v].size();
@@ -187,7 +187,7 @@ namespace boost {
   template <class EdgeList, class Alloc>
   std::pair<typename EdgeList::const_iterator,
             typename EdgeList::const_iterator>
-  adjacent_vertices(typename EdgeList::value_type v, 
+  adjacent_vertices(typename EdgeList::value_type v,
                     const std::vector<EdgeList, Alloc>& g)
   {
     return std::make_pair(g[v].begin(), g[v].end());
@@ -233,7 +233,7 @@ namespace boost {
     typename EdgeList::iterator i = g[u].begin(), end = g[u].end();
     for (; i != end; ++i)
       if (*i == v)
-	return std::make_pair(edge_type(u, v), true);
+        return std::make_pair(edge_type(u, v), true);
     return std::make_pair(edge_type(), false);
   }
 
@@ -258,15 +258,15 @@ namespace boost {
     // FIXME: edge type does not fully specify the edge to be deleted
     typename EdgeList::iterator i = remove(g[u].begin(), g[u].end(), v);
     if (i != g[u].end())
-      g[u].erase(i, g[u].end());  
+      g[u].erase(i, g[u].end());
   }
 
   template<class EdgeList, class Allocator, class Predicate>
   void
-  remove_edge_if(Predicate p, 
+  remove_edge_if(Predicate p,
                  std::vector<EdgeList, Allocator>& g)
   {
-      for (std::size_t u = 0; u < g.size(); ++u) { 
+      for (std::size_t u = 0; u < g.size(); ++u) {
           // Oops! gcc gets internal compiler error on compose_.......
 
           typedef typename EdgeList::iterator iterator;
@@ -280,11 +280,11 @@ namespace boost {
                       if (b == e)
                           break;
                       else
-                          iter_swap(b, e);            
+                          iter_swap(b, e);
                   } else {
                       ++b;
                   }
-              }     
+              }
           }
 
           if (e != g[u].end())

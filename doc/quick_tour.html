@@ -191,7 +191,7 @@ but in this case the iterators are <i>edge iterators</i>. Dereferencing an edge
 iterator gives an edge object. The <tt>source()</tt> and <tt>target()</tt>
 functions return the two vertices that are connected by the edge. Instead of
 explicitly creating a <tt>std::pair</tt> for the iterators, this time we will
-use the <a href="../../utility/tie.html"><tt>tie()</tt></a> helper function.
+use the <a href="../../tuple/doc/tuple_users_guide.html#tiers"><tt>tie()</tt></a> helper function.
 This handy function can be used to assign the parts of a <tt>std::pair</tt> into
 two separate variables, in this case <tt>ei</tt> and <tt>ei_end</tt>. This is
 usually more convenient than creating a <tt>std::pair</tt> and is our method of
