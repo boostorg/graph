@@ -40,7 +40,7 @@ namespace boost {
 
     template <class Property>
     struct property_value_end {
-      template <class T> class result { typedef T type; };
+      template <class T> struct result { typedef T type; };
 
       template <class T, class Tag>
       static T& get_value(Property& p, T* t, Tag tag) {
@@ -61,7 +61,7 @@ namespace boost {
     };
     template <>
     struct property_value_end<no_property> {
-      template <class T> class result { 
+      template <class T> struct result { 
 	typedef detail::error_property_not_found type; 
       };
 
