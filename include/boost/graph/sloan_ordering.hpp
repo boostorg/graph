@@ -63,9 +63,9 @@ namespace boost {
   //
   /////////////////////////////////////////////////////////////////////////
   template<class Distance>
-  int RLS_depth(Distance& d)
+  unsigned RLS_depth(Distance& d)
   {
-    int h_s = 0;
+    unsigned h_s = 0;
     typename Distance::iterator iter;
     
     for (iter = d.begin(); iter != d.end(); ++iter)
@@ -87,14 +87,14 @@ namespace boost {
   //
   /////////////////////////////////////////////////////////////////////////
   template<class Distance, class my_int>
-  int RLS_max_width(Distance& d, my_int depth)
+  unsigned RLS_max_width(Distance& d, my_int depth)
   {
     
       //Searching for the maximum width of a level
-      std::vector<int> dummy_width(depth+1, 0);
-      std::vector<int>::iterator my_it;
+      std::vector<unsigned> dummy_width(depth+1, 0);
+      std::vector<unsigned>::iterator my_it;
       typename Distance::iterator iter;
-      int w_max = 0;
+      unsigned w_max = 0;
       
       for (iter = d.begin(); iter != d.end(); ++iter)
       {
@@ -133,10 +133,10 @@ namespace boost {
     
     Vertex e, i;
     s = *(vertices(G).first);
-    int my_degree = get(degree, s ); 
-    int dummy, h_i, h_s, w_i, w_e;
+    unsigned my_degree = get(degree, s ); 
+    unsigned dummy, h_i, h_s, w_i, w_e;
     bool new_start = true;
-    int maximum_degree = 0;
+    unsigned maximum_degree = 0;
     
     //Creating a std-vector for storing the distance from the start vertex in dist
     std::vector<graph_traits<Graph>::vertices_size_type> dist(num_vertices(G), 0);
@@ -306,7 +306,7 @@ namespace boost {
     property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, g);
     
     //Sets the color and priority to their initial status
-    int cdeg;    
+    unsigned cdeg;    
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
@@ -318,7 +318,12 @@ namespace boost {
     //Priority list
     typedef indirect_cmp<PriorityMap, std::greater<DS> > Compare;
     Compare comp(priority);
+    
+#if !defined BOOST_NO_SLIST
     std::slist<Vertex> priority_list;
+#else
+    std::list<Vertex> priority_list;
+#endif
 
     //Some more declarations
     typename graph_traits<Graph>::out_edge_iterator ei, ei_end, ei2, ei2_end;
