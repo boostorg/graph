@@ -47,7 +47,6 @@
 #include <boost/graph/adjacency_iterator.hpp>
 
 // Symbol truncation problems with MSVC, trying to shorten names.
-#define edge_iter_traits eit_
 #define out_edge_iter_policies oeip_
 #define in_edge_iter_policies ieip_
 #define stored_edge se_
@@ -127,6 +126,7 @@ namespace boost {
     //=========================================================================
     // Out-Edge and In-Edge Iterator Implementation
 
+#if 0
     template <class EdgeDescriptor, class EdgeIterCat, class EdgeIterDiff>
     struct edge_iter_traits {
       typedef EdgeDescriptor value_type;
@@ -135,6 +135,7 @@ namespace boost {
       typedef boost::multi_pass_input_iterator_tag iterator_category;
       typedef EdgeIterDiff difference_type;
     };
+#endif
 
     template <class VertexDescriptor>
     struct out_edge_iter_policies : public boost::default_iterator_policies
@@ -2149,7 +2150,9 @@ namespace boost {
 
         typedef iterator_adaptor<OutEdgeIter, 
           out_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, OutEdgeIterCat, OutEdgeIterDiff>
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          OutEdgeIterDiff
         > out_edge_iterator;
 
         typedef typename adjacency_iterator_generator<graph_type,
@@ -2162,7 +2165,9 @@ namespace boost {
 
         typedef boost::iterator_adaptor<InEdgeIter, 
           in_edge_iter_policies<vertex_descriptor>,
-          edge_iter_traits<edge_descriptor, InEdgeIterCat, InEdgeIterDiff>
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          InEdgeIterDiff
         > in_edge_iterator;
 
         // Edge Iterator
@@ -2172,9 +2177,11 @@ namespace boost {
         typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
 
         typedef boost::iterator_adaptor<EdgeIter,
-              undirected_edge_iter_policies,
-              edge_iter_traits<edge_descriptor, EdgeIterCat, EdgeIterDiff> > 
-          UndirectedEdgeIter;
+          undirected_edge_iter_policies,
+          edge_descriptor, edge_descriptor, edge_descriptor*, 
+          boost::multi_pass_input_iterator_tag,
+          EdgeIterDiff          
+        > UndirectedEdgeIter;
 
         typedef adj_list_edge_iterator<vertex_iterator, out_edge_iterator, 
            graph_type> DirectedEdgeIter;
@@ -2422,7 +2429,6 @@ namespace boost {
 #undef stored_edge
 #undef stored_edge_property
 #undef stored_edge_iter
-#undef edge_iter_traits
 #undef out_edge_iter_policies
 #undef in_edge_iter_policies
 
