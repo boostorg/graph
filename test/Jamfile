@@ -3,6 +3,8 @@ subproject libs/graph/test ;
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
 
+exe transitive_closure_test : transitive_closure_test.cpp : <include>$(BOOST_ROOT) : debug ;
+
 exe adj_list_cc : adj_list_cc.cpp : <include>$(BOOST_ROOT) : debug ;
 exe adj_list_test : adj_list_test.cpp : <include>$(BOOST_ROOT) : debug ;
 exe adj_matrix_cc : adj_matrix_cc.cpp : <include>$(BOOST_ROOT) : debug ;
@@ -21,5 +23,4 @@ exe reverse_graph_cc : reverse_graph_cc.cpp : <include>$(BOOST_ROOT) : debug ;
 exe stanford_graph_cc : stanford_graph_cc.cpp : <include>$(BOOST_ROOT) 
    <include>$(SGB) <library-file>$(SGB)/libgb.a : debug ;
 exe subgraph : subgraph.cpp : <include>$(BOOST_ROOT) : debug ;
-exe transitive_closure_test : transitive_closure_test.cpp : <include>$(BOOST_ROOT) : debug ;
 exe vector_graph_cc : vector_graph_cc.cpp : <include>$(BOOST_ROOT) : debug ;

@@ -64,6 +64,7 @@ void transitive_closure(const Graph& g, GraphTC& tc,
   G_to_TC_VertexMap g_to_tc_map,
   VertexIndexMap index_map)
 {
+  if (num_vertices(g) == 0) return;
   @<Some type definitions@>
   @<Concept checking@>
   @<Compute strongly connected components of the graph@>
@@ -89,6 +90,7 @@ both the \code{g\_to\_tc\_map} and the \code{index\_map}.
 template <typename Graph, typename GraphTC>
 void transitive_closure(const Graph& g, GraphTC& tc)
 {
+  if (num_vertices(g) == 0) return;
   typedef typename property_map<Graph, vertex_index_t>::const_type
     VertexIndexMap;
   VertexIndexMap index_map = get(vertex_index, g);
@@ -115,6 +117,7 @@ template <typename Graph, typename GraphTC,
 void transitive_closure(const Graph& g, GraphTC& tc,
   const bgl_named_params<P, T, R>& params)
 {
+  if (num_vertices(g) == 0) return;
   detail::transitive_closure_dispatch(g, tc, 
     get_param(params, orig_to_copy),
     choose_const_pmap(get_param(params, vertex_index), g, vertex_index)

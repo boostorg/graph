@@ -67,7 +67,7 @@ bool test(int n, double p)
   {
     progress_timer t;
     cout << "transitive_closure" << endl;
-    transitive_closure(g1, g1_tc, identity_property_map());
+    transitive_closure(g1, g1_tc, vertex_index_map(identity_property_map()));
   }
 
   if(check_transitive_closure(g1, g1_tc))
