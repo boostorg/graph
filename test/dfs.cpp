@@ -120,10 +120,10 @@ struct dfs_test
           finish_time(num_vertices(g));
 
         dfs_test_visitor<ColorMap, vertex_descriptor*,
-          int*, int*> visitor(color, &parent[0], 
-                              &discover_time[0], &finish_time[0]);
+          int*, int*> vis(color, &parent[0], 
+			  &discover_time[0], &finish_time[0]);
 
-        boost::depth_first_search(g, visitor);
+        boost::depth_first_search(g, visitor(vis).color_map(color));
 
         // all vertices should be black
         for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
@@ -156,25 +156,6 @@ struct dfs_test
 
 int test_main(int argc, char* argv[])
 {
-  if (0) { // compile only
-    // Check boost::depth_first_search() version 1 requirements with archetypes
-    typedef boost::default_constructible_archetype<
-      boost::sgi_assignable_archetype< 
-      boost::equality_comparable_archetype<> > > Vertex;
-    typedef boost::vertex_list_graph_archetype<Vertex, boost::directed_tag, 
-      boost::allow_parallel_edge_tag > VLGraph;
-    typedef boost::property_graph_archetype<VLGraph, boost::vertex_color_t, 
-      boost::color_value_archetype> PGraph;
-    PGraph g_arch1;
-    boost::depth_first_search(g_arch1, boost::dfs_visitor<>());
-
-    // Check boost::depth_first_search() version 2 requirements with archetypes
-    VLGraph g_arch2;
-    typedef boost::read_write_property_map_archetype<Vertex,
-      boost::color_value_archetype > color_map;
-    boost::depth_first_search(g_arch2, boost::dfs_visitor<>(), color_map());
-  }
-
   int max_V = 15;
   if (argc > 1)
     max_V = atoi(argv[1]);
