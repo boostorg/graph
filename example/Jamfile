@@ -1,7 +1,13 @@
 subproject libs/graph/example ;
 
-SGB = /u/jsiek/sgb ;
-LEDA = /u/jsiek/LEDA-4.1 ;
+# Define SGB (stanford graph base top level directory) and 
+# LEDA (also top level directory) at the command line of jam using -s
+
+
+DEPENDS all : accum-compile-times adjacency_list adjacency_list_io adjacency_matrix bellman-example bellman-ford-internet bfs bfs-example bfs-name-printer bfs_neighbor biconnected_components boost_web_graph bucket_sorter cc-internet city_visitor components_on_edgelist connected_components connected-components container_gen copy-example cuthill_mckee_ordering cycle-file-dep2 cycle-file-dep dag_shortest_paths dave default-constructor2 default-constructor dfs dfs-example dfs_parenthesis dfs-parenthesis dijkstra-example edge_basics edge_connectivity edge-connectivity edge-function edge_iterator_constructor edge-iter-constructor edge_property edmunds-karp-eg edmunds_karp_max_flow exterior_properties exterior_property_map family-tree-eg fibonacci_heap file_dependencies filtered_graph gerdemann graph-assoc-types graph graph-property-iter-eg graphviz incremental_components incremental-components-eg in_edges interior_property_map isomorphism iterator-property-map-eg johnson johnson-eg kevin-bacon knights-tour koenig-lookup kruskal-example kruskal-telephone last-mod-time loops_dfs max_flow minimum_degree_ordering min_max_paths modify_graph neighbor_bfs ordered_out_edges ospf-example parallel-compile-time prim-example prim-telephone print-adjacent-vertices print-edges print-in-edges print-out-edges property_iterator property-map-traits-eg push-relabel-eg put-get-helper-eg quick_tour quick-tour reachable-loop-head reachable-loop-tail remove_edge_if_bidir remove_edge_if_dir remove_edge_if_undir reverse_graph reverse-graph-eg scc strong_components strong-components subgraph topo-sort1 topo-sort2 topo_sort topo-sort-file-dep2 topo-sort-file-dep transitive_closure transpose-example undirected vector-as-graph vertex_basics vertex-name-property visitor ;
+
+DEPENDS sgb_examples : topo-sort-with-sgb girth miles_span roget_components ;
+DEPENDS leda_examples : leda-concept-check leda-graph-eg topo-sort-with-leda ;
 
 exe accum-compile-times : accum-compile-times.cpp : <include>$(BOOST_ROOT) ;
 exe adjacency_list : adjacency_list.cpp : <include>$(BOOST_ROOT) ;
@@ -63,7 +69,6 @@ exe interior_property_map : interior_property_map.cpp : <include>$(BOOST_ROOT) ;
 exe isomorphism : isomorphism.cpp : <include>$(BOOST_ROOT) ;
 exe iterator-property-map-eg : iterator-property-map-eg.cpp : <include>$(BOOST_ROOT) ;
 exe johnson-eg : johnson-eg.cpp <lib>../build/libbgl-viz : <include>$(BOOST_ROOT) ;
-exe kevin_bacon : kevin_bacon.cpp : <include>$(BOOST_ROOT) ;
 exe kevin-bacon : kevin-bacon.cpp : <include>$(BOOST_ROOT) ;
 exe knights-tour : knights-tour.cpp : <include>$(BOOST_ROOT) ;
 exe koenig-lookup : koenig-lookup.cpp : <include>$(BOOST_ROOT) ;
@@ -116,7 +121,9 @@ exe topo-sort2 : topo-sort2.cpp : <include>$(BOOST_ROOT) ;
 exe topo_sort : topo_sort.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort-file-dep2 : topo-sort-file-dep2.cpp : <include>$(BOOST_ROOT) ;
 exe topo-sort-file-dep : topo-sort-file-dep.cpp : <include>$(BOOST_ROOT) ;
-exe topo-sort-with-leda : topo-sort-with-leda.cpp : <include>$(BOOST_ROOT) ;
+exe topo-sort-with-leda : topo-sort-with-leda.cpp : <include>$(BOOST_ROOT) 
+  <include>$(LEDA)/incl <library-file>$(LEDA)/libG.a
+  <library-file>$(LEDA)/libL.a <library-file>$(LEDA)/libP.a ;
 exe topo-sort-with-sgb : topo-sort-with-sgb.cpp : <include>$(BOOST_ROOT) 
    <include>$(SGB) <library-file>$(SGB)/libgb.a ;
 exe transitive_closure : transitive_closure.cpp : <include>$(BOOST_ROOT) ;

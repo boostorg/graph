@@ -46,12 +46,12 @@ main()
                                                             get(vertex_index,
                                                                 G)));
 
-  cout << endl;
+  std::cout << std::endl;
   std::vector < int >::iterator i;
-  cout << "Total number of components: " << num << endl;
+  std::cout << "Total number of components: " << num << std::endl;
   for (i = c.begin(); i != c.end(); ++i)
-    cout << "Vertex " << i - c.begin()
-      << " is in component " << *i << endl;
-  cout << endl;
+    std::cout << "Vertex " << i - c.begin()
+      << " is in component " << *i << std::endl;
+  std::cout << std::endl;
   return EXIT_SUCCESS;
 }

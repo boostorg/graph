@@ -52,7 +52,7 @@ main()
   { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
   // Specify the edges in the graph
-  typedef pair < int, int >E;
+  typedef std::pair < int, int >E;
   E edge_array[] = { E(r, s), E(r, v), E(s, w), E(w, r), E(w, t),
     E(w, x), E(x, t), E(t, u), E(x, y), E(u, y)
   };
@@ -74,7 +74,7 @@ main()
   breadth_first_search(g, vertex(s, g), visitor(vis));
 
   // Use std::sort to order the vertices by their discover time
-  vector < graph_traits < graph_t >::vertices_size_type > discover_order(N);
+  std::vector<graph_traits<graph_t>::vertices_size_type > discover_order(N);
   integer_range < int >range(0, N);
   std::copy(range.begin(), range.end(), discover_order.begin());
   std::sort(discover_order.begin(), discover_order.end(),

@@ -23,6 +23,7 @@
 //=======================================================================
 #include <vector>
 #include <string>
+#include <iostream>
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/stanford_graph.hpp>
 
@@ -59,8 +60,7 @@ main()
   int n = 1;
   for (std::vector < vertex_t >::reverse_iterator i = topo_order.rbegin();
        i != topo_order.rend(); ++i, ++n)
-    std::cout << n << ": " << tasks[get(vertex_index, sgb_g)[*i]] << std::
-      endl;
+    std::cout << n << ": " << tasks[get(vertex_index, sgb_g)[*i]] << std::endl;
 
   gb_recycle(sgb_g);
   return EXIT_SUCCESS;
