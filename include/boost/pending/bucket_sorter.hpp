@@ -33,6 +33,7 @@
 #define BOOST_GRAPH_DETAIL_BUCKET_SORTER_HPP
 
 #include <vector>
+#include <cassert>
 #include <boost/limits.hpp>
 
 namespace boost {

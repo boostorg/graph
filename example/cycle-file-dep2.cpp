@@ -24,38 +24,17 @@
 #include <boost/config.hpp>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
 
 // can't do using namespace boost because then
 // we get conflict with boost::default_dfs_visitor.
-using
-  boost::graph_traits;
-using
-  boost::listS;
-using
-  boost::vecS;
-using
-  boost::directedS;
-using
-  boost::adjacency_list;
-using
-  boost::default_color_type;
-using
-  boost::white_color;
-using
-  boost::gray_color;
-using
-  boost::black_color;
+using namespace boost;
 
-namespace
-  std
-{
-  template <
-    typename
-    T >
-    std::istream &
-  operator >> (std::istream & in, std::pair < T, T > &p)
+namespace std {
+  template <typename T >
+  std::istream& operator >> (std::istream & in, std::pair < T, T > &p)
   {
     in >> p.first >> p.second;
     return
@@ -63,22 +42,14 @@ namespace
   }
 }
 
-typedef
-  adjacency_list <
+typedef adjacency_list<
   listS,                        // Store out-edges of each vertex in a std::list
   vecS,                         // Store vertex set in a std::vector
   directedS                     // The file dependency graph is directed
-  >
-  file_dep_graph;
+  > file_dep_graph;
 
-typedef
-  graph_traits <
-  file_dep_graph >::vertex_descriptor
-  vertex_t;
-typedef
-  graph_traits <
-  file_dep_graph >::edge_descriptor
-  edge_t;
+typedef graph_traits<file_dep_graph>::vertex_descriptor vertex_t;
+typedef graph_traits<file_dep_graph>::edge_descriptor edge_t;
 
 template < typename Visitor > void
 dfs_v1(const file_dep_graph & g, vertex_t u, default_color_type * color,
@@ -111,22 +82,14 @@ generic_dfs_v1(const file_dep_graph & g, Visitor vis)
   }
 }
 
-struct default_dfs_visitor
+struct dfs_visitor_default
 {
-  template <
-    typename
-    V,
-    typename
-    G > void
+  template <typename V, typename G > void
   discover_vertex(V, const G &)
   {
   }
 
-  template <
-    typename
-    E,
-    typename
-    G > void
+  template <typename E, typename G > void
   tree_edge(E, const G &)
   {
   }
@@ -147,9 +110,7 @@ struct default_dfs_visitor
   }
 };
 
-struct cycle_detector:
-  public
-  default_dfs_visitor
+struct cycle_detector : public dfs_visitor_default
 {
   cycle_detector(bool & cycle):
   has_cycle(cycle)
@@ -166,11 +127,8 @@ struct cycle_detector:
 bool
 has_cycle(const file_dep_graph & g)
 {
-  bool
-    has_cycle =
-    false;
-  cycle_detector
-  vis(has_cycle);
+  bool has_cycle = false;
+  cycle_detector vis(has_cycle);
   generic_dfs_v1(g, vis);
   return has_cycle;
 }
@@ -180,12 +138,8 @@ int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef
-    graph_traits <
-    file_dep_graph >::vertices_size_type
-    size_type;
-  size_type
-    n_vertices;
+  typedef graph_traits <file_dep_graph >::vertices_size_type size_type;
+  size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
     size_type > >input_begin(file_in), input_end;

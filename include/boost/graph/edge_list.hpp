@@ -267,23 +267,21 @@ namespace boost {
   // The edge_list class conditionally inherits from one of the
   // above two classes.
 
+  template <class EdgeIter, 
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
-  template <class EdgeIter, 
             class T = typename std::iterator_traits<EdgeIter>::value_type,
-            class D = typename std::iterator_traits<EdgeIter>::difference_type>
-  class edge_list
-    : public ct_if_t< typename is_random<
-        typename std::iterator_traits<EdgeIter>::iterator_category>::type,
-                    edge_list_impl_ra< edge_list<EdgeIter,T,D>, EdgeIter,T,D>,
-                    edge_list_impl< edge_list<EdgeIter,T,D>, EdgeIter,T,D> 
-             >::type
+            class D = typename std::iterator_traits<EdgeIter>::difference_type,
+            class Cat = typename std::iterator_traits<EdgeIter>::iterator_category>
 #else
-  template <class EdgeIter, 
             class T,
-            class D>
-  class edge_list
-    : public edge_list_impl< edge_list<EdgeIter,T,D>, EdgeIter, T, D >
+            class D, 
+            class Cat>
 #endif
+  class edge_list
+    : public ct_if_t< typename is_random<Cat>::type,
+                    edge_list_impl_ra< edge_list<EdgeIter,T,D,Cat>, EdgeIter,T,D>,
+                    edge_list_impl< edge_list<EdgeIter,T,D,Cat>, EdgeIter,T,D> 
+             >::type
   {
   public:
     typedef directed_tag directed_category;
@@ -302,8 +300,8 @@ namespace boost {
     edges_size_type m_num_edges;
   };
 
-  template <class EdgeIter, class T, class D>
-  std::size_t num_edges(const edge_list<EdgeIter, T, D>& el) {
+  template <class EdgeIter, class T, class D, class Cat>
+  std::size_t num_edges(const edge_list<EdgeIter, T, D, Cat>& el) {
     return el.m_num_edges;
   }
 

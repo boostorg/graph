@@ -356,7 +356,12 @@ namespace boost {
   template <typename Graph>
   void write_graphviz(const std::string& filename, const subgraph<Graph>& g) {
     std::ofstream out(filename.c_str());
-    write_graphviz(out, g);
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g,
+                                    vertex_marker.begin(),
+                                    edge_marker.begin());
   }
 
   typedef std::map<std::string, std::string> GraphvizAttrList;

@@ -79,7 +79,7 @@ int main(int , char* [])
   
 
 
-  edge_list<Edge*,Edge,ptrdiff_t> g(edgelist, edgelist + E);
+  edge_list<Edge*,Edge,ptrdiff_t,std::random_access_iterator_tag> g(edgelist, edgelist + E);
   cout << "An undirected graph (edge list):" << endl;
   print_edges(g, identity_property_map());
   cout << endl;

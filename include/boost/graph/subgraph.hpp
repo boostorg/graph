@@ -183,12 +183,12 @@ namespace boost {
     // storing incomplete type.
     typedef std::list< subgraph<Graph>*> ChildrenList;
     typedef typename indirect_iterator_generator<typename ChildrenList::iterator,
-      subgraph<Graph>, subgraph<Graph>&, subgraph<Graph>* >::type
-      children_iterator;
+      subgraph<Graph>, subgraph<Graph>&, std::bidirectional_iterator_tag, 
+      subgraph<Graph>* >::type children_iterator;
 
     typedef typename indirect_iterator_generator<typename ChildrenList::const_iterator,
-       subgraph<Graph>, const subgraph<Graph>&, const subgraph<Graph>* >::type
-       const_children_iterator;
+       subgraph<Graph>, const subgraph<Graph>&, std::bidirectional_iterator_tag, 
+       const subgraph<Graph>* >::type const_children_iterator;
 
     std::pair<const_children_iterator, const_children_iterator>
     children() const

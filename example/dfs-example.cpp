@@ -85,7 +85,8 @@ main()
   std::sort(discover_order.begin(), discover_order.end(),
             indirect_cmp < Iiter, std::less < size_type > >(dtime.begin()));
   std::cout << "order of discovery: ";
-  for (int i = 0; i < N; ++i)
+  int i;
+  for (i = 0; i < N; ++i)
     std::cout << name[discover_order[i]] << " ";
 
   std::vector < size_type > finish_order(N);
@@ -93,7 +94,7 @@ main()
   std::sort(finish_order.begin(), finish_order.end(),
             indirect_cmp < Iiter, std::less < size_type > >(ftime.begin()));
   std::cout << std::endl << "order of finish: ";
-  for (int i = 0; i < N; ++i)
+  for (i = 0; i < N; ++i)
     std::cout << name[finish_order[i]] << " ";
   std::cout << std::endl;
 

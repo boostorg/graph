@@ -232,6 +232,7 @@ namespace boost {
        detail::error_property_not_found)
       {
         std::vector<default_color_type> color_vec(num_vertices(g));
+	default_color_type c;
         null_visitor null_vis;
         
         bfs_helper
@@ -239,7 +240,7 @@ namespace boost {
            make_iterator_property_map
            (color_vec.begin(), 
             choose_const_pmap(get_param(params, vertex_index), 
-                              g, vertex_index), color_vec[0]),
+                              g, vertex_index), c),
            choose_param(get_param(params, graph_visitor),
                         make_bfs_visitor(null_vis)),
            params);

@@ -34,14 +34,11 @@ main()
   GraphvizGraph g;
   read_graphviz("figs/cc-internet.dot", g);
 
-  std::vector < int >component(num_vertices(g));
+  std::vector<int> component(num_vertices(g));
 
-  int num_comp = connected_components(g,
-                                      make_iterator_property_map(component.
-                                                                 begin(),
-                                                                 get
-                                                                 (vertex_index,
-                                                                  g)));
+  int num_comp = connected_components
+    (g, make_iterator_property_map(component.begin(),
+				   get(vertex_index, g), component[0]));
 
   property_map < GraphvizGraph, vertex_attribute_t >::type
     vertex_attr_map = get(vertex_attribute, g);

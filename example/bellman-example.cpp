@@ -27,12 +27,12 @@
 #include <fstream>
 #include <iomanip>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/array.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 
 using namespace boost;
 
-template < typename Graph, typename ParentMap > struct edge_writer
+template < typename Graph, typename ParentMap > 
+struct edge_writer
 {
   edge_writer(const Graph & g, const ParentMap & p)
   : m_g(g), m_parent(p)
@@ -55,7 +55,7 @@ template < typename Graph, typename ParentMap > struct edge_writer
   ParentMap m_parent;
 };
 template < typename Graph, typename Parent >
-  edge_writer < Graph, Parent >
+edge_writer < Graph, Parent >
 make_edge_writer(const Graph & g, const Parent & p)
 {
   return edge_writer < Graph, Parent > (g, p);
@@ -64,35 +64,32 @@ make_edge_writer(const Graph & g, const Parent & p)
 int
 main()
 {
-  enum
-  { u, v, x, y, z, N };
+  enum { u, v, x, y, z, N };
   char name[] = { 'u', 'v', 'x', 'y', 'z' };
   typedef std::pair < int, int >E;
   const int n_edges = 10;
-  typedef boost::array < E, n_edges > EdgeList;
-  EdgeList edge_array = { {E(u, y), E(u, x), E(u, v), E(v, u),
-                           E(x, y), E(x, v), E(y, v), E(y, z), E(z, u), E(z,
-                                                                          x)}
-  };
+  E edge_array[] = { E(u, y), E(u, x), E(u, v), E(v, u),
+      E(x, y), E(x, v), E(y, v), E(y, z), E(z, u), E(z,x) };
   int weight[n_edges] = { -4, 8, 5, -2, 9, -3, 7, 2, 6, 7 };
 
   typedef adjacency_list < vecS, vecS, directedS,
     no_property, property < edge_weight_t, int > > Graph;
-  Graph g(edge_array.begin(), edge_array.end());
+  Graph g(edge_array, edge_array + n_edges);
   graph_traits < Graph >::edge_iterator ei, ei_end;
+  property_map<Graph, edge_weight_t>::type weight_pmap = get(edge_weight, g);
   int i = 0;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
-    get(edge_weight, g)[*ei] = weight[i];
+    weight_pmap[*ei] = weight[i];
 
-  std::vector < int >distance(N, std::numeric_limits < short >::max());
-  std::vector < std::size_t >parent(N);
+  std::vector<int> distance(N, std::numeric_limits < short >::max());
+  std::vector<std::size_t> parent(N);
   for (i = 0; i < N; ++i)
     parent[i] = i;
   distance[z] = 0;
-  bool r = bellman_ford_shortest_paths(g, int (N),
-                                       weight_map(get(edge_weight, g)).
-                                       distance_map(&distance[0]).
-                                       predecessor_map(&parent[0]));
+
+  bool r = bellman_ford_shortest_paths
+    (g, int (N), weight_map(weight_pmap).distance_map(&distance[0]).
+     predecessor_map(&parent[0]));
 
   if (r)
     for (i = 0; i < N; ++i)

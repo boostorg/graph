@@ -180,8 +180,9 @@ namespace boost {
 	bfs_vis(vis, Q, weight, predecessor, distance, combine, compare);
 
     std::vector<default_color_type> color(num_vertices(g));
+    default_color_type c;
     breadth_first_visit(g, s, Q, bfs_vis,
-      make_iterator_property_map(&color[0], index_map));
+      make_iterator_property_map(&color[0], index_map, c));
   }
 
   namespace detail {
