@@ -486,7 +486,6 @@ namespace boost {
     // Directed Graph Helper Class
 
     struct adj_list_dir_traversal_tag :
-      public virtual adjacency_matrix_tag,
       public virtual vertex_list_graph_tag,
       public virtual incidence_graph_tag,
       public virtual adjacency_graph_tag,
