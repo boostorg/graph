@@ -27,6 +27,8 @@
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#include <iostream>
+
 namespace boost
 {
   struct edge_component_t

@@ -25,6 +25,9 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/pending/indirect_cmp.hpp>
+
+#include <iostream>
+
 using namespace boost;
 template < typename TimeMap > class dfs_time_visitor:public default_dfs_visitor {
   typedef typename property_traits < TimeMap >::value_type T;

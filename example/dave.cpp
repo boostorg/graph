@@ -27,11 +27,13 @@
 #include <iterator>
 #include <vector>
 #include <list>
+#include <queue>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 using namespace std;
 using namespace boost;

@@ -26,6 +26,8 @@
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#include <iostream>
+
 // Example from Introduction to Algorithms by Cormen, et all p.537.
 
 // Sample output:
