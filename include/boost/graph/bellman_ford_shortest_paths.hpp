@@ -120,6 +120,8 @@ namespace boost {
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
 
+    D_value inf = (std::numeric_limits<D_value>::max)();
+
     typename GTraits::edge_iterator i, end;
 
     for (Size k = 0; k < N; ++k) {
@@ -137,8 +139,8 @@ namespace boost {
     }
 
     for (tie(i, end) = edges(g); i != end; ++i)
-      if (compare(combine(get(distance, source(*i, g)), 
-                          get(weight, *i)),
+      if (compare(inf_combine(get(distance, source(*i, g)), 
+			      get(weight, *i), inf, combine, compare),
                   get(distance, target(*i,g))))
       {
         v.edge_not_minimized(*i, g);

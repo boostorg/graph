@@ -46,7 +46,9 @@ between each pair of vertices is stored in the distance matrix
 <TT>D</TT>. This is one of the more time intensive graph algorithms,
 having a time complexity of <i>O(V E log V)</i>.
 
-<P>
+<P>This algorithm should be used to compute shortest paths between
+every pair of vertices for sparse graphs. For dense graphs, use <a
+href="floyd_warshall_shortest.html"><code>floyd_warshall_all_pairs_shortest_paths</code></a>.
 
 <H3>Where Defined</H3>
 

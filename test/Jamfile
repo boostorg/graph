@@ -58,6 +58,9 @@ test-suite graph :
 
     [ run bundled_properties.cpp ]
 
+    [ run floyd_warshall_test.cpp ]
+
+    [ run astar_search_test.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.

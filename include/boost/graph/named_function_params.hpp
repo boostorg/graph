@@ -45,6 +45,11 @@ namespace boost {
   struct vertex_max_invariant_t { };
   struct orig_to_copy_t { };
   struct root_vertex_t { };
+  struct attractive_force_t { };
+  struct repulsive_force_t { };
+  struct force_pairs_t { };
+  struct cooling_t { };
+  struct vertex_displacement_t { };
 
   namespace detail {
     template <class T>
@@ -284,6 +289,42 @@ namespace boost {
       return Params(c, *this);
     }
 
+    template <typename VertexDisplacement>
+    bgl_named_params<VertexDisplacement, vertex_displacement_t, self>
+    displacement_map(const VertexDisplacement& c) const {
+      typedef bgl_named_params<VertexDisplacement, vertex_displacement_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename AttractiveForce>
+    bgl_named_params<AttractiveForce, attractive_force_t, self>
+    attractive_force(const AttractiveForce& c) {
+      typedef bgl_named_params<AttractiveForce, attractive_force_t, self> Params;
+      return Params(c, *this);
+    }
+    
+    template <typename RepulsiveForce>
+    bgl_named_params<RepulsiveForce, repulsive_force_t, self>
+    repulsive_force(const RepulsiveForce& c) {
+      typedef bgl_named_params<RepulsiveForce, repulsive_force_t, self> Params;
+      return Params(c, *this);
+    }
+    
+    template <typename ForcePairs>
+    bgl_named_params<ForcePairs, force_pairs_t, self>
+    force_pairs(const ForcePairs& c) {
+      typedef bgl_named_params<ForcePairs, force_pairs_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template <typename Cooling>
+    bgl_named_params<Cooling, cooling_t, self>
+    cooling(const Cooling& c) {
+      typedef bgl_named_params<Cooling, cooling_t, self> Params;
+      return Params(c, *this);
+    }
+
+    
   };
 
   template <typename WeightMap>
@@ -481,6 +522,41 @@ namespace boost {
   bgl_named_params<VertexInvar, vertex_invariant_t>
   vertex_invariant(const VertexInvar& c) {
     typedef bgl_named_params<VertexInvar, vertex_invariant_t> Params;
+    return Params(c);
+  }
+
+  template <typename VertexDisplacement>
+  bgl_named_params<VertexDisplacement, vertex_displacement_t>
+  displacement_map(const VertexDisplacement& c) {
+    typedef bgl_named_params<VertexDisplacement, vertex_displacement_t> Params;
+    return Params(c);
+  }
+
+  template <typename AttractiveForce>
+  bgl_named_params<AttractiveForce, attractive_force_t>
+  attractive_force(const AttractiveForce& c) {
+    typedef bgl_named_params<AttractiveForce, attractive_force_t> Params;
+    return Params(c);
+  }
+
+  template <typename RepulsiveForce>
+  bgl_named_params<RepulsiveForce, repulsive_force_t>
+  repulsive_force(const RepulsiveForce& c) {
+    typedef bgl_named_params<RepulsiveForce, repulsive_force_t> Params;
+    return Params(c);
+  }
+
+  template <typename ForcePairs>
+  bgl_named_params<ForcePairs, force_pairs_t>
+  force_pairs(const ForcePairs& c) {
+    typedef bgl_named_params<ForcePairs, force_pairs_t> Params;
+    return Params(c);
+  }
+
+  template <typename Cooling>
+  bgl_named_params<Cooling, cooling_t>
+  cooling(const Cooling& c) {
+    typedef bgl_named_params<Cooling, cooling_t> Params;
     return Params(c);
   }
 
