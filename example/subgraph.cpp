@@ -23,6 +23,31 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+/*
+  Sample output:
+
+  G0:
+  0 --> 1 
+  1 --> 2 3 
+  2 --> 5 
+  3 --> 
+  4 --> 1 5 
+  5 --> 3 
+  0(0,1) 1(1,2) 2(1,3) 6(2,5) 3(4,1) 4(4,5) 5(5,3) 
+
+  G1:
+  2 --> 5 
+  4 --> 5 
+  5 --> 
+  6(2,5) 4(4,5) 
+
+  G2:
+  0 --> 1 
+  1 --> 
+  0(0,1) 
+
+ */
+
 #include <iostream>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -33,14 +58,14 @@ int main(int,char*[])
   using namespace boost;
   typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
   typedef subgraph< adjacency_list<vecS, vecS, directedS,
-    no_property, property<edge_index_t, int> > > Graph;
+    property<vertex_color_t, int>, property<edge_index_t, int> > > Graph;
 
   const int N = 6;
   Graph G0(N);
   enum { A, B, C, D, E, F};	// for conveniently refering to vertices in G0
 
   Graph G1(G0), G2(G0);
-  enum { A1, B1, C2 };		// for conveniently refering to vertices in G1
+  enum { A1, B1, C1 };		// for conveniently refering to vertices in G1
   enum { A2, B2 };		// for conveniently refering to vertices in G2
 
   add_vertex(C, G1); // global vertex C becomes local A1 for G1
@@ -62,14 +87,16 @@ int main(int,char*[])
   std::cout << "G0:" << std::endl;
   print_graph(G0, get(vertex_index, G0));
   print_edges2(G0, get(vertex_index, G0), get(edge_index, G0));
+  std::cout << std::endl;
 
-  std::cout << "G1:" << std::endl;
-  print_graph(G1, get(vertex_index, G1));
-  print_edges2(G1, get(vertex_index, G1), get(edge_index, G1));
+  Graph::children_iterator ci, ci_end;
+  int num = 1;
+  for (tie(ci, ci_end) = G0.children(); ci != ci_end; ++ci) {
+    std::cout << "G" << num++ << ":" << std::endl;
+    print_graph(*ci, get(vertex_index, *ci));
+    print_edges2(*ci, get(vertex_index, *ci), get(edge_index, *ci));
+    std::cout << std::endl;
+  }
 
-  std::cout << "G2:" << std::endl;
-  print_graph(G2, get(vertex_index, G2));
-  print_edges2(G2, get(vertex_index, G2), get(edge_index, G2));
-  
   return 0;
 }
