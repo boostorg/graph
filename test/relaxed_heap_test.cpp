@@ -179,10 +179,10 @@ void random_test(int n, int iterations, int seed)
       case 0: case 3:
         {
           // Update with a smaller weight
-          boost::uniform_real<> rand_smaller(rand_value.min(), *values[victim]);
+          boost::uniform_real<> rand_smaller(rand_value.min BOOST_PREVENT_MACRO_SUBSTITUTION(), *values[victim]);
           values[victim] = rand_smaller(gen);
-          assert(*values[victim] >= rand_smaller.min());
-          assert(*values[victim] <= rand_smaller.max());
+          assert(*values[victim] >= rand_smaller.min BOOST_PREVENT_MACRO_SUBSTITUTION());
+          assert(*values[victim] <= rand_smaller.max BOOST_PREVENT_MACRO_SUBSTITUTION());
 
 #if BOOST_RELAXED_HEAP_DEBUG > 0
           cout << "u " << victim << " " << *values[victim] << std::endl;
@@ -231,8 +231,8 @@ void random_test(int n, int iterations, int seed)
       }
     } else {
       values[victim] = rand_value(gen);
-      assert(*values[victim] >= rand_value.min());
-      assert(*values[victim] <= rand_value.max());
+      assert(*values[victim] >= rand_value.min BOOST_PREVENT_MACRO_SUBSTITUTION());
+      assert(*values[victim] <= rand_value.max BOOST_PREVENT_MACRO_SUBSTITUTION());
 
 #if BOOST_RELAXED_HEAP_DEBUG > 0
       cout << "i " << victim << " " << *values[victim] << std::endl;
