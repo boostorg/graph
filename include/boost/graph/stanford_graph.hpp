@@ -88,6 +88,10 @@ class sgb_vertex_iterator;
 namespace boost {
   typedef Graph* sgb_graph_ptr;
 
+  struct sgb_traversal_tag :
+    public virtual vertex_list_graph_tag,
+    public virtual incidence_graph_tag { };
+
   template <> struct graph_traits<sgb_graph_ptr> {
     typedef Vertex* vertex_descriptor;
     typedef boost::sgb_edge edge_descriptor;
@@ -100,7 +104,7 @@ namespace boost {
     typedef long edge_size_type;
     typedef long degree_size_type;
     typedef directed_tag directed_category;
-    typedef vertex_list_graph_tag traversal_category;
+    typedef sgb_traversal_tag traversal_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
   };
   template <> struct graph_traits<const sgb_graph_ptr> {
@@ -115,7 +119,7 @@ namespace boost {
     typedef long edge_size_type;
     typedef long degree_size_type;
     typedef directed_tag directed_category;
-    typedef vertex_list_graph_tag traversal_category;
+    typedef sgb_traversal_tag traversal_category;
     typedef allow_parallel_edge_tag edge_parallel_category;
   };
 }
