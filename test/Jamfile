@@ -40,9 +40,13 @@ test-suite graph :
 
     [ compile graph_concepts.cpp : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run gursoy_atun_layout_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+
     [ run layout_test.cpp : : : <test-info>always_show_run_output ]
 
     [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
+
+    [ run sequential_vertex_coloring.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run subgraph.cpp <lib>../../test/build/boost_test_exec_monitor 
         : : : <sysinclude>$(BOOST_ROOT) ]

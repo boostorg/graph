@@ -50,6 +50,9 @@ namespace boost {
   struct force_pairs_t { };
   struct cooling_t { };
   struct vertex_displacement_t { };
+  struct iterations_t { };
+  struct diameter_range_t { };
+  struct learning_constant_range_t { };
 
   namespace detail {
     template <class T>
@@ -324,7 +327,27 @@ namespace boost {
       return Params(c, *this);
     }
 
-    
+    template <typename TP>
+    bgl_named_params<TP, iterations_t, self>
+    iterations(const TP& c) {
+      typedef bgl_named_params<TP, iterations_t, self> Params;
+      return Params(c, *this);
+    }    
+
+    template<typename TP>
+    bgl_named_params<std::pair<TP, TP>, diameter_range_t, self>
+    diameter_range(const std::pair<TP, TP>& c) {
+      typedef bgl_named_params<std::pair<TP, TP>, diameter_range_t, self> Params;
+      return Params(c, *this);
+    }
+
+    template<typename TP>
+    bgl_named_params<std::pair<TP, TP>, learning_constant_range_t, self>
+    learning_constant_range(const std::pair<TP, TP>& c) {
+      typedef bgl_named_params<std::pair<TP, TP>, learning_constant_range_t, self>
+        Params;
+      return Params(c, *this);
+    }
   };
 
   template <typename WeightMap>
@@ -557,6 +580,28 @@ namespace boost {
   bgl_named_params<Cooling, cooling_t>
   cooling(const Cooling& c) {
     typedef bgl_named_params<Cooling, cooling_t> Params;
+    return Params(c);
+  }
+
+  template <typename T>
+  bgl_named_params<T, iterations_t>
+  iterations(const T& c) {
+    typedef bgl_named_params<T, iterations_t> Params;
+    return Params(c);
+  }    
+  
+  template<typename T>
+  bgl_named_params<std::pair<T, T>, diameter_range_t>
+  diameter_range(const std::pair<T, T>& c) {
+    typedef bgl_named_params<std::pair<T, T>, diameter_range_t> Params;
+    return Params(c);
+  }
+  
+  template<typename T>
+  bgl_named_params<std::pair<T, T>, learning_constant_range_t>
+  learning_constant_range(const std::pair<T, T>& c) {
+    typedef bgl_named_params<std::pair<T, T>, learning_constant_range_t>
+      Params;
     return Params(c);
   }
 
