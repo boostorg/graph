@@ -62,7 +62,10 @@ data-structure by allowing objects to be attached to vertices and
 edges using the same property template parameters supported by <a
 href="adjacency_list.html"><tt>adjacency_list</tt></a>. These may be
 <a href="bundles.html">bundled properties</a> or standard (backward-compatible)
-<a href="using_adjacency_list.html#sec:adjacency-list-properties">interior properties</a>.
+<a
+href="using_adjacency_list.html#sec:adjacency-list-properties">interior
+properties</a>. The types of all property values must be
+Copy Constructible, Assignable and Default Constructible. 
 
 In the case of an undirected graph, the
 <tt>adjacency_matrix</tt>. class does not use a full <i>V x V</i>

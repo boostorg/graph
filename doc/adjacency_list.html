@@ -178,7 +178,9 @@ Properties </A>. The property maps are objects that implement the
 interface defined in Section <A
 HREF="../../property_map/property_map.html">Property Map
 Concepts</A> or may be <a href="bundles.html">bundled properties</a>,
-which have a more succinct syntax. The property maps obtained from the
+which have a more succinct syntax. The types of all property values
+must be Copy Constructible, Assignable, and Default Constructible.  
+The property maps obtained from the
 <TT>adjacency_list</TT> class are models of the <a
 href="../../property_map/LvaluePropertyMap.html">Lvalue Property
 Map</a> concept. If the <TT>adjacency_list</TT> is const,
