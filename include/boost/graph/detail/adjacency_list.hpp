@@ -2058,6 +2058,7 @@ namespace boost {
     {
       typedef typename Graph::stored_vertex StoredVertex;
       typedef ValueType value_type;
+      typedef Reference reference;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       inline adj_list_vertex_property_map(Graph&) { }
@@ -2078,6 +2079,7 @@ namespace boost {
     {
       typedef typename Graph::stored_vertex StoredVertex;
       typedef Property value_type;
+      typedef PropRef reference;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       inline adj_list_vertex_all_properties_map(Graph&) { }
@@ -2100,6 +2102,7 @@ namespace boost {
         >
     {
       typedef ValueType value_type;
+      typedef Reference reference;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_property_map(GraphRef g) : m_g(g) { }
@@ -2120,6 +2123,7 @@ namespace boost {
         >
     {
       typedef Property value_type;
+      typedef PropertyRef reference;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
       vec_adj_list_vertex_all_properties_map(GraphRef g) : m_g(g) { }
@@ -2164,6 +2168,7 @@ namespace boost {
     {
       typedef Vertex value_type;
       typedef Vertex key_type;
+      typedef void reference;
       typedef boost::read_write_property_map_tag category;
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
@@ -2254,6 +2259,7 @@ namespace boost {
         >
     {
       typedef Value value_type;
+      typedef Ref reference;
       typedef detail::edge_desc_impl<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
       inline Ref operator[](key_type e) const {
@@ -2274,6 +2280,7 @@ namespace boost {
         >
     {
       typedef Property value_type;
+      typedef PropRef reference;
       typedef detail::edge_desc_impl<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
       inline PropRef operator[](key_type e) const {
