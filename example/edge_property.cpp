@@ -76,7 +76,6 @@ using namespace boost;
 using namespace std;
 
 
-#ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 enum edge_flow_t { edge_flow = 100 };
 enum edge_capacity_t { edge_capacity = 101 };
 
@@ -84,10 +83,6 @@ namespace boost {
   BOOST_INSTALL_PROPERTY(edge, flow);
   BOOST_INSTALL_PROPERTY(edge, capacity);
 }
-#else
-struct edge_flow_t { typedef edge_property_tag kind; } edge_flow;
-struct edge_capacity_t { typedef edge_property_tag kind; } edge_capacity;
-#endif
 
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
