@@ -1,0 +1,20 @@
+digraph G {
+  color=green;
+  graph [bgcolor=white]
+  node[shape=polygon,size=4,color=lightgrey];
+
+  edge[style=dashed color=blue]   //default edge attributes
+
+  0 -> 1 -> 2 -> 3 [style=dotted];   //an edge
+//  3 -> 1 [label=I] ;
+	
+	//  subgraph two {  4 -> 5 }
+	
+
+  2 -> subgraph two
+
+  //1 [shape=circle, style=filled, label="Hello World\n From Rich"];
+
+   2 -> { 6 7 8 } -> 0
+
+}
