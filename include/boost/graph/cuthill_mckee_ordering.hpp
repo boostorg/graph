@@ -172,7 +172,7 @@ namespace boost {
       : inverse_permutation(inverse_permutation_) {}
     
     template <class Vertex, class Graph> 
-    void discover_vertex(const Vertex& u, Graph&) {
+    void examine_vertex(const Vertex& u, Graph&) {
       *inverse_permutation = u;
       ++inverse_permutation;
     }
