@@ -199,6 +199,30 @@ namespace boost {
     return *i;
   }
 
+  template <typename MutableGraph>
+  void generate_random_graph
+    (MutableGraph& g, 
+     typename graph_traits<MutableGraph>::vertices_size_type V,
+     typename graph_traits<MutableGraph>::vertices_size_type E,
+     bool self_edges = false)
+  {
+    typedef graph_traits<MutableGraph> Traits;
+    typedef typename Traits::vertices_size_type v_size_t;
+    typedef typename Traits::edges_size_type e_size_t;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+
+    for (v_size_t i = 0; i < V; ++i)
+      add_vertex(g);
+
+    for (e_size_t j = 0; j < E; ++j) {
+      vertex_descriptor a = random_vertex(g), b;
+      do {
+	b = random_vertex(g);
+      } while (self_edges == false && a == b);
+      add_edge(a, b, g);
+    }
+  }
+
   template <class Graph, class Vertex>
   bool is_adj_dispatch(Graph& g, Vertex a, Vertex b, bidirectional_tag)
   {
@@ -285,6 +309,17 @@ namespace boost {
       if (source(*ei,g) == u && target(*ei,g) == v)
         return true;
     return false;
+  }
+
+  // is x a descendant of y?
+  template <typename Node, typename ParentMap>
+  inline bool is_descendant(Node x, Node y, ParentMap p) {
+    if (p[x] == x) // x is the root of the tree
+      return false;
+    else if (p[x] == y)
+      return true;
+    else
+      return is_descendant(p[x], y, p);
   }
 
   template <class T1, class T2>
