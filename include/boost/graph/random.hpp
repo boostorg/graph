@@ -164,13 +164,6 @@ namespace boost {
     }
   }
 
-  template<class Property, class G, class RandomGenerator>
-  void randomize_property(G& g, RandomGenerator& rg)
-  {
-    detail::randomize_property
-        (g, rg, Property(), typename property_kind<Property>::type());
-  }
-
   namespace detail {
 
     template<class Property, class G, class RandomGenerator>
@@ -194,6 +187,13 @@ namespace boost {
         pm[*ei] = rg();
       }
     }
+  }
+
+  template<class Property, class G, class RandomGenerator>
+  void randomize_property(G& g, RandomGenerator& rg)
+  {
+    detail::randomize_property
+        (g, rg, Property(), typename property_kind<Property>::type());
   }
 
 
