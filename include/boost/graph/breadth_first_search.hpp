@@ -74,11 +74,12 @@ namespace boost {
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     boost::queue<Vertex> Q;
-    typename property_traits<ColorMap>::value_type c = get(color, s);
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
 
     typename boost::graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      put(color, *ui, white(c));
+      put(color, *ui, Color::white());
       vis.initialize_vertex(*ui, g);
     }
     breadth_first_search(g, s, Q, vis, color);
@@ -97,9 +98,10 @@ namespace boost {
     typedef typename GTraits::edge_descriptor Edge;
     function_requires< BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
     function_requires< ReadWritePropertyMapConcept<ColorMap, Vertex> >();
-    typename property_traits<ColorMap>::value_type c = get(color, s);
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
 
-    put(color, s, gray(c));
+    put(color, s, Color::gray());
     vis.discover_vertex(s, g);
     Q.push(s);
     while (! Q.empty()) {
@@ -111,21 +113,21 @@ namespace boost {
         Edge e = *ei;
         vis.examine_edge(e, g);
         Vertex v = target(e, g);
-        if (get(color, v) == white(c)) {
+        if (get(color, v) == Color::white()) {
           vis.tree_edge(e, g);
-          put(color, v, gray(c));
+          put(color, v, Color::gray());
           vis.discover_vertex(v, g);
           Q.push(v);
         } else {
           vis.non_tree_edge(e, g);
 
-          if (get(color, v) == gray(c))
+          if (get(color, v) == Color::gray())
             vis.gray_target(e, g);
           else
             vis.black_target(e, g);
         }
       } // for
-      put(color, u, black(c));
+      put(color, u, Color::black());
       vis.finish_vertex(u, g);
     } // while
   }
