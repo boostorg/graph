@@ -81,7 +81,7 @@ main(int , char* [])
   dijkstra_shortest_paths
     (G, s, distance_map(&d[0]).
      predecessor_map(&p[0]).
-     distance_combine(max_path));
+     distance_extend(max_path));
 
   std::cout << "distances from start vertex:" << std::endl;
   graph_traits<Graph>::vertex_iterator vi, vend;
