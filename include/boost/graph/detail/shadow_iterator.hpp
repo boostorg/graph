@@ -7,7 +7,7 @@
 #ifndef BOOST_SHADOW_ITERATOR_HPP
 #define BOOST_SHADOW_ITERATOR_HPP
 
-#include <boost/graph/detail/new_iterator_adaptors.hpp>
+#include <boost/iterator_adaptors.hpp>
 #include <boost/operators.hpp>
 
 namespace boost {
@@ -50,30 +50,31 @@ namespace boost {
       template <typename iter_pair>
       void initialize(const iter_pair&) { }
 
-      template <typename R, typename iter_pair>
-      R dereference(type<R>, const iter_pair& p) const { 
-	return R(*p.first, *p.second); 
+      template <typename Iter>
+      typename Iter::reference dereference(const Iter& i) const { 
+	return R(*p.base().first, *p.base().second); 
       }
-      template <typename iter_pair>
-      bool equal(const iter_pair& p1, const iter_pair& p2) const { 
-	return p1.first == p2.first;  
+      template <typename Iter>
+      bool equal(const Iter& p1, const Iter& p2) const { 
+	return p1.base().first == p2.base().first;  
       }
-      template <typename iter_pair>
-      void increment(iter_pair& p) { ++p.first; ++p.second; }
+      template <typename Iter>
+      void increment(Iter& i) { ++i.base().first; ++i.base().second; }
 
-      template <typename iter_pair>
-      void decrement(iter_pair& p) { --p.first; --p.second; }
+      template <typename Iter>
+      void decrement(Iter& i) { --i.base().first; --i.base().second; }
 
-      template <typename iter_pair>
-      bool less(const iter_pair& x, const iter_pair& y) const { 
-	return x.first < y.first;  
+      template <typename Iter>
+      bool less(const Iter& x, const Iter& y) const { 
+	return x.base().first < y.base().first;  
       }
-      template <typename D, typename iter_pair>
-      D distance(type<D>, const iter_pair& x, const iter_pair& y) const { 
-	return y.first - x.first; 
+      template <typename Iter>
+      typename Iter::difference_type
+      distance(const Iter& x, const Iter& y) const { 
+	return y.base().first - x.base().first; 
       }
-      template <typename D, typename iter_pair>
-      void advance(iter_pair& p, D n) { p.first += n; p.second += n; }
+      template <typename D, typename Iter>
+      void advance(Iter& p, D n) { p.base().first += n; p.base().second += n; }
     };
 
   } // namespace detail
@@ -87,7 +88,7 @@ namespace boost {
     typedef typename std::iterator_traits<IterA>::difference_type D;
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
-    typedef new_iterator_adaptor< std::pair<IterA, IterB>,
+    typedef iterator_adaptor< std::pair<IterA, IterB>,
 			      detail::shadow_iterator_policies,
 			      V, R, V*, std::random_access_iterator_tag,
 			      D> type;
