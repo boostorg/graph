@@ -86,8 +86,8 @@ namespace boost {
   // Some handy predicates
 
   template <typename Vertex, typename Graph>
-  struct has_source_predicate {
-    has_source_predicate(Vertex u, const Graph& g)
+  struct incident_from_predicate {
+    incident_from_predicate(Vertex u, const Graph& g)
       : m_u(u), m_g(g) { }
     template <class Edge>
     bool operator()(const Edge& e) const {
@@ -97,14 +97,14 @@ namespace boost {
     const Graph& m_g;
   };
   template <typename Vertex, typename Graph>
-  inline has_source_predicate<Vertex, Graph>
-  has_source(Vertex u, const Graph& g) {
-    return has_source_predicate<Vertex, Graph>(u, g);
+  inline incident_from_predicate<Vertex, Graph>
+  incident_from(Vertex u, const Graph& g) {
+    return incident_from_predicate<Vertex, Graph>(u, g);
   }
   
   template <typename Vertex, typename Graph>
-  struct has_target_predicate {
-    has_target_predicate(Vertex u, const Graph& g)
+  struct incident_to_predicate {
+    incident_to_predicate(Vertex u, const Graph& g)
       : m_u(u), m_g(g) { }
     template <class Edge>
     bool operator()(const Edge& e) const {
@@ -114,9 +114,26 @@ namespace boost {
     const Graph& m_g;
   };
   template <typename Vertex, typename Graph>
-  inline has_target_predicate<Vertex, Graph>
-  has_target(Vertex u, const Graph& g) {
-    return has_target_predicate<Vertex, Graph>(u, g);
+  inline incident_to_predicate<Vertex, Graph>
+  incident_to(Vertex u, const Graph& g) {
+    return incident_to_predicate<Vertex, Graph>(u, g);
+  }
+
+  template <typename Vertex, typename Graph>
+  struct incident_on_predicate {
+    incident_on_predicate(Vertex u, const Graph& g)
+      : m_u(u), m_g(g) { }
+    template <class Edge>
+    bool operator()(const Edge& e) const {
+      return source(e, m_g) == m_u || target(e, m_g) == m_u;
+    }
+    Vertex m_u;
+    const Graph& m_g;
+  };
+  template <typename Vertex, typename Graph>
+  inline incident_on_predicate<Vertex, Graph>
+  incident_on(Vertex u, Vertex v, const Graph& g) {
+    return incident_on_predicate<Vertex, Graph>(u, v, g);
   }
   
   template <typename Vertex, typename Graph>
@@ -299,14 +316,14 @@ namespace boost {
     typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
-    out_found = std::find_if(oi, oiend, has_target(b, g));
+    out_found = std::find_if(oi, oiend, incident_to(b, g));
     if (out_found == oiend)
       return false;
 
     typename graph_traits<Graph>::in_edge_iterator ii, iiend, 
       in_found;
     boost::tie(ii, iiend) = in_edges(b, g);
-    in_found = std::find_if(ii, iiend, has_source(a, g));
+    in_found = std::find_if(ii, iiend, incident_from(a, g));
     if (in_found == iiend)
       return false;
 
@@ -346,7 +363,7 @@ namespace boost {
         break;
       }
 #else
-    out_found = std::find_if(oi, oiend, has_target(b, g));
+    out_found = std::find_if(oi, oiend, incident_to(b, g));
 #endif
     if (out_found == oiend)
       return false;
