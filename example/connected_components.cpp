@@ -54,14 +54,9 @@ using namespace std;
 
 int main(int , char* []) 
 {
-  // First example: the connected components of an undirected graph
   using namespace boost;
   {
-    typedef property<vertex_discover_time_t, int,
-      property< vertex_finish_time_t, int,
-        property< vertex_color_t, default_color_type > > > VertexProperty;
-    typedef adjacency_list <vecS, vecS, undirectedS, VertexProperty> Graph;
-    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef adjacency_list <vecS, vecS, undirectedS> Graph;
 
     Graph G;
     add_edge(0, 1, G);
@@ -70,7 +65,7 @@ int main(int , char* [])
     add_edge(2, 5, G);
     
     std::vector<int> component(num_vertices(G));
-    int num = connected_components(G, &component[0], get(vertex_color, G));
+    int num = connected_components(G, &component[0]);
     
     std::vector<int>::size_type i;
     cout << "Total number of components: " << num << endl;
