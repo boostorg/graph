@@ -7,6 +7,8 @@
 #include <boost/graph/isomorphism.hpp>
 #include <boost/graph/copy.hpp>
 
+// UNDER CONSTRUCTION 
+
 namespace boost {
 
   template <typename Graph>
@@ -18,7 +20,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef typename graph_traits<Graph>::degree_size_type deg_size_t;
     typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iter;
-    typedef typename property_map<Graph, vertex_index_t>::const_type index_map_t;
+    typedef typename property_map<Graph, vertex_index_t>::type index_map_t;
     typedef iterator_property_map<typename std::vector<vertex_t>::iterator,index_map_t,vertex_t,vertex_t&> IsoMap;
 
     struct ignore_vertex {
@@ -94,13 +96,11 @@ namespace boost {
 		    (make_filtered_graph(g, ignore_edge(e)), cpy, iso_map)));
       }
       else { // edge not added
-
 	if (! (is_undirected(g) && u == v)) {
 	  // e should be a parallel edge
 	  BOOST_TEST(source(e, g) == u);
 	  BOOST_TEST(target(e, g) == v);
 	}
-
 	// The graph should not be changed.
 	BOOST_TEST((verify_isomorphism(g, cpy, iso_map)));
       }
@@ -119,7 +119,6 @@ namespace boost {
       remove_edge(u, v, g);
       
       BOOST_TEST(num_edges(g) + occurances == num_edges(cpy));
-
       BOOST_TEST((verify_isomorphism
 		  (g, make_filtered_graph(cpy, ignore_edges(u,v,cpy)),
 		   iso_map)));
@@ -139,9 +138,24 @@ namespace boost {
 
       BOOST_TEST(num_edges(g) + 1 == num_edges(cpy));
       BOOST_TEST(count(adjacent_vertices(u, g), v) + 1 == occurances);
-
       BOOST_TEST((verify_isomorphism
 		  (g, make_filtered_graph(cpy, ignore_edge(e)),
+		   iso_map)));
+    }
+
+    void test_clear_vertex(vertex_t v, Graph& g)
+    {
+      Graph cpy;
+      std::vector<vertex_t> iso_vec(num_vertices(g));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
+      copy_graph(g, cpy, orig_to_copy(iso_map));
+
+      clear_vertex(v, g);
+
+      BOOST_TEST(out_degree(v, g) == 0);
+      BOOST_TEST(num_vertices(g) == num_vertices(cpy));
+      BOOST_TEST((verify_isomorphism
+		  (g, make_filtered_graph(cpy, keep_all(), ignore_vertex(v)),
 		   iso_map)));
     }
 
