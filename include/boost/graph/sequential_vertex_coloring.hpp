@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+// Copyright 2004 The Trustees of Indiana University
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
 // This file is part of the Boost Graph Library
@@ -27,6 +28,9 @@
 
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/property_map.hpp>
+#include <boost/limits.hpp>
 
 /* This algorithm is to find coloring of a graph
 
@@ -47,15 +51,13 @@
 
 namespace boost {
   template <class VertexListGraph, class OrderPA, class ColorMap>
-  typename graph_traits<VertexListGraph>::size_type
+  typename property_traits<ColorMap>::value_type
   sequential_vertex_coloring(const VertexListGraph& G, OrderPA order, 
                              ColorMap color)
   {
-    using graph_traits;
-    using boost::tie;
     typedef graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
-    typedef typename GraphTraits::size_type size_type;
+    typedef typename property_traits<ColorMap>::value_type size_type;
     
     size_type max_color = 0;
     const size_type V = num_vertices(G);
@@ -66,7 +68,8 @@ namespace boost {
     // for each color. The length of mark is the
     // number of vertices since the maximum possible number of colors
     // is the number of vertices.
-    std::vector<size_type> mark(V, numeric_limits_max(max_color));
+    std::vector<size_type> mark(V, 
+                                std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION());
     
     //Initialize colors 
     typename GraphTraits::vertex_iterator v, vend;
@@ -88,7 +91,7 @@ namespace boost {
       size_type j = 0;
 
       //Scan through all useable colors, find the smallest possible
-      //color which is not used by neighbors.  Note that if mark[j]
+      //color that is not used by neighbors.  Note that if mark[j]
       //is equal to i, color j is used by one of the current vertex's
       //neighbors.
       while ( j < max_color && mark[j] == i ) 
@@ -99,10 +102,27 @@ namespace boost {
 
       //At this point, j is the smallest possible color
       put(color, current, j);  //Save the color of vertex current
-      
     }
     
     return max_color;
+  }
+
+  template<class VertexListGraph, class ColorMap>
+  typename property_traits<ColorMap>::value_type
+  sequential_vertex_coloring(const VertexListGraph& G, ColorMap color)
+  {
+    typedef typename graph_traits<VertexListGraph>::vertex_descriptor
+      vertex_descriptor;
+    typedef typename graph_traits<VertexListGraph>::vertex_iterator
+      vertex_iterator;
+
+    std::pair<vertex_iterator, vertex_iterator> v = vertices(G);
+    std::vector<vertex_descriptor> order(v.first, v.second);
+    return sequential_vertex_coloring
+             (G, 
+              make_iterator_property_map
+                (order.begin(), identity_property_map()), 
+              color);
   }
 }
 
