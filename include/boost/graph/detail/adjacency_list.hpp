@@ -2074,6 +2074,7 @@ namespace boost {
       typedef Reference reference;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
+      inline adj_list_vertex_property_map() { }
       inline adj_list_vertex_property_map(const Graph*) { }
       inline Reference operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
@@ -2095,6 +2096,7 @@ namespace boost {
       typedef PropRef reference;
       typedef typename Graph::vertex_descriptor key_type;
       typedef boost::lvalue_property_map_tag category;
+      inline adj_list_vertex_all_properties_map() { }
       inline adj_list_vertex_all_properties_map(const Graph*) { }
       inline PropRef operator[](key_type v) const {
         StoredVertex* sv = (StoredVertex*)v;
