@@ -1,6 +1,8 @@
 #ifndef BOOST_LIST_BASE_HPP
 #define BOOST_LIST_BASE_HPP
 
+#include <boost/pending/iterator_adaptors.hpp>
+
 // Perhaps this should go through formal review, and move to <boost/>.
 
 /*
@@ -147,16 +149,16 @@ namespace boost {
     }
 
     // This deletes every node in the list except the
-    // "dummy" node.
+    // sentinel node.
     template <class Node, class Delete>
     inline void
-    dlist_clear(Node dummy, Delete del)
+    dlist_clear(Node sentinel, Delete del)
     {
       Node i, tmp;
-      i = next(dummy);
-      while (i != dummy) {
+      i = next(sentinel);
+      while (i != sentinel) {
 	tmp = i;
-	i = next(i)
+	i = next(i);
 	del(tmp);
       }
     }
