@@ -1489,6 +1489,9 @@ namespace boost {
         return *this;
       }
       inline void clear() {
+	for (typename StoredVertexList::iterator i = m_vertices.begin();
+	     i != m_vertices.end(); ++i)
+	  delete (stored_vertex*)*i;
         m_vertices.clear();
         m_edges.clear();
       }
