@@ -456,6 +456,7 @@ to sort the vertices of graph \code{g1}.
   BGL_FORALL_VERTICES_T(i, g1, Graph1)
     g1_vertices.push_back(i);
   permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
+  perm_map = PermMap(&perm[0], perm.size(), index_map1);
 }
 @}
 
@@ -521,7 +522,6 @@ function object is described next.
 @d Order the edges by DFS discover time
 @{
 std::copy(edges(g1).first, edges(g1).second, std::back_inserter(edge_set));
-perm_map = PermMap(&perm[0], perm.size(), index_map1);
 edge_order = edge_order_fun<PermMap, Graph1>(perm_map, g1);
 std::sort(edge_set.begin(), edge_set.end(), detail::edge_cmp(edge_order));
 std::cout << "edge set = ";
@@ -634,7 +634,7 @@ struct isomorphism_algo
   IndexMapping2 BPAIR;
   std::vector<char> APAIR_assigned_vec;
   std::vector<char> BPAIR_assigned_vec;
-  safe_iterator_property_map<char*, PermMap, char, char&> APAIR_assigned;
+  safe_iterator_property_map<char*, IndexMap1, char, char&> APAIR_assigned;
   safe_iterator_property_map<char*, IndexMap2 ,char, char&> BPAIR_assigned;
 
   isomorphism_algo(const Graph1& g1, const Graph2& g2,
@@ -648,8 +648,10 @@ struct isomorphism_algo
   {
     BPAIR = make_safe_iterator_property_map(&BPAIR_vec[0], BPAIR_vec.size(),
                 index_map2, BPAIR_vec[0]);
+    std::cout << "APAIR_assigned_vec.size()=" << APAIR_assigned_vec.size()
+              << std::endl;
     APAIR_assigned = make_safe_iterator_property_map(&APAIR_assigned_vec[0],
-        APAIR_assigned_vec.size(), perm_map, char());
+        APAIR_assigned_vec.size(), index_map1, char());
     BPAIR_assigned = make_safe_iterator_property_map(&BPAIR_assigned_vec[0], 
         BPAIR_assigned_vec.size(), index_map2, char());
   }
@@ -660,12 +662,15 @@ struct isomorphism_algo
     @<Compute invariant multiplicity@>
     @<Sort vertices by invariant multiplicity@>
     @<Order the vertices by DFS discover time@>
+    std::cout << "reordered g1=" << std::endl;
+    print_graph(g1, perm_map);
     @<Order the edges by DFS discover time@>
     return this->match(edge_set.begin());
   }
 
   bool match(edge_iter_t edge_iter)
   {
+    std::cout << "*** entering match" << std::endl;
     if (edge_iter != edge_set.end()) {
       edge1_t edge = *edge_iter;
       vertex1_t u = source(edge, g1);
@@ -677,9 +682,10 @@ struct isomorphism_algo
         BGL_FORALL_VERTICES_T(y, g2, Graph2) {
           std::cout << "y: " << get(index_map2, y) << std::endl;
           if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
-            APAIR[v] = y; APAIR_assigned[v] = true;
             std::cout << "f(" << get(perm_map, v) << ")="
               << get(index_map2, y) << std::endl;
+            APAIR[v] = y; 
+            APAIR_assigned[v] = true;
             BPAIR[y] = v; BPAIR_assigned[y] = true;
             mc = 0;
             if (match(next(edge_iter)))
@@ -687,12 +693,14 @@ struct isomorphism_algo
             APAIR_assigned[v] = false;
             BPAIR_assigned[y] = false;
           }
+          std::cout << "xxx" << std::endl;
         }
       } else if (APAIR_assigned[v] == false) {
-        std::cout << "edge_order(edge)=" << edge_order(edge) << std::endl;
+        vertex1_t x = g1_vertices[edge_order(edge)];
+        std::cout << "edge_order(edge)=" << get(perm_map, x) << std::endl;
         std::cout << "APAIR_assigned[edge_order(edge)]="
-          << (APAIR_assigned[edge_order(edge)] == 1) << std::endl;
-        vertex2_t z = APAIR[edge_order(edge)];
+          << (APAIR_assigned[x] == 1) << std::endl;
+        vertex2_t z = APAIR[x];
         std::cout << "z: " << get(index_map2, z) << std::endl;
         BGL_FORALL_ADJACENT_T(z, w, g2, Graph2) {
           if (BPAIR_assigned[w] == true)
@@ -712,6 +720,8 @@ struct isomorphism_algo
           std::cout << "y: " << get(index_map2, y) << std::endl;
           if (ADEG(v) == BDEG(y) && BPAIR_assigned[y] == false) {
             APAIR[v] = y; APAIR_assigned[v] = true;
+            std::cout << "f(" << get(perm_map, v) << ")=" 
+                      << get(index_map2, y) << std::endl;;
             BPAIR[y] = v; BPAIR_assigned[y] = true;
             mc = 1;
             if (match(next(edge_iter)))
