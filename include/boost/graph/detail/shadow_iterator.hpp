@@ -52,8 +52,8 @@ namespace boost {
 
       template <typename Iter>
       typename Iter::reference dereference(const Iter& i) const { 
-	typedef typename Iter::reference R;
-	return R(*i.base().first, *i.base().second); 
+        typedef typename Iter::reference R;
+        return R(*i.base().first, *i.base().second); 
       }
       template <typename Iter>
       bool equal(const Iter& p1, const Iter& p2) const { 
@@ -89,7 +89,7 @@ namespace boost {
     // iterator like a random access iterator.
     struct shadow_iterator_tag : public std::input_iterator_tag {
       operator std::random_access_iterator_tag() {
-	return std::random_access_iterator_tag();
+        return std::random_access_iterator_tag();
       };
     };
     typedef typename std::iterator_traits<IterA>::value_type Aval;
@@ -100,9 +100,9 @@ namespace boost {
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
     typedef iterator_adaptor< std::pair<IterA, IterB>,
-			      detail::shadow_iterator_policies,
-			      V, R, V*, shadow_iterator_tag,
-			      D> type;
+                              detail::shadow_iterator_policies,
+                              V, R, V*, shadow_iterator_tag,
+                              D> type;
   };
 
   // short cut for creating a shadow iterator
