@@ -1770,6 +1770,21 @@ namespace boost {
     }
     // O(1)
     template <class Derived, class Config, class Base>
+    inline typename Config::vertex_descriptor
+    add_vertex(const typename Config::vertex_property_type& p,
+	       adj_list_impl<Derived, Config, Base>& g_)
+    {
+      Derived& g = static_cast<Derived&>(g_);
+      typedef typename Config::stored_vertex stored_vertex;
+      stored_vertex* v = new stored_vertex(p);
+      typename Config::StoredVertexList::iterator pos;
+      bool inserted;
+      boost::tie(pos,inserted) = boost::push(g.m_vertices, v);
+      v->m_position = pos;
+      return v;
+    }
+    // O(1)
+    template <class Derived, class Config, class Base>
     inline void remove_vertex(typename Config::vertex_descriptor u,
                               adj_list_impl<Derived, Config, Base>& g_)
     {
@@ -2220,21 +2235,29 @@ namespace boost {
         typedef typename container_gen<VertexListS, vertex_ptr>::type
           SeqStoredVertexList;
         struct seq_stored_vertex {
+	  seq_stored_vertex() { }
+	  seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct bidir_seq_stored_vertex {
+	  bidir_seq_stored_vertex() { }
+	  bidir_seq_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
           VertexProperty m_property;
           typename SeqStoredVertexList::iterator m_position;
         };
         struct rand_stored_vertex {
+	  rand_stored_vertex() { }
+	  rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           VertexProperty m_property;
         };
         struct bidir_rand_stored_vertex {
+	  bidir_rand_stored_vertex() { }
+	  bidir_rand_stored_vertex(const VertexProperty& p) : m_property(p) { }
           OutEdgeList m_out_edges;
           InEdgeList m_in_edges;
           VertexProperty m_property;
@@ -2245,7 +2268,10 @@ namespace boost {
           typename boost::ct_if_t<BidirectionalT,
             bidir_seq_stored_vertex, seq_stored_vertex>::type
         >::type StoredVertex;
-        struct stored_vertex : public StoredVertex { };
+        struct stored_vertex : public StoredVertex {
+	  stored_vertex() { }
+	  stored_vertex(const VertexProperty& p) : StoredVertex(p) { }
+	};
 
         typedef typename container_gen<VertexListS, stored_vertex>::type
           RandStoredVertexList;
