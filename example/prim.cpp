@@ -27,7 +27,6 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
-#include <boost/graph/visitors.hpp>
 
 // The graph from p. 508 of CLR.
 //
@@ -61,9 +60,8 @@ int main(int , char* [])
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
 
   std::vector<Vertex> p(num_vertices(G));
-  Vertex src = *(vertices(G).first);
-  p[src] = src;
-  prim_minimum_spanning_tree(G, src, predecessor_map(&p[0]));
+
+  prim_minimum_spanning_tree(G, &p[0]);
 
   for ( std::vector<Vertex>::iterator vi = p.begin();
         vi != p.end(); ++vi)
