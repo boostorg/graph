@@ -95,14 +95,14 @@ the value of the properties can be given.
 <table border>
 
 <tr>
-<TD><TT>add_edge(g,&nbsp;u,&nbsp;v,&nbsp;ep)</TT></TD>
+<TD><TT>add_edge(u,&nbsp;v,&nbsp;ep,&nbsp;g)</TT></TD>
 <TD>Inserts the edge <i>(u,v)</i> into the graph, and
 copies object <TT>ep</TT> into the property property for that edge.<br>
 Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT></TD>
 </TR>
 
 <tr>
-<TD><TT>add_vertex(g,&nbsp;vp)</TT></TD>
+<TD><TT>add_vertex(vp,&nbsp;g)</TT></TD>
 <TD>
 Add a new vertex to the graph and copy <TT>vp</TT> into the property
 property for the new vertex. The <TT>vertex_descriptor</TT> for the new
@@ -130,8 +130,8 @@ Return type: <TT>vertex_descriptor</TT>
     typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     void constraints() {
       function_requires&lt; MutableGraphConcept&lt;G&gt; &gt;();
-      v = add_vertex(g, vp);
-      p = add_edge(g, u, v, ep);
+      v = add_vertex(vp, g);
+      p = add_edge(u, v, ep, g);
     }
     G g;
     std::pair&lt;edge_descriptor, bool&gt; p;
