@@ -96,6 +96,7 @@ namespace boost {
   make_bellman_visitor(Visitors vis) {
     return bellman_visitor<Visitors>(vis);
   }
+  typedef bellman_visitor<> default_bellman_visitor;
 
   namespace detail {
 

@@ -223,6 +223,7 @@ namespace boost {
   make_dfs_visitor(Visitors vis) {
     return dfs_visitor<Visitors>(vis);
   }
+  typedef dfs_visitor<> default_dfs_visitor;
 
 } // namespace boost
 

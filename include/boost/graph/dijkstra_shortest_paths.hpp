@@ -82,6 +82,7 @@ namespace boost {
   make_dijkstra_visitor(Visitors vis) {
     return dijkstra_visitor<Visitors>(vis);
   }
+  typedef dijkstra_visitor<> default_dijkstra_visitor;
 
   namespace detail {
 
