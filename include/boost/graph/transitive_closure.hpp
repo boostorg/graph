@@ -231,15 +231,15 @@ namespace boost
     {
       vertex_iterator i, i_end;
       for (tie(i, i_end) = vertices(g); i != i_end; ++i) 
-	{
+        {
           adjacency_iterator ab, ae;
           for (boost::tie(ab, ae) = adjacent_vertices(*i, g); ab != ae; ++ab)
-	    {
+            {
               if (*ab == *i)
-		if (components[component_number[*i]].size() == 1)
-		  add_edge(g_to_tc_map[*i], g_to_tc_map[*i], tc);
-	    }
-	}
+                if (components[component_number[*i]].size() == 1)
+                  add_edge(g_to_tc_map[*i], g_to_tc_map[*i], tc);
+            }
+        }
     }
   }
 
