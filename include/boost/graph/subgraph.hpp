@@ -764,7 +764,7 @@ namespace boost {
     };
     struct subgraph_property_generator {
       template <class SubGraph, class Property, class Tag>
-      class bind_ {
+      struct bind_ {
 	typedef subgraph_choose_pmap<Tag, SubGraph, Property> Choice;
         typedef typename Choice::type type;
         typedef typename Choice::const_type const_type;	
