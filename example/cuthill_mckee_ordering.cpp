@@ -31,25 +31,25 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
 
-  /*
-    Sample Output
-    degree: 
-    2 4 3 4 3 4 4 2 1 1 
-    Reverse Cuthill-McKee ordering starting at :6
+/*
+  Sample Output
+  original bandwidth: 8
+  Reverse Cuthill-McKee ordering starting at: 6
     8 3 0 9 2 5 1 4 7 6 
-    Reverse Cuthill-McKee ordering starting at :0
+    bandwidth: 4
+  Reverse Cuthill-McKee ordering starting at: 0
     9 1 4 6 7 2 8 5 3 0 
-    Reverse Cuthill-McKee ordering: //choose vertex 9
+    bandwidth: 4
+  Reverse Cuthill-McKee ordering:
     0 8 5 7 3 6 4 2 1 9 
-
+    bandwidth: 4
  */
 int main(int , char* [])
 {
   using namespace boost;
   using namespace std;
-  identity_property_map id;
   typedef adjacency_list<vecS, vecS, undirectedS, 
-     property< vertex_color_t, default_color_type,
+     property<vertex_color_t, default_color_type,
        property<vertex_degree_t,int> > > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::vertices_size_type size_type;
@@ -80,9 +80,13 @@ int main(int , char* [])
   for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
     deg[*ui] = degree(*ui, G);
 
+  property_map<Graph, vertex_index_t>::type
+    index_map = get(vertex_index, G);
+
   std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
 
-  std::vector<Vertex> inv_perm(num_vertices(G)), perm(num_vertices(G));
+  std::vector<Vertex> inv_perm(num_vertices(G));
+  std::vector<size_type> perm(num_vertices(G));
   {
     Vertex s = vertex(6, G);
     //reverse cuthill_mckee_ordering
@@ -92,12 +96,14 @@ int main(int , char* [])
     cout << "  ";    
     for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
          i != inv_perm.end(); ++i)
-      cout << id[*i] << " ";
+      cout << index_map[*i] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
-      perm[inv_perm[c]] = c;
-    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
+      perm[index_map[inv_perm[c]]] = c;
+    std::cout << "  bandwidth: " 
+	      << bandwidth(G, make_iterator_property_map(&perm[0], index_map))
+	      << std::endl;
   }
   {
     Vertex s = vertex(0, G);
@@ -108,12 +114,14 @@ int main(int , char* [])
     cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
        i != inv_perm.end(); ++i)
-      cout << id[*i] << " ";
+      cout << index_map[*i] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
-      perm[inv_perm[c]] = c;
-    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
+      perm[index_map[inv_perm[c]]] = c;
+    std::cout << "  bandwidth: " 
+	      << bandwidth(G, make_iterator_property_map(&perm[0], index_map))
+	      << std::endl;
   }
 
   {
@@ -125,12 +133,14 @@ int main(int , char* [])
     cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
        i != inv_perm.end(); ++i)
-      cout << id[*i] << " ";
+      cout << index_map[*i] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
-      perm[inv_perm[c]] = c;
-    std::cout << "  bandwidth: " << bandwidth(G, &perm[0]) << std::endl;
+      perm[index_map[inv_perm[c]]] = c;
+    std::cout << "  bandwidth: " 
+	      << bandwidth(G, make_iterator_property_map(&perm[0], index_map))
+	      << std::endl;
   }
   return 0;
 }

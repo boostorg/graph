@@ -112,8 +112,8 @@ main()
   }
 
   {
-    // Use Dijkstra's shortest paths algorithm to calculate the Bacon
-    // numbers of all the actors in our graph.
+    // Use the BFS algorithm to calculate the Bacon numbers of all the
+    // actors in our graph.
 
     std::vector<int> bacon_number( num_vertices(g) );
     std::vector<Vertex> predecessor( num_vertices(g) );
