@@ -36,19 +36,29 @@
 int test_main(int argc, char* argv[])
 {
   using namespace boost;
+#if 0
   typedef adjacency_list<vecS, vecS, directedS,
     no_property, property<edge_index_t, std::size_t> > graph_t;
+  typedef subgraph<graph_t> subgraph_t;
+#elif 1
+  typedef adjacency_list<vecS, vecS, directedS,
+    no_property, property<edge_index_t, std::size_t> > subgraph_t;
+#else
+  typedef adjacency_list<vecS, vecS, bidirectionalS,
+    no_property, property<edge_index_t, std::size_t> > subgraph_t;
+#endif
 
   mt19937 gen;
   for (int t = 0; t < 10; ++t) {
-    subgraph<graph_t> g;
+    subgraph_t g;
     int N = t + 2;
     generate_random_graph(g, N, N * 2, gen);
 
-    graph_test< subgraph<graph_t> > gt;
-
+    graph_test< subgraph_t > gt;
     gt.test_add_vertex(g);
     gt.test_add_edge(random_vertex(g, gen), random_vertex(g, gen), g);
+    gt.test_remove_edge(random_vertex(g, gen), random_vertex(g, gen), g);
+    gt.test_remove_edge(random_edge(g, gen), g);    
   }  
   return 0;
 }

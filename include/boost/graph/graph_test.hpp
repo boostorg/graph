@@ -16,6 +16,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
+    typedef typename graph_traits<Graph>::degree_size_type deg_size_t;
     typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iter;
     typedef typename property_map<Graph, vertex_index_t>::const_type index_map_t;
     typedef iterator_property_map<typename std::vector<vertex_t>::iterator,index_map_t,vertex_t,vertex_t&> IsoMap;
@@ -32,36 +33,44 @@ namespace boost {
       bool operator()(edge_t x) const { return x != e; }
       edge_t e;
     };
+    struct ignore_edges {
+      ignore_edges() { }
+      ignore_edges(vertex_t s, vertex_t t, const Graph& g) 
+	: s(s), t(t), g(g) { }
+      bool operator()(edge_t x) const { 
+	return !(source(x, g) == s && target(x, g) == t);
+      }
+      vertex_t s; vertex_t t; const Graph& g;
+    };
 
-    // PRE: g and orig are isomorphic
-    void test_add_vertex(const Graph& orig)
+    void test_add_vertex(Graph& g)
     {
-      Graph g;
-      std::vector<vertex_t> iso_vec(num_vertices(orig));
-      IsoMap iso_map(iso_vec.begin(), get(vertex_index, orig));
-      copy_graph(orig, g, orig_to_copy(iso_map));
+      Graph cpy;
+      std::vector<vertex_t> iso_vec(num_vertices(g));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
+      copy_graph(g, cpy, orig_to_copy(iso_map));
 
-      assert((verify_isomorphism(orig, g, iso_map)));
+      assert((verify_isomorphism(g, cpy, iso_map)));
 
       vertex_t v = add_vertex(g);
       
-      BOOST_TEST(num_vertices(g) == num_vertices(orig) + 1);
+      BOOST_TEST(num_vertices(g) == num_vertices(cpy) + 1);
 
       BOOST_TEST(out_degree(v, g) == 0);
 
       // Make sure the rest of the graph stayed the same
       BOOST_TEST((verify_isomorphism
-		  (orig, make_filtered_graph(g, keep_all(), ignore_vertex(v)),
+		  (make_filtered_graph(g, keep_all(), ignore_vertex(v)), cpy,
 		   iso_map)));
     }
     
-    void test_add_edge(vertex_t u, vertex_t v, const Graph& orig)
+    void test_add_edge(vertex_t u, vertex_t v, Graph& g)
     {
-      Graph g;
-      std::vector<vertex_t> iso_vec(num_vertices(orig));
-      IsoMap iso_map(iso_vec.begin(), get(vertex_index, orig));
-      copy_graph(orig, g, orig_to_copy(iso_map));
-      
+      Graph cpy;
+      std::vector<vertex_t> iso_vec(num_vertices(g));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
+      copy_graph(g, cpy, orig_to_copy(iso_map));
+
       bool parallel_edge_exists	= contains(adjacent_vertices(u, g), v);
       
       std::pair<edge_t, bool> p = add_edge(u, v, g);
@@ -77,12 +86,12 @@ namespace boost {
 	BOOST_TEST(added == true);
 
       if (p.second == true) { // edge added
-	BOOST_TEST(num_edges(g) == num_edges(orig) + 1);
+	BOOST_TEST(num_edges(g) == num_edges(cpy) + 1);
 	
 	BOOST_TEST(contains(out_edges(u, g), e) == true);
 	
 	BOOST_TEST((verify_isomorphism
-		    (orig, make_filtered_graph(g, ignore_edge(e)), iso_map)));
+		    (make_filtered_graph(g, ignore_edge(e)), cpy, iso_map)));
       }
       else { // edge not added
 
@@ -93,10 +102,48 @@ namespace boost {
 	}
 
 	// The graph should not be changed.
-	BOOST_TEST((verify_isomorphism(g, orig, iso_map)));	
+	BOOST_TEST((verify_isomorphism(g, cpy, iso_map)));
       }
     } // test_add_edge()
 
+
+    void test_remove_edge(vertex_t u, vertex_t v, Graph& g)
+    {
+      Graph cpy;
+      std::vector<vertex_t> iso_vec(num_vertices(g));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
+      copy_graph(g, cpy, orig_to_copy(iso_map));
+
+      deg_size_t occurances = count(adjacent_vertices(u, g), v);
+
+      remove_edge(u, v, g);
+      
+      BOOST_TEST(num_edges(g) + occurances == num_edges(cpy));
+
+      BOOST_TEST((verify_isomorphism
+		  (g, make_filtered_graph(cpy, ignore_edges(u,v,cpy)),
+		   iso_map)));
+    }
+
+    void test_remove_edge(edge_t e, Graph& g)
+    {
+      Graph cpy;
+      std::vector<vertex_t> iso_vec(num_vertices(g));
+      IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
+      copy_graph(g, cpy, orig_to_copy(iso_map));
+
+      vertex_t u = source(e, g), v = target(e, g);
+      deg_size_t occurances = count(adjacent_vertices(u, g), v);
+      
+      remove_edge(e, g);
+
+      BOOST_TEST(num_edges(g) + 1 == num_edges(cpy));
+      BOOST_TEST(count(adjacent_vertices(u, g), v) + 1 == occurances);
+
+      BOOST_TEST((verify_isomorphism
+		  (g, make_filtered_graph(cpy, ignore_edge(e)),
+		   iso_map)));
+    }
 
   };
   
