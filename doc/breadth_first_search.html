@@ -29,6 +29,13 @@
   void breadth_first_search(VertexListGraph& G, 
     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
     const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+  template &lt;class VertexListGraph, class Buffer, class BFSVisitor, 
+            class ColorMap&gt;
+  void breadth_first_search
+    (const VertexListGraph&amp; g, 
+     typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+     Buffer&amp; Q, BFSVisitor vis, ColorMap color);
 </PRE>
 
 

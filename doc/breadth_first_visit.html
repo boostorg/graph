@@ -29,6 +29,12 @@
   void breadth_first_visit(IncidenceGraph& G, 
     typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
     const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+  template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class ColorMap&gt;
+  void breadth_first_visit
+    (const IncidenceGraph&amp; g, 
+     typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+     Buffer&amp; Q, BFSVisitor vis, ColorMap color)
 </PRE>
 
 This function is basically the same as <tt>breadth_first_search()</tt>
