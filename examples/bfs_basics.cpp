@@ -86,11 +86,21 @@ int main(int argc, char* argv[])
   // color property needed in breadth-first search
   std::vector<default_color_type> color(num_vertices(G));
 
+  typedef boost::property_map<Graph, vertex_index>::type IndexMap;
+  IndexMap vertex_id = get(vertex_index(), G);
+
   // discover time property
   std::vector<size_type> dtime(num_vertices(G));
 
   // finish time property
   std::vector<size_type> ftime(num_vertices(G));
+
+  typedef std::vector<size_type>::iterator RAIter;
+  typedef random_access_iterator_property_map<RAIter, size_type, 
+    size_type&, IndexMap> IterMap;
+
+  IterMap discover(dtime.begin(), vertex_id);
+  IterMap finish(ftime.begin(), vertex_id);
 
   // Call the 4 argument version of BFS. 
   // There is also a 3 argument version (assume color is in the graph)
@@ -98,18 +108,18 @@ int main(int argc, char* argv[])
   int time = 0;
   boost::breadth_first_search
     (G, vertex(s, G), make_bfs_visitor(
-     std::make_pair(stamp_times(dtime.begin(), time, on_discover_vertex()),
-		    stamp_times(ftime.begin(), time, on_finish_vertex()))),
-     color.begin());
+     std::make_pair(stamp_times(discover, time, on_discover_vertex()),
+		    stamp_times(finish, time, on_finish_vertex()))),
+     make_iterator_property_map(color.begin(), vertex_id, color[0]));
 
   cout << "order of discovery: ";
 
   // Perform some STL magic to order the vertices
   // according to their discover time
-  vector<size_type> discover_order(N);
+  std::vector<size_type> discover_order(N);
   iota(discover_order.begin(), discover_order.end(), 0);
   std::sort(discover_order.begin(), discover_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(dtime.begin()));
+	    indirect_cmp<IterMap, std::less<size_type> >(discover));
   
   for (i = 0; i < N; ++i)
     cout << name[ discover_order[i] ] << " ";
@@ -120,7 +130,7 @@ int main(int argc, char* argv[])
   vector<size_type> finish_order(N);
   iota(finish_order.begin(), finish_order.end(), 0);
   std::sort(finish_order.begin(), finish_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(ftime.begin()));
+	    indirect_cmp<IterMap, std::less<size_type> >(finish));
   
   for (i = 0; i < N; ++i)
     cout << name[ finish_order[i] ] << " ";

@@ -96,6 +96,8 @@ main(int argc, char* argv[])
 
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::vertices_size_type size_type;
+  boost::property_map<Graph, vertex_index>::type 
+    vertex_id = get(vertex_index(), G);
   
   std::vector<default_color_type> c(num_vertices(G));
   std::vector<size_type> d(num_vertices(G));  
@@ -107,14 +109,14 @@ main(int argc, char* argv[])
       std::make_pair(print_edge("back", on_back_edge()),
                      print_edge("forward or cross", on_forward_or_cross_edge())
                      ))),
-    c.begin());
+    make_iterator_property_map(c.begin(), vertex_id, c[0]));
 
   cout << endl << "BFS categorized directed graph" << endl;
   boost::breadth_first_search
     (G, vertex(0, G), make_bfs_visitor(
      std::make_pair(print_edge("tree", on_tree_edge()),
                     print_edge("cycle", on_cycle_edge()))), 
-     c.begin());
+     make_iterator_property_map(c.begin(), vertex_id, c[0]));
 
   return 0;
 }
