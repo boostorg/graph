@@ -91,7 +91,7 @@ namespace boost
     std::vector < std::vector < vertex > >components;
     build_component_lists(g, num_scc, component_number, components);
 
-    typedef std::vector < std::vector < cg_vertex > >CG_t;
+    typedef std::vector<std::vector<cg_vertex> > CG_t;
     CG_t CG(num_scc);
     for (cg_vertex s = 0; s < components.size(); ++s) {
       std::vector < cg_vertex > adj;
@@ -105,47 +105,46 @@ namespace boost
         }
       }
       std::sort(adj.begin(), adj.end());
-      std::vector < cg_vertex >::iterator di =
+      typename std::vector<cg_vertex>::iterator di =
         std::unique(adj.begin(), adj.end());
       if (di != adj.end())
         adj.erase(di, adj.end());
       CG[s] = adj;
     }
 
-    std::vector < cg_vertex > topo_order;
-    std::vector < cg_vertex > topo_number(num_vertices(CG));
+    std::vector<cg_vertex> topo_order;
+    std::vector<cg_vertex> topo_number(num_vertices(CG));
     topological_sort(CG, std::back_inserter(topo_order),
                      vertex_index_map(identity_property_map()));
     std::reverse(topo_order.begin(), topo_order.end());
     size_type n = 0;
-    for (std::vector < cg_vertex >::iterator iter = topo_order.begin();
+    for (typename std::vector<cg_vertex>::iterator iter = topo_order.begin();
          iter != topo_order.end(); ++iter)
       topo_number[*iter] = n++;
 
     for (size_type i = 0; i < num_vertices(CG); ++i)
       std::sort(CG[i].begin(), CG[i].end(),
-                compose_f_gx_hy(std::less < cg_vertex > (),
+                compose_f_gx_hy(std::less<cg_vertex>(),
                                 detail::subscript(topo_number),
                                 detail::subscript(topo_number)));
 
-    std::vector < std::vector < cg_vertex > >chains;
+    std::vector<std::vector<cg_vertex> > chains;
     {
-      std::vector < cg_vertex > in_a_chain(num_vertices(CG));
-      for (std::vector < cg_vertex >::iterator i = topo_order.begin();
+      std::vector<cg_vertex> in_a_chain(num_vertices(CG));
+      for (typename std::vector<cg_vertex>::iterator i = topo_order.begin();
            i != topo_order.end(); ++i) {
         cg_vertex v = *i;
         if (!in_a_chain[v]) {
           chains.resize(chains.size() + 1);
-          std::vector < cg_vertex > &chain = chains.back();
+          std::vector<cg_vertex>& chain = chains.back();
           for (;;) {
             chain.push_back(v);
             in_a_chain[v] = true;
-            typename graph_traits < CG_t >::adjacency_iterator adj_first, adj_last;
+            typename graph_traits<CG_t>::adjacency_iterator adj_first, adj_last;
             tie(adj_first, adj_last) = adjacent_vertices(v, CG);
-            typename graph_traits < CG_t >::adjacency_iterator next
-              =
-              std::find_if(adj_first, adj_last,
-                           not1(detail::subscript(in_a_chain)));
+            typename graph_traits<CG_t>::adjacency_iterator next
+              = std::find_if(adj_first, adj_last,
+			     not1(detail::subscript(in_a_chain)));
             if (next != adj_last)
               v = *next;
             else
@@ -155,8 +154,8 @@ namespace boost
         }
       }
     }
-    std::vector < size_type > chain_number(num_vertices(CG));
-    std::vector < size_type > pos_in_chain(num_vertices(CG));
+    std::vector<size_type> chain_number(num_vertices(CG));
+    std::vector<size_type> pos_in_chain(num_vertices(CG));
     for (size_type i = 0; i < chains.size(); ++i)
       for (size_type j = 0; j < chains[i].size(); ++j) {
         cg_vertex v = chains[i][j];
@@ -164,16 +163,14 @@ namespace boost
         pos_in_chain[v] = j;
       }
 
-
     cg_vertex inf = std::numeric_limits < cg_vertex >::max();
-    std::vector < std::vector < cg_vertex > >successors(num_vertices(CG),
-                                                        std::vector <
-                                                        cg_vertex >
-                                                        (chains.size(), inf));
-    for (std::vector < cg_vertex >::reverse_iterator i = topo_order.rbegin();
-         i != topo_order.rend(); ++i) {
+    std::vector<std::vector<cg_vertex> > successors(num_vertices(CG),
+						    std::vector<cg_vertex>
+						    (chains.size(), inf));
+    for (typename std::vector<cg_vertex>::reverse_iterator 
+	   i = topo_order.rbegin(); i != topo_order.rend(); ++i) {
       cg_vertex u = *i;
-      graph_traits < CG_t >::adjacency_iterator adj, adj_last;
+      typename graph_traits<CG_t>::adjacency_iterator adj, adj_last;
       for (tie(adj, adj_last) = adjacent_vertices(u, CG);
            adj != adj_last; ++adj) {
         cg_vertex v = *adj;
@@ -208,10 +205,10 @@ namespace boost
         g_to_tc_map[*i] = add_vertex(tc);
     }
     // Add edges between all the vertices in two adjacent SCCs
-    graph_traits < CG_t >::vertex_iterator si, si_end;
+    typename graph_traits<CG_t>::vertex_iterator si, si_end;
     for (tie(si, si_end) = vertices(CG); si != si_end; ++si) {
       cg_vertex s = *si;
-      graph_traits < CG_t >::adjacency_iterator i, i_end;
+      typename graph_traits<CG_t>::adjacency_iterator i, i_end;
       for (tie(i, i_end) = adjacent_vertices(s, CG); i != i_end; ++i) {
         cg_vertex t = *i;
         for (size_type k = 0; k < components[s].size(); ++k)
@@ -231,17 +228,17 @@ namespace boost
 
   }
 
-  template < typename Graph, typename GraphTC >
-    void transitive_closure(const Graph & g, GraphTC & tc)
+  template <typename Graph, typename GraphTC>
+  void transitive_closure(const Graph & g, GraphTC & tc)
   {
     if (num_vertices(g) == 0)
       return;
-    typedef typename property_map < Graph, vertex_index_t >::const_type
+    typedef typename property_map<Graph, vertex_index_t>::const_type
       VertexIndexMap;
     VertexIndexMap index_map = get(vertex_index, g);
 
-    typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
-    std::vector < tc_vertex > to_tc_vec(num_vertices(g));
+    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+    std::vector<tc_vertex> to_tc_vec(num_vertices(g));
     iterator_property_map < tc_vertex *, VertexIndexMap, tc_vertex, tc_vertex&>
       g_to_tc_map(&to_tc_vec[0], index_map);
 
@@ -250,10 +247,9 @@ namespace boost
 
   namespace detail
   {
-    template < typename Graph, typename GraphTC,
-      typename G_to_TC_VertexMap,
-      typename VertexIndexMap >
-      void transitive_closure_dispatch
+    template < typename Graph, typename GraphTC, typename G_to_TC_VertexMap,
+      typename VertexIndexMap>
+    void transitive_closure_dispatch
       (const Graph & g, GraphTC & tc,
        G_to_TC_VertexMap g_to_tc_map, VertexIndexMap index_map)
     {

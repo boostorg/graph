@@ -200,7 +200,7 @@ namespace boost {
   add_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
            std::vector<EdgeList, Allocator>& g)
   {
-    typedef detail::val_edge<EdgeList>::type edge_type;
+    typedef typename detail::val_edge<EdgeList>::type edge_type;
     g[u].insert(g[u].end(), v);
     return std::make_pair(edge_type(u, v), true);
   }
