@@ -34,6 +34,7 @@
 #include <boost/pending/mutable_heap.hpp>
 #include <boost/pending/is_heap.hpp>
 #include <boost/graph/detail/array_binary_tree.hpp>
+#include <iterator>
 
 namespace boost {
 
@@ -75,10 +76,10 @@ namespace boost {
       : index_array(n), comp(x), id(_id) {
       c.reserve(n); 
     }
-    template <class InputIterator>
-    mutable_queue(InputIterator first, InputIterator last, 
+    template <class ForwardIterator>
+    mutable_queue(ForwardIterator first, ForwardIterator last, 
                   const Comp& x, const ID& _id) 
-      : index_array(last-first), comp(x), id(_id)
+      : index_array(std::distance(first, last)), comp(x), id(_id)
     {
       while( first != last ) {
         push(*first);
