@@ -260,7 +260,7 @@ namespace boost {
 
   template <class edge_descriptor>
   struct dummy_edge_predicate {
-    bool operator()(const edge_descriptor& e) const {
+    bool operator()(const edge_descriptor&) const {
       return false;
     }
   };
