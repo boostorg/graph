@@ -26,6 +26,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/undirected_dfs.hpp>
 #include <boost/cstdlib.hpp>
+#include <iostream>
 
 /*
   Example graph from Tarjei Knapstad.

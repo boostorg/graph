@@ -38,10 +38,10 @@ void read_graphviz(FILE* file, GraphvizGraph& g);
 
 This is to read a file in AT&amp;T graphviz  format into a BGL graph. The
 type of the BGL graph has to be either <tt>GraphvizDigraph</tt> or
-<tt>GraphvizGraph</tt>. You need build the <tt>libbglviz.a</tt> library
+<tt>GraphvizGraph</tt>. You need build the <tt>libbgl-viz.a</tt> library
 and link the library into your program properly.
 
-<h3>How to build library <tt>libbglviz.a</tt></h3>
+<h3>How to build library <tt>libbgl-viz.a</tt></h3>
 set <tt>CXX</tt> to be your compiler command. For example(in tcsh shell):
 <pre>
 setenv CXX "g++ -ftemplate-depth-100 -Wno-long-long"
@@ -55,8 +55,8 @@ Assume your boost top directory is <tt>boost_X_XX_X</tt>, then
 <pre>
 cd boost_X_XX_X/libs/graph/src
 $CXX -I../../../ -I. -c *.cpp
-ar -rc libbglviz.a *.o
-ranlib libbglviz.a 
+ar -rc libbgl-viz.a *.o
+ranlib libbgl-viz.a 
 </pre>
 
 Note that for some compilers, the process to build libraries is
@@ -64,7 +64,7 @@ slightly different. You should follow your compiler manual. For example,
 to use Kuck and Associates C++ compiler to build the library:
 <pre>
 KCC +K0 --one_instantiation_per_object -I../../../ -I. -c *.cpp
-KCC +K0 --one_instantiation_per_object -o libbglviz.a *.o
+KCC +K0 --one_instantiation_per_object -o libbgl-viz.a *.o
 </pre>
 
 <H3><A NAME="SECTION001330400000000000000">
