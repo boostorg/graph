@@ -1019,31 +1019,9 @@ namespace boost {
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
       
-      // O(E/V)
-      inline void
-      remove_edge(typename Config::edge_descriptor e)
-      {
-        typedef typename Config::graph_type graph_type;
-        graph_type& g = static_cast<graph_type&>(*this);
+      void
+      remove_edge(typename Config::edge_descriptor e);
 
-        typedef typename Config::OutEdgeList::value_type::property_type PType;
-
-        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
-        typename Config::OutEdgeList::iterator out_i = out_el.begin();
-        for (; out_i != out_el.end(); ++out_i)
-          if (&(*out_i).get_property() == (PType*)e.get_property()) {
-            out_el.erase(out_i);
-            break;
-          }
-        typename Config::InEdgeList& in_el = in_edge_list(g, target(e, g));
-        typename Config::InEdgeList::iterator in_i = in_el.begin();
-        for (; in_i != in_el.end(); ++in_i)
-          if (&(*in_i).get_property() == (PType*)e.get_property()) {
-            g.m_edges.erase((*in_i).get_iter());
-            in_el.erase(in_i);
-            break;
-          }
-      }
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
       {
@@ -1065,7 +1043,17 @@ namespace boost {
       detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       detail::erase_from_incidence_list(in_edge_list(g, v), u, Cat());
     }
-    // O(E/V)
+
+    // O(E/V) or O(log(E/V))
+    template <class Config>
+    inline void
+    bidirectional_graph_helper_with_property<Config>::remove_edge(typename Config::edge_descriptor e)
+    {
+      typedef typename Config::graph_type graph_type;
+      graph_type& g = static_cast<graph_type&>(*this);
+      boost::remove_edge(source(e, g), target(e, g), *this);
+    }
+    // O(E/V) or O(log(E/V))
     template <class EdgeOrIter, class Config>
     inline void
     remove_edge(EdgeOrIter e,
