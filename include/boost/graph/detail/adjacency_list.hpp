@@ -392,10 +392,17 @@ namespace boost {
     //=========================================================================
     // Directed Graph Helper Class
 
+    struct adj_list_dir_traversal_tag :
+      public virtual adjacency_matrix_tag,
+      public virtual vertex_list_graph_tag,
+      public virtual incidence_graph_tag,
+      public virtual adjacency_graph_tag,
+      public virtual edge_list_graph_tag { };
+
     template <class Config>
     struct directed_graph_helper
       : public directed_edges_helper<Config> { 
-      typedef vertex_and_edge_list_graph_tag traversal_category;
+      typedef adj_list_dir_traversal_tag traversal_category;
     };
 
     // O(E/V)
@@ -513,7 +520,10 @@ namespace boost {
     struct undirected_graph_helper;
 
     struct undir_adj_list_traversal_tag : 
-      public virtual vertex_and_edge_list_graph_tag,
+      public virtual vertex_list_graph_tag,
+      public virtual incidence_graph_tag,
+      public virtual adjacency_graph_tag,
+      public virtual edge_list_graph_tag,
       public virtual bidirectional_graph_tag { };
 
     namespace detail {
@@ -838,7 +848,10 @@ namespace boost {
     // Bidirectional Graph Helper Class
 
     struct bidir_adj_list_traversal_tag : 
-      public virtual vertex_and_edge_list_graph_tag,
+      public virtual vertex_list_graph_tag,
+      public virtual incidence_graph_tag,
+      public virtual adjacency_graph_tag,
+      public virtual edge_list_graph_tag,
       public virtual bidirectional_graph_tag { };
 
     template <class Config>
