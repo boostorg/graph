@@ -195,6 +195,8 @@ namespace boost {
   strong_components(const Graph& g, ComponentMap comp,
                     const bgl_named_params<P, T, R>& params)
   {
+    typedef typename graph_traits<Graph>::directed_category DirCat;
+    typedef typename require_same<DirCat, directed_tag>::type req1;
     return detail::strong_comp_dispatch1
       (g, comp, params, get_param(params, vertex_root_t()));
   }
@@ -203,6 +205,8 @@ namespace boost {
   inline typename property_traits<ComponentMap>::value_type
   strong_components(const Graph& g, ComponentMap comp)
   {
+    typedef typename graph_traits<Graph>::directed_category DirCat;
+    typedef typename require_same<DirCat, directed_tag>::type req1;
     bgl_named_params<int, int> params(0);
     return strong_components(g, comp, params);
   }
