@@ -196,12 +196,6 @@ namespace boost {
             const bgl_named_params<P, T, R>& params,
             PredMap pred)
       {
-        typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-        typedef typename graph_traits<Graph>::vertices_size_type size_type;
-        size_type n = is_default_param(get_param(params, vertex_predecessor)) ?
-          num_vertices(g) : 1;
-        std::vector<edge_descriptor> pred_vec(n);
-        
         typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
         return edmunds_karp_dispatch2<C>::apply
           (g, src, sink, pred, params, get_param(params, vertex_color));
