@@ -19,12 +19,14 @@ inline bool operator<(const queue<_Tp, _Seq>&, const queue<_Tp, _Seq>&);
 template <class _Tp, class _Sequence>
 class queue {
 
+#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
   template <class _Tp1, class _Seq1>
   friend bool operator== (const queue<_Tp1, _Seq1>&,
                           const queue<_Tp1, _Seq1>&);
   template <class _Tp1, class _Seq1>
   friend bool operator< (const queue<_Tp1, _Seq1>&,
                          const queue<_Tp1, _Seq1>&);
+#endif
 public:
   typedef typename _Sequence::value_type      value_type;
   typedef typename _Sequence::size_type       size_type;
@@ -32,7 +34,9 @@ public:
 
   typedef typename _Sequence::reference       reference;
   typedef typename _Sequence::const_reference const_reference;
+#ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 protected:
+#endif
   _Sequence c;
 public:
   queue() : c() {}
