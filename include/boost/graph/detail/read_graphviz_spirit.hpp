@@ -239,7 +239,7 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
                       ]
                     >> !( ch_p('=')
                           >> ID[a_list.value = arg1])
-                         [bind(&definition::call_prop_actor)
+                          [phoenix::bind(&definition::call_prop_actor)
                           (var(*this),a_list.key,a_list.value)],ch_p(','));
       
       attr_list = +(ch_p('[') >> !a_list >> ch_p(']'));
@@ -259,17 +259,17 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
 
       node_id
           = ( ID[node_id.name = arg1] >> (!port) )
-             [bind(&definition::memoize_node)(var(*this))];
+             [phoenix::bind(&definition::memoize_node)(var(*this))];
 
       attr_stmt
           = (keyword_p("graph")
-             >> attr_list(actor_t(bind(&definition::default_graph_prop)
+             >> attr_list(actor_t(phoenix::bind(&definition::default_graph_prop)
                                      (var(*this),arg1,arg2))))
           | (keyword_p("node")
-             >> attr_list(actor_t(bind(&definition::default_node_prop)
+             >> attr_list(actor_t(phoenix::bind(&definition::default_node_prop)
                                      (var(*this),arg1,arg2))))
           | (keyword_p("edge")
-             >> attr_list(actor_t(bind(&definition::default_edge_prop)
+             >> attr_list(actor_t(phoenix::bind(&definition::default_edge_prop)
                                      (var(*this),arg1,arg2))))
           ;
 
@@ -280,10 +280,10 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
           =  +(    edgeop[(data_stmt.sources = data_stmt.dests),
                           (data_stmt.dests = construct_<nodes_t>())]
                    >> ( subgraph[data_stmt.dests = arg1]
-                      | node_id[bind(&definition::insert_node)
+                      | node_id[phoenix::bind(&definition::insert_node)
                                 (var(*this),data_stmt.dests,arg1)]
                       )
-                   [bind(&definition::activate_edge)
+                   [phoenix::bind(&definition::activate_edge)
                     (var(*this),data_stmt.sources,data_stmt.dests,
                      var(edges), var(default_edge_props))]
               );
@@ -294,7 +294,7 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
       data_stmt
           = ( subgraph[(data_stmt.dests = arg1),// will get moved in rhs
                        (data_stmt.saw_node = false)] 
-            | node_id[(bind(&definition::insert_node)
+            | node_id[(phoenix::bind(&definition::insert_node)
                        (var(*this),data_stmt.dests,arg1)),
                       (data_stmt.saw_node = true),
 #ifdef BOOST_GRAPH_DEBUG
@@ -303,12 +303,12 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
                       (data_stmt.active_node = arg1)]
             ) >> if_p(edgeRHS)[
                      !attr_list(
-                       actor_t(bind(&definition::edge_prop)
+                       actor_t(phoenix::bind(&definition::edge_prop)
                                (var(*this),arg1,arg2)))
                   ].else_p[
                      if_p(data_stmt.saw_node)[
                          !attr_list(
-                           actor_t(bind(&definition::node_prop)
+                           actor_t(phoenix::bind(&definition::node_prop)
                                    (var(*this),arg1,arg2)))
                      ] // otherwise it's a subgraph, nothing more to do.
                   ];
@@ -343,10 +343,10 @@ struct dot_grammar : public grammar< dot_grammar<MutableGraph> > {
           = (!keyword_p("strict"))
             >>  ( keyword_p("graph")[
                    (var(edge_head) = '-'),
-                   (bind(&definition::check_undirected)(var(*this)))]
+                   (phoenix::bind(&definition::check_undirected)(var(*this)))]
                 | keyword_p("digraph")[
                    (var(edge_head) = '>'),
-                   (bind(&definition::check_directed)(var(*this)))]
+                   (phoenix::bind(&definition::check_directed)(var(*this)))]
                 )
             >> (!ID) >> ch_p('{') >> stmt_list >> ch_p('}');
 
