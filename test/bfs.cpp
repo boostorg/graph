@@ -26,6 +26,7 @@
 #include <boost/test_framework.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
 template <typename DistanceMap, typename ParentMap, 
@@ -176,6 +177,36 @@ int test_main(int argc, char* argv[])
   int max_V = 15;
   if (argc > 1)
     max_V = atoi(argv[1]);
+
+  if (0) { // compile only
+    // Check boost::breadth_first_search() version 1 requirements.
+    typedef boost::default_constructible_archetype<
+      boost::sgi_assignable_archetype< 
+      boost::equality_comparable_archetype<> > > Vertex;
+    typedef boost::vertex_list_graph_archetype<Vertex, boost::directed_tag, 
+      boost::allow_parallel_edge_tag > VLGraph;
+    typedef boost::property_graph_archetype<VLGraph, boost::vertex_color_t, 
+      boost::color_value_archetype> PGraph;
+    PGraph g_arch1;
+    boost::breadth_first_search(g_arch1, Vertex(), boost::bfs_visitor<>());
+
+    // Check boost::breadth_first_search() version 2 requirements.
+    VLGraph g_arch2;
+    typedef boost::read_write_property_map_archetype<Vertex,
+      boost::color_value_archetype > color_map;
+    boost::breadth_first_search(g_arch2, Vertex(), boost::bfs_visitor<>(), 
+				color_map());
+
+    // Check boost::breadth_first_search() version 3 requirements.
+    typedef boost::incidence_graph_archetype<Vertex, boost::directed_tag, 
+      boost::allow_parallel_edge_tag > IncGraph;
+    IncGraph g_arch3;
+    buffer_archetype<Vertex> buffer;
+    boost::breadth_first_search(g_arch3, Vertex(), buffer,
+				boost::bfs_visitor<>(), color_map());
+    
+  }
+
 
   bfs_test< adjacency_list<vecS, vecS, directedS> >::go(max_V);
   bfs_test< adjacency_list<vecS, vecS, undirectedS> >::go(max_V);
