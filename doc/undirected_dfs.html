@@ -95,7 +95,7 @@ be used to do this.
 DFS(<i>G</i>)
   <b>for</b> each vertex <i>u in V</i> 
     <i>vcolor[u] :=</i> WHITE
-    <i>p[u] = u</i> 
+    <i>p[u] := u</i> 
   <b>end for</b>
   <b>for</b> each edge <i>e in E</i> 
     <i>ecolor[u] :=</i> WHITE
@@ -107,16 +107,17 @@ DFS(<i>G</i>)
     <b>if</b> <i>vcolor[u] =</i> WHITE
       <b>call</b> DFS-VISIT(<i>G</i>, <i>u</i>)
   <b>end for</b>
-  return (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br>
+  <b>return</b> (<i>p</i>,<i>d_time</i>,<i>f_time</i>) <br>
 DFS-VISIT(<i>G</i>, <i>u</i>) 
   <i>vcolor[u] :=</i> GRAY
   <i>d_time[u] := time := time + 1</i> 
   <b>for</b> each <i>e in Out[u]</i> 
+    <b>var</b> <i>ec := ecolor[e]</i>
+    <i>ecolor[e] :=</i> BLACK
     <b>if</b> (<i>vcolor[v] =</i> WHITE)
-      <i>p[v] = u</i> 
-      <i>ecolor[e] =</i> BLACK
+      <i>p[v] := u</i> 
       <b>call</b> DFS-VISIT(<i>G</i>, <i>v</i>)
-    <b>else if</b> (<i>vcolor[v] =</i> GRAY and <i>ecolor[e] =</i> WHITE)
+    <b>else if</b> (<i>vcolor[v] =</i> GRAY and <i>ec =</i> WHITE)
       <i>...</i>
   <b>end for</b>
   <i>vcolor[u] :=</i> BLACK
@@ -146,6 +147,7 @@ start vertex <i>u</i>
 discover vertex <i>u</i>
 -
 examine edge <i>(u,v)</i>
+-
 -
 <i>(u,v)</i> is a tree edge
 -
