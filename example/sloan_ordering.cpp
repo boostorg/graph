@@ -140,12 +140,6 @@ int main(int , char* [])
   //Creating a property_map for the indices of a vertex
   property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, G);
 
-  //Creating a property_map for the the current_degree of a vertex
-  property_map<Graph, vertex_current_degree_t>::type current_degree_map = get(vertex_current_degree, G);
-
-  //Creating a property_map for the the priority of a vertex
-  property_map<Graph, vertex_priority_t>::type priority_map = get(vertex_priority, G);
-
   std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
   std::cout << "original profile: " << profile(G) << std::endl;
   std::cout << "original max_wavefront: " << max_wavefront(G) << std::endl;
