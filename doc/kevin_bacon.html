@@ -64,12 +64,12 @@ href="../example/kevin-bacon.cpp"><TT>examples/kevin-bacon.cpp</TT></a>.
 We have supplied a file <TT>kevin-bacon.dat</TT> which contains a list
 of actor pairs who appeared in the same movie. Each line of the file
 contains an actor's name, a movie, and another actor that appeared in
-the movie. The ``|'' character is used as a separator. Here is an
+the movie. The ``;'' character is used as a separator. Here is an
 excerpt.
 
 <P>
 <PRE>
-Patrick Stewart|Prince of Egypt, The (1998)|Steve Martin
+Patrick Stewart;Prince of Egypt, The (1998);Steve Martin
 </PRE>
 
 <P>
@@ -81,7 +81,7 @@ it. We use a <TT>std::ifstream</TT> to input the file.
   std::ifstream datafile("./kevin-bacon.dat");
   if (!datafile) {
     cerr &lt;&lt; "No ./kevin-bacon.dat file" &lt;&lt; endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 </PRE>
 
@@ -97,7 +97,7 @@ actors appearing together in a movie is symmetric.
   using namespace boost;
   typedef adjacency_list&lt;vecS, vecS, undirectedS, 
     property&lt;vertex_name_t, string&gt;,
-    property&lt;edge_name_t, string, property&lt;edge_weight_t, int&gt; &gt;
+    property&lt;edge_name_t, string &gt; &gt;
   &gt; Graph;
 </PRE>
 
@@ -107,22 +107,20 @@ objects from the graph. The following code shows how this is done.
 
 <P>
 <PRE>
-  boost::property_map&lt;Graph, vertex_name_t&gt;::type actor_name = get(vertex_name, g);
-  boost::property_map&lt;Graph, edge_name_t&gt;::type connecting_movie = get(edge_name, g);
-  boost::property_map&lt;Graph, edge_weight_t&gt;::type weight = get(edge_weight, g);
+  property_map&lt;Graph, vertex_name_t&gt;::type actor_name = get(vertex_name, g);
+  property_map&lt;Graph, edge_name_t&gt;::type connecting_movie = get(edge_name, g);
 </PRE>
 
 <P>
 Next we can start to loop through the file, parsing each line into a
-list of tokens. <TT>stringtok</TT> is a C++ version of the old
-<TT>strtok</TT> standard C function.
+sequence of tokens using the <a href="../../tokenizer/index.htm">Boost
+Tokenizer Library</a>.
 
 <P>
 <PRE>
-  std::string line;
-  while (std::getline(datafile,line)) {
-    std::list&lt;std::string&gt; line_toks;
-    boost::stringtok(line_toks, line, "|");
+  for (std::string line; std::getline(datafile, line);) {
+    char_delimiters_separator&lt;char&gt; sep(false, "", ";");
+    tokenizer&lt;&gt; line_toks(line, sep);
     ...
   }
 </PRE>
@@ -150,7 +148,7 @@ can be used to implement this mapping.
 The first token will be an actor's name. If the actor is not already
 in our actor's map we will add a vertex to the graph, set the name
 property of the vertex, and record the vertex descriptor in the map.
-If the actor is already in the graph, we will retreive the vertex
+If the actor is already in the graph, we will retrieve the vertex
 descriptor from the map's <TT>pos</TT> iterator.
 
 <P>
@@ -159,16 +157,16 @@ descriptor from the map's <TT>pos</TT> iterator.
   bool inserted;
   Vertex u, v;
 
-  std::list&lt;std::string&gt;::iterator i = line_toks.begin();
+  tokenizer&lt;&gt;::iterator i = line_toks.begin();
+  std::string actors_name = *i++;
 
-  boost::tie(pos, inserted) = actors.insert(make_pair(*i, Vertex()));
+  tie(pos, inserted) = actors.insert(std::make_pair(actors_name, Vertex()));
   if (inserted) {
     u = add_vertex(g);
-    actor_name[u] = *i;
+    actor_name[u] = actors_name;
     pos-&gt;second = u;
   } else
     u = pos-&gt;second;
-  ++i;
 </PRE>
 
 <P>
@@ -180,7 +178,7 @@ actor into the graph.
 <PRE>
   std::string movie_name = *i++;
       
-  boost::tie(pos, inserted) = actors.insert(make_pair(*i, Vertex()));
+  tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
   if (inserted) {
     v = add_vertex(g);
     actor_name[v] = *i;
@@ -190,72 +188,81 @@ actor into the graph.
 </PRE>
 
 <P>
-The final step is to add an edge connecting the two actors, and
-record the name of the connecting movie. We also set the weight
-of the edge to one. Since we chose <TT>setS</TT> for the <TT>EdgeList</TT>
-type of the <TT>adjacency_list</TT>, any parallel edges in the input
-will not be inserted into the graph.
+The final step is to add an edge connecting the two actors, and record
+the name of the connecting movie. 
 
 <P>
 <PRE>
-  Edge e;
-  boost::tie(e, inserted) = add_edge(u, v, g);
-  if (inserted) {
+  graph_traits&lt;Graph&gt;::edge_descriptor e;
+  tie(e, inserted) = add_edge(u, v, g);
+  if (inserted)
     connecting_movie[e] = movie_name;
-    weight[e] = 1;
+</PRE>
+
+<P>
+
+<H2>A Custom Visitor Class</H2>
+
+<P>
+We create a custom visitor class to record the Kevin Bacon
+numbers. The Kevin Bacon number will be the shortest distances from
+each actor to Kevin Bacon. This distance has also been referred to as
+the ``Bacon Number'' in memory of the ``Erdos Number'' used to rank
+mathematicians according to how many publications separate them from
+Paul Erdos. The shortest distance to from Kevin Bacon to each actor
+will follow the breadth-first tree. The BFS algorithm identifies edges
+that belong to the breadth-first tree and calls our visitor's
+<tt>tree_edge</tt> function. We record the distance to the target
+vertex as one plus the distance to the source vertex.
+
+
+<PRE>
+  template &lt;typename DistanceMap&gt;
+  class bacon_number_recorder : public default_bfs_visitor
+  {
+  public:
+    bacon_number_recorder(DistanceMap dist) : d(dist) { }
+
+    template &lt;typename Edge, typename Graph&gt;
+    void tree_edge(Edge e, const Graph& g) const
+    {
+      typename graph_traits&lt;Graph&gt;::vertex_descriptor
+	u = source(e, g), v = target(e, g);
+	d[v] = d[u] + 1;
+    }
+  private:
+      DistanceMap d;
+  };
+  // Convenience function
+  template &lt;typename DistanceMap&gt;
+  bacon_number_recorder&lt;DistanceMap&gt;
+  record_bacon_number(DistanceMap d)
+  {
+    return bacon_number_recorder&lt;DistanceMap&gt;(d);
   }
 </PRE>
 
 <P>
-
-<H2>Applying Breadth-First Search</H2>
-
-<P>
-The documentation for <A
-HREF="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>
-algorithm shows that we will need to provide property maps for color
-and vertex ID. In addition, we will be using visitors to record
-predecessors and distances so we will need property maps for these as
-well. The distance will be the shortest distances from each actor to
-Kevin Bacon calculated by the algorithm. This distance has also been
-referred to as the ``Bacon Number'' in memory of the ``Erdos Number''
-used to rank mathematicians according to how many publications
-separate them from Paul Erdos. We will use a vector to store the bacon
-numbers, and another vector to store the color property needed by
-the BFS algorithm. The <TT>predecessor</TT> vector will be used to
-record the shortest path from each actor to Kevin. For each vertex,
-the <TT>predecessor</TT> vector will contain a pointer to the next
-vertex on the shortest path towards Kevin Bacon.
+We will use a vector to store the bacon numbers.
 
 <P>
 <PRE>
   std::vector&lt;int&gt; bacon_number(num_vertices(g));
-  std::vector&lt;int&gt; color(num_vertices(g));
-  std::vector&lt;Vertex&gt; predecessor(num_vertices(g));
 </PRE>
 
+<H2>Apply the Breadth-First Search</H2>
+
 <P>
-The BFS algorithm also requires a source vertex as input; of course
-this will be Kevin Bacon. We now call the BGL BFS algorithm, passing
-in the graph, source vertex, the property maps, and a visitor composed
-of a predecessor and distance recorder. We use the <a
-href="./predecessor_recorder.html"><TT>predecessor_recorder</TT></a>
-to record the predecessors and the <a
-href="./distance_recorder.html"><tt>distance_recorder</tt></a> to
-record distances.
+The BFS algorithm requires a source vertex as input; of course this
+will be Kevin Bacon. We now call the BGL BFS algorithm, passing in the
+graph, source vertex, and the visitor.
 
 <P>
 <PRE>
-    Vertex src = actors["Kevin Bacon"];
-    
-    breadth_first_search
-      (g, src, 
-       visitor(make_bfs_visitor
-	       (make_list(record_predecessors(&amp;predecessor[0], 
-					      on_examine_edge()),
-			  record_distances(&amp;bacon_number[0],
-					   on_examine_edge()))))
-       );
+  Vertex src = actors["Kevin Bacon"];
+  bacon_number[src] = 0;
+
+  breadth_first_search(g, src, visitor(record_bacon_number(&amp;bacon_number[0])));
 </PRE>
 
 <P>
@@ -265,10 +272,10 @@ through all the vertices in the graph and use them to index into the
 
 <P>
 <PRE>
-    graph_traits&lt;Graph&gt;::vertex_iterator i, end;
-    for (boost::tie(i, end) = vertices(g); i != end; ++i)
-      std::cout &lt;&lt; actor_name[*i] &lt;&lt; "'s bacon number is " 
-                &lt;&lt; bacon_number[*i] &lt;&lt; std::endl;
+  graph_traits&lt;Graph&gt;::vertex_iterator i, end;
+  for (boost::tie(i, end) = vertices(g); i != end; ++i)
+    std::cout &lt;&lt; actor_name[*i] &lt;&lt; "'s bacon number is " 
+              &lt;&lt; bacon_number[*i] &lt;&lt; std::endl;
 </PRE>
 
 <P>
@@ -283,10 +290,6 @@ HREF="../../property_map/iterator_property_map.html"><TT>iterator_property_map</
 <P>
 Here are some excepts from the output of the program.
 <PRE>
-William Shatner was in Loaded Weapon 1 (1993) with Denise Richards
-Denise Richards was in Wild Things (1998) with Kevin Bacon
-Patrick Stewart was in Prince of Egypt, The (1998) with Steve Martin
-...
 William Shatner's bacon number is 2
 Denise Richards's bacon number is 1
 Kevin Bacon's bacon number is 0
