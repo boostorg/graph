@@ -14,7 +14,7 @@
 <Title>Uniform Cost Search</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
 	ALINK="#ff0000"> 
-<IMG SRC="c++boost.gif" 
+<IMG SRC="../../../c++boost.gif" 
      ALT="C++ Boost"> 
 
 <BR Clear>
@@ -32,54 +32,63 @@
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
 <TD ALIGN="LEFT">color, distance, weight, vertex ID</TD>
 </TR>
+
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT"><i>O((V + E) log V)</i>
 </TD>
 </TR>
+
+<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
+<TD ALIGN="LEFT">
+<a href="../../../boost/graph/uniform_cost_search.hpp"><TT>boost/graph/uniform_cost_search.hpp</TT></a>
+</TD>
+</TR>
+
+
 </TABLE>
 </DIV>
 
 <P>
 <PRE>
-(1)
-template &lt;class VertexListGraph, class Vertex, 
-          class BinaryPredicate, class BinaryFunction&gt;
-void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
-                         BinaryPredicate compare,
-                         BinaryFunction combine,
-                         bool init_graph = true)
+  (1)
+  template &lt;class VertexListGraph, class BinaryPredicate, 
+            class BinaryFunction&gt;
+  void
+  uniform_cost_search(VertexListGraph& g, 
+                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+                      BinaryPredicate compare, BinaryFunction combine);
 
-(2)
-template &lt;class VertexListGraph, class Vertex, 
-          class Distance, class Weight,
-          class BinaryPredicate, class BinaryFunction&gt;
-void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
-                         Distance d, Weight w, 
-                         BinaryPredicate compare, 
-                         BinaryFunction combine,
-                         bool init_graph = true)
+  (2)
+  template &lt;class VertexListGraph, class DistancePA, class WeightPA,
+            class BinaryPredicate, class BinaryFunction&gt;
+  void
+  uniform_cost_search(VertexListGraph& g,
+                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s, 
+	              DistancePA distance, WeightPA weight,
+	              BinaryPredicate compare, BinaryFunction combine);
 
-(3)
-template &lt;class VertexListGraph, class Vertex, 
-          class Distance, class Weight, class Color, class ID,
-          class BinaryPredicate, class BinaryFunction,
-          class Visitor&gt;
-void uniform_cost_search(VertexListGraph&amp; G, Vertex s, 
-                         Distance d, Weight w, Color c, ID id,
-                         BinaryPredicate compare, 
-                         BinaryFunction combine,
-                         Visitor visit, bool init_graph = true)
+  (3)
+  template &lt;class VertexListGraph,
+            class DistancePA, class WeightPA, class ColorPA, class ID_PA,
+            class BinaryPredicate, class BinaryFunction,
+            class UniformCostVisitor&gt;
+  void
+  uniform_cost_search(VertexListGraph& g,
+                      typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor  s,
+                      DistancePA distance, WeightPA weight, ColorPA color, ID_PA id, 
+                      BinaryPredicate compare, BinaryFunction combine,
+                      UniformCostVisitor vis);
 </PRE>
 
 <P>
-This is a generalized version of Dijkstra's single-source shortest
-paths algorithm. In Dijkstra's algorithm the ``cost'' is the
-distance. With <TT>uniform_cost_search()</TT> the user supplies the
-meaning of ``cost'' through the <TT>compare</TT> function object. Also
-the idea of distance is generalized to mean any value that you want
-optimized.  The <TT>operator+()</TT> used to combine distances in
-Dijkstra's algorithm is replaced by the <TT>combine</TT> function
-object.
+This is a generalized version of <a
+href="./dijkstra_shortest_paths.html">Dijkstra's single-source
+shortest paths</a> algorithm. In Dijkstra's algorithm the ``cost'' is
+the distance. With <TT>uniform_cost_search()</TT> the user supplies
+the meaning of ``cost'' through the <TT>compare</TT> and
+<tt>combine</tt> function objects. For Dijkstra's algorithm
+<TT>compare</tt> is <tt>std::less&lt;D&gt;</TT> and
+<tt>combine</tt> is <tt>std::plus&lt;W&gt;</tt>.
 
 <P>
 <TT>uniform_cost_search()</TT> does not initialize the distance
@@ -107,13 +116,6 @@ href="./breadth_first_search.html"><TT>breadth_first_search()</TT></a>.
 
 <P>
 
-<H3>Where Defined</H3>
-
-<P>
-<a href="../../../boost/graph/uniform_cost_search.hpp"><TT>boost/graph/uniform_cost_search.hpp</TT></a>
-
-<P>
-
 <H3>Requirements on Types</H3>
 
 <P>
@@ -124,22 +126,17 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 
 <P>
 </LI>
-<LI>The type <TT>Vertex</TT> must be convertible to type <TT>boost::graph_traits&lt;Graph&gt;::vertex_descriptor</TT>.
-
-<P>
-</LI>
 <LI>The <TT>BinaryPredicate</TT> type must be a model of <a
       href="http://www.sgi.com/Technology/STL/BinaryPredicate.html">BinaryPredicate</a>
       and have argument types that match the value type of the
-      <TT>Distance</TT> property accessor.
+      <TT>DistancePA</TT> property accessor.
 
 <P>
 </LI>
 <LI>The <TT>BinaryFunction</TT> type must be a model of <a
-      href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The
-      first argument type of the binary function must match the value
-      type of the <TT>Distance</TT> property accessor and the second
-      argument type must match the value type of the <TT>Weight</TT>
+     href="http://www.sgi.com/Technology/STL/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
+      type of the <TT>DistancePA</TT> property accessor and the second
+      argument type must match the value type of the <TT>WeightPA</TT>
       property accessor.  The result type must be the same type as the
       distance value type.
 
@@ -148,11 +145,11 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <LI>In version (1) the graph must be a <a
     href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
     <TT>distance_tag</TT> where the property accessor for the graph
-    meets the same requirements as for <TT>Distance</TT>. The graph
+    meets the same requirements as for <TT>DistancePA</TT>. The graph
     must also be a <a
     href="./EdgePropertyGraph.html">EdgePropertyGraph</a> for
     <TT>weight_tag</TT> where the property accessor for the grpah
-    meets the same requirements for <TT>Weight</TT> below.
+    meets the same requirements for <TT>WeightPA</TT> below.
 
 <P>
 </LI>
@@ -160,25 +157,25 @@ href="./VertexListGraph.html">VertexListGraph</a>.
     href="./VertexPropertyGraph.html">VertexPropertyGraph</a> for
     <TT>color_tag</TT> and <TT>id_tag</TT>, where the property
     accessor for the graph meet the same requirements as for
-    <TT>Color</TT> and <TT>ID</TT> below.
+    <TT>ColorPA</TT> and <TT>ID_PA</TT> below.
 
 <P>
 </LI>
-<LI>The type <TT>Distance</TT> must be a model of <a
+<LI>The type <TT>DistancePA</TT> must be a model of <a
     href="./ReadWritePropertyAccessor.html">ReadWritePropertyAccessor</a>. The
     vertex descriptor type of the graph needs to be usable as the key
     type of the distance accessor.
 
 <P>
 </LI>
-<LI>The type <TT>Weight</TT> must be a model of <a
+<LI>The type <TT>WeightPA</TT> must be a model of <a
      href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
      edge descriptor type of the graph needs to be usable as the key
      type for the weight accessor.
 
 <P>
 </LI>
-<LI>The type <TT>Color</TT> must be a model of <a
+<LI>The type <TT>ColorPA</TT> must be a model of <a
      href="./ReadWritePropertyAccessor">ReadWritePropertyAccessor</a>. A
      vertex descriptor must be usable as the key type of the accessor,
      and the value type of the accessor must be a model of
@@ -186,15 +183,15 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 
 <P>
 </LI>
-<LI>The type <TT>ID</TT> must be a model of <a
+<LI>The type <TT>ID_PA</TT> must be a model of <a
      href="./ReadablePropertyAccessor.html">ReadablePropertyAccessor</a>. The
-     value type of <TT>ID</TT> must be an integer type. The vertex
+     value type of <TT>ID_PA</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
      of the ID accessor.
 
 <P>
 </LI>
-<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
+<LI>The type <TT>UniformCostVisitor</TT> must be a model of <a href="./UniformCostVisitor.html">UniformCostVisitor</a>.
 </LI>
 </UL>
 
