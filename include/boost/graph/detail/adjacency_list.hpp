@@ -564,7 +564,7 @@ namespace boost {
       typedef typename Config::StoredEdge StoredEdge;
       graph_type& g = static_cast<graph_type&>(g_);
       typedef typename Config::edge_parallel_category Cat;
-      remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
+      detail::remove_edge_and_property(g, g.out_edge_list(u), v, Cat());
       boost::erase(g.out_edge_list(v), StoredEdge(u));
     }
 

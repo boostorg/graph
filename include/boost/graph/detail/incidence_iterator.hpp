@@ -64,6 +64,9 @@ namespace boost {
       inline bool operator==(const self& x) const { return i == x.i; }
       inline self* operator->() { return this; }
       
+      Iterator1D& iter() { return i; }
+      const Iterator1D& iter() const { return i; }
+
       Iterator1D i;
       Vertex _src;
     protected:
