@@ -840,8 +840,6 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
 
-      assert( u != v ); // don't allow self-loops 
-
       bool inserted;
       typename Config::EdgeContainer::value_type e(u, v, p);
       g.m_edges.push_back(e);
