@@ -4,15 +4,42 @@
 \usepackage{math}
 \usepackage{jweb}
 \usepackage{lgrind}
-%\usepackage{times}
+\usepackage{times}
 \usepackage{fullpage}
 \usepackage{graphicx}
 
-\newcommand{\myhyperref}[2]{#2}
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse
+\else
+   \pdfoutput=1
+   \pdftrue
+\fi
+
+\ifpdf
+  \usepackage[
+              pdftex,
+              colorlinks=true, %change to true for the electronic version
+              linkcolor=blue,filecolor=blue,pagecolor=blue,urlcolor=blue
+              ]{hyperref}
+\fi
+
+\ifpdf
+  \newcommand{\stlconcept}[1]{\href{http://www.sgi.com/tech/stl/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\bglconcept}[1]{\href{http://www.boost.org/libs/graph/doc/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\pmconcept}[1]{\href{http://www.boost.org/libs/property_map/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\myhyperref}[2]{\hyperref[#1]{#2}}
+  \newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.pdf}}\caption{#2}\label{fig:#1}\end{figure}}
+\else
+  \newcommand{\myhyperref}[2]{#2}
+  \newcommand{\bglconcept}[1]{{\small \textsf{#1}}}
+  \newcommand{\pmconcept}[1]{{\small \textsf{#1}}}
+  \newcommand{\stlconcept}[1]{{\small \textsf{#1}}}
+  \newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.eps}}\caption{#2}\label{fig:#1}\end{figure}}
+\fi
+
 \newcommand{\code}[1]{{\small{\em \textbf{#1}}}}
 
-%\newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.pdf}}\caption{#2}\label{fig:#1}\end{figure}}
-\newcommand{\vizfig}[2]{\begin{figure}[htbp]\centerline{\includegraphics*{#1.eps}}\caption{#2}\label{fig:#1}\end{figure}}
 
 % jweb -np isomorphism-impl.w; dot -Tps out.dot -o out.eps; dot -Tps in.dot -o in.eps; latex isomorphism-impl.tex; dvips isomorphism-impl.dvi -o isomorphism-impl.ps
 
@@ -61,7 +88,7 @@ edge $(u,v)$ in $E$ such that both $u$ and $v$ are in $V_s$.  We use
 the notation $E[V_s]$ to mean the edges in $G[V_s]$.
 
 In some places we express a function as a set of pairs, so the set $f
-= \{ \pair{a_1}{b_1}, \pair{a_2}{b_2}, \ldots, \pair{a_n}{b_n} \}$
+= \{ \pair{a_1}{b_1}, \ldots, \pair{a_n}{b_n} \}$
 means $f(a_i) = b_i$ for $i=1,\ldots,n$.
 
 \section{Exhaustive Backtracking Search}
@@ -194,44 +221,41 @@ For this implementation, we combine the above two heuristics in the
 following way. To implement the ``adjacent first'' heuristic we apply
 DFS to the graph, and use the DFS discovery order as our vertex
 order. To comply with the ``most constrained first'' heuristic we
-start the DFS at the vertex with the lowest invariant multiplicity,
-and each time we restart the DFS, we choose the undiscovered vertex
-with lowest invariant multiplicity.
+order the roots of our DFS trees by invariant multiplicity.
 
 
 \section{Implementation}
 
+The following is the public interface for the \code{isomorphism}
+function. The input to the function is the two graphs $G_1$ and $G_2$,
+mappings from the vertices in the graphs to integers (in the range
+$[0,|V|)$), and a vertex invariant function object. The output of the
+function is an isomorphism $f$ if there is one. The \code{isomorphism}
+function returns true if the graphs are isomorphic and false
+otherwise. The requirements on type template parameters are described
+below in the section ``Concept checking''.
 
 @d Isomorphism Function Interface
 @{
 template <typename Graph1, typename Graph2, 
           typename IndexMapping, typename VertexInvariant,
           typename IndexMap1, typename IndexMap2>
-bool isomorphism(const Graph1& g1,
-                 const Graph2& g2,
-                 IndexMapping f,
-                 VertexInvariant invariant,
-                 IndexMap1 index_map1,
-                 IndexMap2 index_map2)
-@}
-
-
-@d Concept checking
-@{
-
+bool isomorphism(const Graph1& g1, const Graph2& g2, 
+                 IndexMapping f, VertexInvariant invariant,
+                 IndexMap1 index_map1, IndexMap2 index_map2)
 @}
 
 The main outline of the \code{simple\_isomorphism} function is as
 follows. Most of the steps in this function are for setting up the
-vertex ordering, first ordering the vertices by invariant multipliciy
+vertex ordering, first ordering the vertices by invariant multiplicity
 and then by DFS order. The last step is the call to the
 \code{isomorph} function which starts the backtracking search.
 
 @d Simple Isomorphism Function Body
 @{
 {
-  @<Concept checking@>
   @<Some type definitions and iterator declarations@>
+  @<Concept checking@>
   @<Quick return with false if $|V_1| \neq |V_2|$@>
   @<Compute vertex invariants@>
   @<Quick return if the graph's invariants do not match@>
@@ -250,10 +274,45 @@ them here.
 
 @d Some type definitions and iterator declarations
 @{
+typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
 typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
 typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 typename graph_traits<Graph1>::vertex_iterator i1, i1_end;
 typename graph_traits<Graph2>::vertex_iterator i2, i2_end;
+@}
+
+We use the Boost Concept Checking Library to make sure that the type
+arguments to the function fulfill there requirements. The
+\code{Graph1} type must be a \bglconcept{VertexListGraph} and a
+\bglconcept{EdgeListGraph}. The \code{Graph2} type must be a
+\bglconcept{VertexListGraph} and a
+\bglconcept{BidirectionalGraph}. The \code{IndexMapping} type that
+represents the isomorphism $f$ must be a
+\pmconcept{ReadWritePropertyMap} that maps from vertices in $G_1$ to
+vertices in $G_2$. The two other index maps are
+\pmconcept{ReadablePropertyMap}s from vertices in $G_1$ and $G_2$ to
+unsigned integers.
+
+@d Concept checking
+@{
+// Graph requirements
+function_requires< VertexListGraphConcept<Graph1> >();
+function_requires< EdgeListGraphConcept<Graph1> >();
+function_requires< VertexListGraphConcept<Graph2> >();
+function_requires< BidirectionalGraphConcept<Graph2> >();
+
+// Property map requirements
+function_requires< ReadWritePropertyMapConcept<IndexMapping, vertex1_t> >();
+typedef typename property_traits<IndexMapping>::value_type IndexMappingValue;
+BOOST_STATIC_ASSERT((is_same<IndexMappingValue, vertex2_t>::value));
+
+function_requires< ReadablePropertyMapConcept<IndexMap1, vertex1_t> >();
+typedef typename property_traits<IndexMap1>::value_type IndexMap1Value;
+BOOST_STATIC_ASSERT((is_convertible<IndexMap1Value, size_type>::value));
+
+function_requires< ReadablePropertyMapConcept<IndexMap2, vertex2_t> >();
+typedef typename property_traits<IndexMap2>::value_type IndexMap2Value;
+BOOST_STATIC_ASSERT((is_convertible<IndexMap2Value, size_type>::value));
 @}
 
 
@@ -373,8 +432,7 @@ std::sort(perm.begin(), perm.end(),
           detail::compare_invariant_multiplicity(invar1_vec.begin(),
                                                  invar_mult.begin()));
 
-typedef typename graph_traits<Graph1>::vertex_descriptor VertexG1;
-std::vector<VertexG1> g1_vertices;
+std::vector<vertex1_t> g1_vertices;
 for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
   g1_vertices.push_back(*i1);
 permute(g1_vertices.begin(), g1_vertices.end(), perm.begin());
@@ -412,7 +470,7 @@ namespace detail {
 \subsection{Ordering by DFS Discover Time}
 
 To implement the ``visit adjacent vertices first'' heuristic, we order
-the vetices according to DFS discover time.  We replace the ordering
+the vertices according to DFS discover time.  We replace the ordering
 in \code{perm} with the new DFS ordering. Again, we use \code{permute}
 to sort the vertices of graph \code{g1}.
 
@@ -438,7 +496,7 @@ the order in which DFS discovers the vertices.
 @d Compute DFS discover times
 @{
 std::vector<default_color_type> color_vec(num_vertices(g1));
-for (typename std::vector<VertexG1>::iterator ui = g1_vertices.begin();
+for (typename std::vector<vertex1_t>::iterator ui = g1_vertices.begin();
      ui != g1_vertices.end(); ++ui) {
   if (color_vec[get(index_map1, *ui)] 
       == color_traits<default_color_type>::white()) {
@@ -541,7 +599,9 @@ backtracking search implemented by the \code{isomorph} function (which
 corresponds to the ISOMORPH algorithm).  The set $S$ is not
 represented directly; instead we represent $V_2 - S$.  Initially $S =
 \emptyset$ so $V_2 - S = V_2$.  We use the permuted indices for the
-vertices of graph \code{g1}.
+vertices of graph \code{g1}. We represent $V_2 - S$ with a bitset.  We
+use \code{std::vector} instead of \code{boost::dyn\_bitset} for speed
+instead of space.
 
 @d Invoke recursive \code{isomorph} function
 @{
@@ -613,7 +673,7 @@ if (k_iter == last)
 @}
 
 
-In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
+In the pseudo-code for ISOMORPH, we iterate through each vertex in $v
 \in V_2 - S$ and check if $k$ and $v$ can match.  A more efficient
 approach is to directly iterate through the potential matches for $k$,
 for this often is many fewer vertices than $V_2 - S$. Let $M$ be the
@@ -687,6 +747,10 @@ for (tie(ei, ei_end) = in_edges(get(f, j), g2); ei != ei_end; ++ei) {
 }
 @}
 
+\noindent Here initialize $M$ with the $out$ set. Since we are
+representing sets with sorted vectors, we sort \code{out} before
+copying to \code{potential\_matches}.
+
 @d Perform $M \leftarrow out$
 @{
 indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
@@ -694,9 +758,10 @@ std::sort(out.begin(), out.end(), cmp);
 std::copy(out.begin(), out.end(), std::back_inserter(potential_matches));
 @}
 
-\noindent We use sorted vectors to store these sets and
-\code{std::set\_intersection} to implement $M \leftarrow M \intersect
-out$.
+\noindent We use \code{std::set\_intersection} to implement $M
+\leftarrow M \intersect out$. Since there is no version of
+\code{std::set\_intersection} that works in-place, we create a
+temporary for the result and then swap.
 
 @d Perform $M \leftarrow M \intersect out$
 @{
@@ -772,6 +837,10 @@ for (tie(ei, ei_end) = out_edges(get(f, j), g2); ei != ei_end; ++ei) {
 }
 @}
 
+\noindent Here initialize $M$ with the $in$ set. Since we are
+representing sets with sorted vectors, we sort \code{in} before
+copying to \code{potential\_matches}.
+
 @d Perform $M \leftarrow in$
 @{
 indirect_cmp<IndexMap2,std::less<std::size_t> > cmp(index_map2);
@@ -825,7 +894,7 @@ digraph G {
 }
 @}
 
-In the case where there were no edges in $E_1[k] - E_1[k-1}$, then $M
+In the case where there were no edges in $E_1[k] - E_1[k-1]$, then $M
 = V_2 - S$, so here we insert all the vertices from $V_2$ that are not
 in $S$.
 
@@ -876,7 +945,9 @@ for (std::size_t j = 0; j < potential_matches.size(); ++j) {
 return false;
 @}
 
-
+We need to create the new set $S' = S - \{ v \}$, which will be the
+$S$ for the next invocation to \code{isomorph}. As before, we
+represent $V_2 - S'$ instead of $S'$ and use a bitset.
 
 @d Perform $S' = S - \{ v \}$
 @{
@@ -913,9 +984,11 @@ code parts into namespace \code{boost}.
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/detail/permutation.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/limits.hpp>
+#include <boost/static_assert.hpp>
 #include <boost/graph/depth_first_search.hpp>
 
 namespace boost {
@@ -993,5 +1066,11 @@ namespace boost {
 % LocalWords:  ISOMORPH Invariants invariants typename IndexMapping bool const
 % LocalWords:  VertexInvariant VertexIndexMap iterator typedef VertexG Idx num
 % LocalWords:  InvarValue struct invar vec iter tmp_matches mult inserter permute ui
-% LocalWords:  dfs cmp isomorph VertexIter EdgeIter IndexMap desc
+% LocalWords:  dfs cmp isomorph VertexIter EdgeIter IndexMap desc RPH ATCH pre
 
+% LocalWords:  iterators VertexListGraph EdgeListGraph BidirectionalGraph tmp
+% LocalWords:  ReadWritePropertyMap VertexListGraphConcept EdgeListGraphConcept
+% LocalWords:  BidirectionalGraphConcept ReadWritePropertyMapConcept indices ei
+% LocalWords:  IndexMappingValue ReadablePropertyMapConcept namespace InvarMap
+% LocalWords:  MultMap vip inline bitset typedefs fj hpp ifndef adaptor params
+% LocalWords:  bgl param pmap endif
