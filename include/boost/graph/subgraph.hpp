@@ -35,7 +35,6 @@
 #include <cassert>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
 
 namespace boost {
 
@@ -97,26 +96,24 @@ namespace boost {
       : m_graph(n), m_parent(0), m_vertex_membership(n, true),
 	m_edge_counter(0)
     { }
+
     // Create a subgraph
-    subgraph(subgraph<Graph>& parent) 
-      : m_parent(&parent), 
-        m_vertex_membership(num_vertices(parent.m_graph), false),
-        m_local_vertex(num_vertices(parent)),
-	m_edge_counter(0)
-    {
-      m_parent->add_child(this);
+    subgraph<Graph>& create_subgraph() {
+      m_children.push_back( subgraph<Graph>() );
+      m_children.back().m_parent = this;
+      return m_children.back();
     }
+    
     // Create a subgraph with the specified vertex set.
     template <typename VertexIterator>
-    subgraph(subgraph<Graph>& parent,
-             VertexIterator first, VertexIterator last)
-      : m_parent(&parent), 
-        m_vertex_membership(num_vertices(parent.m_graph), false),
-        m_local_vertex(num_vertices(parent)),
-	m_edge_counter(0)
+    subgraph<Graph>& create_subgraph(VertexIterator first,
+				     VertexIterator last)
     {
+      m_children.push_back( subgraph<Graph>() );
+      m_children.back().m_parent = this;
       for (; first != last; ++first)
-	add_vertex(*first, *this);
+	add_vertex(*first, m_children.back());
+      return m_children.back();
     }
 
     // local <-> global descriptor conversion functions
@@ -162,25 +159,30 @@ namespace boost {
     }
 
     // Return the children subgraphs of this graph/subgraph.
-    typedef subgraph<Graph>* inner_iter;
-    typedef typename std::list<inner_iter>::const_iterator outer_iter;
-    typedef typename boost::indirect_iterator_generator<outer_iter, inner_iter,
-      boost::iterator<std::input_iterator_tag, const subgraph<Graph> >
-    >::type children_iterator;
+    typedef std::list< subgraph<Graph> > ChildrenList;
+    typedef typename ChildrenList::const_iterator
+      const_children_iterator;
+
+    typedef typename ChildrenList::iterator children_iterator;
+
+    std::pair<const_children_iterator, const_children_iterator>
+    children() const
+    {
+      return std::make_pair(const_children_iterator(m_children.begin()), 
+			    const_children_iterator(m_children.end()));
+    }
 
     std::pair<children_iterator, children_iterator>
-    children() const
+    children() 
     {
       return std::make_pair(children_iterator(m_children.begin()), 
 			    children_iterator(m_children.end()));
     }
 
     //  private:
-    void add_child(subgraph<Graph>* child) { m_children.push_back(child); }
-
     Graph m_graph;
     subgraph<Graph>* m_parent;
-    std::list<subgraph<Graph>*> m_children;
+    ChildrenList m_children;
     std::vector<bool> m_vertex_membership;          // global
     std::vector<vertex_descriptor> m_global_vertex; // local -> global
     std::vector<vertex_descriptor> m_local_vertex;  // global -> local
@@ -346,8 +348,8 @@ namespace boost {
                            Children& c, subgraph<G>* orig)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i)->contains(u_global) && (*i)->contains(v_global))
-          add_edge_recur_down(u_global, v_global, e_global, **i, orig);
+        if ((*i).contains(u_global) && (*i).contains(v_global))
+          add_edge_recur_down(u_global, v_global, e_global, *i, orig);
     }
 
     template <typename Vertex, typename Edge, typename Graph>
@@ -433,9 +435,9 @@ namespace boost {
                               const Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i)->m_vertex_membership[u_global]
-            && (*i)->m_vertex_membership[v_global])
-          remove_edge_recur_down(u_global, v_global, **i);
+        if ((*i).m_vertex_membership[u_global]
+            && (*i).m_vertex_membership[v_global])
+          remove_edge_recur_down(u_global, v_global, *i);
     }
     
     template <typename Vertex, typename Graph>
@@ -470,7 +472,7 @@ namespace boost {
     void children_remove_edge(Edge e_global, const Children& c)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i)->m_vertex_membership[u] && (*i)->m_vertex_membership[v])
+        if ((*i).m_vertex_membership[u] && (*i).m_vertex_membership[v])
           remove_edge_recur_down(u_global, v_global, **i);
     }
 
