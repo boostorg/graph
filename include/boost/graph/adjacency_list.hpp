@@ -73,6 +73,9 @@ namespace boost {
   struct hash_setS { };
 #endif
 
+  template <class StrictWeakOrderingGen>
+  struct ordered_setS { };
+
   template <class Selector, class ValueType>
   struct container_gen { };
 
@@ -99,6 +102,13 @@ namespace boost {
   template <class ValueType>
   struct container_gen<setS, ValueType> {
     typedef std::set<ValueType> type;
+  };
+
+  template <class ValueType, class StrictWeakOrderingGen>
+  struct container_gen<ordered_setS<StrictWeakOrderingGen>, ValueType> {
+    typedef typename StrictWeakOrderingGen::template bind<ValueType> Bind;
+    typedef typename Bind::type StrictWeakOrdering;
+    typedef std::set<ValueType, StrictWeakOrdering> type;
   };
 
 #if !defined BOOST_NO_HASH
@@ -202,6 +212,10 @@ namespace boost {
 
   template <>
   struct parallel_edge_traits<setS> { 
+    typedef disallow_parallel_edge_tag type; };
+
+  template <class StrictWeakOrderingGen>
+  struct parallel_edge_traits<ordered_setS<StrictWeakOrderingGen> > { 
     typedef disallow_parallel_edge_tag type; };
 
 #if !defined BOOST_NO_HASH

@@ -188,7 +188,7 @@ namespace boost {
       template <class EdgeDescriptor, class OutEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const OutEdgeIter& i) const {
-        return EdgeDescriptor(m_src, (*i).get_target(), (*i).get_property());
+        return EdgeDescriptor(m_src, (*i).get_target(), &(*i).get_property());
       }
       VertexDescriptor m_src;
     };
@@ -202,7 +202,7 @@ namespace boost {
       template <class EdgeDescriptor, class InEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).get_target(), m_src, i->get_property());
+        return EdgeDescriptor((*i).get_target(), m_src, &i->get_property());
       }
       VertexDescriptor m_src;
     };
@@ -218,7 +218,7 @@ namespace boost {
       template <class EdgeDescriptor, class InEdgeIter>
       inline EdgeDescriptor
       dereference(boost::type<EdgeDescriptor>, const InEdgeIter& i) const {
-        return EdgeDescriptor((*i).m_source, (*i).m_target, i->get_property());
+        return EdgeDescriptor((*i).m_source, (*i).m_target, &i->get_property());
       }
     };
 #else
@@ -262,14 +262,17 @@ namespace boost {
         : m_target(target) { }
       inline Vertex& get_target() { return m_target; }
       inline const Vertex& get_target() const { return m_target; }
-      inline const no_property* get_property() const { return 0; }
+      inline const no_property& get_property() const { return s_prop; }
       inline bool operator==(const stored_edge& x) const
         { return m_target == x.get_target(); }
       inline bool operator<(const stored_edge& x) const
         { return m_target < x.get_target(); }
     protected:
+      static no_property s_prop;
       Vertex m_target;
     };
+    template <class Vertex>
+    no_property stored_edge<Vertex>::s_prop;
 
     template <class Vertex, class Property>
     class stored_edge_property : public stored_edge<Vertex> {
@@ -278,8 +281,8 @@ namespace boost {
       inline stored_edge_property(Vertex target,
                                   const Property& p = Property())
         : stored_edge<Vertex>(target), m_property(p) { }
-      inline Property* get_property() { return &m_property; }
-      inline const Property* get_property() const { return &m_property; }
+      inline Property& get_property() { return m_property; }
+      inline const Property& get_property() const { return m_property; }
     protected:
       Property m_property;
     };
@@ -292,16 +295,29 @@ namespace boost {
       typedef Property property_type;
       inline stored_edge_iter(Vertex v, Iter i = Iter())
         : stored_edge<Vertex>(v), m_iter(i) { }
-      inline Property* get_property() { return m_iter->get_property(); }
-      inline const Property* get_property() const { 
+      inline Property& get_property() { return m_iter->get_property(); }
+      inline const Property& get_property() const { 
         return m_iter->get_property();
       }
       inline Iter get_iter() const { return m_iter; }
     protected:
       Iter m_iter;
     };
-    
   } // namespace detail
+    
+  template <class Tag, class Vertex, class Property>
+  const typename property_value<Property,Tag>::type&
+  get(Tag p, const detail::stored_edge_property<Vertex, Property>& e) {
+    typedef typename property_value<Property,Tag>::type value_type;
+    return get_property_value(e.get_property(), value_type(), Tag());
+  }
+
+  template <class Tag, class Vertex, class Iter, class Property>
+  const typename property_value<Property,Tag>::type&
+  get(Tag p, const detail::stored_edge_iter<Vertex, Iter, Property>& e) {
+    typedef typename property_value<Property,Tag>::type value_type;
+    return get_property_value(e.get_property(), value_type(), Tag());
+  }
     
     //=========================================================================
     // Directed Edges Helper Class
@@ -320,7 +336,7 @@ namespace boost {
         graph_type& g = static_cast<graph_type&>(*this);
         typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
         typedef typename Config::OutEdgeList::value_type::property_type PType;
-        detail::remove_directed_edge_dispatch(e, el, (PType*)e.get_property());
+        detail::remove_directed_edge_dispatch(e, el, *(PType*)e.get_property());
       }
 
       // O(1)
@@ -444,11 +460,11 @@ namespace boost {
       template <class edge_descriptor, class EdgeList, class StoredProperty>
       inline void
       remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
-                                    StoredProperty* p)
+                                    StoredProperty& p)
       {
         typename EdgeList::iterator i = el.begin();
         for (; i != el.end(); ++i)
-          if ((*i).get_property() == p) {
+          if (&(*i).get_property() == &p) {
             el.erase(i);
             return;
           }
@@ -458,7 +474,7 @@ namespace boost {
       template <class edge_descriptor, class EdgeList, class StoredProperty>
       inline void
       remove_directed_edge_dispatch(edge_descriptor e, EdgeList& el,
-                                    no_property*)
+                                    no_property&)
       {
         typename EdgeList::iterator i = el.begin();
         for (; i != el.end(); ++i)
@@ -525,7 +541,7 @@ namespace boost {
       bool inserted;
       boost::tie(i, inserted) = boost::push(g.out_edge_list(u), 
                                             StoredEdge(v, p));
-      return std::make_pair(edge_descriptor(u, v, (*i).get_property()), 
+      return std::make_pair(edge_descriptor(u, v, &(*i).get_property()), 
                             inserted);
     }
     // Did not use default argument here because that
@@ -550,8 +566,8 @@ namespace boost {
       typedef boost::detail::edge_base<boost::undirected_tag, Vertex> Base;
       undir_edge(Vertex u, Vertex v, const EdgeProperty& p = EdgeProperty())
         : Base(u, v), m_property(p) { }
-      EdgeProperty* get_property() { return &m_property; }
-      const EdgeProperty* get_property() const { return &m_property; }
+      EdgeProperty& get_property() { return m_property; }
+      const EdgeProperty& get_property() const { return m_property; }
       EdgeProperty m_property;
     };
 
@@ -565,9 +581,12 @@ namespace boost {
       template <class EdgeProperty>
       undir_edge_no_p (Vertex u, Vertex v, const EdgeProperty& )
         : Base(u, v) { }
-      no_property* get_property() { return 0; }
-      const boost::no_property* get_property() const { return 0; }
+      no_property& get_property() { return s_prop; }
+      const boost::no_property& get_property() const { return s_prop; }
+      static no_property s_prop;
     };
+    template <class Vertex>
+    no_property undir_edge_no_p<Vertex>::s_prop;
 
     template <class Config>
     struct undirected_graph_helper {
@@ -581,7 +600,7 @@ namespace boost {
       {
         typedef typename Config::OutEdgeList::value_type::property_type PType;
         detail::remove_undirected_edge_dispatch
-          (e, *this, (PType*)e.get_property());
+          (e, *this, *(PType*)e.get_property());
       }
       // O(E/V)
       inline void
@@ -597,7 +616,7 @@ namespace boost {
       inline void
       remove_undirected_edge_dispatch(edge_descriptor e, 
                                       undirected_graph_helper<Config>& g_, 
-                                      StoredProperty* p)
+                                      StoredProperty& p)
       {
         typedef typename Config::graph_type graph_type;
         graph_type& g = static_cast<graph_type&>(g_);
@@ -605,7 +624,7 @@ namespace boost {
         typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
         typename Config::OutEdgeList::iterator out_i = out_el.begin();
         for (; out_i != out_el.end(); ++out_i)
-          if ((*out_i).get_property() == p) {
+          if (&(*out_i).get_property() == &p) {
             g.m_edges.erase((*out_i).get_iter());
             out_el.erase(out_i);
             break;
@@ -613,7 +632,7 @@ namespace boost {
         typename Config::OutEdgeList& in_el = g.out_edge_list(target(e, g));
         typename Config::OutEdgeList::iterator in_i = in_el.begin();
         for (; in_i != in_el.end(); ++in_i)
-          if ((*in_i).get_property() == p) {
+          if (&(*in_i).get_property() == &p) {
             in_el.erase(in_i);
             return;
           }
@@ -623,7 +642,7 @@ namespace boost {
       inline void
       remove_undirected_edge_dispatch(edge_descriptor e,
                                       undirected_graph_helper<Config>& g_,
-                                      no_property*)
+                                      no_property&)
       {
         typedef typename Config::graph_type graph_type;
         graph_type& g = static_cast<graph_type&>(g_);
@@ -685,7 +704,7 @@ namespace boost {
         if (pred(*out_i)) {
           typename Config::vertex_descriptor v = target(*out_i, g);
           detail::remove_directed_edge_dispatch
-            (*out_i, g.out_edge_list(v), (PropT*)(*out_i).get_property());
+            (*out_i, g.out_edge_list(v), *(PropT*)(*out_i).get_property());
           g.m_edges.erase( (*out_i.iter()).get_iter() );
         }
       // Now remove the edges from this out-edge list.
@@ -783,8 +802,8 @@ namespace boost {
                                              StoredEdge(v, p_iter));
         if (inserted) {
           boost::push(g.out_edge_list(v), StoredEdge(u, p_iter));
-          return std::make_pair(edge_descriptor(u, v, 
-                                                p_iter->get_property()),true);
+          return std::make_pair(edge_descriptor(u, v, &p_iter->get_property()),
+				true);
         } else {
           g.m_edges.erase(p_iter);
           return std::make_pair(edge_descriptor(u, v), false);
@@ -850,8 +869,8 @@ namespace boost {
       // short name due to VC++ truncation and linker problems
       bidir_edge(const EdgeProperty& p)
         : m_property(p) { }
-      EdgeProperty* get_property() { return &m_property; }
-      const EdgeProperty* get_property() const { return &m_property; }
+      EdgeProperty& get_property() { return m_property; }
+      const EdgeProperty& get_property() const { return m_property; }
       EdgeProperty m_property;
     };
 
@@ -891,7 +910,7 @@ namespace boost {
         if (pred(*out_i)) {
           typename Config::vertex_descriptor v = target(*out_i, g);
           detail::remove_directed_edge_dispatch
-            (*out_i, g.in_edge_list(v), (PropT*)(*out_i).get_property());
+            (*out_i, g.in_edge_list(v), *(PropT*)(*out_i).get_property());
           g.m_edges.erase( (*out_i.iter()).get_iter() );
         }
       // Now remove the edges from this out-edge list.
@@ -917,7 +936,7 @@ namespace boost {
         if (pred(*in_i)) {
           typename Config::vertex_descriptor u = source(*in_i, g);
           detail::remove_directed_edge_dispatch
-            (*in_i, g.out_edge_list(u), (PropT*)(*in_i).get_property());
+            (*in_i, g.out_edge_list(u), (PropT&)(*in_i).get_property());
           g.m_edges.erase( (*in_i.iter()).get_iter() );
         }
       // Now remove the edges from this in-edge list.
@@ -948,12 +967,12 @@ namespace boost {
         graph_type& g = static_cast<graph_type&>(*this);
 
         typedef typename Config::OutEdgeList::value_type::property_type PType;
-        PType* p = (PType*) e.get_property();
+        PType& p = *(PType*)e.get_property();
 
         typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
         typename Config::OutEdgeList::iterator out_i = out_el.begin();
         for (; out_i != out_el.end(); ++out_i)
-          if ((*out_i).get_property() == p) {
+          if (&(*out_i).get_property() == &p) {
             g.m_edges.erase((*out_i).get_iter());
             out_el.erase(out_i);
             break;
@@ -961,7 +980,7 @@ namespace boost {
         typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
         typename Config::InEdgeList::iterator in_i = in_el.begin();
         for (; in_i != in_el.end(); ++in_i)
-          if ((*in_i).get_property() == p) {
+          if (&(*in_i).get_property() == &p) {
             in_el.erase(in_i);
             break;
           }
@@ -1262,7 +1281,7 @@ namespace boost {
           i = std::find(el.begin(), el.end(), StoredEdge(v));
         found = (i != g.out_edge_list(u).end());
         if (found)
-          return std::make_pair(edge_descriptor(u, v, (*i).get_property()),
+          return std::make_pair(edge_descriptor(u, v, &(*i).get_property()),
                                 true);
         else
           return std::make_pair(edge_descriptor(u, v), false);
@@ -1279,7 +1298,7 @@ namespace boost {
           end = g.out_edge_list(u).end();
         found = (i != end);
         if (found)
-          return std::make_pair(edge_descriptor(u, v, (*i).get_property()),
+          return std::make_pair(edge_descriptor(u, v, &(*i).get_property()),
                                 true);
         else
           return std::make_pair(edge_descriptor(u, v), false);
@@ -2207,12 +2226,12 @@ namespace boost {
       typedef detail::edge_desc_impl<Directed, Vertex> key_type;
       typedef boost::lvalue_property_map_tag category;
       inline value_type& operator[](key_type e) {
-        Property* p = (Property*)e.get_property();
-        return get_property_value(*p, value_type(), Tag());
+        Property& p = *(Property*)e.get_property();
+        return get_property_value(p, value_type(), Tag());
       }
       inline const value_type& operator[](key_type e) const {
-        const Property* p = (Property*)e.get_property();
-        return get_property_value(*p, value_type(), Tag());
+        const Property& p = *(const Property*)e.get_property();
+        return get_property_value(p, value_type(), Tag());
       }
     };
 
