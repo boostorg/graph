@@ -32,6 +32,7 @@
 #include <boost/operators.hpp>
 #include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <memory>
 #include <algorithm>
 
@@ -144,7 +145,7 @@ namespace boost {
       typedef Vertex value_type;
       typedef value_type reference;
       typedef value_type* pointer;
-      typedef typename Traits::iterator_category iterator_category;
+      typedef boost::multi_pass_input_iterator_tag iterator_category;
       typedef typename Traits::difference_type difference_type;
     };
 
@@ -179,14 +180,14 @@ namespace boost {
 #else
     template <class Vertex, class OutEdgeIter, class Graph>
     struct bidir_adj_iter
-      : public boost::iterator<std::forward_iterator_tag, Vertex,
+      : public boost::iterator<boost::multi_pass_input_iterator_tag, Vertex,
                                std::ptrdiff_t, Vertex*, Vertex>
     {
     private:
       typedef bidir_adj_iter self;
     public:
       typedef std::ptrdiff_t difference_type;
-      typedef std::forward_iterator_tag iterator_category;
+      typedef boost::multi_pass_input_iterator_tag iterator_category;
       typedef Vertex* pointer;
       typedef Vertex reference;
       typedef Vertex value_type;
@@ -225,7 +226,7 @@ namespace boost {
       typedef EdgeDescriptor value_type;
       typedef value_type reference;
       typedef value_type* pointer;
-      typedef EdgeIterCat iterator_category;
+      typedef boost::multi_pass_input_iterator_tag iterator_category;
       typedef EdgeIterDiff difference_type;
     };
 
@@ -1777,14 +1778,14 @@ namespace boost {
     in_edge_list(adj_list_impl<D,C,B>&, 
 		 typename C::vertex_descriptor v)
     {
-      stored_vertex* sv = (stored_vertex*)v;
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
       return sv->m_in_edges;
     }
     template <class D, class C, class B>
     inline const typename C::InEdgeList& 
     in_edge_list(const adj_list_impl<D,C,B>&,
 		 typename C::vertex_descriptor v) {
-      stored_vertex* sv = (stored_vertex*)v;
+      typename C::stored_vertex* sv = (typename C::stored_vertex*)v;
       return sv->m_in_edges;
     }
 
@@ -2224,7 +2225,7 @@ namespace boost {
         typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
         typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
 #else
-        typedef std::forward_iterator_tag OutEdgeIterCat;
+        typedef boost::multi_pass_input_iterator_tag OutEdgeIterCat;
         typedef std::ptrdiff_t OutEdgeIterDiff;
 #endif
 
