@@ -54,6 +54,7 @@
 #include <fstream>
 
 #include <iterator>
+#include <boost/graph/graph_utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
 class edge_stream_iterator {

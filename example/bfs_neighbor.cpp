@@ -30,6 +30,7 @@
 #include <utility>
 #include <iostream>
 
+#include <boost/graph/graph_utility.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/neighbor_bfs.hpp>
