@@ -22,6 +22,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 #include <boost/config.hpp>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <unistd.h>
