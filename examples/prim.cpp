@@ -53,8 +53,8 @@ int main(int , char* [])
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::pair<int,int> E;
   const int num_nodes = 9;
-  char name[] = "abcdefghix";
-  enum { a, b, c, d, e, f, g, h, i, x }; 
+  char name[] = "abcdefghi";
+  enum { a, b, c, d, e, f, g, h, i }; 
   E edges[] = { E(a,b), E(a,h),
                 E(b,h), E(b,c),
 		E(c,d), E(c,f), E(c,i),
@@ -74,9 +74,11 @@ int main(int , char* [])
 		    
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
 
-  std::vector<Vertex> p(num_vertices(G), x);
+  std::vector<Vertex> p(num_vertices(G));
+  Vertex src = *(vertices(G).first);
+  p[src] = src;
   prim_minimum_spanning_tree
-    (G, *(vertices(G).first), get(vertex_distance, G),
+    (G, src, get(vertex_distance, G),
      make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
   for ( std::vector<Vertex>::iterator vi = p.begin();

@@ -220,6 +220,7 @@ main(int , char* [])
                     print_endl(std::cout, on_finish_vertex()
                     ))))));
 
+  parent[vertex(a, G)] = vertex(a, G);
   dijkstra_shortest_paths(G, vertex(a, G), 
     make_iterator_property_map(distance.begin(), vertex_id, distance[0]),
     make_ucs_visitor(std::make_pair(copy_graph(G_copy, on_examine_edge()),
