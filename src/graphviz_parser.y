@@ -133,8 +133,8 @@
 	break;
       case GRAPH_NODE_A: 
 	{
-	  boost::graph_property<Graph, boost::graph_node_attribute_t>::type&
-	    gna = boost::get_property(g, boost::graph_node_attribute);
+	  boost::graph_property<Graph, boost::graph_vertex_attribute_t>::type&
+	    gna = boost::get_property(g, boost::graph_vertex_attribute);
 	  set_attribute(gna, attributes); 
 	}
 	break;
