@@ -476,6 +476,8 @@ namespace boost {
 	  result_type;
 	typedef typename property_map<Graph, Tag>::const_type 
 	  const_result_type;
+	typedef typename property_map<Graph, Tag>::const_type 
+	  type;
 
 	static const_result_type
 	const_apply(const P& p, const Graph& g, Tag tag) { 
