@@ -1019,8 +1019,14 @@ namespace boost {
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
       
+      // O(E/V) or O(log(E/V))
       void
-      remove_edge(typename Config::edge_descriptor e);
+      remove_edge(typename Config::edge_descriptor e)
+      {
+        typedef typename Config::graph_type graph_type;
+        graph_type& g = static_cast<graph_type&>(*this);
+        boost::remove_edge(source(e, g), target(e, g), *this);
+      }
 
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
@@ -1044,15 +1050,6 @@ namespace boost {
       detail::erase_from_incidence_list(in_edge_list(g, v), u, Cat());
     }
 
-    // O(E/V) or O(log(E/V))
-    template <class Config>
-    inline void
-    bidirectional_graph_helper_with_property<Config>::remove_edge(typename Config::edge_descriptor e)
-    {
-      typedef typename Config::graph_type graph_type;
-      graph_type& g = static_cast<graph_type&>(*this);
-      boost::remove_edge(source(e, g), target(e, g), *this);
-    }
     // O(E/V) or O(log(E/V))
     template <class EdgeOrIter, class Config>
     inline void
