@@ -132,7 +132,7 @@ namespace boost {
   template <class Visitors = null_visitor>
   class bfs_visitor {
   public:
-    bfs_visitor(Visitors vis = null_visitor()) : m_vis(vis) { }
+    bfs_visitor(Visitors vis = Visitors()) : m_vis(vis) { }
 
     template <class Vertex, class Graph>
     void initialize_vertex(Vertex u, Graph& g) {

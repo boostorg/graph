@@ -60,7 +60,7 @@ namespace boost {
   template <class Visitors = null_visitor>
   class ucs_visitor : public bfs_visitor<Visitors> {
   public:
-    ucs_visitor(Visitors vis = null_visitor()) : bfs_visitor<Visitors>(vis) { }
+    ucs_visitor(Visitors vis = Visitors()) : bfs_visitor<Visitors>(vis) { }
 
     template <class Edge, class Graph>
     void edge_relaxed(Edge e, Graph& g) {
