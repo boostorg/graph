@@ -1,6 +1,37 @@
 #include "basic_graph.hpp"
 
-namespace boost { namespace graph { namespace python {
+namespace boost { 
+
+inline std::ostream& operator<<(std::ostream& out, default_color_type c)
+{
+  switch (c) {
+  case white_color: return out << "white";
+  case gray_color: return out << "gray";
+  case green_color: return out << "green";
+  case red_color: return out << "red";
+  case black_color: return out << "black";
+  }
+  return out;
+}
+
+inline std::istream& operator>>(std::istream& in, default_color_type& c)
+{
+  std::string text;
+  if (in >> text) {
+    if (text == "white") c = white_color;
+    else if (text == "gray") c = gray_color;
+    else if (text == "green") c = green_color;
+    else if (text == "red") c = red_color;
+    else if (text == "black") c = black_color;
+    else {
+      in.setstate(std::ios_base::failbit);
+      return in;
+    }
+  }
+  return in;
+}
+
+namespace graph { namespace python {
 
 class copying_dynamic_property_map
 {
@@ -471,6 +502,8 @@ void export_basic_graph(const char* name)
         // Vertex property maps
         .def("has_vertex_map", &Graph::has_vertex_map)
         .def("get_vertex_index_map", &Graph::get_vertex_index_map)
+        .def("get_vertex_color_map", 
+             &Graph::template get_vertex_map<default_color_type>)
         .def("get_vertex_double_map", &Graph::template get_vertex_map<double>)
         .def("get_vertex_int_map", &Graph::template get_vertex_map<int>)
         .def("get_vertex_string_map", 
@@ -479,6 +512,8 @@ void export_basic_graph(const char* name)
         // Edge property maps
         .def("has_edge_map", &Graph::has_vertex_map)
         .def("get_edge_index_map", &Graph::get_edge_index_map)
+        .def("get_edge_color_map", 
+             &Graph::template get_edge_map<default_color_type>)
         .def("get_edge_double_map", &Graph::template get_edge_map<double>)
         .def("get_edge_int_map", &Graph::template get_edge_map<int>)
         .def("get_edge_string_map", &Graph::template get_edge_map<std::string>)
