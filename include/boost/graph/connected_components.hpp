@@ -32,6 +32,8 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_concepts.hpp>
 
+#include <boost/static_assert.hpp>
+
 namespace boost {
 
   namespace detail {
@@ -76,6 +78,9 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
+    typedef typename boost::graph_traits<Graph>::directed_category directed;
+    BOOST_STATIC_ASSERT((boost::is_same<directed, undirected_tag>::value));
+
     typedef typename property_traits<ComponentMap>::value_type comp_type;
     // c_count initialized to "nil" (with nil represented by max())
     comp_type c_count(std::numeric_limits<comp_type>::max());
@@ -90,6 +95,9 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     function_requires< WritablePropertyMapConcept<ComponentMap, Vertex> >();
+    typedef typename boost::graph_traits<Graph>::directed_category directed;
+    BOOST_STATIC_ASSERT((boost::is_same<directed, undirected_tag>::value));
+
     typedef typename property_traits<ComponentMap>::value_type comp_type;
     // c_count initialized to "nil" (with nil represented by max())
     comp_type c_count(std::numeric_limits<comp_type>::max());
