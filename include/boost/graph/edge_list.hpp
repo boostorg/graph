@@ -125,10 +125,11 @@ namespace boost {
 
   template <class D, class E>
   class el_edge_property_map
-    : public put_get_at_helper<D, el_edge_property_map<D,E> >{
+    : public put_get_helper<D, el_edge_property_map<D,E> >{
   public:
     typedef E key_type;
     typedef D value_type;
+    typedef D reference;
     typedef readable_property_map_tag category;
 
     value_type operator[](key_type e) const {
@@ -213,10 +214,11 @@ namespace boost {
   }
   template <class E>
   class el_ra_edge_property_map
-    : public put_get_at_helper<E, el_ra_edge_property_map<E> >{
+    : public put_get_helper<E, el_ra_edge_property_map<E> >{
   public:
     typedef E key_type;
     typedef E value_type;
+    typedef E reference;
     typedef readable_property_map_tag category;
 
     value_type operator[](key_type e) const {
