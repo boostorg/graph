@@ -224,11 +224,15 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
-  be usable as the key type of the distance map. The value type of the
-  distance map must be <a
-  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
-  Comparable</a>.<br>
+  be usable as the key type of the distance map. 
 
+  The value type of the distance map is the element type of a <a
+  href="./Monoid.html">Monoid</tt> formed with the <tt>combine</tt>
+  function object and the <tt>zero</tt> object for the identity
+  element. Also the distance value type must have a <a
+  href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html">
+  StrictWeakOrdering</a> provided by the <tt>compare</tt> function
+  object.<br>
   <b>Default:</b> <a
   href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
@@ -266,29 +270,21 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
 </blockquote>
 
-IN: <tt>distance_inf(InfinityGenerator inf)</tt> 
+IN: <tt>distance_inf(D inf)</tt> 
 <blockquote>
-  This function is used to initialize the distance for each
-  vertex before the start of the algorithm. 
-  The <tt>InfinityGenerator</tt>
-  type must model the <a href="http://www.sgi.com/tech/stl/Generator.html">Generator</a> concept. The
-  result type of the generator must be convertible to the
-  value type of the <tt>DistanceMap</tt>. The
-  default infinity generator uses <tt>std::numeric_limits::max()</tt>.<br>
-  <b>Default:</b> <tt>detail::generate_infinity&lt;D&gt;</tt>
-  with <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
+  The <tt>inf</tt> object must be the greatest value of any <tt>D</tt> object.
+  That is, <tt>compare(d, inf) == true</tt> for any <tt>d != inf</tt>.
+  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
+  <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt>
 </blockquote>
 
-IN: <tt>distance_zero(ZeroGenerator zero)</tt> 
+IN: <tt>distance_zero(D zero)</tt> 
 <blockquote>
-  This function is used to initialize the distance for the source
-  vertex before the start of the algorithm.  The
-  <tt>ZeroGenerator</tt> type must model the <a
-  href="http://www.sgi.com/tech/stl/Generator.html">Generator</a>concept. The
-  result type of the generator must be convertible to the value type
-  of the <tt>DistanceMap</tt>.<br>
-  <b>Default:</b> <tt>detail::generate_zero&lt;D&gt;</tt>
-   with <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
+  The <tt>zero</tt> value must be the identity element for the
+  <a href="./Monoid.html">Monoid</a> formed by the distance values
+  and the <tt>combine</tt> function object.
+  The type \code{D} is the value type of the \code{DistanceMap}
+  <b>Default:</b> <tt>D()</tt>
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
