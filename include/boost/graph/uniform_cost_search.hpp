@@ -121,11 +121,11 @@ namespace boost {
         m_combine(combine), m_compare(compare)  { }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex, Graph&) {
-        m_vis.initalize_vertex(u, g);
+      void initialize_vertex(Vertex u, Graph& g) {
+        m_vis.initialize_vertex(u, g);
       }
       template <class Vertex, class Graph>
-      void start_vertex(Vertex, Graph&) {
+      void start_vertex(Vertex v, Graph& g) {
         m_vis.start_vertex(u, g);
       }
       template <class Vertex, class Graph>
