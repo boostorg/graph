@@ -315,7 +315,7 @@ namespace boost {
                bool global)
     {
       if (global) {
-        double diff = fabs(last_energy - delta_p);
+        double diff = last_energy - delta_p;
         if (diff < T(0)) diff = -diff;
         last_energy = delta_p;
         return diff < tolerance;
