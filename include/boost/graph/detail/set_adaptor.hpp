@@ -8,7 +8,6 @@
 #define BOOST_SET_ADAPTOR_HPP
 
 #include <set>
-#include <iterator>
 
 namespace boost {
 
@@ -99,7 +98,7 @@ namespace boost {
 
     template <class K, class C, class A>
     bool set_subset(const std::set<K,C,A>& x,
-		    const std::set<K,C,A>& y)
+                    const std::set<K,C,A>& y)
     {
       return std::includes(x.begin(), x.end(), y.begin(), y.end());
     }

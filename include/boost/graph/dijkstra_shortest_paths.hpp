@@ -130,9 +130,9 @@ namespace boost {
       void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) { 
-	if (get(m_weight, e) < 0)
-	  throw negative_edge();
-	m_vis.examine_edge(e, g);
+        if (get(m_weight, e) < 0)
+          throw negative_edge();
+        m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
       void black_target(Edge, Graph&) { }

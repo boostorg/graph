@@ -210,7 +210,7 @@ namespace boost {
     ForwardIterator next = first;
     for (++next; next != last; first = next, ++next) {
       if (*next < *first)
-	return false;
+        return false;
     }
 
     return true;
@@ -218,7 +218,7 @@ namespace boost {
 
   template <typename ForwardIterator, typename StrictWeakOrdering>
   bool is_sorted(ForwardIterator first, ForwardIterator last,
-		 StrictWeakOrdering comp)
+                 StrictWeakOrdering comp)
   {
     if (first == last)
       return true;
@@ -226,7 +226,7 @@ namespace boost {
     ForwardIterator next = first;
     for (++next; next != last; first = next, ++next) {
       if (comp(*next, *first))
-	return false;
+        return false;
     }
 
     return true;
