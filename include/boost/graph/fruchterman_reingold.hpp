@@ -105,6 +105,8 @@ struct grid_force_pairs
 
     std::size_t columns = std::size_t(width / two_k);
     std::size_t rows = std::size_t(height / two_k);
+    if (columns == 0) columns = 1;
+    if (rows == 0) rows = 1;
     buckets_t buckets(rows * columns);
     vertex_iterator v, v_end;
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
