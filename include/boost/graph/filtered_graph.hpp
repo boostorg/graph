@@ -180,9 +180,9 @@ namespace boost {
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
 
-    typedef typename OutEdgeIterGen::policies_type out_edge_iter_policy;
-    typedef typename InEdgeIterGen::policies_type in_edge_iter_policy;
-    typedef typename EdgeIterGen::policies_type edge_iter_policy;
+    typedef typename out_edge_iterator::policies_type out_edge_iter_policy;
+    typedef typename out_edge_iterator::policies_type in_edge_iter_policy;
+    typedef typename edge_iterator::policies_type edge_iter_policy;
   };
 
   //===========================================================================
