@@ -31,7 +31,6 @@ for every pair of vertices $u$ and $v$ in $U$, we have both a path
 from $u$ to $v$ and path from $v$ to $u$. That is to say that $u$ and
 $v$ are reachable from each other.
 
-
 cross edge (u,v) is an edge from one subtree to another subtree
  -> discover_time[u] > discover_time[v]
 
@@ -47,7 +46,6 @@ If there is a path from $v$ to $w$ and if they are in different DFS
 trees, then the discover time for $w$ must be earlier than for $v$.
 Otherwise, the tree that contains $v$ would have extended along the
 path to $w$, putting $v$ and $w$ in the same tree.
-
 
 
 The following is an informal description of Tarjan's algorithm for
@@ -92,6 +90,22 @@ following cases:
 \end{enumerate}
 
 
+
+@d Build a list of vertices for each strongly connected component
+@{
+template <typename Graph, typename ComponentMap, typename ComponentLists>
+void build_component_lists
+  (const Graph& g,
+   typename graph_traits<Graph>::vertices_size_type num_scc,
+   ComponentMap component_number,
+   ComponentLists& components)
+{
+  components.resize(num_scc);
+  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    components[component_number[*vi]].push_back(*vi);
+}
+@}
 
 
 \bibliographystyle{abbrv}

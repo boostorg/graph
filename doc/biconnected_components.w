@@ -25,6 +25,7 @@
               colorlinks=true, % change to true for the electronic version
               linkcolor=blue,filecolor=blue,pagecolor=blue,urlcolor=blue
               ]{hyperref}
+  \newcommand{\myhyperref}[2]{\hyperref[#1]{#2}}
 \fi
 
 \newcommand{\mtlfig}[2]{\centerline{\includegraphics*[#2]{#1.pdf}}}

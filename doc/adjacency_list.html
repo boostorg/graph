@@ -89,61 +89,9 @@ Section <A HREF="./using_adjacency_list.html">Using
 <H3>Example</H3>
 
 <P>
-A graph used to represent a family tree. The complete source code is
-in the file <a
-href="../example/family_tree.cpp"><tt>examples/family_tree.cpp</tt></a>.
-
-<PRE>
-  enum { Jeanie, Debbie, Rick, John, Amanda, 
-         Margaret, Benjamin, N };
-
-  std::vector&lt;std::string&gt; name(N);
-  name[Jeanie] = "Jeanie";
-  name[Debbie] = "Debbie";
-  name[Rick] = "Rick";
-  name[John] = "John";
-  name[Amanda] = "Amanda";
-  name[Margaret] = "Margaret";
-  name[Benjamin] = "Benjamin";
-
-  adjacency_list&lt;&gt;  G(N);
-  add_edge(Jeanie, Debbie, G);
-  add_edge(Jeanie, Rick, G);
-  add_edge(Jeanie, John, G);
-  add_edge(Debbie, Amanda, G);
-  add_edge(Rick, Margaret, G);
-  add_edge(John, Benjamin, G);
-
-  graph_traits&lt; adjacency_list&lt;&gt; &gt;::vertex_iterator i, end;
-  graph_traits&lt; adjacency_list&lt;&gt; &gt;::adjacency_iterator ai, a_end;
-
-  property_map&lt;adjacency_list&lt;&gt;, vertex_index_t&gt;::type
-    id = get(vertex_index, G);
-
-  for(tie(i,end) = vertices(G); i != end; ++i) {
-    cout &lt;&lt; name[get(id, *i)];
-    tie(ai, a_end) = adjacent_vertices(*i, G);
-    if (ai == a_end)
-      cout &lt;&lt; " has no children";
-    else
-      cout &lt;&lt; " is the parent of ";
-    for (; ai != a_end; ++ai)
-      cout &lt;&lt; name[get(id, *ai)] &lt;&lt; "  ";
-    cout &lt;&lt; endl;
-  }
-</PRE>
-The output is:
-<PRE>
-  Jeanie is the parent of Debbie  Rick  John  
-  Debbie is the parent of Amanda  
-  Rick is the parent of Margaret  
-  John is the parent of Benjamin  
-  Amanda has no children
-  Margaret has no children
-  Benjamin has no children
-</PRE>
-
-<P>
+The example in <a
+href="../example/family-tree-eg.cpp"><tt>examples/family-tree-eg.cpp</tt></a>
+shows how to represent a family tree with a graph.
 
 <H3>Template Parameters</H3>
 
