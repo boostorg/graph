@@ -348,7 +348,7 @@ namespace boost {
     typedef T& reference;
     typedef lvalue_property_map_tag category;
 
-    bundle_property_map(Graph* g, T Bundle::* pm) : g(g), pm(pm) {}
+    bundle_property_map(Graph* g_, T Bundle::* pm_) : g(g_), pm(pm_) {}
 
     reference operator[](key_type k) const { return (*g)[k].*pm; }
   private:

@@ -169,13 +169,13 @@ Therefore, the extra requirement is added that the out-edge connecting
       function_requires&lt; GraphConcept&lt;G&gt; &gt;();
       function_requires&lt; MultiPassInputIteratorConcept&lt;out_edge_iterator&gt; &gt;();
 
-      p = out_edges(v, g);
+      p = out_edges(u, g);
       e = *p.first;
       u = source(e, g);
       v = target(e, g);
     }
     void const_constraints(const G&amp; g) {
-      p = out_edges(v, g);
+      p = out_edges(u, g);
       e = *p.first;
       u = source(e, g);
       v = target(e, g);

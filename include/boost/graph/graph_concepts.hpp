@@ -77,19 +77,19 @@ namespace boost {
       function_requires< ConvertibleConcept<traversal_category,
         incidence_graph_tag> >();
 
-      p = out_edges(v, g);
-      n = out_degree(v, g);
+      p = out_edges(u, g);
+      n = out_degree(u, g);
       e = *p.first;
       u = source(e, g);
       v = target(e, g);
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      p = out_edges(v, g);
-      n = out_degree(v, g);
+    void const_constraints(const G& cg) {
+      p = out_edges(u, cg);
+      n = out_degree(u, cg);
       e = *p.first;
-      u = source(e, g);
-      v = target(e, g);
+      u = source(e, cg);
+      v = target(e, cg);
     }
     std::pair<out_edge_iterator, out_edge_iterator> p;
     typename graph_traits<G>::vertex_descriptor u, v;
@@ -116,9 +116,9 @@ namespace boost {
       e = *p.first;
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      p = in_edges(v, g);
-      n = in_degree(v, g);
+    void const_constraints(const G& cg) {
+      p = in_edges(v, cg);
+      n = in_degree(v, cg);
       e = *p.first;
     }
     std::pair<in_edge_iterator, in_edge_iterator> p;
@@ -145,8 +145,8 @@ namespace boost {
       v = *p.first;
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      p = adjacent_vertices(v, g);
+    void const_constraints(const G& cg) {
+      p = adjacent_vertices(v, cg);
     }
     std::pair<adjacency_iterator,adjacency_iterator> p;
     typename graph_traits<G>::vertex_descriptor v;
@@ -197,7 +197,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       v = *p.first;
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
+    void const_constraints(const G& cg) {
 #ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
       // dwa 2003/7/11 -- This clearly shouldn't be neccessary, but if
       // you want to use vector_as_graph, it is!  I'm sure the graph
@@ -207,9 +207,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       using boost::vertices;
 #endif 
       
-      p = vertices(g);
+      p = vertices(cg);
       v = *p.first;
-      V = num_vertices(g);
+      V = num_vertices(cg);
     }
     std::pair<vertex_iterator,vertex_iterator> p;
     typename graph_traits<G>::vertex_descriptor v;
@@ -240,12 +240,12 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       v = target(e, g);
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      p = edges(g);
-      E = num_edges(g);
+    void const_constraints(const G& cg) {
+      p = edges(cg);
+      E = num_edges(cg);
       e = *p.first;
-      u = source(e, g);
-      v = target(e, g);
+      u = source(e, cg);
+      v = target(e, cg);
     }
     std::pair<edge_iterator,edge_iterator> p;
     typename graph_traits<G>::vertex_descriptor u, v;
@@ -387,8 +387,8 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       p = edge(u, v, g);
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      p = edge(u, v, g);
+    void const_constraints(const G& cg) {
+      p = edge(u, v, cg);
     }
     typename graph_traits<G>::vertex_descriptor u, v;
     std::pair<edge_descriptor, bool> p;
@@ -405,9 +405,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
 
       const_constraints(g);
     }
-    void const_constraints(const G& g) {
-      const_Map pmap = get(Property(), g);
-      pval = get(Property(), g, x);
+    void const_constraints(const G& cg) {
+      const_Map pmap = get(Property(), cg);
+      pval = get(Property(), cg, x);
       ignore_unused_variable_warning(pmap);
     }
     G g;
@@ -461,10 +461,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       const_constraints(b);
       ignore_unused_variable_warning(v);
     }
-    void const_constraints(const B& b) {
-      const typename B::value_type& v = b.top();
-      n = b.size();
-      bool e = b.empty();
+    void const_constraints(const B& cb) {
+      const typename B::value_type& v = cb.top();
+      n = cb.size();
+      bool e = cb.empty();
       ignore_unused_variable_warning(v);
       ignore_unused_variable_warning(e);
     }
@@ -495,8 +495,8 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       const_constraints(A);
       ignore_unused_variable_warning(elt);      
     }
-    void const_constraints(const M& A) {
-      const V& elt = A[i][j];
+    void const_constraints(const M& cA) {
+      const V& elt = cA[i][j];
       ignore_unused_variable_warning(elt);      
     }
     M A;
