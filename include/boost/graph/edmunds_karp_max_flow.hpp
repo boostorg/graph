@@ -31,7 +31,7 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/graph/filtered_edge_graph.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
 namespace boost {
@@ -43,9 +43,9 @@ namespace boost {
   namespace detail {
 
     template <class Graph, class ResCapMap>
-    filtered_edge_graph<Graph, is_residual_edge<ResCapMap> >
+    filtered_graph<Graph, is_residual_edge<ResCapMap> >
     residual_graph(Graph& g, ResCapMap residual_capacity) {
-      return filtered_edge_graph<Graph, is_residual_edge<ResCapMap> >
+      return filtered_graph<Graph, is_residual_edge<ResCapMap> >
         (g, is_residual_edge<ResCapMap>(residual_capacity));
     }
 
