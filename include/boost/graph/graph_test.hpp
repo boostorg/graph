@@ -25,7 +25,7 @@
 #define BOOST_GRAPH_TEST_HPP
 
 #include <vector>
-#include <boost/test/test_tools.hpp>
+#include <boost/test/minimal.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/isomorphism.hpp>
