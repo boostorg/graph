@@ -265,18 +265,30 @@ in the graph.
 <hr>
 
 <tt>graph_traits&lt;Graph*&gt;::directed_category</tt><br><br>
-Provides information about whether the graph is directed
-(<tt>directed_tag</tt>) or undirected (<tt>undirected_tag</tt>).
+Provides information about whether the graph is directed or
+undirected. An SGB <tt>Graph*</tt> is directed so this type is
+<tt>directed_tag</tt>.
+
+<hr>
+
+<tt>graph_traits&lt;Graph*&gt;::traversal_category</tt><br><br>
+An SGB <tt>Graph*</tt> provides traversal of the vertex set,
+out edges, and adjacent vertices. Therefore the traversal category
+tag is defined as follows:
+<pre>
+struct sgb_traversal_tag :
+  public virtual vertex_list_graph_tag,
+  public virtual incidence_graph_tag,
+  public virtual adjacency_graph_tag { };
+</pre>
 
 <hr>
 
 <tt>graph_traits&lt;Graph*&gt;::edge_parallel_category</tt><br><br>
 This describes whether the graph class allows the insertion of parallel edges
-(edges with the same source and target).&nbsp; The two tags are
-<tt>allow_parallel_edge_tag</tt> and
-<tt>disallow_parallel_edge_tag</tt>.&nbsp; The <tt>setS</tt> and
-<tt>hash_setS</tt> variants disallow parallel edges, while the others allow
-parallel edges.
+(edges with the same source and target).&nbsp; The SGB <tt>Graph*</tt>
+does not prevent addition of parallel edges, so this type
+is <tt>allow_parallel_edge_tag</tt>.
 
 <hr>
 
