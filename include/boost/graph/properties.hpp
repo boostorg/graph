@@ -30,7 +30,10 @@
 
 namespace boost {
 
-  enum default_color_type { white_color, gray_color, black_color };
+  typedef short default_color_type;
+  default_color_type white_color = 0;
+  default_color_type gray_color = 1;
+  default_color_type black_color = -1;
 
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
@@ -111,15 +114,15 @@ namespace boost {
     struct dummy_edge_property_selector {
       template <class Graph, class Plugin, class Tag>
       struct bind {
-	typedef void type;
-	typedef void const_type;
+	typedef identity_property_map type;
+	typedef identity_property_map const_type;
       };
     };
     struct dummy_vertex_property_selector {
       template <class Graph, class Plugin, class Tag>
       struct bind {
-	typedef void type;
-	typedef void const_type;
+	typedef identity_property_map type;
+	typedef identity_property_map const_type;
       };
     };
 
@@ -167,9 +170,6 @@ namespace boost {
     //
     // It is overly complicated because it's a workaround for
     // partial specialization.
-    template <class Kind>
-    struct property_map_kind_selector { };
-
     struct choose_vertex_property_map {
       template <class Graph, class Property>
       struct bind {
@@ -181,6 +181,12 @@ namespace boost {
       struct bind {
         typedef edge_property_map<Graph, Property> type;
       };
+    };
+    template <class Kind>
+    struct property_map_kind_selector {
+      // VC++ gets confused if this isn't defined, even though
+      // this never gets used.
+      typedef choose_vertex_property_map type;
     };
     template <> struct property_map_kind_selector<vertex_property_tag> {
       typedef choose_vertex_property_map type;
@@ -194,7 +200,8 @@ namespace boost {
   class property_map {
     typedef typename Property::kind Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
-    typedef typename Selector::bind<Graph, Property>::type Map;
+    typedef typename Selector::template bind<Graph, Property> Bind;
+    typedef typename Bind::type Map;
   public:
     typedef typename Map::type type;
     typedef typename Map::const_type const_type;
