@@ -95,6 +95,8 @@ September 27, 2000.
       <li><a href="bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></a> now deals with unreachable vertices better.</li>
       <li><a href="adjacency_list.html"><tt>adjacency_list</tt></a>: parallel edge removal with <tt>OutEdgeListS = listS</tt> has been fixed.</li>
       <li><a href="incremental_components.html">Incremental connected components</a>: fixed a bug in the <tt>incremental_components</tt> routine that may have caused incorrect results.</li>
+      <li>The <tt>remove_out_edge_if</tt> function for an undirected <a href="adjacency_list.html"><tt>adjacency_list</tt></a> has been rewritten and should no longer dereference singular iterators.</li>
+      <li><a href="write-graphviz.html"><tt>write_graphviz</tt></a> now accepts a <tt>vertex_id</tt> parameter that is used to name the nodes.</li>
     </ul>
   </li>
 </ul>

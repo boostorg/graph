@@ -26,32 +26,35 @@
 
 
 <pre>
-(1)
-template < typename VertexListGraph >
+template &lt; typename VertexListGraph &gt;
 void 
-write_graphviz(std::ostream& out, const VertexListGraph& g);
+write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g);
 
-(2)
-template < typename VertexListGraph, typename VertexPropertyWriter >
+template &lt; typename VertexListGraph, typename VertexPropertyWriter &gt;
 void 
-write_graphviz(std::ostream& out, const VertexListGraph& g, 
+write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
                VertexPropertyWriter vpw);
 
-(3)
-template < typename VertexListGraph, typename VertexPropertyWriter,
-           typename EdgePropertyWriter >
+template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+           typename EdgePropertyWriter &gt;
 void
-write_graphviz(std::ostream& out, const VertexListGraph& g, 
+write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
                VertexPropertyWriter vpw, EdgePropertyWriter epw);
 
-(4)
-template < typename VertexListGraph, typename VertexPropertyWriter,
-           typename EdgePropertyWriter, typename GraphPropertyWriter >
+template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+           typename EdgePropertyWriter, typename GraphPropertyWriter &gt;
 void 
-write_graphviz(std::ostream& out, const VertexListGraph& g, 
+write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
                VertexPropertyWriter vpw, EdgePropertyWriter epw, 
                GraphPropertyWriter gpw);
 
+template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+           typename EdgePropertyWriter, typename GraphPropertyWriter,
+           typename VertexID &gt;
+void 
+write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
+               VertexPropertyWriter vpw, EdgePropertyWriter epw, 
+               GraphPropertyWriter gpw, VertexID vertex_id);
 </pre>
 
 <p>
@@ -142,22 +145,6 @@ only edge properties must be written, but function interface requries to pass
 vertex property writer as well.
 
 <h3>Parameters</h3>
-
-For version 1:<p>
-
- OUT: <tt>std::ostream&amp; out</tt>
-<blockquote>
-  A standard <tt>std::ostream</tt> object.
-</blockquote>
-  
- IN: <tt>VertexListGraph&amp; g</tt>
-<blockquote>
-  A directed or undirected graph.  The graph's type must be a model of
-  <a href="./VertexListGraph.html">VertexListGraph</a>. Also the graph 
-  must have an internal <tt>vertex_index</tt> property map.
-</blockquote>
-
-For version 2:<p>
  OUT: <tt>std::ostream&amp; out</tt>
 <blockquote>
   A standard <tt>std::ostream</tt> object.
@@ -173,69 +160,29 @@ For version 2:<p>
  IN: <tt>VertexPropertyWriter vpw</tt>
 <blockquote>
   A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of a vertex.
-</blockquote>
-
- 
-For version 3:<p>
-
- OUT: <tt>std::ostream&amp; out</tt>
-<blockquote>
-  A standard <tt>std::ostream</tt> object.
-</blockquote>  
-
- IN: <tt>VertexListGraph&amp; g</tt>
-<blockquote>
-  A directed or undirected graph.  The graph's type must be a model of
-  <a href="./VertexListGraph.html">VertexListGraph</a>. Also the graph 
-  must have an internal <tt>vertex_index</tt> property map.
-</blockquote>  
-
- IN: <tt>VertexPropertyWriter vpw</tt>
-<blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of a vertex.
+  properties of a vertex.<br>
+<b>Default</b>: <tt>default_writer()</tt>
 </blockquote>  
 
  IN: <tt>EdgePropertyWriter epw</tt>
 <blockquote>
   A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of an edge.
+  properties of an edge.<br>
+<b>Default</b>: <tt>default_writer()</tt>
+</blockquote>  
+
+ IN: <tt>GraphPropertyWriter epw</tt>
+<blockquote>
+  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
+  properties of a graph.<br>
+<b>Default</b>: <tt>default_writer()</tt>
 </blockquote>
 
-
-For version 4:<p>
-
- OUT: <tt>std::ostream&amp; out</tt>
+IN: <tt>VertexID vertex_id</tt>
 <blockquote>
-  A standard <tt>std::ostream</tt> object.
-</blockquote>  
-
- IN: <tt>VertexListGraph&amp; g</tt>
-<blockquote>
-  A directed or undirected graph.  The graph's type must be a model of
-  <a href="./VertexListGraph.html">VertexListGraph</a>. Also the graph 
-  must have an internal <tt>vertex_index</tt> property map.
-</blockquote>  
-
- IN: <tt>VertexPropertyWriter vpw</tt>
-<blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of a vertex.
-</blockquote>  
-
- IN: <tt>EdgePropertyWriter epw</tt>
-<blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of an edge.
-</blockquote>  
-
- IN: <tt>GeaphPropertyWriter epw</tt>
-<blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of a graph.
+  A property map that models <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. The value should be a unique descriptor that can be used to name a node in a Graphviz file (so it should not, for instance, have any spaces in it).<br>
+<b>Default</b>: <tt>get(vertex_index, g)</tt>
 </blockquote>
-
 <H3>
 Example
 </H3>

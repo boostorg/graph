@@ -241,15 +241,14 @@ namespace boost {
   }
 
   template <typename Graph, typename VertexPropertiesWriter,
-            typename EdgePropertiesWriter, typename GraphPropertiesWriter>
-
+            typename EdgePropertiesWriter, typename GraphPropertiesWriter,
+            typename VertexID>
   inline void write_graphviz(std::ostream& out, const Graph& g,
                              VertexPropertiesWriter vpw,
                              EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw)
+                             GraphPropertiesWriter gpw,
+                             VertexID vertex_id)
   {
-    typedef typename property_map<Graph, vertex_index_t>::const_type vimap_t;
-    vimap_t vertex_index = get(vertex_index_t(), g);
     typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
     std::string name = "G";
@@ -260,18 +259,26 @@ namespace boost {
     typename graph_traits<Graph>::vertex_iterator i, end;
 
     for(tie(i,end) = vertices(g); i != end; ++i) {
-      out << get(vertex_index, *i);
+      out << get(vertex_id, *i);
       vpw(out, *i); //print vertex attributes
       out << ";" << std::endl;
     }
     typename graph_traits<Graph>::edge_iterator ei, edge_end;
     for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
-      out << get(vertex_index, source(*ei, g)) << Traits::delimiter() << get(vertex_index, target(*ei, g)) << " ";
+      out << get(vertex_id, source(*ei, g)) << Traits::delimiter() << get(vertex_id, target(*ei, g)) << " ";
       epw(out, *ei); //print edge attributes
       out << ";" << std::endl;
     }
     out << "}" << std::endl;
   }
+
+  template <typename Graph, typename VertexPropertiesWriter,
+            typename EdgePropertiesWriter, typename GraphPropertiesWriter>
+  inline void write_graphviz(std::ostream& out, const Graph& g,
+                             VertexPropertiesWriter vpw,
+                             EdgePropertiesWriter epw,
+                             GraphPropertiesWriter gpw)
+  { write_graphviz(out, g, vpw, epw, gpw, get(vertex_index, g)); }
 
 #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
   // ambiguous overload problem with VC++
@@ -302,11 +309,12 @@ namespace boost {
 
   namespace detail {
 
-    template <class Graph_, class RandomAccessIterator>
+    template <class Graph_, class RandomAccessIterator, class VertexID>
     void write_graphviz_subgraph (std::ostream& out,
                                   const subgraph<Graph_>& g,
                                   RandomAccessIterator vertex_marker,
-                                  RandomAccessIterator edge_marker)
+                                  RandomAccessIterator edge_marker,
+                                  VertexID vertex_id)
     {
       typedef subgraph<Graph_> Graph;
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -345,19 +353,17 @@ namespace boost {
       //print subgraph
       for ( tie(i_child,j_child) = g.children();
             i_child != j_child; ++i_child )
-        write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker);
+        write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker,
+                                vertex_id);
 
       // Print out vertices and edges not in the subgraphs.
 
       typename graph_traits<Graph>::vertex_iterator i, end;
       typename graph_traits<Graph>::edge_iterator ei, edge_end;
 
-      typename property_map<Graph, vertex_index_t>::const_type
-        indexmap = get(vertex_index, g.root());
-
       for(tie(i,end) = vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
-        int pos = get(indexmap, v);
+        int pos = get(vertex_id, v);
         if ( vertex_marker[pos] ) {
           vertex_marker[pos] = false;
           out << pos;
@@ -380,8 +386,8 @@ namespace boost {
         int pos = get(get(edge_index, g.root()), g.local_to_global(*ei));
         if ( edge_marker[pos] ) {
           edge_marker[pos] = false;
-          out << get(indexmap, u) << " " << Traits::delimiter()
-              << " " << get(indexmap, v);
+          out << get(vertex_id, u) << " " << Traits::delimiter()
+              << " " << get(vertex_id, v);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
           typedef typename property_map<Graph, edge_attribute_t>::const_type
             EdgeAttributeMap;
@@ -405,7 +411,8 @@ namespace boost {
 
     detail::write_graphviz_subgraph(out, g,
                                     vertex_marker.begin(),
-                                    edge_marker.begin());
+                                    edge_marker.begin(), 
+                                    get(vertex_index, g));
   }
 
   template <typename Graph>
@@ -416,7 +423,35 @@ namespace boost {
 
     detail::write_graphviz_subgraph(out, g,
                                     vertex_marker.begin(),
-                                    edge_marker.begin());
+                                    edge_marker.begin(),
+                                    get(vertex_index, g));
+  }
+
+  template <typename Graph, typename VertexID>
+  void write_graphviz(std::ostream& out, const subgraph<Graph>& g,
+                      VertexID vertex_id) 
+  {
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g,
+                                    vertex_marker.begin(),
+                                    edge_marker.begin(), 
+                                    vertex_id);
+  }
+
+  template <typename Graph, typename VertexID>
+  void write_graphviz(const std::string& filename, const subgraph<Graph>& g,
+                      VertexID vertex_id) 
+  {
+    std::ofstream out(filename.c_str());
+    std::vector<bool> edge_marker(num_edges(g), true);
+    std::vector<bool> vertex_marker(num_vertices(g), true);
+
+    detail::write_graphviz_subgraph(out, g,
+                                    vertex_marker.begin(),
+                                    edge_marker.begin(),
+                                    vertex_id);
   }
 
   typedef std::map<std::string, std::string> GraphvizAttrList;
