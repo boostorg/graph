@@ -442,6 +442,22 @@ namespace boost {
     C c;
   };
 
+  template <class M, class I, class V>
+  struct BasicMatrixConcept
+  {
+    void constraints() {
+      V& elt = A[i][j];
+      const_constraints(A);
+      ignore_unused_variable_warning(elt);      
+    }
+    void const_constraints(const M& A) {
+      const V& elt = A[i][j];
+      ignore_unused_variable_warning(elt);      
+    }
+    M A;
+    I i, j;
+  };
+
 } // namespace boost
 
 #endif /* BOOST_GRAPH_CONCEPTS_H */

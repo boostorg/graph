@@ -62,6 +62,8 @@ namespace boost {
       typename Traits::edge_iterator e, e_end;
       typename Traits::vertex_descriptor s = *vertices(g).first;
       typedef typename property_traits<Distance>::value_type DT;
+      function_requires< BasicMatrixConcept<DistanceMatrix,
+        typename Traits::vertex_descriptor, DT> >();
       
       std::vector<DT> h_vec(num_vertices(g));
       typedef typename std::vector<DT>::iterator iter_t;
