@@ -65,7 +65,7 @@ namespace boost {
       vertex_index_num = 1, vertex_index1_num, vertex_index2_num,
       edge_index_num, vertex_name_num,
       edge_name_num, graph_name_num, edge_weight_num, edge_weight2_num, 
-      vertex_distance_num, vertex_root_num,
+      vertex_distance_num, vertex_root_num, root_vertex_num,
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
       vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
       edge_reverse_num, edge_residual_capacity_num, edge_capacity_num,
