@@ -148,14 +148,14 @@ namespace boost {
     typedef boost::iterator_adaptor<edge,
       boost::leda_out_edge_iterator_policies,
       edge, const edge&, const edge*,
-      boost::multi_pass_input_iterator_tag,
+      std::forward_iterator_tag,
       std::ptrdiff_t
     > out_edge_iterator;
 
     typedef boost::iterator_adaptor<edge,
       boost::leda_in_edge_iterator_policies, 
       edge, const edge&, const edge*,
-      boost::multi_pass_input_iterator_tag,
+      std::forward_iterator_tag,
       std::ptrdiff_t
     > in_edge_iterator;
 
