@@ -1062,7 +1062,12 @@ namespace boost {
       {
         typedef typename Config::graph_type graph_type;
         graph_type& g = static_cast<graph_type&>(*this);
-        boost::remove_edge(source(e, g), target(e, g), *this);
+        typename Config::OutEdgeList& oel = g.out_edge_list(source(e, g));
+        typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
+        typedef typename Config::OutEdgeList::value_type::property_type PType;
+        PType& p = *(PType*)e.get_property();
+        remove_directed_edge_dispatch(e, oel, p);
+        remove_directed_edge_dispatch(e, iel, p);
       }
 
       inline void
