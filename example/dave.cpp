@@ -211,43 +211,48 @@ main(int , char* [])
   std::ostream_iterator<char> cout_char(std::cout, " ");
 
   boost::breadth_first_search
-    (G, vertex(a, G), make_bfs_visitor(
-     std::make_pair(write_property(make_iterator_property_map(name, vertex_id,
-                                                              name[0]),
-                                   cout_char, on_examine_vertex()),
-     std::make_pair(write_property(make_iterator_property_map(distance.begin(),
-                                                              vertex_id, 
-                                                              distance[0]), 
-                                   cout_int, on_examine_vertex()),
-     std::make_pair(print_edge(make_iterator_property_map(name, vertex_id, 
-                                                          name[0]),
-                               std::cout, on_examine_edge()),
-                    print_endl(std::cout, on_finish_vertex()
-                    ))))));
+    (G, vertex(a, G), 
+     visitor(make_bfs_visitor(
+     boost::make_list
+     (write_property(make_iterator_property_map(name, vertex_id,
+						name[0]),
+		     cout_char, on_examine_vertex()),
+      write_property(make_iterator_property_map(distance.begin(),
+						vertex_id, 
+						distance[0]), 
+		     cout_int, on_examine_vertex()),
+      print_edge(make_iterator_property_map(name, vertex_id, 
+					    name[0]),
+		 std::cout, on_examine_edge()),
+      print_endl(std::cout, on_finish_vertex())))));
+
 
   parent[vertex(a, G)] = vertex(a, G);
-  dijkstra_shortest_paths(G, vertex(a, G), 
-    make_iterator_property_map(distance.begin(), vertex_id, distance[0]),
-    make_ucs_visitor(std::make_pair(copy_graph(G_copy, on_examine_edge()),
-      record_predecessors(make_iterator_property_map(parent.begin(), vertex_id,
-                                                     parent[0]), 
-                          on_edge_relaxed()))));
+  boost::dijkstra_shortest_paths
+    (G, vertex(a, G), 
+     distance_map(make_iterator_property_map(distance.begin(), vertex_id, 
+					     distance[0])).
+     predecessor_map(make_iterator_property_map(parent.begin(), vertex_id,
+						parent[0])).
+     visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
 
   cout << endl;
   cout << "Result:" << endl;
-  breadth_first_search
-    (G_copy, vertex(a, G_copy), make_bfs_visitor(
-     std::make_pair(write_property(make_iterator_property_map(name, vertex_id,
-                                                              name[0]), 
-                                   cout_char, on_examine_vertex()),
-     std::make_pair(write_property(make_iterator_property_map(distance.begin(),
-                                                              vertex_id, 
-                                                              distance[0]),
-                                   cout_int, on_examine_vertex()),
-     std::make_pair(print_edge(make_iterator_property_map(name, vertex_id, 
-                                                          name[0]), 
-                               std::cout, on_examine_edge()),
-                    print_endl(std::cout, on_finish_vertex()
-                               ))))));
+  boost::breadth_first_search
+    (G, vertex(a, G), 
+     visitor(make_bfs_visitor(
+     boost::make_list
+     (write_property(make_iterator_property_map(name, vertex_id,
+						name[0]),
+		     cout_char, on_examine_vertex()),
+      write_property(make_iterator_property_map(distance.begin(),
+						vertex_id, 
+						distance[0]), 
+		     cout_int, on_examine_vertex()),
+      print_edge(make_iterator_property_map(name, vertex_id, 
+					    name[0]),
+		 std::cout, on_examine_edge()),
+      print_endl(std::cout, on_finish_vertex())))));
+
   return 0;
 }
