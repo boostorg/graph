@@ -15,11 +15,11 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
-#include <sys/time.h>
 #include <vector>
 #include <list>
 #include <iostream>
 #include <math.h>    // for sqrt
+#include <time.h>
 
 using namespace boost;
 using namespace std;
