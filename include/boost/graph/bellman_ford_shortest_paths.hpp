@@ -104,12 +104,12 @@ namespace boost {
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
       Vertex;
-    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
+    BOOST_FUNCTION_REQUIRES2(DistanceMap, Vertex, ReadWritePropertyMapConcept);
+    BOOST_FUNCTION_REQUIRES2(WeightMap, Edge, ReadablePropertyMapConcept);
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
-    REQUIRE(D_value, LessThanComparable);
-    REQUIRE3(D_value, D_value, W_value, _OP_PLUS);
+    BOOST_FUNCTION_REQUIRES(D_value, ComparableConcept);
+    BOOST_FUNCTION_REQUIRES3(D_value, D_value, W_value, PlusOpConcept);
     std::plus<D_value> combine;
     std::less<D_value> compare;
     return bellman_ford_shortest_paths(g, N, weight, distance, 
@@ -126,15 +126,16 @@ namespace boost {
                                    BinaryPredicate compare,
                                    BellmanFordVisitor v)
   {
-    REQUIRE(EdgeListGraph, EdgeListGraph);
-    typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
-    typedef typename graph_traits<EdgeListGraph>::vertex_descriptor Vertex;
-    REQUIRE2(DistanceMap, Vertex, ReadWritePropertyMap);
-    REQUIRE2(WeightMap, Edge, ReadablePropertyMap);
+    BOOST_FUNCTION_REQUIRES(EdgeListGraph, EdgeListGraphConcept);
+    typedef graph_traits<EdgeListGraph> GTraits;
+    typedef typename GTraits::edge_descriptor Edge;
+    typedef typename GTraits::vertex_descriptor Vertex;
+    BOOST_FUNCTION_REQUIRES2(DistanceMap, Vertex, ReadWritePropertyMapConcept);
+    BOOST_FUNCTION_REQUIRES2(WeightMap, Edge, ReadablePropertyMapConcept);
     typedef typename property_traits<DistanceMap>::value_type D_value;
     typedef typename property_traits<WeightMap>::value_type W_value;
 
-    typename graph_traits<EdgeListGraph>::edge_iterator i, end;
+    typename GTraits::edge_iterator i, end;
     
     for (Size k = 0; k < N; ++k)
       for (tie(i, end) = edges(g); i != end; ++i) {

@@ -70,7 +70,7 @@ namespace boost {
   void
   depth_first_search(VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
-    REQUIRE2(DFSVisitor, VertexListGraph, DFSVisitor);
+    BOOST_FUNCTION_REQUIRES2(DFSVisitor, VertexListGraph, DFSVisitorConcept);
     typename property_traits<ColorMap>::value_type 
       c = get(color, *vertices(g).first); // value of c not used, just type
 
@@ -91,8 +91,8 @@ namespace boost {
             typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
             DFSVisitor& vis, ColorMap color)
   {
-    REQUIRE(IncidenceGraph, IncidenceGraph);
-    REQUIRE2(DFSVisitor, IncidenceGraph, DFSVisitor);
+    BOOST_FUNCTION_REQUIRES(IncidenceGraph, IncidenceGraphConcept);
+    BOOST_FUNCTION_REQUIRES2(DFSVisitor, IncidenceGraph, DFSVisitorConcept);
     typename property_traits<ColorMap>::value_type c = get(color, u);
 
     put(color, u, gray(c));

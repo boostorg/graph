@@ -28,7 +28,7 @@
 #include <boost/graph/stanford_graph.hpp>
 
 //
-// These concept checks verify that the GGCL classes implement the
+// These concept checks verify that the BGL classes implement the
 // complete interfaces defined in the graph concepts. The concept
 // checks are also useful for verifying whether user-defined graph
 // classes satisfy the desired graph concepts. Note that these concept
@@ -48,14 +48,14 @@ main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    REQUIRE(Graph, VertexAndEdgeListGraph);
-    REQUIRE(Graph, MutableGraph);
-    REQUIRE3(Graph, Vertex, vertex_color_t, PropertyGraph);
-    REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
+    BOOST_FUNCTION_REQUIRES(Graph, VertexAndEdgeListGraphConcept);
+    BOOST_FUNCTION_REQUIRES(Graph, MutableGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Vertex, vertex_color_t, PropertyGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Edge, edge_weight_t, PropertyGraphConcept);
     // the builtin id property is readable but not writable
     typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
+    BOOST_FUNCTION_REQUIRES2(IndexMap, Vertex, ReadablePropertyMapConcept);
   }
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS, 
@@ -64,15 +64,15 @@ main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    REQUIRE(Graph, VertexAndEdgeListGraph);
-    REQUIRE(Graph, BidirectionalGraph);
-    REQUIRE(Graph, MutableGraph);
-    REQUIRE3(Graph, Vertex, vertex_color_t, PropertyGraph);
-    REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
+    BOOST_FUNCTION_REQUIRES(Graph, VertexAndEdgeListGraphConcept);
+    BOOST_FUNCTION_REQUIRES(Graph, BidirectionalGraphConcept);
+    BOOST_FUNCTION_REQUIRES(Graph, MutableGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Vertex, vertex_color_t, PropertyGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Edge, edge_weight_t, PropertyGraphConcept);
     // the builtin id property is readable but not writable
     typedef property_map<Graph, vertex_index_t>::const_type IndexMap;
     typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    REQUIRE2(IndexMap, Vertex, ReadablePropertyMap);
+    BOOST_FUNCTION_REQUIRES2(IndexMap, Vertex, ReadablePropertyMapConcept);
   }
   {
     typedef adjacency_list< listS, listS, directedS, 
@@ -81,10 +81,10 @@ main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    REQUIRE(Graph, VertexAndEdgeListGraph);
-    REQUIRE(Graph, MutableGraph);
-    REQUIRE3(Graph, Vertex, vertex_color_t, PropertyGraph);
-    REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
+    BOOST_FUNCTION_REQUIRES(Graph, VertexAndEdgeListGraphConcept);
+    BOOST_FUNCTION_REQUIRES(Graph, MutableGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Vertex, vertex_color_t, PropertyGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Edge, edge_weight_t, PropertyGraphConcept);
   }
   {
     typedef adjacency_list< listS, listS, undirectedS, 
@@ -93,19 +93,19 @@ main(int,char*[])
     > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    REQUIRE(Graph, VertexAndEdgeListGraph);
-    REQUIRE(Graph, MutableGraph);
-    REQUIRE3(Graph, Vertex, vertex_color_t, PropertyGraph);
-    REQUIRE3(Graph, Edge, edge_weight_t, PropertyGraph);
+    BOOST_FUNCTION_REQUIRES(Graph, VertexAndEdgeListGraphConcept);
+    BOOST_FUNCTION_REQUIRES(Graph, MutableGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Vertex, vertex_color_t, PropertyGraphConcept);
+    BOOST_FUNCTION_REQUIRES3(Graph, Edge, edge_weight_t, PropertyGraphConcept);
   }
   {
     typedef std::pair<int,int> E;
     typedef edge_list<E*,E,ptrdiff_t> EdgeList;
-    REQUIRE(EdgeList, EdgeListGraph);
+    BOOST_FUNCTION_REQUIRES(EdgeList, EdgeListGraphConcept);
   }
   { // Stanford GraphBase Graph
     typedef Graph* Graph;
-    REQUIRE(Graph, VertexListGraph);
+    BOOST_FUNCTION_REQUIRES(Graph, VertexListGraphConcept);
   }
   return 0;
 }

@@ -38,9 +38,9 @@
 namespace boost {
 
   template <class T>
-  struct MultiPassInputIterator_concept {
+  struct MultiPassInputIteratorConcept {
     void constraints() {
-      REQUIRE(T, InputIterator);
+      BOOST_FUNCTION_REQUIRES(T, InputIteratorConcept);
     }
   };
 
@@ -48,7 +48,7 @@ namespace boost {
   // add directed_category in a couple places
 
   template <class G>
-  struct Graph_concept
+  struct GraphConcept
   {
     typedef typename graph_traits<G>
       ::vertex_descriptor vertex_descriptor;
@@ -58,24 +58,24 @@ namespace boost {
     typedef typename graph_traits<G>::edge_parallel_category
       edge_parallel_category;
     void constraints() {
-      REQUIRE(vertex_descriptor, DefaultConstructible);
-      REQUIRE(vertex_descriptor, EqualityComparable);
-      REQUIRE(vertex_descriptor, Assignable);
-      REQUIRE(edge_descriptor, DefaultConstructible);
-      REQUIRE(edge_descriptor, EqualityComparable);
-      REQUIRE(edge_descriptor, Assignable);
+      BOOST_FUNCTION_REQUIRES(vertex_descriptor, DefaultConstructibleConcept);
+      BOOST_FUNCTION_REQUIRES(vertex_descriptor, EqualityComparableConcept);
+      BOOST_FUNCTION_REQUIRES(vertex_descriptor, AssignableConcept);
+      BOOST_FUNCTION_REQUIRES(edge_descriptor, DefaultConstructibleConcept);
+      BOOST_FUNCTION_REQUIRES(edge_descriptor, EqualityComparableConcept);
+      BOOST_FUNCTION_REQUIRES(edge_descriptor, AssignableConcept);
     }
     G g;
   };
 
   template <class G>
-  struct IncidenceGraph_concept
+  struct IncidenceGraphConcept
   {
     typedef typename graph_traits<G>::out_edge_iterator
       out_edge_iterator;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE(out_edge_iterator, MultiPassInputIterator);
+      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
+      BOOST_FUNCTION_REQUIRES(out_edge_iterator, MultiPassInputIteratorConcept);
 
       p = out_edges(v, g);
       e = *p.first;
@@ -95,13 +95,13 @@ namespace boost {
   };
 
   template <class G>
-  struct BidirectionalGraph_concept
+  struct BidirectionalGraphConcept
   {
     typedef typename graph_traits<G>::in_edge_iterator
       in_edge_iterator;
     void constraints() {
-      REQUIRE(G, IncidenceGraph);
-      REQUIRE(in_edge_iterator, MultiPassInputIterator);
+      BOOST_FUNCTION_REQUIRES(G, IncidenceGraphConcept);
+      BOOST_FUNCTION_REQUIRES(in_edge_iterator, MultiPassInputIteratorConcept);
 
       p = in_edges(v, g);
       e = *p.first;
@@ -118,13 +118,13 @@ namespace boost {
   };
 
   template <class G>
-  struct AdjacencyGraph_concept
+  struct AdjacencyGraphConcept
   {
     typedef typename graph_traits<G>::adjacency_iterator
       adjacency_iterator;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE(adjacency_iterator, MultiPassInputIterator);
+      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
+      BOOST_FUNCTION_REQUIRES(adjacency_iterator, MultiPassInputIteratorConcept);
 
       p = adjacent_vertices(v, g);
       v = *p.first;
@@ -139,14 +139,14 @@ namespace boost {
   };
 
   template <class G>
-  struct VertexListGraph_concept
+  struct VertexListGraphConcept
   {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     void constraints() {
-      REQUIRE(G, AdjacencyGraph);
-      REQUIRE(G, IncidenceGraph);
-      REQUIRE(vertex_iterator, MultiPassInputIterator);
+      BOOST_FUNCTION_REQUIRES(G, AdjacencyGraphConcept);
+      BOOST_FUNCTION_REQUIRES(G, IncidenceGraphConcept);
+      BOOST_FUNCTION_REQUIRES(vertex_iterator, MultiPassInputIteratorConcept);
 
       p = vertices(g);
       v = *p.first;
@@ -164,13 +164,13 @@ namespace boost {
   };
 
   template <class G>
-  struct EdgeListGraph_concept
+  struct EdgeListGraphConcept
   {
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE(edge_iterator, MultiPassInputIterator);
+      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
+      BOOST_FUNCTION_REQUIRES(edge_iterator, MultiPassInputIteratorConcept);
 
       p = edges(g);
       e = *p.first;
@@ -193,16 +193,16 @@ namespace boost {
   };
 
   template <class G>
-  struct VertexAndEdgeListGraph_concept
+  struct VertexAndEdgeListGraphConcept
   {
     void constraints() {
-      REQUIRE(G, VertexListGraph);
-      REQUIRE(G, EdgeListGraph);
+      BOOST_FUNCTION_REQUIRES(G, VertexListGraphConcept);
+      BOOST_FUNCTION_REQUIRES(G, EdgeListGraphConcept);
     }
   };
 
   template <class G>
-  struct MutableGraph_concept
+  struct MutableGraphConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
@@ -222,11 +222,11 @@ namespace boost {
   };
 
   template <class G>
-  struct MutablePropertyGraph_concept
+  struct MutablePropertyGraphConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      REQUIRE(G, MutableGraph);
+      BOOST_FUNCTION_REQUIRES(G, MutableGraphConcept);
       v = add_vertex(vp, g);
       p = add_edge(u, v, ep, g);
     }
@@ -238,11 +238,11 @@ namespace boost {
   };
 
   template <class G>
-  struct AdjacencyMatrix_concept
+  struct AdjacencyMatrixConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      REQUIRE(G, Graph);
+      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
       
       p = edge(u, v, g);
       const_constraints(g);
@@ -256,14 +256,14 @@ namespace boost {
   };
 
   template <class G, class X, class Property>
-  struct PropertyGraph_concept
+  struct PropertyGraphConcept
   {
     typedef typename property_map<G, Property>::type Map;
     typedef typename property_map<G, Property>::const_type const_Map;
     void constraints() {
-      REQUIRE(G, Graph);
-      REQUIRE2(Map, X, ReadWritePropertyMap);
-      REQUIRE2(const_Map, X, ReadablePropertyMap);
+      BOOST_FUNCTION_REQUIRES(G, GraphConcept);
+      BOOST_FUNCTION_REQUIRES2(Map, X, ReadWritePropertyMapConcept);
+      BOOST_FUNCTION_REQUIRES2(const_Map, X, ReadablePropertyMapConcept);
 
       Map pmap = get(Property(), g);
       pval = get(Property(), g, x);
@@ -282,7 +282,7 @@ namespace boost {
 
   // This needs to move out of the graph library
   template <class B>
-  struct Buffer_concept
+  struct BufferConcept
   {
     void constraints() {
       b.push(t);
@@ -304,11 +304,11 @@ namespace boost {
   };
 
   template <class C>
-  struct ColorValue_concept
+  struct ColorValueConcept
   {
     void constraints() {
-      REQUIRE(C, EqualityComparable);
-      REQUIRE(C, DefaultConstructible);
+      BOOST_FUNCTION_REQUIRES(C, EqualityComparableConcept);
+      BOOST_FUNCTION_REQUIRES(C, DefaultConstructibleConcept);
 
       c = white(c);
       c = gray(c);

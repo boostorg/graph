@@ -91,11 +91,12 @@ namespace boost {
     typename graph_traits<IncidenceGraph>::vertex_descriptor s, 
     Buffer& Q, BFSVisitor vis, ColorMap color)
   {
-    REQUIRE(IncidenceGraph, IncidenceGraph);
-    typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
-    REQUIRE2(BFSVisitor, IncidenceGraph, BFSVisitor);
-    REQUIRE2(ColorMap, Vertex, ReadWritePropertyMap);
+    BOOST_FUNCTION_REQUIRES(IncidenceGraph, IncidenceGraphConcept);
+    typedef graph_traits<IncidenceGraph> GTraits;
+    typedef typename GTraits::vertex_descriptor Vertex;
+    typedef typename GTraits::edge_descriptor Edge;
+    BOOST_FUNCTION_REQUIRES2(BFSVisitor, IncidenceGraph, BFSVisitorConcept);
+    BOOST_FUNCTION_REQUIRES2(ColorMap, Vertex, ReadWritePropertyMapConcept);
     typename property_traits<ColorMap>::value_type c = get(color, s);
 
     put(color, s, gray(c));
@@ -105,7 +106,7 @@ namespace boost {
       Vertex u = Q.top();
       Q.pop(); // pop before push to avoid problem if Q is priority_queue.
       vis.discover_vertex(u, g);
-      typename boost::graph_traits<IncidenceGraph>::out_edge_iterator
+      typename boost::GTraits::out_edge_iterator
         ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Edge e = *ei;
