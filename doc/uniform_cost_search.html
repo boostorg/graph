@@ -81,14 +81,23 @@
 </PRE>
 
 <P>
-This is a generalized version of <a
-href="./dijkstra_shortest_paths.html">Dijkstra's single-source
-shortest paths</a> algorithm. In Dijkstra's algorithm the ``cost'' is
-the edge weight. With <TT>uniform_cost_search()</TT> the user supplies
-the meaning of ``cost'' through the <TT>compare</TT> and
-<tt>combine</tt> function objects. For Dijkstra's algorithm
-<TT>compare</tt> is <tt>std::less&lt;D&gt;</TT> and
-<tt>combine</tt> is <tt>std::plus&lt;W&gt;</tt>.
+This function solves a generalized version of the single-source
+shortest paths problem. In particular, the algorithm used is a
+generalized version of <a href="./dijkstra_shortest_paths.html">
+Dijkstra's single-source shortest paths</a> algorithm.  In Dijkstra's
+algorithm the ``cost'' is the edge weight. With
+<TT>uniform_cost_search()</TT> the user supplies the meaning of
+``cost'' through the <TT>compare</TT> and <tt>combine</tt> function
+objects. For Dijkstra's algorithm <TT>compare</tt> is
+<tt>std::less&lt;D&gt;</TT> and <tt>combine</tt> is
+<tt>std::plus&lt;W&gt;</tt>.
+
+<p>If you want to solve the single-source shortest paths problem for
+integer edge weights, where all edge weights are equal to 1, then use
+<a href="./breadth_first_search.html">
+<tt>breadth_first_search()</tt></a> instead (it is faster) with a <a
+href="./distance_recorder.html"><tt>distance_recorder</tt></a>.
+
 
 <P>
 <TT>uniform_cost_search()</TT> does not initialize the distance
@@ -130,19 +139,19 @@ href="./breadth_first_search.html"><TT>breadth_first_search()</TT></a>.
 
 <UL>
 <LI>The graph type must be a model of <a
-href="./VertexListGraph.html">VertexListGraph</a>.
+href="./VertexListGraph.html">Vertex List Graph</a>.
 
 <P>
 </LI>
 <LI>The <TT>BinaryPredicate</TT> type must be a model of <a
-      href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>
+      href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary Predicate</a>
       and have argument types that match the value type of the
       <TT>DistanceMap</TT> property map.
 
 <P>
 </LI>
 <LI>The <TT>BinaryFunction</TT> type must be a model of <a
-     href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>. The first argument type of the binary function must match the value
+     href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary Function</a>. The first argument type of the binary function must match the value
       type of the <TT>DistanceMap</TT> property map and the second
       argument type must match the value type of the <TT>WeightMap</TT>
       property map.  The result type must be the same type as the
@@ -151,18 +160,18 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <P>
 </LI>
 <LI>In version (1) the graph must be a <a
-    href="./PropertyGraph.html">PropertyGraph</a> for
+    href="./PropertyGraph.html">Property Graph</a> for
     <TT>vertex_distance_t</TT> where the property map for the graph
     meets the same requirements as for <TT>DistanceMap</TT>. The graph
     must also be a <a
-    href="./PropertyGraph.html">PropertyGraph</a> for
+    href="./PropertyGraph.html">Property Graph</a> for
     <TT>edge_weight_t</TT> where the property map for the grpah
     meets the same requirements for <TT>WeightMap</TT> below.
 
 <P>
 </LI>
 <LI>In version (1) and (2) the graph must be a <a
-    href="./PropertyGraph.html">PropertyGraph</a> for
+    href="./PropertyGraph.html">Property Graph</a> for
     <TT>vertex_color_t</TT> and <TT>vertex_index_t</TT>, where the property
     map for the graph meet the same requirements as for
     <TT>ColorMap</TT> and <TT>VertexIndexMap</TT> below.
@@ -170,36 +179,38 @@ href="./VertexListGraph.html">VertexListGraph</a>.
 <P>
 </LI>
 <LI><a name="DistanceMap">The type <TT>DistanceMap</TT> must be a model of <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+    href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a>. The
     vertex descriptor type of the graph needs to be usable as the key
     type of the distance map.</a>
 
 <P>
 </LI>
 <LI><a name="WeightMap">The type <TT>WeightMap</TT> must be a model of <a
-     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
+     href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The
      edge descriptor type of the graph needs to be usable as the key
      type for the weight map.</a>
 
 <P>
 </LI>
 <LI><a name="ColorMap">The type <TT>ColorMap</TT> must be a model of <a
-     href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. A
+     href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a>. A
      vertex descriptor must be usable as the key type of the map,
      and the value type of the map must be a model of
-     <a href="./ColorValue.html">ColorValue</a>.</a>
+     <a href="./ColorValue.html">Color Value</a>.</a>
 
 <P>
 </LI>
-<LI><a name="VertexIndexMap>" type <TT The>VertexIndexMap</TT> must be a model of <a
-     href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. The
-     value type of <TT>VertexIndexMap</TT> must be an integer type. The vertex
+<LI><a name="VertexIndexMap"> The type <TT>VertexIndexMap</TT> must be
+     a model of <a href="../../property_map/ReadablePropertyMap.html">
+     Readable Property Map</a>. The value type of
+     <TT>VertexIndexMap</TT> must be an integer type. The vertex
      descriptor type of the graph needs to be usable as the key type
      of the index map.</a>
 
 <P>
 </LI>
-<LI>The type <TT>UniformCostVisitor</TT> must be a model of <a href="./UniformCostVisitor.html">UniformCostVisitor</a>.
+<LI>The type <TT>UniformCostVisitor</TT> must be a model of <a
+href="./UniformCostVisitor.html">Uniform Cost Visitor</a>.
 </LI>
 </UL>
 
