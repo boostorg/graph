@@ -52,8 +52,8 @@ main()
   typedef adjacency_list<vecS, vecS, undirectedS, 
     VertexPlugin, EdgePlugin> Graph;
 
-  typedef Graph::vertex_descriptor Vertex;
-  typedef Graph::edge_descriptor Edge;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::edge_descriptor Edge;
 
   typedef map<string, Vertex> NameVertexMap;
   NameVertexMap actors;
@@ -106,7 +106,7 @@ main()
   }
 
   {
-    Graph::edge_iterator i, end;
+    graph_traits<Graph>::edge_iterator i, end;
     for (tie(i, end) = edges(g); i != end; ++i)
       cout << actor_name[source(*i, g)] << " was in "
 	   << connecting_movie[*i] << " with "
@@ -131,8 +131,8 @@ main()
        make_ucs_visitor(record_predecessors(predecessor.begin(), 
 					    on_edge_relaxed())));
 
-    Graph::vertex_iterator i, end;
-    for (tie(i,end) = vertices(g); i != end; ++i)
+    graph_traits<Graph>::vertex_iterator i, end;
+    for (tie(i, end) = vertices(g); i != end; ++i)
       cout << actor_name[*i] << "'s bacon number is " 
 	   << bacon_number[*i] << endl;
 
