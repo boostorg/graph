@@ -49,7 +49,7 @@ public:
     current_vertex = u;
     // Ensure that the distances monotonically increase.
     BOOST_TEST_ASSERT( distance[u] == current_distance
-		       || distance[u] == current_distance + 1 );
+                       || distance[u] == current_distance + 1 );
     if (distance[u] == current_distance + 1) // new level
       ++current_distance;
   }
@@ -82,9 +82,9 @@ public:
     else {
       // cross edge (or going backwards on a tree edge)
       BOOST_TEST_ASSERT(distance[target(e, g)] == distance[source(e, g)] 
-			|| distance[target(e, g)] == distance[source(e, g)] + 1
-			|| distance[target(e, g)] == distance[source(e, g)] - 1
-			);
+                        || distance[target(e, g)] == distance[source(e, g)] + 1
+                        || distance[target(e, g)] == distance[source(e, g)] - 1
+                        );
     }
   }
 
@@ -98,7 +98,7 @@ public:
     // All vertices adjacent to a black vertex must already be discovered
     typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g); 
-	 ai != ai_end; ++ai)
+         ai != ai_end; ++ai)
       BOOST_TEST_ASSERT( color[*ai] != Color::white() );
   }
   void finish_vertex(const Vertex& u, const Graph& ) const {
@@ -132,41 +132,39 @@ struct bfs_test
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
-	Graph g;
-	generate_random_graph(g, i, j);
+        Graph g;
+        generate_random_graph(g, i, j);
 
-	// declare the "start" variable
-	vertex_descriptor start = boost::random_vertex(g);
+        // declare the "start" variable
+        vertex_descriptor start = boost::random_vertex(g);
 
-	// vertex properties
-	std::vector<int> distance(i, std::numeric_limits<int>::max());
-	distance[start] = 0;
-	std::vector<vertex_descriptor> parent(i);
-	for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-	  parent[*ui] = *ui;
-	std::vector<boost::default_color_type> color(i);
+        // vertex properties
+        std::vector<int> distance(i, std::numeric_limits<int>::max());
+        distance[start] = 0;
+        std::vector<vertex_descriptor> parent(i);
+        for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+          parent[*ui] = *ui;
+        std::vector<boost::default_color_type> color(i);
 
-	// Create the testing visitor.
-	bfs_testing_visitor<int*,vertex_descriptor*,Graph,
-	  boost::default_color_type*> 
-	  visitor(start, distance.begin(), parent.begin(), color.begin());
+        // Create the testing visitor.
+        bfs_testing_visitor<int*,vertex_descriptor*,Graph,
+          boost::default_color_type*> 
+          visitor(start, distance.begin(), parent.begin(), color.begin());
 
-	boost::breadth_first_search(g, start, visitor, &color[0]);
-	
-	// All white vertices should be unreachable from the source.
-	for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-	  if (color[*ui] == Color::white()) {
-	    std::vector<boost::default_color_type> color2(i, Color::white());
-	    BOOST_TEST_ASSERT(!boost::is_reachable(start, *ui, g, &color2[0]));
-	  }
+        boost::breadth_first_search(g, start, visitor, &color[0]);
+        
+        // All white vertices should be unreachable from the source.
+        for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+          if (color[*ui] == Color::white()) {
+            std::vector<boost::default_color_type> color2(i, Color::white());
+            BOOST_TEST_ASSERT(!boost::is_reachable(start, *ui, g, &color2[0]));
+          }
 
-	// The shortest path to a child should be one longer than
-	// shortest path to the parent.
-	for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
-	  if (parent[*ui] != *ui) // *ui not the root of the bfs tree
-	    BOOST_TEST_ASSERT(distance[*ui] == distance[parent[*ui]] + 1);
-
-	
+        // The shortest path to a child should be one longer than
+        // shortest path to the parent.
+        for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+          if (parent[*ui] != *ui) // *ui not the root of the bfs tree
+            BOOST_TEST_ASSERT(distance[*ui] == distance[parent[*ui]] + 1);
       }
   }
 };
