@@ -118,7 +118,7 @@ namespace boost {
   get_property_iter_range(Graph& graph, const Tag& tag)
   {
     typedef typename property_kind<Tag>::type Kind;
-    return get_property_iter_range_kind(graph, tag, Kind());
+    return detail::get_property_iter_range_kind(graph, tag, Kind());
   }
 
   template<class Graph, class Tag>
@@ -126,7 +126,7 @@ namespace boost {
   get_property_iter_range(const Graph& graph, const Tag& tag)
   {
     typedef typename property_kind<Tag>::type Kind;
-    return get_property_iter_range_kind(graph, tag, Kind());
+    return detail::get_property_iter_range_kind(graph, tag, Kind());
   }
 
 } // namespace boost

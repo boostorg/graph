@@ -131,7 +131,7 @@ struct GraphParser
                                                 nodes.push_back( add_vertex(vp, *graph) );
                                         }
                                         else
-                                                cerr<<"read vertex, parse error at line"<<numLine<<endl;
+                                                std::cerr<<"read vertex, parse error at line"<<numLine<<std::endl;
                                 }
                                 else if( state == PARSE_EDGE ) {
                                         int source, target;
@@ -144,7 +144,7 @@ struct GraphParser
                                                 add_edge(nodes[source], nodes[target], ep, *graph);
                                         }
                                         else
-                                                cerr<<"read edge, parse error at line"<<numLine<<endl;
+                                                std::cerr<<"read edge, parse error at line"<<numLine<<std::endl;
                                 }
                                 else { // state == PARSE_NUM_NODES
                                         int n;
@@ -153,7 +153,7 @@ struct GraphParser
                                                         nodes.push_back( add_vertex( *graph ));
                                         }
                                         else 
-                                                cerr<<"read num_nodes, parse error at line "<< numLine << endl;
+                                                std::cerr<<"read num_nodes, parse error at line "<< numLine << std::endl;
                                 }
                         }
                 }
@@ -235,14 +235,14 @@ struct EdgePrinter
 
                 // write edges
                 PropertyPrinter<Graph, EdgeProperty> print_Edge(graph);
-                out << "e" << endl;
+                out << "e" << std::endl;
                 graph_traits<Graph>::edge_iterator ei;
                 for (ei = edges(graph).first; ei != edges(graph).second; ++ei){
                         out << indices[source(*ei,graph)] <<  " " << indices[target(*ei,graph)] << "  "; 
                         print_Edge(out,ei); 
-                        out << endl;
+                        out << std::endl;
                 }
-                out << endl;            
+                out << std::endl;            
                 return (*this);
         }
         
@@ -262,11 +262,11 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
                 PropertyPrinter<Graph, V> printNode(graph);
-                out << "v"<<endl;
+                out << "v"<<std::endl;
                 graph_traits<Graph>::vertex_iterator vi;
                 for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
                         printNode(out,vi); 
-                        out << endl;
+                        out << std::endl;
                 }
                 
                 EdgePrinter<Graph,E>::operator ()( out );
@@ -284,7 +284,7 @@ struct GraphPrinter<G,no_property,E>
         
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
-                out << "n "<< num_vertices(graph) << endl;
+                out << "n "<< num_vertices(graph) << std::endl;
                 EdgePrinter<Graph,E>::operator ()( out );
                 return (*this);
         }
