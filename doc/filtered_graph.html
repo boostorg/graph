@@ -424,6 +424,22 @@ graph <tt>g</tt>.
 
 <hr>
 
+<pre>
+template &lt;typename G, typename EP, typename VP&gt;
+std::pair&lt;out_edge_iterator, out_edge_iterator&gt;
+edge_range(vertex_descriptor u, vertex_descriptor v,
+	   const filtered_graph&amp; g)
+</pre>
+Returns a pair of out-edge iterators that give the range for all the
+parallel edges from <tt>u</tt> to <tt>v</tt>. This function only works
+when the underlying graph supports <tt>edge_range</tt>, which requires
+that it sorts its out edges according to target vertex and allows
+parallel edges. The <tt>adjacency_list</tt> class with
+<tt>OutEdgeList=multisetS</tt> is an example of such a graph.
+
+
+<hr>
+
 <h4>Property Map Access</h4>
 
 <hr>
