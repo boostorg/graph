@@ -397,6 +397,7 @@ namespace boost {
     typedef typename property_map<G, Property>::type Map;
     void constraints() {
       function_requires< ReadablePropertyGraphConcept<G, X, Property> >();
+      function_requires< LvaluePropertyMapConcept<Map, X> >();
       function_requires< Mutable_LvaluePropertyMapConcept<Map, X> >();
 
       Map pmap = get(Property(), g);
