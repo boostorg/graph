@@ -23,6 +23,15 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+// The mutating functions (add_edge, etc.) were added by Vladimir Prus.
+
+// Copyright (C) 2001 Vladimir Prus <ghost@cs.msu.su>
+// Permission to copy, use, modify, sell and distribute this software is
+// granted, provided this copyright notice appears in all copies and 
+// modified version are clearly marked as such. This software is provided
+// "as is" without express or implied warranty, and with no claim as to its
+// suitability for any purpose.
+
 #ifndef BOOST_VECTOR_AS_GRAPH_HPP
 #define BOOST_VECTOR_AS_GRAPH_HPP
 
@@ -67,9 +76,9 @@ namespace boost {
   {
     typedef typename EdgeList::value_type V;
     typedef V vertex_descriptor;
-    typedef typename detail::val_edge<EdgeList>::RET edge_descriptor;
+    typedef typename detail::val_edge<EdgeList>::type edge_descriptor;
     typedef typename EdgeList::const_iterator adjacency_iterator;
-    typedef typename detail::val_out_edge_iter<EdgeList>::RET
+    typedef typename detail::val_out_edge_iter<EdgeList>::type
       out_edge_iterator;
     typedef typename integer_range<V>::iterator vertex_iterator;
     typedef directed_tag directed_category;
@@ -92,7 +101,7 @@ namespace boost {
     struct val_edge
     {
       typedef typename EdgeList::value_type V;
-      typedef std::pair<V,V> RET;
+      typedef std::pair<V,V> type;
     };
 
     // need rewrite this using boost::iterator_adaptor
@@ -120,26 +129,26 @@ namespace boost {
     {
       typedef typename EdgeList::value_type V;
       typedef typename EdgeList::const_iterator Iter;
-      typedef val_out_edge_iterator<V,Iter> RET;
+      typedef val_out_edge_iterator<V,Iter> type;
     };
 
     template <class EdgeList>
     struct val_out_edge_ret
     {
-      typedef typename val_out_edge_iter<EdgeList>::RET IncIter;
-      typedef std::pair<IncIter,IncIter> RET;
+      typedef typename val_out_edge_iter<EdgeList>::type IncIter;
+      typedef std::pair<IncIter,IncIter> type;
     };
 
   } // namesapce detail
 
   template <class EdgeList, class Alloc>
-  typename detail::val_out_edge_ret<EdgeList>::RET
+  typename detail::val_out_edge_ret<EdgeList>::type
   out_edges(typename EdgeList::value_type v, 
             const std::vector<EdgeList, Alloc>& g)
   {
-    typedef typename detail::val_out_edge_iter<EdgeList>::RET Iter;
-    typedef typename detail::val_out_edge_ret<EdgeList>::RET RET;
-    return RET(Iter(v, g[v].begin()), Iter(v, g[v].end()));
+    typedef typename detail::val_out_edge_iter<EdgeList>::type Iter;
+    typedef typename detail::val_out_edge_ret<EdgeList>::type return_type;
+    return return_type(Iter(v, g[v].begin()), Iter(v, g[v].end()));
   }
 
   template <class EdgeList, class Alloc>
@@ -178,6 +187,97 @@ namespace boost {
   num_vertices(const std::vector<EdgeList, Alloc>& v)
   {
     return v.size();
+  }
+
+  template<class EdgeList, class Allocator>
+  typename std::pair<detail::val_edge<EdgeList>::type, bool>
+  add_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
+           std::vector<EdgeList, Allocator>& g)
+  {
+    typedef detail::val_edge<EdgeList>::type edge_type;
+    g[u].insert(g[u].end(), v);
+    return std::make_pair(edge_type(u, v), true);
+  }
+
+  template<class EdgeList, class Allocator>
+  void
+  remove_edge(typename EdgeList::value_type u, typename EdgeList::value_type v,
+              std::vector<EdgeList, Allocator>& g)
+  {
+    typename EdgeList::iterator i = remove(g[u].begin(), g[u].end(), v);
+    if (i != g[u].end())
+      g[u].erase(i, g[u].end());
+  }
+
+  template<class EdgeList, class Allocator>
+  void
+  remove_edge(typename detail::val_edge<EdgeList>::type e,
+              std::vector<EdgeList, Allocator>& g)
+  {
+    typename EdgeList::value_type u, v;
+    u = e.first;
+    v = e.second;
+    // FIXME: edge type does not fully specify the edge to be deleted
+    typename EdgeList::iterator i = remove(g[u].begin(), g[u].end(), v);
+    if (i != g[u].end())
+      g[u].erase(i, g[u].end());  
+  }
+
+  template<class EdgeList, class Allocator, class Predicate>
+  void
+  remove_edge_if(Predicate p, 
+                 std::vector<EdgeList, Allocator>& g)
+  {
+    for (size_t u = 0; u < g.size(); ++u) { 
+      // Oops! gcc gets internal compiler error on compose_.......
+
+      typedef typename EdgeList::iterator iterator;
+      iterator b = g[u].begin(), e = g[u].end();
+
+      if (!g[u].empty()) {
+
+        for(; b != e;) {
+          if (p(std::make_pair(u, *b))) {
+            --e;
+            if (b == e)
+              break;
+            else
+              iter_swap(b, e);            
+          } else {
+            ++b;
+          }
+        }     
+      }
+
+      if (e != g[u].end())
+        g[u].erase(e, g[u].end());
+    }
+  }
+
+  template<class EdgeList, class Allocator>
+  typename EdgeList::value_type
+  add_vertex(std::vector<EdgeList, Allocator>& g)
+  {
+    g.resize(g.size()+1);
+    return g.size()-1;
+  }
+
+  template<class EdgeList, class Allocator>
+  void
+  clear_vertex(typename EdgeList::value_type u,
+               std::vector<EdgeList, Allocator>& g)
+  {
+    g[u].clear();
+    for (size_t i = 0; i < g.size(); ++i)
+      remove_edge(i, u, g);
+  }
+
+  template<class EdgeList, class Allocator>
+  void
+  remove_vertex(typename EdgeList::value_type u,
+                std::vector<EdgeList, Allocator>& g)
+  {
+    assert(!"implemented");
   }
 
 } // namespace boost
