@@ -28,7 +28,7 @@ LDFLAAGS	=
 
 LIBS		=
 
-AR		= /usr/local/gnu/bin/ar
+AR		= ar
 
 
 default: libbgl-viz.a libbgl-viz.so
