@@ -32,6 +32,10 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
+#ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
+using namespace boost;
+#endif
+
 template <typename DistanceMap, typename ParentMap, 
           typename Graph, typename ColorMap>
 class bfs_testing_visitor
@@ -139,7 +143,7 @@ struct bfs_test
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
         Graph g;
-        generate_random_graph(g, i, j, gen);
+        boost::generate_random_graph(g, i, j, gen);
 
         // declare the "start" variable
         vertex_descriptor start = boost::random_vertex(g, gen);
