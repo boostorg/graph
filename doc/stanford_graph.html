@@ -186,7 +186,11 @@ used "as is" in the context of BGL.
 Model Of
 </H3>
 
-<a href="./VertexListGraph.html">VertexListGraph</a>
+<a href="./VertexListGraph.html">Vertex List Graph</a> and <a
+href="./PropertyGraph.html">Property Graph</a>.  The set of property
+tags that can be used with the SGB graph is described in the <a
+href="#properties">Vertex and Edge Properties</a> section below.
+
 
 <H3><a name="sec:Example"></a>
 Example
@@ -210,11 +214,18 @@ Associated Types
 
 <tt>graph_traits&lt;Graph*&gt;::vertex_descriptor</tt><br><br>
 The type for the vertex descriptors associated with the <tt>Graph*</tt>.
+We use the type <tt>Vertex*</tt> as the vertex descriptor.
 
 <hr>
 
-<tt>graph_traits&lt;Graph*&gt;::edge_descriptor</tt><br><br>
-The type for the edge descriptors associated with the <tt>Graph*</tt>.
+<tt>graph_traits&lt;Graph*&gt;::edge_descriptor</tt><br><br> The type
+for the edge descriptors associated with the <tt>Graph*</tt>.  This is
+the type <tt>boost::sgb_edge</tt>. In addition to supporting all the
+required operations of a BGL edge descriptor, the
+<tt>boost::sgb_edge</tt> class has the following constructor.
+<pre>
+   sgb_edge::sgb_edge(Arc* arc, Vertex* source)
+</pre>
 
 <hr>
 
@@ -345,6 +356,80 @@ vertex_descriptor
 vertex(vertices_size_type&nbsp;n, Graph*&nbsp;g)
 </pre>
 Returns the (0-based) nth vertex in the graph's vertex list.
+
+<hr>
+
+<pre>
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
+property_map&lt;Graph*, PropertyTag&gt;::type
+get(PropertyTag, Graph*&amp; g)
+
+template &lt;class <a href="./PropertyTag.html">PropertyTag</a>&gt;
+property_map&lt;Graph*, Tag&gt;::const_type
+get(PropertyTag, const Graph*&amp; g)
+</pre>
+Returns the property map object for the vertex property specified by
+<TT>PropertyTag</TT>. The <TT>PropertyTag</TT> must be one of
+the described below.
+
+<hr>
+
+<h3><a name="properties">Vertex and Edge Properties</a></h3>
+
+The SGB <tt>Vertex</tt> and <tt>Arc</tt> structures provide
+&quot;utility&quot; fields for storing extra information.  We provide
+BGL wrappers that provide access to these fields through <a
+href="../../property_map/property_map.html">property maps</a>.  In
+addition, vertex index and edge length maps are provided. A property
+map object can be obtained from a SGB <tt>Graph*</tt> using the
+<tt>get()</tt> function described in the <a
+href="./PropertyGraph.html">Property Graph</a> concept.
+
+<p>
+The following list of property tags can be used to specify which
+utility field you would like a property map for.
+</p>
+
+<pre>
+<i>// vertex properties</i>
+template &lt;class T&gt; u_property;
+template &lt;class T&gt; v_property;
+template &lt;class T&gt; w_property;
+template &lt;class T&gt; x_property;
+template &lt;class T&gt; y_property;
+template &lt;class T&gt; z_property;
+
+<i>// edge properties</i>
+template &lt;class T&gt; a_property;
+template &lt;class T&gt; b_property;
+</pre>
+
+<p>
+The template parameter <tt>T</tt> for these tags is limited to the
+types in the <tt>util</tt> union declared in the SGB header
+<tt>gb_graph.h</tt>, which are <tt>Vertex*</tt>, <tt>Arc*</tt>,
+<tt>Graph*</tt>, <tt>char*</tt>, and <tt>long</tt>. The property maps
+for the utility fields are models of <a
+href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+Map</a>.
+</p>
+
+<p>
+The property map for vertex indices can be obtained using the
+<tt>vertex_index_t</tt> tag, and this property map is a <a
+href="../../property_map/ReadablePropertyMap.html">Readable Property
+Map</a>. A property map for edge length's can be obtained using the
+<tt>edge_length_t</tt> tag, and this property map is a <a
+href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+Map</a> whose value type is <tt>long</tt>.
+</p>
+
+<p>
+Property map objects can be obtained via the <tt>get()</tt> function
+of the Property Graph concept. The type of the property map is given
+by the <a href="./property_map.html"><tt>property_map</tt></a> traits
+class.</p>
+
 
 <HR>
 <TABLE>
