@@ -1,3 +1,28 @@
+//=======================================================================
+// Copyright 2001 University of Notre Dame.
+// Author: Jeremy G. Siek
+//
+// This file is part of the Boost Graph Library
+//
+// You should have received a copy of the License Agreement for the
+// Boost Graph Library along with the software; see the file LICENSE.
+// If not, contact Office of Research, University of Notre Dame, Notre
+// Dame, IN 46556.
+//
+// Permission to modify the code and to distribute modified code is
+// granted, provided the text of this NOTICE is retained, a notice that
+// the code was modified is included with the above COPYRIGHT NOTICE and
+// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
+// file is distributed with the modified code.
+//
+// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
+// By way of example, but not limitation, Licensor MAKES NO
+// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
+// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
+// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
+// OR OTHER RIGHTS.
+//=======================================================================
+
 #ifndef BOOST_SUBGRAPH_HPP
 #define BOOST_SUBGRAPH_HPP
 
@@ -16,8 +41,10 @@ namespace boost {
   struct subgraph_tag { };
 
   // Invariants:
-  //   If vertex u is in subgraph g, then u must be in g.parent().
-  //   If edge e is in subgraph e, then e must be in g.parent().
+  //   - If vertex u is in subgraph g, then u must be in g.parent().
+  //   - If edge e is in subgraph e, then e must be in g.parent().
+  //   - If edge e=(u,v) is in the root graph, then edge e
+  //     is also in any subgraph that contains both vertex u and v.
 
   // The Graph template parameter must have a vertex_index 
   // and edge_index internal property. It is assumed that
@@ -31,10 +58,10 @@ namespace boost {
     typedef graph_traits<Graph> Traits;
   public:
     // Graph requirements
-    typedef typename Traits::vertex_descriptor          vertex_descriptor;
-    typedef typename Traits::edge_descriptor            edge_descriptor;
-    typedef typename Traits::directed_category          directed_category;
-    typedef typename Traits::edge_parallel_category     edge_parallel_category;
+    typedef typename Traits::vertex_descriptor         vertex_descriptor;
+    typedef typename Traits::edge_descriptor           edge_descriptor;
+    typedef typename Traits::directed_category         directed_category;
+    typedef typename Traits::edge_parallel_category    edge_parallel_category;
 
     // IncidenceGraph requirements
     typedef typename Traits::out_edge_iterator         out_edge_iterator;
@@ -56,6 +83,7 @@ namespace boost {
     typedef typename Graph::edge_property_type         edge_property_type;
     typedef typename Graph::vertex_property_type       vertex_property_type;
     typedef subgraph_tag                               graph_tag;
+    typedef Graph                                      graph_type;
     
     // Constructors
 
@@ -72,6 +100,18 @@ namespace boost {
 	m_edge_counter(0)
     {
       m_parent->add_child(this);
+    }
+    // Create a subgraph with the specified vertex set.
+    template <typename VertexIterator>
+    subgraph(subgraph<Graph>& parent,
+             VertexIterator first, VertexIterator last)
+      : m_parent(&parent), 
+        m_vertex_membership(num_vertices(parent.m_graph), false),
+        m_local_vertex(num_vertices(parent)),
+	m_edge_counter(0)
+    {
+      for (; first != last; ++first)
+	add_vertex(*first, *this);
     }
 
     // local <-> global descriptor conversion functions
@@ -122,9 +162,9 @@ namespace boost {
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
 
-    std::vector<edge_index_type> m_global_edge;           // local -> global
+    std::vector<edge_index_type> m_global_edge;              // local -> global
     std::map<edge_index_type, edge_index_type> m_local_edge; // global -> local
-    edge_index_type m_edge_counter;
+    edge_index_type m_edge_counter; // for generating unique edge indices
 
     edge_descriptor
     local_add_edge(vertex_descriptor u_local, vertex_descriptor v_local,  
@@ -344,6 +384,7 @@ namespace boost {
 
   namespace detail {
 
+    //-------------------------------------------------------------------------
     // implementation of remove_edge(u,v,g)
 
     template <typename Vertex, typename Graph>
@@ -382,6 +423,7 @@ namespace boost {
         remove_edge_recur_up(u_global, v_global, *g.m_parent);
     }
 
+    //-------------------------------------------------------------------------
     // implementation of remove_edge(e,g)
 
     template <typename Edge, typename Graph>
@@ -489,35 +531,106 @@ namespace boost {
   //===========================================================================
   // Functions required by the PropertyGraph concept 
 
+  template <typename Graph, typename Property, typename Key>
+  class subgraph_property_map 
+    : public put_get_at_helper< 
+        typename property_traits<
+           typename property_map<Graph, Property>::type
+         >::value_type,
+        subgraph_property_map<Graph, Property, Key> >
+  {
+    typedef typename property_map<Graph, Property>::type PropertyMap;
+  public:
+    typedef typename property_traits<PropertyMap>::value_type value_type;
+    typedef Key key_type;
+
+    subgraph_property_map() { }
+
+    subgraph_property_map(subgraph<Graph>& g)
+      : m_g(&g), m_pmap(get(Property, g.root())) { }
+    
+    inline value_type& operator[](key_type e_local) {
+      if (m_g->m_parent == 0)
+	return m_pmap[e_local];
+      else
+	return m_pmap[m_g->local_to_global(e_local)];
+    }
+    inline const value_type& operator[](key_type e_local) const {
+      if (m_g->m_parent == 0)
+	return m_pmap[e_local];
+      else
+	return m_pmap[m_g->local_to_global(e_local)];
+    }
+    subgraph<Graph>* m_g;
+    ProperyMap m_pmap;
+  };
+
+  namespace detail {
+
+    struct subgraph_vertex_property_selector {
+      template <class Graph, class Property, class Tag>
+      struct bind {
+	typedef subgraph_property_map<typename Graph::graph_type, Property,
+	  typename Graph::vertex_descriptor> type;
+	typedef type const_type;
+      };
+    };
+
+    struct subgraph_edge_property_selector {
+      template <class Graph, class Property, class Tag>
+      struct bind {
+	typedef subgraph_property_map<typename Graph::graph_type, Property,
+	  typename Graph::edge_descriptor> type;
+	typedef type const_type;
+      };
+    };
+        
+  } // namespace detail
+
+  template <>
+  struct vertex_property_selector<subgraph_tag> {
+    typedef detail::subgraph_vertex_property_selector type;
+  };
+
+  template <>
+  struct edge_property_selector<subgraph_tag> {
+    typedef detail::subgraph_edge_property_selector type;
+  };
+
   template <typename G, typename Property>
   typename property_map<G, Property>::type
-  get(Property p, subgraph<G>& g)
+  get(Property, subgraph<G>& g)
   {
-    return get(p, g.m_graph);
+    typedef typename property_map<G, Property>::type PMap;
+    return PMap(g);
   }
 
   template <typename G, typename P,typename Property>
   typename property_map<G, Property>::const_type
-  get(Property p, const subgraph<G>& g)
+  get(Property, const subgraph<G>& g)
   {
-    return get(p, g.m_graph);
+    typedef typename property_map<G, Property>::const_type PMap;
+    return PMap(g);
   }
 
   template <typename G, typename Property, typename Key>
   typename property_traits<
     typename property_map<G, Property>::const_type
   >::value_type
-  get(Property p, const subgraph<G>& g, const Key& k)
+  get(Property, const subgraph<G>& g, const Key& k)
   {
-    return get(p, g.m_graph, k);
+    typedef typename property_map<G, Property>::const_type PMap;
+    PMap pmap(g);
+    return pmap[k];
   }
 
   template <typename G, typename Property, typename Key, typename Value>
   void
-  put(Property p, const subgraph<G>& g, const Key& k,
-      const Value& val)
+  put(Property, const subgraph<G>& g, const Key& k, const Value& val)
   {
-    put(p, g.m_graph, k, val);
+    typedef typename property_map<G, Property>::const_type PMap;
+    PMap pmap(g);
+    pmap[k] = val;
   }
 
   
