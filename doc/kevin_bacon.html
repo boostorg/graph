@@ -80,14 +80,14 @@ it. We use a <TT>std::ifstream</TT> to input the file.
 <PRE>
   std::ifstream datafile("./kevin-bacon.dat");
   if (!datafile) {
-    cerr &lt;&lt; "No ./kevin-bacon.dat file" &lt;&lt; endl;
+    std::cerr &lt;&lt; "No ./kevin-bacon.dat file" &lt;&lt; std::endl;
     return EXIT_FAILURE;
   }
 </PRE>
 
 <P>
 We will want to attach the actor's names to the vertices in the graph,
-and the movie names to the edgesWe use the <TT>property</TT> class to
+and the movie names to the edges. We use the <TT>property</TT> class to
 specify the addition of these vertex and edge properties to the graph.
 We choose to use an undirected graph, because the relationship of
 actors appearing together in a movie is symmetric.
@@ -305,9 +305,17 @@ Steve Martin's bacon number is 1
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
 </HTML> 
+<!--  LocalWords:  gif Hesburgh Ginelli Fass Erd vertices cerr namespace vecS
+ -->
+<!--  LocalWords:  undirectedS Tokenizer sep tokenizer toks NameVertexMap pos
+ -->
+<!--  LocalWords:  bool Erdos BFS typename DistanceMap bfs const num BGL src
+ -->
+<!--  LocalWords:  indices Shatner's Richards's siek htm
+ -->
