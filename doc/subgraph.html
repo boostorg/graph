@@ -94,7 +94,7 @@ Next we create two empty subgraph objects, specifying <tt>G0</tt> as
 their parent.
 
 <pre>
-Graph G1(G0), G2(G0);
+Graph& G1 = G0.create_subgraph(), G2 = G0.create_subgraph();
 enum { A1, B1, C2 }; // for conveniently refering to vertices in G1
 enum { A2, B2 };     // for conveniently refering to vertices in G2
 </pre>
@@ -114,7 +114,7 @@ add_vertex(A, G2); // global vertex A becomes local A2 for G2
 add_vertex(B, G2); // global vertex B becomes local B2 for G2
 </pre>
 
-\noindent Next we can add vertices to the main graph using the usual
+Next we can add edges to the main graph using the usual
 <tt>add_edge</tt> function.
 
 <pre>
