@@ -1,9 +1,13 @@
 // Copyright (C) 2001 Vladimir Prus <ghost@cs.msu.su>
+// Copyright (C) 2001 Jeremy Siek <jsiek@cs.indiana.edu>
 // Permission to copy, use, modify, sell and distribute this software is
 // granted, provided this copyright notice appears in all copies and 
 // modified version are clearly marked as such. This software is provided
 // "as is" without express or implied warranty, and with no claim as to its
 // suitability for any purpose.
+
+#ifndef BOOST_TRANSITIVE_CLOSURE_HPP
+#define BOOST_TRANSITIVE_CLOSURE_HPP
 
 #include <vector>
 #include <functional>
@@ -12,9 +16,20 @@
 #include <boost/graph/strong_components.hpp>
 #include <boost/graph/topological_sort.hpp>
 
+// For a description of the implementation see ../doc/transitive_closure.pdf.
+
 namespace boost {
 
   namespace detail {
+
+    void union_successor_sets(const std::vector<std::size_t>& s1,
+  			  const std::vector<std::size_t>& s2,
+  			  std::vector<std::size_t>& s3)
+    {
+      for (std::size_t k = 0; k < s1.size(); ++k)
+        s3[k] = std::min(s1[k], s2[k]);
+    }
+
     // These classes really don't belong here!
     // They should be moved somewhere
     template<class Container, class ST = std::size_t,
@@ -22,330 +37,211 @@ namespace boost {
     struct const_subscript_t : std::unary_function<ST, RT>
     {
       const_subscript_t(const Container& c) : container(&c) {};
-      const RT& operator()(const ST& i) const 
+      typename Container::const_reference
+      operator()(const ST& i) const 
       { return (*container)[i]; }
-
     protected:
       const Container* container;
     };
-
-    template<class Container, class ST = std::size_t, 
-      class RT = typename Container::value_type>
-    struct subscript_t : std::unary_function<ST, RT>
-    {
+    template <typename Container, typename ST = std::size_t, 
+      typename VT = typename Container::value_type>
+    struct subscript_t : std::unary_function<ST, VT> {
       subscript_t(Container& c) : container(&c) {};
-      RT& operator()(const ST& i) const
-      {   return (*container)[i]; }
-
+      typename Container::reference
+      operator()(const ST& i) const { return (*container)[i]; }
     protected:
       Container *container;
     };
-
-    struct subscript_vb_t : std::unary_function<std::size_t, bool>
-    {
-      subscript_vb_t(std::vector<bool>& c) : container(&c) {};
-      std::vector<bool>::reference operator()(std::size_t i) const
-      {   return (*container)[i]; }
-      
-    protected:
-      std::vector<bool> *container;
-    }; 
 
     template<class Container>
     const_subscript_t<Container>
     subscript(const Container& c)
     { return const_subscript_t<Container>(c); }
 
-    
-    template<class Container>
-    subscript_t<Container>
-    subscript(Container &c)
+    template <typename Container>
+    subscript_t<Container> subscript(Container& c)
     { return subscript_t<Container>(c); }
 
-    inline
-    subscript_vb_t
-    subscript(std::vector<bool>& v)
-    {
-      return subscript_vb_t(v);
-    }   
-
-    template<class T>
-    struct truth : std::unary_function<bool, T>
-    {
-      bool operator()(const T&) { return true; }
-    };
-
-  }
-
-  namespace detail {
-    // The following functions are used in implementation of the algorithm
-    // They are not generic in any way, since it would require much work
-    // for no benefit.
-
-    /** Makes adjacencent vertices of any given vertex to appear in
-      topological order.
-    */
-    template <class Vertex>
-    void topologically_sort_edges(std::vector< std::vector<Vertex> >& g, 
-                    const std::vector<Vertex>& top_num)
-    {
-      for (size_t i = 0; i < g.size(); ++i) {
-        sort(g[i].begin(), g[i].end(), 
-           compose_f_gx_hy(std::less<Vertex>(),
-                   subscript(top_num),
-                   subscript(top_num)));    
-      }
-    }
-
-    /** Computed decomposition of vertices into disjoint chains,
-      where chains are pathes in graph such that vertices occur
-      in them in topological order. The averange number of chains
-      for this algorithm in G(n, p) graphs is O(ln(np)/p).      
-    */
-    template <class Vertex>
-    void compute_chains(const std::vector< std::vector<Vertex> >& g,
-              const std::vector<Vertex>& top_order,
-              std::vector< std::vector<Vertex> >& chains)
-    {
-      std::vector<bool> in_chains(g.size());
-
-      for (size_t i = 0; i < top_order.size(); ++i) {
-
-        Vertex v = top_order[i];
-        if (!in_chains[v]) {
-
-          chains.resize(chains.size()+1);
-          std::vector<Vertex>& chain = chains.back();
-
-          for(;;) {
-            
-            chain.push_back(v);
-            in_chains[v] = true;
-
-            std::vector<Vertex>::const_iterator next;
-            next = find_if(g[v].begin(), g[v].end(),
-                     not1(subscript(in_chains)));
-            if (next != g[v].end())
-              v = *next;
-            else
-              break;
-          }
-        }
-      }
-    }
-
-    template <class Vertex>
-    void acyclic_closure(std::vector< std::vector<Vertex> >& g)
-    {
-      // The simplest algorithm would be
-      //  for u \in reverse_topological_order
-      //    for (v in adj(u))
-      //      if (v \notin succ(u))
-      //        succ(u) = succ(u) | { v } \cup succ(v)
-      //  where succ(v) is the set of all transitive succesors of v
-      //  if succ union takes linear time, this is clearly
-      //  0(n*e) algorithm.
-      //  Different representations for succ improve average
-      //  performance, but not the worst case behaviour.
-      //  In this case, chain decomposition is used -- division
-      //  of V into disjoint pathes C, where vertices in each
-      //  path are topologically ordered. So, succ(u) will
-      //  be a vector, telling for each chain index of element
-      //  of chain with the smallest topological number.
-
-      std::vector<Vertex> top_order;
-      std::vector<Vertex> top_num(g.size());
-      typedef typename std::vector<Vertex>::size_type size_type;
-      {
-        identity_property_map id;
-        topological_sort(g, back_inserter(top_order), 
-			 vertex_index_map(id));
-        std::reverse(top_order.begin(), top_order.end());
-
-        for (size_type i = 0; i < top_order.size(); ++i)
-          top_num[top_order[i]] = i;
-      }
-
-      topologically_sort_edges(g, top_num);
-
-      std::vector< std::vector<Vertex> > chains;
-      std::vector<Vertex> chain_no(g.size()), index_in_chain(g.size());
-      {
-        compute_chains(g, top_order, chains);
-
-        for (size_type i = 0; i < chains.size(); ++i)
-          for (size_type j = 0; j < chains[i].size(); ++j) {
-            Vertex v = chains[i][j];
-            chain_no[v] = i;
-            index_in_chain[v] = j;
-          }                         
-      }
-      
-#ifdef PRINTS
-      cout << "Chains found are :\n" << multiline << chains << endl;
-#endif
-
-      Vertex inf = std::numeric_limits<Vertex>::max();
-      std::vector< std::vector<Vertex> > successors;
-      {
-        successors.resize(g.size(), std::vector<Vertex>(chains.size(), inf));
-
-	for (std::vector<Vertex>::reverse_iterator i = top_order.rbegin();
-	     i != top_order.rend(); ++i) {
-          Vertex v = *i;
-
-          for (size_type j = 0; j < g[v].size(); ++j) {
-            Vertex av = g[v][j];
-
-            if (top_num[av] < successors[v][chain_no[av]]) {
-              
-              for (size_type k = 0; k < chains.size(); ++k)
-                successors[v][k] = std::min(successors[v][k],
-                             successors[av][k]);
-              successors[v][chain_no[av]] = top_num[av];
-            }
-          }
-        }
-      }
-
-#ifdef PRINTS
-      cout << "Successors sets\n" << multiline << successors << endl;
-#endif
-
-
-      for (size_type i = 0; i < g.size(); ++i)
-        g[i].clear();
-
-      for (size_type i = 0; i < g.size(); ++i) 
-        for (size_type j = 0; j < chains.size(); ++j) {
-          Vertex s = successors[i][j];
-
-          if (s < inf) {
-            Vertex v = top_order[s];
-            for (size_type k = index_in_chain[v]; k < chains[j].size(); ++k)
-              g[i].push_back(chains[j][k]);
-          }
-        }
-    }
-  }
-
-
-  /** Computes transitive closure of graph g. The algorithm used has
-    worst-case complexity 0(ne) and averange complexity on G(n, p) 
-    graphs is O(n^2 ln(np)). Note: algorithm temporary removed all
-    the edges, so any information assosiated with edges is lost.
-  */
-  template<class G>
-  void transitive_closure(G& g)
+  } // namespace detail
+  
+  template <typename Graph, typename GraphTC, typename VertexIndexMap>
+  void transitive_closure(const Graph& g, GraphTC& tc, 
+			  VertexIndexMap index_map)
   {
-    using namespace detail;
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex;
+    typedef typename graph_traits<Graph>::edge_descriptor edge;
+    typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
+    typedef typename property_traits<VertexIndexMap>::value_type size_type;
+    typedef typename graph_traits<Graph>::adjacency_iterator 
+      adjacency_iterator;
 
-    function_requires< AdjacencyGraphConcept<G> >();
-    function_requires< EdgeMutableGraphConcept<G> >();
-     
-    typedef typename graph_traits<G>::vertex_descriptor vertex;
-    typedef typename graph_traits<G>::edge_descriptor edge;
-    typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
-    typedef typename graph_traits<G>::adjacency_iterator adjacency_iterator;
+    function_requires< AdjacencyGraphConcept<Graph> >();
+    function_requires< VertexMutableGraphConcept<GraphTC> >();
+    function_requires< EdgeMutableGraphConcept<GraphTC> >();
 
-    //  Find SCCs
-    std::vector<vertex> component_no(num_vertices(g));
+    // Compute strongly connected components of the graph
+    typedef size_type cg_vertex;
+    std::vector<cg_vertex> component_number(num_vertices(g));
+    int num_scc = strong_components(g, 
+      make_iterator_property_map(&component_number[0], index_map),
+      vertex_index_map(index_map));
     std::vector< std::vector<vertex> > components;
-    typedef typename std::vector< std::vector<vertex> >::size_type size_type;
-    {
-      // AAA!
-      identity_property_map id;
-      int n = strong_components(g, &component_no[0], vertex_index_map(id)); 
-      components.resize(n);
-      for (size_type i = 0; i < num_vertices(g); ++i)
-        components[component_no[i]].push_back(i);
-    }
+    components.resize(num_scc);
+    vertex_iterator vi, vi_end;
+    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+      components[component_number[get(index_map, *vi)]].push_back(*vi);
 
-#ifdef PRINTS
-    cout << "Components are\n" << multiline << components << endl;
-#endif
-
-    // Construct a condensation graph 
-    // G=(V,E) -> G'=(V',E')
-    // V' -- set of strong components in G
-    // E' = { (s_1, s_2) : \exists (u \in s_1, v \in s_2) : (u,v) \in E }
-    // Note that G' is acyclic
-    std::vector< std::vector<vertex> > cg(components.size());
-    {
-      for (size_type i = 0; i < components.size(); ++i) {
-        
-        std::vector<vertex> targets;
-        {
-          for (size_type j = 0; j < components[i].size(); ++j) {
-            vertex v = components[i][j];
-
-	    adjacency_iterator k, k_end;
-	    for (tie(k, k_end) = adjacent_vertices(v, g); k != k_end; ++k) {
-              vertex t = component_no[*k];
-              if (t != i) // Avoid loops in the condensation graph
-                targets.push_back(t);
-            }
-          }
+    // Construct the condensation graph   
+    typedef std::vector< std::vector<cg_vertex> > CG_t;
+    CG_t CG(num_scc);
+    for (cg_vertex s = 0; s < components.size(); ++s) {
+      std::vector<cg_vertex> adj;
+      for (size_type i = 0; i < components[s].size(); ++i) {
+        vertex u = components[s][i];
+        adjacency_iterator v, v_end;
+        for (tie(v, v_end) = adjacent_vertices(u, g); v != v_end; ++v) {
+          cg_vertex t = component_number[get(index_map, *v)];
+          if (s != t) // Avoid loops in the condensation graph
+            adj.push_back(t);
         }
-        sort(targets.begin(), targets.end());
-        std::vector<vertex>::iterator 
-	  di = std::unique(targets.begin(), targets.end());
-        if (di != targets.end())
-          targets.erase(di, targets.end());        
-        
-        cg[i] = targets;      
       }
+      std::sort(adj.begin(), adj.end());
+      std::vector<cg_vertex>::iterator
+	di = std::unique(adj.begin(), adj.end());
+      if (di != adj.end())
+        adj.erase(di, adj.end());        
+      CG[s] = adj;
     }
 
-#ifdef PRINTS
-    cout << "Condensation graph is\n" << multiline << cg << endl;
-#endif
-
-    detail::acyclic_closure(cg);
-
-#ifdef PRINTS
-    cout << "Its transitive closure is\n" << multiline << cg << endl;
-#endif
-
-    // Create needed edges in the original graph.
-    // The complexity of the following code is due to fact that we don't
-    // want *reflexive* transitive closure to be computed, but rather
-    // ordinary one.    
+    // topological sort the condensation graph
+    std::vector<cg_vertex> topo_order;
+    std::vector<cg_vertex> topo_number(num_vertices(CG));
+    topological_sort(CG, std::back_inserter(topo_order), 
+      vertex_index_map(identity_property_map()));
+    std::reverse(topo_order.begin(), topo_order.end());
+    size_type n = 0;
+    for (std::vector<cg_vertex>::iterator i = topo_order.begin();
+         i != topo_order.end(); ++i)
+      topo_number[*i] = n++;
     
-    std::vector<vertex> looped_vertices;
+    for (size_type i = 0; i < num_vertices(CG); ++i)
+      std::sort(CG[i].begin(), CG[i].end(), 
+		compose_f_gx_hy(std::less<cg_vertex>(),
+				detail::subscript(topo_number),
+				detail::subscript(topo_number)));   
+
+    // Decompose the condensation graph into chains
+    std::vector< std::vector<cg_vertex> > chains;
     {
-      vertex_iterator vb, ve;
-      for (boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {  
-        adjacency_iterator ab, ae;
-        for (boost::tie(ab, ae) = adjacent_vertices(*vb, g); ab != ae; ++ab)
-          if (*vb == *ab)
-            looped_vertices.push_back(*vb);       
+      std::vector<cg_vertex> in_a_chain(num_vertices(CG));
+      for (std::vector<cg_vertex>::iterator i = topo_order.begin();
+	   i != topo_order.end(); ++i) {
+	cg_vertex v = *i;
+	if (!in_a_chain[v]) {
+	  chains.resize(chains.size() + 1);
+	  std::vector<cg_vertex>& chain = chains.back();
+	  for (;;) {
+	    chain.push_back(v);
+	    in_a_chain[v] = true;
+	    graph_traits<CG_t>::adjacency_iterator adj_first, adj_last;
+	    tie(adj_first, adj_last) = adjacent_vertices(v, CG);
+	    graph_traits<CG_t>::adjacency_iterator next
+	      = std::find_if(adj_first, adj_last,
+			     not1(detail::subscript(in_a_chain)));
+	    if (next != adj_last)
+	      v = *next;
+	    else
+	      break; // end of chain, dead-end
+	    
+	  }
+	}
+      }
+    }
+    std::vector<size_type> chain_number(num_vertices(CG));
+    std::vector<size_type> pos_in_chain(num_vertices(CG));
+    for (size_type i = 0; i < chains.size(); ++i)
+      for (size_type j = 0; j < chains[i].size(); ++j) {
+	cg_vertex v = chains[i][j];
+	chain_number[v] = i;
+	pos_in_chain[v] = j;
+      }             
+    
+    // Compute successors sets of every vertex in the condensation graph
+    cg_vertex inf = std::numeric_limits<cg_vertex>::max();
+    std::vector< std::vector<cg_vertex> > 
+      successors(num_vertices(CG),
+		 std::vector<cg_vertex>(chains.size(), inf));
+    for (std::vector<cg_vertex>::reverse_iterator i = topo_order.rbegin();
+	 i != topo_order.rend(); ++i) {
+      cg_vertex u = *i;
+      graph_traits<CG_t>::adjacency_iterator adj, adj_last;
+      for (tie(adj, adj_last) = adjacent_vertices(u, CG);
+	   adj != adj_last; ++adj) {
+	cg_vertex v = *adj;
+	if (topo_number[v] < successors[v][chain_number[v]]) {
+	  // Succ(u) = Succ(u) U Succ(v)
+	  detail::union_successor_sets(successors[u], successors[v], 
+				       successors[u]);
+	  // Succ(u) = Succ(u) U {v}
+	  successors[u][chain_number[v]] = topo_number[v];
+	}
       }
     }
 
-    remove_edge_if(truth<edge>(), g);
+    // Build the transitive closure of the condensation graph
+    // based on the successor sets.
+    for (size_type i = 0; i < CG.size(); ++i)
+      CG[i].clear();
+    for (size_type i = 0; i < CG.size(); ++i) 
+      for (size_type j = 0; j < chains.size(); ++j) {
+	size_type topo_num = successors[i][j];
+	if (topo_num < inf) {
+	  cg_vertex v = topo_order[topo_num];
+	  for (size_type k = pos_in_chain[v]; k < chains[j].size(); ++k)
+	    CG[i].push_back(chains[j][k]);
+	}
+      }
+    
+    // Build transitive closure of the original graph
 
-    for (size_type i = 0; i < cg.size(); ++i)
-      for (size_type j = 0; j < cg[i].size(); ++j) {
-        vertex s = i;
-        vertex t = cg[i][j];
+    // Add vertices to the transitive closure graph
+    typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
+    std::vector<tc_vertex> to_tc_vec(num_vertices(g));
+    iterator_property_map<tc_vertex*, VertexIndexMap> 
+      to_tc(&to_tc_vec[0], index_map);
+    {
+      vertex_iterator i, i_end;
+      for (tie(i, i_end) = vertices(g); i != i_end; ++i)
+	to_tc[*i] = add_vertex(tc);
+    }
+
+    // Add edges between all the vertices in two adjacent SCCs
+    graph_traits<CG_t>::vertex_iterator si, si_end;
+    for (tie(si, si_end) = vertices(CG); si != si_end; ++si) {
+      cg_vertex s = *si;
+      graph_traits<CG_t>::adjacency_iterator i, i_end;
+      for (tie(i, i_end) = adjacent_vertices(s, CG); i != i_end; ++i) {
+        cg_vertex t = *i;
         for (size_type k = 0; k < components[s].size(); ++k)
           for (size_type l = 0; l < components[t].size(); ++l)
-            add_edge(components[s][k], components[t][l], g);
+            add_edge(to_tc[components[s][k]], to_tc[components[t][l]], tc);
       }
-  
-    // Since cg's closure is not reflexive closure, we need to process SCC's
+    }
+    // Add edges connecting all vertices in a SCC
     for (size_type i = 0; i < components.size(); ++i)
       if (components[i].size() > 1)
         for (size_type k = 0; k < components[i].size(); ++k)
-          for (size_type l = 0; l < components[i].size(); ++l)
-            add_edge(components[i][k], components[i][l], g);
-
-    for (size_type i = 0; i < looped_vertices.size(); ++i) {
-      vertex v = looped_vertices[i];
-      if (components[component_no[v]].size() == 1)
-        add_edge(v, v, g);
-    }
+          for (size_type l = 0; l < components[i].size(); ++l) {
+            vertex u = components[i][k], v = components[i][l];
+            if (u != v)
+              add_edge(to_tc[u], to_tc[v], tc);
+          }    
+  }
+  
+  template <typename Graph, typename GraphTC>
+  void transitive_closure(const Graph& g, GraphTC& tc)
+  {
+    transitive_closure(g, tc, get(vertex_index, g));
   }
 
   template<class G>
@@ -426,7 +322,4 @@ namespace boost {
     
 } // namespace boost
 
-
-
-
-
+#endif // BOOST_TRANSITIVE_CLOSURE_HPP
