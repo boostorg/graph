@@ -81,7 +81,7 @@ struct cycle_detector : public dfs_visitor<>
     : m_has_cycle(has_cycle) { }
 
   template <class Edge, class Graph>
-  void back_edge(Edge e, Graph& g) { m_has_cycle = true; }
+  void back_edge(Edge, Graph&) { m_has_cycle = true; }
 protected:
   bool& m_has_cycle;
 };
