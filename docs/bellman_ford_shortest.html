@@ -31,7 +31,7 @@
 <TD ALIGN="LEFT">directed or undirected</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">distance, weight [, parent]</TD>
+<TD ALIGN="LEFT">distance, weight</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT"><i>O(V E)</i></TD>
@@ -42,16 +42,15 @@
 <P>
 <PRE>
 (1)
-template &lt;class EdgeListGraph, class Size,
-          class WeightMap, class DistanceMap&gt;
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
-                                 WeightMap w, DistanceMap d)
+  WeightMap w, DistanceMap d)
 
 (2)
-template &lt;class EdgeListGraph, class Size, 
-          class WeightMap, class DistanceMap, class BellmanFordVisitor&gt;
+template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap, class DistanceMap,
+          class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, WeightMap w, 
-                                 DistanceMap d, BellmanFordVisitor visit)
+  DistanceMap d, BellmanFordVisitor visit)
 </PRE>
 
 <P>

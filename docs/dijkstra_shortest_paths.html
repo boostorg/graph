@@ -27,7 +27,7 @@
 <DIV ALIGN="left">
 <TABLE CELLPADDING=3 border>
 <TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">directed or undirected</TD>
+<TD ALIGN="LEFT">directed and undirected</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
 <TD ALIGN="LEFT">color, distance, weight, vertex index</TD>
@@ -38,7 +38,7 @@
 </TR>
 <TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
 <TD ALIGN="LEFT">
-<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><TT>boost/graph/dijkstra_shortest_paths</TT></a>
+<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><TT>boost/graph/dijkstra_shortest_paths.hpp</TT></a>
 </TD>
 </TR>
 </TABLE>
@@ -158,9 +158,14 @@ href="../examples/dijkstra.cpp"><TT>examples/dijkstra.cpp</TT></a>.
 
 <P>
 <PRE>
-  typedef weight_property&lt;int&gt; weightp;
+int 
+main(int , char* [])
+{
+  using namespace boost;
+
+  typedef property&lt;edge_weight_t, int&gt; weightp;
   typedef adjacency_list&lt; listS, vecS, directedS, 
-                          no_vertex_property, weightp &gt; Graph;
+    property&lt;vertex_color_t,default_color_type&gt;, weightp &gt; Graph;
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
 
   typedef std::pair&lt;int,int&gt; E;
@@ -179,23 +184,27 @@ href="../examples/dijkstra.cpp"><TT>examples/dijkstra.cpp</TT></a>.
   std::vector&lt;int&gt; d(num_vertices(G));
 
   Vertex s = *(vertices(G).first);
-
-  dijkstra_shortest_paths(G, s, d.begin(), visit_predecessor_ptr(p.begin()));
+  p[s] = s;  
+  dijkstra_shortest_paths(G, s, &d[0], 
+    make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
   std::cout &lt;&lt; "distances from start vertex:" &lt;&lt; std::endl;
-  graph_traits&lt;Graph&gt;::vertex_iterator vi;
-  for(vi = vertices(G).first; vi != vertices(G).second; ++vi)
-    std::cout &lt;&lt; "distance(" &lt;&lt; index(*vi) &lt;&lt; ") = " &lt;&lt; d[*vi] &lt;&lt; std::endl;
+  graph_traits&lt;Graph&gt;::vertex_iterator vi, vend;
+  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+    std::cout &lt;&lt; "distance(" &lt;&lt; *vi &lt;&lt; ") = " &lt;&lt; d[*vi] &lt;&lt; std::endl;
   std::cout &lt;&lt; std::endl;
 
-  std::cout &lt;&lt; "parents in the tree of shortest paths:" &lt;&lt; std::endl;
-  for(vi = vertices(G).first; vi != vertices(G).second; ++vi) {
-    std::cout &lt;&lt; "parent(" &lt;&lt; index(*vi);
-    if ( p[*vi] == Vertex() )
-      std::cout &lt;&lt; ") = no parent" &lt;&lt; std::endl; 
-    else 
-      std::cout &lt;&lt; ") = " &lt;&lt; index(p[*vi]) &lt;&lt; std::endl;
-  }
+  std::cout &lt;&lt; "shortest paths tree" &lt;&lt; std::endl;
+  adjacency_list&lt;&gt; tree(num_nodes);
+  
+  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+    if (*vi != p[*vi])
+      add_edge(p[*vi], *vi, tree);
+
+  print_graph(tree);
+
+  return 0;
+}
 </PRE>
 The output is:
 <PRE>
@@ -206,12 +215,12 @@ The output is:
   distance(3) = 4
   distance(4) = 5
 
-  parents in the tree of shortest paths:
-  parent(0) = no parent
-  parent(1) = 4
-  parent(2) = 0
-  parent(3) = 2
-  parent(4) = 3
+  shortest paths tree
+  0 --> 2 
+  1 --> 
+  2 --> 3 
+  3 --> 4 
+  4 --> 1 
 </PRE>
 
 

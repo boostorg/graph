@@ -54,7 +54,7 @@ main(int , char* [])
 
   typedef property<edge_weight_t, int> weightp;
   typedef adjacency_list< listS, vecS, directedS, 
-                      property<vertex_color_t,default_color_type>, weightp > Graph;
+    property<vertex_color_t,default_color_type>, weightp > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
   typedef std::pair<int,int> E;
@@ -67,15 +67,13 @@ main(int , char* [])
                 E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
 
-  std::cout << "constructing graph" << std::endl;
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
-  std::cout << "done constructing" << std::endl;
 
   std::vector<Vertex> p(num_vertices(G));
   std::vector<int> d(num_vertices(G));
 
   Vertex s = *(vertices(G).first);
-  
+  p[s] = s;
   dijkstra_shortest_paths(G, s, &d[0], 
     make_ucs_visitor(record_predecessors(&p[0], on_edge_relaxed())));
 
@@ -85,11 +83,12 @@ main(int , char* [])
     std::cout << "distance(" << *vi << ") = " << d[*vi] << std::endl;
   std::cout << std::endl;
 
-  std::cout << std::endl << "shortest paths tree" << std::endl;
+  std::cout << "shortest paths tree" << std::endl;
   adjacency_list<> tree(num_nodes);
-  tie(vi,vend) = vertices(G);
-  for(++vi; vi != vend; ++vi)
-    add_edge(p[*vi], *vi, tree);
+  
+  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+    if (*vi != p[*vi])
+      add_edge(p[*vi], *vi, tree);
 
   print_graph(tree);
 
