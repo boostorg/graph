@@ -145,6 +145,25 @@ namespace boost {
   inline bool is_default_param(const detail::error_property_not_found&)
     { return true; }
 
+  // Use this function instead of choose_param() when you want
+  // to avoid requiring get(tag, g) when it is not used. 
+  template <typename Graph, typename PropertyTag>
+  typename property_map<Graph, PropertyTag>::const_type
+  choose_pmap(const detail::error_property_not_found&, 
+	      const Graph& g, PropertyTag tag)
+    { return get(tag, g); }
+
+  template <typename Graph, typename PropertyTag>
+  typename property_map<Graph, PropertyTag>::type
+  choose_pmap(const detail::error_property_not_found&, 
+	      Graph& g, PropertyTag tag)
+    { return get(tag, g); }
+
+  template <class P, class Graph, class Tag> 
+  const P&
+  choose_pmap(const P& param, const Graph&, Tag) { return param; }
+
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
