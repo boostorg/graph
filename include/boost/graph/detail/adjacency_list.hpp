@@ -369,6 +369,20 @@ namespace boost {
 
     namespace detail {
 
+      // O(E/V)
+      template <class edge_descriptor, class EdgeList, class StoredProperty>
+      inline void
+      remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
+                                    StoredProperty& p)
+      {
+        for (typename EdgeList::iterator i = el.begin();
+             i != el.end(); ++i)
+          if (&(*i).get_property() == &p) {
+            el.erase(i);
+            return;
+          }
+      }
+
       template <class incidence_iterator, class EdgeList, class Predicate>
       inline void
       remove_directed_edge_if_dispatch(incidence_iterator first,
@@ -475,20 +489,6 @@ namespace boost {
             el.erase( first.base() );
           }
         }
-      }
-
-      // O(E/V)
-      template <class edge_descriptor, class EdgeList, class StoredProperty>
-      inline void
-      remove_directed_edge_dispatch(edge_descriptor, EdgeList& el,
-                                    StoredProperty& p)
-      {
-        for (typename EdgeList::iterator i = el.begin();
-             i != el.end(); ++i)
-          if (&(*i).get_property() == &p) {
-            el.erase(i);
-            return;
-          }
       }
 
       // O(E/V)
