@@ -41,7 +41,7 @@ namespace boost {
   struct property_traits<default_color_type*> {
     typedef default_color_type value_type;
     typedef std::ptrdiff_t key_type;
-    typedef lvalue_property_map_tag;
+    typedef lvalue_property_map_tag category;
   };
   // get/put already defined for T*
 #endif
@@ -204,7 +204,8 @@ namespace boost {
   } // namespace detail
 
   template <class Graph, class Property>
-  class property_map {
+  struct property_map {
+  private:
     typedef typename Property::kind Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
     typedef typename Selector::template bind<Graph, Property> Bind;

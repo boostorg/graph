@@ -138,12 +138,13 @@ namespace boost {
 
 } // namespace boost
 
-  struct sgb_out_edge_iterator
+  class sgb_out_edge_iterator
     : public boost::forward_iterator_helper<
         sgb_out_edge_iterator, boost::sgb_edge, 
         ptrdiff_t, boost::sgb_edge*, boost::sgb_edge>
   {
     typedef sgb_out_edge_iterator self;
+  public:
     inline sgb_out_edge_iterator() : _src(0), _arc(0) {}
     inline sgb_out_edge_iterator(Vertex* s, Arc* d) : _src(s), _arc(d) {}
     inline boost::sgb_edge operator*() { return boost::sgb_edge(_arc, _src); }
@@ -155,10 +156,11 @@ namespace boost {
     Arc* _arc;
   };
 
-  struct sgb_adj_iterator
+  class sgb_adj_iterator
     : public boost::forward_iterator_helper<
         sgb_adj_iterator, Vertex*, ptrdiff_t, Vertex**,Vertex*>
   {
+  public:
     typedef sgb_adj_iterator self;
     inline sgb_adj_iterator() : _arc(0) {}
     inline sgb_adj_iterator(Arc* d) : _arc(d) {}
@@ -174,10 +176,11 @@ namespace boost {
   // want to use Vertex* as the vertex_descriptor instead of just
   // Vertex, which avoids problems with boost passing vertex descriptors
   // by value and how that interacts with the sgb_vertex_id_map.
-  struct sgb_vertex_iterator
+  class sgb_vertex_iterator
     : public boost::forward_iterator_helper<
         sgb_vertex_iterator, Vertex*, ptrdiff_t, Vertex**, Vertex*>
   {
+  public:
     typedef sgb_vertex_iterator self;
     inline sgb_vertex_iterator() : _v(0) { }
     inline sgb_vertex_iterator(Vertex* v) : _v(v) { }
@@ -234,9 +237,10 @@ namespace boost {
   // Various Property Maps
 
   // Vertex ID
-  struct sgb_vertex_id_map
+  class sgb_vertex_id_map
     : public boost::put_get_at_helper<long, sgb_vertex_id_map>
   {
+  public:
     typedef boost::readable_property_map_tag category;
     typedef long value_type;
     typedef Vertex* key_type;
@@ -250,9 +254,10 @@ namespace boost {
   }
 
   // Vertex Name  
-  struct sgb_vertex_name_map
+  class sgb_vertex_name_map
     : public boost::put_get_at_helper<char*, sgb_vertex_name_map>
   {
+  public:
     typedef boost::readable_property_map_tag category;
     typedef char* value_type;
     typedef Vertex* key_type;
@@ -329,10 +334,11 @@ namespace boost {
   GET_EDGE_UTIL_FIELD(b)
 
   template <class Tag>
-  struct sgb_vertex_util_map
+  class sgb_vertex_util_map
     : public boost::put_get_at_helper< typename Tag::type,
         sgb_vertex_util_map<Tag> >
   {
+  public:
     typedef boost::lvalue_property_map_tag category;
     typedef typename Tag::type value_type;
     typedef Vertex* key_type;
@@ -352,9 +358,10 @@ namespace boost {
 #endif
 
   // Edge Length Access
-  struct sgb_edge_length_map
+  class sgb_edge_length_map
     : public boost::put_get_at_helper<long, sgb_edge_length_map>
   {
+  public:
     typedef boost::lvalue_property_map_tag category;
     typedef long value_type;
     typedef sgb_edge key_type;
@@ -371,10 +378,11 @@ namespace boost {
   }
   
   template <class Tag>
-  struct sgb_edge_util_map
+  class sgb_edge_util_map
     : public boost::put_get_at_helper< typename Tag::type,
         sgb_edge_util_map<Tag> >
   {
+  public:
     typedef boost::lvalue_property_map_tag category;
     typedef typename Tag::type value_type;
     typedef Vertex* key_type;
