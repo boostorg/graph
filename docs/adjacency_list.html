@@ -145,7 +145,7 @@ The output is:
 
 <TR>
 <TD><TT>Directed</TT></TD>
-<TD>A selector to choose whether the graph is directed, undirected, or directied with bidirectional edge access (access to both out-edges and in-edges). The options are <TT>directedS</TT>, <TT>undirectedS</TT>, and <TT>bidirectionalS</TT>.</TD>
+<TD>A selector to choose whether the graph is directed, undirected, or directed with bidirectional edge access (access to both out-edges and in-edges). The options are <TT>directedS</TT>, <TT>undirectedS</TT>, and <TT>bidirectionalS</TT>.</TD>
 <TD><TT>directedS</TT></TD>
 </TR>
 
@@ -216,6 +216,153 @@ properties. Some care must be taken when using these indices to access
 exterior property storage.
 
 <P>
+
+<h2>Iterator and Descriptor Stability/Invalidation</h2>
+
+Some care must be taken when changing the structure of a graph (via
+adding or removing edges). Depending on the type of
+<tt>adjacency_list</tt> and on the operation, some of the iterator or
+descriptor objects that point into the graph may become invalid.  For
+example, the following code will result in undefined (bad) behavior:
+
+<pre>
+  typedef adjacency_list&lt;listS, vecS&gt; Graph; <b>// VertexList=vecS</b>
+  Graph G(N);
+  <b>// Fill in the graph...</b>
+
+  <b>// Attempt to remove all the vertices. Wrong!</b>
+  graph_traits&lt;Graph&gt;::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(G); vi != vi_end; ++vi)
+    remove_vertex(*vi, G);
+
+  <b>// Remove all the vertices. This is still wrong!</b>
+  graph_traits&lt;Graph&gt;::vertex_iterator vi, vi_end, next;
+  tie(vi, vi_end) = vertices(G);
+  for (next = vi; vi != vi_end; vi = next) {
+    ++next;
+    remove_vertex(*vi, G);
+  }
+</pre>
+
+The reason this is a problem is that we are invoking
+<tt>remove_vertex()</tt>, which when used with an
+<tt>adjacency_list</tt> where <tt>VertexList=vecS</tt>, invalidates
+all iterators and descriptors for the graph (such as <tt>vi</tt> and
+<tt>vi_end</tt>), thereby causing trouble in subsequent iterations of
+the loop.
+
+<p>
+
+If we use a different kind of <tt>adjacency_list</tt>, where
+<tt>VertexList=listS</tt>, then the iterators are not invalidated by
+calling <tt>remove_vertex</tt> unless the iterator is pointing to the
+actual vertex that was removed. The following code demonstrates this.
+
+<pre>
+  typedef adjacency_list&lt;listS, listS&gt; Graph; <b>// VertexList=listS</b>
+  Graph G(N);
+  <b>// Fill in the graph...</b>
+
+  <b>// Attempt to remove all the vertices. Wrong!</b>
+  graph_traits&lt;Graph&gt;::vertex_iterator vi, vi_end;
+  for (tie(vi, vi_end) = vertices(G); vi != vi_end; ++vi)
+    remove_vertex(*vi, G);
+
+  <b>// Remove all the vertices. This is OK.</b>
+  graph_traits&lt;Graph&gt;::vertex_iterator vi, vi_end, next;
+  tie(vi, vi_end) = vertices(G);
+  for (next = vi; vi != vi_end; vi = next) {
+    ++next;
+    remove_vertex(*vi, G);
+  }
+</pre>
+
+<p>
+
+The stability issue also affects vertex and edge descriptors.  For
+example, suppose you use vector of vertex descriptors to keep track of
+the parents (or predecessors) of vertices in a shortest paths tree
+(see <a
+href="../examples/dijkstra.cpp"><tt>examples/dijkstra.cpp</tt></a>).
+You create the parent vector with a call to
+<tt>dijkstra_shortest_paths()</tt>, and then remove a vertex from the
+graph. Subsequently you try to use the parent vector, but since all
+vertex descriptors have become invalid, the result is incorrect.
+
+<pre>
+  std::vector&lt;Vertex&gt; parent(num_vertices(G));
+  std::vector&lt;Vertex&gt; distance(num_vertices(G));
+
+  dijkstra_shortest_paths(G, s, &amp;distance[0], 
+    make_ucs_visitor(record_predecessors(&amp;parent[0], on_edge_relaxed())));
+
+  remove_vertex(s, G); <b>// Bad idea! Invalidates vertex descriptors in parent vector.</b>
+
+  <b>// The following will produce incorrect results</b>
+  for(tie(vi, vend) = vertices(G); vi != vend; ++vi)
+    std::cout << p[*vi] << " is the parent of " << *vi << std::endl;
+</pre>
+
+
+<p>
+Note that this discussion iterator and descriptor invalidation is
+concerned with the invalidation of iterators and descriptors that are
+<b>not directly affected</b> by the operation. For example, performing
+<tt>remove_edge(u, v, g)</tt> will always invalidate any edge
+descriptor for <i>(u,v)</i> or edge iterator pointing to <i>(u,v)</i>,
+regardless of the kind <tt>adjacency_list</tt>.  In these discussions
+of iterator and descriptor invalidation, we are only concerned with the
+affect of <tt>remove_edge(u, v, g)</tt> on edge descriptors and
+iterators that point to other edges (not <i>(u,v)</i>).
+
+<p>
+In general, if you want your vertex and edge descriptors to be stable
+(never invalidated) then use <tt>listS</tt> or <tt>setS</tt> for the
+<tt>VertexList</tt> and <tt>EdgeList</tt> template parameters of
+<tt>adjacency_list</tt>. If you are not as concerned about descriptor
+and iterator stability, and are more concerned about memory
+consumption and graph traversal speed, use <tt>vecS</tt> for the
+<tt>VertexList</tt> and/or <tt>EdgeList</tt> template parameters.
+
+<p>
+The following table summarizes which operations cause descriptors and
+iterators to become invalid. In the table, <tt>EL</tt> is an
+abbreviation for <tt>EdgeList</tt> and <tt>VL</tt> means
+<tt>VertexList</tt>. The <b>Adj Iter</b> category includes the
+<tt>out_edge_iterator</tt>, <tt>in_edge_iterator</tt>, and
+<tt>adjacency_iterator</tt> types. A more detailed description of
+descriptor and iterator invalidation is given in the documentation for
+each operation.
+
+<p>
+
+<table border>
+<CAPTION ALIGN="BOTTOM"><STRONG>Table:</STRONG>
+    Summary of Descriptor and Iterator Invalidation.
+    </CAPTION>
+<tr> <th>Function</th> <th>Vertex Desc</th> <th>Edge Desc</th>
+<th>Vertex Iter</th> <th>Edge Iter</th> <th>Adj Iter</th> </tr>
+
+<tr>
+<td><tt>add_edge()</tt></td> <td align=center><tt>OK</tt></td><td
+align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td
+align=center><tt>EL=vecS &amp;&amp;<br> Directed=directedS</tt></td><td align=center><tt>EL=vecS</tt></td>
+</tr>
+<tr>
+<td><tt>remove_edge()<br>remove_edge_if()<br>remove_out_edge_if()<br>remove_in_edge_if()<br>clear_vertex()</tt></td><td align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
+<td align=center><tt>EL=vecS &amp;&amp;<br> Directed=directedS</tt></td><td align=center><tt>EL=vecS</tt></td>
+</tr>
+<tr>
+<td><tt>add_vertex()</tt></td><td align=center><tt>OK</tt></td><td
+align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td
+align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
+</tr>
+<tr>
+<td><tt>remove_vertex()</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td>
+</tr>
+
+</table>
+
 
 <H2>Associated Types</H2>
 
@@ -512,18 +659,22 @@ the <TT>bool</TT> flag will be <TT>false</TT>. Also, if <i>u</i> and
 <i>v</i> are descriptors for the same vertex (creating a self loop)
 then the edge will not be added and the flag will be <TT>false</TT>.
 When the flag is <TT>false</TT>, the edge descriptor is invalid and
-any use of it is undefined.  The placement of the edge in the out-edge
-list for <i>u</i> is unspecified. 
+any use of it is undefined.  The location of the placement of the edge
+in the out-edge list for <i>u</i> is unspecified.
+
 <p>
 If the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
-will <b>invalidate</b> any iterators that point into the edge-list for vertex
-<i>u</i>.
-<!-- or edge descriptors that have vertex <i>u</i> as the source. -->
-This also applies if the <TT>EdgeList</TT> is a user-defined
+will invalidate any <tt>out_edge_iterator</tt> for vertex
+<i>u</i>. This also applies if the <TT>EdgeList</TT> is a user-defined
 container that invalidates its iterators when <TT>push(container,
 x)</TT> is invoked (see Section <A
 HREF="./using_adjacency_list.html#sec:custom-storage">Customizing the
-Adjacency List Storage</A>).
+Adjacency List Storage</A>). If the graph is also bidirectional then
+any <tt>in_edge_iterator</tt> for <i>v</i> is also invalidated.  If
+instead the graph is undirected then any <tt>out_edge_iterator</tt>
+for <i>v</i> is also invalidated. If instead the graph is directed,
+then <tt>add_edge()</tt> also invalidates any <tt>edge_iterator</tt>.
+
 
 <hr>
 
@@ -540,15 +691,18 @@ value of the edge's internal property storage.  Also see the previous
 <hr>
 
 <pre>
-void remove_edge(vertex_descriptor v, vertex_descriptor u, 
+void remove_edge(vertex_descriptor u, vertex_descriptor v,
                  adjacency_list&amp; g)
 </pre>
-Removes the edge <i>(v,u)</i> from the graph.  If the
-<TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation will
-<b>invalidate</b> any iterators that point into the edge-list for
-vertex <i>u</i> and also for vertex <i>v</i> in the undirected and
-bidirectional case. Also, for directed graphs this <b>invalidates</b>
-any <tt>edge_iterator</tt>.
+Removes the edge <i>(u,v)</i> from the graph.  
+<p>
+This operation causes any outstanding edge descriptors or iterators
+that point to edge <i>(u,v)</i> to become invalid.  In addition, if
+the <TT>EdgeList</TT> selector is <TT>vecS</TT> then this operation
+will invalidate any iterators that point into the edge-list for vertex
+<i>u</i> and also for vertex <i>v</i> in the undirected and
+bidirectional case. Also, for directed graphs this invalidates any
+<tt>edge_iterator</tt>.
 
 <hr>
 
@@ -559,10 +713,13 @@ Removes the edge <tt>e</tt> from the graph. This differs from the
 <tt>remove_edge(u, v, g)</tt> function in the case of a
 multigraph. This <tt>remove_edge(e, g)</tt> function removes a single
 edge, whereas the <tt>remove_edge(u, v, g)</tt> function removes all
-edges <i>(u,v)</i>.  This operation will <b>invalidate</b> any iterators
-that point into the edge-list for target vertex of edge <tt>e</tt>.
-Also, for directed graphs this <b>invalidates</b>
-any <tt>edge_iterator</tt>.
+edges <i>(u,v)</i>.
+<p>
+This operation invalidates any outstanding edge descriptors and
+iterators for the same edge pointed to by descriptor <tt>e</tt>.  In
+addition, this operation will invalidate any iterators that point into
+the edge-list for the <tt>target(e, g)</tt>.  Also, for directed
+graphs this invalidates any <tt>edge_iterator</tt> for the graph.
 
 <hr>
 
@@ -582,22 +739,26 @@ void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
 </pre>
 Removes all out-edges of vertex <i>u</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to an edge descriptor, then the edge is removed. This
-operation <b>invalidates</b> out-edge iterators for vertex <i>u</i>.
+applied to an edge descriptor, then the edge is removed. 
+<p>
+The affect on descriptor and iterator stability is the same as that of
+invoking <tt>remove_edge()</tt> on each of the removed edges.
 
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
+template &lt;class <a
+href="http://www.sgi.com/Technology/STL/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
-                       adjacency_list&amp; g)
+adjacency_list&amp; g)
 </pre>
 Removes all in-edges of vertex <i>v</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to an edge descriptor, then the edge is removed. This operation
-<b>invalidates</b> in-edge iterators for vertex <i>v</i>. This
-operation is available for the undirected and bidirectional versions of
-<tt>adjacency_list</tt>, but not for directed.
+applied to an edge descriptor, then the edge is removed.
+<p>
+The affect on descriptor and iterator stability is the
+same as that of invoking <tt>remove_edge()</tt> on each of the
+removed edges.
 
 <hr>
 
@@ -607,8 +768,10 @@ void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to an edge descriptor, then the edge is removed. This operation
-<b>invalidates</b> all edge, out-edge, and in-edge iterators for the graph.
+applied to an edge descriptor, then the edge is removed. 
+<p>
+The affect on descriptor and iterator stability is the same as that of
+invoking <tt>remove_edge()</tt> on each of the removed edges.
 
 <hr>
 
@@ -618,18 +781,20 @@ vertex_descriptor
 add_vertex(adjacency_list&amp; g)
 </pre>
 Adds a vertex to the graph and returns the vertex descriptor for the
-new vertex. If the <TT>VertexList</TT> selector is <tt>vecS</tt> then
-this operation <b>invalidates</b> all iterators, vertex descriptors,
-and edge descriptors for the graph.
+new vertex. 
 </a>
 
 <hr>
 
 <pre>
-void clear_vertex(adjacency_list&amp; g, vertex_descriptor u)
+void clear_vertex(vertex_descriptor u, adjacency_list&amp; g)
 </pre>
 Removes all edges to and from vertex <i>u</i>. The vertex still appears
 in the vertex set of the graph.
+<p>
+The affect on descriptor and iterator stability is the
+same as that of invoking <tt>remove_edge()</tt> for all of
+the edges that have <tt>u</tt> as the source or target.
 
 <hr>
 
@@ -639,19 +804,21 @@ void remove_vertex(vertex_descriptor u, adjacency_list&amp; g)
 Remove vertex <i>u</i> from the vertex set of the graph. It is assumed
 that there are no edges to or from vertex <i>u</i> when it is removed.
 One way to make sure of this is to invoke <TT>clear_vertex()</TT>
-beforehand.  If the <TT>VertexList</TT> template parameter of the
+beforehand.  
+<p>
+If the <TT>VertexList</TT> template parameter of the
 <TT>adjacency_list</TT> was <TT>vecS</TT>, then all vertex
 descriptors, edge descriptors, and iterators for the graph are
-<b>invalidated</b> by this operation. The builtin
+invalidated by this operation. The builtin
 <tt>vertex_index_t</tt> property for each vertex is renumbered so that
 after the operation the vertex indices still form a contiguous range
 <TT>[0, num_vertices(g))</TT>. If you are using external property
-storage based on the builtin vertex index, then the external storage will
-need to be adjusted. Another option is to not use the builtin vertex
-index, and instead use a property to add your own vertex IDs. If you need
-to make frequent use of the <TT>remove_vertex()</TT> function the
-<TT>listS</TT> selector is a much better choice for the
-<TT>VertexList</TT> template parameter.
+storage based on the builtin vertex index, then the external storage
+will need to be adjusted. Another option is to not use the builtin
+vertex index, and instead use a property to add your own vertex index
+property. If you need to make frequent use of the
+<TT>remove_vertex()</TT> function the <TT>listS</TT> selector is a
+much better choice for the <TT>VertexList</TT> template parameter.
 
 <hr>
 
@@ -721,3 +888,15 @@ HREF="mailto:lums@lsc.nd.edu">lums@lsc.nd.edu</A>)
 
 </BODY>
 </HTML> 
+<!--  LocalWords:  gif ALT EdgeList VertexList html VertexProperty EdgeProperty
+ -->
+<!--  LocalWords:  GraphProperty cpp enum ai cout endl VertexAndEdgeListGraph
+ -->
+<!--  LocalWords:  MutablePropertyGraph hpp const ReadablePropertyMap listS num
+ -->
+<!--  LocalWords:  ReadWritePropertyMap vecS dijkstra ucs pre Adj Iter Desc ep
+ -->
+<!--  LocalWords:  EdgeIterator EdgePropertyIterator iter bool edge's IDs siek
+ -->
+<!--  LocalWords:  multigraph typename htm Univ Quan Lumsdaine
+ -->
