@@ -29,9 +29,10 @@
 
 #include <map> // for vertex_map in copy_impl
 #include <boost/config.hpp>
-#include <boost/property_map.hpp>
 #include <boost/operators.hpp>
+#include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
+
 
 #ifdef BOOST_MSVC
 // Having linking troubles due to long symbol names getting

@@ -25,38 +25,34 @@
 //
 //  Sample output
 //
-//    DFS categorized directed graph
-//    tree: 0 --> 2
-//    tree: 2 --> 3
-//    tree: 3 --> 4
-//    back: 4 --> 0
-//    tree: 4 --> 1
-//    back: 1 --> 1
-//    back: 1 --> 3
-//    forward or cross: 3 --> 1
-//    forward or cross: 2 --> 1
-//
-//    BFS categorized directed graph
-//    tree: 0 --> 2
-//    tree: 2 --> 1
-//    back or cross: 1 --> 1
-//    tree: 2 --> 3
-//    back or cross: 3 --> 1
-//    back or cross: 1 --> 3
-//    tree: 3 --> 4
-//    back or cross: 4 --> 0
-//    back or cross: 4 --> 1
+// DFS categorized directed graph
+// tree: 0 --> 2
+// tree: 2 --> 1
+// back: 1 --> 1
+// tree: 1 --> 3
+// back: 3 --> 1
+// tree: 3 --> 4
+// back: 4 --> 0
+// back: 4 --> 1
+// forward or cross: 2 --> 3
 
+// BFS categorized directed graph
+// tree: 0 --> 2
+// tree: 2 --> 1
+// tree: 2 --> 3
+// cycle: 1 --> 1
+// cycle: 1 --> 3
+// cycle: 3 --> 1
+// tree: 3 --> 4
+// cycle: 4 --> 0
+// cycle: 4 --> 1
+
+#include <boost/config.hpp>
 #include <iostream>
-
 #include <vector>
 #include <algorithm>
 #include <utility>
 #include <string>
-
-#ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
-#error stupid fuckers!
-#endif
 
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>

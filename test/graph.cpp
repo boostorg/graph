@@ -195,7 +195,10 @@ int main(int argc, char* argv[])
       cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
 #endif
       graph_traits<Graph>::edges_size_type old_E = num_edges(g);
+#if 1
       remove_edge(e, g);
+#endif    
+
 #if VERBOSE
       print_graph(g, vertex_id_map);
       //      print_in_edges(g, vertex_id_map);
@@ -212,7 +215,6 @@ int main(int argc, char* argv[])
       cerr << "    Failed."<< endl;
     } else
       cerr << "           Passed."<< endl;
-    
     
 
     // add_vertex
