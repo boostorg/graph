@@ -28,6 +28,7 @@
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <algorithm>
 #include <cstdlib>
@@ -141,9 +142,24 @@ void test_isomorphism(int n, double edge_probability)
 
   std::map<graph1::vertex_descriptor, graph2::vertex_descriptor> mapping;
 
-  BOOST_TEST(isomorphism(g1, g2, 
-                         isomorphism_map(make_assoc_property_map(mapping))));
-  BOOST_TEST(verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
+  bool isomorphism_correct;
+  BOOST_TEST(isomorphism_correct = isomorphism
+               (g1, g2, isomorphism_map(make_assoc_property_map(mapping))));
+
+  bool verify_correct;
+  BOOST_TEST(verify_correct = 
+             verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
+
+  if (!isomorphism_correct || !verify_correct) {
+    // Output the graph
+    std::ofstream out("isomorphism_failure.bgl");
+    out << num_vertices(g1) << std::endl;
+    for (graph1::edge_iterator e = edges(g1).first; 
+         e != edges(g1).second; ++e) {
+      out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
+          << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
+    }
+  }
 }
 
 int test_main(int argc, char* argv[])
