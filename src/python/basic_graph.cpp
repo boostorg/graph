@@ -513,6 +513,8 @@ void export_basic_graph(const char* name)
   // Vertex property maps
   declare_readable_property_map<VertexIndexMap>
     ::declare("vertex_index_map");
+  declare_property_map<vector_property_map<Vertex, VertexIndexMap> >
+    ::declare("vertex_vertex_map");
   declare_property_map<vector_property_map<double, VertexIndexMap> >
     ::declare("vertex_double_map");
   declare_property_map<vector_property_map<int, VertexIndexMap> >
@@ -525,6 +527,8 @@ void export_basic_graph(const char* name)
   // Edge property maps
   declare_readable_property_map<EdgeIndexMap>
     ::declare("edge_index_map");
+  declare_property_map<vector_property_map<Edge, EdgeIndexMap> >
+    ::declare("edge_edge_map");
   declare_property_map<vector_property_map<double, EdgeIndexMap> >
     ::declare("edge_double_map");
   declare_property_map<vector_property_map<int, EdgeIndexMap> >
