@@ -90,7 +90,10 @@ are <TT>allow_parallel_edge_tag</TT> and <TT>disallow_parallel_edge_tag</TT>.
 <tr>
 <td><pre>boost::graph_traits&lt;G&gt;::traversal_category</pre>
 This describes the ways in which the vertices and edges of the
-graph can be visited.
+graph can be visited. The choices are <TT>incidence_graph_tag</TT>,
+<TT>adjacency_graph_tag</TT>, <TT>bidirectional_graph_tag</TT>, 
+<TT>vertex_list_graph_tag</TT>, <TT>edge_list_graph_tag</TT>, and 
+<TT>adjacency_matrix_tag</TT>.
 </td>
 </tr>
 
