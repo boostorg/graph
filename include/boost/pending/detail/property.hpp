@@ -68,13 +68,13 @@ namespace boost {
       // Stop the recursion and return error
       template <class T, class Tag>
       static detail::error_property_not_found&
-      get_value(no_property&, T* t, Tag tag) {
+      get_value(no_property&, T*, Tag) {
 	static error_property_not_found s_prop_not_found;
         return s_prop_not_found;
       }
       template <class T, class Tag>
       static const detail::error_property_not_found&
-      const_get_value(const no_property&, T* t, Tag tag) {
+      const_get_value(const no_property&, T*, Tag) {
 	static error_property_not_found s_prop_not_found;
         return s_prop_not_found;
       }
