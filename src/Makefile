@@ -28,6 +28,8 @@ LDFLAAGS	=
 
 LIBS		=
 
+AR		= /usr/local/gnu/bin/ar
+
 
 default: libbgl-viz.a libbgl-viz.so
 
@@ -36,7 +38,7 @@ default: libbgl-viz.a libbgl-viz.so
 OBJS = graphviz_graph_lex.o graphviz_digraph_lex.o graphviz_digraph_parser.o graphviz_graph_parser.o
 
 libbgl-viz.a: $(OBJS)
-	ar -rc libbgl-viz.a $(OBJS)
+	$(AR) -rc libbgl-viz.a $(OBJS)
 
 GRAPH_SONAME_VERSION = 1
 

@@ -34,7 +34,8 @@
 #include <boost/graph/graphviz.hpp>
 
 #if defined BOOST_NO_STRINGSTREAM 
-#include <strstream>
+  //#include <strstream> //We cannot use it since there is a bug in strstream  
+#include <stdlib.h>
 #else
 #include <sstream>
 #endif
@@ -205,13 +206,17 @@
     static std::string random_string() {
       static int i=0;
 #if defined BOOST_NO_STRINGSTREAM
-      std::strstream out;
+      //std::strstream out;
+      char buf[256];
+      sprintf(buf, "default%i\0", i);
+      ++i;
+      return  string(buf);
 #else
       std::stringstream out;
-#endif
       out << "default" << i;
       ++i;
       return out.str();
+#endif
     }
 
 

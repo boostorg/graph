@@ -38,6 +38,7 @@ static void end_literal();
 #define YY_DECL   int yylex(YYSTYPE* lvalp)
 %}
 
+%option noyywrap
 %x Comment
 %x Literal
 
