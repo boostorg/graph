@@ -34,9 +34,9 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/pending/ct_if.hpp>
-#include <boost/graph/detail/adjacency_iterator.hpp>
+#include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/edge.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/iterator_adaptors.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/utility.hpp>
@@ -279,9 +279,6 @@ namespace boost {
 
     //private: if friends worked, these would be private
 
-    typedef boost::iterator<multi_pass_input_iterator_tag, edge_descriptor, 
-      std::ptrdiff_t, edge_descriptor*, edge_descriptor> EdgeTraits;
-
     typedef detail::dir_adj_matrix_out_edge_iter_policies<
       vertex_descriptor, MatrixIter, size_type> DirOutEdgePolicies;
 
@@ -291,30 +288,36 @@ namespace boost {
     typedef typename ct_if_t<typename Directed::is_directed_t,
       DirOutEdgePolicies, UnDirOutEdgePolicies>::type OutEdgePolicies;
     typedef iterator_adaptor<MatrixIter, OutEdgePolicies,
-      EdgeTraits> unfiltered_out_edge_iter;
+      edge_descriptor, edge_descriptor, edge_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t> unfiltered_out_edge_iter;
     
     typedef detail::adj_matrix_edge_iter_policies<
       Directed, MatrixIter, size_type> EdgePolicies;
     typedef iterator_adaptor<MatrixIter, EdgePolicies,
-      EdgeTraits> unfiltered_edge_iter;
+      edge_descriptor, edge_descriptor, edge_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t> unfiltered_edge_iter;
     
-    typedef filter_iterator_policies<detail::does_edge_exist,
-      unfiltered_out_edge_iter> FilteredOutEdgePolicy;
+    typedef filter_iterator_generator<detail::does_edge_exist,
+      unfiltered_out_edge_iter, edge_descriptor, edge_descriptor, edge_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t> OutEdgeFilterGen;
+    typedef typename OutEdgeFilterGen::policies_type FilteredOutEdgePolicy;
 
-    typedef filter_iterator_policies<detail::does_edge_exist,
-      unfiltered_edge_iter> FilteredEdgePolicy;
+    typedef filter_iterator_generator<detail::does_edge_exist,
+      unfiltered_edge_iter, edge_descriptor, edge_descriptor, edge_descriptor*,
+      multi_pass_input_iterator_tag, std::ptrdiff_t> EdgeFilterGen;
+    typedef typename EdgeFilterGen::policies_type FilteredEdgePolicy;
   public:
 
     // IncidenceGraph concept required types
-    typedef typename filter_iterator<detail::does_edge_exist,
-      unfiltered_out_edge_iter, EdgeTraits>::type out_edge_iterator;
+    typedef typename OutEdgeFilterGen::type out_edge_iterator;
+
     typedef size_type degree_size_type;
 
     // BidirectionalGraph required types
     typedef void in_edge_iterator;
 
     // AdjacencyGraph required types
-    typedef typename detail::adjacency_iterator<self,
+    typedef typename adjacency_iterator_generator<self,
       vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
     // VertexListGraph required types
@@ -324,8 +327,7 @@ namespace boost {
 
     // EdgeListGrpah required types
     typedef size_type edges_size_type;
-    typedef typename filter_iterator<detail::does_edge_exist,
-      unfiltered_edge_iter, EdgeTraits>::type edge_iterator;
+    typedef typename EdgeFilterGen::type edge_iterator;
 
     // PropertyGraph required types
     typedef EdgeProperty edge_property_type;
