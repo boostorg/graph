@@ -437,7 +437,7 @@ namespace boost {
                     make_iterator_property_map
                     (orig2copy.begin(), 
                      choose_pmap(get_param(params, vertex_index), 
-                                 g, vertex_index), orig2copy[0])),
+                                 g_in, vertex_index), orig2copy[0])),
        params
        );
   }
