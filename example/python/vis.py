@@ -1,8 +1,7 @@
-#!/usr/bin/pythonw
+import bgl
 import wx
 import wx.lib.ogl as ogl
 # import wx.lib.masked
-import bgl
 import os
 import random
 import sys
@@ -514,7 +513,11 @@ class GraphEditorWindow(wx.Frame):
         mstMenu.Append(212, "Kruskal")
         algorithmsMenu.AppendMenu(210, "Minimum Spanning Tree", mstMenu)
 
+        # Other algorithms...
+        algorithmsMenu.Append(221, "Sequential vertex coloring")
+
         menuBar.Append(algorithmsMenu, "&Algorithms")
+
 
         # Layout menu
         layoutMenu = wx.Menu()
@@ -536,6 +539,7 @@ class GraphEditorWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.StrongComponents, id=202)
         self.Bind(wx.EVT_MENU, self.BiconnectedComponents, id=203)
         self.Bind(wx.EVT_MENU, self.KruskalMST, id=212)
+        self.Bind(wx.EVT_MENU, self.SequentialVertexColoring, id=221)
 
         # Layout menu events
         self.Bind(wx.EVT_MENU, self.CircleLayout, id=301)
@@ -660,6 +664,12 @@ class GraphEditorWindow(wx.Frame):
             shape = self.canvas.EdgeShape(e)
             shape.SetPen(wx.Pen(shape.GetPen().GetColour(), 3))
         self.canvas.Refresh()
+
+    def SequentialVertexColoring(self, event):
+        graph = self.canvas.graph
+        color_map = graph.get_vertex_int_map("color")
+        bgl.sequential_vertex_coloring(graph, color_map)
+        self.canvas.set_vertex_colors_from_components(color_map)
 
     def CircleLayout(self, event):
         bgl.circle_graph_layout(self.canvas.graph, self.canvas.position_map, 50)
