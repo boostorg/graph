@@ -237,8 +237,7 @@ namespace boost {
         for (size_type k = 0; k < components[i].size(); ++k)
           for (size_type l = 0; l < components[i].size(); ++l) {
             vertex u = components[i][k], v = components[i][l];
-            if (u != v)
-              add_edge(to_tc[u], to_tc[v], tc);
+            add_edge(to_tc[u], to_tc[v], tc);
           }    
   }
   
