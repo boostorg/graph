@@ -122,27 +122,28 @@ main()
   // Find yow.h
   name_equals_t < name_map_t > predicate1("yow.h", name);
   yow = *std::find_if(i, end, predicate1);
-  // Find zag.h
-  name_equals_t < name_map_t > predicate2("zag.cpp", name);
+  // Find zag.o
+  name_equals_t < name_map_t > predicate2("zag.o", name);
   zag = *std::find_if(i, end, predicate2);
-  // Find bar.cpp
-  name_equals_t < name_map_t > predicate3("bar.cpp", name);
+  // Find bar.o
+  name_equals_t < name_map_t > predicate3("bar.o", name);
   bar = *std::find_if(i, end, predicate3);
 
   graph_traits < graph_type >::edge_descriptor e1, e2;
   bool exists;
 
-  // Get the edge connecting yow.h to zag.cpp
+  // Get the edge connecting yow.h to zag.o
   tie(e1, exists) = edge(yow, zag, g);
   assert(exists == true);
   assert(source(e1, g) == yow);
   assert(target(e1, g) == zag);
 
-  // Discover that there is no edge connecting zag.cpp to bar.cpp
+  // Discover that there is no edge connecting zag.o to bar.o
   tie(e2, exists) = edge(zag, bar, g);
   assert(exists == false);
 
   assert(num_vertices(g) == 15);
   assert(num_edges(g) == 19);
-  return 0;
+
+  return EXIT_SUCCESS;
 }
