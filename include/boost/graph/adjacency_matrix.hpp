@@ -158,7 +158,7 @@ namespace boost {
         { }
 
         void increment() {
-            ++this->base();
+            ++this->base_reference();
             ++m_targ;
         }
         
@@ -212,12 +212,12 @@ namespace boost {
         {
             if (m_targ < m_src)     // first half
             {
-                ++this->base();
+                ++this->base_reference();
             }
             else
             {                  // second half
                 ++m_inc;
-                this->base() += m_inc;
+                this->base_reference() += m_inc;
             }
             ++m_targ;
         }
