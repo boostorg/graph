@@ -65,10 +65,25 @@ namespace boost {
     typedef typename graph_traits<Graph>::directed_category Cat;
     return detail::is_directed(Cat());
   }
+  template <typename Graph>
+  bool is_undirected(const Graph& g) { 
+    return ! is_directed(g);
+  }
 
   // edge_parallel_category tags
   struct allow_parallel_edge_tag {};
   struct disallow_parallel_edge_tag {};
+
+  namespace detail {
+    inline bool allows_parallel(allow_parallel_edge_tag) { return true; }
+    inline bool allows_parallel(disallow_parallel_edge_tag) { return false; }
+  }
+
+  template <typename Graph>
+  bool allows_parallel_edges(const Graph&) { 
+    typedef typename graph_traits<Graph>::edge_parallel_category Cat;
+    return detail::allows_parallel(Cat());
+  }
 
   //?? not the right place ?? Lee
   struct multi_pass_input_iterator_tag : std::input_iterator_tag { };
