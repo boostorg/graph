@@ -31,6 +31,7 @@
 #include <boost/graph/isomorphism.hpp>
 #include <boost/property_map.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/random/uniform_int.hpp>
 #include <boost/random/mersenne_twister.hpp>
 
 using namespace boost;
