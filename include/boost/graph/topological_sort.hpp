@@ -53,10 +53,10 @@ namespace boost {
       : m_iter(_iter) { }
     
     template <typename Edge, typename Graph>
-    void back_edge(Edge& u, Graph&) { throw not_a_dag(); }
+    void back_edge(const Edge& u, Graph&) { throw not_a_dag(); }
     
     template <typename Vertex, typename Graph> 
-    void finish_vertex(Vertex& u, Graph&) { *m_iter++ = u; }
+    void finish_vertex(const Vertex& u, Graph&) { *m_iter++ = u; }
     
     OutputIterator m_iter;
   };
