@@ -44,7 +44,7 @@ CXXFLAGS	= -Wall -g -Wno-long-double -ftemplate-depth-30 $(INCLUDES)
 	$(CXX) $(CXXFLAGS) $< -c
 
 
-JWEB	= isomorphism-impl.w
+JWEB	= isomorphism-impl.w isomorphism-impl-v2.w
 DOT	= out.dot in.dot
 EPS_GEN	= $(DOT:.dot=.eps)
 WEBTEX	= $(JWEB:.w=.tex)
@@ -68,10 +68,17 @@ isomorphism-v2.hpp: isomorphism-impl-v2.w isomorphism-impl-v2.tex
 out.dot: isomorphism-impl.w
 in.dot: isomorphism-impl.w
 
-isomorphism.o: isomorphism-v2.hpp
+isomorphism.o: isomorphism-v2.hpp isomorphism-impl-v2.w
 
 isomorphism: isomorphism.o
 	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
+
+isomorphism-v2.hpp: isomorphism-impl-v2.tex isomorphism-impl-v2.w
+eg1-iso.o: isomorphism-impl-v2.tex isomorphism-impl-v2.w
+
+eg1-iso: eg1-iso.o
+	$(CXX) $(CXXFLAGS) $< -o $@ $(LIBS)
+
 
 clean:
 	rm *.aux *.dvi $(EPS_GEN) $(PDFPICT)
