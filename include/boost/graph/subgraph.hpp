@@ -310,6 +310,12 @@ namespace boost {
              const subgraph<G>& g) 
     { return in_degree(u_local, g.m_graph); }
 
+  template <typename G>
+  typename graph_traits<G>::degree_size_type
+  degree(typename graph_traits<G>::vertex_descriptor u_local,
+             const subgraph<G>& g) 
+    { return degree(u_local, g.m_graph); }
+
   //===========================================================================
   // Functions required by the AdjacencyGraph concept 
 
@@ -374,7 +380,8 @@ namespace boost {
                            Children& c, subgraph<G>* orig)
     {
       for (typename Children::iterator i = c.begin(); i != c.end(); ++i)
-        if ((*i).find_vertex(u_global).second && (*i).find_vertex(v_global).second)
+        if ((*i).find_vertex(u_global).second
+	    && (*i).find_vertex(v_global).second)
           add_edge_recur_down(u_global, v_global, e_global, *i, orig);
     }
 
@@ -739,6 +746,16 @@ namespace boost {
   const typename graph_property<G, Tag>::type&
   get_property(const subgraph<G>& g, Tag tag) {
     return get_property(g.m_graph, tag);
+  }
+
+  //===========================================================================
+  // Miscellaneous Functions
+
+  template <typename G>
+  typename subgraph<G>::vertex_descriptor
+  vertex(typename subgraph<G>::vertices_size_type n, const subgraph<G>& g)
+  {
+    return vertex(n, g.m_graph);
   }
 
 } // namespace boost
