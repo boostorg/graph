@@ -57,6 +57,8 @@ main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
     // the builtin id property is readable but not writable
@@ -76,6 +78,8 @@ main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
     // the builtin id property is readable but not writable
@@ -93,6 +97,8 @@ main(int,char*[])
     function_requires< MutableIncidenceGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
@@ -107,13 +113,18 @@ main(int,char*[])
     function_requires< MutableBidirectionalGraphConcept<Graph> >();
     function_requires< MutableEdgeListGraphConcept<Graph> >();
     function_requires< MutablePropertyGraphConcept<Graph> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
   }
   {
     typedef std::pair<int,int> E;
     typedef edge_list<E*,E,ptrdiff_t> EdgeList;
+    typedef graph_traits<EdgeList>::edge_descriptor Edge;
     function_requires< EdgeListGraphConcept<EdgeList> >();
+    function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
+      edge_index_t> >();
   }
 #ifdef BOOST_USE_STANFORD_GRAPH_BASE
   { // Stanford GraphBase Graph
