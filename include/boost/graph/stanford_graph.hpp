@@ -274,8 +274,8 @@ namespace boost {
   }
 
   // Vertex Name  
-  class sgb_vertex_name_t_map
-    : public boost::put_get_helper<char*, sgb_vertex_name_t_map>
+  class sgb_vertex_name_map
+    : public boost::put_get_helper<char*, sgb_vertex_name_map>
   {
   public:
     typedef boost::readable_property_map_tag category;
@@ -284,8 +284,8 @@ namespace boost {
     typedef Vertex* key_type;
     char* operator[](Vertex* v) const { return v->name; }
   };
-  inline sgb_vertex_name_t_map get(vertex_name_t, sgb_graph_ptr) {
-    return sgb_vertex_name_t_map();
+  inline sgb_vertex_name_map get(vertex_name_t, sgb_graph_ptr) {
+    return sgb_vertex_name_map();
   }
 
   // Vertex Property Tags
@@ -439,8 +439,8 @@ namespace boost {
   };
   template <>
   struct property_map<sgb_graph_ptr, vertex_name_t> {
-    typedef sgb_vertex_name_t_map type;
-    typedef sgb_vertex_name_t_map const_type;
+    typedef sgb_vertex_name_map type;
+    typedef sgb_vertex_name_map const_type;
   };
 
   template <>
@@ -453,7 +453,7 @@ namespace boost {
   };
   template <>
   struct property_map<sgb_const_graph_ptr, vertex_name_t> {
-    typedef sgb_vertex_name_t_map const_type;
+    typedef sgb_vertex_name_map const_type;
   };
 
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
