@@ -151,7 +151,7 @@ namespace boost {
 #if !defined BOOST_NO_HASH
   struct hash_setS { 
     template <class T>
-    struct bind { typedef std::hash_set<T, std::less<T> > type; };
+    struct bind { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
   };
 #endif
 
@@ -163,7 +163,7 @@ namespace boost {
 #if !defined BOOST_NO_HASH
   struct hash_mapS { 
     template <class T>
-    struct bind { typedef std::hash_set<T, std::less<T> > type; };
+    struct bind { typedef BOOST_STD_EXTENSION_NAMESPACE::hash_set<T, std::less<T> > type; };
   };
 #endif
 
