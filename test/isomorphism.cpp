@@ -32,7 +32,7 @@
 #include <map>
 #include <algorithm>
 #include <cstdlib>
-#include <ctime>
+#include <time.h> // clock used without std:: qualifier?
 
 using namespace boost;
 
@@ -41,6 +41,7 @@ using namespace boost;
 // Note: this could be made much faster by specializing based on the graph
 // concepts modeled, but since we're verifying an O(n^(lg n)) algorithm,
 // O(n^4) won't hurt us.
+/*
 template<typename Graph1, typename Graph2, typename IsoMap>
 inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
                                IsoMap iso_map)
@@ -65,6 +66,7 @@ inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2,
   
   return true;
 }
+*/
 
 template <typename Generator>
 struct random_functor {
