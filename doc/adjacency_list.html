@@ -487,6 +487,12 @@ and must match one of the properties specified in the
 
 <hr>
 
+<tt>graph_property&lt;adjacency_list, Property&gt;::type</tt>
+<br><br>
+The property value type for the graph property specified by the
+<tt>Property</tt> tag.
+
+<hr>
 
 <H2>Member Functions</H2>
 
@@ -967,25 +973,25 @@ This sets the property value for <tt>x</tt> to
 
 <pre>
 template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
-typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
+typename graph_property&lt;adjacency_list, GraphProperty&gt;::type&amp;
 get_property(adjacency_list&amp; g, GraphProperty);
 </pre>
 Return the property specified by <tt>GraphProperty</tt> that is
-attached to the graph object <tt>g</tt>. The <tt>property_value</tt>
+attached to the graph object <tt>g</tt>. The <tt>graph_property</tt>
 traits class is defined in <a
-href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.
+href="../../../boost/graph/adjacency_list.hpp"><tt>boost/graph/adjacency_list.hpp</tt></a>.
 
 <hr>
 
 <pre>
 template &lt;class GraphProperties, class <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
-const typename property_value&lt;GraphProperties, GraphProperty&gt;::type&amp;
+const typename graph_property&lt;adjacency_list, GraphProperty&gt;::type&amp;
 get_property(const adjacency_list&amp; g, GraphProperty);
 </pre>
 Return the property specified by <tt>GraphProperty</tt> that is
-attached to the graph object <tt>g</tt>.  The <tt>property_value</tt>
+attached to the graph object <tt>g</tt>.  The <tt>graph_property</tt>
 traits class is defined in <a
-href="../../../boost/pending/property.hpp"><tt>boost/pending/property.hpp</tt></a>.
+href="../../../boost/graph/adjacency_list.hpp"><tt>boost/graph/adjacency_list.hpp</tt></a>.
 
 <hr>
 
