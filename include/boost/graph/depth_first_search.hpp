@@ -47,7 +47,6 @@
 #include <boost/graph/named_function_params.hpp>
 
 #include <boost/ref.hpp>
-#include <boost/implicit_cast.hpp>
 
 #include <vector>
 #include <utility>
@@ -208,12 +207,12 @@ namespace boost {
 
   } // namespace detail
 
-  template <class VertexListGraph, class DFSVisitor, class ColorMap>
+  template <class VertexListGraph, class DFSVisitor, class ColorMap,
+            class Vertex>
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color,
-                     typename graph_traits<VertexListGraph>::vertex_descriptor start_vertex)
+                     Vertex start_vertex)
   {
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     function_requires<DFSVisitorConcept<DFSVisitor, VertexListGraph> >();
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
@@ -223,7 +222,7 @@ namespace boost {
       put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
     }
 
-    if (start_vertex != implicit_cast<Vertex>(*vertices(g).first)){ vis.start_vertex(start_vertex, g);
+    if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
       detail::depth_first_visit_impl(g, start_vertex, vis, color,
                                      detail::nontruth2());
     }
