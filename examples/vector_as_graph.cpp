@@ -65,9 +65,9 @@ int main()
   int time = 0;
   breadth_first_search
     (g, int(s), make_bfs_visitor(make_pair(stamp_times(discover.begin(), time,
-						       on_discover_vertex()),
-					   stamp_times(finish.begin(), time,
-						       on_finish_vertex()))),
+                                                       on_discover_vertex()),
+                                           stamp_times(finish.begin(), time,
+                                                       on_finish_vertex()))),
      color.begin());
 
   std::cout << "order of discovery: ";

@@ -148,8 +148,8 @@ int main(int argc, char* argv[])
    boost::make_bfs_visitor(
     std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
     std::make_pair(boost::record_predecessors(&p[0], 
-					      boost::on_tree_edge()),
-		   copy_graph(G_copy, boost::on_examine_edge())))) );
+                                              boost::on_tree_edge()),
+                   copy_graph(G_copy, boost::on_examine_edge())))) );
 
   boost::print_graph(G);
   boost::print_graph(G_copy);
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 
     std::for_each(boost::vertices(G).first, boost::vertices(G).second, 
-		  print_parent<Piter>(&p[0]));
+                  print_parent<Piter>(&p[0]));
   }
 
   return 0;

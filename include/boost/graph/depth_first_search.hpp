@@ -80,15 +80,15 @@ namespace boost {
     }
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       if (get(color, *ui) == white(c)) {
-	vis.start_vertex(*ui, g);
-	depth_first_visit(g, *ui, vis, color);
+        vis.start_vertex(*ui, g);
+        depth_first_visit(g, *ui, vis, color);
       }
   }
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit(IncidenceGraph& g,
-	    typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-	    DFSVisitor& vis, ColorMap color)
+            typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+            DFSVisitor& vis, ColorMap color)
   {
     REQUIRE(IncidenceGraph, IncidenceGraph);
     REQUIRE2(DFSVisitor, IncidenceGraph, DFSVisitor);
@@ -100,12 +100,12 @@ namespace boost {
     for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
       vis.examine_edge(*ei, g);
       if (get(color, target(*ei, g)) == white(c)) {
-	vis.tree_edge(*ei, g);
-	depth_first_visit(g, target(*ei, g), vis, color);
+        vis.tree_edge(*ei, g);
+        depth_first_visit(g, target(*ei, g), vis, color);
       } else if (get(color, target(*ei, g)) == gray(c))
-	vis.back_edge(*ei, g);
+        vis.back_edge(*ei, g);
       else
-	vis.forward_or_cross_edge(*ei, g);
+        vis.forward_or_cross_edge(*ei, g);
     }
 
     put(color, u, black(c));

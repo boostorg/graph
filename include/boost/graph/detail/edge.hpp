@@ -37,7 +37,7 @@ namespace boost {
     struct edge_base {
       inline edge_base() {} 
       inline edge_base(Vertex s, Vertex d)
-	: m_source(s), m_target(d) { }
+        : m_source(s), m_target(d) { }
       Vertex m_source;
       Vertex m_target;
     };
@@ -49,7 +49,7 @@ namespace boost {
     template <class Edge>
     inline bool edge_equal(const Edge& a, const Edge& b, undirected_tag) {
       return a.m_source == b.m_source && a.m_target == b.m_target
-	|| a.m_source == b.m_target && a.m_target == b.m_source;
+        || a.m_source == b.m_target && a.m_target == b.m_source;
     }
     
     template <class Edge>
@@ -74,7 +74,7 @@ namespace boost {
       inline bidir_edge() : m_eplugin(0) {} 
       
       inline bidir_edge(Vertex s, Vertex d, const plugin_type* eplug = 0)
-	: Base(s,d), m_eplugin(const_cast<plugin_type*>(eplug)) { }
+        : Base(s,d), m_eplugin(const_cast<plugin_type*>(eplug)) { }
       
       plugin_type* get_plugin() { return m_eplugin; }
       const plugin_type* get_plugin() const { return m_eplugin; }

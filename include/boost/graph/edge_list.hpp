@@ -163,7 +163,7 @@ namespace boost {
   class edge_list
     : public ct_if< is_random<typename std::iterator_traits<EdgeIter>::iterator_category>::RET,
                     edge_list_impl_ra< edge_list<EdgeIter,T,D>, EdgeIter, T, D >,
-	            edge_list_impl< edge_list<EdgeIter,T,D>, EdgeIter, T, D > 
+                    edge_list_impl< edge_list<EdgeIter,T,D>, EdgeIter, T, D > 
              >::type
 #else
   template <class EdgeIter, 

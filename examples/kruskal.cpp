@@ -55,15 +55,15 @@ int main(int argc, char* argv[])
   typedef std::pair<int,int> E;
   const int num_nodes = 5;
   E edges[] = { E(0,2), 
-		E(1,1), E(1,3), E(1,4),
-		E(2,1), E(2,3), 
-		E(3,4),
-		E(4,0), E(4,1) };
+                E(1,1), E(1,3), E(1,4),
+                E(2,1), E(2,3), 
+                E(3,4),
+                E(4,0), E(4,1) };
   int weights[] = { 1, 
-		    2, 1, 2,
-		    7, 3, 
-		    1,
-		    1, 1};
+                    2, 1, 2,
+                    7, 3, 
+                    1,
+                    1, 1};
 
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
   property_map<Graph, edge_weight_t>::type weight = get(edge_weight, G);
@@ -75,15 +75,15 @@ int main(int argc, char* argv[])
   std::vector<int> rank(num_vertices(G));
 
   kruskal_minimum_spanning_tree(G, std::back_inserter(spanning_tree_edges), 
-				&rank[0], &p[0]);
+                                &rank[0], &p[0]);
   
   cout << "Print the edge in MST:" << endl;
   for (std::vector<Edge>::iterator ei = spanning_tree_edges.begin();
        ei != spanning_tree_edges.end(); ++ei) {
     cout << source(*ei, G) << " <--> " 
-	 << target(*ei, G)
-	 << " with weight of " << weight[*ei]
-	 << endl;
+         << target(*ei, G)
+         << " with weight of " << weight[*ei]
+         << endl;
     }
 
   return 0;

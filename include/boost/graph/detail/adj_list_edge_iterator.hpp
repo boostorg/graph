@@ -48,51 +48,51 @@ namespace boost {
 
       inline adj_list_edge_iterator(const self& x) 
       : vBegin(x.vBegin), vCurr(x.vCurr), vEnd(x.vEnd),
-	eCurr(x.eCurr), eEnd(x.eEnd), m_g(x.m_g) { }
+        eCurr(x.eCurr), eEnd(x.eEnd), m_g(x.m_g) { }
 
       template <class G>
       inline adj_list_edge_iterator(VertexIterator b, 
-				    VertexIterator c,
-				    VertexIterator e,
-				    G& g) 
-	: vBegin(b), vCurr(c), vEnd(e), m_g(&g) {
-	if ( vCurr != vEnd ) {
-	  while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
-	    ++vCurr;
-	  eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(), *vCurr);
-	  eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
-	}
+                                    VertexIterator c,
+                                    VertexIterator e,
+                                    G& g) 
+        : vBegin(b), vCurr(c), vEnd(e), m_g(&g) {
+        if ( vCurr != vEnd ) {
+          while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
+            ++vCurr;
+          eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(), *vCurr);
+          eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
+        }
       }
 
       /*Note:
-	In the directed graph cases, it is fine. 
-	For undirected graphs, one edge go through twice.
+        In the directed graph cases, it is fine. 
+        For undirected graphs, one edge go through twice.
       */
       inline self& operator++() {
-	++eCurr;
-	if ( eCurr == eEnd ) {
-	  ++vCurr;
-	  while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
-	    ++vCurr;
-	  if ( vCurr != vEnd ) {
-	    eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(),
-				    *vCurr);
-	    eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
-	  }
-	}
-	return *this;
+        ++eCurr;
+        if ( eCurr == eEnd ) {
+          ++vCurr;
+          while ( vCurr != vEnd && m_g->out_edge_list(*vCurr).empty() )
+            ++vCurr;
+          if ( vCurr != vEnd ) {
+            eCurr = OutEdgeIterator(m_g->out_edge_list(*vCurr).begin(),
+                                    *vCurr);
+            eEnd  = OutEdgeIterator(m_g->out_edge_list(*vCurr).end(), *vCurr);
+          }
+        }
+        return *this;
       }
       inline self operator++(int) {
-	self tmp = *this;
-	++(*this);
-	return tmp;
+        self tmp = *this;
+        ++(*this);
+        return tmp;
       }
       inline value_type operator*() const { return *eCurr; } 
       inline bool operator==(const self& x) const {
-	return vCurr == x.vCurr && (vCurr == vEnd || eCurr == x.eCurr);
+        return vCurr == x.vCurr && (vCurr == vEnd || eCurr == x.eCurr);
       }
       inline bool operator!=(const self& x) const {
-	return vCurr != x.vCurr || (vCurr != vEnd && eCurr != x.eCurr);
+        return vCurr != x.vCurr || (vCurr != vEnd && eCurr != x.eCurr);
       }
     protected:
       VertexIterator vBegin;

@@ -66,9 +66,9 @@ int main() {
     if ( ! my_bucket_sorter[j].empty() ) {
       cout << " has number ";
       do {
-	int v = my_bucket_sorter[j].top();
-	my_bucket_sorter[j].pop();
-	cout << v << " ";
+        int v = my_bucket_sorter[j].top();
+        my_bucket_sorter[j].pop();
+        cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
       cout << endl;
     } else {
@@ -89,9 +89,9 @@ int main() {
     if ( ! my_bucket_sorter[j].empty() ) {
       cout << " has number ";
       do {
-	int v = my_bucket_sorter[j].top();
-	my_bucket_sorter[j].pop();
-	cout << v << " ";
+        int v = my_bucket_sorter[j].top();
+        my_bucket_sorter[j].pop();
+        cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
       cout << endl;
     } else {

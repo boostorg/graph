@@ -61,10 +61,10 @@ main(int argc, char* argv[])
 
   const int num_nodes = 5;
   E edges[] = { E(0,2), 
-		E(1,1), E(1,3), E(1,4),
-		E(2,1), E(2,3), 
-		E(3,4),
-		E(4,0), E(4,1) };
+                E(1,1), E(1,3), E(1,4),
+                E(2,1), E(2,3), 
+                E(3,4),
+                E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
 
   std::cout << "constructing graph" << std::endl;

@@ -99,7 +99,7 @@ namespace boost {
             class BellmanFordVisitor>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
                                    WeightMap weight, DistanceMap distance, 
-				   BellmanFordVisitor v)
+                                   BellmanFordVisitor v)
   {
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
     typedef typename graph_traits<EdgeListGraph>::vertex_descriptor
@@ -113,7 +113,7 @@ namespace boost {
     std::plus<D_value> combine;
     std::less<D_value> compare;
     return bellman_ford_shortest_paths(g, N, weight, distance, 
-				       combine, compare, v);
+                                       combine, compare, v);
   }
 
   // Variant (3)
@@ -122,9 +122,9 @@ namespace boost {
             class BellmanFordVisitor>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
                                    WeightMap weight, DistanceMap distance, 
-				   BinaryFunction combine, 
-				   BinaryPredicate compare,
-				   BellmanFordVisitor v)
+                                   BinaryFunction combine, 
+                                   BinaryPredicate compare,
+                                   BellmanFordVisitor v)
   {
     REQUIRE(EdgeListGraph, EdgeListGraph);
     typedef typename graph_traits<EdgeListGraph>::edge_descriptor Edge;
@@ -138,22 +138,22 @@ namespace boost {
     
     for (Size k = 0; k < N; ++k)
       for (tie(i, end) = edges(g); i != end; ++i) {
-	v.examine_edge(*i, g);
-	if (relax(*i, g, weight, distance, combine, compare))
-	  v.edge_relaxed(*i, g);
-	else
-	  v.edge_not_relaxed(*i, g);
+        v.examine_edge(*i, g);
+        if (relax(*i, g, weight, distance, combine, compare))
+          v.edge_relaxed(*i, g);
+        else
+          v.edge_not_relaxed(*i, g);
       }
 
     for (tie(i, end) = edges(g); i != end; ++i)
       if (compare(combine(get(distance, source(*i, g)), 
-			  get(weight, *i)),
-		  get(distance, target(*i,g))))
+                          get(weight, *i)),
+                  get(distance, target(*i,g))))
       {
-	v.edge_not_minimized(*i, g);
+        v.edge_not_minimized(*i, g);
         return false;
       } else
-	v.edge_minimized(*i, g);
+        v.edge_minimized(*i, g);
 
     return true;
   }

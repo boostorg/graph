@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   for ( std::vector<Graph::vertex_descriptor>::iterator i = p.begin();
         i != p.end(); ++i)
     std::cout << "parent[" << i - p.begin() 
-	      << "] = " << *i << std::endl;
+              << "] = " << *i << std::endl;
   return 0;
 }
 

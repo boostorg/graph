@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
   boost::breadth_first_search
     (G, vertex(s, G), make_bfs_visitor(
      std::make_pair(stamp_times(discover, time, on_discover_vertex()),
-		    stamp_times(finish, time, on_finish_vertex()))),
+                    stamp_times(finish, time, on_finish_vertex()))),
      make_iterator_property_map(color.begin(), vertex_id, color[0]));
 
   cout << "order of discovery: ";
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
   std::vector<size_type> discover_order(N);
   iota(discover_order.begin(), discover_order.end(), 0);
   std::sort(discover_order.begin(), discover_order.end(),
-	    indirect_cmp<IterMap, std::less<size_type> >(discover));
+            indirect_cmp<IterMap, std::less<size_type> >(discover));
   
   for (i = 0; i < N; ++i)
     cout << name[ discover_order[i] ] << " ";
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
   vector<size_type> finish_order(N);
   iota(finish_order.begin(), finish_order.end(), 0);
   std::sort(finish_order.begin(), finish_order.end(),
-	    indirect_cmp<IterMap, std::less<size_type> >(finish));
+            indirect_cmp<IterMap, std::less<size_type> >(finish));
   
   for (i = 0; i < N; ++i)
     cout << name[ finish_order[i] ] << " ";

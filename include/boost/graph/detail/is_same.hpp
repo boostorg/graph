@@ -47,7 +47,7 @@ namespace boost {
     struct is_same {
       enum { Unum = U::num, Vnum = V::num };
       typedef typename boost::ct_if< (Unum == Vnum),
-	       boost::true_tag, boost::false_tag>::type is_same_tag;
+               boost::true_tag, boost::false_tag>::type is_same_tag;
     };
 #endif
   } // namespace detail

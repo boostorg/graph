@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   // Specify the edges in the graph
   typedef pair<int,int> E;
   E edge_array[] = { E(u,v), E(u,x), E(x,v), E(y,x),
-		     E(v,y), E(w,y), E(w,z), E(z,z) };
+                     E(v,y), E(w,y), E(w,z), E(z,z) };
   Graph G(N, edge_array, edge_array + sizeof(edge_array)/sizeof(E));
 
   // Some typedef's to save a little typing
@@ -95,16 +95,16 @@ int main(int argc, char* argv[])
   int t = 0;
   depth_first_search
     (G, make_dfs_visitor(make_pair(stamp_times(&dtime[0], t, 
-					       on_discover_vertex()),
-				   stamp_times(&ftime[0], t, 
-					       on_finish_vertex()))),
+                                               on_discover_vertex()),
+                                   stamp_times(&ftime[0], t, 
+                                               on_finish_vertex()))),
      &color[0]);
 
   // use std::sort to order the vertices by their discover time
   vector<size_type> discover_order(N);
   iota(discover_order.begin(), discover_order.end(), 0);
   std::sort(discover_order.begin(), discover_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(&dtime[0]));
+            indirect_cmp<Iiter, std::less<size_type> >(&dtime[0]));
 
   cout << "order of discovery: ";
   for (i = 0; i < N; ++i)
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
   vector<size_type> finish_order(N);
   iota(finish_order.begin(), finish_order.end(), 0);
   std::sort(finish_order.begin(), finish_order.end(),
-	    indirect_cmp<Iiter, std::less<size_type> >(&ftime[0]));
+            indirect_cmp<Iiter, std::less<size_type> >(&ftime[0]));
 
   cout << endl << "order of finish: ";
   for (i = 0; i < N; ++i)

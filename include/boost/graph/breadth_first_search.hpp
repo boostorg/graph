@@ -107,14 +107,14 @@ namespace boost {
         ei, ei_end;
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Edge e = *ei;
-	vis.examine_edge(e, g);
-	Vertex v = target(e, g);
-	if (get(color, v) == white(c)) {
-	  vis.tree_edge(e, g);
-	  put(color, v, gray(c));
-	  Q.push(v);
-	} else
-	  vis.cycle_edge(e, g);
+        vis.examine_edge(e, g);
+        Vertex v = target(e, g);
+        if (get(color, v) == white(c)) {
+          vis.tree_edge(e, g);
+          put(color, v, gray(c));
+          Q.push(v);
+        } else
+          vis.cycle_edge(e, g);
       } // for 
       vis.finish_vertex(u, g);
     } // while

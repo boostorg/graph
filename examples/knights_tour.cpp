@@ -87,8 +87,8 @@ void knight_adjacency_iterator::valid_position()
 {
   Position new_pos = pos + knight_jumps[i];
   while (i < 8 && (new_pos.first < 0 || new_pos.second < 0 
-		   || new_pos.first >= m_g->m_board_size
-		   || new_pos.second >= m_g->m_board_size)) {
+                   || new_pos.first >= m_g->m_board_size
+                   || new_pos.second >= m_g->m_board_size)) {
     ++i;
     new_pos = pos + knight_jumps[i];
   }
@@ -139,14 +139,14 @@ bool backtracking_search
     put(time_pa, x, time_stamp);
 
     if (time_stamp == num_vertices(g) * num_vertices(g) - 1)
-      return true;			 // success!
+      return true;                         // success!
 
     bool deadend = true;
     typename boost::graph_traits<Graph>::adjacency_iterator i, end;
     for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
       if (get(time_pa, *i) == -1) {
-	S.push(std::make_pair(time_stamp + 1, *i));
-	deadend = false;
+        S.push(std::make_pair(time_stamp + 1, *i));
+        deadend = false;
       }
 
     if (deadend) {
@@ -155,9 +155,9 @@ bool backtracking_search
       boost::tie(time_stamp, x) = S.top();
       // unwind stack to unexplored vertex
       while (get(time_pa, x) != -1) {
-	put(time_pa, x, -1);
-	S.pop();
-	boost::tie(time_stamp, x) = S.top();
+        put(time_pa, x, -1);
+        S.pop();
+        boost::tie(time_stamp, x) = S.top();
       } 
     }
 
@@ -186,29 +186,29 @@ bool warnsdorff
     S.pop();
 
     if (time_stamp == num_vertices(g) * num_vertices(g) - 1)
-      return true;			 // success!
+      return true;                         // success!
 
     typename boost::graph_traits<Graph>::adjacency_iterator i, end;
     boost::tie(i, end) = adjacent_vertices(x, g);
     int num_succ;
     for (; i != end; ++i)
       if (get(time_pa, *i) == -1) {
-	num_succ = number_of_successors(*i, g, time_pa);
-	Q.push(std::make_pair(num_succ, *i));
+        num_succ = number_of_successors(*i, g, time_pa);
+        Q.push(std::make_pair(num_succ, *i));
       }
 
-    if (Q.empty()) {			 // hit dead-end
+    if (Q.empty()) {                         // hit dead-end
       put(time_pa, x, -1);
       boost::tie(time_stamp, x) = S.top();
       while (get(time_pa, x) != -1) { // unwind stack
-	put(time_pa, x, -1);
-	S.pop();
-	boost::tie(time_stamp, x) = S.top();
+        put(time_pa, x, -1);
+        S.pop();
+        boost::tie(time_stamp, x) = S.top();
       } 
     } else {
       for (; !Q.empty(); Q.pop()) {
-	boost::tie(num_succ, x) = Q.top();
-	S.push(std::make_pair(time_stamp + 1, x));
+        boost::tie(num_succ, x) = Q.top();
+        S.push(std::make_pair(time_stamp + 1, x));
       }
     }
 
@@ -269,7 +269,7 @@ main(int argc, char* argv[])
   if (ret)
     for (int i = 0; i < num_vertices(g); ++i) {
       for (int j = 0; j < num_vertices(g); ++j)
-	std::cout << get(chessboard, Position(i,j)) << "\t";
+        std::cout << get(chessboard, Position(i,j)) << "\t";
       std::cout << std::endl;
     }
   else
@@ -370,7 +370,7 @@ bool recursive_backtracking(Vertex x, Graph& g, Board chessboard, int t)
   boost::tie(i, end) = adjacent_vertices(x, g);
   for (; i != end; ++i)
     if (get(chessboard, *i) == -1
-	&& recursive_backtracking(*i, g, chessboard, t + 1))
+        && recursive_backtracking(*i, g, chessboard, t + 1))
       return true;
   put(chessboard, x, -1);
   return false;

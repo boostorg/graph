@@ -52,19 +52,19 @@ int main(int argc, char* argv[])
 
   typedef std::pair<size_t, size_t> Pair;
   Pair edges[14] = { Pair(0,3), //a-d
-		     Pair(0,5),  //a-f
-		     Pair(1,2),  //b-c
-		     Pair(1,4),  //b-e
-		     Pair(1,6),  //b-g
-		     Pair(1,9),  //b-j
-		     Pair(2,3),  //c-d
-		     Pair(2,4),  //c-e
-		     Pair(3,5),  //d-f
-		     Pair(3,8),  //d-i
-		     Pair(4,6),  //e-g
-		     Pair(5,6),  //f-g
-		     Pair(5,7),  //f-h
-		     Pair(6,7) }; //g-h 
+                     Pair(0,5),  //a-f
+                     Pair(1,2),  //b-c
+                     Pair(1,4),  //b-e
+                     Pair(1,6),  //b-g
+                     Pair(1,9),  //b-j
+                     Pair(2,3),  //c-d
+                     Pair(2,4),  //c-e
+                     Pair(3,5),  //d-f
+                     Pair(3,8),  //d-i
+                     Pair(4,6),  //e-g
+                     Pair(5,6),  //f-g
+                     Pair(5,7),  //f-h
+                     Pair(6,7) }; //g-h 
   
   Graph G(10);
   for (int i=0; i<14; ++i)
@@ -86,11 +86,11 @@ int main(int argc, char* argv[])
     Vertex s = vertex(6, G);
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G), 
-			   get(vertex_degree, G));
+                           get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
     
     for (std::vector<Vertex>::const_iterator i = iperm.begin();
-	 i != iperm.end(); ++i)
+         i != iperm.end(); ++i)
       cout << id[*i] << " ";
     cout << endl;
   }
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     Vertex s = vertex(0, G);
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, iperm.rbegin(), get(vertex_color, G),
-			   get(vertex_degree, G));
+                           get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at :" << s << endl;
 
     for (std::vector<Vertex>::const_iterator i=iperm.begin();

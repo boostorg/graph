@@ -103,12 +103,12 @@ namespace boost {
   inline void
   uniform_cost_search(VertexListGraph& g,
               typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-	      DistanceMap d, WeightMap w,
-	      BinaryPredicate compare, BinaryFunction combine)
+              DistanceMap d, WeightMap w,
+              BinaryPredicate compare, BinaryFunction combine)
   {
     null_visitor null_vis;
     uniform_cost_search(g, s, d, w, 
-			get(vertex_color, g), get(vertex_index, g),
+                        get(vertex_color, g), get(vertex_index, g),
                         compare, combine, make_ucs_visitor(null_vis));
   }
 
@@ -118,10 +118,10 @@ namespace boost {
       class BinaryFunction, class BinaryPredicate>
     struct ucs_bfs_visitor {
       ucs_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
-		      WeightMap w, DistanceMap d, 
-		      BinaryFunction combine, BinaryPredicate compare)
-	: m_vis(vis), m_Q(Q), m_weight(w), m_distance(d), 
-	m_combine(combine), m_compare(compare)  { }
+                      WeightMap w, DistanceMap d, 
+                      BinaryFunction combine, BinaryPredicate compare)
+        : m_vis(vis), m_Q(Q), m_weight(w), m_distance(d), 
+        m_combine(combine), m_compare(compare)  { }
 
       template <class Vertex, class Graph>
       void initialize_vertex(Vertex, Graph&) { }
@@ -130,30 +130,30 @@ namespace boost {
 
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph& g) {
-	m_vis.discover_vertex(u, g);
+        m_vis.discover_vertex(u, g);
       }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) { 
-	m_decreased = relax(e, g, m_weight, m_distance, 
-			    m_combine, m_compare);
-	if (m_decreased)
-	  m_vis.edge_relaxed(e, g);
-	else
-	  m_vis.edge_not_relaxed(e, g);
-	m_vis.examine_edge(e, g);
+        m_decreased = relax(e, g, m_weight, m_distance, 
+                            m_combine, m_compare);
+        if (m_decreased)
+          m_vis.edge_relaxed(e, g);
+        else
+          m_vis.edge_not_relaxed(e, g);
+        m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
       void tree_edge(Edge, Graph&) { }
 
       template <class Edge, class Graph>
       void cycle_edge(Edge e, Graph& g) {
-	if (m_decreased)
-	  m_Q.update(target(e, g));
-	m_vis.cycle_edge(e, g);
+        if (m_decreased)
+          m_Q.update(target(e, g));
+        m_vis.cycle_edge(e, g);
       }
       template <class Vertex, class Graph>
       void finish_vertex(Vertex u, Graph& g) {
-	m_vis.finish_vertex(u, g);
+        m_vis.finish_vertex(u, g);
       }
       UniformCostVisitor m_vis;
       UpdatableQueue& m_Q;

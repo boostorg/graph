@@ -88,12 +88,12 @@ int main(int argc, char* argv[])
   dynamic_connected_components(g, ds);
   
   component_index<int> components(&ds.parents()[0], 
-				  &ds.parents()[0] + ds.parents().size());
+                                  &ds.parents()[0] + ds.parents().size());
 
   cout << "Total number of components: " << components.size() << endl;
   for (int k = 0; k != N; ++k)
     cout << "Vertex " << k << " is in the component who's representative is "
-	 << ds.find_set(k) << endl;
+         << ds.find_set(k) << endl;
   cout << endl;
 
   for (component_index<int>::size_type i = 0; i < components.size(); ++i) {

@@ -301,20 +301,20 @@ namespace boost {
       : m_plugin(p) { }
 
     inline adjacency_list(vertices_size_type num_vertices, 
-			  const GraphPlugin& p = GraphPlugin())
+                          const GraphPlugin& p = GraphPlugin())
       : Base(num_vertices), m_plugin(p) { }
 
     template <class EdgeIterator>
     inline adjacency_list(vertices_size_type num_vertices,
                           EdgeIterator first, EdgeIterator last,
-			  const GraphPlugin& p = GraphPlugin())
+                          const GraphPlugin& p = GraphPlugin())
       : Base(num_vertices, first, last), m_plugin(p) { }
 
     template <class EdgeIterator, class EdgePropertyIterator>
     inline adjacency_list(vertices_size_type num_vertices,
                           EdgeIterator first, EdgeIterator last,
                           EdgePropertyIterator ep_iter,
-			  const GraphPlugin& p = GraphPlugin())
+                          const GraphPlugin& p = GraphPlugin())
       : Base(num_vertices, first, last, ep_iter), m_plugin(p) { }
 
     //  protected:  (would be protected if friends were more portable)

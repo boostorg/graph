@@ -46,12 +46,12 @@ namespace boost {
   namespace detail {
     // For partial specialization workaround
     enum event_visitor_enum { ON_NO_EVENT, 
-			      ON_INITIALIZE_VERTEX, ON_START_VERTEX, 
-			      ON_DISCOVER_VERTEX, ON_FINISH_VERTEX,
-			      ON_EXAMINE_EDGE, ON_TREE_EDGE, ON_CYCLE_EDGE, 
-			      ON_FORWARD_OR_CROSS_EDGE, ON_BACK_EDGE,
-			      ON_EDGE_RELAXED, ON_EDGE_NOT_RELAXED,
-			      ON_EDGE_MINIMIZED, ON_EDGE_NOT_MINIMIZED };
+                              ON_INITIALIZE_VERTEX, ON_START_VERTEX, 
+                              ON_DISCOVER_VERTEX, ON_FINISH_VERTEX,
+                              ON_EXAMINE_EDGE, ON_TREE_EDGE, ON_CYCLE_EDGE, 
+                              ON_FORWARD_OR_CROSS_EDGE, ON_BACK_EDGE,
+                              ON_EDGE_RELAXED, ON_EDGE_NOT_RELAXED,
+                              ON_EDGE_MINIMIZED, ON_EDGE_NOT_MINIMIZED };
   } // namespace detail
 
   struct on_no_event { enum { num = detail::ON_NO_EVENT }; };
@@ -168,7 +168,7 @@ namespace boost {
     template <class Edge, class Graph>
     void operator()(Edge e, const Graph& g) {
       typename graph_traits<Graph>::vertex_descriptor 
-	u = source(e, g), v = target(e, g);
+        u = source(e, g), v = target(e, g);
       put(m_distance, v, get(m_distance, u) + 1);
     }
     DistanceMap m_distance;

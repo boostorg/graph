@@ -86,7 +86,7 @@ main()
 
   typedef pair<int,int> Pair;
   Pair edge_array[8] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
-			 Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
+                         Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
 
   // Construct a graph using the edge_array (passing in pointers
   // (iterators) to the beginning and end of the array), and

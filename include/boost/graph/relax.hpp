@@ -43,8 +43,8 @@ namespace boost {
     template <class Graph, class WeightMap, class DistanceMap, 
             class BinaryFunction, class BinaryPredicate>
     bool relax(typename graph_traits<Graph>::edge_descriptor e, 
-	       const Graph& g, WeightMap w, DistanceMap d, 
-	       BinaryFunction combine, BinaryPredicate compare)
+               const Graph& g, WeightMap w, DistanceMap d, 
+               BinaryFunction combine, BinaryPredicate compare)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex u = source(e, g), v = target(e, g);
@@ -54,15 +54,15 @@ namespace boost {
       W w_e = get(w, e);
 
       if ( compare(combine(d_u, w_e), d_v) ) {
-	put(d, v, combine(d_u, w_e));
-	return true;
+        put(d, v, combine(d_u, w_e));
+        return true;
       } else
-	return false;
+        return false;
     }
     
     template <class Graph, class WeightMap, class DistanceMap>
     bool relax(typename graph_traits<Graph>::edge_descriptor e,
-	       const Graph& g, WeightMap w, DistanceMap d)
+               const Graph& g, WeightMap w, DistanceMap d)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
       typedef std::plus<D> Combine;

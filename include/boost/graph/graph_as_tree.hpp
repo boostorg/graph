@@ -75,7 +75,7 @@ namespace boost {
            >
   class graph_as_tree
     : public graph_as_tree_base<Graph, Node, ChIt, 
-	    graph_as_tree<Graph,ParentMap,Node,ChIt> >
+            graph_as_tree<Graph,ParentMap,Node,ChIt> >
   {
     typedef graph_as_tree self;
     typedef graph_as_tree_base<Graph, Node, ChIt, self> super;

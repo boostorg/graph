@@ -70,12 +70,12 @@ using namespace boost;
 
 template <class EdgeIter, class Graph, class Name>
 void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G,
-		  Name name)
+                  Name name)
 {
   while (first != last) {
 
     cout << name[source(*first,G)] << " owes " 
-	 << name[target(*first,G)] << " some money" << endl;
+         << name[target(*first,G)] << " some money" << endl;
     ++first;
   }
 }
@@ -96,8 +96,8 @@ main(int, char*[])
 
   typedef pair<int,int> Pair;
   Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
-			  Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
-			  Pair(3,4), Pair(4,0), Pair(4,1) };
+                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
+                          Pair(3,4), Pair(4,0), Pair(4,1) };
 
     MyGraphType G(5);
     for (int i=0; i<11; ++i)

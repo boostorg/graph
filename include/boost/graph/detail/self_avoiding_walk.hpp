@@ -84,16 +84,16 @@ namespace boost {
     if ( a.first == b.first ) {
       l.first = a.first;
       if ( a.second == b.second || a.second == b.third )
-	l.second = a.second;
+        l.second = a.second;
       else if ( a.third == b.second || a.third == b.third )
-	l.second = a.third; 
+        l.second = a.third; 
 
     }  else if ( a.first == b.second ) {
       l.first = a.first;
       if ( a.second == b.third )
-	l.second = a.second;
+        l.second = a.second;
       else if ( a.third == b.third )
-	l.second = a.third; 
+        l.second = a.third; 
 
     } else if ( a.first == b.third ) {
       l.first = a.first;
@@ -102,20 +102,20 @@ namespace boost {
     } else if ( a.second == b.first ) {
       l.first = a.second;
       if ( a.third == b.second || a.third == b.third )
-	l.second = a.third;
+        l.second = a.third;
 
     } else if ( a.second == b.second ) {
       l.first = a.second;
       if ( a.third == b.third ) 
-	l.second = a.third;
+        l.second = a.third;
 
     } else if ( a.second == b.third ) {
       l.first = a.second;
 
 
     } else if ( a.third == b.first 
-		|| a.third == b.second  
-		|| a.third == b.third )
+                || a.third == b.second  
+                || a.third == b.third )
       l.first = a.third; 
 
     /*Make it in order*/
@@ -189,7 +189,7 @@ namespace boost {
     */
     template <class Edge, class Graph>
     bool tree_edge(Edge e, Graph& G) {
-	  using std::make_pair;
+          using std::make_pair;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex tau = target(e, G);
       Vertex i   = source(e, G); 
@@ -221,174 +221,174 @@ namespace boost {
       b = ( w_i->second.first != SAW_SENTINAL );
 
       if ( w_i_m_1 != w_end ) {
-	a = ( w_i_m_1->second.first != SAW_SENTINAL );
+        a = ( w_i_m_1->second.first != SAW_SENTINAL );
       }      
       
       if ( a ) {
-	
-	if ( b ) {
-	  /*Case 1: 
-	    
-	    w(i-1) |- w(i) |- w(i+1)
-	  */
-	  Line l1 = get_sharing_line(*w_i_m_1, tau);
+        
+        if ( b ) {
+          /*Case 1: 
+            
+            w(i-1) |- w(i) |- w(i+1)
+          */
+          Line l1 = get_sharing_line(*w_i_m_1, tau);
 
-	  iter w_i_m_2 = w_i_m_1;
-	  --w_i_m_2;
+          iter w_i_m_2 = w_i_m_1;
+          --w_i_m_2;
 
-	  bool c = true;
-	  
-	  if ( w_i_m_2 != w_end ) {
-	    c = w_i_m_2->second != l1;
-	  }
+          bool c = true;
+          
+          if ( w_i_m_2 != w_end ) {
+            c = w_i_m_2->second != l1;
+          }
 
-	  if ( c ) {  /* w(i-1) ^ tau != w(i-2) ^ w(i-1)  */
-	    /*extension: w(i-1) -> tau |- w(i) */
-	    w_i_m_1->second = l1;
-	    /*insert(pos, const T&) is to insert before pos*/
-	    iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));  
-	    
-	  } else {  /* w(i-1) ^ tau == w(i-2) ^ w(i-1)  */
-	    /*must be w(i-2) ~> w(i-1) */
-	    
-	    bool d = true;
-	    //need to handle the case when w_i_p_1 is null
-	    Line l3 = get_sharing_line(*w_i_p_1, tau);
-	    if ( w_i_p_1 != w_end )
-	      d = w_i_p_1->second != l3;
-	    if ( d ) { /* w(i+1) ^ tau != w(i+1) ^ w(i+2) */
-	      /*extension: w(i) |- tau -> w(i+1) */
-	      w_i->second = tau_i;
-	      iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l3));
-	    } else { /* w(i+1) ^ tau == w(i+1) ^ w(i+2) */
-	      /*must be w(1+1) ~> w(i+2) */
-	      Line l5 = get_sharing_line(*w_i_m_1, *w_i_p_1);
-	      if ( l5 != w_i_p_1->second ) { /* w(i-1) ^ w(i+1) != w(i+1) ^ w(i+2) */
-		/*extension: w(i-2) -> tau |- w(i) |- w(i-1) -> w(i+1) */
-		w_i_m_2->second = get_sharing_line(*w_i_m_2, tau);
-		iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
-		w_i->second = w_i_m_1->second;
-		w_i_m_1->second = l5;
-		iter_d[w_i_m_1->first] = hlist->insert(w_i_p_1, *w_i_m_1);
-		hlist->erase(w_i_m_1);
-	      } else {
-		/*mesh is tetrahedral*/
-		// dont know what that means.
-		;
-	      }
-	    }
-	    
-	  }
-	} else { 
-	  /*Case 2:
-	    
-	    w(i-1) |- w(i) ~> w(1+1)
-	  */
-	  
-	  if ( w_i->second.second == tau_i.first 
-	       || w_i->second.second == tau_i.second ) {  /*w(i) ^ w(i+1) < w(i) ^ tau*/
-	    /*extension: w(i) |- tau -> w(i+1) */
-	    w_i->second = tau_i;
-	    Line l1 = get_sharing_line(*w_i_p_1, tau);
-	    iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
-	  } else { /*w(i) ^ w(i+1) !< w(i) ^ tau*/
-	    Line l1 = get_sharing_line(*w_i_m_1, tau);
-	    bool c = true;
-	    iter w_i_m_2 = w_i_m_1;
-	    --w_i_m_2;
-	    if ( w_i_m_2 != w_end )
-	      c =  l1 != w_i_m_2->second;
-	    if (c) { /*w(i-1) ^ tau != w(i-2) ^ w(i-1)*/
-	      /*extension: w(i-1) -> tau |- w(i)*/
-	      w_i_m_1->second = l1;
-	      iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
-	    } else { /*w(i-1) ^ tau == w(i-2) ^ w(i-1)*/
-	      /*must be w(i-2)~>w(i-1)*/
-	      /*extension: w(i-2) -> tau |- w(i) |- w(i-1) -> w(i+1)*/
-	      w_i_m_2->second = get_sharing_line(*w_i_m_2, tau);
-	      iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
-	      w_i->second = w_i_m_1->second;
-	      w_i_m_1->second = get_sharing_line(*w_i_m_1, *w_i_p_1);
-	      iter_d[w_i_m_1->first] = hlist->insert(w_i_p_1, *w_i_m_1);
-	      hlist->erase(w_i_m_1);
-	    }
-	    
-	  }    
-	  
-	}
-	
+          if ( c ) {  /* w(i-1) ^ tau != w(i-2) ^ w(i-1)  */
+            /*extension: w(i-1) -> tau |- w(i) */
+            w_i_m_1->second = l1;
+            /*insert(pos, const T&) is to insert before pos*/
+            iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));  
+            
+          } else {  /* w(i-1) ^ tau == w(i-2) ^ w(i-1)  */
+            /*must be w(i-2) ~> w(i-1) */
+            
+            bool d = true;
+            //need to handle the case when w_i_p_1 is null
+            Line l3 = get_sharing_line(*w_i_p_1, tau);
+            if ( w_i_p_1 != w_end )
+              d = w_i_p_1->second != l3;
+            if ( d ) { /* w(i+1) ^ tau != w(i+1) ^ w(i+2) */
+              /*extension: w(i) |- tau -> w(i+1) */
+              w_i->second = tau_i;
+              iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l3));
+            } else { /* w(i+1) ^ tau == w(i+1) ^ w(i+2) */
+              /*must be w(1+1) ~> w(i+2) */
+              Line l5 = get_sharing_line(*w_i_m_1, *w_i_p_1);
+              if ( l5 != w_i_p_1->second ) { /* w(i-1) ^ w(i+1) != w(i+1) ^ w(i+2) */
+                /*extension: w(i-2) -> tau |- w(i) |- w(i-1) -> w(i+1) */
+                w_i_m_2->second = get_sharing_line(*w_i_m_2, tau);
+                iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
+                w_i->second = w_i_m_1->second;
+                w_i_m_1->second = l5;
+                iter_d[w_i_m_1->first] = hlist->insert(w_i_p_1, *w_i_m_1);
+                hlist->erase(w_i_m_1);
+              } else {
+                /*mesh is tetrahedral*/
+                // dont know what that means.
+                ;
+              }
+            }
+            
+          }
+        } else { 
+          /*Case 2:
+            
+            w(i-1) |- w(i) ~> w(1+1)
+          */
+          
+          if ( w_i->second.second == tau_i.first 
+               || w_i->second.second == tau_i.second ) {  /*w(i) ^ w(i+1) < w(i) ^ tau*/
+            /*extension: w(i) |- tau -> w(i+1) */
+            w_i->second = tau_i;
+            Line l1 = get_sharing_line(*w_i_p_1, tau);
+            iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
+          } else { /*w(i) ^ w(i+1) !< w(i) ^ tau*/
+            Line l1 = get_sharing_line(*w_i_m_1, tau);
+            bool c = true;
+            iter w_i_m_2 = w_i_m_1;
+            --w_i_m_2;
+            if ( w_i_m_2 != w_end )
+              c =  l1 != w_i_m_2->second;
+            if (c) { /*w(i-1) ^ tau != w(i-2) ^ w(i-1)*/
+              /*extension: w(i-1) -> tau |- w(i)*/
+              w_i_m_1->second = l1;
+              iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
+            } else { /*w(i-1) ^ tau == w(i-2) ^ w(i-1)*/
+              /*must be w(i-2)~>w(i-1)*/
+              /*extension: w(i-2) -> tau |- w(i) |- w(i-1) -> w(i+1)*/
+              w_i_m_2->second = get_sharing_line(*w_i_m_2, tau);
+              iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
+              w_i->second = w_i_m_1->second;
+              w_i_m_1->second = get_sharing_line(*w_i_m_1, *w_i_p_1);
+              iter_d[w_i_m_1->first] = hlist->insert(w_i_p_1, *w_i_m_1);
+              hlist->erase(w_i_m_1);
+            }
+            
+          }    
+          
+        }
+        
       } else {
-	
-	if ( b ) {
-	  /*Case 3:
-	    
-	    w(i-1) ~> w(i) |- w(i+1)
-	  */
-	  bool c = false;
-	  if ( w_i_m_1 != w_end )
-	    c = ( w_i_m_1->second.second == tau_i.first)
-	      || ( w_i_m_1->second.second == tau_i.second);
-	  
-	  if ( c ) {  /*w(i-1) ^ w(i) < w(i) ^ tau*/
-	    /* extension: w(i-1) -> tau |- w(i) */
-	    if ( w_i_m_1 != w_end )
-	      w_i_m_1->second = get_sharing_line(*w_i_m_1, tau);
-	    iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
-	  } else {
-	    bool d = true;
-	    Line l1;
-	    l1.first = SAW_SENTINAL;
-	    l1.second = SAW_SENTINAL;
-	    if ( w_i_p_1 != w_end ) {
-	      l1 = get_sharing_line(*w_i_p_1, tau);
-	      d = l1 != w_i_p_1->second;
-	    }
-	    if (d) { /*w(i+1) ^ tau != w(i+1) ^ w(i+2)*/
-	      /*extension: w(i) |- tau -> w(i+1) */
-	      w_i->second = tau_i;
-	      iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
-	    } else {
-	      /*must be w(i+1) ~> w(i+2)*/
-	      /*extension: w(i-1) -> w(i+1) |- w(i) |- tau -> w(i+2) */
-	      iter w_i_p_2 = w_i_p_1;
-	      ++w_i_p_2;
-	      
-	      w_i_p_1->second = w_i->second;
-	      iter_d[i] = hlist->insert(w_i_p_2, make_pair(i, tau_i));
-	      hlist->erase(w_i);
-	      Line l2 = get_sharing_line(*w_i_p_2, tau);
-	      iter_d[tau] = hlist->insert(w_i_p_2, make_pair(tau, l2));
-	    }
-	  }
-	  
-	} else {
-	  /*Case 4:
-	    
-	    w(i-1) ~> w(i) ~> w(i+1)
-	    
-	  */
-	  bool c = false;
-	  if ( w_i_m_1 != w_end ) {
-	    c = (w_i_m_1->second.second == tau_i.first) 
-	      || (w_i_m_1->second.second == tau_i.second);
-	  }
-	  if ( c ) {   /*w(i-1) ^ w(i) < w(i) ^ tau */
-	    /*extension: w(i-1) -> tau |- w(i) */
-	    if ( w_i_m_1 != w_end )
-	      w_i_m_1->second = get_sharing_line(*w_i_m_1, tau);
-	    iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
-	  } else { 
-	    /*extension: w(i) |- tau -> w(i+1) */
-	    w_i->second = tau_i;
-	    Line l1;
-	    l1.first = SAW_SENTINAL;
-	    l1.second = SAW_SENTINAL;
-	    if ( w_i_p_1 != w_end ) 
-	      l1 = get_sharing_line(*w_i_p_1, tau);
-	    iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
-	  }
-	}
-	
+        
+        if ( b ) {
+          /*Case 3:
+            
+            w(i-1) ~> w(i) |- w(i+1)
+          */
+          bool c = false;
+          if ( w_i_m_1 != w_end )
+            c = ( w_i_m_1->second.second == tau_i.first)
+              || ( w_i_m_1->second.second == tau_i.second);
+          
+          if ( c ) {  /*w(i-1) ^ w(i) < w(i) ^ tau*/
+            /* extension: w(i-1) -> tau |- w(i) */
+            if ( w_i_m_1 != w_end )
+              w_i_m_1->second = get_sharing_line(*w_i_m_1, tau);
+            iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
+          } else {
+            bool d = true;
+            Line l1;
+            l1.first = SAW_SENTINAL;
+            l1.second = SAW_SENTINAL;
+            if ( w_i_p_1 != w_end ) {
+              l1 = get_sharing_line(*w_i_p_1, tau);
+              d = l1 != w_i_p_1->second;
+            }
+            if (d) { /*w(i+1) ^ tau != w(i+1) ^ w(i+2)*/
+              /*extension: w(i) |- tau -> w(i+1) */
+              w_i->second = tau_i;
+              iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
+            } else {
+              /*must be w(i+1) ~> w(i+2)*/
+              /*extension: w(i-1) -> w(i+1) |- w(i) |- tau -> w(i+2) */
+              iter w_i_p_2 = w_i_p_1;
+              ++w_i_p_2;
+              
+              w_i_p_1->second = w_i->second;
+              iter_d[i] = hlist->insert(w_i_p_2, make_pair(i, tau_i));
+              hlist->erase(w_i);
+              Line l2 = get_sharing_line(*w_i_p_2, tau);
+              iter_d[tau] = hlist->insert(w_i_p_2, make_pair(tau, l2));
+            }
+          }
+          
+        } else {
+          /*Case 4:
+            
+            w(i-1) ~> w(i) ~> w(i+1)
+            
+          */
+          bool c = false;
+          if ( w_i_m_1 != w_end ) {
+            c = (w_i_m_1->second.second == tau_i.first) 
+              || (w_i_m_1->second.second == tau_i.second);
+          }
+          if ( c ) {   /*w(i-1) ^ w(i) < w(i) ^ tau */
+            /*extension: w(i-1) -> tau |- w(i) */
+            if ( w_i_m_1 != w_end )
+              w_i_m_1->second = get_sharing_line(*w_i_m_1, tau);
+            iter_d[tau] = hlist->insert(w_i, make_pair(tau, tau_i));
+          } else { 
+            /*extension: w(i) |- tau -> w(i+1) */
+            w_i->second = tau_i;
+            Line l1;
+            l1.first = SAW_SENTINAL;
+            l1.second = SAW_SENTINAL;
+            if ( w_i_p_1 != w_end ) 
+              l1 = get_sharing_line(*w_i_p_1, tau);
+            iter_d[tau] = hlist->insert(w_i_p_1, make_pair(tau, l1));
+          }
+        }
+        
       }
 
       return true;

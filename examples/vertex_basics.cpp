@@ -133,7 +133,7 @@ struct exercise_vertex {
     
     cout << "adjacent vertices: ";
     for_each(adjacent_vertices(v,g).first, 
-	     adjacent_vertices(v,g).second, print_index<Graph>(g));
+             adjacent_vertices(v,g).second, print_index<Graph>(g));
     cout << endl << endl;
   }
 

@@ -54,8 +54,8 @@ namespace boost {
   template <class Graph>
   inline typename graph_traits<Graph>::vertex_descriptor
   opposite(typename graph_traits<Graph>::edge_descriptor e,
-	   typename graph_traits<Graph>::vertex_descriptor v,
-	   const Graph& g)
+           typename graph_traits<Graph>::vertex_descriptor v,
+           const Graph& g)
   {
     if (v == source(e, g))
       return target(e, g);
@@ -77,7 +77,7 @@ namespace boost {
       typename graph_traits<IncidenceGraph>
         ::in_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = in_edges(*ui,G); ei != ei_end; ++ei)
-	std::cout << get(name,source(*ei,G)) << " ";
+        std::cout << get(name,source(*ei,G)) << " ";
       std::cout << std::endl;
     }
   }
@@ -91,7 +91,7 @@ namespace boost {
       typename graph_traits<IncidenceGraph>
         ::out_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = out_edges(*ui,G); ei != ei_end; ++ei)
-	std::cout << get(name,target(*ei,G)) << " ";
+        std::cout << get(name,target(*ei,G)) << " ";
       std::cout << std::endl;
     }
   }
@@ -104,7 +104,7 @@ namespace boost {
       typename graph_traits<IncidenceGraph>
         ::out_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = out_edges(*ui,G); ei != ei_end; ++ei)
-	std::cout << get(name,target(*ei,G)) << " ";
+        std::cout << get(name,target(*ei,G)) << " ";
       std::cout << std::endl;
     }
   }
@@ -126,7 +126,7 @@ namespace boost {
     typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
       std::cout << "(" << get(name, source(*ei, G))
-		<< "," << get(name, target(*ei, G)) << ") ";
+                << "," << get(name, target(*ei, G)) << ") ";
     std::cout << std::endl;
   }
 
@@ -136,7 +136,7 @@ namespace boost {
     typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
       std::cout << get(ename, *ei) << "(" << get(vname, source(*ei, G))
-		<< "," << get(vname, target(*ei, G)) << ") ";
+                << "," << get(vname, target(*ei, G)) << ") ";
     std::cout << std::endl;
   }
 
@@ -268,7 +268,7 @@ namespace boost {
     typename Graph::edge_iterator ei, ei_end;
     for (boost::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
       if (source(*ei,g) == u && target(*ei,g) == v)
-	return true;
+        return true;
     return false;
   }
 

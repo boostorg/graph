@@ -52,13 +52,13 @@ namespace boost {
       typedef value_type* pointer;
       inline bidir_incidence_iterator() {}
       inline bidir_incidence_iterator(Iterator1D ii, Vertex src) 
-	: i(ii), _src(src) { }
+        : i(ii), _src(src) { }
       
       inline self& operator++() { ++i; return *this; }
       inline self operator++(int) { self tmp = *this; ++(*this); return tmp; }
       
       inline reference operator*() const {
-	return deref_helper(EdgeDir());
+        return deref_helper(EdgeDir());
       }
       inline bool operator!=(const self& x) const { return i != x.i; }
       inline bool operator==(const self& x) const { return i == x.i; }
@@ -68,10 +68,10 @@ namespace boost {
       Vertex _src;
     protected:
       inline reference deref_helper(out_edge_tag) const {
-	return edge_type( _src, (*i).get_target(), (*i).get_plugin() );
+        return edge_type( _src, (*i).get_target(), (*i).get_plugin() );
       }
       inline reference deref_helper(in_edge_tag) const {
-	return edge_type((*i).get_target(), _src, (*i).get_plugin() );
+        return edge_type((*i).get_target(), _src, (*i).get_plugin() );
       }
     };
     

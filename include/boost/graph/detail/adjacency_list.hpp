@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.22  2000/09/25 17:29:32  jsiek
+// changes tabs to spaces
+//
 // Revision 1.21  2000/09/25 17:25:59  jsiek
 // vertex_index() -> vertex_index
 // vertex_index -> vertex_index_t
@@ -1790,7 +1793,7 @@ namespace boost {
     template <class D, class P, class Vertex, class Tag, class K, class V>
     inline void
     put(adj_list_edge_property_map<D,P,Vertex,Tag>&, const K& e,
-	const V& val)
+        const V& val)
     {
       typedef typename plugin_value<P,Tag>::type value_type;
       P* p = (P*)e.get_plugin();

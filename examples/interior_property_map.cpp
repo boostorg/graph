@@ -82,7 +82,7 @@ void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
     src_name = boost::get(name, source(*first,G));
     targ_name = boost::get(name, target(*first,G));
     cout << src_name << " owes " 
-	 << targ_name << " some money" << endl;
+         << targ_name << " some money" << endl;
     ++first;
   }
 }
@@ -98,8 +98,8 @@ main()
     
     typedef pair<int,int> Pair;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
-			    Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
-			    Pair(3,4), Pair(4,0), Pair(4,1) };
+                            Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
+                            Pair(3,4), Pair(4,0), Pair(4,1) };
     
     MyGraphType G(5);
     for (int i=0; i<11; ++i)

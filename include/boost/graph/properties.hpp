@@ -146,15 +146,15 @@ namespace boost {
     struct dummy_edge_property_selector {
       template <class Graph, class Plugin, class Tag>
       struct bind {
-	typedef identity_property_map type;
-	typedef identity_property_map const_type;
+        typedef identity_property_map type;
+        typedef identity_property_map const_type;
       };
     };
     struct dummy_vertex_property_selector {
       template <class Graph, class Plugin, class Tag>
       struct bind {
-	typedef identity_property_map type;
-	typedef identity_property_map const_type;
+        typedef identity_property_map type;
+        typedef identity_property_map const_type;
       };
     };
 
@@ -181,7 +181,7 @@ namespace boost {
       typedef typename Graph::graph_tag graph_tag;
       typedef typename edge_property_selector<graph_tag>::type Selector;
       typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
-	Bind;
+        Bind;
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;
     };
@@ -191,7 +191,7 @@ namespace boost {
       typedef typename Graph::graph_tag graph_tag;
       typedef typename vertex_property_selector<graph_tag>::type Selector;
       typedef typename Selector::template bind<Graph,Plugin,PropertyTag>
-	Bind;
+        Bind;
     public:
       typedef typename Bind::type type;
       typedef typename Bind::const_type const_type;

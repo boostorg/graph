@@ -60,11 +60,11 @@ namespace boost {
             class Rank, class Parent>
   inline void 
   kruskal_minimum_spanning_tree(Graph& G, OutputIterator spanning_tree_edges, 
-				Rank rank, Parent parent)
+                                Rank rank, Parent parent)
   {
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
     kruskal_minimum_spanning_tree(G, spanning_tree_edges, rank, parent, 
-				  get(edge_weight, G));
+                                  get(edge_weight, G));
   }
 
   // Variant (2)
@@ -72,7 +72,7 @@ namespace boost {
             class Rank, class Parent, class Weight>
   void
   kruskal_minimum_spanning_tree(Graph& G, OutputIterator spanning_tree_edges, 
-				Rank rank, Parent parent, Weight weight)
+                                Rank rank, Parent parent, Weight weight)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename graph_traits<Graph>::edge_descriptor Edge;

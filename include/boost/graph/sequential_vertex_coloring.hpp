@@ -49,7 +49,7 @@ namespace boost {
   template <class VertexListGraph, class OrderPA, class ColorMap>
   typename graph_traits<VertexListGraph>::size_type
   sequential_vertex_color_ting(const VertexListGraph& G, OrderPA order, 
-			     ColorMap color)
+                             ColorMap color)
   {
     using graph_traits;
     using boost::tie;
@@ -81,7 +81,7 @@ namespace boost {
       //Mark the colors of vertices adjacent to current.
       //i can be the value for marking since i increases successively
       for (tie(v,vend) = adjacent_vertices(current, G); v != vend; ++v)
-	mark[get(color,*v)] = i; 
+        mark[get(color,*v)] = i; 
       
       //Next step is to assign the smallest un-marked color
       //to the current vertex.
@@ -92,10 +92,10 @@ namespace boost {
       //is equal to i, color j is used by one of the current vertex's
       //neighbors.
       while ( j < max_color && mark[j] == i ) 
-	++j;
+        ++j;
       
       if ( j == max_color )  //All colors are used up. Add one more color
-	++max_color;
+        ++max_color;
 
       //At this point, j is the smallest possible color
       put(color, current, j);  //Save the color of vertex current

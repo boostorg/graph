@@ -75,13 +75,13 @@ struct edge_categorizer : public dfs_visitor<VisitorList> {
   template <class Edge, class Graph>
   void back_edge(Edge e, Graph& G) {
     cout << "Back edge: " << source(e, G)
-	 << " --> " <<  target(e, G) << endl;
+         << " --> " <<  target(e, G) << endl;
     Base::back_edge(e, G);
   }
   template <class Edge, class Graph>
   void forward_or_cross_edge(Edge e, Graph& G) {
     cout << "Forward or cross edge: " << source(e, G)
-	 << " --> " <<  target(e, G) << endl;
+         << " --> " <<  target(e, G) << endl;
     Base::forward_or_cross_edge(e, G);
   }
 };
@@ -119,7 +119,7 @@ main(int argc, char* argv[])
   int t = 0;
   depth_first_search(G, categorize_edges(
                      make_pair(stamp_times(&d[0], t, on_discover_vertex()),
-			       stamp_times(&f[0], t, on_finish_vertex()))),
+                               stamp_times(&f[0], t, on_finish_vertex()))),
                      &c[0]);
 
 

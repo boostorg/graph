@@ -82,8 +82,8 @@ int main(int argc, char* argv[])
     else if(strncmp(argv[argc],"-g",2)==0) file_name = argv[argc]+2;
     else{
       fprintf(stderr,
-	      "Usage: %s [-nN][-dN][-rN][-sN][-NN][-WN][-PN][-v][-gfoo]\n",
-	      argv[0]);
+              "Usage: %s [-nN][-dN][-rN][-sN][-NN][-WN][-PN][-v][-gfoo]\n",
+              argv[0]);
       return -2;
     }
   }
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
 
     if(g == NULL || g->n <= 1) {
       fprintf(stderr,"Sorry, can't create the graph! (error code %ld)\n",
-	      panic_code);
+              panic_code);
       return-1;
     }
 
@@ -111,12 +111,12 @@ int main(int argc, char* argv[])
    total_length_visitor<Distance> length_vis(sp_length, d);
 
    prim_minimum_spanning_tree(g, vertex(0,g), 
-			      get(z_property<long>(), g),
-			      get(edge_length(), g), 
-			      // Use the "y" utility field for color.
-			      get(y_property<long>(), g),
-			      get(vertex_index, g), 
-			      length_vis);
+                              get(z_property<long>(), g),
+                              get(edge_length(), g), 
+                              // Use the "y" utility field for color.
+                              get(y_property<long>(), g),
+                              get(vertex_index, g), 
+                              length_vis);
 
    printf("  and its minimum spanning tree has length %ld.\n", sp_length);
 

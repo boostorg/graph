@@ -87,7 +87,7 @@ main(int,char*)
   if (r)  
     for (int i = 0; i < N; ++i)
       std::cout << name[i] << ": " << distance[i]
-		<< " " << name[parent[i]] << std::endl;
+                << " " << name[parent[i]] << std::endl;
   else
     std::cout << "negative cycle" << std::endl;
         

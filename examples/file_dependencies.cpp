@@ -161,7 +161,7 @@ int main(int,char*[])
     for (tie(i, iend) = vertices(g); i != iend; ++i) {
       if (in_degree[*i] == 0)
         uniform_cost_search(g, *i, &time[0], weight, 
-			    compare, combine);
+                            compare, combine);
     }
 
     cout << "parallel make ordering, " << endl

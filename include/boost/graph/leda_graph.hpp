@@ -153,7 +153,7 @@ namespace boost {
   template <class vtype, class etype>
   typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
   source(typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
-	 const GRAPH<vtype,etype>& g)
+         const GRAPH<vtype,etype>& g)
   {
     return source(e);
   }
@@ -161,7 +161,7 @@ namespace boost {
   template <class vtype, class etype>
   typename graph_traits< GRAPH<vtype,etype> >::vertex_descriptor
   target(typename graph_traits< GRAPH<vtype,etype> >::edge_descriptor e,
-	 const GRAPH<vtype,etype>& g)
+         const GRAPH<vtype,etype>& g)
   {
     return target(e);
   }
@@ -324,7 +324,7 @@ namespace boost {
       i,iend;
     for (boost::tie(i,iend) = out_edges(u,g); i != iend; ++i)
       if (target(*i,g) == v)
-	g.del_edge(*i);
+        g.del_edge(*i);
   }
 
   template <class vtype, class etype>

@@ -207,7 +207,7 @@ namespace boost {
   out_edges(Vertex* u, Graph* g)
   {
     return std::make_pair( sgb_out_edge_iterator(u, u->arcs),
-			   sgb_out_edge_iterator(u, 0) );
+                           sgb_out_edge_iterator(u, 0) );
   }
 
   // in_edges?
@@ -216,7 +216,7 @@ namespace boost {
   adjacent_vertices(Vertex* u, Graph* g)
   {
     return std::make_pair( sgb_adj_iterator(u->arcs),
-			   sgb_adj_iterator(0) );
+                           sgb_adj_iterator(0) );
   }
   // deprecated
   inline std::pair<sgb_adj_iterator,sgb_adj_iterator>

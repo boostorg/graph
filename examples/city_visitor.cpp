@@ -77,7 +77,7 @@ struct city_visitor
   template <class Vertex>
   inline void discover(Vertex u) {
     cout << endl << "arriving at " << names[u] << endl
-	 << "  neighboring cities are: ";
+         << "  neighboring cities are: ";
   }
 
   template <class Edge, class Graph>
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 {
 
   enum { SanJose, SanFran, LA, SanDiego, Fresno, LosVegas, Reno,
-	 Sacramento, SaltLake, Pheonix, N };
+         Sacramento, SaltLake, Pheonix, N };
 
   string names[] = { "San Jose", "San Francisco",  "San Jose",
                      "San Francisco", "Los Angeles", "San Diego", 
@@ -108,11 +108,11 @@ int main(int argc, char* argv[])
 
   typedef std::pair<int,int> E;
   E edge_array[] = { E(Sacramento, Reno), E(Sacramento, SanFran),
-		     E(Reno, SaltLake),
-		     E(SanFran, SanJose),
-		     E(SanJose, Fresno), E(SanJose, LA),
-		     E(LA, LosVegas), E(LA, SanDiego),
-		     E(LosVegas, Pheonix) };
+                     E(Reno, SaltLake),
+                     E(SanFran, SanJose),
+                     E(SanJose, Fresno), E(SanJose, LA),
+                     E(LA, LosVegas), E(LA, SanDiego),
+                     E(LosVegas, Pheonix) };
 
   /* Create the graph type we want. */
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;

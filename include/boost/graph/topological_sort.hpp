@@ -69,7 +69,7 @@ namespace boost {
   template < class Graph, class OutputIterator, class Color, class DFSVisitor>
   inline void 
   topological_sort(Graph& G, OutputIterator iter, Color color, 
-		   DFSVisitor visit)
+                   DFSVisitor visit)
   {
     typedef topo_sort_visitor<OutputIterator, DFSVisitor> TopoVisitor;
     depth_first_search(G, TopoVisitor(iter, visit), color);

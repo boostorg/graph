@@ -55,8 +55,8 @@ namespace boost {
     typedef typename property_traits<ComponentsPA>::value_type comp_type;
   public:
     components_recorder(ComponentsPA c, 
-			comp_type& c_count, 
-			DFSVisitor v)
+                        comp_type& c_count, 
+                        DFSVisitor v)
       : DFSVisitor(v), m_component(c), m_count(c_count) {}
 
     template <class Vertex, class Graph>
@@ -111,9 +111,9 @@ namespace boost {
     template < class Graph, class DFSVisitor, class Components, class Color >
     inline typename property_traits<Components>::value_type
     connected_components(Graph& g, DFSVisitor v, 
-			 Components c, Color color, undirected_tag) {
+                         Components c, Color color, undirected_tag) {
       typedef typename property_traits<Components>::value_type
-	count_type;
+        count_type;
       count_type c_count(-1); // we want first component to be '0', and the increment happens first
 
       typedef components_recorder<Components, DFSVisitor> ComponentRecorder;
@@ -126,11 +126,11 @@ namespace boost {
 
     /* a directed graph */
     template <class Graph, class DFSVisitor, class Components,
-	      class DiscoverTime, class FinishTime,
-	      class Color>
+              class DiscoverTime, class FinishTime,
+              class Color>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c, DiscoverTime d,
-			 FinishTime f, Color color, directed_tag)
+                         FinishTime f, Color color, directed_tag)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typename property_traits<Color>::value_type cc = get(color, Vertex());
@@ -144,12 +144,12 @@ namespace boost {
 
       count_type c_count(0);
       components_recorder<Components, dfs_visitor<> > 
-	vis(c, c_count, dfs_visitor<>());
+        vis(c, c_count, dfs_visitor<>());
 
       // initialize G_T
       typename graph_traits<Graph>::vertex_iterator ui, ui_end;
       for (tie(ui, ui_end) = vertices(G_T); ui != ui_end; ++ui)
-	put(color, *ui, white(cc));
+        put(color, *ui, white(cc));
 
       typedef typename property_traits<FinishTime>::value_type D;
       typedef indirect_cmp< FinishTime, std::less<D> > Compare;
@@ -161,17 +161,17 @@ namespace boost {
       tie(i, iend) = vertices(G_T);
       tie(j, jend) = vertices(G);
       for ( ; i != iend; ++i, ++j) {
-	put(f, *i, get(f, *j));
-	 Q.push(*i);
+        put(f, *i, get(f, *j));
+         Q.push(*i);
       }
 
       while ( !Q.empty() ) {
-	Vertex u = Q.top();
-	Q.pop();
-	if  (get(color, u) == white(cc)) {
-	  depth_first_visit(G_T, u, vis, color);
-	  ++c_count; 
-	}
+        Vertex u = Q.top();
+        Q.pop();
+        if  (get(color, u) == white(cc)) {
+          depth_first_visit(G_T, u, vis, color);
+          ++c_count; 
+        }
       }
       return c_count;
     }
@@ -206,36 +206,36 @@ namespace boost {
     template <class Graph, class DFSVisitor, class Components>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c, 
-			 undirected_tag) 
+                         undirected_tag) 
     {
       return connected_components(G, v, c, get(vertex_color, G), 
-				  undirected_tag());
+                                  undirected_tag());
     }
 
     template <class Graph, class DFSVisitor, class Components>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c,
-			  directed_tag)
+                          directed_tag)
     {
       return connected_components(G, v, c, 
-				  get(vertex_discover_time, G),
-				  get(vertex_finish_time, G),
-				  get(vertex_color, G),
-				  directed_tag());
+                                  get(vertex_discover_time, G),
+                                  get(vertex_finish_time, G),
+                                  get(vertex_color, G),
+                                  directed_tag());
     }
 
     template <class Graph, class DFSVisitor,
-	      class Components,
-	      class Color>
+              class Components,
+              class Color>
     inline typename property_traits<Components>::value_type
     connected_components(Graph& G, DFSVisitor v, Components c,
-			 Color color, directed_tag)
+                         Color color, directed_tag)
     {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       return connected_components(G, v, c, 
-				  get(vertex_discover_time, G),
-				  get(vertex_finish_time, G),
-				  color, directed_tag());
+                                  get(vertex_discover_time, G),
+                                  get(vertex_finish_time, G),
+                                  color, directed_tag());
     }
   } // namespace detail
 
@@ -372,18 +372,18 @@ namespace boost {
       IndexT number;
       const component_index<IndexT>* comp_ind_ptr;
       component(IndexT i, const component_index<IndexT>* p) 
-	: number(i), comp_ind_ptr(p) {}
+        : number(i), comp_ind_ptr(p) {}
     public:
       typedef component_iterator iterator;
       typedef component_iterator const_iterator;
       typedef IndexT value_type;
       iterator begin() const {
-	return iterator( comp_ind_ptr->index.begin(),
-			 (comp_ind_ptr->header)[number] );
+        return iterator( comp_ind_ptr->index.begin(),
+                         (comp_ind_ptr->header)[number] );
       }
       iterator end() const {
-	return iterator( comp_ind_ptr->index.begin(), 
-			 comp_ind_ptr->index.size() );
+        return iterator( comp_ind_ptr->index.begin(), 
+                         comp_ind_ptr->index.size() );
       }
     };
     typedef SizeT size_type;

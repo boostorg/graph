@@ -23,9 +23,9 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#include <iostream>		         // for std::cout
-#include <utility>		         // for std::pair
-#include <algorithm>		         // for std::for_each
+#include <iostream>                         // for std::cout
+#include <utility>                         // for std::pair
+#include <algorithm>                         // for std::for_each
 #include <boost/utility.hpp>             // for boost::tie
 #include <boost/graph/graph_traits.hpp>  // for boost::graph_traits
 #include <boost/graph/adjacency_list.hpp>
@@ -47,12 +47,12 @@ template <class Graph> struct exercise_vertex {
     typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
     typename graph_traits<Graph>::edge_descriptor e;
     for (tie(out_i, out_end) = out_edges(v, g); 
-	 out_i != out_end; ++out_i)
+         out_i != out_end; ++out_i)
     {
       e = *out_i;
       Vertex src = source(e, g), targ = target(e, g);
       std::cout << "(" << get(vertex_id, src)
-		<< "," << get(vertex_id, targ) << ") ";
+                << "," << get(vertex_id, targ) << ") ";
     }
     std::cout << std::endl;
 
@@ -85,8 +85,8 @@ int main(int,char*[])
   const int num_edges = 11;
   // writing out the edges in the graph
   E edge_array[num_edges] = { E(0,1), E(0,2), E(0,3), E(0,4), 
-			      E(2,0), E(3,0), E(2,4), E(3,1), 
-			      E(3,4), E(4,0), E(4,1) };
+                              E(2,0), E(3,0), E(2,4), E(3,1), 
+                              E(3,4), E(4,0), E(4,1) };
   const int num_vertices = 5;
 
   // create a typedef for the Graph type
@@ -113,11 +113,11 @@ int main(int,char*[])
   graph_traits<Graph>::edge_iterator ei, ei_end;
   for (tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << "(" << get(vertex_id, source(*ei, g)) 
-	      << "," << get(vertex_id, target(*ei, g)) << ") ";
+              << "," << get(vertex_id, target(*ei, g)) << ") ";
   std::cout << std::endl;
   
   std::for_each(vertices(g).first, vertices(g).second,
-		exercise_vertex<Graph>(g));
+                exercise_vertex<Graph>(g));
   
   return 0;
 }

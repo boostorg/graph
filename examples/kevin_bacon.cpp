@@ -106,8 +106,8 @@ main()
     graph_traits<Graph>::edge_iterator i, end;
     for (tie(i, end) = edges(g); i != end; ++i)
       cout << get(actor_name, source(*i, g)) << " was in "
-	   << get(connecting_movie, *i) << " with "
-	   << get(actor_name, target(*i, g)) << endl;
+           << get(connecting_movie, *i) << " with "
+           << get(actor_name, target(*i, g)) << endl;
   }
 
   {
@@ -124,12 +124,12 @@ main()
       (g, src, &bacon_number[0], get(edge_weight, g),
        &color[0], get(vertex_index, g),
        make_ucs_visitor(record_predecessors(&predecessor[0], 
-					    on_edge_relaxed())));
+                                            on_edge_relaxed())));
 
     graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
       cout << get(actor_name, *i) << "'s bacon number is " 
-	   << bacon_number[get(vertex_id, *i)] << endl;
+           << bacon_number[get(vertex_id, *i)] << endl;
 
     // use the predecessors to determine shortest paths to kevin...
   }
