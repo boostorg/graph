@@ -25,6 +25,15 @@
 //=======================================================================
 //
 
+// Copyright 2004 The Trustees of Indiana University.
+
+// Use, modification and distribution is subject to the Boost Software
+// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+//  Authors: Douglas Gregor
+//           Andrew Lumsdaine
+
 // Copyright (C) Vladimir Prus 2003. Permission to copy, use,
 // modify, sell and distribute this software is granted provided this
 // copyright notice appears in all copies. This software is provided
@@ -37,6 +46,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/random/uniform_01.hpp>
+#include <boost/random/linear_congruential.hpp>
 
 #include <boost/pending/property.hpp>
 #include <boost/graph/properties.hpp>
@@ -45,6 +56,9 @@
 #include <boost/graph/copy.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <iostream>
 
@@ -211,9 +225,113 @@ namespace boost {
         (g, rg, Property(), typename property_kind<Property>::type());
   }
 
+  template<typename SizeType, typename Probability, 
+           typename RandomGenerator = minstd_rand>
+  class erdos_renyi_random_iterator
+    : public iterator_facade<
+             erdos_renyi_random_iterator<SizeType,Probability,RandomGenerator>
+             , std::pair<SizeType, SizeType> 
+             , std::input_iterator_tag
+             , std::pair<SizeType, SizeType> 
+             >
+  {
+    typedef erdos_renyi_random_iterator self_type;
+    typedef iterator_facade<
+               erdos_renyi_random_iterator<SizeType,Probability,RandomGenerator>
+             , std::pair<SizeType, SizeType> 
+             , std::input_iterator_tag
+             , std::pair<SizeType, SizeType> 
+             > inherited;
+  public:
+    typedef typename inherited::reference reference;
+    typedef typename inherited::value_type value_type;
+    
+    // Starting iterator for n vertices with probability p using gen
+    // as the random number generator.
+    erdos_renyi_random_iterator(SizeType n, Probability p, 
+                                RandomGenerator& gen, bool directed,
+                                bool self_edges = false)
+      : n(n), p(p), 
+        random_(new uniform_01<RandomGenerator, Probability>(gen)), 
+        directed(directed), self_edges(self_edges),
+        current_edge(static_cast<SizeType>(0), static_cast<SizeType>(0))
+    {
+      for (/* no init */; current_edge.first < n; ++current_edge.first)
+      {
+        if (directed) current_edge.second = static_cast<SizeType>(0);
+        else current_edge.second = current_edge.first;
+        for (/* no init */; current_edge.second < n; ++current_edge.second) {
+          // When we hit the first edge, break out
+          if ((self_edges || current_edge.first != current_edge.second)
+              && (*random_)() < p) {
+            return;
+          }
+        }
+      }
+    }
 
+    // Past-the-end iterator
+    erdos_renyi_random_iterator(SizeType n) : n(n), current_edge(n, n) { }
 
-  
+  private:
+    reference dereference() const { return current_edge; }
+    
+    bool equal(const self_type& other) const 
+    { return current_edge == other.current_edge; }
+
+    void increment()
+    {
+      do {
+        if (++current_edge.second == n) {
+          if (++current_edge.first == n) break;
+          if (directed) current_edge.second = static_cast<SizeType>(0);
+          else current_edge.second = current_edge.first;
+        }
+      } while ((!self_edges && current_edge.first == current_edge.second)
+               || (*random_)() >= p);
+    }
+                                
+    SizeType    n;
+    Probability p;
+    shared_ptr<uniform_01<RandomGenerator, Probability> > random_;
+    bool        directed : 1;
+    bool        self_edges : 1;
+    value_type  current_edge;
+    friend class iterator_core_access;
+  };
+
+  template<typename SizeType, typename Probability, typename RandomGenerator>
+  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
+  make_erdos_renyi_random_iterator(SizeType n, Probability p, 
+                                   RandomGenerator& gen,
+                                   directed_tag,
+                                   bool self_edges = false)
+  {
+    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
+      result_type;
+    return result_type(n, p, gen, true, self_edges);
+  }
+
+  template<typename SizeType, typename Probability, typename RandomGenerator>
+  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
+  make_erdos_renyi_random_iterator(SizeType n, Probability p, 
+                                   RandomGenerator& gen,
+                                   undirected_tag,
+                                   bool self_edges = false)
+  {
+    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
+      result_type;
+    return result_type(n, p, gen, false, self_edges);
+  }
+
+  template<typename SizeType, typename Probability, typename RandomGenerator>
+  erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator>
+  make_erdos_renyi_random_iterator(SizeType n, Probability, RandomGenerator&)
+  {
+    typedef erdos_renyi_random_iterator<SizeType, Probability, RandomGenerator> 
+      result_type;
+    return result_type(n);
+  }
 }
 
 
