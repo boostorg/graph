@@ -5,6 +5,6 @@ SOURCES = graphviz_graph_lex graphviz_digraph_lex
 
 
 lib libbgl-viz : ../src/$(SOURCES).cpp 
-	: <include>$(BOOST_ROOT)
+	: <sysinclude>$(BOOST_ROOT)
 	: debug <inlining>on #inlining prevents linker name clashes due to truncation! 
 	;

@@ -5,7 +5,7 @@ subproject libs/graph/example ;
 
 rule graph-test ( sources + : requirements * )
 {
-    unit-test $(sources[1]:S=) : $(sources) : $(requirements) <include>$(BOOST_ROOT) : debug <inlining>on ;
+    unit-test $(sources[1]:S=) : $(sources) : $(requirements) <sysinclude>$(BOOST_ROOT) : debug <inlining>on ;
 }
 
 graph-test remove_edge_if_bidir.cpp  ;
