@@ -539,7 +539,7 @@ owes who''.
     add_edge(edge_array[i].first, edge_array[i].second, G);
 
   property_map&lt;MyGraphType, first_vertex_name_t&gt;::type
-    name = get(first_vertex_name, G);
+    name = get(first_vertex_name_t(), G);
     
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
