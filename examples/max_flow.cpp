@@ -57,12 +57,12 @@ main()
 
   Traits::vertex_descriptor s, t;
 
-  read_dimacs_max_flow(g, capacity, residual_capacity, reverse_edge, s, t);
+  read_dimacs_max_flow(g, capacity, reverse_edge, s, t);
 
   print_graph(g);
   
   flow = maximum_flow(g, s, t, capacity, get(edge_residual_capacity, g),
-		      get(edge_reverse, g), get(vertex_index, g));
+                      get(edge_reverse, g), get(vertex_index, g));
   
   std::cout << "flow: " << flow << std::endl;
   
