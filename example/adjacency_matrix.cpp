@@ -30,12 +30,13 @@
 
 int main()
 {
+  using namespace boost;
   enum { A, B, C, D, E, F, N };
   const char* name = "ABCDEF";
 
   // A directed graph
   
-  typedef boost::adjacency_matrix<boost::directedS> Graph;
+  typedef adjacency_matrix<directedS> Graph;
   Graph g(N);
   add_edge(B, C, g);
   add_edge(B, F, g);
@@ -46,20 +47,20 @@ int main()
   add_edge(F, A, g);
 
   std::cout << "vertex set: ";
-  boost::print_vertices(g, name);
+  print_vertices(g, name);
   std::cout << std::endl;
 
   std::cout << "edge set: ";
-  boost::print_edges(g, name);
+  print_edges(g, name);
   std::cout << std::endl;
 
   std::cout << "out-edges: " << std::endl;
-  boost::print_graph(g, name);
+  print_graph(g, name);
   std::cout << std::endl;
 
   // An undirected graph
 
-  typedef boost::adjacency_matrix<boost::undirectedS> UGraph;
+  typedef adjacency_matrix<undirectedS> UGraph;
   UGraph ug(N);
   add_edge(B, C, ug);
   add_edge(B, F, ug);
@@ -68,16 +69,15 @@ int main()
   add_edge(F, A, ug);
 
   std::cout << "vertex set: ";
-  boost::print_vertices(ug, name);
+  print_vertices(ug, name);
   std::cout << std::endl;
 
   std::cout << "edge set: ";
-  boost::print_edges(ug, name);
+  print_edges(ug, name);
   std::cout << std::endl;
 
   std::cout << "incident edges: " << std::endl;
-  boost::print_graph(ug, name);
+  print_graph(ug, name);
   std::cout << std::endl;
-  
   return 0;
 }
