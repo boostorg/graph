@@ -41,6 +41,9 @@
 // REVISION HISTORY:                                                         
 //                                                                           
 // $Log$
+// Revision 1.18  2000/09/25 14:49:48  david_abrahams
+// remove unused args to suppress warnings
+//
 // Revision 1.17  2000/09/25 11:59:48  david_abrahams
 // keep untabified
 //
@@ -1766,7 +1769,7 @@ namespace boost {
     // call operator[] because that also causes the problem!
     template <class D, class P, class Vertex, class Tag, class K>
     inline typename adj_list_edge_property_map<D,P,Vertex,Tag>::value_type
-    get(const adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& e)
+    get(const adj_list_edge_property_map<D,P,Vertex,Tag>&, const K& e)
     {
       typedef typename plugin_value<P,Tag>::type value_type;
       const P* p = (P*)e.get_plugin();
@@ -1774,7 +1777,7 @@ namespace boost {
     }
     template <class D, class P, class Vertex, class Tag, class K, class V>
     inline void
-    put(adj_list_edge_property_map<D,P,Vertex,Tag>& pmap, const K& e,
+    put(adj_list_edge_property_map<D,P,Vertex,Tag>&, const K& e,
 	const V& val)
     {
       typedef typename plugin_value<P,Tag>::type value_type;
