@@ -12,8 +12,6 @@ subproject libs/graph/build/python ;
 SEARCH on python.jam = $(BOOST_BUILD_PATH) ;
 include python.jam ;
 
-echo $(JAMUNAME) ;
-
 extension bgl          
 :   # Sources 
     ../../src/python/module.cpp
