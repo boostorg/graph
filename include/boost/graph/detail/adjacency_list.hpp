@@ -2051,8 +2051,8 @@ namespace boost {
 
     template <class Graph, class ValueType, class Reference, class Tag>
     struct adj_list_vertex_property_map
-      : public boost::put_get_at_helper<
-          ValueType,
+      : public boost::put_get_helper<
+          Reference,
           adj_list_vertex_property_map<Graph, ValueType, Reference, Tag>
         >
     {
@@ -2073,7 +2073,7 @@ namespace boost {
 
     template <class Graph, class Property, class PropRef>
     struct adj_list_vertex_all_properties_map
-      : public boost::put_get_at_helper<Property,
+      : public boost::put_get_helper<PropRef,
           adj_list_vertex_all_properties_map<Graph, Property, PropRef>
         >
     {
@@ -2095,8 +2095,8 @@ namespace boost {
     template <class Graph, class GraphRef, class ValueType, class Reference,
               class Tag>
     struct vec_adj_list_vertex_property_map
-      : public boost::put_get_at_helper<
-          ValueType,
+      : public boost::put_get_helper<
+          Reference,
           vec_adj_list_vertex_property_map<Graph,GraphRef,ValueType,Reference,
              Tag>
         >
@@ -2117,7 +2117,7 @@ namespace boost {
 
     template <class Graph, class GraphRef, class Property, class PropertyRef>
     struct vec_adj_list_vertex_all_properties_map
-      : public boost::put_get_at_helper<Property,
+      : public boost::put_get_helper<PropertyRef,
           vec_adj_list_vertex_all_properties_map<Graph,GraphRef,Property,
             PropertyRef>
         >
@@ -2162,7 +2162,7 @@ namespace boost {
 
     template <class Property, class Vertex>
     struct vec_adj_list_vertex_id_map
-      : public boost::put_get_at_helper<
+      : public boost::put_get_helper<
           Vertex, vec_adj_list_vertex_id_map<Property, Vertex>
         >
     {
@@ -2252,8 +2252,8 @@ namespace boost {
     template <class Directed, class Value, class Ref, class Vertex,
               class Property, class Tag>
     struct adj_list_edge_property_map
-      : public put_get_at_helper< 
-          Value,
+      : public put_get_helper< 
+          Ref,
           adj_list_edge_property_map<Directed, Value, Ref, Vertex, Property, 
             Tag>
         >
@@ -2274,7 +2274,7 @@ namespace boost {
     template <class Directed, class Property, class PropRef, class PropPtr,
       class Vertex>
     struct adj_list_edge_all_properties_map
-      : public put_get_at_helper<Property,
+      : public put_get_helper<PropRef,
           adj_list_edge_all_properties_map<Directed, Property, PropRef, 
             PropPtr, Vertex>
         >
