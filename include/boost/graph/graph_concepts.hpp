@@ -391,6 +391,24 @@ namespace boost {
     typename property_traits<Map>::value_type pval;
   };
 
+  template <class G, class X, class Property>
+  struct LvaluePropertyGraphConcept
+  {
+    typedef typename property_map<G, Property>::type Map;
+    void constraints() {
+      function_requires< ReadablePropertyGraphConcept<G, X, Property> >();
+      function_requires< Mutable_LvaluePropertyMapConcept<Map, X> >();
+
+      Map pmap = get(Property(), g);
+      pval = get(Property(), g, x);
+      put(Property(), g, x, pval);
+      ignore_unused_variable_warning(pmap);
+    }
+    G g;
+    X x;
+    typename property_traits<Map>::value_type pval;
+  };
+
   // This needs to move out of the graph library
   template <class B>
   struct BufferConcept
