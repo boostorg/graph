@@ -28,7 +28,16 @@
 #define BOOST_GRAPH_DETAIL_ADJ_LIST_EDGE_ITERATOR_HPP
 
 #include <iterator>
-#include <boost/optional.hpp>
+#include <utility>
+
+#define BOOST_GRAPH_NO_OPTIONAL
+
+#ifdef BOOST_GRAPH_NO_OPTIONAL
+#  define BOOST_GRAPH_MEMBER .
+#else 
+#  define BOOST_GRAPH_MEMBER ->
+#  include <boost/optional.hpp>
+#endif // ndef BOOST_GRAPH_NO_OPTIONAL
 
 namespace boost {
 
@@ -70,8 +79,9 @@ namespace boost {
         For undirected graphs, one edge go through twice.
       */
       inline self& operator++() {
-        ++edges->first;
-        if ( edges->first == edges->second ) {
+        ++edges BOOST_GRAPH_MEMBER first;
+        if (edges BOOST_GRAPH_MEMBER first == edges BOOST_GRAPH_MEMBER second) 
+        {
           ++vCurr;
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
             ++vCurr;
@@ -85,24 +95,36 @@ namespace boost {
         ++(*this);
         return tmp;
       }
-      inline value_type operator*() const { return *edges->first; } 
+      inline value_type operator*() const 
+      { return *edges BOOST_GRAPH_MEMBER first; } 
       inline bool operator==(const self& x) const {
-        return vCurr == x.vCurr && (vCurr == vEnd || edges->first == x.edges->first);
+        return vCurr == x.vCurr 
+          && (vCurr == vEnd 
+              || edges BOOST_GRAPH_MEMBER first == x.edges BOOST_GRAPH_MEMBER first);
       }
       inline bool operator!=(const self& x) const {
-        return vCurr != x.vCurr || (vCurr != vEnd && edges->first != x.edges->first);
+        return vCurr != x.vCurr 
+          || (vCurr != vEnd 
+              && edges BOOST_GRAPH_MEMBER first != x.edges BOOST_GRAPH_MEMBER first);
       }
     protected:
       VertexIterator vBegin;
       VertexIterator vCurr;
       VertexIterator vEnd;
+
+#ifdef BOOST_GRAPH_NO_OPTIONAL
+      std::pair<OutEdgeIterator, OutEdgeIterator> edges;
+#else
       boost::optional<std::pair<OutEdgeIterator, OutEdgeIterator> >
         edges;
+#endif // ndef BOOST_GRAPH_NO_OPTIONAL
       const Graph* m_g;
     };
 
   } // namespace detail
 
 }
+
+#undef BOOST_GRAPH_MEMBER
 
 #endif // BOOST_GRAPH_DETAIL_ADJ_LIST_EDGE_ITERATOR_HPP
