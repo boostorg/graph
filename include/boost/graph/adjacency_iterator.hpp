@@ -22,18 +22,18 @@ namespace boost {
       Graph* m_g;
     };
 
-    template <class Graph, class Vertex, class OutEdgeIter>
-    class adjacency_iterator_generator {
-      typedef typename boost::detail::iterator_traits<OutEdgeIter>
-        ::difference_type difference_type;
-      typedef boost::iterator<boost::multi_pass_input_iterator_tag,
-        Vertex, difference_type, Vertex*, Vertex> Traits;
-    public:
-      typedef boost::iterator_adaptor<OutEdgeIter, 
-        adjacency_iterator_policies<Graph>, Traits> type;
-    };
-
   } // namespace detail
+
+  template <class Graph, class Vertex, class OutEdgeIter>
+  class adjacency_iterator_generator {
+    typedef typename boost::detail::iterator_traits<OutEdgeIter>
+      ::difference_type difference_type;
+    typedef boost::iterator<boost::multi_pass_input_iterator_tag,
+      Vertex, difference_type, Vertex*, Vertex> Traits;
+  public:
+    typedef boost::iterator_adaptor<OutEdgeIter, 
+      adjacency_iterator_policies<Graph>, Traits> type;
+  };
 
 } // namespace boost
 
