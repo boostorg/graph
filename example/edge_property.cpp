@@ -92,9 +92,9 @@ void print_network(const Graph& G)
   typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
   typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
 
-  property_map<Graph, edge_mycapacity_t>::const_type
+  typename property_map<Graph, edge_mycapacity_t>::const_type
     capacity = get(edge_mycapacity, G);
-  property_map<Graph, edge_myflow_t>::const_type
+  typename property_map<Graph, edge_myflow_t>::const_type    
     flow = get(edge_myflow, G);
 
   Viter ui, uiend;
