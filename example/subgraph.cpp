@@ -37,25 +37,28 @@ int main(int,char*[])
 
   const int N = 6;
   Graph G0(N);
+  enum { A, B, C, D, E, F};	// for conveniently refering to vertices in G0
 
   Graph G1(G0), G2(G0);
+  enum { A1, B1, C2 };		// for conveniently refering to vertices in G1
+  enum { A2, B2 };		// for conveniently refering to vertices in G2
 
-  add_vertex(2, G1);
-  add_vertex(4, G1);
-  add_vertex(5, G1);
+  add_vertex(C, G1); // global vertex C becomes local A1 for G1
+  add_vertex(E, G1); // global vertex E becomes local B1 for G1
+  add_vertex(F, G1); // global vertex F becomes local C1 for G1
   
-  add_edge(0, 2, G1); // (0,2) is subgraph G1 local indices for (2,5).
+  add_vertex(A, G2); // global vertex A becomes local A1 for G1
+  add_vertex(B, G2); // global vertex B becomes local B1 for G1
 
-  add_vertex(0, G2);
-  add_vertex(1, G2);
+  add_edge(A, B, G0);
+  add_edge(B, C, G0);
+  add_edge(B, D, G0);
+  add_edge(E, B, G0);
+  add_edge(E, F, G0);
+  add_edge(F, D, G0);
 
-  add_edge(0, 1, G0);
-  add_edge(1, 2, G0);
-  add_edge(1, 3, G0);
-  add_edge(4, 1, G0);
-  add_edge(4, 5, G0);
-  add_edge(5, 3, G0);
-  
+  add_edge(A1, C1, G1); // (A1,C1) is subgraph G1 local indices for (C,F).
+
   std::cout << "G0:" << std::endl;
   print_graph(G0, get(vertex_index, G0));
   print_edges2(G0, get(vertex_index, G0), get(edge_index, G0));
