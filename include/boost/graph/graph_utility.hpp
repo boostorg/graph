@@ -41,14 +41,28 @@
 
 namespace boost {
 
-  template <class Graph>
+  // Provide an undirected graph interface alternative to the
+  // the source() and target() edge functions.
+  template <class UndirectedGraph>
   inline 
-  std::pair<typename graph_traits<Graph>::vertex_descriptor,
-            typename graph_traits<Graph>::vertex_descriptor>
-  incident(typename graph_traits<Graph>::edge_descriptor e,
-           Graph& g)
+  std::pair<typename graph_traits<UndirectedGraph>::vertex_descriptor,
+            typename graph_traits<UndirectedGraph>::vertex_descriptor>
+  incident(typename graph_traits<UndirectedGraph>::edge_descriptor e,
+           UndirectedGraph& g)
   {
     return std::make_pair(source(e,g), target(e,g));
+  }
+
+  // Provide an undirected graph interface alternative
+  // to the out_edges() function.
+  template <class Graph>
+  inline 
+  std::pair<typename graph_traits<Graph>::out_edge_iterator,
+            typename graph_traits<Graph>::out_edge_iterator>
+  incident_on(typename graph_traits<Graph>::vertex_descriptor u,
+              Graph& g)
+  {
+    return out_edges(u, g);
   }
 
   template <class Graph>
@@ -63,18 +77,6 @@ namespace boost {
       return source(e, g);
     else
       return Edge(); // ?
-  }
-
-  // Provide an undirected graph interface alternative
-  // to the out_edges() function.
-  template <class Graph>
-  inline 
-  std::pair<typename graph_traits<Graph>::out_edge_iterator,
-            typename graph_traits<Graph>::out_edge_iterator>
-  incident_on(typename graph_traits<Graph>::vertex_descriptor u,
-              Graph& g)
-  {
-    return out_edges(u, g);
   }
 
   // Need to convert all of these printing functions to take an ostream object

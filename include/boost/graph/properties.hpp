@@ -33,6 +33,17 @@ namespace boost {
 
   enum default_color_type { white_color, gray_color, black_color };
 
+  template <class ColorValue>
+  struct color_traits { };
+
+  template <>
+  struct color_traits<default_color_type> {
+    static default_color_type white() { return white_color; }
+    static default_color_type gray() { return gray_color; }
+    static default_color_type black() { return black_color; }
+  };
+
+  // These functions are now obsolete, replaced by color_traits.
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
   inline default_color_type black(default_color_type) { return black_color; }
