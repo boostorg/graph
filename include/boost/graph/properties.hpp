@@ -146,7 +146,6 @@ namespace boost {
 
     template <class Graph, class PropertyTag>
     struct edge_property_map {
-      typedef typename Graph::directed_category Directed;
       typedef typename Graph::edge_property_type Property;
       typedef typename Graph::graph_tag graph_tag;
       typedef typename edge_property_selector<graph_tag>::type Selector;
