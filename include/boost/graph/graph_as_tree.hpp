@@ -32,8 +32,8 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/tree_traits.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/breadth_first_search.hpp>
-#include <boost/graph_search_visitors.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/visitors.hpp>
 
 namespace boost {
 
@@ -92,4 +92,6 @@ namespace boost {
   };
   
 
-} /* namespace boost */
+} // namespace boost
+
+#endif //  BOOST_GRAPH_GRAPH_AS_TREE_HPP
