@@ -45,9 +45,10 @@
 
 #define YYPARSE_PARAM g
 
+#include "yystype.h"
+
   extern void yyerror(char* str);
-  extern int yylex();
-  extern void* yyin;
+  extern int yylex(YYSTYPE* lvalp);
 
   enum AttrState {GRAPH_GRAPH_A, GRAPH_NODE_A, GRAPH_EDGE_A, NODE_A, EDGE_A};
 
@@ -223,10 +224,6 @@
 
 %}
 
-%union {
-  int         i;
-  void*       ptr;
-};
 
 %token<i>   GRAPH_T NODE_T EDGE_T DIGRAPH_T EDGEOP_T SUBGRAPH_T
 %token<ptr> ID_T
@@ -236,6 +233,8 @@
 %type<i>    graph_body edge_rhs_one edge_rhs graph_attr opt_graph_body
 %type<ptr>  graph_name
 %type<ptr>  edge_endpoint node_id  node_port subgraph subgraph_header
+
+%pure_parser
 
 %%
 graph:        graph_header graph_body
@@ -483,14 +482,21 @@ namespace boost {
   
   void read_graphviz(const std::string& filename, GRAPHVIZ_GRAPH& g) {
     FILE* file = fopen(filename.c_str(), "r");
-    yyin = static_cast<void*>(file);
-
-    yyparse(static_cast<void*>(&g));
+    void* in = static_cast<void*>(file);
+#if defined(GRAPHVIZ_DIRECTED)
+    bgl_dir_parse(static_cast<void*>(&g));
+#else
+    bgl_undir_parse(static_cast<void*>(&g));
+#endif
   }
 
   void read_graphviz(FILE* file, GRAPHVIZ_GRAPH& g) {
-    yyin = static_cast<void*>(file);
-    yyparse(static_cast<void*>(&g));
+    void* in = static_cast<void*>(file);
+#if defined(GRAPHVIZ_DIRECTED)
+    bgl_dir_parse(static_cast<void*>(&g));
+#else
+    bgl_undir_parse(static_cast<void*>(&g));
+#endif
   }
     
 }
