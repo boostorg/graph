@@ -58,8 +58,8 @@ namespace boost {
             typename VertexIndexMap, typename Old2NewVertexMap>
   void copy_graph(Graph& g_in, MutableGraph& g_out, 
                   CopyVertex copy_vertex, CopyEdge copy_edge,
-                  VertexIndexMap v_index,
-                  Old2NewVertexMap vertex_map)
+                  OrigVertexIndexMap v_index,
+                  Copy2OrigVertexIndexMap vertex_map)
   {
     // assert Graph::directed_category == MutableGraph::directed_category
     // or allow conversions? 

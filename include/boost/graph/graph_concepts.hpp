@@ -50,6 +50,8 @@ namespace boost {
     typedef typename graph_traits<G>::directed_category directed_category;
     typedef typename graph_traits<G>::edge_parallel_category
       edge_parallel_category;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< DefaultConstructibleConcept<vertex_descriptor> >();
       function_requires< EqualityComparableConcept<vertex_descriptor> >();
@@ -64,12 +66,16 @@ namespace boost {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::out_edge_iterator
       out_edge_iterator;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<out_edge_iterator> >();
       function_requires< DefaultConstructibleConcept<edge_descriptor> >();
       function_requires< EqualityComparableConcept<edge_descriptor> >();
       function_requires< AssignableConcept<edge_descriptor> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	incidence_graph_tag> >();
 
       p = out_edges(v, g);
       n = out_degree(v, g);
@@ -96,9 +102,13 @@ namespace boost {
   {
     typedef typename graph_traits<G>::in_edge_iterator
       in_edge_iterator;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< IncidenceGraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<in_edge_iterator> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	bidirectional_graph_tag> >();
 
       p = in_edges(v, g);
       n = in_degree(v, g);
@@ -122,9 +132,13 @@ namespace boost {
   {
     typedef typename graph_traits<G>::adjacency_iterator
       adjacency_iterator;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<adjacency_iterator> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	adjacency_graph_tag> >();
 
       p = adjacent_vertices(v, g);
       v = *p.first;
@@ -143,10 +157,14 @@ namespace boost {
   {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< AdjacencyGraphConcept<G> >();
       function_requires< IncidenceGraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<vertex_iterator> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	vertex_list_graph_tag> >();
 
       p = vertices(g);
       v = *p.first;
@@ -169,12 +187,16 @@ namespace boost {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< GraphConcept<G> >();
       function_requires< MultiPassInputIteratorConcept<edge_iterator> >();
       function_requires< DefaultConstructibleConcept<edge_descriptor> >();
       function_requires< EqualityComparableConcept<edge_descriptor> >();
       function_requires< AssignableConcept<edge_descriptor> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	edge_list_graph_tag> >();
 
       p = edges(g);
       e = *p.first;
@@ -199,9 +221,13 @@ namespace boost {
   template <class G>
   struct VertexAndEdgeListGraphConcept
   {
+    typedef typename graph_traits<G>::traversal_category
+      traversal_category;
     void constraints() {
       function_requires< VertexListGraphConcept<G> >();
       function_requires< EdgeListGraphConcept<G> >();
+      function_requires< ConvertibleConcept<traversal_category,
+	vertex_and_edge_list_graph_tag> >();
     }
   };
 
@@ -211,23 +237,39 @@ namespace boost {
   // MutableGraph.
 
   template <class G>
-  struct MutableGraphConcept
+  struct EdgeMutableGraphConcept
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     void constraints() {
-      v = add_vertex(g);
-      clear_vertex(v, g);
-      remove_vertex(v, g);
       p = add_edge(u, v, g);
       remove_edge(u, v, g);
       remove_edge(e, g);
+      clear_vertex(v, g);
     }
     G g;
     edge_descriptor e;
     std::pair<edge_descriptor, bool> p;
     typename graph_traits<G>::vertex_descriptor u, v;
-    typename graph_traits<G>::out_edge_iterator iter;
-    typename graph_traits<G>::vertices_size_type n_vertices;
+  };
+
+  template <class G>
+  struct VertexMutableGraphConcept
+  {
+    void constraints() {
+      v = add_vertex(g);
+      remove_vertex(v, g);
+    }
+    G g;
+    typename graph_traits<G>::vertex_descriptor u, v;
+  };
+
+  template <class G>
+  struct MutableGraphConcept
+  {
+    void constraints() {
+      function_requires< EdgeMutableGraphConcept<G> >();
+      function_requires< VertexMutableGraphConcept<G> >();
+    }
   };
 
   template <class edge_descriptor>
