@@ -139,7 +139,8 @@ namespace boost {
 	  Edge e = *ei;
 	  vis.examine_edge(e, g);
 	  Vertex v = target(e, g);
-	  if (get(color, v) == Color::white()) {
+	  ColorValue v_color = get(color, v);
+	  if (v_color == Color::white()) {
 	    vis.tree_edge(e, g);
 	    put(color, v, Color::gray());
 	    vis.discover_vertex(v, g);
@@ -147,7 +148,7 @@ namespace boost {
 	  } else {
 	    vis.non_tree_edge(e, g);
 	    
-	    if (get(color, v) == Color::gray())
+	    if (v_color == Color::gray())
 	      vis.gray_target(e, g);
 	    else
 	      vis.black_target(e, g);
