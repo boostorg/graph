@@ -63,6 +63,29 @@
 #define stored_edge_property sep_
 #define stored_edge_iter sei_
 
+/*
+  Outline for this file:
+
+  adjacency_iterator implementation
+  out_edge_iterator and in_edge_iterator implementation
+  edge_iterator for undirected graph
+  stored edge types (these object live in the out-edge/in-edge lists)
+  directed edges helper class
+  directed graph helper class
+  undirected graph helper class
+  bidirectional graph helper class
+  bidirectional graph helper class (without edge properties)
+  bidirectional graph helper class (with edge properties)
+  adjacency_list helper class
+  adj_list_impl class
+  vec_adj_list_impl class
+  adj_list_gen class
+  vertex property map
+  edge property map
+ */
+
+
+
 namespace boost {
 
   namespace detail {
@@ -316,9 +339,9 @@ namespace boost {
       stored_edge_property(const self& x) 
         : Base(x), m_property(const_cast<self&>(x).m_property) { }
       self& operator=(const self& x) {
-	Base::operator=(x);
-	m_property = const_cast<self&>(x).m_property; 
-	return *this;
+        Base::operator=(x);
+        m_property = const_cast<self&>(x).m_property; 
+        return *this;
       }
       inline Property& get_property() { return *m_property; }
       inline const Property& get_property() const { return *m_property; }
@@ -383,7 +406,8 @@ namespace boost {
         graph_type& g = static_cast<graph_type&>(*this);
         typename Config::OutEdgeList& el = g.out_edge_list(source(e, g));
         typedef typename Config::OutEdgeList::value_type::property_type PType;
-        detail::remove_directed_edge_dispatch(e, el, *(PType*)e.get_property());
+        detail::remove_directed_edge_dispatch(e, el,
+                                              *(PType*)e.get_property());
       }
 
       // O(1)
@@ -908,6 +932,20 @@ namespace boost {
       }
     } // namespace detail
 
+    template <class Config>
+    inline std::pair<typename Config::in_edge_iterator, 
+                     typename Config::in_edge_iterator>
+    in_edges(typename Config::vertex_descriptor u, 
+             const undirected_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type Graph;
+      const Graph& cg = static_cast<const Graph&>(g_);
+      Graph& g = const_cast<Graph&>(cg);
+      typedef typename Config::in_edge_iterator in_edge_iterator;
+      return
+        std::make_pair(in_edge_iterator(g.out_edge_list(u).begin(), u),
+                       in_edge_iterator(g.out_edge_list(u).end(), u));
+    }
 
     //=========================================================================
     // Bidirectional Graph Helper Class
@@ -994,6 +1032,20 @@ namespace boost {
         (first, last, g.in_edge_list(v), pred, Cat());
     }
 
+    template <class Config>
+    inline std::pair<typename Config::in_edge_iterator, 
+                     typename Config::in_edge_iterator>
+    in_edges(typename Config::vertex_descriptor u, 
+             const bidirectional_graph_helper<Config>& g_)
+    {
+      typedef typename Config::graph_type graph_type;
+      const graph_type& cg = static_cast<const graph_type&>(g_);
+      graph_type& g = const_cast<graph_type&>(cg);
+      typedef typename Config::in_edge_iterator in_edge_iterator;
+      return
+        std::make_pair(in_edge_iterator(g.in_edge_list(u).begin(), u),
+                       in_edge_iterator(g.in_edge_list(u).end(), u));
+    }
 
     //=========================================================================
     // Bidirectional Graph Helper Class (with edge properties)
@@ -1169,24 +1221,32 @@ namespace boost {
 
         typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
         typename Config::OutEdgeList::iterator out_i = out_el.begin();
-        for (; out_i != out_el.end(); ++i)
+        for (; out_i != out_el.end(); ++out_i)
           if ((*out_i).get_target() == target(e, g)) {
-            g.m_edges.erase((*out_i).get_iter());
-            out_el.erase(*out_i);
+            out_el.erase(out_i);
             break;
           }
         typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
         typename Config::InEdgeList::iterator in_i = in_el.begin();
-        for (; in_i != in_el.end(); ++i)
+        for (; in_i != in_el.end(); ++in_i)
           if ((*in_i).get_target() == source(e, g)) {
-            in_el.erase(*in_i);
+            in_el.erase(in_i);
             break;
           }
       }
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
       {
-        this->remove_edge(*iter);
+        typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
+	out_el.erase(iter);
+	typename Config::edge_descriptor e = *iter;
+        typename Config::InEdgeList& in_el = g.in_edge_list(target(e, g));
+        typename Config::InEdgeList::iterator in_i = in_el.begin();
+        for (; in_i != in_el.end(); ++in_i)
+          if ((*in_i).get_target() == source(e, g)) {
+            in_el.erase(in_i);
+            break;
+          }
       }
     };
 
@@ -1440,43 +1500,7 @@ namespace boost {
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
-    namespace detail {
-      template <class Graph, class Directed>
-      inline std::pair<typename Graph::in_edge_iterator, 
-		       typename Graph::in_edge_iterator>
-      in_edges_dispatch(typename Graph::vertex_descriptor u, 
-			Graph& g, Directed)
-      {
-	typedef typename Graph::in_edge_iterator in_edge_iterator;
-	return
-	  std::make_pair(in_edge_iterator(g.in_edge_list(u).begin(), u),
-			 in_edge_iterator(g.in_edge_list(u).end(), u));
-      }
-      template <class Graph>
-      inline std::pair<typename Graph::in_edge_iterator, 
-		       typename Graph::in_edge_iterator>
-      in_edges_dispatch(typename Graph::vertex_descriptor u, 
-			Graph& g, undirected_tag)
-      {
-	typedef typename Graph::in_edge_iterator in_edge_iterator;
-	return
-	  std::make_pair(in_edge_iterator(g.out_edge_list(u).begin(), u),
-			 in_edge_iterator(g.out_edge_list(u).end(), u));
-      }
-    } // namespace detail
-  
-    template <class Config, class Base>
-    inline std::pair<typename Config::in_edge_iterator, 
-                     typename Config::in_edge_iterator>
-    in_edges(typename Config::vertex_descriptor u, 
-             const adj_list_helper<Config,Base>& g_)
-    {
-      typedef typename Config::graph_type Graph;
-      const Graph& cg = static_cast<const Graph&>(g_);
-      Graph& g = const_cast<Graph&>(cg);
-      typedef typename Config::directed_category Cat;
-      return detail::in_edges_dispatch(u, g, Cat());
-    }
+
     template <class Config, class Base>
     inline typename Config::degree_size_type
     in_degree(typename Config::vertex_descriptor u, 
@@ -2009,7 +2033,7 @@ namespace boost {
 
       struct config
       {
-	typedef EdgeListS edgelist_selector;
+        typedef EdgeListS edgelist_selector;
 
         typedef Graph graph_type;
         typedef EdgeProperty edge_property_type;
@@ -2096,11 +2120,11 @@ namespace boost {
         typedef typename OutEdgeList::iterator OutEdgeIter;
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
         typedef std::iterator_traits<OutEdgeIter> OutEdgeIterTraits;
-	typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
-	typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
+        typedef typename OutEdgeIterTraits::iterator_category OutEdgeIterCat;
+        typedef typename OutEdgeIterTraits::difference_type OutEdgeIterDiff;
 #else
-	typedef std::forward_iterator_tag OutEdgeIterCat;
-	typedef std::ptrdiff_t OutEdgeIterDiff;
+        typedef std::forward_iterator_tag OutEdgeIterCat;
+        typedef std::ptrdiff_t OutEdgeIterDiff;
 #endif
 
 #if defined BOOST_NO_ITERATOR_ADAPTORS
@@ -2139,8 +2163,8 @@ namespace boost {
         // Edge Iterator
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
         typedef std::iterator_traits<EdgeIter> EdgeIterTraits;
-	typedef typename EdgeIterTraits::iterator_category EdgeIterCat;
-	typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
+        typedef typename EdgeIterTraits::iterator_category EdgeIterCat;
+        typedef typename EdgeIterTraits::difference_type EdgeIterDiff;
 #else
         typedef OutEdgeIterCat EdgeIterCat;
         typedef OutEdgeIterDiff EdgeIterDiff;
