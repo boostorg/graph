@@ -34,7 +34,6 @@ namespace boost {
       for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
         put(distance, *ui, inf_gen());
 	put(pred, *ui, *ui);
-        vis.initialize_vertex(*ui, g);
       }
 
       put(distance, s, zero());
