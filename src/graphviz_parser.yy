@@ -245,6 +245,7 @@
 %type<i>    graph graph_header graph_type stmt_list stmt attr_stmt attr_header
 %type<i>    attr_list attr compound_stmt node_stmt edge_stmt opt_attr
 %type<i>    graph_body edge_rhs_one edge_rhs graph_attr opt_graph_body
+%type<i>    nonempty_attr_list
 %type<ptr>  graph_name
 %type<ptr>  edge_endpoint node_id  node_port subgraph subgraph_header
 
@@ -299,7 +300,10 @@ attr_header:  GRAPH_T  { graphviz::attribute_state = GRAPH_GRAPH_A; }
               | EDGE_T { graphviz::attribute_state = GRAPH_EDGE_A; }
               ;
 
-attr_list:    attr | attr_list attr_separator attr
+attr_list: nonempty_attr_list | {} 
+              ;
+
+nonempty_attr_list: attr | nonempty_attr_list attr_separator attr
               ;
 
 attr:         ID_T '=' ID_T 
