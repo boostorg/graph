@@ -37,12 +37,16 @@ property.
 <td>Property Kind </td>
 <td><TT>kind</TT> </td>
 <td>
-This specifies whether the property is a vertex property
-(<tt>vertex_property_tag</tt>), an edge property
-(<tt>edge_property_tag</tt>), or a property attached to the graph
-object itself (<tt>graph_property_tag</tt>). The tags are defined in
-<a
+
+This specifies whether the property is a <a
+name="VertexProperty">VertexProperty</a>
+(<tt>vertex_property_tag</tt>), an <a
+name="EdgeProperty">EdgeProperty</a> (<tt>edge_property_tag</tt>), or
+a <a name="GraphProperty">GraphProperty</a> which is attached to the
+graph object itself (<tt>graph_property_tag</tt>). The tags are
+defined in <a
 href="../../../boost/graph/properties.hpp"><tt>boost/graph/properties.hpp</tt></a>
+
 </td>
 </tr>
 
@@ -55,6 +59,10 @@ href="http://www.sgi.com/Technology/STL/DefaultConstructible.html">DefaultConstr
 
 
 <h3>Models</h3>
+
+The following models of the Property concept are defined
+in <a
+href="../../../boost/graph/properties.hpp"><tt>boost/graph/properties.hpp</tt></a>.
 
 <ul>
   <li><tt>vertex_index_t</tt></li>
@@ -81,7 +89,7 @@ and
 <h3>Notes</h3>
 
 On compilers that do not support partial specialization, each Property
-type is also required to contain an enum name <tt>num</tt> whose value
+type is also required to contain an enum named <tt>num</tt> whose value
 uniquely identifies the property type.
 
 <br>

@@ -61,7 +61,7 @@ edges and vertices.
 <table border>
 
 <tr>
-<TD><TT>add_edge(g, u, v)</TT></TD>
+<TD><a name="sec:add-edge"><TT>add_edge(g, u, v)</TT></a></TD>
 <TD>
 Inserts the edge <i>(u,v)</i> into the graph.<br>
 Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT>
@@ -69,7 +69,7 @@ Return type: <TT>std::pair&lt;edge_descriptor, bool&gt;</TT>
 </tr>
 
 <tr>
-<TD><TT>remove_edge(g, u, v)</TT></TD>
+<TD><a name="sec:remove_edge"><TT>remove_edge(g,&nbsp;u,&nbsp;v)</TT></a></TD>
 <TD>
 Remove the edge <i>(u,v)</i> from the graph. If the
 graph allows parallel edges this remove all occurances of
@@ -82,7 +82,7 @@ Postcondition: <i>(u,v)</i> is no longer in the edge set for
 </TR>
 
 <tr>
-<TD><TT>remove_edge(g, e)</TT></TD>
+<TD><TT>remove_edge(g,&nbsp;e)</TT></TD>
 <TD>Remove the edge <i>e</i> from the graph.<br>
 Return type: <TT>void</TT><><br>
 Precondition: <i>e</i> is an edge in the graph.<br>
@@ -91,7 +91,7 @@ Postcondition: <i>e</i> is no longer in the edge set for <TT>g</TT>.
 </TR>
 
 <tr>
-<TD><TT>add_vertex(g)</TT></TD>
+<TD><a name="sec:add-vertex"><TT>add_vertex(g)</TT></a></TD>
 <TD>
 Add a new vertex to the graph. The <TT>vertex_descriptor</TT> for the
 new vertex is returned.<br>
@@ -100,7 +100,7 @@ Return type: <TT>vertex_descriptor</TT>
 </TR>
 
 <tr>
-<TD><TT>clear_vertex(g, u)</TT></TD>
+<TD><TT>clear_vertex(g,&nbsp;u)</TT></TD>
 <TD>
 Remove all edges to and from vertex <tt>u</tt> from the graph.<br>
 Return type: <TT>void</TT><br>
@@ -111,7 +111,7 @@ any edge in <TT>g</TT>.
 </TR>
 
 <tr>
-<TD><TT>remove_vertex(g, u)</TT></TD>
+<TD><a name="sec:remove-vertex"><TT>remove_vertex(g,&nbsp;u)</TT></a></TD>
 <TD>
 Remove <i>u</i> from the vertex set of the graph. Note that undefined
 behaviour may result if there are edges remaining in the graph who's

@@ -75,7 +75,8 @@ also be listed.
 <H2>Constructing a Graph</H2>
 
 <P>
-In this example we will use the BGL <TT>adjacency_list</TT> class to
+In this example we will use the BGL <a
+href="./adjacency_list.html"><TT>adjacency_list</TT></a> class to
 demonstrate the main ideas in the BGL interface. The
 <TT>adjacency_list</TT> class provides a generalized version of the
 classic &quot;adjacency list&quot; data structure. The
@@ -96,7 +97,10 @@ and <TT>undirectedS</TT> which selects an undirected graph.
 <P>
 Once we have the graph type selected, we can create the graph in <A
 HREF="#fig:quick-start">Figure 2</A> by declaring a graph object and
-filling in edges using the <TT>add_edge()</TT> function.  We use the
+filling in edges using the <a
+href="./MutableGraph.html#sec:add-edge"><TT>add_edge()</TT></a>
+function of the <a href="./MutableGraph.html">MutableGraph</a>
+interface (which <tt>adjacency_list</tt> implements).  We use the
 array of pairs <TT>edge_array</TT> merely as a convenient way to
 explicitly create the edges for this example.
 
@@ -137,7 +141,8 @@ explicitly create the edges for this example.
 
 <P>
 Instead of calling the <TT>add_edge()</TT> function for each edge, we
-could use the iterator constructor of the graph.  This is typically
+could use the <a
+href="adjacency_list.html#sec:iterator-constructor">edge iterator constructor</a> of the graph.  This is typically
 more efficient than using <TT>add_edge()</TT>. Pointers to the
 <TT>edge_array</TT> can be viewed as iterators, so we can call the
 iterator constructor by passing pointers to the beginning and end of
@@ -151,25 +156,38 @@ the array.
 
 <P>
 
+Instead of creating a graph with a certain number of vertices to begin
+with, it is also possible to add and remove vertices with the <a
+href="./MutableGraph.html#sec:add-vertex"><tt>add_vertex()</tt></a>
+and <a
+href="./MutableGraph.html#sec:remove-vertex"><tt>remove_vertex()</tt></a>
+functions, also of the <a href="./MutableGraph.html">MutableGraph</a>
+interface.
+
+
+
 <H2>Accessing the Vertex Set</H2>
 
 <P>
 Now that we have created a graph, we can use the graph interface to
 access the graph data in different ways. First we can access all of
-the vertices in the graph using the <TT>vertices()</TT> function. This
-function returns a <TT>std::pair</TT> of <I>vertex iterators</I> (the
-<TT>first</TT> iterator points to the &quot;beginning&quot; of the vertices and
-the <TT>second</TT> iterator points &quot;past the end&quot;). Dereferencing a
-vertex iterator gives a vertex object.  The type of the vertex
-iterator is given by the <TT>graph_traits</TT> class. Note that
-different graph classes can have different associated vertex iterator
-types, which is why we need the <TT>graph_traits</TT> class. Given some
-graph type, the <TT>graph_traits</TT> class will provide access to the
-<TT>vertex_iterator</TT> type. 
+the vertices in the graph using the <a
+href="./VertexListGraph.html#sec:vertices"><TT>vertices()</TT></a>
+function of the <a href="./VertexListGraph.html">VertexListGraph</a>
+interface. This function returns a <TT>std::pair</TT> of <I>vertex
+iterators</I> (the <TT>first</TT> iterator points to the
+&quot;beginning&quot; of the vertices and the <TT>second</TT> iterator
+points &quot;past the end&quot;). Dereferencing a vertex iterator
+gives a vertex object.  The type of the vertex iterator is given by
+the <TT>graph_traits</TT> class. Note that different graph classes can
+have different associated vertex iterator types, which is why we need
+the <TT>graph_traits</TT> class. Given some graph type, the
+<TT>graph_traits</TT> class will provide access to the
+<TT>vertex_iterator</TT> type.
 
 <P>
-The following example prints out the ID for each of the vertices in
-the graph. All vertex and edge properties, including ID, are accessed
+The following example prints out the index for each of the vertices in
+the graph. All vertex and edge properties, including index, are accessed
 via property map objects.  The <TT>property_map</TT>
 class is used to obtain the property map type for a specific
 property (specified by <TT>vertex_index_t</TT>, one of the BGL
@@ -183,15 +201,15 @@ returns the actual property map object.
   {
     // ...
 
-    // get the property map for vertex ID's
-    typedef property_map&lt;Graph, vertex_index_t&gt;::type ID;
-    ID id = get(vertex_index, g);
+    // get the property map for vertex indices
+    typedef property_map&lt;Graph, vertex_index_t&gt;::type IndexMap;
+    IndexMap index = get(vertex_index, g);
 
     std::cout &lt;&lt; "vertices(g) = ";
     typedef graph_traits&lt;Graph&gt;::vertex_iterator vertex_iter;
     std::pair&lt;vertex_iter, vertex_iter&gt; vp;
     for (vp = vertices(g); vp.first != vp.second; ++vp.first)
-      std::cout &lt;&lt; id[*vp.first] &lt;&lt;  " ";
+      std::cout &lt;&lt; index[*vp.first] &lt;&lt;  " ";
     std::cout &lt;&lt; std::endl;
     // ...
     return 0;
@@ -229,8 +247,8 @@ creating a <TT>std::pair</TT> and is our method of choice for the BGL.
     std::cout &lt;&lt; "edges(g) = ";
     graph_traits&lt;Graph&gt;::edge_iterator ei, ei_end;
     for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-        std::cout &lt;&lt; "(" &lt;&lt; id[source(*ei, g)] 
-                  &lt;&lt; "," &lt;&lt; id[target(*ei, g)] &lt;&lt; ") ";
+        std::cout &lt;&lt; "(" &lt;&lt; index[source(*ei, g)] 
+                  &lt;&lt; "," &lt;&lt; index[target(*ei, g)] &lt;&lt; ") ";
     std::cout &lt;&lt; std::endl;
     // ...
     return 0;
@@ -350,7 +368,7 @@ the source-target pairs for each out-edge of vertex <TT>v</TT>.
     {
       typedef graph_traits&lt;Graph&gt; GraphTraits;
       typename property_map&lt;Graph, vertex_index_t&gt;::type 
-        id = get(vertex_index, g);
+        index = get(vertex_index, g);
 
       std::cout &lt;&lt; "out-edges: ";
       typename GraphTraits::out_edge_iterator out_i, out_end;
@@ -359,8 +377,8 @@ the source-target pairs for each out-edge of vertex <TT>v</TT>.
            out_i != out_end; ++out_i) {
         e = *out_i;
         Vertex src = source(e, g), targ = target(e, g);
-        std::cout &lt;&lt; "(" &lt;&lt; id[src] &lt;&lt; "," 
-                  &lt;&lt; id[targ] &lt;&lt; ") ";
+        std::cout &lt;&lt; "(" &lt;&lt; index[src] &lt;&lt; "," 
+                  &lt;&lt; index[targ] &lt;&lt; ") ";
       }
       std::cout &lt;&lt; std::endl;
       //...
@@ -395,7 +413,7 @@ is specified instead of <TT>directedS</TT>.
            in_i != in_end; ++in_i) {
         e = *in_i;
         Vertex src = source(e, g), targ = target(e, g);
-        std::cout &lt;&lt; "(" &lt;&lt; id[src] &lt;&lt; "," &lt;&lt; id[targ] &lt;&lt; ") ";
+        std::cout &lt;&lt; "(" &lt;&lt; index[src] &lt;&lt; "," &lt;&lt; index[targ] &lt;&lt; ") ";
       }
       std::cout &lt;&lt; std::endl;
       //...
@@ -434,7 +452,7 @@ descriptor for an adjacent vertex.
       typename graph_traits&lt;Graph&gt;::adjacency_iterator ai_end;
       for (tie(ai, ai_end) = adjacent_vertices(v, g);
            ai != ai_end; ++ai)
-        std::cout &lt;&lt; id[*ai] &lt;&lt;  " ";
+        std::cout &lt;&lt; index[*ai] &lt;&lt;  " ";
       std::cout &lt;&lt; std::endl;
     }
     //...
@@ -462,12 +480,10 @@ an <I>internally stored property</I> while the second kind is called
 an <I>externally stored property</I>.  BGL uses a uniform mechanism to
 access both kinds of properties inside its graph algorithms called the
 <I>property map</I> interface, described in Section <a
-href="../../property_map.html">Property Map Concepts</a>. In
-addition, the <a
-href="./VertexPropertyGraph.html">VertexPropertyGraph</a> and <a
-href="./EdgePropertyGraph.html">EdgePropertyGraph</a> concepts define
-the interface for obtaining a property map object for an
-internally property.
+href="../../property_map.html">Property Map Concepts</a>. In addition,
+the <a href="./PropertyGraph.html">PropertyGraph</a> concept defines
+the interface for obtaining a property map object for an internally
+property.
 
 <P>
 The BGL <TT>adjacency_list</TT> class allows users to specify
@@ -477,13 +493,13 @@ href="./using_adjacency_list.html#sec:adjacency-list-properties">Internal
 Properties</a>.  Externally stored properties can be created in many
 different ways, although they are ultimately passed as separate
 arguments to the graph algorithms.  One straightforward way to store
-properties is to create an array indexed by vertex or edge ID. In the
-<TT>adjacency_list</TT> with <TT>vecS</TT> specified for the
+properties is to create an array indexed by vertex or edge index. In
+the <TT>adjacency_list</TT> with <TT>vecS</TT> specified for the
 <TT>VertexList</TT> template parameter, vertices are automatically
-assigned ID numbers, which can be accessed via the property map for
-the <TT>vertex_index_t</TT>. Edges are not automatically assigned ID
-numbers. However the property mechanism can be used to attach ID
-numbers to the edges which can be used to index into other externally
+assigned indices, which can be accessed via the property map for the
+<TT>vertex_index_t</TT>. Edges are not automatically assigned
+indices. However the property mechanism can be used to attach indices
+to the edges which can be used to index into other externally
 stored properties.
 
 <P>
@@ -721,7 +737,7 @@ The output is:
  -->
 <!--  LocalWords:  iter ei interoperability struct typename GraphTraits src ai
  -->
-<!--  LocalWords:  targ VertexPropertyGraph EdgePropertyGraph Properties property
+<!--  LocalWords:  targ PropertyGraph  Properties property
  -->
 <!--  LocalWords:  VertexList dijkstra listS Edgelist RandomAccessIterator
  -->

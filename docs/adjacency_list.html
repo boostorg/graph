@@ -24,7 +24,7 @@
 <H1><A NAME="sec:adjacency-list-class"></A>
 <pre>
 adjacency_list&lt;EdgeList, VertexList, Directed,
-               VertexProperty, EdgeProperty, GraphProperty&gt;
+              <a href="./Property.html#VertexProperty">VertexProperty</a>, <a href="./Property.html#EdgeProperty">EdgeProperty</a>, <a href="./Property.html#GraphProperty">GraphProperty</a>&gt;
 </pre>
 </H1>
 
@@ -174,9 +174,7 @@ The output is:
 
 <P>
 <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, 
-<a href="./MutablePropertyGraph.html">MutablePropertyGraph</a>, 
-<a href="./VertexPropertyGraph.html">VertexPropertyGraph</a>, and
-<a href="./EdgePropertyGraph.html">EdgePropertyGraph</a>
+<a href="./MutablePropertyGraph.html">MutablePropertyGraph</a>
 
 <P>
 
@@ -341,6 +339,7 @@ Creates a graph object with <TT>n</TT> vertices and zero edges.
 
 <hr>
 
+<a name="sec:iterator-constructor">
 <pre>
 template &lt;class&nbsp;EdgeIterator&gt;
 adjacency_list(vertices_size_type&nbsp;n, 
@@ -353,6 +352,7 @@ The value type of the <TT>EdgeIterator</TT> must be a <TT>std::pair</TT>,
 where the type in the pair is an integer type. The integers will
 correspond to vertices, and they must all fall in the range of
 <TT>[0, n)</TT>.
+</a>
 
 <hr>
 
@@ -548,6 +548,7 @@ will <b>invalidate</b> any iterators that point into the edge-list for vertex
 <i>u</i>.
 <hr>
 
+<a name="sec:add-vertex">
 <pre>
 vertex_descriptor
 add_vertex(adjacency_list&amp; g)
@@ -556,6 +557,8 @@ Adds a vertex to the graph and returns the vertex descriptor for the
 new vertex. If the <TT>VertexList</TT> selector is <tt>vecS</tt> then
 this operation <b>invalidates</b> all iterators, vertex descriptors,
 and edge descriptors for the graph.
+</a>
+
 <hr>
 
 <pre>
@@ -589,11 +592,11 @@ to make frequent use of the <TT>remove_vertex()</TT> function the
 <hr>
 
 <pre>
-template &lt;class Property&gt;
+template &lt;class <a href="./Property.html">Property</a>&gt;
 property_map&lt;adjacency_list, Property&gt;::type
 get(Property, adjacency_list&amp; g)
 
-template &lt;class Property&gt;
+template &lt;class <a href="./Property.html">Property</a>&gt;
 property_map&lt;adjacency_list, Tag&gt;::const_type
 get(Property, const adjacency_list&amp; g)
 </pre>
@@ -605,7 +608,7 @@ argument.
 <hr>
 
 <pre>
-template &lt;class Property, class X&gt;
+template &lt;class <a href="./Property.html">Property</a>, class X&gt;
 typename property_traits&lt;property_map&lt;adjacency_list, Property&gt;::const_type&gt::value_type
 get(Property, const adjacency_list&amp; g, X x)
 </pre>
@@ -614,7 +617,7 @@ a vertex or edge descriptor.
 <hr>
 
 <pre>
-template &lt;class Property, class X, class Value&gt;
+template &lt;class <a href="./Property.html">Property</a>, class X, class Value&gt;
 void
 put(Property, const adjacency_list&amp; g, X x, const Value& value)
 </pre>

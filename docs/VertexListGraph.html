@@ -37,9 +37,7 @@ requirement for efficient traversal of all the vertices in the graph.
 <Table border>
 
 <TR>
-<TD>Vertex Iterator Type</TD>
-<TD><TT>boost::graph_traits&lt;G&gt;::vertex_iterator</TT></TD>
-<TD>
+<TD><tt>boost::graph_traits&lt;G&gt;::vertex_iterator</tt><br><br>
 A vertex iterator (obtained via <TT>vertices(g)</TT>) provides access
 to all of the vertices in a graph.  A vertex iterator type must meet
 the requirements of <a
@@ -50,11 +48,9 @@ graph.
 </TR>
 
 <tr>
-<td>Vertices Size Type</td>
-<td><TT>boost::graph_traits&lt;G&gt;::vertices_size_type</TT></td>
-<td>
+<td><tt>boost::graph_traits&lt;G&gt;::vertices_size_type</tt><br><br>
 The unsigned integer type used to represent the number of vertices
-    in the graph.
+in the graph.
 </td>
 </tr>
 
@@ -70,8 +66,8 @@ The unsigned integer type used to represent the number of vertices
 
 <tr>
 <td>Vertex Set of the Graph</td>
-<td><TT>vertices(g)</TT></TD>
-<TD><TT>std::pair&lt;vertex_iterator, vertex_iterator&gt;</TT></TD>
+<td><a name="sec:vertices"><TT>vertices(g)</TT></a></TD>
+<TD><TT>std::pair&lt;vertex_iterator,&nbsp;vertex_iterator&gt;</TT></TD>
 <TD>
 Returns an iterator-range providing access to all the vertices in the
 graph<TT>g</TT>.
