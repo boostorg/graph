@@ -14,10 +14,10 @@
 #include <cmath>
 #include <boost/optional.hpp>
 #include <vector>
+#include <algorithm> // for std::swap
 
 #ifdef BOOST_RELAXED_HEAP_DEBUG
 #  include <iostream>
-#  include <algorithm>
 #endif // BOOST_RELAXED_HEAP_DEBUG
 
 namespace boost {
@@ -86,7 +86,7 @@ private:
 public:
   relaxed_heap(size_type n, const Compare& compare = Compare(),
                const ID& id = ID())
-    : compare(compare), id(id), root(smallest_key), groups(n), 
+    : compare(compare), id(id), root(smallest_key), groups(n),
       smallest_value(0)
   {
 #ifndef BOOST_NO_STDC_NAMESPACE
@@ -115,7 +115,7 @@ public:
     while (idx < g) {
       root.children[r] = &index_to_group[idx];
       idx = build_tree(root, idx, r, log_g + 1);
-      if (idx != g) 
+      if (idx != g)
         r = static_cast<size_type>(log((double)(g - idx)) / log(2.0));
     }
   }
@@ -131,7 +131,7 @@ public:
   void update(const value_type& x)
   {
     group* a = &index_to_group[get(id, x) / log_n];
-    if (!a->value 
+    if (!a->value
         || *a->value == x
         || compare(x, *a->value)) {
       a->kind = stored_key;
