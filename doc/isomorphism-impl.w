@@ -157,7 +157,8 @@ The problem with the exhaustive backtracking algorithm is that there
 are $N!$ possible vertex mappings, and $N!$ gets very large as $N$
 increases, so we need to prune the search space. We use the pruning
 techniques described in
-\cite{fortin96:_isomorph,reingold77:_combin_algo} that originated in
+\cite{fortin96:_isomorph,reingold77:_combin_algo,deo77:_new_algo_digraph_isomorph}
+that originated in
 \cite{sussenguth65:_isomorphism,unger64:_isomorphism}.
 
 \section{Vertex Invariants}
