@@ -28,10 +28,78 @@
 #define BOOST_GRAPH_UNDIRECTED_DFS_HPP
 
 #include <boost/graph/depth_first_search.hpp>
+#include <vector>
 
 namespace boost {
 
   namespace detail {
+
+// Define BOOST_RECURSIVE_DFS to use older, recursive version.
+// It is retained for a while in order to perform performance
+// comparison.
+#ifndef BOOST_RECURSIVE_DFS
+
+    template <typename IncidenceGraph, typename DFSVisitor, 
+              typename VertexColorMap, typename EdgeColorMap>
+    void undir_dfv_impl
+      (const IncidenceGraph& g,
+       typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+       DFSVisitor& vis,
+       VertexColorMap vertex_color,
+       EdgeColorMap edge_color)
+    {
+      function_requires<IncidenceGraphConcept<IncidenceGraph> >();
+      function_requires<DFSVisitorConcept<DFSVisitor, IncidenceGraph> >();
+      typedef typename graph_traits<IncidenceGraph>::vertex_descriptor Vertex;
+      typedef typename graph_traits<IncidenceGraph>::edge_descriptor Edge;
+      function_requires<ReadWritePropertyMapConcept<VertexColorMap,Vertex> >();
+      function_requires<ReadWritePropertyMapConcept<EdgeColorMap,Edge> >();
+      typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+      typedef typename property_traits<EdgeColorMap>::value_type EColorValue;
+      function_requires< ColorValueConcept<ColorValue> >();
+      function_requires< ColorValueConcept<EColorValue> >();
+      typedef color_traits<ColorValue> Color;
+      typedef color_traits<EColorValue> EColor;
+      typedef typename graph_traits<IncidenceGraph>::out_edge_iterator Iter;
+      typedef std::pair<Vertex, std::pair<Iter, Iter> > VertexInfo;
+
+      std::vector<VertexInfo> stack;
+
+      put(vertex_color, u, Color::gray());
+      vis.discover_vertex(u, g);
+      stack.push_back(std::make_pair(u, out_edges(u, g)));
+      while (!stack.empty()) {
+	VertexInfo& back = stack.back();
+	u = back.first;
+	Iter ei, ei_end;
+	tie(ei, ei_end) = back.second;
+	stack.pop_back();
+	while (ei != ei_end) {
+	  Vertex v = target(*ei, g);
+	  vis.examine_edge(*ei, g);
+	  ColorValue v_color = get(vertex_color, v);
+	  EColorValue uv_color = get(edge_color, *ei);
+	  put(edge_color, *ei, EColor::black());
+	  if (v_color == Color::white()) {
+	    vis.tree_edge(*ei, g);
+	    stack.push_back(std::make_pair(u, std::make_pair(++ei, ei_end)));
+	    u = v;
+	    put(vertex_color, u, Color::gray());
+	    vis.discover_vertex(u, g);
+	    tie(ei, ei_end) = out_edges(u, g);
+	  } else if (v_color == Color::gray()) {
+	    if (uv_color == EColor::white()) vis.back_edge(*ei, g);
+	    ++ei;
+	  } else { // if (v_color == Color::black())
+	    ++ei;
+	  }
+	}
+	put(vertex_color, u, Color::black());
+	vis.finish_vertex(u, g);
+      }
+    }
+
+#else // BOOST_RECURSIVE_DFS
 
     template <typename IncidenceGraph, typename DFSVisitor, 
               typename VertexColorMap, typename EdgeColorMap>
@@ -69,6 +137,9 @@ namespace boost {
       }
       put(vertex_color, u, Color::black());  vis.finish_vertex(u, g);
     }
+
+#endif // ! BOOST_RECURSIVE_DFS
+
   } // namespace detail
 
   template <typename Graph, typename DFSVisitor, 
