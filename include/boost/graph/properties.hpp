@@ -194,7 +194,7 @@ namespace boost {
   class property_map {
     typedef typename Property::kind Kind;
     typedef typename detail::property_map_kind_selector<Kind>::type Selector;
-    typedef typename Selector::bind<Graph, Property>::type Map;
+    typedef typename Selector::template bind<Graph, Property>::type Map;
   public:
     typedef typename Map::type type;
     typedef typename Map::const_type const_type;
