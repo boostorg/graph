@@ -27,6 +27,7 @@
 #include <string>
 #include <boost/graph/maximum_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/read_dimacs.hpp>
 
 int
 main()
@@ -41,49 +42,24 @@ main()
         property<edge_reverse_t, Traits::edge_descriptor> > >
   > Graph;
 
-  const int N = 6;
-  Graph g(N);
+  Graph g;
   
   long flow;
-
-  put(vertex_name, g, 0, std::string("Vancouver"));
-  put(vertex_name, g, 1, std::string("Edmonton"));
-  put(vertex_name, g, 2, std::string("Calgary"));
-  put(vertex_name, g, 3, std::string("Saskatoon"));
-  put(vertex_name, g, 4, std::string("Regina"));
-  put(vertex_name, g, 5, std::string("Winnipeg"));
 
   property_map<Graph, edge_capacity_t>::type 
     capacity = get(edge_capacity, g);
 
-  typedef std::pair<int,int> Edge;
-  Edge edges[] = { Edge(0, 1), Edge(0, 2),
-                   Edge(1, 2), Edge(1, 3),
-                   Edge(2, 4),
-                   Edge(3, 2), Edge(3, 5),
-                   Edge(4, 3), Edge(4, 5) };
-  
-  for (int i = 0; i < sizeof(edges)/sizeof(Edge); ++i) {
-    // Add edges going both directions
-    add_edge(edges[i].first, edges[i].second, g);
-    graph_traits<Graph>::edge_descriptor e; 
-    bool inserted;
-    tie(e, inserted) = add_edge(edges[i].second, edges[i].first, g);
-    capacity[e] = 0;
-  }
+  property_map<Graph, edge_residual_capacity_t>::type 
+    residual_capacity = get(edge_residual_capacity, g);
 
-  capacity[edge(0,1,g).first] = 16;
-  capacity[edge(1,3,g).first] = 12;
-  capacity[edge(1,2,g).first] = 10;
-  capacity[edge(2,1,g).first] = 4;
-  capacity[edge(0,2,g).first] = 13;
-  capacity[edge(3,2,g).first] = 9;
-  capacity[edge(2,4,g).first] = 14;
-  capacity[edge(4,3,g).first] = 7;
-  capacity[edge(3,5,g).first] = 20;
-  capacity[edge(4,5,g).first] = 4;
-  
-  Traits::vertex_descriptor s = 0, t = 5;
+  property_map<Graph, edge_reverse_t>::type 
+    reverse_edge = get(edge_reverse, g);
+
+  Traits::vertex_descriptor s, t;
+
+  read_dimacs_max_flow(g, capacity, residual_capacity, reverse_edge, s, t);
+
+  print_graph(g);
   
   maximum_flow(g, s, t, capacity, get(edge_residual_capacity, g),
                get(vertex_index, g), flow);
