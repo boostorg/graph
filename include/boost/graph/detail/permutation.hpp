@@ -1,3 +1,9 @@
+// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
+// sell and distribute this software is granted provided this
+// copyright notice appears in all copies. This software is provided
+// "as is" without express or implied warranty, and with no claim as
+// to its suitability for any purpose.
+
 #ifndef BOOST_PERMUTATION_HPP
 #define BOOST_PERMUTATION_HPP
 
@@ -10,7 +16,7 @@
 namespace boost {
 
 template <class Iter1, class Iter2>
-inline void permute(Iter1 permuter, Iter1 last, Iter2 result)
+void permute_serial(Iter1 permuter, Iter1 last, Iter2 result)
 {
   typedef typename std::iterator_traits<Iter1>::difference_type D;
   D n = 0;
@@ -21,12 +27,46 @@ inline void permute(Iter1 permuter, Iter1 last, Iter2 result)
   }
 }
 
+template <class InIter, class RandIterP, class RandIterR>
+void permute(InIter first, InIter last, RandIterP p, RandIterR result)
+{
+  typename std::iterator_traits<RandIterP>::difference_type i = 0;
+  for (; first != last; ++first, ++i)
+    result[p[i]] = *first;
+}
+
+template <class RandIter, class RandIterPerm>
+void inplace_permute(RandIter first, RandIter last, RandIterPerm p)
+{
+  typename std::iterator_traits<RandIterPerm>::difference_type 
+    i = 0, pi, n = last - first, cycle_start;
+  typename std::iterator_traits<RandIter>::value_type tmp;
+  std::vector<int> visited(n, false);
+
+  while (i != n) { // continue until all elements have been processed
+    cycle_start = i;
+    tmp = first[i];
+    do { // walk around a cycle
+      pi = p[i];
+      visited[pi] = true;
+      std::swap(tmp, first[pi]);
+      i = pi;
+    } while (i != cycle_start);
+    
+    // find the next cycle
+    for (i = 0; i < n; ++i)
+      if (visited[i] == false)
+	break;
+  }
+}
+
+
 // Knuth 1.3.3, Vol. 1 p 176
 // modified for zero-based arrays
 // time ?
 //
 template <class PermIter>
-inline void invert_permutation(PermIter X, PermIter Xend)
+void invert_permutation(PermIter X, PermIter Xend)
 {
   typedef typename std::iterator_traits<PermIter>::value_type T;
   T n = Xend - X;

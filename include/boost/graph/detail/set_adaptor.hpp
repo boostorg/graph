@@ -1,7 +1,15 @@
+// (C) Copyright Jeremy Siek 2001. Permission to copy, use, modify,
+// sell and distribute this software is granted provided this
+// copyright notice appears in all copies. This software is provided
+// "as is" without express or implied warranty, and with no claim as
+// to its suitability for any purpose.
+
 #ifndef BOOST_SET_ADAPTOR_HPP
 #define BOOST_SET_ADAPTOR_HPP
 
 #include <set>
+
+namespace boost {
 
     template <class K, class C, class A, class T>
     bool set_contains(const std::set<K,C,A>& s, const T& x) {
@@ -98,6 +106,6 @@
       
     }
     
-    
+} // namespace boost    
 
 #endif // BOOST_SET_ADAPTOR_HPP
