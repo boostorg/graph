@@ -230,6 +230,32 @@ order the roots of our DFS trees by invariant multiplicity.
 \section{Implementation}
 
 
+@d Degree vertex invariant functor
+@{
+template <typename InDegreeMap, typename Graph>
+class degree_vertex_invariant
+{
+public:
+    typedef typename graph_traits<Graph>::vertex_descriptor argument_type;
+    typedef typename graph_traits<Graph>::degree_size_type result_type;
+
+    degree_vertex_invariant(const InDegreeMap& in_degree_map, const Graph& g)
+        : m_in_degree_map(in_degree_map), m_g(g) { }
+
+    result_type operator()(argument_type v) const {
+        return (num_vertices(m_g) + 1) * out_degree(v, m_g)
+            + get(m_in_degree_map, v);
+    }
+    // The largest possible vertex invariant number
+    result_type max() const { 
+        return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
+    }
+private:
+    InDegreeMap m_in_degree_map;
+    const Graph& m_g;
+};
+@}
+
 
 @d Invariant multiplicity comparison functor
 @{
@@ -237,24 +263,44 @@ struct cmp_multiplicity
 {
     cmp_multiplicity(self& algo, size_type* multiplicity)
         : algo(algo), multiplicity(multiplicity) { }
-    bool operator()(const vertex_a& x, const vertex_a& y) const {
-        return multiplicity[algo.ADEG(x)] < multiplicity[algo.ADEG(y)];
+    bool operator()(const vertex1_t& x, const vertex1_t& y) const {
+        return multiplicity[algo.invariant1(x)] < multiplicity[algo.invariant1(y)];
     }
     self& algo;
     size_type* multiplicity;
 };
 @}
 
-
-Use \code{pair} instead of \code{edge_a} so that we can create ficticious
+ficticiuos edges for the DFS tree roots
+Use \code{ordered\_edge} instead of \code{edge1\_t} so that we can create ficticious
 edges for the DFS tree roots.
+
+@d Ordered edge class
+@{
+struct ordered_edge {
+    ordered_edge(int s, int t) : source(s), target(t) { }
+
+    bool operator<(const ordered_edge& e) const {
+        using namespace std;
+        int m1 = max(source, target);
+        int m2 = max(e.source, e.target);
+        // lexicographical comparison of (m1,source,target) and (m2,e.source,e.target)
+        return make_pair(m1, make_pair(source, target)) < make_pair(m2, make_pair(e.source, e.target));
+    }
+    int source;
+    int target;
+    int order;
+};
+@}
+
 
 @d State used inside the DFS Visitor
 @{
 struct dfs_order {
-    dfs_order(std::vector<vertex_a>& v) : vertices(v) { }
-    std::vector<vertex_a>& vertices;
-    std::vector< std::pair<int,int> > edges;
+    dfs_order(std::vector<vertex1_t>& v, std::vector<ordered_edge>& e) 
+	: vertices(v), edges(e) { }
+    std::vector<vertex1_t>& vertices;
+    std::vector<ordered_edge>& edges;
 };
 @}
 
@@ -262,53 +308,34 @@ struct dfs_order {
 @{
 struct record_dfs_order : default_dfs_visitor {
     record_dfs_order(dfs_order& order) : order(order) { }
-    void start_vertex(vertex_a v, const GraphA&) const {
-        order.edges.push_back(make_pair(-1, v));
+    void start_vertex(vertex1_t v, const Graph1&) const {
+        order.edges.push_back(ordered_edge(-1, v));
     }
-    void discover_vertex(vertex_a v, const GraphA&) const {
+    void discover_vertex(vertex1_t v, const Graph1&) const {
         order.vertices.push_back(v);
     }
-    void examine_edge(edge_a e, const GraphA& Ga) const {
-        order.edges.push_back(make_pair(source(e, Ga), target(e, Ga)));
+    void examine_edge(edge1_t e, const Graph1& G1) const {
+        order.edges.push_back(ordered_edge(source(e, G1), target(e, G1)));
     }
     dfs_order& order;
 };
 @}
 
-ficticiuos edges for the DFS tree roots
-
-@d Ordered edge class
-@{
-struct ordered_edge {
-    ordered_edge(int f, int t) : from(f), to(t) { }
-
-    bool operator<(const ordered_edge& e) const {
-        using namespace std;
-        int m1 = max(from, to);
-        int m2 = max(e.from, e.to);
-        // lexicographical comparison of (m1,from,to) and (m2,e.from,e.to)
-        return make_pair(m1, make_pair(from, to)) < make_pair(m2, make_pair(e.from, e.to));
-    }
-    int from;
-    int to;
-    int order;
-};
-@}
 
 @d Quick return if the vertex invariants do not match up
 @{
 {
-    std::vector<size_type> ADEG_Ga;
-    BGL_FORALL_VERTICES_T(v, Ga, GraphA)
-    ADEG_Ga.push_back(ADEG(v));
-    std::sort(ADEG_Ga.begin(), ADEG_Ga.end());
+    std::vector<invar1_value> invar1_array;
+    BGL_FORALL_VERTICES_T(v, G1, Graph1)
+        invar1_array.push_back(invariant1(v));
+    std::sort(invar1_array.begin(), invar1_array.end());
 
-    std::vector<size_type> BDEG_Gb;
-    BGL_FORALL_VERTICES_T(v, Gb, GraphB)
-    BDEG_Gb.push_back(BDEG(v));
-    std::sort(BDEG_Gb.begin(), BDEG_Gb.end());
+    std::vector<invar2_value> invar2_array;
+    BGL_FORALL_VERTICES_T(v, G2, Graph2)
+        invar2_array.push_back(invariant2(v));
+    std::sort(invar2_array.begin(), invar2_array.end());
 
-    if (!std::equal(ADEG_Ga.begin(), ADEG_Ga.end(), BDEG_Gb.begin())) {
+    if (!std::equal(invar1_array.begin(), invar1_array.end(), invar2_array.begin())) {
         std::cout << "invariants don't match" << std::endl;
         return false;
     }
@@ -317,19 +344,19 @@ struct ordered_edge {
 
 @d Sort vertices according to invariant multiplicity
 @{
-std::vector<vertex_a> Vmult;
-BGL_FORALL_VERTICES_T(v, Ga, GraphA)
-    Vmult.push_back(v);
+std::vector<vertex1_t> V_mult;
+BGL_FORALL_VERTICES_T(v, G1, Graph1)
+    V_mult.push_back(v);
 {
-    std::vector<size_type> multiplicity(this->max_DEG(), 0);
-    BGL_FORALL_VERTICES_T(v, Ga, GraphA)
-    ++multiplicity[ADEG(v)];
+    std::vector<size_type> multiplicity(max_invariant, 0);
+    BGL_FORALL_VERTICES_T(v, G1, Graph1)
+        ++multiplicity[invariant1(v)];
 
-    std::sort(Vmult.begin(), Vmult.end(), cmp_multiplicity(*this, &multiplicity[0]));
+    std::sort(V_mult.begin(), V_mult.end(), cmp_multiplicity(*this, &multiplicity[0]));
 
-    std::cout << "Vmult=";
-    std::copy(Vmult.begin(), Vmult.end(),
-            std::ostream_iterator<vertex_a>(std::cout, " "));
+    std::cout << "V_mult=";
+    std::copy(V_mult.begin(), V_mult.end(),
+              std::ostream_iterator<vertex1_t>(std::cout, " "));
     std::cout << std::endl;
 }
 @}
@@ -337,28 +364,27 @@ BGL_FORALL_VERTICES_T(v, Ga, GraphA)
 @d Order vertices and edges by DFS
 @{
 {
-    dfs_order order(dfs_vertices);
-    std::vector<default_color_type> color_vec(num_vertices(Ga));
+    dfs_order order(dfs_vertices, ordered_edges);
+    std::vector<default_color_type> color_vec(num_vertices(G1));
     record_dfs_order dfs_visitor(order);
     typedef color_traits<default_color_type> Color;
-    for (vertex_iter u = Vmult.begin(); u != Vmult.end(); ++u) {
+    for (vertex_iter u = V_mult.begin(); u != V_mult.end(); ++u) {
         if (color_vec[*u] == Color::white()) {
-            dfs_visitor.start_vertex(*u, Ga);
-            depth_first_visit(Ga, *u, dfs_visitor, &color_vec[0]);
+            dfs_visitor.start_vertex(*u, G1);
+            depth_first_visit(G1, *u, dfs_visitor, &color_vec[0]);
         }
     }
     // Create the dfs_number array
     size_type n = 0;
-    dfs_number.resize(num_vertices(Ga));
+    dfs_number.resize(num_vertices(G1));
     for (vertex_iter v = dfs_vertices.begin(); v != dfs_vertices.end(); ++v)
         dfs_number[*v] = n++;
     
-    // Construct the ordered_edges array
-    for (std::vector<std::pair<int,int> >::iterator e = order.edges.begin();
-         e != order.edges.end(); ++e) {
-        int u = e->first < 0 ? e->first : dfs_number[e->first];
-        int v = dfs_number[e->second];
-        ordered_edges.push_back(ordered_edge(u, v));
+    // Renumber ordered_edges array according to DFS number
+    for (edge_iter e = ordered_edges.begin(); e != ordered_edges.end(); ++e) {
+        if (e->source >= 0)
+          e->source = dfs_number[e->source];
+        e->target = dfs_number[e->target];
     }
 }
 @}
@@ -375,19 +401,58 @@ The order field needs a better name. How about k?
     // Fill in i->order field
     ordered_edges[0].order = 0;
     for (edge_iter i = next(ordered_edges.begin()); i != ordered_edges.end(); ++i)
-        i->order = std::max(prior(i)->from, prior(i)->to);
+        i->order = std::max(prior(i)->source, prior(i)->target);
 }
 @}
+
+
+\subsection{Recursive Match Function}
+
+
+
+
+@d Match function
+@{
+bool match(edge_iter iter)
+{
+std::cout << "*** entering match" << std::endl;
+if (iter != ordered_edges.end()) {
+    ordered_edge edge = *iter;
+    size_type edge_order_num = edge.order;
+    vertex1_t u;
+    if (edge.source != -1) // might be a ficticious edge
+        u = dfs_vertices[edge.source];
+    vertex1_t v = dfs_vertices[edge.target];
+    std::cout << "edge: (";
+    if (edge.source == -1)
+        std::cout << "root";
+    else
+        std::cout << name_map1[dfs_vertices[edge.source]];
+    std::cout << "," << name_map1[dfs_vertices[edge.target]] << ")" << std::endl;
+    if (edge.source == -1) { // root node
+        @<$v$ is a DFS tree root@>
+    } else if (f_assigned[v] == false) {
+        @<$v$ is an unmatched vertex, $(u,v)$ is a tree edge@>
+    } else {
+        @<Check to see if there is an edge in $G_2$ to match $(u,v)$@>
+    }
+} else 
+    return true;
+std::cout << "returning false" << std::endl;
+return false;
+} // match()
+@}
+
 
 
 @d $v$ is a DFS tree root
 @{
 std::cout << "** case 1" << std::endl;
 // Try all possible mappings
-BGL_FORALL_VERTICES_T(y, Gb, GraphB) {
-    std::cout << "y: " << b_names[y] << std::endl;
-    if (ADEG(v) == BDEG(y) && f_inv_assigned[y] == false) {
-        std::cout << "f(" << a_names[v] << ")=" <<b_names[y] << std::endl;
+BGL_FORALL_VERTICES_T(y, G2, Graph2) {
+    std::cout << "y: " << name_map2[y] << std::endl;
+    if (invariant1(v) == invariant2(y) && f_inv_assigned[y] == false) {
+        std::cout << "f(" << name_map1[v] << ")=" <<name_map2[y] << std::endl;
         f[v] = y; 
         f_assigned[v] = true;
         f_inv[y] = v; f_inv_assigned[y] = true;
@@ -407,10 +472,10 @@ Growing the subgraph.
 @d $v$ is an unmatched vertex, $(u,v)$ is a tree edge
 @{
 std::cout << "** case 2" << std::endl;
-vertex_a k = dfs_vertices[edge_order_num];
-std::cout << "k=" << a_names[k] << std::endl;
+vertex1_t k = dfs_vertices[edge_order_num];
+std::cout << "k=" << name_map1[k] << std::endl;
 assert(f_assigned[k] == true);
-std::cout << "f[k]: " << b_names[f[k]] << std::endl;
+std::cout << "f[k]: " << name_map2[f[k]] << std::endl;
 
 @<Count out-edges of $f(k)$ in $G_2[S]$@>
 @<Count in-edges of $f(k)$ in $G_2[S]$@>
@@ -423,11 +488,11 @@ if (mc != 0) // make sure out/in edges for k and f(k) add up
 
 @d Count out-edges of $f(k)$ in $G_2[S]$
 @{
-BGL_FORALL_ADJACENT_T(f[k], w, Gb, GraphB) {
+BGL_FORALL_ADJACENT_T(f[k], w, G2, Graph2) {
     if (f_inv_assigned[w] == true) {
         --mc;
         std::cout << "--mc: " << mc << std::endl;
-        std::cout << "(" << b_names[f[k]] << "," << b_names[w] << ")\n";
+        std::cout << "(" << name_map2[f[k]] << "," << name_map2[w] << ")\n";
     }
 }
 @}
@@ -435,12 +500,12 @@ BGL_FORALL_ADJACENT_T(f[k], w, Gb, GraphB) {
 @d Count in-edges of $f(k)$ in $G_2[S]$
 @{
 for (std::size_t ji = 0; ji < edge_order_num; ++ji) {
-    vertex_a j = dfs_vertices[ji];
-    BGL_FORALL_ADJACENT_T(f[j], w, Gb, GraphB) {
+    vertex1_t j = dfs_vertices[ji];
+    BGL_FORALL_ADJACENT_T(f[j], w, G2, Graph2) {
         if (w == f[k]) {
             --mc;
             std::cout << "--mc: " << mc << std::endl;
-            std::cout << "(" << b_names[f[j]] << "," << b_names[w] << ")\n";
+            std::cout << "(" << name_map2[f[j]] << "," << name_map2[w] << ")\n";
         }
     }
 }
@@ -448,13 +513,13 @@ for (std::size_t ji = 0; ji < edge_order_num; ++ji) {
 
 @d Assign $v$ to some vertex in $V_2 - S$
 @{
-BGL_FORALL_ADJACENT_T(f[u], y, Gb, GraphB) {
-    if (ADEG(v) == BDEG(y) && f_inv_assigned[y] == false) {
+BGL_FORALL_ADJACENT_T(f[u], y, G2, Graph2) {
+    if (invariant1(v) == invariant2(y) && f_inv_assigned[y] == false) {
         f[v] = y; f_assigned[v] = true;
-        std::cout << "f(" << a_names[v] << ")=" << b_names[y] << std::endl;;
+        std::cout << "f(" << name_map1[v] << ")=" << name_map2[y] << std::endl;;
         f_inv[y] = v; f_inv_assigned[y] = true;
         mc = 1;
-        std::cout << "(f(u),y): (" << b_names[f[u]] << "," << b_names[y]
+        std::cout << "(f(u),y): (" << name_map2[f[u]] << "," << name_map2[y]
                     << ")" << std::endl;
         std::cout << "mc = 1" << std::endl;
         if (match(next(iter)))
@@ -462,7 +527,7 @@ BGL_FORALL_ADJACENT_T(f[u], y, Gb, GraphB) {
         f_assigned[v] = false;
         f_inv_assigned[y] = false;
     }
-}	    
+}           
 @}
 
 
@@ -472,12 +537,12 @@ BGL_FORALL_ADJACENT_T(f[u], y, Gb, GraphB) {
 std::cout << "** case 3" << std::endl;
 bool verify = false;
 assert(f_assigned[u] == true);
-BGL_FORALL_ADJACENT_T(f[u], y, Gb, GraphB) {
-    std::cout << "y: " << b_names[y] << std::endl;
+BGL_FORALL_ADJACENT_T(f[u], y, G2, Graph2) {
+    std::cout << "y: " << name_map2[y] << std::endl;
     assert(f_assigned[v] == true);
     if (y == f[v]) {    
-        std::cout << "found match, (" << b_names[f[u]] 
-                << "," << b_names[y] << ")" << std::endl;
+        std::cout << "found match, (" << name_map2[f[u]] 
+                << "," << name_map2[y] << ")" << std::endl;
         verify = true;
         break;
     }
@@ -490,41 +555,22 @@ if (verify == true) {
 }
 @}
 
-@d Match function
-@{
-bool match(edge_iter iter)
-{
-std::cout << "*** entering match" << std::endl;
-if (iter != ordered_edges.end()) {
-    ordered_edge edge = *iter;
-    size_type edge_order_num = edge.order;
-    vertex_a u;
-    if (edge.from != -1) // might be a ficticious edge
-        u = dfs_vertices[edge.from];
-    vertex_a v = dfs_vertices[edge.to];
-    std::cout << "edge: (";
-    if (edge.from == -1)
-        std::cout << "root";
-    else
-        std::cout << a_names[dfs_vertices[edge.from]];
-    std::cout << "," << a_names[dfs_vertices[edge.to]] << ")" << std::endl;
-    if (edge.from == -1) { // root node
-        @<$v$ is a DFS tree root@>
-    } else if (f_assigned[v] == false) {
-        @<$v$ is an unmatched vertex, $(u,v)$ is a tree edge@>
-    } else {
-        @<Check to see if there is an edge in $G_2$ to match $(u,v)$@>
-    }
-} else 
-    return true;
-std::cout << "returning false" << std::endl;
-return false;
-} // match()
-@}
 
 
-@o isomorphism-v2.hpp
+@o isomorphism-v2.hpp -d
 @{
+// Copyright (C) 2001 Jeremy Siek (jsiek@@osl.iu.edu),
+//                    Doug Gregor (gregod@@cs.rpi.edu),
+//                    Brian Osman (osmanb@@acm.org)
+//
+// Permission to copy, use, sell and distribute this software is granted
+// provided this copyright notice appears in all copies.
+// Permission to modify the code and to distribute modified code is granted
+// provided this copyright notice appears in all copies, and a notice
+// that the code was modified is included with the copyright notice.
+//
+// This software is provided "as is" without express or implied warranty,
+// and with no claim as to its suitability for any purpose.
 #ifndef BOOST_GRAPH_ISOMORPHISM_HPP
 #define BOOST_GRAPH_ISOMORPHISM_HPP
 
@@ -542,37 +588,54 @@ namespace boost {
 
 namespace detail {
     
-template <typename GraphA, typename GraphB>
+template <typename Graph1, typename Graph2, typename IsoMapping,
+  typename Invariant1, typename Invariant2,
+  typename IndexMap1, typename IndexMap2, 
+  typename NameMap1, typename NameMap2>
 class isomorphism_algo
 {
     typedef isomorphism_algo self;
-    typedef typename graph_traits<GraphA>::vertex_descriptor vertex_a;
-    typedef typename graph_traits<GraphB>::vertex_descriptor vertex_b;
-    typedef typename graph_traits<GraphA>::edge_descriptor edge_a;
-    typedef typename graph_traits<GraphA>::vertices_size_type size_type;
+    typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
+    typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
+    typedef typename graph_traits<Graph1>::edge_descriptor edge1_t;
+    typedef typename graph_traits<Graph1>::vertices_size_type size_type;
+    typedef typename Invariant1::result_type invar1_value;
+    typedef typename Invariant2::result_type invar2_value;
 
-    GraphA& Ga;
-    GraphB& Gb;
-    friend struct cmp_multiplicity;
-    @<Invariant multiplicity comparison functor@>
-    typedef std::vector<vertex_a>::iterator vertex_iter;
-
-    @<State used inside the DFS Visitor@>
-    @<DFS visitor to record vertex and edge order@>
-    std::vector<vertex_a> dfs_vertices;
-    std::vector<size_type> dfs_number;
-public:
-    char* a_names;
-    char* b_names;
+    // Parameters
+    const Graph1& G1;
+    const Graph2& G2;
+    IsoMapping f;
+    Invariant1 invariant1;
+    Invariant2 invariant2;
+    std::size_t max_invariant;
+    IndexMap1 index_map1;
+    IndexMap2 index_map2;
+    NameMap1 name_map1;
+    NameMap2 name_map2;
 
     @<Ordered edge class@>
-  
+
+    std::vector<vertex1_t> dfs_vertices;
+    typedef std::vector<vertex1_t>::iterator vertex_iter;
+    std::vector<size_type> dfs_number;
     std::vector<ordered_edge> ordered_edges;
     typedef std::vector<ordered_edge>::iterator edge_iter;
+
+    friend struct cmp_multiplicity;
+    @<Invariant multiplicity comparison functor@>
+    @<State used inside the DFS Visitor@>
+    @<DFS visitor to record vertex and edge order@>
 public:
 
-    isomorphism_algo(GraphA& Ga, GraphB& Gb)
-	: Ga(Ga), Gb(Gb) { }
+    isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
+                     Invariant1 invariant1, Invariant2 invariant2, std::size_t max_invariant,
+                     IndexMap1 index_map1, IndexMap2 index_map2,
+                     NameMap1 name_map1, NameMap2 name_map2)
+        : G1(G1), G2(G2), f(f), invariant1(invariant1), invariant2(invariant2),
+          max_invariant(max_invariant),
+          index_map1(index_map1), index_map2(index_map2),
+          name_map1(name_map1), name_map2(name_map2) { }
 
     bool test_isomorphism()
     {
@@ -581,53 +644,104 @@ public:
         @<Order vertices and edges by DFS@>
         @<Sort edges according to vertex DFS order@>
         
-        f.resize(num_vertices(Ga));
-        f_assigned.resize(num_vertices(Ga));
-        f_inv.resize(num_vertices(Ga));
-        f_inv_assigned.resize(num_vertices(Ga));
+        f_assigned.resize(num_vertices(G1));
+        f_inv.resize(num_vertices(G1));
+        f_inv_assigned.resize(num_vertices(G1));
 
-	return this->match(ordered_edges.begin());
+        return this->match(ordered_edges.begin());
     } // test_isomorphism
 
-    std::vector<vertex_b> f;
-    std::vector<vertex_a> f_inv;
+private:
+
+    std::vector<vertex1_t> f_inv;
     std::vector<bool> f_assigned;
     std::vector<bool> f_inv_assigned;
     int mc; // #edges incident on k
 
     @<Match function@>
-	
+        
     void print_ordered_edges() {
-	std::cout << "ordered edges=";
-	for (edge_iter i = ordered_edges.begin(); i != ordered_edges.end(); ++i)
-	  std::cout << "[" << a_names[dfs_vertices[i->from]]
-                    << "(" << i->from << ")"
-                    << "," << a_names[dfs_vertices[i->to]] << "(" << i->to << ")" 
+        std::cout << "ordered edges=";
+        for (edge_iter i = ordered_edges.begin(); i != ordered_edges.end(); ++i)
+          std::cout << "[" << name_map1[dfs_vertices[i->source]]
+                    << "(" << i->source << ")"
+                    << "," << name_map1[dfs_vertices[i->target]] << "(" << i->target << ")" 
                     << " : " << i->order << ")";
-	std::cout << std::endl;
+        std::cout << std::endl;
     }
 
     void print_dfs_numbers() {
-	std::cout << "dfs numbers=";
-	std::copy(dfs_number.begin(), dfs_number.end(),
-		  std::ostream_iterator<vertex_a>(std::cout, " "));
-	std::cout << std::endl;
-    }
-
-private:
-
-    size_type ADEG(vertex_a i) const {
-	return (num_vertices(Ga) + 1) * out_degree(i, Ga) + in_degree(i, Ga);
-    }
-    size_type BDEG(vertex_b i) const {
-	return (num_vertices(Gb) + 1) * out_degree(i, Gb) + in_degree(i, Gb);
-    }
-    size_type max_DEG() const {
-	return (num_vertices(Ga) + 1) * num_vertices(Ga) + num_vertices(Ga);
+        std::cout << "dfs numbers=";
+        std::copy(dfs_number.begin(), dfs_number.end(),
+                  std::ostream_iterator<vertex1_t>(std::cout, " "));
+        std::cout << std::endl;
     }
 };
-    
+
+
+template <typename Graph, typename InDegreeMap>
+void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
+{
+    BGL_FORALL_VERTICES_T(v, g, Graph)
+        put(in_degree_map, v, 0);
+
+    BGL_FORALL_VERTICES_T(u, g, Graph)
+      BGL_FORALL_ADJACENT_T(u, v, g, Graph)
+        put(in_degree_map, v, get(in_degree_map, v) + 1);
+}
+
 } // namespace detail
+
+
+@<Degree vertex invariant functor@>
+
+template <typename Graph1, typename Graph2, 
+          typename IsoMapping, 
+          typename Invariant1, typename Invariant2,
+          typename IndexMap1, typename IndexMap2,
+          typename NameMap1, typename NameMap2>
+bool isomorphism(const Graph1& G1, const Graph2& G2, 
+                 IsoMapping f, 
+                 Invariant1 invariant1, Invariant2 invariant2, std::size_t max_invariant,
+                 IndexMap1 index_map1, IndexMap2 index_map2,
+                 NameMap1 name_map1, NameMap2 name_map2)
+{
+    detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1, Invariant2, 
+        IndexMap1, IndexMap2, NameMap1, NameMap2> 
+        algo(G1, G2, f, invariant1, invariant2, max_invariant, 
+             index_map1, index_map2, name_map1, name_map2);
+    return algo.test_isomorphism();
+}
+
+// Verify that the given mapping iso_map from the vertices of g1 to the
+// vertices of g2 describes an isomorphism.
+// Note: this could be made much faster by specializing based on the graph
+// concepts modeled, but since we're verifying an O(n^(lg n)) algorithm,
+// O(n^4) won't hurt us.
+template<typename Graph1, typename Graph2, typename IsoMap>
+inline bool verify_isomorphism(const Graph1& g1, const Graph2& g2, 
+                               IsoMap iso_map)
+{
+  if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
+    return false;
+  
+  for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
+       e1 != edges(g1).second; ++e1) {
+    bool found_edge = false;
+    for (typename graph_traits<Graph2>::edge_iterator e2 = edges(g2).first;
+         e2 != edges(g2).second && !found_edge; ++e2) {
+      if (source(*e2, g2) == get(iso_map, source(*e1, g1)) &&
+          target(*e2, g2) == get(iso_map, target(*e1, g1))) {
+        found_edge = true;
+      }
+    }
+    
+    if (!found_edge)
+      return false;
+  }
+  
+  return true;
+}
 
 } // namespace boost
 
@@ -643,7 +757,7 @@ private:
 
 \end{document}
 % LocalWords:  Isomorphism Siek isomorphism adjacency subgraph subgraphs OM DFS
-% LocalWords:  ISOMORPH Invariants invariants typename IndexMapping bool const
+% LocalWords:  ISOMORPH Invariants invariants typename IsoMapping bool const
 % LocalWords:  VertexInvariant VertexIndexMap iterator typedef VertexG Idx num
 % LocalWords:  InvarValue struct invar vec iter tmp_matches mult inserter permute ui
 % LocalWords:  dfs cmp isomorph VertexIter edge_iter_t IndexMap desc RPH ATCH pre
@@ -651,6 +765,6 @@ private:
 % LocalWords:  iterators VertexListGraph EdgeListGraph BidirectionalGraph tmp
 % LocalWords:  ReadWritePropertyMap VertexListGraphConcept EdgeListGraphConcept
 % LocalWords:  BidirectionalGraphConcept ReadWritePropertyMapConcept indices ei
-% LocalWords:  IndexMappingValue ReadablePropertyMapConcept namespace InvarFun
+% LocalWords:  IsoMappingValue ReadablePropertyMapConcept namespace InvarFun
 % LocalWords:  MultMap vip inline bitset typedefs fj hpp ifndef adaptor params
 % LocalWords:  bgl param pmap endif
