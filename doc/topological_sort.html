@@ -24,42 +24,11 @@
 <TT>topological_sort</TT>
 </H1>
 
-<P>
-<DIV ALIGN="left">
-<TABLE CELLPADDING=3 border>
-<TR><TH ALIGN="LEFT"><B>Graphs:</B></TH>
-<TD ALIGN="LEFT">directed acyclic</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">color</TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
-<TD ALIGN="LEFT">time: <i>O(V + E)</i></TD>
-</TR>
-<TR><TH ALIGN="LEFT"><B>Where Defined:</B></TH>
-<TD ALIGN="LEFT">
-<a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
-</TD>
-</TR>
-</TABLE>
-</DIV>
-
-<P>
 <PRE>
-(1)
-template &lt;class VertexListGraph, class OutputIterator&gt;
-void topological_sort(VertexListGraph&amp; G, OutputIterator iter)
-
-(2)
-template &lt;class VertexListGraph, class OutputIterator, class Visitor&gt;
-void topological_sort(VertexListGraph&amp; G, OutputIterator iter,
-                      Visitor visit)
-
-(3)
-template &lt;class VertexListGraph, class OutputIterator, 
-          class ColorMap, class DFSVisitor&gt;
-void topological_sort(VertexListGraph&amp; G, OutputIterator iter, 
-                      ColorMap color, DFSVisitor visit)
+template &lt;class VertexListGraph, class OutputIterator,
+          class P, class T, class R&gt;
+void topological_sort(VertexListGraph&amp; g, OutputIterator result,
+    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 </PRE>
 
 <P>
@@ -69,33 +38,65 @@ vertices such that if edge <i>(u,v)</i> appears in the graph, then
 directed acyclic graph (DAG). The implementation consists mainly of a
 call to <a
 href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
+</p>
 
-<P>
+<h3>Where Defined:</h3>
+<a href="../../../boost/graph/topological_sort.hpp"><TT>boost/graph/topological_sort.hpp</TT></a>
 
-<H3>Requirements on Types</H3>
+<h3>Parameters</h3>
 
-<P>
+IN: <tt>VertexListGraph&amp; g</tt>
+<blockquote>
+  A directed acylic graph. The graph type must
+  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+</blockquote>
 
-<UL>
-<LI>The graph type must be a model of <a
-href="./VertexListGraph.html">VertexListGraph</a>.
-</LI>
-<LI>Vertex descriptors of the graph will be output to the
-    <TT>OutputIterator</TT>, which must model <a
-    href="http://www.sgi.com/tech/stl/OutputIterator.html">OutputIterator</a>.
-</LI>
-<LI>The type <TT>Visitor</TT> must be a model of <I>Visitor</I>.
-</LI>
-<LI>The <TT>ColorMap</TT> must be a <a
-    href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>
-    and vertex descriptors from the graph must be usable as the
-    map's key type.
-</LI>
-<LI>The <TT>DFSVisitor</TT> type must be a model of <a href="./DFSVisitor.html">DFSVisitor</a>.
+OUT: <tt>OutputIterator result</tt>
+<blockquote>
+The vertex descriptors of the graph will be output to the
+<TT>result</TT> output iterator in their topological order.  The
+iterator type must model <a
+href="http://www.sgi.com/tech/stl/OutputIterator.html">Output
+Iterator</a>.
+</blockquote>
 
-</UL>
+<h3>Named Parameters</h3>
 
-<P>
+UTIL/OUT: <tt>color_map(ColorMap color)</tt>
+<blockquote>
+  This is used by the algorithm to keep track of its progress through
+  the graph. The type <tt>ColorMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> and its key type must be the graph's vertex
+  descriptor type and the value type of the color map must model
+  <a href="./ColorValue.html">ColorValue</a>.<br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of <tt>default_color_type</tt> of size
+  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  map.
+</blockquote>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+  num_vertices(g))</tt>. This parameter is only necessary when the
+  default color property map is used. The type <tt>VertexIndexMap</tt>
+  must be a model of <a
+  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  Map</a>. The value type of the map must be an integer type. The
+  vertex descriptor type of the graph needs to be usable as the key
+  type of the map.<br>
+
+  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+</blockquote>
+
+
+<H3>Complexity</H3>
+
+The time complexity is <i>O(V + E)</i>.
+
 
 <H3>Example</H3>
 
