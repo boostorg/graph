@@ -23,8 +23,8 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
-#ifndef BOOST_GRAPH_VEC_ADJ_LIST_HPP
-#define BOOST_GRAPH_VEC_ADJ_LIST_HPP
+#ifndef BOOST_VECTOR_AS_GRAPH_HPP
+#define BOOST_VECTOR_AS_GRAPH_HPP
 
 #include <utility>
 #include <vector>
@@ -175,4 +175,4 @@ namespace boost {
 
 } // namespace boost
 
-#endif // VEC_ADJ_LIST_HPP
+#endif // BOOST_VECTOR_AS_GRAPH_HPP
