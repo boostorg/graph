@@ -124,22 +124,20 @@ void generate_random_digraph(Graph& g, double edge_probability)
 void test_isomorphism(int n, double edge_probability) 
 {
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph1;
-  typedef graph1 graph2;
-  //  typedef adjacency_list<listS, listS, bidirectionalS,
-  //                         property<vertex_index_t, int> > graph2;
+  //  typedef graph1 graph2;
+  typedef adjacency_list<listS, listS, bidirectionalS,
+                         property<vertex_index_t, int> > graph2;
 
   graph1 g1(n);
   generate_random_digraph(g1, edge_probability);
   graph2 g2;
   randomly_permute_graph(g1, g2);
 
-#if 0
   int v_idx = 0;
   for (graph2::vertex_iterator v = vertices(g2).first; 
        v != vertices(g2).second; ++v) {
     put(vertex_index_t(), g2, *v, v_idx++);
   }
-#endif
 
   std::map<graph1::vertex_descriptor, graph2::vertex_descriptor> mapping;
 
@@ -153,9 +151,7 @@ int test_main(int argc, char* argv[])
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph;
 
   if (argc < 3) {
-    for (int n = 50; n <= 100; n += 10) {
-      test_isomorphism(n, 0.45);
-    }
+    test_isomorphism(30, 0.45);
     return 0;
   }
 
