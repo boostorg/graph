@@ -42,44 +42,103 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/pending/ct_if.hpp>
+#include <boost/type_traits/same_traits.hpp>
 
 namespace boost {
 
   namespace detail {
 
     template <class VertexAndEdgeListGraph, class DistanceMatrix,
-              class P, class T, class R, class VertexID, class Distance,
-              class Weight, class Weight2, class DistanceZero>
+              class VertexID, class Weight, class DistanceZero>
     bool
-    johnson_impl(VertexAndEdgeListGraph& g, 
+    johnson_impl(VertexAndEdgeListGraph& g1, 
                  DistanceMatrix& D,
-                 const bgl_named_params<P, T, R>& params,
-                 VertexID id, Distance d, Weight w, Weight2 w_hat,
-                 DistanceZero zero)
+                 VertexID id1, Weight w1, DistanceZero zero)
     {
-      typedef graph_traits<VertexAndEdgeListGraph> Traits;
-      typename Traits::vertex_iterator v, v_end, u, u_end;
-      typename Traits::edge_iterator e, e_end;
-      typename Traits::vertex_descriptor s = *vertices(g).first;
-      typedef typename property_traits<Distance>::value_type DT;
+      typedef graph_traits<VertexAndEdgeListGraph> Traits1;
+      typedef typename property_traits<Weight>::value_type DT;
       function_requires< BasicMatrixConcept<DistanceMatrix,
-        typename Traits::vertex_descriptor, DT> >();
+        typename Traits1::vertex_descriptor, DT> >();
+
+      typedef typename Traits1::directed_category DirCat;
+      bool is_undirected = is_same<DirCat, undirected_tag>::value;
       
-      std::vector<DT> h_vec(num_vertices(g));
+      typedef adjacency_list<vecS, vecS, directedS, 
+        property< vertex_distance_t, DT>,
+	property< edge_weight_t, DT, 
+	property< edge_weight2_t, DT > > > Graph2;
+      typedef graph_traits<Graph2> Traits2;
+
+      Graph2 g2(num_vertices(g1) + 1);
+      typename property_map<Graph2, edge_weight_t>::type 
+	w = get(edge_weight, g2);
+      typename property_map<Graph2, edge_weight2_t>::type 
+	w_hat = get(edge_weight2, g2);
+      typename property_map<Graph2, vertex_distance_t>::type 
+	d = get(vertex_distance, g2);
+      typename property_map<Graph2, vertex_index_t>::type 
+	id2 = get(vertex_index, g2);
+
+      // Construct g2 where V[g2] = V[g1] U {s}
+      //   and  E[g2] = E[g1] U {(s,v)| v in V[g1]}
+      std::vector<typename Traits1::vertex_descriptor> 
+	verts1(num_vertices(g1) + 1);
+      typename Traits2::vertex_descriptor s = *vertices(g2).first;
+      {
+	typename Traits1::vertex_iterator v, v_end;
+	int i = 1;
+	for (tie(v, v_end) = vertices(g1); v != v_end; ++v, ++i) {
+	  typename Traits2::edge_descriptor e; bool z;
+	  tie(e, z) = add_edge(s, id1[*v] + 1, g2);
+	  w[e] = zero;
+	  verts1[i] = *v;
+	}
+	typename Traits1::edge_iterator e, e_end;
+	for (tie(e, e_end) = edges(g1); e != e_end; ++e) {
+	  typename Traits2::edge_descriptor e2; bool z;
+	  tie(e2, z) = add_edge(id1[source(*e, g1)] + 1, 
+			       id1[target(*e, g1)] + 1, g2);
+	  w[e2] = w1[*e];
+	  if (is_undirected) {
+	    tie(e2, z) = add_edge(id1[target(*e, g1)] + 1, 
+				  id1[source(*e, g1)] + 1, g2);
+	    w[e2] = w1[*e];
+	  }
+	}
+      }
+      typename Traits2::vertex_iterator v, v_end, u, u_end;
+      typename Traits2::edge_iterator e, e_end;
+      std::vector<DT> h_vec(num_vertices(g2));
       typedef typename std::vector<DT>::iterator iter_t;
-      iterator_property_map<iter_t, VertexID, DT, DT&> h(h_vec.begin(), id);
+      iterator_property_map<iter_t,VertexID,DT,DT&> h(h_vec.begin(), id2);
+
+      DT inf = std::numeric_limits<DT>::max();
+      for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
+	d[*v] = inf;
 
       put(d, s, zero);
-      if (bellman_ford_shortest_paths(g, num_vertices(g), params)) {
-        for (tie(v, v_end) = vertices(g); v != v_end; ++v)
+      if (bellman_ford_shortest_paths
+	  (g2, num_vertices(g2), distance_map(d).weight_map(w))) {
+        for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
           put(h, *v, get(d, *v));
-        for (tie(e, e_end) = edges(g); e != e_end; ++e)
-          put(w_hat, *e, 
-              get(w, *e) + get(h, source(*e,g)) - get(h, target(*e,g)));
-        for (tie(u, u_end) = vertices(g); u != u_end; ++u) {
-          dijkstra_shortest_paths(g, *u, params.weight_map(w_hat));
-          for (tie(v, v_end) = vertices(g); v != v_end; ++v)
-            D[*u][*v] = get(d, *v) + get(h, *v) - get(h, *u);
+	// Reweight the edges to remove negatives
+        for (tie(e, e_end) = edges(g2); e != e_end; ++e) {
+	  typename Traits2::vertex_descriptor a = source(*e, g2),
+	    b = target(*e, g2);
+	  put(w_hat, *e, get(w, *e) + get(h, a) - get(h, b));
+	}
+        for (tie(u, u_end) = vertices(g2); u != u_end; ++u) {
+	  dijkstra_shortest_paths
+	    (g2, *u, distance_map(d).weight_map(w_hat));
+          for (tie(v, v_end) = vertices(g2); v != v_end; ++v) {
+	    if (*u != s && *v != s) {
+	      typename Traits1::vertex_descriptor u1, v1;
+	      u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
+	      D[u1][v1] = get(d, *v) + get(h, *v) - get(h, *u);
+	    }
+	  }
         }
         return true;
       } else
@@ -96,20 +155,10 @@ namespace boost {
                      Weight w, VertexID id)
     {
       typedef typename property_traits<Weight>::value_type WT;
-      typename std::vector<WT>::size_type 
-        n = is_default_param(get_param(params, vertex_distance))
-        ? num_vertices(g) : 1;
-      std::vector<WT> distance_map(n);
       
       return detail::johnson_impl
-        (g, D, params, id,
-         choose_param(get_param(params, vertex_distance),
-                      make_iterator_property_map
-                      (distance_map.begin(), id, distance_map[0])),
-         w,
-         choose_pmap(get_param(params, edge_weight2), g, edge_weight2),
-         choose_param(get_param(params, distance_zero_t()), 
-                      WT()) );
+        (g, D, id, w,
+         choose_param(get_param(params, distance_zero_t()), WT()) );
     }
 
   } // namespace detail
@@ -138,7 +187,6 @@ namespace boost {
     return detail::johnson_dispatch
       (g, D, params, get(edge_weight, g), get(vertex_index, g));
   }
-
 
 } // namespace boost
 
