@@ -1,5 +1,9 @@
+#LATEX		= latex
+#LATEXOUT	= tex
+
 LATEX		= pdflatex
 LATEXOUT	= pdf
+
 
 .tex.$(LATEXOUT):
 	@ if test ! -f $*.ind; then echo "" > $*.ind; fi
@@ -28,14 +32,26 @@ LATEXOUT	= pdf
 .dot.eps:
 	dot -Tps -o $*.eps $*.dot 
 
-default: isomorphism-impl.$(LATEXOUT) out.pdf in.pdf
+.w.tex: /afs/nd.edu/user11/jsiek/.jweb
+	jweb -np $*.w
+
+JWEB	= isomorphism-impl.w
+DOT	= out.dot in.dot
+EPS_GEN	= $(DOT:.dot=.eps)
+WEBTEX	= $(JWEB:.w=.tex)
+PDFPICT	= $(EPS_GEN:.eps=.pdf)
+
+default: isomorphism-impl.$(LATEXOUT)
+	$(LATEX) isomorphism-impl
 	csh ./mungeaux.csh *.aux
 	$(LATEX) isomorphism-impl
 
-isomorphism-impl.tex: isomorphism-impl.w
-	jweb -np isomorphism-impl.w
+isomorphism-impl.dvi: $(EPS_GEN) $(WEBTEX)
+isomorphism-impl.ps: isomorphism-impl.dvi
+isomorphism-impl.pdf: $(PDFPICT) $(WEBTEX)
 
-
+out.dot: isomorphism-impl.w
+in.dot: isomorphism-impl.w
 
 clean:
-	rm *.aux *.dvi
+	rm *.aux *.dvi $(EPS_GEN) $(PDFPICT)

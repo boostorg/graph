@@ -1065,6 +1065,8 @@ namespace boost {
 #endif // BOOST_GRAPH_ISOMORPHISM_HPP
 @}
 
+\bibliographystyle{abbrv}
+\bibliography{jtran,ggcl,optimization,generic-programming,cad}
 
 \end{document}
 % LocalWords:  Isomorphism Siek isomorphism adjacency subgraph subgraphs OM DFS
