@@ -53,11 +53,11 @@ bool check_vertex_cleared(Graph& g, Vertex v, ID id)
   return true;
 }
 
-template <class Graph, class Edge, class VertexID, class EdgeID>
+template <class Graph, class Edge, class EdgeID>
 bool check_edge_added(Graph& g, Edge e, 
 		      typename graph_traits<Graph>::vertex_descriptor a, 
 		      typename graph_traits<Graph>::vertex_descriptor b, 
-		      VertexID id, EdgeID edge_id, std::size_t correct_id, 
+		      EdgeID edge_id, std::size_t correct_id, 
 		      bool inserted)
 {
   if (! (source(e, g) == a)) {
@@ -111,7 +111,7 @@ std::size_t count_edges(Graph& g)
 }
 
 
-int main(int argc, char* argv[])
+int main(int, char* [])
 {
   int ret = 0;
   std::size_t N = 5, E = 0;
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
       print_graph(g, vertex_id_map);
       //      print_in_edges(g, vertex_id_map);
 #endif
-      if (! check_edge_added(g, e, a, b, vertex_id_map, edge_id_map, 
+      if (! check_edge_added(g, e, a, b, edge_id_map, 
 			     current_edge_id - 1, inserted)) {
 	ret = -1;
 	break;
@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
 #endif
       boost::tie(e,inserted) = add_edge(vid, a, EdgeID(current_edge_id++), g);
       
-      if (! check_edge_added(g, e, vid, a, vertex_id_map, edge_id_map, current_edge_id - 1,
+      if (! check_edge_added(g, e, vid, a, edge_id_map, current_edge_id - 1,
 			     inserted)) {
 	ret = -1;
 	break;
@@ -372,7 +372,7 @@ int main(int argc, char* argv[])
 	edge_id_map[e] = current_edge_id;
       ++current_edge_id;
 
-      if (! check_edge_added(g, e, b, vidp1, vertex_id_map, edge_id_map, 
+      if (! check_edge_added(g, e, b, vidp1, edge_id_map, 
 			     current_edge_id - 1, inserted)) {
 	ret = -1;
 	break;
