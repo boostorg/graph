@@ -162,36 +162,6 @@ namespace boost {
   } // namespace detail
   
 
-  // Named Parameter Variant
-  template <class VertexListGraph, class P, class T, class R>
-  void
-  depth_first_search(const VertexListGraph& g, 
-                     const bgl_named_params<P, T, R>& params)
-  {
-    typedef typename property_value< bgl_named_params<P, T, R>, 
-      vertex_color_t>::type C;
-    detail::dfs_dispatch<C>::apply
-      (g,
-       choose_param(get_param(params, graph_visitor),
-                    make_dfs_visitor(null_visitor())),
-       choose_param(get_param(params, root_vertex_t()),
-                    *vertices(g).first),
-       params,
-       get_param(params, vertex_color)
-       );
-  }
-  
-
-  template <class IncidenceGraph, class DFSVisitor, class ColorMap>
-  void depth_first_visit
-    (const IncidenceGraph& g,
-     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
-     DFSVisitor vis, ColorMap color)
-  {
-    detail::depth_first_visit_impl(g, u, vis, color);
-  }
-
-
   template <class Visitors = null_visitor>
   class dfs_visitor {
   public:
@@ -238,6 +208,37 @@ namespace boost {
     return dfs_visitor<Visitors>(vis);
   }
   typedef dfs_visitor<> default_dfs_visitor;
+
+
+  // Named Parameter Variant
+  template <class VertexListGraph, class P, class T, class R>
+  void
+  depth_first_search(const VertexListGraph& g, 
+                     const bgl_named_params<P, T, R>& params)
+  {
+    typedef typename property_value< bgl_named_params<P, T, R>, 
+      vertex_color_t>::type C;
+    detail::dfs_dispatch<C>::apply
+      (g,
+       choose_param(get_param(params, graph_visitor),
+                    make_dfs_visitor(null_visitor())),
+       choose_param(get_param(params, root_vertex_t()),
+                    *vertices(g).first),
+       params,
+       get_param(params, vertex_color)
+       );
+  }
+  
+
+  template <class IncidenceGraph, class DFSVisitor, class ColorMap>
+  void depth_first_visit
+    (const IncidenceGraph& g,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor u, 
+     DFSVisitor vis, ColorMap color)
+  {
+    detail::depth_first_visit_impl(g, u, vis, color);
+  }
+
 
 } // namespace boost
 
