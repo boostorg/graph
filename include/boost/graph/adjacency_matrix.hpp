@@ -362,23 +362,21 @@ namespace boost {
 
     typename Matrix::const_reference
     get_edge(vertex_descriptor u, vertex_descriptor v) const {
-      using namespace std; // to call swap unqualified
       if (Directed::is_directed)
         return m_matrix[u * m_vertex_set.size() + v];
       else {
         if (v > u)
-          swap(u, v);
+          std::swap(u, v);
         return m_matrix[u * (u - 1)/2 + v];
       }
     }
     typename Matrix::reference
     get_edge(vertex_descriptor u, vertex_descriptor v) {
-      using namespace std; // to call swap unqualified
       if (Directed::is_directed)
         return m_matrix[u * m_vertex_set.size() + v];
       else {
         if (v > u)
-          swap(u, v);
+          std::swap(u, v);
         return m_matrix[u * (u + 1)/2 + v];
       }
     }
