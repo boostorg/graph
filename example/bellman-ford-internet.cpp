@@ -56,7 +56,7 @@ main()
   for (int i = 0; i < n_vertices; ++i)
     parent[i] = i;
   float distance[n_vertices];
-  std::fill(distance, distance + n_vertices, std::numeric_limits < float >::max());
+  std::fill(distance, distance + n_vertices, (std::numeric_limits < float >::max)());
   // Specify A as the source vertex
   distance[A] = 0;
 

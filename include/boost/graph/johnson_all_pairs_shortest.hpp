@@ -112,7 +112,7 @@ namespace boost {
     typedef typename std::vector<DT>::iterator iter_t;
     iterator_property_map<iter_t,VertexID,DT,DT&> h(h_vec.begin(), id2);
 
-    DT inf = std::numeric_limits<DT>::max();
+    DT inf = (std::numeric_limits<DT>::max)();
     for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
       d[*v] = inf;
 

@@ -61,7 +61,7 @@ main()
   for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
     w[*e] = *wp++;
 
-  std::vector < int >d(V, std::numeric_limits < int >::max());
+  std::vector < int >d(V, (std::numeric_limits < int >::max)());
   int D[V][V];
   johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 

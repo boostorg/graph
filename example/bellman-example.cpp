@@ -88,7 +88,7 @@ main()
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
 
-  std::vector<int> distance(N, std::numeric_limits < short >::max());
+  std::vector<int> distance(N, (std::numeric_limits < short >::max)());
   std::vector<std::size_t> parent(N);
   for (i = 0; i < N; ++i)
     parent[i] = i;

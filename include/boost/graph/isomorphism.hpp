@@ -19,6 +19,7 @@
 #include <boost/utility.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
+#include <boost/minmax.hpp>
 
 #ifndef BOOST_GRAPH_ITERATION_MACROS_HPP
 #define BOOST_ISO_INCLUDED_ITER_MACROS // local macro, see bottom of file
@@ -108,8 +109,8 @@ namespace boost {
           using namespace std;
           int u1 = dfs_num[source(e1,G1)], v1 = dfs_num[target(e1,G1)];
           int u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
-          int m1 = max(u1, v1);
-          int m2 = max(u2, v2);
+          int m1 = (max)(u1, v1);
+          int m2 = (max)(u2, v2);
           // lexicographical comparison 
           return make_pair(m1, make_pair(u1, v1))
             < make_pair(m2, make_pair(u2, v2));
@@ -239,7 +240,7 @@ namespace boost {
                 f[j] = v;
                 in_S[v] = true;
                 num_edges_on_k = 1;
-                int next_k = std::max(dfs_num_k, std::max(dfs_num[i], dfs_num[j]));
+                int next_k = std_max(dfs_num_k, std_max(dfs_num[i], dfs_num[j]));
                 if (match(next(iter), next_k))
                   return true;
                 in_S[v] = false;
@@ -294,7 +295,7 @@ namespace boost {
         + get(m_in_degree_map, v);
     }
     // The largest possible vertex invariant number
-    size_type max() const { 
+    size_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { 
       return num_vertices(m_g) * num_vertices(m_g) + num_vertices(m_g);
     }
   private:
@@ -390,7 +391,7 @@ namespace boost {
       return isomorphism(G1, G2, f,
                          choose_param(get_param(params, vertex_invariant1_t()), invariant1),
                          choose_param(get_param(params, vertex_invariant2_t()), invariant2),
-                         choose_param(get_param(params, vertex_max_invariant_t()), invariant2.max()),
+                         choose_param(get_param(params, vertex_max_invariant_t()), (invariant2.max)()),
                          index_map1, index_map2
                          );  
     }  

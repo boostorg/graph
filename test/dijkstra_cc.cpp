@@ -21,6 +21,7 @@
 // OR OTHER RIGHTS.
 //=======================================================================
 
+#include <boost/config.hpp>
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_archetypes.hpp>
@@ -33,7 +34,7 @@ namespace std {
   template <>
   class numeric_limits<dist_value> {
   public:
-    static dist_value max() {
+    static dist_value max BOOST_PREVENT_MACRO_SUBSTITUTION () {
       return boost::static_object<dist_value>::get(); 
     }
   };

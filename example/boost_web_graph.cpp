@@ -34,6 +34,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include <boost/minmax.hpp>
 
 
 template <class Distance>
@@ -177,7 +178,7 @@ main()
 
   size_type diameter = 0;
   for (i = 0; i < num_vertices(g); ++i)
-    diameter = std::max(diameter, *std::max_element(d_matrix[i].begin(), 
+    diameter = std_max(diameter, *std::max_element(d_matrix[i].begin(), 
                                                     d_matrix[i].end()));
   
   std::cout << "The diameter of the boost web-site graph is " << diameter

@@ -13,6 +13,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
+#include <boost/minmax.hpp>
 
 namespace boost {
 
@@ -30,7 +31,7 @@ namespace boost {
       int f_j = get(index, target(*e, g));
       using namespace std; // to call abs() unqualified
       if(f_i > f_j)
-      b = std::max(b, size_type(f_i - f_j));
+      b = std_max(b, size_type(f_i - f_j));
     }
     return b;
   }
@@ -50,7 +51,7 @@ namespace boost {
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-        b = std::max(b, ith_bandwidth(*i, g, index));
+        b = std_max(b, ith_bandwidth(*i, g, index));
     return b;
   }
 

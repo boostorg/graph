@@ -38,7 +38,7 @@ namespace boost
   {
     typename graph_traits < Graph >::vertex_descriptor p;
     typedef typename graph_traits < Graph >::degree_size_type size_type;
-    size_type delta = std::numeric_limits < size_type >::max();
+    size_type delta = (std::numeric_limits < size_type >::max)();
     typename graph_traits < Graph >::vertex_iterator i, iend;
     for (tie(i, iend) = vertices(g); i != iend; ++i)
       if (degree(*i, g) < delta)

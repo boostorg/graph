@@ -375,7 +375,7 @@ namespace boost {
 
     static vertex_descriptor null_vertex()
     {
-      return std::numeric_limits<vertex_descriptor>::max();
+      return (std::numeric_limits<vertex_descriptor>::max)();
     }
       
     //private: if friends worked, these would be private

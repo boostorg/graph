@@ -176,7 +176,7 @@ int main(int,char*[])
         dijkstra_shortest_paths_no_init
           (g, *i, &pred[0], &time[0], weight, indexmap, 
            compare, combine, 0,  // Since we are using > instead of >, we
-           std::numeric_limits<int>::max(), // flip 0 and inf.
+           (std::numeric_limits<int>::max)(), // flip 0 and inf.
            default_dijkstra_visitor());
       }
     }

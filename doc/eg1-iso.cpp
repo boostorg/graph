@@ -94,7 +94,7 @@ void test_isomorphism()
   std::vector<graph_traits<GraphB>::vertex_descriptor> f(num_vertices(Ga));
 
   bool ret = isomorphism(Ga, Gb, &f[0], invariantA, invariantB, 
-                         invariantB.max(),
+                         (invariantB.max)(),
                          get(vertex_index, Ga), get(vertex_index, Gb));
   assert(ret == true);
 

@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
   // This array provides an efficient way to check if we've already
   // created a link from the current component to the component
   // of the target vertex.
-  std::vector<int> mark(num_comp, std::numeric_limits<int>::max());
+  std::vector<int> mark(num_comp, (std::numeric_limits<int>::max)());
 
   // We go in reverse order just to mimic the output ordering in
   // Knuth's version.

@@ -181,7 +181,7 @@ main(int , char* [])
   boost::property_map<Graph, vertex_index_t>::type 
     vertex_id = get(vertex_index, G);
 
-  std::vector<weight_t> distance(N, numeric_limits<weight_t>::max());
+  std::vector<weight_t> distance(N, (numeric_limits<weight_t>::max)());
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   std::vector<Vertex> parent(N);
 

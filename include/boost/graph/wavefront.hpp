@@ -31,6 +31,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include <boost/minmax.hpp>
 #include <cmath>
 #include <vector>
 
@@ -88,7 +89,7 @@ namespace boost {
     typename graph_traits<Graph>::vertices_size_type b = 0;
     typename graph_traits<Graph>::vertex_iterator i, end;
     for (tie(i, end) = vertices(g); i != end; ++i)
-      b = std::max(b, ith_wavefront(*i, g, index));
+      b = std_max(b, ith_wavefront(*i, g, index));
     return b;
   }
 

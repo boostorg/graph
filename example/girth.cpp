@@ -152,7 +152,7 @@ main()
       d_map[*i] = 0;
 
     std::size_t k = 0;
-    std::size_t girth = std::numeric_limits<std::size_t>::max();
+    std::size_t girth = (std::numeric_limits<std::size_t>::max)();
     diameter_and_girth_visitor vis(k, girth);
 
     vertex_descriptor s = *boost::vertices(g).first;

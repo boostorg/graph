@@ -33,6 +33,7 @@
 #include <boost/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/minmax.hpp>
 #include <memory>
 #include <algorithm>
 #include <boost/limits.hpp>
@@ -1872,7 +1873,7 @@ namespace boost {
 
       static vertex_descriptor null_vertex()
       {
-        return std::numeric_limits<vertex_descriptor>::max();
+        return (std::numeric_limits<vertex_descriptor>::max)();
       }
       
       inline vec_adj_list_impl() { }
@@ -2000,7 +2001,7 @@ namespace boost {
              const typename Config::edge_property_type& p,
              vec_adj_list_impl<Graph, Config, Base>& g_)
     {
-      typename Config::vertex_descriptor x = std::max(u, v);
+      typename Config::vertex_descriptor x = std_max(u, v);
       if (x >= num_vertices(g_))
         g_.m_vertices.resize(x + 1);
       adj_list_helper<Config, Base>& g = g_;

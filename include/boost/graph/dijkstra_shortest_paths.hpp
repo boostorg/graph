@@ -240,7 +240,7 @@ namespace boost {
          choose_param(get_param(params, distance_combine_t()), 
                       closed_plus<D>()),
          choose_param(get_param(params, distance_inf_t()), 
-                      std::numeric_limits<D>::max()),
+                      (std::numeric_limits<D>::max)()),
          choose_param(get_param(params, distance_zero_t()), 
                       D()),
          choose_param(get_param(params, graph_visitor),

@@ -90,7 +90,7 @@ main(int , char* [])
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   dijkstra_shortest_paths
     (G, s, &p[0], &d[0], weightmap, get(vertex_index, G),
-     std::greater<int>(), closed_plus<int>(), std::numeric_limits<int>::max(), 0,
+     std::greater<int>(), closed_plus<int>(), (std::numeric_limits<int>::max)(), 0,
      default_dijkstra_visitor());
 #else
   dijkstra_shortest_paths

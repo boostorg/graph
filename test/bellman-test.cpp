@@ -43,7 +43,7 @@ int main()
   for(i = 0; i < numVertex; ++i)
     parent[i] = i;
 
-  int inf = std::numeric_limits<int>::max();
+  int inf = (std::numeric_limits<int>::max)();
   std::vector<int> distance(numVertex, inf);
   distance[A] = 0; // Set source distance to zero
 

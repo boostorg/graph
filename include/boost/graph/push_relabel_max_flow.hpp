@@ -36,6 +36,7 @@
 #include <boost/limits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/minmax.hpp>
 
 namespace boost {
 
@@ -106,8 +107,8 @@ namespace boost {
 
       void add_to_active_list(vertex_descriptor u, Layer& layer) {
         layer.active_vertices.push_front(u);
-        max_active = std::max(distance[u], max_active);
-        min_active = std::min(distance[u], min_active);
+        max_active = std_max(distance[u], max_active);
+        min_active = std_min(distance[u], min_active);
         layer_list_ptr[u] = layer.active_vertices.begin();
       }
       void remove_from_active_list(vertex_descriptor u) {
@@ -171,11 +172,11 @@ namespace boost {
         for (tie(a_iter, a_end) = out_edges(src, g); a_iter != a_end; ++a_iter)
           if (target(*a_iter, g) != src)
             test_excess += residual_capacity[*a_iter];
-        if (test_excess > std::numeric_limits<FlowValue>::max())
+        if (test_excess > (std::numeric_limits<FlowValue>::max)())
           overflow_detected = true;
 
         if (overflow_detected)
-          excess_flow[src] = std::numeric_limits<FlowValue>::max();
+          excess_flow[src] = (std::numeric_limits<FlowValue>::max)();
         else {
           excess_flow[src] = 0;
           for (tie(a_iter, a_end) = out_edges(src, g); 
@@ -252,7 +253,7 @@ namespace boost {
               distance[v] = d_v;
               color[v] = ColorTraits::gray();
               current[v] = out_edges(v, g).first;
-              max_distance = std::max(d_v, max_distance);
+              max_distance = std_max(d_v, max_distance);
 
               if (excess_flow[v] > 0)
                 add_to_active_list(v, layers[d_v]);
@@ -320,7 +321,7 @@ namespace boost {
           v = target(u_v, g);
         
         FlowValue flow_delta
-          = std::min(excess_flow[u], residual_capacity[u_v]);
+          = std_min(excess_flow[u], residual_capacity[u_v]);
 
         residual_capacity[u_v] -= flow_delta;
         residual_capacity[reverse_edge[u_v]] += flow_delta;
@@ -360,7 +361,7 @@ namespace boost {
         if (min_distance < n) {
           distance[u] = min_distance;     // this is the main action
           current[u] = min_edge_iter;
-          max_distance = std::max(min_distance, max_distance);
+          max_distance = std_max(min_distance, max_distance);
         }
         return min_distance;
       } // relabel_distance()
@@ -477,7 +478,7 @@ namespace boost {
                     // find minimum flow on the cycle
                     FlowValue delta = residual_capacity[a];
                     while (1) {
-                      delta = std::min(delta, residual_capacity[*current[v]]);
+                      delta = std_min(delta, residual_capacity[*current[v]]);
                       if (v == u)
                         break;
                       else

@@ -70,14 +70,14 @@ int main()
   closed_plus<int> combine;
   property_map<graph_t, edge_weight_t>::type w_map = get(edge_weight, g);
   dag_shortest_paths(g, s, d_map, w_map, &color[0], &pred[0], 
-     vis, compare, combine, std::numeric_limits<int>::max(), 0);
+     vis, compare, combine, (std::numeric_limits<int>::max)(), 0);
 #else
   dag_shortest_paths(g, s, distance_map(d_map));
 #endif
 
   graph_traits<graph_t>::vertex_iterator vi , vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (d_map[*vi] == std::numeric_limits<int>::max())
+    if (d_map[*vi] == (std::numeric_limits<int>::max)())
       std::cout << name[*vi] << ": inifinity\n";
     else
       std::cout << name[*vi] << ": " << d_map[*vi] << '\n';

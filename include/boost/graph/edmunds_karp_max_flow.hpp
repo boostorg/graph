@@ -34,6 +34,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/minmax.hpp>
 
 namespace boost {
 
@@ -65,10 +66,10 @@ namespace boost {
       typedef typename property_traits<ResCapMap>::value_type FlowValue;
 
       // find minimum residual capacity along the augmenting path
-      FlowValue delta = std::numeric_limits<FlowValue>::max();
+      FlowValue delta = (std::numeric_limits<FlowValue>::max)();
       e = p[sink];
       do {
-        delta = std::min(delta, residual_capacity[e]);
+        delta = std_min(delta, residual_capacity[e]);
         u = source(e, g);
         e = p[u];
       } while (u != src);

@@ -19,6 +19,7 @@
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/minmax.hpp>
 
 namespace boost
 {
@@ -31,7 +32,7 @@ namespace boost
                            std::vector < std::size_t > &s3)
     {
       for (std::size_t k = 0; k < s1.size(); ++k)
-        s3[k] = std::min(s1[k], s2[k]);
+        s3[k] = std_min(s1[k], s2[k]);
     }
   }                             // namespace detail
 
@@ -165,7 +166,7 @@ namespace boost
         pos_in_chain[v] = j;
       }
 
-    cg_vertex inf = std::numeric_limits < cg_vertex >::max();
+    cg_vertex inf = (std::numeric_limits< cg_vertex >::max)();
     std::vector<std::vector<cg_vertex> > successors(num_vertices(CG),
                                                     std::vector<cg_vertex>
                                                     (chains.size(), inf));

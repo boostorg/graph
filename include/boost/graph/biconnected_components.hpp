@@ -18,6 +18,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/property_map.hpp>
+#include <boost/minmax.hpp>
 
 namespace boost
 {
@@ -36,7 +37,7 @@ namespace boost
     {
       typedef typename graph_traits < Graph >::vertex_descriptor vertex_t;
       typedef typename property_traits < DiscoverTimeMap >::value_type D;
-      D infinity = std::numeric_limits < D >::max();
+      D infinity = (std::numeric_limits < D >::max)();
         put(d, v, ++dfs_time);
         put(lowpt, v, get(d, v));
       typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
@@ -47,7 +48,7 @@ namespace boost
         {
           S.push(*ei);
           biconnect(w, v, false, g, comp, c, d, dfs_time, lowpt, S);
-          put(lowpt, v, std::min(get(lowpt, v), get(lowpt, w)));
+          put(lowpt, v, std_min(get(lowpt, v), get(lowpt, w)));
           if (get(lowpt, w) >= get(d, v))
           {
             while (d[source(S.top(), g)] >= d[w]) {
@@ -62,7 +63,7 @@ namespace boost
         } else if (get(d, w) < get(d, v) && (!at_top && w != u))
         {
           S.push(*ei);
-          put(lowpt, v, std::min(get(lowpt, v), get(d, w)));
+          put(lowpt, v, std_min(get(lowpt, v), get(d, w)));
         }
       }
     }
@@ -95,12 +96,12 @@ namespace boost
     std::size_t dfs_time = 0;
     std::stack < edge_t > S;
     typename graph_traits < Graph >::vertex_iterator wi, wi_end;
-    std::size_t infinity = std::numeric_limits < std::size_t >::max();
+    std::size_t infinity = (std::numeric_limits < std::size_t >::max)();
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
       put(discover_time, *wi, infinity);
 
     for (tie(wi, wi_end) = vertices(g); wi != wi_end; ++wi)
-      if (get(discover_time, *wi) == std::numeric_limits < D >::max())
+      if (get(discover_time, *wi) == (std::numeric_limits < D >::max)())
         detail::biconnect(*wi, *wi, true,
                           g, comp, num_components,
                           discover_time, dfs_time, lowpt, S);

@@ -68,7 +68,7 @@ main()
   dijkstra_shortest_paths
     (g, router_six, &parent[0], &distance[0], weightmap,
      indexmap, std::less<int>(), closed_plus<int>(), 
-     std::numeric_limits<int>::max(), 0, default_dijkstra_visitor());
+     (std::numeric_limits<int>::max)(), 0, default_dijkstra_visitor());
 #else
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
 #endif
