@@ -9,6 +9,7 @@
 
 // UNDER CONSTRUCTION
 
+#include <algorithm> // for std::find
 #include <boost/graph/detail/set_adaptor.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/detail/permutation.hpp>
@@ -16,8 +17,10 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/limits.hpp>
+#include <boost/graph/depth_first_search.hpp>
 
 namespace boost {
+
 
   //===========================================================================
   //A simple but slow implementation based on description of the
@@ -116,11 +119,13 @@ namespace boost {
       for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
         my_f[*i1] = f[*i1];
       
-      // Collect the potential vertices
       std::size_t k_id = get(v1_index_map, *k);
+
+      // Collect the potential vertices
       std::vector<v2_desc_t> vertex_set;
       std::copy(not_in_S.begin(), not_in_S.end(), 
                 std::back_inserter(vertex_set));
+      // not_in_S is already sorted, so we don't need to sort vertex_set here
 
       // Weed out vertices that do not have the same connectivity as k
       for (; edge_iter != edge_iter_end 
@@ -130,20 +135,26 @@ namespace boost {
         std::vector<v2_desc_t> tmp, adj;
         if (k_id == get(v1_index_map, source(*edge_iter, g1))) {
           v2_desc_t v = f[target(*edge_iter, g1)];
-          typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
-          for (tie(ei, ei_end) = out_edges(v, g2); ei != ei_end; ++ei)
-            if (invar1[*k] == invar2[target(*ei, g2)])
-              adj.push_back(target(*ei, g2));
+	  typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
+	  for (tie(ei, ei_end) = in_edges(v, g2); ei != ei_end; ++ei)
+	    if (invar1[*k] == invar2[source(*ei, g2)])
+	      adj.push_back(source(*ei, g2));
+
+	  // set_intersection requires sorted ranges
+	  std::sort(adj.begin(), adj.end());
           std::set_intersection(adj.begin(), adj.end(),
                                 vertex_set.begin(), vertex_set.end(),
                                 std::back_inserter(tmp),
                                 not_in_S.key_comp());
         } else {
           v2_desc_t v = f[source(*edge_iter, g1)];
-          typename graph_traits<Graph2>::in_edge_iterator ei, ei_end;
-          for (tie(ei, ei_end) = in_edges(v, g2); ei != ei_end; ++ei)
-            if (invar1[*k] == invar2[source(*ei, g2)])
-              adj.push_back(source(*ei, g2));
+	  typename graph_traits<Graph2>::out_edge_iterator ei, ei_end;
+	  for (tie(ei, ei_end) = out_edges(v, g2); ei != ei_end; ++ei)
+	    if (invar1[*k] == invar2[target(*ei, g2)])
+	      adj.push_back(target(*ei, g2));
+
+	  // set_intersection requires sorted ranges
+	  std::sort(adj.begin(), adj.end());
           std::set_intersection(adj.begin(), adj.end(),
                                 vertex_set.begin(), vertex_set.end(),
                                 std::back_inserter(tmp), 
@@ -247,7 +258,7 @@ namespace boost {
     std::sort(edge_set.begin(), edge_set.end(), 
 	      detail::isomorph_edge_ordering
 	      (make_iterator_property_map(perm.begin(), v1_index_map, perm[0]), g1));
-    
+
     typename std::vector<VertexG1>::iterator first = g1_vertices.begin();
     typename graph_traits<Graph2>::vertex_iterator vi, vi_end;
     for (tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
