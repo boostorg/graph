@@ -7,7 +7,7 @@
 #ifndef BOOST_SHADOW_ITERATOR_HPP
 #define BOOST_SHADOW_ITERATOR_HPP
 
-#include <boost/iterator_adaptors.hpp>
+#include <boost/graph/detail/new_iterator_adaptors.hpp>
 #include <boost/operators.hpp>
 
 namespace boost {
@@ -87,7 +87,7 @@ namespace boost {
     typedef typename std::iterator_traits<IterA>::difference_type D;
     typedef detail::shadow_proxy<Aval,Bval,Aval> V;
     typedef detail::shadow_proxy<Aref,Bref,Aval> R;
-    typedef iterator_adaptor< std::pair<IterA, IterB>,
+    typedef new_iterator_adaptor< std::pair<IterA, IterB>,
 			      detail::shadow_iterator_policies,
 			      V, R, V*, std::random_access_iterator_tag,
 			      D> type;
