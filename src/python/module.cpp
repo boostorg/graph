@@ -1,7 +1,16 @@
+// Copyright 2005 The Trustees of Indiana University.
+
+// Use, modification and distribution is subject to the Boost Software
+// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+//  Authors: Douglas Gregor
+//           Andrew Lumsdaine
 #include "basic_graph.cpp"
 #include "graph.hpp"
 #include "digraph.hpp"
 #include <boost/python.hpp>
+#include "point2d.hpp"
 
 namespace boost { namespace graph { namespace python {
 
@@ -33,6 +42,11 @@ BOOST_PYTHON_MODULE(bgl)
     .value("white", color_traits<default_color_type>::white())
     .value("gray", color_traits<default_color_type>::gray())
     .value("black", color_traits<default_color_type>::black())
+    ;
+
+  enum_<point2d>("Point2D")
+    .def("x", &point2d::x)
+    .def("y", &point2d::y)
     ;
 
   export_Graph();

@@ -1,4 +1,13 @@
+// Copyright 2005 The Trustees of Indiana University.
+
+// Use, modification and distribution is subject to the Boost Software
+// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+//  Authors: Douglas Gregor
+//           Andrew Lumsdaine
 #include "basic_graph.hpp"
+#include "point2d.hpp"
 
 namespace boost { 
 
@@ -509,6 +518,8 @@ void export_basic_graph(const char* name)
         .def("get_vertex_string_map", 
              &Graph::template get_vertex_map<std::string>)
         .def("get_vertex_object_map", &Graph::template get_vertex_map<object>)
+        .def("get_vertex_point2d_map", 
+             &Graph::template get_vertex_map<point2d>)
         // Edge property maps
         .def("has_edge_map", &Graph::has_vertex_map)
         .def("get_edge_index_map", &Graph::get_edge_index_map)
@@ -561,6 +572,8 @@ void export_basic_graph(const char* name)
   declare_property_map<vector_property_map<default_color_type, 
                                            VertexIndexMap> >
     ::declare("vertex_color_map");
+  declare_property_map<vector_property_map<point2d, VertexIndexMap> >
+    ::declare("vertex_point2d_map");
 
   // Edge property maps
   declare_readable_property_map<EdgeIndexMap>
