@@ -266,10 +266,16 @@ namespace boost {
 
   template <class IncidenceGraph, class P, class T, class R>
   void breadth_first_visit
-    (IncidenceGraph& g,
+    (const IncidenceGraph& g,
      typename graph_traits<IncidenceGraph>::vertex_descriptor s,
      const bgl_named_params<P, T, R>& params)
   {
+    // The graph is passed by *const* reference so that graph adaptors
+    // (temporaries) can be passed into this function. However, the
+    // graph is not really const since we may write to property maps
+    // of the graph.
+    IncidenceGraph& ng = const_cast<IncidenceGraph&>(g);
+
     typedef graph_traits<IncidenceGraph> Traits;
     // Buffer default
     typedef typename Traits::vertex_descriptor vertex_descriptor;
@@ -278,11 +284,11 @@ namespace boost {
     detail::wrap_ref<queue_t> Qref(Q);
 
     breadth_first_visit
-      (g, s,
+      (ng, s,
        choose_param(get_param(params, buffer_param_t()), Qref).ref,
        choose_param(get_param(params, graph_visitor),
                     make_bfs_visitor(null_visitor())),
-       choose_pmap(get_param(params, vertex_color), g, vertex_color)
+       choose_pmap(get_param(params, vertex_color), ng, vertex_color)
        );
   }
 
