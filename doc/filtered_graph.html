@@ -44,7 +44,11 @@ the original graph can be changed through property maps of the
 filtered graph. Vertex and edge descriptors of the filtered graph are
 the same as, and interchangeable with, the vertex and edge descriptors
 of the original graph.
-<P>
+
+<P>The <a href="#num_vertices"><tt>num_vertices</tt></a> and <a
+href="#num_edges"><tt>num_edges</tt></a> functions do not filter
+before returning results, so they return the number of vertices or
+edges in the underlying graph, unfiltered <a href="#2">[2]</a>.
 
 <H3>Example</H3>
 
@@ -398,7 +402,7 @@ Returns the number of edges entering vertex <tt>u</tt>.
 
 <hr>
 
-<pre>
+<pre><a name="num_vertices"></a>
 vertices_size_type
 num_vertices(const filtered_graph&amp; g)
 </pre>
@@ -406,11 +410,11 @@ Returns the number of vertices in the underlying graph <a href="#2">[2]</a>.
 
 <hr>
 
-<pre>
+<pre><a name="num_edges"></a>
 edges_size_type
 num_edges(const filtered_graph&amp; g)
 </pre>
-Returns the number of edges in the graph <tt>g</tt>.
+Returns the number of edges in the underlying graph <a href="#2">[2]</a>.
 
 <hr>
 
@@ -497,16 +501,13 @@ by-value (for performance reasons) in the filter iterator adaptor, and
 iterators are required to be Default Constructible by the C++
 Standard.
 
-<p>
-<a name="2">[2]</a> It would be nicer to return the number of
-vertices remaining after the filter has been applied, but
-this has two problems. The first is that it would take longer
-to calculate, and the second is that it would interact badly
-with the underlying vertex index mapping. The index mapping
-would no longer fall in the range <tt>[0,num_vertices(g))</tt>
-which is assumed in many of the algorithms. We are working
-on a solution that will remove that assumption from the
-algorithms.
+<p> <a name="2">[2]</a> It would be nicer to return the number of
+vertices (or edges) remaining after the filter has been applied, but
+this has two problems. The first is that it would take longer to
+calculate, and the second is that it would interact badly with the
+underlying vertex/edge index mappings. The index mapping would no
+longer fall in the range <tt>[0,num_vertices(g))</tt> (resp. <tt>[0,
+num_edges(g))</tt>) which is assumed in many of the algorithms. 
 
 
 <br>
