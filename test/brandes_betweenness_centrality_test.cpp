@@ -141,7 +141,8 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
 
     double relative_error = 
       correct_centrality[v] == 0.0? centrality[v]
-      : fabs(centrality[v] - correct_centrality[v]) / correct_centrality[v];
+      : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
+    if (relative_error < 0) relative_error = -relative_error;
     BOOST_TEST(relative_error < error_tolerance);
   }  
 
@@ -152,8 +153,9 @@ run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
     if (correct_edge_centrality) {
       double relative_error = 
         correct_edge_centrality[e] == 0.0? edge_centrality1[e]
-        : fabs(edge_centrality1[e] - correct_edge_centrality[e]) 
+        : (edge_centrality1[e] - correct_edge_centrality[e]) 
         / correct_edge_centrality[e];
+      if (relative_error < 0) relative_error = -relative_error;
       BOOST_TEST(relative_error < error_tolerance);
 
       if (relative_error >= error_tolerance) {
