@@ -45,37 +45,41 @@ namespace boost {
 
   namespace detail {
     // For partial specialization workaround
-    enum event_visitor_enum { ON_NO_EVENT, 
-                              ON_INITIALIZE_VERTEX, ON_START_VERTEX, 
-                              ON_DISCOVER_VERTEX, ON_FINISH_VERTEX,
-                              ON_EXAMINE_EDGE, ON_TREE_EDGE, ON_CYCLE_EDGE, 
-                              ON_FORWARD_OR_CROSS_EDGE, ON_BACK_EDGE,
-                              ON_EDGE_RELAXED, ON_EDGE_NOT_RELAXED,
-                              ON_EDGE_MINIMIZED, ON_EDGE_NOT_MINIMIZED };
+    enum event_visitor_enum
+    { on_no_event_num, 
+      on_initialize_vertex_num, on_start_vertex_num, 
+      on_discover_vertex_num, on_finish_vertex_num,
+      on_examine_edge_num, on_tree_edge_num, on_cycle_edge_num, 
+      on_forward_or_cross_edge_num, on_back_edge_num,
+      on_edge_relaxed_num, on_edge_not_relaxed_num,
+      on_edge_minimized_num, on_edge_not_minimized_num
+    };
   } // namespace detail
 
-  struct on_no_event { enum { num = detail::ON_NO_EVENT }; };
+  struct on_no_event { enum { num = detail::on_no_event_num }; };
 
-  struct on_initialize_vertex { enum { num = detail::ON_INITIALIZE_VERTEX }; };
-  struct on_start_vertex { enum { num = detail::ON_START_VERTEX }; };
-  struct on_discover_vertex { enum { num = detail::ON_DISCOVER_VERTEX }; };
-  struct on_finish_vertex { enum { num = detail::ON_FINISH_VERTEX }; };
+  struct on_initialize_vertex { 
+    enum { num = detail::on_initialize_vertex_num }; };
+  struct on_start_vertex { enum { num = detail::on_start_vertex_num }; };
+  struct on_discover_vertex { enum { num = detail::on_discover_vertex_num }; };
+  struct on_finish_vertex { enum { num = detail::on_finish_vertex_num }; };
   
-  struct on_examine_edge { enum { num = detail::ON_EXAMINE_EDGE }; };
-  struct on_tree_edge { enum { num = detail::ON_TREE_EDGE }; };
-  struct on_cycle_edge { enum { num = detail::ON_CYCLE_EDGE }; };
-  struct on_forward_or_cross_edge { enum { num = detail::ON_FORWARD_OR_CROSS_EDGE }; };
-  struct on_back_edge { enum { num = detail::ON_BACK_EDGE }; };
+  struct on_examine_edge { enum { num = detail::on_examine_edge_num }; };
+  struct on_tree_edge { enum { num = detail::on_tree_edge_num }; };
+  struct on_cycle_edge { enum { num = detail::on_cycle_edge_num }; };
+  struct on_forward_or_cross_edge { 
+    enum { num = detail::on_forward_or_cross_edge_num }; };
+  struct on_back_edge { enum { num = detail::on_back_edge_num }; };
 
-  struct on_edge_relaxed { enum { num = detail::ON_EDGE_RELAXED }; };
-  struct on_edge_not_relaxed { enum { num = detail::ON_EDGE_NOT_RELAXED }; };
-  struct on_edge_minimized { enum { num = detail::ON_EDGE_MINIMIZED }; };
-  struct on_edge_not_minimized { enum { num = detail::ON_EDGE_NOT_MINIMIZED }; };
+  struct on_edge_relaxed { enum { num = detail::on_edge_relaxed_num }; };
+  struct on_edge_not_relaxed { 
+    enum { num = detail::on_edge_not_relaxed_num }; };
+  struct on_edge_minimized { enum { num = detail::on_edge_minimized_num }; };
+  struct on_edge_not_minimized { 
+    enum { num = detail::on_edge_not_minimized_num }; };
 
-  enum { FALSE_TAG, TRUE_TAG };
-
-  struct true_tag { enum { num = TRUE_TAG }; };
-  struct false_tag { enum { num = FALSE_TAG }; };
+  struct true_tag { enum { num = true }; };
+  struct false_tag { enum { num = false }; };
 
   //========================================================================
   // base_visitor and null_visitor

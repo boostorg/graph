@@ -26,6 +26,7 @@
 #define BOOST_GRAPH_PROPERTIES_HPP
 
 #include <boost/config.hpp>
+#include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
 
 namespace boost {
@@ -51,10 +52,11 @@ namespace boost {
     // don't do partial specialization (like VC++).
     enum property_tag_num
     {
-      no_property_num, vertex_index_num, edge_index_num, vertex_name_num,
+      vertex_index_num, edge_index_num, vertex_name_num,
       edge_name_num, graph_name_num, edge_weight_num, vertex_distance_num,
       vertex_color_num, vertex_degree_num, vertex_out_degree_num, 
-      vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num
+      vertex_in_degree_num, vertex_discover_time_num, vertex_finish_time_num,
+      last_property_num
     };
   } // namespace detail
 
@@ -63,30 +65,33 @@ namespace boost {
   struct vertex_property_tag { };
   struct edge_property_tag { };
 
-  template <class Property>
-  struct property_kind { typedef void type; };
-
-#define BOOST_DEFINE_PROPERTY(KIND, NAME) \
-  enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
+  // See examples/edge_property.cpp for how to use this.
+#define BOOST_INSTALL_PROPERTY(KIND, NAME) \
+  template <> struct property_num<KIND##_##NAME##_t> { \
+    enum { value = KIND##_##NAME }; }; \
   template <> struct property_kind<KIND##_##NAME##_t> { \
     typedef KIND##_property_tag type; \
   }
 
-  BOOST_DEFINE_PROPERTY(vertex, index);
-  BOOST_DEFINE_PROPERTY(edge, index);
-  BOOST_DEFINE_PROPERTY(edge, name);
-  BOOST_DEFINE_PROPERTY(edge, weight);
-  BOOST_DEFINE_PROPERTY(vertex, name);
-  BOOST_DEFINE_PROPERTY(graph, name);
-  BOOST_DEFINE_PROPERTY(vertex, distance);
-  BOOST_DEFINE_PROPERTY(vertex, color);
-  BOOST_DEFINE_PROPERTY(vertex, degree);
-  BOOST_DEFINE_PROPERTY(vertex, in_degree);
-  BOOST_DEFINE_PROPERTY(vertex, out_degree);
-  BOOST_DEFINE_PROPERTY(vertex, discover_time);
-  BOOST_DEFINE_PROPERTY(vertex, finish_time);
+#define BOOST_DEF_PROPERTY(KIND, NAME) \
+  enum KIND##_##NAME##_t { KIND##_##NAME = detail::KIND##_##NAME##_num  }; \
+  BOOST_INSTALL_PROPERTY(KIND, NAME)
 
-#undef BOOST_DEFINE_PROPERTY
+  BOOST_DEF_PROPERTY(vertex, index);
+  BOOST_DEF_PROPERTY(edge, index);
+  BOOST_DEF_PROPERTY(edge, name);
+  BOOST_DEF_PROPERTY(edge, weight);
+  BOOST_DEF_PROPERTY(vertex, name);
+  BOOST_DEF_PROPERTY(graph, name);
+  BOOST_DEF_PROPERTY(vertex, distance);
+  BOOST_DEF_PROPERTY(vertex, color);
+  BOOST_DEF_PROPERTY(vertex, degree);
+  BOOST_DEF_PROPERTY(vertex, in_degree);
+  BOOST_DEF_PROPERTY(vertex, out_degree);
+  BOOST_DEF_PROPERTY(vertex, discover_time);
+  BOOST_DEF_PROPERTY(vertex, finish_time);
+
+#undef BOOST_DEF_PROPERTY
 
   namespace detail {
 

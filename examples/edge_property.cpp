@@ -36,14 +36,13 @@ using namespace boost;
 using namespace std;
 
 
-struct edge_flow { 
-  typedef boost::edge_property_tag kind; 
-  enum { num = 200 };  // for partial spec. workaround
-};
-struct edge_capacity { 
-  typedef boost::edge_property_tag kind; 
-  enum { num = 201 }; // for partial spec. workaround
-};
+enum edge_flow_t { edge_flow = 100 };
+enum edge_capacity_t { edge_capacity = 101 };
+
+namespace boost {
+  BOOST_INSTALL_PROPERTY(edge, flow);
+  BOOST_INSTALL_PROPERTY(edge, capacity);
+}
 
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
@@ -78,8 +77,8 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 
 int main(int argc, char* argv[])
 {
-  typedef property<edge_capacity, int> Cap;
-  typedef property<edge_flow, int, Cap> Flow;
+  typedef property<edge_capacity_t, int> Cap;
+  typedef property<edge_flow_t, int, Cap> Flow;
   typedef adjacency_list<vecS, vecS, bidirectionalS, 
      no_property, Flow> Graph;
 
@@ -114,8 +113,10 @@ int main(int argc, char* argv[])
 
   typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
-  property_map<Graph, edge_capacity>::type capacity = get(edge_capacity(), G);
-  property_map<Graph, edge_flow>::type flow = get(edge_flow(), G);
+  property_map<Graph, edge_capacity_t>::type
+    capacity = get(edge_capacity, G);
+  property_map<Graph, edge_flow_t>::type
+    flow = get(edge_flow, G);
 
   print_network(G, capacity, flow);
 

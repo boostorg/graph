@@ -52,7 +52,7 @@ main(int, char*[])
 
   const int V = 2;
 
-  typedef property<edge_weight_t, float> Weight;
+  typedef property<edge_weight_t, double> Weight;
   typedef adjacency_list<vecS, vecS, undirectedS,
                         no_property, Weight> UndirectedGraph;
   UndirectedGraph undigraph(V);

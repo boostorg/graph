@@ -260,7 +260,7 @@ namespace boost {
     typedef typename boost::ct_if<is_rand_access,
       std::size_t, vertex_ptr>::type vertex_descriptor;
 
-    typedef detail::bidir_edge<directed_category, vertex_descriptor> edge_descriptor;
+    typedef detail::edge_desc_impl<directed_category, vertex_descriptor> edge_descriptor;
   };
 
 } // namespace boost
@@ -274,7 +274,7 @@ namespace boost {
             class DirectedS = directedS,
             class VertexProperty = no_property,
             class EdgeProperty = no_property,
-            class GraphProperty = no_property >
+            class GraphProperty = no_property>
   class adjacency_list
     : public detail::adjacency_list_generator<
       adjacency_list<EdgeListS,VertexListS,DirectedS,

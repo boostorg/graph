@@ -27,7 +27,8 @@ namespace boost {
       static T& get_value(Property& p, T t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
-        enum { match = int(Next_tag::num) == int(Tag::num) };
+        enum { match = int(property_num<Next_tag>::value) 
+	       ==  int(property_num<Tag>::value) };
         return property_value_dispatch<match>
           ::get_value(static_cast<Next&>(p), t, tag);
       }
@@ -35,7 +36,8 @@ namespace boost {
       static const T& const_get_value(const Property& p, T t, Tag tag) {
         typedef typename Property::next_type Next;
         typedef typename Next::tag_type Next_tag;
-        enum { match = int(Next_tag::num) == int(Tag::num) };
+        enum { match = int(property_num<Next_tag>::value) 
+	       == int(property_num<Tag>::value) };
         return property_value_dispatch<match>
           ::const_get_value(static_cast<const Next&>(p), t, tag);
       }
@@ -93,11 +95,11 @@ namespace boost {
         typedef typename TagValueAList::first_type AListFirst;
         typedef typename AListFirst::first_type Tag2;
         typedef typename AListFirst::second_type Value;
-        enum { tag1 = Tag1::num, tag2 = Tag2::num };
-
+        enum { tag1 = property_num<Tag1>::value, 
+	       tag2 = property_num<Tag2>::value };
         typedef typename TagValueAList::second_type Next;
         typedef typename ev_selector<Next>::type Extractor;
-        typedef typename boost::ct_if< tag1==tag2, Value, 
+        typedef typename boost::ct_if< (tag1==tag2), Value, 
           typename Extractor::template bind<Next,Tag1>::type
         >::type type;
       };

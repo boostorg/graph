@@ -274,6 +274,7 @@ main(int argc, char* argv[])
     }
   else
     std::cout << "method failed" << std::endl;
+  return 0;
 }
 
 /*

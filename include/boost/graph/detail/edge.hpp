@@ -65,15 +65,15 @@ namespace boost {
     }
     
     template <class Directed, class Vertex>
-    class bidir_edge  : public edge_base<Directed,Vertex> {
-      typedef bidir_edge                              self;
+    class edge_desc_impl  : public edge_base<Directed,Vertex> {
+      typedef edge_desc_impl                              self;
       typedef edge_base<Directed,Vertex> Base;
     public: 
       typedef void                              property_type;
       
-      inline bidir_edge() : m_eproperty(0) {} 
+      inline edge_desc_impl() : m_eproperty(0) {} 
       
-      inline bidir_edge(Vertex s, Vertex d, const property_type* eplug = 0)
+      inline edge_desc_impl(Vertex s, Vertex d, const property_type* eplug = 0)
         : Base(s,d), m_eproperty(const_cast<property_type*>(eplug)) { }
       
       property_type* get_property() { return m_eproperty; }

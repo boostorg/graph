@@ -47,7 +47,6 @@
 //    back or cross: 4 --> 0
 //    back or cross: 4 --> 1
 
-#include <assert.h>
 #include <iostream>
 
 #include <vector>
@@ -55,10 +54,10 @@
 #include <utility>
 #include <string>
 
-#include "boost/graph/visitors.hpp"
-#include "boost/graph/adjacency_list.hpp"
-#include "boost/graph/breadth_first_search.hpp"
-#include "boost/graph/depth_first_search.hpp"
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/depth_first_search.hpp>
 
 using namespace boost;
 using namespace std;
