@@ -29,7 +29,7 @@
 #include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
-#include <boost/graph/dynamic_components.hpp>
+#include <boost/graph/incremental_components.hpp>
 
 /*
 
@@ -80,8 +80,8 @@ int main(int , char* [])
   typedef std::vector<Vertex>::value_type* Parent;
   disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
-  initialize_dynamic_components(G, ds);
-  dynamic_components(G, ds);
+  initialize_incremental_components(G, ds);
+  incremental_components(G, ds);
 
   graph_traits<Graph>::edge_descriptor e;
   bool flag;

@@ -11,7 +11,7 @@
   -- purpose.  It is provided "as is" without express or implied warranty.
   -->
 <Head>
-<Title>Boost Graph Library: Dynamic Connected Components</Title>
+<Title>Boost Graph Library: Incremental Connected Components</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../c++boost.gif" 
@@ -19,19 +19,23 @@
 
 <BR Clear>
 
-<H1>Dynamic Connected Components</H1>
+<H1>Incremental Connected Components</H1>
 
 <P>
-This section describes a family of functions and classes that
-calculate the connected components of an undirected graph.  The
-algorithm used here is based on the disjoint-sets data
-structure&nbsp;[<A
- HREF="bibliography.html#clr90">8</A>,<A
- HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>] which is
-the best method for situations where the graph is growing (edges are
-being added) and the connected components information needs to be
-updated repeatedly. The disjoint-sets class is described in
-Section <A HREF="../../disjoint_sets/disjoint_sets.html">Disjoint Sets</A>.
+This section describes a family of functions and classes that work
+together to calculate the connected components of an undirected graph.
+The algorithm used here is based on the disjoint-sets (fast
+union-find) data structure&nbsp;[<A
+HREF="bibliography.html#clr90">8</A>,<A
+HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>]
+which is a good method to use for situations where the graph is
+growing (edges are being added) and the connected components
+information needs to be updated repeatedly. This method does not cover
+the situation where edges are both added and removed from the graph,
+hence it is called <b><i>incremental</i></b><a
+href="bibliography.html#eppstein97:dynamic_graph">[42]</a> (and not
+fully dynamic). The disjoint-sets class is described in Section <A
+HREF="../../disjoint_sets/disjoint_sets.html">Disjoint Sets</A>.
 
 <P>
 The following five operations are the primary functions that you will
@@ -42,12 +46,12 @@ and vertices <TT>u</TT> and <TT>v</TT>.
 <P>
 
 <UL>
-<LI><TT>initialize_dynamic_components(g, ds)</TT> 
+<LI><TT>initialize_incremental_components(g, ds)</TT> 
 <BR>
 Basic initialization of the disjoint-sets structure. Each
     vertex in the graph <TT>g</TT> is in its own set.
 </LI>
-<LI><TT>dynamic_connected_components(g, ds)</TT> 
+<LI><TT>incremental_components(g, ds)</TT> 
 <BR>
 The connected components are calculated based on the edges in the graph
     <TT>g</TT> and the information is embedded in <TT>ds</TT>.
@@ -107,8 +111,8 @@ href="../example/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</TT
 
   // determine the connected components
   // the results are embedded in the disjoint-sets structure
-  initialize_dynamic_components(G, ds);
-  dynamic_connected_components(G, ds);
+  initialize_incremental_components(G, ds);
+  incremental_components(G, ds);
 
   Graph::edge_descriptor e;
   bool flag;
@@ -148,8 +152,8 @@ href="../example/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</TT
 <hr>
 <p>
 
-<H2><A NAME="sec:initialize-dynamic-components"></A>
-<TT>initialize_dynamic_components</TT>
+<H2><A NAME="sec:initialize-incremental-components"></A>
+<TT>initialize_incremental_components</TT>
 </H2>
 
 <P>
@@ -170,7 +174,7 @@ href="../example/dynamic_components.cpp"><TT>examples/dynamic_components.cpp</TT
 <P>
 <PRE>
 template &lt;class VertexListGraph, class DisjointSets&gt; 
-void initialize_dynamic_components(VertexListGraph&amp; G, DisjointSets&amp; ds)
+void initialize_incremental_components(VertexListGraph&amp; G, DisjointSets&amp; ds)
 </PRE>
 
 <P>
@@ -183,14 +187,14 @@ member of its own component (or set).
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/connected_components.hpp"><TT>boost/graph/connected_components.hpp</TT></a>
+<a href="../../../boost/graph/incremental_components.hpp"><TT>boost/graph/incremental_components.hpp</TT></a>
 
 <p>
 <hr>
 <P>
 
 <H2><A NAME="sec:dynamic-connected-components"></A>
-<TT>dynamic_connected_components</TT>
+<TT>incremental_components</TT>
 </H2>
 
 <P>
@@ -211,7 +215,7 @@ member of its own component (or set).
 <p>
 <PRE>
 template &lt;class EdgeListGraph, class DisjointSets&gt;
-void dynamic_connected_components(EdgeListGraph&amp; g, DisjointSets&amp; ds)
+void incremental_components(EdgeListGraph&amp; g, DisjointSets&amp; ds)
 </PRE>
 
 <P>
@@ -223,7 +227,7 @@ embedding the results in the disjoint-sets data structure.
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/connected_components.hpp"><TT>boost/graph/connected_components.hpp</TT></a>
+<a href="../../../boost/graph/incremental_components.hpp"><TT>boost/graph/incremental_components.hpp</TT></a>
 
 <P>
 
@@ -271,7 +275,7 @@ component.
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/connected_components.hpp"><TT>boost/graph/connected_components.hpp</TT></a>
+<a href="../../../boost/graph/incremental_components.hpp"><TT>boost/graph/incremental_components.hpp</TT></a>
 
 <P>
 
@@ -304,14 +308,14 @@ components of the graph. Each component is a container-like object,
 and the <TT>component_index</TT> object provides access to the
 component objects via <TT>operator[]</TT>. A <TT>component_index</TT>
 object is initialized with the parents property in the disjoint-sets
-calculated from the <TT>dynamic_connected_components()</TT> function.
+calculated from the <TT>incremental_components()</TT> function.
 
 <P>
 
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/connected_components.hpp"><TT>boost/graph/connected_components.hpp</TT></a>
+<a href="../../../boost/graph/incremental_components.hpp"><TT>boost/graph/incremental_components.hpp</TT></a>
 
 <P>
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 std::string container_types [] = { "vecS", "listS", "setS", "slistS" };
 const int N = sizeof(container_types)/sizeof(std::string);
@@ -16,7 +17,8 @@ main()
     for (j = 0; j < N; ++j)
       for (k = 0; k < D; ++k) {
 
-        std::string file_name = "graph_type.hpp";
+        std::string file_name = "./graph_type.hpp";
+	system("rm -f graph_type.hpp");
         std::ofstream header(file_name.c_str());
         if (!header) {
           std::cerr << "could not open file " << file_name << std::endl;

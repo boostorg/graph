@@ -19,7 +19,7 @@
 
 <H1><A NAME="sec:reverse-graph-adaptor"></A>
 <pre>
-reverse_graph&lt;<a href="./BidirectionalGraph.html">BidirectionalGraph</a>&gt;
+reverse_graph&lt;<a href="./BidirectionalGraph.html">BidirectionalGraph</a>, GraphReference&gt;
 </pre>
 </H1>
 
@@ -69,7 +69,19 @@ main()
 </pre>
 The output is:
 <pre>
+original graph:
+0 --> 2 
+1 --> 1 3 4 
+2 --> 1 3 4 
+3 --> 1 4 
+4 --> 0 1 
 
+reversed graph:
+0 --> 4 
+1 --> 1 2 3 4 
+2 --> 0 
+3 --> 1 2 
+4 --> 1 2 3 
 </pre>
 
 <H3>Template Parameters</H3>
@@ -77,12 +89,20 @@ The output is:
 <P>
 <TABLE border>
 <TR>
-<th>Parameter</th><th>Description</th>
+<th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
 <TR><TD><TT>BidirectionalGraph</TT></TD>
 <TD>The graph type to be adapted.</TD>
+<TD>&nbsp;</TD>
 </TR>
+
+<TR><TD><TT>GraphReference</TT></TD>
+<TD>This type should be <tt>const&nbsp;BidirectionalGraph&amp;</tt>
+if you want to create a const reverse graph, or <tt>BidirectionalGraph&amp;</tt> if you want to create a non-const reverse graph.</TD>
+<TD><tt>const&nbsp;BidirectionalGraph&amp;</tt></TD>
+</TR>
+
 
 </table>
 
