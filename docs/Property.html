@@ -35,7 +35,7 @@ property.
 
 <tr>
 <td>Property Kind </td>
-<td><TT>kind</TT> </td>
+<td><TT>property_kind&lt;Property&gt;::type</TT> </td>
 <td>
 
 This specifies whether the property is a <a
@@ -89,8 +89,9 @@ and
 <h3>Notes</h3>
 
 On compilers that do not support partial specialization, each Property
-type is also required to contain an enum named <tt>num</tt> whose value
-uniquely identifies the property type.
+type is also required to specialize
+<tt>property_num&lt;Property&gt;</tt> to contain an enum named
+<tt>value</tt> which uniquely identifies the property type.
 
 <br>
 <HR>

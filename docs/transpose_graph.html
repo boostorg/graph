@@ -28,7 +28,7 @@
 <TD ALIGN="LEFT">directed (and not undirected)</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Properties:</B></TH>
-<TD ALIGN="LEFT">vertex ID</TD>
+<TD ALIGN="LEFT">vertex index</TD>
 </TR>
 <TR><TH ALIGN="LEFT"><B>Complexity:</B></TH>
 <TD ALIGN="LEFT"><i>O(V + E)</i></TD>
@@ -39,24 +39,31 @@
 <P>
 <PRE>
 (1)
-template &lt;class VertexListGraph, class MutableGraph&gt; 
-void transpose_graph(const VertexListGraph&amp; G1, MutableGraph&amp; G2);
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>&gt; 
+void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T);
 
 (2)
-template &lt;class VertexListGraph, class MutableGraph, class ID&gt; 
-void transpose_graph(const VertexListGraph&amp; G1, MutableGraph&amp; G2, ID id);
+template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class <a href="./MutableGraph.html">MutableGraph</a>, class VertexIndexMap&gt; 
+void transpose_graph(const VertexListGraph&amp; G, MutableGraph&amp; G_T, 
+                     VertexIndexMap index);
 </PRE>
 
 <P>
-Computes the transpose of a directed graph. The transpose of a
-directed graph <i>G = (V, E)</i>is the graph <i>G<sub>T</sub> = (V,
-E<sub>T</sub>)</i> , where <i>E<sub>T</sub> = {(v, u) in V x V: (u, v)
-in E}</i> . i.e., <i>G<sub>T</sub></i> is with all its edges reversed.
+This function computes the transpose of a directed graph. The
+transpose of a directed graph <i>G = (V, E)</i>is the graph
+<i>G<sub>T</sub> = (V, E<sub>T</sub>)</i> , where <i>E<sub>T</sub> =
+{(v, u) in V x V: (u, v) in E}</i> . i.e., <i>G<sub>T</sub></i> is
+<i>G</i> with all its edges reversed.  Graph <TT>G_T</TT> passed into
+the algorithm must have the same number of vertices as <TT>G</TT> and
+no edges. The edges will be added by <tt>transpose_graph()</tt> by
+calling <tt>add_edge</tt> as follows for each edge <i>(u,v)</i> in
+<tt>G</tt>:
+<pre>
+add_edge(G_T, vertex(get(index, v), G_T), vertex(get(index, u), G_T));
+</pre>
 
-<P>
-Graph <TT>G2</TT> passed into the algorithm must have the same number of
-vertices as <TT>G1</TT> and no edges. The edges will be added 
-by <tt>transpose_graph()</tt> by calling <TT>add_edge(G2,u,v)</TT>.
+
+
 
 <P>
 
@@ -72,12 +79,26 @@ by <tt>transpose_graph()</tt> by calling <TT>add_edge(G2,u,v)</TT>.
 <P>
 
 <UL>
-<LI>The graph type for argument <TT>G1</TT> must be a model of <a
+<LI>The graph type for argument <TT>G</TT> must be a model of <a
  href="./VertexListGraph.html">VertexListGraph</a>.
 </LI>
-<LI>The graph type for argument <TT>G2</TT> must be a model of
+
+<LI>In version (1), the graph <TT>G</TT> must be a <a
+ href="./PropertyGraph.html">PropertyGraph</a> with respect to the
+ <tt>vertex_index_t</tt> property.
+</LI>
+
+
+<LI>The graph type for argument <TT>G_T</TT> must be a model of
      <a href="./MutableGraph.html">MutableGraph</a>.
 </LI>
+
+<LI>The <tt>VertexIndexMap</tt> is a <a
+href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>
+that must map the vertex descriptors of <tt>G</tt> to the integers
+from 0 to <tt>num_vertices(G)</tt>.
+</LI>
+
 </UL>
 
 <P>

@@ -102,25 +102,24 @@ of each vertex in the shortest paths tree.
 <H3>Template Parameters</H3>
 
 <P>
-<TABLE CELLPADDING=3 border>
+<TABLE border>
 <TR>
-<th>Parameter</th><th>Description</th><th>Default</th>
+<th>Parameter</th><th>Description</th>
 </tr>
 
 <TR><TD><TT>EdgeIterator</TT></TD> <TD>Must be model of <a
 href="http://www.sgi.com/Technology/STL/InputIterator.html">InputIterator</a>
 who's <TT>value_type</TT> must be a pair of vertex descriptors.</TD>
-<TD>&nbsp;</TD>
 </TR>
 
 <TR><TD><TT>ValueType</TT></TD>
-<TD>The <TT>value_type</TT> of the <TT>EdgeIterator</TT>.</TD>
-<TD><TT>std::iterator_traits&lt;EdgeIterator&gt;::value_type</TT></TD>
+<TD>The <TT>value_type</TT> of the <TT>EdgeIterator</TT>.<br>
+Default: <TT>std::iterator_traits&lt;EdgeIterator&gt;::value_type</TT></TD>
 </TR>
 
 <TR><TD><TT>DiffType</TT></TD>
-<TD>The <TT>difference_type</TT> of the <TT>EdgeIterator</TT>.</TD>
-<TD><TT>std::iterator_traits&lt;EdgeIterator&gt;::difference_type</TT></TD>
+<TD>The <TT>difference_type</TT> of the <TT>EdgeIterator</TT>.<br>
+Default: <TT>std::iterator_traits&lt;EdgeIterator&gt;::difference_type</TT></TD>
 </TR>
 
 </TABLE>
@@ -135,102 +134,78 @@ who's <TT>value_type</TT> must be a pair of vertex descriptors.</TD>
 
 <H3>Associated Types</H3>
 
-<table border>
+<hr>
 
-<tr>
-<th>Type</th><th>Description</th>
-</tr>
-
-<tr>
-<td><tt>boost::graph_traits&lt;edge_list&gt;::vertex_descriptor</tt></td>
-<td>
+<tt>boost::graph_traits&lt;edge_list&gt;::vertex_descriptor</tt>
+<br><br>
 The type for the vertex descriptors associated with the
 <TT>edge_list</TT>. This will be the same type as
 <TT>std::iterator_traits&lt;EdgeIterator&gt;::value_type::first_type</TT>.
-</td>
-</tr>
 
-<tr>
-<td><tt>
+<hr>
+
+<tt>
 boost::graph_traits&lt;edge_list&gt;::edge_descriptor
-</tt></td>
-<td>
+</tt>
+<br><br>
 The type for the edge descriptors associated with the
 <TT>edge_list</TT>. 
-</td>
-</tr>
 
-<tr>
-<td><tt>
+<hr>
+
+<tt>
 boost::graph_traits&lt;edge_list&gt;::edge_iterator
-</tt></td>
-<td>
+</tt>
+<br><br>
 The type for the iterators returned by <TT>edges()</TT>. The iterator
 category of the <TT>edge_iterator</TT> will be the same as that of the
 <TT>EdgeIterator</TT>.
-</td>
-</tr>
 
-</table>
+<hr>
 
 <h3>Member Functions</h3>
 
-<table border>
+<hr>
 
-<tr>
-<th>Member</th><th>Description</th>
-</tr>
-
-<tr>
-<td><tt>
+<tt>
 edge_list(EdgeIterator first, EdgeIterator last)
-</tt></td>
-<td>
+</tt>
+<br><br>
 Creates a graph object with <TT>n</TT> vertices and with the
 edges specified in the edge list given by the range <TT>[first,last)</TT>.
-</td>
-</tr>
 
-</table>
+<hr>
 
 <H3>Non-Member Functions</H3>
 
-<table border>
-<tr>
-<th>Function</th><th>Description</th>
-</tr>
+<hr>
 
-<tr>
-<td><tt>
+<tt>
 std::pair&lt;edge_iterator, edge_iterator&gt;<br>
 edges(const edge_list&amp; g)
-</tt></td>
-<td>
+</tt>
+<br><br>
 Returns an iterator-range providing access to the edge set of graph <TT>g</TT>.
-</td>
-</tr>
 
-<tr>
-<td><tt>
+<hr>
+
+<tt>
 vertex_descriptor<br>
 source(edge_descriptor e, const edge_list&amp; g)
-</tt></td>
-<td>
+</tt>
+<br><br>
 Returns the source vertex of edge <TT>e</TT>.
-</td>
-</tr>
 
-<tr>
-<td><tt>
+<hr>
+
+<tt>
 vertex_descriptor<br>
 target(edge_descriptor e, const edge_list&amp; g)
-</tt></td>
-<td>
+</tt>
+<br><br>
 Returns the target vertex of edge <TT>e</TT>.
-</td>
-</tr>
 
-</table>
+<hr>
 
 <br>
 <HR>
