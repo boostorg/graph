@@ -66,6 +66,12 @@ namespace boost {
     typedef typename Traits::edge_parallel_category    edge_parallel_category;
     typedef typename Traits::traversal_category        traversal_category;
 
+    static vertex_descriptor null_vertex()
+    {
+      return Traits::null_vertex();
+    }
+
+
     // IncidenceGraph requirements
     typedef typename Traits::out_edge_iterator         out_edge_iterator;
     typedef typename Traits::degree_size_type          degree_size_type;
