@@ -31,16 +31,12 @@ review. The pending items are:</li>
    <li><tt>container_traits.hpp</tt> (this should also include
      the work Matt Austern is doing on this topic)</li>
 
-   <li><tt>property.hpp</tt></li>
-
    <li>The queues and heaps: <tt>queue.hpp</tt>,
      <tt>mutable_queue.hpp</tt>, <tt>fibonacci_heap.hpp</tt>.
       Somehow merge implementation with Dietmer's heaps and queues.</li>
 
    <li><tt>disjoint_sets</tt> </li>
   </ul>
-
-<li>Port the graph library to Borland C++</li>
 
 <li>Construct a set of planar graph algorithms.</li>
   <ul>
@@ -62,7 +58,19 @@ polygons.</li>
 
 <li>Floyd-Warshall algorithm.</li>
 
-<li>Rewrite the Qhull algorithm using the Boost Graph Library.</li>
+<li>Rewrite the Qhull algorithm using the Boost Graph Library (this is
+high difficulty challenge).  Or, for a more manageable challenge,
+write an interface for Qhull with the BGL.  <a
+href="http://www.geom.umn.edu/locate/qhull">Qhull</a> computes the
+convex hull, Delaunay triangulation, Voronoi diagram, and halfspace
+intersection about a point.  Qhull runs in 2-d, 3-d, 4-d, and higher
+dimensions.  Qhull is used for collision detection, animation, plate
+tectonics, 3-d modeling, robot motion planning, and other <a
+href="http://www.geom.umn.edu/~bradb/qhull-news.html#use">applications</a>.
+It is currently difficult to use from a C++ program.
+
+</li>
+
 
 <li>Explore the use of Algorithm Objects as an alternative to
   the current approach with visitors.</li>
