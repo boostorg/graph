@@ -100,20 +100,29 @@ namespace boost {
 
 } // namespace boost
 
-/* Some helper functions for dealing with pairs as edges */
-template <class T, class G>
-T source(std::pair<T,T> p, const G&) { return p.first; }
+// Since pair is in namespace std, Koenig lookup will find source and
+// target if they are also defined in namespace std.  This is illegal,
+// but the alternative is to put source and target in the global
+// namespace which causes name conflicts with other libraries (like
+// SUIF).
+namespace std {
 
-template <class T, class G>
-T target(std::pair<T,T> p, const G&) { return p.second; }
+  /* Some helper functions for dealing with pairs as edges */
+  template <class T, class G>
+  T source(pair<T,T> p, const G&) { return p.first; }
+
+  template <class T, class G>
+  T target(pair<T,T> p, const G&) { return p.second; }
+
+}
 
 #if defined(__GNUC__) && defined(__SGI_STL_PORT)
 // For some reason g++ with STLport does not see the above definition
 // of source() and target() unless we bring them into the boost
 // namespace.
 namespace boost {
-  using ::source;
-  using ::target;
+  using std::source;
+  using std::target;
 }
 #endif
 
