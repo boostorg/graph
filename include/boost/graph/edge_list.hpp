@@ -30,7 +30,7 @@
 #include <iterator>
 #include <boost/config.hpp>
 #include <boost/pending/ct_if.hpp>
-#include <boost/pending/iterator_adaptors.hpp>
+#include <boost/pending/integer_range.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #ifndef __GNUC__
