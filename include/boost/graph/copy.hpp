@@ -335,7 +335,7 @@ namespace boost {
       copy_impl;
     copy_impl::apply
       (g_in, g_out,
-       detail::choose_vertex_copier(get_param(params, edge_vertex_t()), 
+       detail::choose_vertex_copier(get_param(params, vertex_copy_t()), 
                                     g_in, g_out),
        detail::choose_edge_copier(get_param(params, edge_copy_t()), 
                                   g_in, g_out),
