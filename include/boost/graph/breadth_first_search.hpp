@@ -35,6 +35,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -181,6 +182,58 @@ namespace boost {
   bfs_visitor<Visitors>
   make_bfs_visitor(Visitors vis) {
     return bfs_visitor<Visitors>(vis);
+  }
+
+  namespace detail {
+
+    template <class VertexListGraph, class BFSVisitor, class ColorMap,
+      class Buffer>
+    void bfs_helper
+      (VertexListGraph& g,
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       Buffer& buffer, ColorMap color, BFSVisitor vis)
+    {
+      typedef typename property_traits<ColorMap>::value_type ColorValue;
+      typedef color_traits<ColorValue> Color;
+      typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
+      for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
+        put(color, *i, Color::white());
+        vis.initialize_vertex(*i, g);
+      }
+      breadth_first_search(g, s, buffer, vis, color);
+    }
+
+  } // namespace detail
+
+
+  // Named Parameter Variant
+  template <class VertexListGraph, class P, class T, class R>
+  void breadth_first_search
+    (VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     const bgl_named_params<P, T, R>& params)
+  {
+    typedef graph_traits<VertexListGraph> Traits;
+    // Buffer default
+    typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
+    queue_t Q;
+    // ColorMap default
+    typename Traits::vertices_size_type
+      n = is_default_param(get_param(params, vertex_color)) ? 
+      num_vertices(g) : 0;
+    std::vector<default_color_type> color_map(n);
+
+    detail::wrap_ref<queue_t> Qref(Q);
+
+    detail::bfs_helper
+      (g, s,
+       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+       choose_param(get_param(params, vertex_color),
+         make_iterator_property_map(color_map.begin(), 
+           choose_pmap(get_param(params, vertex_index), g, vertex_index))),
+       choose_param(get_param(params, graph_visitor),
+                    make_bfs_visitor(null_visitor()))
+       );
   }
 
 } // namespace boost
