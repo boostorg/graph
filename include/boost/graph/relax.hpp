@@ -34,6 +34,7 @@
 #include <boost/property_map.hpp>
 
 #include <cstdlib>  // for abs
+#include <cmath>
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std { using ::abs; }
 #endif
