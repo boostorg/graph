@@ -34,6 +34,15 @@ namespace boost {
   struct distance_combine_t { enum { num = detail::distance_combine_num};  };
   struct distance_inf_t { enum { num = detail::distance_inf_num }; };
   struct distance_zero_t { enum { num = detail::distance_zero_num }; };
+  struct buffer_param_t { enum { num = detail::buffer_param_num }; };
+
+  namespace detail {
+    template <class T>
+    struct wrap_ref {
+      wrap_ref(T& r) : ref(r) {}
+      T& ref;
+    };
+  }
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params : public Base
@@ -108,6 +117,13 @@ namespace boost {
       typedef bgl_named_params<Init, distance_zero_t, self> Params;
       return Params(init, *this);
     }
+
+    template <typename Buffer>
+    bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self>
+    buffer(Buffer& b) {
+      typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self> Params;
+      return Params(detail::wrap_ref<Buffer>(b), *this);
+    }
   };
 
   template <typename WeightMap>
@@ -171,6 +187,13 @@ namespace boost {
   distance_zero(const Init& init) {
     typedef bgl_named_params<Init, distance_zero_t> Params;
     return Params(init);
+  }
+
+  template <typename Buffer>
+  bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t>
+  buffer(const Buffer& b) {
+    typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t> Params;
+    return Params(detail::wrap_ref<Buffer>(b));
   }
 
   //===========================================================================
