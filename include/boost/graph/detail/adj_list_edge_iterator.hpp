@@ -29,8 +29,11 @@
 
 #include <iterator>
 #include <utility>
+#include <boost/detail/workaround.hpp>
 
-#define BOOST_GRAPH_NO_OPTIONAL
+#if BOOST_WORKAROUND( __IBMCPP__, <= 600 )
+#  define BOOST_GRAPH_NO_OPTIONAL
+#endif
 
 #ifdef BOOST_GRAPH_NO_OPTIONAL
 #  define BOOST_GRAPH_MEMBER .
