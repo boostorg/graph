@@ -26,6 +26,7 @@
 #define BOOST_GRAPH_PROPERTIES_HPP
 
 #include <boost/config.hpp>
+#include <cassert>
 #include <boost/pending/property.hpp>
 #include <boost/property_map.hpp>
 
@@ -243,6 +244,40 @@ namespace boost {
     return degree_property_map<Graph>(g);
   }
 
+  //========================================================================
+  // Iterator Property Map Generating Functions contributed by 
+  // Kevin Vanhorn. (see also the property map generating functions
+  // in boost/property_map.hpp)
+
+  // A helper function for creating a vertex property map out of a
+  // random access iterator and the internal vertex index map from a
+  // graph.
+  template <class PropertyGraph, class RandomAccessIterator>
+  inline
+  iterator_property_map<
+    RandomAccessIterator,
+    typename property_map<PropertyGraph, vertex_index_t>::type,
+    typename std::iterator_traits<RandomAccessIterator>::value_type,
+    typename std::iterator_traits<RandomAccessIterator>::reference
+  >
+  make_iterator_vertex_map(RandomAccessIterator iter, const PropertyGraph& g)
+  {
+    return make_iterator_property_map(iter, get(vertex_index, g));
+  }  
+  
+  template <class PropertyGraph, class RandomAccessContainer>
+  inline
+  iterator_property_map<
+    typename RandomAccessContainer::iterator,
+    typename property_map<PropertyGraph, vertex_index_t>::type,
+    typename RandomAccessContainer::value_type,
+    typename RandomAccessContainer::reference
+  >
+  make_container_vertex_map(RandomAccessContainer& c, const PropertyGraph& g)
+  {
+    assert(c.size() >= num_vertices(g));
+    return it_to_vertex_map(c.begin(), g);
+  }   
 
 
 } // namespace boost
