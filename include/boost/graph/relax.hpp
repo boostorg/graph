@@ -62,17 +62,23 @@ namespace boost {
                PredecessorMap p, DistanceMap d, 
                BinaryFunction combine, BinaryPredicate compare)
     {
+      typedef typename graph_traits<Graph>::directed_category DirCat;
+      bool is_undirected = is_same<DirCat, undirected_tag>::value;
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       Vertex u = source(e, g), v = target(e, g);
       typedef typename property_traits<DistanceMap>::value_type D;
       typedef typename property_traits<WeightMap>::value_type W;
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
-
+      
       if ( compare(combine(d_u, w_e), d_v) ) {
         put(d, v, combine(d_u, w_e));
         put(p, v, u);
         return true;
+      } else if (is_undirected && compare(combine(d_v, w_e), d_u)) {
+	put(d, u, combine(d_v, w_e));
+        put(p, u, v);
+	return true;
       } else
         return false;
     }
