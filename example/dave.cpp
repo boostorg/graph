@@ -27,7 +27,9 @@
 #include <iterator>
 #include <vector>
 #include <list>
-#include <queue>
+// Use boost::queue instead of std::queue because std::queue doesn't
+// model Buffer; it has to top() function. -Jeremy
+#include <boost/pending/queue.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
@@ -212,7 +214,7 @@ main(int , char* [])
   std::ostream_iterator<int> cout_int(std::cout, " ");
   std::ostream_iterator<char> cout_char(std::cout, " ");
 
-  std::queue<Vertex> Q;
+  boost::queue<Vertex> Q;
   boost::breadth_first_search
     (G, vertex(a, G), Q,
      make_bfs_visitor(
