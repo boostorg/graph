@@ -799,8 +799,10 @@ namespace boost {
     template <class Config>
     inline typename Config::degree_size_type
     degree(typename Config::vertex_descriptor u, 
-           const undirected_graph_helper<Config>& g)
+           const undirected_graph_helper<Config>& g_)
     {
+      typedef typename Config::graph_type Graph;
+      const Graph& g = static_cast<const Graph&>(g_);
       return out_degree(u, g);
     }
 
