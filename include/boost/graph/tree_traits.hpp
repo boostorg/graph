@@ -20,23 +20,23 @@ namespace boost {
   void traverse_tree(typename tree_traits<Tree>::node_descriptor v,
                      Tree& t, TreeVisitor visitor)
   {
-    visitor.preorder(v);
+    visitor.preorder(v, t);
     typename tree_traits<Tree>::children_iterator i, end;
     tie(i, end) = children(v, t);
     if (i != end) {
       traverse_tree(*i++, t, visitor);
-      visitor.inorder(v);
+      visitor.inorder(v, t);
       while (i != end)
         traverse_tree(*i++, t, visitor);
-      visitor.postorder(v);
+      visitor.postorder(v, t);
     } else
-      visitor.inorder(v);
+      visitor.inorder(v, t);
   }
 
   struct null_tree_visitor {
-    template <class Node> void preorder(Node) { }
-    template <class Node> void inorder(Node) { }
-    template <class Node> void postorder(Node) { }
+    template <typename Node, typename Tree> void preorder(Node, Tree&) { }
+    template <typename Node, typename Tree> void inorder(Node, Tree&) { }
+    template <typename Node, typenae Tree> void postorder(Node, Tree&) { }
   };
 
 } /* namespace boost */
