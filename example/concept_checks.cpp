@@ -347,6 +347,7 @@ main(int,char*[])
     function_requires< VertexListGraphConcept<Graph> >();
     function_requires< PropertyGraphConcept<Graph, Vertex, u_property<Vertex> > >();
     function_requires< PropertyGraphConcept<Graph, Edge, a_property<Vertex> > >();
+    function_requires< PropertyGraphConcept<Graph, Edge, edge_length_t > >();
   }
 #endif
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
