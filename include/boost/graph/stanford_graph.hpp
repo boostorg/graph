@@ -235,7 +235,7 @@ namespace boost {
 
   // Vertex ID
   struct sgb_vertex_id_map
-    : public boost::detail::put_get_at_helper<long, sgb_vertex_id_map>
+    : public boost::put_get_at_helper<long, sgb_vertex_id_map>
   {
     typedef boost::readable_property_map_tag category;
     typedef long value_type;
@@ -251,7 +251,7 @@ namespace boost {
 
   // Vertex Name  
   struct sgb_vertex_name_map
-    : public boost::detail::put_get_at_helper<char*, sgb_vertex_name_map>
+    : public boost::put_get_at_helper<char*, sgb_vertex_name_map>
   {
     typedef boost::readable_property_map_tag category;
     typedef char* value_type;
@@ -330,7 +330,7 @@ namespace boost {
 
   template <class Tag>
   struct sgb_vertex_util_map
-    : public boost::detail::put_get_at_helper< typename Tag::type,
+    : public boost::put_get_at_helper< typename Tag::type,
         sgb_vertex_util_map<Tag> >
   {
     typedef boost::lvalue_property_map_tag category;
@@ -353,7 +353,7 @@ namespace boost {
 
   // Edge Length Access
   struct sgb_edge_length_map
-    : public boost::detail::put_get_at_helper<long, sgb_edge_length_map>
+    : public boost::put_get_at_helper<long, sgb_edge_length_map>
   {
     typedef boost::lvalue_property_map_tag category;
     typedef long value_type;
@@ -372,7 +372,7 @@ namespace boost {
   
   template <class Tag>
   struct sgb_edge_util_map
-    : public boost::detail::put_get_at_helper< typename Tag::type,
+    : public boost::put_get_at_helper< typename Tag::type,
         sgb_edge_util_map<Tag> >
   {
     typedef boost::lvalue_property_map_tag category;
