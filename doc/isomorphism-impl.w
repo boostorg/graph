@@ -4,11 +4,11 @@
 \usepackage{math}
 \usepackage{jweb}
 \usepackage{lgrind}
-\usepackage{times}
+%\usepackage{times}
 \usepackage{fullpage}
 
 \newcommand{\myhyperref}[2]{#2}
-\newcommand{\code}[1]{\textit{\textbf{#1}}}
+\newcommand{\code}[1]{{\small{\em \textbf{#1}}}}
 
 \setlength\overfullrule{5pt}
 \tolerance=10000
@@ -30,6 +30,10 @@
 
 This paper documents the implementation of the
 \code{simple\-\_isomorphism()} function of the Boost Graph Library.
+This function answers the question, ``are these two graphs equal?''
+By \emph{equal}, we mean the two graphs have the same structure---the
+vertices and edges are connected in the same way. The mathematical
+name for this kind of equality is \emph{isomorphic}.
 
 An \emph{isomorphism} is a one-to-one mapping of the vertices in one
 graph to the vertices of another graph such that adjacency is
@@ -40,30 +44,35 @@ if and only if edge $(f(a),f(b))$ is in $E_{2}$.
 
 Both graphs must be the same size, so let $N = |V_1| = |V_2|$. The
 graph $G_1$ is \emph{isomorphic} to $G_2$ if an isomorphism exists
-between the to graphs, which we denote by $G_1 \isomorphic G_2$.
+between the two graphs, which we denote by $G_1 \isomorphic G_2$.
 
 In the following discussion we will need to use several notions from
 graph theory. The graph $G_s=(V_s,E_s)$ is a \emph{subgraph} of graph
 $G=(V,E)$ if $V_s \subseteq V$ and $E_s \subseteq E$.  An
 \emph{induced subgraph}, denoted by $G[V_s]$, of a graph $G=(V,E)$
 consists of the vertices in $V_s$, which is a subset of $V$, and every
-edge $(u,v) \in E$ such that both $u$ and $v$ are in $V_s$.  We use
+edge $(u,v)$ in $E$ such that both $u$ and $v$ are in $V_s$.  We use
 the notation $E[V_s]$ to mean the edges in $G[V_s]$.
 
 In some places we express a function as a set of pairs, so the set $f
-= \{ (a_1,b_1), (a_2, b_2), \ldots (a_n,b_n) \}$ means $f(a_i) =
-b_i$ for $i=1,\ldots,n$.
+= \{ \pair{a_1}{b_1}, \pair{a_2}{b_2}, \ldots, \pair{a_n}{b_n} \}$
+means $f(a_i) = b_i$ for $i=1,\ldots,n$.
 
 \section{Exhaustive Backtracking Search}
 
-The algorithm used by the \code{simple\_isomorphism()} function is,
-at first approximation, an exhaustive search implemented via
+The algorithm used by the \code{simple\_isomorphism()} function is, at
+first approximation, an exhaustive search implemented via
 backtracking.  The backtracking algorithm is a recursive function. At
 each stage we will try to extend the match that we have found so far.
 So suppose that we have already determined that some subgraph of $G_1$
 is isomorphic to a subgraph of $G_2$.  We then try to add a vertex to
 each subgraph such that the new subgraphs are still isomorphic to one
-another.
+another. At some point we may hit a dead end---there are no vertices
+that can be added to extend the isomorphic subgraphs. We then
+backtrack to previous smaller matching subgraphs, and try extending
+with a different vertex choice. The process ends by either finding a
+complete mapping between $G_1$ and $G_2$ and return true, or by
+exhausting all possibilities and returning false.
 
 We are going to consider the vertices of $G_1$ in a specific order
 (more about this later), so assume that the vertices of $G_1$ are
@@ -80,12 +89,12 @@ new isomorphism $f_{k+1}$ with $G_1[k+1] \isomorphic G_2[S \union \{ v
 \}]$.
 
 \begin{tabbing}
-IS\=OM\=OR\=PH\=($k$, $S$, $f_k$) $\equiv$ \\
+IS\=O\=M\=O\=RPH($k$, $S$, $f_k$) $\equiv$ \\
 \>\textbf{if} ($S = V_2$) \\
 \>\>\textbf{return} true \\
 \>\textbf{for} each vertex $v \in V_2 - S$ \\
 \>\>\textbf{if} (MATCH($k+1$, $v$)) \\
-\>\>\>$f_{k+1} = f_k \union (k+1,v)$ \\
+\>\>\>$f_{k+1} = f_k \union \pair{k+1}{v}$ \\
 \>\>\>ISOMORPH($k+1$, $S \union \{ v \}$, $f_{k+1}$)\\
 \>\>\textbf{else}\\
 \>\>\>\textbf{return} false \\
@@ -96,23 +105,35 @@ IS\=OM\=OR\=PH\=($k$, $S$, $f_k$) $\equiv$ \\
 The basic idea of the match operation is to check whether $G_1[k+1]$
 is isomorphic to $G_2[S \union \{ v \}]$. We already know that $G_1[k]
 \isomorphic G_2[S]$ with the mapping $f_k$, so all we need to do is
-verify that the out-edges and in-edges of $k+1$ and $v$ connect to
-vertices in $G_1[k]$ and $S$ that corresponding to one another. To
-state this more precisely, we need to show that $(k+1,w) \in E_1[k+1]$
-if and only if $(v,f_k(w)) \in E_2[S \union \{ v \}]$ and that
-$(w,k+1) \in E_1[k+1]$ if and only if $(v,f_k(w)) \in E_2[S \union \{
-v \}]$.
+verify that the edges in $E_1[k+1] - E_1[k]$ connect vertices that
+correspond to the vertices connected by the edges in $E_2[S \union \{
+v \}] - E_2[S]$. The edges in $E_1[k+1] - E_1[k]$ of course are all
+the out-edges and in-edges of $k+1$, and $E_2[S \union \{ v \}] -
+E_2[S]$ consists of all the out-edges and in-edges of $v$.  We denote
+the out-edges of a given vertex $u$ by $Out[u]$ and the in-edges of a
+vertex $u$ by $In[u]$. Then we state the MATCH operation more
+precisely as follows.
 
 \begin{tabbing}
-MA\=TC\=H(\=$k+1$\=, $v$) $\equiv$ \\
-\>\textbf{for} each out edge $(k+1, j) \in E_1[k+1]$ \\
-\>\>\>\textbf{if} ( $(v,f_k(j)) \notin E_2[S \union \{ v \}]$ ) \\
-\>\>\>\>\textbf{return} false\\
-\>\textbf{for} each in edge $(j, k+1) \in E_1[k+1]$ \\
-\>\>\>\textbf{if} ($(f_k(j),v) \notin E_2[S \union \{ v \}]$) \\
-\>\>\>\>\textbf{return} false \\
-\>\textbf{return} true
+M\=ATCH($i$, $u$) $\equiv$ \\
+\>$out \leftarrow \forall (i,j) \in Out[i] \Big( (u,f(j)) \in Out[u] \Big)$ \\
+\>$in \leftarrow \forall (j,i) \in In[i] \Big( (f(j),u) \in In[u]) \Big)$ \\
+\>\textbf{return} $out \Land in$ 
 \end{tabbing}
+
+
+
+% \begin{tabbing}
+% MA\=TC\=H(\=$i$\=, $v$) $\equiv$ \\
+% \>\textbf{for} each edge $(i, j) \in E_1[i] - E_1[k]$ \\
+% \>\>\textbf{if} ($k=i$) \\
+% \>\>\>\textbf{if} ( $(v,f(j)) \notin E_2[S \union \{ v \}] - E_2[S]$ ) \\
+% \>\>\>\>\textbf{return} false\\
+% \>\>\textbf{else if} ($k=j$) \\
+% \>\>\>\textbf{if} ( $(f(i),v) \notin E_2[S \union \{ v \}] - E_2[S]$ ) \\
+% \>\>\>\>\textbf{return} false\\
+% \end{tabbing}
+
 
 The problem with the exhaustive backtracking algorithm is that there
 are $N!$ possible vertex mappings, and $N!$ gets very large as $N$
@@ -124,8 +145,8 @@ techniques described in
 \section{Vertex Invariants}
 
 One way to reduce the search space is through the use of \emph{vertex
-invariants}. The idea is to compute a number for each vertex $i(v)$
-such that $i(v) = i(v')$ if there exists some isomorphism $f$ where
+invariants}. The idea is to compute a number for each vertex $invar(v)$
+such that $invar(v) = invar(v')$ if there exists some isomorphism $f$ where
 $f(v) = v'$. Then when we look for a match to some vertex $v$, we only
 need to consider those vertices that have the same vertex invariant
 number. The number of vertices in a graph with the same vertex
@@ -142,6 +163,15 @@ them.  If the two lists are different then the two graphs are not
 isomorphic.  If the two lists are the same then the two graphs may be
 isomorphic.
 
+Also, we extend the MATCH operation to use the vertex invariants to
+help rule out vertices.
+
+\begin{tabbing}
+M\=A\=T\=C\=H-INVAR($i$, $v$) $\equiv$ \\
+\>$out \leftarrow \forall (i,j) \in Out[i] \Big( (u,f(j)) \in Out[u] \Land invar(j) = invar(f(j)) \Big)$ \\
+\>$in \leftarrow \forall (j,i) \in In[i] \Big( (f(j),u) \in In[u]) \Land invar(j) = invar(f(j)) \Big)$ \\
+\>\textbf{return} $out \Land in$ 
+\end{tabbing}
 
 \section{Vertex Order}
 
@@ -155,7 +185,7 @@ Consider the most constrained vertices first.  That is, examine
 lower-degree vertices before higher-degree vertices. This reduces the
 search space because it chops off a trunk before the trunk has a
 chance to blossom out. We can generalize this to use vertex
-invariants. We examine vertices with low invariant multiplicilty
+invariants. We examine vertices with low invariant multiplicity
 before examining vertices with high invariant multiplicity.
 
 \subsection{Adjacent First}
@@ -436,7 +466,27 @@ for (tie(i1, i1_end) = vertices(g1); i1 != i1_end; ++i1)
   my_f[*i1] = f[*i1];
 @}
 
-Let $C$ be the set of vertices that have the same connectivity
+In the psuedo-code for ISOMORPH, we iterate through each vertex in $v
+\in V_2 - S$ and check if $k+1$ and $v$ can match.  A more efficient
+approach is to directly iterate through all the potential matches for
+$k+1$. Let $M$ be the set of vertices that can be potentially matched
+to $k+1$. Then we can define $M$ as follows:
+
+\begin{align*}
+M &= \{ v \st out \lor in \} \\
+out &= (k+1,j) \in E_1[k+1] \land (v,f(j)) \in E_2[V_2 - S] \\
+in &= (j,k) \in E_1[k+1] \land (f(j),v) \in E_2[V_2 - S])
+\end{align*}
+
+
+
+
+%(k,j)
+%(j,k)
+%(v,f(j))
+%(f(j), v)
+
+Let $M$ be the set of vertices that have the same connectivity
 structure as $k$ with respect to the vertices that have already been
 mapped, and which have the same vertex invariant. It is the
 intersection of the vertices in $C$ with the vertices in $V_2 - S_2$
@@ -444,19 +494,37 @@ that are potential matches for $k$, which we denote $P$.
 
 introduce notion of partial isomorphism?
 
-@d Find potential matches for $k$ in $V_2 - S$
+@d foo
 @{
-@<Let $P = V_2 - S$@>
-for (; edge_iter != edge_iter_end
-       && (k_id == std::max(get(v1_index_map, source(*edge_iter, g1)),
-			    get(v1_index_map, target(*edge_iter, g1))));
-     ++edge_iter) {
-  std::vector<v2_desc_t> tmp, adj;
-  e = *edge_iter;
-  @<Construct $C$, the vertices that are partially isomorphic to $k$@>  
-  @<Perform $P = P \intersect C$@>
+for (tie(kj, kj_end) = out_edges(k, g1); kj != kj_end; ++kj) {
+  j = target(*kj, g1);
+  vertex2_t v = get(f, j);
+  for (tie(uv, uv_end) = in_edges(v, g2); uv != uv_end; ++uv) {
+    u = source(*uv, g2);
+    if (get(not_in_S, u) && (get(invar1, j) == get(invar2, v))) {
+      isomorph();
+    }
+  }
 }
 @}
+
+@d bar
+@{
+for (tie(jk, jk_end) = in_edges(k, g1); jk != jk_end; ++jk) {
+  j = source(*jk, g1);
+  vertex2_t v = get(f, j);
+  for (tie(vu, vu_end) = out_edges(v, g2); vu != vu_end; ++vu) {
+    u = target(*vu, g2);
+    if (get(not_in_S, u) && (get(invar1, j) == get(invar2, u))) {
+      isomorph();
+    }
+  }
+}
+@}
+
+
+
+
 
 @d Let $P = V_2 - S$
 @{
@@ -478,6 +546,11 @@ Let $P_2$ be the vertices from $V_2 - S$ that have the same
 connectivity with respect to vertex $k$ and the same vertex invariant
 as $k$.
 
+
+@d MATCH-INVAR implementation
+@{
+@}
+
 % P_2 = V_2 - S_2
 
 % (k, v_1)
@@ -493,3 +566,8 @@ as $k$.
 
 
 \end{document}
+% LocalWords:  Isomorphism Siek isomorphism adjacency subgraph subgraphs OM DFS
+% LocalWords:  ISOMORPH Invariants invariants typename IndexMapping bool const
+% LocalWords:  VertexInvariant VertexIndexMap iterator typedef VertexG Idx num
+% LocalWords:  InvarValue struct invar vec iter tmp mult inserter permute ui
+% LocalWords:  dfs cmp isomorph VertexIter EdgeIter IndexMap desc
