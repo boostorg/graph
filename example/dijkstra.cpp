@@ -48,9 +48,6 @@
   4 --> 1 
 */
 
-struct bar { };
-void foo(bar) { }
-
 int 
 main(int , char* [])
 {
@@ -64,11 +61,8 @@ main(int , char* [])
   typedef std::pair<int,int> E;
 
   const int num_nodes = 5;
-  E edges[] = { E(0,2), 
-                E(1,1), E(1,3), E(1,4),
-                E(2,1), E(2,3), 
-                E(3,4),
-                E(4,0), E(4,1) };
+  E edges[] = { E(0,2), E(1,1), E(1,3), E(1,4), E(2,1), E(2,3), 
+                E(3,4), E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
 
   Graph G(num_nodes, edges, edges + sizeof(edges)/sizeof(E), weights);
@@ -82,9 +76,7 @@ main(int , char* [])
   Vertex s = *(vertices(G).first);
 
   dijkstra_shortest_paths
-    (G, s, distance_map(&d[0]).visitor(make_ucs_visitor
-				       (record_predecessors
-					(&p[0], on_edge_relaxed()))));
+    (G, s, distance_map(&d[0]).predecessor_map(&p[0]));
 
   std::cout << "distances from start vertex:" << std::endl;
   for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
