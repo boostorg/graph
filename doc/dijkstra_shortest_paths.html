@@ -103,6 +103,7 @@ DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
     <i>d[u] := infinity</i> 
     <i>p[u] := u</i> 
     <i>color[u] :=</i> WHITE
+  <b>end for</b>
   <i>color[s] := </i>GRAY 
   <i>d[s] := 0</i> 
   INSERT(<i>Q</i>, <i>s</i>)
@@ -130,6 +131,7 @@ DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
 <pre>
 
 initialize vertex <i>u</i>
+
 
 
 
@@ -316,6 +318,39 @@ OUT: <tt>visitor(Vis v)</tt>
 <P>
 The time complexity is <i>O((V + E) log V)</i>, or just <i>O(E log V)</i>
 if all vertices are reachable from the source.
+
+<h3>Visitor Event Points</h3>
+
+<ul>
+<li><b><tt>vis.initialize_vertex(u, g)</tt></b>
+  is invoked on each vertex in the graph before the start of the
+  algorithm.
+<li><b><tt>vis.examine_vertex(u, g)</tt></b>
+  is invoked on a vertex as it is removed from the priority queue
+  and added to set <i>S</i>. At this point we know that <i>(p[u],u)</i>
+  is a shortest-paths tree edge so 
+  <i>d[u] = delta(s,u) = d[p[u]] + w(p[u],u)</i>. Also, the distances 
+  of the examined vertices is monotonically increasing
+  <i>d[u<sub>1</sub>] <= d[u<sub>2</sub>] <= d[u<sub>n</sub>]</i>. 
+<li><b><tt>vis.examine_edge(e, g)</tt></b>
+  is invoked on each out-edge of a vertex immediately after it has
+  been added to set <i>S</i>. 
+<li><b><tt>vis.edge_relaxed(e, g)</tt></b>
+  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) < d[v]</i>.
+  The edge <i>(u,v)</i> that participated in the last
+  relaxation for vertex <i>v</i> is an edge in the shortest paths tree. 
+<li><b><tt>vis.discover_vertex(v, g)</tt></b>
+  is invoked on vertex <i>v</i> when the edge 
+  <i>(u,v)</i> is examined and <i>v</i> is WHITE. Since
+  a vertex is colored GRAY when it is discovered,
+  each reacable vertex is discovered exactly once. This
+  is also when the vertex is inserted into the priority queue.
+<li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
+  is invoked if the edge is not relaxed (see above).
+<li><b><tt>vis.finish_vertex(u, g)</tt></b>
+   is invoked on a vertex after all of its out edges have
+  been examined.
+</ul>
 
 <H3>Example</H3>
 
