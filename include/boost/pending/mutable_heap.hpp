@@ -49,14 +49,14 @@
 namespace boost {
 
   template <class TreeNode, class Compare, class ExternalData>
-  inline TreeNode up_heap(TreeNode x, Compare comp, ExternalData& edata) {
+  inline TreeNode up_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
     while (x.has_parent() && comp(x, x.parent()))
       x.swap(x.parent(), edata);
     return x;
   }
 
   template <class TreeNode, class Compare, class ExternalData>
-  inline TreeNode down_heap(TreeNode x, Compare comp, ExternalData& edata) {
+  inline TreeNode down_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
     while (x.children().size() > 0) {
       typename TreeNode::children_type::iterator 
         child_iter = std::min_element(x.children().begin(),
@@ -71,7 +71,7 @@ namespace boost {
   }
 
   template <class TreeNode, class Compare, class ExternalData>
-  inline void update_heap(TreeNode x, Compare comp, ExternalData& edata) {
+  inline void update_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
     x = down_heap(x, comp, edata);
     (void)up_heap(x, comp, edata);
   }
