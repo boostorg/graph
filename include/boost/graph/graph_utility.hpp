@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <iosfwd>
+#include <algorithm>
 #include <assert.h>
 #include <boost/config.hpp>
 #include <boost/utility.hpp>
@@ -38,6 +39,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
+#include <boost/graph/depth_first_search.hpp>
 
 namespace boost {
 
@@ -199,6 +201,30 @@ namespace boost {
     return *i;
   }
 
+  template <typename MutableGraph>
+  void generate_random_graph
+    (MutableGraph& g, 
+     typename graph_traits<MutableGraph>::vertices_size_type V,
+     typename graph_traits<MutableGraph>::vertices_size_type E,
+     bool self_edges = false)
+  {
+    typedef graph_traits<MutableGraph> Traits;
+    typedef typename Traits::vertices_size_type v_size_t;
+    typedef typename Traits::edges_size_type e_size_t;
+    typedef typename Traits::vertex_descriptor vertex_descriptor;
+
+    for (v_size_t i = 0; i < V; ++i)
+      add_vertex(g);
+
+    for (e_size_t j = 0; j < E; ++j) {
+      vertex_descriptor a = random_vertex(g), b;
+      do {
+	b = random_vertex(g);
+      } while (self_edges == false && a == b);
+      add_edge(a, b, g);
+    }
+  }
+
   template <class Graph, class Vertex>
   bool is_adj_dispatch(Graph& g, Vertex a, Vertex b, bidirectional_tag)
   {
@@ -232,19 +258,39 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::edge_descriptor 
       edge_descriptor;
-    typename Graph::adjacency_iterator vi, viend, found;
+    typename graph_traits<Graph>::adjacency_iterator vi, viend, found;
     boost::tie(vi, viend) = adjacent_vertices(a, g);
+#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+    // Getting internal compiler error with std::find()
+    found = viend;
+    for (; vi != viend; ++vi)
+      if (*vi == b) {
+	found = vi;
+	break;
+      }
+#else
     found = std::find(vi, viend, b);
+#endif
     if ( found == viend )
-      return false;  
+      return false;
 
     typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
+
+#if defined(BOOST_MSVC) && defined(__SGI_STL_PORT)
+    // Getting internal compiler error with std::find()
+    out_found = oiend;
+    for (; oi != oiend; ++oi)
+      if (*oi == edge_descriptor(a,b)) {
+	out_found = oi;
+	break;
+      }
+#else
     out_found = std::find(oi, oiend, edge_descriptor(a,b));
+#endif
     if (out_found == oiend)
       return false;
-
     return true;
   }
   template <class Graph, class Vertex>
@@ -286,6 +332,64 @@ namespace boost {
         return true;
     return false;
   }
+
+  // is x a descendant of y?
+  template <typename ParentMap>
+  inline bool is_descendant
+  (typename property_traits<ParentMap>::value_type x,
+   typename property_traits<ParentMap>::value_type y,
+   ParentMap parent) 
+  {
+    if (get(parent, x) == x) // x is the root of the tree
+      return false;
+    else if (get(parent, x) == y)
+      return true;
+    else
+      return is_descendant(get(parent, x), y, parent);
+  }
+
+  // is y reachable from x?
+  template <typename IncidenceGraph, typename VertexColorMap>
+  inline bool is_reachable
+    (typename graph_traits<IncidenceGraph>::vertex_descriptor x,
+     typename graph_traits<IncidenceGraph>::vertex_descriptor y,
+     const IncidenceGraph& g,
+     VertexColorMap color) // should start out white for every vertex
+  {
+    typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+    dfs_visitor<> vis;
+    depth_first_visit(g, x, vis, color);
+    return get(color, y) != color_traits<ColorValue>::white();
+  }
+
+  // Is the undirected graph connected?
+  // Is the directed graph strongly connected?
+  template <typename VertexListGraph, typename VertexColorMap>
+  inline bool is_connected(const VertexListGraph& g, VertexColorMap color)
+  {
+    typedef typename property_traits<VertexColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+    typename graph_traits<VertexListGraph>::vertex_iterator 
+      ui, ui_end, vi, vi_end, ci, ci_end;
+    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+      for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+	if (*ui != *vi) {
+	  for (tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci) 
+	    put(color, *ci, Color::white());
+	  if (! is_reachable(*ui, *vi, color))
+	    return false;
+	}
+    return true;
+  }
+
+  template <typename Graph>
+  bool is_self_loop
+    (typename graph_traits<Graph>::edge_descriptor e,
+     const Graph& g)
+  {
+    return source(e, g) == target(e, g);
+  }
+
 
   template <class T1, class T2>
   std::pair<T1,T2> 
