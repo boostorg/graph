@@ -258,7 +258,6 @@ int read_dimacs_max_flow(Graph& g,
     default:
       /* unknown type of line */
       err_no = EN18; goto error;
-      break;
       
     } /* end of switch */
   }     /* end of input loop */
@@ -288,6 +287,7 @@ int read_dimacs_max_flow(Graph& g,
            no_lines, err_message[err_no] );
   
   exit (1);
+  return (0); /* to avoid warning */
 }
 /* --------------------   end of parser  -------------------*/
 
