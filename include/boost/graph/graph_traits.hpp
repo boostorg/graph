@@ -28,6 +28,7 @@
 
 #include <iterator>
 #include <boost/utility.hpp>
+#include <boost/pending/ct_if.hpp>
 
 namespace boost {
   
