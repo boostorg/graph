@@ -58,7 +58,7 @@ int main(int, char**) {
 
   // Make grid, like Gursoy and Atun used
   std::map<int, std::map<int, vertex_descriptor> > verts;
-  const int grid_size = 50;
+  const int grid_size = 30;
   boost::minstd_rand edge_weight_gen;
   boost::uniform_01<boost::minstd_rand> random_edge_weight(edge_weight_gen);
   for (int i = 0; i < grid_size; ++i)
@@ -114,7 +114,7 @@ int main(int, char**) {
   typedef topology::point_type point;
   std::vector<point> position_vector(num_vertices(graph));
   typedef boost::iterator_property_map<std::vector<point>::iterator,
-				       VertexIndexMap> Position;
+                                       VertexIndexMap, point, point&> Position;
   Position position(position_vector.begin(), vertex_index);
 
   boost::gursoy_atun_layout(graph, space, position);

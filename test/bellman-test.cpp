@@ -55,8 +55,12 @@ int test_main(int, char*[])
 
   bool const r = bellman_ford_shortest_paths
     (g, int (numVertex),
-     weight_map(weight_pmap).distance_map(&distance[0]).
-     predecessor_map(&parent[0]));
+     weight_pmap, 
+     &parent[0],
+     &distance[0],
+     closed_plus<int>(),
+     std::less<int>(),
+     default_bellman_visitor());
 
   if (r) {
     for(int i = 0; i < numVertex; ++i) {
@@ -71,6 +75,7 @@ int test_main(int, char*[])
     std::cout << "negative cycle" << std::endl;
   }
 
+#if !(defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 700)
   graph_traits<Graph>::vertex_descriptor s = vertex(A, g);
   std::vector<int> parent2(numVertex);
   std::vector<int> distance2(numVertex, 17);
@@ -96,6 +101,7 @@ int test_main(int, char*[])
     BOOST_CHECK(parent == parent2);
     BOOST_CHECK(distance == distance2);
   }
+#endif
 
   return boost::exit_success;
 }
