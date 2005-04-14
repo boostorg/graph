@@ -4,7 +4,7 @@ project boost/graph
     : source-location ../src
     ;
 
-lib libbgl-viz 
+lib bgl-viz 
     : graphviz_graph_lex 
     graphviz_digraph_lex 
     graphviz_graph_parser 
