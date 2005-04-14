@@ -1,3 +1,11 @@
+// Copyright 2002 Rensselaer Polytechnic Institute
+
+// Use, modification and distribution is subject to the Boost Software
+// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
+//  Authors: Lauren Foutz
+//           Scott Hill
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <map>
 #include <algorithm>
@@ -11,6 +19,7 @@
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/test/minimal.hpp>
 #include <algorithm>
+using namespace boost;
 
 template <typename T>
 struct inf_plus{
