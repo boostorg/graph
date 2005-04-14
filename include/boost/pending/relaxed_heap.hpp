@@ -143,7 +143,7 @@ public:
   void remove(const value_type& x)
   {
     group* a = &index_to_group[get(id, x) / log_n];
-    assert(groups[get(id, x)]);
+    assert(groups[get(id, x)] != 0);
     a->value = x;
     a->kind = smallest_key;
     promote(a);
@@ -154,14 +154,14 @@ public:
   value_type& top()
   {
     find_smallest();
-    assert(smallest_value->value);
+    assert(smallest_value->value != 0);
     return *smallest_value->value;
   }
 
   const value_type& top() const
   {
     find_smallest();
-    assert(smallest_value->value);
+    assert(smallest_value->value != 0);
     return *smallest_value->value;
   }
 
@@ -184,7 +184,7 @@ public:
     rank_type r = x->rank;
     group* p = x->parent;
     {
-      assert(x->value);
+      assert(x->value != 0);
 
       // Find x's group
       size_type start = get(id, *x->value) - get(id, *x->value) % log_n;
@@ -374,10 +374,10 @@ private:
 
   void promote(group* a)
   {
-    assert(a);
+    assert(a != 0);
     rank_type r = a->rank;
     group* p = a->parent;
-    assert(p);
+    assert(p != 0);
     if (do_compare(a, p)) {
       // s is the rank + 1 sibling
       group* s = p->rank > r + 1? p->children[r + 1] : 0;
@@ -387,7 +387,7 @@ private:
         if (!A[r]) A[r] = a;
         else if (A[r] != a) pair_transform(a);
       } else {
-        assert(s);
+        assert(s != 0);
         if (A[r + 1] == s) active_sibling_transform(a, s);
         else good_sibling_transform(a, s);
       }
@@ -431,27 +431,27 @@ private:
 
     // p is a's parent
     group* p = a->parent;
-    assert(p);
+    assert(p != 0);
 
     // g is p's parent (a's grandparent)
     group* g = p->parent;
-    assert(g);
+    assert(g != 0);
 
     // a' <- A(r)
-    assert(A[r]);
+    assert(A[r] != 0);
     group* ap = A[r];
-    assert(ap);
+    assert(ap != 0);
 
     // A(r) <- nil
     A[r] = 0;
 
     // let a' have parent p'
     group* pp = ap->parent;
-    assert(pp);
+    assert(pp != 0);
 
     // let a' have grandparent g'
     group* gp = pp->parent;
-    assert(gp);
+    assert(gp != 0);
 
     // Remove a and a' from their parents
     assert(ap == pp->children[pp->rank-1]); // Guaranteed because ap is active
