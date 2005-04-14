@@ -16,6 +16,10 @@
 #include <boost/property_map.hpp>
 #include <boost/limits.hpp>
 
+#ifdef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#  include <iterator>
+#endif
+
 /* This algorithm is to find coloring of a graph
 
    Algorithm: 
@@ -101,7 +105,13 @@ namespace boost {
       vertex_iterator;
 
     std::pair<vertex_iterator, vertex_iterator> v = vertices(G);
+#ifndef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
     std::vector<vertex_descriptor> order(v.first, v.second);
+#else
+    std::vector<vertex_descriptor> order;
+    order.reserve(std::distance(v.first, v.second));
+    while (v.first != v.second) order.push_back(*v.first++);
+#endif
     return sequential_vertex_coloring
              (G, 
               make_iterator_property_map
