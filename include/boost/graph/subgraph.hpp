@@ -227,6 +227,19 @@ namespace boost {
 
     std::size_t num_children() const { return m_children.size(); }
 
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+    // Bundled properties support
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type&
+    operator[](Descriptor x)
+    { return m_graph[local_to_global(x)]; }
+
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type const&
+    operator[](Descriptor x) const
+    { return m_graph[local_to_global(x)]; }
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+
     //  private:
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
@@ -256,6 +269,14 @@ namespace boost {
     }
 
   };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph>
+  struct vertex_bundle_type<subgraph<Graph> > : vertex_bundle_type<Graph> { };
+
+  template<typename Graph>
+  struct edge_bundle_type<subgraph<Graph> > : edge_bundle_type<Graph> { };
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
   //===========================================================================
   // Functions special to the Subgraph Class

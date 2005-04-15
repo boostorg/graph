@@ -196,10 +196,35 @@ namespace boost {
     typedef typename ::boost::vertex_property_type<Graph>::type vertex_property_type;
     typedef filtered_graph_tag graph_tag;
 
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+    // Bundled properties support
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type&
+    operator[](Descriptor x)
+    { return m_graph[local_to_global(x)]; }
+
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<Graph, Descriptor>::type const&
+    operator[](Descriptor x) const
+    { return m_graph[local_to_global(x)]; }
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+
     //private:
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
   };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph, typename EdgePredicate, typename VertexPredicate>
+  struct vertex_bundle_type<filtered_graph<Graph, EdgePredicate, 
+                                           VertexPredicate> > 
+    : vertex_bundle_type<Graph> { };
+
+  template<typename Graph, typename EdgePredicate, typename VertexPredicate>
+  struct edge_bundle_type<filtered_graph<Graph, EdgePredicate, 
+                                         VertexPredicate> > 
+    : edge_bundle_type<Graph> { };
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
   //===========================================================================
   // Non-member functions for the Filtered Edge Graph

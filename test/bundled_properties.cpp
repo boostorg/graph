@@ -9,6 +9,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/subgraph.hpp>
 #include <string>
 #include <vector>
 
@@ -114,6 +115,20 @@ void test_bundled_properties(Map*, truth<CanAddVertex> can_add_vertex)
 
 }
 
+void test_subgraph_bundled_properties()
+{
+  typedef boost::subgraph<
+            boost::adjacency_list<boost::vecS, boost::vecS, 
+                                  boost::bidirectionalS, City, 
+                                  boost::property<boost::edge_index_t, int,
+                                                  Highway> > > SubMap;
+  typedef boost::graph_traits<SubMap>::vertex_descriptor Vertex;
+
+  SubMap map(1);
+  Vertex v = *vertices(map).first;
+  map[v].name = "Troy";
+}
+
 int test_main(int, char*[])
 {
   typedef boost::adjacency_list<
@@ -124,6 +139,6 @@ int test_main(int, char*[])
 
   test_bundled_properties(static_cast<Map1*>(0), truth<true>());
   test_bundled_properties(static_cast<Map2*>(0), truth<false>());
-  
+  test_subgraph_bundled_properties();
   return 0;
 }

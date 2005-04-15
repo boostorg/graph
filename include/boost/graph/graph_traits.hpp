@@ -122,6 +122,27 @@ namespace boost {
   {
     typedef typename G::edge_bundled type;
   };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  namespace graph { namespace detail {
+    template<typename Graph, typename Descriptor>
+    struct bundled_result;
+
+    template<typename Graph>
+    struct bundled_result<Graph, 
+                          typename graph_traits<Graph>::vertex_descriptor>
+    {
+      typedef typename vertex_bundle_type<Graph>::type type;
+    };
+
+    template<typename Graph>
+    struct bundled_result<Graph, 
+                          typename graph_traits<Graph>::edge_descriptor>
+    {
+      typedef typename edge_bundle_type<Graph>::type type;
+    };
+  } } // end namespace graph::detail
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 } // namespace boost
 
 // Since pair is in namespace std, Koenig lookup will find source and
