@@ -77,6 +77,21 @@ class reverse_graph {
       vertex_property_type;
     typedef reverse_graph_tag graph_tag;
 
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+    // Bundled properties support
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<BidirectionalGraph, 
+                                           Descriptor>::type&
+    operator[](Descriptor x)
+    { return m_g[x]; }
+
+    template<typename Descriptor>
+    typename graph::detail::bundled_result<BidirectionalGraph, 
+                                           Descriptor>::type const&
+    operator[](Descriptor x) const
+    { return m_g[x]; }
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+
     static vertex_descriptor null_vertex()
     { return Traits::null_vertex(); }
 
@@ -84,6 +99,16 @@ class reverse_graph {
  // private:
     GraphRef m_g;
 };
+
+#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+  template<typename Graph, typename GraphRef>
+  struct vertex_bundle_type<reverse_graph<Graph, GraphRef> > 
+    : vertex_bundle_type<Graph> { };
+
+  template<typename Graph, typename GraphRef>
+  struct edge_bundle_type<reverse_graph<Graph, GraphRef> > 
+    : edge_bundle_type<Graph> { };
+#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
 template <class BidirectionalGraph>
 inline reverse_graph<BidirectionalGraph>
