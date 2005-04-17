@@ -127,8 +127,7 @@ int main(int , char* [])
 
   {
     //reverse cuthill_mckee_ordering
-    cuthill_mckee_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
-                           make_degree_map(G));
+    cuthill_mckee_ordering(G, inv_perm.rbegin());
     
     cout << "Reverse Cuthill-McKee ordering:" << endl;
     cout << "  ";

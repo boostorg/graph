@@ -6,7 +6,7 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
-#include <boost/graph/cuthill_mckee_ordering.hpp>
+#include <boost/graph/king_ordering.hpp>
 #include "graph.hpp"
 #include "digraph.hpp"
 #include <boost/python.hpp>
@@ -17,23 +17,23 @@ namespace boost { namespace graph { namespace python {
 
 template<typename Graph>
 boost::python::list
-cuthill_mckee_ordering(const Graph& g)
+king_ordering(const Graph& g)
 {
   std::list<typename Graph::Vertex> ordering;
   boost::python::list result;
-  boost::cuthill_mckee_ordering(g, std::back_inserter(ordering), 
-                                g.get_vertex_index_map());
+  boost::king_ordering(g, std::back_inserter(ordering),
+                       g.get_vertex_index_map());
   for (typename std::list<typename Graph::Vertex>::iterator i 
          = ordering.begin(); i != ordering.end(); ++i)
     result.append(*i);
   return result;
 }
 
-void export_cuthill_mckee_ordering()
+void export_king_ordering()
 {
   using boost::python::arg;
   using boost::python::def;
-  def("cuthill_mckee_ordering", &cuthill_mckee_ordering<Graph>, arg("graph"));
+  def("king_ordering", &king_ordering<Graph>, arg("graph"));
 }
 
 } } } // end namespace boost::graph::python

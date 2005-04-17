@@ -681,7 +681,8 @@ class GraphEditorWindow(wx.Frame):
     def FruchtermanReingoldLayout(self, event):
         bgl.fruchterman_reingold_force_directed_layout(self.canvas.graph, 
                                                        self.canvas.position_map,
-                                                       width=100, height=100)
+                                                       width=100, height=100,
+                                                       progressive=True)
         self.canvas.update_layout()
 
     def KamadaKawaiLayout(self, event):

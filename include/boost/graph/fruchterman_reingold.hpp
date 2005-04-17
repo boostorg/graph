@@ -106,30 +106,68 @@ struct grid_force_pairs
     typedef std::list<vertex_descriptor> bucket_t;
     typedef std::vector<bucket_t> buckets_t;
 
-    std::size_t columns = std::size_t(width / two_k);
-    std::size_t rows = std::size_t(height / two_k);
-    if (columns == 0) columns = 1;
-    if (rows == 0) rows = 1;
+    std::size_t columns = std::size_t(width / two_k + Dim(1));
+    std::size_t rows = std::size_t(height / two_k + Dim(1));
     buckets_t buckets(rows * columns);
     vertex_iterator v, v_end;
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
-      std::size_t column = std::size_t((position[*v].x - width  / 2) / two_k);
-      std::size_t row    = std::size_t((position[*v].y - height / 2) / two_k);
+      std::size_t column = std::size_t((position[*v].x + width  / 2) / two_k);
+      std::size_t row    = std::size_t((position[*v].y + height / 2) / two_k);
 
       if (column >= columns) column = columns - 1;
       if (row >= rows) row = rows - 1;
       buckets[row * columns + column].push_back(*v);
     }
 
-    typedef typename buckets_t::iterator buckets_iterator;
-    for (buckets_iterator i = buckets.begin(); i != buckets.end(); ++i) {
-      typedef typename bucket_t::iterator bucket_iterator;
-      for (bucket_iterator u = i->begin(); u != i->end(); ++u) {
-        for (bucket_iterator v = i->begin(); v != i->end(); ++v) {
-          if (*u != *v) apply_force(*u, *v);
+    for (std::size_t row = 0; row < rows; ++row)
+      for (std::size_t column = 0; column < columns; ++column) {
+        bucket_t& bucket = buckets[row * columns + column];
+        typedef typename bucket_t::iterator bucket_iterator;
+        for (bucket_iterator u = bucket.begin(); u != bucket.end(); ++u) {
+          // Repulse vertices in this bucket
+          bucket_iterator v = u;
+          for (++v; v != bucket.end(); ++v) {
+            apply_force(*u, *v);
+            apply_force(*v, *u);
+          }
+
+          // Repulse vertices in the bucket to the right
+          if (column < columns - 1) {
+            bucket_t& r_bucket = buckets[row * columns + column + 1];
+            for (v = r_bucket.begin(); v != r_bucket.end(); ++v) {
+              apply_force(*u, *v);
+              apply_force(*v, *u);
+            }
+          }
+
+          // Repulse vertices in bucket below
+          if (row < rows - 1) {
+            bucket_t& b_bucket = buckets[(row + 1) * columns + column];
+            for (v = b_bucket.begin(); v != b_bucket.end(); ++v) {
+              apply_force(*u, *v);
+              apply_force(*v, *u);
+            }
+          }
+
+          // Repulse vertices in bucket below and to the right
+          if (column < columns - 1 && row < rows - 1) {
+            bucket_t& br_bucket = buckets[(row + 1) * columns + column + 1];
+            for (v = br_bucket.begin(); v != br_bucket.end(); ++v) {
+              apply_force(*u, *v);
+              apply_force(*v, *u);
+            }
+          }
+          
+          // Repulse vertices in bucket above and to the right
+          if (column < columns - 1 && row > 0) {
+            bucket_t& ur_bucket = buckets[(row - 1) * columns + column + 1];
+            for (v = ur_bucket.begin(); v != ur_bucket.end(); ++v) {
+              apply_force(*u, *v);
+              apply_force(*v, *u);
+            }
+          }
         }
       }
-    }
   }
 
  private:

@@ -215,20 +215,20 @@ namespace boost {
   } // namespace detail  
   
 
-  template <class Graph, class OutputIterator,
-            class ColorMap, class DegreeMap> 
+  template<class Graph, class OutputIterator, class ColorMap, class DegreeMap,
+           typename VertexIndexMap> 
   OutputIterator
-  king_ordering(Graph& g,
-		    std::deque< typename
-		    graph_traits<Graph>::vertex_descriptor > vertex_queue,
-		    OutputIterator permutation, 
-		    ColorMap color, DegreeMap degree)
+  king_ordering(const Graph& g,
+                std::deque< typename graph_traits<Graph>::vertex_descriptor >
+                  vertex_queue,
+                OutputIterator permutation, 
+                ColorMap color, DegreeMap degree,
+                VertexIndexMap index_map)
   {
     typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename property_map<Graph, vertex_index_t>::const_type VertexIndexMap;
     typedef iterator_property_map<typename std::vector<DS>::iterator, VertexIndexMap, DS, DS&> PseudoDegreeMap;
     typedef indirect_cmp<PseudoDegreeMap, std::less<DS> > Compare;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
@@ -237,7 +237,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
     std::vector<DS> pseudo_degree_vec(num_vertices(g));
-    PseudoDegreeMap pseudo_degree(pseudo_degree_vec.begin(), get(vertex_index, g));
+    PseudoDegreeMap pseudo_degree(pseudo_degree_vec.begin(), index_map);
     
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;    
     queue Q;
@@ -257,7 +257,7 @@ namespace boost {
     std::vector<int> loc(num_vertices(g));
 
     //create the visitor
-    Visitor vis(&permutation, &Q, comp, pseudo_degree, loc, colors, get(vertex_index, g));
+    Visitor vis(&permutation, &Q, comp, pseudo_degree, loc, colors, index_map);
     
     while( !vertex_queue.empty() ) {
       Vertex s = vertex_queue.front();
@@ -273,77 +273,77 @@ namespace boost {
   
   // This is the case where only a single starting vertex is supplied.
   template <class Graph, class OutputIterator,
-            class ColorMap, class DegreeMap>
+            class ColorMap, class DegreeMap, typename VertexIndexMap>
   OutputIterator
-  king_ordering(Graph& g,
-		    typename graph_traits<Graph>::vertex_descriptor s,
-		    OutputIterator permutation, 
-		    ColorMap color, DegreeMap degree)
+  king_ordering(const Graph& g,
+                typename graph_traits<Graph>::vertex_descriptor s,
+                OutputIterator permutation, 
+                ColorMap color, DegreeMap degree, VertexIndexMap index_map)
   {
 
     std::deque< typename graph_traits<Graph>::vertex_descriptor > vertex_queue;
     vertex_queue.push_front( s );
-    return king_ordering(g, vertex_queue, permutation, color, degree);
-  
+    return king_ordering(g, vertex_queue, permutation, color, degree,
+                         index_map);
   }
 
   
   template < class Graph, class OutputIterator, 
-             class Color, class Degree >
+             class ColorMap, class DegreeMap, class VertexIndexMap>
   OutputIterator 
-  king_ordering(Graph& G, OutputIterator permutation, 
-		    Color color, Degree degree)
+  king_ordering(const Graph& G, OutputIterator permutation, 
+                ColorMap color, DegreeMap degree, VertexIndexMap index_map)
   {
+    if (vertices(G).first == vertices(G).second)
+      return permutation;
+
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::graph_traits<Graph>::vertex_iterator   VerIter;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
 
-    VerIter     ri = vertices(G).first;
-    Vertex      r = *ri;
-    Vertex      s;
-
-    // Check the number of connected components in G.
-    std::vector<int>        c( num_vertices( G ) );
     std::deque<Vertex>      vertex_queue;
 
-    int num = boost::connected_components(G, &c[0]);
+    // Mark everything white
+    BGL_FORALL_VERTICES_T(v, G, Graph) put(color, v, Color::white());
 
-    // Common case: we only have one set.
-    if( num <= 1 ) {
-      s = find_starting_node(G, r, color, degree);
-      vertex_queue.push_front( s );
-
-    } else {
-      // We seem to have more than one disjoint set.  So, find good
-      // starting nodes within each of the subgraphs, and then add
-      // these starting nodes to our vertex queue.
-      int                     num_considered = 0;
-      std::vector<int>        sets_considered( num );
-      std::fill( sets_considered.begin(), sets_considered.end(), 0 ); // Sanity
-
-      for( unsigned int i = 0; i < c.size(); ++i ) {
-        // If it's the first time we've considered this set,
-        // then find a good pseudo peripheral node for it.
-        // Otherwise, keep going until we've considered all of
-        // the sets.
-        if( sets_considered[c[i]] == 0 ) {
-          ++num_considered;
-	  
- 	  s = find_starting_node(G, i, color, degree);
-	  
-          assert( c[s] == c[i] );
-          vertex_queue.push_back( s );
-
-          if( num_considered >= num ) {
-            break;
-          }
-        }
-        ++(sets_considered[c[i]]);
+    // Find one vertex from each connected component 
+    BGL_FORALL_VERTICES_T(v, G, Graph) {
+      if (get(color, v) != Color::white()) {
+        depth_first_visit(G, v, dfs_visitor<>(), color);
+        vertex_queue.push_back(v);
       }
     }
-    return king_ordering(G, vertex_queue, permutation,
-			     color, degree);
+
+    // Find starting nodes for all vertices
+    // TBD: How to do this with a directed graph?
+    for (typename std::deque<Vertex>::iterator i = vertex_queue.begin();
+         i != vertex_queue.end(); ++i)
+      *i = find_starting_node(G, *i, color, degree);
+    
+    return king_ordering(G, vertex_queue, permutation, color, degree,
+                         index_map);
   }
 
+  template<typename Graph, typename OutputIterator, typename VertexIndexMap>
+  OutputIterator 
+  king_ordering(const Graph& G, OutputIterator permutation, 
+                VertexIndexMap index_map)
+  {
+    if (vertices(G).first == vertices(G).second)
+      return permutation;
+
+    typedef out_degree_property_map<Graph> DegreeMap;
+    std::vector<default_color_type> colors(num_vertices(G));
+    return king_ordering(G, permutation, 
+                         make_iterator_property_map(&colors[0], index_map),
+                         make_out_degree_map(G), index_map);
+  }
+
+  template<typename Graph, typename OutputIterator>
+  inline OutputIterator 
+  king_ordering(const Graph& G, OutputIterator permutation)
+  { return king_ordering(G, permutation, get(vertex_index, G)); }
 
 } // namespace boost
 

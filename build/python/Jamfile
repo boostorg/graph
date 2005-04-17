@@ -46,6 +46,7 @@ extension bgl
     ../../src/python/sequential_vertex_coloring.cpp
     # Sparse Matrix Ordering
     ../../src/python/cuthill_mckee_ordering.cpp
+    ../../src/python/king_ordering.cpp
 #    ../../src/python/minimum_degree_ordering.cpp
     ../../src/python/circle_layout.cpp
     ../../src/python/fruchterman_reingold.cpp

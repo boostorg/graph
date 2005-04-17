@@ -92,7 +92,7 @@ int main(int , char* [])
     Vertex s = vertex(6, G);
     //king_ordering
     king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
-                  get(vertex_degree, G));
+                  get(vertex_degree, G), get(vertex_index, G));
     cout << "King ordering starting at: " << s << endl;
     cout << "  ";    
     for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
@@ -110,7 +110,7 @@ int main(int , char* [])
     Vertex s = vertex(0, G);
     //king_ordering
     king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
-                  get(vertex_degree, G));
+                  get(vertex_degree, G), get(vertex_index, G));
     cout << "King ordering starting at: " << s << endl;
     cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
@@ -127,8 +127,7 @@ int main(int , char* [])
 
   {
     //king_ordering
-    king_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
-                  make_degree_map(G));
+    king_ordering(G, inv_perm.rbegin());
     
     cout << "King ordering:" << endl;
     cout << "  ";

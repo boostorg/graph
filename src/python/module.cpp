@@ -36,6 +36,7 @@ extern void export_biconnected_components();
 extern void export_incremental_components();
 extern void export_topological_sort();
 extern void export_cuthill_mckee_ordering();
+extern void export_king_ordering();
   //extern void export_minimum_degree_ordering();
 extern void export_sequential_vertex_coloring();
 extern void export_betweenness_centrality();
@@ -119,6 +120,7 @@ BOOST_PYTHON_MODULE(bgl)
 
   // Sparse Matrix Ordering
   export_cuthill_mckee_ordering();
+  export_king_ordering();
   //  export_minimum_degree_ordering();
 
   // Other algorithms

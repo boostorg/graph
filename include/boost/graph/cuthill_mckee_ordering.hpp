@@ -83,7 +83,7 @@ namespace boost {
   template <class Graph, class OutputIterator,
             class ColorMap, class DegreeMap>
   OutputIterator
-  cuthill_mckee_ordering(Graph& g,
+  cuthill_mckee_ordering(const Graph& g,
 			 std::deque< typename
 			 graph_traits<Graph>::vertex_descriptor > vertex_queue,
 			 OutputIterator permutation, 
@@ -128,7 +128,7 @@ namespace boost {
   template <class Graph, class OutputIterator,
             class ColorMap, class DegreeMap>
   OutputIterator
-  cuthill_mckee_ordering(Graph& g,
+  cuthill_mckee_ordering(const Graph& g,
 			 typename graph_traits<Graph>::vertex_descriptor s,
 			 OutputIterator permutation, 
 			 ColorMap color, DegreeMap degree)
@@ -144,61 +144,62 @@ namespace boost {
 
   // This is the version of CM which selects its own starting vertex
   template < class Graph, class OutputIterator, 
-             class Color, class Degree >
+             class ColorMap, class DegreeMap>
   OutputIterator 
-  cuthill_mckee_ordering(Graph& G, OutputIterator permutation, 
-			     Color color, Degree degree)
+  cuthill_mckee_ordering(const Graph& G, OutputIterator permutation, 
+                         ColorMap color, DegreeMap degree)
   {
+    if (vertices(G).first == vertices(G).second)
+      return permutation;
 
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::graph_traits<Graph>::vertex_iterator   VerIter;
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
 
-    VerIter     ri = vertices(G).first;
-    Vertex      r = *ri;
-    Vertex      s;
-
-    // Check the number of connected components in G.
-    std::vector<int>        c( num_vertices( G ) );
     std::deque<Vertex>      vertex_queue;
 
-    int num = boost::connected_components(G, &c[0]);
+    // Mark everything white
+    BGL_FORALL_VERTICES_T(v, G, Graph) put(color, v, Color::white());
 
-    // Common case: we only have one set.
-    if( num <= 1 ) {
-      s = find_starting_node(G, r, color, degree);
-      vertex_queue.push_front( s );
-
-    } else {
-      // We seem to have more than one disjoint set.  So, find good
-      // starting nodes within each of the subgraphs, and then add
-      // these starting nodes to our vertex queue.
-      int                     num_considered = 0;
-      std::vector<int>        sets_considered( num );
-      std::fill( sets_considered.begin(), sets_considered.end(), 0 ); // Sanity
-
-      for( unsigned int i = 0; i < c.size(); ++i ) {
-        // If it's the first time we've considered this set,
-        // then find a good pseudo peripheral node for it.
-        // Otherwise, keep going until we've considered all of
-        // the sets.
-        if( sets_considered[c[i]] == 0 ) {
-          ++num_considered;
-          s = find_starting_node(G, i, color,
-                                 degree);
-          assert( c[s] == c[i] );
-          vertex_queue.push_back( s );
-
-          if( num_considered >= num ) {
-            break;
-          }
-        }
-        ++(sets_considered[c[i]]);
+    // Find one vertex from each connected component 
+    BGL_FORALL_VERTICES_T(v, G, Graph) {
+      if (get(color, v) != Color::white()) {
+        depth_first_visit(G, v, dfs_visitor<>(), color);
+        vertex_queue.push_back(v);
       }
     }
+
+    // Find starting nodes for all vertices
+    // TBD: How to do this with a directed graph?
+    for (typename std::deque<Vertex>::iterator i = vertex_queue.begin();
+         i != vertex_queue.end(); ++i)
+      *i = find_starting_node(G, *i, color, degree);
+    
     return cuthill_mckee_ordering(G, vertex_queue, permutation,
-			 color, degree);
+                                  color, degree);
   }
 
+  template<typename Graph, typename OutputIterator, typename VertexIndexMap>
+  OutputIterator 
+  cuthill_mckee_ordering(const Graph& G, OutputIterator permutation, 
+                         VertexIndexMap index_map)
+  {
+    if (vertices(G).first == vertices(G).second)
+      return permutation;
+    
+    typedef out_degree_property_map<Graph> DegreeMap;
+    std::vector<default_color_type> colors(num_vertices(G));
+    return cuthill_mckee_ordering(G, permutation, 
+                                  make_iterator_property_map(&colors[0], 
+                                                             index_map),
+                                  make_out_degree_map(G));
+  }
+
+  template<typename Graph, typename OutputIterator>
+  inline OutputIterator 
+  cuthill_mckee_ordering(const Graph& G, OutputIterator permutation)
+  { return cuthill_mckee_ordering(G, permutation, get(vertex_index, G)); }
 } // namespace boost
 
 
