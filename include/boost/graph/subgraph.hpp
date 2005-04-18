@@ -232,12 +232,18 @@ namespace boost {
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type&
     operator[](Descriptor x)
-    { return m_graph[local_to_global(x)]; }
+    { 
+      if (m_parent == 0) return m_graph[x];
+      else return root().m_graph[local_to_global(x)];
+    }
 
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type const&
     operator[](Descriptor x) const
-    { return m_graph[local_to_global(x)]; }
+    { 
+      if (m_parent == 0) return m_graph[x];
+      else return root().m_graph[local_to_global(x)];
+    }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
     //  private:

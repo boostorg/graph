@@ -123,10 +123,18 @@ void test_subgraph_bundled_properties()
                                   boost::property<boost::edge_index_t, int,
                                                   Highway> > > SubMap;
   typedef boost::graph_traits<SubMap>::vertex_descriptor Vertex;
+  typedef boost::graph_traits<SubMap>::vertex_iterator vertex_iterator;
 
-  SubMap map(1);
-  Vertex v = *vertices(map).first;
-  map[v].name = "Troy";
+  SubMap map(3);
+  vertex_iterator vi = vertices(map).first;
+  Vertex troy = *vi++;
+  map[troy].name = "Troy";
+  map[*vi++].name = "Bloomington";
+  map[*vi++].name = "Endicott";
+
+  SubMap& g1 = map.create_subgraph();
+  Vertex troy1 = add_vertex(*vertices(map).first, g1);
+  BOOST_CHECK(map[troy1].name == g1[troy1].name);
 }
 
 int test_main(int, char*[])
