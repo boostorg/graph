@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1>Bellman Ford Visitor Concept</H1>
+<H1><img src="figs/python.gif" alt="(Python)"/>Bellman Ford Visitor Concept</H1>
 
 This concept defines the visitor interface for <a
 href="./bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths()</tt></a>.
@@ -156,6 +156,28 @@ when there is a negative cycle in the graph.
   <li><a href="./bellman_visitor.html"><tt>bellman_visitor</tt></a>
 </ul>
 
+<h3>Python</h3>
+
+To implement a model of the <tt>BellmanFordVisitor</tt> concept in Python,
+create a new class that derives from the <tt>BellmanFordVisitor</tt> type of
+the graph, which will be
+named <tt><i>GraphType</i>.BellmanFordVisitor</tt>. The events and syntax are
+the same as with visitors in C++. Here is an example for the
+Python <tt>bgl.Graph</tt> graph type:
+
+<pre>
+class count_tree_edges_bellman_ford_visitor(bgl.Graph.BellmanFordVisitor):
+  def __init__(self, name_map):
+    bgl.Graph.BellmanFordVisitor.__init__(self)
+    self.name_map = name_map
+
+  def edge_relaxed(self, e, g):
+    (u, v) = (g.source(e), g.target(e))
+    print "Relaxed edge ",
+    print self.name_map[u],
+    print " -> ",
+    print self.name_map[v]
+</pre>
 
 <br>
 <HR>

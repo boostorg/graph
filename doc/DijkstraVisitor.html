@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1>Dijkstra Visitor Concept</H1>
+<H1><img src="figs/python.gif" alt="(Python)"/>Dijkstra Visitor Concept</H1>
 
 This concept defines the visitor interface for <a
 href="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths()</tt></a>
@@ -183,6 +183,29 @@ search tree and all of the adjacent vertices have been discovered
 <ul>
  <li><a href="./dijkstra_visitor.html"><tt>dijkstra_visitor</tt></a>
 </ul>
+
+<h3>Python</h3>
+
+To implement a model of the <tt>DijkstraVisitor</tt> concept in Python,
+create a new class that derives from the <tt>DijkstraVisitor</tt> type of
+the graph, which will be
+named <tt><i>GraphType</i>.DijkstraVisitor</tt>. The events and syntax are
+the same as with visitors in C++. Here is an example for the
+Python <tt>bgl.Graph</tt> graph type:
+
+<pre>
+class count_tree_edges_dijkstra_visitor(bgl.Graph.DijkstraVisitor):
+  def __init__(self, name_map):
+    bgl.Graph.DijkstraVisitor.__init__(self)
+    self.name_map = name_map
+
+  def edge_relaxed(self, e, g):
+    (u, v) = (g.source(e), g.target(e))
+    print "Relaxed edge ",
+    print self.name_map[u],
+    print " -> ",
+    print self.name_map[v]
+</pre>
 
 <br>
 <HR>

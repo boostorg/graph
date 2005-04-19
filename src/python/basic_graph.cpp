@@ -114,6 +114,31 @@ basic_graph<DirectedS>::basic_graph()
 { }
 
 template<typename DirectedS>
+basic_graph<DirectedS>::basic_graph(::boost::python::object l)
+  : inherited()
+{
+  using boost::python::object;
+  std::map<object, vertex_descriptor> verts;
+  int len = ::boost::python::extract<int>(l.attr("__len__")());
+
+  for (int  i = 0; i < len; ++i) {
+    vertex_descriptor u, v;
+    object up = l[i][0];
+    object vp = l[i][1];
+
+    typename std::map<object, vertex_descriptor>::iterator pos;
+    pos = verts.find(up);
+    if (pos == verts.end()) u = verts[up] = add_vertex();
+    else u = pos->second;
+    pos = verts.find(vp);
+    if (pos == verts.end()) v = verts[vp] = add_vertex();
+    else v = pos->second;
+
+    add_edge(u, v);
+  }
+}
+
+template<typename DirectedS>
 basic_graph<DirectedS>::basic_graph(const std::string& filename, 
                                     graph_file_kind kind)
   : inherited(), dp(build_string_property_maps<DirectedS>(this))
@@ -527,13 +552,14 @@ template<typename Graph> void export_in_graph();
 template<typename DirectedS>
 void export_basic_graph(const char* name)
 {
+  using boost::python::arg;
   using boost::python::class_;
   using boost::python::init;
   using boost::python::object;
   using boost::python::range;
   using boost::python::scope;
   using boost::python::self;
-  using boost::python::arg;
+  using boost::python::tuple;
 
   typedef basic_graph<DirectedS> Graph;
   typedef typename Graph::Vertex Vertex;
@@ -545,6 +571,7 @@ void export_basic_graph(const char* name)
     scope s(
       class_<basic_graph<DirectedS> >(name)
         // Constructors
+        .def(init<object>())
         .def(init<std::string, graph_file_kind>())
         .def(init<erdos_renyi, std::size_t>(
                (arg("generator"), arg("seed") = 1)))

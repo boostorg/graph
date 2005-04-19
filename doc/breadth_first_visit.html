@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:bfv">
+<H1><A NAME="sec:bfv"><img src="figs/python.gif" alt="(Python)"/>
 <TT>breadth_first_visit</TT>
 </H1>
 
@@ -60,12 +60,16 @@ only reaches a small portion of the graph.
 IN: <tt>IncidenceGraph&amp; g</tt>
 <blockquote>
   A directed or undirected graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>.
+  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt>
 <blockquote>
-  The source vertex where the search is started.
+  The source vertex where the search is started.<br>
+
+  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
 </blockquote>
 
 
@@ -77,7 +81,10 @@ IN: <tt>visitor(BFSVisitor vis)</tt>
   event-points specified by the <a href="BFSVisitor.html">BFS
   Visitor</a> concept. The visitor object is passed by value <a
   href="#1">[1]</a>.<br> <b>Default:</b>
-  <tt>bfs_visitor&lt;null_visitor&gt;</tt>
+  <tt>bfs_visitor&lt;null_visitor&gt;</tt><br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a href="BFSVisitor.html#python"><tt>BFSVisitor</tt></a> type of the graph.
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap color)</tt>
@@ -88,7 +95,10 @@ UTIL/OUT: <tt>color_map(ColorMap color)</tt>
   Property Map</a> and its key type must be the graph's vertex
   descriptor type and the value type of the color map must model
   <a href="./ColorValue.html">ColorValue</a>.<br>
-  <b>Default:</b> <tt>get(vertex_color, g)</tt>
+  <b>Default:</b> <tt>get(vertex_color, g)</tt><br>
+
+  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
 
 UTIL: <tt>buffer(Buffer&amp; Q)</tt>
@@ -100,7 +110,10 @@ UTIL: <tt>buffer(Buffer&amp; Q)</tt>
   For example Dijkstra's algorithm can be implemented
   using a priority queue. The type <tt>Buffer</tt> must be a model of
   <a href="./Buffer.html">Buffer</a>.<br>
-  <b>Default:</b> <tt>boost::queue</tt>
+  <b>Default:</b> <tt>boost::queue</tt><br>
+
+  <b>Python</b>: The buffer must derive from the <a
+  href="./Buffer.html#python">Buffer</a> type for the graph.
 </blockquote>  
 
 

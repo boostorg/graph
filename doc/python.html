@@ -1,0 +1,125 @@
+<html>
+  <head>
+    <title>Boost Graph Library: Python Bindings (Experimental)</title>
+    <script language="JavaScript" type="text/JavaScript">
+      <!--
+          function address(host, user) {
+          var atchar = '@';
+          var thingy = user+atchar+host;
+          thingy = '<a hre' + 'f=' + "mai" + "lto:" + thingy + '>' + user+atchar+host + '</a>';
+          document.write(thingy);
+          }
+          //-->
+    </script>
+  </head>
+  <body BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
+        ALINK="#ff0000"> 
+    <img SRC="../../../boost.png" 
+         ALT="C++ Boost" width="277" height="86"> 
+    <h1>Boost Graph Library: Python Bindings (<b>Experimental</b>)</h1>
+    <p>The Boost Graph Library offers a wealth of graph algorithms and
+    data types for C++. These algorithms are flexible and efficient,
+    but the mechanisms employed to achieve this goal can result in
+    long compile times that slow the development cycle.</p>
+
+    <p>The Python bindings are build using the <a
+    href="../../python/doc">Boost.Python</a> library. The bindings are
+    meant to strike a balance of usability, flexibility, and
+    efficiency, making it possible to rapidly develop useful systems
+    using the BGL in Python.</p>
+
+    <h2><a name="caveats">Caveats and Warnings</a></h2>
+    <p>The Python bindings for the Graph library are experimental at
+    this time. The bindings may not work (but they probably do) and we
+    will not attempt to provide backward compatibility if the
+    interfaces change. If you have any ideas </p>
+
+    <h2><a name="building">Building the Python Bindings</a></h2>
+    <p>To build the Python bindings, change to
+    the <tt>libs/graph/build/python</tt> subdirectory of Boost and
+    then follow the <a
+    href="../../../more/getting_started.html#Build_Install">Boost
+    Build Instructions</a> to build the Python extension module. The
+    end result will be a dynamic library (DLL, .so, etc.) that can be
+    loaded into Python via "<tt>import bgl</tt>". <b>Note</b>: For
+    this build to succeed, the graph library must work flawlessly on
+    the compile, <i>including the new GraphViz parser</i>, which tends
+    to break many popular compilers. For instance, recent versions of
+    GCC are okay but Visual C++ 7.1 will crash. We're working to
+    resolve the situation.</p>
+
+    <h2><a name="example1">A First Example</a></h2>
+    <p>Our <a
+              href="../example/python/biconnected_components.py">first
+              example</a> illustrates the use of BGL graphs, graph
+              algorithms, and property maps from Python. The initial
+      step is to load the BGL-Python bindings:</p>
+    <pre>
+from bgl import *
+    </pre>
+
+    <p>Next, we load a GraphViz file containing the description of a
+      sample graph. The <tt>Graph</tt> type is an undirected
+      graph; <tt>file_kind</tt> is an enumerator with only two
+      potential values: <tt>adjlist</tt>, for an adjacency-list
+      representation, or <tt>graphviz</tt>, for a GraphViz file.</p>
+
+    <pre>
+g = Graph("biconnected_components.dot", file_kind.graphviz)
+    </pre>
+
+    <p>Assuming no exceptions have been thrown, we will have an
+      undirected graph loaded. We can immediately
+      call <tt>biconnected_components</tt> to compute the biconnected
+      components within the graph:</p>
+
+    <pre>
+art_points = biconnected_components(g, g.get_edge_int_map("label"))
+    </pre>
+    
+    <p>There are several interesting parts of the preceeding line. We
+    call the <a
+    href="biconnected_components.html"><tt>biconnected_components</tt></a>
+    algorithm with two parameters. The first is just the graph
+    itself. The second parameter is a property map from edges to an
+    integer value, which will be stored in the graph under the name
+    "label". Finally, the return value
+    of <tt>biconnected_components</tt> is a Python list containing the
+      articulation points of the graph.</p>
+
+    <p>Other kinds of property maps are available. In this case, we
+    create two property maps attaching strings to the vertices of the
+    graph. We then iterate over all vertices of the graph to set
+    default values for each vertex property.</p>
+
+    <pre>
+v_color = g.get_vertex_string_map("fillcolor") 
+v_style = g.get_vertex_string_map("style") 
+for v in g.vertices: 
+  v_color[v] = "white" 
+  v_style[v] = "filled"
+    </pre>
+
+    <p>Lastly, we mark all of the articulation points red and write
+    out the result in GraphViz format.</p>
+
+    <pre>
+for v in art_points:
+  v_color[v] = "red"
+
+g.write_graphviz("biconnected_components_out.dot")
+    </pre>
+
+    <h2><a name="documentation">Documentation style</a></h2>
+    <p>
+
+    <HR>
+    <TABLE>
+      <TR valign=top>
+        <TD nowrap>Copyright &copy; 2005</TD><TD>
+          <A HREF="../../../people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
+          <A HREF=http://www.osl.iu.edu/~lums>Andrew Lumsdaine</A>,
+          Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
+    </TD></TR></TABLE>
+  </body>
+</html>

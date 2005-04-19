@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1>BFS Visitor Concept</H1>
+<H1><img src="figs/python.gif" alt="(Python)"/>BFS Visitor Concept</H1>
 
 This concept defines the visitor interface for <a
 href="./breadth_first_search.html"><tt>breadth_first_search()</tt></a>.
@@ -180,6 +180,27 @@ search tree and all of the adjacent vertices have been discovered
  <li><a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>
 </ul>
 
+<a name="python"></a><h3>Python</h3>
+To implement a model of the <tt>BFSVisitor</tt> concept in Python,
+create a new class that derives from the <tt>BFSVisitor</tt> type of
+the graph, which will be
+named <tt><i>GraphType</i>.BFSVisitor</tt>. The events and syntax are
+the same as with visitors in C++. Here is an example for the
+Python <tt>bgl.Graph</tt> graph type:
+
+<pre>
+class count_tree_edges_bfs_visitor(bgl.Graph.BFSVisitor):
+  def __init__(self, name_map):
+    bgl.Graph.BFSVisitor.__init__(self)
+    self.name_map = name_map
+
+  def tree_edge(self, e, g):
+    (u, v) = (g.source(e), g.target(e))
+    print "Tree edge ",
+    print self.name_map[u],
+    print " -> ",
+    print self.name_map[v]
+</pre>
 
 <h3>See also</h3>
 

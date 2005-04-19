@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:bfs">
+<H1><A NAME="sec:bfs"><img src="figs/python.gif" alt="(Python)"/>
 <TT>breadth_first_search</TT>
 </H1>
 
@@ -157,12 +157,16 @@ IN: <tt>Graph&amp; g</tt>
 <blockquote>
   A directed or undirected graph. The graph type must
   be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt>
 <blockquote>
-  The source vertex where the search is started.
+  The source vertex where the search is started.<br>
+
+  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
 </blockquote>
 
 
@@ -174,7 +178,11 @@ IN: <tt>visitor(BFSVisitor vis)</tt>
   event-points specified by the <a href="BFSVisitor.html">BFS
   Visitor</a> concept. The visitor object is passed by value <a
   href="#1">[1]</a>.<br> <b>Default:</b>
-  <tt>bfs_visitor&lt;null_visitor&gt;</tt>
+  <tt>bfs_visitor&lt;null_visitor&gt;</tt> <br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a href="BFSVisitor.html#python"><tt>BFSVisitor</tt></a> type of the graph.
+
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap color)</tt>
@@ -198,7 +206,10 @@ UTIL/OUT: <tt>color_map(ColorMap color)</tt>
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>default_color_type</tt> of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+
+  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
@@ -212,7 +223,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
 
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL: <tt>buffer(Buffer&amp; Q)</tt>
@@ -225,7 +238,11 @@ UTIL: <tt>buffer(Buffer&amp; Q)</tt>
   using a priority queue. The type <tt>Buffer</tt> must be a model of
   <a href="./Buffer.html">Buffer</a>.<br> The <tt>value_type</tt>
   of the buffer must be the <tt>vertex_descriptor</tt> type for the graph.<br>
-  <b>Default:</b> <tt>boost::queue</tt>
+  <b>Default:</b> <tt>boost::queue</tt><br>
+
+  <b>Python</b>: The buffer must derive from the <a
+  href="./Buffer.html#python">Buffer</a> type for the graph.
+
 </blockquote>  
 
 
@@ -293,6 +310,11 @@ contains the same example, except that the <tt>adacency_list</tt>
 class used has <tt>VertexList</tt> and <tt>EdgeList</tt> set
 to <tt>listS</tt>.
 </P>
+
+<a name="python"><h3>Python example</h3></a>
+
+<p>TBD...
+
 
 <h3>See Also</h3>
 

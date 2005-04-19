@@ -228,6 +228,7 @@ class basic_graph
                                                      adjacency_iterator;
 
   basic_graph();
+  basic_graph(::boost::python::object);
   basic_graph(const std::string& filename, graph_file_kind kind); 
   basic_graph(erdos_renyi, int seed);
   basic_graph(power_law_out_degree, int seed);
