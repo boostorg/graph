@@ -192,7 +192,8 @@ namespace boost {
     std::vector<default_color_type> colors(num_vertices(G));
     return cuthill_mckee_ordering(G, permutation, 
                                   make_iterator_property_map(&colors[0], 
-                                                             index_map),
+                                                             index_map,
+                                                             colors[0]),
                                   make_out_degree_map(G));
   }
 

@@ -13,7 +13,8 @@
 #include <boost/config.hpp>
 #include <iterator>
 #include <boost/tuple/tuple.hpp>
-#include <boost/pending/ct_if.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/detail/workaround.hpp>
@@ -123,26 +124,19 @@ namespace boost {
     typedef typename G::edge_bundled type;
   };
 
-#ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   namespace graph { namespace detail {
     template<typename Graph, typename Descriptor>
-    struct bundled_result;
-
-    template<typename Graph>
-    struct bundled_result<Graph, 
-                          typename graph_traits<Graph>::vertex_descriptor>
+    class bundled_result
     {
-      typedef typename vertex_bundle_type<Graph>::type type;
-    };
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename mpl::if_c<(is_same<Descriptor, Vertex>::value),
+                                 vertex_bundle_type<Graph>,
+                                 edge_bundle_type<Graph> >::type bundler;
 
-    template<typename Graph>
-    struct bundled_result<Graph, 
-                          typename graph_traits<Graph>::edge_descriptor>
-    {
-      typedef typename edge_bundle_type<Graph>::type type;
+    public:
+      typedef typename bundler::type type;
     };
   } } // end namespace graph::detail
-#endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 } // namespace boost
 
 // Since pair is in namespace std, Koenig lookup will find source and

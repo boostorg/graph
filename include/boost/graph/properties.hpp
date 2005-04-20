@@ -318,7 +318,7 @@ namespace boost {
     return make_iterator_vertex_map(c.begin());
   }
 
-#if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) || (defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 700)
+#if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 #  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #endif
 
