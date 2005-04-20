@@ -114,12 +114,16 @@ basic_graph<DirectedS>::basic_graph()
 { }
 
 template<typename DirectedS>
-basic_graph<DirectedS>::basic_graph(::boost::python::object l)
+basic_graph<DirectedS>::basic_graph(boost::python::object l,
+                                    const std::string& name_map)
   : inherited()
 {
   using boost::python::object;
   std::map<object, vertex_descriptor> verts;
   int len = ::boost::python::extract<int>(l.attr("__len__")());
+
+  vector_property_map<object, VertexIndexMap> name;
+  if (!name_map.empty()) name = get_vertex_map<object>(name_map);
 
   for (int  i = 0; i < len; ++i) {
     vertex_descriptor u, v;
@@ -128,10 +132,16 @@ basic_graph<DirectedS>::basic_graph(::boost::python::object l)
 
     typename std::map<object, vertex_descriptor>::iterator pos;
     pos = verts.find(up);
-    if (pos == verts.end()) u = verts[up] = add_vertex();
+    if (pos == verts.end()) {
+      u = verts[up] = add_vertex();
+      if (!name_map.empty()) name[u] = up;
+    }
     else u = pos->second;
     pos = verts.find(vp);
-    if (pos == verts.end()) v = verts[vp] = add_vertex();
+    if (pos == verts.end()) {
+      v = verts[vp] = add_vertex();
+      if (!name_map.empty()) name[v] = vp;
+    }
     else v = pos->second;
 
     add_edge(u, v);
@@ -572,6 +582,7 @@ void export_basic_graph(const char* name)
       class_<basic_graph<DirectedS> >(name)
         // Constructors
         .def(init<object>())
+        .def(init<object, std::string>())
         .def(init<std::string, graph_file_kind>())
         .def(init<erdos_renyi, std::size_t>(
                (arg("generator"), arg("seed") = 1)))

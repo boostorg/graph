@@ -10,8 +10,12 @@
 <body>
 <div class="titlepage"></div>
 <div class="refnamediv">
-<h2><img src="figs/python.gif" alt="(Python)"/><span class="refentrytitle">Function
-betweenness_centrality_clustering</span></h2>
+
+<IMG SRC="../../../boost.png" 
+     ALT="C++ Boost" width="277" height="86">
+
+<h1><img src="figs/python.gif" alt="(Python)"/><span class="refentrytitle">Function
+betweenness_centrality_clustering</span></h1>
 <p>boost::betweenness_centrality_clustering &mdash; Graph
 clustering based on edge betweenness centrality.</p>
 </div>
@@ -48,53 +52,68 @@ clustering based on edge betweenness centrality.</p>
 <div class="refsect1" lang="en"><a name="id822306" id=
 "id822306"></a>
 <h2>Description</h2>
-<div class="variablelist">
-<p class="title"><b>Parameters</b></p>
-<dl>
-<dt><span class="term">done</span></dt>
-<dd>
-<p>The function object that indicates termination of the algorithm.
-It must be a ternary function object thats accepts the maximum
-centrality, the descriptor of the edge that will be removed, and
-the graph <tt class="computeroutput">g</tt> .</p>
-</dd>
-<dt><span class="term">edge_centrality</span></dt>
-<dd>
-<p>(UTIL/OUT) The property map that will store the betweenness
-centrality for each edge. When the algorithm terminates, it will
-contain the edge centralities for the graph. The type of this
-property map must model the ReadWritePropertyMap concept. Defaults
-to an <tt class="computeroutput">iterator_property_map</tt> whose
-value type is <tt class="computeroutput">Done::centrality_type</tt>
-and using <tt class="computeroutput">get(edge_index, g)</tt> for
-the index map.</p>
-</dd>
-<dt><span class="term">g</span></dt>
-<dd>
-<p>The graph on which clustering will be performed. The type of
-this parameter (<tt class="computeroutput">MutableGraph</tt> ) must
-be a model of the VertexListGraph, IncidenceGraph, EdgeListGraph,
-and Mutable Graph concepts.</p>
-</dd>
-<dt><span class="term">vertex_index</span></dt>
-<dd>
-<p>(IN) The property map that maps vertices to indices in the range
-[0, num_vertices(g)). This type of this property map must model the
-ReadablePropertyMap concept and its value type must be an integral
-type. Defaults to <tt class="computeroutput">get(vertex_index,
-g)</tt> .</p>
-</dd>
-</dl>
-</div>
 <p>This algorithm implements graph clustering based on edge
 betweenness centrality. It is an iterative algorithm, where in each
 step it compute the edge betweenness centrality (via <a href=
-"betweenness_centrality.html">brandes_betweenness_centrality) and
+"betweenness_centrality.html">brandes_betweenness_centrality</a>) and
 removes the edge with the maximum betweenness centrality. The
 <tt class="computeroutput">done</tt> function object determines
 when the algorithm terminates (the edge found when the algorithm
 terminates will not be removed).</p>
-</div>
+
+<h2>Parameters</h2>
+IN: <tt>const Graph&amp; g</tt>
+<blockquote>
+  The graph object on which the algorithm will be applied.  The type
+  <tt>Graph</tt> must be a model of <a
+  href="VertexListGraph.html">Vertex List Graph</a> and <a
+  href="IncidenceGraph.html">Incidence Graph</a>. When an edge
+  centrality map is supplied, it must also model <a
+  href="EdgeListGraph.html">Edge List Graph</a> and <a
+  href="MutableGraph.html">MutableGraph</a>.<br>
+
+<b>Python</b>: The parameter is named <tt>graph</tt>.
+</blockquote>
+
+IN: <tt>Done done</tt>
+<blockquote>
+The function object that indicates termination of the algorithm.
+It must be a ternary function object thats accepts the maximum
+centrality, the descriptor of the edge that will be removed, and
+the graph <tt class="computeroutput">g</tt>.<br>
+<b>Python</b>: Any callable Python object will suffice.
+</blockquote>
+
+OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
+<blockquote>
+  This property map is used to accumulate the betweenness centrality
+  of each edge, and is a secondary form of output for the
+  algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a>, with the graph's edge descriptor type as its key
+  type. The value type of this property map should be the same as the
+  value type of the <tt>CentralityMap</tt> property map.<br>
+
+  <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
+  work to compute and returns no answer.<br>
+  <b>Python</b>: The color map must be a <tt>edge_double_map</tt> for
+  the graph.<br>
+  <b>Python default</b>: <tt>graph.get_edge_double_map("centrality")</tt>
+</blockquote>
+
+IN: <tt>VertexIndexMap vertex_index</tt> 
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+    num_vertices(g))</tt>. This is necessary for efficient updates of the
+  heap data structure when an edge is relaxed.  The type
+  <tt>VertexIndexMap</tt> must be a model of
+  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  integer type. The vertex descriptor type of the graph needs to be
+  usable as the key type of the map.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+  <b>Python</b>: Unsupported parameter.
+</blockquote>
+
 <table xmlns:rev=
 "http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width=
 "100%">
