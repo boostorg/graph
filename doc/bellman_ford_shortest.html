@@ -20,7 +20,7 @@
 <BR Clear>
 
 
-<H1><A NAME="sec:bellman-ford"></A>
+<H1><A NAME="sec:bellman-ford"></A><img src="figs/python.gif" alt="(Python)"/>
 <TT>bellman_ford_shortest_paths</TT>
 </H1>
 
@@ -184,14 +184,18 @@ IN: <tt>EdgeListGraph&amp; g</tt>
   A directed or undirected graph whose type must be a model of
   <a href="./EdgeListGraph.html">Edge List Graph</a>. If a root vertex is
   provided, then the graph must also model
-  <a href="./VertexListGraph.html">Vertex List Graph</a>. 
+  <a href="./VertexListGraph.html">Vertex List Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>Size N</tt>
 <blockquote>
   The number of vertices in the graph. The type <tt>Size</tt> must
   be an integer type.<br>
-  <b>Default:</b> <tt>num_vertices(g)</tt>.
+  <b>Default:</b> <tt>num_vertices(g)</tt>.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 
@@ -205,7 +209,10 @@ IN: <tt>weight_map(WeightMap w)</tt>
   Map</a>.  The key type for this property map must be the edge
   descriptor of the graph.  The value type for the weight map must be
   <i>Addable</i> with the distance map's value type. <br>
-  <b>Default:</b> <tt>get(edge_weight, g)</tt>
+  <b>Default:</b> <tt>get(edge_weight, g)</tt><br>
+
+  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
+  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
 OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
@@ -219,7 +226,9 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
   Property Map</a> which key and vertex types the same as the vertex
   descriptor type of the graph.<br>
-  <b>Default:</b> <tt>dummy_property_map</tt>
+  <b>Default:</b> <tt>dummy_property_map</tt><br>
+
+  <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
 </blockquote>
 
 IN/OUT: <tt>distance_map(DistanceMap d)</tt> 
@@ -233,7 +242,8 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
   distance map must be <a
   href="http://www.sgi.com/tech/stl/LessThanComparable.html"> Less
   Than Comparable</a>.<br> <b>Default:</b> <tt>get(vertex_distance,
-  g)</tt>
+  g)</tt><br>
+  <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>
 </blockquote>
 
 IN: <tt>root_vertex(Vertex s)</tt>
@@ -254,7 +264,13 @@ IN: <tt>visitor(BellmanFordVisitor v)</tt>
   The visitor object is passed by value <a
   href="#1">[1]</a>.
 <br>
-  <b>Default:</b> <tt>bellman_visitor&lt;null_visitor&gt;</tt>
+  <b>Default:</b> <tt>bellman_visitor&lt;null_visitor&gt;</tt><br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a
+  href="BellmanFordVisitor.html#python"><tt>BellmanFordVisitor</tt></a> type
+  of the graph.
+
 </blockquote>
 
 IN: <tt>distance_combine(BinaryFunction combine)</tt>
@@ -265,7 +281,9 @@ IN: <tt>distance_combine(BinaryFunction combine)</tt>
   type.  The result type must be the same as the distance map's value
   type.<br>
   <b>Default:</b><tt>std::plus&lt;D&gt;</tt>
-  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.
+  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>distance_compare(BinaryPredicate compare)</tt>
@@ -274,7 +292,9 @@ IN: <tt>distance_compare(BinaryPredicate compare)</tt>
   that compares distances in the relaxation step. The argument types
   must match the distance map's value type.<br>
   <b>Default:</b> <tt>std::less&lt;D&gt;</tt>
-  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.
+  with <tt>D=typename&nbsp;property_traits&lt;DistanceMap&gt;::value_type</tt>.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 <P>

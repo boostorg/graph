@@ -20,6 +20,7 @@
 <BR Clear>
 
 <H1><A NAME="sec:transitive_closure">
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>transitive_closure</TT>
 </H1>
 
@@ -60,14 +61,19 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
  A directed graph, where the <tt>Graph</tt> type must model the
  <a href="./VertexListGraph.html">Vertex List Graph</a>
- and <a href="./AdjacencyGraph.html">Adjacency Graph</a> concepts.
+ and <a href="./AdjacencyGraph.html">Adjacency Graph</a> concepts.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 OUT: <tt>GraphTC&amp; tc</tt>
 <blockquote>
  A directed graph, where the <tt>GraphTC</tt> type must model the
  <a href="./VertexMutableGraph.html">Vertex Mutable Graph</a> 
- and <a href="./EdgeMutableGraph.html">Edge Mutable Graph</a> concepts.
+ and <a href="./EdgeMutableGraph.html">Edge Mutable Graph</a> concepts.<br>
+
+ <b>Python</b>: This parameter is not used in Python. Instead, a new
+ graph of the same type is returned.
 </blockquote>
 
 <h3>Named Parameters</h3>
@@ -75,7 +81,9 @@ OUT: <tt>GraphTC&amp; tc</tt>
 UTIL/OUT: <tt>orig_to_copy(G_to_TC_VertexMap g_to_tc_map)</tt>
 <blockquote>
   This maps each vertex in the input graph to the new matching
-  vertices in the output transitive closure graph.
+  vertices in the output transitive closure graph.<br>
+
+  <b>Python</b>: This must be a <tt>vertex_vertex_map</tt> of the graph.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap&amp; index_map)</tt>
@@ -89,7 +97,9 @@ IN: <tt>vertex_index_map(VertexIndexMap&amp; index_map)</tt>
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
 
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 

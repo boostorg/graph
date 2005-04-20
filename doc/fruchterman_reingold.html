@@ -7,7 +7,7 @@
      ALT="C++ Boost" width="277" height="86"> 
 
 <BR Clear>
-
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>fruchterman_reingold_force_directed_layout</TT>
 </H1>
 
@@ -78,7 +78,8 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   The graph object on which the algorithm will be applied.
   The type <tt>Graph</tt> must be a model of 
-  <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a>.
+  <a href="./VertexAndEdgeListGraph.html">Vertex And Edge List Graph</a>.<br>
+  <b>Python</b>: This parameter is named <tt>graph</tt> in Python.
 </blockquote>
 
 IN/OUT: <tt>PositionMap position</tt>
@@ -91,7 +92,10 @@ IN/OUT: <tt>PositionMap position</tt>
   Map</a> such that the vertex descriptor type of <tt>Graph</tt> is
   convertible to its key type. Its value type must be a structure
   with fields <tt>x</tt> and <tt>y</tt>, representing the coordinates
-  of the vertex.
+  of the vertex.<br>
+  <b>Python</b>: The position map must be a <tt>vertex_point2d_map</tt> for
+  the graph.<br>
+  <b>Python default</b>: <tt>graph.get_vertex_point2d_map("position")</tt>
 </blockquote>
 
 IN: <tt>Dim width</tt>
@@ -118,7 +122,8 @@ parameters: the edge descriptor, <tt>k</tt>, the distance between the
 vertices, and the graph. <tt>k</tt> is the square root of the ratio
 of the display area to the number of vertices. <br>
 <b>Default:</b> <tt>square_distance_attractive_force()</tt>, which
-computes the attractive force as <code>dist<sup>2</sup>/k</code>.
+computes the attractive force as <code>dist<sup>2</sup>/k</code>.<br>
+<b>Python</b>: Any callable Python object that matches the signature will suffice.
 </blockquote>
 
 IN: <tt>repulsive_force(RepulsiveForce fr)</tt>
@@ -129,7 +134,8 @@ parameters: the two vertex descriptors, <tt>k</tt>, the distance between the
 vertices, and the graph. <tt>k</tt> is the square root of the ratio
 of the display area to the number of vertices. <br>
 <b>Default:</b> <tt>square_distance_repsulsive_force()</tt>, which
-computes the repulsive force as <code>k<sup>2</sup>/dist</code>.
+computes the repulsive force as <code>k<sup>2</sup>/dist</code>.<br>
+<b>Python</b>: Any callable Python object that matches the signature will suffice.
 </blockquote>
 
 IN: <tt>force_pairs(ForcePairs fp)</tt>
@@ -150,7 +156,8 @@ layouts for disconnected graphs, but is not better overall: pass
 <tt>make_grid_force_pairs(width, height, position, g)</tt> as this
 parameter to use the grid variant. Other enumeration strategies may
 yield better results for particular graphs. <br>
-<b>Default:</b> <tt>make_grid_force_pairs(width, height, position, g)</tt>
+<b>Default:</b> <tt>make_grid_force_pairs(width, height, position, g)</tt><br>
+<b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>cooling(Cooling cool)</tt>
@@ -162,7 +169,8 @@ takes no arguments) and returns the temperature for the current
 iteration. When the returned temperature is zero, the algorithm
 terminates. Cooling schedules should begin with some initial
 temperature and gradually reduce the temperature to zero.<br>
-<b>Default:</b> <tt>linear_cooling&lt;double&gt;(100)</tt>
+<b>Default:</b> <tt>linear_cooling&lt;double&gt;(100)</tt><br>
+<b>Python</b>: Any callable Python object that matches the signature will suffice.
 </blockquote>
 
 UTIL: <tt>displacement_map(DisplacementMap displacement)</tt>
@@ -171,7 +179,8 @@ The displacement map is used to compute the amount by which each
 vertex will move in each step. The <tt>DisplacementMap</tt> type
 carries the same requirements as the <tt>PositionMap</tt> type.<br>
 <b>Default:</b> An <tt>iterator_property_map</tt> with a value type
-of <tt>simple_point&lt;double&gt;</tt> and using the given vertex index map.
+of <tt>simple_point&lt;double&gt;</tt> and using the given vertex index map.<br>
+<b>Python:</b> Unsupported parameter.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
@@ -184,7 +193,17 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   Map</a>. The value type of the map must be an integer type. The
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
-<b>Default:</b> <tt>get(vertex_index, g)</tt>
+<b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+<b>Python:</b> Unsupported parameter.
+</blockquote>
+
+<b>Python</b> IN: <tt>bool progressive</tt>
+<blockquote>
+  When <tt>false</tt>, performs a random layout of the graph before
+  running the Fruchterman-Reingold algorithm. If <tt>true</tt>, the
+  algorithm is executing starting with the vertex configuration in
+  the <tt>position</tt> map.<br>
+  <b>Default</b>: <tt>False</tt>.
 </blockquote>
 
 <H3>Complexity</H3>

@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:dijkstra"></A>
+<H1><A NAME="sec:dijkstra"></A><img src="figs/python.gif" alt="(Python)"/>
 <TT>dijkstra_shortest_paths</TT>
 </H1>
 
@@ -184,13 +184,17 @@ IN: <tt>const Graph&amp; g</tt>
   The graph object on which the algorithm will be applied.
   The type <tt>Graph</tt> must be a model of 
   <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt> 
 <blockquote>
   The source vertex. All distance will be calculated from this vertex,
-  and the shortest paths tree will be rooted at this vertex.
+  and the shortest paths tree will be rooted at this vertex.<br>
+
+  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
 </blockquote>
 
 <h3>Named Parameters</h3>
@@ -206,7 +210,10 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   the graph needs to be usable as the key type for the weight
   map. The value type for this map must be
   the same as the value type of the distance map.<br>
-  <b>Default:</b>  <tt>get(edge_weight, g)</tt>
+  <b>Default:</b>  <tt>get(edge_weight, g)</tt><br>
+
+  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
+  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
@@ -220,7 +227,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
@@ -234,7 +243,9 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
   Property Map</a> whose key and value types are the same as the vertex
   descriptor type of the graph.<br>
-  <b>Default:</b> <tt>dummy_property_map</tt>
+  <b>Default:</b> <tt>dummy_property_map</tt><br>
+
+  <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
 </blockquote>
 
 UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
@@ -259,7 +270,9 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+
+  <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>
 </blockquote>
 
 IN: <tt>distance_compare(CompareFunction cmp)</tt> 
@@ -273,7 +286,9 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
 
   <b>Default:</b>
   <tt>std::less&lt;D&gt;</tt> with <tt>D=typename
-  property_traits&lt;DistanceMap&gt;::value_type</tt>
+  property_traits&lt;DistanceMap&gt;::value_type</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>distance_combine(CombineFunction cmb)</tt> 
@@ -288,7 +303,9 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
   type as the distance value type.<br>
 
   <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
-   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
+   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>distance_inf(D inf)</tt> 
@@ -296,7 +313,9 @@ IN: <tt>distance_inf(D inf)</tt>
   The <tt>inf</tt> object must be the greatest value of any <tt>D</tt> object.
   That is, <tt>compare(d, inf) == true</tt> for any <tt>d != inf</tt>.
   The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
-  <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt>
+  <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>distance_zero(D zero)</tt> 
@@ -306,7 +325,9 @@ IN: <tt>distance_zero(D zero)</tt>
   and the <tt>combine</tt> function object.
   The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
   <b>Default:</b> <tt>D()</tt>with
-   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt>
+   <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
@@ -325,7 +346,10 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a <tt>std::vector</tt>
   of <tt>default_color_type</tt> of size <tt>num_vertices(g)</tt> and
-  using the <tt>i_map</tt> for the index map.
+  using the <tt>i_map</tt> for the index map.<br>
+
+  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
   
 OUT: <tt>visitor(DijkstraVisitor v)</tt>  
@@ -336,7 +360,12 @@ OUT: <tt>visitor(DijkstraVisitor v)</tt>
   <a href="./DijkstraVisitor.html">Dijkstra Visitor</a> concept. 
  The visitor object is passed by value <a
   href="#2">[2]</a>.<br>
-  <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt>
+  <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt><br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a
+  href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type
+  of the graph.
 </blockquote>
 
 

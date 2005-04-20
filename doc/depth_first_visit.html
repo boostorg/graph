@@ -20,6 +20,7 @@
 <BR Clear>
 
 <H2><A NAME="sec:dfs"></A>
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>depth_first_visit</TT>
 </H2>
 
@@ -54,16 +55,6 @@ actions are taken at each event-point within the algorithm.
 The <tt>ColorMap</tt> is used by the algorithm to keep track
 of which vertices have been visited.
 
-<p>
-The <tt>func</tt> parameter for the second variant of the algorithm is used to
-prevent the search to proceed past some vertices. It should be functional
-object callable with two parameters - the descriptor of vertex and the
-graph instance - and returing bool. 
-
-<p>The call is made immediately after call to 'discover_vertex' visitor
-event. If <tt>true</tt> is returned, the out edges of the vertex are not
-examined, as if they don't exist.
-
 <p>The second variant can be used, for example, to find all marked vertices
 reachable from a start vertex by a path which does not contain any another
 marked vertices.
@@ -81,12 +72,16 @@ marked vertices.
 IN <tt>IncidenceGraph&amp; g</tt>
 <blockquote>
 A directed or undirected graph. The graph's type must be a model of
-<a href="./IncidenceGraph.html">Incidence Graph</a>. 
+<a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+
+<b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt>
 <blockquote>
-  The source vertex from which to start the search.  
+  The source vertex from which to start the search.<br>
+
+  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
 </blockquote>
 
 IN: <tt>DFSVisitor visitor</tt>
@@ -94,7 +89,11 @@ IN: <tt>DFSVisitor visitor</tt>
   A visitor object that is invoked inside the algorithm at the
   event-points specified by the <a href="./DFSVisitor.html">DFS
   Visitor</a> concept. The visitor object is passed by value <a
-  href="#1">[1]</a>.
+  href="#1">[1]</a>.<br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
+  the graph.
 </blockquote>
 
 UTIL: <tt>ColorMap color</tt>
@@ -104,9 +103,22 @@ UTIL: <tt>ColorMap color</tt>
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
   Property Map</a> and its key type must be the graph's vertex
   descriptor type and the value type of the color map map must model
-  <a href="./ColorValue.html">Color Value</a>.
+  <a href="./ColorValue.html">Color Value</a>.<br>
+
+  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
 
+IN: <tt>TerminatorFunc func</tt>
+<blockquote>
+A function object callable with two parameters - the descriptor of
+vertex and the graph instance - and returning bool. The call is made
+immediately after call to 'discover_vertex' visitor
+event. If <tt>true</tt> is returned, the out edges of the vertex are
+not examined, as if they don't exist.<br>
+
+  <b>Python</b>: Unsupported parameter.
+</blockquote>
 <P>
 
 <h3>Complexity</h3>

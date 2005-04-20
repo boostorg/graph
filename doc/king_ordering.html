@@ -21,7 +21,8 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:bfs">
+<H1>
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>king_ordering</TT>
 </H1>
 
@@ -129,22 +130,29 @@ For version 1:
 
 <li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br> 
   An undirected graph. The graph's type must be a model of <a
-  href="./IncidenceGraph.html">IncidenceGraph</a>.
+  href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 
 <li> <tt>vertex_descriptor s</tt> &nbsp(IN) <br>
-  The starting vertex.
+  The starting vertex.<br>
+  <b>Python</b>: Unsupported parameter.
 
 <li> <tt>OutputIterator permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the <a
   href="http://www.sgi.com/tech/stl/OutputIterator.html">output
-  iterator</a> in their new order. 
+  iterator</a> in their new order. <br>
+  <b>Python</b>: This parameter is unused in Python. The new vertex
+  ordering is returned as a Python <tt>list</tt>.
+
   
 <li> <tt>ColorMap color_map</tt> &nbsp(WORK) <br>
   Used internally to keep track of the progress of the algorithm
-  (to avoid visiting the same vertex twice).
+  (to avoid visiting the same vertex twice).<br>
+  <b>Python</b>: Unsupported parameter.
 
 <li> <tt>DegreeMap degree_map</tt> &nbsp(IN) <br>
-  This must map vertices to their degree.
+  This must map vertices to their degree.<br>
+  <b>Python</b>: Unsupported parameter.
 
 </ul>
 
@@ -155,20 +163,24 @@ For version 2:
 
 <li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br> 
   An undirected graph. The graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a>.
+  href="./VertexListGraph.html">VertexListGraph</a>.<br>
+  <b>Python</b>: The name of this parameter is <tt>graph</tt>.
 
 <li> <tt><a href="http://www.sgi.com/tech/stl/OutputIterator.html">
   OutputIterator</a> permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the
-  output iterator in their new order.
+  output iterator in their new order.<br>
+  <b>Python</b>: This parameter is unused in Python. The new vertex
+  ordering is returned as a Python <tt>list</tt>.
 
 <li> <tt>ColorMap color_map</tt> &nbsp(WORK) <br>
   Used internally to keep track of the progress of the algorithm
-  (to avoid visiting the same vertex twice).
+  (to avoid visiting the same vertex twice).<br>
+  <b>Python</b>: Unsupported parameter.
 
 <li> <tt>DegreeMap degree_map</tt> &nbsp(IN) <br>
-  This must map vertices to their degree.
-
+  This must map vertices to their degree.<br>
+  <b>Python</b>: Unsupported parameter.
 </ul>
 
 
@@ -178,23 +190,29 @@ For version 3:
 
 <li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br> 
   An undirected graph. The graph's type must be a model of <a
-  href="./IncidenceGraph.html">IncidenceGraph</a>.
+  href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 
 <li> <tt> std::deque&lt; typename graph_traits&lt;Graph&gt;::vertex_descriptor &gt; vertex_queue </tt> &nbsp(IN) <br>
-  The deque containing the starting vertices for each component.
+  The deque containing the starting vertices for each component.<br>
+  <b>Python</b>: This parameter is unused in Python. The new vertex
+  ordering is returned as a Python <tt>list</tt>.
 
 <li> <tt>OutputIterator permutation</tt> &nbsp(OUT) <br> 
   The new vertex ordering. The vertices are written to the <a
   href="http://www.sgi.com/tech/stl/OutputIterator.html">output
-  iterator</a> in their new order. 
-  
+  iterator</a> in their new order.<br> 
+  <b>Python</b>: This parameter is unused in Python. The new vertex
+  ordering is returned as a Python <tt>list</tt>.
+
 <li> <tt>ColorMap color_map</tt> &nbsp(WORK) <br>
   Used internally to keep track of the progress of the algorithm
-  (to avoid visiting the same vertex twice).
+  (to avoid visiting the same vertex twice).<br>
+  <b>Python</b>: Unsupported parameter.
 
 <li> <tt>DegreeMap degree_map</tt> &nbsp(IN) <br>
-  This must map vertices to their degree.
-
+  This must map vertices to their degree.<br>
+  <b>Python</b>: Unsupported parameter.
 </ul>
 
 

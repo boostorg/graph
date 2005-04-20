@@ -19,7 +19,7 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:depth-first-search"></A>
+<H1><A NAME="sec:depth-first-search"></A><img src="figs/python.gif" alt="(Python)"/>
 <TT>depth_first_search</TT>
 </H1>
 
@@ -164,7 +164,9 @@ IN: <tt>Graph&amp; g</tt>
 <blockquote>
   A directed graph. The graph type must
   be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>
-  and <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  and <a href="./VertexListGraph.html">Vertex List Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 
@@ -176,7 +178,11 @@ IN: <tt>visitor(DFSVisitor vis)</tt>
   event-points specified by the <a href="./DFSVisitor.html">DFS
   Visitor</a> concept. The visitor object is passed by value <a
   href="#1">[1]</a>. <br> <b>Default:</b>
-  <tt>dfs_visitor&lt;null_visitor&gt;</tt>
+  <tt>dfs_visitor&lt;null_visitor&gt;</tt><br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
+  the graph.
 </blockquote>
 
 UTIL/OUT: <tt>color_map(ColorMap color)</tt>
@@ -192,7 +198,10 @@ UTIL/OUT: <tt>color_map(ColorMap color)</tt>
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>default_color_type</tt> of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+
+   <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
 
 IN: <tt>root_vertex(typename
@@ -201,7 +210,7 @@ graph_traits&lt;VertexListGraph&gt;::vertex_descriptor start)</tt>
   This specifies the vertex that the depth-first search should
   originate from. The type is the type of a vertex descriptor for the
   given graph.<br>
-  <b>Default:</b> <tt>*vertices(g).first</tt>
+  <b>Default:</b> <tt>*vertices(g).first</tt><br>
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
@@ -215,7 +224,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
 
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 <P>

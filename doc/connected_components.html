@@ -22,6 +22,7 @@
 
 <H1>
 <A NAME="sec:connected-components">
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>connected_components</TT></A>
 </H1>
 
@@ -65,7 +66,9 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
 An undirected graph. The graph type must be a model of <a
 href="VertexListGraph.html">Vertex List Graph</a> and <a
-href="IncidenceGraph.html">Incidence Graph</a>.
+href="IncidenceGraph.html">Incidence Graph</a>.<br>
+
+<b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 OUT: <tt>ComponentMap c</tt>
@@ -78,7 +81,10 @@ recording the component number in the component property map. The
 href="../../property_map/WritablePropertyMap.html">Writable Property
 Map</a>. The value type shouch be an integer type, preferably the same
 as the <tt>vertices_size_type</tt> of the graph. The key type must be
-the graph's vertex descriptor type.
+the graph's vertex descriptor type.<br>
+
+  <b>Python</b>: Must be an <tt>vertex_int_map</tt> for the graph.<br>
+  <b>Python default</b>: <tt>graph.get_vertex_int_map("component")</tt>
 </blockquote>
 
 <h3>Named Parameters</h3>
@@ -96,7 +102,9 @@ UTIL: <tt>color_map(ColorMap color)</tt>
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>default_color_type</tt> of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
+  the graph.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
@@ -110,7 +118,8 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
 
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 

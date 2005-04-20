@@ -7,7 +7,7 @@
   <body>
     <IMG SRC="../../../boost.png" 
      ALT="C++ Boost" width="277" height="86"> 
-<h1><tt>brandes_betweenness_centrality</tt></h1>
+<h1><img src="figs/python.gif" alt="(Python)"/><tt>brandes_betweenness_centrality</tt></h1>
 
     <p>
     <pre>
@@ -126,7 +126,9 @@ IN: <tt>const Graph&amp; g</tt>
   href="VertexListGraph.html">Vertex List Graph</a> and <a
   href="IncidenceGraph.html">Incidence Graph</a>. When an edge
   centrality map is supplied, it must also model <a
-  href="EdgeListGraph.html">Edge List Graph</a>.
+  href="EdgeListGraph.html">Edge List Graph</a>.<br>
+
+<b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
     
 UTIL: <tt>IncomingMap incoming</tt> 
@@ -141,7 +143,9 @@ UTIL: <tt>IncomingMap incoming</tt>
   href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>std::vector&lt;Edge&gt;</tt>, where
-  <tt>Edge</tt> is the edge descriptor type of the graph.
+  <tt>Edge</tt> is the edge descriptor type of the graph.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL: <tt>DistanceMap distance_map</tt> 
@@ -162,7 +166,9 @@ UTIL: <tt>DistanceMap distance_map</tt>
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type (or the
   <tt>vertices_size_type</tt> of the graph when no weight map exists)
   of size <tt>num_vertices(g)</tt> and using the <tt>vertex_index</tt> for
-  the index map.
+  the index map.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL: <tt>DependencyMap dependency</tt> 
@@ -180,7 +186,9 @@ UTIL: <tt>DependencyMap dependency</tt>
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>CentralityMap</tt>'s value type of
   size <tt>num_vertices(g)</tt> and using the <tt>vertex_index</tt>
-  for the index map.
+  for the index map.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL: <tt>PathCountMap path_count</tt> 
@@ -199,7 +207,9 @@ UTIL: <tt>PathCountMap path_count</tt>
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>degree_size_type</tt> of the graph of
   size <tt>num_vertices(g)</tt> and using the <tt>vertex_index</tt>
-  for the index map.
+  for the index map.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 <h3>Named parameters</h3>
@@ -214,7 +224,10 @@ OUT/UTIL: <tt>CentralityMap centrality_map</tt>
   or rational type.<br>
 
   <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
-  work to compute and returns no answer.
+  work to compute and returns no answer.<br>
+  <b>Python</b>: The color map must be a <tt>vertex_double_map</tt> for
+  the graph.<br>
+  <b>Python default</b>: <tt>graph.get_vertex_double_map("centrality")</tt>
 </blockquote>
 
 OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
@@ -228,7 +241,10 @@ OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
   value type of the <tt>CentralityMap</tt> property map.<br>
 
   <b>Default:</b> a <tt>dummy_property_map</tt>, which requires no
-  work to compute and returns no answer.
+  work to compute and returns no answer.<br>
+  <b>Python</b>: The color map must be a <tt>edge_double_map</tt> for
+  the graph.<br>
+  <b>Python default</b>: <tt>graph.get_edge_double_map("centrality")</tt>
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt> 
@@ -241,6 +257,7 @@ IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt>
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>weight_map(WeightMap w_map)</tt>   
@@ -255,6 +272,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   map. The value type for this map must be
   the same as the value type of the distance map.<br>
   <b>Default:</b> All edge weights are assumed to be equivalent.
+  <b>Python</b>: If supplied, must be an <tt>edge_double_map</tt> for the graph.
 </blockquote>
 
 <h3>Complexity</h3> 

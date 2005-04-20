@@ -21,12 +21,14 @@
 
 
 <H1><A NAME="sec:kruskal">
+<img src="figs/python.gif" alt="(Python)"/>
 <TT>kruskal_minimum_spanning_tree</TT>
 </H1>
 
 <PRE>
 template &lt;class Graph, class OutputIterator, class P, class T, class R&gt;
-void kruskal_minimum_spanning_tree(Graph&amp; g, OutputIterator tree_edges, 
+OutputIterator
+kruskal_minimum_spanning_tree(Graph&amp; g, OutputIterator tree_edges, 
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </PRE>
 
@@ -85,14 +87,20 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   An undirected graph. The graph type must be a model of
   <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./EdgeListGraph.html">Edge List Graph</a>.
+  and <a href="./EdgeListGraph.html">Edge List Graph</a>.<br>
+
+  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
 IN: <tt>OutputIterator spanning_tree_edges</tt>
 <blockquote>
    The edges of the minimum spanning tree are output to this <a
    href="http:www.sgi.com/tech/stl/OutputIterator.html">Output
-   Iterator</a>.
+   Iterator</a>.<br>
+
+   <b>Python</b>: This parameter is not used in Python. Instead, a
+   Python <tt>list</tt> containing all of the spanning tree edges is
+   returned.
 </blockquote>
 
 
@@ -107,7 +115,9 @@ The weight or ``length'' of
   href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
   Comparable</a>. The key type of this map needs to be the graph's
   edge descriptor type.<br>
-  <b>Default:</b> <tt>get(edge_weight, g)</tt>
+  <b>Default:</b> <tt>get(edge_weight, g)</tt><br>
+  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
+  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
 UTIL: <tt>rank_map(RankMap r_map)</tt> 
@@ -123,7 +133,9 @@ UTIL: <tt>rank_map(RankMap r_map)</tt>
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the integers of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt> 
@@ -140,7 +152,9 @@ UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt>
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of vertex descriptors of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.
+  map.<br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
@@ -153,7 +167,9 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   Map</a>. The value type of the map must be an integer type. The
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 

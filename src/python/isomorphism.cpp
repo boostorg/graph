@@ -65,13 +65,13 @@ void export_isomorphism()
   using boost::python::object;
 
   def("isomorphism", &isomorphism<Graph>,
-      (arg("graph"), 
+      (arg("g1"), arg("g2"),
        arg("isomorphism_map") = 
          (vector_property_map<Graph::Vertex, Graph::VertexIndexMap>*)0,
        arg("vertex_invariant") = object()));
 
   def("isomorphism", &isomorphism<Digraph>,
-      (arg("graph"), 
+      (arg("g1"), arg("g2"),
        arg("isomorphism_map") = 
          (vector_property_map<Digraph::Vertex, Digraph::VertexIndexMap>*)0,
        arg("vertex_invariant") = object()));

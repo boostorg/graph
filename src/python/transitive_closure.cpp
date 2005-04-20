@@ -38,7 +38,7 @@ void export_transitive_closure()
 
   def("transitive_closure", &transitive_closure<Digraph>, 
       (arg("graph"),
-       arg("g_to_tc_map") = 
+       arg("orig_to_copy") = 
          (vector_property_map<Digraph::Vertex, Digraph::VertexIndexMap>*)0));
 }
 
