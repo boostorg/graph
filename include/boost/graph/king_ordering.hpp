@@ -84,7 +84,7 @@ namespace boost {
  	    }
 	  }
 	  
- 	  colors[w] = 0;
+ 	  colors[get(vertex_map, w)] = 0;
  	  i++;
 	}
       }
