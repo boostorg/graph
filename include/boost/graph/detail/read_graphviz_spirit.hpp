@@ -44,6 +44,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/dynamic_property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/detail/workaround.hpp>
 #include <algorithm>
 #include <exception> // for std::exception
 #include <string>
@@ -530,8 +531,12 @@ struct dot_skipper : public grammar<dot_skipper>
           // comment forms
           skip = space_p
                | comment_p("//")                 
-               | comment_p("#")                     
+               | comment_p("#")  
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1310)
+               | confix_p(str_p("/*") ,*anychar_p, str_p("*/"))
+#else
                | confix_p("/*" ,*anychar_p, "*/")
+#endif
                ;
 
 #ifdef BOOST_SPIRIT_DEBUG
