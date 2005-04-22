@@ -52,6 +52,6 @@ extension bgl
     ../../src/python/fruchterman_reingold.cpp
     ../../src/python/kamada_kawai_spring_layout.cpp
     ../../src/python/page_rank.cpp
-    <lib>../../../python/build/boost_python # dependencies
+    <dll>../../../python/build/boost_python # dependencies
     <lib>../bgl-viz
     ;
