@@ -76,9 +76,9 @@
     loaded into Python via "<tt>import bgl</tt>". <b>Note</b>: For
     this build to succeed, the graph library must work flawlessly on
     the compile, <i>including the new GraphViz parser</i>, which tends
-    to break many popular compilers. For instance, recent versions of
-    GCC are okay but Visual C++ 7.1 will crash. We're working to
-    resolve the situation.</p>
+    to break many compilers. Visual C++ 7.1 and recent versions of the
+    GCC and Intel compilers are known to work.</p> 
+
 
     <h2><a name="goals">Goals</a></h2>
     <p>The goal of the BGL-Python bindings is to create a set of
@@ -100,7 +100,8 @@
     implemented in C++, and the Python version may be syntactically
     superior. Nonetheless, having a strong syntactic correlation
     between the BGL in C++ and the BGL in Python is important for this
-    project.</p>
+    project. It is <b>strongly</b> recommended that you build with
+    release mode, e.g., <tt>bjam -sBUILD=release</tt>.</p>
 
     <h2><a name="example1">A First Example</a></h2>
     <p>Our <a
