@@ -75,7 +75,7 @@ int test_main(int, char*[])
     std::cout << "negative cycle" << std::endl;
   }
 
-#if !(defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 700)
+#if !(defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 700) && !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
   graph_traits<Graph>::vertex_descriptor s = vertex(A, g);
   std::vector<int> parent2(numVertex);
   std::vector<int> distance2(numVertex, 17);

@@ -61,7 +61,7 @@ namespace boost {
 
 
 	//heap the vertices already there
-	std::make_heap(rbegin, rend, boost::bind(comp, _2, _1));
+	std::make_heap(rbegin, rend, boost::bind<bool>(comp, _2, _1));
 
 	int i = 0;
 	

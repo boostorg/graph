@@ -22,6 +22,7 @@
 #include <boost/graph/plod_generator.hpp>
 #include <boost/graph/small_world_generator.hpp>
 #endif
+using namespace boost;
 
 template <class Property, class Vertex>
 struct position_writer {
