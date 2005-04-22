@@ -36,7 +36,8 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   int basic_comps = 
     connected_components(g, 
 			 make_iterator_property_map(components.begin(), 
-						    get(vertex_index, g)));
+						    get(vertex_index, g),
+                                                    int()));
 
   std::vector<Vertex> art_points_check;
   
@@ -51,7 +52,8 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
       connected_components
         (g_copy, 
 	 make_iterator_property_map(components.begin(), 
-				    get(vertex_index, g_copy)));
+				    get(vertex_index, g_copy),
+                                    int()));
 
     if (copy_comps > basic_comps)
       art_points_check.push_back(*vi);
