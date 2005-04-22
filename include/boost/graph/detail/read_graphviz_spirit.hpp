@@ -532,7 +532,7 @@ struct dot_skipper : public grammar<dot_skipper>
           skip = space_p
                | comment_p("//")                 
                | comment_p("#")  
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1310)
+#if BOOST_WORKAROUND(BOOST_MSVC, <= 1400)
                | confix_p(str_p("/*") ,*anychar_p, str_p("*/"))
 #else
                | confix_p("/*" ,*anychar_p, "*/")
