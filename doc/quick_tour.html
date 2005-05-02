@@ -112,7 +112,7 @@ convenient way to explicitly create the edges for this example.
     typedef std::pair&lt;int, int&gt; Edge;
     Edge edge_array[] = 
     { Edge(A,B), Edge(A,D), Edge(C,A), Edge(D,C),
-      Edge(C,E), Edge(B,D), Edge(D,E), };
+      Edge(C,E), Edge(B,D), Edge(D,E) };
     const int num_edges = sizeof(edge_array)/sizeof(edge_array[0]);
 
     // declare a graph object
@@ -132,7 +132,7 @@ Pointers to the <tt>edge_array</tt> can be viewed as iterators, so we can call
 the iterator constructor by passing pointers to the beginning and end of the
 array.
 <pre>
-    Graph g(edge_array, edge_array + sizeof(edge_array) / sizeof(E), num_vertices);
+    Graph g(edge_array, edge_array + sizeof(edge_array) / sizeof(Edge), num_vertices);
 </pre>
 <p>Instead of creating a graph with a certain number of vertices to begin with,
 it is also possible to add and remove vertices with the <a href="MutableGraph.html#sec:add-vertex"><tt>add_vertex()</tt></a>
