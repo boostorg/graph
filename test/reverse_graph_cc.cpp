@@ -10,6 +10,7 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/reverse_graph.hpp>
+#include <string>
 
 int main(int,char*[])
 {
@@ -18,7 +19,8 @@ int main(int,char*[])
   {
     typedef adjacency_list< vecS, vecS, bidirectionalS, 
       property<vertex_color_t, int>,
-      property<edge_weight_t, int>
+      property<edge_weight_t, int>,
+      property<graph_name_t, std::string>
     > AdjList;
     typedef reverse_graph<AdjList> Graph;
     function_requires< VertexListGraphConcept<Graph> >();
@@ -26,12 +28,14 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    get_property(*(Graph*)0, graph_name_t());
   }
   // Check non-const reverse_graph
   {
     typedef adjacency_list< vecS, vecS, bidirectionalS, 
       property<vertex_color_t, int>,
-      property<edge_weight_t, int>
+      property<edge_weight_t, int>,
+      property<graph_name_t, std::string>
     > AdjList;
     typedef reverse_graph<AdjList,AdjList&> Graph;
     function_requires< VertexListGraphConcept<Graph> >();
@@ -39,6 +43,8 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    get_property(*(Graph*)0, graph_name_t());
+    set_property(*(Graph*)0, graph_name_t(), "foo");
   }
   return 0;
 }

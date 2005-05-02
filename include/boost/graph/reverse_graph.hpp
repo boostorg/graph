@@ -292,6 +292,22 @@ put(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k,
   put(p, g.m_g, k, val);
 }
 
+template<typename BidirectionalGraph, typename GRef, typename Tag,
+         typename Value>
+inline void
+set_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag, 
+             const Value& value)
+{
+  set_property(g.m_g, tag, value);
+}
+
+template<typename BidirectionalGraph, typename GRef, typename Tag>
+inline
+typename graph_property<BidirectionalGraph, Tag>::type
+get_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag)
+{
+  return get_property(g.m_g, tag);
+}
 
 } // namespace boost
 
