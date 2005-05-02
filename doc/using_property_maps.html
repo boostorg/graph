@@ -202,7 +202,7 @@ Dijkstra's algorithm.
 </PRE>
 
 <P>
-The next question is: how to interior properties become attached to a
+The next question is: how do interior properties become attached to a
 graph object in the first place? This depends on the graph class that
 you are using. The <TT>adjacency_list</TT> graph class of BGL uses a
 property mechanism (see Section <A
@@ -238,7 +238,7 @@ can be used to create exterior property maps for the capacity and flow propertie
 indexed by edge ID. The edge ID is added to the graph using a property,
 and the values of the ID's are given when each edge is added to the
 graph. The complete source code for this example is in
-<TT>examples/exterior_edge_properties.cpp</TT>. The
+<TT>example/exterior_edge_properties.cpp</TT>. The
 <TT>print_network()</TT> function prints out the graph with
 the flow and capacity values.
 
@@ -257,11 +257,11 @@ the flow and capacity values.
   add_edge(0, 1, 0, G);
   // ...
 
-  typedef boost::graph_traits&lt;Graph&gt;::edge_descriptor Edge;
+  typedef graph_traits&lt;Graph&gt;::edge_descriptor Edge;
   typedef property_map&lt;Graph, edge_index_t&gt;::type EdgeID_Map;
   EdgeID_Map edge_id = get(edge_index, G);
 
-  boost::random_access_iterator_property_map
+  random_access_iterator_property_map
     &lt;int*, int, int&amp;, EdgeID_Map&gt; 
       capacity(capacity_array, edge_id), 
       flow(flow_array, edge_id);
@@ -284,7 +284,7 @@ Instead the method described above of using a
 property must be used. The <TT>edge_list</TT> class may also use an
 integer type for the vertex descriptor, depending on how the adapted
 edge iterator is defined. The example in
-<TT>examples/bellman_ford.cpp</TT> shows <TT>edge_list</TT> being used
+<TT>example/bellman_ford.cpp</TT> shows <TT>edge_list</TT> being used
 with pointers as vertex property maps.
 
 <P>
@@ -327,8 +327,8 @@ colors which will be needed in a call to
 <TT>std::vector</TT> (obtained with a call to <TT>begin()</TT>) is a
 pointer, the pointer property map method also works for
 <TT>std::vector::iterator</TT>. The complete source code for this
-examples is in <a
-href="../example/city_visitor.cpp"><TT>examples/city_visitor.cpp</TT></a>.
+example is in <a
+href="../example/city_visitor.cpp"><TT>example/city_visitor.cpp</TT></a>.
 
 <P>
 <PRE>

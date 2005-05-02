@@ -30,7 +30,7 @@
      |
   San Jose ---- Fresno
      |
-  Los Angeles ---- Los Vegas ---- Pheonix
+  Los Angeles ---- Las Vegas ---- Phoenix
      |
   San Diego  
 
@@ -92,21 +92,20 @@ struct finish_city : public base_visitor<finish_city>
 int main(int, char*[]) 
 {
 
-  enum { SanJose, SanFran, LA, SanDiego, Fresno, LosVegas, Reno,
-         Sacramento, SaltLake, Pheonix, N };
+  enum { SanJose, SanFran, LA, SanDiego, Fresno, LasVegas, Reno,
+         Sacramento, SaltLake, Phoenix, N };
 
-  string names[] = { "San Jose", "San Francisco",  "San Jose",
-                     "San Francisco", "Los Angeles", "San Diego", 
-                     "Fresno", "Los Vegas", "Reno", "Sacramento",
-                     "Salt Lake City", "Pheonix" };
+  string names[] = { "San Jose", "San Francisco", "Los Angeles", "San Diego", 
+                     "Fresno", "Las Vegas", "Reno", "Sacramento",
+                     "Salt Lake City", "Phoenix" };
 
   typedef std::pair<int,int> E;
   E edge_array[] = { E(Sacramento, Reno), E(Sacramento, SanFran),
                      E(Reno, SaltLake),
                      E(SanFran, SanJose),
                      E(SanJose, Fresno), E(SanJose, LA),
-                     E(LA, LosVegas), E(LA, SanDiego),
-                     E(LosVegas, Pheonix) };
+                     E(LA, LasVegas), E(LA, SanDiego),
+                     E(LasVegas, Phoenix) };
 
   /* Create the graph type we want. */
   typedef adjacency_list<vecS, vecS, undirectedS> Graph;

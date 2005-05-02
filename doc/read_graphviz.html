@@ -110,7 +110,7 @@ handling.</p>
 parallel edge to the supplied MutableGraph fails.  The DOT language
 supports parallel edges, but some BGL-compatible graph types do not.
 One example of such a graph is <tt class="literal"><span class="pre">boost::adjacency_list&lt;setS,vecS&gt;</span></tt>,
-which allows at most one edge can between any two vertices.</p>
+which allows at most one edge between any two vertices.</p>
 <p>The <tt class="literal"><span class="pre">directed_graph_error</span></tt> exception occurs when an undirected graph
 type is passed to <tt class="literal"><span class="pre">read_graph</span></tt> but the textual representation of the
 graph is directed, as indicated by the <tt class="literal"><span class="pre">digraph</span></tt> keyword in the DOT
@@ -178,8 +178,8 @@ that property map value types are default constructible.</strong></li>
 are case-insensitive.  This change should be easy given the proper
 understanding of Spirit and some free time (hint hint!)</li>
 <li>The parser currently does not handle continuation lines as defined
-in the DOT Language.  Some more sophisticated parsing of
-identifier(so-called &quot;ID&quot; in the source) is required to support this.</li>
+in the DOT Language.  Some more sophisticated parsing of identifiers
+(so-called &quot;ID&quot; in the source) is required to support this.</li>
 </ul>
 </blockquote>
 </div>

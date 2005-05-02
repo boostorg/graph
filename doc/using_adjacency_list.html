@@ -456,11 +456,11 @@ Custom Edge Properties
 </H3>
 
 <P>
-Creating a your own property types and properties is easy; just define
+Creating your own property types and properties is easy; just define
 a tag class for your new property. The property tag class will need to
 define <tt>num</tt> with a unique integer ID, and <tt>kind</tt> which
 should be either <tt>edge_property_tag</tt>,
-<tt>vertex_property_tag</tt>, or <tt>graph_property_tag</tt>,.
+<tt>vertex_property_tag</tt>, or <tt>graph_property_tag</tt>.
 
 <P>
 <PRE>
@@ -477,17 +477,18 @@ struct capacity_t {
 You can also use enum's instead of struct's to create tag types.
 Create an enum type for each property. The first part of the name of
 the enum type must be <tt>edge</tt>, <tt>vertex</tt>, or
-<tt>graph</tt> followed by an underscore, with a <tt>_t</tt> at the
+<tt>graph</tt> followed by an underscore, the new property name, and
+a <tt>_t</tt> at the
 end. Inside the enum, define a value with the same name minus the
 <tt>_t</tt>. Then invoke the <tt>BOOST_INSTALL_PROPERTY</tt> macro.
 
 <pre>
-enum edge_myflow_t { edge_myflow };
-enum edge_mycapacity_t { edge_mycapacity };
+enum edge_flow_t { edge_flow };
+enum edge_capacity_t { edge_capacity };
 
 namespace boost {
-  BOOST_INSTALL_PROPERTY(edge, myflow);
-  BOOST_INSTALL_PROPERTY(edge, mycapacity);
+  BOOST_INSTALL_PROPERTY(edge, flow);
+  BOOST_INSTALL_PROPERTY(edge, capacity);
 }
 </pre>
 
@@ -534,7 +535,7 @@ in the graph.
 
 <P>
 <PRE>
-  struct first_vertex_name_t {
+  struct first_name_t {
     typedef vertex_property_tag kind;
   };
 </PRE>
@@ -548,7 +549,7 @@ owes who''.
 
 <P>
 <PRE>
-  typedef property&lt;first_vertex_name_t, std::string&gt; FirstNameProperty;
+  typedef property&lt;first_name_t, std::string&gt; FirstNameProperty;
   typedef adjacency_list&lt;vecS, vecS, directedS, 
                          FirstNameProperty&gt; MyGraphType;
 
@@ -562,8 +563,8 @@ owes who''.
   for (int i = 0; i &lt; 11; ++i)
     add_edge(edge_array[i].first, edge_array[i].second, G);
 
-  property_map&lt;MyGraphType, first_vertex_name_t&gt;::type
-    name = get(first_vertex_name_t(), G);
+  property_map&lt;MyGraphType, first_name_t&gt;::type
+    name = get(first_name_t(), G);
     
   boost::put(name, 0, "Jeremy");
   boost::put(name, 1, "Rich");
@@ -578,7 +579,7 @@ owes who''.
 The <TT>who_owes_who()</TT> function written for this example was
 implemented in a generic style. The input is templated so we do not
 know the actual graph type. To find out the type of the property
-map for our first name property, we need to use the
+map for our first-name property, we need to use the
 <TT>property_map</TT> traits class. The <TT>const_type</TT>
 is used since the graph parameter is const. Once we have the property
 map type, we can deduce the value type of the property using the
@@ -594,8 +595,8 @@ other property value types.
   {
     // Access the propety acessor type for this graph
     typedef typename property_map&lt;Graph, 
-      first_vertex_name_t&gt;::const_type NameMap;
-    NameMap name = get(first_vertex_name, G);
+      first_name_t&gt;::const_type NameMap;
+    NameMap name = get(first_name, G);
 
     typedef typename boost::property_traits&lt;NameMap&gt;
       ::value_type NameType;
@@ -639,14 +640,14 @@ Customizing the Adjacency List Storage
 The <TT>adjacency_list</TT> is constructed out of two kinds of
 containers. One type of container to hold all the vertices in the
 graph, and another type of container for the out-edge list (and
-potentially in-edge list) for each vertex. BGLprovides selector
-classes that allow the user to choose between several of the container
+potentially in-edge list) for each vertex. BGL provides selector
+classes that allow the user to choose between several of the containers
 from the STL. It is also possible to use your own container types.
 When customizing the <TT>VertexList</TT> you need to define a container
 generator as described below. When customizing the <TT>OutEdgeList</TT> you
 will need to define a container generator and the parallel edge
 traits. The file <TT>container_gen.cpp</TT> has an example of
-how to use a custom storage types.
+how to use a custom storage type.
 
 <P>
 

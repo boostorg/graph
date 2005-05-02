@@ -73,13 +73,13 @@ write_graphviz(std::ostream&amp; out, const Graph&amp; g,
 </pre>
 
 <p>
-This is to write a BGL graph object into a output stream in graphviz
+This is to write a BGL graph object into an output stream in graphviz
 dot format so that users can make use of <a href="http://www.research.att.com/sw/tools/graphviz/">AT&amp;T graphviz</a> to draw a
 picture with nice layout.
 <p>
-The first version with two parameters will write graph into an
-<tt>std::ostream</tt> where vertex is represented by numerical vertex
-IDs. If users have either interior or exterior properties for each vertex
+The first version with two parameters will write the graph into a
+<tt>std::ostream</tt> where each vertex is represented by its numerical vertex
+ID. If users have either interior or exterior properties for each vertex
 in the graph, the second version above provides a way to print those
 properties into the graphviz format file. For example, if each vertex
 in the graph has its label through property map object <tt>name</tt>,
@@ -88,9 +88,12 @@ users can use the second version:
   write_graph(out, g, make_label_writer(name));
 </pre>
 The utility function <tt>make_label_writer</tt> returns a predefined
-<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> for vertex label.  Similarly, the third
-version and fourth version require edge <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>, edge
-<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> and graph <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>,
+<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> for
+vertex labels.  Similarly, the third
+version and fourth version require vertex
+<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>, edge
+<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>, and graph
+<a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>,
 respectively.
 
 <p> The final two overloads of <code>write_graphviz</code> will emit
@@ -122,11 +125,11 @@ by creating their own <a href="./write-graphviz.html#concept:PropertyWriter">Pro
 <p>
 A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> 
 for vertices or edges is a functor which can be called with two parameters:
-<tt>std::ostream</tt> and either vertex or edge descriptor. It should output a
+<tt>std::ostream</tt> and either a vertex or an edge descriptor. It should output a
 pair of brackets with a series of assigments &quot;name=value&quot; inside.
 Each assignment should be separated either with space, with comma, or with semicolon.
-The following functor, provided by BGL, is the example of PropertyWriter for vertices or
-edges.  It is used to print the label of each vertex or edge.
+The following functor, provided by BGL, is the example of PropertyWriter for
+vertices or edges.  It is used to print the label of each vertex or edge.
 <pre>
   template < class Name >
   class label_writer {
@@ -151,7 +154,7 @@ make_label_writer(Name n);
 
 <p>
 A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> 
-for graph is a functor which is called with one parameter, of type 
+for graphs is a functor which is called with one parameter of type 
 <tt>std::ostream</tt> and should print a series of graph properties. The following
 code excerpt is an example of a PropertyWriter for a graph. 
 <pre>
@@ -167,7 +170,7 @@ code excerpt is an example of a PropertyWriter for a graph.
 
 <p>
 There exists a class <tt>default_writer</tt>, which can be used as both
-vertex/edge and graph property write, and does nothing. It comes handy when
+vertex/edge and graph property writer, and does nothing. It comes handy when
 only edge properties must be written, but function interface requries to pass
 vertex property writer as well.
 
