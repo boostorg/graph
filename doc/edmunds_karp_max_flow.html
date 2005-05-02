@@ -25,19 +25,19 @@
 
 <PRE>
 <i>// named paramter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, class P, class T, class R&gt;
-typename detail::edge_capacity_value&lt;VertexListGraph, P, T, R&gt;::value_type
-edmunds_karp_max_flow(VertexListGraph& g, 
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor src,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor sink,
+template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
+typename detail::edge_capacity_value&lt;Graph, P, T, R&gt;::value_type
+edmunds_karp_max_flow(Graph& g, 
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
-template &lt;class <a href="./VertexListGraph.html">VertexListGraph</a>, 
+template &lt;class <a href="./Graph.html">Graph</a>, 
 	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	  class ReverseEdgeMap, class ColorMap, class PredEdgeMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-edmunds_karp_max_flow(VertexListGraph&amp; g, 
+edmunds_karp_max_flow(Graph&amp; g, 
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev, 
@@ -101,11 +101,11 @@ algorithm.
 
 <h3>Parameters</h3>
 
-IN: <tt>VertexListGraph&amp; g</tt>
+IN: <tt>Graph&amp; g</tt>
 <blockquote>
   A directed graph. The
   graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a>. For each edge
+  href="./VertexListGraph.html">VertexListGraph</a> and <a href="./IncidenceGraph.html">IncidenceGraph</a> For each edge
   <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also
   be in the graph.
 </blockquote>
