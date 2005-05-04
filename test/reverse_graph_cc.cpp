@@ -28,7 +28,9 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
-    get_property(*(Graph*)0, graph_name_t());
+    AdjList g;
+    Graph gr(g);
+    get_property(gr, graph_name_t());
   }
   // Check non-const reverse_graph
   {
@@ -43,8 +45,10 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
-    get_property(*(Graph*)0, graph_name_t());
-    set_property(*(Graph*)0, graph_name_t(), "foo");
+    AdjList g;
+    Graph gr(g);
+    get_property(gr, graph_name_t());
+    set_property(gr, graph_name_t(), "foo");
   }
   return 0;
 }
