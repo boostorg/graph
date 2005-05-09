@@ -322,7 +322,7 @@ namespace boost {
          choose_param(get_param(params, distance_combine_t()),
                       closed_plus<C>()),
          choose_param(get_param(params, distance_inf_t()),
-                      std::numeric_limits<C>::max()),
+                      (std::numeric_limits<C>::max)()),
          choose_param(get_param(params, distance_zero_t()),
                       C()));
     }
