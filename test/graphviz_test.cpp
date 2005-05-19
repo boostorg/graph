@@ -6,7 +6,7 @@
 
 //
 // graphviz_test.cpp - Test cases for the Boost.Spirit implementation of a
-// Graphviz DOT Language reader. 
+// Graphviz DOT Language reader.
 //
 
 // Author: Ronald Garcia
@@ -111,10 +111,10 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
         double ref_weight = weights.find(edge_name)->second;
         // - compare the weight to teh result in the table
         BOOST_CHECK_CLOSE(edge_weight, ref_weight, 0.01);
-      }          
+      }
     }
 
-    
+
   } else {
     std::cerr << "Parsing Failed!\n";
     result = false;
@@ -122,7 +122,7 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
 
   return result;
   }
-  
+
 int test_main(int, char*[]) {
 
   typedef istringstream gs_t;
@@ -130,7 +130,7 @@ int test_main(int, char*[]) {
   // Basic directed graph tests
   {
     mass_map_t masses;
-    insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
+    insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
     BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t())));
   }
@@ -147,7 +147,7 @@ int test_main(int, char*[]) {
   // undirected graph with alternate node_id property name
   {
     mass_map_t masses;
-    insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
+    insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
     BOOST_CHECK((test_graph<undirectedS,vecS>(gs,masses,weight_map_t(),
                                              "nodenames")));
@@ -156,7 +156,7 @@ int test_main(int, char*[]) {
   // Basic undirected graph tests
   {
     mass_map_t masses;
-    insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
+    insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
     BOOST_CHECK((test_graph<undirectedS,vecS>(gs,masses,weight_map_t())));
   }
@@ -173,7 +173,7 @@ int test_main(int, char*[]) {
   // Mismatch directed graph test
   {
     mass_map_t masses;
-    insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
+    insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
       test_graph<directedS,vecS>(gs,masses,weight_map_t());
@@ -183,7 +183,7 @@ int test_main(int, char*[]) {
   // Mismatch undirected graph test
   {
     mass_map_t masses;
-    insert ( masses )  ("a",0.0) ("c",7.7) ("e", 6.66);
+    insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
     try {
       test_graph<undirectedS,vecS>(gs,masses,weight_map_t());
