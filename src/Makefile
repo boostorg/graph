@@ -13,8 +13,8 @@
 BOOST 		= ../../..
 
 CXX		= g++ -ftemplate-depth-50
-LEX		= flex
-YACC		= bison
+LEX		= flex -L
+YACC		= bison -l
 MV		= /bin/mv
 
 EXTRAFLAGS 	= -g 

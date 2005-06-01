@@ -63,6 +63,8 @@
 #include <sstream>
 #endif
 
+using namespace std;
+
 #ifndef GRAPHVIZ_DIRECTED
 #error Need to define the GRAPHVIZ_DIRECTED macro to either 0 or 1
 #endif 
@@ -425,8 +427,6 @@ static const short yycheck[] = {    36,
 };
 #define YYPURE 1
 
-/* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/share/bison.simple"
 /* This file comes from bison-1.28.  */
 
 /* Skeleton output parser for bison,
@@ -640,7 +640,6 @@ __yy_memcpy (char *to, char *from, unsigned int count)
 #endif
 #endif
 
-#line 217 "/usr/share/bison.simple"
 
 /* The user can define YYPARSE_PARAM as the name of an argument to be passed
    into yyparse.  The argument should have type void *.
@@ -1227,7 +1226,6 @@ case 48:
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
-#line 543 "/usr/share/bison.simple"
 
   yyvsp -= yylen;
   yyssp -= yylen;
