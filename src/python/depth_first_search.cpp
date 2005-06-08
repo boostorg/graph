@@ -24,6 +24,7 @@ template<typename Graph>
 void 
 depth_first_search
   (const Graph& g,
+   typename Graph::Vertex s,
    const dfs_visitor<Graph>& visitor,
    const vector_property_map<default_color_type, 
                              typename Graph::VertexIndexMap>* in_color)
@@ -37,11 +38,15 @@ depth_first_search
   bool has_default_visitor = 
     dynamic_cast<typename dfs_visitor<Graph>::default_arg const*>(&visitor);
 
+  if (s == graph_traits<Graph>::null_vertex() && g.num_vertices() > 0)
+    s = *g.vertices().first;
+
+
   if (has_default_visitor) {
-    boost::depth_first_search(g, boost::dfs_visitor<>(), color);
+    boost::depth_first_search(g, boost::dfs_visitor<>(), color, s);
   } else {
     boost::depth_first_search(g, typename dfs_visitor<Graph>::ref(visitor),
-                              color);
+                              color, s);
   }
 }
  
@@ -111,6 +116,7 @@ void export_depth_first_search()
 
   def("depth_first_search", &depth_first_search<Graph>,
       (arg("graph"), 
+       arg("root_vertex") = graph_traits<Graph>::null_vertex(),
        arg("visitor") = dfs_visitor<Graph>::default_arg(),
        arg("color_map") = 
          (vector_property_map<default_color_type, Graph::VertexIndexMap>*)0));
@@ -132,6 +138,7 @@ void export_depth_first_search()
 
   def("depth_first_search", &depth_first_search<Digraph>,
       (arg("graph"), 
+       arg("root_vertex") = graph_traits<Graph>::null_vertex(),
        arg("visitor") = dfs_visitor<Digraph>::default_arg(),
        arg("color_map") = 
          (vector_property_map<default_color_type, Digraph::VertexIndexMap>*)0));
