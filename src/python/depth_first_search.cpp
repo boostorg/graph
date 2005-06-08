@@ -138,7 +138,7 @@ void export_depth_first_search()
 
   def("depth_first_search", &depth_first_search<Digraph>,
       (arg("graph"), 
-       arg("root_vertex") = graph_traits<Graph>::null_vertex(),
+       arg("root_vertex") = graph_traits<Digraph>::null_vertex(),
        arg("visitor") = dfs_visitor<Digraph>::default_arg(),
        arg("color_map") = 
          (vector_property_map<default_color_type, Digraph::VertexIndexMap>*)0));
