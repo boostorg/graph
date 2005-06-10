@@ -50,7 +50,8 @@ class copying_dynamic_property_map
   virtual void copy_value(const any& to, const any& from) = 0;
 };
 
-template<typename PropertyMap>
+template<typename PropertyMap,
+         typename ValueType = typename property_traits<PropertyMap>::value_type>
 class copying_dynamic_adaptor
   : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
     public copying_dynamic_property_map
@@ -67,6 +68,35 @@ public:
   { 
     boost::put(this->base(), any_cast<key_type>(to), 
                boost::get(this->base(), any_cast<key_type>(from)));
+  }
+};
+
+template<typename PropertyMap>
+class copying_dynamic_adaptor<PropertyMap, boost::python::object>
+  : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
+    public copying_dynamic_property_map
+{
+  typedef boost::detail::dynamic_property_map_adaptor<PropertyMap> inherited;
+
+public:
+  typedef typename property_traits<PropertyMap>::key_type key_type;
+
+  explicit copying_dynamic_adaptor(const PropertyMap& property_map)
+    : inherited(property_map) { }
+
+  virtual void copy_value(const any& to, const any& from)
+  { 
+    boost::put(this->base(), any_cast<key_type>(to), 
+               boost::get(this->base(), any_cast<key_type>(from)));
+  }
+
+  virtual std::string get_string(const any& key)
+  {
+    using boost::python::extract;
+    using boost::python::str;
+    return std::string(
+             extract<const char*>(str(boost::get(this->base(),
+                                                 any_cast<key_type>(key)))));
   }
 };
 
