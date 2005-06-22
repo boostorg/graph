@@ -350,6 +350,9 @@ class basic_graph
   inherited&       base()       { return *this; }
   const inherited& base() const { return *this; }
   
+  dynamic_properties&       get_dynamic_properties()       { return dp; }
+  const dynamic_properties& get_dynamic_properties() const { return dp; }
+
 protected:
   void renumber_vertices();
   void renumber_edges();
@@ -455,6 +458,103 @@ template<typename DirectedS>
 typename basic_graph<DirectedS>::EdgeIndexMap
 get(edge_index_t, const basic_graph<DirectedS>& g)
 { return g.get_edge_index_map(); }
+
+template<typename DirectedS>
+struct graph_pickle_suite : boost::python::pickle_suite
+{
+  typedef basic_graph<DirectedS> Graph;
+  typedef typename Graph::vertex_descriptor Vertex;
+  typedef typename Graph::edge_descriptor Edge;
+
+  static
+  boost::python::tuple
+  getstate(boost::python::object g_obj);
+  
+  static
+  void
+  setstate(boost::python::object g_obj, boost::python::tuple state);
+};
+
+class python_dynamic_property_map
+{
+ public:
+  virtual ~python_dynamic_property_map() {}
+
+  virtual void copy_value(const any& to, const any& from) = 0;
+  virtual boost::python::object get_python(const any& key) = 0;
+};
+
+template<typename PropertyMap,
+         typename ValueType = typename property_traits<PropertyMap>::value_type>
+class python_dynamic_adaptor
+  : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
+    public python_dynamic_property_map
+{
+  typedef boost::detail::dynamic_property_map_adaptor<PropertyMap> inherited;
+
+public:
+  typedef typename property_traits<PropertyMap>::key_type key_type;
+
+  explicit python_dynamic_adaptor(const PropertyMap& property_map)
+    : inherited(property_map) { }
+
+  virtual void copy_value(const any& to, const any& from)
+  { 
+    boost::put(this->base(), any_cast<key_type>(to), 
+               boost::get(this->base(), any_cast<key_type>(from)));
+  }
+
+  virtual boost::python::object get_python(const any& key)
+  {
+#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ == 95)
+    return boost::get(this->base(), any_cast<key_type>(key));
+#else
+    using boost::get;
+
+    return boost::python::object(get(this->base(), any_cast<key_type>(key)));
+#endif    
+  }
+};
+
+template<typename PropertyMap>
+class python_dynamic_adaptor<PropertyMap, boost::python::object>
+  : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
+    public python_dynamic_property_map
+{
+  typedef boost::detail::dynamic_property_map_adaptor<PropertyMap> inherited;
+
+public:
+  typedef typename property_traits<PropertyMap>::key_type key_type;
+
+  explicit python_dynamic_adaptor(const PropertyMap& property_map)
+    : inherited(property_map) { }
+
+  virtual void copy_value(const any& to, const any& from)
+  { 
+    boost::put(this->base(), any_cast<key_type>(to), 
+               boost::get(this->base(), any_cast<key_type>(from)));
+  }
+
+  virtual std::string get_string(const any& key)
+  {
+    using boost::python::extract;
+    using boost::python::str;
+    return std::string(
+             extract<const char*>(str(boost::get(this->base(),
+                                                 any_cast<key_type>(key)))));
+  }
+
+  virtual boost::python::object get_python(const any& key)
+  {
+#if defined(__GNUC__) && (__GNUC__ == 2) && (__GNUC_MINOR__ == 95)
+    return boost::get(this->base(), any_cast<key_type>(key));
+#else
+    using boost::get;
+
+    return get(this->base(), any_cast<key_type>(key));
+#endif    
+  }
+};
 
 } } } // end namespace boost::graph::python
 

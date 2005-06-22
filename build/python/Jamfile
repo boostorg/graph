@@ -52,6 +52,8 @@ extension bgl
     ../../src/python/fruchterman_reingold.cpp
     ../../src/python/kamada_kawai_spring_layout.cpp
     ../../src/python/page_rank.cpp
+    # Pickling support
+    ../../src/python/pickle.cpp
     <dll>../../../python/build/boost_python
     <lib>../bgl-viz
     : # Default build

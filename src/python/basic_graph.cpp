@@ -42,64 +42,6 @@ inline std::istream& operator>>(std::istream& in, default_color_type& c)
 
 namespace graph { namespace python {
 
-class copying_dynamic_property_map
-{
- public:
-  virtual ~copying_dynamic_property_map() {}
-
-  virtual void copy_value(const any& to, const any& from) = 0;
-};
-
-template<typename PropertyMap,
-         typename ValueType = typename property_traits<PropertyMap>::value_type>
-class copying_dynamic_adaptor
-  : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
-    public copying_dynamic_property_map
-{
-  typedef boost::detail::dynamic_property_map_adaptor<PropertyMap> inherited;
-
-public:
-  typedef typename property_traits<PropertyMap>::key_type key_type;
-
-  explicit copying_dynamic_adaptor(const PropertyMap& property_map)
-    : inherited(property_map) { }
-
-  virtual void copy_value(const any& to, const any& from)
-  { 
-    boost::put(this->base(), any_cast<key_type>(to), 
-               boost::get(this->base(), any_cast<key_type>(from)));
-  }
-};
-
-template<typename PropertyMap>
-class copying_dynamic_adaptor<PropertyMap, boost::python::object>
-  : public boost::detail::dynamic_property_map_adaptor<PropertyMap>, 
-    public copying_dynamic_property_map
-{
-  typedef boost::detail::dynamic_property_map_adaptor<PropertyMap> inherited;
-
-public:
-  typedef typename property_traits<PropertyMap>::key_type key_type;
-
-  explicit copying_dynamic_adaptor(const PropertyMap& property_map)
-    : inherited(property_map) { }
-
-  virtual void copy_value(const any& to, const any& from)
-  { 
-    boost::put(this->base(), any_cast<key_type>(to), 
-               boost::get(this->base(), any_cast<key_type>(from)));
-  }
-
-  virtual std::string get_string(const any& key)
-  {
-    using boost::python::extract;
-    using boost::python::str;
-    return std::string(
-             extract<const char*>(str(boost::get(this->base(),
-                                                 any_cast<key_type>(key)))));
-  }
-};
-
 template<typename DirectedS>
 struct build_string_property_maps
 {
@@ -117,13 +59,13 @@ struct build_string_property_maps
     if (key.type() == typeid(typename basic_graph<DirectedS>::Vertex)) {
       typedef vector_property_map<std::string, VertexIndexMap>
         property_map_type;
-      typedef copying_dynamic_adaptor<property_map_type> adaptor_type;
+      typedef python_dynamic_adaptor<property_map_type> adaptor_type;
       result.reset
         (new adaptor_type(property_map_type(g->num_vertices(),
                                             g->get_vertex_index_map())));
     } else if (key.type() == typeid(typename basic_graph<DirectedS>::Edge)) {
       typedef vector_property_map<std::string, EdgeIndexMap> property_map_type;
-      typedef copying_dynamic_adaptor<property_map_type> adaptor_type;
+      typedef python_dynamic_adaptor<property_map_type> adaptor_type;
       result.reset
         (new adaptor_type(property_map_type(g->num_edges(),
                                             g->get_edge_index_map())));
@@ -319,7 +261,7 @@ vector_property_map<T, typename basic_graph<DirectedS>::VertexIndexMap>
 basic_graph<DirectedS>::get_vertex_map(const std::string& name)
 {
   typedef vector_property_map<T, VertexIndexMap> result_type;
-  typedef copying_dynamic_adaptor<result_type> adaptor_type;
+  typedef python_dynamic_adaptor<result_type> adaptor_type;
   
   dynamic_properties::iterator i = dp.lower_bound(name);
   while (i != dp.end() && i->first == name) {
@@ -348,7 +290,7 @@ basic_graph<DirectedS>::get_vertex_map(const std::string& name)
   }
   
   typedef vector_property_map<T, VertexIndexMap> property_map_type;
-  typedef copying_dynamic_adaptor<property_map_type> adaptor_type;
+  typedef python_dynamic_adaptor<property_map_type> adaptor_type;
   property_map_type result(num_vertices(), get_vertex_index_map());
   dp.insert(name, 
             std::auto_ptr<dynamic_property_map>(new adaptor_type(result)));
@@ -376,7 +318,7 @@ vector_property_map<T, typename basic_graph<DirectedS>::EdgeIndexMap>
 basic_graph<DirectedS>::get_edge_map(const std::string& name)
 {
   typedef vector_property_map<T, EdgeIndexMap> result_type;
-  typedef copying_dynamic_adaptor<result_type> adaptor_type;
+  typedef python_dynamic_adaptor<result_type> adaptor_type;
   
   dynamic_properties::iterator i = dp.lower_bound(name);
   while (i != dp.end() && i->first == name) {
@@ -404,7 +346,7 @@ basic_graph<DirectedS>::get_edge_map(const std::string& name)
   }
 
   typedef vector_property_map<T, EdgeIndexMap> property_map_type;
-  typedef copying_dynamic_adaptor<property_map_type> adaptor_type;
+  typedef python_dynamic_adaptor<property_map_type> adaptor_type;
   property_map_type result(num_edges(), get_edge_index_map());
   dp.insert(name, 
             std::auto_ptr<dynamic_property_map>(new adaptor_type(result)));
@@ -453,7 +395,7 @@ void basic_graph<DirectedS>::remove_vertex(Vertex vertex)
   // Update property maps
   for (dynamic_properties::iterator i = dp.begin(); i != dp.end(); ++i) {
     if (i->second->key() == typeid(Vertex)) {
-      dynamic_cast<copying_dynamic_property_map&>(*i->second).
+      dynamic_cast<python_dynamic_property_map&>(*i->second).
         copy_value(vertex, Vertex(index_to_vertex.back()));
     }
   }
@@ -519,7 +461,7 @@ void basic_graph<DirectedS>::remove_edge(Edge edge)
   // Update property maps
   for (dynamic_properties::iterator i = dp.begin(); i != dp.end(); ++i) {
     if (i->second->key() == typeid(Edge)) {
-      dynamic_cast<copying_dynamic_property_map&>(*i->second).
+      dynamic_cast<python_dynamic_property_map&>(*i->second).
         copy_value(edge, Edge(index_to_edge.back()));
     }
   }
@@ -663,6 +605,8 @@ void export_basic_graph(const char* name)
         .def("read_graphviz", &Graph::read_graphviz)
         .def("write_graphviz", &Graph::write_graphviz)
         .def("write_graphviz", &Graph::write_graphviz_def)
+        // Pickling
+        .def_pickle(graph_pickle_suite<DirectedS>())
       );
       
     export_in_graph<Graph>();
