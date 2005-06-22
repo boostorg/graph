@@ -42,7 +42,7 @@ struct graph_writer {
   }
 };
 
-int main(int, char**) {
+int main(int, char*[]) {
   // Generate a graph structured like a grid, cylinder, or torus; lay it out in
   // a square grid; and output it in dot format
 
