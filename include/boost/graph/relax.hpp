@@ -1,15 +1,30 @@
 //
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Copyright 2002 Rensselaer Polytechnic Institute
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
 //
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Lauren Foutz
-//          Scott Hill
+// This file is part of the Boost Graph Library
 //
-// Use, modification and distribution is subject to the Boost Software
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+// You should have received a copy of the License Agreement for the
+// Boost Graph Library along with the software; see the file LICENSE.
+// If not, contact Office of Research, University of Notre Dame, Notre
+// Dame, IN 46556.
+//
+// Permission to modify the code and to distribute modified code is
+// granted, provided the text of this NOTICE is retained, a notice that
+// the code was modified is included with the above COPYRIGHT NOTICE and
+// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
+// file is distributed with the modified code.
+//
+// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
+// By way of example, but not limitation, Licensor MAKES NO
+// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
+// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
+// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
+// OR OTHER RIGHTS.
 //=======================================================================
+//
+
 #ifndef BOOST_GRAPH_RELAX_HPP
 #define BOOST_GRAPH_RELAX_HPP
 
@@ -19,18 +34,6 @@
 #include <boost/property_map.hpp>
 
 namespace boost {
-
-  template<typename MatrixValue, typename BinaryFunction,
-	   typename BinaryPredicate>
-  inline MatrixValue inf_combine(MatrixValue a, MatrixValue b, 
-				 MatrixValue inf, BinaryFunction combine, 
-				 BinaryPredicate compare)
-  {
-    if(compare(a, inf) && compare(b, inf))
-      return combine(a, b);
-    else
-      return inf;
-  }
 
     // The following version of the plus functor prevents
     // problems due to overflow at positive infinity.
@@ -67,15 +70,13 @@ namespace boost {
       typedef typename property_traits<WeightMap>::value_type W;
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
-      D inf = (std::numeric_limits<D>::max)();
-
-      if ( compare(inf_combine(d_u, w_e, inf, combine, compare), d_v) ) {
-        put(d, v, inf_combine(d_u, w_e, inf, combine, compare));
+      
+      if ( compare(combine(d_u, w_e), d_v) ) {
+        put(d, v, combine(d_u, w_e));
         put(p, v, u);
         return true;
-      } else if (is_undirected 
-		 && compare(inf_combine(d_v, w_e, inf, combine, compare), d_u)) {
-        put(d, u, inf_combine(d_v, w_e, inf, combine, compare));
+      } else if (is_undirected && compare(combine(d_v, w_e), d_u)) {
+        put(d, u, combine(d_v, w_e));
         put(p, u, v);
         return true;
       } else

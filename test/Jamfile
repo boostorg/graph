@@ -24,6 +24,8 @@ test-suite graph :
 
     [ run betweenness_centrality_test.cpp ] 
 
+    [ run dag_longest_paths.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+
     [ run dfs.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ compile dfs_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]

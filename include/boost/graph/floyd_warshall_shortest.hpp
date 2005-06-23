@@ -57,9 +57,8 @@ namespace boost
         for (tie(i, lasti) = vertices(g); i != lasti; i++)
           for (tie(j, lastj) = vertices(g); j != lastj; j++)
           {
-            d[*i][*j] = min BOOST_PREVENT_MACRO_SUBSTITUTION(d[*i][*j], 
-              inf_combine(d[*i][*k], d[*k][*j], inf, combine, 
-              compare));
+            d[*i][*j] = min BOOST_PREVENT_MACRO_SUBSTITUTION
+                         (d[*i][*j], combine(d[*i][*k], d[*k][*j]));
           }
       
     
@@ -161,7 +160,7 @@ namespace boost
         choose_param(get_param(params, distance_compare_t()), 
           std::less<WM>()),
         choose_param(get_param(params, distance_combine_t()), 
-          std::plus<WM>()),
+          closed_plus<WM>()),
         choose_param(get_param(params, distance_inf_t()), 
           std::numeric_limits<WM>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
         choose_param(get_param(params, distance_zero_t()), 
@@ -182,7 +181,7 @@ namespace boost
         choose_param(get_param(params, distance_compare_t()), 
           std::less<WM>()),
         choose_param(get_param(params, distance_combine_t()), 
-          std::plus<WM>()),
+          closed_plus<WM>()),
         choose_param(get_param(params, distance_inf_t()), 
           std::numeric_limits<WM>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
         choose_param(get_param(params, distance_zero_t()), 
