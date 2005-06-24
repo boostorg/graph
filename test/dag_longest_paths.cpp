@@ -38,7 +38,7 @@ int test_main(int, char*[])
     dag_shortest_paths(graph, 0,
                        distance_map(distance)
                        .distance_compare(std::greater<int>())
-                       .distance_inf(std::numeric_limits<int>::min())
+                       .distance_inf((std::numeric_limits<int>::min)())
                        .distance_zero(0));
 
     cout << distance[2] << "\n";
