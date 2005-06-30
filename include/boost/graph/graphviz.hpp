@@ -59,7 +59,7 @@ namespace boost {
     label_writer(Name _name) : name(_name) {}
     template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
-      out << "[label=\"" << name[v] << "\"]";
+      out << "[label=\"" << get(name, v) << "\"]";
     }
   private:
     Name name;
