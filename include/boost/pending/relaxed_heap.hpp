@@ -19,6 +19,11 @@
 #  include <iostream>
 #endif // BOOST_RELAXED_HEAP_DEBUG
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 namespace boost {
 
 template<typename IndexedType,
@@ -616,5 +621,9 @@ private:
 
 
 } // end namespace boost
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // BOOST_RELAXED_HEAP_HEADER
