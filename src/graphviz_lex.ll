@@ -89,6 +89,7 @@ ID        {VARIABLE}|{NUMBER}
 <Literal>([^"\\]*|[\\].)  { add_string(yytext); }
 [ \t]           ;
 \n              ;
+\r              ;
 .               { return yytext[0]; }
 %%
 
