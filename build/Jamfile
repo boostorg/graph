@@ -36,8 +36,11 @@ GRAPHVIZ_DEFS(graphviz_digraph_parser) =
     lib bgl-viz
         : ../src/$(SOURCES).cpp 
         : <sysinclude>$(BOOST_ROOT) <define>YY_NO_UNISTD_H
+          # Darwin compiler ICEs if we turn optimization on
           <darwin><*><debug-symbols>off
           <darwin><*><optimization>off
+          # Intel compiler ICEs if we turn optimization on
+          <intel-win32><*><optimization>off
           <vc-7_1><*><cxxflags>-GR-
         : debug <inlining>on #inlining prevents linker name clashes due to truncation! 
           <debug-symbols>off # Debugging symbols become HUGE 
