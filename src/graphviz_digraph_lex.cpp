@@ -1,3 +1,4 @@
+#define GRAPHVIZ_DIRECTED 1
 #define yy_create_buffer bgl_dir__create_buffer
 #define yy_delete_buffer bgl_dir__delete_buffer
 #define yy_scan_buffer bgl_dir__scan_buffer
