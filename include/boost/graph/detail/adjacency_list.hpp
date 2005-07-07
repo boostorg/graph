@@ -2449,7 +2449,7 @@ namespace boost {
       typedef Vertex value_type;
       typedef Vertex key_type;
       typedef Vertex reference;
-      typedef boost::read_write_property_map_tag category;
+      typedef boost::readable_property_map_tag category;
       inline vec_adj_list_vertex_id_map() { }
       template <class Graph>
       inline vec_adj_list_vertex_id_map(const Graph&) { }
