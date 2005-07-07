@@ -58,7 +58,7 @@ class BGL_PYTHON_VISITOR
 #define BGL_PYTHON_EVENT(Name, Descriptor)                            \
   virtual void Name(Descriptor x, const Graph& g) const {}
 #  include BGL_PYTHON_EVENTS_HEADER
-#undef BGL_PYTHON_EVENTS
+#undef BGL_PYTHON_EVENT
 
   static void declare(const char* name, const char* default_name)
   {

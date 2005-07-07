@@ -184,8 +184,8 @@ basic_graph<DirectedS>::out_edges(Vertex u) const
 {
   std::pair<base_out_edge_iterator, base_out_edge_iterator> rng = 
     boost::out_edges(u.base, base());
-  return std::make_pair(out_edge_iterator(rng.first, Edge::create()),
-                        out_edge_iterator(rng.second, Edge::create()));
+  return std::make_pair(out_edge_iterator(rng.first, typename Edge::create()),
+                        out_edge_iterator(rng.second,typename Edge::create()));
 }
 
 template<typename DirectedS>
@@ -212,8 +212,8 @@ basic_graph<DirectedS>::in_edges(Vertex u) const
 {
   std::pair<base_in_edge_iterator, base_in_edge_iterator> rng = 
     boost::in_edges(u.base, base());
-  return std::make_pair(in_edge_iterator(rng.first, Edge::create()),
-                        in_edge_iterator(rng.second, Edge::create()));
+  return std::make_pair(in_edge_iterator(rng.first, typename Edge::create()),
+                        in_edge_iterator(rng.second, typename Edge::create()));
 }
 
 template<typename DirectedS>
@@ -240,8 +240,8 @@ basic_graph<DirectedS>::adjacent_vertices(Vertex u) const
 {
   std::pair<base_adjacency_iterator, base_adjacency_iterator> rng = 
     boost::adjacent_vertices(u.base, base());
-  return std::make_pair(adjacency_iterator(rng.first, Vertex::create()),
-                        adjacency_iterator(rng.second, Vertex::create()));
+  return std::make_pair(adjacency_iterator(rng.first, typename Vertex::create()),
+                        adjacency_iterator(rng.second, typename Vertex::create()));
 }
 
 template<typename DirectedS>
@@ -395,7 +395,7 @@ void basic_graph<DirectedS>::remove_vertex(Vertex vertex)
   // Update property maps
   for (dynamic_properties::iterator i = dp.begin(); i != dp.end(); ++i) {
     if (i->second->key() == typeid(Vertex)) {
-      dynamic_cast<python_dynamic_property_map&>(*i->second).
+      dynamic_cast<python_dynamic_property_map*>(&*i->second)->
         copy_value(vertex, Vertex(index_to_vertex.back()));
     }
   }
@@ -422,7 +422,7 @@ typename basic_graph<DirectedS>::vertex_iterator
 basic_graph<DirectedS>::vertices_begin() const
 {
   return make_transform_iterator(boost::vertices(base()).first, 
-                                 Vertex::create());
+                                 typename Vertex::create());
 }
 
 template<typename DirectedS>
@@ -430,7 +430,7 @@ typename basic_graph<DirectedS>::vertex_iterator
 basic_graph<DirectedS>::vertices_end() const
 {
   return make_transform_iterator(boost::vertices(base()).second, 
-                                 Vertex::create());
+                                 typename Vertex::create());
 }
 
 template<typename DirectedS>
@@ -461,7 +461,7 @@ void basic_graph<DirectedS>::remove_edge(Edge edge)
   // Update property maps
   for (dynamic_properties::iterator i = dp.begin(); i != dp.end(); ++i) {
     if (i->second->key() == typeid(Edge)) {
-      dynamic_cast<python_dynamic_property_map&>(*i->second).
+      dynamic_cast<python_dynamic_property_map*>(&*i->second)->
         copy_value(edge, Edge(index_to_edge.back()));
     }
   }
@@ -488,7 +488,7 @@ typename basic_graph<DirectedS>::edge_iterator
 basic_graph<DirectedS>::edges_begin() const
 {
   return make_transform_iterator(boost::edges(base()).first, 
-                                 Edge::create());
+                                 typename Edge::create());
 }
 
 template<typename DirectedS>
@@ -496,7 +496,7 @@ typename basic_graph<DirectedS>::edge_iterator
 basic_graph<DirectedS>::edges_end() const
 {
   return make_transform_iterator(boost::edges(base()).second, 
-                                 Edge::create());
+                                 typename Edge::create());
 }
 
 template<typename DirectedS>

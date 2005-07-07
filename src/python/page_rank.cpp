@@ -57,7 +57,7 @@ page_rank_done
   RankMap rank = 
     in_rank? *in_rank : g.template get_vertex_map<double>("pagerank");
 
-  boost::graph::page_rank(g, rank, wrap_pr_done(done));
+  boost::graph::page_rank(g, rank, page_rank_wrap_done(done));
 }
 
 void export_page_rank()
@@ -70,7 +70,7 @@ void export_page_rank()
        arg("rank_map") = 
          (vector_property_map<double, Digraph::VertexIndexMap>*)0,
        arg("iterations") = 20));
-  def("page_rank", &page_rank_iterations<Digraph>,
+  def("page_rank", &page_rank_done<Digraph>,
       (arg("graph"), 
        arg("rank_map") = 
          (vector_property_map<double, Digraph::VertexIndexMap>*)0,
