@@ -186,21 +186,6 @@ namespace boost {
 	}
       }
       
-      template <typename Vertex>
-      void output_heap(int offset){
-	typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
-	
-	reverse_iterator rend = Qptr->rend() - (index_begin + offset);
-	reverse_iterator rbegin = Qptr->rbegin();
-	
-	std::cerr << "Heap: ";
- 	for( ; rbegin != rend; ++rbegin){
-	  std::cerr << get(degree, *rbegin) << " ";
-	}
-	std::cerr << std::endl;
-      }
-      
-
       OutputIterator *permutation;
       int index_begin;
       Buffer *Qptr;
