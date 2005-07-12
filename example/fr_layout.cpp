@@ -24,21 +24,21 @@ using namespace boost;
 void usage()
 {
   std::cerr << "Usage: fr_layout [options] <width> <height>\n"
-	    << "Arguments:\n"
-	    << "\t<width>\tWidth of the display area (floating point)\n"
-	    << "\t<Height>\tHeight of the display area (floating point)\n\n"
-	    << "Options:\n"
-	    << "\t--iterations n\tNumber of iterations to execute.\n" 
-	    << "\t\t\tThe default value is 100.\n"
-	    << "Input:\n"
-	    << "  Input is read from standard input as a list of edges, one per line.\n"
-	    << "  Each edge contains two string labels (the endpoints) separated by a space.\n\n"
-	    << "Output:\n"
-	    << "  Vertices and their positions are written to standard output with the label,\n  x-position, and y-position of a vertex on each line, separated by spaces.\n";
+            << "Arguments:\n"
+            << "\t<width>\tWidth of the display area (floating point)\n"
+            << "\t<Height>\tHeight of the display area (floating point)\n\n"
+            << "Options:\n"
+            << "\t--iterations n\tNumber of iterations to execute.\n" 
+            << "\t\t\tThe default value is 100.\n"
+            << "Input:\n"
+            << "  Input is read from standard input as a list of edges, one per line.\n"
+            << "  Each edge contains two string labels (the endpoints) separated by a space.\n\n"
+            << "Output:\n"
+            << "  Vertices and their positions are written to standard output with the label,\n  x-position, and y-position of a vertex on each line, separated by spaces.\n";
 }
 
 typedef adjacency_list<listS, vecS, undirectedS, 
-		       property<vertex_name_t, std::string> > Graph;
+                       property<vertex_name_t, std::string> > Graph;
 
 typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
@@ -91,8 +91,8 @@ int main(int argc, char* argv[])
       if (width == 0.0) width = lexical_cast<double>(arg);
       else if (height == 0.0) height = lexical_cast<double>(arg);
       else {
-	usage();
-	return -1;
+        usage();
+        return -1;
       }
     }
   }
@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
   graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     std::cout << get(vertex_name, g, *vi) << '\t'
-	      << position[*vi].x << '\t' << position[*vi].y << std::endl;
+              << position[*vi].x << '\t' << position[*vi].y << std::endl;
   }
   return 0;
 }

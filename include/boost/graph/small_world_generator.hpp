@@ -33,7 +33,7 @@ namespace boost {
     small_world_iterator() : gen(0) {}
     small_world_iterator(RandomGenerator& gen, vertices_size_type n, 
                          vertices_size_type k, double prob = 0.0, 
-			 bool allow_self_loops = false) 
+                         bool allow_self_loops = false) 
       : gen(&gen), n(n), k(k), prob(prob), source(0), 
         target(allow_self_loops? 0 : 1), 
         allow_self_loops(allow_self_loops), 
@@ -47,7 +47,7 @@ namespace boost {
     { 
       target = (target + 1) % n;
       if (target == (source + k/2 + 1) % n) {
-	++source;
+        ++source;
         if (allow_self_loops) target = source;
         else target = (source + 1) % n;
       }

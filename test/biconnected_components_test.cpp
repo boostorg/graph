@@ -35,8 +35,8 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   std::vector<int> components(num_vertices(g));
   int basic_comps = 
     connected_components(g, 
-			 make_iterator_property_map(components.begin(), 
-						    get(vertex_index, g),
+                         make_iterator_property_map(components.begin(), 
+                                                    get(vertex_index, g),
                                                     int()));
 
   std::vector<Vertex> art_points_check;
@@ -51,8 +51,8 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
     int copy_comps = 
       connected_components
         (g_copy, 
-	 make_iterator_property_map(components.begin(), 
-				    get(vertex_index, g_copy),
+         make_iterator_property_map(components.begin(), 
+                                    get(vertex_index, g_copy),
                                     int()));
 
     if (copy_comps > basic_comps)
@@ -101,12 +101,12 @@ int test_main(int argc, char* argv[])
 
   std::size_t num_comps = 
     biconnected_components(g, 
-			   get(&EdgeProperty::component, g),
-			   std::back_inserter(art_points)).first;
+                           get(&EdgeProperty::component, g),
+                           std::back_inserter(art_points)).first;
   
   std::cout << "done.\n\t" << num_comps << " biconnected components.\n"
-	    << "\t" << art_points.size() << " articulation points.\n"
-	    << "\tTesting articulation points...";
+            << "\t" << art_points.size() << " articulation points.\n"
+            << "\tTesting articulation points...";
   std::cout.flush();
 
   check_articulation_points(g, art_points);
@@ -123,7 +123,7 @@ int test_main(int argc, char* argv[])
     graph_traits<Graph>::edge_iterator ei, ei_end;
     for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
       out << source(*ei, g) << " -- " << target(*ei, g)
-	  << "[label=\"" << g[*ei].component << "\"]\n";
+          << "[label=\"" << g[*ei].component << "\"]\n";
     out << "}\n";
   }
 

@@ -48,7 +48,7 @@ bool acceptance_test(Graph& g, int vec, int e)
       firstv2, lastv2;
     int x = 0;
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       boost::put(index, *firstv, x);
       x++;
     }
@@ -64,9 +64,9 @@ bool acceptance_test(Graph& g, int vec, int e)
       local_edge_map = boost::get(boost::edge_weight, g);
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
       if (ran() % vec != 0){
-	boost::put(local_edge_map, *first, ran() % 100);
+        boost::put(local_edge_map, *first, ran() % 100);
       } else {
-	boost::put(local_edge_map, *first, 0 - (ran() % 100));
+        boost::put(local_edge_map, *first, 0 - (ran() % 100));
       }
     }
 
@@ -79,16 +79,16 @@ bool acceptance_test(Graph& g, int vec, int e)
       distance_type;
     distance_type distance_row = boost::get(boost::vertex_distance, g);
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       boost::put(distance_row, *firstv, int_inf);
       matrixRow[*firstv] = int_inf;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       matrix[*firstv] = matrixRow;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       matrix[*firstv][*firstv] = 0;
     }
     std::map<vertex_des, std::map<vertex_des, int> > matrix3(matrix);
@@ -96,13 +96,13 @@ bool acceptance_test(Graph& g, int vec, int e)
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
       if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
       {
-	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  my_min
+        matrix[boost::source(*first, g)][boost::target(*first, g)] =
+          my_min
             (boost::get(local_edge_map, *first),
              matrix[boost::source(*first, g)][boost::target(*first, g)]);
       } else {
-	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  boost::get(local_edge_map, *first);
+        matrix[boost::source(*first, g)][boost::target(*first, g)] =
+          boost::get(local_edge_map, *first);
       }
     }
     bool is_undirected =
@@ -110,16 +110,16 @@ bool acceptance_test(Graph& g, int vec, int e)
       boost::undirected_tag>::value;
     if (is_undirected){
       for(boost::tie(first, last) = boost::edges(g); first != last; first++){
-	if (matrix[boost::target(*first, g)][boost::source(*first, g)] != int_inf)
+        if (matrix[boost::target(*first, g)][boost::source(*first, g)] != int_inf)
         {
-	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    my_min
+          matrix[boost::target(*first, g)][boost::source(*first, g)] =
+            my_min
               (boost::get(local_edge_map, *first),
                matrix[boost::target(*first, g)][boost::source(*first, g)]);
-	} else {
-	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    boost::get(local_edge_map, *first);
-	}
+        } else {
+          matrix[boost::target(*first, g)][boost::source(*first, g)] =
+            boost::get(local_edge_map, *first);
+        }
       }
     }
 
@@ -130,16 +130,16 @@ bool acceptance_test(Graph& g, int vec, int e)
     floyd1 =
       boost::floyd_warshall_initialized_all_pairs_shortest_paths
         (g,
-	 matrix, weight_map(boost::get(boost::edge_weight, g)).
-	 distance_compare(compare). distance_combine(combine).
-	 distance_inf(int_inf). distance_zero(0));
+         matrix, weight_map(boost::get(boost::edge_weight, g)).
+         distance_compare(compare). distance_combine(combine).
+         distance_inf(int_inf). distance_zero(0));
 
     floyd2 =
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
-	 weight_map(local_edge_map).  distance_compare(compare).
-	 distance_combine(combine).
-	 distance_inf(int_inf). distance_zero(0));
+         weight_map(local_edge_map).  distance_compare(compare).
+         distance_combine(combine).
+         distance_inf(int_inf). distance_zero(0));
 
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 
@@ -149,66 +149,66 @@ bool acceptance_test(Graph& g, int vec, int e)
     for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++){
       boost::put(distance_row, *firstv, 0);
       bellman =
-	boost::bellman_ford_shortest_paths
-	  (g, vec,
-	   weight_map(boost::get(boost::edge_weight, g)).
-	   distance_map(boost::get(boost::vertex_distance, g)).
-	   predecessor_map(dummy_map).distance_compare(compare).
-	   distance_combine(combine));
+        boost::bellman_ford_shortest_paths
+          (g, vec,
+           weight_map(boost::get(boost::edge_weight, g)).
+           distance_map(boost::get(boost::vertex_distance, g)).
+           predecessor_map(dummy_map).distance_compare(compare).
+           distance_combine(combine));
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
-	  firstv2++){
-	matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
-	boost::put(distance_row, *firstv2, int_inf);
+          firstv2++){
+        matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
+        boost::put(distance_row, *firstv2, int_inf);
       }
       if(bellman == false){
-	break;
+        break;
       }
     }
 
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
       std::cout <<
-	"A negative cycle was detected in one algorithm but not the others. "
+        "A negative cycle was detected in one algorithm but not the others. "
                 << std::endl;
       return false;
     }
     else if (bellman == false && floyd1 == false && floyd2 == false &&
-	     floyd3 == false){
+             floyd3 == false){
       return true;
     }
     else {
       typename boost::graph_traits<Graph>::vertex_iterator first1, first2,
-	last1, last2;
+        last1, last2;
       for (boost::tie(first1, last1) = boost::vertices(g); first1 != last1;
-	   first1++){
-	for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
-	     first2++){
-	  if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 1 results " << matrix[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	  if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 2 results " << matrix3[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	  if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 3 results " << matrix4[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	}
+           first1++){
+        for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
+             first2++){
+          if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 1 results " << matrix[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+          if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 2 results " << matrix3[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+          if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 3 results " << matrix4[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+        }
       }
     }
 
@@ -229,7 +229,7 @@ bool acceptance_test2(Graph& g, int vec, int e)
       firstv2, lastv2;
     int x = 0;
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       boost::put(index, *firstv, x);
       x++;
     }
@@ -241,9 +241,9 @@ bool acceptance_test2(Graph& g, int vec, int e)
       local_edge_map = boost::get(boost::edge_weight, g);
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
       if (ran() % vec != 0){
-	boost::put(local_edge_map, *first, ran() % 100);
+        boost::put(local_edge_map, *first, ran() % 100);
       } else {
-	boost::put(local_edge_map, *first, 0 - (ran() % 100));
+        boost::put(local_edge_map, *first, 0 - (ran() % 100));
       }
     }
 
@@ -256,16 +256,16 @@ bool acceptance_test2(Graph& g, int vec, int e)
       distance_type;
     distance_type distance_row = boost::get(boost::vertex_distance, g);
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       boost::put(distance_row, *firstv, int_inf);
       matrixRow[*firstv] = int_inf;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       matrix[*firstv] = matrixRow;
     }
     for(boost::tie(firstv, lastv) = boost::vertices(g); firstv != lastv;
-	firstv++){
+        firstv++){
       matrix[*firstv][*firstv] = 0;
     }
     std::map<vertex_des, std::map<vertex_des, int> > matrix3(matrix);
@@ -273,13 +273,13 @@ bool acceptance_test2(Graph& g, int vec, int e)
     for(boost::tie(first, last) = boost::edges(g); first != last; first++){
       if (matrix[boost::source(*first, g)][boost::target(*first, g)] != int_inf)
       {
-	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  my_min
+        matrix[boost::source(*first, g)][boost::target(*first, g)] =
+          my_min
             (boost::get(local_edge_map, *first),
              matrix[boost::source(*first, g)][boost::target(*first, g)]);
       } else {
-	matrix[boost::source(*first, g)][boost::target(*first, g)] =
-	  boost::get(local_edge_map, *first);
+        matrix[boost::source(*first, g)][boost::target(*first, g)] =
+          boost::get(local_edge_map, *first);
       }
     }
     bool is_undirected =
@@ -287,16 +287,16 @@ bool acceptance_test2(Graph& g, int vec, int e)
       boost::undirected_tag>::value;
     if (is_undirected){
       for(boost::tie(first, last) = boost::edges(g); first != last; first++){
-	if (matrix[boost::target(*first, g)][boost::source(*first, g)]
-	    != int_inf){
-	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    my_min
+        if (matrix[boost::target(*first, g)][boost::source(*first, g)]
+            != int_inf){
+          matrix[boost::target(*first, g)][boost::source(*first, g)] =
+            my_min
               (boost::get(local_edge_map, *first),
                matrix[boost::target(*first, g)][boost::source(*first, g)]);
-	} else {
-	  matrix[boost::target(*first, g)][boost::source(*first, g)] =
-	    boost::get(local_edge_map, *first);
-	}
+        } else {
+          matrix[boost::target(*first, g)][boost::source(*first, g)] =
+            boost::get(local_edge_map, *first);
+        }
       }
     }
 
@@ -307,16 +307,16 @@ bool acceptance_test2(Graph& g, int vec, int e)
     floyd1 =
       boost::floyd_warshall_initialized_all_pairs_shortest_paths
         (g,
-	 matrix, weight_map(boost::get(boost::edge_weight, g)).
-	 distance_compare(compare). distance_combine(combine).
-	 distance_inf(int_inf). distance_zero(0));
+         matrix, weight_map(boost::get(boost::edge_weight, g)).
+         distance_compare(compare). distance_combine(combine).
+         distance_inf(int_inf). distance_zero(0));
 
     floyd2 =
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
-	 weight_map(local_edge_map).  distance_compare(compare).
-	 distance_combine(combine).
-	 distance_inf(int_inf). distance_zero(0));
+         weight_map(local_edge_map).  distance_compare(compare).
+         distance_combine(combine).
+         distance_inf(int_inf). distance_zero(0));
 
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 
@@ -326,66 +326,66 @@ bool acceptance_test2(Graph& g, int vec, int e)
     for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++){
       boost::put(distance_row, *firstv, 0);
       bellman =
-	boost::bellman_ford_shortest_paths
-	  (g, vec,
-	   weight_map(boost::get(boost::edge_weight, g)).
-	   distance_map(boost::get(boost::vertex_distance, g)).
-	   predecessor_map(dummy_map).distance_compare(compare).
-	   distance_combine(combine));
+        boost::bellman_ford_shortest_paths
+          (g, vec,
+           weight_map(boost::get(boost::edge_weight, g)).
+           distance_map(boost::get(boost::vertex_distance, g)).
+           predecessor_map(dummy_map).distance_compare(compare).
+           distance_combine(combine));
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
-	  firstv2++){
-	matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
-	boost::put(distance_row, *firstv2, int_inf);
+          firstv2++){
+        matrix2[*firstv][*firstv2] = boost::get(distance_row, *firstv2);
+        boost::put(distance_row, *firstv2, int_inf);
       }
       if(bellman == false){
-	break;
+        break;
       }
     }
 
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
       std::cout <<
-	"A negative cycle was detected in one algorithm but not the others. "
+        "A negative cycle was detected in one algorithm but not the others. "
                 << std::endl;
       return false;
     }
     else if (bellman == false && floyd1 == false && floyd2 == false &&
-	     floyd3 == false){
+             floyd3 == false){
       return true;
     }
     else {
       typename boost::graph_traits<Graph>::vertex_iterator first1, first2,
-	last1, last2;
+        last1, last2;
       for (boost::tie(first1, last1) = boost::vertices(g); first1 != last1;
-	   first1++){
-	for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
-	     first2++){
-	  if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 1 results " << matrix[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	  if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 2 results " << matrix3[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	  if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
-	    std::cout << "Algorithms do not match at matrix point "
-		      << index[*first1] << " " << index[*first2]
-		      << " Bellman results: " << matrix2[*first1][*first2]
-		      << " floyd 3 results " << matrix4[*first1][*first2]
-		      << std::endl;
-	    return false;
-	  }
-	}
+           first1++){
+        for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
+             first2++){
+          if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 1 results " << matrix[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+          if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 2 results " << matrix3[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+          if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
+            std::cout << "Algorithms do not match at matrix point "
+                      << index[*first1] << " " << index[*first2]
+                      << " Bellman results: " << matrix2[*first1][*first2]
+                      << " floyd 3 results " << matrix4[*first1][*first2]
+                      << std::endl;
+            return false;
+          }
+        }
       }
     }
 

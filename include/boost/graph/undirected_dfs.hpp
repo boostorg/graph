@@ -53,33 +53,33 @@ namespace boost {
       vis.discover_vertex(u, g);
       stack.push_back(std::make_pair(u, out_edges(u, g)));
       while (!stack.empty()) {
-	VertexInfo& back = stack.back();
-	u = back.first;
-	Iter ei, ei_end;
-	tie(ei, ei_end) = back.second;
-	stack.pop_back();
-	while (ei != ei_end) {
-	  Vertex v = target(*ei, g);
-	  vis.examine_edge(*ei, g);
-	  ColorValue v_color = get(vertex_color, v);
-	  EColorValue uv_color = get(edge_color, *ei);
-	  put(edge_color, *ei, EColor::black());
-	  if (v_color == Color::white()) {
-	    vis.tree_edge(*ei, g);
-	    stack.push_back(std::make_pair(u, std::make_pair(++ei, ei_end)));
-	    u = v;
-	    put(vertex_color, u, Color::gray());
-	    vis.discover_vertex(u, g);
-	    tie(ei, ei_end) = out_edges(u, g);
-	  } else if (v_color == Color::gray()) {
-	    if (uv_color == EColor::white()) vis.back_edge(*ei, g);
-	    ++ei;
-	  } else { // if (v_color == Color::black())
-	    ++ei;
-	  }
-	}
-	put(vertex_color, u, Color::black());
-	vis.finish_vertex(u, g);
+        VertexInfo& back = stack.back();
+        u = back.first;
+        Iter ei, ei_end;
+        tie(ei, ei_end) = back.second;
+        stack.pop_back();
+        while (ei != ei_end) {
+          Vertex v = target(*ei, g);
+          vis.examine_edge(*ei, g);
+          ColorValue v_color = get(vertex_color, v);
+          EColorValue uv_color = get(edge_color, *ei);
+          put(edge_color, *ei, EColor::black());
+          if (v_color == Color::white()) {
+            vis.tree_edge(*ei, g);
+            stack.push_back(std::make_pair(u, std::make_pair(++ei, ei_end)));
+            u = v;
+            put(vertex_color, u, Color::gray());
+            vis.discover_vertex(u, g);
+            tie(ei, ei_end) = out_edges(u, g);
+          } else if (v_color == Color::gray()) {
+            if (uv_color == EColor::white()) vis.back_edge(*ei, g);
+            ++ei;
+          } else { // if (v_color == Color::black())
+            ++ei;
+          }
+        }
+        put(vertex_color, u, Color::black());
+        vis.finish_vertex(u, g);
       }
     }
 

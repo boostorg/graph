@@ -135,8 +135,8 @@ namespace boost {
   namespace detail {
 
     template<typename VertexAndEdgeListGraph, typename Size, 
-	     typename WeightMap, typename PredecessorMap, typename DistanceMap,
-	     typename P, typename T, typename R>
+             typename WeightMap, typename PredecessorMap, typename DistanceMap,
+             typename P, typename T, typename R>
     bool 
     bellman_dispatch2
       (VertexAndEdgeListGraph& g, 
@@ -149,24 +149,24 @@ namespace boost {
       typedef typename property_traits<WeightMap>::value_type weight_type;
       typename graph_traits<VertexAndEdgeListGraph>::vertex_iterator v, v_end;
       for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
-	put(distance, *v, std::numeric_limits<weight_type>::max());
-	put(pred, *v, *v);
+        put(distance, *v, (std::numeric_limits<weight_type>::max)());
+        put(pred, *v, *v);
       }
       put(distance, s, weight_type(0));
       return bellman_ford_shortest_paths
-	       (g, N, weight, pred, distance,
-		choose_param(get_param(params, distance_combine_t()),
-			     closed_plus<D>()),
-		choose_param(get_param(params, distance_compare_t()),
-			     std::less<D>()),
-		choose_param(get_param(params, graph_visitor),
-			     null_vis)
-		);
+               (g, N, weight, pred, distance,
+                choose_param(get_param(params, distance_combine_t()),
+                             closed_plus<D>()),
+                choose_param(get_param(params, distance_compare_t()),
+                             std::less<D>()),
+                choose_param(get_param(params, graph_visitor),
+                             null_vis)
+                );
     }
 
     template<typename VertexAndEdgeListGraph, typename Size, 
-	     typename WeightMap, typename PredecessorMap, typename DistanceMap,
-	     typename P, typename T, typename R>
+             typename WeightMap, typename PredecessorMap, typename DistanceMap,
+             typename P, typename T, typename R>
     bool 
     bellman_dispatch2
       (VertexAndEdgeListGraph& g, 
@@ -177,14 +177,14 @@ namespace boost {
       typedef typename property_traits<DistanceMap>::value_type D;
       bellman_visitor<> null_vis;
       return bellman_ford_shortest_paths
-	       (g, N, weight, pred, distance,
-		choose_param(get_param(params, distance_combine_t()),
-			     closed_plus<D>()),
-		choose_param(get_param(params, distance_compare_t()),
-			     std::less<D>()),
-		choose_param(get_param(params, graph_visitor),
-			     null_vis)
-		);
+               (g, N, weight, pred, distance,
+                choose_param(get_param(params, distance_combine_t()),
+                             closed_plus<D>()),
+                choose_param(get_param(params, distance_compare_t()),
+                             std::less<D>()),
+                choose_param(get_param(params, graph_visitor),
+                             null_vis)
+                );
     }
 
     template <class EdgeListGraph, class Size, class WeightMap,
@@ -195,13 +195,13 @@ namespace boost {
     {
       dummy_property_map dummy_pred;
       return 
-	detail::bellman_dispatch2
-	  (g, 
-	   get_param(params, root_vertex_t()),
-	   N, weight,
-	   choose_param(get_param(params, vertex_predecessor), dummy_pred),
-	   distance,
-	   params);
+        detail::bellman_dispatch2
+          (g, 
+           get_param(params, root_vertex_t()),
+           N, weight,
+           choose_param(get_param(params, vertex_predecessor), dummy_pred),
+           distance,
+           params);
     }
   } // namespace detail
 

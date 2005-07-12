@@ -58,15 +58,15 @@ main()
 
   for (std::size_t i = 0; i < art_points.size(); ++i) {
     std::cout << (char)(art_points[i] + 'A') 
-	      << " [ style=\"filled\", fillcolor=\"red\" ];" 
-	      << std::endl;
+              << " [ style=\"filled\", fillcolor=\"red\" ];" 
+              << std::endl;
   }
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << (char)(source(*ei, g) + 'A') << " -- " 
-	      << (char)(target(*ei, g) + 'A')
-	      << "[label=\"" << component[*ei] << "\"]\n";
+              << (char)(target(*ei, g) + 'A')
+              << "[label=\"" << component[*ei] << "\"]\n";
   std::cout << "}\n";
 
   return 0;

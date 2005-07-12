@@ -38,7 +38,7 @@ namespace detail {
   template<typename Graph, typename RankMap, typename RankMap2>
   void page_rank_step(const Graph& g, RankMap from_rank, RankMap2 to_rank,
                       typename property_traits<RankMap>::value_type damping,
-		      incidence_graph_tag)
+                      incidence_graph_tag)
   {
     typedef typename property_traits<RankMap>::value_type rank_type;
 
@@ -48,20 +48,20 @@ namespace detail {
     BGL_FORALL_VERTICES_T(u, g, Graph) {
       rank_type u_rank_out = damping * get(from_rank, u) / out_degree(u, g);
       BGL_FORALL_ADJ_T(u, v, g, Graph)
-	put(to_rank, v, get(to_rank, v) + u_rank_out);
+        put(to_rank, v, get(to_rank, v) + u_rank_out);
     }
   }
 
   template<typename Graph, typename RankMap, typename RankMap2>
   void page_rank_step(const Graph& g, RankMap from_rank, RankMap2 to_rank,
                       typename property_traits<RankMap>::value_type damping,
-		      bidirectional_graph_tag)
+                      bidirectional_graph_tag)
   {
     typedef typename property_traits<RankMap>::value_type damping_type;
     BGL_FORALL_VERTICES_T(v, g, Graph) {
       typename property_traits<RankMap>::value_type rank(0);
       BGL_FORALL_INEDGES_T(v, e, g, Graph)
-	rank += get(from_rank, source(e, g)) / out_degree(source(e, g), g);
+        rank += get(from_rank, source(e, g)) / out_degree(source(e, g), g);
       put(to_rank, v, (damping_type(1) - damping) + damping * rank);
     }
   }
@@ -141,8 +141,8 @@ remove_dangling_links(MutableGraph& g)
     for (tie(vi, vi_end) = vertices(g); vi != vi_end; /* in loop */) {
       typename graph_traits<MutableGraph>::vertex_descriptor v = *vi++;
       if (out_degree(v, g) == 0) {
-	clear_vertex(v, g);
-	remove_vertex(v, g);
+        clear_vertex(v, g);
+        remove_vertex(v, g);
       }
     }
   } while (num_vertices(g) < old_n);

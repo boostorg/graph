@@ -68,16 +68,16 @@ int main(int, char*[]) {
   for (int i = 0; i < grid_size; ++i) {
     for (int j = 0; j < grid_size; ++j) {
       if (i != 0)
-	add_edge(verts[i][j], verts[i-1][j], random_edge_weight(), graph);
+        add_edge(verts[i][j], verts[i-1][j], random_edge_weight(), graph);
       if (j != 0)
-	add_edge(verts[i][j], verts[i][j-1], random_edge_weight(), graph);
+        add_edge(verts[i][j], verts[i][j-1], random_edge_weight(), graph);
 #if 0
       // Uncomment parts of this to get a cylinder or torus
       if (i == 0)
-	add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(), 
+        add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(), 
                  graph);
       if (j == 0)
-	add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(), 
+        add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(), 
                  graph);
 #endif
     }
@@ -122,17 +122,17 @@ int main(int, char*[]) {
 
   std::cerr << "--------Unweighted layout--------\n";
   boost::write_graphviz(std::cout, graph, 
-			position_writer<Position, vertex_descriptor>(position),
-			boost::default_writer(),
-			graph_writer());
+                        position_writer<Position, vertex_descriptor>(position),
+                        boost::default_writer(),
+                        graph_writer());
 
   boost::gursoy_atun_layout(graph, space, position,
                             weight_map(get(boost::edge_weight, graph)));
 
   std::cerr << "--------Weighted layout--------\n";
   boost::write_graphviz(std::cout, graph, 
-			position_writer<Position, vertex_descriptor>(position),
-			boost::default_writer(),
-			graph_writer());
+                        position_writer<Position, vertex_descriptor>(position),
+                        boost::default_writer(),
+                        graph_writer());
   return 0;
 }

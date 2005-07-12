@@ -81,8 +81,8 @@ int test_main(int, char*[])
   std::vector<int> distance2(numVertex, 17);
   bool const r2 = bellman_ford_shortest_paths
                     (g, 
-		     weight_map(weight_pmap).distance_map(&distance2[0]).
-		     predecessor_map(&parent2[0]).root_vertex(s));
+                     weight_map(weight_pmap).distance_map(&distance2[0]).
+                     predecessor_map(&parent2[0]).root_vertex(s));
   if (r2) {
     for(int i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";

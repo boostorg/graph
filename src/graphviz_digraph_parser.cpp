@@ -12,39 +12,22 @@
 #define yychar bgl_dir_char
 #define yydebug bgl_dir_debug
 #define yynerrs bgl_dir_nerrs
-#define	GRAPH_T	257
-#define	NODE_T	258
-#define	EDGE_T	259
-#define	DIGRAPH_T	260
-#define	EDGEOP_T	261
-#define	SUBGRAPH_T	262
-#define	ID_T	263
+#define GRAPH_T 257
+#define NODE_T  258
+#define EDGE_T  259
+#define DIGRAPH_T       260
+#define EDGEOP_T        261
+#define SUBGRAPH_T      262
+#define ID_T    263
 
-#line 1 "graphviz_parser.yy"
 
 //=======================================================================
 // Copyright 2001 University of Notre Dame.
 // Author: Lie-Quan Lee
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
 #include <iostream>
@@ -62,8 +45,6 @@
 #else
 #include <sstream>
 #endif
-
-using namespace std;
 
 #ifndef GRAPHVIZ_DIRECTED
 #error Need to define the GRAPHVIZ_DIRECTED macro to either 0 or 1
@@ -113,7 +94,7 @@ using namespace std;
 
     static const std::string& get_graph_name(const Subgraph& g) {
       const boost::graph_property<Subgraph, boost::graph_name_t>::type&
-	name = boost::get_property(g, boost::graph_name);
+        name = boost::get_property(g, boost::graph_name);
       return name; 
     }
 
@@ -130,7 +111,7 @@ using namespace std;
 
       //set the label of vertex, it could be overwritten later.
       boost::property_map<GRAPHVIZ_GRAPH, boost::vertex_attribute_t>::type
-	va = boost::get(boost::vertex_attribute, g); 
+        va = boost::get(boost::vertex_attribute, g); 
       va[v]["label"] = name; 
       
       //add v into the map so next time we will find it.
@@ -154,85 +135,85 @@ using namespace std;
 
     
     static void set_attribute(GraphvizAttrList& p,
-			      const GraphvizAttrList& attr) {
+                              const GraphvizAttrList& attr) {
       GraphvizAttrList::const_iterator i, end;
       for ( i=attr.begin(), end=attr.end(); i!=end; ++i)
-	p[i->first]=i->second;
+        p[i->first]=i->second;
     }
   
     static void set_attribute(Subgraph& g,
-			      AttrState s, bool clear_attribute = true) {
+                              AttrState s, bool clear_attribute = true) {
       typedef Subgraph Graph;
       switch ( s ) {
       case GRAPH_GRAPH_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_graph_attribute_t>::type&
-	    gga = boost::get_property(g, boost::graph_graph_attribute);
-	  set_attribute(gga, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_graph_attribute_t>::type&
+            gga = boost::get_property(g, boost::graph_graph_attribute);
+          set_attribute(gga, attributes); 
+        }
+        break;
       case GRAPH_NODE_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_vertex_attribute_t>::type&
-	    gna = boost::get_property(g, boost::graph_vertex_attribute);
-	  set_attribute(gna, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_vertex_attribute_t>::type&
+            gna = boost::get_property(g, boost::graph_vertex_attribute);
+          set_attribute(gna, attributes); 
+        }
+        break;
       case GRAPH_EDGE_A: 
-	{
-	  boost::graph_property<Graph, boost::graph_edge_attribute_t>::type&
-	    gea = boost::get_property(g, boost::graph_edge_attribute);
-	  set_attribute(gea, attributes); 
-	}
-	break;
+        {
+          boost::graph_property<Graph, boost::graph_edge_attribute_t>::type&
+            gea = boost::get_property(g, boost::graph_edge_attribute);
+          set_attribute(gea, attributes); 
+        }
+        break;
       case NODE_A:
-	{
-	  boost::property_map<Graph, boost::vertex_attribute_t>::type
-	    va = boost::get(boost::vertex_attribute, g);    //va[v]
-	  set_attribute(va[current_vertex], attributes);
-	}
-	break;
+        {
+          boost::property_map<Graph, boost::vertex_attribute_t>::type
+            va = boost::get(boost::vertex_attribute, g);    //va[v]
+          set_attribute(va[current_vertex], attributes);
+        }
+        break;
       case EDGE_A: 
-	{
-	  boost::property_map<Graph, boost::edge_attribute_t>::type
-	    ea = boost::get(boost::edge_attribute, g);      //ea[e]
-	  set_attribute(ea[current_edge], attributes); 
-	}
-	break;
+        {
+          boost::property_map<Graph, boost::edge_attribute_t>::type
+            ea = boost::get(boost::edge_attribute, g);      //ea[e]
+          set_attribute(ea[current_edge], attributes); 
+        }
+        break;
       }
       if ( clear_attribute )
-	attributes.clear();
+        attributes.clear();
     }
 
 
     static void add_edges(const Vertex& u,
-			  const Vertex& v, GRAPHVIZ_GRAPH& g) {
+                          const Vertex& v, GRAPHVIZ_GRAPH& g) {
       graphviz::current_edge = boost::add_edge(u, v, g).first; 
       graphviz::set_attribute(g, EDGE_A, false);
     }
     
     static void add_edges(Subgraph* G1, Subgraph* G2,
-			  GRAPHVIZ_GRAPH& g) {
+                          GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j, m, n;
       for ( boost::tie(i, j) = boost::vertices(*G1); i != j; ++i) {
-	for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
-	  graphviz::add_edges(G1->local_to_global(*i),
-			      G2->local_to_global(*m), g);
-	}
+        for ( boost::tie(m, n) = boost::vertices(*G2); m != n; ++m) {
+          graphviz::add_edges(G1->local_to_global(*i),
+                              G2->local_to_global(*m), g);
+        }
       }
     }
 
     static void add_edges(Subgraph* G, const Vertex& v, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
-	graphviz::add_edges(G->local_to_global(*i), v, g);
+        graphviz::add_edges(G->local_to_global(*i), v, g);
       }
     }
 
     static void add_edges(const Vertex& u, Subgraph* G, GRAPHVIZ_GRAPH& g) {
       boost::graph_traits<Subgraph>::vertex_iterator i, j;
       for ( boost::tie(i, j) = boost::vertices(*G); i != j; ++i) {
-	graphviz::add_edges(u, G->local_to_global(*i), g);
+        graphviz::add_edges(u, G->local_to_global(*i), g);
       }
     }
 
@@ -255,7 +236,7 @@ using namespace std;
 
     static void set_graph_name(const std::string& name) {
       boost::graph_property<Subgraph, boost::graph_name_t>::type&
-	gea = boost::get_property(*current_graph, boost::graph_name);
+        gea = boost::get_property(*current_graph, boost::graph_name);
       gea = name;
     }
 
@@ -271,9 +252,9 @@ using namespace std;
 
 
 
-#define	YYFINAL		67
-#define	YYFLAG		-32768
-#define	YYNTBASE	18
+#define YYFINAL         67
+#define YYFLAG          -32768
+#define YYNTBASE        18
 
 #define YYTRANSLATE(x) ((unsigned)(x) <= 263 ? yytranslate[x] : 46)
 
@@ -335,11 +316,11 @@ static const short yyrhs[] = {    20,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   255,   258,   261,   275,   275,   278,   278,   281,   281,   284,
-   284,   287,   287,   291,   298,   299,   300,   303,   303,   306,
-   306,   309,   319,   319,   319,   322,   322,   322,   322,   325,
-   333,   344,   344,   347,   362,   365,   384,   429,   433,   433,
-   436,   445,   456,   463,   473,   478,   499,   499
+   239,   242,   245,   259,   259,   262,   262,   265,   265,   268,
+   268,   271,   271,   275,   282,   283,   284,   287,   287,   290,
+   290,   293,   303,   303,   303,   306,   306,   306,   306,   309,
+   317,   328,   328,   331,   346,   349,   368,   413,   417,   417,
+   420,   429,   440,   447,   457,   462,   483,   483
 };
 #endif
 
@@ -405,7 +386,7 @@ static const short yypgoto[] = {-32768,
 };
 
 
-#define	YYLAST		56
+#define YYLAST          56
 
 
 static const short yytable[] = {    51,
@@ -426,6 +407,8 @@ static const short yycheck[] = {    36,
     40,    42,    -1,    40,    -1,    40
 };
 #define YYPURE 1
+
+/* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
 
 /* This file comes from bison-1.28.  */
 
@@ -474,7 +457,7 @@ static const short yycheck[] = {    36,
    since that symbol is in the user namespace.  */
 #if (defined (_MSDOS) || defined (_MSDOS_)) && !defined (__TURBOC__)
 #if 0 /* No need for malloc.h, which pollutes the namespace;
-	 instead, just don't use alloca.  */
+         instead, just don't use alloca.  */
 #include <malloc.h>
 #endif
 #else /* not MSDOS, or __TURBOC__ */
@@ -487,7 +470,7 @@ static const short yycheck[] = {    36,
 #else /* not MSDOS, or __TURBOC__, or _AIX */
 #if 0
 #ifdef __hpux /* haible@ilog.fr says this works for HPUX 9.05 and up,
-		 and on HPUX 10.  Eventually we can turn this on.  */
+                 and on HPUX 10.  Eventually we can turn this on.  */
 #define YYSTACK_USE_ALLOCA
 #define alloca __builtin_alloca
 #endif /* __hpux */
@@ -509,50 +492,50 @@ static const short yycheck[] = {    36,
    It is replaced by the list of actions, each action
    as one case of the switch.  */
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		-2
-#define YYEOF		0
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT 	goto yyabortlab
-#define YYERROR		goto yyerrlab1
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+#define YYEMPTY         -2
+#define YYEOF           0
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrlab1
 /* Like YYERROR except do call yyerror.
    This remains here temporarily to ease the
    transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
-#define YYFAIL		goto yyerrlab
+#define YYFAIL          goto yyerrlab
 #define YYRECOVERING()  (!!yyerrstatus)
 #define YYBACKUP(token, value) \
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    { yychar = (token), yylval = (value);			\
-      yychar1 = YYTRANSLATE (yychar);				\
-      YYPOPSTACK;						\
-      goto yybackup;						\
-    }								\
-  else								\
-    { yyerror ("syntax error: cannot back up"); YYERROR; }	\
+do                                                              \
+  if (yychar == YYEMPTY && yylen == 1)                          \
+    { yychar = (token), yylval = (value);                       \
+      yychar1 = YYTRANSLATE (yychar);                           \
+      YYPOPSTACK;                                               \
+      goto yybackup;                                            \
+    }                                                           \
+  else                                                          \
+    { yyerror ("syntax error: cannot back up"); YYERROR; }      \
 while (0)
 
-#define YYTERROR	1
-#define YYERRCODE	256
+#define YYTERROR        1
+#define YYERRCODE       256
 
 #ifndef YYPURE
-#define YYLEX		yylex()
+#define YYLEX           yylex()
 #endif
 
 #ifdef YYPURE
 #ifdef YYLSP_NEEDED
 #ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
+#define YYLEX           yylex(&yylval, &yylloc, YYLEX_PARAM)
 #else
-#define YYLEX		yylex(&yylval, &yylloc)
+#define YYLEX           yylex(&yylval, &yylloc)
 #endif
 #else /* not YYLSP_NEEDED */
 #ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, YYLEX_PARAM)
+#define YYLEX           yylex(&yylval, YYLEX_PARAM)
 #else
-#define YYLEX		yylex(&yylval)
+#define YYLEX           yylex(&yylval)
 #endif
 #endif /* not YYLSP_NEEDED */
 #endif
@@ -561,27 +544,27 @@ while (0)
 
 #ifndef YYPURE
 
-int	yychar;			/*  the lookahead symbol		*/
-YYSTYPE	yylval;			/*  the semantic value of the		*/
-				/*  lookahead symbol			*/
+int     yychar;                 /*  the lookahead symbol                */
+YYSTYPE yylval;                 /*  the semantic value of the           */
+                                /*  lookahead symbol                    */
 
 #ifdef YYLSP_NEEDED
-YYLTYPE yylloc;			/*  location data for the lookahead	*/
-				/*  symbol				*/
+YYLTYPE yylloc;                 /*  location data for the lookahead     */
+                                /*  symbol                              */
 #endif
 
-int yynerrs;			/*  number of parse errors so far       */
+int yynerrs;                    /*  number of parse errors so far       */
 #endif  /* not YYPURE */
 
 #if YYDEBUG != 0
-int yydebug;			/*  nonzero means print parse trace	*/
+int yydebug;                    /*  nonzero means print parse trace     */
 /* Since this is uninitialized, it does not stop multiple parsers
    from coexisting.  */
 #endif
 
-/*  YYINITDEPTH indicates the initial size of the parser's stacks	*/
+/*  YYINITDEPTH indicates the initial size of the parser's stacks       */
 
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 #define YYINITDEPTH 200
 #endif
 
@@ -601,9 +584,9 @@ int yydebug;			/*  nonzero means print parse trace	*/
    definitions require.  With GCC, __builtin_memcpy takes an arg
    of type size_t, but it can handle unsigned int.  */
 
-#if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
-#else				/* not GNU C or C++ */
+#if __GNUC__ > 1                /* GNU C and GNU C++ define this.  */
+#define __yy_memcpy(TO,FROM,COUNT)      __builtin_memcpy(TO,FROM,COUNT)
+#else                           /* not GNU C or C++ */
 #ifndef __cplusplus
 
 /* This is the most reliable way to avoid incompatibilities
@@ -641,6 +624,7 @@ __yy_memcpy (char *to, char *from, unsigned int count)
 #endif
 
 
+
 /* The user can define YYPARSE_PARAM as the name of an argument to be passed
    into yyparse.  The argument should have type void *.
    It should actually point to an object.
@@ -677,17 +661,17 @@ yyparse(YYPARSE_PARAM_ARG)
   register int yyn;
   register short *yyssp;
   register YYSTYPE *yyvsp;
-  int yyerrstatus;	/*  number of tokens to shift before error messages enabled */
-  int yychar1 = 0;		/*  lookahead token as an internal (translated) token number */
+  int yyerrstatus;      /*  number of tokens to shift before error messages enabled */
+  int yychar1 = 0;              /*  lookahead token as an internal (translated) token number */
 
-  short	yyssa[YYINITDEPTH];	/*  the state stack			*/
-  YYSTYPE yyvsa[YYINITDEPTH];	/*  the semantic value stack		*/
+  short yyssa[YYINITDEPTH];     /*  the state stack                     */
+  YYSTYPE yyvsa[YYINITDEPTH];   /*  the semantic value stack            */
 
-  short *yyss = yyssa;		/*  refer to the stacks thru separate pointers */
-  YYSTYPE *yyvs = yyvsa;	/*  to allow yyoverflow to reallocate them elsewhere */
+  short *yyss = yyssa;          /*  refer to the stacks thru separate pointers */
+  YYSTYPE *yyvs = yyvsa;        /*  to allow yyoverflow to reallocate them elsewhere */
 
 #ifdef YYLSP_NEEDED
-  YYLTYPE yylsa[YYINITDEPTH];	/*  the location stack			*/
+  YYLTYPE yylsa[YYINITDEPTH];   /*  the location stack                  */
   YYLTYPE *yyls = yylsa;
   YYLTYPE *yylsp;
 
@@ -708,9 +692,9 @@ yyparse(YYPARSE_PARAM_ARG)
 #endif
 #endif
 
-  YYSTYPE yyval;		/*  the variable used to return		*/
-				/*  semantic values from the action	*/
-				/*  routines				*/
+  YYSTYPE yyval;                /*  the variable used to return         */
+                                /*  semantic values from the action     */
+                                /*  routines                            */
 
   int yylen;
 
@@ -722,7 +706,7 @@ yyparse(YYPARSE_PARAM_ARG)
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;		/* Cause a token to be read.  */
+  yychar = YYEMPTY;             /* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
@@ -757,20 +741,20 @@ yynewstate:
 
 #ifdef yyoverflow
       /* Each stack pointer address is followed by the size of
-	 the data in use in that stack, in bytes.  */
+         the data in use in that stack, in bytes.  */
 #ifdef YYLSP_NEEDED
       /* This used to be a conditional around just the two extra args,
-	 but that might be undefined if yyoverflow is a macro.  */
+         but that might be undefined if yyoverflow is a macro.  */
       yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yyls1, size * sizeof (*yylsp),
-		 &yystacksize);
+                 &yyss1, size * sizeof (*yyssp),
+                 &yyvs1, size * sizeof (*yyvsp),
+                 &yyls1, size * sizeof (*yylsp),
+                 &yystacksize);
 #else
       yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yystacksize);
+                 &yyss1, size * sizeof (*yyssp),
+                 &yyvs1, size * sizeof (*yyvsp),
+                 &yystacksize);
 #endif
 
       yyss = yyss1; yyvs = yyvs1;
@@ -780,34 +764,34 @@ yynewstate:
 #else /* no yyoverflow */
       /* Extend the stack our own way.  */
       if (yystacksize >= YYMAXDEPTH)
-	{
-	  yyerror("parser stack overflow");
-	  if (yyfree_stacks)
-	    {
-	      free (yyss);
-	      free (yyvs);
+        {
+          yyerror("parser stack overflow");
+          if (yyfree_stacks)
+            {
+              free (yyss);
+              free (yyvs);
 #ifdef YYLSP_NEEDED
-	      free (yyls);
+              free (yyls);
 #endif
-	    }
-	  return 2;
-	}
+            }
+          return 2;
+        }
       yystacksize *= 2;
       if (yystacksize > YYMAXDEPTH)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 #ifndef YYSTACK_USE_ALLOCA
       yyfree_stacks = 1;
 #endif
       yyss = (short *) YYSTACK_ALLOC (yystacksize * sizeof (*yyssp));
       __yy_memcpy ((char *)yyss, (char *)yyss1,
-		   size * (unsigned int) sizeof (*yyssp));
+                   size * (unsigned int) sizeof (*yyssp));
       yyvs = (YYSTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yyvsp));
       __yy_memcpy ((char *)yyvs, (char *)yyvs1,
-		   size * (unsigned int) sizeof (*yyvsp));
+                   size * (unsigned int) sizeof (*yyvsp));
 #ifdef YYLSP_NEEDED
       yyls = (YYLTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yylsp));
       __yy_memcpy ((char *)yyls, (char *)yyls1,
-		   size * (unsigned int) sizeof (*yylsp));
+                   size * (unsigned int) sizeof (*yylsp));
 #endif
 #endif /* no yyoverflow */
 
@@ -819,11 +803,11 @@ yynewstate:
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Stack size increased to %d\n", yystacksize);
+        fprintf(stderr, "Stack size increased to %d\n", yystacksize);
 #endif
 
       if (yyssp >= yyss + yystacksize - 1)
-	YYABORT;
+        YYABORT;
     }
 
 #if YYDEBUG != 0
@@ -853,21 +837,21 @@ yynewstate:
     {
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Reading a token: ");
+        fprintf(stderr, "Reading a token: ");
 #endif
       yychar = YYLEX;
     }
 
   /* Convert token to internal form (in yychar1) for indexing tables with */
 
-  if (yychar <= 0)		/* This means end of input. */
+  if (yychar <= 0)              /* This means end of input. */
     {
       yychar1 = 0;
-      yychar = YYEOF;		/* Don't call YYLEX any more */
+      yychar = YYEOF;           /* Don't call YYLEX any more */
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Now at end of input.\n");
+        fprintf(stderr, "Now at end of input.\n");
 #endif
     }
   else
@@ -876,15 +860,15 @@ yynewstate:
 
 #if YYDEBUG != 0
       if (yydebug)
-	{
-	  fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
-	  /* Give the individual parser a way to print the precise meaning
-	     of a token, for further debugging info.  */
+        {
+          fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
+          /* Give the individual parser a way to print the precise meaning
+             of a token, for further debugging info.  */
 #ifdef YYPRINT
-	  YYPRINT (stderr, yychar, yylval);
+          YYPRINT (stderr, yychar, yylval);
 #endif
-	  fprintf (stderr, ")\n");
-	}
+          fprintf (stderr, ")\n");
+        }
 #endif
     }
 
@@ -904,7 +888,7 @@ yynewstate:
   if (yyn < 0)
     {
       if (yyn == YYFLAG)
-	goto yyerrlab;
+        goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -955,11 +939,11 @@ yyreduce:
       int i;
 
       fprintf (stderr, "Reducing via rule %d (line %d), ",
-	       yyn, yyrline[yyn]);
+               yyn, yyrline[yyn]);
 
       /* Print the symbols being reduced, and their result.  */
       for (i = yyprhs[yyn]; yyrhs[i] > 0; i++)
-	fprintf (stderr, "%s ", yytname[yyrhs[i]]);
+        fprintf (stderr, "%s ", yytname[yyrhs[i]]);
       fprintf (stderr, " -> %s\n", yytname[yyr1[yyn]]);
     }
 #endif
@@ -968,11 +952,9 @@ yyreduce:
   switch (yyn) {
 
 case 2:
-#line 258 "graphviz_parser.yy"
 {yyval.i=0;;
     break;}
 case 3:
-#line 262 "graphviz_parser.yy"
 {
     graphviz::vlist.clear();
     graphviz::attributes.clear();
@@ -986,38 +968,30 @@ case 3:
   ;
     break;}
 case 6:
-#line 278 "graphviz_parser.yy"
 {yyval.ptr = yyvsp[0].ptr; ;
     break;}
 case 7:
-#line 278 "graphviz_parser.yy"
 {yyval.ptr=(void*)(new std::string("G")); ;
     break;}
 case 14:
-#line 292 "graphviz_parser.yy"
 { 
     graphviz::set_attribute(*graphviz::current_graph,
-			  graphviz::attribute_state); 
+                          graphviz::attribute_state); 
   ;
     break;}
 case 15:
-#line 298 "graphviz_parser.yy"
 { graphviz::attribute_state = GRAPH_GRAPH_A; ;
     break;}
 case 16:
-#line 299 "graphviz_parser.yy"
 { graphviz::attribute_state = GRAPH_NODE_A; ;
     break;}
 case 17:
-#line 300 "graphviz_parser.yy"
 { graphviz::attribute_state = GRAPH_EDGE_A; ;
     break;}
 case 19:
-#line 303 "graphviz_parser.yy"
 {;
     break;}
 case 22:
-#line 310 "graphviz_parser.yy"
 { 
     std::string* name  = static_cast<std::string*>(yyvsp[-2].ptr);
     std::string* value = static_cast<std::string*>(yyvsp[0].ptr);
@@ -1027,45 +1001,39 @@ case 22:
   ;
     break;}
 case 29:
-#line 322 "graphviz_parser.yy"
 { yyval.i = 0; ;
     break;}
 case 30:
-#line 326 "graphviz_parser.yy"
 { 
     graphviz::set_attribute(
          *static_cast<graphviz::Subgraph*>(graphviz::current_graph),
-			    GRAPH_GRAPH_A);
+                            GRAPH_GRAPH_A);
   ;
     break;}
 case 31:
-#line 334 "graphviz_parser.yy"
 { 
     graphviz::Vertex* temp   = static_cast<graphviz::Vertex*>(yyvsp[-1].ptr); 
     graphviz::current_vertex = *temp;
     graphviz::set_attribute(*static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM),
-			    NODE_A); 
+                            NODE_A); 
     delete temp;
     yyval.i = 0;
   ;
     break;}
 case 32:
-#line 344 "graphviz_parser.yy"
 { yyval.i=0; ;
     break;}
 case 33:
-#line 344 "graphviz_parser.yy"
 { yyval.i=0; ;
     break;}
 case 34:
-#line 348 "graphviz_parser.yy"
 {
     std::string* name  = static_cast<std::string*>(yyvsp[0].ptr);
     std::pair<graphviz::Iter, bool> result = graphviz::lookup(*name); 
     if (result.second) {
       graphviz::current_vertex = result.first->second; 
       if (! graphviz::current_graph->is_root())
-	boost::add_vertex(graphviz::current_vertex, *graphviz::current_graph);
+        boost::add_vertex(graphviz::current_vertex, *graphviz::current_graph);
     } else
       graphviz::current_vertex = graphviz::add_name(*name, *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM)) ; 
     graphviz::Vertex* temp = new graphviz::Vertex(graphviz::current_vertex);
@@ -1075,11 +1043,9 @@ case 34:
   ;
     break;}
 case 35:
-#line 362 "graphviz_parser.yy"
 { yyval.ptr=yyvsp[0].ptr; ;
     break;}
 case 36:
-#line 366 "graphviz_parser.yy"
 {
     //consider port as a special properties ?? --need work here
     std::string* name = static_cast<std::string*>(yyvsp[-2].ptr);
@@ -1098,34 +1064,33 @@ case 36:
   ;
     break;}
 case 37:
-#line 385 "graphviz_parser.yy"
 {
 
     typedef std::pair<void*, bool>* Ptr;
     Ptr source = static_cast<Ptr>(yyvsp[-2].ptr);
 
     for (std::vector<Ptr>::iterator it=graphviz::vlist.begin();
-	 it !=graphviz::vlist.end(); ++it) { 
+         it !=graphviz::vlist.end(); ++it) { 
       if ( source->second ) {
-	if ( (*it)->second )
-	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
-			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	else
-	  graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
-			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        if ( (*it)->second )
+          graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
+                            static_cast<graphviz::Subgraph*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        else
+          graphviz::add_edges(static_cast<graphviz::Subgraph*>(source->first),
+                            *static_cast<graphviz::Vertex*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
       } else {
-	graphviz::Vertex* temp = static_cast<graphviz::Vertex*>(source->first);
-	if ( (*it)->second )
-	  graphviz::add_edges(*temp,
-			    static_cast<graphviz::Subgraph*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	else
-	  graphviz::add_edges(*temp,
-			    *static_cast<graphviz::Vertex*>((*it)->first),
-			    *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
-	delete temp;
+        graphviz::Vertex* temp = static_cast<graphviz::Vertex*>(source->first);
+        if ( (*it)->second )
+          graphviz::add_edges(*temp,
+                            static_cast<graphviz::Subgraph*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        else
+          graphviz::add_edges(*temp,
+                            *static_cast<graphviz::Vertex*>((*it)->first),
+                            *static_cast<GRAPHVIZ_GRAPH*>(YYPARSE_PARAM));
+        delete temp;
       }
 
       delete source; 
@@ -1143,11 +1108,9 @@ case 37:
   ;
     break;}
 case 38:
-#line 430 "graphviz_parser.yy"
 { graphviz::vlist.push_back(static_cast<std::pair<void*, bool>*>(yyvsp[0].ptr)); ;
     break;}
 case 41:
-#line 437 "graphviz_parser.yy"
 { 
     std::pair<void*, bool>* temp = new std::pair<void*, bool>;
     temp->first = yyvsp[0].ptr;
@@ -1158,7 +1121,6 @@ case 41:
   ;
     break;}
 case 42:
-#line 446 "graphviz_parser.yy"
 { 
     std::pair<void*, bool>* temp = new std::pair<void*, bool>;
     temp->first = yyvsp[0].ptr;
@@ -1169,7 +1131,6 @@ case 42:
   ;
     break;}
 case 43:
-#line 457 "graphviz_parser.yy"
 {
     if ( yyvsp[0].i )
       graphviz::current_graph = &graphviz::current_graph->parent();
@@ -1178,7 +1139,6 @@ case 43:
   ;
     break;}
 case 44:
-#line 464 "graphviz_parser.yy"
 {
     graphviz::previous_graph = graphviz::current_graph;
     std::string name = graphviz::random_string();
@@ -1190,13 +1150,11 @@ case 44:
   ;
     break;}
 case 45:
-#line 473 "graphviz_parser.yy"
 {
     graphviz::current_graph = &graphviz::current_graph->parent();
   ;
     break;}
 case 46:
-#line 479 "graphviz_parser.yy"
 {
     //lookup ID_T if it is already in the subgraph,
     //if it is not, add a new subgraph
@@ -1217,15 +1175,14 @@ case 46:
   ;
     break;}
 case 47:
-#line 499 "graphviz_parser.yy"
 {yyval.i = 1; ;
     break;}
 case 48:
-#line 499 "graphviz_parser.yy"
 { yyval.i = 0; ;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
+
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1239,7 +1196,7 @@ case 48:
       short *ssp1 = yyss - 1;
       fprintf (stderr, "state stack now");
       while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
+        fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
@@ -1289,44 +1246,44 @@ yyerrlab:   /* here on detecting error */
       yyn = yypact[yystate];
 
       if (yyn > YYFLAG && yyn < YYLAST)
-	{
-	  int size = 0;
-	  char *msg;
-	  int x, count;
+        {
+          int size = 0;
+          char *msg;
+          int x, count;
 
-	  count = 0;
-	  /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
-	  for (x = (yyn < 0 ? -yyn : 0);
-	       x < (sizeof(yytname) / sizeof(char *)); x++)
-	    if (yycheck[x + yyn] == x)
-	      size += strlen(yytname[x]) + 15, count++;
-	  msg = (char *) malloc(size + 15);
-	  if (msg != 0)
-	    {
-	      strcpy(msg, "parse error");
+          count = 0;
+          /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
+          for (x = (yyn < 0 ? -yyn : 0);
+               x < (sizeof(yytname) / sizeof(char *)); x++)
+            if (yycheck[x + yyn] == x)
+              size += strlen(yytname[x]) + 15, count++;
+          msg = (char *) malloc(size + 15);
+          if (msg != 0)
+            {
+              strcpy(msg, "parse error");
 
-	      if (count < 5)
-		{
-		  count = 0;
-		  for (x = (yyn < 0 ? -yyn : 0);
-		       x < (sizeof(yytname) / sizeof(char *)); x++)
-		    if (yycheck[x + yyn] == x)
-		      {
-			strcat(msg, count == 0 ? ", expecting `" : " or `");
-			strcat(msg, yytname[x]);
-			strcat(msg, "'");
-			count++;
-		      }
-		}
-	      yyerror(msg);
-	      free(msg);
-	    }
-	  else
-	    yyerror ("parse error; also virtual memory exceeded");
-	}
+              if (count < 5)
+                {
+                  count = 0;
+                  for (x = (yyn < 0 ? -yyn : 0);
+                       x < (sizeof(yytname) / sizeof(char *)); x++)
+                    if (yycheck[x + yyn] == x)
+                      {
+                        strcat(msg, count == 0 ? ", expecting `" : " or `");
+                        strcat(msg, yytname[x]);
+                        strcat(msg, "'");
+                        count++;
+                      }
+                }
+              yyerror(msg);
+              free(msg);
+            }
+          else
+            yyerror ("parse error; also virtual memory exceeded");
+        }
       else
 #endif /* YYERROR_VERBOSE */
-	yyerror("parse error");
+        yyerror("parse error");
     }
 
   goto yyerrlab1;
@@ -1338,11 +1295,11 @@ yyerrlab1:   /* here on error raised explicitly by an action */
 
       /* return failure if at end of input */
       if (yychar == YYEOF)
-	YYABORT;
+        YYABORT;
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
+        fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
 #endif
 
       yychar = YYEMPTY;
@@ -1351,7 +1308,7 @@ yyerrlab1:   /* here on error raised explicitly by an action */
   /* Else will try to reuse lookahead token
      after shifting the error token.  */
 
-  yyerrstatus = 3;		/* Each real token shifted decrements this */
+  yyerrstatus = 3;              /* Each real token shifted decrements this */
 
   goto yyerrhandle;
 
@@ -1379,7 +1336,7 @@ yyerrpop:   /* pop the current state because it cannot handle the error token */
       short *ssp1 = yyss - 1;
       fprintf (stderr, "Error: state stack now");
       while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
+        fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
@@ -1398,7 +1355,7 @@ yyerrhandle:
   if (yyn < 0)
     {
       if (yyn == YYFLAG)
-	goto yyerrpop;
+        goto yyerrpop;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -1445,7 +1402,6 @@ yyerrhandle:
     }
   return 1;
 }
-#line 501 "graphviz_parser.yy"
 
 
 namespace boost {

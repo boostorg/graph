@@ -62,10 +62,10 @@ main()
     if (std::find(spanning_tree.begin(), spanning_tree.end(), *eiter)
         != spanning_tree.end())
       fout << "[color=\"black\", label=\"" << get(edge_weight, g, *eiter)
-	   << "\"];\n";
+           << "\"];\n";
     else
       fout << "[color=\"gray\", label=\"" << get(edge_weight, g, *eiter)
-	   << "\"];\n";
+           << "\"];\n";
   }
   fout << "}\n";
   return EXIT_SUCCESS;

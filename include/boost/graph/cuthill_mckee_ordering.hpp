@@ -48,22 +48,22 @@ namespace boost {
     {
     public:
       bfs_rcm_visitor(OutputIterator *iter, Buffer *b, DegreeMap deg): 
-	permutation(iter), Qptr(b), degree(deg) { }
+        permutation(iter), Qptr(b), degree(deg) { }
       template <class Vertex, class Graph>
       void examine_vertex(Vertex u, Graph&) {
-	*(*permutation)++ = u;
-	index_begin = Qptr->size();
+        *(*permutation)++ = u;
+        index_begin = Qptr->size();
       }
       template <class Vertex, class Graph>
       void finish_vertex(Vertex, Graph&) {
         using std::sort;
 
-	typedef typename property_traits<DegreeMap>::value_type DS;
+        typedef typename property_traits<DegreeMap>::value_type DS;
 
-	typedef indirect_cmp<DegreeMap, std::less<DS> > Compare;
-	Compare comp(degree);
-    		
-	sort(Qptr->begin()+index_begin, Qptr->end(), comp);
+        typedef indirect_cmp<DegreeMap, std::less<DS> > Compare;
+        Compare comp(degree);
+                
+        sort(Qptr->begin()+index_begin, Qptr->end(), comp);
       }
     protected:
       OutputIterator *permutation;
@@ -84,10 +84,10 @@ namespace boost {
             class ColorMap, class DegreeMap>
   OutputIterator
   cuthill_mckee_ordering(const Graph& g,
-			 std::deque< typename
-			 graph_traits<Graph>::vertex_descriptor > vertex_queue,
-			 OutputIterator permutation, 
-			 ColorMap color, DegreeMap degree)
+                         std::deque< typename
+                         graph_traits<Graph>::vertex_descriptor > vertex_queue,
+                         OutputIterator permutation, 
+                         ColorMap color, DegreeMap degree)
   {
 
     //create queue, visitor...don't forget namespaces!
@@ -102,7 +102,7 @@ namespace boost {
     queue Q;
 
     //create a bfs_rcm_visitor as defined above
-    Visitor	vis(&permutation, &Q, degree);
+    Visitor     vis(&permutation, &Q, degree);
 
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;    
 
@@ -129,9 +129,9 @@ namespace boost {
             class ColorMap, class DegreeMap>
   OutputIterator
   cuthill_mckee_ordering(const Graph& g,
-			 typename graph_traits<Graph>::vertex_descriptor s,
-			 OutputIterator permutation, 
-			 ColorMap color, DegreeMap degree)
+                         typename graph_traits<Graph>::vertex_descriptor s,
+                         OutputIterator permutation, 
+                         ColorMap color, DegreeMap degree)
   {
 
     std::deque< typename graph_traits<Graph>::vertex_descriptor > vertex_queue;

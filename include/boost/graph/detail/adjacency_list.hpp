@@ -1109,27 +1109,27 @@ namespace boost {
       
       std::pair<out_edge_iterator, out_edge_iterator>
       get_parallel_edge_sublist(typename Config::edge_descriptor e,
-				const graph_type& g,
-				void*)
+                                const graph_type& g,
+                                void*)
       { return out_edges(source(e, g), g); }
 
       std::pair<out_edge_iterator, out_edge_iterator>
       get_parallel_edge_sublist(typename Config::edge_descriptor e,
-				const graph_type& g,
-				setS*)
+                                const graph_type& g,
+                                setS*)
       { return edge_range(source(e, g), target(e, g), g); }
 
       std::pair<out_edge_iterator, out_edge_iterator>
       get_parallel_edge_sublist(typename Config::edge_descriptor e,
-				const graph_type& g,
-				multisetS*)
+                                const graph_type& g,
+                                multisetS*)
       { return edge_range(source(e, g), target(e, g), g); }
 
 #if !defined BOOST_NO_HASH
       std::pair<out_edge_iterator, out_edge_iterator>
       get_parallel_edge_sublist(typename Config::edge_descriptor e,
-				const graph_type& g,
-				hash_setS*)
+                                const graph_type& g,
+                                hash_setS*)
       { return edge_range(source(e, g), target(e, g), g); }
 #endif
 
@@ -1142,28 +1142,28 @@ namespace boost {
       {
         graph_type& g = static_cast<graph_type&>(*this);
 
-	typedef typename Config::edgelist_selector OutEdgeListS;
+        typedef typename Config::edgelist_selector OutEdgeListS;
 
-	std::pair<out_edge_iterator, out_edge_iterator> rng = 
-	  get_parallel_edge_sublist(e, g, (OutEdgeListS*)(0));
-	rng.first = std::find(rng.first, rng.second, e);
-	assert(rng.first != rng.second);
-	remove_edge(rng.first);
+        std::pair<out_edge_iterator, out_edge_iterator> rng = 
+          get_parallel_edge_sublist(e, g, (OutEdgeListS*)(0));
+        rng.first = std::find(rng.first, rng.second, e);
+        assert(rng.first != rng.second);
+        remove_edge(rng.first);
       }
 
       inline void
       remove_edge(typename Config::out_edge_iterator iter)
       {
-	typedef typename Config::graph_type graph_type;
+        typedef typename Config::graph_type graph_type;
         graph_type& g = static_cast<graph_type&>(*this);
-	typename Config::edge_descriptor e = *iter;
+        typename Config::edge_descriptor e = *iter;
         typename Config::OutEdgeList& oel = g.out_edge_list(source(e, g));
         typename Config::InEdgeList& iel = in_edge_list(g, target(e, g));
         typedef typename Config::OutEdgeList::value_type::property_type PType;
         PType& p = *(PType*)e.get_property();
         detail::remove_directed_edge_dispatch(*iter, iel, p);
-	g.m_edges.erase(iter.base()->get_iter());
-	oel.erase(iter.base());
+        g.m_edges.erase(iter.base()->get_iter());
+        oel.erase(iter.base());
       }
     };
 
@@ -1564,9 +1564,9 @@ namespace boost {
       typename Config::OutEdgeList::iterator first, last;
       typename Config::EdgeContainer fake_edge_container;
       tie(first, last) = 
-	std::equal_range(el.begin(), el.end(), 
-			 StoredEdge(v, fake_edge_container.end(),
-				    &fake_edge_container));
+        std::equal_range(el.begin(), el.end(), 
+                         StoredEdge(v, fake_edge_container.end(),
+                                    &fake_edge_container));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }

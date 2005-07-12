@@ -44,57 +44,57 @@ namespace boost {
     public:
       bfs_king_visitor(OutputIterator *iter, Buffer *b, Compare compare, 
                        PseudoDegreeMap deg, std::vector<int> loc, VecMap color, 
-		       VertexIndexMap vertices): 
-	permutation(iter), Qptr(b), degree(deg), comp(compare), 
-	Qlocation(loc), colors(color), vertex_map(vertices) { }
+                       VertexIndexMap vertices): 
+        permutation(iter), Qptr(b), degree(deg), comp(compare), 
+        Qlocation(loc), colors(color), vertex_map(vertices) { }
       
       template <typename Vertex, typename Graph>
       void finish_vertex(Vertex, Graph& g) {
-	typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-	Vertex v, w;
+        typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+        Vertex v, w;
 
-	typedef typename std::deque<Vertex>::iterator iterator;
-	typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
+        typedef typename std::deque<Vertex>::iterator iterator;
+        typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
 
-	reverse_iterator rend = Qptr->rend()-index_begin;
-	reverse_iterator rbegin = Qptr->rbegin();
+        reverse_iterator rend = Qptr->rend()-index_begin;
+        reverse_iterator rbegin = Qptr->rbegin();
 
 
-	//heap the vertices already there
-	std::make_heap(rbegin, rend, boost::bind<bool>(comp, _2, _1));
+        //heap the vertices already there
+        std::make_heap(rbegin, rend, boost::bind<bool>(comp, _2, _1));
 
-	int i = 0;
-	
-	for(i = index_begin; i != Qptr->size(); ++i){
-	  colors[get(vertex_map, (*Qptr)[i])] = 1;
-	  Qlocation[get(vertex_map, (*Qptr)[i])] = i;
-	}
+        int i = 0;
+        
+        for(i = index_begin; i != Qptr->size(); ++i){
+          colors[get(vertex_map, (*Qptr)[i])] = 1;
+          Qlocation[get(vertex_map, (*Qptr)[i])] = i;
+        }
 
-	i = 0;
+        i = 0;
 
- 	for( ; rbegin != rend; rend--){
-	  percolate_down<Vertex>(i);
-	  w = (*Qptr)[index_begin+i];
-	  for (tie(ei, ei_end) = out_edges(w, g); ei != ei_end; ++ei) {
- 	    v = target(*ei, g);
- 	    put(degree, v, get(degree, v) - 1);
+        for( ; rbegin != rend; rend--){
+          percolate_down<Vertex>(i);
+          w = (*Qptr)[index_begin+i];
+          for (tie(ei, ei_end) = out_edges(w, g); ei != ei_end; ++ei) {
+            v = target(*ei, g);
+            put(degree, v, get(degree, v) - 1);
     
- 	    if (colors[get(vertex_map, v)] == 1) {
-	      percolate_up<Vertex>(get(vertex_map, v), i);	      
- 	    }
-	  }
-	  
- 	  colors[get(vertex_map, w)] = 0;
- 	  i++;
-	}
+            if (colors[get(vertex_map, v)] == 1) {
+              percolate_up<Vertex>(get(vertex_map, v), i);            
+            }
+          }
+          
+          colors[get(vertex_map, w)] = 0;
+          i++;
+        }
       }
     
       template <typename Vertex, typename Graph>
       void examine_vertex(Vertex u, const Graph&) {
-	
-	*(*permutation)++ = u;
-	index_begin = Qptr->size();
-	
+        
+        *(*permutation)++ = u;
+        index_begin = Qptr->size();
+        
       }
     protected:
 
@@ -102,56 +102,56 @@ namespace boost {
       //this function replaces pop_heap, and tracks state information
       template <typename Vertex>
       void percolate_down(int offset){
-	typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
-	
-	int heap_last = index_begin + offset;
-	int heap_first = Qptr->size() - 1;
-	
-	//pop_heap functionality:
-	//swap first, last
-	std::swap((*Qptr)[heap_last], (*Qptr)[heap_first]);
-	
-	//swap in the location queue
-	std::swap(Qlocation[heap_first], Qlocation[heap_last]);
+        typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
+        
+        int heap_last = index_begin + offset;
+        int heap_first = Qptr->size() - 1;
+        
+        //pop_heap functionality:
+        //swap first, last
+        std::swap((*Qptr)[heap_last], (*Qptr)[heap_first]);
+        
+        //swap in the location queue
+        std::swap(Qlocation[heap_first], Qlocation[heap_last]);
 
-	//set drifter, children
-	int drifter = heap_first;
-	int drifter_heap = Qptr->size() - drifter;
+        //set drifter, children
+        int drifter = heap_first;
+        int drifter_heap = Qptr->size() - drifter;
 
-	int right_child_heap = drifter_heap * 2 + 1;
-	int right_child = Qptr->size() - right_child_heap;
+        int right_child_heap = drifter_heap * 2 + 1;
+        int right_child = Qptr->size() - right_child_heap;
 
-	int left_child_heap = drifter_heap * 2;
-	int left_child = Qptr->size() - left_child_heap;
+        int left_child_heap = drifter_heap * 2;
+        int left_child = Qptr->size() - left_child_heap;
 
-	//check that we are staying in the heap
-	bool valid = (right_child < heap_last) ? false : true;
-	
-	//pick smallest child of drifter, and keep in mind there might only be left child
-	int smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
-	  right_child : left_child;
-	
-	while(valid && smallest_child < heap_last && comp((*Qptr)[drifter], (*Qptr)[smallest_child])){
-	  
-	  //if smallest child smaller than drifter, swap them
-	  std::swap((*Qptr)[smallest_child], (*Qptr)[drifter]);
-	  std::swap(Qlocation[drifter], Qlocation[smallest_child]);
+        //check that we are staying in the heap
+        bool valid = (right_child < heap_last) ? false : true;
+        
+        //pick smallest child of drifter, and keep in mind there might only be left child
+        int smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
+          right_child : left_child;
+        
+        while(valid && smallest_child < heap_last && comp((*Qptr)[drifter], (*Qptr)[smallest_child])){
+          
+          //if smallest child smaller than drifter, swap them
+          std::swap((*Qptr)[smallest_child], (*Qptr)[drifter]);
+          std::swap(Qlocation[drifter], Qlocation[smallest_child]);
 
-	  //update the values, run again, as necessary
-	  drifter = smallest_child;
-	  drifter_heap = Qptr->size() - drifter;
+          //update the values, run again, as necessary
+          drifter = smallest_child;
+          drifter_heap = Qptr->size() - drifter;
 
-	  right_child_heap = drifter_heap * 2 + 1;
-	  right_child = Qptr->size() - right_child_heap;
+          right_child_heap = drifter_heap * 2 + 1;
+          right_child = Qptr->size() - right_child_heap;
 
-	  left_child_heap = drifter_heap * 2;
-	  left_child = Qptr->size() - left_child_heap;
+          left_child_heap = drifter_heap * 2;
+          left_child = Qptr->size() - left_child_heap;
 
-	  valid = (right_child < heap_last) ? false : true;
+          valid = (right_child < heap_last) ? false : true;
 
-	  smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
-	    right_child : left_child;
-	}
+          smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
+            right_child : left_child;
+        }
 
       }
 
@@ -161,29 +161,29 @@ namespace boost {
       // parent, as there is only a single choice
       template <typename Vertex>
       void percolate_up(int vertex, int offset){
-	
-	int child_location = Qlocation[vertex];
-	int heap_child_location = Qptr->size() - child_location;
-	int heap_parent_location = (int)(heap_child_location/2);
-	int parent_location = Qptr->size() - heap_parent_location; 
+        
+        int child_location = Qlocation[vertex];
+        int heap_child_location = Qptr->size() - child_location;
+        int heap_parent_location = (int)(heap_child_location/2);
+        int parent_location = Qptr->size() - heap_parent_location; 
 
-	bool valid = (heap_parent_location != 0 && child_location > index_begin + offset && 
-		      parent_location < Qptr->size());
+        bool valid = (heap_parent_location != 0 && child_location > index_begin + offset && 
+                      parent_location < Qptr->size());
 
-	while(valid && comp((*Qptr)[child_location], (*Qptr)[parent_location])){
-	  
-	  //swap in the heap
-	  std::swap((*Qptr)[child_location], (*Qptr)[parent_location]);
-	  
-	  //swap in the location queue
-	  std::swap(Qlocation[child_location], Qlocation[parent_location]);
+        while(valid && comp((*Qptr)[child_location], (*Qptr)[parent_location])){
+          
+          //swap in the heap
+          std::swap((*Qptr)[child_location], (*Qptr)[parent_location]);
+          
+          //swap in the location queue
+          std::swap(Qlocation[child_location], Qlocation[parent_location]);
 
-	  child_location = parent_location;
-	  heap_child_location = heap_parent_location;
-	  heap_parent_location = (int)(heap_child_location/2);
-	  parent_location = Qptr->size() - heap_parent_location; 
-	  valid = (heap_parent_location != 0 && child_location > index_begin + offset);
-	}
+          child_location = parent_location;
+          heap_child_location = heap_parent_location;
+          heap_parent_location = (int)(heap_child_location/2);
+          parent_location = Qptr->size() - heap_parent_location; 
+          valid = (heap_parent_location != 0 && child_location > index_begin + offset);
+        }
       }
       
       OutputIterator *permutation;

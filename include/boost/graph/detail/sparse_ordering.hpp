@@ -119,7 +119,7 @@ namespace boost {
 
     template <typename Tp, typename Sequence = std::deque<Tp> >
     class sparse_ordering_queue : public boost::queue<Tp, Sequence>{
-    public:	 
+    public:      
       typedef typename Sequence::iterator iterator;
       typedef typename Sequence::reverse_iterator reverse_iterator;
       typedef queue<Tp,Sequence> queue;
