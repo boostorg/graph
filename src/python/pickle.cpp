@@ -16,10 +16,12 @@ template<typename DirectedS>
 boost::python::tuple 
 graph_pickle_suite<DirectedS>::getstate(boost::python::object g_obj)
 {
-  using namespace boost::python;
   using boost::python::tuple;
   using boost::python::make_tuple;
   using boost::python::list;
+  using boost::python::extract;
+  using boost::python::dict;
+  using boost::python::object;
 
   const Graph& g = extract<const Graph&>(g_obj)();
   typename Graph::VertexIndexMap vertex_index_map = g.get_vertex_index_map();
@@ -83,10 +85,12 @@ void
 graph_pickle_suite<DirectedS>::setstate(boost::python::object g_obj, 
                                         boost::python::tuple state)
 {
-  using namespace boost::python;
   using boost::python::tuple;
   using boost::python::make_tuple;
   using boost::python::list;
+  using boost::python::extract;
+  using boost::python::dict;
+  using boost::python::object;
 
   Graph& g = extract<Graph&>(g_obj)();
 
