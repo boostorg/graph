@@ -36,8 +36,11 @@ template<typename Iterator>
 class simple_python_iterator
 {
 public:
+  typedef typename std::iterator_traits<Iterator>::difference_type
+  difference_type;
+
   simple_python_iterator(std::pair<Iterator, Iterator> p)
-    : first(p.first), last(p.second) { }
+    : orig_first(p.first), first(p.first), last(p.second), n(-1) { }
 
   typename std::iterator_traits<Iterator>::value_type next() 
   { 
@@ -45,6 +48,12 @@ public:
 
     if (first == last) stop_iteration_error();
     return *first++;
+  }
+
+  difference_type len()
+  { 
+    if (n == -1) n = std::distance(first, last);
+    return n; 
   }
 
   static void declare(const char* name)
@@ -55,13 +64,16 @@ public:
     if (!type_already_registered<simple_python_iterator>())
       class_<simple_python_iterator<Iterator> >(name, no_init)
         .def("__iter__", identity_function())
+        .def("__len__", &simple_python_iterator<Iterator>::len)
         .def("next", &simple_python_iterator<Iterator>::next)
       ;
   }
 
 private:
+  Iterator orig_first;
   Iterator first;
   Iterator last;
+  difference_type n;
 };
 
 template<typename PropertyMap>
@@ -243,6 +255,7 @@ class basic_graph
   void remove_vertex(Vertex vertex);
   std::size_t num_vertices() const;
   std::pair<vertex_iterator, vertex_iterator> vertices() const;
+  simple_python_iterator<vertex_iterator> py_vertices() const;
   vertex_iterator vertices_begin() const;
   vertex_iterator vertices_end() const;
   
@@ -250,6 +263,7 @@ class basic_graph
   void remove_edge(Edge edge);
   std::size_t num_edges() const;
   std::pair<edge_iterator, edge_iterator> edges() const;
+  simple_python_iterator<edge_iterator> py_edges() const;
   edge_iterator edges_begin() const;
   edge_iterator edges_end() const;
   

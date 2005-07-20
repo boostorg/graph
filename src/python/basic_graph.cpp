@@ -442,6 +442,13 @@ basic_graph<DirectedS>::vertices() const
 }
 
 template<typename DirectedS>
+simple_python_iterator<typename basic_graph<DirectedS>::vertex_iterator>
+basic_graph<DirectedS>::py_vertices() const
+{ 
+  return simple_python_iterator<vertex_iterator>(vertices());
+}
+
+template<typename DirectedS>
 typename basic_graph<DirectedS>::Edge 
 basic_graph<DirectedS>::add_edge(Vertex u, Vertex v)
 {
@@ -508,6 +515,13 @@ basic_graph<DirectedS>::edges() const
 }
 
 template<typename DirectedS>
+simple_python_iterator<typename basic_graph<DirectedS>::edge_iterator>
+basic_graph<DirectedS>::py_edges() const
+{ 
+  return simple_python_iterator<edge_iterator>(edges());
+}
+
+template<typename DirectedS>
 void basic_graph<DirectedS>::renumber_vertices()
 {
   using boost::vertices;
@@ -565,11 +579,10 @@ void export_basic_graph(const char* name)
         .def("is_directed", &Graph::is_directed)
         // Vertex List Graph concept
         .def("num_vertices", &Graph::num_vertices)
-        .add_property("vertices", range(&Graph::vertices_begin, 
-                                        &Graph::vertices_end))
+        .add_property("vertices", &Graph::py_vertices)
         // Edge List Graph concept
         .def("num_edges", &Graph::num_edges)
-        .add_property("edges", range(&Graph::edges_begin, &Graph::edges_end))
+        .add_property("edges", &Graph::py_edges)
         // Mutable Graph concept
         .def("add_vertex", &Graph::add_vertex)
         .def("clear_vertex", &Graph::clear_vertex)
@@ -623,6 +636,10 @@ void export_basic_graph(const char* name)
       .def(self != self);
 
   // Iterators
+  simple_python_iterator<typename Graph::vertex_iterator>
+    ::declare("vertex_iterator");
+  simple_python_iterator<typename Graph::edge_iterator>
+    ::declare("edge_iterator");
   simple_python_iterator<typename Graph::out_edge_iterator>
     ::declare("out_edge_iterator");
   simple_python_iterator<typename Graph::in_edge_iterator>
