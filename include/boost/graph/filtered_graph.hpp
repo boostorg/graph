@@ -209,6 +209,11 @@ namespace boost {
     { return this->m_g[local_to_global(x)]; }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
+    static vertex_descriptor null_vertex()
+    {
+       return Graph::null_vertex();
+    }
+
     //private:
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
