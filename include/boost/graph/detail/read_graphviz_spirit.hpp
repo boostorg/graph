@@ -566,10 +566,11 @@ bool read_graphviz(MultiPassIterator begin, MultiPassIterator end,
   typedef scanner_policies<iter_policy_t> scanner_policies_t;
   typedef scanner<iterator_t, scanner_policies_t> scanner_t;
 
-  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
+  ::boost::detail::graph::mutate_graph_impl<MutableGraph> 
+      m_graph(graph, dp, node_id);
 
-  boost::detail::graph::dot_grammar p(m_graph);
-  boost::detail::graph::dot_skipper skip_p;
+  ::boost::detail::graph::dot_grammar p(m_graph);
+  ::boost::detail::graph::dot_skipper skip_p;
 
   iter_policy_t iter_policy(skip_p);
   scanner_policies_t policies(iter_policy);
