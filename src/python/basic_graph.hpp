@@ -307,6 +307,15 @@ class basic_graph
   bool has_edge_map(const std::string& name) const;
   
   // Graph I/O
+  void read_adjlist(const std::string& filename, 
+                    const std::string& node_id = std::string("node_id"));
+  
+  void write_adjlist(const std::string& filename,
+                     const std::string& node_id = std::string("node_id"));
+
+  void write_adjlist_def(const std::string& filename)
+  { write_adjlist(filename); }
+
   void read_graphviz(const std::string& filename, 
                      const std::string& node_id = std::string("node_id"));
   

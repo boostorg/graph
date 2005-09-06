@@ -127,6 +127,7 @@ basic_graph<DirectedS>::basic_graph(const std::string& filename,
 {
   switch (kind) {
   case gfk_adjlist:
+    read_adjlist(filename);
     break;
   case gfk_graphviz:
     read_graphviz(filename);
@@ -615,6 +616,9 @@ void export_basic_graph(const char* name)
         .def("get_edge_string_map", &Graph::get_edge_string_map)
         .def("get_edge_object_map", &Graph::get_edge_object_map)
         // Graph I/O
+        .def("read_adjlist", &Graph::read_adjlist)
+        .def("write_adjlist", &Graph::write_adjlist)
+        .def("write_adjlist", &Graph::write_adjlist_def)
         .def("read_graphviz", &Graph::read_graphviz)
         .def("write_graphviz", &Graph::write_graphviz)
         .def("write_graphviz", &Graph::write_graphviz_def)

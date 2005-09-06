@@ -20,6 +20,7 @@ extension bgl
     ../../src/python/digraph.cpp
     # Graph I/O
     ../../src/python/graphviz.cpp
+    ../../src/python/adjlist.cpp
     # Graph algorithms
     #  Core Algorithm Patterns
     ../../src/python/breadth_first_search.cpp
