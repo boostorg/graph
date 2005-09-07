@@ -92,6 +92,8 @@ test-suite graph :
     [ run cuthill_mckee_ordering.cpp ]
 
     [ run king_ordering.cpp ]
+ 
+    [ run matching_test.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
