@@ -130,7 +130,7 @@ public:
       root.children[r] = &index_to_group[idx];
       idx = build_tree(root, idx, r, log_g + 1);
       if (idx != g)
-        r = static_cast<size_type>(log((double)(g - idx)) / log(2.0));
+        r = static_cast<size_type>(log2(g-idx));
     }
   }
 
