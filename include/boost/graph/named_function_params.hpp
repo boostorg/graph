@@ -177,6 +177,14 @@ namespace boost {
       return Params(pmap, *this);
     }
 
+    template <typename LowPointMap>
+    bgl_named_params<LowPointMap, vertex_lowpoint_t, self>
+    lowpoint_map(const LowPointMap& pmap) const {
+      typedef bgl_named_params<LowPointMap, vertex_lowpoint_t, self>
+        Params;
+      return Params(pmap, *this);
+    }
+
     template <typename IndexMap>
     bgl_named_params<IndexMap, vertex_index_t, self>
     vertex_index_map(const IndexMap& pmap) const {
@@ -431,6 +439,13 @@ namespace boost {
   bgl_named_params<DiscoverTimeMap, vertex_discover_time_t>
   discover_time_map(DiscoverTimeMap pmap) {
     typedef bgl_named_params<DiscoverTimeMap, vertex_discover_time_t> Params;
+    return Params(pmap);
+  }
+
+  template <typename LowPointMap>
+  bgl_named_params<LowPointMap, vertex_lowpoint_t>
+  lowpoint_map(LowPointMap pmap) {
+    typedef bgl_named_params<LowPointMap, vertex_lowpoint_t> Params;
     return Params(pmap);
   }
 

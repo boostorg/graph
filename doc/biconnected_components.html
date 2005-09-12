@@ -30,12 +30,30 @@ and
 </h1>
 
 <PRE>
-template&lt;typename Graph, typename ComponentMap, typename OutputIterator,
-	   typename DiscoverTimeMap, typename LowPointMap&gt;
+<i>// named parameter version</i>
+template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
+          typename P, typename T, typename R&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
+biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
+                       const bgl_named_params&lt;P, T, R&gt;&amp; params)
+
+template &lt;typename Graph, typename ComponentMap,
+          typename P, typename T, typename R&gt;
+std::size_t
 biconnected_components(const Graph& g, ComponentMap comp, 
-		       OutputIterator out, DiscoverTimeMap discover_time, 
-		       LowPointMap lowpt);
+                       const bgl_named_params&lt;P, T, R&gt;&amp; params)
+
+template &lt;typename Graph, typename OutputIterator, 
+          typename P, typename T, typename R&gt;
+OutputIterator articulation_points(const Graph& g, OutputIterator out, 
+                                   const bgl_named_params&lt;P, T, R&gt;&amp; params)
+
+<i>// non-named parameter version</i>
+template &lt;typename Graph, typename ComponentMap, typename OutputIterator,
+          typename DiscoverTimeMap, typename LowPointMap&gt;
+std::pair&lt;std::size_t, OutputIterator&gt;
+biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
+                       DiscoverTimeMap discover_time, LowPointMap lowpt);
 
 template &lt;typename Graph, typename ComponentMap, typename OutputIterator&gt;
 std::pair&lt;std::size_t, OutputIterator&gt;
@@ -43,9 +61,8 @@ biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out);
 
 template &lt;typename Graph, typename ComponentMap&gt;
 std::size_t biconnected_components(const Graph& g, ComponentMap comp);
-
 <a name="sec:articulation_points">
-template&lt;typename Graph, typename OutputIterator&gt;
+template &lt;typename Graph, typename OutputIterator&gt;
 OutputIterator articulation_points(const Graph& g, OutputIterator out);
 </PRE>
 
@@ -123,7 +140,22 @@ algorithms return a Python <tt>list</tt> containing the articulation
 points.
 </blockquote>
 
-UTIL/OUT: <tt>DiscoverTimeMap discover_time</tt>
+<h3>Named Parameters</h3>
+
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+<blockquote>
+  This maps each vertex to an integer in the range <tt>[0,
+    num_vertices(g))</tt>. The type 
+  <tt>VertexIndexMap</tt> must be a model of
+  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  integer type. The vertex descriptor type of the graph needs to be
+  usable as the key type of the map.<br>
+  <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
+
+  <b>Python</b>: Unsupported parameter.
+</blockquote>
+
+UTIL/OUT: <tt>discover_time_map(DiscoverTimeMap discover_time)</tt>
 <blockquote>
   The discovery time of each vertex in the depth-first search. The
   type <tt>DiscoverTimeMap</tt> must be a model of <a
@@ -141,7 +173,7 @@ UTIL/OUT: <tt>DiscoverTimeMap discover_time</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-UTIL/OUT: <tt>LowPointMap lowpt</tt>
+UTIL/OUT: <tt>lowpoint_map(LowPointMap lowpt)</tt>
 <blockquote>
   The low point of each vertex in the depth-first search, which is the
   smallest vertex reachable from a given vertex with at most one back
@@ -158,6 +190,37 @@ UTIL/OUT: <tt>LowPointMap lowpt</tt>
   the index map.<br>
 
   <b>Python</b>: Unsupported parameter.
+</blockquote>
+
+UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+<blockquote>
+  The predecessor map is unusable after algorithm's completion. 
+  The <tt>PredecessorMap</tt> type
+  must be a <a
+  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  Property Map</a> whose key and value types are the same as the vertex
+  descriptor type of the graph.<br>
+  <b>Default:</b> an <a
+  href="../../property_map/iterator_property_map.html">
+  </tt>iterator_property_map</tt></a> created from a
+  <tt>std::vector</tt> of <tt>vertex_descriptor</tt> of size
+  <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
+  the index map.<br>
+
+  <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
+</blockquote>
+
+IN: <tt>visitor(DFSVisitor vis)</tt>
+<blockquote>
+  A visitor object that is invoked inside the algorithm at the
+  event-points specified by the <a href="./DFSVisitor.html">DFS
+  Visitor</a> concept. The visitor object is passed by value <a
+  href="#1">[1]</a>. <br> <b>Default:</b>
+  <tt>dfs_visitor&lt;null_visitor&gt;</tt><br>
+
+  <b>Python</b>: The parameter should be an object that derives from
+  the <a href="DFSVisitor.html#python"><tt>DFSVisitor</tt></a> type of
+  the graph.
 </blockquote>
 
 <H3>Complexity</H3>

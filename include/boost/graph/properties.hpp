@@ -94,6 +94,7 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, predecessor);
   BOOST_DEF_PROPERTY(vertex, rank);
   BOOST_DEF_PROPERTY(vertex, centrality);
+  BOOST_DEF_PROPERTY(vertex, lowpoint);
   BOOST_DEF_PROPERTY(edge, reverse);
   BOOST_DEF_PROPERTY(edge, capacity);
   BOOST_DEF_PROPERTY(edge, residual_capacity);
