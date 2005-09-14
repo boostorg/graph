@@ -108,8 +108,9 @@ namespace boost
     { }
 
     inline bool augment_matching() { return false; }
+
     template <typename PropertyMap>
-    void get_current_matching(PropertyMap& p) {}
+    void get_current_matching(PropertyMap p) {}
   };
 
 
@@ -138,18 +139,19 @@ namespace boost
       vertex_pair_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor_t; 
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
+    typedef typename graph_traits<Graph>::edges_size_type e_size_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
     typedef typename graph_traits<Graph>::out_edge_iterator 
       out_edge_iterator_t;
     typedef typename std::deque<vertex_descriptor_t> vertex_list_t;
-    typedef typename std::deque<edge_descriptor_t> edge_list_t;
+    typedef typename std::vector<edge_descriptor_t> edge_list_t;
     typedef typename map_vertex_to_<vertex_descriptor_t>::type 
       vertex_to_vertex_map_t;
     typedef typename map_vertex_to_<int>::type vertex_to_int_map_t;
-    typedef typename map_vertex_to_<bool>::type vertex_to_bool_map_t;
     typedef typename map_vertex_to_<vertex_pair_t>::type 
       vertex_to_vertex_pair_map_t;
     typedef typename map_vertex_to_<v_size_t>::type vertex_to_vsize_map_t;
+    typedef typename map_vertex_to_<e_size_t>::type vertex_to_esize_map_t;
 
 
 
@@ -197,6 +199,7 @@ namespace boost
       //iteration, allowing for "lazy blossom expansion." This is not
       //currently implemented.
       
+      e_size_t timestamp = 0;
       even_edges.clear();
       
       vertex_iterator_t vi, vi_end;
@@ -206,8 +209,8 @@ namespace boost
 	  
 	  origin[u] = u;
 	  pred[u] = u;
-	  ancestor_of_v[u] = false;
-	  ancestor_of_w[u] = false;	
+	  ancestor_of_v[u] = 0;
+	  ancestor_of_w[u] = 0;	
 	  ds.make_set(u);
 	  
 	  if (mate[u] == graph_traits<Graph>::null_vertex())
@@ -260,12 +263,10 @@ namespace boost
 		even_edges.push_back(*ei);
 	      pred[w_prime] = v;
 	    }
-          //the latter can happen if we get an edge that has been
+          //w_prime == v_prime can happen below if we get an edge that has been
           //shrunk into a blossom
 	  else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime) 
 	    {                                                             
-	      std::vector<vertex_descriptor_t> w_ancestor_changes;
-	      std::vector<vertex_descriptor_t> v_ancestor_changes;
 	      vertex_descriptor_t w_up = w_prime;
 	      vertex_descriptor_t v_up = v_prime;
 	      vertex_descriptor_t nearest_common_ancestor 
@@ -281,16 +282,17 @@ namespace boost
 	      // are free, in which case we've found an alternating
 	      // path between those two ancestors.
 
+	      ++timestamp;
+
 	      while (nearest_common_ancestor == graph_traits<Graph>::null_vertex() && 
 		     (v_free_ancestor == graph_traits<Graph>::null_vertex() || 
 		      w_free_ancestor == graph_traits<Graph>::null_vertex()
 		      )
 		     )
 		{
-		  ancestor_of_w[w_up] = true;
-		  ancestor_of_v[v_up] = true;
-		  w_ancestor_changes.push_back(w_up);
-		  v_ancestor_changes.push_back(v_up);
+		  ancestor_of_w[w_up] = timestamp;
+		  ancestor_of_v[v_up] = timestamp;
+
 		  if (w_free_ancestor == graph_traits<Graph>::null_vertex())
 		    w_up = parent(w_up);
 		  if (v_free_ancestor == graph_traits<Graph>::null_vertex())
@@ -301,9 +303,9 @@ namespace boost
 		  if (mate[w_up] == graph_traits<Graph>::null_vertex())
 		    w_free_ancestor = w_up;
 		  
-		  if (ancestor_of_w[v_up])
+		  if (ancestor_of_w[v_up] == timestamp)
 		    nearest_common_ancestor = v_up;
-		  else if (ancestor_of_v[w_up])
+		  else if (ancestor_of_v[w_up] == timestamp)
 		    nearest_common_ancestor = w_up;
 		  else if (v_free_ancestor == w_free_ancestor && 
 			   v_free_ancestor != graph_traits<Graph>::null_vertex())
@@ -314,13 +316,7 @@ namespace boost
 		found_alternating_path = true; //to break out of the loop
 	      else
 		{
-		  //Reset the "ancestor_of" arrays for next iteration;
 		  //shrink the blossom
-		  typedef typename std::vector<vertex_descriptor_t>::const_iterator vector_itr_t;
-		  for(vector_itr_t itr = w_ancestor_changes.begin(); itr != w_ancestor_changes.end(); ++itr)
-		    ancestor_of_w[*itr] = false;
-		  for(vector_itr_t itr = v_ancestor_changes.begin(); itr != v_ancestor_changes.end(); ++itr)
-		    ancestor_of_v[*itr] = false;
 		  link_and_set_bridges(w_prime, nearest_common_ancestor, std::make_pair(w,v));
 		  link_and_set_bridges(v_prime, nearest_common_ancestor, std::make_pair(v,w));
 		}
@@ -472,11 +468,11 @@ namespace boost
     const Graph& g;
     VertexIndexMap vm;
     v_size_t n_vertices;
-
+    
     //storage for the property maps below
     std::vector<vertex_descriptor_t> mate_vector;
-    std::vector<bool> ancestor_of_v_vector;
-    std::vector<bool> ancestor_of_w_vector;
+    std::vector<e_size_t> ancestor_of_v_vector;
+    std::vector<e_size_t> ancestor_of_w_vector;
     std::vector<int> vertex_state_vector;
     std::vector<vertex_descriptor_t> origin_vector;
     std::vector<vertex_descriptor_t> pred_vector;
@@ -486,8 +482,8 @@ namespace boost
 
     //iterator property maps
     vertex_to_vertex_map_t mate;
-    vertex_to_bool_map_t ancestor_of_v;
-    vertex_to_bool_map_t ancestor_of_w;
+    vertex_to_esize_map_t ancestor_of_v;
+    vertex_to_esize_map_t ancestor_of_w;
     vertex_to_int_map_t vertex_state;
     vertex_to_vertex_map_t origin;
     vertex_to_vertex_map_t pred;
