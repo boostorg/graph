@@ -130,7 +130,12 @@ href="../../property_map/ReadablePropertyMap.html">Readable Property
 Map</a>. The value type of the map must be an integer type. The vertex
 descriptor type of graph 1 needs to be usable as the key type of the
 map.<br>
-<b>Default:</b> <tt>get(vertex_index, g1)</tt><br>
+<b>Default:</b> <tt>get(vertex_index, g1)</tt>
+    Note: if you use this default, make sure your graph has
+    an internal <tt>vertex_index</tt> property. For example,
+    <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+    not have an internal <tt>vertex_index</tt> property.
+   <br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 
@@ -144,7 +149,12 @@ href="../../property_map/ReadablePropertyMap.html">Readable Property
 Map</a>. The value type of the map must be an integer type. The vertex
 descriptor type of graph 2 needs to be usable as the key type of the
 map.<br>
-<b>Default:</b> <tt>get(vertex_index, g2)</tt><br>
+<b>Default:</b> <tt>get(vertex_index, g2)</tt>
+    Note: if you use this default, make sure your graph has
+    an internal <tt>vertex_index</tt> property. For example,
+    <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+    not have an internal <tt>vertex_index</tt> property.
+   <br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 

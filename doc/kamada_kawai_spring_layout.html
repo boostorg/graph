@@ -217,7 +217,12 @@ IN: <tt>VertexIndexMap index</tt>
 <blockquote>
 As a mapping from vertices to index values between 0 and
 <tt class="computeroutput">num_vertices(g)</tt> .<br>
-<b>Default</b>:<tt class="computeroutput">get(vertex_index,g)</tt>.<br>
+<b>Default</b>:<tt class="computeroutput">get(vertex_index,g)</tt>.
+    Note: if you use this default, make sure your graph has
+    an internal <tt>vertex_index</tt> property. For example,
+    <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+    not have an internal <tt>vertex_index</tt> property.
+   <br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 
