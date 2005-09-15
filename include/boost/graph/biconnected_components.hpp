@@ -320,7 +320,7 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, 
       OutputIterator out, DiscoverTimeMap dtm, LowPointMap lowpt)
   {
-    typedef typename detail::error_property_not_found dispatch_type;
+    typedef detail::error_property_not_found dispatch_type;
 
     return detail::bicomp_dispatch3<dispatch_type>::apply
             (g, comp, out, 
