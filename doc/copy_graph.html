@@ -79,7 +79,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 The vertex index map type must be a model of <a
 href="../../property_map/ReadablePropertyMap.html">Readable Property
 Map</a> and must map the vertex descriptors of <tt>G</tt> to the
-integers from 0 to <tt>num_vertices(G)</tt>.<br>
+integers in the half-open range <tt>[0,num_vertices(G))</tt>.<br>
 
 <b>Default:</b> <tt>get(vertex_index, G)</tt>
 </blockquote>
