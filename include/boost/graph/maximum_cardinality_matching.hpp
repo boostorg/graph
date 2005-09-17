@@ -759,7 +759,7 @@ namespace boost
       //by mate satisfies the Tutte-Berge formula.
 
       //first, make sure it's a valid matching
-      if (!is_a_matching(g,mate))
+      if (!is_a_matching(g,mate,vm))
 	  return false;
 
       //We'll try to augment the matching once. This serves two
@@ -792,7 +792,7 @@ namespace boost
 
       v_size_t num_odd_components;
       detail::odd_components_counter<v_size_t> occ(num_odd_components);
-      depth_first_search(fg, visitor(occ));
+      depth_first_search(fg, visitor(occ).vertex_index_map(vm));
 
       if (2 * matching_size(g,mate,vm) == num_vertices(g) + num_odd_vertices - num_odd_components)
 	return true;
