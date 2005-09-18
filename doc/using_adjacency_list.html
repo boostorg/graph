@@ -724,73 +724,60 @@ to be used with the <TT>std::list</TT>.
 
 <P>
 
+<H3><A NAME="SECTION00834300000000000000">
+Push and Erase for the Custom Container</A>
+</H3>
+
+<P>
+You must also tell the <TT>adjacency_list</TT> how elements can be
+efficiently added and removed from the custom container. This is
+accomplished by overloading the <TT>push()</TT> and <TT>erase()</TT>
+functions for the custom container type. The <TT>push()</TT> function
+should return an iterator pointing to the newly inserted element and a
+<TT>bool</TT> flag saying whether the edge was inserted.
+
+<PRE>
+  template &lt;class T&gt;
+  std::pair&lt;typename custom_container&lt;T&gt;::iterator, bool&gt;
+  push(custom_container&lt;T&gt;&amp; c, const T&amp; v)
+  {
+    // this implementation may need to change for your container
+    c.push_back(v);
+    return std::make_pair(boost::prior(c.end()), true);
+  }
+
+  template &lt;class T&gt;
+  void erase(custom_container&lt;T&gt;&amp; c, const T&amp; x)
+  {
+    // this implementation may need to change for your container
+    c.erase(std::remove(c.begin(), c.end(), x), c.end());
+  }
+</PRE>
+
+
+<P> There are default <TT>push()</TT> and <TT>erase()</TT> functions
+implemented for the STL container types.
+
+
 <H3><A NAME="SECTION00834200000000000000">
 Parallel Edge Traits</A>
 </H3>
 
 <P>
-In addition to specializing the <TT>container_gen</TT> class, one must
-also specialize the <TT>parallel_edge_traits</TT> class to specify
-whether the container type allows parallel edges (and is a <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a>)
-or if the container does not allow parallel edges (and is an <a
+When customizing the <TT>OutEdgeList</TT>, you must also specialize
+the <TT>parallel_edge_traits</TT> class to specify whether the
+container type allows parallel edges (and is a <a
+href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a>) or if
+the container does not allow parallel edges (and is an <a
 href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContainer</a>).
 
 <P>
 <PRE>
-  template &lt;class StorageSelector&gt;
-  struct parallel_edge_traits { };
-
   template &lt;&gt;
-  struct parallel_edge_traits&lt;vecS&gt; { 
+  struct parallel_edge_traits&lt;custom_containerS&gt; { 
     typedef allow_parallel_edge_tag type;
   };
-  template &lt;&gt;
-  struct parallel_edge_traits&lt;setS&gt; { 
-    typedef disallow_parallel_edge_tag type;
-  };
-  ...
 </PRE>
-
-<P>
-
-<H3><A NAME="SECTION00834300000000000000">
-Push and Erase for the Edge List Container</A>
-</H3>
-
-<P>
-One must also tell the <TT>adjacency_list</TT> how edges can be
-efficiently added and removed from the edge-list container. This is
-accomplished by overloading the <TT>push()</TT> and <TT>erase()</TT>
-functions for the custom container type. The <TT>push()</TT> function
-must return an iterator pointing to the newly inserted element and a
-<TT>bool</TT> flag saying whether the edge was inserted. The following
-default <TT>push()</TT> and <TT>erase()</TT> functions are already
-supplied for all STL container types. The family of
-<TT>push_dispatch()</TT> and <TT>erase_dispatch()</TT> function overloads
-handle the various ways inserting and erasing can be done with
-standard containers. 
-
-<P>
-<PRE>
-  template &lt;class Container, class T&gt;
-  std::pair&lt;typename Container::iterator, bool&gt;
-  push(Container&amp; c, const T&amp; v)
-  {
-    return push_dispatch(c, v, container_category(c));
-  }
-
-  template &lt;class Container, class T&gt;
-  void erase(Container&amp; c, const T&amp; x)
-  {
-    erase_dispatch(c, x, container_category(c));
-  }
-</PRE>
-
-
-<!--
-Give an explanation based on ordered_out_edges.cpp
--->
 
 
 <br>
