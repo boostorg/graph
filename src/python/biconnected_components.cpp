@@ -28,7 +28,7 @@ biconnected_components
 
   std::list<typename Graph::Vertex> art_points;
   boost::biconnected_components(g, component, std::back_inserter(art_points),
-                                g.get_vertex_index_map());
+                                boost::vertex_index_map(g.get_vertex_index_map()));
   boost::python::list result;
   for (typename std::list<typename Graph::Vertex>::iterator i 
          = art_points.begin(); i != art_points.end(); ++i)
@@ -42,7 +42,8 @@ articulation_points(const Graph& g)
 {
   std::list<typename Graph::Vertex> art_points;
   boost::python::list result;
-  boost::articulation_points(g, std::back_inserter(art_points));
+  boost::articulation_points(g, std::back_inserter(art_points),
+                             boost::vertex_index_map(g.get_vertex_index_map()));
   for (typename std::list<typename Graph::Vertex>::iterator i 
          = art_points.begin(); i != art_points.end(); ++i)
     result.append(*i);
