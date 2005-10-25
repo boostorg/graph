@@ -107,9 +107,13 @@ public:
     : compare(compare), id(id), root(smallest_key), groups(n),
       smallest_value(0)
   {
-    if (n == 0) return;
+    if (n == 0) {
+      root.children = new group*[1];
+      return;
+    }
 
     log_n = log2(n);
+
     if (log_n == 0) log_n = 1;
     size_type g = n / log_n;
     if (n % log_n > 0) ++g;
