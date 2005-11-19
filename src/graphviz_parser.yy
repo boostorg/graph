@@ -24,6 +24,9 @@
 #include <sstream>
 #endif
 
+using std::free;
+using std::malloc;
+
 #ifndef GRAPHVIZ_DIRECTED
 #error Need to define the GRAPHVIZ_DIRECTED macro to either 0 or 1
 #endif 
