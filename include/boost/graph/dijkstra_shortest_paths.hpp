@@ -141,6 +141,7 @@ namespace boost {
   } // namespace detail
 
   // Initalize distances and call breadth first search
+  // Use default color map
   template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
@@ -153,6 +154,27 @@ namespace boost {
      IndexMap index_map,
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
+  {
+    std::vector<default_color_type> color(num_vertices(g));
+    default_color_type c = white_color;
+    dijkstra_shortest_paths_no_init( g, s, predecessor, distance, weight,
+      index_map, compare, combine, zero, vis,
+        make_iterator_property_map(&color[0], index_map, c));
+  }
+
+  // Initalize distances and call breadth first search
+  template <class VertexListGraph, class DijkstraVisitor,
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine,
+            class DistZero, class ColorMap>
+  inline void
+  dijkstra_shortest_paths_no_init
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+     IndexMap index_map,
+     Compare compare, Combine combine, DistZero zero,
+     DijkstraVisitor vis, ColorMap color)
   {
     typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
     IndirectCmp icmp(distance, compare);
@@ -170,10 +192,7 @@ namespace boost {
         PredecessorMap, DistanceMap, Combine, Compare>
       bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
 
-      std::vector<default_color_type> color(num_vertices(g));
-      default_color_type c = white_color;
-      breadth_first_visit(g, s, Q, bfs_vis,
-                          make_iterator_property_map(&color[0], index_map, c));
+      breadth_first_visit(g, s, Q, bfs_vis, color );
       return;
     }
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
@@ -186,14 +205,12 @@ namespace boost {
       PredecessorMap, DistanceMap, Combine, Compare>
         bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
 
-    std::vector<default_color_type> color(num_vertices(g));
-    default_color_type c = white_color;
-    breadth_first_visit(g, s, Q, bfs_vis,
-      make_iterator_property_map(&color[0], index_map, c));
+    breadth_first_visit(g, s, Q, bfs_vis, color );
   }
 
 
   // Initalize distances and call breadth first search
+  // Use default color map
   template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
@@ -207,6 +224,27 @@ namespace boost {
      Compare compare, Combine combine, DistInf inf, DistZero zero,
      DijkstraVisitor vis)
   {
+    std::vector<default_color_type> color(num_vertices(g));
+    default_color_type c = white_color;
+    dijkstra_shortest_paths( g, s, predecessor, distance, weight, index_map,
+      compare, combine, inf, zero, vis,
+        make_iterator_property_map(&color[0], index_map, c));
+  }
+
+  // Initalize distances and call breadth first search
+  template <class VertexListGraph, class DijkstraVisitor,
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine,
+            class DistInf, class DistZero, class ColorMap>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis, ColorMap color)
+  {
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(distance, *ui, inf);
@@ -215,7 +253,7 @@ namespace boost {
     put(distance, s, zero);
 
     dijkstra_shortest_paths_no_init(g, s, predecessor, distance, weight,
-                            index_map, compare, combine, zero, vis);
+                            index_map, compare, combine, zero, vis, color);
   }
 
   namespace detail {
