@@ -23,6 +23,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/limits.hpp>
+#include <string>
+#include <boost/graph/iteration_macros.hpp>
 
 // Algorithms to test against
 #include <boost/graph/betweenness_centrality.hpp>
@@ -134,8 +136,6 @@ make_edge_to_index_pair(const Graph& g)
 
 void test(int nnodes, double density, int seed)
 {
-  std::cout << "Seed = " << seed << std::endl;
-
   boost::minstd_rand gen(seed);
   std::cout << "Testing " << nnodes << " density " << density << std::endl;
 
@@ -189,16 +189,69 @@ void test(int nnodes, double density, int seed)
                                            get(edge_index, g3))));
 }
 
+void test_graph_properties()
+{
+  using namespace boost;
+
+  typedef compressed_sparse_row_graph<no_property,
+                                      no_property,
+                                      property<graph_name_t, std::string> >
+    CSRGraph;
+
+  CSRGraph g;
+  BOOST_CHECK(get_property(g, graph_name) == "");
+  set_property(g, graph_name, "beep");
+  BOOST_CHECK(get_property(g, graph_name) == "beep");
+}
+
+struct Vertex
+{
+  double centrality;
+};
+
+struct Edge
+{
+  Edge(double weight) : weight(weight), centrality(0.0) { }
+
+  double weight;
+  double centrality;
+};
+
+void test_vertex_and_edge_properties()
+{
+  using namespace boost;
+  typedef compressed_sparse_row_graph<Vertex, Edge> CSRGraph;
+
+  typedef std::pair<int, int> E;
+  E edges_init[6] = { E(0, 1), E(0, 3), E(1, 2), E(3, 1), E(3, 4), E(4, 2) };
+  double weights[6] = { 1.0, 1.0, 0.5, 1.0, 1.0, 0.5 };
+  double centrality[5] = { 0.0, 1.5, 0.0, 1.0, 0.5 };
+
+  CSRGraph g(&edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
+  brandes_betweenness_centrality
+    (g,
+     centrality_map(get(&Vertex::centrality, g)).
+     weight_map(get(&Edge::weight, g)).
+     edge_centrality_map(get(&Edge::centrality, g)));
+
+  BGL_FORALL_VERTICES(v, g, CSRGraph)
+    BOOST_CHECK(g[v].centrality == centrality[v]);
+}
+
 int test_main(int argc, char* argv[])
 {
   // Optionally accept a seed value
   int seed = time(0);
   if (argc > 1) seed = boost::lexical_cast<int>(argv[1]);
 
+  std::cout << "Seed = " << seed << std::endl;
   test(1000, 0.05, seed);
   test(1000, 0.0, seed);
   test(1000, 0.1, seed);
   test(1000, 0.001, seed);
+
+  test_graph_properties();
+  test_vertex_and_edge_properties();
 
   return 0;
 }

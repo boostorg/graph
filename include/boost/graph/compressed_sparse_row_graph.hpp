@@ -23,23 +23,199 @@
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/mpl/if.hpp>
+
+#ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+#  error The Compressed Sparse Row graph only supports bundled properties.
+#  error You will need a compiler than conforms better to the C++ standard.
+#endif
 
 namespace boost {
+
+template<typename Derived, typename Property, typename Descriptor>
+class indexed_vertex_properties
+{
+public:
+  typedef no_property vertex_property_type;
+  typedef Property vertex_bundled;
+
+  // Directly access a vertex or edge bundle
+  Property& operator[](Descriptor v)
+  { return m_vertex_properties[get(vertex_index, derived(), v)]; }
+
+  const Property& operator[](Descriptor v) const
+  { return m_vertex_properties[get(vertex_index, derived(), v)]; }
+
+protected:
+  // Default-construct with no property values
+  indexed_vertex_properties() {}
+
+  // Initialize with n default-constructed property values
+  indexed_vertex_properties(std::size_t n) : m_vertex_properties(n) { }
+
+  // Resize the properties vector
+  void resize(std::size_t n)
+  {
+    m_vertex_properties.resize(n);
+  }
+
+  // Reserve space in the vector of properties
+  void reserve(std::size_t n)
+  {
+    m_vertex_properties.reserve(n);
+  }
+
+  // Add a new property value to the back
+  void push_back(const Property& prop)
+  {
+    m_vertex_properties.push_back(prop);
+  }
+
+  // Access to the derived object
+  Derived& derived() { return *static_cast<Derived*>(this); }
+
+  const Derived& derived() const
+  { return *static_cast<const Derived*>(this); }
+
+public: // should be private, but friend templates not portable
+  std::vector<Property> m_vertex_properties;
+};
+
+template<typename Derived, typename Descriptor>
+class indexed_vertex_properties<Derived, void, Descriptor>
+{
+  struct secret {};
+
+ public:
+  typedef no_property vertex_property_type;
+  typedef void vertex_bundled;
+
+  secret operator[](secret) { return secret(); }
+
+ protected:
+  // All operations do nothing.
+  indexed_vertex_properties() { }
+  indexed_vertex_properties(std::size_t) { }
+  void resize(std::size_t) { }
+  void reserve(std::size_t) { }
+};
+
+template<typename Derived, typename Property, typename Descriptor>
+class indexed_edge_properties
+{
+public:
+  typedef no_property edge_property_type;
+  typedef Property edge_bundled;
+
+  // Directly access a edge or edge bundle
+  Property& operator[](Descriptor v)
+  { return m_edge_properties[get(edge_index, derived(), v)]; }
+
+  const Property& operator[](Descriptor v) const
+  { return m_edge_properties[get(edge_index, derived(), v)]; }
+
+protected:
+  // Default-construct with no property values
+  indexed_edge_properties() {}
+
+  // Initialize with n default-constructed property values
+  indexed_edge_properties(std::size_t n) : m_edge_properties(n) { }
+
+  // Resize the properties vector
+  void resize(std::size_t n)
+  {
+    m_edge_properties.resize(n);
+  }
+
+  // Reserve space in the vector of properties
+  void reserve(std::size_t n)
+  {
+    m_edge_properties.reserve(n);
+  }
+
+  // Add a new property value to the back
+  void push_back(const Property& prop)
+  {
+    m_edge_properties.push_back(prop);
+  }
+
+  // Access to the derived object
+  Derived& derived() { return *static_cast<Derived*>(this); }
+
+  const Derived& derived() const
+  { return *static_cast<const Derived*>(this); }
+
+public: // should be private, but friend templates not portable
+  std::vector<Property> m_edge_properties;
+};
+
+template<typename Derived, typename Descriptor>
+class indexed_edge_properties<Derived, void, Descriptor>
+{
+  struct secret {};
+
+ public:
+  typedef no_property edge_property_type;
+  typedef void edge_bundled;
+
+  secret operator[](secret) { return secret(); }
+
+ protected:
+  // All operations do nothing.
+  indexed_edge_properties() { }
+  indexed_edge_properties(std::size_t) { }
+  void resize(std::size_t) { }
+  void reserve(std::size_t) { }
+};
 
 // A tag type indicating that the graph in question is a compressed
 // sparse row graph. This is an internal detail of the BGL.
 struct csr_graph_tag;
 
+/****************************************************************************
+ * Local helper macros to reduce typing and clutter later on.               *
+ ****************************************************************************/
+#define BOOST_CSR_GRAPH_TEMPLATE_PARMS                                  \
+  typename VertexProperty, typename EdgeProperty, typename GraphProperty, \
+  typename Vertex, typename EdgeIndex
+#define BOOST_CSR_GRAPH_TYPE                                            \
+   compressed_sparse_row_graph<VertexProperty, EdgeProperty, GraphProperty, \
+                               Vertex, EdgeIndex>
+
+// Forward declaration of CSR edge descriptor type, needed to pass to
+// indexed_edge_properties.
+template<typename Vertex, typename EdgeIndex>
+class csr_edge_descriptor;
+
 /** Compressed sparse row graph.
  *
  * Vertex and EdgeIndex should be unsigned integral types and should
  * specialize numeric_limits.
- *
- * DPG TBD: Shall we take vertex/edge properties?
  */
-template<typename Vertex = std::size_t, typename EdgeIndex = Vertex>
+ template<typename VertexProperty = void,
+          typename EdgeProperty = void,
+          typename GraphProperty = no_property,
+          typename Vertex = std::size_t,
+          typename EdgeIndex = Vertex>
 class compressed_sparse_row_graph
+   : public indexed_vertex_properties<BOOST_CSR_GRAPH_TYPE, VertexProperty,
+                                      Vertex>,
+     public indexed_edge_properties<BOOST_CSR_GRAPH_TYPE, EdgeProperty,
+                                    csr_edge_descriptor<Vertex, EdgeIndex> >
+
 {
+  typedef indexed_vertex_properties<compressed_sparse_row_graph,
+                                    VertexProperty, Vertex>
+    inherited_vertex_properties;
+
+  typedef indexed_edge_properties<BOOST_CSR_GRAPH_TYPE, EdgeProperty,
+                                  csr_edge_descriptor<Vertex, EdgeIndex> >
+    inherited_edge_properties;
+
+ public:
+  // For Property Graph
+  typedef GraphProperty graph_property_type;
+
  protected:
   template<typename InputIterator>
   void
@@ -55,14 +231,17 @@ class compressed_sparse_row_graph
                                   std::forward_iterator_tag)
   {
     using std::distance;
-    m_column.reserve(distance(first, last));
+    typename std::iterator_traits<InputIterator>::difference_type n =
+      distance(first, last);
+    m_column.reserve(n);
+    inherited_edge_properties::reserve(n);
   }
 
  public:
   // Concept requirements:
   // For Graph
   typedef Vertex vertex_descriptor;
-  class edge_descriptor;
+  typedef csr_edge_descriptor<Vertex, EdgeIndex> edge_descriptor;
   typedef directed_tag directed_category;
   typedef allow_parallel_edge_tag edge_parallel_category;
 
@@ -94,21 +273,22 @@ class compressed_sparse_row_graph
   typedef void in_edge_iterator;
 
   // For internal use
-  typedef no_property vertex_property_type;
-  typedef no_property edge_property_type;
   typedef csr_graph_tag graph_tag;
 
   // Constructors
 
   // Default constructor: an empty graph.
-  compressed_sparse_row_graph(): m_rowstart(1), m_column(0) {}
+  compressed_sparse_row_graph()
+    : m_rowstart(1), m_column(0), m_property() {}
 
   //  From number of vertices and sorted list of edges
   template<typename InputIterator>
   compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numverts,
-                              edges_size_type numedges = 0)
-    : m_rowstart(numverts + 1), m_column(0)
+                              edges_size_type numedges = 0,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
+      m_column(0), m_property(prop)
   {
     // Reserving storage in advance can save us lots of time and
     // memory, but it can only be done if we have forward iterators or
@@ -136,6 +316,48 @@ class compressed_sparse_row_graph
     // The remaining vertices have no edges
     for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
       m_rowstart[current_vertex_plus_one] = current_edge;
+
+    // Default-construct properties for edges
+    inherited_edge_properties::resize(m_column.size());
+  }
+
+  //  From number of vertices and sorted list of edges
+  template<typename InputIterator, typename EdgePropertyIterator>
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
+      m_column(0), m_property(prop)
+  {
+    // Reserving storage in advance can save us lots of time and
+    // memory, but it can only be done if we have forward iterators or
+    // the user has supplied the number of edges.
+    if (numedges == 0) {
+      typedef typename std::iterator_traits<InputIterator>::iterator_category
+        category;
+      maybe_reserve_edge_list_storage(edge_begin, edge_end, category());
+    } else {
+      m_column.reserve(numedges);
+    }
+
+    EdgeIndex current_edge = 0;
+    Vertex current_vertex_plus_one = 1;
+    m_rowstart[0] = 0;
+    for (InputIterator ei = edge_begin; ei != edge_end; ++ei, ++ep_iter) {
+      Vertex src = ei->first;
+      Vertex tgt = ei->second;
+      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
+        m_rowstart[current_vertex_plus_one] = current_edge;
+      m_column.push_back(tgt);
+      inherited_edge_properties::push_back(*ep_iter);
+      ++current_edge;
+    }
+
+    // The remaining vertices have no edges
+    for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
+      m_rowstart[current_vertex_plus_one] = current_edge;
   }
 
   //   Requires IncidenceGraph, a vertex index map, and a vertex(n, g) function
@@ -143,6 +365,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi,
                               vertices_size_type numverts,
                               edges_size_type numedges)
+    : m_property()
   {
     assign(g, vi, numverts, numedges);
   }
@@ -150,6 +373,7 @@ class compressed_sparse_row_graph
   //   Requires VertexListGraph and EdgeListGraph
   template<typename Graph, typename VertexIndexMap>
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
+    : m_property()
   {
     assign(g, vi, num_vertices(g), num_edges(g));
   }
@@ -157,6 +381,7 @@ class compressed_sparse_row_graph
   // Requires vertex index map plus requirements of previous constructor
   template<typename Graph>
   explicit compressed_sparse_row_graph(const Graph& g)
+    : m_property()
   {
     assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
   }
@@ -169,6 +394,7 @@ class compressed_sparse_row_graph
   assign(const Graph& g, const VertexIndexMap& vi,
          vertices_size_type numverts, edges_size_type numedges)
   {
+    inherited_vertex_properties::resize(numverts);
     m_rowstart.resize(numverts + 1);
     m_column.resize(numedges);
     EdgeIndex current_edge = 0;
@@ -207,47 +433,50 @@ class compressed_sparse_row_graph
     assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
   }
 
+  using inherited_vertex_properties::operator[];
+  using inherited_edge_properties::operator[];
+
   // private: non-portable, requires friend templates
   std::vector<EdgeIndex> m_rowstart;
   std::vector<Vertex> m_column;
+  GraphProperty m_property;
 };
 
 template<typename Vertex, typename EdgeIndex>
-class compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_descriptor
+class csr_edge_descriptor
 {
  public:
   Vertex src;
   EdgeIndex idx;
 
-  edge_descriptor(Vertex src, EdgeIndex idx): src(src), idx(idx) {}
+  csr_edge_descriptor(Vertex src, EdgeIndex idx): src(src), idx(idx) {}
+  csr_edge_descriptor(): src(0), idx(0) {}
 
-  edge_descriptor(): src(0), idx(0) {}
-
-  bool operator==(const edge_descriptor& o) const {return idx == o.idx;}
-  bool operator!=(const edge_descriptor& o) const {return idx != o.idx;}
-  bool operator<(const edge_descriptor& e) const {return idx < e.idx;}
-  bool operator>(const edge_descriptor& e) const {return idx > e.idx;}
-  bool operator<=(const edge_descriptor& e) const {return idx <= e.idx;}
-  bool operator>=(const edge_descriptor& e) const {return idx >= e.idx;}
+  bool operator==(const csr_edge_descriptor& o) const {return idx == o.idx;}
+  bool operator!=(const csr_edge_descriptor& o) const {return idx != o.idx;}
+  bool operator<(const csr_edge_descriptor& e) const {return idx < e.idx;}
+  bool operator>(const csr_edge_descriptor& e) const {return idx > e.idx;}
+  bool operator<=(const csr_edge_descriptor& e) const {return idx <= e.idx;}
+  bool operator>=(const csr_edge_descriptor& e) const {return idx >= e.idx;}
 };
 
 // From VertexListGraph
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-num_vertices(const compressed_sparse_row_graph<Vertex, EdgeIndex>& g) {
+num_vertices(const BOOST_CSR_GRAPH_TYPE& g) {
   return g.m_rowstart.size() - 1;
 }
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 std::pair<counting_iterator<Vertex>, counting_iterator<Vertex> >
-inline vertices(const compressed_sparse_row_graph<Vertex, EdgeIndex>& g) {
+inline vertices(const BOOST_CSR_GRAPH_TYPE& g) {
   return std::make_pair(counting_iterator<Vertex>(0),
                         counting_iterator<Vertex>(num_vertices(g)));
 }
 
 // From IncidenceGraph
-template<typename Vertex, typename EdgeIndex>
-class compressed_sparse_row_graph<Vertex, EdgeIndex>::out_edge_iterator
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+class BOOST_CSR_GRAPH_TYPE::out_edge_iterator
   : public iterator_facade<out_edge_iterator,
                            edge_descriptor,
                            std::random_access_iterator_tag,
@@ -280,61 +509,61 @@ class compressed_sparse_row_graph<Vertex, EdgeIndex>::out_edge_iterator
   friend class iterator_core_access;
 };
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-source(typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_descriptor e,
-       const compressed_sparse_row_graph<Vertex, EdgeIndex>&)
+source(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e,
+       const BOOST_CSR_GRAPH_TYPE&)
 {
   return e.src;
 }
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-target(typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_descriptor e,
-       const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+target(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e,
+       const BOOST_CSR_GRAPH_TYPE& g)
 {
   return g.m_column[e.idx];
 }
 
-template<typename Vertex, typename EdgeIndex>
-inline std::pair<typename compressed_sparse_row_graph<Vertex, EdgeIndex>::out_edge_iterator,
-                 typename compressed_sparse_row_graph<Vertex, EdgeIndex>::out_edge_iterator>
-out_edges(Vertex v, const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
+                 typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
+out_edges(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
-  typedef typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_descriptor ed;
-  typedef typename compressed_sparse_row_graph<Vertex, EdgeIndex>::out_edge_iterator it;
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor ed;
+  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator it;
   return std::make_pair(it(ed(v, g.m_rowstart[v])),
                         it(ed(v, g.m_rowstart[v + 1])));
 }
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline EdgeIndex
-out_degree(Vertex v, const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+out_degree(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   return g.m_rowstart[v + 1] - g.m_rowstart[v];
 }
 
 // From AdjacencyGraph
-template<typename Vertex, typename EdgeIndex>
-inline std::pair<typename compressed_sparse_row_graph<Vertex, EdgeIndex>::adjacency_iterator,
-                 typename compressed_sparse_row_graph<Vertex, EdgeIndex>::adjacency_iterator>
-adjacent_vertices(Vertex v, const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator,
+                 typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator>
+adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   return std::make_pair(g.m_column.begin() + g.m_rowstart[v],
                         g.m_column.begin() + g.m_rowstart[v + 1]);
 }
 
 // Extra, common function
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-vertex(Vertex i, const compressed_sparse_row_graph<Vertex, EdgeIndex>&)
+vertex(Vertex i, const BOOST_CSR_GRAPH_TYPE&)
 {
   return i;
 }
 
 // From EdgeListGraph
-template<typename Vertex, typename EdgeIndex>
-class compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_iterator
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+class BOOST_CSR_GRAPH_TYPE::edge_iterator
 {
  public:
   typedef std::forward_iterator_tag iterator_category;
@@ -389,19 +618,19 @@ class compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_iterator
   EdgeIndex end_of_this_vertex;
 };
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline EdgeIndex
-num_edges(const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+num_edges(const BOOST_CSR_GRAPH_TYPE& g)
 {
   return g.m_column.size();
 }
 
-template<typename Vertex, typename EdgeIndex>
-std::pair<typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_iterator,
-          typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_iterator>
-edges(const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+std::pair<typename BOOST_CSR_GRAPH_TYPE::edge_iterator,
+          typename BOOST_CSR_GRAPH_TYPE::edge_iterator>
+edges(const BOOST_CSR_GRAPH_TYPE& g)
 {
-  typedef typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_iterator ei;
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_iterator ei;
   if (g.m_rowstart.size() == 1) {
     return std::make_pair(ei(), ei());
   } else {
@@ -414,33 +643,61 @@ edges(const compressed_sparse_row_graph<Vertex, EdgeIndex>& g)
   }
 }
 
-// Add vertex_index and edge_index property maps
-template<typename Vertex, typename EdgeIndex>
+// For Property Graph
+
+// Graph properties
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag, class Value>
+inline void
+set_property(BOOST_CSR_GRAPH_TYPE& g, Tag, const Value& value)
+{
+  get_property_value(g.m_property, Tag()) = value;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag>
+inline
+typename graph_property<BOOST_CSR_GRAPH_TYPE, Tag>::type&
+get_property(BOOST_CSR_GRAPH_TYPE& g, Tag)
+{
+  return get_property_value(g.m_property, Tag());
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag>
+inline
+const
+typename graph_property<BOOST_CSR_GRAPH_TYPE, Tag>::type&
+get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag)
+{
+  return get_property_value(g.m_property, Tag());
+}
+
+// Add edge_index property map
+template<typename Index, typename Descriptor>
 struct csr_edge_index_map
 {
-  typedef EdgeIndex value_type;
-  typedef EdgeIndex reference;
-  typedef typename compressed_sparse_row_graph<Vertex, EdgeIndex>
-                     ::edge_descriptor key_type;
+  typedef Index                     value_type;
+  typedef Index                     reference;
+  typedef Descriptor                key_type;
   typedef readable_property_map_tag category;
 };
 
-template<typename Vertex, typename EdgeIndex>
-inline EdgeIndex
-get(const csr_edge_index_map<Vertex, EdgeIndex>&,
-    const typename csr_edge_index_map<Vertex, EdgeIndex>::key_type& key)
+template<typename Index, typename Descriptor>
+inline Index
+get(const csr_edge_index_map<Index, Descriptor>&,
+    const typename csr_edge_index_map<Index, Descriptor>::key_type& key)
 {
   return key.idx;
 }
 
 // Doing the right thing here (by unifying with vertex_index_t and
 // edge_index_t) breaks GCC.
-template<typename Vertex, typename EdgeIndex, typename Tag>
-struct property_map<compressed_sparse_row_graph<Vertex, EdgeIndex>, Tag>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
+struct property_map<BOOST_CSR_GRAPH_TYPE, Tag>
 {
 private:
   typedef identity_property_map vertex_index_type;
-  typedef csr_edge_index_map<Vertex, EdgeIndex> edge_index_type;
+  typedef typename graph_traits<BOOST_CSR_GRAPH_TYPE>::edge_descriptor
+    edge_descriptor;
+  typedef csr_edge_index_map<EdgeIndex, edge_descriptor> edge_index_type;
 
   typedef typename mpl::if_<is_same<Tag, edge_index_t>,
                             edge_index_type,
@@ -455,35 +712,101 @@ public:
   typedef type const_type;
 };
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline identity_property_map
-get(vertex_index_t, const compressed_sparse_row_graph<Vertex, EdgeIndex>&)
+get(vertex_index_t, const BOOST_CSR_GRAPH_TYPE&)
 {
   return identity_property_map();
 }
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
 get(vertex_index_t,
-    const compressed_sparse_row_graph<Vertex, EdgeIndex>&, Vertex v)
+    const BOOST_CSR_GRAPH_TYPE&, Vertex v)
 {
   return v;
 }
 
-template<typename Vertex, typename EdgeIndex>
-inline csr_edge_index_map<Vertex, EdgeIndex>
-get(edge_index_t, const compressed_sparse_row_graph<Vertex, EdgeIndex>&)
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, edge_index_t>::const_type
+get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&)
 {
-  return csr_edge_index_map<Vertex, EdgeIndex>();
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, edge_index_t>::const_type
+    result_type;
+  return result_type();
 }
 
-template<typename Vertex, typename EdgeIndex>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline EdgeIndex
-get(edge_index_t, const compressed_sparse_row_graph<Vertex, EdgeIndex>&,
-    typename compressed_sparse_row_graph<Vertex, EdgeIndex>::edge_descriptor e)
+get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&,
+    typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e)
 {
   return e.idx;
 }
+
+// Support for bundled properties
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
+struct property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>
+{
+private:
+  typedef graph_traits<BOOST_CSR_GRAPH_TYPE> traits;
+  typedef typename BOOST_CSR_GRAPH_TYPE::vertex_bundled vertex_bundled;
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_bundled edge_bundled;
+  typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+                     typename traits::vertex_descriptor,
+                     typename traits::edge_descriptor>::type
+    descriptor;
+
+public:
+  typedef bundle_property_map<BOOST_CSR_GRAPH_TYPE, descriptor, Bundle, T>
+    type;
+  typedef bundle_property_map<const BOOST_CSR_GRAPH_TYPE, descriptor, Bundle,
+                              const T> const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
+inline
+typename property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>::type
+get(T Bundle::* p, BOOST_CSR_GRAPH_TYPE& g)
+{
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE,
+                                T Bundle::*>::type
+    result_type;
+  return result_type(&g, p);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS,
+         typename Allocator, typename T, typename Bundle>
+inline
+typename property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>::const_type
+get(T Bundle::* p, BOOST_CSR_GRAPH_TYPE const & g)
+{
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE,
+                                T Bundle::*>::const_type
+    result_type;
+  return result_type(&g, p);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle,
+         typename Key>
+inline T
+get(T Bundle::* p, BOOST_CSR_GRAPH_TYPE const & g,
+    const Key& key)
+{
+  return get(get(p, g), key);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle,
+         typename Key>
+inline void
+put(T Bundle::* p, BOOST_CSR_GRAPH_TYPE& g,
+    const Key& key, const T& value)
+{
+  put(get(p, g), key, value);
+}
+
+#undef BOOST_CSR_GRAPH_TYPE
+#undef BOOST_CSR_GRAPH_TEMPLATE_PARMS
 
 } // end namespace boost
 
