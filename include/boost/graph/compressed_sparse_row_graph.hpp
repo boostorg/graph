@@ -27,7 +27,7 @@
 
 #ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #  error The Compressed Sparse Row graph only supports bundled properties.
-#  error You will need a compiler than conforms better to the C++ standard.
+#  error You will need a compiler that conforms better to the C++ standard.
 #endif
 
 namespace boost {
@@ -192,11 +192,11 @@ class csr_edge_descriptor;
  * Vertex and EdgeIndex should be unsigned integral types and should
  * specialize numeric_limits.
  */
- template<typename VertexProperty = void,
-          typename EdgeProperty = void,
-          typename GraphProperty = no_property,
-          typename Vertex = std::size_t,
-          typename EdgeIndex = Vertex>
+template<typename VertexProperty = void,
+         typename EdgeProperty = void,
+         typename GraphProperty = no_property,
+         typename Vertex = std::size_t,
+         typename EdgeIndex = Vertex>
 class compressed_sparse_row_graph
    : public indexed_vertex_properties<BOOST_CSR_GRAPH_TYPE, VertexProperty,
                                       Vertex>,
@@ -553,12 +553,60 @@ adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
                         g.m_column.begin() + g.m_rowstart[v + 1]);
 }
 
-// Extra, common function
+// Extra, common functions
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
 vertex(Vertex i, const BOOST_CSR_GRAPH_TYPE&)
 {
   return i;
+}
+
+// Unlike for an adjacency_matrix, edge_range and edge take lg(out_degree(i))
+// time
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
+                 typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
+edge_range(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  typedef typename std::vector<Vertex>::const_iterator adj_iter;
+  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor edge_desc;
+  std::pair<adj_iter, adj_iter> adjacencies =
+    std::equal_range(
+      g.m_column.begin() + g.m_rowstart[i],
+      g.m_column.begin() + g.m_rowstart[i + 1],
+      j);
+  EdgeIndex idx_begin = adjacencies.first - g.m_column.begin();
+  EdgeIndex idx_end = adjacencies.second - g.m_column.begin();
+  return std::make_pair(out_edge_iter(edge_desc(i, idx_begin)),
+                        out_edge_iter(edge_desc(i, idx_end)));
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_CSR_GRAPH_TYPE::edge_descriptor, bool>
+edge(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
+  std::pair<out_edge_iter, out_edge_iter> range = edge_range(i, j, g);
+  if (range.first == range.second)
+    return std::make_pair(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(),
+                          false);
+  else
+    return std::make_pair(*range.first, true);
+}
+
+// Find an edge given its index in the graph
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
+edge_from_index(EdgeIndex idx, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  typedef typename std::vector<EdgeIndex>::const_iterator row_start_iter;
+  row_start_iter src_plus_1 =
+    std::upper_bound(g.m_rowstart.begin(), g.m_rowstart.end(), idx);
+    // Get last source whose rowstart is at most idx
+    // upper_bound returns this position plus 1
+  Vertex src = (src_plus_1 - g.m_rowstart.begin()) - 1;
+  return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, idx);
 }
 
 // From EdgeListGraph

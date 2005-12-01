@@ -160,6 +160,71 @@ void test(int nnodes, double density, int seed)
                       g3, boost::identity_property_map(),
                       boost::identity_property_map());
 
+  // Check edge_from_index (and implicitly the edge_index property map) for
+  // each edge in g2
+  // This test also checks for the correct sorting of the edge iteration
+  CSRGraph::edge_iterator ei, ei_end;
+  std::size_t last_src = 0, last_tgt = 0;
+  for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
+    BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
+    std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
+    std::size_t tgt = get(boost::vertex_index, g2, target(*ei, g2));
+    BOOST_CHECK(src > last_src || (src == last_src && tgt >= last_tgt));
+    last_src = src;
+    last_tgt = tgt;
+  }
+
+  // Check out edge iteration and vertex iteration for sortedness
+  // Also, check a few runs of edge and edge_range
+  CSRGraph::vertex_iterator vi, vi_end;
+  std::size_t last_vertex = 0;
+  bool first_iter = true;
+  for (boost::tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
+    std::size_t v = get(boost::vertex_index, g2, *vi);
+    BOOST_CHECK(first_iter || v > last_vertex);
+    last_vertex = v;
+    first_iter = false;
+
+    CSRGraph::out_edge_iterator oei, oei_end;
+    std::size_t last_tgt = 0;
+    for (boost::tie(oei, oei_end) = out_edges(*vi, g2); oei != oei_end; ++oei) {
+      BOOST_CHECK(source(*oei, g2) == *vi);
+      CSRGraph::vertex_descriptor tgtd = target(*oei, g2);
+      std::size_t tgt = get(boost::vertex_index, g2, tgtd);
+      BOOST_CHECK(tgt >= last_tgt);
+      last_tgt = tgt;
+
+      std::pair<CSRGraph::edge_descriptor, bool> edge_info = edge(*vi, tgtd, g2);
+      BOOST_CHECK(edge_info.second == true);
+      BOOST_CHECK(source(edge_info.first, g2) == *vi);
+      BOOST_CHECK(target(edge_info.first, g2) == tgtd);
+      std::pair<CSRGraph::out_edge_iterator, CSRGraph::out_edge_iterator> er =
+	edge_range(*vi, tgtd, g2);
+      BOOST_CHECK(er.first != er.second);
+      for (; er.first != er.second; ++er.first) {
+	BOOST_CHECK(source(*er.first, g2) == *vi);
+	BOOST_CHECK(target(*er.first, g2) == tgtd);
+      }
+    }
+
+    // Find a vertex for testing
+    CSRGraph::vertex_descriptor test_vertex = vertex(num_vertices(g2) / 2, g2);
+    int edge_count = 0;
+    CSRGraph::out_edge_iterator oei2, oei2_end;
+    for (boost::tie(oei2, oei_end) = out_edges(*vi, g2); oei2 != oei_end; ++oei2) {
+      if (target(*oei2, g2) == test_vertex)
+	++edge_count;
+    }
+
+    // Test edge and edge_range on an edge that may not be present
+    std::pair<CSRGraph::edge_descriptor, bool> edge_info = 
+      edge(*vi, test_vertex, g2);
+    BOOST_CHECK(edge_info.second == (edge_count != 0));
+    std::pair<CSRGraph::out_edge_iterator, CSRGraph::out_edge_iterator> er =
+      edge_range(*vi, test_vertex, g2);
+    BOOST_CHECK(er.second - er.first == edge_count);
+  }
+
   // Run brandes_betweenness_centrality, which touches on a whole lot
   // of things, including VertexListGraph and IncidenceGraph
   using namespace boost;
@@ -249,6 +314,7 @@ int test_main(int argc, char* argv[])
   test(1000, 0.0, seed);
   test(1000, 0.1, seed);
   test(1000, 0.001, seed);
+  test(1000, 0.0005, seed);
 
   test_graph_properties();
   test_vertex_and_edge_properties();
