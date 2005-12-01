@@ -149,11 +149,11 @@ void test(int nnodes, double density, int seed)
                       boost::identity_property_map());
 
   // Check constructing a graph from iterators
-  CSRGraph g3(nnodes,
-              boost::make_transform_iterator(edges(g2).first,
+  CSRGraph g3(boost::make_transform_iterator(edges(g2).first,
                                              make_edge_to_index_pair(g2)),
               boost::make_transform_iterator(edges(g2).second,
-                                             make_edge_to_index_pair(g2)));
+                                             make_edge_to_index_pair(g2)),
+              nnodes);
   BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
   assert_graphs_equal(g2, boost::identity_property_map(),

@@ -105,8 +105,8 @@ class compressed_sparse_row_graph
 
   //  From number of vertices and sorted list of edges
   template<typename InputIterator>
-  compressed_sparse_row_graph(vertices_size_type numverts,
-                              InputIterator edge_begin, InputIterator edge_end,
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
                               edges_size_type numedges = 0)
     : m_rowstart(numverts + 1), m_column(0)
   {
