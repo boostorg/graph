@@ -37,6 +37,8 @@ test-suite graph :
 
     [ run betweenness_centrality_test.cpp ] 
 
+    [ run csr_graph_test.cpp : : : : : release ]
+
     [ run dag_longest_paths.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run dfs.cpp : : : <sysinclude>$(BOOST_ROOT) ]
