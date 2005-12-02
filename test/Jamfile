@@ -48,7 +48,7 @@ test-suite graph :
     [ compile dijkstra_cc.cpp : <sysinclude>$(BOOST_ROOT) ]
 
     [ run dijkstra_heap_performance.cpp : 10000 : : <sysinclude>$(BOOST_ROOT) ]
-
+    [ run dominator_tree_test.cpp ]
     [ run relaxed_heap_test.cpp : 5000 15000 : : <sysinclude>$(BOOST_ROOT) ]
     [ compile edge_list_cc.cpp : <sysinclude>$(BOOST_ROOT) ]
 
