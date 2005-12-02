@@ -41,6 +41,23 @@ function address(host, user) {
     applications or for very large graphs that you do not need to
     change.</p>
         
+    <p>The CSR format stores vertices and edges in separate arrays,
+    with the indices into these arrays corresponding to the identifier
+    for the vertex or edge, respectively. The edge array is sorted by
+    the source of each edge, but contains only the targets for the
+    edges. The vertex array stores offsets into the edge array,
+    providing the offset of the first edge outgoing from each
+    vertex. Iteration over the out-edges for the <i>i</i><sup>th</sup>
+    vertex in the graph is achieved by
+    visiting <tt>edge_array[vertex_array[i]]</tt>, <tt>edge_array[vertex_array[i]+1]</tt>,
+    ..., <tt>edge_array[vertex_array[i+1]]</tt>. This format minimizes
+    memory use to <i>O(n + m)</i>, where <i>n</i> and <i>m</i> are the
+    number of vertices and edges, respectively. The constants
+    multiplied by <i>n</i> and <i>m</i> are based on the size of the
+    integers needed to represent indices into the edge and vertex
+    arrays, respectively, which can be controlled using
+    the <a href="#template-parms">template parameters</a>.</p>
+
     <ul>
       <li><a href="#synopsis">Synopsis</a></li>
       <li><a href="#where">Where Defined</a></li>
