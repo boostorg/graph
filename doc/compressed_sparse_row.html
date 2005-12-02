@@ -77,6 +77,8 @@ function address(host, user) {
           <li><a href="#edge-access">Edge access</a></li>
           <li><a href="#property-map-accessors">Property map accessors</a></li>
         </ul></li>
+
+      <li><a href="#example">Example</a></li>
     </ul>
 
     <a name="synopsis"></a><h2>Synopsis</h2>
@@ -586,6 +588,54 @@ void set_property(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
       is attached to the graph object <tt>g</tt>.
     </p>
 
+    <hr></hr>
+    <a name="example"></a><h2>Example</h2>
+
+    <br>[<a
+    href="../example/csr-example.cpp">libs/graph/example/csr-example.cpp</a>]
+
+    <p>We will use the <tt>compressed_sparse_row_graph</tt> graph
+    class to store a simple Web graph. In this web graph the vertices
+    represent web pages and the edges represent links from one web
+    page to another. With each web page we want to associate a URL, so
+    we initially create a <tt>WebPage</tt> class that stores the
+    URL. Then we can create our graph type by providing
+    <tt>WebPage</tt> as a parameter to the
+    <tt>compressed_sparse_row_graph</tt> class template.</p>
+
+    <pre>
+class WebPage
+{
+ public:
+  std::string url;
+};
+
+// ...
+
+typedef compressed_sparse_row_graph&lt;WebPage&gt; WebGraph;
+WebGraph g(&the_edges[0], &the_edges[0] + sizeof(the_edges)/sizeof(E), 6);
+    </pre>
+
+    <p>We can then set the properties on the vertices of the graph
+    using the <a href="bundles.html">bundled properties</a> syntax,
+    and display the edges for the user.</p>
+
+    <pre>
+// Set the URLs of each vertex
+int index = 0;
+BGL_FORALL_VERTICES(v, g, WebGraph)
+  g[v].url = urls[index++];
+
+// Output each of the links
+std::cout &lt;&lt; "The web graph:" &lt;&lt; std::endl;
+BGL_FORALL_EDGES(e, g, WebGraph)
+  std::cout &lt;&lt; "  " &lt;&lt; g[source(e, g)].url &lt;&lt; " -> " &lt;&lt; g[target(e, g)].url 
+            &lt;&lt; std::endl;
+    </pre>
+
+    <p>See the <a href="../example/csr-example.cpp">complete example
+    source</a> for other operations one can perform with a
+    <tt>compressed_sparse_row_graph</tt>.</p>
 <br>
 <HR>
 <TABLE>
