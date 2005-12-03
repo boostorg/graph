@@ -279,7 +279,8 @@ class compressed_sparse_row_graph
 
   // Default constructor: an empty graph.
   compressed_sparse_row_graph()
-    : m_rowstart(1), m_column(0), m_property() {}
+    : m_rowstart(1, EdgeIndex(0)), m_column(0), m_property(),
+      m_last_source(0) {}
 
   //  From number of vertices and sorted list of edges
   template<typename InputIterator>
@@ -288,7 +289,7 @@ class compressed_sparse_row_graph
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
+      m_column(0), m_property(prop), m_last_source(numverts)
   {
     // Reserving storage in advance can save us lots of time and
     // memory, but it can only be done if we have forward iterators or
@@ -329,7 +330,7 @@ class compressed_sparse_row_graph
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
+      m_column(0), m_property(prop), m_last_source(numverts)
   {
     // Reserving storage in advance can save us lots of time and
     // memory, but it can only be done if we have forward iterators or
@@ -365,7 +366,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi,
                               vertices_size_type numverts,
                               edges_size_type numedges)
-    : m_property()
+    : m_property(), m_last_source(0)
   {
     assign(g, vi, numverts, numedges);
   }
@@ -373,7 +374,7 @@ class compressed_sparse_row_graph
   //   Requires VertexListGraph and EdgeListGraph
   template<typename Graph, typename VertexIndexMap>
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
-    : m_property()
+    : m_property(), m_last_source(0)
   {
     assign(g, vi, num_vertices(g), num_edges(g));
   }
@@ -381,7 +382,7 @@ class compressed_sparse_row_graph
   // Requires vertex index map plus requirements of previous constructor
   template<typename Graph>
   explicit compressed_sparse_row_graph(const Graph& g)
-    : m_property()
+    : m_property(), m_last_source(0)
   {
     assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
   }
@@ -406,17 +407,16 @@ class compressed_sparse_row_graph
     for (Vertex i = 0; i != numverts; ++i) {
       m_rowstart[i] = current_edge;
       g_vertex v = vertex(i, g);
-      std::vector<Vertex> current_out_edges(out_degree(v, g));
+      EdgeIndex num_edges_before_this_vertex = current_edge;
       g_out_edge_iter ei, ei_end;
-      EdgeIndex x = 0;
-      for (tie(ei, ei_end) = out_edges(vertex(i, g), g); ei != ei_end; ++ei) {
-        current_out_edges[x++] = get(vi, target(*ei, g));
+      for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
+        m_column[current_edge++] = get(vi, target(*ei, g));
       }
-      std::sort(current_out_edges.begin(), current_out_edges.end());
-      for (x = 0; x != current_out_edges.size(); ++x, ++current_edge)
-        m_column[current_edge] = current_out_edges[x];
+      std::sort(m_column.begin() + num_edges_before_this_vertex,
+		m_column.begin() + current_edge);
     }
     m_rowstart[numverts] = current_edge;
+    m_last_source = numverts;
   }
 
   // Requires the above, plus VertexListGraph and EdgeListGraph
@@ -440,6 +440,7 @@ class compressed_sparse_row_graph
   std::vector<EdgeIndex> m_rowstart;
   std::vector<Vertex> m_column;
   GraphProperty m_property;
+  Vertex m_last_source;
 };
 
 template<typename Vertex, typename EdgeIndex>
@@ -452,13 +453,44 @@ class csr_edge_descriptor
   csr_edge_descriptor(Vertex src, EdgeIndex idx): src(src), idx(idx) {}
   csr_edge_descriptor(): src(0), idx(0) {}
 
-  bool operator==(const csr_edge_descriptor& o) const {return idx == o.idx;}
-  bool operator!=(const csr_edge_descriptor& o) const {return idx != o.idx;}
+  bool operator==(const csr_edge_descriptor& e) const {return idx == e.idx;}
+  bool operator!=(const csr_edge_descriptor& e) const {return idx != e.idx;}
   bool operator<(const csr_edge_descriptor& e) const {return idx < e.idx;}
   bool operator>(const csr_edge_descriptor& e) const {return idx > e.idx;}
   bool operator<=(const csr_edge_descriptor& e) const {return idx <= e.idx;}
   bool operator>=(const csr_edge_descriptor& e) const {return idx >= e.idx;}
 };
+
+// Construction functions
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline Vertex
+add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
+  Vertex old_num_verts_plus_one = g.m_rowstart.size();
+  g.m_rowstart.push_back(EdgeIndex(0));
+  return old_num_verts_plus_one - 1;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline Vertex
+add_vertices(Vertex count, BOOST_CSR_GRAPH_TYPE& g) {
+  Vertex old_num_verts_plus_one = g.m_rowstart.size();
+  g.m_rowstart.resize(old_num_verts_plus_one + count, EdgeIndex(0));
+  return old_num_verts_plus_one - 1;
+}
+
+// This function requires that (src, tgt) be lexicographically at least as
+// large as the largest edge in the graph so far
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
+add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
+  assert (src >= g.m_last_source);
+  EdgeIndex num_edges_orig = g.m_column.size();
+  for (; g.m_last_source < src; ++g.m_last_source)
+    g.m_rowstart[g.m_last_source + 1] = num_edges_orig;
+  g.m_rowstart[src + 1] = num_edges_orig + 1;
+  g.m_column.push_back(tgt);
+  return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, num_edges_orig);
+}
 
 // From VertexListGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -532,15 +564,19 @@ out_edges(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor ed;
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator it;
-  return std::make_pair(it(ed(v, g.m_rowstart[v])),
-                        it(ed(v, g.m_rowstart[v + 1])));
+  EdgeIndex v_row_start = g.m_rowstart[v];
+  EdgeIndex next_row_start = g.m_rowstart[v + 1];
+  return std::make_pair(it(ed(v, v_row_start)),
+                        it(ed(v, (std::max)(v_row_start, next_row_start))));
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline EdgeIndex
 out_degree(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
-  return g.m_rowstart[v + 1] - g.m_rowstart[v];
+  EdgeIndex v_row_start = g.m_rowstart[v];
+  EdgeIndex next_row_start = g.m_rowstart[v + 1];
+  return (std::max)(v_row_start, next_row_start) - v_row_start;
 }
 
 // From AdjacencyGraph
@@ -549,8 +585,11 @@ inline std::pair<typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator,
                  typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator>
 adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
-  return std::make_pair(g.m_column.begin() + g.m_rowstart[v],
-                        g.m_column.begin() + g.m_rowstart[v + 1]);
+  EdgeIndex v_row_start = g.m_rowstart[v];
+  EdgeIndex next_row_start = g.m_rowstart[v + 1];
+  return std::make_pair(g.m_column.begin() + v_row_start,
+                        g.m_column.begin() + 
+				(std::max)(v_row_start, next_row_start));
 }
 
 // Extra, common functions
@@ -571,11 +610,9 @@ edge_range(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
   typedef typename std::vector<Vertex>::const_iterator adj_iter;
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
   typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor edge_desc;
+  std::pair<adj_iter, adj_iter> raw_adjacencies = adjacent_vertices(i, g);
   std::pair<adj_iter, adj_iter> adjacencies =
-    std::equal_range(
-      g.m_column.begin() + g.m_rowstart[i],
-      g.m_column.begin() + g.m_rowstart[i + 1],
-      j);
+    std::equal_range(raw_adjacencies.first, raw_adjacencies.second, j);
   EdgeIndex idx_begin = adjacencies.first - g.m_column.begin();
   EdgeIndex idx_end = adjacencies.second - g.m_column.begin();
   return std::make_pair(out_edge_iter(edge_desc(i, idx_begin)),
@@ -617,38 +654,35 @@ class BOOST_CSR_GRAPH_TYPE::edge_iterator
   typedef std::forward_iterator_tag iterator_category;
   typedef edge_descriptor value_type;
 
-  class pointer
-  {
-  public:
-    explicit pointer(const edge_descriptor& edge) : edge(edge) { }
-    const edge_descriptor* operator->() const { return &edge; }
-
-  private:
-    edge_descriptor edge;
-  };
+  typedef const edge_descriptor* pointer;
 
   typedef edge_descriptor reference;
   typedef typename int_t<CHAR_BIT * sizeof(EdgeIndex)>::fast difference_type;
 
-  edge_iterator() : rowstart_array(0), src(0), idx(0), end_of_this_vertex(0) {}
+  edge_iterator() : rowstart_array(0), current_edge(), end_of_this_vertex(0) {}
 
-  edge_iterator(const compressed_sparse_row_graph& graph, Vertex src,
-                EdgeIndex idx, EdgeIndex end_of_this_vertex)
-    : rowstart_array(&graph.m_rowstart[0]), src(src), idx(idx),
+  edge_iterator(const compressed_sparse_row_graph& graph,
+		edge_descriptor current_edge,
+                EdgeIndex end_of_this_vertex)
+    : rowstart_array(&graph.m_rowstart[0]), current_edge(current_edge),
       end_of_this_vertex(end_of_this_vertex) {}
 
   // From InputIterator
-  reference operator*() const { return edge_descriptor(src, idx); }
-  pointer operator->() const { return pointer(**this); }
+  reference operator*() const { return current_edge; }
+  pointer operator->() const { return &current_edge; }
 
-  bool operator==(const edge_iterator& o) const {return idx == o.idx;}
-  bool operator!=(const edge_iterator& o) const {return idx != o.idx;}
+  bool operator==(const edge_iterator& o) const {
+    return current_edge == o.current_edge;
+  }
+  bool operator!=(const edge_iterator& o) const {
+    return current_edge != o.current_edge;
+  }
 
   edge_iterator& operator++() {
-    ++idx;
-    while (idx == end_of_this_vertex) {
-      ++src;
-      end_of_this_vertex = rowstart_array[src + 1];
+    ++current_edge.idx;
+    while (current_edge.idx == end_of_this_vertex) {
+      ++current_edge.src;
+      end_of_this_vertex = rowstart_array[current_edge.src + 1];
     }
     return *this;
   }
@@ -661,8 +695,7 @@ class BOOST_CSR_GRAPH_TYPE::edge_iterator
 
  private:
   const EdgeIndex* rowstart_array;
-  Vertex src;
-  EdgeIndex idx;
+  edge_descriptor current_edge;
   EdgeIndex end_of_this_vertex;
 };
 
@@ -679,15 +712,15 @@ std::pair<typename BOOST_CSR_GRAPH_TYPE::edge_iterator,
 edges(const BOOST_CSR_GRAPH_TYPE& g)
 {
   typedef typename BOOST_CSR_GRAPH_TYPE::edge_iterator ei;
-  if (g.m_rowstart.size() == 1) {
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor edgedesc;
+  if (g.m_rowstart.size() == 1 || g.m_column.empty()) {
     return std::make_pair(ei(), ei());
   } else {
     // Find the first vertex that has outgoing edges
     Vertex src = 0;
-    while (g.m_rowstart[src + 1] == 0) ++ src;
-    return std::make_pair(ei(g, src, 0, g.m_rowstart[src + 1]),
-                          ei(g, num_vertices(g), g.m_rowstart[num_vertices(g)],
-                             0));
+    while (g.m_rowstart[src + 1] == 0) ++src;
+    return std::make_pair(ei(g, edgedesc(src, 0), g.m_rowstart[src + 1]),
+                          ei(g, edgedesc(num_vertices(g), g.m_column.size()), 0));
   }
 }
 

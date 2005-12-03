@@ -76,6 +76,7 @@ function address(host, user) {
           <li><a href="#vertex-access">Vertex access</a></li>
           <li><a href="#edge-access">Edge access</a></li>
           <li><a href="#property-map-accessors">Property map accessors</a></li>
+          <li><a href="#incremental-construction-functions">Incremental construction functions</a></li>
         </ul></li>
 
       <li><a href="#example">Example</a></li>
@@ -193,6 +194,17 @@ typename graph_property&lt;compressed_sparse_row_graph, GraphPropertyTag&gt;::ty
 template&lt;typename <a href="./PropertyTag.html#GraphPropertyTag">GraphPropertyTag</a>&gt;
 void <a href="#set_property">set_property</a>(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
                   const typename graph_property&lt;compressed_sparse_row_graph, GraphPropertyTag&gt;::type&amp; value);
+
+<i>// <a href="#incremental-construction-functions">Incremental construction functions</a></i>
+template&lt;typename Graph&gt;
+vertex_descriptor <a href=#add_vertex">add_vertex</a>(compressed_sparse_row_graph&amp; g);
+
+template&lt;typename Graph&gt;
+vertex_descriptor <a href=#add_vertices">add_vertices</a>(vertices_size_type count, compressed_sparse_row_graph&amp; g);
+
+template&lt;typename Graph&gt;
+edge_descriptor <a href=#add_edge">add_vertices</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
+
 } <i>// end namespace boost</i>
    </pre>
 
@@ -586,6 +598,46 @@ void set_property(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
     <p class="indent">
       Set the property specified by <tt>GraphPropertyTag</tt> that
       is attached to the graph object <tt>g</tt>.
+    </p>
+
+    <hr></hr>
+
+    <h3><a name="incremental-construction-functions">Incremental construction functions</a></h3>
+
+    <pre><a name="add_vertex"></a>
+vertex_descriptor add_vertex(compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a new vertex to the end of the graph <tt>g</tt>, and return a
+      descriptor for that vertex.  The new vertex will be greater than any of
+      the previous vertices in <tt>g</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_vertices"></a>
+vertex_descriptor add_vertices(vertices_size_type count, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add <tt>count</tt> new vertices to the end of the graph <tt>g</tt>, and
+      return a descriptor for the smallest new vertex.  The new vertices will
+      be greater than any of the previous vertices in <tt>g</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_edge"></a>
+edge_descriptor add_edge(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a new edge from <tt>src</tt> to <tt>tgt</tt> in the graph <tt>g</tt>,
+      and return a descriptor for it.  There must not be an edge in <tt>g</tt>
+      whose source vertex is greater than <tt>src</tt>.  If the vertex
+      <tt>src</tt> has out edges before this operation is called, there must be
+      none whose target is larger than <tt>tgt</tt>.
     </p>
 
     <hr></hr>

@@ -134,13 +134,10 @@ make_edge_to_index_pair(const Graph& g)
                                                        g));
 }
 
-void test(int nnodes, double density, int seed)
+template<typename OrigGraph>
+void test(const OrigGraph& g)
 {
-  boost::minstd_rand gen(seed);
-  std::cout << "Testing " << nnodes << " density " << density << std::endl;
-
   // Check copying of a graph
-  Graph g(ERGen(gen, nnodes, density), ERGen(), nnodes);
   CSRGraph g2(g);
   BOOST_CHECK((std::size_t)std::distance(edges(g2).first, edges(g2).second)
               == num_edges(g2));
@@ -153,17 +150,32 @@ void test(int nnodes, double density, int seed)
                                              make_edge_to_index_pair(g2)),
               boost::make_transform_iterator(edges(g2).second,
                                              make_edge_to_index_pair(g2)),
-              nnodes);
+              num_vertices(g));
   BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
   assert_graphs_equal(g2, boost::identity_property_map(),
                       g3, boost::identity_property_map(),
                       boost::identity_property_map());
 
+  // Check constructing a graph using add_edge and add_vertices
+  CSRGraph g4;
+  BOOST_CHECK(num_vertices(g4) == 0);
+  std::size_t first_vert = add_vertices(num_vertices(g3), g4);
+  BOOST_CHECK(first_vert == 0);
+  BOOST_CHECK(num_vertices(g4) == num_vertices(g3));
+  CSRGraph::edge_iterator ei, ei_end;
+  for (boost::tie(ei, ei_end) = edges(g3); ei != ei_end; ++ei) {
+    CSRGraph::edge_descriptor e = add_edge(source(*ei, g3), target(*ei, g3), g4);
+    BOOST_CHECK(source(e, g4) == source(*ei, g3));
+    BOOST_CHECK(target(e, g4) == target(*ei, g3));
+  }
+  assert_graphs_equal(g3, boost::identity_property_map(),
+		      g4, boost::identity_property_map(),
+		      boost::identity_property_map());
+
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
   // This test also checks for the correct sorting of the edge iteration
-  CSRGraph::edge_iterator ei, ei_end;
   std::size_t last_src = 0, last_tgt = 0;
   for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
     BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
@@ -254,6 +266,14 @@ void test(int nnodes, double density, int seed)
                                            get(edge_index, g3))));
 }
 
+void test(int nnodes, double density, int seed)
+{
+  boost::minstd_rand gen(seed);
+  std::cout << "Testing " << nnodes << " density " << density << std::endl;
+  Graph g(ERGen(gen, nnodes, density), ERGen(), nnodes);
+  test(g);
+}
+
 void test_graph_properties()
 {
   using namespace boost;
@@ -315,6 +335,13 @@ int test_main(int argc, char* argv[])
   test(1000, 0.1, seed);
   test(1000, 0.001, seed);
   test(1000, 0.0005, seed);
+  {
+    std::cout << "Testing partially constructed CSR graph" << std::endl;
+    CSRGraph g;
+    add_vertices(std::size_t(5), g);
+    add_edge(std::size_t(1), std::size_t(2), g);
+    test(g);
+  }
 
   test_graph_properties();
   test_vertex_and_edge_properties();
