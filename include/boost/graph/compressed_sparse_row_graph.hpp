@@ -639,7 +639,9 @@ edge_from_index(EdgeIndex idx, const BOOST_CSR_GRAPH_TYPE& g)
 {
   typedef typename std::vector<EdgeIndex>::const_iterator row_start_iter;
   row_start_iter src_plus_1 =
-    std::upper_bound(g.m_rowstart.begin(), g.m_rowstart.end(), idx);
+    std::upper_bound(g.m_rowstart.begin(),
+		     g.m_rowstart.begin() + g.m_last_source + 1,
+		     idx);
     // Get last source whose rowstart is at most idx
     // upper_bound returns this position plus 1
   Vertex src = (src_plus_1 - g.m_rowstart.begin()) - 1;

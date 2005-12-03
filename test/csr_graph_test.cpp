@@ -340,6 +340,12 @@ int test_main(int argc, char* argv[])
     CSRGraph g;
     add_vertices(std::size_t(5), g);
     add_edge(std::size_t(1), std::size_t(2), g);
+    add_edge(std::size_t(2), std::size_t(3), g);
+    add_edge(std::size_t(2), std::size_t(4), g);
+    CSRGraph::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+      BOOST_CHECK(edge_from_index(get(boost::edge_index, g, *ei), g) == *ei);
+    }
     test(g);
   }
 
