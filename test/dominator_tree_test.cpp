@@ -64,7 +64,7 @@ int test_main(int, char*[])
           edge(12, 8),
         },
         {
-          numeric_limits<int>::max(), 0, 0, 0, 0, 0, 3, 3, 0, 0, 7, 0, 4,
+          (numeric_limits<int>::max)(), 0, 0, 0, 0, 0, 3, 3, 0, 0, 7, 0, 4,
         },
       },
       // appel. p441. figure 19.4
@@ -82,7 +82,7 @@ int test_main(int, char*[])
           edge(6, 1),
         },
         {
-          numeric_limits<int>::max(), 0, 1, 1, 2, 2, 2,
+          (numeric_limits<int>::max)(), 0, 1, 1, 2, 2, 2,
         },
       },
       // appel. p449. figure 19.8
@@ -111,7 +111,7 @@ int test_main(int, char*[])
           edge(11, 12),
         },
         {
-          numeric_limits<int>::max(), 0, 0, 1, 2, 3, 1, 2, 1, 6, 5, 1, 0,
+          (numeric_limits<int>::max)(), 0, 0, 1, 2, 3, 1, 2, 1, 6, 5, 1, 0,
         },
       },
       {
@@ -129,7 +129,7 @@ int test_main(int, char*[])
           edge(6, 4),
         },
         {
-          numeric_limits<int>::max(), 0, 1, 1, 3, 4, 4, 1,
+          (numeric_limits<int>::max)(), 0, 1, 1, 3, 4, 4, 1,
         },
       },
       // muchnick. p256. figure 8.21
@@ -148,7 +148,7 @@ int test_main(int, char*[])
           edge(6, 7),
         },
         {
-          numeric_limits<int>::max(), 0, 1, 2, 2, 4, 4, 4,
+          (numeric_limits<int>::max)(), 0, 1, 2, 2, 4, 4, 4,
         },
       },
       // muchnick. p253. figure 8.18
@@ -166,7 +166,7 @@ int test_main(int, char*[])
           edge(6, 7),
         },
         {
-          numeric_limits<int>::max(), 0, 0, 2, 2, numeric_limits<int>::max(), 1, 0,
+          (numeric_limits<int>::max)(), 0, 0, 2, 2, (numeric_limits<int>::max)(), 1, 0,
         },
       },
       // cytron's thesis, fig. 9
@@ -195,7 +195,7 @@ int test_main(int, char*[])
           edge(12, 13),
         },
         {
-          numeric_limits<int>::max(), 0, 1, 2, 3,
+          (numeric_limits<int>::max)(), 0, 1, 2, 3,
           3, 3, 2, 2, 8,
           9, 9, 11, 0,
         },
@@ -241,7 +241,7 @@ int test_main(int, char*[])
             idom[get(indexMap, *uItr)] =
               get(indexMap, get(domTreePredMap, *uItr));
           else
-            idom[get(indexMap, *uItr)] = numeric_limits<int>::max();
+            idom[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
         }
 
       copy(idom.begin(), idom.end(), ostream_iterator<int>(cout, " "));
@@ -265,7 +265,7 @@ int test_main(int, char*[])
             idom2[get(indexMap, *uItr)] =
               get(indexMap, get(domTreePredMap, *uItr));
           else
-            idom2[get(indexMap, *uItr)] = numeric_limits<int>::max();
+            idom2[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
         }
 
       copy(idom2.begin(), idom2.end(), ostream_iterator<int>(cout, " "));
