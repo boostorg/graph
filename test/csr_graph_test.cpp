@@ -88,18 +88,18 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
   }
 }
 
-template<typename Graph, typename VertexIndexMap>
+template<typename GraphT, typename VertexIndexMap>
 class edge_to_index_pair
 {
-  typedef typename boost::graph_traits<Graph>::vertices_size_type
+  typedef typename boost::graph_traits<GraphT>::vertices_size_type
     vertices_size_type;
-  typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<GraphT>::edge_descriptor edge_descriptor;
 
  public:
   typedef std::pair<vertices_size_type, vertices_size_type> result_type;
 
   edge_to_index_pair() : g(0), index() { }
-  edge_to_index_pair(const Graph& g, const VertexIndexMap& index)
+  edge_to_index_pair(const GraphT& g, const VertexIndexMap& index)
     : g(&g), index(index)
   { }
 
@@ -109,27 +109,27 @@ class edge_to_index_pair
   }
 
  private:
-  const Graph* g;
+  const GraphT* g;
   VertexIndexMap index;
 };
 
-template<typename Graph, typename VertexIndexMap>
-edge_to_index_pair<Graph, VertexIndexMap>
-make_edge_to_index_pair(const Graph& g, const VertexIndexMap& index)
+template<typename GraphT, typename VertexIndexMap>
+edge_to_index_pair<GraphT, VertexIndexMap>
+make_edge_to_index_pair(const GraphT& g, const VertexIndexMap& index)
 {
-  return edge_to_index_pair<Graph, VertexIndexMap>(g, index);
+  return edge_to_index_pair<GraphT, VertexIndexMap>(g, index);
 }
 
-template<typename Graph>
+template<typename GraphT>
 edge_to_index_pair
-  <Graph,
-   typename boost::property_map<Graph,boost::vertex_index_t>::const_type>
-make_edge_to_index_pair(const Graph& g)
+  <GraphT,
+   typename boost::property_map<GraphT,boost::vertex_index_t>::const_type>
+make_edge_to_index_pair(const GraphT& g)
 {
-  typedef typename boost::property_map<Graph,
+  typedef typename boost::property_map<GraphT,
                                        boost::vertex_index_t>::const_type
     VertexIndexMap;
-  return edge_to_index_pair<Graph, VertexIndexMap>(g,
+  return edge_to_index_pair<GraphT, VertexIndexMap>(g,
                                                    get(boost::vertex_index,
                                                        g));
 }
