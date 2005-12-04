@@ -134,11 +134,33 @@ make_edge_to_index_pair(const Graph& g)
                                                        g));
 }
 
+void check_consistency(const CSRGraph& g) {
+  // Do a bunch of tests on the graph internal data
+  // Check that m_last_source is valid
+  BOOST_CHECK(g.m_last_source <= num_vertices(g));
+  // Check that m_rowstart entries are valid, and that entries after
+  // m_last_source + 1 are all zero
+  BOOST_CHECK(g.m_rowstart[0] == 0);
+  for (CSRGraph::vertices_size_type i = 0; i < g.m_last_source; ++i) {
+    BOOST_CHECK(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
+    BOOST_CHECK(g.m_rowstart[i + 1] <= num_edges(g));
+  }
+  for (CSRGraph::vertices_size_type i = g.m_last_source + 1;
+       i < g.m_rowstart.size(); ++i) {
+    BOOST_CHECK(g.m_rowstart[i] == 0);
+  }
+  // Check that m_column entries are within range
+  for (CSRGraph::edges_size_type i = 0; i < num_edges(g); ++i) {
+    BOOST_CHECK(g.m_column[i] < num_vertices(g));
+  }
+}
+
 template<typename OrigGraph>
 void test(const OrigGraph& g)
 {
   // Check copying of a graph
   CSRGraph g2(g);
+  check_consistency(g2);
   BOOST_CHECK((std::size_t)std::distance(edges(g2).first, edges(g2).second)
               == num_edges(g2));
   assert_graphs_equal(g, boost::identity_property_map(),
@@ -151,6 +173,7 @@ void test(const OrigGraph& g)
               boost::make_transform_iterator(edges(g2).second,
                                              make_edge_to_index_pair(g2)),
               num_vertices(g));
+  check_consistency(g3);
   BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
   assert_graphs_equal(g2, boost::identity_property_map(),
@@ -164,10 +187,12 @@ void test(const OrigGraph& g)
   BOOST_CHECK(first_vert == 0);
   BOOST_CHECK(num_vertices(g4) == num_vertices(g3));
   CSRGraph::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g3); ei != ei_end; ++ei) {
+  int i;
+  for (boost::tie(ei, ei_end) = edges(g3), i = 0; ei != ei_end; ++ei, ++i) {
     CSRGraph::edge_descriptor e = add_edge(source(*ei, g3), target(*ei, g3), g4);
     BOOST_CHECK(source(e, g4) == source(*ei, g3));
     BOOST_CHECK(target(e, g4) == target(*ei, g3));
+    if (i % 13 == 0) check_consistency(g4);
   }
   assert_graphs_equal(g3, boost::identity_property_map(),
 		      g4, boost::identity_property_map(),
@@ -330,6 +355,11 @@ int test_main(int argc, char* argv[])
   if (argc > 1) seed = boost::lexical_cast<int>(argv[1]);
 
   std::cout << "Seed = " << seed << std::endl;
+  {
+    std::cout << "Testing empty graph" << std::endl;
+    CSRGraph g;
+    test(g);
+  }
   test(1000, 0.05, seed);
   test(1000, 0.0, seed);
   test(1000, 0.1, seed);
@@ -340,8 +370,11 @@ int test_main(int argc, char* argv[])
     CSRGraph g;
     add_vertices(std::size_t(5), g);
     add_edge(std::size_t(1), std::size_t(2), g);
+    check_consistency(g);
     add_edge(std::size_t(2), std::size_t(3), g);
+    check_consistency(g);
     add_edge(std::size_t(2), std::size_t(4), g);
+    check_consistency(g);
     CSRGraph::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       BOOST_CHECK(edge_from_index(get(boost::edge_index, g, *ei), g) == *ei);

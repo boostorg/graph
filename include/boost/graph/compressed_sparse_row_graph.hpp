@@ -440,7 +440,7 @@ class compressed_sparse_row_graph
   std::vector<EdgeIndex> m_rowstart;
   std::vector<Vertex> m_column;
   GraphProperty m_property;
-  Vertex m_last_source;
+  Vertex m_last_source; // Last source of added edge, plus one
 };
 
 template<typename Vertex, typename EdgeIndex>
@@ -483,10 +483,11 @@ add_vertices(Vertex count, BOOST_CSR_GRAPH_TYPE& g) {
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
-  assert (src >= g.m_last_source);
+  assert (src >= g.m_last_source - 1 && src < num_vertices(g));
+  assert (tgt < num_vertices(g));
   EdgeIndex num_edges_orig = g.m_column.size();
-  for (; g.m_last_source < src; ++g.m_last_source)
-    g.m_rowstart[g.m_last_source + 1] = num_edges_orig;
+  for (; g.m_last_source <= src; ++g.m_last_source)
+    g.m_rowstart[g.m_last_source] = num_edges_orig;
   g.m_rowstart[src + 1] = num_edges_orig + 1;
   g.m_column.push_back(tgt);
   return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, num_edges_orig);
@@ -638,6 +639,7 @@ inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 edge_from_index(EdgeIndex idx, const BOOST_CSR_GRAPH_TYPE& g)
 {
   typedef typename std::vector<EdgeIndex>::const_iterator row_start_iter;
+  assert (idx < num_edges(g));
   row_start_iter src_plus_1 =
     std::upper_bound(g.m_rowstart.begin(),
 		     g.m_rowstart.begin() + g.m_last_source + 1,
