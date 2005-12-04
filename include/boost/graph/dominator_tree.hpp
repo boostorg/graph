@@ -303,7 +303,7 @@ namespace boost {
     if (numOfVertices == 0) return;
 
     VerticesSizeType time =
-      std::numeric_limits<VerticesSizeType>::max();
+      (std::numeric_limits<VerticesSizeType>::max)();
     std::vector<default_color_type> 
       colors(numOfVertices, color_traits<default_color_type>::white());
     depth_first_visit
@@ -449,7 +449,7 @@ namespace boost {
         typename std::set<Vertex>::const_iterator s;
         for (s = tempSet.begin(); s != tempSet.end(); ++s)
           {
-            typename std::set<Vertex>::const_iterator t;
+            typename std::set<Vertex>::iterator t;
             for (t = get(domMap, *vi).begin(); t != get(domMap, *vi).end(); ++t)
               {
                 if (*t == *s) continue;

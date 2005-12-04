@@ -122,7 +122,7 @@ namespace boost {
     public:      
       typedef typename Sequence::iterator iterator;
       typedef typename Sequence::reverse_iterator reverse_iterator;
-      typedef queue<Tp,Sequence> queue;
+      typedef queue<Tp,Sequence> base;
       typedef typename Sequence::size_type size_type;
 
       inline iterator begin() { return this->c.begin(); }
