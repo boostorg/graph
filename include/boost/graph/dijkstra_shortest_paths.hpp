@@ -224,8 +224,9 @@ namespace boost {
     std::vector<default_color_type> color(num_vertices(g));
     default_color_type c = white_color;
     dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
-      compare, combine, zero, vis,
-        make_iterator_property_map(&color[0], index_map, c));
+                            compare, combine, inf, zero, vis,
+                            make_iterator_property_map(&color[0], index_map,
+                                                       c));
   }
 
   // Initialize distances and call breadth first search
