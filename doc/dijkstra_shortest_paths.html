@@ -37,14 +37,14 @@ dijkstra_shortest_paths(Graph&amp; g,
 template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
 	  typename PredecessorMap, typename DistanceMap,
 	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>, 
-	  typename DistInf, typename DistZero&gt;
+	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
 void dijkstra_shortest_paths
   (const Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
    VertexIndexMap index_map,
    CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
-   DijkstraVisitor vis)
+   DijkstraVisitor vis, ColorMap color = <i>default</i>)
 </PRE>
 
 <P>
