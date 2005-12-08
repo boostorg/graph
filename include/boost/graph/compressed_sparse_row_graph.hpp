@@ -510,10 +510,10 @@ inline vertices(const BOOST_CSR_GRAPH_TYPE& g) {
 // From IncidenceGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 class BOOST_CSR_GRAPH_TYPE::out_edge_iterator
-  : public iterator_facade<out_edge_iterator,
-                           edge_descriptor,
+  : public iterator_facade<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
+                           typename BOOST_CSR_GRAPH_TYPE::edge_descriptor,
                            std::random_access_iterator_tag,
-                           const edge_descriptor&,
+                           const typename BOOST_CSR_GRAPH_TYPE::edge_descriptor&,
                            typename int_t<CHAR_BIT * sizeof(EdgeIndex)>::fast>
 {
  public:
