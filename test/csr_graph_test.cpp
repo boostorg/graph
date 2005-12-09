@@ -270,9 +270,10 @@ void test(const OrigGraph& g)
   brandes_betweenness_centrality
     (g3,
      make_iterator_property_map(vertex_centralities.begin(),
-                                get(vertex_index, g3)),
+                                get(boost::vertex_index, g3)),
      make_iterator_property_map(edge_centralities.begin(),
-                                get(edge_index, g3)));
+                                get(boost::edge_index, g3)));
+    // Extra qualifications for aCC
 
   // Invert the edge centralities and use these as weights to
   // Kruskal's MST algorithm, which will test the EdgeListGraph
@@ -282,13 +283,13 @@ void test(const OrigGraph& g)
     edge_centralities[i] =
       edge_centralities[i] == 0.0? max_val : 1.0 / edge_centralities[i];
 
-  typedef graph_traits<CSRGraphT>::edge_descriptor edge_descriptor;
+  typedef boost::graph_traits<CSRGraphT>::edge_descriptor edge_descriptor;
   std::vector<edge_descriptor> mst_edges;
   mst_edges.reserve(num_vertices(g3));
   kruskal_minimum_spanning_tree
     (g3, std::back_inserter(mst_edges),
      weight_map(make_iterator_property_map(edge_centralities.begin(),
-                                           get(edge_index, g3))));
+                                           get(boost::edge_index, g3))));
 }
 
 void test(int nnodes, double density, int seed)

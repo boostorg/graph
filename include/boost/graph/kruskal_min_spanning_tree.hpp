@@ -48,6 +48,7 @@ namespace boost {
                      OutputIterator spanning_tree_edges, 
                      Rank rank, Parent parent, Weight weight)
     {
+      if (num_vertices(G) == 0) return; // Nothing to do in this case
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
       function_requires<VertexListGraphConcept<Graph> >();
@@ -101,6 +102,7 @@ namespace boost {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename property_map<Graph, vertex_index_t>::type index_map_t;
+    if (num_vertices(g) == 0) return; // Nothing to do in this case
     typename graph_traits<Graph>::vertices_size_type
       n = num_vertices(g);
     std::vector<size_type> rank_map(n);
@@ -121,6 +123,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+    if (num_vertices(g) == 0) return; // Nothing to do in this case
     typename graph_traits<Graph>::vertices_size_type n;
     n = is_default_param(get_param(params, vertex_rank))
                                    ? num_vertices(g) : 1;
