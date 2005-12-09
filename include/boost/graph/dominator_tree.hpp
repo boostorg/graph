@@ -450,11 +450,13 @@ namespace boost {
         for (s = tempSet.begin(); s != tempSet.end(); ++s)
           {
             typename std::set<Vertex>::iterator t;
-            for (t = get(domMap, *vi).begin(); t != get(domMap, *vi).end(); ++t)
+            for (t = get(domMap, *vi).begin(); t != get(domMap, *vi).end(); )
               {
-                if (*t == *s) continue;
-                if (get(domMap, *s).find(*t) != get(domMap, *s).end())
-                  get(domMap, *vi).erase(t);
+		typename std::set<Vertex>::iterator old_t = t;
+		++t; // Done early because t may become invalid
+                if (*old_t == *s) continue;
+                if (get(domMap, *s).find(*old_t) != get(domMap, *s).end())
+                  get(domMap, *vi).erase(old_t);
               }
           }
       }
