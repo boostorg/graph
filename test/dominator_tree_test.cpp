@@ -217,7 +217,6 @@ int test_main(int, char*[])
         PredMap;
 
       vector<Vertex> domTreePredVector, domTreePredVector2;
-      PredMap domTreePredMap;
       IndexMap indexMap(get(vertex_index, g));
       graph_traits<G>::vertex_iterator uItr, uEnd;
       int j = 0;
@@ -229,7 +228,7 @@ int test_main(int, char*[])
       // lengauer-tarjan dominator tree algorithm
       domTreePredVector =
         vector<Vertex>(num_vertices(g), graph_traits<G>::null_vertex());
-      domTreePredMap =
+      PredMap domTreePredMap =
         make_iterator_property_map(domTreePredVector.begin(), indexMap);
 
       lengauer_tarjan_dominator_tree(g, vertex(0, g), domTreePredMap);
