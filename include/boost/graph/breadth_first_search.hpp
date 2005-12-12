@@ -94,8 +94,8 @@ namespace boost {
     typedef color_traits<ColorValue> Color;
     typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
     for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
-      put(color, *i, Color::white());
       vis.initialize_vertex(*i, g);
+      put(color, *i, Color::white());
     }
     breadth_first_visit(g, s, Q, vis, color);
   }
