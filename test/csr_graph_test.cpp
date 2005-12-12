@@ -8,6 +8,11 @@
 //           Douglas Gregor
 //           Andrew Lumsdaine
 
+// The libstdc++ debug mode makes this test run for hours...
+#ifdef _GLIBCXX_DEBUG
+#  undef _GLIBCXX_DEBUG
+#endif
+
 // Test for the compressed sparse row graph type
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/test/minimal.hpp>
