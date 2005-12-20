@@ -6,8 +6,8 @@
   -- License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
   -- http://www.boost.org/LICENSE_1_0.txt)
   --
-  --  Authors: Douglas Gregor
-  --           Jeremiah Willcock
+  --  Authors: Jeremiah Willcock
+  --           Douglas Gregor
   --           Andrew Lumsdaine
   -->
 <Head>
@@ -29,13 +29,13 @@ function address(host, user) {
 <IMG SRC="../../../boost.png" 
      ALT="C++ Boost" width="277" height="86"> 
 
-<tt>erdos_renyi_iterator</tt>
+<tt>sorted_erdos_renyi_iterator</tt>
 
 <br>
 
 <PRE>
 template&lt;typename RandomGenerator, typename Graph&gt;
-class erdos_renyi_iterator
+class sorted_erdos_renyi_iterator
 {
 public:
   typedef std::input_iterator_tag iterator_category;
@@ -44,19 +44,17 @@ public:
   typedef const value_type* pointer;
   typedef void difference_type;
 
-  erdos_renyi_iterator();
-  erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                       double fraction = 0.0, bool allow_self_loops = false);
-  erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                       edges_size_type m, bool allow_self_loops = false);
+  sorted_erdos_renyi_iterator();
+  sorted_erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
+                              double probability = 0.0, bool allow_self_loops = false);
 
   // Iterator operations
   reference operator*() const;
   pointer operator-&gt;() const;
-  erdos_renyi_iterator&amp; operator++();
-  erdos_renyi_iterator operator++(int);
-  bool operator==(const erdos_renyi_iterator&amp; other) const;
-  bool operator!=(const erdos_renyi_iterator&amp; other) const;
+  sorted_erdos_renyi_iterator&amp; operator++();
+  sorted_erdos_renyi_iterator operator++(int);
+  bool operator==(const sorted_erdos_renyi_iterator&amp; other) const;
+  bool operator!=(const sorted_erdos_renyi_iterator&amp; other) const;
 }; 
 </PRE>
 
@@ -68,19 +66,12 @@ graph <em>G = (n, p)</em> is a graph with <em>n</em> vertices
 that. The probability of having an edge <em>(u, v)</em> in <em>G</em>
 is <em>p</em> for any vertices <em>u</em> and <em>v</em>. Typically,
 there are no self-loops, but the generator can optionally introduce
-self-loops with probability <em>p</em>. This generator will not
-produce any parallel edges and will produce edges in sorted order (as
-required by, e.g., the <a
-href="compressed_sparse_row.html"><tt>compressed_sparse_row_graph</tt></a>).</p>
+self-loops with probability <em>p</em>.</p>
 
 <p>Erd&ouml;s-Renyi graphs typically exhibit very little
 structure. For this reason, they are rarely useful in modeling
 real-world problems. However, they are often used when determining
 the theoretical complexity of complex graph algorithms.</p>
-
-<p>If you want the possibility of generating parallel edges and don't
-care about sorted order, use the <a
-href="erdos_renyi_generator.html"><tt>erdos_renyi_iterator</tt></a>.</p>
 
 <h3>Where Defined</h3>
 
@@ -89,31 +80,19 @@ href="erdos_renyi_generator.html"><tt>erdos_renyi_iterator</tt></a>.</p>
 <h3>Constructors</h3>
 
 <a name="default-constructor"/>
-<pre>erdos_renyi_iterator();</pre>
+<pre>sorted_erdos_renyi_iterator();</pre>
 <blockquote>
 Constructs a past-the-end iterator.
 </blockquote>
 
 <pre>
-erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                     double fraction = 0.0, bool allow_self_loops = false);
+sorted_erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
+                            double probability = 0.0, bool allow_self_loops = false);
 </pre>
 <blockquote>
 Constructs an Erd&ouml;s-Renyi generator iterator that creates a
-graph with <tt>n</tt> vertices and a given <tt>fraction</tt> of the
+graph with <tt>n</tt> vertices and a given <tt>probability</tt> of the
 total number of edges that a simple graph may have.
-<tt>probability</tt>. Random vertices and edges are selected using the
-random number generator <tt>gen</tt>. Self-loops are permitted only when
-<tt>allow_self_loops</tt> is <tt>true</tt>.
-</blockquote>
-
-<pre>
-erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                     edges_size_type m, bool allow_self_loops = false);
-</pre>
-<blockquote>
-Constructs an Erd&ouml;s-Renyi generator iterator that creates a
-graph with <tt>n</tt> vertices and <tt>m</tt> edges.
 <tt>probability</tt>. Random vertices and edges are selected using the
 random number generator <tt>gen</tt>. Self-loops are permitted only when
 <tt>allow_self_loops</tt> is <tt>true</tt>.
@@ -127,7 +106,7 @@ random number generator <tt>gen</tt>. Self-loops are permitted only when
 #include &lt;boost/random/linear_congruential.hpp&gt;
 
 typedef boost::adjacency_list&lt;&gt; Graph;
-typedef boost::erdos_renyi_iterator&lt;boost::minstd_rand, Graph&gt; ERGen;
+typedef boost::sorted_erdos_renyi_iterator&lt;boost::minstd_rand, Graph&gt; ERGen;
 
 int main()
 {
@@ -143,6 +122,8 @@ int main()
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2005</TD><TD>
+Jeremiah Willcock, Indiana University (<script language="Javascript">address("cs.indiana.edu", "jewillco")</script>)<br>
+  
 <A HREF="../../../people/doug_gregor.html">Doug Gregor</A>, Indiana University (<script language="Javascript">address("cs.indiana.edu", "dgregor")</script>)<br>
   <A HREF=http://www.osl.iu.edu/~lums>Andrew Lumsdaine</A>,
 Indiana University (<script language="Javascript">address("osl.iu.edu", "lums")</script>)
