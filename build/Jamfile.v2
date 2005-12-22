@@ -9,6 +9,7 @@ lib bgl-viz
     graphviz_digraph_lex 
     graphviz_graph_parser 
     graphviz_digraph_parser
+    read_graphviz_spirit.cpp
     : <define>YY_NO_UNISTD_H
 	;
 
