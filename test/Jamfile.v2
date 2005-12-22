@@ -17,11 +17,19 @@ test-suite graph_test :
 
     [ compile bfs_cc.cpp ]
 
+    [ run bellman-test.cpp ]
+
+    [ run betweenness_centrality_test.cpp ] 
+
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
 
     [ compile dfs_cc.cpp ]
 
     [ compile dijkstra_cc.cpp ]
+
+    [ run dijkstra_heap_performance.cpp : 10000 ]
+
+    [ run relaxed_heap_test.cpp : 5000 15000 ]
 
     [ compile edge_list_cc.cpp ]
 
@@ -31,7 +39,18 @@ test-suite graph_test :
 
     [ compile graph_concepts.cpp ]
 
+
+    [ run graphviz_test.cpp 
+            /boost/test//boost_test_exec_monitor 
+            ../build//bgl-viz ]
+
+    [ run gursoy_atun_layout_test.cpp ]
+
+    [ run layout_test.cpp : : : <test-info>always_show_run_output ]
+
     [ compile reverse_graph_cc.cpp ] 
+
+    [ run sequential_vertex_coloring.cpp ]
 
     [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
 
@@ -46,6 +65,17 @@ test-suite graph_test :
     [ compile property_iter.cpp ]    
 
     [ run bundled_properties.cpp ]
+
+    [ run floyd_warshall_test.cpp ]
+
+    [ run astar_search_test.cpp ]
+
+    [ run biconnected_components_test.cpp ]
+
+    [ run cuthill_mckee_ordering.cpp ]
+
+    [ run king_ordering.cpp ]
+
     ;
 
 # Run SDB tests only when -sSDB= is set.
