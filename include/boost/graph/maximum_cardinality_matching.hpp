@@ -13,6 +13,7 @@
 #include <vector>
 #include <list>
 #include <deque>
+#include <algorithm>                     // for std::sort and std::stable_sort
 #include <utility>                       // for std::pair
 #include <boost/property_map.hpp>
 #include <boost/utility.hpp>             // for boost::tie
@@ -21,6 +22,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/pending/disjoint_sets.hpp>
+#include <boost/assert.hpp>
 
 
 namespace boost
@@ -730,14 +732,15 @@ namespace boost
     struct non_odd_vertex {
       //this predicate is used to create a filtered graph that
       //excludes vertices labeled "graph::detail::V_ODD"
-      non_odd_vertex() { }
-      non_odd_vertex(const VertexStateMap arg_vertex_state) 
+      non_odd_vertex() : vertex_state(0) { }
+      non_odd_vertex(VertexStateMap* arg_vertex_state) 
         : vertex_state(arg_vertex_state) { }
       template <typename Vertex>
       bool operator()(const Vertex& v) const {
-	return get(vertex_state, v) != graph::detail::V_ODD;
+	BOOST_ASSERT(vertex_state);
+	return get(*vertex_state, v) != graph::detail::V_ODD;
       }
-      VertexStateMap vertex_state;
+      VertexStateMap* vertex_state;
     };
 
     static bool verify_matching(const Graph& g, MateMap mate, VertexIndexMap vm)
@@ -787,7 +790,7 @@ namespace boost
 
       //count the number of connected components with odd cardinality
       //in the graph without graph::detail::V_ODD vertices
-      non_odd_vertex<vertex_to_int_map_t> filter(vertex_state);
+      non_odd_vertex<vertex_to_int_map_t> filter(&vertex_state);
       filtered_graph<Graph, keep_all, non_odd_vertex<vertex_to_int_map_t> > fg(g, keep_all(), filter);
 
       v_size_t num_odd_components;
