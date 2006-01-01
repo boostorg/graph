@@ -18,6 +18,7 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <cmath>
 
 namespace boost {
 
@@ -163,6 +164,8 @@ namespace boost {
   private:
     void next()
     {
+      using std::sqrt;
+
       // In order to get the edges from the generator in sorted order, one
       // effective (but slow) procedure would be to use a
       // bernoulli_distribution for each legal (src, tgt) pair.  Because of the
