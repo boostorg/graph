@@ -165,6 +165,7 @@ namespace boost {
     void next()
     {
       using std::sqrt;
+      using std::floor;
 
       // In order to get the edges from the generator in sorted order, one
       // effective (but slow) procedure would be to use a
