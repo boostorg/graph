@@ -14,8 +14,8 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <map>
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/graph/adj_list_serialize.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 struct vertex_properties {
   std::string name;
