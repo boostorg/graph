@@ -24,8 +24,8 @@
 //=======================================================================
 
 
-#ifndef ______adj_list_io_______
-#define ______adj_list_io_______
+#ifndef BOOST_GRAPH_ADJACENCY_LIST_IO_HPP
+#define BOOST_GRAPH_ADJACENCY_LIST_IO_HPP
 
 #include <iostream>
 #include <vector>
@@ -96,23 +96,29 @@ void get
 template<class Tag, class Value, class Next, 
         class Stag, class Svalue, class Snext>
 void getSubset
-( property<Tag,Value,Next>& p, const property<Stag,Svalue,Snext>& s )
+( property<Tag,Value,Next>& p, const property<Stag,Svalue,Snext>& s, long )
 {
         get( p, s.m_value, Stag() );
-        getSubset( p, Snext(s) );
+        getSubset( p, Snext(s), 0 );
 }
 
 template<class Tag, class Value, class Next, 
         class Stag, class Svalue>
 void getSubset
-( property<Tag,Value,Next>& p, const property<Stag,Svalue,no_property>& s )
+( property<Tag,Value,Next>& p, const property<Stag,Svalue,no_property>& s, int)
 {
         get( p, s.m_value, Stag() );
 }
 
 inline void getSubset
-( no_property& p, const no_property& s )
+( no_property& p, const no_property& s, long )
 {
+}
+
+template<typename T>
+void getSubset(T& p, const T& s, int)
+{
+  p = s;
 }
 
 //  get property subset
@@ -153,7 +159,7 @@ struct GraphParser
                                         if( in >> readProp )
                                         {
                                                 VertexProperty vp;
-                                                getSubset( vp, readProp );
+                                                getSubset( vp, readProp, 0 );
                                                 nodes.push_back( add_vertex(vp, *graph) );
                                         }
                                         else
@@ -166,7 +172,7 @@ struct GraphParser
                                         if( in >> readProp ) 
                                         {
                                                 EdgeProperty ep;
-                                                getSubset( ep, readProp );
+                                                getSubset( ep, readProp, 0 );
                                                 add_edge(nodes[source], nodes[target], ep, *graph);
                                         }
                                         else

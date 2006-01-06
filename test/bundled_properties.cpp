@@ -54,6 +54,12 @@ std::istream& operator>>(std::istream& in, City& city)
   return in;
 }
 
+bool operator==(const City& c1, const City& c2)
+{
+  return (c1.name == c2.name && c1.population == c2.population
+          && c1.zipcodes == c2.zipcodes);
+}
+
 struct Highway
 {
   Highway() {}
@@ -79,6 +85,13 @@ std::istream& operator>>(std::istream& in, Highway& highway)
   return in >> highway.name >> highway.miles >> highway.miles
             >> highway.speed_limit  >> highway.lanes
             >> highway.divided;
+}
+
+bool operator==(const Highway& h1, const Highway& h2)
+{
+  return (h1.name == h2.name && h1.miles == h2.miles 
+          && h1.speed_limit == h2.speed_limit && h1.lanes == h2.lanes
+          && h1.divided == h2.divided);
 }
 
 template<bool> struct truth {};
@@ -107,16 +120,21 @@ void test_io(adjacency_list<EL,VL,D,VP,EP,GP>& map, int)
   cout << write(map);
   out << write(map);
   
-#if 0
   istringstream in(out.str());
   adjacency_list<EL,VL,D,VP,EP,GP> map2;
   in >> read(map2);
   typename graph_traits<adjacency_list<EL,VL,D,VP,EP,GP> >::vertex_iterator
     v2 = vertices(map2).first;
   BGL_FORALL_VERTICES_T(v, map, Map) {
-    //    BOOST_CHECK(
+    BOOST_CHECK(map[v] == map2[*v2]);
+    typename graph_traits<adjacency_list<EL,VL,D,VP,EP,GP> >::out_edge_iterator
+      e2 = out_edges(*v2, map2).first;
+    BGL_FORALL_OUTEDGES_T(v, e, map, Map) {
+      BOOST_CHECK(map[e] == map[*e2]);
+      ++e2;
+    }
+    ++v2;
   }
-#endif
 }
 
 template<typename Map>
