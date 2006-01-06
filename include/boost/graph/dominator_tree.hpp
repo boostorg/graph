@@ -13,7 +13,6 @@
 #include <deque>
 #include <set>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/dynamic_bitset.hpp>
 
 namespace boost {
   namespace detail {
@@ -366,7 +365,6 @@ namespace boost {
                                    verticesByDFNum, domTreePredMap);
   }
 
-#if 0
   /**
    * Muchnick. p. 182, 184
    *
@@ -402,21 +400,8 @@ namespace boost {
                 
     std::vector< std::set<Vertex> > dom(numOfVertices, N);
     vertexSetMap domMap(make_iterator_property_map(dom.begin(), indexMap));
-    get(domMap, entry).clear(); // This is redundant
+    get(domMap, entry).clear();
     get(domMap, entry).insert(entry);
-
-    // Reverse-engineered pseudocode for this function:
-    // domMap[v] = {} for v in vertices(g)
-    // domMap[entry] = {entry}
-    // Until domMap doesn't change:
-    //   For v in vertices(g) except entry:
-    //     domMap[v] = {v} | intersection of domMap[p] for p in in_adjacencies(v)
-    // This next part seems to be a kind of reflexive, transitive reduction
-    // domMap[v] -= {v} for v in vertices(g)
-    // For v in vertices(g):
-    //   domMap[v] -= domMap[s] for s in domMap[v] (copied into tempSet)
-    // For v in vertices(g) except entry where |domMap[v]| is 1:
-    //   domTreePredMap[v] = the element in domMap[v]
 
     while (change)
       {
@@ -469,7 +454,7 @@ namespace boost {
               {
 		typename std::set<Vertex>::iterator old_t = t;
 		++t; // Done early because t may become invalid
-                if (*old_t == *s) continue; // Is this necessary with line 440?
+                if (*old_t == *s) continue;
                 if (get(domMap, *s).find(*old_t) != get(domMap, *s).end())
                   get(domMap, *vi).erase(old_t);
               }
@@ -482,114 +467,6 @@ namespace boost {
           {
             Vertex temp = *get(domMap, *vi).begin();
             put(domTreePredMap, *vi, temp);
-          }
-      }
-  }
-#endif
-
-  /**
-   * Muchnick. p. 182, 184
-   *
-   * using iterative bit vector analysis
-   */
-  template<class Graph, class IndexMap, class DomTreePredMap>
-  void
-  iterative_bit_vector_dominator_tree
-    (const Graph& g,
-     const typename graph_traits<Graph>::vertex_descriptor& entry,
-     const IndexMap& indexMap,
-     DomTreePredMap domTreePredMap)
-  {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::vertex_iterator vertexItr;
-    typedef typename graph_traits<Graph>::vertices_size_type VerticesSizeType;
-    typedef
-      iterator_property_map<typename std::vector< boost::dynamic_bitset<> >::iterator,
-                            IndexMap> vertexSetMap;
-
-    function_requires<BidirectionalGraphConcept<Graph> >();
-
-    // 1. Finding dominator
-    // 1.1. Initialize
-    const VerticesSizeType numOfVertices = num_vertices(g);
-    if (numOfVertices == 0) return;
-
-    vertexItr vi, viend;
-    tie(vi, viend) = vertices(g);
-
-    bool change = true;
-                
-    boost::dynamic_bitset<> N(numOfVertices);
-    N.set();
-    std::vector< boost::dynamic_bitset<> > dom(numOfVertices, N);
-    vertexSetMap domMap(make_iterator_property_map(dom.begin(), indexMap));
-    get(domMap, entry).reset();
-    get(domMap, entry).set(indexMap[entry]);
-
-    // Reverse-engineered pseudocode for this function:
-    // domMap[v] = {} for v in vertices(g)
-    // domMap[entry] = {entry}
-    // Until domMap doesn't change:
-    //   For v in vertices(g) except entry:
-    //     domMap[v] = {v} | intersection of domMap[p] for p in in_adjacencies(v)
-    // This next part seems to be a kind of reflexive, transitive reduction
-    // domMap[v] -= {v} for v in vertices(g)
-    // For v in vertices(g):
-    //   domMap[v] -= domMap[s] for s in domMap[v] (copied into tempSet)
-    // For v in vertices(g) except entry where |domMap[v]| is 1:
-    //   domTreePredMap[v] = the element in domMap[v]
-
-    while (change)
-      {
-        change = false;
-        for (tie(vi, viend) = vertices(g); vi != viend; ++vi)
-          {
-            if (*vi == entry) continue;
-
-            boost::dynamic_bitset<> T(N);
-
-            typename graph_traits<Graph>::in_edge_iterator inItr, inEnd;
-            for (tie(inItr, inEnd) = in_edges(*vi, g); inItr != inEnd; ++inItr)
-              {
-                const Vertex p = source(*inItr, g);
-		T &= get(domMap, p);
-
-              }
-
-	    T.set(indexMap[*vi]);
-            if (T != get(domMap, *vi))
-              {
-                change = true;
-                get(domMap, *vi).swap(T);
-              }
-          } // end of for (tie(vi, viend) = vertices(g)
-      } // end of while(change)
-
-    // 2. Build dominator tree
-    for (tie(vi, viend) = vertices(g); vi != viend; ++vi)
-      get(domMap, *vi).reset(indexMap[*vi]);
-
-    for (tie(vi, viend) = vertices(g); vi != viend; ++vi)
-      {
-        if (*vi == entry) continue;
-	
-	boost::dynamic_bitset<> tempSet(get(domMap, *vi));
-	for (VerticesSizeType i = tempSet.find_first();
-	     i != boost::dynamic_bitset<>::npos;
-	     i = tempSet.find_next(i))
-          {
-	    get(domMap, *vi) -= get(domMap, vertex(i, g));
-          }
-      }
-
-    for (tie(vi, viend) = vertices(g); vi != viend; ++vi)
-      {
-        if (*vi != entry)
-	  {
-	    VerticesSizeType i = get(domMap, *vi).find_first();
-	    if (i != boost::dynamic_bitset<>::npos &&
-		get(domMap, *vi).find_next(i) == boost::dynamic_bitset<>::npos)
-	      put(domTreePredMap, *vi, vertex(i, g));
           }
       }
   }
