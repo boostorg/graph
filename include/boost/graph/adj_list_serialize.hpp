@@ -63,7 +63,7 @@ inline void load(
   unsigned int E;
   ar >> BOOST_SERIALIZATION_NVP(E);
   
-  std::map<int,Vertex> verts;
+  std::vector<Vertex> verts(V);
   int i = 0;
   while(V-- > 0){
     Vertex v = add_vertex(graph);
