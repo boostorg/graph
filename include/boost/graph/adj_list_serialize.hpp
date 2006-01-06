@@ -10,12 +10,11 @@
 #include <boost/serialization/collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
 
-// For use with bundled properties
-
 namespace boost { 
 namespace serialization {
 
-template<class Archive, class OEL, class VL, class D, class VP, class EP, class GP, class EL>
+template<class Archive, class OEL, class VL, class D, 
+	 class VP, class EP, class GP, class EL>
 inline void save(
     Archive & ar,
     const boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> &graph,
@@ -35,7 +34,7 @@ inline void save(
   typename graph_traits<Graph>::vertex_iterator vi;
   for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi) {
     indices[*vi] = num++;
-    ar << graph[*vi];
+    ar << get(vertex_all_t(), graph, *vi);
   }
   
   // write edges
@@ -43,12 +42,13 @@ inline void save(
   for (ei = edges(graph).first; ei != edges(graph).second; ++ei){
     ar << BOOST_SERIALIZATION_NVP(indices[source(*ei,graph)]);
     ar << BOOST_SERIALIZATION_NVP(indices[target(*ei,graph)]);
-    ar << graph[*ei];
+    ar << get(edge_all_t(), graph, *ei);
   }
 }
 
 
-template<class Archive, class OEL, class VL, class D, class VP, class EP, class GP, class EL>
+template<class Archive, class OEL, class VL, class D,
+	 class VP, class EP, class GP, class EL>
 inline void load(
     Archive & ar,
     boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> &graph,
