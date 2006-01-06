@@ -204,6 +204,7 @@ protected:
 //=======================================================================
 // property printer
 
+#if defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
 template<class Graph, class Property>
 struct PropertyPrinter
 {
@@ -225,6 +226,41 @@ struct PropertyPrinter
 private:
         Graph* graph;
 };
+#else
+template<class Graph, typename Property>
+struct PropertyPrinter
+{
+        PropertyPrinter( Graph& g ):graph(&g){}
+        
+        template<class Iterator>
+        PropertyPrinter& operator () ( std::ostream& out, Iterator it )
+        {
+                out << (*graph)[ *it ] <<" ";
+                return (*this);
+        }
+private:
+        Graph* graph;
+};
+
+template<class Graph, typename Tag, typename Value, typename Next>
+struct PropertyPrinter<Graph, property<Tag, Value, Next> >
+{
+        PropertyPrinter( Graph& g ):graph(&g){}
+        
+        template<class Iterator>
+        PropertyPrinter& operator () ( std::ostream& out, Iterator it )
+        {
+                typename property_map<Graph,Tag>::type ps = get(Tag(), *graph);
+                out << ps[ *it ] <<" ";
+                PropertyPrinter<Graph,Next> print(*graph);
+                print(out, it);
+                return (*this);
+        }
+private:
+        Graph* graph;
+};
+#endif
+
 template<class Graph>
 struct PropertyPrinter<Graph, no_property>
 {
