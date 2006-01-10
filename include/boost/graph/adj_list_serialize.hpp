@@ -2,7 +2,7 @@
 #define ADJ_LIST_SERIALIZE_HPP
 
 #include <boost/graph/adjacency_list.hpp>
-
+#include <boost/pending/property_serialize.hpp>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 
