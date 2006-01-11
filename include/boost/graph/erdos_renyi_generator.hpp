@@ -13,6 +13,7 @@
 #include <cassert>
 #include <iterator>
 #include <utility>
+#include <boost/shared_ptr.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/random/geometric_distribution.hpp>
@@ -42,7 +43,7 @@ namespace boost {
     typedef const value_type* pointer;
     typedef void difference_type;
 
-    erdos_renyi_iterator() : gen(0), n(0), edges(0), allow_self_loops(false) {}
+    erdos_renyi_iterator() : gen(), n(0), edges(0), allow_self_loops(false) {}
     erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
                          double fraction = 0.0, bool allow_self_loops = false)
       : gen(&gen), n(n), edges(edges_size_type(fraction * n * n)),
@@ -121,7 +122,7 @@ namespace boost {
     typedef void difference_type;
 
     sorted_erdos_renyi_iterator()
-      : gen(0), rand_vertex(0.0), n(0), allow_self_loops(false),
+      : gen(), rand_vertex(0.0), n(0), allow_self_loops(false),
 	src(graph_traits<Graph>::null_vertex()), tgt(0), prob(0) {}
     sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
 			        double prob = 0.0, 
