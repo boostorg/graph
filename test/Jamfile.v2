@@ -21,6 +21,10 @@ test-suite graph_test :
 
     [ run betweenness_centrality_test.cpp ] 
 
+    [ run csr_graph_test.cpp : : : : : <variant>release ]
+
+    [ run dag_longest_paths.cpp ]
+
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
 
     [ compile dfs_cc.cpp ]
@@ -28,6 +32,8 @@ test-suite graph_test :
     [ compile dijkstra_cc.cpp ]
 
     [ run dijkstra_heap_performance.cpp : 10000 ]
+
+    [ run dominator_tree_test.cpp ]
 
     [ run relaxed_heap_test.cpp : 5000 15000 ]
 
@@ -75,6 +81,8 @@ test-suite graph_test :
     [ run cuthill_mckee_ordering.cpp ]
 
     [ run king_ordering.cpp ]
+
+    [ run matching_test.cpp ]
 
     ;
 
