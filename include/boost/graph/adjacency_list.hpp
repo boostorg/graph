@@ -18,11 +18,19 @@
 #include <set>
 
 #if !defined BOOST_NO_HASH
-#include <hash_set>
+#  ifdef BOOST_HASH_SET_HEADER
+#    include BOOST_HASH_SET_HEADER
+#  else
+#    include <hash_set>
+#  endif
 #endif
 
 #if !defined BOOST_NO_SLIST
-#include <slist>
+#  ifdef BOOST_SLIST_HEADER
+#    include BOOST_SLIST_HEADER
+#  else
+#    include <slist>
+#  endif
 #endif
 
 #include <boost/graph/graph_traits.hpp>
@@ -111,7 +119,7 @@ namespace boost {
 #if !defined BOOST_NO_SLIST
   struct slistS {
     template <class T>
-    struct bind_ { typedef std::slist<T> type; };
+    struct bind_ { typedef BOOST_STD_EXTENSION_NAMESPACE::slist<T> type; };
   };
 #endif
 
