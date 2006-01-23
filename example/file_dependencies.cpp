@@ -133,7 +133,7 @@ int main(int,char*[])
   // grouped together
   {
     // Set up the necessary graph properties.
-    vector<int> time(N);
+    vector<int> time(N, (std::numeric_limits<int>::max)());
     typedef vector<int>::iterator Time;
     property_map<Graph, edge_weight_t>::type weight = get(edge_weight, g);
 
@@ -157,8 +157,8 @@ int main(int,char*[])
           indexmap = get(vertex_index, g);
         dijkstra_shortest_paths_no_init
           (g, *i, &pred[0], &time[0], weight, indexmap, 
-           compare, combine, 0,  // Since we are using > instead of >, we
-           (std::numeric_limits<int>::max)(), // flip 0 and inf.
+           compare, combine, 0,  // Since we are using > instead of <, we
+                                 // flip 0 and inf.
            default_dijkstra_visitor());
       }
     }
