@@ -11,10 +11,7 @@
 <img src="../../../boost.png" alt="C++ Boost" height="86" width="277">
 <br clear="">
 <h1>
-<tt>
-<a name="sec:maximum_cardinality_matching">maximum_cardinality_matching
-</a>
-</tt>
+<a name="sec:maximum_cardinality_matching">Maximum Cardinality Matching</a>
 </h1>
 <pre>
 template &lt;typename Graph, typename MateMap&gt;
@@ -55,12 +52,14 @@ maximum cardinality matching in any undirected graph. The matching is returned i
 <tt>MateMap</tt>, which is a 
 <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a> 
 that maps vertices to vertices. In the mapping returned, each vertex is either mapped
-to the vertex it's matched to, or to <tt>graph_traits<Graph>::null_vertex()</tt> if it
+to the vertex it's matched to, or to <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> if it
 doesn't participate in the matching. If no <tt>VertexIndexMap</tt> is provided, both functions
-assume that the <tt>VertexIndexMap</tt> is provided as an internal graph property, and get
-the map by calling <tt>get(vertex_index,g)</tt>. The only difference between <tt>edmonds_maximum_cardinality_matching</tt>
-and <tt>checked_edmonds_maximum_cardinality_matching</tt> is that, as a final step, the latter algorithm runs a simple
-verification on the matching computed and returns <tt>true</tt> if and only if the matching is indeed
+assume that the <tt>VertexIndexMap</tt> is provided as an internal graph property accessible
+by calling <tt>get(vertex_index,g)</tt>. The only difference between 
+<tt>edmonds_maximum_cardinality_matching</tt> and 
+<tt>checked_edmonds_maximum_cardinality_matching</tt> is that as a final step, 
+the latter algorithm runs a simple verification on the matching computed and 
+returns <tt>true</tt> if and only if the matching is indeed
 a maximum cardinality matching.
 
 <p>
