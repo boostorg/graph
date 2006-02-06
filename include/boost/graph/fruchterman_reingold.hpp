@@ -362,7 +362,7 @@ namespace detail {
         error_property_not_found,
         const bgl_named_params<Param, Tag, Rest>& params)
     {
-      std::vector<simple_point<double> > displacements(num_vertices(g));
+      std::vector<simple_point<Dim> > displacements(num_vertices(g));
       fruchterman_reingold_force_directed_layout
         (g, position, width, height, attractive_force, repulsive_force,
          force_pairs, cool,
@@ -370,7 +370,7 @@ namespace detail {
          (displacements.begin(),
           choose_const_pmap(get_param(params, vertex_index), g,
                             vertex_index),
-          simple_point<double>()));
+          simple_point<Dim>()));
     }
   };
 
@@ -398,7 +398,7 @@ fruchterman_reingold_force_directed_layout
      choose_param(get_param(params, force_pairs_t()),
                   make_grid_force_pairs(width, height, position, g)),
      choose_param(get_param(params, cooling_t()),
-                  linear_cooling<double>(100)),
+                  linear_cooling<Dim>(100)),
      get_param(params, vertex_displacement_t()),
      params);
 }
