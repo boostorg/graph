@@ -1,7 +1,7 @@
 //=======================================================================
 // Copyright 2001 University of Notre Dame.
 // Copyright 2006 Trustees of Indiana University
-// Authors: Jeremy G. Siek and Doug Gregor <dgregor@cs.indiana.edu>
+// Authors: Jeremy G. Siek and Douglas Gregor <dgregor@cs.indiana.edu>
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -27,6 +27,7 @@
 #include <boost/pending/integer_range.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
   
@@ -429,15 +430,17 @@ namespace boost {
   // Adjacency Matrix Traits
   template <typename Directed = directedS>
   class adjacency_matrix_traits {
-    typedef typename Directed::is_bidir_t is_bidir;
     typedef typename Directed::is_directed_t is_directed;
   public:
-    typedef typename boost::ct_if_t<is_bidir,
-      bidirectional_tag,
-      typename boost::ct_if_t<is_directed,
-        bidirectional_tag, undirected_tag
-      >::type
-    >::type directed_category;
+    // The bidirectionalS tag is not allowed with the adjacency_matrix
+    // graph type. Instead, use directedS, which also provides the
+    // functionality required for a Bidirectional Graph (in_edges,
+    // in_degree, etc.).
+    BOOST_STATIC_ASSERT(!(is_same<Directed, bidirectionalS>::value));
+
+    typedef typename boost::ct_if_t<is_directed,
+                                    bidirectional_tag, undirected_tag>::type
+      directed_category;
     
     typedef disallow_parallel_edge_tag edge_parallel_category;
     
@@ -468,6 +471,12 @@ namespace boost {
     typedef adjacency_matrix_traits<Directed> Traits;
     
   public:
+    // The bidirectionalS tag is not allowed with the adjacency_matrix
+    // graph type. Instead, use directedS, which also provides the
+    // functionality required for a Bidirectional Graph (in_edges,
+    // in_degree, etc.).
+    BOOST_STATIC_ASSERT(!(is_same<Directed, bidirectionalS>::value));
+
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     typedef typename detail::retag_property_list<vertex_bundle_t, VertexProperty>::type
       vertex_property_type;

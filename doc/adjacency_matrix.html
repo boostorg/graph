@@ -209,7 +209,10 @@ The output is:
 
 <h3>Model Of</h3>
 
-<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, <a
+<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, 
+<a href="./IncidenceGraph.html">Incidence Graph</a>,
+<a href="./BidirectionalGraph.html">Bidirectional Graph</a>,
+<a
 href="./AdjacencyMatrix.html">AdjacencyMatrix</a>, <a
 href="./MutablePropertyGraph.html">MutablePropertyGraph</a>,
 <a href="../../utility/CopyConstructible.html">CopyConstructible</a>,
@@ -254,6 +257,13 @@ The type for the edge descriptors associated with the
   The type for the iterators returned by <tt>out_edges()</tt>.  This
   iterator models <a href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>. <br>
   (Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.)
+
+<hr>
+<tt>graph_traits&lt;adjacency_matrix&gt;::in_edge_iterator</tt>
+<br><br>
+  The type for the iterators returned by <tt>in_edges()</tt>.  This
+  iterator models <a href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>. <br>
+  (Required by <a href="BidirectionalGraph.html">BidirectionalGraph</a>.)
 
 <hr>
 <tt>graph_traits&lt;adjacency_matrix&gt;::adjacency_iterator</tt>
@@ -361,15 +371,15 @@ adjacency_matrix(EdgeIterator first, EdgeIterator last,
 std::pair&lt;vertex_iterator, vertex_iterator&gt;
 vertices(const adjacency_matrix&amp; g)
 </pre>
-Returns an iterator-range providing access to the vertex set of graph <tt>g</i>.<br>
+Returns an iterator-range providing access to the vertex set of graph <tt>g</tt>.<br>
 (Required by <a href="VertexListGraph.html">VertexListGraph</a>.)
 
 <hr>
 <pre>
 std::pair&lt;edge_iterator, edge_iterator&gt;
-edges(const adjacency_matrix&amp; g)
+edges(const adjacency_matrix&amp; g);
 </pre>
-Returns an iterator-range providing access to the edge set of graph <tt>g</i>.<br>
+Returns an iterator-range providing access to the edge set of graph <tt>g</tt>.<br>
 (Required by <a href="EdgeListGraph.html">EdgeListGraph</a>.)
 
 <hr>
@@ -378,7 +388,7 @@ std::pair&lt;adjacency_iterator, adjacency_iterator&gt;
 adjacent_vertices(vertex_descriptor v, const adjacency_matrix&amp; g)
 </pre>
 Returns an iterator-range providing access to the vertices adjacent to
-vertex <tt>v</i> in graph <tt>g</i>.<br>
+vertex <tt>v</tt> in graph <tt>g</tt>.<br>
 (Required by <a href="AdjacencyGraph.html">AdjacencyGraph</a>.)
 
 <hr>
@@ -387,9 +397,9 @@ std::pair&lt;out_edge_iterator, out_edge_iterator&gt;
 out_edges(vertex_descriptor v, const adjacency_matrix&amp; g)
 </pre>
 Returns an iterator-range providing access to the out-edges of
-vertex <tt>v</i> in graph <tt>g</i>. If the graph is undirected,
-this iterator-range provides access to all edge incident on
-vertex <tt>v</i>. <br>
+vertex <tt>v</tt> in graph <tt>g</tt>. If the graph is undirected,
+this iterator-range provides access to all edges incident on
+vertex <tt>v</tt>. <br>
 (Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.)
 
 <hr>
@@ -397,7 +407,7 @@ vertex <tt>v</i>. <br>
 vertex_descriptor
 source(edge_descriptor e, const adjacency_matrix&amp; g)
 </pre>
-Returns the source vertex of edge <tt>e</i>.<br>
+Returns the source vertex of edge <tt>e</tt>.<br>
 (Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.)
 
 <hr>
@@ -405,7 +415,7 @@ Returns the source vertex of edge <tt>e</i>.<br>
 vertex_descriptor
 target(edge_descriptor e, const adjacency_matrix&amp; g)
 </pre>
-Returns the target vertex of edge <tt>e</i>.<br>
+Returns the target vertex of edge <tt>e</tt>.<br>
 (Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.)
 
 <hr>
@@ -413,15 +423,35 @@ Returns the target vertex of edge <tt>e</i>.<br>
 degree_size_type
 out_degree(vertex_descriptor u, const adjacency_matrix&amp; g)
 </pre>
-Returns the number of edges leaving vertex <tt>u</i>.<br>
+Returns the number of edges leaving vertex <tt>u</tt>.<br>
 (Required by <a href="IncidenceGraph.html">IncidenceGraph</a>.) 
+<hr>
+
+<hr>
+<pre>
+std::pair&lt;in_edge_iterator, in_edge_iterator&gt;
+in_edges(vertex_descriptor v, const adjacency_matrix&amp; g)
+</pre>
+Returns an iterator-range providing access to the in-edges of
+vertex <tt>v</tt> in graph <tt>g</tt>. If the graph is undirected,
+this iterator-range provides access to all edges incident on
+vertex <tt>v</tt>. <br>
+(Required by <a href="BidirectionalGraph.html">BidirectionalGraph</a>.)
+
+<hr>
+<pre>
+degree_size_type
+in_degree(vertex_descriptor u, const adjacency_matrix&amp; g)
+</pre>
+Returns the number of edges entering vertex <tt>u</tt>.<br>
+(Required by <a href="BidirectionalGraph.html">BidirectionalGraph</a>.) 
 <hr>
 
 <hr>
 <pre>
 vertices_size_type num_vertices(const adjacency_matrix&amp; g)
 </pre>
-Returns the number of vertices in the graph <tt>g</i>.<br>
+Returns the number of vertices in the graph <tt>g</tt>.<br>
 (Required by <a href="VertexListGraph.html">VertexListGraph</a>.)
 
 <hr>
@@ -443,7 +473,7 @@ std::pair&lt;edge_descriptor, bool&gt;
 edge(vertex_descriptor u, vertex_descriptor v,
      const adjacency_matrix&amp; g)
 </pre>
-Returns the edge connecting vertex <tt>u</i> to vertex <tt>v</i> in graph <tt>g</i>.<br>
+Returns the edge connecting vertex <tt>u</tt> to vertex <tt>v</tt> in graph <tt>g</tt>.<br>
 (Required by <a href="AdjacencyMatrix.html">AdjacencyMatrix</a>.)
 
 <hr>
@@ -452,7 +482,7 @@ std::pair&lt;edge_descriptor, bool&gt;
 add_edge(vertex_descriptor u, vertex_descriptor v,
          adjacency_matrix&amp; g)
 </pre>
-  Adds edge <tt>(u,v)</i> to the graph and returns the edge descriptor for
+  Adds edge <tt>(u,v)</tt> to the graph and returns the edge descriptor for
   the new edge. If the edge is already in the graph then a duplicate
   will not be added and the <tt>bool</tt> flag will be <tt>false</tt>.
   This operation does not invalidate any of the graph's iterators
@@ -466,7 +496,7 @@ add_edge(vertex_descriptor u, vertex_descriptor v,
          const EdgeProperty& p,
          adjacency_matrix&amp; g)
 </pre>
-Adds edge <tt>(u,v)</i> to the graph and attaches <tt>p</tt> as the
+Adds edge <tt>(u,v)</tt> to the graph and attaches <tt>p</tt> as the
 value of the edge's internal property storage.  Also see the previous
 <tt>add_edge()</tt> member function for more details.
 
@@ -475,7 +505,7 @@ value of the edge's internal property storage.  Also see the previous
 void remove_edge(vertex_descriptor u, vertex_descriptor v,
                  adjacency_matrix&amp; g)
 </pre>
-Removes the edge <tt>(u,v)</i> from the graph.  <br>
+Removes the edge <tt>(u,v)</tt> from the graph.  <br>
 (Required by <a href="MutableGraph.html">MutableGraph</a>.)
 
 <hr>
@@ -490,7 +520,7 @@ to calling <tt>remove_edge(source(e, g), target(e, g), g)</tt>.<br>
 <pre>
 void clear_vertex(vertex_descriptor u, adjacency_matrix&amp; g)
 </pre>
-Removes all edges to and from vertex <tt>u</i>. The vertex still appears
+Removes all edges to and from vertex <tt>u</tt>. The vertex still appears
 in the vertex set of the graph.<br>
 (Required by <a href="MutableGraph.html">MutableGraph</a>.)
 
