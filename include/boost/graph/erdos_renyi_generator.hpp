@@ -122,7 +122,7 @@ namespace boost {
     typedef void difference_type;
 
     sorted_erdos_renyi_iterator()
-      : gen(), rand_vertex(0.0), n(0), allow_self_loops(false),
+      : gen(), rand_vertex(0.5), n(0), allow_self_loops(false),
 	src(graph_traits<Graph>::null_vertex()), tgt(0), prob(0) {}
     sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
 			        double prob = 0.0, 

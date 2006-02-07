@@ -351,7 +351,6 @@ inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
   assert ((g.m_last_source == 0 || src >= g.m_last_source - 1) && 
 	  src < num_vertices(g));
-  assert (tgt < num_vertices(g));
   EdgeIndex num_edges_orig = g.m_column.size();
   for (; g.m_last_source <= src; ++g.m_last_source)
     g.m_rowstart[g.m_last_source] = num_edges_orig;
