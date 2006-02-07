@@ -42,16 +42,12 @@
 
 #include <boost/test/minimal.hpp>
 
-int test_main(int, char*[])
+template<typename Graph1, typename Graph2>
+void run_test()
 {
-    // Use setS to keep out edges in order, so they match the adjacency_matrix. 
-   typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>
-           Graph1;
-   typedef boost::adjacency_matrix<boost::undirectedS>
-           Graph2;
-   typedef boost::property_map<Graph1, boost::vertex_index_t>::type
+   typedef typename boost::property_map<Graph1, boost::vertex_index_t>::type
            IndexMap1;
-   typedef boost::property_map<Graph2, boost::vertex_index_t>::type
+   typedef typename boost::property_map<Graph2, boost::vertex_index_t>::type
            IndexMap2;
 
    Graph1 g1(24);
@@ -148,11 +144,11 @@ int test_main(int, char*[])
 
    IndexMap1 index_map1 = boost::get(boost::vertex_index_t(), g1);
    IndexMap2 index_map2 = boost::get(boost::vertex_index_t(), g2);
-   boost::graph_traits<Graph1>::vertex_iterator vi1, vend1;
-   boost::graph_traits<Graph2>::vertex_iterator vi2, vend2;
+   typename boost::graph_traits<Graph1>::vertex_iterator vi1, vend1;
+   typename boost::graph_traits<Graph2>::vertex_iterator vi2, vend2;
 
-   boost::graph_traits<Graph1>::adjacency_iterator ai1, aend1;
-   boost::graph_traits<Graph2>::adjacency_iterator ai2, aend2;
+   typename boost::graph_traits<Graph1>::adjacency_iterator ai1, aend1;
+   typename boost::graph_traits<Graph2>::adjacency_iterator ai2, aend2;
 
    for (boost::tie(vi1, vend1) = boost::vertices(g1), boost::tie(vi2, vend2) =boost::vertices(g2); vi1 != vend1; ++vi1, ++vi2)
    {
@@ -167,8 +163,8 @@ int test_main(int, char*[])
       }
    }
 
-   boost::graph_traits<Graph1>::out_edge_iterator ei1, eend1;
-   boost::graph_traits<Graph2>::out_edge_iterator ei2, eend2;
+   typename boost::graph_traits<Graph1>::out_edge_iterator ei1, eend1;
+   typename boost::graph_traits<Graph2>::out_edge_iterator ei2, eend2;
 
    for (boost::tie(vi1, vend1) = boost::vertices(g1),
           boost::tie(vi2, vend2) = boost::vertices(g2); vi1 != vend1; ++vi1, ++vi2)
@@ -183,6 +179,41 @@ int test_main(int, char*[])
         BOOST_CHECK(boost::get(index_map1, boost::target(*ei1, g1)) == boost::get(index_map2, boost::target(*ei2, g2)));
       }
    }
+
+   typename boost::graph_traits<Graph1>::in_edge_iterator iei1, ieend1;
+   typename boost::graph_traits<Graph2>::in_edge_iterator iei2, ieend2;
+
+   for (boost::tie(vi1, vend1) = boost::vertices(g1),
+          boost::tie(vi2, vend2) = boost::vertices(g2); vi1 != vend1; ++vi1, ++vi2)
+   {
+      BOOST_CHECK(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
+
+      for (boost::tie(iei1, ieend1) = boost::in_edges(*vi1, g1), 
+             boost::tie(iei2, ieend2) = boost::in_edges(*vi2, g2);
+           iei1 != ieend1;
+           ++iei1, ++iei2)
+      {
+        BOOST_CHECK(boost::get(index_map1, boost::target(*iei1, g1)) == boost::get(index_map2, boost::target(*iei2, g2)));
+      }
+   }
+}
+
+int test_main(int, char*[])
+{
+    // Use setS to keep out edges in order, so they match the adjacency_matrix. 
+   typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>
+           UGraph1;
+   typedef boost::adjacency_matrix<boost::undirectedS>
+           UGraph2;
+   run_test<UGraph1, UGraph2>();
+
+    // Use setS to keep out edges in order, so they match the adjacency_matrix. 
+   typedef boost::adjacency_list<boost::setS, boost::vecS, 
+                                 boost::bidirectionalS>
+           BGraph1;
+   typedef boost::adjacency_matrix<boost::directedS>
+           BGraph2;
+   run_test<BGraph1, BGraph2>();
 
    return 0;
 }

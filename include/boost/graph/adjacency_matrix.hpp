@@ -1,6 +1,7 @@
 //=======================================================================
 // Copyright 2001 University of Notre Dame.
-// Author: Jeremy G. Siek
+// Copyright 2006 Trustees of Indiana University
+// Authors: Jeremy G. Siek and Doug Gregor <dgregor@cs.indiana.edu>
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -157,6 +158,63 @@ namespace boost {
     };
 
     //=======================================================================
+    // Directed In Edge Iterator
+
+    template <
+        typename VertexDescriptor, typename MatrixIter
+      , typename VerticesSizeType, typename EdgeDescriptor
+    >
+    struct dir_adj_matrix_in_edge_iter
+      : iterator_adaptor<
+            dir_adj_matrix_in_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
+          , MatrixIter
+          , EdgeDescriptor
+          , use_default
+          , EdgeDescriptor
+          , std::ptrdiff_t
+        >
+    {
+        typedef iterator_adaptor<
+            dir_adj_matrix_in_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
+          , MatrixIter
+          , EdgeDescriptor
+          , use_default
+          , EdgeDescriptor
+          , std::ptrdiff_t
+        > super_t;
+        
+        dir_adj_matrix_in_edge_iter() { }
+        
+        dir_adj_matrix_in_edge_iter(
+            const MatrixIter& i
+          , const MatrixIter& last
+          , const VertexDescriptor& tgt
+          , const VerticesSizeType& n
+           )
+          : super_t(i), m_last(last), m_src(0), m_targ(tgt), m_n(n)
+        { }
+
+        void increment() {
+          if (VerticesSizeType(m_last - this->base_reference()) >= m_n) {
+            this->base_reference() += m_n;
+            ++m_src;
+          } else {
+            this->base_reference() = m_last;
+          }
+        }
+        
+        inline EdgeDescriptor
+        dereference() const 
+        {
+            return EdgeDescriptor(get_edge_exists(*this->base(), 0), m_src, m_targ, 
+                                  &get_property(*this->base()));
+        }
+        MatrixIter m_last;
+        VertexDescriptor m_src, m_targ;
+        VerticesSizeType m_n;
+    };
+
+    //=======================================================================
     // Undirected Out Edge Iterator
 
     template <
@@ -215,6 +273,73 @@ namespace boost {
         {
             return EdgeDescriptor(
                 get_edge_exists(*this->base(), 0), m_src, m_targ
+              , &get_property(*this->base())
+            );
+        }
+        
+        VertexDescriptor m_src, m_inc, m_targ;
+        VerticesSizeType m_n;
+    };
+
+    //=======================================================================
+    // Undirected In Edge Iterator
+
+    template <
+        typename VertexDescriptor, typename MatrixIter
+      , typename VerticesSizeType, typename EdgeDescriptor
+    >
+    struct undir_adj_matrix_in_edge_iter 
+      : iterator_adaptor<
+            undir_adj_matrix_in_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
+          , MatrixIter
+          , EdgeDescriptor
+          , use_default
+          , EdgeDescriptor
+          , std::ptrdiff_t
+        >
+    {
+        typedef iterator_adaptor<
+            undir_adj_matrix_in_edge_iter<VertexDescriptor, MatrixIter,  VerticesSizeType, EdgeDescriptor>
+          , MatrixIter
+          , EdgeDescriptor
+          , use_default
+          , EdgeDescriptor
+          , std::ptrdiff_t
+        > super_t;
+        
+        undir_adj_matrix_in_edge_iter() { }
+        
+        undir_adj_matrix_in_edge_iter(
+            const MatrixIter& i
+          , const VertexDescriptor& src
+          , const VerticesSizeType& n
+        )
+          : super_t(i), m_src(src), m_inc(src), m_targ(0), m_n(n)
+        {}
+
+        void increment()
+        {
+            if (m_targ < m_src)     // first half
+            {
+                ++this->base_reference();
+            }
+            else if (m_targ < m_n - 1)
+            {                  // second half
+                ++m_inc;
+                this->base_reference() += m_inc;
+            }
+            else
+            {                  // past-the-end
+                this->base_reference() += m_n - m_src;
+            }
+            ++m_targ;
+        }
+        
+        inline EdgeDescriptor
+        dereference() const 
+        {
+            return EdgeDescriptor(
+                     get_edge_exists(*this->base(), 0), m_targ, m_src
               , &get_property(*this->base())
             );
         }
@@ -310,7 +435,7 @@ namespace boost {
     typedef typename boost::ct_if_t<is_bidir,
       bidirectional_tag,
       typename boost::ct_if_t<is_directed,
-        directed_tag, undirected_tag
+        bidirectional_tag, undirected_tag
       >::type
     >::type directed_category;
     
@@ -409,6 +534,18 @@ namespace boost {
     typedef typename ct_if_t<
         typename Directed::is_directed_t, DirOutEdgeIter, UnDirOutEdgeIter
     >::type unfiltered_out_edge_iter;
+
+    typedef detail::dir_adj_matrix_in_edge_iter<
+        vertex_descriptor, MatrixIter, size_type, edge_descriptor
+    > DirInEdgeIter;
+
+    typedef detail::undir_adj_matrix_in_edge_iter<
+        vertex_descriptor, MatrixIter, size_type, edge_descriptor
+    > UnDirInEdgeIter;
+
+    typedef typename ct_if_t<
+        typename Directed::is_directed_t, DirInEdgeIter, UnDirInEdgeIter
+    >::type unfiltered_in_edge_iter;
     
     typedef detail::adj_matrix_edge_iter<
         Directed, MatrixIter, size_type, edge_descriptor
@@ -423,7 +560,8 @@ namespace boost {
     typedef size_type degree_size_type;
 
     // BidirectionalGraph required types
-    typedef void in_edge_iterator;
+    typedef filter_iterator<detail::does_edge_exist, unfiltered_in_edge_iter>
+      in_edge_iterator;
 
     // AdjacencyGraph required types
      typedef typename adjacency_iterator_generator<self,
@@ -434,7 +572,7 @@ namespace boost {
     typedef integer_range<vertex_descriptor> VertexList;
     typedef typename VertexList::iterator vertex_iterator;
 
-    // EdgeListGrpah required types
+    // EdgeListGraph required types
     typedef size_type edges_size_type;
     typedef filter_iterator<
         detail::does_edge_exist, unfiltered_edge_iter
@@ -593,6 +731,68 @@ namespace boost {
          const adjacency_matrix<D,VP,EP,GP,A>&)
   {
     return e.m_target;
+  }
+
+  //=========================================================================
+  // Functions required by the BidirectionalGraph concept 
+
+  // O(1)
+  template <typename VP, typename EP, typename GP, typename A>
+  std::pair<typename adjacency_matrix<directedS,VP,EP,GP,A>::in_edge_iterator,
+            typename adjacency_matrix<directedS,VP,EP,GP,A>::in_edge_iterator>
+  in_edges
+    (typename adjacency_matrix<directedS,VP,EP,GP,A>::vertex_descriptor u,
+     const adjacency_matrix<directedS,VP,EP,GP,A>& g_)
+  {
+    typedef adjacency_matrix<directedS,VP,EP,GP,A> Graph;
+    Graph& g = const_cast<Graph&>(g_);
+    typename Graph::MatrixIter f = g.m_matrix.begin() + u;
+    typename Graph::MatrixIter l = g.m_matrix.end();
+    typename Graph::unfiltered_in_edge_iter
+        first(f, l, u, g.m_vertex_set.size())
+      , last(l, l, u, g.m_vertex_set.size());
+    detail::does_edge_exist pred;
+    typedef typename Graph::in_edge_iterator in_edge_iterator;
+    return std::make_pair(in_edge_iterator(pred, first, last), 
+                          in_edge_iterator(pred, last, last));
+  }
+
+  // O(1)
+  template <typename VP, typename EP, typename GP, typename A>
+  std::pair<
+    typename adjacency_matrix<undirectedS,VP,EP,GP,A>::in_edge_iterator,
+    typename adjacency_matrix<undirectedS,VP,EP,GP,A>::in_edge_iterator>
+  in_edges
+    (typename adjacency_matrix<undirectedS,VP,EP,GP,A>::vertex_descriptor u,
+     const adjacency_matrix<undirectedS,VP,EP,GP,A>& g_)
+  {
+    typedef adjacency_matrix<undirectedS,VP,EP,GP,A> Graph;
+    Graph& g = const_cast<Graph&>(g_);
+    typename Graph::vertices_size_type offset = u * (u + 1) / 2;
+    typename Graph::MatrixIter f = g.m_matrix.begin() + offset;
+    typename Graph::MatrixIter l = g.m_matrix.end();
+
+    typename Graph::unfiltered_in_edge_iter
+        first(f, u, g.m_vertex_set.size())
+      , last(l, u, g.m_vertex_set.size());
+    
+    detail::does_edge_exist pred;
+    typedef typename Graph::in_edge_iterator in_edge_iterator;
+    return std::make_pair(in_edge_iterator(pred, first, last), 
+                          in_edge_iterator(pred, last, last));
+  }
+  
+  // O(N)
+  template <typename D, typename VP, typename EP, typename GP, typename A>  
+  typename adjacency_matrix<D,VP,EP,GP,A>::degree_size_type
+  in_degree(typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor u,
+             const adjacency_matrix<D,VP,EP,GP,A>& g)
+  {
+    typename adjacency_matrix<D,VP,EP,GP,A>::degree_size_type n = 0;
+    typename adjacency_matrix<D,VP,EP,GP,A>::in_edge_iterator f, l;
+    for (tie(f, l) = in_edges(u, g); f != l; ++f)
+      ++n;
+    return n;
   }
 
   //=========================================================================
