@@ -15,6 +15,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <vector>
+#include <map>
 #include <cmath>
 
 namespace boost {
@@ -37,18 +38,19 @@ namespace boost {
 
     plod_iterator(RandomGenerator& gen, std::size_t n,  
                   double alpha, double beta, bool allow_self_loops = false)
-      : gen(&gen), n(n), out_degrees(new out_degrees_t(n)),
+      : gen(&gen), n(n), out_degrees(new out_degrees_t),
         degrees_left(0), allow_self_loops(allow_self_loops)
     {
       using std::pow;
 
       uniform_int<std::size_t> x(0, n-1);
-      for (out_degrees_t::iterator i = out_degrees->begin();
-           i != out_degrees->end(); ++i) {
+      for (std::size_t i = 0; i != n; ++i) {
         std::size_t xv = x(gen);
-        i->first = i - out_degrees->begin();
-        i->second = (xv == 0? 0 : std::size_t(beta * pow(xv, -alpha)));
-        degrees_left += i->second;
+	std::size_t degree = (xv == 0? 0 : std::size_t(beta * pow(xv, -alpha)));
+	if (degree != 0) {
+	  out_degrees->push_back(std::make_pair(i, degree));
+	}
+        degrees_left += degree;
       }
 
       next(directed_category());
