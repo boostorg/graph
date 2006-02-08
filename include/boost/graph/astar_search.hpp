@@ -114,7 +114,7 @@ namespace boost {
       typedef typename property_traits<CostMap>::value_type C;
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
-      
+      typedef typename property_traits<DistanceMap>::value_type distance_type;
       
       astar_bfs_visitor(AStarHeuristic h, UniformCostVisitor vis,
                         UpdatableQueue& Q, PredecessorMap p,
@@ -157,6 +157,7 @@ namespace boost {
       void tree_edge(Edge e, Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
+
         if(m_decreased) {
           m_vis.edge_relaxed(e, g);
           put(m_cost, target(e, g),
@@ -169,9 +170,20 @@ namespace boost {
       
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
+        distance_type old_distance = get(m_distance, target(e, g));
+
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
-        if(m_decreased) {
+
+        /* On x86 Linux with optimization, we sometimes get into a
+           horrible case where m_decreased is true but the distance hasn't
+           actually changed. This occurs when the comparison inside
+           relax() occurs with the 80-bit precision of the x87 floating
+           point unit, but the difference is lost when the resulting
+           values are written back to lower-precision memory (e.g., a
+           double). With the eager Dijkstra's implementation, this results
+           in looping. */
+        if(m_decreased && old_distance != get(m_distance, target(e, g))) {
           put(m_cost, target(e, g),
               m_combine(get(m_distance, target(e, g)),
                         m_h(target(e, g))));
@@ -184,9 +196,13 @@ namespace boost {
       
       template <class Edge, class Graph>
       void black_target(Edge e, Graph& g) {
+        distance_type old_distance = get(m_distance, target(e, g));
+
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
-        if(m_decreased) {
+
+        /* See comment in gray_target */
+        if(m_decreased && old_distance != get(m_distance, target(e, g))) {
           m_vis.edge_relaxed(e, g);
           put(m_cost, target(e, g),
               m_combine(get(m_distance, target(e, g)),
