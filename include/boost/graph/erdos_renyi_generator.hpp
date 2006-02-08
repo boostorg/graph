@@ -123,7 +123,7 @@ namespace boost {
 
     sorted_erdos_renyi_iterator()
       : gen(), rand_vertex(0.5), n(0), allow_self_loops(false),
-	src(graph_traits<Graph>::null_vertex()), tgt(0), prob(0) {}
+	src((std::numeric_limits<vertices_size_type>::max)()), tgt(0), prob(0) {}
     sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
 			        double prob = 0.0, 
                                 bool allow_self_loops = false)
@@ -136,7 +136,7 @@ namespace boost {
     { 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
-      if (prob == 0.0) {src = graph_traits<Graph>::null_vertex(); return;}
+      if (prob == 0.0) {src = (std::numeric_limits<vertices_size_type>::max)(); return;}
       next(); 
     }
 
@@ -178,7 +178,7 @@ namespace boost {
       // beyond "tgt += increment" is done to effectively convert linear
       // indexing (the partial sums of the geometric distribution output) into
       // graph edges.
-      assert (src != graph_traits<Graph>::null_vertex());
+      assert (src != (std::numeric_limits<vertices_size_type>::max)());
       vertices_size_type increment = rand_vertex(*gen);
       tgt += increment;
       if (is_undirected) {
@@ -206,7 +206,7 @@ namespace boost {
       }
       // Set end of graph code so (src, tgt) will be the same as for the end
       // sorted_erdos_renyi_iterator
-      if (src >= n) {src = graph_traits<Graph>::null_vertex(); tgt = 0;}
+      if (src >= n) {src = (std::numeric_limits<vertices_size_type>::max)(); tgt = 0;}
       // Copy (src, tgt) into current
       current.first = src;
       current.second = tgt;
