@@ -153,15 +153,18 @@ shows how to represent a family tree with a graph.
 <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, 
 <a href="./MutablePropertyGraph.html">MutablePropertyGraph</a>,
 <a href="../../utility/CopyConstructible.html">CopyConstructible</a>,
-and <a href="../../utility/Assignable.html">Assignable</a>.
+<a href="../../utility/Assignable.html">Assignable</a>,
+and <a href="../../serialization/doc/index.html">Serializable</a>.
+
 
 <P>
 
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/adjacency_list.hpp"><TT>boost/graph/adjacency_list.hpp</TT></a>
-
+<a href="../../../boost/graph/adjacency_list.hpp"><TT>boost/graph/adjacency_list.hpp</TT></a><br><br>
+Also, the serialization functionality is in
+<a href="../../../boost/graph/adj_list_serialize.hpp"><tt>boost/graph/adj_list_serialize.hpp</tt></a>.
 <P>
 
 <H2>Vertex and Edge Properties</H2>
@@ -1053,9 +1056,35 @@ attached to the graph object <tt>g</tt>.  The <tt>graph_property</tt>
 traits class is defined in <a
 href="../../../boost/graph/adjacency_list.hpp"><tt>boost/graph/adjacency_list.hpp</tt></a>.
 
+<!-- add the shortcut property functions -->
+
 <hr>
 
-<!-- add the shortcut property functions -->
+
+
+<h4><a name="property-map-accessors">Serialization</a></h4>
+
+<hr>
+
+<pre>
+template&lt;class <a href="../../serialization/doc/archives.html#saving_interface">SavingArchive</a>&gt;
+SavingArchive&amp; operator<<(SavingArchive&amp; ar, const adjacency_list&amp graph);
+</pre>
+Serializes the graph into the archive. Requires the vertex and edge properties of the
+graph to be <a href="../../serialization/doc/index.html">Serializable</a>.
+<br>
+Include <a href="../../../boost/graph/adj_list_serialize.hpp"><tt>boost/graph/adj_list_serialize.hpp</tt></a>.
+<hr>
+
+<pre>
+template&lt;class <a href="../../serialization/doc/archives.html#loading_interface">LoadingArchive</a>&gt;
+LoadingArchive&amp; operator>>(LoadingArchive&amp; ar, const adjacency_list&amp graph);
+</pre>
+Reads the graph from the archive. Requires the vertex and edge properties of the
+graph to be <a href="../../serialization/doc/index.html">Serializable</a>.
+<br>
+Include <a href="../../../boost/graph/adj_list_serialize.hpp"><tt>boost/graph/adj_list_serialize.hpp</tt></a>.
+<hr>
 
 
 <h3>See Also</h3>
