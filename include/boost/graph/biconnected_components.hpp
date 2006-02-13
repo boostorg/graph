@@ -83,8 +83,8 @@ namespace boost
           put(lowpt, source(e, g),
               min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, source(e, g)),
                                                    get(dtm, target(e, g))));
-        }
         vis.back_edge(e, g);
+      }
       }
 
       template <typename Edge, typename Graph>
@@ -98,14 +98,17 @@ namespace boost
       {
         BOOST_USING_STD_MIN();
         Vertex parent = get(pred, u);
+        const std::size_t dtm_of_dubious_parent = get(dtm, parent);
         bool is_art_point = false;
-        if ( get(dtm, parent) > get(dtm, u) ) {
+        if ( dtm_of_dubious_parent > get(dtm, u) ) {
           parent = get(pred, parent);
           is_art_point = true;
+          put(pred, get(pred, u), u);
+          put(pred, u, parent);
         }
 
         if ( parent == u ) { // at top
-          if ( get(dtm, u) + 1 == get(dtm, get(pred, u)) )
+          if ( get(dtm, u) + 1 == dtm_of_dubious_parent )
             is_art_point = false;
         } else {
           put(lowpt, parent,
