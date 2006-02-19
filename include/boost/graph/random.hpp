@@ -32,9 +32,13 @@ namespace boost {
   random_vertex(Graph& g, RandomNumGen& gen)
   {
     if (num_vertices(g) > 1) {
+    #if BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x581))
+      std::size_t n = std::random( num_vertices(g) );
+    #else
       uniform_int<> distrib(0, num_vertices(g)-1);
       variate_generator<RandomNumGen&, uniform_int<> > rand_gen(gen, distrib);
       std::size_t n = rand_gen();
+    #endif
       typename graph_traits<Graph>::vertex_iterator
         i = vertices(g).first;
       while (n-- > 0) ++i; // std::advance not VC++ portable
@@ -47,10 +51,15 @@ namespace boost {
   typename graph_traits<Graph>::edge_descriptor
   random_edge(Graph& g, RandomNumGen& gen) {
     if (num_edges(g) > 1) {
+    #if BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x581))
+      typename graph_traits<Graph>::edges_size_type
+        n = std::random( num_edges(g) );
+    #else
       uniform_int<> distrib(0, num_edges(g)-1);
       variate_generator<RandomNumGen&, uniform_int<> > rand_gen(gen, distrib);
-      typename graph_traits<Graph>::edges_size_type 
+      typename graph_traits<Graph>::edges_size_type
         n = rand_gen();
+    #endif
       typename graph_traits<Graph>::edge_iterator
         i = edges(g).first;
       while (n-- > 0) ++i; // std::advance not VC++ portable
@@ -69,7 +78,7 @@ namespace boost {
 
   template <typename MutableGraph, class RandNumGen>
   void generate_random_graph1
-    (MutableGraph& g, 
+    (MutableGraph& g,
      typename graph_traits<MutableGraph>::vertices_size_type V,
      typename graph_traits<MutableGraph>::vertices_size_type E,
      RandNumGen& gen,
@@ -87,7 +96,7 @@ namespace boost {
     // but that's task for later.
     if (!allow_parallel) {
 
-      typedef typename boost::graph_traits<MutableGraph>::directed_category dir;      
+      typedef typename boost::graph_traits<MutableGraph>::directed_category dir;
       typedef typename mpl::if_<is_convertible<dir, directed_tag>,
           directedS, undirectedS>::type select;
       adjacency_list<setS, vecS, select> g2;
@@ -100,7 +109,7 @@ namespace boost {
 
       for (v_size_t i = 0; i < V; ++i)
         add_vertex(g);
-      
+
       for (e_size_t j = 0; j < E; ++j) {
         vertex_descriptor a = random_vertex(g, gen), b;
         do {
@@ -113,7 +122,7 @@ namespace boost {
 
   template <typename MutableGraph, class RandNumGen>
   void generate_random_graph
-    (MutableGraph& g, 
+    (MutableGraph& g,
      typename graph_traits<MutableGraph>::vertices_size_type V,
      typename graph_traits<MutableGraph>::vertices_size_type E,
      RandNumGen& gen,
@@ -126,7 +135,7 @@ namespace boost {
   template <typename MutableGraph, typename RandNumGen,
             typename VertexOutputIterator, typename EdgeOutputIterator>
   void generate_random_graph
-    (MutableGraph& g, 
+    (MutableGraph& g,
      typename graph_traits<MutableGraph>::vertices_size_type V,
      typename graph_traits<MutableGraph>::vertices_size_type E,
      RandNumGen& gen,
@@ -158,7 +167,7 @@ namespace boost {
   namespace detail {
 
     template<class Property, class G, class RandomGenerator>
-    void randomize_property(G& g, RandomGenerator& rg, 
+    void randomize_property(G& g, RandomGenerator& rg,
                             Property, vertex_property_tag)
     {
       typename property_map<G, Property>::type pm = get(Property(), g);
@@ -169,7 +178,7 @@ namespace boost {
     }
 
     template<class Property, class G, class RandomGenerator>
-    void randomize_property(G& g, RandomGenerator& rg, 
+    void randomize_property(G& g, RandomGenerator& rg,
                             Property, edge_property_tag)
     {
       typename property_map<G, Property>::type pm = get(Property(), g);
