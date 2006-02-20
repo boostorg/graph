@@ -21,8 +21,6 @@ local rule turn-off-intel-debug-symbols ( toolset variant : properties * )
 
 test-suite graph : 
 
-    [ run transitive_closure_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]
-             
     [ compile adj_list_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
     # adj_list_test needs some work -JGS
@@ -36,6 +34,10 @@ test-suite graph :
     [ run bellman-test.cpp : <sysinclude>$(BOOST_ROOT ]
 
     [ run betweenness_centrality_test.cpp ] 
+
+    [ run bidir_remove_edge.cpp ]
+
+    [ run bidir_vec_remove_edge.cpp ]
 
     [ run csr_graph_test.cpp : : : : : release ]
 
@@ -73,6 +75,8 @@ test-suite graph :
 
     [ run subgraph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
+    [ run transitive_closure_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+             
     [ run isomorphism.cpp  : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run adjacency_matrix_test.cpp : : : <sysinclude>$(BOOST_ROOT) ]    
