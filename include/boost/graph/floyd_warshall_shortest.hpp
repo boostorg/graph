@@ -34,11 +34,17 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/relax.hpp>
-#include <algorithm> // for std::min and std::max
 
 namespace boost
 {
   namespace detail {
+    template<typename T, typename BinaryPredicate>
+    T min_with_compare(const T& x, const T& y, const BinaryPredicate& compare)
+    {
+      if (compare(x, y)) return x; 
+      else return y;
+    }
+
     template<typename VertexListGraph, typename DistanceMatrix, 
       typename BinaryPredicate, typename BinaryFunction,
       typename Infinity, typename Zero>
@@ -47,8 +53,6 @@ namespace boost
       const BinaryFunction &combine, const Infinity& inf, 
       const Zero& zero)
     {
-      BOOST_USING_STD_MIN();
-
       typename graph_traits<VertexListGraph>::vertex_iterator 
         i, lasti, j, lastj, k, lastk;
     
@@ -57,8 +61,10 @@ namespace boost
         for (tie(i, lasti) = vertices(g); i != lasti; i++)
           for (tie(j, lastj) = vertices(g); j != lastj; j++)
           {
-            d[*i][*j] = min BOOST_PREVENT_MACRO_SUBSTITUTION
-                         (d[*i][*j], combine(d[*i][*k], d[*k][*j]));
+            d[*i][*j] = 
+              detail::min_with_compare(d[*i][*j], 
+                                       combine(d[*i][*k], d[*k][*j]),
+                                       compare);
           }
       
     
@@ -95,8 +101,6 @@ namespace boost
     const BinaryPredicate& compare, const BinaryFunction& combine, 
     const Infinity& inf, const Zero& zero)
   {
-    BOOST_USING_STD_MIN();
-
     function_requires<VertexListGraphConcept<VertexAndEdgeListGraph> >();
     function_requires<EdgeListGraphConcept<VertexAndEdgeListGraph> >();
     function_requires<IncidenceGraphConcept<VertexAndEdgeListGraph> >();
@@ -112,16 +116,18 @@ namespace boost
     
     
     for(tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++)
-      d[*firstv][*firstv] = 0;
+      d[*firstv][*firstv] = zero;
     
     
     for(tie(first, last) = edges(g); first != last; first++)
     {
-      if (d[source(*first, g)][target(*first, g)] != inf)
+      if (d[source(*first, g)][target(*first, g)] != inf) {
         d[source(*first, g)][target(*first, g)] = 
-          min BOOST_PREVENT_MACRO_SUBSTITUTION(get(w, *first), 
-            d[source(*first, g)][target(*first, g)]);
-      else 
+          detail::min_with_compare(
+            get(w, *first), 
+            d[source(*first, g)][target(*first, g)],
+            compare);
+      } else 
         d[source(*first, g)][target(*first, g)] = get(w, *first);
     }
     
@@ -134,8 +140,10 @@ namespace boost
       {
         if (d[target(*first, g)][source(*first, g)] != inf)
           d[target(*first, g)][source(*first, g)] = 
-            min BOOST_PREVENT_MACRO_SUBSTITUTION(get(w, *first), 
-            d[target(*first, g)][source(*first, g)]);
+            detail::min_with_compare(
+              get(w, *first), 
+              d[target(*first, g)][source(*first, g)],
+              compare);
         else 
           d[target(*first, g)][source(*first, g)] = get(w, *first);
       }
