@@ -343,7 +343,7 @@ namespace boost {
 
   namespace detail {
     template<typename VertexBundle, typename EdgeBundle, typename Bundle>
-      struct is_vertex_bundle : is_convertible<Bundle*, VertexBundle*> {};
+      struct is_vertex_bundle : is_convertible<VertexBundle*, Bundle*> {};
   }
   
   template <typename Graph, typename T, typename Bundle>
@@ -357,10 +357,15 @@ namespace boost {
                        typename traits::vertex_descriptor,
                        typename traits::edge_descriptor>::type
       descriptor;
+    typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+                       vertex_bundled,
+                       edge_bundled>::type
+      actual_bundle;
     
   public:
-    typedef bundle_property_map<Graph, descriptor, Bundle, T> type;
-    typedef bundle_property_map<const Graph, descriptor, Bundle, const T> const_type;
+    typedef bundle_property_map<Graph, descriptor, actual_bundle, T> type;
+    typedef bundle_property_map<const Graph, descriptor, actual_bundle, const T>
+      const_type;
   };
 #endif
 
