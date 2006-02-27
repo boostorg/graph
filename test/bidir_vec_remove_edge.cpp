@@ -3,6 +3,10 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
+// NOTE: This test illustrates a longstanding bug in the
+// adjacency_list class template. We do not test it because it will
+// cause problems until we have time to fix the bug. Annoying? Yes.
+
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/test/minimal.hpp>

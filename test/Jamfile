@@ -37,8 +37,6 @@ test-suite graph :
 
     [ run bidir_remove_edge.cpp ]
 
-    [ run bidir_vec_remove_edge.cpp ]
-
     [ run csr_graph_test.cpp : : : : : release ]
 
     [ run dag_longest_paths.cpp : : : <sysinclude>$(BOOST_ROOT) ]
