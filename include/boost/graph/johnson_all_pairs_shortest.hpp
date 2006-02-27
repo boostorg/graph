@@ -33,11 +33,14 @@
 namespace boost {
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
-            class VertexID, class Weight, class DistanceZero>
+            class VertexID, class Weight, typename BinaryPredicate, 
+            typename BinaryFunction, typename Infinity, class DistanceZero>
   bool
   johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
                DistanceMatrix& D,
-               VertexID id1, Weight w1, DistanceZero zero)
+               VertexID id1, Weight w1, const BinaryPredicate& compare, 
+               const BinaryFunction& combine, const Infinity& inf,
+               DistanceZero zero)
   {
     typedef graph_traits<VertexAndEdgeListGraph> Traits1;
     typedef typename property_traits<Weight>::value_type DT;
@@ -96,15 +99,13 @@ namespace boost {
     typedef typename std::vector<DT>::iterator iter_t;
     iterator_property_map<iter_t,VertexID2,DT,DT&> h(h_vec.begin(), id2);
 
-    DT inf = (std::numeric_limits<DT>::max)();
     for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
       d[*v] = inf;
 
     put(d, s, zero);
     // Using the non-named parameter versions of bellman_ford and
     // dijkstra for portability reasons.
-    dummy_property_map pred; closed_plus<DT> combine;
-    std::less<DT> compare; bellman_visitor<> bvis;
+    dummy_property_map pred; bellman_visitor<> bvis;
     if (bellman_ford_shortest_paths
         (g2, num_vertices(g2), w, pred, d, combine, compare, bvis)) {
       for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
@@ -132,6 +133,21 @@ namespace boost {
       return false;
   }
 
+  template <class VertexAndEdgeListGraph, class DistanceMatrix,
+            class VertexID, class Weight, class DistanceZero>
+  bool
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+               DistanceMatrix& D,
+               VertexID id1, Weight w1, DistanceZero zero)
+  {
+    typedef typename property_traits<Weight>::value_type WT;
+    return johnson_all_pairs_shortest_paths(g1, D, id1, w1, 
+                                            std::less<WT>(),
+                                            closed_plus<WT>(),
+                                            (std::numeric_limits<WT>::max)(),
+                                            zero);
+  }
+
   namespace detail {
 
     template <class VertexAndEdgeListGraph, class DistanceMatrix,
@@ -147,6 +163,12 @@ namespace boost {
       
       return johnson_all_pairs_shortest_paths
         (g, D, id, w,
+        choose_param(get_param(params, distance_compare_t()), 
+          std::less<WT>()),
+        choose_param(get_param(params, distance_combine_t()), 
+          closed_plus<WT>()),
+        choose_param(get_param(params, distance_inf_t()), 
+          std::numeric_limits<WT>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
          choose_param(get_param(params, distance_zero_t()), WT()) );
     }
 

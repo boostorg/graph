@@ -25,6 +25,16 @@
 
 <PRE>
 <i>// named parameter version</i>
+  template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
+            class VertexID, class Weight, class BinaryPredicate, 
+            class BinaryFunction, class Infinity, class DistanceZero&gt;
+  bool
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+               DistanceMatrix&amp; D,
+               VertexID id1, Weight w1, const BinaryPredicate&amp; compare, 
+               const BinaryFunction&amp; combine, const Infinity&amp; inf,
+               DistanceZero zero);
+
 template &lt;typename Graph, typename DistanceMatrix, typename P, typename T, typename R&gt;
 bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
   const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
