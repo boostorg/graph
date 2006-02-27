@@ -11,6 +11,9 @@ test-suite graph_test :
 
     # adj_list_test needs some work -JGS
     # unit-test adj_list_test : adj_list_test.cpp  ;
+
+    [ run adj_list_edge_list_set.cpp ]
+
     [ compile adj_matrix_cc.cpp ]
 
     [ run bfs.cpp ../../test/build//boost_test_exec_monitor ]

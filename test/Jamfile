@@ -25,6 +25,8 @@ test-suite graph :
 
     # adj_list_test needs some work -JGS
     # unit-test adj_list_test : adj_list_test.cpp : <sysinclude>$(BOOST_ROOT)  ;
+    [ run adj_list_edge_list_set.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+
     [ compile adj_matrix_cc.cpp : <sysinclude>$(BOOST_ROOT)  ]
 
     [ run bfs.cpp : : : <sysinclude>$(BOOST_ROOT) ]
