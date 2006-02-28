@@ -49,8 +49,8 @@ template<typename Graph1, typename Graph2>
 void randomly_permute_graph(const Graph1& g1, Graph2& g2)
 {
   // Need a clean graph to start with
-  assert(num_vertices(g2) == 0);
-  assert(num_edges(g2) == 0);
+  BOOST_REQUIRE(num_vertices(g2) == 0);
+  BOOST_REQUIRE(num_edges(g2) == 0);
 
   typedef typename graph_traits<Graph1>::vertex_descriptor vertex1;
   typedef typename graph_traits<Graph2>::vertex_descriptor vertex2;
