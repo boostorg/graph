@@ -1412,12 +1412,10 @@ namespace boost {
   void read_graphviz(const std::string& filename, GRAPHVIZ_GRAPH& g) {
     FILE* file = fopen(filename.c_str(), "r");
     yyrestart(file);
-    void* in = static_cast<void*>(file);
     yyparse(static_cast<void*>(&g));
   }
 
   void read_graphviz(FILE* file, GRAPHVIZ_GRAPH& g) {
-    void* in = static_cast<void*>(file);
     yyrestart(file);
     yyparse(static_cast<void*>(&g));
   }
