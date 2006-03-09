@@ -95,12 +95,13 @@ using std::malloc;
     typedef std::map<std::string, Subgraph*>::iterator It; 
     typedef std::map<std::string, Vertex>::iterator Iter; 
 
+#if 0 // RG - defined but unused warning
     static const std::string& get_graph_name(const Subgraph& g) {
       const boost::graph_property<Subgraph, boost::graph_name_t>::type&
         name = boost::get_property(g, boost::graph_name);
       return name; 
     }
-
+#endif
     static std::pair<Iter, bool> lookup(const std::string& name) {
       //lookup in the top level
       Iter it = nodes.find(name);
