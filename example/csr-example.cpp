@@ -37,7 +37,7 @@ int main()
                     E(2, 0), E(2, 5), E(3, 1), E(3, 4), E(4, 1), E(5, 0), 
                     E(5, 2) };
 
-  typedef compressed_sparse_row_graph<WebPage> WebGraph;
+  typedef compressed_sparse_row_graph<directedS, WebPage> WebGraph;
   WebGraph g(&the_edges[0], &the_edges[0] + sizeof(the_edges)/sizeof(E), 6);
   
   // Set the URLs of each vertex

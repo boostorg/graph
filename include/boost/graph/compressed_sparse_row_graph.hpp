@@ -1,4 +1,4 @@
-// Copyright 2005 The Trustees of Indiana University.
+// Copyright 2005-2006 The Trustees of Indiana University.
 
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -25,6 +25,8 @@
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/graph/graph_selectors.hpp>
+#include <boost/static_assert.hpp>
 
 #ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #  error The Compressed Sparse Row graph only supports bundled properties.
@@ -41,11 +43,11 @@ struct csr_graph_tag;
  * Local helper macros to reduce typing and clutter later on.               *
  ****************************************************************************/
 #define BOOST_CSR_GRAPH_TEMPLATE_PARMS                                  \
-  typename VertexProperty, typename EdgeProperty, typename GraphProperty, \
-  typename Vertex, typename EdgeIndex
+  typename Directed, typename VertexProperty, typename EdgeProperty,    \
+  typename GraphProperty, typename Vertex, typename EdgeIndex
 #define BOOST_CSR_GRAPH_TYPE                                            \
-   compressed_sparse_row_graph<VertexProperty, EdgeProperty, GraphProperty, \
-                               Vertex, EdgeIndex>
+   compressed_sparse_row_graph<Directed, VertexProperty, EdgeProperty,  \
+                               GraphProperty, Vertex, EdgeIndex>
 
 // Forward declaration of CSR edge descriptor type, needed to pass to
 // indexed_edge_properties.
@@ -57,7 +59,8 @@ class csr_edge_descriptor;
  * Vertex and EdgeIndex should be unsigned integral types and should
  * specialize numeric_limits.
  */
-template<typename VertexProperty = void,
+template<typename Directed = directedS, 
+         typename VertexProperty = void,
          typename EdgeProperty = void,
          typename GraphProperty = no_property,
          typename Vertex = std::size_t,
@@ -104,6 +107,12 @@ class compressed_sparse_row_graph
   }
 
  public:
+  /* At this time, the compressed sparse row graph can only be used to
+   * create a directed graph. In the future, bidirectional and
+   * undirected CSR graphs will also be supported.
+   */
+  BOOST_STATIC_ASSERT((is_same<Directed, directedS>::value));
+
   // Concept requirements:
   // For Graph
   typedef Vertex vertex_descriptor;

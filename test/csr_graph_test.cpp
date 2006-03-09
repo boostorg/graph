@@ -309,7 +309,8 @@ void test_graph_properties()
 {
   using namespace boost;
 
-  typedef compressed_sparse_row_graph<no_property,
+  typedef compressed_sparse_row_graph<directedS,
+                                      no_property,
                                       no_property,
                                       property<graph_name_t, std::string> >
     CSRGraphT;
@@ -336,7 +337,8 @@ struct Edge
 void test_vertex_and_edge_properties()
 {
   using namespace boost;
-  typedef compressed_sparse_row_graph<Vertex, Edge> CSRGraphWithPropsT;
+  typedef compressed_sparse_row_graph<directedS, Vertex, Edge>
+    CSRGraphWithPropsT;
 
   typedef std::pair<int, int> E;
   E edges_init[6] = { E(0, 1), E(0, 3), E(1, 2), E(3, 1), E(3, 4), E(4, 2) };

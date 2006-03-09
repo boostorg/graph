@@ -87,9 +87,9 @@ function address(host, user) {
     <pre>
 namespace boost {
 
-template&lt;typename <a href="#VertexProperty">VertexProperty</a> = void, typename <a href="#EdgeProperty">EdgeProperty</a> = void,
-         typename <a href="#GraphProperty">GraphProperty</a> = no_property, typename <a href="#Vertex">Vertex</a> = std::size_t,
-         typename <a href="#EdgeIndex">EdgeIndex</a> = Vertex&gt;
+template&lt;typename <a href="#Directed">Directed</a> = directedS, typename <a href="#VertexProperty">VertexProperty</a> = void, 
+         typename <a href="#EdgeProperty">EdgeProperty</a> = void, typename <a href="#GraphProperty">GraphProperty</a> = no_property, 
+         typename <a href="#Vertex">Vertex</a> = std::size_t, typename <a href="#EdgeIndex">EdgeIndex</a> = Vertex&gt;
 class compressed_sparse_row_graph
 {
 public:
@@ -240,7 +240,18 @@ edge_descriptor <a href=#add_edge">add_vertices</a>(vertex_descriptor src, verte
 
     <b>Parameters</b>
     <br>
-    <br><a name="VertexProperty"></a><code>VertexProperty</code>
+    <br>
+
+    <a name="Directed"></a><code>Directed</code>
+      <blockquote>
+        A selector that determines whether the graph will be directed,
+        bidirectional or undirected. At this time, the CSR graph type
+        only supports directed graphs, so this value must
+        be <code>boost::directedS</code>.<br>
+        <b>Default</b>: <code>boost::directedS</code>
+      </blockquote>
+
+    <a name="VertexProperty"></a><code>VertexProperty</code>
       <blockquote>
         A class type that will be
         attached to each vertex in the graph. If this value
@@ -664,7 +675,7 @@ class WebPage
 
 // ...
 
-typedef compressed_sparse_row_graph&lt;WebPage&gt; WebGraph;
+typedef compressed_sparse_row_graph&lt;directedS, WebPage&gt; WebGraph;
 WebGraph g(&the_edges[0], &the_edges[0] + sizeof(the_edges)/sizeof(E), 6);
     </pre>
 
