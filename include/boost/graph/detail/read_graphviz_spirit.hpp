@@ -70,10 +70,6 @@ namespace boost {
 namespace detail {
 namespace graph {
 
-using namespace std;
-using namespace boost;
-using namespace boost::spirit;
-using namespace phoenix;
 
 /////////////////////////////////////////////////////////////////////////////
 // Application-specific type definitions
@@ -135,21 +131,21 @@ struct subgraph_closure : boost::spirit::closure<subgraph_closure,
 /////////////////////////////////////////////////////////////////////////////
 
 // Grammar for a dot file.
-struct dot_grammar : public grammar<dot_grammar> { 
+struct dot_grammar : public boost::spirit::grammar<dot_grammar> { 
   mutate_graph& graph_;
   explicit dot_grammar(mutate_graph& graph) : graph_(graph) { }
 
   template <class ScannerT>
   struct definition {
-    
+   
     definition(dot_grammar const& self) : self(self), subgraph_depth(0),
     keyword_p("0-9a-zA-Z_") {
-
+      using namespace boost::spirit;
+      using namespace phoenix;
       
       // RG - Future Work
       // - Handle multi-line strings using \ line continuation
       // - Make keywords case insensitive
-
       ID 
           = ( lexeme_d[((alpha_p | ch_p('_')) >> *(alnum_p | ch_p('_')))]
             | real_p
@@ -277,7 +273,7 @@ struct dot_grammar : public grammar<dot_grammar> {
 
     } // definition()
 
-    typedef rule<ScannerT> rule_t;
+    typedef boost::spirit::rule<ScannerT> rule_t;
 
     rule_t const& start() const { return the_grammar; }
 
@@ -469,20 +465,20 @@ struct dot_grammar : public grammar<dot_grammar> {
     int subgraph_depth; 
 
     // Keywords;
-    const distinct_parser<> keyword_p;
+    const boost::spirit::distinct_parser<> keyword_p;
     //
     // rules that make up the grammar
     //
-    rule<ScannerT,id_closure::context_t> ID;
-    rule<ScannerT,property_closure::context_t> a_list;
-    rule<ScannerT,attr_list_closure::context_t> attr_list;
+    boost::spirit::rule<ScannerT,id_closure::context_t> ID;
+    boost::spirit::rule<ScannerT,property_closure::context_t> a_list;
+    boost::spirit::rule<ScannerT,attr_list_closure::context_t> attr_list;
     rule_t port_location;
     rule_t port_angle;
     rule_t port;
-    rule<ScannerT,node_id_closure::context_t> node_id;
+    boost::spirit::rule<ScannerT,node_id_closure::context_t> node_id;
     rule_t attr_stmt;
-    rule<ScannerT,data_stmt_closure::context_t> data_stmt;
-    rule<ScannerT,subgraph_closure::context_t> subgraph;
+    boost::spirit::rule<ScannerT,data_stmt_closure::context_t> data_stmt;
+    boost::spirit::rule<ScannerT,subgraph_closure::context_t> subgraph;
     rule_t edgeop;
     rule_t edgeRHS;
     rule_t stmt;
@@ -520,7 +516,7 @@ struct dot_grammar : public grammar<dot_grammar> {
 //
 // dot_skipper - GraphViz whitespace and comment skipper
 //
-struct dot_skipper : public grammar<dot_skipper>
+struct dot_skipper : public boost::spirit::grammar<dot_skipper>
 {
     dot_skipper() {}
 
@@ -528,6 +524,8 @@ struct dot_skipper : public grammar<dot_skipper>
     struct definition
     {
         definition(dot_skipper const& /*self*/)  {
+          using namespace boost::spirit;
+          using namespace phoenix;
           // comment forms
           skip = space_p
                | comment_p("//")                 
@@ -544,8 +542,8 @@ struct dot_skipper : public grammar<dot_skipper>
 #endif
         }
 
-      rule<ScannerT>  skip;
-      rule<ScannerT> const&
+      boost::spirit::rule<ScannerT>  skip;
+      boost::spirit::rule<ScannerT> const&
       start() const { return skip; }
     }; // definition
 }; // dot_skipper
