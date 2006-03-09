@@ -102,6 +102,7 @@ class indexed_edge_properties
 public:
   typedef no_property edge_property_type;
   typedef Property edge_bundled;
+  typedef Property edge_push_back_type;
 
   // Directly access a edge or edge bundle
   Property& operator[](Descriptor v)
@@ -129,12 +130,14 @@ protected:
     m_edge_properties.reserve(n);
   }
 
+ public:
   // Add a new property value to the back
   void push_back(const Property& prop)
   {
     m_edge_properties.push_back(prop);
   }
 
+ private:
   // Access to the derived object
   Derived& derived() { return *static_cast<Derived*>(this); }
 
@@ -153,6 +156,7 @@ class indexed_edge_properties<Derived, void, Descriptor>
  public:
   typedef no_property edge_property_type;
   typedef void edge_bundled;
+  typedef void* edge_push_back_type;
 
   secret operator[](secret) { return secret(); }
 
@@ -162,6 +166,9 @@ class indexed_edge_properties<Derived, void, Descriptor>
   indexed_edge_properties(std::size_t) { }
   void resize(std::size_t) { }
   void reserve(std::size_t) { }
+
+ public:
+  void push_back(const edge_push_back_type&) { }
 };
 
 }

@@ -67,15 +67,15 @@ class compressed_sparse_row_graph
                                               Vertex>,
      public detail::indexed_edge_properties<BOOST_CSR_GRAPH_TYPE, EdgeProperty,
                                             csr_edge_descriptor<Vertex,
-								EdgeIndex> >
+                                                                EdgeIndex> >
 
 {
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
-					    VertexProperty, Vertex>
+                                            VertexProperty, Vertex>
     inherited_vertex_properties;
 
   typedef detail::indexed_edge_properties<BOOST_CSR_GRAPH_TYPE, EdgeProperty,
-					  csr_edge_descriptor<Vertex, EdgeIndex> >
+                                          csr_edge_descriptor<Vertex, EdgeIndex> >
     inherited_edge_properties;
 
  public:
@@ -279,7 +279,7 @@ class compressed_sparse_row_graph
         m_column[current_edge++] = get(vi, target(*ei, g));
       }
       std::sort(m_column.begin() + num_edges_before_this_vertex,
-		m_column.begin() + current_edge);
+                m_column.begin() + current_edge);
     }
     m_rowstart[numverts] = current_edge;
     m_last_source = numverts;
@@ -303,6 +303,11 @@ class compressed_sparse_row_graph
   using inherited_edge_properties::operator[];
 
   // private: non-portable, requires friend templates
+  inherited_vertex_properties&       vertex_properties()       {return *this;}
+  const inherited_vertex_properties& vertex_properties() const {return *this;}
+  inherited_edge_properties&       edge_properties()       { return *this; }
+  const inherited_edge_properties& edge_properties() const { return *this; }
+
   std::vector<EdgeIndex> m_rowstart;
   std::vector<Vertex> m_column;
   GraphProperty m_property;
@@ -349,15 +354,36 @@ add_vertices(Vertex count, BOOST_CSR_GRAPH_TYPE& g) {
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
-  assert ((g.m_last_source == 0 || src >= g.m_last_source - 1) && 
-	  src < num_vertices(g));
+  assert ((g.m_last_source == 0 || src >= g.m_last_source - 1) &&
+          src < num_vertices(g));
   EdgeIndex num_edges_orig = g.m_column.size();
   for (; g.m_last_source <= src; ++g.m_last_source)
     g.m_rowstart[g.m_last_source] = num_edges_orig;
   g.m_rowstart[src + 1] = num_edges_orig + 1;
   g.m_column.push_back(tgt);
+  typedef typename BOOST_CSR_GRAPH_TYPE::edge_push_back_type push_back_type;
+  g.edge_properties().push_back(push_back_type());
   return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, num_edges_orig);
 }
+
+// This function requires that (src, tgt) be lexicographically at least as
+// large as the largest edge in the graph so far
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
+add_edge(Vertex src, Vertex tgt,
+         typename BOOST_CSR_GRAPH_TYPE::edge_bundled const& p,
+         BOOST_CSR_GRAPH_TYPE& g) {
+  assert ((g.m_last_source == 0 || src >= g.m_last_source - 1) &&
+          src < num_vertices(g));
+  EdgeIndex num_edges_orig = g.m_column.size();
+  for (; g.m_last_source <= src; ++g.m_last_source)
+    g.m_rowstart[g.m_last_source] = num_edges_orig;
+  g.m_rowstart[src + 1] = num_edges_orig + 1;
+  g.m_column.push_back(tgt);
+  g.edge_properties().push_back(p);
+  return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, num_edges_orig);
+}
+
 
 // From VertexListGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -455,8 +481,8 @@ adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
   EdgeIndex v_row_start = g.m_rowstart[v];
   EdgeIndex next_row_start = g.m_rowstart[v + 1];
   return std::make_pair(g.m_column.begin() + v_row_start,
-                        g.m_column.begin() + 
-				(std::max)(v_row_start, next_row_start));
+                        g.m_column.begin() +
+                                (std::max)(v_row_start, next_row_start));
 }
 
 // Extra, common functions
@@ -508,8 +534,8 @@ edge_from_index(EdgeIndex idx, const BOOST_CSR_GRAPH_TYPE& g)
   assert (idx < num_edges(g));
   row_start_iter src_plus_1 =
     std::upper_bound(g.m_rowstart.begin(),
-		     g.m_rowstart.begin() + g.m_last_source + 1,
-		     idx);
+                     g.m_rowstart.begin() + g.m_last_source + 1,
+                     idx);
     // Get last source whose rowstart is at most idx
     // upper_bound returns this position plus 1
   Vertex src = (src_plus_1 - g.m_rowstart.begin()) - 1;
@@ -532,7 +558,7 @@ class BOOST_CSR_GRAPH_TYPE::edge_iterator
   edge_iterator() : rowstart_array(0), current_edge(), end_of_this_vertex(0) {}
 
   edge_iterator(const compressed_sparse_row_graph& graph,
-		edge_descriptor current_edge,
+                edge_descriptor current_edge,
                 EdgeIndex end_of_this_vertex)
     : rowstart_array(&graph.m_rowstart[0]), current_edge(current_edge),
       end_of_this_vertex(end_of_this_vertex) {}
@@ -701,8 +727,8 @@ struct property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>
 {
 private:
   typedef graph_traits<BOOST_CSR_GRAPH_TYPE> traits;
-  typedef typename BOOST_CSR_GRAPH_TYPE::vertex_bundled vertex_bundled;
-  typedef typename BOOST_CSR_GRAPH_TYPE::edge_bundled edge_bundled;
+  typedef VertexProperty vertex_bundled;
+  typedef EdgeProperty edge_bundled;
   typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
                      typename traits::vertex_descriptor,
                      typename traits::edge_descriptor>::type
@@ -726,8 +752,7 @@ get(T Bundle::* p, BOOST_CSR_GRAPH_TYPE& g)
   return result_type(&g, p);
 }
 
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS,
-         typename Allocator, typename T, typename Bundle>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
 inline
 typename property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>::const_type
 get(T Bundle::* p, BOOST_CSR_GRAPH_TYPE const & g)
