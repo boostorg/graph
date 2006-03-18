@@ -6,6 +6,14 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+// Revision History:
+//   17 March 2006: Fixed a bug: when updating the degree a vertex 
+//                  could be moved to a wrong bucket. (Roman Dementiev) 
+//
+
+
+
 #ifndef BOOST_SMALLEST_LAST_VERTEX_ORDERING_HPP
 #define BOOST_SMALLEST_LAST_VERTEX_ORDERING_HPP
 /*
@@ -29,18 +37,18 @@ namespace boost {
   void 
   smallest_last_vertex_ordering(const VertexListGraph& G, Order order, 
                                 Degree degree, Marker marker) {
-    typedef typename graph_traits<VertexListGraph> GraphTraits;
+    typedef typename boost::graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
     //typedef typename GraphTraits::size_type size_type;
     typedef std::size_t size_type;
     
     const size_type num = num_vertices(G);
     
-    typedef typename vertex_property_map<VertexListGraph, vertex_index_t>::type ID;
+    typedef typename boost::detail::vertex_property_map<VertexListGraph, vertex_index_t>::type ID;
     typedef bucket_sorter<size_type, Vertex, Degree, ID> BucketSorter;
     
     BucketSorter degree_bucket_sorter(num, num, degree,  
-                                      get_vertex_property(G, vertex_index));
+                                      get(vertex_index,G));
 
     smallest_last_vertex_ordering(G, order, degree, marker, degree_bucket_sorter);
   }
@@ -51,7 +59,7 @@ namespace boost {
   smallest_last_vertex_ordering(const VertexListGraph& G, Order order, 
                                 Degree degree, Marker marker,
                                 BucketSorter& degree_buckets) {
-    typedef typename graph_traits<VertexListGraph> GraphTraits;
+    typedef typename boost::graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
     //typedef typename GraphTraits::size_type size_type;
     typedef std::size_t size_type;
@@ -88,15 +96,18 @@ namespace boost {
         
         if ( get(marker,*v) > current_order ) { //*v is unordered vertex
           put(marker, *v, current_order);  //mark the columns adjacent to node
-          
+
+          //delete *v from the bucket sorter         
+          degree_buckets.remove(*v);
+ 
           //It is possible minimum degree goes down
           //Here we keep tracking it.
           put(degree, *v, get(degree, *v) - 1); 
           BOOST_USING_STD_MIN();
           minimum_degree = min BOOST_PREVENT_MACRO_SUBSTITUTION(minimum_degree, get(degree, *v)); 
           
-          //update the position of *v in the bucket sorter
-          degree_buckets.update(*v);
+          //reinsert *v in the bucket sorter with the new degree
+          degree_buckets.push(*v);
         }
 
       current_order--;
