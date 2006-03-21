@@ -73,7 +73,7 @@ namespace boost {
       degree_buckets.push(*v);
     }
  
-    size_type minimum_degree = 1;
+    size_type minimum_degree = 0;
     size_type current_order = num - 1;
     
     while ( 1 ) {
