@@ -57,7 +57,7 @@ test-suite graph_test :
 
     [ run gursoy_atun_layout_test.cpp ]
 
-    [ run layout_test.cpp : : : <test-info>always_show_run_output ]
+    [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
 
     [ compile reverse_graph_cc.cpp ] 
 
