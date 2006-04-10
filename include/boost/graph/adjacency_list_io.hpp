@@ -115,6 +115,7 @@ void getSubset(T&, const no_property&)
 //  get property subset
 //===========================================================================
 // graph parser
+typedef enum{ PARSE_NUM_NODES, PARSE_VERTEX, PARSE_EDGE } GraphParserState;
 
 template<class Graph_t, class VertexProperty, class EdgeProperty, class VertexPropertySubset,
 class EdgePropertySubset>
@@ -131,7 +132,6 @@ struct GraphParser
                 typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
                 std::vector<Vertex> nodes;
 
-                typedef enum{ PARSE_NUM_NODES, PARSE_VERTEX, PARSE_EDGE } State;
                 State state = PARSE_VERTEX;
 
                 unsigned int numLine = 1;
