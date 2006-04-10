@@ -132,7 +132,7 @@ struct GraphParser
                 typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
                 std::vector<Vertex> nodes;
 
-                State state = PARSE_VERTEX;
+                GraphParserState state = PARSE_VERTEX;
 
                 unsigned int numLine = 1;
                 char c;
