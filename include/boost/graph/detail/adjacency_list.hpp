@@ -63,6 +63,10 @@
  */
 
 
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+// Stay out of the way of the concept checking class
+# define Graph Graph_
+#endif
 
 namespace boost {
 
@@ -2797,6 +2801,11 @@ namespace BOOST_STD_EXTENSION_NAMESPACE {
 #undef stored_edge
 #undef stored_edge_property
 #undef stored_edge_iter
+
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
+// Stay out of the way of the concept checking class
+#undef Graph
+#endif
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
 

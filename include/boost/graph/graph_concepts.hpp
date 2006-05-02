@@ -18,17 +18,17 @@
 #include <boost/concept_check.hpp>
 #include <boost/detail/workaround.hpp>
 
-namespace boost {
+#include <boost/concept/detail/concept_def.hpp>
 
-  template <class T>
-  struct MultiPassInputIteratorConcept {
-    ~MultiPassInputIteratorConcept() {
-        BOOST_CONCEPT_ASSERT((InputIteratorConcept<T>));
+namespace boost
+{
+  BOOST_concept(MultiPassInputIterator,(T)) {
+    ~MultiPassInputIterator() {
+        BOOST_CONCEPT_ASSERT((InputIterator<T>));
     }
   };
 
-  template <class G>
-  struct GraphConcept
+  BOOST_concept(Graph,(G))
   {
     typedef typename graph_traits<G>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<G>::directed_category directed_category;
@@ -38,23 +38,21 @@ namespace boost {
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
       
-      ~GraphConcept()
+      ~Graph()
       {
-          BOOST_CONCEPT_ASSERT((DefaultConstructibleConcept<vertex_descriptor>));
-          BOOST_CONCEPT_ASSERT((EqualityComparableConcept<vertex_descriptor>));
-          BOOST_CONCEPT_ASSERT((AssignableConcept<vertex_descriptor>));
+          BOOST_CONCEPT_ASSERT((DefaultConstructible<vertex_descriptor>));
+          BOOST_CONCEPT_ASSERT((EqualityComparable<vertex_descriptor>));
+          BOOST_CONCEPT_ASSERT((Assignable<vertex_descriptor>));
       }
       G g;
       
-#if BOOST_WORKAROUND(__GNUC__, == 3)
-      // at least 3.4.3 needs this :(
-      GraphConcept();
+#if BOOST_WORKAROUND(__GNUC__, <= 3)
+      Graph();   // at least 2.96 and 3.4.3 both need this :(
 #endif 
   };
 
-  template <class G>
-  struct IncidenceGraphConcept
-    : GraphConcept<G>
+  BOOST_concept(IncidenceGraph,(G))
+    : Graph<G>
   {
       typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
       typedef typename graph_traits<G>::out_edge_iterator
@@ -63,12 +61,12 @@ namespace boost {
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
       
-      ~IncidenceGraphConcept() {
-          BOOST_CONCEPT_ASSERT((MultiPassInputIteratorConcept<out_edge_iterator>));
-          BOOST_CONCEPT_ASSERT((DefaultConstructibleConcept<edge_descriptor>));
-          BOOST_CONCEPT_ASSERT((EqualityComparableConcept<edge_descriptor>));
-          BOOST_CONCEPT_ASSERT((AssignableConcept<edge_descriptor>));
-          BOOST_CONCEPT_ASSERT((ConvertibleConcept<traversal_category,
+      ~IncidenceGraph() {
+          BOOST_CONCEPT_ASSERT((MultiPassInputIterator<out_edge_iterator>));
+          BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
+          BOOST_CONCEPT_ASSERT((EqualityComparable<edge_descriptor>));
+          BOOST_CONCEPT_ASSERT((Assignable<edge_descriptor>));
+          BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
                                 incidence_graph_tag>));
 
           p = out_edges(u, g);
@@ -92,17 +90,16 @@ namespace boost {
       G g;
   };
 
-  template <class G>
-  struct BidirectionalGraphConcept
-    : IncidenceGraphConcept<G>
+  BOOST_concept(BidirectionalGraph,(G))
+    : IncidenceGraph<G>
   {
     typedef typename graph_traits<G>::in_edge_iterator
       in_edge_iterator;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-    ~BidirectionalGraphConcept() {
-      BOOST_CONCEPT_ASSERT((MultiPassInputIteratorConcept<in_edge_iterator>));
-      BOOST_CONCEPT_ASSERT((ConvertibleConcept<traversal_category,
+    ~BidirectionalGraph() {
+      BOOST_CONCEPT_ASSERT((MultiPassInputIterator<in_edge_iterator>));
+      BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
         bidirectional_graph_tag>));
 
       p = in_edges(v, g);
@@ -122,17 +119,16 @@ namespace boost {
     G g;
   };
 
-  template <class G>
-  struct AdjacencyGraphConcept
-    : GraphConcept<G>
+  BOOST_concept(AdjacencyGraph,(G))
+    : Graph<G>
   {
     typedef typename graph_traits<G>::adjacency_iterator
       adjacency_iterator;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-    ~AdjacencyGraphConcept() {
-      BOOST_CONCEPT_ASSERT((MultiPassInputIteratorConcept<adjacency_iterator>));
-      BOOST_CONCEPT_ASSERT((ConvertibleConcept<traversal_category,
+    ~AdjacencyGraph() {
+      BOOST_CONCEPT_ASSERT((MultiPassInputIterator<adjacency_iterator>));
+      BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
         adjacency_graph_tag>));
 
       p = adjacent_vertices(v, g);
@@ -166,17 +162,16 @@ template <class T>
 typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
 #endif      
 
-  template <class G>
-  struct VertexListGraphConcept
-    : GraphConcept<G>
+  BOOST_concept(VertexListGraph,(G))
+    : Graph<G>
   {
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-    ~VertexListGraphConcept() {
-      BOOST_CONCEPT_ASSERT((MultiPassInputIteratorConcept<vertex_iterator>));
-      BOOST_CONCEPT_ASSERT((ConvertibleConcept<traversal_category,
+    ~VertexListGraph() {
+      BOOST_CONCEPT_ASSERT((MultiPassInputIterator<vertex_iterator>));
+      BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
         vertex_list_graph_tag>));
 
 #ifdef BOOST_VECTOR_AS_GRAPH_GRAPH_ADL_HACK
@@ -211,21 +206,20 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     vertices_size_type V;
   };
 
-  template <class G>
-  struct EdgeListGraphConcept
-    : GraphConcept<G>
+  BOOST_concept(EdgeListGraph,(G))
+    : Graph<G>
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-    ~EdgeListGraphConcept() {
-      BOOST_CONCEPT_ASSERT((MultiPassInputIteratorConcept<edge_iterator>));
-      BOOST_CONCEPT_ASSERT((DefaultConstructibleConcept<edge_descriptor>));
-      BOOST_CONCEPT_ASSERT((EqualityComparableConcept<edge_descriptor>));
-      BOOST_CONCEPT_ASSERT((AssignableConcept<edge_descriptor>));
-      BOOST_CONCEPT_ASSERT((ConvertibleConcept<traversal_category,
+    ~EdgeListGraph() {
+      BOOST_CONCEPT_ASSERT((MultiPassInputIterator<edge_iterator>));
+      BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
+      BOOST_CONCEPT_ASSERT((EqualityComparable<edge_descriptor>));
+      BOOST_CONCEPT_ASSERT((Assignable<edge_descriptor>));
+      BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
         edge_list_graph_tag>));
 
       p = edges(g);
@@ -248,10 +242,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     G g;
   };
 
-  template <class G>
-  struct VertexAndEdgeListGraphConcept
-    : VertexListGraphConcept<G>
-    , EdgeListGraphConcept<G>
+  BOOST_concept(VertexAndEdgeListGraph,(G))
+    : VertexListGraph<G>
+    , EdgeListGraph<G>
   {};
 
   // Where to put the requirement for this constructor?
@@ -259,11 +252,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   // Not in mutable graph, then LEDA graph's can't be models of
   // MutableGraph.
 
-  template <class G>
-  struct EdgeMutableGraphConcept
+  BOOST_concept(EdgeMutableGraph,(G))
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-    ~EdgeMutableGraphConcept() {
+    ~EdgeMutableGraph() {
       p = add_edge(u, v, g);
       remove_edge(u, v, g);
       remove_edge(e, g);
@@ -275,10 +267,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename graph_traits<G>::vertex_descriptor u, v;
   };
 
-  template <class G>
-  struct VertexMutableGraphConcept
+  BOOST_concept(VertexMutableGraph,(G))
   {
-    ~VertexMutableGraphConcept() {
+    ~VertexMutableGraph() {
       v = add_vertex(g);
       remove_vertex(v, g);
     }
@@ -286,10 +277,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename graph_traits<G>::vertex_descriptor u, v;
   };
 
-  template <class G>
-  struct MutableGraphConcept
-    : EdgeMutableGraphConcept<G>
-    , VertexMutableGraphConcept<G>
+  BOOST_concept(MutableGraph,(G))
+    : EdgeMutableGraph<G>
+    , VertexMutableGraph<G>
   {
   };
 
@@ -300,11 +290,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     }
   };
 
-  template <class G>
-  struct MutableIncidenceGraphConcept
-    : MutableGraphConcept<G>
+  BOOST_concept(MutableIncidenceGraph,(G))
+    : MutableGraph<G>
   {
-    ~MutableIncidenceGraphConcept() {
+    ~MutableIncidenceGraph() {
       remove_edge(iter, g);
       remove_out_edge_if(u, p, g);
     }
@@ -315,11 +304,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename boost::graph_traits<G>::out_edge_iterator iter;
   };
 
-  template <class G>
-  struct MutableBidirectionalGraphConcept
-    : MutableIncidenceGraphConcept<G>
+  BOOST_concept(MutableBidirectionalGraph,(G))
+    : MutableIncidenceGraph<G>
   {
-      ~MutableBidirectionalGraphConcept()
+      ~MutableBidirectionalGraph()
       {
           remove_in_edge_if(u, p, g);
       }
@@ -329,11 +317,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       typename boost::graph_traits<G>::vertex_descriptor u;
   };
 
-  template <class G>
-  struct MutableEdgeListGraphConcept
-    : EdgeMutableGraphConcept<G>
+  BOOST_concept(MutableEdgeListGraph,(G))
+    : EdgeMutableGraph<G>
   {
-    ~MutableEdgeListGraphConcept() {
+    ~MutableEdgeListGraph() {
       remove_edge_if(p, g);
     }
     G g;
@@ -341,11 +328,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     dummy_edge_predicate<edge_descriptor> p;
   };
 
-  template <class G>
-  struct VertexMutablePropertyGraphConcept
-    : VertexMutableGraphConcept<G>
+  BOOST_concept(VertexMutablePropertyGraph,(G))
+    : VertexMutableGraph<G>
   {
-    ~VertexMutablePropertyGraphConcept() {
+    ~VertexMutablePropertyGraph() {
       v = add_vertex(vp, g);
     }
     G g;
@@ -353,12 +339,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename vertex_property<G>::type vp;
   };
 
-  template <class G>
-  struct EdgeMutablePropertyGraphConcept
-    : EdgeMutableGraphConcept<G>
+  BOOST_concept(EdgeMutablePropertyGraph,(G))
+    : EdgeMutableGraph<G>
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-    ~EdgeMutablePropertyGraphConcept() {
+    ~EdgeMutablePropertyGraph() {
       p = add_edge(u, v, ep, g);
     }
     G g;
@@ -367,12 +352,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename edge_property<G>::type ep;
   };
 
-  template <class G>
-  struct AdjacencyMatrixConcept
-    : GraphConcept<G>
+  BOOST_concept(AdjacencyMatrix,(G))
+    : Graph<G>
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-    ~AdjacencyMatrixConcept() {      
+    ~AdjacencyMatrix() {      
       p = edge(u, v, g);
       const_constraints(g);
     }
@@ -384,12 +368,13 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     G g;
   };
 
-  template <class G, class X, class Property>
-  struct ReadablePropertyGraphConcept
-    : GraphConcept<G>
+  BOOST_concept(ReadablePropertyGraph,(G)(X)(Property))
+    : Graph<G>
   {
     typedef typename property_map<G, Property>::const_type const_Map;
-    ~ReadablePropertyGraphConcept() {
+    
+    ~ReadablePropertyGraph()
+    {
       BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept<const_Map, X>));
 
       const_constraints(g);
@@ -404,12 +389,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename property_traits<const_Map>::value_type pval;
   };
 
-  template <class G, class X, class Property>
-  struct PropertyGraphConcept
-    : ReadablePropertyGraphConcept<G, X, Property>
+  BOOST_concept(PropertyGraph,(G)(X)(Property))
+    : ReadablePropertyGraph<G, X, Property>
   {
     typedef typename property_map<G, Property>::type Map;
-    ~PropertyGraphConcept() {
+    ~PropertyGraph() {
       BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept<Map, X>));
 
       Map pmap = get(Property(), g);
@@ -422,13 +406,12 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typename property_traits<Map>::value_type pval;
   };
 
-  template <class G, class X, class Property>
-  struct LvaluePropertyGraphConcept
-    : ReadablePropertyGraphConcept<G, X, Property>
+  BOOST_concept(LvaluePropertyGraph,(G)(X)(Property))
+    : ReadablePropertyGraph<G, X, Property>
   {
     typedef typename property_map<G, Property>::type Map;
     typedef typename property_map<G, Property>::const_type const_Map;
-    ~LvaluePropertyGraphConcept() {
+    ~LvaluePropertyGraph() {
       BOOST_CONCEPT_ASSERT((LvaluePropertyMapConcept<const_Map, X>));
 
       pval = get(Property(), g, x);
@@ -440,10 +423,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   };
 
   // This needs to move out of the graph library
-  template <class B>
-  struct BufferConcept
+  BOOST_concept(Buffer,(B))
   {
-    ~BufferConcept() {
+    ~Buffer() {
       b.push(t);
       b.pop();
       typename B::value_type& v = b.top();
@@ -462,12 +444,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     B b;
   };
 
-  template <class C>
-  struct ColorValueConcept
-    : EqualityComparableConcept<C>
-    , DefaultConstructibleConcept<C>
+  BOOST_concept(ColorValue,(C))
+    : EqualityComparable<C>
+    , DefaultConstructible<C>
   {
-    ~ColorValueConcept() {
+    ~ColorValue() {
       c = color_traits<C>::white();
       c = color_traits<C>::gray();
       c = color_traits<C>::black();
@@ -475,10 +456,9 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     C c;
   };
 
-  template <class M, class I, class V>
-  struct BasicMatrixConcept
+  BOOST_concept(BasicMatrix,(M)(I)(V))
   {
-    ~BasicMatrixConcept() {
+    ~BasicMatrix() {
       V& elt = A[i][j];
       const_constraints(A);
       ignore_unused_variable_warning(elt);      
@@ -492,5 +472,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   };
 
 } // namespace boost
+
+#include <boost/concept/detail/concept_undef.hpp>
 
 #endif /* BOOST_GRAPH_CONCEPTS_H */
