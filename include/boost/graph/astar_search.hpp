@@ -301,6 +301,7 @@ namespace boost {
       put(distance, *ui, inf);
       put(cost, *ui, inf);
       put(predecessor, *ui, *ui);
+      vis.initialize_vertex(*ui, g);
     }
     put(distance, s, zero);
     put(cost, s, h(s));
