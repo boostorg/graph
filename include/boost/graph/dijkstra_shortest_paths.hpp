@@ -32,6 +32,7 @@ namespace boost {
   struct DijkstraVisitorConcept {
     void constraints() {
       function_requires< CopyConstructibleConcept<Visitor> >();
+      vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
