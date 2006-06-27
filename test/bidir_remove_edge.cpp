@@ -13,7 +13,7 @@ struct edge_prop {
 };
 
 int
-test_main(int, char*[])
+main()
 {
   {
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
