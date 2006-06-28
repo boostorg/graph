@@ -57,21 +57,18 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
-      
-      ~Graph()
-      {
-          BOOST_CONCEPT_ASSERT((DefaultConstructible<vertex_descriptor>));
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-      IncidenceGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
-          BOOST_CONCEPT_ASSERT((EqualityComparable<vertex_descriptor>));
-          BOOST_CONCEPT_ASSERT((Assignable<vertex_descriptor>));
-      }
-      G g;
-      
+   
 #if BOOST_WORKAROUND(__GNUC__, <= 3)
       Graph();   // at least 2.96 and 3.4.3 both need this :(
 #endif 
+   
+      ~Graph()
+      {
+          BOOST_CONCEPT_ASSERT((DefaultConstructible<vertex_descriptor>));
+          BOOST_CONCEPT_ASSERT((EqualityComparable<vertex_descriptor>));
+          BOOST_CONCEPT_ASSERT((Assignable<vertex_descriptor>));
+      }
+      G g;      
   };
 
   BOOST_concept(IncidenceGraph,(G))
@@ -83,7 +80,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
-      
+   
+#if BOOST_WORKAROUND(__GNUC__, <= 3)
+      IncidenceGraph();   // at least 2.96 and 3.4.3 both need this :(
+#endif
+   
       ~IncidenceGraph() {
           BOOST_CONCEPT_ASSERT((MultiPassInputIterator<out_edge_iterator>));
           BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
@@ -100,9 +101,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
           const_constraints(g);
       }
       void const_constraints(const G& cg) {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    BidirectionalGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
           p = out_edges(u, cg);
           n = out_degree(u, cg);
           e = *p.first;
@@ -123,6 +121,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       in_edge_iterator;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
+
+#if BOOST_WORKAROUND(__GNUC__, <= 3)
+    BidirectionalGraph();   // at least 2.96 and 3.4.3 both need this :(
+#endif
+
     ~BidirectionalGraph() {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<in_edge_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -132,9 +135,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       n = in_degree(v, g);
       e = *p.first;
       const_constraints(g);
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    AdjacencyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     }
     void const_constraints(const G& cg) {
       p = in_edges(v, cg);
@@ -155,6 +155,11 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       adjacency_iterator;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
+
+#if BOOST_WORKAROUND(__GNUC__, <= 3)
+    AdjacencyGraph();   // at least 2.96 and 3.4.3 both need this :(
+#endif
+
     ~AdjacencyGraph() {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<adjacency_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -178,10 +183,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::vertex_iterator vertex_iterator;
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     typedef typename graph_traits<G>::traversal_category
+      traversal_category;
 #if BOOST_WORKAROUND(__GNUC__, <= 3)
     VertexListGraph();   // at least 2.96 and 3.4.3 both need this :(
 #endif
-      traversal_category;
     ~VertexListGraph() {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<vertex_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -226,10 +231,10 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::edge_iterator edge_iterator;
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     typedef typename graph_traits<G>::traversal_category
+      traversal_category;
 #if BOOST_WORKAROUND(__GNUC__, <= 3)
     EdgeListGraph();   // at least 2.96 and 3.4.3 both need this :(
 #endif
-      traversal_category;
     ~EdgeListGraph() {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<edge_iterator>));
       BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
