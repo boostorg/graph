@@ -7,6 +7,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/cstdlib.hpp>
 #include <boost/test/minimal.hpp>
+using namespace boost;
 
 struct edge_prop {
   int weight;

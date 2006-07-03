@@ -28,6 +28,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits/ice.hpp>
 
 namespace boost {
   
@@ -436,7 +437,7 @@ namespace boost {
     // graph type. Instead, use directedS, which also provides the
     // functionality required for a Bidirectional Graph (in_edges,
     // in_degree, etc.).
-    BOOST_STATIC_ASSERT(!(is_same<Directed, bidirectionalS>::value));
+    BOOST_STATIC_ASSERT(type_traits::ice_not<(is_same<Directed, bidirectionalS>::value)>::value);
 
     typedef typename boost::ct_if_t<is_directed,
                                     bidirectional_tag, undirected_tag>::type
