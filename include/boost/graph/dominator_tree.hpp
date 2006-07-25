@@ -452,8 +452,8 @@ namespace boost {
             typename std::set<Vertex>::iterator t;
             for (t = get(domMap, *vi).begin(); t != get(domMap, *vi).end(); )
               {
-		typename std::set<Vertex>::iterator old_t = t;
-		++t; // Done early because t may become invalid
+        typename std::set<Vertex>::iterator old_t = t;
+        ++t; // Done early because t may become invalid
                 if (*old_t == *s) continue;
                 if (get(domMap, *s).find(*old_t) != get(domMap, *s).end())
                   get(domMap, *vi).erase(old_t);

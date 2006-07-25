@@ -22,7 +22,7 @@ namespace boost {
 namespace serialization {
 
 template<class Archive, class OEL, class VL, class D, 
-	 class VP, class EP, class GP, class EL>
+     class VP, class EP, class GP, class EL>
 inline void save(
     Archive & ar,
     const boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> &graph,
@@ -56,7 +56,7 @@ inline void save(
 
 
 template<class Archive, class OEL, class VL, class D,
-	 class VP, class EP, class GP, class EL>
+     class VP, class EP, class GP, class EL>
 inline void load(
     Archive & ar,
     boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> &graph,
