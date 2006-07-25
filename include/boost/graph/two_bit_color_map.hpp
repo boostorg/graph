@@ -1,7 +1,7 @@
 // Copyright (C) 2005-2006 The Trustees of Indiana University.
 
-// Use, modification and distribution is subject to the Boost Software
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  Authors: Jeremiah Willcock
@@ -20,7 +20,7 @@ namespace boost {
 
 enum two_bit_color_type { 
   two_bit_white = 0, 
-  two_bit_gray = 1, 
+  two_bit_gray  = 1, 
   two_bit_green = 2, 
   two_bit_black = 3 
 };
@@ -29,7 +29,7 @@ template <>
 struct color_traits<two_bit_color_type>
 {
   static two_bit_color_type white() { return two_bit_white; }
-  static two_bit_color_type gray() { return two_bit_gray; }
+  static two_bit_color_type gray()  { return two_bit_gray; }
   static two_bit_color_type green() { return two_bit_green; }
   static two_bit_color_type black() { return two_bit_black; }
 };
