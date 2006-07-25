@@ -46,10 +46,10 @@ namespace boost {
       uniform_int<std::size_t> x(0, n-1);
       for (std::size_t i = 0; i != n; ++i) {
         std::size_t xv = x(gen);
-	std::size_t degree = (xv == 0? 0 : std::size_t(beta * pow(xv, -alpha)));
-	if (degree != 0) {
-	  out_degrees->push_back(std::make_pair(i, degree));
-	}
+    std::size_t degree = (xv == 0? 0 : std::size_t(beta * pow(xv, -alpha)));
+    if (degree != 0) {
+      out_degrees->push_back(std::make_pair(i, degree));
+    }
         degrees_left += degree;
       }
 

@@ -45,10 +45,10 @@ namespace boost
 
     for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
-	vertex_descriptor_t v = *vi;
-	if (get(mate,v) != graph_traits<Graph>::null_vertex() 
+    vertex_descriptor_t v = *vi;
+    if (get(mate,v) != graph_traits<Graph>::null_vertex() 
             && get(vm,v) < get(vm,get(mate,v)))
-	  ++size_of_matching;
+      ++size_of_matching;
       }
     return size_of_matching;
   }
@@ -76,10 +76,10 @@ namespace boost
     vertex_iterator_t vi, vi_end;
     for( tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
-	vertex_descriptor_t v = *vi;
-	if (get(mate,v) != graph_traits<Graph>::null_vertex() 
+    vertex_descriptor_t v = *vi;
+    if (get(mate,v) != graph_traits<Graph>::null_vertex() 
             && v != get(mate,get(mate,v)))
-	  return false;
+      return false;
       }    
     return true;
   }
@@ -188,7 +188,7 @@ namespace boost
     {
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	mate[*vi] = get(arg_mate, *vi);
+    mate[*vi] = get(arg_mate, *vi);
     }
 
 
@@ -206,25 +206,25 @@ namespace boost
       
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	{
-	  vertex_descriptor_t u = *vi;
-	  
-	  origin[u] = u;
-	  pred[u] = u;
-	  ancestor_of_v[u] = 0;
-	  ancestor_of_w[u] = 0;	
-	  ds.make_set(u);
-	  
-	  if (mate[u] == graph_traits<Graph>::null_vertex())
-	    {
-	      vertex_state[u] = graph::detail::V_EVEN;
-	      out_edge_iterator_t ei, ei_end;
-	      for(tie(ei,ei_end) = out_edges(u,g); ei != ei_end; ++ei)
-		even_edges.push_back( *ei );
-	    }
-	  else
-	    vertex_state[u] = graph::detail::V_UNREACHED;      
-	}
+    {
+      vertex_descriptor_t u = *vi;
+      
+      origin[u] = u;
+      pred[u] = u;
+      ancestor_of_v[u] = 0;
+      ancestor_of_w[u] = 0;
+      ds.make_set(u);
+      
+      if (mate[u] == graph_traits<Graph>::null_vertex())
+        {
+          vertex_state[u] = graph::detail::V_EVEN;
+          out_edge_iterator_t ei, ei_end;
+          for(tie(ei,ei_end) = out_edges(u,g); ei != ei_end; ++ei)
+        even_edges.push_back( *ei );
+        }
+      else
+        vertex_state[u] = graph::detail::V_UNREACHED;      
+    }
     
       //end initializations
     
@@ -234,99 +234,99 @@ namespace boost
       bool found_alternating_path = false;
       
       while(!even_edges.empty() && !found_alternating_path)
-	{
-	  // since we push even edges onto the back of the list as
-	  // they're discovered, taking them off the back will search
-	  // for augmenting paths depth-first.
-	  edge_descriptor_t current_edge = even_edges.back();
-	  even_edges.pop_back();
+    {
+      // since we push even edges onto the back of the list as
+      // they're discovered, taking them off the back will search
+      // for augmenting paths depth-first.
+      edge_descriptor_t current_edge = even_edges.back();
+      even_edges.pop_back();
 
-	  v = source(current_edge,g);
-	  w = target(current_edge,g);
-	  
-	  vertex_descriptor_t v_prime = origin[ds.find_set(v)];
-	  vertex_descriptor_t w_prime = origin[ds.find_set(w)];
-	  
-	  // because of the way we put all of the edges on the queue,
-	  // v_prime should be labeled V_EVEN; the following is a
-	  // little paranoid but it could happen...
-	  if (vertex_state[v_prime] != graph::detail::V_EVEN)
-	    {
-	      std::swap(v_prime,w_prime);
-	      std::swap(v,w);
-	    }
+      v = source(current_edge,g);
+      w = target(current_edge,g);
+      
+      vertex_descriptor_t v_prime = origin[ds.find_set(v)];
+      vertex_descriptor_t w_prime = origin[ds.find_set(w)];
+      
+      // because of the way we put all of the edges on the queue,
+      // v_prime should be labeled V_EVEN; the following is a
+      // little paranoid but it could happen...
+      if (vertex_state[v_prime] != graph::detail::V_EVEN)
+        {
+          std::swap(v_prime,w_prime);
+          std::swap(v,w);
+        }
 
-	  if (vertex_state[w_prime] == graph::detail::V_UNREACHED)
-	    {
-	      vertex_state[w_prime] = graph::detail::V_ODD;
-	      vertex_state[mate[w_prime]] = graph::detail::V_EVEN;
-	      out_edge_iterator_t ei, ei_end;
-	      for( tie(ei,ei_end) = out_edges(mate[w_prime], g); ei != ei_end; ++ei)
-		even_edges.push_back(*ei);
-	      pred[w_prime] = v;
-	    }
+      if (vertex_state[w_prime] == graph::detail::V_UNREACHED)
+        {
+          vertex_state[w_prime] = graph::detail::V_ODD;
+          vertex_state[mate[w_prime]] = graph::detail::V_EVEN;
+          out_edge_iterator_t ei, ei_end;
+          for( tie(ei,ei_end) = out_edges(mate[w_prime], g); ei != ei_end; ++ei)
+        even_edges.push_back(*ei);
+          pred[w_prime] = v;
+        }
           //w_prime == v_prime can happen below if we get an edge that has been
           //shrunk into a blossom
-	  else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime) 
-	    {                                                             
-	      vertex_descriptor_t w_up = w_prime;
-	      vertex_descriptor_t v_up = v_prime;
-	      vertex_descriptor_t nearest_common_ancestor 
+      else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime) 
+        {                                                             
+          vertex_descriptor_t w_up = w_prime;
+          vertex_descriptor_t v_up = v_prime;
+          vertex_descriptor_t nearest_common_ancestor 
                 = graph_traits<Graph>::null_vertex();
-	      w_free_ancestor = graph_traits<Graph>::null_vertex();
-	      v_free_ancestor = graph_traits<Graph>::null_vertex();
-	      
-	      // We now need to distinguish between the case that
-	      // w_prime and v_prime share an ancestor under the
-	      // "parent" relation, in which case we've found a
-	      // blossom and should shrink it, or the case that
-	      // w_prime and v_prime both have distinct ancestors that
-	      // are free, in which case we've found an alternating
-	      // path between those two ancestors.
+          w_free_ancestor = graph_traits<Graph>::null_vertex();
+          v_free_ancestor = graph_traits<Graph>::null_vertex();
+          
+          // We now need to distinguish between the case that
+          // w_prime and v_prime share an ancestor under the
+          // "parent" relation, in which case we've found a
+          // blossom and should shrink it, or the case that
+          // w_prime and v_prime both have distinct ancestors that
+          // are free, in which case we've found an alternating
+          // path between those two ancestors.
 
-	      ++timestamp;
+          ++timestamp;
 
-	      while (nearest_common_ancestor == graph_traits<Graph>::null_vertex() && 
-		     (v_free_ancestor == graph_traits<Graph>::null_vertex() || 
-		      w_free_ancestor == graph_traits<Graph>::null_vertex()
-		      )
-		     )
-		{
-		  ancestor_of_w[w_up] = timestamp;
-		  ancestor_of_v[v_up] = timestamp;
+          while (nearest_common_ancestor == graph_traits<Graph>::null_vertex() && 
+             (v_free_ancestor == graph_traits<Graph>::null_vertex() || 
+              w_free_ancestor == graph_traits<Graph>::null_vertex()
+              )
+             )
+        {
+          ancestor_of_w[w_up] = timestamp;
+          ancestor_of_v[v_up] = timestamp;
 
-		  if (w_free_ancestor == graph_traits<Graph>::null_vertex())
-		    w_up = parent(w_up);
-		  if (v_free_ancestor == graph_traits<Graph>::null_vertex())
-		    v_up = parent(v_up);
-		  
-		  if (mate[v_up] == graph_traits<Graph>::null_vertex())
-		    v_free_ancestor = v_up;
-		  if (mate[w_up] == graph_traits<Graph>::null_vertex())
-		    w_free_ancestor = w_up;
-		  
-		  if (ancestor_of_w[v_up] == timestamp)
-		    nearest_common_ancestor = v_up;
-		  else if (ancestor_of_v[w_up] == timestamp)
-		    nearest_common_ancestor = w_up;
-		  else if (v_free_ancestor == w_free_ancestor && 
-			   v_free_ancestor != graph_traits<Graph>::null_vertex())
-		    nearest_common_ancestor = v_up;
-		}
-	      
-	      if (nearest_common_ancestor == graph_traits<Graph>::null_vertex())
-		found_alternating_path = true; //to break out of the loop
-	      else
-		{
-		  //shrink the blossom
-		  link_and_set_bridges(w_prime, nearest_common_ancestor, std::make_pair(w,v));
-		  link_and_set_bridges(v_prime, nearest_common_ancestor, std::make_pair(v,w));
-		}
-	    }      
-	}
+          if (w_free_ancestor == graph_traits<Graph>::null_vertex())
+            w_up = parent(w_up);
+          if (v_free_ancestor == graph_traits<Graph>::null_vertex())
+            v_up = parent(v_up);
+          
+          if (mate[v_up] == graph_traits<Graph>::null_vertex())
+            v_free_ancestor = v_up;
+          if (mate[w_up] == graph_traits<Graph>::null_vertex())
+            w_free_ancestor = w_up;
+          
+          if (ancestor_of_w[v_up] == timestamp)
+            nearest_common_ancestor = v_up;
+          else if (ancestor_of_v[w_up] == timestamp)
+            nearest_common_ancestor = w_up;
+          else if (v_free_ancestor == w_free_ancestor && 
+               v_free_ancestor != graph_traits<Graph>::null_vertex())
+            nearest_common_ancestor = v_up;
+        }
+          
+          if (nearest_common_ancestor == graph_traits<Graph>::null_vertex())
+        found_alternating_path = true; //to break out of the loop
+          else
+        {
+          //shrink the blossom
+          link_and_set_bridges(w_prime, nearest_common_ancestor, std::make_pair(w,v));
+          link_and_set_bridges(v_prime, nearest_common_ancestor, std::make_pair(v,w));
+        }
+        }      
+    }
       
       if (!found_alternating_path)
-	return false;
+    return false;
 
       // retrieve the augmenting path and put it in aug_path
       reversed_retrieve_augmenting_path(v, v_free_ancestor);
@@ -335,14 +335,14 @@ namespace boost
       // augment the matching along aug_path
       vertex_descriptor_t a,b;
       while (!aug_path.empty())
-	{
-	  a = aug_path.front();
-	  aug_path.pop_front();
-	  b = aug_path.front();
-	  aug_path.pop_front();
-	  mate[a] = b;
-	  mate[b] = a;
-	}
+    {
+      a = aug_path.front();
+      aug_path.pop_front();
+      b = aug_path.front();
+      aug_path.pop_front();
+      mate[a] = b;
+      mate[b] = a;
+    }
       
       return true;
       
@@ -356,7 +356,7 @@ namespace boost
     {
       vertex_iterator_t vi,vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	put(pm, *vi, mate[*vi]);
+    put(pm, *vi, mate[*vi]);
     }
 
 
@@ -367,7 +367,7 @@ namespace boost
     {
       vertex_iterator_t vi,vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	put(pm, *vi, vertex_state[origin[ds.find_set(*vi)]]);
+    put(pm, *vi, vertex_state[origin[ds.find_set(*vi)]]);
     }
 
 
@@ -379,11 +379,11 @@ namespace boost
     {
       if (vertex_state[x] == graph::detail::V_EVEN 
           && mate[x] != graph_traits<Graph>::null_vertex())
-	return mate[x];
+    return mate[x];
       else if (vertex_state[x] == graph::detail::V_ODD)
-	return origin[ds.find_set(pred[x])];
+    return origin[ds.find_set(pred[x])];
       else
-	return x;
+    return x;
     }
     
     
@@ -391,21 +391,21 @@ namespace boost
 
     void link_and_set_bridges(vertex_descriptor_t x, 
                               vertex_descriptor_t stop_vertex, 
-			      vertex_pair_t the_bridge)
+                  vertex_pair_t the_bridge)
     {
       for(vertex_descriptor_t v = x; v != stop_vertex; v = parent(v))
-	{
-	  ds.union_set(v, stop_vertex);
-	  origin[ds.find_set(stop_vertex)] = stop_vertex;
+    {
+      ds.union_set(v, stop_vertex);
+      origin[ds.find_set(stop_vertex)] = stop_vertex;
 
-	  if (vertex_state[v] == graph::detail::V_ODD)
-	    {
-	      bridge[v] = the_bridge;
-	      out_edge_iterator_t oei, oei_end;
-	      for(tie(oei, oei_end) = out_edges(v,g); oei != oei_end; ++oei)
-		even_edges.push_back(*oei);
-	    }
-	}
+      if (vertex_state[v] == graph::detail::V_ODD)
+        {
+          bridge[v] = the_bridge;
+          out_edge_iterator_t oei, oei_end;
+          for(tie(oei, oei_end) = out_edges(v,g); oei != oei_end; ++oei)
+        even_edges.push_back(*oei);
+        }
+    }
     }
     
 
@@ -426,19 +426,19 @@ namespace boost
     void retrieve_augmenting_path(vertex_descriptor_t v, vertex_descriptor_t w)  
     {
       if (v == w)
-	aug_path.push_back(v);
+    aug_path.push_back(v);
       else if (vertex_state[v] == graph::detail::V_EVEN)
-	{
-	  aug_path.push_back(v);
-	  aug_path.push_back(mate[v]);
-	  retrieve_augmenting_path(pred[mate[v]], w);
-	}
+    {
+      aug_path.push_back(v);
+      aug_path.push_back(mate[v]);
+      retrieve_augmenting_path(pred[mate[v]], w);
+    }
       else //vertex_state[v] == graph::detail::V_ODD 
-	{
-	  aug_path.push_back(v);
-	  reversed_retrieve_augmenting_path(bridge[v].first, mate[v]);
-	  retrieve_augmenting_path(bridge[v].second, w);
-	}
+    {
+      aug_path.push_back(v);
+      reversed_retrieve_augmenting_path(bridge[v].first, mate[v]);
+      retrieve_augmenting_path(bridge[v].second, w);
+    }
     }
 
 
@@ -447,19 +447,19 @@ namespace boost
     {
 
       if (v == w)
-	aug_path.push_back(v);
+    aug_path.push_back(v);
       else if (vertex_state[v] == graph::detail::V_EVEN)
-	{
-	  reversed_retrieve_augmenting_path(pred[mate[v]], w);
-	  aug_path.push_back(mate[v]);
-	  aug_path.push_back(v);
-	}
+    {
+      reversed_retrieve_augmenting_path(pred[mate[v]], w);
+      aug_path.push_back(mate[v]);
+      aug_path.push_back(v);
+    }
       else //vertex_state[v] == graph::detail::V_ODD 
-	{
-	  reversed_retrieve_augmenting_path(bridge[v].second, w);
-	  retrieve_augmenting_path(bridge[v].first, mate[v]);
-	  aug_path.push_back(v);
-	}
+    {
+      reversed_retrieve_augmenting_path(bridge[v].second, w);
+      retrieve_augmenting_path(bridge[v].first, mate[v]);
+      aug_path.push_back(v);
+    }
     }
 
     
@@ -520,23 +520,23 @@ namespace boost
     {
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	put(mate, *vi, graph_traits<Graph>::null_vertex());
+    put(mate, *vi, graph_traits<Graph>::null_vertex());
             
       edge_iterator_t ei, ei_end;
       for( tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-	{
-	  edge_descriptor_t e = *ei;
-	  vertex_descriptor_t u = source(e,g);
-	  vertex_descriptor_t v = target(e,g);
-	  
-	  if (get(mate,u) == get(mate,v))  
-	    //only way equality can hold is if
+    {
+      edge_descriptor_t e = *ei;
+      vertex_descriptor_t u = source(e,g);
+      vertex_descriptor_t v = target(e,g);
+      
+      if (get(mate,u) == get(mate,v))  
+        //only way equality can hold is if
             //   mate[u] == mate[v] == null_vertex
-	    {
-	      put(mate,u,v);
-	      put(mate,v,u);
-	    }
-	}    
+        {
+          put(mate,u,v);
+          put(mate,v,u);
+        }
+    }    
     }
   };
   
@@ -581,9 +581,9 @@ namespace boost
       less_than_by_degree(const Graph& g): m_g(g) {}
       bool operator() (const vertex_pair_t x, const vertex_pair_t y)
       {
-	return 
-	  out_degree(PairSelector::select_vertex(x), m_g) 
-	  < out_degree(PairSelector::select_vertex(y), m_g);
+    return 
+      out_degree(PairSelector::select_vertex(x), m_g) 
+      < out_degree(PairSelector::select_vertex(y), m_g);
       }
     private:
       const Graph& m_g;
@@ -598,17 +598,17 @@ namespace boost
       directed_edges_vector_t edge_list;
       vertex_iterator_t vi, vi_end;
       for(tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-	put(mate, *vi, graph_traits<Graph>::null_vertex());
+    put(mate, *vi, graph_traits<Graph>::null_vertex());
 
       edge_iterator_t ei, ei_end;
       for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-	{
-	  edge_descriptor_t e = *ei;
-	  vertex_descriptor_t u = source(e,g);
-	  vertex_descriptor_t v = target(e,g);
-	  edge_list.push_back(std::make_pair(u,v));
-	  edge_list.push_back(std::make_pair(v,u));
-	}
+    {
+      edge_descriptor_t e = *ei;
+      vertex_descriptor_t u = source(e,g);
+      vertex_descriptor_t v = target(e,g);
+      edge_list.push_back(std::make_pair(u,v));
+      edge_list.push_back(std::make_pair(v,u));
+    }
       
       //sort the edges by the degree of the target, then (using a
       //stable sort) by degree of the source
@@ -619,14 +619,14 @@ namespace boost
       
       //construct the extra greedy matching
       for(typename directed_edges_vector_t::const_iterator itr = edge_list.begin(); itr != edge_list.end(); ++itr)
-	{
-	  if (get(mate,itr->first) == get(mate,itr->second)) 
-	    //only way equality can hold is if mate[itr->first] == mate[itr->second] == null_vertex
-	    {
-	      put(mate, itr->first, itr->second);
-	      put(mate, itr->second, itr->first);
-	    }
-	}    
+    {
+      if (get(mate,itr->first) == get(mate,itr->second)) 
+        //only way equality can hold is if mate[itr->first] == mate[itr->second] == null_vertex
+        {
+          put(mate, itr->first, itr->second);
+          put(mate, itr->second, itr->first);
+        }
+    }    
     }
   };
 
@@ -642,7 +642,7 @@ namespace boost
     {
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	put(mate, *vi, graph_traits<Graph>::null_vertex());
+    put(mate, *vi, graph_traits<Graph>::null_vertex());
     }
   };
   
@@ -666,22 +666,22 @@ namespace boost
     {
     public:
       odd_components_counter(SizeType& c_count):
-	m_count(c_count)
+    m_count(c_count)
       {
-	m_count = 0;
+    m_count = 0;
       }
       
       template <class Vertex, class Graph>
       void start_vertex(Vertex v, Graph&) 
       {  
-	addend = -1; 
+    addend = -1; 
       }
       
       template <class Vertex, class Graph>
       void discover_vertex(Vertex u, Graph&) 
       {
-	addend *= -1;
-	m_count += addend;
+    addend *= -1;
+    m_count += addend;
       }
       
     protected:
@@ -737,8 +737,8 @@ namespace boost
         : vertex_state(arg_vertex_state) { }
       template <typename Vertex>
       bool operator()(const Vertex& v) const {
-	BOOST_ASSERT(vertex_state);
-	return get(*vertex_state, v) != graph::detail::V_ODD;
+    BOOST_ASSERT(vertex_state);
+    return get(*vertex_state, v) != graph::detail::V_ODD;
       }
       VertexStateMap* vertex_state;
     };
@@ -763,7 +763,7 @@ namespace boost
 
       //first, make sure it's a valid matching
       if (!is_a_matching(g,mate,vm))
-	  return false;
+      return false;
 
       //We'll try to augment the matching once. This serves two
       //purposes: first, if we find some augmenting path, the matching
@@ -775,7 +775,7 @@ namespace boost
       edmonds_augmenting_path_finder<Graph,MateMap,VertexIndexMap>
         augmentor(g,mate,vm);
       if (augmentor.augment_matching())
-	  return false;
+      return false;
 
       std::vector<int> vertex_state_vector(num_vertices(g));
       vertex_to_int_map_t vertex_state(vertex_state_vector.begin(), vm);
@@ -785,8 +785,8 @@ namespace boost
       v_size_t num_odd_vertices = 0;
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	if (vertex_state[*vi] == graph::detail::V_ODD)
-	  ++num_odd_vertices;
+    if (vertex_state[*vi] == graph::detail::V_ODD)
+      ++num_odd_vertices;
 
       //count the number of connected components with odd cardinality
       //in the graph without graph::detail::V_ODD vertices
@@ -798,9 +798,9 @@ namespace boost
       depth_first_search(fg, visitor(occ).vertex_index_map(vm));
 
       if (2 * matching_size(g,mate,vm) == num_vertices(g) + num_odd_vertices - num_odd_components)
-	return true;
+    return true;
       else
-	return false;
+    return false;
     }
   };
 
@@ -808,11 +808,11 @@ namespace boost
 
 
   template <typename Graph, 
-	    typename MateMap,
-	    typename VertexIndexMap,
-	    template <typename, typename, typename> class AugmentingPathFinder, 
-	    template <typename, typename> class InitialMatchingFinder,
-	    template <typename, typename, typename> class MatchingVerifier>
+        typename MateMap,
+        typename VertexIndexMap,
+        template <typename, typename, typename> class AugmentingPathFinder, 
+        template <typename, typename> class InitialMatchingFinder,
+        template <typename, typename, typename> class MatchingVerifier>
   bool matching(const Graph& g, MateMap mate, VertexIndexMap vm)
   {
     
@@ -822,7 +822,7 @@ namespace boost
     bool not_maximum_yet = true;
     while(not_maximum_yet)
       {
-	not_maximum_yet = augmentor.augment_matching();
+    not_maximum_yet = augmentor.augment_matching();
       }
     augmentor.get_current_matching(mate);
 
