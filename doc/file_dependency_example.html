@@ -85,7 +85,20 @@ href="../example/file_dependencies.cpp"><TT>examples/file_dependencies.cpp</TT><
 <H2>Graph Setup</H2>
 
 <P>
-Here we show the construction of the graph.  For simplicity we have
+Here we show the construction of the graph.  First, these are the required
+header files:
+
+<P>
+<PRE>
+#include &lt;iostream&gt; // std::cout
+#include &lt;utility&gt; // std::pair
+#include &lt;boost/graph/graph_traits.hpp&gt;
+#include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/topological_sort.hpp&gt;
+</PRE>
+
+<P>
+For simplicity we have
 constructed the graph &quot;by-hand&quot;. A compilation system such
 as <TT>make</TT> would instead parse a <TT>Makefile</TT> to get the
 list of files and to set-up the dependencies. We use the
@@ -131,7 +144,7 @@ the following sections.
       property&lt;vertex_color_t, default_color_type&gt;,
       property&lt;edge_weight_t, int&gt;
     &gt; Graph;
-  Graph g(N, used_by, used_by + sizeof(used_by) / sizeof(Edge));
+  Graph g(used_by, used_by + sizeof(used_by) / sizeof(Edge), N);
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
 </PRE>
 

@@ -234,6 +234,8 @@ This example demonstrates using BGL-graphviz interface to write
 a BGL graph into a graphviz format file.
 
 <pre>
+#include &lt;boost/graph/graphviz.hpp&gt;
+
 enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp, 
                foo_o, bar_cpp, bar_o, libfoobar_a,
                zig_cpp, zig_o, zag_cpp, zag_o, 
@@ -265,13 +267,15 @@ int main(int,char*[])
   };
   const int nedges = sizeof(used_by)/sizeof(Edge);
   int weights[nedges];
-  fill(weights, weights + nedges, 1);
+  std::fill(weights, weights + nedges, 1);
+
+  using namespace boost;
 
   typedef adjacency_list< vecS, vecS, directedS, 
       property< vertex_color_t, default_color_type >,
       property< edge_weight_t, int >
     > Graph;
-  Graph g(N, used_by, used_by + nedges, weights);
+  Graph g(used_by, used_by + nedges, weights, N);
 
   write_graphviz(std::cout, g, make_label_writer(name));
 }
