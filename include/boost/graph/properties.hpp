@@ -329,7 +329,8 @@ namespace boost {
 #if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 #  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #endif
-
+ 
+    bundle_property_map() { }
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template<typename Graph, typename Descriptor, typename Bundle, typename T>
   struct bundle_property_map
