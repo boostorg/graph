@@ -21,17 +21,17 @@
 using namespace boost;
 
 typedef adjacency_list<vecS, 
-		       vecS, 
-		       undirectedS, 
-      		       property<vertex_index_t, int> >  undirected_graph;
+                       vecS, 
+                       undirectedS, 
+                       property<vertex_index_t, int> >  undirected_graph;
 
 typedef adjacency_list<listS,
-		       listS,
-		       undirectedS,
-		       property<vertex_index_t, int> >  undirected_list_graph;
+                       listS,
+                       undirectedS,
+                       property<vertex_index_t, int> >  undirected_list_graph;
 
 typedef adjacency_matrix<undirectedS, 
-			 property<vertex_index_t,int> > undirected_adjacency_matrix_graph;
+                         property<vertex_index_t,int> > undirected_adjacency_matrix_graph;
 
 
 template <typename Graph>
@@ -72,7 +72,7 @@ void complete_graph(Graph& g, int n)
       wi = vi;
       ++wi;
       for(; wi != vi_end; ++wi)
-	add_edge(*vi,*wi,g);      
+        add_edge(*vi,*wi,g);      
     }
 }
 
@@ -104,10 +104,10 @@ void gabows_graph(Graph& g, int n)
       vi = ui;
       ++vi;
       while (vi != halfway)
-	{
-	  add_edge(*ui,*vi,g);
-	  ++vi;
-	}
+        {
+          add_edge(*ui,*vi,g);
+          ++vi;
+        }
       ++ui;
     }
 
@@ -160,7 +160,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (!edmonds_result)
     {
       std::cout << "Verifier reporting a problem finding a perfect matching on" << std::endl
-		<< "the complete graph using " << graph_name << std::endl;
+                << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
   
@@ -174,7 +174,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (!greedy_result)
     {
       std::cout << "Verifier reporting a problem finding a greedy matching on" << std::endl
-		<< "the complete graph using " << graph_name << std::endl;
+                << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -188,7 +188,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (!extra_greedy_result)
     {
       std::cout << "Verifier reporting a problem finding an extra greedy matching on" << std::endl
-		<< "the complete graph using " << graph_name << std::endl;
+                << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -202,8 +202,8 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (edmonds_result && !edmonds_sanity_check)
     {
       std::cout << "Verifier okayed edmonds' algorithm on the complete graph, but" << std::endl
-		<< "the matching returned either wasn't a valid matching or wasn't" << std::endl
-		<< "actually a maximum cardinality matching." << std::endl;
+                << "the matching returned either wasn't a valid matching or wasn't" << std::endl
+                << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
 
@@ -214,8 +214,8 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (greedy_result && !greedy_sanity_check)
     {
       std::cout << "Verifier okayed greedy algorithm on the complete graph, but" << std::endl
-		<< "the matching returned either wasn't a valid matching or wasn't" << std::endl
-		<< "actually a maximum cardinality matching." << std::endl;
+                << "the matching returned either wasn't a valid matching or wasn't" << std::endl
+                << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
   
@@ -226,8 +226,8 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (extra_greedy_result && !extra_greedy_sanity_check)
     {
       std::cout << "Verifier okayed extra greedy algorithm on the complete graph, but" << std::endl
-		<< "the matching returned either wasn't a valid matching or wasn't" << std::endl
-		<< "actually a maximum cardinality matching." << std::endl;
+                << "the matching returned either wasn't a valid matching or wasn't" << std::endl
+                << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
   
@@ -268,7 +268,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (!gabows_graph_result)
     {
       std::cout << "Problem on Gabow's Graph with " << graph_name << ":" << std::endl
-		<< "   Verifier reporting a maximum cardinality matching not found." << std::endl;
+                << "   Verifier reporting a maximum cardinality matching not found." << std::endl;
       all_tests_passed = false;
     }
   
@@ -276,9 +276,9 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   if (gabows_graph_result && matching_size(h,gabow_mate) != num_v)
     {
       std::cout << "Problem on Gabow's Graph with " << graph_name << ":" << std::endl
-		<< "   Verifier reported a maximum cardinality matching found," << std::endl
-		<< "   but matching size is " << matching_size(h,gabow_mate)
-		<< " when it should be " << num_v << std::endl;
+                << "   Verifier reported a maximum cardinality matching found," << std::endl
+                << "   but matching size is " << matching_size(h,gabow_mate)
+                << " when it should be " << num_v << std::endl;
       all_tests_passed = false;
     }
 
@@ -298,11 +298,11 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
       vertex_descriptor_t u = random_vertex(j,rand_num);
       vertex_descriptor_t v = random_vertex(j,rand_num);
       if (u != v)
-	{
-	  tie(tuples::ignore, success) = add_edge(u, v, j);
-	  if (success)
-	    num_edges++;
-	}
+        {
+          tie(tuples::ignore, success) = add_edge(u, v, j);
+          if (success)
+            num_edges++;
+        }
     }
 
   mate_t random_mate(double_num_v);

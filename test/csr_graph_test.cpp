@@ -200,8 +200,8 @@ void test(const OrigGraph& g)
     if (i % 13 == 0) check_consistency(g4);
   }
   assert_graphs_equal(g3, boost::identity_property_map(),
-		      g4, boost::identity_property_map(),
-		      boost::identity_property_map());
+                      g4, boost::identity_property_map(),
+                      boost::identity_property_map());
 
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
@@ -241,11 +241,11 @@ void test(const OrigGraph& g)
       BOOST_CHECK(source(edge_info.first, g2) == *vi);
       BOOST_CHECK(target(edge_info.first, g2) == tgtd);
       std::pair<CSRGraphT::out_edge_iterator, CSRGraphT::out_edge_iterator> er =
-	edge_range(*vi, tgtd, g2);
+        edge_range(*vi, tgtd, g2);
       BOOST_CHECK(er.first != er.second);
       for (; er.first != er.second; ++er.first) {
-	BOOST_CHECK(source(*er.first, g2) == *vi);
-	BOOST_CHECK(target(*er.first, g2) == tgtd);
+        BOOST_CHECK(source(*er.first, g2) == *vi);
+        BOOST_CHECK(target(*er.first, g2) == tgtd);
       }
     }
 
@@ -255,7 +255,7 @@ void test(const OrigGraph& g)
     CSRGraphT::out_edge_iterator oei2, oei2_end;
     for (boost::tie(oei2, oei_end) = out_edges(*vi, g2); oei2 != oei_end; ++oei2) {
       if (target(*oei2, g2) == test_vertex)
-	++edge_count;
+        ++edge_count;
     }
 
     // Test edge and edge_range on an edge that may not be present

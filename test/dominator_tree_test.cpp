@@ -26,10 +26,10 @@ struct DominatorCorrectnessTestSet
 using namespace boost;
 
 typedef adjacency_list<
-	listS,
-	listS,
-	bidirectionalS,
-	property<vertex_index_t, std::size_t>, no_property> G;
+    listS,
+    listS,
+    bidirectionalS,
+    property<vertex_index_t, std::size_t>, no_property> G;
 
 int test_main(int, char*[])
 {
@@ -209,7 +209,7 @@ int test_main(int, char*[])
       G g(
           testSet[i].edges, testSet[i].edges + testSet[i].numOfEdges,
           numOfVertices);
-		
+
       typedef graph_traits<G>::vertex_descriptor Vertex;
       typedef property_map<G, vertex_index_t>::type IndexMap;
       typedef
