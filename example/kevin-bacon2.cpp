@@ -38,7 +38,7 @@ struct edge_properties {
 using namespace boost;
 
 typedef adjacency_list<vecS, vecS, undirectedS, 
-		       vertex_properties, edge_properties> Graph;
+               vertex_properties, edge_properties> Graph;
 typedef graph_traits<Graph>::vertex_descriptor Vertex;
 typedef graph_traits<Graph>::edge_descriptor Edge;
 
@@ -84,7 +84,7 @@ int main()
 
   for (tie(i, end) = vertices(g); i != end; ++i)
     std::cout << g[*i].name << " has a Bacon number of "
-	      << bacon_number[*i] << std::endl;
+          << bacon_number[*i] << std::endl;
 
   return 0;
 }
