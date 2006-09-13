@@ -44,6 +44,8 @@ template <class G1, class VI1, class G2, class VI2, class IsomorphismMap>
 void assert_graphs_equal(const G1& g1, const VI1& vi1,
                          const G2& g2, const VI2& vi2,
                          const IsomorphismMap& iso) {
+  using boost::out_degree;
+
   BOOST_CHECK (num_vertices(g1) == num_vertices(g2));
   BOOST_CHECK (num_edges(g1) == num_edges(g2));
 
