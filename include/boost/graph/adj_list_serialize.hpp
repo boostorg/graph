@@ -21,6 +21,15 @@
 namespace boost { 
 namespace serialization {
 
+// Turn off tracking for adjacency_list. It's not polymorphic, and we
+// need to do this to enable saving of non-const adjacency lists.
+template<class OEL, class VL, class D, class VP, class EP, class GP, class EL>
+struct tracking_level<boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_<track_never> type;
+  BOOST_STATIC_CONSTANT(int, value = tracking_level::type::value);
+};
+
 template<class Archive, class OEL, class VL, class D, 
      class VP, class EP, class GP, class EL>
 inline void save(
@@ -76,7 +85,7 @@ inline void load(
   while(V-- > 0){
     Vertex v = add_vertex(graph);
     verts[i++] = v;
-    ar >> graph[v];
+    ar >> get(vertex_all_t(), graph, v);
   }
   while(E-- > 0){
     int u; int v;
@@ -84,7 +93,7 @@ inline void load(
     ar >> BOOST_SERIALIZATION_NVP(v);
     Edge e; bool inserted;
     tie(e,inserted) = add_edge(verts[u], verts[v], graph);
-    ar >> graph[e];
+    ar >> get(edge_all_t(), graph, e);
   }
 }
 

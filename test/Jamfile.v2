@@ -59,6 +59,10 @@ test-suite graph_test :
 
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
 
+    [ run serialize.cpp 
+          ../../serialization/build//boost_serialization
+      : : : ]
+
     [ compile reverse_graph_cc.cpp ] 
 
     [ run sequential_vertex_coloring.cpp ]

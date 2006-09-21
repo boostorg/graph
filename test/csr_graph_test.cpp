@@ -370,9 +370,9 @@ int test_main(int argc, char* argv[])
     CSRGraphT g;
     test(g);
   }
-  test(1000, 0.05, seed);
-  test(1000, 0.0, seed);
-  test(1000, 0.1, seed);
+  //  test(1000, 0.05, seed);
+  //  test(1000, 0.0, seed);
+  //  test(1000, 0.1, seed);
   test(1000, 0.001, seed);
   test(1000, 0.0005, seed);
   {
