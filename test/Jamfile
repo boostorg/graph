@@ -72,6 +72,10 @@ test-suite graph :
     [ compile reverse_graph_cc.cpp : <sysinclude>$(BOOST_ROOT) ] 
 
     [ run sequential_vertex_coloring.cpp : : : <sysinclude>$(BOOST_ROOT) ]
+  
+    [ run serialize.cpp 
+          <lib>@boost/libs/serialization/build/boost_serialization
+      : : : <sysinclude>$(BOOST_ROOT) ]
 
     [ run subgraph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 

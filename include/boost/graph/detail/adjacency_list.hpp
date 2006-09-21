@@ -1726,8 +1726,18 @@ namespace boost {
     inline
     typename boost::property_traits<
       typename boost::property_map<typename Config::graph_type, 
+        Property>::type
+    >::reference
+    get(Property p, adj_list_helper<Config, Base>& g, const Key& key) {
+      return get(get(p, g), key);
+    }
+
+    template <class Config, class Base, class Property, class Key>
+    inline
+    typename boost::property_traits<
+      typename boost::property_map<typename Config::graph_type, 
         Property>::const_type
-    >::value_type
+    >::reference
     get(Property p, const adj_list_helper<Config, Base>& g, const Key& key) {
       return get(get(p, g), key);
     }
