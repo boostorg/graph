@@ -33,5 +33,13 @@ else
     lib bgl-viz
         :
         read_graphviz_spirit.cpp
+        :
+        <define>BOOST_GRAPH_NO_LIB=1
+        <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
+        # # Intel compiler ICEs if we turn optimization on
+        <toolset>intel-vc71-win-9.1:<optimization>off
+        # Without these flags, MSVC 7.1 and 8.0 crash
+        <toolset>msvc-7.1:<cxxflags>-GR-
+        <toolset>msvc-8.0:<cxxflags>-GR-
         ;
 }
