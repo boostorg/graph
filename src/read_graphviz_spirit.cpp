@@ -20,6 +20,8 @@
 // Authors: Ronald Garcia and Douglas Gregor
 //
 
+#define BOOST_GRAPH_SOURCE
+
 #ifndef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 #  define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 #endif
@@ -27,6 +29,7 @@
 
 namespace boost { namespace detail { namespace graph { 
 
+BOOST_GRAPH_DECL
 bool read_graphviz(std::istream& in, mutate_graph& graph) 
 {
   using namespace boost;

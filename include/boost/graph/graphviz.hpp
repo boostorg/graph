@@ -24,6 +24,20 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/dynamic_property_map.hpp>
 
+#ifdef BOOST_HAS_DECLSPEC
+#  if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_GRAPH_DYN_LINK)
+#    ifdef BOOST_GRAPH_SOURCE
+#      define BOOST_GRAPH_DECL __declspec(dllexport)
+#    else
+#      define BOOST_GRAPH_DECL __declspec(dllimport)
+#    endif  // BOOST_GRAPH_SOURCE
+#  endif  // DYN_LINK
+#endif  // BOOST_HAS_DECLSPEC
+
+#ifndef BOOST_GRAPH_DECL
+#  define BOOST_GRAPH_DECL
+#endif
+
 namespace boost {
 
   template <typename directed_category>
@@ -734,6 +748,7 @@ class mutate_graph_impl : public mutate_graph
   std::map<edge_t, bgl_edge_t> bgl_edges;
 };
 
+BOOST_GRAPH_DECL
 bool read_graphviz(std::istream& in, mutate_graph& graph);
 
 } } // end namespace detail::graph
