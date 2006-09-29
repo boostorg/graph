@@ -121,7 +121,7 @@ namespace boost {
   void 
   smallest_last_ordering(const VertexListGraph&amp; G, Order order, 
                          Degree degree, Marker marker, 
-                         BucketSorter&amp; bucket_sorter) {
+                         BucketSorter&amp; degree_buckets) {
     typedef typename graph_traits&lt;VertexListGraph&gt; GraphTraits;
 
     typedef typename GraphTraits::vertex_descriptor Vertex;
