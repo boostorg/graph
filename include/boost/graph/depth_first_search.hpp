@@ -214,6 +214,9 @@ namespace boost {
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
+    if (vertices(g).first == vertices(g).second)
+      return;
+
     depth_first_search(g, vis, color, *vertices(g).first);
   }
 
@@ -321,6 +324,8 @@ namespace boost {
   {
     typedef typename property_value< bgl_named_params<P, T, R>,
       vertex_color_t>::type C;
+    if (vertices(g).first == vertices(g).second)
+      return;
     detail::dfs_dispatch<C>::apply
       (g,
        choose_param(get_param(params, graph_visitor),
