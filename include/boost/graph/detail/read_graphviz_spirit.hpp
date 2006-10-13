@@ -182,6 +182,14 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
           = ( ID[node_id.name = arg1] >> (!port) )
              [phoenix::bind(&definition::memoize_node)(var(*this))];
 
+      graph_stmt
+          = (ID[graph_stmt.key = arg1] >>
+             ch_p('=') >>
+             ID[graph_stmt.value = arg1])
+        [phoenix::bind(&definition::default_graph_prop)
+         (var(*this),graph_stmt.key,graph_stmt.value)]
+        ; // Graph property -- ignore.
+
       attr_stmt
           = (as_lower_d[keyword_p("graph")]
              >> attr_list(actor_t(phoenix::bind(&definition::default_graph_prop)
@@ -236,7 +244,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
 
 
       stmt
-          = (ID >> ch_p('=') >> ID) // Graph property -- ignore.
+          = graph_stmt 
           | attr_stmt
           | data_stmt
           ;
@@ -476,6 +484,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
     rule_t port_angle;
     rule_t port;
     boost::spirit::rule<ScannerT,node_id_closure::context_t> node_id;
+    boost::spirit::rule<ScannerT,property_closure::context_t> graph_stmt;
     rule_t attr_stmt;
     boost::spirit::rule<ScannerT,data_stmt_closure::context_t> data_stmt;
     boost::spirit::rule<ScannerT,subgraph_closure::context_t> subgraph;
