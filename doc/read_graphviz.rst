@@ -173,16 +173,12 @@ write_graphviz_
 Future Work
 -----------
 
- - Currently the parser relies upon lowercase language keywords
-   (i.e. "graph", "edge", etc.).  The DOT Language specifies that they
-   are case-insensitive.  This change should be easy given the proper
-   understanding of Spirit and some free time (hint hint!)
-
  - The parser currently does not handle continuation lines as defined
    in the DOT Language.  Some more sophisticated parsing of
    identifier(so-called "ID" in the source) is required to support this.
 
- 
+ - Support for optional recognition of subgraphs as distinct entities.
+    
 
 .. _GraphViz: http://graphviz.org/
 .. _`Mutable Graph`: MutableGraph.html
