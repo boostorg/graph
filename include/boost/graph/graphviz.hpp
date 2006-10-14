@@ -679,6 +679,9 @@ class mutate_graph
 
   virtual void 
   set_edge_property(const id_t& key, const edge_t& edge, const id_t& value) = 0;
+
+  virtual void  // RG: need new second parameter to support BGL subgraphs
+  set_graph_property(const id_t& key, const id_t& value) = 0;
 };
 
 template<typename MutableGraph>
@@ -740,6 +743,14 @@ class mutate_graph_impl : public mutate_graph
     put(key, dp_, bgl_edges[edge], value);
   }
 
+  void
+  set_graph_property(const id_t& key, const id_t& value)
+  {
+    /* RG: pointer to graph prevents copying */
+    put(key, dp_, &graph_, value);
+  }
+
+    
  protected:
   MutableGraph& graph_;
   dynamic_properties& dp_;

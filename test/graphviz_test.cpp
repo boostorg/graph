@@ -45,12 +45,17 @@ typedef std::map<edge_t,double> weight_map_t;
 template <typename Directedness, typename OutEdgeList>
 bool test_graph(std::istream& dotfile, mass_map_t const& masses,
                 weight_map_t const& weights,
-                std::string const& node_id = "node_id") {
+                std::string const& node_id = "node_id",
+                std::string* g_name_ptr = NULL) {
+  std::string dummy;
+  if (!g_name_ptr) g_name_ptr = &dummy;
 
+  typedef property < vertex_name_t, std::string,
+            property < vertex_color_t, float > > vertex_p;  
+  typedef property < edge_weight_t, double > edge_p;
+  typedef property < graph_name_t, std::string > graph_p;
   typedef adjacency_list < OutEdgeList, vecS, Directedness,
-    property < vertex_name_t, std::string,
-    property < vertex_color_t, float > >,
-    property < edge_weight_t, double > > graph_t;
+    vertex_p, edge_p, graph_p > graph_t;
   typedef typename graph_traits < graph_t >::edge_descriptor edge_t;
   typedef typename graph_traits < graph_t >::vertex_descriptor vertex_t;
 
@@ -67,8 +72,9 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
     get(edge_weight, graph);
   dp.property("weight",weight);
 
-  // Read in space characters too!
-  dotfile >> noskipws;
+  boost::ref_property_map<graph_t*,std::string> gname(
+    get_property(graph,graph_name));
+  dp.property("name",gname);
 
   bool result = true;
 #ifdef BOOST_GRAPHVIZ_USE_ISTREAM
@@ -92,7 +98,6 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
         float node_mass = get(mass,*i);
         float ref_mass = masses.find(node_name)->second;
         //  - compare the mass to the result in the table
-
         BOOST_CHECK_CLOSE(node_mass, ref_mass, 0.01f);
       }
     }
@@ -177,6 +182,7 @@ int test_main(int, char*[]) {
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
       test_graph<directedS,vecS>(gs,masses,weight_map_t());
+      BOOST_ERROR("Failed to throw boost::directed_graph_error.");
     } catch (boost::undirected_graph_error&) {}
   }
 
@@ -210,5 +216,14 @@ int test_main(int, char*[]) {
     BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weights)));
   }
 
+  // Graph Property Test
+  {
+    mass_map_t masses;
+    insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
+    gs_t gs("digraph { graph [name=\"foo\"]  a  c e [mass = 6.66] }");
+    std::string graph_name;
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
+                                            &graph_name)));
+  }
   return 0;
 }
