@@ -386,7 +386,9 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
 
     // default_graph_prop - Just ignore graph properties.
     void default_graph_prop(id_t const& key, id_t const& value) {
+#ifdef BOOST_GRAPH_DEBUG
       std::cout << key << " = " << value << std::endl;
+#endif // BOOST_GRAPH_DEBUG
         self.graph_.set_graph_property(key, value);
     }
 
