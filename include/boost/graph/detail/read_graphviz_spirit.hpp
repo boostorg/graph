@@ -161,7 +161,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
                     >> !( ch_p('=')
                           >> ID[a_list.value = arg1])
                           [phoenix::bind(&definition::call_prop_actor)
-                          (var(*this),a_list.key,a_list.value)],ch_p(','));
+                          (var(*this),a_list.key,a_list.value)],!ch_p(','));
       
       attr_list = +(ch_p('[') >> !a_list >> ch_p(']'));
 
@@ -467,7 +467,11 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       self.graph_.set_edge_property(key, edge, value);
 #ifdef BOOST_GRAPH_DEBUG
       // Tell the world
-      std::cout << "(" << edge.first << "," << edge.second << "): "
+#if 0 // RG - edge representation changed, 
+            std::cout << "(" << edge.first << "," << edge.second << "): "
+#else
+            std::cout << "an edge: " 
+#endif // 0
                 << key << " = " << value << std::endl;
 #endif // BOOST_GRAPH_DEBUG
     }
@@ -541,9 +545,9 @@ struct dot_skipper : public boost::spirit::grammar<dot_skipper>
           using namespace boost::spirit;
           using namespace phoenix;
           // comment forms
-          skip = space_p
+          skip = eol_p >> comment_p("#")  
+               | space_p
                | comment_p("//")                 
-               | comment_p("#")  
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1400)
                | confix_p(str_p("/*") ,*anychar_p, str_p("*/"))
 #else
