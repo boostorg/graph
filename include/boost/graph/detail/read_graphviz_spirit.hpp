@@ -339,7 +339,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       edge_stack_t& edge_stack = data_stmt.edge_stack();
       for(nodes_t::iterator i = sources.begin(); i != sources.end(); ++i) {
         for(nodes_t::iterator j = dests.begin(); j != dests.end(); ++j) {
-          // Create the edge and and push onto the edge stack.
+          // Create the edge and push onto the edge stack.
 #ifdef BOOST_GRAPH_DEBUG
           std::cout << "Edge " << *i << " to " << *j << std::endl;
 #endif // BOOST_GRAPH_DEBUG
