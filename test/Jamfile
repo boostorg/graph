@@ -5,6 +5,7 @@
 subproject libs/graph/test ;
 
 import testing ;
+import ../../serialization/build/serialization ;
 
 # A bug in the Win32 intel compilers causes compilation of one of our
 # tests to take forever when debug symbols are enabled. This rule
@@ -75,7 +76,7 @@ test-suite graph :
   
     [ run serialize.cpp 
           <lib>@boost/libs/serialization/build/boost_serialization
-      : : : <sysinclude>$(BOOST_ROOT) ]
+      : : : <sysinclude>$(BOOST_ROOT) toolset::require-boost-spirit-support ]
 
     [ run subgraph.cpp : : : <sysinclude>$(BOOST_ROOT) ]
 
