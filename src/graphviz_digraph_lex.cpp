@@ -1,3 +1,9 @@
+// Copyright (C) 2002 Trustees of Indiana University
+
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
 #define GRAPHVIZ_DIRECTED 1
 #define yy_create_buffer bgl_dir__create_buffer
 #define yy_delete_buffer bgl_dir__delete_buffer
