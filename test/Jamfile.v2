@@ -58,7 +58,7 @@ test-suite graph_test :
 
 
     [ run graphviz_test.cpp 
-            /boost/test//boost_test_exec_monitor 
+            /boost/test//boost_test_exec_monitor/<link>static 
             ../build//bgl-viz ]
 
     [ run gursoy_atun_layout_test.cpp ]
