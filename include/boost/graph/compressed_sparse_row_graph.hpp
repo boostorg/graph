@@ -496,8 +496,9 @@ adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 
 // Extra, common functions
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline Vertex
-vertex(Vertex i, const BOOST_CSR_GRAPH_TYPE&)
+inline typename graph_traits<BOOST_CSR_GRAPH_TYPE>::vertex_descriptor
+vertex(typename graph_traits<BOOST_CSR_GRAPH_TYPE>::vertex_descriptor i, 
+       const BOOST_CSR_GRAPH_TYPE&)
 {
   return i;
 }
