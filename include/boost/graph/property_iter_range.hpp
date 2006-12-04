@@ -20,7 +20,7 @@
 
 #include <boost/property_map_iterator.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/pending/ct_if.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/type_traits/same_traits.hpp>
 
 namespace boost {
@@ -34,7 +34,7 @@ namespace boost {
     typedef typename property_map<Graph, PropertyTag>::const_type 
       const_map_type;
     typedef typename property_kind<PropertyTag>::type Kind;
-    typedef typename ct_if<is_same<Kind, vertex_property_tag>::value,
+    typedef typename mpl::if_c<is_same<Kind, vertex_property_tag>::value,
        typename graph_traits<Graph>::vertex_iterator,
        typename graph_traits<Graph>::edge_iterator>::type iter;
   public:

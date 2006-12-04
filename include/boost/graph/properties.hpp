@@ -361,11 +361,11 @@ namespace boost {
     typedef graph_traits<Graph> traits;
     typedef typename Graph::vertex_bundled vertex_bundled;
     typedef typename Graph::edge_bundled edge_bundled;
-    typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+    typedef typename mpl::if_c<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
                        typename traits::vertex_descriptor,
                        typename traits::edge_descriptor>::type
       descriptor;
-    typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+    typedef typename mpl::if_c<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
                        vertex_bundled,
                        edge_bundled>::type
       actual_bundle;

@@ -26,7 +26,7 @@
 #include <algorithm>
 #include <string>
 #include <boost/config.hpp>
-#include <boost/pending/ct_if.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/graph/detail/bitset_adaptor.hpp>
 
 // This provides versions of std::bitset with both static and dynamic size.
@@ -594,7 +594,7 @@ namespace boost {
       typename Allocator = std::allocator<WordType>
              >
     class bitset_generator {
-      typedef typename ct_if<N, select_dyn_size_bitset,
+      typedef typename mpl::if_c<N, select_dyn_size_bitset,
         select_static_bitset>::type selector;
     public:
       typedef typename selector
