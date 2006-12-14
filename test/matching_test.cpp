@@ -7,7 +7,7 @@
 //
 //=======================================================================
 
-#include <boost/graph/maximum_cardinality_matching.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
 
 #include <iostream>                      // for std::cout
 #include <boost/vector_property_map.hpp>
