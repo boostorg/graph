@@ -14,7 +14,7 @@
 #include <ctime>
 #include <boost/random.hpp>
 
-#include <boost/graph/maximum_cardinality_matching.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
 
 using namespace boost;
 
