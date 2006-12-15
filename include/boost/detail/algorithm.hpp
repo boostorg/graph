@@ -176,17 +176,6 @@ namespace boost {
     return all(begin(c), end(c), p);
   }
 
-  template <typename InputIterator, typename Predicate>
-  bool none(InputIterator first, InputIterator last, Predicate p)
-  {
-    return std::find_if(first, last, p) == last;
-  }
-  template <typename Container, typename Predicate>
-  bool none(const Container& c, Predicate p)
-  {
-    return none(begin(c), end(c), p);
-  }
-
   template <typename Container, typename T>
   std::size_t count(const Container& c, const T& value)
   {
