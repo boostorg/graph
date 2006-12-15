@@ -11,7 +11,7 @@ project boost/graph
 
 if [ modules.peek : GRAPHVIZ_PARSER ]
 {
-    lib bgl-viz
+    lib boost_graph
         :
         graphviz_graph_lex
         graphviz_digraph_lex
@@ -35,7 +35,7 @@ if [ modules.peek : GRAPHVIZ_PARSER ]
 }
 else
 {
-    lib bgl-viz
+    lib boost_graph
         :
         read_graphviz_spirit.cpp
         :
