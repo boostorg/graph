@@ -125,7 +125,7 @@ language.
 Building the GraphViz Readers
 -----------------------------
 To use the GraphViz readers, you will need to build and link against
-the "bgl-viz" library. The library can be built by following the
+the "boost_graph" library. The library can be built by following the
 `Boost Jam Build Instructions`_ for the subdirectory ``libs/graph/build``.
 
 Deprecated Readers
