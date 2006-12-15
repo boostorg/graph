@@ -246,6 +246,17 @@ namespace boost {
     return filtered_graph<Graph, EdgePredicate, VertexPredicate>(g, ep, vp);
   }
 
+  template <typename Graph, typename EdgePredicate>
+  inline filtered_graph<const Graph, EdgePredicate>
+  make_filtered_graph(const Graph& g, EdgePredicate ep) {
+    return filtered_graph<const Graph, EdgePredicate>(g, ep);
+  }
+  template <typename Graph, typename EdgePredicate, typename VertexPredicate>
+  inline filtered_graph<const Graph, EdgePredicate, VertexPredicate>
+  make_filtered_graph(const Graph& g, EdgePredicate ep, VertexPredicate vp) {
+    return filtered_graph<const Graph, EdgePredicate, VertexPredicate>(g, ep, vp);
+  }
+
   template <typename G, typename EP, typename VP>
   std::pair<typename filtered_graph<G, EP, VP>::vertex_iterator,
             typename filtered_graph<G, EP, VP>::vertex_iterator>
