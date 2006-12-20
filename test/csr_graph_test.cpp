@@ -39,7 +39,9 @@ typedef boost::adjacency_list<> GraphT;
 typedef boost::erdos_renyi_iterator<boost::minstd_rand, GraphT> ERGen;
 
 typedef boost::compressed_sparse_row_graph<> CSRGraphT;
-
+typedef boost::graph_traits<CSRGraphT>::vertices_size_type VerticesSizeType;
+typedef std::vector<VerticesSizeType> PermutationVector;
+ 
 template <class G1, class VI1, class G2, class VI2, class IsomorphismMap>
 void assert_graphs_equal(const G1& g1, const VI1& vi1,
                          const G2& g2, const VI2& vi2,
@@ -106,39 +108,47 @@ class edge_to_index_pair
   typedef std::pair<vertices_size_type, vertices_size_type> result_type;
 
   edge_to_index_pair() : g(0), index() { }
-  edge_to_index_pair(const GraphT& g, const VertexIndexMap& index)
-    : g(&g), index(index)
+  edge_to_index_pair(const GraphT& g, const VertexIndexMap& index, 
+		     PermutationVector* permute = 0)
+    : g(&g), index(index), permute(permute)
   { }
 
   result_type operator()(edge_descriptor e) const
   {
-    return result_type(get(index, source(e, *g)), get(index, target(e, *g)));
+    if (permute)
+      return result_type((*permute)[get(index, source(e, *g))], 
+			 (*permute)[get(index, target(e, *g))]);
+    else
+      return result_type(get(index, source(e, *g)), get(index, target(e, *g)));
   }
 
  private:
   const GraphT* g;
   VertexIndexMap index;
+  PermutationVector* permute;
 };
 
 template<typename GraphT, typename VertexIndexMap>
 edge_to_index_pair<GraphT, VertexIndexMap>
-make_edge_to_index_pair(const GraphT& g, const VertexIndexMap& index)
+make_edge_to_index_pair(const GraphT& g, const VertexIndexMap& index,
+			PermutationVector* permute = 0)
 {
-  return edge_to_index_pair<GraphT, VertexIndexMap>(g, index);
+  return edge_to_index_pair<GraphT, VertexIndexMap>(g, index, permute);
 }
 
 template<typename GraphT>
 edge_to_index_pair
   <GraphT,
    typename boost::property_map<GraphT,boost::vertex_index_t>::const_type>
-make_edge_to_index_pair(const GraphT& g)
+make_edge_to_index_pair(const GraphT& g, PermutationVector* permute = 0)
 {
   typedef typename boost::property_map<GraphT,
                                        boost::vertex_index_t>::const_type
     VertexIndexMap;
   return edge_to_index_pair<GraphT, VertexIndexMap>(g,
                                                    get(boost::vertex_index,
-                                                       g));
+                                                       g),
+						    permute);
 }
 
 void check_consistency(const CSRGraphT& g) {
@@ -203,6 +213,26 @@ void test(const OrigGraph& g)
   }
   assert_graphs_equal(g3, boost::identity_property_map(),
                       g4, boost::identity_property_map(),
+                      boost::identity_property_map());
+
+  // Create a vertex index permutation vector
+  std::vector<CSRGraphT::vertices_size_type> permutation(num_vertices(g));
+  for (CSRGraphT::vertices_size_type v = 0; v < permutation.size(); ++v)
+    permutation[v] = v;
+  std::random_shuffle(permutation.begin(), permutation.end());
+
+  // Check constructing a graph from iterators, but with vertex indices
+  // permuted to test out-of-order edge insertion.
+  CSRGraphT g5(boost::make_transform_iterator
+	         (edges(g2).first, make_edge_to_index_pair(g2, &permutation)),
+	       boost::make_transform_iterator
+	         (edges(g2).second, make_edge_to_index_pair(g2, &permutation)),
+              num_vertices(g));
+  check_consistency(g5);
+  BOOST_CHECK((std::size_t)std::distance(edges(g5).first, edges(g5).second)
+              == num_edges(g5));
+  assert_graphs_equal(g2, boost::identity_property_map(),
+                      g5, boost::identity_property_map(),
                       boost::identity_property_map());
 
   // Check edge_from_index (and implicitly the edge_index property map) for
