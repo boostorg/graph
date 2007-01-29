@@ -8,11 +8,8 @@
 
 #include <boost/pending/property.hpp>
 
-// Wierd, I get compilation errors if the following include is
-// removed, but it shouldn't be needed. Some kind of strange
-// include dependency in the serialization library.
-#include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/base_object.hpp>
+#include <boost/serialization/nvp.hpp>
 
 namespace boost {
   template<class Archive>
@@ -23,8 +20,8 @@ namespace boost {
   serialize(Archive& ar, property<Tag, T, Base>& prop, 
             const unsigned int version) 
   {
-    ar & boost::serialization::base_object<Base>(prop);
-    ar & prop.m_value;
+    ar & serialization::make_nvp( "property_base" , boost::serialization::base_object<Base>(prop) );
+    ar & serialization::make_nvp( "property_value" , prop.m_value );
   }
 } // end namespace boost
 
