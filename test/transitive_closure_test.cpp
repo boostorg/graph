@@ -5,6 +5,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 
+#include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/transitive_closure.hpp>
 

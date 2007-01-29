@@ -3,6 +3,13 @@
 
 import modules ;
 
+local optional_tests ;
+
+if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
+{
+  optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
+}
+
 test-suite graph_test : 
 
     [ run transitive_closure_test.cpp ]
@@ -50,7 +57,6 @@ test-suite graph_test :
 
     [ compile graph_concepts.cpp ]
 
-
     [ run graphviz_test.cpp 
             /boost/test//boost_test_exec_monitor/<link>static 
             ../build//boost_graph ]
@@ -96,6 +102,8 @@ test-suite graph_test :
     [ run max_flow_test.cpp ]
 
     [ run kolmogorov_max_flow_test.cpp ]
+
+    $(optional_tests)
     ;
 
 # Run SDB tests only when -sSDB= is set.
