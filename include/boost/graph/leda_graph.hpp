@@ -1,7 +1,9 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
 // Copyright 2004 The Trustees of Indiana University.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Douglas Gregor
+// Copyright 2007 University of Karlsruhe
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Douglas Gregor,
+//          Jens Mueller
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -23,9 +25,6 @@
 // treat a LEDA GRAPH object as a boost graph "as is". No
 // wrapper is needed for the GRAPH object.
 
-// Remember to define LEDA_PREFIX so that LEDA types such as
-// leda_edge show up as "leda_edge" and not just "edge".
-
 // Warning: this implementation relies on partial specialization
 // for the graph_traits class (so it won't compile with Visual C++)
 
@@ -41,95 +40,103 @@ namespace boost {
 
   template <class vtype, class etype>
   struct graph_traits< leda::GRAPH<vtype,etype> > {
-    typedef leda_node vertex_descriptor;
-    typedef leda_edge edge_descriptor;
+    typedef leda::node vertex_descriptor;
+    typedef leda::edge edge_descriptor;
 
     class adjacency_iterator 
       : public iterator_facade<adjacency_iterator,
-                               leda_node,
+                               leda::node,
                                bidirectional_traversal_tag,
-                               leda_node,
-                               const leda_node*>
+                               leda::node,
+                               const leda::node*>
     {
     public:
-      explicit adjacency_iterator(leda_edge edge = 0) : base(edge) {}
-
+      adjacency_iterator(leda::node node = 0, 
+                      const leda::GRAPH<vtype, etype>* g = 0)
+        : base(node), g(g) {}
     private:
-      leda_node dereference() const { return leda::target(base); }
+      leda::node dereference() const { return leda::target(base); }
 
       bool equal(const adjacency_iterator& other) const
       { return base == other.base; }
 
-      void increment() { base = Succ_Adj_Edge(base, 0); }
-      void decrement() { base = Pred_Adj_Edge(base, 0); }
+      void increment() { base = g->adj_succ(base); }
+      void decrement() { base = g->adj_pred(base); }
 
-      leda_edge base;
+      leda::edge base;
+      const leda::GRAPH<vtype, etype>* g;
 
       friend class iterator_core_access;
     };
-      
+
     class out_edge_iterator 
       : public iterator_facade<out_edge_iterator,
-                               leda_edge,
+                               leda::edge,
                                bidirectional_traversal_tag,
-                               const leda_edge&,
-                               const leda_edge*>
+                               const leda::edge&,
+                               const leda::edge*>
     {
     public:
-      explicit out_edge_iterator(leda_edge edge = 0) : base(edge) {}
+      out_edge_iterator(leda::node node = 0, 
+                      const leda::GRAPH<vtype, etype>* g = 0)
+        : base(node), g(g) {}
 
     private:
-      const leda_edge& dereference() const { return base; }
+      const leda::edge& dereference() const { return base; }
 
       bool equal(const out_edge_iterator& other) const
       { return base == other.base; }
 
-      void increment() { base = Succ_Adj_Edge(base, 0); }
-      void decrement() { base = Pred_Adj_Edge(base, 0); }
+      void increment() { base = g->adj_succ(base); }
+      void decrement() { base = g->adj_pred(base); }
 
-      leda_edge base;
+      leda::edge base;
+      const leda::GRAPH<vtype, etype>* g;
 
       friend class iterator_core_access;
     };
-      
+
     class in_edge_iterator 
       : public iterator_facade<in_edge_iterator,
-                               leda_edge,
+                               leda::edge,
                                bidirectional_traversal_tag,
-                               const leda_edge&,
-                               const leda_edge*>
+                               const leda::edge&,
+                               const leda::edge*>
     {
     public:
-      explicit in_edge_iterator(leda_edge edge = 0) : base(edge) {}
+      in_edge_iterator(leda::node node = 0, 
+                      const leda::GRAPH<vtype, etype>* g = 0)
+        : base(node), g(g) {}
 
     private:
-      const leda_edge& dereference() const { return base; }
+      const leda::edge& dereference() const { return base; }
 
       bool equal(const in_edge_iterator& other) const
       { return base == other.base; }
 
-      void increment() { base = Succ_Adj_Edge(base, 1); }
-      void decrement() { base = Pred_Adj_Edge(base, 1); }
+      void increment() { base = g->in_succ(base); }
+      void decrement() { base = g->in_pred(base); }
 
-      leda_edge base;
+      leda::edge base;
+      const leda::GRAPH<vtype, etype>* g;
 
       friend class iterator_core_access;
     };
 
     class vertex_iterator 
       : public iterator_facade<vertex_iterator,
-                               leda_node,
+                               leda::node,
                                bidirectional_traversal_tag,
-                               const leda_node&,
-                               const leda_node*>
+                               const leda::node&,
+                               const leda::node*>
     {
     public:
-      vertex_iterator(leda_node node = 0, 
+      vertex_iterator(leda::node node = 0, 
                       const leda::GRAPH<vtype, etype>* g = 0)
         : base(node), g(g) {}
 
     private:
-      const leda_node& dereference() const { return base; }
+      const leda::node& dereference() const { return base; }
 
       bool equal(const vertex_iterator& other) const
       { return base == other.base; }
@@ -137,7 +144,34 @@ namespace boost {
       void increment() { base = g->succ_node(base); }
       void decrement() { base = g->pred_node(base); }
 
-      leda_node base;
+      leda::node base;
+      const leda::GRAPH<vtype, etype>* g;
+
+      friend class iterator_core_access;
+    };
+
+    class edge_iterator 
+      : public iterator_facade<edge_iterator,
+                               leda::edge,
+                               bidirectional_traversal_tag,
+                               const leda::edge&,
+                               const leda::edge*>
+    {
+    public:
+      edge_iterator(leda::edge edge = 0, 
+                      const leda::GRAPH<vtype, etype>* g = 0)
+        : base(edge), g(g) {}
+
+    private:
+      const leda::edge& dereference() const { return base; }
+
+      bool equal(const edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->succ_edge(base); }
+      void decrement() { base = g->pred_edge(base); }
+
+      leda::node base;
       const leda::GRAPH<vtype, etype>* g;
 
       friend class iterator_core_access;
@@ -151,20 +185,163 @@ namespace boost {
     typedef int degree_size_type;
   };
 
-  template <class vtype, class etype>
-  struct vertex_property< leda::GRAPH<vtype,etype> > {
-    typedef vtype type;
-  };
 
-  template <class vtype, class etype>
-  struct edge_property< leda::GRAPH<vtype,etype> > {
-    typedef etype type;
+
+  template<>
+  struct graph_traits<leda::graph> {
+    typedef leda::node vertex_descriptor;
+    typedef leda::edge edge_descriptor;
+
+    class adjacency_iterator 
+      : public iterator_facade<adjacency_iterator,
+                               leda::node,
+                               bidirectional_traversal_tag,
+                               leda::node,
+                               const leda::node*>
+    {
+    public:
+      adjacency_iterator(leda::edge edge = 0, 
+                      const leda::graph* g = 0)
+        : base(edge), g(g) {}
+
+    private:
+      leda::node dereference() const { return leda::target(base); }
+
+      bool equal(const adjacency_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->adj_succ(base); }
+      void decrement() { base = g->adj_pred(base); }
+
+      leda::edge base;
+      const leda::graph* g;
+
+      friend class iterator_core_access;
+    };
+
+    class out_edge_iterator 
+      : public iterator_facade<out_edge_iterator,
+                               leda::edge,
+                               bidirectional_traversal_tag,
+                               const leda::edge&,
+                               const leda::edge*>
+    {
+    public:
+      out_edge_iterator(leda::edge edge = 0, 
+                      const leda::graph* g = 0)
+        : base(edge), g(g) {}
+
+    private:
+      const leda::edge& dereference() const { return base; }
+
+      bool equal(const out_edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->adj_succ(base); }
+      void decrement() { base = g->adj_pred(base); }
+
+      leda::edge base;
+      const leda::graph* g;
+
+      friend class iterator_core_access;
+    };
+
+    class in_edge_iterator 
+      : public iterator_facade<in_edge_iterator,
+                               leda::edge,
+                               bidirectional_traversal_tag,
+                               const leda::edge&,
+                               const leda::edge*>
+    {
+    public:
+      in_edge_iterator(leda::edge edge = 0, 
+                      const leda::graph* g = 0)
+        : base(edge), g(g) {}
+
+    private:
+      const leda::edge& dereference() const { return base; }
+
+      bool equal(const in_edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->in_succ(base); }
+      void decrement() { base = g->in_pred(base); }
+
+      leda::edge base;
+      const leda::graph* g;
+
+      friend class iterator_core_access;
+    };
+
+    class vertex_iterator 
+      : public iterator_facade<vertex_iterator,
+                               leda::node,
+                               bidirectional_traversal_tag,
+                               const leda::node&,
+                               const leda::node*>
+    {
+    public:
+      vertex_iterator(leda::node node = 0, 
+                      const leda::graph* g = 0)
+        : base(node), g(g) {}
+
+    private:
+      const leda::node& dereference() const { return base; }
+
+      bool equal(const vertex_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->succ_node(base); }
+      void decrement() { base = g->pred_node(base); }
+
+      leda::node base;
+      const leda::graph* g;
+
+      friend class iterator_core_access;
+    };
+
+    class edge_iterator 
+      : public iterator_facade<edge_iterator,
+                               leda::edge,
+                               bidirectional_traversal_tag,
+                               const leda::edge&,
+                               const leda::edge*>
+    {
+    public:
+      edge_iterator(leda::edge edge = 0, 
+                      const leda::graph* g = 0)
+        : base(edge), g(g) {}
+
+    private:
+      const leda::edge& dereference() const { return base; }
+
+      bool equal(const edge_iterator& other) const
+      { return base == other.base; }
+
+      void increment() { base = g->succ_edge(base); }
+      void decrement() { base = g->pred_edge(base); }
+
+      leda::edge base;
+      const leda::graph* g;
+
+      friend class iterator_core_access;
+    };
+
+    typedef directed_tag directed_category;
+    typedef allow_parallel_edge_tag edge_parallel_category; // not sure here
+    typedef leda_graph_traversal_category traversal_category;
+    typedef int vertices_size_type;
+    typedef int edges_size_type;
+    typedef int degree_size_type;
   };
 
 } // namespace boost
 #endif
 
 namespace boost {
+
+  //===========================================================================
+  // functions for GRAPH<vtype,etype>
 
   template <class vtype, class etype>
   typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
@@ -193,7 +370,16 @@ namespace boost {
     return std::make_pair( Iter(g.first_node(),&g), Iter(0,&g) );
   }
 
-  // no edges(g) function
+  template <class vtype, class etype>
+  inline std::pair<
+    typename graph_traits< leda::GRAPH<vtype,etype> >::edge_iterator,
+    typename graph_traits< leda::GRAPH<vtype,etype> >::edge_iterator >  
+  edges(const leda::GRAPH<vtype,etype>& g)
+  {
+    typedef typename graph_traits< leda::GRAPH<vtype,etype> >::edge_iterator
+      Iter;
+    return std::make_pair( Iter(g.first_edge(),&g), Iter(0,&g) );
+  }
 
   template <class vtype, class etype>
   inline std::pair<
@@ -205,7 +391,7 @@ namespace boost {
   {
     typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::out_edge_iterator Iter;
-    return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
+    return std::make_pair( Iter(g.first_adj_edge(u,0),&g), Iter(0,&g) );
   }
 
   template <class vtype, class etype>
@@ -218,7 +404,7 @@ namespace boost {
   {
     typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::in_edge_iterator Iter;
-    return std::make_pair( Iter(First_Adj_Edge(u,1)), Iter(0) );
+    return std::make_pair( Iter(g.first_adj_edge(u,1),&g), Iter(0,&g) );
   }
 
   template <class vtype, class etype>
@@ -231,7 +417,7 @@ namespace boost {
   {
     typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::adjacency_iterator Iter;
-    return std::make_pair( Iter(First_Adj_Edge(u,0)), Iter(0) );
+    return std::make_pair( Iter(g.first_adj_edge(u,0),&g), Iter(0,&g) );
   }
 
   template <class vtype, class etype>
@@ -252,29 +438,29 @@ namespace boost {
   typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   out_degree(
     typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const leda::GRAPH<vtype,etype>&)
+    const leda::GRAPH<vtype,etype>& g)
   {
-    return outdeg(u);
+    return g.outdeg(u);
   }
 
   template <class vtype, class etype>
   typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   in_degree(
     typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const leda::GRAPH<vtype,etype>&)
+    const leda::GRAPH<vtype,etype>& g)
   {
-    return indeg(u);
+    return g.indeg(u);
   }
 
   template <class vtype, class etype>
   typename graph_traits< leda::GRAPH<vtype,etype> >::degree_size_type
   degree(
     typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
-    const leda::GRAPH<vtype,etype>&)
+    const leda::GRAPH<vtype,etype>& g)
   {
-    return outdeg(u) + indeg(u);
+    return g.outdeg(u) + g.indeg(u);
   }
-  
+
   template <class vtype, class etype>
   typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor
   add_vertex(leda::GRAPH<vtype,etype>& g)
@@ -289,14 +475,18 @@ namespace boost {
     return g.new_node(vp);
   }
 
-  // Hmm, LEDA doesn't have the equivalent of clear_vertex() -JGS
-  // need to write an implementation
   template <class vtype, class etype>
   void clear_vertex(
     typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u,
     leda::GRAPH<vtype,etype>& g)
   {
-    g.del_node(u);
+    typename graph_traits< leda::GRAPH<vtype,etype> >::out_edge_iterator ei, ei_end;
+    for (tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
+      remove_edge(*ei);
+
+    typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator iei, iei_end;
+    for (tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
+      remove_edge(*iei);
   }
 
   template <class vtype, class etype>
@@ -356,8 +546,174 @@ namespace boost {
   }
 
   //===========================================================================
-  // property maps
-  
+  // functions for graph (non-templated version)
+
+  graph_traits<leda::graph>::vertex_descriptor
+  source(graph_traits<leda::graph>::edge_descriptor e,
+         const leda::graph& g)
+  {
+    return source(e);
+  }
+
+  graph_traits<leda::graph>::vertex_descriptor
+  target(graph_traits<leda::graph>::edge_descriptor e,
+         const leda::graph& g)
+  {
+    return target(e);
+  }
+
+  inline std::pair<
+    graph_traits<leda::graph>::vertex_iterator,
+    graph_traits<leda::graph>::vertex_iterator >  
+  vertices(const leda::graph& g)
+  {
+    typedef graph_traits<leda::graph>::vertex_iterator
+      Iter;
+    return std::make_pair( Iter(g.first_node(),&g), Iter(0,&g) );
+  }
+
+  inline std::pair<
+    graph_traits<leda::graph>::edge_iterator,
+    graph_traits<leda::graph>::edge_iterator >  
+  edges(const leda::graph& g)
+  {
+    typedef graph_traits<leda::graph>::edge_iterator
+      Iter;
+    return std::make_pair( Iter(g.first_edge(),&g), Iter(0,&g) );
+  }
+
+  inline std::pair<
+    graph_traits<leda::graph>::out_edge_iterator,
+    graph_traits<leda::graph>::out_edge_iterator >
+  out_edges(
+    graph_traits<leda::graph>::vertex_descriptor u, const leda::graph& g)
+  {
+    typedef graph_traits<leda::graph>::out_edge_iterator Iter;
+    return std::make_pair( Iter(g.first_adj_edge(u),&g), Iter(0,&g) );
+  }
+
+  inline std::pair<
+    graph_traits<leda::graph>::in_edge_iterator,
+    graph_traits<leda::graph>::in_edge_iterator >
+  in_edges(
+    graph_traits<leda::graph>::vertex_descriptor u, 
+    const leda::graph& g)
+  {
+    typedef graph_traits<leda::graph>
+      ::in_edge_iterator Iter;
+    return std::make_pair( Iter(g.first_in_edge(u),&g), Iter(0,&g) );
+  }
+
+  inline std::pair<
+    graph_traits<leda::graph>::adjacency_iterator,
+    graph_traits<leda::graph>::adjacency_iterator >  
+  adjacent_vertices(
+    graph_traits<leda::graph>::vertex_descriptor u, 
+    const leda::graph& g)
+  {
+    typedef graph_traits<leda::graph>
+      ::adjacency_iterator Iter;
+    return std::make_pair( Iter(g.first_adj_edge(u),&g), Iter(0,&g) );
+  }
+
+  graph_traits<leda::graph>::vertices_size_type
+  num_vertices(const leda::graph& g)
+  {
+    return g.number_of_nodes();
+  }  
+
+  graph_traits<leda::graph>::edges_size_type
+  num_edges(const leda::graph& g)
+  {
+    return g.number_of_edges();
+  }  
+
+  graph_traits<leda::graph>::degree_size_type
+  out_degree(
+    graph_traits<leda::graph>::vertex_descriptor u, 
+    const leda::graph& g)
+  {
+    return g.outdeg(u);
+  }
+
+  graph_traits<leda::graph>::degree_size_type
+  in_degree(
+    graph_traits<leda::graph>::vertex_descriptor u, 
+    const leda::graph& g)
+  {
+    return g.indeg(u);
+  }
+
+  graph_traits<leda::graph>::degree_size_type
+  degree(
+    graph_traits<leda::graph>::vertex_descriptor u, 
+    const leda::graph& g)
+  {
+    return g.outdeg(u) + g.indeg(u);
+  }
+
+  graph_traits<leda::graph>::vertex_descriptor
+  add_vertex(leda::graph& g)
+  {
+    return g.new_node();
+  }
+
+  void
+  remove_edge(
+    graph_traits<leda::graph>::vertex_descriptor u,
+    graph_traits<leda::graph>::vertex_descriptor v,
+    leda::graph& g)
+  {
+    graph_traits<leda::graph>::out_edge_iterator 
+      i,iend;
+    for (boost::tie(i,iend) = out_edges(u,g); i != iend; ++i)
+      if (target(*i,g) == v)
+        g.del_edge(*i);
+  }
+
+  void
+  remove_edge(
+    graph_traits<leda::graph>::edge_descriptor e,
+    leda::graph& g)
+  {
+    g.del_edge(e);
+  }
+
+  void clear_vertex(
+    graph_traits<leda::graph>::vertex_descriptor u,
+    leda::graph& g)
+  {
+    graph_traits<leda::graph>::out_edge_iterator ei, ei_end;
+    for (tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
+      remove_edge(*ei, g);
+
+    graph_traits<leda::graph>::in_edge_iterator iei, iei_end;
+    for (tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
+      remove_edge(*iei, g);
+  }
+
+  void remove_vertex(
+    graph_traits<leda::graph>::vertex_descriptor u,
+    leda::graph& g)
+  {
+    g.del_node(u);
+  }
+
+  std::pair<
+    graph_traits<leda::graph>::edge_descriptor,
+    bool>
+  add_edge(
+    graph_traits<leda::graph>::vertex_descriptor u,
+    graph_traits<leda::graph>::vertex_descriptor v,
+    leda::graph& g)
+  {
+    return std::make_pair(g.new_edge(u, v), true);
+  }
+
+
+  //===========================================================================
+  // property maps for GRAPH<vtype,etype>
+
   class leda_graph_id_map
     : public put_get_helper<int, leda_graph_id_map>
   {
@@ -365,7 +721,7 @@ namespace boost {
     typedef readable_property_map_tag category;
     typedef int value_type;
     typedef int reference;
-    typedef leda_node key_type;
+    typedef leda::node key_type;
     leda_graph_id_map() { }
     template <class T>
     long operator[](T x) const { return x->id(); }
@@ -476,42 +832,42 @@ namespace boost {
   public:
     typedef E value_type;
     typedef ERef reference;
-    typedef leda_node key_type;
+    typedef leda::node key_type;
     typedef lvalue_property_map_tag category;
     leda_node_property_map(NodeMapPtr a) : m_array(a) { }
-    ERef operator[](leda_node n) const { return (*m_array)[n]; }
+    ERef operator[](leda::node n) const { return (*m_array)[n]; }
   protected:
     NodeMapPtr m_array;
   };
   template <class E>
-  leda_node_property_map<E, const E&, const leda_node_array<E>*>
-  make_leda_node_property_map(const leda_node_array<E>& a)
+  leda_node_property_map<E, const E&, const leda::node_array<E>*>
+  make_leda_node_property_map(const leda::node_array<E>& a)
   {
-    typedef leda_node_property_map<E, const E&, const leda_node_array<E>*>
+    typedef leda_node_property_map<E, const E&, const leda::node_array<E>*>
       pmap_type;
     return pmap_type(&a);
   }
   template <class E>
-  leda_node_property_map<E, E&, leda_node_array<E>*>
-  make_leda_node_property_map(leda_node_array<E>& a)
+  leda_node_property_map<E, E&, leda::node_array<E>*>
+  make_leda_node_property_map(leda::node_array<E>& a)
   {
-    typedef leda_node_property_map<E, E&, leda_node_array<E>*> pmap_type;
+    typedef leda_node_property_map<E, E&, leda::node_array<E>*> pmap_type;
     return pmap_type(&a);
   }
 
   template <class E>
-  leda_node_property_map<E, const E&, const leda_node_map<E>*>
-  make_leda_node_property_map(const leda_node_map<E>& a)
+  leda_node_property_map<E, const E&, const leda::node_map<E>*>
+  make_leda_node_property_map(const leda::node_map<E>& a)
   {
-    typedef leda_node_property_map<E,const E&,const leda_node_map<E>*> 
+    typedef leda_node_property_map<E,const E&,const leda::node_map<E>*> 
       pmap_type;
     return pmap_type(&a);
   }
   template <class E>
-  leda_node_property_map<E, E&, leda_node_map<E>*>
-  make_leda_node_property_map(leda_node_map<E>& a)
+  leda_node_property_map<E, E&, leda::node_map<E>*>
+  make_leda_node_property_map(leda::node_map<E>& a)
   {
-    typedef leda_node_property_map<E, E&, leda_node_map<E>*> pmap_type;
+    typedef leda_node_property_map<E, E&, leda::node_map<E>*> pmap_type;
     return pmap_type(&a);
   }
 
@@ -528,11 +884,11 @@ namespace boost {
   inline
   typename boost::property_traits<
     typename boost::property_map<leda::GRAPH<vtype, etype>,PropertyTag>::const_type
-  >::value_type
+::value_type
   get(PropertyTag p, const leda::GRAPH<vtype, etype>& g, const Key& key) {
     return get(get(p, g), key);
   }
-  
+
   template <class vtype, class etype, class PropertyTag, class Key,class Value>
   inline void
   put(PropertyTag p, leda::GRAPH<vtype, etype>& g, 
@@ -543,7 +899,54 @@ namespace boost {
     put(pmap, key, value);
   }
 
-} // namespace boost
+   // property map interface to the LEDA edge_array class
 
+  template <class E, class ERef, class EdgeMapPtr>
+  class leda_edge_property_map
+    : public put_get_helper<ERef, leda_edge_property_map<E, ERef, EdgeMapPtr> >
+  {
+  public:
+    typedef E value_type;
+    typedef ERef reference;
+    typedef leda::edge key_type;
+    typedef lvalue_property_map_tag category;
+    leda_edge_property_map(EdgeMapPtr a) : m_array(a) { }
+    ERef operator[](leda::edge n) const { return (*m_array)[n]; }
+  protected:
+    EdgeMapPtr m_array;
+  };
+  template <class E>
+  leda_edge_property_map<E, const E&, const leda::edge_array<E>*>
+  make_leda_node_property_map(const leda::node_array<E>& a)
+  {
+    typedef leda_edge_property_map<E, const E&, const leda::node_array<E>*>
+      pmap_type;
+    return pmap_type(&a);
+  }
+  template <class E>
+  leda_edge_property_map<E, E&, leda::edge_array<E>*>
+  make_leda_edge_property_map(leda::edge_array<E>& a)
+  {
+    typedef leda_edge_property_map<E, E&, leda::edge_array<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+
+  template <class E>
+  leda_edge_property_map<E, const E&, const leda::edge_map<E>*>
+  make_leda_edge_property_map(const leda::edge_map<E>& a)
+  {
+    typedef leda_edge_property_map<E,const E&,const leda::edge_map<E>*> 
+      pmap_type;
+    return pmap_type(&a);
+  }
+  template <class E>
+  leda_edge_property_map<E, E&, leda::edge_map<E>*>
+  make_leda_edge_property_map(leda::edge_map<E>& a)
+  {
+    typedef leda_edge_property_map<E, E&, leda::edge_map<E>*> pmap_type;
+    return pmap_type(&a);
+  }
+
+} // namespace boost
 
 #endif // BOOST_GRAPH_LEDA_HPP
