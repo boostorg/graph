@@ -19,6 +19,7 @@
 #include <boost/serialization/split_free.hpp>
 
 namespace boost { 
+
 namespace serialization {
 
 // Turn off tracking for adjacency_list. It's not polymorphic, and we
@@ -51,15 +52,15 @@ inline void save(
   typename graph_traits<Graph>::vertex_iterator vi;
   for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi) {
     indices[*vi] = num++;
-    ar << get(vertex_all_t(), graph, *vi);
+    ar << serialization::make_nvp("vertex_property", get(vertex_all_t(), graph, *vi) );
   }
   
   // write edges
   typename graph_traits<Graph>::edge_iterator ei;
   for (ei = edges(graph).first; ei != edges(graph).second; ++ei){
-    ar << BOOST_SERIALIZATION_NVP(indices[source(*ei,graph)]);
-    ar << BOOST_SERIALIZATION_NVP(indices[target(*ei,graph)]);
-    ar << get(edge_all_t(), graph, *ei);
+    ar << serialization::make_nvp("u" , indices[source(*ei,graph)]);
+    ar << serialization::make_nvp("v" , indices[target(*ei,graph)]);
+    ar << serialization::make_nvp("edge_property", get(edge_all_t(), graph, *ei) );
   }
 }
 
@@ -85,7 +86,7 @@ inline void load(
   while(V-- > 0){
     Vertex v = add_vertex(graph);
     verts[i++] = v;
-    ar >> get(vertex_all_t(), graph, v);
+    ar >> serialization::make_nvp("vertex_property", get(vertex_all_t(), graph, v) );
   }
   while(E-- > 0){
     int u; int v;
@@ -93,7 +94,7 @@ inline void load(
     ar >> BOOST_SERIALIZATION_NVP(v);
     Edge e; bool inserted;
     tie(e,inserted) = add_edge(verts[u], verts[v], graph);
-    ar >> get(edge_all_t(), graph, e);
+    ar >> serialization::make_nvp("edge_property", get(edge_all_t(), graph, e) );
   }
 }
 
