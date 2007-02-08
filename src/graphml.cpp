@@ -10,9 +10,9 @@
 //           Tiago de Paula Peixoto
 
 #include <boost/variant.hpp>
-#include <boost/algorithm/string/replace.hpp>
 #include <expat.h>
 #include <boost/graph/graphml.hpp>
+#include <string>
 
 using namespace boost;
 
@@ -30,13 +30,17 @@ public:
         XML_SetCharacterDataHandler(parser, &on_character_data);
         XML_SetUserData(parser, this);
         char buffer[buffer_size];
+
+        bool okay = true;
         do 
         {
-            in.read(buffer, buffer_size);
-        } 
-        while (XML_Parse(parser, buffer, in.gcount(), in.gcount() == 0) && in.good());
+          in.read(buffer, buffer_size);
 
-        if (in.good()) 
+          okay = XML_Parse(parser, buffer, in.gcount(), in.gcount() == 0);
+        } 
+        while (okay && in.good());
+
+        if (!okay) 
         {
             std::stringstream s;
             s << "Parse error: " << XML_ErrorString(XML_GetErrorCode(parser))
@@ -67,7 +71,9 @@ private:
         graphml_reader* self = static_cast<graphml_reader*>(user_data);
 
         std::string name(c_name);
-        replace_first(name, "http://graphml.graphdrawing.org/xmlns|", "");
+        std::string::size_type pos = name.find('|');
+        if (pos != std::string::npos)
+          name.erase(0, pos+1);
 
         if (name == "key") 
         {
@@ -193,7 +199,9 @@ private:
         graphml_reader* self = static_cast<graphml_reader*>(user_data);
 
         std::string name(c_name);
-        replace_first(name, "http://graphml.graphdrawing.org/xmlns|", "");
+        std::string::size_type pos = name.find('|');
+        if (pos != std::string::npos)
+          name.erase(0, pos+1);
 
         if (name == "data") 
         {            
