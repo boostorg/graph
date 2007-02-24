@@ -27,6 +27,7 @@
 #include <boost/graph/erdos_renyi_generator.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/detail/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -145,5 +146,5 @@ int test_main(int argc, char* argv[])
   run_test(g, "Pairing heap", dijkstra_pairing_heap, binary_heap_distances);
   run_test(g, "Splay heap", dijkstra_splay_heap, binary_heap_distances);
 #endif
-  return 0;
+  return boost::report_errors();
 }

@@ -102,5 +102,5 @@ void test_isomorphism()
 int test_main(int, char* [])
 {
   test_isomorphism();
-  return EXIT_SUCCESS;
+  return boost::report_errors();
 }
