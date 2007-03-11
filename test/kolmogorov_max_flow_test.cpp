@@ -247,7 +247,7 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
             for(tie(ei, e_end) = out_edges(v, tSuper::m_g); ei != e_end; ++ei){
               const tVertex& other_node = target(*ei, tSuper::m_g);
               if(get_tree(other_node) != get_tree(v)){
-                if(get_tree(v) == tColorTraits::white())
+                if(get_tree(v) == tColorTraits::black())
                   BOOST_CHECK(tSuper::m_res_cap_map[*ei] == 0);
                 else
                   BOOST_CHECK(tSuper::m_res_cap_map[tSuper::m_rev_edge_map[*ei]] == 0);
@@ -267,12 +267,12 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
             tVertex current_node = v;
             tDistanceVal distance = 0;
             tColorValue color = get_tree(v);
-            tVertex terminal = (color == tColorTraits::white()) ? tSuper::m_source : tSuper::m_sink;
+            tVertex terminal = (color == tColorTraits::black()) ? tSuper::m_source : tSuper::m_sink;
             while(current_node != terminal){
               BOOST_CHECK(tSuper::has_parent(current_node));
               tEdge e = get_edge_to_parent(current_node);
               ++distance;
-              current_node = (color == tColorTraits::white())? source(e, tSuper::m_g) : target(e, tSuper::m_g);
+              current_node = (color == tColorTraits::black())? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(distance > tSuper::m_dist_map[v])
                 break;
             }
@@ -289,7 +289,7 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
             tVertex current_node = v;
             while(tSuper::has_parent(current_node)){
               tEdge e = get_edge_to_parent(current_node);
-              current_node = (color == tColorTraits::white()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
+              current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               BOOST_CHECK(tSuper::m_time_map[current_node] >= time);
             }
           }
@@ -305,7 +305,7 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
             tVertex current_node = v;
             while(tSuper::has_parent(current_node)){
               tEdge e = get_edge_to_parent(current_node);
-              current_node = (color == tColorTraits::white()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
+              current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(tSuper::m_time_map[current_node] == time)
                 BOOST_CHECK(tSuper::m_dist_map[current_node] < distance);
             }

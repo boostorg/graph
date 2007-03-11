@@ -117,7 +117,7 @@ version keeps the already found paths as follows:</P>
 sink-tree. Each vertex has a label (stored in <I>ColorMap</I>) to
 which tree it belongs and a status-flag if this vertex is active or
 passive. In the beginning of the algorithm only the source and the
-sink are colored (source==white, sink==black) and have active status.
+sink are colored (source==black, sink==white) and have active status.
 All other vertices are colored gray. The algorithm consists of three
 phases:</P>
 <P><I>grow-phase</I>: In this phase active vertices are allowed to
@@ -260,7 +260,7 @@ descriptor type.<BR><B>Default:</B> <TT>get(vertex_predecessor, g)</TT>
 <P>OUT/UTIL: <TT>vertex_color(ColorMap color)</TT> 
 </P>
 <BLOCKQUOTE>A vertex property map that stores a color for edge
-vertex. If the color of a vertex after running the algorithm is white
+vertex. If the color of a vertex after running the algorithm is black
 the vertex belongs to the source tree else it belongs to the
 sink-tree (used for minimum cuts). The map must be a model of mutable
 <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue Property
