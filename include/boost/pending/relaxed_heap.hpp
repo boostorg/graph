@@ -13,6 +13,7 @@
 #include <boost/property_map.hpp>
 #include <boost/optional.hpp>
 #include <vector>
+#include <climits> // for CHAR_BIT
 
 #ifdef BOOST_RELAXED_HEAP_DEBUG
 #  include <iostream>
