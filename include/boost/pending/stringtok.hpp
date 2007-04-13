@@ -3,6 +3,9 @@
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
+#ifndef BOOST_STRINGTOK_HPP
+#define BOOST_STRINGTOK_HPP
+
 /*
  * stringtok.hpp -- Breaks a string into tokens.  This is an example for lib3.
  *
@@ -109,3 +112,5 @@ stringtok (Container &l, std::string const &s, char const * const ws = " \t\n")
 
 
 } // namespace boost
+
+#endif // BOOST_STRINGTOK_HPP
