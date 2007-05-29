@@ -22,16 +22,13 @@ namespace boost {
     template <class T>
     struct closed_plus
     {
-      // std::abs just isn't portable :(
-      template <class X>
-      inline X my_abs(const X& x) const { return x < 0 ? -x : x; }
-
       T operator()(const T& a, const T& b) const {
         using namespace std;
-        T inf = (numeric_limits<T>::max)();
-        if (b > 0 && my_abs(inf - a) < b)
-          return inf;
-        return a + b;
+	T zero(0);
+	T result = a + b;
+	if (result < zero && a >= zero && b >= zero)
+	  return (numeric_limits<T>::max)();
+	return result;
       }
     };
     
