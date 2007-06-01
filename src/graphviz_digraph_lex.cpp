@@ -1411,7 +1411,10 @@ YY_BUFFER_STATE b;
 
 #ifndef YY_ALWAYS_INTERACTIVE
 #ifndef YY_NEVER_INTERACTIVE
+/* Avoid conflicts if isatty() has a different prototype in <unistd.h>. */
+#if !defined(__IBMCPP__)
 extern int isatty YY_PROTO(( int ));
+#endif
 #endif
 #endif
 
