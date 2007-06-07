@@ -41,9 +41,9 @@ namespace boost {
       void finish_vertex(Vertex, Graph&) {
         using std::sort;
 
-        typedef typename property_traits<DegreeMap>::value_type ds_type;
+        typedef typename property_traits<DegreeMap>::value_type DS;
 
-        typedef indirect_cmp<DegreeMap, std::less<ds_type> > Compare;
+        typedef indirect_cmp<DegreeMap, std::less<DS> > Compare;
         Compare comp(degree);
                 
         sort(Qptr->begin()+index_begin, Qptr->end(), comp);
@@ -74,7 +74,7 @@ namespace boost {
   {
 
     //create queue, visitor...don't forget namespaces!
-    typedef typename property_traits<DegreeMap>::value_type ds_type;
+    typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
     typedef typename detail::bfs_rcm_visitor<OutputIterator, queue, DegreeMap> Visitor;

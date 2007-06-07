@@ -10,11 +10,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
-// Stay out of the way of the concept checking class
-# define BidirectionalGraph BidirectionalGraph_
-#endif
-
 namespace boost {
 
 struct reverse_graph_tag { };
@@ -315,10 +310,5 @@ get_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag)
 }
 
 } // namespace boost
-
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
-// Stay out of the way of the concept checking class
-# undef BidirectionalGraph
-#endif
 
 #endif

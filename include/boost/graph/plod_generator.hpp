@@ -89,9 +89,7 @@ namespace boost {
         source = x(*gen);
       } while ((*out_degrees)[source].second == 0);
       current.first = (*out_degrees)[source].first;
-      do {
-        current.second = x(*gen);
-      } while (current.first == current.second && !allow_self_loops);
+      current.second = x(*gen);
       --degrees_left;
       if (--(*out_degrees)[source].second == 0) {
         (*out_degrees)[source] = out_degrees->back();

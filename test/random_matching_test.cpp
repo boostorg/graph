@@ -14,14 +14,14 @@
 #include <ctime>
 #include <boost/random.hpp>
 
-#include <boost/graph/maximum_cardinality_matching.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
 
 using namespace boost;
 
 typedef adjacency_list<vecS, 
-		       vecS, 
-		       undirectedS, 
-      		       property<vertex_index_t, int> >  undirected_graph;
+                       vecS, 
+                       undirectedS, 
+                       property<vertex_index_t, int> >  undirected_graph;
 
 typedef property_map<undirected_graph,vertex_index_t>::type vertex_index_map_t;
 typedef vector_property_map<graph_traits<undirected_graph>::vertex_descriptor, vertex_index_map_t > mate_t;
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
   if (argc < 3)
     {
       std::cout << "Usage: " << argv[0] << " n m" << std::endl
-		<< "Tests the checked matching on a random graph w/ n vertices and m edges" << std::endl;
+                << "Tests the checked matching on a random graph w/ n vertices and m edges" << std::endl;
       exit(-1);
     }
   
@@ -58,15 +58,15 @@ int main(int argc, char** argv)
       vertex_descriptor_t u = random_vertex(g,rand_num);
       vertex_descriptor_t v = random_vertex(g,rand_num);
       if (u != v)
-	{
-	  if (!edge(u,v,g).second)
-	    tie(tuples::ignore, success) = add_edge(u, v, g);
-	  else
-	    success = false;
+        {
+          if (!edge(u,v,g).second)
+            tie(tuples::ignore, success) = add_edge(u, v, g);
+          else
+            success = false;
 
-	  if (success)
-	    num_edges++;
-	}
+          if (success)
+            num_edges++;
+        }
     }
 
   mate_t mate(n);
@@ -80,15 +80,15 @@ int main(int argc, char** argv)
       typedef graph_traits<undirected_graph>::edge_iterator edge_iterator_t;
       edge_iterator_t ei,ei_end;
       for(tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
-	std:: cout << *ei << ", ";
+        std:: cout << *ei << ", ";
       std::cout << std::endl;
       
       std::cout << "Matching is: ";
       vertex_iterator_t vi, vi_end;
       for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-	if (mate[*vi] != graph_traits<undirected_graph>::null_vertex() &&
-	    *vi < mate[*vi])
-	  std::cout << "{" << *vi << "," << mate[*vi] << "}, ";
+        if (mate[*vi] != graph_traits<undirected_graph>::null_vertex() &&
+            *vi < mate[*vi])
+          std::cout << "{" << *vi << "," << mate[*vi] << "}, ";
       std::cout << std::endl;
     }
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 
   if (matching_size(g,mate) > matching_size(g,greedy_mate) &&
       maximum_cardinality_matching_verifier<undirected_graph,mate_t,vertex_index_map_t>::verify_matching(g,greedy_mate,get(vertex_index,g)))
-	std::cout << "TEST 3 FAILED!!!" << std::endl;
+        std::cout << "TEST 3 FAILED!!!" << std::endl;
 
   return 0;
 }

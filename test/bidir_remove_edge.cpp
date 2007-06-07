@@ -6,14 +6,14 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/cstdlib.hpp>
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/test/minimal.hpp>
 
 struct edge_prop {
   int weight;
 };
 
 int
-main()
+test_main(int, char*[])
 {
   {
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
@@ -25,10 +25,10 @@ main()
     edge_prop p = { 42 };
     edge e; bool b;
     tie(e, b) = add_edge(0, 1, p, g);
-    BOOST_TEST( num_edges(g) == 1 );
-    BOOST_TEST( g[e].weight == 42 );
+    assert( num_edges(g) == 1 );
+    assert( g[e].weight == 42 );
     remove_edge(e, g);
-    BOOST_TEST( num_edges(g) == 0 );
+    assert( num_edges(g) == 0 );
   }
   {
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS> graph;
@@ -38,9 +38,9 @@ main()
 
     edge e; bool b;
     tie(e, b) = add_edge(0, 1, g);
-    BOOST_TEST( num_edges(g) == 1 );
+    assert( num_edges(g) == 1 );
     remove_edge(e, g);
-    BOOST_TEST( num_edges(g) == 0 );
+    assert( num_edges(g) == 0 );
   }
-  return boost::report_errors();
+  return boost::exit_success;
 }

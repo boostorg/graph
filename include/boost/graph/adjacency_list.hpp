@@ -259,8 +259,7 @@ namespace boost {
 
   template <class OutEdgeListS = vecS,
             class VertexListS = vecS,
-            class DirectedS = directedS,
-            class EdgeListS = listS>
+            class DirectedS = directedS>
   struct adjacency_list_traits
   {
     typedef typename detail::is_random_access<VertexListS>::type
@@ -283,22 +282,6 @@ namespace boost {
       std::size_t, vertex_ptr>::type vertex_descriptor;
     typedef detail::edge_desc_impl<directed_category, vertex_descriptor>
       edge_descriptor;
-
-    typedef std::size_t vertices_size_type;
-
-  private:
-    // Logic to figure out the edges_size_type
-    struct dummy {};
-    typedef typename container_gen<EdgeListS, dummy>::type EdgeContainer;
-    typedef typename DirectedS::is_bidir_t BidirectionalT;
-    typedef typename DirectedS::is_directed_t DirectedT;
-    typedef typename ct_and<DirectedT, 
-      typename ct_not<BidirectionalT>::type >::type on_edge_storage;
-  public:
-    typedef typename boost::ct_if_t<on_edge_storage,
-       std::size_t, typename EdgeContainer::size_type
-    >::type edges_size_type;
-
   };
 
 } // namespace boost

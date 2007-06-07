@@ -11,7 +11,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <cassert>
 
-#include <boost/graph/maximum_cardinality_matching.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
 
 
 using namespace boost;

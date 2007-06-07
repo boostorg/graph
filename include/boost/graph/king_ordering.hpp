@@ -193,18 +193,18 @@ namespace boost {
                 ColorMap color, DegreeMap degree,
                 VertexIndexMap index_map)
   {
-    typedef typename property_traits<DegreeMap>::value_type ds_type;
+    typedef typename property_traits<DegreeMap>::value_type DS;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef iterator_property_map<typename std::vector<ds_type>::iterator, VertexIndexMap, ds_type, ds_type&> PseudoDegreeMap;
-    typedef indirect_cmp<PseudoDegreeMap, std::less<ds_type> > Compare;
+    typedef iterator_property_map<typename std::vector<DS>::iterator, VertexIndexMap, DS, DS&> PseudoDegreeMap;
+    typedef indirect_cmp<PseudoDegreeMap, std::less<DS> > Compare;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
     typedef typename detail::bfs_king_visitor<OutputIterator, queue, Compare,             
       PseudoDegreeMap, std::vector<int>, VertexIndexMap > Visitor;
     typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
-    std::vector<ds_type> pseudo_degree_vec(num_vertices(g));
+    std::vector<DS> pseudo_degree_vec(num_vertices(g));
     PseudoDegreeMap pseudo_degree(pseudo_degree_vec.begin(), index_map);
     
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;    

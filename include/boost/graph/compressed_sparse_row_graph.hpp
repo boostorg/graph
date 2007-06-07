@@ -352,7 +352,7 @@ add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-add_vertices(typename BOOST_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_CSR_GRAPH_TYPE& g) {
+add_vertices(Vertex count, BOOST_CSR_GRAPH_TYPE& g) {
   Vertex old_num_verts_plus_one = g.m_rowstart.size();
   g.m_rowstart.resize(old_num_verts_plus_one + count, EdgeIndex(0));
   return old_num_verts_plus_one - 1;

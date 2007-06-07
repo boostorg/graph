@@ -142,7 +142,6 @@ int main(int, char* [])
   std::size_t N = 5, E = 0;
   std::size_t old_N;
 
-  typedef ::Graph Graph;
   Graph g;
   typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef boost::graph_traits<Graph>::edge_descriptor Edge;
