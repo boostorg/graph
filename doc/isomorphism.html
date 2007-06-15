@@ -32,12 +32,12 @@ bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
                  const bgl_named_params&lt;P,T,R&gt;&amp; params = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
-template &lt;typename Graph1, typename Graph2, 
-	  typename IndexMapping, typename VertexInvariant,
-	  typename V1Map, typename V2Map&gt;
+template &lt;typename Graph1, typename Graph2, typename IsoMap, 
+          typename VertexInvariant1, typename VertexInvariant2, 
+          typename V1Map, typename V2Map&gt;
 bool isomorphism(const Graph1&amp; g1, const Graph2&amp; g2,
-		 IsoMap f, VertexInvariant invariant,
-		 VertexIndex1Map i1_map, VertexIndex2Map i2_map)
+		 IsoMap f, VertexInvariant1 invariant2, VertexInvariant2 invariant2,
+		 std::size_t max_invariant, VertexIndex1Map i1_map, VertexIndex2Map i2_map)
 </pre>
 
 <p>
@@ -105,7 +105,7 @@ descriptor type and the vertex index map for graph 1.<br>
 <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the first graph.
 </blockquote>
 
-IN: <tt>vertex_invariant(VertexInvariant i)</tt>
+IN: <tt>vertex_invariant1(VertexInvariant1 i)</tt>
 <blockquote>
 A mapping <i>i</i> from vertices to integers such that if there is
 some isomorphism that maps <i>v</i> onto <i>v'</i> then <i>i(v) ==
@@ -113,11 +113,36 @@ i(v')</i>. The <tt>VertexInvariant</tt> type must be a <a
 href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>
 where the first argument is a vertex descriptor, the second argument is a
 graph, and the result type is an integer. The vertex invariant must
-work with the types for both graph 1 and graph 2 and therefore may need
-to have a templated <tt>operator()</tt>.
+work with the types for graph 1.
 <br>
 <b>Default:</b> <tt>degree_vertex_invariant</tt><br>
-<b>Python</b>: Any callable Python object will suffice.
+<b>Python</b>: Unsupported parameter.
+</blockquote>
+
+IN: <tt>vertex_invariant2(VertexInvariant2 i)</tt>
+<blockquote>
+A mapping <i>i</i> from vertices to integers such that if there is
+some isomorphism that maps <i>v</i> onto <i>v'</i> then <i>i(v) ==
+i(v')</i>. The <tt>VertexInvariant</tt> type must be a <a
+href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>
+where the first argument is a vertex descriptor, the second argument is a
+graph, and the result type is an integer. The vertex invariant must
+work with the types for both graph 2.
+<br>
+<b>Default:</b> <tt>degree_vertex_invariant</tt><br>
+<b>Python</b>: Unsupported parameter.
+</blockquote>
+
+IN: <tt>vertex_max_invariant(std::size_t max_invariant)</tt>
+<blockquote>
+An upper bound on the possible values returned from either 
+vertex_invariant1 or vertex_invariant2.
+<br>
+<b>Default:</b> <tt>vertex_invariant2.max()</tt>. The default
+<tt>vertex_invariant2</tt> parameter, an instance of 
+<tt>degree_vertex_invariant</tt>, defines this function to
+return <tt>num_vertices(g2) * (num_vertices(g2)+1)</tt>.<br> 
+<b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>vertex_index1_map(VertexIndex1Map i1_map)</tt>
