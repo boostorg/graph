@@ -61,7 +61,7 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
 
   // Construct a graph and set up the dynamic_property_maps.
   graph_t graph(0);
-  dynamic_properties dp;
+  dynamic_properties dp(ignore_other_properties);
   typename property_map<graph_t, vertex_name_t>::type name =
     get(vertex_name, graph);
   dp.property(node_id,name);
@@ -224,6 +224,16 @@ int test_main(int, char*[]) {
     std::string graph_name;
     BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
                                             &graph_name)));
+  }
+  // Comments embedded in strings
+  { 
+    gs_t gs( 
+      "digraph { "
+      "a0 [ label = \"//depot/path/to/file_14#4\" ];"
+      "a1 [ label = \"//depot/path/to/file_29#9\" ];"
+      "a0 -> a1 [ color=gray ];"
+      "}");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weight_map_t())));
   }
   return 0;
 }
