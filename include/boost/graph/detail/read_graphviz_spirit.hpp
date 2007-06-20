@@ -149,7 +149,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       ID 
           = ( lexeme_d[((alpha_p | ch_p('_')) >> *(alnum_p | ch_p('_')))]
             | real_p
-            | confix_p('"', *c_escape_ch_p, '"')
+            | lexeme_d[confix_p('"', *c_escape_ch_p, '"')]
             | comment_nest_p('<', '>')
             )[ID.name = construct_<std::string>(arg1,arg2)]
           ; 
