@@ -186,9 +186,9 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
           = (ID[graph_stmt.key = arg1] >>
              ch_p('=') >>
              ID[graph_stmt.value = arg1])
-        [phoenix::bind(&definition::default_graph_prop)
+        [phoenix::bind(&definition::call_graph_prop)
          (var(*this),graph_stmt.key,graph_stmt.value)]
-        ; // Graph property -- ignore.
+        ; // Graph property.
 
       attr_stmt
           = (as_lower_d[keyword_p("graph")]
@@ -384,7 +384,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       }
     }
 
-    // default_graph_prop - Just ignore graph properties.
+    // default_graph_prop - Store as a graph property.
     void default_graph_prop(id_t const& key, id_t const& value) {
 #ifdef BOOST_GRAPH_DEBUG
       std::cout << key << " = " << value << std::endl;
@@ -443,6 +443,15 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
         actor(lhs, rhs.substr(1, rhs.size()-2));
       else
         actor(lhs,rhs);
+    }
+
+    void call_graph_prop(std::string const& lhs, std::string const& rhs) {
+      // If first and last characters of the rhs are double-quotes,
+      // remove them.
+      if (!rhs.empty() && rhs[0] == '"' && rhs[rhs.size() - 1] == '"')
+        this->default_graph_prop(lhs, rhs.substr(1, rhs.size()-2));
+      else
+        this->default_graph_prop(lhs,rhs);
     }
 
     void set_node_property(node_t const& node, id_t const& key,
