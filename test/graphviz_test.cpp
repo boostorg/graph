@@ -46,9 +46,7 @@ template <typename Directedness, typename OutEdgeList>
 bool test_graph(std::istream& dotfile, mass_map_t const& masses,
                 weight_map_t const& weights,
                 std::string const& node_id = "node_id",
-                std::string* g_name_ptr = NULL) {
-  std::string dummy;
-  if (!g_name_ptr) g_name_ptr = &dummy;
+                std::string const& g_name = std::string()) {
 
   typedef property < vertex_name_t, std::string,
             property < vertex_color_t, float > > vertex_p;  
@@ -117,6 +115,10 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
         // - compare the weight to teh result in the table
         BOOST_CHECK_CLOSE(edge_weight, ref_weight, 0.01);
       }
+    }
+    if(!g_name.empty()) {
+      std::string parsed_name = get_property(graph,graph_name);
+      BOOST_CHECK(parsed_name == g_name);
     }
 
 
@@ -216,15 +218,26 @@ int test_main(int, char*[]) {
     BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weights)));
   }
 
-  // Graph Property Test
+  // Graph Property Test 1
   {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     gs_t gs("digraph { graph [name=\"foo\"]  a  c e [mass = 6.66] }");
-    std::string graph_name;
+    std::string graph_name("foo");
     BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
-                                            &graph_name)));
+                                            graph_name)));
   }
+
+  // Graph Property Test 2
+  {
+    mass_map_t masses;
+    insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
+    gs_t gs("digraph { name=\"foo\"  a  c e [mass = 6.66] }");
+    std::string graph_name("foo");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
+                                            graph_name)));
+  }
+
   // Comments embedded in strings
   { 
     gs_t gs( 
