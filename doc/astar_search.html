@@ -443,7 +443,7 @@ The time complexity is <i>O((E + V) log V)</i>.
   is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) < d[v]</i>.
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
   is invoked if the edge is not relaxed (see above).
-<li><b><tt>vis.black_target(u, g)</tt></b>
+<li><b><tt>vis.black_target(e, g)</tt></b>
    is invoked when a vertex that is on the CLOSED list is
   "rediscovered" via a more efficient path, and is re-added to the
   OPEN list.
