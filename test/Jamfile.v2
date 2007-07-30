@@ -103,6 +103,8 @@ test-suite graph_test :
 
     [ run kolmogorov_max_flow_test.cpp ]
 
+    [ run cycle_ratio_tests.cpp ../build//boost_graph ]
+
     $(optional_tests)
     ;
 
