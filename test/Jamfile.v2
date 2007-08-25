@@ -5,6 +5,8 @@ import modules ;
 
 local optional_tests ;
 
+path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
+
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
   optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
@@ -104,6 +106,24 @@ test-suite graph_test :
     [ run kolmogorov_max_flow_test.cpp ]
 
     [ run cycle_ratio_tests.cpp ../build//boost_graph ]
+
+    [ run basic_planarity_test.cpp ]
+
+    [ run make_connected_test.cpp ]
+
+    [ run make_biconnected_planar_test.cpp ]
+
+    [ run make_maximal_planar_test.cpp ]
+
+    [ run all_planar_input_files_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+
+    [ run parallel_edges_loops_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
 
     $(optional_tests)
     ;
