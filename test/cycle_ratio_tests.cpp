@@ -180,8 +180,8 @@ void read_data(const char* file, TGraph& g)
 
 int test_main(int argc, char* argv[])
 {
-        std::string input_directory = ".";
-        if (argc > 1) input_directory = argv[1];
+        std::string input_file = "cycle_ratio_s382.90.dot";
+        if (argc > 1) input_file = argv[1];
 
 	const double epsilon = 0.00000001;
 	double min_cr, max_cr; ///Minimum and maximum cycle ratio
@@ -239,7 +239,7 @@ int test_main(int argc, char* argv[])
 	std::cout << '\n';
 	tg.clear();
 
-	/**/read_data((input_directory + "/cycle_ratio_s382.90.dot").c_str(), tg);
+	/**/read_data(input_file.c_str(), tg);
 	min_cr = minimum_cycle_ratio(tg, vim, ew1m, ew2m, get(edge_index,tg), &cc, 2);
 	std::cout << "Minimum cycle ratio is " << min_cr << "\n";
 	BOOST_CHECK(std::abs(min_cr - 0.33333333333) < epsilon );
