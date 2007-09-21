@@ -120,7 +120,7 @@ vertex identifiers. In this case, the name
 </h3>
 
 PropertyWriter is used in the <tt>write_graphviz</tt> function to
-print properties of vertex, edge or graph. There are two types of
+print vertex, edge or graph properties. There are two types of
 PropertyWriter. One is for a vertex or edge. The other is for a graph.
 Thus, users could easily extend the <tt>write_graphviz</tt> function
 by creating their own <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> only.
@@ -133,13 +133,13 @@ Each assignment should be separated either with space, with comma, or with semic
 The following functor, provided by BGL, is the example of PropertyWriter for
 vertices or edges.  It is used to print the label of each vertex or edge.
 <pre>
-  template < class Name >
+  template &lt;class Name&gt;
   class label_writer {
   public:
     label_writer(Name _name) : name(_name) {}
-    template <class VertexOrEdge>
+    template &lt;class VertexOrEdge&gt;
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
-      out << "[label=\"" << name[v] << "\"]";
+      out &lt;&lt; "[label=\"" &lt;&lt; name[v] &lt;&lt; "\"]";
     }
   private:
     Name name;
