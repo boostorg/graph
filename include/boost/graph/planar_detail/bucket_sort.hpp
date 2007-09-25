@@ -60,7 +60,7 @@ namespace boost
       return get(m_wrapper_map, get<n>(x));
     }
 
-    const static int n = N;
+    static const int n = N;
     PropertyMapWrapper m_wrapper_map;
 
   };
