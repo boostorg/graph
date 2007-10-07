@@ -44,8 +44,9 @@ namespace boost
     typedef iterator_property_map
       <std::vector<std::size_t>::iterator, EdgeIndexMap> component_map_t;
 
+	edge_size_t n_edges(num_edges(g));
     std::vector<vertex_t> articulation_points;
-    std::vector<edge_size_t> component_vector(num_edges(g));
+    std::vector<edge_size_t> component_vector(n_edges);
     component_map_t component_map(component_vector.begin(), em);
 
     biconnected_components(g, component_map, 
@@ -58,7 +59,7 @@ namespace boost
         vertex_t v(*ap);
         embedding_iterator_t pi = embedding[v].begin();
         embedding_iterator_t pi_end = embedding[v].end();
-        edge_size_t previous_component;
+        edge_size_t previous_component(n_edges + 1);
         vertex_t previous_vertex = graph_traits<Graph>::null_vertex();
 
         for(; pi != pi_end; ++pi)
