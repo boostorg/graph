@@ -465,7 +465,7 @@ namespace boost
       // to v. This will set the stage for the walkdown to efficiently
       // traverse the graph of bicomps down from v.
 
-      typedef face_vertex_iterator<both_sides>::type walkup_iterator_t;
+      typedef typename face_vertex_iterator<both_sides>::type walkup_iterator_t;
       
       out_edge_iterator_t oi, oi_end;
       for(tie(oi,oi_end) = out_edges(v,g); oi != oi_end; ++oi)
@@ -1081,7 +1081,7 @@ namespace boost
               return current_endpoint;
             }
 
-          typedef face_edge_iterator<>::type walkup_itr_t;
+          typedef typename face_edge_iterator<>::type walkup_itr_t;
           
           walkup_itr_t 
             walkup_itr(current_endpoint, face_handles, first_side());
@@ -1319,7 +1319,7 @@ namespace boost
           bicomp_root = current_vertex;
         }
 
-      typedef face_edge_iterator<>::type walkup_itr_t;
+      typedef typename face_edge_iterator<>::type walkup_itr_t;
 
       std::vector<bool> outer_face_edge_vector(num_edges(g), false);
       edge_to_bool_map_t outer_face_edge(outer_face_edge_vector.begin(), em);
