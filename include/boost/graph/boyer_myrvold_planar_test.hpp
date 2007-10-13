@@ -24,11 +24,11 @@ namespace boost
   namespace boyer_myrvold_params
   {
     
-    BOOST_PARAMETER_KEYWORD(tag, graph);
-    BOOST_PARAMETER_KEYWORD(tag, embedding);
-    BOOST_PARAMETER_KEYWORD(tag, kuratowski_subgraph);
-    BOOST_PARAMETER_KEYWORD(tag, vertex_index_map);
-    BOOST_PARAMETER_KEYWORD(tag, edge_index_map);
+    BOOST_PARAMETER_KEYWORD(tag, graph)
+    BOOST_PARAMETER_KEYWORD(tag, embedding)
+    BOOST_PARAMETER_KEYWORD(tag, kuratowski_subgraph)
+    BOOST_PARAMETER_KEYWORD(tag, vertex_index_map)
+    BOOST_PARAMETER_KEYWORD(tag, edge_index_map)
     
     typedef parameter::parameters< parameter::required<tag::graph>,
                                    tag::embedding,
@@ -39,34 +39,6 @@ namespace boost
     
     namespace core
     {
-      template <typename ArgumentPack>
-      bool boyer_myrvold_planarity_test(ArgumentPack const& args)
-      {
-        
-        typedef typename parameter::binding 
-          < ArgumentPack, 
-            tag::kuratowski_subgraph,
-            const no_kuratowski_subgraph_isolation&
-          >::type 
-          kuratowski_arg_t;
-       
-        typedef typename parameter::binding 
-          < ArgumentPack, 
-            tag::embedding,
-            const no_planar_embedding&
-          >::type 
-          embedding_arg_t;
-      
-         return dispatched_boyer_myrvold
-           (args, 
-            boost::is_same
-              <embedding_arg_t, const no_planar_embedding&>(),
-            boost::is_same
-              <kuratowski_arg_t, const no_kuratowski_subgraph_isolation&>() 
-            );
-      }
-
-
         
       template <typename ArgumentPack>
       bool dispatched_boyer_myrvold(ArgumentPack const& args, 
@@ -256,6 +228,39 @@ namespace boost
             return false;
           } 
       }
+
+
+
+
+      template <typename ArgumentPack>
+      bool boyer_myrvold_planarity_test(ArgumentPack const& args)
+      {
+        
+        typedef typename parameter::binding 
+          < ArgumentPack, 
+            tag::kuratowski_subgraph,
+            const no_kuratowski_subgraph_isolation&
+          >::type 
+          kuratowski_arg_t;
+       
+        typedef typename parameter::binding 
+          < ArgumentPack, 
+            tag::embedding,
+            const no_planar_embedding&
+          >::type 
+          embedding_arg_t;
+      
+         return dispatched_boyer_myrvold
+           (args, 
+            boost::is_same
+              <embedding_arg_t, const no_planar_embedding&>(),
+            boost::is_same
+              <kuratowski_arg_t, const no_kuratowski_subgraph_isolation&>() 
+            );
+      }
+
+
+
     } //namespace core
     
   } //namespace boyer_myrvold_params

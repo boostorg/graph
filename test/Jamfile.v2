@@ -7,6 +7,8 @@ local optional_tests ;
 
 path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
 
+path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
+
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
   optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
@@ -105,7 +107,7 @@ test-suite graph_test :
 
     [ run kolmogorov_max_flow_test.cpp ]
 
-    [ run cycle_ratio_tests.cpp ../build//boost_graph : cycle_ratio_s382.90.dot ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
 
     [ run basic_planarity_test.cpp ]
 

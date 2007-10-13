@@ -10,6 +10,7 @@
 #define __FACE_ITERATORS_HPP__
 
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/mpl/bool.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 namespace boost 
@@ -61,18 +62,16 @@ namespace boost
   
 
 
-  template <typename Graph, typename ValueType>
-  struct edge_storage;
+  template <typename Graph, bool StoreEdge>
+  struct edge_storage
+  {};
 
   template <typename Graph>
-  struct edge_storage <Graph, typename graph_traits<Graph>::edge_descriptor>
+  struct edge_storage <Graph, true>
   {
     typename graph_traits<Graph>::edge_descriptor value;
   };
 
-  template <typename Graph>
-  struct edge_storage <Graph, typename graph_traits<Graph>::vertex_descriptor>
-  {};
 
 
 
@@ -271,7 +270,7 @@ namespace boost
 
     vertex_t m_lead;
     vertex_t m_follow;
-    edge_storage<Graph, ValueType> m_edge;
+	edge_storage<Graph, boost::is_same<ValueType, edge_t>::value > m_edge;
     FaceHandlesMap m_face_handles;
   };
   
