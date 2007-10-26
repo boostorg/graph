@@ -47,3 +47,4 @@ lib boost_graph
     $(optional_reqs)
     ;
 
+boost-install boost_graph ;
