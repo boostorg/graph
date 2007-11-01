@@ -417,7 +417,6 @@ namespace detail { namespace graph {
                                            WeightMap weight_map,
                                            VertexIndexMap vertex_index)
   {
-    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename mpl::if_c<(is_same<CentralityMap, 
@@ -432,7 +431,7 @@ namespace detail { namespace graph {
     std::vector<std::vector<edge_descriptor> > incoming(V);
     std::vector<centrality_type> distance(V);
     std::vector<centrality_type> dependency(V);
-    std::vector<degree_size_type> path_count(V);
+    std::vector<unsigned long long> path_count(V);
 
     brandes_betweenness_centrality(
       g, centrality, edge_centrality_map,
@@ -453,7 +452,6 @@ namespace detail { namespace graph {
                                            EdgeCentralityMap edge_centrality_map,
                                            VertexIndexMap vertex_index)
   {
-    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename mpl::if_c<(is_same<CentralityMap, 
@@ -468,7 +466,7 @@ namespace detail { namespace graph {
     std::vector<std::vector<edge_descriptor> > incoming(V);
     std::vector<centrality_type> distance(V);
     std::vector<centrality_type> dependency(V);
-    std::vector<degree_size_type> path_count(V);
+    std::vector<unsigned long long> path_count(V);
 
     brandes_betweenness_centrality(
       g, centrality, edge_centrality_map,
