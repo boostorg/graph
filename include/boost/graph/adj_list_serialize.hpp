@@ -19,6 +19,7 @@
 #include <boost/serialization/split_free.hpp>
 
 namespace boost { 
+
 namespace serialization {
 
 // Turn off tracking for adjacency_list. It's not polymorphic, and we

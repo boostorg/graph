@@ -25,10 +25,10 @@ struct DominatorCorrectnessTestSet
 using namespace boost;
 
 typedef adjacency_list<
-  listS,
-  listS,
-  bidirectionalS,
-  property<vertex_index_t, std::size_t>, no_property> G;
+    listS,
+    listS,
+    bidirectionalS,
+    property<vertex_index_t, std::size_t>, no_property> G;
 
 int test_main(int, char*[])
 {

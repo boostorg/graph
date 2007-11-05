@@ -4,13 +4,9 @@
 <META http-equiv=Content-Type content="text/html; charset=windows-1252"><!--
   -- Copyright (c) Jeremy Siek 2000
   --
-  -- Permission to use, copy, modify, distribute and sell this software
-  -- and its documentation for any purpose is hereby granted without fee,
-  -- provided that the above copyright notice appears in all copies and
-  -- that both that copyright notice and this permission notice appear
-  -- in supporting documentation.  Silicon Graphics makes no
-  -- representations about the suitability of this software for any
-  -- purpose.  It is provided "as is" without express or implied warranty.
+  -- Distributed under the Boost Software License, Version 1.0.
+  -- (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
   -->
 <META content="MSHTML 6.00.2715.400" name=GENERATOR></HEAD>
 <BODY text=#000000 vLink=#551a8b aLink=#ff0000 link=#0000ee bgColor=#ffffff>
@@ -91,9 +87,9 @@
   manually. But there is also an algorithm sloan_starting_nodes that provides 
   usually quite good start and end vertices. Each vertex is asigned with a priority. 
   This priority is a weighted sum of the distance of the vector to the end vertex 
-  (a global criterium) and is called the current degree of vertex. This current 
+  (a global criterion) and is called the current degree of vertex. This current 
   degree basically reflects the status of the renumbering in the neighborhood 
-  of a vertex (a local criterium). Therefore the Sloan algorithm (in contrast 
+  of a vertex (a local criterion). Therefore the Sloan algorithm (in contrast 
   to-McKee) takes into account local as well as global criteria for the renumbering 
   sequence. One can play around with the relative weights, but the default values 
   proposed by Sloan (weight1/weight2=1/2) turn out to be pretty good in most cases. 
