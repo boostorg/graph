@@ -2,13 +2,9 @@
 <!--
   -- Copyright (c) Jeremy Siek 2000
   --
-  -- Permission to use, copy, modify, distribute and sell this software
-  -- and its documentation for any purpose is hereby granted without fee,
-  -- provided that the above copyright notice appears in all copies and
-  -- that both that copyright notice and this permission notice appear
-  -- in supporting documentation.  Silicon Graphics makes no
-  -- representations about the suitability of this software for any
-  -- purpose.  It is provided "as is" without express or implied warranty.
+  -- Distributed under the Boost Software License, Version 1.0.
+  -- (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>File Dependency Example</Title>
@@ -105,7 +101,7 @@ list of files and to set-up the dependencies. We use the
 <TT>adjacency_list</TT> class to represent the graph. The
 <TT>vecS</TT> selector means that a <TT>std::vector</TT> will be used
 to represent each edge-list, which provides efficient traversal. The
-<TT>directedS</TT> selector means we want a directed graph, and the
+<TT>bidirectionalS</TT> selector means we want a directed graph with access to both the edges outgoing from each vertex and the edges incoming to each vertex, and the
 <TT>color_property</TT> attaches a color property to each vertex of the
 graph. The color property will be used in several of the algorithms in
 the following sections.
@@ -140,9 +136,8 @@ the following sections.
   };
 
   using namespace boost;
-  typedef adjacency_list&lt;vecS, vecS, directedS, 
-      property&lt;vertex_color_t, default_color_type&gt;,
-      property&lt;edge_weight_t, int&gt;
+  typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
+      property&lt;vertex_color_t, default_color_type&gt;
     &gt; Graph;
   Graph g(used_by, used_by + sizeof(used_by) / sizeof(Edge), N);
   typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
@@ -208,86 +203,42 @@ earliest time that a file can be built assuming that an unlimited
 number of files can be built at the same time? The main criteria for
 when a file can be built is that all of the files it depends on must
 already be built. To simplify things for this example, we'll assume
-that each file takes 1 time unit to build (even header files). The
+that each file takes 1 time unit to build (even header files). For
+parallel compilation, we can build all of the files corresponding to
+vertices with no dependencies, e.g., those that have
+an <i>in-degree</i> of 0, in the first step. For all other files, the
 main observation for determining the ``time slot'' for a file is that
 the time slot must be one more than the maximum time-slot of the files
 it depends on.
 
-<P>
-This idea of calculating a value based on the previously computed
-values of neighboring vertices is the same idea behind Dijkstra's
-single-source shortest paths algorithm (see <a
-href="./dijkstra_shortest_paths.html"><tt>dijkstra_shortest_paths()</tt></a>). The
-main difference between this situation and a shortest-path algorithm
-is that we want to use the maximum of the neighbors' values instead of
-the minimum.  In addition, we do not have a single source
-vertex. Instead we will want to treat all vertices with in-degree of
-zero as sources (i.e., vertices with no edges coming into them). So we
-use Dijkstra's algorithm with several extra parameters instead
-of relying on the defaults.
-
-<P>
-To use <TT>dijkstra_shortest_paths()</TT>, we must first set up the vertex
-and edge properties that will be used in the algorithm.  We will need
-a time property (replacing the distance property of Dijkstra's
-algorithm) and an edge weight property. We will use a
-<TT>std::vector</TT> to store the time. The weight property has already
-been attached to the graph via a plug-in so here we just declare an
-map for the internal weight property.
+<P>We start be creating a vector <code>time</code> that will store the
+  time step at which each file can be built. We initialize every value
+  with time step zero.</p>
 
 <P>
 <PRE>
   std::vector&lt;int&gt; time(N, 0);
-  typedef std::vector&lt;int&gt;::iterator Time;
-  using boost::edge_weight_t;
-  typedef boost::property_map&lt;Graph, edge_weight_t&gt;::type Weight;
-  Weight weight = get(edge_weight, g);
 </PRE>
 
-<P>
-The next step is to identify the vertices with zero in-degree which
-will be our ``source'' vertices from which to start the shortest path
-searches. The in-degrees can be calculated with the following loop.
+<p>Now, we want to visit the vertices against in topological order,
+  from those files that need to be built first until those that need
+  to be built last. However, instead of printing out the order
+  immediately, we will compute the time step in which each file should
+  be built based on the time steps of the files it depends on. We
+  only need to consider those files whose in-degree is greater than
+  zero.</p>
 
-<P>
-<PRE>
-  std::vector&lt;int&gt; in_degree(N, 0);
-  Graph::vertex_iterator i, iend;
-  Graph::out_edge_iterator j, jend;
-  for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
-    for (boost::tie(j, jend) = out_edges(*i, g); j != jend; ++j)
-      in_degree[target(*j, g)] += 1;
-</PRE>
-
-<P>
-Next we need to define comparison of the &quot;cost&quot;. In this
-case we want each file to have a time stamp greater than any of its
-predecessors.  Therefore we define comparison with the
-<TT>std::greater&lt;int&gt;</TT> function object.  We also need to
-tell the algorithm that we want to use addition to combine time
-values, so we use <TT>std::plus&lt;int&gt;</TT>.
-
-<P>
-<PRE>
-  std::greater&lt;int&gt; compare;
-  std::plus&lt;int&gt; combine;
-</PRE>
-
-<P>
-We are now ready to call <TT>uniform_cost_search()</TT>. We just
-loop through all the vertices in the graph, and invoke the algorithm
-if the vertex has zero in-degree.
-
-<P>
-<PRE>
-  for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
-    if (in_degree[*i] == 0)
-      boost::dijkstra_shortest_paths(g, *i, 
-				     distance_map(&amp;time[0]). 
-				     weight_map(weight). 
-				     distance_compare(compare).
-				     distance_combine(combine));
-</PRE>
+<pre>
+    for (i = make_order.begin(); i != make_order.end(); ++i) {    
+      if (in_degree (*i, g) &gt; 0) {
+        Graph::in_edge_iterator j, j_end;
+        int maxdist = 0;
+        for (tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
+          maxdist = std::max(time[source(*j, g)], maxdist);
+        time[*i]=maxdist+1;
+      }
+    }
+</pre>
 
 <P>
 Last, we output the time-slot that we've calculated for each vertex.

@@ -61,7 +61,7 @@
 
 
   Note: it would be nice to merge some of the undirected and
-  bidirectional code... it is aweful similar.
+  bidirectional code... it is awful similar.
  */
 
 

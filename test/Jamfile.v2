@@ -1,9 +1,19 @@
+# Copyright (c) 2002 Trustees of Indiana University
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
 
 import modules ;
 
 local optional_tests ;
+
+path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
+
+path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
@@ -103,7 +113,25 @@ test-suite graph_test :
 
     [ run kolmogorov_max_flow_test.cpp ]
 
-    [ run cycle_ratio_tests.cpp ../build//boost_graph ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
+
+    [ run basic_planarity_test.cpp ]
+
+    [ run make_connected_test.cpp ]
+
+    [ run make_biconnected_planar_test.cpp ]
+
+    [ run make_maximal_planar_test.cpp ]
+
+    [ run all_planar_input_files_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+
+    [ run parallel_edges_loops_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
 
     $(optional_tests)
     ;

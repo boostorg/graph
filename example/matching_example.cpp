@@ -70,7 +70,8 @@ int main()
   // matching returned is not actually a maximum cardinality matching
   // in the graph.
 
-  assert(checked_edmonds_maximum_cardinality_matching(g, &mate[0]));
+  bool success = checked_edmonds_maximum_cardinality_matching(g, &mate[0]);
+  assert(success);
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
@@ -96,7 +97,8 @@ int main()
   add_edge(12,13,g);
   add_edge(16,17,g);
 
-  assert(checked_edmonds_maximum_cardinality_matching(g, &mate[0]));
+  success = checked_edmonds_maximum_cardinality_matching(g, &mate[0]);
+  assert(success);
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
