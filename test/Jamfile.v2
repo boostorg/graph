@@ -119,7 +119,7 @@ test-suite graph_test :
 
     [ run make_connected_test.cpp ]
 
-    [ run make_biconnected_planar_test.cpp ]
+    [ run make_bicon_planar_test.cpp ]
 
     [ run make_maximal_planar_test.cpp ]
 
