@@ -4,21 +4,17 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-
-#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/vector_as_graph.hpp>
-#include <boost/graph/transitive_closure.hpp>
-
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include <boost/graph/vector_as_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/graph_utility.hpp>
-
-#include <cstdlib>
-#include <ctime>
+#include <boost/graph/transitive_closure.hpp>
 #include <boost/progress.hpp>
+
 using namespace std;
 using namespace boost;
 
