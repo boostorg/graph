@@ -9,42 +9,47 @@ project boost/graph
     : source-location ../src
     ;
 
-if [ modules.peek : GRAPHVIZ_PARSER ]
+local optional_sources ;
+local optional_reqs ;
+
+if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
-    lib boost_graph
-        :
-        graphviz_graph_lex
-        graphviz_digraph_lex
-        graphviz_graph_parser
-        graphviz_digraph_parser
-        : <define>YY_NO_UNISTD_H
-        ;
+  local EXPAT_INCLUDE = [ modules.peek : EXPAT_INCLUDE ] ;
+  local EXPAT_LIBPATH = [ modules.peek : EXPAT_LIBPATH ] ;
 
-    obj graphviz_graph_lex : graphviz_lex.ll
-        : <flex.prefix>bgl_undir_ <define>GRAPHVIZ_DIRECTED=0
-          <implicit-dependency>graphviz_graph_parser ;
-    obj graphviz_graph_parser : graphviz_parser.yy
-        : <bison.prefix>bgl_undir_ 	<define>GRAPHVIZ_DIRECTED=0 ;
+  if --debug-configuration in [ modules.peek : ARGV ]
+  {
+    ECHO "Expat include directory: $(EXPAT_INCLUDE)" ;
+    ECHO "Expat library directory: $(EXPAT_LIBPATH)" ;
+  }
 
-
-    obj graphviz_digraph_lex : graphviz_lex.ll
-        : <flex.prefix>bgl_dir_ <define>GRAPHVIZ_DIRECTED=1
-          <implicit-dependency>graphviz_digraph_parser ;
-    obj graphviz_digraph_parser : graphviz_parser.yy
-        : <bison.prefix>bgl_dir_ 	<define>GRAPHVIZ_DIRECTED=1 ;
+  optional_sources += graphml.cpp ;
+  optional_reqs += <include>$(EXPAT_INCLUDE) 
+                   <library-path>$(EXPAT_LIBPATH) 
+                   <find-static-library>expat
+                ;
 }
 else
 {
-    lib boost_graph
-        :
-        read_graphviz_spirit.cpp
-        :
-        <define>BOOST_GRAPH_NO_LIB=1
-        <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
-        # # Intel compiler ICEs if we turn optimization on
-        <toolset>intel-vc71-win-9.1:<optimization>off
-        # Without these flags, MSVC 7.1 and 8.0 crash
-        <toolset>msvc-7.1:<cxxflags>-GR-
-        <toolset>msvc-8.0:<cxxflags>-GR-
-        ;
+  ECHO "warning: Graph library does not contain optional GraphML reader." ;
+  ECHO "note: to enable GraphML support, set EXPAT_INCLUDE and EXPAT_LIBPATH to the" ;
+  ECHO "note: directories containing the Expat headers and libraries, respectively." ;
 }
+
+lib boost_graph
+    :
+    read_graphviz_spirit.cpp
+    $(optional_sources)
+    :
+    <define>BOOST_GRAPH_NO_LIB=1
+    <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
+    # # Intel compiler ICEs if we turn optimization on
+    <toolset>intel-vc71-win-9.1:<optimization>off
+    # Without these flags, MSVC 7.1 and 8.0 crash
+    <toolset>msvc-7.1:<cxxflags>-GR-
+    <toolset>msvc-8.0:<cxxflags>-GR-
+    # Requirements for any "optional" sources
+    $(optional_reqs)
+    ;
+
+boost-install boost_graph ;

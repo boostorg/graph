@@ -192,9 +192,13 @@ The type for the edge descriptors associated with the
 
 <hr>
 
-<tt>graph_traits&lt;filtered_graph&gt;::vertex_iterator</tt>
+<tt>graph_traits&lt;filtered_graph&gt;::vertex_iterator</tt><br>
 <br><br>
-The type for the iterators returned by <TT>vertices()</TT>.
+The type for the iterators returned by <TT>vertices()</TT>,
+which is:
+<pre>
+<a href="../../iterator/doc/filter_iterator.html">filter_iterator</a>&lt;VertexPredicate, graph_traits&lt;Graph&gt;::vertex_iterator&gt;
+</pre>
 The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 
 
@@ -202,7 +206,10 @@ The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">M
 
 <tt>graph_traits&lt;filtered_graph&gt;::edge_iterator</tt>
 <br><br>
-The type for the iterators returned by <TT>edges()</TT>.
+The type for the iterators returned by <TT>edges()</TT>, which is:
+<pre>
+<a href="../../iterator/doc/filter_iterator.html">filter_iterator</a>&lt;EdgePredicate, graph_traits&lt;Graph&gt;::edge_iterator&gt;
+</pre>
 The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 
 <hr>
@@ -210,7 +217,10 @@ The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">M
 
 <tt>graph_traits&lt;filtered_graph&gt;::out_edge_iterator</tt>
 <br><br>
-The type for the iterators returned by <TT>out_edges()</TT>.
+The type for the iterators returned by <TT>out_edges()</TT>, which is:
+<pre>
+<a href="../../iterator/doc/filter_iterator.html">filter_iterator</a>&lt;EdgePredicate, graph_traits&lt;Graph&gt;::out_edge_iterator&gt;
+</pre>
 The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>.
 
 
@@ -219,6 +229,7 @@ The iterator is a model of <a href="../../utility/MultiPassInputIterator.html">M
 <tt>graph_traits&lt;filtered_graph&gt;::adjacency_iterator</tt>
 <br><br>
 The type for the iterators returned by <TT>adjacent_vertices()</TT>.
+
 The <tt>adjacency_iterator</tt> models the same iterator concept as
 <tt>out_edge_iterator</tt>.
 

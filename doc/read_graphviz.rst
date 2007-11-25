@@ -121,6 +121,53 @@ type is passed to ``read_graph`` but the textual representation of the
 graph is undirected, as indicated by the ``graph`` keyword in the DOT
 language.
 
+Example
+-------
+The following example illustrates a relatively simple use of the
+GraphViz reader to populate an ``adjacency_list`` graph
+
+::
+
+  // Vertex properties
+  typedef property < vertex_name_t, std::string,
+            property < vertex_color_t, float > > vertex_p;  
+  // Edge properties
+  typedef property < edge_weight_t, double > edge_p;
+  // Graph properties
+  typedef property < graph_name_t, std::string > graph_p;
+  // adjacency_list-based type
+  typedef adjacency_list < vecS, vecS, directedS,
+    vertex_p, edge_p, graph_p > graph_t;
+
+  // Construct an empty graph and prepare the dynamic_property_maps.
+  graph_t graph(0);
+  dynamic_properties dp;
+
+  property_map<graph_t, vertex_name_t>::type name =
+    get(vertex_name, graph);
+  dp.property("node_id",name);
+
+  property_map<graph_t, vertex_color_t>::type mass =
+    get(vertex_color, graph);
+  dp.property("mass",mass);
+
+  property_map<graph_t, edge_weight_t>::type weight =
+    get(edge_weight, graph);
+  dp.property("weight",weight);
+
+  // Use ref_property_map to turn a graph property into a property map
+  boost::ref_property_map<graph_t*,std::string> 
+    gname(get_property(graph,graph_name));
+  dp.property("name",gname);
+
+  // Sample graph as an std::istream;
+  std::istringstream
+    gvgraph("digraph { graph [name=\"graphname\"]  a  c e [mass = 6.66] }");
+
+  bool status = read_graphviz(gvgraph,graph,dp,"node_id");
+
+
+
 
 Building the GraphViz Readers
 -----------------------------
@@ -177,16 +224,12 @@ write_graphviz_
 Future Work
 -----------
 
- - Currently the parser relies upon lowercase language keywords
-   (i.e. "graph", "edge", etc.).  The DOT Language specifies that they
-   are case-insensitive.  This change should be easy given the proper
-   understanding of Spirit and some free time (hint hint!)
-
  - The parser currently does not handle continuation lines as defined
    in the DOT Language.  Some more sophisticated parsing of
    identifier(so-called "ID" in the source) is required to support this.
 
- 
+ - Support for optional recognition of subgraphs as distinct entities.
+    
 
 .. _GraphViz: http://graphviz.org/
 .. _`Mutable Graph`: MutableGraph.html

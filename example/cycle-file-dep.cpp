@@ -39,11 +39,11 @@ has_cycle_dfs(const file_dep_graph & g, vertex_t u,
   color[u] = gray_color;
   graph_traits < file_dep_graph >::adjacency_iterator vi, vi_end;
   for (tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
-    if (color[*vi] == white_color)
+    if (color[*vi] == white_color) {
       if (has_cycle_dfs(g, *vi, color))
         return true;            // cycle detected, return immediately
-      else if (color[*vi] == gray_color)        // *vi is an ancestor!
-        return true;
+    } else if (color[*vi] == gray_color)        // *vi is an ancestor!
+      return true;
   color[u] = black_color;
   return false;
 }

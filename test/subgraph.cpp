@@ -72,8 +72,8 @@ int test_main(int argc, char* argv[])
 
     // compute induced edges
     BGL_FORALL_EDGES(e, g, subgraph_t)
-      if (contains(sub_global_map, source(e, g))
-          && contains(sub_global_map, target(e, g)))
+      if (container_contains(sub_global_map, source(e, g))
+          && container_contains(sub_global_map, target(e, g)))
         sub_edge_set.push_back(std::make_pair(global_sub_map[source(e, g)],
                                               global_sub_map[target(e, g)]));
 

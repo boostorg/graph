@@ -9,6 +9,17 @@
 
 import modules ;
 
+local optional_tests ;
+
+path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
+
+path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
+
+if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
+{
+  optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
+}
+
 test-suite graph_test : 
 
     [ run transitive_closure_test.cpp ]
@@ -56,7 +67,6 @@ test-suite graph_test :
 
     [ compile graph_concepts.cpp ]
 
-
     [ run graphviz_test.cpp 
             /boost/test//boost_test_exec_monitor/<link>static 
             ../build//boost_graph ]
@@ -99,6 +109,31 @@ test-suite graph_test :
 
     [ run matching_test.cpp ]
 
+    [ run max_flow_test.cpp ]
+
+    [ run kolmogorov_max_flow_test.cpp ]
+
+    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
+
+    [ run basic_planarity_test.cpp ]
+
+    [ run make_connected_test.cpp ]
+
+    [ run make_bicon_planar_test.cpp ]
+
+    [ run make_maximal_planar_test.cpp ]
+
+    [ run all_planar_input_files_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+
+    [ run parallel_edges_loops_test.cpp 
+        ../../filesystem/build 
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+
+    $(optional_tests)
     ;
 
 # Run SDB tests only when -sSDB= is set.

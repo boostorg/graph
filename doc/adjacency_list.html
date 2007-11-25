@@ -354,7 +354,7 @@ align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
 <br>
 and
 <br>
-<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::vertex_descriptor</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed, EdgeList&gt;::vertex_descriptor</tt>
 <br><br>
 The type for the vertex descriptors associated with the
 <TT>adjacency_list</TT>.
@@ -363,7 +363,7 @@ The type for the vertex descriptors associated with the
 
 <tt>graph_traits&lt;adjacency_list&gt;::edge_descriptor</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::edge_descriptor</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed, EdgeList&gt;::edge_descriptor</tt>
 <br><br>
 The type for the edge descriptors associated with the
 <TT>adjacency_list</TT>.
@@ -424,7 +424,7 @@ as <tt>out_edge_iterator</tt>.
 
 <tt>graph_traits&lt;adjacency_list&gt;::directed_category</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::directed_category</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed, EdgeList&gt;::directed_category</tt>
 <br><br>
 Provides information about whether the graph is
 directed (<TT>directed_tag</TT>) or undirected
@@ -434,7 +434,7 @@ directed (<TT>directed_tag</TT>) or undirected
 
 <tt>graph_traits&lt;adjacency_list&gt;::edge_parallel_category</tt><br>
 and<br>
-<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed&gt;::edge_parallel_category</tt>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed, EdgeList&gt;::edge_parallel_category</tt>
 <br><br>
 This describes whether the graph class allows the insertion of
 parallel edges (edges with the same source and target). The two tags
@@ -445,13 +445,17 @@ parallel edges while the others allow parallel edges.
 
 <hr>
 
-<tt>graph_traits&lt;adjacency_list&gt;::vertices_size_type</tt>
+<tt>graph_traits&lt;adjacency_list&gt;::vertices_size_type</tt><br>
+and<br>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed_list, EdgeList&gt;::vertices_size_type</tt><br>
 <br><br>
 The type used for dealing with the number of vertices in the graph.
 
 <hr>
 
-<tt>graph_traits&lt;adjacency_list&gt;::edge_size_type</tt>
+<tt>graph_traits&lt;adjacency_list&gt;::edge_size_type</tt><br>
+and<br>
+<tt>adjacency_list_traits&lt;OutEdgeList, VertexList, Directed_list, EdgeList&gt;::edge_size_type</tt><br>
 <br><br>
 The type used for dealing with the number of edges in the graph.
 
