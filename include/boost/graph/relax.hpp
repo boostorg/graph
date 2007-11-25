@@ -24,11 +24,11 @@ namespace boost {
     {
       T operator()(const T& a, const T& b) const {
         using namespace std;
-	T zero(0);
-	T result = a + b;
-	if (result < zero && a >= zero && b >= zero)
-	  return (numeric_limits<T>::max)();
-	return result;
+       T zero(0);
+       T result = a + b;
+       if (result < zero && a >= zero && b >= zero)
+         return (numeric_limits<T>::max)();
+       return result;
       }
     };
     

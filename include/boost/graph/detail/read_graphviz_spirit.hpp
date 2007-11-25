@@ -149,7 +149,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       ID 
           = ( lexeme_d[((alpha_p | ch_p('_')) >> *(alnum_p | ch_p('_')))]
             | real_p
-            | confix_p('"', *c_escape_ch_p, '"')
+            | lexeme_d[confix_p('"', *c_escape_ch_p, '"')]
             | comment_nest_p('<', '>')
             )[ID.name = construct_<std::string>(arg1,arg2)]
           ; 
@@ -161,7 +161,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
                     >> !( ch_p('=')
                           >> ID[a_list.value = arg1])
                           [phoenix::bind(&definition::call_prop_actor)
-                          (var(*this),a_list.key,a_list.value)],ch_p(','));
+                          (var(*this),a_list.key,a_list.value)],!ch_p(','));
       
       attr_list = +(ch_p('[') >> !a_list >> ch_p(']'));
 
@@ -181,6 +181,14 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       node_id
           = ( ID[node_id.name = arg1] >> (!port) )
              [phoenix::bind(&definition::memoize_node)(var(*this))];
+
+      graph_stmt
+          = (ID[graph_stmt.key = arg1] >>
+             ch_p('=') >>
+             ID[graph_stmt.value = arg1])
+        [phoenix::bind(&definition::call_graph_prop)
+         (var(*this),graph_stmt.key,graph_stmt.value)]
+        ; // Graph property.
 
       attr_stmt
           = (as_lower_d[keyword_p("graph")]
@@ -236,7 +244,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
 
 
       stmt
-          = (ID >> ch_p('=') >> ID) // Graph property -- ignore.
+          = graph_stmt 
           | attr_stmt
           | data_stmt
           ;
@@ -331,7 +339,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       edge_stack_t& edge_stack = data_stmt.edge_stack();
       for(nodes_t::iterator i = sources.begin(); i != sources.end(); ++i) {
         for(nodes_t::iterator j = dests.begin(); j != dests.end(); ++j) {
-          // Create the edge and and push onto the edge stack.
+          // Create the edge and push onto the edge stack.
 #ifdef BOOST_GRAPH_DEBUG
           std::cout << "Edge " << *i << " to " << *j << std::endl;
 #endif // BOOST_GRAPH_DEBUG
@@ -376,8 +384,13 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       }
     }
 
-    // default_graph_prop - Just ignore graph properties.
-    void default_graph_prop(id_t const&, id_t const&) { }
+    // default_graph_prop - Store as a graph property.
+    void default_graph_prop(id_t const& key, id_t const& value) {
+#ifdef BOOST_GRAPH_DEBUG
+      std::cout << key << " = " << value << std::endl;
+#endif // BOOST_GRAPH_DEBUG
+        self.graph_.set_graph_property(key, value);
+    }
 
     // default_node_prop - declare default properties for any future new nodes
     void default_node_prop(id_t const& key, id_t const& value) {
@@ -432,6 +445,15 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
         actor(lhs,rhs);
     }
 
+    void call_graph_prop(std::string const& lhs, std::string const& rhs) {
+      // If first and last characters of the rhs are double-quotes,
+      // remove them.
+      if (!rhs.empty() && rhs[0] == '"' && rhs[rhs.size() - 1] == '"')
+        this->default_graph_prop(lhs, rhs.substr(1, rhs.size()-2));
+      else
+        this->default_graph_prop(lhs,rhs);
+    }
+
     void set_node_property(node_t const& node, id_t const& key,
                            id_t const& value) {
 
@@ -454,7 +476,11 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
       self.graph_.set_edge_property(key, edge, value);
 #ifdef BOOST_GRAPH_DEBUG
       // Tell the world
-      std::cout << "(" << edge.first << "," << edge.second << "): "
+#if 0 // RG - edge representation changed, 
+            std::cout << "(" << edge.first << "," << edge.second << "): "
+#else
+            std::cout << "an edge: " 
+#endif // 0
                 << key << " = " << value << std::endl;
 #endif // BOOST_GRAPH_DEBUG
     }
@@ -476,6 +502,7 @@ struct dot_grammar : public boost::spirit::grammar<dot_grammar> {
     rule_t port_angle;
     rule_t port;
     boost::spirit::rule<ScannerT,node_id_closure::context_t> node_id;
+    boost::spirit::rule<ScannerT,property_closure::context_t> graph_stmt;
     rule_t attr_stmt;
     boost::spirit::rule<ScannerT,data_stmt_closure::context_t> data_stmt;
     boost::spirit::rule<ScannerT,subgraph_closure::context_t> subgraph;
@@ -527,9 +554,9 @@ struct dot_skipper : public boost::spirit::grammar<dot_skipper>
           using namespace boost::spirit;
           using namespace phoenix;
           // comment forms
-          skip = space_p
+          skip = eol_p >> comment_p("#")  
+               | space_p
                | comment_p("//")                 
-               | comment_p("#")  
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1400)
                | confix_p(str_p("/*") ,*anychar_p, str_p("*/"))
 #else

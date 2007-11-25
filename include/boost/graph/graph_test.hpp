@@ -85,7 +85,7 @@ namespace boost {
         for (; p.first != p.second; ++p.first) {
           edge_t e = *p.first;
           BOOST_CHECK(source(e, g) == u);
-          BOOST_CHECK(contains(adj, target(e, g)) == true);
+          BOOST_CHECK(container_contains(adj, target(e, g)) == true);
         }
       }
     }
@@ -114,7 +114,7 @@ namespace boost {
         for (; p.first != p.second; ++p.first) {
           edge_t e = *p.first;
           BOOST_CHECK(target(e, g) == v);
-          BOOST_CHECK(contains(inv_adj, source(e, g)) == true);
+          BOOST_CHECK(container_contains(inv_adj, source(e, g)) == true);
         }
       }
     }
@@ -140,7 +140,7 @@ namespace boost {
         BOOST_CHECK(deg_size_t(std::distance(p.first, p.second)) == adj.size());
         for (; p.first != p.second; ++p.first) {
           vertex_t v = *p.first;
-          BOOST_CHECK(contains(adj, v) == true);
+          BOOST_CHECK(container_contains(adj, v) == true);
         }
       }
     }      
@@ -155,7 +155,7 @@ namespace boost {
       BOOST_CHECK(n == num_vertices(g));
       for (; p.first != p.second; ++p.first) {
         vertex_t v = *p.first;
-        BOOST_CHECK(contains(vertex_set, v) == true);
+        BOOST_CHECK(container_contains(vertex_set, v) == true);
       }
     }
 
@@ -172,8 +172,8 @@ namespace boost {
       for (; p.first != p.second; ++p.first) {
         edge_t e = *p.first;
         BOOST_CHECK(any_if(edge_set, connects(source(e, g), target(e, g), g)));
-        BOOST_CHECK(contains(vertex_set, source(e, g)) == true);
-        BOOST_CHECK(contains(vertex_set, target(e, g)) == true);
+        BOOST_CHECK(container_contains(vertex_set, source(e, g)) == true);
+        BOOST_CHECK(container_contains(vertex_set, target(e, g)) == true);
       }
     }
 
@@ -232,7 +232,7 @@ namespace boost {
       IsoMap iso_map(iso_vec.begin(), get(vertex_index, g));
       copy_graph(g, cpy, orig_to_copy(iso_map));
 
-      bool parallel_edge_exists = contains(adjacent_vertices(u, g), v);
+      bool parallel_edge_exists = container_contains(adjacent_vertices(u, g), v);
       
       std::pair<edge_t, bool> p = add_edge(u, v, g);
       edge_t e = p.first;
@@ -249,7 +249,7 @@ namespace boost {
       if (p.second == true) { // edge added
         BOOST_CHECK(num_edges(g) == num_edges(cpy) + 1);
         
-        BOOST_CHECK(contains(out_edges(u, g), e) == true);
+        BOOST_CHECK(container_contains(out_edges(u, g), e) == true);
         
         BOOST_CHECK((verify_isomorphism
                     (make_filtered_graph(g, ignore_edge(e)), cpy, iso_map)));

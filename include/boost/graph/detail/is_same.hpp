@@ -9,7 +9,7 @@
 #ifndef BOOST_GRAPH_DETAIL_IS_SAME_HPP
 #define BOOST_GRAPH_DETAIL_IS_SAME_HPP
 
-#include <boost/pending/ct_if.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace boost {
   struct false_tag;
@@ -30,7 +30,7 @@ namespace boost {
     template <class U, class V>
     struct is_same {
       enum { Unum = U::num, Vnum = V::num };
-      typedef typename boost::ct_if< (Unum == Vnum),
+      typedef typename mpl::if_c< (Unum == Vnum),
                boost::true_tag, boost::false_tag>::type is_same_tag;
     };
 #endif

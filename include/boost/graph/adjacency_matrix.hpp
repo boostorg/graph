@@ -19,7 +19,7 @@
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
-#include <boost/pending/ct_if.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/edge.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
@@ -441,7 +441,7 @@ namespace boost {
     BOOST_STATIC_ASSERT(type_traits::ice_not<(is_same<Directed, bidirectionalS>::value)>::value);
 #endif
 
-    typedef typename boost::ct_if_t<is_directed,
+    typedef typename mpl::if_<is_directed,
                                     bidirectional_tag, undirected_tag>::type
       directed_category;
     
@@ -497,10 +497,10 @@ namespace boost {
     
   public:
     // The types that are actually bundled
-    typedef typename ct_if<(is_same<maybe_vertex_bundled, no_property>::value),
+    typedef typename mpl::if_c<(is_same<maybe_vertex_bundled, no_property>::value),
                            no_vertex_bundle,
                            maybe_vertex_bundled>::type vertex_bundled;
-    typedef typename ct_if<(is_same<maybe_edge_bundled, no_property>::value),
+    typedef typename mpl::if_c<(is_same<maybe_edge_bundled, no_property>::value),
                            no_edge_bundle,
                            maybe_edge_bundled>::type edge_bundled;
 #else
@@ -511,7 +511,7 @@ namespace boost {
 #endif
 
   public: // should be private
-    typedef typename ct_if_t<typename has_property<edge_property_type>::type,
+    typedef typename mpl::if_<typename has_property<edge_property_type>::type,
       std::pair<bool, edge_property_type>, char>::type StoredEdge;
 #if (defined(BOOST_MSVC) && BOOST_MSVC <= 1300) || defined(BOOST_NO_STD_ALLOCATOR)
     typedef std::vector<StoredEdge> Matrix;
@@ -545,7 +545,7 @@ namespace boost {
         vertex_descriptor, MatrixIter, size_type, edge_descriptor
     > UnDirOutEdgeIter;
 
-    typedef typename ct_if_t<
+    typedef typename mpl::if_<
         typename Directed::is_directed_t, DirOutEdgeIter, UnDirOutEdgeIter
     >::type unfiltered_out_edge_iter;
 
@@ -557,7 +557,7 @@ namespace boost {
         vertex_descriptor, MatrixIter, size_type, edge_descriptor
     > UnDirInEdgeIter;
 
-    typedef typename ct_if_t<
+    typedef typename mpl::if_<
         typename Directed::is_directed_t, DirInEdgeIter, UnDirInEdgeIter
     >::type unfiltered_in_edge_iter;
     

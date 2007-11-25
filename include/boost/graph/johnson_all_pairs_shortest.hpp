@@ -27,7 +27,6 @@
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/pending/ct_if.hpp>
 #include <boost/type_traits/same_traits.hpp>
 
 namespace boost {

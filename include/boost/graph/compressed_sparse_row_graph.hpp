@@ -739,7 +739,7 @@ private:
   typedef graph_traits<BOOST_CSR_GRAPH_TYPE> traits;
   typedef VertexProperty vertex_bundled;
   typedef EdgeProperty edge_bundled;
-  typedef typename ct_if<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
+  typedef typename mpl::if_c<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
                      typename traits::vertex_descriptor,
                      typename traits::edge_descriptor>::type
     descriptor;
