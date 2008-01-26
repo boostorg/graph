@@ -8,13 +8,13 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <string>
-#include <boost/graph/edmunds_karp_max_flow.hpp>
+#include <boost/graph/edmonds_karp_max_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/graph_utility.hpp>
 
 // Use a DIMACS network flow file as stdin.
-// edmunds-karp-eg < max_flow.dat
+// edmonds-karp-eg < max_flow.dat
 //
 // Sample output:
 //  c  The total flow:
@@ -68,10 +68,10 @@ main()
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   std::vector<default_color_type> color(num_vertices(g));
   std::vector<Traits::edge_descriptor> pred(num_vertices(g));
-  long flow = edmunds_karp_max_flow
+  long flow = edmonds_karp_max_flow
     (g, s, t, capacity, residual_capacity, rev, &color[0], &pred[0]);
 #else
-  long flow = edmunds_karp_max_flow(g, s, t);
+  long flow = edmonds_karp_max_flow(g, s, t);
 #endif
 
   std::cout << "c  The total flow:" << std::endl;
