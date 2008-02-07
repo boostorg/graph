@@ -347,6 +347,7 @@ inline Vertex
 add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
   Vertex old_num_verts_plus_one = g.m_rowstart.size();
   g.m_rowstart.push_back(EdgeIndex(0));
+  g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }
 
@@ -355,6 +356,7 @@ inline Vertex
 add_vertices(typename BOOST_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_CSR_GRAPH_TYPE& g) {
   Vertex old_num_verts_plus_one = g.m_rowstart.size();
   g.m_rowstart.resize(old_num_verts_plus_one + count, EdgeIndex(0));
+  g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }
 

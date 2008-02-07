@@ -49,6 +49,7 @@ protected:
   // Initialize with n default-constructed property values
   indexed_vertex_properties(std::size_t n) : m_vertex_properties(n) { }
 
+public:
   // Resize the properties vector
   void resize(std::size_t n)
   {
@@ -92,6 +93,8 @@ class indexed_vertex_properties<Derived, void, Descriptor>
   // All operations do nothing.
   indexed_vertex_properties() { }
   indexed_vertex_properties(std::size_t) { }
+
+public:
   void resize(std::size_t) { }
   void reserve(std::size_t) { }
 };
