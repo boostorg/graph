@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#ifndef EDMUNDS_KARP_MAX_FLOW_HPP
-#define EDMUNDS_KARP_MAX_FLOW_HPP
+#ifndef EDMONDS_KARP_MAX_FLOW_HPP
+#define EDMONDS_KARP_MAX_FLOW_HPP
 
 #include <boost/config.hpp>
 #include <vector>
@@ -25,7 +25,7 @@ namespace boost {
 
   // The "labeling" algorithm from "Network Flows" by Ahuja, Magnanti,
   // Orlin.  I think this is the same as or very similar to the original
-  // Edmunds-Karp algorithm.  This solves the maximum flow problem.
+  // Edmonds-Karp algorithm.  This solves the maximum flow problem.
 
   namespace detail {
 
@@ -76,7 +76,7 @@ namespace boost {
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
             class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
   typename property_traits<CapacityEdgeMap>::value_type
-  edmunds_karp_max_flow
+  edmonds_karp_max_flow
     (Graph& g, 
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink,
@@ -111,7 +111,7 @@ namespace boost {
     for (tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
       flow += (cap[*ei] - res[*ei]);
     return flow;
-  } // edmunds_karp_max_flow()
+  } // edmonds_karp_max_flow()
   
   namespace detail {
     //-------------------------------------------------------------------------
@@ -119,7 +119,7 @@ namespace boost {
 
     // use of class here is a VC++ workaround
     template <class ColorMap>
-    struct edmunds_karp_dispatch2 {
+    struct edmonds_karp_dispatch2 {
       template <class Graph, class PredMap, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
       apply
@@ -130,7 +130,7 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        ColorMap color)
       {
-        return edmunds_karp_max_flow
+        return edmonds_karp_max_flow
           (g, src, sink, 
            choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
            choose_pmap(get_param(params, edge_residual_capacity), 
@@ -140,7 +140,7 @@ namespace boost {
       }
     };
     template<>
-    struct edmunds_karp_dispatch2<detail::error_property_not_found> {
+    struct edmonds_karp_dispatch2<detail::error_property_not_found> {
       template <class Graph, class PredMap, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
       apply
@@ -156,7 +156,7 @@ namespace boost {
         size_type n = is_default_param(get_param(params, vertex_color)) ?
           num_vertices(g) : 1;
         std::vector<default_color_type> color_vec(n);
-        return edmunds_karp_max_flow
+        return edmonds_karp_max_flow
           (g, src, sink, 
            choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
            choose_pmap(get_param(params, edge_residual_capacity), 
@@ -174,7 +174,7 @@ namespace boost {
 
     // use of class here is a VC++ workaround
     template <class PredMap>
-    struct edmunds_karp_dispatch1 {
+    struct edmonds_karp_dispatch1 {
       template <class Graph, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
       apply(Graph& g,
@@ -184,12 +184,12 @@ namespace boost {
             PredMap pred)
       {
         typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
-        return edmunds_karp_dispatch2<C>::apply
+        return edmonds_karp_dispatch2<C>::apply
           (g, src, sink, pred, params, get_param(params, vertex_color));
       }
     };
     template<>
-    struct edmunds_karp_dispatch1<detail::error_property_not_found> {
+    struct edmonds_karp_dispatch1<detail::error_property_not_found> {
 
       template <class Graph, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
@@ -207,7 +207,7 @@ namespace boost {
         std::vector<edge_descriptor> pred_vec(n);
         
         typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
-        return edmunds_karp_dispatch2<C>::apply
+        return edmonds_karp_dispatch2<C>::apply
           (g, src, sink, 
            make_iterator_property_map(pred_vec.begin(), choose_const_pmap
                                       (get_param(params, vertex_index),
@@ -221,14 +221,14 @@ namespace boost {
 
   template <class Graph, class P, class T, class R>
   typename detail::edge_capacity_value<Graph, P, T, R>::type
-  edmunds_karp_max_flow
+  edmonds_karp_max_flow
     (Graph& g,
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink,
      const bgl_named_params<P, T, R>& params)
   {
     typedef typename property_value< bgl_named_params<P,T,R>, vertex_predecessor_t>::type Pred;
-    return detail::edmunds_karp_dispatch1<Pred>::apply
+    return detail::edmonds_karp_dispatch1<Pred>::apply
       (g, src, sink, params, get_param(params, vertex_predecessor));
   }
 
@@ -236,15 +236,15 @@ namespace boost {
   typename property_traits<
     typename property_map<Graph, edge_capacity_t>::const_type
   >::value_type
-  edmunds_karp_max_flow
+  edmonds_karp_max_flow
     (Graph& g,
      typename graph_traits<Graph>::vertex_descriptor src,
      typename graph_traits<Graph>::vertex_descriptor sink)
   {
     bgl_named_params<int, buffer_param_t> params(0);
-    return edmunds_karp_max_flow(g, src, sink, params);
+    return edmonds_karp_max_flow(g, src, sink, params);
   }
 
 } // namespace boost
 
-#endif // EDMUNDS_KARP_MAX_FLOW_HPP
+#endif // EDMONDS_KARP_MAX_FLOW_HPP
