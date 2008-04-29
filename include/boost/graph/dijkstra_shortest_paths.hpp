@@ -109,7 +109,7 @@ namespace boost {
       }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g) { }
+      void initialize_vertex(Vertex /*u*/, Graph& /*g*/) { }
       template <class Edge, class Graph>
       void non_tree_edge(Edge, Graph&) { }
       template <class Vertex, class Graph>
