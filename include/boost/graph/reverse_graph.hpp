@@ -76,9 +76,9 @@ class reverse_graph {
     typedef typename Traits::edges_size_type edges_size_type;
 
     // More typedefs used by detail::edge_property_map, vertex_property_map
-    typedef typename BidirectionalGraph::edge_property_type
+    typedef typename boost::edge_property_type<BidirectionalGraph>::type
       edge_property_type;
-    typedef typename BidirectionalGraph::vertex_property_type
+    typedef typename boost::vertex_property_type<BidirectionalGraph>::type
       vertex_property_type;
     typedef reverse_graph_tag graph_tag;
 
