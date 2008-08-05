@@ -44,24 +44,24 @@
             class ColorMap, class DegreeMap&gt;
   OutputIterator
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
-                         typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+                         typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
 
   (2)
   template &lt;class VertexListGraph, class OutputIterator&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexIndexMap&amp; G, OutputIterator inverse_permutation); 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation); 
 
   template &lt;class VertexListGraph, class OutputIterator, class VertexIndexMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexIndexMap&amp; G, OutputIterator inverse_permutation, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
                          VertexIndexMap index_map); 
  
   template &lt;class VertexListGraph, class OutputIterator, 
             class ColorMap, class DegreeMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexListGraph&amp; G, OutputIterator inverse_permutation, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
                          
   (3)
@@ -70,7 +70,7 @@
   OutputIterator
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
     			 std::deque&lt; typename
-			 graph_traits&lt;Graph&gt;::vertex_descriptor &gt; vertex_queue,
+			 graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor &gt; vertex_queue,
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
 </pre>
@@ -172,7 +172,7 @@ For version 2:
 
 <li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br> 
   An undirected graph. The graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a>.<br>
+                                                              href="./VertexListGraph.html">VertexListGraph</a> and <a href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
   <b>Python</b>: The parameter is named <tt>graph</tt>.
 
 <li> <tt><a href="http://www.sgi.com/tech/stl/OutputIterator.html">

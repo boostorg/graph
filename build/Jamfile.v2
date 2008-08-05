@@ -26,7 +26,7 @@ if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
   optional_sources += graphml.cpp ;
   optional_reqs += <include>$(EXPAT_INCLUDE) 
                    <library-path>$(EXPAT_LIBPATH) 
-                   <find-static-library>expat
+                   <find-shared-library>expat
                 ;
 }
 else
