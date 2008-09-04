@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     dp.property("foo",get(vertex_color_t(),g));
     dp.property("weight",get(edge_weight_t(),g));
 
-    ifstream ifile("graphml_test.xml");
+    ifstream ifile(argv[1]);
     read_graphml(ifile, g, dp);
     ifile.close();
 

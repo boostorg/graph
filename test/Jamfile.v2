@@ -17,7 +17,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
-  optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
+  optional_tests += [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ] ;
 }
 
 test-suite graph_test : 
