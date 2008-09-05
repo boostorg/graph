@@ -19,7 +19,7 @@
     <node id="n6">
         <data key="d1">0</data>
     </node>
-    <edge id="e0" source="n0" target="n1" directed="false" />
+    <edge id="e0" source="n0" target="n1" />
     <edge id="e1" source="n1" target="not a canonical node">
       <data key="d2">0.8</data>
     </edge>
