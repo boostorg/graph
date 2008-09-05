@@ -59,15 +59,15 @@ namespace boost
       
       for (tie(k, lastk) = vertices(g); k != lastk; k++)
         for (tie(i, lasti) = vertices(g); i != lasti; i++)
-          for (tie(j, lastj) = vertices(g); j != lastj; j++)
-          {
-            d[*i][*j] = 
-              detail::min_with_compare(d[*i][*j], 
-                                       combine(d[*i][*k], d[*k][*j]),
-                                       compare);
-          }
+	  if(d[*i][*k] != inf)
+	    for (tie(j, lastj) = vertices(g); j != lastj; j++)
+	      if(d[*k][*j] != inf)
+		d[*i][*j] = 
+		  detail::min_with_compare(d[*i][*j], 
+					   combine(d[*i][*k], d[*k][*j]),
+					   compare);
       
-    
+      
       for (tie(i, lasti) = vertices(g); i != lasti; i++)
         if (compare(d[*i][*i], zero))
           return false;
