@@ -2,13 +2,9 @@
 
 <!--   Copyright (c) Jeremy Siek 2000 -->
   
-<!--   Permission to use, copy, modify, distribute and sell this software -->
-<!--   and its documentation for any purpose is hereby granted without fee, -->
-<!--   provided that the above copyright notice appears in all copies and -->
-<!--   that both that copyright notice and this permission notice appear -->
-<!--   in supporting documentation.  Silicon Graphics makes no -->
-<!--   representations about the suitability of this software for any -->
-<!--   purpose.  It is provided "as is" without express or implied warranty. -->
+  -- Distributed under the Boost Software License, Version 1.0.
+  -- (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
 
 <Head> 
 <Title>Boost Graph Library: Cuthill-Mckee Ordering</Title>
@@ -48,24 +44,24 @@
             class ColorMap, class DegreeMap&gt;
   OutputIterator
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
-                         typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+                         typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
 
   (2)
   template &lt;class VertexListGraph, class OutputIterator&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexIndexMap&amp; G, OutputIterator inverse_permutation); 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation); 
 
   template &lt;class VertexListGraph, class OutputIterator, class VertexIndexMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexIndexMap&amp; G, OutputIterator inverse_permutation, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
                          VertexIndexMap index_map); 
  
   template &lt;class VertexListGraph, class OutputIterator, 
             class ColorMap, class DegreeMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexListGraph&amp; G, OutputIterator inverse_permutation, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
                          
   (3)
@@ -74,7 +70,7 @@
   OutputIterator
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
     			 std::deque&lt; typename
-			 graph_traits&lt;Graph&gt;::vertex_descriptor &gt; vertex_queue,
+			 graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor &gt; vertex_queue,
                          OutputIterator inverse_permutation, 
                          ColorMap color, DegreeMap degree)
 </pre>
@@ -176,7 +172,7 @@ For version 2:
 
 <li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br> 
   An undirected graph. The graph's type must be a model of <a
-  href="./VertexListGraph.html">VertexListGraph</a>.<br>
+                                                              href="./VertexListGraph.html">VertexListGraph</a> and <a href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
   <b>Python</b>: The parameter is named <tt>graph</tt>.
 
 <li> <tt><a href="http://www.sgi.com/tech/stl/OutputIterator.html">
@@ -244,7 +240,7 @@ and <tt>degree_property_map</tt> in <tt>boost/graph/properties.hpp</tt>.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2000-2001</TD><TD>
-<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
+<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>

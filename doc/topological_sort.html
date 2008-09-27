@@ -2,13 +2,9 @@
 <!--
   -- Copyright (c) Jeremy Siek 2000
   --
-  -- Permission to use, copy, modify, distribute and sell this software
-  -- and its documentation for any purpose is hereby granted without fee,
-  -- provided that the above copyright notice appears in all copies and
-  -- that both that copyright notice and this permission notice appear
-  -- in supporting documentation.  Jeremy Siek makes no
-  -- representations about the suitability of this software for any
-  -- purpose.  It is provided "as is" without express or implied warranty.
+  -- Distributed under the Boost Software License, Version 1.0.
+  -- (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Topological Sort</Title>
@@ -49,7 +45,8 @@ href="./depth_first_search.html"><tt>depth_first_search()</tt></a>.
 IN: <tt>VertexListGraph&amp; g</tt>
 <blockquote>
   A directed acylic graph (DAG). The graph type must
-  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>.
+  be a model of <a href="./VertexListGraph.html">Vertex List Graph</a>
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.
   If the graph is not a DAG then a <a href="./exception.html#not_a_dag"><tt>not_a_dag</tt></a>
   exception will be thrown and the
   user should discard the contents of <tt>result</tt> range.<br>
@@ -152,7 +149,7 @@ The output is:
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2000-2001</TD><TD>
-<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
+<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>

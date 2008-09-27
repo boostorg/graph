@@ -11,7 +11,6 @@
 #endif
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/test/minimal.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
@@ -81,7 +80,7 @@ void run_test(const Graph& g, const char* name, Kind kind,
 }
 #endif
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   unsigned n = (argc > 1? lexical_cast<unsigned>(argv[1]) : 10000u);
   unsigned m = (argc > 2? lexical_cast<unsigned>(argv[2]) : 10*n);
@@ -136,7 +135,7 @@ int test_main(int argc, char* argv[])
             << "Speedup = " << (binary_heap_time / relaxed_heap_time) << ".\n";
 
   // Verify that the results are equivalent
-  BOOST_CHECK(binary_heap_distances == relaxed_heap_distances);
+  BOOST_TEST(binary_heap_distances == relaxed_heap_distances);
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
   run_test(g, "d-ary heap (d=2)", dijkstra_d_heap_2, binary_heap_distances);

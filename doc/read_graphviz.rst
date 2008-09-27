@@ -6,6 +6,10 @@
    :align: middle
    :alt: Boost
 
+.. Copyright (c) 2005 Trustees of Indiana University
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
 __ ../../../index.htm
 
 ::
@@ -168,7 +172,7 @@ GraphViz reader to populate an ``adjacency_list`` graph
 Building the GraphViz Readers
 -----------------------------
 To use the GraphViz readers, you will need to build and link against
-the "bgl-viz" library. The library can be built by following the
+the "boost_graph" library. The library can be built by following the
 `Boost Jam Build Instructions`_ for the subdirectory ``libs/graph/build``.
 
 Deprecated Readers

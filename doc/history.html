@@ -2,13 +2,9 @@
 <!--
   -- Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
   --
-  -- Permission to use, copy, modify, distribute and sell this software
-  -- and its documentation for any purpose is hereby granted without fee,
-  -- provided that the above copyright notice appears in all copies and
-  -- that both that copyright notice and this permission notice appear
-  -- in supporting documentation.  We make no
-  -- representations about the suitability of this software for any
-  -- purpose.  It is provided "as is" without express or implied warranty.
+  -- Distributed under the Boost Software License, Version 1.0.
+  -- (See accompanying file LICENSE_1_0.txt or copy at
+  -- http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: History</Title>
@@ -82,6 +78,12 @@ September 27, 2000.
 <ul>
   <a name="1.35.0"></a><li>Version 1.35.0<br><b>New algorithms and components</b>
     <ul>
+      <li><a href="r_c_shortest_paths.html"><tt>r_c_shortest_paths</tt></a>, resource-constrained shortest paths, from Michael Drexl.</li>
+    </ul>
+  </li>
+
+  <a name="1.35.0"></a><li>Version 1.35.0<br><b>New algorithms and components</b>
+    <ul>
       <li><a href="kolmogorov_max_flow.html"><tt>kolmogorov_max_flow</tt></a>, from Stephan Diederich as part of the <a href="http://code.google.com/soc/">2006 Google Summer of Code</a>.</li>
       <li><a href="read_dimacs.html">read_dimacs_max_flow</a> and <a href="write_dimacs.html">write_dimacs_max_flow</a> for max-flow problems, from Stephan Diederich.</li>
       <li><a href="read_graphml.html">read_graphml</a> and <a href="write_graphml.html">write_graphml</a> for <a href="http://graphml.graphdrawing.org/">GraphML</a> input/output, from Tiago de Paula Peixoto.</li>
@@ -93,6 +95,10 @@ September 27, 2000.
     </ul>
   </li><br>
 
+  <a name="1.34.1"></a><li>Version 1.34.1</br><b>Bug Fixes</b><br>
+  <ul>
+     <li><a href="bellman_ford_shortest.html"><tt>bellman_ford_shortest_paths</tt></a>: fixed a bug where certain negative cycles were not correctly detected.</li>
+  </ul>
   <a name="1.34.0"></a><li>Version 1.34.0<br><b>New algorithms and components</b>
     <ul>
       <li><a href="maximum_matching.html"><tt>edmonds_maximum_cardinality_matching</tt></a>, from Aaron Windsor.</li>
@@ -101,6 +107,7 @@ September 27, 2000.
       <li><a href="sorted_erdos_renyi_gen.html"><tt>sorted_erdos_renyi_iterator</tt></a>, from Jeremiah Willcock of Indiana University.</li>
     </ul><br><b>Enhancements</b><br>
     <ul>
+       <li>Note: the name of the compiled library for GraphViz reading is now called <code>boost_graph</code> rather than <code>bgl-viz</code>.</li>
       <li><a href="biconnected_components.html"><tt>biconnected_components</tt></a> now has a visitor parameter and supports named parameters, from Janusz Piwowarski.</li>
       <li><a href="adjacency_matrix.html"><tt>adjacency_matrix</tt></a> now models the <a href="BidirectionalGraph.html">Bidirectional Graph</a> concept.</li>
                              <li><a href="adjacency_list.html"><tt>adjacency_list</tt></a> is now <a href="../../serialization/doc/index.html">Serializable</a>, from Jeremy Siek of Rice University.</li>
@@ -188,11 +195,11 @@ September 27, 2000.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2000-2001</TD><TD>
-<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>,
+<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>,
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
-<A HREF="../../../people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF=http://www.osl.iu.edu/~lums>Andrew Lumsdaine</A>,
+<A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
+<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>

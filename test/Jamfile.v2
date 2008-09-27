@@ -1,3 +1,9 @@
+# Copyright (c) 2002 Trustees of Indiana University
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
 # Define SGB (stanford graph base top level directory) and 
 # LEDA (also top level directory) at the command line of jam using -s
 
@@ -11,7 +17,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
-  optional_tests += [ run graphml_test.cpp ../build//boost_graph ] ;
+  optional_tests += [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ] ;
 }
 
 test-suite graph_test : 
@@ -113,7 +119,7 @@ test-suite graph_test :
 
     [ run make_connected_test.cpp ]
 
-    [ run make_biconnected_planar_test.cpp ]
+    [ run make_bicon_planar_test.cpp ]
 
     [ run make_maximal_planar_test.cpp ]
 
@@ -126,6 +132,8 @@ test-suite graph_test :
         ../../filesystem/build 
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
+
+    [ run r_c_shortest_paths_test.cpp ]
 
     $(optional_tests)
     ;

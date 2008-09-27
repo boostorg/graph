@@ -58,10 +58,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
    
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-      Graph();   // at least 2.96 and 3.4.3 both need this :(
-#endif 
-   
       BOOST_CONCEPT_USAGE(Graph)
       {
           BOOST_CONCEPT_ASSERT((DefaultConstructible<vertex_descriptor>));
@@ -80,11 +76,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
       
       typedef typename graph_traits<G>::traversal_category
       traversal_category;
-   
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-      IncidenceGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
-   
+      
       BOOST_CONCEPT_USAGE(IncidenceGraph) {
           BOOST_CONCEPT_ASSERT((MultiPassInputIterator<out_edge_iterator>));
           BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
@@ -122,10 +114,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
 
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    BidirectionalGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
-
     BOOST_CONCEPT_USAGE(BidirectionalGraph) {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<in_edge_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -156,10 +144,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
 
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    AdjacencyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
-
     BOOST_CONCEPT_USAGE(AdjacencyGraph) {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<adjacency_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -184,9 +168,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::vertices_size_type vertices_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    VertexListGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(VertexListGraph) {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<vertex_iterator>));
       BOOST_CONCEPT_ASSERT((Convertible<traversal_category,
@@ -232,9 +214,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     typedef typename graph_traits<G>::edges_size_type edges_size_type;
     typedef typename graph_traits<G>::traversal_category
       traversal_category;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    EdgeListGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(EdgeListGraph) {
       BOOST_CONCEPT_ASSERT((MultiPassInputIterator<edge_iterator>));
       BOOST_CONCEPT_ASSERT((DefaultConstructible<edge_descriptor>));
@@ -267,9 +247,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : VertexListGraph<G>
     , EdgeListGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    VertexAndEdgeListGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
   };
 
   // Where to put the requirement for this constructor?
@@ -280,9 +257,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   BOOST_concept(EdgeMutableGraph,(G))
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    EdgeMutableGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(EdgeMutableGraph) {
       p = add_edge(u, v, g);
       remove_edge(u, v, g);
@@ -297,10 +272,8 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
 
   BOOST_concept(VertexMutableGraph,(G))
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    VertexMutableGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
-    BOOST_CONCEPT_USAGE(VertexMutableGraph) {
+
+      BOOST_CONCEPT_USAGE(VertexMutableGraph) {
       v = add_vertex(g);
       remove_vertex(v, g);
     }
@@ -312,9 +285,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : EdgeMutableGraph<G>
     , VertexMutableGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    MutableGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
   };
 
   template <class edge_descriptor>
@@ -327,9 +297,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   BOOST_concept(MutableIncidenceGraph,(G))
     : MutableGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    MutableIncidenceGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(MutableIncidenceGraph) {
       remove_edge(iter, g);
       remove_out_edge_if(u, p, g);
@@ -344,9 +311,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   BOOST_concept(MutableBidirectionalGraph,(G))
     : MutableIncidenceGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-      MutableBidirectionalGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
       BOOST_CONCEPT_USAGE(MutableBidirectionalGraph)
       {
           remove_in_edge_if(u, p, g);
@@ -360,9 +324,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   BOOST_concept(MutableEdgeListGraph,(G))
     : EdgeMutableGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    MutableEdgeListGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(MutableEdgeListGraph) {
       remove_edge_if(p, g);
     }
@@ -374,9 +335,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   BOOST_concept(VertexMutablePropertyGraph,(G))
     : VertexMutableGraph<G>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    VertexMutablePropertyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(VertexMutablePropertyGraph) {
       v = add_vertex(vp, g);
     }
@@ -389,9 +347,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : EdgeMutableGraph<G>
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    EdgeMutablePropertyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(EdgeMutablePropertyGraph) {
       p = add_edge(u, v, ep, g);
     }
@@ -405,9 +361,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : Graph<G>
   {
     typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    AdjacencyMatrix();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(AdjacencyMatrix) {      
       p = edge(u, v, g);
       const_constraints(g);
@@ -425,9 +379,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   {
     typedef typename property_map<G, Property>::const_type const_Map;
     
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    ReadablePropertyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(ReadablePropertyGraph)
     {
       BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept<const_Map, X>));
@@ -448,9 +399,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : ReadablePropertyGraph<G, X, Property>
   {
     typedef typename property_map<G, Property>::type Map;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    PropertyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(PropertyGraph) {
       BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept<Map, X>));
 
@@ -469,9 +417,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   {
     typedef typename property_map<G, Property>::type Map;
     typedef typename property_map<G, Property>::const_type const_Map;
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    LvaluePropertyGraph();   // at least 2.96 and 3.4.3 both need this :(
-#endif
+
     BOOST_CONCEPT_USAGE(LvaluePropertyGraph) {
       BOOST_CONCEPT_ASSERT((LvaluePropertyMapConcept<const_Map, X>));
 
@@ -486,9 +432,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
   // This needs to move out of the graph library
   BOOST_concept(Buffer,(B))
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    Buffer();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(Buffer) {
       b.push(t);
       b.pop();
@@ -512,9 +455,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
     : EqualityComparable<C>
     , DefaultConstructible<C>
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    ColorValue();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(ColorValue) {
       c = color_traits<C>::white();
       c = color_traits<C>::gray();
@@ -525,9 +465,6 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
 
   BOOST_concept(BasicMatrix,(M)(I)(V))
   {
-#if BOOST_WORKAROUND(__GNUC__, <= 3)
-    BasicMatrix();   // at least 2.96 and 3.4.3 both need this :(
-#endif
     BOOST_CONCEPT_USAGE(BasicMatrix) {
       V& elt = A[i][j];
       const_constraints(A);
