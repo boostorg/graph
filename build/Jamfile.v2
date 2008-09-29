@@ -23,23 +23,30 @@ if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
     ECHO "Expat library directory: $(EXPAT_LIBPATH)" ;
   }
 
-  optional_sources += graphml.cpp ;
-  optional_reqs += <include>$(EXPAT_INCLUDE) 
-                   <library-path>$(EXPAT_LIBPATH) 
-                   <find-shared-library>expat
-                ;
+  alias graphml
+      : graphml.cpp
+      : # requirements
+      : # default built
+      : # usage requirements
+        <include>$(EXPAT_INCLUDE)
+        <library-path>$(EXPAT_LIBPATH)
+        <find-shared-library>expat
+      ;
 }
 else
 {
-  ECHO "warning: Graph library does not contain optional GraphML reader." ;
-  ECHO "note: to enable GraphML support, set EXPAT_INCLUDE and EXPAT_LIBPATH to the" ;
-  ECHO "note: directories containing the Expat headers and libraries, respectively." ;
+    message graphml
+      : "warning: Graph library does not contain optional GraphML reader."
+      : "note: to enable GraphML support, set EXPAT_INCLUDE and EXPAT_LIBPATH to the"
+      : "note: directories containing the Expat headers and libraries, respectively."
+      ;
 }
+explicit graphml ;
 
 lib boost_graph
     :
     read_graphviz_spirit.cpp
-    $(optional_sources)
+    graphml
     :
     <define>BOOST_GRAPH_NO_LIB=1
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
@@ -48,8 +55,6 @@ lib boost_graph
     # Without these flags, MSVC 7.1 and 8.0 crash
     <toolset>msvc-7.1:<cxxflags>-GR-
     <toolset>msvc-8.0:<cxxflags>-GR-
-    # Requirements for any "optional" sources
-    $(optional_reqs)
     ;
 
 boost-install boost_graph ;
