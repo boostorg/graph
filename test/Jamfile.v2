@@ -135,6 +135,8 @@ test-suite graph_test :
 
     [ run r_c_shortest_paths_test.cpp ]
 
+    [ run is_straight_line_draw_test.cpp ]
+
     $(optional_tests)
     ;
 
