@@ -14,19 +14,18 @@
 
 #define WEIGHT1 1               //default weight for the distance in the Sloan algorithm
 #define WEIGHT2 2               //default weight for the degree in the Sloan algorithm
-#define MAXINT 2147483647       //Maximum value for a 32bit integer
 
 #include <boost/config.hpp>
 #include <vector>
 #include <queue>
+#include <algorithm>
+#include <limits>
 #include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/property_map.hpp>
-#include <algorithm>
-#include <utility>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cuthill_mckee_ordering.hpp>
@@ -195,9 +194,9 @@ namespace boost {
       //end 3 & 4
 
       
-      //step 5
-      //Initializing w
-      w_e = MAXINT;
+      // step 5
+      // Initializing w
+      w_e = std::numeric_limits<unsigned>::max();
       //end 5
       
       

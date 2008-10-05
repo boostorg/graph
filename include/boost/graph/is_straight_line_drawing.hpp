@@ -164,7 +164,7 @@ namespace boost
         edge_t e(get<0>(*itr));
         vertex_t source_v(source(e,g));
         vertex_t target_v(target(e,g));
-        if (drawing[source_v].x > drawing[target_v].x)
+        if (drawing[source_v].y > drawing[target_v].y)
           std::swap(source_v, target_v);
 
         active_map_key_t key(get(drawing, source_v).y,
@@ -187,12 +187,32 @@ namespace boost
               before = prior(a_itr);
             after = next(a_itr);
 
-            if (after != active_edges.end() || before != active_edges.end())
+	    if (before != active_edges.end())
               {
                 
-                edge_t f = after != active_edges.end() ? 
-                  after->second : before->second;
+                edge_t f = before->second;
+                vertex_t e_source(source(e,g));
+                vertex_t e_target(target(e,g));
+                vertex_t f_source(source(f,g));
+                vertex_t f_target(target(f,g));
 
+                if (intersects(drawing[e_source].x, 
+                               drawing[e_source].y,
+                               drawing[e_target].x,
+                               drawing[e_target].y,
+                               drawing[f_source].x, 
+                               drawing[f_source].y,
+                               drawing[f_target].x,
+                               drawing[f_target].y
+                               )
+                    )
+                  return false;
+              }
+
+            if (after != active_edges.end())
+              {
+                
+                edge_t f = after->second;
                 vertex_t e_source(source(e,g));
                 vertex_t e_target(target(e,g));
                 vertex_t f_source(source(f,g));
