@@ -123,6 +123,8 @@ test-suite graph_test :
 
     [ run make_maximal_planar_test.cpp ]
 
+    [ run named_vertices_test.cpp ]
+
     [ run all_planar_input_files_test.cpp 
         ../../filesystem/build 
         ../../system/build
