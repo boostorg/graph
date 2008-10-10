@@ -19,7 +19,7 @@
 #include <boost/random/geometric_distribution.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 
 namespace boost {
 

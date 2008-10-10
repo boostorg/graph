@@ -16,7 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/detail/numeric_traits.hpp>
 #include <boost/graph/bandwidth.hpp>
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 #include <vector>
 #include <algorithm> // for std::min and std::max
 
