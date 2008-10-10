@@ -58,26 +58,3 @@ lib boost_graph
     ;
 
 boost-install boost_graph ;
-
-############################################################
-# Distributed-memory parallel graph library (Parallel BGL) #
-############################################################
-use-project /boost/mpi : ../../mpi/build ;
-import mpi ;
-if [ mpi.configured ]
-{
-  lib boost_graph_mpi
-    : distributed/tag_allocator.cpp
-      distributed/mpi_process_group.cpp
-    : # Requirements
-      <library>../../mpi/build//boost_mpi
-      <library>/mpi//mpi [ mpi.extra-requirements ]
-      <library>../../serialization/build//boost_serialization
-    : # Default build
-      <link>shared
-    : # Usage requirements
-      <library>../../mpi/build//boost_mpi
-      <library>/mpi//mpi [ mpi.extra-requirements ]
-      <library>../../serialization/build//boost_serialization
-    ;
-}
