@@ -9,7 +9,7 @@
 #ifndef BOOST_GRAPH_FRUCHTERMAN_REINGOLD_FORCE_DIRECTED_LAYOUT_HPP
 #define BOOST_GRAPH_FRUCHTERMAN_REINGOLD_FORCE_DIRECTED_LAYOUT_HPP
 
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/simple_point.hpp>
