@@ -193,8 +193,8 @@ namespace boost
             delta_p_q += delta_x[temp];
           }
 
-        delta_x[v] = (y[rightmost] - y[leftmost] + delta_p_q)/2;
-        y[v] = (y[rightmost] + y[leftmost] + delta_p_q)/2;
+        delta_x[v] = ((y[rightmost] + delta_p_q) - y[leftmost])/2;
+        y[v] = y[leftmost] + delta_x[v];
         delta_x[rightmost] = delta_p_q - delta_x[v];
         
         bool leftmost_and_rightmost_adjacent = right[leftmost] == rightmost;
