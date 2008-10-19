@@ -16,7 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <vector>
 #include <map>
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 
 namespace boost {
 

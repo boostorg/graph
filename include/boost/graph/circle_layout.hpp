@@ -8,7 +8,7 @@
 //           Andrew Lumsdaine
 #ifndef BOOST_GRAPH_CIRCLE_LAYOUT_HPP
 #define BOOST_GRAPH_CIRCLE_LAYOUT_HPP
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 #include <utility>
 #include <boost/graph/graph_traits.hpp>
 

@@ -15,7 +15,7 @@
 // in EuroPar 2000, p. 234 of LNCS 1900
 // http://springerlink.metapress.com/link.asp?id=pcu07ew5rhexp9yt
 
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 #include <vector>
 #include <exception>
 #include <algorithm>
