@@ -1902,6 +1902,7 @@ namespace boost {
       bool inserted;
       boost::tie(pos,inserted) = boost::graph_detail::push(g.m_vertices, v);
       v->m_position = pos;
+      g.added_vertex(v);
       return v;
     }
     // O(1)
@@ -1910,13 +1911,19 @@ namespace boost {
     add_vertex(const typename Config::vertex_property_type& p,
                adj_list_impl<Derived, Config, Base>& g_)
     {
+      typedef typename Config::vertex_descriptor vertex_descriptor;
       Derived& g = static_cast<Derived&>(g_);
+      if (optional<vertex_descriptor> v 
+            = g.vertex_by_property(get_property_value(p, vertex_bundle)))
+        return *v;
+
       typedef typename Config::stored_vertex stored_vertex;
       stored_vertex* v = new stored_vertex(p);
       typename Config::StoredVertexList::iterator pos;
       bool inserted;
       boost::tie(pos,inserted) = boost::graph_detail::push(g.m_vertices, v);
       v->m_position = pos;
+      g.added_vertex(v);
       return v;
     }
     // O(1)
@@ -1926,6 +1933,7 @@ namespace boost {
     {
       typedef typename Config::stored_vertex stored_vertex;
       Derived& g = static_cast<Derived&>(g_);
+      g.removing_vertex(u);
       stored_vertex* su = (stored_vertex*)u;
       g.m_vertices.erase(su->m_position);
       delete su;
@@ -2171,6 +2179,7 @@ namespace boost {
     add_vertex(vec_adj_list_impl<Graph, Config, Base>& g_) {
       Graph& g = static_cast<Graph&>(g_);
       g.m_vertices.resize(g.m_vertices.size() + 1);
+      g.added_vertex(g.m_vertices.size() - 1);
       return g.m_vertices.size() - 1;
     }
 
@@ -2178,9 +2187,14 @@ namespace boost {
     inline typename Config::vertex_descriptor
     add_vertex(const typename Config::vertex_property_type& p,
                vec_adj_list_impl<Graph, Config, Base>& g_) {
+      typedef typename Config::vertex_descriptor vertex_descriptor;
       Graph& g = static_cast<Graph&>(g_);
+      if (optional<vertex_descriptor> v 
+            = g.vertex_by_property(get_property_value(p, vertex_bundle)))
+        return *v;
       typedef typename Config::stored_vertex stored_vertex;
       g.m_vertices.push_back(stored_vertex(p));
+      g.added_vertex(g.m_vertices.size() - 1);
       return g.m_vertices.size() - 1;
     }
 
@@ -2219,6 +2233,7 @@ namespace boost {
     {
       typedef typename Config::directed_category Cat;
       Graph& g = static_cast<Graph&>(g_);
+      g.removing_vertex(v);
       detail::remove_vertex_dispatch(g, v, Cat());
     }
     // O(1)

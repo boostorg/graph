@@ -16,7 +16,7 @@
 #include <iterator>
 #include <vector>
 #include <boost/limits.hpp>
-#include <cmath>
+#include <boost/config/no_tr1/cmath.hpp>
 
 namespace boost {
   namespace detail { namespace graph {

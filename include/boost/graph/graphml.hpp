@@ -187,7 +187,7 @@ protected:
 template<typename MutableGraph>
 char* mutate_graph_impl<MutableGraph>::m_type_names[] = {"boolean", "int", "long", "float", "double", "string"};
 
-void
+void BOOST_GRAPH_DECL
 read_graphml(std::istream& in, mutate_graph& g);
 
 template<typename MutableGraph>

@@ -8,7 +8,7 @@
 #if defined(__sgi) && !defined(__GNUC__)
 # include <math.h>
 #else
-# include <cmath>
+# include <boost/config/no_tr1/cmath.hpp>
 #endif
 #include <iosfwd>
 #include <vector>
