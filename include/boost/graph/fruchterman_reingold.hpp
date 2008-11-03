@@ -137,11 +137,11 @@ struct grid_force_pairs
           std::size_t adj_end_column = column == columns - 1? column : column + 1;
           for (std::size_t other_row = adj_start_row; other_row <= adj_end_row;
                ++other_row)
-            for (std::size_t other_column = adj_start_column; 
+            for (std::size_t other_column = adj_start_column;
                  other_column <= adj_end_column; ++other_column)
               if (other_row != row || other_column != column) {
                 // Repulse vertices in this bucket
-                bucket_t& other_bucket 
+                bucket_t& other_bucket
                   = buckets[other_row * columns + other_column];
                 for (v = other_bucket.begin(); v != other_bucket.end(); ++v)
                   apply_force(*u, *v);
@@ -301,20 +301,20 @@ fruchterman_reingold_force_directed_layout
       BOOST_USING_STD_MAX();
       Dim disp_size = sqrt(displacement[*v].x * displacement[*v].x
                            + displacement[*v].y * displacement[*v].y);
-      position[*v].x += displacement[*v].x / disp_size 
+      position[*v].x += displacement[*v].x / disp_size
                      * min BOOST_PREVENT_MACRO_SUBSTITUTION (disp_size, temp);
-      position[*v].y += displacement[*v].y / disp_size 
+      position[*v].y += displacement[*v].y / disp_size
                      * min BOOST_PREVENT_MACRO_SUBSTITUTION (disp_size, temp);
-      position[*v].x = min BOOST_PREVENT_MACRO_SUBSTITUTION 
-                         (width / 2, 
-                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-width / 2, 
+      position[*v].x = min BOOST_PREVENT_MACRO_SUBSTITUTION
+                         (width / 2,
+                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-width / 2,
                                                                position[*v].x));
       position[*v].y = min BOOST_PREVENT_MACRO_SUBSTITUTION
-                         (height / 2, 
-                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-height / 2, 
+                         (height / 2,
+                          max BOOST_PREVENT_MACRO_SUBSTITUTION(-height / 2,
                                                                position[*v].y));
     }
-  } while (temp = cool());
+  } while ((temp = cool()));
 }
 
 namespace detail {
