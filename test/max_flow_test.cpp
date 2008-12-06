@@ -39,7 +39,7 @@
 //three max_flows we test here
 #include <boost/graph/kolmogorov_max_flow.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
-#include <boost/graph/edmunds_karp_max_flow.hpp>
+#include <boost/graph/edmonds_karp_max_flow.hpp>
 //boost utilities we use
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
@@ -127,10 +127,10 @@ int test_main(int argc, char* argv[])
   
   tEdgeVal kolmo = kolmogorov_max_flow(g,source_vertex,sink_vertex); 
   tEdgeVal push_relabel = push_relabel_max_flow(g,source_vertex,sink_vertex);
-  tEdgeVal edmunds_karp = edmunds_karp_max_flow(g,source_vertex,sink_vertex);
+  tEdgeVal edmonds_karp = edmonds_karp_max_flow(g,source_vertex,sink_vertex);
   
   BOOST_REQUIRE( kolmo == push_relabel );
-  BOOST_REQUIRE( push_relabel == edmunds_karp );
+  BOOST_REQUIRE( push_relabel == edmonds_karp );
 
   return 0;
 }

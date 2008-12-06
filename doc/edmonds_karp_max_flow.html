@@ -7,7 +7,7 @@
   -- http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
-<Title>Boost Graph Library: Edmunds-Karp Maximum Flow</Title>
+<Title>Boost Graph Library: Edmonds-Karp Maximum Flow</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -15,15 +15,15 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:edmunds_karp_max_flow">
-<TT>edmunds_karp_max_flow</TT>
+<H1><A NAME="sec:edmonds_karp_max_flow">
+<TT>edmonds_karp_max_flow</TT>
 </H1>
 
 <PRE>
 <i>// named paramter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
 typename detail::edge_capacity_value&lt;Graph, P, T, R&gt;::value_type
-edmunds_karp_max_flow(Graph& g, 
+edmonds_karp_max_flow(Graph& g, 
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
@@ -33,7 +33,7 @@ template &lt;class <a href="./Graph.html">Graph</a>,
 	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	  class ReverseEdgeMap, class ColorMap, class PredEdgeMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-edmunds_karp_max_flow(Graph&amp; g, 
+edmonds_karp_max_flow(Graph&amp; g, 
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev, 
@@ -41,7 +41,7 @@ edmunds_karp_max_flow(Graph&amp; g,
 </PRE>
 
 <P>
-The <tt>edmunds_karp_max_flow()</tt> function calculates the maximum flow
+The <tt>edmonds_karp_max_flow()</tt> function calculates the maximum flow
 of a network. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
 Flow Algorithms</a> for a description of maximum flow.  The calculated
@@ -93,7 +93,7 @@ algorithm.
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/edmunds_karp_max_flow.hpp"><TT>boost/graph/edmunds_karp_max_flow.hpp</TT></a>
+<a href="../../../boost/graph/edmonds_karp_max_flow.hpp"><TT>boost/graph/edmonds_karp_max_flow.hpp</TT></a>
 
 <P>
 
@@ -209,7 +209,7 @@ some constant <i>U</i>.
 <h3>Example</h3>
 
 The program in <a
-href="../example/edmunds-karp-eg.cpp"><tt>example/edmunds-karp-eg.cpp</tt></a>
+href="../example/edmonds-karp-eg.cpp"><tt>example/edmonds-karp-eg.cpp</tt></a>
 reads an example maximum flow problem (a graph with edge capacities)
 from a file in the DIMACS format and computes the maximum flow.
 
@@ -224,14 +224,14 @@ from a file in the DIMACS format and computes the maximum flow.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
+<A HREF="../../../people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  HTML Siek Edmunds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
+<!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
-<!--  LocalWords:  gif ALT BR sec edmunds karp TT DIV CELLPADDING TR TD PRE lt
+<!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt
  -->
 <!--  LocalWords:  typename VertexListGraph CapacityEdgeMap ReverseEdgeMap gt
  -->
