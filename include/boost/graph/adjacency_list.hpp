@@ -17,12 +17,9 @@
 #include <list>
 #include <set>
 
-// Thef 4.3 series deprecates hash_set and hash_map.
-// TODO: Migrate this to Boost.Config.
-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 3
-#  define BOOST_NO_HASH
-#endif
-
+// TODO: Deprecating this requires some cooperation from Boost.Config. It's not
+// a good idea to just refuse the inclusion because it could break otherwise
+// functioning code.
 #if !defined BOOST_NO_HASH
 #  ifdef BOOST_HASH_SET_HEADER
 #    include BOOST_HASH_SET_HEADER
