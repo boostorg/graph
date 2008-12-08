@@ -29,6 +29,7 @@ test-suite graph_test :
     # unit-test adj_list_test : adj_list_test.cpp  ;
 
     [ run adj_list_edge_list_set.cpp ]
+    [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
     [ run bfs.cpp ../../test/build//boost_test_exec_monitor ]
     [ compile bfs_cc.cpp ]
