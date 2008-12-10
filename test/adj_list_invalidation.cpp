@@ -134,11 +134,11 @@ int main()
 //     invalidate_out_edges<VVD>();
 //     invalidate_adj_verts<VVD>();
 
-    typedef adjacency_list<vecS, listS, directedS, int, int> VLD;
-    cout << "vecS listS directedS" << endl;
-    invalidate_vertices<VLD>();
-    invalidate_edges<VLD>();
-    invalidate_out_edges<VLD>();
-    invalidate_adj_verts<VLD>();
+    typedef adjacency_list<listS, vecS, directedS, int, int> LVD;
+    cout << "listS vecS directedS" << endl;
+    invalidate_vertices<LVD>();
+//     invalidate_edges<LVD>();
+//     invalidate_out_edges<LVD>();
+//     invalidate_adj_verts<LVD>();
 }
 
