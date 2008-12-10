@@ -123,6 +123,10 @@ int main()
     invalidate_out_edges<VVB>();
     invalidate_adj_verts<VVB>();
 
+    // If you comment out the tests before this, then adj_verts test will
+    // run without segfaulting - at least under gcc-4.3. Not really sure why,
+    // but I'm guessing it's still not generating valid results, and shouldn't
+    // be taken as an indicator of stability.
     typedef adjacency_list<vecS, vecS, directedS, int, int> VVD;
     cout << "vecS vecS directedS" << endl;
     invalidate_vertices<VVD>();
