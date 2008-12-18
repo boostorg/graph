@@ -3,8 +3,6 @@
 # define BOOST_NO_HASH
 #endif
 
-#include "typestr.hpp"
-
 #include <iostream>
 
 #include <boost/assert.hpp>
