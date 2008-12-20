@@ -8,10 +8,10 @@
   -->
 <Head>
 <Title>Boost Graph Library: Adjacency List</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -146,7 +146,7 @@ shows how to represent a family tree with a graph.
 <H3>Model of</H3>
 
 <P>
-<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>, 
+<a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>,
 <a href="./MutablePropertyGraph.html">MutablePropertyGraph</a>,
 <a href="../../utility/CopyConstructible.html">CopyConstructible</a>,
 <a href="../../utility/Assignable.html">Assignable</a>,
@@ -178,7 +178,7 @@ interface defined in Section <A
 HREF="../../property_map/property_map.html">Property Map
 Concepts</A> or may be <a href="bundles.html">bundled properties</a>,
 which have a more succinct syntax. The types of all property values
-must be Copy Constructible, Assignable, and Default Constructible.  
+must be Copy Constructible, Assignable, and Default Constructible.
 The property maps obtained from the
 <TT>adjacency_list</TT> class are models of the <a
 href="../../property_map/LvaluePropertyMap.html">Lvalue Property
@@ -322,29 +322,50 @@ each operation.
 <CAPTION ALIGN="BOTTOM"><STRONG>Table:</STRONG>
     Summary of Descriptor and Iterator Invalidation.
     </CAPTION>
-<tr> <th>Function</th> <th>Vertex Desc</th> <th>Edge Desc</th>
-<th>Vertex Iter</th> <th>Edge Iter</th> <th>Adj Iter</th> </tr>
-
 <tr>
-<td><tt>add_edge()</tt></td> <td align=center><tt>OK</tt></td><td
-align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td
-align=center><tt>EL=vecS &amp;&amp;<br> Directed=directedS</tt></td><td align=center><tt>EL=vecS</tt></td>
+    <th>Function</th>
+    <th>Vertex Desc</th>
+    <th>Edge Desc</th>
+    <th>Vertex Iter</th>
+    <th>Edge Iter</th>
+    <th>Adj Iter</th>
 </tr>
 <tr>
-<td><tt>remove_edge()<br>remove_edge_if()<br>remove_out_edge_if()<br>remove_in_edge_if()<br>clear_vertex()</tt></td><td align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
-<td align=center><tt>EL=vecS &amp;&amp;<br> Directed=directedS</tt></td><td align=center><tt>EL=vecS</tt></td>
+<td>
+    <tt>add_edge()</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>EL=vecS &amp;&amp; <br>Directed=directedS</tt></td>
+    <td align=center><tt>EL=vecS</tt></td>
 </tr>
 <tr>
-<td><tt>add_vertex()</tt></td><td align=center><tt>OK</tt></td><td
-align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td><td
-align=center><tt>OK</tt></td><td align=center><tt>OK</tt></td>
+    <td><tt>remove_edge()<br>remove_edge_if()<br>remove_out_edge_if()<br>
+            remove_in_edge_if()<br>clear_vertex()</tt>
+    </td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>EL=vecS &amp;&amp; <br>Directed=directedS</tt></td>
+    <td align=center><tt>EL=vecS</tt></td>
 </tr>
 <tr>
-<td><tt>remove_vertex()</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td><td align=center><tt>VL=vecS</tt></td>
+    <td><tt>add_vertex()</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>OK</tt></td>
+    <td align=center><tt>VL=vecS &amp;&amp; <br/> Directed=directedS</tt></td>
+    <td align=center><tt>VL=vecS &amp;&amp; <br/> Directed=directedS</tt></td>
 </tr>
-
+<tr>
+    <td><tt>remove_vertex()</tt></td>
+    <td align=center><tt>VL=vecS</tt></td>
+    <td align=center><tt>VL=vecS</tt></td>
+    <td align=center><tt>VL=vecS</tt></td>
+    <td align=center><tt>VL=vecS</tt></td>
+    <td align=center><tt>VL=vecS</tt></td>
+</tr>
 </table>
-
 
 <H2>Associated Types</H2>
 
@@ -539,7 +560,7 @@ Assignment operator. Makes this graph a copy of graph
 <hr>
 
 <pre>
-adjacency_list(vertices_size_type&nbsp;n, 
+adjacency_list(vertices_size_type&nbsp;n,
                const&nbsp;GraphProperty&amp;&nbsp;p = GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and zero edges.
@@ -550,8 +571,8 @@ Creates a graph object with <TT>n</TT> vertices and zero edges.
 <pre>
 template &lt;class&nbsp;EdgeIterator&gt;
 adjacency_list(EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
-               vertices_size_type&nbsp;n, 
-               edges_size_type&nbsp;m = 0, 
+               vertices_size_type&nbsp;n,
+               edges_size_type&nbsp;m = 0,
                const&nbsp;GraphProperty&amp;&nbsp;p&nbsp;=&nbsp;GraphProperty())
 </pre>
 Creates a graph object with <TT>n</TT> vertices and with the edges
@@ -600,7 +621,7 @@ void swap(adjacency_list&amp; x)
 Swap the vertices, edges, and properties of this graph with the
 vertices, edges, and properties of graph <tt>x</tt>.
 <hr>
- 
+
 <P>
 
 <H2>Non-Member Functions</H2>
@@ -781,7 +802,7 @@ returned edge descriptor points to the already existing edge.
 <p>
 The placement of the new edge in the out-edge list is in general
 unspecified, though ordering of the out-edge list can be accomplished
-through the choice of <tt>OutEdgeList</tt>. 
+through the choice of <tt>OutEdgeList</tt>.
 
 If the <tt>VertexList</tt> selector is
 <tt>vecS</tt>, and if either vertex descriptor <tt>u</tt> or
@@ -821,7 +842,7 @@ value of the edge's internal property storage.  Also see the previous
 void remove_edge(vertex_descriptor u, vertex_descriptor v,
                  adjacency_list&amp; g)
 </pre>
-Removes the edge <i>(u,v)</i> from the graph.  
+Removes the edge <i>(u,v)</i> from the graph.
 <p>
 This operation causes any outstanding edge descriptors or iterators
 that point to edge <i>(u,v)</i> to become invalid.  In addition, if
@@ -867,7 +888,7 @@ void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
 </pre>
 Removes all out-edges of vertex <i>u</i> from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to an edge descriptor, then the edge is removed. 
+applied to an edge descriptor, then the edge is removed.
 <p>
 The affect on descriptor and iterator stability is the same as that of
 invoking <tt>remove_edge()</tt> on each of the removed edges.
@@ -899,7 +920,7 @@ void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy
 the <tt>predicate</tt>. That is, if the predicate returns true when
-applied to an edge descriptor, then the edge is removed. 
+applied to an edge descriptor, then the edge is removed.
 <p>
 The affect on descriptor and iterator stability is the same as that of
 invoking <tt>remove_edge()</tt> on each of the removed edges.
@@ -912,7 +933,7 @@ vertex_descriptor
 add_vertex(adjacency_list&amp; g)
 </pre>
 Adds a vertex to the graph and returns the vertex descriptor for the
-new vertex. 
+new vertex.
 </a>
 
 <hr>
@@ -975,7 +996,7 @@ void remove_vertex(vertex_descriptor u, adjacency_list&amp; g)
 Remove vertex <i>u</i> from the vertex set of the graph. It is assumed
 that there are no edges to or from vertex <i>u</i> when it is removed.
 One way to make sure of this is to invoke <TT>clear_vertex()</TT>
-beforehand.  
+beforehand.
 <p>
 If the <TT>VertexList</TT> template parameter of the
 <TT>adjacency_list</TT> was <TT>vecS</TT>, then all vertex
@@ -1110,7 +1131,7 @@ HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  gif ALT OutEdgeList EdgeList VertexList html VertexProperties EdgeProperties
  -->
 <!--  LocalWords:  GraphPropertyTag cpp enum ai cout endl VertexAndEdgeListGraph

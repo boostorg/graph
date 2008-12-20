@@ -53,9 +53,7 @@ void run_test()
    Graph1 g1(24);
    Graph2 g2(24);
 
-   boost::add_edge(boost::vertex(0, g1), boost::vertex(7, g1), g1);
-   boost::add_edge(boost::vertex(0, g2), boost::vertex(7, g2), g2);
-   boost::add_edge(boost::vertex(1, g1), boost::vertex(2, g1), g1);
+boost::add_edge(boost::vertex(1, g1), boost::vertex(2, g1), g1);
    boost::add_edge(boost::vertex(1, g2), boost::vertex(2, g2), g2);
    boost::add_edge(boost::vertex(2, g1), boost::vertex(10, g1), g1);
    boost::add_edge(boost::vertex(2, g2), boost::vertex(10, g2), g2);
@@ -171,7 +169,7 @@ void run_test()
    {
       BOOST_CHECK(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
 
-      for (boost::tie(ei1, eend1) = boost::out_edges(*vi1, g1), 
+      for (boost::tie(ei1, eend1) = boost::out_edges(*vi1, g1),
              boost::tie(ei2, eend2) = boost::out_edges(*vi2, g2);
            ei1 != eend1;
            ++ei1, ++ei2)
@@ -188,7 +186,7 @@ void run_test()
    {
       BOOST_CHECK(boost::get(index_map1, *vi1) == boost::get(index_map2, *vi2));
 
-      for (boost::tie(iei1, ieend1) = boost::in_edges(*vi1, g1), 
+      for (boost::tie(iei1, ieend1) = boost::in_edges(*vi1, g1),
              boost::tie(iei2, ieend2) = boost::in_edges(*vi2, g2);
            iei1 != ieend1;
            ++iei1, ++iei2)
@@ -198,23 +196,46 @@ void run_test()
    }
 }
 
+template <typename Graph>
+void test_remove_edges()
+{
+    using namespace boost;
+
+    // Build a 2-vertex graph
+    Graph g(2);
+    add_edge(vertex(0, g), vertex(1, g), g);
+    BOOST_CHECK(num_vertices(g) == 2);
+    BOOST_CHECK(num_edges(g) == 1);
+    remove_edge(vertex(0, g), vertex(1, g), g);
+    BOOST_CHECK(num_edges(g) == 0);
+
+    // Make sure we don't decrement the edge count if the edge doesn't actually
+    // exist.
+    remove_edge(vertex(0, g), vertex(1, g), g);
+    BOOST_CHECK(num_edges(g) == 0);
+}
+
+
 int test_main(int, char*[])
 {
-    // Use setS to keep out edges in order, so they match the adjacency_matrix. 
-   typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>
-           UGraph1;
-   typedef boost::adjacency_matrix<boost::undirectedS>
-           UGraph2;
-   run_test<UGraph1, UGraph2>();
+        // Use setS to keep out edges in order, so they match the adjacency_matrix.
+    typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS>
+            UGraph1;
+    typedef boost::adjacency_matrix<boost::undirectedS>
+            UGraph2;
+    run_test<UGraph1, UGraph2>();
 
-    // Use setS to keep out edges in order, so they match the adjacency_matrix. 
-   typedef boost::adjacency_list<boost::setS, boost::vecS, 
-                                 boost::bidirectionalS>
-           BGraph1;
-   typedef boost::adjacency_matrix<boost::directedS>
-           BGraph2;
-   run_test<BGraph1, BGraph2>();
+        // Use setS to keep out edges in order, so they match the adjacency_matrix.
+    typedef boost::adjacency_list<boost::setS, boost::vecS,
+                                    boost::bidirectionalS>
+            BGraph1;
+    typedef boost::adjacency_matrix<boost::directedS>
+            BGraph2;
+    run_test<BGraph1, BGraph2>();
 
-   return 0;
+    test_remove_edges<UGraph2>();
+    test_remove_edges<BGraph2>();
+
+    return 0;
 }
 
