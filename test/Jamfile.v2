@@ -21,7 +21,6 @@ if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 }
 
 test-suite graph_test :
-
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
 
@@ -59,66 +58,41 @@ test-suite graph_test :
       : : : ]
 
     [ compile reverse_graph_cc.cpp ]
-
     [ run sequential_vertex_coloring.cpp ]
-
     [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
-
+    [ run subgraph_bundled.cpp ]
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
-
     [ run adjacency_matrix_test.cpp ]
-
     [ compile vector_graph_cc.cpp ]
-
     [ compile copy.cpp ]
-
     [ compile property_iter.cpp ]
-
     [ run bundled_properties.cpp ]
-
     [ run floyd_warshall_test.cpp ]
-
     [ run astar_search_test.cpp ]
-
     [ run biconnected_components_test.cpp ]
-
     [ run cuthill_mckee_ordering.cpp ]
-
     [ run king_ordering.cpp ]
-
     [ run matching_test.cpp ]
-
     [ run max_flow_test.cpp ]
-
     [ run kolmogorov_max_flow_test.cpp ]
-
     [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
-
     [ run basic_planarity_test.cpp ]
-
     [ run make_connected_test.cpp ]
-
     [ run make_bicon_planar_test.cpp ]
-
     [ run make_maximal_planar_test.cpp ]
-
     [ run named_vertices_test.cpp ]
-
     [ run all_planar_input_files_test.cpp
         ../../filesystem/build
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
-
     [ run parallel_edges_loops_test.cpp
         ../../filesystem/build
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
-
     [ run r_c_shortest_paths_test.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.txt ]
     [ compile dimacs.cpp ]
-
     $(optional_tests)
     ;
 

@@ -644,3 +644,23 @@ attached to the subgraph object <tt>g</tt>.  The <tt>property_value</tt>
 traits class is defined in <tt>boost/pending/property.hpp</tt>.
 
 <hr>
+<h2>Notes</h2>
+The subgraph template requires the underlying graph type to supply vertex and
+edge index properties. However, there is no default constructor of any adjacency
+list that satisfies both of these requirements. This is especially true of graphs
+using <a href="bundles.html">bundled properties</a>, or any adjacency list whose
+vertex set is selected by anything other that <tt>vecS</tt>.
+
+However, this problem can be overcome by embedding your bundled (or otherwise)
+properties into a <tt>property</tt> that contains an appropriate index. For
+example:
+<pre>
+struct my_vertex { ... };
+typedef property&lt;vertex_index_t, std::size_t, vertex_prop&gt; vertex_prop;
+
+struct my_edge { ... };
+typedef property&lt;edge_index_t, std::size_t, vertex_prop&gt; edge_prop;
+
+typedef adjacency_list&lt;vecS, listS, undirectedS, vertex_prop, edge_prop&gt; Graph;
+typdef subgraph&lt;Graph&gt; Subgraph;
+</pre>

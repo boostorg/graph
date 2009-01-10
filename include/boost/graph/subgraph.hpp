@@ -34,12 +34,15 @@ namespace boost {
   //   - If edge e=(u,v) is in the root graph, then edge e
   //     is also in any subgraph that contains both vertex u and v.
 
-  // The Graph template parameter must have a vertex_index
-  // and edge_index internal property. It is assumed that
-  // the vertex indices are assigned automatically by the
-  // graph during a call to add_vertex(). It is not
-  // assumed that the edge vertices are assigned automatically,
-  // they are explicitly assigned here.
+  // The Graph template parameter must have a vertex_index and edge_index
+  // internal property. It is assumed that the vertex indices are assigned
+  // automatically by the graph during a call to add_vertex(). It is not
+  // assumed that the edge vertices are assigned automatically, they are
+  // explicitly assigned here.
+  //
+  // NOTE [asutton]: The requirement of internal indexing causes this to fail
+  // for many, many graphs (i.e., those of non-vecS storage, and using bundled
+  // properties). To work around this - in part - you can do the following:
 
   template <typename Graph>
   class subgraph {
