@@ -37,6 +37,8 @@ typedef adjacency_list<
 typedef subgraph<Graph> Subgraph;
 typedef graph_traits<Subgraph>::vertex_descriptor Vertex;
 typedef graph_traits<Subgraph>::edge_descriptor Edge;
+typedef graph_traits<Subgraph>::vertex_iterator VertexIter;
+typedef graph_traits<Subgraph>::edge_iterator EdgeIter;
 
 int test_main(int argc, char* argv[])
 {
@@ -99,12 +101,18 @@ int test_main(int argc, char* argv[])
     if (num_vertices(g_s) == 0)
       return 0;
 
-    // The testing of properties is completely broken (in graph_test) with
-    // respect to bundled (or even generic) properties.
-    // std::vector<int> weights;
-    // for (unsigned i = 0; i < num_vertices(g_s); ++i)
-        // weights.push_back(i*2);
-    // gt.test_vertex_property_graph(weights, vertex_color_t(), g_s);
+    // Test property maps for vertices.
+    typedef property_map<Subgraph, int node::*>::type ColorMap;
+    ColorMap colors = get(&node::color, g_s);
+    for(std::pair<VertexIter, VertexIter> r = vertices(g_s); r.first != r.second; ++r.first)
+        colors[*r.first] = 0;
+
+    // Test property maps for edges.
+    typedef property_map<Subgraph, int arc::*>::type WeightMap;
+    WeightMap weights = get(&arc::weight, g_s);
+    for(std::pair<EdgeIter, EdgeIter> r = edges(g_s); r.first != r.second; ++r.first) {
+        weights[*r.first] = 12;
+    }
 
     // A regression test: the copy constructor of subgraph did not
     // copy one of the members, so local_edge->global_edge mapping
