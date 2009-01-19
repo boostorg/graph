@@ -33,7 +33,7 @@ BOOST_GRAPH_DECL
 bool read_graphviz(std::istream& in, mutate_graph& graph) 
 {
   using namespace boost;
-  using namespace boost::spirit;
+  using namespace boost::spirit::classic;
 
   typedef std::istream_iterator<char> is_t;
   typedef multi_pass<is_t> iterator_t;
