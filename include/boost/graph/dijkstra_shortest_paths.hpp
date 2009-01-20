@@ -17,6 +17,8 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/pending/relaxed_heap.hpp>
+#include <boost/smart_ptr.hpp>
+#include <boost/graph/detail/d_ary_heap.hpp>
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
@@ -90,18 +92,18 @@ namespace boost {
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
-        m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                            m_combine, m_compare);
-        if (m_decreased)
+        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
+                               m_combine, m_compare);
+        if (decreased)
           m_vis.edge_relaxed(e, g);
         else
           m_vis.edge_not_relaxed(e, g);
       }
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
-        m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                            m_combine, m_compare);
-        if (m_decreased) {
+        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
+                               m_combine, m_compare);
+        if (decreased) {
           m_Q.update(target(e, g));
           m_vis.edge_relaxed(e, g);
         } else
@@ -134,7 +136,6 @@ namespace boost {
       DistanceMap m_distance;
       BinaryFunction m_combine;
       BinaryPredicate m_compare;
-      bool m_decreased;
       D m_zero;
     };
 
@@ -182,10 +183,19 @@ namespace boost {
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
     if (!dijkstra_relaxed_heap) {
+#ifdef BOOST_GRAPH_TEST_D_ARY_HEAP
+      boost::scoped_array<std::size_t> index_in_heap_map(new std::size_t[num_vertices(g)]);
+      typedef boost::iterator_property_map<std::size_t*, IndexMap> IndexInHeapMap;
+      IndexInHeapMap index_in_heap(&index_in_heap_map[0], index_map);
+      typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, DistanceMap, Compare>
+        MutableQueue;
+      MutableQueue Q(distance, index_in_heap, compare);
+#else
       typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
         MutableQueue;
 
       MutableQueue Q(num_vertices(g), icmp, index_map);
+#endif
 
       detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
         PredecessorMap, DistanceMap, Combine, Compare>
