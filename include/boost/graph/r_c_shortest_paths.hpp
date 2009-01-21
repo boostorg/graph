@@ -316,7 +316,7 @@ void r_c_shortest_paths_dispatch
             }
           }
           if( !b_outer_iter_erased )
-						++outer_iter;
+            ++outer_iter;
         }
         if( static_cast<int>( list_labels_cur_vertex.size() ) > 1 )
           vec_last_valid_positions_for_dominance[i_cur_resident_vertex_num] = 

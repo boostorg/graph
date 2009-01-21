@@ -196,7 +196,7 @@ namespace boost {
       
       // step 5
       // Initializing w
-      w_e = std::numeric_limits<unsigned>::max();
+      w_e = (std::numeric_limits<unsigned>::max)();
       //end 5
       
       

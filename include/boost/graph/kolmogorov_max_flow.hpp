@@ -344,7 +344,7 @@ namespace boost {
 
           /**
            * returns the bottleneck of a s->t path (end_of_path is last vertex in source-tree, begin_of_path is first vertex in sink-tree)
-           */		
+           */
           inline tEdgeVal find_bottleneck(edge_descriptor e){
             BOOST_USING_STD_MIN();
             tEdgeVal minimum_cap = m_res_cap_map[e];
@@ -467,7 +467,7 @@ namespace boost {
 
           /**
           * return next active vertex if there is one, otherwise a null_vertex
-          */	
+          */    
           inline vertex_descriptor get_next_active_node(){
             while(true){
               if(m_active_nodes.empty())
@@ -486,7 +486,7 @@ namespace boost {
 
           /**
           * adds v as an active vertex, but only if its not in the list already
-          */		
+          */            
           inline void add_active_node(vertex_descriptor v){
             assert(get_tree(v) != tColorTraits::gray());
             if(m_in_active_list_map[v]){
@@ -545,7 +545,7 @@ namespace boost {
 
           /**
            * sets edge to parent vertex of v; 
-          */		
+          */            
           inline void set_edge_to_parent(vertex_descriptor v, edge_descriptor f_edge_to_parent){
             assert(m_res_cap_map[f_edge_to_parent] > 0);
             m_pre_map[v] = f_edge_to_parent;
@@ -676,7 +676,7 @@ namespace boost {
   /**
    * non-named-parameter version, given everything
    * this is the catch all version
-   */			
+   */                   
   template <class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap, 
     class PredecessorMap, class ColorMap, class DistanceMap, class IndexMap>
   typename property_traits<CapacityEdgeMap>::value_type

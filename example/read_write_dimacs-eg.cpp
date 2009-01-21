@@ -103,7 +103,7 @@ int main()
         capacity[to_sink] -= to_augment;
         augmented_flow += to_augment;
       }else{
-        tCapMapValue to_augment = get(capacity, to_sink);	
+        tCapMapValue to_augment = get(capacity, to_sink);
         capacity[to_sink] = 0;
         capacity[from_source] -= to_augment;
         augmented_flow += to_augment;

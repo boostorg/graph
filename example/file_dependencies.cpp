@@ -136,7 +136,7 @@ int main(int,char*[])
         // Through the order from topological sort, we are sure that every 
         // time we are using here is already initialized.
         for (tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
-          maxdist=std::max(time[source(*j, g)], maxdist);
+          maxdist=(std::max)(time[source(*j, g)], maxdist);
         time[*i]=maxdist+1;
       }
     }

@@ -255,7 +255,7 @@ namespace boost {
       }
 
       /*!
-       * Value determination. Find a generalized eigenmode (n^{k+1}, x^{k+1}) of A^{Ï_{k+1}} of the pi graph (Algorithm IV.1).
+       * Value determination. Find a generalized eigenmode (n^{k+1}, x^{k+1}) of A^{I_{k+1}} of the pi graph (Algorithm IV.1).
        */
       void pi_eingen_value(
                            TPiGraphVertexIndexMap index_map,

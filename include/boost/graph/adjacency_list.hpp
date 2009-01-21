@@ -343,7 +343,7 @@ namespace boost {
         adjacency_list<OutEdgeListS,VertexListS,DirectedS,
                        VertexProperty,EdgeProperty,GraphProperty,EdgeListS>,
         typename adjacency_list_traits<OutEdgeListS, VertexListS, DirectedS,
-	  			       EdgeListS>::vertex_descriptor,
+                                       EdgeListS>::vertex_descriptor,
         VertexProperty>
   {
 #if !defined(BOOST_GRAPH_NO_BUNDLED_PROPERTIES)

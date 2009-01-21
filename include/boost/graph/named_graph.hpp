@@ -274,8 +274,8 @@ public:
   typedef multi_index::multi_index_container<
             Vertex,
             multi_index::indexed_by<
-	      multi_index::hashed_unique<multi_index::tag<vertex_name_t>, 
-					 extract_name_from_vertex> >
+              multi_index::hashed_unique<multi_index::tag<vertex_name_t>, 
+                                         extract_name_from_vertex> >
           > named_vertices_type;
 
   /// The set of vertices, indexed by name
@@ -337,8 +337,8 @@ BGL_NAMED_GRAPH::named_graph(const extract_name_type& extract,
           boost::make_tuple(
             0, // initial number of buckets
             extract_name_from_vertex(derived(), extract),
-	    boost::hash<vertex_name_type>(),
-	    std::equal_to<vertex_name_type>())))),
+            boost::hash<vertex_name_type>(),
+            std::equal_to<vertex_name_type>())))),
     vertex_constructor(vertex_constructor)
 {
 }
@@ -380,7 +380,7 @@ vertex_by_property(const bundled_vertex_property_type& property)
 template<BGL_NAMED_GRAPH_PARAMS>
 optional<Vertex> 
 find_vertex(typename BGL_NAMED_GRAPH::vertex_name_type const& name,
-	    const BGL_NAMED_GRAPH& g)
+            const BGL_NAMED_GRAPH& g)
 {
   typedef typename BGL_NAMED_GRAPH::vertices_by_name_type
     vertices_by_name_type;
@@ -418,8 +418,8 @@ add_vertex(typename BGL_NAMED_GRAPH::vertex_name_type const& name,
 template<BGL_NAMED_GRAPH_PARAMS>
 std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
 add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
-	 typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
-	 BGL_NAMED_GRAPH& g)
+         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
+         BGL_NAMED_GRAPH& g)
 {
   return add_edge(add_vertex(u_name, g.derived()), 
                   add_vertex(v_name, g.derived()), 
@@ -430,8 +430,8 @@ add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
 template<BGL_NAMED_GRAPH_PARAMS>
 std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
 add_edge(typename BGL_NAMED_GRAPH::vertex_descriptor const& u,
-	 typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
-	 BGL_NAMED_GRAPH& g)
+         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
+         BGL_NAMED_GRAPH& g)
 {
   return add_edge(u, 
                   add_vertex(v_name, g.derived()), 
@@ -443,7 +443,7 @@ template<BGL_NAMED_GRAPH_PARAMS>
 std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
 add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
          typename BGL_NAMED_GRAPH::vertex_descriptor const& v,
-	 BGL_NAMED_GRAPH& g)
+         BGL_NAMED_GRAPH& g)
 {
   return add_edge(add_vertex(u_name, g.derived()),
                   v, 
@@ -464,8 +464,8 @@ add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
  * graphs. 
  */
 template<typename Graph, typename Vertex, typename VertexProperty,
-	 typename ExtractName 
-	   = typename internal_vertex_name<VertexProperty>::type>
+         typename ExtractName 
+           = typename internal_vertex_name<VertexProperty>::type>
 struct maybe_named_graph : public named_graph<Graph, Vertex, VertexProperty> 
 { 
 };
@@ -506,8 +506,8 @@ struct maybe_named_graph<Graph, Vertex, VertexProperty, void>
 };
 #else
 template<typename Graph, typename Vertex, typename VertexProperty,
-	 typename ExtractName 
-	   = typename internal_vertex_name<VertexProperty>::type>
+         typename ExtractName 
+           = typename internal_vertex_name<VertexProperty>::type>
 struct maybe_named_graph 
 { 
   /// The type of the "bundled" property, from which the name can be
