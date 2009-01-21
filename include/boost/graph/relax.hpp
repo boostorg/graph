@@ -27,7 +27,7 @@ namespace boost {
        T zero(0);
        T result = a + b;
        if (result < zero && a >= zero && b >= zero)
-         return (numeric_limits<T>::max)();
+         return (std::numeric_limits<T>::max)();
        return result;
       }
     };

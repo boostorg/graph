@@ -97,6 +97,8 @@ namespace boost
 
     }
 
+    enum target_graph_t { tg_k_3_3, tg_k_5};
+
   } // namespace detail
 
 
@@ -123,9 +125,7 @@ namespace boost
 
     typedef adjacency_list<vecS, vecS, undirectedS> small_graph_t;
 
-    enum target_graph_t { k_3_3, k_5};
-
-    target_graph_t target_graph = k_3_3; //unless we decide otherwise later
+    detail::target_graph_t target_graph = detail::tg_k_3_3; //unless we decide otherwise later
 
     static small_graph_t K_5(detail::make_K_5<small_graph_t>());
 
@@ -245,11 +245,11 @@ namespace boost
             for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
               if (neighbors[*vi].size() == 4)
                 {
-                  target_graph = k_5;
+                  target_graph = detail::tg_k_5;
                   break;
                 }
 
-            if (target_graph == k_3_3)
+            if (target_graph == detail::tg_k_3_3)
               break;
           }
         
@@ -299,11 +299,11 @@ namespace boost
           }
       }
     
-    if (target_graph == k_5)
+    if (target_graph == detail::tg_k_5)
       {
         return isomorphism(K_5,contracted_graph);
       }
-    else //target_graph == k_3_3
+    else //target_graph == tg_k_3_3
       {
         return isomorphism(K_3_3,contracted_graph);
       }
