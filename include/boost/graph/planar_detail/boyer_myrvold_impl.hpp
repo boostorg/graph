@@ -25,6 +25,9 @@
 
 namespace boost
 {
+  namespace detail {
+    enum bm_case_t{BM_NO_CASE_CHOSEN, BM_CASE_A, BM_CASE_B, BM_CASE_C, BM_CASE_D, BM_CASE_E};
+  }
 
   template<typename LowPointMap, typename DFSParentMap,
            typename DFSNumberMap, typename LeastAncestorMap,
@@ -1240,8 +1243,7 @@ namespace boost
       vertex_t second_x_y_path_endpoint = graph_traits<Graph>::null_vertex();
       vertex_t w_ancestor = v;
 
-      enum case_t{NO_CASE_CHOSEN, CASE_A, CASE_B, CASE_C, CASE_D, CASE_E};
-      case_t chosen_case = NO_CASE_CHOSEN;
+      detail::bm_case_t chosen_case = detail::BM_NO_CASE_CHOSEN;
 
       std::vector<edge_t> x_external_path;
       std::vector<edge_t> y_external_path;
@@ -1403,7 +1405,7 @@ namespace boost
       //If v isn't on the same bicomp as x and y, it's a case A
       if (bicomp_root != v)
         {
-          chosen_case = CASE_A;
+          chosen_case = detail::BM_CASE_A;
 
           for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
             if (lower_face_vertex[*vi])
@@ -1420,7 +1422,7 @@ namespace boost
         }
       else if (w != graph_traits<Graph>::null_vertex())
         {
-          chosen_case = CASE_B;
+          chosen_case = detail::BM_CASE_B;
 
           for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
             {
@@ -1512,7 +1514,7 @@ namespace boost
           //We need to find a valid z, since the x-y path re-defines the lower
           //face, and the z we found earlier may now be on the upper face.
 
-          chosen_case = CASE_E;
+          chosen_case = detail::BM_CASE_E;
 
 
           // The z we've used so far is just an externally active vertex on the
@@ -1631,7 +1633,7 @@ namespace boost
                     }
                   else if (previous_vertex == x || previous_vertex == y)
                     {
-                      chosen_case = CASE_C;
+                      chosen_case = detail::BM_CASE_C;
                     }
               
                 }
@@ -1688,7 +1690,7 @@ namespace boost
 
               if (x_y_path_vertex[current_vertex])
                 {
-                  chosen_case = CASE_D;
+                  chosen_case = detail::BM_CASE_D;
                   break;
                 }
               else
@@ -1704,7 +1706,7 @@ namespace boost
 
 
 
-      if (chosen_case != CASE_B && chosen_case != CASE_A)
+      if (chosen_case != detail::BM_CASE_B && chosen_case != detail::BM_CASE_A)
         {
 
           //Finding z and w.
@@ -1724,7 +1726,7 @@ namespace boost
                             z_v_path
                             );
               
-          if (chosen_case == CASE_E)
+          if (chosen_case == detail::BM_CASE_E)
             {
 
               for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
@@ -1810,11 +1812,11 @@ namespace boost
       // a deterministic process, and we can simplify the function 
       // is_kuratowski_subgraph by cleaning up some edges here.
 
-      if (chosen_case == CASE_B)
+      if (chosen_case == detail::BM_CASE_B)
         {
           is_in_subgraph[dfs_parent_edge[v]] = false;
         }
-      else if (chosen_case == CASE_C)
+      else if (chosen_case == detail::BM_CASE_C)
         {
           // In a case C subgraph, at least one of the x-y path endpoints
           // (call it alpha) is above either x or y on the outer face. The
@@ -1857,7 +1859,7 @@ namespace boost
             }
           
         }
-      else if (chosen_case == CASE_D)
+      else if (chosen_case == detail::BM_CASE_D)
         {
           // Need to remove both of the edges adjacent to v on the outer face.
           // remove the connecting edges from v to bicomp, then
@@ -1868,7 +1870,7 @@ namespace boost
           is_in_subgraph[v_dfchild_handle.second_edge()] = false;
 
         }
-      else if (chosen_case == CASE_E)
+      else if (chosen_case == detail::BM_CASE_E)
         {
           // Similarly to case C, if the endpoints of the x-y path are both 
           // below x and y, we should remove an edge to allow the subgraph to 
