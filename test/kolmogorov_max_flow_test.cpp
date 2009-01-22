@@ -241,7 +241,7 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
             return;
           typename std::list<tVertex>::const_iterator it = find(tSuper::m_orphans.begin(), tSuper::m_orphans.end(), v);
           // a node is active, if its in the active_list AND (is has_a_parent, or its already in the orphans_list or its the sink, or its the source)
-          bool is_active = (tSuper::m_in_active_list_map[v] && (has_parent(v) || it != tSuper::m_orphans.end() ));
+          bool is_active = (tSuper::m_in_active_list_map[v] && (tSuper::has_parent(v) || it != tSuper::m_orphans.end() ));
           if(get_tree(v) != tColorTraits::gray() && !is_active){
             typename graph_traits<Graph>::out_edge_iterator ei,e_end;
             for(tie(ei, e_end) = out_edges(v, tSuper::m_g); ei != e_end; ++ei){
