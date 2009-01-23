@@ -22,7 +22,8 @@ namespace boost
 
 
   namespace detail {
-    enum {PCO_PROCESSED, 
+    enum planar_canonical_ordering_state
+         {PCO_PROCESSED, 
           PCO_UNPROCESSED, 
           PCO_ONE_NEIGHBOR_PROCESSED, 
           PCO_READY_TO_BE_PROCESSED};
