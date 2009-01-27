@@ -8,8 +8,8 @@
 #include <boost/config.hpp>
 #include <fstream>
 #include <iostream>
-#include <iomanip>
 #include <vector>
+#include <iomanip>
 #include <boost/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -21,11 +21,12 @@ main()
   using namespace boost;
   typedef adjacency_list<vecS, vecS, directedS, no_property,
     property< edge_weight_t, int, property< edge_weight2_t, int > > > Graph;
-  const int V = 5;
+  const int V = 6;
   typedef std::pair < int, int >Edge;
   Edge edge_array[] =
-    { Edge(0, 1), Edge(0, 4), Edge(0, 2), Edge(1, 3), Edge(1, 4),
-    Edge(2, 1), Edge(3, 2), Edge(3, 0), Edge(4, 3)
+    { Edge(0, 1), Edge(0, 2), Edge(0, 3), Edge(0, 4), Edge(0, 5),
+    Edge(1, 2), Edge(1, 5), Edge(1, 3), Edge(2, 4), Edge(2, 5),
+    Edge(3, 2), Edge(4, 3), Edge(4, 1), Edge(5, 4)
   };
   const std::size_t E = sizeof(edge_array) / sizeof(Edge);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -38,7 +39,7 @@ main()
 #endif
 
   property_map < Graph, edge_weight_t >::type w = get(edge_weight, g);
-  int weights[] = { 3, -4, 8, 1, 7, 4, -5, 2, 6 };
+  int weights[] = { 0, 0, 0, 0, 0, 3, -4, 8, 1, 7, 4, -5, 2, 6 };
   int *wp = weights;
 
   graph_traits < Graph >::edge_iterator e, e_end;
@@ -49,12 +50,12 @@ main()
   int D[V][V];
   johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
-  std::cout << "     ";
+  std::cout << "       ";
   for (int k = 0; k < V; ++k)
     std::cout << std::setw(5) << k;
   std::cout << std::endl;
   for (int i = 0; i < V; ++i) {
-    std::cout << i << " -> ";
+    std::cout << std::setw(3) << i << " -> ";
     for (int j = 0; j < V; ++j) {
       if (D[i][j] == (std::numeric_limits<int>::max)())
         std::cout << std::setw(5) << "inf";
