@@ -21,17 +21,6 @@
 #include <algorithm>
 using namespace boost;
 
-template <typename T>
-struct inf_plus{
-  T operator()(const T& a, const T& b) const {
-    T inf = std::numeric_limits<T>::max BOOST_PREVENT_MACRO_SUBSTITUTION();
-    if (a == inf || b == inf){
-      return inf;
-    }
-    return a + b;
-  }
-};
-
 template<typename T>
 inline const T& my_min(const T& x, const T& y) 
 { return x < y? x : y; }
@@ -125,20 +114,16 @@ bool acceptance_test(Graph& g, int vec, int e)
 
 
     bool bellman, floyd1, floyd2, floyd3;
-    std::less<int> compare;
-    inf_plus<int> combine;
     floyd1 =
       boost::floyd_warshall_initialized_all_pairs_shortest_paths
         (g,
          matrix, weight_map(boost::get(boost::edge_weight, g)).
-         distance_compare(compare). distance_combine(combine).
          distance_inf(int_inf). distance_zero(0));
 
     floyd2 =
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
-         weight_map(local_edge_map).  distance_compare(compare).
-         distance_combine(combine).
+         weight_map(local_edge_map).
          distance_inf(int_inf). distance_zero(0));
 
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
@@ -153,8 +138,7 @@ bool acceptance_test(Graph& g, int vec, int e)
           (g, vec,
            weight_map(boost::get(boost::edge_weight, g)).
            distance_map(boost::get(boost::vertex_distance, g)).
-           predecessor_map(dummy_map).distance_compare(compare).
-           distance_combine(combine));
+           predecessor_map(dummy_map));
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
           firstv2++){
@@ -302,20 +286,16 @@ bool acceptance_test2(Graph& g, int vec, int e)
 
 
     bool bellman, floyd1, floyd2, floyd3;
-    std::less<int> compare;
-    inf_plus<int> combine;
     floyd1 =
       boost::floyd_warshall_initialized_all_pairs_shortest_paths
         (g,
          matrix, weight_map(boost::get(boost::edge_weight, g)).
-         distance_compare(compare). distance_combine(combine).
          distance_inf(int_inf). distance_zero(0));
 
     floyd2 =
       boost::floyd_warshall_all_pairs_shortest_paths
         (g, matrix3,
-         weight_map(local_edge_map).  distance_compare(compare).
-         distance_combine(combine).
+         weight_map(local_edge_map).
          distance_inf(int_inf). distance_zero(0));
 
     floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
@@ -330,8 +310,7 @@ bool acceptance_test2(Graph& g, int vec, int e)
           (g, vec,
            weight_map(boost::get(boost::edge_weight, g)).
            distance_map(boost::get(boost::vertex_distance, g)).
-           predecessor_map(dummy_map).distance_compare(compare).
-           distance_combine(combine));
+           predecessor_map(dummy_map));
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
           firstv2++){

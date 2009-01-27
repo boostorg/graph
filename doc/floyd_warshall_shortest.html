@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) 2002 Rensselaer Polytechnic Institute
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) 2002 Rensselaer Polytechnic Institute
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Floyd-Warshall All Pairs Shortest Paths</Title>
@@ -127,7 +127,7 @@ path.  The CombineFunction must be a model of <code>BinaryFunction</code>.
 The argument types must match the value type of the <code>WeightMap</code>.
 The result type must be the same as the distance value type.<br>
 
-<b>Default:</b> <code>std::plus&lt;WM&gt;</code> with <code>WM = typename property_traits&lt;WeightMap&gt;::value_type</code>
+<b>Default:</b> <code>boost::closed_plus&lt;WM&gt;</code> with <code>WM = typename property_traits&lt;WeightMap&gt;::value_type</code>
 </blockquote>
 
 IN: <code>distance_inf(WM inf)</code>
