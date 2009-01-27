@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek 2000
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Jeremy Siek 2000
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Dijkstra's Shortest Paths</Title>
@@ -41,6 +41,20 @@ void dijkstra_shortest_paths
    VertexIndexMap index_map,
    CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
    DijkstraVisitor vis, ColorMap color = <i>default</i>)
+
+<i>// version that does not initialize the property maps (except for the default color map)</i>
+template &lt;class VertexListGraph, class DijkstraVisitor,
+          class PredecessorMap, class DistanceMap,
+          class WeightMap, class IndexMap, class Compare, class Combine,
+          class DistZero, class ColorMap&gt;
+void
+dijkstra_shortest_paths_no_init
+  (const VertexListGraph&amp; g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+   IndexMap index_map,
+   Compare compare, Combine combine, DistZero zero,
+   DijkstraVisitor vis, ColorMap color = <i>default</i>);
 </PRE>
 
 <P>
@@ -92,7 +106,7 @@ track of which set each vertex is in. Vertices colored black are in
 <i>S</i>. Vertices colored white or gray are in <i>V-S</i>. White vertices have
 not yet been discovered and gray vertices are in the priority queue.
 By default, the algorithm will allocate an array to store a color
-marker for each vertex in the graph. You can provide you own storage
+marker for each vertex in the graph. You can provide your own storage
 and access for colors with the <tt>color_map()</tt> parameter.
 </P>
 <p>
@@ -109,7 +123,7 @@ indicated by the labels on the right.
 <td valign="top">
 <pre>
 DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u in V</i>
+  <b>for</b> each vertex <i>u in V</i> <b>(This loop is not run in dijkstra_shortest_paths_no_init)</b>
     <i>d[u] := infinity</i> 
     <i>p[u] := u</i> 
     <i>color[u] :=</i> WHITE
