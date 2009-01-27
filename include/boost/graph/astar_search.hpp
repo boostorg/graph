@@ -15,13 +15,15 @@
 
 
 #include <functional>
+#include <vector>
 #include <boost/limits.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/pending/mutable_queue.hpp>
 #include <boost/graph/relax.hpp>
-#include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/property_map.hpp>
+#include <boost/vector_property_map.hpp>
 
 
 namespace boost {
@@ -253,15 +255,13 @@ namespace boost {
      CompareFunction compare, CombineFunction combine,
      CostInf inf, CostZero zero)
   {
-    typedef indirect_cmp<CostMap, CompareFunction> IndirectCmp;
-    IndirectCmp icmp(cost, compare);
-
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
-    typedef mutable_queue<Vertex, std::vector<Vertex>,
-        IndirectCmp, VertexIndexMap>
+    typedef boost::vector_property_map<std::size_t> IndexInHeapMap;
+    IndexInHeapMap index_in_heap;
+    typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, CostMap, CompareFunction>
       MutableQueue;
-    MutableQueue Q(num_vertices(g), icmp, index_map);
+    MutableQueue Q(cost, index_in_heap, compare);
 
     detail::astar_bfs_visitor<AStarHeuristic, AStarVisitor,
         MutableQueue, PredecessorMap, CostMap, DistanceMap,
@@ -356,25 +356,16 @@ namespace boost {
        const Params& params)
     {
       typedef typename property_traits<WeightMap>::value_type D;
-      typename std::vector<D>::size_type
-        n = is_default_param(distance) ? num_vertices(g) : 1;
-      std::vector<D> distance_map(n);
-      n = is_default_param(cost) ? num_vertices(g) : 1;
-      std::vector<D> cost_map(n);
-      std::vector<default_color_type> color_map(num_vertices(g));
-      default_color_type c = white_color;
+      std::vector<D> distance_map;
+      std::vector<D> cost_map;
+      std::vector<default_color_type> color_map;
 
       detail::astar_dispatch2
         (g, s, h,
-         choose_param(cost, make_iterator_property_map
-                      (cost_map.begin(), index_map,
-                       cost_map[0])),
-         choose_param(distance, make_iterator_property_map
-                      (distance_map.begin(), index_map,
-                       distance_map[0])),
+         choose_param(cost, vector_property_map<D, IndexMap>(index_map)),
+         choose_param(distance, vector_property_map<D, IndexMap>(index_map)),
          weight, index_map,
-         choose_param(color, make_iterator_property_map
-                      (color_map.begin(), index_map, c)),
+         choose_param(color, vector_property_map<default_color_type, IndexMap>(index_map)),
          params);
     }
   } // namespace detail
