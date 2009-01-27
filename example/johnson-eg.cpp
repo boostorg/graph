@@ -56,7 +56,7 @@ main()
   for (int i = 0; i < V; ++i) {
     std::cout << i << " -> ";
     for (int j = 0; j < V; ++j) {
-      if (D[i][j] > 20 || D[i][j] < -20)
+      if (D[i][j] == (std::numeric_limits<int>::max)())
         std::cout << std::setw(5) << "inf";
       else
         std::cout << std::setw(5) << D[i][j];
