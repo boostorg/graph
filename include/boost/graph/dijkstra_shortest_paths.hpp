@@ -183,14 +183,14 @@ namespace boost {
   }
 
   // Call breadth first search with default color map.
-  template <class VertexListGraph, class DijkstraVisitor,
+  template <class Graph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
             class DistZero>
   inline void
   dijkstra_shortest_paths_no_init
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    (const Graph& g,
+     typename graph_traits<Graph>::vertex_descriptor s,
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistZero zero,
@@ -198,7 +198,7 @@ namespace boost {
   {
     boost::scoped_array<default_color_type> color_map_holder;
     typedef
-      detail::vertex_property_map_generator<VertexListGraph, IndexMap, default_color_type>
+      detail::vertex_property_map_generator<Graph, IndexMap, default_color_type>
       ColorMapHelper;
     typedef typename ColorMapHelper::type ColorMap;
     ColorMap color =
@@ -209,14 +209,14 @@ namespace boost {
   }
 
   // Call breadth first search
-  template <class VertexListGraph, class DijkstraVisitor,
+  template <class Graph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
             class DistZero, class ColorMap>
   inline void
   dijkstra_shortest_paths_no_init
-    (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+    (const Graph& g,
+     typename graph_traits<Graph>::vertex_descriptor s,
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistZero zero,
@@ -225,7 +225,7 @@ namespace boost {
     typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
     IndirectCmp icmp(distance, compare);
 
-    typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
     if (!dijkstra_relaxed_heap) {
@@ -248,7 +248,7 @@ namespace boost {
 #else // Now the default: use a d-ary heap
       boost::scoped_array<std::size_t> index_in_heap_map_holder;
       typedef
-        detail::vertex_property_map_generator<VertexListGraph, IndexMap, std::size_t>
+        detail::vertex_property_map_generator<Graph, IndexMap, std::size_t>
         IndexInHeapMapHelper;
       typedef typename IndexInHeapMapHelper::type IndexInHeapMap;
       IndexInHeapMap index_in_heap =

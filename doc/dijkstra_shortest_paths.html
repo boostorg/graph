@@ -43,14 +43,14 @@ void dijkstra_shortest_paths
    DijkstraVisitor vis, ColorMap color = <i>default</i>)
 
 <i>// version that does not initialize the property maps (except for the default color map)</i>
-template &lt;class VertexListGraph, class DijkstraVisitor,
+template &lt;class Graph, class DijkstraVisitor,
           class PredecessorMap, class DistanceMap,
           class WeightMap, class IndexMap, class Compare, class Combine,
           class DistZero, class ColorMap&gt;
 void
 dijkstra_shortest_paths_no_init
-  (const VertexListGraph&amp; g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+  (const Graph&amp; g,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
    IndexMap index_map,
    Compare compare, Combine combine, DistZero zero,
