@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) 2004 Kris Beevers
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) 2004 Kris Beevers
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: A* Heuristic Search</Title>
@@ -50,6 +50,25 @@ astar_search
    VertexIndexMap index_map, ColorMap color,
    CompareFunction compare, CombineFunction combine,
    CostInf inf, CostZero zero);
+
+<i>// Version that does not initialize property maps (used for implicit graphs)</i>
+template &lt;typename VertexListGraph, typename AStarHeuristic,
+          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap, typename ColorMap,
+          typename VertexIndexMap,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename CostInf, typename CostZero&gt;
+inline void
+astar_search_no_init
+  (VertexListGraph &amp;g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   AStarHeuristic h, AStarVisitor vis,
+   PredecessorMap predecessor, CostMap cost,
+   DistanceMap distance, WeightMap weight,
+   ColorMap color, VertexIndexMap index_map,
+   CompareFunction compare, CombineFunction combine,
+   CostInf inf, CostZero zero)
 </PRE>
 
 <P>
@@ -92,7 +111,10 @@ useful for searching large state spaces -- in gameplaying scenarios
 (e.g. chess), for example -- in which it may not be possible to store
 the entire graph.  Implicit searches can be performed with this
 implementation of A* by creating special visitors that generate
-neighbors of newly-expanded vertices.
+neighbors of newly-expanded vertices.  Please note that
+<tt>astar_search_no_init()</tt> must be used for implicit graphs; the basic
+<tt>astar_search()</tt> function requires a graph that models
+<a href="VertexListGraph.html"><tt>VertexListGraph</tt></a>.
 </P>
 
 <P>
