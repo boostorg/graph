@@ -8,7 +8,6 @@
 //           Andrew Lumsdaine
 #ifndef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
 #  define BOOST_GRAPH_DIJKSTRA_TESTING
-#  define BOOST_GRAPH_TEST_D_ARY_HEAP
 #endif
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -107,11 +106,7 @@ int main(int argc, char* argv[])
   std::vector<double> relaxed_heap_distances(n);
 
   // Run binary or d-ary heap version
-#ifdef BOOST_GRAPH_TEST_D_ARY_HEAP
-  std::cout << "Running Dijkstra's with d-ary heap...";
-#else
   std::cout << "Running Dijkstra's with binary heap...";
-#endif
   std::cout.flush();
   timer t;
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
@@ -125,7 +120,11 @@ int main(int argc, char* argv[])
   std::cout << binary_heap_time << " seconds.\n";
 
   // Run relaxed heap version
+#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
   std::cout << "Running Dijkstra's with relaxed heap...";
+#else
+  std::cout << "Running Dijkstra's with d-ary heap (d=4)...";
+#endif
   std::cout.flush();
   t.restart();
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR

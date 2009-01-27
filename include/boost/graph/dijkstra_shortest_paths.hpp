@@ -19,6 +19,9 @@
 #include <boost/pending/relaxed_heap.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/property_map.hpp>
+#include <boost/vector_property_map.hpp>
+#include <boost/type_traits.hpp>
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
@@ -27,6 +30,8 @@
 namespace boost {
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
+  // This is a misnomer now: it now just refers to the "default heap", which is
+  // currently d-ary (d=4) but can be changed by a #define.
   static bool dijkstra_relaxed_heap = true;
 #endif
 
@@ -141,6 +146,42 @@ namespace boost {
 
   } // namespace detail
 
+  namespace detail {
+    template <class Graph, class IndexMap, class Value, bool KnownNumVertices>
+    struct vertex_property_map_generator_helper {};
+
+    template <class Graph, class IndexMap, class Value>
+    struct vertex_property_map_generator_helper<Graph, IndexMap, Value, true> {
+      typedef boost::iterator_property_map<Value*, IndexMap> type;
+      static type build(const Graph& g, const IndexMap& index, boost::scoped_array<Value>& array_holder) {
+        array_holder.reset(new Value[num_vertices(g)]);
+        std::fill(array_holder.get(), array_holder.get() + num_vertices(g), Value());
+        return make_iterator_property_map(array_holder.get(), index);
+      }
+    };
+
+    template <class Graph, class IndexMap, class Value>
+    struct vertex_property_map_generator_helper<Graph, IndexMap, Value, false> {
+      typedef boost::vector_property_map<Value, IndexMap> type;
+      static type build(const Graph& g, const IndexMap& index, boost::scoped_array<Value>& array_holder) {
+        return make_vector_property_map(index);
+      }
+    };
+
+    template <class Graph, class IndexMap, class Value>
+    struct vertex_property_map_generator {
+      typedef boost::is_base_and_derived<
+                boost::vertex_list_graph_tag,
+                typename boost::graph_traits<Graph>::traversal_category>
+              known_num_vertices;
+      typedef vertex_property_map_generator_helper<Graph, IndexMap, Value, known_num_vertices::value> helper;
+      typedef typename helper::type type;
+      static type build(const Graph& g, const IndexMap& index, boost::scoped_array<Value>& array_holder) {
+        return helper::build(g, index, array_holder);
+      }
+    };
+  }
+
   // Call breadth first search with default color map.
   template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
@@ -155,11 +196,16 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
   {
-    std::vector<default_color_type> color(num_vertices(g));
-    default_color_type c = white_color;
+    boost::scoped_array<default_color_type> color_map_holder;
+    typedef
+      detail::vertex_property_map_generator<VertexListGraph, IndexMap, default_color_type>
+      ColorMapHelper;
+    typedef typename ColorMapHelper::type ColorMap;
+    ColorMap color =
+      ColorMapHelper::build(g, index_map, white_color, color_map_holder);
     dijkstra_shortest_paths_no_init( g, s, predecessor, distance, weight,
       index_map, compare, combine, zero, vis,
-        make_iterator_property_map(&color[0], index_map, c));
+        color);
   }
 
   // Call breadth first search
@@ -183,20 +229,10 @@ namespace boost {
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
     if (!dijkstra_relaxed_heap) {
-#ifdef BOOST_GRAPH_TEST_D_ARY_HEAP
-      boost::scoped_array<std::size_t> index_in_heap_map(new std::size_t[num_vertices(g)]);
-      typedef boost::iterator_property_map<std::size_t*, IndexMap> IndexInHeapMap;
-      IndexInHeapMap index_in_heap(&index_in_heap_map[0], index_map);
-      typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, DistanceMap, Compare>
-        MutableQueue;
-      MutableQueue Q(distance, index_in_heap, compare);
-#else
       typedef mutable_queue<Vertex, std::vector<Vertex>, IndirectCmp, IndexMap>
         MutableQueue;
 
       MutableQueue Q(num_vertices(g), icmp, index_map);
-#endif
-
       detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
         PredecessorMap, DistanceMap, Combine, Compare>
       bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
@@ -206,9 +242,21 @@ namespace boost {
     }
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
 
+#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
     typedef relaxed_heap<Vertex, IndirectCmp, IndexMap> MutableQueue;
-
     MutableQueue Q(num_vertices(g), icmp, index_map);
+#else // Now the default: use a d-ary heap
+      boost::scoped_array<std::size_t> index_in_heap_map_holder;
+      typedef
+        detail::vertex_property_map_generator<VertexListGraph, IndexMap, std::size_t>
+        IndexInHeapMapHelper;
+      typedef typename IndexInHeapMapHelper::type IndexInHeapMap;
+      IndexInHeapMap index_in_heap =
+        IndexInHeapMapHelper::build(g, index_map, index_in_heap_map_holder);
+      typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, DistanceMap, Compare>
+        MutableQueue;
+      MutableQueue Q(distance, index_in_heap, compare);
+#endif
 
     detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
       PredecessorMap, DistanceMap, Combine, Compare>
