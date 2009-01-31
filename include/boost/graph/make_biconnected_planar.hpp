@@ -44,7 +44,7 @@ namespace boost
     typedef iterator_property_map
       <std::vector<std::size_t>::iterator, EdgeIndexMap> component_map_t;
 
-	edge_size_t n_edges(num_edges(g));
+    edge_size_t n_edges(num_edges(g));
     std::vector<vertex_t> articulation_points;
     std::vector<edge_size_t> component_vector(n_edges);
     component_map_t component_map(component_vector.begin(), em);

@@ -52,15 +52,15 @@ int main()
     std::ofstream ofs("./kevin-bacon2.dat");
     archive::xml_oarchive oa(ofs);
     Graph g;
-		vertex_properties vp;
-		vp.name = "A";
-		vd_type A = add_vertex( vp, g );
-		vp.name = "B";
-		vd_type B = add_vertex( vp, g );
+    vertex_properties vp;
+    vp.name = "A";
+    vd_type A = add_vertex( vp, g );
+    vp.name = "B";
+    vd_type B = add_vertex( vp, g );
 
-		edge_properties ep;
-		ep.name = "a";
-		add_edge( A, B, ep, g);
+    edge_properties ep;
+    ep.name = "a";
+    add_edge( A, B, ep, g);
 
     oa << BOOST_SERIALIZATION_NVP(g);
 
@@ -74,7 +74,7 @@ int main()
     Graph g;
     ia >> BOOST_SERIALIZATION_NVP(g);
 
-		if  (!( g[*(vertices( g ).first)].name == "A" )) return -1;
+    if  (!( g[*(vertices( g ).first)].name == "A" )) return -1;
 
     Graph_no_edge_property g_n;
     ia >> BOOST_SERIALIZATION_NVP(g_n);

@@ -187,7 +187,7 @@ namespace boost
               before = prior(a_itr);
             after = next(a_itr);
 
-	    if (before != active_edges.end())
+            if (before != active_edges.end())
               {
                 
                 edge_t f = before->second;

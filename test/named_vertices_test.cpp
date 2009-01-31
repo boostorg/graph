@@ -71,7 +71,7 @@ int test_main(int argc, char* argv[])
 
   BGL_FORALL_VERTICES(city, map, RoadMap)
     std::cout << map[city].name << ", population " << map[city].population
-	      << std::endl;
+              << std::endl;
 
   BOOST_CHECK(*find_vertex("Bloomington", map) == bloomington);
   BOOST_CHECK(*find_vertex("Indianapolis", map) == indianapolis);
@@ -83,7 +83,7 @@ int test_main(int argc, char* argv[])
 
   BGL_FORALL_EDGES(road, map, RoadMap)
     std::cout << map[source(road, map)].name << " -> " 
-	      << map[target(road, map)].name << std::endl;
+              << map[target(road, map)].name << std::endl;
 
   BOOST_CHECK(map[*find_vertex("Cincinnatti", map)].population == -1);
 

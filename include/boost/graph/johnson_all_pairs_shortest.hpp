@@ -113,7 +113,7 @@ namespace boost {
       for (tie(e, e_end) = edges(g2); e != e_end; ++e) {
         typename Traits2::vertex_descriptor a = source(*e, g2),
           b = target(*e, g2);
-        put(w_hat, *e, get(w, *e) + get(h, a) - get(h, b));
+        put(w_hat, *e, combine(get(w, *e), (get(h, a) - get(h, b))));
       }
       for (tie(u, u_end) = vertices(g2); u != u_end; ++u) {
         dijkstra_visitor<> dvis;
@@ -123,7 +123,7 @@ namespace boost {
           if (*u != s && *v != s) {
             typename Traits1::vertex_descriptor u1, v1;
             u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
-            D[id2[*u]-1][id2[*v]-1] = get(d, *v) + get(h, *v) - get(h, *u);
+            D[id2[*u]-1][id2[*v]-1] = combine(get(d, *v), (get(h, *v) - get(h, *u)));
           }
         }
       }

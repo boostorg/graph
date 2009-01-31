@@ -76,13 +76,13 @@ int main() {
 const char* dot = 
 "digraph \
 { \
-	graph [name=\"GRAPH\", identifier=\"CX2A1Z\"] \
-	 \
-	a [label=\"NODE_A\", root=\"1\"] \
-	b [label=\"NODE_B\", root=\"0\"] \
+  graph [name=\"GRAPH\", identifier=\"CX2A1Z\"] \
+    \
+    a [label=\"NODE_A\", root=\"1\"] \
+    b [label=\"NODE_B\", root=\"0\"] \
  \
-	a -> b [label=\"EDGE_1\"] \
-	b -> c [label=\"EDGE_2\"] \
+ a -> b [label=\"EDGE_1\"] \
+ b -> c [label=\"EDGE_2\"] \
 }";
 
 

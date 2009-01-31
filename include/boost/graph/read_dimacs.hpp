@@ -250,7 +250,7 @@ int read_dimacs_max_flow(Graph& g,
 
   /* ----- all is red  or  error while reading ----- */
 
-  if ( feof (stdin) == 0 ) /* reading error */
+  if ( in.eof() == 0 ) /* reading error */
     { err_no=EN21; goto error; }
 
   if ( no_lines == 0 ) /* empty input */

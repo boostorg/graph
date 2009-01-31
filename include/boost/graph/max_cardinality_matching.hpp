@@ -266,7 +266,7 @@ namespace boost
           pred[w_prime] = v;
         }
         
-		//w_prime == v_prime can happen below if we get an edge that has been
+        //w_prime == v_prime can happen below if we get an edge that has been
         //shrunk into a blossom
         else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime) 
         {                                                             
@@ -682,7 +682,7 @@ namespace boost
       void discover_vertex(Vertex u, Graph&) 
       {
         m_parity = !m_parity;
-		m_parity ? ++m_count : --m_count;
+        m_parity ? ++m_count : --m_count;
       }
       
     protected:
@@ -736,12 +736,12 @@ namespace boost
       //excludes vertices labeled "graph::detail::V_ODD"
       non_odd_vertex() : vertex_state(0) { }
   
-	  non_odd_vertex(VertexStateMap* arg_vertex_state) 
+      non_odd_vertex(VertexStateMap* arg_vertex_state) 
         : vertex_state(arg_vertex_state) { }
 
-	  template <typename Vertex>
+      template <typename Vertex>
       bool operator()(const Vertex& v) const 
-	  {
+      {
         BOOST_ASSERT(vertex_state);
         return get(*vertex_state, v) != graph::detail::V_ODD;
       }
