@@ -104,6 +104,7 @@ namespace boost {
     }
 
     void pop() {
+      put(index_in_heap, data[0], (size_type)(-1));
       data[0] = data.back();
       put(index_in_heap, data[0], 0);
       data.pop_back();
@@ -116,6 +117,21 @@ namespace boost {
     // See http://coding.derkeiler.com/Archive/General/comp.theory/2007-05/msg00043.html
     void update(const Value& v) { /* decrease-key */
       size_type index = get(index_in_heap, v);
+      preserve_heap_property_up(index);
+      verify_heap();
+    }
+
+    bool contains(const Value& v) const {
+      return (index != (size_type)(-1));
+    }
+
+    void push_or_update(const Value& v) { /* insert if not present, else update */
+      size_type index = get(index_in_heap, v);
+      if (index == (size_type)(-1)) {
+        index = data.size();
+        data.push_back(v);
+        put(index_in_heap, v, index);
+      }
       preserve_heap_property_up(index);
       verify_heap();
     }
@@ -211,6 +227,7 @@ namespace boost {
     // From the root, swap elements (each one with its smallest child) if there
     // are any parent-child pairs that violate the heap property
     void preserve_heap_property_down() {
+      if (data.empty()) return;
       size_type index = 0;
       Value currently_being_moved = data[0];
       distance_type currently_being_moved_dist =
