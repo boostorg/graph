@@ -19,6 +19,7 @@
 #include <boost/pending/relaxed_heap.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/graph/two_bit_color_map.hpp>
 #include <boost/property_map.hpp>
 #include <boost/vector_property_map.hpp>
 #include <boost/type_traits.hpp>
@@ -182,6 +183,41 @@ namespace boost {
     };
   }
 
+  namespace detail {
+    template <class Graph, class IndexMap, bool KnownNumVertices>
+    struct default_color_map_generator_helper {};
+
+    template <class Graph, class IndexMap>
+    struct default_color_map_generator_helper<Graph, IndexMap, true> {
+      typedef boost::two_bit_color_map<IndexMap> type;
+      static type build(const Graph& g, const IndexMap& index) {
+        size_t nv = num_vertices(g);
+        return boost::two_bit_color_map<IndexMap>(nv, index);
+      }
+    };
+
+    template <class Graph, class IndexMap>
+    struct default_color_map_generator_helper<Graph, IndexMap, false> {
+      typedef boost::vector_property_map<boost::two_bit_color_type, IndexMap> type;
+      static type build(const Graph& g, const IndexMap& index) {
+        return make_vector_property_map(index);
+      }
+    };
+
+    template <class Graph, class IndexMap>
+    struct default_color_map_generator {
+      typedef boost::is_base_and_derived<
+                boost::vertex_list_graph_tag,
+                typename boost::graph_traits<Graph>::traversal_category>
+              known_num_vertices;
+      typedef default_color_map_generator_helper<Graph, IndexMap, known_num_vertices::value> helper;
+      typedef typename helper::type type;
+      static type build(const Graph& g, const IndexMap& index) {
+        return helper::build(g, index);
+      }
+    };
+  }
+
   // Call breadth first search with default color map.
   template <class Graph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
@@ -196,13 +232,12 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
   {
-    boost::scoped_array<default_color_type> color_map_holder;
     typedef
-      detail::vertex_property_map_generator<Graph, IndexMap, default_color_type>
+      detail::default_color_map_generator<Graph, IndexMap>
       ColorMapHelper;
     typedef typename ColorMapHelper::type ColorMap;
     ColorMap color =
-      ColorMapHelper::build(g, index_map, white_color, color_map_holder);
+      ColorMapHelper::build(g, index_map);
     dijkstra_shortest_paths_no_init( g, s, predecessor, distance, weight,
       index_map, compare, combine, zero, vis,
         color);
@@ -279,12 +314,10 @@ namespace boost {
      Compare compare, Combine combine, DistInf inf, DistZero zero,
      DijkstraVisitor vis)
   {
-    std::vector<default_color_type> color(num_vertices(g));
-    default_color_type c = white_color;
+    boost::two_bit_color_map<IndexMap> color(num_vertices(g), index_map);
     dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
                             compare, combine, inf, zero, vis,
-                            make_iterator_property_map(&color[0], index_map,
-                                                       c));
+                            color);
   }
 
   // Initialize distances and call breadth first search
@@ -366,18 +399,16 @@ namespace boost {
       std::vector<D> distance_map(n);
 
       // Default for color map
-      typename std::vector<default_color_type>::size_type
+      typename std::vector<two_bit_color_type>::size_type
         m = is_default_param(color) ? num_vertices(g) : 1;
-      std::vector<default_color_type> color_map(m);
+      boost::two_bit_color_map<IndexMap> color_map(m, index_map);
 
       detail::dijkstra_dispatch2
         (g, s, choose_param(distance, make_iterator_property_map
                             (distance_map.begin(), index_map,
                              distance_map[0])),
          weight, index_map, params,
-         choose_param(color, make_iterator_property_map
-                      (color_map.begin(), index_map,
-                       color_map[0])));
+         choose_param(color, color_map));
     }
   } // namespace detail
 
