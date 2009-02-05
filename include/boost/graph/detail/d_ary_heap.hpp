@@ -122,6 +122,7 @@ namespace boost {
     }
 
     bool contains(const Value& v) const {
+      size_type index = get(index_in_heap, v);
       return (index != (size_type)(-1));
     }
 
