@@ -4,8 +4,8 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_GRAPH_CLIQUE_HXX
-#define BOOST_GRAPH_CLIQUE_HXX
+#ifndef BOOST_GRAPH_CLIQUE_HPP
+#define BOOST_GRAPH_CLIQUE_HPP
 
 #include <vector>
 #include <deque>
