@@ -103,6 +103,8 @@ test-suite graph_test :
     [ run closeness_centrality.cpp ]
     [ run degree_centrality.cpp ]
     [ run mean_geodesic.cpp ]
+    [ run eccentricity.cpp ]
+    [ run clustering_coefficient.cpp ]
 
     $(optional_tests)
     ;

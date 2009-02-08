@@ -38,10 +38,10 @@ struct mean_geodesic_measure
 };
 
 template <typename Graph, typename DistanceMap>
-inline mean_geodesic_measure<Graph, typename property_traits<DistanceMap>::value_type, float>
+inline mean_geodesic_measure<Graph, typename property_traits<DistanceMap>::value_type, double>
 measure_mean_geodesic(const Graph&, DistanceMap)
 {
-    return mean_geodesic_measure<Graph, typename property_traits<DistanceMap>::value_type, float>();
+    return mean_geodesic_measure<Graph, typename property_traits<DistanceMap>::value_type, double>();
 }
 
 template <typename T, typename Graph, typename DistanceMap>
@@ -119,7 +119,7 @@ mean_geodesic(const Graph& g, DistanceMap dist, Measure measure)
 }
 
 template <typename Graph, typename DistanceMap>
-inline float
+inline double
 mean_geodesic(const Graph& g, DistanceMap dist)
 { return mean_geodesic(g, dist, measure_mean_geodesic(g, dist)); }
 
