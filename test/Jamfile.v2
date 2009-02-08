@@ -93,6 +93,8 @@ test-suite graph_test :
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.txt ]
     [ compile dimacs.cpp ]
+
+    [ run undirected_graph.cpp ]
     $(optional_tests)
     ;
 
