@@ -102,6 +102,7 @@ test-suite graph_test :
     [ run tiernan_all_cycles.cpp ]
     [ run closeness_centrality.cpp ]
     [ run degree_centrality.cpp ]
+    [ run mean_geodesic.cpp ]
 
     $(optional_tests)
     ;
