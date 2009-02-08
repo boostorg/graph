@@ -94,7 +94,7 @@ test-suite graph_test :
     [ run metric_tsp_approx.cpp : metric_tsp_approx.txt ]
     [ compile dimacs.cpp ]
 
-    [ run undirected_graph.cpp ]
+    [ run test_graphs.cpp ]
     $(optional_tests)
     ;
 
