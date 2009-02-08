@@ -24,6 +24,7 @@ test-suite graph_test :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
     [ run test_graphs.cpp ]
+    [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
 
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
@@ -99,6 +100,7 @@ test-suite graph_test :
     [ compile dimacs.cpp ]
     [ run bron_kerbosch_all_cliques.cpp ]
     [ run tiernan_all_cycles.cpp ]
+    [ run closeness_centrality.cpp ]
 
     $(optional_tests)
     ;
