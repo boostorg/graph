@@ -21,6 +21,10 @@ if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 }
 
 test-suite graph_test :
+    # test_graphs will eventually defined a framework for testing the structure
+    # and implementation of graph data structures and adaptors.
+    [ run test_graphs.cpp ]
+
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
 
@@ -93,8 +97,9 @@ test-suite graph_test :
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.txt ]
     [ compile dimacs.cpp ]
+    [ run bron_kerbosch_all_cliques.cpp ]
+    [ run tiernan_all_cycles.cpp ]
 
-    [ run test_graphs.cpp ]
     $(optional_tests)
     ;
 

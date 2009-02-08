@@ -1,7 +1,6 @@
 
 #include <iostream>
 
-#include <boost/mpl/bool.hpp>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
 
