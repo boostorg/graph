@@ -16,21 +16,20 @@ namespace boost
 struct directed_graph_tag { };
 
 /**
-* The directed_graph class template is a simplified version of the BGL
-* adjacency list. This class is provided for ease of use, but may not
-* perform as well as custom-defined adjacency list classes. Instances of
-* this template model the BidirectionalGraph, VertexIndexGraph, and
-* EdgeIndexGraph concepts. The graph is also fully mutable, supporting
-* both insertions and removals.
-*
-* @note Special care must be taken when removing vertices or edges since
-* those operations can invalidate the numbering of vertices.
-*/
+ * The directed_graph class template is a simplified version of the BGL
+ * adjacency list. This class is provided for ease of use, but may not
+ * perform as well as custom-defined adjacency list classes. Instances of
+ * this template model the BidirectionalGraph, VertexIndexGraph, and
+ * EdgeIndexGraph concepts. The graph is also fully mutable, supporting
+ * both insertions and removals of vertices and edges.
+ *
+ * @note Special care must be taken when removing vertices or edges since
+ * those operations can invalidate the numbering of vertices.
+ */
 template <
     typename VertexProperty = no_property,
     typename EdgeProperty = no_property,
-    typename GraphProperty = no_property
->
+    typename GraphProperty = no_property>
 class directed_graph
 {
     // Wrap the user-specified properties with an index.

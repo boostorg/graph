@@ -13,11 +13,23 @@
 
 namespace boost
 {
-    struct undirected_graph_tag { };
+struct undirected_graph_tag { };
 
-    template <typename VertexProperty = no_property,
-            typename EdgeProperty = no_property,
-            typename GraphProperty = no_property>
+/**
+ * The undirected_graph class template is a simplified version of the BGL
+ * adjacency list. This class is provided for ease of use, but may not
+ * perform as well as custom-defined adjacency list classes. Instances of
+ * this template model the VertexIndexGraph, and EdgeIndexGraph concepts. The
+ * graph is also fully mutable, supporting both insertions and removals of
+ * vertices and edges.
+ *
+ * @note Special care must be taken when removing vertices or edges since
+ * those operations can invalidate the numbering of vertices.
+ */
+template <
+    typename VertexProperty = no_property,
+    typename EdgeProperty = no_property,
+    typename GraphProperty = no_property>
 class undirected_graph
 {
     typedef property<vertex_index_t, unsigned, VertexProperty> vertex_property;
