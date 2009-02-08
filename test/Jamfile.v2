@@ -101,6 +101,7 @@ test-suite graph_test :
     [ run bron_kerbosch_all_cliques.cpp ]
     [ run tiernan_all_cycles.cpp ]
     [ run closeness_centrality.cpp ]
+    [ run degree_centrality.cpp ]
 
     $(optional_tests)
     ;
