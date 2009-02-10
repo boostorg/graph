@@ -33,6 +33,27 @@ namespace boost {
     put(prop_map, kb, va);
   }
 
+  namespace detail {
+    template <typename Value>
+    class fixed_max_size_vector {
+      boost::shared_array<Value> m_data;
+      std::size_t m_size;
+
+      public:
+      typedef std::size_t size_type;
+      fixed_max_size_vector(std::size_t max_size)
+        : m_data(new Value[max_size]), m_size(0) {}
+      std::size_t size() const {return m_size;}
+      bool empty() const {return m_size == 0;}
+      Value& operator[](std::size_t i) {return m_data[i];}
+      const Value& operator[](std::size_t i) const {return m_data[i];}
+      void push_back(Value v) {m_data[m_size++] = v;}
+      void pop_back() {--m_size;}
+      Value& back() {return m_data[m_size - 1];}
+      const Value& back() const {return m_data[m_size - 1];}
+    };
+  }
+
   // D-ary heap using an indirect compare operator (use identity_property_map
   // as DistanceMap to get a direct compare operator).  This heap appears to be
   // commonly used for Dijkstra's algorithm for its good practical performance
@@ -73,8 +94,9 @@ namespace boost {
 
     d_ary_heap_indirect(DistanceMap distance,
                         IndexInHeapPropertyMap index_in_heap,
-                        const Compare& compare = Compare())
-      : compare(compare), data(), distance(distance),
+                        const Compare& compare = Compare(),
+                        const Container& data = Container())
+      : compare(compare), data(data), distance(distance),
         index_in_heap(index_in_heap) {}
     /* Implicit copy constructor */
     /* Implicit assignment operator */
@@ -105,11 +127,15 @@ namespace boost {
 
     void pop() {
       put(index_in_heap, data[0], (size_type)(-1));
-      data[0] = data.back();
-      put(index_in_heap, data[0], 0);
-      data.pop_back();
-      preserve_heap_property_down();
-      verify_heap();
+      if (data.size() != 1) {
+        data[0] = data.back();
+        put(index_in_heap, data[0], 0);
+        data.pop_back();
+        preserve_heap_property_down();
+        verify_heap();
+      } else {
+        data.pop_back();
+      }
     }
 
     // This function assumes the key has been updated (using an external write
