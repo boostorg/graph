@@ -42,9 +42,9 @@ namespace boost
 
     // Specializations for floating point types refer to 0.0 and their infinity
     // value defined by numeric_limits.
-    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(float);
-    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(double);
-    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(long double);
+    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(float)
+    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(double)
+    BOOST_GRAPH_SPECIALIZE_NUMERIC_FLOAT(long double)
 
 #undef BOOST_GRAPH_SPECIALIZE_NUMERIC_VALUE
 }
