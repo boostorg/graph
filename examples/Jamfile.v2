@@ -1,0 +1,19 @@
+
+project
+    : requirements
+        <include>../../../
+        <include>$BOOST_ROOT
+    ;
+
+exe degree_centrality : degree_centrality.cpp ;
+exe influence_prestige : influence_prestige.cpp ;
+exe closeness_centrality : closeness_centrality.cpp ;
+exe scaled_closeness_centrality : scaled_closeness_centrality.cpp ;
+exe mean_geodesic : mean_geodesic.cpp ;
+exe inclusive_mean_geodesic : inclusive_mean_geodesic.cpp ;
+exe eccentricity : eccentricity.cpp ;
+exe clustering_coefficient : clustering_coefficient.cpp ;
+exe tiernan_print_cycles : tiernan_print_cycles.cpp ;
+exe tiernan_girth_circumference : tiernan_girth_circumference.cpp ;
+exe bron_kerbosch_print_cliques : bron_kerbosch_print_cliques.cpp ;
+exe bron_kerbosch_clique_number : bron_kerbosch_clique_number.cpp ;
