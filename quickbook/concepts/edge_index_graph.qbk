@@ -1,5 +1,5 @@
 [/
- / Copyright (c) 2007 Andrew Sutton
+ / Copyright (C) 2007-2009 Andrew Sutton
  /
  / Distributed under the Boost Software License, Version 1.0. (See accompanying
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -77,10 +77,7 @@ this concept must also provide functions that allow them to re-index the edges.
     [
         [Edge Index Property]
         [`get(edge_index,g)`]
-        [
-            `P::type` or[br]
-            `P::const_type`
-        ]
+        [`P::type` or `P::const_type`]
         [
             Returns the property map that provides read/write access to the
             edge indices of the graph.

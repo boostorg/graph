@@ -3,7 +3,6 @@
 # subject to the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-using quickbook ;
 
 xml graph : graph.qbk ;
 
@@ -11,74 +10,21 @@ boostbook standalone
     :
         graph
     :
-        # HTML options first:
-        # Use graphics not text for navigation:
-        <xsl:param>navig.graphics=1
-        # How far down we chunk nested sections, basically all of them:
-        # Setting this to 4 will put all reference functions into the
-        # same page... and make all external links to those pages bounce
-        # to the top of them.
+        <xsl:param>boost.root=../../../..
+        <xsl:param>boost.libraries=../../../../libs/libraries.htm
+        # <xsl:param>boost.logo=../boost.png
+
+        <xsl:param>html.stylesheet=../../../../doc/html/boostbook.css
+
+        # ToC and chunking
         <xsl:param>chunk.section.depth=5
-        # Don't put the first section on the same page as the TOC:
         <xsl:param>chunk.first.sections=1
-        # How far down sections get TOC's
         <xsl:param>toc.section.depth=5
-        # Max depth in each TOC:
-        # I could increase this, but that makes the top-level ToC
-        # extremely long.
         <xsl:param>toc.max.depth=3
-        # How far down we go with TOC's
         <xsl:param>generate.section.toc.level=5
-        # Logo location:
-        <xsl:param>boost.logo=../boost.png
+
+        # Misc options
+        <xsl:param>navig.graphics=1
         <xsl:param>annotation.support=1
 
-        # The page style
-        <xsl:param>page.style="'website'"
-        # Show chapters select box
-        <xsl:param>grouped.links.chapters.show="'true'"
-        # GroupedLinks xml definition chapters location
-        <xsl:param>grouped.links.chapters.xml="'boost_libs_grouped_links.xml'"
-        # Select the base url for the chapters GroupedLinks
-        <xsl:param>grouped.links.chapters.url="'http://www.boost.org/libs/'"
-        # Show sections select box
-        <xsl:param>grouped.links.sections.show="'true'"
-        # GroupedLinks xml definition sections location
-        <xsl:param>grouped.links.sections.xml="'sections_grouped_links.xml'"
-        # Select the base url for the chapters GroupedLinks
-        <xsl:param>grouped.links.sections.url="'./'"
-        # Show the Google Search Box
-        <xsl:param>search.box.show="'true'"
-        # Location of the cse defintion
-        <xsl:param>search.box.cse.definition.src="'http://www.drivehq.com/web/matias.capeletto/bimap/doc/html/context8.xml'"
-
-        # PDF Options:
-        # TOC Generation: this is needed for FOP-0.9 and later:
-        # <xsl:param>fop1.extensions=1
-        <xsl:param>xep.extensions=1
-        # TOC generation: this is needed for FOP 0.2, but must not be set to zero for FOP-0.9!
-        <xsl:param>fop.extensions=0
-        # No indent on body text:
-        <xsl:param>body.start.indent=0pt
-        # Margin size:
-        <xsl:param>page.margin.inner=0.5in
-        # Margin size:
-        <xsl:param>page.margin.outer=0.5in
-        # Yes, we want graphics for admonishments:
-        <xsl:param>admon.graphics=1
-        # Set this one for PDF generation *only*:
-        # default pnd graphics are awful in PDF form,
-        # better use SVG's instead:
-        #<xsl:param>admon.graphics.extension=".svg"
     ;
-
-
-
-
-
-
-
-
-
-
-

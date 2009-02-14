@@ -19,11 +19,13 @@
 [endsect]
 
 [section Event Visitor List Adaptors]
+[/
 [include bfs_visitor.qbk]
 [include dfs_visitor.qbk]
 [include dijkstra_visitor.qbk]
 [include bellman_visitor.qbk]
 [include astar_visitor.qbk]
+/]
 [endsect]
 
 [section Event Visitors]
