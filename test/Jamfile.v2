@@ -105,6 +105,7 @@ test-suite graph_test :
     [ run mean_geodesic.cpp ]
     [ run eccentricity.cpp ]
     [ run clustering_coefficient.cpp ]
+    [ run core_numbers_test.cpp ]
 
     $(optional_tests)
     ;
