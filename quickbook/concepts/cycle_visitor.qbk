@@ -1,0 +1,53 @@
+[/
+ / Copyright (c) 2007 Andrew Sutton
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section Cycle Visitor]
+The cycle visitor concept defines requirements for types that act as visitors
+of cycle-detection algorithms. Objects of this type are passed to these
+algorithms and are invoked when a cycle is found within a graph.
+
+[heading Refinement Of]
+[Visitor]
+
+[heading Valid Expressions]
+[table
+    [[Name] [Expression] [Result Type] [Description]]
+    [
+        [Visit Cycle]
+        [`vis.cycle(vs,g)`]
+        [`void`]
+        [
+            The `vis.cycle()` member function of the visitor is invoked when a
+            cycle is identified in the graph `g`. The vertices in `vs` are arranged
+            such that first vertex is connected to the second, and that is connected
+            to the third, etc. The `back()` vertex is connected to the `front()`
+            to form a cycle.
+
+            *Requirements:* `g` is an object whose type `G` is a model of the
+            [Graph] concept.
+
+            *Requirements:* `vs` is an object whose type `VertexSet` is a model
+            of the [SgiContainer] concept. The `value_type` of `VS` must be the
+            the same as the `vertex_descriptor` of `G`.
+        ]
+    ]
+]
+
+[heading C++0x]
+This concept is defined as:
+
+    concept CliqueVisitor<typename T>
+    {
+        Graph graph_type;
+
+        template<Container VertexSet>
+            requires SameType<VertexSet::value_type, graph_type::vertex_descriptor>
+        void T::cycle(const VertexSet&, graph_type&);
+    };
+
+
+[endsect]

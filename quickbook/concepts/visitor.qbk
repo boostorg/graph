@@ -1,0 +1,20 @@
+[/
+ / Copyright (c) 2007 Andrew Sutton
+ /
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section Visitor]
+This concept defines the basic requirements of all visitor concepts in the Boost.Graph
+library.
+
+[h4 Refinement Of]
+[SgiCopyConstructible]
+
+[h4 Design Rationale]
+This concpet is provided primarily as a base concept for its refinements. Its sole purpose
+is to require that instances of concepts be copy-constructible, which is how they are
+passed to different graph algorithms.
+
+[endsect]
