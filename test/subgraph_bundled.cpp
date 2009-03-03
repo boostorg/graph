@@ -8,7 +8,9 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
-#define BOOST_NO_HASH
+#if !defined(BOOST_NO_HASH)
+#   define BOOST_NO_HASH
+#endif
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/subgraph.hpp>
