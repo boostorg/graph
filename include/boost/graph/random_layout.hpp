@@ -18,14 +18,18 @@
 
 namespace boost {
 
-template<typename Graph, typename PositionMap, typename Dimension, 
+template<typename Graph, typename PositionMap, 
          typename RandomNumberGenerator>
 void
-random_graph_layout(const Graph& g, PositionMap position_map,
-                    Dimension minX, Dimension maxX, 
-                    Dimension minY, Dimension maxY,
-                    RandomNumberGenerator& gen)
+random_graph_layout
+ (const Graph& g, PositionMap position_map,
+  typename property_traits<PositionMap>::value_type const& origin,
+  typename property_traits<PositionMap>::value_type const& extent,
+  RandomNumberGenerator& gen)
 {
+  typedef typename property_traits<PositionMap>::value_type Point;
+  typedef double Dimension;
+
   typedef typename mpl::if_<is_integral<Dimension>,
                             uniform_int<Dimension>,
                             uniform_real<Dimension> >::type distrib_t;
@@ -35,8 +39,8 @@ random_graph_layout(const Graph& g, PositionMap position_map,
     ::type gen_t;
 
   gen_t my_gen(gen);
-  distrib_t x(minX, maxX);
-  distrib_t y(minY, maxY);
+  distrib_t x(origin.x, origin.x + extent.x);
+  distrib_t y(origin.y, origin.y + extent.y);
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   for(tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     position_map[*vi].x = x(my_gen);

@@ -1,7 +1,7 @@
 //=======================================================================
 // Copyright 2001 University of Notre Dame.
 // Copyright 2003 Jeremy Siek
-// Authors: Lie-Quan Lee and Jeremy Siek
+// Authors: Lie-Quan Lee, Jeremy Siek, and Douglas Gregor
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -23,6 +23,7 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/dynamic_property_map.hpp>
+#include <boost/graph/overloading.hpp>
 
 #ifdef BOOST_HAS_DECLSPEC
 #  if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_GRAPH_DYN_LINK)
@@ -236,11 +237,14 @@ namespace boost {
   template <typename Graph, typename VertexPropertiesWriter,
             typename EdgePropertiesWriter, typename GraphPropertiesWriter,
             typename VertexID>
-  inline void write_graphviz(std::ostream& out, const Graph& g,
-                             VertexPropertiesWriter vpw,
-                             EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw,
-                             VertexID vertex_id)
+  inline void 
+  write_graphviz
+    (std::ostream& out, const Graph& g,
+     VertexPropertiesWriter vpw,
+     EdgePropertiesWriter epw,
+     GraphPropertiesWriter gpw,
+     VertexID vertex_id
+     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
@@ -267,17 +271,21 @@ namespace boost {
 
   template <typename Graph, typename VertexPropertiesWriter,
             typename EdgePropertiesWriter, typename GraphPropertiesWriter>
-  inline void write_graphviz(std::ostream& out, const Graph& g,
-                             VertexPropertiesWriter vpw,
-                             EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw)
+  inline void 
+  write_graphviz(std::ostream& out, const Graph& g,
+                 VertexPropertiesWriter vpw,
+                 EdgePropertiesWriter epw,
+                 GraphPropertiesWriter gpw
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   { write_graphviz(out, g, vpw, epw, gpw, get(vertex_index, g)); }
 
 #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
   // ambiguous overload problem with VC++
   template <typename Graph>
   inline void
-  write_graphviz(std::ostream& out, const Graph& g) {
+  write_graphviz(std::ostream& out, const Graph& g
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)) 
+  {
     default_writer dw;
     default_writer gw;
     write_graphviz(out, g, dw, dw, gw);
@@ -286,7 +294,9 @@ namespace boost {
 
   template <typename Graph, typename VertexWriter>
   inline void
-  write_graphviz(std::ostream& out, const Graph& g, VertexWriter vw) {
+  write_graphviz(std::ostream& out, const Graph& g, VertexWriter vw
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  {
     default_writer dw;
     default_writer gw;
     write_graphviz(out, g, vw, dw, gw);
@@ -295,7 +305,9 @@ namespace boost {
   template <typename Graph, typename VertexWriter, typename EdgeWriter>
   inline void
   write_graphviz(std::ostream& out, const Graph& g,
-                 VertexWriter vw, EdgeWriter ew) {
+                 VertexWriter vw, EdgeWriter ew
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  {
     default_writer gw;
     write_graphviz(out, g, vw, ew, gw);
   }
@@ -575,7 +587,8 @@ namespace boost {
   inline void
   write_graphviz(std::ostream& out, const Graph& g,
                  const dynamic_properties& dp, 
-                 const std::string& node_id = "node_id")
+                 const std::string& node_id = "node_id"
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     write_graphviz(out, g, dp, node_id,
@@ -586,7 +599,8 @@ namespace boost {
   void
   write_graphviz(std::ostream& out, const Graph& g,
                  const dynamic_properties& dp, const std::string& node_id,
-                 VertexID id)
+                 VertexID id
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     write_graphviz
       (out, g,

@@ -11,6 +11,7 @@
 #include <boost/graph/kamada_kawai_spring_layout.hpp>
 #include <boost/graph/circle_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/point_traits.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/test/minimal.hpp>
 #include <iostream>
@@ -24,8 +25,9 @@ namespace boost { BOOST_INSTALL_PROPERTY(vertex, position); }
 
 struct point
 {
-  double x;
-  double y;
+  double x, y;
+  point(double x, double y): x(x), y(y) {}
+  point() {}
 };
 
 template<typename Graph, typename PositionMap>
@@ -200,15 +202,17 @@ test_cube(Graph*)
   dump_graph_layout("cube", g, get(vertex_position, g));
 
   minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+  random_graph_layout(g, get(vertex_position, g),
+                      point(-25.0, -25.0),
+                      point(25.0, 25.0), 
                       gen);
 
   std::vector<point> displacements(num_vertices(g));
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     50.0,
-     50.0,
+     point(50.0, 50.0),
+     point(50.0, 50.0),
      square_distance_attractive_force(),
      square_distance_repulsive_force(),
      all_force_pairs(),
@@ -267,7 +271,7 @@ test_triangular(Graph*)
   dump_graph_layout("triangular-kk", g, get(vertex_position, g));
 
   minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+  random_graph_layout(g, get(vertex_position, g), point(-25.0, -25.0), point(25.0, 25.0),
                       gen);
 
   dump_graph_layout("random", g, get(vertex_position, g));
@@ -276,8 +280,8 @@ test_triangular(Graph*)
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     50.0,
-     50.0,
+     point(50.0, 50.0),
+     point(50.0, 50.0),
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(100)));
 
@@ -327,15 +331,15 @@ test_disconnected(Graph*)
   BOOST_CHECK(!ok);
 
   minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g), -25.0, 25.0, -25.0, 25.0, 
+  random_graph_layout(g, get(vertex_position, g), point(-25.0, -25.0), point(25.0, 25.0),
                       gen);
 
   std::vector<point> displacements(num_vertices(g));
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     50.0,
-     50.0,
+     point(50.0, 50.0),
+     point(50.0, 50.0),
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(50)));
 

@@ -21,6 +21,8 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/overloading.hpp>
+#include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
 
 namespace boost {
@@ -101,6 +103,8 @@ namespace boost {
     breadth_first_visit(g, s, Q, vis, color);
   }
 
+  namespace graph { struct bfs_visitor_event_not_overridden {}; }
+
 
   template <class Visitors = null_visitor>
   class bfs_visitor {
@@ -109,40 +113,75 @@ namespace boost {
     bfs_visitor(Visitors vis) : m_vis(vis) { }
 
     template <class Vertex, class Graph>
-    void initialize_vertex(Vertex u, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    initialize_vertex(Vertex u, Graph& g)
+    {
       invoke_visitors(m_vis, u, g, ::boost::on_initialize_vertex());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Vertex, class Graph>
-    void discover_vertex(Vertex u, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    discover_vertex(Vertex u, Graph& g)
+    {
       invoke_visitors(m_vis, u, g, ::boost::on_discover_vertex());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Vertex, class Graph>
-    void examine_vertex(Vertex u, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    examine_vertex(Vertex u, Graph& g)
+    {
       invoke_visitors(m_vis, u, g, ::boost::on_examine_vertex());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Edge, class Graph>
-    void examine_edge(Edge e, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    examine_edge(Edge e, Graph& g)
+    {
       invoke_visitors(m_vis, e, g, ::boost::on_examine_edge());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Edge, class Graph>
-    void tree_edge(Edge e, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    tree_edge(Edge e, Graph& g)
+    {
       invoke_visitors(m_vis, e, g, ::boost::on_tree_edge());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Edge, class Graph>
-    void non_tree_edge(Edge e, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    non_tree_edge(Edge e, Graph& g)
+    {
       invoke_visitors(m_vis, e, g, ::boost::on_non_tree_edge());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Edge, class Graph>
-    void gray_target(Edge e, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    gray_target(Edge e, Graph& g)
+    {
       invoke_visitors(m_vis, e, g, ::boost::on_gray_target());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Edge, class Graph>
-    void black_target(Edge e, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    black_target(Edge e, Graph& g)
+    {
       invoke_visitors(m_vis, e, g, ::boost::on_black_target());
+      return graph::bfs_visitor_event_not_overridden();
     }
+
     template <class Vertex, class Graph>
-    void finish_vertex(Vertex u, Graph& g) {
+    graph::bfs_visitor_event_not_overridden
+    finish_vertex(Vertex u, Graph& g)
+    {
       invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
+      return graph::bfs_visitor_event_not_overridden();
     }
 
     BOOST_GRAPH_EVENT_STUB(on_initialize_vertex,bfs)
@@ -175,7 +214,9 @@ namespace boost {
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        ColorMap color,
        BFSVisitor vis,
-       const bgl_named_params<P, T, R>& params)
+       const bgl_named_params<P, T, R>& params,
+       BOOST_GRAPH_ENABLE_IF_MODELS(VertexListGraph, vertex_list_graph_tag,
+                                    void)* = 0)
     {
       typedef graph_traits<VertexListGraph> Traits;
       // Buffer default

@@ -6,6 +6,12 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+//
+//
+// Revision History:
+//   04 April 2001: Added named parameter variant. (Jeremy Siek)
+//   01 April 2001: Modified to use new <boost/limits.hpp> header. (JMaddock)
+//
 #ifndef BOOST_GRAPH_DIJKSTRA_HPP
 #define BOOST_GRAPH_DIJKSTRA_HPP
 
@@ -17,6 +23,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/pending/relaxed_heap.hpp>
+#include <boost/graph/overloading.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
@@ -29,6 +36,28 @@
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
 
 namespace boost {
+
+  /**
+   * @brief Updates a particular value in a queue used by Dijkstra's
+   * algorithm.
+   *
+   * This routine is called by Dijkstra's algorithm after it has
+   * decreased the distance from the source vertex to the given @p
+   * vertex. By default, this routine will just call @c
+   * Q.update(vertex). However, other queues may provide more
+   * specialized versions of this routine.
+   *
+   * @param Q             the queue that will be updated.
+   * @param vertex        the vertex whose distance has been updated
+   * @param old_distance  the previous distance to @p vertex
+   */
+  template<typename Buffer, typename Vertex, typename DistanceType>
+  inline void 
+  dijkstra_queue_update(Buffer& Q, Vertex vertex, DistanceType old_distance)
+  {
+    (void)old_distance;
+    Q.update(vertex);
+  }
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
   // This is a misnomer now: it now just refers to the "default heap", which is
@@ -107,17 +136,20 @@ namespace boost {
       }
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
+        D old_distance = get(m_distance, target(e, g));
+
         bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                                m_combine, m_compare);
         if (decreased) {
-          m_Q.update(target(e, g));
+          dijkstra_queue_update(m_Q, target(e, g), old_distance);
           m_vis.edge_relaxed(e, g);
         } else
           m_vis.edge_not_relaxed(e, g);
       }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex /*u*/, Graph& /*g*/) { }
+      void initialize_vertex(Vertex u, Graph& g)
+        { m_vis.initialize_vertex(u, g); }
       template <class Edge, class Graph>
       void non_tree_edge(Edge, Graph&) { }
       template <class Vertex, class Graph>

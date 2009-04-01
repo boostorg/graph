@@ -29,6 +29,9 @@ namespace boost {
   struct vertex_max_invariant_t { };
   struct orig_to_copy_t { };
   struct root_vertex_t { };
+  struct polling_t { };
+  struct lookahead_t { };
+  struct in_parallel_t { };
   struct attractive_force_t { };
   struct repulsive_force_t { };
   struct force_pairs_t { };
@@ -53,7 +56,7 @@ namespace boost {
     typedef Base next_type;
     typedef Tag tag_type;
     typedef T value_type;
-    bgl_named_params(T v) : m_value(v) { }
+    bgl_named_params(T v = T()) : m_value(v) { }
     bgl_named_params(T v, const Base& b) : Base(b), m_value(v) { }
     T m_value;
 
@@ -303,6 +306,23 @@ namespace boost {
     vertex_max_invariant(const VertexMaxInvar& c) const {
       typedef bgl_named_params<VertexMaxInvar, vertex_max_invariant_t, self> Params;
       return Params(c, *this);
+    }
+
+    bgl_named_params<bool, polling_t, self>
+    polling(bool b) const { 
+      return bgl_named_params<bool, polling_t, self>(b, *this);
+    }
+
+    template<typename Tp>
+    bgl_named_params<Tp, lookahead_t, self>
+    lookahead(const Tp& x) const {
+      return bgl_named_params<Tp, lookahead_t, self>(x, *this);
+    }
+
+    template<typename Tp>
+    bgl_named_params<Tp, in_parallel_t, self>
+    in_parallel(const Tp& x) const {
+      return bgl_named_params<Tp, in_parallel_t, self>(x, *this);
     }
 
     template <typename VertexDisplacement>
@@ -587,6 +607,24 @@ namespace boost {
   vertex_max_invariant(const VertexMaxInvar& c) {
     typedef bgl_named_params<VertexMaxInvar, vertex_max_invariant_t> Params;
     return Params(c);
+  }
+
+  bgl_named_params<bool, polling_t>
+  inline polling(bool b) { 
+    return bgl_named_params<bool, polling_t>(b);
+  }
+
+  
+  template<typename T>
+  bgl_named_params<T, lookahead_t>
+  lookahead(const T& x) {
+    return bgl_named_params<T, lookahead_t>(x);
+  }
+
+  template<typename T>
+  bgl_named_params<T, in_parallel_t>
+  in_parallel(const T& x) {
+    return bgl_named_params<T, in_parallel_t>(x);
   }
 
   template <typename VertexDisplacement>

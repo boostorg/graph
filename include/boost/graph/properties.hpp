@@ -122,6 +122,17 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, bundle);
   BOOST_DEF_PROPERTY(edge, bundle);
 
+  // These tags are used to denote the owners and local descriptors
+  // for the vertices and edges of a distributed graph.
+  BOOST_DEF_PROPERTY(vertex, global);
+  BOOST_DEF_PROPERTY(vertex, owner);
+  BOOST_DEF_PROPERTY(vertex, local);
+  BOOST_DEF_PROPERTY(edge, global);
+  BOOST_DEF_PROPERTY(edge, owner);
+  BOOST_DEF_PROPERTY(edge, local);
+  BOOST_DEF_PROPERTY(vertex, local_index);
+  BOOST_DEF_PROPERTY(edge, local_index);
+
 #undef BOOST_DEF_PROPERTY
 
   namespace detail {
