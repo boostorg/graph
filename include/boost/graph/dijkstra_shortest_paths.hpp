@@ -127,7 +127,7 @@ namespace boost {
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) {
         if (m_compare(get(m_weight, e), m_zero))
-          throw negative_edge();
+            boost::throw_exception(negative_edge());
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
@@ -165,7 +165,7 @@ namespace boost {
     struct vertex_property_map_generator_helper<Graph, IndexMap, Value, false> {
       typedef boost::vector_property_map<Value, IndexMap> type;
       static type build(const Graph& g, const IndexMap& index, boost::scoped_array<Value>& array_holder) {
-        return make_vector_property_map(index);
+        return boost::make_vector_property_map<Value>(index);
       }
     };
 
@@ -200,7 +200,7 @@ namespace boost {
     struct default_color_map_generator_helper<Graph, IndexMap, false> {
       typedef boost::vector_property_map<boost::two_bit_color_type, IndexMap> type;
       static type build(const Graph& g, const IndexMap& index) {
-        return make_vector_property_map(index);
+        return boost::make_vector_property_map<boost::two_bit_color_type>(index);
       }
     };
 
@@ -291,7 +291,7 @@ namespace boost {
       typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, DistanceMap, Compare>
         MutableQueue;
       MutableQueue Q(distance, index_in_heap, compare);
-#endif
+#endif // Relaxed heap
 
     detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
       PredecessorMap, DistanceMap, Combine, Compare>

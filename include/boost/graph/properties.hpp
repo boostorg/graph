@@ -15,7 +15,10 @@
 #include <boost/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-
+#include <boost/limits.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/mpl/if.hpp>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 // Stay out of the way of the concept checking class
@@ -35,12 +38,12 @@ namespace boost {
     static default_color_type red() { return red_color; }
     static default_color_type black() { return black_color; }
   };
-  
+
   // These functions are now obsolete, replaced by color_traits.
   inline default_color_type white(default_color_type) { return white_color; }
   inline default_color_type gray(default_color_type) { return gray_color; }
   inline default_color_type green(default_color_type) { return green_color; }
-  inline default_color_type red(default_color_type) { return red_color; } 
+  inline default_color_type red(default_color_type) { return red_color; }
   inline default_color_type black(default_color_type) { return black_color; }
 
 #ifdef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
@@ -90,22 +93,29 @@ namespace boost {
   BOOST_DEF_PROPERTY(vertex, name);
   BOOST_DEF_PROPERTY(graph, name);
   BOOST_DEF_PROPERTY(vertex, distance);
+  BOOST_DEF_PROPERTY(vertex, distance2);
   BOOST_DEF_PROPERTY(vertex, color);
   BOOST_DEF_PROPERTY(vertex, degree);
   BOOST_DEF_PROPERTY(vertex, in_degree);
   BOOST_DEF_PROPERTY(vertex, out_degree);
   BOOST_DEF_PROPERTY(vertex, current_degree);
-  BOOST_DEF_PROPERTY(vertex, priority); 
+  BOOST_DEF_PROPERTY(vertex, priority);
   BOOST_DEF_PROPERTY(vertex, discover_time);
   BOOST_DEF_PROPERTY(vertex, finish_time);
   BOOST_DEF_PROPERTY(vertex, predecessor);
   BOOST_DEF_PROPERTY(vertex, rank);
   BOOST_DEF_PROPERTY(vertex, centrality);
   BOOST_DEF_PROPERTY(vertex, lowpoint);
+  BOOST_DEF_PROPERTY(vertex, potential);
+  BOOST_DEF_PROPERTY(vertex, update);
   BOOST_DEF_PROPERTY(edge, reverse);
   BOOST_DEF_PROPERTY(edge, capacity);
+  BOOST_DEF_PROPERTY(edge, flow);
   BOOST_DEF_PROPERTY(edge, residual_capacity);
   BOOST_DEF_PROPERTY(edge, centrality);
+  BOOST_DEF_PROPERTY(edge, discover_time);
+  BOOST_DEF_PROPERTY(edge, update);
+  BOOST_DEF_PROPERTY(edge, finished);
   BOOST_DEF_PROPERTY(graph, visitor);
 
   // These tags are used for property bundles
@@ -223,7 +233,7 @@ namespace boost {
   template <class Graph, class Property>
   class graph_property {
   public:
-    typedef typename property_value<typename Graph::graph_property_type, 
+    typedef typename property_value<typename Graph::graph_property_type,
       Property>::type type;
   };
 
@@ -239,9 +249,9 @@ namespace boost {
   };
 
   template <typename Graph>
-  class degree_property_map 
+  class degree_property_map
     : public put_get_helper<typename graph_traits<Graph>::degree_size_type,
-                            degree_property_map<Graph> >                  
+                            degree_property_map<Graph> >
   {
   public:
     typedef typename graph_traits<Graph>::vertex_descriptor key_type;
@@ -262,7 +272,7 @@ namespace boost {
   }
 
   //========================================================================
-  // Iterator Property Map Generating Functions contributed by 
+  // Iterator Property Map Generating Functions contributed by
   // Kevin Vanhorn. (see also the property map generating functions
   // in boost/property_map.hpp)
 
@@ -281,8 +291,8 @@ namespace boost {
   make_iterator_vertex_map(RandomAccessIterator iter, const PropertyGraph& g)
   {
     return make_iterator_property_map(iter, get(vertex_index, g));
-  }  
-  
+  }
+
   // Use this next function when vertex_descriptor is known to be an
   // integer type, with values ranging from 0 to num_vertices(g).
   //
@@ -297,7 +307,7 @@ namespace boost {
   make_iterator_vertex_map(RandomAccessIterator iter)
   {
     return make_iterator_property_map(iter, identity_property_map());
-  }      
+  }
 #endif
 
   template <class PropertyGraph, class RandomAccessContainer>
@@ -312,7 +322,7 @@ namespace boost {
   {
     assert(c.size() >= num_vertices(g));
     return make_iterator_vertex_map(c.begin(), g);
-  }   
+  }
 
   template <class RandomAccessContainer> inline
   iterator_property_map<
@@ -329,17 +339,17 @@ namespace boost {
 #if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 #  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #endif
- 
+
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template<typename Graph, typename Descriptor, typename Bundle, typename T>
   struct bundle_property_map
     : put_get_helper<T&, bundle_property_map<Graph, Descriptor, Bundle, T> >
   {
     typedef Descriptor key_type;
-    typedef T value_type;
+    typedef typename remove_const<T>::type value_type;
     typedef T& reference;
     typedef lvalue_property_map_tag category;
- 
+
     bundle_property_map() { }
     bundle_property_map(Graph* g_, T Bundle::* pm_) : g(g_), pm(pm_) {}
 
@@ -351,11 +361,15 @@ namespace boost {
 
   namespace detail {
     template<typename VertexBundle, typename EdgeBundle, typename Bundle>
-      struct is_vertex_bundle : is_convertible<VertexBundle*, Bundle*> {};
+      struct is_vertex_bundle
+      : mpl::and_<is_convertible<Bundle*, VertexBundle*>,
+                  mpl::and_<mpl::not_<is_void<VertexBundle> >,
+                            mpl::not_<is_same<VertexBundle, no_property> > > >
+      { };
   }
-  
+
   template <typename Graph, typename T, typename Bundle>
-  struct property_map<Graph, T Bundle::*>  
+  struct property_map<Graph, T Bundle::*>
   {
   private:
     typedef graph_traits<Graph> traits;
@@ -376,7 +390,6 @@ namespace boost {
       const_type;
   };
 #endif
-
 } // namespace boost
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
@@ -384,6 +397,5 @@ namespace boost {
 # undef Graph
 # undef RandomAccessIterator
 #endif
-
 
 #endif /* BOOST_GRAPH_PROPERTIES_HPPA */

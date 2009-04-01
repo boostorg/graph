@@ -285,13 +285,12 @@ namespace boost {
     typedef typename parallel_edge_traits<OutEdgeListS>::type
       edge_parallel_category;
 
+    typedef std::size_t vertices_size_type;
     typedef void* vertex_ptr;
     typedef typename mpl::if_<is_rand_access,
-      std::size_t, vertex_ptr>::type vertex_descriptor;
+      vertices_size_type, vertex_ptr>::type vertex_descriptor;
     typedef detail::edge_desc_impl<directed_category, vertex_descriptor>
       edge_descriptor;
-
-    typedef std::size_t vertices_size_type;
 
   private:
     // Logic to figure out the edges_size_type

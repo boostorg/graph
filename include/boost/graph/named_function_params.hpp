@@ -646,6 +646,11 @@ namespace boost {
     return Params(c);
   }
 
+  namespace detail {
+    struct unused_tag_type {};
+  }
+  typedef bgl_named_params<char, detail::unused_tag_type> no_named_parameters;
+
   //===========================================================================
   // Functions for extracting parameters from bgl_named_params
 

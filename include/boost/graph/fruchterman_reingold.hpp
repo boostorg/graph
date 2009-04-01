@@ -95,7 +95,7 @@ struct grid_force_pairs
 #ifndef BOOST_NO_STDC_NAMESPACE
     using std::sqrt;
 #endif // BOOST_NO_STDC_NAMESPACE
-    two_k = Dim(2) * sqrt(width*height / num_vertices(g));
+    two_k = Dim(2) * sqrt(width * height / num_vertices(g));
   }
 
   template<typename Graph, typename ApplyForce >
@@ -105,6 +105,10 @@ struct grid_force_pairs
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef std::list<vertex_descriptor> bucket_t;
     typedef std::vector<bucket_t> buckets_t;
+
+#ifndef BOOST_NO_STDC_NAMESPACE
+    using std::sqrt;
+#endif // BOOST_NO_STDC_NAMESPACE
 
     std::size_t columns = std::size_t(width / two_k + Dim(1));
     std::size_t rows = std::size_t(height / two_k + Dim(1));

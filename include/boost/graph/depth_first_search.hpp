@@ -19,7 +19,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
-
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 
@@ -357,8 +356,6 @@ namespace boost {
     vis.start_vertex(u, g);
     detail::depth_first_visit_impl(g, u, vis, color, func);
   }
-
-
 } // namespace boost
 
 

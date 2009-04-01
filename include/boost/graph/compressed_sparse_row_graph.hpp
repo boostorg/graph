@@ -27,6 +27,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/functional/hash.hpp>
 
 #ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #  error The Compressed Sparse Row graph only supports bundled properties.
@@ -156,6 +157,15 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph()
     : m_rowstart(1, EdgeIndex(0)), m_column(0), m_property(),
       m_last_source(0) {}
+
+  //  With numverts vertices
+  compressed_sparse_row_graph(vertices_size_type numverts)
+    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
+      m_column(0), m_last_source(numverts)
+  {
+    for (Vertex v = 0; v < numverts + 1; ++v)
+      m_rowstart[v] = 0;
+  }
 
   //  From number of vertices and sorted list of edges
   template<typename InputIterator>
@@ -339,6 +349,23 @@ class csr_edge_descriptor
   bool operator>(const csr_edge_descriptor& e) const {return idx > e.idx;}
   bool operator<=(const csr_edge_descriptor& e) const {return idx <= e.idx;}
   bool operator>=(const csr_edge_descriptor& e) const {return idx >= e.idx;}
+
+  template<typename Archiver>
+  void serialize(Archiver& ar, const unsigned int /*version*/)
+  {
+    ar & src & idx;
+  }
+};
+
+template<typename Vertex, typename EdgeIndex>
+struct hash<csr_edge_descriptor<Vertex, EdgeIndex> >
+{
+  std::size_t operator()(csr_edge_descriptor<Vertex, EdgeIndex> const& x) const
+  {
+    std::size_t hash = hash_value(x.src);
+    hash_combine(hash, x.idx);
+    return hash;
+  }
 };
 
 // Construction functions

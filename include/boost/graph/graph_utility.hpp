@@ -420,6 +420,33 @@ namespace boost {
   make_list(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5)
     { return std::make_pair(t1, std::make_pair(t2, std::make_pair(t3, std::make_pair(t4, t5)))); }
 
+  namespace graph {
+    
+    // Functor for remove_parallel_edges: edge property of the removed edge is added to the remaining
+    template <typename EdgeProperty>
+    struct add_removed_edge_property
+    {
+      add_removed_edge_property(EdgeProperty ep) : ep(ep) {}
+      
+      template <typename Edge>
+      void operator() (Edge stay, Edge away)
+      {
+	put(ep, stay, get(ep, stay) + get(ep, away));
+      }
+      EdgeProperty  ep;
+    };
+
+    // Same as above: edge property is capacity here
+    template <typename Graph>
+    struct add_removed_edge_capacity
+      : add_removed_edge_property<typename property_map<Graph, edge_capacity_t>::type>
+    {
+      typedef add_removed_edge_property<typename property_map<Graph, edge_capacity_t>::type> base;
+      add_removed_edge_capacity(Graph& g) : base(get(edge_capacity, g)) {}
+    };    
+
+  } // namespace graph
+
 } /* namespace boost */
 
 #endif /* BOOST_GRAPH_UTILITY_HPP*/

@@ -387,7 +387,7 @@ namespace boost {
           ++first;
         incidence_iterator i = first;
         if (first != last)
-          for (; i != last; ++i)
+          for (++i; i != last; ++i)
             if (!pred(*i)) {
               *first.base() = *i.base();
               ++first;
@@ -786,14 +786,14 @@ namespace boost {
         typedef typename EdgeList::value_type StoredEdge;
         typename EdgeList::iterator i = el.begin(), end = el.end();
         for (; i != end; ++i) {
-          if((*i).get_target() == v) {
+          if ((*i).get_target() == v) {
             // NOTE: Wihtout this skip, this loop will double-delete properties
             // of loop edges. This solution is based on the observation that
             // the incidence edges of a vertex with a loop are adjacent in the
             // out edge list. This *may* actually hold for multisets also.
             bool skip = (next(i) != end && i->get_iter() == next(i)->get_iter());
             g.m_edges.erase((*i).get_iter());
-            if(skip) ++i;
+            if (skip) ++i;
           }
         }
         detail::erase_from_incidence_list(el, v, cat);
@@ -2297,7 +2297,7 @@ namespace boost {
         // VertexList and vertex_iterator
         typedef typename container_gen<VertexListS,
           vertex_ptr>::type SeqVertexList;
-        typedef boost::integer_range<std::size_t> RandVertexList;
+        typedef boost::integer_range<vertices_size_type> RandVertexList;
         typedef typename mpl::if_<is_rand_access,
           RandVertexList, SeqVertexList>::type VertexList;
 

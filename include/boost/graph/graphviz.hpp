@@ -725,7 +725,7 @@ class mutate_graph_impl : public mutate_graph
     
     if(!result.second) {
       // In the case of no parallel edges allowed
-      throw bad_parallel_edge(source, target);
+        boost::throw_exception(bad_parallel_edge(source, target));
     } else {
       bgl_edges.insert(std::make_pair(edge, result.first));
     }

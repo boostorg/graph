@@ -21,6 +21,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/two_bit_color_map.hpp>
 
 namespace boost {
 
@@ -219,16 +220,14 @@ namespace boost {
        const bgl_named_params<P, T, R>& params,
        detail::error_property_not_found)
       {
-        std::vector<default_color_type> color_vec(num_vertices(g));
-        default_color_type c = white_color;
         null_visitor null_vis;
 
         bfs_helper
           (g, s,
-           make_iterator_property_map
-           (color_vec.begin(),
+           make_two_bit_color_map
+           (num_vertices(g),
             choose_const_pmap(get_param(params, vertex_index),
-                              g, vertex_index), c),
+                              g, vertex_index)),
            choose_param(get_param(params, graph_visitor),
                         make_bfs_visitor(null_vis)),
            params);
