@@ -169,7 +169,7 @@ void check_consistency(const CSRGraphT& g) {
 }
 
 template<typename OrigGraph>
-void test(const OrigGraph& g)
+void graph_test(const OrigGraph& g)
 {
   // Check copying of a graph
   CSRGraphT g2(g);
@@ -308,12 +308,12 @@ void test(const OrigGraph& g)
                                            get(boost::edge_index, g3))));
 }
 
-void test(int nnodes, double density, int seed)
+void graph_test(int nnodes, double density, int seed)
 {
   boost::minstd_rand gen(seed);
   std::cout << "Testing " << nnodes << " density " << density << std::endl;
   GraphT g(ERGen(gen, nnodes, density), ERGen(), nnodes);
-  test(g);
+  graph_test(g);
 }
 
 void test_graph_properties()
@@ -377,13 +377,13 @@ int test_main(int argc, char* argv[])
   {
     std::cout << "Testing empty graph" << std::endl;
     CSRGraphT g;
-    test(g);
+    graph_test(g);
   }
-  //  test(1000, 0.05, seed);
-  //  test(1000, 0.0, seed);
-  //  test(1000, 0.1, seed);
-  test(1000, 0.001, seed);
-  test(1000, 0.0005, seed);
+  //  graph_test(1000, 0.05, seed);
+  //  graph_test(1000, 0.0, seed);
+  //  graph_test(1000, 0.1, seed);
+  graph_test(1000, 0.001, seed);
+  graph_test(1000, 0.0005, seed);
   {
     std::cout << "Testing partially constructed CSR graph" << std::endl;
     CSRGraphT g;
@@ -398,7 +398,7 @@ int test_main(int argc, char* argv[])
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       BOOST_CHECK(edge_from_index(get(boost::edge_index, g, *ei), g) == *ei);
     }
-    test(g);
+    graph_test(g);
   }
 
   test_graph_properties();
