@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 #include <queue>
+#include <boost/config.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
@@ -58,6 +59,7 @@ namespace boost {
     
     ssca_iterator& operator++()
     {
+      BOOST_USING_STD_MIN();
       while (values.empty() && verticesRemaining > 0) { // If there are no values left, generate a new clique
         uniform_int<vertices_size_type> clique_size(1, maxCliqueSize);
         uniform_int<vertices_size_type> rand_vertex(0, totVertices-1);
@@ -67,7 +69,7 @@ namespace boost {
         std::vector<vertices_size_type> cliqueVertices;
 
         cliqueVertices.clear();
-        vertices_size_type size = std::min(clique_size(*gen), verticesRemaining);
+        vertices_size_type size = min BOOST_PREVENT_MACRO_SUBSTITUTION (clique_size(*gen), verticesRemaining);
         while (cliqueVertices.size() < size) {
           vertices_size_type v = rand_vertex(*gen);
           if (cliqueNum[v] == -1) {

@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include <boost/config.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -99,24 +100,26 @@ struct cycle_visitor
  */
 struct min_max_cycle_visitor
 {
-    min_max_cycle_visitor(std::size_t& min, std::size_t& max)
-        : minimum(min), maximum(max)
+    min_max_cycle_visitor(std::size_t& min_, std::size_t& max_)
+        : minimum(min_), maximum(max_)
     { }
 
     template <typename Path, typename Graph>
     inline void cycle(const Path& p, const Graph& g)
     {
+        BOOST_USING_STD_MIN();
+        BOOST_USING_STD_MAX();
         std::size_t len = p.size();
-        minimum = std::min(minimum, len);
-        maximum = std::max(maximum, len);
+        minimum = min BOOST_PREVENT_MACRO_SUBSTITUTION (minimum, len);
+        maximum = max BOOST_PREVENT_MACRO_SUBSTITUTION (maximum, len);
     }
     std::size_t& minimum;
     std::size_t& maximum;
 };
 
 inline min_max_cycle_visitor
-find_min_max_cycle(std::size_t& min, std::size_t& max)
-{ return min_max_cycle_visitor(min, max); }
+find_min_max_cycle(std::size_t& min_, std::size_t& max_)
+{ return min_max_cycle_visitor(min_, max_); }
 
 namespace detail
 {
@@ -340,7 +343,7 @@ tiernan_all_cycles(const Graph& g, Visitor vis)
 {
     typedef typename graph_traits<Graph>::directed_category Dir;
     tiernan_all_cycles(g, vis, detail::min_cycles<Dir>::value,
-                       std::numeric_limits<std::size_t>::max());
+                       (std::numeric_limits<std::size_t>::max)());
 }
 
 template <typename Graph>
@@ -348,14 +351,14 @@ inline std::pair<std::size_t, std::size_t>
 tiernan_girth_and_circumference(const Graph& g)
 {
     std::size_t
-        min = std::numeric_limits<std::size_t>::max(),
-        max = 0;
-    tiernan_all_cycles(g, find_min_max_cycle(min, max));
+        min_ = (std::numeric_limits<std::size_t>::max)(),
+        max_ = 0;
+    tiernan_all_cycles(g, find_min_max_cycle(min_, max_));
 
     // if this is the case, the graph is acyclic...
-    if(max == 0) max = min;
+    if(max_ == 0) max_ = min_;
 
-    return std::make_pair(min, max);
+    return std::make_pair(min_, max_);
 }
 
 template <typename Graph>

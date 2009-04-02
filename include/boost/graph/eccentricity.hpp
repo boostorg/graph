@@ -8,6 +8,7 @@
 #define BOOST_GRAPH_ECCENTRICITY_HPP
 
 #include <boost/utility.hpp>
+#include <boost/config.hpp>
 #include <boost/graph/detail/geodesic.hpp>
 
 namespace boost
@@ -50,6 +51,8 @@ all_eccentricities(const Graph& g, const DistanceMatrix& dist, EccentricityMap e
     typedef typename property_traits<DistanceMatrix>::value_type DistanceMap;
     function_requires< WritablePropertyMapConcept<EccentricityMap,Vertex> >();
     typedef typename property_traits<EccentricityMap>::value_type Eccentricity;
+    BOOST_USING_STD_MIN();
+    BOOST_USING_STD_MAX();
 
     Eccentricity
             r = numeric_values<Eccentricity>::infinity(),
@@ -62,8 +65,8 @@ all_eccentricities(const Graph& g, const DistanceMatrix& dist, EccentricityMap e
         put(ecc, *i, e);
 
         // track the radius and diameter at the same time
-        r = std::min(r, e);
-        d = std::max(d, e);
+        r = min BOOST_PREVENT_MACRO_SUBSTITUTION (r, e);
+        d = max BOOST_PREVENT_MACRO_SUBSTITUTION (d, e);
     }
     return make_pair(r, d);
 }
@@ -85,8 +88,8 @@ radius_and_diameter(const Graph& g, EccentricityMap ecc)
     Eccentricity diameter = get(ecc, *i);
     for(i = next(i); i != end; ++i) {
         Eccentricity cur = get(ecc, *i);
-        radius = std::min(radius, cur);
-        diameter = std::max(diameter, cur);
+        radius = min BOOST_PREVENT_MACRO_SUBSTITUTION (radius, cur);
+        diameter = max BOOST_PREVENT_MACRO_SUBSTITUTION (diameter, cur);
     }
     return std::make_pair(radius, diameter);
 }

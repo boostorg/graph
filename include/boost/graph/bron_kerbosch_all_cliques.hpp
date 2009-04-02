@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <deque>
+#include <boost/config.hpp>
 
 #include <boost/graph/graph_concepts.hpp>
 
@@ -106,7 +107,8 @@ struct max_clique_visitor
     template <typename Clique, typename Graph>
     inline void clique(const Clique& p, const Graph& g)
     {
-        maximum = std::max(maximum, p.size());
+        BOOST_USING_STD_MAX();
+        maximum = max BOOST_PREVENT_MACRO_SUBSTITUTION (maximum, p.size());
     }
     std::size_t& maximum;
 };

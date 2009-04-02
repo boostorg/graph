@@ -8,6 +8,7 @@
 #define BOOST_GRAPH_DETAIL_GEODESIC_HPP
 
 #include <functional>
+#include <boost/config.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/numeric_values.hpp>
 
@@ -83,7 +84,7 @@ namespace detail {
     struct maximize : public std::binary_function<T, T, T>
     {
         T operator ()(T x, T y) const
-        { return std::max(x, y); }
+        { BOOST_USING_STD_MAX(); return max BOOST_PREVENT_MACRO_SUBSTITUTION (x, y); }
     };
 
     // Another helper, like maximize() to help abstract functional

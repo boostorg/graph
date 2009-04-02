@@ -19,6 +19,7 @@
 #include <exception>
 #include <set> 
 #include <boost/bind.hpp>
+#include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -52,7 +53,7 @@ namespace boost {
      * \param ewm2 - edge weight2 read property map: E -> R+
      *
      * \return maximum_{for all cycles C}CR(C), or
-     * -(std::numeric_limits<double>)::max() if g is not "good".
+     * -(std::numeric_limits<double>::max)() if g is not "good".
      */
     template <typename TGraph, typename TVertexIndexMap, 
               typename TWeight1EdgeMap, typename TWeight2EdgeMap >      
