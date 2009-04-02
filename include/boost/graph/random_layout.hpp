@@ -15,36 +15,19 @@
 #include <boost/random/uniform_real.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/graph/iteration_macros.hpp>
 
 namespace boost {
 
-template<typename Graph, typename PositionMap, 
-         typename RandomNumberGenerator>
+template<typename Topology,
+         typename Graph, typename PositionMap>
 void
 random_graph_layout
  (const Graph& g, PositionMap position_map,
-  typename property_traits<PositionMap>::value_type const& origin,
-  typename property_traits<PositionMap>::value_type const& extent,
-  RandomNumberGenerator& gen)
+  const Topology& topology)
 {
-  typedef typename property_traits<PositionMap>::value_type Point;
-  typedef double Dimension;
-
-  typedef typename mpl::if_<is_integral<Dimension>,
-                            uniform_int<Dimension>,
-                            uniform_real<Dimension> >::type distrib_t;
-  typedef typename mpl::if_<is_integral<Dimension>,
-                            RandomNumberGenerator&,
-                            uniform_01<RandomNumberGenerator, Dimension> >
-    ::type gen_t;
-
-  gen_t my_gen(gen);
-  distrib_t x(origin.x, origin.x + extent.x);
-  distrib_t y(origin.y, origin.y + extent.y);
-  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for(tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    position_map[*vi].x = x(my_gen);
-    position_map[*vi].y = y(my_gen);
+  BGL_FORALL_VERTICES_T(v, g, Graph) {
+    put(position_map, v, topology.random_point());
   }
 }
 

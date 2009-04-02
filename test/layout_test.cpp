@@ -23,31 +23,26 @@ using namespace boost;
 enum vertex_position_t { vertex_position };
 namespace boost { BOOST_INSTALL_PROPERTY(vertex, position); }
 
-struct point
-{
-  double x, y;
-  point(double x, double y): x(x), y(y) {}
-  point() {}
-};
+typedef square_topology<>::point_type point;
 
-template<typename Graph, typename PositionMap>
-void print_graph_layout(const Graph& g, PositionMap position)
+template<typename Graph, typename PositionMap, typename Topology>
+void print_graph_layout(const Graph& g, PositionMap position, const Topology& topology)
 {
-  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    if ((int)position[*vi].x < xmin) xmin = (int)position[*vi].x;
-    if ((int)position[*vi].x > xmax) xmax = (int)position[*vi].x;
-    if ((int)position[*vi].y < ymin) ymin = (int)position[*vi].y;
-    if ((int)position[*vi].y > ymax) ymax = (int)position[*vi].y;
+  typedef typename Topology::point_type Point;
+  // Find min/max ranges
+  Point min_point = position[*vertices(g).first], max_point = min_point;
+  BGL_FORALL_VERTICES_T(v, g, Graph) {
+    min_point = topology.pointwise_min(min_point, position[v]);
+    max_point = topology.pointwise_max(max_point, position[v]);
   }
 
-  for (int y = ymin; y <= ymax; ++y) {
-    for (int x = xmin; x <= xmax; ++x) {
+  for (int y = min_point[1]; y <= max_point[1]; ++y) {
+    for (int x = min_point[0]; x <= max_point[0]; ++x) {
+      typename graph_traits<Graph>::vertex_iterator vi, vi_end;
       // Find vertex at this position
       typename graph_traits<Graph>::vertices_size_type index = 0;
       for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++index) {
-        if ((int)position[*vi].x == x && (int)position[*vi].y == y)
+        if ((int)position[*vi][0] == x && (int)position[*vi][1] == y)
           break;
       }
 
@@ -67,7 +62,7 @@ void dump_graph_layout(std::string name, const Graph& g, PositionMap position)
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     out << "  n" << get(vertex_index, g, *vi) << "[ pos=\"" 
-        << (int)position[*vi].x + 25 << ", " << (int)position[*vi].y + 25 
+        << (int)position[*vi][0] + 25 << ", " << (int)position[*vi][1] + 25 
         << "\" ];\n";
   }
 
@@ -98,7 +93,8 @@ test_circle_layout(Graph*, typename graph_traits<Graph>::vertices_size_type n)
   circle_graph_layout(g, get(vertex_position, g), 10.0);
 
   std::cout << "Regular polygon layout with " << n << " points.\n";
-  print_graph_layout(g, get(vertex_position, g));
+  square_topology<> topology;
+  print_graph_layout(g, get(vertex_position, g), topology);
 }
 
 struct simple_edge
@@ -151,6 +147,7 @@ test_triangle(Graph*)
   bool ok = kamada_kawai_spring_layout(g, 
                                        get(vertex_position, g),
                                        get(edge_weight, g),
+                                       square_topology<>(50.0),
                                        side_length(50.0));
   BOOST_CHECK(ok);
 
@@ -192,37 +189,43 @@ test_cube(Graph*)
   bool ok = kamada_kawai_spring_layout(g, 
                                        get(vertex_position, g),
                                        get(edge_weight, g),
+                                       square_topology<>(50.0),
                                        side_length(50.0),
                                        kamada_kawai_done());
   BOOST_CHECK(ok);
 
   std::cout << "Cube layout (Kamada-Kawai).\n";
-  print_graph_layout(g, get(vertex_position, g));
+  print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube", g, get(vertex_position, g));
 
   minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g),
-                      point(-25.0, -25.0),
-                      point(25.0, 25.0), 
-                      gen);
+  typedef square_topology<> Topology;
+  Topology topology(gen, 50.0);
+  std::vector<Topology::point_difference_type> displacements(num_vertices(g));
+  Topology::point_type origin;
+  origin[0] = origin[1] = 50.0;
+  Topology::point_difference_type extent;
+  extent[0] = extent[1] = 50.0;
+  rectangle_topology<> rect_top(gen, 0, 0, 50, 50);
+  random_graph_layout(g, get(vertex_position, g), rect_top);
 
-  std::vector<point> displacements(num_vertices(g));
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     point(50.0, 50.0),
-     point(50.0, 50.0),
+     topology,
+     origin,
+     extent,
      square_distance_attractive_force(),
      square_distance_repulsive_force(),
      all_force_pairs(),
      linear_cooling<double>(100),
      make_iterator_property_map(displacements.begin(),
                                 get(vertex_index, g),
-                                point()));
+                                Topology::point_difference_type()));
 
   std::cout << "Cube layout (Fruchterman-Reingold).\n";
-  print_graph_layout(g, get(vertex_position, g));
+  print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube-fr", g, get(vertex_position, g));
 }
@@ -256,37 +259,46 @@ test_triangular(Graph*)
   }
   std::cerr << std::endl;
 
+  typedef square_topology<> Topology;
+  minstd_rand gen;
+  Topology topology(gen, 50.0);
+  Topology::point_type origin;
+  origin[0] = origin[1] = 50.0;
+  Topology::point_difference_type extent;
+  extent[0] = extent[1] = 50.0;
+
   circle_graph_layout(g, get(vertex_position, g), 25.0);
 
   bool ok = kamada_kawai_spring_layout(g, 
                                        get(vertex_position, g),
                                        get(edge_weight, g),
+                                       topology,
                                        side_length(50.0),
                                        kamada_kawai_done());
   BOOST_CHECK(ok);
 
   std::cout << "Triangular layout (Kamada-Kawai).\n";
-  print_graph_layout(g, get(vertex_position, g));
+  print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("triangular-kk", g, get(vertex_position, g));
 
-  minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g), point(-25.0, -25.0), point(25.0, 25.0),
-                      gen);
+  rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
+  random_graph_layout(g, get(vertex_position, g), rect_top);
 
   dump_graph_layout("random", g, get(vertex_position, g));
 
-  std::vector<point> displacements(num_vertices(g));
+  std::vector<Topology::point_difference_type> displacements(num_vertices(g));
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     point(50.0, 50.0),
-     point(50.0, 50.0),
+     topology,
+     origin,
+     extent,
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(100)));
 
   std::cout << "Triangular layout (Fruchterman-Reingold).\n";
-  print_graph_layout(g, get(vertex_position, g));
+  print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("triangular-fr", g, get(vertex_position, g));
 }
@@ -326,25 +338,33 @@ test_disconnected(Graph*)
   bool ok = kamada_kawai_spring_layout(g, 
                                        get(vertex_position, g),
                                        get(edge_weight, g),
+                                       square_topology<>(50.0),
                                        side_length(50.0),
                                        kamada_kawai_done());
   BOOST_CHECK(!ok);
 
   minstd_rand gen;
-  random_graph_layout(g, get(vertex_position, g), point(-25.0, -25.0), point(25.0, 25.0),
-                      gen);
+  rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
+  random_graph_layout(g, get(vertex_position, g), rect_top);
 
-  std::vector<point> displacements(num_vertices(g));
+  typedef square_topology<> Topology;
+  Topology topology(gen, 50.0);
+  std::vector<Topology::point_difference_type> displacements(num_vertices(g));
+  Topology::point_type origin;
+  origin[0] = origin[1] = 50.0;
+  Topology::point_difference_type extent;
+  extent[0] = extent[1] = 50.0;
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
-     point(50.0, 50.0),
-     point(50.0, 50.0),
+     topology,
+     origin,
+     extent,
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(50)));
 
   std::cout << "Disconnected layout (Fruchterman-Reingold).\n";
-  print_graph_layout(g, get(vertex_position, g));
+  print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("disconnected-fr", g, get(vertex_position, g));
 }
