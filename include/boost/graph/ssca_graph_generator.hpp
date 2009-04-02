@@ -42,12 +42,12 @@ namespace boost {
 
     // Initialize for edge generation
     ssca_iterator(RandomGenerator& gen, vertices_size_type totVertices, 
-		  vertices_size_type maxCliqueSize, double probUnidirectional, 
-		  int maxParallelEdges, double probIntercliqueEdges) 
+                  vertices_size_type maxCliqueSize, double probUnidirectional, 
+                  int maxParallelEdges, double probIntercliqueEdges) 
       : gen(&gen), totVertices(totVertices), maxCliqueSize(maxCliqueSize), 
-	probUnidirectional(probUnidirectional), maxParallelEdges(maxParallelEdges),
-	probIntercliqueEdges(probIntercliqueEdges), currentClique(0), 
-	verticesRemaining(totVertices)
+        probUnidirectional(probUnidirectional), maxParallelEdges(maxParallelEdges),
+        probIntercliqueEdges(probIntercliqueEdges), currentClique(0), 
+        verticesRemaining(totVertices)
     { 
       cliqueNum = std::vector<int>(totVertices, -1);
       current = std::make_pair(0,0);
@@ -59,68 +59,68 @@ namespace boost {
     ssca_iterator& operator++()
     {
       while (values.empty() && verticesRemaining > 0) { // If there are no values left, generate a new clique
-	uniform_int<vertices_size_type> clique_size(1, maxCliqueSize);
-	uniform_int<vertices_size_type> rand_vertex(0, totVertices-1);
-	uniform_int<int> num_parallel_edges(1, maxParallelEdges);
-	uniform_int<short> direction(0,1);
-	uniform_01<RandomGenerator> prob(*gen);
-	std::vector<vertices_size_type> cliqueVertices;
+        uniform_int<vertices_size_type> clique_size(1, maxCliqueSize);
+        uniform_int<vertices_size_type> rand_vertex(0, totVertices-1);
+        uniform_int<int> num_parallel_edges(1, maxParallelEdges);
+        uniform_int<short> direction(0,1);
+        uniform_01<RandomGenerator> prob(*gen);
+        std::vector<vertices_size_type> cliqueVertices;
 
-	cliqueVertices.clear();
-	vertices_size_type size = std::min(clique_size(*gen), verticesRemaining);
-	while (cliqueVertices.size() < size) {
-	  vertices_size_type v = rand_vertex(*gen);
-	  if (cliqueNum[v] == -1) {
-	    cliqueNum[v] = currentClique;
-	    cliqueVertices.push_back(v);
-	    verticesRemaining--;
-	  }
-	}  // Nick: This is inefficient when only a few vertices remain...
-	   //       I should probably just select the remaining vertices 
-	   //       in order when only a certain fraction remain.
+        cliqueVertices.clear();
+        vertices_size_type size = std::min(clique_size(*gen), verticesRemaining);
+        while (cliqueVertices.size() < size) {
+          vertices_size_type v = rand_vertex(*gen);
+          if (cliqueNum[v] == -1) {
+            cliqueNum[v] = currentClique;
+            cliqueVertices.push_back(v);
+            verticesRemaining--;
+          }
+        }  // Nick: This is inefficient when only a few vertices remain...
+           //       I should probably just select the remaining vertices 
+           //       in order when only a certain fraction remain.
 
-	typename std::vector<vertices_size_type>::iterator first, second;
-	for (first = cliqueVertices.begin(); first != cliqueVertices.end(); ++first)
-	  for (second = first+1; second != cliqueVertices.end(); ++second) {
-	    Direction d;
-	    int edges;
+        typename std::vector<vertices_size_type>::iterator first, second;
+        for (first = cliqueVertices.begin(); first != cliqueVertices.end(); ++first)
+          for (second = first+1; second != cliqueVertices.end(); ++second) {
+            Direction d;
+            int edges;
 
-	    d = prob() < probUnidirectional ? (direction(*gen) == 0 ? FORWARD : BACKWARD) : BOTH;
+            d = prob() < probUnidirectional ? (direction(*gen) == 0 ? FORWARD : BACKWARD) : BOTH;
 
-	    if (d & FORWARD) {
-	      edges = num_parallel_edges(*gen);
-	      for (int i = 0; i < edges; ++i)
-		values.push(std::make_pair(*first, *second));
-	    }
-	      
-	    if (d & BACKWARD) {
-	      edges = num_parallel_edges(*gen);
-	      for (int i = 0; i < edges; ++i)
-		values.push(std::make_pair(*second, *first));
-	    }
-	  }
+            if (d & FORWARD) {
+              edges = num_parallel_edges(*gen);
+              for (int i = 0; i < edges; ++i)
+                values.push(std::make_pair(*first, *second));
+            }
+              
+            if (d & BACKWARD) {
+              edges = num_parallel_edges(*gen);
+              for (int i = 0; i < edges; ++i)
+                values.push(std::make_pair(*second, *first));
+            }
+          }
 
-	if (verticesRemaining == 0) {
-	  // Generate interclique edges
-	  for (vertices_size_type i = 0; i < totVertices; ++i) {
-	    double p = probIntercliqueEdges;
-	    for (vertices_size_type d = 2; d < totVertices/2; d *= 2, p/= 2) {
-	      vertices_size_type j = (i+d) % totVertices;
-	      if (cliqueNum[j] != cliqueNum[i] && prob() < p) {
-		int edges = num_parallel_edges(*gen);
-		for (int i = 0; i < edges; ++i)
-		  values.push(std::make_pair(i, j));
-	      }
-	    }
-	  }
-	}
+        if (verticesRemaining == 0) {
+          // Generate interclique edges
+          for (vertices_size_type i = 0; i < totVertices; ++i) {
+            double p = probIntercliqueEdges;
+            for (vertices_size_type d = 2; d < totVertices/2; d *= 2, p/= 2) {
+              vertices_size_type j = (i+d) % totVertices;
+              if (cliqueNum[j] != cliqueNum[i] && prob() < p) {
+                int edges = num_parallel_edges(*gen);
+                for (int i = 0; i < edges; ++i)
+                  values.push(std::make_pair(i, j));
+              }
+            }
+          }
+        }
 
-	currentClique++;
+        currentClique++;
       } 
 
       if (!values.empty()) { // If we're not done return a value
-	current = values.front();
-	values.pop();
+        current = values.front();
+        values.pop();
       }
 
       return *this;

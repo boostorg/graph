@@ -29,7 +29,7 @@ public:
   typedef double vertex_weight_type;
   typedef double edge_weight_type;
   typedef std::pair<vertices_size_type,
-		    vertices_size_type> edge_type;
+                    vertices_size_type> edge_type;
   enum incr_mode {edge, edge_weight};
 
   dimacs_basic_reader( std::istream& in, bool want_weights = true ) : 
@@ -51,7 +51,7 @@ public:
 
   //for a past the end iterator
   dimacs_basic_reader() : inpt( std::cin ), num_vertices( 0 ), 
-			  num_edges( 0 ), seen_edges( 0 ), want_weights(false) {}
+                          num_edges( 0 ), seen_edges( 0 ), want_weights(false) {}
 
   edge_type edge_deref() {
     assert( !read_edges.empty() );
@@ -79,7 +79,7 @@ public:
     }
 
     if( (mode == edge && read_edges.empty()) ||
-	(mode == edge_weight && read_edge_weights.empty() )) {
+        (mode == edge_weight && read_edge_weights.empty() )) {
 
       if( seen_edges > num_edges ) {
           boost::throw_exception(dimacs_exception());
@@ -94,7 +94,7 @@ public:
           seen_edges++;
           source--;
           dest--;
-	
+        
           read_edges.push( edge_type( source, dest ) );
           if (want_weights) {
               read_edge_weights.push( weight );
@@ -202,10 +202,10 @@ public:
   typedef dimacs_basic_reader::incr_mode incr_mode;
 
   typedef std::input_iterator_tag iterator_category;
-  typedef edge_type           	  value_type;
-  typedef value_type          	  reference;
-  typedef edge_type*          	  pointer;
-  typedef std::ptrdiff_t      	  difference_type;
+  typedef edge_type               value_type;
+  typedef value_type              reference;
+  typedef edge_type*              pointer;
+  typedef std::ptrdiff_t          difference_type;
 
   dimacs_edge_iterator( T& reader ) :
     reader( reader ) {}

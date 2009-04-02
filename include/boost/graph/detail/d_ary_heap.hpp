@@ -81,7 +81,7 @@ namespace boost {
   //   the operations used probably require that it is std::vector<Value>).
   //
   template <typename Value,
-	    std::size_t Arity,
+            std::size_t Arity,
             typename IndexInHeapPropertyMap,
             typename DistanceMap,
             typename Compare = std::less<Value>,

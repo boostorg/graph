@@ -44,9 +44,9 @@ namespace boost {
     // Vertices are numbered in row-major order
     // Assumes directed
     mesh_iterator(vertices_size_type x, vertices_size_type y, 
-		  bool toroidal = true)
+                  bool toroidal = true)
       : x(x), y(y), n(x*y), source(0), target(1), current(0,1), 
-	toroidal(toroidal), done(false)
+        toroidal(toroidal), done(false)
     { assert(x > 1 && y > 1); }
 
     reference operator*() const { return current; }
@@ -55,69 +55,69 @@ namespace boost {
     mesh_iterator& operator++()
     {
       if (is_undirected) {
-	if (!toroidal) {
-	  if (target == source + 1)
-	    if (source < x * (y - 1))
-	      target = source + x;
-	    else {
-	      source++;
-	      target = (source % x) < x - 1 ? source + 1 : source + x;
-	      if (target > n) 
-		done = true;
-	    }
-	  else if (target == source + x) {
-	    source++;
-	    target = (source % x) < x - 1 ? source + 1 : source + x;
-	  }
-	} else {
-	  if (target == source + 1 || target == source - (source % x))
-	    target = (source + x) % n;
-	  else if (target == (source + x) % n) {
-	    if (source == n - 1)
-	      done = true;
-	    else {
-	      source++;
-	      target = (source % x) < (x - 1) ? source + 1 : source - (source % x);
-	    }
-	  }
-	}
+        if (!toroidal) {
+          if (target == source + 1)
+            if (source < x * (y - 1))
+              target = source + x;
+            else {
+              source++;
+              target = (source % x) < x - 1 ? source + 1 : source + x;
+              if (target > n) 
+                done = true;
+            }
+          else if (target == source + x) {
+            source++;
+            target = (source % x) < x - 1 ? source + 1 : source + x;
+          }
+        } else {
+          if (target == source + 1 || target == source - (source % x))
+            target = (source + x) % n;
+          else if (target == (source + x) % n) {
+            if (source == n - 1)
+              done = true;
+            else {
+              source++;
+              target = (source % x) < (x - 1) ? source + 1 : source - (source % x);
+            }
+          }
+        }
       } else { // Directed
-	if ( !toroidal ) {
-	  if (target == source - x) 
-	    target = source % x > 0 ? source - 1 : source + 1;
-	  else if (target == source - 1)
-	    if ((source % x) < (x - 1))
-	      target = source + 1;
-	    else if (source < x * (y - 1))
-	      target = source + x;
-	    else {
-	      done = true;
-	    }
-	  else if (target == source + 1)
-	    if (source < x * (y - 1))
-	      target = source + x;
-	    else {
-	      source++;
-	      target = source - x;
-	    }
-	  else if (target == source + x) {
-	    source++;
-	    target = (source >= x) ? source - x : source - 1;
-	  }
-	} else {
-	  if (source == n - 1 && target == (source + x) % n)
-	    done = true;
-	  else if (target == source - 1 || target == source + x - 1)
-	    target = (source + x) % n;
-	  else if (target == source + 1 || target == source - (source % x))
-	    target = (source - x + n) % n;
-	  else if (target == (source - x + n) % n)
-	    target = (source % x > 0) ? source - 1 : source + x - 1;
-	  else if (target == (source + x) % n) {
-	    source++;
-	    target = (source % x) < (x - 1) ? source + 1 : source - (source % x);
-	  }
-	}
+        if ( !toroidal ) {
+          if (target == source - x) 
+            target = source % x > 0 ? source - 1 : source + 1;
+          else if (target == source - 1)
+            if ((source % x) < (x - 1))
+              target = source + 1;
+            else if (source < x * (y - 1))
+              target = source + x;
+            else {
+              done = true;
+            }
+          else if (target == source + 1)
+            if (source < x * (y - 1))
+              target = source + x;
+            else {
+              source++;
+              target = source - x;
+            }
+          else if (target == source + x) {
+            source++;
+            target = (source >= x) ? source - x : source - 1;
+          }
+        } else {
+          if (source == n - 1 && target == (source + x) % n)
+            done = true;
+          else if (target == source - 1 || target == source + x - 1)
+            target = (source + x) % n;
+          else if (target == source + 1 || target == source - (source % x))
+            target = (source - x + n) % n;
+          else if (target == (source - x + n) % n)
+            target = (source % x > 0) ? source - 1 : source + x - 1;
+          else if (target == (source + x) % n) {
+            source++;
+            target = (source % x) < (x - 1) ? source + 1 : source - (source % x);
+          }
+        }
       }
 
       current.first = source;

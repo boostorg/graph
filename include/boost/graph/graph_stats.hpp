@@ -78,7 +78,7 @@ std::map<unsigned long, unsigned long> dup_edge_dist( Graph& g ) {
     std::list<vertex_type> front_neighbors;
     a_iterator_type a_iter, a_end;
     for( tie( a_iter, a_end ) = adjacent_vertices( v, g );
-	 a_iter != a_end; ++a_iter ) {
+         a_iter != a_end; ++a_iter ) {
       front_neighbors.push_back( *a_iter );
     }
     
@@ -116,7 +116,7 @@ std::map<unsigned long, double> weight_degree_dist( Graph& g ) {
   BGL_FORALL_VERTICES_T( v, g, Graph ) {
       edge_weight_type tmp = 0;
       BGL_FORALL_OUTEDGES_T( v, e, g, Graph ) {
-	tmp += em[e];
+        tmp += em[e];
       }
       n[out_degree( v, g )] += 1.;
       dist[out_degree( v, g )] += tmp;

@@ -371,7 +371,7 @@ brandes_betweenness_centrality(const Graph& g,
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index
-			       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_unweighted_shortest_paths shortest_paths;
 
@@ -397,7 +397,7 @@ brandes_betweenness_centrality(const Graph& g,
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index,
                                WeightMap weight_map
-			       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_dijkstra_shortest_paths<WeightMap>
     shortest_paths(weight_map);
@@ -518,7 +518,7 @@ template<typename Graph, typename Param, typename Tag, typename Rest>
 void 
 brandes_betweenness_centrality(const Graph& g, 
                                const bgl_named_params<Param,Tag,Rest>& params
-			       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   typedef bgl_named_params<Param,Tag,Rest> named_params;
 
@@ -536,7 +536,7 @@ brandes_betweenness_centrality(const Graph& g,
 template<typename Graph, typename CentralityMap>
 void 
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
-			       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_betweenness_centrality_dispatch2(
     g, centrality, dummy_property_map(), get(vertex_index, g));
@@ -546,7 +546,7 @@ template<typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 void 
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality,
                                EdgeCentralityMap edge_centrality_map
-			       BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_betweenness_centrality_dispatch2(
     g, centrality, edge_centrality_map, get(vertex_index, g));
@@ -577,7 +577,7 @@ relative_betweenness_centrality(const Graph& g, CentralityMap centrality)
 template<typename Graph, typename CentralityMap>
 typename property_traits<CentralityMap>::value_type
 central_point_dominance(const Graph& g, CentralityMap centrality
-			BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+                        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   using std::max;
 

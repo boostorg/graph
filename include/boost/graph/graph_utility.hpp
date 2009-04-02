@@ -431,7 +431,7 @@ namespace boost {
       template <typename Edge>
       void operator() (Edge stay, Edge away)
       {
-	put(ep, stay, get(ep, stay) + get(ep, away));
+        put(ep, stay, get(ep, stay) + get(ep, away));
       }
       EdgeProperty  ep;
     };
