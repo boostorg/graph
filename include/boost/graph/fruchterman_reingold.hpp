@@ -21,8 +21,6 @@
 #include <cmath> // for std::sqrt and std::fabs
 #include <functional>
 
-#include <stdlib.h> // for drand48
-
 namespace boost {
 
   bool vertex_migration = false;
@@ -224,19 +222,9 @@ namespace detail {
                      typename Topology::point_type& p1, const typename Topology::point_type& p2,
                      typename Topology::point_type origin, typename Topology::point_difference_type extent)
   {
-#ifndef BOOST_NO_STDC_NAMESPACE
-    using std::sqrt;
-    using std::fabs;
-#endif // BOOST_NO_STDC_NAMESPACE
     double too_close = topology.norm(extent) / 10000.;
     if (topology.distance(p1, p2) < too_close) {
-      double dist_to_move = sqrt(topology.norm(extent)) / 200.;
-      for (std::size_t i = 0; i < Topology::point_type::dimensions; ++i) {
-        if (p1[i] - origin[i] < origin[i] + extent[i] - p1[i])
-          p1[i] += dist_to_move * drand48();
-        else
-          p1[i] -= dist_to_move * drand48();
-      }
+      p1 = topology.move_position_toward(p1, 1./200, topology.random_point());
     }
   }
 
