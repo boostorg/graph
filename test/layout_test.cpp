@@ -36,8 +36,8 @@ void print_graph_layout(const Graph& g, PositionMap position, const Topology& to
     max_point = topology.pointwise_max(max_point, position[v]);
   }
 
-  for (int y = min_point[1]; y <= max_point[1]; ++y) {
-    for (int x = min_point[0]; x <= max_point[0]; ++x) {
+  for (int y = (int)min_point[1]; y <= (int)max_point[1]; ++y) {
+    for (int x = (int)min_point[0]; x <= (int)max_point[0]; ++x) {
       typename graph_traits<Graph>::vertex_iterator vi, vi_end;
       // Find vertex at this position
       typename graph_traits<Graph>::vertices_size_type index = 0;
