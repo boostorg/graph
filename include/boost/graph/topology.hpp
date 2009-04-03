@@ -14,7 +14,7 @@
 #include <cmath>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/math/constants/constants.hpp>
+#include <boost/math/constants/constants.hpp> // For root_two
 #include <boost/algorithm/minmax.hpp>
 #include <boost/config.hpp> // For BOOST_STATIC_CONSTANT
 #include <boost/math/special_functions/hypot.hpp>
@@ -42,6 +42,7 @@ class convex_topology
     double values[Dims];
   };
 
+  friend struct point_difference; // Workaround for VisualAge C++ bug
   struct point_difference
   {
     BOOST_STATIC_CONSTANT(std::size_t, dimensions = Dims);
@@ -438,14 +439,13 @@ class heart_topology
   {
 #ifndef BOOST_NO_STDC_NAMESPACE
     using std::abs;
-    using boost::math::constants::root_two;
 #endif
 
     if (p[1] < abs(p[0]) - 2000) return false; // Bottom
     if (p[1] <= -1000) return true; // Diagonal of square
-    if (boost::math::hypot(p[0] - -500, p[1] - -500) <= 500. * root_two<double>())
+    if (boost::math::hypot(p[0] - -500, p[1] - -500) <= 500. * boost::math::constants::root_two<double>())
       return true; // Left circle
-    if (boost::math::hypot(p[0] - 500, p[1] - -500) <= 500. * root_two<double>())
+    if (boost::math::hypot(p[0] - 500, p[1] - -500) <= 500. * boost::math::constants::root_two<double>())
       return true; // Right circle
     return false;
   }
@@ -475,10 +475,9 @@ class heart_topology
   point random_point() const 
   {
     point result;
-    using boost::math::constants::root_two;
     do {
-      result[0] = (*rand)() * (1000 + 1000 * root_two<double>()) - (500 + 500 * root_two<double>());
-      result[1] = (*rand)() * (2000 + 500 * (root_two<double>() - 1)) - 2000;
+      result[0] = (*rand)() * (1000 + 1000 * boost::math::constants::root_two<double>()) - (500 + 500 * boost::math::constants::root_two<double>());
+      result[1] = (*rand)() * (2000 + 500 * (boost::math::constants::root_two<double>() - 1)) - 2000;
     } while (!in_heart(result));
     return result;
   }
