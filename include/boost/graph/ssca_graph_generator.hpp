@@ -23,6 +23,9 @@ enum Direction {FORWARD = 1, BACKWARD = 2, BOTH = FORWARD | BACKWARD};
 
 namespace boost {
 
+  // This generator generates graphs according to the method specified
+  // in SSCA 1.1.  Current versions of SSCA use R-MAT graphs
+
   template<typename RandomGenerator, typename Graph>
   class ssca_iterator
   {
