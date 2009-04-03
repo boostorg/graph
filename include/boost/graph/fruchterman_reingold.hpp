@@ -104,10 +104,7 @@ struct grid_force_pairs
                    PositionMap position, const Graph& g)
     : topology(topology), extent(extent), origin(origin), position(position)
   {
-#ifndef BOOST_NO_STDC_NAMESPACE
-    using std::sqrt;
-#endif // BOOST_NO_STDC_NAMESPACE
-    two_k = 2. * topology.volume(extent) / sqrt(num_vertices(g));
+    two_k = 2. * topology.volume(extent) / std::sqrt(num_vertices(g));
   }
 
   template<typename Graph, typename ApplyForce >
@@ -117,10 +114,6 @@ struct grid_force_pairs
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef std::list<vertex_descriptor> bucket_t;
     typedef std::vector<bucket_t> buckets_t;
-
-#ifndef BOOST_NO_STDC_NAMESPACE
-    using std::sqrt;
-#endif // BOOST_NO_STDC_NAMESPACE
 
     std::size_t columns = std::size_t(extent[0] / two_k + 1.);
     std::size_t rows = std::size_t(extent[1] / two_k + 1.);
@@ -247,9 +240,6 @@ namespace detail {
 
     void operator()(vertex_descriptor u, vertex_descriptor v)
     {
-#ifndef BOOST_NO_STDC_NAMESPACE
-      using std::sqrt;
-#endif // BOOST_NO_STDC_NAMESPACE
       if (u != v) {
         // When the vertices land on top of each other, move the
         // first vertex away from the boundaries.
@@ -301,11 +291,6 @@ fruchterman_reingold_force_directed_layout
   typedef typename graph_traits<Graph>::vertex_iterator   vertex_iterator;
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits<Graph>::edge_iterator     edge_iterator;
-
-#ifndef BOOST_NO_STDC_NAMESPACE
-  using std::sqrt;
-  using std::pow;
-#endif // BOOST_NO_STDC_NAMESPACE
 
   double volume = 1.;
   for (std::size_t i = 0; i < Topology::point_difference_type::dimensions; ++i)
