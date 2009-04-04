@@ -104,7 +104,7 @@ struct grid_force_pairs
                    PositionMap position, const Graph& g)
     : topology(topology), extent(extent), origin(origin), position(position)
   {
-    two_k = 2. * topology.volume(extent) / std::sqrt(num_vertices(g));
+    two_k = 2. * this->topology.volume(this->extent) / std::sqrt((double)num_vertices(g));
   }
 
   template<typename Graph, typename ApplyForce >
