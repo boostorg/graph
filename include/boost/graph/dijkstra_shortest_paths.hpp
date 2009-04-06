@@ -344,7 +344,8 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis)
+     DijkstraVisitor vis
+     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
   {
     boost::two_bit_color_map<IndexMap> color(num_vertices(g), index_map);
     dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
