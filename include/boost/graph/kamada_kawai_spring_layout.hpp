@@ -428,6 +428,9 @@ namespace boost {
    * \param weight (IN) must be a model of Readable Property Map,
    * which provides the weight of each edge in the graph @p g.
    *
+   * \param topology (IN) must be a topology object (see topology.hpp),
+   * which provides operations on points and differences between them.
+   *
    * \param edge_or_side_length (IN) provides either the unit length
    * @c e of an edge in the layout or the length of a side @c s of the
    * display area, and must be either @c boost::edge_length(e) or @c
