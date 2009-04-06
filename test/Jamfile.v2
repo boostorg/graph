@@ -50,6 +50,7 @@ test-suite graph_test :
     [ run relaxed_heap_test.cpp : 5000 15000 ]
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
+    [ run generator_test.cpp ]
     [ run graph.cpp ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp

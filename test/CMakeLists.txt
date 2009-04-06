@@ -18,6 +18,7 @@ boost_test_run(dominator_tree_test)
 boost_test_run(relaxed_heap_test ARGS 5000 15000)
 boost_test_compile(edge_list_cc)
 boost_test_compile(filtered_graph_cc)
+boost_test_run(generator_test)
 boost_test_run(graph)
 boost_test_compile(graph_concepts)
 boost_test_run(graphviz_test 
