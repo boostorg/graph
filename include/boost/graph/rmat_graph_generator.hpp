@@ -159,7 +159,7 @@ namespace boost {
       else 
         current = std::make_pair(u, v);
 
-      edge;
+      --edge;
     }
 
     reference operator*() const { return current; }
