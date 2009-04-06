@@ -31,6 +31,7 @@ namespace boost {
 template<std::size_t Dims>
 class convex_topology 
 {
+  public: // For VisualAge C++
   struct point 
   {
     BOOST_STATIC_CONSTANT(std::size_t, dimensions = Dims);
@@ -42,7 +43,7 @@ class convex_topology
     double values[Dims];
   };
 
-  friend struct point_difference; // Workaround for VisualAge C++ bug
+  public: // For VisualAge C++
   struct point_difference
   {
     BOOST_STATIC_CONSTANT(std::size_t, dimensions = Dims);
