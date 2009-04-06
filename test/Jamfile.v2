@@ -114,11 +114,11 @@ test-suite graph_test :
 # Run SDB tests only when -sSDB= is set.
 if [ modules.peek : SDB ] != ""
 {
-    local SDB_DEPENDCIES =
+    local SDB_DEPENDENCIES =
         <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
 
     compile stanford_graph_cc.cpp
-        $(SDB_DEPENDCIES)  ;
+        $(SDB_DEPENDENCIES)  ;
 }
 
 # Run LEDA tests only when -sLEDA= is set.
