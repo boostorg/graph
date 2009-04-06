@@ -573,7 +573,4 @@ namespace boost {
 
 } // end namespace boost
 
-#include <boost/graph/distributed/rmat_graph_generator.hpp>
-
 #endif // BOOST_GRAPH_RMAT_GENERATOR_HPP
-
