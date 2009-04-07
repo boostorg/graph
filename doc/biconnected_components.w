@@ -285,7 +285,7 @@ S.pop();
 #include <boost/limits.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
   @<Biconnected Components Algorithm@>

@@ -23,7 +23,7 @@
 #include <queue>
 #include <functional>
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/pending/disjoint_sets.hpp>

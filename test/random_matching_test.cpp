@@ -8,7 +8,7 @@
 //=======================================================================
 #include <cstdlib>
 #include <iostream>
-#include <boost/vector_property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <ctime>

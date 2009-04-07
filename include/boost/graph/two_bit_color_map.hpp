@@ -13,7 +13,7 @@
 #ifndef BOOST_TWO_BIT_COLOR_MAP_HPP
 #define BOOST_TWO_BIT_COLOR_MAP_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/shared_array.hpp>
 #include <algorithm>
 

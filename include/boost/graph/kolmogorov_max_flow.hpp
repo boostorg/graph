@@ -42,7 +42,7 @@
 
 #include <boost/pending/queue.hpp>
 #include <boost/limits.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/none_t.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>

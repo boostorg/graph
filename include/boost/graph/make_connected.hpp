@@ -12,7 +12,7 @@
 #include <boost/utility.hpp> //for next
 #include <boost/tuple/tuple.hpp>   //for tie
 #include <boost/graph/connected_components.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <vector>
 
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>

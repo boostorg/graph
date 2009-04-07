@@ -21,7 +21,7 @@
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/pending/integer_range.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
 #include <algorithm>
 

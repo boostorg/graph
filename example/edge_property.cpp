@@ -52,7 +52,7 @@
 #include <iostream>
 
 #include <boost/utility.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
 

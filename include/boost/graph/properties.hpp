@@ -12,7 +12,7 @@
 #include <boost/config.hpp>
 #include <cassert>
 #include <boost/pending/property.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/limits.hpp>
@@ -285,7 +285,7 @@ namespace boost {
   //========================================================================
   // Iterator Property Map Generating Functions contributed by
   // Kevin Vanhorn. (see also the property map generating functions
-  // in boost/property_map.hpp)
+  // in boost/property_map/property_map.hpp)
 
 #if !defined(BOOST_NO_STD_ITERATOR_TRAITS)
   // A helper function for creating a vertex property map out of a

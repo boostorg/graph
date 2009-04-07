@@ -38,7 +38,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>

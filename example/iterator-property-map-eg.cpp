@@ -6,7 +6,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #include <iostream>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 int
 main()

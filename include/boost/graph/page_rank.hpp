@@ -11,7 +11,7 @@
 #ifndef BOOST_GRAPH_PAGE_RANK_HPP
 #define BOOST_GRAPH_PAGE_RANK_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/iteration_macros.hpp>

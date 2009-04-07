@@ -27,8 +27,8 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
-#include <boost/property_map.hpp>
-#include <boost/vector_property_map.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/type_traits.hpp>
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING

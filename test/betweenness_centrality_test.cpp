@@ -12,7 +12,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/test/minimal.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>

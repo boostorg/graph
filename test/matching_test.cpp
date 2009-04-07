@@ -10,7 +10,7 @@
 #include <boost/graph/max_cardinality_matching.hpp>
 
 #include <iostream>                      // for std::cout
-#include <boost/vector_property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/random.hpp>

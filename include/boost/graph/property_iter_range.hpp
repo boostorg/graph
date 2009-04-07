@@ -18,7 +18,7 @@
 #ifndef BOOST_GRAPH_PROPERTY_ITER_RANGE_HPP
 #define BOOST_GRAPH_PROPERTY_ITER_RANGE_HPP
 
-#include <boost/property_map_iterator.hpp>
+#include <boost/property_map/property_map_iterator.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/same_traits.hpp>

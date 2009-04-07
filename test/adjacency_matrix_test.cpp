@@ -16,7 +16,7 @@
  * Defines the boost::property_map class template and the boost::get and
  * boost::put function templates.
  */
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 /*
  * Defines the boost::graph_traits class template.

@@ -8,7 +8,7 @@
 #define BOOST_GRAPH_CONTAINER_PROPERTY_MAP_HPP
 
 #include <boost/graph/detail/index.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost
 {

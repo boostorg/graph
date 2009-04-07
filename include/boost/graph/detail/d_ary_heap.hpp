@@ -18,7 +18,7 @@
 #include <cassert>
 #include <boost/static_assert.hpp>
 #include <boost/shared_array.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 

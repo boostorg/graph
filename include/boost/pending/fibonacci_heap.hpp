@@ -14,7 +14,7 @@
 #include <vector>
 #include <functional>
 #include <boost/config.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 //
 // An adaptation of Knuth's Fibonacci heap implementation

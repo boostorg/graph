@@ -11,7 +11,7 @@
 #define BOOST_CREATE_CONDENSATION_GRAPH_HPP
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 

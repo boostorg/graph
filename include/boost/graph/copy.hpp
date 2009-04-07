@@ -44,7 +44,7 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/type_traits/conversion_traits.hpp>

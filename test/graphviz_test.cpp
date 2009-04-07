@@ -18,7 +18,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/dynamic_property_map.hpp>
+#include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/test/test_tools.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <algorithm>

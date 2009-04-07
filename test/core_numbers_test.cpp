@@ -2,7 +2,7 @@
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/core_numbers.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 using namespace boost;
 

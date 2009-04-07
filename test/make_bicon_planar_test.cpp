@@ -11,8 +11,8 @@
 #include <boost/graph/make_biconnected_planar.hpp>
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
-#include <boost/property_map.hpp>
-#include <boost/vector_property_map.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/test/minimal.hpp>
 
 

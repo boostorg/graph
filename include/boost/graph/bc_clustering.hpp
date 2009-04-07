@@ -14,7 +14,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <algorithm>
 #include <vector>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 
