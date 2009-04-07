@@ -15,6 +15,8 @@ path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
 
 path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
+path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
+
 if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
 {
   optional_tests += [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ] ;
@@ -56,6 +58,7 @@ test-suite graph_test :
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph ]
+    [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
 
