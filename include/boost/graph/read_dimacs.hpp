@@ -55,7 +55,7 @@ int read_dimacs_max_flow(Graph& g,
     no_alines=0;                /* no of arc-lines */
 
   std::string in_line;          /* for reading input line */
-  char pr_type[3];              /* for reading type of the problem */
+  char pr_type[4];              /* for reading type of the problem */
   char nd;                      /* source (s) or sink (t) */
 
   int k,                        /* temporary */
