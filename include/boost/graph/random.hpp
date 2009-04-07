@@ -16,6 +16,7 @@
 
 #include <boost/pending/property.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/next_prior.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
@@ -41,8 +42,7 @@ namespace boost {
     #endif
       typename graph_traits<Graph>::vertex_iterator
         i = vertices(g).first;
-      while (n-- > 0) ++i; // std::advance not VC++ portable
-      return *i;
+      return *(boost::next(i, n));
     } else
       return *vertices(g).first;
   }
@@ -62,8 +62,7 @@ namespace boost {
     #endif
       typename graph_traits<Graph>::edge_iterator
         i = edges(g).first;
-      while (n-- > 0) ++i; // std::advance not VC++ portable
-      return *i;
+      return *(boost::next(i, n));
     } else
       return *edges(g).first;
   }
