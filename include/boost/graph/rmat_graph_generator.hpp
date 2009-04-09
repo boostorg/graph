@@ -24,6 +24,14 @@
 using boost::shared_ptr;
 using boost::uniform_01;
 
+// Returns floor(log_2(n)), and -1 when n is 0
+template <typename IntegerType>
+inline int int_log2(IntegerType n) {
+  int l = 0;
+  while (n > 0) {++l; n >>= 1;}
+  return l - 1;
+}
+
 struct keep_all_edges {
   template <typename T>
   bool operator()(const T&, const T&) { return true; }
@@ -137,7 +145,7 @@ namespace boost {
                   double d, bool permute_vertices = true)
       : gen(), n(n), a(a), b(b), c(c), d(d), edge(m), 
         permute_vertices(permute_vertices), 
-        SCALE(int(floor(log2(n))))
+        SCALE(int_log2(n))
               
     {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
@@ -261,7 +269,7 @@ namespace boost {
         generate_permutation_vector(gen, vertexPermutation, n);
       
       // TODO: "Clip and flip" if undirected graph
-      int SCALE = int(floor(log2(n)));
+      int SCALE = int_log2(n);
       
       for (int i = 0; i < m; ++i) {
 
@@ -361,7 +369,7 @@ namespace boost {
       if (permute_vertices) 
         generate_permutation_vector(gen, vertexPermutation, n);
 
-      int SCALE = int(floor(log2(n)));
+      int SCALE = int_log2(n);
       
       std::map<value_type, bool> edge_map;
 
@@ -474,7 +482,7 @@ namespace boost {
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
-      int SCALE = int(floor(log2(n)));
+      int SCALE = int_log2(n);
       
       std::map<value_type, bool> edge_map;
       
