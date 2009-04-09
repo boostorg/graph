@@ -114,6 +114,13 @@ class convex_topology
       return result;
     }
 
+    friend double dot(const point_difference& a, const point_difference& b) {
+      double result = 0;
+      for (std::size_t i = 0; i < Dims; ++i)
+        result += a[i] * b[i];
+      return result;
+    }
+
   private:
     double values[Dims];
   };
