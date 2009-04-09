@@ -794,4 +794,8 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
 #  include <boost/graph/detail/read_graphviz_spirit.hpp>
 #endif // BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/graphviz.hpp>
+#endif
+
 #endif // BOOST_GRAPHVIZ_HPP

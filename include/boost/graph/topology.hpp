@@ -246,6 +246,13 @@ class hypercube_topology : public convex_topology<Dims>
     return dist;
   }
 
+  point_type center() const {
+    point_type result;
+    for (std::size_t i = 0; i < Dims; ++i)
+      result[i] = 0;
+    return result;
+  }
+
  private:
   shared_ptr<RandomNumberGenerator> gen_ptr;
   shared_ptr<rand_t> rand;
@@ -319,6 +326,13 @@ class rectangle_topology : public convex_topology<2>
     return dist;
   }
 
+  point_type center() const {
+    point_type result;
+    result[0] = (left + right) / 2.;
+    result[1] = (top + bottom) / 2.;
+    return result;
+  }
+
  private:
   shared_ptr<RandomNumberGenerator> gen_ptr;
   shared_ptr<rand_t> rand;
@@ -390,6 +404,13 @@ class ball_topology : public convex_topology<Dims>
     for (std::size_t i = 0; i < Dims; ++i)
       r = boost::math::hypot(r, a[i]);
     return radius - r;
+  }
+
+  point_type center() const {
+    point_type result;
+    for (std::size_t i = 0; i < Dims; ++i)
+      result[i] = 0;
+    return result;
   }
 
  private:

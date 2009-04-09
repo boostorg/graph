@@ -25,6 +25,10 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/two_bit_color_map.hpp>
 
+#ifdef BOOST_GRAPH_USE_MPI
+#include <boost/graph/distributed/concepts.hpp>
+#endif // BOOST_GRAPH_USE_MPI
+
 namespace boost {
 
   template <class Visitor, class Graph>
@@ -230,6 +234,19 @@ namespace boost {
          vis, color);
     }
 
+#ifdef BOOST_GRAPH_USE_MPI
+    template <class DistributedGraph, class ColorMap, class BFSVisitor,
+              class P, class T, class R>
+    void bfs_helper
+      (DistributedGraph& g,
+       typename graph_traits<DistributedGraph>::vertex_descriptor s,
+       ColorMap color,
+       BFSVisitor vis,
+       const bgl_named_params<P, T, R>& params,
+       BOOST_GRAPH_ENABLE_IF_MODELS(DistributedGraph, distributed_graph_tag,
+                                    void)* = 0);
+#endif // BOOST_GRAPH_USE_MPI
+
     //-------------------------------------------------------------------------
     // Choose between default color and color parameters. Using
     // function dispatching so that we don't require vertex index if
@@ -328,6 +345,10 @@ namespace boost {
   }
 
 } // namespace boost
+
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/breadth_first_search.hpp>
+#endif
 
 #endif // BOOST_GRAPH_BREADTH_FIRST_SEARCH_HPP
 

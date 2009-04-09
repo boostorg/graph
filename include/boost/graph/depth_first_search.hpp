@@ -358,5 +358,8 @@ namespace boost {
   }
 } // namespace boost
 
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/depth_first_search.hpp>
+#endif
 
 #endif
