@@ -40,6 +40,13 @@ namespace boost {
 // sparse row graph. This is an internal detail of the BGL.
 struct csr_graph_tag;
 
+// A type (edges_are_sorted_t) and a value (edges_are_sorted) used to indicate
+// that the edge list passed into the CSR graph is already sorted by source
+// vertex.
+struct edges_are_sorted_internal {};
+inline void edges_are_sorted(edges_are_sorted_internal) {}
+typedef void (*edges_are_sorted_t)(edges_are_sorted_internal);
+
 /****************************************************************************
  * Local helper macros to reduce typing and clutter later on.               *
  ****************************************************************************/
@@ -167,9 +174,84 @@ class compressed_sparse_row_graph
       m_rowstart[v] = 0;
   }
 
+  //  From number of vertices and unsorted list of edges
+  template <typename MultiPassInputIterator>
+  compressed_sparse_row_graph(MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
+      m_column(0), m_property(prop), m_last_source(numverts)
+  {
+    // Put the degree of each vertex v into m_rowstart[v + 1]
+    for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
+      ++m_rowstart[i->first + 1];
+
+    // Compute the partial sum of the degrees to get the actual values of
+    // m_rowstart
+    EdgeIndex start_of_this_row = 0;
+    m_rowstart[0] = start_of_this_row;
+    for (vertices_size_type i = 1; i <= numverts; ++i) {
+      start_of_this_row += m_rowstart[i];
+      m_rowstart[i] = start_of_this_row;
+    }
+    m_column.resize(m_rowstart.back());
+
+    // Bucket sort the edges by their source vertices, putting the targets into
+    // m_column.  The index current_insert_positions[v] contains the next
+    // location to insert out edges for vertex v.
+    std::vector<EdgeIndex>
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+    for (; edge_begin != edge_end; ++edge_begin)
+      m_column[current_insert_positions[edge_begin->first]++] = edge_begin->second;
+
+    // Default-construct properties for edges
+    inherited_edge_properties::resize(m_column.size());
+  }
+
+  //  From number of vertices and unsorted list of edges, plus edge properties
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator>
+  compressed_sparse_row_graph(MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
+      m_column(0), m_property(prop), m_last_source(numverts)
+  {
+    // Put the degree of each vertex v into m_rowstart[v + 1]
+    for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
+      ++m_rowstart[i->first + 1];
+
+    // Compute the partial sum of the degrees to get the actual values of
+    // m_rowstart
+    EdgeIndex start_of_this_row = 0;
+    m_rowstart[0] = start_of_this_row;
+    for (vertices_size_type i = 1; i <= numverts; ++i) {
+      start_of_this_row += m_rowstart[i];
+      m_rowstart[i] = start_of_this_row;
+    }
+    m_column.resize(m_rowstart.back());
+    inherited_edge_properties::resize(m_rowstart.back());
+
+    // Bucket sort the edges by their source vertices, putting the targets into
+    // m_column.  The index current_insert_positions[v] contains the next
+    // location to insert out edges for vertex v.
+    std::vector<EdgeIndex>
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+    for (; edge_begin != edge_end; ++edge_begin) {
+      vertices_size_type source = edge_begin->first;
+      EdgeIndex insert_pos = current_insert_positions[source];
+      ++current_insert_positions[source];
+      m_column[insert_pos] = edge_begin->second;
+      inherited_edge_properties::operator[](insert_pos) = edge_begin->second;
+    }
+  }
+
   //  From number of vertices and sorted list of edges
   template<typename InputIterator>
-  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+  compressed_sparse_row_graph(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
@@ -209,7 +291,8 @@ class compressed_sparse_row_graph
 
   //  From number of vertices and sorted list of edges
   template<typename InputIterator, typename EdgePropertyIterator>
-  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+  compressed_sparse_row_graph(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
@@ -292,13 +375,10 @@ class compressed_sparse_row_graph
     for (Vertex i = 0; i != numverts; ++i) {
       m_rowstart[i] = current_edge;
       g_vertex v = vertex(i, g);
-      EdgeIndex num_edges_before_this_vertex = current_edge;
       g_out_edge_iter ei, ei_end;
       for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
         m_column[current_edge++] = get(vi, target(*ei, g));
       }
-      std::sort(m_column.begin() + num_edges_before_this_vertex,
-                m_column.begin() + current_edge);
     }
     m_rowstart[numverts] = current_edge;
     m_last_source = numverts;
@@ -387,8 +467,8 @@ add_vertices(typename BOOST_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_CSR_
   return old_num_verts_plus_one - 1;
 }
 
-// This function requires that (src, tgt) be lexicographically at least as
-// large as the largest edge in the graph so far
+// This function requires that src be at least as large as the largest source
+// in the graph so far
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
@@ -404,8 +484,8 @@ add_edge(Vertex src, Vertex tgt, BOOST_CSR_GRAPH_TYPE& g) {
   return typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(src, num_edges_orig);
 }
 
-// This function requires that (src, tgt) be lexicographically at least as
-// large as the largest edge in the graph so far
+// This function requires that src be at least as large as the largest source
+// in the graph so far
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline typename BOOST_CSR_GRAPH_TYPE::edge_descriptor
 add_edge(Vertex src, Vertex tgt,
@@ -530,38 +610,6 @@ vertex(typename graph_traits<BOOST_CSR_GRAPH_TYPE>::vertex_descriptor i,
        const BOOST_CSR_GRAPH_TYPE&)
 {
   return i;
-}
-
-// Unlike for an adjacency_matrix, edge_range and edge take lg(out_degree(i))
-// time
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
-                 typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
-edge_range(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
-{
-  typedef typename std::vector<Vertex>::const_iterator adj_iter;
-  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
-  typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor edge_desc;
-  std::pair<adj_iter, adj_iter> raw_adjacencies = adjacent_vertices(i, g);
-  std::pair<adj_iter, adj_iter> adjacencies =
-    std::equal_range(raw_adjacencies.first, raw_adjacencies.second, j);
-  EdgeIndex idx_begin = adjacencies.first - g.m_column.begin();
-  EdgeIndex idx_end = adjacencies.second - g.m_column.begin();
-  return std::make_pair(out_edge_iter(edge_desc(i, idx_begin)),
-                        out_edge_iter(edge_desc(i, idx_end)));
-}
-
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline std::pair<typename BOOST_CSR_GRAPH_TYPE::edge_descriptor, bool>
-edge(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
-{
-  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
-  std::pair<out_edge_iter, out_edge_iter> range = edge_range(i, j, g);
-  if (range.first == range.second)
-    return std::make_pair(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(),
-                          false);
-  else
-    return std::make_pair(*range.first, true);
 }
 
 // Find an edge given its index in the graph

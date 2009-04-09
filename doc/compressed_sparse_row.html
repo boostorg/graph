@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <!--
-  -- Copyright (c) 2005 Trustees of Indiana University
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) 2005 Trustees of Indiana University
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
   <head>
     <title>Compressed Sparse Row Graph</title>
@@ -103,14 +103,27 @@ public:
   <i>// <a href="#constructors">Graph constructors</a></i>
   <a href="#default-const">compressed_sparse_row_graph</a>();
 
+  template&lt;typename MultiPassInputIterator&gt;
+  <a href="#edge-const">compressed_sparse_row_graph</a>(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+
+  template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
+  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+
   template&lt;typename InputIterator&gt;
-  <a href="#edge-const">compressed_sparse_row_graph</a>(InputIterator edge_begin, InputIterator edge_end,
+  <a href="#edge-sorted-const">compressed_sparse_row_graph</a>(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty&amp; prop = GraphProperty());
 
   template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
-  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(InputIterator edge_begin, InputIterator edge_end,
+  <a href="#edge-sorted-prop-const">compressed_sparse_row_graph</a>(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
@@ -166,13 +179,6 @@ edges_size_type num_edges(const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="#vertex-access">Vertex access</a></i>
 vertex_descriptor <a href="#vertex">vertex</a>(vertices_size_type i, const compressed_sparse_row_graph&amp;);
-
-<i>// <a href="#edge-access">Edge access</a></i>
-std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
-  <a href="#edge_range">edge_range</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
-std::pair&lt;edge_descriptor, bool&gt; 
-  <a href="#edge">edge</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
-edge_descriptor <a href="#edge_from_index">edge_from_index</a>(edges_size_type i, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="#property-map-accessors">Property map accessors</a></i>
 template&lt;typename <a href="./PropertyTag.html">PropertyTag</a>&gt;
@@ -339,6 +345,3844 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
     <hr></hr>
 
     <pre><a name="edge-const"></a>
+  template&lt;typename MultiPassInputIterator&gt;
+  compressed_sparse_row_graph(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>MultiPassInputIterator</tt> must be a model of
+      <a
+      href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> do not need to be sorted.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="../../utility/MultiPassInputIterator.html">MultiPassInputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-sorted-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The argument of type <code>edges_are_sorted_t</code> is
+      a tag used to distinguish this constructor; the value
+      <code>edges_are_sorted</code> can be used to initialize this parameter.
+      The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-sorted-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(edges_are_sorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename InputIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> must be sorted so that all edges originating
+      from vertex <i>i</i> preceed any edges originating from all
+      vertices <i>j</i> where <i>j &gt; i</i>.
+    </p>
+
+    <p class="indent">
+      The value <code>numedges</code>, if provided, tells how many
+      edges are in the range <code>[edge_begin, edge_end)</code> and
+      will be used to preallocate data structures to save both memory
+      and time during construction.
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
   template&lt;typename InputIterator&gt;
   compressed_sparse_row_graph(InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numverts,
@@ -497,35 +4341,6 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
     <p class="indent">
       Retrieves the <i>i</i><sup>th</sup> vertex in the graph in
       constant time.
-    </p>
-
-    <hr></hr>
-
-    <a name="edge-access"></a><h3>Edge access</h3>
-    <pre><a name="edge_range"></a>
-  std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
-    edge_range(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
-    </pre>
-
-    <p class="indent">
-      Returns all edges from <tt>u</tt> to <tt>v</tt>. Requires time
-      linear in the number of edges outgoing from <tt>u</tt>.
-    </p>
-
-    <hr></hr>
-
-    <pre><a name="edge"></a>
-  std::pair&lt;edge_descriptor, bool&gt; 
-    edge(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
-    </pre>
-
-    <p class="indent">
-      If there exists an edge <i>(u, v)</i> in the graph, returns the
-      descriptor for that edge and <tt>true</tt>; otherwise, the
-      second value in the pair will be <tt>false</tt>. If multiple
-      edges exist from <tt>u</tt> to <tt>v</tt>, the first edge will
-      be returned; use <a href="#edge_range"><tt>edge_range</tt></a>
-      to retrieve all edges.
     </p>
 
     <hr></hr>

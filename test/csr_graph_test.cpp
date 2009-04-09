@@ -181,11 +181,12 @@ void graph_test(const OrigGraph& g)
                       boost::identity_property_map());
 
   // Check constructing a graph from iterators
-  CSRGraphT g3(boost::make_transform_iterator(edges(g2).first,
-                                             make_edge_to_index_pair(g2)),
-              boost::make_transform_iterator(edges(g2).second,
-                                             make_edge_to_index_pair(g2)),
-              num_vertices(g));
+  CSRGraphT g3(boost::edges_are_sorted,
+               boost::make_transform_iterator(edges(g2).first,
+                                              make_edge_to_index_pair(g2)),
+               boost::make_transform_iterator(edges(g2).second,
+                                              make_edge_to_index_pair(g2)),
+               num_vertices(g));
   check_consistency(g3);
   BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
@@ -216,19 +217,17 @@ void graph_test(const OrigGraph& g)
 
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
-  // This test also checks for the correct sorting of the edge iteration
   std::size_t last_src = 0, last_tgt = 0;
   for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
     BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
     std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
     std::size_t tgt = get(boost::vertex_index, g2, target(*ei, g2));
-    BOOST_CHECK(src > last_src || (src == last_src && tgt >= last_tgt));
+    BOOST_CHECK(src >= last_src);
     last_src = src;
     last_tgt = tgt;
   }
 
   // Check out edge iteration and vertex iteration for sortedness
-  // Also, check a few runs of edge and edge_range
   CSRGraphT::vertex_iterator vi, vi_end;
   std::size_t last_vertex = 0;
   bool first_iter = true;
@@ -239,25 +238,8 @@ void graph_test(const OrigGraph& g)
     first_iter = false;
 
     CSRGraphT::out_edge_iterator oei, oei_end;
-    std::size_t last_tgt = 0;
     for (boost::tie(oei, oei_end) = out_edges(*vi, g2); oei != oei_end; ++oei) {
       BOOST_CHECK(source(*oei, g2) == *vi);
-      CSRGraphT::vertex_descriptor tgtd = target(*oei, g2);
-      std::size_t tgt = get(boost::vertex_index, g2, tgtd);
-      BOOST_CHECK(tgt >= last_tgt);
-      last_tgt = tgt;
-
-      std::pair<CSRGraphT::edge_descriptor, bool> edge_info = edge(*vi, tgtd, g2);
-      BOOST_CHECK(edge_info.second == true);
-      BOOST_CHECK(source(edge_info.first, g2) == *vi);
-      BOOST_CHECK(target(edge_info.first, g2) == tgtd);
-      std::pair<CSRGraphT::out_edge_iterator, CSRGraphT::out_edge_iterator> er =
-        edge_range(*vi, tgtd, g2);
-      BOOST_CHECK(er.first != er.second);
-      for (; er.first != er.second; ++er.first) {
-        BOOST_CHECK(source(*er.first, g2) == *vi);
-        BOOST_CHECK(target(*er.first, g2) == tgtd);
-      }
     }
 
     // Find a vertex for testing
@@ -268,14 +250,6 @@ void graph_test(const OrigGraph& g)
       if (target(*oei2, g2) == test_vertex)
         ++edge_count;
     }
-
-    // Test edge and edge_range on an edge that may not be present
-    std::pair<CSRGraphT::edge_descriptor, bool> edge_info = 
-      edge(*vi, test_vertex, g2);
-    BOOST_CHECK(edge_info.second == (edge_count != 0));
-    std::pair<CSRGraphT::out_edge_iterator, CSRGraphT::out_edge_iterator> er =
-      edge_range(*vi, test_vertex, g2);
-    BOOST_CHECK(er.second - er.first == edge_count);
   }
 
   // Run brandes_betweenness_centrality, which touches on a whole lot
@@ -356,7 +330,7 @@ void test_vertex_and_edge_properties()
   double weights[6] = { 1.0, 1.0, 0.5, 1.0, 1.0, 0.5 };
   double centrality[5] = { 0.0, 1.5, 0.0, 1.0, 0.5 };
 
-  CSRGraphWithPropsT g(&edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
+  CSRGraphWithPropsT g(boost::edges_are_sorted, &edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
   brandes_betweenness_centrality
     (g,
      centrality_map(get(&Vertex::centrality, g)).
@@ -403,6 +377,13 @@ int test_main(int argc, char* argv[])
 
   test_graph_properties();
   test_vertex_and_edge_properties();
+
+  {
+    std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
+    std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
+    CSRGraphT g(unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
+    graph_test(g);
+  }
 
   return 0;
 }
