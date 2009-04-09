@@ -336,7 +336,8 @@ namespace boost {
   template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
-            class DistInf, class DistZero>
+            class DistInf, class DistZero, typename T, typename Tag, 
+            typename Base>
   inline void
   dijkstra_shortest_paths
     (const VertexListGraph& g,
@@ -344,7 +345,8 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis
+     DijkstraVisitor vis,
+     const bgl_named_params<T, Tag, Base>&
      BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
   {
     boost::two_bit_color_map<IndexMap> color(num_vertices(g), index_map);
@@ -382,18 +384,37 @@ namespace boost {
                             index_map, compare, combine, zero, vis, color);
   }
 
+  // Initialize distances and call breadth first search
+  template <class VertexListGraph, class DijkstraVisitor,
+            class PredecessorMap, class DistanceMap,
+            class WeightMap, class IndexMap, class Compare, class Combine,
+            class DistInf, class DistZero>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+     IndexMap index_map,
+     Compare compare, Combine combine, DistInf inf, DistZero zero,
+     DijkstraVisitor vis)
+  {
+    dijkstra_shortest_paths(g, s, predecessor, distance, weight, index_map,
+                            compare, combine, inf, zero, vis,
+                            no_named_parameters());
+  }
+
   namespace detail {
 
     // Handle defaults for PredecessorMap and
     // Distance Compare, Combine, Inf and Zero
     template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params, class ColorMap>
+              class IndexMap, class Params>
     inline void
     dijkstra_dispatch2
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params, ColorMap color)
+       const Params& params)
     {
       // Default for predecessor map
       dummy_property_map p_map;
@@ -413,17 +434,17 @@ namespace boost {
                       D()),
          choose_param(get_param(params, graph_visitor),
                       make_dijkstra_visitor(null_visitor())),
-         color);
+         params);
     }
 
     template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params, class ColorMap>
+              class IndexMap, class Params>
     inline void
     dijkstra_dispatch1
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
-       const Params& params, ColorMap color)
+       const Params& params)
     {
       // Default for distance map
       typedef typename property_traits<WeightMap>::value_type D;
@@ -431,17 +452,11 @@ namespace boost {
         n = is_default_param(distance) ? num_vertices(g) : 1;
       std::vector<D> distance_map(n);
 
-      // Default for color map
-      typename std::vector<two_bit_color_type>::size_type
-        m = is_default_param(color) ? num_vertices(g) : 1;
-      boost::two_bit_color_map<IndexMap> color_map(m, index_map);
-
       detail::dijkstra_dispatch2
         (g, s, choose_param(distance, make_iterator_property_map
                             (distance_map.begin(), index_map,
                              distance_map[0])),
-         weight, index_map, params,
-         choose_param(color, color_map));
+         weight, index_map, params);
     }
   } // namespace detail
 
@@ -460,8 +475,7 @@ namespace boost {
        get_param(params, vertex_distance),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
        choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-       params,
-       get_param(params, vertex_color));
+       params);
   }
 
 } // namespace boost
