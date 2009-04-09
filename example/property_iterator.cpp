@@ -1,5 +1,5 @@
 
-// (C) Copyright François Faure, iMAGIS-GRAVIR / UJF, 2001. 
+// (C) Copyright Francois Faure, iMAGIS-GRAVIR / UJF, 2001. 
 
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -8,7 +8,7 @@
 // Revision History:
 // 03 May 2001   Jeremy Siek
 //      Moved property iterator code to headers. 
-// 02 May 2001   François Faure
+// 02 May 2001   Francois Faure
 //     Initial version.
 
 #include <boost/graph/adjacency_list_io.hpp>

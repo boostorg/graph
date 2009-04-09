@@ -12,7 +12,7 @@
 //      differentiate between const/mutable graphs and
 //      added a workaround to avoid partial specialization.
 
-// 02 May 2001   François Faure
+// 02 May 2001   Francois Faure
 //     Initial version.
 
 #ifndef BOOST_GRAPH_PROPERTY_ITER_RANGE_HPP
