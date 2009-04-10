@@ -71,7 +71,7 @@ public:
   // Write an element by raw index
   void write_by_index(std::size_t idx, const Property& prop)
   {
-    m_edge_properties[idx] = prop;
+    m_vertex_properties[idx] = prop;
   }
 
   // Access to the derived object
