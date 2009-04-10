@@ -239,12 +239,12 @@ class compressed_sparse_row_graph
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
       current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
-    for (; edge_begin != edge_end; ++edge_begin) {
+    for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
       vertices_size_type source = edge_begin->first;
       EdgeIndex insert_pos = current_insert_positions[source];
       ++current_insert_positions[source];
       m_column[insert_pos] = edge_begin->second;
-      inherited_edge_properties::operator[](insert_pos) = edge_begin->second;
+      inherited_edge_properties::write_by_index(insert_pos, *ep_iter);
     }
   }
 

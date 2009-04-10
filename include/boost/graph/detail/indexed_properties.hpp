@@ -68,6 +68,12 @@ public:
     m_vertex_properties.push_back(prop);
   }
 
+  // Write an element by raw index
+  void write_by_index(std::size_t idx, const Property& prop)
+  {
+    m_edge_properties[idx] = prop;
+  }
+
   // Access to the derived object
   Derived& derived() { return *static_cast<Derived*>(this); }
 
@@ -131,6 +137,12 @@ protected:
   void reserve(std::size_t n)
   {
     m_edge_properties.reserve(n);
+  }
+
+  // Write an element by raw index
+  void write_by_index(std::size_t idx, const Property& prop)
+  {
+    m_edge_properties[idx] = prop;
   }
 
  public:
