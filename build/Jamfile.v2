@@ -45,33 +45,10 @@ else
 }
 explicit graphml ;
 
-if [ mpi.configured ]
-{
-  alias pbgl
-      : mpi_process_group.cpp tag_allocator.cpp
-      : # requirements
-        <library>../../mpi/build//boost_mpi
-        <library>/mpi//mpi [ mpi.extra-requirements ]
-      : # default built
-      : # usage requirements
-        <library>../../mpi/build//boost_mpi
-        <library>/mpi//mpi [ mpi.extra-requirements ]
-      ;
-}
-else
-{
-    message pbgl
-      : "warning: Graph library does not contain MPI-based parallel components."
-      : "note: to enable them, add \"using mpi ;\" to your user_config.jam"
-      ;
-}
-explicit graphml ;
-
 lib boost_graph
     :
     read_graphviz_spirit.cpp
     graphml
-    pbgl
     :
     <define>BOOST_GRAPH_NO_LIB=1
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
