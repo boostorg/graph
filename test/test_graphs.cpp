@@ -1,8 +1,16 @@
+// (C) Copyright 2007-2009 Andrew Sutton
+//
+// Use, modification and distribution are subject to the
+// Boost Software License, Version 1.0 (See accompanying file
+// LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
 #include <iostream>
 
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
+
+// TODO: Finish implementing this test module. In theory, this will become a
+// generic testing facility for any kind of graph declaration.
 
 using namespace std;
 using namespace boost;
@@ -28,16 +36,12 @@ struct arc
     int n;
 };
 
-// TODO: Finish implementing this test. Actually, generalize the test so that
-// it works for lots of different graph types.
-
 template <typename Graph>
 void test()
 {
     typedef typename Graph::vertex_descriptor Vertex;
     Graph g;
     BOOST_ASSERT(num_vertices(g) == 0);
-
 }
 
 int main()
