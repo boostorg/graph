@@ -512,6 +512,16 @@ namespace detail { namespace graph {
     }
   };
 
+  template <typename T>
+  struct is_bgl_named_params {
+    BOOST_STATIC_CONSTANT(bool, value = false);
+  };
+
+  template <typename Param, typename Tag, typename Rest>
+  struct is_bgl_named_params<bgl_named_params<Param, Tag, Rest> > {
+    BOOST_STATIC_CONSTANT(bool, value = true);
+  };
+
 } } // end namespace detail::graph
 
 template<typename Graph, typename Param, typename Tag, typename Rest>
@@ -533,8 +543,11 @@ brandes_betweenness_centrality(const Graph& g,
     get_param(params, edge_weight));
 }
 
+// disable_if is required to work around problem with MSVC 7.1 (it seems to not
+// get partial ordering getween this overload and the previous one correct)
 template<typename Graph, typename CentralityMap>
-void 
+typename disable_if<detail::graph::is_bgl_named_params<CentralityMap>,
+                    void>::type
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
