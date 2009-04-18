@@ -1,3 +1,9 @@
+# Copyright (C) 2008 Mike Jackson
+#
+# Use, modification and distribution is subject to the Boost Software
+# License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
 boost_additional_test_dependencies(graph BOOST_DEPENDS test assign)
 
 boost_test_run(transitive_closure_test)
