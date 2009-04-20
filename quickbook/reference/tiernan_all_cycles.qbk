@@ -134,7 +134,7 @@ in an undirected graph as a cycle.
 ]
 
 [heading Complexity]
-This function has a (loose) upper bound of ['O(2[super n])] where /n/ is the
+This function has a (loose) upper bound of ['O(2[sup n])] where /n/ is the
 number of vertices a graph. This bound is derived from the powerset of vertices
 in /g/ and does not account for the vertex of origin or directionality of edges
 connecting vertices in a path. If one considers the paths in a triangle {1, 2, 3}
@@ -142,7 +142,7 @@ and {3, 2, 1} to be distinct cycles within a graph, then this bound can potentia
 be much greater. From a practical standpoint, it is unlikely that real graphs will
 ever approach a number of paths remotely close to this number.
 
-This function requires ['O(n[super 2])] space where /n/ is the number of vertices
+This function requires ['O(n[sup 2])] space where /n/ is the number of vertices
 in a graph.
 [endsect]
 

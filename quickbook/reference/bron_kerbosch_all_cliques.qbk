@@ -97,10 +97,10 @@ on a directed graph will double the performance penalty (which is generally negl
 ]
 
 [heading Complexity]
-This problem has a loose upper bound of ['O(2[super n])] if one considers all possible
+This problem has a loose upper bound of ['O(2[sup n])] if one considers all possible
 combinations of subsets of vertices as cliques (i.e., the powerset of vertices).
 The original publication, however, approximates the runtime of the algorithm as
-being proportional to ['O(3.14[super n])].
+being proportional to ['O(3.14[sup n])].
 
 Graphs that do not meet the constant-time requirements of the [AdjacencyMatrix]
 concept will incur additional runtime costs during execution (usually by a linear

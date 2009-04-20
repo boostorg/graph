@@ -8,11 +8,10 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#include <iostream>                      // for std::cout
-#include <utility>                       // for std::pair
-#include <algorithm>                     // for std::for_each
-#include <boost/utility.hpp>             // for boost::tie
-#include <boost/graph/graph_traits.hpp>  // for boost::graph_traits
+#include <iostream>                         // for std::cout
+#include <utility>                          // for std::pair
+#include <algorithm>                        // for std::for_each
+#include <boost/utility.hpp>                // for boost::tie
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 
@@ -24,7 +23,7 @@ template <class Graph> struct exercise_vertex {
   void operator()(const Vertex& v) const
   {
     using namespace boost;
-    typename property_map<Graph, vertex_index_t>::type 
+    typename property_map<Graph, vertex_index_t>::type
       vertex_id = get(vertex_index, g);
     std::cout << "vertex: " << get(vertex_id, v) << std::endl;
 
@@ -32,7 +31,7 @@ template <class Graph> struct exercise_vertex {
     std::cout << "\tout-edges: ";
     typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
     typename graph_traits<Graph>::edge_descriptor e;
-    for (tie(out_i, out_end) = out_edges(v, g); 
+    for (tie(out_i, out_end) = out_edges(v, g);
          out_i != out_end; ++out_i)
     {
       e = *out_i;
@@ -42,7 +41,7 @@ template <class Graph> struct exercise_vertex {
     }
     std::cout << std::endl;
 
-    // Write out the incoming edges    
+    // Write out the incoming edges
     std::cout << "\tin-edges: ";
     typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
     for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
@@ -54,7 +53,7 @@ template <class Graph> struct exercise_vertex {
     }
     std::cout << std::endl;
 
-    // Write out all adjacent vertices    
+    // Write out all adjacent vertices
     std::cout << "\tadjacent vertices: ";
     typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
@@ -78,7 +77,7 @@ int main(int,char*[])
 
   // writing out the edges in the graph
   typedef std::pair<int,int> Edge;
-  Edge edge_array[] = 
+  Edge edge_array[] =
   { Edge(A,B), Edge(A,D), Edge(C,A), Edge(D,C),
     Edge(C,E), Edge(B,D), Edge(D,E), };
   const int num_edges = sizeof(edge_array)/sizeof(edge_array[0]);
@@ -101,7 +100,7 @@ int main(int,char*[])
           transmission_delay, num_vertices);
 #endif
 
-  boost::property_map<Graph, vertex_index_t>::type 
+  boost::property_map<Graph, vertex_index_t>::type
     vertex_id = get(vertex_index, g);
   boost::property_map<Graph, edge_weight_t>::type
     trans_delay = get(edge_weight, g);
@@ -112,29 +111,29 @@ int main(int,char*[])
   for (vp = vertices(g); vp.first != vp.second; ++vp.first)
     std::cout << name[get(vertex_id, *vp.first)] <<  " ";
   std::cout << std::endl;
-  
+
   std::cout << "edges(g) = ";
   graph_traits<Graph>::edge_iterator ei, ei_end;
   for (tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << "(" << name[get(vertex_id, source(*ei, g))]
               << "," << name[get(vertex_id, target(*ei, g))] << ") ";
   std::cout << std::endl;
-  
+
   std::for_each(vertices(g).first, vertices(g).second,
                 exercise_vertex<Graph>(g));
-  
+
   std::map<std::string,std::string> graph_attr, vertex_attr, edge_attr;
   graph_attr["size"] = "3,3";
   graph_attr["rankdir"] = "LR";
   graph_attr["ratio"] = "fill";
   vertex_attr["shape"] = "circle";
 
-  boost::write_graphviz(std::cout, g, 
+  boost::write_graphviz(std::cout, g,
                         make_label_writer(name),
                         make_label_writer(trans_delay),
-                        make_graph_attributes_writer(graph_attr, vertex_attr, 
+                        make_graph_attributes_writer(graph_attr, vertex_attr,
                                                      edge_attr));
-  
+
   return 0;
 }
 

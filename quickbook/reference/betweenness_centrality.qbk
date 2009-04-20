@@ -141,9 +141,9 @@ The `vertex_closeness_centrality()` function returns the closeness of a vertex.
 If the source vertex is disconnected from any vertices in the graph, this value is 0.
 
 [heading Complexity]
-The `closenesss_centrality()` function returns in ['O(n[super 2]*O(M))] where /n/
+The `closenesss_centrality()` function returns in ['O(n[sup 2]*O(M))] where /n/
 is the number of vertices in the graph and /M/ is the complexity of the given distance
-measure. This is ['O(n[super 2])] by default
+measure. This is ['O(n[sup 2])] by default
 
 The `vertex_closeness_centrality()` function returns in ['O(n*O(M))]. This is
 linear by default.

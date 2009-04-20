@@ -145,7 +145,7 @@ The `eccentricities()` function returns a pair containing the radius and diamete
 as the `first` and `second` elements respectively.
 
 [heading Complexity]
-The `eccentricities()` function returns in ['O(n[super 2])] where /n/ is the number
+The `eccentricities()` function returns in ['O(n[sup 2])] where /n/ is the number
 of vertices in the graph.
 [endsect]
 

@@ -23,7 +23,7 @@
 ]
 
 [/ Templates /]
-[template super[x]'''<superscript>'''[x]'''</superscript>''']
+[template sup[x]'''<superscript>'''[x]'''</superscript>''']
 [template sub[x]'''<subscript>'''[x]'''</subscript>''']
 
 [template delta[]'''&#x3B4;'''] [/ d Greek small letter delta]

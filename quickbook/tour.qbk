@@ -6,43 +6,55 @@
  /]
 
 [section A Quick tour of Boost.Graph]
-The domain of graph data structures and algorithms is in some respects more complicated than
-that of containers. The abstract iterator interface used by STL is not sufficiently rich to
-encompass the numerous ways that graph algorithms may traverse a graph. Instead, we formulate an
-abstract interface that serves the same purpose for graphs that iterators do for basic containers
-(though iterators still play a large role). Figure 1 depicts the analogy between the STL and
+The domain of graph data structures and algorithms is in some respects more
+complicated than that of containers. The abstract iterator interface used by
+STL is not sufficiently rich to encompass the numerous ways that graph
+algorithms may traverse a graph. Instead, we formulate an abstract interface
+that serves the same purpose for graphs that iterators do for basic containers
+(though iterators still play a large role). Figure 1 depicts the analogy between
+the STL and
 Boost.Graph.
 
 [$../images/tour_analogy.gif]
 
-The graph abstraction consists of a set of vertices (or nodes), and a set of edges (or arcs) that
-connect the vertices. Figure 2 depicts a directed graph with five vertices (labeled 0 through 4)
-and 11 edges. The edges leaving a vertex are called the out-edges of the vertex. The edges
-{(0,1),(0,2),(0,3),(0,4)} are all out-edges of vertex 0. The edges entering a vertex are called
-the in-edges of the vertex. The edges {(0,4),(2,4),(3,4)} are all in-edges of vertex 4.
+The graph abstraction consists of a set of vertices (or nodes), and a set of
+edges (or arcs) that connect the vertices. Figure 2 depicts a directed graph
+with five vertices (labeled 0 through 4) and 11 edges. The edges leaving a
+vertex are called the out-edges of the vertex. The edges {(0,1),(0,2),(0,3),(0,4)}
+are all out-edges of vertex 0. The edges entering a vertex are called the in-edges
+of the vertex. The edges {(0,4),(2,4),(3,4)} are all in-edges of vertex 4.
 
 [$../images/tour_graph.png]
 
-In the following sections we will use Boost.Graph to construct this example graph and manipulate it in
-various ways. The complete source code for this example can be found in examples/quick_tour.cpp. Each
-of the following sections discusses a "slice" of this example file. Excerpts from the output of the
-example program will also be listed.
+In the following sections we will use Boost.Graph to construct this example
+graph and manipulate it in various ways. The complete source code for this
+example can be found in `examples/quick_tour.cpp`. Each of the following
+sections discusses a "slice" of this example file. Excerpts from the output of
+the example program will also be listed.
 
 [h2 Constructing the Graph]
-In this example we will use the `adjacency_list<>` class to demonstrate the main ideas in the
-Boost.Graph interface. The `adjacency_list<>` class provides a generalized version of the classic
-"adjacency list" data structure. The `adjacency_list<>` is a template class with six template parameters,
-though here we only fill in the first three parameters and use the defaults for the remainder.
-The first two template arguments (`vecS`, `vecS`) determine the data structure used to represent the
-out-edges for each vertex in the graph and the data structure used to represent the graph's vertex set
-(see section Choosing the Edgelist and VertexList for information about the tradeoffs of the different
-data structures). The third argument, `bidirectionalS`, selects a directed graph that provides access to
-both out and in-edges. The other options for the third argument are `directedS` which selects a directed
-graph with only out-edges, and `undirectedS` which selects an undirected graph.
 
-Once we have the graph type selected, we can create the graph in Figure 2 by declaring a graph object
-and filling in edges using the add_edge() function of the MutableGraph interface (which `adjacency_list<>`
-implements). We use the array of pairs edge_array merely as a convenient way to explicitly create the
+In this example
+
+[h2 Constructing the Graph]
+In this example we will use the [adjacency_list] class to demonstrate the main
+ideas in the Boost.Graph interface. The [adjacency_list] class provides a
+generalized version of the classic /adjacency list/ data structure. The
+[adjacency_list] class is a template class with six template parameters, though
+here we only fill in the first three parameters and use the defaults for the
+remainder. The first two template arguments (`vecS`, `vecS`) determine the data
+structure used to represent the out-edges for each vertex in the graph and the
+data structure used to represent the graph's vertex set (see section Choosing
+the Edgelist and VertexList for information about the tradeoffs of the different
+data structures). The third argument, `bidirectionalS`, selects a directed graph
+that provides access to both out and in-edges. The other options for the third
+argument are `directedS` which selects a directed graph with only out-edges, and
+`undirectedS` which selects an undirected graph.
+
+Once we have the graph type selected, we can create the graph in Figure 2 by
+declaring a graph object and filling in edges using the add_edge() function of
+the MutableGraph interface (which `adjacency_list<>` implements). We use the
+array of pairs edge_array merely as a convenient way to explicitly create the
 edges for this example.
 
  #include <iostream>          // for std::cout
@@ -83,16 +95,17 @@ edges for this example.
    return 0;
  }
 
-Instead of calling the `add_edge()` function for each edge, we could use the edge iterator constructor
-of the graph. This is typically more efficient than using `add_edge()`. Pointers to the `edge_array` can
-be viewed as iterators, so we can call the iterator constructor by passing pointers to the beginning
-and end of the array.
+Instead of calling the `add_edge()` function for each edge, we could use the
+edge iterator constructor of the graph. This is typically more efficient than
+using `add_edge()`. Pointers to the `edge_array` can be viewed as iterators, so
+we can call the iterator constructor by passing pointers to the beginning and
+end of the array.
 
  Graph g(edges, edges + sizeof(edge_array) / sizeof(edge_array[0]), num_vertices);
 
-Instead of creating a graph with a certain number of vertices to begin with, it is also possible to
-add and remove vertices with the `add_vertex()` and `remove_vertex()` functions, also of the /MutableGraph/
-interface.
+Instead of creating a graph with a certain number of vertices to begin with, it
+is also possible to add and remove vertices with the [add_vertex] and
+[remove_vertex] functions, also of the [MutableGraph] interface.
 
 [h2 Accessing the Vertex Set]
 Now that we have created a graph, we can use the graph interface to access the graph data in
@@ -108,7 +121,7 @@ The following example prints out the index for each of the vertices in the graph
 edge properties, including index, are accessed via property map objects. The `property_map<>` class is
 used to obtain the property map type for a specific property (specified by `vertex_index_t`, one of the
 Boost.Graph predefined properties) and function call `get(vertex_index, g)` returns the actual
-property map object. 
+property map object.
 
 
  // ...
@@ -132,7 +145,7 @@ property map object.
    return 0;
  }
 
-The output is: 
+The output is:
 
 [pre
  vertices(g) = 0 1 2 3 4
@@ -147,7 +160,7 @@ functions return the two vertices that are connected by the edge. Instead of exp
 can be used to assign the parts of a std::pair into two separate variables, in this case `ei`
 and `ei_end`. This is usually more convenient than creating a `std::pair` and is our method of
 choice for Boost.Graph.
-  
+
  // ...
  int main(int,char*[])
  {
@@ -173,8 +186,8 @@ In the next few examples we will explore the adjacency structure of the graph fr
 view of a particular vertex. We will look at the vertices' in-edges, out-edges, and its adjacent
 vertices. We will encapsulate this in an "exercise vertex" function, and apply it to each vertex
 in the graph. To demonstrate the STL-interoperability of Boost.Graph, we will use the STL `for_each()`
-function to iterate through the vertices and apply the function. 
-  
+function to iterate through the vertices and apply the function.
+
  //...
  int main(int,char*[])
  {
@@ -187,8 +200,8 @@ We use a functor for exercise_vertex instead of just a function because the grap
 needed when we access information about each vertex; using a functor gives us a place to keep a
 reference to the graph object during the execution of the `std::for_each()`. Also we template the
 functor on the graph type so that it is reusable with different graph classes. Here is the start
-of the exercise_vertex functor: 
-  
+of the exercise_vertex functor:
+
  template <class Graph> struct exercise_vertex {
    exercise_vertex(Graph& g_) : g(g_)
    { }
@@ -210,8 +223,8 @@ that can be used to access information about the graph via the `out_edges()`, `i
 vertex_descriptor type is obtained through the graph_traits class. The typename keyword used below
 is necessary because the type on the left hand side of the scope :: operator (the `graph_traits<Graph>`
 type) is dependent on a template parameter (the `Graph` type). Here is how we define the functor's
-apply method: 
-  
+apply method:
+
  template <class Graph> struct exercise_vertex {
    // ... continued from above
 
@@ -234,8 +247,9 @@ iterators). The iterators are called out-edge iterators and dereferencing one of
 gives an edge descriptor object. An edge descriptor plays the same kind of role as the vertex
 descriptor object, it is a "black box" provided by the graph type. The following code snippet prints
 the source-target pairs for each out-edge of vertex, v.
-  
- template <class Graph> struct exercise_vertex {
+
+ template <class Graph>
+ struct exercise_vertex {
    //... continued from above
 
    void operator()(const Vertex& v) const
@@ -260,7 +274,7 @@ the source-target pairs for each out-edge of vertex, v.
    // ...
  };
 
-For vertex 0 the output is: 
+For vertex 0 the output is:
 [pre
  out-edges: (0,1) (0,2) (0,3) (0,4)
 ]
@@ -268,8 +282,8 @@ For vertex 0 the output is:
 The `in_edges()` function of the BidirectionalGraph interface provides access to all the in-edges
 of a vertex through in-edge iterators. The in_edges() function is only available for the
 `adjacency_list<>` if `bidirectionalS` is supplied for the Directed template parameter. There is an
-extra cost in space when `bidirectionalS` is specified instead of `directedS`. 
-  
+extra cost in space when `bidirectionalS` is specified instead of `directedS`.
+
  template <class Graph> struct exercise_vertex {
    // ... continued from above
 
@@ -291,7 +305,7 @@ extra cost in space when `bidirectionalS` is specified instead of `directedS`.
    // ...
  };
 
-For vertex 0 the output is: 
+For vertex 0 the output is:
 [pr
  in-edges: (2,0) (3,0) (4,0)
 ]
@@ -302,8 +316,8 @@ vertex. Sometimes an algorithm does not need to look at the edges of the graph a
 about the vertices. Therefore the graph interface also includes the `adjacent_vertices()` function
 of the AdjacencyGraph interface which provides direct access to the adjacent vertices. This function
 returns a pair of adjacency iterators. Dereferencing an adjacency iterator gives a vertex descriptor
-for an adjacent vertex. 
-  
+for an adjacent vertex.
+
  template <class Graph> struct exercise_vertex {
    // ... continued from above
 
@@ -322,7 +336,7 @@ for an adjacent vertex.
    //...
  };
 
-For vertex 4 the output is: 
+For vertex 4 the output is:
 [pre
  adjacent vertices: 0 1
 ]
@@ -337,7 +351,7 @@ the graph object. The first kind of property is called an internally stored prop
 kind is called an externally stored property. Boost.Graph uses a uniform mechanism to access both kinds of
 properties inside its graph algorithms called the property map interface, described in Section
 Property Map Concepts. In addition, the PropertyGraph concept defines the interface for obtaining
-a property map object for an internally stored property. 
+a property map object for an internally stored property.
 
 The Boost.Graph adjacency_list class allows users to specify internally stored properties through plug-in
 template parameters of the graph class. How to do this is discussed in detail in Section Internal
@@ -347,11 +361,11 @@ properties is to create an array indexed by vertex or edge index. In the adjacen
 specified for the VertexList template parameter, vertices are automatically assigned indices, which
 can be accessed via the property map for the vertex_index_t. Edges are not automatically assigned
 indices. However the property mechanism can be used to attach indices to the edges which can be
-used to index into other externally stored properties. 
+used to index into other externally stored properties.
 
 In the following example, we construct a graph and apply `dijkstra_shortest_paths()`. The complete
 source code for the example is in examples/dijkstra-example.cpp. Dijkstra's algorithm computes the
-shortest distance from the starting vertex to every other vertex in the graph. 
+shortest distance from the starting vertex to every other vertex in the graph.
 
 Dijkstra's algorithm requires that a weight property is associated with each edge and a distance
 property with each vertex. Here we use an internal property for the weight and an external property
@@ -362,9 +376,9 @@ The listS and vecS types are selectors that determine the data structure used in
 `adjacency_list<>` (see Section Choosing the Edgelist and VertexList). The directedS type specifies
 that the graph should be directed (versus undirected). The following code shows the specification of
 the graph type and then the initialization of the graph. The edges and weights are passed to the
-graph constructor in the form of iterators (a pointer qualifies as a /RandomAccessIterator/). 
+graph constructor in the form of iterators (a pointer qualifies as a /RandomAccessIterator/).
 
- typedef adjacency_list<listS, vecS, directedS, 
+ typedef adjacency_list<listS, vecS, directedS,
                         no_property,                 // no additional vertex properties
                         property<edge_weight_t, int> // edges have integer edge weight
                        > Graph;
@@ -372,9 +386,9 @@ graph constructor in the form of iterators (a pointer qualifies as a /RandomAcce
  typedef std::pair<int,int> E;
 
  const int num_nodes = 5;
- E edges[] = { E(0,2), 
+ E edges[] = { E(0,2),
                E(1,1), E(1,3), E(1,4),
-               E(2,1), E(2,3), 
+               E(2,1), E(2,3),
                E(3,4),
                E(4,0), E(4,1) };
  int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
@@ -385,8 +399,8 @@ For the external distance property we will use a std::vector for storage. Boost.
 random access iterators as property maps, so we can just pass the beginning iterator of the
 distance vector to Dijkstra's algorithm. Continuing the above example, the following code shows
 the creation of the distance vector, the call to Dijkstra's algorithm (implicitly using the
-internal edge weight property), and then the output of the results. 
-  
+internal edge weight property), and then the output of the results.
+
  // vector for storing distance property
  std::vector<int> d(num_vertices(G));
 
@@ -399,11 +413,11 @@ internal edge weight property), and then the output of the results.
  std::cout << "distances from start vertex:" << ;
  graph_traits<Graph>::vertex_iterator vi;
  for(vi = vertices(G).first; vi != vertices(G).second; ++vi)
-   std::cout << "distance(" << index(*vi) << ") = " 
+   std::cout << "distance(" << index(*vi) << ") = "
              << d[*vi] << ;
  std::cout << ;
 
-The output is: 
+The output is:
 [pre
  distances from start vertex:
  distance(0) = 0
@@ -417,7 +431,7 @@ The output is:
 Often times an algorithm in a library almost does what you need, but not quite. For example, in
 the previous section we used Dijkstra's algorithm to calculate the shortest distances to each
 vertex, but perhaps we also wanted to record the tree of shortest paths. One way to do this is
-to record the predecessor (parent) for each node in the shortest-paths tree. 
+to record the predecessor (parent) for each node in the shortest-paths tree.
 
 It would be nice if we could avoid rewriting Dijkstra's algorithm, and just add that little bit
 extra needed to record the predecessors [1]. In the STL, this kind of extensibility is provided
@@ -439,7 +453,7 @@ then only be responsible for what parent to record. To implement this, we create
 this visitor will only be filling in one of the visitor methods, we will inherit from
 `dijkstra_visitor` which will provide empty methods for the rest. The constructor of the
 `predecessor_recorder` will take the property map object and save it away in a data member.
-  
+
  template <class PredecessorMap>
  class record_predecessors : public dijkstra_visitor<>
  {
@@ -466,8 +480,8 @@ to invoke the `explore()` method. In this case we only want to be notified about
 shortest-paths tree so we specify `tree_edge_tag`.
 
 As a finishing touch, we create a helper function to make it more convenient to create predecessor
-visitors. All Boost.Graph visitors have a helper function like this. 
-  
+visitors. All Boost.Graph visitors have a helper function like this.
+
  template <class PredecessorMap>
  record_predecessors<PredecessorMap>
  make_predecessor_recorder(PredecessorMap p) {
@@ -477,25 +491,25 @@ visitors. All Boost.Graph visitors have a helper function like this.
 We are now ready to use the `record_predecessors` in Dijkstra's algorithm. Luckily, Boost.Graph's
 Dijkstra's algorithm is already equipped to handle visitors, so we just pass in our new visitor.
 In this example we only need to use one visitor, but Boost.Graph is also equipped to handle the use
-of multiple visitors in the same algorithm (see Section Visitor Concepts). 
-  
+of multiple visitors in the same algorithm (see Section Visitor Concepts).
+
  using std::vector;
  using std::cout;
  using std::endl;
  vector<Vertex> p(num_vertices(G)); //the predecessor array
- dijkstra_shortest_paths(G, s, distance_map(&d[0]). 
+ dijkstra_shortest_paths(G, s, distance_map(&d[0]).
                          visitor(make_predecessor_recorder(&p[0])));
 
  cout << "parents in the tree of shortest paths:" << endl;
  for(vi = vertices(G).first; vi != vertices(G).second; ++vi) {
    cout << "parent(" << *vi;
    if (p[*vi] == Vertex())
-     cout << ") = no parent" << endl; 
-   else 
+     cout << ") = no parent" << endl;
+   else
      cout << ") = " << p[*vi] << endl;
  }
 
-The output is: 
+The output is:
 [pre
  parents in the tree of shortest paths:
  parent(0) = no parent

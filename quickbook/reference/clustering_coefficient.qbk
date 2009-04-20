@@ -117,7 +117,7 @@ The `clustering_coefficient()` function returns the clustering coefficient of th
 vertex. The return type is either `float` or the type specified by the user.
 
 [heading Complexity]
-The `clustering_coefficient()` function returns in ['O(d(v)[super 2]] where
+The `clustering_coefficient()` function returns in ['O(d(v)[sup 2]] where
 /d(v)/ is the degree of /v/.
 [endsect]
 
@@ -159,7 +159,7 @@ coefficient to the caller.
 ]
 
 [heading Complexity]
-The `all_clustering_coefficients()` function returns in ['O(nd[super 2])] where
+The `all_clustering_coefficients()` function returns in ['O(nd[sup 2])] where
 /d/ is the mean (average) degree of vertices in the graph.
 [endsect]
 

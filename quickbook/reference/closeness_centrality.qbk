@@ -228,9 +228,9 @@ or as the result of a [breadth_first_search] (if the graph is unweighted).
 ]
 
 [heading Complexity]
-The `all_closenesss_centralities()` function returns in ['O(n[super 2]*O(M))] where /n/
+The `all_closenesss_centralities()` function returns in ['O(n[sup 2]*O(M))] where /n/
 is the number of vertices in the graph and /O(M)/ is the complexity of the distance
-measure. If no distance measure is given, this functions returns in ['O(n[super 2])]
+measure. If no distance measure is given, this functions returns in ['O(n[sup 2])]
 time.
 [endsect]
 

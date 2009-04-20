@@ -223,7 +223,7 @@ If any vertices have infinite mean geodesic distance, then the small-world dista
 will also be infinite.
 
 [heading Complexity]
-The `all_mean_geodesics()` function returns in ['O(n[super 2]*O(M))] where /n/ is the
+The `all_mean_geodesics()` function returns in ['O(n[sup 2]*O(M))] where /n/ is the
 number of vertices in the graph, and /O(M)/ is the complexity of the given measure.
 If no measure is given, this function returns in quadratic time.
 [endsect]
