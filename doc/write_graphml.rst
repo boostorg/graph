@@ -2,6 +2,14 @@
 |(logo)|__ ``write_graphml``
 ============================
 
+.. Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
+  
+   Distributed under the Boost Software License, Version 1.0. (See
+   accompanying file LICENSE_1_0.txt or copy at
+   http://www.boost.org/LICENSE_1_0.txt)
+ 
+   Authors: Tiago de Paula Peixoto
+
 .. |(logo)| image:: ../../../boost.png
    :align: middle
    :alt: Boost
