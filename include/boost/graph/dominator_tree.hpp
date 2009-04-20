@@ -9,9 +9,9 @@
 #ifndef BOOST_GRAPH_DOMINATOR_HPP
 #define BOOST_GRAPH_DOMINATOR_HPP
 
+#include <boost/config.hpp>
 #include <deque>
 #include <set>
-#include <boost/config.hpp>
 #include <boost/graph/depth_first_search.hpp>
 
 // Dominator tree computation
