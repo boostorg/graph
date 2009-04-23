@@ -511,6 +511,7 @@ namespace boost {
     typedef no_vertex_bundle vertex_bundled;
     typedef no_edge_bundle   edge_bundled;
 #endif
+    typedef GraphProperty    graph_property_type;
 
   public: // should be private
     typedef typename mpl::if_<typename has_property<edge_property_type>::type,
