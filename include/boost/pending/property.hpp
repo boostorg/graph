@@ -106,6 +106,13 @@ namespace boost {
   }
 
  namespace detail {
+
+     /** This trait returns true if T is no_property. */
+    template <typename T>
+    struct is_no_property
+        : mpl::bool_<is_same<T, no_property>::value>
+    { };
+
 #if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
     /** @internal @name Retag Property List
      * This metafunction is used internally to normalize a property if it is
