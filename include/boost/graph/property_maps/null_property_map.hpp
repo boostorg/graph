@@ -7,7 +7,10 @@
 #ifndef BOOST_GRAPH_NULL_PROPERTY_HPP
 #define BOOST_GRAPH_NULL_PROPERTY_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
+
+// TODO: This should really be part of the property maps library rather than
+// the Boost.Graph library.
 
 namespace boost
 {
