@@ -27,6 +27,7 @@ test-suite graph_test :
     # and implementation of graph data structures and adaptors.
     [ run test_graphs.cpp ]
     [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
+    [ run labeled_graph.cpp ]
 
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
