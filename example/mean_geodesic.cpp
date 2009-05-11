@@ -10,7 +10,6 @@
 
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
-#include <boost/graph/constant_property_map.hpp>
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <boost/graph/geodesic_distance.hpp>
 #include "helper.hpp"

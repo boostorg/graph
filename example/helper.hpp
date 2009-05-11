@@ -12,7 +12,7 @@
 #include <map>
 #include <algorithm>
 
-#include <boost/graph/null_property_map.hpp>
+#include <boost/graph/properties.hpp>
 
 template <typename Graph, typename NameMap, typename VertexMap>
 typename boost::graph_traits<Graph>::vertex_descriptor
