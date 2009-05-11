@@ -6,13 +6,19 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
 #ifndef BOOST_GRAPH_PROPERTIES_HPP
 #define BOOST_GRAPH_PROPERTIES_HPP
 
 #include <boost/config.hpp>
 #include <cassert>
 #include <boost/pending/property.hpp>
+
+// Include the property map library and extensions in the BGL.
 #include <boost/property_map/property_map.hpp>
+#include <boost/graph/property_maps/constant_property_map.hpp>
+#include <boost/graph/property_maps/null_property_map.hpp>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/limits.hpp>
@@ -394,13 +400,55 @@ namespace boost {
                        vertex_bundled,
                        edge_bundled>::type
       actual_bundle;
-    
+
   public:
     typedef bundle_property_map<Graph, descriptor, actual_bundle, T> type;
     typedef bundle_property_map<const Graph, descriptor, actual_bundle, const T>
       const_type;
   };
 #endif
+
+// These metafunctions help implement the process of determining the vertex
+// and edge properties of a graph.
+namespace graph_detail {
+    template <typename Retag>
+    struct retagged_property {
+        typedef typename Retag::type type;
+    };
+
+    template <typename Retag, typename With, typename Without>
+    struct retagged_bundle {
+        typedef typename mpl::if_<
+            is_same<typename Retag::retagged, no_property>,
+            Without,
+            With
+        >::type type;
+    };
+
+    template <typename Prop>
+    struct vertex_prop {
+    private:
+        typedef detail::retag_property_list<vertex_bundle_t, Prop> Retag;
+    public:
+        typedef typename retagged_property<Retag>::type type;
+        typedef typename retagged_bundle<
+            Retag, Prop, no_vertex_bundle
+        >::type bundle;
+    };
+
+    template <typename Prop>
+    struct edge_prop {
+//     private:
+        typedef detail::retag_property_list<edge_bundle_t, Prop> Retag;
+    public:
+        typedef typename Retag::retagged retagged;
+        typedef typename retagged_property<Retag>::type type;
+        typedef typename retagged_bundle<
+            Retag, Prop, no_edge_bundle
+        >::type bundle;
+    };
+} // namespace graph_detail
+
 } // namespace boost
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
