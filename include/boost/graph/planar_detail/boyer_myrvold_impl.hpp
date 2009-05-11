@@ -1025,7 +1025,7 @@ namespace boost
       garbage.splice(garbage.end(), 
                      *separated_dfs_child_list[dfs_parent[v]], 
                      to_delete, 
-                     next(to_delete)
+                     boost::next(to_delete)
                      );
     }
 
@@ -1589,7 +1589,7 @@ namespace boost
                   if (w == graph_traits<Graph>::null_vertex() && 
                       externally_active(current_vertex,v) &&
                       outer_face_edge[e] &&
-                      outer_face_edge[*next(old_face_itr)] &&
+                      outer_face_edge[*boost::next(old_face_itr)] &&
                       !seen_x_or_y
                       )
                     {

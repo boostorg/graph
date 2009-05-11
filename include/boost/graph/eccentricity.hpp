@@ -86,7 +86,7 @@ radius_and_diameter(const Graph& g, EccentricityMap ecc)
     tie(i, end) = vertices(g);
     Eccentricity radius = get(ecc, *i);
     Eccentricity diameter = get(ecc, *i);
-    for(i = next(i); i != end; ++i) {
+    for(i = boost::next(i); i != end; ++i) {
         Eccentricity cur = get(ecc, *i);
         radius = min BOOST_PREVENT_MACRO_SUBSTITUTION (radius, cur);
         diameter = max BOOST_PREVENT_MACRO_SUBSTITUTION (diameter, cur);

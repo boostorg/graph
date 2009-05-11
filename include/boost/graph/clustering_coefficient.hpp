@@ -92,7 +92,7 @@ num_triangles_on_vertex(const Graph& g, Vertex v)
     Degree count(0);
     AdjacencyIterator i, j, end;
     for(tie(i, end) = adjacent_vertices(v, g); i != end; ++i) {
-        for(j = next(i); j != end; ++j) {
+        for(j = boost::next(i); j != end; ++j) {
             count += detail::count_edges(g, *i, *j, Directed());
         }
     }

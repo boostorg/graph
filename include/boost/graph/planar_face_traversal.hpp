@@ -107,7 +107,7 @@ namespace boost
           {
             edge_t e(*pi);
             std::map<vertex_t, edge_t> m = get(next_edge, e);
-            m[v] = next(pi) == pi_end ? *pi_begin : *next(pi);
+            m[v] = boost::next(pi) == pi_end ? *pi_begin : *boost::next(pi);
             put(next_edge, e, m);
           } 
       }
