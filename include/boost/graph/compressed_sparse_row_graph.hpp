@@ -234,8 +234,8 @@ class compressed_sparse_row_graph
     }
     m_column.resize(m_rowstart.back());
 
-    // Bucket sort the edges by their source vertices, putting the targets into
-    // m_column.  The index current_insert_positions[v] contains the next
+    // Histogram sort the edges by their source vertices, putting the targets
+    // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
       current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
@@ -271,8 +271,8 @@ class compressed_sparse_row_graph
     m_column.resize(m_rowstart.back());
     inherited_edge_properties::resize(m_rowstart.back());
 
-    // Bucket sort the edges by their source vertices, putting the targets into
-    // m_column.  The index current_insert_positions[v] contains the next
+    // Histogram sort the edges by their source vertices, putting the targets
+    // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
       current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
