@@ -17,17 +17,21 @@
 #include <utility>
 #include <algorithm>
 #include <climits>
+#include <cassert>
 #include <iterator>
+#include <iostream> // FIXME
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/utility.hpp>
 
 #ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #  error The Compressed Sparse Row graph only supports bundled properties.
@@ -47,6 +51,28 @@ struct edges_are_sorted_internal {};
 inline void edges_are_sorted(edges_are_sorted_internal) {}
 typedef void (*edges_are_sorted_t)(edges_are_sorted_internal);
 
+// A type (construct_inplace_from_sources_and_targets_t) and a value
+// (construct_inplace_from_sources_and_targets) used to indicate that mutable
+// vectors of sources and targets (and possibly edge properties) are being used
+// to construct the CSR graph.  These vectors are sorted in-place and then the
+// targets and properties are swapped into the graph data structure.
+struct construct_inplace_from_sources_and_targets_internal {};
+inline void construct_inplace_from_sources_and_targets(construct_inplace_from_sources_and_targets_internal) {}
+typedef void (*construct_inplace_from_sources_and_targets_t)(construct_inplace_from_sources_and_targets_internal);
+
+// A type (construct_inplace_from_sources_and_targets_global_t) and a value
+// (construct_inplace_from_sources_and_targets_global) used to indicate that
+// mutable vectors of sources and targets (and possibly edge properties) are
+// being used to construct the CSR graph.  These vectors are sorted in-place
+// and then the targets and properties are swapped into the graph data
+// structure.  It is assumed that global indices (for distributed CSR) are
+// used, and a map is required to convert those to local indices.  This
+// constructor is intended for internal use by the various CSR graphs
+// (sequential and distributed).
+struct construct_inplace_from_sources_and_targets_global_internal {};
+inline void construct_inplace_from_sources_and_targets_global(construct_inplace_from_sources_and_targets_global_internal) {}
+typedef void (*construct_inplace_from_sources_and_targets_global_t)(construct_inplace_from_sources_and_targets_global_internal);
+
 /****************************************************************************
  * Local helper macros to reduce typing and clutter later on.               *
  ****************************************************************************/
@@ -61,6 +87,17 @@ typedef void (*edges_are_sorted_t)(edges_are_sorted_internal);
 // indexed_edge_properties.
 template<typename Vertex, typename EdgeIndex>
 class csr_edge_descriptor;
+
+namespace detail {
+  // Less-than operator for comparing only the first elements of two arbitrary
+  // Boost tuples
+  struct compare_first_elements_in_tuples {
+    template <typename Tuple>
+    bool operator()(const Tuple& a, const Tuple& b) const {
+      return (a.template get<0>()) < (b.template get<0>());
+    }
+  };
+}
 
 /** Compressed sparse row graph.
  *
@@ -328,6 +365,192 @@ class compressed_sparse_row_graph
     for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
       m_rowstart[current_vertex_plus_one] = current_edge;
   }
+
+  //  From number of vertices and mutable vectors of sources and targets;
+  //  vectors are returned with unspecified contents but are guaranteed not to
+  //  share storage with the constructed graph.
+  compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
+                              std::vector<vertex_descriptor>& sources,
+                              std::vector<vertex_descriptor>& targets,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(), m_property(prop), m_last_source(numverts)
+  {
+    assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
+  }
+
+  //  From number of vertices and mutable vectors of sources and targets,
+  //  expressed with global vertex indices; vectors are returned with
+  //  unspecified contents but are guaranteed not to share storage with the
+  //  constructed graph.  This constructor should only be used by the
+  //  distributed CSR graph.
+  template <typename GlobalToLocal>
+  compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
+                              std::vector<vertex_descriptor>& sources,
+                              std::vector<vertex_descriptor>& targets,
+                              vertices_size_type numlocalverts,
+                              GlobalToLocal global_to_local,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
+      m_column(), m_property(prop), m_last_source(numlocalverts)
+  {
+    assign_sources_and_targets_global(sources, targets, numlocalverts, global_to_local);
+  }
+
+  //  From number of vertices and mutable vectors of sources, targets, and edge
+  //  properties; vectors are returned with unspecified contents but are
+  //  guaranteed not to share storage with the constructed graph.
+  compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
+                              std::vector<vertex_descriptor>& sources,
+                              std::vector<vertex_descriptor>& targets,
+                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(), m_property(prop), m_last_source(numverts)
+  {
+    assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::identity_property_map());
+  }
+
+  //  From number of vertices and mutable vectors of sources and targets and
+  //  edge properties, expressed with global vertex indices; vectors are
+  //  returned with unspecified contents but are guaranteed not to share
+  //  storage with the constructed graph.  This constructor should only be used
+  //  by the distributed CSR graph.
+  template <typename GlobalToLocal>
+  compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
+                              std::vector<vertex_descriptor>& sources,
+                              std::vector<vertex_descriptor>& targets,
+                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              vertices_size_type numlocalverts,
+                              GlobalToLocal global_to_local,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
+      m_column(), m_property(prop), m_last_source(numlocalverts)
+  {
+    assign_sources_and_targets_global(sources, targets, edge_props, numlocalverts, global_to_local);
+  }
+
+  // Replace graph with sources and targets given, sorting them in-place, and
+  // using the given global-to-local property map to get local indices from
+  // global ones in the two arrays.
+  template <typename GlobalToLocal>
+  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
+                                         std::vector<vertex_descriptor>& targets,
+                                         vertices_size_type numverts,
+                                         GlobalToLocal global_to_local) {
+    assert (sources.size() == targets.size());
+    typedef typename std::vector<vertex_descriptor>::iterator vertex_vec_iter;
+    EdgeIndex numedges = sources.size();
+#if 0
+    std::cerr << "Edges before:";
+    for (size_t i = 0; i < numedges; ++i) {
+      std::cerr << " (" << sources[i] << " -> " << targets[i] << ")";
+    }
+    std::cerr << std::endl;
+#endif
+    // Do an in-place histogram sort (at least that's what I think it is) to
+    // sort sources and targets
+    // 1. Count degrees; degree of vertex v is in m_rowstart[v + 1]
+    m_rowstart.clear();
+    m_rowstart.resize(numverts + 1);
+    for (size_t i = 0; i < numedges; ++i) {
+      ++m_rowstart[get(global_to_local, sources[i]) + 1];
+    }
+    // 2. Do a prefix sum on those to get starting positions of each row
+    for (size_t i = 0; i < numverts; ++i) {
+      m_rowstart[i + 1] += m_rowstart[i];
+    }
+    // 3. Copy m_rowstart (except last element) to get insert positions
+    std::vector<EdgeIndex> insert_positions(m_rowstart.begin(), boost::prior(m_rowstart.end()));
+    // 4. Swap the sources and targets into place
+    for (size_t i = 0; i < numedges; ++i) {
+      // While edge i is not in the right bucket:
+      while (!(i >= m_rowstart[get(global_to_local, sources[i])] && i < insert_positions[get(global_to_local, sources[i])])) {
+        // Add a slot in the right bucket
+        size_t target_pos = insert_positions[get(global_to_local, sources[i])]++;
+        assert (target_pos < m_rowstart[get(global_to_local, sources[i]) + 1]);
+        if (target_pos == i) continue;
+        // Swap this edge into place
+        using std::swap;
+        swap(sources[i], sources[target_pos]);
+        swap(targets[i], targets[target_pos]);
+      }
+    }
+#if 0
+    std::cerr << "Edges after:";
+    for (size_t i = 0; i < sources.size(); ++i) {
+      std::cerr << " (" << sources[i] << " -> " << targets[i] << ")";
+    }
+    std::cerr << std::endl;
+#endif
+    // Now targets is the correct vector (properly sorted by source) for
+    // m_column
+    m_column.swap(targets);
+  }
+
+  // Replace graph with sources and targets and edge properties given, sorting
+  // them in-place, and using the given global-to-local property map to get
+  // local indices from global ones in the two arrays.
+  template <typename GlobalToLocal>
+  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
+                                         std::vector<vertex_descriptor>& targets,
+                                         std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                                         vertices_size_type numverts,
+                                         GlobalToLocal global_to_local) {
+    assert (sources.size() == targets.size());
+    assert (sources.size() == edge_props.size());
+    EdgeIndex numedges = sources.size();
+#if 0
+    std::cerr << "Edges before:";
+    for (size_t i = 0; i < numedges; ++i) {
+      std::cerr << " (" << sources[i] << " -> " << targets[i] << ")";
+    }
+    std::cerr << std::endl;
+#endif
+    // Do an in-place histogram sort (at least that's what I think it is) to
+    // sort sources and targets
+    // 1. Count degrees; degree of vertex v is in m_rowstart[v + 1]
+    m_rowstart.clear();
+    m_rowstart.resize(numverts + 1);
+    for (size_t i = 0; i < numedges; ++i) {
+      ++m_rowstart[get(global_to_local, sources[i]) + 1];
+    }
+    // 2. Do a prefix sum on those to get starting positions of each row
+    for (size_t i = 0; i < numverts; ++i) {
+      m_rowstart[i + 1] += m_rowstart[i];
+    }
+    // 3. Copy m_rowstart (except last element) to get insert positions
+    std::vector<EdgeIndex> insert_positions(m_rowstart.begin(), boost::prior(m_rowstart.end()));
+    // 4. Swap the sources and targets into place
+    for (size_t i = 0; i < numedges; ++i) {
+      // While edge i is not in the right bucket:
+      while (!(i >= m_rowstart[get(global_to_local, sources[i])] && i < insert_positions[get(global_to_local, sources[i])])) {
+        // Add a slot in the right bucket
+        size_t target_pos = insert_positions[get(global_to_local, sources[i])]++;
+        assert (target_pos < m_rowstart[get(global_to_local, sources[i]) + 1]);
+        if (target_pos == i) continue;
+        // Swap this edge into place
+        using std::swap;
+        swap(sources[i], sources[target_pos]);
+        swap(targets[i], targets[target_pos]);
+        swap(edge_props[i], edge_props[target_pos]);
+      }
+    }
+#if 0
+    std::cerr << "Edges after:";
+    for (size_t i = 0; i < sources.size(); ++i) {
+      std::cerr << " (" << sources[i] << " -> " << targets[i] << ")";
+    }
+    std::cerr << std::endl;
+#endif
+    // Now targets is the correct vector (properly sorted by source) for
+    // m_column, and edge_props for m_edge_properties
+    m_column.swap(targets);
+    this->m_edge_properties.swap(edge_props);
+  }
+
 
   //   Requires IncidenceGraph, a vertex index map, and a vertex(n, g) function
   template<typename Graph, typename VertexIndexMap>

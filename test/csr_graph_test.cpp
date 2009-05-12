@@ -80,6 +80,14 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
 
       std::sort(edges1.begin(), edges1.end());
       std::sort(edges2.begin(), edges2.end());
+      if (edges1 != edges2) {
+        std::cerr << "edges1:";
+        for (size_t i = 0; i < edges1.size(); ++i) std::cerr << " " << edges1[i];
+        std::cerr << std::endl;
+        std::cerr << "edges2:";
+        for (size_t i = 0; i < edges2.size(); ++i) std::cerr << " " << edges2[i];
+        std::cerr << std::endl;
+      }
       BOOST_CHECK (edges1 == edges2);
     }
   }
@@ -193,6 +201,76 @@ void graph_test(const OrigGraph& g)
   assert_graphs_equal(g2, boost::identity_property_map(),
                       g3, boost::identity_property_map(),
                       boost::identity_property_map());
+
+  // Check constructing a graph using in-place modification of vectors
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges actually sorted
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[idx] = source(e, g2);
+      targets[idx] = target(e, g2);
+      ++idx;
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges reverse-sorted
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[num_edges(g2) - 1 - idx] = source(e, g2);
+      targets[num_edges(g2) - 1 - idx] = target(e, g2);
+      ++idx;
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges scrambled using Fisher-Yates shuffle (Durstenfeld variant) from
+    // Wikipedia
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[idx] = source(e, g2);
+      targets[idx] = target(e, g2);
+      ++idx;
+    }
+    boost::minstd_rand gen(1);
+    if (num_edges(g) != 0) {
+      for (std::size_t i = num_edges(g) - 1; i > 0; --i) {
+        std::size_t scrambled = boost::uniform_int<>(0, i)(gen);
+        if (scrambled == i) continue;
+        using std::swap;
+        swap(sources[i], sources[scrambled]);
+        swap(targets[i], targets[scrambled]);
+      }
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
 
   // Check constructing a graph using add_edge and add_vertices
   CSRGraphT g4;
