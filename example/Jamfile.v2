@@ -5,7 +5,7 @@
 
 
 exe labeled_graph : labeled_graph.cpp ;
-exe quick_tour_new : quick_tour_new.cpp ;
+# exe quick_tour_new : quick_tour_new.cpp ;
 exe degree_centrality : degree_centrality.cpp ;
 exe influence_prestige : influence_prestige.cpp ;
 exe closeness_centrality : closeness_centrality.cpp ;
