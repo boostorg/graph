@@ -292,50 +292,54 @@ The source for this example can be found in
 <PRE>#include &lt;boost/config.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;string&gt;
-#include &lt;boost/graph/kolmogorov_map_flow.hpp&gt;
+#include &lt;boost/graph/kolmogorov_max_flow.hpp&gt;
 #include &lt;boost/graph/adjacency_list.hpp&gt;
 #include &lt;boost/graph/read_dimacs.hpp&gt;
+#include &lt;boost/graph/graph_utility.hpp&gt;
 
 int
 main()
 {
   using namespace boost;
 
-  typedef adjacency_list_traits&lt;vecS, vecS, directedS&gt; Traits;
-  typedef adjacency_list&lt;vecS, vecS, directedS, 
-    property&lt;vertex_name_t, std::string&gt;,
-    property&lt;edge_capacity_t, long,
-      property&lt;edge_residual_capacity_t, long,
-        property&lt;edge_reverse_t, Traits::edge_descriptor&gt; &gt; &gt;
-  &gt; Graph;
-
+  typedef adjacency_list_traits &lt; vecS, vecS, directedS &gt; Traits;
+  typedef adjacency_list &lt; vecS, vecS, directedS,
+    property &lt; vertex_name_t, std::string,
+    property &lt; vertex_index_t, long,
+    property &lt; vertex_color_t, boost::default_color_type,
+    property &lt; vertex_distance_t, long,
+    property &lt; vertex_predecessor_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; &gt;,
+    
+    property &lt; edge_capacity_t, long,
+    property &lt; edge_residual_capacity_t, long,
+    property &lt; edge_reverse_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; Graph;
+ 
   Graph g;
-  long flow;
-
-  property_map&lt;Graph, edge_capacity_t&gt;::type 
-    capacity = get(edge_capacity, g);
-  property_map&lt;Graph, edge_reverse_t&gt;::type 
-    rev = get(edge_reverse, g);
-  property_map&lt;Graph, edge_residual_capacity_t&gt;::type 
-    residual_capacity = get(edge_residual_capacity, g);
-
+  property_map &lt; Graph, edge_capacity_t &gt;::type
+      capacity = get(edge_capacity, g);
+  property_map &lt; Graph, edge_residual_capacity_t &gt;::type
+      residual_capacity = get(edge_residual_capacity, g);
+  property_map &lt; Graph, edge_reverse_t &gt;::type rev = get(edge_reverse, g);
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  flow = kolmogorov_max_flow(g, s, t);
+  std::vector&lt;default_color_type&gt; color(num_vertices(g));
+  std::vector&lt;long&gt; distance(num_vertices(g));
+  long flow = kolmogorov_max_flow(g ,s, t);
 
-  std::cout &lt;&lt; &quot;c  The total flow:&quot; &lt;&lt; std::endl;
-  std::cout &lt;&lt; &quot;s &quot; &lt;&lt; flow &lt;&lt; std::endl &lt;&lt; std::endl;
+  std::cout &lt;&lt; "c  The total flow:" &lt;&lt; std::endl;
+  std::cout &lt;&lt; "s " &lt;&lt; flow &lt;&lt; std::endl &lt;&lt; std::endl;
 
-  std::cout &lt;&lt; &quot;c flow values:&quot; &lt;&lt; std::endl;
-  graph_traits&lt;Graph&gt;::vertex_iterator u_iter, u_end;
-  graph_traits&lt;Graph&gt;::out_edge_iterator ei, e_end;
+  std::cout &lt;&lt; "c flow values:" &lt;&lt; std::endl;
+  graph_traits &lt; Graph &gt;::vertex_iterator u_iter, u_end;
+  graph_traits &lt; Graph &gt;::out_edge_iterator ei, e_end;
   for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
     for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] &gt; 0)
-        std::cout &lt;&lt; &quot;f &quot; &lt;&lt; *u_iter &lt;&lt; &quot; &quot; &lt;&lt; target(*ei, g) &lt;&lt; &quot; &quot; 
-                  &lt;&lt; (capacity[*ei] - residual_capacity[*ei]) &lt;&lt; std::endl;
-  return 0;
+        std::cout &lt;&lt; "f " &lt;&lt; *u_iter &lt;&lt; " " &lt;&lt; target(*ei, g) &lt;&lt; " "
+          &lt;&lt; (capacity[*ei] - residual_capacity[*ei]) &lt;&lt; std::endl;
+
+  return EXIT_SUCCESS;
 }</PRE><P>
 The output is: 
 </P>
