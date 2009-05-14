@@ -4,7 +4,7 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
-exe labeled_graph : labeled_graph.cpp ;
+# exe labeled_graph : labeled_graph.cpp ;
 # exe quick_tour_new : quick_tour_new.cpp ;
 exe degree_centrality : degree_centrality.cpp ;
 exe influence_prestige : influence_prestige.cpp ;
