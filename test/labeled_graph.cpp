@@ -72,13 +72,13 @@ void label_graph(Graph& g)
 template <typename Graph>
 void build_graph(Graph& g) {
     // This is the graph shown on the wikipedia page for Graph Theory.
-    add_edge(5, 3, g);
-    add_edge(3, 4, g);
-    add_edge(3, 2, g);
-    add_edge(4, 1, g);
-    add_edge(4, 0, g);
-    add_edge(2, 1, g);
-    add_edge(1, 0, g);
+    add_edge_by_label(5, 3, g);
+    add_edge_by_label(3, 4, g);
+    add_edge_by_label(3, 2, g);
+    add_edge_by_label(4, 1, g);
+    add_edge_by_label(4, 0, g);
+    add_edge_by_label(2, 1, g);
+    add_edge_by_label(1, 0, g);
     BOOST_ASSERT(num_vertices(g) == 6);
     BOOST_ASSERT(num_edges(g) == 7);
 }
@@ -122,16 +122,16 @@ void test_temp() {
 //////////////////////////////////////
 
 void test_bacon() {
-    // More banal tests that use different properties.
+        string bacon("Kevin Bacon");
+        string slater("Christian Slater");
+        Movie murder("Murder in the First");
     {
-        string bacon = "Kevin Bacon";
-        string slater = "Christian Slater";
 
         typedef labeled_graph<undirected_graph<Actor, Movie>, string> Graph;
         Graph g;
         add_vertex(bacon, g);
         add_vertex(slater, g);
-        add_edge(bacon, slater, Movie("Murder in the First"), g);
+        add_edge_by_label(bacon, slater, murder, g);
     }
 
     {
@@ -142,6 +142,6 @@ void test_bacon() {
         Graph g;
         add_vertex(bacon, g);
         add_vertex(slater, g);
-        add_edge(bacon, slater, Movie("Murder in the First"), g);
+        add_edge_by_label(bacon, slater, murder, g);
     }
 }
