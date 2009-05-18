@@ -227,14 +227,14 @@ must also be in the graph.
 <BLOCKQUOTE>The sink vertex for the flow network graph. 
 </BLOCKQUOTE>
 <H3>Named Parameters</H3>
-<P>IN: <TT>capacity_map(EdgeCapacityMap cap)</TT> 
+<P>IN: <TT>edge_capacity(EdgeCapacityMap cap)</TT> 
 </P>
 <BLOCKQUOTE>The edge capacity property map. The type must be a model
 of a constant <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_capacity, g)</TT> 
 </BLOCKQUOTE>
-<P>OUT: <TT>residual_capacity_map(ResidualCapacityEdgeMap res)</TT> 
+<P>OUT: <TT>edge_residual_capacity(ResidualCapacityEdgeMap res)</TT> 
 </P>
 <BLOCKQUOTE>The edge residual capacity property map. The type must be
 a model of a mutable <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
@@ -242,7 +242,7 @@ Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_residual_capacity,
 g)</TT> 
 </BLOCKQUOTE>
-<P>IN: <TT>reverse_edge_map(ReverseEdgeMap rev)</TT> 
+<P>IN: <TT>edge_reverse(ReverseEdgeMap rev)</TT> 
 </P>
 <BLOCKQUOTE>An edge property map that maps every edge <I>(u,v)</I> in
 the graph to the reverse edge <I>(v,u)</I>. The map must be a model
@@ -275,7 +275,7 @@ algorithm. The map must be a model of mutable <A HREF="../../property_map/Lvalue
 Property Map</A>. The key type of the map must be the graph's vertex
 descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT> 
 </BLOCKQUOTE>
-<P>IN: <TT>vertex_index_map(VertexIndexMap index_map)</TT> 
+<P>IN: <TT>vertex_index(VertexIndexMap index_map)</TT> 
 </P>
 <BLOCKQUOTE>Maps each vertex of the graph to a unique integer in the
 range <TT>[0, num_vertices(g))</TT>. The map must be a model of
