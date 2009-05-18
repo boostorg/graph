@@ -11,8 +11,8 @@
 
 // Author: Ronald Garcia
 
-//#define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
 #define BOOST_GRAPHVIZ_USE_ISTREAM
+#include <boost/regex.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/assign/std/map.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -31,9 +31,6 @@
 using namespace std;
 using namespace boost;
 
-#ifndef BOOST_GRAPHVIZ_USE_ISTREAM
-using namespace boost::spirit;
-#endif
 using namespace boost::assign;
 
 typedef std::string node_t;
@@ -43,7 +40,8 @@ typedef std::map<node_t,float> mass_map_t;
 typedef std::map<edge_t,double> weight_map_t;
 
 template <typename Directedness, typename OutEdgeList>
-bool test_graph(std::istream& dotfile, mass_map_t const& masses,
+bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
+                mass_map_t const& masses,
                 weight_map_t const& weights,
                 std::string const& node_id = "node_id",
                 std::string const& g_name = std::string()) {
@@ -79,11 +77,14 @@ bool test_graph(std::istream& dotfile, mass_map_t const& masses,
   if(read_graphviz(dotfile,graph,dp,node_id)) {
 #else
   std::string data;
+  dotfile >> std::noskipws;
   std::copy(std::istream_iterator<char>(dotfile),
             std::istream_iterator<char>(),
             std::back_inserter(data));
   if(read_graphviz(data.begin(),data.end(),graph,dp,node_id)) {
 #endif
+    // check correct vertex count
+    BOOST_CHECK_EQUAL(num_vertices(graph), correct_num_vertices);
     // check masses
     if(!masses.empty()) {
       // assume that all the masses have been set
@@ -139,16 +140,25 @@ int test_main(int, char*[]) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t())));
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t())));
+  }
+
+  {
+    mass_map_t masses;
+    insert ( masses )  ("a",0.0f) ("e", 6.66f);
+    gs_t gs("digraph { a  node [mass = 7.7] \"a\" e [mass = 6.66] }");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,masses,weight_map_t())));
   }
 
   {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),0.0)
-      (make_pair("c","d"),7.7)(make_pair("e","f"),6.66);
-    gs_t gs("digraph { a -> b edge [weight = 7.7] "
-            "c -> d e-> f [weight = 6.66] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weights)));
+      (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
+      (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
+    gs_t gs("digraph { a -> b eDge [weight = 7.7] "
+            "c -> d e-> f [weight = 6.66] "
+            "d ->e->a [weight=.5]}");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,6,mass_map_t(),weights)));
   }
 
   // undirected graph with alternate node_id property name
@@ -156,7 +166,7 @@ int test_main(int, char*[]) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,masses,weight_map_t(),
+    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t(),
                                              "nodenames")));
   }
 
@@ -165,7 +175,7 @@ int test_main(int, char*[]) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,masses,weight_map_t())));
+    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t())));
   }
 
   {
@@ -174,7 +184,7 @@ int test_main(int, char*[]) {
       (make_pair("c","d"),7.7)(make_pair("e","f"),6.66);
     gs_t gs("graph { a -- b eDge [weight = 7.7] "
             "c -- d e -- f [weight = 6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,mass_map_t(),weights)));
+    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,6,mass_map_t(),weights)));
   }
 
   // Mismatch directed graph test
@@ -183,7 +193,7 @@ int test_main(int, char*[]) {
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
-      test_graph<directedS,vecS>(gs,masses,weight_map_t());
+      test_graph<directedS,vecS>(gs,3,masses,weight_map_t());
       BOOST_ERROR("Failed to throw boost::directed_graph_error.");
     } catch (boost::undirected_graph_error&) {}
   }
@@ -194,7 +204,7 @@ int test_main(int, char*[]) {
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
     try {
-      test_graph<undirectedS,vecS>(gs,masses,weight_map_t());
+      test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t());
       BOOST_ERROR("Failed to throw boost::directed_graph_error.");
     } catch (boost::directed_graph_error&) {}
   }
@@ -205,7 +215,7 @@ int test_main(int, char*[]) {
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("diGraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
     try {
-      test_graph<directedS,setS>(gs,mass_map_t(),weights);
+      test_graph<directedS,setS>(gs,2,mass_map_t(),weights);
       BOOST_ERROR("Failed to throw boost::bad_parallel_edge.");
     } catch (boost::bad_parallel_edge&) {}
   }
@@ -215,16 +225,16 @@ int test_main(int, char*[]) {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("digraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weights)));
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,mass_map_t(),weights)));
   }
 
   // Graph Property Test 1
   {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
-    gs_t gs("digraph { graph [name=\"foo\"]  a  c e [mass = 6.66] }");
-    std::string graph_name("foo");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
+    gs_t gs("digraph { graph [name=\"foo \\\"escaped\\\"\"]  a  c e [mass = 6.66] }");
+    std::string graph_name("foo \"escaped\"");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
                                             graph_name)));
   }
 
@@ -232,9 +242,9 @@ int test_main(int, char*[]) {
   {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
-    gs_t gs("digraph { name=\"foo\"  a  c e [mass = 6.66] }");
+    gs_t gs("digraph { name=\"fo\"+ \"\\\no\"  a  c e [mass = 6.66] }");
     std::string graph_name("foo");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,masses,weight_map_t(),"",
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
                                             graph_name)));
   }
 
@@ -246,7 +256,7 @@ int test_main(int, char*[]) {
       "a1 [ label = \"//depot/path/to/file_29#9\" ];"
       "a0 -> a1 [ color=gray ];"
       "}");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,mass_map_t(),weight_map_t())));
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,mass_map_t(),weight_map_t())));
   }
   return 0;
 }

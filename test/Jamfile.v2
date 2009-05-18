@@ -58,7 +58,8 @@ test-suite graph_test :
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
-            ../build//boost_graph ]
+            ../build//boost_graph
+            ../../regex/build//boost_regex ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
@@ -85,7 +86,7 @@ test-suite graph_test :
     [ run matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph : $(CYCLE_RATIO_INPUT_FILE) ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]

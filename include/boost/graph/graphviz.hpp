@@ -784,15 +784,24 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
                    dynamic_properties& dp,
                    std::string const& node_id = "node_id") 
 {
-  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
-  return detail::graph::read_graphviz(in, m_graph);
+  std::string data;
+  in >> std::noskipws;
+  std::copy(std::istream_iterator<char>(in),
+            std::istream_iterator<char>(),
+            std::back_inserter(data));
+  return read_graphviz(data.begin(),data.end(),graph,dp,node_id);
 }
 
 } // namespace boost
 
-#ifdef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
+#  ifndef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#    define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#  endif
 #  include <boost/graph/detail/read_graphviz_spirit.hpp>
-#endif // BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#else // New default parser
+#  include <boost/graph/detail/read_graphviz_new.hpp>
+#endif // BOOST_GRAPH_USE_SPIRIT_PARSER
 
 #ifdef BOOST_GRAPH_USE_MPI
 #  include <boost/graph/distributed/graphviz.hpp>
