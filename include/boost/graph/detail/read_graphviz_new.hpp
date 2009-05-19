@@ -658,6 +658,9 @@ namespace read_graphviz_detail {
     }
 
     void do_begin_graph(bool is_strict, bool is_directed, const std::string& name) {
+        ignore_unused_variable_warning(is_strict);
+        ignore_unused_variable_warning(is_directed);
+        ignore_unused_variable_warning(name);
       // std::cerr << "starting" << (is_strict ? " strict" : "") << " " << (is_directed ? "directed" : "undirected") << " graph named " << name << std::endl;
     }
 
@@ -669,14 +672,17 @@ namespace read_graphviz_detail {
     }
       
     void do_subgraph_reference(const std::string& name) {
+        ignore_unused_variable_warning(name);
       // std::cerr << "subgraph reference to " << name << std::endl;
     }
 
     void do_begin_subgraph(const std::string& name) {
+        ignore_unused_variable_warning(name);
       // std::cerr << "starting subgraph named " << name << std::endl;
     }
 
     void do_end_subgraph(const properties& props) {
+        ignore_unused_variable_warning(props);
       // std::cerr << "ending subgraph " << props_to_string(props) << std::endl;
     }
   };
