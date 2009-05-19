@@ -313,7 +313,7 @@ namespace read_graphviz_detail {
 
   template <typename BidirectionalIterator, typename Policy>
   struct parser {
-    tokenizer<BidirectionalIterator> tokenizer;
+    tokenizer<BidirectionalIterator> the_tokenizer;
     std::vector<token> lookahead;
     bool graph_is_directed;
     properties graph_props;
@@ -322,11 +322,11 @@ namespace read_graphviz_detail {
     Policy hooks;
 
     parser(BidirectionalIterator begin, BidirectionalIterator end, Policy hooks)
-      : tokenizer(begin, end), lookahead(), hooks(hooks) {}
+      : the_tokenizer(begin, end), lookahead(), hooks(hooks) {}
 
     token get() {
       if (lookahead.empty()) {
-        token t = tokenizer.get_token();
+        token t = the_tokenizer.get_token();
         return t;
       } else {
         token t = lookahead.front();
@@ -337,7 +337,7 @@ namespace read_graphviz_detail {
 
     token peek() {
       if (lookahead.empty()) {
-        lookahead.push_back(tokenizer.get_token());
+        lookahead.push_back(the_tokenizer.get_token());
       }
       return lookahead.front();
     }
