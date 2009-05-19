@@ -501,7 +501,7 @@ public:
 
     /** Return a descriptor for the given label. */
     vertex_descriptor vertex(Label const& l) const
-    { return graph_detail::find_labeled_vertex(_map, _graph, l); }
+    { return graph_detail::find_labeled_vertex(_map, *_graph, l); }
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     /** @name Bundled Properties */
