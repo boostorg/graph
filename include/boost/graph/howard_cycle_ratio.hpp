@@ -52,7 +52,7 @@ namespace boost {
      * \param ewm2 - edge weight2 read property map: E -> R+
      *
      * \return maximum_{for all cycles C}CR(C), or
-     * -(std::numeric_limits<double>)::max() if g is not "good".
+     * -(std::numeric_limits<double>::max)() if g is not "good".
      */
     template <typename TGraph, typename TVertexIndexMap, 
               typename TWeight1EdgeMap, typename TWeight2EdgeMap >      

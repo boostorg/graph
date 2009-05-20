@@ -237,7 +237,7 @@ namespace boost {
                 num_edges_on_k = 1;
                 BOOST_USING_STD_MAX();
                 int next_k = max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num_k, max BOOST_PREVENT_MACRO_SUBSTITUTION(dfs_num[i], dfs_num[j]));
-                if (match(next(iter), next_k))
+                if (match(boost::next(iter), next_k))
                   return true;
                 in_S[v] = false;
               }
@@ -247,7 +247,7 @@ namespace boost {
           else {
             if (container_contains(adjacent_vertices(f[i], G2), f[j])) {
               ++num_edges_on_k;
-              if (match(next(iter), dfs_num_k))
+              if (match(boost::next(iter), dfs_num_k))
                 return true;
             }
                 

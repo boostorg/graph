@@ -185,7 +185,7 @@ namespace boost
               before = active_edges.end();
             else
               before = prior(a_itr);
-            after = next(a_itr);
+            after = boost::next(a_itr);
 
             if (before != active_edges.end())
               {

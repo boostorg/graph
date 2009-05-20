@@ -193,7 +193,7 @@ public:
         }
         if (_mark[p] == false) {
           _mark[p] = true;
-	  --_degree[p];
+          --_degree[p];
           break;
         } else
           --_degree[p];
