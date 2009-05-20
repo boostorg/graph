@@ -112,6 +112,7 @@ test-suite graph_test :
     [ run eccentricity.cpp ]
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
+    [ run read_propmap.cpp ]
 
     $(optional_tests)
     ;

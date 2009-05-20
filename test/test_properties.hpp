@@ -14,6 +14,7 @@
 //@{
 template <typename Graph, typename VertexSet>
 void test_vertex_bundle(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...test_vertex_bundle\n";
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
 
     // This just has to compile. You can't actually get this map.
@@ -44,6 +45,7 @@ void test_vertex_bundle(Graph&, VertexSet const&, boost::mpl::false_)
 //@{
 template <typename Graph, typename VertexSet>
 void test_edge_bundle(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...test_edge_bundle\n";
     // This just has to compile. You can't actually get this map.
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
     typedef typename boost::property_map<Graph, boost::edge_bundle_t>::type TestMap;

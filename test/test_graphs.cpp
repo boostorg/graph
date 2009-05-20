@@ -13,6 +13,7 @@
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/labeled_graph.hpp>
+#include <boost/graph/subgraph.hpp>
 
 #include "test_graph.hpp"
 
@@ -145,6 +146,14 @@ int main()
         BOOST_META_ASSERT(!has_edge_property<Graph>);
         BOOST_META_ASSERT(!has_bundled_edge_property<Graph>);
         BOOST_META_ASSERT(is_labeled_mutable_graph<Graph>);
+        Graph g;
+        test_graph(g);
+    }
+    {
+        // Make srue that subgraph obeys the basi
+        typedef property<edge_index_t, size_t, EdgeBundle> EdgeProp;
+        typedef adjacency_list<vecS, vecS, directedS, VertexBundle, EdgeProp> BaseGraph;
+        typedef subgraph<BaseGraph> Graph;
         Graph g;
         test_graph(g);
     }

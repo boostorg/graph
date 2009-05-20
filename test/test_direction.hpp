@@ -16,6 +16,7 @@
 //@{
 template <typename Graph, typename VertexSet>
 void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...test_outdirected_graph\n";
     typedef typename boost::graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;
@@ -55,6 +56,7 @@ void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::
 //@{
 template <typename Graph, typename VertexSet>
 void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...test_indirected_graph\n";
     typedef typename boost::graph_traits<Graph>::in_edge_iterator InIter;
     typedef std::pair<InIter, InIter> InRange;
     typedef std::vector<InRange> InSet;
@@ -89,6 +91,7 @@ void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::f
  */
 template <typename Graph, typename VertexSet>
 void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...test_undirected_graph\n";
     typedef typename boost::graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;

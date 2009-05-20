@@ -24,6 +24,7 @@ void build_graph(Graph& g, Add, Label)
 // This matches MutableGraph, so just add some vertices.
 template <typename Graph>
 void build_graph(Graph& g, boost::mpl::true_, boost::mpl::false_) {
+    std::cout << "...build_normal\n";
     for(std::size_t i = 0; i < N; ++i) {
         boost::add_vertex(g);
     }
@@ -32,6 +33,7 @@ void build_graph(Graph& g, boost::mpl::true_, boost::mpl::false_) {
 // This will match labeled graphs.
 template <typename Graph>
 void build_graph(Graph& g, boost::mpl::false_, boost::mpl::true_) {
+    std::cout << "...build_labeled\n";
     // Add each vertex labeled with the number i.
     for(std::size_t i = 0; i < N; ++i) {
         boost::add_vertex(i, g);
@@ -50,6 +52,7 @@ void build_graph(Graph& g, boost::mpl::false_, boost::mpl::true_) {
 //@{
 template <typename Graph, typename VertexSet>
 void connect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
+    std::cout << "...connect_normal\n";
     Pair *f, *l;
     for(boost::tie(f, l) = edge_pairs(); f != l; ++f) {
         Pair const& e = *f;
@@ -63,6 +66,7 @@ void connect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
 
 template <typename Graph, typename VertexSet>
 void connect_graph(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...connect_labeled\n";
     // With labeled graphs, we want to operate directly on the edge numbers
     // rather than looking up the correct vertex index. This is because the
     // vertices are already mapped to indices.

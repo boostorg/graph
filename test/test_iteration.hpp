@@ -16,6 +16,7 @@
 //@{
 template <typename Graph>
 void test_vertex_list_graph(Graph const& g) {
+    std::cout << "...test_vertex_list_graph\n";
     typedef typename boost::graph_traits<Graph>::vertex_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
 
@@ -33,6 +34,7 @@ void test_vertex_list_graph(Graph const& g) {
 //@{
 template <typename Graph>
 void test_edge_list_graph(Graph const& g) {
+    std::cout << "...test_edge_list_graph\n";
     typedef typename boost::graph_traits<Graph>::edge_iterator Iterator;
     typedef std::pair<Iterator, Iterator> Range;
 

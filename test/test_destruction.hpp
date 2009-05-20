@@ -21,6 +21,7 @@ void destroy_graph(Graph& g, VertexSet const& verts, Remove, Label)
 // This matches MutableGraph, so just remove a vertex and then clear.
 template <typename Graph, typename VertexSet>
 void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::mpl::false_) {
+    std::cout << "...destroy_normal\n";
     // Remove the roof vertex
     boost::remove_vertex(verts[0], g);
     BOOST_ASSERT(boost::num_vertices(g) == N - 1);
@@ -29,6 +30,7 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::m
 // This will match labeled graphs.
 template <typename Graph, typename VertexSet>
 void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::false_, boost::mpl::true_) {
+    std::cout << "...destroy_labeled\n";
     // Remove the roof vertex
     boost::remove_vertex(0, g);
     BOOST_ASSERT(boost::num_vertices(g) == N - 1);
@@ -48,6 +50,7 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::false_, boost::
 
 template <typename Graph, typename VertexSet>
 void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
+    std::cout << "...disconnect_normal\n";
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.
@@ -70,6 +73,7 @@ void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
 
 template <typename Graph, typename VertexSet>
 void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+    std::cout << "...disconnect_labeled\n";
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.

@@ -87,6 +87,8 @@ struct EdgeBundle {
 
 template <typename Graph>
 void test_graph(Graph& g) {
+    std::cout << typestr(g) << "\n";
+
     // Define a bunch of tags for the graph.
     typename boost::graph_has_add_vertex<Graph>::type can_add_vertex;
     typename boost::graph_has_remove_vertex<Graph>::type can_remove_vertex;
