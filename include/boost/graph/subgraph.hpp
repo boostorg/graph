@@ -18,6 +18,7 @@
 #include <map>
 #include <cassert>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 

@@ -18,6 +18,7 @@
 #include <boost/limits.hpp>
 #include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
@@ -1278,6 +1279,17 @@ namespace boost {
   }
 
 #endif
+
+#define ADJMAT_PARAMS \
+    typename D, typename VP, typename EP, typename GP, typename A
+#define ADJMAT adjacency_matrix<D,VP,EP,GP,A>
+template <ADJMAT_PARAMS>
+struct graph_mutability_traits<ADJMAT> {
+    typedef mutable_edge_property_graph_tag category;
+};
+#undef ADJMAT_PARAMS
+#undef ADJMAT
+
 
 } // namespace boost
 

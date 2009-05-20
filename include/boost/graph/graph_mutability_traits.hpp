@@ -196,46 +196,7 @@ struct is_add_only_property_graph
 
 /** @name Mutability Traits Specializations */
 //@{
-#define ADJLIST_PARAMS \
-    typename OEL, typename VL, typename D, typename VP, typename EP, \
-    typename GP, typename EL
-#define ADJLIST adjacency_list<OEL,VL,D,VP,EP,GP,EL>
-template <ADJLIST_PARAMS> class adjacency_list;
-template <ADJLIST_PARAMS>
-struct graph_mutability_traits<ADJLIST> {
-    typedef mutable_property_graph_tag category;
-};
 
-// Never remove vertices from adjacency lists with VL==vecS
-template <typename OEL, typename D, typename VP, typename EP, typename GP, typename EL>
-struct graph_mutability_traits< adjacency_list<OEL,vecS,D,VP,EP,GP,EL> > {
-    typedef add_only_property_graph_tag category;
-};
-#undef ADJLIST_PARAMS
-#undef ADJLIST
-
-template <typename VP, typename EP, typename GP> class directed_graph;
-template <typename VP, typename EP, typename GP>
-struct graph_mutability_traits< directed_graph<VP, EP, GP> > {
-    typedef mutable_property_graph_tag category;
-};
-
-template <typename VP, typename EP, typename GP> class undirected_graph;
-template <typename VP, typename EP, typename GP>
-struct graph_mutability_traits< undirected_graph<VP, EP, GP> > {
-    typedef mutable_property_graph_tag category;
-};
-
-#define ADJMAT_PARAMS \
-    typename D, typename VP, typename EP, typename GP, typename A
-#define ADJMAT adjacency_matrix<D,VP,EP,GP,A>
-template <ADJMAT_PARAMS> class adjacency_matrix;
-template <ADJMAT_PARAMS>
-struct graph_mutability_traits<ADJMAT> {
-    typedef mutable_edge_property_graph_tag category;
-};
-#undef ADJMAT_PARAMS
-#undef ADJMAT
 //@}
 
 } // namespace boost

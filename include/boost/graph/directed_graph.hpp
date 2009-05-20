@@ -667,6 +667,12 @@ inline void
 renumber_indices(DIRECTED_GRAPH& g)
 { g.renumber_indices(); }
 
+// Mutability Traits
+template <DIRECTED_GRAPH_PARAMS>
+struct graph_mutability_traits<DIRECTED_GRAPH> {
+    typedef mutable_property_graph_tag category;
+};
+
 #undef DIRECTED_GRAPH_PARAMS
 #undef DIRECTED_GRAPH
 

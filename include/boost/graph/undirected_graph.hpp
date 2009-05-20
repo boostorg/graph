@@ -675,6 +675,12 @@ inline void
 renumber_indices(UNDIRECTED_GRAPH& g)
 { g.renumber_indices(); }
 
+// Mutability Traits
+template <UNDIRECTED_GRAPH_PARAMS>
+struct graph_mutability_traits<UNDIRECTED_GRAPH> {
+    typedef mutable_property_graph_tag category;
+};
+
 #undef UNDIRECTED_GRAPH_PARAMS
 #undef UNDIRECTED_GRAPH
 

@@ -37,6 +37,7 @@
 #endif
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/mpl/if.hpp>
@@ -605,6 +606,24 @@ namespace boost {
   }
 
 #endif
+
+// Mutability Traits
+#define ADJLIST_PARAMS \
+    typename OEL, typename VL, typename D, typename VP, typename EP, \
+    typename GP, typename EL
+#define ADJLIST adjacency_list<OEL,VL,D,VP,EP,GP,EL>
+template <ADJLIST_PARAMS>
+struct graph_mutability_traits<ADJLIST> {
+    typedef mutable_property_graph_tag category;
+};
+
+// Can't remove vertices from adjacency lists with VL==vecS
+template <typename OEL, typename D, typename VP, typename EP, typename GP, typename EL>
+struct graph_mutability_traits< adjacency_list<OEL,vecS,D,VP,EP,GP,EL> > {
+    typedef add_only_property_graph_tag category;
+};
+#undef ADJLIST_PARAMS
+#undef ADJLIST
 
 
 } // namespace boost
