@@ -237,7 +237,7 @@ namespace boost {
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type&
     operator[](Descriptor x)
-    { 
+    {
       if (m_parent == 0) return m_graph[x];
       else return root().m_graph[local_to_global(x)];
     }
@@ -245,7 +245,7 @@ namespace boost {
     template<typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type const&
     operator[](Descriptor x) const
-    { 
+    {
       if (m_parent == 0) return m_graph[x];
       else return root().m_graph[local_to_global(x)];
     }
@@ -254,7 +254,7 @@ namespace boost {
     //  private:
     typedef typename property_map<Graph, edge_index_t>::type EdgeIndexMap;
     typedef typename property_traits<EdgeIndexMap>::value_type edge_index_type;
-    BOOST_STATIC_ASSERT((!is_same<edge_index_type, 
+    BOOST_STATIC_ASSERT((!is_same<edge_index_type,
                         boost::detail::error_property_not_found>::value));
 
     Graph m_graph;
@@ -884,6 +884,15 @@ namespace boost {
   {
     return vertex(n, g.m_graph);
   }
+
+  //===========================================================================
+  // Mutability Traits
+  // Just pull the mutability traits form the underlying graph. Note that this
+  // will probably fail (badly) for labeled graphs.
+  template <typename G>
+  struct graph_mutability_traits< subgraph<G> > {
+      typedef typename graph_mutability_traits<G>::category category;
+  };
 
 } // namespace boost
 

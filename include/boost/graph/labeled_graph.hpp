@@ -775,7 +775,9 @@ remove_edge_by_label(typename LABELED_GRAPH::label_type const& u,
 
 /** @name Labeled Mutable Graph
  * The labeled mutable graph hides the add_ and remove_ vertex functions from
- * the mutable graph concept.
+ * the mutable graph concept. Note that the remove_vertex is hidden because
+ * removing the vertex without its key could leave a dangling reference in
+ * the map.
  */
 //@{
 template <LABELED_GRAPH_PARAMS>
