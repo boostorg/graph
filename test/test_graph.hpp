@@ -20,6 +20,7 @@
 #include <boost/assert.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 #include "typestr.hpp"
 
@@ -87,23 +88,26 @@ struct EdgeBundle {
 
 template <typename Graph>
 void test_graph(Graph& g) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((GraphConcept<Graph>));
+
     std::cout << typestr(g) << "\n";
 
     // Define a bunch of tags for the graph.
-    typename boost::graph_has_add_vertex<Graph>::type can_add_vertex;
-    typename boost::graph_has_remove_vertex<Graph>::type can_remove_vertex;
-    typename boost::is_labeled_graph<Graph>::type is_labeled;
-    typename boost::is_directed_unidirectional_graph<Graph>::type is_directed;
-    typename boost::is_directed_bidirectional_graph<Graph>::type is_bidirectional;
-    typename boost::is_undirected_graph<Graph>::type is_undirected;
+    typename graph_has_add_vertex<Graph>::type can_add_vertex;
+    typename graph_has_remove_vertex<Graph>::type can_remove_vertex;
+    typename is_labeled_graph<Graph>::type is_labeled;
+    typename is_directed_unidirectional_graph<Graph>::type is_directed;
+    typename is_directed_bidirectional_graph<Graph>::type is_bidirectional;
+    typename is_undirected_graph<Graph>::type is_undirected;
 
     // Test constrution and vertex list.
     build_graph(g, can_add_vertex, is_labeled);
     test_vertex_list_graph(g);
 
     // Collect the vertices for an easy method of "naming" them.
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename boost::graph_traits<Graph>::vertex_iterator VertexIterator;
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename graph_traits<Graph>::vertex_iterator VertexIterator;
     std::vector<Vertex> verts;
     std::pair<VertexIterator, VertexIterator> rng = vertices(g);
     for( ; rng.first != rng.second; ++rng.first) {

@@ -21,19 +21,27 @@ void destroy_graph(Graph& g, VertexSet const& verts, Remove, Label)
 // This matches MutableGraph, so just remove a vertex and then clear.
 template <typename Graph, typename VertexSet>
 void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::mpl::false_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept<Graph>));
+
     std::cout << "...destroy_normal\n";
     // Remove the roof vertex
-    boost::remove_vertex(verts[0], g);
-    BOOST_ASSERT(boost::num_vertices(g) == N - 1);
+    remove_vertex(verts[0], g);
+    BOOST_ASSERT(num_vertices(g) == N - 1);
 }
 
 // This will match labeled graphs.
 template <typename Graph, typename VertexSet>
 void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::false_, boost::mpl::true_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+    // function_requires< VeretexMutableGraphConcept<Graph> >();
+
     std::cout << "...destroy_labeled\n";
     // Remove the roof vertex
-    boost::remove_vertex(0, g);
-    BOOST_ASSERT(boost::num_vertices(g) == N - 1);
+    remove_vertex(0, g);
+    BOOST_ASSERT(num_vertices(g) == N - 1);
 }
 //@}
 
@@ -50,29 +58,37 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::false_, boost::
 
 template <typename Graph, typename VertexSet>
 void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
+
     std::cout << "...disconnect_normal\n";
-    typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.
-    Edge e = boost::edge(verts[5], verts[3], g).first;
-    boost::remove_edge(e, g);
-    BOOST_ASSERT(boost::num_edges(g) == M - 1);
+    Edge e = edge(verts[5], verts[3], g).first;
+    remove_edge(e, g);
+    BOOST_ASSERT(num_edges(g) == M - 1);
 
     // Remove the "floor" edge from the house.
-    boost::remove_edge(verts[3], verts[2], g);
-    BOOST_ASSERT(boost::num_edges(g) == M - 2);
+    remove_edge(verts[3], verts[2], g);
+    BOOST_ASSERT(num_edges(g) == M - 2);
 
     // Fully disconnect the roof vertex.
     clear_vertex(verts[0], g);
-    BOOST_ASSERT(boost::num_edges(g) == M - 4);
+    BOOST_ASSERT(num_edges(g) == M - 4);
 
     // What happens if we try to remove an edge that doesn't exist?
-    boost::remove_edge(verts[5], verts[0], g);
-    BOOST_ASSERT(boost::num_edges(g) == M - 4);
+    remove_edge(verts[5], verts[0], g);
+    BOOST_ASSERT(num_edges(g) == M - 4);
 }
 
 template <typename Graph, typename VertexSet>
 void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::true_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
+    // BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
+
     std::cout << "...disconnect_labeled\n";
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
 

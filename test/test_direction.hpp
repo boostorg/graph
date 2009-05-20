@@ -16,23 +16,26 @@
 //@{
 template <typename Graph, typename VertexSet>
 void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
+
     std::cout << "...test_outdirected_graph\n";
-    typedef typename boost::graph_traits<Graph>::out_edge_iterator OutIter;
+    typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;
 
     // Collect all of the out edge ranges from the graph.
     OutSet outs(verts.size());
     for(size_t i = 0; i < verts.size(); ++i) {
-        outs[i] = boost::out_edges(verts[i], g);
+        outs[i] = out_edges(verts[i], g);
     }
 
-    BOOST_ASSERT(boost::distance(outs[0]) == 0);
-    BOOST_ASSERT(boost::distance(outs[1]) == 1);
-    BOOST_ASSERT(boost::distance(outs[2]) == 1);
-    BOOST_ASSERT(boost::distance(outs[3]) == 2);
-    BOOST_ASSERT(boost::distance(outs[4]) == 2);
-    BOOST_ASSERT(boost::distance(outs[5]) == 1);
+    BOOST_ASSERT(distance(outs[0]) == 0);
+    BOOST_ASSERT(distance(outs[1]) == 1);
+    BOOST_ASSERT(distance(outs[2]) == 1);
+    BOOST_ASSERT(distance(outs[3]) == 2);
+    BOOST_ASSERT(distance(outs[4]) == 2);
+    BOOST_ASSERT(distance(outs[5]) == 1);
 
     // Verify that the edges are actually correct.
     // TODO: Find a better way of testing connectivity with multiple edges.
@@ -56,15 +59,18 @@ void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::
 //@{
 template <typename Graph, typename VertexSet>
 void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<Graph>));
+
     std::cout << "...test_indirected_graph\n";
-    typedef typename boost::graph_traits<Graph>::in_edge_iterator InIter;
+    typedef typename graph_traits<Graph>::in_edge_iterator InIter;
     typedef std::pair<InIter, InIter> InRange;
     typedef std::vector<InRange> InSet;
 
     // Collect all of the in edges from the graph.
     InSet ins(verts.size());
     for(size_t i = 0; i < verts.size(); ++i) {
-        ins[i] = boost::in_edges(verts[i], g);
+        ins[i] = in_edges(verts[i], g);
     }
 
     BOOST_ASSERT(distance(ins[0]) == 2);
@@ -91,25 +97,28 @@ void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::f
  */
 template <typename Graph, typename VertexSet>
 void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::true_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
+
     std::cout << "...test_undirected_graph\n";
-    typedef typename boost::graph_traits<Graph>::out_edge_iterator OutIter;
+    typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;
 
     // The set of out edges is the same as the set of incident edges.
     OutSet outs(verts.size());
     for(size_t i = 0; i < verts.size(); ++i) {
-        outs[i] = boost::out_edges(verts[i], g);
+        outs[i] = out_edges(verts[i], g);
     }
 
     // TODO: Actually test the end connections to ensure that these are
     // definitely correct.
-    BOOST_ASSERT(boost::distance(outs[0]) == 2);
-    BOOST_ASSERT(boost::distance(outs[1]) == 3);
-    BOOST_ASSERT(boost::distance(outs[2]) == 2);
-    BOOST_ASSERT(boost::distance(outs[3]) == 3);
-    BOOST_ASSERT(boost::distance(outs[4]) == 3);
-    BOOST_ASSERT(boost::distance(outs[5]) == 1);
+    BOOST_ASSERT(distance(outs[0]) == 2);
+    BOOST_ASSERT(distance(outs[1]) == 3);
+    BOOST_ASSERT(distance(outs[2]) == 2);
+    BOOST_ASSERT(distance(outs[3]) == 3);
+    BOOST_ASSERT(distance(outs[4]) == 3);
+    BOOST_ASSERT(distance(outs[5]) == 1);
 }
 
 template <typename Graph, typename VertexSet>
