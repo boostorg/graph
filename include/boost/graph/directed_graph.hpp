@@ -588,8 +588,7 @@ set_property(DIRECTED_GRAPH& g, Property p, Value v)
 
 template <DIRECTED_GRAPH_PARAMS, typename Type, typename Bundle>
 inline typename property_map<DIRECTED_GRAPH, Type Bundle::*>::type
-get(Type Bundle::* p, DIRECTED_GRAPH& g)
-{
+get(Type Bundle::* p, DIRECTED_GRAPH& g) {
     typedef typename property_map<
         DIRECTED_GRAPH, Type Bundle::*
     >::type return_type;
@@ -598,8 +597,7 @@ get(Type Bundle::* p, DIRECTED_GRAPH& g)
 
 template <DIRECTED_GRAPH_PARAMS, typename Type, typename Bundle>
 inline typename property_map<DIRECTED_GRAPH, Type Bundle::*>::const_type
-get(Type Bundle::* p, DIRECTED_GRAPH const& g)
-{
+get(Type Bundle::* p, DIRECTED_GRAPH const& g) {
     typedef typename property_map<
         DIRECTED_GRAPH, Type Bundle::*
     >::const_type return_type;
@@ -613,7 +611,6 @@ inline Type get(Type Bundle::* p, DIRECTED_GRAPH const& g, Key const& k)
 template <DIRECTED_GRAPH_PARAMS, typename Type, typename Bundle, typename Key, typename Value>
 inline void put(Type Bundle::* p, DIRECTED_GRAPH& g, Key const& k, Value const& v)
 { put(p, g.impl(), k, v); }
-
 #endif
 
 // Vertex index management

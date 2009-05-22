@@ -8,6 +8,8 @@
 
 #define BOOST_NO_HASH
 
+#include "typestr.hpp"
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/undirected_graph.hpp>
@@ -154,7 +156,7 @@ int main()
         typedef adjacency_list<vecS, vecS, directedS, VertexBundle, EdgeProp> BaseGraph;
         typedef subgraph<BaseGraph> Graph;
         Graph g;
-//         test_graph(g);
+        test_graph(g);
     }
 }
 

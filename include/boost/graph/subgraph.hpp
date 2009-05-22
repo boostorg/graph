@@ -841,37 +841,46 @@ namespace boost {
   }
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-  template<typename TG, typename T, typename Bundle>
-  inline
-  typename property_map<subgraph<TG>, T Bundle::*>::type
-  get(T Bundle::* p, subgraph<TG>& sg)
-  {
-    typedef typename property_map<subgraph<TG>, T Bundle::*>::type
-      result_type;
-    return result_type(&sg, p);
-  }
+    template<typename G, typename T, typename Bundle>
+    inline typename property_map<subgraph<G>, T Bundle::*>::type
+    get(T Bundle::* p, subgraph<G>& g) {
+        typedef typename property_map<subgraph<G>, T Bundle::*>::type Map;
+        return Map(&g, p);
+    }
 
+    template<typename G, typename T, typename Bundle>
+    inline typename property_map<subgraph<G>, T Bundle::*>::const_type
+    get(T Bundle::* p, subgraph<G> const& g) {
+        typedef typename property_map<subgraph<G>, T Bundle::*>::const_type Map;
+        return Map(&g, p);
+    }
+
+    template <typename Graph, typename Type, typename Bundle, typename Key>
+    inline Type get(Type Bundle::* p, subgraph<Graph> const& g, Key const& k)
+    { return get(get(p, g), k); }
+
+    template <
+        typename Graph, typename Type, typename Bundle, typename Key,
+        typename Value>
+    inline void put(Type Bundle::* p, Graph& g, Key const& k, Value const& v)
+    { put(get(p, g), k, v); }
 #endif
 
   template <typename G, typename Property, typename Key, typename Value>
-  void
-  put(Property, subgraph<G>& g, const Key& k, const Value& val)
-  {
+  void put(Property, subgraph<G>& g, const Key& k, const Value& val) {
     typedef typename property_map< subgraph<G>, Property>::type PMap;
     PMap pmap(&g);
     pmap[k] = val;
   }
 
   template <typename G, typename Tag>
-  inline
-  typename graph_property<G, Tag>::type&
+  inline typename graph_property<G, Tag>::type&
   get_property(subgraph<G>& g, Tag tag) {
     return get_property(g.m_graph, tag);
   }
 
   template <typename G, typename Tag>
-  inline
-  const typename graph_property<G, Tag>::type&
+  inline const typename graph_property<G, Tag>::type&
   get_property(const subgraph<G>& g, Tag tag) {
     return get_property(g.m_graph, tag);
   }
