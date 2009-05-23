@@ -353,6 +353,15 @@ int test_main(int argc, char* argv[])
   matching_test<undirected_list_graph>(10, "adjacency_list (using lists)");
   matching_test<undirected_adjacency_matrix_graph>(10, "adjacency_matrix");
 
+  matching_test<undirected_graph>(20, "adjacency_list (using vectors)");
+  matching_test<undirected_list_graph>(20, "adjacency_list (using lists)");
+  matching_test<undirected_adjacency_matrix_graph>(20, "adjacency_matrix");
+
+  matching_test<undirected_graph>(21, "adjacency_list (using vectors)");
+  matching_test<undirected_list_graph>(21, "adjacency_list (using lists)");
+  matching_test<undirected_adjacency_matrix_graph>(21, "adjacency_matrix");
+
+#if 0
   matching_test<undirected_graph>(50, "adjacency_list (using vectors)");
   matching_test<undirected_list_graph>(50, "adjacency_list (using lists)");
   matching_test<undirected_adjacency_matrix_graph>(50, "adjacency_matrix");
@@ -360,6 +369,7 @@ int test_main(int argc, char* argv[])
   matching_test<undirected_graph>(51, "adjacency_list (using vectors)");
   matching_test<undirected_list_graph>(51, "adjacency_list (using lists)");
   matching_test<undirected_adjacency_matrix_graph>(51, "adjacency_matrix");
+#endif
 
   return 0;
 }
