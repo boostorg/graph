@@ -11,6 +11,7 @@
 #define BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
 
 #include <boost/graph/properties.hpp>
+#include <boost/ref.hpp>
 
 namespace boost {
 
@@ -40,14 +41,6 @@ namespace boost {
   struct iterations_t { };
   struct diameter_range_t { };
   struct learning_constant_range_t { };
-
-  namespace detail {
-    template <class T>
-    struct wrap_ref {
-      wrap_ref(T& r) : ref(r) {}
-      T& ref;
-    };
-  }
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params : public Base
@@ -245,11 +238,11 @@ namespace boost {
     }
 
     template <typename Buffer>
-    bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self>
+    bgl_named_params<boost::reference_wrapper<Buffer>, buffer_param_t, self>
     buffer(Buffer& b) const {
-      typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t, self> 
+      typedef bgl_named_params<boost::reference_wrapper<Buffer>, buffer_param_t, self> 
         Params;
-      return Params(detail::wrap_ref<Buffer>(b), *this);
+      return Params(boost::ref(b), *this);
     }
 
     template <typename Copier>
@@ -547,10 +540,10 @@ namespace boost {
   }
 
   template <typename Buffer>
-  bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t>
+  bgl_named_params<boost::reference_wrapper<Buffer>, buffer_param_t>
   buffer(Buffer& b) {
-    typedef bgl_named_params<detail::wrap_ref<Buffer>, buffer_param_t> Params;
-    return Params(detail::wrap_ref<Buffer>(b));
+    typedef bgl_named_params<boost::reference_wrapper<Buffer>, buffer_param_t> Params;
+    return Params(boost::ref(b));
   }
 
   template <typename Copier>

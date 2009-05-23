@@ -227,10 +227,9 @@ namespace boost {
       typedef typename Traits::vertex_descriptor Vertex;
       typedef boost::queue<Vertex> queue_t;
       queue_t Q;
-      detail::wrap_ref<queue_t> Qref(Q);
       breadth_first_search
         (g, s,
-         choose_param(get_param(params, buffer_param_t()), Qref).ref,
+         choose_param(get_param(params, buffer_param_t()), boost::ref(Q)).get(),
          vis, color);
     }
 
@@ -333,11 +332,10 @@ namespace boost {
     typedef typename Traits::vertex_descriptor vertex_descriptor;
     typedef boost::queue<vertex_descriptor> queue_t;
     queue_t Q;
-    detail::wrap_ref<queue_t> Qref(Q);
 
     breadth_first_visit
       (ng, s,
-       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+       choose_param(get_param(params, buffer_param_t()), boost::ref(Q)).get(),
        choose_param(get_param(params, graph_visitor),
                     make_bfs_visitor(null_visitor())),
        choose_pmap(get_param(params, vertex_color), ng, vertex_color)

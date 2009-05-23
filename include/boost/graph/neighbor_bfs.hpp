@@ -17,6 +17,7 @@
   (for directed graphs only. use normal BFS for undirected graphs)
 */
 #include <boost/config.hpp>
+#include <boost/ref.hpp>
 #include <vector>
 #include <boost/pending/queue.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -211,7 +212,6 @@ namespace boost {
       typedef typename Traits::vertex_descriptor Vertex;
       typedef boost::queue<Vertex> queue_t;
       queue_t Q;
-      detail::wrap_ref<queue_t> Qref(Q);
       // Initialization
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
@@ -222,7 +222,7 @@ namespace boost {
       }
       neighbor_bfs_impl
         (g, s, 
-         choose_param(get_param(params, buffer_param_t()), Qref).ref,
+         choose_param(get_param(params, buffer_param_t()), boost::ref(Q)).get(),
          vis, color);
     }
 
@@ -306,11 +306,10 @@ namespace boost {
     // Buffer default
     typedef boost::queue<typename Traits::vertex_descriptor> queue_t;
     queue_t Q;
-    detail::wrap_ref<queue_t> Qref(Q);
 
     detail::neighbor_bfs_impl
       (g, s,
-       choose_param(get_param(params, buffer_param_t()), Qref).ref,
+       choose_param(get_param(params, buffer_param_t()), boost::ref(Q)).get(),
        choose_param(get_param(params, graph_visitor),
                     make_neighbor_bfs_visitor(null_visitor())),
        choose_pmap(get_param(params, vertex_color), g, vertex_color)
