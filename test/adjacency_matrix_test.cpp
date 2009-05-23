@@ -42,6 +42,12 @@
 
 #include <boost/test/minimal.hpp>
 
+#include <vector>
+#include <algorithm> // For std::sort
+#include <boost/type_traits/is_convertible.hpp>
+
+#include <boost/graph/iteration_macros.hpp>
+
 template<typename Graph1, typename Graph2>
 void run_test()
 {
@@ -194,6 +200,41 @@ boost::add_edge(boost::vertex(1, g1), boost::vertex(2, g1), g1);
         BOOST_CHECK(boost::get(index_map1, boost::target(*iei1, g1)) == boost::get(index_map2, boost::target(*iei2, g2)));
       }
    }
+
+   // Test construction from a range of pairs
+   std::vector<std::pair<int, int> > edge_pairs_g1;
+   BGL_FORALL_EDGES_T(e, g1, Graph1) {
+     edge_pairs_g1.push_back(
+       std::make_pair(get(index_map1, source(e, g1)),
+                      get(index_map1, target(e, g1))));
+   }
+   Graph2 g3(edge_pairs_g1.begin(), edge_pairs_g1.end(), num_vertices(g1));
+   BOOST_CHECK(num_vertices(g1) == num_vertices(g3));
+   std::vector<std::pair<int, int> > edge_pairs_g3;
+   IndexMap2 index_map3 = boost::get(boost::vertex_index_t(), g3);
+   BGL_FORALL_EDGES_T(e, g3, Graph2) {
+     edge_pairs_g3.push_back(
+       std::make_pair(get(index_map3, source(e, g3)),
+                      get(index_map3, target(e, g3))));
+   }
+   // Normalize the edge pairs for comparison
+   if (boost::is_convertible<typename boost::graph_traits<Graph1>::directed_category*, boost::undirected_tag*>::value || boost::is_convertible<typename boost::graph_traits<Graph2>::directed_category*, boost::undirected_tag*>::value) {
+     for (size_t i = 0; i < edge_pairs_g1.size(); ++i) {
+       if (edge_pairs_g1[i].first < edge_pairs_g1[i].second) {
+         std::swap(edge_pairs_g1[i].first, edge_pairs_g1[i].second);
+       }
+     }
+     for (size_t i = 0; i < edge_pairs_g3.size(); ++i) {
+       if (edge_pairs_g3[i].first < edge_pairs_g3[i].second) {
+         std::swap(edge_pairs_g3[i].first, edge_pairs_g3[i].second);
+       }
+     }
+   }
+   std::sort(edge_pairs_g1.begin(), edge_pairs_g1.end());
+   std::sort(edge_pairs_g3.begin(), edge_pairs_g3.end());
+   edge_pairs_g1.erase(std::unique(edge_pairs_g1.begin(), edge_pairs_g1.end()), edge_pairs_g1.end());
+   edge_pairs_g3.erase(std::unique(edge_pairs_g3.begin(), edge_pairs_g3.end()), edge_pairs_g3.end());
+   BOOST_CHECK(edge_pairs_g1 == edge_pairs_g3);
 }
 
 template <typename Graph>
