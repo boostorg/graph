@@ -15,6 +15,9 @@
   <key id="d2" for="edge" attr.name="weight" attr.type="double">
     <default>0.0</default>
   </key>
+  <key id="d3" for="node" attr.name="name" attr.type="string">
+    <default>hello</default>
+  </key>
 
   <graph id="G" edgedefault="directed">
     <node id="n0"/>
@@ -23,7 +26,9 @@
       <data key="d1">100</data>
     </node>
     <node id="n3"/>
-    <node id="n4"/>
+    <node id="n4">
+      <data key="d3">foo&lt;</data>
+    </node>
     <node id="n5"/>
     <node id="n6">
         <data key="d1">0</data>

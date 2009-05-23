@@ -29,6 +29,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphml.hpp>
 #include <fstream>
+#include <string>
 
 using namespace std;
 using namespace boost;
@@ -36,12 +37,14 @@ using namespace boost;
 int main(int argc, char** argv)
 {
     typedef adjacency_list<vecS,vecS,directedS, 
-                           property<vertex_color_t,int>,
+                           property<vertex_color_t,int,
+                             property<vertex_name_t,string> >,
                            property<edge_weight_t,double> > graph_t;
     graph_t g;
     dynamic_properties dp;
     dp.property("foo",get(vertex_color_t(),g));
     dp.property("weight",get(edge_weight_t(),g));
+    dp.property("name",get(vertex_name_t(),g));
 
     ifstream ifile(argv[1]);
     read_graphml(ifile, g, dp);
@@ -62,6 +65,7 @@ int main(int argc, char** argv)
     dynamic_properties dp2;
     dp2.property("foo",get(vertex_color_t(),g2));
     dp2.property("weight",get(edge_weight_t(),g2));
+    dp2.property("name",get(vertex_name_t(),g2));
     ifile.open("graphml_test_out.xml");
     read_graphml(ifile, g2, dp2);
     ifile.close();
