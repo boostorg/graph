@@ -12,6 +12,12 @@
 
 #include <boost/graph/properties.hpp>
 #include <boost/ref.hpp>
+#include <boost/parameter/name.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/not.hpp>
+#include <boost/type_traits/add_reference.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -53,7 +59,6 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(edge_centrality_map, edge_centrality) \
     BOOST_BGL_ONE_PARAM_CREF(centrality_map, vertex_centrality) \
     BOOST_BGL_ONE_PARAM_CREF(color_map, vertex_color) \
-    BOOST_BGL_ONE_PARAM_CREF(vertex_color_map, vertex_color) \
     BOOST_BGL_ONE_PARAM_CREF(edge_color_map, edge_color) \
     BOOST_BGL_ONE_PARAM_CREF(capacity_map, edge_capacity) \
     BOOST_BGL_ONE_PARAM_CREF(residual_capacity_map, edge_residual_capacity) \
@@ -120,6 +125,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
+
+    // Duplicate
+    template <typename PType>
+    bgl_named_params<PType, vertex_color_t, self>
+    vertex_color_map(const PType& p) const {return this->color_map(p);}
   };
 
 #define BOOST_BGL_ONE_PARAM_REF(name, key) \
@@ -142,6 +152,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
 #undef BOOST_BGL_ONE_PARAM_REF
 #undef BOOST_BGL_ONE_PARAM_CREF
+
+  // Duplicate
+  template <typename PType>
+  bgl_named_params<PType, vertex_color_t>
+  vertex_color_map(const PType& p) {return color_map(p);}
 
   namespace detail {
     struct unused_tag_type {};
@@ -290,6 +305,199 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     typedef typename 
       detail::choose_pmap_helper<Param,Graph,PropertyTag>::Selector Choice;
     return Choice::apply(p, g, tag);
+  }
+
+  // Declare all new tags
+  namespace graph {
+    namespace keywords {
+#define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
+#define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
+      BOOST_BGL_DECLARE_NAMED_PARAMS
+#undef BOOST_BGL_ONE_PARAM_REF
+#undef BOOST_BGL_ONE_PARAM_CREF
+    }
+  }
+
+  namespace detail {
+    template <typename Tag> struct convert_one_keyword {};
+#define BOOST_BGL_ONE_PARAM_REF(name, key) \
+    template <> \
+    struct convert_one_keyword<BOOST_PP_CAT(key, _t)> { \
+      typedef boost::graph::keywords::tag::name type; \
+    };
+#define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_BGL_ONE_PARAM_REF(name, key)
+    BOOST_BGL_DECLARE_NAMED_PARAMS
+#undef BOOST_BGL_ONE_PARAM_REF
+#undef BOOST_BGL_ONE_PARAM_CREF
+
+    template <typename T>
+    struct convert_bgl_params_to_boost_parameter {
+      typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
+      typedef boost::parameter::aux::tagged_argument<new_kw, const typename T::value_type> tagged_arg_type;
+      typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
+      typedef boost::parameter::aux::arg_list<tagged_arg_type, typename rest_conv::type> type;
+      static type conv(const T& x) {
+        return type(tagged_arg_type(x.m_value), rest_conv::conv(x));
+      }
+    };
+
+    template <>
+    struct convert_bgl_params_to_boost_parameter<boost::no_property> {
+      typedef boost::parameter::aux::empty_arg_list type;
+      static type conv(const boost::no_property&) {return type();}
+    };
+
+    template <>
+    struct convert_bgl_params_to_boost_parameter<boost::no_named_parameters> {
+      typedef boost::parameter::aux::empty_arg_list type;
+      static type conv(const boost::no_property&) {return type();}
+    };
+
+    struct bgl_parameter_not_found_type {};
+
+    template <typename ArgPack, typename KeywordType>
+    struct parameter_exists : boost::mpl::not_<boost::is_same<typename boost::parameter::binding<ArgPack, KeywordType, bgl_parameter_not_found_type>::type, bgl_parameter_not_found_type> > {};
+  }
+
+#define BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(old_type, old_var) \
+  typedef typename boost::detail::convert_bgl_params_to_boost_parameter<old_type>::type arg_pack_type; \
+  arg_pack_type arg_pack = boost::detail::convert_bgl_params_to_boost_parameter<old_type>::conv(old_var);
+
+  namespace detail {
+
+    template <typename ArgType, typename Prop, typename Graph, bool Exists>
+    struct override_const_property_t {
+      typedef ArgType result_type;
+      result_type operator()(const Graph& g, const typename boost::add_reference<ArgType>::type a) const {return a;}
+    };
+
+    template <typename ArgType, typename Prop, typename Graph>
+    struct override_const_property_t<ArgType, Prop, Graph, false> {
+      typedef typename boost::property_map<Graph, Prop>::const_type result_type;
+      result_type operator()(const Graph& g, const ArgType& a) const {return get(Prop(), g);}
+    };
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    typename override_const_property_t<
+               typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+               Prop,
+               Graph,
+               boost::detail::parameter_exists<ArgPack, Tag>::value
+             >::result_type
+    override_const_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop prop) {
+    return override_const_property_t<
+             typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+             Prop,
+             Graph,
+             boost::detail::parameter_exists<ArgPack, Tag>::value
+           >()(g, ap[t | 0]);
+    }
+
+    template <typename ArgType, typename Prop, typename Graph, bool Exists>
+    struct override_property_t {
+      typedef ArgType result_type;
+      result_type operator()(const Graph& g, const typename boost::add_reference<ArgType>::type a) const {return a;}
+    };
+
+    template <typename ArgType, typename Prop, typename Graph>
+    struct override_property_t<ArgType, Prop, Graph, false> {
+      typedef typename boost::property_map<Graph, Prop>::type result_type;
+      result_type operator()(const Graph& g, const ArgType& a) const {return get(Prop(), g);}
+    };
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    typename override_property_t<
+               typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+               Prop,
+               Graph,
+               boost::detail::parameter_exists<ArgPack, Tag>::value
+             >::result_type
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop prop) {
+    return override_property_t<
+             typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+             Prop,
+             Graph,
+             boost::detail::parameter_exists<ArgPack, Tag>::value
+           >()(g, ap[t | 0]);
+    }
+
+  }
+
+  namespace detail {
+
+    template <bool Exists, typename Graph, typename ArgPack, typename Value, typename PM>
+    struct color_map_maker_helper {
+      typedef int data_type;
+      typedef PM map_type;
+      typedef std::pair<data_type, map_type> pm_pair_type;
+      static void make_pm_pair(const Graph&,
+                               Value,
+                               const PM& pm,
+                               const ArgPack&,
+                               pm_pair_type& result) {
+        result.second = pm;
+      }
+    };
+
+    template <typename Graph, typename ArgPack, typename Value, typename PM>
+    struct color_map_maker_helper<false, Graph, ArgPack, Value, PM> {
+      typedef typename boost::remove_const<
+        typename override_const_property_t<
+          typename boost::parameter::value_type<
+            ArgPack, boost::graph::keywords::tag::vertex_index_map, int>::type,
+          boost::vertex_index_t,
+          Graph,
+          boost::detail::parameter_exists<
+            ArgPack, boost::graph::keywords::tag::vertex_index_map>::value
+        >::result_type>::type vi_map_type;
+      typedef std::vector<Value> data_type;
+      typedef
+        boost::iterator_property_map<typename data_type::iterator, vi_map_type, Value>
+        map_type;
+      typedef std::pair<data_type, map_type> pm_pair_type;
+      static void make_pm_pair(const Graph& g,
+                               Value v,
+                               const PM&,
+                               const ArgPack& ap,
+                               pm_pair_type& result) {
+        result.first.clear();
+        result.first.resize(num_vertices(g), v);
+        result.second = map_type(
+                          result.first.begin(),
+                          override_const_property(
+                            ap,
+                            boost::graph::keywords::_vertex_index_map,
+                            g, vertex_index));
+      }
+    };
+
+    template <typename Graph, typename ArgPack>
+    struct color_map_maker {
+      BOOST_STATIC_CONSTANT(
+        bool,
+        has_color_map =
+          (parameter_exists<ArgPack, boost::graph::keywords::tag::color_map>
+           ::value));
+      typedef color_map_maker_helper<has_color_map, Graph, ArgPack, default_color_type,
+                                     typename boost::remove_const<
+                                       typename boost::parameter::value_type<
+                                                  ArgPack,
+                                                  boost::graph::keywords::tag::color_map,
+                                                  int
+                                                >::type
+                                              >::type> helper;
+      typedef typename helper::map_type map_type;
+      typedef typename helper::pm_pair_type pm_pair_type;
+      static void make_pm_pair(const Graph& g, const ArgPack& ap, pm_pair_type& result) {
+        helper::make_pm_pair(g, white_color, ap[boost::graph::keywords::_color_map | 0], ap, result);
+      }
+    };
+
+#define BOOST_GRAPH_MAKE_COLOR_MAP_IF_NEEDED(GraphT, ArgPackT, graph, arg_pack, color_map) \
+    typename boost::detail::color_map_maker<GraphT, ArgPackT>::pm_pair_type BOOST_PP_CAT(cm_pair_, __LINE__); \
+    boost::detail::color_map_maker<GraphT, ArgPackT>::make_pm_pair(graph, arg_pack, BOOST_PP_CAT(cm_pair_, __LINE__)); \
+    typename boost::detail::color_map_maker<GraphT, ArgPackT>::map_type& color_map = BOOST_PP_CAT(cm_pair_, __LINE__).second;
+
   }
 
 } // namespace boost
