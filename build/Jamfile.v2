@@ -47,9 +47,10 @@ explicit graphml ;
 
 lib boost_graph
     :
-    read_graphviz_spirit.cpp
+    read_graphviz_new.cpp
     graphml
     :
+    <library>../../regex/build//boost_regex
     <define>BOOST_GRAPH_NO_LIB=1
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
     # # Intel compiler ICEs if we turn optimization on

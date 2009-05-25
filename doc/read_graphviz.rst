@@ -6,7 +6,7 @@
    :align: middle
    :alt: Boost
 
-.. Copyright (c) 2005 Trustees of Indiana University
+.. Copyright (c) 2005-2009 Trustees of Indiana University
     Distributed under the Boost Software License, Version 1.0.
     (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -21,8 +21,13 @@ __ ../../../index.htm
                        dynamic_properties& dp, 
                        const std::string& node_id = "node_id");
   
-    template <typename BidirectionalIterator, typename MutableGraph>
-    bool read_graphviz(BidirectionalIterator begin, BidirectionalIterator end,
+    template <typename MutableGraph>
+    bool read_graphviz(std::string& str, MutableGraph& graph,
+                       dynamic_properties& dp, 
+                       const std::string& node_id = "node_id");
+  
+    template <typename InputIterator, typename MutableGraph>
+    bool read_graphviz(InputIterator begin, InputIterator end,
                        MutableGraph& graph, dynamic_properties& dp, 
                        const std::string& node_id = "node_id");
   
@@ -33,12 +38,6 @@ The ``read_graphviz`` function interprets a graph described using the
 GraphViz_ DOT language and builds a BGL graph that captures that
 description.  Using these functions, you can initialize a graph using
 data stored as text.
-
-The ``BOOST_GRAPH_USE_SPIRIT_PARSER`` macro may be defined before including
-``<boost/graph/graphviz.hpp>`` to include a previous parser implementation,
-with the same interface, that uses Spirit for its implementation.  The main
-advantage of that version is that it supports subgraphs to a limited extent,
-while the new parser does not support them at all.
 
 The DOT language can specify both directed and undirected graphs, and
 ``read_graphviz`` differentiates between the two. One must pass
@@ -52,11 +51,11 @@ takes a dynamic_properties_ object and operates on its collection of
 property maps.  The reader passes all the properties encountered to
 this object, using the GraphViz string keys as the property keys.
 Furthermore, ``read_graphviz`` stores node identifier names under the
-vertex property map named node_id. 
+vertex property map named ``node_id``. 
 
 Requirements:
  - The type of the graph must model the `Mutable Graph`_ concept.
- - The type of the iterator must model the `Bidirectional Iterator`_
+ - The type of the iterator must model the `Input Iterator`_
    concept.
  - The property map value types must be default-constructible.
 
@@ -96,6 +95,14 @@ Exceptions
     virtual const char* what() const throw();
   };
 
+  struct bad_graphviz_syntax: public graph_exception {
+    std::string errmsg;
+
+    bad_graphviz_syntax(const std::string&);
+    virtual ~bad_graphviz_syntax() throw();
+    virtual const char* what() const throw();
+  };
+
 Under certain circumstances, ``read_graphviz`` will throw one of the
 above exceptions.  The three concrete exceptions can all be caught
 using the general ``graph_exception`` moniker when greater precision
@@ -119,6 +126,10 @@ The ``undirected_graph_error`` exception occurs when a directed graph
 type is passed to ``read_graph`` but the textual representation of the
 graph is undirected, as indicated by the ``graph`` keyword in the DOT
 language.
+
+The ``bad_graphviz_syntax`` exception occurs when the graph input is not a
+valid GraphViz graph.
+
 
 Example
 -------
@@ -171,8 +182,8 @@ GraphViz reader to populate an ``adjacency_list`` graph
 Building the GraphViz Readers
 -----------------------------
 To use the GraphViz readers, you will need to build and link against
-the "boost_regex" library. The library can be built by following the
-`Boost Jam Build Instructions`_ for the subdirectory ``libs/regex/build``.
+the "boost_graph" library. The library can be built by following the
+`Boost Jam Build Instructions`_ for the subdirectory ``libs/graph/build``.
 
 
 Notes
@@ -188,15 +199,12 @@ Notes
  - On successful reading of a graph, every vertex and edge will have
    an associated value for every respective edge and vertex property
    encountered while interpreting the graph.  These values will be set
-   using the ``dynamic_properties`` object.  Some properties may be
-   ``put`` multiple times during the course of reading in order to
-   ensure the same semantics as the GraphViz tools.  Those edges and
+   using the ``dynamic_properties`` object.  Those edges and
    vertices that are not explicitly given a value for a property (and that
    property has no default) will be
    given the default constructed value of the value type.  **Be sure
    that property map value types are default constructible.**
 
-..
  - ``read_graphviz`` treats subgraphs as syntactic sugar.  It does not
    reflect subgraphs as actual entities in the BGL.  Rather, they are
    used to shorten some edge definitions as well as to give a subset
@@ -204,10 +212,9 @@ Notes
    DOT graphs ``digraph { a -> subgraph {b -> c} -> e }`` and 
    ``digraph { a -> b -> e ; a -> c -> e ; b -> c}`` are equivalent.
 
-..
  - Subgraph IDs refer to subgraphs defined earlier in the graph
    description.  Undefined subgraphs behave as empty subgraphs
-   (``{}``).
+   (``{}``).  This is the same behavior as GraphViz.
 
 See Also
 --------
@@ -218,8 +225,6 @@ write_graphviz_
 Future Work
 -----------
 
- - Support for subgraphs (currently parsed but ignored).
-
  - Support for HTML strings.
 
  - Passing port information to BGL.
@@ -229,13 +234,12 @@ Future Work
  - Enforcement of the ``strict`` keyword (ignoring self-loops and parallel
    edges).
     
-..
  - Support for optional recognition of subgraphs as distinct entities.
 
 
 .. _GraphViz: http://graphviz.org/
 .. _`Mutable Graph`: MutableGraph.html
-.. _`Bidirectional Iterator`: http://www.sgi.com/tech/stl/BidirectionalIterator.html
+.. _`Input Iterator`: http://www.sgi.com/tech/stl/InputIterator.html
 .. _dynamic_properties: ../../property_map/doc/dynamic_property_map.html
 .. _write_graphviz: write-graphviz.html
 .. _Boost Jam Build Instructions: ../../../more/getting_started.html#Build_Install

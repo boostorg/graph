@@ -286,7 +286,7 @@ ul.auto-toc {
 <div class="document" id="logo-read-graphviz">
 <h1 class="title"><a class="reference external" href="../../../index.htm"><img align="middle" alt="Boost" class="align-middle" src="../../../boost.png" /></a> <tt class="docutils literal"><span class="pre">read_graphviz</span></tt></h1>
 
-<!-- Copyright (c) 2005 Trustees of Indiana University
+<!-- Copyright (c) 2005-2009 Trustees of Indiana University
 Distributed under the Boost Software License, Version 1.0.
 (See accompanying file LICENSE_1_0.txt or copy at
  http://www.boost.org/LICENSE_1_0.txt) -->
@@ -298,8 +298,13 @@ namespace boost {
                      dynamic_properties&amp; dp,
                      const std::string&amp; node_id = &quot;node_id&quot;);
 
-  template &lt;typename BidirectionalIterator, typename MutableGraph&gt;
-  bool read_graphviz(BidirectionalIterator begin, BidirectionalIterator end,
+  template &lt;typename MutableGraph&gt;
+  bool read_graphviz(std::string&amp; str, MutableGraph&amp; graph,
+                     dynamic_properties&amp; dp,
+                     const std::string&amp; node_id = &quot;node_id&quot;);
+
+  template &lt;typename InputIterator, typename MutableGraph&gt;
+  bool read_graphviz(InputIterator begin, InputIterator end,
                      MutableGraph&amp; graph, dynamic_properties&amp; dp,
                      const std::string&amp; node_id = &quot;node_id&quot;);
 
@@ -309,11 +314,6 @@ namespace boost {
 <a class="reference external" href="http://graphviz.org/">GraphViz</a> DOT language and builds a BGL graph that captures that
 description.  Using these functions, you can initialize a graph using
 data stored as text.</p>
-<p>The <tt class="docutils literal"><span class="pre">BOOST_GRAPH_USE_SPIRIT_PARSER</span></tt> macro may be defined before including
-<tt class="docutils literal"><span class="pre">&lt;boost/graph/graphviz.hpp&gt;</span></tt> to include a previous parser implementation,
-with the same interface, that uses Spirit for its implementation.  The main
-advantage of that version is that it supports subgraphs to a limited extent,
-while the new parser does not support them at all.</p>
 <p>The DOT language can specify both directed and undirected graphs, and
 <tt class="docutils literal"><span class="pre">read_graphviz</span></tt> differentiates between the two. One must pass
 <tt class="docutils literal"><span class="pre">read_graphviz</span></tt> an undirected graph when reading an undirected graph;
@@ -325,12 +325,12 @@ takes a <a class="reference external" href="../../property_map/doc/dynamic_prope
 property maps.  The reader passes all the properties encountered to
 this object, using the GraphViz string keys as the property keys.
 Furthermore, <tt class="docutils literal"><span class="pre">read_graphviz</span></tt> stores node identifier names under the
-vertex property map named node_id.</p>
+vertex property map named <tt class="docutils literal"><span class="pre">node_id</span></tt>.</p>
 <dl class="docutils">
 <dt>Requirements:</dt>
 <dd><ul class="first last simple">
 <li>The type of the graph must model the <a class="reference external" href="MutableGraph.html">Mutable Graph</a> concept.</li>
-<li>The type of the iterator must model the <a class="reference external" href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">Bidirectional Iterator</a>
+<li>The type of the iterator must model the <a class="reference external" href="http://www.sgi.com/tech/stl/InputIterator.html">Input Iterator</a>
 concept.</li>
 <li>The property map value types must be default-constructible.</li>
 </ul>
@@ -378,6 +378,14 @@ struct undirected_graph_error : public graph_exception {
   virtual ~undirected_graph_error() throw();
   virtual const char* what() const throw();
 };
+
+struct bad_graphviz_syntax: public graph_exception {
+  std::string errmsg;
+
+  bad_graphviz_syntax(const std::string&amp;);
+  virtual ~bad_graphviz_syntax() throw();
+  virtual const char* what() const throw();
+};
 </pre>
 <p>Under certain circumstances, <tt class="docutils literal"><span class="pre">read_graphviz</span></tt> will throw one of the
 above exceptions.  The three concrete exceptions can all be caught
@@ -398,6 +406,8 @@ language.</p>
 type is passed to <tt class="docutils literal"><span class="pre">read_graph</span></tt> but the textual representation of the
 graph is undirected, as indicated by the <tt class="docutils literal"><span class="pre">graph</span></tt> keyword in the DOT
 language.</p>
+<p>The <tt class="docutils literal"><span class="pre">bad_graphviz_syntax</span></tt> exception occurs when the graph input is not a
+valid GraphViz graph.</p>
 </div>
 <div class="section" id="example">
 <h1><a class="toc-backref" href="#id4">Example</a></h1>
@@ -446,8 +456,8 @@ bool status = read_graphviz(gvgraph,graph,dp,&quot;node_id&quot;);
 <div class="section" id="building-the-graphviz-readers">
 <h1><a class="toc-backref" href="#id5">Building the GraphViz Readers</a></h1>
 <p>To use the GraphViz readers, you will need to build and link against
-the &quot;boost_regex&quot; library. The library can be built by following the
-<a class="reference external" href="../../../more/getting_started.html#Build_Install">Boost Jam Build Instructions</a> for the subdirectory <tt class="docutils literal"><span class="pre">libs/regex/build</span></tt>.</p>
+the &quot;boost_graph&quot; library. The library can be built by following the
+<a class="reference external" href="../../../more/getting_started.html#Build_Install">Boost Jam Build Instructions</a> for the subdirectory <tt class="docutils literal"><span class="pre">libs/graph/build</span></tt>.</p>
 </div>
 <div class="section" id="notes">
 <h1><a class="toc-backref" href="#id6">Notes</a></h1>
@@ -462,24 +472,22 @@ corner cases that are not well specified.</li>
 <li>On successful reading of a graph, every vertex and edge will have
 an associated value for every respective edge and vertex property
 encountered while interpreting the graph.  These values will be set
-using the <tt class="docutils literal"><span class="pre">dynamic_properties</span></tt> object.  Some properties may be
-<tt class="docutils literal"><span class="pre">put</span></tt> multiple times during the course of reading in order to
-ensure the same semantics as the GraphViz tools.  Those edges and
+using the <tt class="docutils literal"><span class="pre">dynamic_properties</span></tt> object.  Those edges and
 vertices that are not explicitly given a value for a property (and that
 property has no default) will be
 given the default constructed value of the value type.  <strong>Be sure
 that property map value types are default constructible.</strong></li>
+<li><tt class="docutils literal"><span class="pre">read_graphviz</span></tt> treats subgraphs as syntactic sugar.  It does not
+reflect subgraphs as actual entities in the BGL.  Rather, they are
+used to shorten some edge definitions as well as to give a subset
+of all nodes or edges certain properties. For example, the
+DOT graphs <tt class="docutils literal"><span class="pre">digraph</span> <span class="pre">{</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">subgraph</span> <span class="pre">{b</span> <span class="pre">-&gt;</span> <span class="pre">c}</span> <span class="pre">-&gt;</span> <span class="pre">e</span> <span class="pre">}</span></tt> and
+<tt class="docutils literal"><span class="pre">digraph</span> <span class="pre">{</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">e</span> <span class="pre">;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">c</span> <span class="pre">-&gt;</span> <span class="pre">e</span> <span class="pre">;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c}</span></tt> are equivalent.</li>
+<li>Subgraph IDs refer to subgraphs defined earlier in the graph
+description.  Undefined subgraphs behave as empty subgraphs
+(<tt class="docutils literal"><span class="pre">{}</span></tt>).  This is the same behavior as GraphViz.</li>
 </ul>
 </blockquote>
-<!-- - ``read_graphviz`` treats subgraphs as syntactic sugar.  It does not
-  reflect subgraphs as actual entities in the BGL.  Rather, they are
-  used to shorten some edge definitions as well as to give a subset
-  of all nodes or edges certain properties. For example, the
-  DOT graphs ``digraph { a -> subgraph {b -> c} -> e }`` and
-  ``digraph { a -> b -> e ; a -> c -> e ; b -> c}`` are equivalent. -->
-<!-- - Subgraph IDs refer to subgraphs defined earlier in the graph
-  description.  Undefined subgraphs behave as empty subgraphs
-  (``{}``). -->
 </div>
 <div class="section" id="see-also">
 <h1><a class="toc-backref" href="#id7">See Also</a></h1>
@@ -489,15 +497,14 @@ that property map value types are default constructible.</strong></li>
 <h1><a class="toc-backref" href="#id8">Future Work</a></h1>
 <blockquote>
 <ul class="simple">
-<li>Support for subgraphs (currently parsed but ignored).</li>
 <li>Support for HTML strings.</li>
 <li>Passing port information to BGL.</li>
 <li>Expanding escape codes in the same way GraphViz does.</li>
 <li>Enforcement of the <tt class="docutils literal"><span class="pre">strict</span></tt> keyword (ignoring self-loops and parallel
 edges).</li>
+<li>Support for optional recognition of subgraphs as distinct entities.</li>
 </ul>
 </blockquote>
-<!-- - Support for optional recognition of subgraphs as distinct entities. -->
 </div>
 </div>
 </body>

@@ -491,11 +491,12 @@ namespace boost {
 
   // These four require linking the BGL-Graphviz library: libbgl-viz.a
   // from the /src directory.
-  extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
-  extern void read_graphviz(FILE* file, GraphvizDigraph& g);
-
-  extern void read_graphviz(const std::string& file, GraphvizGraph& g);
-  extern void read_graphviz(FILE* file, GraphvizGraph& g);
+  // Library has not existed for a while
+  // extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
+  // extern void read_graphviz(FILE* file, GraphvizDigraph& g);
+  // 
+  // extern void read_graphviz(const std::string& file, GraphvizGraph& g);
+  // extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
   class dynamic_properties_writer
   {
@@ -654,6 +655,14 @@ struct undirected_graph_error : public graph_exception {
   }
 };
 
+struct bad_graphviz_syntax: public graph_exception {
+  std::string errmsg;
+  bad_graphviz_syntax(const std::string& errmsg)
+    : errmsg(errmsg) {}
+  const char* what() const throw () {return errmsg.c_str();}
+  ~bad_graphviz_syntax() throw () {};
+};
+
 namespace detail { namespace graph {
 
 typedef std::string id_t;
@@ -789,7 +798,7 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
   std::copy(std::istream_iterator<char>(in),
             std::istream_iterator<char>(),
             std::back_inserter(data));
-  return read_graphviz(data.begin(),data.end(),graph,dp,node_id);
+  return read_graphviz(data,graph,dp,node_id);
 }
 
 } // namespace boost
