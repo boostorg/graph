@@ -137,7 +137,12 @@ namespace read_graphviz_detail {
       std::string slash_slash_comment = "(?://.*$)";
       std::string slash_star_comment = "(?:/\\*.*?\\*/)";
       std::string hash_comment = "(?:^#.*?$)";
-      stuff_to_skip = "\\A(?:" + whitespace + "|" + slash_slash_comment + "|" + slash_star_comment + "|" + hash_comment + ")*";
+      std::string backslash_newline = "(?:[\\\\][\\n])";
+      stuff_to_skip = "\\A(?:" + whitespace + "|" +
+                                 slash_slash_comment + "|" +
+                                 slash_star_comment + "|" +
+                                 hash_comment + "|" +
+                                 backslash_newline + ")*";
       basic_id_token = "\\A([[:alpha:]_](?:\\w*))";
       punctuation_token = "\\A([][{};=,:+()@]|[-][>-])";
       number_token = "\\A([-]?(?:(?:\\.\\d+)|(?:\\d+(?:\\.\\d*)?)))";

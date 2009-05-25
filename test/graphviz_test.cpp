@@ -174,7 +174,7 @@ int test_main(int, char*[]) {
   {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
-    gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
+    gs_t gs("graph { a  node [mass = 7.7] c e [mass =\\\n6.66] }");
     BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t())));
   }
 
