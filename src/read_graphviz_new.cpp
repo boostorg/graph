@@ -113,7 +113,11 @@ namespace read_graphviz_detail {
   };
 
   bad_graphviz_syntax lex_error(const std::string& errmsg, char bad_char) {
-    return bad_graphviz_syntax(errmsg + " (char is '" + bad_char + "')");
+    if (bad_char == '\0') {
+      return bad_graphviz_syntax(errmsg + " (at end of input)");
+    } else {
+      return bad_graphviz_syntax(errmsg + " (char is '" + bad_char + "')");
+    }
   }
 
   bad_graphviz_syntax parse_error(const std::string& errmsg, const token& bad_token) {
@@ -306,7 +310,7 @@ namespace read_graphviz_detail {
     }
 
     void throw_lex_error(const std::string& errmsg) {
-      boost::throw_exception(lex_error(errmsg, *begin));
+      boost::throw_exception(lex_error(errmsg, (begin == end ? '\0' : *begin)));
     }
   };
 
