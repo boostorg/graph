@@ -335,6 +335,7 @@ namespace read_graphviz_detail {
     std::map<subgraph_name, subgraph_info> subgraphs;
     std::string current_subgraph_name;
     int sgcounter; // Counter for anonymous subgraphs
+    std::set<std::pair<node_name, node_name> > existing_edges; // Used for checking in strict graphs
 
     subgraph_info& current() {return subgraphs[current_subgraph_name];}
     properties& current_graph_props() {return r.graph_props[current_subgraph_name];}
@@ -649,6 +650,14 @@ namespace read_graphviz_detail {
 
     // Do a fixed-up edge, with only nodes as endpoints
     void do_edge(const node_and_port& src, const node_and_port& tgt, const properties& props) {
+      if (r.graph_is_strict) {
+        if (src.name == tgt.name) return;
+        std::pair<node_name, node_name> tag(src.name, tgt.name);
+        if (existing_edges.find(tag) != existing_edges.end()) {
+          return; // Parallel edge
+        }
+        existing_edges.insert(tag);
+      }
       edge_info e;
       e.source = src;
       e.target = tgt;

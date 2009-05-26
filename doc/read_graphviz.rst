@@ -231,9 +231,6 @@ Future Work
 
  - Expanding escape codes in the same way GraphViz does.
 
- - Enforcement of the ``strict`` keyword (ignoring self-loops and parallel
-   edges).
-    
  - Support for optional recognition of subgraphs as distinct entities.
 
 
