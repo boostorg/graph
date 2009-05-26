@@ -41,10 +41,9 @@ namespace boost {
   // assumed that the edge vertices are assigned automatically, they are
   // explicitly assigned here.
   //
-  // NOTE [asutton]: The requirement of internal indexing causes this to fail
-  // for many, many graphs (i.e., those of non-vecS storage, and using bundled
-  // properties). To work around this - in part - you can do the following:
-
+  // NOTE: The requirement of internal indexing causes this to fail for many,
+  // many graphs (i.e., those of non-vecS storage, and using bundled
+  // properties).
   template <typename Graph>
   class subgraph {
     typedef graph_traits<Graph> Traits;
@@ -683,13 +682,21 @@ namespace boost {
   }
 
   template <typename G>
+  typename subgraph<G>::vertex_descriptor
+  add_vertex(typename subgraph<G>::vertex_property_type const& vp,
+             subgraph<G>& g)
+  {
+      // UNDER CONSTRUCTION
+      assert(false);
+  }
+
+  template <typename G>
   void remove_vertex(typename subgraph<G>::vertex_descriptor u,
                      subgraph<G>& g)
   {
     // UNDER CONSTRUCTION
     assert(false);
   }
-
 
   //===========================================================================
   // Functions required by the PropertyGraph concept

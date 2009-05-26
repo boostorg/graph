@@ -15,12 +15,15 @@
  * differentiate testable features of graph instances.
  */
 
+#include "typestr.hpp"
+
 #include <utility>
 #include <vector>
 #include <boost/assert.hpp>
+#include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
-#include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/labeled_graph.hpp>
 
 #define BOOST_META_ASSERT(x) BOOST_ASSERT(x::value)
 
@@ -101,6 +104,7 @@ void test_graph(Graph& g) {
 
     // Test constrution and vertex list.
     build_graph(g, can_add_vertex, is_labeled);
+    build_property_graph(g, can_add_vertex, is_labeled);
     test_vertex_list_graph(g);
 
     // Collect the vertices for an easy method of "naming" them.
@@ -114,6 +118,7 @@ void test_graph(Graph& g) {
 
     // Test connection and edge list
     connect_graph(g, verts, is_labeled);
+//     connect_property_graph(g, verts, is_labeld);
     test_edge_list_graph(g);
 
     // Test properties

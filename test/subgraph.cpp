@@ -12,8 +12,9 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/graph_test.hpp>
 #include <boost/graph/iteration_macros.hpp>
-
 #include <boost/random/mersenne_twister.hpp>
+
+#include "test_graph.hpp"
 
 // UNDER CONSTRUCTION
 
@@ -110,6 +111,27 @@ int test_main(int argc, char* argv[])
         }
     }
 
+    // Bootstrap the test_graph framework.
+    // TODO: Subgraph is fundamentally broken for property types.
+    // TODO: Under construction.
+    {
+        using namespace boost;
+        typedef property<edge_index_t, size_t, EdgeBundle> EdgeProp;
+        typedef adjacency_list<vecS, vecS, directedS, VertexBundle, EdgeProp> BaseGraph;
+        typedef subgraph<BaseGraph> Graph;
+        typedef graph_traits<Graph>::vertex_descriptor Vertex;
+        Graph g;
+        Vertex v = add_vertex(g);
+
+        typedef property_map<Graph, int VertexBundle::*>::type BundleMap;
+        BundleMap map = get(&VertexBundle::value, g);
+        get(map, v);
+//         put(map, v, 5);
+//         BOOST_ASSERT(get(map, v) == 5);
+
+//         test_graph(g);
+        return 0;
+    }
   }
   return 0;
 }

@@ -51,6 +51,31 @@ void build_graph(Graph& g, boost::mpl::false_, boost::mpl::true_) {
 }
 //@}
 
+/** @name Build Mutable
+ * For mutable property graphs, try to add a vertex with a property. This test
+ * actually builds a new graph - or at least tries to. We're not testing for
+ * labeled graphs since that's actually done in build_graph above.
+ */
+//@{
+template <typename Graph, typename Add, typename Label>
+void build_property_graph(Graph const& g, Add, Label)
+{ }
+
+template <typename Graph>
+void build_property_graph(Graph const& g, boost::mpl::true_, boost::mpl::false_) {
+    using namespace boost;
+    BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept<Graph>));
+    typedef typename vertex_property<Graph>::type VertexProp;
+
+    std::cout << "...build mutable\n";
+
+    // Start with clean graph. Nothing really to assert. Just make sure it
+    // copmpiles.
+    Graph h;
+    add_vertex(VertexProp(), h);
+}
+//@}
+
 
 /** @name Connect Graph
  * Given a constructed graph, connect the edges to create a the standard

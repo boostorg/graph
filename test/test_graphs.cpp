@@ -151,12 +151,5 @@ int main()
         Graph g;
         test_graph(g);
     }
-    {
-        typedef property<edge_index_t, size_t, EdgeBundle> EdgeProp;
-        typedef adjacency_list<vecS, vecS, directedS, VertexBundle, EdgeProp> BaseGraph;
-        typedef subgraph<BaseGraph> Graph;
-        Graph g;
-        test_graph(g);
-    }
 }
 
