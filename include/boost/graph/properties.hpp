@@ -385,6 +385,7 @@ namespace boost {
       { };
   }
 
+  // Specialize the property map template to generate bundled property maps.
   template <typename Graph, typename T, typename Bundle>
   struct property_map<Graph, T Bundle::*>
   {

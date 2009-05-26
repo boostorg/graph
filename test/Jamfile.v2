@@ -70,8 +70,12 @@ test-suite graph_test :
 
     [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
+
+    # TODO: Merge these into a single test framework.
     [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
     [ run subgraph_bundled.cpp ]
+    [ run subgraph_props.cpp ]
+
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
