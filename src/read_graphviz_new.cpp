@@ -129,6 +129,8 @@ namespace read_graphviz_detail {
     boost::regex punctuation_token;
     boost::regex number_token;
     boost::regex quoted_string_token;
+    boost::regex xml_tag_token;
+    boost::regex cdata;
 
     tokenizer(const std::string& str) : begin(str.begin()), end(str.end())
     {
@@ -147,6 +149,8 @@ namespace read_graphviz_detail {
       punctuation_token = "\\A([][{};=,:+()@]|[-][>-])";
       number_token = "\\A([-]?(?:(?:\\.\\d+)|(?:\\d+(?:\\.\\d*)?)))";
       quoted_string_token = "\\A(\"(?:[^\"\\\\]|(?:[\\\\].))*\")";
+      xml_tag_token = "\\A<(/?)(?:[^!?'\"]|(?:'[^']*?')|(?:\"[^\"]*?\"))*?(/?)>";
+      cdata = "\\A\\Q<![CDATA[\\E.*?\\Q]]>\\E";
     }
 
     void skip() {
@@ -245,8 +249,33 @@ namespace read_graphviz_detail {
         return token(token::quoted_string, str);
       }
       if (*begin == '<') {
-        throw_lex_error("HTML strings not supported");
-        return token();
+        std::string::const_iterator saved_begin = begin;
+        int counter = 0;
+        do {
+          if (begin == end) throw_lex_error("Unclosed HTML string");
+          if (*begin != '<') {
+            ++begin;
+            continue;
+          }
+          found = boost::regex_search(begin, end, results, xml_tag_token);
+          if (found) {
+            begin = results.suffix().first;
+            if (results[1].str() == "/") { // Close tag
+              --counter;
+            } else if (results[2].str() == "/") { // Empty tag
+            } else { // Open tag
+              ++counter;
+            }
+            continue;
+          }
+          found = boost::regex_search(begin, end, results, cdata);
+          if (found) {
+            begin = results.suffix().first;
+            continue;
+          }
+          throw_lex_error("Invalid contents in HTML string");
+        } while (counter > 0);
+        return token(token::identifier, std::string(saved_begin, begin));
       } else {
         throw_lex_error("Invalid character");
         return token();

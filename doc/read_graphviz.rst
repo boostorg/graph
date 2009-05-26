@@ -225,8 +225,6 @@ write_graphviz_
 Future Work
 -----------
 
- - Support for HTML strings.
-
  - Passing port information to BGL.
 
  - Expanding escape codes in the same way GraphViz does.

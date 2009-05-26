@@ -248,6 +248,16 @@ int test_main(int, char*[]) {
                                             graph_name)));
   }
 
+  // Graph Property Test 3 (HTML)
+  {
+    mass_map_t masses;
+    insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
+    std::string graph_name = "<html title=\"x'\" title2='y\"'>foo<b><![CDATA[><bad tag&>]]>bar</b>\n<br/>\nbaz</html>";
+    gs_t gs("digraph { name=" + graph_name + "  a  c e [mass = 6.66] }");
+    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
+                                            graph_name)));
+  }
+
   // Comments embedded in strings
   { 
     gs_t gs( 
