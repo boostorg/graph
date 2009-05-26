@@ -107,7 +107,7 @@ void dijkstra_shortest_paths_no_color_map
     // Examine neighbors of min_vertex
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
     typename graph_traits<Graph>::out_edge_iterator edge_iter, edge_iter_end;
-    BGL_FORALL_OUT_EDGES_T(current_edge, min_vertex, graph, Graph) {
+    BGL_FORALL_OUTEDGES_T(min_vertex, current_edge, graph, Graph) {
       visitor.examine_edge(current_edge, graph);
       
       // Check if the edge has a negative weight
