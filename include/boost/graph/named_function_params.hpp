@@ -341,6 +341,15 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       }
     };
 
+    template <typename P, typename R>
+    struct convert_bgl_params_to_boost_parameter<bgl_named_params<P, int, R> > {
+      typedef convert_bgl_params_to_boost_parameter<R> rest_conv;
+      typedef typename rest_conv::type type;
+      static type conv(const bgl_named_params<P, int, R>& x) {
+        return rest_conv::conv(x);
+      }
+    };
+
     template <>
     struct convert_bgl_params_to_boost_parameter<boost::no_property> {
       typedef boost::parameter::aux::empty_arg_list type;
