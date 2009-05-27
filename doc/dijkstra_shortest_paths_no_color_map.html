@@ -1,13 +1,13 @@
 <HTML>
 <!--
-     Copyright (c) Jeremy Siek 2000
+     Copyright (c) Michael Hansen 2009
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
-<Title>Boost Graph Library: Dijkstra's Shortest Paths</Title>
+<Title>Boost Graph Library: Dijkstra's Shortest Paths (No Color Map)</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -15,47 +15,46 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:dijkstra"></A><img src="figs/python.gif" alt="(Python)"/>
-<TT>dijkstra_shortest_paths</TT>
+<H1><A NAME="sec:dijkstra"></A>
+<TT>dijkstra_shortest_paths_no_color_map</TT>
 </H1>
 
-<p>See also <a href="dijkstra_shortest_paths_no_color_map.html">dijkstra_shortest_paths_no_color_map</a>
+<p>See also <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>
 
 <P>
 <PRE>
 <i>// named parameter version</i>
-template &lt;typename Graph, typename P, typename T, typename R&gt;
-void
-dijkstra_shortest_paths(Graph&amp; g,
-  typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
-
+template &lt;typename Graph, typename Param, typename Tag, typename Rest&gt;
+void dijkstra_shortest_paths_no_color_map
+  (const Graph&amp; graph,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor start_vertex,
+   const bgl_named_params<Param,Tag,Rest>& params);
+   
 <i>// non-named parameter version</i>
 template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
 	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>, 
-	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
-void dijkstra_shortest_paths
-  (const Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">DistanceCompare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">DistanceWeightCombine</a>, 
+	  typename DistanceInfinity, typename DistanceZero&gt;
+void dijkstra_shortest_paths_no_color_map
+  (const Graph&amp; graph,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor start_vertex, 
+   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map, 
    VertexIndexMap index_map,
-   CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
-   DijkstraVisitor vis, ColorMap color = <i>default</i>)
+   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
+   DistanceInfinity distance_infinity, DistanceZero distance_zero);
 
-<i>// version that does not initialize the property maps (except for the default color map)</i>
-template &lt;class Graph, class DijkstraVisitor,
-          class PredecessorMap, class DistanceMap,
-          class WeightMap, class IndexMap, class Compare, class Combine,
-          class DistZero, class ColorMap&gt;
-void
-dijkstra_shortest_paths_no_init
-  (const Graph&amp; g,
-   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
-   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
-   IndexMap index_map,
-   Compare compare, Combine combine, DistZero zero,
-   DijkstraVisitor vis, ColorMap color = <i>default</i>);
+<i>// version that does not initialize the property maps</i>
+template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
+	  typename PredecessorMap, typename DistanceMap,
+	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">DistanceCompare</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">DistanceWeightCombine</a>, 
+	  typename DistanceInfinity, typename DistanceZero&gt;
+void dijkstra_shortest_paths_no_color_map_no_init
+  (const Graph&amp; graph,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor start_vertex, 
+   PredecessorMap predecessor_map, DistanceMap distance_map, WeightMap weight_map, 
+   VertexIndexMap index_map,
+   DistanceCompare distance_compare, DistanceWeightCombine distance_weight_combine,
+   DistanceInfinity distance_infinity, DistanceZero distance_zero);
 </PRE>
 
 <P>
@@ -73,9 +72,9 @@ Algorithms</A> for some background to the shortest-path problem.
 
 <P>
 There are two main options for obtaining output from the
-<tt>dijkstra_shortest_paths()</tt> function. If you provide a
+<tt>dijkstra_shortest_paths_no_color_map()</tt> function. If you provide a
 distance property map through the <tt>distance_map()</tt> parameter
-then the shortest distance from the source vertex to every other
+then the shortest distance from the start vertex to every other
 vertex in the graph will be recorded in the distance map. Also you can
 record the shortest paths tree in a predecessor map: for each vertex
 <i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in
@@ -87,7 +86,7 @@ algorithm's event points.</P>
 
 <P>
 Dijkstra's algorithm finds all the shortest paths from the source
-vertex to every other vertex by iteratively ``growing'' the set of
+vertex to every other vertex by iteratively &quot;growing&quot; the set of
 vertices <i>S</i> to which it knows the shortest path. At each step of
 the algorithm, the next vertex added to <i>S</i> is determined by a
 priority queue.  The queue contains the vertices in <i>V - S</i><a
@@ -102,13 +101,10 @@ the top of the priority queue. The algorithm finishes when the
 priority queue is empty.
 </P>
 <P>
-The algorithm uses color markers (white, gray, and black) to keep
-track of which set each vertex is in. Vertices colored black are in
-<i>S</i>. Vertices colored white or gray are in <i>V-S</i>. White vertices have
-not yet been discovered and gray vertices are in the priority queue.
-By default, the algorithm will allocate an array to store a color
-marker for each vertex in the graph. You can provide your own storage
-and access for colors with the <tt>color_map()</tt> parameter.
+The algorithm uses the distance map to keep
+track of which set each vertex is in. Vertices with a non-infinite distance are in
+<i>S</i>. Vertices with an infinite distance are in <i>V-S</i> and have
+not yet been discovered.
 </P>
 <p>
 The following is the pseudo-code for Dijkstra's single-source shortest
@@ -124,30 +120,24 @@ indicated by the labels on the right.
 <td valign="top">
 <pre>
 DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u in V</i> <b>(This loop is not run in dijkstra_shortest_paths_no_init)</b>
+  <b>for</b> each vertex <i>u in V</i> <b>(This loop is not run in dijkstra_shortest_paths_no_color_map_no_init)</b>
     <i>d[u] := infinity</i> 
     <i>p[u] := u</i> 
-    <i>color[u] :=</i> WHITE
   <b>end for</b>
-  <i>color[s] := </i>GRAY 
   <i>d[s] := 0</i> 
   INSERT(<i>Q</i>, <i>s</i>)
   <b>while</b> (<i>Q != &Oslash;</i>)
     <i>u :=</i> EXTRACT-MIN(<i>Q</i>)
-    <i>S := S U { u }</i>
     <b>for</b> each vertex <i>v in Adj[u]</i>
       <b>if</b> (<i>w(u,v) + d[u] < d[v]</i>)
         <i>d[v] := w(u,v) + d[u]</i>
         <i>p[v] := u</i> 
-        <b>if</b> (<i>color[v] =</i> WHITE) 
-          <i>color[v] :=</i> GRAY
-          INSERT(<i>Q</i>, <i>v</i>) 
-        <b>else if</b> (<i>color[v] =</i> GRAY)
-          DECREASE-KEY(<i>Q</i>, <i>v</i>)
+        DECREASE-KEY(<i>Q</i>, <i>v</i>)
       <b>else</b>
-        <i>...</i>
+      	...
+      <b>if</b> (<i>d[v]</i> was originally infinity) 
+        INSERT(<i>Q</i>, <i>v</i>)   
     <b>end for</b>
-    <i>color[u] :=</i> BLACK
   <b>end while</b>
   return (<i>d</i>, <i>p</i>)
 </pre>
@@ -160,24 +150,18 @@ initialize vertex <i>u</i>
 
 
 
-
-
 discover vertex <i>s</i>
 
 examine vertex <i>u</i>
-
 examine edge <i>(u,v)</i>
 
 edge <i>(u,v)</i> relaxed
 
 
 
-discover vertex <i>v</i>
-
-
-
 edge <i>(u,v)</i> not relaxed
 
+discover vertex <i>v</i>
 finish vertex <i>u</i>
 </pre>
 </td>
@@ -186,34 +170,30 @@ finish vertex <i>u</i>
 
 <h3>Where Defined</h3>
 
-<a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
+<a href="../../../boost/graph/dijkstra_shortest_paths_no_color_map.hpp"><tt>boost/graph/dijkstra_shortest_paths_no_color_map.hpp</tt></a>
 
 <h3>Parameters</h3>
 
-IN: <tt>const Graph&amp; g</tt> 
+IN: <tt>const Graph&amp; graph</tt> 
 <blockquote>
   The graph object on which the algorithm will be applied.
   The type <tt>Graph</tt> must be a model of 
   <a href="./VertexListGraph.html">Vertex List Graph</a>
   and <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
-
-  <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>
 
-IN: <tt>vertex_descriptor s</tt> 
+IN: <tt>vertex_descriptor start_vertex</tt> 
 <blockquote>
   The source vertex. All distance will be calculated from this vertex,
   and the shortest paths tree will be rooted at this vertex.<br>
-
-  <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
 </blockquote>
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap weight_map)</tt>   
 <blockquote>
   The weight or ``length'' of each edge in the graph. The weights
-  must all be non-negative, and the algorithm will throw a
+  must all be non-negative and <a href="#3">non-infinite</a>. The algorithm will throw a
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
@@ -221,16 +201,13 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   the graph needs to be usable as the key type for the weight
   map. The value type for this map must be
   the same as the value type of the distance map.<br>
-  <b>Default:</b>  <tt>get(edge_weight, g)</tt><br>
-
-  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
-  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
+  <b>Default:</b>  <tt>get(edge_weight, graph)</tt><br>
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>index_map(VertexIndexMap index_map)</tt> 
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. This is necessary for efficient updates of the
+    num_vertices(graph))</tt>. This is necessary for efficient updates of the
   heap data structure&nbsp;[<A
   HREF="bibliography.html#driscoll88">61</A>] when an edge is relaxed.
   The type 
@@ -238,17 +215,15 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
-  <b>Default:</b> <tt>get(vertex_index, g)</tt>.
+  <b>Default:</b> <tt>get(vertex_index, graph)</tt>.
     Note: if you use this default, make sure your graph has
     an internal <tt>vertex_index</tt> property. For example,
     <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
     not have an internal <tt>vertex_index</tt> property.
    <br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
+OUT: <tt>predecessor_map(PredecessorMap predecessor_map)</tt> 
 <blockquote>
   The predecessor map records the edges in the minimum spanning
   tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
@@ -264,10 +239,10 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the graph.<br>
 </blockquote>
 
-UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL/OUT: <tt>distance_map(DistanceMap distance_map)</tt> 
 <blockquote>
-  The shortest path weight from the source vertex <tt>s</tt> to each
-  vertex in the graph <tt>g</tt> is recorded in this property map. The
+  The shortest path weight from the source vertex <tt>start_vertex</tt> to each
+  vertex in the graph <tt>graph</tt> is recorded in this property map. The
   shortest path weight is the sum of the edge weights along the
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/ReadWritePropertyMap.html">Read/Write
@@ -275,26 +250,24 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   be usable as the key type of the distance map. 
 
   The value type of the distance map is the element type of a <a
-  href="./Monoid.html">Monoid</a> formed with the <tt>combine</tt>
-  function object and the <tt>zero</tt> object for the identity
+  href="./Monoid.html">Monoid</a> formed with the <tt>distance_weight_combine</tt>
+  function object and the <tt>distance_zero</tt> object for the identity
   element. Also the distance value type must have a <a
   href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html">
-  StrictWeakOrdering</a> provided by the <tt>compare</tt> function
+  StrictWeakOrdering</a> provided by the <tt>distance_compare</tt> function
   object.<br>
   <b>Default:</b> <a
   href="../../property_map/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
+  <tt>num_vertices(graph)</tt> and using the <tt>index_map</tt> for the index
   map.<br>
-
-  <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>
 </blockquote>
 
-IN: <tt>distance_compare(CompareFunction cmp)</tt> 
+IN: <tt>distance_compare(CompareFunction distance_compare)</tt> 
 <blockquote>
   This function is use to compare distances to determine which vertex
-  is closer to the source vertex.  The <tt>CompareFunction</tt> type
+  is closer to the source vertex.  The <tt>DistanceCompareFunction</tt> type
   must be a model of <a
   href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
   Predicate</a> and have argument types that match the value type of
@@ -303,14 +276,12 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   <b>Default:</b>
   <tt>std::less&lt;D&gt;</tt> with <tt>D=typename
   property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>distance_combine(CombineFunction cmb)</tt> 
+IN: <tt>distance_combine(CombineFunction distance_weight_combine)</tt> 
 <blockquote>
   This function is used to combine distances to compute the distance
-  of a path. The <tt>CombineFunction</tt> type must be a model of <a
+  of a path. The <tt>DistanceWeightCombineFunction</tt> type must be a model of <a
   href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary
   Function</a>. The first argument type of the binary function must
   match the value type of the <tt>DistanceMap</tt> property map and
@@ -318,54 +289,26 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
   <tt>WeightMap</tt> property map.  The result type must be the same
   type as the distance value type.<br>
 
-  <b>Default:</b> <tt>closed_plus&lt;D&gt;</tt> with
+  <b>Default:</b> <tt>boost::closed_plus&lt;D&gt;</tt> with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>distance_inf(D inf)</tt> 
+IN: <tt>distance_inf(D distance_infinity)</tt> 
 <blockquote>
-  The <tt>inf</tt> object must be the greatest value of any <tt>D</tt> object.
-  That is, <tt>compare(d, inf) == true</tt> for any <tt>d != inf</tt>.
+  The <tt>distance_infinity</tt> object must be the greatest value of any <tt>D</tt> object.
+  That is, <tt>distance_compare(d, distance_infinity) == true</tt> for any <tt>d != distance_infinity</tt>.
   The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
   <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>distance_zero(D zero)</tt> 
+IN: <tt>distance_zero(D distance_zero)</tt> 
 <blockquote>
-  The <tt>zero</tt> value must be the identity element for the
+  The <tt>distance_zero</tt> value must be the identity element for the
   <a href="./Monoid.html">Monoid</a> formed by the distance values
-  and the <tt>combine</tt> function object.
+  and the <tt>distance_weight_combine</tt> function object.
   The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
   <b>Default:</b> <tt>D()</tt>with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
-</blockquote>
-
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
-<blockquote>
-  This is used during the execution of the algorithm to mark the
-  vertices. The vertices start out white and become gray when they are
-  inserted in the queue. They then turn black when they are removed
-  from the queue. At the end of the algorithm, vertices reachable from
-  the source vertex will have been colored black. All other vertices
-  will still be white. The type <tt>ColorMap</tt> must be a model of
-  <a href="../../property_map/ReadWritePropertyMap.html">Read/Write
-  Property Map</a>. A vertex descriptor must be usable as the key type
-  of the map, and the value type of the map must be a model of
-  <a href="./ColorValue.html">Color Value</a>.<br>
-  <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
-  <tt>iterator_property_map</tt></a> created from a <tt>std::vector</tt>
-  of <tt>default_color_type</tt> of size <tt>num_vertices(g)</tt> and
-  using the <tt>i_map</tt> for the index map.<br>
-
-  <b>Python</b>: The color map must be a <tt>vertex_color_map</tt> for
-  the graph.
 </blockquote>
   
 OUT: <tt>visitor(DijkstraVisitor v)</tt>  
@@ -377,11 +320,6 @@ OUT: <tt>visitor(DijkstraVisitor v)</tt>
  The visitor object is passed by value <a
   href="#2">[2]</a>.<br>
   <b>Default:</b> <tt>dijkstra_visitor&lt;null_visitor&gt;</tt><br>
-
-  <b>Python</b>: The parameter should be an object that derives from
-  the <a
-  href="DijkstraVisitor.html#python"><tt>DijkstraVisitor</tt></a> type
-  of the graph.
 </blockquote>
 
 
@@ -413,9 +351,7 @@ The time complexity is <i>O(V log V)</i>.
   relaxation for vertex <i>v</i> is an edge in the shortest paths tree. 
 <li><b><tt>vis.discover_vertex(v, g)</tt></b>
   is invoked on vertex <i>v</i> when the edge 
-  <i>(u,v)</i> is examined and <i>v</i> is WHITE. Since
-  a vertex is colored GRAY when it is discovered,
-  each reacable vertex is discovered exactly once. This
+  <i>(u,v)</i> is examined and <i>v</i> has not yet been discovered (i.e. its distance was infinity before relaxation was attempted on the edge).  This
   is also when the vertex is inserted into the priority queue.
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
   is invoked if the edge is not relaxed (see above).
@@ -427,13 +363,14 @@ The time complexity is <i>O(V log V)</i>.
 <H3>Example</H3>
 
 <P>
-See <a href="../example/dijkstra-example.cpp">
-<TT>example/dijkstra-example.cpp</TT></a> for an example of using Dijkstra's
-algorithm.
+See <a href="../example/dijkstra-no-color-map-example.cpp">
+<TT>example/dijkstra-no-color-map-example.cpp</TT></a> for an example of using Dijkstra's algorithm.
 
 <H3>Notes</H3>
 
-<a name="1">[1]</a>
+<p>Based on the documentation for <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>.
+
+<p><a name="1">[1]</a>
 The algorithm used here saves a little space by not putting all <i>V -
 S</i> vertices in the priority queue at once, but instead only those
 vertices in <i>V - S</i> that are discovered and therefore have a
@@ -445,14 +382,16 @@ distance less than infinity.
   will be made to a copy of the visitor object, not the visitor object
   passed in. Therefore you may want the visitor to hold this state by
   pointer or reference.
+  
+<p><a name="3">[3]</a> 
+  The algorithm will not work correctly if any of the edge weights are equal to infinity since the infinite distance value is used to determine if a vertex has been discovered.
 
 <br>
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
-<A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
-</TD></TR></TABLE>
+<TD nowrap>Copyright &copy 2009</TD><TD>
+Trustees of Indiana University</TD></TR></TABLE>
 
 </BODY>
 </HTML> 

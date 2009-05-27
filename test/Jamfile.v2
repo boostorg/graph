@@ -49,6 +49,7 @@ test-suite graph_test :
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
     [ run dijkstra_heap_performance.cpp : 10000 ]
+    [ run dijkstra_no_color_map_compare.cpp : 10000 ]
     [ run dominator_tree_test.cpp ]
     [ run relaxed_heap_test.cpp : 5000 15000 ]
     [ compile edge_list_cc.cpp ]
