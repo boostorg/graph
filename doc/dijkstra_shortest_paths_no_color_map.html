@@ -19,8 +19,6 @@
 <TT>dijkstra_shortest_paths_no_color_map</TT>
 </H1>
 
-<p>See also <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>
-
 <P>
 <PRE>
 <i>// named parameter version</i>
@@ -71,6 +69,10 @@ Algorithms</A> for some background to the shortest-path problem.
 </P>
 
 <P>
+	<tt>dijkstra_shortest_paths_no_color_map</tt> differs from the original <tt>dijkstra_shortest_paths</tt> algorithm by not using a color map to identify vertices as discovered or undiscovered.  Instead, this is done with the distance map: a vertex <i>u</i> such that <i>distance_compare(distance_map[u], distance_infinity) == false</i> is considered to be undiscovered.
+</P>
+
+<P>
 There are two main options for obtaining output from the
 <tt>dijkstra_shortest_paths_no_color_map()</tt> function. If you provide a
 distance property map through the <tt>distance_map()</tt> parameter
@@ -82,7 +84,7 @@ the shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
 either the source or a vertex unreachable from the source).  In
 addition to these two options, the user can provide their own
 custom-made visitor that takes actions during any of the
-algorithm's event points.</P>
+algorithm's event points <a href="#4">[4]</a>.</P>
 
 <P>
 Dijkstra's algorithm finds all the shortest paths from the source
@@ -99,12 +101,6 @@ label for <i>v</i> then the estimated distance for vertex <i>v</i> is
 reduced.  The algorithm then loops back, processing the next vertex at
 the top of the priority queue. The algorithm finishes when the
 priority queue is empty.
-</P>
-<P>
-The algorithm uses the distance map to keep
-track of which set each vertex is in. Vertices with a non-infinite distance are in
-<i>S</i>. Vertices with an infinite distance are in <i>V-S</i> and have
-not yet been discovered.
 </P>
 <p>
 The following is the pseudo-code for Dijkstra's single-source shortest
@@ -193,7 +189,7 @@ IN: <tt>vertex_descriptor start_vertex</tt>
 IN: <tt>weight_map(WeightMap weight_map)</tt>   
 <blockquote>
   The weight or ``length'' of each edge in the graph. The weights
-  must all be non-negative and <a href="#3">non-infinite</a>. The algorithm will throw a
+  must all be non-negative and non-infinite <a href="#3">[3]</a>. The algorithm will throw a
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
@@ -366,6 +362,8 @@ The time complexity is <i>O(V log V)</i>.
 See <a href="../example/dijkstra-no-color-map-example.cpp">
 <TT>example/dijkstra-no-color-map-example.cpp</TT></a> for an example of using Dijkstra's algorithm.
 
+<H3>See also</H3> <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a> for a version of dijkstra's shortest path that uses a color map.
+
 <H3>Notes</H3>
 
 <p>Based on the documentation for <a href="dijkstra_shortest_paths.html">dijkstra_shortest_paths</a>.
@@ -385,6 +383,9 @@ distance less than infinity.
   
 <p><a name="3">[3]</a> 
   The algorithm will not work correctly if any of the edge weights are equal to infinity since the infinite distance value is used to determine if a vertex has been discovered.
+  
+<p><a name="4">[4]</a> 
+  Calls to the visitor events occur in the same order as <tt>dijkstra_shortest_paths</tt> (i.e. <i>discover_vertex(u)</i> will always be called after <i>examine_vertex(u)</i> for an undiscovered vertex <i>u</i>).  However, the vertices of the graph given to <i>dijkstra_shortest_paths_no_color_map</i> will <b>not</b> necessarily be visited in the same order as <i>dijkstra_shortest_paths</i>.
 
 <br>
 <HR>
