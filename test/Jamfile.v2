@@ -75,7 +75,7 @@ test-suite graph_test :
     # TODO: Merge these into a single test framework.
     [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
     [ run subgraph_bundled.cpp ]
-    # [ run subgraph_props.cpp ]
+    [ run subgraph_props.cpp ]
 
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
     [ run adjacency_matrix_test.cpp ]

@@ -32,27 +32,33 @@ struct subgraph_tag { };
 /** @name Property Lookup
  * The local_property and global_property functions are used to create
  * structures that determine the lookup strategy for properties in subgraphs.
+ * Note that the nested kind member is used to help interoperate with actual
+ * Property types.
  */
 //@{
 template <typename T>
-struct local_subgraph_property {
-    local_subgraph_property(T x) : value(x) { }
+struct local_property
+{
+    typedef T kind;
+    local_property(T x) : value(x) { }
     T value;
 };
 
 template <typename T>
-inline local_subgraph_property<T> local(T x)
-{ return local_subgraph_property<T>(x); }
+inline local_property<T> local(T x)
+{ return local_property<T>(x); }
 
 template <typename T>
-struct global_subgraph_property {
-    global_subgraph_property(T x) : value(x) { }
+struct global_property
+{
+    typedef T kind;
+    global_property(T x) : value(x) { }
     T value;
 };
 
 template <typename T>
-inline global_subgraph_property<T> global(T x)
-{ return global_subgraph_property<T>(x); }
+inline global_property<T> global(T x)
+{ return global_property<T>(x); }
 //@}
 
 // Invariants of an induced subgraph:
@@ -252,12 +258,12 @@ typedef typename Traits::traversal_category        traversal_category;
     // Local property access returns the local property of the given descripor.
     template <typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type&
-    operator[](local_subgraph_property<Descriptor> x)
+    operator[](local_property<Descriptor> x)
     { return m_graph[x.value]; }
 
     template <typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type const&
-    operator[](local_subgraph_property<Descriptor> x) const
+    operator[](local_property<Descriptor> x) const
     { return m_graph[x.value]; }
 
     // Global property access returns the global property associated with the
@@ -265,12 +271,12 @@ typedef typename Traits::traversal_category        traversal_category;
     // access operations.
     template <typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type&
-    operator[](global_subgraph_property<Descriptor> x)
+    operator[](global_property<Descriptor> x)
     { return (*this)[x.value]; }
 
     template <typename Descriptor>
     typename graph::detail::bundled_result<Graph, Descriptor>::type const&
-    operator[](global_subgraph_property<Descriptor> x) const
+    operator[](global_property<Descriptor> x) const
     { return (*this)[x.value]; }
 
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
@@ -780,6 +786,9 @@ public:
     typedef typename Traits::key_type key_type;
     typedef typename Traits::reference reference;
 
+    typedef Tag tag;
+    typedef PropertyMap pmap;
+
     subgraph_local_property_map()
     { }
 
@@ -788,7 +797,8 @@ public:
     { }
 
     reference operator[](key_type e) const {
-        PropertyMap pmap = get(Tag(), *m_g);
+        // Get property map on the underlying graph.
+        PropertyMap pmap = get(Tag(), m_g->m_graph);
         return pmap[e];
     }
 
@@ -796,17 +806,30 @@ public:
 };
 
 namespace detail {
+    // Extract the actual tags from local or global property maps so we don't
+    // try to find non-properties.
+    template <typename P> struct extract_lg_tag { typedef P type; };
+    template <typename P> struct extract_lg_tag< local_property<P> > {
+        typedef P type;
+    };
+    template <typename P> struct extract_lg_tag< global_property<P> > {
+        typedef P type;
+    };
+
+    // NOTE: Mysterious Property template parameter unused in both metafunction
+    // classes.
     struct subgraph_global_pmap {
         template <class Tag, class SubGraph, class Property>
-        class bind_ {
+        struct bind_ {
             typedef typename SubGraph::graph_type Graph;
             typedef SubGraph* SubGraphPtr;
             typedef const SubGraph* const_SubGraphPtr;
-            typedef typename property_map<Graph, Tag>::type PMap;
-            typedef typename property_map<Graph, Tag>::const_type const_PMap;
+            typedef typename extract_lg_tag<Tag>::type TagType;
+            typedef typename property_map<Graph, TagType>::type PMap;
+            typedef typename property_map<Graph, TagType>::const_type const_PMap;
         public:
-            typedef subgraph_global_property_map<SubGraphPtr, PMap, Tag> type;
-            typedef subgraph_global_property_map<const_SubGraphPtr, const_PMap, Tag>
+            typedef subgraph_global_property_map<SubGraphPtr, PMap, TagType> type;
+            typedef subgraph_global_property_map<const_SubGraphPtr, const_PMap, TagType>
             const_type;
         };
     };
@@ -817,29 +840,52 @@ namespace detail {
             typedef typename SubGraph::graph_type Graph;
             typedef SubGraph* SubGraphPtr;
             typedef const SubGraph* const_SubGraphPtr;
-            typedef typename property_map<Graph, Tag>::type PMap;
-            typedef typename property_map<Graph, Tag>::const_type const_PMap;
+            typedef typename extract_lg_tag<Tag>::type TagType;
+            typedef typename property_map<Graph, TagType>::type PMap;
+            typedef typename property_map<Graph, TagType>::const_type const_PMap;
         public:
-            typedef subgraph_local_property_map<SubGraphPtr, PMap, Tag> type;
-            typedef subgraph_local_property_map<const_SubGraphPtr, const_PMap, Tag>
+            typedef subgraph_local_property_map<SubGraphPtr, PMap, TagType> type;
+            typedef subgraph_local_property_map<const_SubGraphPtr, const_PMap, TagType>
             const_type;
         };
     };
 
     // These metafunctions select the corresponding metafunctions above, and
     // are used by the choose_pmap metafunction below to specialize the choice
-    // of local/global property map.
+    // of local/global property map. By default, we defer to the global
+    // property.
     template <class Tag>
     struct subgraph_choose_pmap_helper {
         typedef subgraph_global_pmap type;
     };
+    template <class Tag>
+    struct subgraph_choose_pmap_helper< local_property<Tag> > {
+        typedef subgraph_local_pmap type;
+    };
+    template <class Tag>
+    struct subgraph_choose_pmap_helper< global_property<Tag> > {
+        typedef subgraph_global_pmap type;
+    };
+
+    // As above, unless we're requesting vertex_index_t. Then it's always a
+    // local property map. This enables the correct translation of descriptors
+    // between local and global layers.
     template <>
     struct subgraph_choose_pmap_helper<vertex_index_t> {
+        typedef subgraph_local_pmap type;
+    };
+    template <>
+    struct subgraph_choose_pmap_helper< local_property<vertex_index_t> > {
+        typedef subgraph_local_pmap type;
+    };
+    template <>
+    struct subgraph_choose_pmap_helper< global_property<vertex_index_t> > {
         typedef subgraph_local_pmap type;
     };
 
     // Determine the kind of property. If SameType<Tag, vertex_index_t>, then
     // the property lookup is always local. Otherwise, the lookup is global.
+    // NOTE: Property parameter is basically unused.
     template <class Tag, class Graph, class Property>
     struct subgraph_choose_pmap {
         typedef typename subgraph_choose_pmap_helper<Tag>::type Helper;
@@ -872,27 +918,37 @@ struct edge_property_selector<subgraph_tag> {
 };
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-template<typename Graph, typename Descriptor, typename Bundle, typename T>
-struct subgraph_local_bundle_property_map
+/** @internal
+ * This property map implements local or global bundled property access on
+ * an underlying graph. The LocalGlobal template template parameter must be
+ * one of the local_property or global_property templates.
+ */
+template <
+    typename Graph, typename Descriptor, typename Bundle, typename T,
+    template <typename> class LocalGlobal>
+struct subgraph_lg_bundle_property_map
     : put_get_helper<
         T&,
-        subgraph_local_bundle_property_map<Graph, Descriptor, Bundle, T>
+        subgraph_lg_bundle_property_map<Graph, Descriptor, Bundle, T, LocalGlobal>
     >
 {
+private:
+    typedef LocalGlobal<Descriptor> Wrap;
+public:
     typedef Descriptor key_type;
     typedef typename remove_const<T>::type value_type;
     typedef T& reference;
     typedef lvalue_property_map_tag category;
 
-    subgraph_local_bundle_property_map()
+    subgraph_lg_bundle_property_map()
     { }
 
-    subgraph_local_bundle_property_map(Graph* g, T Bundle::* p)
+    subgraph_lg_bundle_property_map(Graph* g, T Bundle::* p)
         : m_g(g), m_prop(p)
     { }
 
     reference operator[](key_type k) const
-    { return (*m_g)[local(k)].*m_prop; }
+    { return (*m_g)[Wrap(k)].*m_prop; }
 
 private:
     Graph* m_g;
@@ -903,35 +959,69 @@ private:
 // NOTE: I'm cheating (actually double-dipping) with the local/global subgraph
 // property templates. I'm not using them store descriptors, just specialize
 // the property map template for specific lookups.
+namespace graph_detail {
+    // Help decoding some of the types required for property map definitions.
+    template <typename Graph, typename T, typename Bundle>
+    struct bundled_subgraph_pmap_helper {
+        typedef subgraph<Graph> Subgraph;
+        typedef graph_traits<Subgraph> Traits;
+        typedef typename Subgraph::vertex_bundled VertBundled;
+        typedef typename Subgraph::edge_bundled EdgeBundled;
+
+        // Deduce the descriptor from the template params
+        typedef typename mpl::if_<
+            detail::is_vertex_bundle<VertBundled, EdgeBundled, Bundle>,
+            typename Traits::vertex_descriptor, typename Traits::edge_descriptor
+        >::type Desc;
+
+        // Deduce the bundled property type
+        typedef typename mpl::if_<
+            detail::is_vertex_bundle<VertBundled, EdgeBundled, Bundle>,
+            VertBundled, EdgeBundled
+        >::type Prop;
+    };
+} // namespace graph_detail
 
 template <typename Graph, typename T, typename Bundle>
-struct property_map<subgraph<Graph>, local_subgraph_property<T Bundle::*> >
+struct property_map<subgraph<Graph>, local_property<T Bundle::*> >
+    : graph_detail::bundled_subgraph_pmap_helper<Graph, T, Bundle>
 {
 private:
-    typedef subgraph<Graph> SubGraph;
-    typedef graph_traits<SubGraph> Traits;
-    typedef typename SubGraph::vertex_bundled VertBundled;
-    typedef typename SubGraph::edge_bundled EdgeBundled;
-
-    // Deduce the descriptor from the template params
-    typedef typename mpl::if_c<
-        detail::is_vertex_bundle<VertBundled, EdgeBundled, Bundle>::value,
-        typename Traits::vertex_descriptor,
-        typename Traits::edge_descriptor
-    >::type Desc;
-
-    // Deduce the bundled property type
-    typedef typename mpl::if_c<
-        detail::is_vertex_bundle<VertBundled, EdgeBundled, Bundle>::value,
-        VertBundled,
-        EdgeBundled
-    >::type Prop;
+    typedef graph_detail::bundled_subgraph_pmap_helper<Graph, T, Bundle> Base;
+    typedef typename Base::Subgraph Subgraph;
+    typedef typename Base::Desc Desc;
+    typedef typename Base::Prop Prop;
 public:
-    typedef subgraph_local_bundle_property_map<SubGraph, Desc, Prop, T> type;
-    typedef subgraph_local_bundle_property_map<const SubGraph, Desc, Prop, const T> const_type;
+    typedef subgraph_lg_bundle_property_map<
+        Subgraph, Desc, Prop, T, local_property
+    > type;
+    typedef subgraph_lg_bundle_property_map<
+        Subgraph const, Desc, Prop, T const, local_property
+    > const_type;
+};
+
+template <typename Graph, typename T, typename Bundle>
+struct property_map<subgraph<Graph>, global_property<T Bundle::*> >
+    : graph_detail::bundled_subgraph_pmap_helper<Graph, T, Bundle>
+{
+private:
+    typedef graph_detail::bundled_subgraph_pmap_helper<Graph, T, Bundle> Base;
+    typedef typename Base::Subgraph Subgraph;
+    typedef typename Base::Desc Desc;
+    typedef typename Base::Prop Prop;
+public:
+    typedef subgraph_lg_bundle_property_map<
+        Subgraph, Desc, Prop, T, global_property
+    > type;
+    typedef subgraph_lg_bundle_property_map<
+        Subgraph const, Desc, Prop, T const, global_property
+    > const_type;
 };
 #endif
 
+// ==================================================
+// get(p, g), get(p, g, k), and put(p, g, k, v)
+// ==================================================
 template <typename G, typename Property>
 typename property_map<subgraph<G>, Property>::type
 get(Property, subgraph<G>& g) {
@@ -956,7 +1046,62 @@ get(Property, const subgraph<G>& g, const Key& k) {
     return pmap[k];
 }
 
+template <typename G, typename Property, typename Key, typename Value>
+void put(Property, subgraph<G>& g, const Key& k, const Value& val) {
+    typedef typename property_map< subgraph<G>, Property>::type PMap;
+    PMap pmap(&g);
+    pmap[k] = val;
+}
+
+// ==================================================
+// get(global(p), g)
+// NOTE: get(global(p), g, k) and put(global(p), g, k, v) not supported
+// ==================================================
+template <typename G, typename Property>
+typename property_map<subgraph<G>, global_property<Property> >::type
+get(global_property<Property>, subgraph<G>& g) {
+    typedef typename property_map<
+        subgraph<G>, global_property<Property>
+    >::type Map;
+    return Map(&g);
+}
+
+template <typename G, typename Property>
+typename property_map<subgraph<G>, global_property<Property> >::const_type
+get(global_property<Property>, const subgraph<G>& g) {
+    typedef typename property_map<
+        subgraph<G>, global_property<Property>
+    >::const_type Map;
+    return Map(&g);
+}
+
+// ==================================================
+// get(local(p), g)
+// NOTE: get(local(p), g, k) and put(local(p), g, k, v) not supported
+// ==================================================
+template <typename G, typename Property>
+typename property_map<subgraph<G>, local_property<Property> >::type
+get(local_property<Property>, subgraph<G>& g) {
+    typedef typename property_map<
+        subgraph<G>, local_property<Property>
+    >::type Map;
+    return Map(&g);
+}
+
+template <typename G, typename Property>
+typename property_map<subgraph<G>, local_property<Property> >::const_type
+get(local_property<Property>, const subgraph<G>& g) {
+    typedef typename property_map<
+        subgraph<G>, local_property<Property>
+    >::const_type Map;
+    return Map(&g);
+}
+
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+// ==================================================
+// get(bundle(p), g)
+// ==================================================
+
 template<typename G, typename T, typename Bundle>
 inline typename property_map<subgraph<G>, T Bundle::*>::type
 get(T Bundle::* p, subgraph<G>& g) {
@@ -981,44 +1126,66 @@ inline void put(Type Bundle::* p, Graph& g, Key const& k, Value const& v)
 { put(get(p, g), k, v); }
 
 // =========================================================
-// Localized bundled, get
+// Local bundled, get
 
 template<typename G, typename T, typename Bundle>
 inline typename property_map<
-    subgraph<G>, local_subgraph_property<T Bundle::*>
+    subgraph<G>, local_property<T Bundle::*>
 >::type
-get(local_subgraph_property<T Bundle::*> p, subgraph<G>& g) {
+get(local_property<T Bundle::*> p, subgraph<G>& g) {
     typedef typename property_map<
-        subgraph<G>, local_subgraph_property<T Bundle::*>
+        subgraph<G>, local_property<T Bundle::*>
     >::type Map;
     return Map(&g, p.value);
 }
 
 template<typename G, typename T, typename Bundle>
 inline typename property_map<
-    subgraph<G>, local_subgraph_property<T Bundle::*>
+    subgraph<G>, local_property<T Bundle::*>
 >::const_type
-get(local_subgraph_property<T Bundle::*> p, subgraph<G> const& g) {
+get(local_property<T Bundle::*> p, subgraph<G> const& g) {
     typedef typename property_map<
-        subgraph<G>, local_subgraph_property<T Bundle::*>
+        subgraph<G>, local_property<T Bundle::*>
     >::const_type Map;
     return Map(&g, p.value);
 }
 
 template <typename Graph, typename Type, typename Bundle, typename Key>
-inline Type get(local_subgraph_property<Type Bundle::*> p,
-                subgraph<Graph> const& g,
+inline Type get(local_property<Type Bundle::*> p, subgraph<Graph> const& g,
+                Key const& k)
+{ return get(get(p, g), k); }
+
+// =========================================================
+// Global bundled, get
+
+template<typename G, typename T, typename Bundle>
+inline typename property_map<
+    subgraph<G>, global_property<T Bundle::*>
+>::type
+get(global_property<T Bundle::*> p, subgraph<G>& g) {
+    typedef typename property_map<
+        subgraph<G>, global_property<T Bundle::*>
+    >::type Map;
+    return Map(&g, p.value);
+}
+
+template<typename G, typename T, typename Bundle>
+inline typename property_map<
+    subgraph<G>, global_property<T Bundle::*>
+>::const_type
+get(global_property<T Bundle::*> p, subgraph<G> const& g) {
+    typedef typename property_map<
+        subgraph<G>, global_property<T Bundle::*>
+    >::const_type Map;
+    return Map(&g, p.value);
+}
+
+template <typename Graph, typename Type, typename Bundle, typename Key>
+inline Type get(global_property<Type Bundle::*> p, subgraph<Graph> const& g,
                 Key const& k)
 { return get(get(p, g), k); }
 
 #endif
-
-template <typename G, typename Property, typename Key, typename Value>
-void put(Property, subgraph<G>& g, const Key& k, const Value& val) {
-    typedef typename property_map< subgraph<G>, Property>::type PMap;
-    PMap pmap(&g);
-    pmap[k] = val;
-}
 
 template <typename G, typename Tag>
 inline typename graph_property<G, Tag>::type&
