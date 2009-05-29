@@ -93,7 +93,6 @@ namespace boost {
   
       // Examine neighbors of min_vertex
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
-      typename graph_traits<Graph>::out_edge_iterator edge_iter, edge_iter_end;
       BGL_FORALL_OUTEDGES_T(min_vertex, current_edge, graph, Graph) {
         visitor.examine_edge(current_edge, graph);
         
