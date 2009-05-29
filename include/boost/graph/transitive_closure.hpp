@@ -38,13 +38,13 @@ namespace boost
 
   namespace detail
   {
-    template < typename Container, typename ST = std::size_t,
-      typename VT = typename Container::value_type >
+    template < typename TheContainer, typename ST = std::size_t,
+      typename VT = typename TheContainer::value_type >
       struct subscript_t:public std::unary_function < ST, VT >
     {
       typedef VT& result_type;
 
-      subscript_t(Container & c):container(&c)
+      subscript_t(TheContainer & c):container(&c)
       {
       }
       VT & operator() (const ST & i) const
@@ -52,11 +52,11 @@ namespace boost
         return (*container)[i];
       }
     protected:
-        Container * container;
+        TheContainer * container;
     };
-    template < typename Container >
-      subscript_t < Container > subscript(Container & c) {
-      return subscript_t < Container > (c);
+    template < typename TheContainer >
+      subscript_t < TheContainer > subscript(TheContainer & c) {
+      return subscript_t < TheContainer > (c);
     }
   }                             // namespace detail
 
