@@ -10,6 +10,7 @@
 #include <boost/config.hpp>
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 
 typedef boost::default_constructible_archetype<
@@ -50,6 +51,11 @@ int main()
                             vertex_index_map(index).
                             weight_map(weight).
                             distance_map(distance));
+
+    dijkstra_shortest_paths_no_color_map(g, s, 
+                                         vertex_index_map(index).
+                                         weight_map(weight).
+                                         distance_map(distance));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -66,6 +72,10 @@ int main()
     dijkstra_shortest_paths(g, s,
                             predecessor_map(pred).
                             weight_map(weight));
+
+    dijkstra_shortest_paths_no_color_map(g, s,
+                                         predecessor_map(pred).
+                                         weight_map(weight));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -81,6 +91,10 @@ int main()
     dijkstra_shortest_paths(g, s,
                             predecessor_map(pred).
                             vertex_index_map(index));
+
+     dijkstra_shortest_paths_no_color_map(g, s,
+                                          predecessor_map(pred).
+                                          vertex_index_map(index));
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -109,6 +123,14 @@ int main()
                             distance_combine(combine).
                             distance_compare(compare).
                             visitor(vis));
+
+    dijkstra_shortest_paths_no_color_map(g, s,
+                                         vertex_index_map(index).
+                                         weight_map(weight).
+                                         distance_map(distance).
+                                         distance_combine(combine).
+                                         distance_compare(compare).
+                                         visitor(vis));
   }
   return 0;
 }
