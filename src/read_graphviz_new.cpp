@@ -159,8 +159,13 @@ namespace read_graphviz_detail {
 
     void skip() {
       boost::match_results<std::string::const_iterator> results;
-      bool found = boost::regex_search(begin, end, results, stuff_to_skip);
+#ifndef NDEBUG
+      bool found =
+#endif
+        boost::regex_search(begin, end, results, stuff_to_skip);
+#ifndef NDEBUG
       assert (found);
+#endif
       boost::sub_match<std::string::const_iterator> sm1 = results.suffix();
       assert (sm1.second == end);
       begin = sm1.first;
@@ -406,7 +411,7 @@ namespace read_graphviz_detail {
 
     void parse_graph(bool want_directed) {
       bool is_strict = false;
-      bool is_directed;
+      bool is_directed = false;
       std::string name;
       if (peek().type == token::kw_strict) {get(); is_strict = true;}
       switch (peek().type) {
