@@ -18,6 +18,8 @@
 #include <boost/mpl/not.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/shared_array_property_map.hpp>
 
 namespace boost {
 
@@ -436,15 +438,9 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <bool Exists, typename Graph, typename ArgPack, typename Value, typename PM>
     struct color_map_maker_helper {
-      typedef int data_type;
       typedef PM map_type;
-      typedef std::pair<data_type, map_type> pm_pair_type;
-      static void make_pm_pair(const Graph&,
-                               Value,
-                               const PM& pm,
-                               const ArgPack&,
-                               pm_pair_type& result) {
-        result.second = pm;
+      static PM make_map(const Graph&, Value, const PM& pm, const ArgPack&) {
+        return pm;
       }
     };
 
@@ -459,24 +455,20 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
           boost::detail::parameter_exists<
             ArgPack, boost::graph::keywords::tag::vertex_index_map>::value
         >::result_type>::type vi_map_type;
-      typedef std::vector<Value> data_type;
       typedef
-        boost::iterator_property_map<typename data_type::iterator, vi_map_type, Value>
+        boost::shared_array_property_map<Value, vi_map_type>
         map_type;
-      typedef std::pair<data_type, map_type> pm_pair_type;
-      static void make_pm_pair(const Graph& g,
+      static map_type make_map(const Graph& g,
                                Value v,
                                const PM&,
-                               const ArgPack& ap,
-                               pm_pair_type& result) {
-        result.first.clear();
-        result.first.resize(num_vertices(g), v);
-        result.second = map_type(
-                          result.first.begin(),
-                          override_const_property(
-                            ap,
-                            boost::graph::keywords::_vertex_index_map,
-                            g, vertex_index));
+                               const ArgPack& ap) {
+        return make_shared_array_property_map(
+                 num_vertices(g), 
+                 v,
+                 override_const_property(
+                   ap,
+                   boost::graph::keywords::_vertex_index_map,
+                   g, vertex_index));
       }
     };
 
@@ -496,16 +488,10 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
                                                 >::type
                                               >::type> helper;
       typedef typename helper::map_type map_type;
-      typedef typename helper::pm_pair_type pm_pair_type;
-      static void make_pm_pair(const Graph& g, const ArgPack& ap, pm_pair_type& result) {
-        helper::make_pm_pair(g, white_color, ap[boost::graph::keywords::_color_map | 0], ap, result);
+      static map_type make_map(const Graph& g, const ArgPack& ap) {
+        return helper::make_map(g, white_color, ap[boost::graph::keywords::_color_map | 0], ap);
       }
     };
-
-#define BOOST_GRAPH_MAKE_COLOR_MAP_IF_NEEDED(GraphT, ArgPackT, graph, arg_pack, color_map) \
-    typename boost::detail::color_map_maker<GraphT, ArgPackT>::pm_pair_type BOOST_PP_CAT(cm_pair_, __LINE__); \
-    boost::detail::color_map_maker<GraphT, ArgPackT>::make_pm_pair(graph, arg_pack, BOOST_PP_CAT(cm_pair_, __LINE__)); \
-    typename boost::detail::color_map_maker<GraphT, ArgPackT>::map_type& color_map = BOOST_PP_CAT(cm_pair_, __LINE__).second;
 
   }
 

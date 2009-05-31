@@ -289,11 +289,10 @@ namespace boost {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    BOOST_GRAPH_MAKE_COLOR_MAP_IF_NEEDED(VertexListGraph, arg_pack_type, g, arg_pack, color_map);
     depth_first_search
       (g,
        arg_pack[_visitor | make_dfs_visitor(null_visitor())],
-       color_map,
+       boost::detail::color_map_maker<VertexListGraph, arg_pack_type>::make_map(g, arg_pack),
        arg_pack[_root_vertex | *vertices(g).first]
       );
   }
