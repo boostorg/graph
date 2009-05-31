@@ -50,7 +50,7 @@ Both <tt>edmonds_maximum_cardinality_matching</tt> and
 <tt>checked_edmonds_maximum_cardinality_matching</tt> find the
 maximum cardinality matching in any undirected graph. The matching is returned in a
 <tt>MateMap</tt>, which is a 
-<a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a> 
+<a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a> 
 that maps vertices to vertices. In the mapping returned, each vertex is either mapped
 to the vertex it's matched to, or to <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> if it
 doesn't participate in the matching. If no <tt>VertexIndexMap</tt> is provided, both functions
@@ -238,12 +238,12 @@ An undirected graph. The graph type must be a model of
 
 IN: <tt>VertexIndexMap vm</tt>
 <blockquote>
-Must be a model of <a href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>, mapping vertices to integer indices.
+Must be a model of <a href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>, mapping vertices to integer indices.
 </blockquote>
 
 OUT: <tt>MateMap mate</tt>
 <blockquote>
-Must be a model of <a href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, mapping
+Must be a model of <a href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>, mapping
 vertices to vertices. For any vertex v in the graph, <tt>get(mate,v)</tt> will be the vertex that v is matched to, or
 <tt>graph_traits<Graph>::null_vertex()</tt> if v isn't matched.
 </blockquote>

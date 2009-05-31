@@ -74,7 +74,7 @@ and assigning each component an integer label. The algorithm then
 records which component each vertex in the graph belongs to by
 recording the component number in the component property map. The
 <tt>ComponentMap</tt> type must be a model of <a
-href="../../property_map/WritablePropertyMap.html">Writable Property
+href="../../property_map/doc/WritablePropertyMap.html">Writable Property
 Map</a>. The value type shouch be an integer type, preferably the same
 as the <tt>vertices_size_type</tt> of the graph. The key type must be
 the graph's vertex descriptor type.<br>
@@ -89,12 +89,12 @@ UTIL: <tt>color_map(ColorMap color)</tt>
 <blockquote>
   This is used by the algorithm to keep track of its progress through
   the graph. The type <tt>ColorMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a> and its key type must be the graph's vertex
   descriptor type and the value type of the color map must model
   <a href="./ColorValue.html">ColorValue</a>.<br>
   <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>default_color_type</tt> of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -109,7 +109,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   num_vertices(g))</tt>. This parameter is only necessary when the
   default color property map is used. The type <tt>VertexIndexMap</tt>
   must be a model of <a
-  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The value type of the map must be an integer type. The
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>

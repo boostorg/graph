@@ -175,13 +175,13 @@ properties is described in Section <A
 HREF="./using_adjacency_list.html#sec:adjacency-list-properties">Internal
 Properties </A>. The property maps are objects that implement the
 interface defined in Section <A
-HREF="../../property_map/property_map.html">Property Map
+HREF="../../property_map/doc/property_map.html">Property Map
 Concepts</A> or may be <a href="bundles.html">bundled properties</a>,
 which have a more succinct syntax. The types of all property values
 must be Copy Constructible, Assignable, and Default Constructible.
 The property maps obtained from the
 <TT>adjacency_list</TT> class are models of the <a
-href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
 Map</a> concept. If the <TT>adjacency_list</TT> is const,
 then the property map is constant, otherwise the property
 map is mutable.
@@ -194,7 +194,7 @@ the <TT>vertex_index_t</TT> property.  The indices fall in the range
 removed the indices are adjusted so that they retain these
 properties. Some care must be taken when using these indices to access
 exterior property storage. The property map for vertex index is a
-model of <a href="../../property_map/ReadablePropertyMap.html">Readable
+model of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
 Property Map</a>.
 
 <P>

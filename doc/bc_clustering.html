@@ -96,7 +96,7 @@ OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
   This property map is used to accumulate the betweenness centrality
   of each edge, and is a secondary form of output for the
   algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>, with the graph's edge descriptor type as its key
   type. The value type of this property map should be the same as the
   value type of the <tt>CentralityMap</tt> property map.<br>
@@ -114,7 +114,7 @@ IN: <tt>VertexIndexMap vertex_index</tt>
     num_vertices(g))</tt>. This is necessary for efficient updates of the
   heap data structure when an edge is relaxed.  The type
   <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>.

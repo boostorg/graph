@@ -133,19 +133,19 @@ IN: <tt>IndexMap indexMap</tt>
   This maps each vertex to an integer in the range <tt>[0, num_vertices(g))</tt>.
   The type 
   <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.
 </blockquote>
 
 IN/OUT: <tt>TimeMap dfnumMap</tt>
 <blockquote>
-  The sequence number of depth first search. The type <tt>TimeMap</tt> must be a model of <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a>. The vertex descriptor type of the graph needs to be usable as the key type of the <tt>TimeMap</tt>.
+  The sequence number of depth first search. The type <tt>TimeMap</tt> must be a model of <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property Map</a>. The vertex descriptor type of the graph needs to be usable as the key type of the <tt>TimeMap</tt>.
 </blockquote>
 
 IN/OUT: <tt>PredMap parentMap</tt>
 <blockquote>
-  The predecessor map records the parent of the depth first search tree. The <tt>PredMap</tt> type must be a <a href="../../property_map/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are the same as the vertex descriptor type of the graph.
+  The predecessor map records the parent of the depth first search tree. The <tt>PredMap</tt> type must be a <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property Map</a> whose key and value types are the same as the vertex descriptor type of the graph.
 </blockquote>
 
 IN/OUT: <tt>VertexVector verticesByDFNum</tt>

@@ -91,12 +91,12 @@ use the propery map interface. This gives the user of the
 algorithm the ability to decide how they want to store the properties.
 Since we will need to both read and write the colors we specify the
 requirements as <a
-href="../../property_map/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
+href="../../property_map/doc/ReadWritePropertyMap.html">ReadWritePropertyMap</a>. The
 <TT>key_type</TT> of the color map must be the
 <TT>vertex_descriptor</TT> from the graph, and the <TT>value_type</TT>
 must be some kind of integer. We also specify the interface for the
 <TT>order</TT> parameter as a property map, in this case a <a
-href="../../property_map/ReadablePropertyMap.html">ReadablePropertyMap</a>. For
+href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>. For
 order, the <TT>key_type</TT> is an integer offset and the
 <TT>value_type</TT> is a <TT>vertex_descriptor</TT>. Again we enforce
 these requirements with concept checks. The return value of this

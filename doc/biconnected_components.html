@@ -120,7 +120,7 @@ and assigning each component an integer label. The algorithm then
 records which component each edge in the graph belongs to by
 recording the component number in the component property map. The
 <tt>ComponentMap</tt> type must be a model of <a
-href="../../property_map/WritablePropertyMap.html">Writable Property
+href="../../property_map/doc/WritablePropertyMap.html">Writable Property
 Map</a>. The value type shouch be an integer type, preferably the same
 as the <tt>edges_size_type</tt> of the graph. The key type must be
 the graph's edge descriptor type.<br>
@@ -147,7 +147,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. The type 
   <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt><br>
@@ -159,12 +159,12 @@ UTIL/OUT: <tt>discover_time_map(DiscoverTimeMap discover_time)</tt>
 <blockquote>
   The discovery time of each vertex in the depth-first search. The
   type <tt>DiscoverTimeMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The value type of the map must be an integer
   type. The vertex descriptor type of the graph needs to be usable as
   the key type of the map.<br>
 <b>Default</b>: an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
   <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
@@ -178,12 +178,12 @@ UTIL/OUT: <tt>lowpoint_map(LowPointMap lowpt)</tt>
   The low point of each vertex in the depth-first search, which is the
   smallest vertex reachable from a given vertex with at most one back
   edge.  The type <tt>LowPointMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The value type of the map must be an integer
   type. The vertex descriptor type of the graph needs to be usable as
   the key type of the map.<br>
 <b>Default</b>: an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>vertices_size_type</tt> of size
   <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for
@@ -197,11 +197,11 @@ UTIL/OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   The predecessor map records the depth first search tree. 
   The <tt>PredecessorMap</tt> type
   must be a <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a> whose key and value types are the same as the vertex
   descriptor type of the graph.<br>
   <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>vertex_descriptor</tt> of size
   <tt>num_vertices(g)</tt> and using <tt>get(vertex_index, g)</tt> for

@@ -92,7 +92,7 @@ The output of the algorithm are the vertices in the new ordering.
 
 <li> <tt>OutDegreeMap outdegree</tt> &nbsp(WORK) <br>
   This is used internally to store the out degree of vertices.  This
-  must be a <a href="../../property_map/LvaluePropertyMap.html">
+  must be a <a href="../../property_map/doc/LvaluePropertyMap.html">
   LvaluePropertyMap</a> with key type the same as the vertex
   descriptor type of the graph, and with a value type that is an
   integer type.
@@ -100,19 +100,19 @@ The output of the algorithm are the vertices in the new ordering.
 <li> <tt>InversePermutationMap inverse_perm</tt> &nbsp(OUT) <br> 
   The new vertex ordering, given as the mapping from the
   new indices to the old indices (an inverse permutation).
-  This must be an <a href="../../property_map/LvaluePropertyMap.html">
+  This must be an <a href="../../property_map/doc/LvaluePropertyMap.html">
   LvaluePropertyMap</a> with a value type and key type a signed integer. 
 
 <li> <tt>PermutationMap perm</tt> &nbsp(OUT) <br> 
   The new vertex ordering, given as the mapping from the
   old indices to the new indices (a permutation).
-  This must be an <a href="../../property_map/LvaluePropertyMap.html">
+  This must be an <a href="../../property_map/doc/LvaluePropertyMap.html">
   LvaluePropertyMap</a> with a value type and key type a signed integer. 
 
 <li> <tt>SuperNodeSizeMap supernode_size</tt> &nbsp(WORK/OUT) <br> 
   This is used internally to record the size of supernodes and is also
   useful information to have. This is a <a
-  href="../../property_map/LvaluePropertyMap.html">
+  href="../../property_map/doc/LvaluePropertyMap.html">
   LvaluePropertyMap</a> with an unsigned integer value type and key
   type of vertex descriptor.
 
@@ -124,7 +124,7 @@ The output of the algorithm are the vertices in the new ordering.
   
 <li> <tt>VertexIndexMap id</tt> &nbsp(IN) <br> 
   Used internally to map vertices to their indices. This must be a <a
-  href="../../property_map/ReadablePropertyMap.html"> Readable
+  href="../../property_map/doc/ReadablePropertyMap.html"> Readable
   Property Map</a> with key type the same as the vertex descriptor of
   the graph and a value type that is some unsigned integer type.
 

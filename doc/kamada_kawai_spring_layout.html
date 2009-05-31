@@ -157,7 +157,7 @@ OUT: <tt>PositionMap position</tt>
 <blockquote>
   This property map is used to store the position of each vertex.  The
   type <tt>PositionMap</tt> must be a model of <a
-  href="../../property_map/WritablePropertyMap.html">Writable Property
+  href="../../property_map/doc/WritablePropertyMap.html">Writable Property
   Map</a>, with the graph's vertex descriptor type as its key type.<br>
 
   <b>Python</b>: The position map must be a <tt>vertex_point2d_map</tt> for
@@ -172,7 +172,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the weight
   map. The value type for this map must be
   the same as the value type of the distance map.<br>
@@ -260,7 +260,7 @@ UTIL: <tt>PartialDerivativeMap partial_derivatives</tt>
 A property map that will be used to store the partial derivates of
 each vertex with respect to the <tt class="computeroutput">x</tt> and
 <tt class="computeroutput">y</tt> coordinates. This must be a
-<a href="../../property_map/ReadWritePropertyMap.html">Read/Write
+<a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
 Property Map</a> whose value type is a pair with both types equivalent
 to the value type of the weight map. The default is an iterator
 property map.<br>

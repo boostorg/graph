@@ -230,14 +230,14 @@ must also be in the graph.
 <P>IN: <TT>edge_capacity(EdgeCapacityMap cap)</TT> 
 </P>
 <BLOCKQUOTE>The edge capacity property map. The type must be a model
-of a constant <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
+of a constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_capacity, g)</TT> 
 </BLOCKQUOTE>
 <P>OUT: <TT>edge_residual_capacity(ResidualCapacityEdgeMap res)</TT> 
 </P>
 <BLOCKQUOTE>The edge residual capacity property map. The type must be
-a model of a mutable <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
+a model of a mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_residual_capacity,
 g)</TT> 
@@ -246,14 +246,14 @@ g)</TT>
 </P>
 <BLOCKQUOTE>An edge property map that maps every edge <I>(u,v)</I> in
 the graph to the reverse edge <I>(v,u)</I>. The map must be a model
-of constant <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
+of constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_reverse, g)</TT> 
 </BLOCKQUOTE>
 <P>UTIL: <TT>vertex_predecessor(PredecessorMap pre_map)</TT> 
 </P>
 <BLOCKQUOTE>A vertex property map that stores the edge to the vertex'
-predecessor. The map must be a model of mutable <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
+predecessor. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's vertex
 descriptor type.<BR><B>Default:</B> <TT>get(vertex_predecessor, g)</TT>
 </BLOCKQUOTE>
@@ -263,7 +263,7 @@ descriptor type.<BR><B>Default:</B> <TT>get(vertex_predecessor, g)</TT>
 vertex. If the color of a vertex after running the algorithm is black
 the vertex belongs to the source tree else it belongs to the
 sink-tree (used for minimum cuts). The map must be a model of mutable
-<A HREF="../../property_map/LvaluePropertyMap.html">Lvalue Property
+<A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
 Map</A>. The key type of the map must be the graph's vertex
 descriptor type.<BR><B>Default:</B> <TT>get(vertex_color, g)</TT> 
 </BLOCKQUOTE>
@@ -271,7 +271,7 @@ descriptor type.<BR><B>Default:</B> <TT>get(vertex_color, g)</TT>
 </P>
 <BLOCKQUOTE>A vertex property map that stores the distance to the
 corresponding terminal. It's a utility-map for speeding up the
-algorithm. The map must be a model of mutable <A HREF="../../property_map/LvaluePropertyMap.html">Lvalue
+algorithm. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's vertex
 descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT> 
 </BLOCKQUOTE>
@@ -279,7 +279,7 @@ descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT>
 </P>
 <BLOCKQUOTE>Maps each vertex of the graph to a unique integer in the
 range <TT>[0, num_vertices(g))</TT>. The map must be a model of
-constant <A HREF="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</A>.
+constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
 The key type of the map must be the graph's vertex descriptor
 type.<BR><B>Default:</B> <TT>get(vertex_index, g)</TT> 
 </BLOCKQUOTE>

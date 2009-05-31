@@ -201,7 +201,7 @@ IN: <tt>weight_map(WeightMap w)</tt>
 <blockquote>
   The weight (also know as ``length'' or ``cost'') of each edge in the
   graph.  The <tt>WeightMap</tt> type must be a model of <a
-  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>.  The key type for this property map must be the edge
   descriptor of the graph.  The value type for the weight map must be
   <i>Addable</i> with the distance map's value type. <br>
@@ -219,7 +219,7 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   u</i> then <i>u</i> is either the source vertex or a vertex that is
   not reachable from the source.  The <tt>PredecessorMap</tt> type
   must be a <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a> which key and vertex types the same as the vertex
   descriptor type of the graph.<br>
   <b>Default:</b> <tt>dummy_property_map</tt><br>
@@ -232,7 +232,7 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
   The shortest path weight from the source vertex to each vertex in
   the graph <tt>g</tt> is recorded in this property map.  The type
   <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The key type of the property map must be the
   vertex descriptor type of the graph, and the value type of the
   distance map must be <a

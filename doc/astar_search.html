@@ -256,7 +256,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
    href="./exception.html#negative_edge"><tt>negative_edge</tt></a>
    exception if one of the edges is negative.  The type
    <tt>WeightMap</tt> must be a model of <a
-   href="../../property_map/ReadablePropertyMap.html"><tt>Readable
+   href="../../property_map/doc/ReadablePropertyMap.html"><tt>Readable
    Property Map</tt></a>.  The edge descriptor type of the graph needs
    to be usable as the key type for the weight map.  The value type
    for this map must be the same as the value type of the distance
@@ -270,7 +270,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   num_vertices(g))</tt>.  This is necessary for efficient updates of
   the heap data structure when an edge is relaxed.  The type
   <tt>VertexIndexMap</tt> must be a model of <a
-  href="../../property_map/ReadablePropertyMap.html"><tt>Readable
+  href="../../property_map/doc/ReadablePropertyMap.html"><tt>Readable
   Property Map</tt></a>.  The value type of the map must be an integer
   type.  The vertex descriptor type of the graph needs to be usable as
   the key type of the map.<br>
@@ -291,7 +291,7 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   <tt>p[u] = u</tt> then <tt>u</tt> is either the start vertex or a
   vertex that is not reachable from the start.  The
   <tt>PredecessorMap</tt> type must be a <a
-  href="../../property_map/ReadWritePropertyMap.html"><tt>Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
   Property Map</tt></a> with key and vertex types the same as the
   vertex descriptor type of the graph.<br>
 
@@ -305,7 +305,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   vertex in the graph <tt>g</tt> is recorded in this property map.
   The shortest path weight is the sum of the edge weights along the
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html"><tt>Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
   Property Map</tt></a>.  The vertex descriptor type of the graph
   needs to be usable as the key type of the distance map.  The value
   type of the distance map is the element type of a <a
@@ -329,7 +329,7 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
   the estimated cost (as returned by the heuristic function
   <tt>h</tt>) from the vertex to a goal.  The type <tt>CostMap</tt>
   must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html"><tt>Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
   Property Map</tt></a>.  The vertex descriptor type of the graph
   needs to be usable as the key type of the distance map.  The value
   type of the distance map is the element type of a <a
@@ -358,7 +358,7 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   reachable from the source vertex will have been colored black.  All
   other vertices will still be white.  The type <tt>ColorMap</tt> must
   be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html"><tt>Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
   Property Map</tt></a>.  A vertex descriptor must be usable as the
   key type of the map, and the value type of the map must be a model
   of <a href="./ColorValue.html"><tt>Color Value</tt></a>.<br>

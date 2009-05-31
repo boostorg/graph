@@ -141,13 +141,13 @@ IN: <tt>const Graph&amp; g</tt>
 UTIL: <tt>IncomingMap incoming</tt> 
 <blockquote>
   This property map records the set of edges incoming to each vertex that comprise a shortest path from a particular source vertex through this vertex, and is used internally by the algorithm.The <tt>IncomingMap</tt> type must be a <a
-  href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
   Map</a> whose key type is the same as the vertex descriptor type of
   the graph and whose value type is a Sequence (e.g., an
   <tt>std::vector</tt>) containing edge descriptors.<br>
 
   <b>Default:</b> <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of <tt>std::vector&lt;Edge&gt;</tt>, where
   <tt>Edge</tt> is the edge descriptor type of the graph.<br>
@@ -161,14 +161,14 @@ UTIL: <tt>DistanceMap distance_map</tt>
   vertex in the graph <tt>g</tt> is recorded in this property map, but
   the result is only used internally. The type <tt>DistanceMap</tt>
   must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the distance map. The value type of the
   distance map is the element type of a <a
   href="./Monoid.html">Monoid</a>.<br>
 
   <b>Default:</b> <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type (or the
   <tt>vertices_size_type</tt> of the graph when no weight map exists)
@@ -182,14 +182,14 @@ UTIL: <tt>DependencyMap dependency</tt>
 <blockquote>
   Property map used internally to accumulate partial betweenness
   centrality results. The type <tt>DependencyMap</tt> must be a model
-  of <a href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  of <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the dependency map. The value type of
   the dependency map must be compatible with the value type of the
   centrality map.<br>
 
   <b>Default:</b> <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>CentralityMap</tt>'s value type of
   size <tt>num_vertices(g)</tt> and using the <tt>vertex_index</tt>
@@ -203,14 +203,14 @@ UTIL: <tt>PathCountMap path_count</tt>
   Property map used internally to accumulate the number of paths that
   pass through each particular vertex. The type <tt>PathCountMap</tt>
   must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the dependency map. The value type of
   the dependency map must be an integral type large enough to store
   the number of paths in the graph.<br>
 
   <b>Default:</b> <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>degree_size_type</tt> of the graph of
   size <tt>num_vertices(g)</tt> and using the <tt>vertex_index</tt>
@@ -225,7 +225,7 @@ OUT/UTIL: <tt>CentralityMap centrality_map</tt>
   This property map is used to accumulate the betweenness centrality
   of each vertex, and is the primary output of the algorithm. The type
   <tt>CentralityMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>, with the graph's vertex descriptor type as its key
   type. The value type of this property map should be a floating-point
   or rational type.<br>
@@ -242,7 +242,7 @@ OUT/UTIL: <tt>EdgeCentralityMap edge_centrality_map</tt>
   This property map is used to accumulate the betweenness centrality
   of each edge, and is a secondary form of output for the
   algorithm. The type <tt>EdgeCentralityMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>, with the graph's edge descriptor type as its key
   type. The value type of this property map should be the same as the
   value type of the <tt>CentralityMap</tt> property map.<br>
@@ -260,7 +260,7 @@ IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt>
     num_vertices(g))</tt>. This is necessary for efficient updates of the
   heap data structure when an edge is relaxed.  The type
   <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>.
@@ -278,7 +278,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the weight
   map. The value type for this map must be
   the same as the value type of the distance map.<br>

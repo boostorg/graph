@@ -106,7 +106,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
 The weight or ``length'' of
   each edge in the graph.  The <tt>WeightMap</tt> type must be a model
-  of <a href="../../property_map/ReadablePropertyMap.html">Readable
+  of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
   Property Map</a> and its value type must be <a
   href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
   Comparable</a>. The key type of this map needs to be the graph's
@@ -120,12 +120,12 @@ UTIL: <tt>rank_map(RankMap r_map)</tt>
 <blockquote>
   This is used by the disjoint sets data structure.
   The type <tt>RankMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the rank map. The value type of the
   rank map must be an integer type.<br>
   <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the integers of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -140,11 +140,11 @@ UTIL: <tt>predecessor_map(PredecessorMap p_map)</tt>
   used for storing predecessors in the spanning tree.  The predecessors
   of the spanning tree can be obtained from the spanning tree edges
   output. The type <tt>PredecessorMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The key type value types of the predecessor map
   must be the vertex descriptor type of the graph. <br>
   <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of vertex descriptors of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -159,7 +159,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   num_vertices(g))</tt>. This is only necessary if the default is used
   for the rank or predecessor maps. The type <tt>VertexIndexMap</tt>
   must be a model of <a
-  href="../../property_map/ReadablePropertyMap.html">Readable Property
+  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The value type of the map must be an integer type. The
   vertex descriptor type of the graph needs to be usable as the key
   type of the map.<br>

@@ -108,7 +108,7 @@ IN: <tt>capacity_map(EdgeCapacityMap cap)</tt>
 <blockquote>
   The edge capacity property map. The type must be a model of a
   constant <a
-  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>. The
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_capacity, g)</tt>
 </blockquote>
@@ -117,7 +117,7 @@ OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   The edge residual capacity property map. The type must be a model of
   a mutable <a
-  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>. The
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_residual_capacity, g)</tt>
 </blockquote>
@@ -127,7 +127,7 @@ IN: <tt>reverse_edge_map(ReverseEdgeMap rev)</tt>
   An edge property map that maps every edge <i>(u,v)</i> in the graph
   to the reverse edge <i>(v,u)</i>. The map must be a model of
   constant <a
-  href="../../property_map/LvaluePropertyMap.html">Lvalue Property Map</a>. The
+  href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property Map</a>. The
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_reverse, g)</tt>
 </blockquote>
@@ -136,7 +136,7 @@ IN: <tt>vertex_index_map(VertexIndexMap index_map)</tt>
 <blockquote>
   Maps each vertex of the graph to a unique integer in the range
   <tt>[0, num_vertices(g))</tt>. The map must be a model of constant <a
-  href="../../property_map/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
+  href="../../property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</a>. The
   key type of the map must be the graph's vertex descriptor type.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>
     Note: if you use this default, make sure your graph has
