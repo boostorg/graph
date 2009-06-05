@@ -29,7 +29,7 @@ __ ../../../index.htm
                 const dynamic_properties& dp, bool ordered_vertices=false);
 
 This is to write a BGL graph object into an output stream in the
-graphml_ format.  Both overloads of ``write_graphml`` will emit all of
+GraphML_ format.  Both overloads of ``write_graphml`` will emit all of
 the properties stored in the dynamic_properties_ object, thereby
 retaining the properties that have been read in through the dual
 function read_graphml_. The second overload must be used when the
@@ -60,8 +60,8 @@ IN: ``VertexIndexMap vertex_index``
 
 
 IN: ``dynamic_properties& dp``
-  Contains all of the vertex and edge properties that should be
-  emitted by the graphml writer.
+  Contains all of the vertex, edge, and graph properties that should be
+  emitted by the GraphML writer.
 
 IN: ``bool ordered_vertices``
   This tells whether or not the order of the vertices from vertices(g)
@@ -74,8 +74,8 @@ IN: ``bool ordered_vertices``
 Example
 -------
 
-This example demonstrates using BGL-graphml interface to write 
-a BGL graph into a graphml format file.
+This example demonstrates using BGL-GraphML interface to write 
+a BGL graph into a GraphML format file.
 
 ::
 
@@ -137,7 +137,7 @@ The output will be:
 ::
 
   <?xml version="1.0" encoding="UTF-8"?>
-  <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml http://graphml.graphdrawing.org/xmlns/graphml/graphml-attributes-1.0rc.xsd">
+  <graphml xmlns="http://graphml.graphdrawing.org/xmlns/graphml"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns/graphml http://graphml.graphdrawing.org/xmlns/graphml/graphml-attributes-1.0rc.xsd">
     <key id="key0" for="node" attr.name="name" attr.type="string" />
     <key id="key1" for="edge" attr.name="weight" attr.type="int" />
     <graph id="G" edgedefault="directed" parse.nodeids="canonical" parse.edgeids="canonical" parse.order="nodesfirst">
@@ -254,11 +254,10 @@ _read_graphml
 Notes
 -----
 
- - Note that you can use graphml file write facilities without linking
+ - Note that you can use GraphML file write facilities without linking
    against the ``boost_graph`` library.
 
-.. _graphml: http://graphml.graphdrawing.org/
-
+.. _GraphML: http://graphml.graphdrawing.org/
 .. _dynamic_properties: ../../property_map/doc/dynamic_property_map.html
 .. _read_graphml: read_graphml.html
 .. _VertexListGraph: VertexListGraph.html
