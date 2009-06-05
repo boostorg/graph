@@ -13,6 +13,9 @@
 #  undef _GLIBCXX_DEBUG
 #endif
 
+// Use new CSR interface
+#define BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
 // Test for the compressed sparse row graph type
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -157,19 +160,29 @@ make_edge_to_index_pair(const GraphT& g)
 
 void check_consistency(const CSRGraphT& g) {
   // Do a bunch of tests on the graph internal data
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_last_source is valid
   BOOST_CHECK(g.m_last_source <= num_vertices(g));
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_rowstart entries are valid, and that entries after
   // m_last_source + 1 are all zero
   BOOST_CHECK(g.m_rowstart[0] == 0);
-  for (CSRGraphT::vertices_size_type i = 0; i < g.m_last_source; ++i) {
+  for (CSRGraphT::vertices_size_type i = 0;
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       i < num_vertices(g);
+#else // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       i < g.m_last_source;
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       ++i) {
     BOOST_CHECK(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
     BOOST_CHECK(g.m_rowstart[i + 1] <= num_edges(g));
   }
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   for (CSRGraphT::vertices_size_type i = g.m_last_source + 1;
        i < g.m_rowstart.size(); ++i) {
     BOOST_CHECK(g.m_rowstart[i] == 0);
   }
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_column entries are within range
   for (CSRGraphT::edges_size_type i = 0; i < num_edges(g); ++i) {
     BOOST_CHECK(g.m_column[i] < num_vertices(g));
@@ -202,6 +215,7 @@ void graph_test(const OrigGraph& g)
                       g3, boost::identity_property_map(),
                       boost::identity_property_map());
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check constructing a graph using in-place modification of vectors
   {
     std::vector<std::size_t> sources(num_edges(g2));
@@ -271,7 +285,11 @@ void graph_test(const OrigGraph& g)
                         g3a, boost::identity_property_map(),
                         boost::identity_property_map());
   }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
+  CSRGraphT::edge_iterator ei, ei_end;
+
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check constructing a graph using add_edge and add_vertices
   CSRGraphT g4;
   BOOST_CHECK(num_vertices(g4) == 0);
@@ -281,7 +299,6 @@ void graph_test(const OrigGraph& g)
 
   BOOST_CHECK(first_vert == 0);
   BOOST_CHECK(num_vertices(g4) == num_vertices(g3));
-  CSRGraphT::edge_iterator ei, ei_end;
   int i;
   for (boost::tie(ei, ei_end) = edges(g3), i = 0; ei != ei_end; ++ei, ++i) {
     CSRGraphT::edge_descriptor e = add_edge(source(*ei, g3), target(*ei, g3), g4);
@@ -292,6 +309,7 @@ void graph_test(const OrigGraph& g)
   assert_graphs_equal(g3, boost::identity_property_map(),
                       g4, boost::identity_property_map(),
                       boost::identity_property_map());
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
@@ -436,6 +454,7 @@ int test_main(int argc, char* argv[])
   //  graph_test(1000, 0.1, seed);
   graph_test(1000, 0.001, seed);
   graph_test(1000, 0.0005, seed);
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   {
     std::cout << "Testing partially constructed CSR graph" << std::endl;
     CSRGraphT g;
@@ -452,16 +471,19 @@ int test_main(int argc, char* argv[])
     }
     graph_test(g);
   }
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   test_graph_properties();
   test_vertex_and_edge_properties();
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   {
     std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
     std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
-    CSRGraphT g(unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
+    CSRGraphT g(boost::edges_are_unsorted, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
     graph_test(g);
   }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   return 0;
 }

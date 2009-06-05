@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <!--
-     Copyright (c) 2005 Trustees of Indiana University
+     Copyright (c) 2005-2009 Trustees of Indiana University
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
@@ -47,6 +47,17 @@ function address(host, user) {
     or edges from a CSR graph. Use this format in high-performance
     applications or for very large graphs that you do not need to
     change.</p>
+
+    <p>There are two interfaces to the compressed sparse row graph.  The
+    old interface requires that all out edges from a single vertex are
+    sorted by target, and does not support construction of the graph from
+    unsorted arrays of sources and targets.  The new interface has these
+    new constructors, but does not support incremental construction of the
+    graph or the <tt>edge_range()</tt> and <tt>edge()</tt> functions.  The
+    old interface is the default, but will be removed in a later version of
+    Boost.  To select the new interface, add <tt>#define
+    BOOST_GRAPH_USE_NEW_CSR_INTERFACE</tt> before including
+    <tt>&lt;boost/graph/compressed_sparse_row_graph.hpp&gt;</tt>.</p>
         
     <p>The CSR format stores vertices and edges in separate arrays,
     with the indices into these arrays corresponding to the identifier
@@ -103,17 +114,35 @@ public:
   <i>// <a href="#constructors">Graph constructors</a></i>
   <a href="#default-const">compressed_sparse_row_graph</a>();
 
+  <i>// Unsorted edge list constructors <b>(new interface only)</b></i>
   template&lt;typename MultiPassInputIterator&gt;
-  <a href="#edge-const">compressed_sparse_row_graph</a>(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+  <a href="#edge-const">compressed_sparse_row_graph</a>(edges_are_unsorted_t,
+                              MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
 
   template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
-  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(edges_are_unsorted_t,
+                              MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
 
+  <i>// Old sorted edge list constructors <b>(old interface only)</b></i>
+  template&lt;typename InputIterator&gt;
+  <a href="#edge-sorted-const">compressed_sparse_row_graph</a>(InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  <a href="#edge-sorted-prop-const">compressed_sparse_row_graph</a>(InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              edges_size_type numedges = 0,
+                              const GraphProperty&amp; prop = GraphProperty());
+
+  <i>// New sorted edge list constructors <b>(both interfaces)</b></i>
   template&lt;typename InputIterator&gt;
   <a href="#edge-sorted-const">compressed_sparse_row_graph</a>(edges_are_sorted_t,
                               InputIterator edge_begin, InputIterator edge_end,
@@ -129,6 +158,7 @@ public:
                               edges_size_type numedges = 0,
                               const GraphProperty&amp; prop = GraphProperty());
 
+  <i>// In-place unsorted edge list constructors <b>(new interface only)</b></i>
   template&lt;typename InputIterator&gt;
   <a href="#edge-inplace-const">compressed_sparse_row_graph</a>(construct_inplace_from_sources_and_targets_t,
                               std::vector&lt;vertex_descriptor&gt;&amp; sources,
@@ -144,6 +174,7 @@ public:
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
 
+  <i>// Miscellaneous constructors <b>(both interfaces)</b></i>
   template&lt;typename Graph, typename VertexIndexMap&gt;
   <a href="#graph-const">compressed_sparse_row_graph</a>(const Graph&amp; g, const VertexIndexMap&amp; vi,
                               vertices_size_type numverts,
@@ -155,7 +186,7 @@ public:
   template&lt;typename Graph&gt;
   explicit <a href="#graph-const">compressed_sparse_row_graph</a>(const Graph&amp; g);
 
-  <i>// <a href="#mutators">Graph mutators</a></i>
+  <i>// <a href="#mutators">Graph mutators <b>(both interfaces)</b></a></i>
   template&lt;typename Graph, typename VertexIndexMap&gt;
   void <a href="#assign">assign</a>(const Graph&amp; g, const VertexIndexMap&amp; vi,
               vertices_size_type numverts, edges_size_type numedges);
@@ -166,36 +197,46 @@ public:
   template&lt;typename Graph&gt;
   void <a href="#assign">assign</a>(const Graph&amp; g);
 
-  <i>// <a href="#property-access">Property Access</a></i>
+  <i>// <a href="#property-access">Property Access <b>(both interfaces)</b></a></i>
   VertexProperty&amp; <a href="#vertex-subscript">operator[]</a>(vertex_descriptor v);
   const VertexProperty&amp; <a href="#vertex-subscript">operator[]</a>(vertex_descriptor v) const;
   EdgeProperty&amp; <a href="#edge-subscript">operator[]</a>(edge_descriptor v);
   const EdgeProperty&amp; <a href="#edge-subscript">operator[]</a>(edge_descriptor v) const;
 };
 
-<i>// <a href="IncidenceGraph.html">Incidence Graph requirements</a></i>
+<i>// <a href="IncidenceGraph.html">Incidence Graph requirements <b>(both interfaces)</b></a></i>
 vertex_descriptor source(edge_descriptor, const compressed_sparse_row_graph&amp;);
 vertex_descriptor target(edge_descriptor, const compressed_sparse_row_graph&amp;);
 std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
   out_edges(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 degree_size_type out_degree(vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 
-<i>// <a href="AdjacencyGraph.html">Adjacency Graph requirements</a></i>
+<i>// <a href="AdjacencyGraph.html">Adjacency Graph requirements <b>(both interfaces)</b></a></i>
 std::pair&lt;adjacency_iterator, adjacency_iterator&gt; 
   adjacent_vertices(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 
-<i>// <a href="VertexListGraph.html">Vertex List Graph requirements</a></i>
+<i>// <a href="VertexListGraph.html">Vertex List Graph requirements <b>(both interfaces)</b></a></i>
 std::pair&lt;vertex_iterator, vertex_iterator&gt; vertices(const compressed_sparse_row_graph&amp;);
 vertices_size_type num_vertices(const compressed_sparse_row_graph&amp;);
 
-<i>// <a href="EdgeListGraph.html">Edge List Graph requirements</a></i>
+<i>// <a href="EdgeListGraph.html">Edge List Graph requirements <b>(both interfaces)</b></a></i>
 std::pair&lt;edge_iterator, edge_iterator&gt; edges(const compressed_sparse_row_graph&amp;);
 edges_size_type num_edges(const compressed_sparse_row_graph&amp;);
 
-<i>// <a href="#vertex-access">Vertex access</a></i>
+<i>// <a href="#vertex-access">Vertex access <b>(both interfaces)</b></a></i>
 vertex_descriptor <a href="#vertex">vertex</a>(vertices_size_type i, const compressed_sparse_row_graph&amp;);
 
-<i>// <a href="#property-map-accessors">Property map accessors</a></i>
+<i>// <a href="#edge-access">Edge access</a></i>
+<b>(old interface only)</b>
+std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
+  <a href="#edge_range">edge_range</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
+<b>(old interface only)</b>
+std::pair&lt;edge_descriptor, bool&gt; 
+  <a href="#edge">edge</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
+<b>(both interfaces)</b>
+edge_descriptor <a href="#edge_from_index">edge_from_index</a>(edges_size_type i, const compressed_sparse_row_graph&amp;);
+
+<i>// <a href="#property-map-accessors">Property map accessors <b>(both interfaces)</b></a></i>
 template&lt;typename <a href="./PropertyTag.html">PropertyTag</a>&gt;
 property_map&lt;compressed_sparse_row_graph, PropertyTag&gt;::type
 <a href="#get">get</a>(PropertyTag, compressed_sparse_row_graph&amp; g)
@@ -223,7 +264,7 @@ template&lt;typename <a href="./PropertyTag.html#GraphPropertyTag">GraphProperty
 void <a href="#set_property">set_property</a>(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
                   const typename graph_property&lt;compressed_sparse_row_graph, GraphPropertyTag&gt;::type&amp; value);
 
-<i>// <a href="#incremental-construction-functions">Incremental construction functions</a></i>
+<i>// <a href="#incremental-construction-functions">Incremental construction functions <b>(old interface only)</b></a></i>
 template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertex">add_vertex</a>(compressed_sparse_row_graph&amp; g);
 
@@ -231,7 +272,7 @@ template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertices">add_vertices</a>(vertices_size_type count, compressed_sparse_row_graph&amp; g);
 
 template&lt;typename Graph&gt;
-edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
+edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
 
 } <i>// end namespace boost</i>
    </pre>
@@ -361,7 +402,8 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
 
     <pre><a name="edge-const"></a>
   template&lt;typename MultiPassInputIterator&gt;
-  compressed_sparse_row_graph(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+  compressed_sparse_row_graph(edges_are_unsorted_t,
+                              MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
     </pre>
@@ -377,6 +419,7 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
       vertices for the edges, and must fall within the range <code>[0,
       numverts)</code>. The edges in <code>[edge_begin,
       edge_end)</code> do not need to be sorted.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <p class="indent">
@@ -388,7 +431,8 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
 
     <pre><a name="edge-prop-const"></a>
   template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
-  compressed_sparse_row_graph(MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
+  compressed_sparse_row_graph(edges_are_unsorted_t,
+                              MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
@@ -406,6 +450,7 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
         m)</tt> will be used to initialize the properties on the edges
       of the graph, where <tt>m</tt> is distance from
       <tt>edge_begin</tt> to <tt>edge_end</tt>.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <hr></hr>
@@ -434,7 +479,9 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
       numverts)</code>. The edges in <code>[edge_begin,
       edge_end)</code> must be sorted so that all edges originating
       from vertex <i>i</i> preceed any edges originating from all
-      vertices <i>j</i> where <i>j &gt; i</i>.
+      vertices <i>j</i> where <i>j &gt; i</i>.  <b>(The version of this
+      constructor without the <tt>edges_are_sorted</tt> tag is deprecated and
+      only provided by the old interface.)</b>
     </p>
 
     <p class="indent">
@@ -472,7 +519,9 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
       <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
         m)</tt> will be used to initialize the properties on the edges
       of the graph, where <tt>m</tt> is distance from
-      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.  <b>(The version of this
+      constructor without the <tt>edges_are_sorted</tt> tag is deprecated and
+      only provided by the old interface.)</b>
     </p>
 
     <hr></hr>
@@ -493,6 +542,7 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
       share storage with the constructed graph (and so are safe to destroy).
       The parameter <code>prop</code>, if provided, is used to initialize the
       graph property.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <hr></hr>
@@ -515,6 +565,7 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
       not share storage with the constructed graph (and so are safe to
       destroy).  The parameter <code>prop</code>, if provided, is used to
       initialize the graph property.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <hr></hr>
@@ -620,6 +671,37 @@ edge_descriptor <a href="#add_edge">add_vertices</a>(vertex_descriptor src, vert
 
     <hr></hr>
 
+    <a name="edge-access"></a><h3>Edge access</h3>
+    <pre><a name="edge_range"></a>
+  std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
+    edge_range(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
+    </pre>
+
+    <p class="indent">
+      Returns all edges from <tt>u</tt> to <tt>v</tt>. Requires time
+      linear in the number of edges outgoing from <tt>u</tt>.
+      <b>(This function is only provided by the old interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge"></a>
+  std::pair&lt;edge_descriptor, bool&gt; 
+    edge(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
+    </pre>
+
+    <p class="indent">
+      If there exists an edge <i>(u, v)</i> in the graph, returns the
+      descriptor for that edge and <tt>true</tt>; otherwise, the
+      second value in the pair will be <tt>false</tt>. If multiple
+      edges exist from <tt>u</tt> to <tt>v</tt>, the first edge will
+      be returned; use <a href="#edge_range"><tt>edge_range</tt></a>
+      to retrieve all edges.
+      <b>(This function is only provided by the old interface.)</b>
+    </p>
+
+    <hr></hr>
+
     <pre><a name="edge_from_index"></a>
   edge_descriptor edge_from_index(edges_size_type i, const compressed_sparse_row_graph&amp;);
     </pre>
@@ -720,6 +802,7 @@ vertex_descriptor add_vertex(compressed_sparse_row_graph&amp; g)
       Add a new vertex to the end of the graph <tt>g</tt>, and return a
       descriptor for that vertex.  The new vertex will be greater than any of
       the previous vertices in <tt>g</tt>.
+      <b>(This function is only provided by the old interface.)</b>
     </p>
 
     <hr></hr>
@@ -732,6 +815,7 @@ vertex_descriptor add_vertices(vertices_size_type count, compressed_sparse_row_g
       Add <tt>count</tt> new vertices to the end of the graph <tt>g</tt>, and
       return a descriptor for the smallest new vertex.  The new vertices will
       be greater than any of the previous vertices in <tt>g</tt>.
+      <b>(This function is only provided by the old interface.)</b>
     </p>
 
     <hr></hr>
@@ -746,6 +830,7 @@ edge_descriptor add_edge(vertex_descriptor src, vertex_descriptor tgt, compresse
       whose source vertex is greater than <tt>src</tt>.  If the vertex
       <tt>src</tt> has out edges before this operation is called, there must be
       none whose target is larger than <tt>tgt</tt>.
+      <b>(This function is only provided by the old interface.)</b>
     </p>
 
     <hr></hr>
