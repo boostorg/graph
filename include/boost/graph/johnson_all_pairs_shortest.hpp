@@ -24,6 +24,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/shared_array_property_map.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -94,9 +95,7 @@ namespace boost {
     }
     typename Traits2::vertex_iterator v, v_end, u, u_end;
     typename Traits2::edge_iterator e, e_end;
-    std::vector<DT> h_vec(num_vertices(g2));
-    typedef typename std::vector<DT>::iterator iter_t;
-    iterator_property_map<iter_t,VertexID2,DT,DT&> h(h_vec.begin(), id2);
+    shared_array_property_map<DT,VertexID2> h(num_vertices(g2), id2);
 
     for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
       put(d, *v, inf);
