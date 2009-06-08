@@ -4,6 +4,8 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+import mpi ;
+
 project boost/graph
     : requirements <include>../src
     : source-location ../src
@@ -45,9 +47,10 @@ explicit graphml ;
 
 lib boost_graph
     :
-    read_graphviz_spirit.cpp
+    read_graphviz_new.cpp
     graphml
     :
+    <library>../../regex/build//boost_regex
     <define>BOOST_GRAPH_NO_LIB=1
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
     # # Intel compiler ICEs if we turn optimization on

@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Trouble Shooting</Title>
@@ -50,7 +50,8 @@ using the <tt>boost::</tt> prefix, i.e., <tt>boost::source(e, g)</tt> instead of
 
 <p>There is a VC++ bug that appears when using <tt>get(property,
 graph, edge)</tt>. A workaround is to use <tt>get(get(property,
-graph), edge)</tt> instead.
+graph), edge)</tt> instead. <i>Note that <tt>boost/property_map.hpp</tt> has
+now been moved to <tt>boost/property_map/property_map.hpp</tt>.
 
 <hr>
 
@@ -114,7 +115,7 @@ for (std::size_t j = 0; j < n_edges; ++j)
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>,
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>

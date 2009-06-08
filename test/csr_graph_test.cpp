@@ -13,6 +13,9 @@
 #  undef _GLIBCXX_DEBUG
 #endif
 
+// Use new CSR interface
+#define BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
 // Test for the compressed sparse row graph type
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -80,6 +83,14 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
 
       std::sort(edges1.begin(), edges1.end());
       std::sort(edges2.begin(), edges2.end());
+      if (edges1 != edges2) {
+        std::cerr << "edges1:";
+        for (size_t i = 0; i < edges1.size(); ++i) std::cerr << " " << edges1[i];
+        std::cerr << std::endl;
+        std::cerr << "edges2:";
+        for (size_t i = 0; i < edges2.size(); ++i) std::cerr << " " << edges2[i];
+        std::cerr << std::endl;
+      }
       BOOST_CHECK (edges1 == edges2);
     }
   }
@@ -149,19 +160,29 @@ make_edge_to_index_pair(const GraphT& g)
 
 void check_consistency(const CSRGraphT& g) {
   // Do a bunch of tests on the graph internal data
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_last_source is valid
   BOOST_CHECK(g.m_last_source <= num_vertices(g));
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_rowstart entries are valid, and that entries after
   // m_last_source + 1 are all zero
   BOOST_CHECK(g.m_rowstart[0] == 0);
-  for (CSRGraphT::vertices_size_type i = 0; i < g.m_last_source; ++i) {
+  for (CSRGraphT::vertices_size_type i = 0;
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       i < num_vertices(g);
+#else // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       i < g.m_last_source;
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+       ++i) {
     BOOST_CHECK(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
     BOOST_CHECK(g.m_rowstart[i + 1] <= num_edges(g));
   }
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   for (CSRGraphT::vertices_size_type i = g.m_last_source + 1;
        i < g.m_rowstart.size(); ++i) {
     BOOST_CHECK(g.m_rowstart[i] == 0);
   }
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_column entries are within range
   for (CSRGraphT::edges_size_type i = 0; i < num_edges(g); ++i) {
     BOOST_CHECK(g.m_column[i] < num_vertices(g));
@@ -169,7 +190,7 @@ void check_consistency(const CSRGraphT& g) {
 }
 
 template<typename OrigGraph>
-void test(const OrigGraph& g)
+void graph_test(const OrigGraph& g)
 {
   // Check copying of a graph
   CSRGraphT g2(g);
@@ -181,11 +202,12 @@ void test(const OrigGraph& g)
                       boost::identity_property_map());
 
   // Check constructing a graph from iterators
-  CSRGraphT g3(boost::make_transform_iterator(edges(g2).first,
-                                             make_edge_to_index_pair(g2)),
-              boost::make_transform_iterator(edges(g2).second,
-                                             make_edge_to_index_pair(g2)),
-              num_vertices(g));
+  CSRGraphT g3(boost::edges_are_sorted,
+               boost::make_transform_iterator(edges(g2).first,
+                                              make_edge_to_index_pair(g2)),
+               boost::make_transform_iterator(edges(g2).second,
+                                              make_edge_to_index_pair(g2)),
+               num_vertices(g));
   check_consistency(g3);
   BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
@@ -193,6 +215,81 @@ void test(const OrigGraph& g)
                       g3, boost::identity_property_map(),
                       boost::identity_property_map());
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  // Check constructing a graph using in-place modification of vectors
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges actually sorted
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[idx] = source(e, g2);
+      targets[idx] = target(e, g2);
+      ++idx;
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges reverse-sorted
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[num_edges(g2) - 1 - idx] = source(e, g2);
+      targets[num_edges(g2) - 1 - idx] = target(e, g2);
+      ++idx;
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
+  {
+    std::vector<std::size_t> sources(num_edges(g2));
+    std::vector<std::size_t> targets(num_edges(g2));
+    std::size_t idx = 0;
+    // Edges scrambled using Fisher-Yates shuffle (Durstenfeld variant) from
+    // Wikipedia
+    BGL_FORALL_EDGES(e, g2, CSRGraphT) {
+      sources[idx] = source(e, g2);
+      targets[idx] = target(e, g2);
+      ++idx;
+    }
+    boost::minstd_rand gen(1);
+    if (num_edges(g) != 0) {
+      for (std::size_t i = num_edges(g) - 1; i > 0; --i) {
+        std::size_t scrambled = boost::uniform_int<>(0, i)(gen);
+        if (scrambled == i) continue;
+        using std::swap;
+        swap(sources[i], sources[scrambled]);
+        swap(targets[i], targets[scrambled]);
+      }
+    }
+    CSRGraphT g3a(boost::construct_inplace_from_sources_and_targets,
+                  sources,
+                  targets,
+                  num_vertices(g2));
+    check_consistency(g3a);
+    assert_graphs_equal(g2, boost::identity_property_map(),
+                        g3a, boost::identity_property_map(),
+                        boost::identity_property_map());
+  }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
+  CSRGraphT::edge_iterator ei, ei_end;
+
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check constructing a graph using add_edge and add_vertices
   CSRGraphT g4;
   BOOST_CHECK(num_vertices(g4) == 0);
@@ -202,7 +299,6 @@ void test(const OrigGraph& g)
 
   BOOST_CHECK(first_vert == 0);
   BOOST_CHECK(num_vertices(g4) == num_vertices(g3));
-  CSRGraphT::edge_iterator ei, ei_end;
   int i;
   for (boost::tie(ei, ei_end) = edges(g3), i = 0; ei != ei_end; ++ei, ++i) {
     CSRGraphT::edge_descriptor e = add_edge(source(*ei, g3), target(*ei, g3), g4);
@@ -213,22 +309,21 @@ void test(const OrigGraph& g)
   assert_graphs_equal(g3, boost::identity_property_map(),
                       g4, boost::identity_property_map(),
                       boost::identity_property_map());
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
-  // This test also checks for the correct sorting of the edge iteration
   std::size_t last_src = 0, last_tgt = 0;
   for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
     BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
     std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
     std::size_t tgt = get(boost::vertex_index, g2, target(*ei, g2));
-    BOOST_CHECK(src > last_src || (src == last_src && tgt >= last_tgt));
+    BOOST_CHECK(src >= last_src);
     last_src = src;
     last_tgt = tgt;
   }
 
   // Check out edge iteration and vertex iteration for sortedness
-  // Also, check a few runs of edge and edge_range
   CSRGraphT::vertex_iterator vi, vi_end;
   std::size_t last_vertex = 0;
   bool first_iter = true;
@@ -239,25 +334,8 @@ void test(const OrigGraph& g)
     first_iter = false;
 
     CSRGraphT::out_edge_iterator oei, oei_end;
-    std::size_t last_tgt = 0;
     for (boost::tie(oei, oei_end) = out_edges(*vi, g2); oei != oei_end; ++oei) {
       BOOST_CHECK(source(*oei, g2) == *vi);
-      CSRGraphT::vertex_descriptor tgtd = target(*oei, g2);
-      std::size_t tgt = get(boost::vertex_index, g2, tgtd);
-      BOOST_CHECK(tgt >= last_tgt);
-      last_tgt = tgt;
-
-      std::pair<CSRGraphT::edge_descriptor, bool> edge_info = edge(*vi, tgtd, g2);
-      BOOST_CHECK(edge_info.second == true);
-      BOOST_CHECK(source(edge_info.first, g2) == *vi);
-      BOOST_CHECK(target(edge_info.first, g2) == tgtd);
-      std::pair<CSRGraphT::out_edge_iterator, CSRGraphT::out_edge_iterator> er =
-        edge_range(*vi, tgtd, g2);
-      BOOST_CHECK(er.first != er.second);
-      for (; er.first != er.second; ++er.first) {
-        BOOST_CHECK(source(*er.first, g2) == *vi);
-        BOOST_CHECK(target(*er.first, g2) == tgtd);
-      }
     }
 
     // Find a vertex for testing
@@ -268,14 +346,6 @@ void test(const OrigGraph& g)
       if (target(*oei2, g2) == test_vertex)
         ++edge_count;
     }
-
-    // Test edge and edge_range on an edge that may not be present
-    std::pair<CSRGraphT::edge_descriptor, bool> edge_info = 
-      edge(*vi, test_vertex, g2);
-    BOOST_CHECK(edge_info.second == (edge_count != 0));
-    std::pair<CSRGraphT::out_edge_iterator, CSRGraphT::out_edge_iterator> er =
-      edge_range(*vi, test_vertex, g2);
-    BOOST_CHECK(er.second - er.first == edge_count);
   }
 
   // Run brandes_betweenness_centrality, which touches on a whole lot
@@ -308,12 +378,12 @@ void test(const OrigGraph& g)
                                            get(boost::edge_index, g3))));
 }
 
-void test(int nnodes, double density, int seed)
+void graph_test(int nnodes, double density, int seed)
 {
   boost::minstd_rand gen(seed);
   std::cout << "Testing " << nnodes << " density " << density << std::endl;
   GraphT g(ERGen(gen, nnodes, density), ERGen(), nnodes);
-  test(g);
+  graph_test(g);
 }
 
 void test_graph_properties()
@@ -356,7 +426,7 @@ void test_vertex_and_edge_properties()
   double weights[6] = { 1.0, 1.0, 0.5, 1.0, 1.0, 0.5 };
   double centrality[5] = { 0.0, 1.5, 0.0, 1.0, 0.5 };
 
-  CSRGraphWithPropsT g(&edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
+  CSRGraphWithPropsT g(boost::edges_are_sorted, &edges_init[0], &edges_init[0] + 6, &weights[0], 5, 6);
   brandes_betweenness_centrality
     (g,
      centrality_map(get(&Vertex::centrality, g)).
@@ -377,13 +447,14 @@ int test_main(int argc, char* argv[])
   {
     std::cout << "Testing empty graph" << std::endl;
     CSRGraphT g;
-    test(g);
+    graph_test(g);
   }
-  //  test(1000, 0.05, seed);
-  //  test(1000, 0.0, seed);
-  //  test(1000, 0.1, seed);
-  test(1000, 0.001, seed);
-  test(1000, 0.0005, seed);
+  //  graph_test(1000, 0.05, seed);
+  //  graph_test(1000, 0.0, seed);
+  //  graph_test(1000, 0.1, seed);
+  graph_test(1000, 0.001, seed);
+  graph_test(1000, 0.0005, seed);
+#ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   {
     std::cout << "Testing partially constructed CSR graph" << std::endl;
     CSRGraphT g;
@@ -398,11 +469,21 @@ int test_main(int argc, char* argv[])
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       BOOST_CHECK(edge_from_index(get(boost::edge_index, g, *ei), g) == *ei);
     }
-    test(g);
+    graph_test(g);
   }
+#endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   test_graph_properties();
   test_vertex_and_edge_properties();
+
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  {
+    std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
+    std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
+    CSRGraphT g(boost::edges_are_unsorted, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
+    graph_test(g);
+  }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   return 0;
 }

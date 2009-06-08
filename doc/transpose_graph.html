@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek 2000
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Jeremy Siek 2000
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Transpose Graph</Title>
@@ -84,7 +84,7 @@ map from the graph.
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
 The vertex index map type must be a model of <a
-href="../../property_map/ReadablePropertyMap.html">Readable Property
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
 Map</a> and must map the vertex descriptors of <tt>G</tt> to the
 integers from 0 to <tt>num_vertices(G)</tt>.<br>
 
@@ -101,7 +101,7 @@ UTIL/OUT: <tt>orig_to_copy(Orig2CopyMap c)</tt>
 This maps vertices in the original graph to vertices in the copy.
 
 <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   </tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the output graph's vertex descriptor type of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -119,7 +119,7 @@ The time complexity is <i>O(V + E)</i>.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 

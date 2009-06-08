@@ -16,8 +16,10 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 
 #include <boost/graph/graph_traits.hpp>
 
@@ -53,7 +55,7 @@ int read_dimacs_max_flow(Graph& g,
     no_alines=0;                /* no of arc-lines */
 
   std::string in_line;          /* for reading input line */
-  char pr_type[3];              /* for reading type of the problem */
+  char pr_type[4];              /* for reading type of the problem */
   char nd;                      /* source (s) or sink (t) */
 
   int k,                        /* temporary */
@@ -134,13 +136,13 @@ int read_dimacs_max_flow(Graph& g,
 
       if (
           /* reading problem line: type of problem, no of nodes, no of arcs */
-          sscanf ( in_line.c_str(), "%*c %3s %ld %ld", pr_type, &n, &m )
+          std::sscanf ( in_line.c_str(), "%*c %3s %ld %ld", pr_type, &n, &m )
           != P_FIELDS
           )
         /*wrong number of parameters in the problem line*/
         { err_no = EN2; goto error; }
 
-      if ( strcmp ( pr_type, PROBLEM_TYPE ) )
+      if ( std::strcmp ( pr_type, PROBLEM_TYPE ) )
         /*wrong problem type*/
         { err_no = EN3; goto error; }
 
@@ -160,7 +162,7 @@ int read_dimacs_max_flow(Graph& g,
         { err_no = EN8; goto error; }
 
       /* reading source  or sink */
-      k = sscanf ( in_line.c_str(),"%*c %ld %c", &i, &nd );
+      k = std::sscanf ( in_line.c_str(),"%*c %ld %c", &i, &nd );
       --i; // index from 0
       if ( k < NODE_FIELDS )
         /* node line is incorrect */
@@ -208,8 +210,8 @@ int read_dimacs_max_flow(Graph& g,
 
       if (
           /* reading an arc description */
-          sscanf ( in_line.c_str(),"%*c %ld %ld %ld",
-                   &tail, &head, &cap )
+          std::sscanf ( in_line.c_str(),"%*c %ld %ld %ld",
+                        &tail, &head, &cap )
           != ARC_FIELDS
           )
         /* arc description is not correct */
@@ -269,10 +271,10 @@ int read_dimacs_max_flow(Graph& g,
   /* ---------------------------------- */
  error:  /* error found reading input */
 
-  printf ( "\nline %ld of input - %s\n",
-           no_lines, err_message[err_no] );
+  std::printf ( "\nline %ld of input - %s\n",
+                no_lines, err_message[err_no] );
 
-  exit (1);
+  std::exit (1);
   return (0); /* to avoid warning */
 }
 /* --------------------   end of parser  -------------------*/

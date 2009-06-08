@@ -13,8 +13,9 @@
 #ifndef BOOST_TWO_BIT_COLOR_MAP_HPP
 #define BOOST_TWO_BIT_COLOR_MAP_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/shared_array.hpp>
+#include <algorithm>
 
 namespace boost {
 
@@ -50,6 +51,8 @@ struct two_bit_color_map
   explicit two_bit_color_map(std::size_t n, const IndexMap& index = IndexMap())
     : n(n), index(index), data(new unsigned char[(n + 3) / 4])
   {
+    // Fill to white
+    std::fill(data.get(), data.get() + (n + 3) / 4, 0);
   }
 };
 
@@ -59,7 +62,7 @@ get(const two_bit_color_map<IndexMap>& pm,
     typename two_bit_color_map<IndexMap>::key_type key) 
 {
   typename property_traits<IndexMap>::value_type i = get(pm.index, key);
-  assert (i < pm.n);
+  assert ((std::size_t)i < pm.n);
   return two_bit_color_type((pm.data.get()[i / 4] >> ((i % 4) * 2)) & 3);
 }
 
@@ -70,7 +73,7 @@ put(const two_bit_color_map<IndexMap>& pm,
     two_bit_color_type value)
 {
   typename property_traits<IndexMap>::value_type i = get(pm.index, key);
-  assert (i < pm.n);
+  assert ((std::size_t)i < pm.n);
   assert (value >= 0 && value < 4);
   std::size_t byte_num = i / 4;
   std::size_t bit_position = ((i % 4) * 2);
@@ -88,3 +91,7 @@ make_two_bit_color_map(std::size_t n, const IndexMap& index_map)
 } // end namespace boost
 
 #endif // BOOST_TWO_BIT_COLOR_MAP_HPP
+
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/two_bit_color_map.hpp>
+#endif

@@ -13,7 +13,7 @@
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/limits.hpp>
 
 #ifdef BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS

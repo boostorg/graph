@@ -11,7 +11,7 @@
 #include <boost/config.hpp>
 #include <boost/tuple/tuple.hpp>   //for tie
 #include <boost/graph/biconnected_components.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <vector>
 #include <iterator>
 #include <algorithm>

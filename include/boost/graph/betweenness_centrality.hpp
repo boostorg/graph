@@ -11,6 +11,7 @@
 
 #include <stack>
 #include <vector>
+#include <boost/graph/overloading.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/relax.hpp>
@@ -19,7 +20,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <algorithm>
 
@@ -369,7 +370,8 @@ brandes_betweenness_centrality(const Graph& g,
                                DistanceMap distance,         // d
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
-                               VertexIndexMap vertex_index)
+                               VertexIndexMap vertex_index
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_unweighted_shortest_paths shortest_paths;
 
@@ -394,7 +396,8 @@ brandes_betweenness_centrality(const Graph& g,
                                DependencyMap dependency,     // delta
                                PathCountMap path_count,      // sigma
                                VertexIndexMap vertex_index,
-                               WeightMap weight_map)
+                               WeightMap weight_map
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_dijkstra_shortest_paths<WeightMap>
     shortest_paths(weight_map);
@@ -417,6 +420,7 @@ namespace detail { namespace graph {
                                            WeightMap weight_map,
                                            VertexIndexMap vertex_index)
   {
+    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename mpl::if_c<(is_same<CentralityMap, 
@@ -431,7 +435,7 @@ namespace detail { namespace graph {
     std::vector<std::vector<edge_descriptor> > incoming(V);
     std::vector<centrality_type> distance(V);
     std::vector<centrality_type> dependency(V);
-    std::vector<unsigned long long> path_count(V);
+    std::vector<degree_size_type> path_count(V);
 
     brandes_betweenness_centrality(
       g, centrality, edge_centrality_map,
@@ -452,6 +456,7 @@ namespace detail { namespace graph {
                                            EdgeCentralityMap edge_centrality_map,
                                            VertexIndexMap vertex_index)
   {
+    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename mpl::if_c<(is_same<CentralityMap, 
@@ -466,7 +471,7 @@ namespace detail { namespace graph {
     std::vector<std::vector<edge_descriptor> > incoming(V);
     std::vector<centrality_type> distance(V);
     std::vector<centrality_type> dependency(V);
-    std::vector<unsigned long long> path_count(V);
+    std::vector<degree_size_type> path_count(V);
 
     brandes_betweenness_centrality(
       g, centrality, edge_centrality_map,
@@ -507,12 +512,23 @@ namespace detail { namespace graph {
     }
   };
 
+  template <typename T>
+  struct is_bgl_named_params {
+    BOOST_STATIC_CONSTANT(bool, value = false);
+  };
+
+  template <typename Param, typename Tag, typename Rest>
+  struct is_bgl_named_params<bgl_named_params<Param, Tag, Rest> > {
+    BOOST_STATIC_CONSTANT(bool, value = true);
+  };
+
 } } // end namespace detail::graph
 
 template<typename Graph, typename Param, typename Tag, typename Rest>
 void 
 brandes_betweenness_centrality(const Graph& g, 
-                               const bgl_named_params<Param,Tag,Rest>& params)
+                               const bgl_named_params<Param,Tag,Rest>& params
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   typedef bgl_named_params<Param,Tag,Rest> named_params;
 
@@ -527,9 +543,13 @@ brandes_betweenness_centrality(const Graph& g,
     get_param(params, edge_weight));
 }
 
+// disable_if is required to work around problem with MSVC 7.1 (it seems to not
+// get partial ordering getween this overload and the previous one correct)
 template<typename Graph, typename CentralityMap>
-void 
-brandes_betweenness_centrality(const Graph& g, CentralityMap centrality)
+typename disable_if<detail::graph::is_bgl_named_params<CentralityMap>,
+                    void>::type
+brandes_betweenness_centrality(const Graph& g, CentralityMap centrality
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_betweenness_centrality_dispatch2(
     g, centrality, dummy_property_map(), get(vertex_index, g));
@@ -538,7 +558,8 @@ brandes_betweenness_centrality(const Graph& g, CentralityMap centrality)
 template<typename Graph, typename CentralityMap, typename EdgeCentralityMap>
 void 
 brandes_betweenness_centrality(const Graph& g, CentralityMap centrality,
-                               EdgeCentralityMap edge_centrality_map)
+                               EdgeCentralityMap edge_centrality_map
+                               BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   detail::graph::brandes_betweenness_centrality_dispatch2(
     g, centrality, edge_centrality_map, get(vertex_index, g));
@@ -568,7 +589,8 @@ relative_betweenness_centrality(const Graph& g, CentralityMap centrality)
 // Compute the central point dominance of a graph.
 template<typename Graph, typename CentralityMap>
 typename property_traits<CentralityMap>::value_type
-central_point_dominance(const Graph& g, CentralityMap centrality)
+central_point_dominance(const Graph& g, CentralityMap centrality
+                        BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   using std::max;
 

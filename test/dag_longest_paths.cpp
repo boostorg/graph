@@ -6,7 +6,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dag_shortest_paths.hpp>
-#include <boost/vector_property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/test/minimal.hpp>
 
 using namespace boost;

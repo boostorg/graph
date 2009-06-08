@@ -3,9 +3,9 @@
   Copyright (C) 2001, Andreas Scherer, Jeremy Siek, Lie-Quan Lee,
   and Andrew Lumsdaine
 
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Stanford Graph Interface</Title>
@@ -384,7 +384,7 @@ the described below.
 The SGB <tt>Vertex</tt> and <tt>Arc</tt> structures provide
 &quot;utility&quot; fields for storing extra information.  We provide
 BGL wrappers that provide access to these fields through <a
-href="../../property_map/property_map.html">property maps</a>.  In
+href="../../property_map/doc/property_map.html">property maps</a>.  In
 addition, vertex index and edge length maps are provided. A property
 map object can be obtained from a SGB <tt>Graph*</tt> using the
 <tt>get()</tt> function described in the <a
@@ -415,17 +415,17 @@ types in the <tt>util</tt> union declared in the SGB header
 <tt>gb_graph.h</tt>, which are <tt>Vertex*</tt>, <tt>Arc*</tt>,
 <tt>Graph*</tt>, <tt>char*</tt>, and <tt>long</tt>. The property maps
 for the utility fields are models of <a
-href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
 Map</a>.
 </p>
 
 <p>
 The property map for vertex indices can be obtained using the
 <tt>vertex_index_t</tt> tag, and this property map is a <a
-href="../../property_map/ReadablePropertyMap.html">Readable Property
+href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
 Map</a>. A property map for edge length's can be obtained using the
 <tt>edge_length_t</tt> tag, and this property map is a <a
-href="../../property_map/LvaluePropertyMap.html">Lvalue Property
+href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
 Map</a> whose value type is <tt>long</tt>.
 </p>
 
@@ -439,7 +439,7 @@ class.</p>
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2001</TD><TD>
+<TD nowrap>Copyright &copy; 2001</TD><TD>
 <A HREF="http://people.freenet.de/andreas.scherer">Andreas Scherer</A>,
 Aachen (<A
 HREF="mailto:andreas_freenet@freenet.de">andreas_freenet@freenet.de</A>)<br>

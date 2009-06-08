@@ -1,7 +1,7 @@
 //=======================================================================
 // Copyright 2001 University of Notre Dame.
 // Copyright 2003 Jeremy Siek
-// Authors: Lie-Quan Lee and Jeremy Siek
+// Authors: Lie-Quan Lee, Jeremy Siek, and Douglas Gregor
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -16,13 +16,14 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h> // for FILE
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/dynamic_property_map.hpp>
+#include <boost/property_map/dynamic_property_map.hpp>
+#include <boost/graph/overloading.hpp>
 
 #ifdef BOOST_HAS_DECLSPEC
 #  if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_GRAPH_DYN_LINK)
@@ -236,11 +237,14 @@ namespace boost {
   template <typename Graph, typename VertexPropertiesWriter,
             typename EdgePropertiesWriter, typename GraphPropertiesWriter,
             typename VertexID>
-  inline void write_graphviz(std::ostream& out, const Graph& g,
-                             VertexPropertiesWriter vpw,
-                             EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw,
-                             VertexID vertex_id)
+  inline void 
+  write_graphviz
+    (std::ostream& out, const Graph& g,
+     VertexPropertiesWriter vpw,
+     EdgePropertiesWriter epw,
+     GraphPropertiesWriter gpw,
+     VertexID vertex_id
+     BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::directed_category cat_type;
     typedef graphviz_io_traits<cat_type> Traits;
@@ -267,17 +271,21 @@ namespace boost {
 
   template <typename Graph, typename VertexPropertiesWriter,
             typename EdgePropertiesWriter, typename GraphPropertiesWriter>
-  inline void write_graphviz(std::ostream& out, const Graph& g,
-                             VertexPropertiesWriter vpw,
-                             EdgePropertiesWriter epw,
-                             GraphPropertiesWriter gpw)
+  inline void 
+  write_graphviz(std::ostream& out, const Graph& g,
+                 VertexPropertiesWriter vpw,
+                 EdgePropertiesWriter epw,
+                 GraphPropertiesWriter gpw
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   { write_graphviz(out, g, vpw, epw, gpw, get(vertex_index, g)); }
 
 #if !defined(BOOST_MSVC) || BOOST_MSVC > 1300
   // ambiguous overload problem with VC++
   template <typename Graph>
   inline void
-  write_graphviz(std::ostream& out, const Graph& g) {
+  write_graphviz(std::ostream& out, const Graph& g
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag)) 
+  {
     default_writer dw;
     default_writer gw;
     write_graphviz(out, g, dw, dw, gw);
@@ -286,7 +294,9 @@ namespace boost {
 
   template <typename Graph, typename VertexWriter>
   inline void
-  write_graphviz(std::ostream& out, const Graph& g, VertexWriter vw) {
+  write_graphviz(std::ostream& out, const Graph& g, VertexWriter vw
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  {
     default_writer dw;
     default_writer gw;
     write_graphviz(out, g, vw, dw, gw);
@@ -295,7 +305,9 @@ namespace boost {
   template <typename Graph, typename VertexWriter, typename EdgeWriter>
   inline void
   write_graphviz(std::ostream& out, const Graph& g,
-                 VertexWriter vw, EdgeWriter ew) {
+                 VertexWriter vw, EdgeWriter ew
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  {
     default_writer gw;
     write_graphviz(out, g, vw, ew, gw);
   }
@@ -479,11 +491,12 @@ namespace boost {
 
   // These four require linking the BGL-Graphviz library: libbgl-viz.a
   // from the /src directory.
-  extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
-  extern void read_graphviz(FILE* file, GraphvizDigraph& g);
-
-  extern void read_graphviz(const std::string& file, GraphvizGraph& g);
-  extern void read_graphviz(FILE* file, GraphvizGraph& g);
+  // Library has not existed for a while
+  // extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
+  // extern void read_graphviz(FILE* file, GraphvizDigraph& g);
+  // 
+  // extern void read_graphviz(const std::string& file, GraphvizGraph& g);
+  // extern void read_graphviz(FILE* file, GraphvizGraph& g);
 
   class dynamic_properties_writer
   {
@@ -575,7 +588,8 @@ namespace boost {
   inline void
   write_graphviz(std::ostream& out, const Graph& g,
                  const dynamic_properties& dp, 
-                 const std::string& node_id = "node_id")
+                 const std::string& node_id = "node_id"
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     write_graphviz(out, g, dp, node_id,
@@ -586,7 +600,8 @@ namespace boost {
   void
   write_graphviz(std::ostream& out, const Graph& g,
                  const dynamic_properties& dp, const std::string& node_id,
-                 VertexID id)
+                 VertexID id
+                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     write_graphviz
       (out, g,
@@ -638,6 +653,14 @@ struct undirected_graph_error : public graph_exception {
       "read_graphviz: "
       "Tried to read an undirected graph into a directed graph.";
   }
+};
+
+struct bad_graphviz_syntax: public graph_exception {
+  std::string errmsg;
+  bad_graphviz_syntax(const std::string& errmsg)
+    : errmsg(errmsg) {}
+  const char* what() const throw () {return errmsg.c_str();}
+  ~bad_graphviz_syntax() throw () {};
 };
 
 namespace detail { namespace graph {
@@ -725,7 +748,7 @@ class mutate_graph_impl : public mutate_graph
     
     if(!result.second) {
       // In the case of no parallel edges allowed
-      throw bad_parallel_edge(source, target);
+        boost::throw_exception(bad_parallel_edge(source, target));
     } else {
       bgl_edges.insert(std::make_pair(edge, result.first));
     }
@@ -770,14 +793,27 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
                    dynamic_properties& dp,
                    std::string const& node_id = "node_id") 
 {
-  detail::graph::mutate_graph_impl<MutableGraph> m_graph(graph, dp, node_id);
-  return detail::graph::read_graphviz(in, m_graph);
+  std::string data;
+  in >> std::noskipws;
+  std::copy(std::istream_iterator<char>(in),
+            std::istream_iterator<char>(),
+            std::back_inserter(data));
+  return read_graphviz(data,graph,dp,node_id);
 }
 
 } // namespace boost
 
-#ifdef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#ifdef BOOST_GRAPH_USE_SPIRIT_PARSER
+#  ifndef BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#    define BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#  endif
 #  include <boost/graph/detail/read_graphviz_spirit.hpp>
-#endif // BOOST_GRAPH_READ_GRAPHVIZ_ITERATORS
+#else // New default parser
+#  include <boost/graph/detail/read_graphviz_new.hpp>
+#endif // BOOST_GRAPH_USE_SPIRIT_PARSER
+
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/graphviz.hpp>
+#endif
 
 #endif // BOOST_GRAPHVIZ_HPP

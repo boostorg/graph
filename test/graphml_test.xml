@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
+  
+  Distributed under the Boost Software License, Version 1.0. (See
+  accompanying file LICENSE_1_0.txt or copy at
+  http://www.boost.org/LICENSE_1_0.txt)
+
+  Authors: Tiago de Paula Peixoto
+-->
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
   <key id="d1" for="node" attr.name="foo" attr.type="int">
     <default>42</default>
   </key>
   <key id="d2" for="edge" attr.name="weight" attr.type="double">
     <default>0.0</default>
+  </key>
+  <key id="d3" for="node" attr.name="name" attr.type="string">
+    <default>hello</default>
   </key>
 
   <graph id="G" edgedefault="directed">
@@ -14,7 +26,9 @@
       <data key="d1">100</data>
     </node>
     <node id="n3"/>
-    <node id="n4"/>
+    <node id="n4">
+      <data key="d3">foo&lt;</data>
+    </node>
     <node id="n5"/>
     <node id="n6">
         <data key="d1">0</data>

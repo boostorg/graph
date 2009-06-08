@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek 2000
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Jeremy Siek 2000
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Dijkstra's Shortest Paths</Title>
@@ -18,7 +18,6 @@
 <H1><A NAME="sec:dijkstra"></A><img src="figs/python.gif" alt="(Python)"/>
 <TT>dijkstra_shortest_paths</TT>
 </H1>
-
 
 <P>
 <PRE>
@@ -41,6 +40,20 @@ void dijkstra_shortest_paths
    VertexIndexMap index_map,
    CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
    DijkstraVisitor vis, ColorMap color = <i>default</i>)
+
+<i>// version that does not initialize the property maps (except for the default color map)</i>
+template &lt;class Graph, class DijkstraVisitor,
+          class PredecessorMap, class DistanceMap,
+          class WeightMap, class IndexMap, class Compare, class Combine,
+          class DistZero, class ColorMap&gt;
+void
+dijkstra_shortest_paths_no_init
+  (const Graph&amp; g,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+   IndexMap index_map,
+   Compare compare, Combine combine, DistZero zero,
+   DijkstraVisitor vis, ColorMap color = <i>default</i>);
 </PRE>
 
 <P>
@@ -66,8 +79,8 @@ record the shortest paths tree in a predecessor map: for each vertex
 <i>u in V</i>, <i>p[u]</i> will be the predecessor of <i>u</i> in
 the shortest paths tree (unless <i>p[u] = u</i>, in which case <i>u</i> is
 either the source or a vertex unreachable from the source).  In
-addition to these two options, the user can provide there own
-custom-made visitor that can takes actions during any of the
+addition to these two options, the user can provide their own
+custom-made visitor that takes actions during any of the
 algorithm's event points.</P>
 
 <P>
@@ -92,7 +105,7 @@ track of which set each vertex is in. Vertices colored black are in
 <i>S</i>. Vertices colored white or gray are in <i>V-S</i>. White vertices have
 not yet been discovered and gray vertices are in the priority queue.
 By default, the algorithm will allocate an array to store a color
-marker for each vertex in the graph. You can provide you own storage
+marker for each vertex in the graph. You can provide your own storage
 and access for colors with the <tt>color_map()</tt> parameter.
 </P>
 <p>
@@ -109,7 +122,7 @@ indicated by the labels on the right.
 <td valign="top">
 <pre>
 DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u in V</i>
+  <b>for</b> each vertex <i>u in V</i> <b>(This loop is not run in dijkstra_shortest_paths_no_init)</b>
     <i>d[u] := infinity</i> 
     <i>p[u] := u</i> 
     <i>color[u] :=</i> WHITE
@@ -202,7 +215,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
   exception is one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the weight
   map. The value type for this map must be
   the same as the value type of the distance map.<br>
@@ -220,7 +233,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   HREF="bibliography.html#driscoll88">61</A>] when an edge is relaxed.
   The type 
   <tt>VertexIndexMap</tt> must be a model of
-  <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The value type of the map must be an
   integer type. The vertex descriptor type of the graph needs to be
   usable as the key type of the map.<br>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>.
@@ -241,7 +254,7 @@ OUT: <tt>predecessor_map(PredecessorMap p_map)</tt>
   u</i> then <i>u</i> is either the source vertex or a vertex that is
   not reachable from the source.  The <tt>PredecessorMap</tt> type
   must be a <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a> whose key and value types are the same as the vertex
   descriptor type of the graph.<br>
   <b>Default:</b> <tt>dummy_property_map</tt><br>
@@ -255,7 +268,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   vertex in the graph <tt>g</tt> is recorded in this property map. The
   shortest path weight is the sum of the edge weights along the
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
-  href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
   be usable as the key type of the distance map. 
 
@@ -267,7 +280,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   StrictWeakOrdering</a> provided by the <tt>compare</tt> function
   object.<br>
   <b>Default:</b> <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a
   <tt>std::vector</tt> of the <tt>WeightMap</tt>'s value type of size
   <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
@@ -303,7 +316,7 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
   <tt>WeightMap</tt> property map.  The result type must be the same
   type as the distance value type.<br>
 
-  <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
+  <b>Default:</b> <tt>closed_plus&lt;D&gt;</tt> with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
 
   <b>Python</b>: Unsupported parameter.
@@ -339,12 +352,12 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   from the queue. At the end of the algorithm, vertices reachable from
   the source vertex will have been colored black. All other vertices
   will still be white. The type <tt>ColorMap</tt> must be a model of
-  <a href="../../property_map/ReadWritePropertyMap.html">Read/Write
+  <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. A vertex descriptor must be usable as the key type
   of the map, and the value type of the map must be a model of
   <a href="./ColorValue.html">Color Value</a>.<br>
   <b>Default:</b> an <a
-  href="../../property_map/iterator_property_map.html">
+  href="../../property_map/doc/iterator_property_map.html">
   <tt>iterator_property_map</tt></a> created from a <tt>std::vector</tt>
   of <tt>default_color_type</tt> of size <tt>num_vertices(g)</tt> and
   using the <tt>i_map</tt> for the index map.<br>
@@ -416,6 +429,8 @@ See <a href="../example/dijkstra-example.cpp">
 <TT>example/dijkstra-example.cpp</TT></a> for an example of using Dijkstra's
 algorithm.
 
+<H3>See also</H3> <a href="dijkstra_shortest_paths_no_color_map.html">dijkstra_shortest_paths_no_color_map</a> for a version of dijkstra's shortest path that does not use a color map.
+
 <H3>Notes</H3>
 
 <a name="1">[1]</a>
@@ -435,7 +450,7 @@ distance less than infinity.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 

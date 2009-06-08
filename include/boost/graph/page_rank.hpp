@@ -11,10 +11,11 @@
 #ifndef BOOST_GRAPH_PAGE_RANK_HPP
 #define BOOST_GRAPH_PAGE_RANK_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/overloading.hpp>
 #include <vector>
 
 namespace boost { namespace graph {
@@ -72,7 +73,8 @@ void
 page_rank(const Graph& g, RankMap rank_map, Done done, 
           typename property_traits<RankMap>::value_type damping,
           typename graph_traits<Graph>::vertices_size_type n,
-          RankMap2 rank_map2)
+          RankMap2 rank_map2
+          BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
 {
   typedef typename property_traits<RankMap>::value_type rank_type;
 
@@ -131,7 +133,9 @@ page_rank(const Graph& g, RankMap rank_map)
 // applies when we have a bidirectional graph.
 template<typename MutableGraph>
 void
-remove_dangling_links(MutableGraph& g)
+remove_dangling_links(MutableGraph& g
+                      BOOST_GRAPH_ENABLE_IF_MODELS_PARM(MutableGraph, 
+                                                        vertex_list_graph_tag))
 {
   typename graph_traits<MutableGraph>::vertices_size_type old_n;
   do {
@@ -149,5 +153,9 @@ remove_dangling_links(MutableGraph& g)
 }
 
 } } // end namespace boost::graph
+
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/page_rank.hpp>
+#endif
 
 #endif // BOOST_GRAPH_PAGE_RANK_HPP

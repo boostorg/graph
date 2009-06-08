@@ -23,7 +23,8 @@
 #define BOOST_GRAPH_JOHNSON_HPP
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/shared_array_property_map.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -94,12 +95,10 @@ namespace boost {
     }
     typename Traits2::vertex_iterator v, v_end, u, u_end;
     typename Traits2::edge_iterator e, e_end;
-    std::vector<DT> h_vec(num_vertices(g2));
-    typedef typename std::vector<DT>::iterator iter_t;
-    iterator_property_map<iter_t,VertexID2,DT,DT&> h(h_vec.begin(), id2);
+    shared_array_property_map<DT,VertexID2> h(num_vertices(g2), id2);
 
     for (tie(v, v_end) = vertices(g2); v != v_end; ++v)
-      d[*v] = inf;
+      put(d, *v, inf);
 
     put(d, s, zero);
     // Using the non-named parameter versions of bellman_ford and
@@ -122,8 +121,8 @@ namespace boost {
         for (tie(v, v_end) = vertices(g2); v != v_end; ++v) {
           if (*u != s && *v != s) {
             typename Traits1::vertex_descriptor u1, v1;
-            u1 = verts1[id2[*u]]; v1 = verts1[id2[*v]];
-            D[id2[*u]-1][id2[*v]-1] = combine(get(d, *v), (get(h, *v) - get(h, *u)));
+            u1 = verts1[get(id2, *u)]; v1 = verts1[get(id2, *v)];
+            D[get(id2, *u)-1][get(id2, *v)-1] = combine(get(d, *v), (get(h, *v) - get(h, *u)));
           }
         }
       }

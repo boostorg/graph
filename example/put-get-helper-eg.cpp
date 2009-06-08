@@ -7,7 +7,7 @@
 //=======================================================================
 #include <vector>
 #include <string>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
 #error This examples requires a compiler that provides a working std::iterator_traits

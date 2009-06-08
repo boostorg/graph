@@ -25,7 +25,7 @@ This test needs to be linked against Boost.Filesystem.
 #include <utility>
 
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/filesystem.hpp>

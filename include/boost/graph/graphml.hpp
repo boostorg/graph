@@ -22,21 +22,74 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/for_each.hpp>
+#if 0 // Change this back later
+#include <boost/property_tree/detail/xml_parser_utils.hpp>
+#endif
 #include <exception>
 #include <sstream>
 
 namespace boost
 {
 
+  // FIXME: Remove this once property_tree is stable
+  namespace graph_detail_from_property_tree {
+
+// ----------------------------------------------------------------------------
+// Copyright (C) 2002-2006 Marcin Kalicinski
+//
+// Distributed under the Boost Software License, Version 1.0. 
+// (See accompanying file LICENSE_1_0.txt or copy at 
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+// For more information, see www.boost.org
+// ----------------------------------------------------------------------------
+
+    // Naively convert narrow string to another character type
+    template<class Ch>
+    std::basic_string<Ch> widen(const char *text)
+    {
+        std::basic_string<Ch> result;
+        while (*text)
+        {
+            result += Ch(*text);
+            ++text;
+        }
+        return result;
+    }
+
+    template<class Ch>
+    std::basic_string<Ch> encode_char_entities(const std::basic_string<Ch> &s)
+    {
+        typedef typename std::basic_string<Ch> Str;
+        Str r;
+        typename Str::const_iterator end = s.end();
+        for (typename Str::const_iterator it = s.begin(); it != end; ++it)
+        {
+            switch (*it)
+            {
+                case Ch('<'): r += boost::graph_detail_from_property_tree::widen<Ch>("&lt;"); break;
+                case Ch('>'): r += boost::graph_detail_from_property_tree::widen<Ch>("&gt;"); break;
+                case Ch('&'): r += boost::graph_detail_from_property_tree::widen<Ch>("&amp;"); break;
+                case Ch('"'): r += boost::graph_detail_from_property_tree::widen<Ch>("&quot;"); break;
+                case Ch('\''): r += boost::graph_detail_from_property_tree::widen<Ch>("&apos;"); break;
+                default: r += *it; break;
+            }
+        }
+        return r;
+    }
+    
+  }
+
 /////////////////////////////////////////////////////////////////////////////
 // Graph reader exceptions
 /////////////////////////////////////////////////////////////////////////////
 struct parse_error: public graph_exception
 {
-    parse_error(const std::string& error) {statement = "parse error: " + error;}
+    parse_error(const std::string& err) {error = err; statement = "parse error: " + error;}
     virtual ~parse_error() throw() {}
     virtual const char* what() const throw() {return statement.c_str();}
     std::string statement;
+    std::string error;
 };
 
 
@@ -226,6 +279,9 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 
+    // using boost::property_tree::xml_parser::encode_char_entities;
+    using boost::graph_detail_from_property_tree::encode_char_entities;
+
     BOOST_STATIC_CONSTANT(bool,
                           graph_is_directed =
                           (is_convertible<directed_category*, directed_tag*>::value));
@@ -254,7 +310,7 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
             continue;
         std::string type_name = "string";
         mpl::for_each<value_types>(get_type_name<value_types>(i->second->value(), type_names, type_name));
-        out << "  <key id=\"" << key_id << "\" for=\""
+        out << "  <key id=\"" << encode_char_entities(key_id) << "\" for=\""
             << (i->second->key() == typeid(Graph) ? "graph" : (i->second->key() == typeid(vertex_descriptor) ? "node" : "edge")) << "\""
             << " attr.name=\"" << i->first << "\""
             << " attr.type=\"" << type_name << "\""
@@ -272,7 +328,7 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
         if (i->second->key() == typeid(Graph))
         {
             out << "   <data key=\"" << graph_key_ids[i->first] << "\">"
-                << i->second->get_string(g) << "</data>\n";
+                << encode_char_entities(i->second->get_string(g)) << "</data>\n";
         }
     }
 
@@ -287,7 +343,7 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
             if (i->second->key() == typeid(vertex_descriptor))
             {
                 out << "      <data key=\"" << vertex_key_ids[i->first] << "\">"
-                    << i->second->get_string(*v) << "</data>\n";
+                    << encode_char_entities(i->second->get_string(*v)) << "</data>\n";
             }
         }
         out << "    </node>\n";
@@ -308,7 +364,7 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
             if (i->second->key() == typeid(edge_descriptor))
             {
                 out << "      <data key=\"" << edge_key_ids[i->first] << "\">"
-                    << i->second->get_string(*e) << "</data>\n";
+                    << encode_char_entities(i->second->get_string(*e)) << "</data>\n";
             }
         }
         out << "    </edge>\n";

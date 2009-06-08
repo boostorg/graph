@@ -3,17 +3,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.3.3: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>Boost write_graphml</title>
-<link rel="stylesheet" href="default.css" type="text/css" />
+<link rel="stylesheet" href="../../rst.css" type="text/css" />
 </head>
 <body>
-<h1 class="title"><a class="reference" href="../../../index.htm"><img align="middle" alt="Boost" src="../../../boost.png" /></a> <tt class="literal"><span class="pre">write_graphml</span></tt></h1>
 <div class="document" id="logo-write-graphml">
+<h1 class="title"><a class="reference external" href="../../../index.htm"><img align="middle" alt="Boost" class="align-middle" src="../../../boost.png" /></a> <tt class="docutils literal"><span class="pre">write_graphml</span></tt></h1>
+
+<!-- Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
+
+Distributed under the Boost Software License, Version 1.0. (See
+accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt)
+
+Authors: Tiago de Paula Peixoto -->
 <pre class="literal-block">
 template&lt;typename Graph&gt;
 void
-write_graphml(std::ostream&amp; out, const Graph&amp; g, const dynamic_properties&amp; dp, 
+write_graphml(std::ostream&amp; out, const Graph&amp; g, const dynamic_properties&amp; dp,
               bool ordered_vertices=false);
 
 template&lt;typename Graph, typename VertexIndexMap&gt;
@@ -22,53 +30,53 @@ write_graphml(std::ostream&amp; out, const Graph&amp; g, VertexIndexMap vertex_i
               const dynamic_properties&amp; dp, bool ordered_vertices=false);
 </pre>
 <p>This is to write a BGL graph object into an output stream in the
-<a class="reference" href="http://graphml.graphdrawing.org/">graphml</a> format.  Both overloads of <tt class="literal"><span class="pre">write_graphml</span></tt> will emit all of
-the properties stored in the <a class="reference" href="../../property_map/doc/dynamic_property_map.html">dynamic_properties</a> object, thereby
+<a class="reference external" href="http://graphml.graphdrawing.org/">GraphML</a> format.  Both overloads of <tt class="docutils literal"><span class="pre">write_graphml</span></tt> will emit all of
+the properties stored in the <a class="reference external" href="../../property_map/doc/dynamic_property_map.html">dynamic_properties</a> object, thereby
 retaining the properties that have been read in through the dual
-function <a class="reference" href="read_graphml.html">read_graphml</a>. The second overload must be used when the
+function <a class="reference external" href="read_graphml.html">read_graphml</a>. The second overload must be used when the
 graph doesn't have an internal vertex index map, which must then be
 supplied with the appropriate parameter.</p>
 <div class="contents topic" id="contents">
-<p class="topic-title first"><a name="contents">Contents</a></p>
+<p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference" href="#where-defined" id="id2" name="id2">Where Defined</a></li>
-<li><a class="reference" href="#parameters" id="id3" name="id3">Parameters</a></li>
-<li><a class="reference" href="#example" id="id4" name="id4">Example</a></li>
-<li><a class="reference" href="#see-also" id="id5" name="id5">See Also</a></li>
-<li><a class="reference" href="#notes" id="id6" name="id6">Notes</a></li>
+<li><a class="reference internal" href="#where-defined" id="id2">Where Defined</a></li>
+<li><a class="reference internal" href="#parameters" id="id3">Parameters</a></li>
+<li><a class="reference internal" href="#example" id="id4">Example</a></li>
+<li><a class="reference internal" href="#see-also" id="id5">See Also</a></li>
+<li><a class="reference internal" href="#notes" id="id6">Notes</a></li>
 </ul>
 </div>
 <div class="section" id="where-defined">
-<h1><a class="toc-backref" href="#id2" name="where-defined">Where Defined</a></h1>
-<p><tt class="literal"><span class="pre">&lt;boost/graph/graphml.hpp&gt;</span></tt></p>
+<h1><a class="toc-backref" href="#id2">Where Defined</a></h1>
+<p><tt class="docutils literal"><span class="pre">&lt;boost/graph/graphml.hpp&gt;</span></tt></p>
 </div>
 <div class="section" id="parameters">
-<h1><a class="toc-backref" href="#id3" name="parameters">Parameters</a></h1>
-<dl>
-<dt>OUT: <tt class="literal"><span class="pre">std::ostream&amp;</span> <span class="pre">out</span></tt></dt>
-<dd>A standard <tt class="literal"><span class="pre">std::ostream</span></tt> object.</dd>
-<dt>IN: <tt class="literal"><span class="pre">VertexListGraph&amp;</span> <span class="pre">g</span></tt> </dt>
+<h1><a class="toc-backref" href="#id3">Parameters</a></h1>
+<dl class="docutils">
+<dt>OUT: <tt class="docutils literal"><span class="pre">std::ostream&amp;</span> <span class="pre">out</span></tt></dt>
+<dd>A standard <tt class="docutils literal"><span class="pre">std::ostream</span></tt> object.</dd>
+<dt>IN: <tt class="docutils literal"><span class="pre">VertexListGraph&amp;</span> <span class="pre">g</span></tt></dt>
 <dd>A directed or undirected graph.  The
-graph's type must be a model of <a class="reference" href="VertexListGraph.html">VertexListGraph</a>. If the graph
-doesn't have an internal <tt class="literal"><span class="pre">vertex_index</span></tt> property map, one
+graph's type must be a model of <a class="reference external" href="VertexListGraph.html">VertexListGraph</a>. If the graph
+doesn't have an internal <tt class="docutils literal"><span class="pre">vertex_index</span></tt> property map, one
 must be supplied with the vertex_index parameter.</dd>
-<dt>IN: <tt class="literal"><span class="pre">VertexIndexMap</span> <span class="pre">vertex_index</span></tt></dt>
+<dt>IN: <tt class="docutils literal"><span class="pre">VertexIndexMap</span> <span class="pre">vertex_index</span></tt></dt>
 <dd>A vertex property map containing the indexes in the range
 [0,num_vertices(g)].</dd>
-<dt>IN: <tt class="literal"><span class="pre">dynamic_properties&amp;</span> <span class="pre">dp</span></tt></dt>
-<dd>Contains all of the vertex and edge properties that should be
-emitted by the graphml writer.</dd>
-<dt>IN: <tt class="literal"><span class="pre">bool</span> <span class="pre">ordered_vertices</span></tt></dt>
+<dt>IN: <tt class="docutils literal"><span class="pre">dynamic_properties&amp;</span> <span class="pre">dp</span></tt></dt>
+<dd>Contains all of the vertex, edge, and graph properties that should be
+emitted by the GraphML writer.</dd>
+<dt>IN: <tt class="docutils literal"><span class="pre">bool</span> <span class="pre">ordered_vertices</span></tt></dt>
 <dd>This tells whether or not the order of the vertices from vertices(g)
-matches the order of the indexes. If <tt class="literal"><span class="pre">true</span></tt>, the <tt class="literal"><span class="pre">parse.nodeids</span></tt>
-graph attribute will be set to <tt class="literal"><span class="pre">canonical</span></tt>. Otherwise it will be
-set to <tt class="literal"><span class="pre">free</span></tt>.</dd>
+matches the order of the indexes. If <tt class="docutils literal"><span class="pre">true</span></tt>, the <tt class="docutils literal"><span class="pre">parse.nodeids</span></tt>
+graph attribute will be set to <tt class="docutils literal"><span class="pre">canonical</span></tt>. Otherwise it will be
+set to <tt class="docutils literal"><span class="pre">free</span></tt>.</dd>
 </dl>
 </div>
 <div class="section" id="example">
-<h1><a class="toc-backref" href="#id4" name="example">Example</a></h1>
-<p>This example demonstrates using BGL-graphml interface to write 
-a BGL graph into a graphml format file.</p>
+<h1><a class="toc-backref" href="#id4">Example</a></h1>
+<p>This example demonstrates using BGL-GraphML interface to write
+a BGL graph into a GraphML format file.</p>
 <pre class="literal-block">
 enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp,
                foo_o, bar_cpp, bar_o, libfoobar_a,
@@ -125,7 +133,7 @@ int main(int,char*[])
 <p>The output will be:</p>
 <pre class="literal-block">
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;graphml xmlns=&quot;http://graphml.graphdrawing.org/xmlns/graphml&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://graphml.graphdrawing.org/xmlns/graphml http://graphml.graphdrawing.org/xmlns/graphml/graphml-attributes-1.0rc.xsd&quot;&gt;
+&lt;graphml xmlns=&quot;http://graphml.graphdrawing.org/xmlns/graphml&quot;  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://graphml.graphdrawing.org/xmlns/graphml http://graphml.graphdrawing.org/xmlns/graphml/graphml-attributes-1.0rc.xsd&quot;&gt;
   &lt;key id=&quot;key0&quot; for=&quot;node&quot; attr.name=&quot;name&quot; attr.type=&quot;string&quot; /&gt;
   &lt;key id=&quot;key1&quot; for=&quot;edge&quot; attr.name=&quot;weight&quot; attr.type=&quot;int&quot; /&gt;
   &lt;graph id=&quot;G&quot; edgedefault=&quot;directed&quot; parse.nodeids=&quot;canonical&quot; parse.edgeids=&quot;canonical&quot; parse.order=&quot;nodesfirst&quot;&gt;
@@ -236,23 +244,24 @@ int main(int,char*[])
 </pre>
 </div>
 <div class="section" id="see-also">
-<h1><a class="toc-backref" href="#id5" name="see-also">See Also</a></h1>
+<h1><a class="toc-backref" href="#id5">See Also</a></h1>
 <p>_read_graphml</p>
 </div>
 <div class="section" id="notes">
-<h1><a class="toc-backref" href="#id6" name="notes">Notes</a></h1>
+<h1><a class="toc-backref" href="#id6">Notes</a></h1>
 <blockquote>
 <ul class="simple">
-<li>Note that you can use graphml file write facilities without linking
-against the <tt class="literal"><span class="pre">boost_graph</span></tt> library.</li>
+<li>Note that you can use GraphML file write facilities without linking
+against the <tt class="docutils literal"><span class="pre">boost_graph</span></tt> library.</li>
 </ul>
 </blockquote>
 </div>
 </div>
-<hr class="footer" />
 <div class="footer">
-<a class="reference" href="write_graphml.rst">View document source</a>.
-Generated by <a class="reference" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+<hr class="footer" />
+Generated on: 2009-06-08 13:57 UTC.
+Generated by <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> from <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> source.
+
 </div>
 </body>
 </html>

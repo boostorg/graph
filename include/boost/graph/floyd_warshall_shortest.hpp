@@ -29,7 +29,7 @@
 #ifndef BOOST_GRAPH_FLOYD_WARSHALL_HPP
 #define BOOST_GRAPH_FLOYD_WARSHALL_HPP
 
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_concepts.hpp>

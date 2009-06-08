@@ -9,6 +9,14 @@
 #ifndef BOOST_GRAPH_DETAIL_IS_SAME_HPP
 #define BOOST_GRAPH_DETAIL_IS_SAME_HPP
 
+// Deprecate the use of this header.
+// TODO: Remove this file from trunk/release in 1.41/1.42.
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
+#  pragma message ("Warning: This header is deprecated. Please use: boost/type_traits/is_same.hpp")
+#elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#  warning "This header is deprecated. Please use: boost/type_traits/is_same.hpp"
+#endif
+
 #include <boost/mpl/if.hpp>
 
 namespace boost {

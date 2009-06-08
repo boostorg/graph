@@ -1007,7 +1007,7 @@ code parts into namespace \code{boost}.
 #include <boost/graph/detail/permutation.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/pending/integer_range.hpp>
 #include <boost/limits.hpp>
 #include <boost/static_assert.hpp>

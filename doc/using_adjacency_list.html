@@ -1,10 +1,10 @@
 <HTML>
 <!--
-  -- Copyright (c) Jeremy Siek 2000
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Jeremy Siek 2000
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Using the Boost Graph Library</Title>
@@ -470,27 +470,26 @@ struct capacity_t {
 </PRE>
 
 <p>
-You can also use enum's instead of struct's to create tag types.
-Create an enum type for each property. The first part of the name of
-the enum type must be <tt>edge</tt>, <tt>vertex</tt>, or
-<tt>graph</tt> followed by an underscore, the new property name, and
-a <tt>_t</tt> at the
-end. Inside the enum, define a value with the same name minus the
-<tt>_t</tt>. Then invoke the <tt>BOOST_INSTALL_PROPERTY</tt> macro.
+You can also use enum's instead of struct's to create tag types. Create an enum
+type for each property inside the boost namespace. The first part of the name of
+the enum type must be <tt>edge</tt>, <tt>vertex</tt>, or <tt>graph</tt> followed
+by an underscore, the new property name, and a <tt>_t</tt> at the end. Inside
+the enum, define a value with the same name minus the <tt>_t</tt>. Then invoke
+the <tt>BOOST_INSTALL_PROPERTY</tt> macro.
 
 <pre>
-enum edge_flow_t { edge_flow };
-enum edge_capacity_t { edge_capacity };
-
 namespace boost {
+  enum edge_flow_t { edge_flow };
+  enum edge_capacity_t { edge_capacity };
+
   BOOST_INSTALL_PROPERTY(edge, flow);
   BOOST_INSTALL_PROPERTY(edge, capacity);
 }
 </pre>
 
 <P>
-Now you can use your new property tag in the definition of properties
-just as you would one of the builtin tags.
+Now you can use your new property tag in the definition of properties just as
+you would one of the builtin tags.
 
 <P>
 <PRE>
@@ -780,7 +779,7 @@ href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContaine
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 

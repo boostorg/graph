@@ -17,7 +17,7 @@
 #include <boost/pending/bucket_sorter.hpp>
 #include <boost/detail/numeric_traits.hpp> // for integer_traits
 #include <boost/graph/graph_traits.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 

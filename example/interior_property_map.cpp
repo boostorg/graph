@@ -11,7 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <string>
 
 using namespace std;

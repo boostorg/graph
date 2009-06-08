@@ -15,18 +15,20 @@
 
 
 #include <functional>
+#include <vector>
 #include <boost/limits.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/pending/mutable_queue.hpp>
 #include <boost/graph/relax.hpp>
-#include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 
 
 namespace boost {
 
-  
+
   template <class Heuristic, class Graph>
   struct AStarHeuristicConcept {
     void constraints()
@@ -37,8 +39,8 @@ namespace boost {
     Heuristic h;
     typename graph_traits<Graph>::vertex_descriptor u;
   };
-  
-  
+
+
   template <class Graph, class CostType>
   class astar_heuristic : public std::unary_function<
     typename graph_traits<Graph>::vertex_descriptor, CostType>
@@ -48,9 +50,9 @@ namespace boost {
     astar_heuristic() {}
     CostType operator()(Vertex u) { return static_cast<CostType>(0); }
   };
-  
 
-  
+
+
   template <class Visitor, class Graph>
   struct AStarVisitorConcept {
     void constraints()
@@ -70,22 +72,22 @@ namespace boost {
     typename graph_traits<Graph>::vertex_descriptor u;
     typename graph_traits<Graph>::edge_descriptor e;
   };
-  
-  
+
+
   template <class Visitors = null_visitor>
   class astar_visitor : public bfs_visitor<Visitors> {
   public:
     astar_visitor() {}
     astar_visitor(Visitors vis)
       : bfs_visitor<Visitors>(vis) {}
-  
+
     template <class Edge, class Graph>
     void edge_relaxed(Edge e, Graph& g) {
       invoke_visitors(this->m_vis, e, g, on_edge_relaxed());
     }
     template <class Edge, class Graph>
     void edge_not_relaxed(Edge e, Graph& g) {
-      invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());      
+      invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());
     }
   private:
     template <class Edge, class Graph>
@@ -99,10 +101,10 @@ namespace boost {
     return astar_visitor<Visitors>(vis);
   }
   typedef astar_visitor<> default_astar_visitor;
-  
+
 
   namespace detail {
-    
+
     template <class AStarHeuristic, class UniformCostVisitor,
               class UpdatableQueue, class PredecessorMap,
               class CostMap, class DistanceMap, class WeightMap,
@@ -110,12 +112,12 @@ namespace boost {
               class BinaryPredicate>
     struct astar_bfs_visitor
     {
-      
+
       typedef typename property_traits<CostMap>::value_type C;
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
       typedef typename property_traits<DistanceMap>::value_type distance_type;
-      
+
       astar_bfs_visitor(AStarHeuristic h, UniformCostVisitor vis,
                         UpdatableQueue& Q, PredecessorMap p,
                         CostMap c, DistanceMap d, WeightMap w,
@@ -124,8 +126,8 @@ namespace boost {
         : m_h(h), m_vis(vis), m_Q(Q), m_predecessor(p), m_cost(c),
           m_distance(d), m_weight(w), m_color(col),
           m_combine(combine), m_compare(compare), m_zero(zero) {}
-      
-      
+
+
       template <class Vertex, class Graph>
       void initialize_vertex(Vertex u, Graph& g) {
         m_vis.initialize_vertex(u, g);
@@ -143,16 +145,16 @@ namespace boost {
         m_vis.finish_vertex(u, g);
       }
       template <class Edge, class Graph>
-      void examine_edge(Edge e, Graph& g) { 
+      void examine_edge(Edge e, Graph& g) {
         if (m_compare(get(m_weight, e), m_zero))
           throw negative_edge();
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
       void non_tree_edge(Edge, Graph&) {}
-      
-      
-      
+
+
+
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
@@ -166,8 +168,8 @@ namespace boost {
         } else
           m_vis.edge_not_relaxed(e, g);
       }
-      
-      
+
+
       template <class Edge, class Graph>
       void gray_target(Edge e, Graph& g) {
         distance_type old_distance = get(m_distance, target(e, g));
@@ -192,8 +194,8 @@ namespace boost {
         } else
           m_vis.edge_not_relaxed(e, g);
       }
-      
-      
+
+
       template <class Edge, class Graph>
       void black_target(Edge e, Graph& g) {
         distance_type old_distance = get(m_distance, target(e, g));
@@ -213,9 +215,9 @@ namespace boost {
         } else
           m_vis.edge_not_relaxed(e, g);
       }
-      
-      
-      
+
+
+
       AStarHeuristic m_h;
       UniformCostVisitor m_vis;
       UpdatableQueue& m_Q;
@@ -228,13 +230,13 @@ namespace boost {
       BinaryPredicate m_compare;
       bool m_decreased;
       C m_zero;
-      
+
     };
-    
+
   } // namespace detail
 
-  
-  
+
+
   template <typename VertexListGraph, typename AStarHeuristic,
             typename AStarVisitor, typename PredecessorMap,
             typename CostMap, typename DistanceMap,
@@ -253,26 +255,24 @@ namespace boost {
      CompareFunction compare, CombineFunction combine,
      CostInf inf, CostZero zero)
   {
-    typedef indirect_cmp<CostMap, CompareFunction> IndirectCmp;
-    IndirectCmp icmp(cost, compare);
-  
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
-    typedef mutable_queue<Vertex, std::vector<Vertex>,
-        IndirectCmp, VertexIndexMap>
+    typedef boost::vector_property_map<std::size_t> IndexInHeapMap;
+    IndexInHeapMap index_in_heap;
+    typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, CostMap, CompareFunction>
       MutableQueue;
-    MutableQueue Q(num_vertices(g), icmp, index_map);
-  
+    MutableQueue Q(cost, index_in_heap, compare);
+
     detail::astar_bfs_visitor<AStarHeuristic, AStarVisitor,
         MutableQueue, PredecessorMap, CostMap, DistanceMap,
         WeightMap, ColorMap, CombineFunction, CompareFunction>
       bfs_vis(h, vis, Q, predecessor, cost, distance, weight,
               color, combine, compare, zero);
-  
+
     breadth_first_visit(g, s, Q, bfs_vis, color);
   }
-  
-  
+
+
   // Non-named parameter interface
   template <typename VertexListGraph, typename AStarHeuristic,
             typename AStarVisitor, typename PredecessorMap,
@@ -292,7 +292,7 @@ namespace boost {
      CompareFunction compare, CombineFunction combine,
      CostInf inf, CostZero zero)
   {
-    
+
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
@@ -305,15 +305,15 @@ namespace boost {
     }
     put(distance, s, zero);
     put(cost, s, h(s));
-    
+
     astar_search_no_init
       (g, s, h, vis, predecessor, cost, distance, weight,
        color, index_map, compare, combine, inf, zero);
-    
+
   }
-  
-  
-  
+
+
+
   namespace detail {
     template <class VertexListGraph, class AStarHeuristic,
               class CostMap, class DistanceMap, class WeightMap,
@@ -343,7 +343,7 @@ namespace boost {
          choose_param(get_param(params, distance_zero_t()),
                       C()));
     }
-  
+
     template <class VertexListGraph, class AStarHeuristic,
               class CostMap, class DistanceMap, class WeightMap,
               class IndexMap, class ColorMap, class Params>
@@ -356,30 +356,21 @@ namespace boost {
        const Params& params)
     {
       typedef typename property_traits<WeightMap>::value_type D;
-      typename std::vector<D>::size_type
-        n = is_default_param(distance) ? num_vertices(g) : 1;
-      std::vector<D> distance_map(n);
-      n = is_default_param(cost) ? num_vertices(g) : 1;
-      std::vector<D> cost_map(n);
-      std::vector<default_color_type> color_map(num_vertices(g));
-      default_color_type c = white_color;
-  
+      std::vector<D> distance_map;
+      std::vector<D> cost_map;
+      std::vector<default_color_type> color_map;
+
       detail::astar_dispatch2
         (g, s, h,
-         choose_param(cost, make_iterator_property_map
-                      (cost_map.begin(), index_map,
-                       cost_map[0])),
-         choose_param(distance, make_iterator_property_map
-                      (distance_map.begin(), index_map, 
-                       distance_map[0])),
+         choose_param(cost, vector_property_map<D, IndexMap>(index_map)),
+         choose_param(distance, vector_property_map<D, IndexMap>(index_map)),
          weight, index_map,
-         choose_param(color, make_iterator_property_map
-                      (color_map.begin(), index_map, c)),
+         choose_param(color, vector_property_map<default_color_type, IndexMap>(index_map)),
          params);
     }
   } // namespace detail
-  
-  
+
+
   // Named parameter interface
   template <typename VertexListGraph,
             typename AStarHeuristic,
@@ -390,7 +381,7 @@ namespace boost {
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      AStarHeuristic h, const bgl_named_params<P, T, R>& params)
   {
-    
+
     detail::astar_dispatch1
       (g, s, h,
        get_param(params, vertex_rank),
@@ -399,9 +390,9 @@ namespace boost {
        choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
        get_param(params, vertex_color),
        params);
-    
+
   }
-  
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_ASTAR_SEARCH_HPP

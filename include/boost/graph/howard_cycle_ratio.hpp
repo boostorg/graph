@@ -19,6 +19,7 @@
 #include <exception>
 #include <set> 
 #include <boost/bind.hpp>
+#include <boost/config.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/remove_const.hpp>

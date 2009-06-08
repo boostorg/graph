@@ -1,11 +1,11 @@
 <HTML>
 
 <!--
-  -- Copyright (c) Lie-Quan Lee and Jeremy Siek 2000, 2001
-  --
-  -- Distributed under the Boost Software License, Version 1.0.
-  -- (See accompanying file LICENSE_1_0.txt or copy at
-  -- http://www.boost.org/LICENSE_1_0.txt)
+     Copyright (c) Lie-Quan Lee and Jeremy Siek 2000, 2001
+    
+     Distributed under the Boost Software License, Version 1.0.
+     (See accompanying file LICENSE_1_0.txt or copy at
+     http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: write graphviz</Title>
@@ -221,7 +221,7 @@ IN: <tt>const std::string& node_id</tt>
 
 IN: <tt>VertexID vertex_id</tt>
 <blockquote>
-  A property map that models <a href="../../property_map/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. The value should be a unique descriptor that can be used to name a node in a Graphviz file (so it should not, for instance, have any spaces in it).<br>
+  A property map that models <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. The value should be a unique descriptor that can be used to name a node in a Graphviz file (so it should not, for instance, have any spaces in it).<br>
 <b>Default</b>: If no <code>dynamic_properties</code> object is provided, <tt>get(vertex_index, g)</tt>. Otherwise, a dynamic property map that accesses the property map named <code>node_id</code>.
 </blockquote>
 <H3>
@@ -337,7 +337,7 @@ without the library <tt>libbglviz.a</tt>.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy 2000-2001</TD><TD>
+<TD nowrap>Copyright &copy; 2000-2001</TD><TD>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
 <A HREF="http://www.boost.org/people/jeremy_siek.htm">Jeremy Siek</A>, Indiana University (<A HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>

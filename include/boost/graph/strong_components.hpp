@@ -17,6 +17,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/type_traits/conversion_traits.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/graph/overloading.hpp>
 
 namespace boost {
 
@@ -219,7 +220,8 @@ namespace boost {
             class P, class T, class R>
   inline typename property_traits<ComponentMap>::value_type
   strong_components(const Graph& g, ComponentMap comp,
-                    const bgl_named_params<P, T, R>& params)
+                    const bgl_named_params<P, T, R>& params
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
@@ -229,7 +231,8 @@ namespace boost {
 
   template <class Graph, class ComponentMap>
   inline typename property_traits<ComponentMap>::value_type
-  strong_components(const Graph& g, ComponentMap comp)
+  strong_components(const Graph& g, ComponentMap comp
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph, vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
@@ -330,5 +333,9 @@ namespace boost {
   }
 
 } // namespace boost
+
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/strong_components.hpp>
+#endif
 
 #endif // BOOST_GRAPH_STRONG_COMPONENTS_HPP

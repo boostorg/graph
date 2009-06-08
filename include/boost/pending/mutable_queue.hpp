@@ -14,7 +14,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/pending/mutable_heap.hpp>
 #include <boost/pending/is_heap.hpp>
 #include <boost/graph/detail/array_binary_tree.hpp>

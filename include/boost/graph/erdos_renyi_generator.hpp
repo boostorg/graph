@@ -123,16 +123,16 @@ namespace boost {
 
     sorted_erdos_renyi_iterator()
       : gen(), rand_vertex(0.5), n(0), allow_self_loops(false),
-    src((std::numeric_limits<vertices_size_type>::max)()), tgt(0), prob(0) {}
+        src((std::numeric_limits<vertices_size_type>::max)()), tgt(0), prob(0) {}
     sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
-                    double prob = 0.0, 
+                                double prob = 0.0, 
                                 bool allow_self_loops = false)
       : gen(),
         // The "1.0 - prob" in the next line is to work around a Boost.Random
         // (and TR1) bug in the specification of geometric_distribution.  It
         // should be replaced by "prob" when the issue is fixed.
         rand_vertex(1.0 - prob),
-    n(n), allow_self_loops(allow_self_loops), src(0), tgt(0), prob(prob)
+        n(n), allow_self_loops(allow_self_loops), src(0), tgt(0), prob(prob)
     { 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -182,27 +182,27 @@ namespace boost {
       vertices_size_type increment = rand_vertex(*gen);
       tgt += increment;
       if (is_undirected) {
-    // Update src and tgt based on position of tgt
-    // Basically, we want the greatest src_increment such that (in \bbQ):
-    // src_increment * (src + allow_self_loops + src_increment - 1/2) <= tgt
-    // The result of the LHS of this, evaluated with the computed
-    // src_increment, is then subtracted from tgt
-    double src_minus_half = (src + allow_self_loops) - 0.5;
-    double disc = src_minus_half * src_minus_half + 2 * tgt;
-    double src_increment_fp = floor(sqrt(disc) - src_minus_half);
-    vertices_size_type src_increment = vertices_size_type(src_increment_fp);
-    if (src + src_increment >= n) {
-      src = n;
-    } else {
-      tgt -= (src + allow_self_loops) * src_increment + 
-         src_increment * (src_increment - 1) / 2;
-      src += src_increment;
-    }
+        // Update src and tgt based on position of tgt
+        // Basically, we want the greatest src_increment such that (in \bbQ):
+        // src_increment * (src + allow_self_loops + src_increment - 1/2) <= tgt
+        // The result of the LHS of this, evaluated with the computed
+        // src_increment, is then subtracted from tgt
+        double src_minus_half = (src + allow_self_loops) - 0.5;
+        double disc = src_minus_half * src_minus_half + 2 * tgt;
+        double src_increment_fp = floor(sqrt(disc) - src_minus_half);
+        vertices_size_type src_increment = vertices_size_type(src_increment_fp);
+        if (src + src_increment >= n) {
+          src = n;
+        } else {
+          tgt -= (src + allow_self_loops) * src_increment + 
+                 src_increment * (src_increment - 1) / 2;
+          src += src_increment;
+        }
       } else {
-    // Number of out edge positions possible from each vertex in this graph
-    vertices_size_type possible_out_edges = n - (allow_self_loops ? 0 : 1);
-    src += (std::min)(n - src, tgt / possible_out_edges);
-    tgt %= possible_out_edges;
+        // Number of out edge positions possible from each vertex in this graph
+        vertices_size_type possible_out_edges = n - (allow_self_loops ? 0 : 1);
+        src += (std::min)(n - src, tgt / possible_out_edges);
+        tgt %= possible_out_edges;
       }
       // Set end of graph code so (src, tgt) will be the same as for the end
       // sorted_erdos_renyi_iterator
