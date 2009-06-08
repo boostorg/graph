@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/iteration_macros.hpp>
 #include <cctype>
 
 // Method read to parse an adjacency list from an input stream. Examples:
@@ -211,13 +212,13 @@ struct PropertyPrinter
         
         PropertyPrinter( const Graph& g ):graph(&g){}
         
-        template<class Iterator>
-        PropertyPrinter& operator () ( std::ostream& out, Iterator it )
+        template<class Val>
+        PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
                 typename property_map<Graph,Tag>::type ps = get(Tag(), *graph);
-                out << ps[ *it ] <<" ";
+                out << ps[ v ] <<" ";
                 PropertyPrinter<Graph,Next> print(*graph);
-                print(out, it);
+                print(out, v);
                 return (*this);
         }
 private:
@@ -229,10 +230,10 @@ struct PropertyPrinter
 {
         PropertyPrinter( const Graph& g ):graph(&g){}
         
-        template<class Iterator>
-        PropertyPrinter& operator () ( std::ostream& out, Iterator it )
+        template<class Val>
+        PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
-                out << (*graph)[ *it ] <<" ";
+                out << (*graph)[ v ] <<" ";
                 return (*this);
         }
 private:
@@ -244,13 +245,13 @@ struct PropertyPrinter<Graph, property<Tag, Value, Next> >
 {
         PropertyPrinter( const Graph& g ):graph(&g){}
         
-        template<class Iterator>
-        PropertyPrinter& operator () ( std::ostream& out, Iterator it )
+        template<class Val>
+        PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
                 typename property_map<Graph,Tag>::type ps = get(Tag(), *graph);
-                out << ps[ *it ] <<" ";
+                out << ps[ v ] <<" ";
                 PropertyPrinter<Graph,Next> print(*graph);
-                print(out, it);
+                print(out, v);
                 return (*this);
         }
 private:
@@ -263,8 +264,8 @@ struct PropertyPrinter<Graph, no_property>
 {
         PropertyPrinter( const Graph& ){}
 
-        template<class Iterator>
-        PropertyPrinter& operator () ( std::ostream&, Iterator it ){ return *this; }
+        template<class Val>
+        PropertyPrinter& operator () ( std::ostream&, const Val& ){ return *this; }
 };
 
 // property printer
@@ -287,18 +288,16 @@ struct EdgePrinter
                 // assign indices to vertices
                 std::map<Vertex,int> indices;
                 int num = 0;
-                typename graph_traits<Graph>::vertex_iterator vi;
-                for (vi = vertices(graph).first; vi != vertices(graph).second; ++vi){
-                        indices[*vi] = num++;
+                BGL_FORALL_VERTICES_T(v, graph, Graph) {
+                        indices[v] = num++;
                 }
 
                 // write edges
                 PropertyPrinter<Graph, EdgeProperty> print_Edge(graph);
                 out << "e" << std::endl;
-                typename graph_traits<Graph>::edge_iterator ei;
-                for (ei = edges(graph).first; ei != edges(graph).second; ++ei){
-                        out << indices[source(*ei,graph)] <<  " " << indices[target(*ei,graph)] << "  "; 
-                        print_Edge(out,ei); 
+                BGL_FORALL_EDGES_T(e, graph, Graph) {
+                        out << indices[source(e,graph)] <<  " " << indices[target(e,graph)] << "  "; 
+                        print_Edge(out,e); 
                         out << std::endl;
                 }
                 out << std::endl;            
@@ -322,9 +321,8 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         {
                 PropertyPrinter<Graph, V> printNode(this->graph);
                 out << "v"<<std::endl;
-                typename graph_traits<Graph>::vertex_iterator vi;
-                for (vi = vertices(this->graph).first; vi != vertices(this->graph).second; ++vi){
-                        printNode(out,vi); 
+                BGL_FORALL_VERTICES_T(v, this->graph, Graph) {
+                        printNode(out,v); 
                         out << std::endl;
                 }
                 

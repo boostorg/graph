@@ -13,6 +13,7 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/detail/sparse_ordering.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 /*
   King Algorithm for matrix reordering
@@ -262,7 +263,7 @@ namespace boost {
   king_ordering(const Graph& G, OutputIterator permutation, 
                 ColorMap color, DegreeMap degree, VertexIndexMap index_map)
   {
-    if (vertices(G).first == vertices(G).second)
+    if (has_no_vertices(G))
       return permutation;
 
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
@@ -298,7 +299,7 @@ namespace boost {
   king_ordering(const Graph& G, OutputIterator permutation, 
                 VertexIndexMap index_map)
   {
-    if (vertices(G).first == vertices(G).second)
+    if (has_no_vertices(G))
       return permutation;
 
     typedef out_degree_property_map<Graph> DegreeMap;

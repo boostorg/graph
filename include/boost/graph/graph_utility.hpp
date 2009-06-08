@@ -445,6 +445,27 @@ namespace boost {
       add_removed_edge_capacity(Graph& g) : base(get(edge_capacity, g)) {}
     };    
 
+    template <typename Graph>
+    bool has_no_vertices(const Graph& g) {
+      typedef typename boost::graph_traits<Graph>::vertex_iterator vi;
+      std::pair<vi, vi> p = vertices(g);
+      return (p.first == p.second);
+    }
+
+    template <typename Graph>
+    bool has_no_edges(const Graph& g) {
+      typedef typename boost::graph_traits<Graph>::edge_iterator ei;
+      std::pair<ei, ei> p = edges(g);
+      return (p.first == p.second);
+    }
+
+    template <typename Graph>
+    bool has_no_out_edges(const typename boost::graph_traits<Graph>::vertex_descriptor& v, const Graph& g) {
+      typedef typename boost::graph_traits<Graph>::out_edge_iterator ei;
+      std::pair<ei, ei> p = out_edges(v, g);
+      return (p.first == p.second);
+    }
+
   } // namespace graph
 
 } /* namespace boost */

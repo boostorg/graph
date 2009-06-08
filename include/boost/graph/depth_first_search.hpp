@@ -214,10 +214,12 @@ namespace boost {
   void
   depth_first_search(const VertexListGraph& g, DFSVisitor vis, ColorMap color)
   {
-    if (vertices(g).first == vertices(g).second)
+    typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
+    std::pair<vi, vi> verts = vertices(g);
+    if (verts.first == verts.second)
       return;
 
-    depth_first_search(g, vis, color, *vertices(g).first);
+    depth_first_search(g, vis, color, *verts.first);
   }
 
   template <class Visitors = null_visitor>
@@ -284,7 +286,9 @@ namespace boost {
   depth_first_search(const VertexListGraph& g,
                      const bgl_named_params<P, T, R>& params)
   {
-    if (vertices(g).first == vertices(g).second)
+    typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
+    std::pair<vi, vi> verts = vertices(g);
+    if (verts.first == verts.second)
       return;
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
