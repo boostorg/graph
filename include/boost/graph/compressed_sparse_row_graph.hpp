@@ -24,6 +24,7 @@
 #endif
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/filtered_graph.hpp> // For keep_all
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -74,6 +75,14 @@ enum edges_are_unsorted_t {edges_are_unsorted};
 // into the CSR graph is not sorted by source vertex.  This version uses less
 // memory but requires multi-pass capability on the iterators.
 enum edges_are_unsorted_multi_pass_t {edges_are_unsorted_multi_pass};
+
+// A type (edges_are_unsorted_multi_pass_filtered_t) and a value
+// (edges_are_unsorted_multi_pass_filtered) used to indicate that the edge list
+// passed into the CSR graph is not sorted by source vertex.  This version uses
+// less memory but requires multi-pass capability on the iterators.  The
+// filtering is done here because it is often faster and it greatly simplifies
+// handling of edge properties.
+enum edges_are_unsorted_multi_pass_filtered_t {edges_are_unsorted_multi_pass_filtered};
 
 // A type (construct_inplace_from_sources_and_targets_t) and a value
 // (construct_inplace_from_sources_and_targets) used to indicate that mutable
@@ -270,19 +279,20 @@ class compressed_sparse_row_graph
   }
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-  //  From number of vertices and unsorted list of edges
-  template <typename MultiPassInputIterator>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
-                              MultiPassInputIterator edge_begin,
-                              MultiPassInputIterator edge_end,
-                              vertices_size_type numverts,
-                              const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
-  {
+  //  Rebuild graph from number of vertices and multi-pass unsorted list of
+  //  edges (filtered using edge_pred)
+  template <typename MultiPassInputIterator, typename EdgePred>
+  void
+  assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
+                                   MultiPassInputIterator edge_end,
+                                   vertices_size_type numverts,
+                                   const EdgePred& edge_pred) {
+    m_rowstart.clear();
+    m_rowstart.resize(numverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
-      ++m_rowstart[i->first + 1];
+      if (edge_pred(*i))
+        ++m_rowstart[i->first + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
@@ -300,26 +310,25 @@ class compressed_sparse_row_graph
     std::vector<EdgeIndex>
       current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
     for (; edge_begin != edge_end; ++edge_begin)
-      m_column[current_insert_positions[edge_begin->first]++] = edge_begin->second;
-
-    // Default-construct properties for edges
-    inherited_edge_properties::resize(m_column.size());
+      if (edge_pred(*edge_begin))
+        m_column[current_insert_positions[edge_begin->first]++] = edge_begin->second;
   }
 
-  //  From number of vertices and unsorted list of edges, plus edge properties
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
-                              MultiPassInputIterator edge_begin,
-                              MultiPassInputIterator edge_end,
-                              EdgePropertyIterator ep_iter,
-                              vertices_size_type numverts,
-                              const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
-  {
+  //  Rebuild graph from number of vertices and multi-pass unsorted list of
+  //  edges and their properties (filtered using edge_pred)
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
+  void
+  assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
+                                   MultiPassInputIterator edge_end,
+                                   EdgePropertyIterator ep_iter,
+                                   vertices_size_type numverts,
+                                   const EdgePred& edge_pred) {
+    m_rowstart.clear();
+    m_rowstart.resize(numverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
-      ++m_rowstart[i->first + 1];
+      if (edge_pred(*i))
+        ++m_rowstart[i->first + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
@@ -338,12 +347,76 @@ class compressed_sparse_row_graph
     std::vector<EdgeIndex>
       current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
     for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
-      vertices_size_type source = edge_begin->first;
-      EdgeIndex insert_pos = current_insert_positions[source];
-      ++current_insert_positions[source];
-      m_column[insert_pos] = edge_begin->second;
-      inherited_edge_properties::write_by_index(insert_pos, *ep_iter);
+      if (edge_pred(*edge_begin)) {
+        vertices_size_type source = edge_begin->first;
+        EdgeIndex insert_pos = current_insert_positions[source];
+        ++current_insert_positions[source];
+        m_column[insert_pos] = edge_begin->second;
+        inherited_edge_properties::write_by_index(insert_pos, *ep_iter);
+      }
     }
+  }
+
+  //  From number of vertices and unsorted list of edges
+  template <typename MultiPassInputIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(0), m_property(prop)
+  {
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, keep_all());
+
+    // Default-construct properties for edges
+    inherited_edge_properties::resize(m_column.size());
+  }
+
+  //  From number of vertices and unsorted list of edges, plus edge properties
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(0), m_property(prop)
+  {
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, keep_all());
+  }
+
+  //  From number of vertices and unsorted list of edges, with filter
+  template <typename MultiPassInputIterator, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const EdgePred& edge_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(0), m_property(prop)
+  {
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, edge_pred);
+
+    // Default-construct properties for edges
+    inherited_edge_properties::resize(m_column.size());
+  }
+
+  //  From number of vertices and unsorted list of edges, plus edge properties, with filter
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const EdgePred& edge_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(0), m_property(prop)
+  {
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, edge_pred);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
