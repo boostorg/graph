@@ -20,6 +20,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 
 using boost::shared_ptr;
 using boost::uniform_01;
@@ -103,7 +104,10 @@ generate_edge(shared_ptr<uniform_01<RandomGenerator> > prob, T n,
     
     double S = a + b + c + d;
     
-    a /= S; b /= S; c /= S; d /= S;
+    a /= S; b /= S; c /= S;
+    // d /= S;
+    // Ensure all values add up to 1, regardless of floating point errors
+    d = 1. - a - b - c;
   }
 
   return std::make_pair(u, v);
@@ -150,7 +154,7 @@ namespace boost {
     {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
-      assert(a + b + c + d == 1);
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       if (permute_vertices) 
         generate_permutation_vector(gen, vertexPermutation, n);
@@ -260,7 +264,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
               
     {
-      assert(a + b + c + d == 1);
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -361,7 +365,7 @@ namespace boost {
       : gen(), done(false)
               
     {
-      assert(a + b + c + d == 1);
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -474,7 +478,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
               
     {
-      assert(a + b + c + d == 1);
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
       
