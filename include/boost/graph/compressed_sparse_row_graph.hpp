@@ -93,6 +93,15 @@ enum construct_inplace_from_sources_and_targets_t {construct_inplace_from_source
 // (sequential and distributed).
 enum construct_inplace_from_sources_and_targets_global_t {construct_inplace_from_sources_and_targets_global};
 
+// A type (edges_are_unsorted_for_distributed_graph_t) and a value
+// (edges_are_unsorted_for_distributed_graph) used to indicate that the edge
+// list passed into the CSR graph is not sorted by source vertex.  The data is
+// also stored using global vertex indices, and must be filtered to choose only
+// local vertices.  This constructor caches the edge information in memory, and
+// thus requires only a single pass over the input data.  This constructor is
+// intended for internal use by the distributed CSR constructors.
+enum edges_are_unsorted_for_distributed_graph_t {edges_are_unsorted_for_distributed_graph};
+
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 /****************************************************************************
@@ -624,6 +633,57 @@ class compressed_sparse_row_graph
       edge_props.push_back(*ep_iter);
     }
     assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::identity_property_map());
+  }
+
+  //  From number of vertices and single-pass range of unsorted edges.  Data is
+  //  cached in coordinate form before creating the actual graph.  Edges are
+  //  filtered and transformed for use in a distributed graph.
+  template<typename InputIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numlocalverts,
+                              GlobalToLocal global_to_local,
+                              const EdgePred& edge_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
+      m_column(), m_property(prop)
+  {
+    std::vector<vertex_descriptor> sources, targets;
+    for (; edge_begin != edge_end; ++edge_begin) {
+      if (edge_pred(*edge_begin)) {
+        sources.push_back(edge_begin->first);
+        targets.push_back(edge_begin->second);
+      }
+    }
+    assign_sources_and_targets_global(sources, targets, numlocalverts, global_to_local);
+  }
+
+  //  From number of vertices and single-pass range of unsorted edges and
+  //  single-pass range of edge properties.  Data is cached in coordinate form
+  //  before creating the actual graph.  Edges are filtered and transformed for
+  //  use in a distributed graph.
+  template<typename InputIterator, typename EdgePropertyIterator,
+           typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numlocalverts,
+                              GlobalToLocal global_to_local,
+                              const EdgePred& edge_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
+      m_column(), m_property(prop)
+  {
+    std::vector<vertex_descriptor> sources, targets;
+    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
+      if (edge_pred(*edge_begin)) {
+        sources.push_back(edge_begin->first);
+        targets.push_back(edge_begin->second);
+        edge_props.push_back(*ep_iter);
+      }
+    }
+    assign_sources_and_targets_global(sources, targets, edge_props, numlocalverts, global_to_local);
   }
 
   // Replace graph with sources and targets given, sorting them in-place, and
