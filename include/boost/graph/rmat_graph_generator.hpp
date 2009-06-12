@@ -229,9 +229,9 @@ namespace boost {
     bool operator() (const std::pair<T,T>& x, const std::pair<T,T>& y)
     { 
       if (x.first == y.first)
-        return x.second >= y.second;
+        return x.second > y.second;
       else 
-        return x.first >= y.first;
+        return x.first > y.first;
     }
   };
 
