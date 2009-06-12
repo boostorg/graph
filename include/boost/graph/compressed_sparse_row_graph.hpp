@@ -19,7 +19,9 @@
 #include <climits>
 #include <cassert>
 #include <iterator>
-#include <iostream> // FIXME
+#if 0
+#include <iostream> // For some debugging code below
+#endif
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/indexed_properties.hpp>
@@ -58,26 +60,20 @@ struct csr_graph_tag;
 // A type (edges_are_sorted_t) and a value (edges_are_sorted) used to indicate
 // that the edge list passed into the CSR graph is already sorted by source
 // vertex.
-struct edges_are_sorted_internal {};
-inline void edges_are_sorted(edges_are_sorted_internal) {}
-typedef void (*edges_are_sorted_t)(edges_are_sorted_internal);
+enum edges_are_sorted_t {edges_are_sorted};
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 // A type (edges_are_unsorted_t) and a value (edges_are_unsorted) used to
 // indicate that the edge list passed into the CSR graph is not sorted by
 // source vertex.
-struct edges_are_unsorted_internal {};
-inline void edges_are_unsorted(edges_are_unsorted_internal) {}
-typedef void (*edges_are_unsorted_t)(edges_are_unsorted_internal);
+enum edges_are_unsorted_t {edges_are_unsorted};
 
 // A type (construct_inplace_from_sources_and_targets_t) and a value
 // (construct_inplace_from_sources_and_targets) used to indicate that mutable
 // vectors of sources and targets (and possibly edge properties) are being used
 // to construct the CSR graph.  These vectors are sorted in-place and then the
 // targets and properties are swapped into the graph data structure.
-struct construct_inplace_from_sources_and_targets_internal {};
-inline void construct_inplace_from_sources_and_targets(construct_inplace_from_sources_and_targets_internal) {}
-typedef void (*construct_inplace_from_sources_and_targets_t)(construct_inplace_from_sources_and_targets_internal);
+enum construct_inplace_from_sources_and_targets_t {construct_inplace_from_sources_and_targets};
 
 // A type (construct_inplace_from_sources_and_targets_global_t) and a value
 // (construct_inplace_from_sources_and_targets_global) used to indicate that
@@ -88,9 +84,7 @@ typedef void (*construct_inplace_from_sources_and_targets_t)(construct_inplace_f
 // used, and a map is required to convert those to local indices.  This
 // constructor is intended for internal use by the various CSR graphs
 // (sequential and distributed).
-struct construct_inplace_from_sources_and_targets_global_internal {};
-inline void construct_inplace_from_sources_and_targets_global(construct_inplace_from_sources_and_targets_global_internal) {}
-typedef void (*construct_inplace_from_sources_and_targets_global_t)(construct_inplace_from_sources_and_targets_global_internal);
+enum construct_inplace_from_sources_and_targets_global_t {construct_inplace_from_sources_and_targets_global};
 
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
