@@ -65,8 +65,15 @@ enum edges_are_sorted_t {edges_are_sorted};
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 // A type (edges_are_unsorted_t) and a value (edges_are_unsorted) used to
 // indicate that the edge list passed into the CSR graph is not sorted by
-// source vertex.
+// source vertex.  This version caches the edge information in memory, and thus
+// requires only a single pass over the input data.
 enum edges_are_unsorted_t {edges_are_unsorted};
+
+// A type (edges_are_unsorted_multi_pass_t) and a value
+// (edges_are_unsorted_multi_pass) used to indicate that the edge list passed
+// into the CSR graph is not sorted by source vertex.  This version uses less
+// memory but requires multi-pass capability on the iterators.
+enum edges_are_unsorted_multi_pass_t {edges_are_unsorted_multi_pass};
 
 // A type (construct_inplace_from_sources_and_targets_t) and a value
 // (construct_inplace_from_sources_and_targets) used to indicate that mutable
@@ -105,14 +112,33 @@ class csr_edge_descriptor;
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 namespace detail {
-  // Less-than operator for comparing only the first elements of two arbitrary
-  // Boost tuples
-  struct compare_first_elements_in_tuples {
-    template <typename Tuple>
-    bool operator()(const Tuple& a, const Tuple& b) const {
-      return (a.template get<0>()) < (b.template get<0>());
-    }
-  };
+  template<typename InputIterator>
+  size_t
+  reserve_count_for_single_pass_helper(InputIterator, InputIterator,
+                                       std::input_iterator_tag)
+  {
+    // Do nothing: we have no idea how much storage to reserve.
+    return 0;
+  }
+
+  template<typename InputIterator>
+  size_t
+  reserve_count_for_single_pass_helper(InputIterator first, InputIterator last,
+                                       std::random_access_iterator_tag)
+  {
+    using std::distance;
+    typename std::iterator_traits<InputIterator>::difference_type n =
+      distance(first, last);
+    return (size_t)n;
+  }
+
+  template<typename InputIterator>
+  size_t
+  reserve_count_for_single_pass(InputIterator first, InputIterator last) {
+    typedef typename std::iterator_traits<InputIterator>::iterator_category
+      category;
+    return reserve_count_for_single_pass_helper(first, last, category());
+  }
 }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -237,7 +263,7 @@ class compressed_sparse_row_graph
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   //  From number of vertices and unsorted list of edges
   template <typename MultiPassInputIterator>
-  compressed_sparse_row_graph(edges_are_unsorted_t,
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
                               vertices_size_type numverts,
@@ -273,7 +299,7 @@ class compressed_sparse_row_graph
 
   //  From number of vertices and unsorted list of edges, plus edge properties
   template <typename MultiPassInputIterator, typename EdgePropertyIterator>
-  compressed_sparse_row_graph(edges_are_unsorted_t,
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
@@ -549,6 +575,55 @@ class compressed_sparse_row_graph
       m_column(), m_property(prop)
   {
     assign_sources_and_targets_global(sources, targets, edge_props, numlocalverts, global_to_local);
+  }
+
+  //  From number of vertices and single-pass range of unsorted edges.  Data is
+  //  cached in coordinate form before creating the actual graph.
+  template<typename InputIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(), m_property(prop)
+  {
+    std::vector<vertex_descriptor> sources, targets;
+    size_t reserve_size
+      = detail::reserve_count_for_single_pass(edge_begin, edge_end);
+    sources.reserve(reserve_size);
+    targets.reserve(reserve_size);
+    for (; edge_begin != edge_end; ++edge_begin) {
+      sources.push_back(edge_begin->first);
+      targets.push_back(edge_begin->second);
+    }
+    assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
+  }
+
+  //  From number of vertices and single-pass range of unsorted edges and
+  //  single-pass range of edge properties.  Data is cached in coordinate form
+  //  before creating the actual graph.
+  template<typename InputIterator, typename EdgePropertyIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_rowstart(),
+      m_column(), m_property(prop)
+  {
+    std::vector<vertex_descriptor> sources, targets;
+    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    size_t reserve_size
+      = detail::reserve_count_for_single_pass(edge_begin, edge_end);
+    sources.reserve(reserve_size);
+    targets.reserve(reserve_size);
+    edge_props.reserve(reserve_size);
+    for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
+      sources.push_back(edge_begin->first);
+      targets.push_back(edge_begin->second);
+      edge_props.push_back(*ep_iter);
+    }
+    assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::identity_property_map());
   }
 
   // Replace graph with sources and targets given, sorting them in-place, and
