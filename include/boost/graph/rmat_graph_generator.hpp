@@ -228,10 +228,13 @@ namespace boost {
   struct sort_pair {
     bool operator() (const std::pair<T,T>& x, const std::pair<T,T>& y)
     { 
+      return y < x;
+#if 0 // Testing VC++ 9.0 behavior
       if (x.first == y.first)
         return x.second > y.second;
       else 
         return x.first > y.first;
+#endif
     }
   };
 
