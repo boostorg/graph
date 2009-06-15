@@ -17,6 +17,7 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <boost/random/uniform_int.hpp>
+#include <boost/random/uniform_01.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
