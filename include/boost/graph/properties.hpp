@@ -13,6 +13,7 @@
 #include <boost/config.hpp>
 #include <cassert>
 #include <boost/pending/property.hpp>
+#include <boost/detail/workaround.hpp>
 
 // Include the property map library and extensions in the BGL.
 #include <boost/property_map/property_map.hpp>
@@ -354,6 +355,13 @@ namespace boost {
   }
 
 #if defined (BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+#  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+#endif
+
+#if BOOST_WORKAROUND(__SUNPRO_CC, BOOST_TESTED_AT(0x590)) && !defined (BOOST_GRAPH_NO_BUNDLED_PROPERTIES)
+// This compiler cannot define a partial specialization based on a
+// pointer-to-member type, as seen in boost/graph/subgraph.hpp line 985 (as of
+// trunk r53912)
 #  define BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 #endif
 
