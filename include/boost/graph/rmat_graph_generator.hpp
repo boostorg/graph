@@ -276,7 +276,7 @@ namespace boost {
       // TODO: "Clip and flip" if undirected graph
       int SCALE = int_log2(n);
       
-      for (int i = 0; i < m; ++i) {
+      for (edges_size_type i = 0; i < m; ++i) {
 
         vertices_size_type u, v;
         tie(u, v) = generate_edge(this->gen, n, SCALE, a, b, c, d);
