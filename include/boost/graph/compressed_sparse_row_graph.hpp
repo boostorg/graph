@@ -1071,6 +1071,65 @@ add_edge(Vertex src, Vertex tgt,
 }
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+// Add edges from a range of (source, target) pairs that are unsorted
+template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
+inline void
+add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
+  typedef BOOST_CSR_GRAPH_TYPE Graph;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+  typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+  typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+  typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
+  edge_vector_t new_edges(first, last);
+  if (new_edges.empty()) return;
+  std::sort(new_edges.begin(), new_edges.end());
+  edge_num edges_added_before_i = new_edges.size(); // Count increment to add to rowstarts
+  g.m_column.resize(g.m_column.size() + new_edges.size());
+  typename edge_vector_t::const_reverse_iterator
+    current_new_edge = new_edges.rbegin(),
+    prev_new_edge = new_edges.rbegin();
+  for (vertex_num i_plus_1 = num_vertices(g); i_plus_1 > 0; --i_plus_1) {
+    vertex_num i = i_plus_1 - 1;
+    prev_new_edge = current_new_edge;
+    // edges_added_to_this_vertex = #mbrs of new_edges with first == i
+    edge_num edges_added_to_this_vertex = 0;
+    while (current_new_edge !=
+            (typename edge_vector_t::const_reverse_iterator)new_edges.rend()) {
+      if (current_new_edge->first != i) break;
+      ++current_new_edge;
+      ++edges_added_to_this_vertex;
+    }
+    edges_added_before_i -= edges_added_to_this_vertex;
+    // Invariant: edges_added_before_i = #mbrs of new_edges with first < i
+    edge_num old_rowstart = g.m_rowstart[i];
+    edge_num new_rowstart = g.m_rowstart[i] + edges_added_before_i;
+    edge_num old_degree = g.m_rowstart[i + 1] - g.m_rowstart[i];
+    edge_num new_degree = old_degree + edges_added_to_this_vertex;
+    // Move old edges forward (by #new_edges before this i) to make room
+    // new_rowstart > old_rowstart, so use copy_backwards
+    if (old_rowstart != new_rowstart) {
+      std::copy_backward(g.m_column.begin() + old_rowstart,
+                         g.m_column.begin() + old_rowstart + old_degree,
+                         g.m_column.begin() + new_rowstart + old_degree);
+    }
+    // Add new edges (reversed because current_new_edge is a
+    // const_reverse_iterator)
+    typename edge_vector_t::const_reverse_iterator temp = current_new_edge;
+    for (; temp != prev_new_edge; ++old_degree) {
+      --temp;
+      g.m_column[new_rowstart + old_degree] = temp->second;
+    }
+    g.m_rowstart[i + 1] = new_rowstart + new_degree;
+    if (edges_added_before_i == 0) break; // No more edges inserted before this point
+    // g.m_rowstart[i] will be fixed up on the next iteration (to avoid
+    // changing the degree of vertex i - 1); the last iteration never changes
+    // it (either because of the condition of the break or because
+    // g.m_rowstart[0] is always 0)
+  }
+}
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
 // From VertexListGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex

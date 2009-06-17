@@ -277,15 +277,22 @@ template&lt;typename <a href="./PropertyTag.html#GraphPropertyTag">GraphProperty
 void <a href="#set_property">set_property</a>(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
                   const typename graph_property&lt;compressed_sparse_row_graph, GraphPropertyTag&gt;::type&amp; value);
 
-<i>// <a href="#incremental-construction-functions">Incremental construction functions <b>(old interface only)</b></a></i>
+<i>// <a href="#incremental-construction-functions">Incremental construction functions</a></i>
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertex">add_vertex</a>(compressed_sparse_row_graph&amp; g);
 
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertices">add_vertices</a>(vertices_size_type count, compressed_sparse_row_graph&amp; g);
 
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
+
+<b>(new interface only)</b>
+template&lt;typename InputIterator, typename Graph&gt;
+void <a href="#add_edges">add_edges</a>(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g);
 
 } <i>// end namespace boost</i>
    </pre>
@@ -905,6 +912,23 @@ edge_descriptor add_edge(vertex_descriptor src, vertex_descriptor tgt, compresse
       <tt>src</tt> has out edges before this operation is called, there must be
       none whose target is larger than <tt>tgt</tt>.
       <b>(This function is only provided by the old interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_edges"></a>
+template&lt;typename InputIterator&gt;
+edge_descriptor add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
+      The <tt>InputIterator</tt> must be a model of <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of integer
+      values. These integer values are the source and target vertices of the
+      new edges.  The edges do not need to be sorted.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <hr></hr>
