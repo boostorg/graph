@@ -468,6 +468,43 @@ namespace boost {
 
   } // namespace graph
 
+  #include <boost/graph/iteration_macros.hpp>
+
+  template <class PropertyIn, class PropertyOut, class Graph>
+  void copy_vertex_property(PropertyIn p_in, PropertyOut p_out, Graph& g)
+  {
+    BGL_FORALL_VERTICES_T(u, g, Graph)
+      put(p_out, u, get(p_in, g));
+  }
+
+  template <class PropertyIn, class PropertyOut, class Graph>
+  void copy_edge_property(PropertyIn p_in, PropertyOut p_out, Graph& g)
+  {
+    BGL_FORALL_EDGES_T(e, g, Graph)
+      put(p_out, e, get(p_in, g));
+  }
+
+  // Return true if property_map1 and property_map2 differ
+  // for any of the vertices in graph.
+  template <typename PropertyMapFirst,
+            typename PropertyMapSecond,
+            typename Graph>
+  bool are_property_maps_different
+  (const PropertyMapFirst property_map1,
+   const PropertyMapSecond property_map2,
+   const Graph& graph) {
+  
+    BGL_FORALL_VERTICES_T(vertex, graph, Graph) {
+      if (get(property_map1, vertex) !=
+          get(property_map2, vertex)) {
+
+        return (true);
+      }
+    }
+
+    return (false);
+  }
+
 } /* namespace boost */
 
 #endif /* BOOST_GRAPH_UTILITY_HPP*/

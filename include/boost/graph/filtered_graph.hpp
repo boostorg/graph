@@ -500,6 +500,23 @@ namespace boost {
     return Filter(g, keep_all(), p);
   }
 
+  // Filter that uses a property map whose value_type is a boolean
+  template <typename PropertyMap>
+  struct property_map_filter {
+    
+    property_map_filter() { }
+      
+    property_map_filter(const PropertyMap& property_map) :
+      m_property_map(property_map) { }
+    
+    template <typename Key>
+    bool operator()(const Key& key) const {
+      return (get(m_property_map, key));
+    }
+    
+  private :
+    PropertyMap m_property_map;
+  };
 
 } // namespace boost
 
