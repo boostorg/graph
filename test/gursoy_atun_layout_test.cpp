@@ -59,7 +59,7 @@ int main(int, char*[]) {
 
   // Make grid, like Gursoy and Atun used
   std::map<int, std::map<int, vertex_descriptor> > verts;
-  const int grid_size = 30;
+  const int grid_size = 20;
   boost::minstd_rand edge_weight_gen;
   boost::uniform_01<boost::minstd_rand> random_edge_weight(edge_weight_gen);
   for (int i = 0; i < grid_size; ++i)
@@ -94,7 +94,7 @@ int main(int, char*[]) {
                    plod_iterator<minstd_rand, graph_type>(),
                    n);
 #else 
-  int n = 100000;
+  int n = 1000;
   int k = 6;
   double p = 0.001;
   minstd_rand gen;
@@ -120,19 +120,23 @@ int main(int, char*[]) {
 
   boost::gursoy_atun_layout(graph, space, position);
 
+#if 0
   std::cerr << "--------Unweighted layout--------\n";
   boost::write_graphviz(std::cout, graph, 
                         position_writer<Position, vertex_descriptor>(position),
                         boost::default_writer(),
                         graph_writer());
+#endif
 
   boost::gursoy_atun_layout(graph, space, position,
                             weight_map(get(boost::edge_weight, graph)));
 
+#if 0
   std::cerr << "--------Weighted layout--------\n";
   boost::write_graphviz(std::cout, graph, 
                         position_writer<Position, vertex_descriptor>(position),
                         boost::default_writer(),
                         graph_writer());
+#endif
   return 0;
 }

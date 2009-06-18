@@ -16,6 +16,7 @@
 #include <boost/test/minimal.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace boost;
 
@@ -440,8 +441,10 @@ void random_unweighted_test(Graph*, int n)
   }
 }
 
-int test_main(int, char*[])
+int test_main(int argc, char* argv[])
 {
+  int random_test_num_vertices = 300;
+  if (argc >= 2) random_test_num_vertices = boost::lexical_cast<int>(argv[1]);
   typedef adjacency_list<listS, listS, undirectedS, 
                          property<vertex_index_t, int>, EdgeProperties> 
     Graph;
@@ -512,7 +515,7 @@ int test_main(int, char*[])
 
   run_wheel_test((Graph*)0, 15);
 
-  random_unweighted_test((Graph*)0, 300);
+  random_unweighted_test((Graph*)0, random_test_num_vertices);
 
   return 0;
 }

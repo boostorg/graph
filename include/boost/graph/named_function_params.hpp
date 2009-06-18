@@ -49,6 +49,8 @@ namespace boost {
   struct iterations_t { };
   struct diameter_range_t { };
   struct learning_constant_range_t { };
+  struct vertices_equivalent_t { };
+  struct edges_equivalent_t { };
 
 #define BOOST_BGL_DECLARE_NAMED_PARAMS \
     BOOST_BGL_ONE_PARAM_CREF(weight_map, edge_weight) \
@@ -94,7 +96,9 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(cooling, cooling) \
     BOOST_BGL_ONE_PARAM_CREF(iterations, iterations) \
     BOOST_BGL_ONE_PARAM_CREF(diameter_range, diameter_range) \
-    BOOST_BGL_ONE_PARAM_CREF(learning_constant_range, learning_constant_range)
+    BOOST_BGL_ONE_PARAM_CREF(learning_constant_range, learning_constant_range) \
+    BOOST_BGL_ONE_PARAM_CREF(vertices_equivalent, vertices_equivalent) \
+    BOOST_BGL_ONE_PARAM_CREF(edges_equivalent, edges_equivalent)
 
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params : public Base

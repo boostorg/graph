@@ -84,6 +84,7 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
       std::sort(edges1.begin(), edges1.end());
       std::sort(edges2.begin(), edges2.end());
       if (edges1 != edges2) {
+        std::cerr << "For vertex " << v1 << std::endl;
         std::cerr << "edges1:";
         for (size_t i = 0; i < edges1.size(); ++i) std::cerr << " " << edges1[i];
         std::cerr << std::endl;
@@ -481,7 +482,21 @@ int test_main(int argc, char* argv[])
     std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
     std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
     CSRGraphT g(boost::edges_are_unsorted, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
+    CSRGraphT g2(boost::edges_are_unsorted_multi_pass, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
     graph_test(g);
+    graph_test(g2);
+    assert_graphs_equal(g, boost::identity_property_map(),
+                        g2, boost::identity_property_map(),
+                        boost::identity_property_map());
+    std::cout << "Testing CSR graph built using add_edges" << std::endl;
+    // Test building a graph using add_edges on unsorted lists
+    CSRGraphT g3(boost::edges_are_unsorted, unsorted_edges, unsorted_edges, 6); // Empty range
+    add_edges(unsorted_edges, unsorted_edges + 3, g3);
+    add_edges(unsorted_edges + 3, unsorted_edges + 6, g3);
+    graph_test(g3);
+    assert_graphs_equal(g, boost::identity_property_map(),
+                        g3, boost::identity_property_map(),
+                        boost::identity_property_map());
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 

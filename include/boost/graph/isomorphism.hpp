@@ -439,13 +439,11 @@ namespace boost {
       return false;
 #endif
   
-    for (typename graph_traits<Graph1>::edge_iterator e1 = edges(g1).first;
-         e1 != edges(g1).second; ++e1) {
+    BGL_FORALL_EDGES_T(e1, g1, Graph1) {
       bool found_edge = false;
-      for (typename graph_traits<Graph2>::edge_iterator e2 = edges(g2).first;
-           e2 != edges(g2).second && !found_edge; ++e2) {
-        if (source(*e2, g2) == get(iso_map, source(*e1, g1)) &&
-            target(*e2, g2) == get(iso_map, target(*e1, g1))) {
+      BGL_FORALL_EDGES_T(e2, g2, Graph2) {
+        if (source(e2, g2) == get(iso_map, source(e1, g1)) &&
+            target(e2, g2) == get(iso_map, target(e1, g1))) {
           found_edge = true;
         }
       }

@@ -29,6 +29,7 @@
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/graph_utility.hpp>
 
 namespace boost {
   namespace detail {
@@ -172,7 +173,7 @@ namespace boost {
           }
         BGL_FORALL_VERTICES_T(vd1, m_g, TGraph)
           {
-            if (boost::out_edges(vd1, m_g).first == boost::out_edges(vd1, m_g).second) throw bad_graph(m_vim[vd1]);
+            if (boost::graph::has_no_out_edges(vd1, m_g)) throw bad_graph(m_vim[vd1]);
             mcr_edge_t ed = *boost::out_edges(vd1, m_g).first;
             pi_edge_t pied = boost::add_edge(m_g2pi_g_vm[source(ed, m_g)], m_g2pi_g_vm[target(ed, m_g)], m_pi_g).first;
             boost::put(boost::edge_weight, m_pi_g, pied, m_ew1m[ed]);

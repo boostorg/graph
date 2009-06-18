@@ -115,14 +115,27 @@ public:
   <a href="#default-const">compressed_sparse_row_graph</a>();
 
   <i>// Unsorted edge list constructors <b>(new interface only)</b></i>
-  template&lt;typename MultiPassInputIterator&gt;
+  template&lt;typename InputIterator&gt;
   <a href="#edge-const">compressed_sparse_row_graph</a>(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+
+  template&lt;typename MultiPassInputIterator&gt;
+  <a href="#edge-multi-const">compressed_sparse_row_graph</a>(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
 
   template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
-  <a href="#edge-prop-const">compressed_sparse_row_graph</a>(edges_are_unsorted_t,
+  <a href="#edge-multi-prop-const">compressed_sparse_row_graph</a>(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
@@ -264,15 +277,22 @@ template&lt;typename <a href="./PropertyTag.html#GraphPropertyTag">GraphProperty
 void <a href="#set_property">set_property</a>(const compressed_sparse_row_graph&amp; g, GraphPropertyTag,
                   const typename graph_property&lt;compressed_sparse_row_graph, GraphPropertyTag&gt;::type&amp; value);
 
-<i>// <a href="#incremental-construction-functions">Incremental construction functions <b>(old interface only)</b></a></i>
+<i>// <a href="#incremental-construction-functions">Incremental construction functions</a></i>
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertex">add_vertex</a>(compressed_sparse_row_graph&amp; g);
 
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 vertex_descriptor <a href="#add_vertices">add_vertices</a>(vertices_size_type count, compressed_sparse_row_graph&amp; g);
 
+<b>(old interface only)</b>
 template&lt;typename Graph&gt;
 edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
+
+<b>(new interface only)</b>
+template&lt;typename InputIterator, typename Graph&gt;
+void <a href="#add_edges">add_edges</a>(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g);
 
 } <i>// end namespace boost</i>
    </pre>
@@ -401,8 +421,67 @@ edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_d
     <hr></hr>
 
     <pre><a name="edge-const"></a>
-  template&lt;typename MultiPassInputIterator&gt;
+  template&lt;typename InputIterator&gt;
   compressed_sparse_row_graph(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+
+    <p class="indent">
+      Constructs a graph with <code>numverts</code> vertices whose
+      edges are specified by the iterator range <code>[edge_begin,
+      edge_end)</code>. The <tt>InputIterator</tt> must be a model of
+      <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of
+      integer values. These integer values are the source and target
+      vertices for the edges, and must fall within the range <code>[0,
+      numverts)</code>. The edges in <code>[edge_begin,
+      edge_end)</code> do not need to be sorted.  This constructor uses extra
+      memory to save the edge information before adding it to the graph,
+      avoiding the requirement for the iterator to have multi-pass capability.
+      <b>(This function is only provided by the new interface.)</b>
+    </p>
+
+    <p class="indent">
+      The value <code>prop</code> will be used to initialize the graph
+      property.
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-prop-const"></a>
+  template&lt;typename InputIterator, typename EdgePropertyIterator&gt;
+  compressed_sparse_row_graph(edges_are_unsorted_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty&amp; prop = GraphProperty());
+    </pre>
+    <p class="indent">
+      This constructor constructs a graph with <code>numverts</code>
+      vertices and the edges provided in the iterator range
+      <code>[edge_begin, edge_end)</code>. Its semantics are identical
+      to the <a href="#edge-const">edge range constructor</a>, except
+      that edge properties are also initialized. The type
+      <tt>EdgePropertyIterator</tt> must be a model of the <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      concept whose <tt>value_type</tt> is convertible to
+      <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
+        m)</tt> will be used to initialize the properties on the edges
+      of the graph, where <tt>m</tt> is distance from
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.  This constructor uses extra
+      memory to save the edge information before adding it to the graph,
+      avoiding the requirement for the iterator to have multi-pass capability.
+      <b>(This function is only provided by the new interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="edge-const"></a>
+  template&lt;typename MultiPassInputIterator&gt;
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
@@ -418,7 +497,8 @@ edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_d
       integer values. These integer values are the source and target
       vertices for the edges, and must fall within the range <code>[0,
       numverts)</code>. The edges in <code>[edge_begin,
-      edge_end)</code> do not need to be sorted.
+      edge_end)</code> do not need to be sorted.  Multiple passes will be made
+      over the edge range.
       <b>(This function is only provided by the new interface.)</b>
     </p>
 
@@ -431,7 +511,7 @@ edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_d
 
     <pre><a name="edge-prop-const"></a>
   template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
-  compressed_sparse_row_graph(edges_are_unsorted_t,
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numverts,
@@ -449,7 +529,8 @@ edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_d
       <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
         m)</tt> will be used to initialize the properties on the edges
       of the graph, where <tt>m</tt> is distance from
-      <tt>edge_begin</tt> to <tt>edge_end</tt>.
+      <tt>edge_begin</tt> to <tt>edge_end</tt>.  Multiple passes will be made
+      over the edge and property ranges.
       <b>(This function is only provided by the new interface.)</b>
     </p>
 
@@ -831,6 +912,23 @@ edge_descriptor add_edge(vertex_descriptor src, vertex_descriptor tgt, compresse
       <tt>src</tt> has out edges before this operation is called, there must be
       none whose target is larger than <tt>tgt</tt>.
       <b>(This function is only provided by the old interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_edges"></a>
+template&lt;typename InputIterator&gt;
+edge_descriptor add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
+      The <tt>InputIterator</tt> must be a model of <a
+      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of integer
+      values. These integer values are the source and target vertices of the
+      new edges.  The edges do not need to be sorted.
+      <b>(This function is only provided by the new interface.)</b>
     </p>
 
     <hr></hr>

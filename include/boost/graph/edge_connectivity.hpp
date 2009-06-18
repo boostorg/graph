@@ -132,7 +132,8 @@ namespace boost {
     detail::neighbors(g, S.begin(), S.end(), 
                       std::inserter(neighbor_S, neighbor_S.begin()));
 
-    std::set_difference(vertices(g).first, vertices(g).second,
+    tie(vi, vi_end) = vertices(g);
+    std::set_difference(vi, vi_end,
                         neighbor_S.begin(), neighbor_S.end(),
                         std::back_inserter(non_neighbor_S));
 
@@ -153,7 +154,8 @@ namespace boost {
       neighbor_S.insert(k);
       detail::neighbors(g, k, std::inserter(neighbor_S, neighbor_S.begin()));
       non_neighbor_S.clear();
-      std::set_difference(vertices(g).first, vertices(g).second,
+      tie(vi, vi_end) = vertices(g);
+      std::set_difference(vi, vi_end,
                           neighbor_S.begin(), neighbor_S.end(),
                           std::back_inserter(non_neighbor_S));
     }

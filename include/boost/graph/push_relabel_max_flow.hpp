@@ -121,7 +121,7 @@ namespace boost {
         : g(g_), n(num_vertices(g_)), capacity(cap), src(src_), sink(sink_), 
           index(idx),
           excess_flow(num_vertices(g_)),
-          current(num_vertices(g_), out_edges(*vertices(g_).first, g_).second),
+          current(num_vertices(g_), out_edges(*vertices(g_).first, g_)),
           distance(num_vertices(g_)),
           color(num_vertices(g_)),
           reverse_edge(rev),
@@ -149,7 +149,7 @@ namespace boost {
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           excess_flow[u] = 0;
-          current[u] = out_edges(u, g).first;
+          current[u] = out_edges(u, g);
         }
 
         bool overflow_detected = false;
@@ -240,7 +240,7 @@ namespace boost {
                 && is_residual_edge(reverse_edge[a])) {
               distance[v] = d_v;
               color[v] = ColorTraits::gray();
-              current[v] = out_edges(v, g).first;
+              current[v] = out_edges(v, g);
               max_distance = max BOOST_PREVENT_MACRO_SUBSTITUTION(d_v, max_distance);
 
               if (excess_flow[v] > 0)
@@ -262,8 +262,7 @@ namespace boost {
         assert(excess_flow[u] > 0);
         while (1) {
           out_edge_iterator ai, ai_end;
-          for (ai = current[u], ai_end = out_edges(u, g).second;
-               ai != ai_end; ++ai) {
+          for (tie(ai, ai_end) = current[u]; ai != ai_end; ++ai) {
             edge_descriptor a = *ai;
             if (is_residual_edge(a)) {
               vertex_descriptor v = target(a, g);
@@ -291,7 +290,7 @@ namespace boost {
             if (distance[u] == n)
               break;
           } else {              // i is no longer active
-            current[u] = ai;
+            current[u].first = ai;
             add_to_inactive_list(u, layer);
             break;
           }
@@ -350,7 +349,7 @@ namespace boost {
         ++min_distance;
         if (min_distance < n) {
           distance[u] = min_distance;     // this is the main action
-          current[u] = min_edge_iter;
+          current[u].first = min_edge_iter;
           max_distance = max BOOST_PREVENT_MACRO_SUBSTITUTION(min_distance, max_distance);
         }
         return min_distance;
@@ -444,7 +443,7 @@ namespace boost {
           u = *u_iter;
           color[u] = ColorTraits::white();
           parent[u] = u;
-          current[u] = out_edges(u, g).first;
+          current[u] = out_edges(u, g);
         }
         // eliminate flow cycles and topologically order the vertices
         for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
@@ -455,8 +454,8 @@ namespace boost {
             r = u;
             color[r] = ColorTraits::gray();
             while (1) {
-              for (; current[u] != out_edges(u, g).second; ++current[u]) {
-                edge_descriptor a = *current[u];
+              for (; current[u].first != current[u].second; ++current[u].first) {
+                edge_descriptor a = *current[u].first;
                 if (capacity[a] == 0 && is_residual_edge(a)) {
                   vertex_descriptor v = target(a, g);
                   if (color[v] == ColorTraits::white()) {
@@ -469,16 +468,16 @@ namespace boost {
                     FlowValue delta = residual_capacity[a];
                     while (1) {
                       BOOST_USING_STD_MIN();
-                      delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[*current[v]]);
+                      delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[*current[v].first]);
                       if (v == u)
                         break;
                       else
-                        v = target(*current[v], g);
+                        v = target(*current[v].first, g);
                     }
                     // remove delta flow units
                     v = u;
                     while (1) {
-                      a = *current[v];
+                      a = *current[v].first;
                       residual_capacity[a] -= delta;
                       residual_capacity[reverse_edge[a]] += delta;
                       v = target(a, g);
@@ -488,25 +487,25 @@ namespace boost {
 
                     // back-out of DFS to the first saturated edge
                     restart = u;
-                    for (v = target(*current[u], g); v != u; v = target(a, g)){
-                      a = *current[v];
+                    for (v = target(*current[u].first, g); v != u; v = target(a, g)){
+                      a = *current[v].first;
                       if (color[v] == ColorTraits::white() 
                           || is_saturated(a)) {
-                        color[target(*current[v], g)] = ColorTraits::white();
+                        color[target(*current[v].first, g)] = ColorTraits::white();
                         if (color[v] != ColorTraits::white())
                           restart = v;
                       }
                     }
                     if (restart != u) {
                       u = restart;
-                      ++current[u];
+                      ++current[u].first;
                       break;
                     }
                   } // else if (color[v] == ColorTraits::gray())
                 } // if (capacity[a] == 0 ...
               } // for out_edges(u, g)  (though "u" changes during loop)
               
-              if (current[u] == out_edges(u, g).second) {
+              if ( current[u].first == current[u].second ) {
                 // scan of i is complete
                 color[u] = ColorTraits::black();
                 if (u != src) {
@@ -521,7 +520,7 @@ namespace boost {
                 }
                 if (u != r) {
                   u = parent[u];
-                  ++current[u];
+                  ++current[u].first;
                 } else
                   break;
               }
@@ -533,8 +532,8 @@ namespace boost {
         // note that the sink is not on the stack
         if (! bos_null) {
           for (u = tos; u != bos; u = topo_next[u]) {
-            ai = out_edges(u, g).first;
-            while (excess_flow[u] > 0 && ai != out_edges(u, g).second) {
+            tie(ai, a_end) = out_edges(u, g);
+            while (excess_flow[u] > 0 && ai != a_end) {
               if (capacity[*ai] == 0 && is_residual_edge(*ai))
                 push_flow(*ai);
               ++ai;
@@ -632,7 +631,7 @@ namespace boost {
 
       // will need to use random_access_property_map with these
       std::vector< FlowValue > excess_flow;
-      std::vector< out_edge_iterator > current;
+      std::vector< std::pair<out_edge_iterator, out_edge_iterator> > current;
       std::vector< distance_size_type > distance;
       std::vector< default_color_type > color;
 

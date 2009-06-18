@@ -48,14 +48,17 @@ namespace boost {
       D d_u = get(d, u), d_v = get(d, v);
       W w_e = get(w, e);
       
+      // The redundant gets in the return statements are to ensure that extra
+      // floating-point precision in x87 registers does not lead to relax()
+      // returning true when the distance did not actually change.
       if ( compare(combine(d_u, w_e), d_v) ) {
         put(d, v, combine(d_u, w_e));
         put(p, v, u);
-        return true;
+        return compare(get(d, v), d_v);
       } else if (is_undirected && compare(combine(d_v, w_e), d_u)) {
         put(d, u, combine(d_v, w_e));
         put(p, u, v);
-        return true;
+        return compare(get(d, u), d_u);
       } else
         return false;
     }
