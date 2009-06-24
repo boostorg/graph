@@ -127,6 +127,12 @@ protected:
   // Initialize with n default-constructed property values
   indexed_edge_properties(std::size_t n) : m_edge_properties(n) { }
 
+  // Get the size of the properties vector
+  std::size_t size() const
+  {
+    return m_edge_properties.size();
+  }
+
   // Resize the properties vector
   void resize(std::size_t n)
   {
@@ -152,6 +158,14 @@ protected:
     m_edge_properties.push_back(prop);
   }
 
+  // Move range of properties backwards
+  void move_range(std::size_t src_begin, std::size_t src_end, std::size_t dest_begin) {
+    std::copy_backward(
+        m_edge_properties.begin() + src_begin,
+        m_edge_properties.begin() + src_end,
+        m_edge_properties.begin() + dest_begin + (src_end - src_begin));
+  }
+
  private:
   // Access to the derived object
   Derived& derived() { return *static_cast<Derived*>(this); }
@@ -174,16 +188,20 @@ class indexed_edge_properties<Derived, void, Descriptor>
   typedef void* edge_push_back_type;
 
   secret operator[](secret) { return secret(); }
+  void write_by_index(std::size_t idx, const no_property& prop) {}
 
  protected:
   // All operations do nothing.
   indexed_edge_properties() { }
   indexed_edge_properties(std::size_t) { }
+  std::size_t size() const {return 0;}
   void resize(std::size_t) { }
   void reserve(std::size_t) { }
 
  public:
   void push_back(const edge_push_back_type&) { }
+  void move_range(std::size_t src_begin, std::size_t src_end, std::size_t dest_begin) {}
+
 };
 
 }

@@ -294,6 +294,14 @@ edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_d
 template&lt;typename InputIterator, typename Graph&gt;
 void <a href="#add_edges">add_edges</a>(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g);
 
+<b>(new interface only)</b>
+template&lt;typename BidirectionalIterator, typename Graph&gt;
+void <a href="#add_edges_sorted">add_edges_sorted</a>(BidirectionalIterator first, BidirectionalIterator last, compressed_sparse_row_graph&amp; g);
+
+<b>(new interface only)</b>
+template&lt;typename BidirectionalIterator, typename EPIter, typename Graph&gt;
+void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator first, BidirectionalIterator last, EPIter ep_iter, compressed_sparse_row_graph&amp; g);
+
 } <i>// end namespace boost</i>
    </pre>
 
@@ -918,7 +926,7 @@ edge_descriptor add_edge(vertex_descriptor src, vertex_descriptor tgt, compresse
 
     <pre><a name="add_edges"></a>
 template&lt;typename InputIterator&gt;
-edge_descriptor add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g)
+void add_edges(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g)
     </pre>
     
     <p class="indent">
@@ -928,6 +936,47 @@ edge_descriptor add_edges(InputIterator first, InputIterator last, compressed_sp
       whose <code>value_type</code> is an <code>std::pair</code> of integer
       values. These integer values are the source and target vertices of the
       new edges.  The edges do not need to be sorted.
+      <b>(This function is only provided by the new interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_edges_sorted"></a>
+template&lt;typename BidirectionalIterator&gt;
+void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
+      The <tt>BidirectionalIterator</tt> must be a model of <a
+      href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>
+      whose <code>value_type</code> is an <code>std::pair</code> of integer
+      values. These integer values are the source and target vertices of the
+      new edges.  The edges must be sorted in increasing order by source vertex
+      index.
+      <b>(This function is only provided by the new interface.)</b>
+    </p>
+
+    <hr></hr>
+
+    <pre><a name="add_edges_sorted_prop"></a>
+template&lt;typename BidirectionalIterator, typename EPIter&gt;
+void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, EPIter ep_iter, compressed_sparse_row_graph&amp; g)
+    </pre>
+    
+    <p class="indent">
+      Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
+      The <tt>BidirectionalIterator</tt> and <tt>EPIter</tt> must be models of
+      <a
+      href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
+      The <code>value_type</code> of the <tt>BidirectionalIterator</tt> must be
+      an <code>std::pair</code> of integer
+      values. These integer values are the source and target vertices of the
+      new edges.
+      The <code>value_type</code> of the <tt>EPIter</tt> must be the edge
+      property type of the graph.
+      The edges must be sorted in increasing order by source vertex
+      index.
       <b>(This function is only provided by the new interface.)</b>
     </p>
 

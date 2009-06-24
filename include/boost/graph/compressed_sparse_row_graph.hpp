@@ -27,6 +27,7 @@
 #include <boost/graph/filtered_graph.hpp> // For keep_all
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/reverse_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -157,6 +158,18 @@ namespace detail {
       category;
     return reserve_count_for_single_pass_helper(first, last, category());
   }
+
+  template <typename T>
+  struct default_construct_iterator: public boost::iterator_facade<default_construct_iterator<T>, T, boost::random_access_traversal_tag, const T&> {
+    typedef boost::iterator_facade<default_construct_iterator<T>, T, std::random_access_iterator_tag, const T&> base_type;
+    T saved_value;
+    const T& dereference() const {return saved_value;}
+    bool equal(default_construct_iterator i) const {return true;}
+    void increment() {}
+    void decrement() {}
+    void advance(typename base_type::difference_type) {}
+    typename base_type::difference_type distance_to(default_construct_iterator) const {return 0;}
+  };
 }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -179,6 +192,7 @@ class compressed_sparse_row_graph
                                                                 EdgeIndex> >
 
 {
+ public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
                                             VertexProperty, Vertex>
     inherited_vertex_properties;
@@ -961,6 +975,100 @@ class compressed_sparse_row_graph
     assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
   }
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  // Add edges from a sorted (smallest sources first) range of pairs and edge
+  // properties
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted) {
+    typedef boost::reverse_iterator<BidirectionalIteratorOrig> BidirectionalIterator;
+    typedef boost::reverse_iterator<EPIterOrig> EPIter;
+    // Flip sequence
+    BidirectionalIterator first(last_sorted);
+    BidirectionalIterator last(first_sorted);
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    edge_num new_edge_count = std::distance(first, last);
+    EPIter ep_iter(ep_iter_sorted);
+    std::advance(ep_iter, -(std::ptrdiff_t)new_edge_count);
+    edge_num edges_added_before_i = new_edge_count; // Count increment to add to rowstarts
+    m_column.resize(m_column.size() + new_edge_count);
+    inherited_edge_properties::resize(inherited_edge_properties::size() + new_edge_count);
+    BidirectionalIterator current_new_edge = first, prev_new_edge = first;
+    EPIter current_new_edge_prop = ep_iter;
+    for (vertex_num i_plus_1 = num_vertices(*this); i_plus_1 > 0; --i_plus_1) {
+      vertex_num i = i_plus_1 - 1;
+      prev_new_edge = current_new_edge;
+      // edges_added_to_this_vertex = #mbrs of new_edges with first == i
+      edge_num edges_added_to_this_vertex = 0;
+      while (current_new_edge != last) {
+        if (current_new_edge->first != i) break;
+        ++current_new_edge;
+        ++current_new_edge_prop;
+        ++edges_added_to_this_vertex;
+      }
+      edges_added_before_i -= edges_added_to_this_vertex;
+      // Invariant: edges_added_before_i = #mbrs of new_edges with first < i
+      edge_num old_rowstart = m_rowstart[i];
+      edge_num new_rowstart = m_rowstart[i] + edges_added_before_i;
+      edge_num old_degree = m_rowstart[i + 1] - m_rowstart[i];
+      edge_num new_degree = old_degree + edges_added_to_this_vertex;
+      // Move old edges forward (by #new_edges before this i) to make room
+      // new_rowstart > old_rowstart, so use copy_backwards
+      if (old_rowstart != new_rowstart) {
+        std::copy_backward(m_column.begin() + old_rowstart,
+                           m_column.begin() + old_rowstart + old_degree,
+                           m_column.begin() + new_rowstart + old_degree);
+        inherited_edge_properties::move_range(old_rowstart, old_rowstart + old_degree, new_rowstart);
+      }
+      // Add new edges (reversed because current_new_edge is a
+      // const_reverse_iterator)
+      BidirectionalIterator temp = current_new_edge;
+      EPIter temp_prop = current_new_edge_prop;
+      for (; temp != prev_new_edge; ++old_degree) {
+        --temp;
+        m_column[new_rowstart + old_degree] = temp->second;
+        inherited_edge_properties::write_by_index(new_rowstart + old_degree, *temp_prop);
+      }
+      m_rowstart[i + 1] = new_rowstart + new_degree;
+      if (edges_added_before_i == 0) break; // No more edges inserted before this point
+      // m_rowstart[i] will be fixed up on the next iteration (to avoid
+      // changing the degree of vertex i - 1); the last iteration never changes
+      // it (either because of the condition of the break or because
+      // m_rowstart[0] is always 0)
+    }
+  }
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <typename BidirectionalIteratorOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted) {
+    add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_property_type>());
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <typename InputIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last) {
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
+    edge_vector_t new_edges(first, last);
+    if (new_edges.empty()) return;
+    std::sort(new_edges.begin(), new_edges.end());
+    add_edges_sorted_internal(new_edges.begin(), new_edges.end());
+  }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
   using inherited_vertex_properties::operator[];
   using inherited_edge_properties::operator[];
 
@@ -1072,62 +1180,35 @@ add_edge(Vertex src, Vertex tgt,
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-// Add edges from a range of (source, target) pairs that are unsorted
-template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
-inline void
-add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
-  typedef BOOST_CSR_GRAPH_TYPE Graph;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-  typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
-  typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
-  typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
-  edge_vector_t new_edges(first, last);
-  if (new_edges.empty()) return;
-  std::sort(new_edges.begin(), new_edges.end());
-  edge_num edges_added_before_i = new_edges.size(); // Count increment to add to rowstarts
-  g.m_column.resize(g.m_column.size() + new_edges.size());
-  typename edge_vector_t::const_reverse_iterator
-    current_new_edge = new_edges.rbegin(),
-    prev_new_edge = new_edges.rbegin();
-  for (vertex_num i_plus_1 = num_vertices(g); i_plus_1 > 0; --i_plus_1) {
-    vertex_num i = i_plus_1 - 1;
-    prev_new_edge = current_new_edge;
-    // edges_added_to_this_vertex = #mbrs of new_edges with first == i
-    edge_num edges_added_to_this_vertex = 0;
-    while (current_new_edge !=
-            (typename edge_vector_t::const_reverse_iterator)new_edges.rend()) {
-      if (current_new_edge->first != i) break;
-      ++current_new_edge;
-      ++edges_added_to_this_vertex;
-    }
-    edges_added_before_i -= edges_added_to_this_vertex;
-    // Invariant: edges_added_before_i = #mbrs of new_edges with first < i
-    edge_num old_rowstart = g.m_rowstart[i];
-    edge_num new_rowstart = g.m_rowstart[i] + edges_added_before_i;
-    edge_num old_degree = g.m_rowstart[i + 1] - g.m_rowstart[i];
-    edge_num new_degree = old_degree + edges_added_to_this_vertex;
-    // Move old edges forward (by #new_edges before this i) to make room
-    // new_rowstart > old_rowstart, so use copy_backwards
-    if (old_rowstart != new_rowstart) {
-      std::copy_backward(g.m_column.begin() + old_rowstart,
-                         g.m_column.begin() + old_rowstart + old_degree,
-                         g.m_column.begin() + new_rowstart + old_degree);
-    }
-    // Add new edges (reversed because current_new_edge is a
-    // const_reverse_iterator)
-    typename edge_vector_t::const_reverse_iterator temp = current_new_edge;
-    for (; temp != prev_new_edge; ++old_degree) {
-      --temp;
-      g.m_column[new_rowstart + old_degree] = temp->second;
-    }
-    g.m_rowstart[i + 1] = new_rowstart + new_degree;
-    if (edges_added_before_i == 0) break; // No more edges inserted before this point
-    // g.m_rowstart[i] will be fixed up on the next iteration (to avoid
-    // changing the degree of vertex i - 1); the last iteration never changes
-    // it (either because of the condition of the break or because
-    // g.m_rowstart[0] is always 0)
+  // Add edges from a sorted (smallest sources first) range of pairs and edge
+  // properties
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig,
+            typename EPIterOrig>
+  void
+  add_edges_sorted(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted);
   }
-}
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig>
+  void
+  add_edges_sorted(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal(first_sorted, last_sorted);
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
+  inline void
+  add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_internal(first, last);
+  }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 // From VertexListGraph
