@@ -1,7 +1,17 @@
+//=======================================================================
+// Copyright 2009 Trustees of Indiana University.
+// Authors: Michael Hansen
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
+#include <cmath>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
-#include <cmath>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
@@ -13,10 +23,12 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
+#include <boost/test/minimal.hpp>
 
 using namespace boost;
 
 bool was_common_subgraph_found = false, output_graphs = false;
+std::vector<std::string> simple_subgraph_list;
 
 // Callback that compares incoming graphs to the supplied common
 // subgraph.
@@ -172,6 +184,46 @@ private:
   Graph& m_common_subgraph;
 };
 
+template <typename Graph>
+struct simple_callback {
+
+  simple_callback(const Graph& graph1) :
+    m_graph1(graph1) { }
+
+  template <typename CorrespondenceMapFirstToSecond,
+            typename CorrespondenceMapSecondToFirst>
+  bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
+                  CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
+                  typename graph_traits<Graph>::vertices_size_type subgraph_size) {
+
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+
+    typedef typename property_map<Graph, vertex_index_t>::type VertexIndexMap;
+    typedef typename property_map<Graph, vertex_name_t>::type VertexNameMap;
+    typedef typename property_map<Graph, edge_name_t>::type EdgeNameMap;
+
+    std::stringstream subgraph_string;
+
+    BGL_FORALL_VERTICES_T(vertex1, m_graph1, Graph) {
+
+      Vertex vertex2 = get(correspondence_map_1_to_2, vertex1);
+
+      if (vertex2 != graph_traits<Graph>::null_vertex()) {
+        subgraph_string << vertex1 << "," << vertex2 << " ";
+      }
+
+    }
+
+    simple_subgraph_list.push_back(subgraph_string.str());
+
+    return (true);
+  }
+
+private:
+  const Graph& m_graph1;
+
+};
+
 template <typename Graph,
           typename RandomNumberGenerator,
           typename VertexNameMap,
@@ -222,6 +274,11 @@ void add_random_vertices(Graph& graph, RandomNumberGenerator& generator,
       edges_for_vertex--;
     }
   }
+}
+
+bool has_subgraph_string(std::string set_string) {
+  return (std::find(simple_subgraph_list.begin(), simple_subgraph_list.end(),
+                    set_string) != simple_subgraph_list.end());
 }
 
 int test_main (int argc, char *argv[]) {
@@ -326,11 +383,89 @@ int test_main (int argc, char *argv[]) {
 
   test_callback<Graph> user_callback(common_subgraph, graph1, graph2);
 
-  mcgregor_common_subgraphs(graph1, graph2, user_callback,
+  mcgregor_common_subgraphs(graph1, graph2, true, user_callback,
     edges_equivalent(make_property_map_equivalent(ename_map1, ename_map2)).
     vertices_equivalent(make_property_map_equivalent(vname_map1, vname_map2)));
 
   BOOST_CHECK(was_common_subgraph_found);
+
+  // Test maximum and unique variants on known graphs
+  Graph graph_simple1, graph_simple2;
+  simple_callback<Graph> user_callback_simple(graph_simple1);
+
+  VertexNameMap vname_map_simple1 = get(vertex_name, graph_simple1);
+  VertexNameMap vname_map_simple2 = get(vertex_name, graph_simple2);
+
+  put(vname_map_simple1, add_vertex(graph_simple1), 1);
+  put(vname_map_simple1, add_vertex(graph_simple1), 2);
+  put(vname_map_simple1, add_vertex(graph_simple1), 3);
+
+  add_edge(0, 1, graph_simple1);
+  add_edge(0, 2, graph_simple1);
+  add_edge(1, 2, graph_simple1);
+
+  put(vname_map_simple2, add_vertex(graph_simple2), 1);
+  put(vname_map_simple2, add_vertex(graph_simple2), 2);
+  put(vname_map_simple2, add_vertex(graph_simple2), 3);
+  put(vname_map_simple2, add_vertex(graph_simple2), 4);
+
+  add_edge(0, 1, graph_simple2);
+  add_edge(0, 2, graph_simple2);
+  add_edge(1, 2, graph_simple2);
+  add_edge(1, 3, graph_simple2);
+
+  // Unique subgraphs
+  std::cout << "Searching for unique subgraphs" << std::endl;
+  mcgregor_common_subgraphs_unique(graph_simple1, graph_simple2,
+    true, user_callback_simple,
+    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+
+  BOOST_CHECK(has_subgraph_string("0,0 1,1 "));
+  BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
+  BOOST_CHECK(has_subgraph_string("0,0 2,2 "));
+  BOOST_CHECK(has_subgraph_string("1,1 2,2 "));
+
+  if (output_graphs) {
+    std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
+              std::ostream_iterator<std::string>(std::cout, "\n"));
+
+    std::cout << std::endl;
+  }
+
+  simple_subgraph_list.clear();
+
+  // Maximum subgraphs
+  std::cout << "Searching for maximum subgraphs" << std::endl;
+  mcgregor_common_subgraphs_maximum(graph_simple1, graph_simple2,
+    true, user_callback_simple,
+    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+
+  BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
+
+  if (output_graphs) {
+    std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
+              std::ostream_iterator<std::string>(std::cout, "\n"));
+
+    std::cout << std::endl;
+  }
+
+  simple_subgraph_list.clear();
+
+  // Maximum, unique subgraphs
+  std::cout << "Searching for maximum unique subgraphs" << std::endl;
+  mcgregor_common_subgraphs_maximum_unique(graph_simple1, graph_simple2,
+    true, user_callback_simple,
+    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+
+  BOOST_CHECK(simple_subgraph_list.size() == 1);
+  BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
+
+  if (output_graphs) {
+    std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
+              std::ostream_iterator<std::string>(std::cout, "\n"));
+
+    std::cout << std::endl;
+  }
 
   return 0;
 }
