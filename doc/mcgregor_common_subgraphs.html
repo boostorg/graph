@@ -49,7 +49,7 @@ template &lt;typename GraphFirst,
    const GraphSecond&amp; graph2,
    SubGraphCallback user_callback,
    bool only_connected_subgraphs,
-   const bgl_named_params<Param, Tag, Rest>& params)
+   const bgl_named_params<Param, Tag, Rest>& params);
 
 <em class="comment">// non-named parameter version</em>
 template &lt;typename GraphFirst,
@@ -67,7 +67,7 @@ template &lt;typename GraphFirst,
    EdgeEquivalencePredicate edges_equivalent,
    VertexEquivalencePredicate vertices_equivalent,
    bool only_connected_subgraphs,
-   SubGraphCallback user_callback)
+   SubGraphCallback user_callback);
     </pre>
 
     <p>
@@ -80,7 +80,7 @@ template &lt;typename GraphFirst,
       the <tt><a href="#make_property_map_equivalent">make_property_map_equivalent</a></tt>
       function.  By
       default, <tt><a href="#always_equivalent">always_equivalent</a></tt>
-      tt used, which returns true for any pair of edges or vertices.
+      is used, which returns true for any pair of edges or vertices.
     </p>
     <p>
       McGregor's algorithm does a depth-first search on the space of
@@ -117,6 +117,9 @@ template &lt;typename GraphFirst,
 
     <h3>Where Defined</h3>
     <a href="../../../boost/graph/mcgregor_common_subgraphs.hpp"><tt>boost/graph/mcgregor_common_subgraphs.hpp</tt></a>
+    <p>
+      All functions are defined in the boost namespace.
+    </p>
 
     <h3>Parameters</h3>
 
@@ -156,7 +159,7 @@ template &lt;typename CorrespondenceMapFirstToSecond,
           typename CorrespondenceMapSecondToFirst&gt;
 bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
                 CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
-                typename graph_traits&lt;GraphFirst&gt;::vertices_size_type subgraph_size)
+                typename graph_traits&lt;GraphFirst&gt;::vertices_size_type subgraph_size);
       </pre>
       Both the <tt>CorrespondenceMapFirstToSecond</tt>
       and <tt>CorresondenceMapSecondToFirst</tt> types are models
@@ -240,7 +243,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       Each <tt>mcgregor_common_subgraphs_*</tt> function below takes
       the same parameters as <tt>mcgregor_common_subgraphs</tt>.
     </p>
-    <tt>mcgregor_common_subgraphs_unique(...)</tt>
+    <tt>mcgregor_common_subgraphs_unique(...);</tt>
     <blockquote>
       Keeps an internal cache of all discovered subgraphs and
       only invokes the <tt>user_callback</tt> for unique
@@ -249,19 +252,19 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       expected.
     </blockquote>
 
-    <tt>mcgregor_common_subgraphs_maximum(...)</tt>
+    <tt>mcgregor_common_subgraphs_maximum(...);</tt>
     <blockquote>
       Explores the <em>entire</em> search space and invokes
-      the <tt>user_callback</tt> afterwards with each of the largest
+      the <tt>user_callback</tt> afterward with each of the largest
       discovered subgraphs.  Returning <tt>false</tt> from
       the <tt>user_callback</tt> will <b>not</b> terminate the search
       because it is invoked after the search has been completed.
     </blockquote>
 
-    <tt>mcgregor_common_subgraphs_maximum_unique(...)</tt>
+    <tt>mcgregor_common_subgraphs_maximum_unique(...);</tt>
     <blockquote>
       Explores the <em>entire</em> search space and invokes
-      the <tt>user_callback</tt> afterwards with each of the largest,
+      the <tt>user_callback</tt> afterward with each of the largest,
       unique discovered subgraphs.  Returning <tt>false</tt> from
       the <tt>user_callback</tt> will <b>not</b> terminate the search
       because it is invoked after the search has been completed.
@@ -270,7 +273,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
     <h3>Utility Functions/Structs</h3>
     <tt id="make_property_map_equivalent">
 property_map_equivalent&lt;PropertyMapFirst, PropertyMapSecond&gt;<br />
-&nbsp;&nbsp;make_property_map_equivalent(const PropertyMapFirst property_map1, const PropertyMapSecond property_map2)
+&nbsp;&nbsp;make_property_map_equivalent(const PropertyMapFirst property_map1, const PropertyMapSecond property_map2);
     </tt>
     <blockquote>
       Returns a binary predicate function object
@@ -290,7 +293,7 @@ property_map_equivalent&lt;PropertyMapFirst, PropertyMapSecond&gt;<br />
 
     <tt>
 void fill_membership_map&lt;GraphSecond&gt;<br />
-(const GraphFirst& graph1, const CorrespondenceMapFirstToSecond correspondence_map_1_to_2, MembershipMapFirst membership_map1)
+(const GraphFirst& graph1, const CorrespondenceMapFirstToSecond correspondence_map_1_to_2, MembershipMapFirst membership_map1);
     </tt>
     <blockquote>
       Takes a subgraph (represented as a correspondence map) and fills
@@ -303,7 +306,7 @@ void fill_membership_map&lt;GraphSecond&gt;<br />
 
     <tt>
 typename membership_filtered_graph_traits&lt;Graph, MembershipMap&gt;::graph_type<br />
-&nbsp;&nbsp;make_membership_filtered_graph(const Graph&amp; graph, MembershipMap&amp; membership_map)
+&nbsp;&nbsp;make_membership_filtered_graph(const Graph&amp; graph, MembershipMap&amp; membership_map);
     </tt>
     <blockquote>
       Creates a <a href="filtered_graph.html">Filtered Graph</a> from
@@ -315,7 +318,9 @@ typename membership_filtered_graph_traits&lt;Graph, MembershipMap&gt;::graph_typ
 
     <h3>Complexity</h3>
     <p>
-      The time complexity is <em>O(?)</em>.
+      The time complexity for searching the entire space is <em>O(V1 *
+      V2)</em> where V1 is number of vertices in the first graph and
+      V2 is the number of vertices in the second graph.
     </p>
 
     <h3>Examples</h3>
@@ -433,7 +438,7 @@ BGL_FORALL_VERTICES_T(vertex1, subgraph1, MembershipFilteredGraph) {
     <h3>Notes</h3>
     <p>
       <a name="1">[1]</a>
-      <b>NOTE</b>: For <tt>mcgregor_common_subgraphs_maximum</tt>
+      For <tt>mcgregor_common_subgraphs_maximum</tt>
       and <tt>mcgregor_common_subgraphs_maximum_unique</tt> the entire
       search space is always explored, so the return value of the
       callback has no effect.
