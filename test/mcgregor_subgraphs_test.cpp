@@ -69,9 +69,8 @@ struct test_callback {
     MembershipMap membership_map2(num_vertices(m_graph2),
                                   get(vertex_index, m_graph2));
 
-    fill_membership_maps(m_graph1, m_graph2,
-                         correspondence_map_1_to_2, correspondence_map_2_to_1,
-                         membership_map1, membership_map2);
+    fill_membership_map<Graph>(m_graph1, correspondence_map_1_to_2, membership_map1);
+    fill_membership_map<Graph>(m_graph2, correspondence_map_2_to_1, membership_map2);
 
     // Generate filtered graphs using membership maps
     typedef typename membership_filtered_graph_traits<Graph, MembershipMap>::graph_type

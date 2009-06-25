@@ -47,9 +47,8 @@ namespace boost {
 
   // ==========================================================================
 
-  // Binary function object that returns true if the values for
-  // vertex1 in property_map1 and vertex2 in property_map2 are
-  // equivalent.
+  // Binary function object that returns true if the values for item1
+  // in property_map1 and item2 in property_map2 are equivalent.
   template <typename PropertyMapFirst,
             typename PropertyMapSecond>
   struct property_map_equivalent {
@@ -59,10 +58,10 @@ namespace boost {
       m_property_map1(property_map1),
       m_property_map2(property_map2) { }
 
-    template <typename VertexFirst,
-              typename VertexSecond>
-    bool operator()(const VertexFirst vertex1, const VertexSecond vertex2) {
-      return (get(m_property_map1, vertex1) == get(m_property_map2, vertex2));
+    template <typename ItemFirst,
+              typename ItemSecond>
+    bool operator()(const ItemFirst item1, const ItemSecond item2) {
+      return (get(m_property_map1, item1) == get(m_property_map2, item2));
     }
   
   private:
@@ -1091,37 +1090,24 @@ namespace boost {
 
   // ==========================================================================
 
-  // Fills two membership maps (vertex -> bool) using the information
-  // present in correspondence_map_1_to_2 and
-  // correspondence_map_2_to_1.  Every vertex in a membership map will
-  // have a true value only if it is not associated with a null vertex
-  // in its respective correspondence map.
-  template <typename GraphFirst,
-            typename GraphSecond,
+  // Fills a membership map (vertex -> bool) using the information
+  // present in correspondence_map_1_to_2. Every vertex in a
+  // membership map will have a true value only if it is not
+  // associated with a null vertex in the correspondence map.
+  template <typename GraphSecond,
+            typename GraphFirst,
             typename CorrespondenceMapFirstToSecond,
-            typename CorrespondenceMapSecondToFirst,
-            typename MembershipMapFirst,
-            typename MembershipMapSecond>
-  void fill_membership_maps
+            typename MembershipMapFirst>
+  void fill_membership_map
   (const GraphFirst& graph1,
-   const GraphSecond& graph2,
    const CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
-   const CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
-   MembershipMapFirst membership_map1,
-   MembershipMapSecond membership_map2) {
-
-    typedef typename graph_traits<GraphSecond>::vertex_descriptor
-      VertexSecond;
+   MembershipMapFirst membership_map1) {
 
     BGL_FORALL_VERTICES_T(vertex1, graph1, GraphFirst) {
       put(membership_map1, vertex1,
           get(correspondence_map_1_to_2, vertex1) != graph_traits<GraphSecond>::null_vertex());
     }
 
-    BGL_FORALL_VERTICES_T(vertex2, graph2, GraphSecond) {
-      put(membership_map2, vertex2,
-          get(correspondence_map_2_to_1, vertex2) != graph_traits<GraphFirst>::null_vertex());
-    }
   }
 
   // Traits associated with a membership map filtered graph.  Provided
