@@ -670,7 +670,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
                               std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
-                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numverts,
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_rowstart(),
@@ -688,7 +688,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
                               std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
-                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
                               const GraphProperty& prop = GraphProperty())
@@ -733,7 +733,7 @@ class compressed_sparse_row_graph
       m_column(), m_property(prop)
   {
     std::vector<vertex_descriptor> sources, targets;
-    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    std::vector<typename inherited_edge_properties::edge_bundled> edge_props;
     size_t reserve_size
       = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     sources.reserve(reserve_size);
@@ -787,7 +787,7 @@ class compressed_sparse_row_graph
       m_column(), m_property(prop)
   {
     std::vector<vertex_descriptor> sources, targets;
-    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    std::vector<typename inherited_edge_properties::edge_bundled> edge_props;
     for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
       if (edge_pred(*edge_begin)) {
         sources.push_back(edge_begin->first);
@@ -862,7 +862,7 @@ class compressed_sparse_row_graph
   template <typename GlobalToLocal>
   void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
                                          std::vector<vertex_descriptor>& targets,
-                                         std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                                         std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                                          vertices_size_type numverts,
                                          GlobalToLocal global_to_local) {
     assert (sources.size() == targets.size());
@@ -1075,7 +1075,7 @@ class compressed_sparse_row_graph
   add_edges_sorted_internal(
       BidirectionalIteratorOrig first_sorted,
       BidirectionalIteratorOrig last_sorted) {
-    add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_property_type>());
+    add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_bundled>());
   }
 
   // Add edges from a range of (source, target) pairs that are unsorted
