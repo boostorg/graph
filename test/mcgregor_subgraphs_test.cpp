@@ -250,7 +250,7 @@ void add_random_vertices(Graph& graph, RandomNumberGenerator& generator,
        v_iter != new_vertices.end(); ++v_iter) {
 
     Vertex source_vertex = *v_iter;
-    int edges_for_vertex = (std::min)((generator() % max_edges_per_vertex) + 1,
+    int edges_for_vertex = (std::min)((int)(generator() % max_edges_per_vertex) + 1,
                                       (int)num_vertices(graph));
 
     while (edges_for_vertex > 0) {
