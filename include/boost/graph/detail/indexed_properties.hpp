@@ -50,6 +50,12 @@ protected:
   indexed_vertex_properties(std::size_t n) : m_vertex_properties(n) { }
 
 public:
+  // Clear the properties vector
+  void clear()
+  {
+    m_vertex_properties.clear();
+  }
+
   // Resize the properties vector
   void resize(std::size_t n)
   {
@@ -101,6 +107,7 @@ class indexed_vertex_properties<Derived, void, Descriptor>
   indexed_vertex_properties(std::size_t) { }
 
 public:
+  void clear() { }
   void resize(std::size_t) { }
   void reserve(std::size_t) { }
 };
@@ -131,6 +138,12 @@ protected:
   std::size_t size() const
   {
     return m_edge_properties.size();
+  }
+
+  // Clear the properties vector
+  void clear()
+  {
+    m_edge_properties.clear();
   }
 
   // Resize the properties vector
@@ -195,6 +208,7 @@ class indexed_edge_properties<Derived, void, Descriptor>
   indexed_edge_properties() { }
   indexed_edge_properties(std::size_t) { }
   std::size_t size() const {return 0;}
+  void clear() { }
   void resize(std::size_t) { }
   void reserve(std::size_t) { }
 
