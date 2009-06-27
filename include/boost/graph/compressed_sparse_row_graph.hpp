@@ -82,13 +82,13 @@ enum edges_are_unsorted_t {edges_are_unsorted};
 // memory but requires multi-pass capability on the iterators.
 enum edges_are_unsorted_multi_pass_t {edges_are_unsorted_multi_pass};
 
-// A type (edges_are_unsorted_multi_pass_filtered_t) and a value
-// (edges_are_unsorted_multi_pass_filtered) used to indicate that the edge list
+// A type (edges_are_unsorted_multi_pass_global_t) and a value
+// (edges_are_unsorted_multi_pass_global) used to indicate that the edge list
 // passed into the CSR graph is not sorted by source vertex.  This version uses
 // less memory but requires multi-pass capability on the iterators.  The
-// filtering is done here because it is often faster and it greatly simplifies
-// handling of edge properties.
-enum edges_are_unsorted_multi_pass_filtered_t {edges_are_unsorted_multi_pass_filtered};
+// global mapping and filtering is done here because it is often faster and it
+// greatly simplifies handling of edge properties.
+enum edges_are_unsorted_multi_pass_global_t {edges_are_unsorted_multi_pass_global};
 
 // A type (construct_inplace_from_sources_and_targets_t) and a value
 // (construct_inplace_from_sources_and_targets) used to indicate that mutable
@@ -108,14 +108,14 @@ enum construct_inplace_from_sources_and_targets_t {construct_inplace_from_source
 // (sequential and distributed).
 enum construct_inplace_from_sources_and_targets_global_t {construct_inplace_from_sources_and_targets_global};
 
-// A type (edges_are_unsorted_for_distributed_graph_t) and a value
-// (edges_are_unsorted_for_distributed_graph) used to indicate that the edge
-// list passed into the CSR graph is not sorted by source vertex.  The data is
-// also stored using global vertex indices, and must be filtered to choose only
-// local vertices.  This constructor caches the edge information in memory, and
-// thus requires only a single pass over the input data.  This constructor is
-// intended for internal use by the distributed CSR constructors.
-enum edges_are_unsorted_for_distributed_graph_t {edges_are_unsorted_for_distributed_graph};
+// A type (edges_are_unsorted_global_t) and a value (edges_are_unsorted_global)
+// used to indicate that the edge list passed into the CSR graph is not sorted
+// by source vertex.  The data is also stored using global vertex indices, and
+// must be filtered to choose only local vertices.  This constructor caches the
+// edge information in memory, and thus requires only a single pass over the
+// input data.  This constructor is intended for internal use by the
+// distributed CSR constructors.
+enum edges_are_unsorted_global_t {edges_are_unsorted_global};
 
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -299,25 +299,26 @@ class compressed_sparse_row_graph
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges (filtered using edge_pred)
-  template <typename MultiPassInputIterator, typename EdgePred>
+  //  edges (filtered using edge_pred and mapped using global_to_local)
+  template <typename MultiPassInputIterator, typename GlobalToLocal, typename EdgePred>
   void
   assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
                                    MultiPassInputIterator edge_end,
-                                   vertices_size_type numverts,
+                                   vertices_size_type numlocalverts,
+                                   const GlobalToLocal& global_to_local,
                                    const EdgePred& edge_pred) {
     m_rowstart.clear();
-    m_rowstart.resize(numverts + 1, 0);
+    m_rowstart.resize(numlocalverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
       if (edge_pred(*i))
-        ++m_rowstart[i->first + 1];
+        ++m_rowstart[get(global_to_local, i->first) + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
     EdgeIndex start_of_this_row = 0;
     m_rowstart[0] = start_of_this_row;
-    for (vertices_size_type i = 1; i <= numverts; ++i) {
+    for (vertices_size_type i = 1; i <= numlocalverts; ++i) {
       start_of_this_row += m_rowstart[i];
       m_rowstart[i] = start_of_this_row;
     }
@@ -327,33 +328,35 @@ class compressed_sparse_row_graph
     // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
-      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numlocalverts);
     for (; edge_begin != edge_end; ++edge_begin)
       if (edge_pred(*edge_begin))
-        m_column[current_insert_positions[edge_begin->first]++] = edge_begin->second;
+        m_column[current_insert_positions[get(global_to_local, edge_begin->first)]++] = edge_begin->second;
   }
 
   //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges and their properties (filtered using edge_pred)
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
+  //  edges and their properties (filtered using edge_pred and mapped using
+  //  global_to_local)
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
   void
   assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
                                    MultiPassInputIterator edge_end,
                                    EdgePropertyIterator ep_iter,
-                                   vertices_size_type numverts,
+                                   vertices_size_type numlocalverts,
+                                   const GlobalToLocal& global_to_local,
                                    const EdgePred& edge_pred) {
     m_rowstart.clear();
-    m_rowstart.resize(numverts + 1, 0);
+    m_rowstart.resize(numlocalverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
       if (edge_pred(*i))
-        ++m_rowstart[i->first + 1];
+        ++m_rowstart[get(global_to_local, i->first) + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
     EdgeIndex start_of_this_row = 0;
     m_rowstart[0] = start_of_this_row;
-    for (vertices_size_type i = 1; i <= numverts; ++i) {
+    for (vertices_size_type i = 1; i <= numlocalverts; ++i) {
       start_of_this_row += m_rowstart[i];
       m_rowstart[i] = start_of_this_row;
     }
@@ -364,10 +367,10 @@ class compressed_sparse_row_graph
     // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
-      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numlocalverts);
     for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
       if (edge_pred(*edge_begin)) {
-        vertices_size_type source = edge_begin->first;
+        vertices_size_type source = get(global_to_local, edge_begin->first);
         EdgeIndex insert_pos = current_insert_positions[source];
         ++current_insert_positions[source];
         m_column[insert_pos] = edge_begin->second;
@@ -386,7 +389,7 @@ class compressed_sparse_row_graph
     : inherited_vertex_properties(numverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, keep_all());
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, identity_property_map(), keep_all());
 
     // Default-construct properties for edges
     inherited_edge_properties::resize(m_column.size());
@@ -403,39 +406,43 @@ class compressed_sparse_row_graph
     : inherited_vertex_properties(numverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, keep_all());
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, identity_property_map(), keep_all());
   }
 
-  //  From number of vertices and unsorted list of edges, with filter
-  template <typename MultiPassInputIterator, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+  //  From number of vertices and unsorted list of edges, with filter and
+  //  global-to-local map
+  template <typename MultiPassInputIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
-                              vertices_size_type numverts,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
                               const EdgePred& edge_pred,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(),
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, edge_pred);
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numlocalverts, global_to_local, edge_pred);
 
     // Default-construct properties for edges
     inherited_edge_properties::resize(m_column.size());
   }
 
-  //  From number of vertices and unsorted list of edges, plus edge properties, with filter
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+  //  From number of vertices and unsorted list of edges, plus edge properties,
+  //  with filter and global-to-local map
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
-                              vertices_size_type numverts,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
                               const EdgePred& edge_pred,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(),
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, edge_pred);
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numlocalverts, global_to_local, edge_pred);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -751,7 +758,7 @@ class compressed_sparse_row_graph
   //  cached in coordinate form before creating the actual graph.  Edges are
   //  filtered and transformed for use in a distributed graph.
   template<typename InputIterator, typename GlobalToLocal, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+  compressed_sparse_row_graph(edges_are_unsorted_global_t,
                               InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
@@ -776,7 +783,7 @@ class compressed_sparse_row_graph
   //  use in a distributed graph.
   template<typename InputIterator, typename EdgePropertyIterator,
            typename GlobalToLocal, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+  compressed_sparse_row_graph(edges_are_unsorted_global_t,
                               InputIterator edge_begin, InputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numlocalverts,
