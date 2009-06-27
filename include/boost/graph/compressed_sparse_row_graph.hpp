@@ -184,8 +184,8 @@ namespace detail {
  * specialize numeric_limits.
  */
 template<typename Directed = directedS, 
-         typename VertexProperty = void,
-         typename EdgeProperty = void,
+         typename VertexProperty = no_property,
+         typename EdgeProperty = no_property,
          typename GraphProperty = no_property,
          typename Vertex = std::size_t,
          typename EdgeIndex = Vertex>
