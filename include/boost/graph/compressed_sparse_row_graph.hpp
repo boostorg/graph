@@ -829,6 +829,7 @@ class compressed_sparse_row_graph
     m_rowstart.clear();
     m_rowstart.resize(numverts + 1);
     for (size_t i = 0; i < numedges; ++i) {
+      assert(get(global_to_local, sources[i]) < numverts);
       ++m_rowstart[get(global_to_local, sources[i]) + 1];
     }
     // 2. Do a prefix sum on those to get starting positions of each row
