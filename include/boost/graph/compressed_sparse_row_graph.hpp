@@ -175,8 +175,8 @@ namespace detail {
     void advance(typename base_type::difference_type) {}
     typename base_type::difference_type distance_to(default_construct_iterator) const {return 0;}
   };
-}
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+}
 
 /** Compressed sparse row graph.
  *
