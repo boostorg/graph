@@ -27,6 +27,7 @@
 #include <boost/graph/filtered_graph.hpp> // For keep_all
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/reverse_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -64,6 +65,11 @@ struct csr_graph_tag;
 enum edges_are_sorted_t {edges_are_sorted};
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+// A type (edges_are_sorted_global_t) and a value (edges_are_sorted_global)
+// used to indicate that the edge list passed into the CSR graph is already
+// sorted by source vertex.
+enum edges_are_sorted_global_t {edges_are_sorted_global};
+
 // A type (edges_are_unsorted_t) and a value (edges_are_unsorted) used to
 // indicate that the edge list passed into the CSR graph is not sorted by
 // source vertex.  This version caches the edge information in memory, and thus
@@ -76,13 +82,13 @@ enum edges_are_unsorted_t {edges_are_unsorted};
 // memory but requires multi-pass capability on the iterators.
 enum edges_are_unsorted_multi_pass_t {edges_are_unsorted_multi_pass};
 
-// A type (edges_are_unsorted_multi_pass_filtered_t) and a value
-// (edges_are_unsorted_multi_pass_filtered) used to indicate that the edge list
+// A type (edges_are_unsorted_multi_pass_global_t) and a value
+// (edges_are_unsorted_multi_pass_global) used to indicate that the edge list
 // passed into the CSR graph is not sorted by source vertex.  This version uses
 // less memory but requires multi-pass capability on the iterators.  The
-// filtering is done here because it is often faster and it greatly simplifies
-// handling of edge properties.
-enum edges_are_unsorted_multi_pass_filtered_t {edges_are_unsorted_multi_pass_filtered};
+// global mapping and filtering is done here because it is often faster and it
+// greatly simplifies handling of edge properties.
+enum edges_are_unsorted_multi_pass_global_t {edges_are_unsorted_multi_pass_global};
 
 // A type (construct_inplace_from_sources_and_targets_t) and a value
 // (construct_inplace_from_sources_and_targets) used to indicate that mutable
@@ -102,14 +108,14 @@ enum construct_inplace_from_sources_and_targets_t {construct_inplace_from_source
 // (sequential and distributed).
 enum construct_inplace_from_sources_and_targets_global_t {construct_inplace_from_sources_and_targets_global};
 
-// A type (edges_are_unsorted_for_distributed_graph_t) and a value
-// (edges_are_unsorted_for_distributed_graph) used to indicate that the edge
-// list passed into the CSR graph is not sorted by source vertex.  The data is
-// also stored using global vertex indices, and must be filtered to choose only
-// local vertices.  This constructor caches the edge information in memory, and
-// thus requires only a single pass over the input data.  This constructor is
-// intended for internal use by the distributed CSR constructors.
-enum edges_are_unsorted_for_distributed_graph_t {edges_are_unsorted_for_distributed_graph};
+// A type (edges_are_unsorted_global_t) and a value (edges_are_unsorted_global)
+// used to indicate that the edge list passed into the CSR graph is not sorted
+// by source vertex.  The data is also stored using global vertex indices, and
+// must be filtered to choose only local vertices.  This constructor caches the
+// edge information in memory, and thus requires only a single pass over the
+// input data.  This constructor is intended for internal use by the
+// distributed CSR constructors.
+enum edges_are_unsorted_global_t {edges_are_unsorted_global};
 
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -128,7 +134,6 @@ enum edges_are_unsorted_for_distributed_graph_t {edges_are_unsorted_for_distribu
 template<typename Vertex, typename EdgeIndex>
 class csr_edge_descriptor;
 
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 namespace detail {
   template<typename InputIterator>
   size_t
@@ -157,8 +162,21 @@ namespace detail {
       category;
     return reserve_count_for_single_pass_helper(first, last, category());
   }
-}
+
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  template <typename T>
+  struct default_construct_iterator: public boost::iterator_facade<default_construct_iterator<T>, T, boost::random_access_traversal_tag, const T&> {
+    typedef boost::iterator_facade<default_construct_iterator<T>, T, std::random_access_iterator_tag, const T&> base_type;
+    T saved_value;
+    const T& dereference() const {return saved_value;}
+    bool equal(default_construct_iterator i) const {return true;}
+    void increment() {}
+    void decrement() {}
+    void advance(typename base_type::difference_type) {}
+    typename base_type::difference_type distance_to(default_construct_iterator) const {return 0;}
+  };
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+}
 
 /** Compressed sparse row graph.
  *
@@ -166,8 +184,8 @@ namespace detail {
  * specialize numeric_limits.
  */
 template<typename Directed = directedS, 
-         typename VertexProperty = void,
-         typename EdgeProperty = void,
+         typename VertexProperty = no_property,
+         typename EdgeProperty = no_property,
          typename GraphProperty = no_property,
          typename Vertex = std::size_t,
          typename EdgeIndex = Vertex>
@@ -179,6 +197,7 @@ class compressed_sparse_row_graph
                                                                 EdgeIndex> >
 
 {
+ public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
                                             VertexProperty, Vertex>
     inherited_vertex_properties;
@@ -280,25 +299,26 @@ class compressed_sparse_row_graph
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges (filtered using edge_pred)
-  template <typename MultiPassInputIterator, typename EdgePred>
+  //  edges (filtered using edge_pred and mapped using global_to_local)
+  template <typename MultiPassInputIterator, typename GlobalToLocal, typename EdgePred>
   void
   assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
                                    MultiPassInputIterator edge_end,
-                                   vertices_size_type numverts,
+                                   vertices_size_type numlocalverts,
+                                   const GlobalToLocal& global_to_local,
                                    const EdgePred& edge_pred) {
     m_rowstart.clear();
-    m_rowstart.resize(numverts + 1, 0);
+    m_rowstart.resize(numlocalverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
       if (edge_pred(*i))
-        ++m_rowstart[i->first + 1];
+        ++m_rowstart[get(global_to_local, i->first) + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
     EdgeIndex start_of_this_row = 0;
     m_rowstart[0] = start_of_this_row;
-    for (vertices_size_type i = 1; i <= numverts; ++i) {
+    for (vertices_size_type i = 1; i <= numlocalverts; ++i) {
       start_of_this_row += m_rowstart[i];
       m_rowstart[i] = start_of_this_row;
     }
@@ -308,33 +328,35 @@ class compressed_sparse_row_graph
     // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
-      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numlocalverts);
     for (; edge_begin != edge_end; ++edge_begin)
       if (edge_pred(*edge_begin))
-        m_column[current_insert_positions[edge_begin->first]++] = edge_begin->second;
+        m_column[current_insert_positions[get(global_to_local, edge_begin->first)]++] = edge_begin->second;
   }
 
   //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges and their properties (filtered using edge_pred)
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
+  //  edges and their properties (filtered using edge_pred and mapped using
+  //  global_to_local)
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
   void
   assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
                                    MultiPassInputIterator edge_end,
                                    EdgePropertyIterator ep_iter,
-                                   vertices_size_type numverts,
+                                   vertices_size_type numlocalverts,
+                                   const GlobalToLocal& global_to_local,
                                    const EdgePred& edge_pred) {
     m_rowstart.clear();
-    m_rowstart.resize(numverts + 1, 0);
+    m_rowstart.resize(numlocalverts + 1, 0);
     // Put the degree of each vertex v into m_rowstart[v + 1]
     for (MultiPassInputIterator i = edge_begin; i != edge_end; ++i)
       if (edge_pred(*i))
-        ++m_rowstart[i->first + 1];
+        ++m_rowstart[get(global_to_local, i->first) + 1];
 
     // Compute the partial sum of the degrees to get the actual values of
     // m_rowstart
     EdgeIndex start_of_this_row = 0;
     m_rowstart[0] = start_of_this_row;
-    for (vertices_size_type i = 1; i <= numverts; ++i) {
+    for (vertices_size_type i = 1; i <= numlocalverts; ++i) {
       start_of_this_row += m_rowstart[i];
       m_rowstart[i] = start_of_this_row;
     }
@@ -345,10 +367,10 @@ class compressed_sparse_row_graph
     // into m_column.  The index current_insert_positions[v] contains the next
     // location to insert out edges for vertex v.
     std::vector<EdgeIndex>
-      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numverts);
+      current_insert_positions(m_rowstart.begin(), m_rowstart.begin() + numlocalverts);
     for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
       if (edge_pred(*edge_begin)) {
-        vertices_size_type source = edge_begin->first;
+        vertices_size_type source = get(global_to_local, edge_begin->first);
         EdgeIndex insert_pos = current_insert_positions[source];
         ++current_insert_positions[source];
         m_column[insert_pos] = edge_begin->second;
@@ -367,7 +389,7 @@ class compressed_sparse_row_graph
     : inherited_vertex_properties(numverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, keep_all());
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, identity_property_map(), keep_all());
 
     // Default-construct properties for edges
     inherited_edge_properties::resize(m_column.size());
@@ -384,42 +406,113 @@ class compressed_sparse_row_graph
     : inherited_vertex_properties(numverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, keep_all());
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, identity_property_map(), keep_all());
   }
 
-  //  From number of vertices and unsorted list of edges, with filter
-  template <typename MultiPassInputIterator, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+  //  From number of vertices and unsorted list of edges, with filter and
+  //  global-to-local map
+  template <typename MultiPassInputIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
-                              vertices_size_type numverts,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
                               const EdgePred& edge_pred,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(),
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, edge_pred);
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, numlocalverts, global_to_local, edge_pred);
 
     // Default-construct properties for edges
     inherited_edge_properties::resize(m_column.size());
   }
 
-  //  From number of vertices and unsorted list of edges, plus edge properties, with filter
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_filtered_t,
+  //  From number of vertices and unsorted list of edges, plus edge properties,
+  //  with filter and global-to-local map
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
                               MultiPassInputIterator edge_begin,
                               MultiPassInputIterator edge_end,
                               EdgePropertyIterator ep_iter,
-                              vertices_size_type numverts,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
                               const EdgePred& edge_pred,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(),
+    : inherited_vertex_properties(numlocalverts), m_rowstart(),
       m_column(0), m_property(prop)
   {
-    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, edge_pred);
+    assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numlocalverts, global_to_local, edge_pred);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
+  //  Assign from number of vertices and sorted list of edges
+  template<typename InputIterator, typename GlobalToLocal, typename EdgePred>
+  void assign_from_sorted_edges(
+         InputIterator edge_begin, InputIterator edge_end,
+         const GlobalToLocal& global_to_local,
+         const EdgePred& edge_pred,
+         vertices_size_type numlocalverts,
+         edges_size_type numedges_or_zero) {
+    m_column.clear();
+    m_column.reserve(numedges_or_zero);
+    inherited_vertex_properties::resize(numlocalverts);
+    m_rowstart.resize(numlocalverts + 1);
+    EdgeIndex current_edge = 0;
+    Vertex current_vertex_plus_one = 1;
+    m_rowstart[0] = 0;
+    for (InputIterator ei = edge_begin; ei != edge_end; ++ei) {
+      if (!edge_pred(*ei)) continue;
+      Vertex src = get(global_to_local, ei->first);
+      Vertex tgt = ei->second;
+      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
+        m_rowstart[current_vertex_plus_one] = current_edge;
+      m_column.push_back(tgt);
+      ++current_edge;
+    }
+
+    // The remaining vertices have no edges
+    for (; current_vertex_plus_one != numlocalverts + 1; ++current_vertex_plus_one)
+      m_rowstart[current_vertex_plus_one] = current_edge;
+
+    // Default-construct properties for edges
+    inherited_edge_properties::resize(m_column.size());
+  }
+
+  //  Assign from number of vertices and sorted list of edges
+  template<typename InputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
+  void assign_from_sorted_edges(
+         InputIterator edge_begin, InputIterator edge_end,
+         EdgePropertyIterator ep_iter,
+         const GlobalToLocal& global_to_local,
+         const EdgePred& edge_pred,
+         vertices_size_type numlocalverts,
+         edges_size_type numedges_or_zero) {
+    m_column.clear();
+    m_column.reserve(numedges_or_zero);
+    inherited_edge_properties::clear();
+    inherited_edge_properties::reserve(numedges_or_zero);
+    inherited_vertex_properties::resize(numlocalverts);
+    m_rowstart.resize(numlocalverts + 1);
+    EdgeIndex current_edge = 0;
+    Vertex current_vertex_plus_one = 1;
+    m_rowstart[0] = 0;
+    for (InputIterator ei = edge_begin; ei != edge_end; ++ei, ++ep_iter) {
+      if (!edge_pred(*ei)) continue;
+      Vertex src = get(global_to_local, ei->first);
+      Vertex tgt = ei->second;
+      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
+        m_rowstart[current_vertex_plus_one] = current_edge;
+      m_column.push_back(tgt);
+      inherited_edge_properties::push_back(*ep_iter);
+      ++current_edge;
+    }
+
+    // The remaining vertices have no edges
+    for (; current_vertex_plus_one != numlocalverts + 1; ++current_vertex_plus_one)
+      m_rowstart[current_vertex_plus_one] = current_edge;
+  }
+
 #ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
   //  From number of vertices and sorted list of edges (deprecated
@@ -429,8 +522,7 @@ class compressed_sparse_row_graph
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop), m_last_source(numverts)
+    : m_property(prop), m_last_source(numverts)
   {
     // Reserving storage in advance can save us lots of time and
     // memory, but it can only be done if we have forward iterators or
@@ -438,29 +530,9 @@ class compressed_sparse_row_graph
     if (numedges == 0) {
       typedef typename std::iterator_traits<InputIterator>::iterator_category
         category;
-      maybe_reserve_edge_list_storage(edge_begin, edge_end, category());
-    } else {
-      m_column.reserve(numedges);
+      numedges = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     }
-
-    EdgeIndex current_edge = 0;
-    Vertex current_vertex_plus_one = 1;
-    m_rowstart[0] = 0;
-    for (InputIterator ei = edge_begin; ei != edge_end; ++ei) {
-      Vertex src = ei->first;
-      Vertex tgt = ei->second;
-      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
-        m_rowstart[current_vertex_plus_one] = current_edge;
-      m_column.push_back(tgt);
-      ++current_edge;
-    }
-
-    // The remaining vertices have no edges
-    for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
-      m_rowstart[current_vertex_plus_one] = current_edge;
-
-    // Default-construct properties for edges
-    inherited_edge_properties::resize(m_column.size());
+    assign_from_sorted_edges(edge_begin, edge_end, identity_property_map(), keep_all(), numverts, numedges);
   }
 
   //  From number of vertices and sorted list of edges (deprecated
@@ -471,8 +543,7 @@ class compressed_sparse_row_graph
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop), m_last_source(numverts)
+    : m_property(prop), m_last_source(numverts)
   {
     // Reserving storage in advance can save us lots of time and
     // memory, but it can only be done if we have forward iterators or
@@ -480,27 +551,9 @@ class compressed_sparse_row_graph
     if (numedges == 0) {
       typedef typename std::iterator_traits<InputIterator>::iterator_category
         category;
-      maybe_reserve_edge_list_storage(edge_begin, edge_end, category());
-    } else {
-      m_column.reserve(numedges);
+      numedges = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     }
-
-    EdgeIndex current_edge = 0;
-    Vertex current_vertex_plus_one = 1;
-    m_rowstart[0] = 0;
-    for (InputIterator ei = edge_begin; ei != edge_end; ++ei, ++ep_iter) {
-      Vertex src = ei->first;
-      Vertex tgt = ei->second;
-      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
-        m_rowstart[current_vertex_plus_one] = current_edge;
-      m_column.push_back(tgt);
-      inherited_edge_properties::push_back(*ep_iter);
-      ++current_edge;
-    }
-
-    // The remaining vertices have no edges
-    for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
-      m_rowstart[current_vertex_plus_one] = current_edge;
+    assign_from_sorted_edges(edge_begin, edge_end, ep_iter, identity_property_map(), keep_all(), numverts, numedges);
   }
 
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
@@ -512,8 +565,7 @@ class compressed_sparse_row_graph
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
+    : m_property(prop)
 #ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
       , m_last_source(numverts)
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
@@ -524,29 +576,9 @@ class compressed_sparse_row_graph
     if (numedges == 0) {
       typedef typename std::iterator_traits<InputIterator>::iterator_category
         category;
-      maybe_reserve_edge_list_storage(edge_begin, edge_end, category());
-    } else {
-      m_column.reserve(numedges);
+      numedges = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     }
-
-    EdgeIndex current_edge = 0;
-    Vertex current_vertex_plus_one = 1;
-    m_rowstart[0] = 0;
-    for (InputIterator ei = edge_begin; ei != edge_end; ++ei) {
-      Vertex src = ei->first;
-      Vertex tgt = ei->second;
-      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
-        m_rowstart[current_vertex_plus_one] = current_edge;
-      m_column.push_back(tgt);
-      ++current_edge;
-    }
-
-    // The remaining vertices have no edges
-    for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
-      m_rowstart[current_vertex_plus_one] = current_edge;
-
-    // Default-construct properties for edges
-    inherited_edge_properties::resize(m_column.size());
+    assign_from_sorted_edges(edge_begin, edge_end, identity_property_map(), keep_all(), numverts, numedges);
   }
 
   //  From number of vertices and sorted list of edges (new interface)
@@ -557,8 +589,7 @@ class compressed_sparse_row_graph
                               vertices_size_type numverts,
                               edges_size_type numedges = 0,
                               const GraphProperty& prop = GraphProperty())
-    : inherited_vertex_properties(numverts), m_rowstart(numverts + 1),
-      m_column(0), m_property(prop)
+    : m_property(prop)
 #ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
       , m_last_source(numverts)
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
@@ -569,30 +600,45 @@ class compressed_sparse_row_graph
     if (numedges == 0) {
       typedef typename std::iterator_traits<InputIterator>::iterator_category
         category;
-      maybe_reserve_edge_list_storage(edge_begin, edge_end, category());
-    } else {
-      m_column.reserve(numedges);
+      numedges = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     }
-
-    EdgeIndex current_edge = 0;
-    Vertex current_vertex_plus_one = 1;
-    m_rowstart[0] = 0;
-    for (InputIterator ei = edge_begin; ei != edge_end; ++ei, ++ep_iter) {
-      Vertex src = ei->first;
-      Vertex tgt = ei->second;
-      for (; current_vertex_plus_one != src + 1; ++current_vertex_plus_one)
-        m_rowstart[current_vertex_plus_one] = current_edge;
-      m_column.push_back(tgt);
-      inherited_edge_properties::push_back(*ep_iter);
-      ++current_edge;
-    }
-
-    // The remaining vertices have no edges
-    for (; current_vertex_plus_one != numverts + 1; ++current_vertex_plus_one)
-      m_rowstart[current_vertex_plus_one] = current_edge;
+    assign_from_sorted_edges(edge_begin, edge_end, ep_iter, identity_property_map(), keep_all(), numverts, numedges);
   }
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  //  From number of vertices and sorted list of edges, filtered and global (new interface)
+  template<typename InputIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_sorted_global_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              const GlobalToLocal& global_to_local,
+                              const EdgePred& edge_pred,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : m_property(prop)
+#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+      , m_last_source(numverts)
+#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+  {
+    assign_from_sorted_edges(edge_begin, edge_end, global_to_local, edge_pred, numverts, 0);
+  }
+
+  //  From number of vertices and sorted list of edges (new interface)
+  template<typename InputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename EdgePred>
+  compressed_sparse_row_graph(edges_are_sorted_global_t,
+                              InputIterator edge_begin, InputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              const GlobalToLocal& global_to_local,
+                              const EdgePred& edge_pred,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : m_property(prop)
+#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+      , m_last_source(numverts)
+#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+  {
+    assign_from_sorted_edges(edge_begin, edge_end, ep_iter, global_to_local, edge_pred, numverts, 0);
+  }
+
   //  From number of vertices and mutable vectors of sources and targets;
   //  vectors are returned with unspecified contents but are guaranteed not to
   //  share storage with the constructed graph.
@@ -631,7 +677,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
                               std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
-                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numverts,
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_rowstart(),
@@ -649,7 +695,7 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
                               std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
-                              std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                              std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
                               const GraphProperty& prop = GraphProperty())
@@ -694,7 +740,7 @@ class compressed_sparse_row_graph
       m_column(), m_property(prop)
   {
     std::vector<vertex_descriptor> sources, targets;
-    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    std::vector<typename inherited_edge_properties::edge_bundled> edge_props;
     size_t reserve_size
       = detail::reserve_count_for_single_pass(edge_begin, edge_end);
     sources.reserve(reserve_size);
@@ -712,7 +758,7 @@ class compressed_sparse_row_graph
   //  cached in coordinate form before creating the actual graph.  Edges are
   //  filtered and transformed for use in a distributed graph.
   template<typename InputIterator, typename GlobalToLocal, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+  compressed_sparse_row_graph(edges_are_unsorted_global_t,
                               InputIterator edge_begin, InputIterator edge_end,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
@@ -737,7 +783,7 @@ class compressed_sparse_row_graph
   //  use in a distributed graph.
   template<typename InputIterator, typename EdgePropertyIterator,
            typename GlobalToLocal, typename EdgePred>
-  compressed_sparse_row_graph(edges_are_unsorted_for_distributed_graph_t,
+  compressed_sparse_row_graph(edges_are_unsorted_global_t,
                               InputIterator edge_begin, InputIterator edge_end,
                               EdgePropertyIterator ep_iter,
                               vertices_size_type numlocalverts,
@@ -748,7 +794,7 @@ class compressed_sparse_row_graph
       m_column(), m_property(prop)
   {
     std::vector<vertex_descriptor> sources, targets;
-    std::vector<typename inherited_edge_properties::edge_property_type> edge_props;
+    std::vector<typename inherited_edge_properties::edge_bundled> edge_props;
     for (; edge_begin != edge_end; ++edge_begin, ++ep_iter) {
       if (edge_pred(*edge_begin)) {
         sources.push_back(edge_begin->first);
@@ -776,6 +822,7 @@ class compressed_sparse_row_graph
     m_rowstart.clear();
     m_rowstart.resize(numverts + 1);
     for (size_t i = 0; i < numedges; ++i) {
+      assert(get(global_to_local, sources[i]) < numverts);
       ++m_rowstart[get(global_to_local, sources[i]) + 1];
     }
     // 2. Do a prefix sum on those to get starting positions of each row
@@ -809,7 +856,7 @@ class compressed_sparse_row_graph
   template <typename GlobalToLocal>
   void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
                                          std::vector<vertex_descriptor>& targets,
-                                         std::vector<typename inherited_edge_properties::edge_property_type>& edge_props,
+                                         std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                                          vertices_size_type numverts,
                                          GlobalToLocal global_to_local) {
     assert (sources.size() == targets.size());
@@ -933,6 +980,100 @@ class compressed_sparse_row_graph
     assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
   }
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  // Add edges from a sorted (smallest sources first) range of pairs and edge
+  // properties
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted) {
+    typedef boost::reverse_iterator<BidirectionalIteratorOrig> BidirectionalIterator;
+    typedef boost::reverse_iterator<EPIterOrig> EPIter;
+    // Flip sequence
+    BidirectionalIterator first(last_sorted);
+    BidirectionalIterator last(first_sorted);
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    edge_num new_edge_count = std::distance(first, last);
+    EPIter ep_iter(ep_iter_sorted);
+    std::advance(ep_iter, -(std::ptrdiff_t)new_edge_count);
+    edge_num edges_added_before_i = new_edge_count; // Count increment to add to rowstarts
+    m_column.resize(m_column.size() + new_edge_count);
+    inherited_edge_properties::resize(inherited_edge_properties::size() + new_edge_count);
+    BidirectionalIterator current_new_edge = first, prev_new_edge = first;
+    EPIter current_new_edge_prop = ep_iter;
+    for (vertex_num i_plus_1 = num_vertices(*this); i_plus_1 > 0; --i_plus_1) {
+      vertex_num i = i_plus_1 - 1;
+      prev_new_edge = current_new_edge;
+      // edges_added_to_this_vertex = #mbrs of new_edges with first == i
+      edge_num edges_added_to_this_vertex = 0;
+      while (current_new_edge != last) {
+        if (current_new_edge->first != i) break;
+        ++current_new_edge;
+        ++current_new_edge_prop;
+        ++edges_added_to_this_vertex;
+      }
+      edges_added_before_i -= edges_added_to_this_vertex;
+      // Invariant: edges_added_before_i = #mbrs of new_edges with first < i
+      edge_num old_rowstart = m_rowstart[i];
+      edge_num new_rowstart = m_rowstart[i] + edges_added_before_i;
+      edge_num old_degree = m_rowstart[i + 1] - m_rowstart[i];
+      edge_num new_degree = old_degree + edges_added_to_this_vertex;
+      // Move old edges forward (by #new_edges before this i) to make room
+      // new_rowstart > old_rowstart, so use copy_backwards
+      if (old_rowstart != new_rowstart) {
+        std::copy_backward(m_column.begin() + old_rowstart,
+                           m_column.begin() + old_rowstart + old_degree,
+                           m_column.begin() + new_rowstart + old_degree);
+        inherited_edge_properties::move_range(old_rowstart, old_rowstart + old_degree, new_rowstart);
+      }
+      // Add new edges (reversed because current_new_edge is a
+      // const_reverse_iterator)
+      BidirectionalIterator temp = current_new_edge;
+      EPIter temp_prop = current_new_edge_prop;
+      for (; temp != prev_new_edge; ++old_degree) {
+        --temp;
+        m_column[new_rowstart + old_degree] = temp->second;
+        inherited_edge_properties::write_by_index(new_rowstart + old_degree, *temp_prop);
+      }
+      m_rowstart[i + 1] = new_rowstart + new_degree;
+      if (edges_added_before_i == 0) break; // No more edges inserted before this point
+      // m_rowstart[i] will be fixed up on the next iteration (to avoid
+      // changing the degree of vertex i - 1); the last iteration never changes
+      // it (either because of the condition of the break or because
+      // m_rowstart[0] is always 0)
+    }
+  }
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <typename BidirectionalIteratorOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted) {
+    add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_bundled>());
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <typename InputIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last) {
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
+    edge_vector_t new_edges(first, last);
+    if (new_edges.empty()) return;
+    std::sort(new_edges.begin(), new_edges.end());
+    add_edges_sorted_internal(new_edges.begin(), new_edges.end());
+  }
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
   using inherited_vertex_properties::operator[];
   using inherited_edge_properties::operator[];
 
@@ -1044,62 +1185,35 @@ add_edge(Vertex src, Vertex tgt,
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-// Add edges from a range of (source, target) pairs that are unsorted
-template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
-inline void
-add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
-  typedef BOOST_CSR_GRAPH_TYPE Graph;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-  typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
-  typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
-  typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
-  edge_vector_t new_edges(first, last);
-  if (new_edges.empty()) return;
-  std::sort(new_edges.begin(), new_edges.end());
-  edge_num edges_added_before_i = new_edges.size(); // Count increment to add to rowstarts
-  g.m_column.resize(g.m_column.size() + new_edges.size());
-  typename edge_vector_t::const_reverse_iterator
-    current_new_edge = new_edges.rbegin(),
-    prev_new_edge = new_edges.rbegin();
-  for (vertex_num i_plus_1 = num_vertices(g); i_plus_1 > 0; --i_plus_1) {
-    vertex_num i = i_plus_1 - 1;
-    prev_new_edge = current_new_edge;
-    // edges_added_to_this_vertex = #mbrs of new_edges with first == i
-    edge_num edges_added_to_this_vertex = 0;
-    while (current_new_edge !=
-            (typename edge_vector_t::const_reverse_iterator)new_edges.rend()) {
-      if (current_new_edge->first != i) break;
-      ++current_new_edge;
-      ++edges_added_to_this_vertex;
-    }
-    edges_added_before_i -= edges_added_to_this_vertex;
-    // Invariant: edges_added_before_i = #mbrs of new_edges with first < i
-    edge_num old_rowstart = g.m_rowstart[i];
-    edge_num new_rowstart = g.m_rowstart[i] + edges_added_before_i;
-    edge_num old_degree = g.m_rowstart[i + 1] - g.m_rowstart[i];
-    edge_num new_degree = old_degree + edges_added_to_this_vertex;
-    // Move old edges forward (by #new_edges before this i) to make room
-    // new_rowstart > old_rowstart, so use copy_backwards
-    if (old_rowstart != new_rowstart) {
-      std::copy_backward(g.m_column.begin() + old_rowstart,
-                         g.m_column.begin() + old_rowstart + old_degree,
-                         g.m_column.begin() + new_rowstart + old_degree);
-    }
-    // Add new edges (reversed because current_new_edge is a
-    // const_reverse_iterator)
-    typename edge_vector_t::const_reverse_iterator temp = current_new_edge;
-    for (; temp != prev_new_edge; ++old_degree) {
-      --temp;
-      g.m_column[new_rowstart + old_degree] = temp->second;
-    }
-    g.m_rowstart[i + 1] = new_rowstart + new_degree;
-    if (edges_added_before_i == 0) break; // No more edges inserted before this point
-    // g.m_rowstart[i] will be fixed up on the next iteration (to avoid
-    // changing the degree of vertex i - 1); the last iteration never changes
-    // it (either because of the condition of the break or because
-    // g.m_rowstart[0] is always 0)
+  // Add edges from a sorted (smallest sources first) range of pairs and edge
+  // properties
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig,
+            typename EPIterOrig>
+  void
+  add_edges_sorted(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted);
   }
-}
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig>
+  void
+  add_edges_sorted(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal(first_sorted, last_sorted);
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
+  inline void
+  add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_internal(first, last);
+  }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 // From VertexListGraph

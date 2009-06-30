@@ -47,6 +47,7 @@ boost_test_run(biconnected_components_test)
 boost_test_run(cuthill_mckee_ordering)
 boost_test_run(king_ordering)
 boost_test_run(matching_test)
+boost_test_run(mcgregor_subgraphs_test)
 # boost_test_run(max_flow_test)
 # boost_test_run(kolmogorov_max_flow_test) TODO: Boost 1.34.x only
 

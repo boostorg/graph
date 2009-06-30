@@ -118,6 +118,7 @@ test-suite graph_test :
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
+    [ run mcgregor_subgraphs_test.cpp ]
 
     $(optional_tests)
     ;
