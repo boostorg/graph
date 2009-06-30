@@ -134,7 +134,6 @@ enum edges_are_unsorted_global_t {edges_are_unsorted_global};
 template<typename Vertex, typename EdgeIndex>
 class csr_edge_descriptor;
 
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 namespace detail {
   template<typename InputIterator>
   size_t
@@ -164,6 +163,7 @@ namespace detail {
     return reserve_count_for_single_pass_helper(first, last, category());
   }
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   template <typename T>
   struct default_construct_iterator: public boost::iterator_facade<default_construct_iterator<T>, T, boost::random_access_traversal_tag, const T&> {
     typedef boost::iterator_facade<default_construct_iterator<T>, T, std::random_access_iterator_tag, const T&> base_type;
