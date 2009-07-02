@@ -642,8 +642,9 @@ class compressed_sparse_row_graph
   //  From number of vertices and mutable vectors of sources and targets;
   //  vectors are returned with unspecified contents but are guaranteed not to
   //  share storage with the constructed graph.
+  template <typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
-                              std::vector<vertex_descriptor>& sources,
+                              std::vector<Source>& sources,
                               std::vector<vertex_descriptor>& targets,
                               vertices_size_type numverts,
                               const GraphProperty& prop = GraphProperty())
@@ -658,9 +659,9 @@ class compressed_sparse_row_graph
   //  unspecified contents but are guaranteed not to share storage with the
   //  constructed graph.  This constructor should only be used by the
   //  distributed CSR graph.
-  template <typename GlobalToLocal>
+  template <typename GlobalToLocal, typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
-                              std::vector<vertex_descriptor>& sources,
+                              std::vector<Source>& sources,
                               std::vector<vertex_descriptor>& targets,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
@@ -674,8 +675,9 @@ class compressed_sparse_row_graph
   //  From number of vertices and mutable vectors of sources, targets, and edge
   //  properties; vectors are returned with unspecified contents but are
   //  guaranteed not to share storage with the constructed graph.
+  template <typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
-                              std::vector<vertex_descriptor>& sources,
+                              std::vector<Source>& sources,
                               std::vector<vertex_descriptor>& targets,
                               std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numverts,
@@ -691,9 +693,9 @@ class compressed_sparse_row_graph
   //  returned with unspecified contents but are guaranteed not to share
   //  storage with the constructed graph.  This constructor should only be used
   //  by the distributed CSR graph.
-  template <typename GlobalToLocal>
+  template <typename GlobalToLocal, typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
-                              std::vector<vertex_descriptor>& sources,
+                              std::vector<Source>& sources,
                               std::vector<vertex_descriptor>& targets,
                               std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numlocalverts,
@@ -808,8 +810,8 @@ class compressed_sparse_row_graph
   // Replace graph with sources and targets given, sorting them in-place, and
   // using the given global-to-local property map to get local indices from
   // global ones in the two arrays.
-  template <typename GlobalToLocal>
-  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
+  template <typename GlobalToLocal, typename Source>
+  void assign_sources_and_targets_global(std::vector<Source>& sources,
                                          std::vector<vertex_descriptor>& targets,
                                          vertices_size_type numverts,
                                          GlobalToLocal global_to_local) {
@@ -867,8 +869,8 @@ class compressed_sparse_row_graph
   // Replace graph with sources and targets and edge properties given, sorting
   // them in-place, and using the given global-to-local property map to get
   // local indices from global ones in the two arrays.
-  template <typename GlobalToLocal>
-  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
+  template <typename GlobalToLocal, typename Source>
+  void assign_sources_and_targets_global(std::vector<Source>& sources,
                                          std::vector<vertex_descriptor>& targets,
                                          std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                                          vertices_size_type numverts,
