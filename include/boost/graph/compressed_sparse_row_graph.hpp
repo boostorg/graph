@@ -28,6 +28,9 @@
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/integer.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -174,6 +177,25 @@ namespace detail {
     void decrement() {}
     void advance(typename base_type::difference_type) {}
     typename base_type::difference_type distance_to(default_construct_iterator) const {return 0;}
+  };
+
+  template <typename Less>
+  struct compare_first {
+    Less less;
+    compare_first(Less less = Less()): less(less) {}
+    template <typename Tuple>
+    bool operator()(const Tuple& a, const Tuple& b) const {
+      return less(a.template get<0>(), b.template get<0>());
+    }
+  };
+
+  template <int N, typename Result>
+  struct my_tuple_get_class {
+    typedef Result result_type;
+    template <typename Tuple>
+    result_type operator()(const Tuple& t) const {
+      return t.template get<N>();
+    }
   };
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 }
@@ -1102,6 +1124,41 @@ class compressed_sparse_row_graph
     std::sort(new_edges.begin(), new_edges.end());
     add_edges_sorted_internal(new_edges.begin(), new_edges.end());
   }
+
+  // Add edges from a range of (source, target) pairs and edge properties that
+  // are unsorted
+  template <typename InputIterator, typename EPIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last,
+                     EPIterator ep_iter, EPIterator ep_iter_end) {
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    typedef std::pair<vertex_t, vertex_t> vertex_pair;
+    typedef std::vector<
+              boost::tuple<vertex_pair,
+                           typename inherited_edge_properties::edge_bundled> >
+      edge_vector_t;
+    edge_vector_t new_edges
+      (boost::make_zip_iterator(boost::make_tuple(first, ep_iter)),
+       boost::make_zip_iterator(boost::make_tuple(last, ep_iter_end)));
+    if (new_edges.empty()) return;
+    std::sort(new_edges.begin(), new_edges.end(),
+              boost::detail::compare_first<
+                std::less<vertex_pair> >());
+    add_edges_sorted_internal
+      (boost::make_transform_iterator(
+         new_edges.begin(),
+         boost::detail::my_tuple_get_class<0, vertex_pair>()),
+       boost::make_transform_iterator(
+         new_edges.end(),
+         boost::detail::my_tuple_get_class<0, vertex_pair>()),
+       boost::make_transform_iterator(
+         new_edges.begin(),
+         boost::detail::my_tuple_get_class
+           <1, typename inherited_edge_properties::edge_bundled>()));
+  }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
   using inherited_vertex_properties::operator[];
@@ -1243,6 +1300,17 @@ add_edge(Vertex src, Vertex tgt,
   inline void
   add_edges(InputIterator first, InputIterator last, BOOST_CSR_GRAPH_TYPE& g) {
     g.add_edges_internal(first, last);
+  }
+
+  // Add edges from a range of (source, target) pairs and edge properties that
+  // are unsorted
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS,
+            typename InputIterator, typename EPIterator>
+  inline void
+  add_edges(InputIterator first, InputIterator last,
+            EPIterator ep_iter, EPIterator ep_iter_end,
+            BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_internal(first, last, ep_iter, ep_iter_end);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 

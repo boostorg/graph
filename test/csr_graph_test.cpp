@@ -492,7 +492,8 @@ int test_main(int argc, char* argv[])
     // Test building a graph using add_edges on unsorted lists
     CSRGraphT g3(boost::edges_are_unsorted, unsorted_edges, unsorted_edges, 6); // Empty range
     add_edges(unsorted_edges, unsorted_edges + 3, g3);
-    add_edges(unsorted_edges + 3, unsorted_edges + 6, g3);
+    boost::no_property edge_data[3];
+    add_edges(unsorted_edges + 3, unsorted_edges + 6, edge_data, edge_data + 3, g3);
     graph_test(g3);
     assert_graphs_equal(g, boost::identity_property_map(),
                         g3, boost::identity_property_map(),
