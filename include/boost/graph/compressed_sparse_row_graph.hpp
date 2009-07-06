@@ -191,7 +191,7 @@ namespace detail {
 
   template <int N, typename Result>
   struct my_tuple_get_class {
-    typedef Result result_type;
+    typedef const Result& result_type;
     template <typename Tuple>
     result_type operator()(const Tuple& t) const {
       return t.template get<N>();
@@ -1220,7 +1220,8 @@ template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
 add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
   Vertex old_num_verts_plus_one = g.m_rowstart.size();
-  g.m_rowstart.push_back(EdgeIndex(0));
+  EdgeIndex numedges = g.m_rowstart.back();
+  g.m_rowstart.push_back(numedges);
   g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }
@@ -1229,7 +1230,8 @@ template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
 add_vertices(typename BOOST_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_CSR_GRAPH_TYPE& g) {
   Vertex old_num_verts_plus_one = g.m_rowstart.size();
-  g.m_rowstart.resize(old_num_verts_plus_one + count, EdgeIndex(0));
+  EdgeIndex numedges = g.m_rowstart.back();
+  g.m_rowstart.resize(old_num_verts_plus_one + count, numedges);
   g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }
