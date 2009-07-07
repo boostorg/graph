@@ -664,9 +664,8 @@ class compressed_sparse_row_graph
   //  From number of vertices and mutable vectors of sources and targets;
   //  vectors are returned with unspecified contents but are guaranteed not to
   //  share storage with the constructed graph.
-  template <typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
-                              std::vector<Source>& sources,
+                              std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
                               vertices_size_type numverts,
                               const GraphProperty& prop = GraphProperty())
@@ -681,9 +680,9 @@ class compressed_sparse_row_graph
   //  unspecified contents but are guaranteed not to share storage with the
   //  constructed graph.  This constructor should only be used by the
   //  distributed CSR graph.
-  template <typename GlobalToLocal, typename Source>
+  template <typename GlobalToLocal>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
-                              std::vector<Source>& sources,
+                              std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
                               vertices_size_type numlocalverts,
                               GlobalToLocal global_to_local,
@@ -697,9 +696,8 @@ class compressed_sparse_row_graph
   //  From number of vertices and mutable vectors of sources, targets, and edge
   //  properties; vectors are returned with unspecified contents but are
   //  guaranteed not to share storage with the constructed graph.
-  template <typename Source>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_t,
-                              std::vector<Source>& sources,
+                              std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
                               std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numverts,
@@ -715,9 +713,9 @@ class compressed_sparse_row_graph
   //  returned with unspecified contents but are guaranteed not to share
   //  storage with the constructed graph.  This constructor should only be used
   //  by the distributed CSR graph.
-  template <typename GlobalToLocal, typename Source>
+  template <typename GlobalToLocal>
   compressed_sparse_row_graph(construct_inplace_from_sources_and_targets_global_t,
-                              std::vector<Source>& sources,
+                              std::vector<vertex_descriptor>& sources,
                               std::vector<vertex_descriptor>& targets,
                               std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                               vertices_size_type numlocalverts,
@@ -832,8 +830,8 @@ class compressed_sparse_row_graph
   // Replace graph with sources and targets given, sorting them in-place, and
   // using the given global-to-local property map to get local indices from
   // global ones in the two arrays.
-  template <typename GlobalToLocal, typename Source>
-  void assign_sources_and_targets_global(std::vector<Source>& sources,
+  template <typename GlobalToLocal>
+  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
                                          std::vector<vertex_descriptor>& targets,
                                          vertices_size_type numverts,
                                          GlobalToLocal global_to_local) {
@@ -891,8 +889,8 @@ class compressed_sparse_row_graph
   // Replace graph with sources and targets and edge properties given, sorting
   // them in-place, and using the given global-to-local property map to get
   // local indices from global ones in the two arrays.
-  template <typename GlobalToLocal, typename Source>
-  void assign_sources_and_targets_global(std::vector<Source>& sources,
+  template <typename GlobalToLocal>
+  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
                                          std::vector<vertex_descriptor>& targets,
                                          std::vector<typename inherited_edge_properties::edge_bundled>& edge_props,
                                          vertices_size_type numverts,
@@ -1035,12 +1033,14 @@ class compressed_sparse_row_graph
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Add edges from a sorted (smallest sources first) range of pairs and edge
   // properties
-  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig,
+            typename GlobalToLocal>
   void
   add_edges_sorted_internal(
       BidirectionalIteratorOrig first_sorted,
       BidirectionalIteratorOrig last_sorted,
-      EPIterOrig ep_iter_sorted) {
+      EPIterOrig ep_iter_sorted,
+      const GlobalToLocal& global_to_local) {
     typedef boost::reverse_iterator<BidirectionalIteratorOrig> BidirectionalIterator;
     typedef boost::reverse_iterator<EPIterOrig> EPIter;
     // Flip sequence
@@ -1051,6 +1051,7 @@ class compressed_sparse_row_graph
     typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
     typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
     edge_num new_edge_count = std::distance(first, last);
+
     EPIter ep_iter(ep_iter_sorted);
     std::advance(ep_iter, -(std::ptrdiff_t)new_edge_count);
     edge_num edges_added_before_i = new_edge_count; // Count increment to add to rowstarts
@@ -1064,7 +1065,7 @@ class compressed_sparse_row_graph
       // edges_added_to_this_vertex = #mbrs of new_edges with first == i
       edge_num edges_added_to_this_vertex = 0;
       while (current_new_edge != last) {
-        if (current_new_edge->first != i) break;
+        if (get(global_to_local, current_new_edge->first) != i) break;
         ++current_new_edge;
         ++current_new_edge_prop;
         ++edges_added_to_this_vertex;
@@ -1101,6 +1102,16 @@ class compressed_sparse_row_graph
     }
   }
 
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted)  {
+    add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted,
+                              identity_property_map());
+  }
+
   // Add edges from a sorted (smallest sources first) range of pairs
   template <typename BidirectionalIteratorOrig>
   void
@@ -1110,10 +1121,33 @@ class compressed_sparse_row_graph
     add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_bundled>());
   }
 
+  template <typename BidirectionalIteratorOrig, typename GlobalToLocal>
+  void
+  add_edges_sorted_internal_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      const GlobalToLocal& global_to_local) {
+    add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<typename inherited_edge_properties::edge_bundled>(),
+                              global_to_local);
+  }
+
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig, 
+	    typename GlobalToLocal>
+  void
+  add_edges_sorted_internal_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      const GlobalToLocal& global_to_local) {
+    add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted,
+                              global_to_local);
+  }
+
   // Add edges from a range of (source, target) pairs that are unsorted
-  template <typename InputIterator>
+  template <typename InputIterator, typename GlobalToLocal>
   inline void
-  add_edges_internal(InputIterator first, InputIterator last) {
+  add_edges_internal(InputIterator first, InputIterator last, 
+                     const GlobalToLocal& global_to_local) {
     typedef compressed_sparse_row_graph Graph;
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
@@ -1122,15 +1156,22 @@ class compressed_sparse_row_graph
     edge_vector_t new_edges(first, last);
     if (new_edges.empty()) return;
     std::sort(new_edges.begin(), new_edges.end());
-    add_edges_sorted_internal(new_edges.begin(), new_edges.end());
+    add_edges_sorted_internal_global(new_edges.begin(), new_edges.end(), global_to_local);
+  }
+
+  template <typename InputIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last) {
+    add_edges_internal(first, last, identity_property_map());
   }
 
   // Add edges from a range of (source, target) pairs and edge properties that
   // are unsorted
-  template <typename InputIterator, typename EPIterator>
+  template <typename InputIterator, typename EPIterator, typename GlobalToLocal>
   inline void
   add_edges_internal(InputIterator first, InputIterator last,
-                     EPIterator ep_iter, EPIterator ep_iter_end) {
+                     EPIterator ep_iter, EPIterator ep_iter_end,
+                     const GlobalToLocal& global_to_local) {
     typedef compressed_sparse_row_graph Graph;
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
@@ -1157,7 +1198,17 @@ class compressed_sparse_row_graph
        boost::make_transform_iterator(
          new_edges.begin(),
          boost::detail::my_tuple_get_class
-           <1, typename inherited_edge_properties::edge_bundled>()));
+           <1, typename inherited_edge_properties::edge_bundled>()),
+       global_to_local);
+  }
+
+  // Add edges from a range of (source, target) pairs and edge properties that
+  // are unsorted
+  template <typename InputIterator, typename EPIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last,
+                     EPIterator ep_iter, EPIterator ep_iter_end) {
+    add_edges_internal(first, last, ep_iter, ep_iter_end, identity_property_map());
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
@@ -1223,6 +1274,16 @@ add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
   EdgeIndex numedges = g.m_rowstart.back();
   g.m_rowstart.push_back(numedges);
   g.vertex_properties().resize(num_vertices(g));
+  return old_num_verts_plus_one - 1;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline Vertex
+add_vertex(BOOST_CSR_GRAPH_TYPE& g, 
+           typename BOOST_CSR_GRAPH_TYPE::vertex_bundled const& p) {
+  Vertex old_num_verts_plus_one = g.m_rowstart.size();
+  g.m_rowstart.push_back(EdgeIndex(0));
+  g.vertex_properties().push_back(p);
   return old_num_verts_plus_one - 1;
 }
 
@@ -1297,6 +1358,40 @@ add_edge(Vertex src, Vertex tgt,
     g.add_edges_sorted_internal(first_sorted, last_sorted);
   }
 
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig,
+            typename EPIterOrig, typename GlobalToLocal>
+  void
+  add_edges_sorted_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      const GlobalToLocal& global_to_local,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal_global(first_sorted, last_sorted, ep_iter_sorted, 
+				       global_to_local);
+  }
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename BidirectionalIteratorOrig,
+            typename GlobalToLocal>
+  void
+  add_edges_sorted_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      const GlobalToLocal& global_to_local,
+      BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_sorted_internal_global(first_sorted, last_sorted, global_to_local);
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator,
+            typename GlobalToLocal>
+  inline void
+  add_edges_global(InputIterator first, InputIterator last, 
+		   const GlobalToLocal& global_to_local, BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_internal(first, last, global_to_local);
+  }
+
   // Add edges from a range of (source, target) pairs that are unsorted
   template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename InputIterator>
   inline void
@@ -1313,6 +1408,16 @@ add_edge(Vertex src, Vertex tgt,
             EPIterator ep_iter, EPIterator ep_iter_end,
             BOOST_CSR_GRAPH_TYPE& g) {
     g.add_edges_internal(first, last, ep_iter, ep_iter_end);
+  }
+
+  template <BOOST_CSR_GRAPH_TEMPLATE_PARMS,
+            typename InputIterator, typename EPIterator, typename GlobalToLocal>
+  inline void
+  add_edges_global(InputIterator first, InputIterator last,
+            EPIterator ep_iter, EPIterator ep_iter_end,
+            const GlobalToLocal& global_to_local,
+            BOOST_CSR_GRAPH_TYPE& g) {
+    g.add_edges_internal(first, last, ep_iter, ep_iter_end, global_to_local);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
