@@ -44,28 +44,28 @@ namespace boost {
     typedef void difference_type;
 
     erdos_renyi_iterator() : gen(), n(0), edges(0), allow_self_loops(false) {}
-    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
+    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
                          double fraction = 0.0, bool allow_self_loops = false)
       : gen(&gen), n(n), edges(edges_size_type(fraction * n * n)),
         allow_self_loops(allow_self_loops)
-    { 
+    {
       if (is_undirected) edges = edges / 2;
-      next(); 
+      next();
     }
 
-    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
+    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
                          edges_size_type m, bool allow_self_loops = false)
       : gen(&gen), n(n), edges(m),
         allow_self_loops(allow_self_loops)
-    { 
-      next(); 
+    {
+      next();
     }
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     erdos_renyi_iterator& operator++()
-    { 
+    {
       --edges;
       next();
       return *this;
@@ -122,29 +122,30 @@ namespace boost {
     typedef void difference_type;
 
     sorted_erdos_renyi_iterator()
-      : gen(), rand_vertex(0.5), n(0), allow_self_loops(false),
-        src((std::numeric_limits<vertices_size_type>::max)()), tgt(0), prob(0) {}
-    sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
-                                double prob = 0.0, 
-                                bool allow_self_loops = false)
-      : gen(),
-        // The "1.0 - prob" in the next line is to work around a Boost.Random
-        // (and TR1) bug in the specification of geometric_distribution.  It
-        // should be replaced by "prob" when the issue is fixed.
-        rand_vertex(1.0 - prob),
-        n(n), allow_self_loops(allow_self_loops), src(0), tgt(0), prob(prob)
-    { 
+      : gen(), rand_vertex(0.5), n(0), allow_self_loops(false)
+      , src((std::numeric_limits<vertices_size_type>::max)()), tgt(0), prob(0)
+    { }
+
+    // NOTE: The default probability has been changed to be the same as that
+    // used by the geometic distribution. It was previously 0.0, which would
+    // cause an assertion.
+    sorted_erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
+                                double prob = 0.5,
+                                bool loops = false)
+      : gen(), rand_vertex(prob), n(n), allow_self_loops(loops), src(0)
+      , tgt(0), prob(prob)
+    {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
       if (prob == 0.0) {src = (std::numeric_limits<vertices_size_type>::max)(); return;}
-      next(); 
+      next();
     }
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     sorted_erdos_renyi_iterator& operator++()
-    { 
+    {
       next();
       return *this;
     }
@@ -194,7 +195,7 @@ namespace boost {
         if (src + src_increment >= n) {
           src = n;
         } else {
-          tgt -= (src + allow_self_loops) * src_increment + 
+          tgt -= (src + allow_self_loops) * src_increment +
                  src_increment * (src_increment - 1) / 2;
           src += src_increment;
         }
