@@ -1132,7 +1132,7 @@ class compressed_sparse_row_graph
   }
 
   template <typename BidirectionalIteratorOrig, typename EPIterOrig, 
-	    typename GlobalToLocal>
+            typename GlobalToLocal>
   void
   add_edges_sorted_internal_global(
       BidirectionalIteratorOrig first_sorted,
@@ -1368,7 +1368,7 @@ add_edge(Vertex src, Vertex tgt,
       const GlobalToLocal& global_to_local,
       BOOST_CSR_GRAPH_TYPE& g) {
     g.add_edges_sorted_internal_global(first_sorted, last_sorted, ep_iter_sorted, 
-				       global_to_local);
+                                       global_to_local);
   }
 
   // Add edges from a sorted (smallest sources first) range of pairs
@@ -1388,7 +1388,7 @@ add_edge(Vertex src, Vertex tgt,
             typename GlobalToLocal>
   inline void
   add_edges_global(InputIterator first, InputIterator last, 
-		   const GlobalToLocal& global_to_local, BOOST_CSR_GRAPH_TYPE& g) {
+                   const GlobalToLocal& global_to_local, BOOST_CSR_GRAPH_TYPE& g) {
     g.add_edges_internal(first, last, global_to_local);
   }
 

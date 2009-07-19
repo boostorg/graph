@@ -34,10 +34,10 @@ void gen_rand_graph(TG &g, size_t nV, size_t nE)
     rng.seed(uint32_t(time(0)));
     boost::generate_random_graph(g, nV, nE, rng, true, true);
     boost::uniform_real<> ur(-1,10);
-    boost::variate_generator<boost::mt19937&, boost::uniform_real<> >	ew1rg(rng, ur);
+    boost::variate_generator<boost::mt19937&, boost::uniform_real<> >   ew1rg(rng, ur);
     randomize_property<edge_weight_t>(g, ew1rg);
     boost::uniform_int<size_t> uint(1,5);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<size_t> >	ew2rg(rng, uint);
+    boost::variate_generator<boost::mt19937&, boost::uniform_int<size_t> >      ew2rg(rng, uint);
     randomize_property<edge_weight2_t>(g, ew2rg);
 }
 
