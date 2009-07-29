@@ -1809,6 +1809,8 @@ get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&,
   return e.idx;
 }
 
+// This is a duplicate of the version in boost/graph/properties.hpp:399
+#if 0
 // Support for bundled properties
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
 struct property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>
@@ -1828,6 +1830,7 @@ public:
   typedef bundle_property_map<const BOOST_CSR_GRAPH_TYPE, descriptor, Bundle,
                               const T> const_type;
 };
+#endif
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
 inline
