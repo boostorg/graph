@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
 
   // Open the METIS input file
   std::ifstream in(filename);
+  assert (in.good());
   graph::metis_reader reader(in);
 
   // Load the graph using the default distribution
