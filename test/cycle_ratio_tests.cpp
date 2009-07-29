@@ -213,6 +213,7 @@ struct my_float2 : boost::mcr_float<>
 
 int test_main(int argc, char* argv[])
 {
+  assert (argc >= 2);
   using std::endl; using std::cout;
   const double epsilon = 0.005;
   double min_cr, max_cr; ///Minimum and maximum cycle ratio
@@ -291,7 +292,7 @@ int test_main(int argc, char* argv[])
   }
 
   {
-      read_data("cycle_ratio_s382.90.dot", tg);
+      read_data(argv[1], tg);
       min_cr = boost::minimum_cycle_ratio(tg, vim, ew1m, ew2m, &cc, my_float2());
       cout << "Minimum cycle ratio is " << min_cr << endl;
       BOOST_CHECK(std::abs(min_cr - 0.33333333333) < epsilon );
