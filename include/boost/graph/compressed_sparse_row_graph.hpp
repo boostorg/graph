@@ -1731,6 +1731,27 @@ get(const csr_edge_index_map<Index, Descriptor>&,
   return key.idx;
 }
 
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_index_t>
+{
+  typedef identity_property_map type;
+  typedef type const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, edge_index_t>
+{
+private:
+  typedef typename graph_traits<BOOST_CSR_GRAPH_TYPE>::edge_descriptor
+    edge_descriptor;
+  typedef csr_edge_index_map<EdgeIndex, edge_descriptor> edge_index_type;
+
+public:
+  typedef edge_index_type type;
+  typedef type const_type;
+};
+
+#if 0
 // Doing the right thing here (by unifying with vertex_index_t and
 // edge_index_t) breaks GCC.
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
@@ -1754,6 +1775,7 @@ public:
 
   typedef type const_type;
 };
+#endif
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline identity_property_map
