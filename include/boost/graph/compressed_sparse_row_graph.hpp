@@ -1687,27 +1687,23 @@ get(const csr_edge_index_map<Index, Descriptor>&,
   return key.idx;
 }
 
-// Doing the right thing here (by unifying with vertex_index_t and
-// edge_index_t) breaks GCC.
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
-struct property_map<BOOST_CSR_GRAPH_TYPE, Tag>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_index_t>
+{
+  typedef identity_property_map type;
+  typedef type const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, edge_index_t>
 {
 private:
-  typedef identity_property_map vertex_index_type;
   typedef typename graph_traits<BOOST_CSR_GRAPH_TYPE>::edge_descriptor
     edge_descriptor;
   typedef csr_edge_index_map<EdgeIndex, edge_descriptor> edge_index_type;
 
-  typedef typename mpl::if_<is_same<Tag, edge_index_t>,
-                            edge_index_type,
-                            detail::error_property_not_found>::type
-    edge_or_none;
-
 public:
-  typedef typename mpl::if_<is_same<Tag, vertex_index_t>,
-                            vertex_index_type,
-                            edge_or_none>::type type;
-
+  typedef edge_index_type type;
   typedef type const_type;
 };
 
@@ -1742,26 +1738,6 @@ get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&,
 {
   return e.idx;
 }
-
-// Support for bundled properties
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
-struct property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>
-{
-private:
-  typedef graph_traits<BOOST_CSR_GRAPH_TYPE> traits;
-  typedef VertexProperty vertex_bundled;
-  typedef EdgeProperty edge_bundled;
-  typedef typename mpl::if_c<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
-                     typename traits::vertex_descriptor,
-                     typename traits::edge_descriptor>::type
-    descriptor;
-
-public:
-  typedef bundle_property_map<BOOST_CSR_GRAPH_TYPE, descriptor, Bundle, T>
-    type;
-  typedef bundle_property_map<const BOOST_CSR_GRAPH_TYPE, descriptor, Bundle,
-                              const T> const_type;
-};
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
 inline
