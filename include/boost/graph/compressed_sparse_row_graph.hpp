@@ -1752,32 +1752,6 @@ public:
   typedef type const_type;
 };
 
-#if 0
-// Doing the right thing here (by unifying with vertex_index_t and
-// edge_index_t) breaks GCC.
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
-struct property_map<BOOST_CSR_GRAPH_TYPE, Tag>
-{
-private:
-  typedef identity_property_map vertex_index_type;
-  typedef typename graph_traits<BOOST_CSR_GRAPH_TYPE>::edge_descriptor
-    edge_descriptor;
-  typedef csr_edge_index_map<EdgeIndex, edge_descriptor> edge_index_type;
-
-  typedef typename mpl::if_<is_same<Tag, edge_index_t>,
-                            edge_index_type,
-                            detail::error_property_not_found>::type
-    edge_or_none;
-
-public:
-  typedef typename mpl::if_<is_same<Tag, vertex_index_t>,
-                            vertex_index_type,
-                            edge_or_none>::type type;
-
-  typedef type const_type;
-};
-#endif
-
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline identity_property_map
 get(vertex_index_t, const BOOST_CSR_GRAPH_TYPE&)
@@ -1809,29 +1783,6 @@ get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&,
 {
   return e.idx;
 }
-
-// This is a duplicate of the version in boost/graph/properties.hpp:399
-#if 0
-// Support for bundled properties
-template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
-struct property_map<BOOST_CSR_GRAPH_TYPE, T Bundle::*>
-{
-private:
-  typedef graph_traits<BOOST_CSR_GRAPH_TYPE> traits;
-  typedef VertexProperty vertex_bundled;
-  typedef EdgeProperty edge_bundled;
-  typedef typename mpl::if_c<(detail::is_vertex_bundle<vertex_bundled, edge_bundled, Bundle>::value),
-                     typename traits::vertex_descriptor,
-                     typename traits::edge_descriptor>::type
-    descriptor;
-
-public:
-  typedef bundle_property_map<BOOST_CSR_GRAPH_TYPE, descriptor, Bundle, T>
-    type;
-  typedef bundle_property_map<const BOOST_CSR_GRAPH_TYPE, descriptor, Bundle,
-                              const T> const_type;
-};
-#endif
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>
 inline
