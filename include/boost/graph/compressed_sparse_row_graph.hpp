@@ -1062,6 +1062,7 @@ class compressed_sparse_row_graph
       EPIter temp_prop = current_new_edge_prop;
       for (; temp != prev_new_edge; ++old_degree) {
         --temp;
+        --temp_prop;
         m_column[new_rowstart + old_degree] = temp->second;
         inherited_edge_properties::write_by_index(new_rowstart + old_degree, *temp_prop);
       }
