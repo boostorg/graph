@@ -119,6 +119,8 @@ test-suite graph_test :
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
     [ run mcgregor_subgraphs_test.cpp ]
+    [ compile grid_graph_cc.cpp ]
+    [ run grid_graph_test.cpp ]
 
     $(optional_tests)
     ;
