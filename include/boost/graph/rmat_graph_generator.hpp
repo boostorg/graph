@@ -47,7 +47,7 @@ struct keep_local_edges {
   { }
 
   template <typename T>
-  bool operator()(const T& x, const T& y) 
+  bool operator()(const T& x, const T& y)
   { return distrib(x) == id || distrib(y) == id; }
 
 private:
@@ -58,16 +58,16 @@ private:
 template <typename RandomGenerator, typename T>
 void
 generate_permutation_vector(RandomGenerator& gen, std::vector<T>& vertexPermutation, T n)
-{ 
+{
   using boost::uniform_int;
 
   vertexPermutation.resize(n);
-  
+
   // Generate permutation map of vertex numbers
   uniform_int<T> rand_vertex(0, n-1);
   for (T i = 0; i < n; ++i)
     vertexPermutation[i] = i;
-  
+
   // Can't use std::random_shuffle unless we create another (synchronized) PRNG
   for (T i = 0; i < n; ++i)
     std::swap(vertexPermutation[i], vertexPermutation[rand_vertex(gen)]);
@@ -75,14 +75,14 @@ generate_permutation_vector(RandomGenerator& gen, std::vector<T>& vertexPermutat
 
 template <typename RandomGenerator, typename T>
 std::pair<T,T>
-generate_edge(shared_ptr<uniform_01<RandomGenerator> > prob, T n, 
+generate_edge(shared_ptr<uniform_01<RandomGenerator> > prob, T n,
               unsigned int SCALE, double a, double b, double c, double d)
 {
   T u = 0, v = 0;
   T step = n/2;
   for (unsigned int j = 0; j < SCALE; ++j) {
     double p = (*prob)();
-    
+
     if (p < a)
       ;
     else if (p >= a && p < a + b)
@@ -93,18 +93,18 @@ generate_edge(shared_ptr<uniform_01<RandomGenerator> > prob, T n,
       u += step;
       v += step;
     }
-    
+
     step /= 2;
 
     // 0.2 and 0.9 are hardcoded in the reference SSCA implementation.
     // The maximum change in any given value should be less than 10%
-    a *= 0.9 + 0.2 * (*prob)(); 
-    b *= 0.9 + 0.2 * (*prob)(); 
-    c *= 0.9 + 0.2 * (*prob)(); 
-    d *= 0.9 + 0.2 * (*prob)(); 
-    
+    a *= 0.9 + 0.2 * (*prob)();
+    b *= 0.9 + 0.2 * (*prob)();
+    c *= 0.9 + 0.2 * (*prob)();
+    d *= 0.9 + 0.2 * (*prob)();
+
     double S = a + b + c + d;
-    
+
     a /= S; b /= S; c /= S;
     // d /= S;
     // Ensure all values add up to 1, regardless of floating point errors
@@ -119,8 +119,8 @@ namespace boost {
   /*
     Chakrabarti's R-MAT scale free generator.
 
-    For all flavors of the R-MAT iterator a+b+c+d must equal 1 and for the 
-    unique_rmat_iterator 'm' << 'n^2'.  If 'm' is too close to 'n^2' the 
+    For all flavors of the R-MAT iterator a+b+c+d must equal 1 and for the
+    unique_rmat_iterator 'm' << 'n^2'.  If 'm' is too close to 'n^2' the
     generator may be unable to generate sufficient unique edges
 
     To get a true scale free distribution {a, b, c, d : a > b, a > c, a > d}
@@ -145,19 +145,19 @@ namespace boost {
       : gen(), edge(0) { }
 
     // Initialize for edge generation
-    rmat_iterator(RandomGenerator& gen, vertices_size_type n, 
-                  edges_size_type m, double a, double b, double c, 
+    rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+                  edges_size_type m, double a, double b, double c,
                   double d, bool permute_vertices = true)
-      : gen(), n(n), a(a), b(b), c(c), d(d), edge(m), 
-        permute_vertices(permute_vertices), 
+      : gen(), n(n), a(a), b(b), c(c), d(d), edge(m),
+        permute_vertices(permute_vertices),
         SCALE(int_log2(n))
-              
+
     {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
       assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
-      if (permute_vertices) 
+      if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
       // TODO: Generate the entire adjacency matrix then "Clip and flip" if undirected graph
@@ -167,9 +167,9 @@ namespace boost {
       tie(u, v) = generate_edge(this->gen, n, SCALE, a, b, c, d);
 
       if (permute_vertices)
-        current = std::make_pair(vertexPermutation[u], 
+        current = std::make_pair(vertexPermutation[u],
                                  vertexPermutation[v]);
-      else 
+      else
         current = std::make_pair(u, v);
 
       --edge;
@@ -177,16 +177,16 @@ namespace boost {
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     rmat_iterator& operator++()
     {
       vertices_size_type u, v;
       tie(u, v) = generate_edge(this->gen, n, SCALE, a, b, c, d);
 
       if (permute_vertices)
-        current = std::make_pair(vertexPermutation[u], 
+        current = std::make_pair(vertexPermutation[u],
                                  vertexPermutation[v]);
-      else 
+      else
         current = std::make_pair(u, v);
 
       --edge;
@@ -223,15 +223,15 @@ namespace boost {
     std::vector<vertices_size_type> vertexPermutation;
     value_type current;
   };
-  
+
   // Sorted version for CSR
   template <typename T>
   struct sort_pair {
     bool operator() (const std::pair<T,T>& x, const std::pair<T,T>& y)
-    { 
+    {
       if (x.first == y.first)
         return x.second > y.second;
-      else 
+      else
         return x.first > y.first;
     }
   };
@@ -257,25 +257,25 @@ namespace boost {
     { }
 
     // Initialize for edge generation
-    sorted_rmat_iterator(RandomGenerator& gen, vertices_size_type n, 
-                         edges_size_type m, double a, double b, double c, 
+    sorted_rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+                         edges_size_type m, double a, double b, double c,
                          double d, bool permute_vertices = true,
                          EdgePredicate ep = keep_all_edges())
       : gen(), permute_vertices(permute_vertices),
         values(sort_pair<vertices_size_type>()), done(false)
-              
+
     {
       assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
       std::vector<vertices_size_type> vertexPermutation;
-      if (permute_vertices) 
+      if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
-      
+
       // TODO: "Clip and flip" if undirected graph
       int SCALE = int_log2(n);
-      
+
       for (edges_size_type i = 0; i < m; ++i) {
 
         vertices_size_type u, v;
@@ -297,7 +297,7 @@ namespace boost {
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     sorted_rmat_iterator& operator++()
     {
       if (!values.empty()) {
@@ -359,23 +359,23 @@ namespace boost {
     { }
 
     // Initialize for edge generation
-    unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n, 
-                         edges_size_type m, double a, double b, double c, 
+    unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+                         edges_size_type m, double a, double b, double c,
                          double d, bool permute_vertices = true,
                          EdgePredicate ep = keep_all_edges())
       : gen(), done(false)
-              
+
     {
       assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
       std::vector<vertices_size_type> vertexPermutation;
-      if (permute_vertices) 
+      if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
       int SCALE = int_log2(n);
-      
+
       std::map<value_type, bool> edge_map;
 
       edges_size_type edges = 0;
@@ -383,14 +383,14 @@ namespace boost {
         vertices_size_type u, v;
         tie(u, v) = generate_edge(this->gen, n, SCALE, a, b, c, d);
 
-        // Lowest vertex number always comes first 
+        // Lowest vertex number always comes first
         // (this means we don't have to worry about i->j and j->i being in the edge list)
         if (u > v && is_same<directed_category, undirected_tag>::value)
           std::swap(u, v);
 
         if (edge_map.find(std::make_pair(u, v)) == edge_map.end()) {
           edge_map[std::make_pair(u, v)] = true;
-          
+
           if (permute_vertices) {
             if (ep(vertexPermutation[u], vertexPermutation[v]))
               values.push_back(std::make_pair(vertexPermutation[u], vertexPermutation[v]));
@@ -404,20 +404,20 @@ namespace boost {
       } while (edges < m);
       // NGE - Asking for more than n^2 edges will result in an infinite loop here
       //       Asking for a value too close to n^2 edges may as well
-     
+
       current = values.back();
       values.pop_back();
     }
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     unique_rmat_iterator& operator++()
     {
       if (!values.empty()) {
         current = values.back();
         values.pop_back();
-      } else 
+      } else
         done = true;
 
       return *this;
@@ -470,30 +470,30 @@ namespace boost {
       : gen(), values(sort_pair<vertices_size_type>()), done(true) { }
 
     // Initialize for edge generation
-    sorted_unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n, 
-                                edges_size_type m, double a, double b, double c, 
-                                double d, bool bidirectional = false, 
+    sorted_unique_rmat_iterator(RandomGenerator& gen, vertices_size_type n,
+                                edges_size_type m, double a, double b, double c,
+                                double d, bool bidirectional = false,
                                 bool permute_vertices = true,
                                 EdgePredicate ep = keep_all_edges())
-      : gen(), bidirectional(bidirectional), 
+      : gen(), bidirectional(bidirectional),
         values(sort_pair<vertices_size_type>()), done(false)
-              
+
     {
       assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
-      
+
       std::vector<vertices_size_type> vertexPermutation;
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
 
       int SCALE = int_log2(n);
-      
+
       std::map<value_type, bool> edge_map;
-      
+
       edges_size_type edges = 0;
       do {
-        
+
         vertices_size_type u, v;
         tie(u, v) = generate_edge(this->gen, n, SCALE, a, b, c, d);
 
@@ -501,8 +501,8 @@ namespace boost {
           if (edge_map.find(std::make_pair(u, v)) == edge_map.end()) {
             edge_map[std::make_pair(u, v)] = true;
             edge_map[std::make_pair(v, u)] = true;
-            
-            if (ep(u, v))
+
+            if (ep(u, v)) {
               if (permute_vertices) {
                 values.push(std::make_pair(vertexPermutation[u], vertexPermutation[v]));
                 values.push(std::make_pair(vertexPermutation[v], vertexPermutation[u]));
@@ -510,15 +510,16 @@ namespace boost {
                 values.push(std::make_pair(u, v));
                 values.push(std::make_pair(v, u));
               }
+           }
 
             ++edges;
           }
         } else {
-          // Lowest vertex number always comes first 
+          // Lowest vertex number always comes first
           // (this means we don't have to worry about i->j and j->i being in the edge list)
           if (u > v && is_same<directed_category, undirected_tag>::value)
             std::swap(u, v);
-          
+
           if (edge_map.find(std::make_pair(u, v)) == edge_map.end()) {
             edge_map[std::make_pair(u, v)] = true;
 
@@ -533,7 +534,7 @@ namespace boost {
             ++edges;
           }
         }
-          
+
       } while (edges < m);
       // NGE - Asking for more than n^2 edges will result in an infinite loop here
       //       Asking for a value too close to n^2 edges may as well
@@ -544,13 +545,13 @@ namespace boost {
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     sorted_unique_rmat_iterator& operator++()
     {
       if (!values.empty()) {
         current = values.top();
         values.pop();
-      } else 
+      } else
         done = true;
 
       return *this;
@@ -578,7 +579,7 @@ namespace boost {
     bool             bidirectional;
 
     // Internal data structures
-    std::priority_queue<value_type, std::vector<value_type>, 
+    std::priority_queue<value_type, std::vector<value_type>,
                         sort_pair<vertices_size_type> > values;
     value_type current;
     bool       done;

@@ -1468,8 +1468,14 @@ out_edges(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator it;
   EdgeIndex v_row_start = g.m_rowstart[v];
   EdgeIndex next_row_start = g.m_rowstart[v + 1];
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  return std::make_pair(it(ed(v, v_row_start)),
+                        it(ed(v, next_row_start)));
+#else
+  // Special case to allow incremental construction
   return std::make_pair(it(ed(v, v_row_start)),
                         it(ed(v, (std::max)(v_row_start, next_row_start))));
+#endif
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1478,7 +1484,12 @@ out_degree(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   EdgeIndex v_row_start = g.m_rowstart[v];
   EdgeIndex next_row_start = g.m_rowstart[v + 1];
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  return next_row_start - v_row_start;
+#else
+  // Special case to allow incremental construction
   return (std::max)(v_row_start, next_row_start) - v_row_start;
+#endif
 }
 
 // From AdjacencyGraph
@@ -1489,9 +1500,15 @@ adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   EdgeIndex v_row_start = g.m_rowstart[v];
   EdgeIndex next_row_start = g.m_rowstart[v + 1];
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+  return std::make_pair(g.m_column.begin() + v_row_start,
+                        g.m_column.begin() + next_row_start);
+#else
+  // Special case to allow incremental construction
   return std::make_pair(g.m_column.begin() + v_row_start,
                         g.m_column.begin() +
                                 (std::max)(v_row_start, next_row_start));
+#endif
 }
 
 // Extra, common functions

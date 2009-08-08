@@ -2,17 +2,17 @@
 
 <!--
      Copyright (c) Lie-Quan Lee and Jeremy Siek 2000, 2001
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: write graphviz</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -23,42 +23,42 @@
 
 <pre>
 // Output graph structure without properties.
-template &lt; typename VertexListGraph &gt;
-void 
-write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g);
+template &lt; typename VertexAndEdgeListGraph &gt;
+void
+write_graphviz(std::ostream&amp; out, const VertexAndEdgeListGraph&amp; g);
 
 // Graph structure with customized property output
-template &lt; typename VertexListGraph, typename VertexPropertyWriter &gt;
-void 
-write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
+template &lt; typename VertexAndEdgeListGraph, typename VertexPropertyWriter &gt;
+void
+write_graphviz(std::ostream&amp; out, const VertexAndEdgeListGraph&amp; g,
                VertexPropertyWriter vpw);
 
-template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+template &lt; typename VertexAndEdgeListGraph, typename VertexPropertyWriter,
            typename EdgePropertyWriter &gt;
 void
-write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
+write_graphviz(std::ostream&amp; out, const VertexAndEdgeListGraph&amp; g,
                VertexPropertyWriter vpw, EdgePropertyWriter epw);
 
-template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+template &lt; typename VertexAndEdgeListGraph, typename VertexPropertyWriter,
            typename EdgePropertyWriter, typename GraphPropertyWriter &gt;
-void 
-write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
-               VertexPropertyWriter vpw, EdgePropertyWriter epw, 
+void
+write_graphviz(std::ostream&amp; out, const VertexAndEdgeListGraph&amp; g,
+               VertexPropertyWriter vpw, EdgePropertyWriter epw,
                GraphPropertyWriter gpw);
 
-template &lt; typename VertexListGraph, typename VertexPropertyWriter,
+template &lt; typename VertexAndEdgeListGraph, typename VertexPropertyWriter,
            typename EdgePropertyWriter, typename GraphPropertyWriter,
            typename VertexID &gt;
-void 
-write_graphviz(std::ostream&amp; out, const VertexListGraph&amp; g, 
-               VertexPropertyWriter vpw, EdgePropertyWriter epw, 
+void
+write_graphviz(std::ostream&amp; out, const VertexAndEdgeListGraph&amp; g,
+               VertexPropertyWriter vpw, EdgePropertyWriter epw,
                GraphPropertyWriter gpw, VertexID vertex_id);
 
 // Graph structure with dynamic property output
 template&lt;typename Graph&gt;
 void
 write_graphviz(std::ostream&amp; out, const Graph&amp; g,
-               const dynamic_properties&amp; dp, 
+               const dynamic_properties&amp; dp,
                const std::string&amp; node_id = "node_id");
 
 template&lt;typename Graph, typename VertexID&gt;
@@ -69,9 +69,9 @@ write_graphviz(std::ostream&amp; out, const Graph&amp; g,
 </pre>
 
 <p>
-This is to write a BGL graph object into an output stream in graphviz
-dot format so that users can make use of <a href="http://www.research.att.com/sw/tools/graphviz/">AT&amp;T graphviz</a> to draw a
-picture with nice layout.
+This is to write a BGL graph object into an output stream in graphviz dot format
+so that users can make use of <a href="http://www.research.att.com/sw/tools/graphviz/">AT&amp;T graphviz</a>
+to draw a picture with nice layout.
 <p>
 The first version with two parameters will write the graph into a
 <tt>std::ostream</tt> where each vertex is represented by its numerical vertex
@@ -121,7 +121,7 @@ PropertyWriter. One is for a vertex or edge. The other is for a graph.
 Thus, users could easily extend the <tt>write_graphviz</tt> function
 by creating their own <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> only.
 <p>
-A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> 
+A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>
 for vertices or edges is a functor which can be called with two parameters:
 <tt>std::ostream</tt> and either a vertex or an edge descriptor. It should output a
 pair of brackets with a series of assigments &quot;name=value&quot; inside.
@@ -151,10 +151,10 @@ make_label_writer(Name n);
 </pre>
 
 <p>
-A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> 
-for graphs is a functor which is called with one parameter of type 
+A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>
+for graphs is a functor which is called with one parameter of type
 <tt>std::ostream</tt> and should print a series of graph properties. The following
-code excerpt is an example of a PropertyWriter for a graph. 
+code excerpt is an example of a PropertyWriter for a graph.
 <pre>
   struct sample_graph_writer {
     void operator()(std::ostream& out) const {
@@ -176,28 +176,28 @@ vertex property writer as well.
  OUT: <tt>std::ostream&amp; out</tt>
 <blockquote>
   A standard <tt>std::ostream</tt> object.
-</blockquote>  
+</blockquote>
 
- IN: <tt>VertexListGraph&amp; g</tt>
+ IN: <tt>VertexAndEdgeListGraph&amp; g</tt>
 <blockquote>
-  A directed or undirected graph.  The graph's type must be a model of
-  <a href="./VertexListGraph.html">VertexListGraph</a>. Also the graph 
-  must have an internal <tt>vertex_index</tt> property map.
-</blockquote>  
+  A directed or undirected graph. The graph's type must be a model of
+  <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>. Also the
+  graph must have an internal <tt>vertex_index</tt> property map.
+</blockquote>
 
  IN: <tt>VertexPropertyWriter vpw</tt>
 <blockquote>
   A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
   properties of a vertex.<br>
 <b>Default</b>: <tt>default_writer()</tt>
-</blockquote>  
+</blockquote>
 
  IN: <tt>EdgePropertyWriter epw</tt>
 <blockquote>
   A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
   properties of an edge.<br>
 <b>Default</b>: <tt>default_writer()</tt>
-</blockquote>  
+</blockquote>
 
  IN: <tt>GraphPropertyWriter epw</tt>
 <blockquote>
@@ -228,15 +228,15 @@ IN: <tt>VertexID vertex_id</tt>
 Example
 </H3>
 
-This example demonstrates using BGL-graphviz interface to write 
+This example demonstrates using BGL-graphviz interface to write
 a BGL graph into a graphviz format file.
 
 <pre>
 #include &lt;boost/graph/graphviz.hpp&gt;
 
-enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp, 
+enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp,
                foo_o, bar_cpp, bar_o, libfoobar_a,
-               zig_cpp, zig_o, zag_cpp, zag_o, 
+               zig_cpp, zig_o, zag_cpp, zag_o,
                  libzigzag_a, killerapp, N };
 const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
                        "foo.o", "bar.cpp", "bar.o", "libfoobar.a",
@@ -245,13 +245,13 @@ const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
 
 int main(int,char*[])
 {
-    
+
   typedef pair&lt;int,int&gt; Edge;
   Edge used_by[] = {
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
     Edge(boz_h, bar_cpp), Edge(boz_h, zig_cpp), Edge(boz_h, zag_cpp),
-    Edge(zow_h, foo_cpp), 
+    Edge(zow_h, foo_cpp),
     Edge(foo_cpp, foo_o),
     Edge(foo_o, libfoobar_a),
     Edge(bar_cpp, bar_o),
@@ -269,7 +269,7 @@ int main(int,char*[])
 
   using namespace boost;
 
-  typedef adjacency_list< vecS, vecS, directedS, 
+  typedef adjacency_list< vecS, vecS, directedS,
       property< vertex_color_t, default_color_type >,
       property< edge_weight_t, int >
     > Graph;
@@ -343,4 +343,4 @@ without the library <tt>libbglviz.a</tt>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

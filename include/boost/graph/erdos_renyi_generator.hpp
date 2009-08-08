@@ -45,26 +45,26 @@ namespace boost {
 
   public:
     erdos_renyi_iterator() : gen(), n(0), edges(0), allow_self_loops(false) {}
-    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
+    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
                          double fraction = 0.0, bool allow_self_loops = false)
       : gen(&gen), n(n), edges(edges_size_type(fraction * n * n)),
         allow_self_loops(allow_self_loops)
-    { 
+    {
       if (is_undirected) edges = edges / 2;
-      next(); 
+      next();
     }
 
-    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n, 
+    erdos_renyi_iterator(RandomGenerator& gen, vertices_size_type n,
                          edges_size_type m, bool allow_self_loops = false)
       : gen(&gen), n(n), edges(m),
         allow_self_loops(allow_self_loops)
-    { 
-      next(); 
+    {
+      next();
     }
 
     const std::pair<vertices_size_type, vertices_size_type>&
     dereference() const { return current; }
-    
+
     void increment() {
       --edges;
       next();
@@ -128,14 +128,14 @@ namespace boost {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
       if (prob == 0.0) {src = (std::numeric_limits<vertices_size_type>::max)(); return;}
-      next(); 
+      next();
     }
 
     const std::pair<vertices_size_type, vertices_size_type>&
     dereference() const {
       return current;
     }
-    
+
     bool equal(const sorted_erdos_renyi_iterator& o) const {
       return src == o.src && tgt_index == o.tgt_index;
     }
