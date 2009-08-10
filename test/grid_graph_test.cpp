@@ -85,7 +85,7 @@ int test_main(int argc, char* argv[]) {
     BOOST_REQUIRE(graph.wrapped(dimension_index) == wrapped[dimension_index]);
   }
 
-  // Verify matching indicies
+  // Verify matching indices
   for (vertices_size_type vertex_index = 0;
        vertex_index < num_vertices(graph);
        ++vertex_index) {

@@ -304,7 +304,7 @@ namespace boost {
     // dependent upon dimension wrapping.
     edge_descriptor edge_at(edges_size_type edge_index) const {
 
-      // Edge indicies are sorted into bins by dimension
+      // Edge indices are sorted into bins by dimension
       std::size_t dimension_index = 0;
       edges_size_type dimension_edges = num_edges(0);
 
@@ -474,7 +474,7 @@ namespace boost {
       return (out_edge_count);
     }
 
-    // Returns an out-edge for [vertex] by index. Indicies are in the
+    // Returns an out-edge for [vertex] by index. Indices are in the
     // range [0, out_degree(vertex)).
     edge_descriptor out_edge_at
     (vertex_descriptor vertex,
@@ -522,7 +522,7 @@ namespace boost {
       return (out_degree(vertex));
     }
 
-    // Returns an in-edge for [vertex] by index. Indicies are in the
+    // Returns an in-edge for [vertex] by index. Indices are in the
     // range [0, in_degree(vertex)).
     edge_descriptor in_edge_at
     (vertex_descriptor vertex,
