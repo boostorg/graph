@@ -33,7 +33,7 @@
   grid_graph<DimensionsT, VertexIndexT, EdgeIndexT>
 
 #define BOOST_GRID_GRAPH_TRAITS_T \
-  typename graph_traits<BOOST_GRID_GRAPH_TYPE>
+  typename graph_traits<BOOST_GRID_GRAPH_TYPE >
 
 namespace boost {
 
