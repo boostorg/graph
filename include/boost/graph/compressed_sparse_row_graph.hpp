@@ -965,7 +965,11 @@ class compressed_sparse_row_graph
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
     : m_property()
   {
-    assign(g, vi, num_vertices(g), num_edges(g));
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    assign(g, vi, num_vertices(g), numedges);
   }
 
   // Requires vertex index map plus requirements of previous constructor
@@ -973,12 +977,17 @@ class compressed_sparse_row_graph
   explicit compressed_sparse_row_graph(const Graph& g)
     : m_property()
   {
-    assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    assign(g, get(vertex_index, g), num_vertices(g), numedges);
   }
 
   // From any graph (slow and uses a lot of memory)
   //   Requires IncidenceGraph, a vertex index map, and a vertex(n, g) function
   //   Internal helper function
+  //   Note that numedges must be doubled for undirected source graphs
   template<typename Graph, typename VertexIndexMap>
   void
   assign(const Graph& g, const VertexIndexMap& vi,
@@ -1020,14 +1029,22 @@ class compressed_sparse_row_graph
   template<typename Graph, typename VertexIndexMap>
   void assign(const Graph& g, const VertexIndexMap& vi)
   {
-    assign(g, vi, num_vertices(g), num_edges(g));
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    assign(g, vi, num_vertices(g), numedges);
   }
 
   // Requires the above, plus a vertex_index map.
   template<typename Graph>
   void assign(const Graph& g)
   {
-    assign(g, get(vertex_index, g), num_vertices(g), num_edges(g));
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    assign(g, get(vertex_index, g), num_vertices(g), numedges);
   }
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
