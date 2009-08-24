@@ -32,6 +32,11 @@
 #define BOOST_GRID_GRAPH_TYPE \
   grid_graph<DimensionsT, VertexIndexT, EdgeIndexT>
 
+#define BOOST_GRID_GRAPH_TYPE_MEM typename BOOST_GRID_GRAPH_TYPE::
+
+#define BOOST_GRID_GRAPH_TYPE_TD(mem) \
+  typedef typename BOOST_GRID_GRAPH_TYPE::mem mem
+
 #define BOOST_GRID_GRAPH_TRAITS_T \
   typename graph_traits<BOOST_GRID_GRAPH_TYPE >
 
@@ -573,8 +578,13 @@ namespace boost {
     //================
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline std::pair<vertex_iterator, vertex_iterator> 
+    friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM vertex_iterator,
+                            BOOST_GRID_GRAPH_TYPE_MEM vertex_iterator> 
     vertices(const BOOST_GRID_GRAPH_TYPE& graph) {
+      BOOST_GRID_GRAPH_TYPE_TD(vertex_descriptor);
+      BOOST_GRID_GRAPH_TYPE_TD(vertices_size_type);
+      BOOST_GRID_GRAPH_TYPE_TD(vertex_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(vertex_index_iterator);
 
       typedef boost::function<vertex_descriptor (vertices_size_type)>
         vertex_function;
@@ -589,14 +599,14 @@ namespace boost {
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline vertices_size_type
+    friend inline  BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type
     num_vertices(const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.num_vertices());
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline vertex_descriptor
-    vertex(vertices_size_type vertex_index,
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor
+    vertex(BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type vertex_index,
            const BOOST_GRID_GRAPH_TYPE& graph) {
 
       return (graph.vertex_at(vertex_index));
@@ -607,9 +617,14 @@ namespace boost {
     //===============
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline std::pair<out_edge_iterator, out_edge_iterator>
-    out_edges(vertex_descriptor vertex,
+    friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM out_edge_iterator,
+                            BOOST_GRID_GRAPH_TYPE_MEM out_edge_iterator>
+    out_edges(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
               const BOOST_GRID_GRAPH_TYPE& graph) {
+      BOOST_GRID_GRAPH_TYPE_TD(edge_descriptor);
+      BOOST_GRID_GRAPH_TYPE_TD(degree_size_type);
+      BOOST_GRID_GRAPH_TYPE_TD(degree_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(out_edge_iterator);
 
       typedef boost::function<edge_descriptor (degree_size_type)>
         out_edge_at_function;
@@ -625,8 +640,10 @@ namespace boost {
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline degree_size_type out_degree
-    (vertex_descriptor vertex, const BOOST_GRID_GRAPH_TYPE& graph) {
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM degree_size_type
+    out_degree
+    (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
+     const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.out_degree(vertex));
     }
 
@@ -635,12 +652,14 @@ namespace boost {
     //===============
 
     template <BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend typename std::pair<adjacency_iterator, adjacency_iterator>
-    adjacent_vertices (vertex_descriptor vertex,
+    friend typename std::pair<BOOST_GRID_GRAPH_TYPE_MEM adjacency_iterator,
+                              BOOST_GRID_GRAPH_TYPE_MEM adjacency_iterator>
+    adjacent_vertices (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
                        const BOOST_GRID_GRAPH_TYPE& graph) {
 
-      out_edge_iterator out_edge_start, out_edge_end;
+      BOOST_GRID_GRAPH_TYPE_MEM out_edge_iterator out_edge_start, out_edge_end;
       tie(out_edge_start, out_edge_end) = out_edges(vertex, graph);
+      BOOST_GRID_GRAPH_TYPE_TD(adjacency_iterator);
 
       return (std::make_pair
               (adjacency_iterator(out_edge_start, &graph),
@@ -652,32 +671,37 @@ namespace boost {
     //==============
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline edges_size_type
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM edges_size_type
     num_edges(const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.num_edges());
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline edge_descriptor
-    edge_at(edges_size_type edge_index,
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor
+    edge_at(BOOST_GRID_GRAPH_TYPE_MEM edges_size_type edge_index,
             const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.edge_at(edge_index));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline std::pair<edge_iterator, edge_iterator>
+    friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM edge_iterator,
+                            BOOST_GRID_GRAPH_TYPE_MEM edge_iterator>
     edges(const BOOST_GRID_GRAPH_TYPE& graph) {
 
-      typedef boost::function<edge_descriptor (edges_size_type)>
+      typedef boost::function<BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor
+                               (BOOST_GRID_GRAPH_TYPE_MEM edges_size_type)>
         edge_at_function;
 
       edge_at_function transform_function =
         boost::bind(&BOOST_GRID_GRAPH_TYPE::edge_at, boost::cref(graph), _1);
 
       return (std::make_pair
-              (edge_iterator(edge_index_iterator(0), transform_function),
-               edge_iterator(edge_index_iterator(graph.num_edges()),
-                             transform_function)));
+              (BOOST_GRID_GRAPH_TYPE_MEM edge_iterator
+                (BOOST_GRID_GRAPH_TYPE_MEM edge_index_iterator(0),
+                transform_function),
+               BOOST_GRID_GRAPH_TYPE_MEM edge_iterator
+                (edge_index_iterator(graph.num_edges()),
+                 transform_function)));
     }
 
     //===================
@@ -685,9 +709,14 @@ namespace boost {
     //===================
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline std::pair<in_edge_iterator, in_edge_iterator>
-    in_edges(vertex_descriptor vertex,
+    friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM in_edge_iterator,
+                            BOOST_GRID_GRAPH_TYPE_MEM in_edge_iterator>
+    in_edges(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
              const BOOST_GRID_GRAPH_TYPE& graph) {
+      BOOST_GRID_GRAPH_TYPE_TD(edge_descriptor);
+      BOOST_GRID_GRAPH_TYPE_TD(degree_size_type);
+      BOOST_GRID_GRAPH_TYPE_TD(degree_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(in_edge_iterator);
 
       typedef boost::function<edge_descriptor (degree_size_type)>
         in_edge_at_function;
@@ -703,15 +732,15 @@ namespace boost {
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline degree_size_type
-    in_degree (vertex_descriptor vertex,
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM degree_size_type
+    in_degree (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
                const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.in_degree(vertex));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline degree_size_type
-    degree (vertex_descriptor vertex,
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM degree_size_type
+    degree (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
             const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.out_degree(vertex) * 2);
     }
@@ -721,20 +750,21 @@ namespace boost {
     //==================
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend std::pair<edge_descriptor, bool>
-    edge (vertex_descriptor source_vertex,
-          vertex_descriptor destination_vertex,
+    friend std::pair<BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor, bool>
+    edge (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor source_vertex,
+          BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor destination_vertex,
           const BOOST_GRID_GRAPH_TYPE& graph) {
 
-      std::pair<edge_descriptor, bool> edge_exists =
+      std::pair<BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor, bool> edge_exists =
         std::make_pair(std::make_pair(source_vertex, destination_vertex), false);
 
       for (std::size_t dimension_index = 0;
            dimension_index < Dimensions;
            ++dimension_index) {
 
-        vertices_size_type dim_difference = 0;
-        vertices_size_type source_dim = source_vertex[dimension_index],
+        BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type dim_difference = 0;
+        BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type
+          source_dim = source_vertex[dimension_index],
           dest_dim = destination_vertex[dimension_index];
 
         dim_difference = (source_dim > dest_dim) ?
@@ -781,37 +811,43 @@ namespace boost {
     //=============================
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline vertices_size_type
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type
     get(vertex_index_t,
         const BOOST_GRID_GRAPH_TYPE& graph,
-        vertex_descriptor vertex) {
+        BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex) {
       return (graph.index_of(vertex));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline edges_size_type
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM edges_size_type
     get(edge_index_t,
         const BOOST_GRID_GRAPH_TYPE& graph,
-        edge_descriptor edge) {
+        BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor edge) {
       return (graph.index_of(edge));
     }
 
     template <BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline grid_graph_index_map<BOOST_GRID_GRAPH_TYPE,
-                                       vertex_descriptor,
-                                       vertices_size_type>
+    friend inline grid_graph_index_map<
+                    BOOST_GRID_GRAPH_TYPE,
+                    BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor,
+                    BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type>
     get(vertex_index_t, const BOOST_GRID_GRAPH_TYPE& graph) {
-      return (grid_graph_index_map<BOOST_GRID_GRAPH_TYPE,
-              vertex_descriptor, vertices_size_type>(graph));
+      return (grid_graph_index_map<
+                BOOST_GRID_GRAPH_TYPE,
+                BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor,
+                BOOST_GRID_GRAPH_TYPE_MEM vertices_size_type>(graph));
     }
 
     template <BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
-    friend inline grid_graph_index_map<BOOST_GRID_GRAPH_TYPE,
-                                       edge_descriptor,
-                                       edges_size_type>
+    friend inline grid_graph_index_map<
+                    BOOST_GRID_GRAPH_TYPE,
+                    BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor,
+                    BOOST_GRID_GRAPH_TYPE_MEM edges_size_type>
     get(edge_index_t, const BOOST_GRID_GRAPH_TYPE& graph) {
-      return (grid_graph_index_map<BOOST_GRID_GRAPH_TYPE,
-              edge_descriptor, edges_size_type>(graph));
+      return (grid_graph_index_map<
+                BOOST_GRID_GRAPH_TYPE,
+                BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor,
+                BOOST_GRID_GRAPH_TYPE_MEM edges_size_type>(graph));
     }                                       
 
     template<typename Graph,
@@ -834,6 +870,8 @@ namespace boost {
 } // namespace boost
 
 #undef BOOST_GRID_GRAPH_TYPE
+#undef BOOST_GRID_GRAPH_TYPE_TD
+#undef BOOST_GRID_GRAPH_TYPE_MEM
 #undef BOOST_GRID_GRAPH_TEMPLATE_PARAMS
 #undef BOOST_GRID_GRAPH_TRAITS_T
 
