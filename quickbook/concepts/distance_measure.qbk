@@ -5,6 +5,8 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
+[/ TODO: Redefine this as a function taking some distance value and a graph. /]
+
 [section Distance Measure]
 The [DistanceMeasure] concept defines requirements for function objects
 that are used in computations of distances.

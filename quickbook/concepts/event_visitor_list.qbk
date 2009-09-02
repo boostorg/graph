@@ -47,14 +47,14 @@ the EventVisitorList concept.
 
     make_pair(open_paren(), close_paren());
 
-Next we want to pass this list into [[depth_first_search], but it is
+Next we want to pass this list into [depth_first_search], but it is
 expecting a [DFSVisitor], not a [EventVisitorList]. We therefore use the [[dfs_visitor]
 adaptor which turns an [EventVisitor] list into a [DFSVisitor]. Like all of the visitor
-adaptors, [dfs_visitor] has a creation function called [[make_dfs_visitor].
+adaptors, [dfs_visitor] has a creation function called [make_dfs_visitor].
 
     make_dfs_visitor((open_paren(), close_paren()));
 
-Now we can pass the resulting visitor object into [[depth_first_search] as follows.
+Now we can pass the resulting visitor object into [depth_first_search] as follows.
 
     depth_first_search(
         G,

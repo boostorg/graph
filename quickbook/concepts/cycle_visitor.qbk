@@ -18,36 +18,26 @@ algorithms and are invoked when a cycle is found within a graph.
     [[Name] [Expression] [Result Type] [Description]]
     [
         [Visit Cycle]
-        [`vis.cycle(vs,g)`]
+        [`vis.cycle(c,g)`]
         [`void`]
         [
             The `vis.cycle()` member function of the visitor is invoked when a
-            cycle is identified in the graph `g`. The vertices in `vs` are arranged
+            cycle is identified in the graph `g`. The vertices in `c` are arranged
             such that first vertex is connected to the second, and that is connected
             to the third, etc. The `back()` vertex is connected to the `front()`
-            to form a cycle.
+            to form the reported cycle.
 
             *Requirements:* `g` is an object whose type `G` is a model of the
             [Graph] concept.
 
-            *Requirements:* `vs` is an object whose type `VertexSet` is a model
-            of the [SgiContainer] concept. The `value_type` of `VS` must be the
-            the same as the `vertex_descriptor` of `G`.
+            *Requirements:* `c` is an object whose type `C` is a model of the
+            [SgiContainer] concept. The `value_type` of `C` must be the same type
+            as the `vertex_descriptor` of `G`.
         ]
     ]
 ]
 
-[heading C++0x]
-This concept is defined as:
-
-    concept CliqueVisitor<typename T>
-    {
-        Graph graph_type;
-
-        template<Container VertexSet>
-            requires SameType<VertexSet::value_type, graph_type::vertex_descriptor>
-        void T::cycle(const VertexSet&, graph_type&);
-    };
-
+[heading Models]
+[cycle_visitor], [min_max_cycle_visitor]
 
 [endsect]

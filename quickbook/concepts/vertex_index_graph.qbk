@@ -99,7 +99,7 @@ this concept must also provide functions that allow them to re-index the vertice
     [
         [Renumber Vertex Indices]
         [`renumber_vertex_indices(g)`]
-        []
+        [`void`]
         [
             Renumbers all vertices in the graph such that each vertex is in the
             range \[0, `num_vertices(g)`).

@@ -223,7 +223,7 @@ Here, we use a standard front insertion iterator to prepend each target to the m
 order. The `vertex_index_map()` named parameter is also required for the implementation.
 After computation, we simply print the ordering to standard output.
 
-[h4 parallel Compilation]
+[h4 Parallel Compilation]
 What if we have multiple processors available? Surely there is a way to determine if
 we can compile several independent files simultaneously, thereby reducing the overall
 build time. In fact, there is. Consider rephrasing the question to "what is the earliest

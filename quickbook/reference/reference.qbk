@@ -11,20 +11,26 @@
 [include undirected_graph.qbk]
 [include directed_graph.qbk]
 [include adjacency_list.qbk]
+[include adjacency_matrix.qbk]
 [include edge_list.qbk]
 [endsect]
 
 [section Traits Classes]
-[include exterior_vertex_property.qbk]
+[/
+ / [include graph_traits.qbk]
+ / [include exterior_vertex_property.qbk]
+/]
 [endsect]
 
-[section Event Visitor List Adaptors]
+[section Visitor Adaptors]
 [/
 [include bfs_visitor.qbk]
 [include dfs_visitor.qbk]
 [include dijkstra_visitor.qbk]
 [include bellman_visitor.qbk]
 [include astar_visitor.qbk]
+[include clique_visitor.qbk]
+[inblude cycle_visitor.qbk]
 /]
 [endsect]
 

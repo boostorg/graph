@@ -9,26 +9,26 @@
 This concept defines the interface for single-event visitors. An EventVisitor has an
 /apply/ member function (`operator()`) which is invoked within the graph algorithm
 at the event-point specified by the `event_filter` typedef within the type modeling
-the EventVisitor concept. EventVisitors can be combined into an [EventVistorList].
+the EventVisitor concept. EventVisitors can be combined into an [EventVisitorList].
 
 The following is the list of event tags that can be invoked in Boost.Graph algorithms.
 Each tag corresponds to a member function of the visitor for an algorithm. For example,
-the [BFSVisitor] of [[breadth_first_search] has a `cycle_edge()` member function.
-The corresponding tag is `on_cycle_edge`. The first argument in the event visitor's
-`operator()` must be either an edge or vertex depending on the event tag.
+the [BFSVisitor] has a `cycle_edge()` member function. The corresponding tag is
+`on_cycle_edge`. The first argument in the event visitor's `operator()` must be
+either an edge or vertex depending on the event tag.
 
 [h4 Event Tags]
 [table
     [[Type] [Description]]
     [
-        [on_initialize_vertex]
+        [`on_initialize_vertex`]
         [
             An event tag corresponding to the initialization of a vertex. The parameter
             type associated with this event is `vertex_descriptor`.
         ]
     ]
     [
-        [on_start_vertex]
+        [`on_start_vertex`]
         [
             In algorithms that without explicit starting points, this event tag
             corresponds to the selection of a starting vertex. The parameter
@@ -36,7 +36,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_discover_vertex]
+        [`on_discover_vertex`]
         [
             An event tag that corresponds to a vertex that is being used for
             the first time. The parameter type associated with this event is
@@ -44,7 +44,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_examine_edge]
+        [`on_examine_edge`]
         [
             An event tag that corresponds to the examination of edges for recently
             discovered vertices. The parameter type associated with this event
@@ -52,7 +52,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_tree_edge]
+        [`on_tree_edge`]
         [
             For algorithms whose iterations of a vertex set implicitly define a
             tree (such as [[breadth_first_search] or [[depth_first_search]),
@@ -62,7 +62,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_cycle_edge]
+        [`on_cycle_edge`]
         [
             For algorithms capable of detecting cycles in graphs such as
             [[depth_first_search], this event tag is associated with discovery
@@ -71,7 +71,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_forward_or_cross_edge]
+        [`on_forward_or_cross_edge`]
         [
             Forward and cross edges refer to types of edges that can be found by
             different types of searches on graph (e.g., [[depth_first_search]).
@@ -81,7 +81,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_back_edge]
+        [`on_back_edge`]
         [
             Back edges refer to types of edges that can be found by different types
             of searches on a graph (e.g., [[breadth_first_search] and
@@ -91,7 +91,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_finish_vertex]
+        [`on_finish_vertex`]
         [
             The inverse event of `on_discover_vertex`, this event tag corresponds to
             the completion of an iteration of an algorithm that is operating on a
@@ -99,7 +99,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_edge_relaxed]
+        [`on_edge_relaxed`]
         [
             For algorithms implementing edge relaxation (e.g.,
             [[dijkstra_shortest_paths]), this event corresponds to the case
@@ -108,7 +108,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_edge_not_relaxed]
+        [`on_edge_not_relaxed`]
         [
             For algorithms implementing edge relaxation (e.g.,
             [[dijkstra_shortest_paths]), this event corresponds to the case
@@ -117,7 +117,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_edge_minimized]
+        [`on_edge_minimized`]
         [
             For algorithms implementing edge minimization (e.g.,
             [[bellman_ford_shortest_paths]), this event corresponds to the case
@@ -126,7 +126,7 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
         ]
     ]
     [
-        [on_edge_not_minimized]
+        [`on_edge_not_minimized`]
         [
             For algorithms implementing edge minimization (e.g.,
             [[bellman_ford_shortest_paths]), this event corresponds to the case
@@ -166,10 +166,10 @@ The corresponding tag is `on_cycle_edge`. The first argument in the event visito
 ]
 
 [h4 Models]
-* [[predecessor_recorder]
-* [[distance_recorder]
-* [[time_stamper]
-* [[property_writer]
-* [[null_visitor]
+* [predecessor_recorder]
+* [distance_recorder]
+* [time_stamper]
+* [property_writer]
+* [null_visitor]
 
 [endsect]

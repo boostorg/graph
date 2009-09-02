@@ -10,8 +10,7 @@ The Descriptor concept describes requirements common to vertex and edge descript
 all graph types.
 
 [heading Refinement Of]
-[SgiDefaultConstructible], [SgiCopyConstructible], [SgiAssignable], [SgiEqualityComparable],
-and [SgiLessThanComparable].
+[StdRegular] and [SgiLessThanComparable].
 
 [heading Associated Types]
 There are no associated types of a Descriptor.

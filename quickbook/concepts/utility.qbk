@@ -10,8 +10,14 @@ This section describes utlity graph concepts - those that do not necessarily
 pertain explicitly to graphs or visitors for algorithms.
 
 [include descriptor.qbk]
-[include numeric_value.qbk]
-[include degree_measure.qbk]
-[include distance_measure.qbk]
+
+[/ TODO: These concepts need some serious revisions, which means that the
+ algorithms requiring them need to be revised so that they don't need them or
+ use them in modified ways.
+]
+
+[/ [include numeric_value.qbk] ]
+[/ [include degree_measure.qbk] ]
+[/ [include distance_measure.qbk] ]
 
 [endsect]

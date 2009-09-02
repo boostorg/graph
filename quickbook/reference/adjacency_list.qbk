@@ -7,17 +7,17 @@
 
 [section Adjacency List]
 
-[warning
-This reference is missing documentation for a number of associated types and
-methods.
-]
+ template <
+     typename OutEdgeList = vecS,
+     typename VertexList = vecS,
+     typename Directed = directedS,
+     typename VertexProperty = no_property,
+     typename EdgeProperty = no_property,
+     typename GraphProperty = no_property,
+     typename EdgeList = listS>
+ class adjacency_list;
 
-[h4 Missing or Incorrect Documentation]
-* `edge_iterator`
-* `clear_in_edges()`
-* `clear_out_edges()`
-
-The adjacency_list class implements a generalized adjacency list graph structure.
+The `adjacency_list` class implements a generalized adjacency list graph structure.
 The template parameters provide many configuration options so that you can pick a
 version of the class that best meets your needs. An adjacency-list is basically a
 two-dimensional structure, where each element of the first dimension represents a
@@ -38,9 +38,14 @@ bidirectional). The bidirectional graph takes up twice the space (per edge) of a
 directed graph since each edge will appear in both an out-edge and in-edge list.
 Figure 2 shows an adjacency list representation of an undirected graph.
 
-A tutorial on how to use the adjacency_list class is in Section Using adjacency_list.
+A tutorial on how to use the [adjacency_list] class is in Section
+[link boost_graph.guide.the_adjacnecy_list The Adjacency List].
 
-[h3 Template Parameters]
+[heading Where Defined]
+
+`boost/graph/adjacency_list.hpp`
+
+[heading Template Parameters]
 [table
     [[Parameter] [Description] [Default]]
     [
@@ -69,17 +74,17 @@ A tutorial on how to use the adjacency_list class is in Section Using adjacency_
         [`directedS`]
     ]
     [
-        [`VertexProperties`]
+        [`VertexProperty`]
         [Specifies internal properties for vertices.]
         [`no_property`]
     ]
     [
-        [`EdgeProperties`]
+        [`EdgeProperty`]
         [Specifies internal properties for edges.]
         [`no_property`]
     ]
     [
-        [`GraphProperties`]
+        [`GraphProperty`]
         [Specifies internal properties for the graph object.]
         [`no_property`]
     ]
@@ -93,38 +98,469 @@ A tutorial on how to use the adjacency_list class is in Section Using adjacency_
     ]
 ]
 
-[h4 Model of]
-VertexAndEdgeListGraph, MutablePropertyGraph, CopyConstructible, Assignable,
-and Serializable.
+[heading Model of]
+All adjacency lists model these concepts: [VertexAndEdgeListGraph], [IncidenceGraph]
+[MutablePropertyGraph], [SgiCopyConstructible], and [SgiAssignable]. If the template
+parameter `Directed` is given as `bidirectionalS`, then the adjacency graph models
+the [BidirectionalGraph] concept as well.
 
-[h4 Where Defined]
+[heading Associated Types]
+[table
+    [[Type] [Description]]
+    [
+        [`graph_traits<adjancency_list>::vertex_descriptor`]
+        [The type of vertex descriptors associated with the `adjacency_list`.]
+    ]
+    [
+        [`graph_traits<adjancency_list>::edge_descriptor`]
+        [The type of edge descriptors associated with the `adjacency_list`.]
+    ]
+    [
+        [`graph_traits<adjancency_list>::vertex_iterator`]
+        [
+            The type for iterators returned by `vertices()`. The concept modeled by this
+            type varies with the type of the `VertexList` parameter. If the `VertexList`
+            selector is `vecS`, then this type models the [SgiRandomAccessIterator] concept.
+            In all other cases, it is a model of [SgiBidirectionalIterator].
+        ]
+    ]
+    [
+        [`graph_traits<adjancency_list>::out_edge_iterator`]
+        [
+            The type for iterators returned by `edges()`. The concept modeled by this type
+            depends on the `OutEdgeList` parameter. If the selector is `vecS` then the
+            iterator is a model of [SgiRandomAccessIterator]. If the selector is `slistS`
+            then it is a model of [SgiForwardIterator]. Otherwise, the iterator models
+            [SgiBidirectionalIterator].
+        ]
+    ]
+    [
+        [`graph_traits<adjancency_list>::in_edge_iterator`]
+        [
+            This type is only valid if the `Directed` parameter is given as `bidirectionalS`.
+            The concepts modeled by this type are the same as the `out_edge_iterator`.
+        ]
+    ]
+    [
+        [`graph_traits<adjancency_list>::adjacency_iterator`]
+        [
+            The type for iterators returned by `adjacent_vertices()`. The concepts modeled
+            by this type are the same as `out_edge_iterator`. Dereferencing these types,
+            however, will result in vertex descriptors rather than edge descriptors.
+        ]
+    ]
+    [
+        [`graph_traits<adjancency_list>::inv_adjacency_iterator`]
+        [
+            The type for iterators returned by `inv_adjacent_vertices()`. The concepts
+            modeled by this type are identical to hose of the `adjacency_iterator`.
+        ]
+    ]
+    [
+        [`graph_traits<adjancency_list>::directed_category`]
+        [
+            Provides inforamtion about whether the graph is undirected (`undirected_tag`),
+            directed (`directed_tag`), or bidirectional (`bidirectional_tag`).
+        ]
+    ]
+    [
+        [`graph_traits<adjacency_list>::edge_parallel_category`]
+        [
+            This describes whether the class allows the insertion of parallel edges; those
+            with the same source and target. When `EdgeList` is selected as `setS` or
+            `hash_setS`, this type is set to `disallow_parallel_edge_tag`. Otherwise it
+            is `allow_parallel_edge_tag`.
+        ]
+    ]
+    [
+        [`graph_traits<adjacency_list>::vertices_size_type`]
+        [The type used for dealing with the number of vertices in the graph. ]
+    ]
+    [
+        [`graph_traits<adjacency_list>::edge_size_type`]
+        [The type used for dealing with the number of edges in the graph. ]
+    ]
+    [
+        [`graph_traits<adjacency_list>::degree_size_type`]
+        [The type used for dealing with the number of edges incident to a vertex in the graph. ]
+    ]
+    [
+        [
+            `property_map<adjacency_list, Property>::type`
 
-`boost/graph/adjacency_list.hpp`
+            `property_map<adjacency_list, Property>::const_type`
+        ]
+        [
+            The property map type for vertex or edge properties in the graph. The specific
+            property is specified by the `Property` template argument, and must match one of
+            the properties specified in the `VertexProperties` or `EdgeProperties` for the
+            graph.
+        ]
+    ]
+    [
+        [`graph_property<adjacency_list, Property>::type`]
+        [
+            The value type ofor the graph property specified by the `Property` parameter.
+        ]
+    ]
+    [
+        [`adjacency_list::out_edge_list_selector`]
+        [The instantiated type of the `OutEdgeList` template parameter.]
+    ]
+    [
+        [`adjacency_list::vertex_list_selector`]
+        [The instantiated type of the `VertexList` template parameter.]
+    ]
+    [
+        [`adjacency_list::directed_selector`]
+        [The instantiated type of the `Directed` template parameter.]
+    ]
+    [
+        [`adjacency_list::edge_list_selector`]
+        [The instantiated type of the `EdgeList` template parameter.]
+    ]
+]
 
-The serialization functionality is in `boost/graph/adj_list_serialize.hpp`.
+[heading Member Functions]
+[table
+    [[Member Function] [Description]]
+    [
+        [`adjacency_list(const GraphProperty& p = GraphProperty())`]
+        [
+            The default constructor creates an empty graph with no vertices or edges,
+            optionally assigning the given graph properties `p`.
+        ]
+    ]
+    [
+        [`adjacency_list(const adjacency_list& x)`]
+        [ ]
+    ]
+    [
+        [
+            ``
+            adjacency_list(vertices_size_type n,
+                           const GraphProperty& p = GraphProperty())
+            ``
+        ]
+        [ ]
+    ]
+    [
+        [
+            ``
+            template <typename Iter>
+            adjacency_list(Iter f, Iter l,
+                           vertices_size_type n, edges_size_type m = 0,
+                           const GraphProperty& p = GraphProperty())
+            ``
+        ]
+        [ ]
+    ]
+    [
+        [
+            ``
+            template <typename EdgeIter, typename PropIter>
+            adjacency_list(EdgeIter f, EgeIter l, PropIter p,
+                           vertices_size_type n, edges_size_type m = 0,
+                           const GraphProperty& p = GraphProperty())
+            ``
+        ]
+        [ ]
+    ]
+    [
+        [`adjacency_list& operator=(adjacency_list const& x)`]
+        [ ]
+    ]
+    [
+        [`void swap(adjacency_list& x)`]
+        [ ]
+    ]
+    [
+        [`void clear()`]
+        [ ]
+    ]
+]
 
-[h3 Vertex and Edge Properties]
+[heading Non-Member Observers]
+[table
+    [[Member Function] [Description]]
+    [
+        [
+            ``
+            vertices_size_type
+            num_vertices(const adjacency_list& g)
+            ``
+        ]
+        [Return the number of vertices in `g`.]
+    ]
+    [
+        [
+            ``
+            edges_size_type
+            num_edges(const adjacency_list& g)
+            ``
+        ]
+        [Return the edges in vertices in `g`.]
+    ]
+    [
+        [
+            ``
+            vertex_descriptor
+            vertex(vertices_size_type n, const adjacency_list& g)
+            ``
+        ]
+        [Return a descriptor to the `n`th vertex in `g`.]
+    ]
+    [
+        [
+            ``
+            pair<edge_descriptor, bool>
+            edge(vertex_descriptor u, vertex_descriptor v,
+                 const adjacency_list& g)
+            ``
+        ]
+        [
+            Returns a pair containing a descriptor for the edge connecting vertices
+            `u` and `v` in `g`, and a boolean value that indicates whether the
+            edge exists (`true`) or not (`false`).
+        ]
+    ]
+    [
+        [
+            ``
+            vertex_descriptor
+            source(edge_descriptor e, const adjacency_list& g)
+            ``
+        ]
+        [Return the source vertex of the edge `e` in `g`.]
+    ]
+    [
+        [
+            ``
+            vertex_descriptor
+            target(edge_descriptor e, const adjacency_list& g)
+            ``
+        ]
+        [Return the target vertex of the edge `e` in `g`.]
+    ]
+    [
+        [
+            ``
+            pair<vertex_iterator, vertex_iterator>
+            vertices(const adjacency_list& g)
+            ``
+        ]
+        [Returns an iterator range to the vertex set of `g`.]
+    ]
+    [
+        [
+            ``
+            pair<edge_iterator, edge_iterator>
+            edges(const adjacency_list& g)
+            ``
+        ]
+        [Returns an iterator range to the edge set of `g`.]
+    ]
+    [
+        [
+            ``
+            pair<out_edge_iterator, out_edge_iterator>
+            out_edges(vertex_descriptor v, const adjacency_list& g)
+            ``
+        ]
+        [
+            Returns an iterator range to the out-edge set of the vertex `v` in `g`.
+            If the graph is undirected, the iterator range provides access to all
+            incident edges.
+        ]
+    ]
+    [
+        [
+            ``
+            pair<in_edge_iterator, in_edge_iterator>
+            in_edges(vertex_descriptor v, const adjacency_list& g)
+            ``
+        ]
+        [
+            Returns an iterator range to the in-edge set of the vertex `v` in `g`.
+            If the graph is undirected, this operation is equivalent to `out_edges`.
+        ]
+    ]
+    [
+        [
+            ``
+            pair<adjacency_iterator, adjacency_iterator>
+            adjacent_vertices(vertex_descriptor v, const adjacency_list& g)
+            ``
+        ]
+        [Returns an iterator range providing access to the adjacent vertices of `v` in `g`.]
+    ]
+    [
+        [
+            ``
+            degree_size_type
+            out_degree(vertex_descriptor v, const adjacency_list& g)``
+        ]
+        [
+            Return the out-degree of vertex `v` in `g`.
+
+            *Complexity:* /O(|V|)/
+        ]
+    ]
+    [
+        [
+            ``
+            degree_size_type
+            in_degree(vertex_descriptor v, const adjacency_list& g)
+            ``
+        ]
+        [
+            Return the in-degree of vertex `v` in `g`.
+
+            *Complexity:* /O(|V|)/
+        ]
+    ]
+]
+
+
+[heading Non-Member Mutators]
+[table
+    [[Member Function] [Description]]
+    [
+        [
+            ``
+            pair<edge_descriptor, bool>
+            add_edge(vertex_descriptor u, vertex_descriptor v,
+                     adjacency_list& g)
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            pair<edge_descriptor, bool>
+            add_edge(vertex_descriptor u, vertex_descriptor v,
+                     EdgeProperty const& p, adjacency_list& g)
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            void remove_edge(vertex_descriptor u, vertex_descriptor v,
+                             adjacency_list& g)
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            void remove_edge(edge_descriptor v, adjacency_list& g)
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            void clear_vertex(edge_descriptor v, adjacency_list& g)
+            ``
+        ]
+        []
+    ]
+]
+
+[heading Property Accessors]
+[table
+    [[Member Function] [Description]]
+    [
+        [
+            ``
+            template <typename Property>
+            typename property_map<adjancecy_list, Property>::type
+            get(Property, adjaceny_list& g);
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            template <typename Property>
+            typename property_map<adjancecy_list, Property>::const_type
+            get(Property, adjaceny_list const& g);
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            template <typename Property, typename X>
+            typename property_traits<
+                property_map<adjancecy_list, Property>::const_type
+            >::value_type
+            get(Property, adjaceny_list const& g, X x);
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            template <typename Property, typename X, typename Value>
+            void put(Property, X, adjaceny_list const& g,
+                     X x, const Value&);
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            template <typename Property>
+            typename graph_property<adjacency_list, Property>::type
+            void get_property(adjaceny_list const& g, Property);
+            ``
+        ]
+        []
+    ]
+    [
+        [
+            ``
+            template <typename Property, typename Value>
+            void set_property(adjaceny_list const& g, Property,
+                              const Value&);
+            ``
+        ]
+        []
+    ]
+]
+
+[heading Vertex and Edge Properties]
 Properties such as color, distance, weight, and user-defined properties can be
 attached to the vertices and edges of the graph using properties. The property
 values can be read from and written to via the property maps provided by the
-graph. The property maps are obtained via the get(property, g) function. How
+graph. The property maps are obtained via the `get(property, g)` function. How
 to use properties is described in Section Internal Properties . The property
 maps are objects that implement the interface defined in Section Property Map
 Concepts or may be bundled properties, which have a more succinct syntax. The
-types of all property values must be Copy Constructible, Assignable, and
-Default Constructible. The property maps obtained from the adjacency_list class
-are models of the Lvalue Property Map concept. If the adjacency_list is const,
-then the property map is constant, otherwise the property map is  mutable.
+types of all property values must be [SgiCopyConstructible], [SgiAssignable], and
+[SgiDefaultConstructible]. The property maps obtained from the adjacency_list class
+are models of the [LvaluePropertyMap] concept. If the `adjacency_list` is `const`,
+then the property map is constant, otherwise the property map is mutable.
 
 If the VertexList of the graph is vecS, then the graph has a builtin vertex
 indices accessed via the property map for the vertex_index_t property. The
-indices fall in the range [0, num_vertices(g)) and are contiguous. When a
+indices fall in the range \[0, num_vertices(g)) and are contiguous. When a
 vertex is removed the indices are adjusted so that they retain these
 properties. Some care must be taken when using these indices to access exterior
  roperty storage. The property map for vertex index is a model of Readable
 Property Map.
 
-[h3 Iterator and Descriptor Stability/Invalidation]
+[heading Iterator and Descriptor Stability/Invalidation]
 Some care must be taken when changing the structure of a graph (via adding or
 removing edges). Depending on the type of adjacency_list and on the operation,
 some of the iterator or descriptor objects that point into the graph may become
@@ -228,9 +664,7 @@ operation.
     [[Function] [Vertex Descriptor] [Edge Descriptor] [Vertex Iterator] [Edge Iterator] [Adjacency Iterator]]
     [
         [`add_edge()`]
-        [Valid]
-        [Valid]
-        [Valid]
+        [Valid] [Valid] [Valid]
         [
             OEL = `vecS` &&
 
@@ -249,162 +683,21 @@ operation.
 
             `clear_vertex()`
         ]
-        [Valid]
-        [Valid]
-        [Valid]
+        [Valid] [Valid] [Valid]
         [
             OEL = `vecS` &&
 
-            Directed = `directedS`]
+            Directed = `directedS`
+        ]
         [OEL = `vecS`]
     ]
     [
         [`add_vertex()`]
-        [Valid]
-        [Valid]
-        [Valid]
-        [Valid]
-        [Valid]
+        [Valid] [Valid] [Valid] [Valid] [Valid]
     ]
     [
         [`remove_vertex()`]
-        [VL = `vecS`]
-        [VL = `vecS`]
-        [VL = `vecS`]
-        [VL = `vecS`]
-        [VL = `vecS`]
-    ]
-]
-
-[h3 Associated Types]
-[table
-    [[Type] [Description]]
-    [
-        [`graph_traits<adjancency_list>::vertex_descriptor`]
-        [
-            The type for the vertex descriptors associated with the `adjacency_list`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::edge_descriptor`]
-        [
-            The type for the edge descriptors associated with the `adjacency_list`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::vertex_iterator`]
-        [
-            The type for iterators returned by `vertices()`. The concept modeled by this
-            type varies with the type of the `VertexList` parameter. If the `VertexList`
-            selector is `vecS`, then this type models the `RandomAccessIterator` concept.
-            In all other cases, it is a model of `BidirectionalIterator`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::out_edge_iterator`]
-        [
-            The type for iterators returned by `edges()`. The concept modeled by this type
-            depends on the `OutEdgeList` parameter. If the selector is `vecS` then the
-            iterator is a model of `RandomAccessIterator`. If the selector is `slistS`
-            then it is a model of `ForwardIterator`. Otherwise, the iterator models
-            `BidirectionalIterator`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::in_edge_iterator`]
-        [
-            This type is only valid if the `Directed` parameter is given as `bidirectionalS`.
-            The concepts modeled by this type are the same as the `out_edge_iterator`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::adjacency_iterator`]
-        [
-            The type for iterators returned by `adjacent_vertices()`. The concepts modeled
-            by this type are the same as `out_edge_iterator`. Dereferencing these types,
-            however, will result in vertex descriptors rather than edge descriptors.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::inv_adjacency_iterator`]
-        [
-            The type for iterators returned by `inv_adjacent_vertices()`. The concepts
-            modeled by this type are identical to hose of the `adjacency_iterator`.
-        ]
-    ]
-    [
-        [`graph_traits<adjancency_list>::directed_category`]
-        [
-            Provides inforamtion about whether the graph is undirected (`undirected_tag`),
-            directed (`directed_tag`), or bidirectional (`bidirectional_tag`).
-        ]
-    ]
-    [
-        [`graph_traits<adjacency_list>::edge_parallel_category`]
-        [
-            This describes whether the class allows the insertion of parallel edges; those
-            with the same source and target. When `EdgeList` is selected as `setS` or
-            `hash_setS`, this type is set to `disallow_parallel_edge_tag`. Otherwise it
-            is `allow_parallel_edge_tag`.
-        ]
-    ]
-    [
-        [`graph_traits<adjacency_list>::vertices_size_type`]
-        [The type used for dealing with the number of vertices in the graph. ]
-    ]
-    [
-        [`graph_traits<adjacency_list>::edge_size_type`]
-        [The type used for dealing with the number of edges in the graph. ]
-    ]
-    [
-        [`graph_traits<adjacency_list>::degree_size_type`]
-        [The type used for dealing with the number of edges incident to a vertex in the graph. ]
-    ]
-    [
-        [
-            `property_map<adjacency_list, Property>::type`
-
-            `property_map<adjacency_list, Property>::const_type`
-        ]
-        [
-            The property map type for vertex or edge properties in the graph. The specific
-            property is specified by the `Property` template argument, and must match one of
-            the properties specified in the `VertexProperties` or `EdgeProperties` for the
-            graph.
-        ]
-    ]
-    [
-        [`graph_property<adjacency_list, Property>::type`]
-        [
-            The value type ofor the graph property specified by the `Property` parameter.
-        ]
-    ]
-    [
-        [`adjacency_list::out_edge_list_selector`]
-        [The instantiated type of the `OutEdgeList` template parameter.]
-    ]
-    [
-        [`adjacency_list::vertex_list_selector`]
-        [The instantiated type of the `VertexList` template parameter.]
-    ]
-    [
-        [`adjacency_list::directed_selector`]
-        [The instantiated type of the `Directed` template parameter.]
-    ]
-    [
-        [`adjacency_list::edge_list_selector`]
-        [The instantiated type of the `EdgeList` template parameter.]
-    ]
-]
-
-[h3 Member Functions]
-[table
-    [[Member Function] [Description]]
-    [
-        [`adjacency_list(const GraphProperties& = GraphProperties()`]
-        [
-            The default constructor creates an empty graph with no vertices or edges.
-        ]
+        [VL = `vecS`] [VL = `vecS`] [VL = `vecS`] [VL = `vecS`] [VL = `vecS`]
     ]
 ]
 

@@ -11,7 +11,7 @@ The IncidenceGraph concept provides an interface for efficient access to the out
 the graph.
 
 [h4 Refinement Of]
-[BootGraph]
+[BoostGraph]
 
 [h4 Associated Types]
 [table

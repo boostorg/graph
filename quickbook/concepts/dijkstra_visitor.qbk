@@ -82,6 +82,6 @@ search.
 ]
 
 [h4 Models]
-* [dijkstra_visitor]
+* [boost_dijkstra_visitor]
 
 [endsect]

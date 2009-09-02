@@ -94,6 +94,6 @@ can define a class with the DFS Visitor interface and pass and object of the cla
 ]
 
 [h4 Models]
-* [boost_dfs_visitor]
+* [dfs_visitor]
 
 [endsect]

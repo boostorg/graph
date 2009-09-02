@@ -8,10 +8,10 @@
 [section Introduction]
 Graphs are mathematical abstractions that are useful for solving many types of
 problems in computer science. Consequently, these abstractions must also be
-represented in computer programs. A standardized generic interface for
-traversing graphs is of utmost importance to encourage reuse of graph algorithms
-and data structures. Part of the Boost Graph Library is a generic interface that
-allows access to a graph's structure, but hides the details of the implementation.
+represented in computer programs. A standardized generic interface for traversing
+graphs is of utmost importance to encourage reuse of graph algorithms and data
+structures. Part of the Boost Graph Library is a generic interface that allows
+access to a graph's structure, but hides the details of the implementation.
 This is an "open" interface in the sense that any graph library that implements
 this interface will be interoperable with the BGL generic algorithms and with
 other algorithms that also use this interface. The BGL provides some general

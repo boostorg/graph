@@ -105,27 +105,29 @@ The notation used in the table is as follows.
 [include mutable_property_graph.qbk]
 
 [heading Pseudo-Concepts]
-The concepts above describe the type and functional requirements of graphs. However,
-these do not directly common concepts such as "directed graph" or "multigraph". As
-such, there are a number of pseudo-concepts with which we can also describe graph objects.
+The concepts above describe the syntactic and semantic requirements of graphs
+types. However, these do not directly address common graph notions such as
+"directed" graphs or "multigraphs". As such, there are a number of
+pseudo-concepts with which we can also describe graph objects.
 
 [heading Directed and Undirected Graphs]
-The interface that Boost.Graph provides for accessing and manipulating an undirected
-graph is the same as the interface for directed graphs described in the following
-sections, however there are some differences in the behaviour and semantics. For example,
-in a directed graph we can talk about out-edges and in-edges of a vertex. In an
-undirected graph there is no "in" and "out", there are just edges incident to a vertex.
-Nevertheless, in Boost.Graph we still use the `out_edges()` function (or `in_edges()`)
-to access the incident edges in an undirected graph. Similarly, an undirected edge has
-no "source" and "target" but merely an unordered pair of vertices, but we still use
-`source()` and `target()` to access these vertices. The reason Boost.Graph does not
-provide a separate interface for undirected graphs is that many algorithms on directed
-graphs also work on undirected graphs, and it would be inconvenient to have to duplicate
-the algorithms just because of an interface difference. When using undirected graphs
-just mentally disregard the directionality in the function names. The example below
-demonstrates using the `out_edges()`, `source()`, and `target()` with an undirected
-graph. The source code for this example and the following one can be found in
-`examples/undirected.cpp`.
+The interface that Boost.Graph provides for accessing and manipulating an
+undirected graph is the same as the interface for directed graphs described in
+the following sections, however there are some differences in the behaviour and
+semantics. For example, in a directed graph we can talk about out-edges and
+in-edges of a vertex. In an undirected graph there is no "in" and "out", there
+are just edges incident to a vertex. Nevertheless, in Boost.Graph we still use
+the `out_edges()` function (or `in_edges()`) to access the incident edges in an
+undirected graph. Similarly, an undirected edge has no "source" and "target" but
+merely an unordered pair of vertices, but we still use `source()` and `target()`
+to access these vertices. The reason Boost.Graph does not provide a separate
+interface for undirected graphs is that many algorithms on directed graphs also
+work on undirected graphs, and it would be inconvenient to have to duplicate the
+algorithms just because of an interface difference. When using undirected graphs
+just mentally disregard the directionality in the function names. The example
+below demonstrates using the `out_edges()`, `source()`, and `target()` with an
+undirected graph. The source code for this example and the following one can be
+found in `examples/undirected.cpp`.
 
 
     const int V = 2;
@@ -141,21 +143,22 @@ graph. The source code for this example and the following one can be found in
                   << ")" << endl;
     }
 
-Even though the interface is the same for undirected graphs, there are some behavioral
-differences because edge equality is defined differently. In a directed graph,
-edge /(u,v)/ is never equal to edge /(v,u)/, but in an undirected graph they may
-be equal. If the undirected graph is a multigraph then /(u,v)/ and /(v,u)/ might be
-parallel edges. If the graph is not a multigraph then /(u,v)/ and /(v,u)/ must be the
-same edge.
+Even though the interface is the same for undirected graphs, there are some
+behavioral differences because edge equality is defined differently. In a
+directed graph, edge /(u,v)/ is never equal to edge /(v,u)/, but in an
+undirected graph they may be equal. If the undirected graph is a multigraph then
+/(u,v)/ and /(v,u)/ might be parallel edges. If the graph is not a multigraph
+then /(u,v)/ and /(v,u)/ must be the same edge.
 
-In the example below the edge equality test will return false for the directed graph
-and true for the undirected graph. The difference also affects the meaning of `add_edge()`.
-In the example below, if we had also written `add_add(v, u, graph)`, this would have
-added a parallel edge between `u` and `v` (provided the graph type allows parallel edges -
-which most do). The difference in edge equality also affects the association of edge
-properties. In the directed graph, the edges /(u,v)/ and /(v,u)/ can have distinct
-weight values, whereas in the undirected graph the weight of /(u,v)/ is the same as
-the weight of /(v,u)/ since they are the same edge.
+In the example below the edge equality test will return false for the directed
+graph and true for the undirected graph. The difference also affects the meaning
+of `add_edge()`. In the example below, if we had also written `add_add(v, u,
+graph)`, this would have added a parallel edge between `u` and `v` (provided the
+graph type allows parallel edges - which most do). The difference in edge
+equality also affects the association of edge properties. In the directed graph,
+the edges /(u,v)/ and /(v,u)/ can have distinct weight values, whereas in the
+undirected graph the weight of /(u,v)/ is the same as the weight of /(v,u)/
+since they are the same edge.
 
     typedef ... DirectedGraph;
     typedef ... UndirectedGraph;
@@ -218,8 +221,8 @@ of parallel edges, meaning that it is fairly easy to actually create multigraphs
 without any additional work.
 
 There are certain sets of graph types that do not allow the addition of parallel edges.
-Specifically, if the EdgeList and OutEdgeList of an [adjacency_list] models an
-associative container, then the graph cannont be a multigraph.
+Specifically, if the EdgeList and OutEdgeList of an [adjacency_list] models
+[StdUniqueAssociativeContainer], then the graph cannont be a multigraph.
 
 [heading Indexed Graphs]
 Indexed graph provide a specific property, an index, for verticese, edges or both.

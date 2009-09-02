@@ -5,6 +5,8 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
+[/ TODO: Redefine this as a function taking a vertex and a graph. /]
+
 [section Degree Measure]
 The [DegreeMeasure] concept defines requirements for function objects
 that are used in computations on the degree of a vertex.

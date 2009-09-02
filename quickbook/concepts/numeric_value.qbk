@@ -5,6 +5,15 @@
  / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  /]
 
+[/ TODO: This concept is fundamentally broken. It's trying to capture the
+ / association of named constants with a type or a particular use. We probably
+ / need to explore the design space of named concepts before we can really
+ / attribute this as a legitimate operation.
+ /
+ / For example, why are these required to be scoped? Why not simply use the
+ / functions zero<T>() and infinity<T>()?
+ /]
+
 [section Numeric Value]
 The [NumericValue] concept describes requirements for a type to behave
 as if it were numeric. This concept is generally used by algorithms that
@@ -19,12 +28,6 @@ multiplication and division).
 Finally, this concept requires that its models define appropriate values of
 zero and infinity. These are used within certain computations to represent
 infinite and zero states.
-
-[heading Refinement Of]
-[StdRegularType], [StdAddable], [StdSubtractable], [StdMulitplicable],
-[StdDivisible].
-
-[note Why is numeric not a standard concept?]
 
 [heading Notation]
 The following expressions are used within this document:
