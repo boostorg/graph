@@ -193,7 +193,7 @@ the [BidirectionalGraph] concept as well.
         [
             The property map type for vertex or edge properties in the graph. The specific
             property is specified by the `Property` template argument, and must match one of
-            the properties specified in the `VertexProperties` or `EdgeProperties` for the
+            the properties specified in the `VertexProperty` or `EdgeProperty` for the
             graph.
         ]
     ]
@@ -222,63 +222,55 @@ the [BidirectionalGraph] concept as well.
 ]
 
 [heading Member Functions]
-[table
-    [[Member Function] [Description]]
-    [
-        [`adjacency_list(const GraphProperty& p = GraphProperty())`]
-        [
-            The default constructor creates an empty graph with no vertices or edges,
-            optionally assigning the given graph properties `p`.
-        ]
-    ]
-    [
-        [`adjacency_list(const adjacency_list& x)`]
-        [ ]
-    ]
-    [
-        [
-            ``
-            adjacency_list(vertices_size_type n,
-                           const GraphProperty& p = GraphProperty())
-            ``
-        ]
-        [ ]
-    ]
-    [
-        [
-            ``
-            template <typename Iter>
-            adjacency_list(Iter f, Iter l,
-                           vertices_size_type n, edges_size_type m = 0,
-                           const GraphProperty& p = GraphProperty())
-            ``
-        ]
-        [ ]
-    ]
-    [
-        [
-            ``
-            template <typename EdgeIter, typename PropIter>
-            adjacency_list(EdgeIter f, EgeIter l, PropIter p,
-                           vertices_size_type n, edges_size_type m = 0,
-                           const GraphProperty& p = GraphProperty())
-            ``
-        ]
-        [ ]
-    ]
-    [
-        [`adjacency_list& operator=(adjacency_list const& x)`]
-        [ ]
-    ]
-    [
-        [`void swap(adjacency_list& x)`]
-        [ ]
-    ]
-    [
-        [`void clear()`]
-        [ ]
-    ]
-]
+
+[/ Constructors ]
+ adjacency_list(const GraphProperty& p = GraphProperty())
+
+The default constructor creates an empty graph with no vertices or edges, optionally
+assigning the given graph properties `p`.
+
+ adjacency_list(const adjacency_list& x)
+
+Construct the graph as a copy of `x`.
+
+ adjacency_list(vertices_size_type n, const GraphProperty& p = GraphProperty())
+
+Construct the graph with `n` vertices and no edges. An optional graph property
+may be given.
+
+ template <typename Iter>
+ adjacency_list(Iter f, Iter l,
+                vertices_size_type n, edges_size_type m = 0,
+                const GraphProperty& p = GraphProperty())
+
+Construct the graph over `n` vertices and the edges given in the range \[f, l).
+The `Iter` type must be an [InputIterator] and its `value_type` must be a `pair`
+of integral types. The integral values of each `pair` refer to vertices in the
+range \[0, n).
+
+ template <typename EdgeIter, typename PropIter>
+ adjacency_list(EdgeIter f, EgeIter l, PropIter p,
+                vertices_size_type n, edges_size_type m = 0,
+                const GraphProperty& p = GraphProperty())
+
+[/ Assignment Operator]
+Construct the graph over `n` vertices and the edges given in the range \[f, l).
+The `EdgeIter` and `PropIter` types must model the [InputIterator] concept. The
+`value_type` of `EdgeIter` must be a `pair` of integral types. The integral
+values of each `pair` refer to vertices in the range \[0, n). The `value_type`
+of `PropIter` must be `EdgeProperty`.
+
+ adjacency_list& operator=(adjacency_list const& x)
+
+Assign this graph to be a copy of `x`.
+
+ void swap(adjacency_list& x)
+
+Swap this graph with `x`.
+
+ void clear()
+
+Reset the graph so that it has no vertices or edges.
 
 [heading Non-Member Observers]
 [table

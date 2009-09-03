@@ -19,6 +19,7 @@
 [template BidirectionalGraph[] [link boost_graph.concepts.graph_concepts.bidirectional_graph [^BidirectionalGraph]]]
 [template VertexListGraph[] [link boost_graph.concepts.graph_concepts.vertex_list_graph [^VertexListGraph]]]
 [template EdgeListGraph[] [link boost_graph.concepts.graph_concepts.edge_list_graph [^EdgeListGraph]]]
+[template VertexAndEdgeListGraph[] [link boost_graph.concepts.graph_concepts.vertex_and_edge_list_graph [^VertexAndEdgeListGraph]]]
 [template AdjacencyGraph[] [link boost_graph.concepts.graph_concepts.adjacency_graph [^AdjacencyGraph]]]
 [template AdjacencyMatrix[] [link boost_graph.concepts.graph_concepts.adjacency_matrix [^AdjacencyMatrix]]]
 [template MutableGraph[] [link boost_graph.concepts.graph_concepts.mutable_graph [^MutableGraph]]]
