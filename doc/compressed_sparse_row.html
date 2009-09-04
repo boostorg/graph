@@ -243,7 +243,7 @@ vertex_descriptor <a href="#vertex">vertex</a>(vertices_size_type i, const compr
 <b>(old interface only)</b>
 std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
   <a href="#edge_range">edge_range</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
-<b>(old interface only)</b>
+<b>(both interfaces)</b>
 std::pair&lt;edge_descriptor, bool&gt; 
   <a href="#edge">edge</a>(vertex_descriptor u, vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 <b>(both interfaces)</b>
@@ -770,7 +770,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
     <p class="indent">
       Returns all edges from <tt>u</tt> to <tt>v</tt>. Requires time
-      linear in the number of edges outgoing from <tt>u</tt>.
+      logarithmic in the number of edges outgoing from <tt>u</tt>.
       <b>(This function is only provided by the old interface.)</b>
     </p>
 
@@ -787,8 +787,9 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       second value in the pair will be <tt>false</tt>. If multiple
       edges exist from <tt>u</tt> to <tt>v</tt>, the first edge will
       be returned; use <a href="#edge_range"><tt>edge_range</tt></a>
-      to retrieve all edges.
-      <b>(This function is only provided by the old interface.)</b>
+      to retrieve all edges.  This function requires time logarithmic in the
+      number of edges outgoing from <tt>u</tt> for the old interface, and
+      linear time for the new interface.
     </p>
 
     <hr></hr>

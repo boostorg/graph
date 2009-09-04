@@ -1605,7 +1605,25 @@ edge(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
   else
     return std::make_pair(*range.first, true);
 }
-#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+
+#else // !BOOST_GRAPH_USE_OLD_CSR_INTERFACE
+// edge() can be provided in linear time for the new interface
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_CSR_GRAPH_TYPE::edge_descriptor, bool>
+edge(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
+  std::pair<out_edge_iter, out_edge_iter> range = out_edges(i, g);
+  for (; range.first != range.second; ++range.first) {
+    if (target(*range.first) == j)
+      return std::make_pair(*range.first, true);
+  }
+  return std::make_pair(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(),
+                        false);
+}
+
+#endif // !BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
 // Find an edge given its index in the graph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
