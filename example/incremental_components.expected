@@ -13,6 +13,6 @@ representative[3] = 3
 representative[4] = 1
 representative[5] = 5
 
-component 0 contains: 4 1 0 
+component 0 contains: 1 4 0 
 component 1 contains: 3 
 component 2 contains: 5 2 
