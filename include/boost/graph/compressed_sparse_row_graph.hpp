@@ -26,6 +26,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/filtered_graph.hpp> // For keep_all
 #include <boost/graph/detail/indexed_properties.hpp>
+#include <boost/graph/iteration_macros.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
@@ -950,7 +951,7 @@ class compressed_sparse_row_graph
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 
-  //   Requires IncidenceGraph, a vertex index map, and a vertex(n, g) function
+  //   Requires IncidenceGraph and a vertex index map
   template<typename Graph, typename VertexIndexMap>
   compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi,
                               vertices_size_type numverts,
@@ -985,7 +986,7 @@ class compressed_sparse_row_graph
   }
 
   // From any graph (slow and uses a lot of memory)
-  //   Requires IncidenceGraph, a vertex index map, and a vertex(n, g) function
+  //   Requires IncidenceGraph and a vertex index map
   //   Internal helper function
   //   Note that numedges must be doubled for undirected source graphs
   template<typename Graph, typename VertexIndexMap>
@@ -1002,9 +1003,13 @@ class compressed_sparse_row_graph
     typedef typename boost::graph_traits<Graph>::out_edge_iterator
       g_out_edge_iter;
 
+    std::vector<g_vertex> ordered_verts_of_g(numverts);
+    BGL_FORALL_VERTICES_T(v, g, Graph) {
+      ordered_verts_of_g[get(vertex_index, g, v)] = v;
+    }
     for (Vertex i = 0; i != numverts; ++i) {
       m_rowstart[i] = current_edge;
-      g_vertex v = vertex(i, g);
+      g_vertex v = ordered_verts_of_g[i];
 #ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
       // Out edges in a single vertex are only sorted for the old interface
       EdgeIndex num_edges_before_this_vertex = current_edge;
