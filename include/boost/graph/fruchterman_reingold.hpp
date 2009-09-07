@@ -23,8 +23,6 @@
 
 namespace boost {
 
-  bool vertex_migration = false;
-
 struct square_distance_attractive_force {
   template<typename Graph, typename T>
   T
