@@ -1482,7 +1482,7 @@ class BOOST_CSR_GRAPH_TYPE::out_edge_iterator
   { return m_edge == other.m_edge; }
 
   void increment() { ++m_edge.idx; }
-  void decrement() { ++m_edge.idx; }
+  void decrement() { --m_edge.idx; }
   void advance(difference_type n) { m_edge.idx += n; }
 
   difference_type distance_to(const out_edge_iterator& other) const
