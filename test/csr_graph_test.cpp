@@ -167,7 +167,7 @@ void check_consistency(const CSRGraphT& g) {
 #endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_rowstart entries are valid, and that entries after
   // m_last_source + 1 are all zero
-  BOOST_CHECK(g.m_rowstart[0] == 0);
+  BOOST_CHECK(g.m_forward.m_rowstart[0] == 0);
   for (CSRGraphT::vertices_size_type i = 0;
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
        i < num_vertices(g);
@@ -175,18 +175,18 @@ void check_consistency(const CSRGraphT& g) {
        i < g.m_last_source;
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
        ++i) {
-    BOOST_CHECK(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
-    BOOST_CHECK(g.m_rowstart[i + 1] <= num_edges(g));
+    BOOST_CHECK(g.m_forward.m_rowstart[i + 1] >= g.m_forward.m_rowstart[i]);
+    BOOST_CHECK(g.m_forward.m_rowstart[i + 1] <= num_edges(g));
   }
 #ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   for (CSRGraphT::vertices_size_type i = g.m_last_source + 1;
-       i < g.m_rowstart.size(); ++i) {
-    BOOST_CHECK(g.m_rowstart[i] == 0);
+       i < g.m_forward.m_rowstart.size(); ++i) {
+    BOOST_CHECK(g.m_forward.m_rowstart[i] == 0);
   }
 #endif // !BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   // Check that m_column entries are within range
   for (CSRGraphT::edges_size_type i = 0; i < num_edges(g); ++i) {
-    BOOST_CHECK(g.m_column[i] < num_vertices(g));
+    BOOST_CHECK(g.m_forward.m_column[i] < num_vertices(g));
   }
 }
 
