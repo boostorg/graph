@@ -25,7 +25,7 @@ should pass graph objects by reference (or `const` reference).
     [
         [`graph_traits<G>::edge_descriptor`]
         [
-            An edge descriptor corresponds to a unqie edge /(u,v)/ in a graph. An edge descriptor
+            An edge descriptor corresponds to a unique edge /(u,v)/ in a graph. An edge descriptor
             must be DefaultConstructible, Assignable, and EqualityComparable. Edge descriptors
             are almost always passed by value.
         ]

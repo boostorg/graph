@@ -27,7 +27,7 @@ can define a class with the DFS Visitor interface and pass and object of the cla
     [
         [`vis.start_vertex(v,g)`]
         [
-            This is invoked on the source veretx once before the start of the search.
+            This is invoked on the source vertex once before the start of the search.
 
             *Returns* `void`
         ]
@@ -51,7 +51,7 @@ can define a class with the DFS Visitor interface and pass and object of the cla
     [
         [`vis.tree_edge(e,g)`]
         [
-            This is invoked on each edge as it becomes a member of the eges that the form the
+            This is invoked on each edge as it becomes a member of the edges that form the
             search tree.
 
             *Returns* `void`
@@ -60,7 +60,7 @@ can define a class with the DFS Visitor interface and pass and object of the cla
     [
         [`vis.back_edge(v,g)`]
         [
-            This is invoked on the back edges of the graph. For an unidrected graph there
+            This is invoked on the back edges of the graph. For an undirected graph there
             is some ambiguity between tree edges and back edges since the edge /(u,v)/
             and /(v,u)/ are the same edge, but both `tree_edge(v,g)` and `back_edge(v,g)`
             will be invoked. One way to resolve this ambiguity is to record the tree

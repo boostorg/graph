@@ -13,7 +13,7 @@ not even be implemented using a data-structure, as for some problems it is easie
 or more efficient to define a graph implicitly based on some functions.
 
 The Boost.Graph interface does not appear as a single graph concept. Instead it is
-factored into much smaller peices. The reason for this is that the purpose of a
+factored into much smaller pieces. The reason for this is that the purpose of a
 concept is to summarize the requirements for particular algorithms. Any one algorithm
 does not need every kind of graph operation, typically only a small subset. Furthermore,
 there are many graph data-structures that can not provide efficient implementations of
@@ -225,15 +225,15 @@ Specifically, if the EdgeList and OutEdgeList of an [adjacency_list] models
 [StdUniqueAssociativeContainer], then the graph cannont be a multigraph.
 
 [heading Indexed Graphs]
-Indexed graph provide a specific property, an index, for verticese, edges or both.
-Many algorithms require vertex or edge indices for "fast" property acces, often
+Indexed graph provide a specific property, an index, for vertices, edges or both.
+Many algorithms require vertex or edge indices for "fast" property access, often
 declaring exterior properties as `vector`s and using the indices as random access
 iterators to access those properties. These concepts effectively require that
 indices are accessible as interior properties of the graph.
 
 These concepts are provided to help describe interface requirements for algorithms
 that allow indices to be provided as an exterior property map. With these concepts,
-requirements (and interfaces) can be written more disticntly for algorithms that accept
+requirements (and interfaces) can be written more distinctly for algorithms that accept
 indexed graphs, and those that require adaptation through exterior properties.
 
 There are two indexed graph concepts: [VertexIndexGraph] and [EdgeIndexGraph].
