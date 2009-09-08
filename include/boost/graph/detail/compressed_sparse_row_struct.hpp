@@ -403,6 +403,98 @@ namespace detail {
 
   };
 
+  // Common out edge and edge iterators
+  template<typename CSRGraph>
+  class csr_out_edge_iterator
+    : public iterator_facade<csr_out_edge_iterator<CSRGraph>,
+                             typename CSRGraph::edge_descriptor,
+                             std::random_access_iterator_tag,
+                             const typename CSRGraph::edge_descriptor&,
+                             typename int_t<CHAR_BIT * sizeof(typename CSRGraph::edges_size_type)>::fast>
+  {
+   public:
+    typedef typename CSRGraph::edges_size_type EdgeIndex;
+    typedef typename CSRGraph::edge_descriptor edge_descriptor;
+    typedef typename int_t<CHAR_BIT * sizeof(EdgeIndex)>::fast difference_type;
+
+    csr_out_edge_iterator() {}
+    // Implicit copy constructor OK
+    explicit csr_out_edge_iterator(edge_descriptor edge) : m_edge(edge) { }
+
+   private:
+    // iterator_facade requirements
+    const edge_descriptor& dereference() const { return m_edge; }
+
+    bool equal(const csr_out_edge_iterator& other) const
+    { return m_edge == other.m_edge; }
+
+    void increment() { ++m_edge.idx; }
+    void decrement() { --m_edge.idx; }
+    void advance(difference_type n) { m_edge.idx += n; }
+
+    difference_type distance_to(const csr_out_edge_iterator& other) const
+    { return other.m_edge.idx - m_edge.idx; }
+
+    edge_descriptor m_edge;
+
+    friend class iterator_core_access;
+  };
+
+  template<typename CSRGraph>
+  class csr_edge_iterator
+  {
+   public:
+    typedef std::forward_iterator_tag iterator_category;
+    typedef typename CSRGraph::edge_descriptor edge_descriptor;
+    typedef typename CSRGraph::edges_size_type EdgeIndex;
+    typedef edge_descriptor value_type;
+
+    typedef const edge_descriptor* pointer;
+
+    typedef edge_descriptor reference;
+    typedef typename int_t<CHAR_BIT * sizeof(EdgeIndex)>::fast difference_type;
+
+    csr_edge_iterator() : rowstart_array(0), current_edge(), end_of_this_vertex(0) {}
+
+    csr_edge_iterator(const CSRGraph& graph,
+                      edge_descriptor current_edge,
+                  EdgeIndex end_of_this_vertex)
+      : rowstart_array(&graph.m_forward.m_rowstart[0]), current_edge(current_edge),
+        end_of_this_vertex(end_of_this_vertex) {}
+
+    // From InputIterator
+    reference operator*() const { return current_edge; }
+    pointer operator->() const { return &current_edge; }
+
+    bool operator==(const csr_edge_iterator& o) const {
+      return current_edge == o.current_edge;
+    }
+    bool operator!=(const csr_edge_iterator& o) const {
+      return current_edge != o.current_edge;
+    }
+
+    csr_edge_iterator& operator++() {
+      ++current_edge.idx;
+      while (current_edge.idx == end_of_this_vertex) {
+        ++current_edge.src;
+        end_of_this_vertex = rowstart_array[current_edge.src + 1];
+      }
+      return *this;
+    }
+
+    csr_edge_iterator operator++(int) {
+      csr_edge_iterator temp = *this;
+      ++*this;
+      return temp;
+    }
+
+   private:
+    const EdgeIndex* rowstart_array;
+    edge_descriptor current_edge;
+    EdgeIndex end_of_this_vertex;
+  };
+
+
 } // namespace detail
 } // namespace boost
 
