@@ -54,7 +54,7 @@ void test_graph(const Graph& graph) {
 
   initialize_incremental_components(graph, vertex_sets);
   incremental_components(graph, vertex_sets);
-				
+
   // Build component index from the graph's vertices, its index map,
   // and the disjoint sets.
   typedef component_index<vertices_size_type> Components;
