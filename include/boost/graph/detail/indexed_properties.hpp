@@ -179,6 +179,10 @@ protected:
         m_edge_properties.begin() + dest_begin + (src_end - src_begin));
   }
 
+  typedef typename std::vector<Property>::iterator iterator;
+  iterator begin() {return m_edge_properties.begin();}
+  iterator end() {return m_edge_properties.end();}
+
  private:
   // Access to the derived object
   Derived& derived() { return *static_cast<Derived*>(this); }
@@ -188,6 +192,17 @@ protected:
 
 public: // should be private, but friend templates not portable
   std::vector<Property> m_edge_properties;
+};
+
+struct dummy_no_property_iterator
+: public boost::iterator_facade<dummy_no_property_iterator, no_property, std::random_access_iterator_tag> {
+  mutable no_property prop;
+  no_property& dereference() const {return prop;}
+  bool equal(const dummy_no_property_iterator&) const {return true;}
+  void increment() {}
+  void decrement() {}
+  void advance(std::ptrdiff_t) {}
+  std::ptrdiff_t distance_to(const dummy_no_property_iterator) const {return 0;}
 };
 
 template<typename Derived, typename Descriptor>
@@ -215,6 +230,10 @@ class indexed_edge_properties<Derived, void, Descriptor>
  public:
   void push_back(const edge_push_back_type&) { }
   void move_range(std::size_t src_begin, std::size_t src_end, std::size_t dest_begin) {}
+
+  typedef dummy_no_property_iterator iterator;
+  iterator begin() {return dummy_no_property_iterator();}
+  iterator end() {return dummy_no_property_iterator();}
 
 };
 

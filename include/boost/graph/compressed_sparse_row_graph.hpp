@@ -216,7 +216,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
 
  public:
   /* At this time, the compressed sparse row graph can only be used to
-   * create a directed graph. In the future, bidirectional and
+   * create directed and bidirectional graphs. In the future, 
    * undirected CSR graphs will also be supported.
    */
   // BOOST_STATIC_ASSERT((is_same<Directed, directedS>::value));
@@ -224,7 +224,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
   // Concept requirements:
   // For Graph
   typedef Vertex vertex_descriptor;
-  typedef csr_edge_descriptor<Vertex, EdgeIndex> edge_descriptor;
+  typedef detail::csr_edge_descriptor<Vertex, EdgeIndex> edge_descriptor;
   typedef directed_tag directed_category;
   typedef allow_parallel_edge_tag edge_parallel_category;
 
@@ -272,32 +272,6 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     : inherited_vertex_properties(numverts), m_forward(numverts) {}
 
 #ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-  //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges (filtered using source_pred and mapped using global_to_local)
-  template <typename MultiPassInputIterator, typename GlobalToLocal, typename SourcePred>
-  void
-  assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
-                                   MultiPassInputIterator edge_end,
-                                   vertices_size_type numlocalverts,
-                                   const GlobalToLocal& global_to_local,
-                                   const SourcePred& source_pred) {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numlocalverts, global_to_local, source_pred);
-  }
-
-  //  Rebuild graph from number of vertices and multi-pass unsorted list of
-  //  edges and their properties (filtered using source_pred and mapped using
-  //  global_to_local)
-  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename SourcePred>
-  void
-  assign_unsorted_multi_pass_edges(MultiPassInputIterator edge_begin,
-                                   MultiPassInputIterator edge_end,
-                                   EdgePropertyIterator ep_iter,
-                                   vertices_size_type numlocalverts,
-                                   const GlobalToLocal& global_to_local,
-                                   const SourcePred& source_pred) {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numlocalverts, global_to_local, source_pred);
-  }
-
   //  From number of vertices and unsorted list of edges
   template <typename MultiPassInputIterator>
   compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
@@ -354,31 +328,6 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numlocalverts, global_to_local, source_pred);
   }
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-
-  //  Assign from number of vertices and sorted list of edges
-  template<typename InputIterator, typename GlobalToLocal, typename SourcePred>
-  void assign_from_sorted_edges(
-         InputIterator edge_begin, InputIterator edge_end,
-         const GlobalToLocal& global_to_local,
-         const SourcePred& source_pred,
-         vertices_size_type numlocalverts,
-         edges_size_type numedges_or_zero) {
-    m_forward.assign_from_sorted_edges(edge_begin, edge_end, global_to_local, source_pred, numlocalverts, numedges_or_zero);
-    inherited_vertex_properties::resize(numlocalverts);
-  }
-
-  //  Assign from number of vertices and sorted list of edges
-  template<typename InputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename SourcePred>
-  void assign_from_sorted_edges(
-         InputIterator edge_begin, InputIterator edge_end,
-         EdgePropertyIterator ep_iter,
-         const GlobalToLocal& global_to_local,
-         const SourcePred& source_pred,
-         vertices_size_type numlocalverts,
-         edges_size_type numedges_or_zero) {
-    m_forward.assign_from_sorted_edges(edge_begin, edge_end, ep_iter, global_to_local, source_pred, numlocalverts, numedges_or_zero);
-    inherited_vertex_properties::resize(numlocalverts);
-  }
 
 #ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
@@ -542,7 +491,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     std::vector<vertex_descriptor> sources, targets;
     boost::graph::detail::split_into_separate_coords
       (edge_begin, edge_end, sources, targets);
-    assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
+    m_forward.assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
   }
 
   //  From number of vertices and single-pass range of unsorted edges and
@@ -605,29 +554,6 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     boost::graph::detail::split_into_separate_coords_filtered
       (edge_begin, edge_end, ep_iter, sources, targets, edge_props, source_pred);
     m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numlocalverts, global_to_local);
-  }
-
-  // Replace graph with sources and targets given, sorting them in-place, and
-  // using the given global-to-local property map to get local indices from
-  // global ones in the two arrays.
-  template <typename GlobalToLocal>
-  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
-                                         std::vector<vertex_descriptor>& targets,
-                                         vertices_size_type numverts,
-                                         GlobalToLocal global_to_local) {
-    m_forward.assign_sources_and_targets_global(sources, targets, numverts, global_to_local);
-  }
-
-  // Replace graph with sources and targets and edge properties given, sorting
-  // them in-place, and using the given global-to-local property map to get
-  // local indices from global ones in the two arrays.
-  template <typename GlobalToLocal>
-  void assign_sources_and_targets_global(std::vector<vertex_descriptor>& sources,
-                                         std::vector<vertex_descriptor>& targets,
-                                         std::vector<edge_bundled>& edge_props,
-                                         vertices_size_type numverts,
-                                         GlobalToLocal global_to_local) {
-    m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numverts, global_to_local);
   }
 
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
@@ -849,50 +775,383 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
   GraphProperty m_property;
 };
 
-template<typename Vertex, typename EdgeIndex>
-class csr_edge_descriptor
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+// Bidir is only supported in this mode
+template<typename VertexProperty,
+         typename EdgeProperty,
+         typename GraphProperty,
+         typename Vertex,
+         typename EdgeIndex>
+class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex>
+   : public detail::indexed_vertex_properties<BOOST_BIDIR_CSR_GRAPH_TYPE,
+                                              VertexProperty, Vertex>
 {
  public:
-  Vertex src;
-  EdgeIndex idx;
+  typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
+                                            VertexProperty, Vertex>
+    inherited_vertex_properties;
 
-  csr_edge_descriptor(Vertex src, EdgeIndex idx): src(src), idx(idx) {}
-  csr_edge_descriptor(): src(0), idx(0) {}
+ public:
+  // For Property Graph
+  typedef GraphProperty graph_property_type;
 
-  bool operator==(const csr_edge_descriptor& e) const {return idx == e.idx;}
-  bool operator!=(const csr_edge_descriptor& e) const {return idx != e.idx;}
-  bool operator<(const csr_edge_descriptor& e) const {return idx < e.idx;}
-  bool operator>(const csr_edge_descriptor& e) const {return idx > e.idx;}
-  bool operator<=(const csr_edge_descriptor& e) const {return idx <= e.idx;}
-  bool operator>=(const csr_edge_descriptor& e) const {return idx >= e.idx;}
+  typedef detail::compressed_sparse_row_structure<EdgeProperty, Vertex, EdgeIndex> forward_type;
+  typedef EdgeIndex /* typename boost::mpl::if_c<boost::is_same<EdgeProperty, boost::no_property>, boost::no_property, EdgeIndex> */ backward_edge_property;
+  typedef detail::compressed_sparse_row_structure<backward_edge_property, Vertex, EdgeIndex> backward_type;
 
-  template<typename Archiver>
-  void serialize(Archiver& ar, const unsigned int /*version*/)
-  {
-    ar & src & idx;
+ public:
+  // Concept requirements:
+  // For Graph
+  typedef Vertex vertex_descriptor;
+  typedef detail::csr_edge_descriptor<Vertex, EdgeIndex> edge_descriptor;
+  typedef bidirectional_tag directed_category;
+  typedef allow_parallel_edge_tag edge_parallel_category;
+
+  class traversal_category: public incidence_graph_tag,
+                            public bidirectional_graph_tag,
+                            public adjacency_graph_tag,
+                            public vertex_list_graph_tag,
+                            public edge_list_graph_tag {};
+
+  static vertex_descriptor null_vertex() { return vertex_descriptor(-1); }
+
+  // For VertexListGraph
+  typedef counting_iterator<Vertex> vertex_iterator;
+  typedef Vertex vertices_size_type;
+
+  // For EdgeListGraph
+  typedef EdgeIndex edges_size_type;
+
+  // For IncidenceGraph
+  typedef detail::csr_out_edge_iterator<compressed_sparse_row_graph> out_edge_iterator;
+  typedef EdgeIndex degree_size_type;
+
+  // For AdjacencyGraph
+  typedef typename std::vector<Vertex>::const_iterator adjacency_iterator;
+
+  // For EdgeListGraph
+  typedef detail::csr_edge_iterator<compressed_sparse_row_graph> edge_iterator;
+
+  // For BidirectionalGraph (not implemented)
+  typedef detail::csr_in_edge_iterator<compressed_sparse_row_graph> in_edge_iterator;
+
+  // For internal use
+  typedef csr_graph_tag graph_tag;
+
+  typedef typename forward_type::inherited_edge_properties::edge_bundled edge_bundled;
+  typedef typename forward_type::inherited_edge_properties::edge_push_back_type edge_push_back_type;
+  typedef typename forward_type::inherited_edge_properties::edge_property_type edge_property_type;
+
+  // Constructors
+
+  // Default constructor: an empty graph.
+  compressed_sparse_row_graph(): m_property() {}
+
+  //  With numverts vertices
+  compressed_sparse_row_graph(vertices_size_type numverts)
+    : inherited_vertex_properties(numverts),
+      m_forward(numverts), m_backward(numverts) {}
+
+  private:
+
+  void set_up_backward_property_links() {
+    std::pair<edge_iterator, edge_iterator> e = edges(*this);
+    m_backward.assign_unsorted_multi_pass_edges
+      (detail::transpose_edges(
+         detail::make_edge_to_index_pair_iter
+           (*this, get(vertex_index, *this), e.first)),
+       detail::transpose_edges(
+         detail::make_edge_to_index_pair_iter
+           (*this, get(vertex_index, *this), e.second)),
+       boost::counting_iterator<EdgeIndex>(0),
+       m_forward.m_rowstart.size() - 1,
+       identity_property_map(),
+       keep_all());
   }
-};
 
-template<typename Vertex, typename EdgeIndex>
-struct hash<csr_edge_descriptor<Vertex, EdgeIndex> >
-{
-  std::size_t operator()(csr_edge_descriptor<Vertex, EdgeIndex> const& x) const
+  public:
+
+  //  From number of vertices and unsorted list of edges
+  template <typename MultiPassInputIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_property(prop)
   {
-    std::size_t hash = hash_value(x.src);
-    hash_combine(hash, x.idx);
-    return hash;
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, identity_property_map(), keep_all());
+    set_up_backward_property_links();
   }
+
+  //  From number of vertices and unsorted list of edges, plus edge properties
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numverts,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numverts), m_forward(), m_property(prop)
+  {
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, identity_property_map(), keep_all());
+    set_up_backward_property_links();
+  }
+
+  //  From number of vertices and unsorted list of edges, with filter and
+  //  global-to-local map
+  template <typename MultiPassInputIterator, typename GlobalToLocal, typename SourcePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
+                              const SourcePred& source_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_forward(), m_property(prop)
+  {
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numlocalverts, global_to_local, source_pred);
+    set_up_backward_property_links();
+  }
+
+  //  From number of vertices and unsorted list of edges, plus edge properties,
+  //  with filter and global-to-local map
+  template <typename MultiPassInputIterator, typename EdgePropertyIterator, typename GlobalToLocal, typename SourcePred>
+  compressed_sparse_row_graph(edges_are_unsorted_multi_pass_global_t,
+                              MultiPassInputIterator edge_begin,
+                              MultiPassInputIterator edge_end,
+                              EdgePropertyIterator ep_iter,
+                              vertices_size_type numlocalverts,
+                              const GlobalToLocal& global_to_local,
+                              const SourcePred& source_pred,
+                              const GraphProperty& prop = GraphProperty())
+    : inherited_vertex_properties(numlocalverts), m_forward(), m_property(prop)
+  {
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numlocalverts, global_to_local, source_pred);
+    set_up_backward_property_links();
+  }
+
+  //   Requires IncidenceGraph and a vertex index map
+  template<typename Graph, typename VertexIndexMap>
+  compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi,
+                              vertices_size_type numverts,
+                              edges_size_type numedges)
+    : m_property()
+  {
+    assign(g, vi, numverts, numedges);
+    inherited_vertex_properties::resize(numverts);
+  }
+
+  //   Requires VertexListGraph and EdgeListGraph
+  template<typename Graph, typename VertexIndexMap>
+  compressed_sparse_row_graph(const Graph& g, const VertexIndexMap& vi)
+    : m_property()
+  {
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    vertices_size_type numverts = num_vertices(g);
+    assign(g, vi, numverts, numedges);
+    inherited_vertex_properties::resize(numverts);
+  }
+
+  // Requires vertex index map plus requirements of previous constructor
+  template<typename Graph>
+  explicit compressed_sparse_row_graph(const Graph& g)
+    : m_property()
+  {
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    assign(g, get(vertex_index, g), num_vertices(g), numedges);
+  }
+
+  // From any graph (slow and uses a lot of memory)
+  //   Requires IncidenceGraph and a vertex index map
+  //   Internal helper function
+  //   Note that numedges must be doubled for undirected source graphs
+  template<typename Graph, typename VertexIndexMap>
+  void
+  assign(const Graph& g, const VertexIndexMap& vi,
+         vertices_size_type numverts, edges_size_type numedges)
+  {
+    m_forward.assign(g, vi, numverts, numedges);
+    inherited_vertex_properties::resize(numverts);
+  }
+
+  // Requires the above, plus VertexListGraph and EdgeListGraph
+  template<typename Graph, typename VertexIndexMap>
+  void assign(const Graph& g, const VertexIndexMap& vi)
+  {
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    vertices_size_type numverts = num_vertices(g);
+    m_forward.assign(g, vi, numverts, numedges);
+    inherited_vertex_properties::resize(numverts);
+  }
+
+  // Requires the above, plus a vertex_index map.
+  template<typename Graph>
+  void assign(const Graph& g)
+  {
+    typename graph_traits<Graph>::edges_size_type numedges = num_edges(g);
+    if (is_same<typename graph_traits<Graph>::directed_category, undirectedS>::value) {
+      numedges *= 2; // Double each edge (actual doubling done by out_edges function)
+    }
+    vertices_size_type numverts = num_vertices(g);
+    m_forward.assign(g, get(vertex_index, g), numverts, numedges);
+    inherited_vertex_properties::resize(numverts);
+  }
+
+  // Add edges from a sorted (smallest sources first) range of pairs and edge
+  // properties
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig,
+            typename GlobalToLocal>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      const GlobalToLocal& global_to_local) {
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, global_to_local);
+  }
+
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted)  {
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, identity_property_map());
+  }
+
+  // Add edges from a sorted (smallest sources first) range of pairs
+  template <typename BidirectionalIteratorOrig>
+  void
+  add_edges_sorted_internal(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted) {
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<edge_bundled>());
+  }
+
+  template <typename BidirectionalIteratorOrig, typename GlobalToLocal>
+  void
+  add_edges_sorted_internal_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      const GlobalToLocal& global_to_local) {
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<edge_bundled>(), global_to_local);
+  }
+
+  template <typename BidirectionalIteratorOrig, typename EPIterOrig, 
+            typename GlobalToLocal>
+  void
+  add_edges_sorted_internal_global(
+      BidirectionalIteratorOrig first_sorted,
+      BidirectionalIteratorOrig last_sorted,
+      EPIterOrig ep_iter_sorted,
+      const GlobalToLocal& global_to_local) {
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, global_to_local);
+  }
+
+  // Add edges from a range of (source, target) pairs that are unsorted
+  template <typename InputIterator, typename GlobalToLocal>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last, 
+                     const GlobalToLocal& global_to_local) {
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
+    edge_vector_t new_edges(first, last);
+    if (new_edges.empty()) return;
+    std::sort(new_edges.begin(), new_edges.end());
+    this->add_edges_sorted_internal_global(new_edges.begin(), new_edges.end(), global_to_local);
+  }
+
+  template <typename InputIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last) {
+    this->add_edges_internal(first, last, identity_property_map());
+  }
+
+  // Add edges from a range of (source, target) pairs and edge properties that
+  // are unsorted
+  template <typename InputIterator, typename EPIterator, typename GlobalToLocal>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last,
+                     EPIterator ep_iter, EPIterator ep_iter_end,
+                     const GlobalToLocal& global_to_local) {
+    typedef compressed_sparse_row_graph Graph;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
+    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
+    typedef std::pair<vertex_t, vertex_t> vertex_pair;
+    typedef std::vector<
+              boost::tuple<vertex_pair,
+                           edge_bundled> >
+      edge_vector_t;
+    edge_vector_t new_edges
+      (boost::make_zip_iterator(boost::make_tuple(first, ep_iter)),
+       boost::make_zip_iterator(boost::make_tuple(last, ep_iter_end)));
+    if (new_edges.empty()) return;
+    std::sort(new_edges.begin(), new_edges.end(),
+              boost::detail::compare_first<
+                std::less<vertex_pair> >());
+    m_forward.add_edges_sorted_internal
+      (boost::make_transform_iterator(
+         new_edges.begin(),
+         boost::detail::my_tuple_get_class<0, vertex_pair>()),
+       boost::make_transform_iterator(
+         new_edges.end(),
+         boost::detail::my_tuple_get_class<0, vertex_pair>()),
+       boost::make_transform_iterator(
+         new_edges.begin(),
+         boost::detail::my_tuple_get_class
+           <1, edge_bundled>()),
+       global_to_local);
+  }
+
+  // Add edges from a range of (source, target) pairs and edge properties that
+  // are unsorted
+  template <typename InputIterator, typename EPIterator>
+  inline void
+  add_edges_internal(InputIterator first, InputIterator last,
+                     EPIterator ep_iter, EPIterator ep_iter_end) {
+    this->add_edges_internal(first, last, ep_iter, ep_iter_end, identity_property_map());
+  }
+
+  using inherited_vertex_properties::operator[];
+
+  // Directly access a edge or edge bundle
+  edge_push_back_type& operator[](const edge_descriptor& v)
+  { return m_forward.m_edge_properties[get(edge_index, *this, v)]; }
+
+  const edge_push_back_type& operator[](const edge_descriptor& v) const
+  { return m_forward.m_edge_properties[get(edge_index, *this, v)]; }
+
+  // private: non-portable, requires friend templates
+  inherited_vertex_properties&       vertex_properties()       {return *this;}
+  const inherited_vertex_properties& vertex_properties() const {return *this;}
+  typename forward_type::inherited_edge_properties&       edge_properties()       { return m_forward; }
+  const typename forward_type::inherited_edge_properties& edge_properties() const { return m_forward; }
+
+  forward_type m_forward;
+  backward_type m_backward;
+  GraphProperty m_property;
 };
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 // Construction functions
-template<BOOST_DIR_CSR_GRAPH_TEMPLATE_PARMS>
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline Vertex
-add_vertex(BOOST_DIR_CSR_GRAPH_TYPE& g) {
-  Vertex old_num_verts_plus_one = g.m_forward.m_rowstart.size();
-  EdgeIndex numedges = g.m_forward.m_rowstart.back();
-  g.m_forward.m_rowstart.push_back(numedges);
-  g.vertex_properties().resize(num_vertices(g));
-  return old_num_verts_plus_one - 1;
+add_vertex(BOOST_CSR_GRAPH_TYPE& g) {
+  add_vertex(g, typename BOOST_CSR_GRAPH_TYPE::vertex_bundled());
 }
 
 template<BOOST_DIR_CSR_GRAPH_TEMPLATE_PARMS>
@@ -900,7 +1159,18 @@ inline Vertex
 add_vertex(BOOST_DIR_CSR_GRAPH_TYPE& g, 
            typename BOOST_DIR_CSR_GRAPH_TYPE::vertex_bundled const& p) {
   Vertex old_num_verts_plus_one = g.m_forward.m_rowstart.size();
-  g.m_forward.m_rowstart.push_back(EdgeIndex(0));
+  g.m_forward.m_rowstart.push_back(g.m_forward.m_rowstart.back());
+  g.vertex_properties().push_back(p);
+  return old_num_verts_plus_one - 1;
+}
+
+template<BOOST_BIDIR_CSR_GRAPH_TEMPLATE_PARMS>
+inline Vertex
+add_vertex(BOOST_BIDIR_CSR_GRAPH_TYPE& g, 
+           typename BOOST_BIDIR_CSR_GRAPH_TYPE::vertex_bundled const& p) {
+  Vertex old_num_verts_plus_one = g.m_forward.m_rowstart.size();
+  g.m_forward.m_rowstart.push_back(g.m_forward.m_rowstart.back());
+  g.m_backward.m_rowstart.push_back(g.m_backward.m_rowstart.back());
   g.vertex_properties().push_back(p);
   return old_num_verts_plus_one - 1;
 }
@@ -911,6 +1181,7 @@ add_vertices(typename BOOST_DIR_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_
   Vertex old_num_verts_plus_one = g.m_forward.m_rowstart.size();
   EdgeIndex numedges = g.m_forward.m_rowstart.back();
   g.m_forward.m_rowstart.resize(old_num_verts_plus_one + count, numedges);
+  g.m_backward.m_rowstart.resize(old_num_verts_plus_one + count, numedges);
   g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }
@@ -1070,6 +1341,21 @@ target(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e,
   return g.m_forward.m_column[e.idx];
 }
 
+namespace detail {
+  template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+  inline EdgeIndex get_actual_row_start
+    (const BOOST_CSR_GRAPH_TYPE& g,
+     EdgeIndex rowstart_i_minus_1, EdgeIndex rowstart_i)
+  {
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+    return rowstart_i;
+#else
+  // Special case to allow incremental construction
+    return (std::max)(rowstart_i_minus_1, rowstart_i);
+#endif
+  }
+}
+
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
                  typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
@@ -1079,14 +1365,9 @@ out_edges(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator it;
   EdgeIndex v_row_start = g.m_forward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_forward.m_rowstart[v + 1];
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
   return std::make_pair(it(ed(v, v_row_start)),
-                        it(ed(v, next_row_start)));
-#else
-  // Special case to allow incremental construction
-  return std::make_pair(it(ed(v, v_row_start)),
-                        it(ed(v, (std::max)(v_row_start, next_row_start))));
-#endif
+                        it(ed(v, detail::get_actual_row_start
+                                   (g, v_row_start, next_row_start))));
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1095,13 +1376,34 @@ out_degree(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   EdgeIndex v_row_start = g.m_forward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_forward.m_rowstart[v + 1];
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-  return next_row_start - v_row_start;
-#else
-  // Special case to allow incremental construction
-  return (std::max)(v_row_start, next_row_start) - v_row_start;
-#endif
+  return detail::get_actual_row_start(g, v_row_start, next_row_start) - v_row_start;
 }
+
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+
+template<BOOST_BIDIR_CSR_GRAPH_TEMPLATE_PARMS>
+inline std::pair<typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator,
+                 typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator>
+in_edges(Vertex v, const BOOST_BIDIR_CSR_GRAPH_TYPE& g)
+{
+  typedef typename BOOST_BIDIR_CSR_GRAPH_TYPE::edge_descriptor ed;
+  typedef typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator it;
+  EdgeIndex v_row_start = g.m_backward.m_rowstart[v];
+  EdgeIndex next_row_start = g.m_backward.m_rowstart[v + 1];
+  return std::make_pair(it(ed(v, v_row_start)),
+                        it(ed(v, next_row_start)));
+}
+
+template<BOOST_BIDIR_CSR_GRAPH_TEMPLATE_PARMS>
+inline EdgeIndex
+in_degree(Vertex v, const BOOST_BIDIR_CSR_GRAPH_TYPE& g)
+{
+  EdgeIndex v_row_start = g.m_backward.m_rowstart[v];
+  EdgeIndex next_row_start = g.m_backward.m_rowstart[v + 1];
+  return next_row_start - v_row_start;
+}
+
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 // From AdjacencyGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1111,15 +1413,10 @@ adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   EdgeIndex v_row_start = g.m_forward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_forward.m_rowstart[v + 1];
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
-  return std::make_pair(g.m_forward.m_column.begin() + v_row_start,
-                        g.m_forward.m_column.begin() + next_row_start);
-#else
-  // Special case to allow incremental construction
   return std::make_pair(g.m_forward.m_column.begin() + v_row_start,
                         g.m_forward.m_column.begin() +
-                                (std::max)(v_row_start, next_row_start));
-#endif
+                          detail::get_actual_row_start
+                            (g, v_row_start, next_row_start));
 }
 
 // Extra, common functions
