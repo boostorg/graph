@@ -16,7 +16,7 @@
 #include <boost/graph/incremental_components.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/property_map.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/random.hpp>
 #include <boost/test/minimal.hpp>
 
