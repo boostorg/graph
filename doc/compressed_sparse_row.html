@@ -40,7 +40,8 @@ function address(host, user) {
           
     <p>The class template <code>compressed_sparse_row_graph</code> is
     a graph class that uses the compact Compressed Sparse Row (CSR)
-    format to store directed graphs. While CSR graphs have much less
+    format to store directed (and bidirectional) graphs. While CSR graphs have
+    much less
     overhead than many other graph formats (e.g., <a
     href="adjacency_list.html"><code>adjacency_list</code></a>), they
     do not provide any mutability: one cannot add or remove vertices
@@ -67,14 +68,20 @@ function address(host, user) {
     providing the offset of the first edge outgoing from each
     vertex. Iteration over the out-edges for the <i>i</i><sup>th</sup>
     vertex in the graph is achieved by
-    visiting <tt>edge_array[vertex_array[i]]</tt>, <tt>edge_array[vertex_array[i]+1]</tt>,
+    visiting <tt>edge_array[vertex_array[i]]</tt>,
+    <tt>edge_array[vertex_array[i]+1]</tt>,
     ..., <tt>edge_array[vertex_array[i+1]]</tt>. This format minimizes
     memory use to <i>O(n + m)</i>, where <i>n</i> and <i>m</i> are the
     number of vertices and edges, respectively. The constants
     multiplied by <i>n</i> and <i>m</i> are based on the size of the
     integers needed to represent indices into the edge and vertex
     arrays, respectively, which can be controlled using
-    the <a href="#template-parms">template parameters</a>.</p>
+    the <a href="#template-parms">template parameters</a>.  The
+    <tt>Directed</tt> template parameter controls whether one edge direction
+    (the default) or both directions are stored.  A directed CSR graph has
+    <tt>Directed</tt> = <tt>directedS</tt> and a bidirectional CSR graph (only
+    supported with the new interface and with a limited set of constructors)
+    has <tt>Directed</tt> = <tt>bidirectionalS</tt>.</p>
 
     <ul>
       <li><a href="#synopsis">Synopsis</a></li>
@@ -155,7 +162,7 @@ public:
                               edges_size_type numedges = 0,
                               const GraphProperty&amp; prop = GraphProperty());
 
-  <i>// New sorted edge list constructors <b>(both interfaces)</b></i>
+  <i>// New sorted edge list constructors <b>(both interfaces, directed only)</b></i>
   template&lt;typename InputIterator&gt;
   <a href="#edge-sorted-const">compressed_sparse_row_graph</a>(edges_are_sorted_t,
                               InputIterator edge_begin, InputIterator edge_end,
@@ -171,7 +178,7 @@ public:
                               edges_size_type numedges = 0,
                               const GraphProperty&amp; prop = GraphProperty());
 
-  <i>// In-place unsorted edge list constructors <b>(new interface only)</b></i>
+  <i>// In-place unsorted edge list constructors <b>(new interface and directed only)</b></i>
   template&lt;typename InputIterator&gt;
   <a href="#edge-inplace-const">compressed_sparse_row_graph</a>(construct_inplace_from_sources_and_targets_t,
                               std::vector&lt;vertex_descriptor&gt;&amp; sources,
@@ -187,7 +194,7 @@ public:
                               vertices_size_type numverts,
                               const GraphProperty&amp; prop = GraphProperty());
 
-  <i>// Miscellaneous constructors <b>(both interfaces)</b></i>
+  <i>// Miscellaneous constructors <b>(both interfaces, directed only)</b></i>
   template&lt;typename Graph, typename VertexIndexMap&gt;
   <a href="#graph-const">compressed_sparse_row_graph</a>(const Graph&amp; g, const VertexIndexMap&amp; vi,
                               vertices_size_type numverts,
@@ -199,7 +206,7 @@ public:
   template&lt;typename Graph&gt;
   explicit <a href="#graph-const">compressed_sparse_row_graph</a>(const Graph&amp; g);
 
-  <i>// <a href="#mutators">Graph mutators <b>(both interfaces)</b></a></i>
+  <i>// <a href="#mutators">Graph mutators <b>(both interfaces, directed only)</b></a></i>
   template&lt;typename Graph, typename VertexIndexMap&gt;
   void <a href="#assign">assign</a>(const Graph&amp; g, const VertexIndexMap&amp; vi,
               vertices_size_type numverts, edges_size_type numedges);
@@ -223,6 +230,11 @@ vertex_descriptor target(edge_descriptor, const compressed_sparse_row_graph&amp;
 std::pair&lt;out_edge_iterator, out_edge_iterator&gt; 
   out_edges(vertex_descriptor, const compressed_sparse_row_graph&amp;);
 degree_size_type out_degree(vertex_descriptor v, const compressed_sparse_row_graph&amp;);
+
+<i>// <a href="BidirectionalGraph.html">Bidirectional Graph requirements <b>(new interface and bidirectional only)</b></a></i>
+std::pair&lt;in_edge_iterator, in_edge_iterator&gt; 
+  in_edges(vertex_descriptor, const compressed_sparse_row_graph&amp;);
+degree_size_type in_degree(vertex_descriptor v, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="AdjacencyGraph.html">Adjacency Graph requirements <b>(both interfaces)</b></a></i>
 std::pair&lt;adjacency_iterator, adjacency_iterator&gt; 
@@ -259,7 +271,7 @@ property_map&lt;compressed_sparse_row_graph, Tag&gt;::const_type
 <a href="#get">get</a>(PropertyTag, const compressed_sparse_row_graph&amp; g)
 
 template&lt;typename <a href="./PropertyTag.html">PropertyTag</a>, class X&gt;
-typename property_traits&lt;property_map&lt;compressed_sparse_row_graph, PropertyTag&gt;::const_type&gt::value_type
+typename property_traits&lt;property_map&lt;compressed_sparse_row_graph, PropertyTag&gt;::const_type&gt;::value_type
 <a href="#get-x">get</a>(PropertyTag, const compressed_sparse_row_graph&amp; g, X x)
 
 template&lt;typename <a href="./PropertyTag.html">PropertyTag</a>, class X, class Value&gt;
@@ -290,19 +302,19 @@ vertex_descriptor <a href="#add_vertices">add_vertices</a>(vertices_size_type co
 template&lt;typename Graph&gt;
 edge_descriptor <a href="#add_edge">add_edge</a>(vertex_descriptor src, vertex_descriptor tgt, compressed_sparse_row_graph&amp; g);
 
-<b>(new interface only)</b>
+<b>(new interface and directed only)</b>
 template&lt;typename InputIterator, typename Graph&gt;
 void <a href="#add_edges">add_edges</a>(InputIterator first, InputIterator last, compressed_sparse_row_graph&amp; g);
 
-<b>(new interface only)</b>
+<b>(new interface and directed only)</b>
 template&lt;typename InputIterator, typename EPIter, typename Graph&gt;
 void <a href="#add_edges_prop">add_edges</a>(InputIterator first, InputIterator last, EPIter ep_first, EPIter ep_last, compressed_sparse_row_graph&amp; g);
 
-<b>(new interface only)</b>
+<b>(new interface and directed only)</b>
 template&lt;typename BidirectionalIterator, typename Graph&gt;
 void <a href="#add_edges_sorted">add_edges_sorted</a>(BidirectionalIterator first, BidirectionalIterator last, compressed_sparse_row_graph&amp; g);
 
-<b>(new interface only)</b>
+<b>(new interface and directed only)</b>
 template&lt;typename BidirectionalIterator, typename EPIter, typename Graph&gt;
 void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator first, BidirectionalIterator last, EPIter ep_iter, compressed_sparse_row_graph&amp; g);
 
