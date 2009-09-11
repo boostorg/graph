@@ -18,7 +18,6 @@
 #include <boost/bind.hpp>
 #include <boost/limits.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
@@ -90,6 +89,127 @@ namespace boost {
     typedef type const_type;
   };
 
+  //=================
+  // Function Objects
+  //=================
+
+  namespace detail {
+
+    // vertex_at
+    template <typename Graph>
+    struct grid_graph_vertex_at {
+
+      typedef typename graph_traits<Graph>::vertex_descriptor result_type;
+
+      grid_graph_vertex_at(const Graph* graph) :
+        m_graph(graph) { }
+
+      result_type
+      operator()
+      (typename graph_traits<Graph>::vertices_size_type vertex_index) const {
+        return (vertex(vertex_index, *m_graph));
+      }
+
+    private:
+      const Graph* m_graph;
+    };
+
+    // out_edge_at
+    template <typename Graph>
+    struct grid_graph_out_edge_at {
+
+    private:
+      typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+
+    public:
+      typedef typename graph_traits<Graph>::edge_descriptor result_type;
+
+      grid_graph_out_edge_at(vertex_descriptor source_vertex,
+                             const Graph* graph) :
+        m_vertex(source_vertex),
+        m_graph(graph) { }
+
+      result_type
+      operator()
+      (typename graph_traits<Graph>::degree_size_type out_edge_index) const {
+        return (out_edge_at(m_vertex, out_edge_index, *m_graph));
+      }
+
+    private:
+      vertex_descriptor m_vertex;
+      const Graph* m_graph;
+    };
+
+    // in_edge_at
+    template <typename Graph>
+    struct grid_graph_in_edge_at {
+
+    private:
+      typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+
+    public:
+      typedef typename graph_traits<Graph>::edge_descriptor result_type;
+
+      grid_graph_in_edge_at(vertex_descriptor target_vertex,
+                            const Graph* graph) :
+        m_vertex(target_vertex),
+        m_graph(graph) { }
+
+      result_type
+      operator()
+      (typename graph_traits<Graph>::degree_size_type in_edge_index) const {
+        return (in_edge_at(m_vertex, in_edge_index, *m_graph));
+      }
+
+    private:
+      vertex_descriptor m_vertex;
+      const Graph* m_graph;
+    };
+
+    // edge_at
+    template <typename Graph>
+    struct grid_graph_edge_at {
+
+      typedef typename graph_traits<Graph>::edge_descriptor result_type;
+
+      grid_graph_edge_at(const Graph* graph) :
+        m_graph(graph) { }
+
+      result_type
+      operator()
+      (typename graph_traits<Graph>::edges_size_type edge_index) const {
+        return (edge_at(edge_index, *m_graph));
+      }
+
+    private:
+      const Graph* m_graph;
+    };
+
+    // adjacent_vertex_at
+    template <typename Graph>
+    struct grid_graph_adjacent_vertex_at {
+
+    public:
+      typedef typename graph_traits<Graph>::vertex_descriptor result_type;
+
+      grid_graph_adjacent_vertex_at(result_type source_vertex,
+                                    const Graph* graph) :
+        m_vertex(source_vertex),
+        m_graph(graph) { }
+
+      result_type
+      operator()
+      (typename graph_traits<Graph>::degree_size_type adjacent_index) const {
+        return (target(out_edge_at(m_vertex, adjacent_index, *m_graph), *m_graph));
+      }
+
+    private:
+      result_type m_vertex;
+      const Graph* m_graph;
+    };
+
+  }; // namespace detail
+
   //===========
   // Grid Graph
   //===========
@@ -118,25 +238,26 @@ namespace boost {
 
     // vertex_iterator
     typedef counting_iterator<vertices_size_type> vertex_index_iterator;
-    typedef boost::function<vertex_descriptor (vertices_size_type)> vertex_function;
+    typedef detail::grid_graph_vertex_at<type> vertex_function;
     typedef transform_iterator<vertex_function, vertex_index_iterator> vertex_iterator;
 
     // edge_iterator
     typedef counting_iterator<edges_size_type> edge_index_iterator;
-    typedef boost::function<edge_descriptor (edges_size_type)> edge_function;
+    typedef detail::grid_graph_edge_at<type> edge_function;
     typedef transform_iterator<edge_function, edge_index_iterator> edge_iterator;
 
     // out_edge_iterator
     typedef counting_iterator<degree_size_type> degree_iterator;
-    typedef boost::function<edge_descriptor (degree_size_type)> degree_function;
-    typedef transform_iterator<degree_function, degree_iterator> out_edge_iterator;
+    typedef detail::grid_graph_out_edge_at<type> out_edge_function;
+    typedef transform_iterator<out_edge_function, degree_iterator> out_edge_iterator;
 
     // in_edge_iterator
-    typedef transform_iterator<degree_function, degree_iterator> in_edge_iterator;
+    typedef detail::grid_graph_in_edge_at<type> in_edge_function;
+    typedef transform_iterator<in_edge_function, degree_iterator> in_edge_iterator;
 
     // adjacency_iterator
-    typedef typename adjacency_iterator_generator<type,
-      vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+    typedef detail::grid_graph_adjacent_vertex_at<type> adjacent_vertex_function;
+    typedef transform_iterator<adjacent_vertex_function, degree_iterator> adjacency_iterator;
 
     // categories
     typedef undirected_tag directed_category;
@@ -581,21 +702,15 @@ namespace boost {
     friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM vertex_iterator,
                             BOOST_GRID_GRAPH_TYPE_MEM vertex_iterator> 
     vertices(const BOOST_GRID_GRAPH_TYPE& graph) {
-      BOOST_GRID_GRAPH_TYPE_TD(vertex_descriptor);
-      BOOST_GRID_GRAPH_TYPE_TD(vertices_size_type);
       BOOST_GRID_GRAPH_TYPE_TD(vertex_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(vertex_function);
       BOOST_GRID_GRAPH_TYPE_TD(vertex_index_iterator);
 
-      typedef boost::function<vertex_descriptor (vertices_size_type)>
-        vertex_function;
-
-      vertex_function transform_function =
-        boost::bind(&BOOST_GRID_GRAPH_TYPE::vertex_at, boost::cref(graph), _1);
-
       return (std::make_pair
-              (vertex_iterator(vertex_index_iterator(0), transform_function),
+              (vertex_iterator(vertex_index_iterator(0),
+                               vertex_function(&graph)),
                vertex_iterator(vertex_index_iterator(graph.num_vertices()),
-                               transform_function)));
+                               vertex_function(&graph))));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
@@ -621,22 +736,15 @@ namespace boost {
                             BOOST_GRID_GRAPH_TYPE_MEM out_edge_iterator>
     out_edges(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
               const BOOST_GRID_GRAPH_TYPE& graph) {
-      BOOST_GRID_GRAPH_TYPE_TD(edge_descriptor);
-      BOOST_GRID_GRAPH_TYPE_TD(degree_size_type);
       BOOST_GRID_GRAPH_TYPE_TD(degree_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(out_edge_function);
       BOOST_GRID_GRAPH_TYPE_TD(out_edge_iterator);
 
-      typedef boost::function<edge_descriptor (degree_size_type)>
-        out_edge_at_function;
-
-      out_edge_at_function transform_function =
-        boost::bind(&BOOST_GRID_GRAPH_TYPE::out_edge_at,
-                    boost::cref(graph), vertex, _1);
-
       return (std::make_pair
-              (out_edge_iterator(degree_iterator(0), transform_function),
+              (out_edge_iterator(degree_iterator(0),
+                                 out_edge_function(vertex, &graph)),
                out_edge_iterator(degree_iterator(graph.out_degree(vertex)),
-                                 transform_function)));
+                                 out_edge_function(vertex, &graph))));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
@@ -645,6 +753,14 @@ namespace boost {
     (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
      const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.out_degree(vertex));
+    }
+
+    template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor
+    out_edge_at(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
+                BOOST_GRID_GRAPH_TYPE_MEM degree_size_type out_edge_index,
+                const BOOST_GRID_GRAPH_TYPE& graph) {
+      return (graph.out_edge_at(vertex, out_edge_index));
     }
 
     //===============
@@ -656,14 +772,15 @@ namespace boost {
                               BOOST_GRID_GRAPH_TYPE_MEM adjacency_iterator>
     adjacent_vertices (BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
                        const BOOST_GRID_GRAPH_TYPE& graph) {
-
-      BOOST_GRID_GRAPH_TYPE_MEM out_edge_iterator out_edge_start, out_edge_end;
-      tie(out_edge_start, out_edge_end) = out_edges(vertex, graph);
+      BOOST_GRID_GRAPH_TYPE_TD(degree_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(adjacent_vertex_function);
       BOOST_GRID_GRAPH_TYPE_TD(adjacency_iterator);
 
       return (std::make_pair
-              (adjacency_iterator(out_edge_start, &graph),
-               adjacency_iterator(out_edge_end, &graph)));
+              (adjacency_iterator(degree_iterator(0),
+                                 adjacent_vertex_function(vertex, &graph)),
+               adjacency_iterator(degree_iterator(graph.out_degree(vertex)),
+                                 adjacent_vertex_function(vertex, &graph))));
     }
 
     //==============
@@ -687,21 +804,15 @@ namespace boost {
     friend inline std::pair<BOOST_GRID_GRAPH_TYPE_MEM edge_iterator,
                             BOOST_GRID_GRAPH_TYPE_MEM edge_iterator>
     edges(const BOOST_GRID_GRAPH_TYPE& graph) {
-
-      typedef boost::function<BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor
-                               (BOOST_GRID_GRAPH_TYPE_MEM edges_size_type)>
-        edge_at_function;
-
-      edge_at_function transform_function =
-        boost::bind(&BOOST_GRID_GRAPH_TYPE::edge_at, boost::cref(graph), _1);
+      BOOST_GRID_GRAPH_TYPE_TD(edge_index_iterator);
+      BOOST_GRID_GRAPH_TYPE_TD(edge_function);
+      BOOST_GRID_GRAPH_TYPE_TD(edge_iterator);
 
       return (std::make_pair
-              (BOOST_GRID_GRAPH_TYPE_MEM edge_iterator
-                (BOOST_GRID_GRAPH_TYPE_MEM edge_index_iterator(0),
-                transform_function),
-               BOOST_GRID_GRAPH_TYPE_MEM edge_iterator
-                (edge_index_iterator(graph.num_edges()),
-                 transform_function)));
+              (edge_iterator(edge_index_iterator(0),
+                             edge_function(&graph)),
+               edge_iterator(edge_index_iterator(graph.num_edges()),
+                             edge_function(&graph))));
     }
 
     //===================
@@ -713,22 +824,15 @@ namespace boost {
                             BOOST_GRID_GRAPH_TYPE_MEM in_edge_iterator>
     in_edges(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
              const BOOST_GRID_GRAPH_TYPE& graph) {
-      BOOST_GRID_GRAPH_TYPE_TD(edge_descriptor);
-      BOOST_GRID_GRAPH_TYPE_TD(degree_size_type);
+      BOOST_GRID_GRAPH_TYPE_TD(in_edge_function);
       BOOST_GRID_GRAPH_TYPE_TD(degree_iterator);
       BOOST_GRID_GRAPH_TYPE_TD(in_edge_iterator);
 
-      typedef boost::function<edge_descriptor (degree_size_type)>
-        in_edge_at_function;
-
-      in_edge_at_function transform_function =
-        boost::bind(&BOOST_GRID_GRAPH_TYPE::in_edge_at,
-                    boost::cref(graph), vertex, _1);
-
       return (std::make_pair
-              (in_edge_iterator(degree_iterator(0), transform_function),
+              (in_edge_iterator(degree_iterator(0),
+                                in_edge_function(vertex, &graph)),
                in_edge_iterator(degree_iterator(graph.in_degree(vertex)),
-                                transform_function)));    
+                                in_edge_function(vertex, &graph))));
     }
 
     template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
@@ -744,6 +848,15 @@ namespace boost {
             const BOOST_GRID_GRAPH_TYPE& graph) {
       return (graph.out_degree(vertex) * 2);
     }
+
+    template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
+    friend inline BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor
+    in_edge_at(BOOST_GRID_GRAPH_TYPE_MEM vertex_descriptor vertex,
+               BOOST_GRID_GRAPH_TYPE_MEM degree_size_type in_edge_index,
+               const BOOST_GRID_GRAPH_TYPE& graph) {
+      return (graph.in_edge_at(vertex, in_edge_index));
+    }
+
 
     //==================
     // Adjacency Matrix

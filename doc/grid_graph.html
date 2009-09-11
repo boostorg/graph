@@ -166,6 +166,17 @@ get(<span class="name">boost</span>::<span class="type">edge_index_t</span>,
     <span class="name">Traits</span>::<span class="type">edge_descriptor</span> edge,
     <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph);
 
+<span class="comment">// Get the out-edge associated with vertex and out_edge_index</span>
+<span class="name">Traits</span>::<span class="type">edge_descriptor</span>
+out_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descriptor</span> vertex,
+            <span class="name">Traits</span>::<span class="type">degree_size_type</span> out_edge_index,
+            <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph);
+
+<span class="comment">// Get the out-edge associated with vertex and in_edge_index</span>
+<span class="name">Traits</span>::<span class="type">edge_descriptor</span>
+in_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descriptor</span> vertex,
+           <span class="name">Traits</span>::<span class="type">degree_size_type</span> in_edge_index,
+           <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph);
     </pre>
 
     <h4>Example</h4>
