@@ -115,14 +115,14 @@ namespace detail {
 
       boost::graph::detail::count_starts
         (sources_begin, sources_end, m_rowstart.begin(), numlocalverts,
-         source_pred, make_property_map_function(global_to_local));
+         source_pred, boost::make_property_map_function(global_to_local));
 
       m_column.resize(m_rowstart.back());
 
       boost::graph::detail::histogram_sort
         (sources_begin, sources_end, m_rowstart.begin(), numlocalverts,
          targets_begin, m_column.begin(),
-         source_pred, make_property_map_function(global_to_local));
+         source_pred, boost::make_property_map_function(global_to_local));
     }
 
     //  Rebuild graph from number of vertices and multi-pass unsorted list of
@@ -148,7 +148,7 @@ namespace detail {
 
       boost::graph::detail::count_starts
         (sources_begin, sources_end, m_rowstart.begin(), numlocalverts,
-         source_pred, make_property_map_function(global_to_local));
+         source_pred, boost::make_property_map_function(global_to_local));
 
       m_column.resize(m_rowstart.back());
       inherited_edge_properties::resize(m_rowstart.back());
@@ -157,7 +157,7 @@ namespace detail {
         (sources_begin, sources_end, m_rowstart.begin(), numlocalverts,
          targets_begin, m_column.begin(),
          ep_iter, inherited_edge_properties::begin(),
-         source_pred, make_property_map_function(global_to_local));
+         source_pred, boost::make_property_map_function(global_to_local));
     }
 
     //  Assign from number of vertices and sorted list of edges
@@ -249,10 +249,10 @@ namespace detail {
       m_rowstart.resize(numverts + 1);
       boost::graph::detail::count_starts
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
-         keep_all(), make_property_map_function(global_to_local));
+         keep_all(), boost::make_property_map_function(global_to_local));
       boost::graph::detail::histogram_sort_inplace
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
-         targets.begin(), make_property_map_function(global_to_local));
+         targets.begin(), boost::make_property_map_function(global_to_local));
       // Now targets is the correct vector (properly sorted by source) for
       // m_column
       m_column.swap(targets);
@@ -275,11 +275,11 @@ namespace detail {
       m_rowstart.resize(numverts + 1);
       boost::graph::detail::count_starts
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
-         keep_all(), make_property_map_function(global_to_local));
+         keep_all(), boost::make_property_map_function(global_to_local));
       boost::graph::detail::histogram_sort_inplace
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
          targets.begin(), edge_props.begin(),
-         make_property_map_function(global_to_local));
+         boost::make_property_map_function(global_to_local));
       // Now targets is the correct vector (properly sorted by source) for
       // m_column, and edge_props for m_edge_properties
       m_column.swap(targets);
