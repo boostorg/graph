@@ -445,7 +445,7 @@ namespace detail {
     // Implicit copy constructor OK
     explicit csr_out_edge_iterator(edge_descriptor edge) : m_edge(edge) { }
 
-   private:
+   public: // GCC 4.2.1 doesn't like the private-and-friend thing
     // iterator_facade requirements
     const edge_descriptor& dereference() const { return m_edge; }
 
@@ -484,7 +484,7 @@ namespace detail {
       : rowstart_array(&graph.m_forward.m_rowstart[0]), current_edge(current_edge),
         end_of_this_vertex(end_of_this_vertex) {}
 
-   private:
+   public: // See above
     friend class boost::iterator_core_access;
 
     edge_descriptor dereference() const {return current_edge;}
@@ -524,7 +524,7 @@ namespace detail {
                          EdgeIndex index_in_backward_graph)
       : m_graph(graph), m_index_in_backward_graph(index_in_backward_graph) {}
 
-   private:
+   public: // See above
     // iterator_facade requirements
     edge_descriptor dereference() const {
       return edge_descriptor(
