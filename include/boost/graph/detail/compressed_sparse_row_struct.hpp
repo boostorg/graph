@@ -468,7 +468,7 @@ namespace detail {
   class csr_edge_iterator
     : public iterator_facade<csr_edge_iterator<CSRGraph>,
                              typename CSRGraph::edge_descriptor,
-                             std::input_iterator_tag,
+                             boost::forward_traversal_tag,
                              typename CSRGraph::edge_descriptor>
   {
    private:
@@ -481,7 +481,7 @@ namespace detail {
     csr_edge_iterator(const CSRGraph& graph,
                       edge_descriptor current_edge,
                       EdgeIndex end_of_this_vertex)
-      : rowstart_array(&graph.m_forward.m_rowstart[0]), current_edge(current_edge),
+      : rowstart_array(&graph.m_forward.m_rowstart), current_edge(current_edge),
         end_of_this_vertex(end_of_this_vertex) {}
 
    public: // See above
@@ -495,13 +495,14 @@ namespace detail {
 
     void increment() {
       ++current_edge.idx;
-      while (current_edge.idx == end_of_this_vertex) {
+      while (current_edge.idx == end_of_this_vertex &&
+             current_edge.src + 1 < rowstart_array->size()) {
         ++current_edge.src;
-        end_of_this_vertex = rowstart_array[current_edge.src + 1];
+        end_of_this_vertex = (*rowstart_array)[current_edge.src + 1];
       }
     }
 
-    const EdgeIndex* rowstart_array;
+    const std::vector<EdgeIndex>* rowstart_array;
     edge_descriptor current_edge;
     EdgeIndex end_of_this_vertex;
   };
@@ -511,7 +512,7 @@ namespace detail {
   class csr_in_edge_iterator
     : public iterator_facade<csr_in_edge_iterator<CSRGraph>,
                              typename CSRGraph::edge_descriptor,
-                             std::input_iterator_tag,
+                             boost::forward_traversal_tag,
                              typename CSRGraph::edge_descriptor>
   {
    public:
