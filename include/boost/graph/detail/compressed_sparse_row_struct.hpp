@@ -476,13 +476,15 @@ namespace detail {
     typedef typename CSRGraph::edges_size_type EdgeIndex;
 
    public:
-    csr_edge_iterator() : rowstart_array(0), current_edge(), end_of_this_vertex(0) {}
+    csr_edge_iterator() : rowstart_array(0), current_edge(), end_of_this_vertex(0), total_num_edges(0) {}
 
     csr_edge_iterator(const CSRGraph& graph,
                       edge_descriptor current_edge,
                       EdgeIndex end_of_this_vertex)
-      : rowstart_array(&graph.m_forward.m_rowstart), current_edge(current_edge),
-        end_of_this_vertex(end_of_this_vertex) {}
+      : rowstart_array(&graph.m_forward.m_rowstart[0]),
+        current_edge(current_edge),
+        end_of_this_vertex(end_of_this_vertex),
+        total_num_edges(num_edges(graph)) {}
 
    public: // See above
     friend class boost::iterator_core_access;
@@ -495,16 +497,17 @@ namespace detail {
 
     void increment() {
       ++current_edge.idx;
-      while (current_edge.idx == end_of_this_vertex &&
-             current_edge.src + 1 < rowstart_array->size()) {
+      if (current_edge.idx == total_num_edges) return;
+      while (current_edge.idx == end_of_this_vertex) {
         ++current_edge.src;
-        end_of_this_vertex = (*rowstart_array)[current_edge.src + 1];
+        end_of_this_vertex = rowstart_array[current_edge.src + 1];
       }
     }
 
-    const std::vector<EdgeIndex>* rowstart_array;
+    const EdgeIndex* rowstart_array;
     edge_descriptor current_edge;
     EdgeIndex end_of_this_vertex;
+    EdgeIndex total_num_edges;
   };
 
   // Only for bidirectional graphs
