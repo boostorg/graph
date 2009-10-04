@@ -557,14 +557,14 @@ equipped to handle the use of multiple visitors in the same algorithm
   using std::vector;
   using std::cout;
   using std::endl;
-  vector&lt;Vertex&gt; p(num_vertices(G)); //the predecessor array
+  vector&lt;Vertex&gt; p(num_vertices(G), graph_traits&lt;G&gt;::null_vertex()); //the predecessor array
   dijkstra_shortest_paths(G, s, distance_map(&amp;d[0]). 
                           visitor(make_predecessor_recorder(&amp;p[0])));
 
   cout &lt;&lt; &quot;parents in the tree of shortest paths:&quot; &lt;&lt; endl;
   for(vi = vertices(G).first; vi != vertices(G).second; ++vi) {
     cout &lt;&lt; &quot;parent(&quot; &lt;&lt; *vi;
-    if (p[*vi] == Vertex())
+    if (p[*vi] == graph_traits&lt;G&gt;::null_vertex())
       cout &lt;&lt; &quot;) = no parent&quot; &lt;&lt; endl; 
     else 
       cout &lt;&lt; &quot;) = &quot; &lt;&lt; p[*vi] &lt;&lt; endl;

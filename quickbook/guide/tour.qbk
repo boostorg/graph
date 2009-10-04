@@ -525,14 +525,14 @@ visitors in the same algorithm (see Section Visitor Concepts).
  using std::vector;
  using std::cout;
  using std::endl;
- vector<Vertex> p(num_vertices(G)); //the predecessor array
+ vector<Vertex> p(num_vertices(G), graph_traits<G>::null_vertex()); //the predecessor array
  dijkstra_shortest_paths(G, s, distance_map(&d[0]).
                          visitor(make_predecessor_recorder(&p[0])));
 
  cout << "parents in the tree of shortest paths:" << endl;
  for(vi = vertices(G).first; vi != vertices(G).second; ++vi) {
    cout << "parent(" << *vi;
-   if (p[*vi] == Vertex())
+   if (p[*vi] == graph_traits<G>::null_vertex())
      cout << ") = no parent" << endl;
    else
      cout << ") = " << p[*vi] << endl;
