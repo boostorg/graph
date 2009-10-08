@@ -807,8 +807,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
   typedef bidirectional_tag directed_category;
   typedef allow_parallel_edge_tag edge_parallel_category;
 
-  class traversal_category: public incidence_graph_tag,
-                            public bidirectional_graph_tag,
+  class traversal_category: public bidirectional_graph_tag,
                             public adjacency_graph_tag,
                             public vertex_list_graph_tag,
                             public edge_list_graph_tag {};
