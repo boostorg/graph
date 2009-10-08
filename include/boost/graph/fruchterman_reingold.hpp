@@ -98,11 +98,10 @@ struct grid_force_pairs
   template<typename Graph>
   explicit
   grid_force_pairs(const Topology& topology,
-                   const Point& origin, const point_difference_type& extent, 
                    PositionMap position, const Graph& g)
-    : topology(topology), extent(extent), origin(origin), position(position)
+    : topology(topology), position(position)
   {
-    two_k = 2. * this->topology.volume(this->extent) / std::sqrt((double)num_vertices(g));
+    two_k = 2. * this->topology.volume(this->topology.extent()) / std::sqrt((double)num_vertices(g));
   }
 
   template<typename Graph, typename ApplyForce >
@@ -113,13 +112,15 @@ struct grid_force_pairs
     typedef std::list<vertex_descriptor> bucket_t;
     typedef std::vector<bucket_t> buckets_t;
 
-    std::size_t columns = std::size_t(extent[0] / two_k + 1.);
-    std::size_t rows = std::size_t(extent[1] / two_k + 1.);
+    std::size_t columns = std::size_t(topology.extent()[0] / two_k + 1.);
+    std::size_t rows = std::size_t(topology.extent()[1] / two_k + 1.);
     buckets_t buckets(rows * columns);
     vertex_iterator v, v_end;
     for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
-      std::size_t column = std::size_t((position[*v][0] + extent[0] / 2) / two_k);
-      std::size_t row    = std::size_t((position[*v][1] + extent[1] / 2) / two_k);
+      std::size_t column =
+        std::size_t((position[*v][0] + topology.extent()[0] / 2) / two_k);
+      std::size_t row    =
+        std::size_t((position[*v][1] + topology.extent()[1] / 2) / two_k);
 
       if (column >= columns) column = columns - 1;
       if (row >= rows) row = rows - 1;
@@ -161,8 +162,6 @@ struct grid_force_pairs
 
  private:
   const Topology& topology;
-  point_difference_type extent;
-  Point origin;
   PositionMap position;
   double two_k;
 };
@@ -171,10 +170,8 @@ template<typename PositionMap, typename Topology, typename Graph>
 inline grid_force_pairs<Topology, PositionMap>
 make_grid_force_pairs
   (const Topology& topology,
-   typename Topology::point_type const& origin,
-   typename Topology::point_difference_type const& extent,
    const PositionMap& position, const Graph& g)
-{ return grid_force_pairs<Topology, PositionMap>(topology, origin, extent, position, g); }
+{ return grid_force_pairs<Topology, PositionMap>(topology, position, g); }
 
 template<typename Graph, typename PositionMap, typename Topology>
 void
@@ -210,10 +207,9 @@ namespace detail {
   template<typename Topology>
   void 
   maybe_jitter_point(const Topology& topology,
-                     typename Topology::point_type& p1, const typename Topology::point_type& p2,
-                     typename Topology::point_type origin, typename Topology::point_difference_type extent)
+                     typename Topology::point_type& p1, const typename Topology::point_type& p2)
   {
-    double too_close = topology.norm(extent) / 10000.;
+    double too_close = topology.norm(topology.extent()) / 10000.;
     if (topology.distance(p1, p2) < too_close) {
       p1 = topology.move_position_toward(p1, 1./200, topology.random_point());
     }
@@ -230,10 +226,9 @@ namespace detail {
     fr_apply_force(const Topology& topology,
                    const PositionMap& position,
                    const DisplacementMap& displacement,
-                   Point origin, PointDiff extent,
                    RepulsiveForce repulsive_force, double k, const Graph& g)
-      : topology(topology), position(position), displacement(displacement), origin(origin),
-        extent(extent), repulsive_force(repulsive_force), k(k), g(g)
+      : topology(topology), position(position), displacement(displacement),
+        repulsive_force(repulsive_force), k(k), g(g)
     { }
 
     void operator()(vertex_descriptor u, vertex_descriptor v)
@@ -241,7 +236,7 @@ namespace detail {
       if (u != v) {
         // When the vertices land on top of each other, move the
         // first vertex away from the boundaries.
-        maybe_jitter_point(topology, position[u], position[v], origin, extent);
+        maybe_jitter_point(topology, position[u], position[v]);
 
         double dist = topology.distance(position[u], position[v]);
         if (dist == 0.) {
@@ -260,8 +255,6 @@ namespace detail {
     const Topology& topology;
     PositionMap position;
     DisplacementMap displacement;
-    Point origin;
-    PointDiff extent;
     RepulsiveForce repulsive_force;
     double k;
     const Graph& g;
@@ -277,8 +270,6 @@ fruchterman_reingold_force_directed_layout
  (const Graph&    g,
   PositionMap     position,
   const Topology& topology,
-  typename Topology::point_type const& origin,
-  typename Topology::point_difference_type const& extent,
   AttractiveForce attractive_force,
   RepulsiveForce  repulsive_force,
   ForcePairs      force_pairs,
@@ -290,16 +281,14 @@ fruchterman_reingold_force_directed_layout
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits<Graph>::edge_iterator     edge_iterator;
 
-  double volume = 1.;
-  for (std::size_t i = 0; i < Topology::point_difference_type::dimensions; ++i)
-    volume *= extent[i];
+  double volume = topology.volume(topology.extent());
 
   // assume positions are initialized randomly
   double k = pow(volume / num_vertices(g), 1. / (double)(Topology::point_difference_type::dimensions));
 
   detail::fr_apply_force<Topology, PositionMap, DisplacementMap,
                          RepulsiveForce, Graph>
-    apply_force(topology, position, displacement, origin, extent, repulsive_force, k, g);
+    apply_force(topology, position, displacement, repulsive_force, k, g);
 
   do {
     // Calculate repulsive forces
@@ -316,8 +305,7 @@ fruchterman_reingold_force_directed_layout
 
       // When the vertices land on top of each other, move the
       // first vertex away from the boundaries.
-      ::boost::detail::maybe_jitter_point(topology, position[u], position[v], 
-                                          origin, extent);
+      ::boost::detail::maybe_jitter_point(topology, position[u], position[v]);
 
       typename Topology::point_difference_type delta = topology.difference(position[v], position[u]);
       double dist = topology.distance(position[u], position[v]);
@@ -361,8 +349,6 @@ namespace detail {
     run(const Graph&    g,
         PositionMap     position,
         const Topology& topology,
-        typename Topology::point_type const& origin,
-        typename Topology::point_difference_type const& extent,
         AttractiveForce attractive_force,
         RepulsiveForce  repulsive_force,
         ForcePairs      force_pairs,
@@ -371,7 +357,7 @@ namespace detail {
         const bgl_named_params<Param, Tag, Rest>&)
     {
       fruchterman_reingold_force_directed_layout
-        (g, position, topology, origin, extent, attractive_force, repulsive_force,
+        (g, position, topology, attractive_force, repulsive_force,
          force_pairs, cool, displacement);
     }
   };
@@ -387,8 +373,6 @@ namespace detail {
     run(const Graph&    g,
         PositionMap     position,
         const Topology& topology,
-        typename Topology::point_type const& origin,
-        typename Topology::point_difference_type const& extent,
         AttractiveForce attractive_force,
         RepulsiveForce  repulsive_force,
         ForcePairs      force_pairs,
@@ -399,7 +383,7 @@ namespace detail {
       typedef typename Topology::point_difference_type PointDiff;
       std::vector<PointDiff> displacements(num_vertices(g));
       fruchterman_reingold_force_directed_layout
-        (g, position, topology, origin, extent, attractive_force, repulsive_force,
+        (g, position, topology, attractive_force, repulsive_force,
          force_pairs, cool,
          make_iterator_property_map
          (displacements.begin(),
@@ -418,21 +402,19 @@ fruchterman_reingold_force_directed_layout
   (const Graph&    g,
    PositionMap     position,
    const Topology& topology,
-   typename Topology::point_type const& origin,
-   typename Topology::point_difference_type const& extent,
    const bgl_named_params<Param, Tag, Rest>& params)
 {
   typedef typename property_value<bgl_named_params<Param,Tag,Rest>,
                                   vertex_displacement_t>::type D;
 
   detail::fr_force_directed_layout<D>::run
-    (g, position, topology, origin, extent,
+    (g, position, topology, 
      choose_param(get_param(params, attractive_force_t()),
                   square_distance_attractive_force()),
      choose_param(get_param(params, repulsive_force_t()),
                   square_distance_repulsive_force()),
      choose_param(get_param(params, force_pairs_t()),
-                  make_grid_force_pairs(topology, origin, extent, position, g)),
+                  make_grid_force_pairs(topology, position, g)),
      choose_param(get_param(params, cooling_t()),
                   linear_cooling<double>(100)),
      get_param(params, vertex_displacement_t()),
@@ -444,12 +426,10 @@ void
 fruchterman_reingold_force_directed_layout
   (const Graph&    g,
    PositionMap     position,
-   const Topology& topology,
-   typename Topology::point_type const& origin,
-   typename Topology::point_difference_type const& extent)
+   const Topology& topology)
 {
   fruchterman_reingold_force_directed_layout
-    (g, position, topology, origin, extent,
+    (g, position, topology,
      attractive_force(square_distance_attractive_force()));
 }
 
