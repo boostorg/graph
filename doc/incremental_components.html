@@ -329,13 +329,13 @@ component_index&lt;Index&gt;
 </PRE>
 
 <P>
-<tt>component_index</tt> is a class that provides an STL
+The <tt>component_index</tt> class provides an STL
 container-like view for the components of the graph. Each component is
 a container-like object, and access is provided via
 the <TT>operator[]</TT>.  A <TT>component_index</TT> object is
 initialized with the parents property in the disjoint-sets calculated
 from the <TT>incremental_components()</TT> function.  Optionally, a
-vertex -> index property map is passed in
+vertex -&gt; index property map is passed in
 (<tt>identity_property_map</tt> is used by default).
 
 <P>
