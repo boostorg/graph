@@ -341,7 +341,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     : m_property(prop)
   {
     m_forward.assign_from_sorted_edges(edge_begin, edge_end, identity_property_map(), keep_all(), numverts, numedges);
-    inherited_vertex_properties::resize(numlocalverts);
+    inherited_vertex_properties::resize(numverts);
   }
 
   //  From number of vertices and sorted list of edges (deprecated
@@ -355,7 +355,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     : m_property(prop)
   {
     m_forward.assign_from_sorted_edges(edge_begin, edge_end, ep_iter, identity_property_map(), keep_all(), numverts, numedges);
-    inherited_vertex_properties::resize(numlocalverts);
+    inherited_vertex_properties::resize(numverts);
   }
 
 #endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
