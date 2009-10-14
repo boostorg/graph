@@ -387,7 +387,7 @@ namespace boost {
   namespace detail {
     template<typename VertexBundle, typename EdgeBundle, typename Bundle>
       struct is_vertex_bundle
-      : mpl::and_<is_convertible<Bundle*, VertexBundle*>,
+      : mpl::and_<is_convertible<VertexBundle*, Bundle*>,
                   mpl::and_<mpl::not_<is_void<VertexBundle> >,
                             mpl::not_<is_same<VertexBundle, no_property> > > >
       { };
