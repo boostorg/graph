@@ -8,6 +8,18 @@
   -->
 <Head>
 <Title>Boost Graph Library: Incremental Connected Components</Title>
+<style type="text/css">
+  <!--
+     .code
+     {
+       border-left-style: groove; 
+       border-left-width: 1px; 
+       padding-left: 2em; 
+     }
+
+  -->
+</style>
+
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -88,58 +100,77 @@ example can be found in <a
 href="../example/incremental_components.cpp"><TT>examples/incremental_components.cpp</TT></a>.
 
 <P>
-<PRE>
-typedef adjacency_list &lt;vecS, vecS, undirectedS&gt; Graph;
-typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
-typedef graph_traits&lt;Graph&gt;::vertices_size_type size_type;
+<PRE class="code">
+using namespace boost;
 
-const int N = 6;
-Graph G(N);
+int main(int argc, char* argv[]) 
+{
+  typedef adjacency_list <vecS, vecS, undirectedS> Graph;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::vertices_size_type VertexIndex;
 
-std::vector&lt;size_type&gt; rank(num_vertices(G));
-std::vector&lt;Vertex&gt; parent(num_vertices(G));
-typedef size_type* Rank;
-typedef Vertex* Parent;
-disjoint_sets&lt;Rank, Parent&gt;  ds(&amp;rank[0], &amp;parent[0]);
+  const int VERTEX_COUNT = 6;
+  Graph graph(VERTEX_COUNT);
 
-initialize_incremental_components(G, ds);
-incremental_components(G, ds);
+  std::vector<VertexIndex> rank(num_vertices(graph));
+  std::vector<Vertex> parent(num_vertices(graph));
 
-graph_traits&lt;Graph&gt;::edge_descriptor e;
-bool flag;
-boost::tie(e,flag) = add_edge(0, 1, G);
-ds.union_set(0,1);
+  typedef VertexIndex* Rank;
+  typedef Vertex* Parent;
 
-boost::tie(e,flag) = add_edge(1, 4, G);
-ds.union_set(1,4);
+  disjoint_sets<Rank, Parent> ds(&rank[0], &parent[0]);
 
-boost::tie(e,flag) = add_edge(4, 0, G);
-ds.union_set(4,0);
+  initialize_incremental_components(graph, ds);
+  incremental_components(graph, ds);
 
-boost::tie(e,flag) = add_edge(2, 5, G);
-ds.union_set(2,5);
+  graph_traits<Graph>::edge_descriptor edge;
+  bool flag;
 
-cout &lt;&lt; &quot;An undirected graph:&quot; &lt;&lt; endl;
-print_graph(G, get(vertex_index, G));
-cout &lt;&lt; endl;
+  boost::tie(edge, flag) = add_edge(0, 1, graph);
+  ds.union_set(0,1);
 
-graph_traits&lt;Graph&gt;::vertex_iterator i,end;
-for (boost::tie(i, end) = vertices(G); i != end; ++i)
-  cout &lt;&lt; &quot;representative[&quot; &lt;&lt; *i &lt;&lt; &quot;] = &quot; &lt;&lt; 
-    ds.find_set(*i) &lt;&lt; endl;;
-cout &lt;&lt; endl;
+  boost::tie(edge, flag) = add_edge(1, 4, graph);
+  ds.union_set(1,4);
 
-typedef component_index&lt;unsigned int&gt; Components;
-Components components(&amp;parent[0], &amp;parent[0] + parent.size());
+  boost::tie(edge, flag) = add_edge(4, 0, graph);
+  ds.union_set(4,0);
 
-for (Components::size_type c = 0; c &lt; components.size(); ++c) {
-  cout &lt;&lt; &quot;component &quot; &lt;&lt; c &lt;&lt; &quot; contains: &quot;;
-  Components::value_type::iterator
-    j = components[c].begin(),
-    jend = components[c].end();
-  for ( ; j != jend; ++j)
-    cout &lt;&lt; *j &lt;&lt; &quot; &quot;;
-  cout &lt;&lt; endl;
+  boost::tie(edge, flag) = add_edge(2, 5, graph);
+  ds.union_set(2,5);
+    
+  std::cout << "An undirected graph:" << std::endl;
+  print_graph(graph, get(boost::vertex_index, graph));
+  std::cout << std::endl;
+    
+  BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
+    std::cout << "representative[" << current_vertex << "] = " <<
+      ds.find_set(current_vertex) << std::endl;
+  }
+
+  std::cout << std::endl;
+
+  typedef component_index<VertexIndex> Components;
+
+  // NOTE: Because we're using vecS for the graph type, we're
+  // effectively using identity_property_map for a vertex index map.
+  // If we were to use listS instead, the index map would need to be
+  // explicity passed to the component_index constructor.
+  Components components(parent.begin(), parent.end());
+
+  // Iterate through the component indices
+  BOOST_FOREACH(VertexIndex current_index, components) {
+    std::cout << "component " << current_index << " contains: ";
+
+    // Iterate through the child vertex indices for [current_index]
+    BOOST_FOREACH(VertexIndex child_index,
+                  components[current_index]) {
+      std::cout << child_index << " ";
+    }
+
+    std::cout << std::endl;
+  }
+
+  return (0);
 }
 </PRE>
 
@@ -298,19 +329,14 @@ component_index&lt;Index&gt;
 </PRE>
 
 <P>
-<b>The <tt>component_index</tt> functionality is broken in Boost 1.40 and
-earlier versions (see <a
-href="https://svn.boost.org/trac/boost/ticket/3250">bug 3250</a> for more
-information).</b>
-
-<p>
-
-The is a class that provides an STL container-like view for the
-components of the graph. Each component is a container-like object,
-and the <TT>component_index</TT> object provides access to the
-component objects via <TT>operator[]</TT>. A <TT>component_index</TT>
-object is initialized with the parents property in the disjoint-sets
-calculated from the <TT>incremental_components()</TT> function.
+The <tt>component_index</tt> class provides an STL
+container-like view for the components of the graph. Each component is
+a container-like object, and access is provided via
+the <TT>operator[]</TT>.  A <TT>component_index</TT> object is
+initialized with the parents property in the disjoint-sets calculated
+from the <TT>incremental_components()</TT> function.  Optionally, a
+vertex -&gt; index property map is passed in
+(<tt>identity_property_map</tt> is used by default).
 
 <P>
 
@@ -332,81 +358,47 @@ calculated from the <TT>incremental_components()</TT> function.
 </tr>
 
 <tr>
-<td><tt>size_type</tt></td>
-<td>The type used for representing the number of components.</td>
+<td><tt>value_type/size_type</tt></td>
+<td>
+The type for a component index (same as <tt>Index</tt>).
+</td>
+</tr>
+
+<tr>
+<td><tt>size_type size()</tt></td>
+<td>
+Returns the number of components in the graph.
+</td>
 </tr>
 
 
 <tr>
-<td><tt>value_type</tt></td>
+<td><tt>iterator/const_iterator</tt></td>
 <td>
-The type for a component object. The component type has the following members.
+Iterators used to traverse the available component indices [0 to <tt>size()</tt>).
+</td>
+</tr>
+
+<tr>
+<td><tt>iterator begin() const</tt></td>
+<td>
+Returns an iterator at the start of the component indices (0).
+</td>
+</tr>
+
+<tr>
+<td><tt>iterator end() const</tt></td>
+<td>
+Returns an iterator past the end of the component indices (<tt>size()</tt>).
 </td>
 </tr>
  
 <tr>
-<td><tt>value_type::value_type</tt></td>
+<td><tt>std::pair&lt;component_iterator, component_iterator&gt; operator[size_type index] const</tt></td>
 <td>
-The value type of a component object is a vertex ID.
+Returns a pair of iterators for the component at <tt>index</tt> where <tt>index</tt> is in [0, <tt>size()</tt>).
 </td>
 </tr>
-
-<tr>
-<td><tt>value_type::iterator</tt></td>
-<td>
-This iterator can be used to traverse all of the vertices
-in the component. This iterator dereferences to give a vertex ID.
-</td>
-</tr>
-
-<tr>
-<td><tt>value_type::const_iterator</tt></td>
-<td>
-The const iterator.
-</td>
-</tr>
-
-<tr>
-<td><tt>value_type::iterator value_type::begin() const</tt></td>
-<td>
-Return an iterator pointing to the first vertex in the component.
-</td>
-</tr>
-
-<tr>
-<td><tt>value_type::iterator value_type::end() const</tt></td>
-<td>
-Return an iterator pointing past the end of the last vertex in the
-component.
-</td>
-<tr>
-
-<tr>
-<td>
-<tt>
-template &lt;class ComponentsContainer&gt;
-component_index(const ComponentsContainer&amp; c)
-</tt>
-</td>
-<td>
-Construct the <TT>component_index</TT> using the information
-from the components container <TT>c</TT> which was the result
-of executing <TT>connected_components_on_edgelist</TT>.
-</td>
-</tr>
-
-<tr>
-<td><tt>value_type operator[](size_type i)</tt></td>
-<td>
-Returns the <TT>i</TT>th component in the graph.
-</td>
-</tr>
-
-<tr>
-<td><tt>size_type component_index::size()</tt></td>
-<td>
-Returns the number of components in the graph.
-</td>
 
 </table> 
 

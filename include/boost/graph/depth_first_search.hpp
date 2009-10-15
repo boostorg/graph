@@ -21,7 +21,6 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
-#include <boost/spirit/home/phoenix.hpp>
 
 #include <vector>
 #include <utility>

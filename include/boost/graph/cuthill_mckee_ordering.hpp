@@ -133,7 +133,7 @@ namespace boost {
   cuthill_mckee_ordering(const Graph& G, OutputIterator permutation, 
                          ColorMap color, DegreeMap degree)
   {
-    if (has_no_vertices(G))
+    if (boost::graph::has_no_vertices(G))
       return permutation;
 
     typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
@@ -169,7 +169,7 @@ namespace boost {
   cuthill_mckee_ordering(const Graph& G, OutputIterator permutation, 
                          VertexIndexMap index_map)
   {
-    if (has_no_vertices(G))
+    if (boost::graph::has_no_vertices(G))
       return permutation;
     
     typedef out_degree_property_map<Graph> DegreeMap;

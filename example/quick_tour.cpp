@@ -18,14 +18,14 @@
 using namespace boost;
 
 template <class Graph> struct exercise_vertex {
-  exercise_vertex(Graph& g_) : g(g_) { }
+  exercise_vertex(Graph& g_, const char name_[]) : g(g_),name(name_) { }
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   void operator()(const Vertex& v) const
   {
     using namespace boost;
     typename property_map<Graph, vertex_index_t>::type
       vertex_id = get(vertex_index, g);
-    std::cout << "vertex: " << get(vertex_id, v) << std::endl;
+    std::cout << "vertex: " << name[get(vertex_id, v)] << std::endl;
 
     // Write out the outgoing edges
     std::cout << "\tout-edges: ";
@@ -36,8 +36,8 @@ template <class Graph> struct exercise_vertex {
     {
       e = *out_i;
       Vertex src = source(e, g), targ = target(e, g);
-      std::cout << "(" << get(vertex_id, src)
-                << "," << get(vertex_id, targ) << ") ";
+      std::cout << "(" << name[get(vertex_id, src)]
+                << "," << name[get(vertex_id, targ)] << ") ";
     }
     std::cout << std::endl;
 
@@ -48,8 +48,8 @@ template <class Graph> struct exercise_vertex {
     {
       e = *in_i;
       Vertex src = source(e, g), targ = target(e, g);
-      std::cout << "(" << get(vertex_id, src)
-                << "," << get(vertex_id, targ) << ") ";
+      std::cout << "(" << name[get(vertex_id, src)]
+                << "," << name[get(vertex_id, targ)] << ") ";
     }
     std::cout << std::endl;
 
@@ -57,10 +57,11 @@ template <class Graph> struct exercise_vertex {
     std::cout << "\tadjacent vertices: ";
     typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
-      std::cout << get(vertex_id, *ai) <<  " ";
+      std::cout << name[get(vertex_id, *ai)] <<  " ";
     std::cout << std::endl;
   }
   Graph& g;
+  const char *name;
 };
 
 
@@ -73,7 +74,7 @@ int main(int,char*[])
   // Make convenient labels for the vertices
   enum { A, B, C, D, E, N };
   const int num_vertices = N;
-  const char* name = "ABCDE";
+  const char name[] = "ABCDE";
 
   // writing out the edges in the graph
   typedef std::pair<int,int> Edge;
@@ -120,7 +121,7 @@ int main(int,char*[])
   std::cout << std::endl;
 
   std::for_each(vertices(g).first, vertices(g).second,
-                exercise_vertex<Graph>(g));
+                exercise_vertex<Graph>(g, name));
 
   std::map<std::string,std::string> graph_attr, vertex_attr, edge_attr;
   graph_attr["size"] = "3,3";

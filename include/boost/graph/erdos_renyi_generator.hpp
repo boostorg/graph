@@ -125,7 +125,7 @@ namespace boost {
       : gen(), rand_vertex(1. - prob), n(n), allow_self_loops(loops), src(0)
       , tgt_index(vertices_size_type(-1)), prob(prob)
     {
-      this->gen.reset(new uniform_01<RandomGenerator>(gen));
+      this->gen.reset(new uniform_01<RandomGenerator*>(&gen));
 
       if (prob == 0.0) {src = (std::numeric_limits<vertices_size_type>::max)(); return;}
       next();
@@ -181,7 +181,7 @@ namespace boost {
       if (src == n) src = (std::numeric_limits<vertices_size_type>::max)();
     }
 
-    shared_ptr<uniform_01<RandomGenerator> > gen;
+    shared_ptr<uniform_01<RandomGenerator*> > gen;
     geometric_distribution<vertices_size_type> rand_vertex;
     vertices_size_type n;
     bool allow_self_loops;

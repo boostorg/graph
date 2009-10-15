@@ -1,64 +1,84 @@
 //=======================================================================
 // Copyright 2001 Jeremy G. Siek, Andrew Lumsdaine, Lie-Quan Lee, 
+// Copyright 2009 Trustees of Indiana University.
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Michael Hansen
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <boost/config.hpp>
+
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <utility>
+
+#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/pending/disjoint_sets.hpp>
 #include <boost/graph/incremental_components.hpp>
+#include <boost/pending/disjoint_sets.hpp>
 
-int
-main(int, char *[])
+using namespace boost;
+
+int main(int argc, char* argv[]) 
 {
-  using namespace boost;
+  typedef adjacency_list <vecS, vecS, undirectedS> Graph;
+  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef graph_traits<Graph>::edge_descriptor Edge;
+  typedef graph_traits<Graph>::vertices_size_type VertexIndex;
+ 
   // Create a graph
-  typedef adjacency_list < vecS, vecS, undirectedS > Graph;
-  typedef graph_traits < Graph >::vertex_descriptor Vertex;
-  const int N = 6;
-  Graph G(N);
-  add_edge(0, 1, G);
-  add_edge(1, 4, G);
-  // create the disjoint-sets object, which requires rank and parent vertex properties
-  std::vector < Vertex > rank(num_vertices(G));
-  std::vector < Vertex > parent(num_vertices(G));
-  typedef graph_traits<Graph>::vertices_size_type* Rank;
-  typedef Vertex* Parent;
-  disjoint_sets < Rank, Parent > ds(&rank[0], &parent[0]);
+  const int VERTEX_COUNT = 6;
+  Graph graph(VERTEX_COUNT);
 
-  // determine the connected components, storing the results in the disjoint-sets object
-  initialize_incremental_components(G, ds);
-  incremental_components(G, ds);
+  add_edge(0, 1, graph);
+  add_edge(1, 4, graph);
+
+  // reate the disjoint-sets object, which requires rank and parent
+  // vertex properties.
+  std::vector<Vertex> rank(num_vertices(graph));
+  std::vector<Vertex> parent(num_vertices(graph));
+
+  typedef VertexIndex* Rank;
+  typedef Vertex* Parent;
+  disjoint_sets<Rank, Parent> ds(&rank[0], &parent[0]);
+
+  // Determine the connected components, storing the results in the
+  // disjoint-sets object.
+  initialize_incremental_components(graph, ds);
+  incremental_components(graph, ds);
 
   // Add a couple more edges and update the disjoint-sets
-  graph_traits < Graph >::edge_descriptor e;
-  bool flag;
-  tie(e, flag) = add_edge(4, 0, G);
+  add_edge(4, 0, graph);
+  add_edge(2, 5, graph);
+
   ds.union_set(4, 0);
-  tie(e, flag) = add_edge(2, 5, G);
   ds.union_set(2, 5);
 
-  graph_traits < Graph >::vertex_iterator iter, end;
-  for (tie(iter, end) = vertices(G); iter != end; ++iter)
-    std::cout << "representative[" << *iter << "] = " <<
-      ds.find_set(*iter) << std::endl;;
+  BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
+    std::cout << "representative[" << current_vertex << "] = " <<
+      ds.find_set(current_vertex) << std::endl;
+  }
+
   std::cout << std::endl;
 
-  typedef component_index < unsigned int >Components;
+  // Generate component index. NOTE: We would need to pass in a vertex
+  // index map into the component_index constructor if our graph type
+  // used listS instead of vecS (identity_property_map is used by
+  // default).
+  typedef component_index<VertexIndex> Components;
   Components components(parent.begin(), parent.end());
-  for (Components::size_type i = 0; i < components.size(); ++i) {
-    std::cout << "component " << i << " contains: ";
-    for (Components::value_type::iterator j = components[i].begin();
-         j != components[i].end(); ++j)
-      std::cout << *j << " ";
+
+  // Iterate through the component indices
+  BOOST_FOREACH(VertexIndex component_index, components) {
+    std::cout << "component " << component_index << " contains: ";
+
+    // Iterate through the child vertex indices for [component_index]
+    BOOST_FOREACH(VertexIndex child_index,
+                  components[component_index]) {
+      std::cout << child_index << " ";
+    }
+
     std::cout << std::endl;
   }
 
-  return EXIT_SUCCESS;
+  return (0);
 }

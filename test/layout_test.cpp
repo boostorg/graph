@@ -203,10 +203,6 @@ test_cube(Graph*)
   typedef square_topology<> Topology;
   Topology topology(gen, 50.0);
   std::vector<Topology::point_difference_type> displacements(num_vertices(g));
-  Topology::point_type origin;
-  origin[0] = origin[1] = 50.0;
-  Topology::point_difference_type extent;
-  extent[0] = extent[1] = 50.0;
   rectangle_topology<> rect_top(gen, 0, 0, 50, 50);
   random_graph_layout(g, get(vertex_position, g), rect_top);
 
@@ -214,8 +210,6 @@ test_cube(Graph*)
     (g,
      get(vertex_position, g),
      topology,
-     origin,
-     extent,
      square_distance_attractive_force(),
      square_distance_repulsive_force(),
      all_force_pairs(),
@@ -292,8 +286,6 @@ test_triangular(Graph*)
     (g,
      get(vertex_position, g),
      topology,
-     origin,
-     extent,
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(100)));
 
@@ -350,16 +342,10 @@ test_disconnected(Graph*)
   typedef square_topology<> Topology;
   Topology topology(gen, 50.0);
   std::vector<Topology::point_difference_type> displacements(num_vertices(g));
-  Topology::point_type origin;
-  origin[0] = origin[1] = 50.0;
-  Topology::point_difference_type extent;
-  extent[0] = extent[1] = 50.0;
   fruchterman_reingold_force_directed_layout
     (g,
      get(vertex_position, g),
      topology,
-     origin,
-     extent,
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(50)));
 

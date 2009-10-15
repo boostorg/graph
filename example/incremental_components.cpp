@@ -1,20 +1,20 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright 2009 Trustees of Indiana University.
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Michael Hansen
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <boost/config.hpp>
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <utility>
-#include <boost/graph/graph_utility.hpp>
+
+#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/pending/disjoint_sets.hpp>
+#include <boost/graph/graph_utility.hpp>
 #include <boost/graph/incremental_components.hpp>
+#include <boost/pending/disjoint_sets.hpp>
 
 /*
 
@@ -45,64 +45,75 @@
 
  */
 
-using namespace std;
+using namespace boost;
 
-int main(int , char* []) 
+int main(int argc, char* argv[]) 
 {
-  using namespace boost;
   typedef adjacency_list <vecS, vecS, undirectedS> Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+  typedef graph_traits<Graph>::vertices_size_type VertexIndex;
 
-  const int N = 6;
-  Graph G(N);
+  const int VERTEX_COUNT = 6;
+  Graph graph(VERTEX_COUNT);
 
-  std::vector<size_type> rank(num_vertices(G));
-  std::vector<Vertex> parent(num_vertices(G));
-  typedef size_type* Rank;
+  std::vector<VertexIndex> rank(num_vertices(graph));
+  std::vector<Vertex> parent(num_vertices(graph));
+
+  typedef VertexIndex* Rank;
   typedef Vertex* Parent;
-  disjoint_sets<Rank, Parent>  ds(&rank[0], &parent[0]);
 
-  initialize_incremental_components(G, ds);
-  incremental_components(G, ds);
+  disjoint_sets<Rank, Parent> ds(&rank[0], &parent[0]);
 
-  graph_traits<Graph>::edge_descriptor e;
+  initialize_incremental_components(graph, ds);
+  incremental_components(graph, ds);
+
+  graph_traits<Graph>::edge_descriptor edge;
   bool flag;
-  boost::tie(e,flag) = add_edge(0, 1, G);
+
+  boost::tie(edge, flag) = add_edge(0, 1, graph);
   ds.union_set(0,1);
 
-  boost::tie(e,flag) = add_edge(1, 4, G);
+  boost::tie(edge, flag) = add_edge(1, 4, graph);
   ds.union_set(1,4);
 
-  boost::tie(e,flag) = add_edge(4, 0, G);
+  boost::tie(edge, flag) = add_edge(4, 0, graph);
   ds.union_set(4,0);
 
-  boost::tie(e,flag) = add_edge(2, 5, G);
+  boost::tie(edge, flag) = add_edge(2, 5, graph);
   ds.union_set(2,5);
     
-  cout << "An undirected graph:" << endl;
-  print_graph(G, get(vertex_index, G));
-  cout << endl;
+  std::cout << "An undirected graph:" << std::endl;
+  print_graph(graph, get(boost::vertex_index, graph));
+  std::cout << std::endl;
     
-  graph_traits<Graph>::vertex_iterator i,end;
-  for (boost::tie(i, end) = vertices(G); i != end; ++i)
-    cout << "representative[" << *i << "] = " << 
-      ds.find_set(*i) << endl;;
-  cout << endl;
-
-  typedef component_index<unsigned int> Components;
-  Components components(&parent[0], &parent[0] + parent.size());
-
-  for (Components::size_type c = 0; c < components.size(); ++c) {
-    cout << "component " << c << " contains: ";
-    Components::value_type::iterator
-      j = components[c].begin(),
-      jend = components[c].end();
-    for ( ; j != jend; ++j)
-      cout << *j << " ";
-    cout << endl;
+  BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
+    std::cout << "representative[" << current_vertex << "] = " <<
+      ds.find_set(current_vertex) << std::endl;
   }
 
-  return 0;
+  std::cout << std::endl;
+
+  typedef component_index<VertexIndex> Components;
+
+  // NOTE: Because we're using vecS for the graph type, we're
+  // effectively using identity_property_map for a vertex index map.
+  // If we were to use listS instead, the index map would need to be
+  // explicitly passed to the component_index constructor.
+  Components components(parent.begin(), parent.end());
+
+  // Iterate through the component indices
+  BOOST_FOREACH(VertexIndex current_index, components) {
+    std::cout << "component " << current_index << " contains: ";
+
+    // Iterate through the child vertex indices for [current_index]
+    BOOST_FOREACH(VertexIndex child_index,
+                  components[current_index]) {
+      std::cout << child_index << " ";
+    }
+
+    std::cout << std::endl;
+  }
+
+  return (0);
 }
 
