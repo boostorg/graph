@@ -1340,20 +1340,28 @@ target(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e,
   return g.m_forward.m_column[e.idx];
 }
 
+#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 namespace detail {
   template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
   inline EdgeIndex get_actual_row_start
-    (const BOOST_CSR_GRAPH_TYPE& g,
-     EdgeIndex rowstart_i_minus_1, EdgeIndex rowstart_i)
+    (const BOOST_CSR_GRAPH_TYPE& /*g*/,
+     EdgeIndex /*rowstart_i_minus_1*/, EdgeIndex rowstart_i)
   {
-#ifdef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
     return rowstart_i;
-#else
-  // Special case to allow incremental construction
-    return (std::max)(rowstart_i_minus_1, rowstart_i);
-#endif
   }
 }
+#else
+namespace detail {
+  template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+  inline EdgeIndex get_actual_row_start
+    (const BOOST_CSR_GRAPH_TYPE& /*g*/,
+     EdgeIndex rowstart_i_minus_1, EdgeIndex rowstart_i)
+  {
+  // Special case to allow incremental construction
+    return (std::max)(rowstart_i_minus_1, rowstart_i);
+  }
+}
+#endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,

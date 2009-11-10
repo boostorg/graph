@@ -199,7 +199,7 @@ public:
 };
 // end data structures for shortest path problem with time windows (spptw)
 
-int test_main(int argc, char* argv[])
+int test_main(int, char*[])
 {
   SPPRC_Example_Graph g;
   add_vertex( SPPRC_Example_Graph_Vert_Prop( 0, 0, 1000000000 ), g );

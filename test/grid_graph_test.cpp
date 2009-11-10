@@ -110,7 +110,7 @@ int test_main(int argc, char* argv[]) {
     for (int dimension_index = 0;
          dimension_index < DIMENSIONS;
          ++dimension_index) {
-      BOOST_REQUIRE((current_vertex[dimension_index] >= 0) &&
+      BOOST_REQUIRE(/*(current_vertex[dimension_index] >= 0) && */ // Always true
                    (current_vertex[dimension_index] < lengths[dimension_index]));        
     }
 
@@ -194,8 +194,8 @@ int test_main(int argc, char* argv[]) {
       get(boost::vertex_index, graph, target(current_edge, graph));
 
     BOOST_REQUIRE(source_index != target_index);
-    BOOST_REQUIRE((source_index >= 0) && (source_index < num_vertices(graph)));
-    BOOST_REQUIRE((target_index >= 0) && (target_index < num_vertices(graph)));
+    BOOST_REQUIRE(/* (source_index >= 0) : always true && */ (source_index < num_vertices(graph)));
+    BOOST_REQUIRE(/* (target_index >= 0) : always true && */ (target_index < num_vertices(graph)));
 
     // Verify that the edge is listed as existing in both directions
     BOOST_REQUIRE(edge(source(current_edge, graph), target(current_edge, graph), graph).second);

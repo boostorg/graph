@@ -991,7 +991,7 @@ namespace boost {
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
   inline typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
-  add_vertex(const VP& vp, adjacency_matrix<D,VP,EP,GP,A>& g) {
+  add_vertex(const VP& /*vp*/, adjacency_matrix<D,VP,EP,GP,A>& g) {
     // UNDER CONSTRUCTION
     assert(false);
     return *vertices(g).first;
@@ -999,8 +999,8 @@ namespace boost {
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
   inline void
-  remove_vertex(typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor u,
-                adjacency_matrix<D,VP,EP,GP,A>& g)
+  remove_vertex(typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor /*u*/,
+                adjacency_matrix<D,VP,EP,GP,A>& /*g*/)
   {
     // UNDER CONSTRUCTION
     assert(false);
@@ -1298,7 +1298,7 @@ namespace boost {
   template <typename D, typename VP, typename EP, typename GP, typename A>
   typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
   vertex(typename adjacency_matrix<D,VP,EP,GP,A>::vertices_size_type n,
-         const adjacency_matrix<D,VP,EP,GP,A>& g)
+         const adjacency_matrix<D,VP,EP,GP,A>&)
   {
     return n;
   }

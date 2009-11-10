@@ -104,7 +104,7 @@ namespace boost
     }
     
     template <typename Vertex, typename Graph>
-    void finish_vertex(const Vertex& u, Graph& g)
+    void finish_vertex(const Vertex& u, Graph&)
     {
       typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
 
@@ -889,7 +889,7 @@ namespace boost
     }          
 
 
-    void add_to_merge_points(vertex_t v, graph::detail::no_old_handles) {}
+    void add_to_merge_points(vertex_t, graph::detail::no_old_handles) {}
 
     void add_to_merge_points(vertex_t v, graph::detail::store_old_handles)
     {
@@ -897,7 +897,7 @@ namespace boost
     }
 
     
-    void add_to_embedded_edges(edge_t e, graph::detail::no_old_handles) {}
+    void add_to_embedded_edges(edge_t, graph::detail::no_old_handles) {}
 
     void add_to_embedded_edges(edge_t e, graph::detail::store_old_handles)
     {

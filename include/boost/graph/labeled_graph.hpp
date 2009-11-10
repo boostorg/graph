@@ -141,7 +141,7 @@ namespace graph_detail {
     // Tag dispatch on unique associative containers (i.e. maps).
     template <typename Container, typename Graph, typename Label, typename Prop>
     std::pair<typename graph_traits<Graph>::vertex_descriptor, bool>
-    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const& p,
+    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const&,
                           unique_associative_container_tag)
     {
         // Here, we actually have to try the insertion first, and only add

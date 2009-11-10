@@ -90,7 +90,7 @@ namespace boost {
         void discover_vertex(vertex1_t v, const Graph1&) const {
           vertices.push_back(v);
         }
-        void examine_edge(edge1_t e, const Graph1& G1) const {
+        void examine_edge(edge1_t e, const Graph1&) const {
           edges.push_back(e);
         }
         std::vector<vertex1_t>& vertices;

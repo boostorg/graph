@@ -442,7 +442,7 @@ void test_vertex_and_edge_properties()
 int test_main(int argc, char* argv[])
 {
   // Optionally accept a seed value
-  int seed = std::time(0);
+  int seed = int(std::time(0));
   if (argc > 1) seed = boost::lexical_cast<int>(argv[1]);
 
   std::cout << "Seed = " << seed << std::endl;

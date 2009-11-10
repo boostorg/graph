@@ -208,7 +208,7 @@ namespace boost {
       const Graph* m_graph;
     };
 
-  }; // namespace detail
+  } // namespace detail
 
   //===========
   // Grid Graph

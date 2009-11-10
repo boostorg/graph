@@ -44,7 +44,7 @@ void build_graph(Graph& g,
     add_edge(v[2], v[0], g);
     add_edge(v[3], v[4], g);
     add_edge(v[4], v[0], g);
-};
+}
 
 
 template <typename Graph>
@@ -124,7 +124,7 @@ void test_directed()
 }
 
 int
-main(int argc, char *argv[])
+main(int, char *[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> Digraph;

@@ -42,7 +42,7 @@ void connectAllEuclidean(VertexListGraph& g,
                         const PointContainer& points,
                         WeightMap wmap,            // Property maps passed by value
                         VertexIndexMap vmap,       // Property maps passed by value
-                        int sz)
+                        int /*sz*/)
 {
     using namespace boost;
     using namespace std;

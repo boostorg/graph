@@ -68,11 +68,11 @@ namespace boost
 
         PreorderTraverser(std::vector<Node>& p) : path_(p) {}
 
-        void preorder(Node n, const Tree& t)
+        void preorder(Node n, const Tree&)
         { path_.push_back(n); }
 
-        void inorder(Node n, const Tree& t) const {}
-        void postorder(Node, const Tree& t) const {}
+        void inorder(Node, const Tree&) const {}
+        void postorder(Node, const Tree&) const {}
 
         const_iterator begin() const { return path_.begin(); }
         const_iterator end() const { return path_.end(); }
@@ -241,7 +241,7 @@ namespace boost
         { }
 
         template <typename Vertex, typename Graph>
-        void visit_vertex(Vertex v, const Graph& g)
+        void visit_vertex(Vertex v, const Graph&)
         {
             BOOST_CONCEPT_ASSERT((OutputIterator<OutItr, Vertex>));
             *itr_++ = v;

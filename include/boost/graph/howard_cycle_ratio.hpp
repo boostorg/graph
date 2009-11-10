@@ -173,8 +173,8 @@ namespace boost {
       virtual ~mcr_howard() {}
 
     protected:
-      virtual void store_critical_edge(edge_t ed, critical_cycle_t &cc) {}
-      virtual void store_critical_cycle(critical_cycle_t &cc) {}
+      virtual void store_critical_edge(edge_t, critical_cycle_t &) {}
+      virtual void store_critical_cycle(critical_cycle_t &) {}
 
     private:
       /*!

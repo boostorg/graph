@@ -49,7 +49,7 @@ void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::
 }
 
 template <typename Graph, typename VertexSet>
-void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::false_)
+void test_outdirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
 { }
 //@}
 
@@ -88,7 +88,7 @@ void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
 }
 
 template <typename Graph, typename VertexSet>
-void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::false_)
+void test_indirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
 { }
 //@}
 
@@ -122,7 +122,7 @@ void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
 }
 
 template <typename Graph, typename VertexSet>
-void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::false_)
+void test_undirected_graph(Graph const&, VertexSet const&, boost::mpl::false_)
 { }
 //@}
 

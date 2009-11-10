@@ -192,8 +192,8 @@ struct simple_callback {
   template <typename CorrespondenceMapFirstToSecond,
             typename CorrespondenceMapSecondToFirst>
   bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
-                  CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
-                  typename graph_traits<Graph>::vertices_size_type subgraph_size) {
+                  CorrespondenceMapSecondToFirst /*correspondence_map_2_to_1*/,
+                  typename graph_traits<Graph>::vertices_size_type /*subgraph_size*/) {
 
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 

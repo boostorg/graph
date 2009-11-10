@@ -251,7 +251,7 @@ namespace detail {
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
          keep_all(), boost::make_property_map_function(global_to_local));
       boost::graph::detail::histogram_sort_inplace
-        (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
+        (sources.begin(), m_rowstart.begin(), numverts,
          targets.begin(), boost::make_property_map_function(global_to_local));
       // Now targets is the correct vector (properly sorted by source) for
       // m_column
@@ -277,7 +277,7 @@ namespace detail {
         (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
          keep_all(), boost::make_property_map_function(global_to_local));
       boost::graph::detail::histogram_sort_inplace
-        (sources.begin(), sources.end(), m_rowstart.begin(), numverts,
+        (sources.begin(), m_rowstart.begin(), numverts,
          targets.begin(), edge_props.begin(),
          boost::make_property_map_function(global_to_local));
       // Now targets is the correct vector (properly sorted by source) for

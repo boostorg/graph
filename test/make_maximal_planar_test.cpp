@@ -64,7 +64,7 @@ struct UpdateVertexIndex
 
 struct NoVertexIndexUpdater
 {
-  template <typename Graph> void update(Graph& g) {}
+  template <typename Graph> void update(Graph&) {}
 };
 
 

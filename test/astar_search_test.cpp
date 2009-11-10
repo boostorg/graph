@@ -98,7 +98,7 @@ class astar_goal_visitor : public boost::default_astar_visitor
 public:
   astar_goal_visitor(Vertex goal) : m_goal(goal) {}
   template <class Graph>
-  void examine_vertex(Vertex u, Graph& g) {
+  void examine_vertex(Vertex u, Graph&) {
     if(u == m_goal)
       throw found_goal();
   }
@@ -107,7 +107,7 @@ private:
 };
 
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
   
   // specify some types

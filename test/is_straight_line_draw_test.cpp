@@ -24,7 +24,7 @@ struct coord_t
 };
 
 
-int test_main(int argc, char* argv []) 
+int test_main(int, char*[]) 
 {
   typedef adjacency_list< vecS, vecS, undirectedS, 
                           property<vertex_index_t, int> 

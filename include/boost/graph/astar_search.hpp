@@ -238,9 +238,9 @@ namespace boost {
      AStarHeuristic h, AStarVisitor vis,
      PredecessorMap predecessor, CostMap cost,
      DistanceMap distance, WeightMap weight,
-     ColorMap color, VertexIndexMap index_map,
+     ColorMap color, VertexIndexMap /*index_map*/,
      CompareFunction compare, CombineFunction combine,
-     CostInf inf, CostZero zero)
+     CostInf /*inf*/, CostZero zero)
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;

@@ -148,7 +148,7 @@ template <typename KeyIterator, typename RowstartIterator,
           typename Value1Iter,
           typename KeyTransform>
 void
-histogram_sort_inplace(KeyIterator key_begin, KeyIterator key_end,
+histogram_sort_inplace(KeyIterator key_begin,
                        RowstartIterator rowstart, // Must support numkeys + 1 elements and be precomputed
                        NumKeys numkeys,
                        Value1Iter values1,
@@ -181,7 +181,7 @@ template <typename KeyIterator, typename RowstartIterator,
           typename Value2Iter,
           typename KeyTransform>
 void
-histogram_sort_inplace(KeyIterator key_begin, KeyIterator key_end,
+histogram_sort_inplace(KeyIterator key_begin,
                        RowstartIterator rowstart, // Must support numkeys + 1 elements and be precomputed
                        NumKeys numkeys,
                        Value1Iter values1,

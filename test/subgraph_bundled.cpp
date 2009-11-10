@@ -42,7 +42,7 @@ typedef graph_traits<Subgraph>::edge_descriptor Edge;
 typedef graph_traits<Subgraph>::vertex_iterator VertexIter;
 typedef graph_traits<Subgraph>::edge_iterator EdgeIter;
 
-int test_main(int argc, char* argv[])
+int test_main(int, char*[])
 {
   mt19937 gen;
   for (int t = 0; t < 100; t += 5) {
