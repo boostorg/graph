@@ -72,7 +72,6 @@ namespace graph_detail {
     struct generate_label_map<multimapS, Label, Vertex>
     { typedef std::multimap<Label, Vertex> type; };
 
-#if !defined BOOST_NO_HASH
     template <typename Label, typename Vertex>
     struct generate_label_map<hash_mapS, Label, Vertex>
     { typedef boost::unordered_map<Label, Vertex> type; };
@@ -80,7 +79,7 @@ namespace graph_detail {
     template <typename Label, typename Vertex>
     struct generate_label_map<hash_multimapS, Label, Vertex>
     { typedef boost::unordered_multimap<Label, Vertex> type; };
-#endif
+
     template <typename Selector, typename Label, typename Vertex>
     struct choose_custom_map {
         typedef typename generate_label_map<Selector, Label, Vertex>::type type;

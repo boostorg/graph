@@ -8,8 +8,6 @@
 #include <string>
 #include <set>
 
-#define BOOST_NO_HASH
-
 #include <boost/assert.hpp>
 #include <boost/range.hpp>
 

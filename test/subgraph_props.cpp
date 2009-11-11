@@ -5,10 +5,6 @@
 
 #include <iostream>
 
-#if !defined(BOOST_NO_HASH)
-#   define BOOST_NO_HASH
-#endif
-
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/subgraph.hpp>
 #include "typestr.hpp"
