@@ -2295,7 +2295,7 @@ namespace boost {
         // VertexList and vertex_iterator
         typedef typename container_gen<VertexListS,
           vertex_ptr>::type SeqVertexList;
-        typedef boost::integer_range<vertices_size_type> RandVertexList;
+        typedef boost::integer_range<vertex_descriptor> RandVertexList;
         typedef typename mpl::if_<is_rand_access,
           RandVertexList, SeqVertexList>::type VertexList;
 
