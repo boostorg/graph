@@ -81,17 +81,9 @@ namespace detail {
 
     std::vector<EdgeIndex> m_rowstart;
     std::vector<Vertex> m_column;
-#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
-    // This member is only needed to support add_edge(), which is not provided by
-    // the new interface
-    Vertex m_last_source; // Last source of added edge, plus one
-#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
 
     compressed_sparse_row_structure(Vertex numverts = 0)
       : m_rowstart(numverts + 1, EdgeIndex(0)), m_column()
-#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
-        , m_last_source(numverts)
-#endif
       {}
     
     //  Rebuild graph from number of vertices and multi-pass unsorted list of
@@ -310,24 +302,12 @@ namespace detail {
       for (Vertex i = 0; i != numverts; ++i) {
         m_rowstart[i] = current_edge;
         g_vertex v = ordered_verts_of_g[i];
-#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
-        // Out edges in a single vertex are only sorted for the old interface
-        EdgeIndex num_edges_before_this_vertex = current_edge;
-#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
         g_out_edge_iter ei, ei_end;
         for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
           m_column[current_edge++] = get(vi, target(*ei, g));
         }
-#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
-        // Out edges in a single vertex are only sorted for the old interface
-        std::sort(m_column.begin() + num_edges_before_this_vertex,
-                  m_column.begin() + current_edge);
-#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
       }
       m_rowstart[numverts] = current_edge;
-#ifdef BOOST_GRAPH_USE_OLD_CSR_INTERFACE
-      m_last_source = numverts;
-#endif // BOOST_GRAPH_USE_OLD_CSR_INTERFACE
     }
 
     // Add edges from a sorted (smallest sources first) range of pairs and edge
