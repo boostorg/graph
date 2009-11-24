@@ -925,18 +925,19 @@ namespace boost {
   // Functions required by the MutableGraph concept
 
   // O(1)
-  template <typename D, typename VP, typename EP, typename GP, typename A>
+  template <typename D, typename VP, typename EP, typename GP, typename A,
+            typename EP2>
   std::pair<typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor, bool>
   add_edge(typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor u,
            typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor v,
-           const EP& ep,
+           const EP2& ep,
            adjacency_matrix<D,VP,EP,GP,A>& g)
   {
     typedef typename adjacency_matrix<D,VP,EP,GP,A>::edge_descriptor
       edge_descriptor;
     if (detail::get_edge_exists(g.get_edge(u,v), 0) == false) {
       ++(g.m_num_edges);
-      detail::set_property(g.get_edge(u,v), ep, 0);
+      detail::set_property(g.get_edge(u,v), EP(ep), 0);
       detail::set_edge_exists(g.get_edge(u,v), true, 0);
       return std::make_pair
         (edge_descriptor(true, u, v, &detail::get_property(g.get_edge(u,v))),
@@ -989,9 +990,10 @@ namespace boost {
     return *vertices(g).first;
   }
 
-  template <typename D, typename VP, typename EP, typename GP, typename A>
+  template <typename D, typename VP, typename EP, typename GP, typename A,
+            typename VP2>
   inline typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor
-  add_vertex(const VP& /*vp*/, adjacency_matrix<D,VP,EP,GP,A>& g) {
+  add_vertex(const VP2& /*vp*/, adjacency_matrix<D,VP,EP,GP,A>& g) {
     // UNDER CONSTRUCTION
     assert(false);
     return *vertices(g).first;
