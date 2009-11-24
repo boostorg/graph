@@ -187,23 +187,6 @@ namespace boost {
       typedef typename Graph::graph_tag type;
     };
 
-    // This code is from boost/thread/locks.hpp (with the member name changed
-    // and changed to look for a member type) and should be factored out into a
-    // separate library (type_traits?).
-    template<typename T>
-    struct has_member_graph_tag {
-      typedef char true_type;
-      struct false_type {
-        true_type dummy[2];
-      };
-
-      template<typename U>
-      static true_type has_member(U*,typename U::graph_tag* = 0);
-      static false_type has_member(void*, ...);
-
-      BOOST_STATIC_CONSTANT(bool, value=sizeof(has_member_graph_tag<T>::has_member((T*)NULL))==sizeof(true_type));
-    };
-
     template <class Graph, class PropertyTag>
     struct edge_property_map {
       typedef typename edge_property_type<Graph>::type Property;
