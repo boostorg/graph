@@ -184,6 +184,14 @@ out_degree(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
 }
 
 template <class BidirectionalGraph, class GRef>
+inline typename graph_traits<BidirectionalGraph>::vertex_descriptor
+vertex(const typename graph_traits<BidirectionalGraph>::vertices_size_type v,
+       const reverse_graph<BidirectionalGraph,GRef>& g)
+{
+    return vertex(v, g.m_g);
+}
+
+template <class BidirectionalGraph, class GRef>
 inline std::pair<typename graph_traits<BidirectionalGraph>::edge_descriptor, 
                  bool>
 edge(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
