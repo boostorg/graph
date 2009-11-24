@@ -75,11 +75,6 @@ class reverse_graph {
     typedef typename Traits::vertices_size_type vertices_size_type;
     typedef typename Traits::edges_size_type edges_size_type;
 
-    // More typedefs used by detail::edge_property_map, vertex_property_map
-    typedef typename boost::edge_property_type<BidirectionalGraph>::type
-      edge_property_type;
-    typedef typename boost::vertex_property_type<BidirectionalGraph>::type
-      vertex_property_type;
     typedef reverse_graph_tag graph_tag;
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
@@ -103,6 +98,18 @@ class reverse_graph {
     // would be private, but template friends aren't portable enough.
  // private:
     GraphRef m_g;
+};
+
+
+// These are separate so they are not instantiated unless used (see bug 1021)
+template <class BidirectionalGraph, class GraphRef>
+struct vertex_property_type<reverse_graph<BidirectionalGraph, GraphRef> > {
+  typedef typename boost::vertex_property_type<BidirectionalGraph>::type type;
+};
+
+template <class BidirectionalGraph, class GraphRef>
+struct edge_property_type<reverse_graph<BidirectionalGraph, GraphRef> > {
+  typedef typename boost::edge_property_type<BidirectionalGraph>::type type;
 };
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES

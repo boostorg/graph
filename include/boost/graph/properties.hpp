@@ -175,10 +175,39 @@ namespace boost {
 
   namespace detail {
 
+    template <typename A> struct return_void {typedef void type;};
+
+    template <typename Graph, typename Enable = void>
+    struct graph_tag_or_void {
+      typedef void type;
+    };
+
+    template <typename Graph>
+    struct graph_tag_or_void<Graph, typename return_void<typename Graph::graph_tag>::type> {
+      typedef typename Graph::graph_tag type;
+    };
+
+    // This code is from boost/thread/locks.hpp (with the member name changed
+    // and changed to look for a member type) and should be factored out into a
+    // separate library (type_traits?).
+    template<typename T>
+    struct has_member_graph_tag {
+      typedef char true_type;
+      struct false_type {
+        true_type dummy[2];
+      };
+
+      template<typename U>
+      static true_type has_member(U*,typename U::graph_tag* = 0);
+      static false_type has_member(void*, ...);
+
+      BOOST_STATIC_CONSTANT(bool, value=sizeof(has_member_graph_tag<T>::has_member((T*)NULL))==sizeof(true_type));
+    };
+
     template <class Graph, class PropertyTag>
     struct edge_property_map {
-      typedef typename Graph::edge_property_type Property;
-      typedef typename Graph::graph_tag graph_tag;
+      typedef typename edge_property_type<Graph>::type Property;
+      typedef typename graph_tag_or_void<Graph>::type graph_tag;
       typedef typename edge_property_selector<graph_tag>::type Selector;
       typedef typename Selector::template bind_<Graph,Property,PropertyTag>
         Bind;
@@ -187,8 +216,8 @@ namespace boost {
     };
     template <class Graph, class PropertyTag>
     class vertex_property_map {
-      typedef typename Graph::vertex_property_type Property;
-      typedef typename Graph::graph_tag graph_tag;
+      typedef typename vertex_property_type<Graph>::type Property;
+      typedef typename graph_tag_or_void<Graph>::type graph_tag;
       typedef typename vertex_property_selector<graph_tag>::type Selector;
       typedef typename Selector::template bind_<Graph,Property,PropertyTag>
         Bind;
