@@ -282,14 +282,14 @@ struct edge_property_selector<reverse_graph_tag> {
 };
 
 template <class BidirGraph, class GRef, class Property>
-typename property_map<BidirGraph, Property>::type
+typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type
 get(Property p, reverse_graph<BidirGraph,GRef>& g)
 {
   return get(p, g.m_g);
 }
 
 template <class BidirGraph, class GRef, class Property>
-typename property_map<BidirGraph, Property>::const_type
+typename property_map<reverse_graph<BidirGraph,GRef>, Property>::const_type
 get(Property p, const reverse_graph<BidirGraph,GRef>& g)
 {
   const BidirGraph& gref = g.m_g; // in case GRef is non-const
