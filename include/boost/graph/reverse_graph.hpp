@@ -9,6 +9,8 @@
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/mpl/if.hpp>
 
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 // Stay out of the way of the concept checking class
@@ -324,7 +326,10 @@ set_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag,
 
 template<typename BidirectionalGraph, typename GRef, typename Tag>
 inline
-typename graph_property<BidirectionalGraph, Tag>::type
+typename boost::mpl::if_<
+           boost::is_const<typename boost::remove_reference<GRef>::type>,
+           const typename graph_property<BidirectionalGraph, Tag>::type&,
+           typename graph_property<BidirectionalGraph, Tag>::type& >::type
 get_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag)
 {
   return get_property(g.m_g, tag);
