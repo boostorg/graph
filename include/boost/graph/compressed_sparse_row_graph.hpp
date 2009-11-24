@@ -48,10 +48,19 @@
 #endif
 
 #ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
+#if BOOST_VERSION >= 103800
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
+#pragma message ("Using deprecated BGL compressed sparse row graph interface --")
+#pragma message ("please see the documentation for the new interface and then")
+#pragma message ("#define BOOST_GRAPH_USE_NEW_CSR_INTERFACE before including")
+#pragma message ("<boost/graph/compressed_sparse_row_graph.hpp>")
+#elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#endif
 #warning "Using deprecated BGL compressed sparse row graph interface --"
 #warning "please see the documentation for the new interface and then"
 #warning "#define BOOST_GRAPH_USE_NEW_CSR_INTERFACE before including"
 #warning "<boost/graph/compressed_sparse_row_graph.hpp>"
+#endif
 #endif // BOOST_GRAPH_USE_NEW_CSR_INTERFACE
 
 #ifndef BOOST_GRAPH_USE_NEW_CSR_INTERFACE
