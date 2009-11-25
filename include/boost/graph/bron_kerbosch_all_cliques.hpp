@@ -12,6 +12,7 @@
 #include <boost/config.hpp>
 
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/lookup_edge.hpp>
 
 #include <boost/concept/detail/concept_def.hpp>
 namespace boost {
@@ -125,9 +126,7 @@ namespace detail
                             typename graph_traits<Graph>::vertex_descriptor v,
                             typename graph_traits<Graph>::undirected_category)
     {
-        function_requires< AdjacencyMatrixConcept<Graph> >();
-
-        return edge(u, v, g).second;
+        return lookup_edge(u, v, g).second;
     }
 
     template <typename Graph>
@@ -137,13 +136,12 @@ namespace detail
                             typename graph_traits<Graph>::vertex_descriptor v,
                             typename graph_traits<Graph>::directed_category)
     {
-        function_requires< AdjacencyMatrixConcept<Graph> >();
         // Note that this could alternate between using an || to determine
         // full connectivity. I believe that this should produce strongly
         // connected components. Note that using && instead of || will
         // change the results to a fully connected subgraph (i.e., symmetric
         // edges between all vertices s.t., if a->b, then b->a.
-        return edge(u, v, g).second && edge(v, u, g).second;
+        return lookup_edge(u, v, g).second && lookup_edge(v, u, g).second;
     }
 
     template <typename Graph, typename Container>
@@ -189,7 +187,7 @@ namespace detail
             for(ni = nots.begin(); ni != nend; ++ni) {
                 for(ci = cands.begin(); ci != cend; ++ci) {
                     // if we don't find an edge, then we're okay.
-                    if(!edge(*ni, *ci, g).second) break;
+                    if(!lookup_edge(*ni, *ci, g).second) break;
                 }
                 // if we iterated all the way to the end, then *ni
                 // is connected to all *ci
