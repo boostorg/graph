@@ -1,18 +1,20 @@
 // Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
-// Copyright (C) 2004  The Trustees of Indiana University.
+// Copyright (C) 2004,2009  The Trustees of Indiana University.
 //
 // Use, modification and distribution is subject to the Boost Software
 // License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  Authors: Douglas Gregor
+//           Jeremiah Willcock
 //           Andrew Lumsdaine
 //           Tiago de Paula Peixoto
 
-#include <boost/variant.hpp>
-#include <expat.h>
+#include <boost/foreach.hpp>
+#include <boost/optional.hpp>
 #include <boost/graph/graphml.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 using namespace boost;
 
@@ -20,34 +22,91 @@ class graphml_reader
 {
 public:
     graphml_reader(mutate_graph& g) 
-        : m_g(g), m_canonical_vertices(false) { }
+        : m_g(g) { }
+
+    static boost::property_tree::ptree::path_type path(const std::string& str) {
+      return boost::property_tree::ptree::path_type(str, '/');
+    }
+
+    static void get_graphs(const boost::property_tree::ptree& top,
+                           std::vector<const boost::property_tree::ptree*>& result) {
+      using boost::property_tree::ptree;
+      BOOST_FOREACH(const ptree::value_type& n, top) {
+        if (n.first == "graph") {
+          result.push_back(&n.second);
+          get_graphs(n.second, result);
+        }
+      }
+    }
     
     void run(std::istream& in)
     {
-        const int buffer_size = 4096;
-        m_parser = XML_ParserCreateNS(0,'|');
-        XML_SetElementHandler(m_parser, &on_start_element, &on_end_element);
-        XML_SetCharacterDataHandler(m_parser, &on_character_data);
-        XML_SetUserData(m_parser, this);
-        char buffer[buffer_size];
-
-        bool okay = true;
-        do 
-        {
-            in.read(buffer, buffer_size);
-            okay = XML_Parse(m_parser, buffer, in.gcount(), in.gcount() == 0);
-        } 
-        while (okay && in.good());
-
-        if (!okay) 
-        {
-            std::stringstream s;
-            s << "on line " << XML_GetCurrentLineNumber(m_parser) 
-              <<", column " << XML_GetCurrentColumnNumber(m_parser)
-              << ": " << XML_ErrorString(XML_GetErrorCode(m_parser));
-            throw parse_error(s.str());
+      using boost::property_tree::ptree;
+      ptree pt;
+      read_xml(in, pt, boost::property_tree::xml_parser::no_comments | boost::property_tree::xml_parser::trim_whitespace);
+      ptree gml = pt.get_child(path("graphml"));
+      // Search for attributes
+      BOOST_FOREACH(const ptree::value_type& child, gml) {
+        if (child.first != "key") continue;
+        std::string id = child.second.get(path("<xmlattr>/id"), "");
+        std::string for_ = child.second.get(path("<xmlattr>/for"), "");
+        std::string name = child.second.get(path("<xmlattr>/attr.name"), "");
+        std::string type = child.second.get(path("<xmlattr>/attr.type"), "");
+        key_kind kind = all_key;
+        if (for_ == "graph") kind = graph_key;
+        else if (for_ == "node") kind = node_key;
+        else if (for_ == "edge") kind = edge_key;
+        else if (for_ == "hyperedge") kind = hyperedge_key;
+        else if (for_ == "port") kind = port_key;
+        else if (for_ == "endpoint") kind = endpoint_key;
+        else if (for_ == "all") kind = all_key;
+        else throw parse_error("Attribute for is not valid: " + for_);
+        m_keys[id] = kind;
+        m_key_name[id] = name;
+        m_key_type[id] = type;
+        boost::optional<std::string> default_ = child.second.get_optional<std::string>(path("default"));
+        if (default_) m_key_default[id] = default_.get();
+      }
+      // Search for graphs
+      std::vector<const ptree*> graphs;
+      get_graphs(gml, graphs);
+      BOOST_FOREACH(const ptree* gr, graphs) {
+        // Search for nodes
+        BOOST_FOREACH(const ptree::value_type& node, *gr) {
+          if (node.first != "node") continue;
+          std::string id = node.second.get<std::string>(path("<xmlattr>/id"));
+          handle_vertex(id);
+          BOOST_FOREACH(const ptree::value_type& attr, node.second) {
+            if (attr.first != "data") continue;
+            std::string key = attr.second.get<std::string>(path("<xmlattr>/key"));
+            std::string value = attr.second.get_value("");
+            handle_node_property(key, id, value);
+          }
         }
-        XML_ParserFree(m_parser);
+      }
+      BOOST_FOREACH(const ptree* gr, graphs) {
+        bool default_directed = gr->get<std::string>(path("<xmlattr>/edgedefault")) == "directed";
+        // Search for edges
+        BOOST_FOREACH(const ptree::value_type& edge, *gr) {
+          if (edge.first != "edge") continue;
+          std::string id = edge.second.get<std::string>(path("<xmlattr>/id"));
+          std::string source = edge.second.get<std::string>(path("<xmlattr>/source"));
+          std::string target = edge.second.get<std::string>(path("<xmlattr>/target"));
+          std::string local_directed = edge.second.get(path("<xmlattr>/directed"), "");
+          bool is_directed = (local_directed == "" ? default_directed : local_directed == "true");
+          if (is_directed != m_g.is_directed()) {
+            if (is_directed) throw directed_graph_error(); else throw undirected_graph_error();
+          }
+          size_t old_edges_size = m_edge.size();
+          handle_edge(source, target);
+          BOOST_FOREACH(const ptree::value_type& attr, edge.second) {
+            if (attr.first != "data") continue;
+            std::string key = attr.second.get<std::string>(path("<xmlattr>/key"));
+            std::string value = attr.second.get_value("");
+            handle_edge_property(key, old_edges_size, value);
+          }
+        }
+      }
     }
 
 private:
@@ -62,199 +121,15 @@ private:
         all_key
     };
 
-    static void 
-    on_start_element(void* user_data, const XML_Char *c_name,
-                     const XML_Char **atts)
-    {
-        graphml_reader* self = static_cast<graphml_reader*>(user_data);
-
-        std::string name(c_name);
-        replace_first(name, "http://graphml.graphdrawing.org/xmlns|", "");
-        
-        if (name == "edge") 
-        {
-            std::string id;
-            std::string source, target;
-            while (*atts) 
-            {
-                std::string name = *atts++;
-                std::string value = *atts++;
-
-                if (name == "id") id = value;
-                else if (name == "source") source = value;
-                else if (name == "target") target = value;
-                else if (name == "directed") 
-                {
-                    bool edge_is_directed = (value == "directed");
-                    if (edge_is_directed != self->m_g.is_directed()) 
-                    {
-                        if (edge_is_directed) 
-                            throw directed_graph_error();
-                        else
-                            throw undirected_graph_error();
-                    }
-                }
-            }
-
-            self->m_active_descriptor = self->m_edge.size();
-            self->handle_edge(source, target);
-        }
-        else if (name == "node") 
-        {
-            std::string id;
-
-            while (*atts) 
-            {
-                std::string name = *atts++;
-                std::string value = *atts++;
-                
-                if (name == "id") id = value;
-            }
-
-            self->handle_vertex(id);
-            self->m_active_descriptor = id;
-        } 
-        else if (name == "data") 
-        {
-            while (*atts) 
-            {
-                std::string name = *atts++;
-                std::string value = *atts++;
-
-                if (name == "key") self->m_active_key = value;
-            }
-        }
-        else if (name == "key") 
-        {
-            std::string id;
-            std::string key_name;
-            std::string key_type;
-            key_kind kind = all_key;
-
-            while (*atts) 
-            {
-                std::string name = *atts++;
-                std::string value = *atts++;
-
-                if (name == "id") id = value;
-                else if (name == "attr.name") key_name = value;
-                else if (name == "attr.type") key_type = value;
-                else if (name == "for") 
-                {
-                    if (value == "graph") kind = graph_key;
-                    else if (value == "node") kind = node_key;
-                    else if (value == "edge") kind = edge_key;
-                    else if (value == "hyperedge") kind = hyperedge_key;
-                    else if (value == "port") kind = port_key;
-                    else if (value == "endpoint") kind = endpoint_key;
-                    else if (value == "all") kind = all_key;
-                    else 
-                    {
-                        std::stringstream s;
-                        s << "on line " << XML_GetCurrentLineNumber(self->m_parser) 
-                          << ", column " << XML_GetCurrentColumnNumber(self->m_parser)
-                          << ": unrecognized key kind '" << value << "'";
-                        throw parse_error(s.str());
-                    }
-                }
-            }
-
-            self->m_keys[id] = kind;
-            self->m_key_name[id] = key_name;
-            self->m_key_type[id] = key_type;
-            self->m_active_key = id;
-        } 
-        else if (name == "graph") 
-        {
-            while (*atts) 
-            {
-                std::string name = *atts++;
-                std::string value = *atts++;
-                
-                if (name == "edgedefault") 
-                {
-                    bool edge_is_directed = (value == "directed");
-                    if (edge_is_directed != self->m_g.is_directed()) 
-                    {
-                        if (edge_is_directed) 
-                            throw directed_graph_error();
-                        else
-                            throw undirected_graph_error();
-                    }
-                }
-                else if (name == "parse.nodeids")
-                {
-                    self->m_canonical_vertices = (value == "canonical");
-                }
-            }
-            self->m_active_descriptor = "";
-        } 
-
-        self->m_character_data.clear();
-    }
-    
-    static void
-    on_end_element(void* user_data, const XML_Char *c_name)
-    {
-        graphml_reader* self = static_cast<graphml_reader*>(user_data);
-
-        std::string name(c_name);
-        replace_first(name, "http://graphml.graphdrawing.org/xmlns|", "");
-
-        if (name == "data") 
-        {            
-            self->handle_property(self->m_active_key, self->m_active_descriptor,
-                                  self->m_character_data);
-        } 
-        else if (name == "default")
-        {
-            self->m_key_default[self->m_active_key] = self->m_character_data;
-        }
-    }
-
-    static void
-    on_character_data(void* user_data, const XML_Char* s, int len)
-    {
-        graphml_reader* self = static_cast<graphml_reader*>(user_data);
-        self->m_character_data.append(s, len);
-    }
-
     void 
     handle_vertex(const std::string& v)
     {
         bool is_new = false;
 
-        if (m_canonical_vertices)
+        if (m_vertex.find(v) == m_vertex.end())
         {
-            size_t id;
-
-            //strip leading "n" from name
-            try 
-            {
-                id = lexical_cast<size_t>(std::string(v,1));
-            }
-            catch (bad_lexical_cast)
-            {
-                std::stringstream s;
-                s << "on line " << XML_GetCurrentLineNumber(m_parser) 
-                  << ", column " << XML_GetCurrentColumnNumber(m_parser)
-                  << ": invalid vertex: " << v;
-                throw parse_error(s.str());
-            }
-            
-            while(id >= m_canonical_vertex.size())
-            {
-                m_canonical_vertex.push_back(m_g.do_add_vertex());
-                is_new = true;
-            }
-        }
-        else
-        {
-            if (m_vertex.find(v) == m_vertex.end())
-            {
-                m_vertex[v] = m_g.do_add_vertex();
-                is_new = true;
-            }
+            m_vertex[v] = m_g.do_add_vertex();
+            is_new = true;
         }
 
         if (is_new)
@@ -263,7 +138,7 @@ private:
             for (iter = m_key_default.begin(); iter != m_key_default.end(); ++iter)
             {
                 if (m_keys[iter->first] == node_key)
-                    handle_property(iter->first, v, iter->second);
+                    handle_node_property(iter->first, v, iter->second);
             }
         }
     }
@@ -271,16 +146,7 @@ private:
     any
     get_vertex_descriptor(const std::string& v)
     {
-        if (m_canonical_vertices)
-        {
-            //strip leading "n" from name
-            size_t id = lexical_cast<size_t>(std::string(v,1));
-            return m_canonical_vertex[id];
-        }
-        else
-        {            
-            return m_vertex[v];
-        }
+      return m_vertex[v];
     }
 
     void 
@@ -306,40 +172,18 @@ private:
         for (iter = m_key_default.begin(); iter != m_key_default.end(); ++iter)
         {
             if (m_keys[iter->first] == edge_key)
-                handle_property(iter->first, e, iter->second);
+                handle_edge_property(iter->first, e, iter->second);
         }
     }
 
-    void handle_property(const std::string& key_id, const variant<std::string,size_t>& descriptor, const std::string& value)
+    void handle_node_property(const std::string& key_id, const std::string& descriptor, const std::string& value)
     {
-        try 
-        {
-            if (get<std::string>(&descriptor))
-            {
-                if (get<std::string>(descriptor) == "")
-                    m_g.set_graph_property(m_key_name[key_id], value, m_key_type[key_id]);
-                else
-                    m_g.set_vertex_property(m_key_name[key_id], get_vertex_descriptor(get<std::string>(descriptor)), value, m_key_type[key_id]);
-            }
-            else
-            {
-                m_g.set_edge_property(m_key_name[key_id], get_edge_descriptor(get<size_t>(descriptor)), value, m_key_type[key_id]);
-            }
-        }
-        catch (parse_error &e)
-        {
-            std::stringstream s;
-            s << "on line " << XML_GetCurrentLineNumber(m_parser) 
-              << ", column " << XML_GetCurrentColumnNumber(m_parser)
-              << ": " << e.error;
-            throw parse_error(s.str());
-        }
+      m_g.set_vertex_property(m_key_name[key_id], m_vertex[descriptor], value, m_key_type[key_id]);
     }
 
-    any
-    get_edge_descriptor(size_t e)
+    void handle_edge_property(const std::string& key_id, size_t descriptor, const std::string& value)
     {
-        return m_edge[e];
+      m_g.set_edge_property(m_key_name[key_id], m_edge[descriptor], value, m_key_type[key_id]);
     }
 
     mutate_graph& m_g;
@@ -348,14 +192,7 @@ private:
     std::map<std::string, std::string> m_key_type;
     std::map<std::string, std::string> m_key_default;
     std::map<std::string, any> m_vertex;
-    std::vector<any> m_canonical_vertex;
     std::vector<any> m_edge;
-    variant<std::string, size_t> m_active_descriptor;
-    std::string m_active_key;
-    std::string m_character_data;
-    bool m_canonical_vertices;
-    bool m_canonical_edges;
-    XML_Parser m_parser;
 };
 
 namespace boost
