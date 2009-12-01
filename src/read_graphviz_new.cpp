@@ -227,7 +227,7 @@ namespace read_graphviz_detail {
               default: assert (!"Definition of punctuation_token does not match switch statement");
             }
           }
-          default: assert (!"Definition of punctuation_token does not match switch statement"); std::abort();
+          default: assert (!"Definition of punctuation_token does not match switch statement");
         }
       }
       found = boost::regex_search(begin, end, results, number_token);
@@ -497,7 +497,7 @@ namespace read_graphviz_detail {
         case token::kw_graph: parse_attr_list(current_graph_props()); break;
         case token::kw_node: parse_attr_list(current().def_node_props); break;
         case token::kw_edge: parse_attr_list(current().def_edge_props); break;
-        default: assert (!"Bad attr_stmt case"); std::abort();
+        default: assert (!"Bad attr_stmt case");
       }
     }
 
@@ -790,7 +790,7 @@ namespace read_graphviz_detail {
 namespace detail {
   namespace graph {
 
-    bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
+    BOOST_GRAPH_DECL bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
       read_graphviz_detail::parser_result parsed_file;
       read_graphviz_detail::parse_graphviz_from_string(str, parsed_file, mg->is_directed());
       read_graphviz_detail::translate_results_to_graph(parsed_file, mg);
