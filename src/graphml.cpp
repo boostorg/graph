@@ -197,7 +197,7 @@ private:
 
 namespace boost
 {
-void
+void BOOST_GRAPH_DECL
 read_graphml(std::istream& in, mutate_graph& g)
 {    
     graphml_reader reader(g);
