@@ -17,19 +17,8 @@
 #include <list>
 #include <map>
 #include <set>
-
-#if !defined BOOST_NO_HASH
-#  ifdef BOOST_HASH_SET_HEADER
-#    include BOOST_HASH_SET_HEADER
-#  else
-#    include <hash_set>
-#  endif
-#  ifdef BOOST_HASH_MAP_HEADER
-#    include BOOST_HASH_MAP_HEADER
-#  else
-#    include <hash_map>
-#  endif
-#endif
+#include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 #if !defined BOOST_NO_SLIST
 #  ifdef BOOST_SLIST_HEADER
@@ -276,30 +265,30 @@ namespace boost { namespace graph_detail {
 #ifndef BOOST_NO_HASH
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Eq, class Hash, class Alloc> 
-  struct container_traits< BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc> > {
+  struct container_traits< boost::unordered_set<Key,Eq,Hash,Alloc> > {
     typedef set_tag category;
     typedef stable_tag iterator_stability; // is this right?
   };
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  struct container_traits< BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc> > {
+  struct container_traits< boost::unordered_map<Key,T,Eq,Hash,Alloc> > {
     typedef map_tag category;
     typedef stable_tag iterator_stability; // is this right?
   };
 #endif
   template <class Key, class Eq, class Hash, class Alloc>
-  set_tag container_category(const BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc>&)
+  set_tag container_category(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
   { return set_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  map_tag container_category(const BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc>&)
+  map_tag container_category(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
   { return map_tag(); }
 
   template <class Key, class Eq, class Hash, class Alloc>
-  stable_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key,Eq,Hash,Alloc>&)
+  stable_tag iterator_stability(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
   { return stable_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  stable_tag iterator_stability(const BOOST_STD_EXTENSION_NAMESPACE::hash_map<Key,T,Eq,Hash,Alloc>&)
+  stable_tag iterator_stability(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
   { return stable_tag(); }
 #endif
 
