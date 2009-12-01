@@ -192,8 +192,6 @@ namespace boost {
     > edge_iterator;
     typedef typename Traits::edges_size_type           edges_size_type;
 
-    typedef typename ::boost::edge_property_type<Graph>::type   edge_property_type;
-    typedef typename ::boost::vertex_property_type<Graph>::type vertex_property_type;
     typedef filtered_graph_tag graph_tag;
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
@@ -218,6 +216,22 @@ namespace boost {
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
   };
+
+  // Do not instantiate these unless needed
+  template <typename Graph, 
+            typename EdgePredicate,
+            typename VertexPredicate>
+  class vertex_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
+    typedef typename vertex_property_type<Graph>::type type;
+  };
+
+  template <typename Graph, 
+            typename EdgePredicate,
+            typename VertexPredicate>
+  class edge_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
+    typedef typename edge_property_type<Graph>::type type;
+  };
+
 
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
   template<typename Graph, typename EdgePredicate, typename VertexPredicate>
