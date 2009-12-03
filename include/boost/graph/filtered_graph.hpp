@@ -221,14 +221,14 @@ namespace boost {
   template <typename Graph, 
             typename EdgePredicate,
             typename VertexPredicate>
-  class vertex_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
+  struct vertex_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
     typedef typename vertex_property_type<Graph>::type type;
   };
 
   template <typename Graph, 
             typename EdgePredicate,
             typename VertexPredicate>
-  class edge_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
+  struct edge_property_type<filtered_graph<Graph, EdgePredicate, VertexPredicate> > {
     typedef typename edge_property_type<Graph>::type type;
   };
 
