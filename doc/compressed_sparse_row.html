@@ -317,8 +317,9 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       <blockquote>
         A selector that determines whether the graph will be directed,
         bidirectional or undirected. At this time, the CSR graph type
-        only supports directed graphs, so this value must
-        be <code>boost::directedS</code>.<br>
+        only supports directed and bidirectional graphs, so this value must
+        be either <code>boost::directedS</code> or
+        <code>boost::bidirectionalS</code>.<br>
         <b>Default</b>: <code>boost::directedS</code>
       </blockquote>
 
