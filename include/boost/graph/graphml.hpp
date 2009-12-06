@@ -16,6 +16,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/any.hpp>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/graphviz.hpp> // for exceptions
 #include <typeinfo>
 #include <boost/mpl/bool.hpp>

@@ -10,9 +10,11 @@
 //           Andrew Lumsdaine
 //           Tiago de Paula Peixoto
 
+#define BOOST_GRAPH_SOURCE
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/graph/graphml.hpp>
+#include <boost/graph/dll_import_export.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 

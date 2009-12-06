@@ -24,20 +24,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/graph/overloading.hpp>
-
-#ifdef BOOST_HAS_DECLSPEC
-#  if defined(BOOST_ALL_DYN_LINK) || defined(BOOST_GRAPH_DYN_LINK)
-#    ifdef BOOST_GRAPH_SOURCE
-#      define BOOST_GRAPH_DECL __declspec(dllexport)
-#    else
-#      define BOOST_GRAPH_DECL __declspec(dllimport)
-#    endif  // BOOST_GRAPH_SOURCE
-#  endif  // DYN_LINK
-#endif  // BOOST_HAS_DECLSPEC
-
-#ifndef BOOST_GRAPH_DECL
-#  define BOOST_GRAPH_DECL
-#endif
+#include <boost/graph/dll_import_export.hpp>
 
 namespace boost {
 

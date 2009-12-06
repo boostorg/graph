@@ -25,6 +25,7 @@
 //         Ronald Garcia
 //
 
+#define BOOST_GRAPH_SOURCE
 #include <boost/ref.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -44,6 +45,7 @@
 #include <boost/regex.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/graphviz.hpp>
 
 namespace boost {
