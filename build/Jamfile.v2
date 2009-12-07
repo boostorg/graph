@@ -17,13 +17,13 @@ lib boost_graph
     graphml.cpp
     :
     <library>../../regex/build//boost_regex
-    <define>BOOST_GRAPH_NO_LIB=1
     <link>shared:<define>BOOST_GRAPH_DYN_LINK=1
-    # # Intel compiler ICEs if we turn optimization on
-    <toolset>intel-vc71-win-9.1:<optimization>off
     # Without these flags, MSVC 7.1 and 8.0 crash
     # User reports that VC++ 8.0 does not fail anymore, so that is removed
     <toolset>msvc-7.1:<cxxflags>-GR-
+    :
+    :
+    <library>../../regex/build//boost_regex
     ;
 
 boost-install boost_graph ;
