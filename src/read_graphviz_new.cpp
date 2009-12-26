@@ -77,7 +77,8 @@ namespace read_graphviz_detail {
       quoted_string, // Only used internally in tokenizer
       eof,
       invalid
-    } type;
+    };
+    token_type type;
     std::string normalized_value; // May have double-quotes removed and/or some escapes replaced
     token(token_type type, const std::string& normalized_value)
       : type(type), normalized_value(normalized_value) {}
