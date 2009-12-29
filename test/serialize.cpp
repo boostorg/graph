@@ -21,7 +21,7 @@ struct vertex_properties {
   std::string name;
 
   template<class Archive>
-  void serialize(Archive & ar, const unsigned int version) {
+  void serialize(Archive & ar, const unsigned int /*version*/) {
     ar & BOOST_SERIALIZATION_NVP(name);
   }  
 };
@@ -30,7 +30,7 @@ struct edge_properties {
   std::string name;
 
   template<class Archive>
-  void serialize(Archive & ar, const unsigned int version) {
+  void serialize(Archive & ar, const unsigned int /*version*/) {
     ar & BOOST_SERIALIZATION_NVP(name);
   }  
 };

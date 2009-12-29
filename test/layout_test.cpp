@@ -108,8 +108,8 @@ struct kamada_kawai_done
 
   template<typename Graph>
   bool operator()(double delta_p, 
-                  typename boost::graph_traits<Graph>::vertex_descriptor p,
-                  const Graph& g,
+                  typename boost::graph_traits<Graph>::vertex_descriptor /*p*/,
+                  const Graph& /*g*/,
                   bool global)
   {
     if (global) {

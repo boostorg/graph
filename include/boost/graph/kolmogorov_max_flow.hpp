@@ -46,6 +46,7 @@
 #include <boost/none_t.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/lookup_edge.hpp>
 
 namespace boost {
   namespace detail {
@@ -161,7 +162,7 @@ namespace boost {
               }
               edge_descriptor to_sink;
               bool is_there;
-              tie(to_sink, is_there) = edge(current_node, m_sink, m_g);
+              tie(to_sink, is_there) = lookup_edge(current_node, m_sink, m_g);
               if(is_there){
                 tEdgeVal cap_from_source = m_res_cap_map[from_source];
                 tEdgeVal cap_to_sink = m_res_cap_map[to_sink];

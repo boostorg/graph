@@ -14,7 +14,7 @@
 #define DIMENSIONS 3
 using namespace boost;
 
-int main (int argc, char* argv[]) {
+int main (int, char*[]) {
 
   typedef grid_graph<DIMENSIONS> Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
@@ -30,4 +30,4 @@ int main (int argc, char* argv[]) {
   function_requires<ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> >();
 
   return (0);
-};
+}

@@ -159,7 +159,7 @@ namespace boost
     template <class VertexListGraph, class DistanceMatrix, 
       class WeightMap, class P, class T, class R>
     bool floyd_warshall_init_dispatch(const VertexListGraph& g, 
-      DistanceMatrix& d, WeightMap w, 
+      DistanceMatrix& d, WeightMap /*w*/, 
       const bgl_named_params<P, T, R>& params)
     {
       typedef typename property_traits<WeightMap>::value_type WM;

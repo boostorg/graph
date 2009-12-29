@@ -236,7 +236,7 @@ namespace boost {
   lengauer_tarjan_dominator_tree_without_dfs
     (const Graph& g,
      const typename graph_traits<Graph>::vertex_descriptor& entry,
-     const IndexMap& indexMap,
+     const IndexMap& /*indexMap*/,
      TimeMap dfnumMap, PredMap parentMap, VertexVector& verticesByDFNum,
      DomTreePredMap domTreePredMap)
   {

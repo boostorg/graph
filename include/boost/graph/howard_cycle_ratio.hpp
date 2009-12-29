@@ -173,8 +173,8 @@ namespace boost {
       virtual ~mcr_howard() {}
 
     protected:
-      virtual void store_critical_edge(edge_t ed, critical_cycle_t &cc) {}
-      virtual void store_critical_cycle(critical_cycle_t &cc) {}
+      virtual void store_critical_edge(edge_t, critical_cycle_t &) {}
+      virtual void store_critical_cycle(critical_cycle_t &) {}
 
     private:
       /*!
@@ -216,10 +216,10 @@ namespace boost {
             tie(oei, oeie) = out_edges(*vi, m_g);
             typename graph_traits<Graph>::out_edge_iterator mei =
               std::max_element(oei, oeie,
-                               bind(m_cmp,
-                                    bind(&EdgeWeight1::operator[], m_ew1m, _1),
-                                    bind(&EdgeWeight1::operator[], m_ew1m, _2)
-                                    )
+                               boost::bind(m_cmp,
+                                           boost::bind(&EdgeWeight1::operator[], m_ew1m, _1),
+                                           boost::bind(&EdgeWeight1::operator[], m_ew1m, _2)
+                                          )
                                );
             if (mei == oeie)
               {
@@ -334,10 +334,10 @@ namespace boost {
         tie(uv_itr, vie) = vertices(m_g);
         float_t mcr = m_bound;
         while ( (uv_itr = std::find_if(uv_itr, vie,
-                                       bind(std::equal_to<my_color_type>(),
-                                            my_white,
-                                            bind(&color_map_t::operator[], vcm_, _1)
-                                            )
+                                       boost::bind(std::equal_to<my_color_type>(),
+                                                   my_white,
+                                                   boost::bind(&color_map_t::operator[], vcm_, _1)
+                                                   )
                                        )
                  ) != vie )
           ///While there are undiscovered vertices

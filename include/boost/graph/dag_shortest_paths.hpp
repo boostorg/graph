@@ -83,7 +83,7 @@ namespace boost {
     dag_sp_dispatch2
       (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-       DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
+       DistanceMap distance, WeightMap weight, ColorMap color, IndexMap /*id*/,
        DijkstraVisitor vis, const Params& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;

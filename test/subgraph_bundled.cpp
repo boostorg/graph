@@ -8,10 +8,6 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
-#if !defined(BOOST_NO_HASH)
-#   define BOOST_NO_HASH
-#endif
-
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/random.hpp>
@@ -42,7 +38,7 @@ typedef graph_traits<Subgraph>::edge_descriptor Edge;
 typedef graph_traits<Subgraph>::vertex_iterator VertexIter;
 typedef graph_traits<Subgraph>::edge_iterator EdgeIter;
 
-int test_main(int argc, char* argv[])
+int test_main(int, char*[])
 {
   mt19937 gen;
   for (int t = 0; t < 100; t += 5) {

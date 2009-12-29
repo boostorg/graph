@@ -83,8 +83,8 @@ namespace boost
           put(lowpt, source(e, g),
               min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, source(e, g)),
                                                    get(dtm, target(e, g))));
+        }
         vis.back_edge(e, g);
-      }
       }
 
       template <typename Edge, typename Graph>

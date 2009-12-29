@@ -37,7 +37,7 @@ typedef adjacency_matrix<undirectedS,
 template <typename Graph>
 struct vertex_index_installer 
 {
-  static void install(Graph& g) {}
+  static void install(Graph&) {}
 };
 
 
@@ -346,7 +346,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
 
 
 
-int test_main(int argc, char* argv[])
+int test_main(int, char*[])
 {
 
   matching_test<undirected_graph>(10, "adjacency_list (using vectors)");

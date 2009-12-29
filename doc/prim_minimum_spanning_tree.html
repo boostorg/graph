@@ -55,6 +55,8 @@ simply a call to <a
 href="./dijkstra_shortest_paths.html"><TT>dijkstra_shortest_paths()</TT></a>
 with the appropriate choice of comparison and combine functors.
 The pseudo-code for Prim's algorithm is listed below.
+The algorithm as implemented in Boost.Graph does not produce correct results on
+graphs with parallel edges.
 </p>
 
 <table>
@@ -131,7 +133,8 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   An undirected graph. The type <tt>Graph</tt> must be a
   model of <a href="./VertexListGraph.html">Vertex List Graph</a>
-  and <a href="./IncidenceGraph.html">Incidence Graph</a>.<br>
+  and <a href="./IncidenceGraph.html">Incidence Graph</a>.  It should not
+  contain parallel edges.<br>
 
   <b>Python</b>: The parameter is named <tt>graph</tt>.
 </blockquote>

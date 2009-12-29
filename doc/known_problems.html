@@ -44,14 +44,6 @@ versions.
   <li>&quot;using boost::tie;&quot; may cause VC++ internal compiler error.
 </ol>
 
-<h2>Workarounds</h2>
-<p>
-<b>Compiler Warnings on <code>hash_set</code> and <code>hash_map</code></b>. Versions of
-GCC &gt;= 4.3 deprecate these headers and data structures and will emit warnings when
-compiling the BGL. To suppress these warnings <em>and the hash-based storage selectors</em>
-define the <code>BOOST_NO_HASH</code> prior to including any Boost.Graph headers.
-</p>
-
 <br>
 <HR>
 <TABLE>

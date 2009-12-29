@@ -31,15 +31,15 @@ public:
     m_discover_time(d), m_finish_time(f), m_time(0) { }
 
   template <class Vertex, class Graph>
-  void initialize_vertex(Vertex u, Graph& g) {
+  void initialize_vertex(Vertex u, Graph&) {
     BOOST_CHECK( boost::get(m_color, u) == Color::white() );
   }
   template <class Vertex, class Graph>
-  void start_vertex(Vertex u, Graph& g) {
+  void start_vertex(Vertex u, Graph&) {
     BOOST_CHECK( boost::get(m_color, u) == Color::white() );
   }
   template <class Vertex, class Graph>
-  void discover_vertex(Vertex u, Graph& g) {
+  void discover_vertex(Vertex u, Graph&) {
     using namespace boost;
     BOOST_CHECK( get(m_color, u) == Color::gray() );
     BOOST_CHECK( get(m_color, get(m_parent, u)) == Color::gray() );
@@ -69,7 +69,7 @@ public:
     BOOST_CHECK( get(m_color, target(e, g)) == Color::black() );
   }
   template <class Vertex, class Graph>
-  void finish_vertex(Vertex u, Graph& g) {
+  void finish_vertex(Vertex u, Graph&) {
     using namespace boost;
     BOOST_CHECK( get(m_color, u) == Color::black() );
 

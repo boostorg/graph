@@ -1183,13 +1183,11 @@ namespace boost {
                                 multisetS*)
       { return edge_range(source(e, g), target(e, g), g); }
 
-#if !defined BOOST_NO_HASH
       std::pair<out_edge_iterator, out_edge_iterator>
       get_parallel_edge_sublist(typename Config::edge_descriptor e,
                                 const graph_type& g,
                                 hash_setS*)
       { return edge_range(source(e, g), target(e, g), g); }
-#endif
 
       // Placement of these overloaded remove_edge() functions
       // inside the class avoids a VC++ bug.
@@ -2297,7 +2295,7 @@ namespace boost {
         // VertexList and vertex_iterator
         typedef typename container_gen<VertexListS,
           vertex_ptr>::type SeqVertexList;
-        typedef boost::integer_range<vertices_size_type> RandVertexList;
+        typedef boost::integer_range<vertex_descriptor> RandVertexList;
         typedef typename mpl::if_<is_rand_access,
           RandVertexList, SeqVertexList>::type VertexList;
 
@@ -2785,8 +2783,8 @@ namespace boost {
 
 } // namespace boost
 
-#if !defined(BOOST_NO_HASH) && !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
-namespace BOOST_STD_EXTENSION_NAMESPACE {
+#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
+namespace boost {
 
   #if BOOST_WORKAROUND( _STLPORT_VERSION, >= 0x500 )
   // STLport 5 already defines a hash<void*> specialization.

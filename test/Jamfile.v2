@@ -9,18 +9,11 @@
 
 import modules ;
 
-local optional_tests ;
-
 path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
 
 path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
-
-if [ modules.peek : EXPAT_INCLUDE ] && [ modules.peek : EXPAT_LIBPATH ]
-{
-  optional_tests += [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ] ;
-}
 
 test-suite graph_test :
     # test_graphs will eventually defined a framework for testing the structure
@@ -122,8 +115,7 @@ test-suite graph_test :
     [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]
-
-    $(optional_tests)
+    [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     ;
 
 # Run SDB tests only when -sSDB= is set.

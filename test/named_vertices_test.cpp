@@ -58,7 +58,7 @@ struct internal_vertex_constructor<City>
 typedef adjacency_list<vecS, vecS, directedS, City> RoadMap;
 typedef graph_traits<RoadMap>::vertex_descriptor Vertex;
 
-int test_main(int argc, char* argv[])
+int test_main(int, char*[])
 {
   RoadMap map;
 

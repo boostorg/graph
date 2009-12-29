@@ -29,11 +29,11 @@ namespace boost
     {}
 
     template <typename Edge>
-    void next_edge(Edge e)
+    void next_edge(Edge)
     {}
 
     template <typename Vertex>
-    void next_vertex(Vertex v)
+    void next_vertex(Vertex)
     {}
 
     void end_face()

@@ -25,6 +25,7 @@
 //         Ronald Garcia
 //
 
+#define BOOST_GRAPH_SOURCE
 #include <boost/ref.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -44,6 +45,7 @@
 #include <boost/regex.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/graphviz.hpp>
 
 namespace boost {
@@ -75,7 +77,8 @@ namespace read_graphviz_detail {
       quoted_string, // Only used internally in tokenizer
       eof,
       invalid
-    } type;
+    };
+    token_type type;
     std::string normalized_value; // May have double-quotes removed and/or some escapes replaced
     token(token_type type, const std::string& normalized_value)
       : type(type), normalized_value(normalized_value) {}
@@ -227,7 +230,7 @@ namespace read_graphviz_detail {
               default: assert (!"Definition of punctuation_token does not match switch statement");
             }
           }
-          default: assert (!"Definition of punctuation_token does not match switch statement"); std::abort();
+          default: assert (!"Definition of punctuation_token does not match switch statement");
         }
       }
       found = boost::regex_search(begin, end, results, number_token);
@@ -497,7 +500,7 @@ namespace read_graphviz_detail {
         case token::kw_graph: parse_attr_list(current_graph_props()); break;
         case token::kw_node: parse_attr_list(current().def_node_props); break;
         case token::kw_edge: parse_attr_list(current().def_edge_props); break;
-        default: assert (!"Bad attr_stmt case"); std::abort();
+        default: assert (!"Bad attr_stmt case");
       }
     }
 
@@ -790,7 +793,7 @@ namespace read_graphviz_detail {
 namespace detail {
   namespace graph {
 
-    bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
+    BOOST_GRAPH_DECL bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
       read_graphviz_detail::parser_result parsed_file;
       read_graphviz_detail::parse_graphviz_from_string(str, parsed_file, mg->is_directed());
       read_graphviz_detail::translate_results_to_graph(parsed_file, mg);

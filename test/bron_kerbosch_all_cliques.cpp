@@ -65,7 +65,7 @@ void test()
 }
 
 int
-main(int argc, char *argv[])
+main(int, char *[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;

@@ -100,7 +100,7 @@ namespace boost
             >
   bool is_straight_line_drawing(const Graph& g, 
                                 GridPositionMap drawing, 
-                                VertexIndexMap vm
+                                VertexIndexMap
                                 )
   {
 

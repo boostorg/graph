@@ -10,6 +10,7 @@
 #include <boost/utility.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/lookup_edge.hpp>
 
 namespace boost
 {
@@ -42,8 +43,8 @@ namespace detail
 
     {
         function_requires< AdjacencyMatrixConcept<Graph> >();
-        return (edge(u, v, g).second ? 1 : 0) +
-                (edge(v, u, g).second ? 1 : 0);
+        return (lookup_edge(u, v, g).second ? 1 : 0) +
+                (lookup_edge(v, u, g).second ? 1 : 0);
     }
 
     // This template matches undirectedS
@@ -55,7 +56,7 @@ namespace detail
                 undirected_tag)
     {
         function_requires< AdjacencyMatrixConcept<Graph> >();
-        return edge(u, v, g).second ? 1 : 0;
+        return lookup_edge(u, v, g).second ? 1 : 0;
     }
 }
 

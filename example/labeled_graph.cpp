@@ -7,8 +7,6 @@
 #include <iostream>
 #include <string>
 
-#define BOOST_NO_HASH
-
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/labeled_graph.hpp>
 

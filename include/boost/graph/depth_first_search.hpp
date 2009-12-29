@@ -193,7 +193,8 @@ namespace boost {
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      put(color, *ui, Color::white());       vis.initialize_vertex(*ui, g);
+      Vertex u = implicit_cast<Vertex>(*ui);
+      put(color, u, Color::white()); vis.initialize_vertex(u, g);
     }
 
     if (start_vertex != implicit_cast<Vertex>(*vertices(g).first)){ vis.start_vertex(start_vertex, g);
@@ -202,9 +203,10 @@ namespace boost {
     }
 
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
-      ColorValue u_color = get(color, *ui);
-      if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
-        detail::depth_first_visit_impl(g, *ui, vis, color, detail::nontruth2());
+      Vertex u = implicit_cast<Vertex>(*ui);
+      ColorValue u_color = get(color, u);
+      if (u_color == Color::white()) {       vis.start_vertex(u, g);
+        detail::depth_first_visit_impl(g, u, vis, color, detail::nontruth2());
       }
     }
   }

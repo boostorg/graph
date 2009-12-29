@@ -32,7 +32,7 @@ struct VertexIndexUpdater
 
 struct NoVertexIndexUpdater
 {
-  template <typename Graph> void reset(Graph& g) {}
+  template <typename Graph> void reset(Graph&) {}
 };
 
 

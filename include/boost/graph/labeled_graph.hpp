@@ -72,7 +72,6 @@ namespace graph_detail {
     struct generate_label_map<multimapS, Label, Vertex>
     { typedef std::multimap<Label, Vertex> type; };
 
-#if !defined BOOST_NO_HASH
     template <typename Label, typename Vertex>
     struct generate_label_map<hash_mapS, Label, Vertex>
     { typedef boost::unordered_map<Label, Vertex> type; };
@@ -80,7 +79,7 @@ namespace graph_detail {
     template <typename Label, typename Vertex>
     struct generate_label_map<hash_multimapS, Label, Vertex>
     { typedef boost::unordered_multimap<Label, Vertex> type; };
-#endif
+
     template <typename Selector, typename Label, typename Vertex>
     struct choose_custom_map {
         typedef typename generate_label_map<Selector, Label, Vertex>::type type;
@@ -141,7 +140,7 @@ namespace graph_detail {
     // Tag dispatch on unique associative containers (i.e. maps).
     template <typename Container, typename Graph, typename Label, typename Prop>
     std::pair<typename graph_traits<Graph>::vertex_descriptor, bool>
-    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const& p,
+    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const&,
                           unique_associative_container_tag)
     {
         // Here, we actually have to try the insertion first, and only add

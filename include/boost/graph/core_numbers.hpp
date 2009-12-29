@@ -86,7 +86,7 @@ namespace boost {
 
     template <class Visitors>
     core_numbers_visitor<Visitors> make_core_numbers_visitor(Visitors vis)
-    { return core_numbers_visitor<Visitors>(vis); };
+    { return core_numbers_visitor<Visitors>(vis); }
 
     typedef core_numbers_visitor<> default_core_numbers_visitor;
 

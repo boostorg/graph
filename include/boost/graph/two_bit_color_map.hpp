@@ -14,6 +14,7 @@
 #define BOOST_TWO_BIT_COLOR_MAP_HPP
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/shared_array.hpp>
 #include <algorithm>
 
@@ -77,8 +78,10 @@ put(const two_bit_color_map<IndexMap>& pm,
   assert (value >= 0 && value < 4);
   std::size_t byte_num = i / 4;
   std::size_t bit_position = ((i % 4) * 2);
-    pm.data.get()[byte_num] = (pm.data.get()[byte_num] & ~(3 << bit_position))
-      | (value << bit_position);
+    pm.data.get()[byte_num] =
+      (unsigned char)
+        ((pm.data.get()[byte_num] & ~(3 << bit_position))
+         | (value << bit_position));
 }
 
 template<typename IndexMap>

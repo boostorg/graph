@@ -62,7 +62,7 @@ void build_property_graph(Graph const& g, Add, Label)
 { }
 
 template <typename Graph>
-void build_property_graph(Graph const& g, boost::mpl::true_, boost::mpl::false_) {
+void build_property_graph(Graph const&, boost::mpl::true_, boost::mpl::false_) {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept<Graph>));
     typedef typename vertex_property<Graph>::type VertexProp;

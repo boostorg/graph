@@ -6,8 +6,6 @@
 
 #include <iostream>
 
-#define BOOST_NO_HASH
-
 #include "typestr.hpp"
 
 #include <boost/graph/adjacency_list.hpp>

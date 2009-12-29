@@ -162,7 +162,7 @@ template<class Graph,
 void r_c_shortest_paths_dispatch
 ( const Graph& g, 
   const VertexIndexMap& vertex_index_map, 
-  const EdgeIndexMap& edge_index_map, 
+  const EdgeIndexMap& /*edge_index_map*/, 
   typename graph_traits<Graph>::vertex_descriptor s, 
   typename graph_traits<Graph>::vertex_descriptor t, 
   // each inner vector corresponds to a pareto-optimal path
@@ -179,7 +179,7 @@ void r_c_shortest_paths_dispatch
   Resource_Extension_Function& ref, 
   Dominance_Function& dominance, 
   // to specify the memory management strategy for the labels
-  Label_Allocator la, 
+  Label_Allocator /*la*/, 
   Visitor vis )
 {
   pareto_optimal_resource_containers.clear();
@@ -449,15 +449,15 @@ void r_c_shortest_paths_dispatch
 struct default_r_c_shortest_paths_visitor
 {
   template<class Label, class Graph>
-  void on_label_popped( const Label& l, const Graph& g ) {}
+  void on_label_popped( const Label&, const Graph& ) {}
   template<class Label, class Graph>
-  void on_label_feasible( const Label& l, const Graph& g ) {}
+  void on_label_feasible( const Label&, const Graph& ) {}
   template<class Label, class Graph>
-  void on_label_not_feasible( const Label& l, const Graph& g ) {}
+  void on_label_not_feasible( const Label&, const Graph& ) {}
   template<class Label, class Graph>
-  void on_label_dominated( const Label& l, const Graph& g ) {}
+  void on_label_dominated( const Label&, const Graph& ) {}
   template<class Label, class Graph>
-  void on_label_not_dominated( const Label& l, const Graph& g ) {}
+  void on_label_not_dominated( const Label&, const Graph& ) {}
 }; // default_r_c_shortest_paths_visitor
 
 
