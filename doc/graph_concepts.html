@@ -421,7 +421,7 @@ parallel edges. If the graph is not a multigraph then <i>(u,v)</i> and
 In the example below the edge equality test will return <TT>false</TT>
 for the directed graph and <TT>true</TT> for the undirected graph. The
 difference also affects the meaning of <TT>add_edge()</TT>. In the
-example below, if we had also written <TT>add_add(v, u,
+example below, if we had also written <TT>add_edge(v, u,
 undigraph)</TT>, this would have added a parallel edge between
 <i>u</i> and <i>v</i> (provided the graph type allows parallel
 edges). The difference in edge equality also affects the association
