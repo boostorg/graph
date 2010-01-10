@@ -16,6 +16,7 @@
 // http://springerlink.metapress.com/link.asp?id=pcu07ew5rhexp9yt
 
 #include <boost/config/no_tr1/cmath.hpp>
+#include <boost/throw_exception.hpp>
 #include <vector>
 #include <exception>
 #include <algorithm>
@@ -72,7 +73,7 @@ struct update_position_visitor {
 #endif
 
     if (get(node_distance, v) > distance_limit)
-      throw over_distance_limit();
+      BOOST_THROW_EXCEPTION(over_distance_limit());
     Point old_position = get(position_map, v);
     double distance = get(node_distance, v);
     double fraction = 

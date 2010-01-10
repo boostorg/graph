@@ -17,6 +17,7 @@
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
@@ -147,7 +148,7 @@ namespace boost {
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) {
         if (m_compare(get(m_weight, e), m_zero))
-          throw negative_edge();
+          BOOST_THROW_EXCEPTION(negative_edge());
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>

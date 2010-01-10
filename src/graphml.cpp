@@ -13,6 +13,7 @@
 #define BOOST_GRAPH_SOURCE
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/graphml.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -62,7 +63,7 @@ public:
         else if (for_ == "port") kind = port_key;
         else if (for_ == "endpoint") kind = endpoint_key;
         else if (for_ == "all") kind = all_key;
-        else throw parse_error("Attribute for is not valid: " + for_);
+        else {BOOST_THROW_EXCEPTION(parse_error("Attribute for is not valid: " + for_));}
         m_keys[id] = kind;
         m_key_name[id] = name;
         m_key_type[id] = type;
@@ -97,7 +98,11 @@ public:
           std::string local_directed = edge.second.get(path("<xmlattr>/directed"), "");
           bool is_directed = (local_directed == "" ? default_directed : local_directed == "true");
           if (is_directed != m_g.is_directed()) {
-            if (is_directed) throw directed_graph_error(); else throw undirected_graph_error();
+            if (is_directed) {
+              BOOST_THROW_EXCEPTION(directed_graph_error());
+            } else {
+              BOOST_THROW_EXCEPTION(undirected_graph_error());
+            }
           }
           size_t old_edges_size = m_edge.size();
           handle_edge(source, target);
@@ -164,8 +169,9 @@ private:
         any edge;
         bool added;
         tie(edge, added) = m_g.do_add_edge(source, target);
-        if (!added)
-            throw bad_parallel_edge(u, v);
+        if (!added) {
+            BOOST_THROW_EXCEPTION(bad_parallel_edge(u, v));
+        }
 
         size_t e = m_edge.size();
         m_edge.push_back(edge);
