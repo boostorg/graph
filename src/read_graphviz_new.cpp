@@ -764,7 +764,7 @@ namespace read_graphviz_detail {
     typedef boost::detail::graph::node_t vertex;
     typedef boost::detail::graph::edge_t edge;
     for (std::map<node_name, properties>::const_iterator i = r.nodes.begin(); i != r.nodes.end(); ++i) {
-      std::cerr << i->first << " " << props_to_string(i->second) << std::endl;
+      // std::cerr << i->first << " " << props_to_string(i->second) << std::endl;
       mg->do_add_vertex(i->first);
       for (properties::const_iterator j = i->second.begin(); j != i->second.end(); ++j) {
         mg->set_node_property(j->first, i->first, j->second);
@@ -772,7 +772,7 @@ namespace read_graphviz_detail {
     }
     for (std::vector<edge_info>::const_iterator i = r.edges.begin(); i != r.edges.end(); ++i) {
       const edge_info& ei = *i;
-      std::cerr << ei.source << " -> " << ei.target << " " << props_to_string(ei.props) << std::endl;
+      // std::cerr << ei.source << " -> " << ei.target << " " << props_to_string(ei.props) << std::endl;
       edge e = edge::new_edge();
       mg->do_add_edge(e, ei.source.name, ei.target.name);
       for (properties::const_iterator j = ei.props.begin(); j != ei.props.end(); ++j) {
@@ -782,7 +782,7 @@ namespace read_graphviz_detail {
     std::map<subgraph_name, properties>::const_iterator root_graph_props_i = r.graph_props.find("___root___");
     assert (root_graph_props_i != r.graph_props.end()); // Should not happen
     const properties& root_graph_props = root_graph_props_i->second;
-    std::cerr << "ending graph " << props_to_string(root_graph_props) << std::endl;
+    // std::cerr << "ending graph " << props_to_string(root_graph_props) << std::endl;
     for (properties::const_iterator i = root_graph_props.begin(); i != root_graph_props.end(); ++i) {
       mg->set_graph_property(i->first, i->second);
     }
