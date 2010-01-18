@@ -239,6 +239,15 @@ href="../example/biconnected_components.cpp"><tt>examples/biconnected_components
 contains an example of calculating the biconnected components and
 articulation points of an undirected graph.
 
+<h3>Notes</h3>
+
+<p><a name="1">[1]</a> 
+  Since the visitor parameter is passed by value, if your visitor
+  contains state then any changes to the state during the algorithm
+  will be made to a copy of the visitor object, not the visitor object
+  passed in. Therefore you may want the visitor to hold this state by
+  pointer or reference.
+
 <br>
 <HR>
 <TABLE>
