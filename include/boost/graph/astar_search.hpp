@@ -239,14 +239,14 @@ namespace boost {
      AStarHeuristic h, AStarVisitor vis,
      PredecessorMap predecessor, CostMap cost,
      DistanceMap distance, WeightMap weight,
-     ColorMap color, VertexIndexMap /*index_map*/,
+     ColorMap color, VertexIndexMap index_map,
      CompareFunction compare, CombineFunction combine,
      CostInf /*inf*/, CostZero zero)
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
-    typedef boost::vector_property_map<std::size_t> IndexInHeapMap;
-    IndexInHeapMap index_in_heap;
+    typedef boost::vector_property_map<std::size_t, VertexIndexMap> IndexInHeapMap;
+    IndexInHeapMap index_in_heap(index_map);
     typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, CostMap, CompareFunction>
       MutableQueue;
     MutableQueue Q(cost, index_in_heap, compare);
