@@ -48,11 +48,6 @@ struct two_bit_color_map
 
   BOOST_STATIC_CONSTANT(int, bits_per_char = std::numeric_limits<unsigned char>::digits);
   BOOST_STATIC_CONSTANT(int, elements_per_char = bits_per_char / 2);
-  BOOST_STATIC_ASSERT(std::numeric_limits<unsigned char>::radix == 2);
-#if (__GNUC__ == 3 && __GNUC__ == 4) || (__GNUC__ == 4 && __GNUC_MINOR__ == 0)
-  // This test fails on GCC 3.4 and 4.0 according to Ralf W. Grosse-Kunstleve
-  BOOST_STATIC_ASSERT(elements_per_char > 0);
-#endif
   typedef typename property_traits<IndexMap>::key_type key_type;
   typedef two_bit_color_type value_type;
   typedef void reference;
