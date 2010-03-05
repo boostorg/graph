@@ -1,4 +1,5 @@
 //  (C) Copyright Jeremy Siek 2004 
+//  (C) Copyright Thomas Claveirole 2010
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -267,12 +268,22 @@ namespace boost { namespace graph_detail {
   template <class Key, class Eq, class Hash, class Alloc> 
   struct container_traits< boost::unordered_set<Key,Eq,Hash,Alloc> > {
     typedef set_tag category;
-    typedef stable_tag iterator_stability; // is this right?
+    typedef unstable_tag iterator_stability;
   };
   template <class Key, class T, class Eq, class Hash, class Alloc>
   struct container_traits< boost::unordered_map<Key,T,Eq,Hash,Alloc> > {
     typedef map_tag category;
-    typedef stable_tag iterator_stability; // is this right?
+    typedef unstable_tag iterator_stability;
+  };
+  template <class Key, class Eq, class Hash, class Alloc>
+  struct container_traits< boost::unordered_multiset<Key,Eq,Hash,Alloc> > {
+    typedef multiset_tag category;
+    typedef unstable_tag iterator_stability;
+  };
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  struct container_traits< boost::unordered_multimap<Key,T,Eq,Hash,Alloc> > {
+    typedef multimap_tag category;
+    typedef unstable_tag iterator_stability;
   };
 #endif
   template <class Key, class Eq, class Hash, class Alloc>
@@ -284,12 +295,31 @@ namespace boost { namespace graph_detail {
   { return map_tag(); }
 
   template <class Key, class Eq, class Hash, class Alloc>
-  stable_tag iterator_stability(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
-  { return stable_tag(); }
+  unstable_tag iterator_stability(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  stable_tag iterator_stability(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
-  { return stable_tag(); }
+  unstable_tag iterator_stability(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+  template <class Key, class Eq, class Hash, class Alloc>
+  multiset_tag
+  container_category(const boost::unordered_multiset<Key,Eq,Hash,Alloc>&)
+  { return multiset_tag(); }
+
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  multimap_tag
+  container_category(const boost::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
+  { return multimap_tag(); }
+
+  template <class Key, class Eq, class Hash, class Alloc>
+  unstable_tag
+  iterator_stability(const boost::unordered_multiset<Key,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  unstable_tag
+  iterator_stability(const boost::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
 #endif
 
 
@@ -401,6 +431,38 @@ namespace boost { namespace graph_detail {
   push(Container& c, const T& v)
   {
     return push_dispatch(c, v, container_category(c));
+  }
+
+  // Equal range
+  template <class Container,
+            class LessThanComparable,
+            class ContainerCategory>
+  std::pair<typename Container::iterator, typename Container::iterator>
+  equal_range_dispatch(Container& c,
+                       const LessThanComparable& value,
+                       const ContainerCategory&)
+  {
+    // c must be sorted for std::equal_range to behave properly.
+    return std::equal_range(c.begin(), c.end(), value);
+  }
+
+  template <class AssociativeContainer, class LessThanComparable>
+  std::pair<typename AssociativeContainer::iterator,
+            typename AssociativeContainer::iterator>
+  equal_range_dispatch(AssociativeContainer& c,
+                       const LessThanComparable& value,
+                       const associative_container_tag&)
+  {
+    return c.equal_range(value);
+  }
+
+  template <class Container, class LessThanComparable>
+  std::pair<typename Container::iterator, typename Container::iterator>
+  equal_range(Container& c,
+              const LessThanComparable& value)
+  {
+    return equal_range_dispatch(c, value,
+                                graph_detail::container_category(c));
   }
 
 }} // namespace boost::graph_detail

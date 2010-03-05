@@ -1,6 +1,7 @@
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright 2010 Thomas Claveirole
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Thomas Claveirole
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -252,6 +253,16 @@ namespace boost {
   template <>
   struct parallel_edge_traits<hash_mapS> {
     typedef disallow_parallel_edge_tag type;
+  };
+
+  template <>
+  struct parallel_edge_traits<hash_multisetS> {
+    typedef allow_parallel_edge_tag type;
+  };
+
+  template <>
+  struct parallel_edge_traits<hash_multimapS> {
+    typedef allow_parallel_edge_tag type;
   };
 
   namespace detail {

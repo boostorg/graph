@@ -1,7 +1,8 @@
 // -*- c++ -*-
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+// Copyright 2010 Thomas Claveirole
+// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Thomas Claveirole
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -1633,6 +1634,7 @@ namespace boost {
       const Graph& g = static_cast<const Graph&>(g_);
       return g_.edge_dispatch(g, u, v, Cat());
     }
+
     template <class Config, class Base>
     inline std::pair<typename Config::out_edge_iterator,
                      typename Config::out_edge_iterator>
@@ -1648,10 +1650,9 @@ namespace boost {
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator first, last;
       typename Config::EdgeContainer fake_edge_container;
-      tie(first, last) =
-        std::equal_range(el.begin(), el.end(),
-                         StoredEdge(v, fake_edge_container.end(),
-                                    &fake_edge_container));
+      tie(first, last) = graph_detail::
+        equal_range(el, StoredEdge(v, fake_edge_container.end(),
+                                   &fake_edge_container));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
