@@ -292,9 +292,9 @@ namespace boost {
     inline property_put <PropertyMap, EventTag>
     put_property (PropertyMap property_map,
 		  typename property_traits <PropertyMap>::value_type value,
-		  Tag tag)
+		  EventTag tag)
     {
-      return property_put <PropertyMap, Tag> (property_map, value);
+      return property_put <PropertyMap, EventTag> (property_map, value);
     }
 
 #define BOOST_GRAPH_EVENT_STUB(Event,Kind)                                 \
