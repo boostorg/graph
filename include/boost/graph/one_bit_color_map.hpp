@@ -61,7 +61,7 @@ struct one_bit_color_map
 template<typename IndexMap>
 inline one_bit_color_type
 get(const one_bit_color_map<IndexMap>& pm, 
-    typename one_bit_color_map<IndexMap>::key_type key) 
+    typename property_traits<IndexMap>::key_type key) 
 {
   BOOST_STATIC_CONSTANT(int, bits_per_char = one_bit_color_map<IndexMap>::bits_per_char);
   typename property_traits<IndexMap>::value_type i = get(pm.index, key);
@@ -72,7 +72,7 @@ get(const one_bit_color_map<IndexMap>& pm,
 template<typename IndexMap>
 inline void
 put(const one_bit_color_map<IndexMap>& pm, 
-    typename one_bit_color_map<IndexMap>::key_type key,
+    typename property_traits<IndexMap>::key_type key,
     one_bit_color_type value)
 {
   BOOST_STATIC_CONSTANT(int, bits_per_char = one_bit_color_map<IndexMap>::bits_per_char);
