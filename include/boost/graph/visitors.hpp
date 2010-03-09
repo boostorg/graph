@@ -264,7 +264,7 @@ namespace boost {
     typedef EventTag event_filter;
     
     property_put (PropertyMap property_map,
-		  typename property_traits <PropertyMap>::value_type value) :
+                  typename property_traits <PropertyMap>::value_type value) :
       property_map_ (property_map), value_ (value)
     {}
 
@@ -291,8 +291,8 @@ namespace boost {
     template <typename PropertyMap, typename EventTag>
     inline property_put <PropertyMap, EventTag>
     put_property (PropertyMap property_map,
-		  typename property_traits <PropertyMap>::value_type value,
-		  EventTag tag)
+                  typename property_traits <PropertyMap>::value_type value,
+                  EventTag tag)
     {
       return property_put <PropertyMap, EventTag> (property_map, value);
     }
