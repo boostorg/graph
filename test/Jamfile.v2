@@ -36,6 +36,7 @@ test-suite graph_test :
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
+    [ run bipartite_test.cpp ]
     [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
