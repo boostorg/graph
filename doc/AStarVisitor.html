@@ -118,7 +118,7 @@ OPEN list.
 <td><tt>vis.examine_vertex(u, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on a vertex as it is popped from the queue (i.e. it
+This is invoked on a vertex as it is popped from the queue (i.e., it
 has the lowest cost on the OPEN list). This happens immediately before
 <tt>examine_edge()</tt> is invoked on each of the out-edges of vertex
 <tt>u</tt>.
@@ -160,7 +160,7 @@ assert(compare(combine(d_u, w_e), d_s));
 <td><tt>vis.edge_not_relaxed(e, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-Upon examination, if an edge is not relaxed (see above), then this
+Upon examination, if an edge is not relaxed (see above) then this
 method is invoked.
 </td>
 </tr>
@@ -171,7 +171,7 @@ method is invoked.
 <td><tt>void</tt></td>
 <td>
 This is invoked when a vertex that is on the CLOSED list is
-``rediscovered'' via a more efficient path, and is re-added to the
+``rediscovered'' via a more efficient path and is re-added to the
 OPEN list.
 </td>
 </tr>
@@ -181,8 +181,8 @@ OPEN list.
 <td><tt>vis.finish_vertex(u, g)</tt></td>
 <td><tt>void</tt></td>
 <td>
-This is invoked on a vertex when it is added to the CLOSED list, which
-happens after all of its out edges have been examined.
+This is invoked on a vertex when it is added to the CLOSED list. This
+happens after all of its out-edges have been examined.
 </td>
 </tr>
 

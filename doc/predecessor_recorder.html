@@ -27,7 +27,7 @@ map. This is particularly useful in graph search algorithms where
 recording the predecessors is an efficient way to encode the search
 tree that was traversed during the search. The predecessor recorder is
 typically used with the <tt>on_tree_edge</tt> or
-<tt>on_relax_edge</tt> events, and cannot be used with vertex events.
+<tt>on_relax_edge</tt> events and cannot be used with vertex events.
 
 <p>
 <tt>predecessor_recorder</tt> can be used with graph algorithms by
@@ -40,12 +40,12 @@ visitor can be combined with other event visitors using
 <p>
 Algorithms such as Dijkstra's and breadth-first search will not assign
 a predecessor to the source vertex (which is the root of the search
-tree). Often times it is useful to initialize the source vertex's
+tree). It is often useful to initialize the source vertex's
 predecessor to itself, thereby identifying the root vertex as the only
 vertex which is its own parent. When using an algorithm like
-depth-first search that creates a forest (multiple search trees), it
-is useful to intialize the predecessor of every vertex to itself, so
-that all the root nodes can be distinguished.
+depth-first search that creates a forest (multiple search trees) it
+is useful to intialize the predecessor of every vertex to itself. This
+way all the root nodes can be distinguished.
 
 
 <h3>Example</h3>
@@ -74,7 +74,7 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <TR><TD><TT>PredecessorMap</TT></TD>
 <TD>
 A <a
-href="../../property_map/doc/WritablePropertyMap.html">WritablePropertyMap</a>,
+href="../../property_map/doc/WritablePropertyMap.html">WritablePropertyMap</a>
 where the key type and the value type are the vertex descriptor type
 of the graph.
 </TD>
