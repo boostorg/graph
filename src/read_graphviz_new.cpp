@@ -793,7 +793,7 @@ namespace read_graphviz_detail {
 namespace detail {
   namespace graph {
 
-    BOOST_GRAPH_DECL bool read_graphviz(const std::string& str, boost::detail::graph::mutate_graph* mg) {
+    BOOST_GRAPH_DECL bool read_graphviz_new(const std::string& str, boost::detail::graph::mutate_graph* mg) {
       read_graphviz_detail::parser_result parsed_file;
       read_graphviz_detail::parse_graphviz_from_string(str, parsed_file, mg->is_directed());
       read_graphviz_detail::translate_results_to_graph(parsed_file, mg);
