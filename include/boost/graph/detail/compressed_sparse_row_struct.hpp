@@ -54,6 +54,24 @@ namespace detail {
   template<typename Vertex, typename EdgeIndex>
   class csr_edge_descriptor;
 
+  // Add edge_index property map
+  template<typename Vertex, typename EdgeIndex>
+  struct csr_edge_index_map
+  {
+    typedef EdgeIndex                 value_type;
+    typedef EdgeIndex                 reference;
+    typedef csr_edge_descriptor<Vertex, EdgeIndex> key_type;
+    typedef readable_property_map_tag category;
+  };
+
+  template<typename Vertex, typename EdgeIndex>
+  inline EdgeIndex
+  get(const csr_edge_index_map<Vertex, EdgeIndex>&,
+      const csr_edge_descriptor<Vertex, EdgeIndex>& key)
+  {
+    return key.idx;
+  }
+
   /** Compressed sparse row graph internal structure.
    *
    * Vertex and EdgeIndex should be unsigned integral types and should
@@ -65,12 +83,14 @@ namespace detail {
     public detail::indexed_edge_properties<
              compressed_sparse_row_structure<EdgeProperty, Vertex, EdgeIndex>,
              EdgeProperty,
-             csr_edge_descriptor<Vertex, EdgeIndex> > {
+             csr_edge_descriptor<Vertex, EdgeIndex>,
+             csr_edge_index_map<Vertex, EdgeIndex> > {
     public:
     typedef detail::indexed_edge_properties<
               compressed_sparse_row_structure<EdgeProperty, Vertex, EdgeIndex>,
               EdgeProperty,
-              csr_edge_descriptor<Vertex, EdgeIndex> >
+              csr_edge_descriptor<Vertex, EdgeIndex>,
+              csr_edge_index_map<Vertex, EdgeIndex> >
       inherited_edge_properties;
 
     typedef Vertex vertices_size_type;
@@ -110,6 +130,7 @@ namespace detail {
          source_pred, boost::make_property_map_function(global_to_local));
 
       m_column.resize(m_rowstart.back());
+      inherited_edge_properties::resize(m_rowstart.back());
 
       boost::graph::detail::histogram_sort
         (sources_begin, sources_end, m_rowstart.begin(), numlocalverts,
@@ -248,6 +269,7 @@ namespace detail {
       // Now targets is the correct vector (properly sorted by source) for
       // m_column
       m_column.swap(targets);
+      inherited_edge_properties::resize(m_rowstart.back());
     }
 
     // Replace graph with sources and targets and edge properties given, sorting
@@ -289,6 +311,7 @@ namespace detail {
     {
       m_rowstart.resize(numverts + 1);
       m_column.resize(numedges);
+      inherited_edge_properties::resize(numedges);
       EdgeIndex current_edge = 0;
       typedef typename boost::graph_traits<Graph>::vertex_descriptor g_vertex;
       typedef typename boost::graph_traits<Graph>::edge_descriptor g_edge;

@@ -19,6 +19,7 @@
 #include <boost/graph/erdos_renyi_generator.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/concept_check.hpp> // for ignore_unused_variable_warning
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -43,10 +44,15 @@ struct VertexData
   int index;
 };
 
-typedef boost::compressed_sparse_row_graph<boost::directedS, VertexData>
+struct EdgeData 
+{
+  int index_e;
+};
+
+typedef boost::compressed_sparse_row_graph<boost::directedS, VertexData, EdgeData>
   CSRGraphT;
 
-typedef boost::compressed_sparse_row_graph<boost::bidirectionalS, VertexData>
+typedef boost::compressed_sparse_row_graph<boost::bidirectionalS, VertexData, EdgeData>
   BidirCSRGraphT;
 
 template <class G1, class VI1, class G2, class VI2, class IsomorphismMap>
@@ -423,6 +429,27 @@ int test_main(int argc, char* argv[])
     std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
     std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
     CSRGraphT g(boost::edges_are_unsorted, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
+
+    // Test vertex and edge bundle access
+    boost::ignore_unused_variable_warning(
+      (VertexData&)get(get(boost::vertex_bundle, g), vertex(0, g)));
+    boost::ignore_unused_variable_warning(
+      (const VertexData&)get(get(boost::vertex_bundle, (const CSRGraphT&)g), vertex(0, g)));
+    boost::ignore_unused_variable_warning(
+      (VertexData&)get(boost::vertex_bundle, g, vertex(0, g)));
+    boost::ignore_unused_variable_warning(
+      (const VertexData&)get(boost::vertex_bundle, (const CSRGraphT&)g, vertex(0, g)));
+    put(boost::vertex_bundle, g, vertex(0, g), VertexData());
+    boost::ignore_unused_variable_warning(
+      (EdgeData&)get(get(boost::edge_bundle, g), *edges(g).first));
+    boost::ignore_unused_variable_warning(
+      (const EdgeData&)get(get(boost::edge_bundle, (const CSRGraphT&)g), *edges(g).first));
+    boost::ignore_unused_variable_warning(
+      (EdgeData&)get(boost::edge_bundle, g, *edges(g).first));
+    boost::ignore_unused_variable_warning(
+      (const EdgeData&)get(boost::edge_bundle, (const CSRGraphT&)g, *edges(g).first));
+    put(boost::edge_bundle, g, *edges(g).first, EdgeData());
+
     CSRGraphT g2(boost::edges_are_unsorted_multi_pass, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
     graph_test(g);
     graph_test(g2);
@@ -439,7 +466,7 @@ int test_main(int argc, char* argv[])
     // Test building a graph using add_edges on unsorted lists
     CSRGraphT g3(boost::edges_are_unsorted, unsorted_edges, unsorted_edges, 6); // Empty range
     add_edges(unsorted_edges, unsorted_edges + 3, g3);
-    boost::no_property edge_data[3];
+    EdgeData edge_data[3];
     add_edges(unsorted_edges + 3, unsorted_edges + 6, edge_data, edge_data + 3, g3);
     graph_test(g3);
     assert_graphs_equal(g, boost::identity_property_map(),
