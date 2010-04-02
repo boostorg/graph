@@ -1,5 +1,6 @@
 //  (C) Copyright Jeremy Siek 2004 
 //  (C) Copyright Thomas Claveirole 2010
+//  (C) Copyright Ignacy Gawedzki 2010
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -263,36 +264,60 @@ namespace boost { namespace graph_detail {
 
  // hash_set, hash_map
 
+  struct unordered_set_tag :
+    virtual public simple_associative_container_tag,
+    virtual public unique_associative_container_tag
+    { };
+
+  struct unordered_multiset_tag :
+    virtual public simple_associative_container_tag,
+    virtual public multiple_associative_container_tag
+    { };
+
+
+  struct unordered_map_tag :
+    virtual public pair_associative_container_tag,
+    virtual public unique_associative_container_tag
+    { };
+
+  struct unordered_multimap_tag :
+    virtual public pair_associative_container_tag,
+    virtual public multiple_associative_container_tag
+    { };
+
+
 #ifndef BOOST_NO_HASH
 #ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Eq, class Hash, class Alloc> 
   struct container_traits< boost::unordered_set<Key,Eq,Hash,Alloc> > {
-    typedef set_tag category;
+    typedef unordered_set_tag category;
     typedef unstable_tag iterator_stability;
   };
   template <class Key, class T, class Eq, class Hash, class Alloc>
   struct container_traits< boost::unordered_map<Key,T,Eq,Hash,Alloc> > {
-    typedef map_tag category;
+    typedef unordered_map_tag category;
     typedef unstable_tag iterator_stability;
   };
   template <class Key, class Eq, class Hash, class Alloc>
   struct container_traits< boost::unordered_multiset<Key,Eq,Hash,Alloc> > {
-    typedef multiset_tag category;
+    typedef unordered_multiset_tag category;
     typedef unstable_tag iterator_stability;
   };
   template <class Key, class T, class Eq, class Hash, class Alloc>
   struct container_traits< boost::unordered_multimap<Key,T,Eq,Hash,Alloc> > {
-    typedef multimap_tag category;
+    typedef unordered_multimap_tag category;
     typedef unstable_tag iterator_stability;
   };
 #endif
   template <class Key, class Eq, class Hash, class Alloc>
-  set_tag container_category(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
-  { return set_tag(); }
+  unordered_set_tag
+  container_category(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
+  { return unordered_set_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  map_tag container_category(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
-  { return map_tag(); }
+  unordered_map_tag
+  container_category(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
+  { return unordered_map_tag(); }
 
   template <class Key, class Eq, class Hash, class Alloc>
   unstable_tag iterator_stability(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
@@ -302,14 +327,14 @@ namespace boost { namespace graph_detail {
   unstable_tag iterator_stability(const boost::unordered_map<Key,T,Eq,Hash,Alloc>&)
   { return unstable_tag(); }
   template <class Key, class Eq, class Hash, class Alloc>
-  multiset_tag
+  unordered_multiset_tag
   container_category(const boost::unordered_multiset<Key,Eq,Hash,Alloc>&)
-  { return multiset_tag(); }
+  { return unordered_multiset_tag(); }
 
   template <class Key, class T, class Eq, class Hash, class Alloc>
-  multimap_tag
+  unordered_multimap_tag
   container_category(const boost::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
-  { return multimap_tag(); }
+  { return unordered_multimap_tag(); }
 
   template <class Key, class Eq, class Hash, class Alloc>
   unstable_tag
@@ -435,12 +460,11 @@ namespace boost { namespace graph_detail {
 
   // Equal range
   template <class Container,
-            class LessThanComparable,
-            class ContainerCategory>
+            class LessThanComparable>
   std::pair<typename Container::iterator, typename Container::iterator>
   equal_range_dispatch(Container& c,
                        const LessThanComparable& value,
-                       const ContainerCategory&)
+                       container_tag)
   {
     // c must be sorted for std::equal_range to behave properly.
     return std::equal_range(c.begin(), c.end(), value);
@@ -451,7 +475,7 @@ namespace boost { namespace graph_detail {
             typename AssociativeContainer::iterator>
   equal_range_dispatch(AssociativeContainer& c,
                        const LessThanComparable& value,
-                       const associative_container_tag&)
+                       associative_container_tag)
   {
     return c.equal_range(value);
   }
