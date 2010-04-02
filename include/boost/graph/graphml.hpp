@@ -24,6 +24,7 @@
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/for_each.hpp>
 #include <boost/property_tree/detail/xml_parser_utils.hpp>
+#include <boost/throw_exception.hpp>
 #include <exception>
 #include <sstream>
 
@@ -101,12 +102,16 @@ class mutate_graph_impl : public mutate_graph
         }
         catch (bad_lexical_cast)
         {
-            throw parse_error("invalid value \"" + value + "\" for key " +
-                              name + " of type " + value_type);
+            BOOST_THROW_EXCEPTION(
+              parse_error("invalid value \"" + value + "\" for key " +
+                          name + " of type " + value_type));
         }
         if (!type_found)
-            throw  parse_error("unrecognized type \"" + value_type +
-                               "\" for key " + name);
+        {
+            BOOST_THROW_EXCEPTION(
+              parse_error("unrecognized type \"" + value_type +
+                          "\" for key " + name));
+        }
 
     }
 
@@ -122,12 +127,16 @@ class mutate_graph_impl : public mutate_graph
         }
         catch (bad_lexical_cast)
         {
-            throw parse_error("invalid value \"" + value + "\" for key " +
-                              name + " of type " + value_type);
+            BOOST_THROW_EXCEPTION(
+              parse_error("invalid value \"" + value + "\" for key " +
+                          name + " of type " + value_type));
         }
         if (!type_found)
-            throw  parse_error("unrecognized type \"" + value_type +
-                               "\" for key " + name);
+        {
+            BOOST_THROW_EXCEPTION(
+              parse_error("unrecognized type \"" + value_type +
+                          "\" for key " + name));
+        }
 
     }
 
@@ -143,12 +152,16 @@ class mutate_graph_impl : public mutate_graph
         }
         catch (bad_lexical_cast)
         {
-            throw parse_error("invalid value \"" + value + "\" for key " +
-                              name + " of type " + value_type);
+            BOOST_THROW_EXCEPTION(
+              parse_error("invalid value \"" + value + "\" for key " +
+                          name + " of type " + value_type));
         }
         if (!type_found)
-            throw  parse_error("unrecognized type \"" + value_type +
-                               "\" for key " + name);
+        {
+            BOOST_THROW_EXCEPTION(
+              parse_error("unrecognized type \"" + value_type +
+                          "\" for key " + name));
+        }
     }
 
     template <typename Key, typename ValueVector>

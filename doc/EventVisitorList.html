@@ -19,7 +19,7 @@
 
 An EventVisitorList is either an <a
 href="./EventVisitor.html">EventVisitor</a>, or a list of
-EventVisitor's combined using <tt>std::pair</tt>. Each graph algorithm
+EventVisitors combined using <tt>std::pair</tt>. Each graph algorithm
 defines visitor adaptors that convert an EventVisitorList into the
 particular kind of visitor needed by the algorithm.
 
@@ -91,7 +91,7 @@ Now we can pass the resulting visitor object into
                      color.begin());
 </pre>
 
-For creating a list of more than two event visitors, nest calls to
+For creating a list of more than two event visitors, you can nest calls to
 <tt>std::make_pair</tt> in the following way:
 
 <pre>

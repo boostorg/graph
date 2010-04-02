@@ -185,11 +185,11 @@ template<typename VertexProperty,
          typename EdgeIndex>
 class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex>
    : public detail::indexed_vertex_properties<BOOST_DIR_CSR_GRAPH_TYPE,
-                                              VertexProperty, Vertex>
+                                              VertexProperty, Vertex, identity_property_map>
 {
  public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
-                                            VertexProperty, Vertex>
+                                            VertexProperty, Vertex, identity_property_map>
     inherited_vertex_properties;
 
  public:
@@ -728,11 +728,11 @@ template<typename VertexProperty,
          typename EdgeIndex>
 class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex>
    : public detail::indexed_vertex_properties<BOOST_BIDIR_CSR_GRAPH_TYPE,
-                                              VertexProperty, Vertex>
+                                              VertexProperty, Vertex, identity_property_map>
 {
  public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
-                                            VertexProperty, Vertex>
+                                            VertexProperty, Vertex, identity_property_map>
     inherited_vertex_properties;
 
  public:
@@ -1394,24 +1394,6 @@ get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag)
   return get_property_value(g.m_property, Tag());
 }
 
-// Add edge_index property map
-template<typename Index, typename Descriptor>
-struct csr_edge_index_map
-{
-  typedef Index                     value_type;
-  typedef Index                     reference;
-  typedef Descriptor                key_type;
-  typedef readable_property_map_tag category;
-};
-
-template<typename Index, typename Descriptor>
-inline Index
-get(const csr_edge_index_map<Index, Descriptor>&,
-    const typename csr_edge_index_map<Index, Descriptor>::key_type& key)
-{
-  return key.idx;
-}
-
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_index_t>
 {
@@ -1422,14 +1404,22 @@ struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_index_t>
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 struct property_map<BOOST_CSR_GRAPH_TYPE, edge_index_t>
 {
-private:
-  typedef typename graph_traits<BOOST_CSR_GRAPH_TYPE>::edge_descriptor
-    edge_descriptor;
-  typedef csr_edge_index_map<EdgeIndex, edge_descriptor> edge_index_type;
-
-public:
-  typedef edge_index_type type;
+  typedef detail::csr_edge_index_map<Vertex, EdgeIndex> type;
   typedef type const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_bundle_t>
+{
+  typedef typename BOOST_CSR_GRAPH_TYPE::inherited_vertex_properties::vertex_map_type type;
+  typedef typename BOOST_CSR_GRAPH_TYPE::inherited_vertex_properties::const_vertex_map_type const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, edge_bundle_t>
+{
+  typedef typename BOOST_CSR_GRAPH_TYPE::forward_type::inherited_edge_properties::edge_map_type type;
+  typedef typename BOOST_CSR_GRAPH_TYPE::forward_type::inherited_edge_properties::const_edge_map_type const_type;
 };
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1462,6 +1452,88 @@ get(edge_index_t, const BOOST_CSR_GRAPH_TYPE&,
     typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e)
 {
   return e.idx;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, vertex_bundle_t>::type
+get(vertex_bundle_t, BOOST_CSR_GRAPH_TYPE& g)
+{
+  return g.get_vertex_bundle(get(vertex_index, g));
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, vertex_bundle_t>::const_type
+get(vertex_bundle_t, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  return g.get_vertex_bundle(get(vertex_index, g));
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline VertexProperty&
+get(vertex_bundle_t,
+    BOOST_CSR_GRAPH_TYPE& g, Vertex v)
+{
+  return get(vertex_bundle, g)[v];
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline const VertexProperty&
+get(vertex_bundle_t,
+    const BOOST_CSR_GRAPH_TYPE& g, Vertex v)
+{
+  return get(vertex_bundle, g)[v];
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline void
+put(vertex_bundle_t,
+    BOOST_CSR_GRAPH_TYPE& g,
+    Vertex v,
+    const VertexProperty& val)
+{
+  put(get(vertex_bundle, g), v, val);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, edge_bundle_t>::type
+get(edge_bundle_t, BOOST_CSR_GRAPH_TYPE& g)
+{
+  return g.m_forward.get_edge_bundle(get(edge_index, g));
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, edge_bundle_t>::const_type
+get(edge_bundle_t, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  return g.m_forward.get_edge_bundle(get(edge_index, g));
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline EdgeProperty&
+get(edge_bundle_t,
+    BOOST_CSR_GRAPH_TYPE& g,
+    const typename BOOST_CSR_GRAPH_TYPE::edge_descriptor& e)
+{
+  return get(edge_bundle, g)[e];
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline const EdgeProperty&
+get(edge_bundle_t,
+    const BOOST_CSR_GRAPH_TYPE& g,
+    const typename BOOST_CSR_GRAPH_TYPE::edge_descriptor& e)
+{
+  return get(edge_bundle, g)[e];
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline void
+put(edge_bundle_t,
+    BOOST_CSR_GRAPH_TYPE& g,
+    const typename BOOST_CSR_GRAPH_TYPE::edge_descriptor& e,
+    const EdgeProperty& val)
+{
+  put(get(edge_bundle, g), e, val);
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename T, typename Bundle>

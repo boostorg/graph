@@ -92,8 +92,8 @@ void testScalability(unsigned numpts)
     typedef vector< Vertex > Container;
 
     mt19937 rng(time(0));
-    uniform_int<> range(0.01, (numpts * 2));
-    variate_generator<mt19937&, uniform_int<> >
+    uniform_real<> range(0.01, (numpts * 2));
+    variate_generator<mt19937&, uniform_real<> >
         pnt_gen(rng, range);
 
     PointSet points;

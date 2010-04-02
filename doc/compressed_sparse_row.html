@@ -224,7 +224,7 @@ std::pair&lt;edge_iterator, edge_iterator&gt; edges(const compressed_sparse_row_
 edges_size_type num_edges(const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="#vertex-access">Vertex access</a></i>
-vertex_descriptor <a href="#vertex">vertex</a>(vertices_size_type i, const compressed_sparse_row_graph&amp;);
+vertex_descriptor <a href="#vertex-lookup">vertex</a>(vertices_size_type i, const compressed_sparse_row_graph&amp;);
 
 <i>// <a href="#edge-access">Edge access</a></i>
 std::pair&lt;edge_descriptor, bool&gt; 
@@ -460,7 +460,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
     <hr></hr>
 
-    <pre><a name="edge-const"></a>
+    <pre><a name="edge-multi-const"></a>
   template&lt;typename MultiPassInputIterator&gt;
   compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
@@ -489,7 +489,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
     <hr></hr>
 
-    <pre><a name="edge-prop-const"></a>
+    <pre><a name="edge-multi-prop-const"></a>
   template&lt;typename MultiPassInputIterator, typename EdgePropertyIterator&gt;
   compressed_sparse_row_graph(edges_are_unsorted_multi_pass_t,
                               MultiPassInputIterator edge_begin, MultiPassInputIterator edge_end,
@@ -624,7 +624,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
     <hr></hr>
 
-    <pre><a name="#graph-const"></a>
+    <pre><a name="graph-const"></a>
   template&lt;typename Graph, typename VertexIndexMap&gt;
   compressed_sparse_row_graph(const Graph&amp; g, const VertexIndexMap&amp; vi,
                               vertices_size_type numverts,
@@ -713,7 +713,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
 
     <a name="vertex-access"></a><h3>Vertex access</h3>
 
-    <pre><a name="vertex"></a>
+    <pre><a name="vertex-lookup"></a>
   vertex_descriptor vertex(vertices_size_type i, const compressed_sparse_row_graph&amp;);
     </pre>
     <p class="indent">
@@ -722,6 +722,8 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
     </p>
 
     <hr></hr>
+
+    <a name="edge-access"></a><h3>Edge access</h3>
 
     <pre><a name="edge"></a>
   std::pair&lt;edge_descriptor, bool&gt; 
@@ -733,8 +735,10 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       descriptor for that edge and <tt>true</tt>; otherwise, the
       second value in the pair will be <tt>false</tt>. If multiple
       edges exist from <tt>u</tt> to <tt>v</tt>, the first edge will
-      be returned; use <a href="#edge_range"><tt>edge_range</tt></a>
-      to retrieve all edges.  This function requires linear time in the
+      be returned; use <a href="IncidenceGraph.html"><tt>out_edges</tt></a> and a
+      conditional statement
+      to retrieve all edges to a given target.  This function requires linear
+      time in the
       number of edges outgoing from <tt>u</tt>.
     </p>
 

@@ -17,6 +17,8 @@
 #include <boost/graph/isomorphism.hpp>
 #include <boost/graph/copy.hpp>
 #include <boost/graph/graph_utility.hpp> // for connects
+#include <boost/range.hpp>
+#include <boost/detail/algorithm.hpp>
 
 
 // UNDER CONSTRUCTION 
@@ -171,7 +173,7 @@ namespace boost {
       BOOST_CHECK(m == num_edges(g));
       for (; p.first != p.second; ++p.first) {
         edge_t e = *p.first;
-        BOOST_CHECK(any_if(edge_set, connects(source(e, g), target(e, g), g)));
+        BOOST_CHECK(find_if(edge_set, connects(source(e, g), target(e, g), g)) != end(edge_set));
         BOOST_CHECK(container_contains(vertex_set, source(e, g)) == true);
         BOOST_CHECK(container_contains(vertex_set, target(e, g)) == true);
       }
@@ -196,8 +198,8 @@ namespace boost {
         for (k = vertex_set.begin(); k != vertex_set.end(); ++k) {
           p = edge(*j, *k, g);
           if (p.second == true)
-            BOOST_CHECK(any_if(edge_set, 
-              connects(source(p.first, g), target(p.first, g), g)) == true);
+            BOOST_CHECK(find_if(edge_set, 
+              connects(source(p.first, g), target(p.first, g), g)) != end(edge_set));
         }
     }
 

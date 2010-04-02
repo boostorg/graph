@@ -140,6 +140,12 @@ namespace boost {
     std::stable_sort(begin(c), end(c), p);
   }
 
+  template <typename Container, typename Predicate>
+  typename Container::const_iterator find_if(const Container& c, Predicate p)
+  {
+    return find_if(begin(c), end(c), p);
+  }
+
   template <typename InputIterator, typename Predicate>
   bool any_if(InputIterator first, InputIterator last, Predicate p)
   {

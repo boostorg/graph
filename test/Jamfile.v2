@@ -36,6 +36,7 @@ test-suite graph_test :
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
+    [ run bipartite_test.cpp ]
     [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
@@ -53,7 +54,7 @@ test-suite graph_test :
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph
-            ../../regex/build//boost_regex ]
+            ../../regex/build//boost_regex : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]

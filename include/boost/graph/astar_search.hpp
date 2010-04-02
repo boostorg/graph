@@ -17,6 +17,7 @@
 #include <functional>
 #include <vector>
 #include <boost/limits.hpp>
+#include <boost/throw_exception.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/relax.hpp>
 #include <boost/graph/exception.hpp>
@@ -147,7 +148,7 @@ namespace boost {
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) {
         if (m_compare(get(m_weight, e), m_zero))
-          throw negative_edge();
+          BOOST_THROW_EXCEPTION(negative_edge());
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
@@ -238,14 +239,14 @@ namespace boost {
      AStarHeuristic h, AStarVisitor vis,
      PredecessorMap predecessor, CostMap cost,
      DistanceMap distance, WeightMap weight,
-     ColorMap color, VertexIndexMap /*index_map*/,
+     ColorMap color, VertexIndexMap index_map,
      CompareFunction compare, CombineFunction combine,
      CostInf /*inf*/, CostZero zero)
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor
       Vertex;
-    typedef boost::vector_property_map<std::size_t> IndexInHeapMap;
-    IndexInHeapMap index_in_heap;
+    typedef boost::vector_property_map<std::size_t, VertexIndexMap> IndexInHeapMap;
+    IndexInHeapMap index_in_heap(index_map);
     typedef d_ary_heap_indirect<Vertex, 4, IndexInHeapMap, CostMap, CompareFunction>
       MutableQueue;
     MutableQueue Q(cost, index_in_heap, compare);

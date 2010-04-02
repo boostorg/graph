@@ -27,7 +27,7 @@ within an algorithm.
 
 <p>
 <tt>property_writer</tt> can be used with graph algorithms by
-wrapping it with the algorithm specific adaptor, such as <a
+wrapping it with the algorithm-specific adaptor, such as <a
 href="./bfs_visitor.html"><tt>bfs_visitor</tt></a> and <a
 href="./dfs_visitor.html"><tt>dfs_visitor</tt></a>. Also, this event
 visitor can be combined with other event visitors using
@@ -74,9 +74,9 @@ href="../example/dave.cpp"><tt>examples/dave.cpp</tt></a>.
 <TR><TD><TT>PropertyMap</TT></TD>
 <TD>
 A <a
-href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>,
+href="../../property_map/doc/ReadablePropertyMap.html">ReadablePropertyMap</a>
 where the <tt>key_type</tt> is the vertex descriptor type or edge
-descriptor of the graph (depending on the kind of event tag), and
+descriptor of the graph (depending on the kind of event tag) and
 the <tt>value_type</tt> of the property is convertible
 to the <tt>value_type</tt> of the <tt>OutputIterator</tt>.
 </TD>
@@ -145,7 +145,7 @@ template &lt;class X, class Graph&gt;<br>
 void operator()(X x, const Graph& g);
 </tt></td>
 <td>
-This writs the property value for <tt>x</tt> to the output iterator.<br>
+This writes the property value for <tt>x</tt> to the output iterator.<br>
 <tt>*out++ = get(pa, x);</tt>
 </td>
 </tr>

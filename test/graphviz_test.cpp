@@ -194,7 +194,7 @@ int test_main(int, char*[]) {
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
       test_graph<directedS,vecS>(gs,3,masses,weight_map_t());
-      BOOST_ERROR("Failed to throw boost::directed_graph_error.");
+      BOOST_ERROR("Failed to throw boost::undirected_graph_error.");
     } catch (boost::undirected_graph_error&) {}
   }
 
