@@ -40,11 +40,31 @@
 
 #include <algorithm>
 #include <vector>
-#include <boost/range.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/algorithm_ext.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/range/algorithm/equal.hpp>
+#include <boost/range/algorithm/sort.hpp>
+#include <boost/range/algorithm/stable_sort.hpp>
+#include <boost/range/algorithm/find_if.hpp>
+#include <boost/range/algorithm/count.hpp>
+#include <boost/range/algorithm/count_if.hpp>
+#include <boost/range/algorithm_ext/is_sorted.hpp>
+#include <boost/range/algorithm_ext/iota.hpp>
 
 namespace boost {
+
+  template <typename InputIterator, typename Predicate>
+  bool any_if(InputIterator first, InputIterator last, Predicate p)
+  {
+    return std::find_if(first, last, p) != last;
+  }
+
+  template <typename Container, typename Predicate>
+  bool any_if(const Container& c, Predicate p)
+  {
+    return any_if(begin(c), end(c), p);
+  }
 
   template <typename InputIterator, typename T>
   bool container_contains(InputIterator first, InputIterator last, T value)
