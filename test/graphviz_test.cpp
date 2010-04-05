@@ -195,7 +195,10 @@ int test_main(int, char*[]) {
     try {
       test_graph<directedS,vecS>(gs,3,masses,weight_map_t());
       BOOST_ERROR("Failed to throw boost::undirected_graph_error.");
-    } catch (boost::undirected_graph_error&) {}
+    } catch (boost::undirected_graph_error&) {
+    } catch (boost::directed_graph_error&) {
+      BOOST_ERROR("Threw boost::directed_graph_error, should have thrown boost::undirected_graph_error.");
+    }
   }
 
   // Mismatch undirected graph test
