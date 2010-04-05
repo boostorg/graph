@@ -18,7 +18,7 @@
 #include <boost/graph/copy.hpp>
 #include <boost/graph/graph_utility.hpp> // for connects
 #include <boost/range.hpp>
-#include <boost/detail/algorithm.hpp>
+#include <boost/range/algorithm/find_if.hpp>
 
 
 // UNDER CONSTRUCTION 
