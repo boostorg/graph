@@ -9,7 +9,7 @@
 #include <boost/graph/fruchterman_reingold.hpp>
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/simple_point.hpp>
+#include <boost/graph/topology.hpp>
 #include <boost/lexical_cast.hpp>
 #include <string>
 #include <iostream>
@@ -36,6 +36,9 @@ void usage()
             << "Output:\n"
             << "  Vertices and their positions are written to standard output with the label,\n  x-position, and y-position of a vertex on each line, separated by spaces.\n";
 }
+
+typedef boost::rectangle_topology<> topology_type;
+typedef topology_type::point_type point_type;
 
 typedef adjacency_list<listS, vecS, undirectedS, 
                        property<vertex_name_t, std::string> > Graph;
@@ -110,7 +113,7 @@ int main(int argc, char* argv[])
     add_edge(get_vertex(source, g, names), get_vertex(target, g, names), g);
   }
   
-  typedef std::vector<simple_point<double> > PositionVec;
+  typedef std::vector<point_type> PositionVec;
   PositionVec position_vec(num_vertices(g));
   typedef iterator_property_map<PositionVec::iterator, 
                                 property_map<Graph, vertex_index_t>::type>
@@ -118,15 +121,16 @@ int main(int argc, char* argv[])
   PositionMap position(position_vec.begin(), get(vertex_index, g));
 
   minstd_rand gen;
-  random_graph_layout(g, position, -width/2, width/2, -height/2, height/2, gen);
+  topology_type topo(gen, -width/2, -height/2, width/2, height/2);
+  random_graph_layout(g, position, topo);
   fruchterman_reingold_force_directed_layout
-    (g, position, width, height,
+    (g, position, topo,
      cooling(progress_cooling(iterations)));
 
   graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     std::cout << get(vertex_name, g, *vi) << '\t'
-              << position[*vi].x << '\t' << position[*vi].y << std::endl;
+              << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
   }
   return 0;
 }

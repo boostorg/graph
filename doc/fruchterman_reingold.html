@@ -1,6 +1,6 @@
 <HTML>
 <!--
-     Copyright (c) 2004 Trustees of Indiana University
+     Copyright (c) 2004, 2010 Trustees of Indiana University
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
@@ -23,36 +23,35 @@
 <P>
 <PRE>
 <i>// named parameter version</i>
-template&lt;typename Graph, typename PositionMap, typename Dim, typename Param,
+template&lt;typename Graph, typename PositionMap, typename Topology, typename Param,
 	 typename Tag, typename Rest&gt;
 void
 fruchterman_reingold_force_directed_layout
-  (const Graph&    g,
+  (const Graph&amp;    g,
    PositionMap     position,
-   Dim             width,
-   Dim             height,
+   const Topology&amp;     space,
    const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params);
 
 <i>// non-named parameter version</i>
-template&lt;typename Graph, typename PositionMap, typename Dim,
+template&lt;typename Graph, typename PositionMap, typename Topology,
          typename AttractiveForce, typename RepulsiveForce,
          typename ForcePairs, typename DisplacementMap, typename Cooling&gt;
 void
 fruchterman_reingold_force_directed_layout
  (const Graph&amp;    g,
   PositionMap     position,
-  Dim             width,
-  Dim             height,
+  const Topology&amp; space,
   AttractiveForce fa,
   RepulsiveForce  fr,
   ForcePairs      fp,
   Cooling         cool,
   DisplacementMap displacement);
 
-template&lt;typename Graph, typename PositionMap, typename Dim&gt;
+template&lt;typename Graph, typename PositionMap, typename Topology&gt;
 void
-fruchterman_reingold_force_directed_layout(const Graph&    g,
+fruchterman_reingold_force_directed_layout(const Graph&amp;    g,
 			     		   PositionMap     position,
+			     		   Topology&amp;     space,
 			     		   Dim             width,
 			     		   Dim             height);
 </PRE>
@@ -98,26 +97,20 @@ IN/OUT: <tt>PositionMap position</tt>
   type <tt>PositionMap</tt> must be a model of <a
   href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
   Map</a> such that the vertex descriptor type of <tt>Graph</tt> is
-  convertible to its key type. Its value type must be a structure
-  with fields <tt>x</tt> and <tt>y</tt>, representing the coordinates
+  convertible to its key type. Its value type must be
+  <tt>Topology::point_type</tt>, representing the coordinates
   of the vertex.<br>
   <b>Python</b>: The position map must be a <tt>vertex_point2d_map</tt> for
   the graph.<br>
   <b>Python default</b>: <tt>graph.get_vertex_point2d_map("position")</tt>
 </blockquote>
 
-IN: <tt>Dim width</tt>
+IN: <tt>const Topology&amp; space</tt>
 <blockquote>
-  The width of the display area in which layout should occur. On
-  termination of the algorithm, the <tt>x</tt> coordinates of all
-  vertices will fall in <tt>[-width/2, width/2]</tt>.
-</blockquote>
-
-IN: <tt>Dim height</tt>
-<blockquote>
-  The height of the display area in which layout should occur. On
-  termination of the algorithm, the <tt>y</tt> coordinates of all
-  vertices will fall in <tt>[-height/2, height/2]</tt>.
+  The topology used to lay out the vertices.  This parameter describes both the
+  size and shape of the layout area.  Topologies are described in more detail
+  (with a list of BGL-provided topologies) <a href="topology.html">in separate
+  documentation</a>.
 </blockquote>
 
 <h3>Named Parameters</h3>
@@ -184,10 +177,11 @@ temperature and gradually reduce the temperature to zero.<br>
 UTIL: <tt>displacement_map(DisplacementMap displacement)</tt>
 <blockquote>
 The displacement map is used to compute the amount by which each
-vertex will move in each step. The <tt>DisplacementMap</tt> type
-carries the same requirements as the <tt>PositionMap</tt> type.<br>
-<b>Default:</b> An <tt>iterator_property_map</tt> with a value type
-of <tt>simple_point&lt;double&gt;</tt> and using the given vertex index map.<br>
+vertex will move in each step. The <tt>DisplacementMap</tt> type must be a
+property map whose key type is the graph's vertex type and whose value type is
+<tt>Topology::point_difference_type</tt>.<br>
+<b>Default:</b> An <tt>iterator_property_map</tt> with the specified value type
+and using the given vertex index map.<br>
 <b>Python:</b> Unsupported parameter.
 </blockquote>
 
@@ -233,7 +227,7 @@ determined by the cooling schedule.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy; 2004</TD><TD>
+<TD nowrap>Copyright &copy; 2004, 2010 Trustees of Indiana University</TD><TD>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University
 </TD></TR></TABLE>
 

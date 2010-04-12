@@ -21,3 +21,4 @@ exe bron_kerbosch_clique_number : bron_kerbosch_clique_number.cpp ;
 exe mcgregor_subgraphs_example : mcgregor_subgraphs_example.cpp ;
 exe grid_graph_example : grid_graph_example.cpp ;
 exe bipartite_example : bipartite_example.cpp ;
+exe fr_layout : fr_layout.cpp ;
