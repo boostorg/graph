@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <!--
-     Copyright (c) 2004 Trustees of Indiana University
+     Copyright (c) 2004, 2010 Trustees of Indiana University
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
@@ -46,6 +46,7 @@ layout for connected, undirected graphs.</p>
 "refsynopsisdiv">
 <pre class="synopsis">
 <span class="bold"><b>template</b></span>&lt;<span class=
+"bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
@@ -62,6 +63,7 @@ layout for connected, undirected graphs.</p>
   <span class="type"><span class=
 "bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
                                   WeightMap weight, 
+                                  <b>const</b> Topology&amp; space,
                                   <span class=
 "emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
                                   <span class=
@@ -71,6 +73,7 @@ layout for connected, undirected graphs.</p>
                                   SpringStrengthMatrix spring_strength, 
                                   PartialDerivativeMap partial_derivatives);
 <span class="bold"><b>template</b></span>&lt;<span class=
+"bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
@@ -82,12 +85,14 @@ layout for connected, undirected graphs.</p>
   <span class="type"><span class=
 "bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
                                   WeightMap weight, 
+                                  <b>const</b> Topology&amp; space,
                                   <span class=
 "emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
                                   <span class=
 "bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant, 
                                   VertexIndexMap index);
 <span class="bold"><b>template</b></span>&lt;<span class=
+"bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
@@ -98,11 +103,13 @@ layout for connected, undirected graphs.</p>
   <span class="type"><span class=
 "bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
                                   WeightMap weight, 
+                                  <b>const</b> Topology&amp; space,
                                   <span class=
 "emphasis"><em>unspecified</em></span> edge_or_side_length, Done done, 
                                   <span class=
 "bold"><b>typename</b></span> property_traits&lt; WeightMap &gt;::value_type spring_constant = typename property_traits&lt; WeightMap &gt;::value_type(1));
 <span class="bold"><b>template</b></span>&lt;<span class=
+"bold"><b>typename</b></span> Topology, <span class=
 "bold"><b>typename</b></span> Graph, <span class=
 "bold"><b>typename</b></span> PositionMap, <span class=
 "bold"><b>typename</b></span> WeightMap, <span class=
@@ -112,6 +119,7 @@ layout for connected, undirected graphs.</p>
   <span class="type"><span class=
 "bold"><b>bool</b></span></span> kamada_kawai_spring_layout(<span class="bold"><b>const</b></span> Graph &amp; g, PositionMap position, 
                                   WeightMap weight, 
+                                  <b>const</b> Topology&amp; space,
                                   <span class=
 "emphasis"><em>unspecified</em></span> edge_or_side_length);
 </pre></div>
@@ -158,7 +166,8 @@ OUT: <tt>PositionMap position</tt>
   This property map is used to store the position of each vertex.  The
   type <tt>PositionMap</tt> must be a model of <a
   href="../../property_map/doc/WritablePropertyMap.html">Writable Property
-  Map</a>, with the graph's vertex descriptor type as its key type.<br>
+  Map</a>, with the graph's vertex descriptor type as its key type and
+  <tt>Topology::point_type</tt> as its value type.<br>
 
   <b>Python</b>: The position map must be a <tt>vertex_point2d_map</tt> for
   the graph.<br>
@@ -180,6 +189,16 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
 
   <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
   <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
+</blockquote>
+
+IN: <tt>const Topology&amp; space</tt>
+<blockquote>
+The topology used to lay out the vertices.  This parameter describes both the
+size and shape of the layout area, as well as its dimensionality; up to three
+dimensions are supported by the current implementation.  Topologies are
+described in more detail
+(with a list of BGL-provided topologies) <a href="topology.html">in separate
+documentation</a>.
 </blockquote>
 
 IN: <tt>EdgeOrSideLength edge_or_side_length</tt>
@@ -257,17 +276,15 @@ value type of the weight map.<br>
 
 UTIL: <tt>PartialDerivativeMap partial_derivatives</tt>
 <blockquote>
-A property map that will be used to store the partial derivates of
-each vertex with respect to the <tt class="computeroutput">x</tt> and
-<tt class="computeroutput">y</tt> coordinates. This must be a
+A property map that will be used to store the partial derivatives of
+each vertex with respect to the vertex's current coordinates.
+coordinates. This must be a
 <a href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-Property Map</a> whose value type is a pair with both types equivalent
-to the value type of the weight map. The default is an iterator
-property map.<br>
+Property Map</a> whose value type is <tt>Topology::point_difference_type</tt>.
+The default is an iterator property map built using the graph's vertex index
+map.<br>
 <b>Default</b>: An <tt>iterator_property_map</tt> created from
-an <tt>std::vector</tt> of <tt>std::pair&lt;weight_type,
-  weight_type&gt;</tt>, where <tt>weight_type</tt> is the value type of
-the <tt>WeightMap</tt>.<br>
+an <tt>std::vector</tt> of <tt>Topology::point_difference_type</tt>.<br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 
@@ -294,7 +311,7 @@ the <tt>WeightMap</tt>.<br>
 <hr>
 <table>
 <tr valign="top">
-<td nowrap>Copyright &copy; 2004</td>
+<td nowrap>Copyright &copy; 2004, 2010 Trustees of Indiana University</td>
 <td><a href="http://www.boost.org/people/doug_gregor.html">Douglas Gregor</a>,
 Indiana University (dgregor -at cs.indiana.edu)<br>
 <a href="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</a>, Indiana

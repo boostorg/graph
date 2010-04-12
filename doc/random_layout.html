@@ -1,6 +1,6 @@
 <HTML>
 <!--
-     Copyright (c) 2005 Trustees of Indiana University
+     Copyright (c) 2005, 2010 Trustees of Indiana University
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
@@ -22,17 +22,14 @@
 <P>
 <PRE>
 <i>// non-named parameter version</i>
-template&lt;typename Graph, typename PositionMap, typename Dimension, 
-         typename RandomNumberGenerator&gt;
+template&lt;typename Graph, typename PositionMap, typename Topology&gt;
 void
 random_graph_layout(const Graph&amp; g, PositionMap position_map,
-                    Dimension minX, Dimension maxX, 
-                    Dimension minY, Dimension maxY,
-                    RandomNumberGenerator&amp; gen);
+                    const Topology&amp; space);
 </PRE>
 
 <P> This algorithm places the points of the graph at random
-locations. </p>
+locations within a given space. </p>
 
 <h3>Where Defined</h3>
 
@@ -53,37 +50,17 @@ IN/OUT: <tt>PositionMap position</tt>
   <tt>PositionMap</tt> must be a model of <a
   href="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
   Map</a> such that the vertex descriptor type of <tt>Graph</tt> is
-  convertible to its key type. Its value type must be a structure with
-  fields <tt>x</tt> and <tt>y</tt>, representing the coordinates of
-  the vertex.
+  convertible to its key type. Its value type must be
+  <tt>Topology::point_type</tt>, representing the coordinates of the vertex.
 </blockquote>
 
-IN: <tt>Dimension minX</tt>
+IN: <tt>const Topology&amp; space</tt>
 <blockquote>
-  The minimum <tt>x</tt> coordinate.
-</blockquote>
-
-IN: <tt>Dimension maxX</tt>
-<blockquote>
-  The maximum <tt>x</tt> coordinate.
-</blockquote>
-
-IN: <tt>Dimension minY</tt>
-<blockquote>
-  The minimum <tt>y</tt> coordinate.
-</blockquote>
-
-IN: <tt>Dimension maxY</tt>
-<blockquote>
-  The maximum <tt>y</tt> coordinate.
-</blockquote>
-
-IN/UTIL: <tt>RandomNumberGenerator&amp; gen</tt>
-<blockquote>
-A random number generator that will be used to place vertices. The
-type <tt>RandomNumberGenerator</tt> must model the <a
-href="../../random/doc/html/boost_random/reference.html#boost_random.reference.concepts.number_generator">NumberGenerator</a>
-concept. 
+  The topology used to lay out the vertices.  This parameter describes both the
+  size and shape of the layout area and provides a random number generator used
+  to create random positions within the space.  Topologies are described in
+  more detail (with a list of BGL-provided topologies) <a
+  href="topology.html">in separate documentation</a>.
 </blockquote>
 
 <H3>Complexity</H3>
@@ -93,7 +70,7 @@ concept.
 <HR>
 <TABLE>
 <TR valign=top>
-<TD nowrap>Copyright &copy; 2004</TD><TD>
+<TD nowrap>Copyright &copy; 2004, 2010</TD><TD>
 <A HREF="http://www.boost.org/people/doug_gregor.html">Doug Gregor</A>, Indiana University
 </TD></TR></TABLE>
 
