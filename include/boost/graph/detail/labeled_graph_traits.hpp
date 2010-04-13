@@ -187,7 +187,7 @@ struct is_labeled_graph
     >
 { };
 
-template <typename> class graph_mutability_traits;
+template <typename> struct graph_mutability_traits;
 
 namespace graph_detail {
     // The determine mutability metafunction computes a labeled mutability tag
