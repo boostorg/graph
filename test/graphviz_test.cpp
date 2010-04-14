@@ -12,6 +12,7 @@
 // Author: Ronald Garcia
 
 #define BOOST_GRAPHVIZ_USE_ISTREAM
+#define BOOST_TEST_MODULE TestGraphviz
 #include <boost/regex.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/assign/std/map.hpp>
@@ -20,6 +21,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <boost/test/test_tools.hpp>
+#include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <algorithm>
 #include <string>
@@ -131,26 +133,26 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
   return result;
   }
 
-int test_main(int, char*[]) {
+// int test_main(int, char*[]) {
 
   typedef istringstream gs_t;
 
   // Basic directed graph tests
-  {
+  BOOST_AUTO_TEST_CASE (basic_directed_graph_1) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
     BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t())));
   }
 
-  {
+  BOOST_AUTO_TEST_CASE (basic_directed_graph_2) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] \"a\" e [mass = 6.66] }");
     BOOST_CHECK((test_graph<directedS,vecS>(gs,2,masses,weight_map_t())));
   }
 
-  {
+  BOOST_AUTO_TEST_CASE (basic_directed_graph_3) {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),0.0)
       (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
@@ -162,7 +164,7 @@ int test_main(int, char*[]) {
   }
 
   // undirected graph with alternate node_id property name
-  {
+  BOOST_AUTO_TEST_CASE (undirected_graph_alternate_node_id) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
@@ -171,14 +173,14 @@ int test_main(int, char*[]) {
   }
 
   // Basic undirected graph tests
-  {
+  BOOST_AUTO_TEST_CASE (basic_undirected_graph_1) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass =\\\n6.66] }");
     BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t())));
   }
 
-  {
+  BOOST_AUTO_TEST_CASE (basic_undirected_graph_2) {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),0.0)
       (make_pair("c","d"),7.7)(make_pair("e","f"),6.66);
@@ -188,7 +190,7 @@ int test_main(int, char*[]) {
   }
 
   // Mismatch directed graph test
-  {
+  BOOST_AUTO_TEST_CASE (mismatch_directed_graph) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
@@ -202,7 +204,7 @@ int test_main(int, char*[]) {
   }
 
   // Mismatch undirected graph test
-  {
+  BOOST_AUTO_TEST_CASE (mismatch_undirected_graph) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
@@ -213,7 +215,8 @@ int test_main(int, char*[]) {
   }
 
   // Complain about parallel edges
-  {
+  BOOST_AUTO_TEST_CASE (complain_about_parallel_edges) {
+    BOOST_TEST_CHECKPOINT("Complain about parallel edges");
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("diGraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
@@ -224,7 +227,7 @@ int test_main(int, char*[]) {
   }
 
   // Handle parallel edges gracefully
-  {
+  BOOST_AUTO_TEST_CASE (handle_parallel_edges_gracefully) {
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("digraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
@@ -232,7 +235,7 @@ int test_main(int, char*[]) {
   }
 
   // Graph Property Test 1
-  {
+  BOOST_AUTO_TEST_CASE (graph_property_test_1) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     gs_t gs("digraph { graph [name=\"foo \\\"escaped\\\"\"]  a  c e [mass = 6.66] }");
@@ -242,7 +245,7 @@ int test_main(int, char*[]) {
   }
 
   // Graph Property Test 2
-  {
+  BOOST_AUTO_TEST_CASE (graph_property_test_2) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     gs_t gs("digraph { name=\"fo\"+ \"\\\no\"  a  c e [mass = 6.66] }");
@@ -252,7 +255,7 @@ int test_main(int, char*[]) {
   }
 
   // Graph Property Test 3 (HTML)
-  {
+  BOOST_AUTO_TEST_CASE (graph_property_test_3) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     std::string graph_name = "<html title=\"x'\" title2='y\"'>foo<b><![CDATA[><bad tag&>]]>bar</b>\n<br/>\nbaz</html>";
@@ -262,7 +265,7 @@ int test_main(int, char*[]) {
   }
 
   // Comments embedded in strings
-  { 
+  BOOST_AUTO_TEST_CASE (comments_embedded_in_strings) { 
     gs_t gs( 
       "digraph { "
       "a0 [ label = \"//depot/path/to/file_14#4\" ];"
@@ -271,5 +274,5 @@ int test_main(int, char*[]) {
       "}");
     BOOST_CHECK((test_graph<directedS,vecS>(gs,2,mass_map_t(),weight_map_t())));
   }
-  return 0;
-}
+// return 0;
+// }
