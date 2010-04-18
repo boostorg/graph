@@ -1318,7 +1318,7 @@ edge(Vertex i, Vertex j, const BOOST_CSR_GRAPH_TYPE& g)
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator out_edge_iter;
   std::pair<out_edge_iter, out_edge_iter> range = out_edges(i, g);
   for (; range.first != range.second; ++range.first) {
-    if (target(*range.first) == j)
+    if (target(*range.first, g) == j)
       return std::make_pair(*range.first, true);
   }
   return std::make_pair(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor(),
