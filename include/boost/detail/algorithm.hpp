@@ -63,7 +63,7 @@ namespace boost {
   template <typename Container, typename Predicate>
   bool any_if(const Container& c, Predicate p)
   {
-    return any_if(begin(c), end(c), p);
+    return any_if(boost::begin(c), boost::end(c), p);
   }
 
   template <typename InputIterator, typename T>
@@ -74,7 +74,7 @@ namespace boost {
   template <typename Container, typename T>
   bool container_contains(const Container& c, const T& value)
   {
-    return container_contains(begin(c), end(c), value);
+    return container_contains(boost::begin(c), boost::end(c), value);
   }
 
 } // namespace boost
