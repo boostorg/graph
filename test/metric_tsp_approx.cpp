@@ -93,7 +93,7 @@ void testScalability(unsigned numpts)
 
     boost::mt19937 rng(time(0));
     uniform_real<> range(0.01, (numpts * 2));
-    variate_generator<mt19937&, uniform_real<> >
+    variate_generator<boost::mt19937&, uniform_real<> >
         pnt_gen(rng, range);
 
     PointSet points;
