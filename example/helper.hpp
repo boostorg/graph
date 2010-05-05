@@ -24,7 +24,7 @@ add_named_vertex(Graph& g, NameMap nm, const std::string& name, VertexMap& vm)
     Vertex v;
     Iterator iter;
     bool inserted;
-    tie(iter, inserted) = vm.insert(make_pair(name, Vertex()));
+    boost::tie(iter, inserted) = vm.insert(make_pair(name, Vertex()));
     if(inserted) {
         // The name was unique so we need to add a vertex to the graph
         v = add_vertex(g);
