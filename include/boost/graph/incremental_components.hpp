@@ -18,6 +18,7 @@
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/pending/disjoint_sets.hpp>
+#include <iterator>
 
 namespace boost {
 
@@ -175,7 +176,7 @@ namespace boost {
     void build_index_lists(ParentIterator parent_start,
                            const ElementIndexMap& index_map) {
 
-      typedef typename ParentIterator::value_type Element;
+      typedef typename std::iterator_traits<ParentIterator>::value_type Element;
       typename IndexContainer::iterator index_list =
         m_index_list->begin();
 
