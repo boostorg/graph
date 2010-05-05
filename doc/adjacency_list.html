@@ -763,8 +763,10 @@ std::pair&lt;edge_descriptor, bool&gt;
 edge(vertex_descriptor&nbsp;u, vertex_descriptor&nbsp;v,
      const&nbsp;adjacency_list&amp;&nbsp;g)
 </pre>
-Returns an edge connecting vertex <tt>u</tt> to vertex <tt>v</tt> in
-graph <tt>g</tt>.
+If an edge from vertex <tt>u</tt> to vertex <tt>v</tt> exists, return a pair
+containing one such edge and <tt>true</tt>.  If there are no edges between
+<tt>u</tt> and <tt>v</tt>, return a pair with an arbitrary edge descriptor and
+<tt>false</tt>.
 
 <hr>
 
