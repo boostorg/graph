@@ -68,7 +68,7 @@ int main(int , char* [])
   print_edges(g, identity_property_map());
   cout << endl;
 
-  disjoint_sets_with_storage<> ds;
+  disjoint_sets_with_storage<> ds(N);
   incremental_components(g, ds);
   
   component_index<int> components(&ds.parents()[0], 
