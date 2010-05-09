@@ -242,12 +242,12 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
           typename std::list<tVertex>::const_iterator it = find(tSuper::m_orphans.begin(), tSuper::m_orphans.end(), v);
           // a node is active, if its in the active_list AND (is has_a_parent, or its already in the orphans_list or its the sink, or its the source)
           bool is_active = (tSuper::m_in_active_list_map[v] && (tSuper::has_parent(v) || it != tSuper::m_orphans.end() ));
-          if(get_tree(v) != tColorTraits::gray() && !is_active){
+          if(this->get_tree(v) != tColorTraits::gray() && !is_active){
             typename graph_traits<Graph>::out_edge_iterator ei,e_end;
             for(tie(ei, e_end) = out_edges(v, tSuper::m_g); ei != e_end; ++ei){
               const tVertex& other_node = target(*ei, tSuper::m_g);
-              if(get_tree(other_node) != get_tree(v)){
-                if(get_tree(v) == tColorTraits::black())
+              if(this->get_tree(other_node) != this->get_tree(v)){
+                if(this->get_tree(v) == tColorTraits::black())
                   BOOST_CHECK(tSuper::m_res_cap_map[*ei] == 0);
                 else
                   BOOST_CHECK(tSuper::m_res_cap_map[tSuper::m_rev_edge_map[*ei]] == 0);
@@ -257,20 +257,20 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
         }
 
         void invariant_five(const tVertex& v) const{
-          BOOST_CHECK(get_tree(v) != tColorTraits::gray() || tSuper::m_time_map[v] <= tSuper::m_time);
+          BOOST_CHECK(this->get_tree(v) != tColorTraits::gray() || tSuper::m_time_map[v] <= tSuper::m_time);
         }
 
         void invariant_six(const tVertex& v) const{
-          if(get_tree(v) == tColorTraits::gray() || tSuper::m_time_map[v] != tSuper::m_time)
+          if(this->get_tree(v) == tColorTraits::gray() || tSuper::m_time_map[v] != tSuper::m_time)
             return;
           else{
             tVertex current_node = v;
             tDistanceVal distance = 0;
-            tColorValue color = get_tree(v);
+            tColorValue color = this->get_tree(v);
             tVertex terminal = (color == tColorTraits::black()) ? tSuper::m_source : tSuper::m_sink;
             while(current_node != terminal){
               BOOST_CHECK(tSuper::has_parent(current_node));
-              tEdge e = get_edge_to_parent(current_node);
+              tEdge e = this->get_edge_to_parent(current_node);
               ++distance;
               current_node = (color == tColorTraits::black())? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(distance > tSuper::m_dist_map[v])
@@ -281,14 +281,14 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
         }
 
         void invariant_seven(const tVertex& v) const{
-          if(get_tree(v) == tColorTraits::gray())
+          if(this->get_tree(v) == tColorTraits::gray())
             return;
           else{
-            tColorValue color = get_tree(v);
+            tColorValue color = this->get_tree(v);
             long time = tSuper::m_time_map[v];
             tVertex current_node = v;
             while(tSuper::has_parent(current_node)){
-              tEdge e = get_edge_to_parent(current_node);
+              tEdge e = this->get_edge_to_parent(current_node);
               current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               BOOST_CHECK(tSuper::m_time_map[current_node] >= time);
             }
@@ -296,15 +296,15 @@ class kolmogorov_test:public detail::kolmogorov<Graph,EdgeCapacityMap,ResidualCa
         }//invariant_seven
 
         void invariant_eight(const tVertex& v) const{
-          if(get_tree(v) == tColorTraits::gray())
+          if(this->get_tree(v) == tColorTraits::gray())
              return;
           else{
-            tColorValue color = get_tree(v);
+            tColorValue color = this->get_tree(v);
             long time = tSuper::m_time_map[v];
             tDistanceVal distance = tSuper::m_dist_map[v];
             tVertex current_node = v;
             while(tSuper::has_parent(current_node)){
-              tEdge e = get_edge_to_parent(current_node);
+              tEdge e = this->get_edge_to_parent(current_node);
               current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(tSuper::m_time_map[current_node] == time)
                 BOOST_CHECK(tSuper::m_dist_map[current_node] < distance);
