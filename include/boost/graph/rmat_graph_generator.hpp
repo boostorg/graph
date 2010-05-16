@@ -155,7 +155,7 @@ namespace boost {
     {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
-      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
@@ -265,7 +265,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
 
     {
-      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -366,7 +366,7 @@ namespace boost {
       : gen(), done(false)
 
     {
-      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -479,7 +479,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
 
     {
-      assert(boost::test_tools::check_is_close(a + b + c + d, 1., boost::test_tools::fraction_tolerance(1.e-5)));
+      assert(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
