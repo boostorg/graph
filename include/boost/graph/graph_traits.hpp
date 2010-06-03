@@ -67,7 +67,7 @@ namespace boost {
         return detail::is_directed(Cat());
     }
 
-    /** Return false if the given graph is undirected. */
+    /** Return true if the given graph is undirected. */
     template <typename Graph>
     bool is_undirected(const Graph& g) {
         return !is_directed(g);
