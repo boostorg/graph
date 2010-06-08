@@ -525,18 +525,18 @@ namespace detail {
     typedef typename CSRGraph::edges_size_type EdgeIndex;
     typedef typename CSRGraph::edge_descriptor edge_descriptor;
 
-    csr_in_edge_iterator() {}
+    csr_in_edge_iterator(): m_graph(0) {}
     // Implicit copy constructor OK
     csr_in_edge_iterator(const CSRGraph& graph,
                          EdgeIndex index_in_backward_graph)
-      : m_graph(graph), m_index_in_backward_graph(index_in_backward_graph) {}
+      : m_index_in_backward_graph(index_in_backward_graph), m_graph(&graph) {}
 
    public: // See above
     // iterator_facade requirements
     edge_descriptor dereference() const {
       return edge_descriptor(
-               m_graph.m_backward.m_column[m_index_in_backward_graph],
-               m_graph.m_backward.m_edge_properties[m_index_in_backward_graph]);
+               m_graph->m_backward.m_column[m_index_in_backward_graph],
+               m_graph->m_backward.m_edge_properties[m_index_in_backward_graph]);
     }
 
     bool equal(const csr_in_edge_iterator& other) const
@@ -550,7 +550,7 @@ namespace detail {
     { return other.m_index_in_backward_graph - m_index_in_backward_graph; }
 
     EdgeIndex m_index_in_backward_graph;
-    const CSRGraph& m_graph;
+    const CSRGraph* m_graph;
 
     friend class iterator_core_access;
   };
