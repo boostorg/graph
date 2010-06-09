@@ -76,8 +76,9 @@ namespace boost {
       for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Vertex v = target(*ei, g);            vis.examine_edge(*ei, g);
         ColorValue v_color = get(color, v);
-        if (v_color == Color::white()) {      vis.tree_edge(*ei, g);
-          put(color, v, Color::gray());       vis.discover_vertex(v, g);
+        if (v_color == Color::white()) {      vis.discover_vertex(v, g);
+                                              vis.tree_edge(*ei, g);
+          put(color, v, Color::gray());
           Q.push(v);
         } else {                              vis.non_tree_edge(*ei, g);
           if (v_color == Color::gray())       vis.gray_target(*ei, g);
