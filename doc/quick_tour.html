@@ -445,7 +445,7 @@ of iterators (a pointer qualifies as a <a href="http://www.sgi.com/tech/stl/Rand
                 E(4,0), E(4,1) };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1};
 
-  Graph G(edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+  Graph G(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
 </pre>
 <p>For the external distance property we will use a <tt>std::vector</tt> for
 storage. BGL algorithms treat random access iterators as property maps, so we
