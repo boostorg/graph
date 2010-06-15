@@ -24,3 +24,4 @@ exe bipartite_example : bipartite_example.cpp ;
 exe fr_layout : fr_layout.cpp ;
 exe canonical_ordering : canonical_ordering.cpp ;
 exe components_on_edgelist : components_on_edgelist.cpp ;
+exe ospf-example : ospf-example.cpp ../build//boost_graph ;
