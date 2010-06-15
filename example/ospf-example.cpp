@@ -9,32 +9,48 @@
 #include <boost/graph/graphviz.hpp>     // for read/write_graphviz()
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/lexical_cast.hpp>
+
+namespace boost {
+  enum graph_color_t { graph_color = 5556 };
+  BOOST_INSTALL_PROPERTY(graph, color);
+}
+
 int
 main()
 {
   using namespace boost;
-  GraphvizDigraph g_dot;
-  read_graphviz("figs/ospf-graph.dot", g_dot);
+  typedef 
+    adjacency_list<vecS, vecS, directedS,
+                   property<vertex_name_t, std::string>, 
+                   property<edge_color_t, std::string, property<edge_weight_t, int> >,
+                   property<graph_color_t, std::string> >
+    g_dot_type;
+  g_dot_type g_dot;
+
+  dynamic_properties dp;
+  dp.property("label", get(vertex_name, g_dot));
+  dp.property("color", get(edge_color, g_dot));
+  dp.property("color", ref_property_map<g_dot_type*, std::string>(get_property(g_dot, graph_color)));
+  {
+    std::ifstream infile("figs/ospf-graph.dot");
+    read_graphviz(infile, g_dot, dp, "label");
+  }
 
   typedef adjacency_list < vecS, vecS, directedS, no_property,
     property < edge_weight_t, int > > Graph;
   typedef graph_traits < Graph >::vertex_descriptor vertex_descriptor;
   Graph g(num_vertices(g_dot));
-  property_map < GraphvizDigraph, edge_attribute_t >::type
-    edge_attr_map = get(edge_attribute, g_dot);
-  graph_traits < GraphvizDigraph >::edge_iterator ei, ei_end;
+  graph_traits < g_dot_type >::edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    int weight = lexical_cast < int >(edge_attr_map[*ei]["label"]);
+    int weight = get(edge_weight, g_dot, *ei);
     property < edge_weight_t, int >edge_property(weight);
     add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
   }
 
   vertex_descriptor router_six;
-  property_map < GraphvizDigraph, vertex_attribute_t >::type
-    vertex_attr_map = get(vertex_attribute, g_dot);
-  graph_traits < GraphvizDigraph >::vertex_iterator vi, vi_end;
+  graph_traits < g_dot_type >::vertex_iterator vi, vi_end;
   for (tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
-    if ("RT6" == vertex_attr_map[*vi]["label"]) {
+    if ("RT6" == get(vertex_name, g_dot, *vi)) {
       router_six = *vi;
       break;
     }
@@ -57,58 +73,24 @@ main()
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
 #endif
 
-  graph_traits < GraphvizDigraph >::edge_descriptor e;
+  graph_traits < g_dot_type >::edge_descriptor e;
   for (size_type i = 0; i < num_vertices(g); ++i)
     if (parent[i] != i) {
       e = edge(parent[i], i, g_dot).first;
-      edge_attr_map[e]["color"] = "black";
+      put(edge_color, g_dot, e, "black");
     }
 
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  // VC++ can't handle write_graphviz :(
+  get_property(g_dot, graph_color) = "grey";
   {
-    std::ofstream out("figs/ospf-sptree.dot");
-    out << "digraph loops {\n"
-        << "size=\"3,3\"\n"
-        << "ratio=\"fill\"\n"
-        << "shape=\"box\"\n";
-    graph_traits<Graph>::vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-      out << *vi << "[";
-      for (std::map<std::string,std::string>::iterator ai = vattr_map[*vi].begin();
-           ai != vattr_map[*vi].end(); ++ai) {
-        out << ai->first << "=" << ai->second;
-        if (next(ai) != vattr_map[*vi].end())
-          out << ", ";
-      }
-      out<< "]";
-    }
-
-    for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-      out << source(*ei, g) << " -> " << target(*ei, g) << "[";
-      std::map<std::string,std::string>& attr_map = eattr_map[*ei];
-      for (std::map<std::string,std::string>::iterator eai = attr_map.begin();
-           eai != attr_map.end(); ++eai) {
-        out << eai->first << "=" << eai->second;
-        if (next(eai) != attr_map.end())
-          out << ", ";
-      }
-      out<< "]";
-    }
-    out << "}\n";
+    std::ofstream outfile("figs/ospf-sptree.dot");
+    write_graphviz_dp(outfile, g_dot, dp, "label");
   }
-#else
-  graph_property < GraphvizDigraph, graph_edge_attribute_t >::type &
-    graph_edge_attr_map = get_property(g_dot, graph_edge_attribute);
-  graph_edge_attr_map["color"] = "grey";
-  write_graphviz("figs/ospf-sptree.dot", g_dot);
-#endif
 
   std::ofstream rtable("routing-table.dat");
   rtable << "Dest    Next Hop    Total Cost" << std::endl;
   for (tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
     if (parent[*vi] != *vi) {
-      rtable << vertex_attr_map[*vi]["label"] << "    ";
+      rtable << get(vertex_name, g_dot, *vi) << "    ";
       vertex_descriptor v = *vi, child;
       int path_cost = 0;
       property_map < Graph, edge_weight_t >::type
@@ -118,7 +100,7 @@ main()
         child = v;
         v = parent[v];
       } while (v != parent[v]);
-      rtable << vertex_attr_map[child]["label"] << "     ";
+      rtable << get(vertex_name, g_dot, child) << "     ";
       rtable << path_cost << std::endl;
 
     }
