@@ -449,6 +449,8 @@ namespace boost {
                                     vertex_id);
   }
 
+#if 0
+  // This interface has not worked for a long time
   typedef std::map<std::string, std::string> GraphvizAttrList;
 
   typedef property<vertex_attribute_t, GraphvizAttrList>
@@ -478,15 +480,15 @@ namespace boost {
                    GraphvizGraphProperty> >
           GraphvizGraph;
 
-
   // These four require linking the BGL-Graphviz library: libbgl-viz.a
   // from the /src directory.
   // Library has not existed for a while
-  // extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
-  // extern void read_graphviz(FILE* file, GraphvizDigraph& g);
-  //
-  // extern void read_graphviz(const std::string& file, GraphvizGraph& g);
-  // extern void read_graphviz(FILE* file, GraphvizGraph& g);
+  extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
+  extern void read_graphviz(FILE* file, GraphvizDigraph& g);
+  
+  extern void read_graphviz(const std::string& file, GraphvizGraph& g);
+  extern void read_graphviz(FILE* file, GraphvizGraph& g);
+#endif
 
   class dynamic_properties_writer
   {
@@ -576,22 +578,22 @@ namespace boost {
 
   template<typename Graph>
   inline void
-  write_graphviz(std::ostream& out, const Graph& g,
-                 const dynamic_properties& dp,
-                 const std::string& node_id = "node_id"
-                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  write_graphviz_dp(std::ostream& out, const Graph& g,
+                    const dynamic_properties& dp,
+                    const std::string& node_id = "node_id"
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    write_graphviz(out, g, dp, node_id,
-                   graph::detail::node_id_property_map<Vertex>(dp, node_id));
+    write_graphviz_dp(out, g, dp, node_id,
+                      graph::detail::node_id_property_map<Vertex>(dp, node_id));
   }
 
   template<typename Graph, typename VertexID>
   void
-  write_graphviz(std::ostream& out, const Graph& g,
-                 const dynamic_properties& dp, const std::string& node_id,
-                 VertexID id
-                 BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
+  write_graphviz_dp(std::ostream& out, const Graph& g,
+                    const dynamic_properties& dp, const std::string& node_id,
+                    VertexID id
+                    BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
   {
     write_graphviz
       (out, g,

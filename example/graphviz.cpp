@@ -68,7 +68,7 @@ void test_graph_read_write(const std::string& filename)
                 == 10.0);
 
   // Write out the graph
-  write_graphviz(std::cout, g, dp, std::string("id"));
+  write_graphviz_dp(std::cout, g, dp, std::string("id"));
 }
 
 int test_main(int, char*[])
