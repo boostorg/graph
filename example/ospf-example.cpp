@@ -22,18 +22,20 @@ main()
   typedef 
     adjacency_list<vecS, vecS, directedS,
                    property<vertex_name_t, std::string>, 
-                   property<edge_color_t, std::string, property<edge_weight_t, int> >,
+                   property<edge_color_t, std::string,
+                            property<edge_weight_t, int> >,
                    property<graph_color_t, std::string> >
     g_dot_type;
   g_dot_type g_dot;
 
-  dynamic_properties dp;
-  dp.property("label", get(vertex_name, g_dot));
+  dynamic_properties dp(ignore_other_properties);
+  dp.property("node_id", get(vertex_name, g_dot));
+  dp.property("label", get(edge_weight, g_dot));
   dp.property("color", get(edge_color, g_dot));
   dp.property("color", ref_property_map<g_dot_type*, std::string>(get_property(g_dot, graph_color)));
   {
     std::ifstream infile("figs/ospf-graph.dot");
-    read_graphviz(infile, g_dot, dp, "label");
+    read_graphviz(infile, g_dot, dp);
   }
 
   typedef adjacency_list < vecS, vecS, directedS, no_property,
@@ -83,7 +85,7 @@ main()
   get_property(g_dot, graph_color) = "grey";
   {
     std::ofstream outfile("figs/ospf-sptree.dot");
-    write_graphviz_dp(outfile, g_dot, dp, "label");
+    write_graphviz_dp(outfile, g_dot, dp);
   }
 
   std::ofstream rtable("routing-table.dat");
