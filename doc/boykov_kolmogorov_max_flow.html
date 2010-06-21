@@ -2,13 +2,13 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
-	<TITLE>Boost Graph Library: Kolmogorov Maximum Flow</TITLE>
+	<TITLE>Boost Graph Library: Boykov-Kolmogorov Maximum Flow</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20060820;17315200">
 	<META NAME="CHANGEDBY" CONTENT="Stephan Diederich">
 	<META NAME="CHANGED" CONTENT="20060820;23125100">
 <!--
-//  Copyright (c) 2006, Stephan Diederich
+//  Copyright (c) 2006 Stephan Diederich
 //
 //  This documentation may be used under either of the following two licences:
 //
@@ -53,31 +53,14 @@
 	</STYLE>
 </HEAD>
 <BODY LANG="de-DE" TEXT="#000000" LINK="#0000ee" VLINK="#551a8b" BGCOLOR="#ffffff" DIR="LTR">
-
-<P>
-<IMG SRC="../../../boost.png" NAME="Grafik1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
+<P><IMG SRC="../../../boost.png" NAME="Grafik1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
 </P>
-
-<table align="center" width="75%" style="border:1px solid; border-spacing: 10pt">
-<tr>
-  <td style="vertical-align: top"><img src="figs/warning.png"></td>
-  <td>
-    <b>Warning!</b> This header and its contents are <em>deprecated</em> and
-    will be removed in a future release. Please update your program to use
-    <a href="boykov_kolmogorov_max_flow.html"> <tt>boykov_kolmogorov_max_flow</tt></a>
-    instead. Note that only the name of the algorithm has changed. The template
-    and function parameters will remain the same.
-  </td>
-</tr>
-</table>
-
-
-<H1><A NAME="sec:kolmogorov_max_flow"></A><TT>kolmogorov_max_flow</TT>
+<H1><A NAME="sec:boykov_kolmogorov_max_flow"></A><TT>boykov_kolmogorov_max_flow</TT>
 </H1>
 <PRE><I>// named parameter version</I>
 template &lt;class Graph, class P, class T, class R&gt;
 typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
-kolmogorov_max_flow(Graph&amp; g,
+boykov_kolmogorov_max_flow(Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>)
@@ -86,7 +69,7 @@ kolmogorov_max_flow(Graph&amp; g,
 template &lt;class Graph, class CapacityEdgeMap, class ResidualCapacityEdgeMap, class ReverseEdgeMap,
           class PredecessorMap, class ColorMap, class DistanceMap, class IndexMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-kolmogorov_max_flow(Graph&amp; g,
+boykov_kolmogorov_max_flow(Graph&amp; g,
        CapacityEdgeMap cap,
        ResidualCapacityEdgeMap res_cap,
        ReverseEdgeMap rev_map,
@@ -99,7 +82,7 @@ kolmogorov_max_flow(Graph&amp; g,
 <FONT SIZE=3>Additional overloaded versions for non-named parameters
 are provided (without DistanceMap/ColorMap/DistanceMap; for those
 iterator_property_maps with the provided index map are used)</FONT></P>
-<P>The <TT>kolmogorov_max_flow()</TT> function calculates the maximum
+<P>The <TT>boykov_kolmogorov_max_flow()</TT> function calculates the maximum
 flow of a network. See Section <A HREF="graph_theory_review.html#sec:network-flow-algorithms">Network
 Flow Algorithms</A> for a description of maximum flow. The calculated
 maximum flow will be the return value of the function. The function
@@ -114,22 +97,25 @@ represents the network must include a reverse edge for every edge in
 must map each edge in the original graph to its reverse edge, that is
 <I>(u,v) -&gt; (v,u)</I> for all <I>(u,v)</I> in <I>E</I>.
 </P>
+
 <P>Remarks: While the push-relabel method states that each edge in <I>E<SUP>T</SUP></I>
 has to have capacity of 0, the reverse edges for this algorithm ARE
 allowed to carry capacities. If there are already reverse edges in
 the input Graph <I><FONT FACE="Courier New, monospace">G</FONT></I>,
 those can be used. This can halve the amount of edges and will
-noticeably increase the performance.<BR><BR><B>Algorithm
-description:</B><BR>Kolmogorov's algorithm is a variety of the
-augmenting-path algorithm. Standard augmenting path algorithms find
-shortest paths from source to sink vertex and augment them by
-substracting the bottleneck capacity found on that path from the
-residual capacities of each edge and adding it to the total flow.
-Additionally the minimum capacity is added to the residual capacity
-of the reverse edges. If no more paths in the residual-edge tree are
-found, the algorithm terminates. Instead of finding a new shortest
-path from source to sink in the graph in each iteration, Kolmogorov's
-version keeps the already found paths as follows:</P>
+noticeably increase the performance.</P>
+
+<P>
+<B>Algorithm description:</B><BR>The Boykov-Kolmogorov max-flow (or often
+BK max-flow) algorithm is a variety of the augmenting-path algorithm. Standard
+augmenting path algorithms find shortest paths from source to sink vertex and
+augment them by substracting the bottleneck capacity found on that path from the
+residual capacities of each edge and adding it to the total flow. Additionally
+the minimum capacity is added to the residual capacity of the reverse edges. If
+no more paths in the residual-edge tree are found, the algorithm terminates.
+Instead of finding a new shortest path from source to sink in the graph in each
+iteration, Kolmogorov's version keeps the already found paths as follows:</P>
+
 <P>The algorithm builds up two search trees, a source-tree and a
 sink-tree. Each vertex has a label (stored in <I>ColorMap</I>) to
 which tree it belongs and a status-flag if this vertex is active or
@@ -168,7 +154,7 @@ forest is re-included into the search tree. If no new valid parent is
 found, this vertex becomes a free vertex (marked gray), and it's
 children become orphans. The adoption phase terminates if there are
 no more orphans.</P>
-<P><IMG SRC="figs/kolmogorov_max_flow.gif" NAME="Grafik2" ALIGN=LEFT WIDTH=827 HEIGHT=311 BORDER=0><BR CLEAR=LEFT><B>Details:</B></P>
+<P><IMG SRC="figs/bk_max_flow.gif" NAME="Grafik2" ALIGN=LEFT WIDTH=827 HEIGHT=311 BORDER=0><BR CLEAR=LEFT><B>Details:</B></P>
 <UL>
 	<LI><P>Marking heuristics: A timestamp is stored for each vertex
 	which shows in which iteration of the algorithm the distance to the
@@ -199,32 +185,31 @@ no more orphans.</P>
 	the main queue for the same reason.</P>
 </UL>
 <P><BR><B>Implementation notes:</B></P>
-<P>The algorithm is mainly implemented as described in the PhD thesis
-of Kolmogorov. Few changes were made for increasing performance:</P>
+<P>The algorithm is mainly implemented as described by Boykov and Kolmogorov in
+[<a href="bibliography.html#boykov-kolmogorov04">69</a>]. An extended version
+can be found in the PhD Thesis of Kolmogorov [<A HREF="bibliography.html#kolmogorov03">68</a>].
+The following changes are made to improve performance:</P>
 <UL>
-	<LI><P>initialization: the algorithm first augments all paths from
+	<LI>initialization: the algorithm first augments all paths from
 	source-&gt;sink and all paths from source-&gt;VERTEX-&gt;sink. This
 	improves especially graph-cuts used in image vision where nearly
 	each vertex has a source and sink connect. During this step, all
 	vertices that have an unsaturated connection from source are added
-	to the active vertex list and so the source is not.
-	</P>
-	<LI><P>active vertices: Kolmogorov uses two lists for active nodes
+	to the active vertex list and so the source is not.</LI>
+	<LI>active vertices: Kolmogorov uses two lists for active nodes
 	and states that new active vertices are added to the rear of the
 	second. Fetching an active vertex is done from the beginning of the
 	first list. If the first list is empty, it is exchanged by the
-	second. This implementation uses just one list.</P>
-	<LI><P>grow-phase: In the grow phase the first vertex in the
+	second. This implementation uses just one list.</LI>
+	<LI>grow-phase: In the grow phase the first vertex in the
 	active-list is taken and all outgoing edges are checked if they are
 	unsaturated. This decreases performance for graphs with high-edge
 	density. This implementation stores the last accessed edge and
 	continues with it, if the first vertex in the active-list is the
-	same one as during the last grow-phase.</P>
+	same one as during the last grow-phase.</LI>
 </UL>
-<P>This algorithm [<A HREF="bibliography.html#kolmogorov03">68</a>, <a href="bibliography.html#boykov-kolmogorov04">69</a>] was developed by Boykov and Kolmogorov.
-</P>
 <H3>Where Defined</H3>
-<P><TT><A HREF="../../../boost/graph/kolmogorov_max_flow.hpp">boost/graph/kolmogorov_max_flow.hpp</A></TT>
+<P><TT><A HREF="../../../boost/graph/boykov_kolmogorov_max_flow.hpp">boost/graph/boykov_kolmogorov_max_flow.hpp</A></TT>
 </P>
 <H3>Parameters</H3>
 <P>IN: <TT>Graph&amp; g</TT>
@@ -306,13 +291,13 @@ type.<BR><B>Default:</B> <TT>get(vertex_index, g)</TT>
 <P>This reads an example maximum flow problem (a graph with edge
 capacities) from a file in the DIMACS format (<TT><A HREF="../example/max_flow.dat">example/max_flow.dat</A></TT>).
 The source for this example can be found in
-<TT><A HREF="../example/kolmogorov-eg.cpp">example/kolmogorov-eg.cpp</A></TT>.
+<TT><A HREF="../example/boykov_kolmogorov-eg.cpp">example/boykov_kolmogorov-eg.cpp</A></TT>.
 </P>
 <PRE>#include &lt;boost/config.hpp&gt;
 #include &lt;iostream&gt;
 #include &lt;string&gt;
-#include &lt;boost/graph/kolmogorov_max_flow.hpp&gt;
 #include &lt;boost/graph/adjacency_list.hpp&gt;
+#include &lt;boost/graph/boykov_kolmogorov_max_flow.hpp&gt;
 #include &lt;boost/graph/read_dimacs.hpp&gt;
 #include &lt;boost/graph/graph_utility.hpp&gt;
 
@@ -344,7 +329,7 @@ main()
 
   std::vector&lt;default_color_type&gt; color(num_vertices(g));
   std::vector&lt;long&gt; distance(num_vertices(g));
-  long flow = kolmogorov_max_flow(g ,s, t);
+  long flow = boykov_kolmogorov_max_flow(g ,s, t);
 
   std::cout &lt;&lt; "c  The total flow:" &lt;&lt; std::endl;
   std::cout &lt;&lt; "s " &lt;&lt; flow &lt;&lt; std::endl &lt;&lt; std::endl;
@@ -387,7 +372,9 @@ f 6 4 0
 f 7 6 0
 f 7 5 0</PRE><H3>
 See Also</H3>
-<P STYLE="margin-bottom: 0cm"><TT><A HREF="edmonds_karp_max_flow.html">edmonds_karp_max_flow()</A></TT>,<BR><TT><A HREF="push_relabel_max_flow.html">push_relabel_max_flow()</A></TT>.
+<P STYLE="margin-bottom: 0cm">
+<TT><A HREF="edmonds_karp_max_flow.html">edmonds_karp_max_flow()</A></TT>,
+<TT><A HREF="push_relabel_max_flow.html">push_relabel_max_flow()</A></TT>.
 </P>
 <HR>
 <TABLE CELLPADDING=2 CELLSPACING=2>

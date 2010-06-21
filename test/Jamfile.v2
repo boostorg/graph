@@ -84,6 +84,7 @@ test-suite graph_test :
     [ run king_ordering.cpp ]
     [ run matching_test.cpp ]
     [ run max_flow_test.cpp ]
+    [ run boykov_kolmogorov_max_flow_test.cpp ]
     [ run kolmogorov_max_flow_test.cpp ]
     [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
