@@ -92,8 +92,8 @@ namespace boost {
     
     typename graph_traits<Graph>::vertex_iterator u_iter, u_end;
     typename graph_traits<Graph>::out_edge_iterator ei, e_end;
-    for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-      for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+    for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+      for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
         res[*ei] = cap[*ei];
     
     color[sink] = Color::gray();
@@ -108,7 +108,7 @@ namespace boost {
     } // while
     
     typename property_traits<CapacityEdgeMap>::value_type flow = 0;
-    for (tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
+    for (boost::tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
       flow += (cap[*ei] - res[*ei]);
     return flow;
   } // edmonds_karp_max_flow()

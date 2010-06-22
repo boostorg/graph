@@ -326,7 +326,7 @@ namespace detail {
         m_rowstart[i] = current_edge;
         g_vertex v = ordered_verts_of_g[i];
         g_out_edge_iter ei, ei_end;
-        for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
           m_column[current_edge++] = get(vi, target(*ei, g));
         }
       }

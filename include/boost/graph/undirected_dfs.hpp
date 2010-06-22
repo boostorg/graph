@@ -56,7 +56,7 @@ namespace boost {
         VertexInfo& back = stack.back();
         u = back.first;
         Iter ei, ei_end;
-        tie(ei, ei_end) = back.second;
+        boost::tie(ei, ei_end) = back.second;
         stack.pop_back();
         while (ei != ei_end) {
           Vertex v = target(*ei, g);
@@ -70,7 +70,7 @@ namespace boost {
             u = v;
             put(vertex_color, u, Color::gray());
             vis.discover_vertex(u, g);
-            tie(ei, ei_end) = out_edges(u, g);
+            boost::tie(ei, ei_end) = out_edges(u, g);
           } else if (v_color == Color::gray()) {
             if (uv_color == EColor::white()) vis.back_edge(*ei, g);
             ++ei;
@@ -109,7 +109,7 @@ namespace boost {
       typename graph_traits<IncidenceGraph>::out_edge_iterator ei, ei_end;
 
       put(vertex_color, u, Color::gray());   vis.discover_vertex(u, g);
-      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+      for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
         ColorValue v_color = get(vertex_color, v);
         EColorValue uv_color = get(edge_color, *ei);
@@ -141,18 +141,18 @@ namespace boost {
     typedef color_traits<ColorValue> Color;
 
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(vertex_color, *ui, Color::white());   vis.initialize_vertex(*ui, g);
     }
     typename graph_traits<Graph>::edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
       put(edge_color, *ei, Color::white());
 
     if (start_vertex != *vertices(g).first){ vis.start_vertex(start_vertex, g);
       detail::undir_dfv_impl(g, start_vertex, vis, vertex_color, edge_color);
     }
 
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       ColorValue u_color = get(vertex_color, *ui);
       if (u_color == Color::white()) {       vis.start_vertex(*ui, g);
         detail::undir_dfv_impl(g, *ui, vis, vertex_color, edge_color);

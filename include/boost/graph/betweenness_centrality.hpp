@@ -305,10 +305,10 @@ namespace detail { namespace graph {
 
     std::stack<vertex_descriptor> ordered_vertices;
     vertex_iterator s, s_end;
-    for (tie(s, s_end) = vertices(g); s != s_end; ++s) {
+    for (boost::tie(s, s_end) = vertices(g); s != s_end; ++s) {
       // Initialize for this iteration
       vertex_iterator w, w_end;
-      for (tie(w, w_end) = vertices(g); w != w_end; ++w) {
+      for (boost::tie(w, w_end) = vertices(g); w != w_end; ++w) {
         incoming[*w].clear();
         put(path_count, *w, 0);
         put(dependency, *w, 0);
@@ -581,7 +581,7 @@ relative_betweenness_centrality(const Graph& g, CentralityMap centrality)
   typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
   centrality_type factor = centrality_type(2)/centrality_type(n*n - 3*n + 2);
   vertex_iterator v, v_end;
-  for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
+  for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
     put(centrality, *v, factor * get(centrality, *v));
   }
 }
@@ -602,13 +602,13 @@ central_point_dominance(const Graph& g, CentralityMap centrality
   // Find max centrality
   centrality_type max_centrality(0);
   vertex_iterator v, v_end;
-  for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
+  for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
     max_centrality = (max)(max_centrality, get(centrality, *v));
   }
 
   // Compute central point dominance
   centrality_type sum(0);
-  for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
+  for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
     sum += (max_centrality - get(centrality, *v));
   }
   return sum/(n-1);

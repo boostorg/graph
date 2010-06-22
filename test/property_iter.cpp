@@ -123,7 +123,7 @@ int main(int, char* [])
 
   TLinkIterator itEdgeBegin, itEdgeEnd;
 
-  tie(itEdgeBegin, itEdgeEnd) = get_property_iter_range(g, edge_id);
+  boost::tie(itEdgeBegin, itEdgeEnd) = get_property_iter_range(g, edge_id);
 
   cout << "Edge iteration:" << endl;
   for (; itEdgeBegin != itEdgeEnd; ++itEdgeBegin)
@@ -134,7 +134,7 @@ int main(int, char* [])
 
   TNodeIterator itVertexBegin, itVertexEnd;
 
-  tie(itVertexBegin, itVertexEnd) = get_property_iter_range(g, vertex_id);
+  boost::tie(itVertexBegin, itVertexEnd) = get_property_iter_range(g, vertex_id);
 
   cout << "Vertex iteration:" << endl;
   for (; itVertexBegin != itVertexEnd; ++itVertexBegin)

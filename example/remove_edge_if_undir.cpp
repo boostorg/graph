@@ -78,7 +78,7 @@ main()
 
   int w = 0;
   graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     weight[*ei] = ++w;
 
   std::cout << "original graph:" << std::endl;

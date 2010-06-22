@@ -100,7 +100,7 @@ namespace boost {
 
       put(color, u, Color::gray());
       vis.discover_vertex(u, g);
-      tie(ei, ei_end) = out_edges(u, g);
+      boost::tie(ei, ei_end) = out_edges(u, g);
       // Variable is needed to workaround a borland bug.
       TF& fn = static_cast<TF&>(func);
       if (fn(u, g)) {
@@ -112,7 +112,7 @@ namespace boost {
       while (!stack.empty()) {
         VertexInfo& back = stack.back();
         u = back.first;
-        tie(ei, ei_end) = back.second;
+        boost::tie(ei, ei_end) = back.second;
         stack.pop_back();
         while (ei != ei_end) {
           Vertex v = target(*ei, g);
@@ -124,7 +124,7 @@ namespace boost {
             u = v;
             put(color, u, Color::gray());
             vis.discover_vertex(u, g);
-            tie(ei, ei_end) = out_edges(u, g);
+            boost::tie(ei, ei_end) = out_edges(u, g);
             if (fn(u, g)) {
                 ei = ei_end;
             }
@@ -166,7 +166,7 @@ namespace boost {
       // Variable is needed to workaround a borland bug.
       TF& fn = static_cast<TF&>(func);
       if (!fn(u, g))
-        for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
           Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
           ColorValue v_color = get(color, v);
           if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
@@ -192,7 +192,7 @@ namespace boost {
     typedef color_traits<ColorValue> Color;
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       Vertex u = implicit_cast<Vertex>(*ui);
       put(color, u, Color::white()); vis.initialize_vertex(u, g);
     }
@@ -202,7 +202,7 @@ namespace boost {
                                      detail::nontruth2());
     }
 
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       Vertex u = implicit_cast<Vertex>(*ui);
       ColorValue u_color = get(color, u);
       if (u_color == Color::white()) {       vis.start_vertex(u, g);

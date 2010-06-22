@@ -74,11 +74,11 @@ int main(int argc, char** argv)
     assert(num_edges(g) == num_edges(g2));
 
     graph_traits<graph_t>::vertex_iterator v, v_end;
-    for (tie(v,v_end) = vertices(g); v != v_end; ++v)
+    for (boost::tie(v,v_end) = vertices(g); v != v_end; ++v)
       assert(get(vertex_color_t(), g, *v) == get(vertex_color_t(), g2, *v));
 
     graph_traits<graph_t>::edge_iterator e, e_end;
-    for (tie(e,e_end) = edges(g); e != e_end; ++e)
+    for (boost::tie(e,e_end) = edges(g); e != e_end; ++e)
       assert(get(edge_weight_t(), g, *e) == get(edge_weight_t(), g2, *e));
 
     return 0;

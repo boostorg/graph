@@ -113,19 +113,19 @@ namespace boost {
                         Orig2CopyVertexIndexMap orig2copy, IndexMap)
       {
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<MutableGraph>::vertex_descriptor
             new_v = add_vertex(g_out);
           put(orig2copy, *vi, new_v);
           copy_vertex(*vi, new_v);
         }
         typename graph_traits<Graph>::edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = edges(g_in); ei != ei_end; ++ei) {
           typename graph_traits<MutableGraph>::edge_descriptor new_e;
           bool inserted;
-          tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
-                                          get(orig2copy, target(*ei, g_in)),
-                                          g_out);
+          boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
+                                                 get(orig2copy, target(*ei, g_in)),
+                                                 g_out);
           copy_edge(*ei, new_e);
         }
       }
@@ -142,20 +142,20 @@ namespace boost {
                         Orig2CopyVertexIndexMap orig2copy, IndexMap)
       {
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<MutableGraph>::vertex_descriptor
             new_v = add_vertex(g_out);
           put(orig2copy, *vi, new_v);
           copy_vertex(*vi, new_v);
         }
-        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-          for (tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
+          for (boost::tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
             typename graph_traits<MutableGraph>::edge_descriptor new_e;
             bool inserted;
-            tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
-                                            get(orig2copy, target(*ei, g_in)),
-                                            g_out);
+            boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
+                                                   get(orig2copy, target(*ei, g_in)),
+                                                   g_out);
             copy_edge(*ei, new_e);
           }
         }
@@ -177,21 +177,21 @@ namespace boost {
         std::vector<default_color_type> 
           color(num_vertices(g_in), Color::white());
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<MutableGraph>::vertex_descriptor
             new_v = add_vertex(g_out);
           put(orig2copy, *vi, new_v);
           copy_vertex(*vi, new_v);
         }
-        for (tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-          for (tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
+          for (boost::tie(ei, ei_end) = out_edges(*vi, g_in); ei != ei_end; ++ei) {
             typename graph_traits<MutableGraph>::edge_descriptor new_e;
             bool inserted;
             if (color[get(index_map, target(*ei, g_in))] == Color::white()) {
-              tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei,g_in)),
-                                              get(orig2copy, target(*ei,g_in)),
-                                              g_out);
+              boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei,g_in)),
+                                                     get(orig2copy, target(*ei,g_in)),
+                                                     g_out);
               copy_edge(*ei, new_e);
             }
           }
@@ -361,9 +361,9 @@ namespace boost {
       void examine_edge(Edge e, const Graph& g_in) const {
         typename graph_traits<NewGraph>::edge_descriptor new_e;
         bool inserted;
-        tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
-                                        get(orig2copy, target(e, g_in)),
-                                        g_out);
+        boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
+                                               get(orig2copy, target(e, g_in)),
+                                               g_out);
         copy_edge(e, new_e);
       }
     private:

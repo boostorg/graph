@@ -288,8 +288,8 @@ namespace boost {
       typename graph_traits<GraphSecond>::vertex_iterator
         vertex2_begin, vertex2_end, vertex2_iter;
   
-      tie(vertex1_iter, vertex1_end) = vertices(graph1);
-      tie(vertex2_begin, vertex2_end) = vertices(graph2);
+      boost::tie(vertex1_iter, vertex1_end) = vertices(graph1);
+      boost::tie(vertex2_begin, vertex2_end) = vertices(graph2);
       vertex2_iter = vertex2_begin;
   
       // Iterate until all vertices have been visited

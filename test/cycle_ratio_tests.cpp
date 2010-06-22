@@ -333,7 +333,7 @@ int test_main(int argc, char* argv[])
     typedef graph_traits<GraphMInt>::vertex_iterator VertexItM;
     typedef graph_traits<GraphMInt>::edge_descriptor EdgeM;
     VertexItM  vi1, vi2, vi_end;
-    for (tie(vi1, vi_end) = vertices(gm); vi1 != vi_end; ++vi1)
+    for (boost::tie(vi1, vi_end) = vertices(gm); vi1 != vi_end; ++vi1)
     {
       for (vi2 = vertices(gm).first; vi2 != vi_end; ++vi2)
         add_edge(*vi1, *vi2, gm);

@@ -41,7 +41,7 @@ void print_graph_layout(const Graph& g, PositionMap position, const Topology& to
       typename graph_traits<Graph>::vertex_iterator vi, vi_end;
       // Find vertex at this position
       typename graph_traits<Graph>::vertices_size_type index = 0;
-      for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++index) {
+      for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++index) {
         if ((int)position[*vi][0] == x && (int)position[*vi][1] == y)
           break;
       }
@@ -60,14 +60,14 @@ void dump_graph_layout(std::string name, const Graph& g, PositionMap position)
   out << "graph " << name << " {" << std::endl;
 
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     out << "  n" << get(vertex_index, g, *vi) << "[ pos=\"" 
         << (int)position[*vi][0] + 25 << ", " << (int)position[*vi][1] + 25 
         << "\" ];\n";
   }
 
   typename graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     out << "  n" << get(vertex_index, g, source(*ei, g)) << " -- n"
         << get(vertex_index, g, target(*ei, g)) << ";\n";
   }
@@ -172,11 +172,11 @@ test_cube(Graph*)
 
   vertex_iterator vi, vi_end;
   int i = 0;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     put(vertex_index, g, *vi, i++);
 
   edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
     std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
               << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
@@ -241,11 +241,11 @@ test_triangular(Graph*)
 
   vertex_iterator vi, vi_end;
   int i = 0;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     put(vertex_index, g, *vi, i++);
 
   edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
     std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
               << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
@@ -313,11 +313,11 @@ test_disconnected(Graph*)
 
   vertex_iterator vi, vi_end;
   int i = 0;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     put(vertex_index, g, *vi, i++);
 
   edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
     std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
               << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')

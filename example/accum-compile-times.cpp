@@ -85,14 +85,14 @@ main()
   std::ifstream name_in("makefile-target-names.dat");
   std::ifstream compile_cost_in("target-compile-costs.dat");
   graph_traits < file_dep_graph2 >::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     name_in >> name_map[*vi];
     compile_cost_in >> compile_cost_map[*vi];
   }
 
   graph_property_iter_range < file_dep_graph2,
     vertex_compile_cost_t >::iterator ci, ci_end;
-  tie(ci, ci_end) = get_property_iter_range(g, vertex_compile_cost);
+  boost::tie(ci, ci_end) = get_property_iter_range(g, vertex_compile_cost);
   std::cout << "total (sequential) compile time: "
     << std::accumulate(ci, ci_end, 0.0) << std::endl;
 

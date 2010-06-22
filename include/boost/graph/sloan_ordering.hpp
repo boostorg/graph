@@ -139,7 +139,7 @@ namespace boost {
     //step 1
     //Scan for the vertex with the smallest degree and the maximum degree
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+    for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
     {
       dummy = get(degree, *ui);
       
@@ -180,7 +180,7 @@ namespace boost {
       //step 4
       //pushing one node of each degree in an ascending manner into degree_queue
       std::vector<bool> shrink_trace(maximum_degree, false);
-      for (tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
+      for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       {
         dummy = get(degree, *ui);
         
@@ -292,7 +292,7 @@ namespace boost {
     //Sets the color and priority to their initial status
     unsigned cdeg;    
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
     {
         put(color, *ui, Color::white());
         cdeg=get(degree, *ui)+1;
@@ -321,7 +321,7 @@ namespace boost {
       if(get(color, u) == Color::green() )
       {
         //for-loop over all out-edges of vertex u
-        for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) 
+        for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) 
         {
           v = target(*ei, g);
           
@@ -340,7 +340,7 @@ namespace boost {
       put(color, u, Color::black() );          //Gives u an inactive status
       
       //for loop over all the adjacent vertices of u
-      for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+      for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
         
         v = target(*ei, g);     
         
@@ -350,7 +350,7 @@ namespace boost {
           put(priority, v, get(priority, v)+W2);  //updates the priority        
           
           //for loop over alll adjacent vertices of v
-          for (tie(ei2, ei2_end) = out_edges(v, g); ei2 != ei2_end; ++ei2) {
+          for (boost::tie(ei2, ei2_end) = out_edges(v, g); ei2 != ei2_end; ++ei2) {
             w = target(*ei2, g);
             
             if(get(color, w) != Color::black() ) {     //tests if vertex is postactive

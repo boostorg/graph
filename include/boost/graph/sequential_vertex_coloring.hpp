@@ -61,7 +61,7 @@ namespace boost {
     
     //Initialize colors 
     typename GraphTraits::vertex_iterator v, vend;
-    for (tie(v, vend) = vertices(G); v != vend; ++v)
+    for (boost::tie(v, vend) = vertices(G); v != vend; ++v)
       put(color, *v, V-1);
     
     //Determine the color for every vertex one by one
@@ -71,7 +71,7 @@ namespace boost {
       
       //Mark the colors of vertices adjacent to current.
       //i can be the value for marking since i increases successively
-      for (tie(v,vend) = adjacent_vertices(current, G); v != vend; ++v)
+      for (boost::tie(v,vend) = adjacent_vertices(current, G); v != vend; ++v)
         mark[get(color,*v)] = i; 
       
       //Next step is to assign the smallest un-marked color

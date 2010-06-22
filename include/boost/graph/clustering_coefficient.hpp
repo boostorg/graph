@@ -72,7 +72,7 @@ num_paths_through_vertex(const Graph& g, Vertex v)
     // for things like this (num_neighbors() would be great).
 
     AdjacencyIterator i, end;
-    tie(i, end) = adjacent_vertices(v, g);
+    boost::tie(i, end) = adjacent_vertices(v, g);
     std::size_t k = std::distance(i, end);
     return detail::possible_edges(g, k, Directed());
 }
@@ -92,7 +92,7 @@ num_triangles_on_vertex(const Graph& g, Vertex v)
 
     Degree count(0);
     AdjacencyIterator i, j, end;
-    for(tie(i, end) = adjacent_vertices(v, g); i != end; ++i) {
+    for(boost::tie(i, end) = adjacent_vertices(v, g); i != end; ++i) {
         for(j = boost::next(i); j != end; ++j) {
             count += detail::count_edges(g, *i, *j, Directed());
         }
@@ -127,7 +127,7 @@ all_clustering_coefficients(const Graph& g, ClusteringMap cm)
 
     Coefficient sum(0);
     VertexIterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         Coefficient cc = clustering_coefficient<Coefficient>(g, *i);
         put(cm, *i, cc);
         sum += cc;
@@ -147,7 +147,7 @@ mean_clustering_coefficient(const Graph& g, ClusteringMap cm)
 
     Coefficient cc(0);
     VertexIterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         cc += get(cm, *i);
     }
     return cc / Coefficient(num_vertices(g));

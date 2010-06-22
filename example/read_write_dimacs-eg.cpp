@@ -90,12 +90,12 @@ int main()
   
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
   out_edge_iterator oei,oe_end;
-  for(tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
+  for(boost::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
     edge_descriptor from_source = *oei;
     vertex_descriptor v = target(from_source, g);
     edge_descriptor to_sink;
     bool is_there;
-    tie(to_sink, is_there) = edge(v, t, g);
+    boost::tie(to_sink, is_there) = edge(v, t, g);
     if( is_there ){
       if( get(capacity, to_sink) > get(capacity, from_source) ){ 
         tCapMapValue to_augment = get(capacity, from_source);

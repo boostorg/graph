@@ -108,7 +108,7 @@ namespace boost {
 
     for (Size k = 0; k < N; ++k) {
       bool at_least_one_edge_relaxed = false;
-      for (tie(i, end) = edges(g); i != end; ++i) {
+      for (boost::tie(i, end) = edges(g); i != end; ++i) {
         v.examine_edge(*i, g);
         if (relax(*i, g, weight, pred, distance, combine, compare)) {
           at_least_one_edge_relaxed = true;
@@ -120,7 +120,7 @@ namespace boost {
         break;
     }
 
-    for (tie(i, end) = edges(g); i != end; ++i)
+    for (boost::tie(i, end) = edges(g); i != end; ++i)
       if (compare(combine(get(distance, source(*i, g)), get(weight, *i)),
                   get(distance, target(*i,g))))
       {
@@ -148,7 +148,7 @@ namespace boost {
       bellman_visitor<> null_vis;
       typedef typename property_traits<WeightMap>::value_type weight_type;
       typename graph_traits<VertexAndEdgeListGraph>::vertex_iterator v, v_end;
-      for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
+      for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
         put(distance, *v, (std::numeric_limits<weight_type>::max)());
         put(pred, *v, *v);
       }

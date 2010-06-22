@@ -107,7 +107,7 @@ int test_main(int argc, char* argv[])
   property_map < Graph, edge_capacity_t >::type cap = get(edge_capacity, g);
   std::list<tEdge> edges_copy;
   graph_traits<Graph>::edge_iterator ei, e_end;
-  tie(ei, e_end) = edges(g);  
+  boost::tie(ei, e_end) = edges(g);  
   std::copy(ei, e_end, std::back_insert_iterator< std::list<tEdge> >(edges_copy));
   while( ! edges_copy.empty()){
     tEdge old_edge=edges_copy.front();
@@ -116,7 +116,7 @@ int test_main(int argc, char* argv[])
     tVertex target_vertex = source(old_edge, g);
     bool inserted;
     tEdge new_edge;        
-    tie(new_edge,inserted) = add_edge(source_vertex, target_vertex, g); 
+    boost::tie(new_edge,inserted) = add_edge(source_vertex, target_vertex, g); 
     assert(inserted);
     rev[old_edge] = new_edge;
     rev[new_edge] = old_edge ;

@@ -31,7 +31,7 @@ main()
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {
     Edge e; bool inserted;
-    tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    boost::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
 #else
@@ -57,7 +57,7 @@ main()
     << " ratio=\"filled\"\n"
     << " edge[style=\"bold\"]\n" << " node[shape=\"circle\"]\n";
   graph_traits<Graph>::edge_iterator eiter, eiter_end;
-  for (tie(eiter, eiter_end) = edges(g); eiter != eiter_end; ++eiter) {
+  for (boost::tie(eiter, eiter_end) = edges(g); eiter != eiter_end; ++eiter) {
     fout << source(*eiter, g) << " -- " << target(*eiter, g);
     if (std::find(spanning_tree.begin(), spanning_tree.end(), *eiter)
         != spanning_tree.end())

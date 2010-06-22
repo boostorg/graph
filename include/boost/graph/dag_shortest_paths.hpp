@@ -46,7 +46,7 @@ namespace boost {
     depth_first_visit(g, s, topo_visitor, color);
 
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(distance, *ui, inf);
       put(pred, *ui, *ui);
     }
@@ -58,7 +58,7 @@ namespace boost {
       Vertex u = *i;
       vis.examine_vertex(u, g);
       typename graph_traits<VertexListGraph>::out_edge_iterator e, e_end;
-      for (tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
+      for (boost::tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
         vis.discover_vertex(target(*e, g), g);
         bool decreased = relax(*e, g, weight, pred, distance, 
                                combine, compare);

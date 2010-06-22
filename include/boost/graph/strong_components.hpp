@@ -54,7 +54,7 @@ namespace boost {
                          const Graph& g) {
         typename graph_traits<Graph>::vertex_descriptor w;
         typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
           w = target(*ei, g);
           if (get(comp, w) == (std::numeric_limits<comp_type>::max)())
             put(root, v, this->min_discover_time(get(root,v), get(root,w)));
@@ -249,7 +249,7 @@ namespace boost {
   {
     components.resize(num_scc);
     typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
       components[component_number[*vi]].push_back(*vi);
   }
 
@@ -304,7 +304,7 @@ namespace boost {
 
     // initialize G_T
     typename graph_traits<Graph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(G_T); ui != ui_end; ++ui)
+    for (boost::tie(ui, ui_end) = vertices(G_T); ui != ui_end; ++ui)
       put(color, *ui, Color::white());
 
     typedef typename property_traits<FinishTime>::value_type D;
@@ -314,8 +314,8 @@ namespace boost {
     std::priority_queue<Vertex, std::vector<Vertex>, Compare > Q(fl);
 
     typename graph_traits<Graph>::vertex_iterator i, j, iend, jend;
-    tie(i, iend) = vertices(G_T);
-    tie(j, jend) = vertices(G);
+    boost::tie(i, iend) = vertices(G_T);
+    boost::tie(j, jend) = vertices(G);
     for ( ; i != iend; ++i, ++j) {
       put(finish_time, *i, get(finish_time, *j));
        Q.push(*i);

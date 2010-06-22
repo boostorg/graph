@@ -481,11 +481,11 @@ namespace boost {
     leda::GRAPH<vtype,etype>& g)
   {
     typename graph_traits< leda::GRAPH<vtype,etype> >::out_edge_iterator ei, ei_end;
-    for (tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
+    for (boost::tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
       remove_edge(*ei);
 
     typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator iei, iei_end;
-    for (tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
+    for (boost::tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
       remove_edge(*iei);
   }
 
@@ -684,11 +684,11 @@ namespace boost {
     leda::graph& g)
   {
     graph_traits<leda::graph>::out_edge_iterator ei, ei_end;
-    for (tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
+    for (boost::tie(ei, ei_end)=out_edges(u,g); ei!=ei_end; ei++)
       remove_edge(*ei, g);
 
     graph_traits<leda::graph>::in_edge_iterator iei, iei_end;
-    for (tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
+    for (boost::tie(iei, iei_end)=in_edges(u,g); iei!=iei_end; iei++)
       remove_edge(*iei, g);
   }
 

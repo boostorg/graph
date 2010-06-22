@@ -85,8 +85,8 @@ main()
   std::cout << "c flow values:" << std::endl;
   graph_traits<Graph>::vertex_iterator u_iter, u_end;
   graph_traits<Graph>::out_edge_iterator ei, e_end;
-  for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-    for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+  for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+    for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] > 0)
         std::cout << "f " << *u_iter << " " << target(*ei, g) << " " 
                   << (capacity[*ei] - residual_capacity[*ei]) << std::endl;

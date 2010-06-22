@@ -35,12 +35,12 @@ main()
 
   graph_traits<graph_t>::vertex_iterator i, end;
   int id = 0;
-  for (tie(i, end) = vertices(g1); i != end; ++i, ++id) {
+  for (boost::tie(i, end) = vertices(g1); i != end; ++i, ++id) {
     put(v1_index_map, *i, id);
     v1[id] = *i;
   }
   id = 0;
-  for (tie(i, end) = vertices(g2); i != end; ++i, ++id) {
+  for (boost::tie(i, end) = vertices(g2); i != end; ++i, ++id) {
     put(v2_index_map, *i, id);
     v2[id] = *i;
   }

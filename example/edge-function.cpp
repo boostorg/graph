@@ -43,7 +43,7 @@ output_adjacent_vertices(std::ostream & out,
 {
   typename graph_traits < Graph >::adjacency_iterator vi, vi_end;
   out << get(name_map, u) << " -> { ";
-  for (tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
     out << get(name_map, *vi) << " ";
   out << "}" << std::endl;
 }
@@ -108,7 +108,7 @@ main()
   name_map_t name = get(vertex_name, g);
   // Get iterators for the vertex set
   graph_traits < graph_type >::vertex_iterator i, end;
-  tie(i, end) = vertices(g);
+  boost::tie(i, end) = vertices(g);
   // Find yow.h
   name_equals_t < name_map_t > predicate1("yow.h", name);
   yow = *std::find_if(i, end, predicate1);
@@ -123,13 +123,13 @@ main()
   bool exists;
 
   // Get the edge connecting yow.h to zag.o
-  tie(e1, exists) = edge(yow, zag, g);
+  boost::tie(e1, exists) = edge(yow, zag, g);
   assert(exists == true);
   assert(source(e1, g) == yow);
   assert(target(e1, g) == zag);
 
   // Discover that there is no edge connecting zag.o to bar.o
-  tie(e2, exists) = edge(zag, bar, g);
+  boost::tie(e2, exists) = edge(zag, bar, g);
   assert(exists == false);
 
   assert(num_vertices(g) == 15);

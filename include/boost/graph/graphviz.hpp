@@ -245,13 +245,13 @@ namespace boost {
 
     typename graph_traits<Graph>::vertex_iterator i, end;
 
-    for(tie(i,end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i,end) = vertices(g); i != end; ++i) {
       out << get(vertex_id, *i);
       vpw(out, *i); //print vertex attributes
       out << ";" << std::endl;
     }
     typename graph_traits<Graph>::edge_iterator ei, edge_end;
-    for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
+    for(boost::tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
       out << get(vertex_id, source(*ei, g)) << Traits::delimiter() << get(vertex_id, target(*ei, g)) << " ";
       epw(out, *ei); //print edge attributes
       out << ";" << std::endl;
@@ -346,7 +346,7 @@ namespace boost {
 #endif
 
       //print subgraph
-      for ( tie(i_child,j_child) = g.children();
+      for ( boost::tie(i_child,j_child) = g.children();
             i_child != j_child; ++i_child )
         write_graphviz_subgraph(out, *i_child, vertex_marker, edge_marker,
                                 vertex_id);
@@ -356,7 +356,7 @@ namespace boost {
       typename graph_traits<Graph>::vertex_iterator i, end;
       typename graph_traits<Graph>::edge_iterator ei, edge_end;
 
-      for(tie(i,end) = vertices(g); i != end; ++i) {
+      for(boost::tie(i,end) = vertices(g); i != end; ++i) {
         Vertex v = g.local_to_global(*i);
         int pos = get(vertex_id, v);
         if ( vertex_marker[pos] ) {
@@ -375,7 +375,7 @@ namespace boost {
         }
       }
 
-      for (tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
+      for (boost::tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
         Vertex u = g.local_to_global(source(*ei,g)),
           v = g.local_to_global(target(*ei, g));
         int pos = get(get(edge_index, g.root()), g.local_to_global(*ei));

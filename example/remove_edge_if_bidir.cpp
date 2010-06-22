@@ -79,7 +79,7 @@ main()
 
   int w = 0;
   graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     weight[*ei] = ++w;
 
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);

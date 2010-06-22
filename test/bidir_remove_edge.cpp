@@ -24,7 +24,7 @@ main(int, char*[])
 
     edge_prop p = { 42 };
     edge e; bool b;
-    tie(e, b) = add_edge(0, 1, p, g);
+    boost::tie(e, b) = add_edge(0, 1, p, g);
     BOOST_TEST( num_edges(g) == 1 );
     BOOST_TEST( g[e].weight == 42 );
     remove_edge(e, g);
@@ -37,7 +37,7 @@ main(int, char*[])
     graph g(2);
 
     edge e; bool b;
-    tie(e, b) = add_edge(0, 1, g);
+    boost::tie(e, b) = add_edge(0, 1, g);
     BOOST_TEST( num_edges(g) == 1 );
     remove_edge(e, g);
     BOOST_TEST( num_edges(g) == 0 );

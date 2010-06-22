@@ -29,7 +29,7 @@ main()
   std::string color[] = {
   "white", "gray", "black", "lightgray"};
   graph_traits < GraphvizDigraph >::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     vertex_attr_map[*vi]["color"] = color[component[*vi]];
     vertex_attr_map[*vi]["style"] = "filled";
     if (vertex_attr_map[*vi]["color"] == "black")
