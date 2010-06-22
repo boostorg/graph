@@ -455,7 +455,7 @@ int test_main(int argc, char* argv[])
   std::cout << "overloads flow: " << flow_overloads << std::endl;
   BOOST_CHECK(flow_bundles == flow_overloads);
 
-  // excessive test version where boykov-kolmogorov's algorithm invariants are
+  // excessive test version where Boykov-Kolmogorov's algorithm invariants are
   // checked
   long flow_invariants = test_algorithms_invariant(n_verts, n_edges, seed);
   std::cout << "invariants flow: " << flow_invariants << std::endl;

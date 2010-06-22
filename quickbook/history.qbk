@@ -56,7 +56,7 @@ The first release of BGL was September 27, 2000.
 
 * Version 1.35.0
   * New algorithms and components
-    * kolmogorov_max_flow, from Stephan Diederich as part of the 2006 Google Summer of Code.
+    * boykov_kolmogorov_max_flow (formerly kolmogorov_max_flow), from Stephan Diederich as part of the 2006 Google Summer of Code.
     * read_dimacs_max_flow and write_dimacs_max_flow for max-flow problems, from Stephan Diederich.
     * read_graphml and write_graphml for GraphML input/output, from Tiago de Paula Peixoto.
   * Enhancements

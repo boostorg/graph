@@ -37,7 +37,7 @@
 
 #include <boost/test/minimal.hpp>
 //three max_flows we test here
-#include <boost/graph/kolmogorov_max_flow.hpp>
+#include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
 #include <boost/graph/edmonds_karp_max_flow.hpp>
 //boost utilities we use
@@ -125,11 +125,11 @@ int test_main(int argc, char* argv[])
   
   typedef property_traits< property_map<Graph, edge_capacity_t>::const_type>::value_type tEdgeVal;
   
-  tEdgeVal kolmo = kolmogorov_max_flow(g,source_vertex,sink_vertex); 
+  tEdgeVal bk = boykov_kolmogorov_max_flow(g,source_vertex,sink_vertex); 
   tEdgeVal push_relabel = push_relabel_max_flow(g,source_vertex,sink_vertex);
   tEdgeVal edmonds_karp = edmonds_karp_max_flow(g,source_vertex,sink_vertex);
   
-  BOOST_REQUIRE( kolmo == push_relabel );
+  BOOST_REQUIRE( bk == push_relabel );
   BOOST_REQUIRE( push_relabel == edmonds_karp );
 
   return 0;

@@ -29,8 +29,8 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //    http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_KOLMOGOROV_MAX_FLOW_HPP
-#define BOOST_KOLMOGOROV_MAX_FLOW_HPP
+#ifndef BOOST_BOYKOV_KOLMOGOROV_MAX_FLOW_HPP
+#define BOOST_BOYKOV_KOLMOGOROV_MAX_FLOW_HPP
 
 #include <boost/config.hpp>
 #include <cassert>
@@ -155,7 +155,7 @@ class bk_max_flow {
       }
 
       // the complete class is protected, as we want access to members in
-      // derived test-class (see test/kolmogorov_max_flow_test.cpp)
+      // derived test-class (see test/boykov_kolmogorov_max_flow_test.cpp)
     protected:
       void augment_direct_paths(){
         // in a first step, we augment all direct paths from source->NODE->sink
