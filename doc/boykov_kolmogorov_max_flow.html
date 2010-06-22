@@ -114,7 +114,8 @@ residual capacities of each edge and adding it to the total flow. Additionally
 the minimum capacity is added to the residual capacity of the reverse edges. If
 no more paths in the residual-edge tree are found, the algorithm terminates.
 Instead of finding a new shortest path from source to sink in the graph in each
-iteration, Kolmogorov's version keeps the already found paths as follows:</P>
+iteration, the Boykov-Kolmogorov algorithm keeps the already found paths as
+follows:</P>
 
 <P>The algorithm builds up two search trees, a source-tree and a
 sink-tree. Each vertex has a label (stored in <I>ColorMap</I>) to
@@ -196,7 +197,7 @@ The following changes are made to improve performance:</P>
 	each vertex has a source and sink connect. During this step, all
 	vertices that have an unsaturated connection from source are added
 	to the active vertex list and so the source is not.</LI>
-	<LI>active vertices: Kolmogorov uses two lists for active nodes
+	<LI>active vertices: Boykov-Kolmogorov uses two lists for active nodes
 	and states that new active vertices are added to the rear of the
 	second. Fetching an active vertex is done from the beginning of the
 	first list. If the first list is empty, it is exchanged by the
