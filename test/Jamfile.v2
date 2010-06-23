@@ -112,7 +112,7 @@ test-suite graph_test :
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
-    [ run mcgregor_subgraphs_test.cpp ]
+    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph ]
     [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]

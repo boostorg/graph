@@ -26,6 +26,9 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
+#include <boost/regex.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace boost {
 
@@ -56,13 +59,24 @@ namespace boost {
     }
   };
 
+  template <typename T>
+  inline std::string escape_dot_string(const T& obj) {
+    static boost::regex valid_unquoted_id("[a-zA-Z\\0200-\\0377_][a-zA-Z\\0200-\\0377_0-9]*|-?(?:[.][0-9]*|[0-9]+(?:[.][0-9]*)?)");
+    std::string s(boost::lexical_cast<std::string>(obj));
+    if (boost::regex_match(s, valid_unquoted_id)) {
+      return s;
+    } else {
+      return "\"" + boost::algorithm::replace_all_copy(s, "\"", "\\\"") + "\"";
+    }
+  }
+
   template <class Name>
   class label_writer {
   public:
     label_writer(Name _name) : name(_name) {}
     template <class VertexOrEdge>
     void operator()(std::ostream& out, const VertexOrEdge& v) const {
-      out << "[label=\"" << get(name, v) << "\"]";
+      out << "[label=" << escape_dot_string(get(name, v)) << "]";
     }
   private:
     Name name;
@@ -93,7 +107,7 @@ namespace boost {
     iend = attr.end();
 
     while ( i != iend ) {
-      out << i->first << "=\"" << i->second << "\"";
+      out << i->first << "=" << escape_dot_string(i->second);
       ++i;
       if ( i != iend )
         out << ", ";
@@ -506,7 +520,7 @@ namespace boost {
           else out << ", ";
           first = false;
 
-          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+          out << i->first << "=" << escape_dot_string(i->second->get_string(key));
         }
       }
 
@@ -536,7 +550,7 @@ namespace boost {
           else out << ", ";
           first = false;
 
-          out << i->first << "=\"" << i->second->get_string(key) << "\"";
+          out << i->first << "=" << escape_dot_string(i->second->get_string(key));
         }
       }
 
