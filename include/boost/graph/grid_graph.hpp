@@ -101,6 +101,8 @@ namespace boost {
 
       typedef typename graph_traits<Graph>::vertex_descriptor result_type;
 
+      grid_graph_vertex_at() : m_graph(0) {}
+
       grid_graph_vertex_at(const Graph* graph) :
         m_graph(graph) { }
 
@@ -123,6 +125,8 @@ namespace boost {
 
     public:
       typedef typename graph_traits<Graph>::edge_descriptor result_type;
+
+      grid_graph_out_edge_at() : m_vertex(), m_graph(0) {}
 
       grid_graph_out_edge_at(vertex_descriptor source_vertex,
                              const Graph* graph) :
@@ -150,6 +154,8 @@ namespace boost {
     public:
       typedef typename graph_traits<Graph>::edge_descriptor result_type;
 
+      grid_graph_in_edge_at() : m_vertex(), m_graph(0) {}
+
       grid_graph_in_edge_at(vertex_descriptor target_vertex,
                             const Graph* graph) :
         m_vertex(target_vertex),
@@ -171,6 +177,8 @@ namespace boost {
     struct grid_graph_edge_at {
 
       typedef typename graph_traits<Graph>::edge_descriptor result_type;
+
+      grid_graph_edge_at() : m_graph(0) {}
 
       grid_graph_edge_at(const Graph* graph) :
         m_graph(graph) { }
