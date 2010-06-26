@@ -16,10 +16,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
-#include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/test/minimal.hpp>
+#include <boost/graph/iteration_macros.hpp>
 
 #define INITIALIZE_VERTEX 0
 #define DISCOVER_VERTEX 1
