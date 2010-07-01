@@ -52,7 +52,7 @@ astar_search
    CostInf inf, CostZero zero);
 
 <i>// Version that does not initialize property maps (used for implicit graphs)</i>
-template &lt;typename VertexListGraph, typename AStarHeuristic,
+template &lt;typename IncidenceGraph, typename AStarHeuristic,
           typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap, typename ColorMap,
@@ -61,8 +61,8 @@ template &lt;typename VertexListGraph, typename AStarHeuristic,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init
-  (VertexListGraph &amp;g,
-   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+  (IncidenceGraph &amp;g,
+   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
    DistanceMap distance, WeightMap weight,
