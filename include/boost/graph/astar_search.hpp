@@ -344,9 +344,6 @@ namespace boost {
        const Params& params)
     {
       typedef typename property_traits<WeightMap>::value_type D;
-      std::vector<D> distance_map;
-      std::vector<D> cost_map;
-      std::vector<default_color_type> color_map;
 
       detail::astar_dispatch2
         (g, s, h,
