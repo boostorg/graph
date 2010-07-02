@@ -28,7 +28,7 @@ template &lt;typename VertexListGraph,
           typename P, typename T, typename R&gt;
 void
 astar_search
-  (VertexListGraph &amp;g,
+  (const VertexListGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
@@ -42,7 +42,7 @@ template &lt;typename VertexListGraph, typename AStarHeuristic,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search
-  (VertexListGraph &amp;g,
+  (const VertexListGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
@@ -61,7 +61,7 @@ template &lt;typename IncidenceGraph, typename AStarHeuristic,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init
-  (IncidenceGraph &amp;g,
+  (const IncidenceGraph &amp;g,
    typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
    AStarHeuristic h, AStarVisitor vis,
    PredecessorMap predecessor, CostMap cost,
@@ -117,7 +117,10 @@ implementation of A* by creating special visitors that generate
 neighbors of newly-expanded vertices.  Please note that
 <tt>astar_search_no_init()</tt> must be used for implicit graphs; the basic
 <tt>astar_search()</tt> function requires a graph that models
-<a href="VertexListGraph.html"><tt>VertexListGraph</tt></a>.
+the <a href="VertexListGraph.html">Vertex List Graph</a> concept.  Both
+versions
+also require the graph type to model the <a
+href="IncidenceGraph.html">Incidence Graph</a> concept.
 </P>
 
 <P>
@@ -228,12 +231,21 @@ finish vertex <i>u</i>
 
 <h3>Parameters</h3>
 
-IN: <tt>VertexListGraph&amp; g</tt>
+IN: <tt>const VertexListGraph&amp; g</tt>
 <blockquote>
-  The graph object on which the algorithm will be applied.  The type
+  The graph object on which the algorithm will be applied for <tt>astar_search()</tt>.  The type
   <tt>VertexListGraph</tt> must be a model of the <a
   href="VertexListGraph.html">
-  Vertex List Graph</a> concept.
+  Vertex List Graph</a> and <a href="IncidenceGraph.html">Incidence Graph</a>
+  concepts.
+</blockquote>
+
+IN: <tt>const IncidenceGraph&amp; g</tt>
+<blockquote>
+  The graph object on which the algorithm will be applied for <tt>astar_search_no_init()</tt>.  The type
+  <tt>IncidenceGraph</tt> must be a model of the 
+  <a href="IncidenceGraph.html">Incidence Graph</a>
+  concept.
 </blockquote>
 
 IN: <tt>vertex_descriptor s</tt>
