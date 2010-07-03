@@ -15,6 +15,11 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/config.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/graph_concepts.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 namespace boost {
 
@@ -25,18 +30,17 @@ namespace boost {
     // unweighted selection of trees.
     // Algorithm is from http://en.wikipedia.org/wiki/Uniform_spanning_tree
     template <typename Graph, typename PredMap, typename ColorMap, typename NextEdge>
-    void random_spanning_tree_internal(const Graph& g, PredMap pred, ColorMap color, NextEdge next_edge) {
+    void random_spanning_tree_internal(const Graph& g, typename graph_traits<Graph>::vertex_descriptor s, PredMap pred, ColorMap color, NextEdge next_edge) {
       typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
       typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 
-      assert (num_vertices(g) >= 2); // g must also be undirected (or symmetric) and connected
+      assert (num_vertices(g) >= 1); // g must also be undirected (or symmetric) and connected
 
       typedef color_traits<typename property_traits<ColorMap>::value_type> color_gen;
       BGL_FORALL_VERTICES_T(v, g, Graph) put(color, v, color_gen::white());
 
       std::vector<vertex_descriptor> path;
 
-      vertex_descriptor s = *vertices(g).first;
       put(color, s, color_gen::black());
       put(pred, s, graph_traits<Graph>::null_vertex());
 
@@ -55,46 +59,46 @@ namespace boost {
     }
   }
 
-  // Compute a uniformly-distributed spanning tree on a graph.
-  template <typename Graph, typename PredMap, typename ColorMap, typename Gen>
-  void random_spanning_tree(const Graph& g, PredMap pred, Gen& gen, ColorMap color) {
+  // Compute a uniformly-distributed spanning tree on a graph.  Use Wilson's algorithm:
+  // @inproceedings{wilson96generating,
+  //    author = {Wilson, David Bruce},
+  //    title = {Generating random spanning trees more quickly than the cover time},
+  //    booktitle = {STOC '96: Proceedings of the twenty-eighth annual ACM symposium on Theory of computing},
+  //    year = {1996},
+  //    isbn = {0-89791-785-5},
+  //    pages = {296--303},
+  //    location = {Philadelphia, Pennsylvania, United States},
+  //    doi = {http://doi.acm.org/10.1145/237814.237880},
+  //    publisher = {ACM},
+  //    address = {New York, NY, USA},
+  //  }
+  //
+  template <typename Graph, typename Gen, typename PredMap, typename ColorMap>
+  void random_spanning_tree(const Graph& g, Gen& gen, typename graph_traits<Graph>::vertex_descriptor root,
+                            PredMap pred, static_property_map<double>, ColorMap color) {
     unweighted_random_out_edge_gen<Graph, Gen> random_oe(gen);
-    detail::random_spanning_tree_internal(g, pred, color, random_oe);
-  }
-
-  // Compute a uniformly-distributed spanning tree on a graph.
-  template <typename Graph, typename PredMap, typename Gen>
-  void random_spanning_tree(const Graph& g, PredMap pred, Gen& gen) {
-    std::vector<default_color_type> color_data(num_vertices(g));
-    random_spanning_tree(g, pred, gen, make_iterator_property_map(color_data.begin(), get(vertex_index, g)));
+    detail::random_spanning_tree_internal(g, root, pred, color, random_oe);
   }
 
   // Compute a weight-distributed spanning tree on a graph.
-  // Weighting works according to:
-  // @article{Mosbah1999263,
-  //   title = "Non-uniform random spanning trees on weighted graphs",
-  //   journal = "Theoretical Computer Science",
-  //   volume = "218",
-  //   number = "2",
-  //   pages = "263--271",
-  //   year = "1999",
-  //   note = "",
-  //   issn = "0304-3975",
-  //   doi = "DOI: 10.1016/S0304-3975(98)00325-9",
-  //   url = "http://www.sciencedirect.com/science/article/B6V1G-3WSV1D9-P/2/06bea092e23163c4884844cde4a5e92c",
-  //   author = "M. Mosbah and N. Saheb"
-  // }
-  template <typename Graph, typename PredMap, typename WeightMap, typename ColorMap, typename Gen>
-  void weighted_random_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, Gen& gen, ColorMap color) {
+  template <typename Graph, typename Gen, typename PredMap, typename WeightMap, typename ColorMap>
+  void random_spanning_tree(const Graph& g, Gen& gen, typename graph_traits<Graph>::vertex_descriptor root,
+                            PredMap pred, WeightMap weight, ColorMap color) {
     weighted_random_out_edge_gen<Graph, WeightMap, Gen> random_oe(weight, gen);
-    detail::random_spanning_tree_internal(g, pred, color, random_oe);
+    detail::random_spanning_tree_internal(g, root, pred, color, random_oe);
   }
 
-  // Compute a weight-distributed spanning tree on a graph.
-  template <typename Graph, typename PredMap, typename WeightMap, typename Gen>
-  void weighted_random_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, Gen& gen) {
-    std::vector<default_color_type> color_data(num_vertices(g));
-    weighted_random_spanning_tree(g, pred, weight, gen, make_iterator_property_map(color_data.begin(), get(vertex_index, g)));
+  template <typename Graph, typename Gen, typename P, typename T, typename R>
+  void random_spanning_tree(const Graph& g, Gen& gen, const bgl_named_params<P, T, R>& params) {
+    using namespace boost::graph::keywords;
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    random_spanning_tree(g,
+                         gen,
+                         arg_pack[_root_vertex | *vertices(g).first],
+                         arg_pack[_predecessor_map],
+                         arg_pack[_weight_map | static_property_map<double>(1.)],
+                         boost::detail::color_map_maker<Graph, arg_pack_type>::make_map(g, arg_pack));
   }
 }
 
