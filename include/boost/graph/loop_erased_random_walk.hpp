@@ -19,6 +19,13 @@
 
 namespace boost {
 
+  struct loop_erased_random_walk_stuck : public std::exception {
+    virtual ~loop_erased_random_walk_stuck() throw() {}
+    inline virtual const char* what() const throw() {
+      return "Loop-erased random walk found a vertex with no out-edges";
+    }
+  };
+
   // Do a loop-erased random walk from vertex s to any vertex colored black (or
   // actually any color other than white or gray) in the color map.  The color
   // white is for vertices that are not part of the path, while gray is for
@@ -86,6 +93,7 @@ namespace boost {
 
     typename gt::edge_descriptor
     operator()(typename gt::vertex_descriptor src, const Graph& g) const {
+      if (out_degree(src, g) == 0) throw loop_erased_random_walk_stuck();
       return boost::random_out_edge(g, src, gen);
     }
   };
@@ -102,6 +110,7 @@ namespace boost {
 
     typename gt::edge_descriptor
     operator()(typename gt::vertex_descriptor src, const Graph& g) const {
+      if (out_degree(src, g) == 0) throw loop_erased_random_walk_stuck();
       return boost::weighted_random_out_edge(g, src, weight, gen);
     }
   };
