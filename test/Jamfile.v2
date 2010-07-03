@@ -84,7 +84,7 @@ test-suite graph_test :
     [ run king_ordering.cpp ]
     [ run matching_test.cpp ]
     [ run max_flow_test.cpp ]
-    [ run kolmogorov_max_flow_test.cpp ]
+    [ run boykov_kolmogorov_max_flow_test.cpp ]
     [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
@@ -112,10 +112,11 @@ test-suite graph_test :
     [ run clustering_coefficient.cpp ]
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
-    [ run mcgregor_subgraphs_test.cpp ]
+    [ run mcgregor_subgraphs_test.cpp ../build//boost_graph ]
     [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]
+    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     ;
 

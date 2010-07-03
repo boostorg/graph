@@ -185,11 +185,11 @@ template<typename VertexProperty,
          typename EdgeIndex>
 class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex>
    : public detail::indexed_vertex_properties<BOOST_DIR_CSR_GRAPH_TYPE,
-                                              VertexProperty, Vertex, identity_property_map>
+                                              VertexProperty, Vertex, typed_identity_property_map<Vertex> >
 {
  public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
-                                            VertexProperty, Vertex, identity_property_map>
+                                            VertexProperty, Vertex, typed_identity_property_map<Vertex> >
     inherited_vertex_properties;
 
  public:
@@ -264,7 +264,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_property(prop)
   {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, identity_property_map(), keep_all());
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, typed_identity_property_map<vertices_size_type>(), keep_all());
   }
 
   //  From number of vertices and unsorted list of edges, plus edge properties
@@ -277,7 +277,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_forward(), m_property(prop)
   {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, identity_property_map(), keep_all());
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, typed_identity_property_map<vertices_size_type>(), keep_all());
   }
 
   //  From number of vertices and unsorted list of edges, with filter and
@@ -320,7 +320,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : m_property(prop)
   {
-    m_forward.assign_from_sorted_edges(edge_begin, edge_end, identity_property_map(), keep_all(), numverts, numedges);
+    m_forward.assign_from_sorted_edges(edge_begin, edge_end, typed_identity_property_map<vertices_size_type>(), keep_all(), numverts, numedges);
     inherited_vertex_properties::resize(numverts);
   }
 
@@ -334,7 +334,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : m_property(prop)
   {
-    m_forward.assign_from_sorted_edges(edge_begin, edge_end, ep_iter, identity_property_map(), keep_all(), numverts, numedges);
+    m_forward.assign_from_sorted_edges(edge_begin, edge_end, ep_iter, typed_identity_property_map<vertices_size_type>(), keep_all(), numverts, numedges);
     inherited_vertex_properties::resize(numverts);
   }
 
@@ -377,7 +377,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_property(prop)
   {
-    m_forward.assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
+    m_forward.assign_sources_and_targets_global(sources, targets, numverts, boost::typed_identity_property_map<vertices_size_type>());
   }
 
   //  From number of vertices and mutable vectors of sources and targets,
@@ -408,7 +408,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_property(prop)
   {
-    m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::identity_property_map());
+    m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::typed_identity_property_map<vertices_size_type>());
   }
 
   //  From number of vertices and mutable vectors of sources and targets and
@@ -441,7 +441,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     std::vector<vertex_descriptor> sources, targets;
     boost::graph::detail::split_into_separate_coords
       (edge_begin, edge_end, sources, targets);
-    m_forward.assign_sources_and_targets_global(sources, targets, numverts, boost::identity_property_map());
+    m_forward.assign_sources_and_targets_global(sources, targets, numverts, boost::typed_identity_property_map<vertices_size_type>());
   }
 
   //  From number of vertices and single-pass range of unsorted edges and
@@ -463,7 +463,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
     for (size_t i = 0; i < numedges; ++i) {
       edge_props[i] = *ep_iter++;
     }
-    m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::identity_property_map());
+    m_forward.assign_sources_and_targets_global(sources, targets, edge_props, numverts, boost::typed_identity_property_map<vertices_size_type>());
   }
 
   //  From number of vertices and single-pass range of unsorted edges.  Data is
@@ -602,7 +602,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
       BidirectionalIteratorOrig first_sorted,
       BidirectionalIteratorOrig last_sorted,
       EPIterOrig ep_iter_sorted)  {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, identity_property_map());
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, typed_identity_property_map<vertices_size_type>());
   }
 
   // Add edges from a sorted (smallest sources first) range of pairs
@@ -653,7 +653,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
   template <typename InputIterator>
   inline void
   add_edges_internal(InputIterator first, InputIterator last) {
-    this->add_edges_internal(first, last, identity_property_map());
+    this->add_edges_internal(first, last, typed_identity_property_map<vertices_size_type>());
   }
 
   // Add edges from a range of (source, target) pairs and edge properties that
@@ -699,7 +699,7 @@ class compressed_sparse_row_graph<directedS, VertexProperty, EdgeProperty, Graph
   inline void
   add_edges_internal(InputIterator first, InputIterator last,
                      EPIterator ep_iter, EPIterator ep_iter_end) {
-    this->add_edges_internal(first, last, ep_iter, ep_iter_end, identity_property_map());
+    this->add_edges_internal(first, last, ep_iter, ep_iter_end, typed_identity_property_map<vertices_size_type>());
   }
 
   using inherited_vertex_properties::operator[];
@@ -728,11 +728,11 @@ template<typename VertexProperty,
          typename EdgeIndex>
 class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex>
    : public detail::indexed_vertex_properties<BOOST_BIDIR_CSR_GRAPH_TYPE,
-                                              VertexProperty, Vertex, identity_property_map>
+                                              VertexProperty, Vertex, typed_identity_property_map<Vertex> >
 {
  public:
   typedef detail::indexed_vertex_properties<compressed_sparse_row_graph,
-                                            VertexProperty, Vertex, identity_property_map>
+                                            VertexProperty, Vertex, typed_identity_property_map<Vertex> >
     inherited_vertex_properties;
 
  public:
@@ -808,7 +808,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
            (*this, get(vertex_index, *this), e.second)),
        boost::counting_iterator<EdgeIndex>(0),
        m_forward.m_rowstart.size() - 1,
-       identity_property_map(),
+       typed_identity_property_map<Vertex>(),
        keep_all());
   }
 
@@ -823,7 +823,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_property(prop)
   {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, identity_property_map(), keep_all());
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, numverts, typed_identity_property_map<Vertex>(), keep_all());
     set_up_backward_property_links();
   }
 
@@ -837,7 +837,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
                               const GraphProperty& prop = GraphProperty())
     : inherited_vertex_properties(numverts), m_forward(), m_property(prop)
   {
-    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, identity_property_map(), keep_all());
+    m_forward.assign_unsorted_multi_pass_edges(edge_begin, edge_end, ep_iter, numverts, typed_identity_property_map<Vertex>(), keep_all());
     set_up_backward_property_links();
   }
 
@@ -969,7 +969,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
       BidirectionalIteratorOrig first_sorted,
       BidirectionalIteratorOrig last_sorted,
       EPIterOrig ep_iter_sorted)  {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, identity_property_map());
+    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, typed_identity_property_map<Vertex>());
   }
 
   // Add edges from a sorted (smallest sources first) range of pairs
@@ -1020,7 +1020,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
   template <typename InputIterator>
   inline void
   add_edges_internal(InputIterator first, InputIterator last) {
-    this->add_edges_internal(first, last, identity_property_map());
+    this->add_edges_internal(first, last, typed_identity_property_map<Vertex>());
   }
 
   // Add edges from a range of (source, target) pairs and edge properties that
@@ -1066,7 +1066,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
   inline void
   add_edges_internal(InputIterator first, InputIterator last,
                      EPIterator ep_iter, EPIterator ep_iter_end) {
-    this->add_edges_internal(first, last, ep_iter, ep_iter_end, identity_property_map());
+    this->add_edges_internal(first, last, ep_iter, ep_iter_end, typed_identity_property_map<Vertex>());
   }
 
   using inherited_vertex_properties::operator[];
@@ -1397,7 +1397,7 @@ get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag)
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
 struct property_map<BOOST_CSR_GRAPH_TYPE, vertex_index_t>
 {
-  typedef identity_property_map type;
+  typedef typed_identity_property_map<Vertex> type;
   typedef type const_type;
 };
 
@@ -1423,10 +1423,10 @@ struct property_map<BOOST_CSR_GRAPH_TYPE, edge_bundle_t>
 };
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline identity_property_map
+inline typed_identity_property_map<Vertex>
 get(vertex_index_t, const BOOST_CSR_GRAPH_TYPE&)
 {
-  return identity_property_map();
+  return typed_identity_property_map<Vertex>();
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>

@@ -61,7 +61,7 @@ int main()
 
   std::cout << "unfiltered edge_range(C,D)\n";
   graph_traits<Graph>::out_edge_iterator f, l;
-  for (tie(f, l) = edge_range(C, D, g); f != l; ++f)
+  for (boost::tie(f, l) = edge_range(C, D, g); f != l; ++f)
     std::cout << name[source(*f, g)] << " --" << weight[*f]
               << "-> " <<  name[target(*f, g)] << "\n";
 
@@ -71,7 +71,7 @@ int main()
 
   std::cout << "filtered edge_range(C,D)\n";
   graph_traits<FGraph>::out_edge_iterator first, last;
-  for (tie(first, last) = edge_range(C, D, fg); first != last; ++first)
+  for (boost::tie(first, last) = edge_range(C, D, fg); first != last; ++first)
     std::cout << name[source(*first, fg)] << " --" << weight[*first]
               << "-> " <<  name[target(*first, fg)] << "\n";
   

@@ -291,7 +291,7 @@ namespace boost {
     predecessor_recorder_t predecessor_recorder (predecessor_map);
 
     /// Initialize predecessor map
-    for (tie (vertex_iter, vertex_end) = vertices (graph); vertex_iter != vertex_end; ++vertex_iter)
+    for (boost::tie (vertex_iter, vertex_end) = vertices (graph); vertex_iter != vertex_end; ++vertex_iter)
     {
       put (predecessor_map, *vertex_iter, *vertex_iter);
     }

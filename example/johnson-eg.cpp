@@ -73,7 +73,7 @@ main()
     << "edge[style=\"bold\"]\n" << "node[shape=\"circle\"]\n";
 
   graph_traits < Graph >::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     fout << source(*ei, g) << " -> " << target(*ei, g)
       << "[label=" << get(edge_weight, g)[*ei] << "]\n";
 

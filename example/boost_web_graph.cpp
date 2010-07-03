@@ -116,7 +116,7 @@ main()
 
     std::list<std::string>::iterator i = line_toks.begin();
 
-    tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
+    boost::tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       put(node_name, u, *i);
@@ -127,7 +127,7 @@ main()
 
     std::string hyperlink_name = *i++;
       
-    tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
+    boost::tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       v = add_vertex(g);
       put(node_name, v, *i);
@@ -136,7 +136,7 @@ main()
       v = pos->second;
 
     Edge e;
-    tie(e, inserted) = add_edge(u, v, g);
+    boost::tie(e, inserted) = add_edge(u, v, g);
     if (inserted) {
       put(link_name, e, hyperlink_name);
     }
@@ -170,7 +170,7 @@ main()
 
   std::cout << "Number of clicks from the home page: " << std::endl;
   Traits::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     std::cout << d_matrix[0][*vi] << "\t" << node_name[*vi] << std::endl;
   std::cout << std::endl;
   
@@ -179,7 +179,7 @@ main()
 
   // Create storage for a mapping from vertices to their parents
   std::vector<Traits::vertex_descriptor> parent(num_vertices(g));
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     parent[*vi] = *vi;
 
   // Do a BFS starting at the home page, recording the parent of each
@@ -192,7 +192,7 @@ main()
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));
-  tie(vi, vi_end) = vertices(g);
+  boost::tie(vi, vi_end) = vertices(g);
   ++vi;
   for (; vi != vi_end; ++vi)
     add_edge(parent[*vi], *vi, search_tree);
@@ -205,7 +205,7 @@ main()
   std::vector<size_type> dfs_distances(num_vertices(g), 0);
   print_tree_visitor<NameMap, size_type*>
     tree_printer(node_name, &dfs_distances[0]);
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
   depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
   

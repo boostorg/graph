@@ -592,7 +592,7 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::out_edge_iterator first, last;
-      tie(first, last) = out_edges(u, g);
+      boost::tie(first, last) = out_edges(u, g);
       typedef typename Config::edge_parallel_category edge_parallel_category;
       detail::remove_directed_edge_if_dispatch
         (first, last, g.out_edge_list(u), pred, edge_parallel_category());
@@ -606,7 +606,7 @@ namespace boost {
       graph_type& g = static_cast<graph_type&>(g_);
 
       typename Config::vertex_iterator vi, vi_end;
-      for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+      for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
         remove_out_edge_if(*vi, pred, g);
     }
 
@@ -921,7 +921,7 @@ namespace boost {
       typedef typename Config::OutEdgeList::value_type::property_type PropT;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::out_edge_iterator first, last;
-      tie(first, last) = out_edges(u, g);
+      boost::tie(first, last) = out_edges(u, g);
       typedef typename Config::edge_parallel_category Cat;
       detail::undirected_remove_out_edge_if_dispatch<PropT>
         (g, first, last, g.out_edge_list(u), pred, Cat());
@@ -948,7 +948,7 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::edge_iterator ei, ei_end, next;
-      tie(ei, ei_end) = edges(g);
+      boost::tie(ei, ei_end) = edges(g);
       for (next = ei; ei != ei_end; ei = next) {
         ++next;
         if (pred(*ei))
@@ -1118,7 +1118,7 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       graph_type& g = static_cast<graph_type&>(g_);
       typename Config::edge_iterator ei, ei_end, next;
-      tie(ei, ei_end) = edges(g);
+      boost::tie(ei, ei_end) = edges(g);
       for (next = ei; ei != ei_end; ei = next) {
         ++next;
         if (pred(*ei))
@@ -1279,7 +1279,7 @@ namespace boost {
       // First remove the edges from the targets' in-edge lists and
       // from the graph's edge set list.
       typename Config::out_edge_iterator out_i, out_end;
-      for (tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
+      for (boost::tie(out_i, out_end) = out_edges(u, g); out_i != out_end; ++out_i)
         if (pred(*out_i)) {
           detail::remove_directed_edge_dispatch
             (*out_i, in_edge_list(g, target(*out_i, g)),
@@ -1291,7 +1291,7 @@ namespace boost {
 
       // Now remove the edges from this out-edge list.
       typename Config::out_edge_iterator first, last;
-      tie(first, last) = out_edges(u, g);
+      boost::tie(first, last) = out_edges(u, g);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_directed_edge_if_dispatch
         (first, last, g.out_edge_list(u), pred, Cat());
@@ -1320,7 +1320,7 @@ namespace boost {
       // First remove the edges from the sources' out-edge lists and
       // from the graph's edge set list.
       typename Config::in_edge_iterator in_i, in_end;
-      for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+      for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
         if (pred(*in_i)) {
           typename Config::vertex_descriptor u = source(*in_i, g);
           detail::remove_directed_edge_dispatch
@@ -1331,7 +1331,7 @@ namespace boost {
         }
       // Now remove the edges from this in-edge list.
       typename Config::in_edge_iterator first, last;
-      tie(first, last) = in_edges(v, g);
+      boost::tie(first, last) = in_edges(v, g);
       typedef typename Config::edge_parallel_category Cat;
       detail::remove_directed_edge_if_dispatch
         (first, last, in_edge_list(g, v), pred, Cat());
@@ -1650,7 +1650,7 @@ namespace boost {
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator first, last;
       typename Config::EdgeContainer fake_edge_container;
-      tie(first, last) = graph_detail::
+      boost::tie(first, last) = graph_detail::
         equal_range(el, StoredEdge(v, fake_edge_container.end(),
                                    &fake_edge_container));
       return std::make_pair(out_edge_iterator(first, u),
@@ -1873,7 +1873,7 @@ namespace boost {
         // Copy the stored vertex objects by adding each vertex
         // and copying its property object.
         vertex_iterator vi, vi_end;
-        for (tie(vi, vi_end) = vertices(x); vi != vi_end; ++vi) {
+        for (boost::tie(vi, vi_end) = vertices(x); vi != vi_end; ++vi) {
           stored_vertex* v = (stored_vertex*)add_vertex(*this);
           v->m_property = ((stored_vertex*)*vi)->m_property;
           vertex_map[(stored_vertex*)*vi] = v;
@@ -1881,12 +1881,12 @@ namespace boost {
         // Copy the edges by adding each edge and copying its
         // property object.
         edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
           edge_descriptor e;
           bool inserted;
           vertex_descriptor s = source(*ei,x), t = target(*ei,x);
-          tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s],
-                                      vertex_map[(stored_vertex*)t], *this);
+          boost::tie(e, inserted) = add_edge(vertex_map[(stored_vertex*)s],
+                                             vertex_map[(stored_vertex*)t], *this);
           *((edge_property_type*)e.m_eproperty)
             = *((edge_property_type*)(*ei).m_eproperty);
         }
@@ -2154,10 +2154,10 @@ namespace boost {
         // Copy the edges by adding each edge and copying its
         // property object.
         edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = edges(x); ei != ei_end; ++ei) {
           edge_descriptor e;
           bool inserted;
-          tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
+          boost::tie(e, inserted) = add_edge(source(*ei,x), target(*ei,x) , *this);
           *((edge_property_type*)e.m_eproperty)
             = *((edge_property_type*)(*ei).m_eproperty);
         }

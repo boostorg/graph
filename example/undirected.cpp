@@ -27,10 +27,10 @@ undirected_graph_demo1()
   add_edge(one, two, undigraph);
 
   std::cout << "out_edges(0): ";
-  for (tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
+  for (boost::tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
     std::cout << *out;
   std::cout << std::endl << "in_edges(0): ";
-  for (tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
+  for (boost::tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
     std::cout << *in;
   std::cout << std::endl;
 }
@@ -51,8 +51,8 @@ directed_graph_demo()
   v = vertex(1, digraph);
   add_edge(u, v, Weight(1.2), digraph);
   add_edge(v, u, Weight(2.4), digraph);
-  tie(e1, found) = edge(u, v, digraph);
-  tie(e2, found) = edge(v, u, digraph);
+  boost::tie(e1, found) = edge(u, v, digraph);
+  boost::tie(e2, found) = edge(v, u, digraph);
   std::cout << "in a directed graph is ";
 #ifdef __GNUC__
   // no boolalpha
@@ -80,8 +80,8 @@ undirected_graph_demo2()
   u = vertex(0, undigraph);
   v = vertex(1, undigraph);
   add_edge(u, v, Weight(3.1), undigraph);
-  tie(e1, found) = edge(u, v, undigraph);
-  tie(e2, found) = edge(v, u, undigraph);
+  boost::tie(e1, found) = edge(u, v, undigraph);
+  boost::tie(e2, found) = edge(v, u, undigraph);
   std::cout << "in an undirected graph is ";
 #ifdef __GNUC__
   std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;

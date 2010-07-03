@@ -51,7 +51,7 @@ struct vertex_index_installer<undirected_list_graph>
     
     vertex_iterator_t vi, vi_end;
     v_size_t i = 0;
-    for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi, ++i)
+    for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi, ++i)
       put(vertex_index, g, *vi, i);
   }
 };
@@ -66,8 +66,8 @@ void complete_graph(Graph& g, int n)
 
   g = Graph(n);
   vertex_iterator_t vi, vi_end, wi;
-  tie(vi,vi_end) = vertices(g);
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  boost::tie(vi,vi_end) = vertices(g);
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     {
       wi = vi;
       ++wi;
@@ -92,7 +92,7 @@ void gabows_graph(Graph& g, int n)
 
   vertex_iterator_t vi, vi_end, ui, ui_end, halfway;
 
-  tie(ui,ui_end) = vertices(g);
+  boost::tie(ui,ui_end) = vertices(g);
 
   halfway = ui;
   for(int i = 0; i < n; ++i)
@@ -111,7 +111,7 @@ void gabows_graph(Graph& g, int n)
       ++ui;
     }
 
-  tie(ui,ui_end) = vertices(g);
+  boost::tie(ui,ui_end) = vertices(g);
 
   while(halfway != ui_end)
     {
@@ -233,7 +233,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
   
   //Now remove an edge from the edmonds_mate matching.
   vertex_iterator_t vi,vi_end;
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     if (edmonds_mate[*vi] != graph_traits<Graph>::null_vertex())
       break;
   
@@ -299,7 +299,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
       vertex_descriptor_t v = random_vertex(j,rand_num);
       if (u != v)
         {
-          tie(tuples::ignore, success) = add_edge(u, v, j);
+          boost::tie(tuples::ignore, success) = add_edge(u, v, j);
           if (success)
             num_edges++;
         }
@@ -316,7 +316,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     }
 
   //Now remove an edge from the random_mate matching.
-  for(tie(vi,vi_end) = vertices(j); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(j); vi != vi_end; ++vi)
     if (random_mate[*vi] != graph_traits<Graph>::null_vertex())
       break;
   

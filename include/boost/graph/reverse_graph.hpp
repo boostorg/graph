@@ -220,7 +220,7 @@ adjacent_vertices(typename graph_traits<BidirectionalGraph>::vertex_descriptor u
 {
     typedef reverse_graph<BidirectionalGraph,GRef> Graph;
     typename graph_traits<Graph>::out_edge_iterator first, last;
-    tie(first, last) = out_edges(u, g);
+    boost::tie(first, last) = out_edges(u, g);
     typedef typename graph_traits<Graph>::adjacency_iterator adjacency_iterator;
     return std::make_pair(adjacency_iterator(first, const_cast<Graph*>(&g)),
                           adjacency_iterator(last, const_cast<Graph*>(&g)));

@@ -359,7 +359,7 @@ void r_c_shortest_paths_dispatch
       typename graph_traits<Graph>::vertex_descriptor cur_vertex = 
         cur_label->resident_vertex;
       typename graph_traits<Graph>::out_edge_iterator oei, oei_end;
-      for( tie( oei, oei_end ) = out_edges( cur_vertex, g ); 
+      for( boost::tie( oei, oei_end ) = out_edges( cur_vertex, g ); 
            oei != oei_end; 
            ++oei )
       {

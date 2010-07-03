@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   std::cout << n << " vertices, " << num_edges(g) << " edges.\n";
   uniform_real<double> rand01(0.0, 1.0);
   graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     put(edge_weight, g, *ei, rand01(gen));
 
   std::vector<double> binary_heap_distances(n);

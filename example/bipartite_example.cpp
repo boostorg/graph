@@ -41,7 +41,7 @@ void print_bipartite (const Graph& g)
 
     is_bipartite (g, get (vertex_index, g), partition_map);
 
-    for (tie (vertex_iter, vertex_end) = vertices (g); vertex_iter != vertex_end; ++vertex_iter)
+    for (boost::tie (vertex_iter, vertex_end) = vertices (g); vertex_iter != vertex_end; ++vertex_iter)
     {
       std::cout << "Vertex " << *vertex_iter << " has color " << (get (partition_map, *vertex_iter) == color_traits <
           default_color_type>::white () ? "white" : "black") << std::endl;

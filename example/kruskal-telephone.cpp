@@ -25,7 +25,7 @@ main()
   property_map < GraphvizGraph, edge_attribute_t >::type
     edge_attr_map = get(edge_attribute, g_dot);
   graph_traits < GraphvizGraph >::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
     int weight = lexical_cast < int >(edge_attr_map[*ei]["label"]);
     property < edge_weight_t, int >edge_property(weight);
     add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);

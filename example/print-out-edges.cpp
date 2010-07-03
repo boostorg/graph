@@ -42,7 +42,7 @@ output_out_edges(std::ostream & out, const Graph & g,
                  VertexNameMap name_map)
 {
   typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
     out << get(name_map, source(*ei, g)) << " -> "
       << get(name_map, target(*ei, g)) << std::endl;
 }
@@ -100,7 +100,7 @@ main()
   read_graph_file(file_in, name_in, g, name_map);
 
   graph_traits < graph_type >::vertex_iterator i, end;
-  tie(i, end) = vertices(g);
+  boost::tie(i, end) = vertices(g);
   typedef property_map < graph_type, vertex_name_t >::type name_map_t;
   name_equals_t < name_map_t > predicate("dax.h", get(vertex_name, g));
   i = std::find_if(i, end, predicate);

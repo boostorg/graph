@@ -46,13 +46,13 @@ void merge_vertex
   typedef boost::graph_traits<Graph> Traits;
   typename Traits::edge_descriptor e;
   typename Traits::out_edge_iterator out_i, out_end;
-  for (tie(out_i, out_end) = out_edges(v, g); out_i != out_end; ++out_i) {
+  for (boost::tie(out_i, out_end) = out_edges(v, g); out_i != out_end; ++out_i) {
     e = *out_i;
     typename Traits::vertex_descriptor targ = target(e, g);
     add_edge(u, targ, getp(e), g);
   }
   typename Traits::in_edge_iterator in_i, in_end;
-  for (tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i) {
+  for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i) {
     e = *in_i;
     typename Traits::vertex_descriptor src = source(e, g);
     add_edge(src, u, getp(e), g);

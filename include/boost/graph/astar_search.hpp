@@ -83,18 +83,18 @@ namespace boost {
       : bfs_visitor<Visitors>(vis) {}
 
     template <class Edge, class Graph>
-    void edge_relaxed(Edge e, Graph& g) {
+    void edge_relaxed(Edge e, const Graph& g) {
       invoke_visitors(this->m_vis, e, g, on_edge_relaxed());
     }
     template <class Edge, class Graph>
-    void edge_not_relaxed(Edge e, Graph& g) {
+    void edge_not_relaxed(Edge e, const Graph& g) {
       invoke_visitors(this->m_vis, e, g, on_edge_not_relaxed());
     }
   private:
     template <class Edge, class Graph>
-    void tree_edge(Edge e, Graph& g) {}
+    void tree_edge(Edge e, const Graph& g) {}
     template <class Edge, class Graph>
-    void non_tree_edge(Edge e, Graph& g) {}
+    void non_tree_edge(Edge e, const Graph& g) {}
   };
   template <class Visitors>
   astar_visitor<Visitors>
@@ -130,34 +130,34 @@ namespace boost {
 
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g) {
+      void initialize_vertex(Vertex u, const Graph& g) {
         m_vis.initialize_vertex(u, g);
       }
       template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) {
+      void discover_vertex(Vertex u, const Graph& g) {
         m_vis.discover_vertex(u, g);
       }
       template <class Vertex, class Graph>
-      void examine_vertex(Vertex u, Graph& g) {
+      void examine_vertex(Vertex u, const Graph& g) {
         m_vis.examine_vertex(u, g);
       }
       template <class Vertex, class Graph>
-      void finish_vertex(Vertex u, Graph& g) {
+      void finish_vertex(Vertex u, const Graph& g) {
         m_vis.finish_vertex(u, g);
       }
       template <class Edge, class Graph>
-      void examine_edge(Edge e, Graph& g) {
+      void examine_edge(Edge e, const Graph& g) {
         if (m_compare(get(m_weight, e), m_zero))
           BOOST_THROW_EXCEPTION(negative_edge());
         m_vis.examine_edge(e, g);
       }
       template <class Edge, class Graph>
-      void non_tree_edge(Edge, Graph&) {}
+      void non_tree_edge(Edge, const Graph&) {}
 
 
 
       template <class Edge, class Graph>
-      void tree_edge(Edge e, Graph& g) {
+      void tree_edge(Edge e, const Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
@@ -172,7 +172,7 @@ namespace boost {
 
 
       template <class Edge, class Graph>
-      void gray_target(Edge e, Graph& g) {
+      void gray_target(Edge e, const Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
@@ -188,7 +188,7 @@ namespace boost {
 
 
       template <class Edge, class Graph>
-      void black_target(Edge e, Graph& g) {
+      void black_target(Edge e, const Graph& g) {
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
@@ -234,7 +234,7 @@ namespace boost {
             typename CostInf, typename CostZero>
   inline void
   astar_search_no_init
-    (VertexListGraph &g,
+    (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      AStarHeuristic h, AStarVisitor vis,
      PredecessorMap predecessor, CostMap cost,
@@ -271,7 +271,7 @@ namespace boost {
             typename CostInf, typename CostZero>
   inline void
   astar_search
-    (VertexListGraph &g,
+    (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      AStarHeuristic h, AStarVisitor vis,
      PredecessorMap predecessor, CostMap cost,
@@ -284,7 +284,7 @@ namespace boost {
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
-    for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+    for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
       put(color, *ui, Color::white());
       put(distance, *ui, inf);
       put(cost, *ui, inf);
@@ -308,7 +308,7 @@ namespace boost {
               class IndexMap, class ColorMap, class Params>
     inline void
     astar_dispatch2
-      (VertexListGraph& g,
+      (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        AStarHeuristic h, CostMap cost, DistanceMap distance,
        WeightMap weight, IndexMap index_map, ColorMap color,
@@ -337,16 +337,13 @@ namespace boost {
               class IndexMap, class ColorMap, class Params>
     inline void
     astar_dispatch1
-      (VertexListGraph& g,
+      (const VertexListGraph& g,
        typename graph_traits<VertexListGraph>::vertex_descriptor s,
        AStarHeuristic h, CostMap cost, DistanceMap distance,
        WeightMap weight, IndexMap index_map, ColorMap color,
        const Params& params)
     {
       typedef typename property_traits<WeightMap>::value_type D;
-      std::vector<D> distance_map;
-      std::vector<D> cost_map;
-      std::vector<default_color_type> color_map;
 
       detail::astar_dispatch2
         (g, s, h,
@@ -365,7 +362,7 @@ namespace boost {
             typename P, typename T, typename R>
   void
   astar_search
-    (VertexListGraph &g,
+    (const VertexListGraph &g,
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      AStarHeuristic h, const bgl_named_params<P, T, R>& params)
   {

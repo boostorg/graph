@@ -68,7 +68,7 @@ int main(int , char* [])
   print_edges(g, identity_property_map());
   cout << endl;
 
-  disjoint_sets_with_storage<> ds;
+  disjoint_sets_with_storage<> ds(N);
   incremental_components(g, ds);
   
   component_index<int> components(&ds.parents()[0], 
@@ -80,11 +80,11 @@ int main(int , char* [])
          << ds.find_set(k) << endl;
   cout << endl;
 
-  for (component_index<int>::size_type i = 0; i < components.size(); ++i) {
+  for (std::size_t i = 0; i < components.size(); ++i) {
     cout << "component " << i << " contains: ";
-    component_index<int>::value_type::iterator
-      j = components[i].begin(),
-      jend = components[i].end();
+    component_index<int>::component_iterator
+      j = components[i].first,
+      jend = components[i].second;
     for ( ; j != jend; ++j)
       cout << *j << " ";
     cout << endl;

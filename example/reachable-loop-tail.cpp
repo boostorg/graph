@@ -50,7 +50,7 @@ main(int argc, char *argv[])
   property_map<Graph, vertex_attribute_t>::type
     vattr_map = get(vertex_attribute, g);
   graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;
-  for (tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
+  for (boost::tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
     loops_out << *i << "[label=\"" << vattr_map[*i]["label"]
       << "\"";
     if (reachable_to_tail[*i] != Color::white()) {
@@ -59,7 +59,7 @@ main(int argc, char *argv[])
     loops_out << "]\n";
   }
   graph_traits < GraphvizDigraph >::edge_iterator e, e_end;
-  for (tie(e, e_end) = edges(g_in); e != e_end; ++e)
+  for (boost::tie(e, e_end) = edges(g_in); e != e_end; ++e)
     loops_out << source(*e, g) << " -> " << target(*e, g) << ";\n";
   loops_out << "}\n";
   return EXIT_SUCCESS;

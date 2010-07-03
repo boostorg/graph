@@ -32,18 +32,18 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <string>
-#include <boost/graph/kolmogorov_max_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/graph_utility.hpp>
 
 // Use a DIMACS network flow file as stdin.
-// kolmogorov-eg < max_flow.dat
+// boykov_kolmogorov-eg < max_flow.dat
 //
 // Sample output:
 // c  The total flow:
 // s 13
-// 
+//
 // c flow values:
 // f 0 6 3
 // f 0 1 6
@@ -66,8 +66,7 @@
 // f 7 6 0
 // f 7 5 0
 
-int
-main()
+int main()
 {
   using namespace boost;
 
@@ -78,11 +77,11 @@ main()
     property < vertex_color_t, boost::default_color_type,
     property < vertex_distance_t, long,
     property < vertex_predecessor_t, Traits::edge_descriptor > > > > >,
-    
+
     property < edge_capacity_t, long,
     property < edge_residual_capacity_t, long,
     property < edge_reverse_t, Traits::edge_descriptor > > > > Graph;
- 
+
   Graph g;
   property_map < Graph, edge_capacity_t >::type
       capacity = get(edge_capacity, g);
@@ -94,7 +93,7 @@ main()
 
   std::vector<default_color_type> color(num_vertices(g));
   std::vector<long> distance(num_vertices(g));
-  long flow = kolmogorov_max_flow(g ,s, t);
+  long flow = boykov_kolmogorov_max_flow(g ,s, t);
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
@@ -102,8 +101,8 @@ main()
   std::cout << "c flow values:" << std::endl;
   graph_traits < Graph >::vertex_iterator u_iter, u_end;
   graph_traits < Graph >::out_edge_iterator ei, e_end;
-  for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-    for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+  for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+    for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] > 0)
         std::cout << "f " << *u_iter << " " << target(*ei, g) << " "
           << (capacity[*ei] - residual_capacity[*ei]) << std::endl;

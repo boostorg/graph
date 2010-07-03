@@ -78,7 +78,7 @@ struct all_force_pairs
   {
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
     vertex_iterator v, end;
-    for (tie(v, end) = vertices(g); v != end; ++v) {
+    for (boost::tie(v, end) = vertices(g); v != end; ++v) {
       vertex_iterator u = v;
       for (++u; u != end; ++u) {
         apply_force(*u, *v);
@@ -116,7 +116,7 @@ struct grid_force_pairs
     std::size_t rows = std::size_t(topology.extent()[1] / two_k + 1.);
     buckets_t buckets(rows * columns);
     vertex_iterator v, v_end;
-    for (tie(v, v_end) = vertices(g); v != v_end; ++v) {
+    for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v) {
       std::size_t column =
         std::size_t((get(position, *v)[0] + topology.extent()[0] / 2) / two_k);
       std::size_t row    =
@@ -299,13 +299,13 @@ fruchterman_reingold_force_directed_layout
   do {
     // Calculate repulsive forces
     vertex_iterator v, v_end;
-    for (tie(v, v_end) = vertices(g); v != v_end; ++v)
+    for (boost::tie(v, v_end) = vertices(g); v != v_end; ++v)
       put(displacement, *v, typename Topology::point_difference_type());
     force_pairs(g, apply_force);
 
     // Calculate attractive forces
     edge_iterator e, e_end;
-    for (tie(e, e_end) = edges(g); e != e_end; ++e) {
+    for (boost::tie(e, e_end) = edges(g); e != e_end; ++e) {
       vertex_descriptor v = source(*e, g);
       vertex_descriptor u = target(*e, g);
 

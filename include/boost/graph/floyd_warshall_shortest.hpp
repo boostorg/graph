@@ -57,10 +57,10 @@ namespace boost
         i, lasti, j, lastj, k, lastk;
     
       
-      for (tie(k, lastk) = vertices(g); k != lastk; k++)
-        for (tie(i, lasti) = vertices(g); i != lasti; i++)
+      for (boost::tie(k, lastk) = vertices(g); k != lastk; k++)
+        for (boost::tie(i, lasti) = vertices(g); i != lasti; i++)
           if(d[*i][*k] != inf)
-            for (tie(j, lastj) = vertices(g); j != lastj; j++)
+            for (boost::tie(j, lastj) = vertices(g); j != lastj; j++)
               if(d[*k][*j] != inf)
                 d[*i][*j] = 
                   detail::min_with_compare(d[*i][*j], 
@@ -68,7 +68,7 @@ namespace boost
                                            compare);
       
       
-      for (tie(i, lasti) = vertices(g); i != lasti; i++)
+      for (boost::tie(i, lasti) = vertices(g); i != lasti; i++)
         if (compare(d[*i][*i], zero))
           return false;
       return true;
@@ -110,16 +110,16 @@ namespace boost
     typename graph_traits<VertexAndEdgeListGraph>::edge_iterator first, last;
   
     
-    for(tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++)
-      for(tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2; firstv2++)
+    for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++)
+      for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2; firstv2++)
         d[*firstv][*firstv2] = inf;
     
     
-    for(tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++)
+    for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++)
       d[*firstv][*firstv] = zero;
     
     
-    for(tie(first, last) = edges(g); first != last; first++)
+    for(boost::tie(first, last) = edges(g); first != last; first++)
     {
       if (d[source(*first, g)][target(*first, g)] != inf) {
         d[source(*first, g)][target(*first, g)] = 
@@ -136,7 +136,7 @@ namespace boost
       undirected_tag>::value;
     if (is_undirected)
     {
-      for(tie(first, last) = edges(g); first != last; first++)
+      for(boost::tie(first, last) = edges(g); first != last; first++)
       {
         if (d[target(*first, g)][source(*first, g)] != inf)
           d[target(*first, g)][source(*first, g)] = 

@@ -285,7 +285,7 @@ namespace boost
                 // would require revisiting the core algorithm.
                 Edge e;
                 bool found;
-                tie(e, found) = lookup_edge(previous_, v, g);
+                boost::tie(e, found) = lookup_edge(previous_, v, g);
                 if(!found) {
                     BOOST_THROW_EXCEPTION(not_complete());
                 }

@@ -238,7 +238,7 @@ int test_main(int, char*[])
     IndexMap indexMap(get(vertex_index, g));
     graph_traits<G>::vertex_iterator uItr, uEnd;
     int j = 0;
-    for (tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr, ++j)
+    for (boost::tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr, ++j)
     {
       put(indexMap, *uItr, j);
     }
@@ -252,7 +252,7 @@ int test_main(int, char*[])
     lengauer_tarjan_dominator_tree(g, vertex(0, g), domTreePredMap);
 
     vector<int> idom(num_vertices(g));
-    for (tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr)
+    for (boost::tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr)
     {
       if (get(domTreePredMap, *uItr) != graph_traits<G>::null_vertex())
         idom[get(indexMap, *uItr)] =
@@ -276,7 +276,7 @@ int test_main(int, char*[])
     iterative_bit_vector_dominator_tree(g, vertex(0, g), domTreePredMap);
 
     vector<int> idom2(num_vertices(g));
-    for (tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr)
+    for (boost::tie(uItr, uEnd) = vertices(g); uItr != uEnd; ++uItr)
     {
       if (get(domTreePredMap, *uItr) != graph_traits<G>::null_vertex())
         idom2[get(indexMap, *uItr)] =

@@ -38,7 +38,7 @@ topo_sort_dfs(const file_dep_graph & g, vertex_t u, vertex_t * &topo_order,
 {
   mark[u] = 1;                  // 1 means visited, 0 means not yet visited
   graph_traits < file_dep_graph >::adjacency_iterator vi, vi_end;
-  for (tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
     if (mark[*vi] == 0)
       topo_sort_dfs(g, *vi, topo_order, mark);
 
@@ -50,7 +50,7 @@ topo_sort(const file_dep_graph & g, vertex_t * topo_order)
 {
   std::vector < int >mark(num_vertices(g), 0);
   graph_traits < file_dep_graph >::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (mark[*vi] == 0)
       topo_sort_dfs(g, *vi, topo_order, &mark[0]);
 }
@@ -70,7 +70,7 @@ main()
   file_dep_graph g(n_vertices);
   while (input_begin != input_end) {
     size_type i, j;
-    tie(i, j) = *input_begin++;
+    boost::tie(i, j) = *input_begin++;
     add_edge(i, j, g);
   }
 #else
@@ -80,7 +80,7 @@ main()
   std::vector < std::string > name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");
   graph_traits < file_dep_graph >::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     name_in >> name[*vi];
 
   std::vector < vertex_t > order(num_vertices(g));

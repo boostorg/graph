@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
      cooling(progress_cooling(iterations)));
 
   graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     std::cout << get(vertex_name, g, *vi) << '\t'
               << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
   }

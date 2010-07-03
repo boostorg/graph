@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     cout << "Edges number: " << num_edges(tgr) << endl;
     int i = 0;
     graph_traits<grap_real_t>::vertex_iterator vi, vi_end;
-    for (tie(vi, vi_end) = vertices(tgr); vi != vi_end; vi++) {
+    for (boost::tie(vi, vi_end) = vertices(tgr); vi != vi_end; vi++) {
         vim[*vi] = i++; ///Initialize vertex index property
     }
     max_cr = maximum_cycle_ratio(tgr, vim, ew1, ew2);

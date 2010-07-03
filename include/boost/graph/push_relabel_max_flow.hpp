@@ -141,12 +141,12 @@ namespace boost {
         // Initialize flow to zero which means initializing
         // the residual capacity to equal the capacity.
         out_edge_iterator ei, e_end;
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+          for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei) {
             residual_capacity[*ei] = capacity[*ei];
           }
 
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           excess_flow[u] = 0;
           current[u] = out_edges(u, g);
@@ -156,7 +156,7 @@ namespace boost {
         FlowValue test_excess = 0;
 
         out_edge_iterator a_iter, a_end;
-        for (tie(a_iter, a_end) = out_edges(src, g); a_iter != a_end; ++a_iter)
+        for (boost::tie(a_iter, a_end) = out_edges(src, g); a_iter != a_end; ++a_iter)
           if (target(*a_iter, g) != src)
             test_excess += residual_capacity[*a_iter];
         if (test_excess > (std::numeric_limits<FlowValue>::max)())
@@ -166,7 +166,7 @@ namespace boost {
           excess_flow[src] = (std::numeric_limits<FlowValue>::max)();
         else {
           excess_flow[src] = 0;
-          for (tie(a_iter, a_end) = out_edges(src, g); 
+          for (boost::tie(a_iter, a_end) = out_edges(src, g); 
                a_iter != a_end; ++a_iter) {
             edge_descriptor a = *a_iter;
             if (target(a, g) != src) {
@@ -182,7 +182,7 @@ namespace boost {
         max_active = 0;
         min_active = n;
 
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           if (u == sink) {
             distance[u] = 0;
@@ -211,7 +211,7 @@ namespace boost {
         BOOST_USING_STD_MAX();
         ++update_count;
         vertex_iterator u_iter, u_end;
-        for (tie(u_iter,u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter,u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           color[*u_iter] = ColorTraits::white();
           distance[*u_iter] = n;
         }
@@ -233,7 +233,7 @@ namespace boost {
           distance_size_type d_v = distance[u] + 1;
 
           out_edge_iterator ai, a_end;
-          for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) {
+          for (boost::tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) {
             edge_descriptor a = *ai;
             vertex_descriptor v = target(a, g);
             if (color[v] == ColorTraits::white()
@@ -262,7 +262,7 @@ namespace boost {
         assert(excess_flow[u] > 0);
         while (1) {
           out_edge_iterator ai, ai_end;
-          for (tie(ai, ai_end) = current[u]; ai != ai_end; ++ai) {
+          for (boost::tie(ai, ai_end) = current[u]; ai != ai_end; ++ai) {
             edge_descriptor a = *ai;
             if (is_residual_edge(a)) {
               vertex_descriptor v = target(a, g);
@@ -337,7 +337,7 @@ namespace boost {
         // Examine the residual out-edges of vertex i, choosing the
         // edge whose target vertex has the minimal distance.
         out_edge_iterator ai, a_end, min_edge_iter;
-        for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) {
+        for (boost::tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) {
           ++work_since_last_update;
           edge_descriptor a = *ai;
           vertex_descriptor v = target(a, g);
@@ -433,20 +433,20 @@ namespace boost {
         bool bos_null = true;
 
         // handle self-loops
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-          for (tie(ai, a_end) = out_edges(*u_iter, g); ai != a_end; ++ai)
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+          for (boost::tie(ai, a_end) = out_edges(*u_iter, g); ai != a_end; ++ai)
             if (target(*ai, g) == *u_iter)
               residual_capacity[*ai] = capacity[*ai];
 
         // initialize
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           u = *u_iter;
           color[u] = ColorTraits::white();
           parent[u] = u;
           current[u] = out_edges(u, g);
         }
         // eliminate flow cycles and topologically order the vertices
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           u = *u_iter;
           if (color[u] == ColorTraits::white() 
               && excess_flow[u] > 0
@@ -532,7 +532,7 @@ namespace boost {
         // note that the sink is not on the stack
         if (! bos_null) {
           for (u = tos; u != bos; u = topo_next[u]) {
-            tie(ai, a_end) = out_edges(u, g);
+            boost::tie(ai, a_end) = out_edges(u, g);
             while (excess_flow[u] > 0 && ai != a_end) {
               if (capacity[*ai] == 0 && is_residual_edge(*ai))
                 push_flow(*ai);
@@ -558,8 +558,8 @@ namespace boost {
         out_edge_iterator ai, a_end;
 
         // check edge flow values
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
-          for (tie(ai, a_end) = out_edges(*u_iter, g); ai != a_end; ++ai) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+          for (boost::tie(ai, a_end) = out_edges(*u_iter, g); ai != a_end; ++ai) {
             edge_descriptor a = *ai;
             if (capacity[a] > 0)
               if ((residual_capacity[a] + residual_capacity[reverse_edge[a]]
@@ -572,13 +572,13 @@ namespace boost {
         
         // check conservation
         FlowValue sum;  
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter) {
           vertex_descriptor u = *u_iter;
           if (u != src && u != sink) {
             if (excess_flow[u] != 0)
               return false;
             sum = 0;
-            for (tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) 
+            for (boost::tie(ai, a_end) = out_edges(u, g); ai != a_end; ++ai) 
               if (capacity[*ai] > 0)
                 sum -= capacity[*ai] - residual_capacity[*ai];
               else
@@ -611,8 +611,8 @@ namespace boost {
         os << "flow values" << std::endl;
         vertex_iterator u_iter, u_end;
         out_edge_iterator ei, e_end;
-        for (tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-          for (tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+        for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+          for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
             if (capacity[*ei] > 0)
               os << *u_iter << " " << target(*ei, g) << " " 
                  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;

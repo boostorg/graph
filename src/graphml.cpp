@@ -168,7 +168,7 @@ private:
 
         any edge;
         bool added;
-        tie(edge, added) = m_g.do_add_edge(source, target);
+        boost::tie(edge, added) = m_g.do_add_edge(source, target);
         if (!added) {
             BOOST_THROW_EXCEPTION(bad_parallel_edge(u, v));
         }

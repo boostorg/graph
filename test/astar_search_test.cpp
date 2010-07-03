@@ -162,8 +162,8 @@ int main(int, char **)
   WeightMap weightmap = get(edge_weight, g);
   for(std::size_t j = 0; j < num_edges; ++j) {
     edge_descriptor e; bool inserted;
-    tie(e, inserted) = add_edge(edge_array[j].first,
-                                edge_array[j].second, g);
+    boost::tie(e, inserted) = add_edge(edge_array[j].first,
+                                       edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
   

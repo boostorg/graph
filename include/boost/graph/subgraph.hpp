@@ -124,7 +124,7 @@ typedef typename Traits::traversal_category        traversal_category;
     {
         typename Graph::vertex_iterator v, v_end;
         vertices_size_type i = 0;
-        for(tie(v, v_end) = vertices(m_graph); v != v_end; ++v)
+        for(boost::tie(v, v_end) = vertices(m_graph); v != v_end; ++v)
             m_global_vertex[i++] = *v;
     }
 
@@ -180,7 +180,7 @@ typedef typename Traits::traversal_category        traversal_category;
     vertex_descriptor global_to_local(vertex_descriptor u_global) const {
         vertex_descriptor u_local; bool in_subgraph;
         if (is_root()) return u_global;
-        tie(u_local, in_subgraph) = this->find_vertex(u_global);
+        boost::tie(u_local, in_subgraph) = this->find_vertex(u_global);
         assert(in_subgraph == true);
         return u_local;
     }
@@ -315,7 +315,7 @@ public: // Probably shouldn't be public....
     {
         edge_descriptor e_local;
         bool inserted;
-        tie(e_local, inserted) = add_edge(u_local, v_local, m_graph);
+        boost::tie(e_local, inserted) = add_edge(u_local, v_local, m_graph);
         put(edge_index, m_graph, e_local, m_edge_counter++);
         m_global_edge.push_back(e_global);
         m_local_edge[get(get(edge_index, this->root()), e_global)] = e_local;
@@ -358,7 +358,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
     // remember edge global and local maps
     {
         typename subgraph<G>::out_edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = out_edges(u_global, r);
+        for (boost::tie(ei, ei_end) = out_edges(u_global, r);
             ei != ei_end; ++ei) {
             e_global = *ei;
             v_global = target(e_global, r);
@@ -369,10 +369,10 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
     if (is_directed(g)) { // not necessary for undirected graph
         typename subgraph<G>::vertex_iterator vi, vi_end;
         typename subgraph<G>::out_edge_iterator ei, ei_end;
-        for(tie(vi, vi_end) = vertices(r); vi != vi_end; ++vi) {
+        for(boost::tie(vi, vi_end) = vertices(r); vi != vi_end; ++vi) {
             v_global = *vi;
             if(g.find_vertex(v_global).second)
-            for(tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
+            for(boost::tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
                 e_global = *ei;
                 uu_global = target(e_global, r);
                 if(uu_global == u_global && g.find_vertex(v_global).second) {
@@ -507,8 +507,8 @@ namespace detail {
             // add local edge only if u_global and v_global are in subgraph g
             Vertex u_local, v_local;
             bool u_in_subgraph, v_in_subgraph;
-            tie(u_local, u_in_subgraph) = g.find_vertex(u_global);
-            tie(v_local, v_in_subgraph) = g.find_vertex(v_global);
+            boost::tie(u_local, u_in_subgraph) = g.find_vertex(u_global);
+            boost::tie(v_local, v_in_subgraph) = g.find_vertex(v_global);
             if(u_in_subgraph && v_in_subgraph) {
                 g.local_add_edge(u_local, v_local, e_global);
             }
@@ -525,7 +525,7 @@ namespace detail {
         if(g.is_root()) {
             typename subgraph<Graph>::edge_descriptor e_global;
             bool inserted;
-            tie(e_global, inserted) = add_edge(u_global, v_global, ep, g.m_graph);
+            boost::tie(e_global, inserted) = add_edge(u_global, v_global, ep, g.m_graph);
             put(edge_index, g.m_graph, e_global, g.m_edge_counter++);
             g.m_global_edge.push_back(e_global);
             children_add_edge(u_global, v_global, e_global, g.m_children, orig);
@@ -554,7 +554,7 @@ add_edge(typename subgraph<G>::vertex_descriptor u,
     } else {
         typename subgraph<G>::edge_descriptor e_local, e_global;
         bool inserted;
-        tie(e_global, inserted) =
+        boost::tie(e_global, inserted) =
             detail::add_edge_recur_up(g.local_to_global(u),
                                       g.local_to_global(v),
                                       ep, g, &g);

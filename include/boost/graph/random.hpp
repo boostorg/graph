@@ -12,10 +12,12 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/random/uniform_int.hpp>
+#include <boost/random/uniform_real.hpp>
 #include <boost/random/variate_generator.hpp>
 
 #include <boost/pending/property.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/iteration_macros.hpp>
 #include <boost/next_prior.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -24,6 +26,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <iostream>
+#include <cassert>
 
 namespace boost {
 
@@ -65,6 +68,43 @@ namespace boost {
       return *(boost::next(i, n));
     } else
       return *edges(g).first;
+  }
+
+  template <typename Graph, typename RandomNumGen>
+  typename graph_traits<Graph>::edge_descriptor
+  random_out_edge(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, RandomNumGen& gen) {
+    typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
+    typedef boost::uniform_int<degree_size_type> ui_type;
+    ui_type ui(0, out_degree(src, g) - 1);
+    boost::variate_generator<RandomNumGen&, ui_type>
+      variate(gen, ui);
+    typename graph_traits<Graph>::out_edge_iterator it = out_edges(src, g).first;
+    std::advance(it, variate());
+    return *it;
+  }
+
+  template <typename Graph, typename WeightMap, typename RandomNumGen>
+  typename graph_traits<Graph>::edge_descriptor
+  weighted_random_out_edge(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, WeightMap weight, RandomNumGen& gen) {
+    typedef graph_traits<Graph> gt;
+    typedef typename gt::vertex_descriptor vertex_descriptor;
+    typedef typename property_traits<WeightMap>::value_type weight_type;
+    weight_type weight_sum(0);
+    BGL_FORALL_OUTEDGES_T(src, e, g, Graph) {weight_sum += get(weight, e);}
+    typedef boost::uniform_real<> ur_type;
+    ur_type ur(0, weight_sum);
+    boost::variate_generator<RandomNumGen&, ur_type>
+      variate(gen, ur);
+    weight_type chosen_weight = variate();
+    BGL_FORALL_OUTEDGES_T(src, e, g, Graph) {
+      weight_type w = get(weight, e);
+      if (chosen_weight < w) {
+        return e;
+      } else {
+        chosen_weight -= w;
+      }
+    }
+    assert (false); // Should not get here
   }
 
   namespace detail {
@@ -157,7 +197,7 @@ namespace boost {
         b = random_vertex(g, gen);
       } while (self_edges == false && a == b);
       edge_t e; bool inserted;
-      tie(e, inserted) = add_edge(a, b, g);
+      boost::tie(e, inserted) = add_edge(a, b, g);
       if (inserted)
         *edge_out++ = std::make_pair(source(e, g), target(e, g));
     }
@@ -171,7 +211,7 @@ namespace boost {
     {
       typename property_map<G, Property>::type pm = get(Property(), g);
       typename graph_traits<G>::vertex_iterator vi, ve;
-      for (tie(vi, ve) = vertices(g); vi != ve; ++vi) {
+      for (boost::tie(vi, ve) = vertices(g); vi != ve; ++vi) {
         pm[*vi] = rg();
       }
     }
@@ -182,7 +222,7 @@ namespace boost {
     {
       typename property_map<G, Property>::type pm = get(Property(), g);
       typename graph_traits<G>::edge_iterator ei, ee;
-      for (tie(ei, ee) = edges(g); ei != ee; ++ei) {
+      for (boost::tie(ei, ee) = edges(g); ei != ee; ++ei) {
         pm[*ei] = rg();
       }
     }
@@ -200,5 +240,6 @@ namespace boost {
   
 }
 
+#include <boost/graph/iteration_macros_undef.hpp>
 
 #endif

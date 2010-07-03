@@ -152,7 +152,7 @@ namespace boost {
         vis.examine_vertex(u, g);
 
         typename GTraits::out_edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+        for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
           Edge e = *ei;
           vis.examine_out_edge(e, g);
           Vertex v = target(e, g);
@@ -172,7 +172,7 @@ namespace boost {
         } // for out-edges
 
         typename GTraits::in_edge_iterator in_ei, in_ei_end;
-        for (tie(in_ei, in_ei_end) = in_edges(u, g); 
+        for (boost::tie(in_ei, in_ei_end) = in_edges(u, g); 
              in_ei != in_ei_end; ++in_ei) {
           Edge e = *in_ei;
           vis.examine_in_edge(e, g);
@@ -216,7 +216,7 @@ namespace boost {
       typedef typename property_traits<ColorMap>::value_type ColorValue;
       typedef color_traits<ColorValue> Color;
       typename boost::graph_traits<VertexListGraph>::vertex_iterator i, i_end;
-      for (tie(i, i_end) = vertices(g); i != i_end; ++i) {
+      for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i) {
         put(color, *i, Color::white());
         vis.initialize_vertex(*i, g);
       }

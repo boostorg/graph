@@ -18,6 +18,7 @@
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/pending/disjoint_sets.hpp>
+#include <iterator>
 
 namespace boost {
 
@@ -54,7 +55,7 @@ namespace boost {
   void incremental_components(EdgeListGraph& g, DisjointSets& ds)
   {
     typename graph_traits<EdgeListGraph>::edge_iterator e, end;
-    for (tie(e,end) = edges(g); e != end; ++e)
+    for (boost::tie(e,end) = edges(g); e != end; ++e)
       ds.union_set(source(*e,g),target(*e,g));
   }
   
@@ -90,7 +91,7 @@ namespace boost {
   {
     typename graph_traits<VertexListGraph>
       ::vertex_iterator v, vend;
-    for (tie(v, vend) = vertices(G); v != vend; ++v)
+    for (boost::tie(v, vend) = vertices(G); v != vend; ++v)
       ds.make_set(*v);
   }
 
@@ -175,7 +176,7 @@ namespace boost {
     void build_index_lists(ParentIterator parent_start,
                            const ElementIndexMap& index_map) {
 
-      typedef typename ParentIterator::value_type Element;
+      typedef typename std::iterator_traits<ParentIterator>::value_type Element;
       typename IndexContainer::iterator index_list =
         m_index_list->begin();
 

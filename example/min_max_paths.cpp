@@ -58,7 +58,7 @@ main(int , char* [])
   property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, G);
   for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
-    tie(e, inserted) = add_edge(edges[j].first, edges[j].second, G);
+    boost::tie(e, inserted) = add_edge(edges[j].first, edges[j].second, G);
     weightmap[e] = weights[j];
   }
 #else
@@ -85,14 +85,14 @@ main(int , char* [])
 
   std::cout << "distances from start vertex:" << std::endl;
   graph_traits<Graph>::vertex_iterator vi, vend;
-  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+  for(boost::tie(vi,vend) = vertices(G); vi != vend; ++vi)
     std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << std::endl;
   std::cout << std::endl;
 
   std::cout << "min-max paths tree" << std::endl;
   adjacency_list<> tree(num_nodes);
   
-  for(tie(vi,vend) = vertices(G); vi != vend; ++vi)
+  for(boost::tie(vi,vend) = vertices(G); vi != vend; ++vi)
     if (*vi != p[*vi])
       add_edge(p[*vi], *vi, tree);
 

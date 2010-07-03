@@ -694,19 +694,19 @@ get(Prop p, LABELED_GRAPH& g)
 template <LABELED_GRAPH_PARAMS, typename Prop>
 inline typename property_map<LABELED_GRAPH, Prop>::const_type
 get(Prop p, LABELED_GRAPH const& g)
-{ return get(p, g.impl()); }
+{ return get(p, g.graph()); }
 
 template <LABELED_GRAPH_PARAMS, typename Prop, typename Key>
 inline typename property_traits<
     typename property_map<typename LABELED_GRAPH::graph_type, Prop>::const_type
 >::value_type
 get(Prop p, LABELED_GRAPH const& g, const Key& k)
-{ return get(p, g.impl(), k); }
+{ return get(p, g.graph(), k); }
 
 template <LABELED_GRAPH_PARAMS, typename Prop, typename Key, typename Value>
 inline void
 put(Prop p, LABELED_GRAPH& g, Key const& k, Value const& v)
-{ put(p, g.impl(), k, v); }
+{ put(p, g.graph(), k, v); }
 //@}
 
 /** @name Mutable Graph */

@@ -41,7 +41,7 @@ main(int, char *[])
   property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_arcs; ++j) {
     edge_descriptor e; bool inserted;
-    tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    boost::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
 #else
@@ -66,7 +66,7 @@ main(int, char *[])
 
   std::cout << "distances and parents:" << std::endl;
   graph_traits < graph_t >::vertex_iterator vi, vend;
-  for (tie(vi, vend) = vertices(g); vi != vend; ++vi) {
+  for (boost::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
     std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
     std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::
       endl;
@@ -82,7 +82,7 @@ main(int, char *[])
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     graph_traits < graph_t >::edge_descriptor e = *ei;
     graph_traits < graph_t >::vertex_descriptor
       u = source(e, g), v = target(e, g);

@@ -41,7 +41,7 @@ print_dependencies(std::ostream & out, const Graph & g,
                    VertexNameMap name_map)
 {
   typename graph_traits < Graph >::edge_iterator ei, ei_end;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     out << get(name_map, source(*ei, g)) << " -$>$ "
       << get(name_map, target(*ei, g)) << std::endl;
 }

@@ -29,7 +29,7 @@ main(int argc, char *argv[])
 
     // Compute the girth and circumference simulataneously
     size_t girth, circ;
-    tie(girth, circ) = tiernan_girth_and_circumference(g);
+    boost::tie(girth, circ) = tiernan_girth_and_circumference(g);
 
     // Print the result
     cout << "girth: " << girth << endl;

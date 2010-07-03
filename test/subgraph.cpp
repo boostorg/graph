@@ -105,7 +105,7 @@ int test_main(int, char*[])
         subgraph_t sub = g.create_subgraph(vertices(g).first, vertices(g).second);
 
         graph_t::edge_iterator ei, ee;
-        for (tie(ei, ee) = edges(sub); ei != ee; ++ei) {
+        for (boost::tie(ei, ee) = edges(sub); ei != ee; ++ei) {
             // This used to segfault.
             get(edge_weight, sub, *ei);
         }

@@ -77,7 +77,7 @@ void build()
 
     // Each vertex should be numbered correctly.
     Iterator i, end;
-    tie(i, end) = vertices(g);
+    boost::tie(i, end) = vertices(g);
     for(size_t x = 0; i != end; ++i, ++x) {
         BOOST_ASSERT(get_vertex_index(*i, g) == x);
     }

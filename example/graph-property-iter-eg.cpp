@@ -23,11 +23,11 @@ main()
   const char *vertex_names[] = { "Kubrick", "Clark", "Hal" };
   int i = 0;
   graph_property_iter_range < graph_t, vertex_name_t >::iterator v, v_end;
-  for (tie(v, v_end) = get_property_iter_range(g, vertex_name);
+  for (boost::tie(v, v_end) = get_property_iter_range(g, vertex_name);
        v != v_end; ++v, ++i)
     *v = vertex_names[i];
 
-  tie(v, v_end) = get_property_iter_range(g, vertex_name);
+  boost::tie(v, v_end) = get_property_iter_range(g, vertex_name);
   std::copy(v, v_end, std::ostream_iterator < std::string > (std::cout, " "));
   std::cout << std::endl;
   return 0;

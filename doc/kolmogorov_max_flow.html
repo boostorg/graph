@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-15">
-	<TITLE>Boost Graph Library: Kolmogorov Maximum Flow</TITLE>
+	<TITLE>Boost Graph Library: Boykov-Kolmogorov Maximum Flow</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20060820;17315200">
 	<META NAME="CHANGEDBY" CONTENT="Stephan Diederich">
@@ -53,14 +53,31 @@
 	</STYLE>
 </HEAD>
 <BODY LANG="de-DE" TEXT="#000000" LINK="#0000ee" VLINK="#551a8b" BGCOLOR="#ffffff" DIR="LTR">
-<P><IMG SRC="../../../boost.png" NAME="Grafik1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
+
+<P>
+<IMG SRC="../../../boost.png" NAME="Grafik1" ALT="C++ Boost" ALIGN=BOTTOM WIDTH=277 HEIGHT=86 BORDER=0>
 </P>
+
+<table align="center" width="75%" style="border:1px solid; border-spacing: 10pt">
+<tr>
+  <td style="vertical-align: top"><img src="figs/warning.png"></td>
+  <td>
+    <b>Warning!</b> This header and its contents are <em>deprecated</em> and
+    will be removed in a future release. Please update your program to use
+    <a href="boykov_kolmogorov_max_flow.html"> <tt>boykov_kolmogorov_max_flow</tt></a>
+    instead. Note that only the name of the algorithm has changed. The template
+    and function parameters will remain the same.
+  </td>
+</tr>
+</table>
+
+
 <H1><A NAME="sec:kolmogorov_max_flow"></A><TT>kolmogorov_max_flow</TT>
 </H1>
 <PRE><I>// named parameter version</I>
 template &lt;class Graph, class P, class T, class R&gt;
 typename property_traits&lt;typename property_map&lt;Graph, edge_capacity_t&gt;::const_type&gt;::value_type
-kolmogorov_max_flow(Graph&amp; g, 
+kolmogorov_max_flow(Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <I>all defaults</I>)
@@ -88,14 +105,14 @@ Flow Algorithms</A> for a description of maximum flow. The calculated
 maximum flow will be the return value of the function. The function
 also calculates the flow values <I>f(u,v)</I> for all <I>(u,v)</I> in
 <I>E</I>, which are returned in the form of the residual capacity
-<I>r(u,v) = c(u,v) - f(u,v)</I>. 
+<I>r(u,v) = c(u,v) - f(u,v)</I>.
 </P>
 <P><B>Requirements:</B><BR>The directed graph <I>G=(V,E)</I> that
 represents the network must include a reverse edge for every edge in
 <I>E</I>. That is, the input graph should be <I>G<SUB>in</SUB> =
 (V,{E U E<SUP>T</SUP>})</I>. The <TT>ReverseEdgeMap</TT> argument <TT>rev</TT>
 must map each edge in the original graph to its reverse edge, that is
-<I>(u,v) -&gt; (v,u)</I> for all <I>(u,v)</I> in <I>E</I>. 
+<I>(u,v) -&gt; (v,u)</I> for all <I>(u,v)</I> in <I>E</I>.
 </P>
 <P>Remarks: While the push-relabel method states that each edge in <I>E<SUP>T</SUP></I>
 has to have capacity of 0, the reverse edges for this algorithm ARE
@@ -155,7 +172,7 @@ no more orphans.</P>
 <UL>
 	<LI><P>Marking heuristics: A timestamp is stored for each vertex
 	which shows in which iteration of the algorithm the distance to the
-	corresponding terminal was calculated. 
+	corresponding terminal was calculated.
 	</P>
 	<UL>
 		<LI><P>This distance is used and gets calculated in the
@@ -190,7 +207,7 @@ of Kolmogorov. Few changes were made for increasing performance:</P>
 	improves especially graph-cuts used in image vision where nearly
 	each vertex has a source and sink connect. During this step, all
 	vertices that have an unsaturated connection from source are added
-	to the active vertex list and so the source is not. 
+	to the active vertex list and so the source is not.
 	</P>
 	<LI><P>active vertices: Kolmogorov uses two lists for active nodes
 	and states that new active vertices are added to the rear of the
@@ -210,7 +227,7 @@ of Kolmogorov. Few changes were made for increasing performance:</P>
 <P><TT><A HREF="../../../boost/graph/kolmogorov_max_flow.hpp">boost/graph/kolmogorov_max_flow.hpp</A></TT>
 </P>
 <H3>Parameters</H3>
-<P>IN: <TT>Graph&amp; g</TT> 
+<P>IN: <TT>Graph&amp; g</TT>
 </P>
 <BLOCKQUOTE>A directed graph. The graph's type must be a model of
 <A HREF="VertexListGraph.html">Vertex List Graph</A>, <A HREF="EdgeListGraph.html">Edge
@@ -220,46 +237,46 @@ must also be in the graph.  Performance of the algorithm will be slightly
 improved if the graph type also models <a href="AdjacencyMatrix.html">Adjacency
 Matrix</a>.
 </BLOCKQUOTE>
-<P>IN: <TT>vertex_descriptor src</TT> 
+<P>IN: <TT>vertex_descriptor src</TT>
 </P>
-<BLOCKQUOTE>The source vertex for the flow network graph. 
+<BLOCKQUOTE>The source vertex for the flow network graph.
 </BLOCKQUOTE>
-<P>IN: <TT>vertex_descriptor sink</TT> 
+<P>IN: <TT>vertex_descriptor sink</TT>
 </P>
-<BLOCKQUOTE>The sink vertex for the flow network graph. 
+<BLOCKQUOTE>The sink vertex for the flow network graph.
 </BLOCKQUOTE>
 <H3>Named Parameters</H3>
-<P>IN: <TT>edge_capacity(EdgeCapacityMap cap)</TT> 
+<P>IN: <TT>edge_capacity(EdgeCapacityMap cap)</TT>
 </P>
 <BLOCKQUOTE>The edge capacity property map. The type must be a model
 of a constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
-descriptor type.<BR><B>Default:</B> <TT>get(edge_capacity, g)</TT> 
+descriptor type.<BR><B>Default:</B> <TT>get(edge_capacity, g)</TT>
 </BLOCKQUOTE>
-<P>OUT: <TT>edge_residual_capacity(ResidualCapacityEdgeMap res)</TT> 
+<P>OUT: <TT>edge_residual_capacity(ResidualCapacityEdgeMap res)</TT>
 </P>
 <BLOCKQUOTE>The edge residual capacity property map. The type must be
 a model of a mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
 descriptor type.<BR><B>Default:</B> <TT>get(edge_residual_capacity,
-g)</TT> 
+g)</TT>
 </BLOCKQUOTE>
-<P>IN: <TT>edge_reverse(ReverseEdgeMap rev)</TT> 
+<P>IN: <TT>edge_reverse(ReverseEdgeMap rev)</TT>
 </P>
 <BLOCKQUOTE>An edge property map that maps every edge <I>(u,v)</I> in
 the graph to the reverse edge <I>(v,u)</I>. The map must be a model
 of constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's edge
-descriptor type.<BR><B>Default:</B> <TT>get(edge_reverse, g)</TT> 
+descriptor type.<BR><B>Default:</B> <TT>get(edge_reverse, g)</TT>
 </BLOCKQUOTE>
-<P>UTIL: <TT>vertex_predecessor(PredecessorMap pre_map)</TT> 
+<P>UTIL: <TT>vertex_predecessor(PredecessorMap pre_map)</TT>
 </P>
 <BLOCKQUOTE>A vertex property map that stores the edge to the vertex'
 predecessor. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's vertex
 descriptor type.<BR><B>Default:</B> <TT>get(vertex_predecessor, g)</TT>
 </BLOCKQUOTE>
-<P>OUT/UTIL: <TT>vertex_color(ColorMap color)</TT> 
+<P>OUT/UTIL: <TT>vertex_color(ColorMap color)</TT>
 </P>
 <BLOCKQUOTE>A vertex property map that stores a color for edge
 vertex. If the color of a vertex after running the algorithm is black
@@ -267,29 +284,29 @@ the vertex belongs to the source tree else it belongs to the
 sink-tree (used for minimum cuts). The map must be a model of mutable
 <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue Property
 Map</A>. The key type of the map must be the graph's vertex
-descriptor type.<BR><B>Default:</B> <TT>get(vertex_color, g)</TT> 
+descriptor type.<BR><B>Default:</B> <TT>get(vertex_color, g)</TT>
 </BLOCKQUOTE>
-<P>UTIL: <TT>vertex_distance(DistanceMap dist)</TT> 
+<P>UTIL: <TT>vertex_distance(DistanceMap dist)</TT>
 </P>
 <BLOCKQUOTE>A vertex property map that stores the distance to the
 corresponding terminal. It's a utility-map for speeding up the
 algorithm. The map must be a model of mutable <A HREF="../../property_map/doc/LvaluePropertyMap.html">Lvalue
 Property Map</A>. The key type of the map must be the graph's vertex
-descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT> 
+descriptor type.<BR><B>Default:</B> <TT>get(vertex_distance, g)</TT>
 </BLOCKQUOTE>
-<P>IN: <TT>vertex_index(VertexIndexMap index_map)</TT> 
+<P>IN: <TT>vertex_index(VertexIndexMap index_map)</TT>
 </P>
 <BLOCKQUOTE>Maps each vertex of the graph to a unique integer in the
 range <TT>[0, num_vertices(g))</TT>. The map must be a model of
 constant <A HREF="../../property_map/doc/LvaluePropertyMap.html">LvaluePropertyMap</A>.
 The key type of the map must be the graph's vertex descriptor
-type.<BR><B>Default:</B> <TT>get(vertex_index, g)</TT> 
+type.<BR><B>Default:</B> <TT>get(vertex_index, g)</TT>
 </BLOCKQUOTE>
 <H3>Example</H3>
 <P>This reads an example maximum flow problem (a graph with edge
 capacities) from a file in the DIMACS format (<TT><A HREF="../example/max_flow.dat">example/max_flow.dat</A></TT>).
 The source for this example can be found in
-<TT><A HREF="../example/kolmogorov-eg.cpp">example/kolmogorov-eg.cpp</A></TT>.
+<TT><A HREF="../example/boykov_kolmogorov-eg.cpp">example/boykov_kolmogorov-eg.cpp</A></TT>.
 </P>
 <PRE>#include &lt;boost/config.hpp&gt;
 #include &lt;iostream&gt;
@@ -311,11 +328,11 @@ main()
     property &lt; vertex_color_t, boost::default_color_type,
     property &lt; vertex_distance_t, long,
     property &lt; vertex_predecessor_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; &gt;,
-    
+
     property &lt; edge_capacity_t, long,
     property &lt; edge_residual_capacity_t, long,
     property &lt; edge_reverse_t, Traits::edge_descriptor &gt; &gt; &gt; &gt; Graph;
- 
+
   Graph g;
   property_map &lt; Graph, edge_capacity_t &gt;::type
       capacity = get(edge_capacity, g);
@@ -343,7 +360,7 @@ main()
 
   return EXIT_SUCCESS;
 }</PRE><P>
-The output is: 
+The output is:
 </P>
 <PRE>c  The total flow:
 s 13

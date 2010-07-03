@@ -151,8 +151,8 @@ int main(int , char* [])
   boost::graph_traits<Graph>::vertex_iterator v, v_end;
   boost::graph_traits<Graph>::out_edge_iterator e, e_end;
   int f = 0;
-  for (tie(v, v_end) = vertices(G); v != v_end; ++v)
-    for (tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
+  for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v)
+    for (boost::tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
       flow[*e] = ++f;
   cout << endl << endl;
 

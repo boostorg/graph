@@ -187,9 +187,9 @@ namespace boost {
         float_t cz = (std::numeric_limits<float_t>::max)(); //Closest to zero value
         float_t s = 0;
         const float_t eps_ = std::numeric_limits<float_t>::epsilon();
-        for (tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
+        for (boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
           {
-            for (tie(oei, oeie) = out_edges(*vi, m_g); oei != oeie; ++oei)
+            for (boost::tie(oei, oeie) = out_edges(*vi, m_g); oei != oeie; ++oei)
               {
                 s += std::abs(m_ew1m[*oei]);
                 float_t a = std::abs(m_ew2m[*oei]);
@@ -211,9 +211,9 @@ namespace boost {
         m_sink = graph_traits<Graph>().null_vertex();
         typename  graph_traits<Graph>::vertex_iterator  vi, vie;
         typename  graph_traits<Graph>::out_edge_iterator  oei, oeie;
-        for ( tie(vi, vie) = vertices(m_g); vi != vie; ++vi )
+        for ( boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi )
           {
-            tie(oei, oeie) = out_edges(*vi, m_g);
+            boost::tie(oei, oeie) = out_edges(*vi, m_g);
             typename graph_traits<Graph>::out_edge_iterator mei =
               std::max_element(oei, oeie,
                                boost::bind(m_cmp,
@@ -331,7 +331,7 @@ namespace boost {
         std::fill(m_col_bfs.begin(), m_col_bfs.end(), my_white);
         color_map_t vcm_ = color_map_t(m_col_bfs.begin(), m_vim);
         typename graph_traits<Graph>::vertex_iterator uv_itr, vie;
-        tie(uv_itr, vie) = vertices(m_g);
+        boost::tie(uv_itr, vie) = vertices(m_g);
         float_t mcr = m_bound;
         while ( (uv_itr = std::find_if(uv_itr, vie,
                                        boost::bind(std::equal_to<my_color_type>(),
@@ -373,11 +373,11 @@ namespace boost {
         typename  graph_traits<Graph>::vertex_iterator  vi, vie;
         typename  graph_traits<Graph>::out_edge_iterator  oei, oeie;
         const float_t eps_ =  FloatTraits::epsilon();
-        for (tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
+        for (boost::tie(vi, vie) = vertices(m_g); vi != vie; ++vi)
           {
             if (!m_badv[*vi])
               {
-                for (tie(oei, oeie) = out_edges(*vi, m_g); oei != oeie; ++oei)
+                for (boost::tie(oei, oeie) = out_edges(*vi, m_g); oei != oeie; ++oei)
                   {
                     vertex_t t = target(*oei, m_g);
                     //Current distance from *vi to some vertex

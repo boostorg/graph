@@ -74,7 +74,7 @@ main()
   property_map<Graph, int EdgeProperties::*>::type 
     weight_pmap = get(&EdgeProperties::weight, g);
   int i = 0;
-  for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
 
   std::vector<int> distance(N, (std::numeric_limits < short >::max)());
@@ -108,7 +108,7 @@ main()
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
   {
-    for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       graph_traits < Graph >::edge_descriptor e = *ei;
       graph_traits < Graph >::vertex_descriptor
         u = source(e, g), v = target(e, g);

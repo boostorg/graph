@@ -24,7 +24,7 @@ namespace boost
     typedef typename graph_traits < Graph >::degree_size_type size_type;
     size_type delta = (std::numeric_limits < size_type >::max)();
     typename graph_traits < Graph >::vertex_iterator i, iend;
-    for (tie(i, iend) = vertices(g); i != iend; ++i)
+    for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
       if (degree(*i, g) < delta)
       {
         delta = degree(*i, g);
@@ -39,7 +39,7 @@ namespace boost
                    OutputIterator result)
   {
     typename graph_traits < Graph >::adjacency_iterator ai, aend;
-    for (tie(ai, aend) = adjacent_vertices(u, g); ai != aend; ++ai)
+    for (boost::tie(ai, aend) = adjacent_vertices(u, g); ai != aend; ++ai)
       *result++ = *ai;
   }
   template < typename Graph, typename VertexIterator,
@@ -87,17 +87,17 @@ namespace boost
       rev_edge = get(edge_reverse, flow_g);
 
     typename graph_traits < VertexListGraph >::edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       u = source(*ei, g), v = target(*ei, g);
-      tie(e1, inserted) = add_edge(u, v, flow_g);
+      boost::tie(e1, inserted) = add_edge(u, v, flow_g);
       cap[e1] = 1;
-      tie(e2, inserted) = add_edge(v, u, flow_g);
+      boost::tie(e2, inserted) = add_edge(v, u, flow_g);
       cap[e2] = 1;
       rev_edge[e1] = e2;
       rev_edge[e2] = e1;
     }
 
-    tie(p, delta) = min_degree_vertex(g);
+    boost::tie(p, delta) = min_degree_vertex(g);
     S_star.push_back(p);
     alpha_star = delta;
     S.insert(p);
@@ -115,7 +115,7 @@ namespace boost
       if (alpha_S_k < alpha_star) {
         alpha_star = alpha_S_k;
         S_star.clear();
-        for (tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
+        for (boost::tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
           if (color[*vi] != Color::white())
             S_star.push_back(*vi);
       }
@@ -135,7 +135,7 @@ namespace boost
     degree_size_type c = 0;
     for (si = S_star.begin(); si != S_star.end(); ++si) {
       typename graph_traits < VertexListGraph >::out_edge_iterator ei, ei_end;
-      for (tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
+      for (boost::tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
         if (!in_S_star[target(*ei, g)]) {
           *disconnecting_set++ = *ei;
           ++c;

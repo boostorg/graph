@@ -34,9 +34,9 @@ main()
   property_map < adjacency_list <>, vertex_index_t >::type
     index_map = get(vertex_index, g);
 
-  for (tie(i, end) = vertices(g); i != end; ++i) {
+  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << name[get(index_map, *i)];
-    tie(ai, a_end) = adjacent_vertices(*i, g);
+    boost::tie(ai, a_end) = adjacent_vertices(*i, g);
     if (ai == a_end)
       std::cout << " has no children";
     else
