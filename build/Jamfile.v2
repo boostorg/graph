@@ -23,7 +23,6 @@ lib boost_graph
     <toolset>msvc-7.1:<cxxflags>-GR-
     :
     :
-    <library>../../regex/build//boost_regex
     ;
 
 boost-install boost_graph ;

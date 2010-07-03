@@ -26,9 +26,9 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
-#include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/xpressive/xpressive_static.hpp>
 
 namespace boost {
 
@@ -61,12 +61,13 @@ namespace boost {
 
   template <typename T>
   inline std::string escape_dot_string(const T& obj) {
-    static boost::regex valid_unquoted_id("[a-zA-Z\\0200-\\0377_][a-zA-Z\\0200-\\0377_0-9]*|-?(?:[.][0-9]*|[0-9]+(?:[.][0-9]*)?)");
+    using namespace boost::xpressive;
+    static sregex valid_unquoted_id = (((alpha | '_') >> *_w) | (!as_xpr('-') >> (('.' >> *_d) | (+_d >> !('.' >> *_d)))));
     std::string s(boost::lexical_cast<std::string>(obj));
-    if (boost::regex_match(s, valid_unquoted_id)) {
+    if (regex_match(s, valid_unquoted_id)) {
       return s;
     } else {
-      return "\"" + boost::algorithm::replace_all_copy(s, "\"", "\\\"") + "\"";
+      return "\"" + regex_replace(s, sregex(as_xpr('"')), "\\\"") + "\"";
     }
   }
 
