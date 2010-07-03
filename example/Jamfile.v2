@@ -25,6 +25,5 @@ exe fr_layout : fr_layout.cpp ;
 exe canonical_ordering : canonical_ordering.cpp ;
 exe components_on_edgelist : components_on_edgelist.cpp ;
 exe boykov_kolmogorov-eg : boykov_kolmogorov-eg.cpp ;
-
-# FIXME: Fails due to read_graphviz error...
 exe ospf-example : ospf-example.cpp ../build//boost_graph ;
+# exe cc-internet : cc-internet.cpp ../build//boost_graph ;
