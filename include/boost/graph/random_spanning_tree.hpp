@@ -98,7 +98,7 @@ namespace boost {
                          arg_pack[_root_vertex | *vertices(g).first],
                          arg_pack[_predecessor_map],
                          arg_pack[_weight_map | static_property_map<double>(1.)],
-                         boost::detail::color_map_maker<Graph, arg_pack_type>::make_map(g, arg_pack));
+                         boost::detail::make_color_map_from_arg_pack(g, arg_pack));
   }
 }
 

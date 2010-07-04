@@ -297,7 +297,7 @@ namespace boost {
     depth_first_search
       (g,
        arg_pack[_visitor | make_dfs_visitor(null_visitor())],
-       boost::detail::color_map_maker<VertexListGraph, arg_pack_type>::make_map(g, arg_pack),
+       boost::detail::make_color_map_from_arg_pack(g, arg_pack),
        arg_pack[_root_vertex | *vertices(g).first]
       );
   }
