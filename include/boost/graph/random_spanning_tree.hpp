@@ -48,7 +48,9 @@ namespace boost {
         if (get(color, v) != color_gen::white()) continue;
         loop_erased_random_walk(g, v, next_edge, color, path);
         for (typename std::vector<vertex_descriptor>::const_reverse_iterator i = path.rbegin();
-             boost::next(i) != path.rend(); ++i) {
+             boost::next(i) !=
+               (typename std::vector<vertex_descriptor>::const_reverse_iterator)path.rend();
+             ++i) {
           typename std::vector<vertex_descriptor>::const_reverse_iterator j = i;
           ++j;
           assert (get(color, *j) == color_gen::gray());
