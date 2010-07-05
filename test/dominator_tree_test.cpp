@@ -265,7 +265,7 @@ int test_main(int, char*[])
     cout << endl;
 
     // dominator tree correctness test
-    BOOST_CHECK(equal(idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
+    BOOST_CHECK(std::equal(idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
 
     // compare results of fast version and slow version of dominator tree
     domTreePredVector2 =

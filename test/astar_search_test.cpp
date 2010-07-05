@@ -169,7 +169,7 @@ int main(int, char **)
   
   
   // pick random start/goal
-  minstd_rand gen(time(0));
+  boost::minstd_rand gen(time(0));
   vertex start = gen() % num_vertices(g);
   vertex goal = gen() % num_vertices(g);
   
