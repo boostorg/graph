@@ -441,7 +441,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   namespace detail {
 
     template <bool Exists, typename Graph, typename ArgPack, typename Value, typename PM>
-    struct color_map_maker_helper {
+    struct map_maker_helper {
       typedef PM map_type;
       static PM make_map(const Graph&, Value, const PM& pm, const ArgPack&) {
         return pm;
@@ -449,7 +449,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 
     template <typename Graph, typename ArgPack, typename Value, typename PM>
-    struct color_map_maker_helper<false, Graph, ArgPack, Value, PM> {
+    struct map_maker_helper<false, Graph, ArgPack, Value, PM> {
       typedef typename boost::remove_const<
         typename override_const_property_t<
           typename boost::parameter::value_type<
@@ -476,27 +476,57 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       }
     };
 
-    template <typename Graph, typename ArgPack>
-    struct color_map_maker {
+    template <typename Graph, typename ArgPack, typename MapTag, typename ValueType>
+    struct map_maker {
       BOOST_STATIC_CONSTANT(
         bool,
-        has_color_map =
-          (parameter_exists<ArgPack, boost::graph::keywords::tag::color_map>
+        has_map =
+          (parameter_exists<ArgPack, MapTag>
            ::value));
-      typedef color_map_maker_helper<has_color_map, Graph, ArgPack, default_color_type,
-                                     typename boost::remove_const<
-                                       typename boost::parameter::value_type<
-                                                  ArgPack,
-                                                  boost::graph::keywords::tag::color_map,
-                                                  int
-                                                >::type
-                                              >::type> helper;
+      typedef map_maker_helper<has_map, Graph, ArgPack, ValueType,
+                               typename boost::remove_const<
+                                 typename boost::parameter::value_type<
+                                            ArgPack,
+                                            MapTag,
+                                            int
+                                          >::type
+                                        >::type> helper;
       typedef typename helper::map_type map_type;
-      static map_type make_map(const Graph& g, const ArgPack& ap) {
-        return helper::make_map(g, white_color, ap[boost::graph::keywords::_color_map | 0], ap);
+      static map_type make_map(const Graph& g, const ArgPack& ap, ValueType default_value) {
+        return helper::make_map(g, default_value, ap[::boost::parameter::keyword<MapTag>::instance | 0], ap);
       }
     };
 
+    template <typename MapTag, typename ValueType = void>
+    class make_property_map_from_arg_pack_gen {
+      ValueType default_value;
+
+      public:
+      make_property_map_from_arg_pack_gen(ValueType default_value)
+        : default_value(default_value) {}
+
+      template <typename Graph, typename ArgPack>
+      typename map_maker<Graph, ArgPack, MapTag, ValueType>::map_type
+      operator()(const Graph& g, const ArgPack& ap) const {
+        return map_maker<Graph, ArgPack, MapTag, ValueType>::make_map(g, ap, default_value);
+      }
+    };
+
+    template <typename MapTag>
+    class make_property_map_from_arg_pack_gen<MapTag, void> {
+      public:
+      template <typename ValueType, typename Graph, typename ArgPack>
+      typename map_maker<Graph, ArgPack, MapTag, ValueType>::map_type
+      operator()(const Graph& g, const ArgPack& ap, ValueType default_value) const {
+        return map_maker<Graph, ArgPack, MapTag, ValueType>::make_map(g, ap, default_value);
+      }
+    };
+
+    static const
+      make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::color_map,
+        default_color_type>
+      make_color_map_from_arg_pack(white_color);
   }
 
 } // namespace boost
