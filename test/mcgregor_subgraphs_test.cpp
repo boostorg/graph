@@ -25,8 +25,6 @@
 #include <boost/property_map/shared_array_property_map.hpp>
 #include <boost/test/minimal.hpp>
 
-using namespace boost;
-
 bool was_common_subgraph_found = false, output_graphs = false;
 std::vector<std::string> simple_subgraph_list;
 
@@ -46,52 +44,52 @@ struct test_callback {
             typename CorrespondenceMapSecondToFirst>
   bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
                   CorrespondenceMapSecondToFirst correspondence_map_2_to_1,
-                  typename graph_traits<Graph>::vertices_size_type subgraph_size) {
+                  typename boost::graph_traits<Graph>::vertices_size_type subgraph_size) {
 
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
     typedef std::pair<Edge, bool> EdgeInfo;
 
-    typedef typename property_map<Graph, vertex_index_t>::type VertexIndexMap;
-    typedef typename property_map<Graph, vertex_name_t>::type VertexNameMap;
-    typedef typename property_map<Graph, edge_name_t>::type EdgeNameMap;
+    typedef typename boost::property_map<Graph, boost::vertex_index_t>::type VertexIndexMap;
+    typedef typename boost::property_map<Graph, boost::vertex_name_t>::type VertexNameMap;
+    typedef typename boost::property_map<Graph, boost::edge_name_t>::type EdgeNameMap;
 
     if (subgraph_size != num_vertices(m_common_subgraph)) {
       return (true);
     }
 
     // Fill membership maps for both graphs
-    typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;
+    typedef boost::shared_array_property_map<bool, VertexIndexMap> MembershipMap;
       
     MembershipMap membership_map1(num_vertices(m_graph1),
-                                  get(vertex_index, m_graph1));
+                                  get(boost::vertex_index, m_graph1));
 
     MembershipMap membership_map2(num_vertices(m_graph2),
-                                  get(vertex_index, m_graph2));
+                                  get(boost::vertex_index, m_graph2));
 
-    fill_membership_map<Graph>(m_graph1, correspondence_map_1_to_2, membership_map1);
-    fill_membership_map<Graph>(m_graph2, correspondence_map_2_to_1, membership_map2);
+    boost::fill_membership_map<Graph>(m_graph1, correspondence_map_1_to_2, membership_map1);
+    boost::fill_membership_map<Graph>(m_graph2, correspondence_map_2_to_1, membership_map2);
 
     // Generate filtered graphs using membership maps
-    typedef typename membership_filtered_graph_traits<Graph, MembershipMap>::graph_type
+    typedef typename boost::membership_filtered_graph_traits<Graph, MembershipMap>::graph_type
       MembershipFilteredGraph;
 
     MembershipFilteredGraph subgraph1 =
-      make_membership_filtered_graph(m_graph1, membership_map1);
+      boost::make_membership_filtered_graph(m_graph1, membership_map1);
 
     MembershipFilteredGraph subgraph2 =
-      make_membership_filtered_graph(m_graph2, membership_map2);
+      boost::make_membership_filtered_graph(m_graph2, membership_map2);
 
-    VertexIndexMap vindex_map1 = get(vertex_index, subgraph1);
-    VertexIndexMap vindex_map2 = get(vertex_index, subgraph2);
+    VertexIndexMap vindex_map1 = get(boost::vertex_index, subgraph1);
+    VertexIndexMap vindex_map2 = get(boost::vertex_index, subgraph2);
 
-    VertexNameMap vname_map_common = get(vertex_name, m_common_subgraph);
-    VertexNameMap vname_map1 = get(vertex_name, subgraph1);
-    VertexNameMap vname_map2 = get(vertex_name, subgraph2);
+    VertexNameMap vname_map_common = get(boost::vertex_name, m_common_subgraph);
+    VertexNameMap vname_map1 = get(boost::vertex_name, subgraph1);
+    VertexNameMap vname_map2 = get(boost::vertex_name, subgraph2);
 
-    EdgeNameMap ename_map_common = get(edge_name, m_common_subgraph);
-    EdgeNameMap ename_map1 = get(edge_name, subgraph1);
-    EdgeNameMap ename_map2 = get(edge_name, subgraph2);
+    EdgeNameMap ename_map_common = get(boost::edge_name, m_common_subgraph);
+    EdgeNameMap ename_map1 = get(boost::edge_name, subgraph1);
+    EdgeNameMap ename_map2 = get(boost::edge_name, subgraph2);
 
     // Verify that subgraph1 matches the supplied common subgraph
     BGL_FORALL_VERTICES_T(vertex1, subgraph1, MembershipFilteredGraph) {
@@ -164,8 +162,8 @@ struct test_callback {
 
         std::fstream file_subgraph("found_common_subgraph.dot", std::fstream::out);
         write_graphviz(file_subgraph, subgraph1,
-                       make_label_writer(get(vertex_name, m_graph1)),
-                       make_label_writer(get(edge_name, m_graph1)));
+                       make_label_writer(get(boost::vertex_name, m_graph1)),
+                       make_label_writer(get(boost::edge_name, m_graph1)));
 
       }
 
@@ -193,13 +191,13 @@ struct simple_callback {
             typename CorrespondenceMapSecondToFirst>
   bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
                   CorrespondenceMapSecondToFirst /*correspondence_map_2_to_1*/,
-                  typename graph_traits<Graph>::vertices_size_type /*subgraph_size*/) {
+                  typename boost::graph_traits<Graph>::vertices_size_type /*subgraph_size*/) {
 
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
 
-    typedef typename property_map<Graph, vertex_index_t>::type VertexIndexMap;
-    typedef typename property_map<Graph, vertex_name_t>::type VertexNameMap;
-    typedef typename property_map<Graph, edge_name_t>::type EdgeNameMap;
+    typedef typename boost::property_map<Graph, boost::vertex_index_t>::type VertexIndexMap;
+    typedef typename boost::property_map<Graph, boost::vertex_name_t>::type VertexNameMap;
+    typedef typename boost::property_map<Graph, boost::edge_name_t>::type EdgeNameMap;
 
     std::stringstream subgraph_string;
 
@@ -207,7 +205,7 @@ struct simple_callback {
 
       Vertex vertex2 = get(correspondence_map_1_to_2, vertex1);
 
-      if (vertex2 != graph_traits<Graph>::null_vertex()) {
+      if (vertex2 != boost::graph_traits<Graph>::null_vertex()) {
         subgraph_string << vertex1 << "," << vertex2 << " ";
       }
 
@@ -231,7 +229,7 @@ void add_random_vertices(Graph& graph, RandomNumberGenerator& generator,
                          int vertices_to_create, int max_edges_per_vertex,
                          VertexNameMap vname_map, EdgeNameMap ename_map) {
 
-  typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
   typedef std::vector<Vertex> VertexList;
 
   VertexList new_vertices;
@@ -286,47 +284,47 @@ int test_main (int argc, char *argv[]) {
   std::size_t random_seed = time(0);
   
   if (argc > 1) {
-    vertices_to_create = lexical_cast<int>(argv[1]);
+    vertices_to_create = boost::lexical_cast<int>(argv[1]);
   }
   
   if (argc > 2) {
-    max_edges_per_vertex = lexical_cast<int>(argv[2]);
+    max_edges_per_vertex = boost::lexical_cast<int>(argv[2]);
   }
 
   if (argc > 3) {
-    output_graphs = lexical_cast<bool>(argv[3]);
+    output_graphs = boost::lexical_cast<bool>(argv[3]);
   }
   
   if (argc > 4) {
-    random_seed = lexical_cast<std::size_t>(argv[4]);
+    random_seed = boost::lexical_cast<std::size_t>(argv[4]);
   }
   
-  minstd_rand generator(random_seed);
+  boost::minstd_rand generator(random_seed);
 
   // Using a vecS graph here so that we don't have to mess around with
   // a vertex index map; it will be implicit.
-  typedef adjacency_list<listS, vecS, directedS,
-    property<vertex_name_t, unsigned int,
-    property<vertex_index_t, unsigned int> >,
-    property<edge_name_t, unsigned int> > Graph;
+  typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS,
+    boost::property<boost::vertex_name_t, unsigned int,
+    boost::property<boost::vertex_index_t, unsigned int> >,
+    boost::property<boost::edge_name_t, unsigned int> > Graph;
 
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef graph_traits<Graph>::edge_descriptor Edge;
+  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  typedef boost::graph_traits<Graph>::edge_descriptor Edge;
 
-  typedef property_map<Graph, vertex_name_t>::type VertexNameMap;
-  typedef property_map<Graph, edge_name_t>::type EdgeNameMap;
+  typedef boost::property_map<Graph, boost::vertex_name_t>::type VertexNameMap;
+  typedef boost::property_map<Graph, boost::edge_name_t>::type EdgeNameMap;
 
   // Generate a random common subgraph and then add random vertices
   // and edges to the two parent graphs.
   Graph common_subgraph, graph1, graph2;
 
-  VertexNameMap vname_map_common = get(vertex_name, common_subgraph);
-  VertexNameMap vname_map1 = get(vertex_name, graph1);
-  VertexNameMap vname_map2 = get(vertex_name, graph2);
+  VertexNameMap vname_map_common = get(boost::vertex_name, common_subgraph);
+  VertexNameMap vname_map1 = get(boost::vertex_name, graph1);
+  VertexNameMap vname_map2 = get(boost::vertex_name, graph2);
 
-  EdgeNameMap ename_map_common = get(edge_name, common_subgraph);
-  EdgeNameMap ename_map1 = get(edge_name, graph1);
-  EdgeNameMap ename_map2 = get(edge_name, graph2);
+  EdgeNameMap ename_map_common = get(boost::edge_name, common_subgraph);
+  EdgeNameMap ename_map1 = get(boost::edge_name, graph1);
+  EdgeNameMap ename_map2 = get(boost::edge_name, graph2);
 
   for (int vindex = 0; vindex < vertices_to_create; ++vindex) {
     put(vname_map_common, add_vertex(common_subgraph), generator());
@@ -344,11 +342,11 @@ int test_main (int argc, char *argv[]) {
     }
   }
 
-  randomize_property<vertex_name_t>(common_subgraph, generator);
-  randomize_property<edge_name_t>(common_subgraph, generator);
+  boost::randomize_property<boost::vertex_name_t>(common_subgraph, generator);
+  boost::randomize_property<boost::edge_name_t>(common_subgraph, generator);
 
-  copy_graph(common_subgraph, graph1);
-  copy_graph(common_subgraph, graph2);
+  boost::copy_graph(common_subgraph, graph1);
+  boost::copy_graph(common_subgraph, graph2);
 
   // Randomly add vertices and edges to graph1 and graph2.
   add_random_vertices(graph1, generator, vertices_to_create,
@@ -372,8 +370,8 @@ int test_main (int argc, char *argv[]) {
                    make_label_writer(ename_map2));
 
     write_graphviz(file_common_subgraph, common_subgraph,
-                   make_label_writer(get(vertex_name, common_subgraph)),
-                   make_label_writer(get(edge_name, common_subgraph)));
+                   make_label_writer(get(boost::vertex_name, common_subgraph)),
+                   make_label_writer(get(boost::edge_name, common_subgraph)));
 
   }
 
@@ -382,9 +380,9 @@ int test_main (int argc, char *argv[]) {
 
   test_callback<Graph> user_callback(common_subgraph, graph1, graph2);
 
-  mcgregor_common_subgraphs(graph1, graph2, true, user_callback,
-    edges_equivalent(make_property_map_equivalent(ename_map1, ename_map2)).
-    vertices_equivalent(make_property_map_equivalent(vname_map1, vname_map2)));
+  boost::mcgregor_common_subgraphs(graph1, graph2, true, user_callback,
+    boost::edges_equivalent(boost::make_property_map_equivalent(ename_map1, ename_map2)).
+    vertices_equivalent(boost::make_property_map_equivalent(vname_map1, vname_map2)));
 
   BOOST_CHECK(was_common_subgraph_found);
 
@@ -392,8 +390,8 @@ int test_main (int argc, char *argv[]) {
   Graph graph_simple1, graph_simple2;
   simple_callback<Graph> user_callback_simple(graph_simple1);
 
-  VertexNameMap vname_map_simple1 = get(vertex_name, graph_simple1);
-  VertexNameMap vname_map_simple2 = get(vertex_name, graph_simple2);
+  VertexNameMap vname_map_simple1 = get(boost::vertex_name, graph_simple1);
+  VertexNameMap vname_map_simple2 = get(boost::vertex_name, graph_simple2);
 
   put(vname_map_simple1, add_vertex(graph_simple1), 1);
   put(vname_map_simple1, add_vertex(graph_simple1), 2);
@@ -415,9 +413,9 @@ int test_main (int argc, char *argv[]) {
 
   // Unique subgraphs
   std::cout << "Searching for unique subgraphs" << std::endl;
-  mcgregor_common_subgraphs_unique(graph_simple1, graph_simple2,
+  boost::mcgregor_common_subgraphs_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
 
   BOOST_CHECK(has_subgraph_string("0,0 1,1 "));
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
@@ -435,9 +433,9 @@ int test_main (int argc, char *argv[]) {
 
   // Maximum subgraphs
   std::cout << "Searching for maximum subgraphs" << std::endl;
-  mcgregor_common_subgraphs_maximum(graph_simple1, graph_simple2,
+  boost::mcgregor_common_subgraphs_maximum(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
 
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
 
@@ -452,9 +450,9 @@ int test_main (int argc, char *argv[]) {
 
   // Maximum, unique subgraphs
   std::cout << "Searching for maximum unique subgraphs" << std::endl;
-  mcgregor_common_subgraphs_maximum_unique(graph_simple1, graph_simple2,
+  boost::mcgregor_common_subgraphs_maximum_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    vertices_equivalent(make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
 
   BOOST_CHECK(simple_subgraph_list.size() == 1);
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
