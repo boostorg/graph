@@ -32,9 +32,11 @@
 #ifndef BOOST_KOLMOGOROV_MAX_FLOW_HPP
 #define BOOST_KOLMOGOROV_MAX_FLOW_HPP
 
-#warning \
-  The kolmogorov_max_flow.hpp header is deprecated and will be removed \
-  in Boost 1.46. Use boykov_kolmogorov_max_flow.hpp instead.
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
+#  pragma message ("The kolmogorov_max_flow.hpp header is deprecated and will be removed in Boost 1.46. Use boykov_kolmogorov_max_flow.hpp instead.")
+#elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#  warning "The kolmogorov_max_flow.hpp header is deprecated and will be removed in Boost 1.46. Use boykov_kolmogorov_max_flow.hpp instead."
+#endif
 
 #include <boost/config.hpp>
 #include <cassert>
