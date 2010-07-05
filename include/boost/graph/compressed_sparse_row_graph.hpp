@@ -1275,8 +1275,8 @@ in_edges(Vertex v, const BOOST_BIDIR_CSR_GRAPH_TYPE& g)
   typedef typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator it;
   EdgeIndex v_row_start = g.m_backward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_backward.m_rowstart[v + 1];
-  return std::make_pair(it(ed(v, v_row_start)),
-                        it(ed(v, next_row_start)));
+  return std::make_pair(it(g, v_row_start),
+                        it(g, next_row_start));
 }
 
 template<BOOST_BIDIR_CSR_GRAPH_TEMPLATE_PARMS>

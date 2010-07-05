@@ -14,6 +14,9 @@
 
 /* ----------------------------------------------------------------- */
 
+#ifndef BOOST_GRAPH_READ_DIMACS_HPP
+#define BOOST_GRAPH_READ_DIMACS_HPP
+
 #include <vector>
 #include <iostream>
 #include <string>
@@ -280,3 +283,5 @@ int read_dimacs_max_flow(Graph& g,
 /* --------------------   end of parser  -------------------*/
 
 } // namespace boost
+
+#endif // BOOST_GRAPH_READ_DIMACS_HPP

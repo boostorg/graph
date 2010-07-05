@@ -462,6 +462,10 @@ int test_main(int argc, char* argv[])
     assert_graphs_equal(g, boost::identity_property_map(),
                         g2b, boost::identity_property_map(),
                         boost::identity_property_map());
+    // Check in edge access
+    typedef boost::graph_traits<BidirCSRGraphT>::in_edge_iterator in_edge_iterator;
+    std::pair<in_edge_iterator, in_edge_iterator> ie(in_edges(vertex(0, g2b), g2b));
+
     std::cout << "Testing CSR graph built using add_edges" << std::endl;
     // Test building a graph using add_edges on unsorted lists
     CSRGraphT g3(boost::edges_are_unsorted, unsorted_edges, unsorted_edges, 6); // Empty range
