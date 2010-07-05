@@ -56,7 +56,7 @@ int main(int, char**) {
 
   BGL_FORALL_EDGES(e, g, graph_type) {put(weight, e, (1. + get(edge_index, g, e)) / num_edges(g));}
 
-  mt19937 gen;
+  boost::mt19937 gen;
   random_spanning_tree(g, gen, predecessor_map(pred));
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st.dot");
   random_spanning_tree(g, gen, predecessor_map(pred));
