@@ -503,6 +503,8 @@ namespace boost {
     return Filter(g, keep_all(), p);
   }
 
+  // This is misspelled, but present for backwards compatibility; new code
+  // should use the version below that has the correct spelling.
   template <typename Graph, typename Set>
   struct vertex_subset_compliment_filter {
     typedef filtered_graph<Graph, keep_all, is_not_in_subset<Set> > type;
@@ -511,6 +513,18 @@ namespace boost {
   inline typename vertex_subset_compliment_filter<Graph, Set>::type
   make_vertex_subset_compliment_filter(Graph& g, const Set& s) {
     typedef typename vertex_subset_compliment_filter<Graph, Set>::type Filter;
+    is_not_in_subset<Set> p(s);
+    return Filter(g, keep_all(), p);
+  }
+
+  template <typename Graph, typename Set>
+  struct vertex_subset_complement_filter {
+    typedef filtered_graph<Graph, keep_all, is_not_in_subset<Set> > type;
+  };
+  template <typename Graph, typename Set>
+  inline typename vertex_subset_complement_filter<Graph, Set>::type
+  make_vertex_subset_complement_filter(Graph& g, const Set& s) {
+    typedef typename vertex_subset_complement_filter<Graph, Set>::type Filter;
     is_not_in_subset<Set> p(s);
     return Filter(g, keep_all(), p);
   }
