@@ -152,8 +152,8 @@ vertex(<span class="name">Traits</span>::<span class="type">vertices_size_type</
 <span class="comment">// Get the index associated with vertex</span>
 <span class="name">Traits</span>::<span class="type">vertices_size_type</span>
 get(<span class="name">boost</span>::<span class="type">vertex_index_t</span>,
-    <span class="name">Traits</span>::<span class="type">vertex_descriptor</span> vertex,
-    <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph);
+    <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph,
+    <span class="name">Traits</span>::<span class="type">vertex_descriptor</span> vertex);
 
 <span class="comment">// Get the edge associated with edge_index</span>
 <span class="name">Traits</span>::<span class="type">edge_descriptor</span>
@@ -163,8 +163,8 @@ edge_at(<span class="name">Traits</span>::<span class="type">edges_size_type</sp
 <span class="comment">// Get the index associated with edge</span>
 <span class="name">Traits</span>::<span class="type">edges_size_type</span>
 get(<span class="name">boost</span>::<span class="type">edge_index_t</span>,
-    <span class="name">Traits</span>::<span class="type">edge_descriptor</span> edge,
-    <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph);
+    <span class="keyword">const</span> <span class="name">Graph&amp;</span> graph,
+    <span class="name">Traits</span>::<span class="type">edge_descriptor</span> edge);
 
 <span class="comment">// Get the out-edge associated with vertex and out_edge_index</span>
 <span class="name">Traits</span>::<span class="type">edge_descriptor</span>
@@ -190,7 +190,7 @@ in_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descripto
 
 <span class="comment">// Do a round-trip test of the vertex index functions</span>
 <span class="keyword">for</span> (<span class="name">Traits</span>::<span class="type">vertices_size_type</span> v_index = <span class="literal">0</span>;
-     v_index < num_vertices(graph); ++v_index) {
+     v_index &lt; num_vertices(graph); ++v_index) {
 
   <span class="comment">// The two indices should always be equal</span>
   <span class="name">std</span>::cout &lt;&lt; <span class="literal">&quot;Index of vertex &quot;</span> &lt;&lt; v_index &lt;&lt; <span class="literal">&quot; is &quot;</span> &lt;&lt;
@@ -200,7 +200,7 @@ in_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descripto
 
 <span class="comment">// Do a round-trip test of the edge index functions</span>
 <span class="keyword">for</span> (<span class="name">Traits</span>::<span class="type">edges_size_type</span> e_index = <span class="literal">0</span>;
-     e_index < num_edges(graph); ++e_index) {
+     e_index &lt; num_edges(graph); ++e_index) {
 
   <span class="comment">// The two indices should always be equal</span>
   <span class="name">std</span>::cout &lt;&lt; <span class="literal">&quot;Index of edge &quot;</span> &lt;&lt; e_index &lt;&lt; <span class="literal">&quot; is &quot;</span> &lt;&lt;

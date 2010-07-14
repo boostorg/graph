@@ -473,7 +473,7 @@ The time complexity is <i>O((E + V) log V)</i>.
   is invoked on each out-edge of a vertex immediately after it is
   examined.
 <li><b><tt>vis.edge_relaxed(e, g)</tt></b>
-  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) < d[v]</i>.
+  is invoked on edge <i>(u,v)</i> if <i>d[u] + w(u,v) &lt; d[v]</i>.
 <li><b><tt>vis.edge_not_relaxed(e, g)</tt></b>
   is invoked if the edge is not relaxed (see above).
 <li><b><tt>vis.black_target(e, g)</tt></b>
