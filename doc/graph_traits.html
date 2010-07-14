@@ -34,6 +34,10 @@ required by the concepts, it is ok to use <tt>void</tt> as the type
 (when using nested typedefs inside the graph class), or to leave the
 typedef out of the <tt>graph_traits</tt> specialization for the graph
 class.
+Note that because of the use of traits classes rather than member
+types, it is not safe (and often will not work) to define subclasses of BGL
+graph types; those types may be missing important traits and properties that
+were defined externally to the class definition.
 
 <pre>
   template &lt;typename Graph&gt;
