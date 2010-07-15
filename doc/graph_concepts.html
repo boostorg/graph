@@ -36,10 +36,15 @@ the purpose of a concept is to summarize the requirements for
 kind of graph operation, typically only a small subset.  Furthermore,
 there are many graph data-structures that can not provide efficient
 implementations of all the operations, but provide highly efficient
-implementations of the operations necessary for a particular algorithm
-. By factoring the graph interface into many smaller concepts we
+implementations of the operations necessary for a particular algorithm.
+By factoring the graph interface into many smaller concepts we
 provide the graph algorithm writer with a good selection from which to
 choose the concept that is the closest match for their algorithm.
+
+Note that because of the use of traits classes rather than member
+types, it is not safe (and often will not work) to define subclasses of BGL
+graph types; those types may be missing important traits and properties that
+were defined externally to the class definition.
 
 <H2>Graph Structure Concepts Overview</H2>
 
