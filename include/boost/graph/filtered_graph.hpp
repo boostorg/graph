@@ -435,27 +435,10 @@ namespace boost {
 
   //===========================================================================
   // Property map
-
-  namespace detail {
-    struct filtered_graph_property_selector {
-      template <class FilteredGraph, class Property, class Tag>
-      struct bind_ {
-        typedef typename FilteredGraph::graph_type Graph;
-        typedef property_map<Graph, Tag> Map;
-        typedef typename Map::type type;
-        typedef typename Map::const_type const_type;
-      };
-    };    
-  } // namespace detail
-
-  template <>  
-  struct vertex_property_selector<filtered_graph_tag> {
-    typedef detail::filtered_graph_property_selector type;
-  };
-  template <>  
-  struct edge_property_selector<filtered_graph_tag> {
-    typedef detail::filtered_graph_property_selector type;
-  };
+  
+  template <typename G, typename EP, typename VP, typename Property>
+  struct property_map<filtered_graph<G, EP, VP>, Property>
+    : property_map<G, Property> {};
 
   template <typename G, typename EP, typename VP, typename Property>
   typename property_map<G, Property>::type
@@ -503,6 +486,8 @@ namespace boost {
     return Filter(g, keep_all(), p);
   }
 
+  // This is misspelled, but present for backwards compatibility; new code
+  // should use the version below that has the correct spelling.
   template <typename Graph, typename Set>
   struct vertex_subset_compliment_filter {
     typedef filtered_graph<Graph, keep_all, is_not_in_subset<Set> > type;
@@ -511,6 +496,18 @@ namespace boost {
   inline typename vertex_subset_compliment_filter<Graph, Set>::type
   make_vertex_subset_compliment_filter(Graph& g, const Set& s) {
     typedef typename vertex_subset_compliment_filter<Graph, Set>::type Filter;
+    is_not_in_subset<Set> p(s);
+    return Filter(g, keep_all(), p);
+  }
+
+  template <typename Graph, typename Set>
+  struct vertex_subset_complement_filter {
+    typedef filtered_graph<Graph, keep_all, is_not_in_subset<Set> > type;
+  };
+  template <typename Graph, typename Set>
+  inline typename vertex_subset_complement_filter<Graph, Set>::type
+  make_vertex_subset_complement_filter(Graph& g, const Set& s) {
+    typedef typename vertex_subset_complement_filter<Graph, Set>::type Filter;
     is_not_in_subset<Set> p(s);
     return Filter(g, keep_all(), p);
   }
