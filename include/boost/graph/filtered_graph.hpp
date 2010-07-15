@@ -435,27 +435,10 @@ namespace boost {
 
   //===========================================================================
   // Property map
-
-  namespace detail {
-    struct filtered_graph_property_selector {
-      template <class FilteredGraph, class Property, class Tag>
-      struct bind_ {
-        typedef typename FilteredGraph::graph_type Graph;
-        typedef property_map<Graph, Tag> Map;
-        typedef typename Map::type type;
-        typedef typename Map::const_type const_type;
-      };
-    };    
-  } // namespace detail
-
-  template <>  
-  struct vertex_property_selector<filtered_graph_tag> {
-    typedef detail::filtered_graph_property_selector type;
-  };
-  template <>  
-  struct edge_property_selector<filtered_graph_tag> {
-    typedef detail::filtered_graph_property_selector type;
-  };
+  
+  template <typename G, typename EP, typename VP, typename Property>
+  struct property_map<filtered_graph<G, EP, VP>, Property>
+    : property_map<G, Property> {};
 
   template <typename G, typename EP, typename VP, typename Property>
   typename property_map<G, Property>::type
