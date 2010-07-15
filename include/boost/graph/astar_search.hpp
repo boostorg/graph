@@ -300,63 +300,7 @@ namespace boost {
 
   }
 
-
-
-  namespace detail {
-    template <class VertexListGraph, class AStarHeuristic,
-              class CostMap, class DistanceMap, class WeightMap,
-              class IndexMap, class ColorMap, class Params>
-    inline void
-    astar_dispatch2
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       AStarHeuristic h, CostMap cost, DistanceMap distance,
-       WeightMap weight, IndexMap index_map, ColorMap color,
-       const Params& params)
-    {
-      dummy_property_map p_map;
-      typedef typename property_traits<CostMap>::value_type C;
-      astar_search
-        (g, s, h,
-         choose_param(get_param(params, graph_visitor),
-                      make_astar_visitor(null_visitor())),
-         choose_param(get_param(params, vertex_predecessor), p_map),
-         cost, distance, weight, index_map, color,
-         choose_param(get_param(params, distance_compare_t()),
-                      std::less<C>()),
-         choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<C>()),
-         choose_param(get_param(params, distance_inf_t()),
-                      std::numeric_limits<C>::max BOOST_PREVENT_MACRO_SUBSTITUTION ()),
-         choose_param(get_param(params, distance_zero_t()),
-                      C()));
-    }
-
-    template <class VertexListGraph, class AStarHeuristic,
-              class CostMap, class DistanceMap, class WeightMap,
-              class IndexMap, class ColorMap, class Params>
-    inline void
-    astar_dispatch1
-      (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
-       AStarHeuristic h, CostMap cost, DistanceMap distance,
-       WeightMap weight, IndexMap index_map, ColorMap color,
-       const Params& params)
-    {
-      typedef typename property_traits<WeightMap>::value_type D;
-
-      detail::astar_dispatch2
-        (g, s, h,
-         choose_param(cost, vector_property_map<D, IndexMap>(index_map)),
-         choose_param(distance, vector_property_map<D, IndexMap>(index_map)),
-         weight, index_map,
-         choose_param(color, vector_property_map<default_color_type, IndexMap>(index_map)),
-         params);
-    }
-  } // namespace detail
-
-
-  // Named parameter interface
+  // Named parameter interfaces
   template <typename VertexListGraph,
             typename AStarHeuristic,
             typename P, typename T, typename R>
@@ -366,16 +310,67 @@ namespace boost {
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      AStarHeuristic h, const bgl_named_params<P, T, R>& params)
   {
+    using namespace boost::graph::keywords;
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
 
-    detail::astar_dispatch1
+    // Distance type is the value type of the distance map if there is one,
+    // otherwise the value type of the weight map.
+    typedef
+      typename detail::override_const_property_result<
+                 arg_pack_type, tag::weight_map, edge_weight_t, VertexListGraph>::type
+      weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type W;
+    typedef
+      typename detail::map_maker<VertexListGraph, arg_pack_type, tag::distance_map, W>::map_type
+      distance_map_type;
+    typedef typename boost::property_traits<distance_map_type>::value_type D;
+
+    astar_search
       (g, s, h,
-       get_param(params, vertex_rank),
-       get_param(params, vertex_distance),
-       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
-       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-       get_param(params, vertex_color),
-       params);
+       arg_pack[_visitor | make_astar_visitor(null_visitor())],
+       arg_pack[_predecessor_map | dummy_property_map()],
+       detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
+       detail::make_property_map_from_arg_pack_gen<tag::distance_map, W>(W())(g, arg_pack),
+       override_const_property(arg_pack, _weight_map, g, edge_weight),
+       override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
+       detail::make_color_map_from_arg_pack(g, arg_pack),
+       arg_pack[_distance_compare | std::less<D>()],
+       arg_pack[_distance_combine | closed_plus<D>()],
+       arg_pack[_distance_inf | (std::numeric_limits<D>::max)()],
+       arg_pack[_distance_zero | D()]);
+  }
 
+  template <typename VertexListGraph,
+            typename AStarHeuristic,
+            typename P, typename T, typename R>
+  void
+  astar_search_no_init
+    (const VertexListGraph &g,
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     AStarHeuristic h, const bgl_named_params<P, T, R>& params)
+  {
+    using namespace boost::graph::keywords;
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    typedef
+      typename detail::override_const_property_result<
+                 arg_pack_type, tag::weight_map, edge_weight_t, VertexListGraph>::type
+               weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    astar_search_no_init
+      (g, s, h,
+       arg_pack[_visitor | make_astar_visitor(null_visitor())],
+       arg_pack[_predecessor_map | dummy_property_map()],
+       detail::make_property_map_from_arg_pack_gen<tag::rank_map, D>(D())(g, arg_pack),
+       detail::make_property_map_from_arg_pack_gen<tag::distance_map, D>(D())(g, arg_pack),
+       override_const_property(arg_pack, _weight_map, g, edge_weight),
+       override_const_property(arg_pack, _vertex_index_map, g, vertex_index),
+       detail::make_color_map_from_arg_pack(g, arg_pack),
+       arg_pack[_distance_compare | std::less<D>()],
+       arg_pack[_distance_combine | closed_plus<D>()],
+       arg_pack[_distance_inf | (std::numeric_limits<D>::max)()],
+       arg_pack[_distance_zero | D()]);
   }
 
 } // namespace boost

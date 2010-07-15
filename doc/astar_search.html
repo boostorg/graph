@@ -22,12 +22,21 @@
 
 <P>
 <PRE>
-<i>// Named parameter interface</i>
+<i>// Named parameter interfaces</i>
 template &lt;typename VertexListGraph,
           typename AStarHeuristic,
           typename P, typename T, typename R&gt;
 void
 astar_search
+  (const VertexListGraph &amp;g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+template &lt;typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R&gt;
+void
+astar_search_no_init
   (const VertexListGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
@@ -71,7 +80,8 @@ astar_search_no_init
    CostInf inf, CostZero zero);
 
 <b>Note that the index_map and color parameters are swapped in
-astar_search_no_init relative to astar_search.</b>
+astar_search_no_init() relative to astar_search(); the named parameter
+interfaces are not affected.</b>
 </PRE>
 
 <P>
@@ -110,7 +120,7 @@ A* is particularly useful for searching <i>implicit</i> graphs.
 Implicit graphs are graphs that are not completely known at the
 beginning of the search.  Upon visiting a vertex, its neighbors are
 "generated" and added to the search.  Implicit graphs are particularly
-useful for searching large state spaces -- in gameplaying scenarios
+useful for searching large state spaces -- in game-playing scenarios
 (e.g. chess), for example -- in which it may not be possible to store
 the entire graph.  Implicit searches can be performed with this
 implementation of A* by creating special visitors that generate
@@ -293,7 +303,7 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
   <b>Default:</b> <tt>get(vertex_index, g)</tt>.
    Note: if you use this default, make sure your graph has
    an internal <tt>vertex_index</tt> property. For example,
-   <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+   <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
    not have an internal <tt>vertex_index</tt> property.
 </blockquote>
 
@@ -330,8 +340,8 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
   provided by the <tt>compare</tt> function object.<br>
 
-  <b>Default:</b> <tt>iterator_property_map</tt> created from a
-  <tt>std::vector</tt> with the same value type as the
+  <b>Default:</b> <tt>shared_array_property_map</tt>
+  with the same value type as the
   <tt>WeightMap</tt>, and of size <tt>num_vertices(g)</tt>, and using
   the <tt>i_map</tt> for the index map.
 </blockquote>
@@ -356,9 +366,9 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
   for this map must be the same as the value type for the distance
   map.<br>
 
-  <b>Default:</b> <tt>iterator_property_map</tt> created from a
-  <tt>std::vector</tt> with the same value type as the
-  <tt>WeightMap</tt>, and of size <tt>num_vertices(g)</tt>, and using
+  <b>Default:</b> <tt>shared_array_property_map</tt>
+  with the same value type as the
+  <tt>DistanceMap</tt>, and of size <tt>num_vertices(g)</tt>, and using
   the <tt>i_map</tt> for the index map.
 </blockquote>
 
@@ -378,10 +388,10 @@ UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
   key type of the map, and the value type of the map must be a model
   of <a href="./ColorValue.html"><tt>Color Value</tt></a>.<br>
 
-  <b>Default:</b> <tt>iterator_property_map</tt> created from a
-  <tt>std::vector</tt> of value type <tt>default_color_type</tt>, with
-  size <tt>num_vertices(g)</tt>, and using the <tt>i_map</tt> for the
-  index map.
+  <b>Default:</b> <tt>shared_array_property_map</tt>
+  of value type <tt>default_color_type</tt>, with size
+  <tt>num_vertices(g)</tt>, and using
+  the <tt>i_map</tt> for the index map.
 </blockquote>
 
 IN: <tt>distance_compare(CompareFunction cmp)</tt>

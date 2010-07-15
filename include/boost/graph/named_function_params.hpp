@@ -393,12 +393,19 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
-    typename override_const_property_t<
-               typename boost::parameter::value_type<ArgPack, Tag, int>::type,
-               Prop,
-               Graph,
-               boost::detail::parameter_exists<ArgPack, Tag>::value
-             >::result_type
+    struct override_const_property_result {
+      typedef 
+        typename override_const_property_t<
+                   typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+                   Prop,
+                   Graph,
+                   boost::detail::parameter_exists<ArgPack, Tag>::value
+                 >::result_type
+        type;
+    };
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    typename override_const_property_result<ArgPack, Tag, Prop, Graph>::type
     override_const_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
     return override_const_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
@@ -421,12 +428,19 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
-    typename override_property_t<
-               typename boost::parameter::value_type<ArgPack, Tag, int>::type,
-               Prop,
-               Graph,
-               boost::detail::parameter_exists<ArgPack, Tag>::value
-             >::result_type
+    struct override_property_result {
+      typedef 
+        typename override_property_t<
+                   typename boost::parameter::value_type<ArgPack, Tag, int>::type,
+                   Prop,
+                   Graph,
+                   boost::detail::parameter_exists<ArgPack, Tag>::value
+                 >::result_type
+        type;
+    };
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    typename override_property_result<ArgPack, Tag, Prop, Graph>::type
     override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop prop) {
     return override_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
