@@ -1505,51 +1505,6 @@ namespace boost {
 
       typedef typename Config::global_edgelist_selector
         global_edgelist_selector;
-
-      //    protected:
-
-      // The edge_dispatch() functions should be static, but
-      // Borland gets confused about constness.
-
-      // O(E/V)
-      inline std::pair<edge_descriptor,bool>
-      edge_dispatch(const AdjList& g,
-                    vertex_descriptor u, vertex_descriptor v,
-                    boost::allow_parallel_edge_tag) const
-      {
-        bool found;
-        const typename Config::OutEdgeList& el = g.out_edge_list(u);
-        typename Config::OutEdgeList::const_iterator
-          i = std::find_if(el.begin(), el.end(),
-                           detail::target_is<vertex_descriptor>(v));
-        found = (i != g.out_edge_list(u).end());
-        if (found)
-          return std::make_pair(edge_descriptor(u, v, &(*i).get_property()),
-                                true);
-        else
-          return std::make_pair(edge_descriptor(u, v, 0), false);
-      }
-      // O(log(E/V))
-      inline std::pair<edge_descriptor,bool>
-      edge_dispatch(const AdjList& g,
-                    vertex_descriptor u, vertex_descriptor v,
-                    boost::disallow_parallel_edge_tag) const
-      {
-        bool found;
-        /* According to the standard, this should be iterator, not const_iterator,
-           but the VC++ std::set::find() const returns const_iterator.
-           And since iterator should be convertible to const_iterator, the
-           following should work everywhere. -Jeremy */
-        typename Config::OutEdgeList::const_iterator
-          i = g.out_edge_list(u).find(StoredEdge(v)),
-          end = g.out_edge_list(u).end();
-        found = (i != end);
-        if (found)
-          return std::make_pair(edge_descriptor(u, v, &(*i).get_property()),
-                                true);
-        else
-          return std::make_pair(edge_descriptor(u, v, 0), false);
-      }
     };
 
     template <class Config, class Base>
@@ -1630,9 +1585,16 @@ namespace boost {
          const adj_list_helper<Config, Base>& g_)
     {
       typedef typename Config::graph_type Graph;
-      typedef typename Config::edge_parallel_category Cat;
-      const Graph& g = static_cast<const Graph&>(g_);
-      return g_.edge_dispatch(g, u, v, Cat());
+      typedef typename Config::StoredEdge StoredEdge;
+      const Graph& cg = static_cast<const Graph&>(g_);
+      typedef typename Config::out_edge_iterator out_edge_iterator;
+      const typename Config::OutEdgeList& el = cg.out_edge_list(u);
+      typename Config::OutEdgeList::const_iterator it = graph_detail::
+        find(el, StoredEdge(v));
+      return std::make_pair(
+               typename Config::edge_descriptor
+                     (u, v, (it == el.end() ? 0 : &(*it).get_property())),
+               (it != el.end()));
     }
 
     template <class Config, class Base>
