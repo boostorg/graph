@@ -71,7 +71,7 @@ Various aspects of the graph are modeled by the following classes:
 
 Along with these classes, the graph concepts are modeled by various valid
 expression functions defined below.  This example also defines a
-get(boost::vertex_index_t, const ring_graph&) function which isn’t part of a
+get(boost::vertex_index_t, const ring_graph&) function which isn't part of a
 graph concept, but is used for Dijkstra search.
 
 Apart from graph, client code should not instantiate the model classes
