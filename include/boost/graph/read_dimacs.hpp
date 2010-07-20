@@ -28,13 +28,16 @@
 
 namespace boost {
 
+  namespace detail {
+
 template <class Graph, class CapacityMap, class ReverseEdgeMap>
-int read_dimacs_max_flow(Graph& g,
-                         CapacityMap capacity,
-                         ReverseEdgeMap reverse_edge,
-                         typename graph_traits<Graph>::vertex_descriptor& src,
-                         typename graph_traits<Graph>::vertex_descriptor& sink,
-                         std::istream& in = std::cin)
+int read_dimacs_max_flow_internal(Graph& g,
+                                  CapacityMap capacity,
+                                  ReverseEdgeMap reverse_edge,
+                                  typename graph_traits<Graph>::vertex_descriptor& src,
+                                  typename graph_traits<Graph>::vertex_descriptor& sink,
+                                  std::istream& in,
+                                  bool require_source_and_sink)
 {
   //  const int MAXLINE = 100;      /* max line length in the input file */
   const int ARC_FIELDS = 3;     /* no of fields in arc line  */
@@ -203,7 +206,7 @@ int read_dimacs_max_flow(Graph& g,
       break;
 
     case 'a':                    /* arc description */
-      if ( no_nslines == 0 || no_nklines == 0 )
+      if ( require_source_and_sink && (no_nslines == 0 || no_nklines == 0) )
         /* there was not source and sink description above */
         { err_no = EN14; goto error; }
 
@@ -264,7 +267,8 @@ int read_dimacs_max_flow(Graph& g,
   if ( no_alines < m ) /* not enough arcs */
     { err_no = EN19; goto error; }
 
-  if ( out_degree(src, g) == 0 || out_degree(sink, g) == 0  )
+  if ( require_source_and_sink &&
+       (out_degree(src, g) == 0 || out_degree(sink, g) == 0) )
     /* no arc goes out of the source */
     { err_no = EN20; goto error; }
 
@@ -281,6 +285,27 @@ int read_dimacs_max_flow(Graph& g,
   return (0); /* to avoid warning */
 }
 /* --------------------   end of parser  -------------------*/
+
+  } // namespace detail
+
+template <class Graph, class CapacityMap, class ReverseEdgeMap>
+int read_dimacs_max_flow(Graph& g,
+                         CapacityMap capacity,
+                         ReverseEdgeMap reverse_edge,
+                         typename graph_traits<Graph>::vertex_descriptor& src,
+                         typename graph_traits<Graph>::vertex_descriptor& sink,
+                         std::istream& in = std::cin) {
+  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, src, sink, in, true);
+}
+
+template <class Graph, class CapacityMap, class ReverseEdgeMap>
+int read_dimacs_min_cut(Graph& g,
+                        CapacityMap capacity,
+                        ReverseEdgeMap reverse_edge,
+                        std::istream& in = std::cin) {
+  typename graph_traits<Graph>::vertex_descriptor dummy_src, dummy_sink; // Not filled in
+  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, dummy_src, dummy_sink, in, false);
+}
 
 } // namespace boost
 
