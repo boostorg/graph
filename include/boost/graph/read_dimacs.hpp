@@ -37,13 +37,13 @@ int read_dimacs_max_flow_internal(Graph& g,
                                   typename graph_traits<Graph>::vertex_descriptor& src,
                                   typename graph_traits<Graph>::vertex_descriptor& sink,
                                   std::istream& in,
-                                  bool require_source_and_sink)
+                                  bool require_source_and_sink,
+                                  const std::string& problem_type)
 {
   //  const int MAXLINE = 100;      /* max line length in the input file */
   const int ARC_FIELDS = 3;     /* no of fields in arc line  */
   const int NODE_FIELDS = 2;    /* no of fields in node line  */
   const int P_FIELDS = 3;       /* no of fields in problem line */
-  const char* PROBLEM_TYPE = "max"; /* name of problem type*/
 
   typedef typename graph_traits<Graph>::vertices_size_type vertices_size_type;
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -148,7 +148,7 @@ int read_dimacs_max_flow_internal(Graph& g,
         /*wrong number of parameters in the problem line*/
         { err_no = EN2; goto error; }
 
-      if ( std::strcmp ( pr_type, PROBLEM_TYPE ) )
+      if ( pr_type != problem_type )
         /*wrong problem type*/
         { err_no = EN3; goto error; }
 
@@ -295,7 +295,7 @@ int read_dimacs_max_flow(Graph& g,
                          typename graph_traits<Graph>::vertex_descriptor& src,
                          typename graph_traits<Graph>::vertex_descriptor& sink,
                          std::istream& in = std::cin) {
-  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, src, sink, in, true);
+  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, src, sink, in, true, "max");
 }
 
 template <class Graph, class CapacityMap, class ReverseEdgeMap>
@@ -304,7 +304,7 @@ int read_dimacs_min_cut(Graph& g,
                         ReverseEdgeMap reverse_edge,
                         std::istream& in = std::cin) {
   typename graph_traits<Graph>::vertex_descriptor dummy_src, dummy_sink; // Not filled in
-  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, dummy_src, dummy_sink, in, false);
+  return detail::read_dimacs_max_flow_internal(g, capacity, reverse_edge, dummy_src, dummy_sink, in, false, "cut");
 }
 
 } // namespace boost
