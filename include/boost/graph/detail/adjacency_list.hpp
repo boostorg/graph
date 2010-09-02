@@ -993,10 +993,19 @@ namespace boost {
       typename Config::OutEdgeList& el = g.out_edge_list(u);
       typename Config::OutEdgeList::iterator
         ei = el.begin(), ei_end = el.end();
-      for (; ei != ei_end; ++ei) {
-        detail::erase_from_incidence_list
-          (g.out_edge_list((*ei).get_target()), u, Cat());
-        g.m_edges.erase((*ei).get_iter());
+      for (; ei != ei_end; /* Increment below */ ) {
+        bool is_self_loop = (*ei).get_target() == u;
+        // Don't erase from our own incidence list in the case of a self-loop
+        // since we're clearing it anyway.
+        if (!is_self_loop) {
+          detail::erase_from_incidence_list
+            (g.out_edge_list((*ei).get_target()), u, Cat());
+          typename Config::OutEdgeList::iterator ei_copy = ei;
+          ++ei;
+          if (!is_self_loop) g.m_edges.erase((*ei_copy).get_iter());
+        } else {
+          ++ei;
+        }
       }
       g.out_edge_list(u).clear();
     }
