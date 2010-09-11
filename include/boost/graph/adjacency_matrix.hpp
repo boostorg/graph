@@ -25,7 +25,7 @@
 #include <boost/graph/detail/edge.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/pending/integer_range.hpp>
+#include <boost/range/irange.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/static_assert.hpp>
