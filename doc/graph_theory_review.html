@@ -1,6 +1,7 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
+     Copyright (c) Daniel Trebbien 2010
     
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
@@ -577,6 +578,41 @@ href="./bibliography.html#goldberg85:_new_max_flow_algor">Goldberg</a>
 which is based on the notion of a <b><i>preflow</i></b> introduced by
 <a href="./bibliography.html#karzanov74:_deter">Karzanov</a>.
 
+
+<h2><a name="sec:min-cut-algorithms">Minimum Cut Algorithms</a></h2>
+
+<h3>Undirected Graphs</h3>
+<p>Given an undirected graph <i>G</i> = (<i>V</i>, <i>E</i>), a <em>cut</em> of <i>G</i> is a partition of the vertices into two, non-empty sets <i>X</i> and <img src="stoer_wagner_imgs/6e4.gif" alt="\overline{X} = V - X" style="vertical-align: middle; padding-bottom: 2px">. The <i>weight</i> of a cut is defined as the number of edges between sets <i>X</i> and <img src="stoer_wagner_imgs/f79.gif" alt="\overline{X}" style="vertical-align: middle; padding-bottom: 3px"> if <i>G</i> is unweighted, or the sum of the weights of all edges between sets <i>X</i> and <img src="stoer_wagner_imgs/f79.gif" alt="\overline{X}" style="vertical-align: middle; padding-bottom: 3px"> if <i>G</i> is weighted (each edge has an associated, non-negative weight).
+
+<p>When the weight of a cut <img src="stoer_wagner_imgs/8b7.gif" alt="C = \{X, \overline{X}\}" style="vertical-align: middle"> is minimal for a graph <i>G</i> (that is, no other cut of <i>G</i> has a lesser weight), then the cut is known as a <em>minimum cut</em> or a <em>min-cut</em>. For example, given this weighted graph:
+
+<p><a href="stoer_wagner_imgs/stoer_wagner-example.dot"><img src="stoer_wagner_imgs/stoer_wagner-example.gif"></a>
+
+<p>The cut {{0, 6}, {3, 2, 7, 1, 5, 4}} has weight 13:
+
+<p><a href="stoer_wagner_imgs/stoer_wagner-example-c1.dot"><img src="stoer_wagner_imgs/stoer_wagner-example-c1.gif"></a>
+
+<p>And the min-cut is {{0, 1, 4, 5}, {2, 3, 6, 7}} (weight 4):
+
+<p><a href="stoer_wagner_imgs/stoer_wagner-example-min-cut.dot"><img src="stoer_wagner_imgs/stoer_wagner-example-min-cut.gif"></a>
+
+<p>Unlike this example, a graph will sometimes have multiple min-cuts, all of equal weight. A minimum cut algorithm determines one of them as well as the min-cut weight.
+
+<h3>Directed Graphs</h3>
+
+<p>Given a directed graph <i>G</i> = (<i>V</i>, <i>E</i>), a <em>cut</em> of <i>G</i> is a partition of the vertices into two, non-empty sets <i>S</i> and <i>T</i> where <i>S</i> is known as the set of <em>source vertices</em> and <i>T</i> is known as the set of <em>sink vertices</em>. The <em>capacity</em> of a cut <i>C</i> = (<i>S</i>, <i>T</i>) is the number of edges from a vertex in <i>S</i> to a vertex in <i>T</i> if <i>G</i> is unweighted, or the sum of weights of edges from a vertex in <i>S</i> to a vertex in <i>T</i> if <i>G</i> is weighted.
+
+<p>When the capacity of a cut <i>C</i> = (<i>S</i>, <i>T</i>) of a directed graph is minimal (that is, no other cut of <i>G</i> has lesser capacity), then <i>C</i> is known as a <em>minimum cut</em> or <em>min-cut</em>.
+
+<p>For example, given this directed graph:
+
+<p><a href="stoer_wagner_imgs/digraph1.dot"><img src="stoer_wagner_imgs/digraph1.gif"></a>
+
+<p>A min-cut is:
+
+<p><a href="stoer_wagner_imgs/digraph1-min-cut.dot"><img src="stoer_wagner_imgs/digraph1-min-cut.gif"></a>
+
+<p>where <i>S</i> = {0}, <i>T</i> = {1, 2, 3}, and the min-cut capacity is 1.
 
 <br>
 <HR>
