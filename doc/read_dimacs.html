@@ -1,6 +1,7 @@
 <HTML>
 <!--
 //  Copyright (c) 2006, Stephan Diederich
+//  Copyright (c) 2010, Trustees of Indiana University
 //
 //  This code may be used under either of the following two licences:
 //
@@ -32,7 +33,7 @@
 //    http://www.boost.org/LICENSE_1_0.txt)
 -->
 <Head>
-<Title>Boost Graph Library: read_dimacs_max_flow</Title>
+<Title>Boost Graph Library: read_dimacs_max_flow and read_dimacs_min_cut</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -47,18 +48,27 @@
 <pre>
 //reads a graph with attached edge_capacity properties from an std::istream
 template &lt;class Graph, class CapacityMap, class ReverseEdgeMap&gt;
-int read_dimacs_max_flow(Graph& g,
+int read_dimacs_max_flow(Graph&amp; g,
                          CapacityMap capacity, 
                          ReverseEdgeMap reverse_edge,
-                         typename graph_traits<Graph>::vertex_descriptor& src,
-                         typename graph_traits<Graph>::vertex_descriptor& sink,
-                         std::istream& in=std::cin)
+                         typename graph_traits<Graph>::vertex_descriptor&amp; src,
+                         typename graph_traits<Graph>::vertex_descriptor&amp; sink,
+                         std::istream&amp; in=std::cin)
+
+//reads a graph with attached edge_capacity properties from an std::istream
+template &lt;class Graph, class CapacityMap, class ReverseEdgeMap&gt;
+int read_dimacs_min_cut(Graph&amp; g,
+                        CapacityMap capacity, 
+                        ReverseEdgeMap reverse_edge,
+                        std::istream&amp; in=std::cin)
 
 </pre>
 
 <p>
-This method reads a BGL graph object from a max-flow problem description in extended dimacs format. (see <a href="http://www.avglab.com/andrew/CATS/maxflow_formats.htm"><TT>Goldbergs site</TT></a> for more information). For each edge found in the 
-file an additional reverse_edge is added and set in the reverse_edge map. Source- and sink-vertex-descriptors are set according to the dimacs file.
+These functions read a BGL graph object from a max-flow or min-cut problem description in extended dimacs format. (see <a href="http://www.avglab.com/andrew/CATS/maxflow_formats.htm"><TT>Goldberg's site</TT></a> for more information). For each edge found in the 
+file an additional reverse_edge is added and set in the reverse_edge map.  For
+max-flow problems, source and sink vertex descriptors are set according to the
+dimacs file.
  
 <H3>Where Defined</H3>
 
@@ -79,6 +89,16 @@ file an additional reverse_edge is added and set in the reverse_edge map. Source
  OUT: <tt>ReverseEdgeMap reverse_edge</tt>
 <blockquote>
  A property map that models <a href="../../property_map/doc/LvaluePropertyMap.html">mutable Lvalue Property Map</a> whose key and value type is the edge descriptor of the graph. This map stores the corresponding reverse edge for each each in Graph g.<br>
+</blockquote>  
+  
+ OUT: <tt>vertex_descriptor&amp; src</tt>
+<blockquote>
+ A graph vertex that will be set to the source of a max-flow problem.
+</blockquote>  
+  
+ OUT: <tt>vertex_descriptor&amp; sink</tt>
+<blockquote>
+ A graph vertex that will be set to the sink of a max-flow problem.
 </blockquote>  
   
  IN: <tt>std::istream&amp; in</tt>
