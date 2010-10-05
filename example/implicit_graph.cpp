@@ -178,10 +178,6 @@ Iterator over edges incident on a vertex in a ring graph.
 For vertex i, this returns edge (i, i+1) and then edge (i, i-1), wrapping
 around the end of the ring as needed.
 
-Because this is an undirected graph, the edge <x,y> is equivalent to <y,x>.
-For clarity's sake, however, this iterator always returns an edge descriptor
-with the smaller vertex index first.
-
 It is implemented with the boost::iterator_adaptor class, adapting an
 offset into the dereference::ring_offset array.
 */
@@ -438,6 +434,10 @@ boost::identity_property_map get(boost::vertex_index_t, const ring_graph&) {
   return boost::identity_property_map();
 }
 
+// Print edges as (x, y)
+std::ostream& operator<<(std::ostream& output, const edge_descriptor& e) {
+  return output << "(" << e.first << ", " << e.second << ")";
+}
 
 int main (int argc, char const *argv[]) {
   using namespace boost;
@@ -465,11 +465,11 @@ int main (int argc, char const *argv[]) {
   // Print the outgoing edges of all the vertices.  For n=5 this will print:
   //
   // Vertices, outgoing edges, and adjacent vertices
-  // Vertex 0: <0, 1>  <0, 4>   Adjacent vertices 1 4
-  // Vertex 1: <1, 2>  <1, 0>   Adjacent vertices 2 0
-  // Vertex 2: <2, 3>  <2, 1>   Adjacent vertices 3 1
-  // Vertex 3: <3, 4>  <3, 2>   Adjacent vertices 4 2
-  // Vertex 4: <4, 0>  <4, 3>   Adjacent vertices 0 3
+  // Vertex 0: (0, 1)  (0, 4)   Adjacent vertices 1 4
+  // Vertex 1: (1, 2)  (1, 0)   Adjacent vertices 2 0
+  // Vertex 2: (2, 3)  (2, 1)   Adjacent vertices 3 1
+  // Vertex 3: (3, 4)  (3, 2)   Adjacent vertices 4 2
+  // Vertex 4: (4, 0)  (4, 3)   Adjacent vertices 0 3
   // 5 vertices
   std::cout << "Vertices, outgoing edges, and adjacent vertices" << std::endl;
   vertex_iterator vi, vi_end;
@@ -478,10 +478,8 @@ int main (int argc, char const *argv[]) {
     std::cout << "Vertex " << u << ": ";
     // Adjacenct edges
     out_edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ei++) {
-      edge_descriptor e = *ei;
-      std::cout << "<" << e.first << ", " << e.second << ">" << "  ";
-    }
+    for (tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ei++)
+      std::cout << *ei << "  ";
     std::cout << " Adjacent vertices ";
     // Adjacent vertices
     // Here we want our adjacency_iterator and not boost::adjacency_iterator.
@@ -497,18 +495,17 @@ int main (int argc, char const *argv[]) {
   // will print:
   //
   // Edges and weights
-  // <0, 1> weight 0.5
-  // <1, 2> weight 1.5
-  // <2, 3> weight 2.5
-  // <3, 4> weight 3.5
-  // <4, 0> weight 2
+  // (0, 1) weight 0.5
+  // (1, 2) weight 1.5
+  // (2, 3) weight 2.5
+  // (3, 4) weight 3.5
+  // (4, 0) weight 2
   // 5 edges
   std::cout << "Edges and weights" << std::endl;
   edge_iterator ei, ei_end;
   for (tie(ei, ei_end) = edges(g); ei != ei_end; ei++) {
     edge_descriptor e = *ei;
-    std::cout << "<" << e.first << ", " << e.second << ">"
-              << " weight " << get(edge_weight, g, e) << std::endl;
+    std::cout << e << " weight " << get(edge_weight, g, e) << std::endl;
   }
   std::cout << num_edges(g) << " edges"  << std::endl;
 
