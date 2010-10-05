@@ -39,12 +39,12 @@
 typedef boost::adjacency_list<> GraphT;
 typedef boost::erdos_renyi_iterator<boost::minstd_rand, GraphT> ERGen;
 
-struct VertexData 
+struct VertexData
 {
   int index;
 };
 
-struct EdgeData 
+struct EdgeData
 {
   int index_e;
 };
@@ -194,7 +194,7 @@ void graph_test(const OrigGraph& g)
 
   // Check constructing a graph from iterators
   CSRGraphT g3(boost::edges_are_sorted,
-               boost::make_transform_iterator(edges(g2).first,
+              boost::make_transform_iterator(edges(g2).first,
                                               boost::detail::make_edge_to_index_pair(g2)),
                boost::make_transform_iterator(edges(g2).second,
                                               boost::detail::make_edge_to_index_pair(g2)),

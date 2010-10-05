@@ -60,6 +60,12 @@ bool has_source(Graph const& g, Edge e, Vertex v)
  * generator to define property maps.
  */
 //@{
+// This is really just a place holder to make sure that bundled graph
+// properties actually work. There are no semantics to this type.
+struct GraphBundle {
+  int value;
+};
+
 struct VertexBundle {
     VertexBundle() : value() { }
     VertexBundle(int n) : value(n) { }
@@ -105,6 +111,7 @@ void test_graph(Graph& g) {
     // Test constrution and vertex list.
     build_graph(g, can_add_vertex, is_labeled);
     build_property_graph(g, can_add_vertex, is_labeled);
+
     test_vertex_list_graph(g);
 
     // Collect the vertices for an easy method of "naming" them.
@@ -118,7 +125,7 @@ void test_graph(Graph& g) {
 
     // Test connection and edge list
     connect_graph(g, verts, is_labeled);
-//     connect_property_graph(g, verts, is_labeld);
+    // connect_property_graph(g, verts, is_labeld);
     test_edge_list_graph(g);
 
     // Test properties
