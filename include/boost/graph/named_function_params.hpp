@@ -392,8 +392,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_const_property_t {
-      typedef ArgType result_type;
-      result_type operator()(const Graph&, const typename boost::add_reference<ArgType>::type a) const {return a;}
+      typedef typename boost::remove_const<ArgType>::type result_type;
+      result_type operator()(const Graph&, const ArgType& a) const {return a;}
     };
 
     template <typename ArgType, typename Prop, typename Graph>
