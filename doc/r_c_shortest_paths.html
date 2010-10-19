@@ -446,11 +446,11 @@ A container for storing the Pareto-optimal resource containers in the overloads 
 OUT: <tt>std::vector&lt;typename graph_traits&lt;Graph&gt;::edge_descriptor&gt;&amp; 
 pareto_optimal_solution</tt>
 <blockquote>
-A container for storing the first Pareto-optimal (undominated) solution (<i>s</i>-<i>t</i>-path) in the overloads where only one Pareto-optimal solution is returned. The path is returned as a sequence of edge descriptors in reverse order (from <tt>t</tt> to <tt>s</tt>).
+A container for storing the first Pareto-optimal (undominated) solution (<i>s</i>-<i>t</i>-path) in the overloads where only one Pareto-optimal solution is returned. The path is returned as a sequence of edge descriptors in reverse order (from <tt>t</tt> to <tt>s</tt>).  This argument is not modified if there are no solutions.
 </blockquote>
 OUT: <tt>Resource_Container&amp; pareto_optimal_resource_container</tt>
 <blockquote>
-A <tt>Resource_Container</tt> object for storing the Pareto-optimal resource container corresponding to the first Pareto-optimal path in the overloads where only one Pareto-optimal solution is returned.
+A <tt>Resource_Container</tt> object for storing the Pareto-optimal resource container corresponding to the first Pareto-optimal path in the overloads where only one Pareto-optimal solution is returned.  This argument is not modified if there are no solutions.
 </blockquote>
 IN: <tt>const Resource_Container&amp; rc</tt>
 <blockquote>
