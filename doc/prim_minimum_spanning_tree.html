@@ -197,11 +197,10 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 
 UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt> 
 <blockquote>
-  The shortest path weight from the source vertex <tt>s</tt> to each
-  vertex in the graph <tt>g</tt> is recorded in this property map. The
-  shortest path weight is the sum of the edge weights along the
-  shortest path.  The type <tt>DistanceMap</tt> must be a model of
-  <a
+  The weight of the spanning tree edge into each
+  vertex in the graph <tt>g</tt> is recorded in this property map, with edges
+  directed away from the spanning tree root. 
+  The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the
   graph needs to be usable as the key type of the distance map. The

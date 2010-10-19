@@ -248,9 +248,13 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 
 OUT: <tt>predecessor_map(PredecessorMap p_map)</tt> 
 <blockquote>
-  The predecessor map records the edges in the minimum spanning
-  tree. Upon completion of the algorithm, the edges <i>(p[u],u)</i>
-  for all <i>u in V</i> are in the minimum spanning tree. If <i>p[u] =
+  The predecessor map records the edges in the shortest path tree, the tree computed
+  by the traversal of the graph. Upon completion of the algorithm, the edges 
+  <i>(p[u],u)</i> for all <i>u in V</i> are in the tree.  The shortest path
+  from vertex <i>s</i> to each vertex <i>v</i> in the graph consists of the
+  vertices <i>v</i>, <i>p[v]</i>, <i>p[p[v]]</i>, and so on until <i>s</i> is
+  reached, in reverse order.  The
+  tree is not guaranteed to be a minimum spanning tree. If <i>p[u] =
   u</i> then <i>u</i> is either the source vertex or a vertex that is
   not reachable from the source.  The <tt>PredecessorMap</tt> type
   must be a <a
