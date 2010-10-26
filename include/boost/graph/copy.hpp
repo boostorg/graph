@@ -350,7 +350,7 @@ namespace boost {
         : g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
 
       template <class Vertex, class Graph>
-      typename graph_traits<NewGraph>::vertex_descriptor copy_one_vertex(Vertex u, const Graph& g_in) const {
+      typename graph_traits<NewGraph>::vertex_descriptor copy_one_vertex(Vertex u) const {
         typename graph_traits<NewGraph>::vertex_descriptor
           new_u = add_vertex(g_out);
         put(orig2copy, u, new_u);
@@ -364,7 +364,7 @@ namespace boost {
         typename graph_traits<NewGraph>::edge_descriptor new_e;
         bool inserted;
         boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(e, g_in)), 
-                                               this->copy_one_vertex(target(e, g_in), g_in),
+                                               this->copy_one_vertex(target(e, g_in)),
                                                g_out);
         copy_edge(e, new_e);
       }
