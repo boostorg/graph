@@ -92,7 +92,6 @@ public:
         // Search for edges
         BOOST_FOREACH(const ptree::value_type& edge, *gr) {
           if (edge.first != "edge") continue;
-          std::string id = edge.second.get<std::string>(path("<xmlattr>/id"));
           std::string source = edge.second.get<std::string>(path("<xmlattr>/source"));
           std::string target = edge.second.get<std::string>(path("<xmlattr>/target"));
           std::string local_directed = edge.second.get(path("<xmlattr>/directed"), "");
