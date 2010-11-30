@@ -266,7 +266,7 @@ namespace boost {
   class graph_property {
   public:
     typedef typename property_value<
-      typename Graph::graph_property_type, Property
+      typename boost::graph_property_type<Graph>::type, Property
     >::type type;
   };
 
