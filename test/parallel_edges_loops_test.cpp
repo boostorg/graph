@@ -340,20 +340,19 @@ int test_main(int argc, char* argv[])
             << std::endl;
 
   filesystem::path input_directory = 
-    filesystem::system_complete
-    (filesystem::path(input_directory_str, filesystem::native));
-  const std::string dimacs_suffix = ".dimacs";
+    filesystem::system_complete(filesystem::path(input_directory_str));
+  const std::string dimacs_extension = ".dimacs";
 
   filesystem::directory_iterator dir_end;
   for( filesystem::directory_iterator dir_itr(input_directory);
        dir_itr != dir_end; ++dir_itr)
   { 
 
-    if (!ends_with(dir_itr->string(), dimacs_suffix))
+    if (dir_itr->path().extension() != dimacs_extension)
       continue;
 
     std::cerr << "Testing " << dir_itr->path().leaf() << "... ";
-    BOOST_REQUIRE (test_graph(dir_itr->string()) == 0);
+    BOOST_REQUIRE (test_graph(dir_itr->path().string()) == 0);
 
     std::cerr << std::endl;
   }
