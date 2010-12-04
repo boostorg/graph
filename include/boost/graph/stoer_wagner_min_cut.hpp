@@ -74,7 +74,8 @@ namespace boost {
       
       assert(pq.size() >= 2);
       
-      vertex_descriptor s, t;
+      vertex_descriptor s = boost::graph_traits<UndirectedGraph>::null_vertex();
+      vertex_descriptor t = boost::graph_traits<UndirectedGraph>::null_vertex();
       weight_type w;
       while (!pq.empty()) { // while PQ \neq {} do
         const vertex_descriptor u = pq.top(); // u = extractmax(PQ)
