@@ -7,7 +7,7 @@
 //=======================================================================
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/pending/integer_range.hpp>
+#include <boost/range/irange.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 
 #include <iostream>
