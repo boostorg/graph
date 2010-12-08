@@ -346,7 +346,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
            subgraph<G>& g)
 {
     assert(!g.is_root());
-    typename subgraph<G>::vertex_descriptor u_local, v_global, uu_global;
+    typename subgraph<G>::vertex_descriptor u_local, v_global;
     typename subgraph<G>::edge_descriptor e_global;
 
     u_local = add_vertex(g.m_graph);
@@ -371,11 +371,13 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
         typename subgraph<G>::out_edge_iterator ei, ei_end;
         for(boost::tie(vi, vi_end) = vertices(r); vi != vi_end; ++vi) {
             v_global = *vi;
-            if(g.find_vertex(v_global).second)
+            if (v_global == u_global)
+                continue; // don't insert self loops twice!
+            if (!g.find_vertex(v_global).second)
+                continue; // not a subgraph vertex => try next one
             for(boost::tie(ei, ei_end) = out_edges(*vi, r); ei != ei_end; ++ei) {
                 e_global = *ei;
-                uu_global = target(e_global, r);
-                if(uu_global == u_global && g.find_vertex(v_global).second) {
+                if(target(e_global, r) == u_global) {
                     g.local_add_edge(g.global_to_local(v_global), u_local, e_global);
                 }
             }
