@@ -67,7 +67,9 @@ namespace boost {
     if (regex_match(s, valid_unquoted_id)) {
       return s;
     } else {
-      return "\"" + regex_replace(s, sregex(as_xpr('"')), "\\\"") + "\"";
+      // The explicit template arguments here are to disambiguate the two
+      // overloads of regex_replace() on VC++ 7.1.
+      return "\"" + regex_replace<std::string, std::string::const_iterator>(s, sregex(as_xpr('"')), "\\\"") + "\"";
     }
   }
 
