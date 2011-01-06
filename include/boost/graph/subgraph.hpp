@@ -16,7 +16,7 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <cassert>
+#include <boost/assert.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -181,7 +181,7 @@ typedef typename Traits::traversal_category        traversal_category;
         vertex_descriptor u_local; bool in_subgraph;
         if (is_root()) return u_global;
         boost::tie(u_local, in_subgraph) = this->find_vertex(u_global);
-        assert(in_subgraph == true);
+        BOOST_ASSERT(in_subgraph == true);
         return u_local;
     }
 
@@ -345,7 +345,7 @@ typename subgraph<G>::vertex_descriptor
 add_vertex(typename subgraph<G>::vertex_descriptor u_global,
            subgraph<G>& g)
 {
-    assert(!g.is_root());
+    BOOST_ASSERT(!g.is_root());
     typename subgraph<G>::vertex_descriptor u_local, v_global;
     typename subgraph<G>::edge_descriptor e_global;
 
@@ -751,7 +751,7 @@ add_vertex(subgraph<G>& g)
 // TODO: Under Construction
 template <typename G>
 void remove_vertex(typename subgraph<G>::vertex_descriptor u, subgraph<G>& g)
-{ assert(false); }
+{ BOOST_ASSERT(false); }
 #endif
 
 //===========================================================================
