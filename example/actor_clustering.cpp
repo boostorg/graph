@@ -9,7 +9,7 @@
 
 // This program performs betweenness centrality (BC) clustering on the
 // actor collaboration graph available at
-// http://www.nd.edu/~networks/database/index.html and outputs the
+// http://www.nd.edu/~networks/resources/actor/actor.dat.gz and outputs the
 // result of clustering in Pajek format.
 //
 // This program mimics the BC clustering algorithm program implemented
