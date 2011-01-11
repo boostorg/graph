@@ -18,8 +18,6 @@ This test needs to be linked against Boost.Filesystem.
 
 */
 
-#define BOOST_FILESYSTEM_VERSION 3
-
 #include <iostream>
 #include <fstream>
 #include <vector>
