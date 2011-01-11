@@ -11,7 +11,7 @@
 #define BOOST_GRAPH_PROPERTIES_HPP
 
 #include <boost/config.hpp>
-#include <cassert>
+#include <boost/assert.hpp>
 #include <boost/pending/property.hpp>
 #include <boost/detail/workaround.hpp>
 
@@ -353,7 +353,7 @@ namespace boost {
   >
   make_container_vertex_map(RandomAccessContainer& c, const PropertyGraph& g)
   {
-    assert(c.size() >= num_vertices(g));
+    BOOST_ASSERT(c.size() >= num_vertices(g));
     return make_iterator_vertex_map(c.begin(), g);
   }
 

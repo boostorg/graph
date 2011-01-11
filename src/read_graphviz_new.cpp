@@ -26,6 +26,7 @@
 //
 
 #define BOOST_GRAPH_SOURCE
+#include <boost/assert.hpp>
 #include <boost/ref.hpp>
 #include <boost/function/function2.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -167,10 +168,10 @@ namespace read_graphviz_detail {
 #endif
         boost::regex_search(begin, end, results, stuff_to_skip);
 #ifndef NDEBUG
-      assert (found);
+      BOOST_ASSERT (found);
 #endif
       boost::sub_match<std::string::const_iterator> sm1 = results.suffix();
-      assert (sm1.second == end);
+      BOOST_ASSERT (sm1.second == end);
       begin = sm1.first;
     }
 
@@ -227,10 +228,10 @@ namespace read_graphviz_detail {
             switch (str[1]) {
               case '-': return token(token::dash_dash, str);
               case '>': return token(token::dash_greater, str);
-              default: assert (!"Definition of punctuation_token does not match switch statement");
+              default: BOOST_ASSERT (!"Definition of punctuation_token does not match switch statement");
             }
           }
-          default: assert (!"Definition of punctuation_token does not match switch statement");
+          default: BOOST_ASSERT (!"Definition of punctuation_token does not match switch statement");
         }
       }
       found = boost::regex_search(begin, end, results, number_token);
@@ -244,7 +245,7 @@ namespace read_graphviz_detail {
         std::string str = results[1].str();
         begin = results.suffix().first;
         // Remove the beginning and ending quotes
-        assert (str.size() >= 2);
+        BOOST_ASSERT (str.size() >= 2);
         str.erase(str.begin());
         str.erase(str.end() - 1);
         // Unescape quotes in the middle, but nothing else (see format spec)
@@ -500,7 +501,7 @@ namespace read_graphviz_detail {
         case token::kw_graph: parse_attr_list(current_graph_props()); break;
         case token::kw_node: parse_attr_list(current().def_node_props); break;
         case token::kw_edge: parse_attr_list(current().def_edge_props); break;
-        default: assert (!"Bad attr_stmt case");
+        default: BOOST_ASSERT (!"Bad attr_stmt case");
       }
     }
 
@@ -637,7 +638,7 @@ namespace read_graphviz_detail {
       }
       properties this_edge_props = current().def_edge_props;
       if (peek().type == token::left_bracket) parse_attr_list(this_edge_props);
-      assert (nodes_in_chain.size() >= 2); // Should be in node parser otherwise
+      BOOST_ASSERT (nodes_in_chain.size() >= 2); // Should be in node parser otherwise
       for (size_t i = 0; i + 1 < nodes_in_chain.size(); ++i) {
         do_orig_edge(nodes_in_chain[i], nodes_in_chain[i + 1], this_edge_props);
       }
@@ -780,7 +781,7 @@ namespace read_graphviz_detail {
       }
     }
     std::map<subgraph_name, properties>::const_iterator root_graph_props_i = r.graph_props.find("___root___");
-    assert (root_graph_props_i != r.graph_props.end()); // Should not happen
+    BOOST_ASSERT (root_graph_props_i != r.graph_props.end()); // Should not happen
     const properties& root_graph_props = root_graph_props_i->second;
     // std::cerr << "ending graph " << props_to_string(root_graph_props) << std::endl;
     for (properties::const_iterator i = root_graph_props.begin(); i != root_graph_props.end(); ++i) {
