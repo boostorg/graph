@@ -718,7 +718,7 @@ namespace read_graphviz_detail {
               std::string rhs = "true";
               if (peek().type == token::equal) {
                 get();
-                if (peek().type != token::identifier) error("Wanted identifier as value of attributed");
+                if (peek().type != token::identifier) error("Wanted identifier as value of attribute");
                 rhs = get().normalized_value;
               }
               props[lhs] = rhs;

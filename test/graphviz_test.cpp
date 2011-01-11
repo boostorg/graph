@@ -97,6 +97,7 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
         std::string node_name = get(name,*i);
         //  - get its mass
         float node_mass = get(mass,*i);
+        BOOST_CHECK(masses.find(node_name) != masses.end());
         float ref_mass = masses.find(node_name)->second;
         //  - compare the mass to the result in the table
         BOOST_CHECK_CLOSE(node_mass, ref_mass, 0.01f);
@@ -114,6 +115,7 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
                                 get(name, target(*i,graph)));
         // - get its weight
         double edge_weight = get(weight,*i);
+        BOOST_CHECK(weights.find(edge_name) != weights.end());
         double ref_weight = weights.find(edge_name)->second;
         // - compare the weight to teh result in the table
         BOOST_CHECK_CLOSE(edge_weight, ref_weight, 0.01);
