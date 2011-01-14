@@ -9,7 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <iomanip>
+#include <boost/detail/iomanip.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -52,15 +52,15 @@ main()
 
   std::cout << "       ";
   for (int k = 0; k < V; ++k)
-    std::cout << std::setw(5) << k;
+    std::cout << boost::detail::setw(5) << k;
   std::cout << std::endl;
   for (int i = 0; i < V; ++i) {
-    std::cout << std::setw(3) << i << " -> ";
+    std::cout << boost::detail::setw(3) << i << " -> ";
     for (int j = 0; j < V; ++j) {
       if (D[i][j] == (std::numeric_limits<int>::max)())
-        std::cout << std::setw(5) << "inf";
+        std::cout << boost::detail::setw(5) << "inf";
       else
-        std::cout << std::setw(5) << D[i][j];
+        std::cout << boost::detail::setw(5) << D[i][j];
     }
     std::cout << std::endl;
   }
