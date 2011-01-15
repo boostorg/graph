@@ -7,7 +7,7 @@
 
 //[degree_centrality_example
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
@@ -58,7 +58,7 @@ main(int argc, char *argv[])
     // Print the degree centrality of each vertex.
     graph_traits<Graph>::vertex_iterator i, end;
     for(tie(i, end) = vertices(g); i != end; ++i) {
-        cout << boost::detail::setiosflags(ios::left) << boost::detail::setw(12)
+        cout << setiosflags(ios::left) << setw(12)
              << g[*i].name << cm[*i] << endl;
     }
 

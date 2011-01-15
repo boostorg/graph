@@ -26,7 +26,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -63,14 +63,14 @@ int main()
     int D[V][V];
     johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
-    std::cout << boost::detail::setw(5) <<" ";
+    std::cout << std::setw(5) <<" ";
     for (int k = 0; k < 10; ++k)
-      std::cout << boost::detail::setw(5) << k ;
+      std::cout << std::setw(5) << k ;
     std::cout << std::endl;
     for (int i = 0; i < 10; ++i) {
-      std::cout <<boost::detail::setw(5) <<  i ;
+      std::cout <<std::setw(5) <<  i ;
       for (int j = 0; j < 10; ++j) {
-          std::cout << boost::detail::setw(5) << D[i][j] ;
+          std::cout << std::setw(5) << D[i][j] ;
       }
       std::cout << std::endl;
     }

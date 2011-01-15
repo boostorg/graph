@@ -14,7 +14,7 @@ B: 2147483647 B
 */
 
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/cstdlib.hpp>
@@ -66,9 +66,9 @@ int test_main(int, char*[])
     for(int i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";
       if (distance[i] == inf)
-        std::cout  << boost::detail::setw(3) << "inf";
+        std::cout  << std::setw(3) << "inf";
       else
-        std::cout << boost::detail::setw(3) << distance[i];
+        std::cout << std::setw(3) << distance[i];
       std::cout << " " << name[parent[i]] << std::endl;
     }
   } else {
@@ -87,9 +87,9 @@ int test_main(int, char*[])
     for(int i = 0; i < numVertex; ++i) {
       std::cout << name[i] << ": ";
       if (distance2[i] == inf)
-        std::cout  << boost::detail::setw(3) << "inf";
+        std::cout  << std::setw(3) << "inf";
       else
-        std::cout << boost::detail::setw(3) << distance2[i];
+        std::cout << std::setw(3) << distance2[i];
       std::cout << " " << name[parent2[i]] << std::endl;
     }
   } else {

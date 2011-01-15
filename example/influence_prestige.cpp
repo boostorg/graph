@@ -6,7 +6,7 @@
 
 //[influence_prestige_example
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
@@ -64,8 +64,7 @@ main(int argc, char *argv[])
     graph_traits<Graph>::vertex_iterator i, end;
     for(tie(i, end) = vertices(g); i != end; ++i) {
         Vertex v = *i;
-        cout << ::boost::detail::setiosflags(ios::left)
-             << ::boost::detail::setw(12)
+        cout << setiosflags(ios::left) << setw(12)
              << g[v].name << "\t"
              << im[v] << "\t"
              << pm[v] << endl;

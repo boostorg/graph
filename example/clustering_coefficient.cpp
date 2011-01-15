@@ -7,7 +7,7 @@
 
 //[code_clustering_coefficient
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
@@ -59,7 +59,7 @@ main(int argc, char *argv[])
     // Print the clustering coefficient of each vertex.
     graph_traits<Graph>::vertex_iterator i, end;
     for(tie(i, end) = vertices(g); i != end; ++i) {
-        cout << boost::detail::setw(12) << boost::detail::setiosflags(ios::left)
+        cout << setw(12) << setiosflags(ios::left)
                 << g[*i].name << get(cm, *i) << endl;
     }
     cout << "mean clustering coefficient: " << cc << endl;

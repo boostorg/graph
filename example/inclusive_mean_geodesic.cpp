@@ -6,7 +6,7 @@
 
 //[inclusive_mean_geodesic_example
 #include <iostream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
@@ -117,15 +117,15 @@ main(int argc, char *argv[])
 
     // Print the mean geodesic distance of each vertex and finally,
     // the graph itself.
-    cout << boost::detail::setw(12) << boost::detail::setiosflags(ios::left) << "vertex";
-    cout << boost::detail::setw(12) << boost::detail::setiosflags(ios::left) << "excluding";
-    cout << boost::detail::setw(12) << boost::detail::setiosflags(ios::left) << "including" << endl;
+    cout << setw(12) << setiosflags(ios::left) << "vertex";
+    cout << setw(12) << setiosflags(ios::left) << "excluding";
+    cout << setw(12) << setiosflags(ios::left) << "including" << endl;
     graph_traits<Graph>::vertex_iterator i, end;
     for(tie(i, end) = vertices(g); i != end; ++i) {
-        cout << boost::detail::setw(12) << boost::detail::setiosflags(ios::left)
+        cout << setw(12) << setiosflags(ios::left)
              << g[*i].name
-             << boost::detail::setw(12) << get(exmap, *i)
-             << boost::detail::setw(12) << get(inmap, *i) << endl;
+             << setw(12) << get(exmap, *i)
+             << setw(12) << get(inmap, *i) << endl;
     }
     cout << "small world (excluding self-loops): " << ex << endl;
     cout << "small world (including self-loops): " << in << endl;

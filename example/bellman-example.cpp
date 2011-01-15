@@ -9,7 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <boost/detail/iomanip.hpp>
+#include <iomanip>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 
@@ -95,7 +95,7 @@ main()
 
   if (r)
     for (i = 0; i < N; ++i)
-      std::cout << name[i] << ": " << boost::detail::setw(3) << distance[i]
+      std::cout << name[i] << ": " << std::setw(3) << distance[i]
         << " " << name[parent[i]] << std::endl;
   else
     std::cout << "negative cycle" << std::endl;
