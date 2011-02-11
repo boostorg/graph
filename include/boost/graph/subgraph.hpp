@@ -691,7 +691,7 @@ remove_edge_if(Predicate p, subgraph<G>& g) {
       if (p(*ep.first)) {
         any_removed = true;
         remove_edge(*ep.first, g);
-        continue; /* Since iterators may be invalidated */
+        break; /* Since iterators may be invalidated */
       }
     }
     if (!any_removed) break;
