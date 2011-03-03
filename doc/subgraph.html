@@ -76,9 +76,9 @@ built in to the <tt>adjacency_list</tt>. We will be building the graph
 and subgraphs in Figure 1, so we will need a total of six vertices.
 
 <pre>
-typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
-typedef subgraph< adjacency_list<vecS, vecS, directedS,
-  no_property, property<edge_index_t, int> > > Graph;
+typedef adjacency_list_traits&lt; vecS, vecS, directedS &gt; Traits;
+typedef subgraph&lt; adjacency_list&lt; vecS, vecS, directedS,
+  no_property, property&lt; edge_index_t, int &gt; &gt; &gt; Graph;
 
 const int N = 6;
 Graph G0(N);
