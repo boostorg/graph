@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
+#include <utility>
 #include <vector>
 #include <list>
 #include <iostream>
