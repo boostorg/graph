@@ -143,7 +143,7 @@ map[v].population = 49170;
 map[v].zipcodes.push_back(12180);
 Map::edge_descriptor e = *out_edges(v, map).first;
 map[e].name = "I-87";
-map[e].miles = 10;
+map[e].miles = 10.;
 map[e].speed_limit = 65;
 map[e].lanes = 4;
 map[e].divided = true;
@@ -186,8 +186,8 @@ dijkstra_shortest_paths(map, from,
                                                get(vertex_index, map))));
 </pre>
 
-<p>The type of the returned property map is <code>property_map&lt;Map, int Highway::*&gt;::type</code>
-or <code>property_map&lt;Map, int Highway::*&gt;::const_type</code>, depending on whether the graph
+<p>The type of the returned property map is <code>property_map&lt;Map, double Highway::*&gt;::type</code>
+or <code>property_map&lt;Map, double Highway::*&gt;::const_type</code>, depending on whether the graph
 <code>map</code> is non-constant or constant.
 
 <p> You may also access the entire vertex or edge bundle as a property map
