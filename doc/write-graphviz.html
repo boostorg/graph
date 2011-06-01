@@ -134,7 +134,7 @@ vertices or edges.  It is used to print the label of each vertex or edge.
   public:
     label_writer(Name _name) : name(_name) {}
     template &lt;class VertexOrEdge&gt;
-    void operator()(std::ostream& out, const VertexOrEdge& v) const {
+    void operator()(std::ostream&amp; out, const VertexOrEdge&amp; v) const {
       out &lt;&lt; "[label=\"" &lt;&lt; name[v] &lt;&lt; "\"]";
     }
   private:
@@ -154,13 +154,13 @@ make_label_writer(Name n);
 A <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a>
 for graphs is a functor which is called with one parameter of type
 <tt>std::ostream</tt> and should print a series of graph properties. The following
-code excerpt is an example of a PropertyWriter for a graph.
+code excerpt is an example of a PropertyWriter for a graph:
 <pre>
   struct sample_graph_writer {
-    void operator()(std::ostream& out) const {
-      out << "graph [bgcolor=lightgrey]" << std::endl;
-      out << "node [shape=circle color=white]" << std::endl;
-      out << "edge [style=dashed]" << std::endl;
+    void operator()(std::ostream&amp; out) const {
+      out &lt;&lt; "graph [bgcolor=lightgrey]" &lt;&lt; std::endl;
+      out &lt;&lt; "node [shape=circle color=white]" &lt;&lt; std::endl;
+      out &lt;&lt; "edge [style=dashed]" &lt;&lt; std::endl;
     }
   };
 }
@@ -168,9 +168,9 @@ code excerpt is an example of a PropertyWriter for a graph.
 
 <p>
 There exists a class <tt>default_writer</tt>, which can be used as both
-vertex/edge and graph property writer, and does nothing. It comes handy when
-only edge properties must be written, but function interface requries to pass
-vertex property writer as well.
+vertex/edge and graph property writer, and does nothing. It is useful when
+only edge properties must be written, but the function interface also requires a
+vertex property writer.
 
 <h3>Parameters</h3>
  OUT: <tt>std::ostream&amp; out</tt>
@@ -181,38 +181,38 @@ vertex property writer as well.
  IN: <tt>VertexAndEdgeListGraph&amp; g</tt>
 <blockquote>
   A directed or undirected graph. The graph's type must be a model of
-  <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>. Also the
+  <a href="./VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>. In most cases, the
   graph must have an internal <tt>vertex_index</tt> property map.
 </blockquote>
 
  IN: <tt>VertexPropertyWriter vpw</tt>
 <blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
+  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> to print
   properties of a vertex.<br>
 <b>Default</b>: <tt>default_writer()</tt>
 </blockquote>
 
  IN: <tt>EdgePropertyWriter epw</tt>
 <blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
+  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> to print
   properties of an edge.<br>
 <b>Default</b>: <tt>default_writer()</tt>
 </blockquote>
 
  IN: <tt>GraphPropertyWriter epw</tt>
 <blockquote>
-  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> concept to print
-  properties of a graph.<br>
+  A functor that models <a href="./write-graphviz.html#concept:PropertyWriter">PropertyWriter</a> to print
+  properties of the graph.<br>
 <b>Default</b>: <tt>default_writer()</tt>
 </blockquote>
 
-IN: <tt>dynamic_properties& dp</tt>
+IN: <tt>dynamic_properties&amp; dp</tt>
 <blockquote>
   Contains all of the vertex and edge properties that should be
   emitted by the GraphViz writer.
 </blockquote>
 
-IN: <tt>const std::string& node_id</tt>
+IN: <tt>const std::string&amp; node_id</tt>
 <blockquote>
   The name of the property map that provides identifiers for the
   vertices in the graph.<br>
@@ -221,15 +221,15 @@ IN: <tt>const std::string& node_id</tt>
 
 IN: <tt>VertexID vertex_id</tt>
 <blockquote>
-  A property map that models <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a> whose key type is the vertex descriptor of the graph and whose value type can be written to a stream. The value should be a unique descriptor that can be used to name a node in a Graphviz file (so it should not, for instance, have any spaces in it).<br>
-<b>Default</b>: If no <code>dynamic_properties</code> object is provided, <tt>get(vertex_index, g)</tt>. Otherwise, a dynamic property map that accesses the property map named <code>node_id</code>.
+  A property map that models <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>, whose key type is the vertex descriptor of the graph, and whose value type can be written to a stream. The value should be a unique descriptor for each vertex, and will be used to name each node in the Graphviz file (it will be escaped properly for Graphviz output).<br>
+<b>Default</b>: If no <code>dynamic_properties</code> object is provided, <tt>get(vertex_index, g)</tt>. Otherwise, a dynamic property map that accesses the property map in <code>dp</code> whose name is given by the <code>node_id</code> parameter.
 </blockquote>
 <H3>
 Example
 </H3>
 
-This example demonstrates using BGL-graphviz interface to write
-a BGL graph into a graphviz format file.
+This example demonstrates using the BGL-Graphviz interface to write
+a BGL graph into a Graphviz format file.
 
 <pre>
 #include &lt;boost/graph/graphviz.hpp&gt;

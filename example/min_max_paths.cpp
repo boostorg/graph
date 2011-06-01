@@ -6,6 +6,9 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+#error "This example appears to be incorrect; it uses edge weights that are smaller than 0 using the comparison operator passed to Dijkstra's algorithm, which is not allowed."
+
 #include <boost/config.hpp>
 #include <iostream>
 
