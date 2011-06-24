@@ -268,7 +268,7 @@ namespace boost {
     typedef transform_iterator<adjacent_vertex_function, degree_iterator> adjacency_iterator;
 
     // categories
-    typedef undirected_tag directed_category;
+    typedef directed_tag directed_category;
     typedef disallow_parallel_edge_tag edge_parallel_category;    
     struct traversal_category : virtual public incidence_graph_tag,
                                 virtual public adjacency_graph_tag,
