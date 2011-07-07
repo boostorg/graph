@@ -420,6 +420,9 @@ namespace boost {
       dummy_property_map p_map;
 
       typedef typename property_traits<DistanceMap>::value_type D;
+      D inf = choose_param(get_param(params, distance_inf_t()),
+                           (std::numeric_limits<D>::max)());
+
       dijkstra_shortest_paths
         (g, s,
          choose_param(get_param(params, vertex_predecessor), p_map),
@@ -427,9 +430,8 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<D>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<D>()),
-         choose_param(get_param(params, distance_inf_t()),
-                      (std::numeric_limits<D>::max)()),
+                      closed_plus<D>(inf)),
+         inf,
          choose_param(get_param(params, distance_zero_t()),
                       D()),
          choose_param(get_param(params, graph_visitor),
