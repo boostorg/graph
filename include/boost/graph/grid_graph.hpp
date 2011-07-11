@@ -89,6 +89,32 @@ namespace boost {
     typedef type const_type;
   };
 
+  //==========================
+  // Reverse Edge Property Map
+  //==========================
+
+  template <typename Descriptor>
+  struct grid_graph_reverse_edge_map {
+  public:
+    typedef Descriptor value_type;
+    typedef Descriptor reference_type;
+    typedef reference_type reference;
+    typedef Descriptor key_type;
+    typedef readable_property_map_tag category;
+
+    grid_graph_reverse_edge_map() { }
+
+    value_type operator[](const key_type& key) const {
+      return (value_type(key.second, key.first));
+    }
+  };
+
+  template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
+  struct property_map<BOOST_GRID_GRAPH_TYPE, edge_reverse_t> {
+    typedef grid_graph_reverse_edge_map<BOOST_GRID_GRAPH_TRAITS_T::edge_descriptor> type;
+    typedef type const_type;
+  };
+
   //=================
   // Function Objects
   //=================
@@ -971,6 +997,14 @@ namespace boost {
                 BOOST_GRID_GRAPH_TYPE_MEM edges_size_type>(graph));
     }                                       
 
+    template <BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
+    friend inline grid_graph_reverse_edge_map<
+                    BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor>
+    get(edge_reverse_t, const BOOST_GRID_GRAPH_TYPE& graph) {
+      return (grid_graph_reverse_edge_map<
+                BOOST_GRID_GRAPH_TYPE_MEM edge_descriptor>());
+    }                                       
+
     template<typename Graph,
              typename Descriptor,
              typename Index>
@@ -985,6 +1019,17 @@ namespace boost {
              typename Descriptor,
              typename Index>
     friend struct grid_graph_index_map;
+
+    template<typename Descriptor>
+    friend inline Descriptor
+    get(const grid_graph_reverse_edge_map<Descriptor>& rev_map,
+        const typename grid_graph_reverse_edge_map<Descriptor>::key_type& key)
+    {
+      return (rev_map[key]);
+    }
+
+    template<typename Descriptor>
+    friend struct grid_graph_reverse_edge_map;
 
   }; // grid_graph
 
