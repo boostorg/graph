@@ -556,7 +556,7 @@ class bk_max_flow {
        * white() for sink tree, gray() for no tree
        */
       inline tColorValue get_tree(vertex_descriptor v) const {
-        return m_tree_map[v];
+        return get(m_tree_map, v);
       }
 
       /**
@@ -564,7 +564,7 @@ class bk_max_flow {
        * for sink tree, gray() for no tree
        */
       inline void set_tree(vertex_descriptor v, tColorValue t){
-        m_tree_map[v] = t;
+        put(m_tree_map, v, t);
       }
 
       /**
@@ -743,11 +743,11 @@ boykov_kolmogorov_max_flow(Graph& g,
   function_requires<VertexListGraphConcept<Graph> >(); //to have vertices(), num_vertices(),
   function_requires<EdgeListGraphConcept<Graph> >(); //to have edges()
   function_requires<IncidenceGraphConcept<Graph> >(); //to have source(), target() and out_edges()
-  function_requires<LvaluePropertyMapConcept<CapacityEdgeMap, edge_descriptor> >(); //read flow-values from edges
+  function_requires<ReadablePropertyMapConcept<CapacityEdgeMap, edge_descriptor> >(); //read flow-values from edges
   function_requires<Mutable_LvaluePropertyMapConcept<ResidualCapacityEdgeMap, edge_descriptor> >(); //write flow-values to residuals
-  function_requires<LvaluePropertyMapConcept<ReverseEdgeMap, edge_descriptor> >(); //read out reverse edges
+  function_requires<ReadablePropertyMapConcept<ReverseEdgeMap, edge_descriptor> >(); //read out reverse edges
   function_requires<Mutable_LvaluePropertyMapConcept<PredecessorMap, vertex_descriptor> >(); //store predecessor there
-  function_requires<Mutable_LvaluePropertyMapConcept<ColorMap, vertex_descriptor> >(); //write corresponding tree
+  function_requires<ReadWritePropertyMapConcept<ColorMap, vertex_descriptor> >(); //write corresponding tree
   function_requires<Mutable_LvaluePropertyMapConcept<DistanceMap, vertex_descriptor> >(); //write distance to source/sink
   function_requires<ReadablePropertyMapConcept<IndexMap, vertex_descriptor> >(); //get index 0...|V|-1
   BOOST_ASSERT(num_vertices(g) >= 2 && src != sink);
