@@ -377,7 +377,7 @@ namespace boost {
         // Stop at the end of this dimension if necessary.
         new_position =
           (std::min)(new_position,
-                     length(dimension_index) - 1);
+                     vertices_size_type(length(dimension_index) - 1));
       }
 
       vertex[dimension_index] = new_position;
