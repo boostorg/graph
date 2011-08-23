@@ -106,7 +106,7 @@ hence the return type of the function is the graph's
 graph algorithm as a template function, the concept checks, and some
 typedefs. The implementation is straightforward, the only step not
 discussed above is the color initialization step, where we set the
-color of all the vertices to ``uncolored''.
+color of all the vertices to "uncolored."
 
 <P>
 <PRE>
@@ -125,8 +125,8 @@ namespace boost {
     function_requires&lt; VertexListGraphConcept&lt;VertexListGraph&gt; &gt;();
     function_requires&lt; ReadWritePropertyMapConcept&lt;Color, vertex_descriptor&gt; &gt;();
     function_requires&lt; IntegerConcept&lt;ColorType&gt; &gt;();
-    function_requires&lt; size_type, ReadablePropertyMapConcept&lt;Order&gt; &gt;();
-    typedef typename same_type&lt;OrderType, vertex_descriptor&gt;::type req_same;
+    function_requires&lt; ReadablePropertyMapConcept&lt;Order, size_type&gt; &gt;();
+    BOOST_STATIC_ASSERT((is_same&lt;OrderType, vertex_descriptor&gt;::value));
     
     size_type max_color = 0;
     const size_type V = num_vertices(G);
