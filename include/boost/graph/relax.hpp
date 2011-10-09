@@ -24,7 +24,7 @@ namespace boost {
     {
       const T inf;
 
-      closed_plus() : inf(std::numeric_limits<T>::max()) { }
+      closed_plus() : inf((std::numeric_limits<T>::max)()) { }
       closed_plus(T inf) : inf(inf) { }
 
       T operator()(const T& a, const T& b) const {
