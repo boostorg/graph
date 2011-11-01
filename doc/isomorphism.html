@@ -59,7 +59,7 @@ The current implementation is based on descriptions of a backtracking
 algorithm in [<a
 href="./bibliography.html#fortin96:_graph_iso_prob">46</a>,<a
 href="./bibliography.html#reingold77:_combin_algo">48</a>].  The file
-<a href="./isomorphism-impl.pdf">isomorphism-impl.pdf</a> contains a
+<a href="./isomorphism-impl.pdf">isomorphism-impl.pdf</a> contains a (somewhat out-of-date)
 &quot;literate&quot; description of the implementation.  The algorithm
 used is simple but slow. A more efficient (and much more complex)
 algorithm is described in [<a
@@ -101,31 +101,24 @@ descriptor type and the vertex index map for graph 1.<br>
 <b>Python</b>: Must be a <tt>vertex_vertex_map</tt> for the first graph.
 </blockquote>
 
-IN: <tt>vertex_invariant1(VertexInvariant1 i)</tt>
+IN: <tt>vertex_invariant1(VertexInvariant1 i1)</tt>
+IN: <tt>vertex_invariant2(VertexInvariant2 i2)</tt>
 <blockquote>
-A mapping <i>i</i> from vertices to integers such that if there is
-some isomorphism that maps <i>v</i> onto <i>v'</i> then <i>i(v) ==
-i(v')</i>. The <tt>VertexInvariant</tt> type must be a <a
-href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>
-where the first argument is a vertex descriptor, the second argument is a
-graph, and the result type is an integer. The vertex invariant must
-work with the types for graph 1.
+Mappings from vertices to integers which restrict which vertices may be
+considered isomorphic. If a candidate isomorphism maps <i>v1</i> to <i>v2</i>
+but <i>i1</i>(<i>v1</i>) != <i>i2</i>(<i>v2</i>), that candidate is rejected.
+This mapping can be used either to speed up the search (as is done by the
+default value, which requires that the degrees of <i>v1</i> and <i>v2</i> are
+equal) or to impose extra conditions on the result.  The
+<tt>VertexInvariant1</tt> and <tt>VertexInvariant2</tt> types must model <a
+href="http://www.sgi.com/tech/stl/UnaryFunction.html">UnaryFunction</a>, with
+the argument type of <tt>vertex_invariant1</tt> being <tt>Graph1</tt>'s vertex
+descriptor type, the argument type of <tt>vertex_invariant2</tt> being
+<tt>Graph2</tt>'s vertex descriptor type, and both functions having integral
+result types.  The values returned by these two functions must be in the range
+[0, <tt>vertex_max_invariant</tt>).
 <br>
-<b>Default:</b> <tt>degree_vertex_invariant</tt><br>
-<b>Python</b>: Unsupported parameter.
-</blockquote>
-
-IN: <tt>vertex_invariant2(VertexInvariant2 i)</tt>
-<blockquote>
-A mapping <i>i</i> from vertices to integers such that if there is
-some isomorphism that maps <i>v</i> onto <i>v'</i> then <i>i(v) ==
-i(v')</i>. The <tt>VertexInvariant</tt> type must be a <a
-href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>
-where the first argument is a vertex descriptor, the second argument is a
-graph, and the result type is an integer. The vertex invariant must
-work with the types for both graph 2.
-<br>
-<b>Default:</b> <tt>degree_vertex_invariant</tt><br>
+<b>Default:</b> <tt>degree_vertex_invariant</tt> for both arguments<br>
 <b>Python</b>: Unsupported parameter.
 </blockquote>
 

@@ -48,7 +48,7 @@ void write_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, string 
 
 int main(int, char**) {
 
-  array<size_t, 2> sizes = {{ 5, 5 }};
+  boost::array<size_t, 2> sizes = {{ 5, 5 }};
   graph_type g(sizes);
 
   shared_array_property_map<gt::vertex_descriptor, property_map<graph_type, vertex_index_t>::const_type> pred(num_vertices(g), get(vertex_index, g));
