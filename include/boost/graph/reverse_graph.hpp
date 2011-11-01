@@ -8,6 +8,7 @@
 
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/if.hpp>
@@ -23,10 +24,44 @@ struct reverse_graph_tag { };
 
   namespace detail {
 
+    template <typename EdgeDesc>
+    class reverse_graph_edge_descriptor {
+      public:
+      EdgeDesc underlying_desc;
+
+      public:
+      explicit reverse_graph_edge_descriptor(const EdgeDesc& underlying_desc = EdgeDesc())
+        : underlying_desc(underlying_desc) {}
+
+      friend bool operator==(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc == b.underlying_desc;
+      }
+      friend bool operator!=(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc != b.underlying_desc;
+      }
+    };
+
+    template <typename EdgeDesc>
+    struct reverse_graph_edge_descriptor_maker {
+      typedef reverse_graph_edge_descriptor<EdgeDesc> result_type;
+
+      reverse_graph_edge_descriptor<EdgeDesc> operator()(const EdgeDesc& ed) const {
+        return reverse_graph_edge_descriptor<EdgeDesc>(ed);
+      }
+    };
+
+    template <typename EdgeDesc, typename Iter>
+    std::pair<transform_iterator<reverse_graph_edge_descriptor_maker<EdgeDesc>, Iter>,
+              transform_iterator<reverse_graph_edge_descriptor_maker<EdgeDesc>, Iter> >
+    reverse_edge_iter_pair(const std::pair<Iter, Iter>& ip) {
+      return std::make_pair(make_transform_iterator(ip.first, reverse_graph_edge_descriptor_maker<EdgeDesc>()),
+                            make_transform_iterator(ip.second, reverse_graph_edge_descriptor_maker<EdgeDesc>()));
+    }
+
     template <bool isEdgeList> struct choose_rev_edge_iter { };
     template <> struct choose_rev_edge_iter<true> {
       template <class G> struct bind_ {
-        typedef typename graph_traits<G>::edge_iterator type;
+        typedef transform_iterator<reverse_graph_edge_descriptor_maker<typename graph_traits<G>::edge_descriptor>, typename graph_traits<G>::edge_iterator> type;
       };
     };
     template <> struct choose_rev_edge_iter<false> {
@@ -49,17 +84,17 @@ class reverse_graph {
 
     // Graph requirements
     typedef typename Traits::vertex_descriptor vertex_descriptor;
-    typedef typename Traits::edge_descriptor edge_descriptor;
+    typedef detail::reverse_graph_edge_descriptor<typename Traits::edge_descriptor> edge_descriptor;
     typedef typename Traits::directed_category directed_category;
     typedef typename Traits::edge_parallel_category edge_parallel_category;
     typedef typename Traits::traversal_category traversal_category;
 
     // IncidenceGraph requirements
-    typedef typename Traits::in_edge_iterator out_edge_iterator;
+    typedef transform_iterator<detail::reverse_graph_edge_descriptor_maker<typename Traits::edge_descriptor>, typename Traits::in_edge_iterator> out_edge_iterator;
     typedef typename Traits::degree_size_type degree_size_type;
 
     // BidirectionalGraph requirements
-    typedef typename Traits::out_edge_iterator in_edge_iterator;
+    typedef transform_iterator<detail::reverse_graph_edge_descriptor_maker<typename Traits::edge_descriptor>, typename Traits::out_edge_iterator> in_edge_iterator;
 
     // AdjacencyGraph requirements
   typedef typename adjacency_iterator_generator<Self,
@@ -158,16 +193,16 @@ std::pair<typename reverse_graph<BidirectionalGraph>::edge_iterator,
           typename reverse_graph<BidirectionalGraph>::edge_iterator>
 edges(const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return edges(g.m_g);
+    return detail::reverse_edge_iter_pair<typename graph_traits<BidirectionalGraph>::edge_descriptor>(edges(g.m_g));
 }
 
 template <class BidirectionalGraph, class GRef>
-inline std::pair<typename graph_traits<BidirectionalGraph>::in_edge_iterator,
-                 typename graph_traits<BidirectionalGraph>::in_edge_iterator>
+inline std::pair<typename reverse_graph<BidirectionalGraph>::out_edge_iterator,
+                 typename reverse_graph<BidirectionalGraph>::out_edge_iterator>
 out_edges(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
           const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return in_edges(u, g.m_g);
+    return detail::reverse_edge_iter_pair<typename graph_traits<BidirectionalGraph>::edge_descriptor>(in_edges(u, g.m_g));
 }
 
 template <class BidirectionalGraph, class GRef>
@@ -211,12 +246,12 @@ edge(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
 }
 
 template <class BidirectionalGraph, class GRef>
-inline std::pair<typename graph_traits<BidirectionalGraph>::out_edge_iterator,
-                 typename graph_traits<BidirectionalGraph>::out_edge_iterator>
+inline std::pair<typename reverse_graph<BidirectionalGraph>::in_edge_iterator,
+                 typename reverse_graph<BidirectionalGraph>::in_edge_iterator>
 in_edges(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
          const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return out_edges(u, g.m_g);
+    return detail::reverse_edge_iter_pair<typename graph_traits<BidirectionalGraph>::edge_descriptor>(out_edges(u, g.m_g));
 }
 
 template <class BidirectionalGraph, class GRef>
@@ -243,20 +278,51 @@ in_degree(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
 
 template <class Edge, class BidirectionalGraph, class GRef>
 inline typename graph_traits<BidirectionalGraph>::vertex_descriptor
-source(const Edge& e, const reverse_graph<BidirectionalGraph,GRef>& g)
+source(const detail::reverse_graph_edge_descriptor<Edge>& e, const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return target(e, g.m_g);
+    return target(e.underlying_desc, g.m_g);
 }
 
 template <class Edge, class BidirectionalGraph, class GRef>
 inline typename graph_traits<BidirectionalGraph>::vertex_descriptor
-target(const Edge& e, const reverse_graph<BidirectionalGraph,GRef>& g)
+target(const detail::reverse_graph_edge_descriptor<Edge>& e, const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return source(e, g.m_g);
+    return source(e.underlying_desc, g.m_g);
 }
 
 
 namespace detail {
+
+  template <typename PM>
+  struct reverse_graph_edge_property_map {
+    private:
+    PM underlying_pm;
+
+    public:
+    typedef reverse_graph_edge_descriptor<typename property_traits<PM>::key_type> key_type;
+    typedef typename property_traits<PM>::value_type value_type;
+    typedef typename property_traits<PM>::reference reference;
+    typedef typename property_traits<PM>::category category;
+
+    explicit reverse_graph_edge_property_map(const PM& pm): underlying_pm(pm) {}
+
+    friend reference
+    get(const reverse_graph_edge_property_map& m,
+        const key_type& e) {
+      return get(m.underlying_pm, e.underlying_desc);
+    }
+
+    friend void
+    put(const reverse_graph_edge_property_map& m,
+        const key_type& e,
+        const value_type& v) {
+      put(m.underlying_pm, e.underlying_desc, v);
+    }
+
+    reference operator[](const key_type& k) {
+      return (this->underlying_pm)[k.underlying_desc];
+    }
+  };
 
   struct reverse_graph_vertex_property_selector {
     template <class ReverseGraph, class Property, class Tag>
@@ -273,8 +339,8 @@ namespace detail {
     struct bind_ {
       typedef typename ReverseGraph::base_type Graph;
       typedef property_map<Graph, Tag> PMap;
-      typedef typename PMap::type type;
-      typedef typename PMap::const_type const_type;
+      typedef reverse_graph_edge_property_map<typename PMap::type> type;
+      typedef reverse_graph_edge_property_map<typename PMap::const_type> const_type;
     };
   };
 
@@ -294,7 +360,7 @@ template <class BidirGraph, class GRef, class Property>
 typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type
 get(Property p, reverse_graph<BidirGraph,GRef>& g)
 {
-  return get(p, g.m_g);
+  return typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type(get(p, g.m_g));
 }
 
 template <class BidirGraph, class GRef, class Property>
@@ -302,7 +368,7 @@ typename property_map<reverse_graph<BidirGraph,GRef>, Property>::const_type
 get(Property p, const reverse_graph<BidirGraph,GRef>& g)
 {
   const BidirGraph& gref = g.m_g; // in case GRef is non-const
-  return get(p, gref);
+  return typename property_map<reverse_graph<BidirGraph,GRef>, Property>::const_type(get(p, gref));
 }
 
 template <class BidirectionalGraph, class GRef, class Property, class Key>
@@ -311,15 +377,15 @@ typename property_traits<
 >::value_type
 get(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k)
 {
-  return get(p, g.m_g, k);
+  return get(get(p, g), k);
 }
 
 template <class BidirectionalGraph, class GRef, class Property, class Key, class Value>
 void
-put(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k,
+put(Property p, reverse_graph<BidirectionalGraph,GRef>& g, const Key& k,
     const Value& val)
 {
-  put(p, g.m_g, k, val);
+  put(get(p, g), k, val);
 }
 
 template<typename BidirectionalGraph, typename GRef, typename Tag,
@@ -343,10 +409,5 @@ get_property(const reverse_graph<BidirectionalGraph,GRef>& g, Tag tag)
 }
 
 } // namespace boost
-
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
-// Stay out of the way of the concept checking class
-# undef BidirectionalGraph
-#endif
 
 #endif

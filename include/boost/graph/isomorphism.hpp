@@ -153,7 +153,7 @@ namespace boost {
         {
           std::vector<size_type> multiplicity(max_invariant, 0);
           BGL_FORALL_VERTICES_T(v, G1, Graph1)
-            ++multiplicity[invariant1(v)];
+            ++multiplicity.at(invariant1(v));
           sort(V_mult, compare_multiplicity(invariant1, &multiplicity[0]));
         }
         
@@ -302,7 +302,7 @@ namespace boost {
     }
     // The largest possible vertex invariant number
     size_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { 
-      return (m_max_vertex_in_degree + 2) * m_max_vertex_out_degree + 1;
+      return (m_max_vertex_in_degree + 1) * (m_max_vertex_out_degree + 1);
     }
   private:
     InDegreeMap m_in_degree_map;
