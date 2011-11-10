@@ -24,7 +24,7 @@ void reset_edge_index(Graph& g)
   typename property_map<Graph, edge_index_t>::type index = get(edge_index, g);
   typename graph_traits<Graph>::edge_iterator ei, ei_end;
   typename graph_traits<Graph>::edges_size_type cnt = 0;
-  for(tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
     put(index, *ei, cnt++);
 }
 
@@ -36,7 +36,7 @@ void reset_vertex_index(Graph& g)
   typename property_map<Graph, vertex_index_t>::type index = get(vertex_index, g);
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   typename graph_traits<Graph>::vertices_size_type cnt = 0;
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     put(index, *vi, cnt++);
 }
 

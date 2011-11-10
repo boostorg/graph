@@ -25,7 +25,7 @@ struct VertexIndexUpdater
     typename property_map<Graph, vertex_index_t>::type index = get(vertex_index, g);
     typename graph_traits<Graph>::vertex_iterator vi, vi_end;
     typename graph_traits<Graph>::vertices_size_type cnt = 0;
-    for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+    for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       put(index, *vi, cnt++);
   }
 };

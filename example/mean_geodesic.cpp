@@ -77,7 +77,7 @@ main(int argc, char *argv[])
     // Print the mean geodesic distance of each vertex and finally,
     // the graph itself.
     graph_traits<Graph>::vertex_iterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         cout << setw(12) << setiosflags(ios::left)
              << g[*i].name << get(gm, *i) << endl;
     }

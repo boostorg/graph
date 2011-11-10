@@ -126,7 +126,7 @@ all_closeness_centralities(const Graph& g,
     typedef typename property_traits<CentralityMap>::value_type Centrality;
 
     typename graph_traits<Graph>::vertex_iterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         DistanceMap dm = get(dist, *i);
         Centrality c = closeness_centrality(g, dm, measure);
         put(cent, *i, c);

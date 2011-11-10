@@ -94,7 +94,7 @@ int main(int argc, char** argv)
   property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
   graph_traits<graph>::edges_size_type edge_count = 0;
   graph_traits<graph>::edge_iterator ei, ei_end;
-  for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     put(e_index, *ei, edge_count++);
   
 
