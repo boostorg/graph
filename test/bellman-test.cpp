@@ -42,7 +42,7 @@ int test_main(int, char*[])
     weight_pmap = get(edge_weight, g);
 
   int i = 0;
-  for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
+  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
 
   std::vector<int> parent(numVertex);

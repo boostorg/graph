@@ -156,7 +156,7 @@ all_mean_geodesics(const Graph& g,
     Result inf = numeric_values<Result>::infinity();
     Result sum = numeric_values<Result>::zero();
     VertexIterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         DistanceMap dm = get(dist, *i);
         Result r = mean_geodesic(g, dm, measure);
         put(geo, *i, r);

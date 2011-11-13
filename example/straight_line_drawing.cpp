@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 
   std::cout << "The straight line drawing is: " << std::endl;
   graph_traits<graph>::vertex_iterator vi, vi_end;
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     {
       coord_t coord(get(straight_line_drawing,*vi));
       std::cout << *vi << " -> (" << coord.x << ", " << coord.y << ")" 

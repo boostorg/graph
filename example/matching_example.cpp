@@ -83,7 +83,7 @@ int main()
   std::cout << "The matching is:" << std::endl;
   
   graph_traits<my_graph>::vertex_iterator vi, vi_end;
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
       std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
 
@@ -109,7 +109,7 @@ int main()
 
   std::cout << "The matching is:" << std::endl;
   
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
       std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
 

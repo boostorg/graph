@@ -137,7 +137,7 @@ int test_graph(const std::string& dimacs_filename)
   // Initialize the interior edge index
   property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
   e_size_t edge_count = 0;
-  for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     put(e_index, *ei, edge_count++);
 
   // Initialize the interior vertex index - not needed if the vertices
@@ -145,7 +145,7 @@ int test_graph(const std::string& dimacs_filename)
   /*
   property_map<graph, vertex_index_t>::type v_index = get(vertex_index, g);
   v_size_t vertex_count = 0;
-  for(tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     put(v_index, *vi, vertex_count++);
   */
 

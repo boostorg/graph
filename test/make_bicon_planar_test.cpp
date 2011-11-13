@@ -25,7 +25,7 @@ void reset_edge_index(Graph& g)
   typename property_map<Graph, edge_index_t>::type index = get(edge_index, g);
   typename graph_traits<Graph>::edge_iterator ei, ei_end;
   typename graph_traits<Graph>::edges_size_type cnt = 0;
-  for(tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
     put(index, *ei, cnt++);
 }
 
@@ -54,7 +54,7 @@ struct UpdateVertexIndex
     typename property_map<Graph, vertex_index_t>::type index = get(vertex_index, g);
     typename graph_traits<Graph>::vertex_iterator vi, vi_end;
     typename graph_traits<Graph>::vertices_size_type cnt = 0;
-    for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+    for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       put(index, *vi, cnt++);
   }
 };
@@ -87,7 +87,7 @@ void test_line_graph(VertexIndexUpdater vertex_index_updater, int size)
   embedding_t embedding(embedding_storage.begin(), get(vertex_index, g));
 
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for(tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
     std::copy(out_edges(*vi,g).first, out_edges(*vi,g).second, std::back_inserter(embedding[*vi]));
 
   BOOST_CHECK(biconnected_components(g, make_vector_property_map<int>(get(edge_index,g))) > 1);
