@@ -51,7 +51,7 @@ int main(int argc, char** argv)
   property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
   graph_traits<graph>::edges_size_type edge_count = 0;
   graph_traits<graph>::edge_iterator ei, ei_end;
-  for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     put(e_index, *ei, edge_count++);
   
   
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
   // Re-initialize the edge index, since we just added a few edges
   edge_count = 0;
-  for(tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     put(e_index, *ei, edge_count++);
 
   // Re-size the storage for the biconnected components, since we

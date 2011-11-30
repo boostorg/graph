@@ -101,7 +101,7 @@ all_degree_centralities(const Graph& g, CentralityMap cent, Measure measure)
     typedef typename property_traits<CentralityMap>::value_type Centrality;
 
     VertexIterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         Centrality c = degree_centrality(g, *i, measure);
         put(cent, *i, c);
     }

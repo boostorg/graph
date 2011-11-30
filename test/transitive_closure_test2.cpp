@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
        << endl;
   cout << "transitive closure: ";
   graph_t::edge_iterator i,iend;
-  for(tie(i,iend) = edges(g_TC);i!=iend;++i) {
+  for(boost::tie(i,iend) = edges(g_TC);i!=iend;++i) {
     cout << source(*i,g_TC) << "->" << target(*i,g_TC) << " ";
   }
   cout << endl;

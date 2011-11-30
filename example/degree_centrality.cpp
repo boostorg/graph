@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 
     // Print the degree centrality of each vertex.
     graph_traits<Graph>::vertex_iterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         cout << setiosflags(ios::left) << setw(12)
              << g[*i].name << cm[*i] << endl;
     }

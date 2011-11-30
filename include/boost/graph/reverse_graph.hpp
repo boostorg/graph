@@ -39,6 +39,18 @@ struct reverse_graph_tag { };
       friend bool operator!=(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
         return a.underlying_desc != b.underlying_desc;
       }
+      friend bool operator<(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc < b.underlying_desc;
+      }
+      friend bool operator>(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc > b.underlying_desc;
+      }
+      friend bool operator<=(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc <= b.underlying_desc;
+      }
+      friend bool operator>=(const reverse_graph_edge_descriptor& a, const reverse_graph_edge_descriptor& b) {
+        return a.underlying_desc >= b.underlying_desc;
+      }
     };
 
     template <typename EdgeDesc>

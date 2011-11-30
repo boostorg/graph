@@ -550,8 +550,8 @@ namespace boost {
           }
           // do the bottom
           u = bos;
-          ai = out_edges(u, g).first;
-          while (get(excess_flow, u) > 0) {
+          boost::tie(ai, a_end) = out_edges(u, g);
+          while (get(excess_flow, u) > 0 && ai != a_end) {
             if (get(capacity, *ai) == 0 && is_residual_edge(*ai))
               push_flow(*ai);
             ++ai;

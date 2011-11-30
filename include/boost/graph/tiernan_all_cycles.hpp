@@ -193,7 +193,7 @@ namespace detail
             u = p.back(),
             v = p.front();
         OutIterator i, end;
-        for(tie(i, end) = out_edges(u, g); i != end; ++i) {
+        for(boost::tie(i, end) = out_edges(u, g); i != end; ++i) {
             if((target(*i, g) == v)) {
                 return true;
             }
@@ -220,7 +220,7 @@ namespace detail
 
         // AdjacencyIterator i, end;
         OutIterator i, end;
-        for(tie(i, end) = out_edges(u, g); i != end; ++i) {
+        for(boost::tie(i, end) = out_edges(u, g); i != end; ++i) {
             Vertex v = target(*i, g);
 
             // if we can actually extend along this edge,
@@ -324,7 +324,7 @@ tiernan_all_cycles(const Graph& g,
     typedef typename graph_traits<Graph>::vertex_iterator VertexIterator;
 
     VertexIterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         detail::all_cycles_from_vertex(g, *i, vis, minlen, maxlen);
     }
 }

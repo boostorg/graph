@@ -121,7 +121,7 @@ main(int argc, char *argv[])
     cout << setw(12) << setiosflags(ios::left) << "excluding";
     cout << setw(12) << setiosflags(ios::left) << "including" << endl;
     graph_traits<Graph>::vertex_iterator i, end;
-    for(tie(i, end) = vertices(g); i != end; ++i) {
+    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
         cout << setw(12) << setiosflags(ios::left)
              << g[*i].name
              << setw(12) << get(exmap, *i)
