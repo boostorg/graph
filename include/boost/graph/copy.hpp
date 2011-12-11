@@ -44,6 +44,7 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/reverse_graph.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/breadth_first_search.hpp>
@@ -52,6 +53,21 @@
 namespace boost {
 
   namespace detail {
+
+    // Hack to make transpose_graph work with the same interface as before
+    template <typename Desc>
+    struct remove_reverse_edge_descriptor {
+      typedef Desc type;
+      static Desc convert(const Desc& d) {return d;}
+    };
+
+    template <typename Desc>
+    struct remove_reverse_edge_descriptor<reverse_graph_edge_descriptor<Desc> > {
+      typedef Desc type;
+      static Desc convert(const reverse_graph_edge_descriptor<Desc>& d) {
+        return d.underlying_desc;
+      }
+    };
 
     // Default edge and vertex property copiers
 
@@ -112,6 +128,7 @@ namespace boost {
                         CopyVertex copy_vertex, CopyEdge copy_edge,
                         Orig2CopyVertexIndexMap orig2copy, IndexMap)
       {
+        typedef remove_reverse_edge_descriptor<typename graph_traits<Graph>::edge_descriptor> cvt;
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
         for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<MutableGraph>::vertex_descriptor
@@ -126,7 +143,7 @@ namespace boost {
           boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
                                                  get(orig2copy, target(*ei, g_in)),
                                                  g_out);
-          copy_edge(*ei, new_e);
+          copy_edge(cvt::convert(*ei), new_e);
         }
       }
     };
@@ -141,6 +158,7 @@ namespace boost {
                         CopyVertex copy_vertex, CopyEdge copy_edge,
                         Orig2CopyVertexIndexMap orig2copy, IndexMap)
       {
+        typedef remove_reverse_edge_descriptor<typename graph_traits<Graph>::edge_descriptor> cvt;
         typename graph_traits<Graph>::vertex_iterator vi, vi_end;
         for (boost::tie(vi, vi_end) = vertices(g_in); vi != vi_end; ++vi) {
           typename graph_traits<MutableGraph>::vertex_descriptor
@@ -156,7 +174,7 @@ namespace boost {
             boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei, g_in)), 
                                                    get(orig2copy, target(*ei, g_in)),
                                                    g_out);
-            copy_edge(*ei, new_e);
+            copy_edge(cvt::convert(*ei), new_e);
           }
         }
       }
@@ -173,6 +191,7 @@ namespace boost {
                         Orig2CopyVertexIndexMap orig2copy,
                         IndexMap index_map)
       {
+        typedef remove_reverse_edge_descriptor<typename graph_traits<Graph>::edge_descriptor> cvt;
         typedef color_traits<default_color_type> Color;
         std::vector<default_color_type> 
           color(num_vertices(g_in), Color::white());
@@ -192,7 +211,7 @@ namespace boost {
               boost::tie(new_e, inserted) = add_edge(get(orig2copy, source(*ei,g_in)),
                                                      get(orig2copy, target(*ei,g_in)),
                                                      g_out);
-              copy_edge(*ei, new_e);
+              copy_edge(cvt::convert(*ei), new_e);
             }
           }
           color[get(index_map, *vi)] = Color::black();

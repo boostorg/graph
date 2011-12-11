@@ -28,6 +28,7 @@ struct reverse_graph_tag { };
     class reverse_graph_edge_descriptor {
       public:
       EdgeDesc underlying_desc;
+      typedef EdgeDesc base_descriptor_type;
 
       public:
       explicit reverse_graph_edge_descriptor(const EdgeDesc& underlying_desc = EdgeDesc())
@@ -69,6 +70,18 @@ struct reverse_graph_tag { };
       return std::make_pair(make_transform_iterator(ip.first, reverse_graph_edge_descriptor_maker<EdgeDesc>()),
                             make_transform_iterator(ip.second, reverse_graph_edge_descriptor_maker<EdgeDesc>()));
     }
+
+    // Get the underlying descriptor from a vertex or edge descriptor
+    template <typename Desc>
+    struct get_underlying_descriptor_from_reverse_descriptor {
+      typedef Desc type;
+      static Desc convert(const Desc& d) {return d;}
+    };
+    template <typename Desc>
+    struct get_underlying_descriptor_from_reverse_descriptor<reverse_graph_edge_descriptor<Desc> > {
+      typedef Desc type;
+      static Desc convert(const reverse_graph_edge_descriptor<Desc>& d) {return d.underlying_desc;}
+    };
 
     template <bool isEdgeList> struct choose_rev_edge_iter { };
     template <> struct choose_rev_edge_iter<true> {
@@ -129,14 +142,20 @@ class reverse_graph {
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
     // Bundled properties support
     template<typename Descriptor>
-    typename graph::detail::bundled_result<BidirectionalGraph, Descriptor>::type&
+    typename graph::detail::bundled_result<
+               BidirectionalGraph,
+               typename detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::type
+             >::type&
     operator[](Descriptor x)
-    { return m_g[x]; }
+    { return detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(m_g[x]); }
 
     template<typename Descriptor>
-    typename graph::detail::bundled_result<BidirectionalGraph, Descriptor>::type const&
+    typename graph::detail::bundled_result<
+               BidirectionalGraph,
+               typename detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::type
+             >::type const&
     operator[](Descriptor x) const
-    { return m_g[x]; }
+    { return detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(m_g[x]); }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
     static vertex_descriptor null_vertex()
