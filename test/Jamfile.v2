@@ -129,10 +129,9 @@ local SDB = [ modules.peek : SDB ] ;
 if $(SDB)
 {
     local sdb-root = [ path.root [ path.make $(SDB) ] [ path.pwd ] ] ;
-    local sdb-lib = [ path.join $(sdb-root) libgb.a ] ;
 
     compile stanford_graph_cc.cpp :
-        <include>$(sdb-root) <library-file>$(sdb-lib) ;
+        <include>$(sdb-root) ;
 }
 
 # Run LEDA tests only when -sLEDA= is set.
@@ -141,9 +140,7 @@ if $(LEDA)
 {
     local leda-root = [ path.root [ path.make $(LEDA) ] [ path.pwd ] ] ;
     local leda-include = [ path.join $(leda-root) incl ] ;
-    local leda-lib = [ path.join $(leda-root) libG.a ] ;
 
     compile leda_graph_cc.cpp :
-        <include>$(leda-include)
-        <library-file>$(leda-lib) ;
+        <include>$(leda-include) ;
 }
