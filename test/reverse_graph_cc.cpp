@@ -28,6 +28,7 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> >();
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());
@@ -45,6 +46,7 @@ int main(int,char*[])
     typedef graph_traits<Graph>::edge_descriptor Edge;
     function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
     function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> >();
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());
