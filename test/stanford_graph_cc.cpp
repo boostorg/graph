@@ -9,6 +9,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/stanford_graph.hpp>
+#include <boost/concept/assert.hpp>
 
 int main(int,char*[])
 {
@@ -18,28 +19,28 @@ int main(int,char*[])
     typedef Graph* Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_length_t > >();
-    function_requires< 
-      PropertyGraphConcept<Graph, Vertex, u_property<Vertex> > >();
-    function_requires< 
-      PropertyGraphConcept<Graph, Edge, a_property<Vertex> > >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_length_t > ));
+    BOOST_CONCEPT_ASSERT(( 
+      PropertyGraphConcept<Graph, Vertex, u_property<Vertex> > ));
+    BOOST_CONCEPT_ASSERT(( 
+      PropertyGraphConcept<Graph, Edge, a_property<Vertex> > ));
   }
   {
     typedef const Graph* Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< 
-      ReadablePropertyGraphConcept<Graph, Edge, edge_length_t > >();
-    function_requires< 
-      ReadablePropertyGraphConcept<Graph, Vertex, u_property<Vertex> > >();
-    function_requires< 
-      ReadablePropertyGraphConcept<Graph, Edge, a_property<Vertex> > >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( 
+      ReadablePropertyGraphConcept<Graph, Edge, edge_length_t > ));
+    BOOST_CONCEPT_ASSERT(( 
+      ReadablePropertyGraphConcept<Graph, Vertex, u_property<Vertex> > ));
+    BOOST_CONCEPT_ASSERT(( 
+      ReadablePropertyGraphConcept<Graph, Edge, a_property<Vertex> > ));
   }
   return 0;
 }

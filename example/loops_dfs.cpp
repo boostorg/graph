@@ -6,6 +6,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #include <boost/config.hpp>
+#include <boost/concept/assert.hpp>
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -47,7 +48,7 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry,
            const Graph & g, 
            Loops & loops)    // A container of sets of vertices
 {
-  function_requires < BidirectionalGraphConcept < Graph > >();
+  BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
   typedef typename graph_traits < Graph >::edge_descriptor Edge;
   typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
   std::vector < Edge > back_edges;
@@ -69,7 +70,7 @@ compute_loop_extent(typename graph_traits <
                     Graph >::edge_descriptor back_edge, const Graph & g,
                     Set & loop_set)
 {
-  function_requires < BidirectionalGraphConcept < Graph > >();
+  BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
   typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
   typedef color_traits < default_color_type > Color;
 

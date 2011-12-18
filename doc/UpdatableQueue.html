@@ -58,7 +58,7 @@ in addition to the members that are required of types that model <a href="./Buff
   struct UpdatableQueueConcept
   {
     void constraints() {
-      function_requires&lt; Buffer&lt;Q&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( Buffer&lt;Q&gt; ));
       
       q.update(g_ct);
     }

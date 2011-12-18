@@ -10,6 +10,7 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/grid_graph.hpp>
+#include <boost/concept/assert.hpp>
 
 #define DIMENSIONS 3
 using namespace boost;
@@ -20,14 +21,14 @@ int main (int, char*[]) {
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::edge_descriptor Edge;
 
-  function_requires<BidirectionalGraphConcept<Graph> >();
-  function_requires<VertexListGraphConcept<Graph> >();
-  function_requires<EdgeListGraphConcept<Graph> >();
-  function_requires<IncidenceGraphConcept<Graph> >();
-  function_requires<AdjacencyGraphConcept<Graph> >();
-  function_requires<AdjacencyMatrixConcept<Graph> >();
-  function_requires<ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
-  function_requires<ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> >();
+  BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT((ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
+  BOOST_CONCEPT_ASSERT((ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> ));
 
   return (0);
 }

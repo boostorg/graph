@@ -9,6 +9,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
+#include <boost/concept/assert.hpp>
 
 int main(int,char*[])
 {
@@ -16,21 +17,21 @@ int main(int,char*[])
   // Check adjacency_matrix without properties
   {
     typedef adjacency_matrix<directedS> Graph;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< EdgeListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
-    function_requires< AdjacencyMatrixConcept<Graph> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( MutableGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph> ));
   }
   {
     typedef adjacency_matrix<undirectedS> Graph;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< EdgeListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< MutableGraphConcept<Graph> >();
-    function_requires< AdjacencyMatrixConcept<Graph> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( MutableGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph> ));
   }
   // Check adjacency_matrix with properties
   {
@@ -39,17 +40,17 @@ int main(int,char*[])
       property<edge_weight_t, float> > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< EdgeListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< AdjacencyMatrixConcept<Graph> >();
-    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
-    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
     typedef adjacency_matrix<undirectedS, 
@@ -57,17 +58,17 @@ int main(int,char*[])
       property<edge_weight_t, float> > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< EdgeListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< AdjacencyMatrixConcept<Graph> >();
-    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
-    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, 
-      Vertex, vertex_index_t> >();
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, 
+      Vertex, vertex_index_t> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   return 0;
 }

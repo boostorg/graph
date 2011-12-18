@@ -7,6 +7,7 @@
 #ifndef TEST_ITERATION_HPP
 #define TEST_ITERATION_HPP
 
+#include <boost/concept/assert.hpp>
 #include <algorithm>
 
 /** @name Test Vertex List

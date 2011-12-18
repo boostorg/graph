@@ -125,7 +125,7 @@ Return type: <TT>vertex_descriptor</TT>
   {
     typedef typename boost::graph_traits&lt;G&gt;::edge_descriptor edge_descriptor;
     void constraints() {
-      function_requires&lt; MutableGraphConcept&lt;G&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( MutableGraphConcept&lt;G&gt; ));
       v = add_vertex(vp, g);
       p = add_edge(u, v, ep, g);
     }

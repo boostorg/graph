@@ -116,7 +116,7 @@ Called for the target of every out edge of a vertex being examined.
   struct AStarHeuristicConcept {
     void constraints()
     {
-      function_requires&lt; CopyConstructibleConcept&lt;Heuristic&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept&lt;Heuristic&gt; ));
       h(u);
     }
     Heuristic h;

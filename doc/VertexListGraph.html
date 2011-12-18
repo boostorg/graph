@@ -121,9 +121,9 @@ groups these requirements together, hence the VertexListGraph concept.
     typedef typename boost::graph_traits&lt;G&gt;::vertex_iterator 
       vertex_iterator;
     void constraints() {
-      function_requires&lt; IncidenceGraphConcept&lt;G&gt; &gt;();
-      function_requires&lt; AdjacencyGraphConcept&lt;G&gt; &gt;();
-      function_requires&lt; MultiPassInputIteratorConcept&lt;vertex_iterator&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept&lt;G&gt; ));
+      BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept&lt;G&gt; ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept&lt;vertex_iterator&gt; ));
 
       p = vertices(g);
       V = num_vertices(g);

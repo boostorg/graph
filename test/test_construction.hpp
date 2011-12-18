@@ -7,6 +7,7 @@
 #ifndef TEST_CONSTRUCTION_HPP
 #define TEST_CONSTRUCTION_HPP
 
+#include <boost/concept/assert.hpp>
 #include <utility>
 
 /** @name Build Graph

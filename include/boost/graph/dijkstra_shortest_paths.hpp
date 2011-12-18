@@ -30,6 +30,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/concept/assert.hpp>
 
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
@@ -68,7 +69,7 @@ namespace boost {
   template <class Visitor, class Graph>
   struct DijkstraVisitorConcept {
     void constraints() {
-      function_requires< CopyConstructibleConcept<Visitor> >();
+      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);

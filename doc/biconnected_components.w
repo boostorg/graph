@@ -156,11 +156,11 @@ template.
 
 @d Concept checking of type parameters
 @{
-function_requires< VertexListGraphConcept<Graph> >();
-function_requires< IncidenceGraphConcept<Graph> >();
-function_requires< WritablePropertyMapConcept<ComponentMap, edge_t> >();
-function_requires< ReadWritePropertyMapConcept<DiscoverTimeMap, vertex_t> >();
-function_requires< ReadWritePropertyMapConcept<LowPointMap, vertex_t> >();
+BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<ComponentMap, edge_t> ));
+BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DiscoverTimeMap, vertex_t> ));
+BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<LowPointMap, vertex_t> ));
 @}
 
 The first step of the algorithm is to initialize the discover times of
@@ -286,6 +286,7 @@ S.pop();
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/concept/assert.hpp>
 
 namespace boost {
   @<Biconnected Components Algorithm@>

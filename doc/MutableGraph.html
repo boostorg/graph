@@ -250,7 +250,7 @@ is no longer a valid vertex descriptor.
   struct MutableIncidenceGraphConcept
   {
     void constraints() {
-      function_requires&lt; MutableGraph&lt;G&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( MutableGraph&lt;G&gt; ));
       remove_edge(iter, g);
       remove_out_edge_if(u, p, g);
     }
@@ -265,7 +265,7 @@ is no longer a valid vertex descriptor.
   struct MutableBidirectionalGraphConcept
   {
     void constraints() {
-      function_requires&lt; MutableIncidenceGraph&lt;G&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( MutableIncidenceGraph&lt;G&gt; ));
       remove_in_edge_if(u, p, g);
     }
     G g;
@@ -278,7 +278,7 @@ is no longer a valid vertex descriptor.
   struct MutableEdgeListGraphConcept
   {
     void constraints() {
-      function_requires&lt; MutableGraph&lt;G&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( MutableGraph&lt;G&gt; ));
       remove_edge_if(p, g);
     }
     G g;
