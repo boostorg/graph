@@ -269,13 +269,15 @@ vertex(const typename graph_traits<BidirectionalGraph>::vertices_size_type v,
 }
 
 template <class BidirectionalGraph, class GRef>
-inline std::pair<typename graph_traits<BidirectionalGraph>::edge_descriptor,
-                 bool>
+inline std::pair< typename graph_traits<reverse_graph<BidirectionalGraph,GRef> >::edge_descriptor,
+                  bool>
 edge(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
      const typename graph_traits<BidirectionalGraph>::vertex_descriptor v,
      const reverse_graph<BidirectionalGraph,GRef>& g)
 {
-    return edge(v, u, g.m_g);
+    typedef typename graph_traits<BidirectionalGraph>::edge_descriptor underlying_edge_descriptor;
+    std::pair<underlying_edge_descriptor, bool> e = edge(v, u, g.m_g);
+    return std::make_pair(detail::reverse_graph_edge_descriptor<underlying_edge_descriptor>(e.first), e.second);
 }
 
 template <class BidirectionalGraph, class GRef>
