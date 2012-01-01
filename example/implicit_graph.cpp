@@ -4,7 +4,7 @@
 //    (See accompanying file LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-
+#include <boost/concept/assert.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -444,15 +444,15 @@ int main (int argc, char const *argv[]) {
   // Check the concepts that graph models.  This is included to demonstrate
   // how concept checking works, but is not required for a working program
   // since Boost algorithms do their own concept checking.
-  function_requires< BidirectionalGraphConcept<ring_graph> >();
-  function_requires< AdjacencyGraphConcept<ring_graph> >();
-  function_requires< VertexListGraphConcept<ring_graph> >();
-  function_requires< EdgeListGraphConcept<ring_graph> >();
-  function_requires< AdjacencyMatrixConcept<ring_graph> >();
-  function_requires<
-    ReadablePropertyMapConcept<const_edge_weight_map, edge_descriptor> >();
-  function_requires<
-    ReadablePropertyGraphConcept<ring_graph, edge_descriptor, edge_weight_t> >();
+  BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<ring_graph> ));
+  BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<ring_graph> ));
+  BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<ring_graph> ));
+  BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<ring_graph> ));
+  BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<ring_graph> ));
+  BOOST_CONCEPT_ASSERT((
+    ReadablePropertyMapConcept<const_edge_weight_map, edge_descriptor> ));
+  BOOST_CONCEPT_ASSERT((
+    ReadablePropertyGraphConcept<ring_graph, edge_descriptor, edge_weight_t> ));
 
   // Specify the size of the graph on the command line, or use a default size
   // of 5.

@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <boost/range.hpp>
+#include <boost/concept/assert.hpp>
 
 /** @name Test Out-Directed Graph
  * Test all graphs that have directed out edges.

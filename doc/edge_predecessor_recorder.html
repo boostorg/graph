@@ -7,7 +7,7 @@
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
-<Title>Boost Graph Library: predecessor_recorder</Title>
+<Title>Boost Graph Library: edge_predecessor_recorder</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -17,20 +17,25 @@
 
 <H1>
 <pre>
-predecessor_recorder&lt;PredecessorMap, EventTag&gt;
+edge_predecessor_recorder&lt;PredEdgeMap, EventTag&gt;
 </pre>
 </H1>
 
 This is an <a href="./EventVisitor.html">EventVisitor</a> that records
-the predecessor (or parent) of a vertex in a predecessor property
+the predecessor (or parent) edge of a vertex in a property
 map. This is particularly useful in graph search algorithms where
 recording the predecessors is an efficient way to encode the search
-tree that was traversed during the search. The predecessor recorder is
+tree that was traversed during the search. The edge predecessor recorder is
 typically used with the <tt>on_tree_edge</tt> or
-<tt>on_relax_edge</tt> events and cannot be used with vertex events.
+<tt>on_relax_edge</tt> events and cannot be used with vertex events.  This
+visitor is meant to be used instead of <a
+href="predecessor_recorder.html"><tt>predecessor_recorder</tt></a> when a
+graph has parallel edges and it is necessary to know which incoming edge a
+search algorithm
+used to get to a particular vertex.
 
 <p>
-<tt>predecessor_recorder</tt> can be used with graph algorithms by
+<tt>edge_predecessor_recorder</tt> can be used with graph algorithms by
 wrapping it with an algorithm-specific adaptor, such as <a
 href="./bfs_visitor.html"><tt>bfs_visitor</tt></a> and <a
 href="./dfs_visitor.html"><tt>dfs_visitor</tt></a>. Also, this event
@@ -39,18 +44,19 @@ visitor can be combined with other event visitors using
 
 <p>
 Algorithms such as Dijkstra's and breadth-first search will not assign
-a predecessor to the source vertex (which is the root of the search
+a predecessor edge to the source vertex (which is the root of the search
 tree). It is often useful to initialize the source vertex's
-predecessor to itself, thereby identifying the root vertex as the only
-vertex which is its own parent. When using an algorithm like
+predecessor to a special value, thereby identifying the root vertex.
+When using an algorithm like
 depth-first search that creates a forest (multiple search trees) it
-is useful to initialize the predecessor of every vertex to itself. This
+is useful to do the same for every vertex. This
 way all the root nodes can be distinguished.
 
 
-<h3>Example</h3>
+<!-- <h3>Example</h3>
 
 See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
+-->
 
 <h3>Model of</h3>
 
@@ -71,19 +77,18 @@ See the example for <a href="./bfs_visitor.html"><tt>bfs_visitor</tt></a>.
 <th>Parameter</th><th>Description</th><th>Default</th>
 </tr>
 
-<TR><TD><TT>PredecessorMap</TT></TD>
+<TR><TD><TT>PredEdgeMap</TT></TD>
 <TD>
 A <a
 href="../../property_map/doc/WritablePropertyMap.html">WritablePropertyMap</a>
-where the key type and the value type are the vertex descriptor type
-of the graph.
+where the key and value types are the vertex and edge descriptor types, respectively, of the graph.
 </TD>
 <TD>&nbsp;</TD>
 </TR>
 
 <TR><TD><TT>EventTag</TT></TD>
 <TD>
-The tag to specify when the <tt>predecessor_recorder</tt> should be
+The tag to specify when the <tt>edge_predecessor_recorder</tt> should be
 applied during the graph algorithm. <tt>EventTag</tt> must be an
 edge event.
 </TD>
@@ -101,7 +106,7 @@ edge event.
 </tr>
 
 <tr>
-<td><tt>predecessor_recorder::event_filter</tt></td>
+<td><tt>edge_predecessor_recorder::event_filter</tt></td>
 <td>
 This will be the same type as the template parameter <tt>EventTag</tt>.
 </td>
@@ -120,10 +125,10 @@ This will be the same type as the template parameter <tt>EventTag</tt>.
 
 <tr>
 <td><tt>
-predecessor_recorder(PredecessorMap pa);
+edge_predecessor_recorder(PredEdgeMap pa);
 </tt></td>
 <td>
-Construct a predecessor recorder object with predecessor property map
+Construct an edge predecessor recorder object with predecessor property map
 <tt>pa</tt>.
 </td>
 </tr>
@@ -134,8 +139,8 @@ template &lt;class Edge, class Graph&gt;<br>
 void operator()(Edge e, const Graph& g);
 </tt></td>
 <td>
-Given edge <i>e = (u,v)</i>, this records <i>u</i> as the
-predecessor (or parent) of <i>v</i>.
+Given edge <i>e = (u,v)</i>, this records <i>e</i> as the
+predecessor (or parent) edge of <i>v</i>.
 </td>
 </tr>
 
@@ -149,11 +154,11 @@ predecessor (or parent) of <i>v</i>.
 </tr>
 
 <tr><td><tt>
-template &lt;class PredecessorMap, class Tag&gt;<br>
-predecessor_recorder&lt;PredecessorMap, Tag&gt; <br>
-record_predecessors(PredecessorMap pa, Tag);
+template &lt;class PredEdgeMap, class Tag&gt;<br>
+edge_predecessor_recorder&lt;PredEdgeMap, Tag&gt; <br>
+record_edge_predecessors(PredEdgeMap pa, Tag);
 </tt></td><td>
-A convenient way to create a <tt>predecessor_recorder</tt>.
+A convenient way to create a <tt>edge_predecessor_recorder</tt>.
 </td></tr>
 
 </table>
@@ -184,7 +189,7 @@ HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 
 </BODY>
 </HTML> 
-<!--  LocalWords:  PredecessorMap EventTag EventVisitor map bfs dfs const
+<!--  LocalWords:  PredEdgeMap EventTag EventVisitor map bfs dfs const
  -->
 <!--  LocalWords:  EventVisitorList WritablePropertyMap Siek Univ Quan
  -->

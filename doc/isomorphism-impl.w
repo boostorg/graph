@@ -174,7 +174,7 @@ need to consider those vertices that have the same vertex invariant
 number. The number of vertices in a graph with the same vertex
 invariant number $i$ is called the \emph{invariant multiplicity} for
 $i$.  In this implementation, by default we use the out-degree of the
-vertex as the vertex invariant, though the user can also supply there
+vertex as the vertex invariant, though the user can also supply their
 own invariant function. The ability of the invariant function to prune
 the search space varies widely with the type of graph.
 
@@ -301,21 +301,21 @@ unsigned integers.
 @d Concept checking
 @{
 // Graph requirements
-function_requires< VertexListGraphConcept<Graph1> >();
-function_requires< EdgeListGraphConcept<Graph1> >();
-function_requires< VertexListGraphConcept<Graph2> >();
-function_requires< BidirectionalGraphConcept<Graph2> >();
+BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph1> ));
+BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph1> ));
+BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph2> ));
+BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph2> ));
 
 // Property map requirements
-function_requires< ReadWritePropertyMapConcept<IndexMapping, vertex1_t> >();
+BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<IndexMapping, vertex1_t> ));
 typedef typename property_traits<IndexMapping>::value_type IndexMappingValue;
 BOOST_STATIC_ASSERT((is_same<IndexMappingValue, vertex2_t>::value));
 
-function_requires< ReadablePropertyMapConcept<IndexMap1, vertex1_t> >();
+BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap1, vertex1_t> ));
 typedef typename property_traits<IndexMap1>::value_type IndexMap1Value;
 BOOST_STATIC_ASSERT((is_convertible<IndexMap1Value, size_type>::value));
 
-function_requires< ReadablePropertyMapConcept<IndexMap2, vertex2_t> >();
+BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap2, vertex2_t> ));
 typedef typename property_traits<IndexMap2>::value_type IndexMap2Value;
 BOOST_STATIC_ASSERT((is_convertible<IndexMap2Value, size_type>::value));
 @}

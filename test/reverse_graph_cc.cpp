@@ -10,6 +10,7 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/reverse_graph.hpp>
+#include <boost/concept/assert.hpp>
 #include <string>
 
 int main(int,char*[])
@@ -23,11 +24,12 @@ int main(int,char*[])
       property<graph_name_t, std::string>
     > AdjList;
     typedef reverse_graph<AdjList> Graph;
-    function_requires< VertexListGraphConcept<Graph> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> ));
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());
@@ -40,11 +42,12 @@ int main(int,char*[])
       property<graph_name_t, std::string>
     > AdjList;
     typedef reverse_graph<AdjList,AdjList&> Graph;
-    function_requires< VertexListGraphConcept<Graph> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< PropertyGraphConcept<Graph, Vertex, vertex_color_t> >();
-    function_requires< PropertyGraphConcept<Graph, Edge, edge_weight_t> >();
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_weight_t> ));
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> ));
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());

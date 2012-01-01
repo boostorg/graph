@@ -20,6 +20,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/concept/assert.hpp>
 
 namespace boost
 {
@@ -157,14 +158,14 @@ namespace boost
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
-    function_requires<VertexListGraphConcept<Graph> >();
-    function_requires<IncidenceGraphConcept<Graph> >();
-    function_requires<WritablePropertyMapConcept<ComponentMap, edge_t> >();
-    function_requires<ReadWritePropertyMapConcept<DiscoverTimeMap,
-                                                  vertex_t> >();
-    function_requires<ReadWritePropertyMapConcept<LowPointMap, vertex_t > >();
-    function_requires<ReadWritePropertyMapConcept<PredecessorMap,
-                                                  vertex_t> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( WritablePropertyMapConcept<ComponentMap, edge_t> ));
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DiscoverTimeMap,
+                                                  vertex_t> ));
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<LowPointMap, vertex_t > ));
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<PredecessorMap,
+                                                  vertex_t> ));
 
     std::size_t num_components = 0;
     std::size_t dfs_time = 0;

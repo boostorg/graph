@@ -7,6 +7,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #include <boost/config.hpp>
+#include <boost/concept/assert.hpp>
 #include <vector>
 #include <list>
 
@@ -24,9 +25,9 @@ int main(int,char*[])
   // Check "vector as graph"
   {
     typedef std::vector< std::list<int> > Graph;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< IncidenceGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
   }
   return 0;
 }

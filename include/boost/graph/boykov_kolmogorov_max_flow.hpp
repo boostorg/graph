@@ -47,6 +47,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/lookup_edge.hpp>
+#include <boost/concept/assert.hpp>
 
 // The algorithm impelemented here is described in:
 //
@@ -743,16 +744,16 @@ boykov_kolmogorov_max_flow(Graph& g,
   typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   //as this method is the last one before we instantiate the solver, we do the concept checks here
-  function_requires<VertexListGraphConcept<Graph> >(); //to have vertices(), num_vertices(),
-  function_requires<EdgeListGraphConcept<Graph> >(); //to have edges()
-  function_requires<IncidenceGraphConcept<Graph> >(); //to have source(), target() and out_edges()
-  function_requires<ReadablePropertyMapConcept<CapacityEdgeMap, edge_descriptor> >(); //read flow-values from edges
-  function_requires<ReadWritePropertyMapConcept<ResidualCapacityEdgeMap, edge_descriptor> >(); //write flow-values to residuals
-  function_requires<ReadablePropertyMapConcept<ReverseEdgeMap, edge_descriptor> >(); //read out reverse edges
-  function_requires<ReadWritePropertyMapConcept<PredecessorMap, vertex_descriptor> >(); //store predecessor there
-  function_requires<ReadWritePropertyMapConcept<ColorMap, vertex_descriptor> >(); //write corresponding tree
-  function_requires<ReadWritePropertyMapConcept<DistanceMap, vertex_descriptor> >(); //write distance to source/sink
-  function_requires<ReadablePropertyMapConcept<IndexMap, vertex_descriptor> >(); //get index 0...|V|-1
+  BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> )); //to have vertices(), num_vertices(),
+  BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> )); //to have edges()
+  BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> )); //to have source(), target() and out_edges()
+  BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<CapacityEdgeMap, edge_descriptor> )); //read flow-values from edges
+  BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ResidualCapacityEdgeMap, edge_descriptor> )); //write flow-values to residuals
+  BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<ReverseEdgeMap, edge_descriptor> )); //read out reverse edges
+  BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<PredecessorMap, vertex_descriptor> )); //store predecessor there
+  BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ColorMap, vertex_descriptor> )); //write corresponding tree
+  BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DistanceMap, vertex_descriptor> )); //write distance to source/sink
+  BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, vertex_descriptor> )); //get index 0...|V|-1
   BOOST_ASSERT(num_vertices(g) >= 2 && src != sink);
 
   detail::bk_max_flow<
