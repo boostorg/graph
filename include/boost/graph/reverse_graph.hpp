@@ -124,8 +124,7 @@ class reverse_graph {
     typedef transform_iterator<detail::reverse_graph_edge_descriptor_maker<typename Traits::edge_descriptor>, typename Traits::out_edge_iterator> in_edge_iterator;
 
     // AdjacencyGraph requirements
-  typedef typename adjacency_iterator_generator<Self,
-    vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
+    typedef typename adjacency_iterator_generator<Self, vertex_descriptor, out_edge_iterator>::type adjacency_iterator;
 
     // VertexListGraph requirements
     typedef typename Traits::vertex_iterator vertex_iterator;
@@ -149,7 +148,7 @@ class reverse_graph {
                typename detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::type
              >::type&
     operator[](Descriptor x)
-    { return detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(m_g[x]); }
+    { return m_g[detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(x)]; }
 
     template<typename Descriptor>
     typename graph::detail::bundled_result<
@@ -157,7 +156,7 @@ class reverse_graph {
                typename detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::type
              >::type const&
     operator[](Descriptor x) const
-    { return detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(m_g[x]); }
+    { return m_g[detail::get_underlying_descriptor_from_reverse_descriptor<Descriptor>::convert(x)]; }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
     static vertex_descriptor null_vertex()
@@ -354,7 +353,7 @@ namespace detail {
       put(m.underlying_pm, e.underlying_descx, v);
     }
 
-    reference operator[](const key_type& k) {
+    reference operator[](const key_type& k) const {
       return (this->underlying_pm)[k.underlying_descx];
     }
   };
