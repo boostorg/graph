@@ -30,7 +30,6 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> ));
-    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> >();
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());
@@ -49,7 +48,6 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
     BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_weight_t> ));
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> ));
-    function_requires< ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> >();
     AdjList g;
     Graph gr(g);
     get_property(gr, graph_name_t());
