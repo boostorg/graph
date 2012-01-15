@@ -388,31 +388,31 @@ unsigned integers.
 @d Concept checking
 @{
 // Graph requirements
-function_requires< VertexListGraphConcept<Graph1> >();
-function_requires< EdgeListGraphConcept<Graph1> >();
-function_requires< VertexListGraphConcept<Graph2> >();
-function_requires< BidirectionalGraphConcept<Graph2> >();
+BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph1> ));
+BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph1> ));
+BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph2> ));
+BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph2> ));
 
 typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
 typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
 typedef typename graph_traits<Graph1>::vertices_size_type size_type;
 
 // Vertex invariant requirement
-function_requires< AdaptableUnaryFunctionConcept<Invariant1,
-  size_type, vertex1_t> >();
-function_requires< AdaptableUnaryFunctionConcept<Invariant2,
-  size_type, vertex2_t> >();
+BOOST_CONCEPT_ASSERT(( AdaptableUnaryFunctionConcept<Invariant1,
+  size_type, vertex1_t> ));
+BOOST_CONCEPT_ASSERT(( AdaptableUnaryFunctionConcept<Invariant2,
+  size_type, vertex2_t> ));
 
 // Property map requirements
-function_requires< ReadWritePropertyMapConcept<IsoMapping, vertex1_t> >();
+BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<IsoMapping, vertex1_t> ));
 typedef typename property_traits<IsoMapping>::value_type IsoMappingValue;
 BOOST_STATIC_ASSERT((is_same<IsoMappingValue, vertex2_t>::value));
 
-function_requires< ReadablePropertyMapConcept<IndexMap1, vertex1_t> >();
+BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap1, vertex1_t> ));
 typedef typename property_traits<IndexMap1>::value_type IndexMap1Value;
 BOOST_STATIC_ASSERT((is_convertible<IndexMap1Value, size_type>::value));
 
-function_requires< ReadablePropertyMapConcept<IndexMap2, vertex2_t> >();
+BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap2, vertex2_t> ));
 typedef typename property_traits<IndexMap2>::value_type IndexMap2Value;
 BOOST_STATIC_ASSERT((is_convertible<IndexMap2Value, size_type>::value));
 @}

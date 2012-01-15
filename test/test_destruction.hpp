@@ -7,6 +7,7 @@
 #ifndef TEST_DESTRUCTION_HPP
 #define TEST_DESTRUCTION_HPP
 
+#include <boost/concept/assert.hpp>
 #include <utility>
 
 /** @name Destroy Graph
@@ -36,7 +37,7 @@ template <typename Graph, typename VertexSet>
 void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::true_) {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
-    // function_requires< VeretexMutableGraphConcept<Graph> >();
+    // BOOST_CONCEPT_ASSERT(( VeretexMutableGraphConcept<Graph> ));
 
     std::cout << "...destroy_labeled\n";
     // Remove the roof vertex

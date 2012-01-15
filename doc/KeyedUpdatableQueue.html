@@ -63,8 +63,8 @@ in addition to the members that are required of types that model <a href="./Upda
     typedef typename Q::key_map key_map;
     
     void constraints() {
-      function_requires&lt; UpdatableQueue&lt;Q&gt; &gt;();
-      function_requires&lt; ReadWritePropertyMap&lt; key_map, typename Buffer&lt;Q&gt;::value_type &gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( UpdatableQueue&lt;Q&gt; ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMap&lt; key_map, typename Buffer&lt;Q&gt;::value_type &gt; ));
     }
     
     void const_constraints(const Q&amp; cq) {

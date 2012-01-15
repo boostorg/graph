@@ -10,6 +10,7 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/concept/assert.hpp>
 
 int main(int,char*[])
 {
@@ -22,12 +23,12 @@ int main(int,char*[])
     typedef filtered_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
     typedef graph_traits<ResGraph>::edge_descriptor Edge;
 
-    function_requires< VertexListGraphConcept<ResGraph> >();
-    function_requires< EdgeListGraphConcept<ResGraph> >();
-    function_requires< IncidenceGraphConcept<ResGraph> >();
-    function_requires< AdjacencyGraphConcept<ResGraph> >();
-    function_requires< PropertyGraphConcept<ResGraph, Edge, 
-      edge_residual_capacity_t> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<ResGraph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<ResGraph> ));
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<ResGraph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<ResGraph> ));
+    BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<ResGraph, Edge, 
+      edge_residual_capacity_t> ));
   }
   // Check filtered_graph with bidirectional adjacency_list
   {
@@ -35,7 +36,7 @@ int main(int,char*[])
       no_property, property<edge_residual_capacity_t, long> > Graph;
     typedef property_map<Graph, edge_residual_capacity_t>::type ResCapMap;
     typedef filtered_graph<Graph, is_residual_edge<ResCapMap> > ResGraph;
-    function_requires< BidirectionalGraphConcept<ResGraph> >();
+    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<ResGraph> ));
   }
   return 0;
 }

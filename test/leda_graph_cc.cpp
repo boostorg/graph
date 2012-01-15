@@ -8,7 +8,7 @@
 //=======================================================================
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/leda_graph.hpp>
-
+#include <boost/concept/assert.hpp>
 
 int
 main(int,char*[])
@@ -18,21 +18,21 @@ main(int,char*[])
     typedef leda::GRAPH<int,int> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
     typedef graph_traits<Graph>::edge_descriptor Edge;
-    function_requires< VertexListGraphConcept<Graph> >();
-    function_requires< BidirectionalGraphConcept<Graph> >();
-    function_requires< AdjacencyGraphConcept<Graph> >();
-    function_requires< VertexMutableGraphConcept<Graph> >();
-    function_requires< EdgeMutableGraphConcept<Graph> >();
-    function_requires< VertexMutablePropertyGraphConcept<Graph> >();
-    function_requires< EdgeMutablePropertyGraphConcept<Graph> >();
-    function_requires<
-      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> >();
-    function_requires<
-      ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> >();
-    function_requires<
-      LvaluePropertyGraphConcept<Graph, Vertex, vertex_all_t> >();
-    function_requires<
-      LvaluePropertyGraphConcept<Graph, Vertex, edge_all_t> >();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( VertexMutableGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeMutableGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
+    BOOST_CONCEPT_ASSERT((
+      ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
+    BOOST_CONCEPT_ASSERT((
+      ReadablePropertyGraphConcept<Graph, Edge, edge_index_t> ));
+    BOOST_CONCEPT_ASSERT((
+      LvaluePropertyGraphConcept<Graph, Vertex, vertex_all_t> ));
+    BOOST_CONCEPT_ASSERT((
+      LvaluePropertyGraphConcept<Graph, Vertex, edge_all_t> ));
   }
   return 0;
 }

@@ -51,8 +51,8 @@ requirements are added.
   struct VertexAndEdgeListGraphConcept
   {
     void constraints() {
-      function_requires&lt; VertexListGraphConcept&lt;G&gt; &gt;();
-      function_requires&lt; EdgeListGraphConcept&lt;G&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept&lt;G&gt; ));
+      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept&lt;G&gt; ));
     }
   };
 </PRE>

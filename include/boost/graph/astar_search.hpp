@@ -25,7 +25,7 @@
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-
+#include <boost/concept/assert.hpp>
 
 namespace boost {
 
@@ -34,7 +34,7 @@ namespace boost {
   struct AStarHeuristicConcept {
     void constraints()
     {
-      function_requires< CopyConstructibleConcept<Heuristic> >();
+      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Heuristic> ));
       h(u);
     }
     Heuristic h;
@@ -58,7 +58,7 @@ namespace boost {
   struct AStarVisitorConcept {
     void constraints()
     {
-      function_requires< CopyConstructibleConcept<Visitor> >();
+      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);

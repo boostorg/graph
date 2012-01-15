@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <boost/property_map/property_map.hpp>
+#include <boost/concept/assert.hpp>
 
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
 #error This examples requires a compiler that provides a working std::iterator_traits
@@ -53,6 +54,6 @@ main()
   typedef foo::iterator_property_map < vec_t::iterator,
     boost::identity_property_map > pmap_t;
   using namespace boost;
-  function_requires < Mutable_LvaluePropertyMapConcept < pmap_t, int > >();
+  BOOST_CONCEPT_ASSERT(( Mutable_LvaluePropertyMapConcept<pmap_t, int> ));
   return 0;
 }

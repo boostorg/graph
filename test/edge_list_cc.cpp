@@ -9,6 +9,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/edge_list.hpp>
+#include <boost/concept/assert.hpp>
 #include <cstddef>
 #include <iterator>
 
@@ -24,10 +25,10 @@ int main(int,char*[])
     
         typedef graph_traits<EdgeList>::edge_descriptor Edge;
     
-        function_requires< EdgeListGraphConcept<EdgeList> >();
+        BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<EdgeList> ));
     
-        function_requires< ReadablePropertyGraphConcept<EdgeList, Edge, 
-            edge_index_t> >();
+        BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<EdgeList, Edge, 
+            edge_index_t> ));
     }
     return 0;
 }

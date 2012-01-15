@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include <boost/assert.hpp>
+#include <boost/concept/assert.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>

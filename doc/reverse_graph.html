@@ -27,7 +27,7 @@ The <tt>reverse_graph</tt> adaptor flips the in-edges and out-edges of
 a <a href="./BidirectionalGraph.html">BidirectionalGraph</a>,
 effectively transposing the graph. The construction of the
 <tt>reverse_graph</tt> is constant time, providing a highly efficient
-way to obtain a transposed-view of a graph.
+way to obtain a transposed view of a graph.
 
 
 <H3>Example</H3>
@@ -215,6 +215,16 @@ and must match one of the properties specified in the
 <hr>
 
 
+<tt>property_map&lt;reverse_graph, edge_underlying_t&gt;::type</tt><br>
+and<br>
+<tt>property_map&lt;reverse_graph, edge_underlying_t&gt;::const_type</tt>
+<br><br>
+An edge property type mapping from edge descriptors in the <tt>reverse_graph</tt> to
+edge descriptors in the underlying <tt>BidirectionalGraph</tt> object.
+
+<hr>
+
+
 <H2>Member Functions</H2>
 
 <hr>
@@ -359,12 +369,29 @@ argument.
 <hr>
 
 <pre>
+property_map&lt;reverse_graph, edge_underlying_t&gt;::const_type
+get(PropertyTag, const reverse_graph&amp; g)
+</pre>
+Returns a property map object that converts from edge descriptors in the
+<tt>reverse_graph</tt> to edge descriptors in the underlying
+<tt>BidirectionalGraph</tt> object.
+
+<hr>
+
+<pre>
 template &lt;class <a href="./PropertyTag.html">PropertyTag</a>, class X&gt;
 typename property_traits&lt;property_map&lt;reverse_graph, PropertyTag&gt;::const_type&gt;::value_type
 get(PropertyTag, const reverse_graph&amp; g, X x)
 </pre>
 This returns the property value for <tt>x</tt>, which is either
 a vertex or edge descriptor.
+<hr>
+
+<pre>
+typename graph_traits&lt;BidirectionalGraph&gt;::edge_descriptor
+get(edge_underlying_t, const reverse_graph&amp; g, edge_descriptor e)
+</pre>
+This returns the underlying edge descriptor for the edge <tt>e</tt> in the <tt>reverse_graph</tt>.
 <hr>
 
 <pre>

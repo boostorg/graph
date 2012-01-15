@@ -8,6 +8,7 @@
 //=======================================================================
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
+#include <boost/concept/assert.hpp>
 
 int main(int,char*[])
 {
@@ -19,22 +20,22 @@ int main(int,char*[])
 
   typedef incidence_graph_archetype<Vertex, directed_tag, 
     allow_parallel_edge_tag> Graph1;
-  function_requires< IncidenceGraphConcept<Graph1> >();
+  BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph1> ));
 
   typedef adjacency_graph_archetype<Vertex, directed_tag, 
     allow_parallel_edge_tag> Graph2;
-  function_requires< AdjacencyGraphConcept<Graph2> >();
+  BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph2> ));
 
   typedef vertex_list_graph_archetype<Vertex, directed_tag, 
     allow_parallel_edge_tag> Graph3;
-  function_requires< VertexListGraphConcept<Graph3> >();
+  BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph3> ));
 
-  function_requires< ColorValueConcept<color_value_archetype> >();
+  BOOST_CONCEPT_ASSERT(( ColorValueConcept<color_value_archetype> ));
 
   typedef incidence_graph_archetype<Vertex, directed_tag, allow_parallel_edge_tag> G;
   typedef property_graph_archetype<G, vertex_color_t, color_value_archetype>
     Graph4;
-  function_requires< PropertyGraphConcept<Graph4, Vertex, vertex_color_t> >();
+  BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph4, Vertex, vertex_color_t> ));
 
   return 0;
 }

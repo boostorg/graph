@@ -162,8 +162,8 @@ Therefore, the extra requirement is added that the out-edge connecting
   {
     typedef typename boost::graph_traits&lt;G&gt;::out_edge_iterator out_edge_iterator;
     void constraints() {
-      function_requires&lt; GraphConcept&lt;G&gt; &gt;();
-      function_requires&lt; MultiPassInputIteratorConcept&lt;out_edge_iterator&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( GraphConcept&lt;G&gt; ));
+      BOOST_CONCEPT_ASSERT(( MultiPassInputIteratorConcept&lt;out_edge_iterator&gt; ));
 
       p = out_edges(u, g);
       e = *p.first;

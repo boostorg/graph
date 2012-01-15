@@ -121,12 +121,12 @@ any vertex of graph object which type is <tt>G</tt>.
     typedef typename boost::graph_traits&lt;G&gt;::traversal_category traversal_category;
 
     void constraints() {
-      function_requires&lt; DefaultConstructibleConcept&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; EqualityComparableConcept&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; AssignableConcept&lt;vertex_descriptor&gt; &gt;();
-      function_requires&lt; DefaultConstructibleConcept&lt;edge_descriptor&gt; &gt;();
-      function_requires&lt; EqualityComparableConcept&lt;edge_descriptor&gt; &gt;();
-      function_requires&lt; AssignableConcept&lt;edge_descriptor&gt; &gt;();
+      BOOST_CONCEPT_ASSERT(( DefaultConstructibleConcept&lt;vertex_descriptor&gt; ));
+      BOOST_CONCEPT_ASSERT(( EqualityComparableConcept&lt;vertex_descriptor&gt; ));
+      BOOST_CONCEPT_ASSERT(( AssignableConcept&lt;vertex_descriptor&gt; ));
+      BOOST_CONCEPT_ASSERT(( DefaultConstructibleConcept&lt;edge_descriptor&gt; ));
+      BOOST_CONCEPT_ASSERT(( EqualityComparableConcept&lt;edge_descriptor&gt; ));
+      BOOST_CONCEPT_ASSERT(( AssignableConcept&lt;edge_descriptor&gt; ));
     }
     G g;
   };

@@ -236,9 +236,9 @@ href="../test/graph.cpp"><TT>test/graph.cpp</TT></a>.
   main(int,char*[])
   {
     typedef GRAPH&lt;int,int&gt; Graph;
-    function_requires&lt; VertexListGraphConcept&lt;Graph&gt; &gt;();
-    function_requires&lt; BidirectionalGraphConcept&lt;Graph&gt; &gt;();
-    function_requires&lt; MutableGraphConcept&lt;Graph&gt; &gt;();
+    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept&lt;Graph&gt; ));
+    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept&lt;Graph&gt; ));
+    BOOST_CONCEPT_ASSERT(( MutableGraphConcept&lt;Graph&gt; ));
     return 0;
   }
 </PRE>
