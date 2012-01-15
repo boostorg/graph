@@ -410,7 +410,7 @@ template <DIRECTED_GRAPH_PARAMS>
 typename DIRECTED_GRAPH::vertex_descriptor
 vertex(typename DIRECTED_GRAPH::vertices_size_type n,
        DIRECTED_GRAPH const& g)
-{ return vertex(g.impl()); }
+{ return vertex(n, g.impl()); }
 
 template <DIRECTED_GRAPH_PARAMS>
 std::pair<typename DIRECTED_GRAPH::edge_descriptor, bool>

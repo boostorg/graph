@@ -69,6 +69,33 @@ namespace boost {
       }
     };
 
+    // Add a reverse_graph_edge_descriptor wrapper if the Graph is a
+    // reverse_graph but the edge descriptor is from the original graph (this
+    // case comes from the fact that transpose_graph uses reverse_graph
+    // internally but doesn't expose the different edge descriptor type to the
+    // user).
+    template <typename Desc, typename Graph>
+    struct add_reverse_edge_descriptor {
+      typedef Desc type;
+      static Desc convert(const Desc& d) {return d;}
+    };
+
+    template <typename Desc, typename G, typename GR>
+    struct add_reverse_edge_descriptor<Desc, boost::reverse_graph<G, GR> > {
+      typedef reverse_graph_edge_descriptor<Desc> type;
+      static reverse_graph_edge_descriptor<Desc> convert(const Desc& d) {
+        return reverse_graph_edge_descriptor<Desc>(d);
+      }
+    };
+
+    template <typename Desc, typename G, typename GR>
+    struct add_reverse_edge_descriptor<reverse_graph_edge_descriptor<Desc>, boost::reverse_graph<G, GR> > {
+      typedef reverse_graph_edge_descriptor<Desc> type;
+      static reverse_graph_edge_descriptor<Desc> convert(const reverse_graph_edge_descriptor<Desc>& d) {
+        return d;
+      }
+    };
+
     // Default edge and vertex property copiers
 
     template <typename Graph1, typename Graph2>
@@ -79,7 +106,7 @@ namespace boost {
 
       template <typename Edge1, typename Edge2>
       void operator()(const Edge1& e1, Edge2& e2) const {
-        put(edge_all_map2, e2, get(edge_all_map1, e1));
+        put(edge_all_map2, e2, get(edge_all_map1, add_reverse_edge_descriptor<Edge1, Graph1>::convert(e1)));
       }
       typename property_map<Graph1, edge_all_t>::const_type edge_all_map1;
       mutable typename property_map<Graph2, edge_all_t>::type edge_all_map2;

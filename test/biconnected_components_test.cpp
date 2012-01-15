@@ -77,23 +77,11 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   } else std::cout << "OK." << std::endl;
 }
 
-int test_main(int argc, char* argv[])
-{
-  std::size_t n = 100;
-  std::size_t m = 500;
-  std::size_t seed = 1;
+typedef adjacency_list<listS, vecS, undirectedS,
+                       no_property, EdgeProperty> Graph;
+typedef graph_traits<Graph>::vertex_descriptor Vertex;
 
-  if (argc > 1) n = lexical_cast<std::size_t>(argv[1]);
-  if (argc > 2) m = lexical_cast<std::size_t>(argv[2]);
-  if (argc > 3) seed = lexical_cast<std::size_t>(argv[3]);
-
-  typedef adjacency_list<listS, vecS, undirectedS,
-                         no_property, EdgeProperty> Graph;
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  
-  Graph g(n);
-  minstd_rand gen(seed);
-  generate_random_graph(g, n, m, gen);
+bool test_graph(Graph& g) { // Returns false on failure
   std::vector<Vertex> art_points;
 
   std::cout << "Computing biconnected components & articulation points... ";
@@ -125,6 +113,35 @@ int test_main(int argc, char* argv[])
       out << source(*ei, g) << " -- " << target(*ei, g)
           << "[label=\"" << g[*ei].component << "\"]\n";
     out << "}\n";
+  }
+
+  return any_errors;
+}
+  
+int test_main(int argc, char* argv[])
+{
+  std::size_t n = 100;
+  std::size_t m = 500;
+  std::size_t seed = 1;
+
+  if (argc > 1) n = lexical_cast<std::size_t>(argv[1]);
+  if (argc > 2) m = lexical_cast<std::size_t>(argv[2]);
+  if (argc > 3) seed = lexical_cast<std::size_t>(argv[3]);
+
+  {
+    Graph g(n);
+    minstd_rand gen(seed);
+    generate_random_graph(g, n, m, gen);
+    if (test_graph(g)) return 1;
+  }
+
+  {
+    Graph g(4);
+    add_edge(2, 3, g);
+    add_edge(0, 3, g);
+    add_edge(0, 2, g);
+    add_edge(1, 0, g);
+    if (test_graph(g)) return 1;
   }
 
   return 0;

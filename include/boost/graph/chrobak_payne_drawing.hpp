@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <list>
+#include <stack>
 #include <boost/config.hpp>
 #include <boost/utility.hpp>  //for next and prior
 #include <boost/graph/graph_traits.hpp>

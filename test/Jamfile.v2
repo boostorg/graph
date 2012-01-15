@@ -8,6 +8,7 @@
 # LEDA (also top level directory) at the command line of jam using -s
 
 import modules ;
+import path ;
 
 path-constant TEST_DIR : . ;
 
@@ -124,23 +125,22 @@ test-suite graph_test :
     ;
 
 # Run SDB tests only when -sSDB= is set.
-if [ modules.peek : SDB ] != ""
+local SDB = [ modules.peek : SDB ] ;
+if $(SDB)
 {
-    local SDB_DEPENDENCIES =
-        <include>$(SGB) <library-file>$(SGB)/libgb.a  ;
+    local sdb-root = [ path.root [ path.make $(SDB) ] [ path.pwd ] ] ;
 
-    compile stanford_graph_cc.cpp
-        $(SDB_DEPENDENCIES)  ;
+    compile stanford_graph_cc.cpp :
+        <include>$(sdb-root) ;
 }
 
 # Run LEDA tests only when -sLEDA= is set.
-if [ modules.peek : LEDA ] != ""
+local LEDA = [ modules.peek : LEDA ] ;
+if $(LEDA)
 {
-     local LEDA_DEPENDENCIES =
-        <include>$(LEDA)/incl
-        <library-file>$(LEDA)/libG.a
-        ;
+    local leda-root = [ path.root [ path.make $(LEDA) ] [ path.pwd ] ] ;
+    local leda-include = [ path.join $(leda-root) incl ] ;
 
-    compile leda_graph_cc.cpp
-       $(LEDA_DEPENDENCIES) ;
+    compile leda_graph_cc.cpp :
+        <include>$(leda-include) ;
 }

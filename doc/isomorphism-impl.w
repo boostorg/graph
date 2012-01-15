@@ -174,7 +174,7 @@ need to consider those vertices that have the same vertex invariant
 number. The number of vertices in a graph with the same vertex
 invariant number $i$ is called the \emph{invariant multiplicity} for
 $i$.  In this implementation, by default we use the out-degree of the
-vertex as the vertex invariant, though the user can also supply there
+vertex as the vertex invariant, though the user can also supply their
 own invariant function. The ability of the invariant function to prune
 the search space varies widely with the type of graph.
 
