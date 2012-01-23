@@ -158,6 +158,7 @@ namespace boost {
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, const Graph& g) {
+        using boost::get;
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
@@ -173,6 +174,7 @@ namespace boost {
 
       template <class Edge, class Graph>
       void gray_target(Edge e, const Graph& g) {
+        using boost::get;
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
@@ -189,6 +191,7 @@ namespace boost {
 
       template <class Edge, class Graph>
       void black_target(Edge e, const Graph& g) {
+        using boost::get;
         m_decreased = relax(e, g, m_weight, m_predecessor, m_distance,
                             m_combine, m_compare);
 
