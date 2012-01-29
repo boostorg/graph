@@ -35,3 +35,6 @@ exe bfs-example : bfs-example.cpp ;
 exe bfs-example2 : bfs-example2.cpp ;
 exe dfs-example : dfs-example.cpp ;
 exe adjacency_list_io : adjacency_list_io.cpp ;
+exe undirected_adjacency_list : undirected_adjacency_list.cpp ;
+exe directed_graph : directed_graph.cpp ;
+exe undirected_graph : undirected_graph.cpp ;
