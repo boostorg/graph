@@ -52,21 +52,21 @@ namespace boost {
 
       // find minimum residual capacity along the augmenting path
       FlowValue delta = (std::numeric_limits<FlowValue>::max)();
-      e = p[sink];
+      e = get(p, sink);
       do {
         BOOST_USING_STD_MIN();
-        delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, residual_capacity[e]);
+        delta = min BOOST_PREVENT_MACRO_SUBSTITUTION(delta, get(residual_capacity, e));
         u = source(e, g);
-        e = p[u];
+        e = get(p, u);
       } while (u != src);
 
       // push delta units of flow along the augmenting path
-      e = p[sink];
+      e = get(p, sink);
       do {
-        residual_capacity[e] -= delta;
-        residual_capacity[reverse_edge[e]] += delta;
+        put(residual_capacity, e, get(residual_capacity, e) - delta);
+        put(residual_capacity, get(reverse_edge, e), get(residual_capacity, get(reverse_edge, e)) + delta);
         u = source(e, g);
-        e = p[u];
+        e = get(p, u);
       } while (u != src);
     }
 
@@ -94,22 +94,22 @@ namespace boost {
     typename graph_traits<Graph>::out_edge_iterator ei, e_end;
     for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
       for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-        res[*ei] = cap[*ei];
+        put(res, *ei, get(cap, *ei));
     
-    color[sink] = Color::gray();
-    while (color[sink] != Color::white()) {
+    put(color, sink, Color::gray());
+    while (get(color, sink) != Color::white()) {
       boost::queue<vertex_t> Q;
       breadth_first_search
         (detail::residual_graph(g, res), src, Q,
          make_bfs_visitor(record_edge_predecessors(pred, on_tree_edge())),
          color);
-      if (color[sink] != Color::white())
+      if (get(color, sink) != Color::white())
         detail::augment(g, src, sink, pred, res, rev);
     } // while
     
     typename property_traits<CapacityEdgeMap>::value_type flow = 0;
     for (boost::tie(ei, e_end) = out_edges(src, g); ei != e_end; ++ei)
-      flow += (cap[*ei] - res[*ei]);
+      flow += (get(cap, *ei) - get(res, *ei));
     return flow;
   } // edmonds_karp_max_flow()
   
