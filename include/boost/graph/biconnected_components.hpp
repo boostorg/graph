@@ -28,17 +28,23 @@ namespace boost
   {
     template<typename ComponentMap, typename DiscoverTimeMap,
              typename LowPointMap, typename PredecessorMap,
-             typename OutputIterator, typename Stack, 
+             typename OutputIterator, typename Stack,
+             typename ArticulationVector, typename IndexMap,
              typename DFSVisitor>
     struct biconnected_components_visitor : public dfs_visitor<>
     {
       biconnected_components_visitor
-        (ComponentMap comp, std::size_t& c, DiscoverTimeMap dtm,
+        (ComponentMap comp, std::size_t& c, 
+         std::size_t& children_of_root, DiscoverTimeMap dtm,
          std::size_t& dfs_time, LowPointMap lowpt, PredecessorMap pred,
-         OutputIterator out, Stack& S, DFSVisitor vis)
-          : comp(comp), c(c), children_of_root(0), dtm(dtm),
-            dfs_time(dfs_time), lowpt(lowpt),
-            pred(pred), out(out), S(S), vis(vis) { }
+         OutputIterator out, Stack& S,
+         ArticulationVector& is_articulation_point, IndexMap index_map,
+         DFSVisitor vis)
+          : comp(comp), c(c), children_of_root(children_of_root),
+            dtm(dtm), dfs_time(dfs_time), lowpt(lowpt),
+            pred(pred), out(out), S(S),
+            is_articulation_point(is_articulation_point),
+            index_map(index_map), vis(vis) { }
 
       template <typename Vertex, typename Graph>
       void initialize_vertex(const Vertex& u, Graph& g)
@@ -89,8 +95,7 @@ namespace boost
 
         typename boost::graph_traits<Graph>::vertex_descriptor src = source(e, g);
         typename boost::graph_traits<Graph>::vertex_descriptor tgt = target(e, g);
-        if ( ( tgt != get(pred, src) || get(pred, src) == src ) &&
-             get(dtm, tgt) < get(dtm, src) ) {
+        if ( tgt != get(pred, src) ) {
           S.push(e);
           put(lowpt, src,
               min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, src),
@@ -111,40 +116,41 @@ namespace boost
         BOOST_USING_STD_MIN();
         Vertex parent = get(pred, u);
         if (parent == u) { // Root of tree is special
-          if (children_of_root >= 2) {
-            *out++ = u;
-          }
-          return;
-        }
-        put(lowpt, parent,
-            min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, parent),
+          is_articulation_point[get(index_map, u)] = (children_of_root > 1);
+        } else {
+          put(lowpt, parent,
+              min BOOST_PREVENT_MACRO_SUBSTITUTION(get(lowpt, parent),
                                                  get(lowpt, u)));
-        if ( get(lowpt, u) >= get(dtm, parent) ) {
-          if ( get(pred, parent) != parent ) {
-            *out++ = parent;
-          }
-          while ( get(dtm, source(S.top(), g)) >= get(dtm, u) ) {
+          if ( get(lowpt, u) >= get(dtm, parent) ) {
+            is_articulation_point[get(index_map, parent)] = true;
+            while ( get(dtm, source(S.top(), g)) >= get(dtm, u) ) {
+              put(comp, S.top(), c);
+              S.pop();
+            }
+            assert (source(S.top(), g) == parent);
+            assert (target(S.top(), g) == u);
             put(comp, S.top(), c);
             S.pop();
+            ++c;
           }
-          assert (source(S.top(), g) == parent);
-          assert (target(S.top(), g) == u);
-          put(comp, S.top(), c);
-          S.pop();
-          ++c;
+        }
+        if ( is_articulation_point[get(index_map, u)] ) {
+          *out++ = u;
         }
         vis.finish_vertex(u, g);
       }
 
       ComponentMap comp;
       std::size_t& c;
-      std::size_t children_of_root;
+      std::size_t& children_of_root;
       DiscoverTimeMap dtm;
       std::size_t& dfs_time;
       LowPointMap lowpt;
       PredecessorMap pred;
       OutputIterator out;
       Stack& S;
+      ArticulationVector& is_articulation_point;
+      IndexMap index_map;
       DFSVisitor vis;
     };
 
@@ -168,14 +174,16 @@ namespace boost
                                                   vertex_t> ));
 
     std::size_t num_components = 0;
+    std::size_t children_of_root;
     std::size_t dfs_time = 0;
-      std::stack<edge_t> S;
+    std::stack<edge_t> S;
+	std::vector<char> is_articulation_point(num_vertices(g));
 
-      biconnected_components_visitor<ComponentMap, DiscoverTimeMap,
-          LowPointMap, PredecessorMap, OutputIterator, std::stack<edge_t>, 
-          DFSVisitor>
-      vis(comp, num_components, dtm, dfs_time, lowpt, pred, out, 
-          S, dfs_vis);
+    biconnected_components_visitor<ComponentMap, DiscoverTimeMap,
+        LowPointMap, PredecessorMap, OutputIterator, std::stack<edge_t>, 
+        std::vector<char>, VertexIndexMap, DFSVisitor>
+    vis(comp, num_components, children_of_root, dtm, dfs_time,
+        lowpt, pred, out, S, is_articulation_point, index_map, dfs_vis);
 
     depth_first_search(g, visitor(vis).vertex_index_map(index_map));
 
