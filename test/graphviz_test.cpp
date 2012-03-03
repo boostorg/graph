@@ -17,6 +17,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/assign/std/map.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
@@ -41,33 +42,49 @@ typedef std::pair<node_t,node_t> edge_t;
 typedef std::map<node_t,float> mass_map_t;
 typedef std::map<edge_t,double> weight_map_t;
 
-template <typename Directedness, typename OutEdgeList>
+template <typename graph_t, typename NameMapKey, typename MassMapKey, typename WeightMapKey>
+bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
+                mass_map_t const& masses,
+                weight_map_t const& weights,
+                std::string const& node_id = "node_id",
+                std::string const& g_name = std::string(),
+                NameMapKey name_map_key = boost::vertex_name,
+                MassMapKey mass_map_key = boost::vertex_color,
+                WeightMapKey weight_map_key = boost::edge_weight);
+
+template <typename graph_t>
 bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
                 mass_map_t const& masses,
                 weight_map_t const& weights,
                 std::string const& node_id = "node_id",
                 std::string const& g_name = std::string()) {
+  return test_graph<graph_t, boost::vertex_name_t, boost::vertex_color_t, boost::edge_weight_t>(dotfile, correct_num_vertices, masses, weights, node_id);
+}
 
-  typedef property < vertex_name_t, std::string,
-            property < vertex_color_t, float > > vertex_p;  
-  typedef property < edge_weight_t, double > edge_p;
-  typedef property < graph_name_t, std::string > graph_p;
-  typedef adjacency_list < OutEdgeList, vecS, Directedness,
-    vertex_p, edge_p, graph_p > graph_t;
+template <typename graph_t, typename NameMapKey, typename MassMapKey, typename WeightMapKey>
+bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
+                mass_map_t const& masses,
+                weight_map_t const& weights,
+                std::string const& node_id = "node_id",
+                std::string const& g_name = std::string(),
+                NameMapKey name_map_key = boost::vertex_name,
+                MassMapKey mass_map_key = boost::vertex_color,
+                WeightMapKey weight_map_key = boost::edge_weight) {
+
   typedef typename graph_traits < graph_t >::edge_descriptor edge_t;
   typedef typename graph_traits < graph_t >::vertex_descriptor vertex_t;
 
   // Construct a graph and set up the dynamic_property_maps.
-  graph_t graph(0);
+  graph_t graph;
   dynamic_properties dp(ignore_other_properties);
-  typename property_map<graph_t, vertex_name_t>::type name =
-    get(vertex_name, graph);
+  typename property_map<graph_t, NameMapKey>::type name =
+    get(name_map_key, graph);
   dp.property(node_id,name);
-  typename property_map<graph_t, vertex_color_t>::type mass =
-    get(vertex_color, graph);
+  typename property_map<graph_t, MassMapKey>::type mass =
+    get(mass_map_key, graph);
   dp.property("mass",mass);
-  typename property_map<graph_t, edge_weight_t>::type weight =
-    get(edge_weight, graph);
+  typename property_map<graph_t, WeightMapKey>::type weight =
+    get(weight_map_key, graph);
   dp.property("weight",weight);
 
   boost::ref_property_map<graph_t*,std::string> gname(
@@ -139,19 +156,31 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
 
   typedef istringstream gs_t;
 
+  typedef property < vertex_name_t, std::string,
+            property < vertex_color_t, float > > vertex_p;  
+  typedef property < edge_weight_t, double > edge_p;
+  typedef property < graph_name_t, std::string > graph_p;
+
+  struct vertex_p_bundled {std::string name; float color;};
+  struct edge_p_bundled {double weight;};
+
   // Basic directed graph tests
   BOOST_AUTO_TEST_CASE (basic_directed_graph_1) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t())));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t())));
   }
 
   BOOST_AUTO_TEST_CASE (basic_directed_graph_2) {
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] \"a\" e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,masses,weight_map_t())));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,2,masses,weight_map_t())));
   }
 
   BOOST_AUTO_TEST_CASE (basic_directed_graph_3) {
@@ -162,7 +191,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     gs_t gs("digraph { a -> b eDge [weight = 7.7] "
             "c -> d e-> f [weight = 6.66] "
             "d ->e->a [weight=.5]}");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,6,mass_map_t(),weights)));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,6,mass_map_t(),weights)));
   }
 
   // undirected graph with alternate node_id property name
@@ -170,8 +201,10 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t(),
-                                             "nodenames")));
+    typedef adjacency_list < vecS, vecS, undirectedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t(),
+                                     "nodenames")));
   }
 
   // Basic undirected graph tests
@@ -179,7 +212,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     mass_map_t masses;
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  node [mass = 7.7] c e [mass =\\\n6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t())));
+    typedef adjacency_list < vecS, vecS, undirectedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t())));
   }
 
   BOOST_AUTO_TEST_CASE (basic_undirected_graph_2) {
@@ -188,7 +223,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
       (make_pair("c","d"),7.7)(make_pair("e","f"),6.66);
     gs_t gs("graph { a -- b eDge [weight = 7.7] "
             "c -- d e -- f [weight = 6.66] }");
-    BOOST_CHECK((test_graph<undirectedS,vecS>(gs,6,mass_map_t(),weights)));
+    typedef adjacency_list < vecS, vecS, undirectedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,6,mass_map_t(),weights)));
   }
 
   // Mismatch directed graph test
@@ -197,7 +234,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("graph { a  nodE [mass = 7.7] c e [mass = 6.66] }");
     try {
-      test_graph<directedS,vecS>(gs,3,masses,weight_map_t());
+      typedef adjacency_list < vecS, vecS, directedS,
+        vertex_p, edge_p, graph_p > graph_t;
+      test_graph<graph_t>(gs,3,masses,weight_map_t());
       BOOST_ERROR("Failed to throw boost::undirected_graph_error.");
     } catch (boost::undirected_graph_error&) {
     } catch (boost::directed_graph_error&) {
@@ -211,7 +250,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert ( masses )  ("a",0.0f) ("c",7.7f) ("e", 6.66f);
     gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
     try {
-      test_graph<undirectedS,vecS>(gs,3,masses,weight_map_t());
+      typedef adjacency_list < vecS, vecS, undirectedS,
+        vertex_p, edge_p, graph_p > graph_t;
+      test_graph<graph_t>(gs,3,masses,weight_map_t());
       BOOST_ERROR("Failed to throw boost::directed_graph_error.");
     } catch (boost::directed_graph_error&) {}
   }
@@ -223,7 +264,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("diGraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
     try {
-      test_graph<directedS,setS>(gs,2,mass_map_t(),weights);
+      typedef adjacency_list < setS, vecS, directedS,
+        vertex_p, edge_p, graph_p > graph_t;
+      test_graph<graph_t>(gs,2,mass_map_t(),weights);
       BOOST_ERROR("Failed to throw boost::bad_parallel_edge.");
     } catch (boost::bad_parallel_edge&) {}
   }
@@ -233,7 +276,9 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     weight_map_t weights;
     insert( weights )(make_pair("a","b"),7.7);
     gs_t gs("digraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,mass_map_t(),weights)));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,2,mass_map_t(),weights)));
   }
 
   // Graph Property Test 1
@@ -242,8 +287,10 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     gs_t gs("digraph { graph [name=\"foo \\\"escaped\\\"\"]  a  c e [mass = 6.66] }");
     std::string graph_name("foo \"escaped\"");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
-                                            graph_name)));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t(),"",
+                                     graph_name)));
   }
 
   // Graph Property Test 2
@@ -252,8 +299,10 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     gs_t gs("digraph { name=\"fo\"+ \"\\\no\"  a  c e [mass = 6.66] }");
     std::string graph_name("foo");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
-                                            graph_name)));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t(),"",
+                                     graph_name)));
   }
 
   // Graph Property Test 3 (HTML)
@@ -262,8 +311,10 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     insert ( masses )  ("a",0.0f) ("c",0.0f) ("e", 6.66f);
     std::string graph_name = "<html title=\"x'\" title2='y\"'>foo<b><![CDATA[><bad tag&>]]>bar</b>\n<br/>\nbaz</html>";
     gs_t gs("digraph { name=" + graph_name + "  a  c e [mass = 6.66] }");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,3,masses,weight_map_t(),"",
-                                            graph_name)));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,3,masses,weight_map_t(),"",
+                                     graph_name)));
   }
 
   // Comments embedded in strings
@@ -274,7 +325,24 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
       "a1 [ label = \"//depot/path/to/file_29#9\" ];"
       "a0 -> a1 [ color=gray ];"
       "}");
-    BOOST_CHECK((test_graph<directedS,vecS>(gs,2,mass_map_t(),weight_map_t())));
+    typedef adjacency_list < vecS, vecS, directedS,
+      vertex_p, edge_p, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,2,mass_map_t(),weight_map_t())));
   }
+
+#if 0 // Currently broken
+  BOOST_AUTO_TEST_CASE (basic_csr_directed_graph) {
+    weight_map_t weights;
+    insert( weights )(make_pair("a","b"),0.0)
+      (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
+      (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
+    gs_t gs("digraph { a -> b eDge [weight = 7.7] "
+            "c -> d e-> f [weight = 6.66] "
+            "d ->e->a [weight=.5]}");
+    typedef compressed_sparse_row_graph<directedS, vertex_p_bundled, edge_p_bundled, graph_p > graph_t;
+    BOOST_CHECK((test_graph<graph_t>(gs,6,mass_map_t(),weights,"node_id","",&vertex_p_bundled::name,&vertex_p_bundled::color,&edge_p_bundled::weight)));
+  }
+#endif
+
 // return 0;
 // }
