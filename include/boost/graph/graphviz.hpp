@@ -26,6 +26,7 @@
 #include <boost/graph/overloading.hpp>
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
+#include <boost/graph/iteration_macros.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
@@ -808,13 +809,10 @@ template<typename Directed,
 class mutate_graph_impl<compressed_sparse_row_graph<Directed, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex> >
   : public mutate_graph
 {
-  // The first part of this is to make the code dependent on a template parameter.
-  BOOST_STATIC_ASSERT_MSG(sizeof(Directed) == 0,
-                          "Graphviz loading for CSR graphs is broken");
-
   typedef compressed_sparse_row_graph<Directed, VertexProperty, EdgeProperty, GraphProperty, Vertex, EdgeIndex> CSRGraph;
   typedef typename graph_traits<CSRGraph>::vertices_size_type bgl_vertex_t;
   typedef typename graph_traits<CSRGraph>::edges_size_type    bgl_edge_t;
+  typedef typename graph_traits<CSRGraph>::edge_descriptor    edge_descriptor;
 
  public:
   mutate_graph_impl(CSRGraph& graph, dynamic_properties& dp,
@@ -824,12 +822,24 @@ class mutate_graph_impl<compressed_sparse_row_graph<Directed, VertexProperty, Ed
   ~mutate_graph_impl() {}
 
   void finish_building_graph() {
-    CSRGraph temp(edges_are_unsorted, edges.begin(), edges.end(), vertex_count);
+    typedef compressed_sparse_row_graph<directedS, no_property, bgl_edge_t, GraphProperty, Vertex, EdgeIndex> TempCSRGraph;
+    TempCSRGraph temp(edges_are_unsorted_multi_pass,
+                      edges_to_add.begin(), edges_to_add.end(),
+                      counting_iterator<bgl_edge_t>(0),
+                      vertex_count);
     set_property(temp, graph_all, get_property(graph_, graph_all));
-    graph_ = temp;
-    typedef tuple<id_t, bgl_edge_t, id_t> ve_prop;
-    BOOST_FOREACH(const ve_prop& t, vertex_and_edge_props) {
+    graph_.assign(temp); // Copies structure, not properties
+    std::vector<edge_descriptor> edge_permutation_from_sorting(num_edges(temp));
+    BGL_FORALL_EDGES_T(e, temp, TempCSRGraph) {
+      edge_permutation_from_sorting[temp[e]] = e;
+    }
+    typedef tuple<id_t, bgl_vertex_t, id_t> v_prop;
+    BOOST_FOREACH(const v_prop& t, vertex_props) {
       put(get<0>(t), dp_, get<1>(t), get<2>(t));
+    }
+    typedef tuple<id_t, bgl_edge_t, id_t> e_prop;
+    BOOST_FOREACH(const e_prop& t, edge_props) {
+      put(get<0>(t), dp_, edge_permutation_from_sorting[get<1>(t)], get<2>(t));
     }
   }
 
@@ -850,27 +860,27 @@ class mutate_graph_impl<compressed_sparse_row_graph<Directed, VertexProperty, Ed
     bgl_nodes.insert(std::make_pair(node, v));
 
     // node_id_prop_ allows the caller to see the real id names for nodes.
-    vertex_and_edge_props.push_back(make_tuple(node_id_prop_, v, node));
+    vertex_props.push_back(make_tuple(node_id_prop_, v, node));
   }
 
   void
   do_add_edge(const edge_t& edge, const node_t& source, const node_t& target)
   {
-    bgl_edge_t result = edges.size();
-    edges.push_back(std::make_pair(bgl_nodes[source], bgl_nodes[target]));
+    bgl_edge_t result = edges_to_add.size();
+    edges_to_add.push_back(std::make_pair(bgl_nodes[source], bgl_nodes[target]));
     bgl_edges.insert(std::make_pair(edge, result));
   }
 
   void
   set_node_property(const id_t& key, const node_t& node, const id_t& value)
   {
-    vertex_and_edge_props.push_back(make_tuple(key, bgl_nodes[node], value));
+    vertex_props.push_back(make_tuple(key, bgl_nodes[node], value));
   }
 
   void
   set_edge_property(const id_t& key, const edge_t& edge, const id_t& value)
   {
-    vertex_and_edge_props.push_back(make_tuple(key, bgl_edges[edge], value));
+    edge_props.push_back(make_tuple(key, bgl_edges[edge], value));
   }
 
   void
@@ -886,8 +896,9 @@ class mutate_graph_impl<compressed_sparse_row_graph<Directed, VertexProperty, Ed
   dynamic_properties& dp_;
   bgl_vertex_t vertex_count;
   std::string node_id_prop_;
-  std::vector<tuple<id_t, bgl_edge_t, id_t> > vertex_and_edge_props;
-  std::vector<std::pair<bgl_vertex_t, bgl_vertex_t> > edges;
+  std::vector<tuple<id_t, bgl_vertex_t, id_t> > vertex_props;
+  std::vector<tuple<id_t, bgl_edge_t, id_t> > edge_props;
+  std::vector<std::pair<bgl_vertex_t, bgl_vertex_t> > edges_to_add;
   std::map<node_t, bgl_vertex_t> bgl_nodes;
   std::map<edge_t, bgl_edge_t> bgl_edges;
 };

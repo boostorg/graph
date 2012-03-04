@@ -42,15 +42,16 @@ typedef std::pair<node_t,node_t> edge_t;
 typedef std::map<node_t,float> mass_map_t;
 typedef std::map<edge_t,double> weight_map_t;
 
-template <typename graph_t, typename NameMapKey, typename MassMapKey, typename WeightMapKey>
-bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
+template <typename graph_t, typename NameMap, typename MassMap, typename WeightMap>
+bool test_graph(std::istream& dotfile, graph_t& graph,
+                std::size_t correct_num_vertices,
                 mass_map_t const& masses,
                 weight_map_t const& weights,
-                std::string const& node_id = "node_id",
-                std::string const& g_name = std::string(),
-                NameMapKey name_map_key = boost::vertex_name,
-                MassMapKey mass_map_key = boost::vertex_color,
-                WeightMapKey weight_map_key = boost::edge_weight);
+                std::string const& node_id,
+                std::string const& g_name,
+                NameMap name,
+                MassMap mass,
+                WeightMap weight);
 
 template <typename graph_t>
 bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
@@ -58,33 +59,29 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
                 weight_map_t const& weights,
                 std::string const& node_id = "node_id",
                 std::string const& g_name = std::string()) {
-  return test_graph<graph_t, boost::vertex_name_t, boost::vertex_color_t, boost::edge_weight_t>(dotfile, correct_num_vertices, masses, weights, node_id);
+  graph_t g;
+  return test_graph(dotfile, g, correct_num_vertices, masses, weights, node_id, g_name,
+                    get(vertex_name, g), get(vertex_color, g), get(edge_weight, g));
 }
 
-template <typename graph_t, typename NameMapKey, typename MassMapKey, typename WeightMapKey>
-bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
+template <typename graph_t, typename NameMap, typename MassMap, typename WeightMap>
+bool test_graph(std::istream& dotfile, graph_t& graph,
+                std::size_t correct_num_vertices,
                 mass_map_t const& masses,
                 weight_map_t const& weights,
-                std::string const& node_id = "node_id",
-                std::string const& g_name = std::string(),
-                NameMapKey name_map_key = boost::vertex_name,
-                MassMapKey mass_map_key = boost::vertex_color,
-                WeightMapKey weight_map_key = boost::edge_weight) {
+                std::string const& node_id,
+                std::string const& g_name,
+                NameMap name,
+                MassMap mass,
+                WeightMap weight) {
 
   typedef typename graph_traits < graph_t >::edge_descriptor edge_t;
   typedef typename graph_traits < graph_t >::vertex_descriptor vertex_t;
 
   // Construct a graph and set up the dynamic_property_maps.
-  graph_t graph;
   dynamic_properties dp(ignore_other_properties);
-  typename property_map<graph_t, NameMapKey>::type name =
-    get(name_map_key, graph);
   dp.property(node_id,name);
-  typename property_map<graph_t, MassMapKey>::type mass =
-    get(mass_map_key, graph);
   dp.property("mass",mass);
-  typename property_map<graph_t, WeightMapKey>::type weight =
-    get(weight_map_key, graph);
   dp.property("weight",weight);
 
   boost::ref_property_map<graph_t*,std::string> gname(
@@ -343,6 +340,22 @@ bool test_graph(std::istream& dotfile, std::size_t correct_num_vertices,
     BOOST_CHECK((test_graph<graph_t>(gs,6,mass_map_t(),weights,"node_id","",&vertex_p_bundled::name,&vertex_p_bundled::color,&edge_p_bundled::weight)));
   }
 #endif
+
+  BOOST_AUTO_TEST_CASE (basic_csr_directed_graph_ext_props) {
+    weight_map_t weights;
+    insert( weights )(make_pair("a","b"),0.0)
+      (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
+      (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
+    gs_t gs("digraph { a -> b eDge [weight = 7.7] "
+            "c -> d e-> f [weight = 6.66] "
+            "d ->e->a [weight=.5]}");
+    typedef compressed_sparse_row_graph<directedS, no_property, no_property, graph_p > graph_t;
+    graph_t g;
+    vector_property_map<std::string, property_map<graph_t, vertex_index_t>::const_type> vertex_name(get(vertex_index, g));
+    vector_property_map<float, property_map<graph_t, vertex_index_t>::const_type> vertex_color(get(vertex_index, g));
+    vector_property_map<double, property_map<graph_t, edge_index_t>::const_type> edge_weight(get(edge_index, g));
+    BOOST_CHECK((test_graph(gs,g,6,mass_map_t(),weights,"node_id","",vertex_name,vertex_color,edge_weight)));
+  }
 
 // return 0;
 // }
