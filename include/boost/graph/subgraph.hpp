@@ -131,15 +131,29 @@ public:
 
     // copy constructor
     subgraph(const subgraph& x)
-        : m_graph(x.m_graph), m_parent(x.m_parent), m_edge_counter(x.m_edge_counter)
+        : m_parent(x.m_parent), m_edge_counter(x.m_edge_counter)
         , m_global_vertex(x.m_global_vertex), m_global_edge(x.m_global_edge)
     {
-        // Do a deep copy (recursive).
-        for(typename ChildrenList::const_iterator i = x.m_children.begin();
-            i != x.m_children.end(); ++i)
+        if(x.is_root())
         {
-            m_children.push_back(new subgraph<Graph>( **i ));
+         m_graph = x.m_graph;
         }
+        // Do a deep copy (recursive).
+        // Only the root graph is copied, the subgraphs contain
+        // only references to the global vertices they own.
+        subgraph<Graph>::children_iterator i,i_end;
+        boost::tie(i,i_end) = x.children();
+        for(; i != i_end; ++i)
+        {         
+         subgraph<Graph> child = this->create_subgraph();
+         child = *i;
+         vertex_iterator vi,vi_end;   
+         boost::tie(vi,vi_end) = vertices(*i);
+         for (;vi!=vi_end;++vi)  
+         {
+          add_vertex(*vi,child);
+         }
+       }
     }
 
 
