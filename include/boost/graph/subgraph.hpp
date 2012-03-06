@@ -141,7 +141,7 @@ public:
         // Do a deep copy (recursive).
         // Only the root graph is copied, the subgraphs contain
         // only references to the global vertices they own.
-        subgraph<Graph>::children_iterator i,i_end;
+        typename subgraph<Graph>::children_iterator i,i_end;
         boost::tie(i,i_end) = x.children();
         for(; i != i_end; ++i)
         {         
