@@ -787,6 +787,7 @@ namespace read_graphviz_detail {
     for (properties::const_iterator i = root_graph_props.begin(); i != root_graph_props.end(); ++i) {
       mg->set_graph_property(i->first, i->second);
     }
+    mg->finish_building_graph();
   }
 
 } // end namespace read_graphviz_detail
