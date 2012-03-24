@@ -121,8 +121,6 @@ namespace boost {
           (g2, *u, pred, d, w_hat, id2, compare, combine, inf, zero,dvis);
         for (boost::tie(v, v_end) = vertices(g2); v != v_end; ++v) {
           if (*u != s && *v != s) {
-            typename Traits1::vertex_descriptor u1, v1;
-            u1 = verts1[get(id2, *u)]; v1 = verts1[get(id2, *v)];
             D[get(id2, *u)-1][get(id2, *v)-1] = combine(get(d, *v), (get(h, *v) - get(h, *u)));
           }
         }
