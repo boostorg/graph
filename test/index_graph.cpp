@@ -20,7 +20,7 @@ void test()
     static const size_t N = 5;
 
     Graph g;
-    IndexMap x = get(vertex_index, g);
+    (void)(IndexMap)get(vertex_index, g);
 
     // build up the graph
     Vertex v[N];
@@ -73,7 +73,7 @@ void build()
     Graph g(N);
     BOOST_ASSERT(max_vertex_index(g) == N);
 
-    IndexMap x = get(vertex_index, g);
+    (void)(IndexMap)get(vertex_index, g);
 
     // Each vertex should be numbered correctly.
     Iterator i, end;
