@@ -31,7 +31,7 @@ void print_bipartite (const Graph& g)
   if (bipartite)
   {
     typedef std::vector <default_color_type> partition_t;
-    typedef vec_adj_list_vertex_id_map <no_property, unsigned int> index_map_t;
+    typedef typename property_map <Graph, vertex_index_t>::type index_map_t;
     typedef iterator_property_map <partition_t::iterator, index_map_t> partition_map_t;
 
     partition_t partition (num_vertices (g));
