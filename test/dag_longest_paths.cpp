@@ -20,12 +20,11 @@ int test_main(int, char*[])
         property<edge_weight_t, int> > Graph;
 
     Graph graph;
-    Graph::vertex_descriptor v1, v2, v3, v4;
 
-    v1 = add_vertex(graph);
-    v2 = add_vertex(graph);
-    v3 = add_vertex(graph);
-    v4 = add_vertex(graph);
+    (void)add_vertex(graph);
+    (void)add_vertex(graph);
+    (void)add_vertex(graph);
+    (void)add_vertex(graph);
 
     Graph::edge_descriptor e;
     
