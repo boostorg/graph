@@ -78,7 +78,6 @@ int test_2() {
     int num_arcs = sizeof(edge_array) / sizeof(Edge);
 
     graph_t G(edge_array, edge_array + num_arcs, weights, num_nodes);
-    property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, G);
 
     std::vector<int> core_nums(num_vertices(G));
     weighted_core_numbers(G,
