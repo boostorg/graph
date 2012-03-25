@@ -209,7 +209,7 @@ namespace boost
     };
     
     template <>
-    struct bicomp_dispatch3<error_property_not_found>
+    struct bicomp_dispatch3<param_not_found>
     {
       template<typename Graph, typename ComponentMap, typename OutputIterator,
                 typename VertexIndexMap, typename DiscoverTimeMap, 
@@ -218,7 +218,7 @@ namespace boost
           ComponentMap comp, OutputIterator out, VertexIndexMap index_map, 
           DiscoverTimeMap dtm, LowPointMap lowpt, 
           const bgl_named_params<P, T, R>& params, 
-          error_property_not_found)
+          param_not_found)
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     std::vector<vertex_t> pred(num_vertices(g));
@@ -243,7 +243,7 @@ namespace boost
           DiscoverTimeMap dtm, const bgl_named_params<P, T, R>& params, 
           LowPointMap lowpt)
       {
-        typedef typename property_value< bgl_named_params<P,T,R>,
+        typedef typename get_param_type< bgl_named_params<P,T,R>,
             vertex_predecessor_t>::type dispatch_type;
 
         return bicomp_dispatch3<dispatch_type>::apply
@@ -254,7 +254,7 @@ namespace boost
 
 
     template <>
-    struct bicomp_dispatch2<error_property_not_found>
+    struct bicomp_dispatch2<param_not_found>
     {
       template<typename Graph, typename ComponentMap, typename OutputIterator,
                 typename VertexIndexMap, typename DiscoverTimeMap, 
@@ -262,14 +262,14 @@ namespace boost
       static std::pair<std::size_t, OutputIterator> apply (const Graph& g, 
           ComponentMap comp, OutputIterator out, VertexIndexMap index_map, 
           DiscoverTimeMap dtm, const bgl_named_params<P, T, R>& params, 
-          error_property_not_found)
+          param_not_found)
   {
     typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
     std::vector<vertices_size_type> lowpt(num_vertices(g));
         vertices_size_type vst(0);
 
-        typedef typename property_value< bgl_named_params<P,T,R>,
+        typedef typename get_param_type< bgl_named_params<P,T,R>,
             vertex_predecessor_t>::type dispatch_type;
   
         return bicomp_dispatch3<dispatch_type>::apply
@@ -288,7 +288,7 @@ namespace boost
           ComponentMap comp, OutputIterator out, VertexIndexMap index_map, 
           const bgl_named_params<P, T, R>& params, DiscoverTimeMap dtm)
       {
-        typedef typename property_value< bgl_named_params<P,T,R>,
+        typedef typename get_param_type< bgl_named_params<P,T,R>,
             vertex_lowpoint_t>::type dispatch_type;
 
         return bicomp_dispatch2<dispatch_type>::apply
@@ -298,20 +298,20 @@ namespace boost
     };
 
     template <>
-    struct bicomp_dispatch1<error_property_not_found>
+    struct bicomp_dispatch1<param_not_found>
     {
       template<typename Graph, typename ComponentMap, typename OutputIterator,
                 typename VertexIndexMap, class P, class T, class R>
       static std::pair<std::size_t, OutputIterator> apply(const Graph& g, 
           ComponentMap comp, OutputIterator out, VertexIndexMap index_map, 
-          const bgl_named_params<P, T, R>& params, error_property_not_found)
+          const bgl_named_params<P, T, R>& params, param_not_found)
       {
         typedef typename graph_traits<Graph>::vertices_size_type
             vertices_size_type;
         std::vector<vertices_size_type> discover_time(num_vertices(g));
     vertices_size_type vst(0);
 
-        typedef typename property_value< bgl_named_params<P,T,R>,
+        typedef typename get_param_type< bgl_named_params<P,T,R>,
             vertex_lowpoint_t>::type dispatch_type;
 
         return bicomp_dispatch2<dispatch_type>::apply
@@ -329,14 +329,14 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, 
       OutputIterator out, DiscoverTimeMap dtm, LowPointMap lowpt)
   {
-    typedef detail::error_property_not_found dispatch_type;
+    typedef param_not_found dispatch_type;
 
     return detail::bicomp_dispatch3<dispatch_type>::apply
             (g, comp, out, 
              get(vertex_index, g), 
              dtm, lowpt, 
              bgl_named_params<int, buffer_param_t>(0), 
-             detail::error_property_not_found());
+             param_not_found());
   }
 
   template <typename Graph, typename ComponentMap, typename OutputIterator,
@@ -345,7 +345,7 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_value< bgl_named_params<P,T,R>,
+    typedef typename get_param_type< bgl_named_params<P,T,R>,
         vertex_discover_time_t>::type dispatch_type;
 
     return detail::bicomp_dispatch1<dispatch_type>::apply(g, comp, out, 

@@ -140,7 +140,7 @@ namespace boost {
       }
     };
     template<>
-    struct edmonds_karp_dispatch2<detail::error_property_not_found> {
+    struct edmonds_karp_dispatch2<param_not_found> {
       template <class Graph, class PredMap, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
       apply
@@ -149,7 +149,7 @@ namespace boost {
        typename graph_traits<Graph>::vertex_descriptor sink,
        PredMap pred,
        const bgl_named_params<P, T, R>& params,
-       detail::error_property_not_found)
+       param_not_found)
       {
         typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
         typedef typename graph_traits<Graph>::vertices_size_type size_type;
@@ -183,13 +183,13 @@ namespace boost {
             const bgl_named_params<P, T, R>& params,
             PredMap pred)
       {
-        typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+        typedef typename get_param_type< bgl_named_params<P,T,R>, vertex_color_t>::type C;
         return edmonds_karp_dispatch2<C>::apply
           (g, src, sink, pred, params, get_param(params, vertex_color));
       }
     };
     template<>
-    struct edmonds_karp_dispatch1<detail::error_property_not_found> {
+    struct edmonds_karp_dispatch1<param_not_found> {
 
       template <class Graph, class P, class T, class R>
       static typename edge_capacity_value<Graph, P, T, R>::type
@@ -198,7 +198,7 @@ namespace boost {
        typename graph_traits<Graph>::vertex_descriptor src,
        typename graph_traits<Graph>::vertex_descriptor sink,
        const bgl_named_params<P, T, R>& params,
-       detail::error_property_not_found)
+       param_not_found)
       {
         typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
         typedef typename graph_traits<Graph>::vertices_size_type size_type;
@@ -206,7 +206,7 @@ namespace boost {
           num_vertices(g) : 1;
         std::vector<edge_descriptor> pred_vec(n);
         
-        typedef typename property_value< bgl_named_params<P,T,R>, vertex_color_t>::type C;
+        typedef typename get_param_type< bgl_named_params<P,T,R>, vertex_color_t>::type C;
         return edmonds_karp_dispatch2<C>::apply
           (g, src, sink, 
            make_iterator_property_map(pred_vec.begin(), choose_const_pmap
@@ -227,7 +227,7 @@ namespace boost {
      typename graph_traits<Graph>::vertex_descriptor sink,
      const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_value< bgl_named_params<P,T,R>, vertex_predecessor_t>::type Pred;
+    typedef typename get_param_type< bgl_named_params<P,T,R>, vertex_predecessor_t>::type Pred;
     return detail::edmonds_karp_dispatch1<Pred>::apply
       (g, src, sink, params, get_param(params, vertex_predecessor));
   }

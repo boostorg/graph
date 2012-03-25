@@ -188,7 +188,7 @@ namespace boost {
     };
 
     template <>
-    struct udfs_dispatch<detail::error_property_not_found> {
+    struct udfs_dispatch<param_not_found> {
       template <typename Graph, typename Vertex, typename DFSVisitor,
                 typename EdgeColorMap,
                 typename P, typename T, typename R>
@@ -196,7 +196,7 @@ namespace boost {
       apply(const Graph& g, DFSVisitor vis, Vertex start_vertex,
             const bgl_named_params<P, T, R>& params,
             EdgeColorMap edge_color,
-            detail::error_property_not_found)
+            param_not_found)
       {
         std::vector<default_color_type> color_vec(num_vertices(g));
         default_color_type c = white_color; // avoid warning about un-init
@@ -219,7 +219,7 @@ namespace boost {
   undirected_dfs(const Graph& g, 
                  const bgl_named_params<P, T, R>& params)
   {
-    typedef typename property_value< bgl_named_params<P, T, R>, 
+    typedef typename get_param_type< bgl_named_params<P, T, R>, 
       vertex_color_t>::type C;
     detail::udfs_dispatch<C>::apply
       (g,

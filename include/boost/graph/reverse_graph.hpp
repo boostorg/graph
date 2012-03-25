@@ -358,36 +358,23 @@ namespace detail {
     }
   };
 
-  struct reverse_graph_vertex_property_selector {
-    template <class ReverseGraph, class Property, class Tag>
-    struct bind_ {
-      typedef typename ReverseGraph::base_type Graph;
-      typedef property_map<Graph, Tag> PMap;
-      typedef typename PMap::type type;
-      typedef typename PMap::const_type const_type;
-    };
-  };
-
-  struct reverse_graph_edge_property_selector {
-    template <class ReverseGraph, class Property, class Tag>
-    struct bind_ {
-      typedef typename ReverseGraph::base_type Graph;
-      typedef property_map<Graph, Tag> PMap;
-      typedef reverse_graph_edge_property_map<typename PMap::type> type;
-      typedef reverse_graph_edge_property_map<typename PMap::const_type> const_type;
-    };
-  };
-
 } // namespace detail
 
-template <>
-struct vertex_property_selector<reverse_graph_tag> {
-  typedef detail::reverse_graph_vertex_property_selector type;
+template <class BidirGraph, class GRef, class Property>
+struct property_map<reverse_graph<BidirGraph, GRef>, Property> {
+  typedef boost::is_same<typename detail::property_kind_from_graph<BidirGraph, Property>::type, edge_property_tag> is_edge_prop;
+  typedef typename property_map<BidirGraph, Property>::type orig_type;
+  typedef typename property_map<BidirGraph, Property>::const_type orig_const_type;
+  typedef typename boost::mpl::if_<is_edge_prop, detail::reverse_graph_edge_property_map<orig_type>, orig_type>::type type;
+  typedef typename boost::mpl::if_<is_edge_prop, detail::reverse_graph_edge_property_map<orig_const_type>, orig_const_type>::type const_type;
 };
 
-template <>
-struct edge_property_selector<reverse_graph_tag> {
-  typedef detail::reverse_graph_edge_property_selector type;
+template <class BidirGraph, class GRef, class Property>
+struct property_map<const reverse_graph<BidirGraph, GRef>, Property> {
+  typedef boost::is_same<typename detail::property_kind_from_graph<BidirGraph, Property>::type, edge_property_tag> is_edge_prop;
+  typedef typename property_map<BidirGraph, Property>::const_type orig_const_type;
+  typedef typename boost::mpl::if_<is_edge_prop, detail::reverse_graph_edge_property_map<orig_const_type>, orig_const_type>::type const_type;
+  typedef const_type type;
 };
 
 template <class BidirGraph, class GRef, class Property>
@@ -407,7 +394,7 @@ get(Property p, const reverse_graph<BidirGraph,GRef>& g)
 
 template <class BidirectionalGraph, class GRef, class Property, class Key>
 typename property_traits<
-  typename property_map<BidirectionalGraph, Property>::const_type
+  typename property_map<reverse_graph<BidirectionalGraph, GRef>, Property>::const_type
 >::value_type
 get(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k)
 {
@@ -458,6 +445,23 @@ struct property_map<reverse_graph<Graph, GRef>, edge_underlying_t> {
   typedef detail::underlying_edge_desc_map_type<ed> type;
   typedef detail::underlying_edge_desc_map_type<ed> const_type;
 };
+
+template <class Graph, class GRef>
+detail::underlying_edge_desc_map_type<typename graph_traits<Graph>::edge_descriptor>
+get(edge_underlying_t,
+    reverse_graph<Graph,GRef>& g)
+{
+  return detail::underlying_edge_desc_map_type<typename graph_traits<Graph>::edge_descriptor>();
+}
+
+template <class Graph, class GRef>
+typename graph_traits<Graph>::edge_descriptor
+get(edge_underlying_t,
+    reverse_graph<Graph,GRef>& g,
+    const typename graph_traits<reverse_graph<Graph, GRef> >::edge_descriptor& k)
+{
+  return k.underlying_descx;
+}
 
 template <class Graph, class GRef>
 detail::underlying_edge_desc_map_type<typename graph_traits<Graph>::edge_descriptor>

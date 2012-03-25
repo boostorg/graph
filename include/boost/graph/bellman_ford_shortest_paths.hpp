@@ -171,7 +171,7 @@ namespace boost {
     bool 
     bellman_dispatch2
       (VertexAndEdgeListGraph& g, 
-       detail::error_property_not_found,
+       param_not_found,
        Size N, WeightMap weight, PredecessorMap pred, DistanceMap distance,
        const bgl_named_params<P, T, R>& params)
     {
