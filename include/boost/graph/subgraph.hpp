@@ -24,7 +24,9 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
 
 namespace boost {
 
@@ -777,7 +779,10 @@ class subgraph_global_property_map
 {
     typedef property_traits<PropertyMap> Traits;
 public:
-    typedef typename Traits::category category;
+    typedef typename mpl::if_<is_const<typename remove_pointer<GraphPtr>::type>,
+                              readable_property_map_tag,
+                              typename Traits::category>::type
+      category;
     typedef typename Traits::value_type value_type;
     typedef typename Traits::key_type key_type;
     typedef typename Traits::reference reference;
@@ -813,7 +818,10 @@ class subgraph_local_property_map
 {
     typedef property_traits<PropertyMap> Traits;
 public:
-    typedef typename Traits::category category;
+    typedef typename mpl::if_<is_const<typename remove_pointer<GraphPtr>::type>,
+                              readable_property_map_tag,
+                              typename Traits::category>::type
+      category;
     typedef typename Traits::value_type value_type;
     typedef typename Traits::key_type key_type;
     typedef typename Traits::reference reference;
