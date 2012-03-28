@@ -229,17 +229,12 @@ namespace boost {
   } // namespace detail
 
   template <class Graph, class Property>
-  struct property_map {
-  // private:
-    typedef typename detail::property_kind_from_graph<Graph, Property>::type Kind;
-    typedef typename mpl::if_<
-              is_same<Kind, edge_property_tag>,
-              detail::edge_property_map<Graph, Property>,
-              detail::vertex_property_map<Graph, Property> >::type Map;
-  public:
-    typedef typename Map::type type;
-    typedef typename Map::const_type const_type;
-  };
+  struct property_map:
+    mpl::if_<
+      is_same<typename detail::property_kind_from_graph<Graph, Property>::type, edge_property_tag>,
+      detail::edge_property_map<Graph, Property>,
+      detail::vertex_property_map<Graph, Property> >::type
+  {};
 
   // shortcut for accessing the value type of the property map
   template <class Graph, class Property>
