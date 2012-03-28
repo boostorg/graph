@@ -235,17 +235,17 @@ namespace boost {
     struct graph_property_type
       : boost::mpl::eval_if<detail::has_graph_property_type<G>,
                             detail::get_graph_property_type<G>,
-                            boost::mpl::void_> {};
+                            no_property> {};
     template <typename G>
     struct edge_property_type
       : boost::mpl::eval_if<detail::has_edge_property_type<G>,
                             detail::get_edge_property_type<G>,
-                            boost::mpl::void_> {};
+                            no_property> {};
     template <typename G>
     struct vertex_property_type
       : boost::mpl::eval_if<detail::has_vertex_property_type<G>,
                             detail::get_vertex_property_type<G>,
-                            boost::mpl::void_> {};
+                            no_property> {};
 
     template<typename G>
     struct graph_bundle_type {
