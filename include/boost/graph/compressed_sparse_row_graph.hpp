@@ -1383,26 +1383,26 @@ edges(const BOOST_CSR_GRAPH_TYPE& g)
 // Graph properties
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag, class Value>
 inline void
-set_property(BOOST_CSR_GRAPH_TYPE& g, Tag, const Value& value)
+set_property(BOOST_CSR_GRAPH_TYPE& g, Tag tag, const Value& value)
 {
-  get_property_value(g.m_property, Tag()) = value;
+  get_property_value(g.m_property, tag) = value;
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag>
 inline
 typename graph_property<BOOST_CSR_GRAPH_TYPE, Tag>::type&
-get_property(BOOST_CSR_GRAPH_TYPE& g, Tag)
+get_property(BOOST_CSR_GRAPH_TYPE& g, Tag tag)
 {
-  return get_property_value(g.m_property, Tag());
+  return get_property_value(g.m_property, tag);
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS, class Tag>
 inline
 const
 typename graph_property<BOOST_CSR_GRAPH_TYPE, Tag>::type&
-get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag)
+get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag tag)
 {
-  return get_property_value(g.m_property, Tag());
+  return get_property_value(g.m_property, tag);
 }
 
 template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
