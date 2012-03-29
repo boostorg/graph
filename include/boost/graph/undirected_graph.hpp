@@ -529,11 +529,7 @@ remove_in_edge_if(typename UNDIRECTED_GRAPH::vertex_descriptor v,
 { return remove_in_edge_if(v, pred, g.impl()); }
 
 template <UNDIRECTED_GRAPH_PARAMS, typename Property>
-struct property_map<UNDIRECTED_GRAPH, Property> {
-  typedef typename UNDIRECTED_GRAPH::graph_type Graph;
-  typedef typename property_map<Graph, Property>::type type;
-  typedef typename property_map<Graph, Property>::const_type const_type;
-};
+struct property_map<UNDIRECTED_GRAPH, Property>: property_map<typename UNDIRECTED_GRAPH::graph_type, Property> {};
 
 // PropertyGraph concepts
 template <UNDIRECTED_GRAPH_PARAMS, typename Property>

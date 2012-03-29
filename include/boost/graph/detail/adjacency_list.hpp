@@ -2574,14 +2574,13 @@ namespace boost {
     };
   namespace detail {
     template <class Tag, class Graph, class Property>
-    struct adj_list_choose_vertex_pa {
-      typedef typename
-        boost::mpl::if_<boost::is_same<Tag, vertex_all_t>, adj_list_all_vertex_pa, adj_list_any_vertex_pa>::type
-        Helper;
-      typedef typename Helper::template bind_<Tag,Graph,Property> Bind;
-      typedef typename Bind::type type;
-      typedef typename Bind::const_type const_type;
-    };
+    struct adj_list_choose_vertex_pa
+      : boost::mpl::if_<
+          boost::is_same<Tag, vertex_all_t>,
+          adj_list_all_vertex_pa,
+          adj_list_any_vertex_pa>::type
+        ::template bind_<Tag, Graph, Property>
+    {};
 
 
     template <class Tag>
@@ -2597,12 +2596,9 @@ namespace boost {
       typedef vec_adj_list_all_vertex_pa type;
     };
     template <class Tag, class Graph, class Property>
-    struct vec_adj_list_choose_vertex_pa {
-      typedef typename vec_adj_list_choose_vertex_pa_helper<Tag>::type Helper;
-      typedef typename Helper::template bind_<Tag,Graph,Property> Bind;
-      typedef typename Bind::type type;
-      typedef typename Bind::const_type const_type;
-    };
+    struct vec_adj_list_choose_vertex_pa
+      : vec_adj_list_choose_vertex_pa_helper<Tag>::type::template bind_<Tag,Graph,Property>
+    {};
   } // namespace detail
 
     //=========================================================================
@@ -2693,19 +2689,12 @@ namespace boost {
       typedef adj_list_all_edge_pmap type;
     };
     template <class Tag, class Graph, class Property>
-    struct adj_list_choose_edge_pmap {
-      typedef typename adj_list_choose_edge_pmap_helper<Tag>::type Helper;
-      typedef typename Helper::template bind_<Graph,Property,Tag> Bind;
-      typedef typename Bind::type type;
-      typedef typename Bind::const_type const_type;
-    };
+    struct adj_list_choose_edge_pmap
+      : adj_list_choose_edge_pmap_helper<Tag>::type::template bind_<Graph, Property, Tag>
+      {};
     struct adj_list_edge_property_selector {
       template <class Graph, class Property, class Tag>
-      struct bind_ {
-        typedef adj_list_choose_edge_pmap<Tag,Graph,Property> Choice;
-        typedef typename Choice::type type;
-        typedef typename Choice::const_type const_type;
-      };
+      struct bind_: adj_list_choose_edge_pmap<Tag, Graph, Property> {};
     };
   } // namespace detail
 
@@ -2722,11 +2711,9 @@ namespace boost {
 
   struct adj_list_vertex_property_selector {
     template <class Graph, class Property, class Tag>
-    struct bind_ {
-      typedef detail::adj_list_choose_vertex_pa<Tag,Graph,Property> Choice;
-      typedef typename Choice::type type;
-      typedef typename Choice::const_type const_type;
-    };
+    struct bind_
+      : detail::adj_list_choose_vertex_pa<Tag,Graph,Property>
+    {};
   };
   template <>
   struct vertex_property_selector<adj_list_tag> {
@@ -2735,11 +2722,7 @@ namespace boost {
 
   struct vec_adj_list_vertex_property_selector {
     template <class Graph, class Property, class Tag>
-    struct bind_ {
-      typedef detail::vec_adj_list_choose_vertex_pa<Tag,Graph,Property> Choice;
-      typedef typename Choice::type type;
-      typedef typename Choice::const_type const_type;
-    };
+    struct bind_: detail::vec_adj_list_choose_vertex_pa<Tag,Graph,Property> {};
   };
   template <>
   struct vertex_property_selector<vec_adj_list_tag> {

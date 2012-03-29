@@ -205,27 +205,23 @@ namespace boost {
     };
 
     template <class Graph, class PropertyTag>
-    struct edge_property_map {
-      typedef typename edge_property_type<Graph>::type Property;
-      typedef typename graph_tag_or_void<Graph>::type graph_tag;
-      typedef typename edge_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind_<Graph,Property,PropertyTag>
-        Bind;
-      typedef typename Bind::type type;
-      typedef typename Bind::const_type const_type;
-    };
+    struct edge_property_map
+      : edge_property_selector<
+          typename graph_tag_or_void<Graph>::type
+        >::type::template bind_<
+                            Graph,
+                            typename edge_property_type<Graph>::type,
+                            PropertyTag>
+      {};
     template <class Graph, class PropertyTag>
-    class vertex_property_map {
-    public:
-      typedef typename vertex_property_type<Graph>::type Property;
-      typedef typename graph_tag_or_void<Graph>::type graph_tag;
-      typedef typename vertex_property_selector<graph_tag>::type Selector;
-      typedef typename Selector::template bind_<Graph,Property,PropertyTag>
-        Bind;
-    public:
-      typedef typename Bind::type type;
-      typedef typename Bind::const_type const_type;
-    };
+    struct vertex_property_map
+      : vertex_property_selector<
+          typename graph_tag_or_void<Graph>::type
+        >::type::template bind_<
+                            Graph,
+                            typename vertex_property_type<Graph>::type,
+                            PropertyTag>
+      {};
   } // namespace detail
 
   template <class Graph, class Property>
