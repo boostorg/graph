@@ -272,40 +272,45 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
           property_map<Graph, Tag> >,
         boost::mpl::identity<Param> > {};
 
-    // Parameters are (NotFound, GraphIsConst, Graph, Param, Tag)
-    template <typename Param, typename Graph, typename PropertyTag>
-    typename property_map<Graph, PropertyTag>::const_type
-    choose_impl(boost::mpl::true_, boost::mpl::true_, const Graph& g, const Param&, PropertyTag tag) {
-      return get(tag, g);
-    }
+    // Parameters of f are (GraphIsConst, Graph, Param, Tag)
+    template <bool Found> struct choose_impl_helper;
 
-    template <typename Param, typename Graph, typename PropertyTag>
-    typename property_map<Graph, PropertyTag>::type
-    choose_impl(boost::mpl::true_, boost::mpl::false_, Graph& g, const Param&, PropertyTag tag) {
-      return get(tag, g);
-    }
+    template <> struct choose_impl_helper<false> {
+      template <typename Param, typename Graph, typename PropertyTag>
+      static typename property_map<Graph, PropertyTag>::const_type
+      f(boost::mpl::true_, const Graph& g, const Param&, PropertyTag tag) {
+        return get(tag, g);
+      }
 
-    template <typename GraphIsConst, typename Param, typename Graph, typename PropertyTag>
-    Param
-    choose_impl(boost::mpl::false_, GraphIsConst, const Graph&, const Param& p, PropertyTag) {
-      return p;
-    }
+      template <typename Param, typename Graph, typename PropertyTag>
+      static typename property_map<Graph, PropertyTag>::type
+      f(boost::mpl::false_, Graph& g, const Param&, PropertyTag tag) {
+        return get(tag, g);
+      }
+    };
+
+    template <> struct choose_impl_helper<true> {
+      template <typename GraphIsConst, typename Param, typename Graph, typename PropertyTag>
+      static Param f(GraphIsConst, const Graph&, const Param& p, PropertyTag) {
+        return p;
+      }
+    };
   }
 
   template <typename Param, typename Graph, typename PropertyTag>
   typename detail::choose_impl_result<boost::mpl::true_, Graph, Param, PropertyTag>::type
   choose_const_pmap(const Param& p, const Graph& g, PropertyTag tag)
   { 
-    return detail::choose_impl(boost::mpl::bool_<boost::is_same<Param, param_not_found>::value>(),
-                               boost::mpl::true_(), g, p, tag);
+    return detail::choose_impl_helper<!boost::is_same<Param, param_not_found>::value>
+             ::f(boost::mpl::true_(), g, p, tag);
   }
 
   template <typename Param, typename Graph, typename PropertyTag>
   typename detail::choose_impl_result<boost::mpl::false_, Graph, Param, PropertyTag>::type
   choose_pmap(const Param& p, Graph& g, PropertyTag tag)
   { 
-    return detail::choose_impl(boost::mpl::bool_<boost::is_same<Param, param_not_found>::value>(),
-                               boost::mpl::false_(), g, p, tag);
+    return detail::choose_impl_helper<!boost::is_same<Param, param_not_found>::value>
+             ::f(boost::mpl::false_(), g, p, tag);
   }
 
   namespace detail {
