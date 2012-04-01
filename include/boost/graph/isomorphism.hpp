@@ -11,6 +11,7 @@
 #include <iterator>
 #include <algorithm>
 #include <boost/config.hpp>
+#include <boost/assert.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/utility.hpp>
@@ -309,7 +310,14 @@ fi_adj_loop_k:++fi_adj.first;
             case match_continuation::pos_G2_vertex_loop: {G2_verts = this_k.G2_verts; iter = this_k.iter; dfs_num_k = this_k.dfs_num_k; k.pop_back(); in_S[*G2_verts.first] = false; i = source(*iter, G1); j = target(*iter, G2); goto G2_loop_k;}
             case match_continuation::pos_fi_adj_loop: {fi_adj = this_k.fi_adj; iter = this_k.iter; dfs_num_k = this_k.dfs_num_k; k.pop_back(); in_S[*fi_adj.first] = false; i = source(*iter, G1); j = target(*iter, G2); goto fi_adj_loop_k;}
             case match_continuation::pos_dfs_num: {k.pop_back(); goto return_point_false;}
-            default: assert (!"Bad position"); abort();
+            default: {
+              BOOST_ASSERT(!"Bad position");
+#ifdef UNDER_CE
+              exit(-1);
+#else
+              abort();
+#endif
+            }
           }
         }
       }
