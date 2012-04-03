@@ -322,7 +322,7 @@ namespace boost {
 
   } // namespace detail
 
-
+#if 1
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
   void breadth_first_search
@@ -339,6 +339,7 @@ namespace boost {
     detail::bfs_dispatch<C>::apply(ng, s, params,
                                    get_param(params, vertex_color));
   }
+#endif
 
 
   // This version does not initialize colors, user has to.
@@ -369,6 +370,50 @@ namespace boost {
        choose_pmap(get_param(params, vertex_color), ng, vertex_color)
        );
   }
+
+  namespace graph {
+    namespace detail {
+      template <typename Graph, typename Source, typename ArgPack>
+      struct breadth_first_search_impl {
+        typedef void result_type;
+        void operator()(const Graph& g, const Source& source, const ArgPack& arg_pack) {
+          using namespace boost::graph::keywords;
+          typename boost::graph_traits<Graph>::vertex_descriptor sources[1] = {source};
+          boost::queue<typename boost::graph_traits<Graph>::vertex_descriptor> Q;
+          boost::breadth_first_search(g,
+                                      &sources[0],
+                                      &sources[1], 
+                                      boost::unwrap_ref(arg_pack[_buffer | boost::ref(Q)]),
+                                      arg_pack[_visitor | make_bfs_visitor(null_visitor())],
+                                      boost::detail::make_color_map_from_arg_pack(g, arg_pack));
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(breadth_first_search, 2, 4)
+  }
+
+#if 0
+  // Named Parameter Variant
+  template <class VertexListGraph, class P, class T, class R>
+  void
+  breadth_first_search(const VertexListGraph& g,
+                       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+                       const bgl_named_params<P, T, R>& params)
+  {
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    boost::graph::breadth_first_search_with_named_params(g, s, arg_pack);
+  }
+
+  template <class VertexListGraph, class P, class T, class R>
+  void
+  breadth_first_search(const VertexListGraph& g,
+                       typename graph_traits<VertexListGraph>::vertex_descriptor s)
+  {
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(no_named_parameters, no_named_parameters())
+    boost::graph::breadth_first_search_with_named_params(g, s, arg_pack);
+  }
+#endif
 
 } // namespace boost
 
