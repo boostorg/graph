@@ -13,6 +13,7 @@
 #include <functional>
 #include <vector>
 #include <boost/ref.hpp>
+#include <boost/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -463,6 +464,36 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
            >()(g, ap[t | 0]);
     }
 
+#define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(name, nfixed, nnamed_max) \
+  /* Entry point for conversion from BGL-style named parameters */ \
+  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) typename ArgPack> \
+  typename detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) ArgPack>::result_type \
+  BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const ArgPack& arg_pack) { \
+    return detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) ArgPack>()(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
+  } \
+  /* Individual functions taking Boost.Parameter-style keyword arguments */ \
+  BOOST_PP_REPEAT(nnamed_max, BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE, (name)(nfixed))
+
+#define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE(z, nnamed, seq) \
+  BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, BOOST_PP_SEQ_ELEM(0, seq), BOOST_PP_SEQ_ELEM(1, seq))
+
+#define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
+  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, typename Keyword) BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, typename Arg)> \
+  typename detail::BOOST_PP_CAT(name, _impl)<BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed)>::result_type \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) \
+       BOOST_PP_ENUM_TRAILING(nnamed, BOOST_GRAPH_MAKE_PAIR_PARAM, ~)) { \
+    return detail::BOOST_PP_CAT(name, _impl)<BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed)>() \
+             (BOOST_PP_ENUM_PARAMS(nfixed, param), \
+              (boost::parameter::aux::empty_arg_list() BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, kw))); \
+  }
+
+#define BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed) \
+  BOOST_PP_ENUM_PARAMS(nfixed, Param), \
+  BOOST_PP_REPEAT(nnamed, BOOST_GRAPH_OPENING_PART_OF_PAIR, BOOST_PP_DEC(nnamed)) boost::parameter::aux::empty_arg_list BOOST_PP_REPEAT(nnamed, > BOOST_PP_TUPLE_EAT(3), ~)
+           
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)),  BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)>& BOOST_PP_CAT(kw, i)
+
   }
 
   namespace detail {
@@ -617,6 +648,25 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       operator()(const Graph& g, const ArgPack& ap) const {
         return priority_queue_maker<Graph, ArgPack, KeyT, ValueT, PriorityQueueTag, KeyMapTag, IndexInHeapMapTag, Compare>::make_queue(g, ap, defaultKey);
       }
+    };
+
+    template <typename G>
+    typename boost::graph_traits<G>::vertex_descriptor
+    get_null_vertex(const G&) {return boost::graph_traits<G>::null_vertex();}
+
+    template <typename G>
+    typename boost::graph_traits<G>::vertex_descriptor
+    get_default_starting_vertex(const G& g) {
+      std::pair<typename boost::graph_traits<G>::vertex_iterator, typename boost::graph_traits<G>::vertex_iterator> iters = vertices(g);
+      return (iters.first == iters.second) ? boost::graph_traits<G>::null_vertex() : *iters.first;
+    }
+
+    template <typename G>
+    struct get_default_starting_vertex_t {
+      typedef typename boost::graph_traits<G>::vertex_descriptor result_type;
+      const G& g;
+      get_default_starting_vertex_t(const G& g): g(g) {}
+      result_type operator()() const {return get_default_starting_vertex(g);}
     };
 
   } // namespace detail
