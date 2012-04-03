@@ -21,6 +21,7 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
+#include <boost/parameter.hpp>
 #include <boost/concept/assert.hpp>
 
 #include <vector>
@@ -198,7 +199,7 @@ namespace boost {
       put(color, u, Color::white()); vis.initialize_vertex(u, g);
     }
 
-    if (start_vertex != implicit_cast<Vertex>(*vertices(g).first)){ vis.start_vertex(start_vertex, g);
+    if (start_vertex != detail::get_default_starting_vertex(g)){ vis.start_vertex(start_vertex, g);
       detail::depth_first_visit_impl(g, start_vertex, vis, color,
                                      detail::nontruth2());
     }
@@ -221,7 +222,7 @@ namespace boost {
     if (verts.first == verts.second)
       return;
 
-    depth_first_search(g, vis, color, *verts.first);
+    depth_first_search(g, vis, color, detail::get_default_starting_vertex(g));
   }
 
   template <class Visitors = null_visitor>
@@ -282,6 +283,24 @@ namespace boost {
   }
   typedef dfs_visitor<> default_dfs_visitor;
 
+  // Boost.Parameter named parameter variant
+  namespace graph {
+    namespace detail {
+      template <typename Graph, typename ArgPack>
+      struct depth_first_search_impl {
+        typedef void result_type;
+        void operator()(const Graph& g, const ArgPack& arg_pack) {
+          using namespace boost::graph::keywords;
+          boost::depth_first_search(g,
+                                    arg_pack[_visitor | make_dfs_visitor(null_visitor())],
+                                    boost::detail::make_color_map_from_arg_pack(g, arg_pack),
+                                    arg_pack[_root_vertex || boost::detail::get_default_starting_vertex_t<Graph>(g)]);
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_search, 1, 4)
+  }
+
   // Named Parameter Variant
   template <class VertexListGraph, class P, class T, class R>
   void
@@ -295,12 +314,7 @@ namespace boost {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    depth_first_search
-      (g,
-       arg_pack[_visitor | make_dfs_visitor(null_visitor())],
-       boost::detail::make_color_map_from_arg_pack(g, arg_pack),
-       arg_pack[_root_vertex | *vertices(g).first]
-      );
+    boost::graph::depth_first_search_with_named_params(g, arg_pack);
   }
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
