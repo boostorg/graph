@@ -301,11 +301,11 @@ namespace boost
     
     if (target_graph == detail::tg_k_5)
       {
-        return isomorphism(K_5,contracted_graph);
+        return boost::isomorphism(K_5,contracted_graph);
       }
     else //target_graph == tg_k_3_3
       {
-        return isomorphism(K_3_3,contracted_graph);
+        return boost::isomorphism(K_3_3,contracted_graph);
       }
     
     
