@@ -472,7 +472,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     return detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) ArgPack>()(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
   } \
   /* Individual functions taking Boost.Parameter-style keyword arguments */ \
-  BOOST_PP_REPEAT(nnamed_max, BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE, (name)(nfixed))
+  BOOST_PP_REPEAT(BOOST_PP_INC(nnamed_max), BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE, (name)(nfixed))
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE(z, nnamed, seq) \
   BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, BOOST_PP_SEQ_ELEM(0, seq), BOOST_PP_SEQ_ELEM(1, seq))
