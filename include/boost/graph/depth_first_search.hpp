@@ -289,7 +289,7 @@ namespace boost {
       template <typename Graph, typename ArgPack>
       struct depth_first_search_impl {
         typedef void result_type;
-        void operator()(const Graph& g, const ArgPack& arg_pack) {
+        void operator()(const Graph& g, const ArgPack& arg_pack) const {
           using namespace boost::graph::keywords;
           boost::depth_first_search(g,
                                     arg_pack[_visitor | make_dfs_visitor(null_visitor())],
@@ -307,13 +307,16 @@ namespace boost {
   depth_first_search(const VertexListGraph& g,
                      const bgl_named_params<P, T, R>& params)
   {
-    typedef typename boost::graph_traits<VertexListGraph>::vertex_iterator vi;
-    std::pair<vi, vi> verts = vertices(g);
-    if (verts.first == verts.second)
-      return;
-    using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    boost::graph::depth_first_search_with_named_params(g, arg_pack);
+  }
+
+  template <class VertexListGraph>
+  void
+  depth_first_search(const VertexListGraph& g)
+  {
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(no_named_parameters, no_named_parameters())
     boost::graph::depth_first_search_with_named_params(g, arg_pack);
   }
 
