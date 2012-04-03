@@ -79,6 +79,7 @@ namespace boost {
     typedef typename std::vector<EdgeList>::size_type vertices_size_type;
     typedef void edges_size_type;
     typedef typename EdgeList::size_type degree_size_type;
+    static V null_vertex() {return V(-1);}
   };
   template <class EdgeList>
   struct edge_property_type< std::vector<EdgeList> >
