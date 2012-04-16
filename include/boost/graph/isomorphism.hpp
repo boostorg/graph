@@ -532,23 +532,7 @@ fi_adj_loop_k:++fi_adj.first;
   }
 
   // Named parameter interface
-  template <typename Graph1, typename Graph2, class P, class T, class R>
-  bool isomorphism(const Graph1& g1,
-                   const Graph2& g2,
-                   const bgl_named_params<P,T,R>& params)
-  {
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    return boost::graph::isomorphism_with_named_params(g1, g2, arg_pack);
-  }
-
-  template <typename Graph1, typename Graph2>
-  bool isomorphism(const Graph1& g1,
-                   const Graph2& g2)
-  {
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(no_named_parameters, no_named_parameters())
-    return boost::graph::isomorphism_with_named_params(g1, g2, arg_pack);
-  }
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
 
   // Verify that the given mapping iso_map from the vertices of g1 to the
   // vertices of g2 describes an isomorphism.

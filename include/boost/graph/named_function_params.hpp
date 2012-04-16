@@ -514,6 +514,29 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
               (boost::parameter::aux::empty_arg_list() BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, kw))); \
   }
 
+#define BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(name, nfixed) \
+  template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) class P, class T, class R> \
+  typename boost::result_of< \
+    ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
+      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
+       const typename boost::detail::convert_bgl_params_to_boost_parameter<boost::bgl_named_params<P, T, R> >::type &) \
+    >::type \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const boost::bgl_named_params<P, T, R>& old_style_params) { \
+    typedef boost::bgl_named_params<P, T, R> old_style_params_type; \
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(old_style_params_type, old_style_params) \
+    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
+  } \
+  \
+  BOOST_PP_EXPR_IF(nfixed, template <) BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_EXPR_IF(nfixed, >) \
+  BOOST_PP_EXPR_IF(nfixed, typename) boost::result_of< \
+    ::boost::graph::detail::BOOST_PP_CAT(name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >) \
+      (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) const boost::parameter::aux::empty_arg_list &) \
+    >::type \
+  name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param)) { \
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(boost::no_named_parameters, boost::no_named_parameters()) \
+    return ::boost::graph::BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
+  }
+
   }
 
   namespace detail {
