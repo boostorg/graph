@@ -243,8 +243,7 @@ namespace boost
           DiscoverTimeMap dtm, const bgl_named_params<P, T, R>& params, 
           LowPointMap lowpt)
       {
-        typedef typename get_param_type< bgl_named_params<P,T,R>,
-            vertex_predecessor_t>::type dispatch_type;
+        typedef typename get_param_type< vertex_predecessor_t, bgl_named_params<P,T,R> >::type dispatch_type;
 
         return bicomp_dispatch3<dispatch_type>::apply
             (g, comp, out, index_map, dtm, lowpt, params, 
@@ -269,8 +268,7 @@ namespace boost
     std::vector<vertices_size_type> lowpt(num_vertices(g));
         vertices_size_type vst(0);
 
-        typedef typename get_param_type< bgl_named_params<P,T,R>,
-            vertex_predecessor_t>::type dispatch_type;
+        typedef typename get_param_type< vertex_predecessor_t, bgl_named_params<P,T,R> >::type dispatch_type;
   
         return bicomp_dispatch3<dispatch_type>::apply
             (g, comp, out, index_map, dtm,
@@ -288,8 +286,7 @@ namespace boost
           ComponentMap comp, OutputIterator out, VertexIndexMap index_map, 
           const bgl_named_params<P, T, R>& params, DiscoverTimeMap dtm)
       {
-        typedef typename get_param_type< bgl_named_params<P,T,R>,
-            vertex_lowpoint_t>::type dispatch_type;
+        typedef typename get_param_type< vertex_lowpoint_t, bgl_named_params<P,T,R> >::type dispatch_type;
 
         return bicomp_dispatch2<dispatch_type>::apply
             (g, comp, out, index_map, dtm, params, 
@@ -311,8 +308,7 @@ namespace boost
         std::vector<vertices_size_type> discover_time(num_vertices(g));
     vertices_size_type vst(0);
 
-        typedef typename get_param_type< bgl_named_params<P,T,R>,
-            vertex_lowpoint_t>::type dispatch_type;
+        typedef typename get_param_type< vertex_lowpoint_t, bgl_named_params<P,T,R> >::type dispatch_type;
 
         return bicomp_dispatch2<dispatch_type>::apply
             (g, comp, out, index_map, 
@@ -345,8 +341,7 @@ namespace boost
   biconnected_components(const Graph& g, ComponentMap comp, OutputIterator out, 
       const bgl_named_params<P, T, R>& params)
   {
-    typedef typename get_param_type< bgl_named_params<P,T,R>,
-        vertex_discover_time_t>::type dispatch_type;
+    typedef typename get_param_type< vertex_discover_time_t, bgl_named_params<P,T,R> >::type dispatch_type;
 
     return detail::bicomp_dispatch1<dispatch_type>::apply(g, comp, out, 
         choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 

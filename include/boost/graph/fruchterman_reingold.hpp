@@ -404,8 +404,7 @@ fruchterman_reingold_force_directed_layout
    const Topology& topology,
    const bgl_named_params<Param, Tag, Rest>& params)
 {
-  typedef typename get_param_type<bgl_named_params<Param,Tag,Rest>,
-                                  vertex_displacement_t>::type D;
+  typedef typename get_param_type<vertex_displacement_t, bgl_named_params<Param,Tag,Rest> >::type D;
 
   detail::fr_force_directed_layout<D>::run
     (g, position, topology, 
