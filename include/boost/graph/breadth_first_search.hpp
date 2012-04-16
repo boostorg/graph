@@ -395,25 +395,7 @@ namespace boost {
 
 #if 0
   // Named Parameter Variant
-  template <class VertexListGraph, class P, class T, class R>
-  void
-  breadth_first_search(const VertexListGraph& g,
-                       typename graph_traits<VertexListGraph>::vertex_descriptor s,
-                       const bgl_named_params<P, T, R>& params)
-  {
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    boost::graph::breadth_first_search_with_named_params(g, s, arg_pack);
-  }
-
-  template <class VertexListGraph, class P, class T, class R>
-  void
-  breadth_first_search(const VertexListGraph& g,
-                       typename graph_traits<VertexListGraph>::vertex_descriptor s)
-  {
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(no_named_parameters, no_named_parameters())
-    boost::graph::breadth_first_search_with_named_params(g, s, arg_pack);
-  }
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(breadth_first_search, 2)
 #endif
 
 } // namespace boost

@@ -302,24 +302,7 @@ namespace boost {
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(depth_first_search, 1, 4)
   }
 
-  // Named Parameter Variant
-  template <class VertexListGraph, class P, class T, class R>
-  void
-  depth_first_search(const VertexListGraph& g,
-                     const bgl_named_params<P, T, R>& params)
-  {
-    typedef bgl_named_params<P, T, R> params_type;
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    boost::graph::depth_first_search_with_named_params(g, arg_pack);
-  }
-
-  template <class VertexListGraph>
-  void
-  depth_first_search(const VertexListGraph& g)
-  {
-    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(no_named_parameters, no_named_parameters())
-    boost::graph::depth_first_search_with_named_params(g, arg_pack);
-  }
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(depth_first_search, 1)
 
   template <class IncidenceGraph, class DFSVisitor, class ColorMap>
   void depth_first_visit
