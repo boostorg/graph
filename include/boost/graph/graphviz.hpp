@@ -15,7 +15,6 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include <cctype>
 #include <stdio.h> // for FILE
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -32,9 +31,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#if 0
 #include <boost/xpressive/xpressive_static.hpp>
-#endif
 #include <boost/foreach.hpp>
 
 namespace boost {
@@ -68,39 +65,10 @@ namespace boost {
 
   template <typename T>
   inline std::string escape_dot_string(const T& obj) {
-    std::string s(boost::lexical_cast<std::string>(obj));
-#if 0
     using namespace boost::xpressive;
     static sregex valid_unquoted_id = (((alpha | '_') >> *_w) | (!as_xpr('-') >> (('.' >> *_d) | (+_d >> !('.' >> *_d)))));
-    bool ok = regex_match(s, valid_unquoted_id);
-#else
-    bool ok;
-    using std::isdigit; using std::isalpha;
-    if (s.empty()) {
-      ok = false;
-    } else if (isdigit(s[0]) || s[0] == '-' || s[0] == '.') { // Number
-      size_t startpos = (s[0] == '-' ? 1 : 0);
-      size_t dot_maybe = s.find('.', startpos);
-      if (dot_maybe != std::string::npos && s.find('.', dot_maybe + 1) != std::string::npos) {
-        ok = false; // Has two decimal points
-      } else {
-        for (size_t i = startpos; i < s.size(); ++i) {
-          if (!(isdigit(s[i]) || s[i] == '.')) {ok = false; break;}
-        }
-      }
-    } else if (isalpha(s[0]) || s[0] == '_') { // Identifier
-      ok = true;
-      for (size_t i = 1; i < s.size(); ++i) {
-        if (!(isalpha(s[i]) || isdigit(s[i]) || s[i] == '_')) {
-          ok = false;
-          break;
-        }
-      }
-    } else {
-      ok = false;
-    }
-#endif
-    if (ok) {
+    std::string s(boost::lexical_cast<std::string>(obj));
+    if (regex_match(s, valid_unquoted_id)) {
       return s;
     } else {
       boost::algorithm::replace_all(s, "\"", "\\\"");
