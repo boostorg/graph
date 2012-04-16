@@ -491,9 +491,10 @@ fi_adj_loop_k:++fi_adj.first;
 
   namespace graph {
     namespace detail {
-      template <typename Graph1, typename Graph2, typename ArgPack>
+      template <typename Graph1, typename Graph2>
       struct isomorphism_impl {
         typedef bool result_type;
+        template <typename ArgPack>
         bool operator()(const Graph1& g1, const Graph2& g2, const ArgPack& arg_pack) const {
           using namespace boost::graph::keywords;
           typedef typename boost::detail::override_const_property_result<ArgPack, tag::vertex_index1_map, boost::vertex_index_t, Graph1>::type index1_map_type;

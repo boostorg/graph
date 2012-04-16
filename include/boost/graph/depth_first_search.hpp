@@ -286,9 +286,10 @@ namespace boost {
   // Boost.Parameter named parameter variant
   namespace graph {
     namespace detail {
-      template <typename Graph, typename ArgPack>
+      template <typename Graph>
       struct depth_first_search_impl {
         typedef void result_type;
+        template <typename ArgPack>
         void operator()(const Graph& g, const ArgPack& arg_pack) const {
           using namespace boost::graph::keywords;
           boost::depth_first_search(g,

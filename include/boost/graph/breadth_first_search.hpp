@@ -373,9 +373,10 @@ namespace boost {
 
   namespace graph {
     namespace detail {
-      template <typename Graph, typename Source, typename ArgPack>
+      template <typename Graph, typename Source>
       struct breadth_first_search_impl {
         typedef void result_type;
+        template <typename ArgPack>
         void operator()(const Graph& g, const Source& source, const ArgPack& arg_pack) {
           using namespace boost::graph::keywords;
           typename boost::graph_traits<Graph>::vertex_descriptor sources[1] = {source};

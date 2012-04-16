@@ -13,6 +13,7 @@
 #include <functional>
 #include <vector>
 #include <boost/ref.hpp>
+#include <boost/utility/result_of.hpp>
 #include <boost/preprocessor.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
@@ -464,12 +465,34 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
            >()(g, ap[t | 0]);
     }
 
+    template <typename F> struct make_arg_pack_type;
+    template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
+    template <typename K, typename A>
+    struct make_arg_pack_type<void(K, A)> {
+      typedef boost::parameter::aux::tagged_argument<K, A> type;
+    };
+
+#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)),  BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
+#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)>& BOOST_PP_CAT(kw, i)
+
+#define BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION(z, i, _) \
+    template <BOOST_PP_ENUM_PARAMS(i, typename Keyword), BOOST_PP_ENUM_PARAMS(i, typename Arg)> \
+    struct make_arg_pack_type<void(BOOST_PP_ENUM_PARAMS(i, Keyword), BOOST_PP_ENUM_PARAMS(i, Arg))> { \
+      typedef \
+        BOOST_PP_REPEAT(i, BOOST_GRAPH_OPENING_PART_OF_PAIR, BOOST_PP_DEC(i)) boost::parameter::aux::empty_arg_list BOOST_PP_REPEAT(i, > BOOST_PP_TUPLE_EAT(3), ~) \
+        type; \
+    };
+    BOOST_PP_REPEAT_FROM_TO(2, 11, BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION, ~)
+#undef BOOST_GRAPH_MAKE_AP_TYPE_SPECIALIZATION
+
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(name, nfixed, nnamed_max) \
   /* Entry point for conversion from BGL-style named parameters */ \
   template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_COMMA_IF(nfixed) typename ArgPack> \
-  typename detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) ArgPack>::result_type \
+  typename boost::result_of< \
+             detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param)>(BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) const ArgPack&) \
+           >::type \
   BOOST_PP_CAT(name, _with_named_params)(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) BOOST_PP_COMMA_IF(nfixed) const ArgPack& arg_pack) { \
-    return detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) ArgPack>()(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
+    return detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param)>()(BOOST_PP_ENUM_PARAMS(nfixed, param) BOOST_PP_COMMA_IF(nfixed) arg_pack); \
   } \
   /* Individual functions taking Boost.Parameter-style keyword arguments */ \
   BOOST_PP_REPEAT(BOOST_PP_INC(nnamed_max), BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONE, (name)(nfixed))
@@ -479,20 +502,17 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
 #define BOOST_GRAPH_MAKE_FORWARDING_FUNCTION_ONEX(z, nnamed, name, nfixed) \
   template <BOOST_PP_ENUM_PARAMS(nfixed, typename Param) BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, typename Keyword) BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, typename Arg)> \
-  typename detail::BOOST_PP_CAT(name, _impl)<BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed)>::result_type \
+  typename boost::result_of< \
+             detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param)> \
+               (BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed) \
+                const typename boost::detail::make_arg_pack_type<void(BOOST_PP_ENUM_PARAMS(nnamed, Keyword) BOOST_PP_COMMA_IF(nnamed) BOOST_PP_ENUM_PARAMS(nnamed, Arg))>::type&) \
+           >::type \
   name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, & param) \
        BOOST_PP_ENUM_TRAILING(nnamed, BOOST_GRAPH_MAKE_PAIR_PARAM, ~)) { \
-    return detail::BOOST_PP_CAT(name, _impl)<BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed)>() \
+    return detail::BOOST_PP_CAT(name, _impl)<BOOST_PP_ENUM_PARAMS(nfixed, Param)>() \
              (BOOST_PP_ENUM_PARAMS(nfixed, param), \
               (boost::parameter::aux::empty_arg_list() BOOST_PP_ENUM_TRAILING_PARAMS(nnamed, kw))); \
   }
-
-#define BOOST_GRAPH_TEMPLATE_ARGS_FOR_IMPL(nnamed, nfixed) \
-  BOOST_PP_ENUM_PARAMS(nfixed, Param), \
-  BOOST_PP_REPEAT(nnamed, BOOST_GRAPH_OPENING_PART_OF_PAIR, BOOST_PP_DEC(nnamed)) boost::parameter::aux::empty_arg_list BOOST_PP_REPEAT(nnamed, > BOOST_PP_TUPLE_EAT(3), ~)
-           
-#define BOOST_GRAPH_OPENING_PART_OF_PAIR(z, i, n) boost::parameter::aux::arg_list<boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, BOOST_PP_SUB(n, i)),  BOOST_PP_CAT(Arg, BOOST_PP_SUB(n, i))>,
-#define BOOST_GRAPH_MAKE_PAIR_PARAM(z, i, _) const boost::parameter::aux::tagged_argument<BOOST_PP_CAT(Keyword, i), BOOST_PP_CAT(Arg, i)>& BOOST_PP_CAT(kw, i)
 
   }
 
