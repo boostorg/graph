@@ -11,7 +11,7 @@
 #include <boost/test/minimal.hpp>
 #include <stdlib.h>
 
-#include <boost/graph/depth_first_search.hpp>
+#include <boost/graph/undirected_dfs.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -71,8 +71,10 @@ public:
   template <class Edge, class Graph>
   void finish_edge(Edge e, Graph& g) {
     using namespace boost;
-    BOOST_CHECK( get(m_color, target(e, g)) == Color::gray() ||
-                 get(m_color, target(e, g)) == Color::black() );
+    BOOST_CHECK(
+        (get(m_color, target(e, g)) == Color::gray())
+     || (get(m_color, target(e, g)) == Color::black())
+    );
   }
   template <class Vertex, class Graph>
   void finish_vertex(Vertex u, Graph&) {
@@ -103,10 +105,15 @@ struct dfs_test
       boost::vertex_color_t>::type ColorMap;
     typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
     typedef typename boost::color_traits<ColorValue> Color;
+    typedef typename boost::property_map<Graph,
+      boost::edge_color_t>::type EColorMap;
+    typedef typename boost::property_traits<EColorMap>::value_type EColorValue;
+    typedef typename boost::color_traits<EColorValue> EColor;
 
     vertices_size_type i, k;
     typename Traits::edges_size_type j;
     typename Traits::vertex_iterator vi, vi_end, ui, ui_end;
+    typename Traits::edge_iterator ei, ei_end;
 
     boost::mt19937 gen;
 
@@ -116,6 +123,7 @@ struct dfs_test
         generate_random_graph(g, i, j, gen);
 
         ColorMap color = get(boost::vertex_color, g);
+        EColorMap e_color = get(boost::edge_color, g);
         std::vector<vertex_descriptor> parent(num_vertices(g));
         for (k = 0; k < num_vertices(g); ++k)
           parent[k] = k;
@@ -126,11 +134,16 @@ struct dfs_test
           int*, int*> vis(color, &parent[0],
                           &discover_time[0], &finish_time[0]);
 
-        boost::depth_first_search(g, visitor(vis).color_map(color));
+        boost::undirected_dfs(g, visitor(vis).color_map(color)
+                              .edge_color_map(e_color));
 
         // all vertices should be black
         for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
           BOOST_CHECK(get(color, *vi) == Color::black());
+
+        // all edges should be black
+        for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+          BOOST_CHECK(get(e_color, *ei) == EColor::black());
 
         // check parenthesis structure of discover/finish times
         // See CLR p.480
@@ -155,7 +168,7 @@ struct dfs_test
 };
 
 
-// usage: dfs.exe [max-vertices=15]
+// usage: undirected_dfs.exe [max-vertices=15]
 
 int test_main(int argc, char* argv[])
 {
@@ -163,13 +176,10 @@ int test_main(int argc, char* argv[])
   if (argc > 1)
     max_V = atoi(argv[1]);
 
-  // Test directed graphs.
-  dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
-           boost::property<boost::vertex_color_t, boost::default_color_type> >
-    >::go(max_V);
   // Test undirected graphs.
   dfs_test< boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-           boost::property<boost::vertex_color_t, boost::default_color_type> >
+           boost::property<boost::vertex_color_t, boost::default_color_type>,
+           boost::property<boost::edge_color_t, boost::default_color_type> >
     >::go(max_V);
 
   return 0;
