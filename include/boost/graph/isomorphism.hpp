@@ -136,6 +136,10 @@ namespace boost {
     
       bool test_isomorphism()
       {
+        // reset isomapping
+        BGL_FORALL_VERTICES_T(v, G1, Graph1)
+          f[v] = graph_traits<Graph2>::null_vertex();
+          
         {
           std::vector<invar1_value> invar1_array;
           BGL_FORALL_VERTICES_T(v, G1, Graph1)
