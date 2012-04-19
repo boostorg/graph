@@ -44,11 +44,6 @@
 #include <boost/utility.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
 
-#ifdef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-#  error The Compressed Sparse Row graph only supports bundled properties.
-#  error You will need a compiler that conforms better to the C++ standard.
-#endif
-
 namespace boost {
 
 // A tag type indicating that the graph in question is a compressed
