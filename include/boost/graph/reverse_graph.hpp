@@ -379,14 +379,18 @@ struct property_map<const reverse_graph<BidirGraph, GRef>, Property> {
 };
 
 template <class BidirGraph, class GRef, class Property>
-typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type
+typename disable_if<
+  is_same<Property, edge_underlying_t>,
+  typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type>::type
 get(Property p, reverse_graph<BidirGraph,GRef>& g)
 {
   return typename property_map<reverse_graph<BidirGraph,GRef>, Property>::type(get(p, g.m_g));
 }
 
 template <class BidirGraph, class GRef, class Property>
-typename property_map<reverse_graph<BidirGraph,GRef>, Property>::const_type
+typename disable_if<
+  is_same<Property, edge_underlying_t>,
+  typename property_map<reverse_graph<BidirGraph,GRef>, Property>::const_type>::type
 get(Property p, const reverse_graph<BidirGraph,GRef>& g)
 {
   const BidirGraph& gref = g.m_g; // in case GRef is non-const
@@ -394,9 +398,11 @@ get(Property p, const reverse_graph<BidirGraph,GRef>& g)
 }
 
 template <class BidirectionalGraph, class GRef, class Property, class Key>
-typename property_traits<
-  typename property_map<reverse_graph<BidirectionalGraph, GRef>, Property>::const_type
->::value_type
+typename disable_if<
+  is_same<Property, edge_underlying_t>,
+  typename property_traits<
+    typename property_map<reverse_graph<BidirectionalGraph, GRef>, Property>::const_type
+  >::value_type>::type
 get(Property p, const reverse_graph<BidirectionalGraph,GRef>& g, const Key& k)
 {
   return get(get(p, g), k);
