@@ -981,22 +981,27 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
-      typename Config::OutEdgeList& el = g.out_edge_list(u);
-      typename Config::OutEdgeList::iterator
-        ei = el.begin(), ei_end = el.end();
-      for (; ei != ei_end; /* Increment below */ ) {
-        bool is_self_loop = (*ei).get_target() == u;
-        // Don't erase from our own incidence list in the case of a self-loop
-        // since we're clearing it anyway.
-        typename Config::OutEdgeList::iterator ei_copy = ei;
-        if (!is_self_loop) {
-          detail::erase_from_incidence_list
-            (g.out_edge_list((*ei).get_target()), u, Cat());
-          ++ei;
-        } else {
-          ++ei;
+      {
+        typename Config::OutEdgeList& el = g.out_edge_list(u);
+        typename Config::OutEdgeList::iterator
+          ei = el.begin(), ei_end = el.end();
+        for (; ei != ei_end; ++ei) {
+          bool is_self_loop = (*ei).get_target() == u;
+          // Don't erase from our own incidence list in the case of a self-loop
+          // since we're clearing it anyway.
+          if (!is_self_loop) {
+            detail::erase_from_incidence_list
+              (g.out_edge_list((*ei).get_target()), u, Cat());
+          }
         }
-        g.m_edges.erase((*ei_copy).get_iter());
+      }
+      {
+        typename Config::OutEdgeList& el = g.out_edge_list(u);
+        typename Config::OutEdgeList::iterator
+          ei = el.begin(), ei_end = el.end();
+        for (; ei != ei_end; ++ei) {
+          g.m_edges.erase((*ei).get_iter());
+        }
       }
       g.out_edge_list(u).clear();
     }
