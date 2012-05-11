@@ -988,15 +988,15 @@ namespace boost {
         bool is_self_loop = (*ei).get_target() == u;
         // Don't erase from our own incidence list in the case of a self-loop
         // since we're clearing it anyway.
+        typename Config::OutEdgeList::iterator ei_copy = ei;
         if (!is_self_loop) {
           detail::erase_from_incidence_list
             (g.out_edge_list((*ei).get_target()), u, Cat());
-          typename Config::OutEdgeList::iterator ei_copy = ei;
           ++ei;
-          if (!is_self_loop) g.m_edges.erase((*ei_copy).get_iter());
         } else {
           ++ei;
         }
+        g.m_edges.erase((*ei_copy).get_iter());
       }
       g.out_edge_list(u).clear();
     }
