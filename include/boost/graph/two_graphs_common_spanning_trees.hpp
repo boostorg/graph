@@ -78,7 +78,7 @@ namespace detail {
     void back_edge(const Edge& e, const Graph& g)
     {
       put(mLow, source(e, g),
-        std::min(get(mLow, source(e, g)), get(mDist, target(e, g))));
+        (std::min)(get(mLow, source(e, g)), get(mDist, target(e, g))));
     }
 
     template <typename Vertex, typename Graph>
@@ -88,7 +88,7 @@ namespace detail {
       if(get(mLow, u) > get(mDist, parent))
         mBuffer.push(get(mTree, u));
       put(mLow, parent,
-        std::min(get(mLow, parent), get(mLow, u)));
+        (std::min)(get(mLow, parent), get(mLow, u)));
     }
 
     TreeMap mTree;
