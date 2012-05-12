@@ -21,6 +21,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/assert.hpp>
 
 namespace boost
 {
@@ -127,8 +128,8 @@ namespace boost
               put(comp, S.top(), c);
               S.pop();
             }
-            assert (source(S.top(), g) == parent);
-            assert (target(S.top(), g) == u);
+            BOOST_ASSERT (source(S.top(), g) == parent);
+            BOOST_ASSERT (target(S.top(), g) == u);
             put(comp, S.top(), c);
             S.pop();
             ++c;
@@ -177,7 +178,7 @@ namespace boost
     std::size_t children_of_root;
     std::size_t dfs_time = 0;
     std::stack<edge_t> S;
-	std::vector<char> is_articulation_point(num_vertices(g));
+        std::vector<char> is_articulation_point(num_vertices(g));
 
     biconnected_components_visitor<ComponentMap, DiscoverTimeMap,
         LowPointMap, PredecessorMap, OutputIterator, std::stack<edge_t>, 

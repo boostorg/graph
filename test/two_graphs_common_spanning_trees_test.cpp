@@ -6,7 +6,7 @@
 //          Two Graphs Common Spanning Trees Algorithm
 //      Based on academic article of Mint, Read and Tarjan
 //     Efficient Algorithm for Common Spanning Tree Problem
-// Electron. Lett., 28 April 1983, Volume 19, Issue 9, p.346–347
+// Electron. Lett., 28 April 1983, Volume 19, Issue 9, p.346-347
 
 
 #include <boost/type_traits.hpp>
