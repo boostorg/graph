@@ -717,8 +717,10 @@ namespace boost {
 
           typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
           typename Config::OutEdgeList::iterator out_i = out_el.begin();
+          typename Config::EdgeIter edge_iter_to_erase;
           for (; out_i != out_el.end(); ++out_i)
             if (&(*out_i).get_property() == &p) {
+              edge_iter_to_erase = (*out_i).get_iter();
               out_el.erase(out_i);
               break;
             }
@@ -726,10 +728,10 @@ namespace boost {
           typename Config::OutEdgeList::iterator in_i = in_el.begin();
           for (; in_i != in_el.end(); ++in_i)
             if (&(*in_i).get_property() == &p) {
-              g.m_edges.erase((*in_i).get_iter());
               in_el.erase(in_i);
-              return;
+              break;
             }
+          g.m_edges.erase(edge_iter_to_erase);
         }
       };
 
@@ -750,8 +752,10 @@ namespace boost {
           no_property* p = (no_property*)e.get_property();
           typename Config::OutEdgeList& out_el = g.out_edge_list(source(e, g));
           typename Config::OutEdgeList::iterator out_i = out_el.begin();
+          typename Config::EdgeIter edge_iter_to_erase;
           for (; out_i != out_el.end(); ++out_i)
             if (&(*out_i).get_property() == p) {
+              edge_iter_to_erase = (*out_i).get_iter();
               out_el.erase(out_i);
               break;
             }
@@ -759,10 +763,10 @@ namespace boost {
           typename Config::OutEdgeList::iterator in_i = in_el.begin();
           for (; in_i != in_el.end(); ++in_i)
             if (&(*in_i).get_property() == p) {
-              g.m_edges.erase((*in_i).get_iter());
               in_el.erase(in_i);
-              return;
+              break;
             }
+          g.m_edges.erase(edge_iter_to_erase);
         }
       };
 
@@ -801,6 +805,7 @@ namespace boost {
 
         typedef typename EdgeList::value_type StoredEdge;
         typename EdgeList::iterator i = el.find(StoredEdge(v)), end = el.end();
+        BOOST_ASSERT ((i != end));
         if (i != end) {
           g.m_edges.erase((*i).get_iter());
           el.erase(i);
@@ -981,29 +986,12 @@ namespace boost {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
-      {
-        typename Config::OutEdgeList& el = g.out_edge_list(u);
-        typename Config::OutEdgeList::iterator
-          ei = el.begin(), ei_end = el.end();
-        for (; ei != ei_end; ++ei) {
-          bool is_self_loop = (*ei).get_target() == u;
-          // Don't erase from our own incidence list in the case of a self-loop
-          // since we're clearing it anyway.
-          if (!is_self_loop) {
-            detail::erase_from_incidence_list
-              (g.out_edge_list((*ei).get_target()), u, Cat());
-          }
-        }
+      while (true) {
+        typename Config::out_edge_iterator ei, ei_end;
+        boost::tie(ei, ei_end) = out_edges(u, g);
+        if (ei == ei_end) break;
+        remove_edge(*ei, g);
       }
-      {
-        typename Config::OutEdgeList& el = g.out_edge_list(u);
-        typename Config::OutEdgeList::iterator
-          ei = el.begin(), ei_end = el.end();
-        for (; ei != ei_end; ++ei) {
-          g.m_edges.erase((*ei).get_iter());
-        }
-      }
-      g.out_edge_list(u).clear();
     }
     // O(1) for allow_parallel_edge_tag
     // O(log(E/V)) for disallow_parallel_edge_tag
