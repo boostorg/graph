@@ -13,7 +13,6 @@
 #include <list>
 #include <stack>
 #include <boost/config.hpp>
-#include <boost/utility.hpp>  //for next and prior
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 

@@ -14,7 +14,6 @@
 #include <boost/assert.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/utility.hpp>
 #include <boost/detail/algorithm.hpp>
 #include <boost/pending/indirect_cmp.hpp> // for make_indirect_pmap
 #include <boost/concept/assert.hpp>

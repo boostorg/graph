@@ -41,7 +41,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/utility.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
 
 namespace boost {

@@ -7,7 +7,7 @@
 #ifndef BOOST_GRAPH_CLUSTERING_COEFFICIENT_HPP
 #define BOOST_GRAPH_CLUSTERING_COEFFICIENT_HPP
 
-#include <boost/utility.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/lookup_edge.hpp>

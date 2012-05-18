@@ -9,7 +9,6 @@
 #define __IS_KURATOWSKI_SUBGRAPH_HPP__
 
 #include <boost/config.hpp>
-#include <boost/utility.hpp> //for next/prior
 #include <boost/tuple/tuple.hpp>   //for tie
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>

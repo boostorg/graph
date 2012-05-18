@@ -7,7 +7,7 @@
 #ifndef BOOST_GRAPH_ECCENTRICITY_HPP
 #define BOOST_GRAPH_ECCENTRICITY_HPP
 
-#include <boost/utility.hpp>
+#include <boost/next_prior.hpp>
 #include <boost/config.hpp>
 #include <boost/graph/detail/geodesic.hpp>
 #include <boost/concept/assert.hpp>
