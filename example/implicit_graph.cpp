@@ -460,7 +460,6 @@ int main (int argc, char const *argv[]) {
 
   // Create a small ring graph.
   ring_graph g(n);
-  const_edge_weight_map m = get(edge_weight, g);
 
   // Print the outgoing edges of all the vertices.  For n=5 this will print:
   //
