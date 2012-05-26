@@ -206,10 +206,12 @@ BOOST_AUTO_TEST_CASE(test_prgen_20_70_2)
   boost::associative_property_map<std::map<vertex_descriptor, std::size_t> > components(component);
   BOOST_CHECK_EQUAL(boost::connected_components(g, components), 1U); // verify the connectedness assumption
   
-  BOOST_AUTO(distances, (boost::make_shared_array_property_map(num_vertices(g), weight_type(0), get(boost::vertex_index, g))));
+  typedef boost::shared_array_property_map<weight_type, boost::property_map<undirected_graph, boost::vertex_index_t>::const_type> distances_type;
+  distances_type distances = boost::make_shared_array_property_map(num_vertices(g), weight_type(0), get(boost::vertex_index, g));
   typedef std::vector<vertex_descriptor>::size_type index_in_heap_type;
-  BOOST_AUTO(indicesInHeap, (boost::make_shared_array_property_map(num_vertices(g), index_in_heap_type(-1), get(boost::vertex_index, g))));
-  boost::d_ary_heap_indirect<vertex_descriptor, 22, BOOST_TYPEOF(indicesInHeap), BOOST_TYPEOF(distances), std::greater<weight_type> > pq(distances, indicesInHeap);
+  typedef boost::shared_array_property_map<index_in_heap_type, boost::property_map<undirected_graph, boost::vertex_index_t>::const_type> indicesInHeap_type;
+  indicesInHeap_type indicesInHeap = boost::make_shared_array_property_map(num_vertices(g), index_in_heap_type(-1), get(boost::vertex_index, g));
+  boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > pq(distances, indicesInHeap);
   
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g), boost::max_priority_queue(pq));
   BOOST_CHECK_EQUAL(w, 3407);

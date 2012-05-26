@@ -9,7 +9,7 @@
 #define __IS_STRAIGHT_LINE_DRAWING_HPP__
 
 #include <boost/config.hpp>
-#include <boost/utility.hpp> //for next and prior
+#include <boost/next_prior.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/property_map/property_map.hpp>

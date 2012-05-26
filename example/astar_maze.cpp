@@ -221,7 +221,7 @@ std::ostream& operator<<(std::ostream& output, const maze& m) {
       if (x == 0)
         output << BARRIER;
       // Put the character representing this point in the maze grid.
-      vertex_descriptor u = {{x, y}};
+      vertex_descriptor u = {{x, vertices_size_type(y)}};
       if (m.solution_contains(u))
         output << ".";
       else if (m.has_barrier(u))

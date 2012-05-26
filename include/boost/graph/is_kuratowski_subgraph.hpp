@@ -9,7 +9,6 @@
 #define __IS_KURATOWSKI_SUBGRAPH_HPP__
 
 #include <boost/config.hpp>
-#include <boost/utility.hpp> //for next/prior
 #include <boost/tuple/tuple.hpp>   //for tie
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
@@ -301,11 +300,11 @@ namespace boost
     
     if (target_graph == detail::tg_k_5)
       {
-        return isomorphism(K_5,contracted_graph);
+        return boost::isomorphism(K_5,contracted_graph);
       }
     else //target_graph == tg_k_3_3
       {
-        return isomorphism(K_3_3,contracted_graph);
+        return boost::isomorphism(K_3_3,contracted_graph);
       }
     
     

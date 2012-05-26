@@ -33,3 +33,6 @@ exe stoer_wagner : stoer_wagner.cpp ;
 exe bfs-example : bfs-example.cpp ;
 exe bfs-example2 : bfs-example2.cpp ;
 exe dfs-example : dfs-example.cpp ;
+exe adjacency_list_io : adjacency_list_io.cpp ;
+exe strong_components : strong_components.cpp ../build//boost_graph ;
+exe strong-components : strong-components.cpp ;

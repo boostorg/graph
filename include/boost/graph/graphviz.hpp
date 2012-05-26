@@ -29,6 +29,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/xpressive/xpressive_static.hpp>
+#include <boost/foreach.hpp>
 
 namespace boost {
 

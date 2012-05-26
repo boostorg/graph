@@ -46,22 +46,23 @@ int main(int, char*[])
   using namespace boost;
   const char* name = "abcdefghij";
 
-  GraphvizDigraph G;
-  read_graphviz("scc.dot", G);
+  adjacency_list<vecS, vecS, directedS> G;
+  dynamic_properties dp;
+  read_graphviz("scc.dot", G, dp);
 
   std::cout << "A directed graph:" << std::endl;
   print_graph(G, name);
   std::cout << std::endl;
 
-  typedef graph_traits<GraphvizGraph>::vertex_descriptor Vertex;
+  typedef graph_traits<adjacency_list<vecS, vecS, directedS> >::vertex_descriptor Vertex;
     
   std::vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
-  int num = strong_components(G, &component[0], 
-                              root_map(&root[0]).
-                              color_map(&color[0]).
-                              discover_time_map(&discover_time[0]));
+  int num = strong_components(G, make_iterator_property_map(component.begin(), get(vertex_index, G)), 
+                              root_map(make_iterator_property_map(root.begin(), get(vertex_index, G))).
+                              color_map(make_iterator_property_map(color.begin(), get(vertex_index, G))).
+                              discover_time_map(make_iterator_property_map(discover_time.begin(), get(vertex_index, G))));
     
   std::cout << "Total number of components: " << num << std::endl;
   std::vector<int>::size_type i;

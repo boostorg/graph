@@ -7,7 +7,6 @@
 #ifndef BOOST_GRAPH_DIRECTED_GRAPH_HPP
 #define BOOST_GRAPH_DIRECTED_GRAPH_HPP
 
-#include <boost/utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
 
