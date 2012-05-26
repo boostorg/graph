@@ -1134,7 +1134,6 @@ add_vertices(typename BOOST_DIR_CSR_GRAPH_TYPE::vertices_size_type count, BOOST_
   Vertex old_num_verts_plus_one = g.m_forward.m_rowstart.size();
   EdgeIndex numedges = g.m_forward.m_rowstart.back();
   g.m_forward.m_rowstart.resize(old_num_verts_plus_one + count, numedges);
-  g.m_backward.m_rowstart.resize(old_num_verts_plus_one + count, numedges);
   g.vertex_properties().resize(num_vertices(g));
   return old_num_verts_plus_one - 1;
 }

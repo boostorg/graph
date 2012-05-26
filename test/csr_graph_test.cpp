@@ -280,14 +280,13 @@ void graph_test(const OrigGraph& g)
 
   // Check edge_from_index (and implicitly the edge_index property map) for
   // each edge in g2
-  std::size_t last_src = 0, last_tgt = 0;
+  std::size_t last_src = 0;
   for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
     BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
     std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
-    std::size_t tgt = get(boost::vertex_index, g2, target(*ei, g2));
+    (void)(std::size_t)get(boost::vertex_index, g2, target(*ei, g2));
     BOOST_CHECK(src >= last_src);
     last_src = src;
-    last_tgt = tgt;
   }
 
   // Check out edge iteration and vertex iteration for sortedness

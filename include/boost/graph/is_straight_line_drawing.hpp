@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <vector>
 #include <set>
+#include <map>
 
 
 
@@ -34,12 +35,12 @@ namespace boost
   // defines how far away from the endpoints of s1 and s2 we want to consider
   // an intersection.
 
-  bool intersects(double x1, double y1,
-                  double x2, double y2,
-                  double a1, double b1,
-                  double a2, double b2,
-                  double epsilon = 0.000001
-                  )
+  inline bool intersects(double x1, double y1,
+                         double x2, double y2,
+                         double a1, double b1,
+                         double a2, double b2,
+                         double epsilon = 0.000001
+                         )
   {
 
     if (x1 - x2 == 0)

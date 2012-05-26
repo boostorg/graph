@@ -224,7 +224,7 @@ namespace detail
 
         // otherwise, iterate over candidates and and test
         // for maxmimal cliquiness.
-        typename Container::iterator i, j, end = cands.end();
+        typename Container::iterator i, j;
         for(i = cands.begin(); i != cands.end(); ) {
             Vertex candidate = *i;
 

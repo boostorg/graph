@@ -127,7 +127,7 @@ int test_main(int, char*[])
         graph_traits<Graph>::edge_iterator ei, ee;
         for (boost::tie(ei, ee) = edges(sub); ei != ee; ++ei) {
             // This used to segfault.
-            get(edge_weight, sub, *ei);
+            get(&arc::weight, sub, *ei);
         }
     }
 
