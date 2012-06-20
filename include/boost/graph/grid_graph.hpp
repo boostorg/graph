@@ -17,7 +17,6 @@
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/limits.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
@@ -63,14 +62,14 @@ namespace boost {
     grid_graph_index_map() { }
 
     grid_graph_index_map(const Graph& graph) :
-      m_graph(make_shared<Graph>(graph)) { }
+      m_graph(&graph) { }
 
     value_type operator[](key_type key) const {
       return (m_graph->index_of(key));
     }
 
   protected:
-    shared_ptr<Graph> m_graph;
+    const Graph* m_graph;
   };
 
   template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
