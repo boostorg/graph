@@ -929,6 +929,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
   {
     m_forward.assign(g, vi, numverts, numedges);
     inherited_vertex_properties::resize(numverts);
+    set_up_backward_property_links();
   }
 
   // Requires the above, plus VertexListGraph and EdgeListGraph
@@ -942,6 +943,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
     vertices_size_type numverts = num_vertices(g);
     m_forward.assign(g, vi, numverts, numedges);
     inherited_vertex_properties::resize(numverts);
+    set_up_backward_property_links();
   }
 
   // Requires the above, plus a vertex_index map.
@@ -955,125 +957,7 @@ class compressed_sparse_row_graph<bidirectionalS, VertexProperty, EdgeProperty, 
     vertices_size_type numverts = num_vertices(g);
     m_forward.assign(g, get(vertex_index, g), numverts, numedges);
     inherited_vertex_properties::resize(numverts);
-  }
-
-  // Add edges from a sorted (smallest sources first) range of pairs and edge
-  // properties
-  template <typename BidirectionalIteratorOrig, typename EPIterOrig,
-            typename GlobalToLocal>
-  void
-  add_edges_sorted_internal(
-      BidirectionalIteratorOrig first_sorted,
-      BidirectionalIteratorOrig last_sorted,
-      EPIterOrig ep_iter_sorted,
-      const GlobalToLocal& global_to_local) {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, global_to_local);
-  }
-
-  template <typename BidirectionalIteratorOrig, typename EPIterOrig>
-  void
-  add_edges_sorted_internal(
-      BidirectionalIteratorOrig first_sorted,
-      BidirectionalIteratorOrig last_sorted,
-      EPIterOrig ep_iter_sorted)  {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, typed_identity_property_map<Vertex>());
-  }
-
-  // Add edges from a sorted (smallest sources first) range of pairs
-  template <typename BidirectionalIteratorOrig>
-  void
-  add_edges_sorted_internal(
-      BidirectionalIteratorOrig first_sorted,
-      BidirectionalIteratorOrig last_sorted) {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<edge_bundled>());
-  }
-
-  template <typename BidirectionalIteratorOrig, typename GlobalToLocal>
-  void
-  add_edges_sorted_internal_global(
-      BidirectionalIteratorOrig first_sorted,
-      BidirectionalIteratorOrig last_sorted,
-      const GlobalToLocal& global_to_local) {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, detail::default_construct_iterator<edge_bundled>(), global_to_local);
-  }
-
-  template <typename BidirectionalIteratorOrig, typename EPIterOrig,
-            typename GlobalToLocal>
-  void
-  add_edges_sorted_internal_global(
-      BidirectionalIteratorOrig first_sorted,
-      BidirectionalIteratorOrig last_sorted,
-      EPIterOrig ep_iter_sorted,
-      const GlobalToLocal& global_to_local) {
-    m_forward.add_edges_sorted_internal(first_sorted, last_sorted, ep_iter_sorted, global_to_local);
-  }
-
-  // Add edges from a range of (source, target) pairs that are unsorted
-  template <typename InputIterator, typename GlobalToLocal>
-  inline void
-  add_edges_internal(InputIterator first, InputIterator last,
-                     const GlobalToLocal& global_to_local) {
-    typedef compressed_sparse_row_graph Graph;
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
-    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
-    typedef std::vector<std::pair<vertex_t, vertex_t> > edge_vector_t;
-    edge_vector_t new_edges(first, last);
-    if (new_edges.empty()) return;
-    std::sort(new_edges.begin(), new_edges.end());
-    this->add_edges_sorted_internal_global(new_edges.begin(), new_edges.end(), global_to_local);
-  }
-
-  template <typename InputIterator>
-  inline void
-  add_edges_internal(InputIterator first, InputIterator last) {
-    this->add_edges_internal(first, last, typed_identity_property_map<Vertex>());
-  }
-
-  // Add edges from a range of (source, target) pairs and edge properties that
-  // are unsorted
-  template <typename InputIterator, typename EPIterator, typename GlobalToLocal>
-  inline void
-  add_edges_internal(InputIterator first, InputIterator last,
-                     EPIterator ep_iter, EPIterator ep_iter_end,
-                     const GlobalToLocal& global_to_local) {
-    typedef compressed_sparse_row_graph Graph;
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-    typedef typename boost::graph_traits<Graph>::vertices_size_type vertex_num;
-    typedef typename boost::graph_traits<Graph>::edges_size_type edge_num;
-    typedef std::pair<vertex_t, vertex_t> vertex_pair;
-    typedef std::vector<
-              boost::tuple<vertex_pair,
-                           edge_bundled> >
-      edge_vector_t;
-    edge_vector_t new_edges
-      (boost::make_zip_iterator(boost::make_tuple(first, ep_iter)),
-       boost::make_zip_iterator(boost::make_tuple(last, ep_iter_end)));
-    if (new_edges.empty()) return;
-    std::sort(new_edges.begin(), new_edges.end(),
-              boost::detail::compare_first<
-                std::less<vertex_pair> >());
-    m_forward.add_edges_sorted_internal
-      (boost::make_transform_iterator(
-         new_edges.begin(),
-         boost::detail::my_tuple_get_class<0, vertex_pair>()),
-       boost::make_transform_iterator(
-         new_edges.end(),
-         boost::detail::my_tuple_get_class<0, vertex_pair>()),
-       boost::make_transform_iterator(
-         new_edges.begin(),
-         boost::detail::my_tuple_get_class
-           <1, edge_bundled>()),
-       global_to_local);
-  }
-
-  // Add edges from a range of (source, target) pairs and edge properties that
-  // are unsorted
-  template <typename InputIterator, typename EPIterator>
-  inline void
-  add_edges_internal(InputIterator first, InputIterator last,
-                     EPIterator ep_iter, EPIterator ep_iter_end) {
-    this->add_edges_internal(first, last, ep_iter, ep_iter_end, typed_identity_property_map<Vertex>());
+    set_up_backward_property_links();
   }
 
   using inherited_vertex_properties::operator[];

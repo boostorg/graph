@@ -21,6 +21,8 @@
 
 using namespace boost;
 
+namespace {
+
 class graphml_reader
 {
 public:
@@ -201,6 +203,8 @@ private:
     std::map<std::string, any> m_vertex;
     std::vector<any> m_edge;
 };
+
+}
 
 namespace boost
 {
