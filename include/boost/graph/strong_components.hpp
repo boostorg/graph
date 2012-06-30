@@ -131,7 +131,7 @@ namespace boost {
 
 
     template <>
-    struct strong_comp_dispatch2<detail::error_property_not_found> {
+    struct strong_comp_dispatch2<param_not_found> {
       template <class Graph, class ComponentMap, class RootMap,
                 class P, class T, class R>
       inline static typename property_traits<ComponentMap>::value_type
@@ -139,7 +139,7 @@ namespace boost {
             ComponentMap comp,
             RootMap r_map,
             const bgl_named_params<P, T, R>& params,
-            detail::error_property_not_found)
+            param_not_found)
       {
         typedef typename graph_traits<Graph>::vertices_size_type size_type;
         size_type       n = num_vertices(g) > 0 ? num_vertices(g) : 1;
@@ -179,7 +179,7 @@ namespace boost {
       }
     };
     template <>
-    struct strong_comp_dispatch1<detail::error_property_not_found> {
+    struct strong_comp_dispatch1<param_not_found> {
 
       template <class Graph, class ComponentMap, 
                 class P, class T, class R>
@@ -187,7 +187,7 @@ namespace boost {
       apply(const Graph& g,
             ComponentMap comp,
             const bgl_named_params<P, T, R>& params,
-            detail::error_property_not_found)
+            param_not_found)
       {
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
         typename std::vector<Vertex>::size_type

@@ -95,6 +95,7 @@ void generate_random_digraph(Graph& g, double edge_probability)
 
 void test_isomorphism2()
 {
+  using namespace boost::graph::keywords;
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph1;
   typedef adjacency_list<listS, listS, bidirectionalS,
                          property<vertex_index_t, int> > graph2;
@@ -115,8 +116,8 @@ void test_isomorphism2()
 
   bool isomorphism_correct;
   clock_t start = clock();
-  BOOST_CHECK(isomorphism_correct = isomorphism
-               (g1, g2, isomorphism_map(make_assoc_property_map(mapping))));
+  BOOST_CHECK(isomorphism_correct = boost::graph::isomorphism
+               (g1, g2, _isomorphism_map = make_assoc_property_map(mapping)));
   clock_t end = clock();
 
   std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
@@ -152,6 +153,7 @@ void test_isomorphism2()
 
 void test_isomorphism(int n, double edge_probability)
 {
+  using namespace boost::graph::keywords;
   typedef adjacency_list<vecS, vecS, bidirectionalS> graph1;
   typedef adjacency_list<listS, listS, bidirectionalS,
                          property<vertex_index_t, int> > graph2;
@@ -171,8 +173,8 @@ void test_isomorphism(int n, double edge_probability)
 
   bool isomorphism_correct;
   clock_t start = clock();
-  BOOST_CHECK(isomorphism_correct = isomorphism
-               (g1, g2, isomorphism_map(make_assoc_property_map(mapping))));
+  BOOST_CHECK(isomorphism_correct = boost::graph::isomorphism
+               (g1, g2, _isomorphism_map = make_assoc_property_map(mapping)));
   clock_t end = clock();
 
   std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;

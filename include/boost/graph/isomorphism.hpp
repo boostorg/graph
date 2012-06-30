@@ -470,39 +470,68 @@ fi_adj_loop_k:++fi_adj.first;
                          index_map1, index_map2
                          );  
     }  
+
+    template <typename G, typename Index>
+    struct make_degree_invariant {
+      const G& g;
+      const Index& index;
+      make_degree_invariant(const G& g, const Index& index): g(g), index(index) {}
+      typedef typename boost::graph_traits<G>::degree_size_type degree_size_type;
+      typedef shared_array_property_map<degree_size_type, Index> prop_map_type;
+      typedef degree_vertex_invariant<prop_map_type, G> result_type;
+      result_type operator()() const {
+        prop_map_type pm = make_shared_array_property_map(num_vertices(g), degree_size_type(), index);
+        compute_in_degree(g, pm);
+        return result_type(pm, g);
+      }
+    };
    
   } // namespace detail
 
+  namespace graph {
+    namespace detail {
+      template <typename Graph1, typename Graph2>
+      struct isomorphism_impl {
+        typedef bool result_type;
+        template <typename ArgPack>
+        bool operator()(const Graph1& g1, const Graph2& g2, const ArgPack& arg_pack) const {
+          using namespace boost::graph::keywords;
+          typedef typename boost::detail::override_const_property_result<ArgPack, tag::vertex_index1_map, boost::vertex_index_t, Graph1>::type index1_map_type;
+          typedef typename boost::detail::override_const_property_result<ArgPack, tag::vertex_index2_map, boost::vertex_index_t, Graph2>::type index2_map_type;
+          index1_map_type index1_map = boost::detail::override_const_property(arg_pack, _vertex_index1_map, g1, boost::vertex_index);
+          index2_map_type index2_map = boost::detail::override_const_property(arg_pack, _vertex_index2_map, g2, boost::vertex_index);
+          typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
+          typename std::vector<vertex2_t>::size_type n = (typename std::vector<vertex2_t>::size_type)num_vertices(g1);
+          std::vector<vertex2_t> f(n);
+          typename boost::parameter::lazy_binding<
+                     ArgPack,
+                     tag::vertex_invariant1,
+                     boost::detail::make_degree_invariant<Graph1, index1_map_type> >::type
+            invariant1 =
+              arg_pack[_vertex_invariant1 || boost::detail::make_degree_invariant<Graph1, index1_map_type>(g1, index1_map)];
+          typename boost::parameter::lazy_binding<
+                     ArgPack,
+                     tag::vertex_invariant2,
+                     boost::detail::make_degree_invariant<Graph2, index2_map_type> >::type
+            invariant2 =
+              arg_pack[_vertex_invariant2 || boost::detail::make_degree_invariant<Graph2, index2_map_type>(g2, index2_map)];
+          return boost::isomorphism
+                   (g1, g2,
+                    choose_param(arg_pack[_isomorphism_map | boost::param_not_found()],
+                                 make_shared_array_property_map(num_vertices(g1), vertex2_t(), index1_map)),
+                    invariant1,
+                    invariant2,
+                    arg_pack[_vertex_max_invariant | (invariant2.max)()],
+                    index1_map,
+                    index2_map);
+        }
+      };
+    }
+    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+  }
 
   // Named parameter interface
-  template <typename Graph1, typename Graph2, class P, class T, class R>
-  bool isomorphism(const Graph1& g1,
-                   const Graph2& g2,
-                   const bgl_named_params<P,T,R>& params)
-  {
-    typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
-    typename std::vector<vertex2_t>::size_type n = num_vertices(g1);
-    std::vector<vertex2_t> f(n);
-    return detail::isomorphism_impl
-      (g1, g2, 
-       choose_param(get_param(params, vertex_isomorphism_t()),
-                    make_safe_iterator_property_map(f.begin(), f.size(),
-                                                    choose_const_pmap(get_param(params, vertex_index1),
-                                                                      g1, vertex_index), vertex2_t())),
-       choose_const_pmap(get_param(params, vertex_index1), g1, vertex_index),
-       choose_const_pmap(get_param(params, vertex_index2), g2, vertex_index),
-       params
-       );
-  }
-
-  // All defaults interface
-  template <typename Graph1, typename Graph2>
-  bool isomorphism(const Graph1& g1, const Graph2& g2)
-  {
-    return isomorphism(g1, g2,
-                       bgl_named_params<int, buffer_param_t>(0));// bogus named param
-  }
-
+  BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
 
   // Verify that the given mapping iso_map from the vertices of g1 to the
   // vertices of g2 describes an isomorphism.

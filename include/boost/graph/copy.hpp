@@ -280,7 +280,7 @@ namespace boost {
       typedef choose_copier_parameter type;
     };
     template <>
-    struct choose_edge_copy<detail::error_property_not_found> {
+    struct choose_edge_copy<param_not_found> {
       typedef choose_default_edge_copier type;
     };
     template <class Param, class G1, class G2>
@@ -314,7 +314,7 @@ namespace boost {
       typedef choose_copier_parameter type;
     };
     template <>
-    struct choose_vertex_copy<detail::error_property_not_found> {
+    struct choose_vertex_copy<param_not_found> {
       typedef choose_default_vertex_copier type;
     };
     template <class Param, class G1, class G2>
