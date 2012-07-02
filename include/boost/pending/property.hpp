@@ -8,6 +8,7 @@
 
 #include <boost/mpl/bool.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 
@@ -29,10 +30,19 @@ namespace boost {
   };
 
   // Kinds of properties
+  namespace graph_introspect_detail {
+    BOOST_MPL_HAS_XXX_TRAIT_DEF(kind)
+    template <typename T, bool Cond> struct get_kind {typedef void type;};
+    template <typename T> struct get_kind<T, true> {typedef typename T::kind type;};
+  }
+
+  // Having a default is to make this trait work for any type, not just valid
+  // properties, to work around VC++ <= 10 bugs related to SFINAE in
+  // compressed_sparse_row_graph's get functions and similar
   template <class PropertyTag>
-  struct property_kind {
-    typedef typename PropertyTag::kind type;
-  };
+  struct property_kind:
+    graph_introspect_detail::get_kind<PropertyTag, graph_introspect_detail::has_kind<PropertyTag>::value>
+  {};
 
   // Some standard properties defined independently of Boost.Graph:
   enum vertex_all_t {vertex_all};
