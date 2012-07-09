@@ -139,7 +139,7 @@ public:
   euclidean_heuristic(vertex_descriptor goal):m_goal(goal) {};
 
   double operator()(vertex_descriptor v) {
-    return sqrt(pow(m_goal[0] - v[0], 2) + pow(m_goal[1] - v[1], 2));
+    return sqrt(pow(double(m_goal[0] - v[0]), 2) + pow(double(m_goal[1] - v[1]), 2));
   }
 
 private:
