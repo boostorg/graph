@@ -224,7 +224,7 @@ int test_main(int argc, char* argv[])
   diGraphInt tg;
   property_map<diGraphInt, vertex_index_t>::type vim = get(vertex_index, tg);
   property_map<diGraphInt, edge_weight_t>::type ew1m = get(edge_weight, tg);
-  property_map<diGraphInt, edge_weight2_t>::type ew2m = ew2m;
+  property_map<diGraphInt, edge_weight2_t>::type ew2m = get(edge_weight2, tg);
 
 
 
