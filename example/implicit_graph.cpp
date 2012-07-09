@@ -95,6 +95,12 @@ namespace boost {
     typedef edge_weight_map type;
     typedef edge_weight_map const_type;
   };
+
+  template<>
+  struct property_map< const ring_graph, edge_weight_t > {
+    typedef edge_weight_map type;
+    typedef edge_weight_map const_type;
+  };
 }
 
 // Tag values that specify the traversal type in graph::traversal_category.
@@ -374,7 +380,7 @@ edges_size_type num_edges(const ring_graph& g) {
 // AdjacencyMatrix valid expressions
 std::pair<edge_descriptor, bool>
 edge(vertex_descriptor u, vertex_descriptor v, const ring_graph& g) {
-  if (abs(u-v) == 1 &&
+  if ((u == v + 1 || v == u + 1) &&
       u >= 0 && u < num_vertices(g) && v >= 0 && v < num_vertices(g))
     return std::pair<edge_descriptor, bool>(edge_descriptor(u, v), true);
   else
