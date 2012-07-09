@@ -43,6 +43,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
+#include <boost/mpl/print.hpp>
 
 namespace boost {
 
@@ -1284,21 +1285,50 @@ get_property(const BOOST_CSR_GRAPH_TYPE& g, Tag tag)
   return get_property_value(g.m_property, tag);
 }
 
+template <typename G, typename Tag, typename Kind>
+struct csr_property_map_helper {};
+// Kind == void for invalid property tags, so we can use that to SFINAE out
+
 template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
-struct property_map<BOOST_CSR_GRAPH_TYPE, Tag> {
-  typedef typename detail::property_kind_from_graph<BOOST_CSR_GRAPH_TYPE, Tag>::type kind;
-  typedef typename boost::mpl::if_<
-            boost::is_same<kind, vertex_property_tag>,
-            vertex_all_t,
-            typename boost::mpl::if_<
-              boost::is_same<kind, edge_property_tag>,
-              edge_all_t,
-              graph_all_t>::type>::type all_tag;
-  typedef typename property_traits<typename property_map<BOOST_CSR_GRAPH_TYPE, all_tag>::type>::key_type key_type;
-  typedef typename property_traits<typename property_map<BOOST_CSR_GRAPH_TYPE, all_tag>::type>::value_type plist_type;
-  typedef transform_value_property_map<detail::lookup_one_property_f<plist_type, Tag>, typename property_map<BOOST_CSR_GRAPH_TYPE, all_tag>::type> type;
-  typedef transform_value_property_map<detail::lookup_one_property_f<const plist_type, Tag>, typename property_map<BOOST_CSR_GRAPH_TYPE, all_tag>::const_type> const_type;
+struct csr_property_map_helper<BOOST_CSR_GRAPH_TYPE, Tag, vertex_property_tag> {
+  typedef vertex_all_t all_tag;
+  typedef typename property_traits<typename property_map<BOOST_CSR_GRAPH_TYPE, vertex_all_t>::type>::key_type key_type;
+  typedef VertexProperty plist_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, vertex_all_t>::type all_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, vertex_all_t>::const_type all_const_type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<plist_type, Tag>, all_type> type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<const plist_type, Tag>, all_const_type> const_type;
 };
+
+template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
+struct csr_property_map_helper<BOOST_CSR_GRAPH_TYPE, Tag, edge_property_tag> {
+  typedef edge_all_t all_tag;
+  typedef typename property_traits<typename property_map<BOOST_CSR_GRAPH_TYPE, edge_all_t>::type>::key_type key_type;
+  typedef EdgeProperty plist_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, edge_all_t>::type all_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, edge_all_t>::const_type all_const_type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<plist_type, Tag>, all_type> type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<const plist_type, Tag>, all_const_type> const_type;
+};
+
+template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
+struct csr_property_map_helper<BOOST_CSR_GRAPH_TYPE, Tag, graph_property_tag> {
+  typedef graph_all_t all_tag;
+  typedef BOOST_CSR_GRAPH_TYPE* key_type;
+  typedef GraphProperty plist_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::type all_type;
+  typedef typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::const_type all_const_type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<plist_type, Tag>, all_type> type;
+  typedef transform_value_property_map<detail::lookup_one_property_f<const plist_type, Tag>, all_const_type> const_type;
+};
+
+template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
+struct property_map<BOOST_CSR_GRAPH_TYPE, Tag>:
+  csr_property_map_helper<
+    BOOST_CSR_GRAPH_TYPE,
+    Tag,
+    typename detail::property_kind_from_graph<BOOST_CSR_GRAPH_TYPE, Tag>
+               ::type> {};
 
 template <BOOST_CSR_GRAPH_TEMPLATE_PARMS, typename Tag>
 typename property_map<BOOST_CSR_GRAPH_TYPE, Tag>::type
@@ -1365,6 +1395,13 @@ struct property_map<BOOST_CSR_GRAPH_TYPE, edge_all_t>
 {
   typedef typename BOOST_CSR_GRAPH_TYPE::forward_type::inherited_edge_properties::edge_map_type type;
   typedef typename BOOST_CSR_GRAPH_TYPE::forward_type::inherited_edge_properties::const_edge_map_type const_type;
+};
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+struct property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>
+{
+  typedef boost::ref_property_map<BOOST_CSR_GRAPH_TYPE*, typename BOOST_CSR_GRAPH_TYPE::graph_property_type> type;
+  typedef boost::ref_property_map<BOOST_CSR_GRAPH_TYPE*, const typename BOOST_CSR_GRAPH_TYPE::graph_property_type> const_type;
 };
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
@@ -1511,6 +1548,48 @@ put(edge_all_t,
     const EdgeProperty& val)
 {
   put(get(edge_all, g), e, val);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::type
+get(graph_all_t, BOOST_CSR_GRAPH_TYPE& g)
+{
+  return typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::type(g.m_property);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::const_type
+get(graph_all_t, const BOOST_CSR_GRAPH_TYPE& g)
+{
+  return typename property_map<BOOST_CSR_GRAPH_TYPE, graph_all_t>::const_type(g.m_property);
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline GraphProperty&
+get(graph_all_t,
+    BOOST_CSR_GRAPH_TYPE& g,
+    BOOST_CSR_GRAPH_TYPE*)
+{
+  return g.m_property;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline const GraphProperty&
+get(graph_all_t,
+    const BOOST_CSR_GRAPH_TYPE& g,
+    BOOST_CSR_GRAPH_TYPE*)
+{
+  return g.m_property;
+}
+
+template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
+inline void
+put(graph_all_t,
+    BOOST_CSR_GRAPH_TYPE& g,
+    BOOST_CSR_GRAPH_TYPE*,
+    const GraphProperty& val)
+{
+  g.m_property = val;
 }
 
 #undef BOOST_CSR_GRAPH_TYPE
