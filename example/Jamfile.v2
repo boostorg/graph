@@ -41,3 +41,5 @@ exe undirected_graph : undirected_graph.cpp ;
 exe two_graphs_common_spanning_trees : two_graphs_common_spanning_trees.cpp ;
 exe strong_components : strong_components.cpp ../build//boost_graph ;
 exe strong-components : strong-components.cpp ;
+exe subgraph : subgraph.cpp ;
+exe subgraph_properties : subgraph_properties.cpp ;
