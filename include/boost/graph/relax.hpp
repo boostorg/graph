@@ -49,8 +49,9 @@ namespace boost {
       Vertex u = source(e, g), v = target(e, g);
       typedef typename property_traits<DistanceMap>::value_type D;
       typedef typename property_traits<WeightMap>::value_type W;
-      D d_u = get(d, u), d_v = get(d, v);
-      W w_e = get(w, e);
+      const D d_u = get(d, u);
+      const D d_v = get(d, v);
+      const W& w_e = get(w, e);
       
       // The redundant gets in the return statements are to ensure that extra
       // floating-point precision in x87 registers does not lead to relax()
