@@ -161,7 +161,8 @@ IN: <tt>double learning_constant_final</tt>
 IN: <tt>VertexIndexMap vertex_index_map</tt> 
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
-    num_vertices(g))</tt>. 
+    num_vertices(g))</tt>. This is only necessary when no
+    displacement map is provided. 
   The type <tt>VertexIndexMap</tt> must be a model of <a
   href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The value type of the map must be an integer type. The
@@ -176,9 +177,7 @@ IN: <tt>VertexIndexMap vertex_index_map</tt>
 
 IN: <tt>EdgeWeightMap weight</tt> 
 <blockquote>
-  This maps each edge to an weight.
-    num_vertices(g))</tt>. This is only necessary when no
-    displacement map is provided. 
+  This maps each edge to a weight.
   The type <tt>EdgeWeightMap</tt> must be a model of <a
   href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The value type of the map must be an floating-point type
@@ -221,7 +220,7 @@ Equivalent to the non-named <tt>vertex_index_map</tt> parameter.<br>
 <b>Default:</b> <tt>get(vertex_index, g)</tt>
     Note: if you use this default, make sure your graph has
     an internal <tt>vertex_index</tt> property. For example,
-    <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
+    <tt>adjacency_list</tt> with <tt>VertexList=listS</tt> does
     not have an internal <tt>vertex_index</tt> property.
 </blockquote>
 
