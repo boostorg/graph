@@ -11,6 +11,7 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/static_assert.hpp>
 
 namespace boost {
 
@@ -53,7 +54,7 @@ namespace boost {
   enum graph_bundle_t {graph_bundle};
 
   // Code to look up one property in a property list:
-  template <typename PList, typename PropName>
+  template <typename PList, typename PropName, typename Enable = void>
   struct lookup_one_property_internal {BOOST_STATIC_CONSTANT(bool, found = false);};
 
   // Special-case properties (vertex_all, edge_all, graph_all)
@@ -135,12 +136,12 @@ namespace boost {
 
   // Pointer-to-member access to bundled properties
 #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
-  template <typename T, typename R>
-  struct lookup_one_property_internal<T, R T::*> {
+  template <typename T, typename TMaybeBase, typename R>
+  struct lookup_one_property_internal<T, R TMaybeBase::*, typename enable_if<is_base_of<TMaybeBase, T> >::type> {
     BOOST_STATIC_CONSTANT(bool, found = true);
     typedef R type;
-    static R& lookup(T& x, R T::*ptr) {return x.*ptr;}
-    static const R& lookup(const T& x, R T::*ptr) {return x.*ptr;}
+    static R& lookup(T& x, R TMaybeBase::*ptr) {return x.*ptr;}
+    static const R& lookup(const T& x, R TMaybeBase::*ptr) {return x.*ptr;}
   };
 #endif
 
