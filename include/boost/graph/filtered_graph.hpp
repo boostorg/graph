@@ -210,7 +210,7 @@ namespace boost {
 
     static vertex_descriptor null_vertex()
     {
-       return Graph::null_vertex();
+       return Traits::null_vertex();
     }
 
     //private:
