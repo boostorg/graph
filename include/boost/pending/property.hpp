@@ -55,7 +55,7 @@ namespace boost {
 
   // Code to look up one property in a property list:
   template <typename PList, typename PropName, typename Enable = void>
-  struct lookup_one_property_internal {BOOST_STATIC_CONSTANT(bool, found = false);};
+  struct lookup_one_property_internal {BOOST_STATIC_CONSTANT(bool, found = false); typedef void type;};
 
   // Special-case properties (vertex_all, edge_all, graph_all)
 #define BGL_ALL_PROP(tag) \
