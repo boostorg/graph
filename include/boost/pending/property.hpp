@@ -123,12 +123,14 @@ namespace boost {
     typedef lookup_one_property_internal<Base, PropName> base_type;
     public:
     template <typename PL>
-    static typename enable_if<is_same<PL, boost::property<Tag, T, Base> >, typename base_type::type&>::type
+    static typename lazy_enable_if<is_same<PL, boost::property<Tag, T, Base> >,
+                                   add_reference<typename base_type::type> >::type
     lookup(PL& prop, const PropName& tag) {
       return base_type::lookup(prop.m_base, tag);
     }
     template <typename PL>
-    static typename enable_if<is_same<PL, boost::property<Tag, T, Base> >, const typename base_type::type&>::type
+    static typename lazy_enable_if<is_same<PL, boost::property<Tag, T, Base> >,
+                                   add_reference<const typename base_type::type> >::type
     lookup(const PL& prop, const PropName& tag) {
       return base_type::lookup(prop.m_base, tag);
     }
