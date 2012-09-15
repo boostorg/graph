@@ -156,7 +156,8 @@ namespace boost {
     BOOST_STATIC_CONSTANT(bool, found = (lookup_one_property_internal<T, Tag>::found));
     typedef const typename lookup_one_property_internal<T, Tag>::type type;
     template <typename U>
-    static typename enable_if<is_same<T, U>, const typename lookup_one_property_internal<T, Tag>::type&>::type
+    static typename lazy_enable_if<is_same<T, U>,
+                                   add_reference<const typename lookup_one_property_internal<T, Tag>::type> >::type
     lookup(const U& p, Tag tag) {
       return lookup_one_property_internal<T, Tag>::lookup(p, tag);
     }
