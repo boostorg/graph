@@ -94,8 +94,14 @@ namespace boost {
     private: \
     typedef lookup_one_property_internal<Base, BOOST_JOIN(kind, _bundle_t)> base_type; \
     public: \
-    static typename base_type::type& lookup(property<Tag, T, Base>& p, BOOST_JOIN(kind, _bundle_t)) {return base_type::lookup(p.m_base, BOOST_JOIN(kind, _bundle_t)());} \
-    static const typename base_type::type& lookup(const property<Tag, T, Base>& p, BOOST_JOIN(kind, _bundle_t)) {return base_type::lookup(p.m_base, BOOST_JOIN(kind, _bundle_t)());} \
+    template <typename BundleTag> \
+    static typename lazy_enable_if_c<(base_type::found && (is_same<BundleTag, BOOST_JOIN(kind, _bundle_t)>::value)), \
+                                     add_reference<typename base_type::type> >::type \
+    lookup(property<Tag, T, Base>& p, BundleTag) {return base_type::lookup(p.m_base, BOOST_JOIN(kind, _bundle_t)());} \
+    template <typename BundleTag> \
+    static typename lazy_enable_if_c<(base_type::found && (is_same<BundleTag, BOOST_JOIN(kind, _bundle_t)>::value)), \
+                                     add_reference<const typename base_type::type> >::type \
+    lookup(const property<Tag, T, Base>& p, BundleTag) {return base_type::lookup(p.m_base, BOOST_JOIN(kind, _bundle_t)());} \
   }; \
 
   BGL_DO_ONE_BUNDLE_TYPE(vertex)
