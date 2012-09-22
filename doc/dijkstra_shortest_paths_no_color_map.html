@@ -69,7 +69,7 @@ Algorithms</A> for some background to the shortest-path problem.
 </P>
 
 <P>
-	<tt>dijkstra_shortest_paths_no_color_map</tt> differs from the original <tt>dijkstra_shortest_paths</tt> algorithm by not using a color map to identify vertices as discovered or undiscovered.  Instead, this is done with the distance map: a vertex <i>u</i> such that <i>distance_compare(distance_map[u], distance_infinity) == false</i> is considered to be undiscovered.
+	<tt>dijkstra_shortest_paths_no_color_map</tt> differs from the original <tt>dijkstra_shortest_paths</tt> algorithm by not using a color map to identify vertices as discovered or undiscovered.  Instead, this is done with the distance map: a vertex <i>u</i> such that <i>distance_compare(distance_map[u], distance_infinity) == false</i> is considered to be undiscovered.  Note that this means that edges with infinite weight will not work correctly in this algorithm.
 </P>
 
 <P>
@@ -116,10 +116,6 @@ indicated by the labels on the right.
 <td valign="top">
 <pre>
 DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
-  <b>for</b> each vertex <i>u in V</i> <b>(This loop is not run in dijkstra_shortest_paths_no_color_map_no_init)</b>
-    <i>d[u] := infinity</i> 
-    <i>p[u] := u</i> 
-  <b>end for</b>
   <i>d[s] := 0</i> 
   INSERT(<i>Q</i>, <i>s</i>)
   <b>while</b> (<i>Q != &Oslash;</i>)
@@ -140,10 +136,6 @@ DIJKSTRA(<i>G</i>, <i>s</i>, <i>w</i>)
 </td>
 <td valign="top">
 <pre>
-
-initialize vertex <i>u</i>
-
-
 
 
 discover vertex <i>s</i>
@@ -293,7 +285,9 @@ IN: <tt>distance_inf(D distance_infinity)</tt>
 <blockquote>
   The <tt>distance_infinity</tt> object must be the greatest value of any <tt>D</tt> object.
   That is, <tt>distance_compare(d, distance_infinity) == true</tt> for any <tt>d != distance_infinity</tt>.
-  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
+  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.  All edges
+  are assumed to have weight less than (by <tt>distance_compare</tt>) this
+  value.<br>
   <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt><br>
 </blockquote>
 
