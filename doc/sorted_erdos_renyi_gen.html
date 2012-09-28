@@ -63,7 +63,7 @@ graphs, suitable for initializing an <a
 href="adjacency_list.html"><tt>adjacency_list</tt></a> or other graph
 structure with iterator-based initialization. An Erd&ouml;s-Renyi
 graph <em>G = (n, p)</em> is a graph with <em>n</em> vertices
-that. The probability of having an edge <em>(u, v)</em> in <em>G</em>
+such that the probability of having an edge <em>(u, v)</em> in <em>G</em>
 is <em>p</em> for any vertices <em>u</em> and <em>v</em>. Typically,
 there are no self-loops, but the generator can optionally introduce
 self-loops with probability <em>p</em>.</p>
@@ -93,7 +93,7 @@ sorted_erdos_renyi_iterator(RandomGenerator&amp; gen, vertices_size_type n,
 Constructs an Erd&ouml;s-Renyi generator iterator that creates a
 graph with <tt>n</tt> vertices and a given <tt>probability</tt> of the
 total number of edges that a simple graph may have.
-<tt>probability</tt>. Random vertices and edges are selected using the
+Random vertices and edges are selected using the
 random number generator <tt>gen</tt>. Self-loops are permitted only when
 <tt>allow_self_loops</tt> is <tt>true</tt>.
 </blockquote>

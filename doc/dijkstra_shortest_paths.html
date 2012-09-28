@@ -330,7 +330,9 @@ IN: <tt>distance_inf(D inf)</tt>
 <blockquote>
   The <tt>inf</tt> object must be the greatest value of any <tt>D</tt> object.
   That is, <tt>compare(d, inf) == true</tt> for any <tt>d != inf</tt>.
-  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.<br>
+  The type <tt>D</tt> is the value type of the <tt>DistanceMap</tt>.  Edges
+  are assumed to have a weight less than (using <tt>distance_compare</tt> for
+  comparison) this value.<br>
   <b>Default:</b> <tt>std::numeric_limits&lt;D&gt;::max()</tt><br>
 
   <b>Python</b>: Unsupported parameter.

@@ -17,8 +17,6 @@
 #include <boost/random.hpp>
 #include <boost/test/minimal.hpp>
 
-#define DIMENSIONS 3
-
 using namespace boost;
 
 // Function that prints a vertex to std::cout
@@ -28,11 +26,11 @@ void print_vertex(Vertex vertex_to_print) {
   std::cout << "(";
 
   for (std::size_t dimension_index = 0;
-       dimension_index < DIMENSIONS;
+       dimension_index < vertex_to_print.size();
        ++dimension_index) {
     std::cout << vertex_to_print[dimension_index];
 
-    if (dimension_index != (DIMENSIONS - 1)) {
+    if (dimension_index != (vertex_to_print.size() - 1)) {
       std::cout << ", ";
     }
   }
@@ -40,31 +38,23 @@ void print_vertex(Vertex vertex_to_print) {
   std::cout << ")";
 }
 
-int test_main(int argc, char* argv[]) {
+template <unsigned int Dims>
+void do_test(minstd_rand& generator) {
+  typedef grid_graph<Dims> Graph;
+  typedef typename graph_traits<Graph>::vertices_size_type vertices_size_type;
+  typedef typename graph_traits<Graph>::edges_size_type edges_size_type;
 
-  std::size_t random_seed = time(0);
+  typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 
-  if (argc > 1) {
-    random_seed = lexical_cast<std::size_t>(argv[1]);
-  }
-
-  minstd_rand generator(random_seed);
-
-  typedef grid_graph<DIMENSIONS> Graph;
-  typedef graph_traits<Graph>::vertices_size_type vertices_size_type;
-  typedef graph_traits<Graph>::edges_size_type edges_size_type;
-
-  typedef graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-  typedef graph_traits<Graph>::edge_descriptor edge_descriptor;
-
-  std::cout << "Dimensions: " << DIMENSIONS << ", lengths: ";
+  std::cout << "Dimensions: " << Dims << ", lengths: ";
 
   // Randomly generate the dimension lengths (3-10) and wrapping
-  array<Graph::vertices_size_type, DIMENSIONS> lengths;
-  array<bool, DIMENSIONS> wrapped;
+  boost::array<vertices_size_type, Dims> lengths;
+  boost::array<bool, Dims> wrapped;
 
-  for (int dimension_index = 0;
-       dimension_index < DIMENSIONS;
+  for (unsigned int dimension_index = 0;
+       dimension_index < Dims;
        ++dimension_index) {
     lengths[dimension_index] = 3 + (generator() % 8);
     wrapped[dimension_index] = ((generator() % 2) == 0);
@@ -78,8 +68,8 @@ int test_main(int argc, char* argv[]) {
   Graph graph(lengths, wrapped);
 
   // Verify dimension lengths and wrapping
-  for (int dimension_index = 0;
-       dimension_index < DIMENSIONS;
+  for (unsigned int dimension_index = 0;
+       dimension_index < Dims;
        ++dimension_index) {
     BOOST_REQUIRE(graph.length(dimension_index) == lengths[dimension_index]);
     BOOST_REQUIRE(graph.wrapped(dimension_index) == wrapped[dimension_index]);
@@ -107,8 +97,8 @@ int test_main(int argc, char* argv[]) {
     vertices_size_type current_index =
       get(boost::vertex_index, graph, current_vertex);
 
-    for (int dimension_index = 0;
-         dimension_index < DIMENSIONS;
+    for (unsigned int dimension_index = 0;
+         dimension_index < Dims;
          ++dimension_index) {
       BOOST_REQUIRE(/*(current_vertex[dimension_index] >= 0) && */ // Always true
                    (current_vertex[dimension_index] < lengths[dimension_index]));        
@@ -205,6 +195,23 @@ int test_main(int argc, char* argv[]) {
   }
 
   BOOST_REQUIRE(edge_count == num_edges(graph));
+}
+
+int test_main(int argc, char* argv[]) {
+
+  std::size_t random_seed = time(0);
+
+  if (argc > 1) {
+    random_seed = lexical_cast<std::size_t>(argv[1]);
+  }
+
+  minstd_rand generator(random_seed);
+
+  do_test<0>(generator);
+  do_test<1>(generator);
+  do_test<2>(generator);
+  do_test<3>(generator);
+  do_test<4>(generator);
 
   return (0);
 }
