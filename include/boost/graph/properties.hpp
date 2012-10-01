@@ -248,8 +248,8 @@ namespace boost {
     >::type type;
   };
 
-  template <class Graph> class vertex_property: vertex_property_type<Graph> {};
-  template <class Graph> class edge_property: edge_property_type<Graph> {};
+  template <typename Graph> struct vertex_property: vertex_property_type<Graph> {};
+  template <typename Graph> struct edge_property: edge_property_type<Graph> {};
 
   template <typename Graph>
   class degree_property_map
