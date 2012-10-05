@@ -544,8 +544,9 @@ inline bool label_vertex(typename LABELED_GRAPH::vertex_descriptor v,
 { return g.label_vertex(v, l); }
 
 template <LABELED_GRAPH_PARAMS>
-inline bool vertex_by_label(typename LABELED_GRAPH::label_type const l,
-                            LABELED_GRAPH& g)
+inline typename LABELED_GRAPH::vertex_descriptor
+vertex_by_label(typename LABELED_GRAPH::label_type const l,
+                LABELED_GRAPH& g)
 { return g.vertex(l); }
 //@}
 
