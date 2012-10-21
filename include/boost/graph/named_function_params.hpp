@@ -278,13 +278,13 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <> struct choose_impl_helper<false> {
       template <typename Param, typename Graph, typename PropertyTag>
-      static typename property_map<Graph, PropertyTag>::const_type
+      static typename property_map<typename boost::remove_const<Graph>::type, PropertyTag>::const_type
       f(boost::mpl::true_, const Graph& g, const Param&, PropertyTag tag) {
         return get(tag, g);
       }
 
       template <typename Param, typename Graph, typename PropertyTag>
-      static typename property_map<Graph, PropertyTag>::type
+      static typename property_map<typename boost::remove_const<Graph>::type, PropertyTag>::type
       f(boost::mpl::false_, Graph& g, const Param&, PropertyTag tag) {
         return get(tag, g);
       }
