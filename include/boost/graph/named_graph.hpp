@@ -11,6 +11,7 @@
 #define BOOST_GRAPH_NAMED_GRAPH_HPP
 
 #include <boost/config.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/multi_index_container.hpp>
@@ -18,6 +19,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/optional.hpp>
 #include <boost/throw_exception.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <stdexcept> // for std::runtime_error
 
 namespace boost { namespace graph {
@@ -352,8 +354,15 @@ find_vertex(typename BGL_NAMED_GRAPH::vertex_name_type const& name,
 
 /// Retrieve the vertex associated with the given name, or add a new
 /// vertex with that name if no such vertex is available.
+/// Note: This is enabled only when the vertex property type is different
+///       from the vertex name to avoid ambiguous overload problems with
+///       the add_vertex() function that takes a vertex property.
 template<BGL_NAMED_GRAPH_PARAMS>
-Vertex
+    typename disable_if<is_same<
+        typename BGL_NAMED_GRAPH::vertex_name_type,
+        VertexProperty
+    >,
+Vertex>::type
 add_vertex(typename BGL_NAMED_GRAPH::vertex_name_type const& name,
            BGL_NAMED_GRAPH& g)
 {
