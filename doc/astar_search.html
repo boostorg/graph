@@ -37,7 +37,7 @@ template &lt;typename VertexListGraph,
           typename P, typename T, typename R&gt;
 void
 astar_search_no_init
-  (const VertexListGraph &amp;g,
+  (const IncidenceGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
@@ -55,7 +55,7 @@ template &lt;typename VertexListGraph,
           typename P, typename T, typename R&gt;
 void
 astar_search_no_init_tree
-  (const VertexListGraph &amp;g,
+  (const IncidenceGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
