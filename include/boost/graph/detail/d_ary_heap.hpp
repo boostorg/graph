@@ -126,18 +126,21 @@ namespace boost {
     }
 
     Value& top() {
+      assert (!this->empty());
       return data[0];
     }
 
     const Value& top() const {
+      assert (!this->empty());
       return data[0];
     }
 
     void pop() {
+      assert (!this->empty());
       put(index_in_heap, data[0], (size_type)(-1));
       if (data.size() != 1) {
         data[0] = data.back();
-        put(index_in_heap, data[0], 0);
+        put(index_in_heap, data[0], (size_type)(0));
         data.pop_back();
         preserve_heap_property_down();
         verify_heap();
