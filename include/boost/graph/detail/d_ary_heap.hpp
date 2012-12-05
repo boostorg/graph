@@ -126,17 +126,17 @@ namespace boost {
     }
 
     Value& top() {
-      assert (!this->empty());
+      BOOST_ASSERT (!this->empty());
       return data[0];
     }
 
     const Value& top() const {
-      assert (!this->empty());
+      BOOST_ASSERT (!this->empty());
       return data[0];
     }
 
     void pop() {
-      assert (!this->empty());
+      BOOST_ASSERT (!this->empty());
       put(index_in_heap, data[0], (size_type)(-1));
       if (data.size() != 1) {
         data[0] = data.back();
