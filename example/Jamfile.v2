@@ -44,3 +44,10 @@ exe strong_components : strong_components.cpp ../build//boost_graph ;
 exe strong-components : strong-components.cpp ;
 exe subgraph : subgraph.cpp ;
 exe subgraph_properties : subgraph_properties.cpp ;
+exe vf2_sub_graph_iso_csr_example : vf2_sub_graph_iso_csr_example.cpp ;
+exe vf2_sub_graph_iso_example : vf2_sub_graph_iso_example.cpp ;
+exe vf2_sub_graph_iso_grd_example : vf2_sub_graph_iso_grd_example.cpp ;
+exe vf2_sub_graph_iso_gviz_example : vf2_sub_graph_iso_gviz_example.cpp ../build//boost_graph ;
+exe vf2_sub_graph_iso_multi_example : vf2_sub_graph_iso_multi_example.cpp ;
+exe vf2_sub_graph_iso_undir_example : vf2_sub_graph_iso_undir_example.cpp ;
+

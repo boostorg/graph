@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+    Copyright (c) Flavio De Lorenzi 2012 
+    
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+-->
+<html>
+  <head>
+    <title>Boost Graph Library:  VF2 (Sub)Graph Isomorphism</title>
+    <style type="text/css">
+      <!--
+          body {
+          color: black;
+          background-color: white;
+          }
+
+          .comment {
+          color: #333333;
+          }
+          
+          a {
+          color: blue;
+          }
+          
+          a:visited {
+          color: #551A8B;
+          }
+      -->
+    </style>
+  </head>
+  <body>
+    <img src="../../../boost.png" alt="C++ Boost" width="277" height="86" />
+    <br />
+    <h1>
+      <tt>vf2_sub_graph_iso</tt>
+    </h1>
+    <pre>
+<em class="comment">// all defaults interface</em>
+template &lt;typename GraphSmall,
+          typename GraphLarge,
+          typename SubGraphIsoMapCallBack&gt;
+bool vf2_sub_graph_iso(const GraphSmall&amp; graph_small,
+                       const GraphLarge&amp; graph_large, 
+                       SubGraphIsoMapCallBack user_callback)
+
+
+<em class="comment">// named parameter version</em>
+template &lt;typename GraphSmall,
+          typename GraphLarge,
+          typename VertexOrderSmall,
+          typename SubGraphIsoMapCallBack,
+          typename Param,
+          typename Tag,
+          typename Rest&gt;
+bool vf2_sub_graph_iso(const GraphSmall&amp; graph_small,
+                       const GraphLarge&amp; graph_large,
+                       SubGraphIsoMapCallBack user_callback,
+                       const VertexOrderSmall&amp; vertex_order_small,
+                       const bgl_named_params&lt;Param, Tag, Rest&gt;&amp; params)
+
+
+<em class="comment">// non-named parameter version</em>
+template &lt;typename GraphSmall,
+          typename GraphLarge,
+          typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapSmall</a>,
+          typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapLarge</a>,
+          typename VertexOrderSmall,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">EdgeCompatibilityPredicate</a>,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">VertexCompatibilityPredicate</a>,
+          typename SubGraphIsoMapCallBack&gt;
+bool vf2_sub_graph_iso(const GraphSmall&amp; graph_small,
+                       const GraphLarge&amp; graph_large,
+                       SubGraphIsoMapCallBack user_callback,
+                       IndexMapSmall index_map_small,
+                       IndexMapLarge index_map_large, 
+                       const VertexOrderSmall&amp; vertex_order_small,
+                       EdgeCompatibilityPredicate edge_comp,
+                       VertexCompatibilityPredicate vertex_comp)
+    </pre>
+    <p>
+      An isomorphism between two graphs <em>G<sub>1</sub>=(V<sub>1</sub>, E<sub>1</sub>)</em> 
+      and <em>G<sub>2</sub>=(V<sub>2</sub>, E<sub>2</sub>)</em> is a
+      bijective mapping <em>M</em> of the vertices of one graph to vertices of the other
+      graph that preserves the edge structure of the graphs. <em>M</em> is said to be a
+      graph-subgraph isomorphism iff <em>M</em> is an isomorphism between 
+      <em>G<sub>1</sub></em> and a subgraph of <em>G<sub>2</sub></em>.
+    </p>
+    
+    <p>
+      This function finds all graph-subgraph isomorphism mappings between
+      graphs <tt>graph_small</tt> and <tt>graph_large</tt> and outputs them to
+      <tt>user_callback</tt>.  It continues until <tt>user_callback</tt>
+      returns true or the search space has been fully explored.
+      <tt>EdgeCompatibilityPredicate</tt> and
+      <tt>VertexCompatibilityPredicate</tt> predicates are used to test whether
+      edges and vertices are compatible.  To use property maps for equivalence,
+      look at the 
+      <tt><a href="#make_property_map_compatible">make_property_map_compatible</a></tt>
+      function. By default <tt>always_compatible</tt> is used, which returns
+      true for any pair of vertices or edges.
+    </p>
+    <p>
+      The current implementation is based on the <em>VF2</em> algorithm,
+      introduced by Cordella et al. An in-depth description of the algorithm is
+      given in [<a href=#cordella2001>1</a>] and [<a href=#cordella2004>2</a>]
+      and references therein.  In brief, the process of finding a mapping between
+      the two graphs <em>G<sub>1</sub></em> and <em>G<sub>2</sub></em> determines
+      the isomorphism mapping <em>M</em>, which associates vertices
+      <em>G<sub>1</sub></em> with vertices of <em>G<sub>2</sub></em> and vice
+      versa. It can be described by means of a state space representation, which
+      is explored by the algorithm according to a depth-first strategy. Each
+      state <em>s</em> of the matching process can be associated with a partial
+      mapping <em>M(s)</em>.  At each level, the algorithm computes the set of
+      the vertex pairs that are candidates to be added to the current state
+      <em>s</em>. If a pair of vertices (<em>v, w</em>) is feasible, the mapping
+      is extended and the associated successor state <em>s'</em> is computed.
+      The whole procedure is then repeated for state <em>s'</em>. A somewhat more
+      detailed description of the current implementation is given in the file
+      <a href="./vf2_sub_graph_iso_impl.pdf">vf2_sub_graph_iso_impl.pdf</a>.
+    </p>
+
+    <h3>Where Defined</h3>
+    <a href="../../../boost/graph/vf2_sub_graph_iso.hpp"><tt>boost/graph/vf2_sub_graph_iso.hpp</tt></a>
+    <p>
+      All functions are defined in the boost namespace.
+    </p>
+    
+    <h3>Parameters</h3>
+
+    IN: <tt>const GraphSmall&amp; graph_small</tt> 
+    <blockquote>
+      The (first) smaller graph (fewer vertices) of the pair to be tested for 
+      isomorphism. The type <tt>GraphSmall</tt> must be a
+      model of 
+      <a href="./VertexListGraph.html">Vertex List Graph</a>
+      <a href="./EdgeListGraph.html">Edge List Graph</a>,
+      <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
+      <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
+    </blockquote>
+
+    IN: <tt>const GraphLarge&amp; graph_large</tt> 
+    <blockquote>
+      The (second) larger graph to be tested.
+      Type <tt>GraphLarge</tt> must be a model of 
+      <a href="./VertexListGraph.html">Vertex List Graph</a>
+      <a href="./EdgeListGraph.html">Edge List Graph</a>,
+      <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
+      <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
+    </blockquote>
+    
+    OUT: <tt>SubGraphIsoMapCallBack  user_callback</tt> 
+    <blockquote>
+      A function object to be called when a graph-subgraph isomorphism has been discovered. The
+      <tt>operator()</tt> must have following form:
+      <pre>
+template &lt;typename CorrespondenceMap1To2,
+          typename CorrespondenceMap2To1&gt;
+bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
+      </pre>
+      Both the <tt>CorrespondenceMap1To2</tt>
+      and <tt>CorresondenceMap2To1</tt> types are models
+      of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
+      Property Map</a> and map equivalent vertices across the two
+      graphs given to <tt>vf2_sub_graph_iso</tt> (or <tt>vf2_graph_iso</tt>. For
+      instance, if <tt>v</tt> is
+      from <tt>graph_small</tt>, <tt>w</tt> is from <tt>graph_large</tt>,
+      and the vertices can be considered equivalent,
+      then <tt>get(f, v)</tt> will be <tt>w</tt> and <tt>get(g, w)</tt> 
+      will be <tt>v</tt>. If any vertex, say <tt>v</tt> in <tt>graph_small</tt>, 
+      does not match a vertex in <tt>graph_large</tt> ,
+      then <tt>get(f, v)</tt> will be <tt>graph_traits&lt;GraphLarge&gt;::null_vertex()</tt>.
+      Likewise for any un-matched vertices from <tt>graph_large</tt>,
+      <tt>get(g, w)</tt> will be <tt>graph_traits&lt;GraphSmall&gt;::null_vertex()</tt>.
+
+      Returning false from the callback will abort the search immediately. Otherwise,
+      the entire search space will be explored. A "default" print callback 
+      is provided as a <a href="#vf2_callback">utility function</a> and another one is
+      given in <a href="#example_callback">Example 2</a>.
+    </blockquote>
+
+    IN: <tt>const VertexOrderSmall&amp; vertex_order_small</tt>
+    <blockquote>
+      The ordered vertices of the smaller (first) graph <tt>graph_small</tt>.
+      During the matching process the vertices are examined in the order given by
+      <tt>vertex_order_small</tt>. Type <tt>VertexOrderSmall</tt> must be a model 
+      of <a href="http://www.sgi.com/tech/stl/Container.html">ContainerConcept</a> 
+      with value type 
+      <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt>.
+      <br />
+      <b>Default</b> The vertices are ordered by multiplicity of in/out degree.
+    </blockquote>
+    
+    <h3>Named Parameters</h3>
+    
+    IN: <tt>vertex_index1(IndexMapSmall index_map_small)</tt>   
+    <blockquote>
+      This maps each vertex to an integer in the range <tt>[0, num_vertices(graph_small))</tt>.
+      Type <tt>IndexMapSmall</tt> must be a model of 
+      <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
+      <br />
+      <b>Default:</b> <tt>get(vertex_index, graph_small)</tt>
+    </blockquote>
+
+    IN: <tt>vertex_index2(IndexMapLarge index_map_large)</tt>   
+    <blockquote>
+      This maps each vertex to an integer in the range <tt>[0, num_vertices(graph_large))</tt>.
+      Type <tt>IndexMapLarge</tt> must be a model of
+      <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>.
+      <br />
+      <b>Default:</b> <tt>get(vertex_index, graph_large)</tt>
+    </blockquote>
+    
+    IN: <tt>edges_equivalent(EdgeCompatibilityPredicate edge_comp)</tt> 
+    <blockquote>
+      This function object is used to determine if edges between the two graphs 
+      <tt>graph_small</tt> and <tt>graph_large</tt> are compatible. 
+      Type <tt>EdgeCompatiblePredicate</tt> must be a model of 
+      of <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+        Predicate</a> and have argument types of
+      <tt>graph_traits&lt;GraphSmall&gt;::edge_descriptor</tt> and
+      <tt>graph_traits&lt;GraphLarge&gt;::edge_descriptor</tt>. A return value of true
+      indicates that the edges are compatible.
+      <br />
+      <b>Default:</b> <tt><a href="#always_compatible">always_compatible</a></tt>
+    </blockquote>
+    
+    IN: <tt>vertices_equivalent(VertexCompatibilityPredicate vertex_comp)</tt> 
+    <blockquote>
+      This function object is used to determine if vertices between the two graphs 
+      <tt>graph_small</tt> and <tt>graph_large</tt> are compatible. 
+      Type <tt>VertexCompatiblePredicate</tt> must be a model of 
+      <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary Predicate</a> 
+      and have argument types of
+      <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt> and
+      <tt>graph_traits&lt;GraphLarge&gt;::vertex_descriptor</tt>. A return value of true
+      indicates that the vertices are compatible.
+      <br />
+      <b>Default:</b> <tt><a href="#always_compatible">always_compatible</a></tt>
+    </blockquote>
+    
+    <h3>Related Functions</h3>
+    <p>
+      Non-named parameter, named-parameter and all default parameter versions of 
+      function
+    </p>
+    <pre>
+vf2_graph_iso(...)
+    </pre>
+    <p>
+      for isomorphism testing take the same parameters as the corresponding
+      functions <tt>vf2_sub_graph_iso</tt> for sub-graph isomorphism testing.
+      The algorithm finds all isomorphism mappings between graphs
+      <tt>graph1</tt> and <tt>graph2</tt> and outputs them to
+      <tt>user_callback</tt>. It continues until <tt>user_callback</tt>
+      returns true or the search space has been fully explored. As before,
+      <tt>EdgeCompatibilityPredicate</tt> and
+      <tt>VertexCompatibilityPredicate</tt> predicates are used to test
+      whether edges and vertices are compatible with
+      <tt>always_compatible</tt> as default.
+    </p>
+
+    <h3>Utility Functions and Structs</h3>
+    <pre id="make_property_map_compatible">
+template &lt;typename PropertyMap1,
+          typename PropertyMap2&gt;
+property_map_compatible&lt;PropertyMap1, PropertyMap2&gt;
+make_property_map_compatible(const PropertyMap1 property_map1,
+                             const PropertyMap2 property_map2) 
+    </pre>
+    <blockquote>
+      Returns a binary predicate function object
+      (<tt>property_map_compatible&lt;PropertyMap1, PropertyMap2&gt;</tt>) that compares
+      vertices or edges between graphs using property maps. 
+    </blockquote>
+    
+    <tt id="always_compatible">struct always_compatible</tt>
+    <blockquote>
+      A binary function object that returns true for any pair of items.
+    </blockquote>
+
+    <pre id="vf2_callback">
+template &lt;typename Graph1,
+          typename Graph2&gt;
+struct vf2_print_callback
+    </pre>
+    <blockquote>
+      Callback function object that prints out the correspondences between vertices
+      of <tt>Graph1</tt> and <tt>Graph2</tt>. The constructor takes the two graphs <em>G<sub>1</sub></em>
+      and <em>G<sub>2</sub></em> and an optional <tt>bool</tt> parameter as arguments. If the latter is
+      set to <tt>true</tt>, the callback function will verify the mapping before outputting
+      it to standard output.
+    </blockquote>
+
+    <pre>
+<em class="comment">// Variant of verify_sub_graph_iso with all default parameters</em>
+template&lt;typename Graph1,
+         typename Graph2,
+         typename CorresponenceMap1To2&gt;
+inline bool verify_vf2_sub_graph_iso(const Graph1&amp; graph1, const Graph2&amp; graph2, 
+                                     const CorresponenceMap1To2 f)
+
+
+<em class="comment">// Verifies a graph (sub)graph isomorphism map</em> 
+template&lt;typename Graph1,
+         typename Graph2,
+         typename CorresponenceMap1To2,
+         typename EdgeCompatibilityPredicate,
+         typename VertexCompatibilityPredicate&gt;
+inline bool verify_vf2_sub_graph_iso(const Graph1&amp; graph1, const Graph2&amp; graph2, 
+                                     const CorresponenceMap1To2 f,
+                                     EdgeCompatibilityPredicate edge_comp, 
+                                     VertexCompatibilityPredicate vertex_comp) 
+    </pre>
+    <blockquote>
+This function can be used to verify a (sub)graph isomorphism mapping <em>f</em>. The parameters are
+akin to function <tt>vf2_sub_graph_iso</tt> (<tt>vf2_graph_iso</tt>).
+    </blockquote>
+
+
+    <h3>Complexity</h3>
+    <p>
+      Spatial and time complexity are given in [<a href="#cordella2004">2</a>]. The spatial
+      complexity of VF2 is of order <em>O(V)</em>, where V is the (maximum) number
+      of vertices of the two graphs. Time complexity is <em>O(V<sup>2</sup>)</em> in the best case and
+      <em>O(V!&middot;V)</em> in the worst case.
+    </p>
+    
+    <h3>Examples</h3>
+
+    <h4>Example 1</h4>
+    <p>
+      In the example below, a small graph <tt>graph1</tt> and a larger graph
+      <tt>graph2</tt> are defined. Here small and large refers to the number of
+      vertices of the graphs. <tt>vf2_sub_graph_iso</tt> computes all the
+      sub-graph isomorphism mappings between the two graphs and outputs them
+      via <tt>callback</tt>.
+    </p>
+    <pre>
+typedef adjacency_list&lt;vecS, vecS, bidirectionalS&gt; graph_type;
+
+<em class="comment">// Build graph1</em>
+int num_vertices1 = 8; graph_type graph1(num_vertices1);
+add_edge(0, 6, graph1); add_edge(0, 7, graph1);
+add_edge(1, 5, graph1); add_edge(1, 7, graph1);
+add_edge(2, 4, graph1); add_edge(2, 5, graph1); add_edge(2, 6, graph1);
+add_edge(3, 4, graph1);
+
+<em class="comment">// Build graph2</em>
+int num_vertices2 = 9; graph_type graph2(num_vertices2);
+add_edge(0, 6, graph2); add_edge(0, 8, graph2);
+add_edge(1, 5, graph2); add_edge(1, 7, graph2);
+add_edge(2, 4, graph2); add_edge(2, 7, graph2); add_edge(2, 8, graph2);
+add_edge(3, 4, graph2); add_edge(3, 5, graph2); add_edge(3, 6, graph2);
+
+<em class="comment">// true instructs callback to verify a map using
+// verify_vf2_sub_graph_iso</em>
+vf2_print_callback&lt;graph_type, graph_type&gt; callback(graph1, graph2, true);
+
+bool ret = vf2_sub_graph_iso(graph1, graph2, callback);
+    </pre>
+<p>
+The complete example can be found under
+<a href="../example/vf2_sub_graph_iso_example.cpp"><tt>examples/vf2_sub_graph_iso_example.cpp</tt></a>.
+<br>
+<p>
+
+
+    <h4>Example 2</h4>
+    This example uses the GraphViz input parser, i.e. <a href="./read_graphviz.html">read_graphviz</a>
+    function to interpret the two graphs specified in files <em>graph_small.dot</em> and <em>graph_large.dot</em>
+    using the using the <a href="http://graphviz.org">GraphViz</a> DOT language. Sample files are provided 
+    <a href="#dot_files">below</a>. <tt>vf2_sub_graph_iso</tt> computes all the sub-graph isomorphism mappings
+    between <tt>graph_small</tt> and <tt>graph_large</tt>.
+    <pre>
+std::ifstream graph_small_file("graph_small.dot");
+std::ifstream graph_large_file("graph_large.dot");
+
+<em class="comment">// Vertex properties</em>
+typedef property &lt;vertex_name_t, std::string&gt; vertex_p;
+
+<em class="comment">// adjacency_list-based type</em>
+typedef adjacency_list &lt;vecS, vecS, undirectedS, vertex_p&gt; graph_t;
+
+<em class="comment">// Construct an empty graph_small and prepare the dynamic_property_maps.</em>
+graph_t graph_small(0);
+dynamic_properties dp_small;
+  
+property_map&lt;graph_t, vertex_name_t&gt;::type name_small =
+  get(vertex_name, graph_small);
+dp_small.property("node_id", name_small);
+
+<em class="comment">// Read graph_small</em>
+bool status = read_graphviz(graph_small_file, graph_small, dp_small, "node_id");
+
+<em class="comment">// Construct an empty graph_large and prepare the dynamic_property_maps,
+// following the read_graphviz example</em>
+graph_t graph_large(0);
+dynamic_properties dp_large;
+
+property_map&lt;graph_t, vertex_name_t&gt;::type name_large =
+  get(vertex_name, graph_large);
+dp_large.property("node_id", name_large);
+
+<em class="comment">// Read graph_large</em>
+status = read_graphviz(graph_large_file, graph_large, dp_large, "node_id");
+
+<em class="comment">// Create the call_back function</em>
+typedef property_map&lt;graph_t, vertex_name_t&gt;::type p_map_t;
+print_callback&lt;graph_t, graph_t, p_map_t, p_map_t&gt; callback(graph_small, graph_large,
+                                                            name_small, name_large, true);
+<em class="comment"> // Compute the sub-graph isomorphism mappings</em>
+bool ret = vf2_sub_graph_iso(graph_small, graph_large, callback);
+    </pre>
+
+    To output the mappings using the node names, the following callback function object is created:
+
+    <pre>
+<em id="example_callback" class="comment">// Define a print_callback</em>
+template &lt;typename Graph1,
+          typename Graph2,
+          typename PropertyMap1,
+          typename PropertyMap2&gt;
+struct print_callback {
+    
+  print_callback(const Graph1&amp; graph1, const Graph2&amp; graph2, 
+                 PropertyMap1 p_map1, PropertyMap2 p_map2, 
+                 bool verify = false) 
+    : graph1_(graph1), graph2_(graph2), 
+      p_map1_(p_map1), p_map2_(p_map2),
+      verify_(verify) {}
+
+  template &lt;typename CorrespondenceMap1To2,
+            typename CorrespondenceMap2To1&gt;
+  bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1) const {
+    
+    if (verify_)
+      std::cout &lt;&lt; "Verify: " &lt;&lt; std::boolalpha 
+                &lt;&lt; verify_vf2_sub_graph_iso(graph1_, graph2_, f)
+                &lt;&lt; std::endl;
+    
+<em class="comment">// Print sub graph isomorphism map</em>
+    BGL_FORALL_VERTICES_T(v, graph1_, Graph1) 
+      std::cout &lt;&lt; '(' &lt;&lt; get(p_map1_,v) &lt;&lt; ", " 
+                &lt;&lt; get(p_map2_, get(f, v)) &lt;&lt; ") ";
+    
+    std::cout &lt;&lt; std::endl;
+      
+    return true;
+  }
+
+private:
+  const Graph1&amp; graph1_;
+  const Graph2&amp; graph2_;
+  
+  const PropertyMap1&amp; p_map1_;
+  const PropertyMap2&amp; p_map2_;
+  
+  const bool verify_;
+};
+    </pre>
+
+    Using the sample DOT-files <em>graph_small.dot</em>:
+
+    <pre id="dot_files">
+graph G_small {
+node1 -- node2;
+node1 -- node3;
+node3 -- node3;
+node4 -- node1;
+node4 -- node3;
+}
+    </pre>
+
+    and <em>graph_large.dot</em>:
+    
+    <pre>
+graph G_large {
+node1 -- node3;
+node1 -- node4;
+node1 -- node6;
+node2 -- node4;
+node2 -- node5;
+node3 -- node3;
+node4 -- node5;
+node4 -- node6;
+node6 -- node6;
+}
+    </pre>
+
+    <tt>vf2_sub_graph_iso</tt> finds the mappings <tt>(node1, node4) (node2, node2)
+      (node3, node6) (node4, node1)</tt> and <tt>(node1, node4) (node2, node5)
+      (node3, node6) (node4, node1)</tt>.
+    To compile this example, you will need to build and link against the
+    "boost_graph" and "boost_regex" libraries
+    (cf. <a href="./read_graphviz.html">read_graphviz</a>).
+
+<p>
+The complete example is provided under
+<a href="../example/vf2_sub_graph_iso_gviz_example.cpp"><tt>examples/vf2_sub_graph_iso_gviz_example.cpp</tt></a>,
+including a <a href="http://www.scilab.org/">Scilab</a> script to generate simple dot-files
+<a href="../example/vf2_random_graphs.sce"><tt>examples/vf2_random_graphs.sce</tt></a>.
+<br>
+<p>
+
+
+<h4>Additional Examples</h4>
+
+<p>
+These are: a multi-graph example
+<a href="../example/vf2_sub_graph_iso_multi_example.cpp"><tt>examples/vf2_sub_graph_iso_multi_example.cpp</tt></a>,
+<br>
+one using a compressed_sparse_row_graph (works not for <tt>directed</tt> because <tt>in_edges</tt> not available)
+<a href="../example/vf2_sub_graph_iso_csr_example.cpp"><tt>examples/vf2_sub_graph_iso_csr_example.cpp</tt></a>, 
+<br>
+one putting a grid_graph
+<a href="../example/vf2_sub_graph_iso_grd_example.cpp"><tt>examples/vf2_sub_graph_iso_grd_example.cpp</tt></a>
+<br>
+and one matching bidirectional und undirected graphs
+<a href="../example/vf2_sub_graph_iso_undir_example.cpp"><tt>examples/vf2_sub_graph_iso_undir_example.cpp</tt></a>.
+<br>
+<p>
+
+    <h3>Bibliography</h3>
+
+    <dl>
+      <p></p><dt><a name="cordella2001">1</a>
+        <dd>
+          L.&nbsp;P. Cordella, P. Foggia, C. Sansone, and M. Vento.
+          <br><em>An improved algorithm for matching large graphs</em>.
+          <br>In: 3rd IAPR-TC15 Workshop on Graph-based Representations in Pattern Recognition, pp. 149-159, Cuen, 2001.
+        </dd>
+        <p></p><dt><a name="cordella2004">2</a>
+        <dd>
+          L.&nbsp;P. Cordella, P. Foggia, C. Sansone, and M. Vento.
+          <br><em>A (Sub)Graph Isomorphism Algorithm for Matching Large Graphs</em>.
+          <br>IEEE Trans. Pattern Anal. Mach. Intell., vol. 26, no. 10, pp. 1367-1372, 2004.
+        </dd>
+    </dl>
+    
+    <hr />
+    Copyright &copy; 2012, Flavio De Lorenzi 
+    (<a href="mailto:fdlorenzi@gmail.com">fdlorenzi@gmail.com</a>)
+    
+  </body>
+</html> 
