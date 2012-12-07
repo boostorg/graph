@@ -140,7 +140,7 @@ namespace graph_detail {
     // Tag dispatch on unique associative containers (i.e. maps).
     template <typename Container, typename Graph, typename Label, typename Prop>
     std::pair<typename graph_traits<Graph>::vertex_descriptor, bool>
-    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const&,
+    insert_labeled_vertex(Container& c, Graph& g, Label const& l, Prop const& p,
                           unique_associative_container_tag)
     {
         // Here, we actually have to try the insertion first, and only add
@@ -150,6 +150,7 @@ namespace graph_detail {
         std::pair<Iterator, bool> x = c.insert(std::make_pair(l, Vertex()));
         if(x.second) {
             x.first->second = add_vertex(g);
+            put(boost::vertex_all, g, x.first->second, p);
         }
         return std::make_pair(x.first->second, x.second);
     }
