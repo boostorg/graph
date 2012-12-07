@@ -11,16 +11,23 @@
 #define BOOST_GRAPH_NAMED_GRAPH_HPP
 
 #include <boost/config.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/optional.hpp>
+#include <boost/pending/property.hpp> // for boost::lookup_one_property
+#include <boost/throw_exception.hpp>
+#include <boost/tuple/tuple.hpp> // for boost::make_tuple
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/member.hpp>
-#include <boost/optional.hpp>
-#include <boost/throw_exception.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <functional> // for std::equal_to
 #include <stdexcept> // for std::runtime_error
+#include <utility> // for std::pair
 
 namespace boost { namespace graph {
 
@@ -408,6 +415,35 @@ add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
   return add_edge(add_vertex(u_name, g.derived()),
                   v,
                   g.derived());
+}
+
+// Overloads to support EdgeMutablePropertyGraph graphs
+template <BGL_NAMED_GRAPH_PARAMS>
+std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
+add_edge(typename BGL_NAMED_GRAPH::vertex_descriptor const& u,
+         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
+         typename edge_property_type<Graph>::type const& p,
+         BGL_NAMED_GRAPH& g) {
+    return add_edge(u, add_vertex(v_name, g.derived()), p, g.derived());
+}
+
+template <BGL_NAMED_GRAPH_PARAMS>
+std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
+add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
+         typename BGL_NAMED_GRAPH::vertex_descriptor const& v,
+         typename edge_property_type<Graph>::type const& p,
+         BGL_NAMED_GRAPH& g) {
+    return add_edge(add_vertex(u_name, g.derived()), v, p, g.derived());
+}
+
+template <BGL_NAMED_GRAPH_PARAMS>
+std::pair<typename graph_traits<Graph>::edge_descriptor, bool>
+add_edge(typename BGL_NAMED_GRAPH::vertex_name_type const& u_name,
+         typename BGL_NAMED_GRAPH::vertex_name_type const& v_name,
+         typename edge_property_type<Graph>::type const& p,
+         BGL_NAMED_GRAPH& g) {
+    return add_edge(add_vertex(u_name, g.derived()),
+                    add_vertex(v_name, g.derived()), p, g.derived());
 }
 
 #undef BGL_NAMED_GRAPH
