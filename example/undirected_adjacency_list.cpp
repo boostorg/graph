@@ -26,12 +26,12 @@ undirected_graph_demo1()
   add_edge(zero, two, undigraph);
   add_edge(one, two, undigraph);
 
-  std::cout << "out_edges(0): ";
+  std::cout << "out_edges(0):";
   for (boost::tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
-    std::cout << *out;
-  std::cout << std::endl << "in_edges(0): ";
+    std::cout << ' ' << *out;
+  std::cout << std::endl << "in_edges(0):";
   for (boost::tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
-    std::cout << *in;
+    std::cout << ' ' << *in;
   std::cout << std::endl;
 }
 
@@ -91,6 +91,14 @@ undirected_graph_demo2()
 #endif
   std::cout << "weight[(u,v)] = " << get(weight, e1) << std::endl;
   std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
+
+  std::cout << "the edges incident to v: ";
+  typename boost::graph_traits<UndirectedGraph>::out_edge_iterator e, e_end;
+  typename boost::graph_traits<UndirectedGraph>::vertex_descriptor 
+    s = vertex(0, undigraph);
+  for (boost::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
+    std::cout << "(" << source(*e, undigraph) 
+              << "," << target(*e, undigraph) << ")" << std::endl;
 }
 
 
@@ -103,7 +111,7 @@ main()
   typedef adjacency_list < vecS, vecS, directedS,
     no_property, Weight > DirectedGraph;
   undirected_graph_demo1 < UndirectedGraph > ();
-  undirected_graph_demo2 < UndirectedGraph > ();
   directed_graph_demo < DirectedGraph > ();
+  undirected_graph_demo2 < UndirectedGraph > ();
   return 0;
 }
