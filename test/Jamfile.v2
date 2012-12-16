@@ -125,6 +125,7 @@ test-suite graph_test :
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
+    [ run vf2_sub_graph_iso_test.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.

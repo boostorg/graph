@@ -12,7 +12,8 @@ using namespace boost;
 
 
 int main() {
-  typedef adjacency_list<vecS, vecS, bidirectionalS> graph_type;
+
+  typedef adjacency_list<setS, vecS, bidirectionalS> graph_type;
   
   // Build graph1
   int num_vertices1 = 8; graph_type graph1(num_vertices1);
@@ -28,12 +29,12 @@ int main() {
   add_edge(2, 4, graph2); add_edge(2, 7, graph2); add_edge(2, 8, graph2);
   add_edge(3, 4, graph2); add_edge(3, 5, graph2); add_edge(3, 6, graph2);
 
-  // true instructs callback to verify a map using
-  // verify_vf2_sub_graph_iso
-  vf2_print_callback<graph_type, graph_type> callback(graph1, graph2, true);
+  // Create callback to print mappings
+  vf2_print_callback<graph_type, graph_type> callback(graph1, graph2);
 
-  bool ret = vf2_sub_graph_iso(graph1, graph2, callback);
-  (void)ret;
+  // Print out all subgraph isomorphism mappings between graph1 and graph2.
+  // Vertices and edges are assumed to be always equivalent.
+  vf2_subgraph_iso(graph1, graph2, callback);
 
   return 0;
 }

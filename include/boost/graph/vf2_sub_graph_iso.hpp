@@ -24,7 +24,9 @@
 #include <boost/concept_check.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/mcgregor_common_subgraphs.hpp> // for always_equivalent
 #include <boost/graph/named_function_params.hpp>
+#include <boost/type_traits/has_less.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/range/algorithm/sort.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -36,73 +38,23 @@
 #endif
 
 namespace boost {
-
-  // Utility functions (analogue to mcgregor_common_subgraphs) 
-  // Returns binary predicate function object that compares vertices or edges
-  // between graphs using property maps
-  template <typename PropertyMap1,
-            typename PropertyMap2>
-  struct property_map_compatible {
-    
-    property_map_compatible(const PropertyMap1 property_map1,
-                            const PropertyMap2 property_map2)
-      : property_map1_(property_map1), property_map2_(property_map2) {}
-
-    template <typename Item1,
-              typename Item2>
-    bool operator()(const Item1 item1, const Item2 item2) const {
-      return (get(property_map1_, item1) == get(property_map2_, item2));
-    }
-  
-  private:
-    const PropertyMap1 property_map1_;
-    const PropertyMap2 property_map2_;
-  };
-  
-  // Returns a property_map_compatible object that compares the values
-  // of property_map1 and property_map2.
-  template <typename PropertyMap1,
-            typename PropertyMap2>
-  property_map_compatible<PropertyMap1, PropertyMap2>
-  make_property_map_compatible(const PropertyMap1 property_map1,
-                               const PropertyMap2 property_map2) {
-    return property_map_compatible<PropertyMap1, PropertyMap2>
-      (property_map1, property_map2);
-  }
-
-  // Binary function object that always returns true.  Used when
-  // vertices or edges are always compatible (i.e. have no labels).
-  struct always_compatible {
-    template <typename Item1,
-              typename Item2>
-    bool operator()(const Item1&, const Item2&) const {
-      return true;
-    }
-  };
-  
   
   // Default print_callback
   template <typename Graph1,
             typename Graph2>
   struct vf2_print_callback {
     
-    vf2_print_callback(const Graph1& graph1, const Graph2& graph2, 
-                       bool verify = false) 
-      : graph1_(graph1), graph2_(graph2), verify_(verify) {}
+    vf2_print_callback(const Graph1& graph1, const Graph2& graph2) 
+      : graph1_(graph1), graph2_(graph2) {}
     
     template <typename CorrespondenceMap1To2,
               typename CorrespondenceMap2To1>
     bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1) const {
       
-      if (verify_)
-        std::cout << "Verify: " << std::boolalpha 
-                  << verify_vf2_sub_graph_iso(graph1_, graph2_, f)
-                  << std::endl;
-      
-      // Print sub graph isomorphism map
+      // Print (sub)graph isomorphism map
       BGL_FORALL_VERTICES_T(v, graph1_, Graph1) 
-        std::cout << '(' << get(vertex_index, graph1_, v) << ", " 
-                  << get(vertex_index, graph1_, get(f, v)) << ") ";
+        std::cout << '(' << get(vertex_index_t(), graph1_, v) << ", " 
+                  << get(vertex_index_t(), graph1_, get(f, v)) << ") ";
       
       std::cout << std::endl;
       
@@ -112,8 +64,6 @@ namespace boost {
   private:
     const Graph1& graph1_;
     const Graph2& graph2_;
-    
-    const bool verify_;
   };
   
   namespace detail {
@@ -332,25 +282,44 @@ namespace boost {
     };
 
 
+    // Used for bookkeeping of matched edges in equivalent_edge_exists
+    // (when dealing with multi-graphs)
+    template <typename Item, typename Enable = void>
+    struct memory {
+      void store(Item item) { items_.push_back(item); }
+      bool exists(Item item) const { 
+        return (std::find(items_.begin(), items_.end(), item) != items_.end());
+      }
+
+      std::vector<Item> items_;
+    };
+
+
+    template <typename Item>
+    struct memory<Item, typename boost::enable_if<has_less<Item> >::type> {
+      void store(Item item) { items_.insert(item); }
+      bool exists(Item item) const { 
+        return (items_.find(item) != items_.end());
+      }
+
+      std::set<Item> items_;
+    };
+
+
     // Function object that checks whether a valid edge
     // exists. For multi-graphs matched edges are excluded  
     template <typename Graph, typename Enable = void>
-    struct compatible_edge_exists {
-      
-      compatible_edge_exists() {};
-      
-      typedef typename boost::graph_traits<Graph>::out_edge_iterator edge_iterator_type;
+    struct equivalent_edge_exists {
+      typedef typename boost::graph_traits<Graph>::edge_descriptor edge_type;
       
       template<typename EdgePredicate>
       bool operator()(typename graph_traits<Graph>::vertex_descriptor s,
                       typename graph_traits<Graph>::vertex_descriptor t, 
                       EdgePredicate is_valid_edge, const Graph& g) {
         
-        edge_iterator_type ei, ei_end;
-        for (boost::tie(ei, ei_end) = out_edges(s, g); ei != ei_end; ++ei) {
-          if ((target(*ei, g) == t) && is_valid_edge(*ei) &&
-              (matched_edges_.find(ei) == matched_edges_.end())) {
-            matched_edges_.insert(ei);
+        BGL_FORALL_OUTEDGES_T(s, e, g, Graph) {
+          if ((target(e, g) == t) && is_valid_edge(e) && !edge_memory_.exists(e)) {
+            edge_memory_.store(e);
             return true;
           }
         }
@@ -360,14 +329,11 @@ namespace boost {
 
     private:
       
-      std::set<edge_iterator_type> matched_edges_;
+      memory<edge_type> edge_memory_;
     };
     
     template <typename Graph>
-    struct compatible_edge_exists<Graph, typename boost::disable_if<is_multigraph<Graph> >::type> {
-      
-      compatible_edge_exists() {};
-      
+    struct equivalent_edge_exists<Graph, typename boost::disable_if<is_multigraph<Graph> >::type> {
       template<typename EdgePredicate>
       bool operator()(typename graph_traits<Graph>::vertex_descriptor s,
                       typename graph_traits<Graph>::vertex_descriptor t, 
@@ -391,18 +357,18 @@ namespace boost {
     // fixed edge e2
     template <typename Graph1,
               typename Graph2,
-              typename EdgeCompatibilityPredicate>
+              typename EdgeEquivalencePredicate>
     struct edge1_predicate {
       
-      edge1_predicate(EdgeCompatibilityPredicate edge_comp, 
+      edge1_predicate(EdgeEquivalencePredicate edge_comp, 
                       typename graph_traits<Graph2>::edge_descriptor e2)
         : edge_comp_(edge_comp), e2_(e2) {}
       
-      bool operator()(typename graph_traits<Graph1>::edge_descriptor e1) const {
+      bool operator()(typename graph_traits<Graph1>::edge_descriptor e1) {
         return edge_comp_(e1, e2_);
       }
 
-      EdgeCompatibilityPredicate edge_comp_;
+      EdgeEquivalencePredicate edge_comp_;
       typename graph_traits<Graph2>::edge_descriptor e2_;
     };
 
@@ -411,32 +377,32 @@ namespace boost {
     // fixed edge e1
     template <typename Graph1,
               typename Graph2,
-              typename EdgeCompatibilityPredicate>
+              typename EdgeEquivalencePredicate>
     struct edge2_predicate {
       
-      edge2_predicate(EdgeCompatibilityPredicate edge_comp, 
+      edge2_predicate(EdgeEquivalencePredicate edge_comp, 
                       typename graph_traits<Graph1>::edge_descriptor e1)
         : edge_comp_(edge_comp), e1_(e1) {}
 
-      bool operator()(typename graph_traits<Graph2>::edge_descriptor e2) const {
+      bool operator()(typename graph_traits<Graph2>::edge_descriptor e2) {
         return edge_comp_(e1_, e2);
       }
 
-      EdgeCompatibilityPredicate edge_comp_;
+      EdgeEquivalencePredicate edge_comp_;
       typename graph_traits<Graph1>::edge_descriptor e1_;
     };
 
 
-    enum problem_selector { sub_graph_iso, isomorphism };
+    enum problem_selector { subgraph_iso, isomorphism };
     
     // The actual state associated with both graphs
     template<typename Graph1,
              typename Graph2,
              typename IndexMap1,
              typename IndexMap2,
-             typename EdgeCompatibilityPredicate,
-             typename VertexCompatibilityPredicate,
-             typename SubGraphIsoMapCallBack,
+             typename EdgeEquivalencePredicate,
+             typename VertexEquivalencePredicate,
+             typename SubGraphIsoMapCallback,
              problem_selector problem_selection>
     class state {
 
@@ -454,8 +420,8 @@ namespace boost {
       
       IndexMap1 index_map1_;
       
-      EdgeCompatibilityPredicate edge_comp_;
-      VertexCompatibilityPredicate vertex_comp_;
+      EdgeEquivalencePredicate edge_comp_;
+      VertexEquivalencePredicate vertex_comp_;
                 
       base_state<Graph1, Graph2, IndexMap1, IndexMap2> state1_;
       base_state<Graph2, Graph1, IndexMap2, IndexMap1> state2_;
@@ -465,7 +431,7 @@ namespace boost {
       // - graph sub-graph isomorphism, or
       inline bool comp_term_sets(graph1_size_type a, 
                                  graph2_size_type b,
-                                 boost::mpl::int_<sub_graph_iso>) const {
+                                 boost::mpl::int_<subgraph_iso>) const {
         return a <= b;
       }
 
@@ -484,8 +450,8 @@ namespace boost {
 
       state(const Graph1& graph1, const Graph2& graph2, 
             IndexMap1 index_map1, IndexMap2 index_map2, 
-            EdgeCompatibilityPredicate edge_comp,
-            VertexCompatibilityPredicate vertex_comp)
+            EdgeEquivalencePredicate edge_comp,
+            VertexEquivalencePredicate vertex_comp)
         : graph1_(graph1), graph2_(graph2), 
           index_map1_(index_map1), 
           edge_comp_(edge_comp), vertex_comp_(vertex_comp),
@@ -514,7 +480,7 @@ namespace boost {
         graph1_size_type term_in1_count = 0, term_out1_count = 0, rest1_count = 0;
         
         {
-          compatible_edge_exists<Graph2> edge2_exists;
+          equivalent_edge_exists<Graph2> edge2_exists;
           
           BGL_FORALL_INEDGES_T(v_new, e1, graph1_, Graph1) {
             vertex1_type v = source(e1, graph1_);
@@ -524,7 +490,7 @@ namespace boost {
               if (v != v_new)
                 w = state1_.core(v);
               if (!edge2_exists(w, w_new,
-                                edge2_predicate<Graph1, Graph2, EdgeCompatibilityPredicate>(edge_comp_, e1), 
+                                edge2_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e1), 
                                 graph2_))
                 return false;
               
@@ -540,7 +506,7 @@ namespace boost {
         }
         
         {
-          compatible_edge_exists<Graph2> edge2_exists;
+          equivalent_edge_exists<Graph2> edge2_exists;
           
           BGL_FORALL_OUTEDGES_T(v_new, e1, graph1_, Graph1) {
             vertex1_type v = target(e1, graph1_);
@@ -550,7 +516,7 @@ namespace boost {
                 w = state1_.core(v);
               
               if (!edge2_exists(w_new, w,
-                                edge2_predicate<Graph1, Graph2, EdgeCompatibilityPredicate>(edge_comp_, e1), 
+                                edge2_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e1), 
                                 graph2_))
                 return false;
               
@@ -569,7 +535,7 @@ namespace boost {
         graph2_size_type term_out2_count = 0, term_in2_count = 0, rest2_count = 0;
         
         {
-          compatible_edge_exists<Graph1> edge1_exists;
+          equivalent_edge_exists<Graph1> edge1_exists;
           
           BGL_FORALL_INEDGES_T(w_new, e2, graph2_, Graph2) {
             vertex2_type w = source(e2, graph2_);
@@ -579,7 +545,7 @@ namespace boost {
                 v = state2_.core(w);
               
               if (!edge1_exists(v, v_new,
-                                edge1_predicate<Graph1, Graph2, EdgeCompatibilityPredicate>(edge_comp_, e2), 
+                                edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
                                 graph1_))
                 return false;
               
@@ -595,7 +561,7 @@ namespace boost {
         }
 
         {
-          compatible_edge_exists<Graph1> edge1_exists;
+          equivalent_edge_exists<Graph1> edge1_exists;
           
           BGL_FORALL_OUTEDGES_T(w_new, e2, graph2_, Graph2) {
             vertex2_type w = target(e2, graph2_);
@@ -605,7 +571,7 @@ namespace boost {
                 v = state2_.core(w);
               
               if (!edge1_exists(v_new, v,
-                                edge1_predicate<Graph1, Graph2, EdgeCompatibilityPredicate>(edge_comp_, e2), 
+                                edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
                                 graph1_))
                 return false;
               
@@ -676,7 +642,7 @@ namespace boost {
       }
       
       // Calls the user_callback with a graph (sub)graph mapping 
-      bool call_back(SubGraphIsoMapCallBack user_callback) const {
+      bool call_back(SubGraphIsoMapCallback user_callback) const {
         return user_callback(state1_.get_map(), state2_.get_map());
       }
       
@@ -705,15 +671,15 @@ namespace boost {
              typename IndexMap1,
              typename IndexMap2,
              typename VertexOrder1,
-             typename EdgeCompatibilityPredicate,
-             typename VertexCompatibilityPredicate, 
-             typename SubGraphIsoMapCallBack,
+             typename EdgeEquivalencePredicate,
+             typename VertexEquivalencePredicate, 
+             typename SubGraphIsoMapCallback,
              problem_selector problem_selection>
     bool match(const Graph1& graph1, const Graph2& graph2, 
-               SubGraphIsoMapCallBack user_callback, const VertexOrder1& vertex_order1, 
+               SubGraphIsoMapCallback user_callback, const VertexOrder1& vertex_order1, 
                state<Graph1, Graph2, IndexMap1, IndexMap2,
-               EdgeCompatibilityPredicate, VertexCompatibilityPredicate,
-               SubGraphIsoMapCallBack, problem_selection>& s) {
+               EdgeEquivalencePredicate, VertexEquivalencePredicate,
+               SubGraphIsoMapCallback, problem_selection>& s) {
       
       typename VertexOrder1::const_iterator graph1_verts_iter;
 
@@ -783,20 +749,19 @@ namespace boost {
         // lexicographical comparison
         return std::make_pair(in_degree(v, graph_), out_degree(v, graph_)) <
                std::make_pair(in_degree(w, graph_), out_degree(w, graph_));
-
       }
 
-      const Graph graph_;
+      const Graph& graph_;
     };
 
 
-    // Used to sort nodes by frequency/degrees
+    // Used to sort nodes by multiplicity of in/out degrees
     template<typename Graph,
              typename FrequencyMap>
     struct vertex_frequency_degree_cmp {
       typedef typename graph_traits<Graph>::vertex_descriptor vertex_type;
       
-      vertex_frequency_degree_cmp(const Graph& graph, const FrequencyMap& freq)
+      vertex_frequency_degree_cmp(const Graph& graph, FrequencyMap freq)
         : graph_(graph), freq_(freq) {}
       
       bool operator()(const vertex_type& v, const vertex_type& w) const {
@@ -807,17 +772,17 @@ namespace boost {
       }
 
       const Graph& graph_;
-      const FrequencyMap& freq_;
+      FrequencyMap freq_;
     };
 
     
-    // Sorts vertices of a graph by frequency/degree 
+    // Sorts vertices of a graph by multiplicity of in/out degrees 
     template<typename Graph,
              typename IndexMap,
              typename VertexOrder>
     void sort_vertices(const Graph& graph, const IndexMap index_map, VertexOrder& order) {
       typedef typename graph_traits<Graph>::vertices_size_type size_type;
-      
+
       boost::range::sort(order, vertex_in_out_degree_cmp<Graph>(graph));
 
       std::vector<size_type> freq_vec(num_vertices(graph), 0);
@@ -849,6 +814,19 @@ namespace boost {
 
   } // namespace detail
 
+
+  // Returns vertex order (vertices sorted by multiplicity of in/out degrees)
+  template<typename Graph>
+  std::vector<typename graph_traits<Graph>::vertex_descriptor> 
+    vertex_order_by_mult(const Graph& graph) {
+
+    std::vector<typename graph_traits<Graph>::vertex_descriptor> vertex_order;
+    std::copy(vertices(graph).first, vertices(graph).second, std::back_inserter(vertex_order));
+
+    detail::sort_vertices(graph, get(vertex_index, graph), vertex_order);
+    return vertex_order;
+  }
+
   
   // Enumerates all graph sub-graph isomorphism mappings between graphs
   // graph_small and graph_large. Continues until user_callback returns true or the
@@ -858,15 +836,15 @@ namespace boost {
             typename IndexMapSmall,
             typename IndexMapLarge,
             typename VertexOrderSmall,
-            typename EdgeCompatibilityPredicate,
-            typename VertexCompatibilityPredicate,
-            typename SubGraphIsoMapCallBack>
-  bool vf2_sub_graph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
-                         SubGraphIsoMapCallBack user_callback,
-                         IndexMapSmall index_map_small, IndexMapLarge index_map_large, 
-                         const VertexOrderSmall& vertex_order_small,
-                         EdgeCompatibilityPredicate edge_comp,
-                         VertexCompatibilityPredicate vertex_comp) {
+            typename EdgeEquivalencePredicate,
+            typename VertexEquivalencePredicate,
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                        SubGraphIsoMapCallback user_callback,
+                        IndexMapSmall index_map_small, IndexMapLarge index_map_large, 
+                        const VertexOrderSmall& vertex_order_small,
+                        EdgeEquivalencePredicate edge_comp,
+                        VertexEquivalencePredicate vertex_comp) {
 
     // Graph requirements
     BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<GraphSmall> ));
@@ -894,14 +872,14 @@ namespace boost {
     typedef typename property_traits<IndexMapLarge>::value_type IndexMapLargeValue;
     BOOST_STATIC_ASSERT(( is_convertible<IndexMapLargeValue, size_type_large>::value ));
 
-    // Edge & vertex compatibility requirements
+    // Edge & vertex requirements
     typedef typename graph_traits<GraphSmall>::edge_descriptor edge_small_type;
     typedef typename graph_traits<GraphLarge>::edge_descriptor edge_large_type;
 
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeCompatibilityPredicate, 
+    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeEquivalencePredicate, 
                            edge_small_type, edge_large_type> ));
 
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexCompatibilityPredicate, 
+    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexEquivalencePredicate, 
                            vertex_small_type, vertex_large_type> ));
 
     // Vertex order requirements
@@ -927,60 +905,54 @@ namespace boost {
       return true;
 
     detail::state<GraphSmall, GraphLarge, IndexMapSmall, IndexMapLarge,
-                  EdgeCompatibilityPredicate, VertexCompatibilityPredicate,
-                  SubGraphIsoMapCallBack, detail::sub_graph_iso> 
+                  EdgeEquivalencePredicate, VertexEquivalencePredicate,
+                  SubGraphIsoMapCallback, detail::subgraph_iso> 
       s(graph_small, graph_large, index_map_small, index_map_large, edge_comp, vertex_comp);
 
     return detail::match(graph_small, graph_large, user_callback, vertex_order_small, s);
   }
 
 
-  // All default interface for vf2_sub_graph_iso
+  // All default interface for vf2_subgraph_iso
   template <typename GraphSmall,
             typename GraphLarge,
-            typename SubGraphIsoMapCallBack>
-  bool vf2_sub_graph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large, 
-                         SubGraphIsoMapCallBack user_callback) {
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large, 
+                        SubGraphIsoMapCallback user_callback) {
 
     typedef typename graph_traits<GraphSmall>::vertex_descriptor vertex_small_type;
     
-    std::vector<vertex_small_type> vertex_order_small;
-    BGL_FORALL_VERTICES_T(v, graph_small, GraphSmall)
-      vertex_order_small.push_back(v);
-
-    detail::sort_vertices(graph_small, get(vertex_index, graph_small), vertex_order_small);
-    
-    return vf2_sub_graph_iso(graph_small, graph_large, user_callback, 
-                             get(vertex_index, graph_small), get(vertex_index, graph_large),
-                             vertex_order_small,
-                             always_compatible(), always_compatible());
+    return vf2_subgraph_iso(graph_small, graph_large, user_callback, 
+                            get(vertex_index, graph_small), get(vertex_index, graph_large),
+                            vertex_order_by_mult(graph_small),
+                            always_equivalent(), always_equivalent());
   }
 
 
-  // Named parameter interface of vf2_sub_graph_iso
+  // Named parameter interface of vf2_subgraph_iso
   template <typename GraphSmall,
             typename GraphLarge,
             typename VertexOrderSmall,
-            typename SubGraphIsoMapCallBack,
+            typename SubGraphIsoMapCallback,
             typename Param,
             typename Tag,
             typename Rest>
-  bool vf2_sub_graph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
-                         SubGraphIsoMapCallBack user_callback,
-                         const VertexOrderSmall& vertex_order_small,
-                         const bgl_named_params<Param, Tag, Rest>& params) {
+  bool vf2_subgraph_iso(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                        SubGraphIsoMapCallback user_callback,
+                        const VertexOrderSmall& vertex_order_small,
+                        const bgl_named_params<Param, Tag, Rest>& params) {
     
-    return vf2_sub_graph_iso(graph_small, graph_large, user_callback,
-                             choose_const_pmap(get_param(params, vertex_index1),
-                                               graph_small, vertex_index),
-                             choose_const_pmap(get_param(params, vertex_index2),
-                                               graph_large, vertex_index),
-                             vertex_order_small,
-                             choose_param(get_param(params, edges_equivalent_t()),
-                                          always_compatible()),
-                             choose_param(get_param(params, vertices_equivalent_t()),
-                                          always_compatible())
-                             );
+    return vf2_subgraph_iso(graph_small, graph_large, user_callback,
+                            choose_const_pmap(get_param(params, vertex_index1),
+                                              graph_small, vertex_index),
+                            choose_const_pmap(get_param(params, vertex_index2),
+                                              graph_large, vertex_index),
+                            vertex_order_small,
+                            choose_param(get_param(params, edges_equivalent_t()),
+                                         always_equivalent()),
+                            choose_param(get_param(params, vertices_equivalent_t()),
+                                         always_equivalent())
+                            );
 
   }
 
@@ -993,15 +965,15 @@ namespace boost {
             typename IndexMap1,
             typename IndexMap2,
             typename VertexOrder1,
-            typename EdgeCompatibilityPredicate,
-            typename VertexCompatibilityPredicate,
-            typename GraphIsoMapCallBack>
+            typename EdgeEquivalencePredicate,
+            typename VertexEquivalencePredicate,
+            typename GraphIsoMapCallback>
   bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
-                     GraphIsoMapCallBack user_callback,
+                     GraphIsoMapCallback user_callback,
                      IndexMap1 index_map1, IndexMap2 index_map2, 
                      const VertexOrder1& vertex_order1,
-                     EdgeCompatibilityPredicate edge_comp,
-                     VertexCompatibilityPredicate vertex_comp) {
+                     EdgeEquivalencePredicate edge_comp,
+                     VertexEquivalencePredicate vertex_comp) {
 
     // Graph requirements
     BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph1> ));
@@ -1030,14 +1002,14 @@ namespace boost {
     typedef typename property_traits<IndexMap2>::value_type IndexMap2Value;
     BOOST_STATIC_ASSERT(( is_convertible<IndexMap2Value, size_type2>::value ));
 
-    // Edge & vertex compatibility requirements
+    // Edge & vertex requirements
     typedef typename graph_traits<Graph1>::edge_descriptor edge1_type;
     typedef typename graph_traits<Graph2>::edge_descriptor edge2_type;
 
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeCompatibilityPredicate, 
+    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeEquivalencePredicate, 
                            edge1_type, edge2_type> ));
 
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexCompatibilityPredicate, 
+    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexEquivalencePredicate, 
                            vertex1_type, vertex2_type> ));
     
     // Vertex order requirements
@@ -1045,7 +1017,6 @@ namespace boost {
     typedef typename VertexOrder1::value_type order_value_type;
     BOOST_STATIC_ASSERT(( is_same<vertex1_type, order_value_type>::value ));
     BOOST_ASSERT( num_vertices(graph1) == vertex_order1.size() );
-
 
     if (num_vertices(graph1) != num_vertices(graph2))
       return false;
@@ -1064,8 +1035,8 @@ namespace boost {
       return true;
         
     detail::state<Graph1, Graph2, IndexMap1, IndexMap2,
-                  EdgeCompatibilityPredicate, VertexCompatibilityPredicate,
-                  GraphIsoMapCallBack, detail::isomorphism> 
+                  EdgeEquivalencePredicate, VertexEquivalencePredicate,
+                  GraphIsoMapCallback, detail::isomorphism> 
       s(graph1, graph2, index_map1, index_map2, edge_comp, vertex_comp);
 
     return detail::match(graph1, graph2, user_callback, vertex_order1, s);
@@ -1075,22 +1046,16 @@ namespace boost {
   // All default interface for vf2_graph_iso
   template <typename Graph1,
             typename Graph2,
-            typename GraphIsoMapCallBack>
+            typename GraphIsoMapCallback>
   bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2, 
-                     GraphIsoMapCallBack user_callback) {
+                     GraphIsoMapCallback user_callback) {
     
     typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_type;
 
-    std::vector<vertex1_type> vertex_order1;
-    BGL_FORALL_VERTICES_T(v, graph1, Graph1)
-      vertex_order1.push_back(v);
-
-    detail::sort_vertices(graph1, get(vertex_index, graph1), vertex_order1);
-    
     return vf2_graph_iso(graph1, graph2, user_callback, 
                          get(vertex_index, graph1), get(vertex_index, graph2),
-                         vertex_order1,
-                         always_compatible(), always_compatible());
+                         vertex_order_by_mult(graph1),
+                         always_equivalent(), always_equivalent());
   }
 
 
@@ -1098,12 +1063,12 @@ namespace boost {
   template <typename Graph1,
             typename Graph2,
             typename VertexOrder1,
-            typename GraphIsoMapCallBack,
+            typename GraphIsoMapCallback,
             typename Param,
             typename Tag,
             typename Rest>
   bool vf2_graph_iso(const Graph1& graph1, const Graph2& graph2,
-                     GraphIsoMapCallBack user_callback,
+                     GraphIsoMapCallback user_callback,
                      const VertexOrder1& vertex_order1,
                      const bgl_named_params<Param, Tag, Rest>& params) {
     
@@ -1114,9 +1079,9 @@ namespace boost {
                                            graph2, vertex_index),
                          vertex_order1,
                          choose_param(get_param(params, edges_equivalent_t()),
-                                always_compatible()),
+                                always_equivalent()),
                          choose_param(get_param(params, vertices_equivalent_t()),
-                                      always_compatible())
+                                      always_equivalent())
                          );
 
   }
@@ -1126,17 +1091,17 @@ namespace boost {
   template<typename Graph1,
            typename Graph2,
            typename CorresponenceMap1To2,
-           typename EdgeCompatibilityPredicate,
-           typename VertexCompatibilityPredicate>
-  inline bool verify_vf2_sub_graph_iso(const Graph1& graph1, const Graph2& graph2, 
-                                       const CorresponenceMap1To2 f,
-                                       EdgeCompatibilityPredicate edge_comp, 
-                                       VertexCompatibilityPredicate vertex_comp) {
+           typename EdgeEquivalencePredicate,
+           typename VertexEquivalencePredicate>
+  inline bool verify_vf2_subgraph_iso(const Graph1& graph1, const Graph2& graph2, 
+                                      const CorresponenceMap1To2 f,
+                                      EdgeEquivalencePredicate edge_comp, 
+                                      VertexEquivalencePredicate vertex_comp) {
         
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph1> ));
     BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph2> ));
 
-    detail::compatible_edge_exists<Graph2> edge2_exists;
+    detail::equivalent_edge_exists<Graph2> edge2_exists;
 
     BGL_FORALL_EDGES_T(e1, graph1, Graph1) {
       typename graph_traits<Graph1>::vertex_descriptor s1, t1;
@@ -1151,7 +1116,7 @@ namespace boost {
       typename graph_traits<Graph2>::edge_descriptor e2;
       
       if (!edge2_exists(s2, t2,
-                        detail::edge2_predicate<Graph1, Graph2, EdgeCompatibilityPredicate>(edge_comp, e1), 
+                        detail::edge2_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp, e1), 
                         graph2))
         return false;
       
@@ -1160,14 +1125,14 @@ namespace boost {
     return true;
   }
 
-  // Variant of verify_sub_graph_iso with all default parameters
+  // Variant of verify_subgraph_iso with all default parameters
   template<typename Graph1,
            typename Graph2,
            typename CorresponenceMap1To2>
-  inline bool verify_vf2_sub_graph_iso(const Graph1& graph1, const Graph2& graph2, 
-                                       const CorresponenceMap1To2 f) {
-    return verify_vf2_sub_graph_iso(graph1, graph2, f, 
-                                    always_compatible(), always_compatible());
+  inline bool verify_vf2_subgraph_iso(const Graph1& graph1, const Graph2& graph2, 
+                                      const CorresponenceMap1To2 f) {
+    return verify_vf2_subgraph_iso(graph1, graph2, f, 
+                                   always_equivalent(), always_equivalent());
   }
 
 
