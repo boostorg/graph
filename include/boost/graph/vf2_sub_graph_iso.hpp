@@ -282,44 +282,23 @@ namespace boost {
     };
 
 
-    // Used for bookkeeping of matched edges in equivalent_edge_exists
-    // (when dealing with multi-graphs)
-    template <typename Item, typename Enable = void>
-    struct memory {
-      void store(Item item) { items_.push_back(item); }
-      bool exists(Item item) const { 
-        return (std::find(items_.begin(), items_.end(), item) != items_.end());
-      }
-
-      std::vector<Item> items_;
-    };
-
-
-    template <typename Item>
-    struct memory<Item, typename boost::enable_if<has_less<Item> >::type> {
-      void store(Item item) { items_.insert(item); }
-      bool exists(Item item) const { 
-        return (items_.find(item) != items_.end());
-      }
-
-      std::set<Item> items_;
-    };
-
-
     // Function object that checks whether a valid edge
     // exists. For multi-graphs matched edges are excluded  
     template <typename Graph, typename Enable = void>
     struct equivalent_edge_exists {
       typedef typename boost::graph_traits<Graph>::edge_descriptor edge_type;
-      
+
+      BOOST_CONCEPT_ASSERT(( LessThanComparable<edge_type> ));
+
       template<typename EdgePredicate>
       bool operator()(typename graph_traits<Graph>::vertex_descriptor s,
                       typename graph_traits<Graph>::vertex_descriptor t, 
                       EdgePredicate is_valid_edge, const Graph& g) {
         
         BGL_FORALL_OUTEDGES_T(s, e, g, Graph) {
-          if ((target(e, g) == t) && is_valid_edge(e) && !edge_memory_.exists(e)) {
-            edge_memory_.store(e);
+          if ((target(e, g) == t) && is_valid_edge(e) && 
+              (matched_edges_.find(e) == matched_edges_.end())) {
+            matched_edges_.insert(e);
             return true;
           }
         }
@@ -329,7 +308,7 @@ namespace boost {
 
     private:
       
-      memory<edge_type> edge_memory_;
+      std::set<edge_type> matched_edges_;
     };
     
     template <typename Graph>
@@ -768,7 +747,6 @@ namespace boost {
         // lexicographical comparison
         return std::make_pair(freq_[v], in_degree(v, graph_)+out_degree(v, graph_)) <
                std::make_pair(freq_[w], in_degree(w, graph_)+out_degree(w, graph_));
-
       }
 
       const Graph& graph_;
@@ -780,7 +758,7 @@ namespace boost {
     template<typename Graph,
              typename IndexMap,
              typename VertexOrder>
-    void sort_vertices(const Graph& graph, const IndexMap index_map, VertexOrder& order) {
+    void sort_vertices(const Graph& graph, IndexMap index_map, VertexOrder& order) {
       typedef typename graph_traits<Graph>::vertices_size_type size_type;
 
       boost::range::sort(order, vertex_in_out_degree_cmp<Graph>(graph));

@@ -80,7 +80,7 @@ int main() {
 
   // Print out all subgraph isomorphism mappings between graph1 and graph2.
   // Function vertex_order_by_mult is used to compute the order of 
-  // vertices of graph1. That's the order in which the vertices are examined
+  // vertices of graph1. This is the order in which the vertices are examined
   // during the matching process.
   vf2_subgraph_iso(graph1, graph2, callback, vertex_order_by_mult(graph1),
                    edges_equivalent(edge_comp).vertices_equivalent(vertex_comp));
