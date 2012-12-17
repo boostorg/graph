@@ -19,7 +19,7 @@ __ ../../../index.htm
 ::
 
   void read_graphml(std::istream& in, MutableGraph& graph,
-                    dynamic_properties& dp);
+                    dynamic_properties& dp, size_t graph_index = 0);
 
  
 The ``read_graphml`` function interprets a graph described using the
@@ -41,6 +41,11 @@ this object, using the GraphML attribute names as the property names,
 and with the appropriate C++ value type based on the GraphML attribute type
 definition. Graph properties are also set with the same
 dynamic_properties_ object, where the key type is the type of the graph itself.
+
+If the file contains multiple graphs, the ``graph_index`` parameter controls
+which graph will be loaded.  It defaults to ``0``, meaning that the first graph
+in the file will be loaded.  If ``graph_index`` is greater than or equal to the
+number of graphs in the file, an empty graph will be returned.
 
 Requirements:
  - The type of the graph must model the `Mutable Graph`_ concept.

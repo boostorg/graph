@@ -192,7 +192,7 @@ int main(int argc, char **argv)
   vector<cost> d(num_vertices(g));
   try {
     // call astar named parameter interface
-    astar_search
+    astar_search_tree
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),

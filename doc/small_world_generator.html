@@ -45,7 +45,7 @@ public:
 
   small_world_iterator();
   small_world_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                       vertices_size_type k, double probability,
+                       vertices_size_type k, double probability = 0.,
                        bool allow_self_loops = false);
   // Iterator operations
   reference operator*() const;
@@ -82,7 +82,7 @@ Constructs a past-the-end iterator.
 
 <pre>
 small_world_iterator(RandomGenerator&amp; gen, vertices_size_type n,
-                     vertices_size_type k, double probability,
+                     vertices_size_type k, double probability = 0.,
                      bool allow_self_loops = false);
 </pre>
 <blockquote>

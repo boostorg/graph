@@ -37,7 +37,25 @@ template &lt;typename VertexListGraph,
           typename P, typename T, typename R&gt;
 void
 astar_search_no_init
+  (const IncidenceGraph &amp;g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+template &lt;typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R&gt;
+void
+astar_search_tree
   (const VertexListGraph &amp;g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+template &lt;typename VertexListGraph,
+          typename AStarHeuristic,
+          typename P, typename T, typename R&gt;
+void
+astar_search_no_init_tree
+  (const IncidenceGraph &amp;g,
    typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
    <a href="AStarHeuristic.html">AStarHeuristic</a> h, const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
@@ -60,7 +78,23 @@ astar_search
    CompareFunction compare, CombineFunction combine,
    CostInf inf, CostZero zero);
 
-<i>// Version that does not initialize property maps (used for implicit graphs)</i>
+template &lt;typename VertexListGraph, typename AStarHeuristic,
+          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename CostInf, typename CostZero&gt;
+inline void
+astar_search_tree
+  (const VertexListGraph &amp;g,
+   typename graph_traits&lt;VertexListGraph&gt;::vertex_descriptor s,
+   AStarHeuristic h, AStarVisitor vis,
+   PredecessorMap predecessor, CostMap cost,
+   DistanceMap distance, WeightMap weight,
+   CompareFunction compare, CombineFunction combine,
+   CostInf inf, CostZero zero);
+
+<i>// Versions that do not initialize property maps (used for implicit graphs)</i>
 template &lt;typename IncidenceGraph, typename AStarHeuristic,
           typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
@@ -82,6 +116,22 @@ astar_search_no_init
 <b>Note that the index_map and color parameters are swapped in
 astar_search_no_init() relative to astar_search(); the named parameter
 interfaces are not affected.</b>
+
+template &lt;typename IncidenceGraph, typename AStarHeuristic,
+          typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
+          typename CostMap, typename DistanceMap,
+          typename WeightMap,
+          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename CostInf, typename CostZero&gt;
+inline void
+astar_search_no_init_tree
+  (const IncidenceGraph &amp;g,
+   typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
+   AStarHeuristic h, AStarVisitor vis,
+   PredecessorMap predecessor, CostMap cost,
+   DistanceMap distance, WeightMap weight,
+   CompareFunction compare, CombineFunction combine,
+   CostInf inf, CostZero zero);
 </PRE>
 
 <P>
@@ -125,7 +175,8 @@ useful for searching large state spaces -- in game-playing scenarios
 the entire graph.  Implicit searches can be performed with this
 implementation of A* by creating special visitors that generate
 neighbors of newly-expanded vertices.  Please note that
-<tt>astar_search_no_init()</tt> must be used for implicit graphs; the basic
+<tt>astar_search_no_init()</tt> or <tt>astar_search_no_init_tree()</tt> must be
+used for implicit graphs; the basic
 <tt>astar_search()</tt> function requires a graph that models
 the <a href="VertexListGraph.html">Vertex List Graph</a> concept.  Both
 versions
@@ -134,8 +185,9 @@ href="IncidenceGraph.html">Incidence Graph</a> concept.
 </P>
 
 <P>
-This implementation of A* is based on an OPEN/CLOSED list formulation
-of the algorithm.  Vertices on the OPEN list have been ``discovered''
+For the non-tree versions of the algorithm,
+this implementation of A* is based on an OPEN/CLOSED list formulation.
+Vertices on the OPEN list have been ``discovered''
 by the algorithm, but not ``expanded'' (we have not discovered their
 adjacent vertices).  Vertices on the CLOSED list have been completely
 examined by our search (we have expanded them and added their children
@@ -146,7 +198,11 @@ avoids ``cycles'' in the state space; the search will not become
 trapped by loops in the graph.  The OPEN/CLOSED lists are implemented
 using BGL's vertex coloring mechanisms.  Vertices in OPEN are colored
 gray, vertices in CLOSED are colored black, and undiscovered vertices
-are colored white.
+are colored white.  For the versions of the algorithm whose names end in
+<tt>_tree</tt>, all vertices are assumed to always be white, leading to
+checking for repeated vertices being done using the distance map.  If a dummy
+value is used for the distance map and the graph contains cycles, the algorithm
+will probably enter an infinite loop.
 </P>
 
 <P>
@@ -292,7 +348,8 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
-  num_vertices(g))</tt>.  This is necessary for efficient updates of
+  num_vertices(g))</tt>.  This is necessary in non-tree versions of the
+  algorithm for efficient updates of
   the heap data structure when an edge is relaxed.  The type
   <tt>VertexIndexMap</tt> must be a model of <a
   href="../../property_map/doc/ReadablePropertyMap.html"><tt>Readable
@@ -338,7 +395,10 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   <tt>combine</tt> function object and the zero object for the
   identity element.  Also the distance value type must have a <a
   href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
-  provided by the <tt>compare</tt> function object.<br>
+  provided by the <tt>compare</tt> function object.  A
+  <tt>constant_writable_property_map</tt> returning the infinity value can be
+  used for this parameter in tree versions of the algorithm when the graph does
+  not contain a directed cycle.<br>
 
   <b>Default:</b> <tt>shared_array_property_map</tt>
   with the same value type as the
@@ -355,7 +415,10 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
   <tt>h</tt>) from the vertex to a goal.  The type <tt>CostMap</tt>
   must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html"><tt>Read/Write
-  Property Map</tt></a>.  The vertex descriptor type of the graph
+  Property Map</tt></a> in non-tree versions of the algorithm, and <a
+  href="../../property_map/doc/WritablePropertyMap.html"><tt>Writable Property
+  Map</tt></a> in tree versions of the algorithm.  The vertex descriptor type
+  of the graph
   needs to be usable as the key type of the distance map.  The value
   type of the distance map is the element type of a <a
   href="./Monoid.html"><tt>Monoid</tt></a> formed with the
@@ -364,7 +427,8 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
   href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
   provided by the <tt>compare</tt> function object.  The value type
   for this map must be the same as the value type for the distance
-  map.<br>
+  map.  In tree versions of the algorithm, <tt>null_property_map</tt> can be
+  used for this parameter.<br>
 
   <b>Default:</b> <tt>shared_array_property_map</tt>
   with the same value type as the
@@ -375,7 +439,8 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
 UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
 <blockquote>
 
-  This is used during the execution of the algorithm to mark the
+  This is used during the execution of non-tree versions of the algorithm to
+  mark the
   vertices, indicating whether they are on the OPEN or CLOSED lists.
   The vertices start out white and become gray when they are inserted
   into the OPEN list.  They then turn black when they are examined and
