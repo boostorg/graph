@@ -38,25 +38,8 @@ main(int, char *[])
   int num_arcs = sizeof(edge_array) / sizeof(Edge);
   graph_traits<graph_t>::vertex_iterator i, iend;
 
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  graph_t g(num_nodes);
-  property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
-
-  std::vector<vertex_descriptor> msvc_vertices;
-  for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
-    msvc_vertices.push_back(*i);
-
-  for (std::size_t j = 0; j < num_arcs; ++j) {
-    edge_descriptor e; bool inserted;
-    boost::tie(e, inserted) = add_edge(msvc_vertices[edge_array[j].first], 
-                                       msvc_vertices[edge_array[j].second], g);
-    weightmap[e] = weights[j];
-  }
-
-#else
   graph_t g(edge_array, edge_array + num_arcs, weights, num_nodes);
   property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
-#endif
 
   // Manually intialize the vertex index and name maps
   property_map<graph_t, vertex_index_t>::type indexmap = get(vertex_index, g);
@@ -73,16 +56,7 @@ main(int, char *[])
     d = get(vertex_distance, g);
   property_map<graph_t, vertex_predecessor_t>::type
     p = get(vertex_predecessor, g);
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  // VC++ has trouble with the named parameters mechanism
-  property_map<graph_t, vertex_index_t>::type indexmap = get(vertex_index, g);
-  dijkstra_shortest_paths(g, s, p, d, weightmap, indexmap, 
-                          std::less<int>(), closed_plus<int>(), 
-                          (std::numeric_limits<int>::max)(), 0,
-                          default_dijkstra_visitor());
-#else
   dijkstra_shortest_paths(g, s, predecessor_map(p).distance_map(d));
-#endif
 
   std::cout << "distances and parents:" << std::endl;
   graph_traits < graph_t >::vertex_iterator vi, vend;
