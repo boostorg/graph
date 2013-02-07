@@ -22,7 +22,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/test/floating_point_comparison.hpp>
+// #include <boost/test/floating_point_comparison.hpp>
 
 using boost::shared_ptr;
 using boost::uniform_01;
@@ -156,7 +156,7 @@ namespace boost {
     {
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
-      BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
+      // BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       if (permute_vertices)
         generate_permutation_vector(gen, vertexPermutation, n);
@@ -266,7 +266,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
 
     {
-      BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
+      // BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -367,7 +367,7 @@ namespace boost {
       : gen(), done(false)
 
     {
-      BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
+      // BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
@@ -480,7 +480,7 @@ namespace boost {
         values(sort_pair<vertices_size_type>()), done(false)
 
     {
-      BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
+      // BOOST_ASSERT(boost::test_tools::check_is_close(a + b + c + d, 1., 1.e-5));
 
       this->gen.reset(new uniform_01<RandomGenerator>(gen));
 
