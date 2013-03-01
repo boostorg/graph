@@ -87,13 +87,16 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
       graph that preserves the edge structure of the graphs. <em>M</em> is said to be a
       graph-subgraph isomorphism if and only if <em>M</em> is an isomorphism between 
       <em>G<sub>1</sub></em> and a subgraph of <em>G<sub>2</sub></em>.
+      An induced subgraph of a graph <em>G = (V, E)<em> is a normal subgraph
+      <em>G' = (V', E')</em> with the extra condition that all edges of <em>G</em>
+      which have both endpoints in <em>V'</em> are in <em>E'</em>.
     </p>
     
     <p>
-      This function finds all graph-subgraph isomorphism mappings between
+      This function finds all induced subgraph isomorphisms between
       graphs <tt>graph_small</tt> and <tt>graph_large</tt> and outputs them to
       <tt>user_callback</tt>. It continues until <tt>user_callback</tt>
-      returns true or the search space has been fully explored. <tt>vf2_subgraph_iso</tt>
+      returns false or the search space has been fully explored. <tt>vf2_subgraph_iso</tt>
       returns true if a graph-subgraph isomorphism exists and false otherwise.
       <tt>EdgeEquivalencePredicate</tt> and
       <tt>VertexEquivalencePredicate</tt> predicates are used to test whether
@@ -182,8 +185,8 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
         and <tt>CorresondenceMap2To1</tt> types are models
         of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
           Property Map</a> and map equivalent vertices across the two
-        graphs given to <tt>vf2_subgraph_iso</tt> (or <tt>vf2_graph_iso</tt>). For
-        instance, if <tt>v</tt> is
+        graphs given to <tt>vf2_subgraph_iso</tt> (or <tt>vf2_graph_iso</tt> or
+        <tt>vf2_subgraph_mono</tt>). For instance, if <tt>v</tt> is
         from <tt>graph_small</tt>, <tt>w</tt> is from <tt>graph_large</tt>,
         and the vertices can be considered equivalent,
         then <tt>get(f, v)</tt> will be <tt>w</tt> and <tt>get(g, w)</tt> 
@@ -279,13 +282,22 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
       function
     </p>
     <p><tt>vf2_graph_iso(...)</tt></p>
+    <p><tt>vf2_subgraph_mono(...)</tt></p>
     <p>
-      for isomorphism testing take the same parameters as the corresponding
-      functions <tt>vf2_subgraph_iso</tt> for subgraph isomorphism testing.
-      The algorithm finds all isomorphism mappings between graphs
-      <tt>graph1</tt> and <tt>graph2</tt> and outputs them to
-      <tt>user_callback</tt>. It continues until <tt>user_callback</tt>
-      returns true or the search space has been fully explored. As before,
+      for isomorphism and (not necessarily induced) subgraph isomorphism testing,
+      taking the same parameters as the corresponding functions <tt>vf2_subgraph_iso</tt> 
+      for induced subgraph isomorphism testing.
+      For <tt>vf2_graph_iso</tt> the algorithm finds all isomorphism mappings between
+      graphs <tt>graph1</tt> and <tt>graph2</tt> and outputs them to
+      <tt>user_callback</tt>.
+      For <tt>vf2_graph_mono</tt> the algorithm finds all mappings of <tt>graph_small</tt>
+      to subgraphs of <tt>graph_large</tt>.
+      Note that, as opposed to <tt>vf2_subgraph_iso</tt>,
+      these subgraphs need not to be induced subgraphs.
+    </p>
+    <p> 
+      Both algorithms continues until <tt>user_callback</tt>
+      returns false or the search space has been fully explored. As before,
       <tt>EdgeEquivalencePredicate</tt> and
       <tt>VertexEquivalencePredicate</tt> predicates are used to test
       whether edges and vertices are equivalent. By default
@@ -511,7 +523,9 @@ vf2_subgraph_iso(graph1, graph2, callback, vertex_order_by_mult(graph1),
     <hr>
     <p>
       Copyright &copy; 2012, Flavio De Lorenzi 
-      (<a href="mailto:fdlorenzi@gmail.com">fdlorenzi@gmail.com</a>)
+      (<a href="mailto:fdlorenzi@gmail.com">fdlorenzi@gmail.com</a>) <br />
+      Copyright &copy; 2013, Jakob Lykke Andersen, University of Southern Denmark
+      (<a href="mailto:jlandersen@imada.sdu.dk">jlandersen@imada.sdu.dk</a>)
     </p>
   </body>
 </html> 

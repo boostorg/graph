@@ -1,5 +1,6 @@
 //=======================================================================
 // Copyright (C) 2012 Flavio De Lorenzi (fdlorenzi@gmail.com)
+// Copyright (C) 2013 Jakob Lykke Andersen, University of Southern Denmark (jlandersen@imada.sdu.dk)
 //
 // The algorithm implemented here is derived from original ideas by 
 // Pasquale Foggia and colaborators. For further information see 
@@ -372,7 +373,7 @@ namespace boost {
     };
 
 
-    enum problem_selector { subgraph_iso, isomorphism };
+    enum problem_selector {subgraph_mono, subgraph_iso, isomorphism };
     
     // The actual state associated with both graphs
     template<typename Graph1,
@@ -405,8 +406,15 @@ namespace boost {
       base_state<Graph1, Graph2, IndexMap1, IndexMap2> state1_;
       base_state<Graph2, Graph1, IndexMap2, IndexMap1> state2_;
 
-      // Two helper functions used in Feasibility and Valid functions to test
+      // Three helper functions used in Feasibility and Valid functions to test
       // terminal set counts when testing for:
+      // - graph sub-graph monomorphism, or
+      inline bool comp_term_sets(graph1_size_type a, 
+                                 graph2_size_type b,
+                                 boost::mpl::int_<subgraph_mono>) const {
+        return a <= b;
+      }
+
       // - graph sub-graph isomorphism, or
       inline bool comp_term_sets(graph1_size_type a, 
                                  graph2_size_type b,
@@ -519,15 +527,16 @@ namespace boost {
           BGL_FORALL_INEDGES_T(w_new, e2, graph2_, Graph2) {
             vertex2_type w = source(e2, graph2_);
             if (state2_.in_core(w) || (w == w_new)) {
-              vertex1_type v = v_new;
-              if (w != w_new)
-                v = state2_.core(w);
+              if (problem_selection != subgraph_mono) {
+                vertex1_type v = v_new;
+                if (w != w_new)
+                  v = state2_.core(w);
               
-              if (!edge1_exists(v, v_new,
-                                edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
-                                graph1_))
-                return false;
-              
+                if (!edge1_exists(v, v_new,
+                                  edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
+                                  graph1_))
+                  return false;
+              }
             } else {
               if (0 < state2_.in_depth(w))
                 ++term_in2_count;
@@ -545,15 +554,16 @@ namespace boost {
           BGL_FORALL_OUTEDGES_T(w_new, e2, graph2_, Graph2) {
             vertex2_type w = target(e2, graph2_);
             if (state2_.in_core(w) || (w == w_new)) {
-              vertex1_type v = v_new;
-              if (w != w_new)
-                v = state2_.core(w);
+              if (problem_selection != subgraph_mono) {
+                vertex1_type v = v_new;
+                if (w != w_new)
+                  v = state2_.core(w);
               
-              if (!edge1_exists(v_new, v,
-                                edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
-                                graph1_))
-                return false;
-              
+                if (!edge1_exists(v_new, v,
+                                  edge1_predicate<Graph1, Graph2, EdgeEquivalencePredicate>(edge_comp_, e2), 
+                                  graph1_))
+                  return false;
+              }
             } else {
               if (0 < state2_.in_depth(w))
                 ++term_in2_count;
@@ -564,13 +574,23 @@ namespace boost {
             }
           }
         }
-        
-        return comp_term_sets(term_in1_count, term_in2_count,
-                              boost::mpl::int_<problem_selection>()) &&
-               comp_term_sets(term_out1_count, term_out2_count, 
-                              boost::mpl::int_<problem_selection>()) &&
-               comp_term_sets(rest1_count, rest2_count, 
-                              boost::mpl::int_<problem_selection>());
+
+        if (problem_selection != subgraph_mono) { // subgraph_iso and isomorphism
+          return comp_term_sets(term_in1_count, term_in2_count,
+                                boost::mpl::int_<problem_selection>()) &&
+                 comp_term_sets(term_out1_count, term_out2_count, 
+                                boost::mpl::int_<problem_selection>()) &&
+                 comp_term_sets(rest1_count, rest2_count, 
+                                boost::mpl::int_<problem_selection>());
+        } else { // subgraph_mono
+          return comp_term_sets(term_in1_count, term_in2_count,
+                                boost::mpl::int_<problem_selection>()) &&
+                 comp_term_sets(term_out1_count, term_out2_count, 
+                                boost::mpl::int_<problem_selection>()) &&
+                 comp_term_sets(term_in1_count + term_out1_count + rest1_count,
+                                term_in2_count + term_out2_count + rest2_count, 
+                                boost::mpl::int_<problem_selection>());
+        }
       }
       
       // Returns true if vertex v in graph1 is a possible candidate to
@@ -790,6 +810,91 @@ namespace boost {
 
     }
 
+    // Enumerates all graph sub-graph mono-/iso-morphism mappings between graphs
+    // graph_small and graph_large. Continues until user_callback returns true or the
+    // search space has been fully explored.
+    template <problem_selector problem_selection,
+              typename GraphSmall,
+              typename GraphLarge,
+              typename IndexMapSmall,
+              typename IndexMapLarge,
+              typename VertexOrderSmall,
+              typename EdgeEquivalencePredicate,
+              typename VertexEquivalencePredicate,
+              typename SubGraphIsoMapCallback>
+    bool vf2_subgraph_morphism(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                          SubGraphIsoMapCallback user_callback,
+                          IndexMapSmall index_map_small, IndexMapLarge index_map_large, 
+                          const VertexOrderSmall& vertex_order_small,
+                          EdgeEquivalencePredicate edge_comp,
+                          VertexEquivalencePredicate vertex_comp) {
+
+      // Graph requirements
+      BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<GraphSmall> ));
+      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<GraphSmall> ));
+      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<GraphSmall> ));
+      BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<GraphSmall> ));
+
+      BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<GraphLarge> ));
+      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<GraphLarge> ));
+      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<GraphLarge> ));
+      BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<GraphLarge> ));
+
+      typedef typename graph_traits<GraphSmall>::vertex_descriptor vertex_small_type;
+      typedef typename graph_traits<GraphLarge>::vertex_descriptor vertex_large_type;
+
+      typedef typename graph_traits<GraphSmall>::vertices_size_type size_type_small;
+      typedef typename graph_traits<GraphLarge>::vertices_size_type size_type_large;
+        
+      // Property map requirements
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMapSmall, vertex_small_type> ));
+      typedef typename property_traits<IndexMapSmall>::value_type IndexMapSmallValue;
+      BOOST_STATIC_ASSERT(( is_convertible<IndexMapSmallValue, size_type_small>::value ));
+        
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMapLarge, vertex_large_type> ));
+      typedef typename property_traits<IndexMapLarge>::value_type IndexMapLargeValue;
+      BOOST_STATIC_ASSERT(( is_convertible<IndexMapLargeValue, size_type_large>::value ));
+
+      // Edge & vertex requirements
+      typedef typename graph_traits<GraphSmall>::edge_descriptor edge_small_type;
+      typedef typename graph_traits<GraphLarge>::edge_descriptor edge_large_type;
+
+      BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeEquivalencePredicate, 
+                             edge_small_type, edge_large_type> ));
+
+      BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexEquivalencePredicate, 
+                             vertex_small_type, vertex_large_type> ));
+
+      // Vertex order requirements
+      BOOST_CONCEPT_ASSERT(( ContainerConcept<VertexOrderSmall> )); 
+      typedef typename VertexOrderSmall::value_type order_value_type;
+      BOOST_STATIC_ASSERT(( is_same<vertex_small_type, order_value_type>::value ));
+      BOOST_ASSERT( num_vertices(graph_small) == vertex_order_small.size() );
+
+      if (num_vertices(graph_small) > num_vertices(graph_large))
+        return false;
+
+      typename graph_traits<GraphSmall>::edges_size_type num_edges_small = num_edges(graph_small);
+      typename graph_traits<GraphLarge>::edges_size_type num_edges_large = num_edges(graph_large);
+
+      // Double the number of edges for undirected graphs: each edge counts as
+      // in-edge and out-edge
+      if (is_undirected(graph_small)) num_edges_small *= 2;
+      if (is_undirected(graph_large)) num_edges_large *= 2;
+      if (num_edges_small > num_edges_large)
+        return false;
+    
+      if ((num_vertices(graph_small) == 0) && (num_vertices(graph_large) == 0))
+        return true;
+
+      detail::state<GraphSmall, GraphLarge, IndexMapSmall, IndexMapLarge,
+                    EdgeEquivalencePredicate, VertexEquivalencePredicate,
+                    SubGraphIsoMapCallback, problem_selection> 
+        s(graph_small, graph_large, index_map_small, index_map_large, edge_comp, vertex_comp);
+
+      return detail::match(graph_small, graph_large, user_callback, vertex_order_small, s);
+    }
+
   } // namespace detail
 
 
@@ -805,6 +910,72 @@ namespace boost {
     return vertex_order;
   }
 
+
+  // Enumerates all graph sub-graph monomorphism mappings between graphs
+  // graph_small and graph_large. Continues until user_callback returns true or the
+  // search space has been fully explored.
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename IndexMapSmall,
+            typename IndexMapLarge,
+            typename VertexOrderSmall,
+            typename EdgeEquivalencePredicate,
+            typename VertexEquivalencePredicate,
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                         SubGraphIsoMapCallback user_callback,
+                         IndexMapSmall index_map_small, IndexMapLarge index_map_large, 
+                         const VertexOrderSmall& vertex_order_small,
+                         EdgeEquivalencePredicate edge_comp,
+                         VertexEquivalencePredicate vertex_comp) {
+    return detail::vf2_subgraph_morphism<detail::subgraph_mono>
+                                        (graph_small, graph_large,
+                                         user_callback,
+                                         index_map_small, index_map_large,
+                                         vertex_order_small,
+                                         edge_comp,
+                                         vertex_comp);
+  }
+
+
+  // All default interface for vf2_subgraph_iso
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename SubGraphIsoMapCallback>
+  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large, 
+                         SubGraphIsoMapCallback user_callback) {
+    return vf2_subgraph_mono(graph_small, graph_large, user_callback, 
+                             get(vertex_index, graph_small), get(vertex_index, graph_large),
+                             vertex_order_by_mult(graph_small),
+                             always_equivalent(), always_equivalent());
+  }
+
+
+  // Named parameter interface of vf2_subgraph_iso
+  template <typename GraphSmall,
+            typename GraphLarge,
+            typename VertexOrderSmall,
+            typename SubGraphIsoMapCallback,
+            typename Param,
+            typename Tag,
+            typename Rest>
+  bool vf2_subgraph_mono(const GraphSmall& graph_small, const GraphLarge& graph_large,
+                         SubGraphIsoMapCallback user_callback,
+                         const VertexOrderSmall& vertex_order_small,
+                         const bgl_named_params<Param, Tag, Rest>& params) {
+    return vf2_subgraph_mono(graph_small, graph_large, user_callback,
+                             choose_const_pmap(get_param(params, vertex_index1),
+                                               graph_small, vertex_index),
+                             choose_const_pmap(get_param(params, vertex_index2),
+                                               graph_large, vertex_index),
+                             vertex_order_small,
+                             choose_param(get_param(params, edges_equivalent_t()),
+                                          always_equivalent()),
+                             choose_param(get_param(params, vertices_equivalent_t()),
+                                          always_equivalent())
+                             );
+  }
+  
   
   // Enumerates all graph sub-graph isomorphism mappings between graphs
   // graph_small and graph_large. Continues until user_callback returns true or the
@@ -823,71 +994,13 @@ namespace boost {
                         const VertexOrderSmall& vertex_order_small,
                         EdgeEquivalencePredicate edge_comp,
                         VertexEquivalencePredicate vertex_comp) {
-
-    // Graph requirements
-    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<GraphSmall> ));
-    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<GraphSmall> ));
-    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<GraphSmall> ));
-    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<GraphSmall> ));
-
-    BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<GraphLarge> ));
-    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<GraphLarge> ));
-    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<GraphLarge> ));
-    BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<GraphLarge> ));
-
-    typedef typename graph_traits<GraphSmall>::vertex_descriptor vertex_small_type;
-    typedef typename graph_traits<GraphLarge>::vertex_descriptor vertex_large_type;
-
-    typedef typename graph_traits<GraphSmall>::vertices_size_type size_type_small;
-    typedef typename graph_traits<GraphLarge>::vertices_size_type size_type_large;
-        
-    // Property map requirements
-    BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMapSmall, vertex_small_type> ));
-    typedef typename property_traits<IndexMapSmall>::value_type IndexMapSmallValue;
-    BOOST_STATIC_ASSERT(( is_convertible<IndexMapSmallValue, size_type_small>::value ));
-        
-    BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMapLarge, vertex_large_type> ));
-    typedef typename property_traits<IndexMapLarge>::value_type IndexMapLargeValue;
-    BOOST_STATIC_ASSERT(( is_convertible<IndexMapLargeValue, size_type_large>::value ));
-
-    // Edge & vertex requirements
-    typedef typename graph_traits<GraphSmall>::edge_descriptor edge_small_type;
-    typedef typename graph_traits<GraphLarge>::edge_descriptor edge_large_type;
-
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<EdgeEquivalencePredicate, 
-                           edge_small_type, edge_large_type> ));
-
-    BOOST_CONCEPT_ASSERT(( BinaryPredicateConcept<VertexEquivalencePredicate, 
-                           vertex_small_type, vertex_large_type> ));
-
-    // Vertex order requirements
-    BOOST_CONCEPT_ASSERT(( ContainerConcept<VertexOrderSmall> )); 
-    typedef typename VertexOrderSmall::value_type order_value_type;
-    BOOST_STATIC_ASSERT(( is_same<vertex_small_type, order_value_type>::value ));
-    BOOST_ASSERT( num_vertices(graph_small) == vertex_order_small.size() );
-
-    if (num_vertices(graph_small) > num_vertices(graph_large))
-      return false;
-
-    typename graph_traits<GraphSmall>::edges_size_type num_edges_small = num_edges(graph_small);
-    typename graph_traits<GraphLarge>::edges_size_type num_edges_large = num_edges(graph_large);
-
-    // Double the number of edges for undirected graphs: each edge counts as
-    // in-edge and out-edge
-    if (is_undirected(graph_small)) num_edges_small *= 2;
-    if (is_undirected(graph_large)) num_edges_large *= 2;
-    if (num_edges_small > num_edges_large)
-      return false;
-    
-    if ((num_vertices(graph_small) == 0) && (num_vertices(graph_large) == 0))
-      return true;
-
-    detail::state<GraphSmall, GraphLarge, IndexMapSmall, IndexMapLarge,
-                  EdgeEquivalencePredicate, VertexEquivalencePredicate,
-                  SubGraphIsoMapCallback, detail::subgraph_iso> 
-      s(graph_small, graph_large, index_map_small, index_map_large, edge_comp, vertex_comp);
-
-    return detail::match(graph_small, graph_large, user_callback, vertex_order_small, s);
+    return detail::vf2_subgraph_morphism<detail::subgraph_iso>
+                                        (graph_small, graph_large,
+                                         user_callback,
+                                         index_map_small, index_map_large,
+                                         vertex_order_small,
+                                         edge_comp,
+                                         vertex_comp);
   }
 
 
