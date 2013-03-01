@@ -44,6 +44,7 @@ int main()
   // our vertices are stored in a vector, so we can refer to vertices
   // by integers in the range 0..15
 
+  add_edge(1,2,g);
   add_edge(0,4,g);
   add_edge(1,5,g);
   add_edge(2,6,g);
