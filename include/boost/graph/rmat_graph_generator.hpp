@@ -139,7 +139,7 @@ namespace boost {
     typedef std::pair<vertices_size_type, vertices_size_type> value_type;
     typedef const value_type& reference;
     typedef const value_type* pointer;
-    typedef void difference_type;
+    typedef std::ptrdiff_t difference_type; // Not used
 
     // No argument constructor, set to terminating condition
     rmat_iterator()
@@ -250,7 +250,7 @@ namespace boost {
     typedef std::pair<vertices_size_type, vertices_size_type> value_type;
     typedef const value_type& reference;
     typedef const value_type* pointer;
-    typedef void difference_type;
+    typedef std::ptrdiff_t difference_type; // Not used
 
     // No argument constructor, set to terminating condition
     sorted_rmat_iterator()
@@ -352,7 +352,7 @@ namespace boost {
     typedef std::pair<vertices_size_type, vertices_size_type> value_type;
     typedef const value_type& reference;
     typedef const value_type* pointer;
-    typedef void difference_type;
+    typedef std::ptrdiff_t difference_type; // Not used
 
     // No argument constructor, set to terminating condition
     unique_rmat_iterator()
@@ -464,7 +464,7 @@ namespace boost {
     typedef std::pair<vertices_size_type, vertices_size_type> value_type;
     typedef const value_type& reference;
     typedef const value_type* pointer;
-    typedef void difference_type;
+    typedef std::ptrdiff_t difference_type; // Not used
 
     // No argument constructor, set to terminating condition
     sorted_unique_rmat_iterator()
