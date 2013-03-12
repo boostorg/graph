@@ -123,6 +123,7 @@ test-suite graph_test :
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
+    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
     [ run vf2_sub_graph_iso_test.cpp ]
