@@ -409,7 +409,7 @@ void r_c_shortest_paths_dispatch
   typename std::list<Splabel>::const_iterator csi = dsplabels.begin();
   typename std::list<Splabel>::const_iterator csi_end = dsplabels.end();
   // if d could be reached from o
-  if( dsplabels.size() )
+  if( !dsplabels.empty() )
   {
     for( ; csi != csi_end; ++csi )
     {
