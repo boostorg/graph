@@ -11,6 +11,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+// Revision History:
+//   8 April 2013: Fixed a typo in vf2_print_callback. (Flavio De Lorenzi) 
+
 #ifndef BOOST_VF2_SUB_GRAPH_ISO_HPP
 #define BOOST_VF2_SUB_GRAPH_ISO_HPP
 
@@ -55,7 +58,7 @@ namespace boost {
       // Print (sub)graph isomorphism map
       BGL_FORALL_VERTICES_T(v, graph1_, Graph1) 
         std::cout << '(' << get(vertex_index_t(), graph1_, v) << ", " 
-                  << get(vertex_index_t(), graph1_, get(f, v)) << ") ";
+                  << get(vertex_index_t(), graph2_, get(f, v)) << ") ";
       
       std::cout << std::endl;
       

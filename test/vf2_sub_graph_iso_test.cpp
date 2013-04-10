@@ -9,6 +9,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+// Revision History:
+//   8 April 2013: Fixed a typo in random_functor. (Flavio De Lorenzi) 
+
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -36,7 +39,7 @@ struct random_functor {
   random_functor(Generator& g) : g(g) { }
   std::size_t operator()(std::size_t n) {
     boost::uniform_int<std::size_t> distrib(0, n-1);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<std::size_t> >
+    boost::variate_generator<Generator&, boost::uniform_int<std::size_t> >
       x(g, distrib);
     return x();
   }
