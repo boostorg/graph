@@ -49,4 +49,5 @@ exe subgraph : subgraph.cpp ;
 exe subgraph_properties : subgraph_properties.cpp ;
 exe vf2_sub_graph_iso_example : vf2_sub_graph_iso_example.cpp ;
 exe vf2_sub_graph_iso_multi_example : vf2_sub_graph_iso_multi_example.cpp ;
+exe sloan_ordering : sloan_ordering.cpp ;
 
