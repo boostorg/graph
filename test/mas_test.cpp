@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(test1)
   std::map<edge_descriptor, weight_type> wm;
 
   weight_type i = 0;
-  BGL_FORALL_EDGES_T(e, g, undirected_unweighted_graph) {
+  BGL_FORALL_EDGES(e, g, undirected_unweighted_graph) {
     wm[e] = ws[i];
     ++i;
   }
