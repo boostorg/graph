@@ -31,7 +31,12 @@ struct location
 {
   float y, x; // lat, long
 };
-typedef float cost;
+struct my_float {float v; explicit my_float(float v = float()): v(v) {}};
+typedef my_float cost;
+ostream& operator<<(ostream& o, my_float f) {return o << f.v;}
+my_float operator+(my_float a, my_float b) {return my_float(a.v + b.v);}
+bool operator==(my_float a, my_float b) {return a.v == b.v;}
+bool operator<(my_float a, my_float b) {return a.v < b.v;}
 
 template <class Name, class LocMap>
 class city_writer {
@@ -80,9 +85,9 @@ public:
     : m_location(l), m_goal(goal) {}
   CostType operator()(Vertex u)
   {
-    CostType dx = m_location[m_goal].x - m_location[u].x;
-    CostType dy = m_location[m_goal].y - m_location[u].y;
-    return ::sqrt(dx * dx + dy * dy);
+    float dx = m_location[m_goal].x - m_location[u].x;
+    float dy = m_location[m_goal].y - m_location[u].y;
+    return CostType(::sqrt(dx * dx + dy * dy));
   }
 private:
   LocMap m_location;
@@ -153,8 +158,8 @@ int main(int, char **)
   };
   unsigned int num_edges = sizeof(edge_array) / sizeof(edge);
   cost weights[] = { // estimated travel time (mins)
-    96, 134, 143, 65, 115, 133, 117, 116, 74, 56,
-    84, 73, 69, 70, 116, 147, 173, 183, 74, 71, 124
+    my_float(96), my_float(134), my_float(143), my_float(65), my_float(115), my_float(133), my_float(117), my_float(116), my_float(74), my_float(56),
+    my_float(84), my_float(73), my_float(69), my_float(70), my_float(116), my_float(147), my_float(173), my_float(183), my_float(74), my_float(71), my_float(124)
   };
   
   
@@ -187,7 +192,7 @@ int main(int, char **)
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
        predecessor_map(&p[0]).distance_map(&d[0]).
-       visitor(astar_goal_visitor<vertex>(goal)));
+       visitor(astar_goal_visitor<vertex>(goal)).distance_inf(my_float((std::numeric_limits<float>::max)())));
   
   
   } catch(found_goal fg) { // found a path to the goal

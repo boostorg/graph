@@ -438,7 +438,7 @@ namespace boost {
       typename detail::map_maker<VertexListGraph, arg_pack_type, tag::distance_map, W>::map_type
       distance_map_type;
     typedef typename boost::property_traits<distance_map_type>::value_type D;
-    const D inf = arg_pack[_distance_inf | (std::numeric_limits<D>::max)()];
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
     astar_search
       (g, s, h,
@@ -480,7 +480,7 @@ namespace boost {
       typename detail::map_maker<VertexListGraph, arg_pack_type, tag::distance_map, W>::map_type
       distance_map_type;
     typedef typename boost::property_traits<distance_map_type>::value_type D;
-    const D inf = arg_pack[_distance_inf | (std::numeric_limits<D>::max)()];
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
 
     astar_search_tree
       (g, s, h,
@@ -512,7 +512,7 @@ namespace boost {
                  arg_pack_type, tag::weight_map, edge_weight_t, VertexListGraph>::type
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
-    const D inf = arg_pack[_distance_inf | (std::numeric_limits<D>::max)()];
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
     astar_search_no_init
       (g, s, h,
        arg_pack[_visitor | make_astar_visitor(null_visitor())],
@@ -545,7 +545,7 @@ namespace boost {
                  arg_pack_type, tag::weight_map, edge_weight_t, VertexListGraph>::type
                weight_map_type;
     typedef typename boost::property_traits<weight_map_type>::value_type D;
-    const D inf = arg_pack[_distance_inf | (std::numeric_limits<D>::max)()];
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
     astar_search_no_init_tree
       (g, s, h,
        arg_pack[_visitor | make_astar_visitor(null_visitor())],
