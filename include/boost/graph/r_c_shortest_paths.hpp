@@ -222,7 +222,7 @@ void r_c_shortest_paths_dispatch
   std::vector<int> vec_last_valid_index_for_dominance( num_vertices( g ), 0 );
   std::vector<bool> 
     b_vec_vertex_already_checked_for_dominance( num_vertices( g ), false );
-  while( unprocessed_labels.size() )
+  while( !unprocessed_labels.empty()  && vis.on_enter_loop(unprocessed_labels, g) )
   {
     Splabel cur_label = unprocessed_labels.top();
     unprocessed_labels.pop();
@@ -458,6 +458,8 @@ struct default_r_c_shortest_paths_visitor
   void on_label_dominated( const Label&, const Graph& ) {}
   template<class Label, class Graph>
   void on_label_not_dominated( const Label&, const Graph& ) {}
+  template<class Queue, class Graph>             
+  bool on_enter_loop(const Queue& queue, const Graph& graph) {return true;}
 }; // default_r_c_shortest_paths_visitor
 
 
