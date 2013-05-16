@@ -71,6 +71,7 @@ public:
         else if (for_ == "port") kind = port_key;
         else if (for_ == "endpoint") kind = endpoint_key;
         else if (for_ == "all") kind = all_key;
+        else if (for_ == "graphml") kind = graphml_key;
         else {BOOST_THROW_EXCEPTION(parse_error("Attribute for is not valid: " + for_));}
         m_keys[id] = kind;
         m_key_name[id] = name;
@@ -132,7 +133,8 @@ private:
         hyperedge_key,
         port_key,
         endpoint_key, 
-        all_key
+        all_key,
+        graphml_key
     };
 
     void 

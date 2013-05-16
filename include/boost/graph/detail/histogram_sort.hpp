@@ -69,7 +69,7 @@ count_starts
   // m_rowstart
   EdgeIndex start_of_this_row = 0;
   starts[0] = start_of_this_row;
-  for (vertices_size_type i = 1; i <= numkeys; ++i) {
+  for (vertices_size_type i = 1; i < numkeys + 1; ++i) {
     start_of_this_row += starts[i];
     starts[i] = start_of_this_row;
   }

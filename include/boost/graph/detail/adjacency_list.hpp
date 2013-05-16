@@ -17,6 +17,7 @@
 #include <boost/detail/workaround.hpp>
 #include <boost/operators.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/pending/container_traits.hpp>
 #include <boost/range/irange.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <memory>
@@ -1903,7 +1904,7 @@ namespace boost {
     {
       typedef typename Config::stored_vertex stored_vertex;
       Derived& g = static_cast<Derived&>(g_);
-      g.removing_vertex(u);
+      g.removing_vertex(u, boost::graph_detail::iterator_stability(g_.m_vertices));
       stored_vertex* su = (stored_vertex*)u;
       g.m_vertices.erase(su->m_position);
       delete su;
@@ -2203,7 +2204,7 @@ namespace boost {
     {
       typedef typename Config::directed_category Cat;
       Graph& g = static_cast<Graph&>(g_);
-      g.removing_vertex(v);
+      g.removing_vertex(v, boost::graph_detail::iterator_stability(g_.m_vertices));
       detail::remove_vertex_dispatch(g, v, Cat());
     }
     // O(1)
