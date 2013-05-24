@@ -274,16 +274,21 @@ void split_into_separate_coords_filtered
   }
 }
 
+// The versions of operator()() here can't return by reference because the
+// actual type passed in may not match Pair, in which case the reference
+// parameter is bound to a temporary that could end up dangling after the
+// operator returns.
+
 template <typename Pair>
 struct project1st {
   typedef typename Pair::first_type result_type;
-  const result_type& operator()(const Pair& p) const {return p.first;}
+  result_type operator()(const Pair& p) const {return p.first;}
 };
 
 template <typename Pair>
 struct project2nd {
   typedef typename Pair::second_type result_type;
-  const result_type& operator()(const Pair& p) const {return p.second;}
+  result_type operator()(const Pair& p) const {return p.second;}
 };
 
     }
