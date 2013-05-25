@@ -762,7 +762,6 @@ namespace read_graphviz_detail {
   }
 
   void translate_results_to_graph(const parser_result& r, ::boost::detail::graph::mutate_graph* mg) {
-    typedef boost::detail::graph::node_t vertex;
     typedef boost::detail::graph::edge_t edge;
     for (std::map<node_name, properties>::const_iterator i = r.nodes.begin(); i != r.nodes.end(); ++i) {
       // std::cerr << i->first << " " << props_to_string(i->second) << std::endl;

@@ -635,7 +635,6 @@ namespace boost {
                     directed_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       g.out_edge_list(u).clear();
       // clear() should be a req of Sequence and AssociativeContainer,
@@ -782,7 +781,6 @@ namespace boost {
         typedef typename Graph::global_edgelist_selector EdgeListS;
         BOOST_STATIC_ASSERT((!is_same<EdgeListS, vecS>::value));
 
-        typedef typename EdgeList::value_type StoredEdge;
         typename EdgeList::iterator i = el.begin(), end = el.end();
         for (; i != end; ++i) {
           if ((*i).get_target() == v) {
@@ -987,7 +985,6 @@ namespace boost {
       BOOST_STATIC_ASSERT((!is_same<EdgeListS, vecS>::value));
 
       typedef typename Config::graph_type graph_type;
-      typedef typename Config::edge_parallel_category Cat;
       graph_type& g = static_cast<graph_type&>(g_);
       while (true) {
         typename Config::out_edge_iterator ei, ei_end;
@@ -1589,7 +1586,6 @@ namespace boost {
       typedef typename Config::graph_type Graph;
       typedef typename Config::StoredEdge StoredEdge;
       const Graph& cg = static_cast<const Graph&>(g_);
-      typedef typename Config::out_edge_iterator out_edge_iterator;
       const typename Config::OutEdgeList& el = cg.out_edge_list(u);
       typename Config::OutEdgeList::const_iterator it = graph_detail::
         find(el, StoredEdge(v));
