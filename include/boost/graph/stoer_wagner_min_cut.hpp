@@ -36,7 +36,7 @@ namespace boost {
       mas_min_cut_visitor(const Graph& g,
                           ParityMap parity,
                           weight_type& cutweight,
-                          WeightMap weight_map, 
+                          const WeightMap& weight_map, 
                           IndexMap index_map)
         : m_bestParity(parity),
           m_parity(make_one_bit_color_map(num_vertices(g), index_map)),
@@ -140,7 +140,7 @@ namespace boost {
 
       weight_type bestW = (std::numeric_limits<weight_type>::max)();
       weight_type bestThisTime = (std::numeric_limits<weight_type>::max)();
-      vertex_descriptor bestStart;
+      vertex_descriptor bestStart = boost::graph_traits<UndirectedGraph>::null_vertex();
 
       detail::mas_min_cut_visitor<ParityMap, WeightMap, IndexMap>
         vis(g, parities, bestThisTime, weights, index_map);
@@ -213,7 +213,7 @@ namespace graph {
         typedef typename boost::graph_traits<UndirectedGraph>::vertex_descriptor vertex_descriptor;
         typedef typename boost::property_traits<WeightMap>::value_type weight_type;
 
-        typedef typename boost::detail::make_priority_queue_from_arg_pack_gen<boost::graph::keywords::tag::max_priority_queue, weight_type, vertex_descriptor, std::greater<weight_type> > gen_type;
+        typedef boost::detail::make_priority_queue_from_arg_pack_gen<boost::graph::keywords::tag::max_priority_queue, weight_type, vertex_descriptor, std::greater<weight_type> > gen_type;
 
         gen_type gen(choose_param(get_param(arg_pack, boost::distance_zero_t()), weight_type(0)));
 
