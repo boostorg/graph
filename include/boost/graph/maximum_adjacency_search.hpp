@@ -304,7 +304,7 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
 
         template <typename ArgPack>
         void
-        operator() (const Graph& g, const ArgPack arg_pack) const {
+        operator() (const Graph& g, const ArgPack& arg_pack) const {
           // call the function that does the dispatching
           typedef typename get_param_type<edge_weight_t, ArgPack >::type W;
           graph::detail::mas_dispatch<W>::apply(g, arg_pack, get_param(arg_pack, edge_weight));
