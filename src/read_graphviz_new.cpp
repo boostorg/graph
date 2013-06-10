@@ -144,7 +144,7 @@ namespace read_graphviz_detail {
     {
       std::string end_of_token = "(?=(?:\\W))";
       std::string whitespace = "(?:\\s+)";
-      std::string slash_slash_comment = "(?://.*$)";
+      std::string slash_slash_comment = "(?://.*?$)";
       std::string slash_star_comment = "(?:/\\*.*?\\*/)";
       std::string hash_comment = "(?:^#.*?$)";
       std::string backslash_newline = "(?:[\\\\][\\n])";
