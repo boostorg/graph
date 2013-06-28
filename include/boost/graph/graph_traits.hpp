@@ -166,7 +166,12 @@ namespace boost {
     struct edge_list_graph_tag { };
     struct adjacency_matrix_tag { };
 
-    /** @name Taversal Category Traits
+    // Parallel traversal_category tags
+    struct distributed_graph_tag { };
+    struct distributed_vertex_list_graph_tag { };
+    struct distributed_edge_list_graph_tag { };
+
+    /** @name Traversal Category Traits
      * These traits classify graph types by their supported methods of
      * vertex and edge traversal.
      */
