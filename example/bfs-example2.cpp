@@ -63,7 +63,6 @@ main()
 #endif
 
   // Typedefs
-  typedef graph_traits<graph_t>::vertex_descriptor Vertex;
   typedef graph_traits<graph_t>::vertices_size_type Size;
   typedef Size* Iiter;
 

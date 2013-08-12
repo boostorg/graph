@@ -71,7 +71,6 @@ namespace boost
     if (num_vertices(g) == 0)
       return;
     typedef typename graph_traits < Graph >::vertex_descriptor vertex;
-    typedef typename graph_traits < Graph >::edge_descriptor edge;
     typedef typename graph_traits < Graph >::vertex_iterator vertex_iterator;
     typedef typename property_traits < VertexIndexMap >::value_type size_type;
     typedef typename graph_traits <
@@ -208,7 +207,6 @@ namespace boost
 
 
     // Add vertices to the transitive closure graph
-    typedef typename graph_traits < GraphTC >::vertex_descriptor tc_vertex;
     {
       vertex_iterator i, i_end;
       for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
@@ -306,7 +304,6 @@ namespace boost
 
   template < typename G > void warshall_transitive_closure(G & g)
   {
-    typedef typename graph_traits < G >::vertex_descriptor vertex;
     typedef typename graph_traits < G >::vertex_iterator vertex_iterator;
 
     BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept < G > ));
@@ -332,7 +329,6 @@ namespace boost
   template < typename G > void warren_transitive_closure(G & g)
   {
     using namespace boost;
-    typedef typename graph_traits < G >::vertex_descriptor vertex;
     typedef typename graph_traits < G >::vertex_iterator vertex_iterator;
 
     BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept < G > ));

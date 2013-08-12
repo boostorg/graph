@@ -59,7 +59,6 @@ main()
 #endif
 
   // Typedefs
-  typedef boost::graph_traits < graph_t >::vertex_descriptor Vertex;
   typedef size_type* Iiter;
 
   // discover time and finish time properties
