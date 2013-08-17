@@ -162,7 +162,7 @@ namespace boost {
       void examine_edge(Edge e, Graph& g) {
         // Test for negative-weight edges:
         //
-        // Reasons that simpler comparisons do not work:
+        // Reasons that other comparisons do not work:
         //
         // m_compare(e_weight, D(0)):
         //    m_compare only needs to work on distances, not weights, and those
@@ -179,16 +179,15 @@ namespace boost {
         //    m_combine be able to take a distance and a weight (in that order)
         //    and return a distance.
 
-        D source_dist = get(m_distance, source(e, g));
-        W e_weight = get(m_weight, e);
+        // W e_weight = get(m_weight, e);
         // sd_plus_ew = source_dist + e_weight.
-        D sd_plus_ew = m_combine(source_dist, e_weight);
+        // D sd_plus_ew = m_combine(source_dist, e_weight);
         // sd_plus_2ew = source_dist + 2 * e_weight.
-        D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
+        // D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
         // The test here is equivalent to e_weight < 0 if m_combine has a
         // cancellation law, but always returns false when m_combine is a
-        // projection operator or is idempotent.
-        if (m_compare(sd_plus_2ew, sd_plus_ew))
+        // projection operator.
+        if (m_compare(m_combine(m_zero, get(m_weight, e)), m_zero)) 
             boost::throw_exception(negative_edge());
         // End of test for negative-weight edges.
 
