@@ -118,6 +118,7 @@ namespace boost {
     struct dijkstra_bfs_visitor
     {
       typedef typename property_traits<DistanceMap>::value_type D;
+      typedef typename property_traits<WeightMap>::value_type W;
 
       dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
                            WeightMap w, PredecessorMap p, DistanceMap d,
@@ -159,13 +160,40 @@ namespace boost {
       void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
       template <class Edge, class Graph>
       void examine_edge(Edge e, Graph& g) {
-        // Comparison needs to be more complicated because distance and weight
-        // types may not be the same; see bug 8398
-        // (https://svn.boost.org/trac/boost/ticket/8398)
+        // Test for negative-weight edges:
+        //
+        // Reasons that simpler comparisons do not work:
+        //
+        // m_compare(e_weight, D(0)):
+        //    m_compare only needs to work on distances, not weights, and those
+        //    types do not need to be the same (bug 8398,
+        //    https://svn.boost.org/trac/boost/ticket/8398).
+        // m_compare(m_combine(source_dist, e_weight), source_dist):
+        //    if m_combine is project2nd (as in prim_minimum_spanning_tree),
+        //    this test will claim that the edge weight is negative whenever
+        //    the edge weight is less than source_dist, even if both of those
+        //    are positive (bug 9012,
+        //    https://svn.boost.org/trac/boost/ticket/9012).
+        // m_compare(m_combine(e_weight, source_dist), source_dist):
+        //    would fix project2nd issue, but documentation only requires that
+        //    m_combine be able to take a distance and a weight (in that order)
+        //    and return a distance.
+
         D source_dist = get(m_distance, source(e, g));
-        if (m_compare(m_combine(source_dist, get(m_weight, e)), source_dist))
+        W e_weight = get(m_weight, e);
+        // sd_plus_ew = source_dist + e_weight.
+        D sd_plus_ew = m_combine(source_dist, e_weight);
+        // sd_plus_2ew = source_dist + 2 * e_weight.
+        D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
+        // The test here is equivalent to e_weight < 0 if m_combine has a
+        // cancellation law, but always returns false when m_combine is a
+        // projection operator or is idempotent.
+        if (m_compare(sd_plus_2ew, sd_plus_ew))
             boost::throw_exception(negative_edge());
+        // End of test for negative-weight edges.
+
         m_vis.examine_edge(e, g);
+
       }
       template <class Edge, class Graph>
       void black_target(Edge, Graph&) { }
