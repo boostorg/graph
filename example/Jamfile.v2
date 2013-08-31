@@ -51,4 +51,5 @@ exe vf2_sub_graph_iso_example : vf2_sub_graph_iso_example.cpp ;
 exe vf2_sub_graph_iso_multi_example : vf2_sub_graph_iso_multi_example.cpp ;
 exe sloan_ordering : sloan_ordering.cpp ;
 exe hawick_circuits : hawick_circuits.cpp ;
+exe edge_coloring : edge_coloring.cpp ;
 
