@@ -92,7 +92,7 @@ void cycle_canceling(const Graph &g, Weight weight, Reversed rev, ResidualCapaci
 }
 
 
-//in this namespace argument dispatching tak place
+//in this namespace argument dispatching takes place
 namespace detail {
 
 template <class Graph, class P, class T, class R, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance>

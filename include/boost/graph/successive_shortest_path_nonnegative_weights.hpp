@@ -62,7 +62,7 @@ make_mapReducedWeight(const Graph & g, Weight w, Distance d, Reversed r)  {
 
 
 template <class Graph, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex>
-void successive_shortest_path(
+void successive_shortest_path_nonnegative_weights(
         const Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -112,7 +112,7 @@ void successive_shortest_path(
 namespace detail {
 
 template <class Graph, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class Distance2, class VertexIndex>
-void successive_shortest_path_dispatch3(
+void successive_shortest_path_nonnegative_weights_dispatch3(
         const Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -124,12 +124,12 @@ void successive_shortest_path_dispatch3(
         Pred pred,
         Distance dist,
         Distance2 dist_pred) {
-    successive_shortest_path(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist, dist_pred);
+    successive_shortest_path_nonnegative_weights(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist, dist_pred);
 }
 
 //setting default distance map
 template <class Graph, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class VertexIndex>
-void successive_shortest_path_dispatch3(
+void successive_shortest_path_nonnegative_weights_dispatch3(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -145,12 +145,12 @@ void successive_shortest_path_dispatch3(
 
     std::vector<D> d_map(num_vertices(g));
 
-    successive_shortest_path(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist,
+    successive_shortest_path_nonnegative_weights(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist,
                              make_iterator_property_map(d_map.begin(), index));
 }
 
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class VertexIndex>
-void successive_shortest_path_dispatch2(
+void successive_shortest_path_nonnegative_weights_dispatch2(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -162,12 +162,12 @@ void successive_shortest_path_dispatch2(
         Pred pred,
         Distance dist,
         const bgl_named_params<P, T, R>& params) {
-    successive_shortest_path_dispatch3(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist, get_param(params, vertex_distance2));
+    successive_shortest_path_nonnegative_weights_dispatch3(g, s, t, capacity, residual_capacity, weight, rev, index, pred, dist, get_param(params, vertex_distance2));
 }
 
 //setting default distance map
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class VertexIndex>
-void successive_shortest_path_dispatch2(
+void successive_shortest_path_nonnegative_weights_dispatch2(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -183,13 +183,13 @@ void successive_shortest_path_dispatch2(
 
     std::vector<D> d_map(num_vertices(g));
 
-    successive_shortest_path_dispatch3(g, s, t, capacity, residual_capacity, weight, rev, index, pred,
+    successive_shortest_path_nonnegative_weights_dispatch3(g, s, t, capacity, residual_capacity, weight, rev, index, pred,
             make_iterator_property_map(d_map.begin(), index),
             get_param(params, vertex_distance2));
 }
 
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class VertexIndex>
-void successive_shortest_path_dispatch1(
+void successive_shortest_path_nonnegative_weights_dispatch1(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -200,13 +200,13 @@ void successive_shortest_path_dispatch1(
         VertexIndex index,
         Pred pred,
         const bgl_named_params<P, T, R>& params) {
-    successive_shortest_path_dispatch2(g, s, t, capacity, residual_capacity, weight,  rev, index, pred,
+    successive_shortest_path_nonnegative_weights_dispatch2(g, s, t, capacity, residual_capacity, weight,  rev, index, pred,
                                 get_param(params, vertex_distance), params);
 }
 
 //setting default predecessors map
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class VertexIndex>
-void successive_shortest_path_dispatch1(
+void successive_shortest_path_nonnegative_weights_dispatch1(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -220,7 +220,7 @@ void successive_shortest_path_dispatch1(
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     std::vector<edge_descriptor> pred_vec(num_vertices(g));
 
-    successive_shortest_path_dispatch2(g, s, t, capacity, residual_capacity, weight, rev, index, 
+    successive_shortest_path_nonnegative_weights_dispatch2(g, s, t, capacity, residual_capacity, weight, rev, index, 
             make_iterator_property_map(pred_vec.begin(), index),
             get_param(params, vertex_distance), params); 
 }
@@ -229,13 +229,13 @@ void successive_shortest_path_dispatch1(
 
 
 template <class Graph, class P, class T, class R>
-void successive_shortest_path(
+void successive_shortest_path_nonnegative_weights(
         Graph &g, 
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t,
         const bgl_named_params<P, T, R>& params) {
            
-    return detail::successive_shortest_path_dispatch1(g, s, t, 
+    return detail::successive_shortest_path_nonnegative_weights_dispatch1(g, s, t, 
            choose_const_pmap(get_param(params, edge_capacity), g, edge_capacity),
            choose_pmap(get_param(params, edge_residual_capacity), 
                        g, edge_residual_capacity),
@@ -247,12 +247,12 @@ void successive_shortest_path(
 }
 
 template <class Graph>
-void successive_shortest_path(
+void successive_shortest_path_nonnegative_weights(
         Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s, 
         typename graph_traits<Graph>::vertex_descriptor t) {
     bgl_named_params<int, buffer_param_t> params(0);
-    successive_shortest_path(g, s, t, params);
+    successive_shortest_path_nonnegative_weights(g, s, t, params);
 }
 
 

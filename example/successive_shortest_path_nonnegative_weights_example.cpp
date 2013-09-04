@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#include <boost/graph/cycle_canceling.hpp>
-#include <boost/graph/edmonds_karp_max_flow.hpp>
+#include <boost/graph/successive_shortest_path_nonnegative_weights.hpp>
+#include <boost/graph/find_flow_cost.hpp>
 
 #include "../test/min_cost_max_flow_utils.hpp"
 
@@ -18,11 +18,13 @@ int main() {
     boost::SampleGraph::Graph g 
         = boost::SampleGraph::getSampleGraph(s, t);
 
-    boost::edmonds_karp_max_flow(g, s, t);
-    boost::cycle_canceling(g);
+    boost::successive_shortest_path_nonnegative_weights(g, s, t);
 
-    int cost = boost::find_flow_cost(g);
+    int cost =  boost::find_flow_cost(g);
     assert(cost == 29);
+
     return 0;
 }
+
+
 

@@ -1,10 +1,12 @@
-/**
- * @file sample_graph_undirected.hpp
- * @brief 
- * @author Piotr Wygocki
- * @version 1.0
- * @date 2013-06-17
- */
+//=======================================================================
+// Copyright 2013 University of Warsaw.
+// Authors: Piotr Wygocki 
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
 #ifndef SAMPLE_GRAPH_UNDIRECTED_HPP
 #define SAMPLE_GRAPH_UNDIRECTED_HPP 
 

@@ -15,14 +15,14 @@
 
 <BR Clear>
 
-<H1><A NAME="sec:successive_shortest_path">
-<TT>successive_shortest_path</TT>
+<H1><A NAME="sec:successive_shortest_path_nonnegative_weights">
+<TT>successive_shortest_path_nonnegative_weights</TT>
 </H1>
 
 <PRE>
 <i>// named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
-void successive_shortest_path(
+void successive_shortest_path_nonnegative_weights(
         Graph &amp;g, 
         typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
         typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
@@ -30,7 +30,7 @@ void successive_shortest_path(
 
 <i>// non-named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex&gt;
-void successive_shortest_path(
+void successive_shortest_path_nonnegative_weights(
         const Graph &amp; g, 
         typename graph_traits&lt;Graph&gt;::vertex_descriptor s, 
         typename graph_traits&lt;Graph&gt;::vertex_descriptor t,
@@ -45,7 +45,7 @@ void successive_shortest_path(
 </PRE>
 
 <P>
-The <tt>successive_shortest_path()</tt> function calculates the minimum cost maximum flow of a network. See Section <a
+The <tt>successive_shortest_path_nonnegative_weights()</tt> function calculates the minimum cost maximum flow of a network. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
 Flow Algorithms</a> for a description of maximum flow.  
  The function calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
@@ -79,7 +79,7 @@ In order to find the cost of the result flow use:
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/successive_shortest_path.hpp"><TT>boost/graph/successive_shortest_path.hpp</TT></a>
+<a href="../../../boost/graph/successive_shortest_path_nonnegative_weights.hpp"><TT>boost/graph/successive_shortest_path_nonnegative_weights.hpp</TT></a>
 
 <P>
 
@@ -228,7 +228,7 @@ In many real world cases number of iterations is much smaller than <i>U</i>.
 <h3>Example</h3>
 
 The program in <a
-href="../example/successive_shortest_path_example.cpp"><tt>example/successive_shortest_path_example.cpp</tt></a>.
+href="../example/successive_shortest_path_nonnegative_weights_example.cpp"><tt>example/successive_shortest_path_nonnegative_weights_example.cpp</tt></a>.
 
 <h3>See Also</h3>
 
