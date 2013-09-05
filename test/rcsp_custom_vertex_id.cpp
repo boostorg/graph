@@ -1,4 +1,5 @@
 //=======================================================================
+// Copyright (c) 2013 Alberto Santini
 // Author: Alberto Santini <alberto@santini.in>
 //
 // Distributed under the Boost Software License, Version 1.0. (See
@@ -67,9 +68,9 @@ int main() {
   VertexProperty vp3(4, 3);
   EdgeProperty e12(1);
   EdgeProperty e23(2);
-	
+        
   Graph g;
-	
+        
   Vertex v1 = add_vertex(g); g[v1] = vp1;
   Vertex v2 = add_vertex(g); g[v2] = vp2;
   Vertex v3 = add_vertex(g); g[v3] = vp3;
