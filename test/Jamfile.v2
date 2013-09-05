@@ -104,6 +104,7 @@ test-suite graph_test :
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
     [ run r_c_shortest_paths_test.cpp ]
+    [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp : metric_tsp_approx.graph ]
     [ compile dimacs.cpp ]
