@@ -38,7 +38,7 @@ namespace cycle_test_detail {
             // that the paths are valid.
             typename Path::const_iterator i, j, last = prior(p.end());
             for (i = p.begin(); i != last; ++i) {
-                j = next(i);
+                j = boost::next(i);
                 BOOST_ASSERT(edge(*i, *j, g).second);
             }
             BOOST_ASSERT(edge(p.back(), p.front(), g).second);
