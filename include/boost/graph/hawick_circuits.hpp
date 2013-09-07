@@ -105,7 +105,7 @@ private:
     typedef typename Traits::vertex_descriptor Vertex;
     typedef typename Traits::edge_descriptor Edge;
     typedef typename Traits::vertices_size_type VerticesSize;
-    typedef typename property_traits<VertexIndexMap>::reference VertexIndex;
+    typedef typename property_traits<VertexIndexMap>::value_type VertexIndex;
 
     typedef typename result_of<
                 GetAdjacentVertices(Vertex, Graph const&)
