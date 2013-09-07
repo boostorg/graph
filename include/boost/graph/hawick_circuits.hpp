@@ -110,7 +110,7 @@ private:
     typedef typename result_of<
                 GetAdjacentVertices(Vertex, Graph const&)
             >::type AdjacentVertices;
-    typedef typename range_iterator<AdjacentVertices>::type AdjacencyIterator;
+    typedef typename range_iterator<AdjacentVertices const>::type AdjacencyIterator;
 
     // The one_bit_color_map starts all white, i.e. not blocked.
     // Since we make that assumption (I looked at the implementation, but
