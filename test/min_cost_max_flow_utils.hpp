@@ -10,6 +10,8 @@
 #ifndef SAMPLE_GRAPH_UNDIRECTED_HPP
 #define SAMPLE_GRAPH_UNDIRECTED_HPP 
 
+#include <iostream>
+#include <cstdlib>
 #include <boost/graph/adjacency_list.hpp>
 
 
@@ -46,8 +48,11 @@ struct SampleGraph {
         Traits::edge_descriptor add(int v, int w, int weight, int capacity) {
             bool b;
             Traits::edge_descriptor e;
-            boost::tie(e, b) = add_edge(v, w, m_g);
-            assert(b);
+            boost::tie(e, b) = add_edge(vertex(v, m_g), vertex(w, m_g), m_g);
+            if (!b) {
+              std::cerr << "Edge between " << v << " and " << w << " already exists." << std::endl;
+              std::abort();
+            }
             m_cap[e] = capacity;
             m_w[e] = weight;
             return e;
