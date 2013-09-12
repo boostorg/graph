@@ -184,13 +184,18 @@ int main(int, char **)
   
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
+
+  boost::property_map<mygraph_t, boost::vertex_index_t>::const_type
+    idx = get(boost::vertex_index, g);
+
   try {
     // call astar named parameter interface
     astar_search
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       predecessor_map(&p[0]).distance_map(&d[0]).
+       predecessor_map(make_iterator_property_map(p.begin(), idx)).
+       distance_map(make_iterator_property_map(d.begin(), idx)).
        visitor(astar_goal_visitor<vertex>(goal)).distance_inf(my_float((std::numeric_limits<float>::max)())));
   
   

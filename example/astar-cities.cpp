@@ -195,7 +195,8 @@ int main(int argc, char **argv)
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       predecessor_map(&p[0]).distance_map(&d[0]).
+       predecessor_map(make_iterator_property_map(p.begin(), get(vertex_index, g))).
+       distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))).
        visitor(astar_goal_visitor<vertex>(goal)));
   
   

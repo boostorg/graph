@@ -50,12 +50,14 @@ BOOST_AUTO_TEST_CASE(path_augmentation_test) {
     typedef boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
     std::vector<edge_descriptor> pred(N);
         
+    boost::property_map<Graph, boost::vertex_index_t>::const_type
+      idx = get(boost::vertex_index, g);
 
     boost::successive_shortest_path_nonnegative_weights(g, s, t, 
-            boost::distance_map(&dist[0]).
-            predecessor_map(&pred[0]).
-            distance_map2(&dist_prev[0]).
-            vertex_index_map(boost::identity_property_map()));
+            boost::distance_map(boost::make_iterator_property_map(dist.begin(), idx)).
+            predecessor_map(boost::make_iterator_property_map(pred.begin(), idx)).
+            distance_map2(boost::make_iterator_property_map(dist_prev.begin(), idx)).
+            vertex_index_map(idx));
 
     int cost =  boost::find_flow_cost(g);
     BOOST_CHECK_EQUAL(cost, 29);
