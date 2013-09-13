@@ -14,9 +14,9 @@
 
 
 int main() {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::successive_shortest_path_nonnegative_weights(g, s, t);
 

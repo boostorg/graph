@@ -18,9 +18,9 @@
 
 
 BOOST_AUTO_TEST_CASE(path_augmentation_def_test) {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::successive_shortest_path_nonnegative_weights(g, s, t);
 
@@ -29,9 +29,9 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test) {
 }
 
 BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph2(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::getSampleGraph2(g, s, t);
 
     boost::successive_shortest_path_nonnegative_weights(g, s, t);
 
@@ -40,9 +40,10 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
 }
 
 BOOST_AUTO_TEST_CASE(path_augmentation_test) {
-    unsigned s,t;
+    boost::SampleGraph::vertex_descriptor s,t;
     typedef boost::SampleGraph::Graph Graph;
-    Graph g = boost::SampleGraph::getSampleGraph(s, t);
+    Graph g;
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     int N = boost::num_vertices(g);
     std::vector<int> dist(N);

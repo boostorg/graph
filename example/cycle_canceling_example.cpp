@@ -14,9 +14,9 @@
 
 
 int main() {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g;
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);

@@ -18,9 +18,9 @@
 
 
 BOOST_AUTO_TEST_CASE(cycle_canceling_def_test) {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g;
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);
@@ -30,9 +30,9 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_def_test) {
 }
 
 BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
-    unsigned s,t;
-    boost::SampleGraph::Graph g 
-        = boost::SampleGraph::getSampleGraph2(s, t);
+    boost::SampleGraph::vertex_descriptor s,t;
+    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::getSampleGraph2(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
     boost::cycle_canceling(g);
@@ -42,9 +42,10 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
 }
 
 BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
-    unsigned s,t;
+    boost::SampleGraph::vertex_descriptor s,t;
     typedef boost::SampleGraph::Graph Graph;
-    Graph g = boost::SampleGraph::getSampleGraph(s, t);
+    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::getSampleGraph(g, s, t);
 
     int N = num_vertices(g);
     std::vector<int> dist(N);

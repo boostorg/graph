@@ -19,7 +19,7 @@ namespace boost {
 struct SampleGraph {
     typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
 
-    typedef adjacency_list < listS, vecS, directedS, no_property,
+    typedef adjacency_list < vecS, vecS, directedS, no_property,
             property < edge_capacity_t, long,
                 property < edge_residual_capacity_t, long,
                     property < edge_reverse_t, Traits::edge_descriptor, 
@@ -30,14 +30,15 @@ struct SampleGraph {
     typedef property_map < Graph, edge_capacity_t >::type Capacity;
     typedef property_map < Graph, edge_residual_capacity_t >::type ResidualCapacity;
     typedef property_map < Graph, edge_weight_t >::type Weight;
+    typedef property_map < Graph, edge_reverse_t>::type Reversed;
+    typedef boost::graph_traits<Graph>::vertices_size_type size_type;
+    typedef Traits::vertex_descriptor vertex_descriptor;
     
-
-    template <typename Graph, typename Weight, typename Capacity, typename Reversed, typename ResidualCapacity>
     class EdgeAdder {
     public:
         EdgeAdder(Graph & g, Weight & w, Capacity & c, Reversed & rev, ResidualCapacity & residualCapacity) 
             : m_g(g), m_w(w), m_cap(c), m_resCap(residualCapacity), m_rev(rev) {}
-        void addEdge(int v, int w, int weight, int capacity) {
+        void addEdge(vertex_descriptor v, vertex_descriptor w, long weight, long capacity) {
             Traits::edge_descriptor e,f;
             e = add(v, w, weight, capacity);
             f = add(w, v, -weight, 0);
@@ -45,7 +46,7 @@ struct SampleGraph {
             m_rev[f] = e; 
         }
     private:
-        Traits::edge_descriptor add(int v, int w, int weight, int capacity) {
+        Traits::edge_descriptor add(vertex_descriptor v, vertex_descriptor w, long weight, long capacity) {
             bool b;
             Traits::edge_descriptor e;
             boost::tie(e, b) = add_edge(vertex(v, m_g), vertex(w, m_g), m_g);
@@ -65,11 +66,13 @@ struct SampleGraph {
     };
 
 
-    static Graph getSampleGraph(unsigned & s, unsigned & t) {
-        const boost::graph_traits<Graph>::vertices_size_type N(6);
+    static void getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
+        size_type N(6);
         typedef property_map < Graph, edge_reverse_t >::type Reversed;
 
-        Graph g(N);
+        for(size_type i = 0; i < N; ++i){
+            add_vertex(g);
+        }
         Capacity  capacity = get(edge_capacity, g);
         Reversed rev = get(edge_reverse, g);
         ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
@@ -78,8 +81,7 @@ struct SampleGraph {
         s = 0;
         t = 5;
 
-        EdgeAdder<Graph, Weight, Capacity, Reversed, ResidualCapacity> 
-            ea(g, weight, capacity, rev, residual_capacity);
+        EdgeAdder ea(g, weight, capacity, rev, residual_capacity);
 
         ea.addEdge(0, 1, 4 ,2);
         ea.addEdge(0, 2, 2 ,2);
@@ -91,15 +93,17 @@ struct SampleGraph {
 
         ea.addEdge(3, 5, 4 ,20);
         ea.addEdge(4, 5, 2 ,20);
-
-        return g;
     }       
-    
-    static Graph getSampleGraph2(unsigned & s, unsigned & t) {
+
+    static void getSampleGraph2(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
+
         const boost::graph_traits<Graph>::vertices_size_type N(5);
         typedef property_map < Graph, edge_reverse_t >::type Reversed;
 
-        Graph g(N);
+        for(size_type i = 0; i < N; ++i){
+            add_vertex(g);
+        }
+
         Capacity  capacity = get(edge_capacity, g);
         Reversed rev = get(edge_reverse, g);
         ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
@@ -108,8 +112,7 @@ struct SampleGraph {
         s = 0;
         t = 4;
 
-        EdgeAdder<Graph, Weight, Capacity, Reversed, ResidualCapacity> 
-            ea(g, weight, capacity, rev, residual_capacity);
+        EdgeAdder ea(g, weight, capacity, rev, residual_capacity);
 
         ea.addEdge(0, 1, 4 ,2);
         ea.addEdge(0, 2, 2 ,2);
@@ -117,7 +120,7 @@ struct SampleGraph {
         ea.addEdge(2, 3, 1 ,1);
         ea.addEdge(2, 4, 1 ,1);
         ea.addEdge(3, 4, 1 ,1);
-        
+
 
         ea.addEdge(1, 0, 2 ,2);
         ea.addEdge(2, 0, 1 ,1);
@@ -125,8 +128,6 @@ struct SampleGraph {
         ea.addEdge(3, 2, 1 ,1);
         ea.addEdge(4, 2, 2 ,2);
         ea.addEdge(4, 3, 1 ,3);
-
-        return g;
     }       
 };
 } //boost
