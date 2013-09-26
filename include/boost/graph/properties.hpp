@@ -27,12 +27,6 @@
 #include <boost/mpl/not.hpp>
 #include <boost/mpl/if.hpp>
 
-#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
-// Stay out of the way of the concept checking class
-# define Graph Graph_
-# define RandomAccessContainer RandomAccessContainer_
-#endif
-
 namespace boost {
 
   enum default_color_type { white_color, gray_color, green_color, red_color, black_color };
