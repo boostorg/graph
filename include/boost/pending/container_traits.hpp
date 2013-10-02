@@ -30,6 +30,14 @@
 #  endif
 #endif
 
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+#include <unordered_set>
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+#include <unordered_map>
+#endif
+
 // The content of this file is in 'graph_detail' because otherwise
 // there will be name clashes with 
 // sandbox/boost/sequence_algo/container_traits.hpp
@@ -280,8 +288,6 @@ namespace boost { namespace graph_detail {
     { };
 
 
-#ifndef BOOST_NO_HASH
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Eq, class Hash, class Alloc> 
   struct container_traits< boost::unordered_set<Key,Eq,Hash,Alloc> > {
     typedef unordered_set_tag category;
@@ -302,7 +308,7 @@ namespace boost { namespace graph_detail {
     typedef unordered_multimap_tag category;
     typedef unstable_tag iterator_stability;
   };
-#endif
+
   template <class Key, class Eq, class Hash, class Alloc>
   unordered_set_tag
   container_category(const boost::unordered_set<Key,Eq,Hash,Alloc>&)
@@ -339,8 +345,87 @@ namespace boost { namespace graph_detail {
   unstable_tag
   iterator_stability(const boost::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
   { return unstable_tag(); }
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc> 
+  struct container_traits< std::unordered_set<Key,Eq,Hash,Alloc> > {
+    typedef unordered_set_tag category;
+    typedef unstable_tag iterator_stability;
+  };
+#endif
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  struct container_traits< std::unordered_map<Key,T,Eq,Hash,Alloc> > {
+    typedef unordered_map_tag category;
+    typedef unstable_tag iterator_stability;
+  };
+#endif
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc>
+  struct container_traits< std::unordered_multiset<Key,Eq,Hash,Alloc> > {
+    typedef unordered_multiset_tag category;
+    typedef unstable_tag iterator_stability;
+  };
+#endif
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  struct container_traits< std::unordered_multimap<Key,T,Eq,Hash,Alloc> > {
+    typedef unordered_multimap_tag category;
+    typedef unstable_tag iterator_stability;
+  };
+#endif
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc>
+  unordered_set_tag
+  container_category(const std::unordered_set<Key,Eq,Hash,Alloc>&)
+  { return unordered_set_tag(); }
 #endif
 
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  unordered_map_tag
+  container_category(const std::unordered_map<Key,T,Eq,Hash,Alloc>&)
+  { return unordered_map_tag(); }
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc>
+  unstable_tag iterator_stability(const std::unordered_set<Key,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  unstable_tag iterator_stability(const std::unordered_map<Key,T,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+#endif
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc>
+  unordered_multiset_tag
+  container_category(const std::unordered_multiset<Key,Eq,Hash,Alloc>&)
+  { return unordered_multiset_tag(); }
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  unordered_multimap_tag
+  container_category(const std::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
+  { return unordered_multimap_tag(); }
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
+  template <class Key, class Eq, class Hash, class Alloc>
+  unstable_tag
+  iterator_stability(const std::unordered_multiset<Key,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+#endif
+
+#ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
+  template <class Key, class T, class Eq, class Hash, class Alloc>
+  unstable_tag
+  iterator_stability(const std::unordered_multimap<Key,T,Eq,Hash,Alloc>&)
+  { return unstable_tag(); }
+#endif
 
 
   //===========================================================================
