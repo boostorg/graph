@@ -62,7 +62,6 @@ struct internal_vertex_name
   typedef void type;
 };
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 /**
  * Extract the internal vertex name from a @c property structure by
  * looking at its base.
@@ -70,7 +69,6 @@ struct internal_vertex_name
 template<typename Tag, typename T, typename Base>
 struct internal_vertex_name<property<Tag, T, Base> >
   : internal_vertex_name<Base> { };
-#endif
 
 /**
  * Construct an instance of @c VertexProperty directly from its
@@ -157,7 +155,6 @@ struct internal_vertex_constructor
   typedef cannot_add_vertex<VertexProperty> type;
 };
 
-#ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 /**
  * Extract the internal vertex constructor from a @c property structure by
  * looking at its base.
@@ -165,7 +162,6 @@ struct internal_vertex_constructor
 template<typename Tag, typename T, typename Base>
 struct internal_vertex_constructor<property<Tag, T, Base> >
   : internal_vertex_constructor<Base> { };
-#endif
 
 /*******************************************************************
  * Named graph mixin                                               *

@@ -89,14 +89,12 @@ namespace boost { namespace graph_detail {
   //======================================================================
   // Container Traits Class and container_category() function
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   // don't use this unless there is partial specialization 
   template <class Container>
   struct container_traits {
     typedef typename Container::category category;
     typedef typename Container::iterator_stability iterator_stability;
   };
-#endif
 
   // Use this as a compile-time assertion that X is stable
   inline void require_stable(stable_tag) { }
@@ -114,13 +112,11 @@ namespace boost { namespace graph_detail {
   unstable_tag iterator_stability(const std::vector<T,Alloc>&)
     { return unstable_tag(); }
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class T, class Alloc>
   struct container_traits< std::vector<T,Alloc> > {
     typedef vector_tag category;
     typedef unstable_tag iterator_stability;
   };
-#endif
 
   // std::list
   struct list_tag :
@@ -138,24 +134,20 @@ namespace boost { namespace graph_detail {
   stable_tag iterator_stability(const std::list<T,Alloc>&)
     { return stable_tag(); }
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class T, class Alloc>
   struct container_traits< std::list<T,Alloc> > {
     typedef list_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
 
 
   // std::slist
 #ifndef BOOST_NO_SLIST
-# ifndef BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class T, class Alloc>
   struct container_traits<BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc> > {
     typedef front_insertion_sequence_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
   template <class T, class Alloc>
   front_insertion_sequence_tag container_category(
   const BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc>&
@@ -184,13 +176,11 @@ namespace boost { namespace graph_detail {
   stable_tag iterator_stability(const std::set<Key,Cmp,Alloc>&)
   { return stable_tag(); }
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Cmp, class Alloc> 
   struct container_traits< std::set<Key,Cmp,Alloc> > {
     typedef set_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
 
   // std::multiset
   struct multiset_tag :
@@ -207,13 +197,11 @@ namespace boost { namespace graph_detail {
   stable_tag iterator_stability(const std::multiset<Key,Cmp,Alloc>&)
   { return stable_tag(); }
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class Cmp, class Alloc> 
   struct container_traits< std::multiset<Key,Cmp,Alloc> > {
     typedef multiset_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
 
   // deque
 
@@ -224,13 +212,11 @@ namespace boost { namespace graph_detail {
     virtual public unique_associative_container_tag 
     { };
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class T, class Cmp, class Alloc> 
   struct container_traits< std::map<Key,T,Cmp,Alloc> > {
     typedef map_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
 
   template <class Key, class T, class Cmp, class Alloc> 
   map_tag container_category(const std::map<Key,T,Cmp,Alloc>&)
@@ -247,13 +233,11 @@ namespace boost { namespace graph_detail {
     virtual public multiple_associative_container_tag 
     { };
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
   template <class Key, class T, class Cmp, class Alloc> 
   struct container_traits< std::multimap<Key,T,Cmp,Alloc> > {
     typedef multimap_tag category;
     typedef stable_tag iterator_stability;
   };
-#endif
 
   template <class Key, class T, class Cmp, class Alloc> 
   multimap_tag container_category(const std::multimap<Key,T,Cmp,Alloc>&)

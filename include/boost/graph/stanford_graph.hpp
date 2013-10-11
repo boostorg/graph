@@ -347,7 +347,6 @@ namespace boost {
     }
   };
 
-#if !defined BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION  
 
   template <class Tag>
   inline sgb_vertex_util_map<Tag, const typename Tag::type&>
@@ -371,7 +370,6 @@ namespace boost {
     return sgb_edge_util_map<Tag, typename Tag::type&>();
   }
 
-#endif // ! BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
 
   // Edge Length Access
   template <class Ref>

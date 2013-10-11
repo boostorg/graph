@@ -2722,7 +2722,6 @@ namespace boost {
 
 } // namespace boost
 
-#if !defined(BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION)
 namespace boost {
 
   template <typename V>
@@ -2756,7 +2755,6 @@ namespace boost {
   };
 
 }
-#endif
 
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_ADJACENCY_LIST_CCT
