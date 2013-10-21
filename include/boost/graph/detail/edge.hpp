@@ -105,5 +105,15 @@ namespace std {
   }
 }
 
+// Boost's functional/hash
+namespace boost {
+  template<typename D, typename V>
+  struct hash<boost::detail::edge_desc_impl<D, V> >
+  {
+    std::size_t operator()(const boost::detail::edge_desc_impl<D, V> & x) const
+    { return hash_value(x.get_property()); }
+  };
+}
+
 
 #endif // BOOST_GRAPH_DETAIL_DETAIL_EDGE_HPP
