@@ -1610,8 +1610,7 @@ namespace boost {
       typename Config::OutEdgeList::iterator first, last;
       typename Config::EdgeContainer fake_edge_container;
       boost::tie(first, last) = graph_detail::
-        equal_range(el, StoredEdge(v, fake_edge_container.end(),
-                                   &fake_edge_container));
+        equal_range(el, StoredEdge(v));
       return std::make_pair(out_edge_iterator(first, u),
                             out_edge_iterator(last, u));
     }
