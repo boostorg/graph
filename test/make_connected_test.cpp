@@ -116,7 +116,7 @@ int test_main(int, char* [])
   std::vector<int> gVV_components(num_vertices(gVV));
   boost::iterator_property_map<
     std::vector<int>::iterator,
-    typename boost::property_map<VVgraph_t, boost::vertex_index_t>::const_type
+    boost::property_map<VVgraph_t, boost::vertex_index_t>::const_type
   > gVV_components_pm(gVV_components.begin(), get(boost::vertex_index, gVV));
   BOOST_CHECK(connected_components(gVV, gVV_components_pm) == 
               static_cast<int>(num_cycles));
@@ -132,7 +132,7 @@ int test_main(int, char* [])
   std::vector<int> gLV_components(num_vertices(gLV));
   boost::iterator_property_map<
     std::vector<int>::iterator,
-    typename boost::property_map<VVgraph_t, boost::vertex_index_t>::const_type
+    boost::property_map<VVgraph_t, boost::vertex_index_t>::const_type
   > gLV_components_pm(gLV_components.begin(), get(boost::vertex_index, gLV));
   BOOST_CHECK(connected_components(gLV, gLV_components_pm) == 
               static_cast<int>(num_cycles));
