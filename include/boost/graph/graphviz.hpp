@@ -536,6 +536,28 @@ namespace boost {
     const std::string* node_id;
   };
 
+  template <typename Graph>
+  class dynamic_graph_properties_writer
+  {
+  public:
+    dynamic_graph_properties_writer(const dynamic_properties& dp, const Graph& g) : g(&g), dp(&dp) { }
+
+    void operator()(std::ostream& out) const
+    {
+      for (dynamic_properties::const_iterator i = dp->begin();
+           i != dp->end(); ++i) {
+        if (typeid(Graph*) == i->second->key()) {
+          // const_cast here is to match interface used in read_graphviz
+          out << i->first << "=" << escape_dot_string(i->second->get_string(const_cast<Graph*>(g))) << ";\n";
+        }
+      }
+    }
+
+  private:
+    const Graph* g;
+    const dynamic_properties* dp;
+  };
+
   namespace graph { namespace detail {
 
     template<typename Vertex>
@@ -587,7 +609,7 @@ namespace boost {
       (out, g,
        /*vertex_writer=*/dynamic_vertex_properties_writer(dp, node_id),
        /*edge_writer=*/dynamic_properties_writer(dp),
-       /*graph_writer=*/default_writer(),
+       /*graph_writer=*/dynamic_graph_properties_writer<Graph>(dp, g),
        id);
   }
 
