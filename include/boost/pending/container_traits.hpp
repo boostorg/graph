@@ -15,6 +15,7 @@
 #include <boost/next_prior.hpp>
 
 #include <algorithm>   // for std::remove
+#include <utility>
 #include <vector>
 #include <list>
 #include <map>
@@ -36,6 +37,14 @@
 
 #ifndef BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #include <unordered_map>
+#endif
+
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
+#define BOOST_PENDING_FWD_TYPE(type) const type&
+#define BOOST_PENDING_FWD_VALUE(type, var) (var)
+#else
+#define BOOST_PENDING_FWD_TYPE(type) type&&
+#define BOOST_PENDING_FWD_VALUE(type, var) (std::forward<type>((var)))
 #endif
 
 // The content of this file is in 'graph_detail' because otherwise
@@ -484,41 +493,41 @@ namespace boost { namespace graph_detail {
   // Push
   template <class Container, class T>
   std::pair<typename Container::iterator, bool>
-  push_dispatch(Container& c, const T& v, back_insertion_sequence_tag)
+  push_dispatch(Container& c, BOOST_PENDING_FWD_TYPE(T) v, back_insertion_sequence_tag)
   {
-    c.push_back(v);
+    c.push_back(BOOST_PENDING_FWD_VALUE(T, v));
     return std::make_pair(boost::prior(c.end()), true);
   }
 
   template <class Container, class T>
   std::pair<typename Container::iterator, bool>
-  push_dispatch(Container& c, const T& v, front_insertion_sequence_tag)
+  push_dispatch(Container& c, BOOST_PENDING_FWD_TYPE(T) v, front_insertion_sequence_tag)
   {
-    c.push_front(v);
+    c.push_front(BOOST_PENDING_FWD_VALUE(T, v));
     return std::make_pair(c.begin(), true);
   }
 
   template <class AssociativeContainer, class T>
   std::pair<typename AssociativeContainer::iterator, bool>
-  push_dispatch(AssociativeContainer& c, const T& v, 
+  push_dispatch(AssociativeContainer& c, BOOST_PENDING_FWD_TYPE(T) v, 
                 unique_associative_container_tag)
   {
-    return c.insert(v);
+    return c.insert(BOOST_PENDING_FWD_VALUE(T, v));
   }
 
   template <class AssociativeContainer, class T>
   std::pair<typename AssociativeContainer::iterator, bool>
-  push_dispatch(AssociativeContainer& c, const T& v,
+  push_dispatch(AssociativeContainer& c, BOOST_PENDING_FWD_TYPE(T) v,
                 multiple_associative_container_tag)
   {
-    return std::make_pair(c.insert(v), true);
+    return std::make_pair(c.insert(BOOST_PENDING_FWD_VALUE(T, v)), true);
   }
 
   template <class Container, class T>
   std::pair<typename Container::iterator,bool>
-  push(Container& c, const T& v)
+  push(Container& c, BOOST_PENDING_FWD_TYPE(T) v)
   {
-    return push_dispatch(c, v, container_category(c));
+    return push_dispatch(c, BOOST_PENDING_FWD_VALUE(T, v), container_category(c));
   }
 
   // Find
@@ -614,5 +623,8 @@ namespace boost { namespace graph_detail {
   }
 
 }} // namespace boost::graph_detail
+
+#undef BOOST_PENDING_FWD_TYPE
+#undef BOOST_PENDING_FWD_VALUE
 
 #endif // BOOST_GRAPH_DETAIL_CONTAINER_TRAITS_H

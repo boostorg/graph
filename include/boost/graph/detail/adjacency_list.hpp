@@ -38,6 +38,12 @@
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
 
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
+#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (x)
+#else
+#define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (std::move((x)))
+#endif
+
 /*
   Outline for this file:
 
@@ -251,6 +257,7 @@ namespace boost {
     template <class Vertex>
     no_property stored_edge<Vertex>::s_prop;
 
+#if defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
     template <class Vertex, class Property>
     class stored_edge_property : public stored_edge<Vertex> {
       typedef stored_edge_property self;
@@ -277,6 +284,25 @@ namespace boost {
       // a perfect fit for the job, but it is darn close.
       std::auto_ptr<Property> m_property;
     };
+#else
+    template <class Vertex, class Property>
+    class stored_edge_property : public stored_edge<Vertex> {
+      typedef stored_edge_property self;
+      typedef stored_edge<Vertex> Base;
+    public:
+      typedef Property property_type;
+      inline stored_edge_property() { }
+      inline stored_edge_property(Vertex target,
+                                  const Property& p = Property())
+        : stored_edge<Vertex>(target), m_property(new Property(p)) { }
+      stored_edge_property(self&& x) = default;
+      self& operator=(self&& x) = default;
+      inline Property& get_property() { return *m_property; }
+      inline const Property& get_property() const { return *m_property; }
+    protected:
+      std::unique_ptr<Property> m_property;
+    };
+#endif
 
 
     template <class Vertex, class Iter, class Property>
@@ -384,7 +410,7 @@ namespace boost {
         if (first != last)
           for (++i; i != last; ++i)
             if (!pred(*i)) {
-              *first.base() = *i.base();
+              *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
               ++first;
             }
         el.erase(first.base(), el.end());
@@ -432,7 +458,7 @@ namespace boost {
               self_loop_removed = false;
             }
             else if (!pred(*i)) {
-              *first.base() = *i.base();
+              *first.base() = BOOST_GRAPH_MOVE_IF_POSSIBLE(*i.base());
               ++first;
             } else {
               if (source(*i, g) == target(*i, g)) self_loop_removed = true;
