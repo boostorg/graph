@@ -57,11 +57,27 @@ namespace boost {
       typedef typename property_traits<DistanceMap>::value_type DistanceValue;
       typedef typename property_traits<EarMap>::value_type EarValue;
       
-      typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
+      typename graph_traits<Graph>::edge_iterator ei, ei_end;
       
       // Needed container are: 
+      struct {
+        ei;
+        DistanceValue;
+      }
+      typedef std::vector<> Number;
       
       
+    }
+    
+    template <typename Graph, typename PredMap, typename DistanceMap>
+    typename graph_traits<Graph>::vertex_descriptor Vertex;
+    Vertex get_lca(Vertex u, Vertex v, PredMap& pred, DistanceMap& dist) {
+      if (get(dist, u) < get(dist, v)) { get_lca(u, get(pred, v), pred, dist); }
+      else if (get(dist, u) > get(dist, v)) { get_lca(get(pred, u), v, pred, dist); }
+      else {
+        if (u != v) { get_lca(get(pred, u), get(pred, v), pred, dist); }
+        else { return u; }
+      }
     }
     
     template <typename Graph, typename PredMap, typename DistanceMap>
