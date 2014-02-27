@@ -12,6 +12,8 @@
 #include <boost/assert.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/properties.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 #include <vector>
 #include <algorithm>
@@ -20,18 +22,6 @@
 #include <boost/graph/buffer_concepts.hpp>
 #include <boost/graph/exception.hpp>
 #include <boost/graph/graph_concepts.hpp>
-
-#include <boost/graph/named_function_params.hpp>
-#include <boost/graph/visitors.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/config.hpp>
-#include <boost/graph/depth_first_search.hpp>
-#include <boost/graph/properties.hpp>
-#include <boost/graph/graph_concepts.hpp>
-#include <boost/graph/overloading.hpp>
-#include <boost/static_assert.hpp>
-
-
 
 namespace boost {
   
@@ -61,37 +51,36 @@ namespace boost {
       // For all cross-edges we need to calculate NUMBER(DIST(LCA(e))/INDEX(e))
       typedef std::vector<std::pair<Edge, DistanceValue>> NumberVector;
       NumberVector number;
-      std::<vector>(num_edges(g)) tree_edges;
-      // get all tree-edges
-      BGL_FORALL_VERTICES_T(v, g, Graph) {
-        std::tie(Edge e, bool exists) = edge(v, get(pred, v), g);
-        if (exists) {
-          tree_edges.push_back(e);
-        }
-      }
-      // calculate NUMBER
+
+      // calculate NUMBER for all tree-edges
       BGL_FORALL_EDGES_T(e, g, Graph) {
-        if ( std::find(tree_edges.begin(), tree_edges.end(), e) != tree_edges.end() ) {
+        if ((get(pred, source(e, g)) != target(e, g)) && (source(e, g) != get(pred, target(e, g))) {
             number.push_back(std::make_pair(e, get(dist, get_lca(source(e, g), target(e, g), pred, dist))));
+        } else {
+          put(ear, e, 0);
         }
       }
       // sort cross-edges by number
       std::sort (number.begin(), number.end(), lexicographical_sort);
-      
-      EarValue ear_index = 0;
+      // number ears from 1 to n
+      EarValue ear_index = 1;
       for(NumberVector::iterator it = number.begin(); it != number.end(); ++it) {
         put(ear, it->first, ear_index);
-        // FOR SOURCE AND TARGET OF CROSS EDGE!
-        Vertex v = source(it-first, g);
-        while (get(dist, v) != it->second) {
-          std::tie(Edge e, bool exists) = edge(v, get(pred, v), g);
-          if (exists) {
-            if (get(ear, e) != 0) put(ear, e, ear_index);
-            break;
+        // For source and target vertex of cross-edge traverse up to lca and assign ear index
+        for (int i = 0; i < 2; ++i) {
+          if (i == 0) Vertex v = source(it->first, g);
+          else if (i == 1) Vertex v = target(it->first, g);
+          
+          while (get(dist, v) != it->second) {
+            std::tie(Edge e, bool exists) = edge(v, get(pred, v), g);
+            if (exists) {
+              if (get(ear, e) == 0) put(ear, e, ear_index);
+              else break;
+            }
+            v = get(pred, v);
           }
-          v = get(pred, v);
+          v = target(it->first, g);
         }
-        
         ear_index++;
       }
     }
@@ -143,7 +132,6 @@ namespace boost {
     // call the implementation
     detail::open_ear_decomposition_impl(g, pred, dist, ear);
   }
-
 }
 
 #include <boost/graph/iteration_macros_undef.hpp>
