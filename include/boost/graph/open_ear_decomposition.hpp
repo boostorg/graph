@@ -14,6 +14,7 @@
 #include <boost/graph/iteration_macros.hpp>
 
 #include <vector>
+#include <algorithm>
 
 #include <boost/concept_check.hpp>
 #include <boost/graph/buffer_concepts.hpp>
@@ -57,16 +58,48 @@ namespace boost {
       typedef typename property_traits<DistanceMap>::value_type DistanceValue;
       typedef typename property_traits<EarMap>::value_type EarValue;
       
-      typename graph_traits<Graph>::edge_iterator ei, ei_end;
-      
-      // Needed container are: 
-      struct {
-        ei;
-        DistanceValue;
+      // For all cross-edges we need to calculate NUMBER(DIST(LCA(e))/INDEX(e))
+      typedef std::vector<std::pair<Edge, DistanceValue>> NumberVector;
+      NumberVector number;
+      std::<vector>(num_edges(g)) tree_edges;
+      // get all tree-edges
+      BGL_FORALL_VERTICES_T(v, g, Graph) {
+        std::tie(Edge e, bool exists) = edge(v, get(pred, v), g);
+        if (exists) {
+          tree_edges.push_back(e);
+        }
       }
-      typedef std::vector<> Number;
+      // calculate NUMBER
+      BGL_FORALL_EDGES_T(e, g, Graph) {
+        if ( std::find(tree_edges.begin(), tree_edges.end(), e) != tree_edges.end() ) {
+            number.push_back(std::make_pair(e, get(dist, get_lca(source(e, g), target(e, g), pred, dist))));
+        }
+      }
+      // sort cross-edges by number
+      std::sort (number.begin(), number.end(), lexicographical_sort);
       
-      
+      EarValue ear_index = 0;
+      for(NumberVector::iterator it = number.begin(); it != number.end(); ++it) {
+        put(ear, it->first, ear_index);
+        // FOR SOURCE AND TARGET OF CROSS EDGE!
+        Vertex v = source(it-first, g);
+        while (get(dist, v) != it->second) {
+          std::tie(Edge e, bool exists) = edge(v, get(pred, v), g);
+          if (exists) {
+            if (get(ear, e) != 0) put(ear, e, ear_index);
+            break;
+          }
+          v = get(pred, v);
+        }
+        
+        ear_index++;
+      }
+    }
+    
+    template <typename A, typename B>
+    bool lexicographical_sort(A a, B b) {
+      if (a.second == b.second) return (a.first > b.first);
+      else return (a.second > b.second);
     }
     
     template <typename Graph, typename PredMap, typename DistanceMap>
@@ -85,7 +118,7 @@ namespace boost {
       if (get(pred, v) == graph_traits<Graph>::null_vertex()) { put(dist, v, 0); }
       if (get(dist, v) == -1) {
         get_distance(get(pred, v), pred, dist);
-        put(dist, v) = get(dist, get(pred, v)) + 1;
+        put(dist, v, get(dist, get(pred, v)) + 1);
       }
     }
   
