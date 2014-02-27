@@ -5,36 +5,52 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
+#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/open_ear_decomposition.hpp>
-#include <boost/graph/grid_graph.hpp>
-#include <boost/array.hpp>
-#include <boost/random.hpp>
-#include <boost/property_map/shared_array_property_map.hpp>
-#include <boost/property_map/dynamic_property_map.hpp>
-#include <boost/graph/property_maps/constant_property_map.hpp>
-#include <string>
+#include <boost/property_map/property_map.hpp>
 #include <iostream>
-#include <fstream>
+#include <map>
+#include <vector>
 #include <boost/graph/iteration_macros.hpp>
 
 using namespace boost;
 using namespace std;
 
-typedef grid_graph<2> graph_type;
-typedef graph_traits<graph_type> gt;
+typedef adjacency_list< vecS, vecS, undirectedS,
+    no_property,
+    property<edge_color_t, default_color_type> > graph_t;
+typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
+typedef graph_traits<graph_t>::edge_descriptor edge_t;
 
 int main(int, char**) {
-
-  boost::array<size_t, 2> sizes = {{ 5, 5 }};
-  graph_type g(sizes);
-
-  shared_array_property_map<gt::vertex_descriptor, property_map<graph_type, vertex_index_t>::const_type> pred(num_vertices(g), get(vertex_index, g));
-  shared_array_property_map<int, property_map<graph_type, edge_index_t>::const_type> ear(num_edges(g), get(edge_index, g));
-
-  boost::mt19937 gen;
-  random_spanning_tree(g, gen, predecessor_map(pred));
+  /** 0 - - 1 - - 2
+   *  |     |     |
+   *  7 - - 8 - - 3
+   *  |           |
+   *  6 - - 5 - - 4
+   */
   
-  open_ear_decomposition(g, pred, ear);
+  const size_t N = 9;
+  graph_t g(N);
+  for(unsigned int i = 0; i < N; ++i) { add_edge(i, i+1, g); };
+  add_edge(0, 7, g);
+  add_edge(1, 8, g);
+  add_edge(8, 3, g);
+  
+  typedef map<vertex_t,vertex_t> pred_t;
+  pred_t pred;
+  for (unsigned int i = 8; i >= 0; --i) { pred[i] = i-1; }
+  associative_property_map< pred_t > pm(pred);
+  
+  typedef map<vertex_t,int> ear_t;
+  ear_t ear;
+  associative_property_map< ear_t > em(ear);
+  
+  open_ear_decomposition(g, pm, em);
+  
+  for (ear_t::iterator it = ear.begin(); it != ear.end(); it++) {
+      cout << it->first << ", " << it->second << endl;
+  }
 
   return 0;
 }
