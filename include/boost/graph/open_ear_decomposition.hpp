@@ -18,7 +18,6 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/bind.hpp>
 
-#include <iostream>
 #include <vector>
 #include <algorithm>
 
@@ -122,7 +121,7 @@ namespace boost {
     vector_property_map<int> dist;
     BGL_FORALL_VERTICES_T(v, g, Graph) { put(dist, v, -1); }
     BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, dist); }
-    
+    // call the implementation
     detail::open_ear_decomposition_impl(g, pred, dist, ear);
   }
 }

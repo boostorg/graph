@@ -32,27 +32,37 @@ int test_main(int, char* []) {
    */
   
   const size_t N = 9;
+  // graph
   graph_t g(N);
+  // predecessor map
   typedef map<vertex_t,vertex_t> pred_t;
   pred_t pred;
+  associative_property_map< pred_t > pm(pred);
   
   for(unsigned int i = 0; i < N-1; i++) { 
+    // add tree-edges
     add_edge(i, i+1, g);
-    pred[i] = i+1;
+    // fill predecessor map
+    pred[vertex(i, g)] = vertex(i+1, g);
   }
   // add cross-edges
   add_edge(0, 7, g);
   add_edge(1, 8, g);
   add_edge(8, 3, g);
-  // add root in pred
-  pred[8] = graph_traits<graph_t>::null_vertex();
+  // add null_vertex to root in predecessor map
+  pred[vertex(8, g)] = graph_traits<graph_t>::null_vertex();
   
+  // ear map (this is what we want to fill!)
   typedef map<edge_t,int> ear_t;
   ear_t ear;
   associative_property_map< ear_t > em(ear);
-  associative_property_map< pred_t > pm(pred);
   
+  // call the algorithm
   open_ear_decomposition(g, pm, em);
+  
+  BGL_FORALL_EDGES_T(e, g, graph_t) {
+    cout << source(e, g) << "/" << target(e, g) << ": " << em[e] << endl;
+  }
   
   ear_t ear_check;
   BGL_FORALL_EDGES_T(e, g, graph_t) { ear_check[e] = 1; }
