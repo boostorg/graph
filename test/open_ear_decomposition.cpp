@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/test/minimal.hpp>
 
 using namespace boost;
 using namespace std;
@@ -22,7 +23,7 @@ typedef adjacency_list< vecS, vecS, undirectedS,
 typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
 typedef graph_traits<graph_t>::edge_descriptor edge_t;
 
-int main(int, char**) {
+int test_main(int, char* []) {
   /** 0 - - 1 - - 2
    *  |     |     |
    *  7 - - 8 - - 3
@@ -32,25 +33,34 @@ int main(int, char**) {
   
   const size_t N = 9;
   graph_t g(N);
-  for(unsigned int i = 0; i < N; ++i) { add_edge(i, i+1, g); };
+  typedef map<vertex_t,vertex_t> pred_t;
+  pred_t pred;
+  
+  for(unsigned int i = 0; i < N-1; i++) { 
+    add_edge(i, i+1, g);
+    pred[i] = i+1;
+  }
+  // add cross-edges
   add_edge(0, 7, g);
   add_edge(1, 8, g);
   add_edge(8, 3, g);
+  // add root in pred
+  pred[8] = graph_traits<graph_t>::null_vertex();
   
-  typedef map<vertex_t,vertex_t> pred_t;
-  pred_t pred;
-  for (unsigned int i = 8; i >= 0; --i) { pred[i] = i-1; }
-  associative_property_map< pred_t > pm(pred);
-  
-  typedef map<vertex_t,int> ear_t;
+  typedef map<edge_t,int> ear_t;
   ear_t ear;
   associative_property_map< ear_t > em(ear);
+  associative_property_map< pred_t > pm(pred);
   
   open_ear_decomposition(g, pm, em);
   
-  for (ear_t::iterator it = ear.begin(); it != ear.end(); it++) {
-      cout << it->first << ", " << it->second << endl;
-  }
+  ear_t ear_check;
+  BGL_FORALL_EDGES_T(e, g, graph_t) { ear_check[e] = 1; }
+  ear_check[edge(0, 1, g).first] = 3;
+  ear_check[edge(0, 7, g).first] = 3;
+  ear_check[edge(8, 3, g).first] = 2;
+  
+  BOOST_CHECK(ear == ear_check);
 
-  return EXIT_SUCCESS;
+  return 0;
 }

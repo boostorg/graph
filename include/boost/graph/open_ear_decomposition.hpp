@@ -14,8 +14,11 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/bind.hpp>
 
+#include <iostream>
 #include <vector>
 #include <algorithm>
 
@@ -29,14 +32,8 @@ namespace boost {
      *
      */
     
-    template <typename A, typename B>
-    bool lexicographical_sort(A a, B b) {
-      if (a.second == b.second) return (a.first > b.first);
-      else return (a.second > b.second);
-    }
-    
     template <typename Vertex, typename PredMap, typename DistanceMap>
-    Vertex get_lca(Vertex u, Vertex v, PredMap pred, DistanceMap dist) {
+    Vertex get_lca(Vertex u, Vertex v, PredMap & pred, DistanceMap & dist) {
       if (get(dist, u) < get(dist, v)) { get_lca(u, get(pred, v), pred, dist); }
       else if (get(dist, u) > get(dist, v)) { get_lca(get(pred, u), v, pred, dist); }
       else {
@@ -46,11 +43,12 @@ namespace boost {
     }
     
     template <typename Graph, typename Vertex, typename PredMap, typename DistanceMap>
-    void get_distance(Graph g, Vertex v, PredMap pred, DistanceMap dist) {
+    void get_distance(const Graph& g, Vertex v, PredMap & pred, DistanceMap & dist) {
       if (get(pred, v) == graph_traits<Graph>::null_vertex()) { put(dist, v, 0); }
       if (get(dist, v) == -1) {
-        get_distance(get(pred, v), pred, dist);
-        put(dist, v, get(dist, get(pred, v)) + 1);
+        Vertex u = get(pred, v);
+        get_distance(g, u, pred, dist);
+        put(dist, v, get(dist, u) + 1);
       }
     }
 
@@ -70,8 +68,8 @@ namespace boost {
       typedef typename property_traits<EarMap>::value_type EarValue;
       
       // For all cross-edges we need to calculate NUMBER(DIST(LCA(e))/INDEX(e))
-      typedef std::vector<std::pair<Edge, DistanceValue> > NumberVector;
-      NumberVector number;
+      typedef std::pair<Edge, DistanceValue> NumberValue;
+      std::vector<NumberValue> number;
 
       // calculate NUMBER for all tree-edges
       BGL_FORALL_EDGES_T(e, g, Graph) {
@@ -82,10 +80,11 @@ namespace boost {
         }
       }
       // sort cross-edges by number
-      std::sort (number.begin(), number.end(), lexicographical_sort);
+      std::sort (number.begin(), number.end(), bind(&NumberValue::second, _1) <
+          bind(&NumberValue::second, _2));
       // number ears from 1 to n
       EarValue ear_index = 1;
-      for(typename NumberVector::iterator it = number.begin(); it != number.end(); ++it) {
+      for(typename std::vector<NumberValue>::iterator it = number.begin(); it != number.end(); ++it) {
         put(ear, it->first, ear_index);
         // For source and target vertex of cross-edge traverse up to lca and assign ear index
         Vertex v;
@@ -94,7 +93,7 @@ namespace boost {
           else if (i == 1) v = target(it->first, g);
           
           while (get(dist, v) != it->second) {
-            Edge e = edge(v, get(pred, v), g).second;
+            Edge e = edge(v, get(pred, v), g).first;
             if (get(ear, e) == 0) put(ear, e, ear_index);
             else break;
             v = get(pred, v);
@@ -120,8 +119,9 @@ namespace boost {
   template <typename Graph, typename PredMap, typename EarMap>
   void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
     // DistanceMap needs to be calculated here
-    std::vector<int> dist(num_vertices(g), -1);
-    BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, &dist); }
+    vector_property_map<int> dist;
+    BGL_FORALL_VERTICES_T(v, g, Graph) { put(dist, v, -1); }
+    BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, dist); }
     
     detail::open_ear_decomposition_impl(g, pred, dist, ear);
   }
