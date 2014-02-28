@@ -52,5 +52,5 @@ int main(int, char**) {
       cout << it->first << ", " << it->second << endl;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

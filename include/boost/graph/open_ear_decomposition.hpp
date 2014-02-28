@@ -10,12 +10,15 @@
 
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/property_map/property_map.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 #include <vector>
 #include <algorithm>
+
 
 namespace boost {
   
@@ -33,7 +36,7 @@ namespace boost {
     }
     
     template <typename Vertex, typename PredMap, typename DistanceMap>
-    Vertex get_lca(Vertex u, Vertex v, PredMap& pred, DistanceMap& dist) {
+    Vertex get_lca(Vertex u, Vertex v, PredMap pred, DistanceMap dist) {
       if (get(dist, u) < get(dist, v)) { get_lca(u, get(pred, v), pred, dist); }
       else if (get(dist, u) > get(dist, v)) { get_lca(get(pred, u), v, pred, dist); }
       else {
@@ -43,13 +46,14 @@ namespace boost {
     }
     
     template <typename Graph, typename Vertex, typename PredMap, typename DistanceMap>
-    void get_distance(Vertex v, PredMap& pred, DistanceMap& dist) {
+    void get_distance(Graph g, Vertex v, PredMap pred, DistanceMap dist) {
       if (get(pred, v) == graph_traits<Graph>::null_vertex()) { put(dist, v, 0); }
       if (get(dist, v) == -1) {
         get_distance(get(pred, v), pred, dist);
         put(dist, v, get(dist, get(pred, v)) + 1);
       }
     }
+
     
     template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
     void open_ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
@@ -100,27 +104,25 @@ namespace boost {
         ear_index++;
       }
     }
-  
+  } 
   /**
    * TODO Some documentation about the algorithm should be here!
    * 
    *
    */
   
-  template <typename Graph, typename PredMap, typename EarMap>
-  void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
-    // DistanceMap needs to be calculated here
-    typedef std::vector<int> DistanceMap;
-    DistanceMap dist(num_vertices(g));
-    BGL_FORALL_VERTICES_T(v, g, Graph) put(dist, v, -1);
-    BGL_FORALL_VERTICES_T(v, g, Graph) detail::get_distance(v, pred, dist);
-    
-    detail::open_ear_decomposition_impl(g, pred, dist, ear);
-  }
-  
   template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
   void open_ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
     // call the implementation
+    detail::open_ear_decomposition_impl(g, pred, dist, ear);
+  }
+  
+  template <typename Graph, typename PredMap, typename EarMap>
+  void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
+    // DistanceMap needs to be calculated here
+    std::vector<int> dist(num_vertices(g), -1);
+    BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, &dist); }
+    
     detail::open_ear_decomposition_impl(g, pred, dist, ear);
   }
 }
