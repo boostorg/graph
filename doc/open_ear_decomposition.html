@@ -59,7 +59,9 @@ IN: <tt>const Graph&amp; g</tt>
   href="biconnected_components.html">biconnected component</a>.<br>
 </blockquote>
 
-IN: <tt>PredMap pred</tt>
+<!-- TODO <h3>Named Parameters</h3> -->
+
+IN: <tt><!--predecessor_map(-->PredMap pred<!--)--></tt>
 <blockquote>
   This map has to contain the predecessor of each vertex in the graph
   of an arbitrary spanning tree <tt>T</tt>.  The value
@@ -70,7 +72,7 @@ IN: <tt>PredMap pred</tt>
   Map</a>. The key and value types of the map must both be the graph's vertex type.<br>
 </blockquote>
 
-UTIL: <tt>DistanceMap dist</tt>
+UTIL: <tt><!--distance_map(-->DistanceMap dist<!--)--></tt>
 <blockquote>
   This map contains the tree-edge distance of each vertex in the spanning tree <tt>T</tt> to the <tt>root</tt> vertex.
   The <tt>DistanceMap</tt> type must be a model of <a
@@ -80,7 +82,7 @@ UTIL: <tt>DistanceMap dist</tt>
   <b>Default</b>: <tt>vector_property_map</tt>.<br>
 </blockquote>
 
-OUT: <tt>EarMap ear</tt>
+OUT: <tt><!--ear_map(-->EarMap ear<!--)--></tt>
 <blockquote>
   The algorithm decomposes the block into a sequence of ears and labels every edge with the according ear number 
   between 1 and the amount of cycles in the block.
@@ -91,15 +93,6 @@ OUT: <tt>EarMap ear</tt>
   as the <tt>edges_size_type</tt> of the graph. The key type must be
   the graph's edge descriptor type.<br>
 </blockquote>
-
-<!-- TODO 
-<h3>Named Parameters</h3>
-EXAMPLE:
-UTIL: <tt>distance_map(DistanceMap dist)</tt>
-<blockquote>
-  DESCRIPTION
-</blockquote>
--->
 
 <H3>Example</H3>
 

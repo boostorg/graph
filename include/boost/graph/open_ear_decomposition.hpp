@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <algorithm>  // for std::sort
-
+#include <limits>     // std::numeric_limits
 
 namespace boost {
   
@@ -45,13 +45,20 @@ namespace boost {
     template <typename Graph, typename Vertex, typename PredMap, typename DistanceMap>
     void get_distance(const Graph& g, Vertex v, PredMap & pred, DistanceMap & dist) {
       if (get(pred, v) == graph_traits<Graph>::null_vertex()) { put(dist, v, 0); }
-      if (get(dist, v) == -1) {
+      if (get(dist, v) == std::numeric_limits<unsigned int>::max()) {
         Vertex u = get(pred, v);
         get_distance(g, u, pred, dist);
         put(dist, v, get(dist, u) + 1);
       }
     }
-
+    
+    template <typename Graph, typename PredMap>
+    vector_property_map<unsigned int> get_distance_map(const Graph& g, PredMap & pred) {
+      vector_property_map<unsigned int> dist(num_vertices(g));
+      BGL_FORALL_VERTICES_T(v, g, Graph) { put(dist, v, std::numeric_limits<unsigned int>::max()); }
+      BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, dist); }
+      return dist;
+    }
     
     template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
     void open_ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
@@ -119,12 +126,8 @@ namespace boost {
   
   template <typename Graph, typename PredMap, typename EarMap>
   void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
-    // DistanceMap needs to be calculated here
-    vector_property_map<int> dist(num_vertices(g));
-    BGL_FORALL_VERTICES_T(v, g, Graph) { put(dist, v, -1); }
-    BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, dist); }
-    // call the implementation
-    detail::open_ear_decomposition_impl(g, pred, dist, ear);
+    // call the implementation with a new DistanceMap
+    detail::open_ear_decomposition_impl(g, pred, detail::get_distance_map(g, pred), ear);
   }
   /*
   template <typename Graph, typename P, typename T, typename R>
@@ -134,8 +137,8 @@ namespace boost {
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
     detail::open_ear_decomposition_impl(g,
                                         arg_pack[_predecessor_map],
-                                        arg_pack[_distance_map | vector_property_map<int>(-1)], //TODO fill right distances in impl
-                                        arg_pack[_ear_map); // TODO _ear_map is no keyword. how to implement this?
+                                        arg_pack[_distance_map | detail::get_distance_map(g, arg_pack[_predecessor_map]) ],
+                                        arg_pack[_ear_map]);
   }*/
 }  //namespace boost
 
