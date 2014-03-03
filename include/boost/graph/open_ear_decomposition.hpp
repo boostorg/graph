@@ -1,9 +1,10 @@
-// Copyright (c) 2014 Stefan Hammer, University of Vienna
-// Copyright (c) 2014 Jakob Lykke Andersen, University of Southern Denmark
-//
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
+/* Copyright (c) 2014 Stefan Hammer, University of Vienna
+ * Copyright (c) 2014 Jakob Lykke Andersen, University of Southern Denmark
+ *
+ * Distributed under the Boost Software License, Version 1.0.
+ * (See accompanying file LICENSE_1_0.txt or copy at
+ * http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 #ifndef BOOST_GRAPH_OPEN_EAR_DECOMPOSITION_HPP
 #define BOOST_GRAPH_OPEN_EAR_DECOMPOSITION_HPP
@@ -17,7 +18,7 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/bind.hpp>
-#include <boost/graph/named_function_params.hpp>
+//#include <boost/graph/named_function_params.hpp>
 
 #include <vector>
 #include <algorithm>  // for std::sort
@@ -26,11 +27,6 @@
 namespace boost {
   
   namespace detail {
-    /**
-     * TODO Some documentation about the algorithm should be here!
-     *
-     *
-     */
     
     template <typename Vertex, typename PredMap, typename DistanceMap>
     Vertex get_lca(Vertex u, Vertex v, PredMap & pred, DistanceMap & dist) {
@@ -111,13 +107,15 @@ namespace boost {
         ear_index++;
       }
     }
-  } 
-  /**
-   * TODO Some documentation about the algorithm should be here!
-   * 
-   *
-   */
+  }
   
+  /**
+   * The input for this algorithm is an undirected graph, which has to consist of a single biconnected component, 
+   * a spanning tree in form of a predecessor_map, and optionally a map containing the distances of each vertex 
+   * to the root of the spanning tree. The output of the open_ear_decomposition records the ear number of each 
+   * edge in the property map ear.
+   * The algorithm used in this approach is described by Maon et. al [http://dx.doi.org/10.1016/0304-3975(86)90153-2].
+   */
   template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
   void open_ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
     // call the implementation
