@@ -17,9 +17,10 @@
 #include <boost/property_map/vector_property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/bind.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 #include <vector>
-#include <algorithm>
+#include <algorithm>  // for std::sort
 
 
 namespace boost {
@@ -59,8 +60,9 @@ namespace boost {
       
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<PredMap,Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<DistanceMap,Vertex> ));
+      BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<PredMap,Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<DistanceMap,Vertex> ));
       BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<EarMap,Edge> ));
       
       typedef typename property_traits<DistanceMap>::value_type DistanceValue;
@@ -118,14 +120,24 @@ namespace boost {
   template <typename Graph, typename PredMap, typename EarMap>
   void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
     // DistanceMap needs to be calculated here
-    
     vector_property_map<int> dist(num_vertices(g));
     BGL_FORALL_VERTICES_T(v, g, Graph) { put(dist, v, -1); }
     BGL_FORALL_VERTICES_T(v, g, Graph) { detail::get_distance(g, v, pred, dist); }
     // call the implementation
     detail::open_ear_decomposition_impl(g, pred, dist, ear);
   }
-}
+  /*
+  template <typename Graph, typename P, typename T, typename R>
+  void open_ear_decomposition(const Graph& g, const bgl_named_params<P, T, R>& params) {
+    using namespace boost::graph::keywords;
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
+    detail::open_ear_decomposition_impl(g,
+                                        arg_pack[_predecessor_map],
+                                        arg_pack[_distance_map | vector_property_map<int>(-1)], //TODO fill right distances in impl
+                                        arg_pack[_ear_map); // TODO _ear_map is no keyword. how to implement this?
+  }*/
+}  //namespace boost
 
 #include <boost/graph/iteration_macros_undef.hpp>
 

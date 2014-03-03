@@ -21,10 +21,9 @@
 
 <P>
 <PRE>
-<!--<i>// named parameter version</i>
-template &lt;class Graph, class Gen, class class P, class T, class R&gt;
-void random_spanning_tree(Graph&amp; G,
-  Gen&amp; gen,
+<!--TODO <i>// named parameter version</i>
+template &lt;class Graph, class class P, class T, class R&gt;
+void open_ear_decomposition(Graph&amp; G,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 -->
 <i>// non-named parameter versions</i>
@@ -33,31 +32,17 @@ void open_ear_decomposition(const Graph&amp; g, PredMap pred, DistanceMap dist, 
 </PRE>
 
 <p>
-The <tt>open_ear_decomposition()</tt> decomposes blocks of a undirected graph into 
-paths and a single cycle. 
-Graph must be a single biconnected component, undirected, 
-input is a spanning tree in form of a <tt>predecessor_map</tt>, eg. using <a href="random_spanning_tree.html">random_spanning_tree()</a>
-the agorithm fills the ear map. is a edge property map with ear index.
-The algorithm used is approach described by Maon et. al (<a
-href="bibliography.html#maonschiebervishkin86">74</a>
+The <tt>open_ear_decomposition</tt> decomposes blocks of an undirected graph <tt>G</tt> into a sequence of ears. An ear is a path <tt>P</tt> where the two endpoints of the path may coincide with the remaining graph, but where otherwise no repetition of edges or vertices is allowed. In other words, the endpoints of an ear always belong to an earlier ear in the sequence of ears, but the internal vertices of the path do not belong to any earlier ear.
+<br>
+In most cases the first ear in the sequence is a cycle. In contrast to an ordinary <tt>ear_decomposition</tt>, the <tt>open_ear_decomposition</tt> does not allow the removal of cycles as ears, so the ears are always open.
 
-  
-<!--  TODO -->
-There must
-be a path from every non-root vertex of the graph to the root;
-the algorithm typically enters an infinite loop when
-given a graph that does not satisfy this property, but may also throw the
-exception <tt>loop_erased_random_walk_stuck</tt> if the search reaches a vertex
-with no outgoing edges.  Both weighted and unweighted versions of
-<tt>random_spanning_tree()</tt> are
-implemented.  In the unweighted version, all spanning trees are equally likely.
-In the weighted version, the probability of a particular spanning tree being
-selected is the product of its edge weights.
-In the non-named-parameter
-version of the algorithm, the unweighted version can be selected by passing an
-object of type <tt>static_property_map&lt;double&gt;</tt> as the weight map.
-In the named-parameter version, leaving off the <tt>weight_map</tt> parameter
-has the same effect.
+<p><center><img style="padding:20px; height:250px;" src="figs/open_ear_decomposition.svg"></center>
+
+The input for this algorithm is an undirected graph, which has to consist of a single <a href="biconnected_components.html">biconnected component</a>, a spanning tree in form of a <tt>predecessor_map</tt>, and optionally a map containing the distances of each vertex to the root of the spanning tree.
+The output of the <tt>open_ear_decomposition</tt> records the ear number of each edge in the property map <tt>ear</tt>.
+<br>
+The algorithm used in this approach is described by Maon et. al [<a href="bibliography.html#maonschiebervishkin86">74</a>].
+You can retrieve the spanning tree by, for example, using the <a href="random_spanning_tree.html"><tt>random_spanning_tree()</tt></a> algorithm.
 </p>
 
 <H3>Where Defined</H3>
@@ -70,79 +55,57 @@ has the same effect.
 IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   An undirected graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a>
-  and <a href="./VertexListGraph.html">Vertex List Graph</a>.<br>
+  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a> and has to consist of a single <a
+  href="biconnected_components.html">biconnected component</a>.<br>
 </blockquote>
 
-IN: <tt>Gen&amp; gen</tt>
+IN: <tt>PredMap pred</tt>
 <blockquote>
-  A random number generator. The generator type must
-  be a model of <a
-  href="../../../doc/html/boost_random/reference.html#boost_random.reference.concepts.uniform_random_number_generator">Uniform
-  Random Number Generator</a> or a pointer or reference to such a type.<br>
-</blockquote>
-
-<!-- TODO -->
-<h3>Named Parameters</h3>
-
-IN: <tt>root_vertex(vertex_descriptor root)</tt>
-<blockquote>
-  This parameter, whose type must be the vertex descriptor type of
-  <tt>Graph</tt>, gives the root of the tree to be generated.  The default is
-  <tt>*vertices(g).first</tt>.<br>
-</blockquote>
-
-UTIL: <tt>color_map(ColorMap color)</tt>
-<blockquote>
-  This is used by the algorithm to keep track of its progress through
-  the graph. The type <tt>ColorMap</tt> must be a model of <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
-  Property Map</a> and its key type must be the graph's vertex
-  descriptor type and the value type of the color map must model
-  <a href="./ColorValue.html">ColorValue</a>.<br>
-  <b>Default:</b> a <tt>two_bit_color_map</tt> of size
-  <tt>num_vertices(g)</tt> and using the <tt>i_map</tt> for the index
-  map.<br>
-</blockquote>
-
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
-<blockquote>
-  This maps each vertex to an integer in the range <tt>[0,
-  num_vertices(g))</tt>. This parameter is only necessary when the
-  default color property map is used. The type <tt>VertexIndexMap</tt>
-  must be a model of <a
-  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The value type of the map must be an integer type. The
-  vertex descriptor type of the graph needs to be usable as the key
-  type of the map.<br>
-</blockquote>
-
-OUT: <tt>predecessor_map(PredMap pred)</tt>
-<blockquote>
-  This map, on output, will contain the predecessor of each vertex in the graph
-  in the spanning tree.  The value
-  <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> will be used as the
+  This map has to contain the predecessor of each vertex in the graph
+  of an arbitrary spanning tree <tt>T</tt>.  The value
+  <tt>graph_traits&lt;Graph&gt;::null_vertex()</tt> has to be used as the
   predecessor of the root of the tree.  The type <tt>PredMap</tt> must be a
-  model of
-  <a
-  href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write Property
+  model of <a 
+  href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
   Map</a>. The key and value types of the map must both be the graph's vertex type.<br>
 </blockquote>
 
-IN: <tt>weight_map(WeightMap weight)</tt>
+UTIL: <tt>DistanceMap dist</tt>
 <blockquote>
-  This map contains the weight of each edge in the graph.  The probability of
-  any given spanning tree being produced as the result of the algorithm is
-  proportional to the product of its edge weights.  If the weight map is
-  omitted, a default that gives an equal weight to each edge will be used; a
-  faster algorithm that relies on constant weights will also be invoked.
-  The type <tt>WeightMap</tt> must be a
-  model of
-  <a
+  This map contains the tree-edge distance of each vertex in the spanning tree <tt>T</tt> to the <tt>root</tt> vertex.
+  The <tt>DistanceMap</tt> type must be a model of <a
   href="../../property_map/doc/ReadablePropertyMap.html">Readable Property
-  Map</a>. The key type of the map must be the graph's edge type, and the value
-  type must be a real number type (such as <tt>double</tt>).<br>
+  Map</a>. The value type shouch be an integer type, the key type must be
+  the graph's vertex descriptor type.<br>
+  <b>Default</b>: <tt>vector_property_map</tt>.<br>
 </blockquote>
+
+OUT: <tt>EarMap ear</tt>
+<blockquote>
+  The algorithm decomposes the block into a sequence of ears and labels every edge with the according ear number 
+  between 1 and the amount of cycles in the block.
+  The last ear usually is a cycle, while the others are paths.
+  The <tt>EarMap</tt> type must be a model of <a
+  href="../../property_map/doc/ReadWritePropertyMap.html"> Read/Write Property
+  Map</a>. The value type should be an integer type, preferably the same
+  as the <tt>edges_size_type</tt> of the graph. The key type must be
+  the graph's edge descriptor type.<br>
+</blockquote>
+
+<!-- TODO 
+<h3>Named Parameters</h3>
+EXAMPLE:
+UTIL: <tt>distance_map(DistanceMap dist)</tt>
+<blockquote>
+  DESCRIPTION
+</blockquote>
+-->
+
+<H3>Example</H3>
+
+<P> The file <a
+href="../example/open_ear_decomposition.cpp"><tt>examples/open_ear_decomposition.cpp</tt></a>
+contains an example of the <tt>open_ear_decomposition()</tt> given a random spanning tree on a simple graph block.
 
 <br>
 <HR>

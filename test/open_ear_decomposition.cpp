@@ -10,7 +10,6 @@
 #include <boost/property_map/property_map.hpp>
 #include <iostream>
 #include <map>
-#include <vector>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/test/minimal.hpp>
 
@@ -38,6 +37,8 @@ int test_main(int, char* []) {
   typedef map<vertex_t,vertex_t> pred_t;
   pred_t pred;
   associative_property_map< pred_t > pm(pred);
+  // add null_vertex to root in predecessor map
+  pred[vertex(8, g)] = graph_traits<graph_t>::null_vertex();
   
   for(unsigned int i = 0; i < N-1; i++) { 
     // add tree-edges
@@ -49,8 +50,6 @@ int test_main(int, char* []) {
   add_edge(0, 7, g);
   add_edge(1, 8, g);
   add_edge(8, 3, g);
-  // add null_vertex to root in predecessor map
-  pred[vertex(8, g)] = graph_traits<graph_t>::null_vertex();
   
   // ear map (this is what we want to fill!)
   typedef map<edge_t,int> ear_t;

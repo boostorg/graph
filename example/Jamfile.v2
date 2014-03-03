@@ -54,4 +54,4 @@ exe hawick_circuits : hawick_circuits.cpp ;
 exe edge_coloring : edge_coloring.cpp ;
 exe successive_shortest_path_nonnegative_weights_example : successive_shortest_path_nonnegative_weights_example.cpp ;
 exe cycle_canceling_example : cycle_canceling_example.cpp ;
-
+exe open_ear_decomposition : open_ear_decomposition.cpp ;
