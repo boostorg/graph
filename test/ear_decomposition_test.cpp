@@ -6,7 +6,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/open_ear_decomposition.hpp>
+#include <boost/graph/ear_decomposition.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <iostream>
 #include <map>
@@ -57,7 +57,7 @@ int test_main(int, char* []) {
   associative_property_map< ear_t > em(ear);
   
   // call the algorithm
-  open_ear_decomposition(g, pm, em);
+  ear_decomposition(g, pm, em);
   
   BGL_FORALL_EDGES_T(e, g, graph_t) {
     cout << source(e, g) << "/" << target(e, g) << ": " << em[e] << endl;

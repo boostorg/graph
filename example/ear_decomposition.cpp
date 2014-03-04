@@ -10,7 +10,7 @@
 #include <boost/graph/random_spanning_tree.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
 #include <boost/random.hpp>
-#include <boost/graph/open_ear_decomposition.hpp>
+#include <boost/graph/ear_decomposition.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/lexical_cast.hpp>
 #include <iostream>
@@ -55,8 +55,8 @@ int main(int argc, char* argv[])
   ear_t ear;
   associative_property_map< ear_t > em(ear);
   
-  // run the open ear decomposition
-  open_ear_decomposition(g, pred, em);
+  // run the ear decomposition
+  ear_decomposition(g, pred, em);
   // print the EarMap
   BGL_FORALL_EDGES_T(e, g, graph_t) {
     std::cout << "(" << source(e, g) << "/" << target(e, g) << "): " << em[e] << std::endl;

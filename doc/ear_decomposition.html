@@ -8,7 +8,7 @@
   http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
-<Title>Boost Graph Library: Open Ear Decomposition</Title>
+<Title>Boost Graph Library: Ear Decomposition</Title>
 <BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
         ALINK="#ff0000"> 
 <IMG SRC="../../../boost.png" 
@@ -16,30 +16,30 @@
 
 <BR Clear>
 
-<TT>open_ear_decomposition</TT>
+<TT>ear_decomposition</TT>
 </H1>
 
 <P>
 <PRE>
 <!--TODO <i>// named parameter version</i>
 template &lt;class Graph, class class P, class T, class R&gt;
-void open_ear_decomposition(Graph&amp; G,
+void ear_decomposition(Graph&amp; G,
   const bgl_named_params&lt;P, T, R&gt;&amp; params);
 -->
 <i>// non-named parameter versions</i>
 template &lt;class Graph, class PredMap, class DistanceMap, class EarMap&gt;
-void open_ear_decomposition(const Graph&amp; g, PredMap pred, DistanceMap dist, EarMap ear);
+void ear_decomposition(const Graph&amp; g, PredMap pred, DistanceMap dist, EarMap ear);
 </PRE>
 
 <p>
-The <tt>open_ear_decomposition</tt> decomposes blocks of an undirected graph <tt>G</tt> into a sequence of ears. An ear is a path <tt>P</tt> where the two endpoints of the path may coincide with the remaining graph, but where otherwise no repetition of edges or vertices is allowed. In other words, the endpoints of an ear always belong to an earlier ear in the sequence of ears, but the internal vertices of the path do not belong to any earlier ear.
+The <tt>ear_decomposition</tt> decomposes blocks of an undirected graph <tt>G</tt> into a sequence of ears. An ear is a path or a cycle where the endpoints of the path may coincide with the remaining graph, but where otherwise no repetition of edges or vertices is allowed. In other words, the endpoints of an ear always belong to an earlier ear in the sequence of ears, but the internal vertices of the path or cycle do not belong to any earlier ear.
 <br>
-In most cases the first ear in the sequence is a cycle. In contrast to an ordinary <tt>ear_decomposition</tt>, the <tt>open_ear_decomposition</tt> does not allow the removal of cycles as ears, so the ears are always open.
+In most cases the first ear in the sequence is a cycle. The <tt>ear_decomposition</tt> is called <tt>open</tt> if it does not allow the removal of cycles as ears.
 
-<p><center><img style="padding:20px; height:250px;" src="figs/open_ear_decomposition.svg"></center>
+<p><center><img style="padding:20px; height:250px;" src="figs/ear_decomposition.svg"></center>
 
 The input for this algorithm is an undirected graph, which has to consist of a single <a href="biconnected_components.html">biconnected component</a>, a spanning tree in form of a <tt>predecessor_map</tt>, and optionally a map containing the distances of each vertex to the root of the spanning tree.
-The output of the <tt>open_ear_decomposition</tt> records the ear number of each edge in the property map <tt>ear</tt>.
+The output of the <tt>ear_decomposition</tt> records the ear number of each edge in the property map <tt>ear</tt>.
 <br>
 The algorithm used in this approach is described by Maon et. al [<a href="bibliography.html#maonschiebervishkin86">74</a>].
 You can retrieve the spanning tree by, for example, using the <a href="random_spanning_tree.html"><tt>random_spanning_tree()</tt></a> algorithm.
@@ -48,7 +48,7 @@ You can retrieve the spanning tree by, for example, using the <a href="random_sp
 <H3>Where Defined</H3>
 
 <P>
-<a href="../../../boost/graph/open_ear_decomposition.hpp"><TT>boost/graph/open_ear_decomposition.hpp</TT></a>
+<a href="../../../boost/graph/ear_decomposition.hpp"><TT>boost/graph/ear_decomposition.hpp</TT></a>
 
 <h3>Parameters</h3>
 
@@ -97,8 +97,8 @@ OUT: <tt><!--ear_map(-->EarMap ear<!--)--></tt>
 <H3>Example</H3>
 
 <P> The file <a
-href="../example/open_ear_decomposition.cpp"><tt>examples/open_ear_decomposition.cpp</tt></a>
-contains an example of the <tt>open_ear_decomposition()</tt> given a random spanning tree on a simple graph block.
+href="../example/ear_decomposition.cpp"><tt>examples/ear_decomposition.cpp</tt></a>
+contains an example of the <tt>ear_decomposition()</tt> given a random spanning tree on a simple graph block.
 
 <br>
 <HR>

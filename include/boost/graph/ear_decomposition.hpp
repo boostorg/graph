@@ -6,8 +6,8 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_GRAPH_OPEN_EAR_DECOMPOSITION_HPP
-#define BOOST_GRAPH_OPEN_EAR_DECOMPOSITION_HPP
+#ifndef BOOST_GRAPH_EAR_DECOMPOSITION_HPP
+#define BOOST_GRAPH_EAR_DECOMPOSITION_HPP
 
 #include <boost/concept/assert.hpp>
 #include <boost/assert.hpp>
@@ -57,7 +57,7 @@ namespace boost {
     }
     
     template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
-    void open_ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
+    void ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
       
       BOOST_ASSERT (num_vertices(g) >= 1); // g must also be undirected (or symmetric) and connected
       
@@ -112,28 +112,28 @@ namespace boost {
   /**
    * The input for this algorithm is an undirected graph, which has to consist of a single biconnected component, 
    * a spanning tree in form of a predecessor_map, and optionally a map containing the distances of each vertex 
-   * to the root of the spanning tree. The output of the open_ear_decomposition records the ear number of each 
+   * to the root of the spanning tree. The output of the ear_decomposition records the ear number of each 
    * edge in the property map ear.
    * The algorithm used in this approach is described by Maon et. al [http://dx.doi.org/10.1016/0304-3975(86)90153-2].
    */
   template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
-  void open_ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
+  void ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
     // call the implementation
-    detail::open_ear_decomposition_impl(g, pred, dist, ear);
+    detail::ear_decomposition_impl(g, pred, dist, ear);
   }
   
   template <typename Graph, typename PredMap, typename EarMap>
-  void open_ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
+  void ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
     // call the implementation with a new DistanceMap
-    detail::open_ear_decomposition_impl(g, pred, detail::get_distance_map(g, pred), ear);
+    detail::ear_decomposition_impl(g, pred, detail::get_distance_map(g, pred), ear);
   }
   /*
   template <typename Graph, typename P, typename T, typename R>
-  void open_ear_decomposition(const Graph& g, const bgl_named_params<P, T, R>& params) {
+  void ear_decomposition(const Graph& g, const bgl_named_params<P, T, R>& params) {
     using namespace boost::graph::keywords;
     typedef bgl_named_params<P, T, R> params_type;
     BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, params)
-    detail::open_ear_decomposition_impl(g,
+    detail::ear_decomposition_impl(g,
                                         arg_pack[_predecessor_map],
                                         arg_pack[_distance_map | detail::get_distance_map(g, arg_pack[_predecessor_map]) ],
                                         arg_pack[_ear_map]);
@@ -142,4 +142,4 @@ namespace boost {
 
 #include <boost/graph/iteration_macros_undef.hpp>
 
-#endif // BOOST_GRAPH_OPEN_EAR_DECOMPOSITION_HPP
+#endif // BOOST_GRAPH_EAR_DECOMPOSITION_HPP
