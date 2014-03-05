@@ -38,7 +38,7 @@ graph_t get_graph () {
   }
   add_edge(2, 7, g);
   add_edge(3, 6, g);
-  //add_edge(0, 4, g);
+  add_edge(0, 4, g);
   return g;
 }
 

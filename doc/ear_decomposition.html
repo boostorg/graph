@@ -54,8 +54,8 @@ You can retrieve the spanning tree by, for example, using the <a href="random_sp
 
 IN: <tt>const Graph&amp; g</tt>
 <blockquote>
-  An undirected graph. The graph type must
-  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a> and has to consist of a single <a
+  An undirected, unweighted graph. The graph type must
+  be a model of <a href="./IncidenceGraph.html">Incidence Graph</a> and should consist of a single <a
   href="biconnected_components.html">biconnected component</a>.<br>
 </blockquote>
 
@@ -85,7 +85,7 @@ UTIL: <tt><!--distance_map(-->DistanceMap dist<!--)--></tt>
 OUT: <tt><!--ear_map(-->EarMap ear<!--)--></tt>
 <blockquote>
   The algorithm decomposes the block into a sequence of ears and labels every edge with the according ear number 
-  between 1 and the amount of cycles in the block.
+  between 1 and the amount of cycles in the block. It assignes 0 to edges not included in any ears.
   The last ear usually is a cycle, while the others are paths.
   The <tt>EarMap</tt> type must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html"> Read/Write Property
