@@ -39,7 +39,7 @@ In most cases the first ear in the sequence is a cycle. The <tt>ear_decompositio
 <p><center><img style="padding:20px; height:250px;" src="figs/ear_decomposition.svg"></center>
 
 The input for this algorithm is an undirected graph, which has to consist of a single <a href="biconnected_components.html">biconnected component</a>, a spanning tree in form of a <tt>predecessor_map</tt>, and optionally a map containing the distances of each vertex to the root of the spanning tree.
-The output of the <tt>ear_decomposition</tt> records the ear number of each edge in the property map <tt>ear</tt>.
+The output of the <tt>ear_decomposition</tt> records the ear number of each edge in the property map <tt>ear</tt>. If a certain edge is not present in any ear, its ear number will zero.
 <br>
 The algorithm used in this approach is described by Maon et. al [<a href="bibliography.html#maonschiebervishkin86">74</a>].
 You can retrieve the spanning tree by, for example, using the <a href="random_spanning_tree.html"><tt>random_spanning_tree()</tt></a> algorithm.

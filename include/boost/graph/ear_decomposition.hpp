@@ -75,7 +75,7 @@ namespace boost {
       typedef std::pair<Edge, DistanceValue> NumberValue;
       std::vector<NumberValue> number;
 
-      // calculate NUMBER for all tree-edges
+      // calculate NUMBER for all cross-edges
       BGL_FORALL_EDGES_T(e, g, Graph) {
         if ((get(pred, source(e, g)) != target(e, g)) && (source(e, g) != get(pred, target(e, g)))) {
             number.push_back(std::make_pair(e, get(dist, get_lca(source(e, g), target(e, g), pred, dist))));
@@ -113,7 +113,7 @@ namespace boost {
    * The input for this algorithm is an undirected graph, which has to consist of a single biconnected component, 
    * a spanning tree in form of a predecessor_map, and optionally a map containing the distances of each vertex 
    * to the root of the spanning tree. The output of the ear_decomposition records the ear number of each 
-   * edge in the property map ear.
+   * edge in the property map ear. If a certain edge is in no ear, its ear-number will be 0.
    * The algorithm used in this approach is described by Maon et. al [http://dx.doi.org/10.1016/0304-3975(86)90153-2].
    */
   template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>

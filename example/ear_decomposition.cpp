@@ -26,14 +26,19 @@ typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
 typedef graph_traits<graph_t>::edge_descriptor edge_t;
 
 graph_t get_graph () {
+  /** 1 - - - - - 0
+   *  |           |
+   *  2 - - 3 - - 4
+   *  |     |     |
+   *  7 - - 6 - - 5
+   */
   graph_t g(8);
   for(unsigned int i = 0; i < 7; i++) { 
     add_edge(i, i+1, g);
   }
   add_edge(2, 7, g);
   add_edge(3, 6, g);
-  add_edge(0, 4, g);
-  
+  //add_edge(0, 4, g);
   return g;
 }
 
