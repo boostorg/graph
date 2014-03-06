@@ -57,7 +57,8 @@ namespace boost {
     }
     
     template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
-    void ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
+    inline typename property_traits<EarMap>::value_type
+    ear_decomposition_impl(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
       
       BOOST_ASSERT (num_vertices(g) >= 1); // g must also be undirected (or symmetric) and connected
       
@@ -87,8 +88,9 @@ namespace boost {
       std::sort (number.begin(), number.end(), bind(&NumberValue::second, _1) <
           bind(&NumberValue::second, _2));
       // number ears from 1 to n
-      EarValue ear_index = 1;
+      EarValue ear_index = 0;
       for(typename std::vector<NumberValue>::iterator it = number.begin(); it != number.end(); ++it) {
+        ear_index++;
         put(ear, it->first, ear_index);
         // For source and target vertex of cross-edge traverse up to lca and assign ear index
         Vertex v;
@@ -104,8 +106,8 @@ namespace boost {
           }
           v = target(it->first, g);
         }
-        ear_index++;
       }
+      return ear_index;
     }
   }
   
@@ -117,15 +119,17 @@ namespace boost {
    * The algorithm used in this approach is described by Maon et. al [http://dx.doi.org/10.1016/0304-3975(86)90153-2].
    */
   template <typename Graph, typename PredMap, typename DistanceMap, typename EarMap>
-  void ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
+  inline typename property_traits<EarMap>::value_type
+  ear_decomposition(const Graph& g, PredMap pred, DistanceMap dist, EarMap ear) {
     // call the implementation
-    detail::ear_decomposition_impl(g, pred, dist, ear);
+    return detail::ear_decomposition_impl(g, pred, dist, ear);
   }
   
   template <typename Graph, typename PredMap, typename EarMap>
-  void ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
+  inline typename property_traits<EarMap>::value_type
+  ear_decomposition(const Graph& g, PredMap pred, EarMap ear) {
     // call the implementation with a new DistanceMap
-    detail::ear_decomposition_impl(g, pred, detail::get_distance_map(g, pred), ear);
+    return detail::ear_decomposition_impl(g, pred, detail::get_distance_map(g, pred), ear);
   }
   /*
   template <typename Graph, typename P, typename T, typename R>

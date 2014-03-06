@@ -57,7 +57,7 @@ int test_main(int, char* []) {
   associative_property_map< ear_t > em(ear);
   
   // call the algorithm
-  ear_decomposition(g, pm, em);
+  int num = ear_decomposition(g, pm, em);
   
   BGL_FORALL_EDGES_T(e, g, graph_t) {
     cout << source(e, g) << "/" << target(e, g) << ": " << em[e] << endl;
@@ -70,6 +70,7 @@ int test_main(int, char* []) {
   ear_check[edge(8, 3, g).first] = 2;
   
   BOOST_CHECK(ear == ear_check);
+  BOOST_CHECK(num == 3);
 
   return 0;
 }

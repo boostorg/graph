@@ -61,8 +61,9 @@ int main(int argc, char* argv[])
   associative_property_map< ear_t > em(ear);
   
   // run the ear decomposition
-  ear_decomposition(g, pred, em);
+  int num = ear_decomposition(g, pred, em);
   // print the EarMap
+  std::cout << "Decomposed into " << num << " ears:" << std::endl;
   BGL_FORALL_EDGES_T(e, g, graph_t) {
     std::cout << "(" << source(e, g) << "/" << target(e, g) << "): " << em[e] << std::endl;
   }
