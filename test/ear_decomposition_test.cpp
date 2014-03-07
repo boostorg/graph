@@ -64,9 +64,9 @@ int test_main(int, char* []) {
   }
   
   ear_t ear_check;
-  BGL_FORALL_EDGES_T(e, g, graph_t) { ear_check[e] = 1; }
-  ear_check[edge(0, 1, g).first] = 3;
-  ear_check[edge(0, 7, g).first] = 3;
+  BGL_FORALL_EDGES_T(e, g, graph_t) { ear_check[e] = 3; }
+  ear_check[edge(0, 1, g).first] = 1;
+  ear_check[edge(0, 7, g).first] = 1;
   ear_check[edge(8, 3, g).first] = 2;
   
   BOOST_CHECK(ear == ear_check);

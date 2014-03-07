@@ -88,9 +88,8 @@ namespace boost {
       std::sort (number.begin(), number.end(), bind(&NumberValue::second, _1) <
           bind(&NumberValue::second, _2));
       // number ears from 1 to n
-      EarValue ear_index = 0;
+      EarValue ear_index = number.size();
       for(typename std::vector<NumberValue>::iterator it = number.begin(); it != number.end(); ++it) {
-        ear_index++;
         put(ear, it->first, ear_index);
         // For source and target vertex of cross-edge traverse up to lca and assign ear index
         Vertex v;
@@ -106,8 +105,9 @@ namespace boost {
           }
           v = target(it->first, g);
         }
+        ear_index--;
       }
-      return ear_index;
+      return number.size();
     }
   }
   
