@@ -28,6 +28,7 @@
 namespace boost {
 
   struct parity_map_t { };
+  struct edge_multiplicity_t { };
   struct vertex_assignment_map_t { };
   struct distance_compare_t { };
   struct distance_combine_t { };
@@ -76,6 +77,7 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(edge_color_map, edge_color) \
     BOOST_BGL_ONE_PARAM_CREF(capacity_map, edge_capacity) \
     BOOST_BGL_ONE_PARAM_CREF(residual_capacity_map, edge_residual_capacity) \
+    BOOST_BGL_ONE_PARAM_CREF(multiplicity_map, edge_multiplicity) \
     BOOST_BGL_ONE_PARAM_CREF(reverse_edge_map, edge_reverse) \
     BOOST_BGL_ONE_PARAM_CREF(discover_time_map, vertex_discover_time) \
     BOOST_BGL_ONE_PARAM_CREF(lowpoint_map, vertex_lowpoint) \

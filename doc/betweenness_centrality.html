@@ -57,6 +57,19 @@ brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                VertexIndexMap vertex_index,
                                WeightMap weight_map);
 
+template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+         typename IncomingMap, typename DistanceMap, typename DependencyMap, 
+         typename PathCountMap, typename VertexIndexMap, typename WeightMap&gt;    
+void 
+brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
+                               EdgeCentralityMap edge_centrality,
+                               IncomingMap incoming, 
+                               DistanceMap distance,  DependencyMap dependency,
+                               PathCountMap path_count,      
+                               VertexIndexMap vertex_index,
+                               WeightMap weight_map,
+                               MultiplicityMap multiplicity_map);
+
 <em>// helper functions</em>
 template&lt;typename Graph, typename CentralityMap&gt;
 void 
@@ -271,7 +284,7 @@ IN: <tt>vertex_index_map(VertexIndexMap vertex_index)</tt>
   <b>Python</b>: Unsupported parameter.
 </blockquote>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap weight_map)</tt>   
 <blockquote>
   The weight or ``length'' of each edge in the graph. The weights
   must all be non-negative, and the algorithm will throw a
@@ -284,6 +297,21 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   the same as the value type of the distance map.<br>
   <b>Default:</b> All edge weights are assumed to be equivalent.
   <b>Python</b>: If supplied, must be an <tt>edge_double_map</tt> for the graph.
+</blockquote>
+
+IN: <tt>multiplicity_map(MultiplicityMap multiplicity_map)</tt>   
+<blockquote>
+  The multiplicity of each edge in the graph. The multiplicities
+  must all be positive, and the algorithm will throw a
+  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
+  exception is one of the edges is non-positive.
+  The type <tt>MultiplicityMap</tt> must be a model of
+  <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
+  the graph needs to be usable as the key type for the multiplicity
+  map. The value type for this map must be
+  the same as the value type of the distance map.<br>
+  <b>Default:</b> All edge multiplicities are assumed to be one.
+  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 <h3>Complexity</h3> 
