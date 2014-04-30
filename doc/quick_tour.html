@@ -160,6 +160,8 @@ call <tt>get(vertex_index, g)</tt> returns the actual property map object.
   {
     // ...
 
+    typedef graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+
     // get the property map for vertex indices
     typedef property_map&lt;Graph, vertex_index_t&gt;::type IndexMap;
     IndexMap index = get(vertex_index, g);
@@ -167,8 +169,10 @@ call <tt>get(vertex_index, g)</tt> returns the actual property map object.
     std::cout &lt;&lt; &quot;vertices(g) = &quot;;
     typedef graph_traits&lt;Graph&gt;::vertex_iterator vertex_iter;
     std::pair&lt;vertex_iter, vertex_iter&gt; vp;
-    for (vp = vertices(g); vp.first != vp.second; ++vp.first)
-      std::cout &lt;&lt; index[*vp.first] &lt;&lt;  &quot; &quot;;
+    for (vp = vertices(g); vp.first != vp.second; ++vp.first) {
+      Vertex v = *vp.first;
+      std::cout &lt;&lt; index[v] &lt;&lt;  &quot; &quot;;
+    }
     std::cout &lt;&lt; std::endl;
     // ...
     return 0;
