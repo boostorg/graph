@@ -483,7 +483,7 @@ brandes_betweenness_centrality(const Graph& g,
   typedef static_property_map<multiplicity_type, edge_descriptor> MultiplicityMap;
 
   MultiplicityMap multiplicity_map =
-      detail::graph::make_static_one_property<multiplicity_type>(g);
+      detail::graph::make_static_one_property<MultiplicityMap>(g);
 
   detail::graph::brandes_unweighted_shortest_paths<MultiplicityMap>
     shortest_paths(multiplicity_map);
