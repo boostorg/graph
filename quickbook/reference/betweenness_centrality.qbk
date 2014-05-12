@@ -182,4 +182,20 @@ interface.
                                    VertexIndexMap vertex_index,
                                    WeightMap weight_map)
 
+    template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
+             typename IncomingMap, typename DistanceMap, typename DependencyMap,
+             typename PathCountMap, typename VertexIndexMap, typename WeightMap,
+             typename MultiplicityMap>
+    void
+    brandes_betweenness_centrality(const Graph& g,
+                                   CentralityMap centrality,
+                                   EdgeCentralityMap edge_centrality,
+                                   IncomingMap incoming,
+                                   DistanceMap distance,
+                                   DependencyMap dependency,
+                                   PathCountMap path_count,
+                                   VertexIndexMap vertex_index,
+                                   WeightMap weight_map,
+                                   MultiplicityMap multiplicity_map)
+
 [endsect]
