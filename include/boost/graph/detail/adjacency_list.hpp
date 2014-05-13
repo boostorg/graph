@@ -295,8 +295,15 @@ namespace boost {
       inline stored_edge_property(Vertex target,
                                   const Property& p = Property())
         : stored_edge<Vertex>(target), m_property(new Property(p)) { }
+#if defined(BOOST_MSVC)
+        inline stored_edge_property(self&& x) {std::swap(m_property, x.m_property);};
+        inline stored_edge_property(self const& x) {std::swap(m_property, const_cast<self&>(x).m_property);};
+        inline self& operator=(self&& x) { std::swap(m_property, x.m_property); return *this;};
+        inline self& operator=(self& x) { std::swap(m_property, x.m_property); return *this;};
+#else
       stored_edge_property(self&& x) = default;
       self& operator=(self&& x) = default;
+#endif
       inline Property& get_property() { return *m_property; }
       inline const Property& get_property() const { return *m_property; }
     protected:
