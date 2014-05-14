@@ -79,6 +79,7 @@ test-suite graph_test :
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
+    [ compile swap.cpp ]
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
