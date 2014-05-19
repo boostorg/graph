@@ -344,13 +344,10 @@ namespace detail { namespace graph {
     }
   }
 
-  template<typename PropertyMap, typename Graph>
-  inline boost::static_property_map<typename property_traits<PropertyMap>::value_type,
-                                    typename graph_traits<Graph>::edge_descriptor>
-  make_static_one_property(const Graph& g) {
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-    typedef typename property_traits<PropertyMap>::value_type property_type;
-    return boost::make_static_property_map<edge_descriptor, property_type>(property_type(1));
+  template<typename Number>
+  inline Number
+  one() {
+    return Number(1);
   }
 
   template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
@@ -369,12 +366,9 @@ namespace detail { namespace graph {
                                       ShortestPaths shortest_paths)
   {
     // default constant multiplicity of one
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename property_traits<PathCountMap>::value_type multiplicity_type;
-    typedef static_property_map<multiplicity_type, edge_descriptor> MultiplicityMap;
-
-    MultiplicityMap multiplicity_map =
-        detail::graph::make_static_one_property<MultiplicityMap>(g);
+    typedef static_property_map<multiplicity_type> MultiplicityMap;
+    MultiplicityMap multiplicity_map(detail::graph::one<multiplicity_type>());
 
     brandes_betweenness_centrality_impl(g, centrality, edge_centrality_map,
                                         incoming, distance, dependency,
@@ -478,12 +472,9 @@ brandes_betweenness_centrality(const Graph& g,
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   // default constant multiplicity of one
-  typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
   typedef typename property_traits<PathCountMap>::value_type multiplicity_type;
-  typedef static_property_map<multiplicity_type, edge_descriptor> MultiplicityMap;
-
-  MultiplicityMap multiplicity_map =
-      detail::graph::make_static_one_property<MultiplicityMap>(g);
+  typedef static_property_map<multiplicity_type> MultiplicityMap;
+  MultiplicityMap multiplicity_map(detail::graph::one<multiplicity_type>());
 
   detail::graph::brandes_unweighted_shortest_paths<MultiplicityMap>
     shortest_paths(multiplicity_map);
@@ -513,12 +504,9 @@ brandes_betweenness_centrality(const Graph& g,
                                BOOST_GRAPH_ENABLE_IF_MODELS_PARM(Graph,vertex_list_graph_tag))
 {
   // default constant multiplicity of one
-  typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
   typedef typename property_traits<PathCountMap>::value_type multiplicity_type;
-  typedef static_property_map<multiplicity_type, edge_descriptor> MultiplicityMap;
-
-  MultiplicityMap multiplicity_map =
-      detail::graph::make_static_one_property<MultiplicityMap>(g);
+  typedef static_property_map<multiplicity_type> MultiplicityMap;
+  MultiplicityMap multiplicity_map(detail::graph::one<multiplicity_type>());
 
   brandes_betweenness_centrality(g, centrality, edge_centrality_map,
                                  incoming, distance, dependency, path_count,
@@ -654,16 +642,12 @@ namespace detail { namespace graph {
         WeightMap weight_map, param_not_found)
     {
       // default constant multiplicity of one
-      typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-      typedef typename mpl::if_c<(is_same<CentralityMap, 
-                                          dummy_property_map>::value),
-                                           EdgeCentralityMap, 
-                                  CentralityMap>::type a_centrality_map;
+      typedef typename mpl::if_<is_same<CentralityMap, dummy_property_map>,
+                                EdgeCentralityMap, CentralityMap>::type
+                                a_centrality_map;
       typedef typename property_traits<a_centrality_map>::value_type multiplicity_type;
-      typedef static_property_map<multiplicity_type, edge_descriptor> MultiplicityMap;
-
-      MultiplicityMap multiplicity_map =
-          detail::graph::make_static_one_property<MultiplicityMap>(g);
+      typedef static_property_map<multiplicity_type> MultiplicityMap;
+      MultiplicityMap multiplicity_map(detail::graph::one<multiplicity_type>());
 
       brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
                                                weight_map, multiplicity_map,
