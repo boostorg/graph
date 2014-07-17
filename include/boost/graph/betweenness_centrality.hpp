@@ -41,7 +41,7 @@ namespace detail { namespace graph {
     closed_plus<property_type> combine;
     property_type zero = property_type();
     if (compare(combine(zero, get(property, e)), zero)) {
-          boost::throw_exception(negative_edge());
+          boost::throw_exception(nonpositive_edge());
     }
   }
 
@@ -52,8 +52,8 @@ namespace detail { namespace graph {
    * predecessors on the shortest path(s) to a vertex, and the number
    * of shortest paths.
    */
-  template<typename Graph, typename WeightMap, typename MultiplicityMap,
-           typename IncomingMap, typename DistanceMap, typename PathCountMap>
+  template<typename Graph, typename WeightMap, typename IncomingMap,
+           typename DistanceMap, typename PathCountMap, typename MultiplicityMap>
   struct brandes_dijkstra_visitor : public bfs_visitor<>
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -62,13 +62,13 @@ namespace detail { namespace graph {
 
     brandes_dijkstra_visitor(std::stack<vertex_descriptor>& ordered_vertices,
                              WeightMap weight,
-                             MultiplicityMap multiplicity,
                              IncomingMap incoming,
                              DistanceMap distance,
-                             PathCountMap path_count)
+                             PathCountMap path_count,
+                             MultiplicityMap multiplicity)
       : ordered_vertices(ordered_vertices), weight(weight),
-        multiplicity(multiplicity), incoming(incoming), distance(distance),
-        path_count(path_count)
+        incoming(incoming), distance(distance),
+        path_count(path_count), multiplicity(multiplicity)
     { }
 
     /**
@@ -119,10 +119,10 @@ namespace detail { namespace graph {
   private:
     std::stack<vertex_descriptor>& ordered_vertices;
     WeightMap weight;
-    MultiplicityMap multiplicity;
     IncomingMap incoming;
     DistanceMap distance;
     PathCountMap path_count;
+    MultiplicityMap multiplicity;
   };
 
   /**
@@ -147,9 +147,11 @@ namespace detail { namespace graph {
                PathCountMap path_count,
                VertexIndexMap vertex_index)
     {
-      typedef brandes_dijkstra_visitor<Graph, WeightMap, MultiplicityMap, IncomingMap, 
-                                       DistanceMap, PathCountMap> visitor_type;
-      visitor_type visitor(ov, weight_map, multiplicity_map, incoming, distance, path_count);
+      typedef brandes_dijkstra_visitor<Graph, WeightMap, IncomingMap, 
+                                       DistanceMap, PathCountMap,
+                                       MultiplicityMap> visitor_type;
+      visitor_type visitor(ov, weight_map, incoming, distance, path_count,
+                           multiplicity_map);
 
       dijkstra_shortest_paths(g, s, 
                               boost::weight_map(weight_map)
@@ -539,14 +541,14 @@ brandes_betweenness_centrality(const Graph& g,
 
 namespace detail { namespace graph {
   template<typename Graph, typename CentralityMap, typename EdgeCentralityMap,
-           typename WeightMap, typename MultiplicityMap, typename VertexIndexMap>
+           typename WeightMap, typename VertexIndexMap, typename MultiplicityMap>
   void 
   brandes_betweenness_centrality_dispatch2(const Graph& g,
                                            CentralityMap centrality,
                                            EdgeCentralityMap edge_centrality_map,
                                            WeightMap weight_map,
-                                           MultiplicityMap multiplicity_map,
-                                           VertexIndexMap vertex_index)
+                                           VertexIndexMap vertex_index,
+                                           MultiplicityMap multiplicity_map)
   {
     typedef typename graph_traits<Graph>::degree_size_type degree_size_type;
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
@@ -620,8 +622,8 @@ namespace detail { namespace graph {
         WeightMap weight_map, MultiplicityMap multiplicity_map)
     {
       brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
-                                               weight_map, multiplicity_map,
-                                               vertex_index);
+                                               weight_map, vertex_index,
+                                               multiplicity_map);
     }
   };
 
@@ -644,8 +646,8 @@ namespace detail { namespace graph {
       MultiplicityMap multiplicity_map(multiplicity_type(1));
 
       brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
-                                               weight_map, multiplicity_map,
-                                               vertex_index);
+                                               weight_map, vertex_index,
+                                               multiplicity_map);
     }
   };
 
@@ -661,8 +663,8 @@ namespace detail { namespace graph {
     {
       // default weight to dummy property map
       brandes_betweenness_centrality_dispatch2(g, centrality, edge_centrality_map,
-                                               dummy_property_map(), multiplicity_map,
-                                               vertex_index);
+                                               dummy_property_map(), vertex_index,
+                                               multiplicity_map);
     }
   };
 

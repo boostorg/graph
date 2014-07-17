@@ -26,9 +26,18 @@ namespace boost {
         { }
     };
 
-    struct negative_edge : public bad_graph {
+    struct nonpositive_edge : public bad_graph {
+        nonpositive_edge()
+            : bad_graph("The graph may not contain an edge with non-positive weight.")
+        { }
+      protected:
+        nonpositive_edge(const std::string& what_arg)
+            : bad_graph(what_arg) { }
+    };
+
+    struct negative_edge : public nonpositive_edge {
         negative_edge()
-            : bad_graph("The graph may not contain an edge with negative weight.")
+            : nonpositive_edge("The graph may not contain an edge with negative weight.")
         { }
     };
 

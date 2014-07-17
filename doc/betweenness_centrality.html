@@ -59,7 +59,8 @@ brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
 
 template&lt;typename Graph, typename CentralityMap, typename EdgeCentralityMap,
          typename IncomingMap, typename DistanceMap, typename DependencyMap, 
-         typename PathCountMap, typename VertexIndexMap, typename WeightMap&gt;    
+         typename PathCountMap, typename VertexIndexMap, typename WeightMap,
+         typename MultiplicityMap&gt;
 void 
 brandes_betweenness_centrality(const Graph&amp; g, CentralityMap centrality_map,
                                EdgeCentralityMap edge_centrality,
@@ -289,7 +290,7 @@ IN: <tt>weight_map(WeightMap weight_map)</tt>
   The weight or ``length'' of each edge in the graph. The weights
   must all be non-negative, and the algorithm will throw a
   <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
-  exception is one of the edges is negative.
+  exception if one of the edges is negative.
   The type <tt>WeightMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the weight
@@ -303,8 +304,8 @@ IN: <tt>multiplicity_map(MultiplicityMap multiplicity_map)</tt>
 <blockquote>
   The multiplicity of each edge in the graph. The multiplicities
   must all be positive, and the algorithm will throw a
-  <a href="./exception.html#negative_edge"><tt>negative_edge</tt></a> 
-  exception is one of the edges is non-positive.
+  <a href="./exception.html#nonpositive_edge"><tt>nonpositive_edge</tt></a> 
+  exception if one of the edges is non-positive.
   The type <tt>MultiplicityMap</tt> must be a model of
   <a href="../../property_map/doc/ReadablePropertyMap.html">Readable Property Map</a>. The edge descriptor type of
   the graph needs to be usable as the key type for the multiplicity

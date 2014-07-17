@@ -34,7 +34,10 @@ appropriate exception.
   struct <a name="not_a_dag">not_a_dag</a> : public bad_graph {
     not_a_dag();
   };
-  struct <a name="negative_edge">negative_edge</a> : public bad_graph {
+  struct <a name="nonpositive_edge">nonpositive_edge</a> : public bad_graph {
+    negative_edge();
+  };
+  struct <a name="negative_edge">negative_edge</a> : public nonpositive_edge {
     negative_edge();
   };
   struct <a name="negative_cycle">negative_cycle</a> : public bad_graph {
