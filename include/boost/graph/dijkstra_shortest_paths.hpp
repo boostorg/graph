@@ -36,6 +36,7 @@
 #  include <boost/pending/mutable_queue.hpp>
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
 
+
 namespace boost {
 
   /**
@@ -104,107 +105,6 @@ namespace boost {
     return dijkstra_visitor<Visitors>(vis);
   }
   typedef dijkstra_visitor<> default_dijkstra_visitor;
-
-  namespace detail {
-
-    template <class UniformCostVisitor, class UpdatableQueue,
-      class WeightMap, class PredecessorMap, class DistanceMap,
-      class BinaryFunction, class BinaryPredicate>
-    struct dijkstra_bfs_visitor
-    {
-      typedef typename property_traits<DistanceMap>::value_type D;
-      typedef typename property_traits<WeightMap>::value_type W;
-
-      dijkstra_bfs_visitor(UniformCostVisitor vis, UpdatableQueue& Q,
-                           WeightMap w, PredecessorMap p, DistanceMap d,
-                           BinaryFunction combine, BinaryPredicate compare,
-                           D zero)
-        : m_vis(vis), m_Q(Q), m_weight(w), m_predecessor(p), m_distance(d),
-          m_combine(combine), m_compare(compare), m_zero(zero)  { }
-
-      template <class Edge, class Graph>
-      void tree_edge(Edge e, Graph& g) {
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                               m_combine, m_compare);
-        if (decreased)
-          m_vis.edge_relaxed(e, g);
-        else
-          m_vis.edge_not_relaxed(e, g);
-      }
-      template <class Edge, class Graph>
-      void gray_target(Edge e, Graph& g) {
-        D old_distance = get(m_distance, target(e, g));
-
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
-                               m_combine, m_compare);
-        if (decreased) {
-          dijkstra_queue_update(m_Q, target(e, g), old_distance);
-          m_vis.edge_relaxed(e, g);
-        } else
-          m_vis.edge_not_relaxed(e, g);
-      }
-
-      template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g)
-        { m_vis.initialize_vertex(u, g); }
-      template <class Edge, class Graph>
-      void non_tree_edge(Edge, Graph&) { }
-      template <class Vertex, class Graph>
-      void discover_vertex(Vertex u, Graph& g) { m_vis.discover_vertex(u, g); }
-      template <class Vertex, class Graph>
-      void examine_vertex(Vertex u, Graph& g) { m_vis.examine_vertex(u, g); }
-      template <class Edge, class Graph>
-      void examine_edge(Edge e, Graph& g) {
-        // Test for negative-weight edges:
-        //
-        // Reasons that other comparisons do not work:
-        //
-        // m_compare(e_weight, D(0)):
-        //    m_compare only needs to work on distances, not weights, and those
-        //    types do not need to be the same (bug 8398,
-        //    https://svn.boost.org/trac/boost/ticket/8398).
-        // m_compare(m_combine(source_dist, e_weight), source_dist):
-        //    if m_combine is project2nd (as in prim_minimum_spanning_tree),
-        //    this test will claim that the edge weight is negative whenever
-        //    the edge weight is less than source_dist, even if both of those
-        //    are positive (bug 9012,
-        //    https://svn.boost.org/trac/boost/ticket/9012).
-        // m_compare(m_combine(e_weight, source_dist), source_dist):
-        //    would fix project2nd issue, but documentation only requires that
-        //    m_combine be able to take a distance and a weight (in that order)
-        //    and return a distance.
-
-        // W e_weight = get(m_weight, e);
-        // sd_plus_ew = source_dist + e_weight.
-        // D sd_plus_ew = m_combine(source_dist, e_weight);
-        // sd_plus_2ew = source_dist + 2 * e_weight.
-        // D sd_plus_2ew = m_combine(sd_plus_ew, e_weight);
-        // The test here is equivalent to e_weight < 0 if m_combine has a
-        // cancellation law, but always returns false when m_combine is a
-        // projection operator.
-        if (m_compare(m_combine(m_zero, get(m_weight, e)), m_zero))
-            boost::throw_exception(negative_edge());
-        // End of test for negative-weight edges.
-
-        m_vis.examine_edge(e, g);
-
-      }
-      template <class Edge, class Graph>
-      void black_target(Edge, Graph&) { }
-      template <class Vertex, class Graph>
-      void finish_vertex(Vertex u, Graph& g) { m_vis.finish_vertex(u, g); }
-
-      UniformCostVisitor m_vis;
-      UpdatableQueue& m_Q;
-      WeightMap m_weight;
-      PredecessorMap m_predecessor;
-      DistanceMap m_distance;
-      BinaryFunction m_combine;
-      BinaryPredicate m_compare;
-      D m_zero;
-    };
-
-  } // namespace detail
 
   namespace detail {
     template <class Graph, class IndexMap, class Value, bool KnownNumVertices>
@@ -321,7 +221,6 @@ namespace boost {
                                     vis);
   }
 
-  // Call breadth first search
   template <class Graph, class SourceInputIter, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap, class Compare, class Combine,
@@ -335,10 +234,15 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis, ColorMap color)
   {
+    BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
+    typedef graph_traits<Graph> GTraits;
+    typedef typename GTraits::vertex_descriptor Vertex;
+    BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<ColorMap, Vertex> ));
+    typedef typename property_traits<ColorMap>::value_type ColorValue;
+    typedef color_traits<ColorValue> Color;
+    typename GTraits::out_edge_iterator ei, ei_end;
     typedef indirect_cmp<DistanceMap, Compare> IndirectCmp;
     IndirectCmp icmp(distance, compare);
-
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
     // Now the default: use a d-ary heap
       boost::scoped_array<std::size_t> index_in_heap_map_holder;
@@ -352,11 +256,70 @@ namespace boost {
         MutableQueue;
       MutableQueue Q(distance, index_in_heap, compare);
 
-    detail::dijkstra_bfs_visitor<DijkstraVisitor, MutableQueue, WeightMap,
-      PredecessorMap, DistanceMap, Combine, Compare>
-        bfs_vis(vis, Q, weight, predecessor, distance, combine, compare, zero);
 
-    breadth_first_visit(g, s_begin, s_end, Q, bfs_vis, color);
+    for (; s_begin != s_end; ++s_begin) {
+      Vertex s = *s_begin;
+      put(color, s, Color::gray());
+      vis.discover_vertex(s, g);
+      Q.push(s);
+    }
+    while (! Q.empty()) {
+      Vertex u = Q.top(); Q.pop();
+      vis.examine_vertex(u, g);
+      for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
+        Vertex v = target(*ei, g);
+        // Test for negative-weight edges:
+        //
+        // Reasons that other comparisons do not work:
+        //
+        // compare(e_weight, D(0)):
+        //    compare only needs to work on distances, not weights, and those
+        //    types do not need to be the same (bug 8398,
+        //    https://svn.boost.org/trac/boost/ticket/8398).
+        // compare(combine(source_dist, e_weight), source_dist):
+        //    if combine is project2nd (as in prim_minimum_spanning_tree),
+        //    this test will claim that the edge weight is negative whenever
+        //    the edge weight is less than source_dist, even if both of those
+        //    are positive (bug 9012,
+        //    https://svn.boost.org/trac/boost/ticket/9012).
+        // compare(combine(e_weight, source_dist), source_dist):
+        //    would fix project2nd issue, but documentation only requires that
+        //    combine be able to take a distance and a weight (in that order)
+        //    and return a distance.
+        //
+        // W e_weight = get(weight, e);
+        // sd_plus_ew = source_dist + e_weight.
+        // D sd_plus_ew = combine(source_dist, e_weight);
+        // sd_plus_2ew = source_dist + 2 * e_weight.
+        // D sd_plus_2ew = combine(sd_plus_ew, e_weight);
+        // The test here is equivalent to e_weight < 0 if combine has a
+        // cancellation law, but always returns false when combine is a
+        // projection operator.
+        if (compare(combine(zero, get(weight, *ei)), zero))
+            boost::throw_exception(negative_edge());
+        // End of test for negative-weight edges.
+        vis.examine_edge(*ei, g);
+        bool decreased = relax(*ei, g, weight, predecessor, distance,
+                               combine, compare);
+        if(decreased) {
+            ColorValue v_color = get(color, v);
+            vis.edge_relaxed(*ei, g);
+            if (v_color == Color::white()) {
+              put(color, v, Color::gray());
+              vis.discover_vertex(v, g);
+              Q.push(v);
+            } else {
+              if (v_color == Color::gray()) {
+                Q.update(v);
+              }
+            }
+        } else {
+          vis.edge_not_relaxed(*ei, g);
+        }
+      } // end for
+      put(color, u, Color::black());
+      vis.finish_vertex(u, g);
+    } // end while
   }
 
   // Call breadth first search
