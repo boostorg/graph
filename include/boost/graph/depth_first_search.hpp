@@ -44,6 +44,11 @@ namespace boost {
       vis.back_edge(e, g);
       vis.forward_or_cross_edge(e, g);
       // vis.finish_edge(e, g); // Optional for user
+      // vis.finish_tree_edge(e, g); // Optional for user.
+      /* NB, finish_back_edge and finish_forward_or_cross_edge don't
+	 make much sense as they would get called right after their
+	 back_edge and forward_or_cross_edge, respectively.
+      */
       vis.finish_vertex(u, g);
     }
   private:
@@ -59,7 +64,8 @@ namespace boost {
       template<class T, class T2>
       bool operator()(const T&, const T2&) const { return false; }
     };
-
+    
+    // Helper to call finish_edge if it exists.
     BOOST_TTI_HAS_MEMBER_FUNCTION(finish_edge)
 
     template <bool IsCallable> struct do_call_finish_edge {
@@ -76,7 +82,35 @@ namespace boost {
 
     template <typename E, typename G, typename Vis>
     void call_finish_edge(Vis& vis, const E& e, const G& g) { // Only call if method exists
-      do_call_finish_edge<has_member_function_finish_edge<Vis, void>::value>::call_finish_edge(vis, e, g);
+      /* HACK: Hard-wire non-optionality of finish_edge. The original
+	 implementation is commented out and seems to have a bug, not
+	 recognizing a finish_edge() member properly. */
+      vis.finish_edge(e, g);
+      /* BUGGY: */
+      // do_call_finish_edge<has_member_function_finish_edge<Vis, void>::value>::call_finish_edge(vis, e, g);
+    }
+    
+    // Helper to call finish_tree_edge if it exists.
+    BOOST_TTI_HAS_MEMBER_FUNCTION(finish_tree_edge)
+    
+    template <bool IsCallable> struct do_call_finish_tree_edge {
+      template <typename E, typename G, typename Vis>
+      static void call_finish_tree_edge(Vis& vis, const E& e, const G& g) {
+        vis.finish_tree_edge(e, g);
+      }
+    };
+
+    template <> struct do_call_finish_tree_edge<false> {
+      template <typename E, typename G, typename Vis>
+      static void call_finish_tree_edge(Vis&, const E&, const G&) {}
+    };
+
+    template <typename E, typename G, typename Vis>
+    void call_finish_tree_edge(Vis& vis, const E& e, const G& g) { // Only call if method exists
+      /* HACK: See above */
+      vis.finish_tree_edge(e, g);
+      /* BUGGY: See above*/
+      // do_call_finish_tree_edge<has_member_function_finish_tree_edge<Vis, void>::value>::call_finish_tree_edge(vis, e, g);
     }
 
 
@@ -137,6 +171,13 @@ namespace boost {
         src_e = back.second.first;
         boost::tie(ei, ei_end) = back.second.second;
         stack.pop_back();
+	/* finish_edge (and finish_tree_edge) has to be called here,
+	   not after the loop. Think of the pop as the return from a
+	   recursive call. */
+        if (src_e) {
+	  call_finish_tree_edge(vis, src_e.get(), g);
+	  call_finish_edge(vis, src_e.get(), g);
+	}
         while (ei != ei_end) {
           Vertex v = target(*ei, g);
           vis.examine_edge(*ei, g);
@@ -164,7 +205,6 @@ namespace boost {
         }
         put(color, u, Color::black());
         vis.finish_vertex(u, g);
-        if (src_e) call_finish_edge(vis, src_e.get(), g);
       }
     }
 
@@ -191,12 +231,18 @@ namespace boost {
 
       if (!func(u, g))
         for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-          Vertex v = target(*ei, g);           vis.examine_edge(*ei, g);
+          Vertex v = target(*ei, g);
+	  vis.examine_edge(*ei, g);
           ColorValue v_color = get(color, v);
-          if (v_color == Color::white()) {     vis.tree_edge(*ei, g);
-          depth_first_visit_impl(g, v, vis, color, func);
-          } else if (v_color == Color::gray()) vis.back_edge(*ei, g);
-          else                                 vis.forward_or_cross_edge(*ei, g);
+          if (v_color == Color::white()) {
+	    vis.tree_edge(*ei, g);
+	    depth_first_visit_impl(g, v, vis, color, func);
+	    call_finish_tree_edge(vis, *ei, g);
+          }
+	  else if (v_color == Color::gray())
+	    vis.back_edge(*ei, g);
+          else
+	    vis.forward_or_cross_edge(*ei, g);
           call_finish_edge(vis, *ei, g);
         }
       put(color, u, Color::black());         vis.finish_vertex(u, g);
@@ -286,6 +332,10 @@ namespace boost {
     void finish_edge(Edge u, const Graph& g) {
       invoke_visitors(m_vis, u, g, ::boost::on_finish_edge());
     }
+    template <class Edge, class Graph>
+    void finish_tree_edge(Edge u, const Graph& g) {
+      invoke_visitors(m_vis, u, g, ::boost::on_finish_tree_edge());
+    }
     template <class Vertex, class Graph>
     void finish_vertex(Vertex u, const Graph& g) {
       invoke_visitors(m_vis, u, g, ::boost::on_finish_vertex());
@@ -298,6 +348,7 @@ namespace boost {
     BOOST_GRAPH_EVENT_STUB(on_tree_edge,dfs)
     BOOST_GRAPH_EVENT_STUB(on_back_edge,dfs)
     BOOST_GRAPH_EVENT_STUB(on_forward_or_cross_edge,dfs)
+    BOOST_GRAPH_EVENT_STUB(on_finish_tree_edge,dfs)
     BOOST_GRAPH_EVENT_STUB(on_finish_edge,dfs)
     BOOST_GRAPH_EVENT_STUB(on_finish_vertex,dfs)
 

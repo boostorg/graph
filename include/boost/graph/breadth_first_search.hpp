@@ -41,6 +41,7 @@ namespace boost {
       vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
       vis.tree_edge(e, g);
+      // Makes finish_tree_edge sense in BFS?
       vis.non_tree_edge(e, g);
       vis.gray_target(e, g);
       vis.black_target(e, g);
