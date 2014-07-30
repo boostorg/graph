@@ -41,6 +41,7 @@
 #ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
 #define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (x)
 #else
+#include <utility>
 #define BOOST_GRAPH_MOVE_IF_POSSIBLE(x) (std::move((x)))
 #endif
 
@@ -295,11 +296,23 @@ namespace boost {
       inline stored_edge_property(Vertex target,
                                   const Property& p = Property())
         : stored_edge<Vertex>(target), m_property(new Property(p)) { }
-#if defined(BOOST_MSVC)
-        inline stored_edge_property(self&& x) {std::swap(m_property, x.m_property);};
-        inline stored_edge_property(self const& x) {std::swap(m_property, const_cast<self&>(x).m_property);};
-        inline self& operator=(self&& x) { std::swap(m_property, x.m_property); return *this;};
-        inline self& operator=(self& x) { std::swap(m_property, x.m_property); return *this;};
+#if defined(BOOST_MSVC) || (defined(BOOST_GCC) && (BOOST_GCC / 100) < 406)
+      stored_edge_property(self&& x) : Base(static_cast< Base const& >(x)) {
+        m_property.swap(x.m_property);
+      }
+      stored_edge_property(self const& x) : Base(static_cast< Base const& >(x)) {
+        m_property.swap(const_cast<self&>(x).m_property);
+      }
+      self& operator=(self&& x) {
+        Base::operator=(static_cast< Base const& >(x));
+        m_property = std::move(x.m_property);
+        return *this;
+      }
+      self& operator=(self& x) {
+        Base::operator=(static_cast< Base const& >(x));
+        m_property = std::move(x.m_property);
+        return *this;
+      }
 #else
       stored_edge_property(self&& x) = default;
       self& operator=(self&& x) = default;
