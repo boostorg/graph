@@ -308,9 +308,9 @@ namespace boost {
         m_property = std::move(x.m_property);
         return *this;
       }
-      self& operator=(self& x) {
+      self& operator=(self const& x) {
         Base::operator=(static_cast< Base const& >(x));
-        m_property = std::move(x.m_property);
+        m_property = std::move(const_cast<self&>(x).m_property);
         return *this;
       }
 #else
