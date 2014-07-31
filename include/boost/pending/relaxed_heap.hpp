@@ -192,7 +192,7 @@ public:
   }
 
   const bool contains(const value_type& x) const { 
-    return groups[get(id, x)] == 0;
+    return static_cast<const bool>(groups[get(id, x)]);
   }
 
   void pop()
