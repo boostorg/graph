@@ -191,7 +191,9 @@ public:
     return !smallest_value || (smallest_value->kind == largest_key);
   }
 
-  const bool contains(const value_type& x) const { return groups[get(id, x)]; }
+  const bool contains(const value_type& x) const { 
+    return groups[get(id, x)] == 0;
+  }
 
   void pop()
   {
