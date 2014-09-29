@@ -29,6 +29,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphml.hpp>
 #include <boost/test/minimal.hpp>
+#include <cmath>
 #include <fstream>
 #include <string>
 
@@ -59,9 +60,9 @@ int test_main(int argc, char** argv)
     BOOST_CHECK(num_vertices(g) == 9);
     BOOST_CHECK(num_edges(g) == 9);
     BOOST_CHECK(get(vertex_color_t(), g, vertex(2,g)) == 100);
-    BOOST_CHECK(get(vertex_color_t(), g, vertex(3,g)) == 42);
-    BOOST_CHECK(get(edge_weight_t(), g, edge(vertex(0,g),vertex(1,g),g).first) == 0.0);
-    BOOST_CHECK(get(edge_weight_t(), g, edge(vertex(1,g),vertex(2,g),g).first) == 0.8);
+    BOOST_CHECK(get(vertex_color_t(), g, vertex(3,g)) == 42);    
+    BOOST_CHECK(std::abs(get(edge_weight_t(), g, edge(vertex(0,g),vertex(1,g),g).first) - 0.0) < 0.00001);
+    BOOST_CHECK(std::abs(get(edge_weight_t(), g, edge(vertex(1,g),vertex(2,g),g).first) - 0.8) < 0.00001);
     BOOST_CHECK(get("description", dp, &g) == "Root graph.");
 
 
@@ -91,7 +92,7 @@ int test_main(int argc, char** argv)
 
     graph_traits<graph_t>::edge_iterator e, e_end;
     for (boost::tie(e,e_end) = edges(g); e != e_end; ++e)
-      BOOST_CHECK(get(edge_weight_t(), g, *e) == get(edge_weight_t(), g2, *e));
+      BOOST_CHECK(std::abs(get(edge_weight_t(), g, *e) - get(edge_weight_t(), g2, *e)) < 0.00001);
 
     return 0;
 }
