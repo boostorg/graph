@@ -7,6 +7,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+#include <iostream>
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/edge_coloring.hpp>

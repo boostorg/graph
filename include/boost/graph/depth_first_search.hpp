@@ -64,19 +64,21 @@ namespace boost {
 
     template <bool IsCallable> struct do_call_finish_edge {
       template <typename E, typename G, typename Vis>
-      static void call_finish_edge(Vis& vis, const E& e, const G& g) {
+      static void call_finish_edge(Vis& vis, E e, const G& g) {
         vis.finish_edge(e, g);
       }
     };
 
     template <> struct do_call_finish_edge<false> {
       template <typename E, typename G, typename Vis>
-      static void call_finish_edge(Vis&, const E&, const G&) {}
+      static void call_finish_edge(Vis&, E, const G&) {}
     };
 
     template <typename E, typename G, typename Vis>
-    void call_finish_edge(Vis& vis, const E& e, const G& g) { // Only call if method exists
-      do_call_finish_edge<has_member_function_finish_edge<Vis, void>::value>::call_finish_edge(vis, e, g);
+    void call_finish_edge(Vis& vis, E e, const G& g) { // Only call if method exists
+      do_call_finish_edge<
+        has_member_function_finish_edge<Vis, void,
+          boost::mpl::vector<E, const G&> >::value>::call_finish_edge(vis, e, g);
     }
 
 
