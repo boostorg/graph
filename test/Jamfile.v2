@@ -24,6 +24,7 @@ test-suite graph_test :
     [ run test_graphs.cpp ]
     [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
     [ run labeled_graph.cpp ]
+    [ run finish_edge_bug.cpp ]
 
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
