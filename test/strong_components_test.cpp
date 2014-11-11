@@ -30,7 +30,6 @@ Vertex c is in component 0 and has root 0
 int main(int, char*[])
 {
   using namespace boost;
-  const char* name = "abc";
 
   adjacency_list<vecS, vecS, directedS> G;
 
@@ -47,6 +46,7 @@ int main(int, char*[])
 
 #if VERBOSE
   std::cout << "The example graph:" << std::endl;
+  const char* name = "abc";
   print_graph(G, name);
   std::cout << std::endl;
 #endif
@@ -66,40 +66,46 @@ int main(int, char*[])
 	      << " and has root " << root[i] << std::endl;
 #endif
   
+#if VERBOSE
   bool test_failed;
+#endif
   int ret = 0;
   
   //////////
-  test_failed = false;
 #if VERBOSE
+  test_failed = false;
   std::cerr << "Testing component-computation of strong_components ..." << std::endl;
 #endif
   for (std::vector<int>::size_type i = 0; i != component.size(); ++i) {
     if(component[i] != 0) {
+#if VERBOSE
       test_failed = true;
+#endif
       ret = -1;
       break;
     }
   }
 #if VERBOSE
-  std::cerr << test_failed ? "   **** Failed." :  "   Passed." << std::endl;
+  std::cerr << (test_failed ? "   **** Failed." :  "   Passed.") << std::endl;
 #endif
   //////////
   
   //////////
-  test_failed = false;
 #if VERBOSE
+  test_failed = false;
   std::cerr << "Testing root_map-computation of strong_components ..." << std::endl;
 #endif
   for (std::vector<int>::size_type i = 0; i != component.size(); ++i) {
     if(root[i] != 0) {
+#if VERBOSE
       test_failed = true;
+#endif
       ret = -1;
       break;
     }
   }
 #if VERBOSE
-  std::cerr << test_failed ? "   **** Failed." :  "   Passed." << std::endl;
+  std::cerr << (test_failed ? "   **** Failed." :  "   Passed.") << std::endl;
 #endif
   //////////
   
