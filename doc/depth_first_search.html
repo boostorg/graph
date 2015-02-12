@@ -261,7 +261,8 @@ The time complexity is <i>O(E + V)</i>.
 
 <li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked on each edge as it
   becomes a member of the edges that form the search tree. If you
-  wish to record predecessors, do so at this event point.
+  wish to record predecessors, do so at this event point. The target
+  vertex is discovered after this function is called.
   
 <li><b><tt>vis.back_edge(e, g)</tt></b> is invoked on the back edges in
   the graph.

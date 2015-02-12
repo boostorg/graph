@@ -270,7 +270,8 @@ The time complexity is <i>O(E + V)</i>.
 
 <li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked (in addition to
   <tt>examine_edge()</tt>) if the edge is a tree edge. The
-  target vertex of edge <tt>e</tt> is discovered at this time.
+  target vertex of edge <tt>e</tt> is discovered at this time after this
+  function is called.
 
 <li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked the first time the
   algorithm encounters vertex <i>u</i>. All vertices closer to the
