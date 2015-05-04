@@ -24,6 +24,7 @@ test-suite graph_test :
     [ run test_graphs.cpp ]
     [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
     [ run labeled_graph.cpp ]
+    [ run finish_edge_bug.cpp ]
 
     [ run transitive_closure_test.cpp ]
     [ compile adj_list_cc.cpp ]
@@ -79,6 +80,7 @@ test-suite graph_test :
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
+    [ compile swap.cpp ]
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
@@ -129,9 +131,11 @@ test-suite graph_test :
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
     [ run vf2_sub_graph_iso_test.cpp ]
+    [ run vf2_sub_graph_iso_test_2.cpp ]
     [ run hawick_circuits.cpp ]
     [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run strong_components_test.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
