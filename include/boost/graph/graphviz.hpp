@@ -15,7 +15,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
-#include <stdio.h> // for FILE
+#include <cstdio> // for FILE
 #include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -473,7 +473,7 @@ namespace boost {
   // Library has not existed for a while
   extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
   extern void read_graphviz(FILE* file, GraphvizDigraph& g);
-  
+
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
   extern void read_graphviz(FILE* file, GraphvizGraph& g);
 #endif
