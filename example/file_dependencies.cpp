@@ -32,7 +32,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <time.h>
+#include <ctime>
 
 #include <boost/utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -44,9 +44,9 @@
 using namespace std;
 using namespace boost;
 
-enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp, 
+enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp,
                foo_o, bar_cpp, bar_o, libfoobar_a,
-               zig_cpp, zig_o, zag_cpp, zag_o, 
+               zig_cpp, zig_o, zag_cpp, zag_o,
                  libzigzag_a, killerapp, N };
 const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
                        "foo.o", "bar.cpp", "bar.o", "libfoobar.a",
@@ -64,7 +64,7 @@ struct print_visitor : public bfs_visitor<> {
 
 struct cycle_detector : public dfs_visitor<>
 {
-  cycle_detector(bool& has_cycle) 
+  cycle_detector(bool& has_cycle)
     : m_has_cycle(has_cycle) { }
 
   template <class Edge, class Graph>
@@ -84,7 +84,7 @@ int main(int,char*[])
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
     Edge(boz_h, bar_cpp), Edge(boz_h, zig_cpp), Edge(boz_h, zag_cpp),
-    Edge(zow_h, foo_cpp), 
+    Edge(zow_h, foo_cpp),
     Edge(foo_cpp, foo_o),
     Edge(foo_o, libfoobar_a),
     Edge(bar_cpp, bar_o),
@@ -121,19 +121,19 @@ int main(int,char*[])
     topological_sort(g, std::front_inserter(make_order));
     cout << "make ordering: ";
     for (i = make_order.begin();
-         i != make_order.end(); ++i) 
+         i != make_order.end(); ++i)
       cout << name[*i] << " ";
-  
+
     cout << endl << endl;
 
     // Parallel compilation ordering
     std::vector<int> time(N, 0);
-    for (i = make_order.begin(); i != make_order.end(); ++i) {    
+    for (i = make_order.begin(); i != make_order.end(); ++i) {
       // Walk through the in_edges an calculate the maximum time.
       if (in_degree (*i, g) > 0) {
         Graph::in_edge_iterator j, j_end;
         int maxdist=0;
-        // Through the order from topological sort, we are sure that every 
+        // Through the order from topological sort, we are sure that every
         // time we are using here is already initialized.
         for (boost::tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
           maxdist=(std::max)(time[source(*j, g)], maxdist);
