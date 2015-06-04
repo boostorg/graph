@@ -14,9 +14,9 @@
 namespace boost {
 
 template<class Graph, class Capacity, class ResidualCapacity, class Weight>
-typename property_traits<typename property_map < Graph, edge_capacity_t >::type>::value_type
+typename property_traits<Weight>::value_type
 find_flow_cost(const Graph & g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight) {
-    typedef typename property_traits<typename property_map<Graph, edge_weight_t>::const_type>::value_type Cost;
+    typedef typename property_traits<Weight>::value_type Cost;
 
     Cost cost = 0;
     BGL_FORALL_EDGES_T(e, g, Graph) {
