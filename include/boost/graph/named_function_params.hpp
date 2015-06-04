@@ -326,6 +326,14 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
       typedef typename detail::choose_impl_result<boost::mpl::true_, Graph, typename get_param_type<edge_capacity_t, Params>::type, edge_capacity_t>::type CapacityEdgeMap;
       typedef typename property_traits<CapacityEdgeMap>::value_type type;
     };
+    // used in the max-flow algorithms
+    template <class Graph, class P, class T, class R>
+    struct edge_weight_value
+    {
+      typedef bgl_named_params<P, T, R> Params;
+      typedef typename detail::choose_impl_result<boost::mpl::true_, Graph, typename get_param_type<edge_weight_t, Params>::type, edge_weight_t>::type WeightMap;
+      typedef typename property_traits<WeightMap>::value_type type;
+    };
 
   }
 
