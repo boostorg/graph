@@ -133,6 +133,8 @@ test-suite graph_test :
     [ run hawick_circuits.cpp ]
     [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+    [ run strong_components_test.cpp ]
+    [ run rank_branchings_test.cpp : 4 10 ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
