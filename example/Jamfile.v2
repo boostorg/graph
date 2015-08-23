@@ -165,6 +165,8 @@ exe property-map-traits-eg : property-map-traits-eg.cpp ;
 exe push-relabel-eg : push-relabel-eg.cpp ;
 exe put-get-helper-eg : put-get-helper-eg.cpp ;
 exe quick_tour : quick_tour.cpp ;
+exe rank-branchings1 : rank-branchings1.cpp ;
+exe rank-branchings2 : rank-branchings2.cpp ;
 exe r_c_shortest_paths_example : r_c_shortest_paths_example.cpp ;
 exe read_graphviz : read_graphviz.cpp ../build//boost_graph ;
 exe read_write_dimacs-eg : read_write_dimacs-eg.cpp ;
