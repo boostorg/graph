@@ -11,15 +11,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/rank_spanning_branchings.hpp>
 
-struct my_compare
-{
-  template<typename T>
-  bool operator()( const T& w1, const T& w2 ) const
-  {
-    return w1 > w2;
-  }
-};
-
 struct print_branching
 {
 
@@ -108,7 +99,7 @@ main()
     g,
     100,
     print_branching(),
-    my_compare()
+    std::greater<int>()
   );
 
   return EXIT_SUCCESS;

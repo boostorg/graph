@@ -40,15 +40,6 @@ namespace boost {
 
   namespace detail {
 
-    struct default_compare
-    {
-      template<typename T>
-      bool operator()( const T& w1, const T& w2 ) const
-      {
-        return w1 < w2;
-      }
-    };
-      
     template <class Edge, class WeightMap, class Compare>
     struct EdgeNode
     {
@@ -975,7 +966,15 @@ namespace boost {
                             Function fn
                           )
   {
-    rank_spanning_branchings( g, k, fn, detail::default_compare() );
+
+    typedef
+      typename
+      property_traits<
+        typename property_map<Graph, edge_weight_t>::const_type
+      >::value_type weight_t;
+
+    rank_spanning_branchings( g, k, fn, std::less<weight_t>() );
+
   }
 
 } // namespace boost
