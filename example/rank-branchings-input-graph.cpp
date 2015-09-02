@@ -27,6 +27,8 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
+#include <boost/graph/iteration_macros.hpp>
+
 #include <boost/graph/rank_spanning_branchings.hpp>
 
 using namespace boost;
@@ -103,6 +105,7 @@ read_graph_file(
 )
 {
   typedef typename graph_traits<Graph>::vertices_size_type size_type;
+  typedef typename property_map < Graph, vertex_index_t >::type index_map_t;
   typedef typename property_map < Graph, vertex_name_t >::type name_map_t;
   size_type n_vertices;
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -110,12 +113,14 @@ read_graph_file(
   typename property_traits <name_map_t>::value_type name;
   std::map<std::string, Vertex> s_map;
 
+  index_map_t index_map = get( vertex_index, g );
   name_map_t name_map = get( vertex_name, g );
 
   graph_in >> n_vertices;
   for (size_type i = 0; i < n_vertices; ++i)
   {
     u = add_vertex( g );
+    index_map[u] = i;
     graph_in >> name;
     put( name_map, u, name );
     s_map[name] = u;
@@ -136,8 +141,11 @@ int main( int argc, char **argv )
 
   std::ifstream input_file;
   typedef adjacency_list <
-      vecS, vecS, directedS,
-      property < vertex_name_t, std::string >,
+      listS, listS, directedS,
+      property <
+        vertex_index_t, size_t,
+        property< vertex_name_t, std::string >
+      >,
       property < edge_weight_t, double >
     > Graph;
 

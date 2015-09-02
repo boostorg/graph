@@ -91,16 +91,18 @@ struct set_rank_vector
 
 };
 
-template<class Graph, class Edge>
+template<class Graph, class Edge, class Rank, class Parent>
 void
 set_branching(
   Graph& g,
   const std::vector<Edge>& v_edges,
   const std::vector<size_t>& combination,
+  Rank rank,
+  Parent parent,
   heap::fibonacci_heap<Branching<Edge> >& branching_heap
 )
 {
-  disjoint_sets_with_storage<> W( num_vertices( g ) );
+  disjoint_sets<Rank, Parent> W( rank, parent );
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   unordered_set<Vertex> in_vertex_set;
   typename property_map<Graph, edge_weight_t>::type weightmap =
@@ -143,13 +145,44 @@ loop(
   heap::fibonacci_heap<Branching<Edge> >& branching_heap
 )
 {
+
+  typedef typename graph_traits<Graph>::vertices_size_type size_type;
+  typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+
+  size_type n = num_vertices( g );
+  std::vector<size_type> rank_map( n );
+  std::vector<vertex_t> pred_map( n );
+
   if (k == 0) {
-    set_branching(g, v_edges, combination, branching_heap);
+    set_branching(
+      g,
+      v_edges,
+      combination,
+      make_iterator_property_map(
+        rank_map.begin(),
+        get(vertex_index, g),
+        rank_map[0]
+      ),
+      make_iterator_property_map(
+        pred_map.begin(),
+        get(vertex_index, g),
+        pred_map[0]
+      ),
+      branching_heap
+    );
     return;
   }
   for (size_t i = offset; i <= indices.size() - k; ++i) {
     combination.push_back(indices[i]);
-    loop(i+1, k-1, g, v_edges, indices, combination, branching_heap);
+    loop(
+      i+1,
+      k-1,
+      g,
+      v_edges,
+      indices,
+      combination,
+      branching_heap
+    );
     combination.pop_back();
   }
 }
@@ -157,8 +190,10 @@ loop(
 int main( int argc, char **argv )
 {
 
-  typedef adjacency_list < vecS, vecS, directedS,
-     no_property, property < edge_weight_t, int > > Graph;
+  typedef adjacency_list < listS, setS, directedS,
+     property < vertex_index_t, size_t >, property < edge_weight_t, int > >
+     Graph;
+  typedef typename property_map < Graph, vertex_index_t >::type index_map_t;
   typedef graph_traits <Graph>::edge_descriptor Edge;
   heap::fibonacci_heap<Branching<Edge> > branching_heap;
   typedef random::mt19937 base_generator_type;
@@ -189,14 +224,45 @@ int main( int argc, char **argv )
 
   size_t n = lexical_cast<size_t>( argv[1] );
 
-  for( size_t i = 0; i < n; i++ )
+  for( size_t i = 0; i <= n; i++ )
   {
-    for( size_t j = 0; j < n; j++ )
-    {
-      if( i != j ) add_edge( i, j, rvt(), g );
-    }
-    add_edge( n, i, 0, g );
+    add_vertex( g );
   }
+
+  // Set index map.
+
+  index_map_t index_map = get( vertex_index, g );
+
+  size_t j = 0;
+  BGL_FORALL_VERTICES( v, g, Graph )
+  {
+    put( index_map, v, j++ );
+  }
+
+  // Add edges.
+
+  BGL_FORALL_VERTICES( v, g, Graph )
+  {
+    BGL_FORALL_VERTICES( u, g, Graph )
+    {
+      if( u != v )
+      {
+        if( index_map[v] != 0 )
+        {
+          if( index_map[u] != 0 )
+          {
+            add_edge( v, u, rvt(), g );
+          }
+        }
+        else
+        {
+          add_edge( v, u, 0, g );
+        }
+      }
+    }
+  }
+
+  // Create vectors.
 
   BGL_FORALL_EDGES( e, g, Graph )
   {
@@ -291,7 +357,8 @@ int main( int argc, char **argv )
       std::cout << "Error: " << std::endl;
       BOOST_FOREACH( Edge e, branching_heap.top().v_edges )
       {
-        std::cout << " (" << source( e, g ) << "," << target( e, g ) << ") ";
+        std::cout << " (" << index_map[source( e, g )] << "," <<
+                     index_map[target( e, g )] << ") ";
       }
       std::cout << " Weight: " << branching_heap.top().weight << std::endl;
       std::cout << std::endl;

@@ -20,6 +20,8 @@
 #include <vector>
 #include <limits>
 
+#include <boost/config.hpp>
+#include <boost/graph/properties.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/pending/disjoint_sets.hpp>
@@ -66,8 +68,10 @@ namespace boost {
       const Graph& g,
       WeightMap& w,
       Compare& comp,
-      std::vector<heap::fibonacci_heap<EdgeNode<Edge,WeightMap,Compare> > >&
-        in_edges,
+      std::map<
+        Vertex,
+        heap::fibonacci_heap<EdgeNode<Edge,WeightMap,Compare> >
+      >& in_edges,
       const unordered_set<Edge>& include_edges,
       const unordered_set<Edge>& exclude_edges
     )
@@ -154,10 +158,12 @@ namespace boost {
     // Expand cycles.
 
     template <class Graph, class Edge, class BranchingGraph,
-              class BranchingVertex, class WeightMap, class Compare>
+              class BranchingVertex, class IndexMap,
+              class WeightMap, class Compare>
     void
     expand(
       const Graph& g,
+      IndexMap& v_id,
       BranchingGraph& C,
       unordered_set<BranchingVertex>& root_set,
       std::vector<EdgeNode< Edge, WeightMap, Compare> >& beta
@@ -169,7 +175,7 @@ namespace boost {
         if( in_degree( v, C ) == 0 && out_degree( v, C ) != 0 ) 
         {
           std::vector<BranchingVertex> bv;
-          bv.push_back( target( beta[v].edge, g ) );
+          bv.push_back( v_id[target( beta[v].edge, g )] );
           find_back_path( C, bv );
           for( size_t i = 0; i < bv.size() - 1; i++ )
           {
@@ -200,12 +206,17 @@ namespace boost {
 
     // Camerini et al. BEST routine.
 
-    template <class Graph, class Edge, class WeightMap, class Compare>
+    template <class Graph, class Edge, class IndexMap, class WeightMap,
+              class Rank, class Pred, class Compare>
     void
     best_spanning_branching( const Graph& g, 
                              unordered_set<Edge>& branching,
+                             IndexMap& v_id,
                              WeightMap& w,
                              Compare& comp,
+                             Rank rank,
+                             Pred pred1,
+                             Pred pred2,
                              unordered_set<Edge>& include_edges,
                              unordered_set<Edge>& exclude_edges
                            )
@@ -215,6 +226,7 @@ namespace boost {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
 
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
@@ -229,9 +241,9 @@ namespace boost {
 
       vertex_idx_t n = num_vertices(g);
 
-      disjoint_sets_with_storage<> W( n ), S( n );
+      disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
 
-      std::vector<f_heap_t> in_edges( n );
+      std::map<Vertex, f_heap_t> in_edges;
 
       if(
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
@@ -247,13 +259,13 @@ namespace boost {
 
       std::vector<edge_node_t> beta( 2 * n );
 
-      std::vector<Vertex> parent( n );
+      std::map<Vertex, vertex_idx_t> parent;
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
       {
         W.make_set( v );
         S.make_set( v );
-        parent[v]  = v;
+        parent[v]  = v_id[v];
         add_vertex( C );
         unvisited_vertex_set.insert( v );
       }
@@ -290,7 +302,7 @@ namespace boost {
 	  }
 	  else
 	  {
-	    Vertex v_new = add_vertex( C );
+	    BranchingVertex v_new = add_vertex( C );
 
 	    edge_node_t least_costly_edge_node = critical_edge_node; 
 
@@ -322,12 +334,14 @@ namespace boost {
               new_repr = S.find_set( new_repr );
             }
 
-            std::vector<shared_ptr<edge_node_t> > v_exit( n );
+            typedef
+              typename std::map<Vertex, shared_ptr<edge_node_t> > exit_map_t;
+            exit_map_t v_exit;
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit )
+              BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
               {
-                t.reset();
+                t.second.reset();
               }
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
@@ -354,9 +368,9 @@ namespace boost {
                 }
 	      }
               f_heap_t tmp_heap;
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit )
+              BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
               {
-                if( t ) {tmp_heap.push( *t );}
+                if( t.second ) {tmp_heap.push( *(t.second) );}
               }
               in_edges[v].swap( tmp_heap );
 	    }
@@ -382,21 +396,21 @@ namespace boost {
 
       unordered_set<BranchingVertex> root_set;
 
-      BGL_FORALL_VERTICES( v, C, BranchingGraph )
+      BGL_FORALL_VERTICES( u, C, BranchingGraph )
       {
-        root_set.insert( v );
+        root_set.insert( u );
       }
 
       while( !root_set.empty() )
       {
-        expand( g, C, root_set, beta );
+        expand( g, v_id, C, root_set, beta );
       }
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
       {
         if( v != root_vertex )
         {
-          branching.insert( beta[v].edge );
+          branching.insert( beta[v_id[v]].edge );
         }
       }
 
@@ -415,13 +429,13 @@ namespace boost {
 	) :  m_pr( pr ), m_po( po ) { td = 0; tf = 0; }
 
 	template<typename Vertex, typename Graph>
-	void discover_vertex(Vertex u, const Graph & g)
+	void discover_vertex(const Vertex u, const Graph & g)
 	{
 	  m_pr[u] = td++;
 	}
 
 	template < typename Vertex, typename Graph >
-	void finish_vertex(Vertex u, const Graph & g)
+	void finish_vertex(const Vertex u, const Graph & g)
 	{
 	  m_po[u] = tf++;
 	}
@@ -453,14 +467,19 @@ namespace boost {
 
     // Camerini et al. NEXT routine.
 
-    template <class Graph, class Edge, class WeightMap, class Compare>
+    template <class Graph, class Edge, class IndexMap, class WeightMap,
+              class Rank, class Pred, class Compare>
     shared_ptr<
       std::pair<Edge, typename property_traits<WeightMap>::value_type>
     >
     next_spanning_branching( const Graph& g, 
                              const unordered_set<Edge>& branching,
+                             IndexMap& v_id,
                              WeightMap& w,
                              Compare& comp,
+                             Rank rank,
+                             Pred pred1,
+                             Pred pred2,
                              unordered_set<Edge>& include_edges,
                              unordered_set<Edge>& exclude_edges
                            )
@@ -469,6 +488,7 @@ namespace boost {
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
 
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
 
       Edge return_edge;
@@ -499,7 +519,7 @@ namespace boost {
 
       BOOST_FOREACH( const Edge& e, branching )
       {
-        add_edge( source( e, g), target( e, g ), C );
+        add_edge( v_id[source( e, g)], v_id[target( e, g )], C );
       }
 
       // Create other types and data.
@@ -514,11 +534,11 @@ namespace boost {
 
       unordered_set<Vertex> unvisited_vertex_set;
 
-      disjoint_sets_with_storage<> W( n ), S( n );
+      disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
 
-      std::vector<f_heap_t> in_edges( n );
+      std::map<Vertex, f_heap_t> in_edges;
 
-      std::vector<edge_node_t> max_e( n );
+      std::map<Vertex, edge_node_t> max_e;
 
       if(
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
@@ -539,19 +559,19 @@ namespace boost {
       // Initialize data structures and find start vertex for depth
       // first search.
 
-      Vertex start_vertex;
+      BranchingVertex start_vertex;
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
       {
         W.make_set( v );
         S.make_set( v );
         unvisited_vertex_set.insert( v );
-        if( in_edges[v].empty() ) { start_vertex = v; }
+        if( in_edges[v].empty() ) { start_vertex = v_id[v]; }
       }
 
       // Create the ancestor checker from C.
 
-      typedef std::map<Vertex, size_t> OrderMap;
+      typedef std::map<BranchingVertex, size_t> OrderMap;
 
       OrderMap pr;
       OrderMap po;
@@ -611,8 +631,8 @@ namespace boost {
               {
                 if(
                   !is_ancestor(
-                    target( b.edge, g ),
-                    source( (*ei).edge, g )
+                    v_id[target( b.edge, g )],
+                    v_id[source( (*ei).edge, g )]
                   )
                 )
                 {
@@ -679,16 +699,18 @@ namespace boost {
             // the largest weight in arc and the largest viable alternative
             // arc from each source outside the cycle.
 
-            std::vector<shared_ptr<edge_node_t> > v_exit1( n ), v_exit2( n );
+            typedef
+              typename std::map<Vertex, shared_ptr<edge_node_t> > exit_map_t;
+            exit_map_t v_exit1, v_exit2;
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit1 )
+              BOOST_FOREACH( typename exit_map_t::value_type & t, v_exit1 )
               {
-                t.reset();
+                t.second.reset();
               }
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit2 )
+              BOOST_FOREACH( typename exit_map_t::value_type & t, v_exit2 )
               {
-                t.reset();
+                t.second.reset();
               }
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
@@ -702,8 +724,8 @@ namespace boost {
                     {
                       if(
                         !is_ancestor(
-                           target( (*v_exit1[u]).edge, g ),
-                           source( (*v_exit1[u]).edge, g )
+                           v_id[target( (*v_exit1[u]).edge, g )],
+                           v_id[source( (*v_exit1[u]).edge, g )]
                         )
                       )
                       {
@@ -718,7 +740,8 @@ namespace boost {
                     {
                       if(
                         !is_ancestor(
-                            target( en.edge, g ), source( en.edge, g )
+                            v_id[target( en.edge, g )],
+                            v_id[source( en.edge, g )]
                         )
                       )
                       {
@@ -735,13 +758,13 @@ namespace boost {
                 }
 	      }
               f_heap_t tmp_heap;
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit1 )
+              BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit1 )
               {
-                if( t ) {tmp_heap.push( *t );}
+                if( t.second ) {tmp_heap.push( *(t.second) );}
               }
-              BOOST_FOREACH( shared_ptr<edge_node_t> & t, v_exit2 )
+              BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit2 )
               {
-                if( t ) {tmp_heap.push( *t );}
+                if( t.second ) {tmp_heap.push( *(t.second) );}
               }
               in_edges[v].swap( tmp_heap );
 	    }
@@ -826,12 +849,45 @@ namespace boost {
   {
 
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
 
     unordered_set<Edge> best_branching, empty_set;
 
+    typedef typename property_map<Graph, vertex_index_t>::const_type IndexMap;
+
+    IndexMap v_id = get( vertex_index, g );
+
+    if( num_vertices(g) == 0 ) return; // Nothing to do in this case
+
+    typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
+
+    // Set up rank and parent for disjoint sets.
+    
+    typedef std::vector<vertex_idx_t> rank_t;
+    rank_t rank( n );
+
+    typedef iterator_property_map<
+      typename rank_t::iterator, IndexMap, vertex_idx_t, vertex_idx_t&
+    > rank_map_t;
+
+    rank_map_t rank_map = make_iterator_property_map( rank.begin(), v_id );
+
+    typedef std::vector<Vertex> pred_t;
+    pred_t pred1( n ), pred2( n );
+
+    typedef iterator_property_map<
+      typename pred_t::iterator, IndexMap, Vertex, Vertex&
+    > pred_map_t;
+
+    pred_map_t pred1_map = make_iterator_property_map( pred1.begin(), v_id );
+    pred_map_t pred2_map = make_iterator_property_map( pred2.begin(), v_id );
+
+    // Weight map and type.
+    
     typedef typename property_map<Graph, edge_weight_t>::const_type WeightMap;
 
     WeightMap w = get( edge_weight, g );
@@ -846,8 +902,12 @@ namespace boost {
 
     detail::best_spanning_branching( g,
                                      best_branching,
+                                     v_id,
                                      w,
                                      comp,
+                                     rank_map,
+                                     pred1_map,
+                                     pred2_map,
                                      empty_set,
                                      empty_set
                                    );
@@ -856,8 +916,12 @@ namespace boost {
 
     p = detail::next_spanning_branching( g,
                                          best_branching,
+                                         v_id,
                                          w,
                                          comp,
+                                         rank_map,
+                                         pred1_map,
+                                         pred2_map,
                                          empty_set,
                                          empty_set
                                        );
@@ -901,8 +965,12 @@ namespace boost {
 
       detail::best_spanning_branching( g,
                                        branching,
+                                       v_id,
                                        w,
                                        comp,
+                                       rank_map,
+                                       pred1_map,
+                                       pred2_map,
                                        P.include_edges,
                                        exclude_edges
                                      );
@@ -912,8 +980,12 @@ namespace boost {
       p =
         detail::next_spanning_branching( g,
                                          P.branching,
+                                         v_id,
                                          w,
                                          comp,
+                                         rank_map,
+                                         pred1_map,
+                                         pred2_map,
                                          include_edges,
                                          P.exclude_edges
                                        );
@@ -935,8 +1007,12 @@ namespace boost {
       p =
         detail::next_spanning_branching( g,
                                          branching,
+                                         v_id,
                                          w,
                                          comp,
+                                         rank_map,
+                                         pred1_map,
+                                         pred2_map,
                                          P.include_edges,
                                          exclude_edges
                                        );
