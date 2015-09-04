@@ -20,6 +20,7 @@
 #include <vector>
 #include <limits>
 
+#include <boost/concept_check.hpp>
 #include <boost/config.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -28,7 +29,6 @@
 #include <boost/heap/fibonacci_heap.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -225,9 +225,6 @@ namespace boost {
 
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
-
-      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
@@ -487,9 +484,6 @@ namespace boost {
 
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
-
-      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
 
       Edge return_edge;
 
@@ -795,50 +789,228 @@ namespace boost {
 
     }
 
+    template<class Edge, class WeightMap, class Compare>
+    struct BranchingEntry
+    {
+      Edge                                                        edge;
+      typename property_traits<WeightMap>::value_type             weight;
+      Compare                                                     compare;
+      unordered_set<Edge>                                         branching;
+      unordered_set<Edge>                                         include_edges;
+      unordered_set<Edge>                                         exclude_edges;
+      BranchingEntry(
+	const typename property_traits<WeightMap>::value_type& w,
+	const Edge& e,
+	Compare& comp,
+	const unordered_set<Edge>& b,
+	const unordered_set<Edge>& include,
+	const unordered_set<Edge>& exclude
+      ) :
+	  edge( e ), weight( w ), compare( comp ),
+	  branching( b ), include_edges( include ),
+	  exclude_edges( exclude ){}
+      bool operator<( BranchingEntry const & rhs ) const
+      { return compare( weight, rhs.weight ); }
+    };
+
+    template<class WeightMap, class Edge>
+    typename property_traits<WeightMap>::value_type
+    compute_branching_weight(
+      WeightMap& w,
+      const unordered_set<Edge>& branching
+    )
+    {
+
+      typename property_traits<WeightMap>::value_type weight = 0;
+
+       BOOST_FOREACH( const Edge& e, branching )
+       {
+	 weight += get( w, e );
+       }
+
+       return weight;
+    }
+     
+    template <class Graph, class Function, class Compare, class IndexMap,
+              class WeightMap, class Rank, class Parent>
+    void 
+    rank_spanning_branchings_impl( const Graph& g,
+			           size_t k,
+			           Function fn,
+			           Compare comp,
+                                   IndexMap v_id,
+                                   WeightMap w,
+                                   Rank rank,
+                                   Parent pred1,
+                                   Parent pred2
+			         )
+    {
+
+      typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+      typedef typename graph_traits<Graph>::edge_descriptor Edge;
+
+      typedef typename property_traits<WeightMap>::value_type weight_t;
+      typedef typename property_traits<Rank>::value_type r_value_t;
+      typedef typename property_traits<Parent>::value_type p_value_t;
+
+      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
+      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Rank, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Parent, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
+      BOOST_CONCEPT_ASSERT(( ComparableConcept<weight_t> ));
+      BOOST_CONCEPT_ASSERT(( ConvertibleConcept<p_value_t, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( IntegerConcept<r_value_t> ));
+
+      unordered_set<Edge> best_branching, empty_set;
+
+      if( num_vertices(g) == 0 ) return; // Nothing to do in this case
+
+      shared_ptr< std::pair<Edge, weight_t> > p;
+
+      Edge e;
+
+      heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
+
+      best_spanning_branching( g,
+                               best_branching,
+                               v_id,
+                               w,
+                               comp,
+                               rank,
+                               pred1,
+                               pred2,
+                               empty_set,
+                               empty_set
+                             );
+
+      if( !fn( g, best_branching ) || k == 1 ) return;
+
+      p = next_spanning_branching( g,
+                                   best_branching,
+                                   v_id,
+                                   w,
+                                   comp,
+                                   rank,
+                                   pred1,
+                                   pred2,
+                                   empty_set,
+                                   empty_set
+                                 );
+
+      if( p )
+      {
+	Q.push(
+	  BranchingEntry<Edge, WeightMap, Compare>(
+	    compute_branching_weight( w, best_branching ) - (*p.get()).second,
+	    (*p.get()).first,
+	    comp,
+	    best_branching,
+	    empty_set,
+	    empty_set
+	  )
+	);
+      }
+      else
+      {
+	return;
+      }
+
+      for( size_t j = 1; j < k; j++ )
+      {
+
+	if( Q.empty() ) break;
+
+	unordered_set<Edge> branching;
+
+	BranchingEntry<Edge, WeightMap, Compare> P = Q.top();
+
+	Q.pop();
+
+	unordered_set<Edge> include_edges = P.include_edges;
+
+	unordered_set<Edge> exclude_edges = P.exclude_edges;
+
+	include_edges.insert( P.edge );
+
+	exclude_edges.insert( P.edge );
+
+	best_spanning_branching( g,
+                                 branching,
+                                 v_id,
+                                 w,
+                                 comp,
+                                 rank,
+                                 pred1,
+                                 pred2,
+                                 P.include_edges,
+                                 exclude_edges
+                               );
+
+	if( !fn( g, branching ) || j == k - 1 ) return;
+
+	p =
+	  next_spanning_branching( g,
+                                   P.branching,
+                                   v_id,
+                                   w,
+                                   comp,
+                                   rank,
+                                   pred1,
+                                   pred2,
+                                   include_edges,
+                                   P.exclude_edges
+                                 );
+
+	if( p )
+	{
+	  Q.push(
+	    BranchingEntry<Edge, WeightMap, Compare>(
+	      compute_branching_weight( w, P.branching ) - (*p.get()).second,
+	      (*p.get()).first,
+	      comp,
+	      P.branching,
+	      include_edges,
+	      P.exclude_edges
+	    )
+	  );
+	}
+
+	p =
+	  next_spanning_branching( g,
+                                   branching,
+                                   v_id,
+                                   w,
+                                   comp,
+                                   rank,
+                                   pred1,
+                                   pred2,
+                                   P.include_edges,
+                                   exclude_edges
+                                 );
+
+	if( p )
+	{
+	  Q.push(
+	    BranchingEntry<Edge, WeightMap, Compare>(
+	      P.weight - (*p.get()).second,
+	      (*p.get()).first,
+	      comp,
+	      branching,
+	      P.include_edges,
+	      exclude_edges
+	    )
+	  );
+	}
+
+      }
+
+    }
+
   } // namespace detail 
 
-  template<class Edge, class WeightMap, class Compare>
-  struct BranchingEntry
-  {
-    Edge                                                        edge;
-    typename property_traits<WeightMap>::value_type             weight;
-    Compare                                                     compare;
-    unordered_set<Edge>                                         branching;
-    unordered_set<Edge>                                         include_edges;
-    unordered_set<Edge>                                         exclude_edges;
-    BranchingEntry(
-      const typename property_traits<WeightMap>::value_type& w,
-      const Edge& e,
-      Compare& comp,
-      const unordered_set<Edge>& b,
-      const unordered_set<Edge>& include,
-      const unordered_set<Edge>& exclude
-    ) :
-        edge( e ), weight( w ), compare( comp ),
-        branching( b ), include_edges( include ),
-        exclude_edges( exclude ){}
-    bool operator<( BranchingEntry const & rhs ) const
-    { return compare( weight, rhs.weight ); }
-  };
-
-  template<class WeightMap, class Edge>
-  typename property_traits<WeightMap>::value_type
-  compute_branching_weight(
-    WeightMap& w,
-    const unordered_set<Edge>& branching
-  )
-  {
-
-    typename property_traits<WeightMap>::value_type weight = 0;
-
-     BOOST_FOREACH( const Edge& e, branching )
-     {
-       weight += get( w, e );
-     }
-
-     return weight;
-  }
-   
   template <class Graph, class Function, class Compare>
   inline void 
   rank_spanning_branchings( const Graph& g,
@@ -848,190 +1020,35 @@ namespace boost {
                           )
   {
 
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
+    if( n == 0 ) return; // Nothing to do in this case
+
     typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
-    BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
-
-    unordered_set<Edge> best_branching, empty_set;
-
-    typedef typename property_map<Graph, vertex_index_t>::const_type IndexMap;
-
-    IndexMap v_id = get( vertex_index, g );
-
-    if( num_vertices(g) == 0 ) return; // Nothing to do in this case
-
-    typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
-
     // Set up rank and parent for disjoint sets.
-    
-    typedef std::vector<vertex_idx_t> rank_t;
-    rank_t rank( n );
+      
+    std::vector<vertex_idx_t> rank( n );
 
-    typedef iterator_property_map<
-      typename rank_t::iterator, IndexMap, vertex_idx_t, vertex_idx_t&
-    > rank_map_t;
+    std::vector<Vertex> pred1( n ), pred2( n );
 
-    rank_map_t rank_map = make_iterator_property_map( rank.begin(), v_id );
-
-    typedef std::vector<Vertex> pred_t;
-    pred_t pred1( n ), pred2( n );
-
-    typedef iterator_property_map<
-      typename pred_t::iterator, IndexMap, Vertex, Vertex&
-    > pred_map_t;
-
-    pred_map_t pred1_map = make_iterator_property_map( pred1.begin(), v_id );
-    pred_map_t pred2_map = make_iterator_property_map( pred2.begin(), v_id );
-
-    // Weight map and type.
-    
-    typedef typename property_map<Graph, edge_weight_t>::const_type WeightMap;
-
-    WeightMap w = get( edge_weight, g );
-
-    typedef typename property_traits<WeightMap>::value_type weight_t;
-
-    shared_ptr< std::pair<Edge, weight_t> > p;
-
-    Edge e;
-
-    heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
-
-    detail::best_spanning_branching( g,
-                                     best_branching,
-                                     v_id,
-                                     w,
-                                     comp,
-                                     rank_map,
-                                     pred1_map,
-                                     pred2_map,
-                                     empty_set,
-                                     empty_set
-                                   );
-
-    if( !fn( g, best_branching ) || k == 1 ) return;
-
-    p = detail::next_spanning_branching( g,
-                                         best_branching,
-                                         v_id,
-                                         w,
-                                         comp,
-                                         rank_map,
-                                         pred1_map,
-                                         pred2_map,
-                                         empty_set,
-                                         empty_set
-                                       );
-
-    if( p )
-    {
-      Q.push(
-        BranchingEntry<Edge, WeightMap, Compare>(
-          compute_branching_weight( w, best_branching ) - (*p.get()).second,
-          (*p.get()).first,
-          comp,
-          best_branching,
-          empty_set,
-          empty_set
-        )
-      );
-    }
-    else
-    {
-      return;
-    }
-
-    for( size_t j = 1; j < k; j++ )
-    {
-
-      if( Q.empty() ) break;
-
-      unordered_set<Edge> branching;
-
-      BranchingEntry<Edge, WeightMap, Compare> P = Q.top();
-
-      Q.pop();
-
-      unordered_set<Edge> include_edges = P.include_edges;
-
-      unordered_set<Edge> exclude_edges = P.exclude_edges;
-
-      include_edges.insert( P.edge );
-
-      exclude_edges.insert( P.edge );
-
-      detail::best_spanning_branching( g,
-                                       branching,
-                                       v_id,
-                                       w,
-                                       comp,
-                                       rank_map,
-                                       pred1_map,
-                                       pred2_map,
-                                       P.include_edges,
-                                       exclude_edges
-                                     );
-
-      if( !fn( g, branching ) || j == k - 1 ) return;
-
-      p =
-        detail::next_spanning_branching( g,
-                                         P.branching,
-                                         v_id,
-                                         w,
-                                         comp,
-                                         rank_map,
-                                         pred1_map,
-                                         pred2_map,
-                                         include_edges,
-                                         P.exclude_edges
-                                       );
-
-      if( p )
-      {
-        Q.push(
-          BranchingEntry<Edge, WeightMap, Compare>(
-            compute_branching_weight( w, P.branching ) - (*p.get()).second,
-            (*p.get()).first,
-            comp,
-            P.branching,
-            include_edges,
-            P.exclude_edges
-          )
-        );
-      }
-
-      p =
-        detail::next_spanning_branching( g,
-                                         branching,
-                                         v_id,
-                                         w,
-                                         comp,
-                                         rank_map,
-                                         pred1_map,
-                                         pred2_map,
-                                         P.include_edges,
-                                         exclude_edges
-                                       );
-
-      if( p )
-      {
-        Q.push(
-          BranchingEntry<Edge, WeightMap, Compare>(
-            P.weight - (*p.get()).second,
-            (*p.get()).first,
-            comp,
-            branching,
-            P.include_edges,
-            exclude_edges
-          )
-        );
-      }
-
-    }
+    detail::rank_spanning_branchings_impl(
+      g,
+      k,
+      fn,
+      comp,
+      get( vertex_index, g ),
+      get( edge_weight, g ),
+      make_iterator_property_map(
+        rank.begin(), get(vertex_index, g), rank[0]
+      ),
+      make_iterator_property_map(
+        pred1.begin(), get(vertex_index, g), pred1[0]
+      ),
+      make_iterator_property_map(
+        pred2.begin(), get(vertex_index, g), pred2[0]
+      )
+    );
 
   }
 
