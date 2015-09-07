@@ -139,7 +139,6 @@ namespace boost {
 
     // Retrieve the path back from leaf to root in cycle branching.
 
-    template <class BranchingGraph, class BranchingVertex>
     void
     find_back_path(
       BranchingGraph& C,
@@ -157,8 +156,7 @@ namespace boost {
 
     // Expand cycles.
 
-    template <class Graph, class Edge, class BranchingGraph,
-              class BranchingVertex, class IndexMap,
+    template <class Graph, class Edge, class IndexMap,
               class WeightMap, class Compare>
     void
     expand(
