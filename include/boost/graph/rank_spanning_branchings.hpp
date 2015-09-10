@@ -35,12 +35,12 @@
 
 namespace boost {
 
-  typedef adjacency_list < vecS, vecS, bidirectionalS,
-    no_property, no_property > BranchingGraph;
-
-  typedef graph_traits<BranchingGraph>::vertex_descriptor BranchingVertex;
-
   namespace detail {
+
+    typedef adjacency_list < vecS, vecS, bidirectionalS,
+      no_property, no_property > BranchingGraph;
+
+    typedef graph_traits<BranchingGraph>::vertex_descriptor BranchingVertex;
 
     template <class Edge, class WeightMap, class Compare>
     struct EdgeNode
