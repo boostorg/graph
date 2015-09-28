@@ -16,9 +16,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <iostream>
-#include <algorithm>
+#include <limits>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/lexical_cast.hpp>
@@ -33,67 +31,72 @@
 
 using namespace boost;
 
+template<class Graph>
 class my_function
 {
 
   public:
 
-    my_function( double _cut) : cut( _cut ) { i_flag = 0; max_weight = 0; }
+    my_function(
+      const Graph& g, double& _max_weight, double _cut
+    ) : m_g( g ), max_weight( _max_weight ), cut( _cut )
+    {
+      w = boost::get( boost::edge_weight, m_g );
+      weight = 0;
+      n = 1;
+      name_map = get( vertex_name, m_g );
+      b_string = "";
+    }
 
-    template<class Graph, class Edge>
-    bool operator()( const Graph& G, const boost::unordered_set<Edge>& b )
+    template<class Edge>
+    bool operator()( const Edge& e )
     {
 
-       double d_diff;
+      weight += get( w, e );
 
-       typedef
-         typename boost::property_map<Graph, boost::edge_weight_t>::const_type
-         WeightMap;
+      b_string += "("; 
+      b_string += name_map[source( e, m_g )];
+      b_string += ",";
+      b_string += name_map[target( e, m_g )];
+      b_string += ") ";
 
-       typename property_map < Graph, vertex_name_t >::const_type
-         name_map = get( vertex_name, G );
+      if( ++n == num_vertices( m_g ) )
+      {
 
-       WeightMap w = boost::get( boost::edge_weight, G );
+        if( weight > max_weight ) { max_weight = weight; }
 
-       typename boost::property_traits<WeightMap>::value_type weight = 0;
+        d_diff = weight - max_weight;
 
-       BOOST_FOREACH( const Edge& e, b )
-       {
-         weight += get( w, e );
-       }
+        if( d_diff < cut ) { return false; }
 
-       if( i_flag == 0 )
-       {
-         max_weight = weight;
-         i_flag = 1;
-       }
+        std::cout << "Branching: " << b_string << std::endl;
 
-       d_diff = weight - max_weight;
+        std::cout << "  Weight = " << weight << std::endl;
 
-       if( d_diff < cut ) return false;
+        std::cout << "  Weight - Max Weight = " << d_diff << std::endl
+                   << std::endl;
 
-       std::cout << "Branching: ";
+        return true;
 
-       BOOST_FOREACH( const Edge& e, b )
-       {
-         std::cout << "(" << name_map[source( e, G )] << "," <<
-                      name_map[target( e, G )] << ") ";
-       }
-       std::cout << std::endl;
+      }
 
-       std::cout << "  Weight = " << weight << std::endl;
-
-       std::cout << "  Weight - Max Weight = " << d_diff << std::endl
-                 << std::endl;
-
-       return true;
+      return true;
 
     }
 
   private:
+    const Graph& m_g;
+    double& max_weight;
     double cut;
-    double max_weight;
-    int i_flag;
+    typedef
+      typename boost::property_map<Graph, boost::edge_weight_t>::const_type
+      WeightMap;
+    WeightMap w;
+    typename boost::property_traits<WeightMap>::value_type weight;
+    size_t n;
+    typename property_map < Graph, vertex_name_t >::const_type name_map;
+    std::string b_string;
+    double d_diff;
 
 };
    
@@ -148,6 +151,7 @@ int main( int argc, char **argv )
       >,
       property < edge_weight_t, double >
     > Graph;
+  double max_weight = std::numeric_limits<double>::min();
 
   if( argc != 3 )
   {
@@ -170,7 +174,9 @@ int main( int argc, char **argv )
   rank_spanning_branchings(
     g,
     std::numeric_limits<size_t>::max(),
-    my_function( boost::lexical_cast<double>( argv[2] ) )
+    my_function<Graph>(
+      g, max_weight, boost::lexical_cast<double>( argv[2] )
+    )
   );
 
 }

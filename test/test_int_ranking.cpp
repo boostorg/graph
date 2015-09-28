@@ -58,32 +58,39 @@ struct Branching
   { return my_compare()( weight, rhs.weight ); }
 };
 
-template<class Edge>
+template<class Graph, class Edge>
 struct set_rank_vector
 {
 
+  const Graph& m_g;
   std::vector<Branching<Edge> >& rank_vector;
-  set_rank_vector( std::vector<Branching<Edge> >& rv) : rank_vector( rv ){}
+  typedef typename property_map<Graph, edge_weight_t>::const_type WeightMap;
+  WeightMap w;
+  typename property_traits<WeightMap>::value_type weight;
+  unordered_set<Edge> branching;
+  size_t n;
 
-  template<class Graph>
-  bool operator()( 
+  set_rank_vector(
     const Graph& g,
-    const unordered_set<Edge>& branching_edges
-  )
+    std::vector<Branching<Edge> >& rv
+  ) : m_g( g ), rank_vector( rv )
+  {
+    n = 1;
+    w = get( edge_weight, g );
+    weight = 0;
+  }
+
+  bool operator()( const Edge& e )
   {
 
-    typedef typename property_map<Graph, edge_weight_t>::const_type WeightMap;
+    weight += get( w, e );
 
-    WeightMap w = get( edge_weight, g );
+    branching.insert( e );
 
-    typename property_traits<WeightMap>::value_type weight = 0;
-
-    BOOST_FOREACH( const Edge& e, branching_edges )
+    if( ++n == num_vertices( m_g ) )
     {
-      weight += get( w, e );
+      rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
     }
-
-    rank_vector.push_back( Branching<Edge>( weight, branching_edges ) ); 
 
     return true;
 
@@ -289,7 +296,7 @@ int main( int argc, char **argv )
   rank_spanning_branchings(
     g,
     std::numeric_limits<size_t>::max(),
-    set_rank_vector<Edge>( rank_vector ),
+    set_rank_vector<Graph,Edge>( g, rank_vector ),
     my_compare()
   );
 

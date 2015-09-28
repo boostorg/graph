@@ -11,32 +11,44 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/rank_spanning_branchings.hpp>
 
+template<class Graph>
 struct print_branching
 {
 
-  print_branching(){}
+  const Graph& m_g;
 
-  template<class Graph, class Edge>
-  bool operator()( const Graph& g, const boost::unordered_set<Edge>& b )
+  size_t n;
+
+  typedef
+    typename boost::property_map<Graph, boost::edge_weight_t>::const_type
+    WeightMap;
+
+  WeightMap w;
+  typename boost::property_traits<WeightMap>::value_type weight;
+
+  print_branching( const Graph& g ) : m_g( g )
+  {
+    weight = 0.;
+    w = boost::get( boost::edge_weight, m_g );
+    n = 1;
+  }
+
+  template<class Edge>
+  bool operator()( const Edge& e )
   {
 
-    typedef
-      typename boost::property_map<Graph, boost::edge_weight_t>::const_type
-      WeightMap;
+    if( n == 1 ) std::cout << "Branching:";
 
-    WeightMap w = boost::get( boost::edge_weight, g );
+    std::cout << " (" << boost::source( e, m_g ) << "," <<
+      boost::target( e, m_g ) << ")";
 
-    typename boost::property_traits<WeightMap>::value_type weight = 0;
+    weight += get( w, e );
 
-    std::cout << "Branching:";
-
-    BOOST_FOREACH( const Edge& e, b )
+    if( ++n == num_vertices( m_g ) )
     {
-      std::cout << " (" << boost::source( e, g ) << "," <<
-	    boost::target( e, g ) << ")";
-      weight += get( w, e );
+      std::cout << std::endl <<
+        "  Weight: " << weight << std::endl << std::endl;
     }
-    std::cout << std::endl << "  Weight: " << weight << std::endl << std::endl;
 
     return true;
 
@@ -84,7 +96,7 @@ main()
   boost::rank_spanning_branchings(
     g,
     100,
-    print_branching()
+    print_branching<Graph>( g )
   );
 
   std::cout << std::endl;
@@ -98,7 +110,7 @@ main()
   boost::rank_spanning_branchings(
     g,
     100,
-    print_branching(),
+    print_branching<Graph>( g ),
     std::greater<int>()
   );
 

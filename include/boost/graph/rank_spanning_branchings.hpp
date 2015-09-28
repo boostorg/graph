@@ -32,6 +32,7 @@
 #include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/algorithm/cxx11/all_of.hpp>
 
 namespace boost {
 
@@ -884,7 +885,15 @@ namespace boost {
                                empty_set
                              );
 
-      if( !fn( g, best_branching ) || k == 1 ) return;
+      if(
+        !algorithm::all_of(
+          best_branching.begin(),
+          best_branching.end(),
+          fn
+        )
+        ||
+        k == 1
+      ) return;
 
       p = next_spanning_branching( g,
                                    best_branching,
@@ -947,7 +956,15 @@ namespace boost {
                                  exclude_edges
                                );
 
-	if( !fn( g, branching ) || j == k - 1 ) return;
+        if(
+          !algorithm::all_of(
+            branching.begin(),
+            branching.end(),
+            fn
+          )
+          ||
+          j == k - 1
+        ) return;
 
 	p =
 	  next_spanning_branching( g,
