@@ -200,7 +200,7 @@ int main( int argc, char **argv )
   typedef adjacency_list < listS, setS, directedS,
      property < vertex_index_t, size_t >, property < edge_weight_t, int > >
      Graph;
-  typedef typename property_map < Graph, vertex_index_t >::type index_map_t;
+  typedef property_map < Graph, vertex_index_t >::type index_map_t;
   typedef graph_traits <Graph>::edge_descriptor Edge;
   heap::fibonacci_heap<Branching<Edge> > branching_heap;
   typedef random::mt19937 base_generator_type;

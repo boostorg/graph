@@ -147,7 +147,7 @@ namespace boost {
     )
     {
 
-      BGL_FORALL_INEDGES_T( bv[0], e, C, BranchingGraph )
+      BGL_FORALL_INEDGES( bv[0], e, C, BranchingGraph )
       {
         bv.insert( bv.begin(), source( e, C ) );
         find_back_path( C, bv );
