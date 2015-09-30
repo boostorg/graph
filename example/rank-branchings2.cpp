@@ -10,24 +10,27 @@
 /*
   Example execution:
 
-    ./rank-branchings-input-graph input.txt -10
+    ./rank-branchings2 branching_input.txt -10
 
 */
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <limits>
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_real_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
-#include <boost/graph/iteration_macros.hpp>
-
 #include <boost/graph/rank_spanning_branchings.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string.hpp>
+
+// When rank_spanning_branchings finds a branching, it calls the user-defined 
+// functor (in this case, my_function) and applies the functor to each
+// edge in the branching.  If the functor returns false for any edge,
+// rank_spanning_branchings will return after processing all edges in the
+// current branching.
 
 using namespace boost;
 
@@ -54,20 +57,23 @@ class my_function
 
       weight += get( w, e );
 
-      b_string += "("; 
-      b_string += name_map[source( e, m_g )];
-      b_string += ",";
-      b_string += name_map[target( e, m_g )];
-      b_string += ") ";
+      std::stringstream ss;
+      ss << "(" << name_map[source( e, m_g )] << ", " <<
+            name_map[target( e, m_g )] << ") ";
 
-      if( ++n == num_vertices( m_g ) )
+      b_string += ss.str();
+
+      if( ++n == num_vertices( m_g ) )  // Last edge in branching.
       {
 
-        if( weight > max_weight ) { max_weight = weight; }
+        if( max_weight == -std::numeric_limits<double>::infinity() )
+        {
+          max_weight = weight;
+        }
 
         d_diff = weight - max_weight;
 
-        if( d_diff < cut ) { return false; }
+        if( d_diff < cut ) { return false; }  // Stop before output.
 
         std::cout << "Branching: " << b_string << std::endl;
 
@@ -100,6 +106,32 @@ class my_function
 
 };
    
+// Check for vertex from input file and add if not already present.
+
+template <typename Graph, typename Vertex>
+void
+check_vertex( Graph& g, std::map<std::string, Vertex>& s_map, std::string str )
+{
+
+  typedef typename property_map < Graph, vertex_index_t >::type index_map_t;
+  typedef typename property_map < Graph, vertex_name_t >::type name_map_t;
+
+  index_map_t index_map = get( vertex_index, g );
+  name_map_t name_map = get( vertex_name, g );
+
+  if( s_map.find( str ) == s_map.end() )
+  {
+    Vertex u = add_vertex( g );
+    index_map[u] = s_map.size();
+    put( name_map, u, str );
+    s_map[str] = u;
+  }
+
+}
+
+// Read in the graph from the file.  Each line in the input file should be
+// a comma-delimited triplet (source, target, weight).
+
 template <typename Graph>
 void
 read_graph_file(
@@ -107,34 +139,32 @@ read_graph_file(
   Graph & g
 )
 {
-  typedef typename graph_traits<Graph>::vertices_size_type size_type;
-  typedef typename property_map < Graph, vertex_index_t >::type index_map_t;
-  typedef typename property_map < Graph, vertex_name_t >::type name_map_t;
-  size_type n_vertices;
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-  Vertex u;
-  typename property_traits <name_map_t>::value_type name;
   std::map<std::string, Vertex> s_map;
+  std::string text;
 
-  index_map_t index_map = get( vertex_index, g );
-  name_map_t name_map = get( vertex_name, g );
+  char_separator<char> sep(",");
 
-  graph_in >> n_vertices;
-  for (size_type i = 0; i < n_vertices; ++i)
+  while( std::getline( graph_in, text ) )
   {
-    u = add_vertex( g );
-    index_map[u] = i;
-    graph_in >> name;
-    put( name_map, u, name );
-    s_map[name] = u;
-  }
 
-  std::string src, targ;
-  double weight;
+    std::vector<std::string> str;
+    tokenizer<char_separator<char> > tokens( text, sep );
 
-  while( graph_in >> src >> targ >> weight )
-  {
-    add_edge( s_map[src], s_map[targ], weight, g );
+    BOOST_FOREACH( const std::string& name, tokens )
+    {
+      std::string s = name;
+      algorithm::trim( s );
+      str.push_back( s );
+    }
+
+    check_vertex( g, s_map, str[0] );  // Check source;
+    check_vertex( g, s_map, str[1] );  // Check target;
+
+    add_edge(
+      s_map[str[0]], s_map[str[1]], lexical_cast<double>( str[2] ), g
+    );
+
   }
 
 }
@@ -142,7 +172,6 @@ read_graph_file(
 int main( int argc, char **argv )
 {
 
-  std::ifstream input_file;
   typedef adjacency_list <
       listS, listS, directedS,
       property <
@@ -151,7 +180,8 @@ int main( int argc, char **argv )
       >,
       property < edge_weight_t, double >
     > Graph;
-  double max_weight = std::numeric_limits<double>::min();
+  std::ifstream input_file;
+  double max_weight = -std::numeric_limits<double>::infinity();
 
   if( argc != 3 )
   {
@@ -175,7 +205,9 @@ int main( int argc, char **argv )
     g,
     std::numeric_limits<size_t>::max(),
     my_function<Graph>(
-      g, max_weight, boost::lexical_cast<double>( argv[2] )
+      g,
+      max_weight,
+      boost::lexical_cast<double>( argv[2] )
     )
   );
 
