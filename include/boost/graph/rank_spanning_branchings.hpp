@@ -176,7 +176,7 @@ namespace boost {
           std::vector<BranchingVertex> bv;
           bv.push_back( v_id[target( beta[v].edge, g )] );
           find_back_path( C, bv );
-          for( size_t i = 0; i < bv.size() - 1; i++ )
+          for( std::size_t i = 0; i < bv.size() - 1; i++ )
           {
             beta[bv[i+1]] = beta[bv[i]];
             clear_vertex( bv[i], C );
@@ -220,7 +220,6 @@ namespace boost {
                              unordered_set<Edge>& exclude_edges
                            )
     {
-      if (num_vertices(g) == 0) return; // Nothing to do in this case
 
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
@@ -440,8 +439,8 @@ namespace boost {
 	OrderMap& m_po;
 
       private:
-	size_t td;
-	size_t tf;
+	std::size_t td;
+	std::size_t tf;
 
     };
 
@@ -482,7 +481,6 @@ namespace boost {
     {
 
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-      typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
 
       Edge return_edge;
 
@@ -500,8 +498,6 @@ namespace boost {
 
       // Create a branching graph to check whether a vertex is an ancestor of
       // another vertex in the branching.
-
-      vertex_idx_t n = num_vertices(g);
 
       BranchingGraph C;
 
@@ -564,7 +560,7 @@ namespace boost {
 
       // Create the ancestor checker from C.
 
-      typedef std::map<BranchingVertex, size_t> OrderMap;
+      typedef std::map<BranchingVertex, std::size_t> OrderMap;
 
       OrderMap pr;
       OrderMap po;
@@ -834,7 +830,7 @@ namespace boost {
               class WeightMap, class Rank, class Parent>
     void 
     rank_spanning_branchings_impl( const Graph& g,
-			           size_t k,
+			           std::size_t k,
 			           Function fn,
 			           Compare comp,
                                    IndexMap v_id,
@@ -845,7 +841,6 @@ namespace boost {
 			         )
     {
 
-      typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
@@ -865,13 +860,13 @@ namespace boost {
 
       unordered_set<Edge> best_branching, empty_set;
 
-      if( num_vertices(g) == 0 ) return; // Nothing to do in this case
-
       shared_ptr< std::pair<Edge, weight_t> > p;
 
       Edge e;
 
       heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
+
+      if( num_vertices( g ) == 0 || k == 0 ) return; // Nothing to do.
 
       best_spanning_branching( g,
                                best_branching,
@@ -886,11 +881,7 @@ namespace boost {
                              );
 
       if(
-        !algorithm::all_of(
-          best_branching.begin(),
-          best_branching.end(),
-          fn
-        )
+        !algorithm::all_of( best_branching.begin(), best_branching.end(), fn )
         ||
         k == 1
       ) return;
@@ -925,7 +916,7 @@ namespace boost {
 	return;
       }
 
-      for( size_t j = 1; j < k; j++ )
+      for( std::size_t j = 1; j < k; j++ )
       {
 
 	if( Q.empty() ) break;
@@ -957,11 +948,7 @@ namespace boost {
                                );
 
         if(
-          !algorithm::all_of(
-            branching.begin(),
-            branching.end(),
-            fn
-          )
+          !algorithm::all_of( branching.begin(), branching.end(), fn )
           ||
           j == k - 1
         ) return;
@@ -1029,14 +1016,13 @@ namespace boost {
   template <class Graph, class Function, class Compare>
   inline void 
   rank_spanning_branchings( const Graph& g,
-                            size_t k,
+                            std::size_t k,
                             Function fn,
                             Compare comp
                           )
   {
 
     typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
-    if( n == 0 ) return; // Nothing to do in this case
 
     typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -1070,7 +1056,7 @@ namespace boost {
   template <class Graph, class Function>
   inline void 
   rank_spanning_branchings( const Graph& g,
-                            size_t k,
+                            std::size_t k,
                             Function fn
                           )
   {
