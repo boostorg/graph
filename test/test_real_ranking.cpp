@@ -22,7 +22,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <limits>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
@@ -219,7 +218,6 @@ int main( int argc, char **argv )
 
   rank_spanning_branchings(
     g,
-    std::numeric_limits<size_t>::max(),
     set_rank_vector<Graph, Edge>( g, rank_vector )
   );
 
