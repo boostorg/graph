@@ -95,7 +95,6 @@ main()
 
   boost::rank_spanning_branchings(
     g,
-    100,
     print_branching<Graph>( g )
   );
 
@@ -109,7 +108,6 @@ main()
 
   boost::rank_spanning_branchings(
     g,
-    100,
     print_branching<Graph>( g ),
     std::greater<int>()
   );

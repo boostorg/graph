@@ -830,7 +830,6 @@ namespace boost {
               class WeightMap, class Rank, class Parent>
     void 
     rank_spanning_branchings_impl( const Graph& g,
-			           std::size_t k,
 			           Function fn,
 			           Compare comp,
                                    IndexMap v_id,
@@ -866,7 +865,7 @@ namespace boost {
 
       heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
 
-      if( num_vertices( g ) == 0 || k == 0 ) return; // Nothing to do.
+      if( num_vertices( g ) == 0 ) return; // Nothing to do.
 
       best_spanning_branching( g,
                                best_branching,
@@ -882,8 +881,6 @@ namespace boost {
 
       if(
         !algorithm::all_of( best_branching.begin(), best_branching.end(), fn )
-        ||
-        k == 1
       ) return;
 
       p = next_spanning_branching( g,
@@ -916,10 +913,8 @@ namespace boost {
 	return;
       }
 
-      for( std::size_t j = 1; j < k; j++ )
+      while( !Q.empty() )
       {
-
-	if( Q.empty() ) break;
 
 	unordered_set<Edge> branching;
 
@@ -949,8 +944,6 @@ namespace boost {
 
         if(
           !algorithm::all_of( branching.begin(), branching.end(), fn )
-          ||
-          j == k - 1
         ) return;
 
 	p =
@@ -1016,7 +1009,6 @@ namespace boost {
   template <class Graph, class Function, class Compare>
   inline void 
   rank_spanning_branchings( const Graph& g,
-                            std::size_t k,
                             Function fn,
                             Compare comp
                           )
@@ -1035,7 +1027,6 @@ namespace boost {
 
     detail::rank_spanning_branchings_impl(
       g,
-      k,
       fn,
       comp,
       get( vertex_index, g ),
@@ -1056,7 +1047,6 @@ namespace boost {
   template <class Graph, class Function>
   inline void 
   rank_spanning_branchings( const Graph& g,
-                            std::size_t k,
                             Function fn
                           )
   {
@@ -1067,7 +1057,7 @@ namespace boost {
         typename property_map<Graph, edge_weight_t>::const_type
       >::value_type weight_t;
 
-    rank_spanning_branchings( g, k, fn, std::less<weight_t>() );
+    rank_spanning_branchings( g, fn, std::less<weight_t>() );
 
   }
 

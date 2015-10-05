@@ -73,14 +73,16 @@ class my_function
 
         d_diff = weight - max_weight;
 
-        if( d_diff < cut ) { return false; }  // Stop before output.
+        if( d_diff < cut ){
+          std::cout << std::endl;
+          return false;
+        }  // Stop before output.
 
-        std::cout << "Branching: " << b_string << std::endl;
+        std::cout << "\nBranching: " << b_string << std::endl;
 
         std::cout << "  Weight = " << weight << std::endl;
 
-        std::cout << "  Weight - Max Weight = " << d_diff << std::endl
-                   << std::endl;
+        std::cout << "  Weight - Max Weight = " << d_diff << std::endl;
 
         return true;
 
@@ -197,13 +199,18 @@ int main( int argc, char **argv )
 
   input_file.open( argv[1] );
 
+  if( !input_file.is_open() )
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::ifstream file_in( argv[1] );
 
   read_graph_file( file_in, g );
 
   rank_spanning_branchings(
     g,
-    std::numeric_limits<size_t>::max(),
     my_function<Graph>(
       g,
       max_weight,
