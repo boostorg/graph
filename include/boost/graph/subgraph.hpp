@@ -405,8 +405,6 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
     typename subgraph<G>::edge_descriptor e_global;
 
     u_local = detail::add_vertex_recur_up(u_global, g);
-    g.m_global_vertex.push_back(u_global);
-    g.m_local_vertex[u_global] = u_local;
 
     subgraph<G>& r = g.root();
 
