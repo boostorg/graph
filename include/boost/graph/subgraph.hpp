@@ -366,6 +366,35 @@ struct graph_bundle_type<subgraph<Graph> >
 //===========================================================================
 // Functions special to the Subgraph Class
 
+
+namespace detail {
+    
+    template <typename G>
+    typename subgraph<G>::vertex_descriptor
+    add_vertex_recur_up(typename subgraph<G>::vertex_descriptor u_global,
+                subgraph<G>& g)
+    {
+        if (!g.is_root()) {
+            if (!g.find_vertex(u_global).second) {
+                add_vertex_recur_up(u_global, g.parent());
+
+                typename subgraph<G>::vertex_descriptor u_local;
+                u_local = add_vertex(g.m_graph);
+                g.m_global_vertex.push_back(u_global);
+                g.m_local_vertex[u_global] = u_local;
+
+                return u_local;
+            } else {
+                return g.find_vertex(u_global).first;
+            }
+        } else {
+            return u_global;
+        }
+    }
+    
+} // namespace detail
+
+
 template <typename G>
 typename subgraph<G>::vertex_descriptor
 add_vertex(typename subgraph<G>::vertex_descriptor u_global,
@@ -375,7 +404,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
     typename subgraph<G>::vertex_descriptor u_local, v_global;
     typename subgraph<G>::edge_descriptor e_global;
 
-    u_local = add_vertex(g.m_graph);
+    u_local = detail::add_vertex_recur_up(u_global, g);
     g.m_global_vertex.push_back(u_global);
     g.m_local_vertex[u_global] = u_local;
 
