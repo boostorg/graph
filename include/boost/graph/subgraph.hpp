@@ -379,7 +379,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
         boost::tie(u_local, exists_local) = g.find_vertex(u_global);
 
         if (!exists_local) {
-            typename subgraph<G>::vertex_descriptor u_local, v_global;
+            typename subgraph<G>::vertex_descriptor v_global;
             typename subgraph<G>::edge_descriptor e_global;
             // call recursion for parent subgraph
             add_vertex(u_global, g.parent());
