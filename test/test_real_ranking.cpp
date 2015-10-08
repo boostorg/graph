@@ -63,23 +63,24 @@ struct set_rank_vector
     const Graph& g,
     std::vector<Branching<Edge> >& rv
   ) : m_g( g ), rank_vector( rv )
+  {}
+
+  template<class EdgeIterator>
+  bool operator()( const EdgeIterator begin, const EdgeIterator end )
   {
-    n = 1;
-    w = get( edge_weight, g );
+
+    w = get( edge_weight, m_g );
+
     weight = 0;
-  }
 
-  bool operator()( const Edge& e )
-  {
-
-    weight += get( w, e );
-
-    branching.insert( e );
-
-    if( ++n == num_vertices( m_g ) )
+    for( EdgeIterator it = begin; it != end; it++ )
     {
-      rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
+      weight += get( w, *it );
+
+      branching.insert( *it );
     }
+
+    rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
 
     return true;
 

@@ -27,10 +27,10 @@
 #include <boost/algorithm/string.hpp>
 
 // When rank_spanning_branchings finds a branching, it calls the user-defined 
-// functor (in this case, my_function) and applies the functor to each
-// edge in the branching.  If the functor returns false for any edge,
-// rank_spanning_branchings will return after processing all edges in the
-// current branching.
+// functor (in this case, my_function).  The functor takes as input
+// an iterator pointing to the first edge in the branching and to the
+// end of the branching. If the functor returns false,
+// rank_spanning_branchings will stop ranking the branchings and will return.
 
 using namespace boost;
 
@@ -43,50 +43,47 @@ class my_function
     my_function(
       const Graph& g, double& _max_weight, double _cut
     ) : m_g( g ), max_weight( _max_weight ), cut( _cut )
+    {}
+
+    template<class EdgeIterator>
+    bool operator()( const EdgeIterator begin, const EdgeIterator end )
     {
-      w = boost::get( boost::edge_weight, m_g );
+
       weight = 0;
-      n = 1;
-      name_map = get( vertex_name, m_g );
+
       b_string = "";
-    }
 
-    template<class Edge>
-    bool operator()( const Edge& e )
-    {
-
-      weight += get( w, e );
-
-      std::stringstream ss;
-      ss << "(" << name_map[source( e, m_g )] << ", " <<
-            name_map[target( e, m_g )] << ") ";
-
-      b_string += ss.str();
-
-      if( ++n == num_vertices( m_g ) )  // Last edge in branching.
+      for( EdgeIterator it = begin; it != end; it++ )
       {
+        weight += get( w, *it );
 
-        if( max_weight == -std::numeric_limits<double>::infinity() )
-        {
-          max_weight = weight;
-        }
+        std::stringstream ss;
+        ss << "(" << name_map[source( *it, m_g )] << ", " <<
+              name_map[target( *it, m_g )] << ") ";
 
-        d_diff = weight - max_weight;
-
-        if( d_diff < cut ){
-          std::cout << std::endl;
-          return false;
-        }  // Stop before output.
-
-        std::cout << "\nBranching: " << b_string << std::endl;
-
-        std::cout << "  Weight = " << weight << std::endl;
-
-        std::cout << "  Weight - Max Weight = " << d_diff << std::endl;
-
-        return true;
-
+        b_string += ss.str();
       }
+
+      if( max_weight == -std::numeric_limits<double>::infinity() )
+      {
+        max_weight = weight;
+      }
+
+      d_diff = weight - max_weight;
+
+      if( d_diff < cut )
+      {
+        std::cout << std::endl;
+        return false;
+      }  // Stop before output.
+
+      std::cout << "Branching: " << b_string << std::endl;
+
+      std::cout << "  Weight = " << weight << std::endl;
+
+      std::cout << "  Weight - Max Weight = " << d_diff << std::endl;
+
+      std::cout << std::endl;
 
       return true;
 
@@ -101,7 +98,6 @@ class my_function
       WeightMap;
     WeightMap w;
     typename boost::property_traits<WeightMap>::value_type weight;
-    size_t n;
     typename property_map < Graph, vertex_name_t >::const_type name_map;
     std::string b_string;
     double d_diff;
@@ -208,6 +204,8 @@ int main( int argc, char **argv )
   std::ifstream file_in( argv[1] );
 
   read_graph_file( file_in, g );
+
+  std::cout << std::endl;
 
   rank_spanning_branchings(
     g,

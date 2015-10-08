@@ -67,29 +67,30 @@ struct set_rank_vector
   WeightMap w;
   typename property_traits<WeightMap>::value_type weight;
   unordered_set<Edge> branching;
-  size_t n;
 
   set_rank_vector(
     const Graph& g,
     std::vector<Branching<Edge> >& rv
-  ) : m_g( g ), rank_vector( rv )
+  ) : m_g( g ), rank_vector( rv ) {}
+
+  template<class EdgeIterator>
+  bool operator()( EdgeIterator it, const EdgeIterator end )
   {
-    n = 1;
-    w = get( edge_weight, g );
+
+    w = get( edge_weight, m_g );
+
     weight = 0;
-  }
 
-  bool operator()( const Edge& e )
-  {
-
-    weight += get( w, e );
-
-    branching.insert( e );
-
-    if( ++n == num_vertices( m_g ) )
+    while( it != end )
     {
-      rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
+
+      weight += get( w, *it );
+
+      branching.insert( *it++ );
+
     }
+
+    rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
 
     return true;
 

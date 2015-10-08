@@ -17,8 +17,6 @@ struct print_branching
 
   const Graph& m_g;
 
-  size_t n;
-
   typedef
     typename boost::property_map<Graph, boost::edge_weight_t>::const_type
     WeightMap;
@@ -26,29 +24,27 @@ struct print_branching
   WeightMap w;
   typename boost::property_traits<WeightMap>::value_type weight;
 
-  print_branching( const Graph& g ) : m_g( g )
+  print_branching( const Graph& g ) : m_g( g ) {} 
+
+  template<class EdgeIterator>
+  bool operator()( EdgeIterator it, const EdgeIterator end )
   {
+
+    std::cout << "Branching:";
+
     weight = 0.;
-    w = boost::get( boost::edge_weight, m_g );
-    n = 1;
-  }
 
-  template<class Edge>
-  bool operator()( const Edge& e )
-  {
-
-    if( n == 1 ) std::cout << "Branching:";
-
-    std::cout << " (" << boost::source( e, m_g ) << "," <<
-      boost::target( e, m_g ) << ")";
-
-    weight += get( w, e );
-
-    if( ++n == num_vertices( m_g ) )
+    while( it != end )
     {
-      std::cout << std::endl <<
-        "  Weight: " << weight << std::endl << std::endl;
+
+      std::cout << " (" << boost::source( *it, m_g ) << "," <<
+        boost::target( *it, m_g ) << ")";
+
+      weight += get( w, *it++ );
+
     }
+
+    std::cout << std::endl << "  Weight: " << weight << std::endl << std::endl;
 
     return true;
 
