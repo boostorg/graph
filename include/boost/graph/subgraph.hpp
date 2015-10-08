@@ -376,7 +376,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
     } else {
         typename subgraph<G>::vertex_descriptor u_local;
         bool exists_local;
-        boost::tie(u_local, exists) = g.find_vertex(u_global);
+        boost::tie(u_local, exists_local) = g.find_vertex(u_global);
 
         if (!exists_local) {
             typename subgraph<G>::vertex_descriptor u_local, v_global;
