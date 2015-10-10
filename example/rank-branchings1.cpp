@@ -27,20 +27,20 @@ struct print_branching
   print_branching( const Graph& g ) : m_g( g ) {} 
 
   template<class EdgeIterator>
-  bool operator()( EdgeIterator it, const EdgeIterator end )
+  bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
   {
 
     std::cout << "Branching:";
 
     weight = 0.;
 
-    while( it != end )
+    while( p.first != p.second )
     {
 
-      std::cout << " (" << boost::source( *it, m_g ) << "," <<
-        boost::target( *it, m_g ) << ")";
+      std::cout << " (" << boost::source( *p.first, m_g ) << "," <<
+        boost::target( *p.first, m_g ) << ")";
 
-      weight += get( w, *it++ );
+      weight += get( w, *p.first++ );
 
     }
 

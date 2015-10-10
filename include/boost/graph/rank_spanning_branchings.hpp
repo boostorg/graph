@@ -878,7 +878,11 @@ namespace boost {
                                empty_set
                              );
 
-      if( !fn( best_branching.begin(), best_branching.end() ) ) return;
+      if(
+        !fn(
+          std::make_pair(best_branching.begin(), best_branching.end() )
+        )
+      ) return;
 
       p = next_spanning_branching( g,
                                    best_branching,
@@ -939,7 +943,11 @@ namespace boost {
                                  exclude_edges
                                );
 
-        if( !fn( branching.begin(), branching.end() ) ) return;
+        if(
+          !fn(
+            std::make_pair( branching.begin(), branching.end() )
+          )
+        ) return;
 
 	p =
 	  next_spanning_branching( g,

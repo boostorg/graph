@@ -28,9 +28,10 @@
 
 // When rank_spanning_branchings finds a branching, it calls the user-defined 
 // functor (in this case, my_function).  The functor takes as input
-// an iterator pointing to the first edge in the branching and to the
-// end of the branching. If the functor returns false,
-// rank_spanning_branchings will stop ranking the branchings and will return.
+// a pair of iterators.  The first iterator refers to the first edge in the
+// branching while the second refers to (one past) the end of the branching.
+// If the functor returns false, rank_spanning_branchings will stop ranking
+// the branchings and will return.
 
 using namespace boost;
 
@@ -46,20 +47,22 @@ class my_function
     {}
 
     template<class EdgeIterator>
-    bool operator()( const EdgeIterator begin, const EdgeIterator end )
+    bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
     {
 
       weight = 0;
 
       b_string = "";
 
-      for( EdgeIterator it = begin; it != end; it++ )
+      EdgeIterator ei, ei_end;
+
+      for( boost::tie( ei, ei_end ) = p; ei != ei_end; ei++ )
       {
-        weight += get( w, *it );
+        weight += get( w, *ei );
 
         std::stringstream ss;
-        ss << "(" << name_map[source( *it, m_g )] << ", " <<
-              name_map[target( *it, m_g )] << ") ";
+        ss << "(" << name_map[source( *ei, m_g )] << ", " <<
+              name_map[target( *ei, m_g )] << ") ";
 
         b_string += ss.str();
       }

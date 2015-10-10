@@ -74,19 +74,19 @@ struct set_rank_vector
   ) : m_g( g ), rank_vector( rv ) {}
 
   template<class EdgeIterator>
-  bool operator()( EdgeIterator it, const EdgeIterator end )
+  bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
   {
 
     w = get( edge_weight, m_g );
 
     weight = 0;
 
-    while( it != end )
+    while( p.first != p.second )
     {
 
-      weight += get( w, *it );
+      weight += get( w, *p.first );
 
-      branching.insert( *it++ );
+      branching.insert( *p.first++ );
 
     }
 

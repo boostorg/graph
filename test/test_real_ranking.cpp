@@ -66,18 +66,20 @@ struct set_rank_vector
   {}
 
   template<class EdgeIterator>
-  bool operator()( const EdgeIterator begin, const EdgeIterator end )
+  bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
   {
 
     w = get( edge_weight, m_g );
 
     weight = 0;
 
-    for( EdgeIterator it = begin; it != end; it++ )
-    {
-      weight += get( w, *it );
+    EdgeIterator ei, ei_end;
 
-      branching.insert( *it );
+    for( boost::tie( ei, ei_end ) = p; ei != ei_end; ei++ )
+    {
+      weight += get( w, *ei );
+
+      branching.insert( *ei );
     }
 
     rank_vector.push_back( Branching<Edge>( weight, branching ) ); 
