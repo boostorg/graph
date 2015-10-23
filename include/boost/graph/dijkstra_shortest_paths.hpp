@@ -129,7 +129,7 @@ namespace boost {
 
       template <class Edge, class Graph>
       void tree_edge(Edge e, Graph& g) {
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
+        bool decreased = relax_target(e, g, m_weight, m_predecessor, m_distance,
                                m_combine, m_compare);
         if (decreased)
           m_vis.edge_relaxed(e, g);
@@ -140,7 +140,7 @@ namespace boost {
       void gray_target(Edge e, Graph& g) {
         D old_distance = get(m_distance, target(e, g));
 
-        bool decreased = relax(e, g, m_weight, m_predecessor, m_distance,
+        bool decreased = relax_target(e, g, m_weight, m_predecessor, m_distance,
                                m_combine, m_compare);
         if (decreased) {
           dijkstra_queue_update(m_Q, target(e, g), old_distance);
@@ -564,7 +564,7 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<D>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<D>(inf)),
+                      std::plus<D>()),
          inf,
          choose_param(get_param(params, distance_zero_t()),
                       D()),
