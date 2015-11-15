@@ -89,7 +89,6 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(distance_inf, distance_inf) \
     BOOST_BGL_ONE_PARAM_CREF(distance_zero, distance_zero) \
     BOOST_BGL_ONE_PARAM_CREF(edge_copy, edge_copy) \
-    BOOST_BGL_ONE_PARAM_CREF(edge_compare, edge_compare) \
     BOOST_BGL_ONE_PARAM_CREF(vertex_copy, vertex_copy) \
     BOOST_BGL_ONE_PARAM_REF(buffer, buffer_param) \
     BOOST_BGL_ONE_PARAM_CREF(orig_to_copy, orig_to_copy) \

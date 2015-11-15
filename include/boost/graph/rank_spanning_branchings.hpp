@@ -1045,32 +1045,8 @@ namespace boost {
 
   } // namespace detail 
 
-  template <class Graph, class Function, class IndexMap, class WeightMap,
-            class Compare>
-  void 
-  rank_spanning_branchings(
-    const Graph& g,
-    Function fn,
-    IndexMap id_map,
-    WeightMap w_map,
-    Compare compare
-  )
-  {
-
-    detail::rank_spanning_branchings_dispatch(
-      g,
-      fn,
-      id_map,
-      w_map,
-      compare
-    );
- 
-  }
-
-  // Named parameters variant.
-
   template <class Graph, class Function, typename P, typename T, typename R>
-  void 
+  inline void 
   rank_spanning_branchings(
     const Graph& g,
     Function fn,
@@ -1094,7 +1070,7 @@ namespace boost {
         get_param( params, edge_weight_t()), get( edge_weight, g )
       ),
       choose_param(
-        get_param( params, edge_compare_t()), std::less<weight_t>()
+        get_param( params, distance_compare_t()), std::less<weight_t>()
       )
     );
  

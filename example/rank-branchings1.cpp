@@ -104,7 +104,7 @@ main()
   boost::rank_spanning_branchings(
     g,
     print_branching<Graph>( g ),
-    boost::edge_compare( std::greater<int>() )
+    boost::distance_compare( std::greater<int>() )
   );
 
   return EXIT_SUCCESS;

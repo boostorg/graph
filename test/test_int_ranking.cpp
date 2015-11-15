@@ -296,7 +296,7 @@ int main( int argc, char **argv )
   rank_spanning_branchings(
     g,
     set_rank_vector<Graph,Edge>( g, rank_vector ),
-    edge_compare( my_compare() )
+    distance_compare( my_compare() )
   );
 
   assert(
