@@ -1,4 +1,3 @@
-//=======================================================================
 // Copyright 2015 Clemson University
 // Authors: Bradley S. Meyer
 //
@@ -105,7 +104,7 @@ main()
   boost::rank_spanning_branchings(
     g,
     print_branching<Graph>( g ),
-    std::greater<int>()
+    boost::edge_compare( std::greater<int>() )
   );
 
   return EXIT_SUCCESS;

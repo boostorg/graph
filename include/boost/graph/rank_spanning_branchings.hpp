@@ -23,11 +23,12 @@
 #include <boost/concept_check.hpp>
 #include <boost/config.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/graph/named_function_params.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/depth_first_search.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
-#include <boost/graph/depth_first_search.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -825,14 +826,14 @@ namespace boost {
        return weight;
     }
      
-    template <class Graph, class Function, class Compare, class IndexMap,
-              class WeightMap, class Rank, class Parent>
+    template <class Graph, class Function, class IndexMap, class WeightMap,
+              class Compare, class Rank, class Parent>
     void 
     rank_spanning_branchings_impl( const Graph& g,
 			           Function fn,
-			           Compare comp,
                                    IndexMap v_id,
                                    WeightMap w,
+			           Compare comp,
                                    Rank rank,
                                    Parent pred1,
                                    Parent pred2
@@ -1007,44 +1008,96 @@ namespace boost {
 
     }
 
+    template <class Graph, class Function, class IndexMap, class WeightMap,
+              class Compare>
+    void 
+    rank_spanning_branchings_dispatch( const Graph& g,
+                                       Function fn,
+                                       IndexMap id_map,
+                                       WeightMap w_map,
+                                       Compare compare
+                                     )
+    {
+
+      typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
+
+      typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+
+      // Set up rank and parent for disjoint sets.
+      
+      std::vector<vertex_idx_t> rank( n );
+
+      std::vector<Vertex> pred1( n ), pred2( n );
+
+      rank_spanning_branchings_impl(
+        g,
+        fn,
+        id_map,
+        w_map,
+        compare,
+        make_iterator_property_map( rank.begin(), id_map, rank[0] ),
+        make_iterator_property_map( pred1.begin(), id_map, pred1[0] ),
+        make_iterator_property_map( pred2.begin(), id_map, pred2[0])
+      );
+
+    }
+
   } // namespace detail 
 
-  template <class Graph, class Function, class Compare>
-  inline void 
-  rank_spanning_branchings( const Graph& g,
-                            Function fn,
-                            Compare comp
-                          )
+  template <class Graph, class Function, class IndexMap, class WeightMap,
+            class Compare>
+  void 
+  rank_spanning_branchings(
+    const Graph& g,
+    Function fn,
+    IndexMap id_map,
+    WeightMap w_map,
+    Compare compare
+  )
   {
 
-    typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
-
-    typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-
-    // Set up rank and parent for disjoint sets.
-      
-    std::vector<vertex_idx_t> rank( n );
-
-    std::vector<Vertex> pred1( n ), pred2( n );
-
-    detail::rank_spanning_branchings_impl(
+    detail::rank_spanning_branchings_dispatch(
       g,
       fn,
-      comp,
-      get( vertex_index, g ),
-      get( edge_weight, g ),
-      make_iterator_property_map(
-        rank.begin(), get(vertex_index, g), rank[0]
+      id_map,
+      w_map,
+      compare
+    );
+ 
+  }
+
+  // Named parameters variant.
+
+  template <class Graph, class Function, typename P, typename T, typename R>
+  void 
+  rank_spanning_branchings(
+    const Graph& g,
+    Function fn,
+    const bgl_named_params<P, T, R>& params
+  )
+  {
+
+    typedef
+      typename
+      property_traits<
+        typename property_map<Graph, edge_weight_t>::const_type
+      >::value_type weight_t;
+
+    detail::rank_spanning_branchings_dispatch(
+      g,
+      fn,
+      choose_param(
+        get_param( params, vertex_index_t()), get( vertex_index, g )
       ),
-      make_iterator_property_map(
-        pred1.begin(), get(vertex_index, g), pred1[0]
+      choose_param(
+        get_param( params, edge_weight_t()), get( edge_weight, g )
       ),
-      make_iterator_property_map(
-        pred2.begin(), get(vertex_index, g), pred2[0]
+      choose_param(
+        get_param( params, edge_compare_t()), std::less<weight_t>()
       )
     );
-
+ 
   }
 
   template <class Graph, class Function>
@@ -1054,13 +1107,8 @@ namespace boost {
                           )
   {
 
-    typedef
-      typename
-      property_traits<
-        typename property_map<Graph, edge_weight_t>::const_type
-      >::value_type weight_t;
-
-    rank_spanning_branchings( g, fn, std::less<weight_t>() );
+    bgl_named_params<int,int> params(0);
+    rank_spanning_branchings( g, fn, params );
 
   }
 

@@ -15,7 +15,7 @@ g++ -I../include/ -o test_real_ranking test_real_ranking.cpp
 
 for i in {1..100}
 do
-  test_int_ranking $1
+  ./test_int_ranking $1
   if [ $? -eq 0 ]; then
     printf "."
   else
@@ -33,7 +33,7 @@ echo ""
 
 for i in {1..100}
 do
-  test_real_ranking $1
+  ./test_real_ranking $1
   if [ $? -eq 0 ]; then
     printf "."
   else
@@ -47,4 +47,4 @@ echo ""
 echo "PASSED"
 echo ""
 
-rm test_int_ranking test_real_ranking
+rm test_int_ranking.exe test_real_ranking.exe

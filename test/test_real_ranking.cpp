@@ -221,7 +221,10 @@ int main( int argc, char **argv )
 
   rank_spanning_branchings(
     g,
-    set_rank_vector<Graph, Edge>( g, rank_vector )
+    set_rank_vector<Graph, Edge>( g, rank_vector ),
+    get( vertex_index, g ),
+    get( edge_weight, g ),
+    std::less<double>()
   );
 
   // Check that number of branchings found is correct.
