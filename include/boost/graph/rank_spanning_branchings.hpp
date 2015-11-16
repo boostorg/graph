@@ -22,17 +22,17 @@
 
 #include <boost/concept_check.hpp>
 #include <boost/config.hpp>
+#include <boost/foreach.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/depth_first_search.hpp>
-#include <boost/property_map/property_map.hpp>
-#include <boost/pending/disjoint_sets.hpp>
 #include <boost/heap/fibonacci_heap.hpp>
-#include <boost/foreach.hpp>
-#include <boost/unordered_set.hpp>
+#include <boost/pending/disjoint_sets.hpp>
+#include <boost/property_map/property_map.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace boost {
 
@@ -826,11 +826,11 @@ namespace boost {
        return weight;
     }
      
-    template <class Graph, class Function, class IndexMap, class WeightMap,
-              class Compare, class Rank, class Parent>
+    template <class Graph, class BranchingProcessor, class IndexMap,
+              class WeightMap, class Compare, class Rank, class Parent>
     void 
     rank_spanning_branchings_impl( const Graph& g,
-			           Function fn,
+			           BranchingProcessor bp,
                                    IndexMap v_id,
                                    WeightMap w,
 			           Compare comp,
@@ -878,7 +878,7 @@ namespace boost {
                              );
 
       if(
-        !fn(
+        !bp(
           std::make_pair(best_branching.begin(), best_branching.end() )
         )
       ) return;
@@ -943,7 +943,7 @@ namespace boost {
                                );
 
         if(
-          !fn(
+          !bp(
             std::make_pair( branching.begin(), branching.end() )
           )
         ) return;
@@ -1006,11 +1006,11 @@ namespace boost {
 
     }
 
-    template <class Graph, class Function, class IndexMap, class WeightMap,
-              class Compare>
+    template <class Graph, class BranchingProcessor, class IndexMap,
+              class WeightMap, class Compare>
     void 
     rank_spanning_branchings_dispatch( const Graph& g,
-                                       Function fn,
+                                       BranchingProcessor bp,
                                        IndexMap id_map,
                                        WeightMap w_map,
                                        Compare compare
@@ -1032,7 +1032,7 @@ namespace boost {
 
       rank_spanning_branchings_impl(
         g,
-        fn,
+        bp,
         id_map,
         w_map,
         compare,
@@ -1045,11 +1045,12 @@ namespace boost {
 
   } // namespace detail 
 
-  template <class Graph, class Function, typename P, typename T, typename R>
+  template <class Graph, class BranchingProcessor, typename P, typename T,
+            typename R>
   inline void 
   rank_spanning_branchings(
     const Graph& g,
-    Function fn,
+    BranchingProcessor bp,
     const bgl_named_params<P, T, R>& params
   )
   {
@@ -1062,7 +1063,7 @@ namespace boost {
 
     detail::rank_spanning_branchings_dispatch(
       g,
-      fn,
+      bp,
       choose_param(
         get_param( params, vertex_index_t()), get( vertex_index, g )
       ),
@@ -1079,12 +1080,12 @@ namespace boost {
   template <class Graph, class Function>
   inline void 
   rank_spanning_branchings( const Graph& g,
-                            Function fn
+                            Function bp
                           )
   {
 
     bgl_named_params<int,int> params(0);
-    rank_spanning_branchings( g, fn, params );
+    rank_spanning_branchings( g, bp, params );
 
   }
 
