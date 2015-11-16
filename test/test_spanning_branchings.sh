@@ -47,4 +47,4 @@ echo ""
 echo "PASSED"
 echo ""
 
-rm test_int_ranking.exe test_real_ranking.exe
+rm -f test_int_ranking.exe test_real_ranking.exe test_int_ranking test_real_ranking

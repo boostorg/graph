@@ -865,8 +865,6 @@ namespace boost {
 
       heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
 
-      if( num_vertices( g ) == 0 ) return; // Nothing to do.
-
       best_spanning_branching( g,
                                best_branching,
                                v_id,
@@ -1020,6 +1018,8 @@ namespace boost {
     {
 
       typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
+
+      if( num_vertices( g ) == 0 ) return; // Nothing to do.
 
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
