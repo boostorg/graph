@@ -17,7 +17,6 @@
 
 
 <H1><A NAME="sec:rank_spanning">
-<img src="figs/python.gif" alt="(Python)"/>
 <TT>rank_spanning_branchings</TT>
 </H1>
 
@@ -28,7 +27,7 @@ rank_spanning_branchings(Graph&amp; g, BranchingProcessor fn,
     const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>);
 </PRE>
 
-<P>
+<p>
 The <tt>rank_spanning_branchings()</tt> function finds, in order by branching
 weight, the spanning branchings in a directed graph with weighted edges.
 If a directed graph has size <tt>N</tt>, a spanning branching is an
@@ -45,7 +44,8 @@ move on to find the next branching.  The
 user-supplied
 <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
 must take as
-input a pair of iterators (begin, end) to allow iteration over the edges
+input a <tt>std::pair</tt>
+of iterators (begin, end) to allow iteration over the edges
 in the branching.
 [<A
 HREF="bibliography.html#kruskal56">18</A>,<A
@@ -54,31 +54,151 @@ HREF="bibliography.html#tarjan83:_data_struct_network_algo">27</A>,<A
 HREF="bibliography.html#graham85">15</A>].
 </p>
 <p>
-Kruskal's algorithm starts with each vertex in a tree by itself, and
-with no edges in the minimum spanning tree <i>T</i>. The algorithm
-then examines each edge in the graph in order of increasing edge
-weight. If an edge connects two vertices in different trees the
-algorithm merges the two trees into a single tree and adds the edge to
-<i>T</i>. We use the ``union by rank'' and ``path compression''
-heuristics to provide fast implementations of the disjoint set
-operations (<tt>MAKE-SET</tt>, <tt>FIND-SET</tt>, and
-<tt>UNION-SET</tt>).  The algorithm is as follows:
+The Camerini et al. algorithm starts with a directed graph that has
+a single root vertex (that is, a vertex that has indegree equal to zero
+and outdegree not equal to zero).  The procedure <tt>RANK</tt>
+finds from the procedure <tt>BEST</tt> the branching <i>A</i> with the largest
+branching weight, denoted <i>d(A)</i>.
+The 
+<a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
+is invoked on <i>A</i>, and if it returns true, the procedure continues.
+The procedure <tt>NEXT</tt> is then invoked to find
+the edge <i>e</i> such that when <i>e</i> is removed from <i>G</i>, the
+<tt>BEST</tt> will find the next largest branching.
+<tt>NEXT</tt> also returns <i>&delta;</i>
+such that <i>d(A)-&delta;</i> is the weight of the next largest branching.
+</p>
+
+<p>
+<tt>RANK</tt> keeps a priority queue of tuples with elements <i>(weight, edge,
+branching, Y, Z)</i>.  The element
+<i>branching</i> is a set of edges giving a branching.  <i>Y</i> is a set of
+edges that must be included in the graph.
+<i>Z</i> is a set of edges that must be excluded from the graph.  After
+each evaluation of next, the appropriate tuple is inserted into <i>Q</i>.
+The priority queue ranks tuples by the <i>weight</i> entry.
+Once the maximum weight branching is found, <tt>RANK</tt> finds subsequent
+branchings by popping a tuple off the top of <i>Q</i> and running
+<tt>BEST</tt>.  Possible descendants are then evaluated with <tt>NEXT</tt>
 </p>
 
 <pre>
-KRUSKAL-MST(<i>G</i>, <i>w</i>) 
-  <i>T := &Oslash;</i> 
-  <b>for</b> each vertex <i>u in V</i> 
-    MAKE-SET(<i>DS</i>, <i>u</i>) 
-  <b>end for</b>
-  <b>for</b> each edge <i>(u,v) in E</i> in order of nondecreasing weight 
-    <b>if</b> FIND-SET(<i>DS</i>, <i>u</i>) != FIND-SET(<i>DS</i>, <i>v</i>) 
-      UNION-SET(<i>DS</i>, <i>u</i>, <i>v</i>) 
-      <i>T := T U {(u,v)}</i> 
-  <b>end for</b>
-  <b>return</b> <i>T</i>
+RANK(<i>G, BranchingProcessor()</i>)
+  <i>A</i> := BEST(<i>G</i>, &Oslash;, &Oslash;)
+  <b>if</b> (<i>!BranchingProcessor(A)</i>) return
+  <i>(e,&delta;)</i> := NEXT(<i>G, A, &Oslash;, &Oslash;</i>)
+  INSERT( <i>Q, (d(A) - &delta;, e, A, &Oslash;, &Oslash;)</i> )
+  <b>while</b> (<i>Q != &Oslash;</i>)
+    (<i>w, e, A, Y, Z</i>) := POP(<i>Q</i>)
+    <i>Y'</i> := <i>Y U e</i>
+    <i>Z'</i> := <i>Z U e</i>
+    <i>A'</i> := BEST(<i>G, Y, Z'</i>)
+    <b>if</b> (<i>!BranchingProcessor(A')</i>) return
+    <i>(e',&delta;)</i> := NEXT(<i>G, A, Y', Z</i>)
+    INSERT( <i>Q, (d(A) - &delta;, e', A, Y', Z)</i>)
+    <i>(e',&delta;)</i> := NEXT(<i>G, A', Y, Z'</i>)
+    INSERT( <i>Q, (w - &delta;, e', A', Y, Z')</i>)
+  <b>end while</b> 
+  return
 </pre>
 
+<p>
+The procedure <tt>BEST</tt> is Edmond's algorithm in the form adopted by
+<a>HREF="bibliography.html#tarjan">??</A> and
+<a>HREF="bibliography.html#camerini79">??</A>.  The procedure begins by
+constructing a subgraph <i>M</i> of <i>G</i>.  To construct <i>M</i>,
+the procedure loops over each edge in <i>Y</i> and removes from the graph
+every other edge with the same target.  This ensures that the edges in
+<i>Y</i> will be part of the branching found in this invocation of
+<tt>BEST</tt>.  The procedure then removes the edges in <i>Z</i> from the
+graph; thus, the edges in <i>Z</i> will not be part of the branching.
+<tt>BEST</tt> finds the largest branching into vertices.  When a cycle forms,
+the cycle is condensed to a new vertex (such that the graph becomes
+<i>M<sub>C</sub></i>) and the weight of
+edges into the cycle are appropriately modified.  This proceeds until all
+vertices have been examined.  The condensed graph is then expanded to get the
+best branching given the constraints <i>Y</i> and </i>Z</i>.
+</p>
+
+<pre>
+BEST(<i>G, Y, Z</i>)
+  <i>M := G<sub>YZ</sub></i>
+  <i>B := &Oslash;</i>
+  <i>&Gamma; := (V,&Oslash;)</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
+    let <i>s<sub>M</sub>, t<sub>M</sub>, and w<sub>M</sub></i> be the source, target, and weighting functions of <i>M</i>
+    <i>b</i> := edge in <i>M</i> with <i>v = t<sub>M</sub>(b)</i> and <i>w(b)</i> a maximum
+    <i>B := B U b</i>
+    <i>&beta;(v) := b</i>
+    <b>if</b> <i>B</i> contains a cycle <i>C</i> of <i>M</i> then
+      <i>M := M<sub>C</sub></i>
+      let <i>u</i> be the vertex of <i>M<sub>C</sub></i> corresponding to <i>C</i>
+      add <i>u</i> to <i>&Gamma;</i>
+      <b>for</b> each vertex <i>v'</i> in <i>C</i>
+        make <i>v'</i> a child of <i>u</i> in <i>&Gamma;</i>
+      </b>end for</b>
+      <i>B := B - C</i>
+    </b>end if</b>
+  <b>end while</b>
+  <b>while</b> <i>&Gamma;</i> contains non-isolated vertices
+    find path in <i>&Gamma;</i> with vertices <i>v<sub>1</sub>, v<sub>2</sub>, ... v<sub>k</sub></i> such that <i>v<sub>1</sub></i> is any non-isolated root of <i>&Gamma;</i> and <i>v<sub>k</sub> = t(&beta;(v<sub>1</sub>))</i>
+    <b>for</b> <i>h = 1, k - 1</i>
+      &beta;(v<sub>h+1</sub>) := &beta;(v<sub>h</sub>)
+      remove from <i>&Gamma;</i> vertex <i>v<sub>h</sub></i> and all edges directed out of <i>v<sub>h</sub></i>
+    <b>end for</b>
+  <b>end while</b>
+  <i>A := {&beta;(v):v &ne; root is a vertex of G}</i>
+  return <i>A</i>
+</pre>
+
+<p>
+The procedure <tt>NEXT</tt> constructs the constrained graph <i>M</i> as
+in <tt>BEST</tt>.  It examines each edge in the branching to determine
+whether swapping an edge not in the input branching results in a smaller
+weight difference.  Only those edges for which the source is not an
+ancestor of the target of the branching edge are allowed as possible
+swapped edges (as determined by procedure <tt>SEEK</tt>).  Cycles
+are handled as in <tt>BEST</tt>.   <tt>NEXT</tt>
+returns the edge <i>e</i> that when removed from the input branching will
+give the next best branching and the weight difference between the input
+branching and the next best descendent.
+</p>
+
+<pre>
+NEXT(<i>G, A, Y, Z</i>)
+  <i>M := G<sub>YZ</sub></i>
+  <i>B := &Oslash;</i>
+  <i>&delta; := &infin;</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
+    let <i>s<sub>M</sub>, t<sub>M</sub>, and w<sub>M</sub></i> be the source, target, and weighting functions of <i>M</i>
+    <i>b</i> := edge in <i>M</i> with <i>v = t<sub>M</sub>(b)</i> and <i>w(b)</i> a maximum (ties among edges must be solved in favor of edges in <i>A</i>)
+    <i>B := B U b</i>
+    <b>if</b> <i>b &in; A - Y</i> 
+       <i>w' := SEEK(b)</i>
+       <b>if</b> <i>w<sub>M</sub>(b) - w' < &delta;</i>
+         <i>e := b</i>
+         <i>&delta; := w<sub>M</sub>(b) - w'</i>
+       <b>end if</b>
+    <b>end if</b>
+    <b>if</b> <i>B</i> contains a cycle <i>C</i> of <i>M</i>
+      M := M<sub>C</sub>
+      B := B - C
+    <b>end if</b>
+  <b>end while</b>
+  return <i>(e, &delta;)</i>
+</pre>
+
+<pre>
+SEEK(<i>b, Q, A, M </i>)
+  <i>Q</i> is the priority queue used to find <i>b</i> in NEXT
+  <b>while</b> (<i>Q != &Oslash;</i>)
+  <i>f</i> := POP(<i>Q</i>)
+  <b>if</b> <i>t(b)</i> is not an ancestor of <i>s(f)</i> in <i>A</i>
+    INSERT( <i>Q, f</i> )
+    return <i>w<sub>M</sub>(f)</i>
+  <b>end if</b>
+  return -&infin;
+</pre>
 
 <H3>Where Defined</H3>
 
@@ -94,8 +214,9 @@ KRUSKAL-MST(<i>G</i>, <i>w</i>)
 <p>
 BranchingProcessor is used in the <tt>rank_spanning_branchings</tt> function to
 process the edges in a branching.  It is a functor that can be called with
-a pair of iterators.  The first iterator of the pair points to the first
-edge in a branching while the second points to one past the last edge in
+a <tt>std::pair</tt>
+of iterators.  The first iterator of the pair points to the first
+edge in the branching while the second points to one past the last edge in
 the branching.  The processor must return a boolean.  If the return value is
 true, <tt>rank_spanning_branchings</tt> continues and seeks the next branching.
 If the return value is false, <tt>rank_spanning_branchings</tt> stops.
@@ -144,10 +265,14 @@ by branching weight.
 
 IN: <tt>const Graph&amp; g</tt> 
 <blockquote>
-  An undirected graph. The graph type must be a model of
-  <a href="./EdgeListGraph.html">Edge List Graph</a>.<br>
-
-  <b>Python</b>: The parameter is named <tt>graph</tt>.
+  A directed graph. The graph type must be a model of
+  <a href="./EdgeListGraph.html">Edge List Graph</a>.  The graph should
+  have a single root vertex, that is, a single vertex that has indegree
+  equal to zero and an edge directed to at least one other vertex.
+  A graph with at least one spanning branching
+  can always be constructed from a general
+  directed graph by adding a vertex (the root vertex) and then adding edges
+  with weight zero directed from the root vertex to every other vertex.<br>
 </blockquote>
 
 </blockquote>
@@ -170,8 +295,6 @@ The weight or ``length'' of
   Comparable</a>. The key type of this map needs to be the graph's
   edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_weight, g)</tt><br>
-  <b>Python</b>: Must be an <tt>edge_double_map</tt> for the graph.<br>
-  <b>Python default</b>: <tt>graph.get_edge_double_map("weight")</tt>
 </blockquote>
 
 IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
@@ -190,8 +313,6 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
     <tt>adjacenty_list</tt> with <tt>VertexList=listS</tt> does
     not have an internal <tt>vertex_index</tt> property.
    <br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 IN: <tt>distance_compare(CompareFunction cmp)</tt>
@@ -208,8 +329,6 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   <b>Default:</b>
   <tt>std::less&lt;W&gt;</tt> with <tt>W=typename
   property_traits&lt;WeightMap&gt;::value_type</tt><br>
-
-  <b>Python</b>: Unsupported parameter.
 </blockquote>
 
 <H3>Complexity</H3>
@@ -237,4 +356,3 @@ contain examples of using the Camerini et al. algorithm.
 
 </BODY>
 </HTML> 
-
