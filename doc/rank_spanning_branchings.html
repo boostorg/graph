@@ -126,8 +126,9 @@ BEST(<i>G, Y, Z</i>)
   <i>B := &Oslash;</i>
   <i>&Gamma; := (V,&Oslash;)</i>
   <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
-    let <i>s<sub>H</sub>, t<sub>H</sub>, and w<sub>H</sub></i> be the source, target, and weighting functions of <i>H</i>
-    <i>b</i> := edge in <i>H</i> with <i>v = t<sub>H</sub>(b)</i> and <i>w(b)</i> a maximum
+    let w<sub>H</sub></i> be the weighting function of <i>H</i>
+    let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
+    <i>b := TOP(Q)</i>
     <i>B := B U b</i>
     <i>&beta;(v) := b</i>
     <b>if</b> <i>B</i> contains a cycle <i>C</i> of <i>H</i> then
@@ -174,11 +175,12 @@ NEXT(<i>G, A, Y, Z</i>)
   <i>B := &Oslash;</i>
   <i>&delta; := &infin;</i>
   <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
-    let <i>s<sub>H</sub>, t<sub>H</sub>, and w<sub>H</sub></i> be the source, target, and weighting functions of <i>H</i>
-    <i>b</i> := edge in <i>H</i> with <i>v = t<sub>H</sub>(b)</i> and <i>w(b)</i> a maximum (ties among edges must be solved in favor of edges in <i>A</i>)
+    let w<sub>H</sub></i> be the weighting function of <i>H</i>
+    let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
+    <i>b := TOP(Q)</i> (ties among edges must be solved in favor of edges in <i>A</i>)
     <i>B := B U b</i>
     <b>if</b> <i>b &in; A - Y</i> 
-       <i>w' := SEEK(b)</i>
+       <i>w' := SEEK(b, Q, A, H)</i>
        <b>if</b> <i>w<sub>H</sub>(b) - w' < &delta;</i>
          <i>e := b</i>
          <i>&delta; := w<sub>H</sub>(b) - w'</i>
@@ -194,10 +196,9 @@ NEXT(<i>G, A, Y, Z</i>)
 
 <pre>
 SEEK(<i>b, Q, A, H </i>)
-  <i>Q</i> is the priority queue used to find <i>b</i> in NEXT
   <b>while</b> (<i>Q != &Oslash;</i>)
   <i>f</i> := POP(<i>Q</i>)
-  <b>if</b> <i>t(b)</i> is not an ancestor of <i>s(f)</i> in <i>A</i>
+  <b>if</b> target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
     INSERT( <i>Q, f</i> )
     return <i>w<sub>H</sub>(f)</i>
   <b>end if</b>
@@ -216,14 +217,16 @@ SEEK(<i>b, Q, A, H </i>)
 </h3>
 
 <p>
-BranchingProcessor is used in the <tt>rank_spanning_branchings</tt> function to
-process the edges in a branching.  It is a functor that can be called with
+BranchingProcessor is used in the <tt>rank_spanning_branchings()</tt>
+function to
+process the edges in a branching.  It is a functor that is called with
 a <tt>std::pair</tt>
 of iterators.  The first iterator of the pair points to the first
 edge in the branching while the second points to one past the last edge in
 the branching.  The processor must return a boolean.  If the return value is
-true, <tt>rank_spanning_branchings</tt> continues and seeks the next branching.
-If the return value is false, <tt>rank_spanning_branchings</tt> stops.
+true, <tt>rank_spanning_branchings()</tt>
+continues and seeks the next branching.
+If the return value is false, <tt>rank_spanning_branchings()</tt> stops.
 </p>
 
 <p>
@@ -251,7 +254,7 @@ struct print_branching
   }
 };
 </pre>
-It returns true, so <tt>rank_spanning_branchings</tt> would always continue
+It returns true, so <tt>rank_spanning_branchings()</tt> would always continue
 on to find the next branching.
 </p>
 
@@ -270,7 +273,8 @@ by branching weight.
 IN: <tt>const Graph&amp; g</tt> 
 <blockquote>
   A directed graph. The graph type must be a model of
-  <a href="./EdgeListGraph.html">Edge List Graph</a>.  The graph should
+  <a href="VertexAndEdgeListGraph.html">VertexAndEdgeListGraph</a>.
+  The graph should
   have a single root vertex, that is, a single vertex that has indegree
   equal to zero and an edge directed to at least one other vertex.
   No other vertex should have indegree equal to zero.
@@ -351,12 +355,20 @@ and
 href="../example/rank-branchings2.cpp"><TT>example/rank-branching2.cpp</TT></a>
 contain examples of using the Camerini et al. algorithm.
 
+<H3>Acknowledgments</H3>
+
+<p>
+The development of <tt>rank_spanning_branchings()</tt> was inspired by
+the C++ <a href="http://edmonds-alg.sourceforge.net">implementation</a> of
+Edmond's algorithm by Ali Tofigh and Erik Sj&ouml;lund.
+</p>
+
 <br>
 <HR>
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2015</TD><TD>
-<A HREF="http://www.boost.org/people/bradley_meyer.htm">Bradley S. Meyer</A>, Clemson University (<A HREF="mailto:mbradle@clemson.edu">mbradle@clemson.edu</A>)
+Clemson University, Bradley S. Meyer (<A HREF="mailto:mbradle@clemson.edu">mbradle@clemson.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>

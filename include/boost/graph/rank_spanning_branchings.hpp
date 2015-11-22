@@ -844,18 +844,12 @@ namespace boost {
       typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
       typedef typename property_traits<WeightMap>::value_type weight_t;
-      typedef typename property_traits<Rank>::value_type r_value_t;
-      typedef typename property_traits<Parent>::value_type p_value_t;
 
-      BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
-      BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Rank, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<Parent, Vertex> ));
+      BOOST_CONCEPT_ASSERT(( VertexAndEdgeListGraphConcept<Graph> ));
+
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
       BOOST_CONCEPT_ASSERT(( ComparableConcept<weight_t> ));
-      BOOST_CONCEPT_ASSERT(( ConvertibleConcept<p_value_t, Vertex> ));
-      BOOST_CONCEPT_ASSERT(( IntegerConcept<r_value_t> ));
 
       unordered_set<Edge> best_branching, empty_set;
 
