@@ -125,7 +125,7 @@ BEST(<i>G, Y, Z</i>)
   <i>H := G<sub>YZ</sub></i>
   <i>B := &Oslash;</i>
   <i>&Gamma; := (V,&Oslash;)</i>
-  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>H</i> with respect to <i>B</i>
     let w<sub>H</sub></i> be the weighting function of <i>H</i>
     let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
     <i>b := TOP(Q)</i>
@@ -155,9 +155,12 @@ BEST(<i>G, Y, Z</i>)
 <p>
 The procedure <tt>NEXT</tt> constructs the constrained graph <i>H</i> as
 in <tt>BEST</tt>.  It examines each edge in the branching to determine
-whether swapping an edge not in the input branching results in a smaller
-weight difference.  Only those edges for which the source is not an
-ancestor of the target of the branching edge are allowed as possible
+whether swapping an edge not in the input branching for an edge in the
+branching results in a smaller
+weight difference.  Only those alternative
+edges for which the target of the
+branching edge (to be replaced) is not an ancestor of the source of the
+alternative edge in the branching are allowed as possible
 swapped edges (as determined by procedure <tt>SEEK</tt>).  The implementation
 of <tt>rank_spanning_branchings()</tt> does not in fact use a separate
 <tt>SEEK</tt> routine but rather simply an ordered iteration over the
@@ -174,7 +177,7 @@ NEXT(<i>G, A, Y, Z</i>)
   <i>H := G<sub>YZ</sub></i>
   <i>B := &Oslash;</i>
   <i>&delta; := &infin;</i>
-  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>B</i>
+  <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>H</i> with respect to <i>B</i>
     let w<sub>H</sub></i> be the weighting function of <i>H</i>
     let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
     <i>b := TOP(Q)</i> (ties among edges must be solved in favor of edges in <i>A</i>)
@@ -198,7 +201,7 @@ NEXT(<i>G, A, Y, Z</i>)
 SEEK(<i>b, Q, A, H </i>)
   <b>while</b> (<i>Q != &Oslash;</i>)
   <i>f</i> := POP(<i>Q</i>)
-  <b>if</b> target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
+  <b>if</b> <i>f != b</i> and target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
     INSERT( <i>Q, f</i> )
     return <i>w<sub>H</sub>(f)</i>
   <b>end if</b>
@@ -213,7 +216,7 @@ SEEK(<i>b, Q, A, H </i>)
 <P>
 
 <h3><A NAME="concept:BranchingProcessor">
-<tt>BranchingProcessor</tt>
+BranchingProcessor
 </h3>
 
 <p>
