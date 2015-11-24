@@ -191,6 +191,8 @@ int main( int argc, char **argv )
                  " file  cut" << std::endl << std::endl;
     std::cerr << "    file = input file" << std::endl;
     std::cerr << "    cut = branching weight cut" << std::endl << std::endl;
+    std::cerr << "  Example usage: " << argv[0] <<
+                 " branching_input.txt -10" << std::endl << std::endl;;
     return EXIT_FAILURE;
   }
 
