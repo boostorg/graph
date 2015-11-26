@@ -120,7 +120,12 @@ graph; thus, the edges in <i>Z</i> will not be part of the branching.
 the cycle is condensed to a new vertex (such that the graph becomes
 <i>H<sub>C</sub></i>) and the weight of
 edges into the cycle (that is, into the new vertex)
-are appropriately modified.  This proceeds until all
+are modified.  The modification is such that, if <i>v</i> is a vertex
+in the cycle and is the invertex for edge <i>e</i> whose source is outside
+the cycle, the weight of <i>e</i> is modified
+by adding the weight of the least costly edge within the cycle and
+subtracting the weight of the cycle edge into <i>v</i>.
+This proceeds until all
 vertices have been examined.  The condensed graph is then expanded to give the
 best branching given the constraints <i>Y</i> and </i>Z</i>.
 </p>
@@ -185,7 +190,7 @@ NEXT(<i>G, A, Y, Z</i>)
   <b>while</b> there exists an exposed vertex <i>v &ne; root</i> in <i>H</i> with respect to <i>B</i>
     let w<sub>H</sub></i> be the weighting function of <i>H</i>
     let <i>Q</i> be a priority queue of in edges of <i>v</i> ordered by <i>w<sub>H</sub></i>
-    <i>b := POP(Q)</i> (ties among edges must be solved in favor of edges in <i>A</i>)
+    <i>b := TOP(Q)</i> (ties among edges must be solved in favor of edges in <i>A</i>)
     <i>B := B U b</i>
     <b>if</b> <i>b &in; A - Y</i> 
        <i>w' := SEEK(b, Q, A, H)</i>
@@ -204,12 +209,11 @@ NEXT(<i>G, A, Y, Z</i>)
 
 <pre>
 SEEK(<i>b, Q, A, H </i>)
-  <b>while</b> (<i>Q != &Oslash;</i>)
-  <i>f</i> := POP(<i>Q</i>)
-  <b>if</b> target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
-    INSERT( <i>Q, f</i> )
-    return <i>w<sub>H</sub>(f)</i>
-  <b>end if</b>
+  <b>for</b> <i>f in Q</i> (ordered iteration by <i>w<sub>H</sub></i>)
+    <b>if</b> <i>f != b</i> and target of <i>b</i> is not an ancestor of source of <i>f</i> in <i>A</i>
+      return <i>w<sub>H</sub>(f)</i>
+    <b>end if</b>
+  <b>end for</b>
   return -&infin;
 </pre>
 
@@ -351,7 +355,8 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
 <H3>Complexity</H3>
 
 <P>
-The time complexity is <i>O(E log V)</i>.
+The time complexity is <i>O(kE log V)</i>, where <i>k</i> is the number
+of spanning branchings found.
 
 <H3>Example</H3>
 
