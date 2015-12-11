@@ -227,6 +227,7 @@ namespace boost {
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
       typedef heap::fibonacci_heap<edge_node_t> f_heap_t;
+      typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       unordered_set<Vertex> unvisited_vertex_set;
 
@@ -329,43 +330,33 @@ namespace boost {
               new_repr = S.find_set( new_repr );
             }
 
-            typedef
-              typename std::map<Vertex, shared_ptr<edge_node_t> > exit_map_t;
-            exit_map_t v_exit;
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
-              {
-                t.second.reset();
-              }
+              exit_map_t v_exit;
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
-                if( S.find_set( source( en.edge, g ) ) !=
-                    new_repr
-                )
+                if( S.find_set( source( en.edge, g ) ) != new_repr )
                 {
                   en.weight += least_costly_edge_node.weight -
                       beta[parent[v]].weight;
                   Vertex u = S.find_set( source( en.edge, g ) );
-                  if( v_exit[u] )
+                  if( v_exit.find(u) != v_exit.end() )
                   {
-                    if( comp( (*v_exit[u]).weight, en.weight ) )
+                    if( comp( v_exit[u].weight, en.weight ) )
                     {
-                      v_exit[u].reset( new edge_node_t );
-                      *v_exit[u] = en;
+                      v_exit[u] = en;
                     }
                   }
                   else
                   {
-                    v_exit[u].reset( new edge_node_t );
-                    *v_exit[u] = en;
+                    v_exit[u] = en;
                   }
                 }
 	      }
               f_heap_t tmp_heap;
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
               {
-                if( t.second ) {tmp_heap.push( *(t.second) );}
+                tmp_heap.push( t.second );
               }
               in_edges[v].swap( tmp_heap );
 	    }
@@ -514,6 +505,7 @@ namespace boost {
       // Create other types and data.
 
       typedef heap::fibonacci_heap<edge_node_t> f_heap_t;
+      typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       shared_ptr<
         std::pair<Edge, typename property_traits<WeightMap>::value_type>
@@ -688,43 +680,33 @@ namespace boost {
             // the largest weight in arc and the largest viable alternative
             // arc from each source outside the cycle.
 
-            typedef
-              typename std::map<Vertex, shared_ptr<edge_node_t> > exit_map_t;
-            exit_map_t v_exit1, v_exit2;
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              BOOST_FOREACH( typename exit_map_t::value_type & t, v_exit1 )
-              {
-                t.second.reset();
-              }
-              BOOST_FOREACH( typename exit_map_t::value_type & t, v_exit2 )
-              {
-                t.second.reset();
-              }
+              exit_map_t v_exit1, v_exit2;
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
                 if( S.find_set( source( en.edge, g ) ) != new_repr )
                 {
                   en.weight += least_costly_edge_node.weight - max_e[v].weight;
                   Vertex u = S.find_set( source( en.edge, g ) );
-                  if( v_exit1[u] )
+                  if( v_exit1.find(u) != v_exit1.end() )
                   {
-                    if( comp( (*v_exit1[u]).weight, en.weight ) )
+                    if( comp( v_exit1[u].weight, en.weight ) )
                     {
                       if(
                         !is_ancestor(
-                           v_id[target( (*v_exit1[u]).edge, g )],
-                           v_id[source( (*v_exit1[u]).edge, g )]
+                           v_id[target( v_exit1[u].edge, g )],
+                           v_id[source( v_exit1[u].edge, g )]
                         )
                       )
                       {
-                        v_exit2[u].reset( new edge_node_t );
-                        *v_exit2[u] = *v_exit1[u];
+                        v_exit2[u] = v_exit1[u];
                       }
-                      *v_exit1[u] = en;
+                      v_exit1[u] = en;
                     }
                     else if(
-                      !v_exit2[u] || comp( (*v_exit2[u]).weight, en.weight )
+                      v_exit2.find(u) == v_exit2.end() ||
+                      comp( v_exit2[u].weight, en.weight )
                     )
                     {
                       if(
@@ -734,26 +716,24 @@ namespace boost {
                         )
                       )
                       {
-                        v_exit2[u].reset( new edge_node_t );
-                        *v_exit2[u] = en;
+                        v_exit2[u] = en;
                       }
                     }
                   }
                   else
                   {
-                    v_exit1[u].reset( new edge_node_t );
-                    *v_exit1[u] = en;
+                    v_exit1[u] = en;
                   }
                 }
 	      }
               f_heap_t tmp_heap;
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit1 )
               {
-                if( t.second ) {tmp_heap.push( *(t.second) );}
+                tmp_heap.push( t.second );
               }
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit2 )
               {
-                if( t.second ) {tmp_heap.push( *(t.second) );}
+                tmp_heap.push( t.second );
               }
               in_edges[v].swap( tmp_heap );
 	    }
