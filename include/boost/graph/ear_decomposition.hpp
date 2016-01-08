@@ -30,12 +30,11 @@ namespace boost {
     
     template <typename Vertex, typename PredMap, typename DistanceMap>
     Vertex get_lca(Vertex u, Vertex v, PredMap & pred, DistanceMap & dist) {
-      if (get(dist, u) < get(dist, v)) { get_lca(u, get(pred, v), pred, dist); }
-      else if (get(dist, u) > get(dist, v)) { get_lca(get(pred, u), v, pred, dist); }
-      else {
-        if (u != v) { get_lca(get(pred, u), get(pred, v), pred, dist); }
-        else { return u; }
-      }
+      if (u == v)
+        return u;
+      else if (get(dist, u) < get(dist, v)) { return get_lca(u, get(pred, v), pred, dist); }
+      else if (get(dist, u) > get(dist, v)) { return get_lca(get(pred, u), v, pred, dist); }
+      else { return get_lca(get(pred, u), get(pred, v), pred, dist); }
     }
     
     template <typename Graph, typename Vertex, typename PredMap, typename DistanceMap>
