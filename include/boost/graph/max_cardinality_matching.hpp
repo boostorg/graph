@@ -1,7 +1,7 @@
 //=======================================================================
 // Copyright (c) 2005 Aaron Windsor
 //
-// Distributed under the Boost Software License, Version 1.0. 
+// Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
@@ -16,7 +16,7 @@
 #include <algorithm>                     // for std::sort and std::stable_sort
 #include <utility>                       // for std::pair
 #include <boost/property_map/property_map.hpp>
-#include <boost/graph/graph_traits.hpp>  
+#include <boost/graph/graph_traits.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
@@ -31,7 +31,7 @@ namespace boost
   } } // end namespace graph::detail
 
   template <typename Graph, typename MateMap, typename VertexIndexMap>
-  typename graph_traits<Graph>::vertices_size_type 
+  typename graph_traits<Graph>::vertices_size_type
   matching_size(const Graph& g, MateMap mate, VertexIndexMap vm)
   {
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
@@ -45,7 +45,7 @@ namespace boost
     for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
         vertex_descriptor_t v = *vi;
-        if (get(mate,v) != graph_traits<Graph>::null_vertex() 
+        if (get(mate,v) != graph_traits<Graph>::null_vertex()
             && get(vm,v) < get(vm,get(mate,v)))
         ++size_of_matching;
       }
@@ -76,10 +76,10 @@ namespace boost
     for( boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
         vertex_descriptor_t v = *vi;
-        if (get(mate,v) != graph_traits<Graph>::null_vertex() 
+        if (get(mate,v) != graph_traits<Graph>::null_vertex()
             && v != get(mate,get(mate,v)))
         return false;
-      }    
+      }
     return true;
   }
 
@@ -97,11 +97,11 @@ namespace boost
 
   //***************************************************************************
   //***************************************************************************
-  //               Maximum Cardinality Matching Functors 
+  //               Maximum Cardinality Matching Functors
   //***************************************************************************
   //***************************************************************************
-  
-  template <typename Graph, typename MateMap, 
+
+  template <typename Graph, typename MateMap,
             typename VertexIndexMap = dummy_property_map>
   struct no_augmenting_path_finder
   {
@@ -128,37 +128,37 @@ namespace boost
 
     //generates the type of an iterator property map from vertices to type X
     template <typename X>
-    struct map_vertex_to_ 
-    { 
+    struct map_vertex_to_
+    {
       typedef boost::iterator_property_map<typename std::vector<X>::iterator,
-                                           VertexIndexMap> type; 
+                                           VertexIndexMap> type;
     };
-    
+
     typedef typename graph_traits<Graph>::vertex_descriptor
       vertex_descriptor_t;
     typedef typename std::pair< vertex_descriptor_t, vertex_descriptor_t >
       vertex_pair_t;
-    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor_t; 
+    typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef typename graph_traits<Graph>::edges_size_type e_size_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
-    typedef typename graph_traits<Graph>::out_edge_iterator 
+    typedef typename graph_traits<Graph>::out_edge_iterator
       out_edge_iterator_t;
     typedef typename std::deque<vertex_descriptor_t> vertex_list_t;
     typedef typename std::vector<edge_descriptor_t> edge_list_t;
-    typedef typename map_vertex_to_<vertex_descriptor_t>::type 
+    typedef typename map_vertex_to_<vertex_descriptor_t>::type
       vertex_to_vertex_map_t;
     typedef typename map_vertex_to_<int>::type vertex_to_int_map_t;
-    typedef typename map_vertex_to_<vertex_pair_t>::type 
+    typedef typename map_vertex_to_<vertex_pair_t>::type
       vertex_to_vertex_pair_map_t;
     typedef typename map_vertex_to_<v_size_t>::type vertex_to_vsize_map_t;
     typedef typename map_vertex_to_<e_size_t>::type vertex_to_esize_map_t;
 
 
 
-    
-    edmonds_augmenting_path_finder(const Graph& arg_g, MateMap arg_mate, 
-                                   VertexIndexMap arg_vm) : 
+
+    edmonds_augmenting_path_finder(const Graph& arg_g, MateMap arg_mate,
+                                   VertexIndexMap arg_vm) :
       g(arg_g),
       vm(arg_vm),
       n_vertices(num_vertices(arg_g)),
@@ -191,7 +191,7 @@ namespace boost
     }
 
 
-    
+
 
     bool augment_matching()
     {
@@ -199,21 +199,21 @@ namespace boost
       //iteration to the next instead of being re-initialized each
       //iteration, allowing for "lazy blossom expansion." This is not
       //currently implemented.
-      
+
       e_size_t timestamp = 0;
       even_edges.clear();
-      
+
       vertex_iterator_t vi, vi_end;
       for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
         vertex_descriptor_t u = *vi;
-      
+
         origin[u] = u;
         pred[u] = u;
         ancestor_of_v[u] = 0;
         ancestor_of_w[u] = 0;
         ds.make_set(u);
-      
+
         if (mate[u] == graph_traits<Graph>::null_vertex())
         {
           vertex_state[u] = graph::detail::V_EVEN;
@@ -227,16 +227,16 @@ namespace boost
           }
         }
         else
-          vertex_state[u] = graph::detail::V_UNREACHED;      
+          vertex_state[u] = graph::detail::V_UNREACHED;
       }
-    
+
       //end initializations
-    
+
       vertex_descriptor_t v,w,w_free_ancestor,v_free_ancestor;
       w_free_ancestor = graph_traits<Graph>::null_vertex();
-      v_free_ancestor = graph_traits<Graph>::null_vertex(); 
+      v_free_ancestor = graph_traits<Graph>::null_vertex();
       bool found_alternating_path = false;
-      
+
       while(!even_edges.empty() && !found_alternating_path)
       {
         // since we push even edges onto the back of the list as
@@ -247,10 +247,10 @@ namespace boost
 
         v = source(current_edge,g);
         w = target(current_edge,g);
-      
+
         vertex_descriptor_t v_prime = origin[ds.find_set(v)];
         vertex_descriptor_t w_prime = origin[ds.find_set(w)];
-      
+
         // because of the way we put all of the edges on the queue,
         // v_prime should be labeled V_EVEN; the following is a
         // little paranoid but it could happen...
@@ -275,18 +275,18 @@ namespace boost
           }
           pred[w_prime] = v;
         }
-        
+
         //w_prime == v_prime can happen below if we get an edge that has been
         //shrunk into a blossom
-        else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime) 
-        {                                                             
+        else if (vertex_state[w_prime] == graph::detail::V_EVEN && w_prime != v_prime)
+        {
           vertex_descriptor_t w_up = w_prime;
           vertex_descriptor_t v_up = v_prime;
-          vertex_descriptor_t nearest_common_ancestor 
+          vertex_descriptor_t nearest_common_ancestor
                 = graph_traits<Graph>::null_vertex();
           w_free_ancestor = graph_traits<Graph>::null_vertex();
           v_free_ancestor = graph_traits<Graph>::null_vertex();
-          
+
           // We now need to distinguish between the case that
           // w_prime and v_prime share an ancestor under the
           // "parent" relation, in which case we've found a
@@ -297,8 +297,8 @@ namespace boost
 
           ++timestamp;
 
-          while (nearest_common_ancestor == graph_traits<Graph>::null_vertex() && 
-             (v_free_ancestor == graph_traits<Graph>::null_vertex() || 
+          while (nearest_common_ancestor == graph_traits<Graph>::null_vertex() &&
+             (v_free_ancestor == graph_traits<Graph>::null_vertex() ||
               w_free_ancestor == graph_traits<Graph>::null_vertex()
               )
              )
@@ -310,21 +310,21 @@ namespace boost
               w_up = parent(w_up);
             if (v_free_ancestor == graph_traits<Graph>::null_vertex())
               v_up = parent(v_up);
-          
+
             if (mate[v_up] == graph_traits<Graph>::null_vertex())
               v_free_ancestor = v_up;
             if (mate[w_up] == graph_traits<Graph>::null_vertex())
               w_free_ancestor = w_up;
-          
+
             if (ancestor_of_w[v_up] == timestamp)
               nearest_common_ancestor = v_up;
             else if (ancestor_of_v[w_up] == timestamp)
               nearest_common_ancestor = w_up;
-            else if (v_free_ancestor == w_free_ancestor && 
+            else if (v_free_ancestor == w_free_ancestor &&
               v_free_ancestor != graph_traits<Graph>::null_vertex())
             nearest_common_ancestor = v_up;
           }
-          
+
           if (nearest_common_ancestor == graph_traits<Graph>::null_vertex())
             found_alternating_path = true; //to break out of the loop
           else
@@ -333,9 +333,9 @@ namespace boost
             link_and_set_bridges(w_prime, nearest_common_ancestor, std::make_pair(w,v));
             link_and_set_bridges(v_prime, nearest_common_ancestor, std::make_pair(v,w));
           }
-        }      
+        }
       }
-      
+
       if (!found_alternating_path)
         return false;
 
@@ -354,9 +354,9 @@ namespace boost
         mate[a] = b;
         mate[b] = a;
       }
-      
+
       return true;
-      
+
     }
 
 
@@ -384,11 +384,11 @@ namespace boost
 
 
 
-  private:    
+  private:
 
     vertex_descriptor_t parent(vertex_descriptor_t x)
     {
-      if (vertex_state[x] == graph::detail::V_EVEN 
+      if (vertex_state[x] == graph::detail::V_EVEN
           && mate[x] != graph_traits<Graph>::null_vertex())
         return mate[x];
       else if (vertex_state[x] == graph::detail::V_ODD)
@@ -396,12 +396,12 @@ namespace boost
       else
         return x;
     }
-    
-    
 
 
-    void link_and_set_bridges(vertex_descriptor_t x, 
-                              vertex_descriptor_t stop_vertex, 
+
+
+    void link_and_set_bridges(vertex_descriptor_t x,
+                              vertex_descriptor_t stop_vertex,
                   vertex_pair_t the_bridge)
     {
       for(vertex_descriptor_t v = x; v != stop_vertex; v = parent(v))
@@ -423,7 +423,7 @@ namespace boost
         }
       }
     }
-    
+
 
     // Since none of the STL containers support both constant-time
     // concatenation and reversal, the process of expanding an
@@ -432,14 +432,14 @@ namespace boost
     // w, then the augmenting path is recursively defined as:
     //
     // path(v,w) = [v], if v = w
-    //           = concat([v, mate[v]], path(pred[mate[v]], w), 
+    //           = concat([v, mate[v]], path(pred[mate[v]], w),
     //                if v != w and vertex_state[v] == graph::detail::V_EVEN
     //           = concat([v], reverse(path(x,mate[v])), path(y,w)),
     //                if v != w, vertex_state[v] == graph::detail::V_ODD, and bridge[v] = (x,y)
     //
     // These next two mutually recursive functions implement this definition.
-    
-    void retrieve_augmenting_path(vertex_descriptor_t v, vertex_descriptor_t w)  
+
+    void retrieve_augmenting_path(vertex_descriptor_t v, vertex_descriptor_t w)
     {
       if (v == w)
         aug_path.push_back(v);
@@ -449,7 +449,7 @@ namespace boost
         aug_path.push_back(mate[v]);
         retrieve_augmenting_path(pred[mate[v]], w);
       }
-      else //vertex_state[v] == graph::detail::V_ODD 
+      else //vertex_state[v] == graph::detail::V_ODD
       {
         aug_path.push_back(v);
         reversed_retrieve_augmenting_path(bridge[v].first, mate[v]);
@@ -459,7 +459,7 @@ namespace boost
 
 
     void reversed_retrieve_augmenting_path(vertex_descriptor_t v,
-                                           vertex_descriptor_t w)  
+                                           vertex_descriptor_t w)
     {
 
       if (v == w)
@@ -470,7 +470,7 @@ namespace boost
         aug_path.push_back(mate[v]);
         aug_path.push_back(v);
       }
-      else //vertex_state[v] == graph::detail::V_ODD 
+      else //vertex_state[v] == graph::detail::V_ODD
       {
         reversed_retrieve_augmenting_path(bridge[v].second, w);
         retrieve_augmenting_path(bridge[v].first, mate[v]);
@@ -478,15 +478,15 @@ namespace boost
       }
     }
 
-    
+
 
 
     //private data members
-    
+
     const Graph& g;
     VertexIndexMap vm;
     v_size_t n_vertices;
-    
+
     //storage for the property maps below
     std::vector<vertex_descriptor_t> mate_vector;
     std::vector<e_size_t> ancestor_of_v_vector;
@@ -523,13 +523,13 @@ namespace boost
   //               Initial Matching Functors
   //***************************************************************************
   //***************************************************************************
-  
+
   template <typename Graph, typename MateMap>
   struct greedy_matching
   {
     typedef typename graph_traits< Graph >::vertex_descriptor vertex_descriptor_t;
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
-    typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor_t; 
+    typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor_t;
     typedef typename graph_traits< Graph >::edge_iterator edge_iterator_t;
 
     static void find_matching(const Graph& g, MateMap mate)
@@ -537,28 +537,28 @@ namespace boost
       vertex_iterator_t vi, vi_end;
       for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
         put(mate, *vi, graph_traits<Graph>::null_vertex());
-            
+
       edge_iterator_t ei, ei_end;
       for( boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
       {
         edge_descriptor_t e = *ei;
         vertex_descriptor_t u = source(e,g);
         vertex_descriptor_t v = target(e,g);
-      
-        if (u != v && get(mate,u) == get(mate,v))  
+
+        if (u != v && get(mate,u) == get(mate,v))
         //only way equality can hold is if
         //   mate[u] == mate[v] == null_vertex
         {
           put(mate,u,v);
           put(mate,v,u);
         }
-      }    
+      }
     }
   };
-  
 
 
-  
+
+
   template <typename Graph, typename MateMap>
   struct extra_greedy_matching
   {
@@ -570,23 +570,23 @@ namespace boost
     // either choice are broken arbitrarily. This procedure takes time
     // O(m log n), where m is the number of edges in the graph and n
     // is the number of vertices.
-    
+
     typedef typename graph_traits< Graph >::vertex_descriptor
       vertex_descriptor_t;
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
-    typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor_t; 
+    typedef typename graph_traits< Graph >::edge_descriptor edge_descriptor_t;
     typedef typename graph_traits< Graph >::edge_iterator edge_iterator_t;
     typedef std::pair<vertex_descriptor_t, vertex_descriptor_t> vertex_pair_t;
-    
+
     struct select_first
     {
-      inline static vertex_descriptor_t select_vertex(const vertex_pair_t p) 
+      inline static vertex_descriptor_t select_vertex(const vertex_pair_t p)
       {return p.first;}
     };
 
     struct select_second
     {
-      inline static vertex_descriptor_t select_vertex(const vertex_pair_t p) 
+      inline static vertex_descriptor_t select_vertex(const vertex_pair_t p)
       {return p.second;}
     };
 
@@ -597,8 +597,8 @@ namespace boost
       less_than_by_degree(const Graph& g): m_g(g) {}
       bool operator() (const vertex_pair_t x, const vertex_pair_t y)
       {
-        return 
-          out_degree(PairSelector::select_vertex(x), m_g) 
+        return
+          out_degree(PairSelector::select_vertex(x), m_g)
           < out_degree(PairSelector::select_vertex(y), m_g);
       }
     private:
@@ -610,7 +610,7 @@ namespace boost
     {
       typedef std::vector<std::pair<vertex_descriptor_t, vertex_descriptor_t> >
         directed_edges_vector_t;
-      
+
       directed_edges_vector_t edge_list;
       vertex_iterator_t vi, vi_end;
       for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
@@ -626,35 +626,35 @@ namespace boost
         edge_list.push_back(std::make_pair(u,v));
         edge_list.push_back(std::make_pair(v,u));
       }
-      
+
       //sort the edges by the degree of the target, then (using a
       //stable sort) by degree of the source
-      std::sort(edge_list.begin(), edge_list.end(), 
+      std::sort(edge_list.begin(), edge_list.end(),
                 less_than_by_degree<select_second>(g));
-      std::stable_sort(edge_list.begin(), edge_list.end(), 
+      std::stable_sort(edge_list.begin(), edge_list.end(),
                        less_than_by_degree<select_first>(g));
-      
+
       //construct the extra greedy matching
       for(typename directed_edges_vector_t::const_iterator itr = edge_list.begin(); itr != edge_list.end(); ++itr)
       {
-        if (get(mate,itr->first) == get(mate,itr->second)) 
+        if (get(mate,itr->first) == get(mate,itr->second))
         //only way equality can hold is if mate[itr->first] == mate[itr->second] == null_vertex
         {
           put(mate, itr->first, itr->second);
           put(mate, itr->second, itr->first);
         }
-      }    
+      }
     }
   };
 
 
-  
+
 
   template <typename Graph, typename MateMap>
   struct empty_matching
-  { 
+  {
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator_t;
-    
+
     static void find_matching(const Graph& g, MateMap mate)
     {
       vertex_iterator_t vi, vi_end;
@@ -662,7 +662,7 @@ namespace boost
         put(mate, *vi, graph_traits<Graph>::null_vertex());
     }
   };
-  
+
 
 
 
@@ -677,8 +677,8 @@ namespace boost
 
     template <typename SizeType>
     class odd_components_counter : public dfs_visitor<>
-    // This depth-first search visitor will count the number of connected 
-    // components with an odd number of vertices. It's used by 
+    // This depth-first search visitor will count the number of connected
+    // components with an odd number of vertices. It's used by
     // maximum_matching_verifier.
     {
     public:
@@ -687,26 +687,26 @@ namespace boost
       {
         m_count = 0;
       }
-      
+
       template <class Vertex, class Graph>
-      void start_vertex(Vertex, Graph&) 
+      void start_vertex(Vertex, Graph&)
       {
-        m_parity = false; 
+        m_parity = false;
       }
-      
+
       template <class Vertex, class Graph>
-      void discover_vertex(Vertex, Graph&) 
+      void discover_vertex(Vertex, Graph&)
       {
         m_parity = !m_parity;
         m_parity ? ++m_count : --m_count;
       }
-      
+
     protected:
       SizeType& m_count;
-      
+
     private:
       bool m_parity;
-      
+
     };
 
   }//namespace detail
@@ -714,16 +714,16 @@ namespace boost
 
 
 
-  template <typename Graph, typename MateMap, 
+  template <typename Graph, typename MateMap,
             typename VertexIndexMap = dummy_property_map>
   struct no_matching_verifier
   {
-    inline static bool 
-    verify_matching(const Graph&, MateMap, VertexIndexMap) 
+    inline static bool
+    verify_matching(const Graph&, MateMap, VertexIndexMap)
     { return true;}
   };
-  
-  
+
+
 
 
   template <typename Graph, typename MateMap, typename VertexIndexMap>
@@ -732,17 +732,17 @@ namespace boost
 
     template <typename X>
     struct map_vertex_to_
-    { 
+    {
       typedef boost::iterator_property_map<typename std::vector<X>::iterator,
-                                           VertexIndexMap> type; 
+                                           VertexIndexMap> type;
     };
 
-    typedef typename graph_traits<Graph>::vertex_descriptor 
+    typedef typename graph_traits<Graph>::vertex_descriptor
       vertex_descriptor_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
     typedef typename map_vertex_to_<int>::type vertex_to_int_map_t;
-    typedef typename map_vertex_to_<vertex_descriptor_t>::type 
+    typedef typename map_vertex_to_<vertex_descriptor_t>::type
       vertex_to_vertex_map_t;
 
 
@@ -751,12 +751,12 @@ namespace boost
       //this predicate is used to create a filtered graph that
       //excludes vertices labeled "graph::detail::V_ODD"
       non_odd_vertex() : vertex_state(0) { }
-  
-      non_odd_vertex(VertexStateMap* arg_vertex_state) 
+
+      non_odd_vertex(VertexStateMap* arg_vertex_state)
         : vertex_state(arg_vertex_state) { }
 
       template <typename Vertex>
-      bool operator()(const Vertex& v) const 
+      bool operator()(const Vertex& v) const
       {
         BOOST_ASSERT(vertex_state);
         return get(*vertex_state, v) != graph::detail::V_ODD;
@@ -803,7 +803,7 @@ namespace boost
       std::vector<int> vertex_state_vector(num_vertices(g));
       vertex_to_int_map_t vertex_state(vertex_state_vector.begin(), vm);
       augmentor.get_vertex_state_map(vertex_state);
-      
+
       //count the number of graph::detail::V_ODD vertices
       v_size_t num_odd_vertices = 0;
       vertex_iterator_t vi, vi_end;
@@ -830,15 +830,15 @@ namespace boost
 
 
 
-  template <typename Graph, 
+  template <typename Graph,
         typename MateMap,
         typename VertexIndexMap,
-        template <typename, typename, typename> class AugmentingPathFinder, 
+        template <typename, typename, typename> class AugmentingPathFinder,
         template <typename, typename> class InitialMatchingFinder,
         template <typename, typename, typename> class MatchingVerifier>
   bool matching(const Graph& g, MateMap mate, VertexIndexMap vm)
   {
-    
+
     InitialMatchingFinder<Graph,MateMap>::find_matching(g,mate);
 
     AugmentingPathFinder<Graph,MateMap,VertexIndexMap> augmentor(g,mate,vm);
@@ -849,8 +849,8 @@ namespace boost
       }
     augmentor.get_current_matching(mate);
 
-    return MatchingVerifier<Graph,MateMap,VertexIndexMap>::verify_matching(g,mate,vm);    
-    
+    return MatchingVerifier<Graph,MateMap,VertexIndexMap>::verify_matching(g,mate,vm);
+
   }
 
 
@@ -859,7 +859,7 @@ namespace boost
   template <typename Graph, typename MateMap, typename VertexIndexMap>
   inline bool checked_edmonds_maximum_cardinality_matching(const Graph& g, MateMap mate, VertexIndexMap vm)
   {
-    return matching 
+    return matching
       < Graph, MateMap, VertexIndexMap,
         edmonds_augmenting_path_finder, extra_greedy_matching, maximum_cardinality_matching_verifier>
       (g, mate, vm);

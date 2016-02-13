@@ -218,9 +218,9 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
       struct mas_dispatch {
         typedef void result_type;
         template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g, 
-                          //const bgl_named_params<P,T,R>& params, 
-                          const ArgPack& params, 
+        static result_type apply(const Graph& g,
+                          //const bgl_named_params<P,T,R>& params,
+                          const ArgPack& params,
                           WeightMap w) {
 
           using namespace boost::graph::keywords;
@@ -249,8 +249,8 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
         typedef void result_type;
 
         template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g, 
-                          const ArgPack& params, 
+        static result_type apply(const Graph& g,
+                          const ArgPack& params,
                           param_not_found) {
 
           using namespace boost::graph::keywords;

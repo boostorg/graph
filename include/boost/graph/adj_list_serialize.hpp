@@ -19,7 +19,7 @@
 #include <boost/serialization/collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
 
-namespace boost { 
+namespace boost {
 
 namespace serialization {
 
@@ -32,7 +32,7 @@ struct tracking_level<boost::adjacency_list<OEL,VL,D,VP,EP,GP,EL> > {
   BOOST_STATIC_CONSTANT(int, value = tracking_level::type::value);
 };
 
-template<class Archive, class OEL, class VL, class D, 
+template<class Archive, class OEL, class VL, class D,
      class VP, class EP, class GP, class EL>
 inline void save(
     Archive & ar,
@@ -54,7 +54,7 @@ inline void save(
     indices[v] = num++;
     ar << serialization::make_nvp("vertex_property", get(vertex_all_t(), graph, v) );
   }
-  
+
   // write edges
   BGL_FORALL_EDGES_T(e, graph, Graph) {
     ar << serialization::make_nvp("u" , indices[source(e,graph)]);
@@ -81,7 +81,7 @@ inline void load(
   ar >> BOOST_SERIALIZATION_NVP(V);
   unsigned int E;
   ar >> BOOST_SERIALIZATION_NVP(E);
-  
+
   std::vector<Vertex> verts(V);
   int i = 0;
   while(V-- > 0){

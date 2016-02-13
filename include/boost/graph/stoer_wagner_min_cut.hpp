@@ -36,7 +36,7 @@ namespace boost {
       mas_min_cut_visitor(const Graph& g,
                           ParityMap parity,
                           weight_type& cutweight,
-                          const WeightMap& weight_map, 
+                          const WeightMap& weight_map,
                           IndexMap index_map)
         : m_bestParity(parity),
           m_parity(make_one_bit_color_map(num_vertices(g), index_map)),

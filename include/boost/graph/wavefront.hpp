@@ -30,12 +30,12 @@ namespace boost {
   {
     typename graph_traits<Graph>::vertex_descriptor v, w;
     typename graph_traits<Graph>::vertices_size_type b = 1;
-    typename graph_traits<Graph>::out_edge_iterator edge_it2, edge_it2_end; 
+    typename graph_traits<Graph>::out_edge_iterator edge_it2, edge_it2_end;
     typename graph_traits<Graph>::vertices_size_type index_i = index[i];
     std::vector<bool> rows_active(num_vertices(g), false);
 
     rows_active[index_i] = true;
-      
+
       typename graph_traits<Graph>::vertex_iterator ui, ui_end;
       for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       {
@@ -53,7 +53,7 @@ namespace boost {
               }
             }
       }
- 
+
     return b;
   }
 
@@ -128,8 +128,8 @@ namespace boost {
   {
     return rms_wavefront(g, get(vertex_index, g));
   }
- 
-  
+
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_WAVEFRONT_HPP

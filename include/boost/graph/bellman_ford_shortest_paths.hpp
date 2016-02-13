@@ -13,9 +13,9 @@
   This file implements the function
 
   template <class EdgeListGraph, class Size, class P, class T, class R>
-  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
+  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N,
      const bgl_named_params<P, T, R>& params)
-  
+
  */
 
 
@@ -60,7 +60,7 @@ namespace boost {
     }
     template <class Edge, class Graph>
     void edge_relaxed(Edge u, Graph& g) {
-      invoke_visitors(m_vis, u, g, on_edge_relaxed());      
+      invoke_visitors(m_vis, u, g, on_edge_relaxed());
     }
     template <class Edge, class Graph>
     void edge_not_relaxed(Edge u, Graph& g) {
@@ -88,11 +88,11 @@ namespace boost {
             class PredecessorMap, class DistanceMap,
             class BinaryFunction, class BinaryPredicate,
             class BellmanFordVisitor>
-  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N, 
-                         WeightMap weight, 
+  bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N,
+                         WeightMap weight,
                          PredecessorMap pred,
-                         DistanceMap distance, 
-                         BinaryFunction combine, 
+                         DistanceMap distance,
+                         BinaryFunction combine,
                          BinaryPredicate compare,
                          BellmanFordVisitor v)
   {
@@ -133,12 +133,12 @@ namespace boost {
 
   namespace detail {
 
-    template<typename VertexAndEdgeListGraph, typename Size, 
+    template<typename VertexAndEdgeListGraph, typename Size,
              typename WeightMap, typename PredecessorMap, typename DistanceMap,
              typename P, typename T, typename R>
-    bool 
+    bool
     bellman_dispatch2
-      (VertexAndEdgeListGraph& g, 
+      (VertexAndEdgeListGraph& g,
        typename graph_traits<VertexAndEdgeListGraph>::vertex_descriptor s,
        Size N, WeightMap weight, PredecessorMap pred, DistanceMap distance,
        const bgl_named_params<P, T, R>& params)
@@ -163,12 +163,12 @@ namespace boost {
                 );
     }
 
-    template<typename VertexAndEdgeListGraph, typename Size, 
+    template<typename VertexAndEdgeListGraph, typename Size,
              typename WeightMap, typename PredecessorMap, typename DistanceMap,
              typename P, typename T, typename R>
-    bool 
+    bool
     bellman_dispatch2
-      (VertexAndEdgeListGraph& g, 
+      (VertexAndEdgeListGraph& g,
        param_not_found,
        Size N, WeightMap weight, PredecessorMap pred, DistanceMap distance,
        const bgl_named_params<P, T, R>& params)
@@ -188,14 +188,14 @@ namespace boost {
 
     template <class EdgeListGraph, class Size, class WeightMap,
               class DistanceMap, class P, class T, class R>
-    bool bellman_dispatch(EdgeListGraph& g, Size N, 
-                          WeightMap weight, DistanceMap distance, 
+    bool bellman_dispatch(EdgeListGraph& g, Size N,
+                          WeightMap weight, DistanceMap distance,
                           const bgl_named_params<P, T, R>& params)
     {
       dummy_property_map dummy_pred;
-      return 
+      return
         detail::bellman_dispatch2
-          (g, 
+          (g,
            get_param(params, root_vertex_t()),
            N, weight,
            choose_param(get_param(params, vertex_predecessor), dummy_pred),
@@ -206,9 +206,9 @@ namespace boost {
 
   template <class EdgeListGraph, class Size, class P, class T, class R>
   bool bellman_ford_shortest_paths
-    (EdgeListGraph& g, Size N, 
+    (EdgeListGraph& g, Size N,
      const bgl_named_params<P, T, R>& params)
-  {                                
+  {
     return detail::bellman_dispatch
       (g, N,
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
@@ -218,16 +218,16 @@ namespace boost {
 
   template <class EdgeListGraph, class Size>
   bool bellman_ford_shortest_paths(EdgeListGraph& g, Size N)
-  {                                
+  {
     bgl_named_params<int,int> params(0);
     return bellman_ford_shortest_paths(g, N, params);
   }
 
   template <class VertexAndEdgeListGraph, class P, class T, class R>
   bool bellman_ford_shortest_paths
-    (VertexAndEdgeListGraph& g, 
+    (VertexAndEdgeListGraph& g,
      const bgl_named_params<P, T, R>& params)
-  {               
+  {
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<VertexAndEdgeListGraph> ));
     return detail::bellman_dispatch
       (g, num_vertices(g),

@@ -13,7 +13,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <iterator>
 
-namespace boost { 
+namespace boost {
 
 namespace graph {
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
@@ -25,13 +25,13 @@ namespace graph {
     typedef typename traits_type::directed_category directed_category;
     typedef typename traits_type::edge_parallel_category
       edge_parallel_category;
-    struct traversal_category 
+    struct traversal_category
       : public virtual vertex_list_graph_tag,
         public virtual edge_list_graph_tag { };
 
     typedef std::size_t vertices_size_type;
     typedef VertexIterator vertex_iterator;
-    typedef typename std::iterator_traits<VertexIterator>::value_type 
+    typedef typename std::iterator_traits<VertexIterator>::value_type
       vertex_descriptor;
 
     typedef EdgeIterator edge_iterator;
@@ -45,7 +45,7 @@ namespace graph {
     typedef void in_edge_iterator;
     typedef void degree_size_type;
 
-    static vertex_descriptor null_vertex() 
+    static vertex_descriptor null_vertex()
     { return traits_type::null_vertex(); }
 
     vertex_and_edge_range(const Graph& g,
@@ -53,16 +53,16 @@ namespace graph {
                           vertices_size_type n,
                           EdgeIterator first_e, EdgeIterator last_e,
                           edges_size_type m)
-      : g(&g), 
+      : g(&g),
         first_vertex(first_v), last_vertex(last_v), m_num_vertices(n),
         first_edge(first_e), last_edge(last_e), m_num_edges(m)
     {
     }
 
-    vertex_and_edge_range(const Graph& g, 
+    vertex_and_edge_range(const Graph& g,
                           VertexIterator first_v, VertexIterator last_v,
                           EdgeIterator first_e, EdgeIterator last_e)
-      : g(&g), 
+      : g(&g),
         first_vertex(first_v), last_vertex(last_v),
         first_edge(first_e), last_edge(last_e)
     {
@@ -87,7 +87,7 @@ namespace graph {
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
   inline typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
                     ::vertices_size_type
-  num_vertices(const vertex_and_edge_range<Graph, VertexIterator, 
+  num_vertices(const vertex_and_edge_range<Graph, VertexIterator,
                                            EdgeIterator>& g)
   { return g.m_num_vertices; }
 
@@ -99,7 +99,7 @@ namespace graph {
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
   inline typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
                     ::edges_size_type
-  num_edges(const vertex_and_edge_range<Graph, VertexIterator, 
+  num_edges(const vertex_and_edge_range<Graph, VertexIterator,
                                         EdgeIterator>& g)
   { return g.m_num_edges; }
 
@@ -108,7 +108,7 @@ namespace graph {
                     ::vertex_descriptor
   source(typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
                     ::edge_descriptor e,
-         const vertex_and_edge_range<Graph, VertexIterator, 
+         const vertex_and_edge_range<Graph, VertexIterator,
                                         EdgeIterator>& g)
   { return source(e, *g.g); }
 
@@ -117,7 +117,7 @@ namespace graph {
                     ::vertex_descriptor
   target(typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
                     ::edge_descriptor e,
-         const vertex_and_edge_range<Graph, VertexIterator, 
+         const vertex_and_edge_range<Graph, VertexIterator,
                                         EdgeIterator>& g)
   { return target(e, *g.g); }
 
@@ -126,7 +126,7 @@ namespace graph {
   make_vertex_and_edge_range(const Graph& g,
                              VertexIterator first_v, VertexIterator last_v,
                              EdgeIterator first_e, EdgeIterator last_e)
-  { 
+  {
     typedef vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
       result_type;
     return result_type(g, first_v, last_v, first_e, last_e);

@@ -103,13 +103,13 @@ class mutate_graph_impl : public mutate_graph
         catch (bad_lexical_cast)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("invalid value \"" + value + "\" for key " +
+              parse_error("invalid value \"" + value + "\" for key "
                           name + " of type " + value_type));
         }
         if (!type_found)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("unrecognized type \"" + value_type +
+              parse_error("unrecognized type \"" + value_type
                           "\" for key " + name));
         }
 
@@ -128,13 +128,13 @@ class mutate_graph_impl : public mutate_graph
         catch (bad_lexical_cast)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("invalid value \"" + value + "\" for key " +
+              parse_error("invalid value \"" + value + "\" for key "
                           name + " of type " + value_type));
         }
         if (!type_found)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("unrecognized type \"" + value_type +
+              parse_error("unrecognized type \"" + value_type
                           "\" for key " + name));
         }
 
@@ -153,13 +153,13 @@ class mutate_graph_impl : public mutate_graph
         catch (bad_lexical_cast)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("invalid value \"" + value + "\" for key " +
+              parse_error("invalid value \"" + value + "\" for key "
                           name + " of type " + value_type));
         }
         if (!type_found)
         {
             BOOST_THROW_EXCEPTION(
-              parse_error("unrecognized type \"" + value_type +
+              parse_error("unrecognized type \"" + value_type
                           "\" for key " + name));
         }
     }

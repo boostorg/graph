@@ -31,14 +31,14 @@ namespace boost {
   template <class Graph, class PropertyTag>
   class graph_property_iter_range {
     typedef typename property_map<Graph, PropertyTag>::type map_type;
-    typedef typename property_map<Graph, PropertyTag>::const_type 
+    typedef typename property_map<Graph, PropertyTag>::const_type
       const_map_type;
     typedef typename property_kind<PropertyTag>::type Kind;
     typedef typename mpl::if_c<is_same<Kind, vertex_property_tag>::value,
        typename graph_traits<Graph>::vertex_iterator,
        typename graph_traits<Graph>::edge_iterator>::type iter;
   public:
-    typedef typename property_map_iterator_generator<map_type, iter>::type 
+    typedef typename property_map_iterator_generator<map_type, iter>::type
       iterator;
     typedef typename property_map_iterator_generator<const_map_type, iter>
       ::type const_iterator;
@@ -50,7 +50,7 @@ namespace boost {
 
     template<class Graph,class Tag>
     typename graph_property_iter_range<Graph,Tag>::type
-    get_property_iter_range_kind(Graph& graph, const Tag& tag, 
+    get_property_iter_range_kind(Graph& graph, const Tag& tag,
                                  const vertex_property_tag& )
     {
       typedef typename graph_property_iter_range<Graph,Tag>::iterator iter;
@@ -60,7 +60,7 @@ namespace boost {
 
     template<class Graph,class Tag>
     typename graph_property_iter_range<Graph,Tag>::const_type
-    get_property_iter_range_kind(const Graph& graph, const Tag& tag, 
+    get_property_iter_range_kind(const Graph& graph, const Tag& tag,
                                  const vertex_property_tag& )
     {
       typedef typename graph_property_iter_range<Graph,Tag>
@@ -72,7 +72,7 @@ namespace boost {
 
     template<class Graph,class Tag>
     typename graph_property_iter_range<Graph,Tag>::type
-    get_property_iter_range_kind(Graph& graph, const Tag& tag, 
+    get_property_iter_range_kind(Graph& graph, const Tag& tag,
                                  const edge_property_tag& )
     {
       typedef typename graph_property_iter_range<Graph,Tag>::iterator iter;
@@ -82,7 +82,7 @@ namespace boost {
 
     template<class Graph,class Tag>
     typename graph_property_iter_range<Graph,Tag>::const_type
-    get_property_iter_range_kind(const Graph& graph, const Tag& tag, 
+    get_property_iter_range_kind(const Graph& graph, const Tag& tag,
                                  const edge_property_tag& )
     {
       typedef typename graph_property_iter_range<Graph,Tag>

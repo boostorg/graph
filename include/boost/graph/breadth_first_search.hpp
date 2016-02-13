@@ -388,7 +388,7 @@ namespace boost {
           boost::queue<typename boost::graph_traits<Graph>::vertex_descriptor> Q;
           boost::breadth_first_search(g,
                                       &sources[0],
-                                      &sources[1], 
+                                      &sources[1],
                                       boost::unwrap_ref(arg_pack[_buffer | boost::ref(Q)]),
                                       arg_pack[_visitor | make_bfs_visitor(null_visitor())],
                                       boost::detail::make_color_map_from_arg_pack(g, arg_pack));

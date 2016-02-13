@@ -18,18 +18,18 @@
 namespace boost {
 
   // Initalize distances and call depth first search
-  template <class VertexListGraph, class DijkstraVisitor, 
-            class DistanceMap, class WeightMap, class ColorMap, 
+  template <class VertexListGraph, class DijkstraVisitor,
+            class DistanceMap, class WeightMap, class ColorMap,
             class PredecessorMap,
-            class Compare, class Combine, 
+            class Compare, class Combine,
             class DistInf, class DistZero>
   inline void
   dag_shortest_paths
     (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
      DistanceMap distance, WeightMap weight, ColorMap color,
      PredecessorMap pred,
-     DijkstraVisitor vis, Compare compare, Combine combine, 
+     DijkstraVisitor vis, Compare compare, Combine combine,
      DistInf inf, DistZero zero)
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
@@ -60,14 +60,14 @@ namespace boost {
       typename graph_traits<VertexListGraph>::out_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = out_edges(u, g); e != e_end; ++e) {
         vis.discover_vertex(target(*e, g), g);
-        bool decreased = relax(*e, g, weight, pred, distance, 
+        bool decreased = relax(*e, g, weight, pred, distance,
                                combine, compare);
         if (decreased)
           vis.edge_relaxed(*e, g);
         else
           vis.edge_not_relaxed(*e, g);
       }
-      vis.finish_vertex(u, g);      
+      vis.finish_vertex(u, g);
     }
   }
 
@@ -76,40 +76,40 @@ namespace boost {
     // Defaults are the same as Dijkstra's algorithm
 
     // Handle Distance Compare, Combine, Inf and Zero defaults
-    template <class VertexListGraph, class DijkstraVisitor, 
-      class DistanceMap, class WeightMap, class ColorMap, 
+    template <class VertexListGraph, class DijkstraVisitor,
+      class DistanceMap, class WeightMap, class ColorMap,
       class IndexMap, class Params>
     inline void
     dag_sp_dispatch2
       (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, ColorMap color, IndexMap /*id*/,
        DijkstraVisitor vis, const Params& params)
     {
       typedef typename property_traits<DistanceMap>::value_type D;
       dummy_property_map p_map;
       D inf =
-        choose_param(get_param(params, distance_inf_t()), 
+        choose_param(get_param(params, distance_inf_t()),
                      (std::numeric_limits<D>::max)());
       dag_shortest_paths
-        (g, s, distance, weight, color, 
+        (g, s, distance, weight, color,
          choose_param(get_param(params, vertex_predecessor), p_map),
-         vis, 
+         vis,
          choose_param(get_param(params, distance_compare_t()), std::less<D>()),
          choose_param(get_param(params, distance_combine_t()), closed_plus<D>(inf)),
          inf,
-         choose_param(get_param(params, distance_zero_t()), 
+         choose_param(get_param(params, distance_zero_t()),
                       D()));
     }
 
     // Handle DistanceMap and ColorMap defaults
-    template <class VertexListGraph, class DijkstraVisitor, 
+    template <class VertexListGraph, class DijkstraVisitor,
               class DistanceMap, class WeightMap, class ColorMap,
               class IndexMap, class Params>
     inline void
     dag_sp_dispatch1
       (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+       typename graph_traits<VertexListGraph>::vertex_descriptor s,
        DistanceMap distance, WeightMap weight, ColorMap color, IndexMap id,
        DijkstraVisitor vis, const Params& params)
     {
@@ -121,19 +121,19 @@ namespace boost {
       std::vector<default_color_type> color_map(n);
 
       dag_sp_dispatch2
-        (g, s, 
-         choose_param(distance, 
+        (g, s,
+         choose_param(distance,
                       make_iterator_property_map(distance_map.begin(), id,
                                                  distance_map[0])),
-         weight, 
+         weight,
          choose_param(color,
-                      make_iterator_property_map(color_map.begin(), id, 
+                      make_iterator_property_map(color_map.begin(), id,
                                                  color_map[0])),
          id, vis, params);
     }
-    
-  } // namespace detail 
-  
+
+  } // namespace detail
+
   template <class VertexListGraph, class Param, class Tag, class Rest>
   inline void
   dag_shortest_paths
@@ -144,7 +144,7 @@ namespace boost {
     // assert that the graph is directed...
     null_visitor null_vis;
     detail::dag_sp_dispatch1
-      (g, s, 
+      (g, s,
        get_param(params, vertex_distance),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
        get_param(params, vertex_color),
@@ -153,7 +153,7 @@ namespace boost {
                     make_dijkstra_visitor(null_vis)),
        params);
   }
-  
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_DAG_SHORTEST_PATHS_HPP

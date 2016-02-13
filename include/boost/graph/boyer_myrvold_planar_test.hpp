@@ -23,55 +23,55 @@ namespace boost
 
   namespace boyer_myrvold_params
   {
-    
+
     BOOST_PARAMETER_KEYWORD(tag, graph)
     BOOST_PARAMETER_KEYWORD(tag, embedding)
     BOOST_PARAMETER_KEYWORD(tag, kuratowski_subgraph)
     BOOST_PARAMETER_KEYWORD(tag, vertex_index_map)
     BOOST_PARAMETER_KEYWORD(tag, edge_index_map)
-    
+
     typedef parameter::parameters< parameter::required<tag::graph>,
                                    tag::embedding,
                                    tag::kuratowski_subgraph,
                                    tag::vertex_index_map,
                                    tag::edge_index_map
                                    > boyer_myrvold_params_t;
-    
+
     namespace core
     {
-        
+
       template <typename ArgumentPack>
-      bool dispatched_boyer_myrvold(ArgumentPack const& args, 
-                                    mpl::true_, 
+      bool dispatched_boyer_myrvold(ArgumentPack const& args,
+                                    mpl::true_,
                                     mpl::true_
                                     )
       {
         //Dispatch for no planar embedding, no kuratowski subgraph isolation
 
         typedef typename remove_const
-                < 
+                <
                     typename remove_reference
                     < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
+                        < ArgumentPack, tag::graph>::type
+                    >::type
                 >::type graph_t;
 
         typedef typename parameter::binding
-          < ArgumentPack, 
+          < ArgumentPack,
             tag::vertex_index_map,
             typename property_map
-              < typename remove_reference<graph_t>::type, 
+              < typename remove_reference<graph_t>::type,
                 vertex_index_t>::const_type
           >::type vertex_index_map_t;
 
         boyer_myrvold_impl
-          <graph_t, 
+          <graph_t,
            vertex_index_map_t,
            graph::detail::no_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
+          planarity_tester(args[graph],
+                           args[vertex_index_map |
                                 get(vertex_index, args[graph])
                                 ]
                            );
@@ -80,36 +80,36 @@ namespace boost
       }
 
 
-    
+
       template <typename ArgumentPack>
-      bool dispatched_boyer_myrvold(ArgumentPack const& args, 
-                                    mpl::true_, 
+      bool dispatched_boyer_myrvold(ArgumentPack const& args,
+                                    mpl::true_,
                                     mpl::false_
                                     )
       {
         //Dispatch for no planar embedding, kuratowski subgraph isolation
         typedef typename remove_const
-                < 
+                <
                     typename remove_reference
                     < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
+                        < ArgumentPack, tag::graph>::type
+                    >::type
                 >::type graph_t;
-        
+
         typedef typename parameter::binding
-          < ArgumentPack, 
+          < ArgumentPack,
             tag::vertex_index_map,
             typename property_map<graph_t, vertex_index_t>::type
           >::type vertex_index_map_t;
-      
-        boyer_myrvold_impl 
-          <graph_t, 
+
+        boyer_myrvold_impl
+          <graph_t,
            vertex_index_map_t,
            graph::detail::store_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
+          planarity_tester(args[graph],
+                           args[vertex_index_map |
                                 get(vertex_index, args[graph])
                                 ]
                            );
@@ -121,37 +121,37 @@ namespace boost
             planarity_tester.extract_kuratowski_subgraph
               (args[kuratowski_subgraph],
                args[edge_index_map|get(edge_index, args[graph])]
-               );          
+               );
             return false;
           }
       }
 
 
 
-    
+
       template <typename ArgumentPack>
-      bool dispatched_boyer_myrvold(ArgumentPack const& args, 
-                                    mpl::false_, 
+      bool dispatched_boyer_myrvold(ArgumentPack const& args,
+                                    mpl::false_,
                                     mpl::true_
                                     )
       {
         //Dispatch for planar embedding, no kuratowski subgraph isolation
         typedef typename remove_const
-                < 
+                <
                     typename remove_reference
                     < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;        
-        
+                        < ArgumentPack, tag::graph>::type
+                    >::type
+                >::type graph_t;
+
         typedef typename parameter::binding
-          < ArgumentPack, 
+          < ArgumentPack,
           tag::vertex_index_map,
           typename property_map<graph_t, vertex_index_t>::type
           >::type  vertex_index_map_t;
 
         boyer_myrvold_impl
-          <graph_t, 
+          <graph_t,
            vertex_index_map_t,
            graph::detail::no_old_handles,
 #ifdef BOOST_GRAPH_PREFER_STD_LIB
@@ -160,8 +160,8 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
+          planarity_tester(args[graph],
+                           args[vertex_index_map |
                                 get(vertex_index, args[graph])
                                 ]
                            );
@@ -174,32 +174,32 @@ namespace boost
         else
           return false;
       }
-    
+
 
 
       template <typename ArgumentPack>
-      bool dispatched_boyer_myrvold(ArgumentPack const& args, 
-                                    mpl::false_, 
+      bool dispatched_boyer_myrvold(ArgumentPack const& args,
+                                    mpl::false_,
                                     mpl::false_
                                     )
       {
         //Dispatch for planar embedding, kuratowski subgraph isolation
         typedef typename remove_const
-                < 
+                <
                     typename remove_reference
                     < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;        
-        
+                        < ArgumentPack, tag::graph>::type
+                    >::type
+                >::type graph_t;
+
         typedef typename parameter::binding
-          < ArgumentPack, 
-          tag::vertex_index_map, 
+          < ArgumentPack,
+          tag::vertex_index_map,
           typename property_map<graph_t, vertex_index_t>::type
           >::type vertex_index_map_t;
-        
+
         boyer_myrvold_impl
-          <graph_t, 
+          <graph_t,
           vertex_index_map_t,
           graph::detail::store_old_handles,
 #ifdef BOOST_BGL_PREFER_STD_LIB
@@ -208,8 +208,8 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
+          planarity_tester(args[graph],
+                           args[vertex_index_map |
                                 get(vertex_index, args[graph])
                                 ]
                            );
@@ -222,11 +222,11 @@ namespace boost
         else
           {
             planarity_tester.extract_kuratowski_subgraph
-              (args[kuratowski_subgraph], 
+              (args[kuratowski_subgraph],
                args[edge_index_map | get(edge_index, args[graph])]
-               );          
+               );
             return false;
-          } 
+          }
       }
 
 
@@ -235,44 +235,44 @@ namespace boost
       template <typename ArgumentPack>
       bool boyer_myrvold_planarity_test(ArgumentPack const& args)
       {
-        
-        typedef typename parameter::binding 
-          < ArgumentPack, 
+
+        typedef typename parameter::binding
+          < ArgumentPack,
             tag::kuratowski_subgraph,
             const no_kuratowski_subgraph_isolation&
-          >::type 
+          >::type
           kuratowski_arg_t;
-       
-        typedef typename parameter::binding 
-          < ArgumentPack, 
+
+        typedef typename parameter::binding
+          < ArgumentPack,
             tag::embedding,
             const no_planar_embedding&
-          >::type 
+          >::type
           embedding_arg_t;
-      
+
          return dispatched_boyer_myrvold
-           (args, 
+           (args,
             boost::is_same
               <embedding_arg_t, const no_planar_embedding&>(),
             boost::is_same
-              <kuratowski_arg_t, const no_kuratowski_subgraph_isolation&>() 
+              <kuratowski_arg_t, const no_kuratowski_subgraph_isolation&>()
             );
       }
 
 
 
     } //namespace core
-    
+
   } //namespace boyer_myrvold_params
-  
-    
+
+
   template <typename A0>
   bool boyer_myrvold_planarity_test(A0 const& arg0)
   {
     return boyer_myrvold_params::core::boyer_myrvold_planarity_test
       (boyer_myrvold_params::boyer_myrvold_params_t()(arg0));
   }
-  
+
   template <typename A0, typename A1>
   //  bool boyer_myrvold_planarity_test(A0 const& arg0, A1 const& arg1)
   bool boyer_myrvold_planarity_test(A0 const& arg0, A1 const& arg1)
@@ -280,21 +280,21 @@ namespace boost
     return boyer_myrvold_params::core::boyer_myrvold_planarity_test
       (boyer_myrvold_params::boyer_myrvold_params_t()(arg0,arg1));
   }
-  
+
   template <typename A0, typename A1, typename A2>
-  bool boyer_myrvold_planarity_test(A0 const& arg0, 
-                                    A1 const& arg1, 
+  bool boyer_myrvold_planarity_test(A0 const& arg0,
+                                    A1 const& arg1,
                                     A2 const& arg2
                                     )
   {
     return boyer_myrvold_params::core::boyer_myrvold_planarity_test
       (boyer_myrvold_params::boyer_myrvold_params_t()(arg0,arg1,arg2));
   }
-    
+
   template <typename A0, typename A1, typename A2, typename A3>
   bool boyer_myrvold_planarity_test(A0 const& arg0,
-                                    A1 const& arg1, 
-                                    A2 const& arg2, 
+                                    A1 const& arg1,
+                                    A2 const& arg2,
                                     A3 const& arg3
                                     )
   {
@@ -303,10 +303,10 @@ namespace boost
   }
 
   template <typename A0, typename A1, typename A2, typename A3, typename A4>
-  bool boyer_myrvold_planarity_test(A0 const& arg0, 
-                                    A1 const& arg1, 
-                                    A2 const& arg2, 
-                                    A3 const& arg3, 
+  bool boyer_myrvold_planarity_test(A0 const& arg0,
+                                    A1 const& arg1,
+                                    A2 const& arg2,
+                                    A3 const& arg3,
                                     A4 const& arg4
                                     )
   {
@@ -315,7 +315,7 @@ namespace boost
        (arg0,arg1,arg2,arg3,arg4)
        );
   }
-    
+
 
 }
 

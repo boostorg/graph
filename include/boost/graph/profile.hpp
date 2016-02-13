@@ -26,7 +26,7 @@ namespace boost {
     for (boost::tie(i, end) = vertices(g); i != end; ++i){
       b += ith_bandwidth(*i, g, index) + 1;
     }
-    
+
     return b;
   }
 
@@ -36,8 +36,8 @@ namespace boost {
   {
     return profile(g, get(vertex_index, g));
   }
- 
-  
+
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_PROFILE_HPP

@@ -19,7 +19,7 @@
 // Thanks to Andreas Scherer for numerous suggestions and fixes!
 
 // This file adapts a Stanford GraphBase (SGB) Graph pointer into a
-// VertexListGraph. Note that a graph adaptor class is not needed, 
+// VertexListGraph. Note that a graph adaptor class is not needed,
 // SGB's Graph* is used as is. The VertexListGraph concept is fulfilled by
 // defining the appropriate non-member functions for Graph*.
 //
@@ -145,7 +145,7 @@ namespace boost {
 
   class sgb_out_edge_iterator
     : public boost::forward_iterator_helper<
-        sgb_out_edge_iterator, boost::sgb_edge, 
+        sgb_out_edge_iterator, boost::sgb_edge,
         std::ptrdiff_t, boost::sgb_edge*, boost::sgb_edge>
   {
     typedef sgb_out_edge_iterator self;
@@ -257,7 +257,7 @@ namespace boost {
     return sgb_vertex_id_map(g);
   }
 
-  // Vertex Name  
+  // Vertex Name
   class sgb_vertex_name_map
     : public boost::put_get_helper<char*, sgb_vertex_name_map>
   {
@@ -284,7 +284,7 @@ namespace boost {
   SGB_PROPERTY_TAG(vertex, x)
   SGB_PROPERTY_TAG(vertex, y)
   SGB_PROPERTY_TAG(vertex, z)
- 
+
   // Edge Property Tags
   SGB_PROPERTY_TAG(edge, a)
   SGB_PROPERTY_TAG(edge, b)
@@ -326,7 +326,7 @@ namespace boost {
     typedef Vertex* key_type;
     typedef Ref reference;
     reference operator[](Vertex* v) const {
-      return get_util_field(v, tag); 
+      return get_util_field(v, tag);
     }
   };
 
@@ -343,7 +343,7 @@ namespace boost {
     typedef Vertex* key_type;
     typedef Ref reference;
     reference operator[](const sgb_edge& e) const {
-      return get_util_field(e._arc, tag); 
+      return get_util_field(e._arc, tag);
     }
   };
 
@@ -360,12 +360,12 @@ namespace boost {
   }
 
   template <class Tag>
-  inline sgb_edge_util_map<Tag, const typename Tag::type&> 
+  inline sgb_edge_util_map<Tag, const typename Tag::type&>
   get_property_map(Tag, const sgb_graph_ptr& g, edge_property_tag) {
     return sgb_edge_util_map<Tag, const typename Tag::type&>();
   }
   template <class Tag>
-  inline sgb_edge_util_map<Tag, typename Tag::type&> 
+  inline sgb_edge_util_map<Tag, typename Tag::type&>
   get_property_map(Tag, sgb_graph_ptr& g, edge_property_tag) {
     return sgb_edge_util_map<Tag, typename Tag::type&>();
   }
@@ -381,22 +381,22 @@ namespace boost {
     typedef long value_type;
     typedef sgb_edge key_type;
     typedef Ref reference;
-    reference operator[](const sgb_edge& e) const { 
-      return e._arc->len; 
+    reference operator[](const sgb_edge& e) const {
+      return e._arc->len;
     }
   };
 
   inline sgb_edge_length_map<const long&>
-  get(edge_length_t, const sgb_graph_ptr&) { 
-    return sgb_edge_length_map<const long&>(); 
+  get(edge_length_t, const sgb_graph_ptr&) {
+    return sgb_edge_length_map<const long&>();
   }
   inline sgb_edge_length_map<const long&>
-  get(edge_length_t, const sgb_const_graph_ptr&) { 
-    return sgb_edge_length_map<const long&>(); 
+  get(edge_length_t, const sgb_const_graph_ptr&) {
+    return sgb_edge_length_map<const long&>();
   }
   inline sgb_edge_length_map<long&>
-  get(edge_length_t, sgb_graph_ptr&) { 
-    return sgb_edge_length_map<long&>(); 
+  get(edge_length_t, sgb_graph_ptr&) {
+    return sgb_edge_length_map<long&>();
   }
   inline long
   get(edge_length_t, const sgb_graph_ptr&, const sgb_edge& key) {

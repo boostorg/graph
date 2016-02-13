@@ -29,9 +29,9 @@ struct bc_clustering_threshold
 
   /// Terminate clustering when maximum absolute edge centrality is
   /// below the given threshold.
-  explicit bc_clustering_threshold(T threshold) 
+  explicit bc_clustering_threshold(T threshold)
     : threshold(threshold), dividend(1.0) {}
-  
+
   /**
    * Terminate clustering when the maximum edge centrality is below
    * the given threshold.
@@ -69,7 +69,7 @@ struct bc_clustering_threshold
 };
 
 /** Graph clustering based on edge betweenness centrality.
- * 
+ *
  * This algorithm implements graph clustering based on edge
  * betweenness centrality. It is an iterative algorithm, where in each
  * step it compute the edge betweenness centrality (via @ref
@@ -93,19 +93,19 @@ struct bc_clustering_threshold
  * terminates, it will contain the edge centralities for the
  * graph. The type of this property map must model the
  * ReadWritePropertyMap concept. Defaults to an @c
- * iterator_property_map whose value type is 
- * @c Done::centrality_type and using @c get(edge_index, g) for the 
+ * iterator_property_map whose value type is
+ * @c Done::centrality_type and using @c get(edge_index, g) for the
  * index map.
  *
  * @param vertex_index (IN) The property map that maps vertices to
  * indices in the range @c [0, num_vertices(g)). This type of this
  * property map must model the ReadablePropertyMap concept and its
- * value type must be an integral type. Defaults to 
+ * value type must be an integral type. Defaults to
  * @c get(vertex_index, g).
  */
 template<typename MutableGraph, typename Done, typename EdgeCentralityMap,
          typename VertexIndexMap>
-void 
+void
 betweenness_centrality_clustering(MutableGraph& g, Done done,
                                   EdgeCentralityMap edge_centrality,
                                   VertexIndexMap vertex_index)
@@ -120,12 +120,12 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
   if (has_no_edges(g)) return;
 
   // Function object that compares the centrality of edges
-  indirect_cmp<EdgeCentralityMap, std::less<centrality_type> > 
+  indirect_cmp<EdgeCentralityMap, std::less<centrality_type> >
     cmp(edge_centrality);
 
   bool is_done;
   do {
-    brandes_betweenness_centrality(g, 
+    brandes_betweenness_centrality(g,
                                    edge_centrality_map(edge_centrality)
                                    .vertex_index_map(vertex_index));
     std::pair<edge_iterator, edge_iterator> edges_iters = edges(g);
@@ -137,9 +137,9 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
 
 /**
  * \overload
- */ 
+ */
 template<typename MutableGraph, typename Done, typename EdgeCentralityMap>
-void 
+void
 betweenness_centrality_clustering(MutableGraph& g, Done done,
                                   EdgeCentralityMap edge_centrality)
 {
@@ -149,14 +149,14 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
 
 /**
  * \overload
- */ 
+ */
 template<typename MutableGraph, typename Done>
 void
 betweenness_centrality_clustering(MutableGraph& g, Done done)
 {
   typedef typename Done::centrality_type centrality_type;
   std::vector<centrality_type> edge_centrality(num_edges(g));
-  betweenness_centrality_clustering(g, done, 
+  betweenness_centrality_clustering(g, done,
     make_iterator_property_map(edge_centrality.begin(), get(edge_index, g)),
     get(vertex_index, g));
 }

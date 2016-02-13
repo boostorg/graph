@@ -33,15 +33,15 @@ public:
                     vertices_size_type> edge_type;
   enum incr_mode {edge, edge_weight};
 
-  dimacs_basic_reader( std::istream& in, bool want_weights = true ) : 
+  dimacs_basic_reader( std::istream& in, bool want_weights = true ) :
       inpt( in ), seen_edges( 0 ), want_weights(want_weights)
     {
     while( getline( inpt, buf ) && !buf.empty() && buf[0] == 'c' );
-    
+
     if( buf[0] != 'p' ) {
         boost::throw_exception(dimacs_exception());
     }
-    
+
     std::stringstream instr( buf );
     std::string junk;
 
@@ -51,7 +51,7 @@ public:
   }
 
   //for a past the end iterator
-  dimacs_basic_reader() : inpt( std::cin ), num_vertices( 0 ), 
+  dimacs_basic_reader() : inpt( std::cin ), num_vertices( 0 ),
                           num_edges( 0 ), seen_edges( 0 ), want_weights(false) {}
 
   edge_type edge_deref() {
@@ -87,7 +87,7 @@ public:
       }
 
       while( getline( inpt, buf ) && !buf.empty() && buf[0] == 'c' );
-      
+
       if( !inpt.eof() ) {
           int source, dest, weight;
           read_edge_line((char*) buf.c_str(), source, dest, weight);
@@ -95,7 +95,7 @@ public:
           seen_edges++;
           source--;
           dest--;
-        
+
           read_edges.push( edge_type( source, dest ) );
           if (want_weights) {
               read_edge_weights.push( weight );
@@ -105,7 +105,7 @@ public:
       BOOST_ASSERT( read_edge_weights.size() < 100 );
     }
 
-    // the 1000000 just happens to be about how many edges can be read in 
+    // the 1000000 just happens to be about how many edges can be read in
     // 10s
 //     if( !(seen_edges % 1000000) && !process_id( pg ) && mode == edge ) {
 //       std::cout << "read " << seen_edges << " edges" << std::endl;
@@ -124,7 +124,7 @@ public:
   inline vertices_size_type n_vertices() {
     return num_vertices;
   }
-  
+
   inline vertices_size_type processed_edges() {
     return seen_edges - read_edges.size();
   }
@@ -146,7 +146,7 @@ protected:
         fs = tmp;
         if ('e' == linebuf[0]) {
             while (*tmp != '\n' && *tmp != '\0') {
-                if (*tmp == ' ') { 
+                if (*tmp == ' ') {
                     *tmp = '\0';
                     ts = ++tmp;
                     break;
@@ -159,15 +159,15 @@ protected:
 
         } else if ('a' == linebuf[0]) {
             while (*tmp != '\n' && *tmp != '\0') {
-                if (*tmp == ' ') { 
+                if (*tmp == ' ') {
                     *tmp = '\0';
                     ts = ++tmp;
                     break;
                 }
                 tmp++;
-            } 
+            }
             while (*tmp != '\n' && *tmp != '\0') {
-                if (*tmp == ' ') { 
+                if (*tmp == ' ') {
                     *tmp = '\0';
                     ws = ++tmp;
                     break;
@@ -177,7 +177,7 @@ protected:
             while (*tmp != '\n' && *tmp != '\0') tmp++;
             *tmp = '\0';
             if (fs == NULL || ts == NULL || ws == NULL) return false;
-            from = atoi(fs); to = atoi(ts) ; 
+            from = atoi(fs); to = atoi(ts) ;
             if (want_weights) weight = atoi(ws); else weight = 0;
 
         } else {
@@ -225,7 +225,7 @@ public:
   }
 
   // don't expect this to do the right thing if you're not comparing against a
-  // general past-the-end-iterator made with the default constructor for 
+  // general past-the-end-iterator made with the default constructor for
   // dimacs_basic_reader
   inline bool operator==( dimacs_edge_iterator arg ) {
     if( reader.n_vertices() == 0 ) {
@@ -275,7 +275,7 @@ public:
   }
 
   // don't expect this to do the right thing if you're not comparing against a
-  // general past-the-end-iterator made with the default constructor for 
+  // general past-the-end-iterator made with the default constructor for
   // dimacs_basic_reader
   inline bool operator==( dimacs_edge_weight_iterator arg ) {
     if( reader.n_vertices() == 0 ) {

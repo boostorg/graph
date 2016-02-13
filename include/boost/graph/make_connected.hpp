@@ -62,7 +62,7 @@ namespace boost
     if (ci_prev == ci_end)
       return;
 
-    for(vec_of_vertices_itr_t ci = boost::next(ci_prev); 
+    for(vec_of_vertices_itr_t ci = boost::next(ci_prev);
         ci != ci_end;  ci_prev = ci, ++ci
         )
       {
@@ -94,6 +94,6 @@ namespace boost
 
 
 
-} // namespace boost 
+} // namespace boost
 
 #endif //__MAKE_CONNECTED_HPP__

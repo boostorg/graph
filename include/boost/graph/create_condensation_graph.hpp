@@ -15,10 +15,10 @@
 
 namespace boost {
 
-  template <typename Graph, typename ComponentLists, 
+  template <typename Graph, typename ComponentLists,
     typename ComponentNumberMap,
     typename CondensationGraph, typename EdgeMultiplicityMap>
-  void create_condensation_graph(const Graph& g, 
+  void create_condensation_graph(const Graph& g,
                                  const ComponentLists& components,
                                  ComponentNumberMap component_number,
                                  CondensationGraph& cg,
@@ -26,7 +26,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex;
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
-    typedef typename graph_traits<CondensationGraph>::vertex_descriptor 
+    typedef typename graph_traits<CondensationGraph>::vertex_descriptor
       cg_vertex;
     std::vector<cg_vertex> to_cg_vertex(components.size());
     for (size_type s = 0; s < components.size(); ++s)
@@ -66,15 +66,15 @@ namespace boost {
       }
     }
   }
-  
-  template <typename Graph, typename ComponentLists, 
+
+  template <typename Graph, typename ComponentLists,
     typename ComponentNumberMap, typename CondensationGraph>
-  void create_condensation_graph(const Graph& g, 
+  void create_condensation_graph(const Graph& g,
                                  const ComponentLists& components,
                                  ComponentNumberMap component_number,
                                  CondensationGraph& cg)
   {
-    create_condensation_graph(g, components, component_number, cg, 
+    create_condensation_graph(g, components, component_number, cg,
                               dummy_property_map());
   }
 

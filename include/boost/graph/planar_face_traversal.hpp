@@ -51,12 +51,12 @@ namespace boost
 
 
 
-  template<typename Graph, 
-           typename PlanarEmbedding, 
-           typename Visitor, 
+  template<typename Graph,
+           typename PlanarEmbedding,
+           typename Visitor,
            typename EdgeIndexMap>
-  void planar_face_traversal(const Graph& g, 
-                             PlanarEmbedding embedding, 
+  void planar_face_traversal(const Graph& g,
+                             PlanarEmbedding embedding,
                              Visitor& visitor, EdgeIndexMap em
                              )
   {
@@ -64,22 +64,22 @@ namespace boost
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
     typedef typename graph_traits<Graph>::edge_iterator edge_iterator_t;
-    typedef typename 
+    typedef typename
       property_traits<PlanarEmbedding>::value_type embedding_value_t;
     typedef typename embedding_value_t::const_iterator embedding_iterator_t;
 
-    typedef typename 
+    typedef typename
       std::vector< std::set<vertex_t> > distinguished_edge_storage_t;
-    typedef typename 
-      std::vector< std::map<vertex_t, edge_t> > 
+    typedef typename
+      std::vector< std::map<vertex_t, edge_t> >
       distinguished_edge_to_edge_storage_t;
 
-    typedef typename 
+    typedef typename
       boost::iterator_property_map
         <typename distinguished_edge_storage_t::iterator, EdgeIndexMap>
       distinguished_edge_map_t;
 
-    typedef typename 
+    typedef typename
       boost::iterator_property_map
         <typename distinguished_edge_to_edge_storage_t::iterator, EdgeIndexMap>
       distinguished_edge_to_edge_map_t;
@@ -112,11 +112,11 @@ namespace boost
             std::map<vertex_t, edge_t> m = get(next_edge, e);
             m[v] = boost::next(pi) == pi_end ? *pi_begin : *boost::next(pi);
             put(next_edge, e, m);
-          } 
+          }
       }
 
     // Take a copy of the edges in the graph here, since we want to accomodate
-    // face traversals that add edges to the graph (for triangulation, in 
+    // face traversals that add edges to the graph (for triangulation, in
     // particular) and don't want to use invalidated edge iterators.
     // Also, while iterating over all edges in the graph, we single out
     // any self-loops, which need some special treatment in the face traversal.
@@ -146,19 +146,19 @@ namespace boost
 
         typename std::vector<vertex_t>::iterator vi, vi_end;
         vi_end = vertices_in_edge.end();
-        
+
         //Iterate over both vertices in the current edge
         for(vi = vertices_in_edge.begin(); vi != vi_end; ++vi)
           {
 
             vertex_t v(*vi);
             std::set<vertex_t> e_visited = get(visited, e);
-            typename std::set<vertex_t>::iterator e_visited_found 
+            typename std::set<vertex_t>::iterator e_visited_found
               = e_visited.find(v);
-            
+
             if (e_visited_found == e_visited.end())
               visitor.begin_face();
-            
+
             while (e_visited.find(v) == e_visited.end())
               {
                 visitor.next_vertex(v);
@@ -169,10 +169,10 @@ namespace boost
                 e = get(next_edge, e)[v];
                 e_visited = get(visited, e);
               }
-            
+
             if (e_visited_found == e_visited.end())
               visitor.end_face();
-            
+
           }
 
       }
@@ -180,7 +180,7 @@ namespace boost
     // Iterate over all self-loops, visiting them once separately
     // (they've already been visited once, this visitation is for
     // the "inside" of the self-loop)
-    
+
     ei_end = self_loops.end();
     for(ei = self_loops.begin(); ei != ei_end; ++ei)
       {
@@ -197,8 +197,8 @@ namespace boost
 
 
   template<typename Graph, typename PlanarEmbedding, typename Visitor>
-  inline void planar_face_traversal(const Graph& g, 
-                                    PlanarEmbedding embedding, 
+  inline void planar_face_traversal(const Graph& g,
+                                    PlanarEmbedding embedding,
                                     Visitor& visitor
                                     )
   {
