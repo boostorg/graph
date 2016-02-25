@@ -132,7 +132,7 @@ namespace graph_detail {
         // Note that insertion always succeeds so we can add the vertex first
         // and then the mapping to the label.
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-        Vertex v = add_vertex(g);
+        Vertex v = add_vertex(p, g);
         c.insert(std::make_pair(l, v));
         return std::make_pair(v, true);
     }
