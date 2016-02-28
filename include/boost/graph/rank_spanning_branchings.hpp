@@ -829,7 +829,6 @@ namespace boost {
 
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap, Vertex> ));
       BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<WeightMap, Edge> ));
-      BOOST_CONCEPT_ASSERT(( ComparableConcept<weight_t> ));
 
       unordered_set<Edge> best_branching, empty_set;
 
@@ -983,12 +982,12 @@ namespace boost {
     template <class Graph, class BranchingProcessor, class IndexMap,
               class WeightMap, class Compare>
     void 
-    rank_spanning_branchings_dispatch( const Graph& g,
-                                       BranchingProcessor bp,
-                                       IndexMap id_map,
-                                       WeightMap w_map,
-                                       Compare compare
-                                     )
+    rank_spanning_branchings_dispatch2( const Graph& g,
+                                        BranchingProcessor bp,
+                                        IndexMap id_map,
+                                        WeightMap w_map,
+                                        Compare compare
+                                      )
     {
 
       typename graph_traits<Graph>::vertices_size_type n = num_vertices(g);
@@ -1017,6 +1016,59 @@ namespace boost {
 
     }
 
+    template <class Graph, class BranchingProcessor, class IndexMap,
+              class WeightMap, class Compare, typename P, typename T,
+              typename R>
+    void rank_spanning_branchings_dispatch1(
+      const Graph& g,
+      BranchingProcessor bp,
+      IndexMap id_map,
+      WeightMap w_map,
+      Compare compare,
+      const bgl_named_params<P, T, R>& params
+    )
+    {
+
+      detail::rank_spanning_branchings_dispatch2(
+        g,
+        bp,
+        id_map,
+        w_map,
+        compare
+      );
+
+    }
+ 
+    template <class Graph, class BranchingProcessor, class IndexMap,
+              class WeightMap, typename P, typename T, typename R>
+    void rank_spanning_branchings_dispatch1(
+      const Graph& g,
+      BranchingProcessor bp,
+      IndexMap id_map,
+      WeightMap w_map,
+      param_not_found,
+      const bgl_named_params<P, T, R>& params
+    )
+    {
+
+      typedef
+        typename
+        property_traits<
+          typename property_map<Graph, edge_weight_t>::const_type
+        >::value_type weight_t;
+ 
+      BOOST_CONCEPT_ASSERT(( ComparableConcept<weight_t> ));
+
+      detail::rank_spanning_branchings_dispatch2(
+        g,
+        bp,
+        id_map,
+        w_map,
+        std::less<weight_t>()
+      );
+
+    }
+ 
   } // namespace detail 
 
   template <class Graph, class BranchingProcessor, typename P, typename T,
@@ -1029,13 +1081,7 @@ namespace boost {
   )
   {
 
-    typedef
-      typename
-      property_traits<
-        typename property_map<Graph, edge_weight_t>::const_type
-      >::value_type weight_t;
-
-    detail::rank_spanning_branchings_dispatch(
+    detail::rank_spanning_branchings_dispatch1(
       g,
       bp,
       choose_param(
@@ -1044,9 +1090,8 @@ namespace boost {
       choose_param(
         get_param( params, edge_weight_t()), get( edge_weight, g )
       ),
-      choose_param(
-        get_param( params, distance_compare_t()), std::less<weight_t>()
-      )
+      get_param( params, distance_compare_t() ),
+      params
     );
  
   }

@@ -309,9 +309,11 @@ IN: <tt>const Graph&amp; g</tt>
 IN: <tt>weight_map(WeightMap w_map)</tt> 
 <blockquote>
 The weight or ``length'' of
-  each edge in the graph.  The <tt>WeightMap</tt> type must be a model
+  each edge in the graph.
+  The <tt>WeightMap</tt> type must be a model
   of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
-  Property Map</a> and its value type must be <a
+  Property Map</a>.  If no edge weight comparison function is supplied,
+  its value type must be <a
   href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
   Comparable</a>. The key type of this map needs to be the graph's
   edge descriptor type.<br>
