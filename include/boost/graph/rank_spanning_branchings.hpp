@@ -43,7 +43,7 @@ namespace boost {
 
     typedef graph_traits<BranchingGraph>::vertex_descriptor BranchingVertex;
 
-    template <class Edge, class WeightMap, class Compare>
+    template <typename Edge, typename WeightMap, typename Compare>
     struct EdgeNode
     {
       Edge                                                            edge;
@@ -61,8 +61,8 @@ namespace boost {
 
     // Insert edges from graph into heap, taking into account constraints.
 
-    template <class Graph, class Vertex, class Edge, class WeightMap,
-              class Compare>
+    template <typename Graph, typename Vertex, typename Edge,
+              typename WeightMap, typename Compare>
     bool
     insert_edges
     (
@@ -157,8 +157,8 @@ namespace boost {
 
     // Expand cycles.
 
-    template <class Graph, class Edge, class IndexMap,
-              class WeightMap, class Compare>
+    template <typename Graph, typename Edge, typename IndexMap,
+              typename WeightMap, typename Compare>
     void
     expand(
       const Graph& g,
@@ -205,8 +205,9 @@ namespace boost {
 
     // Camerini et al. BEST routine.
 
-    template <class Graph, class Edge, class IndexMap, class WeightMap,
-              class Rank, class Pred, class Compare>
+    template <typename Graph, typename Edge, typename IndexMap,
+              typename WeightMap, typename Rank, typename Pred,
+              typename Compare>
     void
     best_spanning_branching( const Graph& g, 
                              unordered_set<Edge>& branching,
@@ -420,7 +421,7 @@ namespace boost {
 	  m_pr[u] = td++;
 	}
 
-	template < typename Vertex, typename Graph >
+	template <typename Vertex, typename Graph>
 	void finish_vertex(const Vertex u, const Graph & g)
 	{
 	  m_po[u] = tf++;
@@ -453,8 +454,9 @@ namespace boost {
 
     // Camerini et al. NEXT routine.
 
-    template <class Graph, class Edge, class IndexMap, class WeightMap,
-              class Rank, class Pred, class Compare>
+    template <typename Graph, typename Edge, typename IndexMap,
+              typename WeightMap, typename Rank, typename Pred,
+              typename Compare>
     shared_ptr<
       std::pair<Edge, typename property_traits<WeightMap>::value_type>
     >
@@ -764,7 +766,7 @@ namespace boost {
 
     }
 
-    template<class Edge, class WeightMap, class Compare>
+    template<typename Edge, typename WeightMap, typename Compare>
     struct BranchingEntry
     {
       Edge                                                        edge;
@@ -788,7 +790,7 @@ namespace boost {
       { return compare( weight, rhs.weight ); }
     };
 
-    template<class WeightMap, class Edge>
+    template<typename WeightMap, typename Edge>
     typename property_traits<WeightMap>::value_type
     compute_branching_weight(
       WeightMap& w,
@@ -806,8 +808,9 @@ namespace boost {
        return weight;
     }
      
-    template <class Graph, class BranchingProcessor, class IndexMap,
-              class WeightMap, class Compare, class Rank, class Parent>
+    template <typename Graph, typename BranchingProcessor, typename IndexMap,
+              typename WeightMap, typename Compare, typename Rank,
+              typename Parent>
     void 
     rank_spanning_branchings_impl( const Graph& g,
 			           BranchingProcessor bp,
@@ -979,8 +982,8 @@ namespace boost {
 
     }
 
-    template <class Graph, class BranchingProcessor, class IndexMap,
-              class WeightMap, class Compare>
+    template <typename Graph, typename BranchingProcessor, typename IndexMap,
+              typename WeightMap, typename Compare>
     void 
     rank_spanning_branchings_dispatch2( const Graph& g,
                                         BranchingProcessor bp,
@@ -1016,14 +1019,11 @@ namespace boost {
 
     }
 
-    template <class Graph, class BranchingProcessor, class IndexMap,
-              class WeightMap, class Compare, typename P, typename T,
-              typename R>
+    template <typename Graph, typename BranchingProcessor, typename Compare,
+              typename P, typename T, typename R>
     void rank_spanning_branchings_dispatch1(
       const Graph& g,
       BranchingProcessor bp,
-      IndexMap id_map,
-      WeightMap w_map,
       Compare compare,
       const bgl_named_params<P, T, R>& params
     )
@@ -1032,20 +1032,22 @@ namespace boost {
       detail::rank_spanning_branchings_dispatch2(
         g,
         bp,
-        id_map,
-        w_map,
+        choose_param(
+          get_param( params, vertex_index_t()), get( vertex_index, g )
+        ),
+        choose_param(
+          get_param( params, edge_weight_t()), get( edge_weight, g )
+        ),
         compare
       );
 
     }
  
-    template <class Graph, class BranchingProcessor, class IndexMap,
-              class WeightMap, typename P, typename T, typename R>
+    template <typename Graph, typename BranchingProcessor, typename P,
+              typename T, typename R>
     void rank_spanning_branchings_dispatch1(
       const Graph& g,
       BranchingProcessor bp,
-      IndexMap id_map,
-      WeightMap w_map,
       param_not_found,
       const bgl_named_params<P, T, R>& params
     )
@@ -1062,8 +1064,12 @@ namespace boost {
       detail::rank_spanning_branchings_dispatch2(
         g,
         bp,
-        id_map,
-        w_map,
+        choose_param(
+          get_param( params, vertex_index_t()), get( vertex_index, g )
+        ),
+        choose_param(
+          get_param( params, edge_weight_t()), get( edge_weight, g )
+        ),
         std::less<weight_t>()
       );
 
@@ -1071,7 +1077,7 @@ namespace boost {
  
   } // namespace detail 
 
-  template <class Graph, class BranchingProcessor, typename P, typename T,
+  template <typename Graph, typename BranchingProcessor, typename P, typename T,
             typename R>
   inline void 
   rank_spanning_branchings(
@@ -1084,19 +1090,13 @@ namespace boost {
     detail::rank_spanning_branchings_dispatch1(
       g,
       bp,
-      choose_param(
-        get_param( params, vertex_index_t()), get( vertex_index, g )
-      ),
-      choose_param(
-        get_param( params, edge_weight_t()), get( edge_weight, g )
-      ),
       get_param( params, distance_compare_t() ),
       params
     );
  
   }
 
-  template <class Graph, class Function>
+  template <typename Graph, typename Function>
   inline void 
   rank_spanning_branchings( const Graph& g,
                             Function bp
