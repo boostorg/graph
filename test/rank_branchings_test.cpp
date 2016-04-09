@@ -7,9 +7,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-// This test first creates a complete graph with n vertices
-// Each arc is assigned a random integer or double weight
-// between -10 and 10.  A root vertex is added and arcs with zero weight
+// This test first creates a complete graph or multigraph with n vertices.
+// Each arc is assigned a random integer, double, or complex weight.
+// A root vertex is added and arcs with zero weight
 // are added from the root vertex to each of the other vertices.  The test
 // then constructs all potential branchings and discards those
 // that have indegree for any vertex greater than one or contain
@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <complex>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/pending/disjoint_sets.hpp>
@@ -41,12 +41,12 @@ using namespace boost;
 
 typedef random::mt19937 base_generator_type;
 
+template<typename T>
 struct my_compare
 {
-  template<class T>
-  bool operator()( const T& w1, const T& w2 ) const
+  bool operator()( const std::complex<T>& a, const std::complex<T>& b) const
   {
-    return w1 > w2;
+    return a.real() < b.real( );
   }
 };
 
@@ -401,6 +401,8 @@ void test_int_graph( base_generator_type& gen, size_t n, Compare comp )
     distance_compare( comp )
   );
 
+  // Check that number of branchings found is correct.
+
   assert(
     pow(
       static_cast<double>( n + 1 ),
@@ -411,6 +413,8 @@ void test_int_graph( base_generator_type& gen, size_t n, Compare comp )
   );
 
   assert( branching_heap.size() == rank_vector.size() );
+
+  // Compare branchings found by both methods.
 
   if( !compare_heap_and_vector( g, branching_heap, rank_vector ) )
   {
@@ -452,7 +456,11 @@ void test_real_graph( base_generator_type& gen, size_t n, Compare comp )
   {
     for( size_t j = 0; j < n; j++ )
     {
-      if( i != j ) add_edge( i, j, rvt(), g );
+      if( i != j )
+      {
+        add_edge( i, j, rvt(), g );
+        add_edge( i, j, rvt(), g );    // A parallel edge.
+      }
     }
     add_edge( n, i, 0, g );
   }
@@ -492,6 +500,101 @@ void test_real_graph( base_generator_type& gen, size_t n, Compare comp )
     vertex_index_map( get( vertex_index, g ) )
   );
 
+  // Check that number of branchings found is correct.  The formula
+  // accounts for the parallel edges.
+
+  assert(
+    pow(
+      static_cast<double>( 2*n + 1 ),
+      static_cast<double>( n - 1 )
+    )
+    ==
+    rank_vector.size()
+  );
+
+  assert( branchings.size() == rank_vector.size() );
+
+  // Compare branchings found by both methods.
+
+  if( !compare_heap_and_vector( g, branching_heap, rank_vector ) )
+  {
+    exit( EXIT_FAILURE );
+  }
+
+}
+
+template<class Compare>
+void test_complex_graph( base_generator_type& gen, size_t n, Compare comp )
+{
+
+  typedef adjacency_list < vecS, vecS, directedS,
+     no_property, property < edge_weight_t, std::complex<double> > > Graph;
+  typedef graph_traits <Graph>::edge_descriptor Edge;
+
+  std::vector<size_t> indices;
+  std::vector<size_t> combination;
+  std::vector<Edge> v_edges;
+  std::vector<Branching<Graph,Edge> > branchings, rank_vector;
+
+  typedef
+    heap::fibonacci_heap<
+      Branching<Graph,Edge>,
+      heap::compare<compare_branchings<Graph,Edge,Compare> >
+    > branching_heap_t;
+
+  branching_heap_t branching_heap( comp );
+
+  boost::random::uniform_real_distribution<> tdist( -10, 10 );
+
+  boost::variate_generator<
+    base_generator_type&, boost::random::uniform_real_distribution<>
+  > rvt( gen, tdist );
+
+  Graph g;
+
+  for( size_t i = 0; i < n; i++ )
+  {
+    for( size_t j = 0; j < n; j++ )
+    {
+      if( i != j )
+      {
+        add_edge( i, j, std::complex<double>( rvt(), rvt() ), g );
+      }
+    }
+    add_edge( n, i, std::complex<double>( 0, 0 ), g );
+  }
+
+  BGL_FORALL_EDGES( e, g, Graph )
+  {
+    v_edges.push_back( e );
+  }
+
+  for( size_t i = 0; i < v_edges.size(); ++i )
+  {
+    indices.push_back(i);
+  }
+
+  loop(
+    0,
+    num_vertices(g) - 1,
+    g,
+    v_edges,
+    indices,
+    combination,
+    branchings
+  );
+
+  for( size_t i = 0; i < branchings.size(); i++ )
+  {
+    branching_heap.push( branchings[i] );
+  }
+
+  rank_spanning_branchings(
+    g,
+    set_rank_vector<Graph, Edge>( g, rank_vector ),
+    distance_compare( comp )
+  );
+
   // Check that number of branchings found is correct.
 
   assert(
@@ -504,6 +607,8 @@ void test_real_graph( base_generator_type& gen, size_t n, Compare comp )
   );
 
   assert( branchings.size() == rank_vector.size() );
+
+  // Compare branchings found by both methods.
 
   if( !compare_heap_and_vector( g, branching_heap, rank_vector ) )
   {
@@ -530,9 +635,14 @@ int main( int argc, char **argv )
 
   for( size_t i = 0; i < lexical_cast<size_t>( argv[2] ); i++ )
   {
-    test_int_graph( gen, lexical_cast<size_t>( argv[1] ), std::greater<int>() );
+    test_int_graph(
+      gen, lexical_cast<size_t>( argv[1] ) + 1, std::greater<int>()
+    );
     test_real_graph(
       gen, lexical_cast<size_t>( argv[1] ), std::less<double>()
+    );
+    test_complex_graph(
+      gen, lexical_cast<size_t>( argv[1] ) + 1, my_compare<double>()
     );
   }
 
