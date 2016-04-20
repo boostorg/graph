@@ -56,8 +56,9 @@ main()
 {
   typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::directedS,
     boost::no_property, boost::property < boost::edge_weight_t, int > > Graph;
+#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   typedef boost::graph_traits < Graph >::edge_descriptor Edge;
-  typedef boost::graph_traits < Graph >::vertex_descriptor Vertex;
+#endif
   typedef std::pair<int, int> E;
 
   const int num_nodes = 4;
