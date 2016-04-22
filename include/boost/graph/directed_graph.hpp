@@ -172,7 +172,7 @@ public:
     { return m_num_edges; }
 
 private:
-    // A helper fucntion for managing edge index attributes.
+    // A helper function for managing edge index attributes.
     std::pair<edge_descriptor, bool> const&
     make_index(std::pair<edge_descriptor, bool> const& x)
     {
