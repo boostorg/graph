@@ -15,7 +15,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 namespace boost {
-  
+
   namespace detail {
     // this should be somewhere else in boost...
     template <class U, class V> struct _project2nd {
@@ -43,14 +43,14 @@ namespace boost {
     }
   } // namespace detail
 
-  template <class VertexListGraph, class DijkstraVisitor, 
+  template <class VertexListGraph, class DijkstraVisitor,
             class PredecessorMap, class DistanceMap,
             class WeightMap, class IndexMap>
   inline void
   prim_minimum_spanning_tree
     (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
-     PredecessorMap predecessor, DistanceMap distance, WeightMap weight, 
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
+     PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      DijkstraVisitor vis)
   {
@@ -70,8 +70,8 @@ namespace boost {
      const bgl_named_params<P,T,R>& params)
   {
     detail::prim_mst_impl
-      (g, 
-       choose_param(get_param(params, root_vertex_t()), *vertices(g).first), 
+      (g,
+       choose_param(get_param(params, root_vertex_t()), *vertices(g).first),
        params.predecessor_map(p_map),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }

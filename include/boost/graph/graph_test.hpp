@@ -21,14 +21,14 @@
 #include <boost/range/algorithm/find_if.hpp>
 
 
-// UNDER CONSTRUCTION 
+// UNDER CONSTRUCTION
 
 namespace boost {
 
   template <typename Graph>
   struct graph_test
   {
-  
+
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
@@ -52,9 +52,9 @@ namespace boost {
       edge_t e;
     };
     struct ignore_edges {
-      ignore_edges(vertex_t s, vertex_t t, const Graph& g) 
+      ignore_edges(vertex_t s, vertex_t t, const Graph& g)
         : s(s), t(t), g(g) { }
-      bool operator()(edge_t x) const { 
+      bool operator()(edge_t x) const {
         return !(source(x, g) == s && target(x, g) == t);
       }
       vertex_t s; vertex_t t; const Graph& g;
@@ -79,7 +79,7 @@ namespace boost {
         for (edge_iter e = edge_set.begin(); e != edge_set.end(); ++e)
           if (e->first == u)
             adj.push_back(e->second);
-        
+
         std::pair<out_edge_iter, out_edge_iter> p = out_edges(u, g);
         BOOST_CHECK(out_degree(u, g) == adj.size());
         BOOST_CHECK(deg_size_t(std::distance(p.first, p.second))
@@ -145,7 +145,7 @@ namespace boost {
           BOOST_CHECK(container_contains(adj, v) == true);
         }
       }
-    }      
+    }
 
     void test_vertex_list_graph
       (const std::vector<vertex_t>& vertex_set, const Graph& g)
@@ -162,8 +162,8 @@ namespace boost {
     }
 
     void test_edge_list_graph
-      (const std::vector<vertex_t>& vertex_set, 
-       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set, 
+      (const std::vector<vertex_t>& vertex_set,
+       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set,
        const Graph& g)
     {
       typedef typename graph_traits<Graph>::edge_iterator e_iter;
@@ -180,8 +180,8 @@ namespace boost {
     }
 
     void test_adjacency_matrix
-      (const std::vector<vertex_t>& vertex_set, 
-       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set, 
+      (const std::vector<vertex_t>& vertex_set,
+       const std::vector< std::pair<vertex_t, vertex_t> >& edge_set,
        const Graph& g)
     {
       std::pair<edge_t, bool> p;
@@ -198,7 +198,7 @@ namespace boost {
         for (k = vertex_set.begin(); k != vertex_set.end(); ++k) {
           p = edge(*j, *k, g);
           if (p.second == true)
-            BOOST_CHECK(find_if(edge_set, 
+            BOOST_CHECK(find_if(edge_set,
               connects(source(p.first, g), target(p.first, g), g)) != boost::end(edge_set));
         }
     }
@@ -216,7 +216,7 @@ namespace boost {
       BOOST_CHECK((verify_isomorphism(g, cpy, iso_map)));
 
       vertex_t v = add_vertex(g);
-      
+
       BOOST_CHECK(num_vertices(g) == num_vertices(cpy) + 1);
 
       BOOST_CHECK(out_degree(v, g) == 0);
@@ -226,7 +226,7 @@ namespace boost {
                   (make_filtered_graph(g, keep_all(), ignore_vertex(v)), cpy,
                    iso_map)));
     }
-    
+
     void test_add_edge(vertex_t u, vertex_t v, Graph& g)
     {
       Graph cpy;
@@ -235,7 +235,7 @@ namespace boost {
       copy_graph(g, cpy, orig_to_copy(iso_map));
 
       bool parallel_edge_exists = container_contains(adjacent_vertices(u, g), v);
-      
+
       std::pair<edge_t, bool> p = add_edge(u, v, g);
       edge_t e = p.first;
       bool added = p.second;
@@ -250,9 +250,9 @@ namespace boost {
 
       if (p.second == true) { // edge added
         BOOST_CHECK(num_edges(g) == num_edges(cpy) + 1);
-        
+
         BOOST_CHECK(container_contains(out_edges(u, g), e) == true);
-        
+
         BOOST_CHECK((verify_isomorphism
                     (make_filtered_graph(g, ignore_edge(e)), cpy, iso_map)));
       }
@@ -278,7 +278,7 @@ namespace boost {
       deg_size_t occurances = count(adjacent_vertices(u, g), v);
 
       remove_edge(u, v, g);
-      
+
       BOOST_CHECK(num_edges(g) + occurances == num_edges(cpy));
       BOOST_CHECK((verify_isomorphism
                   (g, make_filtered_graph(cpy, ignore_edges(u,v,cpy)),
@@ -294,7 +294,7 @@ namespace boost {
 
       vertex_t u = source(e, g), v = target(e, g);
       deg_size_t occurances = count(adjacent_vertices(u, g), v);
-      
+
       remove_edge(e, g);
 
       BOOST_CHECK(num_edges(g) + 1 == num_edges(cpy));
@@ -331,14 +331,14 @@ namespace boost {
       const_Map pmap = get(tag, g);
       typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
 
-  for (typename boost::graph_traits<Graph>::vertex_iterator 
+  for (typename boost::graph_traits<Graph>::vertex_iterator
            bgl_first_9 = vertices(g).first, bgl_last_9 = vertices(g).second;
        bgl_first_9 != bgl_last_9; bgl_first_9 = bgl_last_9)
     for (typename boost::graph_traits<Graph>::vertex_descriptor v;
          bgl_first_9 != bgl_last_9 ? (v = *bgl_first_9, true) : false;
          ++bgl_first_9) {
       //BGL_FORALL_VERTICES_T(v, g, Graph) {
-        typename property_traits<const_Map>::value_type 
+        typename property_traits<const_Map>::value_type
           pval1 = get(pmap, v), pval2 = get(tag, g, v);
         BOOST_CHECK(pval1 == pval2);
         BOOST_CHECK(pval1 == *i++);
@@ -352,7 +352,7 @@ namespace boost {
       typedef typename property_map<Graph, PropertyTag>::type PMap;
       PMap pmap = get(tag, g);
       typename std::vector<PropVal>::const_iterator i = vertex_prop.begin();
-  for (typename boost::graph_traits<Graph>::vertex_iterator 
+  for (typename boost::graph_traits<Graph>::vertex_iterator
            bgl_first_9 = vertices(g).first, bgl_last_9 = vertices(g).second;
        bgl_first_9 != bgl_last_9; bgl_first_9 = bgl_last_9)
     for (typename boost::graph_traits<Graph>::vertex_descriptor v;
@@ -365,15 +365,15 @@ namespace boost {
 
       BGL_FORALL_VERTICES_T(v, g, Graph)
         put(pmap, v, vertex_prop[0]);
-      
+
       typename std::vector<PropVal>::const_iterator j = vertex_prop.begin();
       BGL_FORALL_VERTICES_T(v, g, Graph)
         put(tag, g, v, *j++);
-      
-      test_readable_vertex_property_graph(vertex_prop, tag, g);      
+
+      test_readable_vertex_property_graph(vertex_prop, tag, g);
     }
-    
-    
+
+
   };
 
 

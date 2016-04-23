@@ -44,7 +44,7 @@ namespace detail
 
     {
         BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<Graph> ));
-        return (lookup_edge(u, v, g).second ? 1 : 0) +
+        return (lookup_edge(u, v, g).second ? 1 : 0)
                 (lookup_edge(v, u, g).second ? 1 : 0);
     }
 

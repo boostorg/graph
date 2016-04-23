@@ -247,7 +247,7 @@ namespace boost {
   struct property_put
   {
     typedef EventTag event_filter;
-    
+
     property_put (PropertyMap property_map,
                   typename property_traits <PropertyMap>::value_type value) :
       property_map_ (property_map), value_ (value)
@@ -266,8 +266,8 @@ namespace boost {
 
   /**
    * Creates a property_put functor which just sets a given value to a vertex or edge.
-   * 
-   * @param property_map Given writeable property map 
+   *
+   * @param property_map Given writeable property map
    * @param value Fixed value of the map
    * @param tag Event Filter
    * @return The functor.

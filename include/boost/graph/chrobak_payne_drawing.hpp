@@ -23,8 +23,8 @@ namespace boost
   namespace graph { namespace detail
   {
 
-    template<typename Graph, 
-             typename VertexToVertexMap, 
+    template<typename Graph,
+             typename VertexToVertexMap,
              typename VertexTo1DCoordMap>
     void accumulate_offsets(typename graph_traits<Graph>::vertex_descriptor v,
                             std::size_t offset,
@@ -58,13 +58,13 @@ namespace boost
 
 
 
-  template<typename Graph, 
-           typename PlanarEmbedding, 
-           typename ForwardIterator, 
+  template<typename Graph,
+           typename PlanarEmbedding,
+           typename ForwardIterator,
            typename GridPositionMap,
            typename VertexIndexMap>
-  void chrobak_payne_straight_line_drawing(const Graph& g, 
-                                           PlanarEmbedding embedding, 
+  void chrobak_payne_straight_line_drawing(const Graph& g,
+                                           PlanarEmbedding embedding,
                                            ForwardIterator ordering_begin,
                                            ForwardIterator ordering_end,
                                            GridPositionMap drawing,
@@ -74,26 +74,26 @@ namespace boost
 
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
-    typedef typename PlanarEmbedding::value_type::const_iterator 
+    typedef typename PlanarEmbedding::value_type::const_iterator
       edge_permutation_iterator_t;
     typedef typename graph_traits<Graph>::vertices_size_type v_size_t;
     typedef std::vector<vertex_t> vertex_vector_t;
     typedef std::vector<v_size_t> vsize_vector_t;
     typedef std::vector<bool> bool_vector_t;
     typedef boost::iterator_property_map
-      <typename vertex_vector_t::iterator, VertexIndexMap> 
+      <typename vertex_vector_t::iterator, VertexIndexMap>
       vertex_to_vertex_map_t;
     typedef boost::iterator_property_map
-      <typename vsize_vector_t::iterator, VertexIndexMap> 
+      <typename vsize_vector_t::iterator, VertexIndexMap>
       vertex_to_vsize_map_t;
     typedef boost::iterator_property_map
-      <typename bool_vector_t::iterator, VertexIndexMap> 
+      <typename bool_vector_t::iterator, VertexIndexMap>
       vertex_to_bool_map_t;
 
-    vertex_vector_t left_vector(num_vertices(g), 
+    vertex_vector_t left_vector(num_vertices(g),
                                 graph_traits<Graph>::null_vertex()
                                 );
-    vertex_vector_t right_vector(num_vertices(g), 
+    vertex_vector_t right_vector(num_vertices(g),
                                  graph_traits<Graph>::null_vertex()
                                  );
     vsize_vector_t seen_as_right_vector(num_vertices(g), 0);
@@ -120,9 +120,9 @@ namespace boost
     vertex_t v2 = *itr; ++itr;
     vertex_t v3 = *itr; ++itr;
 
-    delta_x[v2] = 1; 
+    delta_x[v2] = 1;
     delta_x[v3] = 1;
-    
+
     y[v1] = 0;
     y[v2] = 0;
     y[v3] = 1;
@@ -136,11 +136,11 @@ namespace boost
       {
         vertex_t v = *itr;
 
-        // First, find the leftmost and rightmost neighbor of v on the outer 
-        // cycle of the embedding. 
-        // Note: since we're moving clockwise through the edges adjacent to v, 
+        // First, find the leftmost and rightmost neighbor of v on the outer
+        // cycle of the embedding.
+        // Note: since we're moving clockwise through the edges adjacent to v,
         // we're actually moving from right to left among v's neighbors on the
-        // outer face (since v will be installed above them all) looking for 
+        // outer face (since v will be installed above them all) looking for
         // the leftmost and rightmost installed neigbhors
 
         vertex_t leftmost = graph_traits<Graph>::null_vertex();
@@ -153,9 +153,9 @@ namespace boost
         pi_end = embedding[v].end();
         for(pi = embedding[v].begin(); pi != pi_end; ++pi)
           {
-            vertex_t curr_vertex = source(*pi,g) == v ? 
+            vertex_t curr_vertex = source(*pi,g) == v ?
               target(*pi,g) : source(*pi,g);
-            
+
             // Skip any self-loops or parallel edges
             if (curr_vertex == v || curr_vertex == prev_vertex)
                 continue;
@@ -178,7 +178,7 @@ namespace boost
         vi_end = installed_neighbors.end();
         for(vi = installed_neighbors.begin(); vi != vi_end; ++vi)
           {
-            if (right[*vi] == graph_traits<Graph>::null_vertex() || 
+            if (right[*vi] == graph_traits<Graph>::null_vertex() ||
                 seen[right[*vi]] != timestamp
                 )
               rightmost = *vi;
@@ -195,7 +195,7 @@ namespace boost
         //adjust offsets
         std::size_t delta_p_q = 0;
         vertex_t stopping_vertex = right[rightmost];
-        for(vertex_t temp = right[leftmost]; temp != stopping_vertex; 
+        for(vertex_t temp = right[leftmost]; temp != stopping_vertex;
             temp = right[temp]
             )
           {
@@ -205,7 +205,7 @@ namespace boost
         delta_x[v] = ((y[rightmost] + delta_p_q) - y[leftmost])/2;
         y[v] = y[leftmost] + delta_x[v];
         delta_x[rightmost] = delta_p_q - delta_x[v];
-        
+
         bool leftmost_and_rightmost_adjacent = right[leftmost] == rightmost;
         if (!leftmost_and_rightmost_adjacent)
           delta_x[right[leftmost]] -= delta_x[v];
@@ -215,7 +215,7 @@ namespace boost
           {
             left[v] = right[leftmost];
             vertex_t next_to_rightmost;
-            for(vertex_t temp = leftmost; temp != rightmost; 
+            for(vertex_t temp = leftmost; temp != rightmost;
                 temp = right[temp]
                 )
               {
@@ -251,28 +251,28 @@ namespace boost
 
 
 
-  template<typename Graph, 
-           typename PlanarEmbedding, 
-           typename ForwardIterator, 
+  template<typename Graph,
+           typename PlanarEmbedding,
+           typename ForwardIterator,
            typename GridPositionMap>
-  inline void chrobak_payne_straight_line_drawing(const Graph& g, 
-                                                  PlanarEmbedding embedding, 
+  inline void chrobak_payne_straight_line_drawing(const Graph& g,
+                                                  PlanarEmbedding embedding,
                                                   ForwardIterator ord_begin,
                                                   ForwardIterator ord_end,
                                                   GridPositionMap drawing
                                                   )
   {
-    chrobak_payne_straight_line_drawing(g, 
-                                        embedding, 
-                                        ord_begin, 
-                                        ord_end, 
-                                        drawing, 
+    chrobak_payne_straight_line_drawing(g,
+                                        embedding,
+                                        ord_begin,
+                                        ord_end,
+                                        drawing,
                                         get(vertex_index,g)
                                         );
   }
 
 
-  
+
 
 } // namespace boost
 

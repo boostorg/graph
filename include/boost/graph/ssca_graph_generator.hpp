@@ -30,7 +30,7 @@ namespace boost {
   class ssca_iterator
   {
     typedef typename graph_traits<Graph>::directed_category directed_category;
-    typedef typename graph_traits<Graph>::vertices_size_type 
+    typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
 
   public:
@@ -45,21 +45,21 @@ namespace boost {
       : gen(), verticesRemaining(0) { }
 
     // Initialize for edge generation
-    ssca_iterator(RandomGenerator& gen, vertices_size_type totVertices, 
-                  vertices_size_type maxCliqueSize, double probUnidirectional, 
-                  int maxParallelEdges, double probIntercliqueEdges) 
-      : gen(&gen), totVertices(totVertices), maxCliqueSize(maxCliqueSize), 
+    ssca_iterator(RandomGenerator& gen, vertices_size_type totVertices,
+                  vertices_size_type maxCliqueSize, double probUnidirectional,
+                  int maxParallelEdges, double probIntercliqueEdges)
+      : gen(&gen), totVertices(totVertices), maxCliqueSize(maxCliqueSize),
         probUnidirectional(probUnidirectional), maxParallelEdges(maxParallelEdges),
-        probIntercliqueEdges(probIntercliqueEdges), currentClique(0), 
+        probIntercliqueEdges(probIntercliqueEdges), currentClique(0),
         verticesRemaining(totVertices)
-    { 
+    {
       cliqueNum = std::vector<int>(totVertices, -1);
       current = std::make_pair(0,0);
     }
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     ssca_iterator& operator++()
     {
       BOOST_USING_STD_MIN();
@@ -81,7 +81,7 @@ namespace boost {
             verticesRemaining--;
           }
         }  // Nick: This is inefficient when only a few vertices remain...
-           //       I should probably just select the remaining vertices 
+           //       I should probably just select the remaining vertices
            //       in order when only a certain fraction remain.
 
         typename std::vector<vertices_size_type>::iterator first, second;
@@ -97,7 +97,7 @@ namespace boost {
               for (int i = 0; i < edges; ++i)
                 values.push(std::make_pair(*first, *second));
             }
-              
+
             if (d & BACKWARD) {
               edges = num_parallel_edges(*gen);
               for (int i = 0; i < edges; ++i)
@@ -121,7 +121,7 @@ namespace boost {
         }
 
         currentClique++;
-      } 
+      }
 
       if (!values.empty()) { // If we're not done return a value
         current = values.front();

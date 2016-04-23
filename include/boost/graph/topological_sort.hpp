@@ -18,7 +18,7 @@
 #include <boost/graph/exception.hpp>
 #include <boost/throw_exception.hpp>
 
-namespace boost { 
+namespace boost {
 
 
   // Topological sort visitor
@@ -36,13 +36,13 @@ namespace boost {
   {
     topo_sort_visitor(OutputIterator _iter)
       : m_iter(_iter) { }
-    
+
     template <typename Edge, typename Graph>
     void back_edge(const Edge&, Graph&) { BOOST_THROW_EXCEPTION(not_a_dag()); }
-    
-    template <typename Vertex, typename Graph> 
+
+    template <typename Vertex, typename Graph>
     void finish_vertex(const Vertex& u, Graph&) { *m_iter++ = u; }
-    
+
     OutputIterator m_iter;
   };
 
@@ -68,7 +68,7 @@ namespace boost {
   template <typename VertexListGraph, typename OutputIterator>
   void topological_sort(VertexListGraph& g, OutputIterator result)
   {
-    topological_sort(g, result, 
+    topological_sort(g, result,
                      bgl_named_params<int, buffer_param_t>(0)); // bogus
   }
 

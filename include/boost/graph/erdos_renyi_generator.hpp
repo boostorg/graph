@@ -31,7 +31,7 @@ namespace boost {
                std::pair<typename graph_traits<Graph>::vertices_size_type,
                          typename graph_traits<Graph>::vertices_size_type>,
                std::input_iterator_tag,
-               const 
+               const
                  std::pair<typename graph_traits<Graph>::vertices_size_type,
                            typename graph_traits<Graph>::vertices_size_type>&>
   {
@@ -97,7 +97,7 @@ namespace boost {
                std::pair<typename graph_traits<Graph>::vertices_size_type,
                          typename graph_traits<Graph>::vertices_size_type>,
                std::input_iterator_tag,
-               const 
+               const
                  std::pair<typename graph_traits<Graph>::vertices_size_type,
                            typename graph_traits<Graph>::vertices_size_type>&>
   {
@@ -160,7 +160,7 @@ namespace boost {
       while (src != n) {
         vertices_size_type increment = rand_vertex(*gen);
         size_t tgt_index_limit =
-                 (is_undirected ? src + 1 : n) +
+                 (is_undirected ? src + 1 : n)
                  (allow_self_loops ? 0 : -1);
         if (tgt_index + increment >= tgt_index_limit) {
           // Overflowed this source; go to the next one and try again.
@@ -173,7 +173,7 @@ namespace boost {
           tgt_index += increment;
           current.first = src;
           current.second =
-            tgt_index +
+            tgt_index
             (!allow_self_loops && !is_undirected && tgt_index >= src ? 1 : 0);
           break;
         }

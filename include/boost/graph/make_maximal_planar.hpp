@@ -34,24 +34,24 @@ namespace boost
     typedef typename graph_traits<Graph>::degree_size_type degree_size_t;
     typedef typename graph_traits<Graph>::edge_iterator edge_iterator_t;
     typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
-    typedef typename graph_traits<Graph>::adjacency_iterator 
+    typedef typename graph_traits<Graph>::adjacency_iterator
       adjacency_iterator_t;
     typedef typename std::vector<vertex_t> vertex_vector_t;
     typedef typename std::vector<v_size_t> v_size_vector_t;
     typedef typename std::vector<degree_size_t> degree_size_vector_t;
     typedef iterator_property_map
-      < typename v_size_vector_t::iterator, VertexIndexMap > 
+      < typename v_size_vector_t::iterator, VertexIndexMap >
       vertex_to_v_size_map_t;
     typedef iterator_property_map
-      < typename degree_size_vector_t::iterator, VertexIndexMap > 
+      < typename degree_size_vector_t::iterator, VertexIndexMap >
       vertex_to_degree_size_map_t;
     typedef typename vertex_vector_t::iterator face_iterator;
 
 
-    triangulation_visitor(Graph& arg_g, 
-                          VertexIndexMap arg_vm, 
+    triangulation_visitor(Graph& arg_g,
+                          VertexIndexMap arg_vm,
                           AddEdgeVisitor arg_add_edge_visitor
-                          ) : 
+                          ) :
       g(arg_g),
       vm(arg_vm),
       add_edge_visitor(arg_add_edge_visitor),
@@ -71,7 +71,7 @@ namespace boost
     {
       // Self-loops will appear as consecutive vertices in the list of
       // vertices on a face. We want to skip these.
-      if (!vertices_on_face.empty() && 
+      if (!vertices_on_face.empty() &&
           (vertices_on_face.back() == v || vertices_on_face.front() == v)
           )
         return;
@@ -89,7 +89,7 @@ namespace boost
           vertices_on_face.clear();
           return;
         }
-      
+
       // Find vertex on face of minimum degree
       degree_size_t min_degree = num_vertices(g);
       typename vertex_vector_t::iterator min_degree_vertex_itr;
@@ -104,33 +104,33 @@ namespace boost
             }
         }
 
-      // To simplify some of the manipulations, we'll re-arrange 
-      // vertices_on_face so that it still contains the same 
-      // (counter-clockwise) order of the vertices on this face, but now the 
+      // To simplify some of the manipulations, we'll re-arrange
+      // vertices_on_face so that it still contains the same
+      // (counter-clockwise) order of the vertices on this face, but now the
       // min_degree_vertex is the first element in vertices_on_face.
       vertex_vector_t temp_vector;
-      std::copy(min_degree_vertex_itr, vertices_on_face.end(), 
+      std::copy(min_degree_vertex_itr, vertices_on_face.end(),
                 std::back_inserter(temp_vector));
-      std::copy(vertices_on_face.begin(), min_degree_vertex_itr, 
+      std::copy(vertices_on_face.begin(), min_degree_vertex_itr,
                 std::back_inserter(temp_vector));
       vertices_on_face.swap(temp_vector);
 
       // Mark all of the min degree vertex's neighbors
       adjacency_iterator_t ai, ai_end;
-      for(boost::tie(ai,ai_end) = adjacent_vertices(vertices_on_face.front(),g); 
+      for(boost::tie(ai,ai_end) = adjacent_vertices(vertices_on_face.front(),g);
           ai != ai_end; ++ai
           )
         {
           put(marked, *ai, timestamp);
         }
 
-      typename vertex_vector_t::iterator marked_neighbor 
+      typename vertex_vector_t::iterator marked_neighbor
         = vertices_on_face.end();
-     
-      // The iterator manipulations on the next two lines are safe because 
+
+      // The iterator manipulations on the next two lines are safe because
       // vertices_on_face.size() > 3 (from the first test in this function)
       fi_end = prior(vertices_on_face.end());
-      for(face_iterator fi = boost::next(boost::next(vertices_on_face.begin())); 
+      for(face_iterator fi = boost::next(boost::next(vertices_on_face.begin()));
           fi != fi_end; ++fi
           )
         {
@@ -166,14 +166,14 @@ namespace boost
 
       //reset for the next face
       vertices_on_face.clear();
-      
+
     }
 
   private:
 
-    
-    void add_edge_range(vertex_t anchor, 
-                        face_iterator fi, 
+
+    void add_edge_range(vertex_t anchor,
+                        face_iterator fi,
                         face_iterator fi_end
                         )
     {
@@ -196,7 +196,7 @@ namespace boost
     degree_size_vector_t degree_vector;
     vertex_to_v_size_map_t marked;
     vertex_to_degree_size_map_t degree;
-    
+
   };
 
 
@@ -208,13 +208,13 @@ namespace boost
             typename EdgeIndexMap,
             typename AddEdgeVisitor
             >
-  void make_maximal_planar(Graph& g, 
+  void make_maximal_planar(Graph& g,
                            PlanarEmbedding embedding,
-                           VertexIndexMap vm, 
+                           VertexIndexMap vm,
                            EdgeIndexMap em,
                            AddEdgeVisitor& vis)
   {
-    triangulation_visitor<Graph,VertexIndexMap,AddEdgeVisitor> 
+    triangulation_visitor<Graph,VertexIndexMap,AddEdgeVisitor>
       visitor(g, vm, vis);
     planar_face_traversal(g, embedding, visitor, em);
   }
@@ -266,7 +266,7 @@ namespace boost
   }
 
 
-  
+
 
 } // namespace boost
 

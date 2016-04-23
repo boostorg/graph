@@ -76,7 +76,7 @@ void get
 }
 
 // get a subset of properties tagged Stag
-template<class Tag, class Value, class Next, 
+template<class Tag, class Value, class Next,
         class Stag, class Svalue, class Snext>
 void getSubset
 ( property<Tag,Value,Next>& p, const property<Stag,Svalue,Snext>& s )
@@ -85,7 +85,7 @@ void getSubset
         getSubset( p, s.m_base );
 }
 
-template<class Tag, class Value, class Next, 
+template<class Tag, class Value, class Next,
         class Stag, class Svalue>
 void getSubset
 ( property<Tag,Value,Next>& p, const property<Stag,Svalue,no_property>& s)
@@ -124,10 +124,10 @@ struct GraphParser
 {
 
         typedef Graph_t Graph;
-        
+
         GraphParser( Graph* g ): graph(g)
-        {}      
-        
+        {}
+
         GraphParser& operator () ( std::istream& in )
         {
                 typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -161,7 +161,7 @@ struct GraphParser
                                         int source, target;
                                         EdgePropertySubset readProp;
                                         in >> source >> target;
-                                        if( in >> readProp ) 
+                                        if( in >> readProp )
                                         {
                                                 EdgeProperty ep;
                                                 getSubset( ep, readProp );
@@ -176,23 +176,23 @@ struct GraphParser
                                                 for( int i=0; i<n; ++i )
                                                         nodes.push_back( add_vertex( *graph ));
                                         }
-                                        else 
+                                        else
                                                 std::cerr<<"read num_nodes, parse error at line "<< numLine << std::endl;
                                 }
                         }
                 }
         return (*this);
         }
-        
-        
+
+
 protected:
 
         Graph* graph;
-        
+
         void skip( std::istream& in )
         {
                 char c = 0;
-                while( c!='\n' && !in.eof() ) 
+                while( c!='\n' && !in.eof() )
                        in.get(c);
                 in.putback(c);
         }
@@ -209,9 +209,9 @@ struct PropertyPrinter
         typedef typename Property::value_type Value;
         typedef typename Property::tag_type Tag;
         typedef typename Property::next_type Next;
-        
+
         PropertyPrinter( const Graph& g ):graph(&g){}
-        
+
         template<class Val>
         PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
@@ -229,7 +229,7 @@ template<class Graph, typename Property>
 struct PropertyPrinter
 {
         PropertyPrinter( const Graph& g ):graph(&g){}
-        
+
         template<class Val>
         PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
@@ -244,7 +244,7 @@ template<class Graph, typename Tag, typename Value, typename Next>
 struct PropertyPrinter<Graph, property<Tag, Value, Next> >
 {
         PropertyPrinter( const Graph& g ):graph(&g){}
-        
+
         template<class Val>
         PropertyPrinter& operator () ( std::ostream& out, const Val& v )
         {
@@ -278,11 +278,11 @@ struct EdgePrinter
 
         typedef Graph_t Graph;
         typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-        
+
         EdgePrinter( const Graph& g )
                 : graph(g)
-        {}      
-        
+        {}
+
         const EdgePrinter& operator () ( std::ostream& out ) const
         {
                 // assign indices to vertices
@@ -296,18 +296,18 @@ struct EdgePrinter
                 PropertyPrinter<Graph, EdgeProperty> print_Edge(graph);
                 out << "e" << std::endl;
                 BGL_FORALL_EDGES_T(e, graph, Graph) {
-                        out << indices[source(e,graph)] <<  " " << indices[target(e,graph)] << "  "; 
-                        print_Edge(out,e); 
+                        out << indices[source(e,graph)] <<  " " << indices[target(e,graph)] << "  ";
+                        print_Edge(out,e);
                         out << std::endl;
                 }
-                out << std::endl;            
+                out << std::endl;
                 return (*this);
         }
-        
+
 protected:
 
         const Graph& graph;
-        
+
 };
 
 template<class Graph, class V, class E>
@@ -316,29 +316,29 @@ struct GraphPrinter: public EdgePrinter<Graph,E>
         GraphPrinter( const Graph& g )
           : EdgePrinter<Graph,E>(g)
         {}
-        
+
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
                 PropertyPrinter<Graph, V> printNode(this->graph);
                 out << "v"<<std::endl;
                 BGL_FORALL_VERTICES_T(v, this->graph, Graph) {
-                        printNode(out,v); 
+                        printNode(out,v);
                         out << std::endl;
                 }
-                
+
                 EdgePrinter<Graph,E>::operator ()( out );
                 return (*this);
         }
 };
 
 template<class Graph, class E>
-struct GraphPrinter<Graph,no_property,E> 
+struct GraphPrinter<Graph,no_property,E>
   : public EdgePrinter<Graph,E>
 {
         GraphPrinter( const Graph& g )
           : EdgePrinter<Graph,E>(g)
         {}
-        
+
         const GraphPrinter& operator () ( std::ostream& out ) const
         {
                 out << "n "<< num_vertices(this->graph) << std::endl;
@@ -353,15 +353,15 @@ struct GraphPrinter<Graph,no_property,E>
 
 /// input stream for reading a graph
 template<class Graph, class VP, class EP, class VPS, class EPS>
-std::istream& operator >> ( std::istream& in, GraphParser<Graph,VP,EP,VPS,EPS> gp ) 
-{ 
-        gp(in); 
-        return in; 
+std::istream& operator >> ( std::istream& in, GraphParser<Graph,VP,EP,VPS,EPS> gp )
+{
+        gp(in);
+        return in;
 }
 
 /// graph parser for given subsets of internal vertex and edge properties
 template<class EL, class VL, class D, class VP, class EP, class GP, class VPS, class EPS>
-GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VPS,EPS> 
+GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VPS,EPS>
 read( adjacency_list<EL,VL,D,VP,EP,GP>& g, VPS vps, EPS eps )
 {
         return GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VPS,EPS>(&g);
@@ -369,7 +369,7 @@ read( adjacency_list<EL,VL,D,VP,EP,GP>& g, VPS vps, EPS eps )
 
 /// graph parser for all internal vertex and edge properties
 template<class EL, class VL, class D, class VP, class EP, class GP>
-GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VP,EP> 
+GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VP,EP>
 read( adjacency_list<EL,VL,D,VP,EP,GP>& g )
 {
         return GraphParser<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP,VP,EP>(&g);
@@ -378,15 +378,15 @@ read( adjacency_list<EL,VL,D,VP,EP,GP>& g )
 
 /// output stream for writing a graph
 template<class Graph, class VP, class EP>
-std::ostream& operator << ( std::ostream& out, const GraphPrinter<Graph,VP,EP>& gp ) 
-{ 
-        gp(out); 
-        return out; 
+std::ostream& operator << ( std::ostream& out, const GraphPrinter<Graph,VP,EP>& gp )
+{
+        gp(out);
+        return out;
 }
 
 /// write the graph with given property subsets
 template<class EL, class VL, class D, class VP, class EP, class GP, class VPS, class EPS>
-GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VPS,EPS> 
+GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VPS,EPS>
 write( const adjacency_list<EL,VL,D,VP,EP,GP>& g, VPS, EPS )
 {
         return GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VPS,EPS>(g);
@@ -394,7 +394,7 @@ write( const adjacency_list<EL,VL,D,VP,EP,GP>& g, VPS, EPS )
 
 /// write the graph with all internal vertex and edge properties
 template<class EL, class VL, class D, class VP, class EP, class GP>
-GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP> 
+GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP>
 write( const adjacency_list<EL,VL,D,VP,EP,GP>& g )
 {
         return GraphPrinter<adjacency_list<EL,VL,D,VP,EP,GP>,VP,EP>(g);

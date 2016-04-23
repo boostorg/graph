@@ -54,7 +54,7 @@ all_eccentricities(const Graph& g, const DistanceMatrix& dist, EccentricityMap e
     typedef typename property_traits<EccentricityMap>::value_type Eccentricity;
     BOOST_USING_STD_MIN();
     BOOST_USING_STD_MAX();
-    
+
     Eccentricity
             r = numeric_values<Eccentricity>::infinity(),
             d = numeric_values<Eccentricity>::zero();

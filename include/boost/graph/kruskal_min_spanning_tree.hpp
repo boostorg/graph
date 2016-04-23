@@ -12,7 +12,7 @@
 #define BOOST_GRAPH_MST_KRUSKAL_HPP
 
 /*
- *Minimum Spanning Tree 
+ *Minimum Spanning Tree
  *         Kruskal Algorithm
  *
  *Requirement:
@@ -42,11 +42,11 @@ namespace boost {
 
   namespace detail {
 
-    template <class Graph, class OutputIterator, 
+    template <class Graph, class OutputIterator,
               class Rank, class Parent, class Weight>
     void
-    kruskal_mst_impl(const Graph& G, 
-                     OutputIterator spanning_tree_edges, 
+    kruskal_mst_impl(const Graph& G,
+                     OutputIterator spanning_tree_edges,
                      Rank rank, Parent parent, Weight weight)
     {
       if (num_vertices(G) == 0) return; // Nothing to do in this case
@@ -76,7 +76,7 @@ namespace boost {
       std::priority_queue<Edge, std::vector<Edge>, weight_greater> Q(wl);
       /*push all edge into Q*/
       typename graph_traits<Graph>::edge_iterator ei, eiend;
-      for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei) 
+      for (boost::tie(ei, eiend) = edges(G); ei != eiend; ++ei)
         Q.push(*ei);
 
       while (! Q.empty()) {
@@ -91,12 +91,12 @@ namespace boost {
       }
     }
 
-  } // namespace detail 
+  } // namespace detail
 
   // Named Parameters Variants
 
   template <class Graph, class OutputIterator>
-  inline void 
+  inline void
   kruskal_minimum_spanning_tree(const Graph& g,
                                 OutputIterator spanning_tree_edges)
   {
@@ -109,7 +109,7 @@ namespace boost {
     std::vector<vertex_t> pred_map(n);
 
     detail::kruskal_mst_impl
-      (g, spanning_tree_edges, 
+      (g, spanning_tree_edges,
        make_iterator_property_map(rank_map.begin(), get(vertex_index, g), rank_map[0]),
        make_iterator_property_map(pred_map.begin(), get(vertex_index, g), pred_map[0]),
        get(edge_weight, g));
@@ -118,7 +118,7 @@ namespace boost {
   template <class Graph, class OutputIterator, class P, class T, class R>
   inline void
   kruskal_minimum_spanning_tree(const Graph& g,
-                                OutputIterator spanning_tree_edges, 
+                                OutputIterator spanning_tree_edges,
                                 const bgl_named_params<P, T, R>& params)
   {
     typedef typename graph_traits<Graph>::vertices_size_type size_type;
@@ -131,23 +131,23 @@ namespace boost {
     n = is_default_param(get_param(params, vertex_predecessor))
                                    ? num_vertices(g) : 1;
     std::vector<vertex_t> pred_map(n);
-    
+
     detail::kruskal_mst_impl
-      (g, spanning_tree_edges, 
+      (g, spanning_tree_edges,
        choose_param
-       (get_param(params, vertex_rank), 
+       (get_param(params, vertex_rank),
         make_iterator_property_map
-        (rank_map.begin(), 
+        (rank_map.begin(),
          choose_pmap(get_param(params, vertex_index), g, vertex_index), rank_map[0])),
        choose_param
-       (get_param(params, vertex_predecessor), 
+       (get_param(params, vertex_predecessor),
         make_iterator_property_map
-        (pred_map.begin(), 
-         choose_const_pmap(get_param(params, vertex_index), g, vertex_index), 
+        (pred_map.begin(),
+         choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
          pred_map[0])),
        choose_const_pmap(get_param(params, edge_weight), g, edge_weight));
   }
-    
+
 } // namespace boost
 
 

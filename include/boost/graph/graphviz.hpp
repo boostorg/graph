@@ -473,7 +473,7 @@ namespace boost {
   // Library has not existed for a while
   extern void read_graphviz(const std::string& file, GraphvizDigraph& g);
   extern void read_graphviz(FILE* file, GraphvizDigraph& g);
-  
+
   extern void read_graphviz(const std::string& file, GraphvizGraph& g);
   extern void read_graphviz(FILE* file, GraphvizGraph& g);
 #endif

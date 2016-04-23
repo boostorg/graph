@@ -30,15 +30,15 @@ namespace boost
             typename AddEdgeVisitor
             >
   void make_biconnected_planar(Graph& g,
-                               PlanarEmbedding embedding, 
-                               EdgeIndexMap em, 
+                               PlanarEmbedding embedding,
+                               EdgeIndexMap em,
                                AddEdgeVisitor& vis
                                )
   {
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::edges_size_type edge_size_t;
-    typedef typename 
+    typedef typename
       property_traits<PlanarEmbedding>::value_type embedding_value_t;
     typedef typename embedding_value_t::const_iterator embedding_iterator_t;
     typedef iterator_property_map
@@ -49,7 +49,7 @@ namespace boost
     std::vector<edge_size_t> component_vector(n_edges);
     component_map_t component_map(component_vector.begin(), em);
 
-    biconnected_components(g, component_map, 
+    biconnected_components(g, component_map,
                            std::back_inserter(articulation_points));
 
     typename std::vector<vertex_t>::iterator ap, ap_end;
@@ -93,13 +93,13 @@ namespace boost
             typename PlanarEmbedding,
             typename EdgeIndexMap
             >
-  inline void make_biconnected_planar(Graph& g, 
-                                      PlanarEmbedding embedding, 
+  inline void make_biconnected_planar(Graph& g,
+                                      PlanarEmbedding embedding,
                                       EdgeIndexMap em
                                       )
   {
     default_add_edge_visitor vis;
-    make_biconnected_planar(g, embedding, em, vis); 
+    make_biconnected_planar(g, embedding, em, vis);
   }
 
 

@@ -38,7 +38,7 @@ namespace boost {
       typedef typename graph_traits<Graph1>::vertices_size_type size_type;
       typedef typename Invariant1::result_type invar1_value;
       typedef typename Invariant2::result_type invar2_value;
-    
+
       const Graph1& G1;
       const Graph2& G2;
       IsoMapping f;
@@ -47,7 +47,7 @@ namespace boost {
       std::size_t max_invariant;
       IndexMap1 index_map1;
       IndexMap2 index_map2;
-    
+
       std::vector<vertex1_t> dfs_vertices;
       typedef typename std::vector<vertex1_t>::iterator vertex_iter;
       std::vector<int> dfs_num_vec;
@@ -60,7 +60,7 @@ namespace boost {
       DFSNumMap dfs_num;
       std::vector<edge1_t> ordered_edges;
       typedef typename std::vector<edge1_t>::iterator edge_iter;
-    
+
       std::vector<char> in_S_vec;
       typedef safe_iterator_property_map<typename std::vector<char>::iterator,
                                          IndexMap2
@@ -69,9 +69,9 @@ namespace boost {
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
                                          > InSMap;
       InSMap in_S;
-    
+
       int num_edges_on_k;
-    
+
       friend struct compare_multiplicity;
       struct compare_multiplicity
       {
@@ -83,12 +83,12 @@ namespace boost {
         Invariant1 invariant1;
         size_type* multiplicity;
       };
-    
+
       struct record_dfs_order : default_dfs_visitor
       {
-        record_dfs_order(std::vector<vertex1_t>& v, std::vector<edge1_t>& e) 
+        record_dfs_order(std::vector<vertex1_t>& v, std::vector<edge1_t>& e)
           : vertices(v), edges(e) { }
-    
+
         void discover_vertex(vertex1_t v, const Graph1&) const {
           vertices.push_back(v);
         }
@@ -98,7 +98,7 @@ namespace boost {
         std::vector<vertex1_t>& vertices;
         std::vector<edge1_t>& edges;
       };
-    
+
       struct edge_cmp {
         edge_cmp(const Graph1& G1, DFSNumMap dfs_num)
           : G1(G1), dfs_num(dfs_num) { }
@@ -108,14 +108,14 @@ namespace boost {
           int u2 = dfs_num[source(e2,G1)], v2 = dfs_num[target(e2,G1)];
           int m1 = (max)(u1, v1);
           int m2 = (max)(u2, v2);
-          // lexicographical comparison 
+          // lexicographical comparison
           return std::make_pair(m1, std::make_pair(u1, v1))
             < std::make_pair(m2, std::make_pair(u2, v2));
         }
         const Graph1& G1;
         DFSNumMap dfs_num;
       };
-    
+
     public:
       isomorphism_algo(const Graph1& G1, const Graph2& G2, IsoMapping f,
                        Invariant1 invariant1, Invariant2 invariant2, std::size_t max_invariant,
@@ -132,19 +132,19 @@ namespace boost {
 #endif /* BOOST_NO_STD_ITERATOR_TRAITS */
            );
       }
-    
+
       bool test_isomorphism()
       {
         // reset isomapping
         BGL_FORALL_VERTICES_T(v, G1, Graph1)
           f[v] = graph_traits<Graph2>::null_vertex();
-          
+
         {
           std::vector<invar1_value> invar1_array;
           BGL_FORALL_VERTICES_T(v, G1, Graph1)
             invar1_array.push_back(invariant1(v));
           sort(invar1_array);
-        
+
           std::vector<invar2_value> invar2_array;
           BGL_FORALL_VERTICES_T(v, G2, Graph2)
             invar2_array.push_back(invariant2(v));
@@ -152,7 +152,7 @@ namespace boost {
           if (! equal(invar1_array, invar2_array))
             return false;
         }
-        
+
         std::vector<vertex1_t> V_mult;
         BGL_FORALL_VERTICES_T(v, G1, Graph1)
           V_mult.push_back(v);
@@ -162,7 +162,7 @@ namespace boost {
             ++multiplicity.at(invariant1(v));
           sort(V_mult, compare_multiplicity(invariant1, &multiplicity[0]));
         }
-        
+
         std::vector<default_color_type> color_vec(num_vertices(G1));
         safe_iterator_property_map<std::vector<default_color_type>::iterator,
                                    IndexMap1
@@ -182,7 +182,7 @@ namespace boost {
         // Create the dfs_num array and dfs_num_map
         dfs_num_vec.resize(num_vertices(G1));
         dfs_num = make_safe_iterator_property_map(dfs_num_vec.begin(),
-                                                  dfs_num_vec.size(), 
+                                                  dfs_num_vec.size(),
                                                   index_map1
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
                                                   , dfs_num_vec.front()
@@ -191,14 +191,14 @@ namespace boost {
         size_type n = 0;
         for (vertex_iter v = dfs_vertices.begin(); v != dfs_vertices.end(); ++v)
           dfs_num[*v] = n++;
-        
+
         sort(ordered_edges, edge_cmp(G1, dfs_num));
-        
-    
+
+
         int dfs_num_k = -1;
         return this->match(ordered_edges.begin(), dfs_num_k);
       }
-    
+
     private:
       struct match_continuation {
         enum {pos_G2_vertex_loop, pos_fi_adj_loop, pos_dfs_num} position;
@@ -234,7 +234,7 @@ namespace boost {
                     f[kp1] = u;
                     in_S[u] = true;
                     num_edges_on_k = 0;
-                    
+
                     match_continuation new_k;
                     new_k.position = match_continuation::pos_G2_vertex_loop;
                     new_k.G2_verts = G2_verts;
@@ -248,20 +248,20 @@ namespace boost {
               }
 G2_loop_k:    ++G2_verts.first;
             }
-               
+
           }
           else if (dfs_num[j] > dfs_num_k) {
             {
               vertex1_t vk = dfs_vertices[dfs_num_k];
-              num_edges_on_k -= 
+              num_edges_on_k -=
                 count_if(adjacent_vertices(f[vk], G2), make_indirect_pmap(in_S));
-                  
+
               for (int jj = 0; jj < dfs_num_k; ++jj) {
                 vertex1_t j = dfs_vertices[jj];
                 num_edges_on_k -= count(adjacent_vertices(f[j], G2), f[vk]);
               }
             }
-                
+
             if (num_edges_on_k != 0)
               goto return_point_false;
             fi_adj = adjacent_vertices(f[i], G2);
@@ -297,12 +297,12 @@ fi_adj_loop_k:++fi_adj.first;
               ++iter;
               goto recur;
             }
-                
+
           }
-        } else 
+        } else
           goto return_point_true;
         goto return_point_false;
-    
+
         {
           return_point_true: return true;
 
@@ -326,7 +326,7 @@ fi_adj_loop_k:++fi_adj.first;
       }
     };
 
-    
+
     template <typename Graph, typename InDegreeMap>
     void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
     {
@@ -368,7 +368,7 @@ fi_adj_loop_k:++fi_adj.first;
         + get(m_in_degree_map, v);
     }
     // The largest possible vertex invariant number
-    size_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const { 
+    size_type max BOOST_PREVENT_MACRO_SUBSTITUTION () const {
       return (m_max_vertex_in_degree + 1) * (m_max_vertex_out_degree + 1);
     }
   private:
@@ -387,11 +387,11 @@ fi_adj_loop_k:++fi_adj.first;
       return n;
   }
 
-  template <typename Graph1, typename Graph2, typename IsoMapping, 
+  template <typename Graph1, typename Graph2, typename IsoMapping,
     typename Invariant1, typename Invariant2,
     typename IndexMap1, typename IndexMap2>
-  bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f, 
-                   Invariant1 invariant1, Invariant2 invariant2, 
+  bool isomorphism(const Graph1& G1, const Graph2& G2, IsoMapping f,
+                   Invariant1 invariant1, Invariant2 invariant2,
                    std::size_t max_invariant,
                    IndexMap1 index_map1, IndexMap2 index_map2)
 
@@ -401,50 +401,50 @@ fi_adj_loop_k:++fi_adj.first;
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph1> ));
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph2> ));
     //BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph2> ));
-    
+
     typedef typename graph_traits<Graph1>::vertex_descriptor vertex1_t;
     typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
     typedef typename graph_traits<Graph1>::vertices_size_type size_type;
-    
+
     // Vertex invariant requirement
     BOOST_CONCEPT_ASSERT(( AdaptableUnaryFunctionConcept<Invariant1,
       size_type, vertex1_t> ));
     BOOST_CONCEPT_ASSERT(( AdaptableUnaryFunctionConcept<Invariant2,
       size_type, vertex2_t> ));
-    
+
     // Property map requirements
     BOOST_CONCEPT_ASSERT(( ReadWritePropertyMapConcept<IsoMapping, vertex1_t> ));
     typedef typename property_traits<IsoMapping>::value_type IsoMappingValue;
     BOOST_STATIC_ASSERT((is_convertible<IsoMappingValue, vertex2_t>::value));
-    
+
     BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap1, vertex1_t> ));
     typedef typename property_traits<IndexMap1>::value_type IndexMap1Value;
     BOOST_STATIC_ASSERT((is_convertible<IndexMap1Value, size_type>::value));
-    
+
     BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<IndexMap2, vertex2_t> ));
     typedef typename property_traits<IndexMap2>::value_type IndexMap2Value;
     BOOST_STATIC_ASSERT((is_convertible<IndexMap2Value, size_type>::value));
-    
+
     if (count_vertices(G1) != count_vertices(G2))
       return false;
     if (count_vertices(G1) == 0 && count_vertices(G2) == 0)
       return true;
-    
+
     detail::isomorphism_algo<Graph1, Graph2, IsoMapping, Invariant1,
-      Invariant2, IndexMap1, IndexMap2> 
-      algo(G1, G2, f, invariant1, invariant2, max_invariant, 
+      Invariant2, IndexMap1, IndexMap2>
+      algo(G1, G2, f, invariant1, invariant2, max_invariant,
            index_map1, index_map2);
     return algo.test_isomorphism();
   }
 
 
   namespace detail {
-  
-    template <typename Graph1, typename Graph2, 
-      typename IsoMapping, 
+
+    template <typename Graph1, typename Graph2,
+      typename IsoMapping,
       typename IndexMap1, typename IndexMap2,
       typename P, typename T, typename R>
-    bool isomorphism_impl(const Graph1& G1, const Graph2& G2, 
+    bool isomorphism_impl(const Graph1& G1, const Graph2& G2,
                           IsoMapping f, IndexMap1 index_map1, IndexMap2 index_map2,
                           const bgl_named_params<P,T,R>& params)
     {
@@ -459,7 +459,7 @@ fi_adj_loop_k:++fi_adj.first;
       compute_in_degree(G1, in_degree1);
 
       std::vector<std::size_t> in_degree2_vec(num_vertices(G2));
-      typedef safe_iterator_property_map<std::vector<std::size_t>::iterator, 
+      typedef safe_iterator_property_map<std::vector<std::size_t>::iterator,
                                          IndexMap2
 #ifdef BOOST_NO_STD_ITERATOR_TRAITS
                                          , std::size_t, std::size_t&
@@ -476,8 +476,8 @@ fi_adj_loop_k:++fi_adj.first;
                          choose_param(get_param(params, vertex_invariant2_t()), invariant2),
                          choose_param(get_param(params, vertex_max_invariant_t()), (invariant2.max)()),
                          index_map1, index_map2
-                         );  
-    }  
+                         );
+    }
 
     template <typename G, typename Index>
     struct make_degree_invariant {
@@ -493,7 +493,7 @@ fi_adj_loop_k:++fi_adj.first;
         return result_type(pm, g);
       }
     };
-   
+
   } // namespace detail
 
   namespace graph {
@@ -554,7 +554,7 @@ fi_adj_loop_k:++fi_adj.first;
     if (num_vertices(g1) != num_vertices(g2) || num_edges(g1) != num_edges(g2))
       return false;
 #endif
-  
+
     BGL_FORALL_EDGES_T(e1, g1, Graph1) {
       bool found_edge = false;
       BGL_FORALL_EDGES_T(e2, g2, Graph2) {
@@ -563,11 +563,11 @@ fi_adj_loop_k:++fi_adj.first;
           found_edge = true;
         }
       }
-    
+
       if (!found_edge)
         return false;
     }
-  
+
     return true;
   }
 

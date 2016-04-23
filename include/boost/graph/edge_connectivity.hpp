@@ -43,7 +43,7 @@ namespace boost {
     }
 
     template <class Graph, class OutputIterator>
-    void neighbors(const Graph& g, 
+    void neighbors(const Graph& g,
                    typename graph_traits<Graph>::vertex_descriptor u,
                    OutputIterator result)
     {
@@ -53,7 +53,7 @@ namespace boost {
     }
 
     template <class Graph, class VertexIterator, class OutputIterator>
-    void neighbors(const Graph& g, 
+    void neighbors(const Graph& g,
                    VertexIterator first, VertexIterator last,
                    OutputIterator result)
     {
@@ -80,10 +80,10 @@ namespace boost {
 
     typedef adjacency_list_traits<vecS, vecS, directedS> Tr;
     typedef typename Tr::edge_descriptor Tr_edge_desc;
-    typedef adjacency_list<vecS, vecS, directedS, no_property, 
+    typedef adjacency_list<vecS, vecS, directedS, no_property,
       property<edge_capacity_t, degree_size_type,
         property<edge_residual_capacity_t, degree_size_type,
-          property<edge_reverse_t, Tr_edge_desc> > > > 
+          property<edge_reverse_t, Tr_edge_desc> > > >
       FlowGraph;
     typedef typename graph_traits<FlowGraph>::edge_descriptor edge_descriptor;
 
@@ -129,7 +129,7 @@ namespace boost {
     alpha_star = delta;
     S.insert(p);
     neighbor_S.insert(p);
-    detail::neighbors(g, S.begin(), S.end(), 
+    detail::neighbors(g, S.begin(), S.end(),
                       std::inserter(neighbor_S, neighbor_S.begin()));
 
     boost::tie(vi, vi_end) = vertices(g);

@@ -22,7 +22,7 @@ namespace boost {
   class mesh_iterator
   {
     typedef typename graph_traits<Graph>::directed_category directed_category;
-    typedef typename graph_traits<Graph>::vertices_size_type 
+    typedef typename graph_traits<Graph>::vertices_size_type
       vertices_size_type;
 
     BOOST_STATIC_CONSTANT
@@ -43,15 +43,15 @@ namespace boost {
 
     // Vertices are numbered in row-major order
     // Assumes directed
-    mesh_iterator(vertices_size_type x, vertices_size_type y, 
+    mesh_iterator(vertices_size_type x, vertices_size_type y,
                   bool toroidal = true)
-      : x(x), y(y), n(x*y), source(0), target(1), current(0,1), 
+      : x(x), y(y), n(x*y), source(0), target(1), current(0,1),
         toroidal(toroidal), done(false)
     { BOOST_ASSERT(x > 1 && y > 1); }
 
     reference operator*() const { return current; }
     pointer operator->() const { return &current; }
-    
+
     mesh_iterator& operator++()
     {
       if (is_undirected) {
@@ -62,7 +62,7 @@ namespace boost {
             else {
               source++;
               target = (source % x) < x - 1 ? source + 1 : source + x;
-              if (target > n) 
+              if (target > n)
                 done = true;
             }
           else if (target == source + x) {
@@ -83,7 +83,7 @@ namespace boost {
         }
       } else { // Directed
         if ( !toroidal ) {
-          if (target == source - x) 
+          if (target == source - x)
             target = source % x > 0 ? source - 1 : source + 1;
           else if (target == source - 1)
             if ((source % x) < (x - 1))
@@ -141,7 +141,7 @@ namespace boost {
     bool operator!=(const mesh_iterator& other) const
     { return !(*this == other); }
 
-  private: 
+  private:
 
     vertices_size_type x,y;
     vertices_size_type n;

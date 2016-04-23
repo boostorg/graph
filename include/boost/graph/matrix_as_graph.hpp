@@ -121,7 +121,7 @@ namespace boost {
   protected:
     Iter _iter;
   };
-  
+
 } /* namespace boost */
 
 #endif /* BOOST_GRAPH_MATRIX2GRAPH_HPP*/

@@ -58,7 +58,7 @@ class metis_reader
       value_type value;
       friend class edge_iterator;
     };
-    
+
   public:
     edge_iterator& operator++();
     postincrement_proxy operator++(int);
@@ -71,7 +71,7 @@ class metis_reader
   private:
     edge_iterator(metis_reader* self);
     void advance(bool skip_initial_read);
-    
+
     metis_reader* self;
 
     friend class metis_reader;
@@ -100,10 +100,10 @@ class metis_reader
     edge_weight_iterator(metis_reader* self) : self(self) { }
 
     metis_reader* self;
-    
+
     friend class metis_reader;
   };
-  
+
   metis_reader(std::istream& in) : in(in), edge_weight(1.0) { start(); }
 
   edge_iterator begin();
@@ -136,7 +136,7 @@ class metis_reader
   std::istringstream line_in;
   std::pair<vertices_size_type, vertices_size_type> edge;
   std::vector<vertex_weight_type> vertex_weights;
-  edge_weight_type edge_weight;    
+  edge_weight_type edge_weight;
 
   friend bool operator==(edge_iterator, edge_iterator);
   friend bool operator!=(edge_iterator, edge_iterator);
@@ -144,13 +144,13 @@ class metis_reader
 
 class metis_distribution
 {
- public:  
+ public:
   typedef int process_id_type;
   typedef std::size_t size_type;
   typedef std::vector<process_id_type>::iterator iterator;
 
   metis_distribution(std::istream& in, process_id_type my_id);
-  
+
   size_type block_size(process_id_type id, size_type) const;
   process_id_type operator()(size_type n) const { return vertices[n]; }
   size_type local(size_type n) const;
@@ -182,8 +182,8 @@ bool operator!=(metis_reader::edge_iterator x, metis_reader::edge_iterator y)
 }
 
 BOOST_GRAPH_METIS_INLINE_KEYWORD
-metis_reader::edge_iterator::edge_iterator(metis_reader* self) 
-  : self(self) 
+metis_reader::edge_iterator::edge_iterator(metis_reader* self)
+  : self(self)
 {
   if (self) advance(true);
 }
@@ -241,7 +241,7 @@ void metis_reader::edge_iterator::advance(bool skip_initial_read)
 }
 
 BOOST_GRAPH_METIS_INLINE_KEYWORD
-metis_reader::edge_iterator::postincrement_proxy 
+metis_reader::edge_iterator::postincrement_proxy
 metis_reader::edge_iterator::operator++(int)
 {
   postincrement_proxy result(**this);
@@ -288,7 +288,7 @@ void metis_reader::start()
   line_in >> fmt;
   n_vertex_weights = fmt / 10;
   edge_weights = (fmt % 10 == 1);
-  
+
   // Determine how many (if any!) vertex weights are included
   if (n_vertex_weights) line_in >> n_vertex_weights;
 
@@ -300,14 +300,14 @@ void metis_reader::start()
 }
 
 metis_distribution::metis_distribution(std::istream& in, process_id_type my_id)
-  : in(in), my_id(my_id), 
+  : in(in), my_id(my_id),
     vertices(std::istream_iterator<process_id_type>(in),
              std::istream_iterator<process_id_type>())
 {
 }
 
 
-metis_distribution::size_type 
+metis_distribution::size_type
 metis_distribution::block_size(process_id_type id, size_type) const
 {
   return std::count(vertices.begin(), vertices.end(), id);
@@ -318,14 +318,14 @@ metis_distribution::size_type metis_distribution::local(size_type n) const
   return std::count(vertices.begin(), vertices.begin() + n, vertices[n]);
 }
 
-metis_distribution::size_type 
+metis_distribution::size_type
 metis_distribution::global(process_id_type id, size_type n) const
 {
   std::vector<process_id_type>::const_iterator i = vertices.begin();
   while (*i != id) ++i;
 
   while (n > 0) {
-    do { ++i; } while (*i != id); 
+    do { ++i; } while (*i != id);
     --n;
   }
 

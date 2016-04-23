@@ -28,43 +28,43 @@ namespace boost {
   public:
     typedef Node node_descriptor;
     typedef ChIt children_iterator;
-    
+
     graph_as_tree_base(Graph& g, Node root) : _g(g), _root(root) { }
-    
+
     friend Node root(const Tree& t) { return t._root; }
-    
+
     template <class N>
     friend std::pair<ChIt,ChIt>
     children(N n, const Tree& t) { return adjacent_vertices(n, t._g);  }
-    
+
     template<class N>
-    friend Node parent(N n, const Tree& t) { 
-      return boost::get(t.parent_pa(), n); 
+    friend Node parent(N n, const Tree& t) {
+      return boost::get(t.parent_pa(), n);
     }
-    
+
     Graph& _g;
     Node _root;
   };
-  
+
   struct graph_as_tree_tag { };
-  
+
   template <class Graph, class ParentMap
-          , class Node 
+          , class Node
              = typename graph_traits<Graph>::vertex_descriptor
           , class ChIt
               = typename graph_traits<Graph>::adjacency_iterator
            >
   class graph_as_tree
-    : public graph_as_tree_base<Graph, Node, ChIt, 
+    : public graph_as_tree_base<Graph, Node, ChIt,
             graph_as_tree<Graph,ParentMap,Node,ChIt> >
   {
     typedef graph_as_tree self;
     typedef graph_as_tree_base<Graph, Node, ChIt, self> super;
   public:
     graph_as_tree(Graph& g, Node root) : super(g, root) {  }
-    
-    graph_as_tree(Graph& g, Node root, ParentMap p) : super(g, root), _p(p) { 
-      breadth_first_search(g, root, 
+
+    graph_as_tree(Graph& g, Node root, ParentMap p) : super(g, root), _p(p) {
+      breadth_first_search(g, root,
                            visitor(make_bfs_visitor
                    (record_predecessors(p, boost::on_tree_edge()))));
     }
@@ -73,7 +73,7 @@ namespace boost {
   protected:
     ParentMap _p;
   };
-  
+
 
   namespace detail {
 
@@ -109,7 +109,7 @@ namespace boost {
     typedef detail::graph_as_tree_edge_property_selector type;
   };
 
-  template <typename Graph, typename P, typename N, typename C, 
+  template <typename Graph, typename P, typename N, typename C,
             typename Property>
   typename property_map<Graph, Property>::type
   get(Property p, graph_as_tree<Graph,P,N,C>& g)
@@ -117,7 +117,7 @@ namespace boost {
     return get(p, g._g);
   }
 
-  template <typename Graph, typename P, typename N, typename C, 
+  template <typename Graph, typename P, typename N, typename C,
             typename Property>
   typename property_map<Graph, Property>::const_type
   get(Property p, const graph_as_tree<Graph,P,N,C>& g)
@@ -126,7 +126,7 @@ namespace boost {
     return get(p, gref);
   }
 
-  template <typename Graph, typename P, typename N, typename C, 
+  template <typename Graph, typename P, typename N, typename C,
             typename Property, typename Key>
   typename property_traits<
     typename property_map<Graph, Property>::const_type
@@ -136,7 +136,7 @@ namespace boost {
     return get(p, g._g, k);
   }
 
-  template <typename Graph, typename P, typename N, typename C, 
+  template <typename Graph, typename P, typename N, typename C,
             typename Property, typename Key, typename Value>
   void
   put(Property p, const graph_as_tree<Graph,P,N,C>& g, const Key& k,

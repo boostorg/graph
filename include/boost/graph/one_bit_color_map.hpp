@@ -24,8 +24,8 @@
 
 namespace boost {
 
-enum one_bit_color_type { 
-  one_bit_white     = 0, 
+enum one_bit_color_type {
+  one_bit_white     = 0,
   one_bit_not_white  = 1
 };
 
@@ -39,7 +39,7 @@ struct color_traits<one_bit_color_type>
 
 
 template<typename IndexMap = identity_property_map>
-struct one_bit_color_map 
+struct one_bit_color_map
 {
   BOOST_STATIC_CONSTANT(int, bits_per_char = std::numeric_limits<unsigned char>::digits);
   std::size_t n;
@@ -61,8 +61,8 @@ struct one_bit_color_map
 
 template<typename IndexMap>
 inline one_bit_color_type
-get(const one_bit_color_map<IndexMap>& pm, 
-    typename property_traits<IndexMap>::key_type key) 
+get(const one_bit_color_map<IndexMap>& pm,
+    typename property_traits<IndexMap>::key_type key)
 {
   BOOST_STATIC_CONSTANT(int, bits_per_char = one_bit_color_map<IndexMap>::bits_per_char);
   typename property_traits<IndexMap>::value_type i = get(pm.index, key);
@@ -72,7 +72,7 @@ get(const one_bit_color_map<IndexMap>& pm,
 
 template<typename IndexMap>
 inline void
-put(const one_bit_color_map<IndexMap>& pm, 
+put(const one_bit_color_map<IndexMap>& pm,
     typename property_traits<IndexMap>::key_type key,
     one_bit_color_type value)
 {

@@ -50,7 +50,7 @@ namespace boost {
     typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
     typedef typename boost::property_traits<ColorMap>::value_type color_t;
     typedef boost::color_traits<color_t> color_gen;
-    
+
     BOOST_ASSERT (get(color, s) == color_gen::white());
     path.clear();
     path.push_back(s);

@@ -144,12 +144,12 @@ public:
         typename subgraph<Graph>::children_iterator i,i_end;
         boost::tie(i,i_end) = x.children();
         for(; i != i_end; ++i)
-        {         
+        {
          subgraph<Graph> child = this->create_subgraph();
          child = *i;
-         vertex_iterator vi,vi_end;   
+         vertex_iterator vi,vi_end;
          boost::tie(vi,vi_end) = vertices(*i);
-         for (;vi!=vi_end;++vi)  
+         for (;vi!=vi_end;++vi)
          {
           add_vertex(*vi,child);
          }

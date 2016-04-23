@@ -141,7 +141,7 @@ namespace boost {
 
     /**
      * Find the beginning of a common suffix of two sequences
-     * 
+     *
      * @param sequence1 Pair of bidirectional iterators defining the first sequence.
      * @param sequence2 Pair of bidirectional iterators defining the second sequence.
      * @return Pair of iterators pointing to the beginning of the common suffix.

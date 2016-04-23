@@ -35,7 +35,7 @@ namespace boost
         , Vertex
         , Difference
       > super_t;
-      
+
       inline adjacency_iterator() {}
       inline adjacency_iterator(OutEdgeIter const& i, const Graph* g) : super_t(i), m_g(g) { }
 
