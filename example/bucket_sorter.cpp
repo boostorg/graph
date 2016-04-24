@@ -10,7 +10,7 @@
 #include <vector>
 #include <iostream>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <boost/pending/bucket_sorter.hpp>
 
 template <class Integral>
@@ -27,7 +27,7 @@ struct trivial_id {
 int main() {
   using namespace std;
   using boost::bucket_sorter;
-  
+
   const std::size_t N = 10;
 
   vector<std::size_t> bucket(N);
@@ -38,13 +38,13 @@ int main() {
   }
 
   typedef trivial_id<int> ID;
-  typedef bucket_sorter<std::size_t, int, 
+  typedef bucket_sorter<std::size_t, int,
     vector<std::size_t>::iterator, ID> BS;
   BS my_bucket_sorter(N, N, bucket.begin());
 
   for (std::size_t ii=0; ii<N; ii++)
     my_bucket_sorter.push(ii);
-    
+
   std::size_t j;
   for (j=0; j<N; j++) {
     cout << "The bucket " << j;
