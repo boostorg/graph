@@ -136,6 +136,7 @@ test-suite graph_test :
     [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run strong_components_test.cpp ]
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
+	[ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
