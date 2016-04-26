@@ -21,7 +21,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
-#include <cmath>    // for sqrt
+#include <math.h>    // for sqrt
 
 using namespace boost;
 using namespace std;
@@ -111,7 +111,7 @@ private:
 
 int main(int argc, char **argv)
 {
-
+  
   // specify some types
   typedef adjacency_list<listS, vecS, undirectedS, no_property,
     property<edge_weight_t, cost> > mygraph_t;
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
   typedef mygraph_t::vertex_descriptor vertex;
   typedef mygraph_t::edge_descriptor edge_descriptor;
   typedef std::pair<int, int> edge;
-
+  
   // specify data
   enum nodes {
     Troy, LakePlacid, Plattsburgh, Massena, Watertown, Utica,
@@ -156,8 +156,8 @@ int main(int argc, char **argv)
     96, 134, 143, 65, 115, 133, 117, 116, 74, 56,
     84, 73, 69, 70, 116, 147, 173, 183, 74, 71, 124
   };
-
-
+  
+  
   // create graph
   mygraph_t g(N);
   WeightMap weightmap = get(edge_weight, g);
@@ -167,17 +167,17 @@ int main(int argc, char **argv)
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
-
-
+  
+  
   // pick random start/goal
   boost::mt19937 gen(time(0));
   vertex start = random_vertex(g, gen);
   vertex goal = random_vertex(g, gen);
-
-
+  
+  
   cout << "Start vertex: " << name[start] << endl;
   cout << "Goal vertex: " << name[goal] << endl;
-
+  
   ofstream dotfile;
   dotfile.open("test-astar-cities.dot");
   write_graphviz(dotfile, g,
@@ -185,8 +185,8 @@ int main(int argc, char **argv)
                   (name, locations, 73.46, 78.86, 40.67, 44.93,
                    480, 400),
                  time_writer<WeightMap>(weightmap));
-
-
+  
+  
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
   try {
@@ -198,8 +198,8 @@ int main(int argc, char **argv)
        predecessor_map(make_iterator_property_map(p.begin(), get(vertex_index, g))).
        distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))).
        visitor(astar_goal_visitor<vertex>(goal)));
-
-
+  
+  
   } catch(found_goal fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
@@ -216,9 +216,9 @@ int main(int argc, char **argv)
     cout << endl << "Total travel time: " << d[goal] << endl;
     return 0;
   }
-
+  
   cout << "Didn't find a path from " << name[start] << "to"
        << name[goal] << "!" << endl;
   return 0;
-
+  
 }

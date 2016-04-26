@@ -114,6 +114,14 @@ namespace boost {
 
     void clear() { c.clear(); }
 
+#if 0
+        // dwa 2003/7/11 - I don't know what compiler is supposed to
+        // be able to compile this, but is_heap is not standard!!
+    bool test() {
+      return std::is_heap(c.begin(), c.end(), Comp());
+    }
+#endif
+
    protected:
     IndexArray index_array;
     Compare comp;

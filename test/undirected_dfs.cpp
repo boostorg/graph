@@ -9,7 +9,7 @@
 
 #include <boost/config.hpp>
 #include <boost/test/minimal.hpp>
-#include <cstdlib>
+#include <stdlib.h>
 
 #include <boost/graph/undirected_dfs.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -133,7 +133,7 @@ struct dfs_test
         // Get vertex index map
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type idx_type;
         idx_type idx = get(boost::vertex_index, g);
-
+        
         typedef
           boost::iterator_property_map<typename std::vector<vertex_descriptor>::iterator, idx_type>
           parent_pm_type;
@@ -199,3 +199,4 @@ int test_main(int argc, char* argv[])
 
   return 0;
 }
+
