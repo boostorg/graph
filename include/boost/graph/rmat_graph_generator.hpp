@@ -9,7 +9,7 @@
 #ifndef BOOST_GRAPH_RMAT_GENERATOR_HPP
 #define BOOST_GRAPH_RMAT_GENERATOR_HPP
 
-#include <cmath>
+#include <math.h>
 #include <iterator>
 #include <utility>
 #include <vector>

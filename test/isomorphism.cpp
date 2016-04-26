@@ -20,7 +20,7 @@
 #include <map>
 #include <algorithm>
 #include <cstdlib>
-#include <ctime> // clock used without std:: qualifier?
+#include <time.h> // clock used without std:: qualifier?
 #include <boost/test/minimal.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/isomorphism.hpp>
