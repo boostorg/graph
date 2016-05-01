@@ -36,35 +36,36 @@ struct SampleGraph {
     
     class EdgeAdder {
     public:
-        EdgeAdder(Graph & g, Weight & w, Capacity & c, Reversed & rev, ResidualCapacity & residualCapacity) 
-            : m_g(g), m_w(w), m_cap(c), m_resCap(residualCapacity), m_rev(rev) {}
+      EdgeAdder(Graph& g, Weight& w, Capacity& c, Reversed& rev
+        , ResidualCapacity&) : m_g(g), m_w(w), m_cap(c), m_rev(rev) {}
         void addEdge(vertex_descriptor v, vertex_descriptor w, long weight, long capacity) {
-            Traits::edge_descriptor e,f;
-            e = add(v, w, weight, capacity);
-            f = add(w, v, -weight, 0);
-            m_rev[e] = f; 
-            m_rev[f] = e; 
+          Traits::edge_descriptor e,f;
+          e = add(v, w, weight, capacity);
+          f = add(w, v, -weight, 0);
+          m_rev[e] = f; 
+          m_rev[f] = e; 
         }
-    private:
-        Traits::edge_descriptor add(vertex_descriptor v, vertex_descriptor w, long weight, long capacity) {
-            bool b;
-            Traits::edge_descriptor e;
-            boost::tie(e, b) = add_edge(vertex(v, m_g), vertex(w, m_g), m_g);
-            if (!b) {
-              std::cerr << "Edge between " << v << " and " << w << " already exists." << std::endl;
-              std::abort();
-            }
-            m_cap[e] = capacity;
-            m_w[e] = weight;
-            return e;
-        }
-        Graph & m_g;
-        Weight & m_w;
-        Capacity & m_cap;
-        ResidualCapacity & m_resCap;
-        Reversed & m_rev;
-    };
 
+    private:
+      Traits::edge_descriptor add(vertex_descriptor v, vertex_descriptor w
+        , long weight, long capacity) 
+      {
+        bool b;
+        Traits::edge_descriptor e;
+        boost::tie(e, b) = add_edge(vertex(v, m_g), vertex(w, m_g), m_g);
+        if (!b) {
+          std::cerr << "Edge between " << v << " and " << w << " already exists." << std::endl;
+          std::abort();
+        }
+        m_cap[e] = capacity;
+        m_w[e] = weight;
+        return e;
+      }
+      Graph & m_g;
+      Weight & m_w;
+      Capacity & m_cap;
+      Reversed & m_rev;
+    };
 
     static void getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
         size_type N(6);
