@@ -88,7 +88,10 @@ exe filtered_graph_edge_range : filtered_graph_edge_range.cpp ;
 exe filtered_vec_as_graph : filtered_vec_as_graph.cpp ;
 exe fr_layout : fr_layout.cpp ;
 exe gerdemann : gerdemann.cpp ;
-exe girth : girth.cpp ;
+
+# This needs SGB headers, via BGL's stanford_graph.h:
+# exe girth : girth.cpp ;
+
 exe graph-assoc-types : graph-assoc-types.cpp ;
 exe graph_as_tree : graph_as_tree.cpp ;
 exe graph : graph.cpp ;
@@ -122,8 +125,8 @@ exe kuratowski_subgraph : kuratowski_subgraph.cpp ;
 exe last-mod-time : last-mod-time.cpp ;
 
 # These need LEDA:
-exe leda-concept-check : leda-concept-check.cpp ;
-exe leda-graph-eg : leda-graph-eg.cpp ;
+# exe leda-concept-check : leda-concept-check.cpp ;
+# exe leda-graph-eg : leda-graph-eg.cpp ;
 
 exe loops_dfs : loops_dfs.cpp ;
 exe make_biconnected_planar : make_biconnected_planar.cpp ;
@@ -132,9 +135,15 @@ exe matching_example : matching_example.cpp ;
 exe max_flow : max_flow.cpp ;
 exe mcgregor_subgraphs_example : mcgregor_subgraphs_example.cpp ;
 exe mean_geodesic : mean_geodesic.cpp ;
-exe miles_span : miles_span.cpp ;
+
+# This needs SGB headers, via BGL's stanford_graph.h:
+# exe miles_span : miles_span.cpp ;
+
 exe minimum_degree_ordering : minimum_degree_ordering.cpp ;
-exe min_max_paths : min_max_paths.cpp ;
+
+# This has an error pragma explaining that it is incorrect.
+# exe min_max_paths : min_max_paths.cpp ;
+
 exe modify_graph : modify_graph.cpp ;
 exe neighbor_bfs : neighbor_bfs.cpp ;
 exe ordered_out_edges : ordered_out_edges.cpp ;
@@ -160,7 +169,10 @@ exe remove_edge_if_bidir : remove_edge_if_bidir.cpp ;
 exe remove_edge_if_dir : remove_edge_if_dir.cpp ;
 exe remove_edge_if_undir : remove_edge_if_undir.cpp ;
 exe reverse-graph-eg : reverse-graph-eg.cpp ;
-exe roget_components : roget_components.cpp ;
+
+# This needs SGB headers, via BGL's stanford_graph.h:
+# exe roget_components : roget_components.cpp ;
+
 exe quick_tour : quick_tour.cpp ;
 # exe quick_tour_new : quick_tour_new.cpp ;
 exe scaled_closeness_centrality : scaled_closeness_centrality.cpp ;
@@ -180,8 +192,13 @@ exe topo-sort2 : topo-sort2.cpp ;
 exe topo_sort : topo_sort.cpp ;
 exe topo-sort-file-dep2 : topo-sort-file-dep2.cpp ;
 exe topo-sort-file-dep : topo-sort-file-dep.cpp ;
-exe topo-sort-with-leda : topo-sort-with-leda.cpp ;
-exe topo-sort-with-sgb : topo-sort-with-sgb.cpp ;
+
+# This needs LEDA:
+# exe topo-sort-with-leda : topo-sort-with-leda.cpp ;
+
+# This needs SGB headers, via BGL's stanford_graph.h:
+# exe topo-sort-with-sgb : topo-sort-with-sgb.cpp ;
+
 exe transitive_closure : transitive_closure.cpp ;
 exe transpose-example : transpose-example.cpp ;
 exe two_graphs_common_spanning_trees : two_graphs_common_spanning_trees.cpp ;
