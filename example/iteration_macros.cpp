@@ -10,6 +10,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <iostream>
 
 enum family { Jeanie, Debbie, Rick, John, Amanda, Margaret, Benjamin, N };
 

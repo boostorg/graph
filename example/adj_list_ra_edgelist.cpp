@@ -9,6 +9,7 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <iostream>
 
 int
 main()
