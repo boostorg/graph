@@ -93,12 +93,15 @@ exe gerdemann : gerdemann.cpp ;
 # exe girth : girth.cpp ;
 
 exe graph-assoc-types : graph-assoc-types.cpp ;
-exe graph_as_tree : graph_as_tree.cpp ;
+
+#TODO:
+#exe graph_as_tree : graph_as_tree.cpp ;
+
 exe graph : graph.cpp ;
 exe graph_property : graph_property.cpp ;
 exe graph-property-iter-eg : graph-property-iter-eg.cpp ;
-exe graph-thingie : graph-thingie.cpp ;
-exe graphviz : graphviz.cpp ;
+exe graph-thingie : graph-thingie.cpp /boost/graph//boost_graph ;
+exe graphviz : graphviz.cpp /boost/graph//boost_graph ;
 exe grid_graph_example : grid_graph_example.cpp ;
 exe grid_graph_properties : grid_graph_properties.cpp ;
 exe hawick_circuits : hawick_circuits.cpp ;
@@ -162,7 +165,7 @@ exe push-relabel-eg : push-relabel-eg.cpp ;
 exe put-get-helper-eg : put-get-helper-eg.cpp ;
 exe quick_tour : quick_tour.cpp ;
 exe r_c_shortest_paths_example : r_c_shortest_paths_example.cpp ;
-exe read_graphviz : read_graphviz.cpp ;
+exe read_graphviz : read_graphviz.cpp ../build//boost_graph ;
 exe read_write_dimacs-eg : read_write_dimacs-eg.cpp ;
 exe reachable-loop-tail : reachable-loop-tail.cpp ;
 exe remove_edge_if_bidir : remove_edge_if_bidir.cpp ;
