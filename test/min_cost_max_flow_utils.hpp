@@ -34,7 +34,7 @@ struct SampleGraph {
     typedef boost::graph_traits<Graph>::vertices_size_type size_type;
     typedef Traits::vertex_descriptor vertex_descriptor;
     
-	template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
+    template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
     class EdgeAdder {
     public:
       EdgeAdder(Graph& g, Weight& w, Capacity& c, Reversed& rev
@@ -69,18 +69,18 @@ struct SampleGraph {
     };
 
 
-	static void getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
-		Capacity  capacity = get(edge_capacity, g);
-		Reversed rev = get(edge_reverse, g);
-		ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
-		Weight weight = get(edge_weight, g);
-		getSampleGraph(g,s,t,capacity,residual_capacity,weight,rev);
-	}
+    static void getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
+        Capacity  capacity = get(edge_capacity, g);
+        Reversed rev = get(edge_reverse, g);
+        ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
+        Weight weight = get(edge_weight, g);
+        getSampleGraph(g,s,t,capacity,residual_capacity,weight,rev);
+    }
 
-	template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
+    template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
     static void 
-	getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t, 
-			Capacity capacity, ResidualCapacity residual_capacity, Weight weight, Reversed rev) {
+    getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t, 
+            Capacity capacity, ResidualCapacity residual_capacity, Weight weight, Reversed rev) {
         size_type N(6);
 
         for(size_type i = 0; i < N; ++i){
