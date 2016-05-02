@@ -117,7 +117,7 @@ exe isomorphism : isomorphism.cpp ;
 exe iteration_macros : iteration_macros.cpp ;
 exe iterator-property-map-eg : iterator-property-map-eg.cpp ;
 exe johnson-eg : johnson-eg.cpp ;
-exe kevin-bacon2 : kevin-bacon2.cpp ;
+exe kevin-bacon2 : kevin-bacon2.cpp /boost//serialization ;
 exe kevin-bacon : kevin-bacon.cpp ;
 exe king_ordering : king_ordering.cpp ;
 exe knights-tour : knights-tour.cpp ;
