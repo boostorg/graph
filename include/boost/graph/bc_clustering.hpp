@@ -112,8 +112,6 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
 {
   typedef typename property_traits<EdgeCentralityMap>::value_type
     centrality_type;
-  typedef typename graph_traits<MutableGraph>::edge_iterator edge_iterator;
-  typedef typename graph_traits<MutableGraph>::edge_descriptor edge_descriptor;
 
   if (has_no_edges(g)) return;
 
@@ -126,8 +124,8 @@ betweenness_centrality_clustering(MutableGraph& g, Done done,
     brandes_betweenness_centrality(g, 
                                    edge_centrality_map(edge_centrality)
                                    .vertex_index_map(vertex_index));
-    std::pair<edge_iterator, edge_iterator> edges_iters = edges(g);
-    edge_descriptor e = *max_element(edges_iters.first, edges_iters.second, cmp);
+    auto edges_iters = edges(g);
+    auto e = *max_element(edges_iters.first, edges_iters.second, cmp);
     is_done = done(get(edge_centrality, e), e, g);
     if (!is_done) remove_edge(e, g);
   } while (!is_done && !has_no_edges(g));

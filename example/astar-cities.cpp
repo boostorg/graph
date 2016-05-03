@@ -81,8 +81,8 @@ public:
     : m_location(l), m_goal(goal) {}
   CostType operator()(Vertex u)
   {
-    CostType dx = m_location[m_goal].x - m_location[u].x;
-    CostType dy = m_location[m_goal].y - m_location[u].y;
+    auto dx = m_location[m_goal].x - m_location[u].x;
+    auto dy = m_location[m_goal].y - m_location[u].y;
     return ::sqrt(dx * dx + dy * dy);
   }
 private:
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
   
   // create graph
   mygraph_t g(N);
-  WeightMap weightmap = get(edge_weight, g);
+  auto weightmap = get(edge_weight, g);
   for(std::size_t j = 0; j < num_edges; ++j) {
     edge_descriptor e; bool inserted;
     boost::tie(e, inserted) = add_edge(edge_array[j].first,
@@ -171,8 +171,8 @@ int main(int argc, char **argv)
   
   // pick random start/goal
   boost::mt19937 gen(time(0));
-  vertex start = random_vertex(g, gen);
-  vertex goal = random_vertex(g, gen);
+  auto start = random_vertex(g, gen);
+  auto goal = random_vertex(g, gen);
   
   
   cout << "Start vertex: " << name[start] << endl;
@@ -202,14 +202,14 @@ int main(int argc, char **argv)
   
   } catch(found_goal fg) { // found a path to the goal
     list<vertex> shortest_path;
-    for(vertex v = goal;; v = p[v]) {
+    for(auto v = goal;; v = p[v]) {
       shortest_path.push_front(v);
       if(p[v] == v)
         break;
     }
     cout << "Shortest path from " << name[start] << " to "
          << name[goal] << ": ";
-    list<vertex>::iterator spi = shortest_path.begin();
+    auto spi = shortest_path.begin();
     cout << name[start];
     for(++spi; spi != shortest_path.end(); ++spi)
       cout << " -> " << name[*spi];

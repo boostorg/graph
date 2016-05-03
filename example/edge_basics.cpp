@@ -52,8 +52,8 @@ struct exercise_edge {
     // edge_traits class
     // Use the source() and target() functions to access the vertices
     // that belong to Edge e
-    Vertex src = source(e, G);
-    Vertex targ = target(e, G);
+    auto src = source(e, G);
+    auto targ = target(e, G);
 
     // print out the vertex id's just because 
     cout << "(" << src << "," << targ << ") ";

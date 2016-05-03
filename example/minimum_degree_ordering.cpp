@@ -129,8 +129,7 @@ int main(int argc, char* argv[])
 
   Vector supernode_sizes(n, 1); // init has to be 1
 
-  boost::property_map<Graph, vertex_index_t>::type 
-    id = get(vertex_index, G);
+  auto id = get(vertex_index, G);
 
   Vector degree(n, 0);
 

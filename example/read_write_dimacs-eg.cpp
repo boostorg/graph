@@ -76,10 +76,8 @@ int main()
   typedef property_map < Graph, edge_capacity_t >::type tCapMap;
   typedef tCapMap::value_type tCapMapValue;
   
-  typedef property_map < Graph, edge_reverse_t >::type tRevEdgeMap;
-  
-  tCapMap capacity = get(edge_capacity, g);
-  tRevEdgeMap rev = get(edge_reverse, g);
+  auto capacity = get(edge_capacity, g);
+  auto rev = get(edge_reverse, g);
   
   vertex_descriptor s, t;
   /*reading the graph from stdin*/
@@ -91,14 +89,14 @@ int main()
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
   out_edge_iterator oei,oe_end;
   for(boost::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
-    edge_descriptor from_source = *oei;
-    vertex_descriptor v = target(from_source, g);
+    auto from_source = *oei;
+    auto v = target(from_source, g);
     edge_descriptor to_sink;
     bool is_there;
     boost::tie(to_sink, is_there) = edge(v, t, g);
     if( is_there ){
       if( get(capacity, to_sink) > get(capacity, from_source) ){ 
-        tCapMapValue to_augment = get(capacity, from_source);
+        auto to_augment = get(capacity, from_source);
         capacity[from_source] = 0;
         capacity[to_sink] -= to_augment;
         augmented_flow += to_augment;

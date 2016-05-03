@@ -65,14 +65,9 @@ int main() {
   add_edge(5, 0, edge_property('s'), graph2); 
   
   // create predicates
-  typedef property_map<graph_type, vertex_name_t>::type vertex_name_map_t;
-  typedef property_map_equivalent<vertex_name_map_t, vertex_name_map_t> vertex_comp_t;
-  vertex_comp_t vertex_comp =
+  auto vertex_comp =
     make_property_map_equivalent(get(vertex_name, graph1), get(vertex_name, graph2));
-  
-  typedef property_map<graph_type, edge_name_t>::type edge_name_map_t;
-  typedef property_map_equivalent<edge_name_map_t, edge_name_map_t> edge_comp_t;
-  edge_comp_t edge_comp =
+  auto edge_comp =
     make_property_map_equivalent(get(edge_name, graph1), get(edge_name, graph2));
  
   // Create callback

@@ -69,12 +69,10 @@ main()
   file_dep_graph2 g(input_begin, input_end, n_vertices);
 #endif
 
-  typedef property_map < file_dep_graph2, vertex_name_t >::type name_map_t;
-  typedef property_map < file_dep_graph2, vertex_compile_cost_t >::type
-    compile_cost_map_t;
-
-  name_map_t name_map = get(vertex_name, g);
-  compile_cost_map_t compile_cost_map = get(vertex_compile_cost, g);
+  auto name_map = get(vertex_name, g);
+  auto compile_cost_map = get(vertex_compile_cost, g);
+  auto distance_map = get(vertex_distance, g);
+  auto color_map = get(vertex_color, g);
 
   std::ifstream name_in("makefile-target-names.dat");
   std::ifstream compile_cost_in("target-compile-costs.dat");

@@ -104,13 +104,13 @@ main()
 
   graph_traits < graph_type >::vertex_descriptor yow, zag, bar;
   // Get vertex name property map from the graph
-  typedef property_map < graph_type, vertex_name_t >::type name_map_t;
-  name_map_t name = get(vertex_name, g);
+  auto name = get(vertex_name, g);
   // Get iterators for the vertex set
   graph_traits < graph_type >::vertex_iterator i, end;
   boost::tie(i, end) = vertices(g);
   // Find yow.h
-  name_equals_t < name_map_t > predicate1("yow.h", name);
+  typedef property_map < graph_type, vertex_name_t >::type name_map_t;
+  name_equals_t<name_map_t> predicate1("yow.h", name);
   yow = *std::find_if(i, end, predicate1);
   // Find zag.o
   name_equals_t < name_map_t > predicate2("zag.o", name);

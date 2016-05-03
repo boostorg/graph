@@ -72,14 +72,14 @@ public:
     : k(k_), girth(girth_) { }
 
   void tree_edge(edge_descriptor e, Graph* g) {
-    vertex_descriptor u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     k = d_map[u] + 1;
     d_map[v] = k;
     ++distance_list[k];
     p_map[v] = u;
   }
   void non_tree_edge(edge_descriptor e, Graph* g) {
-    vertex_descriptor u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     k = d_map[u] + 1;
     if (d_map[v] + k < girth && v != p_map[u])
       girth = d_map[v]+ k;

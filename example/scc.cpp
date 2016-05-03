@@ -24,8 +24,7 @@ main()
 
   strong_components(g, make_assoc_property_map(component));
 
-  property_map < GraphvizDigraph, vertex_attribute_t >::type
-    vertex_attr_map = get(vertex_attribute, g);
+  auto vertex_attr_map = get(vertex_attribute, g);
   std::string color[] = {
   "white", "gray", "black", "lightgray"};
   graph_traits < GraphvizDigraph >::vertex_iterator vi, vi_end;

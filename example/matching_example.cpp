@@ -76,7 +76,7 @@ int main()
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
-  for(std::vector<std::string>::iterator itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
+  for (auto itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
     std::cout << *itr << std::endl;
 
   std::cout << std::endl << "Found a matching of size " << matching_size(g, &mate[0]) << std::endl;
@@ -103,7 +103,7 @@ int main()
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
-  for(std::vector<std::string>::iterator itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
+  for (auto itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
     std::cout << *itr << std::endl;
 
   std::cout << std::endl << "Found a matching of size " << matching_size(g, &mate[0]) << std::endl;

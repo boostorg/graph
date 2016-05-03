@@ -47,9 +47,8 @@ main(int argc, char *argv[])
     << "  graph [ratio=\"fill\",size=\"3,3\"];\n"
     << "  node [shape=\"box\"];\n" << "  edge [style=\"bold\"];\n";
 
-  property_map<Graph, vertex_attribute_t>::type
-    vattr_map = get(vertex_attribute, g);
-  graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;
+  auto vattr_map = get(vertex_attribute, g);
+  graph_traits<GraphvizDigraph>::vertex_iterator i, i_end;
   for (boost::tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
     loops_out << *i << "[label=\"" << vattr_map[*i]["label"]
       << "\"";

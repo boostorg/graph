@@ -51,7 +51,7 @@ int main() {
     if ( ! my_bucket_sorter[j].empty() ) {
       cout << " has number ";
       do {
-        int v = my_bucket_sorter[j].top();
+        auto v = my_bucket_sorter[j].top();
         my_bucket_sorter[j].pop();
         cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
@@ -74,7 +74,7 @@ int main() {
     if ( ! my_bucket_sorter[j].empty() ) {
       cout << " has number ";
       do {
-        int v = my_bucket_sorter[j].top();
+        auto v = my_bucket_sorter[j].top();
         my_bucket_sorter[j].pop();
         cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
@@ -88,7 +88,7 @@ int main() {
   for (iii=0; iii<N; iii++) {
     std::size_t current = rand() % N;
     if ( ! my_bucket_sorter[current].empty() ) {
-      int v = my_bucket_sorter[current].top();
+      auto v = my_bucket_sorter[current].top();
       my_bucket_sorter[current].pop();
       bucket[v] = rand() % N;
       my_bucket_sorter.push(v);
@@ -98,7 +98,7 @@ int main() {
   for (iii=0; iii<N; iii++) {
     std::size_t current = rand() % N;
     if ( ! my_bucket_sorter[current].empty() ) {
-      int v = my_bucket_sorter[current].top();
+      auto v = my_bucket_sorter[current].top();
       bucket[v] = rand() % N;
       my_bucket_sorter.update(v);
     }

@@ -42,7 +42,7 @@ main()
                    vertex_index_map(identity_property_map()));
 
   int n = 1;
-  for (std::deque < int >::iterator i = topo_order.begin();
+  for (auto i = topo_order.begin();
        i != topo_order.end(); ++i, ++n)
     std::cout << tasks[*i] << std::endl;
 

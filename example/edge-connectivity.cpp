@@ -22,7 +22,7 @@ namespace boost
   {
     typename graph_traits < Graph >::vertex_descriptor p;
     typedef typename graph_traits < Graph >::degree_size_type size_type;
-    size_type delta = (std::numeric_limits < size_type >::max)();
+    auto delta = (std::numeric_limits < size_type >::max)();
     typename graph_traits < Graph >::vertex_iterator i, iend;
     for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
       if (degree(*i, g) < delta)
@@ -79,12 +79,9 @@ namespace boost
     std::vector < edge_descriptor > pred(num_vertices(g));
 
     FlowGraph flow_g(num_vertices(g));
-    typename property_map < FlowGraph, edge_capacity_t >::type
-      cap = get(edge_capacity, flow_g);
-    typename property_map < FlowGraph, edge_residual_capacity_t >::type
-      res_cap = get(edge_residual_capacity, flow_g);
-    typename property_map < FlowGraph, edge_reverse_t >::type
-      rev_edge = get(edge_reverse, flow_g);
+    auto cap = get(edge_capacity, flow_g);
+    auto res_cap = get(edge_residual_capacity, flow_g);
+    auto rev_edge = get(edge_reverse, flow_g);
 
     typename graph_traits < VertexListGraph >::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
@@ -129,11 +126,10 @@ namespace boost
     }
 
     std::vector < bool > in_S_star(num_vertices(g), false);
-    typename std::vector < vertex_descriptor >::iterator si;
-    for (si = S_star.begin(); si != S_star.end(); ++si)
+    for (auto si = S_star.begin(); si != S_star.end(); ++si)
       in_S_star[*si] = true;
     degree_size_type c = 0;
-    for (si = S_star.begin(); si != S_star.end(); ++si) {
+    for (auto si = S_star.begin(); si != S_star.end(); ++si) {
       typename graph_traits < VertexListGraph >::out_edge_iterator ei, ei_end;
       for (boost::tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
         if (!in_S_star[target(*ei, g)]) {
@@ -155,18 +151,15 @@ main()
   read_graphviz("figs/edge-connectivity.dot", g);
 
   typedef graph_traits < GraphvizGraph >::edge_descriptor edge_descriptor;
-  typedef graph_traits < GraphvizGraph >::degree_size_type degree_size_type;
   std::vector < edge_descriptor > disconnecting_set;
-  degree_size_type c =
-    edge_connectivity(g, std::back_inserter(disconnecting_set));
+  auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 
   std::cout << "The edge connectivity is " << c << "." << std::endl;
 
-  property_map < GraphvizGraph, vertex_attribute_t >::type
-    attr_map = get(vertex_attribute, g);
+  auto attr_map = get(vertex_attribute, g);
 
   std::cout << "The disconnecting set is {";
-  for (std::vector < edge_descriptor >::iterator i =
+  for (auto i =
        disconnecting_set.begin(); i != disconnecting_set.end(); ++i)
     std::
       cout << "(" << attr_map[source(*i, g)]["label"] << "," <<
