@@ -61,11 +61,9 @@ int main()
 
     Graph g;
 
-    property_map< Graph, edge_capacity_t >::type capacity
-        = get(edge_capacity, g);
-    property_map< Graph, edge_reverse_t >::type rev = get(edge_reverse, g);
-    property_map< Graph, edge_residual_capacity_t >::type residual_capacity
-        = get(edge_residual_capacity, g);
+    auto capacity = get(edge_capacity, g);
+    auto rev = get(edge_reverse, g);
+    auto residual_capacity = get(edge_residual_capacity, g);
 
     Traits::vertex_descriptor s, t;
     read_dimacs_max_flow(g, capacity, rev, s, t);

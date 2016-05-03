@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     graph_traits< Graph >::vertex_iterator i, end;
     for (boost::tie(i, end) = vertices(g); i != end; ++i)
     {
-        Vertex v = *i;
+        auto v = *i;
         cout << setiosflags(ios::left) << setw(12) << g[v].name << "\t" << im[v]
              << "\t" << pm[v] << endl;
     }

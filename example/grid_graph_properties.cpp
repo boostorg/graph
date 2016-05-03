@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     put(dataMap, v, 2.0f);
 
     // Get the data at the node at position (0,1) in the grid
-    float retrieved = get(dataMap, v);
+    auto retrieved = get(dataMap, v);
     std::cout << "Retrieved value: " << retrieved << std::endl;
 
     return 0;

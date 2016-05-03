@@ -65,7 +65,7 @@ int main()
     add_edge(D, B, 3, g);
     add_edge(E, C, 0, g);
 
-    EdgeWeightMap weight = get(edge_weight, g);
+    auto weight = get(edge_weight, g);
 
     std::cout << "unfiltered edge_range(C,D)\n";
     graph_traits< Graph >::out_edge_iterator f, l;

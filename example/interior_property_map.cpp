@@ -61,7 +61,7 @@ void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
     // Access the propety acessor type for this graph
     typedef
         typename property_map< Graph, vertex_first_name_t >::const_type NamePA;
-    NamePA name = get(vertex_first_name, G);
+    auto name = get(vertex_first_name, G);
 
     typedef typename boost::property_traits< NamePA >::value_type NameType;
 

@@ -65,16 +65,14 @@ public:
     template < class Edge, class Graph >
     void tree_out_edge(Edge e, const Graph& g) const
     {
-        typename graph_traits< Graph >::vertex_descriptor u = source(e, g),
-                                                          v = target(e, g);
+        auto u = source(e, g), v = target(e, g);
         put(m_distance, v, get(m_distance, u) + 1);
         put(m_predecessor, v, u);
     }
     template < class Edge, class Graph >
     void tree_in_edge(Edge e, const Graph& g) const
     {
-        typename graph_traits< Graph >::vertex_descriptor u = source(e, g),
-                                                          v = target(e, g);
+        auto u = source(e, g), v = target(e, g);
         put(m_distance, u, get(m_distance, v) + 1);
         put(m_predecessor, u, v);
     }

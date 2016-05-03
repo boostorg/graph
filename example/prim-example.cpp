@@ -23,7 +23,7 @@ int main()
     int weights[] = { 1, 1, 2, 7, 3, 1, 1 };
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
     Graph g(num_nodes);
-    property_map< Graph, edge_weight_t >::type weightmap = get(edge_weight, g);
+    auto weightmap = get(edge_weight, g);
     for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j)
     {
         graph_traits< Graph >::edge_descriptor e;
@@ -37,9 +37,8 @@ int main()
     std::vector< graph_traits< Graph >::vertex_descriptor > p(num_vertices(g));
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    property_map< Graph, vertex_distance_t >::type distance
-        = get(vertex_distance, g);
-    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
+    auto distance = get(vertex_distance, g);
+    auto indexmap = get(vertex_index, g);
     prim_minimum_spanning_tree(g, *vertices(g).first, &p[0], distance,
         weightmap, indexmap, default_dijkstra_visitor());
 #else
