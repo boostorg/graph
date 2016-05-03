@@ -58,7 +58,7 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry,
                     make_iterator_property_map(color_map.begin(),
                                                get(vertex_index, g), color_map[0]));
 
-  for (std::vector < Edge >::size_type i = 0; i < back_edges.size(); ++i) {
+  for (typename std::vector < Edge >::size_type i = 0; i < back_edges.size(); ++i) {
     typename Loops::value_type x;
     loops.push_back(x);
     compute_loop_extent(back_edges[i], g, loops.back());
