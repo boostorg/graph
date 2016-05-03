@@ -126,12 +126,12 @@ namespace boost
     }
 
     std::vector < bool > in_S_star(num_vertices(g), false);
-    for (auto si = S_star.begin(); si != S_star.end(); ++si)
-      in_S_star[*si] = true;
+    for (const auto& vertex : S_star.begin())
+      in_S_star[vertex] = true;
     degree_size_type c = 0;
-    for (auto si = S_star.begin(); si != S_star.end(); ++si) {
+    for (const auto& vertex : S_star.begin()) {
       typename graph_traits < VertexListGraph >::out_edge_iterator ei, ei_end;
-      for (boost::tie(ei, ei_end) = out_edges(*si, g); ei != ei_end; ++ei)
+      for (boost::tie(ei, ei_end) = out_edges(vertex, g); ei != ei_end; ++ei)
         if (!in_S_star[target(*ei, g)]) {
           *disconnecting_set++ = *ei;
           ++c;
@@ -159,11 +159,10 @@ main()
   auto attr_map = get(vertex_attribute, g);
 
   std::cout << "The disconnecting set is {";
-  for (auto i =
-       disconnecting_set.begin(); i != disconnecting_set.end(); ++i)
+  for (const auto& edge : disconnecting_set)
     std::
-      cout << "(" << attr_map[source(*i, g)]["label"] << "," <<
-      attr_map[target(*i, g)]["label"] << ") ";
+      cout << "(" << attr_map[source(edge, g)]["label"] << "," <<
+      attr_map[target(edge, g)]["label"] << ") ";
   std::cout << "}." << std::endl;
   return EXIT_SUCCESS;
 }

@@ -56,8 +56,8 @@ int main(int , char* [])
                      Pair(6,7) }; //g-h 
   
   Graph G(10);
-  for (int i = 0; i < 14; ++i)
-    add_edge(edges[i].first, edges[i].second, G);
+  for (const auto& edge : edges)
+    add_edge(edge.first, edge.second, G);
 
   graph_traits<Graph>::vertex_iterator ui, ui_end;
 
@@ -78,9 +78,8 @@ int main(int , char* [])
                            get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
     cout << "  ";    
-    for (auto i = inv_perm.begin();
-         i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
+    for (const auto& vertex : inv_perm)
+      cout << index_map[vertex] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -96,9 +95,8 @@ int main(int , char* [])
                            get(vertex_degree, G));
     cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
     cout << "  ";
-    for (auto i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
+    for (const auto& vertex : inv_perm)
+      cout << index_map[vertex] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -115,9 +113,8 @@ int main(int , char* [])
     
     cout << "Reverse Cuthill-McKee ordering:" << endl;
     cout << "  ";
-    for (auto i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
+    for (const auto& vertex : inv_perm)
+      cout << index_map[vertex] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)

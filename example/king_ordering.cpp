@@ -96,9 +96,8 @@ int main(int , char* [])
                   get(vertex_degree, G), get(vertex_index, G));
     cout << "King ordering starting at: " << s << endl;
     cout << "  ";
-    for (auto i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
+    for (const auto& vertex : inv_perm)
+      cout << index_map[vertex] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
@@ -115,9 +114,8 @@ int main(int , char* [])
     
     cout << "King ordering:" << endl;
     cout << "  ";
-    for (auto i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
+    for (const auto& vertex : inv_perm)
+      cout << index_map[vertex] << " ";
     cout << endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
