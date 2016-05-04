@@ -52,11 +52,10 @@ struct edge_properties
 
 using namespace boost;
 
-typedef adjacency_list< vecS, vecS, undirectedS, vertex_properties,
-    edge_properties >
-    Graph;
-typedef graph_traits< Graph >::vertex_descriptor Vertex;
-typedef graph_traits< Graph >::edge_descriptor Edge;
+using Graph = adjacency_list< vecS, vecS, undirectedS, vertex_properties,
+    edge_properties >;
+using Vertex = graph_traits< Graph >::vertex_descriptor;
+using Edge = graph_traits< Graph >::edge_descriptor;
 
 class bacon_number_recorder : public default_bfs_visitor
 {

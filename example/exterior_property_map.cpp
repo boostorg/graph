@@ -76,9 +76,9 @@ int main(int, char*[])
     names[3] = "Jeff";
     names[4] = "Kinis";
 
-    typedef adjacency_list<> MyGraphType;
+    using MyGraphType = adjacency_list<>;
 
-    typedef pair< int, int > Pair;
+    using Pair = pair< int, int >;
     Pair edge_array[11] = { Pair(0, 1), Pair(0, 2), Pair(0, 3), Pair(0, 4),
         Pair(2, 0), Pair(3, 0), Pair(2, 4), Pair(3, 1), Pair(3, 4), Pair(4, 0),
         Pair(4, 1) };
