@@ -1,0 +1,16 @@
+BasedOnStyle: WebKit
+Standard: Cpp11
+AlignAfterOpenBracket: false
+AlignEscapedNewlinesLeft: true
+AlwaysBreakAfterDefinitionReturnType: None
+BreakBeforeBraces: Allman
+BreakConstructorInitializersBeforeComma: false
+ColumnLimit: 80
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 0
+IndentCaseLabels: false
+SortIncludes: false
+AlignTrailingComments: false
+
+SpacesInAngles: true
+
