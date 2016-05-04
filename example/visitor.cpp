@@ -71,18 +71,12 @@ main(int, char*[])
   
   using Graph = adjacency_list<>;
   using E = std::pair<int,int>;
-  E edges[] = { E(0, 2),
+  const auto edges = { E(0, 2),
                 E(1, 1), E(1, 3),
                 E(2, 1), E(2, 3),
                 E(3, 1), E(3, 4),
                 E(4, 0), E(4, 1) };  
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  Graph G(5);
-  for (std::size_t j = 0; j < sizeof(edges)/sizeof(E); ++j)
-    add_edge(edges[j].first, edges[j].second, G);
-#else
-  Graph G(edges, edges + sizeof(edges)/sizeof(E), 5);
-#endif
+  Graph G(std::begin(edges), std::end(edges), 5);
 
   using size_type = boost::graph_traits<Graph>::vertices_size_type;
   

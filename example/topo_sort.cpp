@@ -44,18 +44,15 @@ main(int , char* [])
     property<vertex_color_t, default_color_type> >;
 
   using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
-  Pair edges[6] = { Pair(0,1), Pair(2,4),
-                    Pair(2,5),
-                    Pair(0,3), Pair(1,4),
-                    Pair(4,3) };
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  // VC++ can't handle the iterator constructor
-  Graph G(6);
-  for (std::size_t j = 0; j < 6; ++j)
-    add_edge(edges[j].first, edges[j].second, G);
-#else
-  Graph G(edges, edges + 6, 6);
-#endif
+
+  const auto edges = {
+    Pair(0, 1),
+    Pair(2, 4),
+    Pair(2, 5),
+    Pair(0, 3),
+    Pair(1, 4),
+    Pair(4, 3) };
+  Graph G(std::begin(edges), std::end(edges), 6 /* vertices count */);
 
   auto id = get(vertex_index, G);
 

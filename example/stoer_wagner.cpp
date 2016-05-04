@@ -40,7 +40,7 @@ int main()
   
   // construct the graph object. 8 is the number of vertices, which are numbered from 0
   // through 7, and 16 is the number of edges.
-  undirected_graph g(edges, edges + 16, ws, 8, 16);
+  undirected_graph g(std::begin(edges), std::end(edges), ws, 8, 16);
   
   // define a property map, `parities`, that will store a boolean value for each vertex.
   // Vertices that have the same parity after `stoer_wagner_min_cut` runs are on the same side of the min-cut.
