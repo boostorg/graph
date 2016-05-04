@@ -17,16 +17,14 @@
 using namespace boost;
 using namespace std;
 
-typedef property< vertex_color_t, default_color_type,
+using VertexProperty = property< vertex_color_t, default_color_type,
     property< vertex_distance_t, int,
         property< vertex_degree_t, int,
             property< vertex_in_degree_t, int,
-                property< vertex_out_degree_t, int > > > > >
-    VertexProperty;
-typedef property< edge_weight_t, int > EdgeProperty;
-typedef adjacency_list< vecS, vecS, bidirectionalS, VertexProperty,
-    EdgeProperty >
-    Graph;
+                property< vertex_out_degree_t, int > > > > >;
+using EdgeProperty = property< edge_weight_t, int >;
+using Graph = adjacency_list< vecS, vecS, bidirectionalS, VertexProperty,
+    EdgeProperty >;
 
 template < class Graph > void print(Graph& g)
 {

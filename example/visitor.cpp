@@ -50,8 +50,8 @@ using namespace std;
 template < class Tag >
 struct edge_printer : public base_visitor< edge_printer< Tag > >
 {
-    typedef Tag event_filter;
-    edge_printer(std::string edge_t) : m_edge_type(edge_t) {}
+    using event_filter = Tag;
+    edge_printer(std::string edge_t) : m_edge_type(edge_t) { }
     template < class Edge, class Graph > void operator()(Edge e, Graph& G)
     {
         std::cout << m_edge_type << ": " << source(e, G) << " --> "
@@ -69,13 +69,13 @@ int main(int, char*[])
 
     using namespace boost;
 
-    typedef adjacency_list<> Graph;
-    typedef std::pair< int, int > E;
+    using Graph = adjacency_list<>;
+    using E = std::pair< int, int >;
     const auto edges = { E(0, 2), E(1, 1), E(1, 3), E(2, 1), E(2, 3), E(3, 1),
         E(3, 4), E(4, 0), E(4, 1) };
     Graph G(std::begin(edges), std::end(edges), 5);
 
-    typedef boost::graph_traits< Graph >::vertices_size_type size_type;
+    using size_type = boost::graph_traits< Graph >::vertices_size_type;
 
     std::vector< size_type > d(num_vertices(G));
     std::vector< size_type > f(num_vertices(G));

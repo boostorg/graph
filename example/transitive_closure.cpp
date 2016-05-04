@@ -17,10 +17,10 @@
 int main(int, char*[])
 {
     using namespace boost;
-    typedef property< vertex_name_t, char > Name;
-    typedef property< vertex_index_t, std::size_t, Name > Index;
-    typedef adjacency_list< listS, listS, directedS, Index > graph_t;
-    typedef graph_traits< graph_t >::vertex_descriptor vertex_t;
+    using Name = property< vertex_name_t, char >;
+    using Index = property< vertex_index_t, std::size_t, Name >;
+    using graph_t = adjacency_list< listS, listS, directedS, Index >;
+    using vertex_t = graph_traits< graph_t >::vertex_descriptor;
     graph_t G;
     std::vector< vertex_t > verts(4);
     for (int i = 0; i < 4; ++i)

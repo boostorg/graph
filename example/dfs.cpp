@@ -52,7 +52,7 @@ using namespace std;
 template < class VisitorList >
 struct edge_categorizer : public dfs_visitor< VisitorList >
 {
-    typedef dfs_visitor< VisitorList > Base;
+    using Base = dfs_visitor< VisitorList >;
 
     edge_categorizer(const VisitorList& v = null_visitor()) : Base(v) {}
 
@@ -93,7 +93,7 @@ int main(int, char*[])
 
     using namespace boost;
 
-    typedef adjacency_list<> Graph;
+    using Graph = adjacency_list<>;
 
     Graph G(5);
     add_edge(0, 2, G);
@@ -106,7 +106,7 @@ int main(int, char*[])
     add_edge(4, 0, G);
     add_edge(4, 1, G);
 
-    typedef graph_traits< Graph >::vertices_size_type size_type;
+    using size_type = graph_traits< Graph >::vertices_size_type;
 
     std::vector< size_type > d(num_vertices(G));
     std::vector< size_type > f(num_vertices(G));

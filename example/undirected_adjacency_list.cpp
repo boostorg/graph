@@ -38,7 +38,7 @@ template < typename DirectedGraph > void directed_graph_demo()
 {
     const int V = 2;
     DirectedGraph digraph(V);
-    typedef typename DirectedGraph::edge_property_type Weight;
+    using Weight = typename DirectedGraph::edge_property_type;
     auto weight = get(edge_weight, digraph);
     typename graph_traits< DirectedGraph >::edge_descriptor e1, e2;
     bool found;
@@ -65,7 +65,7 @@ template < typename UndirectedGraph > void undirected_graph_demo2()
 {
     const int V = 2;
     UndirectedGraph undigraph(V);
-    typedef typename UndirectedGraph::edge_property_type Weight;
+    using Weight = typename UndirectedGraph::edge_property_type;
     typename property_map< UndirectedGraph, edge_weight_t >::type weight
         = get(edge_weight, undigraph);
     typename graph_traits< UndirectedGraph >::edge_descriptor e1, e2;
@@ -96,11 +96,11 @@ template < typename UndirectedGraph > void undirected_graph_demo2()
 
 int main()
 {
-    typedef property< edge_weight_t, double > Weight;
-    typedef adjacency_list< vecS, vecS, undirectedS, no_property, Weight >
-        UndirectedGraph;
-    typedef adjacency_list< vecS, vecS, directedS, no_property, Weight >
-        DirectedGraph;
+    using Weight = property< edge_weight_t, double >;
+    using UndirectedGraph
+        = adjacency_list< vecS, vecS, undirectedS, no_property, Weight >;
+    using DirectedGraph
+        = adjacency_list< vecS, vecS, directedS, no_property, Weight >;
     undirected_graph_demo1< UndirectedGraph >();
     directed_graph_demo< DirectedGraph >();
     undirected_graph_demo2< UndirectedGraph >();

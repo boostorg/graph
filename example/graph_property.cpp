@@ -14,16 +14,15 @@ int main()
     using namespace boost;
     using std::string;
 
-    typedef adjacency_list< vecS, vecS, directedS, no_property,
-        property< edge_index_t, int >, property< graph_name_t, string > >
-        graph_t;
+    using graph_t = adjacency_list< vecS, vecS, directedS, no_property,
+        property< edge_index_t, int >, property< graph_name_t, string > >;
 
     graph_t g;
     get_property(g, graph_name) = "graph";
 
     std::cout << "name: " << get_property(g, graph_name) << std::endl;
 
-    typedef subgraph< graph_t > subgraph_t;
+    using subgraph_t = subgraph< graph_t >;
 
     subgraph_t sg;
     get_property(sg, graph_name) = "subgraph";
