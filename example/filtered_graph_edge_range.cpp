@@ -44,6 +44,7 @@ int main()
         property< edge_weight_t, int > >
         Graph;
     typedef property_map< Graph, edge_weight_t >::type EdgeWeightMap;
+    using EdgeWeightMap = property_map< Graph, edge_weight_t >::type;
 
     enum
     {
@@ -74,8 +75,8 @@ int main()
                   << name[target(*f, g)] << "\n";
 
     positive_edge_weight< EdgeWeightMap > filter(weight);
-    typedef filtered_graph< Graph, positive_edge_weight< EdgeWeightMap > >
-        FGraph;
+    using FGraph
+        = filtered_graph< Graph, positive_edge_weight< EdgeWeightMap > >;
     FGraph fg(g, filter);
 
     std::cout << "filtered edge_range(C,D)\n";

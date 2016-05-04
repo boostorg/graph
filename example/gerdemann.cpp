@@ -42,7 +42,7 @@ void merge_vertex(typename boost::graph_traits< Graph >::vertex_descriptor u,
     typename boost::graph_traits< Graph >::vertex_descriptor v, Graph& g,
     GetEdgeProperties getp)
 {
-    typedef boost::graph_traits< Graph > Traits;
+    using Traits = boost::graph_traits< Graph >;
     typename Traits::edge_descriptor e;
     typename Traits::out_edge_iterator out_i, out_end;
     for (boost::tie(out_i, out_end) = out_edges(v, g); out_i != out_end;
@@ -86,11 +86,11 @@ namespace boost
 template < class ValueType >
 struct container_gen< ordered_set_by_nameS, ValueType >
 {
-    typedef std::set< ValueType, order_by_name< ValueType > > type;
+    using type = std::set< ValueType, order_by_name< ValueType > >;
 };
 template <> struct parallel_edge_traits< ordered_set_by_nameS >
 {
-    typedef allow_parallel_edge_tag type;
+    using type = allow_parallel_edge_tag;
 };
 }
 #endif
@@ -114,10 +114,9 @@ int main()
     std::cout << "This program requires partial specialization." << std::endl;
 #else
     using namespace boost;
-    typedef property< edge_name_t, char > EdgeProperty;
-    typedef adjacency_list< ordered_set_by_nameS, vecS, bidirectionalS,
-        no_property, EdgeProperty >
-        graph_type;
+    using EdgeProperty = property< edge_name_t, char >;
+    using graph_type = adjacency_list< ordered_set_by_nameS, vecS,
+        bidirectionalS, no_property, EdgeProperty >;
 
     graph_type g;
 

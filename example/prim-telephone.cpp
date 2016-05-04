@@ -26,9 +26,8 @@ int main()
     GraphvizGraph g_dot;
     read_graphviz("figs/telephone-network.dot", g_dot);
 
-    typedef adjacency_list< vecS, vecS, undirectedS, no_property,
-        property< edge_weight_t, int > >
-        Graph;
+    using Graph = adjacency_list< vecS, vecS, undirectedS, no_property,
+        property< edge_weight_t, int > >;
     Graph g(num_vertices(g_dot));
     auto edge_attr_map = get(edge_attribute, g_dot);
     graph_traits< GraphvizGraph >::edge_iterator ei, ei_end;
@@ -39,7 +38,7 @@ int main()
         add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
     }
 
-    typedef graph_traits< Graph >::vertex_descriptor Vertex;
+    using Vertex = graph_traits< Graph >::vertex_descriptor;
     std::vector< Vertex > parent(num_vertices(g));
     auto weight = get(edge_weight, g);
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300

@@ -24,8 +24,8 @@ template < typename Graph, typename DistanceType, typename ResultType,
     typename Divides = divides< ResultType > >
 struct inclusive_average
 {
-    typedef DistanceType distance_type;
-    typedef ResultType result_type;
+    using distance_type = DistanceType;
+    using result_type = ResultType;
 
     result_type operator()(distance_type d, const Graph& g)
     {
@@ -56,30 +56,30 @@ struct Link
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph< WebPage, Link > Graph;
-typedef graph_traits< Graph >::vertex_descriptor Vertex;
-typedef graph_traits< Graph >::edge_descriptor Edge;
+using Graph = directed_graph< WebPage, Link >;
+using Vertex = graph_traits< Graph >::vertex_descriptor;
+using Edge = graph_traits< Graph >::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map< Graph, string WebPage::* >::type NameMap;
+using NameMap = property_map< Graph, string WebPage::* >::type;
 
 // Declare a matrix type and its corresponding property map that
 // will contain the distances between each pair of vertices.
-typedef exterior_vertex_property< Graph, float > DistanceProperty;
-typedef DistanceProperty::matrix_type DistanceMatrix;
-typedef DistanceProperty::matrix_map_type DistanceMatrixMap;
+using DistanceProperty = exterior_vertex_property< Graph, float >;
+using DistanceMatrix = DistanceProperty::matrix_type;
+using DistanceMatrixMap = DistanceProperty::matrix_map_type;
 
 // Declare the weight map as an accessor into the bundled
 // edge property.
-typedef property_map< Graph, float Link::* >::type WeightMap;
+using WeightMap = property_map< Graph, float Link::* >::type;
 
 // Declare a container and its corresponding property map that
 // will contain the resulting mean geodesic distances of each
 // vertex in the graph.
-typedef exterior_vertex_property< Graph, float > GeodesicProperty;
-typedef GeodesicProperty::container_type GeodesicContainer;
-typedef GeodesicProperty::map_type GeodesicMap;
+using GeodesicProperty = exterior_vertex_property< Graph, float >;
+using GeodesicContainer = GeodesicProperty::container_type;
+using GeodesicMap = GeodesicProperty::map_type;
 
 static float exclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);
 static float inclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);

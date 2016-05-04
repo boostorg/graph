@@ -25,9 +25,9 @@ struct toto_t
     {
         num = 23063
     };
-    typedef vertex_property_tag kind;
+    using kind = vertex_property_tag;
 };
-typedef property< toto_t, double > Toto;
+using Toto = property< toto_t, double >;
 
 struct radius_t
 {
@@ -35,9 +35,9 @@ struct radius_t
     {
         num = 23062
     };
-    typedef vertex_property_tag kind;
+    using kind = vertex_property_tag;
 };
-typedef property< radius_t, double, Toto > Radius;
+using Radius = property< radius_t, double, Toto >;
 
 struct mass_t
 {
@@ -45,9 +45,9 @@ struct mass_t
     {
         num = 23061
     };
-    typedef vertex_property_tag kind;
+    using kind = vertex_property_tag;
 };
-typedef property< mass_t, int, Radius > Mass;
+using Mass = property< mass_t, int, Radius >;
 
 //====== edge properties
 struct stiff_t
@@ -56,16 +56,15 @@ struct stiff_t
     {
         num = 23064
     };
-    typedef edge_property_tag kind;
+    using kind = edge_property_tag;
 };
-typedef property< stiff_t, double > Stiff;
+using Stiff = property< stiff_t, double >;
 
 //===== graph type
-typedef Mass VertexProperty;
-typedef Stiff EdgeProperty;
-typedef adjacency_list< vecS, setS, bidirectionalS, VertexProperty,
-    EdgeProperty >
-    Graph;
+using VertexProperty = Mass;
+using EdgeProperty = Stiff;
+using Graph = adjacency_list< vecS, setS, bidirectionalS, VertexProperty,
+    EdgeProperty >;
 
 //===== utilities
 struct Print

@@ -54,8 +54,8 @@ using boost::tie;
 int main(int, char*[])
 {
     using namespace boost;
-    typedef int Index; // ID of a Vertex
-    typedef pair< Index, Index > Edge;
+    using Index = int; // ID of a Vertex
+    using Edge = pair< Index, Index >;
     const int N = 6;
     const int E = 4;
     Edge edgelist[] = { Edge(0, 1), Edge(1, 4), Edge(4, 0), Edge(2, 5) };

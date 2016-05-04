@@ -39,9 +39,8 @@ using namespace boost;
 
  */
 
-typedef adjacency_list< vecS, vecS, undirectedS, no_property,
-    property< edge_weight_t, int > >
-    Graph;
+using Graph = adjacency_list< vecS, vecS, undirectedS, no_property,
+    property< edge_weight_t, int > >;
 
 struct has_weight_greater_than
 {
@@ -62,7 +61,7 @@ struct has_weight_greater_than
 
 int main()
 {
-    typedef std::pair< std::size_t, std::size_t > Edge;
+    using Edge = std::pair< std::size_t, std::size_t >;
     Edge edge_array[5]
         = { Edge(0, 3), Edge(0, 3), Edge(1, 3), Edge(2, 0), Edge(3, 2) };
 

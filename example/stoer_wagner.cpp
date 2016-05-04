@@ -26,12 +26,12 @@ int main()
 {
     using namespace std;
 
-    typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
-        boost::no_property, boost::property< boost::edge_weight_t, int > >
-        undirected_graph;
-    typedef boost::property_map< undirected_graph, boost::edge_weight_t >::type
-        weight_map_type;
-    typedef boost::property_traits< weight_map_type >::value_type weight_type;
+    using undirected_graph
+        = boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
+            boost::no_property, boost::property< boost::edge_weight_t, int > >;
+    using weight_map_type
+        = boost::property_map< undirected_graph, boost::edge_weight_t >::type;
+    using weight_type = boost::property_traits< weight_map_type >::value_type;
 
     // define the 16 edges of the graph. {3, 4} means an undirected edge between
     // vertices 3 and 4.

@@ -17,9 +17,8 @@ int main(int argc, char** argv)
 
     using namespace boost;
 
-    typedef adjacency_list< vecS, vecS, undirectedS,
-        property< vertex_index_t, int > >
-        graph;
+    using graph = adjacency_list< vecS, vecS, undirectedS,
+        property< vertex_index_t, int > >;
 
     graph K_4(4);
     add_edge(0, 1, K_4);

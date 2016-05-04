@@ -25,9 +25,8 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list< vecS, vecS, directedS,
-        property< vertex_distance_t, int >, property< edge_weight_t, int > >
-        graph_t;
+    using graph_t = adjacency_list< vecS, vecS, directedS,
+        property< vertex_distance_t, int >, property< edge_weight_t, int > >;
     graph_t g(6);
     enum verts
     {

@@ -27,7 +27,7 @@ using namespace boost;
 int main()
 {
     const int N = 8;
-    typedef adjacency_list< vecS, vecS, undirectedS > UndirectedGraph;
+    using UndirectedGraph = adjacency_list< vecS, vecS, undirectedS >;
     UndirectedGraph g(N);
 
     add_edge(0, 1, g);
@@ -45,8 +45,8 @@ int main()
     add_edge(5, 7, g);
     add_edge(6, 7, g);
 
-    typedef graph_traits< UndirectedGraph >::edge_descriptor edge_descriptor;
-    typedef graph_traits< UndirectedGraph >::degree_size_type degree_size_type;
+    using edge_descriptor = graph_traits< UndirectedGraph >::edge_descriptor;
+    using degree_size_type = graph_traits< UndirectedGraph >::degree_size_type;
     std::vector< edge_descriptor > disconnecting_set;
 
     auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));

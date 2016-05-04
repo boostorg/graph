@@ -37,9 +37,8 @@ struct face_counter : public planar_face_traversal_visitor
 int main(int argc, char** argv)
 {
 
-    typedef adjacency_list< vecS, vecS, undirectedS,
-        property< vertex_index_t, int >, property< edge_index_t, int > >
-        graph;
+    using graph = adjacency_list< vecS, vecS, undirectedS,
+        property< vertex_index_t, int >, property< edge_index_t, int > >;
 
     // Create the graph - a straight line
     graph g(10);
@@ -67,7 +66,7 @@ int main(int argc, char** argv)
         put(e_index, *ei, edge_count++);
 
     // Test for planarity; compute the planar embedding as a side-effect
-    typedef std::vector< graph_traits< graph >::edge_descriptor > vec_t;
+    using vec_t = std::vector< graph_traits< graph >::edge_descriptor >;
     std::vector< vec_t > embedding(num_vertices(g));
     if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
             boyer_myrvold_params::embedding = &embedding[0]))

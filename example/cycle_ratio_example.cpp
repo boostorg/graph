@@ -18,10 +18,9 @@
  */
 
 using namespace boost;
-typedef adjacency_list< listS, listS, directedS,
-    property< vertex_index_t, int >,
-    property< edge_weight_t, double, property< edge_weight2_t, double > > >
-    grap_real_t;
+using grap_real_t
+    = adjacency_list< listS, listS, directedS, property< vertex_index_t, int >,
+        property< edge_weight_t, double, property< edge_weight2_t, double > > >;
 
 template < typename TG > void gen_rand_graph(TG& g, size_t nV, size_t nE)
 {
@@ -45,8 +44,8 @@ int main(int argc, char* argv[])
     using std::endl;
     const double epsilon = 0.0000001;
     double min_cr, max_cr; /// Minimum and maximum cycle ratio
-    typedef std::vector< graph_traits< grap_real_t >::edge_descriptor >
-        ccReal_t;
+    using ccReal_t
+        = std::vector< graph_traits< grap_real_t >::edge_descriptor >;
     ccReal_t cc; /// critical cycle
 
     grap_real_t tgr;
