@@ -45,18 +45,15 @@ int main()
         B,
         C,
         D,
-        E,
-        N
+        E
     };
     const char* name = "ABCDE";
     typedef std::vector< std::list< int > > Graph;
-    Graph g(N);
-    g[A].push_back(B);
-    g[A].push_back(C);
-    g[C].push_back(D);
-    g[C].push_back(E);
-    g[D].push_back(E);
-    g[E].push_back(C);
+    Graph g = { { B, C }, // A
+        {}, // B
+        { D, E }, // C
+        { E }, // D
+        { C } }; // E
 
     constant_target filter(E);
     filtered_graph< Graph, constant_target > fg(g, filter);
