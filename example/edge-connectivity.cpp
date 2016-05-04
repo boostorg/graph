@@ -95,7 +95,7 @@ namespace boost
     }
 
     boost::tie(p, delta) = min_degree_vertex(g);
-    S_star.push_back(p);
+    S_star.emplace_back(p);
     alpha_star = delta;
     S.insert(p);
     neighbor_S.insert(p);
@@ -114,7 +114,7 @@ namespace boost
         S_star.clear();
         for (boost::tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
           if (color[*vi] != Color::white())
-            S_star.push_back(*vi);
+            S_star.emplace_back(*vi);
       }
       S.insert(k);
       neighbor_S.insert(k);

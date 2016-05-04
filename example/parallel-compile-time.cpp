@@ -131,7 +131,7 @@ main()
   typedef graph_traits<file_dep_graph2 >::vertex_descriptor vertex_t;
   std::vector<vertex_t> id2vertex;
   for (std::size_t v = 0; v < n_vertices; ++v)
-    id2vertex.push_back(add_vertex(g));
+    id2vertex.emplace_back(add_vertex(g));
   while (input_begin != input_end) {
     size_type i, j;
     boost::tie(i, j) = *input_begin++;

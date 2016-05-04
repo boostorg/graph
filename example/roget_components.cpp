@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
   graph_traits<Graph*>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (root[*vi] == *vi)
-      strong_comp[comp[index_map[*vi]]].push_back(*vi);
+      strong_comp[comp[index_map[*vi]]].emplace_back(*vi);
 
   // Then add the other vertices of the component
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (root[*vi] != *vi)
-      strong_comp[comp[index_map[*vi]]].push_back(*vi);
+      strong_comp[comp[index_map[*vi]]].emplace_back(*vi);
 
   // We do not print out the "from" and "to" information as Knuth
   // does because we no longer have easy access to that information

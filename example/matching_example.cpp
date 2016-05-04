@@ -92,7 +92,7 @@ int main()
   //now we'll add two edges, and the perfect matching has size 9
 
   ascii_graph.pop_back();
-  ascii_graph.push_back("     12---13      14---15      16---17 ");
+  ascii_graph.emplace_back("     12---13      14---15      16---17 ");
 
   add_edge(12,13,g);
   add_edge(16,17,g);

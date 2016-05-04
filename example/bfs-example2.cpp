@@ -56,7 +56,7 @@ main()
   graph_t g;
   std::vector<graph_traits<graph_t>::vertex_descriptor> verts;
   for (std::size_t i = 0; i < N; ++i)
-    verts.push_back(add_vertex(g));
+    verts.emplace_back(add_vertex(g));
   for (std::size_t j = 0; j < n_edges; ++j)
     add_edge(verts[edge_array[j].first], verts[edge_array[j].second], g);
 #else

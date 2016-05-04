@@ -203,7 +203,7 @@ int main(int argc, char **argv)
   } catch(found_goal fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(auto v = goal;; v = p[v]) {
-      shortest_path.push_front(v);
+      shortest_path.emplace_front(v);
       if(p[v] == v)
         break;
     }

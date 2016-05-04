@@ -59,7 +59,7 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry,
 
   for (typename std::vector < Edge >::size_type i = 0; i < back_edges.size(); ++i) {
     typename Loops::value_type x;
-    loops.push_back(x);
+    loops.emplace_back(x);
     compute_loop_extent(back_edges[i], g, loops.back());
   }
 }

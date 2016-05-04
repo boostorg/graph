@@ -59,7 +59,7 @@ main()
   std::vector<vertex_t> id2vertex;
   file_dep_graph2 g;
   for (std::size_t i = 0; i < n_vertices; ++i)
-    id2vertex.push_back(add_vertex(g));
+    id2vertex.emplace_back(add_vertex(g));
   std::pair<size_type, size_type> p;
   while (file_in >> p) 
     add_edge(id2vertex[p.first], id2vertex[p.second], g);

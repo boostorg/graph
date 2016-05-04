@@ -56,9 +56,9 @@ void load_actor_graph(std::istream& in, ActorGraph& g)
       if (v == actors.end()) {
         auto new_vertex = add_vertex(Actor(actor_id), g);
         actors[actor_id] = new_vertex;
-        actors_in_movie.push_back(new_vertex);
+        actors_in_movie.emplace_back(new_vertex);
       } else {
-        actors_in_movie.push_back(v->second);
+        actors_in_movie.emplace_back(v->second);
       }
     }
 

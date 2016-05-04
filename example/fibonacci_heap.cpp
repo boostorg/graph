@@ -58,7 +58,7 @@ main()
       }
 
       for (i = 0; i < N; ++i) {
-        v.push_back(w[Q.top()]);
+        v.emplace_back(w[Q.top()]);
         Q.pop();
       }
       std::sort(w.begin(), w.end());
