@@ -26,15 +26,14 @@ int main()
 
   const int n_vertices = 18;
 
-  std::vector<std::string> ascii_graph;
-
-  ascii_graph.push_back("           0       1---2       3       ");
-  ascii_graph.push_back("            \\     /     \\     /        ");
-  ascii_graph.push_back("             4---5       6---7         ");
-  ascii_graph.push_back("             |   |       |   |         ");
-  ascii_graph.push_back("             8---9      10---11        ");
-  ascii_graph.push_back("            /     \\     /     \\        ");
-  ascii_graph.push_back("     12   13      14---15      16   17 ");
+  std::vector<std::string> ascii_graph = {
+    "           0       1---2       3       ",
+    "            \\     /     \\     /        ",
+    "             4---5       6---7         ",
+    "             |   |       |   |         ",
+    "             8---9      10---11        ",
+    "            /     \\     /     \\        ",
+    "     12   13      14---15      16   17 "};
 
   // It has a perfect matching of size 8. There are two isolated
   // vertices that we'll use later...
