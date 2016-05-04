@@ -14,7 +14,7 @@
 
 using namespace boost;
 template < typename TimeMap > class bfs_time_visitor:public default_bfs_visitor {
-  typedef typename property_traits < TimeMap >::value_type T;
+  using T = typename property_traits < TimeMap >::value_type;
 public:
   bfs_time_visitor(TimeMap tmap, T & t):m_timemap(tmap), m_time(t) { }
   template < typename Vertex, typename Graph >
@@ -32,12 +32,12 @@ main()
 {
   using namespace boost;
   // Select the graph type we wish to use
-  typedef adjacency_list < vecS, vecS, undirectedS > graph_t;
+  using graph_t = adjacency_list < vecS, vecS, undirectedS >;
   // Set up the vertex IDs and names
   enum { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
   // Specify the edges in the graph
-  typedef std::pair < int, int >E;
+  using E = std::pair < int, int >;
   E edge_array[] = { E(r, s), E(r, v), E(s, w), E(w, r), E(w, t),
     E(w, x), E(x, t), E(t, u), E(x, y), E(u, y)
   };
@@ -49,19 +49,18 @@ main()
   for (std::size_t j = 0; j < n_edges; ++j)
     add_edge(edge_array[j].first, edge_array[j].second, g);
 #else
-  typedef graph_traits<graph_t>::vertices_size_type v_size_t;
+  using v_size_t = graph_traits<graph_t>::vertices_size_type;
   graph_t g(edge_array, edge_array + n_edges, v_size_t(N));
 #endif
 
   // Typedefs
-  typedef graph_traits < graph_t >::vertices_size_type Size;
+  using Size = graph_traits < graph_t >::vertices_size_type;
 
   // a vector to hold the discover time property for each vertex
   std::vector < Size > dtime(num_vertices(g));
-  typedef
+  using dtime_pm_type =
     iterator_property_map<std::vector<Size>::iterator,
-                          property_map<graph_t, vertex_index_t>::const_type>
-    dtime_pm_type;
+                          property_map<graph_t, vertex_index_t>::const_type>;
   dtime_pm_type dtime_pm(dtime.begin(), get(vertex_index, g));
 
   Size time = 0;

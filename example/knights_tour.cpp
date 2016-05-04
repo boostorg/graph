@@ -18,9 +18,7 @@
 
 using namespace boost;
 
-typedef
-std::pair < int, int >
-  Position;
+using Position = std::pair < int, int >;
 Position
   knight_jumps[8] = {
     Position(2, -1),
@@ -93,35 +91,22 @@ protected:
 
 struct knights_tour_graph
 {
-  typedef Position
-    vertex_descriptor;
-  typedef
+  using vertex_descriptor = Position;
+  using edge_descriptor =
     std::pair <
     vertex_descriptor,
-    vertex_descriptor >
-    edge_descriptor;
-  typedef knight_adjacency_iterator
-    adjacency_iterator;
-  typedef void
-    out_edge_iterator;
-  typedef void
-    in_edge_iterator;
-  typedef void
-    edge_iterator;
-  typedef void
-    vertex_iterator;
-  typedef int
-    degree_size_type;
-  typedef int
-    vertices_size_type;
-  typedef int
-    edges_size_type;
-  typedef directed_tag
-    directed_category;
-  typedef disallow_parallel_edge_tag
-    edge_parallel_category;
-  typedef adjacency_graph_tag
-    traversal_category;
+    vertex_descriptor >;
+  using adjacency_iterator = knight_adjacency_iterator;
+  using out_edge_iterator = void;
+  using in_edge_iterator = void;
+  using edge_iterator = void;
+  using vertex_iterator = void;
+  using degree_size_type = int;
+  using vertices_size_type = int;
+  using edges_size_type = int;
+  using directed_category = directed_tag;
+  using edge_parallel_category = disallow_parallel_edge_tag;
+  using traversal_category =  adjacency_graph_tag;
   knights_tour_graph(int n):
   m_board_size(n)
   {
@@ -153,7 +138,7 @@ std::pair < knights_tour_graph::adjacency_iterator,
 adjacent_vertices(knights_tour_graph::vertex_descriptor v,
                   const knights_tour_graph & g)
 {
-  typedef knights_tour_graph::adjacency_iterator Iter;
+  using Iter = knights_tour_graph::adjacency_iterator;
   return std::make_pair(Iter(0, v, g), Iter(8, v, g));
 }
 
@@ -172,8 +157,8 @@ template < typename Graph, typename TimePropertyMap >
                            Graph >::vertex_descriptor src,
                            TimePropertyMap time_map)
 {
-  typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
-  typedef std::pair < int, Vertex > P;
+  using Vertex = typename graph_traits < Graph >::vertex_descriptor;
+  using P = std::pair < int, Vertex >;
   std::stack < P > S;
   int time_stamp = 0;
 
@@ -225,8 +210,8 @@ template < typename Graph, typename TimePropertyMap >
                   typename graph_traits < Graph >::vertex_descriptor src,
                   TimePropertyMap time_map)
 {
-  typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
-  typedef std::pair < int, Vertex > P;
+  using Vertex = typename graph_traits < Graph >::vertex_descriptor;
+  using P = std::pair < int, Vertex >;
   std::stack < P > S;
   int time_stamp = 0;
 
@@ -272,9 +257,9 @@ template < typename Graph, typename TimePropertyMap >
 
 struct board_map
 {
-  typedef int value_type;
-  typedef Position key_type;
-  typedef read_write_property_map_tag category;
+  using value_type = int;
+  using key_type = Position;
+  using category = read_write_property_map_tag;
     board_map(int *b, int n):m_board(b), m_size(n)
   {
   }

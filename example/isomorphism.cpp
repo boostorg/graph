@@ -23,8 +23,8 @@ main()
   
   const int n = 12;
 
-  typedef adjacency_list<vecS, listS, undirectedS,
-    property<vertex_index_t, int> > graph_t;
+  using graph_t = adjacency_list<vecS, listS, undirectedS,
+    property<vertex_index_t, int> >;
   graph_t g1(n), g2(n);
 
   std::vector<graph_traits<graph_t>::vertex_descriptor> v1(n), v2(n);

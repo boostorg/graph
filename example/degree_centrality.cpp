@@ -25,19 +25,19 @@ struct Actor
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = undirected_graph<Actor>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+using NameMap = property_map<Graph, string Actor::*>::type;
 
 // Declare a container type for degree centralities and its
 // corresponding property map.
-typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
-typedef CentralityProperty::container_type CentralityContainer;
-typedef CentralityProperty::map_type CentralityMap;
+using CentralityProperty = exterior_vertex_property<Graph, unsigned>;
+using CentralityContainer = CentralityProperty::container_type;
+using CentralityMap = CentralityProperty::map_type;
 
 int
 main(int argc, char *argv[])

@@ -25,23 +25,23 @@ using namespace std;
 //
 // Create a custom graph properties
 //  (see the documentation for adjacency list)
-struct graph_identifier_t { typedef graph_property_tag kind; };
-struct vertex_label_t { typedef vertex_property_tag kind; };
+struct graph_identifier_t { using kind = graph_property_tag; };
+struct vertex_label_t { using kind = vertex_property_tag; };
 
 int main() {
 
   // Vertex properties
-  typedef property < vertex_name_t, string,
+  using vertex_p = property < vertex_name_t, string,
             property < vertex_label_t, string,
-              property < vertex_root_t, int > > > vertex_p;  
+              property < vertex_root_t, int > > >;  
   // Edge properties
-  typedef property < edge_name_t, string > edge_p;
+  using edge_p = property < edge_name_t, string >;
   // Graph properties
-  typedef property < graph_name_t, string,
-            property < graph_identifier_t, string > > graph_p;
+  using graph_p = property < graph_name_t, string,
+            property < graph_identifier_t, string > >;
   // adjacency_list-based type
-  typedef adjacency_list < vecS, vecS, directedS,
-    vertex_p, edge_p, graph_p > graph_t;
+  using graph_t = adjacency_list < vecS, vecS, directedS,
+    vertex_p, edge_p, graph_p >;
 
   // Construct an empty graph and prepare the dynamic_property_maps.
   graph_t graph(0);

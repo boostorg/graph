@@ -55,11 +55,11 @@ template <class EdgeIter, class Graph>
 void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
 {
   // Access the propety acessor type for this graph
-  typedef typename property_map<Graph, vertex_first_name_t>
-    ::const_type NamePA;
+  using NamePA = typename property_map<Graph, vertex_first_name_t>
+    ::const_type;
   auto name = get(vertex_first_name, G);
 
-  typedef typename boost::property_traits<NamePA>::value_type NameType;
+  using NameType = typename boost::property_traits<NamePA>::value_type;
 
   NameType src_name, targ_name;
 
@@ -78,10 +78,10 @@ main()
   {
     // Create the graph, and specify that we will use std::string to
     // store the first name's.
-    typedef adjacency_list<vecS, vecS, directedS, 
-      property<vertex_first_name_t, std::string> > MyGraphType;
+    using MyGraphType = adjacency_list<vecS, vecS, directedS, 
+      property<vertex_first_name_t, std::string> >;
     
-    typedef pair<int,int> Pair;
+    using Pair = pair<int,int>;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                             Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                             Pair(3,4), Pair(4,0), Pair(4,1) };

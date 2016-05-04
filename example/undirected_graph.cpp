@@ -10,7 +10,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/undirected_graph.hpp>
 
-typedef boost::undirected_graph<boost::no_property> Graph;
+using Graph = boost::undirected_graph<boost::no_property>;
 
 int main(int,char*[])
 {

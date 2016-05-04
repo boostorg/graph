@@ -30,7 +30,7 @@ int main(int , char* [])
   using namespace std;
   using namespace boost;
 
-  typedef adjacency_list<listS,vecS,bidirectionalS> Graph;
+  using Graph = adjacency_list<listS,vecS,bidirectionalS>;
   const int num_vertices = 5;
   Graph g(num_vertices);
 

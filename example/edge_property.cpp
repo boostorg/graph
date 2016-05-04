@@ -72,9 +72,9 @@ namespace boost {
 template <class Graph>
 void print_network(const Graph& G)
 {
-  typedef typename boost::graph_traits<Graph>::vertex_iterator    Viter;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
+  using Viter = typename boost::graph_traits<Graph>::vertex_iterator   ;
+  using OutEdgeIter = typename boost::graph_traits<Graph>::out_edge_iterator;
+  using InEdgeIter = typename boost::graph_traits<Graph>::in_edge_iterator;
 
   auto capacity = get(edge_mycapacity, G);
   auto flow = get(edge_myflow, G);
@@ -105,10 +105,10 @@ void print_network(const Graph& G)
 
 int main(int , char* [])
 {
-  typedef property<edge_mycapacity_t, int> Cap;
-  typedef property<edge_myflow_t, int, Cap> Flow;
-  typedef adjacency_list<vecS, vecS, bidirectionalS, 
-     no_property, Flow> Graph;
+  using Cap = property<edge_mycapacity_t, int>;
+  using Flow = property<edge_myflow_t, int, Cap>;
+  using Graph = adjacency_list<vecS, vecS, bidirectionalS, 
+     no_property, Flow>;
 
   const int num_vertices = 9;
   Graph G(num_vertices);

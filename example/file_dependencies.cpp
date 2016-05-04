@@ -79,7 +79,7 @@ protected:
 int main(int,char*[])
 {
 
-  typedef pair<int,int> Edge;
+  using Edge = pair<int,int>;
   Edge used_by[] = {
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
@@ -98,7 +98,7 @@ int main(int,char*[])
   };
   const std::size_t nedges = sizeof(used_by)/sizeof(Edge);
 
-  typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
+  using Graph = adjacency_list<vecS, vecS, bidirectionalS>;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   Graph g(N);
@@ -109,12 +109,12 @@ int main(int,char*[])
 #else
   Graph g(used_by, used_by + nedges, N);
 #endif
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
 
   // Determine ordering for a full recompilation
   // and the order with files that can be compiled in parallel
   {
-    typedef list<Vertex> MakeOrder;
+    using MakeOrder = list<Vertex>;
     MakeOrder::iterator i;
     MakeOrder make_order;
 

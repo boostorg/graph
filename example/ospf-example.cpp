@@ -19,13 +19,12 @@ int
 main()
 {
   using namespace boost;
-  typedef 
+  using g_dot_type = 
     adjacency_list<vecS, vecS, directedS,
                    property<vertex_name_t, std::string>, 
                    property<edge_color_t, std::string,
                             property<edge_weight_t, int> >,
-                   property<graph_color_t, std::string> >
-    g_dot_type;
+                   property<graph_color_t, std::string> >;
   g_dot_type g_dot;
 
   dynamic_properties dp(ignore_other_properties);
@@ -38,9 +37,9 @@ main()
     read_graphviz(infile, g_dot, dp);
   }
 
-  typedef adjacency_list < vecS, vecS, directedS, no_property,
-    property < edge_weight_t, int > > Graph;
-  typedef graph_traits < Graph >::vertex_descriptor vertex_descriptor;
+  using Graph = adjacency_list < vecS, vecS, directedS, no_property,
+    property < edge_weight_t, int > >;
+  using vertex_descriptor = graph_traits < Graph >::vertex_descriptor;
   Graph g(num_vertices(g_dot));
   graph_traits < g_dot_type >::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
@@ -59,7 +58,7 @@ main()
 
   std::vector < vertex_descriptor > parent(num_vertices(g));
   // All vertices start out as there own parent
-  typedef graph_traits < Graph >::vertices_size_type size_type;
+  using size_type = graph_traits < Graph >::vertices_size_type;
   for (size_type p = 0; p < num_vertices(g); ++p)
     parent[p] = p;
 

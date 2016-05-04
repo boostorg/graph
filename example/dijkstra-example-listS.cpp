@@ -18,15 +18,15 @@ using namespace boost;
 int
 main(int, char *[])
 {
-  typedef adjacency_list_traits<listS, listS, 
-    directedS>::vertex_descriptor vertex_descriptor;
-  typedef adjacency_list < listS, listS, directedS,
+  using vertex_descriptor = adjacency_list_traits<listS, listS, 
+    directedS>::vertex_descriptor;
+  using graph_t = adjacency_list < listS, listS, directedS,
     property<vertex_index_t, int, 
     property<vertex_name_t, char,
     property<vertex_distance_t, int,
     property<vertex_predecessor_t, vertex_descriptor> > > >, 
-    property<edge_weight_t, int> > graph_t;
-  typedef std::pair<int, int> Edge;
+    property<edge_weight_t, int> >;
+  using Edge = std::pair<int, int>;
 
   const int num_nodes = 5;
   enum nodes { A, B, C, D, E };

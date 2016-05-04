@@ -50,8 +50,8 @@ struct cycle_printer
 template <typename Graph, typename VertexPairIterator>
 void build_graph(Graph& graph, unsigned int const nvertices,
                  VertexPairIterator first, VertexPairIterator last) {
-    typedef boost::graph_traits<Graph> Traits;
-    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    using Traits = boost::graph_traits<Graph>;
+    using vertex_descriptor = typename Traits::vertex_descriptor;
     std::map<unsigned int, vertex_descriptor> vertices;
 
     for (unsigned int i = 0; i < nvertices; ++i)

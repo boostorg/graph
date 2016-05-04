@@ -17,7 +17,7 @@
 
 using namespace std;
 
-typedef
+using Graph =
 boost::adjacency_list
   <
     boost::vecS,         // OutEdgeList
@@ -27,25 +27,19 @@ boost::adjacency_list
     boost::no_property,  // EdgeProperties
     boost::no_property,  // GraphProperties
     boost::listS         // EdgeList
-  >
-Graph
-;
+  >;
 
-typedef
-boost::graph_traits<Graph>::vertex_descriptor
-vertex_descriptor;
+using vertex_descriptor =
+boost::graph_traits<Graph>::vertex_descriptor;
 
-typedef
-boost::graph_traits<Graph>::edge_descriptor
-edge_descriptor;
+using edge_descriptor =
+boost::graph_traits<Graph>::edge_descriptor;
 
-typedef
-boost::graph_traits<Graph>::vertex_iterator
-vertex_iterator;
+using vertex_iterator =
+boost::graph_traits<Graph>::vertex_iterator;
 
-typedef
-boost::graph_traits<Graph>::edge_iterator
-edge_iterator;
+using edge_iterator =
+boost::graph_traits<Graph>::edge_iterator;
 
 
 int main(int argc, char **argv)

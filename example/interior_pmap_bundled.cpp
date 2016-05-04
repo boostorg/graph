@@ -66,9 +66,9 @@ main()
   {
     // Create the graph, and specify that we will use std::string to
     // store the first name's.
-    typedef adjacency_list<vecS, vecS, directedS, VertexData> MyGraphType;
+    using MyGraphType = adjacency_list<vecS, vecS, directedS, VertexData>;
     
-    typedef pair<int,int> Pair;
+    using Pair = pair<int,int>;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                             Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                             Pair(3,4), Pair(4,0), Pair(4,1) };

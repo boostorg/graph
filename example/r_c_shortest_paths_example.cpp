@@ -39,12 +39,11 @@ struct SPPRC_Example_Graph_Arc_Prop
   int time;
 };
 
-typedef adjacency_list<vecS, 
+using SPPRC_Example_Graph = adjacency_list<vecS, 
                        vecS, 
                        directedS, 
                        SPPRC_Example_Graph_Vert_Prop, 
-                       SPPRC_Example_Graph_Arc_Prop> 
-  SPPRC_Example_Graph;
+                       SPPRC_Example_Graph_Arc_Prop>;
 
 // data structures for spp without resource constraints:
 // ResourceContainer model

@@ -17,7 +17,7 @@ main()
   enum
   { A, B, C, D, E, F, G, H, n_vertices };
   const int n_edges = 11;
-  typedef std::pair < int, int >Edge;
+  using Edge = std::pair < int, int >;
 
   // The list of connections between routers stored in an array.
   Edge edges[] = {
@@ -27,7 +27,7 @@ main()
   };
 
   // Specify the graph type and declare a graph object
-  typedef edge_list < Edge*, Edge, std::ptrdiff_t, std::random_access_iterator_tag> Graph;
+  using Graph = edge_list < Edge*, Edge, std::ptrdiff_t, std::random_access_iterator_tag>;
   Graph g(edges, edges + n_edges);
 
   // The transmission delay values for each edge.  

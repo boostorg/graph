@@ -71,12 +71,12 @@ b(14); d a
 
 */
 
-typedef property<vertex_color_t, default_color_type, 
-         property<vertex_distance_t,int> > VProperty;
-typedef int weight_t;
-typedef property<edge_weight_t,weight_t> EProperty;
+using VProperty = property<vertex_color_t, default_color_type, 
+         property<vertex_distance_t,int> >;
+using weight_t = int;
+using EProperty = property<edge_weight_t,weight_t>;
 
-typedef adjacency_list<vecS, vecS, directedS, VProperty, EProperty > Graph;
+using Graph = adjacency_list<vecS, vecS, directedS, VProperty, EProperty >;
 
 
 
@@ -84,7 +84,7 @@ template <class Tag>
 struct endl_printer
   : public boost::base_visitor< endl_printer<Tag> >
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
   endl_printer(std::ostream& os) : m_os(os) { }
   template <class T, class Graph>
   void operator()(T, Graph&) { m_os << std::endl; }
@@ -99,7 +99,7 @@ template <class PA, class Tag>
 struct edge_printer
  : public boost::base_visitor< edge_printer<PA, Tag> >
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
 
   edge_printer(PA pa, std::ostream& os) : m_pa(pa), m_os(os) { }
 
@@ -122,7 +122,7 @@ template <class NewGraph, class Tag>
 struct graph_copier 
   : public boost::base_visitor<graph_copier<NewGraph, Tag> >
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
 
   graph_copier(NewGraph& graph) : new_g(graph) { }
 
@@ -165,10 +165,10 @@ main(int , char* [])
   auto vertex_id = get(vertex_index, G);
 
   std::vector<weight_t> distance(N, (numeric_limits<weight_t>::max)());
-  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
   std::vector<Vertex> parent(N);
 
-  typedef std::pair<int,int> E;
+  using E = std::pair<int,int>;
 
   E edges[] = { E(a,c), E(a,d),
                 E(b,a), E(b,d),

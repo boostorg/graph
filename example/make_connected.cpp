@@ -22,13 +22,12 @@ using namespace boost;
 int main(int argc, char** argv)
 {
 
-  typedef adjacency_list
+  using graph = adjacency_list
     < vecS,
       vecS,
       undirectedS,
       property<vertex_index_t, int>
-    > 
-    graph;
+    >;
 
   graph g(11);
   add_edge(0,1,g);

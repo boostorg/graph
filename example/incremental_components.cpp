@@ -49,9 +49,9 @@ using namespace boost;
 
 int main(int argc, char* argv[]) 
 {
-  typedef adjacency_list <vecS, vecS, undirectedS> Graph;
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef graph_traits<Graph>::vertices_size_type VertexIndex;
+  using Graph = adjacency_list <vecS, vecS, undirectedS>;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
+  using VertexIndex = graph_traits<Graph>::vertices_size_type;
 
   const int VERTEX_COUNT = 6;
   Graph graph(VERTEX_COUNT);
@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
   std::vector<VertexIndex> rank(num_vertices(graph));
   std::vector<Vertex> parent(num_vertices(graph));
 
-  typedef VertexIndex* Rank;
-  typedef Vertex* Parent;
+  using Rank = VertexIndex*;
+  using Parent = Vertex*;
 
   disjoint_sets<Rank, Parent> ds(&rank[0], &parent[0]);
 
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
 
-  typedef component_index<VertexIndex> Components;
+  using Components = component_index<VertexIndex>;
 
   // NOTE: Because we're using vecS for the graph type, we're
   // effectively using identity_property_map for a vertex index map.

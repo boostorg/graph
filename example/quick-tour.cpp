@@ -32,7 +32,7 @@ template < typename Graph, typename VertexNameMap > void
 print_vertex_names(const Graph & g, VertexNameMap name_map)
 {
   std::cout << "vertices(g) = { ";
-  typedef typename graph_traits < Graph >::vertex_iterator iter_t;
+  using iter_t = typename graph_traits < Graph >::vertex_iterator;
   for (auto p = vertices(g); p.first != p.second;
        ++p.first) {
     print_vertex_name(*p.first, name_map);
@@ -92,9 +92,9 @@ build_router_network(Graph & g, VertexNameMap name_map,
 int
 main()
 {
-  typedef adjacency_list < listS, listS, directedS,
+  using graph_t = adjacency_list < listS, listS, directedS,
     property < vertex_name_t, char >,
-    property < edge_weight_t, double > > graph_t;
+    property < edge_weight_t, double > >;
   graph_t g;
 
   auto name_map = get(vertex_name, g);

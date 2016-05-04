@@ -45,10 +45,10 @@ struct detect_loops : public boost::dfs_visitor<>
 int main(int, char*[])
 {
   using namespace boost;
-  typedef adjacency_list< vecS, vecS, undirectedS,
+  using graph_t = adjacency_list< vecS, vecS, undirectedS,
     no_property,
-    property<edge_color_t, default_color_type> > graph_t;
-  typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
+    property<edge_color_t, default_color_type> >;
+  using vertex_t = graph_traits<graph_t>::vertex_descriptor;
   
   const std::size_t N = sizeof(name)/sizeof(std::string);
   graph_t g(N);

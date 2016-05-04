@@ -92,14 +92,14 @@ struct edge_weight_map;
 namespace boost {
   template<>
   struct property_map< ring_graph, edge_weight_t > {
-    typedef edge_weight_map type;
-    typedef edge_weight_map const_type;
+    using type = edge_weight_map;
+    using const_type = edge_weight_map;
   };
 
   template<>
   struct property_map< const ring_graph, edge_weight_t > {
-    typedef edge_weight_map type;
-    typedef edge_weight_map const_type;
+    using type = edge_weight_map;
+    using const_type = edge_weight_map;
   };
 }
 
@@ -121,35 +121,35 @@ indices.  Vertex 0 is also adjacent to the vertex n-1.
 class ring_graph {
 public:
   // Graph associated types
-  typedef std::size_t vertex_descriptor;
-  typedef boost::undirected_tag directed_category;
-  typedef boost::disallow_parallel_edge_tag edge_parallel_category;
-  typedef ring_traversal_catetory traversal_category;
+  using vertex_descriptor = std::size_t;
+  using directed_category = boost::undirected_tag;
+  using edge_parallel_category = boost::disallow_parallel_edge_tag;
+  using traversal_category = ring_traversal_catetory;
 
   // IncidenceGraph associated types
-  typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
-  typedef ring_incident_edge_iterator out_edge_iterator;
-  typedef std::size_t degree_size_type;
+  using edge_descriptor = std::pair<vertex_descriptor, vertex_descriptor>;
+  using out_edge_iterator = ring_incident_edge_iterator;
+  using degree_size_type = std::size_t;
 
   // BidirectionalGraph associated types
   // Note that undirected graphs make no distinction between in- and out-
   // edges.
-  typedef ring_incident_edge_iterator in_edge_iterator;
+  using in_edge_iterator = ring_incident_edge_iterator;
 
   // AdjacencyGraph associated types
-  typedef ring_adjacency_iterator adjacency_iterator;
+  using adjacency_iterator = ring_adjacency_iterator;
 
   // VertexListGraph associated types
-  typedef boost::counting_iterator<vertex_descriptor> vertex_iterator;
-  typedef std::size_t vertices_size_type;
+  using vertex_iterator = boost::counting_iterator<vertex_descriptor>;
+  using vertices_size_type = std::size_t;
 
   // EdgeListGraph associated types
-  typedef ring_edge_iterator edge_iterator;
-  typedef std::size_t edges_size_type;
+  using edge_iterator = ring_edge_iterator;
+  using edges_size_type = std::size_t;
 
   // This type is not part of a graph concept, but is used to return the
   // default vertex index map used by the Dijkstra search algorithm.
-  typedef vertex_descriptor vertex_property_type;
+  using vertex_property_type = vertex_descriptor;
 
   ring_graph(std::size_t n):m_n(n) {};
   std::size_t n() const {return m_n;}
@@ -160,16 +160,16 @@ private:
 
 // Use these graph_traits parameterizations to refer to the associated
 // graph types.
-typedef boost::graph_traits<ring_graph>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<ring_graph>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<ring_graph>::out_edge_iterator out_edge_iterator;
-typedef boost::graph_traits<ring_graph>::in_edge_iterator in_edge_iterator;
-typedef boost::graph_traits<ring_graph>::adjacency_iterator adjacency_iterator;
-typedef boost::graph_traits<ring_graph>::degree_size_type degree_size_type;
-typedef boost::graph_traits<ring_graph>::vertex_iterator vertex_iterator;
-typedef boost::graph_traits<ring_graph>::vertices_size_type vertices_size_type;
-typedef boost::graph_traits<ring_graph>::edge_iterator edge_iterator;
-typedef boost::graph_traits<ring_graph>::edges_size_type edges_size_type;
+using vertex_descriptor = boost::graph_traits<ring_graph>::vertex_descriptor;
+using edge_descriptor = boost::graph_traits<ring_graph>::edge_descriptor;
+using out_edge_iterator = boost::graph_traits<ring_graph>::out_edge_iterator;
+using in_edge_iterator = boost::graph_traits<ring_graph>::in_edge_iterator;
+using adjacency_iterator = boost::graph_traits<ring_graph>::adjacency_iterator;
+using degree_size_type = boost::graph_traits<ring_graph>::degree_size_type;
+using vertex_iterator = boost::graph_traits<ring_graph>::vertex_iterator;
+using vertices_size_type = boost::graph_traits<ring_graph>::vertices_size_type;
+using edge_iterator = boost::graph_traits<ring_graph>::edge_iterator;
+using edges_size_type = boost::graph_traits<ring_graph>::edges_size_type;
 
 
 // Tag values passed to an iterator constructor to specify whether it should
@@ -287,10 +287,10 @@ class ring_adjacency_iterator:public boost::adjacency_iterator_generator<
   out_edge_iterator>::type {
   // The parent class is an iterator_adpator that turns an iterator over
   // out edges into an iterator over adjacent vertices.
-  typedef boost::adjacency_iterator_generator<
+  using parent_class = boost::adjacency_iterator_generator<
     ring_graph,
     vertex_descriptor,
-    out_edge_iterator>::type parent_class;
+    out_edge_iterator>::type;
 public:
   ring_adjacency_iterator() {};
   ring_adjacency_iterator(vertex_descriptor u,
@@ -392,10 +392,10 @@ edge(vertex_descriptor u, vertex_descriptor v, const ring_graph& g) {
 Map from edges to weight values
 */
 struct edge_weight_map {
-  typedef double value_type;
-  typedef value_type reference;
-  typedef edge_descriptor key_type;
-  typedef boost::readable_property_map_tag category;
+  using value_type = double;
+  using reference = value_type;
+  using key_type = edge_descriptor;
+  using category = boost::readable_property_map_tag;
 
   // Edges have a weight equal to the average of their endpoint indexes.
   reference operator[](key_type e) const {
@@ -405,13 +405,10 @@ struct edge_weight_map {
 
 // Use these propety_map and property_traits parameterizations to refer to
 // the associated property map types.
-typedef boost::property_map<ring_graph,
-                            boost::edge_weight_t>::const_type
-        const_edge_weight_map;
-typedef boost::property_traits<const_edge_weight_map>::reference
-        edge_weight_map_value_type;
-typedef boost::property_traits<const_edge_weight_map>::key_type
-        edge_weight_map_key;
+using const_edge_weight_map = boost::property_map<ring_graph,
+                            boost::edge_weight_t>::const_type;
+using edge_weight_map_value_type = boost::property_traits<const_edge_weight_map>::reference;
+using edge_weight_map_key = boost::property_traits<const_edge_weight_map>::key_type;
 
 // PropertyMap valid expressions
 edge_weight_map_value_type

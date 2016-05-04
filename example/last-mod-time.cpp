@@ -20,7 +20,7 @@ template < typename Graph, typename VertexNamePropertyMap > void
 read_graph_file(std::istream & graph_in, std::istream & name_in,
                 Graph & g, VertexNamePropertyMap name_map)
 {
-  typedef typename graph_traits < Graph >::vertices_size_type size_type;
+  using size_type = typename graph_traits < Graph >::vertices_size_type;
   size_type n_vertices;
   typename graph_traits < Graph >::vertex_descriptor u;
   typename property_traits < VertexNamePropertyMap >::value_type name;
@@ -43,11 +43,11 @@ read_graph_file(std::istream & graph_in, std::istream & name_in,
 int
 main()
 {
-  typedef adjacency_list < listS,       // Store out-edges of each vertex in a std::list
+  using graph_type = adjacency_list < listS,       // Store out-edges of each vertex in a std::list
     vecS,                       // Store vertex set in a std::vector
     directedS,                  // The graph is directed
     property < vertex_name_t, std::string >     // Add a vertex property
-   >graph_type;
+   >;
 
   graph_type g;                 // use default constructor to create empty graph
   std::ifstream file_in("makefile-dependencies.dat"),
@@ -64,15 +64,15 @@ main()
   // Create storage for last modified times
   std::vector < time_t > last_mod_vec(num_vertices(g));
   // Create nickname for the property map type
-  typedef iterator_property_map < std::vector < time_t >::iterator,
-    property_map < graph_type, vertex_index_t >::type, time_t, time_t&> iter_map_t;
+  using iter_map_t = iterator_property_map < std::vector < time_t >::iterator,
+    property_map < graph_type, vertex_index_t >::type, time_t, time_t&>;
   // Create last modified time property map
   iter_map_t mod_time_map(last_mod_vec.begin(), get(vertex_index, g));
 
   auto name = get(vertex_name, g);
   struct stat stat_buf;
   graph_traits < graph_type >::vertex_descriptor u;
-  typedef graph_traits < graph_type >::vertex_iterator vertex_iter_t;
+  using vertex_iter_t = graph_traits < graph_type >::vertex_iterator;
   std::pair < vertex_iter_t, vertex_iter_t > p;
   for (p = vertices(g); p.first != p.second; ++p.first) {
     u = *p.first;

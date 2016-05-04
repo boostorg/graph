@@ -32,7 +32,7 @@ namespace boost
 
 using namespace boost;
 
-typedef adjacency_list< listS, // Store out-edges of each vertex in a std::list
+using file_dep_graph2 = adjacency_list< listS, // Store out-edges of each vertex in a std::list
   listS,                       // Store vertex set in a std::list
   directedS,                   // The file dependency graph is directed
   // vertex properties
@@ -41,17 +41,16 @@ typedef adjacency_list< listS, // Store out-edges of each vertex in a std::list
   property < vertex_distance_t, float,
   property < vertex_color_t, default_color_type > > > >,
   // an edge property
-  property < edge_weight_t, float > >
-  file_dep_graph2;
+  property < edge_weight_t, float > >;
 
-typedef graph_traits<file_dep_graph2>::vertex_descriptor vertex_t;
-typedef graph_traits<file_dep_graph2>::edge_descriptor edge_t;
+using vertex_t = graph_traits<file_dep_graph2>::vertex_descriptor;
+using edge_t = graph_traits<file_dep_graph2>::edge_descriptor;
 
 int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef graph_traits<file_dep_graph2>::vertices_size_type size_type;
+  using size_type = graph_traits<file_dep_graph2>::vertices_size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300

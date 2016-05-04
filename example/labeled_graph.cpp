@@ -17,10 +17,10 @@ int main() {
 
     using namespace boost::graph_detail;
 
-    typedef directed_graph<> Digraph;
+    using Digraph = directed_graph<>;
 
     {
-        typedef labeled_graph<Digraph, unsigned> Graph;
+        using Graph = labeled_graph<Digraph, unsigned>;
         Graph g;
         add_vertex(1, g);
         add_vertex(2, g);
@@ -29,14 +29,14 @@ int main() {
     }
 
     {
-        typedef labeled_graph<Digraph, string> Graph;
+        using Graph = labeled_graph<Digraph, string>;
         Graph g;
         add_vertex("foo", g);
         add_vertex("bar", g);
     }
 
     {
-        typedef labeled_graph<Digraph, string, mapS> Graph;
+        using Graph = labeled_graph<Digraph, string, mapS>;
         Graph g;
         add_vertex("foo", g);
         add_vertex("bar", g);
@@ -44,7 +44,7 @@ int main() {
     }
 
     {
-        typedef labeled_graph<Digraph*, int> TempGraph;
+        using TempGraph = labeled_graph<Digraph*, int>;
         Digraph g;
         TempGraph h(&g);
         add_vertex(12, h);
@@ -53,8 +53,8 @@ int main() {
 
     {
         // This is actually a fairly complicated specialization.
-        typedef adjacency_list<vecS, vecS, bidirectionalS> G;
-        typedef labeled_graph<G, size_t> Graph;
+        using G = adjacency_list<vecS, vecS, bidirectionalS>;
+        using Graph = labeled_graph<G, size_t>;
         Graph g;
         add_vertex(0, g);
         add_vertex(1, g);

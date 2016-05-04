@@ -32,7 +32,7 @@ struct location
 {
   float y, x; // lat, long
 };
-typedef float cost;
+using cost = float;
 
 template <class Name, class LocMap>
 class city_writer {
@@ -76,7 +76,7 @@ template <class Graph, class CostType, class LocMap>
 class distance_heuristic : public astar_heuristic<Graph, CostType>
 {
 public:
-  typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
   distance_heuristic(LocMap l, Vertex goal)
     : m_location(l), m_goal(goal) {}
   CostType operator()(Vertex u)
@@ -113,12 +113,12 @@ int main(int argc, char **argv)
 {
   
   // specify some types
-  typedef adjacency_list<listS, vecS, undirectedS, no_property,
-    property<edge_weight_t, cost> > mygraph_t;
-  typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
-  typedef mygraph_t::vertex_descriptor vertex;
-  typedef mygraph_t::edge_descriptor edge_descriptor;
-  typedef std::pair<int, int> edge;
+  using mygraph_t = adjacency_list<listS, vecS, undirectedS, no_property,
+    property<edge_weight_t, cost> >;
+  using WeightMap = property_map<mygraph_t, edge_weight_t>::type;
+  using vertex = mygraph_t::vertex_descriptor;
+  using edge_descriptor = mygraph_t::edge_descriptor;
+  using edge = std::pair<int, int>;
   
   // specify data
   enum nodes {

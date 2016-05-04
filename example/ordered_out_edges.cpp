@@ -50,17 +50,17 @@ struct ordered_set_by_nameS { };
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
-    typedef std::multiset<ValueType, order_by_name<ValueType> > type;
+    using type = std::multiset<ValueType, order_by_name<ValueType> >;
   };
 }
 #else
 struct ordered_set_by_nameS {
   template <class T>
-  struct bind_ { typedef std::multiset<T, order_by_name<T> > type; };
+  struct bind_ { using } = std::multiset<T, order_by_name<T> > type;;
 };
 namespace boost {
   template <> struct container_selector<ordered_set_by_nameS>  {
-    typedef ordered_set_by_nameS type;
+    using type = ordered_set_by_nameS;
   };
 }
 #endif
@@ -68,7 +68,7 @@ namespace boost {
 namespace boost {
   template <>
   struct parallel_edge_traits<ordered_set_by_nameS> { 
-    typedef allow_parallel_edge_tag type;
+    using type = allow_parallel_edge_tag;
   };
 }
 
@@ -79,9 +79,9 @@ main()
   std::cout << "This program requires partial specialization" << std::endl;
 #else
   using namespace boost;
-  typedef property<edge_name_t, std::string> EdgeProperty;
-  typedef adjacency_list<ordered_set_by_nameS, vecS, undirectedS,
-    no_property, EdgeProperty> graph_type;
+  using EdgeProperty = property<edge_name_t, std::string>;
+  using graph_type = adjacency_list<ordered_set_by_nameS, vecS, undirectedS,
+    no_property, EdgeProperty>;
   graph_type g;
   
   add_edge(0, 1, EdgeProperty("joe"), g);
@@ -106,7 +106,7 @@ main()
   std::cout << std::endl;
 
   bool found;
-  typedef graph_traits<graph_type> Traits;
+  using Traits = graph_traits<graph_type>;
   Traits::edge_descriptor e;
   Traits::out_edge_iterator e_first, e_last;
 

@@ -22,7 +22,7 @@ main()
   enum
   { r, s, t, u, v, w, x, y };
   char name[] = "rstuvwxy";
-  typedef std::vector < std::list < int > > Graph;
+  using Graph = std::vector < std::list < int > >;
   Graph g = {
     {v}, //r
     {r, r, w}, //s

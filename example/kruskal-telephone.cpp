@@ -19,8 +19,8 @@ main()
   GraphvizGraph g_dot;
   read_graphviz("figs/telephone-network.dot", g_dot);
 
-  typedef adjacency_list < vecS, vecS, undirectedS, no_property,
-    property < edge_weight_t, int > > Graph;
+  using Graph = adjacency_list < vecS, vecS, undirectedS, no_property,
+    property < edge_weight_t, int > >;
   Graph g(num_vertices(g_dot));
   auto edge_attr_map = get(edge_attribute, g_dot);
   graph_traits < GraphvizGraph >::edge_iterator ei, ei_end;
@@ -31,7 +31,7 @@ main()
   }
 
   std::vector < graph_traits < Graph >::edge_descriptor > mst;
-  typedef std::vector < graph_traits < Graph >::edge_descriptor >::size_type size_type;
+  using size_type = std::vector < graph_traits < Graph >::edge_descriptor >::size_type;
   kruskal_minimum_spanning_tree(g, std::back_inserter(mst));
 
   auto weight = get(edge_weight, g);
@@ -40,7 +40,7 @@ main()
     total_weight += get(weight, edge);
   std::cout << "total weight: " << total_weight << std::endl;
 
-  typedef graph_traits < Graph >::vertex_descriptor Vertex;
+  using Vertex = graph_traits < Graph >::vertex_descriptor;
   for (const auto& edge : mst) {
     auto u = source(edge, g), v = target(edge, g);
     edge_attr_map[edge(u, v, g_dot).first]["color"] = "black";

@@ -28,14 +28,14 @@ using namespace boost;
 using namespace std;
 
 struct open_paren : public base_visitor<open_paren> {
-  typedef on_discover_vertex event_filter;
+  using event_filter = on_discover_vertex;
   template <class Vertex, class Graph>
   void operator()(Vertex v, Graph&) {
     std::cout << "(" << v;
   }
 };
 struct close_paren : public base_visitor<close_paren> {
-  typedef on_finish_vertex event_filter;
+  using event_filter = on_finish_vertex;
   template <class Vertex, class Graph>
   void operator()(Vertex v, Graph&) {
     std::cout << v << ")";
@@ -49,8 +49,8 @@ main(int, char*[])
 
   using namespace boost;
   
-  typedef adjacency_list<> Graph;
-  typedef std::pair<int,int> E;
+  using Graph = adjacency_list<>;
+  using E = std::pair<int,int>;
   E edge_array[] = { E(0, 2),
                 E(1, 1), E(1, 3),
                 E(2, 1), E(2, 3),

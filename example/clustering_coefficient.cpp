@@ -24,19 +24,19 @@ struct Actor
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = undirected_graph<Actor>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+using NameMap = property_map<Graph, string Actor::*>::type;
 
 // The clustering property, container, and map define the containment
 // and abstract accessor for the clustering coefficients of vertices.
-typedef exterior_vertex_property<Graph, float> ClusteringProperty;
-typedef ClusteringProperty::container_type ClusteringContainer;
-typedef ClusteringProperty::map_type ClusteringMap;
+using ClusteringProperty = exterior_vertex_property<Graph, float>;
+using ClusteringContainer = ClusteringProperty::container_type;
+using ClusteringMap = ClusteringProperty::map_type;
 
 int
 main(int argc, char *argv[])

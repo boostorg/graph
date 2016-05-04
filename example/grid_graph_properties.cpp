@@ -14,7 +14,7 @@
 int main(int argc, char* argv[]) 
 {
   // A 2D grid graph
-  typedef boost::grid_graph<2> GraphType;
+  using GraphType = boost::grid_graph<2>;
 
   // Create a 5x5 graph
   const unsigned int dimension = 5;
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   GraphType graph(lengths);
 
   // Get the index map of the grid graph
-  typedef boost::property_map<GraphType, boost::vertex_index_t>::const_type indexMapType;
+  using indexMapType = boost::property_map<GraphType, boost::vertex_index_t>::const_type;
   indexMapType indexMap(get(boost::vertex_index, graph));
 
   // Create a float for every node in the graph

@@ -41,9 +41,9 @@ int main()
 {
   using namespace boost;
   
-  typedef adjacency_list<vecS, vecS, directedS,
-    no_property, property<edge_weight_t, int> > Graph;
-  typedef property_map<Graph, edge_weight_t>::type EdgeWeightMap;
+  using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property, property<edge_weight_t, int> >;
+  using EdgeWeightMap = property_map<Graph, edge_weight_t>::type;
 
   enum { A, B, C, D, E, N };
   const char* name = "ABCDE";

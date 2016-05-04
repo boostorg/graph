@@ -14,13 +14,13 @@
 
 using namespace boost;
 
-typedef boost::adjacency_list<vecS, vecS, directedS,
+using Digraph = boost::adjacency_list<vecS, vecS, directedS,
                               property<vertex_name_t, std::string>,
-                              property<edge_weight_t, double> > Digraph;
+                              property<edge_weight_t, double> >;
 
-typedef boost::adjacency_list<vecS, vecS, undirectedS,
+using Graph = boost::adjacency_list<vecS, vecS, undirectedS,
                               property<vertex_name_t, std::string>,
-                              property<edge_weight_t, double> > Graph;
+                              property<edge_weight_t, double> >;
 
 void test_graph_read_write(const std::string& filename)
 {
@@ -36,7 +36,7 @@ void test_graph_read_write(const std::string& filename)
   BOOST_CHECK(num_vertices(g) == 4);
   BOOST_CHECK(num_edges(g) == 4);
   
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
 
   std::map<std::string, Vertex> name_to_vertex;
   BGL_FORALL_VERTICES(v, g, Graph) 

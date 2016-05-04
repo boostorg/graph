@@ -40,7 +40,7 @@ int main()
   
   enum { A, B, C, D, E };
   const char* name = "ABCDE";
-  typedef std::vector < std::list < int > > Graph;
+  using Graph = std::vector < std::list < int > >;
   Graph g = {
     {B, C}, //A
     {}, //B

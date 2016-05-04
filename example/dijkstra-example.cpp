@@ -19,10 +19,10 @@ using namespace boost;
 int
 main(int, char *[])
 {
-  typedef adjacency_list < listS, vecS, directedS,
-    no_property, property < edge_weight_t, int > > graph_t;
-  typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
-  typedef std::pair<int, int> Edge;
+  using graph_t = adjacency_list < listS, vecS, directedS,
+    no_property, property < edge_weight_t, int > >;
+  using vertex_descriptor = graph_traits < graph_t >::vertex_descriptor;
+  using Edge = std::pair<int, int>;
 
   const int num_nodes = 5;
   enum nodes { A, B, C, D, E };

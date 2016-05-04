@@ -41,9 +41,9 @@
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
 {
-  typedef typename boost::graph_traits<Graph>::vertex_iterator    Viter;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
+  using Viter = typename boost::graph_traits<Graph>::vertex_iterator   ;
+  using OutEdgeIter = typename boost::graph_traits<Graph>::out_edge_iterator;
+  using InEdgeIter = typename boost::graph_traits<Graph>::in_edge_iterator;
 
   Viter ui, uiend;
   for (boost::tie(ui, uiend) = boost::vertices(G); ui != uiend; ++ui) {
@@ -66,9 +66,9 @@ void print_network(Graph& G, Capacity capacity, Flow flow)
 
 int main(int , char* []) {
 
-  typedef boost::adjacency_list<boost::vecS, boost::vecS, 
+  using Graph = boost::adjacency_list<boost::vecS, boost::vecS, 
     boost::bidirectionalS, boost::no_property, 
-    boost::property<boost::edge_index_t, std::size_t> > Graph;
+    boost::property<boost::edge_index_t, std::size_t> >;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -104,10 +104,10 @@ int main(int , char* []) {
 
   boost::add_edge(6, 8, 9, G);
 
-  typedef boost::property_map<Graph, boost::edge_index_t>::type EdgeIndexMap;
+  using EdgeIndexMap = boost::property_map<Graph, boost::edge_index_t>::type;
   EdgeIndexMap edge_id = boost::get(boost::edge_index, G);
 
-  typedef boost::iterator_property_map<int*, EdgeIndexMap, int, int&> IterMap;
+  using IterMap = boost::iterator_property_map<int*, EdgeIndexMap, int, int&>;
 
   print_network(G, IterMap(capacity, edge_id), IterMap(flow, edge_id));
           

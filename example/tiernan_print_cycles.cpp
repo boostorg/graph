@@ -44,9 +44,9 @@ struct cycle_printer
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = directed_graph<>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 int
 main(int argc, char *argv[])

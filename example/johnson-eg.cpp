@@ -19,10 +19,10 @@ int
 main()
 {
   using namespace boost;
-  typedef adjacency_list<vecS, vecS, directedS, no_property,
-    property< edge_weight_t, int, property< edge_weight2_t, int > > > Graph;
+  using Graph = adjacency_list<vecS, vecS, directedS, no_property,
+    property< edge_weight_t, int, property< edge_weight2_t, int > > >;
   const int V = 6;
-  typedef std::pair < int, int >Edge;
+  using Edge = std::pair < int, int >;
   Edge edge_array[] =
     { Edge(0, 1), Edge(0, 2), Edge(0, 3), Edge(0, 4), Edge(0, 5),
     Edge(1, 2), Edge(1, 5), Edge(1, 3), Edge(2, 4), Edge(2, 5),

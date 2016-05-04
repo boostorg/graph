@@ -61,20 +61,20 @@ struct zero_edge_capacity{
 int main()
 {
   using namespace boost;
-  typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
-  typedef adjacency_list < vecS, vecS, directedS,
-  no_property,
-  property < edge_capacity_t, long,
-  property < edge_reverse_t, Traits::edge_descriptor > > > Graph;
+  using Traits = adjacency_list_traits < vecS, vecS, directedS >;
+  using Graph = adjacency_list < vecS, vecS, directedS,
+    no_property,
+    property < edge_capacity_t, long,
+    property < edge_reverse_t, Traits::edge_descriptor > > >;
   
-  typedef graph_traits<Graph>::out_edge_iterator out_edge_iterator;
-  typedef graph_traits<Graph>::edge_descriptor edge_descriptor;
-  typedef graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  using out_edge_iterator = graph_traits<Graph>::out_edge_iterator;
+  using edge_descriptor = graph_traits<Graph>::edge_descriptor;
+  using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   
   Graph g;
 
-  typedef property_map < Graph, edge_capacity_t >::type tCapMap;
-  typedef tCapMap::value_type tCapMapValue;
+  using tCapMap = property_map < Graph, edge_capacity_t >::type;
+  using tCapMapValue = tCapMap::value_type;
   
   auto capacity = get(edge_capacity, g);
   auto rev = get(edge_reverse, g);

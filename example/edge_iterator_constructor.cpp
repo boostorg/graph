@@ -43,11 +43,11 @@
 
 class edge_stream_iterator {
 public:
-  typedef std::input_iterator_tag  iterator_category;
-  typedef std::pair<int,int>  value_type;
-  typedef std::ptrdiff_t      difference_type;
-  typedef const value_type*   pointer;
-  typedef const value_type&   reference;
+  using iterator_category = std::input_iterator_tag ;
+  using value_type = std::pair<int,int> ;
+  using difference_type = std::ptrdiff_t     ;
+  using pointer = const value_type*  ;
+  using reference = const value_type&  ;
 
   edge_stream_iterator() : m_stream(0), m_end_marker(false) {}
   edge_stream_iterator(std::istream& s) : m_stream(&s) { m_read(); }
@@ -93,8 +93,8 @@ bool operator!=(const edge_stream_iterator& x,
 int
 main()
 {
-  typedef boost::adjacency_list<> IteratorConstructibleGraph;
-  typedef boost::graph_traits<IteratorConstructibleGraph> Traits;
+  using IteratorConstructibleGraph = boost::adjacency_list<>;
+  using Traits = boost::graph_traits<IteratorConstructibleGraph>;
   Traits::vertices_size_type size_V;
   Traits::edges_size_type size_E;
 

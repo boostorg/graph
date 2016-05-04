@@ -70,8 +70,8 @@ int main()
 {
   using namespace boost;
 
-  typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
-  typedef adjacency_list < vecS, vecS, directedS,
+  using Traits = adjacency_list_traits < vecS, vecS, directedS >;
+  using Graph = adjacency_list < vecS, vecS, directedS,
     property < vertex_name_t, std::string,
     property < vertex_index_t, long,
     property < vertex_color_t, boost::default_color_type,
@@ -80,7 +80,7 @@ int main()
 
     property < edge_capacity_t, long,
     property < edge_residual_capacity_t, long,
-    property < edge_reverse_t, Traits::edge_descriptor > > > > Graph;
+    property < edge_reverse_t, Traits::edge_descriptor > > > >;
 
   Graph g;
   auto capacity = get(edge_capacity, g);

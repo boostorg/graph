@@ -12,14 +12,14 @@ int
 main()
 {
   using namespace boost;
-  typedef leda::GRAPH < std::string, int >graph_t;
+  using graph_t = leda::GRAPH < std::string, int >;
   graph_t g;
   g.new_node("Philoctetes");
   g.new_node("Heracles");
   g.new_node("Alcmena");
   g.new_node("Eurystheus");
   g.new_node("Amphitryon");
-  typedef property_map < graph_t, vertex_all_t >::type NodeMap;
+  using NodeMap = property_map < graph_t, vertex_all_t >::type;
   auto node_name_map = get(vertex_all, g);
   graph_traits < graph_t >::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)

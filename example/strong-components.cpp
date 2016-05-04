@@ -15,7 +15,7 @@ int
 main()
 {
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, directedS > Graph;
+  using Graph = adjacency_list < vecS, vecS, directedS >;
   const int N = 6;
   Graph G(N);
   add_edge(0, 1, G);

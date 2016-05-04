@@ -41,8 +41,8 @@
 int main(int,char*[])
 {
   using namespace boost;
-  typedef subgraph< adjacency_list<vecS, vecS, directedS,
-    property<vertex_color_t, int>, property<edge_index_t, int> > > Graph;
+  using Graph = subgraph< adjacency_list<vecS, vecS, directedS,
+    property<vertex_color_t, int>, property<edge_index_t, int> > >;
 
   const int N = 6;
   Graph G0(N);

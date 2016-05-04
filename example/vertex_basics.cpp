@@ -59,8 +59,8 @@ template <class Graph>
 struct print_edge {
   print_edge(Graph& g) : G(g) { }
 
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Edge e) const
   {
     auto id = get(vertex_index, G);
@@ -78,7 +78,7 @@ template <class Graph>
 struct print_index {
   print_index(Graph& g) : G(g){ }
 
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Vertex c) const
   {
     typename boost::property_map<Graph,vertex_index_t>::type 
@@ -92,7 +92,7 @@ struct print_index {
 
 template <class Graph>
 struct exercise_vertex {
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
 
   exercise_vertex(Graph& _g) : g(_g) { }
 
@@ -128,9 +128,9 @@ struct exercise_vertex {
 int
 main()
 {
-  typedef adjacency_list<vecS,vecS,bidirectionalS> MyGraphType;
+  using MyGraphType = adjacency_list<vecS,vecS,bidirectionalS>;
 
-  typedef pair<int,int> Pair;
+  using Pair = pair<int,int>;
   Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                           Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                           Pair(3,4), Pair(4,0), Pair(4,1) };

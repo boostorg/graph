@@ -37,9 +37,9 @@ int main() {
     cout << "Number " << i << " has its bucket "  << bucket[i] << endl;
   }
 
-  typedef trivial_id<int> ID;
-  typedef bucket_sorter<std::size_t, int, 
-    vector<std::size_t>::iterator, ID> BS;
+  using ID = trivial_id<int>;
+  using BS = bucket_sorter<std::size_t, int, 
+    vector<std::size_t>::iterator, ID>;
   BS my_bucket_sorter(N, N, bucket.begin());
 
   for (std::size_t ii=0; ii<N; ii++)

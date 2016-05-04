@@ -71,7 +71,7 @@ template <class NewGraph, class Tag>
 struct graph_copier 
   : public boost::base_visitor<graph_copier<NewGraph, Tag> >
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
 
   graph_copier(NewGraph& graph) : new_g(graph) { }
 
@@ -91,13 +91,13 @@ copy_graph(NewGraph& g, Tag) {
 
 int main(int , char* []) 
 {
-  typedef boost::adjacency_list< 
+  using Graph = boost::adjacency_list< 
     boost::mapS, boost::vecS, boost::bidirectionalS,
     boost::property<boost::vertex_color_t, boost::default_color_type,
         boost::property<boost::vertex_degree_t, int,
           boost::property<boost::vertex_in_degree_t, int,
     boost::property<boost::vertex_out_degree_t, int> > > >
-  > Graph;
+  >;
   
   Graph G(5);
   boost::add_edge(0, 2, G);
@@ -112,7 +112,7 @@ int main(int , char* [])
   boost::add_edge(4, 0, G);
   boost::add_edge(4, 1, G);
 
-  typedef Graph::vertex_descriptor Vertex;
+  using Vertex = Graph::vertex_descriptor;
 
   Graph G_copy(5);
   // Array to store predecessor (parent) of each vertex. This will be
@@ -120,7 +120,7 @@ int main(int , char* [])
   std::vector<Vertex> p(boost::num_vertices(G));
   // VC++ version of std::vector has no ::pointer, so
   // I use ::value_type* instead.
-  typedef std::vector<Vertex>::value_type* Piter;
+  using Piter = std::vector<Vertex>::value_type*;
 
   // Array to store distances from the source to each vertex .  We use
   // a built-in array here just for variety. This will also be used as

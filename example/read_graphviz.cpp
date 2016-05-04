@@ -20,15 +20,15 @@ using namespace std;
 
 int main() {
   // Vertex properties
-  typedef property < vertex_name_t, std::string,
-            property < vertex_color_t, float > > vertex_p;  
+  using vertex_p = property < vertex_name_t, std::string,
+            property < vertex_color_t, float > >;  
   // Edge properties
-  typedef property < edge_weight_t, double > edge_p;
+  using edge_p = property < edge_weight_t, double >;
   // Graph properties
-  typedef property < graph_name_t, std::string > graph_p;
+  using graph_p = property < graph_name_t, std::string >;
   // adjacency_list-based type
-  typedef adjacency_list < vecS, vecS, directedS,
-    vertex_p, edge_p, graph_p > graph_t;
+  using graph_t = adjacency_list < vecS, vecS, directedS,
+    vertex_p, edge_p, graph_p >;
 
   // Construct an empty graph and prepare the dynamic_property_maps.
   graph_t graph(0);

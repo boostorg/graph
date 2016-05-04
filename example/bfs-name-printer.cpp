@@ -75,7 +75,7 @@ struct EP {
 int
 main()
 {
-  typedef adjacency_list < listS, vecS, directedS, VP, EP> graph_t;
+  using graph_t = adjacency_list < listS, vecS, directedS, VP, EP>;
   graph_t g;
 
   auto name_map = get(&VP::name, g);
@@ -83,7 +83,7 @@ main()
 
   build_router_network(g, name_map, delay_map);
 
-  typedef property_map<graph_t, char VP::*>::type VertexNameMap;
+  using VertexNameMap = property_map<graph_t, char VP::*>::type;
   auto a = *vertices(g).first;
   bfs_name_printer<VertexNameMap> vis(name_map);
   std::cout << "BFS vertex discover order: ";

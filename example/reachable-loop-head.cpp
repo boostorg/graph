@@ -25,7 +25,7 @@ main(int argc, char *argv[])
   GraphvizDigraph g;
   read_graphviz(argv[1], g);
   graph_traits < GraphvizDigraph >::vertex_descriptor loop_head = 1;
-  typedef color_traits < default_color_type > Color;
+  using Color = color_traits < default_color_type >;
 
   std::vector < default_color_type >
     reachable_from_head(num_vertices(g), Color::white());

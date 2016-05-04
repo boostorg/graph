@@ -31,23 +31,21 @@ struct coord_t
 
 int main(int argc, char** argv)
 {
-  typedef adjacency_list
+  using graph = adjacency_list
     < vecS,
       vecS,
       undirectedS,
       property<vertex_index_t, int>
-    > graph;
+    >;
 
   
 
   //Define the storage type for the planar embedding
-  typedef std::vector< std::vector< graph_traits<graph>::edge_descriptor > > 
-    embedding_storage_t;
-  typedef boost::iterator_property_map
+  using embedding_storage_t = std::vector< std::vector< graph_traits<graph>::edge_descriptor > >;
+  using embedding_t = boost::iterator_property_map
     < embedding_storage_t::iterator, 
       property_map<graph, vertex_index_t>::type 
-    >
-    embedding_t;
+    >;
 
 
 
@@ -94,12 +92,11 @@ int main(int argc, char** argv)
 
 
   //Set up a property map to hold the mapping from vertices to coord_t's
-  typedef std::vector< coord_t > straight_line_drawing_storage_t;
-  typedef boost::iterator_property_map
+  using straight_line_drawing_storage_t = std::vector< coord_t >;
+  using straight_line_drawing_t = boost::iterator_property_map
     < straight_line_drawing_storage_t::iterator, 
       property_map<graph, vertex_index_t>::type 
-    >
-    straight_line_drawing_t;
+    >;
 
   straight_line_drawing_storage_t straight_line_drawing_storage
     (num_vertices(g));

@@ -14,7 +14,7 @@
 
 using namespace boost;
 template < typename TimeMap > class dfs_time_visitor:public default_dfs_visitor {
-  typedef typename property_traits < TimeMap >::value_type T;
+  using T = typename property_traits < TimeMap >::value_type;
 public:
   dfs_time_visitor(TimeMap dmap, TimeMap fmap, T & t)
 :  m_dtimemap(dmap), m_ftimemap(fmap), m_time(t) {
@@ -39,14 +39,14 @@ int
 main()
 {
   // Select the graph type we wish to use
-  typedef adjacency_list < vecS, vecS, directedS > graph_t;
-  typedef graph_traits < graph_t >::vertices_size_type size_type;
+  using graph_t = adjacency_list < vecS, vecS, directedS >;
+  using size_type = graph_traits < graph_t >::vertices_size_type;
   // Set up the vertex names
   enum
   { u, v, w, x, y, z, N };
   char name[] = { 'u', 'v', 'w', 'x', 'y', 'z' };
   // Specify the edges in the graph
-  typedef std::pair < int, int >E;
+  using E = std::pair < int, int >;
   E edge_array[] = { E(u, v), E(u, x), E(x, v), E(y, x),
     E(v, y), E(w, y), E(w, z), E(z, z)
   };
@@ -61,10 +61,9 @@ main()
   // discover time and finish time properties
   std::vector < size_type > dtime(num_vertices(g));
   std::vector < size_type > ftime(num_vertices(g));
-  typedef
+  using time_pm_type =
     iterator_property_map<std::vector<size_type>::iterator,
-                          property_map<graph_t, vertex_index_t>::const_type>
-    time_pm_type;
+                          property_map<graph_t, vertex_index_t>::const_type>;
   time_pm_type dtime_pm(dtime.begin(), get(vertex_index, g));
   time_pm_type ftime_pm(ftime.begin(), get(vertex_index, g));
   size_type t = 0;

@@ -24,13 +24,13 @@ namespace std
   }
 }
 
-typedef adjacency_list < listS, // Store out-edges of each vertex in a std::list
+using file_dep_graph = adjacency_list < listS, // Store out-edges of each vertex in a std::list
   vecS,                         // Store vertex set in a std::vector
   directedS                     // The file dependency graph is directed
-> file_dep_graph;
+>;
 
-typedef graph_traits < file_dep_graph >::vertex_descriptor vertex_t;
-typedef graph_traits < file_dep_graph >::edge_descriptor edge_t;
+using vertex_t = graph_traits < file_dep_graph >::vertex_descriptor;
+using edge_t = graph_traits < file_dep_graph >::edge_descriptor;
 
 bool
 has_cycle_dfs(const file_dep_graph & g, vertex_t u,
@@ -65,7 +65,7 @@ int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  typedef graph_traits < file_dep_graph >::vertices_size_type size_type;
+  using size_type = graph_traits < file_dep_graph >::vertices_size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,

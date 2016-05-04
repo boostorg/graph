@@ -43,8 +43,8 @@ template <class Graph>
 struct exercise_edge {
   exercise_edge(Graph& g) : G(g) {}
 
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Edge e) const
   {
     //begin
@@ -67,9 +67,9 @@ struct exercise_edge {
 int
 main()
 {
-  typedef adjacency_list<> MyGraph;
+  using MyGraph = adjacency_list<>;
 
-  typedef pair<int,int> Pair;
+  using Pair = pair<int,int>;
   Pair edge_array[8] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
 

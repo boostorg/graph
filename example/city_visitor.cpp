@@ -58,7 +58,7 @@ using namespace boost;
 struct city_arrival : public base_visitor<city_arrival>
 {
   city_arrival(string* n) : names(n) { }
-  typedef on_discover_vertex event_filter;
+  using event_filter = on_discover_vertex;
   template <class Vertex, class Graph>
   inline void operator()(Vertex u, Graph&) {
     cout << endl << "arriving at " << names[u] << endl
@@ -70,7 +70,7 @@ struct city_arrival : public base_visitor<city_arrival>
 struct neighbor_cities : public base_visitor<neighbor_cities>
 {
   neighbor_cities(string* n) : names(n) { }
-  typedef on_examine_edge event_filter;
+  using event_filter = on_examine_edge;
   template <class Edge, class Graph>
   inline void operator()(Edge e, Graph& g) {
     cout << names[ target(e, g) ] << ", ";
@@ -81,7 +81,7 @@ struct neighbor_cities : public base_visitor<neighbor_cities>
 struct finish_city : public base_visitor<finish_city>
 {
   finish_city(string* n) : names(n) { }
-  typedef on_finish_vertex event_filter;
+  using event_filter = on_finish_vertex;
   template <class Vertex, class Graph>
   inline void operator()(Vertex u, Graph&) {
     cout << endl << "finished with " << names[u] << endl;
@@ -99,7 +99,7 @@ int main(int, char*[])
                      "Fresno", "Las Vegas", "Reno", "Sacramento",
                      "Salt Lake City", "Phoenix" };
 
-  typedef std::pair<int,int> E;
+  using E = std::pair<int,int>;
   E edge_array[] = { E(Sacramento, Reno), E(Sacramento, SanFran),
                      E(Reno, SaltLake),
                      E(SanFran, SanJose),
@@ -108,7 +108,7 @@ int main(int, char*[])
                      E(LasVegas, Phoenix) };
 
   /* Create the graph type we want. */
-  typedef adjacency_list<vecS, vecS, undirectedS> Graph;
+  using Graph = adjacency_list<vecS, vecS, undirectedS>;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   Graph G(N);

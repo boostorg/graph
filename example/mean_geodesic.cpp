@@ -24,29 +24,29 @@ struct Actor
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = undirected_graph<Actor>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+using NameMap = property_map<Graph, string Actor::*>::type;
 
 // Declare a matrix type and its corresponding property map that
 // will contain the distances between each pair of vertices.
-typedef exterior_vertex_property<Graph, int> DistanceProperty;
-typedef DistanceProperty::matrix_type DistanceMatrix;
-typedef DistanceProperty::matrix_map_type DistanceMatrixMap;
+using DistanceProperty = exterior_vertex_property<Graph, int>;
+using DistanceMatrix = DistanceProperty::matrix_type;
+using DistanceMatrixMap = DistanceProperty::matrix_map_type;
 
 // Declare the weight map so that each edge returns the same value.
-typedef constant_property_map<Edge, int> WeightMap;
+using WeightMap = constant_property_map<Edge, int>;
 
 // Declare a container and its corresponding property map that
 // will contain the resulting mean geodesic distances of each
 // vertex in the graph.
-typedef exterior_vertex_property<Graph, float> GeodesicProperty;
-typedef GeodesicProperty::container_type GeodesicContainer;
-typedef GeodesicProperty::map_type GeodesicMap;
+using GeodesicProperty = exterior_vertex_property<Graph, float>;
+using GeodesicContainer = GeodesicProperty::container_type;
+using GeodesicMap = GeodesicProperty::map_type;
 
 int
 main(int argc, char *argv[])

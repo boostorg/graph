@@ -23,14 +23,13 @@ using namespace boost;
 int main(int argc, char** argv)
 {
   
-  typedef adjacency_list
+  using graph = adjacency_list
     < vecS,
       vecS,
       undirectedS,
       property<vertex_index_t, int>,
       property<edge_index_t, int>
-    > 
-    graph;
+    >;
 
   graph g(11);
   add_edge(0,1,g);
@@ -56,7 +55,7 @@ int main(int argc, char** argv)
   
   
   //Test for planarity; compute the planar embedding as a side-effect
-  typedef std::vector< graph_traits<graph>::edge_descriptor > vec_t;
+  using vec_t = std::vector< graph_traits<graph>::edge_descriptor >;
   std::vector<vec_t> embedding(num_vertices(g));
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::embedding = 
@@ -67,13 +66,11 @@ int main(int argc, char** argv)
   else
     std::cout << "Input graph is not planar" << std::endl;
   
-  typedef std::vector< graph_traits<graph>::edges_size_type > 
-    component_storage_t;
-  typedef iterator_property_map
+  using component_storage_t = std::vector< graph_traits<graph>::edges_size_type >;
+  using component_map_t = iterator_property_map
     < component_storage_t::iterator, 
       property_map<graph, edge_index_t>::type
-    >
-    component_map_t;
+    >;
   
   component_storage_t component_storage(num_edges(g));
   component_map_t component(component_storage.begin(), get(edge_index, g));

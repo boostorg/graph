@@ -14,10 +14,10 @@ int
 main()
 {
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS,
-    no_property, property < edge_weight_t, int > > Graph;
-  typedef graph_traits < Graph >::edge_descriptor Edge;
-  typedef std::pair<int, int> E;
+  using Graph = adjacency_list < vecS, vecS, undirectedS,
+    no_property, property < edge_weight_t, int > >;
+  using Edge = graph_traits < Graph >::edge_descriptor;
+  using E = std::pair<int, int>;
 
   const int num_nodes = 5;
   E edge_array[] = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3),

@@ -19,7 +19,7 @@ namespace boost
   {
     enum
     { num = 555 };
-    typedef edge_property_tag kind;
+    using kind = edge_property_tag;
   }
   edge_component;
 }
@@ -28,9 +28,9 @@ int
 main()
 {
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS,
-    no_property, property < edge_component_t, std::size_t > >graph_t;
-  typedef graph_traits < graph_t >::vertex_descriptor vertex_t;
+  using graph_t = adjacency_list < vecS, vecS, undirectedS,
+    no_property, property < edge_component_t, std::size_t > >;
+  using vertex_t = graph_traits < graph_t >::vertex_descriptor;
   graph_t g(9);
   add_edge(0, 5, g);
   add_edge(0, 1, g);

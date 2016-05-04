@@ -21,7 +21,7 @@ namespace boost
     min_degree_vertex(Graph & g)
   {
     typename graph_traits < Graph >::vertex_descriptor p;
-    typedef typename graph_traits < Graph >::degree_size_type size_type;
+    using size_type = typename graph_traits < Graph >::degree_size_type;
     auto delta = (std::numeric_limits < size_type >::max)();
     typename graph_traits < Graph >::vertex_iterator i, iend;
     for (boost::tie(i, iend) = vertices(g); i != iend; ++i)
@@ -56,17 +56,17 @@ namespace boost
   typename graph_traits < VertexListGraph >::degree_size_type
   edge_connectivity(VertexListGraph & g, OutputIterator disconnecting_set)
   {
-    typedef typename graph_traits <
-      VertexListGraph >::vertex_descriptor vertex_descriptor;
-    typedef typename graph_traits <
-      VertexListGraph >::degree_size_type degree_size_type;
-    typedef color_traits < default_color_type > Color;
-    typedef typename adjacency_list_traits < vecS, vecS,
-      directedS >::edge_descriptor edge_descriptor;
-    typedef adjacency_list < vecS, vecS, directedS, no_property,
+    using vertex_descriptor = typename graph_traits <
+      VertexListGraph >::vertex_descriptor;
+    using degree_size_type = typename graph_traits <
+      VertexListGraph >::degree_size_type;
+    using Color = color_traits < default_color_type >;
+    using edge_descriptor = typename adjacency_list_traits < vecS, vecS,
+      directedS >::edge_descriptor;
+    using FlowGraph = adjacency_list < vecS, vecS, directedS, no_property,
       property < edge_capacity_t, degree_size_type,
       property < edge_residual_capacity_t, degree_size_type,
-      property < edge_reverse_t, edge_descriptor > > > > FlowGraph;
+      property < edge_reverse_t, edge_descriptor > > > >;
 
     vertex_descriptor u, v, p, k;
     edge_descriptor e1, e2;
@@ -150,7 +150,7 @@ main()
   GraphvizGraph g;
   read_graphviz("figs/edge-connectivity.dot", g);
 
-  typedef graph_traits < GraphvizGraph >::edge_descriptor edge_descriptor;
+  using edge_descriptor = graph_traits < GraphvizGraph >::edge_descriptor;
   std::vector < edge_descriptor > disconnecting_set;
   auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 

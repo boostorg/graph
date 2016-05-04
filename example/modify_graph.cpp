@@ -39,9 +39,9 @@ name_equals(const std::string& str, NamePropertyMap name) {
 template <class MutableGraph>
 void modify_demo(MutableGraph& g)
 {
-  typedef graph_traits<MutableGraph> GraphTraits;
-  typedef typename GraphTraits::vertices_size_type size_type;
-  typedef typename GraphTraits::edge_descriptor edge_descriptor;
+  using GraphTraits = graph_traits<MutableGraph>;
+  using size_type = typename GraphTraits::vertices_size_type;
+  using edge_descriptor = typename GraphTraits::edge_descriptor;
   size_type n = 0;
   typename GraphTraits::edges_size_type m = 0;
   typename GraphTraits::vertex_descriptor u, v, w;
