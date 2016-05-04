@@ -71,15 +71,9 @@ int main(int, char*[])
 
     typedef adjacency_list<> Graph;
     typedef std::pair< int, int > E;
-    E edges[] = { E(0, 2), E(1, 1), E(1, 3), E(2, 1), E(2, 3), E(3, 1), E(3, 4),
-        E(4, 0), E(4, 1) };
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    Graph G(5);
-    for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j)
-        add_edge(edges[j].first, edges[j].second, G);
-#else
-    Graph G(edges, edges + sizeof(edges) / sizeof(E), 5);
-#endif
+    const auto edges = { E(0, 2), E(1, 1), E(1, 3), E(2, 1), E(2, 3), E(3, 1),
+        E(3, 4), E(4, 0), E(4, 1) };
+    Graph G(std::begin(edges), std::end(edges), 5);
 
     typedef boost::graph_traits< Graph >::vertices_size_type size_type;
 

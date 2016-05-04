@@ -18,7 +18,7 @@ int main()
         Graph;
     typedef std::pair< int, int > E;
     const int num_nodes = 5;
-    E edges[]
+    const auto edges
         = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3), E(3, 4), E(4, 0) };
     int weights[] = { 1, 1, 2, 7, 3, 1, 1 };
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -32,7 +32,7 @@ int main()
         weightmap[e] = weights[j];
     }
 #else
-    Graph g(edges, edges + sizeof(edges) / sizeof(E), weights, num_nodes);
+    Graph g(std::begin(edges), std::end(edges), weights, num_nodes);
 #endif
     std::vector< graph_traits< Graph >::vertex_descriptor > p(num_vertices(g));
 

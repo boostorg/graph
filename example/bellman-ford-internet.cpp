@@ -29,15 +29,15 @@ int main()
     typedef std::pair< int, int > Edge;
 
     // The list of connections between routers stored in an array.
-    Edge edges[] = { Edge(A, B), Edge(A, C), Edge(B, D), Edge(B, E), Edge(C, E),
-        Edge(C, F), Edge(D, H), Edge(D, E), Edge(E, H), Edge(F, G),
+    const auto edges = { Edge(A, B), Edge(A, C), Edge(B, D), Edge(B, E),
+        Edge(C, E), Edge(C, F), Edge(D, H), Edge(D, E), Edge(E, H), Edge(F, G),
         Edge(G, H) };
 
     // Specify the graph type and declare a graph object
-    typedef edge_list< Edge*, Edge, std::ptrdiff_t,
+    typedef edge_list< const Edge*, Edge, std::ptrdiff_t,
         std::random_access_iterator_tag >
         Graph;
-    Graph g(edges, edges + n_edges);
+    Graph g(std::begin(edges), std::end(edges));
 
     // The transmission delay values for each edge.
     float delay[] = { 5.0, 1.0, 1.3, 3.0, 10.0, 2.0, 6.3, 0.4, 1.3, 1.2, 0.5 };
