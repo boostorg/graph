@@ -37,8 +37,8 @@ main()
   gb_new_arc(sgb_g->vertices + 4, sgb_g->vertices + 6, 0);
   gb_new_arc(sgb_g->vertices + 5, sgb_g->vertices + 6, 0);
 
-  using vertex_t = graph_traits < Graph * >::vertex_descriptor;
-  std::vector < vertex_t > topo_order;
+  using vertex_t = graph_traits<Graph *>::vertex_descriptor;
+  std::vector<vertex_t> topo_order;
   topological_sort(sgb_g, std::back_inserter(topo_order),
                    vertex_index_map(get(vertex_index, sgb_g)));
   int n = 1;

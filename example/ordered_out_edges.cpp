@@ -50,13 +50,13 @@ struct ordered_set_by_nameS { };
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
-    using type = std::multiset<ValueType, order_by_name<ValueType> >;
+    using type = std::multiset<ValueType, order_by_name<ValueType>>;
   };
 }
 #else
 struct ordered_set_by_nameS {
   template <class T>
-  struct bind_ { using } = std::multiset<T, order_by_name<T> > type;;
+  struct bind_ { using } = std::multiset<T, order_by_name<T>> type;;
 };
 namespace boost {
   template <> struct container_selector<ordered_set_by_nameS>  {

@@ -195,7 +195,7 @@ int
 main()
 {
   adjacency_list<listS, vecS, bidirectionalS,
-    no_property, property<edge_name_t, std::string> > g;
+    no_property, property<edge_name_t, std::string>> g;
 
   modify_demo(g);
   return 0;

@@ -31,17 +31,17 @@ struct vertex_label_t { using kind = vertex_property_tag; };
 int main() {
 
   // Vertex properties
-  using vertex_p = property < vertex_name_t, string,
-            property < vertex_label_t, string,
-              property < vertex_root_t, int > > >;  
+  using vertex_p = property<vertex_name_t, string,
+    property< vertex_label_t, string,
+    property<vertex_root_t, int>>>;  
   // Edge properties
-  using edge_p = property < edge_name_t, string >;
+  using edge_p = property<edge_name_t, string>;
   // Graph properties
-  using graph_p = property < graph_name_t, string,
-            property < graph_identifier_t, string > >;
+  using graph_p = property<graph_name_t, string,
+    property<graph_identifier_t, string>>;
   // adjacency_list-based type
-  using graph_t = adjacency_list < vecS, vecS, directedS,
-    vertex_p, edge_p, graph_p >;
+  using graph_t = adjacency_list<vecS, vecS, directedS,
+    vertex_p, edge_p, graph_p>;
 
   // Construct an empty graph and prepare the dynamic_property_maps.
   graph_t graph(0);

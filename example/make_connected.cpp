@@ -22,12 +22,9 @@ using namespace boost;
 int main(int argc, char** argv)
 {
 
-  using graph = adjacency_list
-    < vecS,
-      vecS,
-      undirectedS,
-      property<vertex_index_t, int>
-    >;
+  using graph = adjacency_list<vecS, vecS,
+    undirectedS,
+    property<vertex_index_t, int>>;
 
   graph g(11);
   add_edge(0,1,g);
@@ -39,7 +36,7 @@ int main(int argc, char** argv)
   add_edge(9,10,g);
   add_edge(10,8,g);
 
-  std::vector< graph_traits<graph>::vertices_size_type > 
+  std::vector<graph_traits<graph>::vertices_size_type> 
     component(num_vertices(g));
   
   std::cout << "Before calling make_connected, the graph has "

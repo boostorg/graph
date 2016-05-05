@@ -26,7 +26,7 @@ main()
     "eat dinner"
   };
 
-  std::vector < std::list < int > > g = {
+  std::vector<std::list<int>> g = {
     {3},
     {3, 4},
     {1},
@@ -35,7 +35,7 @@ main()
     {6},
     {}};
 
-  std::deque < int >topo_order;
+  std::deque<int> topo_order;
 
   topological_sort(g, std::front_inserter(topo_order),
                    vertex_index_map(identity_property_map()));

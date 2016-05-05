@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 
   // Test for planarity - we know it is planar, we just want to 
   // compute the planar embedding as a side-effect
-  using vec_t = std::vector< graph_traits<graph>::edge_descriptor >;
+  using vec_t = std::vector<graph_traits<graph>::edge_descriptor>;
   std::vector<vec_t> embedding(num_vertices(g));
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::embedding = 

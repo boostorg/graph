@@ -12,8 +12,8 @@
 
 using namespace boost;
 
-template < typename T >
-  std::istream & operator >> (std::istream & in, std::pair < T, T > &p) {
+template <typename T>
+  std::istream & operator >> (std::istream & in, std::pair<T, T> &p) {
   in >> p.first >> p.second;
   return in;
 }
@@ -29,7 +29,7 @@ main()
     >;
 
   std::ifstream file_in("makefile-dependencies.dat");
-  using size_type = graph_traits < graph_type >::vertices_size_type;
+  using size_type = graph_traits<graph_type>::vertices_size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
 
@@ -37,7 +37,7 @@ main()
   g(n_vertices);                // create graph with n vertices
 
   // Read in edges
-  graph_traits < graph_type >::vertices_size_type u, v;
+  graph_traits<graph_type>::vertices_size_type u, v;
   while (file_in >> u)
     if (file_in >> v)
       add_edge(u, v, g);

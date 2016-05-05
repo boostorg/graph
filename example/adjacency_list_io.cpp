@@ -33,7 +33,7 @@ struct n2_t { enum { num = 23062}; using kind = vertex_property_tag; };
 struct n3_t { enum { num = 23061}; using kind = vertex_property_tag; };
 using VertexProperty = property< n1_t, int,
         property< n2_t, double,
-                property< n3_t, MyStruct > > >;
+                property<n3_t, MyStruct>>>;
 
 
 //====== edge properties
@@ -82,7 +82,7 @@ main()
         // read Graph2, incomplete data in a different order. Write it diffently.
         Graph2 g31;
         std::ifstream readFile31("data3.txt");
-        using readNodeProp = property< n3_t, MyStruct, property< n1_t, int > >;
+        using readNodeProp = property<n3_t, MyStruct, property<n1_t, int>>;
         readFile31 >> read( g31, readNodeProp() , EdgeProperty() );
         std::cout << "graph g31 from file data3.txt:\n" 
              << write( g31, property<n3_t, MyStruct>(), EdgeProperty() ) 

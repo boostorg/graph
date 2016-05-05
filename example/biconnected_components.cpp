@@ -28,9 +28,9 @@ int
 main()
 {
   using namespace boost;
-  using graph_t = adjacency_list < vecS, vecS, undirectedS,
-    no_property, property < edge_component_t, std::size_t > >;
-  using vertex_t = graph_traits < graph_t >::vertex_descriptor;
+  using graph_t = adjacency_list<vecS, vecS, undirectedS,
+    no_property, property<edge_component_t, std::size_t>>;
+  using vertex_t = graph_traits<graph_t>::vertex_descriptor;
   graph_t g(9);
   add_edge(0, 5, g);
   add_edge(0, 1, g);
@@ -61,7 +61,7 @@ main()
               << std::endl;
   }
 
-  graph_traits < graph_t >::edge_iterator ei, ei_end;
+  graph_traits<graph_t>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << (char)(source(*ei, g) + 'A') << " -- " 
               << (char)(target(*ei, g) + 'A')

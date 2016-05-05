@@ -16,11 +16,11 @@ using namespace boost;
 
 using Digraph = boost::adjacency_list<vecS, vecS, directedS,
                               property<vertex_name_t, std::string>,
-                              property<edge_weight_t, double> >;
+                              property<edge_weight_t, double>>;
 
 using Graph = boost::adjacency_list<vecS, vecS, undirectedS,
                               property<vertex_name_t, std::string>,
-                              property<edge_weight_t, double> >;
+                              property<edge_weight_t, double>>;
 
 void test_graph_read_write(const std::string& filename)
 {

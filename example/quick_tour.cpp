@@ -68,7 +68,7 @@ int main(int,char*[])
 {
   // create an alias for the Graph type
   using Graph = adjacency_list<vecS, vecS, bidirectionalS,
-     no_property, property<edge_weight_t, float> >;
+     no_property, property<edge_weight_t, float>>;
 
   // Make convenient labels for the vertices
   enum { A, B, C, D, E, N };

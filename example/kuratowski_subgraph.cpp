@@ -22,13 +22,10 @@ using namespace boost;
 int main(int argc, char** argv)
 {
 
-  using graph = adjacency_list
-    < vecS,
-      vecS,
-      undirectedS,
-      property<vertex_index_t, int>,
-      property<edge_index_t, int>
-    >;
+  using graph = adjacency_list<vecS, vecS,
+    undirectedS,
+    property<vertex_index_t, int>,
+    property<edge_index_t, int>>;
 
   // Create a K_6 (complete graph on 6 vertices), which
   // contains both Kuratowski subgraphs as minors.
@@ -60,7 +57,7 @@ int main(int argc, char** argv)
 
   // Test for planarity - we know it is not planar, we just want to 
   // compute the kuratowski subgraph as a side-effect
-  using kuratowski_edges_t = std::vector< graph_traits<graph>::edge_descriptor >;
+  using kuratowski_edges_t = std::vector<graph_traits<graph>::edge_descriptor>;
   kuratowski_edges_t kuratowski_edges;
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::kuratowski_subgraph = 

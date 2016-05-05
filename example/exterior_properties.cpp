@@ -68,7 +68,7 @@ int main(int , char* []) {
 
   using Graph = boost::adjacency_list<boost::vecS, boost::vecS, 
     boost::bidirectionalS, boost::no_property, 
-    boost::property<boost::edge_index_t, std::size_t> >;
+    boost::property<boost::edge_index_t, std::size_t>>;
 
   const int num_vertices = 9;
   Graph G(num_vertices);

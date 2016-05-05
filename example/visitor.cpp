@@ -48,7 +48,7 @@ using namespace boost;
 using namespace std;
 
 template <class Tag>
-struct edge_printer : public base_visitor<edge_printer<Tag> > {
+struct edge_printer : public base_visitor<edge_printer<Tag>> {
   using event_filter = Tag;
   edge_printer(std::string edge_t) : m_edge_type(edge_t) { }
   template <class Edge, class Graph>

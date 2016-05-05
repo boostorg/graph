@@ -12,16 +12,16 @@ int
 main()
 {
   using namespace boost;
-  using graph_t = leda::GRAPH < std::string, int >;
+  using graph_t = leda::GRAPH<std::string, int>;
   graph_t g;
   g.new_node("Philoctetes");
   g.new_node("Heracles");
   g.new_node("Alcmena");
   g.new_node("Eurystheus");
   g.new_node("Amphitryon");
-  using NodeMap = property_map < graph_t, vertex_all_t >::type;
+  using NodeMap = property_map<graph_t, vertex_all_t>::type;
   auto node_name_map = get(vertex_all, g);
-  graph_traits < graph_t >::vertex_iterator vi, vi_end;
+  graph_traits<graph_t>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     std::cout << node_name_map[*vi] << std::endl;
   return EXIT_SUCCESS;

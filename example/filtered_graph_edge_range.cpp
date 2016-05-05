@@ -66,7 +66,7 @@ int main()
               << "-> " <<  name[target(*f, g)] << "\n";
 
   positive_edge_weight<EdgeWeightMap> filter(weight);
-  using FGraph = filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> >;
+  using FGraph = filtered_graph<Graph, positive_edge_weight<EdgeWeightMap>>;
   FGraph fg(g, filter);
 
   std::cout << "filtered edge_range(C,D)\n";

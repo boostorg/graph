@@ -34,7 +34,7 @@ int main()
 {
   using namespace boost;
   using graph_t = adjacency_list<vecS, vecS, directedS, 
-    property<vertex_name_t, std::string> >;
+    property<vertex_name_t, std::string>>;
   using vertex_t = graph_traits<graph_t>::vertex_descriptor;
 
   graph_t g;

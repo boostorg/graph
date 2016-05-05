@@ -26,7 +26,7 @@ int main()
   using namespace std;
   
   using undirected_graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-    boost::no_property, boost::property<boost::edge_weight_t, int> >;
+    boost::no_property, boost::property<boost::edge_weight_t, int>>;
   using weight_map_type = boost::property_map<undirected_graph, boost::edge_weight_t>::type;
   using weight_type = boost::property_traits<weight_map_type>::value_type;
   

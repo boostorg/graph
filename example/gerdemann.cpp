@@ -80,7 +80,7 @@ struct ordered_set_by_nameS { };
 namespace boost {
   template <class ValueType>
   struct container_gen<ordered_set_by_nameS, ValueType> {
-    using type = std::set<ValueType, order_by_name<ValueType> >;
+    using type = std::set<ValueType, order_by_name<ValueType>>;
   };
   template <>
   struct parallel_edge_traits<ordered_set_by_nameS> { 

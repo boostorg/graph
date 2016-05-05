@@ -14,9 +14,9 @@ int
 main()
 {
   using namespace boost;
-  using Graph = adjacency_list < vecS, vecS, undirectedS,
-    property<vertex_distance_t, int>, property < edge_weight_t, int > >;
-  using E = std::pair < int, int>;
+  using Graph = adjacency_list<vecS, vecS, undirectedS,
+    property<vertex_distance_t, int>, property<edge_weight_t, int >>;
+  using E = std::pair<int, int>;
   const int num_nodes = 5;
   const auto edges = { E(0, 2), E(1, 3), E(1, 4), E(2, 1), E(2, 3),
     E(3, 4), E(4, 0)

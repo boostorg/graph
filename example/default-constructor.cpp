@@ -11,10 +11,10 @@
 
 using namespace boost;
 
-template < typename Graph > void
+template <typename Graph> void
 read_graph_file(std::istream & in, Graph & g)
 {
-  using size_type = typename graph_traits < Graph >::vertices_size_type;
+  using size_type = typename graph_traits<Graph>::vertices_size_type;
   size_type n_vertices;
   in >> n_vertices;             // read in number of vertices
   for (size_type i = 0; i < n_vertices; ++i)    // Add n vertices to the graph

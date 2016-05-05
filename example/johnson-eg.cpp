@@ -20,9 +20,9 @@ main()
 {
   using namespace boost;
   using Graph = adjacency_list<vecS, vecS, directedS, no_property,
-    property< edge_weight_t, int, property< edge_weight2_t, int > > >;
+    property<edge_weight_t, int, property<edge_weight2_t, int>>>;
   const int V = 6;
-  using Edge = std::pair < int, int >;
+  using Edge = std::pair<int, int>;
   Edge edge_array[] =
     { Edge(0, 1), Edge(0, 2), Edge(0, 3), Edge(0, 4), Edge(0, 5),
     Edge(1, 2), Edge(1, 5), Edge(1, 3), Edge(2, 4), Edge(2, 5),
@@ -42,11 +42,11 @@ main()
   int weights[] = { 0, 0, 0, 0, 0, 3, -4, 8, 1, 7, 4, -5, 2, 6 };
   int *wp = weights;
 
-  graph_traits < Graph >::edge_iterator e, e_end;
+  graph_traits<Graph>::edge_iterator e, e_end;
   for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
     w[*e] = *wp++;
 
-  std::vector < int >d(V, (std::numeric_limits < int >::max)());
+  std::vector<int >d(V, (std::numeric_limits < int>::max)());
   int D[V][V];
   johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
@@ -72,7 +72,7 @@ main()
     << "ratio=\"fill\"\n"
     << "edge[style=\"bold\"]\n" << "node[shape=\"circle\"]\n";
 
-  graph_traits < Graph >::edge_iterator ei, ei_end;
+  graph_traits<Graph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     fout << source(*ei, g) << " -> " << target(*ei, g)
       << "[label=" << get(edge_weight, g)[*ei] << "]\n";

@@ -20,7 +20,7 @@ int
 main()
 {
   using namespace boost;
-  using Graph = adjacency_list < vecS, vecS, bidirectionalS >;
+  using Graph = adjacency_list<vecS, vecS, bidirectionalS>;
 
   Graph G(5);
   add_edge(0, 2, G);

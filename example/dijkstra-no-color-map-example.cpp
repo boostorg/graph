@@ -23,9 +23,9 @@ using namespace boost;
 int
 main(int, char *[])
 {
-  using graph_t = adjacency_list < listS, vecS, directedS,
-    no_property, property < edge_weight_t, int > >;
-  using vertex_descriptor = graph_traits < graph_t >::vertex_descriptor;
+  using graph_t = adjacency_list<listS, vecS, directedS,
+    no_property, property<edge_weight_t, int>>;
+  using vertex_descriptor = graph_traits<graph_t>::vertex_descriptor;
   using Edge = std::pair<int, int>;
 
   const int num_nodes = 5;
@@ -47,7 +47,7 @@ main(int, char *[])
                                        distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))));
 
   std::cout << "distances and parents:" << std::endl;
-  graph_traits < graph_t >::vertex_iterator vi, vend;
+  graph_traits<graph_t>::vertex_iterator vi, vend;
   for (boost::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
     std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
     std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::
@@ -63,9 +63,9 @@ main(int, char *[])
     << "  ratio=\"fill\"\n"
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-  graph_traits < graph_t >::edge_iterator ei, ei_end;
+  graph_traits<graph_t>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-    graph_traits < graph_t >::edge_descriptor e = *ei;
+    graph_traits<graph_t>::edge_descriptor e = *ei;
     auto u = source(e, g), v = target(e, g);
     dot_file << name[u] << " -> " << name[v]
       << "[label=\"" << get(weightmap, e) << "\"";

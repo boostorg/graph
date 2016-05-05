@@ -36,11 +36,11 @@ private:
 };
 
 // Convenience function
-template < typename DistanceMap >
+template <typename DistanceMap>
 bacon_number_recorder<DistanceMap>
 record_bacon_number(DistanceMap d)
 {
-  return bacon_number_recorder < DistanceMap > (d);
+  return bacon_number_recorder<DistanceMap> (d);
 }
 
 
@@ -53,19 +53,20 @@ main()
     return EXIT_FAILURE;
   }
 
-  using Graph = adjacency_list < vecS, vecS, undirectedS, property < vertex_name_t,
-    std::string >, property < edge_name_t, std::string > >;
+  using Graph = adjacency_list <vecS, vecS, undirectedS,
+    property<vertex_name_t, std::string>,
+    property<edge_name_t, std::string>>;
   Graph g;
 
   auto actor_name = get(vertex_name, g);
   auto connecting_movie = get(edge_name, g);
 
-  using Vertex = graph_traits < Graph >::vertex_descriptor;
-  using NameVertexMap = std::map < std::string, Vertex >;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
+  using NameVertexMap = std::map<std::string, Vertex>;
   NameVertexMap actors;
 
   for (std::string line; std::getline(datafile, line);) {
-    char_delimiters_separator < char >sep(false, "", ";");
+    char_delimiters_separator<char> sep(false, "", ";");
     tokenizer <> line_toks(line, sep);
     tokenizer <>::iterator i = line_toks.begin();
     std::string actors_name = *i++;
@@ -90,14 +91,14 @@ main()
     } else
       v = pos->second;
 
-    graph_traits < Graph >::edge_descriptor e;
+    graph_traits<Graph>::edge_descriptor e;
     boost::tie(e, inserted) = add_edge(u, v, g);
     if (inserted)
       connecting_movie[e] = movie_name;
 
   }
 
-  std::vector < int >bacon_number(num_vertices(g));
+  std::vector<int>bacon_number(num_vertices(g));
 
   Vertex src = actors["Kevin Bacon"];
   bacon_number[src] = 0;
@@ -105,7 +106,7 @@ main()
   breadth_first_search(g, src,
                        visitor(record_bacon_number(&bacon_number[0])));
 
-  graph_traits < Graph >::vertex_iterator i, end;
+  graph_traits<Graph>::vertex_iterator i, end;
   for (boost::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << actor_name[*i] << " has a Bacon number of "
       << bacon_number[*i] << std::endl;

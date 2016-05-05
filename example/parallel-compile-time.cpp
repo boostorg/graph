@@ -17,8 +17,8 @@
 
 namespace std
 {
-  template < typename T >
-    std::istream & operator >> (std::istream & in, std::pair < T, T > &p)
+  template <typename T>
+    std::istream & operator >> (std::istream & in, std::pair<T, T> &p)
   {
     in >> p.first >> p.second;
     return in;
@@ -33,31 +33,31 @@ namespace boost
 
 using namespace boost;
 
-using file_dep_graph2 = adjacency_list < listS, // Store out-edges of each vertex in a std::list
+using file_dep_graph2 = adjacency_list<listS, // Store out-edges of each vertex in a std::list
   listS,                        // Store vertex set in a std::list
   directedS,                    // The file dependency graph is directed
   // vertex properties
   property < vertex_name_t, std::string, 
   property < vertex_compile_cost_t, float,
   property < vertex_distance_t, float, 
-  property < vertex_color_t, default_color_type > > > >,
+  property<vertex_color_t, default_color_type>>>>,
   // an edge property
-  property < edge_weight_t, float > >;
+  property<edge_weight_t, float >>;
 
 using vertex_t = graph_traits<file_dep_graph2>::vertex_descriptor;
 using edge_t = graph_traits<file_dep_graph2>::edge_descriptor;
 
 
-template < typename Graph, typename ColorMap, typename Visitor > void
+template <typename Graph, typename ColorMap, typename Visitor> void
 dfs_v2(const Graph & g,
-       typename graph_traits < Graph >::vertex_descriptor u,
+       typename graph_traits<Graph>::vertex_descriptor u,
        ColorMap color, Visitor vis)
 {
-  using color_type = typename property_traits < ColorMap >::value_type;
-  using ColorT = color_traits < color_type >;
+  using color_type = typename property_traits<ColorMap>::value_type;
+  using ColorT = color_traits<color_type>;
   color[u] = ColorT::gray();
   vis.discover_vertex(u, g);
-  typename graph_traits < Graph >::out_edge_iterator ei, ei_end;
+  typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
     if (color[target(*ei, g)] == ColorT::white()) {
       vis.tree_edge(*ei, g);
@@ -70,12 +70,12 @@ dfs_v2(const Graph & g,
   vis.finish_vertex(u, g);
 }
 
-template < typename Graph, typename Visitor, typename ColorMap > void
+template <typename Graph, typename Visitor, typename ColorMap> void
 generic_dfs_v2(const Graph & g, Visitor vis, ColorMap color)
 {
   using ColorValue = typename property_traits <ColorMap >::value_type;
-  using ColorT = color_traits < ColorValue > ;
-  typename graph_traits < Graph >::vertex_iterator  vi, vi_end;
+  using ColorT = color_traits<ColorValue> ;
+  typename graph_traits<Graph>::vertex_iterator  vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     color[*vi] = ColorT::white();
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
@@ -84,15 +84,15 @@ generic_dfs_v2(const Graph & g, Visitor vis, ColorMap color)
 }
 
 
-template < typename OutputIterator > 
+template <typename OutputIterator> 
 struct topo_visitor: public default_dfs_visitor
 {
   topo_visitor(OutputIterator & order):
   topo_order(order)
   {
   }
-  template < typename Graph > void
-  finish_vertex(typename graph_traits < Graph >::vertex_descriptor u,
+  template <typename Graph> void
+  finish_vertex(typename graph_traits<Graph>::vertex_descriptor u,
                 const Graph &)
   {
     *topo_order++ = u;
@@ -100,29 +100,29 @@ struct topo_visitor: public default_dfs_visitor
   OutputIterator & topo_order;
 };
 
-template < typename Graph, typename OutputIterator, typename ColorMap > void
+template <typename Graph, typename OutputIterator, typename ColorMap> void
 topo_sort(const Graph & g, OutputIterator topo_order, ColorMap color)
 {
-  topo_visitor < OutputIterator > vis(topo_order);
+  topo_visitor<OutputIterator> vis(topo_order);
   generic_dfs_v2(g, vis, color);
 }
 
 
-using name_map_t = property_map < file_dep_graph2, vertex_name_t >::type;
-using compile_cost_map_t = property_map < file_dep_graph2, vertex_compile_cost_t >::type;
-using distance_map_t = property_map < file_dep_graph2, vertex_distance_t >::type;
-using color_map_t = property_map < file_dep_graph2, vertex_color_t >::type;
+using name_map_t = property_map<file_dep_graph2, vertex_name_t>::type;
+using compile_cost_map_t = property_map<file_dep_graph2, vertex_compile_cost_t>::type;
+using distance_map_t = property_map<file_dep_graph2, vertex_distance_t>::type;
+using color_map_t = property_map<file_dep_graph2, vertex_color_t>::type;
 
 
 int
 main()
 {
   std::ifstream file_in("makefile-dependencies.dat");
-  using size_type = graph_traits < file_dep_graph2 >::vertices_size_type;
+  using size_type = graph_traits<file_dep_graph2>::vertices_size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
   std::istream_iterator < std::pair < size_type,
-    size_type > >input_begin(file_in), input_end;
+    size_type >> input_begin(file_in), input_end;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ can't handle the iterator constructor
   file_dep_graph2 g;
@@ -155,18 +155,18 @@ main()
   {
     std::ifstream name_in("makefile-target-names.dat");
     std::ifstream compile_cost_in("target-compile-costs.dat");
-    graph_traits < file_dep_graph2 >::vertex_iterator vi, vi_end;
+    graph_traits<file_dep_graph2>::vertex_iterator vi, vi_end;
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
       name_in >> name_map[*vi];
       compile_cost_in >> compile_cost_map[*vi];
     }
 
   }
-  std::vector < vertex_t > topo_order(num_vertices(g));
+  std::vector<vertex_t> topo_order(num_vertices(g));
   topo_sort(g, topo_order.rbegin(), color_map);
 
-  graph_traits < file_dep_graph2 >::vertex_iterator i, i_end;
-  graph_traits < file_dep_graph2 >::adjacency_iterator vi, vi_end;
+  graph_traits<file_dep_graph2>::vertex_iterator i, i_end;
+  graph_traits<file_dep_graph2>::adjacency_iterator vi, vi_end;
 
   // find source vertices with zero in-degree by marking all vertices with incoming edges
   for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
@@ -182,7 +182,7 @@ main()
     else
       distance_map[*i] = 0;
 
-  std::vector < vertex_t >::iterator ui;
+  std::vector<vertex_t>::iterator ui;
   for (ui = topo_order.begin(); ui != topo_order.end(); ++ui) {
     vertex_t
       u = *

@@ -114,7 +114,7 @@ int main(int argc, char **argv)
   
   // specify some types
   using mygraph_t = adjacency_list<listS, vecS, undirectedS, no_property,
-    property<edge_weight_t, cost> >;
+    property<edge_weight_t, cost>>;
   using WeightMap = property_map<mygraph_t, edge_weight_t>::type;
   using vertex = mygraph_t::vertex_descriptor;
   using edge_descriptor = mygraph_t::edge_descriptor;

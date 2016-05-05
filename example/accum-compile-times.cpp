@@ -16,8 +16,8 @@
 
 namespace std
 {
-  template < typename T >
-  std::istream& operator >> (std::istream& in, std::pair < T, T > &p)
+  template <typename T>
+  std::istream& operator >> (std::istream& in, std::pair<T, T> &p)
   {
     in >> p.first >> p.second;
     return in;
@@ -32,16 +32,16 @@ namespace boost
 
 using namespace boost;
 
-using file_dep_graph2 = adjacency_list< listS, // Store out-edges of each vertex in a std::list
+using file_dep_graph2 = adjacency_list<listS, // Store out-edges of each vertex in a std::list
   listS,                       // Store vertex set in a std::list
   directedS,                   // The file dependency graph is directed
   // vertex properties
-  property < vertex_name_t, std::string,
-  property < vertex_compile_cost_t, float,
-  property < vertex_distance_t, float,
-  property < vertex_color_t, default_color_type > > > >,
+  property<vertex_name_t, std::string,
+  property<vertex_compile_cost_t, float,
+  property<vertex_distance_t, float,
+  property<vertex_color_t, default_color_type>>>>,
   // an edge property
-  property < edge_weight_t, float > >;
+  property<edge_weight_t, float>>;
 
 using vertex_t = graph_traits<file_dep_graph2>::vertex_descriptor;
 using edge_t = graph_traits<file_dep_graph2>::edge_descriptor;
@@ -63,7 +63,7 @@ main()
   while (file_in >> p) 
     add_edge(id2vertex[p.first], id2vertex[p.second], g);
 #else
-  std::istream_iterator<std::pair<size_type, size_type> >
+  std::istream_iterator<std::pair<size_type, size_type>>
     input_begin(file_in), input_end;
   file_dep_graph2 g(input_begin, input_end, n_vertices);
 #endif
@@ -75,7 +75,7 @@ main()
 
   std::ifstream name_in("makefile-target-names.dat");
   std::ifstream compile_cost_in("target-compile-costs.dat");
-  graph_traits < file_dep_graph2 >::vertex_iterator vi, vi_end;
+  graph_traits<file_dep_graph2>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     name_in >> name_map[*vi];
     compile_cost_in >> compile_cost_map[*vi];

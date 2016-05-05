@@ -15,9 +15,9 @@
 
 namespace boost
 {
-  template < typename Graph >
-    std::pair < typename graph_traits < Graph >::vertex_descriptor,
-    typename graph_traits < Graph >::degree_size_type >
+  template <typename Graph>
+    std::pair < typename graph_traits<Graph>::vertex_descriptor,
+    typename graph_traits<Graph >::degree_size_type>
     min_degree_vertex(Graph & g)
   {
     typename graph_traits < Graph >::vertex_descriptor p;
@@ -33,12 +33,12 @@ namespace boost
     return std::make_pair(p, delta);
   }
 
-  template < typename Graph, typename OutputIterator >
+  template <typename Graph, typename OutputIterator>
     void neighbors(const Graph & g,
-                   typename graph_traits < Graph >::vertex_descriptor u,
+                   typename graph_traits<Graph>::vertex_descriptor u,
                    OutputIterator result)
   {
-    typename graph_traits < Graph >::adjacency_iterator ai, aend;
+    typename graph_traits<Graph>::adjacency_iterator ai, aend;
     for (boost::tie(ai, aend) = adjacent_vertices(u, g); ai != aend; ++ai)
       *result++ = *ai;
   }
@@ -52,38 +52,38 @@ namespace boost
       neighbors(g, *first, result);
   }
 
-  template < typename VertexListGraph, typename OutputIterator >
-  typename graph_traits < VertexListGraph >::degree_size_type
+  template <typename VertexListGraph, typename OutputIterator>
+  typename graph_traits<VertexListGraph>::degree_size_type
   edge_connectivity(VertexListGraph & g, OutputIterator disconnecting_set)
   {
     using vertex_descriptor = typename graph_traits <
       VertexListGraph >::vertex_descriptor;
     using degree_size_type = typename graph_traits <
       VertexListGraph >::degree_size_type;
-    using Color = color_traits < default_color_type >;
+    using Color = color_traits<default_color_type>;
     using edge_descriptor = typename adjacency_list_traits < vecS, vecS,
       directedS >::edge_descriptor;
     using FlowGraph = adjacency_list < vecS, vecS, directedS, no_property,
       property < edge_capacity_t, degree_size_type,
       property < edge_residual_capacity_t, degree_size_type,
-      property < edge_reverse_t, edge_descriptor > > > >;
+      property<edge_reverse_t, edge_descriptor>>>>;
 
     vertex_descriptor u, v, p, k;
     edge_descriptor e1, e2;
     bool inserted;
-    typename graph_traits < VertexListGraph >::vertex_iterator vi, vi_end;
+    typename graph_traits<VertexListGraph>::vertex_iterator vi, vi_end;
     degree_size_type delta, alpha_star, alpha_S_k;
-    std::set < vertex_descriptor > S, neighbor_S;
-    std::vector < vertex_descriptor > S_star, nonneighbor_S;
-    std::vector < default_color_type > color(num_vertices(g));
-    std::vector < edge_descriptor > pred(num_vertices(g));
+    std::set<vertex_descriptor> S, neighbor_S;
+    std::vector<vertex_descriptor> S_star, nonneighbor_S;
+    std::vector<default_color_type> color(num_vertices(g));
+    std::vector<edge_descriptor> pred(num_vertices(g));
 
     FlowGraph flow_g(num_vertices(g));
     auto cap = get(edge_capacity, flow_g);
     auto res_cap = get(edge_residual_capacity, flow_g);
     auto rev_edge = get(edge_reverse, flow_g);
 
-    typename graph_traits < VertexListGraph >::edge_iterator ei, ei_end;
+    typename graph_traits<VertexListGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
       u = source(*ei, g), v = target(*ei, g);
       boost::tie(e1, inserted) = add_edge(u, v, flow_g);
@@ -125,12 +125,12 @@ namespace boost
                           std::back_inserter(nonneighbor_S));
     }
 
-    std::vector < bool > in_S_star(num_vertices(g), false);
+    std::vector<bool> in_S_star(num_vertices(g), false);
     for (const auto& vertex : S_star.begin())
       in_S_star[vertex] = true;
     degree_size_type c = 0;
     for (const auto& vertex : S_star.begin()) {
-      typename graph_traits < VertexListGraph >::out_edge_iterator ei, ei_end;
+      typename graph_traits<VertexListGraph>::out_edge_iterator ei, ei_end;
       for (boost::tie(ei, ei_end) = out_edges(vertex, g); ei != ei_end; ++ei)
         if (!in_S_star[target(*ei, g)]) {
           *disconnecting_set++ = *ei;
@@ -150,8 +150,8 @@ main()
   GraphvizGraph g;
   read_graphviz("figs/edge-connectivity.dot", g);
 
-  using edge_descriptor = graph_traits < GraphvizGraph >::edge_descriptor;
-  std::vector < edge_descriptor > disconnecting_set;
+  using edge_descriptor = graph_traits<GraphvizGraph>::edge_descriptor;
+  std::vector<edge_descriptor> disconnecting_set;
   auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 
   std::cout << "The edge connectivity is " << c << "." << std::endl;

@@ -14,9 +14,9 @@ int
 main()
 {
   using namespace boost;
-  using Graph = adjacency_list < vecS, vecS, undirectedS,
-    no_property, property < edge_weight_t, int > >;
-  using Edge = graph_traits < Graph >::edge_descriptor;
+  using Graph = adjacency_list<vecS, vecS, undirectedS,
+    no_property, property<edge_weight_t, int>>;
+  using Edge = graph_traits<Graph>::edge_descriptor;
   using E = std::pair<int, int>;
 
   const int num_nodes = 5;
@@ -37,7 +37,7 @@ main()
   Graph g(edge_array, edge_array + num_edges, weights, num_nodes);
 #endif
   auto weight = get(edge_weight, g);
-  std::vector < Edge > spanning_tree;
+  std::vector<Edge> spanning_tree;
 
   kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
 

@@ -29,18 +29,18 @@ int
 main()
 {
   using namespace boost;
-  using graph_t = adjacency_list < vecS, vecS, bidirectionalS,
-    property < vertex_name_t, char > >;
+  using graph_t = adjacency_list<vecS, vecS, bidirectionalS,
+    property<vertex_name_t, char>>;
 
   enum { a, b, c, d, e, f, g, N };
   graph_t G(N);
   auto name_map = get(vertex_name, G);
   char name = 'a';
-  graph_traits < graph_t >::vertex_iterator v, v_end;
+  graph_traits<graph_t>::vertex_iterator v, v_end;
   for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v, ++name)
     name_map[*v] = name;
 
-  using E = std::pair < int, int >;
+  using E = std::pair<int, int>;
   E edges[] = { E(a, c), E(a, d), E(b, a), E(b, d), E(c, f),
     E(d, c), E(d, e), E(d, f), E(e, b), E(e, g), E(f, e), E(f, g)
   };

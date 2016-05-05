@@ -64,7 +64,7 @@ struct print_parent {
 
 template <class NewGraph, class Tag>
 struct graph_copier 
-  : public boost::base_visitor<graph_copier<NewGraph, Tag> >
+  : public boost::base_visitor<graph_copier<NewGraph, Tag>>
 {
   using event_filter = Tag;
 
@@ -91,7 +91,7 @@ int main(int , char* [])
     boost::property<boost::vertex_color_t, boost::default_color_type,
         boost::property<boost::vertex_degree_t, int,
           boost::property<boost::vertex_in_degree_t, int,
-    boost::property<boost::vertex_out_degree_t, int> > > >
+    boost::property<boost::vertex_out_degree_t, int>>>>
   >;
   
   Graph G(5);

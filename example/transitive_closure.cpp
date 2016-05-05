@@ -18,12 +18,12 @@ int
 main(int, char *[])
 {
   using namespace boost;
-  using Name = property < vertex_name_t, char >;
-  using Index = property < vertex_index_t, std::size_t, Name >;
-  using graph_t = adjacency_list < listS, listS, directedS, Index >;
-  using vertex_t = graph_traits < graph_t >::vertex_descriptor;
+  using Name = property<vertex_name_t, char>;
+  using Index = property<vertex_index_t, std::size_t, Name>;
+  using graph_t = adjacency_list<listS, listS, directedS, Index>;
+  using vertex_t = graph_traits<graph_t>::vertex_descriptor;
   graph_t G;
-  std::vector < vertex_t > verts(4);
+  std::vector<vertex_t> verts(4);
   for (int i = 0; i < 4; ++i)
     verts[i] = add_vertex(Index(i, Name('a' + i)), G);
   add_edge(verts[1], verts[2], G);

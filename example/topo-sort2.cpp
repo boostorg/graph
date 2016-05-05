@@ -26,7 +26,7 @@ main()
   };
   const int n_tasks = sizeof(tasks) / sizeof(char *);
 
-  adjacency_list < listS, vecS, directedS > g(n_tasks);
+  adjacency_list<listS, vecS, directedS> g(n_tasks);
 
   add_edge(0, 3, g);
   add_edge(1, 3, g);
@@ -36,7 +36,7 @@ main()
   add_edge(4, 6, g);
   add_edge(5, 6, g);
 
-  std::deque < int >topo_order;
+  std::deque<int> topo_order;
 
   topological_sort(g, std::front_inserter(topo_order),
                    vertex_index_map(identity_property_map()));

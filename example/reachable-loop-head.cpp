@@ -24,10 +24,10 @@ main(int argc, char *argv[])
   using namespace boost;
   GraphvizDigraph g;
   read_graphviz(argv[1], g);
-  graph_traits < GraphvizDigraph >::vertex_descriptor loop_head = 1;
-  using Color = color_traits < default_color_type >;
+  graph_traits<GraphvizDigraph>::vertex_descriptor loop_head = 1;
+  using Color = color_traits<default_color_type>;
 
-  std::vector < default_color_type >
+  std::vector<default_color_type>
     reachable_from_head(num_vertices(g), Color::white());
   default_color_type c;
   depth_first_visit(g, loop_head, default_dfs_visitor(),
@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 
   auto vattr_map = get(vertex_attribute, g);
 
-  graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;
+  graph_traits<GraphvizDigraph>::vertex_iterator i, i_end;
   for (boost::tie(i, i_end) = vertices(g); i != i_end; ++i)
     if (reachable_from_head[*i] != Color::white()) {
       vattr_map[*i]["color"] = "gray";

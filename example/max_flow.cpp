@@ -54,7 +54,7 @@ main()
     property<vertex_name_t, std::string>,
     property<edge_capacity_t, long,
       property<edge_residual_capacity_t, long,
-        property<edge_reverse_t, Traits::edge_descriptor> > >
+        property<edge_reverse_t, Traits::edge_descriptor>>>
   >;
 
   Graph g;

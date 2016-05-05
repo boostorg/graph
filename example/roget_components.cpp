@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
      discover_time_map(get(z_property<long>(), g)).
      color_map(get(w_property<long>(), g)));
 
-  std::vector< std::vector<vertex_t> > strong_comp(num_comp);
+  std::vector<std::vector<vertex_t>> strong_comp(num_comp);
 
   // First add representative vertices to each component's list
   graph_traits<Graph*>::vertex_iterator vi, vi_end;

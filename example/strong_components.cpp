@@ -54,7 +54,7 @@ int main(int, char*[])
   print_graph(G, name);
   std::cout << std::endl;
 
-  using Vertex = graph_traits<adjacency_list<vecS, vecS, directedS> >::vertex_descriptor;
+  using Vertex = graph_traits<adjacency_list<vecS, vecS, directedS>>::vertex_descriptor;
     
   std::vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
   std::vector<default_color_type> color(num_vertices(G));

@@ -42,7 +42,7 @@ int main()
   using namespace boost;
   
   using Graph = adjacency_list<vecS, vecS, directedS,
-    no_property, property<edge_weight_t, int> >;
+    no_property, property<edge_weight_t, int>>;
   using EdgeWeightMap = property_map<Graph, edge_weight_t>::type;
 
   enum { A, B, C, D, E, N };
@@ -56,7 +56,7 @@ int main()
   add_edge(E, C, 0, g);
   
   positive_edge_weight<EdgeWeightMap> filter(get(edge_weight, g));
-  filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> >
+  filtered_graph<Graph, positive_edge_weight<EdgeWeightMap>>
     fg(g, filter);
 
   std::cout << "filtered edge set: ";

@@ -35,7 +35,7 @@ int main(int , char* [])
   using namespace std;
   using Graph = adjacency_list<vecS, vecS, undirectedS, 
      property<vertex_color_t, default_color_type,
-       property<vertex_degree_t,int> > >;
+       property<vertex_degree_t,int>>>;
   using Vertex = graph_traits<Graph>::vertex_descriptor;
   using size_type = graph_traits<Graph>::vertices_size_type;
 

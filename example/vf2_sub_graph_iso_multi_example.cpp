@@ -12,7 +12,7 @@ using namespace boost;
 
 int main() {
   using edge_property = property<edge_name_t, char>;
-  using vertex_property = property<vertex_name_t, char, property<vertex_index_t, int> >;
+  using vertex_property = property<vertex_name_t, char, property<vertex_index_t, int>>;
 
   // Using a vecS graphs => the index maps are implicit.
   using graph_type = adjacency_list<vecS, vecS, bidirectionalS, vertex_property, edge_property>;

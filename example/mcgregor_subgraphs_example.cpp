@@ -73,8 +73,8 @@ int main (int argc, char *argv[]) {
   // a vertex index map; it will be implicit.
   using Graph = adjacency_list<listS, vecS, directedS,
     property<vertex_name_t, unsigned int,
-    property<vertex_index_t, unsigned int> >,
-    property<edge_name_t, unsigned int> >;
+    property<vertex_index_t, unsigned int>>,
+    property<edge_name_t, unsigned int>>;
 
   // Test maximum and unique variants on known graphs
   Graph graph_simple1, graph_simple2;

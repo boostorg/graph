@@ -20,13 +20,13 @@
 
 using namespace boost;
 
-template < typename OutputIterator > 
+template <typename OutputIterator> 
 class back_edge_recorder : public default_dfs_visitor
 {
 public:
   back_edge_recorder(OutputIterator out):m_out(out) { }
 
-  template < typename Edge, typename Graph >
+  template <typename Edge, typename Graph>
   void back_edge(Edge e, const Graph &)
   {
     *m_out++ = e;
@@ -36,61 +36,61 @@ private:
 };
 
 // object generator function
-template < typename OutputIterator >
-back_edge_recorder < OutputIterator >
+template <typename OutputIterator>
+back_edge_recorder<OutputIterator>
 make_back_edge_recorder(OutputIterator out)
 {
-  return back_edge_recorder < OutputIterator > (out);
+  return back_edge_recorder<OutputIterator> (out);
 }
 
-template < typename Graph, typename Loops > void
-find_loops(typename graph_traits < Graph >::vertex_descriptor entry, 
+template <typename Graph, typename Loops> void
+find_loops(typename graph_traits<Graph>::vertex_descriptor entry, 
            const Graph & g, 
            Loops & loops)    // A container of sets of vertices
 {
   BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
-  using Edge = typename graph_traits < Graph >::edge_descriptor;
-  std::vector < Edge > back_edges;
-  std::vector < default_color_type > color_map(num_vertices(g));
+  using Edge = typename graph_traits<Graph>::edge_descriptor;
+  std::vector<Edge> back_edges;
+  std::vector<default_color_type> color_map(num_vertices(g));
   depth_first_visit(g, entry,
                     make_back_edge_recorder(std::back_inserter(back_edges)),
                     make_iterator_property_map(color_map.begin(),
                                                get(vertex_index, g), color_map[0]));
 
-  for (typename std::vector < Edge >::size_type i = 0; i < back_edges.size(); ++i) {
+  for (typename std::vector<Edge>::size_type i = 0; i < back_edges.size(); ++i) {
     typename Loops::value_type x;
     loops.emplace_back(x);
     compute_loop_extent(back_edges[i], g, loops.back());
   }
 }
 
-template < typename Graph, typename Set > void
+template <typename Graph, typename Set> void
 compute_loop_extent(typename graph_traits <
                     Graph >::edge_descriptor back_edge, const Graph & g,
                     Set & loop_set)
 {
   BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
-  using Vertex = typename graph_traits < Graph >::vertex_descriptor;
-  using Color = color_traits < default_color_type >;
+  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
+  using Color = color_traits<default_color_type>;
 
   Vertex loop_head, loop_tail;
   loop_tail = source(back_edge, g);
   loop_head = target(back_edge, g);
 
-  std::vector < default_color_type >
+  std::vector<default_color_type>
     reachable_from_head(num_vertices(g), Color::white());
   default_color_type c;
   depth_first_visit(g, loop_head, default_dfs_visitor(),
                     make_iterator_property_map(reachable_from_head.begin(),
                                                get(vertex_index, g), c));
 
-  std::vector < default_color_type > reachable_to_tail(num_vertices(g));
-  reverse_graph < Graph > reverse_g(g);
+  std::vector<default_color_type> reachable_to_tail(num_vertices(g));
+  reverse_graph<Graph> reverse_g(g);
   depth_first_visit(reverse_g, loop_tail, default_dfs_visitor(),
                     make_iterator_property_map(reachable_to_tail.begin(),
                                                get(vertex_index, g), c));
 
-  typename graph_traits < Graph >::vertex_iterator vi, vi_end;
+  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (reachable_from_head[*vi] != Color::white()
         && reachable_to_tail[*vi] != Color::white())
@@ -111,7 +111,7 @@ main(int argc, char *argv[])
   using Graph = adjacency_list < vecS, vecS, bidirectionalS,
     GraphvizVertexProperty,
     GraphvizEdgeProperty, GraphvizGraphProperty >;
-  using Vertex = graph_traits < Graph >::vertex_descriptor;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
 
   Graph g;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
@@ -121,8 +121,8 @@ main(int argc, char *argv[])
 
   copy_graph(g_in, g);
 
-  using set_t = std::set < Vertex >;
-  using list_of_sets_t = std::list < set_t >;
+  using set_t = std::set<Vertex>;
+  using list_of_sets_t = std::list<set_t>;
   list_of_sets_t loops;
   auto entry = *vertices(g).first;
 
@@ -130,10 +130,10 @@ main(int argc, char *argv[])
 
   auto vattr_map = get(vertex_attribute, g);
   auto eattr_map = get(edge_attribute, g);
-  graph_traits < Graph >::edge_iterator ei, ei_end;
+  graph_traits<Graph>::edge_iterator ei, ei_end;
 
   for (auto i = loops.begin(); i != loops.end(); ++i) {
-    std::vector < bool > in_loop(num_vertices(g), false);
+    std::vector<bool> in_loop(num_vertices(g), false);
     for (auto j = (*i).begin(); j != (*i).end(); ++j) {
       vattr_map[*j]["color"] = "gray";
       in_loop[*j] = true;

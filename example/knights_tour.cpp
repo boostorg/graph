@@ -18,7 +18,7 @@
 
 using namespace boost;
 
-using Position = std::pair < int, int >;
+using Position = std::pair<int, int>;
 Position
   knight_jumps[8] = {
     Position(2, -1),
@@ -145,21 +145,21 @@ adjacent_vertices(knights_tour_graph::vertex_descriptor v,
 
 struct compare_first
 {
-  template < typename P > bool operator() (const P & x, const P & y)
+  template <typename P> bool operator() (const P & x, const P & y)
   {
     return x.first < y.first;
   }
 };
 
-template < typename Graph, typename TimePropertyMap >
+template <typename Graph, typename TimePropertyMap>
   bool backtracking_search(Graph & g,
                            typename graph_traits <
                            Graph >::vertex_descriptor src,
                            TimePropertyMap time_map)
 {
-  using Vertex = typename graph_traits < Graph >::vertex_descriptor;
-  using P = std::pair < int, Vertex >;
-  std::stack < P > S;
+  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
+  using P = std::pair<int, Vertex>;
+  std::stack<P> S;
   int time_stamp = 0;
 
   S.push(std::make_pair(time_stamp, src));
@@ -172,7 +172,7 @@ template < typename Graph, typename TimePropertyMap >
       return true;
 
     bool deadend = true;
-    typename graph_traits < Graph >::adjacency_iterator i, end;
+    typename graph_traits<Graph>::adjacency_iterator i, end;
     for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
       if (get(time_map, *i) == -1) {
         S.push(std::make_pair(time_stamp + 1, *i));
@@ -194,25 +194,25 @@ template < typename Graph, typename TimePropertyMap >
   return false;
 }
 
-template < typename Vertex, typename Graph, typename TimePropertyMap > int
+template <typename Vertex, typename Graph, typename TimePropertyMap> int
 number_of_successors(Vertex x, Graph & g, TimePropertyMap time_map)
 {
   int s_x = 0;
-  typename graph_traits < Graph >::adjacency_iterator i, end;
+  typename graph_traits<Graph>::adjacency_iterator i, end;
   for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
     if (get(time_map, *i) == -1)
       ++s_x;
   return s_x;
 }
 
-template < typename Graph, typename TimePropertyMap >
+template <typename Graph, typename TimePropertyMap>
   bool warnsdorff(Graph & g,
-                  typename graph_traits < Graph >::vertex_descriptor src,
+                  typename graph_traits<Graph>::vertex_descriptor src,
                   TimePropertyMap time_map)
 {
-  using Vertex = typename graph_traits < Graph >::vertex_descriptor;
-  using P = std::pair < int, Vertex >;
-  std::stack < P > S;
+  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
+  using P = std::pair<int, Vertex>;
+  std::stack<P> S;
   int time_stamp = 0;
 
   S.push(std::make_pair(time_stamp, src));
@@ -225,8 +225,8 @@ template < typename Graph, typename TimePropertyMap >
       return true;
 
     // Put adjacent vertices into a local priority queue
-    std::priority_queue < P, std::vector < P >, compare_first > Q;
-    typename graph_traits < Graph >::adjacency_iterator i, end;
+    std::priority_queue<P, std::vector<P>, compare_first> Q;
+    typename graph_traits<Graph>::adjacency_iterator i, end;
     int num_succ;
     for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
       if (get(time_map, *i) == -1) {

@@ -243,7 +243,7 @@ int main()
 
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor>> 
         opt_solutions;
   std::vector<spp_no_rc_res_cont> pareto_opt_rcs_no_rc;
 
@@ -260,7 +260,7 @@ int main()
     dominance_no_res_cont(), 
     std::allocator
       <r_c_shortest_paths_label
-        <SPPRC_Example_Graph, spp_no_rc_res_cont> >(), 
+        <SPPRC_Example_Graph, spp_no_rc_res_cont>>(), 
     default_r_c_shortest_paths_visitor() );
 
   std::cout << "SPP without resource constraints:" << std::endl;
@@ -280,7 +280,7 @@ int main()
   // spptw
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor>> 
         opt_solutions_spptw;
   std::vector<spp_spptw_res_cont> pareto_opt_rcs_spptw;
 
@@ -297,7 +297,7 @@ int main()
     dominance_spptw(), 
     std::allocator
       <r_c_shortest_paths_label
-        <SPPRC_Example_Graph, spp_spptw_res_cont> >(), 
+        <SPPRC_Example_Graph, spp_spptw_res_cont>>(), 
           default_r_c_shortest_paths_visitor() );
 
   std::cout << "SPP with time windows:" << std::endl;

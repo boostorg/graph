@@ -14,11 +14,11 @@
 #include <iostream>
 
 using namespace boost;
-template < typename TimeMap > class bfs_time_visitor:public default_bfs_visitor {
-  using T = typename property_traits < TimeMap >::value_type;
+template <typename TimeMap> class bfs_time_visitor:public default_bfs_visitor {
+  using T = typename property_traits<TimeMap>::value_type;
 public:
   bfs_time_visitor(TimeMap tmap, T & t):m_timemap(tmap), m_time(t) { }
-  template < typename Vertex, typename Graph >
+  template <typename Vertex, typename Graph>
   void discover_vertex(Vertex u, const Graph & g) const
   {
     put(m_timemap, u, m_time++);
@@ -39,13 +39,13 @@ main()
 {
   using namespace boost;
   // Select the graph type we wish to use
-  using graph_t = adjacency_list < listS, listS, undirectedS,
+  using graph_t = adjacency_list<listS, listS, undirectedS,
     VertexProps>;
   // Set up the vertex IDs and names
   enum { r, s, t, u, v, w, x, y, N };
   const char *name = "rstuvwxy";
   // Specify the edges in the graph
-  using E = std::pair < int, int >;
+  using E = std::pair<int, int>;
   E edge_array[] = { E(r, s), E(r, v), E(s, w), E(w, r), E(w, t),
     E(w, x), E(x, t), E(t, u), E(x, y), E(u, y)
   };
@@ -70,12 +70,12 @@ main()
   Size time = 0;
   using dtime_map_t = property_map<graph_t, std::size_t VertexProps::*>::type;
   auto dtime_map = get(&VertexProps::discover_time, g);
-  bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
+  bfs_time_visitor<dtime_map_t> vis(dtime_map, time);
   breadth_first_search(g, vertex(s, g), color_map(get(&VertexProps::color, g)).
     visitor(vis));
 
   // a vector to hold the discover time property for each vertex
-  std::vector < Size > dtime(num_vertices(g));
+  std::vector<Size> dtime(num_vertices(g));
   using dtime_pm_type =
     iterator_property_map<std::vector<Size>::iterator,
                           property_map<graph_t, unsigned int VertexProps::*>::type>;
@@ -89,7 +89,7 @@ main()
 
   // Use std::sort to order the vertices by their discover time
   std::vector<graph_traits<graph_t>::vertices_size_type > discover_order(N);
-  integer_range < int >range(0, N);
+  integer_range<int> range(0, N);
   std::copy(range.begin(), range.end(), discover_order.begin());
   std::sort(discover_order.begin(), discover_order.end(),
             make_indirect_cmp(

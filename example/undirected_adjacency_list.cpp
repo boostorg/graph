@@ -10,13 +10,13 @@
 #include <boost/graph/adjacency_list.hpp>
 using namespace boost;
 
-template < typename UndirectedGraph > void
+template <typename UndirectedGraph> void
 undirected_graph_demo1()
 {
   const int V = 3;
   UndirectedGraph undigraph(V);
-  typename graph_traits < UndirectedGraph >::out_edge_iterator out, out_end;
-  typename graph_traits < UndirectedGraph >::in_edge_iterator in, in_end;
+  typename graph_traits<UndirectedGraph>::out_edge_iterator out, out_end;
+  typename graph_traits<UndirectedGraph>::in_edge_iterator in, in_end;
 
   auto zero = vertex(0, undigraph);
   auto one = vertex(1, undigraph);
@@ -34,14 +34,14 @@ undirected_graph_demo1()
   std::cout << std::endl;
 }
 
-template < typename DirectedGraph > void
+template <typename DirectedGraph> void
 directed_graph_demo()
 {
   const int V = 2;
   DirectedGraph digraph(V);
   using Weight = typename DirectedGraph::edge_property_type;
   auto weight = get(edge_weight, digraph);
-  typename graph_traits < DirectedGraph >::edge_descriptor e1, e2;
+  typename graph_traits<DirectedGraph>::edge_descriptor e1, e2;
   bool found;
 
   auto u = vertex(0, digraph);
@@ -62,15 +62,15 @@ directed_graph_demo()
   std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
 }
 
-template < typename UndirectedGraph > void
+template <typename UndirectedGraph> void
 undirected_graph_demo2()
 {
   const int V = 2;
   UndirectedGraph undigraph(V);
   using Weight = typename UndirectedGraph::edge_property_type;
-  typename property_map < UndirectedGraph, edge_weight_t >::type
+  typename property_map<UndirectedGraph, edge_weight_t>::type
     weight = get(edge_weight, undigraph);
-  typename graph_traits < UndirectedGraph >::edge_descriptor e1, e2;
+  typename graph_traits<UndirectedGraph>::edge_descriptor e1, e2;
   bool found;
 
   auto u = vertex(0, undigraph);
@@ -105,8 +105,8 @@ main()
     no_property, Weight >;
   using DirectedGraph = adjacency_list < vecS, vecS, directedS,
     no_property, Weight >;
-  undirected_graph_demo1 < UndirectedGraph > ();
-  directed_graph_demo < DirectedGraph > ();
-  undirected_graph_demo2 < UndirectedGraph > ();
+  undirected_graph_demo1<UndirectedGraph> ();
+  directed_graph_demo<DirectedGraph> ();
+  undirected_graph_demo2<UndirectedGraph> ();
   return 0;
 }

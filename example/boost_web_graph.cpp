@@ -84,8 +84,8 @@ main()
 
   using Graph = adjacency_list<vecS, vecS, directedS, 
     property<vertex_name_t, std::string, 
-      property<vertex_color_t, default_color_type> >,
-    property<edge_name_t, std::string, property<edge_weight_t, int> >
+      property<vertex_color_t, default_color_type>>,
+    property<edge_name_t, std::string, property<edge_weight_t, int>>
   >;
 
   using Traits = graph_traits<Graph>;

@@ -72,7 +72,7 @@ b(14); d a
 */
 
 using VProperty = property<vertex_color_t, default_color_type, 
-         property<vertex_distance_t,int> >;
+         property<vertex_distance_t,int>>;
 using weight_t = int;
 using EProperty = property<edge_weight_t,weight_t>;
 
@@ -82,7 +82,7 @@ using Graph = adjacency_list<vecS, vecS, directedS, VProperty, EProperty >;
 
 template <class Tag>
 struct endl_printer
-  : public boost::base_visitor< endl_printer<Tag> >
+  : public boost::base_visitor<endl_printer<Tag>>
 {
   using event_filter = Tag;
   endl_printer(std::ostream& os) : m_os(os) { }
@@ -97,7 +97,7 @@ endl_printer<Tag> print_endl(std::ostream& os, Tag) {
 
 template <class PA, class Tag>
 struct edge_printer
- : public boost::base_visitor< edge_printer<PA, Tag> >
+ : public boost::base_visitor<edge_printer<PA, Tag>>
 {
   using event_filter = Tag;
 
@@ -120,7 +120,7 @@ print_edge(PA pa, std::ostream& os, Tag) {
 
 template <class NewGraph, class Tag>
 struct graph_copier 
-  : public boost::base_visitor<graph_copier<NewGraph, Tag> >
+  : public boost::base_visitor<graph_copier<NewGraph, Tag>>
 {
   using event_filter = Tag;
 
@@ -190,7 +190,7 @@ main(int , char* [])
   print(G, name);
 
   adjacency_list<listS, vecS, directedS, 
-    property<vertex_color_t, default_color_type> > G_copy(N);
+    property<vertex_color_t, default_color_type>> G_copy(N);
 
   cout << "Starting graph:" << endl;
 

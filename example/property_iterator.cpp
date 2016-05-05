@@ -24,19 +24,19 @@ struct toto_t {
   enum { num = 23063};
   using kind = vertex_property_tag;
 };
-using Toto = property< toto_t, double >;
+using Toto = property<toto_t, double>;
 
 struct radius_t {
   enum { num = 23062};
   using kind = vertex_property_tag;
 };
-using Radius = property< radius_t, double, Toto >;
+using Radius = property<radius_t, double, Toto>;
 
 struct mass_t {
   enum { num = 23061};
   using kind = vertex_property_tag;
 };
-using Mass = property< mass_t, int, Radius >;
+using Mass = property<mass_t, int, Radius>;
 
 
 //====== edge properties

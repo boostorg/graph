@@ -41,7 +41,7 @@ main(int , char* [])
      internal decorator, so we "property" the color to the graph.
      */
   using Graph = adjacency_list<vecS, vecS, directedS, 
-    property<vertex_color_t, default_color_type> >;
+    property<vertex_color_t, default_color_type>>;
 
   using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
 
@@ -56,7 +56,7 @@ main(int , char* [])
 
   auto id = get(vertex_index, G);
 
-  using container = std::vector< Vertex >;
+  using container = std::vector<Vertex>;
   container c;
   topological_sort(G, std::back_inserter(c));
 

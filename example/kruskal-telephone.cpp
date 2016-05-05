@@ -19,19 +19,19 @@ main()
   GraphvizGraph g_dot;
   read_graphviz("figs/telephone-network.dot", g_dot);
 
-  using Graph = adjacency_list < vecS, vecS, undirectedS, no_property,
-    property < edge_weight_t, int > >;
+  using Graph = adjacency_list<vecS, vecS, undirectedS, no_property,
+    property<edge_weight_t, int>>;
   Graph g(num_vertices(g_dot));
   auto edge_attr_map = get(edge_attribute, g_dot);
-  graph_traits < GraphvizGraph >::edge_iterator ei, ei_end;
+  graph_traits<GraphvizGraph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    int weight = lexical_cast < int >(edge_attr_map[*ei]["label"]);
-    property < edge_weight_t, int >edge_property(weight);
+    int weight = lexical_cast<int>(edge_attr_map[*ei]["label"]);
+    property<edge_weight_t, int> edge_property(weight);
     add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
   }
 
-  std::vector < graph_traits < Graph >::edge_descriptor > mst;
-  using size_type = std::vector < graph_traits < Graph >::edge_descriptor >::size_type;
+  std::vector<graph_traits<Graph>::edge_descriptor> mst;
+  using size_type = std::vector<graph_traits<Graph>::edge_descriptor>::size_type;
   kruskal_minimum_spanning_tree(g, std::back_inserter(mst));
 
   auto weight = get(edge_weight, g);
@@ -40,7 +40,7 @@ main()
     total_weight += get(weight, edge);
   std::cout << "total weight: " << total_weight << std::endl;
 
-  using Vertex = graph_traits < Graph >::vertex_descriptor;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
   for (const auto& edge : mst) {
     auto u = source(edge, g), v = target(edge, g);
     edge_attr_map[edge(u, v, g_dot).first]["color"] = "black";

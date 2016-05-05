@@ -79,7 +79,7 @@ main()
     // Create the graph, and specify that we will use std::string to
     // store the first name's.
     using MyGraphType = adjacency_list<vecS, vecS, directedS, 
-      property<vertex_first_name_t, std::string> >;
+      property<vertex_first_name_t, std::string>>;
     
     using Pair = pair<int,int>;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 

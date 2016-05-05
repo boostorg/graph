@@ -29,8 +29,8 @@ int main()
   add_edge(Rick, Margaret, g);
   add_edge(John, Benjamin, g);
 
-  graph_traits<adjacency_list <> >::vertex_iterator i, end;
-  graph_traits<adjacency_list <> >::adjacency_iterator ai, a_end;
+  graph_traits<adjacency_list<>>::vertex_iterator i, end;
+  graph_traits<adjacency_list<>>::adjacency_iterator ai, a_end;
   auto index_map = get(vertex_index, g);
 
   BGL_FORALL_VERTICES(i, g, adjacency_list<>) {

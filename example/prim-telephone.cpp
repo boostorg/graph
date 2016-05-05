@@ -19,14 +19,14 @@ main()
   GraphvizGraph g_dot;
   read_graphviz("figs/telephone-network.dot", g_dot);
 
-  using Graph = adjacency_list < vecS, vecS, undirectedS, no_property,
-    property < edge_weight_t, int > >;
+  using Graph = adjacency_list<vecS, vecS, undirectedS, no_property,
+    property<edge_weight_t, int>>;
   Graph g(num_vertices(g_dot));
   auto edge_attr_map = get(edge_attribute, g_dot);
-  graph_traits < GraphvizGraph >::edge_iterator ei, ei_end;
+  graph_traits<GraphvizGraph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    auto weight = lexical_cast < int >(edge_attr_map[*ei]["label"]);
-    property < edge_weight_t, int >edge_property(weight);
+    auto weight = lexical_cast<int>(edge_attr_map[*ei]["label"]);
+    property<edge_weight_t, int> edge_property(weight);
     add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
   }
 
@@ -52,7 +52,7 @@ main()
     if (parent[u] != u)
       edge_attr_map[edge(parent[u], u, g_dot).first]["color"] = "black";
   std::ofstream out("figs/telephone-mst-prim.dot");
-  graph_property < GraphvizGraph, graph_edge_attribute_t >::type &
+  graph_property<GraphvizGraph, graph_edge_attribute_t>::type &
     graph_edge_attr_map = get_property(g_dot, graph_edge_attribute);
   graph_edge_attr_map["color"] = "gray";
   write_graphviz(out, g_dot);

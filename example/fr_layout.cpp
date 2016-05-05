@@ -41,7 +41,7 @@ using topology_type = boost::rectangle_topology<>;
 using point_type = topology_type::point_type;
 
 using Graph = adjacency_list<listS, vecS, undirectedS, 
-                       property<vertex_name_t, std::string> >;
+                       property<vertex_name_t, std::string>>;
 
 using Vertex = graph_traits<Graph>::vertex_descriptor;
 

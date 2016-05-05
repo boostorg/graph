@@ -13,14 +13,14 @@
 
 using namespace boost;
 
-template < typename Graph, typename VertexNamePropertyMap > void
+template <typename Graph, typename VertexNamePropertyMap> void
 read_graph_file(std::istream & graph_in, std::istream & name_in,
                 Graph & g, VertexNamePropertyMap name_map)
 {
-  using size_type = typename graph_traits < Graph >::vertices_size_type;
+  using size_type = typename graph_traits<Graph>::vertices_size_type;
   size_type n_vertices;
-  typename graph_traits < Graph >::vertex_descriptor u;
-  typename property_traits < VertexNamePropertyMap >::value_type name;
+  typename graph_traits<Graph>::vertex_descriptor u;
+  typename property_traits<VertexNamePropertyMap>::value_type name;
 
   graph_in >> n_vertices;       // read in number of vertices
   for (size_type i = 0; i < n_vertices; ++i) {  // Add n vertices to the graph
@@ -36,11 +36,11 @@ read_graph_file(std::istream & graph_in, std::istream & name_in,
       break;
 }
 
-template < typename Graph, typename VertexNameMap > void
+template <typename Graph, typename VertexNameMap> void
 print_dependencies(std::ostream & out, const Graph & g,
                    VertexNameMap name_map)
 {
-  typename graph_traits < Graph >::edge_iterator ei, ei_end;
+  typename graph_traits<Graph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     out << get(name_map, source(*ei, g)) << " -$>$ "
       << get(name_map, target(*ei, g)) << std::endl;
@@ -53,7 +53,7 @@ main()
   using graph_type = adjacency_list < listS,       // Store out-edges of each vertex in a std::list
     vecS,                       // Store vertex set in a std::vector
     directedS,                  // The graph is directed
-    property < vertex_name_t, std::string >     // Add a vertex property
+    property<vertex_name_t, std::string>     // Add a vertex property
    >;
 
   graph_type g;                 // use default constructor to create empty graph
@@ -72,7 +72,7 @@ main()
   }
 
   // Obtain internal property map from the graph
-  property_map < graph_type, vertex_name_t >::type name_map =
+  property_map<graph_type, vertex_name_t>::type name_map =
     get(vertex_name, g);
   read_graph_file(file_in, name_in, g, name_map);
 

@@ -15,7 +15,7 @@ int
 main()
 {
   using namespace boost;
-  using Graph = adjacency_list < vecS, vecS, undirectedS >;
+  using Graph = adjacency_list<vecS, vecS, undirectedS>;
 
   const int N = 6;
   Graph G(N);
@@ -29,7 +29,7 @@ main()
     (G, make_iterator_property_map(c.begin(), get(vertex_index, G), c[0]));
 
   std::cout << std::endl;
-  std::vector < int >::iterator i;
+  std::vector<int>::iterator i;
   std::cout << "Total number of components: " << num << std::endl;
   for (i = c.begin(); i != c.end(); ++i)
     std::cout << "Vertex " << i - c.begin()

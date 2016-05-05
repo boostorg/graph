@@ -15,8 +15,8 @@ main()
   using namespace boost;
   using Graph = leda::GRAPH<int, int>;
   BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
-  BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept< Graph> ));
-  BOOST_CONCEPT_ASSERT(( VertexMutableGraphConcept< Graph> ));
+  BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
+  BOOST_CONCEPT_ASSERT(( VertexMutableGraphConcept<Graph> ));
   BOOST_CONCEPT_ASSERT(( EdgeMutableGraphConcept<Graph> ));
   return EXIT_SUCCESS;
 }

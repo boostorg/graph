@@ -13,14 +13,14 @@
 
 using namespace boost;
 
-template < typename VertexDescriptor, typename VertexNameMap > void
+template <typename VertexDescriptor, typename VertexNameMap> void
 print_vertex_name(VertexDescriptor v, VertexNameMap name_map)
 {
   std::cout << get(name_map, v);
 }
 
-template < typename Graph, typename TransDelayMap, typename VertexNameMap > void
-print_trans_delay(typename graph_traits < Graph >::edge_descriptor e,
+template <typename Graph, typename TransDelayMap, typename VertexNameMap> void
+print_trans_delay(typename graph_traits<Graph>::edge_descriptor e,
                   const Graph & g, TransDelayMap delay_map,
                   VertexNameMap name_map)
 {
@@ -28,11 +28,11 @@ print_trans_delay(typename graph_traits < Graph >::edge_descriptor e,
     << get(name_map, target(e, g)) << ") = " << get(delay_map, e);
 }
 
-template < typename Graph, typename VertexNameMap > void
+template <typename Graph, typename VertexNameMap> void
 print_vertex_names(const Graph & g, VertexNameMap name_map)
 {
   std::cout << "vertices(g) = { ";
-  using iter_t = typename graph_traits < Graph >::vertex_iterator;
+  using iter_t = typename graph_traits<Graph>::vertex_iterator;
   for (auto p = vertices(g); p.first != p.second;
        ++p.first) {
     print_vertex_name(*p.first, name_map);
@@ -41,22 +41,22 @@ print_vertex_names(const Graph & g, VertexNameMap name_map)
   std::cout << "}" << std::endl;
 }
 
-template < typename Graph, typename TransDelayMap, typename VertexNameMap > void
+template <typename Graph, typename TransDelayMap, typename VertexNameMap> void
 print_trans_delays(const Graph & g, TransDelayMap trans_delay_map,
                    VertexNameMap name_map)
 {
-  typename graph_traits < Graph >::edge_iterator first, last;
+  typename graph_traits<Graph>::edge_iterator first, last;
   for (boost::tie(first, last) = edges(g); first != last; ++first) {
     print_trans_delay(*first, g, trans_delay_map, name_map);
     std::cout << std::endl;
   }
 }
 
-template < typename Graph, typename VertexNameMap, typename TransDelayMap > void
+template <typename Graph, typename VertexNameMap, typename TransDelayMap> void
 build_router_network(Graph & g, VertexNameMap name_map,
                      TransDelayMap delay_map)
 {
-  typename graph_traits < Graph >::vertex_descriptor a, b, c, d, e;
+  typename graph_traits<Graph>::vertex_descriptor a, b, c, d, e;
   a = add_vertex(g);
   name_map[a] = 'a';
   b = add_vertex(g);
@@ -68,7 +68,7 @@ build_router_network(Graph & g, VertexNameMap name_map,
   e = add_vertex(g);
   name_map[e] = 'e';
 
-  typename graph_traits < Graph >::edge_descriptor ed;
+  typename graph_traits<Graph>::edge_descriptor ed;
   bool inserted;
 
   boost::tie(ed, inserted) = add_edge(a, b, g);
@@ -93,8 +93,8 @@ int
 main()
 {
   using graph_t = adjacency_list < listS, listS, directedS,
-    property < vertex_name_t, char >,
-    property < edge_weight_t, double > >;
+    property<vertex_name_t, char>,
+    property<edge_weight_t, double>>;
   graph_t g;
 
   auto name_map = get(vertex_name, g);

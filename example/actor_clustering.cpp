@@ -35,7 +35,7 @@ struct Actor
 };
 
 using ActorGraph = adjacency_list<vecS, vecS, undirectedS, Actor,
-  property<edge_centrality_t, double> >;
+  property<edge_centrality_t, double>>;
 using Vertex = graph_traits<ActorGraph>::vertex_descriptor;
 using Edge = graph_traits<ActorGraph>::edge_descriptor;
 
@@ -48,7 +48,7 @@ void load_actor_graph(std::istream& in, ActorGraph& g)
     std::vector<Vertex> actors_in_movie;
 
     // Map from the actor numbers on this line to the actor vertices
-    using Tok = tokenizer<char_separator<char> >;
+    using Tok = tokenizer<char_separator<char>>;
     Tok tok(line, char_separator<char>(" "));
     for (const auto& id : tok) {
       auto actor_id = lexical_cast<int>(id);

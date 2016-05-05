@@ -23,13 +23,10 @@ using namespace boost;
 int main(int argc, char** argv)
 {
 
-  using graph = adjacency_list
-    < vecS,
-      vecS,
-      undirectedS,
-      property<vertex_index_t, int>,
-      property<edge_index_t, int>
-    >;
+  using graph = adjacency_list<vecS, vecS,
+    undirectedS,
+    property<vertex_index_t, int>,
+    property<edge_index_t, int>>;
 
   // Create a maximal planar graph on 6 vertices
   graph g(6);
@@ -59,7 +56,7 @@ int main(int argc, char** argv)
 
   // Test for planarity - we know it is planar, we just want to 
   // compute the planar embedding as a side-effect
-  using vec_t = std::vector< graph_traits<graph>::edge_descriptor >;
+  using vec_t = std::vector<graph_traits<graph>::edge_descriptor>;
   std::vector<vec_t> embedding(num_vertices(g));
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::embedding = 

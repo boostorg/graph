@@ -15,7 +15,7 @@
 
 using namespace boost;
 
-template < typename Graph, typename ParentMap > 
+template <typename Graph, typename ParentMap> 
 struct edge_writer
 {
   edge_writer(const Graph & g, const ParentMap & p)
@@ -23,7 +23,7 @@ struct edge_writer
   {
   }
 
-  template < typename Edge >
+  template <typename Edge>
     void operator() (std::ostream & out, const Edge & e) const
   {
     out << "[label=\"" << get(edge_weight, m_g, e) << "\"";
@@ -37,11 +37,11 @@ struct edge_writer
   const Graph & m_g;
   ParentMap m_parent;
 };
-template < typename Graph, typename Parent >
-edge_writer < Graph, Parent >
+template <typename Graph, typename Parent>
+edge_writer<Graph, Parent>
 make_edge_writer(const Graph & g, const Parent & p)
 {
-  return edge_writer < Graph, Parent > (g, p);
+  return edge_writer<Graph, Parent> (g, p);
 }
 
 struct EdgeProperties {
@@ -53,7 +53,7 @@ main()
 {
   enum { u, v, x, y, z, N };
   char name[] = { 'u', 'v', 'x', 'y', 'z' };
-  using E = std::pair < int, int >;
+  using E = std::pair<int, int>;
   const int n_edges = 10;
   E edge_array[] = { E(u, y), E(u, x), E(u, v), E(v, u),
       E(x, y), E(x, v), E(y, v), E(y, z), E(z, u), E(z,x) };
@@ -69,13 +69,13 @@ main()
 #else
   Graph g(edge_array, edge_array + n_edges, N);
 #endif
-  graph_traits < Graph >::edge_iterator ei, ei_end;
+  graph_traits<Graph>::edge_iterator ei, ei_end;
   auto weight_pmap = get(&EdgeProperties::weight, g);
   int i = 0;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
     weight_pmap[*ei] = weight[i];
 
-  std::vector<int> distance(N, (std::numeric_limits < short >::max)());
+  std::vector<int> distance(N, (std::numeric_limits<short>::max)());
   std::vector<std::size_t> parent(N);
   for (i = 0; i < N; ++i)
     parent[i] = i;

@@ -26,7 +26,7 @@ using namespace boost;
 template <typename Graph,
           typename Distance,
           typename Result,
-          typename Divide = divides<Result> >
+          typename Divide = divides<Result>>
 struct scaled_closeness_measure
 {
     using distance_type = Distance;

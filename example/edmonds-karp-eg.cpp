@@ -47,12 +47,12 @@ main()
 {
   using namespace boost;
 
-  using Traits = adjacency_list_traits < vecS, vecS, directedS >;
+  using Traits = adjacency_list_traits<vecS, vecS, directedS>;
   using Graph = adjacency_list < listS, vecS, directedS,
-    property < vertex_name_t, std::string >,
+    property<vertex_name_t, std::string>,
     property < edge_capacity_t, long,
     property < edge_residual_capacity_t, long,
-    property < edge_reverse_t, Traits::edge_descriptor > > > >;
+    property<edge_reverse_t, Traits::edge_descriptor>>>>;
 
   Graph g;
 
@@ -76,8 +76,8 @@ main()
   std::cout << "s " << flow << std::endl << std::endl;
 
   std::cout << "c flow values:" << std::endl;
-  graph_traits < Graph >::vertex_iterator u_iter, u_end;
-  graph_traits < Graph >::out_edge_iterator ei, e_end;
+  graph_traits<Graph>::vertex_iterator u_iter, u_end;
+  graph_traits<Graph>::out_edge_iterator ei, e_end;
   for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
     for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] > 0)

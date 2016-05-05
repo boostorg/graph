@@ -91,13 +91,13 @@ struct edge_weight_map;
 // ReadablePropertyGraph associated types
 namespace boost {
   template<>
-  struct property_map< ring_graph, edge_weight_t > {
+  struct property_map<ring_graph, edge_weight_t> {
     using type = edge_weight_map;
     using const_type = edge_weight_map;
   };
 
   template<>
-  struct property_map< const ring_graph, edge_weight_t > {
+  struct property_map<const ring_graph, edge_weight_t> {
     using type = edge_weight_map;
     using const_type = edge_weight_map;
   };

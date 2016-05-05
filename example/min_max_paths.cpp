@@ -43,7 +43,7 @@ main(int , char* [])
   using namespace boost;
 
   using Graph = adjacency_list<listS, vecS, directedS, 
-    no_property, property<edge_weight_t, int> >;
+    no_property, property<edge_weight_t, int>>;
   using Vertex = graph_traits<Graph>::vertex_descriptor;
 
   using E = std::pair<int,int>;

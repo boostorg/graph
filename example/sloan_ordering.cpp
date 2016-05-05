@@ -85,7 +85,7 @@ int main(int , char* [])
     int,
     property<
     vertex_priority_t,
-    double > > > >;
+    double>>>>;
   
   using Vertex = graph_traits<Graph>::vertex_descriptor;
   using size_type = graph_traits<Graph>::vertices_size_type;

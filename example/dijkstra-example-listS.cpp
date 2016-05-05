@@ -20,12 +20,12 @@ main(int, char *[])
 {
   using vertex_descriptor = adjacency_list_traits<listS, listS, 
     directedS>::vertex_descriptor;
-  using graph_t = adjacency_list < listS, listS, directedS,
+  using graph_t = adjacency_list<listS, listS, directedS,
     property<vertex_index_t, int, 
     property<vertex_name_t, char,
     property<vertex_distance_t, int,
-    property<vertex_predecessor_t, vertex_descriptor> > > >, 
-    property<edge_weight_t, int> >;
+    property<vertex_predecessor_t, vertex_descriptor>>>>, 
+    property<edge_weight_t, int>>;
   using Edge = std::pair<int, int>;
 
   const int num_nodes = 5;
@@ -56,7 +56,7 @@ main(int, char *[])
   dijkstra_shortest_paths(g, s, predecessor_map(p).distance_map(d));
 
   std::cout << "distances and parents:" << std::endl;
-  graph_traits < graph_t >::vertex_iterator vi, vend;
+  graph_traits<graph_t>::vertex_iterator vi, vend;
   for (boost::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
     std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
     std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::
@@ -71,7 +71,7 @@ main(int, char *[])
     << "  ratio=\"fill\"\n"
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-  graph_traits < graph_t >::edge_iterator ei, ei_end;
+  graph_traits<graph_t>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     auto e = *ei;
     auto u = source(e, g), v = target(e, g);

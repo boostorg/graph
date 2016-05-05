@@ -23,8 +23,8 @@ main()
     adjacency_list<vecS, vecS, directedS,
                    property<vertex_name_t, std::string>, 
                    property<edge_color_t, std::string,
-                            property<edge_weight_t, int> >,
-                   property<graph_color_t, std::string> >;
+                            property<edge_weight_t, int>>,
+                   property<graph_color_t, std::string>>;
   g_dot_type g_dot;
 
   dynamic_properties dp(ignore_other_properties);
@@ -37,28 +37,28 @@ main()
     read_graphviz(infile, g_dot, dp);
   }
 
-  using Graph = adjacency_list < vecS, vecS, directedS, no_property,
-    property < edge_weight_t, int > >;
-  using vertex_descriptor = graph_traits < Graph >::vertex_descriptor;
+  using Graph = adjacency_list<vecS, vecS, directedS, no_property,
+    property<edge_weight_t, int>>;
+  using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   Graph g(num_vertices(g_dot));
-  graph_traits < g_dot_type >::edge_iterator ei, ei_end;
+  graph_traits<g_dot_type>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
     auto weight = get(edge_weight, g_dot, *ei);
-    property < edge_weight_t, int >edge_property(weight);
+    property<edge_weight_t, int> edge_property(weight);
     add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
   }
 
   vertex_descriptor router_six;
-  graph_traits < g_dot_type >::vertex_iterator vi, vi_end;
+  graph_traits<g_dot_type>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
     if ("RT6" == get(vertex_name, g_dot, *vi)) {
       router_six = *vi;
       break;
     }
 
-  std::vector < vertex_descriptor > parent(num_vertices(g));
+  std::vector<vertex_descriptor> parent(num_vertices(g));
   // All vertices start out as there own parent
-  using size_type = graph_traits < Graph >::vertices_size_type;
+  using size_type = graph_traits<Graph>::vertices_size_type;
   for (size_type p = 0; p < num_vertices(g); ++p)
     parent[p] = p;
 
@@ -74,7 +74,7 @@ main()
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
 #endif
 
-  graph_traits < g_dot_type >::edge_descriptor e;
+  graph_traits<g_dot_type>::edge_descriptor e;
   for (size_type i = 0; i < num_vertices(g); ++i)
     if (parent[i] != i) {
       e = edge(parent[i], i, g_dot).first;
@@ -94,7 +94,7 @@ main()
       rtable << get(vertex_name, g_dot, *vi) << "    ";
       vertex_descriptor v = *vi, child;
       int path_cost = 0;
-      property_map < Graph, edge_weight_t >::type
+      property_map<Graph, edge_weight_t>::type
         weight_map = get(edge_weight, g);
       do {
         path_cost += get(weight_map, edge(parent[v], v, g).first);

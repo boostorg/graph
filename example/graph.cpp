@@ -21,7 +21,7 @@ using VertexProperty = property<vertex_color_t, default_color_type,
     property<vertex_distance_t,int,
       property<vertex_degree_t,int,
         property<vertex_in_degree_t, int,
-          property<vertex_out_degree_t,int> > > > >;
+          property<vertex_out_degree_t,int>>>>>;
 using EdgeProperty = property<edge_weight_t,int>;
 using Graph = adjacency_list<vecS, vecS, bidirectionalS, 
                        VertexProperty, EdgeProperty>;

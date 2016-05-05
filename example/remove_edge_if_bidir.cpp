@@ -41,7 +41,7 @@
 using namespace boost;
 
 using Graph = adjacency_list<vecS, vecS, bidirectionalS, 
-  no_property, property<edge_weight_t, int> >;
+  no_property, property<edge_weight_t, int>>;
 
 struct has_weight_greater_than {
   has_weight_greater_than(int w_, Graph& g_) : w(w_), g(g_) { }

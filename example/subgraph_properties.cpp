@@ -39,11 +39,11 @@ int main(int,char*[])
 {
   using namespace boost;
   //using Traits = adjacency_list_traits<vecS, vecS, directedS>;// Does nothing?
-  using VertexProperty = property<   vertex_color_t, int,
-    property< vertex_name_t, std::string > >;
+  using VertexProperty = property<vertex_color_t, int,
+    property<vertex_name_t, std::string>>;
   
-  using Graph = subgraph< adjacency_list<  vecS, vecS, directedS,
-    VertexProperty, property<edge_index_t, int> > >;
+  using Graph = subgraph<adjacency_list<vecS, vecS, directedS,
+    VertexProperty, property<edge_index_t, int>>>;
   
   const int N = 6;
   Graph G0(N);

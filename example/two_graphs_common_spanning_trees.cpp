@@ -45,7 +45,7 @@ boost::graph_traits<Graph>::edge_iterator;
 int main(int argc, char **argv)
 {
   Graph iG, vG;
-  vector< edge_descriptor > iG_o = {
+  vector<edge_descriptor> iG_o = {
     boost::add_edge(0, 1, iG).first,
     boost::add_edge(0, 2, iG).first,
     boost::add_edge(0, 3, iG).first,
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     boost::add_edge(1, 2, iG).first,
     boost::add_edge(3, 4, iG).first};
 
-  vector< edge_descriptor > vG_o= {
+  vector<edge_descriptor> vG_o= {
     boost::add_edge(1, 2, vG).first,
     boost::add_edge(2, 0, vG).first,
     boost::add_edge(2, 3, vG).first,
@@ -63,9 +63,9 @@ int main(int argc, char **argv)
 
   vector<bool> inL(iG_o.size(), false);
 
-  std::vector< std::vector<bool> > coll;
+  std::vector<std::vector<bool>> coll;
   boost::tree_collector<
-      std::vector< std::vector<bool> >,
+      std::vector<std::vector<bool>>,
       std::vector<bool>
     > tree_collector(coll);
   boost::two_graphs_common_spanning_trees

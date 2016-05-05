@@ -23,7 +23,7 @@ using namespace boost;
 template <typename Graph,
           typename DistanceType,
           typename ResultType,
-          typename Divides = divides<ResultType> >
+          typename Divides = divides<ResultType>>
 struct inclusive_average
 {
     using distance_type = DistanceType;
