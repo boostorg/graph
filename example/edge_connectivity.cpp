@@ -41,7 +41,6 @@ main()
   add_edge(6, 7, g);
 
   using edge_descriptor = graph_traits<UndirectedGraph>::edge_descriptor;
-  using degree_size_type = graph_traits<UndirectedGraph>::degree_size_type;
   std::vector<edge_descriptor> disconnecting_set;
 
   auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
