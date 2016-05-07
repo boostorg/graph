@@ -48,7 +48,6 @@
  */
 
 using namespace boost;
-using namespace std;
 
 
 template <class VisitorList>
@@ -59,26 +58,26 @@ struct edge_categorizer : public dfs_visitor<VisitorList> {
 
   template <class Edge, class Graph>
   void tree_edge(Edge e, Graph& G) {
-    cout << "Tree edge: " << source(e, G) <<
-      " --> " <<  target(e, G) << endl;
+    std::cout << "Tree edge: " << source(e, G) <<
+      " --> " <<  target(e, G) << std::endl;
     Base::tree_edge(e, G);
   }
   template <class Edge, class Graph>
   void back_edge(Edge e, Graph& G) {
-    cout << "Back edge: " << source(e, G)
-         << " --> " <<  target(e, G) << endl;
+    std::cout << "Back edge: " << source(e, G)
+         << " --> " <<  target(e, G) << std::endl;
     Base::back_edge(e, G);
   }
   template <class Edge, class Graph>
   void forward_or_cross_edge(Edge e, Graph& G) {
-    cout << "Forward or cross edge: " << source(e, G)
-         << " --> " <<  target(e, G) << endl;
+    std::cout << "Forward or cross edge: " << source(e, G)
+         << " --> " <<  target(e, G) << std::endl;
     Base::forward_or_cross_edge(e, G);
   }
   template <class Edge, class Graph> 
   void finish_edge(Edge e, Graph& G) { 
-    cout << "Finish edge: " << source(e, G) << 
-      " --> " <<  target(e, G) << endl; 
+    std::cout << "Finish edge: " << source(e, G) << 
+      " --> " <<  target(e, G) << std::endl;
     Base::finish_edge(e, G); 
   } 
 };
@@ -113,12 +112,12 @@ main(int , char* [])
   std::vector<size_type> f(num_vertices(G));
   int t = 0;
   depth_first_search(G, visitor(categorize_edges(
-                     make_pair(stamp_times(&d[0], t, on_discover_vertex()),
+                     std::make_pair(stamp_times(&d[0], t, on_discover_vertex()),
                                stamp_times(&f[0], t, on_finish_vertex())))));
 
   std::vector<size_type>::iterator i, j;
   for (i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)
-    cout << *i << " " << *j << endl;
+    std::cout << *i << " " << *j << std::endl;
 
   return 0;
 }

@@ -34,8 +34,6 @@
 
  */
 
-using namespace std;
-
 int main(int , char* []) 
 {
   using namespace boost;
@@ -52,10 +50,10 @@ int main(int , char* [])
     auto num = connected_components(G, &component[0]);
     
     std::vector<int>::size_type i;
-    cout << "Total number of components: " << num << endl;
+    std::cout << "Total number of components: " << num << std::endl;
     for (i = 0; i != component.size(); ++i)
-      cout << "Vertex " << i <<" is in component " << component[i] << endl;
-    cout << endl;
+      std::cout << "Vertex " << i <<" is in component " << component[i] << std::endl;
+    std::cout << std::endl;
   }
   return 0;
 }

@@ -12,7 +12,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The clique_printer is a visitor that will print the vertices that comprise
@@ -32,7 +31,7 @@ struct clique_printer
         for(i = c.begin(); i != end; ++i) {
             os << g[*i].name << " ";
         }
-        os << endl;
+        os << std::endl;
     }
     OutputStream& os;
 };
@@ -40,7 +39,7 @@ struct clique_printer
 // The Actor type stores the name of each vertex in the graph.
 struct Actor
 {
-    string name;
+    std::string name;
 };
 
 // Declare the graph type and its vertex and edge types.
@@ -50,7 +49,7 @@ using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-using NameMap = property_map<Graph, string Actor::*>::type;
+using NameMap = property_map<Graph, std::string Actor::*>::type;
 
 int
 main(int argc, char *argv[])
@@ -60,10 +59,10 @@ main(int argc, char *argv[])
     NameMap nm(get(&Actor::name, g));
 
     // Read the graph from standard input.
-    read_graph(g, nm, cin);
+    read_graph(g, nm, std::cin);
 
     // Instantiate the visitor for printing cliques
-    clique_printer<ostream> vis(cout);
+    clique_printer<std::ostream> vis(std::cout);
 
     // Use the Bron-Kerbosch algorithm to find all cliques, printing them
     // as they are found.

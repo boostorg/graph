@@ -45,7 +45,6 @@
 #include <boost/graph/depth_first_search.hpp>
 
 using namespace boost;
-using namespace std;
 
 template <class Tag>
 struct edge_printer : public base_visitor<edge_printer<Tag>> {
@@ -83,14 +82,14 @@ main(int, char*[])
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
 
-  cout << "DFS categorized directed graph" << endl;
+  std::cout << "DFS categorized directed graph" << std::endl;
   depth_first_search(G, visitor(make_dfs_visitor(
       make_list(print_edge("tree", on_tree_edge()),
                 print_edge("back", on_back_edge()),
                 print_edge("forward or cross", on_forward_or_cross_edge())
                 ))));
 
-  cout << endl << "BFS categorized directed graph" << endl;
+  std::cout << std::endl << "BFS categorized directed graph" << std::endl;
   boost::breadth_first_search
     (G, vertex(0, G), visitor(make_bfs_visitor(
      std::make_pair(print_edge("tree", on_tree_edge()),

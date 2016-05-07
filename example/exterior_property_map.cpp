@@ -14,7 +14,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
 
-using namespace std;
 using namespace boost;
 
 /*
@@ -59,8 +58,8 @@ void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G,
 {
   while (first != last) {
 
-    cout << name[source(*first,G)] << " owes " 
-         << name[target(*first,G)] << " some money" << endl;
+    std::cout << name[source(*first,G)] << " owes " 
+         << name[target(*first,G)] << " some money" << std::endl;
     ++first;
   }
 }
@@ -70,7 +69,7 @@ main(int, char*[])
 {
   /* The property will be "names" attached to the vertices */ 
 
-  string* names = new string[5];
+  std::string* names = new std::string[5];
   names[0] = "Jeremy";
   names[1] = "Rich";
   names[2] = "Andrew";
@@ -79,7 +78,7 @@ main(int, char*[])
   
   using MyGraphType = adjacency_list<>;
 
-  using Pair = pair<int,int>;
+  using Pair = std::pair<int,int>;
   Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                           Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                           Pair(3,4), Pair(4,0), Pair(4,1) };

@@ -57,7 +57,6 @@
 
 
 using namespace boost;
-using namespace std;
 
 
 enum edge_myflow_t { edge_myflow };
@@ -84,21 +83,20 @@ void print_network(const Graph& G)
 
   for (; ui != uiend; ++ui) {
     OutEdgeIter out, out_end;
-    cout << *ui << "\t";
+    std::cout << *ui << "\t";
 
     boost::tie(out, out_end) = out_edges(*ui, G);
     for(; out != out_end; ++out)
-      cout << "--(" << capacity[*out] << ", " << flow[*out] << ")--> "
+      std::cout << "--(" << capacity[*out] << ", " << flow[*out] << ")--> "
            << target(*out,G) << "\t";
 
     InEdgeIter in, in_end;
-    cout << endl << "\t";
     boost::tie(in, in_end) = in_edges(*ui, G);
     for(; in != in_end; ++in)
-      cout << "<--(" << capacity[*in] << "," << flow[*in] << ")-- "
+      std::cout << "<--(" << capacity[*in] << "," << flow[*in] << ")-- "
            << source(*in,G) << "\t";
 
-    cout << endl;
+    std::cout << std::endl;
   }
 }
 
@@ -150,7 +148,7 @@ int main(int , char* [])
   for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v)
     for (boost::tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
       flow[*e] = ++f;
-  cout << endl << endl;
+  std::cout << std::endl << std::endl;
 
   remove_edge(6, 8, G);
 

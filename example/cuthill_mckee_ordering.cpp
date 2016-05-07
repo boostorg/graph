@@ -32,7 +32,6 @@
 int main(int , char* [])
 {
   using namespace boost;
-  using namespace std;
   using Graph = adjacency_list<vecS, vecS, undirectedS, 
      property<vertex_color_t, default_color_type,
        property<vertex_degree_t,int>>>;
@@ -76,11 +75,11 @@ int main(int , char* [])
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";    
+    std::cout << "Reverse Cuthill-McKee ordering starting at: " << s << std::endl;
+    std::cout << "  ";    
     for (const auto& vertex : inv_perm)
-      cout << index_map[vertex] << " ";
-    cout << endl;
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
@@ -93,11 +92,11 @@ int main(int , char* [])
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";
+    std::cout << "Reverse Cuthill-McKee ordering starting at: " << s << std::endl;
+    std::cout << "  ";
     for (const auto& vertex : inv_perm)
-      cout << index_map[vertex] << " ";
-    cout << endl;
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
@@ -111,11 +110,11 @@ int main(int , char* [])
     cuthill_mckee_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
                            make_degree_map(G));
     
-    cout << "Reverse Cuthill-McKee ordering:" << endl;
-    cout << "  ";
+    std::cout << "Reverse Cuthill-McKee ordering:" << std::endl;
+    std::cout << "  ";
     for (const auto& vertex : inv_perm)
-      cout << index_map[vertex] << " ";
-    cout << endl;
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;

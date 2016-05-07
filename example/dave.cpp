@@ -21,7 +21,6 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_utility.hpp>
 
-using namespace std;
 using namespace boost;
 /*
   This example does a best-first-search (using dijkstra's) and
@@ -144,13 +143,11 @@ void print(Graph& G, Name name)
 {
   typename boost::graph_traits<Graph>::vertex_iterator ui, uiend;
   for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
-    cout << name[*ui] << " --> ";
+    std::cout << name[*ui] << " --> ";
     typename boost::graph_traits<Graph>::adjacency_iterator vi, viend;
     for(boost::tie(vi, viend) = adjacent_vertices(*ui, G); vi != viend; ++vi)
-      cout << name[*vi] << " ";
-    cout << endl;
+      std::cout << name[*vi] << " ";
   }
-    
 }
 
 
@@ -164,7 +161,7 @@ main(int , char* [])
   Graph G(N);
   auto vertex_id = get(vertex_index, G);
 
-  std::vector<weight_t> distance(N, (numeric_limits<weight_t>::max)());
+  std::vector<weight_t> distance(N, (std::numeric_limits<weight_t>::max)());
   using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
   std::vector<Vertex> parent(N);
 
@@ -192,7 +189,7 @@ main(int , char* [])
   adjacency_list<listS, vecS, directedS, 
     property<vertex_color_t, default_color_type>> G_copy(N);
 
-  cout << "Starting graph:" << endl;
+  std::cout << "Starting graph:" << std::endl;
 
   std::ostream_iterator<int> cout_int(std::cout, " ");
   std::ostream_iterator<char> cout_char(std::cout, " ");
@@ -226,8 +223,8 @@ main(int , char* [])
                                                 parent[0])).
      visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
 
-  cout << endl;
-  cout << "Result:" << endl;
+  std::cout << std::endl;
+  std::cout << "Result:" << std::endl;
   boost::breadth_first_search
     (G, vertex(a, G), 
      visitor(make_bfs_visitor(

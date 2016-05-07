@@ -14,13 +14,12 @@
 #include <boost/graph/clustering_coefficient.hpp>
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The Actor type stores the name of each vertex in the graph.
 struct Actor
 {
-    string name;
+    std::string name;
 };
 
 // Declare the graph type and its vertex and edge types.
@@ -30,7 +29,7 @@ using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-using NameMap = property_map<Graph, string Actor::*>::type;
+using NameMap = property_map<Graph, std::string Actor::*>::type;
 
 // The clustering property, container, and map define the containment
 // and abstract accessor for the clustering coefficients of vertices.
@@ -47,7 +46,7 @@ main(int argc, char *argv[])
     NameMap nm(get(&Actor::name, g));
 
     // Read the graph from standard input.
-    read_graph(g, nm, cin);
+    read_graph(g, nm, std::cin);
 
     // Compute the clustering coefficients of each vertex in the graph
     // and the mean clustering coefficient which is returned from the
@@ -59,10 +58,10 @@ main(int argc, char *argv[])
     // Print the clustering coefficient of each vertex.
     graph_traits<Graph>::vertex_iterator i, end;
     for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        cout << setw(12) << setiosflags(ios::left)
-                << g[*i].name << get(cm, *i) << endl;
+        std::cout << std::setw(12) << std::setiosflags(std::ios::left)
+                << g[*i].name << get(cm, *i) << std::endl;
     }
-    cout << "mean clustering coefficient: " << cc << endl;
+    std::cout << "mean clustering coefficient: " << cc << std::endl;
 
     return 0;
 }

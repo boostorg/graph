@@ -19,7 +19,6 @@
 #include <cstdlib>
 
 using namespace boost;
-using namespace std;
 
 
 //
@@ -31,14 +30,14 @@ struct vertex_label_t { using kind = vertex_property_tag; };
 int main() {
 
   // Vertex properties
-  using vertex_p = property<vertex_name_t, string,
-    property< vertex_label_t, string,
+  using vertex_p = property<vertex_name_t, std::string,
+    property< vertex_label_t, std::string,
     property<vertex_root_t, int>>>;  
   // Edge properties
-  using edge_p = property<edge_name_t, string>;
+  using edge_p = property<edge_name_t, std::string>;
   // Graph properties
-  using graph_p = property<graph_name_t, string,
-    property<graph_identifier_t, string>>;
+  using graph_p = property<graph_name_t, std::string,
+    property<graph_identifier_t, std::string>>;
   // adjacency_list-based type
   using graph_t = adjacency_list<vecS, vecS, directedS,
     vertex_p, edge_p, graph_p>;
@@ -60,12 +59,12 @@ int main() {
   dp.property("label",elabel);
 
   // Use ref_property_map to turn a graph property into a property map
-  ref_property_map<graph_t*,string> 
+  ref_property_map<graph_t*, std::string> 
     gname(get_property(graph,graph_name));
   dp.property("name",gname);
 
   // Use ref_property_map to turn a graph property into a property map
-  ref_property_map<graph_t*,string> 
+  ref_property_map<graph_t*, std::string> 
     gid(get_property(graph,graph_identifier_t()));
   dp.property("identifier",gid);
   // Sample graph as an istream;
@@ -83,19 +82,19 @@ const char* dot =
 }";
 
 
-  istringstream gvgraph(dot);
+  std::istringstream gvgraph(dot);
 
   bool status = read_graphviz(gvgraph,graph,dp,"node_id");
   if (!status) {
-    cerr << "read_graphviz() failed." << endl;
+    std::cerr << "read_graphviz() failed." << std::endl;
     return -1;
   }
 
-  cout << "graph " << get("name",dp,&graph) <<
+  std::cout << "graph " << get("name",dp,&graph) <<
       " (" << get("identifier",dp,&graph) << ")\n\n";
 
   BOOST_FOREACH( graph_t::vertex_descriptor v, vertices(graph) ) {
-    cout << "vertex " << get("node_id",dp,v) <<
+    std::cout << "vertex " << get("node_id",dp,v) <<
       " (" << get("label",dp,v) << ")\n";
   }
 

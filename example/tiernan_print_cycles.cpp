@@ -12,7 +12,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The cycle_printer is a visitor that will print the path that comprises
@@ -38,7 +37,7 @@ struct cycle_printer
         for(i = p.begin(); i != end; ++i) {
             os << get(indices, *i) << " ";
         }
-        os << endl;
+        os << std::endl;
     }
     OutputStream& os;
 };
@@ -53,10 +52,10 @@ main(int argc, char *argv[])
 {
     // Create the graph and read it from standard input.
     Graph g;
-    read_graph(g, cin);
+    read_graph(g, std::cin);
 
     // Instantiate the visitor for printing cycles
-    cycle_printer<ostream> vis(cout);
+    cycle_printer<std::ostream> vis(std::cout);
 
     // Use the Tiernan algorithm to visit all cycles, printing them
     // as they are found.

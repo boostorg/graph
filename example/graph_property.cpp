@@ -13,11 +13,10 @@ int
 main()
 {
   using namespace boost;
-  using std::string;
 
   using graph_t = adjacency_list<vecS, vecS, directedS,no_property, 
     property<edge_index_t, int>,
-    property<graph_name_t, string>>;
+    property<graph_name_t, std::string>>;
 
   graph_t g;
   get_property(g, graph_name) = "graph";

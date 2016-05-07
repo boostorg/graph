@@ -24,7 +24,6 @@
 #include <math.h>    // for sqrt
 
 using namespace boost;
-using namespace std;
 
 
 // auxiliary types
@@ -43,7 +42,7 @@ public:
     : name(n), loc(l), minx(_minx), maxx(_maxx), miny(_miny),
       maxy(_maxy), ptx(_ptx), pty(_pty) {}
   template <class Vertex>
-  void operator()(ostream& out, const Vertex& v) const {
+  void operator()(std::ostream& out, const Vertex& v) const {
     float px = 1 - (loc[v].x - minx) / (maxx - minx);
     float py = (loc[v].y - miny) / (maxy - miny);
     out << "[label=\"" << name[v] << "\", pos=\""
@@ -62,8 +61,8 @@ template <class WeightMap>
 class time_writer {
 public:
   time_writer(WeightMap w) : wm(w) {}
-  template <class Edge>
-  void operator()(ostream &out, const Edge& e) const {
+  template <class Edge>	
+  void operator()(std::ostream &out, const Edge& e) const {
     out << "[label=\"" << wm[e] << "\", fontsize=\"11\"]";
   }
 private:
@@ -175,10 +174,10 @@ int main(int argc, char **argv)
   auto goal = random_vertex(g, gen);
   
   
-  cout << "Start vertex: " << name[start] << endl;
-  cout << "Goal vertex: " << name[goal] << endl;
+  std::cout << "Start vertex: " << name[start] << std::endl;
+  std::cout << "Goal vertex: " << name[goal] << std::endl;
   
-  ofstream dotfile;
+  std::ofstream dotfile;
   dotfile.open("test-astar-cities.dot");
   write_graphviz(dotfile, g,
                  city_writer<const char **, location*>
@@ -187,8 +186,8 @@ int main(int argc, char **argv)
                  time_writer<WeightMap>(weightmap));
   
   
-  vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-  vector<cost> d(num_vertices(g));
+  std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
+  std::vector<cost> d(num_vertices(g));
   try {
     // call astar named parameter interface
     astar_search_tree
@@ -201,24 +200,24 @@ int main(int argc, char **argv)
   
   
   } catch(found_goal fg) { // found a path to the goal
-    list<vertex> shortest_path;
+    std::list<vertex> shortest_path;
     for(auto v = goal;; v = p[v]) {
       shortest_path.emplace_front(v);
       if(p[v] == v)
         break;
     }
-    cout << "Shortest path from " << name[start] << " to "
+    std::cout << "Shortest path from " << name[start] << " to "
          << name[goal] << ": ";
     auto spi = shortest_path.begin();
-    cout << name[start];
+    std::cout << name[start];
     for(++spi; spi != shortest_path.end(); ++spi)
-      cout << " -> " << name[*spi];
-    cout << endl << "Total travel time: " << d[goal] << endl;
+      std::cout << " -> " << name[*spi];
+    std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
     return 0;
   }
   
-  cout << "Didn't find a path from " << name[start] << "to"
-       << name[goal] << "!" << endl;
+  std::cout << "Didn't find a path from " << name[start] << "to"
+       << name[goal] << "!" << std::endl;
   return 0;
   
 }

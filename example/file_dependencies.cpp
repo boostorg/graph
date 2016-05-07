@@ -41,7 +41,6 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/visitors.hpp>
 
-using namespace std;
 using namespace boost;
 
 enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp, 
@@ -57,7 +56,7 @@ const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
 struct print_visitor : public bfs_visitor<> {
   template <class Vertex, class Graph>
   void discover_vertex(Vertex v, Graph&) {
-    cout << name[v] << " ";
+    std::cout << name[v] << " ";
   }
 };
 
@@ -79,7 +78,7 @@ protected:
 int main(int,char*[])
 {
 
-  using Edge = pair<int,int>;
+  using Edge = std::pair<int,int>;
   Edge used_by[] = {
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
@@ -114,17 +113,17 @@ int main(int,char*[])
   // Determine ordering for a full recompilation
   // and the order with files that can be compiled in parallel
   {
-    using MakeOrder = list<Vertex>;
+    using MakeOrder = std::list<Vertex>;
     MakeOrder::iterator i;
     MakeOrder make_order;
 
     topological_sort(g, std::front_inserter(make_order));
-    cout << "make ordering: ";
+    std::cout << "make ordering: ";
     for (i = make_order.begin();
          i != make_order.end(); ++i) 
-      cout << name[*i] << " ";
+      std::cout << name[*i] << " ";
   
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
 
     // Parallel compilation ordering
     std::vector<int> time(N, 0);
@@ -141,48 +140,48 @@ int main(int,char*[])
       }
     }
 
-    cout << "parallel make ordering, " << endl
-         << "vertices with same group number can be made in parallel" << endl;
+    std::cout << "parallel make ordering, " << std::endl
+         << "vertices with same group number can be made in parallel" << std::endl;
     {
       graph_traits<Graph>::vertex_iterator i, iend;
       for (boost::tie(i,iend) = vertices(g); i != iend; ++i)
-        cout << "time_slot[" << name[*i] << "] = " << time[*i] << endl;
+        std::cout << "time_slot[" << name[*i] << "] = " << time[*i] << std::endl;
     }
 
   }
-  cout << endl;
+  std::cout << std::endl;
 
   // if I change yow.h what files need to be re-made?
   {
-    cout << "A change to yow.h will cause what to be re-made?" << endl;
+    std::cout << "A change to yow.h will cause what to be re-made?" << std::endl;
     print_visitor vis;
     breadth_first_search(g, vertex(yow_h, g), visitor(vis));
-    cout << endl;
+    std::cout << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
 
   // are there any cycles in the graph?
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
     depth_first_search(g, visitor(vis));
-    cout << "The graph has a cycle? " << has_cycle << endl;
+    std::cout << "The graph has a cycle? " << has_cycle << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
 
   // add a dependency going from bar.cpp to dax.h
   {
-    cout << "adding edge bar_cpp -> dax_h" << endl;
+    std::cout << "adding edge bar_cpp -> dax_h" << std::endl;
     add_edge(bar_cpp, dax_h, g);
   }
-  cout << endl;
+  std::cout << std::endl;
 
   // are there any cycles in the graph?
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
     depth_first_search(g, visitor(vis));
-    cout << "The graph has a cycle now? " << has_cycle << endl;
+    std::cout << "The graph has a cycle now? " << has_cycle << std::endl;
   }
 
   return 0;

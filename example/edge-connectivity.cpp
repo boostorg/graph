@@ -160,8 +160,7 @@ main()
 
   std::cout << "The disconnecting set is {";
   for (const auto& edge : disconnecting_set)
-    std::
-      cout << "(" << attr_map[source(edge, g)]["label"] << "," <<
+    std::cout << "(" << attr_map[source(edge, g)]["label"] << "," <<
       attr_map[target(edge, g)]["label"] << ") ";
   std::cout << "}." << std::endl;
   return EXIT_SUCCESS;

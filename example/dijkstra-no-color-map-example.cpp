@@ -50,8 +50,7 @@ main(int, char *[])
   graph_traits<graph_t>::vertex_iterator vi, vend;
   for (boost::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
     std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
-    std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::
-      endl;
+    std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::endl;
   }
   std::cout << std::endl;
 

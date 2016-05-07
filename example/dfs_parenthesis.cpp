@@ -25,7 +25,6 @@
 #include "boost/graph/depth_first_search.hpp"
 
 using namespace boost;
-using namespace std;
 
 struct open_paren : public base_visitor<open_paren> {
   using event_filter = on_discover_vertex;

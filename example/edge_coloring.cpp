@@ -35,7 +35,6 @@
 int main(int, char *[])
 {
   using namespace boost;
-  using namespace std;
   using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, size_t, no_property>;
 
   using Pair = std::pair<std::size_t, std::size_t>;
@@ -61,9 +60,9 @@ int main(int, char *[])
 
   size_t colors = edge_coloring(G, get(edge_bundle, G));
 
-  cout << "Colored using " << colors << " colors" << endl;
+  std::cout << "Colored using " << colors << " colors" << std::endl;
   for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++) {
-    cout << "  " << (char)('a' + edges[i].first) << "-" << (char)('a' + edges[i].second) << ": " << G[edge(edges[i].first, edges[i].second, G).first] << endl;
+    std::cout << "  " << (char)('a' + edges[i].first) << "-" << (char)('a' + edges[i].second) << ": " << G[edge(edges[i].first, edges[i].second, G).first] << std::endl;
   }
 
   return 0;

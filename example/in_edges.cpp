@@ -27,8 +27,6 @@
 int main(int , char* [])
 {
   using namespace boost;
-  using namespace std;
-  using namespace boost;
 
   using Graph = adjacency_list<listS,vecS,bidirectionalS>;
   const int num_vertices = 5;
@@ -44,10 +42,9 @@ int main(int , char* [])
   boost::graph_traits<Graph>::in_edge_iterator ei, edge_end;
 
   for(boost::tie(i,end) = vertices(g); i != end; ++i) {
-    cout << *i << " <-- ";
+    std::cout << *i << " <-- ";
     for (boost::tie(ei,edge_end) = in_edges(*i, g); ei != edge_end; ++ei)
-      cout << source(*ei, g) << "  ";
-    cout << endl;
+      std::cout << source(*ei, g) << "  ";
   }
   return 0;
 }

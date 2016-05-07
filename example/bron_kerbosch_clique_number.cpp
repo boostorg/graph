@@ -12,7 +12,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // Declare the graph type and its vertex and edge types.
@@ -25,11 +24,11 @@ main(int argc, char *argv[])
 {
     // Create the graph and read it from standard input.
     Graph g;
-    read_graph(g, cin);
+    read_graph(g, std::cin);
 
     // Use the Bron-Kerbosch algorithm to find all cliques, and
     auto c = bron_kerbosch_clique_number(g);
-    cout << "clique number: " << c << endl;
+    std::cout << "clique number: " << c << std::endl;
 
     return 0;
 }

@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
 
-using namespace std;
 using namespace boost;
 
 
@@ -56,7 +55,7 @@ struct exercise_edge {
     auto targ = target(e, G);
 
     // print out the vertex id's just because 
-    cout << "(" << src << "," << targ << ") ";
+    std::cout << "(" << src << "," << targ << ") ";
     //end
   }
 
@@ -69,7 +68,7 @@ main()
 {
   using MyGraph = adjacency_list<>;
 
-  using Pair = pair<int,int>;
+  using Pair = std::pair<int,int>;
   Pair edge_array[8] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
 
@@ -82,7 +81,7 @@ main()
 
   // Use the STL for_each algorithm to "exercise" all of the edges in
   // the graph
-  for_each(edges(G).first, edges(G).second, exercise_edge<MyGraph>(G));
-  cout << endl;
+  std::for_each(edges(G).first, edges(G).second, exercise_edge<MyGraph>(G));
+  std::cout << std::endl;
   return 0;
 }

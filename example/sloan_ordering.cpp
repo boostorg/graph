@@ -20,10 +20,6 @@
 #include <boost/graph/profile.hpp>
 #include <boost/graph/wavefront.hpp>
 
-
-using std::cout;
-using std::endl;
-
 /*
   Sample Output
   #####################################
@@ -63,13 +59,12 @@ using std::endl;
 
 int main(int , char* [])
 {
-  cout << endl;  
-  cout << "#####################################" << endl; 
-  cout << "### First light of sloan-ordering ###" << endl;
-  cout << "#####################################" << endl << endl;
+  std::cout << std::endl;  
+  std::cout << "#####################################" << std::endl; 
+  std::cout << "### First light of sloan-ordering ###" << std::endl;
+  std::cout << "#####################################" << std::endl << std::endl;
 
   using namespace boost;
-  using namespace std;
  
 
   //Defining the graph type 
@@ -145,10 +140,10 @@ int main(int , char* [])
     //Calculating the pseudoeperipheral node and radius
     Vertex e = pseudo_peripheral_pair(G, s, ecc, get(vertex_color, G), get(vertex_degree, G) );
 
-    cout << endl;
-    cout << "Starting vertex: " << s << endl;
-    cout << "Pseudoperipheral vertex: " << e << endl;
-    cout << "Pseudoperipheral radius: " << ecc << endl << endl;
+    std::cout << std::endl;
+    std::cout << "Starting vertex: " << s << std::endl;
+    std::cout << "Pseudoperipheral vertex: " << e << std::endl;
+    std::cout << "Pseudoperipheral radius: " << ecc << std::endl << std::endl;
 
 
 
@@ -156,13 +151,13 @@ int main(int , char* [])
     sloan_ordering(G, s, e, sloan_order.begin(), get(vertex_color, G), 
                            get(vertex_degree, G), get(vertex_priority, G));
     
-    cout << "Sloan ordering starting at: " << s << endl;
-    cout << "  ";    
+    std::cout << "Sloan ordering starting at: " << s << std::endl;
+    std::cout << "  ";    
     
     for (auto i = sloan_order.begin();
          i != sloan_order.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+      std::cout << index_map[*i] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != sloan_order.size(); ++c)
       perm[index_map[sloan_order[c]]] = c;
@@ -197,12 +192,12 @@ int main(int , char* [])
                         make_degree_map(G), 
                         get(vertex_priority, G) );
       
-      cout << endl << "Sloan ordering without a start-vertex:" << endl;
-      cout << "  ";
+      std::cout << std::endl << "Sloan ordering without a start-vertex:" << std::endl;
+      std::cout << "  ";
       for (auto i=sloan_order.begin();
            i != sloan_order.end(); ++i)
-        cout << index_map[*i] << " ";
-      cout << endl;
+        std::cout << index_map[*i] << " ";
+      std::cout << std::endl;
       
       for (size_type c = 0; c != sloan_order.size(); ++c)
         perm[index_map[sloan_order[c]]] = c;
@@ -225,10 +220,10 @@ int main(int , char* [])
   
 
   
-  cout << endl;
-  cout << "###############################" << endl;
-  cout << "### sloan-ordering finished ###" << endl;
-  cout << "###############################" << endl << endl;
+  std::cout << std::endl;
+  std::cout << "###############################" << std::endl;
+  std::cout << "### sloan-ordering finished ###" << std::endl;
+  std::cout << "###############################" << std::endl << std::endl;
   return 0;
 
 }

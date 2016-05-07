@@ -14,9 +14,6 @@
 #include <exception>
 #include <vector>
 
-
-using namespace std;
-
 using Graph =
 boost::adjacency_list
   <
@@ -45,7 +42,7 @@ boost::graph_traits<Graph>::edge_iterator;
 int main(int argc, char **argv)
 {
   Graph iG, vG;
-  vector<edge_descriptor> iG_o = {
+  std::vector<edge_descriptor> iG_o = {
     boost::add_edge(0, 1, iG).first,
     boost::add_edge(0, 2, iG).first,
     boost::add_edge(0, 3, iG).first,
@@ -53,7 +50,7 @@ int main(int argc, char **argv)
     boost::add_edge(1, 2, iG).first,
     boost::add_edge(3, 4, iG).first};
 
-  vector<edge_descriptor> vG_o= {
+  std::vector<edge_descriptor> vG_o= {
     boost::add_edge(1, 2, vG).first,
     boost::add_edge(2, 0, vG).first,
     boost::add_edge(2, 3, vG).first,
@@ -61,7 +58,7 @@ int main(int argc, char **argv)
     boost::add_edge(0, 3, vG).first,
     boost::add_edge(0, 4, vG).first};
 
-  vector<bool> inL(iG_o.size(), false);
+  std::vector<bool> inL(iG_o.size(), false);
 
   std::vector<std::vector<bool>> coll;
   boost::tree_collector<

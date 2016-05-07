@@ -43,8 +43,6 @@ void gen_rand_graph(TG &g, size_t nV, size_t nE)
 
 int main(int argc, char* argv[])
 {
-    using std::cout;
-    using std::endl;
     const double epsilon = 0.0000001;
     double min_cr, max_cr; ///Minimum and maximum cycle ratio
     using ccReal_t = std::vector<graph_traits<grap_real_t>::edge_descriptor>;
@@ -56,19 +54,19 @@ int main(int argc, char* argv[])
     auto ew2 = get(edge_weight2, tgr);
 
     gen_rand_graph(tgr, 1000, 30000);
-    cout << "Vertices number: " << num_vertices(tgr) << endl;
-    cout << "Edges number: " << num_edges(tgr) << endl;
+    std::cout << "Vertices number: " << num_vertices(tgr) << std::endl;
+    std::cout << "Edges number: " << num_edges(tgr) << std::endl;
     int i = 0;
     graph_traits<grap_real_t>::vertex_iterator vi, vi_end;
     for (boost::tie(vi, vi_end) = vertices(tgr); vi != vi_end; vi++) {
         vim[*vi] = i++; ///Initialize vertex index property
     }
     max_cr = maximum_cycle_ratio(tgr, vim, ew1, ew2);
-    cout << "Maximum cycle ratio is " << max_cr << endl;
+    std::cout << "Maximum cycle ratio is " << max_cr << std::endl;
     min_cr = minimum_cycle_ratio(tgr, vim, ew1, ew2, &cc);
-    cout << "Minimum cycle ratio is " << min_cr << endl;
+    std::cout << "Minimum cycle ratio is " << min_cr << std::endl;
     std::pair<double, double> cr(.0,.0);
-    cout << "Critical cycle:\n";
+    std::cout << "Critical cycle:\n";
     for (const auto& edge : cc)
     {
         cr.first += ew1[edge];
@@ -76,7 +74,7 @@ int main(int argc, char* argv[])
         std::cout << "(" << vim[source(edge, tgr)] << "," <<
             vim[target(edge, tgr)] << ") ";
     }
-    cout << endl;
+    std::cout << std::endl;
     assert(std::abs(cr.first / cr.second - min_cr) < epsilon);
     return EXIT_SUCCESS;
 }

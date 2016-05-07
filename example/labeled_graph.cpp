@@ -11,7 +11,6 @@
 #include <boost/graph/labeled_graph.hpp>
 
 using namespace boost;
-using namespace std;
 
 int main() {
 
@@ -29,14 +28,14 @@ int main() {
     }
 
     {
-        using Graph = labeled_graph<Digraph, string>;
+        using Graph = labeled_graph<Digraph, std::string>;
         Graph g;
         add_vertex("foo", g);
         add_vertex("bar", g);
     }
 
     {
-        using Graph = labeled_graph<Digraph, string, mapS>;
+        using Graph = labeled_graph<Digraph, std::string, mapS>;
         Graph g;
         add_vertex("foo", g);
         add_vertex("bar", g);

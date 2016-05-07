@@ -25,21 +25,20 @@ struct trivial_id {
 
 
 int main() {
-  using namespace std;
   using boost::bucket_sorter;
   
   const std::size_t N = 10;
 
-  vector<std::size_t> bucket(N);
+  std::vector<std::size_t> bucket(N);
   for (std::size_t i=0; i<N; i++) {
     bucket[i] = rand() % N;
-    cout.width(6);
-    cout << "Number " << i << " has its bucket "  << bucket[i] << endl;
+    std::cout.width(6);
+    std::cout << "Number " << i << " has its bucket "  << bucket[i] << std::endl;
   }
 
   using ID = trivial_id<int>;
   using BS = bucket_sorter<std::size_t, int, 
-    vector<std::size_t>::iterator, ID>;
+    std::vector<std::size_t>::iterator, ID>;
   BS my_bucket_sorter(N, N, bucket.begin());
 
   for (std::size_t ii=0; ii<N; ii++)
@@ -47,17 +46,17 @@ int main() {
     
   std::size_t j;
   for (j=0; j<N; j++) {
-    cout << "The bucket " << j;
+    std::cout << "The bucket " << j;
     if ( ! my_bucket_sorter[j].empty() ) {
-      cout << " has number ";
+      std::cout << " has number ";
       do {
         auto v = my_bucket_sorter[j].top();
         my_bucket_sorter[j].pop();
-        cout << v << " ";
+        std::cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
-      cout << endl;
+      std::cout << std::endl;
     } else {
-      cout << " has no number associated with." << endl;
+      std::cout << " has no number associated with." << std::endl;
     }
   }
 
@@ -67,20 +66,20 @@ int main() {
   my_bucket_sorter.remove(5);
   my_bucket_sorter.remove(7);
 
-  cout << "Afer remove number 5 and 7, check correctness again." << endl;
+  std::cout << "Afer remove number 5 and 7, check correctness again." << std::endl;
 
   for (j=0; j<N; j++) {
-    cout << "The bucket " << j;
+    std::cout << "The bucket " << j;
     if ( ! my_bucket_sorter[j].empty() ) {
-      cout << " has number ";
+      std::cout << " has number ";
       do {
         auto v = my_bucket_sorter[j].top();
         my_bucket_sorter[j].pop();
-        cout << v << " ";
+        std::cout << v << " ";
       } while ( ! my_bucket_sorter[j].empty() );
-      cout << endl;
+      std::cout << std::endl;
     } else {
-      cout << " has no number associated with." << endl;
+      std::cout << " has no number associated with." << std::endl;
     }
   }
 

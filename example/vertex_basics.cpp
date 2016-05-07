@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
 
-using namespace std;
 using namespace boost;
 
 
@@ -68,7 +67,7 @@ struct print_edge {
     auto src = source(e, G);
     auto targ = target(e, G);
 
-    cout << "(" << id[src] << "," << id[targ] << ") ";
+    std::cout << "(" << id[src] << "," << id[targ] << ") ";
   }
 
   Graph& G;
@@ -83,7 +82,7 @@ struct print_index {
   {
     typename boost::property_map<Graph,vertex_index_t>::type 
       id = get(vertex_index, G);
-    cout << id[c] << " ";
+    std::cout << id[c] << " ";
   }
 
   Graph& G;
@@ -101,24 +100,24 @@ struct exercise_vertex {
     typename boost::property_map<Graph, vertex_index_t>::type 
       id = get(vertex_index, g);
 
-    cout << "vertex id: " << id[v] << endl;
+    std::cout << "vertex id: " << id[v] << std::endl;
     
-    cout << "out-edges: ";
-    for_each(out_edges(v, g).first, out_edges(v,g).second, 
+    std::cout << "out-edges: ";
+    std::for_each(out_edges(v, g).first, out_edges(v,g).second, 
              print_edge<Graph>(g));
 
-    cout << endl;
+    std::cout << std::endl;
 
-    cout << "in-edges: ";
-    for_each(in_edges(v, g).first, in_edges(v,g).second, 
+    std::cout << "in-edges: ";
+    std::for_each(in_edges(v, g).first, in_edges(v,g).second, 
              print_edge<Graph>(g));
 
-    cout << endl;
+    std::cout << std::endl;
     
-    cout << "adjacent vertices: ";
-    for_each(adjacent_vertices(v,g).first, 
+    std::cout << "adjacent vertices: ";
+    std::for_each(adjacent_vertices(v,g).first, 
              adjacent_vertices(v,g).second, print_index<Graph>(g));
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
   }
 
   Graph& g;
@@ -130,7 +129,7 @@ main()
 {
   using MyGraphType = adjacency_list<vecS,vecS,bidirectionalS>;
 
-  using Pair = pair<int,int>;
+  using Pair = std::pair<int,int>;
   Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                           Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                           Pair(3,4), Pair(4,0), Pair(4,1) };
@@ -143,7 +142,7 @@ main()
   boost::property_map<MyGraphType, vertex_index_t>::type 
     id = get(vertex_index, g);
 
-  cout << "vertices(g) = ";
+  std::cout << "vertices(g) = ";
   boost::graph_traits<MyGraphType>::vertex_iterator vi;
   for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
     std::cout << id[*vi] <<  " ";
@@ -151,7 +150,7 @@ main()
 
   /* Use the STL for_each algorithm to "exercise" all
      of the vertices in the graph */
-  for_each(vertices(g).first, vertices(g).second,
+  std::for_each(vertices(g).first, vertices(g).second,
            exercise_vertex<MyGraphType>(g));
 
   return 0;

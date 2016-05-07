@@ -14,7 +14,6 @@
 #include <boost/property_map/property_map.hpp>
 #include <string>
 
-using namespace std;
 using namespace boost;
 
 /*
@@ -66,8 +65,8 @@ void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
   while (first != last) {
     src_name = boost::get(name, source(*first,G));
     targ_name = boost::get(name, target(*first,G));
-    cout << src_name << " owes " 
-         << targ_name << " some money" << endl;
+    std::cout << src_name << " owes " 
+         << targ_name << " some money" << std::endl;
     ++first;
   }
 }
@@ -81,7 +80,7 @@ main()
     using MyGraphType = adjacency_list<vecS, vecS, directedS, 
       property<vertex_first_name_t, std::string>>;
     
-    using Pair = pair<int,int>;
+    using Pair = std::pair<int,int>;
     Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                             Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                             Pair(3,4), Pair(4,0), Pair(4,1) };
@@ -102,7 +101,7 @@ main()
     who_owes_who(edges(G).first, edges(G).second, G);
   }
 
-  cout << endl;
+  std::cout << std::endl;
 
   return 0;
 }

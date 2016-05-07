@@ -22,9 +22,7 @@ struct edge_t
 
 // A graphic of the min-cut is available at <http://www.boost.org/doc/libs/release/libs/graph/doc/stoer_wagner_imgs/stoer_wagner.cpp.gif>
 int main()
-{
-  using namespace std;
-  
+{ 
   using undirected_graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
     boost::no_property, boost::property<boost::edge_weight_t, int>>;
   using weight_map_type = boost::property_map<undirected_graph, boost::edge_weight_t>::type;
@@ -49,23 +47,23 @@ int main()
   // run the Stoer-Wagner algorithm to obtain the min-cut weight. `parities` is also filled in.
   int w = boost::stoer_wagner_min_cut(g, get(boost::edge_weight, g), boost::parity_map(parities));
   
-  cout << "The min-cut weight of G is " << w << ".\n" << endl;
+  std::cout << "The min-cut weight of G is " << w << ".\n" << std::endl;
   assert(w == 7);
   
-  cout << "One set of vertices consists of:" << endl;
+  std::cout << "One set of vertices consists of:" << std::endl;
   size_t i;
   for (i = 0; i < num_vertices(g); ++i) {
     if (get(parities, i))
-      cout << i << endl;
+      std::cout << i << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
   
-  cout << "The other set of vertices consists of:" << endl;
+  std::cout << "The other set of vertices consists of:" << std::endl;
   for (i = 0; i < num_vertices(g); ++i) {
     if (!get(parities, i))
-      cout << i << endl;
+      std::cout << i << std::endl;
   }
-  cout << endl;
+  std::cout << std::endl;
   
   return EXIT_SUCCESS;
 }

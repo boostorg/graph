@@ -14,7 +14,6 @@
 #include <boost/graph/geodesic_distance.hpp>
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // This template structure defines the function that we will apply
@@ -23,7 +22,7 @@ using namespace boost;
 template <typename Graph,
           typename DistanceType,
           typename ResultType,
-          typename Divides = divides<ResultType>>
+          typename Divides = std::divides<ResultType>>
 struct inclusive_average
 {
     using distance_type = DistanceType;
@@ -45,7 +44,7 @@ struct inclusive_average
 // represents web pages that can be navigated to.
 struct WebPage
 {
-    string name;
+    std::string name;
 };
 
 // The Link type stores an associated probability of traveling
@@ -62,7 +61,7 @@ using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-using NameMap = property_map<Graph, string WebPage::*>::type;
+using NameMap = property_map<Graph, std::string WebPage::*>::type;
 
 // Declare a matrix type and its corresponding property map that
 // will contain the distances between each pair of vertices.
@@ -95,7 +94,7 @@ main(int argc, char *argv[])
     WeightMap wm(get(&Link::probability, g));
 
     // Read the weighted graph from standard input.
-    read_weighted_graph(g, nm, wm, cin);
+    read_weighted_graph(g, nm, wm, std::cin);
 
     // Compute the distances between all pairs of vertices using
     // the Floyd-Warshall algorithm. The weight map was created
@@ -117,18 +116,18 @@ main(int argc, char *argv[])
 
     // Print the mean geodesic distance of each vertex and finally,
     // the graph itself.
-    cout << setw(12) << setiosflags(ios::left) << "vertex";
-    cout << setw(12) << setiosflags(ios::left) << "excluding";
-    cout << setw(12) << setiosflags(ios::left) << "including" << endl;
+    std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "vertex";
+    std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "excluding";
+    std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "including" << std::endl;
     graph_traits<Graph>::vertex_iterator i, end;
     for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        cout << setw(12) << setiosflags(ios::left)
+          std::cout << std::setw(12) << std::setiosflags(std::ios::left)
              << g[*i].name
-             << setw(12) << get(exmap, *i)
-             << setw(12) << get(inmap, *i) << endl;
+             << std::setw(12) << get(exmap, *i)
+             << std::setw(12) << get(inmap, *i) << std::endl;
     }
-    cout << "small world (excluding self-loops): " << ex << endl;
-    cout << "small world (including self-loops): " << in << endl;
+    std::cout << "small world (excluding self-loops): " << ex << std::endl;
+    std::cout << "small world (including self-loops): " << in << std::endl;
 
     return 0;
 }

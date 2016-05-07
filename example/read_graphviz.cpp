@@ -16,7 +16,6 @@
 #include <sstream>
 
 using namespace boost;
-using namespace std;
 
 int main() {
   // Vertex properties

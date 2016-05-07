@@ -51,7 +51,6 @@ struct VertexProperties {
 int main(int , char* [])
 {
   using namespace boost;
-  using namespace std;
 
   using Graph = adjacency_list<vecS, listS, undirectedS, 
     VertexProperties, EdgeProperties>;
@@ -77,26 +76,25 @@ int main(int , char* [])
   graph_traits<Graph>::vertex_iterator i, end;
   graph_traits<Graph>::out_edge_iterator ei, edge_end;
   for (boost::tie(i,end) = vertices(g); i != end; ++i) {
-    cout << id[*i] << " ";
+    std::cout << id[*i] << " ";
     for (boost::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
-      cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
-    cout << endl;
+      std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
   }
   print_edges(g, id);
 
-  cout << endl << "removing edge (1,3): " << endl;  
+  std::cout << std::endl << "removing edge (1,3): " << std::endl;
   remove_edge(vertex(1, g), vertex(3, g), g);
 
   ei = out_edges(vertex(1, g), g).first;
-  cout << "removing edge (" << id[source(*ei, g)] 
-       << "," << id[target(*ei, g)] << ")" << endl;
+  std::cout << "removing edge (" << id[source(*ei, g)] 
+       << "," << id[target(*ei, g)] << ")" << std::endl;
   remove_edge(ei, g);
 
   for(boost::tie(i,end) = vertices(g); i != end; ++i) {
-    cout << id[*i] << " ";
+    std::cout << id[*i] << " ";
     for (boost::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
-      cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
-    cout << endl;
+      std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
+    std::cout << std::endl;
   }
 
   print_edges(g, id);
