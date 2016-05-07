@@ -16,6 +16,7 @@
 #include <boost/foreach.hpp>
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 using namespace boost;
 using namespace std;
@@ -102,5 +103,5 @@ const char* dot =
       " (" << get("label",dp,v) << ")\n";
   }
 
-  return 0;
+  return status ? EXIT_SUCCESS : EXIT_FAILURE;
 }
