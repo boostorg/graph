@@ -44,12 +44,12 @@ main()
 #endif
 
   int total_weight = 0;
-  for (int v = 0; v < num_vertices(g); ++v)
+  for (std::size_t v = 0; v < num_vertices(g); ++v)
     if (parent[v] != v)
       total_weight += get(weight, edge(parent[v], v, g).first);
   std::cout << "total weight: " << total_weight << std::endl;
 
-  for (int u = 0; u < num_vertices(g); ++u)
+  for (std::size_t  u = 0; u < num_vertices(g); ++u)
     if (parent[u] != u)
       edge_attr_map[edge(parent[u], u, g_dot).first]["color"] = "black";
   std::ofstream out("figs/telephone-mst-prim.dot");
