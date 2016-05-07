@@ -59,7 +59,7 @@ int main()
 #endif
 
   graph_traits<graph_t>::vertex_iterator vi , vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     if (d_map[*vi] == (std::numeric_limits<int>::max)())
       std::cout << name[*vi] << ": inifinity\n";
     else

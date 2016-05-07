@@ -70,16 +70,16 @@ int main(int argc, char* argv[])
   graph_traits<Graph>::edge_descriptor edge;
   bool flag;
 
-  boost::tie(edge, flag) = add_edge(0, 1, graph);
+  std::tie(edge, flag) = add_edge(0, 1, graph);
   ds.union_set(0,1);
 
-  boost::tie(edge, flag) = add_edge(1, 4, graph);
+  std::tie(edge, flag) = add_edge(1, 4, graph);
   ds.union_set(1,4);
 
-  boost::tie(edge, flag) = add_edge(4, 0, graph);
+  std::tie(edge, flag) = add_edge(4, 0, graph);
   ds.union_set(4,0);
 
-  boost::tie(edge, flag) = add_edge(2, 5, graph);
+  std::tie(edge, flag) = add_edge(2, 5, graph);
   ds.union_set(2,5);
     
   std::cout << "An undirected graph:" << std::endl;

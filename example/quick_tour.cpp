@@ -11,7 +11,7 @@
 #include <iostream>                         // for std::cout
 #include <utility>                          // for std::pair
 #include <algorithm>                        // for std::for_each
-#include <boost/utility.hpp>                // for boost::tie
+#include <boost/utility.hpp>                // for std::tie
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 
@@ -30,7 +30,7 @@ template <class Graph> struct exercise_vertex {
     std::cout << "\tout-edges: ";
     typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
     typename graph_traits<Graph>::edge_descriptor e;
-    for (boost::tie(out_i, out_end) = out_edges(v, g);
+    for (std::tie(out_i, out_end) = out_edges(v, g);
          out_i != out_end; ++out_i)
     {
       e = *out_i;
@@ -43,7 +43,7 @@ template <class Graph> struct exercise_vertex {
     // Write out the incoming edges
     std::cout << "\tin-edges: ";
     typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
-    for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+    for (std::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
     {
       e = *in_i;
       Vertex src = source(e, g), targ = target(e, g);
@@ -55,7 +55,7 @@ template <class Graph> struct exercise_vertex {
     // Write out all adjacent vertices
     std::cout << "\tadjacent vertices: ";
     typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
-    for (boost::tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
+    for (std::tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
       std::cout << name[get(vertex_id, *ai)] <<  " ";
     std::cout << std::endl;
   }
@@ -92,7 +92,7 @@ int main(int,char*[])
   auto weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
-    boost::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    std::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
     weightmap[e] = transmission_delay[j];
   }
 #else
@@ -114,7 +114,7 @@ int main(int,char*[])
 
   std::cout << "edges(g) = ";
   graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (boost::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
+  for (std::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << "(" << name[get(vertex_id, source(*ei, g))]
               << "," << name[get(vertex_id, target(*ei, g))] << ") ";
   std::cout << std::endl;

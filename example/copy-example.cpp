@@ -24,7 +24,7 @@ main()
   auto name_map = get(vertex_name, G);
   char name = 'a';
   graph_traits<graph_t>::vertex_iterator v, v_end;
-  for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v, ++name)
+  for (std::tie(v, v_end) = vertices(G); v != v_end; ++v, ++name)
     name_map[*v] = name;
 
   using E = std::pair<int, int>;

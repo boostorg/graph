@@ -26,10 +26,10 @@ undirected_graph_demo1()
   add_edge(one, two, undigraph);
 
   std::cout << "out_edges(0):";
-  for (boost::tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
+  for (std::tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
     std::cout << ' ' << *out;
   std::cout << std::endl << "in_edges(0):";
-  for (boost::tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
+  for (std::tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
     std::cout << ' ' << *in;
   std::cout << std::endl;
 }
@@ -48,8 +48,8 @@ directed_graph_demo()
   auto v = vertex(1, digraph);
   add_edge(u, v, Weight(1.2), digraph);
   add_edge(v, u, Weight(2.4), digraph);
-  boost::tie(e1, found) = edge(u, v, digraph);
-  boost::tie(e2, found) = edge(v, u, digraph);
+  std::tie(e1, found) = edge(u, v, digraph);
+  std::tie(e2, found) = edge(v, u, digraph);
   std::cout << "in a directed graph is ";
 #ifdef __GNUC__
   // no boolalpha
@@ -76,8 +76,8 @@ undirected_graph_demo2()
   auto u = vertex(0, undigraph);
   auto v = vertex(1, undigraph);
   add_edge(u, v, Weight(3.1), undigraph);
-  boost::tie(e1, found) = edge(u, v, undigraph);
-  boost::tie(e2, found) = edge(v, u, undigraph);
+  std::tie(e1, found) = edge(u, v, undigraph);
+  std::tie(e2, found) = edge(v, u, undigraph);
   std::cout << "in an undirected graph is ";
 #ifdef __GNUC__
   std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;
@@ -91,7 +91,7 @@ undirected_graph_demo2()
   std::cout << "the edges incident to v: ";
   typename boost::graph_traits<UndirectedGraph>::out_edge_iterator e, e_end;
   auto s = vertex(0, undigraph);
-  for (boost::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
+  for (std::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
     std::cout << "(" << source(*e, undigraph) 
               << "," << target(*e, undigraph) << ")" << std::endl;
 }

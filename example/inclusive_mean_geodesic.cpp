@@ -120,7 +120,7 @@ main(int argc, char *argv[])
     std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "excluding";
     std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "including" << std::endl;
     graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
+    for(std::tie(i, end) = vertices(g); i != end; ++i) {
           std::cout << std::setw(12) << std::setiosflags(std::ios::left)
              << g[*i].name
              << std::setw(12) << get(exmap, *i)

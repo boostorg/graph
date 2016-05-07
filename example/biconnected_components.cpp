@@ -62,7 +62,7 @@ main()
   }
 
   graph_traits<graph_t>::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     std::cout << (char)(source(*ei, g) + 'A') << " -- " 
               << (char)(target(*ei, g) + 'A')
               << "[label=\"" << component[*ei] << "\"]\n";

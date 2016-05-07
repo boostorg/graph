@@ -31,19 +31,19 @@ build_router_network(Graph & g, VertexNameMap name_map,
   typename graph_traits<Graph>::edge_descriptor ed;
   bool inserted;
 
-  boost::tie(ed, inserted) = add_edge(a, b, g);
+  std::tie(ed, inserted) = add_edge(a, b, g);
   delay_map[ed] = 1.2;
-  boost::tie(ed, inserted) = add_edge(a, d, g);
+  std::tie(ed, inserted) = add_edge(a, d, g);
   delay_map[ed] = 4.5;
-  boost::tie(ed, inserted) = add_edge(b, d, g);
+  std::tie(ed, inserted) = add_edge(b, d, g);
   delay_map[ed] = 1.8;
-  boost::tie(ed, inserted) = add_edge(c, a, g);
+  std::tie(ed, inserted) = add_edge(c, a, g);
   delay_map[ed] = 2.6;
-  boost::tie(ed, inserted) = add_edge(c, e, g);
+  std::tie(ed, inserted) = add_edge(c, e, g);
   delay_map[ed] = 5.2;
-  boost::tie(ed, inserted) = add_edge(d, c, g);
+  std::tie(ed, inserted) = add_edge(d, c, g);
   delay_map[ed] = 0.4;
-  boost::tie(ed, inserted) = add_edge(d, e, g);
+  std::tie(ed, inserted) = add_edge(d, e, g);
   delay_map[ed] = 3.3;
 }
 

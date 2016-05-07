@@ -29,9 +29,9 @@ template <class Graph>
 void print(Graph& g) {
   typename Graph::vertex_iterator i, end;
   typename Graph::out_edge_iterator ei, edge_end;
-  for(boost::tie(i,end) = vertices(g); i != end; ++i) {
+  for(std::tie(i,end) = vertices(g); i != end; ++i) {
     std::cout << *i << " --> ";
-    for (boost::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
+    for (std::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
       std::cout << target(*ei, g) << "  ";
   }
 }
@@ -45,7 +45,7 @@ std::size_t myrand(std::size_t N) {
 template <class Graph>
 bool check_edge(Graph& g, std::size_t a, std::size_t b) {
   typename Graph::adjacency_iterator vi, viend, found;
-  boost::tie(vi, viend) = adjacent_vertices(vertex(a,g), g);
+  std::tie(vi, viend) = adjacent_vertices(vertex(a,g), g);
 
   found = find(vi, viend, vertex(b, g));
   if ( found == viend )

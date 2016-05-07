@@ -103,7 +103,7 @@ int main(int,char*[])
   Graph g(N);
   for (std::size_t j = 0; j < nedges; ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
-    boost::tie(e, inserted) = add_edge(used_by[j].first, used_by[j].second, g);
+    std::tie(e, inserted) = add_edge(used_by[j].first, used_by[j].second, g);
   }
 #else
   Graph g(used_by, used_by + nedges, N);
@@ -134,7 +134,7 @@ int main(int,char*[])
         int maxdist=0;
         // Through the order from topological sort, we are sure that every 
         // time we are using here is already initialized.
-        for (boost::tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
+        for (std::tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
           maxdist=(std::max)(time[source(*j, g)], maxdist);
         time[*i]=maxdist+1;
       }
@@ -144,7 +144,7 @@ int main(int,char*[])
          << "vertices with same group number can be made in parallel" << std::endl;
     {
       graph_traits<Graph>::vertex_iterator i, iend;
-      for (boost::tie(i,iend) = vertices(g); i != iend; ++i)
+      for (std::tie(i,iend) = vertices(g); i != iend; ++i)
         std::cout << "time_slot[" << name[*i] << "] = " << time[*i] << std::endl;
     }
 

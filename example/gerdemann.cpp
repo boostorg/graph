@@ -46,13 +46,13 @@ void merge_vertex
   using Traits = boost::graph_traits<Graph>;
   typename Traits::edge_descriptor e;
   typename Traits::out_edge_iterator out_i, out_end;
-  for (boost::tie(out_i, out_end) = out_edges(v, g); out_i != out_end; ++out_i) {
+  for (std::tie(out_i, out_end) = out_edges(v, g); out_i != out_end; ++out_i) {
     e = *out_i;
     auto targ = target(e, g);
     add_edge(u, targ, getp(e), g);
   }
   typename Traits::in_edge_iterator in_i, in_end;
-  for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i) {
+  for (std::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i) {
     e = *in_i;
     auto src = source(e, g);
     add_edge(src, u, getp(e), g);
@@ -129,9 +129,9 @@ main()
   graph_traits<graph_type>::vertex_iterator i, end;
   graph_traits<graph_type>::out_edge_iterator ei, edge_end;
 
-  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
+  for (std::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << id[*i] << " ";
-    for (boost::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
+    for (std::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
       std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
     std::cout << std::endl;
   }
@@ -140,9 +140,9 @@ main()
   std::cout << "merging vertex 1 into vertex 0" << std::endl << std::endl;
   merge_vertex(0, 1, g, get_edge_name<graph_type>(g));
   
-  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
+  for (std::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << id[*i] << " ";
-    for (boost::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
+    for (std::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
       std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
     std::cout << std::endl;
   }

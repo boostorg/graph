@@ -73,7 +73,7 @@ main()
     NameVertexMap::iterator pos;
     bool inserted;
     Vertex u, v;
-    boost::tie(pos, inserted) = actors.insert(std::make_pair(actors_name, Vertex()));
+    std::tie(pos, inserted) = actors.insert(std::make_pair(actors_name, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       actor_name[u] = actors_name;
@@ -83,7 +83,7 @@ main()
 
     std::string movie_name = *i++;
 
-    boost::tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
+    std::tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       v = add_vertex(g);
       actor_name[v] = *i;
@@ -92,7 +92,7 @@ main()
       v = pos->second;
 
     graph_traits<Graph>::edge_descriptor e;
-    boost::tie(e, inserted) = add_edge(u, v, g);
+    std::tie(e, inserted) = add_edge(u, v, g);
     if (inserted)
       connecting_movie[e] = movie_name;
 
@@ -107,7 +107,7 @@ main()
                        visitor(record_bacon_number(&bacon_number[0])));
 
   graph_traits<Graph>::vertex_iterator i, end;
-  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
+  for (std::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << actor_name[*i] << " has a Bacon number of "
       << bacon_number[*i] << std::endl;
   }

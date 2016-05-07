@@ -74,7 +74,7 @@ main(int argc, char *argv[])
 
     // Print the closeness centrality of each vertex.
     graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
+    for(std::tie(i, end) = vertices(g); i != end; ++i) {
           std::cout << std::setw(12) << std::setiosflags(std::ios::left)
              << g[*i].name << get(cm, *i) << std::endl;
     }

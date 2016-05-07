@@ -33,9 +33,9 @@ main()
   graph_traits<adjacency_list <>>::adjacency_iterator ai, a_end;
   auto index_map = get(vertex_index, g);
 
-  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
+  for (std::tie(i, end) = vertices(g); i != end; ++i) {
     std::cout << name[get(index_map, *i)];
-    boost::tie(ai, a_end) = adjacent_vertices(*i, g);
+    std::tie(ai, a_end) = adjacent_vertices(*i, g);
     if (ai == a_end)
       std::cout << " has no children";
     else

@@ -142,10 +142,10 @@ template <class Graph, class Name>
 void print(Graph& G, Name name)
 {
   typename boost::graph_traits<Graph>::vertex_iterator ui, uiend;
-  for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
+  for (std::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
     std::cout << name[*ui] << " --> ";
     typename boost::graph_traits<Graph>::adjacency_iterator vi, viend;
-    for(boost::tie(vi, viend) = adjacent_vertices(*ui, G); vi != viend; ++vi)
+    for(std::tie(vi, viend) = adjacent_vertices(*ui, G); vi != viend; ++vi)
       std::cout << name[*vi] << " ";
   }
 }

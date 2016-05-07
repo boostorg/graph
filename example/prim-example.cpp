@@ -27,7 +27,7 @@ main()
   auto weightmap = get(edge_weight, g); 
   for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
     graph_traits<Graph>::edge_descriptor e; bool inserted;
-    boost::tie(e, inserted) = add_edge(edges[j].first, edges[j].second, g);
+    std::tie(e, inserted) = add_edge(edges[j].first, edges[j].second, g);
     weightmap[e] = weights[j];
   }
 #else

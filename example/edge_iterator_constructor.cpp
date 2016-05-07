@@ -107,7 +107,7 @@ main()
   IteratorConstructibleGraph G(size_V);
   while (edge_iter != end) {
     int i, j;
-    boost::tie(i, j) = *edge_iter++;
+    std::tie(i, j) = *edge_iter++;
     boost::add_edge(i, j, G);
   }
 #else

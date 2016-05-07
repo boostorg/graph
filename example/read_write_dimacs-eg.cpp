@@ -88,12 +88,12 @@ int main()
   
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
   out_edge_iterator oei,oe_end;
-  for(boost::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
+  for(std::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
     auto from_source = *oei;
     auto v = target(from_source, g);
     edge_descriptor to_sink;
     bool is_there;
-    boost::tie(to_sink, is_there) = edge(v, t, g);
+    std::tie(to_sink, is_there) = edge(v, t, g);
     if( is_there ){
       if( get(capacity, to_sink) > get(capacity, from_source) ){ 
         auto to_augment = get(capacity, from_source);

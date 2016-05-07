@@ -41,9 +41,9 @@ int main(int , char* [])
   boost::graph_traits<Graph>::vertex_iterator i, end;
   boost::graph_traits<Graph>::in_edge_iterator ei, edge_end;
 
-  for(boost::tie(i,end) = vertices(g); i != end; ++i) {
+  for(std::tie(i,end) = vertices(g); i != end; ++i) {
     std::cout << *i << " <-- ";
-    for (boost::tie(ei,edge_end) = in_edges(*i, g); ei != edge_end; ++ei)
+    for (std::tie(ei,edge_end) = in_edges(*i, g); ei != edge_end; ++ei)
       std::cout << source(*ei, g) << "  ";
   }
   return 0;

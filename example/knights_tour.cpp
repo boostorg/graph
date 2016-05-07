@@ -165,7 +165,7 @@ template <typename Graph, typename TimePropertyMap>
   S.push(std::make_pair(time_stamp, src));
   while (!S.empty()) {
     Vertex x;
-    boost::tie(time_stamp, x) = S.top();
+    std::tie(time_stamp, x) = S.top();
     put(time_map, x, time_stamp);
     // all vertices have been visited, success!
     if (time_stamp == num_vertices(g) - 1)
@@ -173,7 +173,7 @@ template <typename Graph, typename TimePropertyMap>
 
     bool deadend = true;
     typename graph_traits<Graph>::adjacency_iterator i, end;
-    for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
+    for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
       if (get(time_map, *i) == -1) {
         S.push(std::make_pair(time_stamp + 1, *i));
         deadend = false;
@@ -182,11 +182,11 @@ template <typename Graph, typename TimePropertyMap>
     if (deadend) {
       put(time_map, x, -1);
       S.pop();
-      boost::tie(time_stamp, x) = S.top();
+      std::tie(time_stamp, x) = S.top();
       while (get(time_map, x) != -1) {  // unwind stack to last unexplored vertex
         put(time_map, x, -1);
         S.pop();
-        boost::tie(time_stamp, x) = S.top();
+        std::tie(time_stamp, x) = S.top();
       }
     }
 
@@ -199,7 +199,7 @@ number_of_successors(Vertex x, Graph & g, TimePropertyMap time_map)
 {
   int s_x = 0;
   typename graph_traits<Graph>::adjacency_iterator i, end;
-  for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
+  for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
     if (get(time_map, *i) == -1)
       ++s_x;
   return s_x;
@@ -218,7 +218,7 @@ template <typename Graph, typename TimePropertyMap>
   S.push(std::make_pair(time_stamp, src));
   while (!S.empty()) {
     Vertex x;
-    boost::tie(time_stamp, x) = S.top();
+    std::tie(time_stamp, x) = S.top();
     put(time_map, x, time_stamp);
     // all vertices have been visited, success!
     if (time_stamp == num_vertices(g) - 1)
@@ -228,7 +228,7 @@ template <typename Graph, typename TimePropertyMap>
     std::priority_queue<P, std::vector<P>, compare_first> Q;
     typename graph_traits<Graph>::adjacency_iterator i, end;
     int num_succ;
-    for (boost::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
+    for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
       if (get(time_map, *i) == -1) {
         num_succ = number_of_successors(*i, g, time_map);
         Q.push(std::make_pair(num_succ, *i));
@@ -236,17 +236,17 @@ template <typename Graph, typename TimePropertyMap>
     bool deadend = Q.empty();
     // move vertices from local priority queue to the stack
     for (; !Q.empty(); Q.pop()) {
-      boost::tie(num_succ, x) = Q.top();
+      std::tie(num_succ, x) = Q.top();
       S.push(std::make_pair(time_stamp + 1, x));
     }
     if (deadend) {
       put(time_map, x, -1);
       S.pop();
-      boost::tie(time_stamp, x) = S.top();
+      std::tie(time_stamp, x) = S.top();
       while (get(time_map, x) != -1) {  // unwind stack to last unexplored vertex
         put(time_map, x, -1);
         S.pop();
-        boost::tie(time_stamp, x) = S.top();
+        std::tie(time_stamp, x) = S.top();
       }
     }
 

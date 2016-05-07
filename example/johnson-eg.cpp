@@ -43,7 +43,7 @@ main()
   int *wp = weights;
 
   graph_traits<Graph>::edge_iterator e, e_end;
-  for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
+  for (std::tie(e, e_end) = edges(g); e != e_end; ++e)
     w[*e] = *wp++;
 
   std::vector<int >d(V, (std::numeric_limits < int>::max)());
@@ -73,7 +73,7 @@ main()
     << "edge[style=\"bold\"]\n" << "node[shape=\"circle\"]\n";
 
   graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
     fout << source(*ei, g) << " -> " << target(*ei, g)
       << "[label=" << get(edge_weight, g)[*ei] << "]\n";
 
