@@ -58,4 +58,4 @@ before_install:
 # This part is meant for unit tests
 script:
   - cd $HOME/$BOOST/libs/graph/test
-  - ../../../b2
+  - ../../../b2 cxxflags="-std=c++11"
