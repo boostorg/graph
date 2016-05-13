@@ -4,8 +4,8 @@
 #
 # Mael Valais, 2016
 # This travis file has been inspired from boostorg/geometry/circle.yml.
-# 
-# This file is intended to make use of travis-ci, a continuous integration 
+#
+# This file is intended to make use of travis-ci, a continuous integration
 # service. The purpose is to build and run the tests on the graph module
 # on every push, and be able to know if those commits are "clean" or if
 # they break the build.
@@ -19,16 +19,20 @@
 #    - develop
 #    - test
 
-language: c
+language: cpp
 compiler: gcc
 
 env:
   global:
     - BOOST_BRANCH=$([[ "$TRAVIS_BRANCH" = "master" ]] && echo master || echo develop)
     - BOOST=boost-local # must be different from graph/boost dir name
+addons:
+  apt:
+    sources: ubuntu-toolchain-r-test
+    packages: g++-4.8
 
 before_install:
-  # clone boost repository
+  # Clone boost repository
   - cd
   - mkdir $BOOST && cd $BOOST
   - git init .
@@ -43,7 +47,7 @@ before_install:
   - git submodule foreach "git reset --quiet --hard; git clean -fxd"
   - git reset --hard; git clean -fxd
   - git status
-    
+
   # replace the content of the library with the currently tested repo
   - cd && pwd && ls
   - rm -rf $BOOST/libs/graph
@@ -58,4 +62,4 @@ before_install:
 # This part is meant for unit tests
 script:
   - cd $HOME/$BOOST/libs/graph/test
-  - ../../../b2 cxxflags="-std=c++11"
+  - ../../../b2 toolset=gcc-4.8 cxxflags=-std=c++11
