@@ -154,84 +154,84 @@ namespace boost {
   // -JGS
 
   template <class IncidenceGraph, class Name>
-  void print_in_edges(const IncidenceGraph& G, Name name)
+  void print_in_edges(const IncidenceGraph& G, Name name, std::ostream& os = std::cout)
   {
     typename graph_traits<IncidenceGraph>::vertex_iterator ui,ui_end;
     for (boost::tie(ui,ui_end) = vertices(G); ui != ui_end; ++ui) {
-      std::cout << get(name,*ui) << " <-- ";
+      os << get(name,*ui) << " <-- ";
       typename graph_traits<IncidenceGraph>
         ::in_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = in_edges(*ui,G); ei != ei_end; ++ei)
-        std::cout << get(name,source(*ei,G)) << " ";
-      std::cout << std::endl;
+        os << get(name,source(*ei,G)) << " ";
+      os << '\n';
     }
   }
 
   template <class IncidenceGraph, class Name>
-  void print_graph_dispatch(const IncidenceGraph& G, Name name, directed_tag)
+  void print_graph_dispatch(const IncidenceGraph& G, Name name, directed_tag, std::ostream& os = std::cout)
   {
     typename graph_traits<IncidenceGraph>::vertex_iterator ui,ui_end;
     for (boost::tie(ui,ui_end) = vertices(G); ui != ui_end; ++ui) {
-      std::cout << get(name,*ui) << " --> ";
+      os << get(name,*ui) << " --> ";
       typename graph_traits<IncidenceGraph>
         ::out_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = out_edges(*ui,G); ei != ei_end; ++ei)
-        std::cout << get(name,target(*ei,G)) << " ";
-      std::cout << std::endl;
+        os << get(name,target(*ei,G)) << " ";
+      os << '\n';
     }
   }
   template <class IncidenceGraph, class Name>
-  void print_graph_dispatch(const IncidenceGraph& G, Name name, undirected_tag)
+  void print_graph_dispatch(const IncidenceGraph& G, Name name, undirected_tag, std::ostream& os = std::cout)
   {
     typename graph_traits<IncidenceGraph>::vertex_iterator ui,ui_end;
     for (boost::tie(ui,ui_end) = vertices(G); ui != ui_end; ++ui) {
-      std::cout << get(name,*ui) << " <--> ";
+      os << get(name,*ui) << " <--> ";
       typename graph_traits<IncidenceGraph>
         ::out_edge_iterator ei, ei_end;
       for(boost::tie(ei,ei_end) = out_edges(*ui,G); ei != ei_end; ++ei)
-        std::cout << get(name,target(*ei,G)) << " ";
-      std::cout << std::endl;
+        os << get(name,target(*ei,G)) << " ";
+      os << '\n';
     }
   }
   template <class IncidenceGraph, class Name>
-  void print_graph(const IncidenceGraph& G, Name name)
+  void print_graph(const IncidenceGraph& G, Name name, std::ostream& os = std::cout)
   {
     typedef typename graph_traits<IncidenceGraph>
       ::directed_category Cat;
-    print_graph_dispatch(G, name, Cat());
+    print_graph_dispatch(G, name, Cat(), os);
   }
   template <class IncidenceGraph>
-  void print_graph(const IncidenceGraph& G) {
-    print_graph(G, get(vertex_index, G));
+  void print_graph(const IncidenceGraph& G, std::ostream& os = std::cout) {
+    print_graph(G, get(vertex_index, G), os);
   }
 
   template <class EdgeListGraph, class Name>
-  void print_edges(const EdgeListGraph& G, Name name)
+  void print_edges(const EdgeListGraph& G, Name name, std::ostream& os = std::cout)
   {
     typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
-      std::cout << "(" << get(name, source(*ei, G))
+      os << "(" << get(name, source(*ei, G))
                 << "," << get(name, target(*ei, G)) << ") ";
-    std::cout << std::endl;
+    os << '\n';
   }
 
   template <class EdgeListGraph, class VertexName, class EdgeName>
-  void print_edges2(const EdgeListGraph& G, VertexName vname, EdgeName ename)
+  void print_edges2(const EdgeListGraph& G, VertexName vname, EdgeName ename, std::ostream& os = std::cout)
   {
     typename graph_traits<EdgeListGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
-      std::cout << get(ename, *ei) << "(" << get(vname, source(*ei, G))
+      os << get(ename, *ei) << "(" << get(vname, source(*ei, G))
                 << "," << get(vname, target(*ei, G)) << ") ";
-    std::cout << std::endl;
+    os << '\n';
   }
 
   template <class VertexListGraph, class Name>
-  void print_vertices(const VertexListGraph& G, Name name)
+  void print_vertices(const VertexListGraph& G, Name name, std::ostream& os = std::cout)
   {
     typename graph_traits<VertexListGraph>::vertex_iterator vi,vi_end;
     for (boost::tie(vi,vi_end) = vertices(G); vi != vi_end; ++vi)
-      std::cout << get(name,*vi) << " ";
-    std::cout << std::endl;
+      os << get(name,*vi) << " ";
+    os << '\n';
   }
 
   template <class Graph, class Vertex>
