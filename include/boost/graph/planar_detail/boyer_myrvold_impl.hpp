@@ -782,7 +782,6 @@ namespace boost
               bool bottom_path_follows_first;
               bool top_path_follows_first;
               bool next_bottom_follows_first = chose_first_upper_path;
-              face_handle_t top_handle, bottom_handle;
 
               vertex_t merge_point = chosen;
 
