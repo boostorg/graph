@@ -798,7 +798,7 @@ namespace boost {
     )
     {
 
-      typename property_traits<WeightMap>::value_type weight = 0;
+      typename property_traits<WeightMap>::value_type weight;
 
        BOOST_FOREACH( const Edge& e, branching )
        {
