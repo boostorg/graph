@@ -18,14 +18,6 @@
 #include <boost/config.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#if !defined BOOST_NO_SLIST
-#  ifdef BOOST_SLIST_HEADER
-#    include BOOST_SLIST_HEADER
-#  else
-#    include <slist>
-#  endif
-#endif
-
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/container_traits.hpp>
