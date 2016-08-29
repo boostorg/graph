@@ -517,12 +517,12 @@ namespace boost {
 
     // Handle defaults for PredecessorMap and
     // Distance Compare, Combine, Inf and Zero
-    template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
+    template <class VertexListGraph, class SourceInputIter, class DistanceMap,
+              class WeightMap, class IndexMap, class Params>
     inline void
     dijkstra_dispatch2
       (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       SourceInputIter s_begin, SourceInputIter s_end,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
        const Params& params)
     {
@@ -534,7 +534,7 @@ namespace boost {
                            (std::numeric_limits<D>::max)());
 
       dijkstra_shortest_paths
-        (g, s,
+        (g, s_begin, s_end,
          choose_param(get_param(params, vertex_predecessor), p_map),
          distance, weight, index_map,
          choose_param(get_param(params, distance_compare_t()),
@@ -549,12 +549,12 @@ namespace boost {
          params);
     }
 
-    template <class VertexListGraph, class DistanceMap, class WeightMap,
-              class IndexMap, class Params>
+    template <class VertexListGraph, class SourceInputIter, class DistanceMap,
+              class WeightMap, class IndexMap, class Params>
     inline void
     dijkstra_dispatch1
       (const VertexListGraph& g,
-       typename graph_traits<VertexListGraph>::vertex_descriptor s,
+       SourceInputIter s_begin, SourceInputIter s_end,
        DistanceMap distance, WeightMap weight, IndexMap index_map,
        const Params& params)
     {
@@ -565,14 +565,34 @@ namespace boost {
       std::vector<D> distance_map(n);
 
       detail::dijkstra_dispatch2
-        (g, s, choose_param(distance, make_iterator_property_map
-                            (distance_map.begin(), index_map,
-                             distance_map[0])),
+        (g, s_begin, s_end,
+         choose_param(distance, make_iterator_property_map
+                      (distance_map.begin(), index_map,
+                       distance_map[0])),
          weight, index_map, params);
     }
   } // namespace detail
 
-  // Named Parameter Variant
+  // Named parameter version for multiple start vertices
+  template <class VertexListGraph, class SourceInputIter, class Param,
+           class Tag, class Rest>
+  inline void
+  dijkstra_shortest_paths
+    (const VertexListGraph& g,
+     SourceInputIter s_begin, SourceInputIter s_end,
+     const bgl_named_params<Param,Tag,Rest>& params)
+  {
+    // Default for edge weight and vertex index map is to ask for them
+    // from the graph.  Default for the visitor is null_visitor.
+    detail::dijkstra_dispatch1
+      (g, s_begin, s_end,
+       get_param(params, vertex_distance),
+       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
+       params);
+  }
+
+  // Named parameter version for a single start vertex
   template <class VertexListGraph, class Param, class Tag, class Rest>
   inline void
   dijkstra_shortest_paths
@@ -580,14 +600,7 @@ namespace boost {
      typename graph_traits<VertexListGraph>::vertex_descriptor s,
      const bgl_named_params<Param,Tag,Rest>& params)
   {
-    // Default for edge weight and vertex index map is to ask for them
-    // from the graph.  Default for the visitor is null_visitor.
-    detail::dijkstra_dispatch1
-      (g, s,
-       get_param(params, vertex_distance),
-       choose_const_pmap(get_param(params, edge_weight), g, edge_weight),
-       choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
-       params);
+    dijkstra_shortest_paths(g, &s, &s + 1, params);
   }
 
 } // namespace boost
