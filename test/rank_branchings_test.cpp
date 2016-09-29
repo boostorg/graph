@@ -46,7 +46,10 @@ struct my_compare
 {
   bool operator()( const std::complex<T>& a, const std::complex<T>& b) const
   {
-    return a.real() < b.real( );
+    if( a.real() == b.real() )
+      return a.imag() < b.imag( );
+    else
+      return a.real() < b.real( );
   }
 };
 
@@ -59,8 +62,8 @@ struct Branching
       typename property_map<Graph, edge_weight_t>::const_type
     >::value_type weight_t;
   weight_t weight;
-  unordered_set<Edge>  v_edges;
-  Branching( weight_t & w, const unordered_set<Edge>& v_e) :
+  std::set<Edge>  v_edges;
+  Branching( weight_t & w, const std::set<Edge>& v_e) :
     weight( w ), v_edges( v_e ){}
 };
 
@@ -82,32 +85,31 @@ template<class Graph, class Edge>
 struct set_rank_vector
 {
 
-  const Graph& m_g;
   std::vector<Branching<Graph,Edge> >& rank_vector;
-  typedef typename property_map<Graph, edge_weight_t>::const_type weight_map_t;
-  weight_map_t w;
-  typename property_traits<weight_map_t>::value_type weight;
-  unordered_set<Edge> branching;
-
   set_rank_vector(
-    const Graph& g,
     std::vector<Branching<Graph,Edge> >& rv
-  ) : m_g( g ), rank_vector( rv ) {}
+  ) : rank_vector( rv ) {}
 
-  template<class EdgeIterator>
-  bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
+  template<class BranchingGraph>
+  bool operator()( BranchingGraph& bg )
   {
 
-    w = get( edge_weight, m_g );
+    std::set<Edge> branching;
+
+    typedef
+      typename
+        property_map<BranchingGraph, edge_weight_t>::const_type weight_map_t;
+    weight_map_t w;
+    typename property_traits<weight_map_t>::value_type weight;
 
     weight = 0;
 
-    while( p.first != p.second )
+    BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
     {
 
-      weight += get( w, *p.first );
+      weight += get( w, e );
 
-      branching.insert( *p.first++ );
+      branching.insert( e );
 
     }
 
@@ -134,10 +136,10 @@ set_branching(
 {
   disjoint_sets<Rank, Parent> W( rank, parent );
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
-  unordered_set<Vertex> in_vertex_set;
+  std::set<Vertex> in_vertex_set;
   typedef typename property_map<Graph, edge_weight_t>::const_type weight_map_t;
   typename property_traits<weight_map_t>::value_type weight;
-  unordered_set<Edge> branching_edges;
+  std::set<Edge> branching_edges;
 
   BGL_FORALL_VERTICES_T( v, g, Graph )
   {
@@ -186,7 +188,8 @@ loop(
   std::vector<size_type> rank_map( n );
   std::vector<vertex_t> pred_map( n );
 
-  if (k == 0) {
+  if( k == 0 )
+  {
     set_branching(
       g,
       v_edges,
@@ -239,6 +242,9 @@ compare_heap_and_vector(
 
   std::set<size_t> check;
 
+  typename property_map < Graph, vertex_index_t >::type index_map =
+    get( vertex_index, g ); 
+
   for( size_t i = 0; i < rank_vector.size(); i++ )
   {
     check.insert( i );
@@ -286,7 +292,8 @@ compare_heap_and_vector(
       BOOST_FOREACH( Edge e, branching_heap.top().v_edges )
       {
         std::cerr <<
-        " (" << source( e, g ) << "," << target( e, g ) << ") ";
+        " (" << source( e, g ) <<
+        "," << target( e, g ) << ") ";
       }
       std::cerr << " Weight: " << branching_heap.top().weight << std::endl;
         std::cerr << std::endl;
@@ -397,7 +404,7 @@ void test_int_graph( base_generator_type& gen, size_t n, Compare comp )
 
   rank_spanning_branchings(
     g,
-    set_rank_vector<Graph,Edge>( g, rank_vector ),
+    set_rank_vector<Graph,Edge>( rank_vector ),
     distance_compare( comp )
   );
 
@@ -494,7 +501,7 @@ void test_real_graph( base_generator_type& gen, size_t n, Compare comp )
 
   rank_spanning_branchings(
     g,
-    set_rank_vector<Graph, Edge>( g, rank_vector ),
+    set_rank_vector<Graph, Edge>( rank_vector ),
     distance_compare( comp ).
     weight_map( get( edge_weight, g ) ).
     vertex_index_map( get( vertex_index, g ) )
@@ -591,7 +598,7 @@ void test_complex_graph( base_generator_type& gen, size_t n, Compare comp )
 
   rank_spanning_branchings(
     g,
-    set_rank_vector<Graph, Edge>( g, rank_vector ),
+    set_rank_vector<Graph, Edge>( rank_vector ),
     distance_compare( comp )
   );
 

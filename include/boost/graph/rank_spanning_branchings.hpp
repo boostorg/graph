@@ -24,6 +24,7 @@
 #include <boost/config.hpp>
 #include <boost/foreach.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/depth_first_search.hpp>
@@ -680,55 +681,67 @@ namespace boost {
 
             // Adjust arc weights and remove parallel arcs.  Keep the
             // the largest weight in arc and the largest viable alternative
-            // arc from each source outside the cycle.
+            // arc from each source outside the cycle.  Make sure that
+            // an arc from the branching is among the added edges, if present.
 
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              exit_map_t v_exit1, v_exit2;
+              exit_map_t b_exit, v_exit1, v_exit2;
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
                 if( S.find_set( source( en.edge, g ) ) != new_repr )
                 {
                   en.weight += least_costly_edge_node.weight - max_e[v].weight;
                   Vertex u = S.find_set( source( en.edge, g ) );
-                  if( v_exit1.find(u) != v_exit1.end() )
+                  if( branching.find( en.edge ) != branching.end() )
                   {
-                    if( comp( v_exit1[u].weight, en.weight ) )
-                    {
-                      if(
-                        !is_ancestor(
-                           v_id[target( v_exit1[u].edge, g )],
-                           v_id[source( v_exit1[u].edge, g )]
-                        )
-                      )
-                      {
-                        v_exit2[u] = v_exit1[u];
-                      }
-                      v_exit1[u] = en;
-                    }
-                    else if(
-                      v_exit2.find(u) == v_exit2.end() ||
-                      comp( v_exit2[u].weight, en.weight )
-                    )
-                    {
-                      if(
-                        !is_ancestor(
-                            v_id[target( en.edge, g )],
-                            v_id[source( en.edge, g )]
-                        )
-                      )
-                      {
-                        v_exit2[u] = en;
-                      }
-                    }
+                    b_exit[u] = en;
                   }
                   else
                   {
-                    v_exit1[u] = en;
+                    if( v_exit1.find(u) != v_exit1.end() )
+                    {
+                      if( comp( v_exit1[u].weight, en.weight ) )
+                      {
+                        if(
+                          !is_ancestor(
+                             v_id[target( v_exit1[u].edge, g )],
+                             v_id[source( v_exit1[u].edge, g )]
+                          )
+                        )
+                        {
+                          v_exit2[u] = v_exit1[u];
+                        }
+                        v_exit1[u] = en;
+                      }
+                      else if(
+                        v_exit2.find(u) == v_exit2.end() ||
+                        comp( v_exit2[u].weight, en.weight )
+                      )
+                      {
+                        if(
+                          !is_ancestor(
+                            v_id[target( en.edge, g )],
+                            v_id[source( en.edge, g )]
+                          )
+                        )
+                        {
+                          v_exit2[u] = en;
+                        }
+                      }
+                    }
+                    else
+                    {
+                      v_exit1[u] = en;
+                    }
                   }
                 }
 	      }
               f_heap_t tmp_heap;
+              BOOST_FOREACH( typename exit_map_t::value_type& t, b_exit )
+              {
+                tmp_heap.push( t.second );
+              }
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit1 )
               {
                 tmp_heap.push( t.second );
@@ -765,6 +778,28 @@ namespace boost {
       }
 
     }
+
+    template<typename EdgeSet>
+    class branching_filter
+    {
+
+      public:
+        branching_filter(){}
+        branching_filter( const EdgeSet * _es ) : p_es( _es ){}
+
+        template <typename Edge>
+        bool operator()( const Edge& e ) const
+        {
+          if( p_es->find( e ) != p_es->end() )
+            return true;
+          else
+            return false;
+        }
+
+     private:
+       const EdgeSet * p_es;
+
+    };
 
     template<typename Edge, typename WeightMap, typename Compare>
     struct BranchingEntry
@@ -853,11 +888,10 @@ namespace boost {
                                empty_set
                              );
 
-      if(
-        !bp(
-          std::make_pair(best_branching.begin(), best_branching.end() )
-        )
-      ) return;
+      branching_filter<unordered_set<Edge> > filter1( &best_branching );
+      filtered_graph<Graph, branching_filter<unordered_set<Edge> > > fg1( g, filter1 );
+
+      if( !bp( fg1 ) ) return;
 
       p = next_spanning_branching( g,
                                    best_branching,
@@ -918,11 +952,10 @@ namespace boost {
                                  exclude_edges
                                );
 
-        if(
-          !bp(
-            std::make_pair( branching.begin(), branching.end() )
-          )
-        ) return;
+        branching_filter<unordered_set<Edge> > filter( &branching );
+        filtered_graph<Graph, branching_filter<unordered_set<Edge > > > fg( g, filter );
+
+        if( !bp( fg ) ) return;
 
 	p =
 	  next_spanning_branching( g,

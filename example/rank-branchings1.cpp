@@ -10,36 +10,34 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/rank_spanning_branchings.hpp>
 
-template<class Graph>
 struct print_branching
 {
 
-  const Graph& m_g;
+  print_branching(){}
 
-  typedef
-    typename boost::property_map<Graph, boost::edge_weight_t>::const_type
-    WeightMap;
-
-  WeightMap w;
-  typename boost::property_traits<WeightMap>::value_type weight;
-
-  print_branching( const Graph& g ) : m_g( g ) {} 
-
-  template<class EdgeIterator>
-  bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
+  template <typename BranchingGraph>
+  bool operator()( BranchingGraph& bg )
   {
+
+    typedef
+      typename
+        boost::property_map<BranchingGraph, boost::edge_weight_t>::const_type
+        WeightMap;
+
+    WeightMap w;
+    typename boost::property_traits<WeightMap>::value_type weight;
 
     std::cout << "Branching:";
 
     weight = 0.;
 
-    while( p.first != p.second )
+    BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
     {
 
-      std::cout << " (" << boost::source( *p.first, m_g ) << "," <<
-        boost::target( *p.first, m_g ) << ")";
+      std::cout << " (" << boost::source( e, bg ) << "," <<
+        boost::target( e, bg ) << ")";
 
-      weight += get( w, *p.first++ );
+      weight += get( w, e );
 
     }
 
@@ -91,7 +89,7 @@ main()
 
   boost::rank_spanning_branchings(
     g,
-    print_branching<Graph>( g )
+    print_branching()
   );
 
   std::cout << std::endl;
@@ -104,7 +102,7 @@ main()
 
   boost::rank_spanning_branchings(
     g,
-    print_branching<Graph>( g ),
+    print_branching(),
     boost::distance_compare( std::greater<int>() )
   );
 

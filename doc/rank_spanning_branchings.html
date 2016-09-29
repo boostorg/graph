@@ -30,7 +30,7 @@ rank_spanning_branchings(Graph&amp; g, BranchingProcessor bp,
 <p>
 The <tt>rank_spanning_branchings()</tt> function finds, in order by branching
 weight, the spanning branchings in a directed graph with weighted edges.
-If a directed graph has size <tt>N</tt>, a spanning branching is an
+If the order of a directed graph is <tt>N</tt>, a spanning branching is an
 acyclic subgraph of 
 that graph with <tt>N-1</tt> edges such that no vertex has indegree larger than
 one.  The weight of the branching is the sum of the weights of the edges
@@ -45,10 +45,9 @@ to process the branching and then
 moves on to find the next branching.  The
 user-supplied
 <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a>
-must take as
-input a <tt>std::pair</tt>
-of iterators (begin, end) to allow iteration over the edges
-in the branching.
+must take as input
+a <a href="filtered_graph.html">filtered view</a> of the parent graph
+that gives the branching.
 </p>
 <p>
 The Camerini et al. algorithm starts with a directed graph that has
@@ -230,12 +229,9 @@ BranchingProcessor
 
 <p>
 BranchingProcessor is used in the <tt>rank_spanning_branchings()</tt>
-function to
-process the edges in a branching.  It is a functor that is called with
-a <tt>std::pair</tt>
-of iterators.  The first iterator of the pair points to the first
-edge in the branching while the second points to one past the last edge in
-the branching.  The processor must return a boolean.  If the return value is
+function to process the current branching.  It is a functor that is called with
+a <a href="filtered_graph.html">filtered view</a> of the parent graph.
+The processor must return a boolean.  If the return value is
 true, <tt>rank_spanning_branchings()</tt>
 continues and seeks the next branching.
 If the return value is false, <tt>rank_spanning_branchings()</tt> stops.
@@ -245,21 +241,18 @@ If the return value is false, <tt>rank_spanning_branchings()</tt> stops.
 The following functor is an example 
 <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> that prints out the edges in a branching.
 <pre>
-template&lt;class Graph&gt;
 struct print_branching
 {
-  const Graph&amp; m_g;
 
-  print_branching( const Graph&amp; g ) : m_g( g ) {} 
+  print_branching() {} 
 
-  template&lt;class EdgeIterator&gt;
-  bool operator()( std::pair&lt;EdgeIterator, EdgeIterator&gt; p )
+  template&lt;class BranchingGraph&gt;
+  bool operator()( const BranchingGraph& bg )
   {
     std::cout << "Branching:";
-    while( p.first != p.second )
+    BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
     {
-      std::cout << " (" << source( *p.first, m_g ) << "," << target( *p.first, m_g ) << ")";
-      p.first++;
+      std::cout << " (" << source( e, bg ) << "," << target( e, bg ) << ")";
     }
     std::cout << std::endl;
     return true;
@@ -274,7 +267,7 @@ on to find the next branching.
 This example
 <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> could be called on a <tt>Graph g</tt> as
 <pre>
-rank_spanning_branchings( g, print_branching&lt;Graph&gt;( g ) );
+rank_spanning_branchings( g, print_branching() );
 </pre>
 This would print out all spanning branchings in the graph in descending order
 by branching weight.
@@ -301,8 +294,6 @@ IN: <tt>const Graph&amp; g</tt>
 <blockquote>
   A functor that models <a href="./rank_spanning_branchings.html#concept:BranchingProcessor">BranchingProcessor</a> to process the edges in a branching.<br>
 </blockquote>
-
-
 
 <h3>Named Parameters</h3>
 

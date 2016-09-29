@@ -28,10 +28,10 @@
 
 // When rank_spanning_branchings finds a branching, it calls the user-defined 
 // functor (in this case, my_function).  The functor takes as input
-// a pair of iterators.  The first iterator refers to the first edge in the
-// branching while the second refers to (one past) the end of the branching.
-// If the functor returns false, rank_spanning_branchings will stop ranking
-// the branchings and will return.
+// a filtered view of the parent graph that gives the branching.  If the
+// functor returns false, rank_spanning_branchings will stop ranking the
+// branchings and will return.  If the functor returns true,
+// rank_spanning_branchings will continue to find the next branching.
 
 using namespace boost;
 
@@ -41,33 +41,41 @@ class my_function
 
   public:
 
-    my_function(
-      const Graph& g, double& _max_weight, double _cut
-    ) : m_g( g ), max_weight( _max_weight ), cut( _cut )
+    typedef
+      typename property_map<Graph, edge_weight_t>::const_type WeightMap;
+
+    typedef
+      typename property_traits<WeightMap>::value_type weight_t;
+
+    my_function( weight_t& _max_weight, weight_t _cut ) :
+      max_weight( _max_weight ), cut( _cut )
     {}
 
-    template<class EdgeIterator>
-    bool operator()( std::pair<EdgeIterator, EdgeIterator> p )
+    template<class BranchingGraph>
+    bool operator()( BranchingGraph& bg )
     {
 
-      weight = 0;
+      WeightMap w;
+
+      typename property_map<BranchingGraph, vertex_name_t>::const_type name_map;
+
+      weight_t weight = 0;
 
       b_string = "";
 
-      EdgeIterator ei, ei_end;
-
-      for( boost::tie( ei, ei_end ) = p; ei != ei_end; ei++ )
+      BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
       {
-        weight += get( w, *ei );
+
+        weight += get( w, e );
 
         std::stringstream ss;
-        ss << "(" << name_map[source( *ei, m_g )] << ", " <<
-              name_map[target( *ei, m_g )] << ") ";
+        ss << "(" << name_map[source( e, bg )] << ", " <<
+              name_map[target( e, bg )] << ") ";
 
         b_string += ss.str();
       }
 
-      if( max_weight == -std::numeric_limits<double>::infinity() )
+      if( max_weight == -std::numeric_limits<weight_t>::infinity() )
       {
         max_weight = weight;
       }
@@ -93,17 +101,10 @@ class my_function
     }
 
   private:
-    const Graph& m_g;
-    double& max_weight;
-    double cut;
-    typedef
-      typename boost::property_map<Graph, boost::edge_weight_t>::const_type
-      WeightMap;
-    WeightMap w;
-    typename boost::property_traits<WeightMap>::value_type weight;
-    typename property_map < Graph, vertex_name_t >::const_type name_map;
+    weight_t& max_weight;
+    weight_t cut;
     std::string b_string;
-    double d_diff;
+    weight_t d_diff;
 
 };
    
@@ -140,6 +141,11 @@ read_graph_file(
   Graph & g
 )
 {
+
+  typedef typename property_map<Graph, edge_weight_t>::const_type WeightMap;
+
+  typedef typename property_traits<WeightMap>::value_type weight_t;
+
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   std::map<std::string, Vertex> s_map;
   std::string text;
@@ -163,7 +169,7 @@ read_graph_file(
     check_vertex( g, s_map, str[1] );  // Check target;
 
     add_edge(
-      s_map[str[0]], s_map[str[1]], lexical_cast<double>( str[2] ), g
+      s_map[str[0]], s_map[str[1]], lexical_cast<weight_t>( str[2] ), g
     );
 
   }
@@ -173,16 +179,18 @@ read_graph_file(
 int main( int argc, char **argv )
 {
 
+  typedef int my_type;
+
   typedef adjacency_list <
       listS, listS, directedS,
       property <
         vertex_index_t, size_t,
         property< vertex_name_t, std::string >
       >,
-      property < edge_weight_t, double >
+      property < edge_weight_t, my_type>
     > Graph;
   std::ifstream input_file;
-  double max_weight = -std::numeric_limits<double>::infinity();
+  my_type max_weight = -std::numeric_limits<my_type>::infinity();
 
   if( argc != 3 )
   {
@@ -215,9 +223,8 @@ int main( int argc, char **argv )
   rank_spanning_branchings(
     g,
     my_function<Graph>(
-      g,
       max_weight,
-      boost::lexical_cast<double>( argv[2] )
+      lexical_cast<my_type>( argv[2] )
     )
   );
 
