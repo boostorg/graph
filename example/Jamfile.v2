@@ -54,4 +54,6 @@ exe hawick_circuits : hawick_circuits.cpp ;
 exe edge_coloring : edge_coloring.cpp ;
 exe successive_shortest_path_nonnegative_weights_example : successive_shortest_path_nonnegative_weights_example.cpp ;
 exe cycle_canceling_example : cycle_canceling_example.cpp ;
+exe rank-branchings1 : rank-branchings1.cpp ;
+exe rank-branchings2 : rank-branchings2.cpp ;
 

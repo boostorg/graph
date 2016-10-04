@@ -833,14 +833,27 @@ namespace boost {
     )
     {
 
-      typename property_traits<WeightMap>::value_type weight;
+       typedef typename property_traits<WeightMap>::value_type weight_t;
+
+       scoped_ptr<weight_t> weight;
+       weight.reset();
 
        BOOST_FOREACH( const Edge& e, branching )
        {
-	 weight += get( w, e );
+         
+         if( !weight )
+         {
+           weight.reset( new weight_t );
+           *weight = get( w, e );
+         }
+         else
+         {
+	   *weight += get( w, e );
+         }
        }
 
-       return weight;
+       return *weight;
+
     }
      
     template <typename Graph, typename BranchingProcessor, typename IndexMap,

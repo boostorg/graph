@@ -8,8 +8,8 @@
 //=======================================================================
 
 // This test first creates a complete graph or multigraph with n vertices.
-// Each arc is assigned a random integer, double, or complex weight.
-// A root vertex is added and arcs with zero weight
+// Each arc is assigned a random integer, double, complex, or defined class
+// weight.  A root vertex is added and arcs with zero weight
 // are added from the root vertex to each of the other vertices.  The test
 // then constructs all potential branchings and discards those
 // that have indegree for any vertex greater than one or contain
@@ -40,6 +40,65 @@
 using namespace boost;
 
 typedef random::mt19937 base_generator_type;
+
+template<typename T, typename U>
+class my_type
+{
+  public:
+
+    my_type(){}
+    my_type( T _t, U _u ) : t( _t ), u( _u ) {}
+
+    my_type& operator+=( const my_type& rhs )
+    {
+      this->t += rhs.t;
+      this->u += rhs.u;
+      return *this;
+    }
+
+    friend my_type operator+( my_type lhs, const my_type& rhs )
+    {
+      lhs += rhs;
+      return lhs;
+    }
+
+    my_type& operator-=( const my_type& rhs )
+    {
+      this->t -= rhs.t;
+      this->u -= rhs.u;
+      return *this;
+    }
+
+    friend my_type operator-( my_type lhs, const my_type& rhs )
+    {
+      lhs -= rhs;
+      return lhs;
+    }
+
+    bool operator!=( const my_type& rhs )
+    {
+      return !( ( this->t == rhs.t ) && ( this->u == rhs.u ) );
+    }
+
+    bool operator<( const my_type& rhs ) const
+    {
+      if( this->t == rhs.t )
+       return this->u < rhs.u;
+      else
+       return this->t < rhs.t;
+    }
+
+    friend std::ostream& operator<<( std::ostream& os, const my_type& p )
+    {
+      os << "(" << p.t << ", " << p.u << ")";
+      return os;
+    }
+
+  private:
+    T t;
+    U u;
+
+};
 
 template<typename T>
 struct my_compare
@@ -100,22 +159,26 @@ struct set_rank_vector
       typename
         property_map<BranchingGraph, edge_weight_t>::const_type weight_map_t;
     weight_map_t w;
-    typename property_traits<weight_map_t>::value_type weight;
+    typedef typename property_traits<weight_map_t>::value_type weight_t;
 
-    weight = 0;
+    scoped_ptr<weight_t> weight;
+    weight.reset();
 
     BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
     {
-
-      weight += get( w, e );
-
+      if( !weight )
+      {
+        weight.reset( new weight_t );
+        *weight = get( w, e );
+      }
+      else
+      {
+        *weight += get( w, e );
+      }
       branching.insert( e );
-
     }
 
-    rank_vector.push_back(Branching<Graph,Edge>(
-      weight, branching )
-    ); 
+    rank_vector.push_back(Branching<Graph,Edge>( *weight, branching ) ); 
 
     return true;
 
@@ -138,7 +201,7 @@ set_branching(
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
   std::set<Vertex> in_vertex_set;
   typedef typename property_map<Graph, edge_weight_t>::const_type weight_map_t;
-  typename property_traits<weight_map_t>::value_type weight;
+  typedef typename property_traits<weight_map_t>::value_type weight_t;
   std::set<Edge> branching_edges;
 
   BGL_FORALL_VERTICES_T( v, g, Graph )
@@ -155,17 +218,24 @@ set_branching(
     in_vertex_set.insert( target( e, g ) );
   }
   
-  weight = 0;
+  scoped_ptr<weight_t> weight;
+  weight.reset();
 
   BOOST_FOREACH( size_t i, combination )
   {
     Edge e = v_edges[i];
-    weight += get( edge_weight, g, e );
+    if( !weight )
+    {
+      weight.reset( new weight_t );
+      *weight = get( edge_weight, g, e );
+    }
+    else
+    {
+      *weight += get( edge_weight, g, e );
+    }
     branching_edges.insert( e );
   }
-  branchings.push_back(
-    Branching<Graph,Edge>( weight, branching_edges )
-  );
+  branchings.push_back( Branching<Graph,Edge>( *weight, branching_edges ) );
 }
 
 template<class Graph, class Edge>
@@ -238,12 +308,12 @@ compare_heap_and_vector(
   // Compare branchings in heap and ranked vector.  Allow for the possibility
   // that two branchings might have the same weight (hence the second loop).
 
+  typename property_map<Graph, vertex_index_t>::type index_map =
+    get( vertex_index, g );
+
   bool found;
 
   std::set<size_t> check;
-
-  typename property_map < Graph, vertex_index_t >::type index_map =
-    get( vertex_index, g ); 
 
   for( size_t i = 0; i < rank_vector.size(); i++ )
   {
@@ -292,8 +362,8 @@ compare_heap_and_vector(
       BOOST_FOREACH( Edge e, branching_heap.top().v_edges )
       {
         std::cerr <<
-        " (" << source( e, g ) <<
-        "," << target( e, g ) << ") ";
+        " (" << index_map[source( e, g )] <<
+        "," << index_map[target( e, g )] << ") ";
       }
       std::cerr << " Weight: " << branching_heap.top().weight << std::endl;
         std::cerr << std::endl;
@@ -624,6 +694,106 @@ void test_complex_graph( base_generator_type& gen, size_t n, Compare comp )
 
 }
 
+template<class Compare>
+void test_class_graph( base_generator_type& gen, size_t n, Compare comp )
+{
+
+  typedef adjacency_list < vecS, vecS, directedS,
+     no_property, property < edge_weight_t, my_type<double, double > >
+  > Graph;
+  typedef graph_traits <Graph>::edge_descriptor Edge;
+
+  std::vector<size_t> indices;
+  std::vector<size_t> combination;
+  std::vector<Edge> v_edges;
+  std::vector<Branching<Graph,Edge> > branchings, rank_vector;
+
+  typedef
+    heap::fibonacci_heap<
+      Branching<Graph,Edge>,
+      heap::compare<compare_branchings<Graph,Edge,Compare> >
+    > branching_heap_t;
+
+  branching_heap_t branching_heap( comp );
+
+  boost::random::uniform_real_distribution<> tdist( -10, 10 );
+
+  boost::variate_generator<
+    base_generator_type&, boost::random::uniform_real_distribution<>
+  > rvt( gen, tdist );
+
+  Graph g;
+
+  for( size_t i = 0; i < n; i++ )
+  {
+    for( size_t j = 0; j < n; j++ )
+    {
+      if( i != j )
+      {
+        add_edge( i, j, my_type<double, double>( rvt(), rvt() ), g );
+      }
+    }
+    add_edge( n, i, my_type<double, double>( 0, 0 ), g );
+  }
+
+  BGL_FORALL_EDGES( e, g, Graph )
+  {
+    v_edges.push_back( e );
+  }
+
+  for( size_t i = 0; i < v_edges.size(); ++i )
+  {
+    indices.push_back(i);
+  }
+
+  loop(
+    0,
+    num_vertices(g) - 1,
+    g,
+    v_edges,
+    indices,
+    combination,
+    branchings
+  );
+
+  for( size_t i = 0; i < branchings.size(); i++ )
+  {
+    branching_heap.push( branchings[i] );
+  }
+
+  // Call explicitly with named parameters to test.
+
+  rank_spanning_branchings(
+    g,
+    set_rank_vector<Graph, Edge>( rank_vector ),
+    distance_compare( comp ).
+    weight_map( get( edge_weight, g ) ).
+    vertex_index_map( get( vertex_index, g ) )
+  );
+
+  // Check that number of branchings found is correct.  The formula
+  // accounts for the parallel edges.
+
+  assert(
+    pow(
+      static_cast<double>( n + 1 ),
+      static_cast<double>( n - 1 )
+    )
+    ==
+    rank_vector.size()
+  );
+
+  assert( branchings.size() == rank_vector.size() );
+
+  // Compare branchings found by both methods.
+
+  if( !compare_heap_and_vector( g, branching_heap, rank_vector ) )
+  {
+    exit( EXIT_FAILURE );
+  }
+
+}
+
 int main( int argc, char **argv )
 {
 
@@ -650,6 +820,11 @@ int main( int argc, char **argv )
     );
     test_complex_graph(
       gen, lexical_cast<size_t>( argv[1] ) + 1, my_compare<double>()
+    );
+    test_class_graph(
+      gen,
+      lexical_cast<size_t>( argv[1] ) + 1,
+      std::less<my_type<double, double> >()
     );
   }
 
