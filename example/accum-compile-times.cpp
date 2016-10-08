@@ -70,8 +70,6 @@ main()
 
   auto name_map = get(vertex_name, g);
   auto compile_cost_map = get(vertex_compile_cost, g);
-  auto distance_map = get(vertex_distance, g);
-  auto color_map = get(vertex_color, g);
 
   std::ifstream name_in("makefile-target-names.dat");
   std::ifstream compile_cost_in("target-compile-costs.dat");
