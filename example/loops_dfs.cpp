@@ -50,7 +50,6 @@ find_loops(typename graph_traits < Graph >::vertex_descriptor entry,
 {
   BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
   typedef typename graph_traits < Graph >::edge_descriptor Edge;
-  typedef typename graph_traits < Graph >::vertex_descriptor Vertex;
   std::vector < Edge > back_edges;
   std::vector < default_color_type > color_map(num_vertices(g));
   depth_first_visit(g, entry,
