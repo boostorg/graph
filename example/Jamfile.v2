@@ -25,7 +25,7 @@ exe boost_web_graph : boost_web_graph.cpp ;
 exe boykov_kolmogorov-eg : boykov_kolmogorov-eg.cpp ;
 exe bron_kerbosch_clique_number : bron_kerbosch_clique_number.cpp ;
 exe bron_kerbosch_print_cliques : bron_kerbosch_print_cliques.cpp ;
-exe bucket_sorter : bucket_sorter.cpp ;
+#exe bucket_sorter : bucket_sorter.cpp ;
 exe canonical_ordering : canonical_ordering.cpp ;
 # exe cc-internet : cc-internet.cpp ../build//boost_graph ;
 exe city_visitor : city_visitor.cpp ;
@@ -39,7 +39,7 @@ exe connected-components : connected-components.cpp ;
 
 exe container_gen : container_gen.cpp ;
 exe copy-example : copy-example.cpp ;
-exe csr-example : csr-example.cpp ;
+# exe csr-example : csr-example.cpp ;
 exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp ;
 exe cycle_canceling_example : cycle_canceling_example.cpp ;
 exe cycle-file-dep2 : cycle-file-dep2.cpp ;
@@ -55,7 +55,7 @@ exe dfs-example : dfs-example.cpp ;
 
 # TODO: Duplicate?
 exe dfs_parenthesis : dfs_parenthesis.cpp ;
-exe dfs-parenthesis : dfs-parenthesis.cpp ;
+# exe dfs-parenthesis : dfs-parenthesis.cpp ;
 
 exe dijkstra-example : dijkstra-example.cpp ;
 exe dijkstra-example-listS : dijkstra-example-listS.cpp ;
@@ -67,7 +67,7 @@ exe edge_coloring : edge_coloring.cpp ;
 
 # TODO: Duplicate?
 exe edge_connectivity : edge_connectivity.cpp ;
-exe edge-connectivity : edge-connectivity.cpp ;
+# exe edge-connectivity : edge-connectivity.cpp ;
 
 exe edge-function : edge-function.cpp ;
 
@@ -122,7 +122,7 @@ exe kevin-bacon : kevin-bacon.cpp ;
 exe king_ordering : king_ordering.cpp ;
 exe knights-tour : knights-tour.cpp ;
 exe kruskal-example : kruskal-example.cpp ;
-exe kruskal-telephone : kruskal-telephone.cpp ;
+# exe kruskal-telephone : kruskal-telephone.cpp ;
 exe kuratowski_subgraph : kuratowski_subgraph.cpp ;
 # exe labeled_graph : last-mod-time.cpp ;
 exe last-mod-time : last-mod-time.cpp ;
@@ -131,7 +131,7 @@ exe last-mod-time : last-mod-time.cpp ;
 # exe leda-concept-check : leda-concept-check.cpp ;
 # exe leda-graph-eg : leda-graph-eg.cpp ;
 
-exe loops_dfs : loops_dfs.cpp ;
+# exe loops_dfs : loops_dfs.cpp ;
 exe make_biconnected_planar : make_biconnected_planar.cpp ;
 exe make_maximal_planar : make_maximal_planar.cpp ;
 exe matching_example : matching_example.cpp ;
@@ -154,7 +154,7 @@ exe ospf-example : ospf-example.cpp ../build//boost_graph ;
 exe parallel-compile-time : parallel-compile-time.cpp ;
 exe planar_face_traversal : planar_face_traversal.cpp ;
 exe prim-example : prim-example.cpp ;
-exe prim-telephone : prim-telephone.cpp ;
+# exe prim-telephone : prim-telephone.cpp ;
 exe print-adjacent-vertices : print-adjacent-vertices.cpp ;
 exe print-edges : print-edges.cpp ;
 exe print-in-edges : print-in-edges.cpp ;
@@ -167,7 +167,8 @@ exe quick_tour : quick_tour.cpp ;
 exe r_c_shortest_paths_example : r_c_shortest_paths_example.cpp ;
 exe read_graphviz : read_graphviz.cpp ../build//boost_graph ;
 exe read_write_dimacs-eg : read_write_dimacs-eg.cpp ;
-exe reachable-loop-tail : reachable-loop-tail.cpp ;
+# exe reachable-loop-head : reachable-loop-head.cpp ;
+# exe reachable-loop-tail : reachable-loop-tail.cpp ;
 exe remove_edge_if_bidir : remove_edge_if_bidir.cpp ;
 exe remove_edge_if_dir : remove_edge_if_dir.cpp ;
 exe remove_edge_if_undir : remove_edge_if_undir.cpp ;
@@ -179,7 +180,7 @@ exe reverse-graph-eg : reverse-graph-eg.cpp ;
 exe quick_tour : quick_tour.cpp ;
 # exe quick_tour_new : quick_tour_new.cpp ;
 exe scaled_closeness_centrality : scaled_closeness_centrality.cpp ;
-exe scc : scc.cpp ;
+# exe scc : scc.cpp ;
 exe simple_planarity_test : simple_planarity_test.cpp ;
 exe sloan_ordering : sloan_ordering.cpp ;
 exe stoer_wagner : stoer_wagner.cpp ;
