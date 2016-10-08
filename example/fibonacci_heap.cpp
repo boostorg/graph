@@ -39,7 +39,7 @@ main()
       ICmp cmp(&w[0], std::less<float>());
       fibonacci_heap<int, ICmp> Q(N, cmp);
 
-      for (int c = 0; c < w.size(); ++c)
+      for (std::size_t c = 0; c < w.size(); ++c)
         w[c] = c;
 #ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
       std::random_shuffle(w.begin(), w.end());
