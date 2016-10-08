@@ -142,7 +142,7 @@ exe mean_geodesic : mean_geodesic.cpp ;
 # This needs SGB headers, via BGL's stanford_graph.h:
 # exe miles_span : miles_span.cpp ;
 
-exe minimum_degree_ordering : minimum_degree_ordering.cpp ;
+exe minimum_degree_ordering : minimum_degree_ordering.cpp iohb.c ;
 
 # This has an error pragma explaining that it is incorrect.
 # exe min_max_paths : min_max_paths.cpp ;
