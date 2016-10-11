@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
     // The two indicies should always be equal
     std::cout << "Index of vertex " << v_index << " is " <<
-      get(boost::vertex_index, graph, vertex(v_index, graph)) << std::endl;
+      boost::get(boost::vertex_index, graph, vertex(v_index, graph)) << std::endl;
 
   }
 
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     // The two indicies should always be equal
     std::cout << "Index of edge " << e_index << " is " <<
-      get(boost::edge_index, graph, edge_at(e_index, graph)) << std::endl;
+      boost::get(boost::edge_index, graph, edge_at(e_index, graph)) << std::endl;
 
   }
 

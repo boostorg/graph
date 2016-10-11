@@ -63,16 +63,20 @@ namespace boost {
       return (m_graph->index_of(key));
     }
 
-    friend inline Index
-    get(const grid_graph_index_map<Graph, Descriptor, Index>& index_map,
-        const typename grid_graph_index_map<Graph, Descriptor, Index>::key_type& key)
-    {
-      return (index_map[key]);
-    }
 
   protected:
     const Graph* m_graph;
   };
+
+  template <typename Graph,
+            typename Descriptor,
+            typename Index>
+  inline Index
+  get(const grid_graph_index_map<Graph, Descriptor, Index>& index_map,
+      const typename grid_graph_index_map<Graph, Descriptor, Index>::key_type& key)
+  {
+    return (index_map[key]);
+  }
 
   template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
   struct property_map<BOOST_GRID_GRAPH_TYPE, vertex_index_t> {
@@ -109,13 +113,15 @@ namespace boost {
       return (value_type(key.second, key.first));
     }
 
-    friend inline Descriptor
-    get(const grid_graph_reverse_edge_map<Descriptor>& rev_map,
-        const typename grid_graph_reverse_edge_map<Descriptor>::key_type& key)
-    {
-      return (rev_map[key]);
-    }
   };
+
+  template <typename Descriptor>
+  inline Descriptor
+  get(const grid_graph_reverse_edge_map<Descriptor>& rev_map,
+      const typename grid_graph_reverse_edge_map<Descriptor>::key_type& key)
+  {
+    return (rev_map[key]);
+  }
 
   template<BOOST_GRID_GRAPH_TEMPLATE_PARAMS>
   struct property_map<BOOST_GRID_GRAPH_TYPE, edge_reverse_t> {
@@ -429,6 +435,7 @@ namespace boost {
       return (m_edge_count[dimension_index]);
     }
 
+  public:
     // Returns the index of [vertex] (See also vertex_at)
     vertices_size_type index_of(vertex_descriptor vertex) const {
 
@@ -445,6 +452,8 @@ namespace boost {
 
       return (vertex_index);
     }
+
+  protected:
 
     // Returns the vertex whose index is [vertex_index] (See also
     // index_of(vertex_descriptor))
@@ -536,6 +545,7 @@ namespace boost {
       return (std::make_pair(vertex_source, vertex_target));
     }
     
+  public:
     // Returns the index for [edge] (See also edge_at)
     edges_size_type index_of(edge_descriptor edge) const {
       vertex_descriptor source_vertex = source(edge, *this);
@@ -618,6 +628,8 @@ namespace boost {
 
       return (edge_index);
     }
+
+  protected:
 
     // Returns the number of out-edges for [vertex]
     degree_size_type out_degree(vertex_descriptor vertex) const {
@@ -953,48 +965,6 @@ namespace boost {
     // Index Property Map Functions
     //=============================
 
-    friend inline typename type::vertices_size_type
-    get(vertex_index_t,
-        const type& graph,
-        typename type::vertex_descriptor vertex) {
-      return (graph.index_of(vertex));
-    }
-
-    friend inline typename type::edges_size_type
-    get(edge_index_t,
-        const type& graph,
-        typename type::edge_descriptor edge) {
-      return (graph.index_of(edge));
-    }
-
-    friend inline grid_graph_index_map<
-                    type,
-                    typename type::vertex_descriptor,
-                    typename type::vertices_size_type>
-    get(vertex_index_t, const type& graph) {
-      return (grid_graph_index_map<
-                type,
-                typename type::vertex_descriptor,
-                typename type::vertices_size_type>(graph));
-    }
-
-    friend inline grid_graph_index_map<
-                    type,
-                    typename type::edge_descriptor,
-                    typename type::edges_size_type>
-    get(edge_index_t, const type& graph) {
-      return (grid_graph_index_map<
-                type,
-                typename type::edge_descriptor,
-                typename type::edges_size_type>(graph));
-    }                                       
-
-    friend inline grid_graph_reverse_edge_map<
-                    typename type::edge_descriptor>
-    get(edge_reverse_t, const type& graph) {
-      return (grid_graph_reverse_edge_map<
-                typename type::edge_descriptor>());
-    }                                       
 
     template<typename Graph,
              typename Descriptor,
@@ -1006,6 +976,63 @@ namespace boost {
 
   }; // grid_graph
 
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline VertexIndex
+  get(vertex_index_t,
+      const grid_graph<Dimensions, VertexIndex, EdgeIndex> & graph,
+      typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_descriptor vertex) {
+    return (graph.index_of(vertex));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline VertexIndex
+  get(edge_index_t,
+      const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph,
+      typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor edge) {
+    return (graph.index_of(edge));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline grid_graph_index_map<
+                  grid_graph<Dimensions, VertexIndex, EdgeIndex>,
+                  typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_descriptor,
+                  VertexIndex>
+  get(vertex_index_t, const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (grid_graph_index_map<
+              grid_graph<Dimensions, VertexIndex, EdgeIndex>,
+              typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_descriptor,
+              VertexIndex>(graph));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline grid_graph_index_map<
+                  grid_graph<Dimensions, VertexIndex, EdgeIndex>,
+                  typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor,
+                  EdgeIndex>
+  get(edge_index_t, const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (grid_graph_index_map<
+              grid_graph<Dimensions, VertexIndex, EdgeIndex>,
+              typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor,
+              EdgeIndex>(graph));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline grid_graph_reverse_edge_map<
+                  typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor>
+  get(edge_reverse_t, const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (grid_graph_reverse_edge_map<
+              typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor>());
+  }
 } // namespace boost
 
 #undef BOOST_GRID_GRAPH_TYPE
