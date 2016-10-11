@@ -92,7 +92,7 @@ void do_test(minstd_rand& generator) {
 
   // Verify all vertices are within bounds
   vertices_size_type vertex_count = 0;
-  BOOST_FOREACH(vertex_descriptor current_vertex, vertices(graph)) {
+  BOOST_FOREACH(vertex_descriptor current_vertex, boost::vertices(graph)) {
 
     vertices_size_type current_index =
       boost::get(boost::vertex_index, graph, current_vertex);
@@ -154,7 +154,7 @@ void do_test(minstd_rand& generator) {
 
     // Verify that this vertex is not listed as connected to any
     // vertices outside of its adjacent vertices.
-    BOOST_FOREACH(vertex_descriptor unconnected_vertex, vertices(graph)) {
+    BOOST_FOREACH(vertex_descriptor unconnected_vertex, boost::vertices(graph)) {
       
       vertices_size_type unconnected_index =
         boost::get(boost::vertex_index, graph, unconnected_vertex);

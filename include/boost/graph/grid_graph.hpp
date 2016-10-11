@@ -417,8 +417,7 @@ namespace boost {
       return (vertex);    
     }
 
-  protected:
-
+  public:
     // Returns the number of vertices in the graph
     inline vertices_size_type num_vertices() const {
       return (m_num_vertices);
@@ -435,7 +434,6 @@ namespace boost {
       return (m_edge_count[dimension_index]);
     }
 
-  public:
     // Returns the index of [vertex] (See also vertex_at)
     vertices_size_type index_of(vertex_descriptor vertex) const {
 
@@ -452,8 +450,6 @@ namespace boost {
 
       return (vertex_index);
     }
-
-  protected:
 
     // Returns the vertex whose index is [vertex_index] (See also
     // index_of(vertex_descriptor))
@@ -751,35 +747,6 @@ namespace boost {
 
   public:
 
-    //================
-    // VertexListGraph
-    //================
-
-    friend inline std::pair<typename type::vertex_iterator,
-                            typename type::vertex_iterator> 
-    vertices(const type& graph) {
-      typedef typename type::vertex_iterator vertex_iterator;
-      typedef typename type::vertex_function vertex_function;
-      typedef typename type::vertex_index_iterator vertex_index_iterator;
-
-      return (std::make_pair
-              (vertex_iterator(vertex_index_iterator(0),
-                               vertex_function(&graph)),
-               vertex_iterator(vertex_index_iterator(graph.num_vertices()),
-                               vertex_function(&graph))));
-    }
-
-    friend inline typename type::vertices_size_type
-    num_vertices(const type& graph) {
-      return (graph.num_vertices());
-    }
-
-    friend inline typename type::vertex_descriptor
-    vertex(typename type::vertices_size_type vertex_index,
-           const type& graph) {
-
-      return (graph.vertex_at(vertex_index));
-    }
 
     //===============
     // IncidenceGraph
@@ -975,6 +942,45 @@ namespace boost {
     friend struct grid_graph_reverse_edge_map;
 
   }; // grid_graph
+
+  //================
+  // VertexListGraph
+  //================
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline std::pair<typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_iterator,
+                          typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_iterator> 
+  vertices(const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_iterator vertex_iterator;
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_function vertex_function;
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_index_iterator vertex_index_iterator;
+
+    return (std::make_pair
+            (vertex_iterator(vertex_index_iterator(0),
+                             vertex_function(&graph)),
+             vertex_iterator(vertex_index_iterator(graph.num_vertices()),
+                             vertex_function(&graph))));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertices_size_type
+  num_vertices(const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (graph.num_vertices());
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertex_descriptor
+  vertex(typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::vertices_size_type vertex_index,
+         const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+
+    return (graph.vertex_at(vertex_index));
+  }
 
   template <std::size_t Dimensions,
             typename VertexIndex = std::size_t,
