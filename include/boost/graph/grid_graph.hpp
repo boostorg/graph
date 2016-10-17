@@ -800,34 +800,6 @@ namespace boost {
                                  adjacent_vertex_function(vertex, &graph))));
     }
 
-    //==============
-    // EdgeListGraph
-    //==============
-
-    friend inline typename type::edges_size_type
-    num_edges(const type& graph) {
-      return (graph.num_edges());
-    }
-
-    friend inline typename type::edge_descriptor
-    edge_at(typename type::edges_size_type edge_index,
-            const type& graph) {
-      return (graph.edge_at(edge_index));
-    }
-
-    friend inline std::pair<typename type::edge_iterator,
-                            typename type::edge_iterator>
-    edges(const type& graph) {
-      typedef typename type::edge_index_iterator edge_index_iterator;
-      typedef typename type::edge_function edge_function;
-      typedef typename type::edge_iterator edge_iterator;
-
-      return (std::make_pair
-              (edge_iterator(edge_index_iterator(0),
-                             edge_function(&graph)),
-               edge_iterator(edge_index_iterator(graph.num_edges()),
-                             edge_function(&graph))));
-    }
 
     //===================
     // BiDirectionalGraph
@@ -1038,6 +1010,44 @@ namespace boost {
   get(edge_reverse_t, const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
     return (grid_graph_reverse_edge_map<
               typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor>());
+  }
+
+  //==============
+  // EdgeListGraph
+  //==============
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline EdgeIndex 
+  num_edges(const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (graph.num_edges());
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_descriptor
+  edge_at(EdgeIndex edge_index,
+          const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    return (graph.edge_at(edge_index));
+  }
+
+  template <std::size_t Dimensions,
+            typename VertexIndex = std::size_t,
+            typename EdgeIndex = VertexIndex>
+  inline std::pair<typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_iterator,
+                          typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_iterator>
+  edges(const grid_graph<Dimensions, VertexIndex, EdgeIndex>& graph) {
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_index_iterator edge_index_iterator;
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_function edge_function;
+    typedef typename grid_graph<Dimensions, VertexIndex, EdgeIndex>::edge_iterator edge_iterator;
+
+    return (std::make_pair
+            (edge_iterator(edge_index_iterator(0),
+                           edge_function(&graph)),
+             edge_iterator(edge_index_iterator(graph.num_edges()),
+                           edge_function(&graph))));
   }
 } // namespace boost
 

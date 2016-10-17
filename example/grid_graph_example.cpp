@@ -32,17 +32,17 @@ int main(int argc, char* argv[]) {
 
   // Do a round-trip test of the vertex index functions
   for (Traits::vertices_size_type v_index = 0;
-       v_index < num_vertices(graph); ++v_index) {
+       v_index < boost::num_vertices(graph); ++v_index) {
 
     // The two indicies should always be equal
     std::cout << "Index of vertex " << v_index << " is " <<
-      boost::get(boost::vertex_index, graph, vertex(v_index, graph)) << std::endl;
+      boost::get(boost::vertex_index, graph, boost::vertex(v_index, graph)) << std::endl;
 
   }
 
   // Do a round-trip test of the edge index functions
   for (Traits::edges_size_type e_index = 0;
-       e_index < num_edges(graph); ++e_index) {
+       e_index < boost::num_edges(graph); ++e_index) {
 
     // The two indicies should always be equal
     std::cout << "Index of edge " << e_index << " is " <<
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     (graph.wrapped(2) ? "W" : "U") << std::endl; // prints "W, U, W"
 
   // Start with the first vertex in the graph
-  Traits::vertex_descriptor first_vertex = vertex(0, graph);
+  Traits::vertex_descriptor first_vertex = boost::vertex(0, graph);
   print_vertex(first_vertex); // prints "(0, 0, 0)"
 
   // Print the next vertex in dimension 0
