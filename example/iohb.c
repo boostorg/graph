@@ -1340,7 +1340,7 @@ int writeHB_mat_char(const char* filename, int M, int N,
     int Ptrperline, Ptrwidth, Indperline, Indwidth;
     int Rhsperline, Rhswidth, Rhsprec;
     int Rhsflag;
-    int Valperline, Valwidth, Valprec;
+    int Valperline = 1, Valwidth, Valprec;
     int Valflag;           /* Indicates 'E','D', or 'F' float format */
     char pformat[16],iformat[16],vformat[19],rformat[19];
 
