@@ -177,7 +177,6 @@ exe reverse-graph-eg : reverse-graph-eg.cpp ;
 # This needs SGB headers, via BGL's stanford_graph.h:
 # exe roget_components : roget_components.cpp ;
 
-exe quick_tour : quick_tour.cpp ;
 # exe quick_tour_new : quick_tour_new.cpp ;
 exe scaled_closeness_centrality : scaled_closeness_centrality.cpp ;
 # exe scc : scc.cpp ;
