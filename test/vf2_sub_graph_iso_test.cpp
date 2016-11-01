@@ -170,6 +170,23 @@ private:
   bool output_;
 };
 
+// we pretend this is something more complicated which calculates indices somehow
+template<typename G>
+struct IndirectIndexMap {
+  typedef std::size_t value_type;
+  typedef value_type reference;
+  typedef typename boost::graph_traits<G>::vertex_descriptor key_type;
+  typedef boost::readable_property_map_tag category;
+  explicit IndirectIndexMap(const G &g) : g(g) {}
+public:
+  const G &g;
+};
+
+template<typename G>
+std::size_t get(const IndirectIndexMap<G> &map, typename boost::graph_traits<G>::vertex_descriptor v) {
+  // we pretend this is something more complicated which calculates indices somehow
+  return get(vertex_index_t(), map.g, v);
+}
 
 void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability, 
                             int max_parallel_edges, double parallel_edge_probability,
@@ -219,6 +236,11 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
   std::cout << std::endl;
   BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback, vertex_order_by_mult(g1),
                                edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)));
+  BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback,
+                               IndirectIndexMap<graph1>(g1),
+                               IndirectIndexMap<graph2>(g2),
+                               vertex_order_by_mult(g1),
+                               edge_comp, vertex_comp));
 
   std::clock_t end1 = std::clock();
   std::cout << "vf2_subgraph_iso: elapsed time (clock cycles): " << (end1 - start) << std::endl;
