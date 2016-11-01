@@ -13,12 +13,12 @@ Bugs and feature requests can be reported through the [Trac issue tracker](https
 
 You can submit your changes through a [pull request](https://github.com/boostorg/graph/pulls). One of the maintainers will take a look (remember that it can take some time).
 
-There is no mailing-list specific to Boost Graph, although you can use the general-purpose Boost [mailing-list](https://groups.google.com/forum/#!forum/boost-devel-archive) using the tag [graph].
+There is no mailing-list specific to Boost Graph, although you can use the general-purpose Boost [mailing-list](http://lists.boost.org/mailman/listinfo.cgi/boost-users) using the tag [graph].
 
 
 ## Development ##
 
-Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://svn.boost.org/trac/boost/wiki/TryModBoost#InstallingModularBoost)): 
+Clone the whole boost project, which includes the individual Boost projects as submodules ([see boost+git doc](https://github.com/boostorg/boost/wiki/Getting-Started)): 
 
     git clone https://github.com/boostorg/boost
     cd boost
