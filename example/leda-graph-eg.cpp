@@ -21,8 +21,7 @@ main()
   g.new_node("Amphitryon");
   using NodeMap = property_map<graph_t, vertex_all_t>::type;
   auto node_name_map = get(vertex_all, g);
-  graph_traits<graph_t>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    std::cout << node_name_map[*vi] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << node_name_map[vertex] << std::endl;
   return EXIT_SUCCESS;
 }

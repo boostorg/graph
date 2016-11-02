@@ -14,6 +14,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include "range_pair.hpp"
 #include <map>
 
 using namespace boost;
@@ -106,10 +107,9 @@ main()
   breadth_first_search(g, src,
                        visitor(record_bacon_number(&bacon_number[0])));
 
-  graph_traits<Graph>::vertex_iterator i, end;
-  for (std::tie(i, end) = vertices(g); i != end; ++i) {
-    std::cout << actor_name[*i] << " has a Bacon number of "
-      << bacon_number[*i] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << actor_name[vertex] << " has a Bacon number of "
+      << bacon_number[vertex] << std::endl;
   }
 
   return 0;

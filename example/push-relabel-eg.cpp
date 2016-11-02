@@ -11,6 +11,7 @@
 #include <boost/graph/push_relabel_max_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
+#include "range_pair.hpp"
 
 // Use a DIMACS network flow file as stdin.
 // push-relabel-eg < max_flow.dat
@@ -62,21 +63,19 @@ main()
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   auto indexmap = get(vertex_index, g);
-  long flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev,
+  auto flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev,
                                     indexmap);
 #else
-  long flow = push_relabel_max_flow(g, s, t);
+  auto flow = push_relabel_max_flow(g, s, t);
 #endif
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
   std::cout << "c flow values:" << std::endl;
-  graph_traits<Graph>::vertex_iterator u_iter, u_end;
-  graph_traits<Graph>::out_edge_iterator ei, e_end;
-  for (std::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-    for (std::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-      if (capacity[*ei] > 0)
-        std::cout << "f " << *u_iter << " " << target(*ei, g) << " "
-          << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    for (const auto& edge : make_range_pair(out_edges(vertex, g)))
+      if (capacity[edge] > 0)
+        std::cout << "f " << vertex << " " << target(edge, g) << " "
+          << (capacity[edge] - residual_capacity[edge]) << std::endl;
   return EXIT_SUCCESS;
 }

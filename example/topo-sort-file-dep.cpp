@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -37,10 +38,9 @@ topo_sort_dfs(const file_dep_graph & g, vertex_t u, vertex_t * &topo_order,
               int *mark)
 {
   mark[u] = 1;                  // 1 means visited, 0 means not yet visited
-  graph_traits<file_dep_graph>::adjacency_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
-    if (mark[*vi] == 0)
-      topo_sort_dfs(g, *vi, topo_order, mark);
+  for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
+    if (mark[vertex] == 0)
+      topo_sort_dfs(g, vertex, topo_order, mark);
 
   *--topo_order = u;
 }
@@ -49,10 +49,9 @@ void
 topo_sort(const file_dep_graph & g, vertex_t * topo_order)
 {
   std::vector<int>mark(num_vertices(g), 0);
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (mark[*vi] == 0)
-      topo_sort_dfs(g, *vi, topo_order, &mark[0]);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (mark[vertex] == 0)
+      topo_sort_dfs(g, vertex, topo_order, &mark[0]);
 }
 
 
@@ -79,9 +78,8 @@ main()
 
   std::vector<std::string> name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    name_in >> name[*vi];
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    name_in >> name[vertex];
 
   std::vector<vertex_t> order(num_vertices(g));
   topo_sort(g, &order[0] + num_vertices(g));

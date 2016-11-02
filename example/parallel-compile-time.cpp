@@ -14,6 +14,7 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/depth_first_search.hpp>   // for default_dfs_visitor
+#include "range_pair.hpp"
 
 namespace std
 {
@@ -57,15 +58,14 @@ dfs_v2(const Graph & g,
   using ColorT = color_traits<color_type>;
   color[u] = ColorT::gray();
   vis.discover_vertex(u, g);
-  typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
-    if (color[target(*ei, g)] == ColorT::white()) {
-      vis.tree_edge(*ei, g);
-      dfs_v2(g, target(*ei, g), color, vis);
-    } else if (color[target(*ei, g)] == ColorT::gray())
-      vis.back_edge(*ei, g);
+  for (const auto& edge : make_range_pair(out_edges(u, g)))
+    if (color[target(edge, g)] == ColorT::white()) {
+      vis.tree_edge(edge, g);
+      dfs_v2(g, target(edge, g), color, vis);
+    } else if (color[target(edge, g)] == ColorT::gray())
+      vis.back_edge(edge, g);
     else
-      vis.forward_or_cross_edge(*ei, g);
+      vis.forward_or_cross_edge(edge, g);
   color[u] = ColorT::black();
   vis.finish_vertex(u, g);
 }
@@ -75,12 +75,11 @@ generic_dfs_v2(const Graph & g, Visitor vis, ColorMap color)
 {
   using ColorValue = typename property_traits <ColorMap >::value_type;
   using ColorT = color_traits<ColorValue> ;
-  typename graph_traits<Graph>::vertex_iterator  vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    color[*vi] = ColorT::white();
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (color[*vi] == ColorT::white())
-      dfs_v2(g, *vi, color, vis);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    color[vertex] = ColorT::white();
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (color[vertex] == ColorT::white())
+      dfs_v2(g, vertex, color, vis);
 }
 
 
@@ -155,41 +154,37 @@ main()
   {
     std::ifstream name_in("makefile-target-names.dat");
     std::ifstream compile_cost_in("target-compile-costs.dat");
-    graph_traits<file_dep_graph2>::vertex_iterator vi, vi_end;
-    for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-      name_in >> name_map[*vi];
-      compile_cost_in >> compile_cost_map[*vi];
+    for (const auto& vertex : make_range_pair(vertices(g))) {
+      name_in >> name_map[vertex];
+      compile_cost_in >> compile_cost_map[vertex];
     }
 
   }
   std::vector<vertex_t> topo_order(num_vertices(g));
   topo_sort(g, topo_order.rbegin(), color_map);
 
-  graph_traits<file_dep_graph2>::vertex_iterator i, i_end;
-  graph_traits<file_dep_graph2>::adjacency_iterator vi, vi_end;
-
   // find source vertices with zero in-degree by marking all vertices with incoming edges
-  for (std::tie(i, i_end) = vertices(g); i != i_end; ++i)
-    color_map[*i] = white_color;
-  for (std::tie(i, i_end) = vertices(g); i != i_end; ++i)
-    for (std::tie(vi, vi_end) = adjacent_vertices(*i, g); vi != vi_end; ++vi)
-      color_map[*vi] = black_color;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    color_map[vertex] = white_color;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    for (const auto& vertex_adjacent : make_range_pair(adjacent_vertices(vertex, g)))
+      color_map[vertex_adjacent] = black_color;
 
   // initialize distances to zero, or for source vertices, to the compile cost
-  for (std::tie(i, i_end) = vertices(g); i != i_end; ++i)
-    if (color_map[*i] == white_color)
-      distance_map[*i] = compile_cost_map[*i];
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (color_map[vertex] == white_color)
+      distance_map[vertex] = compile_cost_map[vertex];
     else
-      distance_map[*i] = 0;
+      distance_map[vertex] = 0;
 
   std::vector<vertex_t>::iterator ui;
   for (ui = topo_order.begin(); ui != topo_order.end(); ++ui) {
     vertex_t
       u = *
       ui;
-    for (std::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
-      if (distance_map[*vi] < distance_map[u] + compile_cost_map[*vi])
-        distance_map[*vi] = distance_map[u] + compile_cost_map[*vi];
+    for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
+      if (distance_map[vertex] < distance_map[u] + compile_cost_map[vertex])
+        distance_map[vertex] = distance_map[u] + compile_cost_map[vertex];
   }
 
   graph_property_iter_range < file_dep_graph2,

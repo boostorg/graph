@@ -48,6 +48,7 @@
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using Traits = boost::graph_traits<Graph*>;
 using vertex_descriptor = Traits::vertex_descriptor;
@@ -133,9 +134,8 @@ main()
     p_map = get(pred_t(), g);
     c_map = get(color_t(), g);
 
-    vertex_iterator i, end;
-    for (std::tie(i, end) = boost::vertices(g); i != end; ++i)
-      d_map[*i] = 0;
+    for (const auto& vertex : make_range_pair(boost::vertices(g)))
+      d_map[vertex] = 0;
 
     std::size_t k = 0;
     std::size_t girth = (std::numeric_limits<std::size_t>::max)();

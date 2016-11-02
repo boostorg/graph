@@ -48,18 +48,17 @@ main(int argc, char *argv[])
     << "  node [shape=\"box\"];\n" << "  edge [style=\"bold\"];\n";
 
   auto vattr_map = get(vertex_attribute, g);
-  graph_traits<GraphvizDigraph>::vertex_iterator i, i_end;
-  for (std::tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
-    loops_out << *i << "[label=\"" << vattr_map[*i]["label"]
+  for (const auto& vertex : make_range_pair(vertices(g_in))) {
+    loops_out << vertex << "[label=\"" << vattr_map[vertex]["label"]
       << "\"";
-    if (reachable_to_tail[*i] != Color::white()) {
+    if (reachable_to_tail[vertex] != Color::white()) {
       loops_out << ", color=\"gray\", style=\"filled\"";
     }
     loops_out << "]\n";
   }
-  graph_traits<GraphvizDigraph>::edge_iterator e, e_end;
-  for (std::tie(e, e_end) = edges(g_in); e != e_end; ++e)
-    loops_out << source(*e, g) << " -> " << target(*e, g) << ";\n";
+
+  for (const auto& edge : make_range_pair(edges(g_in)))
+    loops_out << source(edge, g) << " -> " << target(edge, g) << ";\n";
   loops_out << "}\n";
   return EXIT_SUCCESS;
 }

@@ -11,6 +11,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include "range_pair.hpp"
 
 int
 main()
@@ -23,11 +24,10 @@ main()
     property<edge_weight_t, int>>;
   Graph g(num_vertices(g_dot));
   auto edge_attr_map = get(edge_attribute, g_dot);
-  graph_traits<GraphvizGraph>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    int weight = lexical_cast<int>(edge_attr_map[*ei]["label"]);
+  for (const auto& edge : make_range_pair(edges(g_dot))) {
+    int weight = lexical_cast<int>(edge_attr_map[edge]["label"]);
     property<edge_weight_t, int> edge_property(weight);
-    add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
+    add_edge(source(edge, g_dot), target(edge, g_dot), edge_property, g);
   }
 
   std::vector<graph_traits<Graph>::edge_descriptor> mst;

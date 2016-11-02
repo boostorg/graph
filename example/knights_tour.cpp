@@ -15,6 +15,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/property_map/property_map.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -172,10 +173,9 @@ template <typename Graph, typename TimePropertyMap>
       return true;
 
     bool deadend = true;
-    typename graph_traits<Graph>::adjacency_iterator i, end;
-    for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
-      if (get(time_map, *i) == -1) {
-        S.push(std::make_pair(time_stamp + 1, *i));
+    for (const auto& vertex : make_range_pair(adjacent_vertices(x, g)))
+      if (get(time_map, vertex) == -1) {
+        S.push(std::make_pair(time_stamp + 1, vertex));
         deadend = false;
       }
 
@@ -198,9 +198,8 @@ template <typename Vertex, typename Graph, typename TimePropertyMap> int
 number_of_successors(Vertex x, Graph & g, TimePropertyMap time_map)
 {
   int s_x = 0;
-  typename graph_traits<Graph>::adjacency_iterator i, end;
-  for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
-    if (get(time_map, *i) == -1)
+  for (const auto& vertex : make_range_pair(adjacent_vertices(x, g)))
+    if (get(time_map, vertex) == -1)
       ++s_x;
   return s_x;
 }
@@ -226,12 +225,11 @@ template <typename Graph, typename TimePropertyMap>
 
     // Put adjacent vertices into a local priority queue
     std::priority_queue<P, std::vector<P>, compare_first> Q;
-    typename graph_traits<Graph>::adjacency_iterator i, end;
     int num_succ;
-    for (std::tie(i, end) = adjacent_vertices(x, g); i != end; ++i)
-      if (get(time_map, *i) == -1) {
-        num_succ = number_of_successors(*i, g, time_map);
-        Q.push(std::make_pair(num_succ, *i));
+    for (const auto& vertex : make_range_pair(adjacent_vertices(x, g)))
+      if (get(time_map, vertex) == -1) {
+        num_succ = number_of_successors(vertex, g, time_map);
+        Q.push(std::make_pair(num_succ, vertex));
       }
     bool deadend = Q.empty();
     // move vertices from local priority queue to the stack

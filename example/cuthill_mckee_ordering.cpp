@@ -15,6 +15,7 @@
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include "range_pair.hpp"
 
 /*
   Sample Output
@@ -58,11 +59,9 @@ int main(int , char* [])
   for (const auto& edge : edges)
     add_edge(edge.first, edge.second, G);
 
-  graph_traits<Graph>::vertex_iterator ui, ui_end;
-
   auto deg = get(vertex_degree, G);
-  for (std::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-    deg[*ui] = degree(*ui, G);
+  for(const auto& v : make_range_pair(vertices(G)))
+    deg[v] = degree(v, G);
 
   auto index_map = get(vertex_index, G);
 

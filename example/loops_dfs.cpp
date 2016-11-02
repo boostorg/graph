@@ -17,6 +17,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/copy.hpp>
 #include <boost/graph/reverse_graph.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -90,11 +91,10 @@ compute_loop_extent(typename graph_traits <
                     make_iterator_property_map(reachable_to_tail.begin(),
                                                get(vertex_index, g), c));
 
-  typename graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (reachable_from_head[*vi] != Color::white()
-        && reachable_to_tail[*vi] != Color::white())
-      loop_set.insert(*vi);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (reachable_from_head[vertex] != Color::white()
+        && reachable_to_tail[vertex] != Color::white())
+      loop_set.insert(vertex);
 }
 
 
@@ -130,7 +130,6 @@ main(int argc, char *argv[])
 
   auto vattr_map = get(vertex_attribute, g);
   auto eattr_map = get(edge_attribute, g);
-  graph_traits<Graph>::edge_iterator ei, ei_end;
 
   for (auto i = loops.begin(); i != loops.end(); ++i) {
     std::vector<bool> in_loop(num_vertices(g), false);
@@ -138,9 +137,9 @@ main(int argc, char *argv[])
       vattr_map[*j]["color"] = "gray";
       in_loop[*j] = true;
     }
-    for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-      if (in_loop[source(*ei, g)] && in_loop[target(*ei, g)])
-        eattr_map[*ei]["color"] = "gray";
+    for (const auto& edge : make_range_pair(edges(g)))
+      if (in_loop[source(edge, g)] && in_loop[target(edge, g)])
+        eattr_map[edge]["color"] = "gray";
   }
 
   std::ofstream loops_out(argv[2]);
@@ -150,21 +149,20 @@ main(int argc, char *argv[])
             << "size=\"3,3\"\n"
             << "ratio=\"fill\"\n"
             << "shape=\"box\"\n";
-  graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    loops_out << *vi << "[";
-    for (auto ai = vattr_map[*vi].begin();
-         ai != vattr_map[*vi].end(); ++ai) {
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    loops_out << vertex << "[";
+    for (auto ai = vattr_map[vertex].begin();
+         ai != vattr_map[vertex].end(); ++ai) {
       loops_out << ai->first << "=" << ai->second;
-      if (next(ai) != vattr_map[*vi].end())
+      if (next(ai) != vattr_map[vertex].end())
         loops_out << ", ";
     }
     loops_out<< "]";
   }
 
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-    loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
-    auto& attr_map = eattr_map[*ei];
+  for (const auto& edge : make_range_pair(edges(g))) {
+    loops_out << source(edge, g) << " -> " << target(edge, g) << "[";
+    auto& attr_map = eattr_map[edge];
     for (auto eai = attr_map.begin();
          eai != attr_map.end(); ++eai) {
       loops_out << eai->first << "=" << eai->second;

@@ -8,6 +8,8 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
+
 using namespace boost;
 
 template <typename UndirectedGraph> void
@@ -15,8 +17,6 @@ undirected_graph_demo1()
 {
   const int V = 3;
   UndirectedGraph undigraph(V);
-  typename graph_traits<UndirectedGraph>::out_edge_iterator out, out_end;
-  typename graph_traits<UndirectedGraph>::in_edge_iterator in, in_end;
 
   auto zero = vertex(0, undigraph);
   auto one = vertex(1, undigraph);
@@ -26,11 +26,11 @@ undirected_graph_demo1()
   add_edge(one, two, undigraph);
 
   std::cout << "out_edges(0):";
-  for (std::tie(out, out_end) = out_edges(zero, undigraph); out != out_end; ++out)
-    std::cout << ' ' << *out;
+  for (const auto& edge : make_range_pair(out_edges(zero, undigraph)))
+    std::cout << ' ' << edge;
   std::cout << std::endl << "in_edges(0):";
-  for (std::tie(in, in_end) = in_edges(zero, undigraph); in != in_end; ++in)
-    std::cout << ' ' << *in;
+  for (const auto& edge : make_range_pair(in_edges(zero, undigraph)))
+    std::cout << ' ' << edge;
   std::cout << std::endl;
 }
 
@@ -89,11 +89,10 @@ undirected_graph_demo2()
   std::cout << "weight[(v,u)] = " << get(weight, e2) << std::endl;
 
   std::cout << "the edges incident to v: ";
-  typename boost::graph_traits<UndirectedGraph>::out_edge_iterator e, e_end;
   auto s = vertex(0, undigraph);
-  for (std::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
-    std::cout << "(" << source(*e, undigraph) 
-              << "," << target(*e, undigraph) << ")" << std::endl;
+  for (const auto& edge : make_range_pair(out_edges(s, undigraph)))
+    std::cout << "(" << source(edge, undigraph) 
+              << "," << target(edge, undigraph) << ")" << std::endl;
 }
 
 

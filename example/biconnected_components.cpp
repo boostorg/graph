@@ -12,6 +12,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <iterator>
 #include <iostream>
+#include "range_pair.hpp"
 
 namespace boost
 {
@@ -61,11 +62,10 @@ main()
               << std::endl;
   }
 
-  graph_traits<graph_t>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << (char)(source(*ei, g) + 'A') << " -- " 
-              << (char)(target(*ei, g) + 'A')
-              << "[label=\"" << component[*ei] << "\"]\n";
+  for(const auto& edge : make_range_pair(edges(g)))
+    std::cout << (char)(source(edge, g) + 'A') << " -- " 
+              << (char)(target(edge, g) + 'A')
+              << "[label=\"" << component[edge] << "\"]\n";
   std::cout << "}\n";
 
   return 0;

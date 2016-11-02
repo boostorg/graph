@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -41,15 +42,14 @@ dfs_v1(const file_dep_graph & g, vertex_t u, default_color_type * color,
 {
   color[u] = gray_color;
   vis.discover_vertex(u, g);
-  graph_traits<file_dep_graph>::out_edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei) {
-    if (color[target(*ei, g)] == white_color) {
-      vis.tree_edge(*ei, g);
-      dfs_v1(g, target(*ei, g), color, vis);
-    } else if (color[target(*ei, g)] == gray_color)
-      vis.back_edge(*ei, g);
+  for (const auto& edge : make_range_pair(out_edges(u, g))) {
+    if (color[target(edge, g)] == white_color) {
+      vis.tree_edge(edge, g);
+      dfs_v1(g, target(edge, g), color, vis);
+    } else if (color[target(edge, g)] == gray_color)
+      vis.back_edge(edge, g);
     else
-      vis.forward_or_cross_edge(*ei, g);
+      vis.forward_or_cross_edge(edge, g);
   }
   color[u] = black_color;
   vis.finish_vertex(u, g);
@@ -59,10 +59,9 @@ template <typename Visitor> void
 generic_dfs_v1(const file_dep_graph & g, Visitor vis)
 {
   std::vector<default_color_type> color(num_vertices(g), white_color);
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    if (color[*vi] == white_color)
-      dfs_v1(g, *vi, &color[0], vis);
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    if (color[vertex] == white_color)
+      dfs_v1(g, vertex, &color[0], vis);
   }
 }
 
@@ -139,9 +138,8 @@ main()
 
   std::vector<std::string> name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    name_in >> name[*vi];
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    name_in >> name[vertex];
 
   std::vector<vertex_t> order(num_vertices(g));
   topo_sort(g, &order[0] + num_vertices(g));

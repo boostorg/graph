@@ -14,6 +14,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
+#include "range_pair.hpp"
 
 int
 main()
@@ -42,9 +43,8 @@ main()
   int weights[] = { 0, 0, 0, 0, 0, 3, -4, 8, 1, 7, 4, -5, 2, 6 };
   int *wp = weights;
 
-  graph_traits<Graph>::edge_iterator e, e_end;
-  for (std::tie(e, e_end) = edges(g); e != e_end; ++e)
-    w[*e] = *wp++;
+  for (const auto& edge : make_range_pair(edges(g)))
+    w[edge] = *wp++;
 
   std::vector<int >d(V, (std::numeric_limits < int>::max)());
   int D[V][V];
@@ -72,10 +72,9 @@ main()
     << "ratio=\"fill\"\n"
     << "edge[style=\"bold\"]\n" << "node[shape=\"circle\"]\n";
 
-  graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    fout << source(*ei, g) << " -> " << target(*ei, g)
-      << "[label=" << get(edge_weight, g)[*ei] << "]\n";
+  for (const auto& edge : make_range_pair(edges(g)))
+    fout << source(edge, g) << " -> " << target(edge, g)
+      << "[label=" << get(edge_weight, g)[edge] << "]\n";
 
   fout << "}\n";
   return 0;

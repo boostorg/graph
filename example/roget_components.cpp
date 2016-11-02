@@ -12,6 +12,7 @@
 #include <iostream>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/strong_components.hpp>
+#include "range_pair.hpp"
 
 #define specs(v) \
  (filename ? index_map[v] : v->cat_no) << " " << v->name
@@ -70,15 +71,14 @@ int main(int argc, char* argv[])
   std::vector<std::vector<vertex_t>> strong_comp(num_comp);
 
   // First add representative vertices to each component's list
-  graph_traits<Graph*>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (root[*vi] == *vi)
-      strong_comp[comp[index_map[*vi]]].emplace_back(*vi);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (root[vertex] == vertex)
+      strong_comp[comp[index_map[vertex]]].emplace_back(vertex);
 
   // Then add the other vertices of the component
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (root[*vi] != *vi)
-      strong_comp[comp[index_map[*vi]]].emplace_back(*vi);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (root[vertex] != vertex)
+      strong_comp[comp[index_map[vertex]]].emplace_back(vertex);
 
   // We do not print out the "from" and "to" information as Knuth
   // does because we no longer have easy access to that information
@@ -115,9 +115,8 @@ int main(int argc, char* argv[])
     vertex_t u = strong_comp[c][0];
     for (i = 0; i < strong_comp[c].size(); ++i) {
       vertex_t v = strong_comp[c][i];
-      graph_traits<Graph*>::out_edge_iterator ei, ei_end;
-      for (std::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
-        auto x = target(*ei, g);
+      for (const auto& edge : make_range_pair(out_edges(v, g))) {
+        auto x = target(edge, g);
         auto comp_x = comp[index_map[x]];
         if (comp_x != c && mark[comp_x] != c) {
           mark[comp_x] = c;

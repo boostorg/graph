@@ -20,6 +20,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 /*
@@ -141,12 +142,11 @@ copy_graph(NewGraph& g, Tag) {
 template <class Graph, class Name>
 void print(Graph& G, Name name)
 {
-  typename boost::graph_traits<Graph>::vertex_iterator ui, uiend;
-  for (std::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
-    std::cout << name[*ui] << " --> ";
-    typename boost::graph_traits<Graph>::adjacency_iterator vi, viend;
-    for(std::tie(vi, viend) = adjacent_vertices(*ui, G); vi != viend; ++vi)
-      std::cout << name[*vi] << " ";
+  for(const auto& u : make_range_pair(vertices(G))) {
+    std::cout << name[u] << " --> ";
+    for(const auto& v : make_range_pair(adjacent_vertices(u, G)))
+      std::cout << name[v] << " ";
+    std::cout << std::endl;
   }
 }
 

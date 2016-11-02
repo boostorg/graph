@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -41,10 +42,9 @@ output_out_edges(std::ostream & out, const Graph & g,
                  typename graph_traits<Graph>::vertex_descriptor u,
                  VertexNameMap name_map)
 {
-  typename graph_traits<Graph>::out_edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ++ei)
-    out << get(name_map, source(*ei, g)) << " -> "
-      << get(name_map, target(*ei, g)) << std::endl;
+  for (const auto& edge : make_range_pair(out_edges(u, g)))
+    out << get(name_map, source(edge, g)) << " -> "
+      << get(name_map, target(edge, g)) << std::endl;
 }
 
 template <typename NameMap> class name_equals_t {

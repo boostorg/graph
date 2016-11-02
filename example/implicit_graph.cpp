@@ -14,6 +14,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <utility>
+#include "range_pair.hpp"
 
 
 /*
@@ -474,20 +475,16 @@ int main (int argc, char const *argv[]) {
   // Vertex 4: (4, 0)  (4, 3)   Adjacent vertices 0 3
   // 5 vertices
   std::cout << "Vertices, outgoing edges, and adjacent vertices" << std::endl;
-  vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; vi++) {
-    vertex_descriptor u = *vi;
+  for (const auto& u : make_range_pair(vertices(g))) {
     std::cout << "Vertex " << u << ": ";
     // Adjacenct edges
-    out_edge_iterator ei, ei_end;
-    for (std::tie(ei, ei_end) = out_edges(u, g); ei != ei_end; ei++)
-      std::cout << *ei << "  ";
+    for (const auto& edge : make_range_pair(out_edges(u, g)))
+      std::cout << edge << "  ";
     std::cout << " Adjacent vertices ";
     // Adjacent vertices
     // Here we want our adjacency_iterator and not boost::adjacency_iterator.
-    ::adjacency_iterator ai, ai_end;
-    for (std::tie(ai, ai_end) = adjacent_vertices(u, g); ai != ai_end; ai++) {
-      std::cout << *ai << " ";
+    for (const auto& vertex : make_range_pair(adjacent_vertices(u, g))) {
+      std::cout << vertex << " ";
     }
     std::cout << std::endl;
   }
@@ -504,9 +501,7 @@ int main (int argc, char const *argv[]) {
   // (4, 0) weight 2
   // 5 edges
   std::cout << "Edges and weights" << std::endl;
-  edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ei++) {
-    edge_descriptor e = *ei;
+  for (const auto& e : make_range_pair(edges(g))) {
     std::cout << e << " weight " << get(edge_weight, g, e) << std::endl;
   }
   std::cout << num_edges(g) << " edges"  << std::endl;
@@ -536,11 +531,10 @@ int main (int argc, char const *argv[]) {
                             distance_map(dist_pm) );
 
     std::cout << "Dijkstra search from vertex " << source << std::endl;
-    for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-      vertex_descriptor u = *vi;
-      std::cout << "Vertex " << u << ": "
-                << "parent "<< pred[*vi] << ", "
-                << "distance " << dist[u]
+    for (const auto& vertex : make_range_pair(vertices(g))) {
+      std::cout << "Vertex " << vertex << ": "
+                << "parent "<< pred[vertex] << ", "
+                << "distance " << dist[vertex]
                 << std::endl;
     }
   }

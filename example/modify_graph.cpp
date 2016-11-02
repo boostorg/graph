@@ -12,6 +12,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -47,8 +48,6 @@ void modify_demo(MutableGraph& g)
   typename GraphTraits::vertex_descriptor u, v, w;
   edge_descriptor e, e1, e2;
   auto name_map = get(edge_name, g);
-  bool added;
-  typename GraphTraits::vertex_iterator vi, vi_end;
 
   {
     v = add_vertex(g);
@@ -182,11 +181,10 @@ void modify_demo(MutableGraph& g)
     
     assert(out_degree(u, g) == 0);
     
-    for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+    for (const auto & vertex : make_range_pair(vertices(g))) {
       typename GraphTraits::adjacency_iterator ai, ai_end;
-      for (std::tie(ai, ai_end) = adjacent_vertices(*vi, g);
-           ai != ai_end; ++ai)
-        assert(*ai != u);
+      for (const auto& adjacent_vertex : make_range_pair(adjacent_vertices(vertex, g)))
+        assert(adjacent_vertex != vertex);
     }
   }
 }

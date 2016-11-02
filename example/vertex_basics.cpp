@@ -11,6 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -144,8 +145,8 @@ main()
 
   std::cout << "vertices(g) = ";
   boost::graph_traits<MyGraphType>::vertex_iterator vi;
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
-    std::cout << id[*vi] <<  " ";
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << id[vertex] <<  " ";
   std::cout << std::endl;
 
   /* Use the STL for_each algorithm to "exercise" all

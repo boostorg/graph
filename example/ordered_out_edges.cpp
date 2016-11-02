@@ -13,6 +13,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
+#include "range_pair.hpp"
 
 /*
   Sample output:
@@ -95,12 +96,10 @@ main()
   auto id = get(vertex_index, g);
   auto name = get(edge_name, g);
 
-  graph_traits<graph_type>::vertex_iterator i, end;
-  graph_traits<graph_type>::out_edge_iterator ei, edge_end;
-  for (std::tie(i, end) = vertices(g); i != end; ++i) {
-    std::cout << id[*i] << " ";
-    for (std::tie(ei, edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
-      std::cout << " --" << name[*ei] << "--> " << id[target(*ei, g)] << "  ";
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << id[vertex] << " ";
+    for (const auto& edge : make_range_pair(out_edges(vertex, g)))
+      std::cout << " --" << name[edge] << "--> " << id[target(edge, g)] << "  ";
     std::cout << std::endl;
   }
   std::cout << std::endl;

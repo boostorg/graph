@@ -7,6 +7,7 @@
 //=======================================================================
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/depth_first_search.hpp>
+#include "range_pair.hpp"
 
 char name[] = "abcdefghij";
 
@@ -35,10 +36,9 @@ main()
   using namespace boost;
   GraphvizGraph g;
   read_graphviz("figs/dfs-example.dot", g);
-  graph_traits<GraphvizGraph>::edge_iterator e, e_end;
-  for (std::tie(e, e_end) = edges(g); e != e_end; ++e)
-    std::cout << '(' << name[source(*e, g)] << ' '
-      << name[target(*e, g)] << ')' << std::endl;
+  for (const auto& edge : make_range_pair(edges(g)))
+    std::cout << '(' << name[source(edge, g)] << ' '
+      << name[target(edge, g)] << ')' << std::endl;
   parenthesis_visitor
     paren_vis;
   depth_first_search(g, visitor(paren_vis));

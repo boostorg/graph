@@ -40,6 +40,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/visitors.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -130,12 +131,11 @@ int main(int,char*[])
     for (i = make_order.begin(); i != make_order.end(); ++i) {    
       // Walk through the in_edges an calculate the maximum time.
       if (in_degree (*i, g) > 0) {
-        Graph::in_edge_iterator j, j_end;
         int maxdist=0;
         // Through the order from topological sort, we are sure that every 
         // time we are using here is already initialized.
-        for (std::tie(j, j_end) = in_edges(*i, g); j != j_end; ++j)
-          maxdist=(std::max)(time[source(*j, g)], maxdist);
+        for (const auto& edge :  make_range_pair(in_edges(*i, g)))
+          maxdist=(std::max)(time[source(edge, g)], maxdist);
         time[*i]=maxdist+1;
       }
     }
@@ -143,9 +143,8 @@ int main(int,char*[])
     std::cout << "parallel make ordering, " << std::endl
          << "vertices with same group number can be made in parallel" << std::endl;
     {
-      graph_traits<Graph>::vertex_iterator i, iend;
-      for (std::tie(i,iend) = vertices(g); i != iend; ++i)
-        std::cout << "time_slot[" << name[*i] << "] = " << time[*i] << std::endl;
+      for (const auto& vertex : make_range_pair(vertices(g)))
+        std::cout << "time_slot[" << name[vertex] << "] = " << time[vertex] << std::endl;
     }
 
   }

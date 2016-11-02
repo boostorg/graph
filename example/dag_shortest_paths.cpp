@@ -9,6 +9,7 @@
 
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 #include <iostream>
 
@@ -58,11 +59,10 @@ int main()
   dag_shortest_paths(g, s, distance_map(d_map));
 #endif
 
-  graph_traits<graph_t>::vertex_iterator vi , vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (d_map[*vi] == (std::numeric_limits<int>::max)())
-      std::cout << name[*vi] << ": inifinity\n";
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (d_map[vertex] == (std::numeric_limits<int>::max)())
+      std::cout << name[vertex] << ": inifinity\n";
     else
-      std::cout << name[*vi] << ": " << d_map[*vi] << '\n';
+      std::cout << name[vertex] << ": " << d_map[vertex] << '\n';
   return 0;
 }

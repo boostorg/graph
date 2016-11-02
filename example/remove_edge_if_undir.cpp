@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -77,9 +78,8 @@ main()
     weight = get(edge_weight, g);
 
   int w = 0;
-  graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    weight[*ei] = ++w;
+  for (const auto& edge : make_range_pair(edges(g)))
+    weight[edge] = ++w;
 
   std::cout << "original graph:" << std::endl;
   print_graph(g, get(vertex_index, g));

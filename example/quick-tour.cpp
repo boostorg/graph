@@ -45,9 +45,8 @@ template <typename Graph, typename TransDelayMap, typename VertexNameMap> void
 print_trans_delays(const Graph & g, TransDelayMap trans_delay_map,
                    VertexNameMap name_map)
 {
-  typename graph_traits<Graph>::edge_iterator first, last;
-  for (std::tie(first, last) = edges(g); first != last; ++first) {
-    print_trans_delay(*first, g, trans_delay_map, name_map);
+  for (const auto& edge : make_range_pair(edges(g))) {
+    print_trans_delay(edge, g, trans_delay_map, name_map);
     std::cout << std::endl;
   }
 }

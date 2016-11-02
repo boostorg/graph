@@ -12,6 +12,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/copy.hpp>
+#include "range_pair.hpp"
 
 int
 main(int argc, char *argv[])
@@ -36,11 +37,10 @@ main(int argc, char *argv[])
 
   auto vattr_map = get(vertex_attribute, g);
 
-  graph_traits<GraphvizDigraph>::vertex_iterator i, i_end;
-  for (std::tie(i, i_end) = vertices(g); i != i_end; ++i)
-    if (reachable_from_head[*i] != Color::white()) {
-      vattr_map[*i]["color"] = "gray";
-      vattr_map[*i]["style"] = "filled";
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (reachable_from_head[vertex] != Color::white()) {
+      vattr_map[vertex]["color"] = "gray";
+      vattr_map[vertex]["style"] = "filled";
     }
 
   std::ofstream loops_out(argv[2]);
@@ -50,23 +50,21 @@ main(int argc, char *argv[])
             << "size=\"3,3\"\n"
             << "ratio=\"fill\"\n"
             << "shape=\"box\"\n";
-  graph_traits<GraphvizDigraph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    loops_out << *vi << "[";
-    for (auto ai = vattr_map[*vi].begin();
-         ai != vattr_map[*vi].end(); ++ai) {
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    loops_out << vertex << "[";
+    for (auto ai = vattr_map[vertex].begin();
+         ai != vattr_map[vertex].end(); ++ai) {
       loops_out << ai->first << "=" << ai->second;
-      if (next(ai) != vattr_map[*vi].end())
+      if (next(ai) != vattr_map[vertex].end())
         loops_out << ", ";
     }
     loops_out<< "]";
   }
   property_map<GraphvizDigraph, edge_attribute_t>::type
     eattr_map = get(edge_attribute, g);
-  graph_traits<GraphvizDigraph>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-    loops_out << source(*ei, g) << " -> " << target(*ei, g) << "[";
-    std::map<std::string,std::string>& attr_map = eattr_map[*ei];
+  for (const auto& edge : make_range_pair(edges(g))) {
+    loops_out << source(edge, g) << " -> " << target(edge, g) << "[";
+    std::map<std::string,std::string>& attr_map = eattr_map[edge];
     for (auto eai = attr_map.begin();
          eai != attr_map.end(); ++eai) {
       loops_out << eai->first << "=" << eai->second;

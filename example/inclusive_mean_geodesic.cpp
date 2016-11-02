@@ -13,6 +13,7 @@
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <boost/graph/geodesic_distance.hpp>
 #include "helper.hpp"
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -119,12 +120,11 @@ main(int argc, char *argv[])
     std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "vertex";
     std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "excluding";
     std::cout << std::setw(12) << std::setiosflags(std::ios::left) << "including" << std::endl;
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(std::tie(i, end) = vertices(g); i != end; ++i) {
-          std::cout << std::setw(12) << std::setiosflags(std::ios::left)
-             << g[*i].name
-             << std::setw(12) << get(exmap, *i)
-             << std::setw(12) << get(inmap, *i) << std::endl;
+    for(const auto& vertex : make_range_pair(vertices(g))) {
+      std::cout << std::setw(12) << std::setiosflags(std::ios::left)
+             << g[vertex].name
+             << std::setw(12) << get(exmap, vertex)
+             << std::setw(12) << get(inmap, vertex) << std::endl;
     }
     std::cout << "small world (excluding self-loops): " << ex << std::endl;
     std::cout << "small world (including self-loops): " << in << std::endl;

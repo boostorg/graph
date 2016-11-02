@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -41,10 +42,9 @@ output_adjacent_vertices(std::ostream & out,
                          typename graph_traits<Graph>::vertex_descriptor u,
                          const Graph & g, VertexNameMap name_map)
 {
-  typename graph_traits<Graph>::adjacency_iterator vi, vi_end;
   out << get(name_map, u) << " -> { ";
-  for (std::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
-    out << get(name_map, *vi) << " ";
+  for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
+    out << get(name_map, vertex) << " ";
   out << "}" << std::endl;
 }
 

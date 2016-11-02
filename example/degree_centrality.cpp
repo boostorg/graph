@@ -14,6 +14,7 @@
 #include <boost/graph/degree_centrality.hpp>
 
 #include "helper.hpp"
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -55,10 +56,9 @@ main(int argc, char *argv[])
     all_degree_centralities(g, cm);
 
     // Print the degree centrality of each vertex.
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(std::tie(i, end) = vertices(g); i != end; ++i) {
-          std::cout << std::setiosflags(std::ios::left) << std::setw(12)
-             << g[*i].name << cm[*i] << std::endl;
+    for(const auto& vertex : make_range_pair(vertices(g))) {
+      std::cout << std::setiosflags(std::ios::left) << std::setw(12)
+             << g[vertex].name << cm[vertex] << std::endl;
     }
 
     return 0;

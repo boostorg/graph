@@ -37,28 +37,22 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
+#include "range_pair.hpp"
 
 template <class Graph, class Capacity, class Flow>
 void print_network(Graph& G, Capacity capacity, Flow flow)
 {
-  using Viter = typename boost::graph_traits<Graph>::vertex_iterator   ;
-  using OutEdgeIter = typename boost::graph_traits<Graph>::out_edge_iterator;
-  using InEdgeIter = typename boost::graph_traits<Graph>::in_edge_iterator;
+  for (const auto& vertex : make_range_pair(vertices(G))) {
+    std::cout << vertex << "\t";
 
-  Viter ui, uiend;
-  for (std::tie(ui, uiend) = boost::vertices(G); ui != uiend; ++ui) {
-    OutEdgeIter out, out_end;
-    std::cout << *ui << "\t";
-
-    for(std::tie(out, out_end) = boost::out_edges(*ui, G); out != out_end; ++out)
-      std::cout << "--(" << boost::get(capacity, *out) << ", " 
-           << boost::get(flow, *out) << ")--> " << boost::target(*out,G) << "\t";
+    for (const auto& edge : make_range_pair(out_edges(vertex, G)))
+      std::cout << "--(" << boost::get(capacity, edge) << ", " 
+           << boost::get(flow, edge) << ")--> " << boost::target(edge, G) << "\t";
     std::cout << std::endl << "\t";
 
-    InEdgeIter in, in_end;    
-    for(std::tie(in, in_end) = boost::in_edges(*ui, G); in != in_end; ++in)
-      std::cout << "<--(" << boost::get(capacity, *in) << "," << boost::get(flow, *in) << ")-- "
-           << boost::source(*in, G) << "\t";
+    for (const auto& edge : make_range_pair(in_edges(vertex, G)))
+      std::cout << "<--(" << boost::get(capacity, edge) << "," << boost::get(flow, edge) << ")-- "
+           << boost::source(edge, G) << "\t";
     std::cout << std::endl;
   }
 }

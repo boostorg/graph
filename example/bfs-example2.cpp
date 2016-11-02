@@ -10,6 +10,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/range/irange.hpp>
 #include <boost/property_map/property_map.hpp>
+#include "range_pair.hpp"
 
 #include <iostream>
 
@@ -79,11 +80,10 @@ main()
   using dtime_pm_type =
     iterator_property_map<std::vector<Size>::iterator,
                           property_map<graph_t, unsigned int VertexProps::*>::type>;
-  graph_traits<graph_t>::vertex_iterator vi, vi_end;
   std::size_t c = 0;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi, ++c) {
-    dtime[c] = dtime_map[*vi];
-    put(&VertexProps::index, g, *vi, c);
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    dtime[c] = dtime_map[vertex];
+    put(&VertexProps::index, g, vertex, c);
   }
   dtime_pm_type dtime_pm(dtime.begin(), get(&VertexProps::index, g));
 

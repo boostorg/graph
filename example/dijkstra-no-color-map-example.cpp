@@ -17,6 +17,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/property_map/property_map.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -47,10 +48,9 @@ main(int, char *[])
                                        distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g))));
 
   std::cout << "distances and parents:" << std::endl;
-  graph_traits<graph_t>::vertex_iterator vi, vend;
-  for (std::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
-    std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
-    std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::endl;
+  for(const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << "distance(" << name[vertex] << ") = " << d[vertex] << ", ";
+    std::cout << "parent(" << name[vertex] << ") = " << name[p[vertex]] << std::endl;
   }
   std::cout << std::endl;
 
@@ -62,9 +62,7 @@ main(int, char *[])
     << "  ratio=\"fill\"\n"
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-  graph_traits<graph_t>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-    graph_traits<graph_t>::edge_descriptor e = *ei;
+  for (const auto& e : make_range_pair(edges(g))) {
     auto u = source(e, g), v = target(e, g);
     dot_file << name[u] << " -> " << name[v]
       << "[label=\"" << get(weightmap, e) << "\"";

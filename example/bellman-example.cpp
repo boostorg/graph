@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -69,11 +70,12 @@ main()
 #else
   Graph g(edge_array, edge_array + n_edges, N);
 #endif
-  graph_traits<Graph>::edge_iterator ei, ei_end;
   auto weight_pmap = get(&EdgeProperties::weight, g);
   int i = 0;
-  for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei, ++i)
-    weight_pmap[*ei] = weight[i];
+  for (const auto& edge : make_range_pair(edges(g))) {
+    weight_pmap[edge] = weight[i];
+    ++i;
+  }
 
   std::vector<int> distance(N, (std::numeric_limits<short>::max)());
   std::vector<std::size_t> parent(N);
@@ -106,8 +108,7 @@ main()
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
   {
-    for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-      auto e = *ei;
+    for(const auto& e : make_range_pair(edges(g))) {
       auto u = source(e, g), v = target(e, g);
       // VC++ doesn't like the 3-argument get function, so here
       // we workaround by using 2-nested get()'s.

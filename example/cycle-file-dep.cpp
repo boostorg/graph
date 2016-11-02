@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -37,12 +38,11 @@ has_cycle_dfs(const file_dep_graph & g, vertex_t u,
               default_color_type * color)
 {
   color[u] = gray_color;
-  graph_traits<file_dep_graph>::adjacency_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = adjacent_vertices(u, g); vi != vi_end; ++vi)
-    if (color[*vi] == white_color) {
-      if (has_cycle_dfs(g, *vi, color))
+  for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
+    if (color[vertex] == white_color) {
+      if (has_cycle_dfs(g, vertex, color))
         return true;            // cycle detected, return immediately
-    } else if (color[*vi] == gray_color)        // *vi is an ancestor!
+    } else if (color[vertex] == gray_color)        // vertex is an ancestor!
       return true;
   color[u] = black_color;
   return false;
@@ -52,10 +52,9 @@ bool
 has_cycle(const file_dep_graph & g)
 {
   std::vector<default_color_type> color(num_vertices(g), white_color);
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (color[*vi] == white_color)
-      if (has_cycle_dfs(g, *vi, &color[0]))
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (color[vertex] == white_color)
+      if (has_cycle_dfs(g, vertex, &color[0]))
         return true;
   return false;
 }
@@ -83,9 +82,8 @@ main()
 
   std::vector<std::string> name(num_vertices(g));
   std::ifstream name_in("makefile-target-names.dat");
-  graph_traits<file_dep_graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    name_in >> name[*vi];
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    name_in >> name[vertex];
 
   assert(has_cycle(g) == false);
   return 0;

@@ -13,6 +13,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bipartite.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -22,7 +23,6 @@ template <typename Graph>
 void print_bipartite (const Graph& g)
 {
   using traits = graph_traits <Graph>;
-  typename traits::vertex_iterator vertex_iter, vertex_end;
 
   /// Most simple interface just tests for bipartiteness. 
 
@@ -41,9 +41,9 @@ void print_bipartite (const Graph& g)
 
     is_bipartite (g, get (vertex_index, g), partition_map);
 
-    for (std::tie (vertex_iter, vertex_end) = vertices (g); vertex_iter != vertex_end; ++vertex_iter)
+    for (const auto& vertex : make_range_pair(vertices (g)))
     {
-      std::cout << "Vertex " << *vertex_iter << " has color " << (get (partition_map, *vertex_iter) == color_traits <
+      std::cout << "Vertex " << vertex << " has color " << (get (partition_map, vertex) == color_traits <
           default_color_type>::white () ? "white" : "black") << std::endl;
     }
   }

@@ -24,6 +24,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <map>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -78,14 +79,14 @@ write_pajek_graph(std::ostream& out, const Graph& g,
                   VertexIndexMap vertex_index, VertexNameMap vertex_name)
 {
   out << "*Vertices " << num_vertices(g) << '\n';
-  for (auto v = vertices(g).first; v != vertices(g).second; ++v) {
-    out << get(vertex_index, *v)+1 << " \"" << get(vertex_name, *v) << "\"\n";
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    out << get(vertex_index, vertex)+1 << " \"" << get(vertex_name, vertex) << "\"\n";
   }
 
   out << "*Edges\n";
-  for (auto e = edges(g).first; e != edges(g).second; ++e) {
-    out << get(vertex_index, source(*e, g))+1 << ' ' 
-        << get(vertex_index, target(*e, g))+1 << " 1.0\n"; // HACK!
+  for (const auto& edge : make_range_pair(edges(g))) {
+    out << get(vertex_index, source(edge, g))+1 << ' ' 
+        << get(vertex_index, target(edge, g))+1 << " 1.0\n"; // HACK!
   }
   return out;
 }

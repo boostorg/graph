@@ -9,6 +9,7 @@
 #include <boost/graph/graphviz.hpp>     // for read/write_graphviz()
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/lexical_cast.hpp>
+#include "range_pair.hpp"
 
 namespace boost {
   enum graph_color_t { graph_color = 5556 };
@@ -41,18 +42,16 @@ main()
     property<edge_weight_t, int>>;
   using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   Graph g(num_vertices(g_dot));
-  graph_traits<g_dot_type>::edge_iterator ei, ei_end;
-  for (std::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    auto weight = get(edge_weight, g_dot, *ei);
+  for (const auto& edge : make_range_pair(edges(g_dot))) {
+    auto weight = get(edge_weight, g_dot, edge);
     property<edge_weight_t, int> edge_property(weight);
-    add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
+    add_edge(source(edge, g_dot), target(edge, g_dot), edge_property, g);
   }
 
   vertex_descriptor router_six;
-  graph_traits<g_dot_type>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
-    if ("RT6" == get(vertex_name, g_dot, *vi)) {
-      router_six = *vi;
+  for (const auto& vertex : make_range_pair(vertices(g_dot)))
+    if ("RT6" == get(vertex_name, g_dot, vertex)) {
+      router_six = vertex;
       break;
     }
 
@@ -89,10 +88,10 @@ main()
 
   std::ofstream rtable("routing-table.dat");
   rtable << "Dest    Next Hop    Total Cost" << std::endl;
-  for (std::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
-    if (parent[*vi] != *vi) {
-      rtable << get(vertex_name, g_dot, *vi) << "    ";
-      vertex_descriptor v = *vi, child;
+  for (const auto& vertex : make_range_pair(vertices(g_dot)))
+    if (parent[vertex] != vertex) {
+      rtable << get(vertex_name, g_dot, vertex) << "    ";
+      vertex_descriptor v = vertex, child;
       int path_cost = 0;
       property_map<Graph, edge_weight_t>::type
         weight_map = get(edge_weight, g);

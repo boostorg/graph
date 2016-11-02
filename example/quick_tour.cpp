@@ -14,6 +14,7 @@
 #include <boost/utility.hpp>                // for std::tie
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -28,11 +29,8 @@ template <class Graph> struct exercise_vertex {
 
     // Write out the outgoing edges
     std::cout << "\tout-edges: ";
-    typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
-    for (std::tie(out_i, out_end) = out_edges(v, g);
-         out_i != out_end; ++out_i)
+    for (const auto& e : make_range_pair(out_edges(v, g)))
     {
-      auto e = *out_i;
       auto src = source(e, g), targ = target(e, g);
       std::cout << "(" << name[get(vertex_id, src)]
                 << "," << name[get(vertex_id, targ)] << ") ";
@@ -41,10 +39,8 @@ template <class Graph> struct exercise_vertex {
 
     // Write out the incoming edges
     std::cout << "\tin-edges: ";
-    typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
-    for (std::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+    for (const auto& e : make_range_pair(in_edges(v, g)))
     {
-      auto e = *in_i;
       Vertex src = source(e, g), targ = target(e, g);
       std::cout << "(" << name[get(vertex_id, src)]
                 << "," << name[get(vertex_id, targ)] << ") ";
@@ -53,9 +49,8 @@ template <class Graph> struct exercise_vertex {
 
     // Write out all adjacent vertices
     std::cout << "\tadjacent vertices: ";
-    typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
-    for (std::tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
-      std::cout << name[get(vertex_id, *ai)] <<  " ";
+    for (const auto& vertex : make_range_pair(adjacent_vertices(v, g)))
+      std::cout << name[get(vertex_id, vertex)] <<  " ";
     std::cout << std::endl;
   }
   Graph& g;
@@ -107,15 +102,14 @@ int main(int,char*[])
   std::cout << "vertices(g) = ";
   using vertex_iter = graph_traits<Graph>::vertex_iterator;
   std::pair<vertex_iter, vertex_iter> vp;
-  for (vp = vertices(g); vp.first != vp.second; ++vp.first)
-    std::cout << name[get(vertex_id, *vp.first)] <<  " ";
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << name[get(vertex_id, vertex)] <<  " ";
   std::cout << std::endl;
 
   std::cout << "edges(g) = ";
-  graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (std::tie(ei,ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << "(" << name[get(vertex_id, source(*ei, g))]
-              << "," << name[get(vertex_id, target(*ei, g))] << ") ";
+  for (const auto& edge : make_range_pair(edges(g)))
+    std::cout << "(" << name[get(vertex_id, source(edge, g))]
+              << "," << name[get(vertex_id, target(edge, g))] << ") ";
   std::cout << std::endl;
 
   std::for_each(vertices(g).first, vertices(g).second,

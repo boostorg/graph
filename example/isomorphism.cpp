@@ -9,6 +9,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 /*
   Sample output:
@@ -33,16 +34,17 @@ main()
     v1_index_map = get(vertex_index, g1),
     v2_index_map = get(vertex_index, g2);
 
-  graph_traits<graph_t>::vertex_iterator i, end;
   int id = 0;
-  for (std::tie(i, end) = vertices(g1); i != end; ++i, ++id) {
-    put(v1_index_map, *i, id);
-    v1[id] = *i;
+  for (const auto& vertex : make_range_pair(vertices(g1))) {
+    put(v1_index_map, vertex, id);
+    v1[id] = vertex;
+    ++id;
   }
   id = 0;
-  for (std::tie(i, end) = vertices(g2); i != end; ++i, ++id) {
-    put(v2_index_map, *i, id);
-    v2[id] = *i;
+  for (const auto& vertex : make_range_pair(vertices(g2))) {
+    put(v2_index_map, vertex, id);
+    v2[id] = vertex;
+    ++id;
   }
   add_edge(v1[0], v1[1], g1); add_edge(v1[1], v1[2], g1); 
   add_edge(v1[0], v1[2], g1);

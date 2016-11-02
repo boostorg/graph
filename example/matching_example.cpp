@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include <boost/graph/max_cardinality_matching.hpp>
+#include "range_pair.hpp"
 
 
 using namespace boost;
@@ -81,11 +82,10 @@ int main()
   std::cout << std::endl << "Found a matching of size " << matching_size(g, &mate[0]) << std::endl;
 
   std::cout << "The matching is:" << std::endl;
-  
-  graph_traits<my_graph>::vertex_iterator vi, vi_end;
-  for(std::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
-      std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
+
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (mate[vertex] != graph_traits<my_graph>::null_vertex() && vertex < mate[vertex])
+      std::cout << "{" << vertex << ", " << mate[vertex] << "}" << std::endl;
 
   std::cout << std::endl;
 
@@ -109,9 +109,9 @@ int main()
 
   std::cout << "The matching is:" << std::endl;
   
-  for(std::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
-      std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (mate[vertex] != graph_traits<my_graph>::null_vertex() && vertex < mate[vertex])
+      std::cout << "{" << vertex << ", " << mate[vertex] << "}" << std::endl;
 
   return 0;
 }

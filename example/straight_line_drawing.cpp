@@ -113,11 +113,10 @@ int main(int argc, char** argv)
 
 
   std::cout << "The straight line drawing is: " << std::endl;
-  graph_traits<graph>::vertex_iterator vi, vi_end;
-  for(std::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
+  for(const auto& vertex : make_range_pair(vertices(g)))
     {
-      coord_t coord(get(straight_line_drawing,*vi));
-      std::cout << *vi << " -> (" << coord.x << ", " << coord.y << ")" 
+      coord_t coord(get(straight_line_drawing,vertex));
+      std::cout << vertex << " -> (" << coord.x << ", " << coord.y << ")" 
                 << std::endl;
     }
 

@@ -12,6 +12,7 @@
 #include <boost/graph/push_relabel_max_flow.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphviz.hpp>
+#include "range_pair.hpp"
 
 namespace boost
 {
@@ -20,15 +21,14 @@ namespace boost
     typename graph_traits<Graph >::degree_size_type>
     min_degree_vertex(Graph & g)
   {
-    typename graph_traits < Graph >::vertex_descriptor p;
-    using size_type = typename graph_traits < Graph >::degree_size_type;
-    auto delta = (std::numeric_limits < size_type >::max)();
-    typename graph_traits < Graph >::vertex_iterator i, iend;
-    for (std::tie(i, iend) = vertices(g); i != iend; ++i)
-      if (degree(*i, g) < delta)
+    typename graph_traits<Graph>::vertex_descriptor p;
+    using size_type = typename graph_traits<Graph>::degree_size_type;
+    auto delta = (std::numeric_limits<size_type>::max)();
+    for(const auto& vertex : make_range_pair(vertices(g)))
+      if (degree(vertex, g) < delta)
       {
-        delta = degree(*i, g);
-        p = *i;
+        delta = degree(vertex, g);
+        p = vertex;
       }
     return std::make_pair(p, delta);
   }
@@ -38,9 +38,8 @@ namespace boost
                    typename graph_traits<Graph>::vertex_descriptor u,
                    OutputIterator result)
   {
-    typename graph_traits<Graph>::adjacency_iterator ai, aend;
-    for (std::tie(ai, aend) = adjacent_vertices(u, g); ai != aend; ++ai)
-      *result++ = *ai;
+    for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
+      *result++ = vertex;
   }
   template < typename Graph, typename VertexIterator,
     typename OutputIterator > void neighbors(const Graph & g,
@@ -71,7 +70,6 @@ namespace boost
     vertex_descriptor u, v, p, k;
     edge_descriptor e1, e2;
     bool inserted;
-    typename graph_traits<VertexListGraph>::vertex_iterator vi, vi_end;
     degree_size_type delta, alpha_star, alpha_S_k;
     std::set<vertex_descriptor> S, neighbor_S;
     std::vector<vertex_descriptor> S_star, nonneighbor_S;
@@ -83,9 +81,8 @@ namespace boost
     auto res_cap = get(edge_residual_capacity, flow_g);
     auto rev_edge = get(edge_reverse, flow_g);
 
-    typename graph_traits<VertexListGraph>::edge_iterator ei, ei_end;
-    for (std::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-      u = source(*ei, g), v = target(*ei, g);
+    for (const auto& edge : make_range_pair(edges(g))) {
+      u = source(edge, g), v = target(edge, g);
       std::tie(e1, inserted) = add_edge(u, v, flow_g);
       cap[e1] = 1;
       std::tie(e2, inserted) = add_edge(v, u, flow_g);
@@ -112,9 +109,9 @@ namespace boost
       if (alpha_S_k < alpha_star) {
         alpha_star = alpha_S_k;
         S_star.clear();
-        for (std::tie(vi, vi_end) = vertices(flow_g); vi != vi_end; ++vi)
-          if (color[*vi] != Color::white())
-            S_star.emplace_back(*vi);
+        for (const auto& vertex : make_range_pair(vertices(flow_g)))
+          if (color[vertex] != Color::white())
+            S_star.emplace_back(vertex);
       }
       S.insert(k);
       neighbor_S.insert(k);
@@ -130,10 +127,9 @@ namespace boost
       in_S_star[vertex] = true;
     degree_size_type c = 0;
     for (const auto& vertex : S_star.begin()) {
-      typename graph_traits<VertexListGraph>::out_edge_iterator ei, ei_end;
-      for (std::tie(ei, ei_end) = out_edges(vertex, g); ei != ei_end; ++ei)
-        if (!in_S_star[target(*ei, g)]) {
-          *disconnecting_set++ = *ei;
+      for (const auto& edge : make_range_pair(out_edges(vertex, g)))
+        if (!in_S_star[target(edge, g)]) {
+          *disconnecting_set++ = edge;
           ++c;
         }
     }

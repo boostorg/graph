@@ -17,6 +17,7 @@
 #include <boost/graph/adj_list_serialize.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
+#include "range_pair.hpp"
 
 struct vertex_properties {
   std::string name;
@@ -71,10 +72,9 @@ int main()
 
   // Get the vertex for Kevin Bacon
   Vertex src;
-  graph_traits<Graph>::vertex_iterator i, end;
-  for (std::tie(i, end) = vertices(g); i != end; ++i)
-    if (g[*i].name == "Kevin Bacon")
-      src = *i;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (g[vertex].name == "Kevin Bacon")
+      src = vertex;
 
   // Set Kevin's number to zero
   bacon_number[src] = 0;
@@ -83,9 +83,9 @@ int main()
   breadth_first_search(g, src,
                        visitor(bacon_number_recorder(&bacon_number[0])));
 
-  for (std::tie(i, end) = vertices(g); i != end; ++i)
-    std::cout << g[*i].name << " has a Bacon number of "
-          << bacon_number[*i] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << g[vertex].name << " has a Bacon number of "
+          << bacon_number[vertex] << std::endl;
 
   return 0;
 }

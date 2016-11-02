@@ -37,6 +37,7 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 int main(int,char*[])
 {
@@ -74,12 +75,11 @@ int main(int,char*[])
   print_edges2(G0, get(vertex_index, G0), get(edge_index, G0));
   std::cout << std::endl;
 
-  Graph::children_iterator ci, ci_end;
   int num = 1;
-  for (std::tie(ci, ci_end) = G0.children(); ci != ci_end; ++ci) {
+  for (const auto& vertex : make_range_pair(G0.children())) {
     std::cout << "G" << num++ << ":" << std::endl;
-    print_graph(*ci, get(vertex_index, *ci));
-    print_edges2(*ci, get(vertex_index, *ci), get(edge_index, *ci));
+    print_graph(vertex, get(vertex_index, vertex));
+    print_edges2(vertex, get(vertex_index, vertex), get(edge_index, vertex));
     std::cout << std::endl;
   }
 

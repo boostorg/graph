@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -71,19 +72,15 @@ main()
 
   auto name = get(vertex_name, g);
   struct stat stat_buf;
-  graph_traits<graph_type>::vertex_descriptor u;
-  using vertex_iter_t = graph_traits<graph_type>::vertex_iterator;
-  std::pair<vertex_iter_t, vertex_iter_t> p;
-  for (p = vertices(g); p.first != p.second; ++p.first) {
-    u = *p.first;
+  for (const auto& u : make_range_pair(vertices(g))) {
     if (stat(name[u].c_str(), &stat_buf) != 0)
       std::cerr << "error in stat() for file " << name[u] << std::endl;
     put(mod_time_map, u, stat_buf.st_mtime);
   }
 
-  for (p = vertices(g); p.first != p.second; ++p.first) {
-    std::cout << name[*p.first] << " was last modified at "
-      << ctime(&mod_time_map[*p.first]);
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << name[vertex] << " was last modified at "
+      << ctime(&mod_time_map[vertex]);
   }
   assert(num_vertices(g) == 15);
   assert(num_edges(g) == 19);

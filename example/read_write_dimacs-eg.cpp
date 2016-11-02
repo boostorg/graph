@@ -35,6 +35,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/write_dimacs.hpp>
+#include "range_pair.hpp"
 
 
 /*************************************
@@ -66,9 +67,7 @@ int main()
     no_property,
     property<edge_capacity_t, long,
     property<edge_reverse_t, Traits::edge_descriptor>>>;
-  
-  using out_edge_iterator = graph_traits<Graph>::out_edge_iterator;
-  using edge_descriptor = graph_traits<Graph>::edge_descriptor;
+
   using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   
   Graph g;
@@ -87,9 +86,7 @@ int main()
   tCapMapValue augmented_flow = 0;
   
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
-  out_edge_iterator oei,oe_end;
-  for(std::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
-    auto from_source = *oei;
+  for(const auto& from_source : make_range_pair(out_edges(s, g))){
     auto v = target(from_source, g);
     edge_descriptor to_sink;
     bool is_there;

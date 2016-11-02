@@ -54,6 +54,7 @@
 #include <boost/utility.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 
 using namespace boost;
@@ -71,30 +72,20 @@ namespace boost {
 template <class Graph>
 void print_network(const Graph& G)
 {
-  using Viter = typename boost::graph_traits<Graph>::vertex_iterator   ;
-  using OutEdgeIter = typename boost::graph_traits<Graph>::out_edge_iterator;
-  using InEdgeIter = typename boost::graph_traits<Graph>::in_edge_iterator;
-
   auto capacity = get(edge_mycapacity, G);
   auto flow = get(edge_myflow, G);
 
-  Viter ui, uiend;
-  std::tie(ui, uiend) = vertices(G);
+  for (const auto& vertex : make_range_pair(vertices(G))) {
+    std::cout << vertex << "\t";
 
-  for (; ui != uiend; ++ui) {
-    OutEdgeIter out, out_end;
-    std::cout << *ui << "\t";
+    for (const auto& edge : make_range_pair(out_edges(vertex, G)))
+      std::cout << "--(" << capacity[edge] << ", " << flow[edge] << ")--> "
+           << target(edge,G) << "\t";
 
-    std::tie(out, out_end) = out_edges(*ui, G);
-    for(; out != out_end; ++out)
-      std::cout << "--(" << capacity[*out] << ", " << flow[*out] << ")--> "
-           << target(*out,G) << "\t";
-
-    InEdgeIter in, in_end;
-    std::tie(in, in_end) = in_edges(*ui, G);
-    for(; in != in_end; ++in)
-      std::cout << "<--(" << capacity[*in] << "," << flow[*in] << ")-- "
-           << source(*in,G) << "\t";
+    std::cout << std::endl << "\t";
+    for (const auto& edge : make_range_pair(in_edges(vertex, G)))
+      std::cout << "<--(" << capacity[edge] << "," << flow[edge] << ")-- "
+           << source(edge, G) << "\t";
 
     std::cout << std::endl;
   }
@@ -142,12 +133,10 @@ int main(int , char* [])
   property_map<Graph, edge_myflow_t>::type
     flow = get(edge_myflow, G);
 
-  boost::graph_traits<Graph>::vertex_iterator v, v_end;
-  boost::graph_traits<Graph>::out_edge_iterator e, e_end;
   int f = 0;
-  for (std::tie(v, v_end) = vertices(G); v != v_end; ++v)
-    for (std::tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
-      flow[*e] = ++f;
+  for (const auto& vertex : make_range_pair(vertices(G)))
+    for (const auto& edge : make_range_pair(out_edges(vertex, G)))
+      flow[edge] = ++f;
   std::cout << std::endl << std::endl;
 
   remove_edge(6, 8, G);

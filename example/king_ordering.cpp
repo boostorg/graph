@@ -15,6 +15,7 @@
 #include <boost/graph/king_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include "range_pair.hpp"
 
 /*
   Sample Output
@@ -58,11 +59,9 @@ int main(int , char* [])
   for (int i = 0; i < 14; ++i)
     add_edge(edges[i].first, edges[i].second, G);
 
-  graph_traits<Graph>::vertex_iterator ui, ui_end;
-
   auto deg = get(vertex_degree, G);
-  for (std::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-    deg[*ui] = degree(*ui, G);
+  for (const auto& vertex : make_range_pair(vertices(G)))
+    deg[vertex] = degree(vertex, G);
 
   auto index_map = get(vertex_index, G);
 

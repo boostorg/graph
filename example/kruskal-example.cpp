@@ -9,6 +9,7 @@
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <iostream>
 #include <fstream>
+#include "range_pair.hpp"
 
 int
 main()
@@ -55,15 +56,14 @@ main()
     << " size=\"3,3\"\n"
     << " ratio=\"filled\"\n"
     << " edge[style=\"bold\"]\n" << " node[shape=\"circle\"]\n";
-  graph_traits<Graph>::edge_iterator eiter, eiter_end;
-  for (std::tie(eiter, eiter_end) = edges(g); eiter != eiter_end; ++eiter) {
-    fout << source(*eiter, g) << " -- " << target(*eiter, g);
-    if (std::find(spanning_tree.begin(), spanning_tree.end(), *eiter)
+  for (const auto& edge : make_range_pair(edges(g))) {
+    fout << source(edge, g) << " -- " << target(edge, g);
+    if (std::find(spanning_tree.begin(), spanning_tree.end(), edge)
         != spanning_tree.end())
-      fout << "[color=\"black\", label=\"" << get(edge_weight, g, *eiter)
+      fout << "[color=\"black\", label=\"" << get(edge_weight, g, edge)
            << "\"];\n";
     else
-      fout << "[color=\"gray\", label=\"" << get(edge_weight, g, *eiter)
+      fout << "[color=\"gray\", label=\"" << get(edge_weight, g, edge)
            << "\"];\n";
   }
   fout << "}\n";

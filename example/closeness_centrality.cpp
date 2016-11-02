@@ -14,6 +14,7 @@
 #include <boost/graph/closeness_centrality.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
 #include "helper.hpp"
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -73,10 +74,9 @@ main(int argc, char *argv[])
     all_closeness_centralities(g, dm, cm);
 
     // Print the closeness centrality of each vertex.
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(std::tie(i, end) = vertices(g); i != end; ++i) {
-          std::cout << std::setw(12) << std::setiosflags(std::ios::left)
-             << g[*i].name << get(cm, *i) << std::endl;
+    for(const auto& vertex : make_range_pair(vertices(g))) {
+      std::cout << std::setw(12) << std::setiosflags(std::ios::left)
+             << g[vertex].name << get(cm, vertex) << std::endl;
     }
 
     return 0;

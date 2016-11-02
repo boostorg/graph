@@ -18,6 +18,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -126,10 +127,9 @@ int main(int argc, char* argv[])
     (g, position, topo,
      cooling(progress_cooling(iterations)));
 
-  graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (std::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    std::cout << get(vertex_name, g, *vi) << '\t'
-              << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << get(vertex_name, g, vertex) << '\t'
+              << position[vertex][0] << '\t' << position[vertex][1] << std::endl;
   }
   return 0;
 }

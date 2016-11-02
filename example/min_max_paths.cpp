@@ -88,16 +88,16 @@ main(int , char* [])
 
   std::cout << "distances from start vertex:" << std::endl;
   graph_traits<Graph>::vertex_iterator vi, vend;
-  for(std::tie(vi,vend) = vertices(G); vi != vend; ++vi)
-    std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << std::endl;
+  for(const auto& vertex : make_range_pair(vertices(G)))
+    std::cout << "distance(" << name[vertex] << ") = " << d[vertex] << std::endl;
   std::cout << std::endl;
 
   std::cout << "min-max paths tree" << std::endl;
   adjacency_list<> tree(num_nodes);
   
-  for(std::tie(vi,vend) = vertices(G); vi != vend; ++vi)
-    if (*vi != p[*vi])
-      add_edge(p[*vi], *vi, tree);
+  for(const auto& vertex : make_range_pair(vertices(G)))
+    if (vertex != p[vertex])
+      add_edge(p[vertex], vertex, tree);
 
   print_graph(tree, name);
 

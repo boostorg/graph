@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/property_iter_range.hpp>
+#include "range_pair.hpp"
 
 int
 main()
@@ -22,10 +23,10 @@ main()
 
   const char *vertex_names[] = { "Kubrick", "Clark", "Hal" };
   int i = 0;
-  graph_property_iter_range<graph_t, vertex_name_t>::iterator v, v_end;
-  for (std::tie(v, v_end) = get_property_iter_range(g, vertex_name);
-       v != v_end; ++v, ++i)
-    *v = vertex_names[i];
+  for (auto& vertex : make_range_pair(get_property_iter_range(g, vertex_name))) {
+    vertex = vertex_names[i];
+    ++i;
+  }
 
   std::tie(v, v_end) = get_property_iter_range(g, vertex_name);
   std::copy(v, v_end, std::ostream_iterator<std::string> (std::cout, " "));
