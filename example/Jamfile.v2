@@ -208,7 +208,7 @@ exe two_graphs_common_spanning_trees : two_graphs_common_spanning_trees.cpp ;
 exe undirected_adjacency_list : undirected_adjacency_list.cpp ;
 exe undirected_dfs : undirected_dfs.cpp ;
 exe undirected_graph : undirected_graph.cpp ;
-exe vector-as-graph : vector-as-graph.cpp ;
+exe vector_as_graph : vector_as_graph.cpp ;
 exe vertex_basics : vertex_basics.cpp ;
 exe vertex-name-property : vertex-name-property.cpp ;
 exe vf2_sub_graph_iso_example : vf2_sub_graph_iso_example.cpp ;
