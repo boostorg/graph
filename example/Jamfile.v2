@@ -172,7 +172,7 @@ exe read_write_dimacs-eg : read_write_dimacs-eg.cpp ;
 exe remove_edge_if_bidir : remove_edge_if_bidir.cpp ;
 exe remove_edge_if_dir : remove_edge_if_dir.cpp ;
 exe remove_edge_if_undir : remove_edge_if_undir.cpp ;
-exe reverse-graph-eg : reverse-graph-eg.cpp ;
+exe reverse_graph : reverse-graph.cpp ;
 
 # This needs SGB headers, via BGL's stanford_graph.h:
 # exe roget_components : roget_components.cpp ;
