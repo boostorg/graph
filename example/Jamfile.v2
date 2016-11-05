@@ -120,7 +120,7 @@ exe johnson-eg : johnson-eg.cpp ;
 exe kevin-bacon2 : kevin-bacon2.cpp /boost//serialization ;
 exe kevin-bacon : kevin-bacon.cpp ;
 exe king_ordering : king_ordering.cpp ;
-exe knights-tour : knights-tour.cpp ;
+exe knights_tour : knights_tour.cpp ;
 exe kruskal-example : kruskal-example.cpp ;
 # exe kruskal-telephone : kruskal-telephone.cpp ;
 exe kuratowski_subgraph : kuratowski_subgraph.cpp ;
