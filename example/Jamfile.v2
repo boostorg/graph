@@ -79,7 +79,7 @@ exe edge_property : edge_property.cpp ;
 exe edmonds-karp-eg : edmonds-karp-eg.cpp ;
 exe exterior_properties : exterior_properties.cpp ;
 exe exterior_property_map : exterior_property_map.cpp ;
-exe family-tree-eg : family-tree-eg.cpp ;
+exe family_tree : family_tree.cpp ;
 exe fibonacci_heap : fibonacci_heap.cpp ;
 exe file_dependencies : file_dependencies.cpp ;
 exe filtered-copy-example : filtered-copy-example.cpp ;
