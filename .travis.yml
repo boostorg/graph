@@ -1,0 +1,65 @@
+# Use, modification, and distribution are
+# subject to the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Mael Valais, 2016
+# This travis file has been inspired from boostorg/geometry/circle.yml.
+#
+# This file is intended to make use of travis-ci, a continuous integration
+# service. The purpose is to build and run the tests on the graph module
+# on every push, and be able to know if those commits are "clean" or if
+# they break the build.
+#
+
+# I think that we shouldn't restrict on branches: PRs must also be tested
+# So for now, I disabled the "only on branches" feature
+#branches:
+#  only:
+#    - master
+#    - develop
+#    - test
+
+language: cpp
+compiler: gcc
+
+env:
+  global:
+    - BOOST_BRANCH=$([[ "$TRAVIS_BRANCH" = "master" ]] && echo master || echo develop)
+    - BOOST=boost-local # must be different from graph/boost dir name
+addons:
+  apt:
+    sources: ubuntu-toolchain-r-test
+    packages: g++-4.8
+
+before_install:
+  # Clone boost repository
+  - cd
+  - mkdir $BOOST && cd $BOOST
+  - git init .
+  - git remote add --no-tags -t $BOOST_BRANCH origin https://github.com/boostorg/boost.git
+  - git fetch --depth=1
+  - git checkout $BOOST_BRANCH
+  - git submodule update --init --merge
+  - git remote set-branches --add origin $BOOST_BRANCH
+  - git pull --recurse-submodules
+  - git submodule update --init
+  - git checkout $BOOST_BRANCH
+  - git submodule foreach "git reset --quiet --hard; git clean -fxd"
+  - git reset --hard; git clean -fxd
+  - git status
+
+  # replace the content of the library with the currently tested repo
+  - cd && pwd && ls
+  - rm -rf $BOOST/libs/graph
+  - cd $TRAVIS_BUILD_DIR && cd ..
+  - mv graph $HOME/$BOOST/libs/
+
+  # build b2 and create headers
+  - cd && cd $BOOST
+  - ./bootstrap.sh
+  - ./b2 headers
+
+# This part is meant for unit tests
+script:
+  - cd $HOME/$BOOST/libs/graph/test
+  - ../../../b2 toolset=gcc-4.8 cxxflags=-std=c++11
