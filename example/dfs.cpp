@@ -115,8 +115,7 @@ main(int , char* [])
                      std::make_pair(stamp_times(&d[0], t, on_discover_vertex()),
                                stamp_times(&f[0], t, on_finish_vertex())))));
 
-  std::vector<size_type>::iterator i, j;
-  for (i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)
+  for (auto i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)
     std::cout << *i << " " << *j << std::endl;
 
   return 0;

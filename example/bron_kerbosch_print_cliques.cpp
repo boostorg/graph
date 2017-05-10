@@ -27,9 +27,8 @@ struct clique_printer
     void clique(const Clique& c, const Graph& g)
     {
         // Iterate over the clique and print each vertex within it.
-        typename Clique::const_iterator i, end = c.end();
-        for(i = c.begin(); i != end; ++i) {
-            os << g[*i].name << " ";
+        for(const auto& vertex : c) {
+            os << g[vertex].name << " ";
         }
         os << std::endl;
     }

@@ -100,8 +100,6 @@ int main(int,char*[])
     trans_delay = get(edge_weight, g);
 
   std::cout << "vertices(g) = ";
-  using vertex_iter = graph_traits<Graph>::vertex_iterator;
-  std::pair<vertex_iter, vertex_iter> vp;
   for (const auto& vertex : make_range_pair(vertices(g)))
     std::cout << name[get(vertex_id, vertex)] <<  " ";
   std::cout << std::endl;

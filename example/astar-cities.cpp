@@ -208,10 +208,9 @@ int main(int argc, char **argv)
     }
     std::cout << "Shortest path from " << name[start] << " to "
          << name[goal] << ": ";
-    auto spi = shortest_path.begin();
     std::cout << name[start];
-    for(++spi; spi != shortest_path.end(); ++spi)
-      std::cout << " -> " << name[*spi];
+    for(const auto& sp : shortest_path)
+      std::cout << " -> " << name[sp];
     std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
     return 0;
   }

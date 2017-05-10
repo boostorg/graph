@@ -76,10 +76,9 @@ int main(int argc, char** argv)
                               embedding.begin(), get(vertex_index, g)),
                             std::back_inserter(ordering));
 
-  auto oi_end = ordering.end();
   std::cout << "The planar canonical ordering is: ";
-  for(auto oi = ordering.begin(); oi != oi_end; ++oi)
-    std::cout << *oi << " ";
+  for(const auto& o : ordering)
+    std::cout << o << " ";
   std::cout << std::endl;
 
   return 0;  

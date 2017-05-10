@@ -182,7 +182,6 @@ void modify_demo(MutableGraph& g)
     assert(out_degree(u, g) == 0);
     
     for (const auto & vertex : make_range_pair(vertices(g))) {
-      typename GraphTraits::adjacency_iterator ai, ai_end;
       for (const auto& adjacent_vertex : make_range_pair(adjacent_vertices(vertex, g)))
         assert(adjacent_vertex != vertex);
     }

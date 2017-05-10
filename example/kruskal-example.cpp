@@ -43,10 +43,9 @@ main()
   kruskal_minimum_spanning_tree(g, std::back_inserter(spanning_tree));
 
   std::cout << "Print the edges in the MST:" << std::endl;
-  for (auto ei = spanning_tree.begin();
-       ei != spanning_tree.end(); ++ei) {
-    std::cout << source(*ei, g) << " <--> " << target(*ei, g)
-      << " with weight of " << weight[*ei]
+  for (const auto& edge : spanning_tree) {
+    std::cout << source(edge, g) << " <--> " << target(edge, g)
+      << " with weight of " << weight[edge]
       << std::endl;
   }
 

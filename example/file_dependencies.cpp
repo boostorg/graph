@@ -120,21 +120,20 @@ int main(int,char*[])
 
     topological_sort(g, std::front_inserter(make_order));
     std::cout << "make ordering: ";
-    for (i = make_order.begin();
-         i != make_order.end(); ++i) 
-      std::cout << name[*i] << " ";
+    for (const auto& o : make_order) 
+      std::cout << name[o] << " ";
   
     std::cout << std::endl << std::endl;
 
     // Parallel compilation ordering
     std::vector<int> time(N, 0);
-    for (i = make_order.begin(); i != make_order.end(); ++i) {    
+    for (const auto& vertex : make_order) {
       // Walk through the in_edges an calculate the maximum time.
-      if (in_degree (*i, g) > 0) {
+      if (in_degree (vertex, g) > 0) {
         int maxdist=0;
         // Through the order from topological sort, we are sure that every 
         // time we are using here is already initialized.
-        for (const auto& edge :  make_range_pair(in_edges(*i, g)))
+        for (const auto& edge :  make_range_pair(in_edges(vertex, g)))
           maxdist=(std::max)(time[source(edge, g)], maxdist);
         time[*i]=maxdist+1;
       }

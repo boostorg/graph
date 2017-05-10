@@ -144,7 +144,6 @@ main()
     id = get(vertex_index, g);
 
   std::cout << "vertices(g) = ";
-  boost::graph_traits<MyGraphType>::vertex_iterator vi;
   for (const auto& vertex : make_range_pair(vertices(g)))
     std::cout << id[vertex] <<  " ";
   std::cout << std::endl;

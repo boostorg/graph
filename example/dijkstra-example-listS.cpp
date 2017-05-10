@@ -36,7 +36,6 @@ main(int, char *[])
   };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1 };
   int num_arcs = sizeof(edge_array) / sizeof(Edge);
-  graph_traits<graph_t>::vertex_iterator i, iend;
 
   graph_t g(edge_array, edge_array + num_arcs, weights, num_nodes);
   auto weightmap = get(edge_weight, g);

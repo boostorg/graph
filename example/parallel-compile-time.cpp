@@ -177,11 +177,8 @@ main()
     else
       distance_map[vertex] = 0;
 
-  std::vector<vertex_t>::iterator ui;
-  for (ui = topo_order.begin(); ui != topo_order.end(); ++ui) {
-    vertex_t
-      u = *
-      ui;
+
+  for (const auto& u : topo_order) {
     for (const auto& vertex : make_range_pair(adjacent_vertices(u, g)))
       if (distance_map[vertex] < distance_map[u] + compile_cost_map[vertex])
         distance_map[vertex] = distance_map[u] + compile_cost_map[vertex];

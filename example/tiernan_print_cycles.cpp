@@ -33,9 +33,8 @@ struct cycle_printer
         auto indices = get(vertex_index, g);
 
         // Iterate over path printing each vertex that forms the cycle.
-        typename Path::const_iterator i, end = p.end();
-        for(i = p.begin(); i != end; ++i) {
-            os << get(indices, *i) << " ";
+        for(const auto& vertex : p) {
+            os << get(indices, vertex) << " ";
         }
         os << std::endl;
     }

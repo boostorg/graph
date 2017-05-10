@@ -131,11 +131,11 @@ main(int argc, char *argv[])
   auto vattr_map = get(vertex_attribute, g);
   auto eattr_map = get(edge_attribute, g);
 
-  for (auto i = loops.begin(); i != loops.end(); ++i) {
+  for (const auto& loop : loops) {
     std::vector<bool> in_loop(num_vertices(g), false);
-    for (auto j = (*i).begin(); j != (*i).end(); ++j) {
-      vattr_map[*j]["color"] = "gray";
-      in_loop[*j] = true;
+    for (const auto& vertex : loop) {
+      vattr_map[vertex]["color"] = "gray";
+      in_loop[vertex] = true;
     }
     for (const auto& edge : make_range_pair(edges(g)))
       if (in_loop[source(edge, g)] && in_loop[target(edge, g)])

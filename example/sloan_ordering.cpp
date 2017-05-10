@@ -152,9 +152,8 @@ int main(int , char* [])
     std::cout << "Sloan ordering starting at: " << s << std::endl;
     std::cout << "  ";    
     
-    for (auto i = sloan_order.begin();
-         i != sloan_order.end(); ++i)
-      std::cout << index_map[*i] << " ";
+    for (const auto& vertex : sloan_order)
+      std::cout << index_map[vertex] << " ";
     std::cout << std::endl;
 
     for (size_type c = 0; c != sloan_order.size(); ++c)
@@ -192,9 +191,8 @@ int main(int , char* [])
       
       std::cout << std::endl << "Sloan ordering without a start-vertex:" << std::endl;
       std::cout << "  ";
-      for (auto i=sloan_order.begin();
-           i != sloan_order.end(); ++i)
-        std::cout << index_map[*i] << " ";
+      for (const auto& vertex : sloan_order)
+        std::cout << index_map[vertex] << " ";
       std::cout << std::endl;
       
       for (size_type c = 0; c != sloan_order.size(); ++c)

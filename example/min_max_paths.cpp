@@ -87,7 +87,6 @@ main(int , char* [])
 #endif
 
   std::cout << "distances from start vertex:" << std::endl;
-  graph_traits<Graph>::vertex_iterator vi, vend;
   for(const auto& vertex : make_range_pair(vertices(G)))
     std::cout << "distance(" << name[vertex] << ") = " << d[vertex] << std::endl;
   std::cout << std::endl;
