@@ -28,10 +28,7 @@ build_router_network(Graph & g, VertexNameMap name_map,
   auto e = add_vertex(g);
   name_map[e] = 'e';
 
-  typename graph_traits<Graph>::edge_descriptor ed;
-  bool inserted;
-
-  std::tie(ed, inserted) = add_edge(a, b, g);
+  auto [ed, inserted] = add_edge(a, b, g);
   delay_map[ed] = 1.2;
   std::tie(ed, inserted) = add_edge(a, d, g);
   delay_map[ed] = 4.5;

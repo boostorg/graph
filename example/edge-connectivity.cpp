@@ -67,10 +67,9 @@ namespace boost
       property < edge_residual_capacity_t, degree_size_type,
       property<edge_reverse_t, edge_descriptor>>>>;
 
-    vertex_descriptor u, v, p, k;
-    edge_descriptor e1, e2;
+    vertex_descriptor u, v, k;
     bool inserted;
-    degree_size_type delta, alpha_star, alpha_S_k;
+    degree_size_type alpha_star, alpha_S_k;
     std::set<vertex_descriptor> S, neighbor_S;
     std::vector<vertex_descriptor> S_star, nonneighbor_S;
     std::vector<default_color_type> color(num_vertices(g));
@@ -83,15 +82,15 @@ namespace boost
 
     for (const auto& edge : make_range_pair(edges(g))) {
       u = source(edge, g), v = target(edge, g);
-      std::tie(e1, inserted) = add_edge(u, v, flow_g);
+      const auto [e1, inserted1] = add_edge(u, v, flow_g);
       cap[e1] = 1;
-      std::tie(e2, inserted) = add_edge(v, u, flow_g);
+      const auto [e2, inserted2] = add_edge(v, u, flow_g);
       cap[e2] = 1;
       rev_edge[e1] = e2;
       rev_edge[e2] = e1;
     }
 
-    std::tie(p, delta) = min_degree_vertex(g);
+    const auto [p, delta] = min_degree_vertex(g);
     S_star.emplace_back(p);
     alpha_star = delta;
     S.insert(p);

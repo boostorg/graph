@@ -130,8 +130,7 @@ main()
   for (std::size_t v = 0; v < n_vertices; ++v)
     id2vertex.emplace_back(add_vertex(g));
   while (input_begin != input_end) {
-    size_type i, j;
-    std::tie(i, j) = *input_begin++;
+    auto [i, j] = *input_begin++;
     add_edge(id2vertex[i], id2vertex[j], g);
   }
 #else
@@ -184,9 +183,7 @@ main()
         distance_map[vertex] = distance_map[u] + compile_cost_map[vertex];
   }
 
-  graph_property_iter_range < file_dep_graph2,
-    vertex_distance_t >::iterator ci, ci_end;
-  std::tie(ci, ci_end) = get_property_iter_range(g, vertex_distance);
+  auto [ci, ci_end] = get_property_iter_range(g, vertex_distance);
   std::cout << "total (parallel) compile time: "
     << *std::max_element(ci, ci_end) << std::endl;
 

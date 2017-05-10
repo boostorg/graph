@@ -106,8 +106,7 @@ main()
   // Get vertex name property map from the graph
   auto name = get(vertex_name, g);
   // Get iterators for the vertex set
-  graph_traits<graph_type>::vertex_iterator i, end;
-  std::tie(i, end) = vertices(g);
+  const auto [i, end] = vertices(g);
   // Find yow.h
   using name_map_t = property_map<graph_type, vertex_name_t >::type;
   name_equals_t<name_map_t> predicate1("yow.h", name);
@@ -119,18 +118,16 @@ main()
   name_equals_t<name_map_t> predicate3("bar.o", name);
   bar = *std::find_if(i, end, predicate3);
 
-  graph_traits<graph_type>::edge_descriptor e1, e2;
-  bool exists;
 
   // Get the edge connecting yow.h to zag.o
-  std::tie(e1, exists) = edge(yow, zag, g);
-  assert(exists == true);
+  const auto [e1, exists1] = edge(yow, zag, g);
+  assert(exists1 == true);
   assert(source(e1, g) == yow);
   assert(target(e1, g) == zag);
 
   // Discover that there is no edge connecting zag.o to bar.o
-  std::tie(e2, exists) = edge(zag, bar, g);
-  assert(exists == false);
+  const auto [e2, exists2] = edge(zag, bar, g);
+  assert(exists2 == false);
 
   assert(num_vertices(g) == 15);
   assert(num_edges(g) == 19);

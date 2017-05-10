@@ -88,9 +88,7 @@ int main()
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
   for(const auto& from_source : make_range_pair(out_edges(s, g))){
     auto v = target(from_source, g);
-    edge_descriptor to_sink;
-    bool is_there;
-    std::tie(to_sink, is_there) = edge(v, t, g);
+    auto [to_sink, is_there] = edge(v, t, g);
     if( is_there ){
       if( get(capacity, to_sink) > get(capacity, from_source) ){ 
         auto to_augment = get(capacity, from_source);

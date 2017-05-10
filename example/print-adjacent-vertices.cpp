@@ -100,8 +100,7 @@ main()
     get(vertex_name, g);
   read_graph_file(file_in, name_in, g, name_map);
 
-  graph_traits<graph_type>::vertex_iterator i, end;
-  std::tie(i, end) = vertices(g);
+  auto [i, end] = vertices(g);
   i = std::find_if(i, end, name_equals("dax.h", get(vertex_name, g)));
   output_adjacent_vertices(std::cout, *i, g, get(vertex_name, g));
 

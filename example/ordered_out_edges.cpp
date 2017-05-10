@@ -104,19 +104,14 @@ main()
   }
   std::cout << std::endl;
 
-  bool found;
-  using Traits = graph_traits<graph_type>;
-  Traits::edge_descriptor e;
-  Traits::out_edge_iterator e_first, e_last;
-
-  std::tie(e, found) = edge(0, 1, g);
+  auto [e, found] = edge(0, 1, g);
   if (found)
     std::cout << "name(0,1) = " << name[e] << std::endl;
   else
     std::cout << "not found" << std::endl;
   std::cout << std::endl;
 
-  std::tie(e_first, e_last) = edge_range(0, 1, g);
+  auto [e_first, e_last] = edge_range(0, 1, g);
   while (e_first != e_last)
     std::cout << "name(0,1) = " << name[*e_first++] << std::endl;
 #endif

@@ -70,10 +70,9 @@ main(int argc, char *argv[])
 
     // Compute the eccentricities for graph - this computation returns
     // both the radius and diameter as well.
-    int r, d;
     EccentricityContainer eccs(num_vertices(g));
     EccentricityMap em(eccs, g);
-    std::tie(r, d) = all_eccentricities(g, dm, em);
+    const auto [r, d] = all_eccentricities(g, dm, em);
 
     // Print the closeness centrality of each vertex.
     for(const auto& vertex : make_range_pair(vertices(g))) {

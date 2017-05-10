@@ -67,10 +67,7 @@ int main(int argc, char* argv[])
   initialize_incremental_components(graph, ds);
   incremental_components(graph, ds);
 
-  graph_traits<Graph>::edge_descriptor edge;
-  bool flag;
-
-  std::tie(edge, flag) = add_edge(0, 1, graph);
+  auto [edge, flag] = add_edge(0, 1, graph);
   ds.union_set(0,1);
 
   std::tie(edge, flag) = add_edge(1, 4, graph);

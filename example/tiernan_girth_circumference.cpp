@@ -27,8 +27,7 @@ main(int argc, char *argv[])
     read_graph(g, std::cin);
 
     // Compute the girth and circumference simulataneously
-    size_t girth, circ;
-    std::tie(girth, circ) = tiernan_girth_and_circumference(g);
+    auto [girth, circ] = tiernan_girth_and_circumference(g);
 
     // Print the result
     std::cout << "girth: " << girth << std::endl;

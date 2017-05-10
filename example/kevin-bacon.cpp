@@ -71,10 +71,8 @@ main()
     tokenizer <> line_toks(line, sep);
     tokenizer <>::iterator i = line_toks.begin();
     std::string actors_name = *i++;
-    NameVertexMap::iterator pos;
-    bool inserted;
     Vertex u, v;
-    std::tie(pos, inserted) = actors.insert(std::make_pair(actors_name, Vertex()));
+    auto [pos, inserted] = actors.insert(std::make_pair(actors_name, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       actor_name[u] = actors_name;
@@ -92,9 +90,8 @@ main()
     } else
       v = pos->second;
 
-    graph_traits<Graph>::edge_descriptor e;
-    std::tie(e, inserted) = add_edge(u, v, g);
-    if (inserted)
+    auto [e, insertede] = add_edge(u, v, g);
+    if (insertede)
       connecting_movie[e] = movie_name;
 
   }

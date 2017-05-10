@@ -129,8 +129,7 @@ main()
   // VC++ has trouble with the edge iterator constructor
   file_dep_graph g(n_vertices);
   while (input_begin != input_end) {
-    size_type i, j;
-    std::tie(i, j) = *input_begin++;
+    const auto [i, j] = *input_begin++;
     add_edge(i, j, g);
   }
 #else

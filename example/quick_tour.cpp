@@ -85,8 +85,7 @@ int main(int,char*[])
   Graph g(num_vertices);
   auto weightmap = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {
-    graph_traits<Graph>::edge_descriptor e; bool inserted;
-    std::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    auto [e, inserted] = add_edge(edge_array[j].first, edge_array[j].second, g);
     weightmap[e] = transmission_delay[j];
   }
 #else

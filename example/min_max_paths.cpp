@@ -60,8 +60,7 @@ main(int , char* [])
   Graph G(num_nodes);
   auto weightmap = get(edge_weight, G);
   for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j) {
-    graph_traits<Graph>::edge_descriptor e; bool inserted;
-    std::tie(e, inserted) = add_edge(edges[j].first, edges[j].second, G);
+    auto [e, inserted] = add_edge(edges[j].first, edges[j].second, G);
     weightmap[e] = weights[j];
   }
 #else

@@ -30,8 +30,7 @@ main()
   Graph g(num_nodes);
   auto = get(edge_weight, g);
   for (std::size_t j = 0; j < num_edges; ++j) {
-    Edge e; bool inserted;
-    std::tie(e, inserted) = add_edge(edge_array[j].first, edge_array[j].second, g);
+    auto [e, inserted] = add_edge(edge_array[j].first, edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
 #else

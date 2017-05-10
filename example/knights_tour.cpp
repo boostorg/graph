@@ -161,12 +161,10 @@ template <typename Graph, typename TimePropertyMap>
   using Vertex = typename graph_traits<Graph>::vertex_descriptor;
   using P = std::pair<int, Vertex>;
   std::stack<P> S;
-  int time_stamp = 0;
 
-  S.push(std::make_pair(time_stamp, src));
+  S.push(std::make_pair(0, src));
   while (!S.empty()) {
-    Vertex x;
-    std::tie(time_stamp, x) = S.top();
+    auto [time_stamp, x] = S.top();
     put(time_map, x, time_stamp);
     // all vertices have been visited, success!
     if (time_stamp == num_vertices(g) - 1)
@@ -182,7 +180,7 @@ template <typename Graph, typename TimePropertyMap>
     if (deadend) {
       put(time_map, x, -1);
       S.pop();
-      std::tie(time_stamp, x) = S.top();
+      auto [time_stamp, x] = S.top();
       while (get(time_map, x) != -1) {  // unwind stack to last unexplored vertex
         put(time_map, x, -1);
         S.pop();
@@ -212,12 +210,10 @@ template <typename Graph, typename TimePropertyMap>
   using Vertex = typename graph_traits<Graph>::vertex_descriptor;
   using P = std::pair<int, Vertex>;
   std::stack<P> S;
-  int time_stamp = 0;
 
-  S.push(std::make_pair(time_stamp, src));
+  S.push(std::make_pair(0, src));
   while (!S.empty()) {
-    Vertex x;
-    std::tie(time_stamp, x) = S.top();
+    auto [time_stamp, x] = S.top();
     put(time_map, x, time_stamp);
     // all vertices have been visited, success!
     if (time_stamp == num_vertices(g) - 1)

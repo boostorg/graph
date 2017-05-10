@@ -99,8 +99,7 @@ main()
     get(vertex_name, g);
   read_graph_file(file_in, name_in, g, name_map);
 
-  graph_traits<graph_type>::vertex_iterator i, end;
-  std::tie(i, end) = vertices(g);
+  auto [i, end] = vertices(g);
   using name_map_t = property_map<graph_type, vertex_name_t>::type;
   name_equals_t<name_map_t> predicate("dax.h", get(vertex_name, g));
   i = std::find_if(i, end, predicate);

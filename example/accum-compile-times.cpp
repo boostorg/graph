@@ -44,9 +44,6 @@ using file_dep_graph2 = adjacency_list<listS, // Store out-edges of each vertex 
   // an edge property
   property<edge_weight_t, float>>;
 
-using vertex_t = graph_traits<file_dep_graph2>::vertex_descriptor;
-using edge_t = graph_traits<file_dep_graph2>::edge_descriptor;
-
 int
 main()
 {
@@ -79,9 +76,7 @@ main()
     compile_cost_in >> compile_cost_map[vertex];
   }
 
-  graph_property_iter_range < file_dep_graph2,
-    vertex_compile_cost_t >::iterator ci, ci_end;
-  std::tie(ci, ci_end) = get_property_iter_range(g, vertex_compile_cost);
+  const auto [ci, ci_end] = get_property_iter_range(g, vertex_compile_cost);
   std::cout << "total (sequential) compile time: "
     << std::accumulate(ci, ci_end, 0.0) << std::endl;
 

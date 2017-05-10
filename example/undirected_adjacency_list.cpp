@@ -41,15 +41,13 @@ directed_graph_demo()
   DirectedGraph digraph(V);
   using Weight = typename DirectedGraph::edge_property_type;
   auto weight = get(edge_weight, digraph);
-  typename graph_traits<DirectedGraph>::edge_descriptor e1, e2;
-  bool found;
 
   auto u = vertex(0, digraph);
   auto v = vertex(1, digraph);
   add_edge(u, v, Weight(1.2), digraph);
   add_edge(v, u, Weight(2.4), digraph);
-  std::tie(e1, found) = edge(u, v, digraph);
-  std::tie(e2, found) = edge(v, u, digraph);
+  auto [e1, found1] = edge(u, v, digraph);
+  auto [e2, found2] = edge(v, u, digraph);
   std::cout << "in a directed graph is ";
 #ifdef __GNUC__
   // no boolalpha
@@ -70,14 +68,12 @@ undirected_graph_demo2()
   using Weight = typename UndirectedGraph::edge_property_type;
   typename property_map<UndirectedGraph, edge_weight_t>::type
     weight = get(edge_weight, undigraph);
-  typename graph_traits<UndirectedGraph>::edge_descriptor e1, e2;
-  bool found;
 
   auto u = vertex(0, undigraph);
   auto v = vertex(1, undigraph);
   add_edge(u, v, Weight(3.1), undigraph);
-  std::tie(e1, found) = edge(u, v, undigraph);
-  std::tie(e2, found) = edge(v, u, undigraph);
+  auto [e1, found1] = edge(u, v, undigraph);
+  auto [e2, found2] = edge(v, u, undigraph);
   std::cout << "in an undirected graph is ";
 #ifdef __GNUC__
   std::cout << "(u,v) == (v,u) ? " << (e1 == e2) << std::endl;

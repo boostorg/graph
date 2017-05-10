@@ -28,7 +28,7 @@ main()
     ++i;
   }
 
-  std::tie(v, v_end) = get_property_iter_range(g, vertex_name);
+  auto [v, v_end] = get_property_iter_range(g, vertex_name);
   std::copy(v, v_end, std::ostream_iterator<std::string> (std::cout, " "));
   std::cout << std::endl;
   return 0;

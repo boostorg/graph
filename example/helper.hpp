@@ -19,12 +19,9 @@ typename boost::graph_traits<Graph>::vertex_descriptor
 add_named_vertex(Graph& g, NameMap nm, const std::string& name, VertexMap& vm)
 {
     using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
-    using Iterator = typename VertexMap::iterator;
 
     Vertex v;
-    Iterator iter;
-    bool inserted;
-    std::tie(iter, inserted) = vm.insert(make_pair(name, Vertex()));
+    auto [iter, inserted] = vm.insert(make_pair(name, Vertex()));
     if(inserted) {
         // The name was unique so we need to add a vertex to the graph
         v = add_vertex(g);

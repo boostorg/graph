@@ -106,8 +106,7 @@ main()
   // VC++ can't handle the iterator constructor
   IteratorConstructibleGraph G(size_V);
   while (edge_iter != end) {
-    int i, j;
-    std::tie(i, j) = *edge_iter++;
+    const auto [i, j] = *edge_iter++;
     boost::add_edge(i, j, G);
   }
 #else

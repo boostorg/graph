@@ -84,7 +84,7 @@ void modify_demo(MutableGraph& g)
     u = add_vertex(g);
     v = add_vertex(g);
     
-    std::tie(e, added) = add_edge(u, v, g);
+    auto [e, added] = add_edge(u, v, g);
 
     assert(num_edges(g) == m + 2);
     assert(added == true); // edge should have been added
@@ -99,15 +99,14 @@ void modify_demo(MutableGraph& g)
     remove_edge(u, v, g);
 
     assert(num_edges(g) == m + 1);
-    bool exists;
-    std::tie(e, exists) = edge(u, v, g);
+    auto [e, exists] = edge(u, v, g);
     assert(exists == false);
     assert(out_degree(u, g) == 0);
     assert(in_degree(v, g) == 0);
   }
   {
     e = *edges(g).first;
-    std::tie(u, v) = incident(e, g);
+    auto [u, v] = incident(e, g);
 
     remove_edge(e, g);
 
@@ -118,8 +117,7 @@ void modify_demo(MutableGraph& g)
   {
     add_edge(u, v, g);
 
-    typename GraphTraits::out_edge_iterator iter, iter_end;
-    std::tie(iter, iter_end) = out_edges(u, g);
+    auto [iter, iter_end] = out_edges(u, g);
 
     remove_edge(iter, g);
     
@@ -129,13 +127,12 @@ void modify_demo(MutableGraph& g)
   }
   {
     w = add_vertex(g);
-    std::tie(e1, added) = add_edge(u, v, g);
-    std::tie(e2, added) = add_edge(v, w, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(v, w, g);
     name_map[e1] = "I-5";
     name_map[e2] = "Route 66";
     
-    typename GraphTraits::out_edge_iterator iter, iter_end;
-    std::tie(iter, iter_end) = out_edges(u, g);
+    auto [iter, iter_end] = out_edges(u, g);
 
     remove_edge_if(name_equals("Route 66", name_map), g);
     
@@ -150,8 +147,8 @@ void modify_demo(MutableGraph& g)
     assert(in_degree(w, g) == 0);
   }
   {
-    std::tie(e1, added) = add_edge(u, v, g);
-    std::tie(e2, added) = add_edge(u, w, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(u, w, g);
     name_map[e1] = "foo";
     name_map[e2] = "foo";
     
@@ -161,8 +158,8 @@ void modify_demo(MutableGraph& g)
     assert(out_degree(u, g) == 0);
   }
   {
-    std::tie(e1, added) = add_edge(u, v, g);
-    std::tie(e2, added) = add_edge(w, v, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(w, v, g);
     name_map[e1] = "bar";
     name_map[e2] = "bar";
     

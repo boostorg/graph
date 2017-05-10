@@ -109,13 +109,11 @@ main()
     std::list<std::string> line_toks;
     boost::stringtok(line_toks, line, "|");
 
-    NameVertexMap::iterator pos; 
-    bool inserted;
     Vertex u, v;
 
     auto i = line_toks.begin();
 
-    std::tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
+    auto [pos, inserted] = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
       u = add_vertex(g);
       put(node_name, u, *i);
@@ -190,7 +188,7 @@ main()
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));
-  std::tie(vi, vi_end) = vertices(g);
+  auto [vi, vi_end] = vertices(g);
   ++vi;
   for (; vi != vi_end; ++vi)
     add_edge(parent[*vi], *vi, search_tree);

@@ -116,7 +116,6 @@ int main(int argc, char **argv)
     property<edge_weight_t, cost>>;
   using WeightMap = property_map<mygraph_t, edge_weight_t>::type;
   using vertex = mygraph_t::vertex_descriptor;
-  using edge_descriptor = mygraph_t::edge_descriptor;
   using edge = std::pair<int, int>;
   
   // specify data
@@ -161,8 +160,7 @@ int main(int argc, char **argv)
   mygraph_t g(N);
   auto weightmap = get(edge_weight, g);
   for(std::size_t j = 0; j < num_edges; ++j) {
-    edge_descriptor e; bool inserted;
-    std::tie(e, inserted) = add_edge(edge_array[j].first,
+    const auto [e, inserted] = add_edge(edge_array[j].first,
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }

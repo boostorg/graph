@@ -103,8 +103,7 @@ int main(int,char*[])
   // VC++ can't handle the iterator constructor
   Graph g(N);
   for (std::size_t j = 0; j < nedges; ++j) {
-    graph_traits<Graph>::edge_descriptor e; bool inserted;
-    std::tie(e, inserted) = add_edge(used_by[j].first, used_by[j].second, g);
+    const auto [e, inserted] = add_edge(used_by[j].first, used_by[j].second, g);
   }
 #else
   Graph g(used_by, used_by + nedges, N);
