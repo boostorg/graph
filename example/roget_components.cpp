@@ -20,7 +20,6 @@
 int main(int argc, char* argv[])
 {
   using namespace boost;
-  Graph* g;
   using vertex_t = graph_traits<Graph*>::vertex_descriptor;
   unsigned long n = 0;
   unsigned long d = 0;
@@ -42,7 +41,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  g = (filename ? restore_graph(filename) : roget(n, d, p, s));
+  auto g = (filename ? restore_graph(filename) : roget(n, d, p, s));
   if (g == NULL) {
     fprintf(stderr, "Sorry, can't create the graph! (error code %ld)\n",
             panic_code);
@@ -62,7 +61,7 @@ int main(int argc, char* argv[])
 
   auto root = get(v_property<vertex_t>(), g);
 
-  int num_comp = strong_components
+  auto num_comp = strong_components
     (g, make_iterator_property_map(comp.begin(), index_map),
      root_map(root).
      discover_time_map(get(z_property<long>(), g)).
@@ -85,7 +84,7 @@ int main(int argc, char* argv[])
   // from outside the algorithm.
 
   for (c = 0; c < num_comp; ++c) {
-    vertex_t v = strong_comp[c].front();
+    auto v = strong_comp[c].front();
     std::cout << "Strong component `" << specs(v) << "'";
     if (strong_comp[c].size() > 1) {
       std::cout << " also includes:\n";
@@ -112,9 +111,9 @@ int main(int argc, char* argv[])
   // We go in reverse order just to mimic the output ordering in
   // Knuth's version.
   for (c = num_comp - 1; c >= 0; --c) {
-    vertex_t u = strong_comp[c][0];
+    auto u = strong_comp[c][0];
     for (i = 0; i < strong_comp[c].size(); ++i) {
-      vertex_t v = strong_comp[c][i];
+      auto v = strong_comp[c][i];
       for (const auto& edge : make_range_pair(out_edges(v, g))) {
         auto x = target(edge, g);
         auto comp_x = comp[index_map[x]];

@@ -132,11 +132,11 @@ int main(int , char* [])
   {
     
     //Setting the start node
-    Vertex s = vertex(0, G);
+    auto s = vertex(0, G);
     int ecc;   //defining a variable for the pseudoperipheral radius
     
     //Calculating the pseudoeperipheral node and radius
-    Vertex e = pseudo_peripheral_pair(G, s, ecc, get(vertex_color, G), get(vertex_degree, G) );
+    auto e = pseudo_peripheral_pair(G, s, ecc, get(vertex_color, G), get(vertex_degree, G) );
 
     std::cout << std::endl;
     std::cout << "Starting vertex: " << s << std::endl;

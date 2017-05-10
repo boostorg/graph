@@ -74,9 +74,8 @@ compute_loop_extent(typename graph_traits <
   using Vertex = typename graph_traits<Graph>::vertex_descriptor;
   using Color = color_traits<default_color_type>;
 
-  Vertex loop_head, loop_tail;
-  loop_tail = source(back_edge, g);
-  loop_head = target(back_edge, g);
+  auto loop_tail = source(back_edge, g);
+  auto loop_head = target(back_edge, g);
 
   std::vector<default_color_type>
     reachable_from_head(num_vertices(g), Color::white());

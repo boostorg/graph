@@ -16,7 +16,7 @@ main()
 {
   using namespace boost;
   const int n_vertices = 7;
-  Graph *sgb_g = gb_new_graph(n_vertices);
+  auto sgb_g = gb_new_graph(n_vertices);
 
   const char *tasks[] = {
     "pick up kids from school",

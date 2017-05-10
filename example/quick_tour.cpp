@@ -41,7 +41,7 @@ template <class Graph> struct exercise_vertex {
     std::cout << "\tin-edges: ";
     for (const auto& e : make_range_pair(in_edges(v, g)))
     {
-      Vertex src = source(e, g), targ = target(e, g);
+      auto src = source(e, g), targ = target(e, g);
       std::cout << "(" << name[get(vertex_id, src)]
                 << "," << name[get(vertex_id, targ)] << ") ";
     }
@@ -93,10 +93,8 @@ int main(int,char*[])
           transmission_delay, num_vertices);
 #endif
 
-  boost::property_map<Graph, vertex_index_t>::type
-    vertex_id = get(vertex_index, g);
-  boost::property_map<Graph, edge_weight_t>::type
-    trans_delay = get(edge_weight, g);
+  auto vertex_id = get(vertex_index, g);
+  auto trans_delay = get(edge_weight, g);
 
   std::cout << "vertices(g) = ";
   for (const auto& vertex : make_range_pair(vertices(g)))

@@ -45,7 +45,6 @@ void gen_rand_graph(TG &g, size_t nV, size_t nE)
 int main(int argc, char* argv[])
 {
     const double epsilon = 0.0000001;
-    double min_cr, max_cr; ///Minimum and maximum cycle ratio
     using ccReal_t = std::vector<graph_traits<grap_real_t>::edge_descriptor>;
     ccReal_t cc; ///critical cycle
 
@@ -61,9 +60,9 @@ int main(int argc, char* argv[])
     for(const auto& vertex : make_range_pair(vertices(tgr))) {
         vim[vertex] = i++; ///Initialize vertex index property
     }
-    max_cr = maximum_cycle_ratio(tgr, vim, ew1, ew2);
+    auto max_cr = maximum_cycle_ratio(tgr, vim, ew1, ew2);
     std::cout << "Maximum cycle ratio is " << max_cr << std::endl;
-    min_cr = minimum_cycle_ratio(tgr, vim, ew1, ew2, &cc);
+    auto min_cr = minimum_cycle_ratio(tgr, vim, ew1, ew2, &cc);
     std::cout << "Minimum cycle ratio is " << min_cr << std::endl;
     std::pair<double, double> cr(.0,.0);
     std::cout << "Critical cycle:\n";

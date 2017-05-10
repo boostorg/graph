@@ -28,7 +28,7 @@ template <typename Graph> void
 generic_bar(Graph & g)
 {
   // Declare some vertex and edge descriptor variables
-  typename graph_traits<Graph>::vertex_descriptor u = vertex(0,g), v = vertex(1,g);
+  auto u = vertex(0,g), v = vertex(1,g);
   typename graph_traits<Graph>::edge_descriptor e1, e2;
   // Set u and e1 to valid descriptors...
   v = u;                        // Make v a handle to the same vertex as u.
@@ -65,10 +65,8 @@ foo(Digraph & digraph,
     typename graph_traits<Digraph>::vertex_descriptor u,
     typename graph_traits<Digraph>::vertex_descriptor v)
 {
-  using edge_t = typename graph_traits<Digraph>::edge_descriptor;
-  std::pair<edge_t, bool> e1, e2;
-  e1 = edge(u, v, digraph);
-  e2 = edge(v, u, digraph);
+  auto e1 = edge(u, v, digraph);
+  auto e2 = edge(v, u, digraph);
   assert(e1.first != e2.first);
 }
 template <typename Undigraph> void
@@ -76,10 +74,8 @@ bar(Undigraph & undigraph,
     typename graph_traits<Undigraph>::vertex_descriptor u,
     typename graph_traits<Undigraph>::vertex_descriptor v)
 {
-  using edge_t = typename graph_traits<Undigraph>::edge_descriptor;
-  std::pair<edge_t, bool> e1, e2;
-  e1 = edge(u, v, undigraph);
-  e2 = edge(v, u, undigraph);
+  auto e1 = edge(u, v, undigraph);
+  auto e2 = edge(v, u, undigraph);
   assert(e1.first == e2.first);
 }
 

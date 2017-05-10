@@ -119,8 +119,7 @@ main()
     if (q == 0)
       break;
 
-    Graph* g;
-    g = raman(p, q, 0L, 0L);
+    auto g = raman(p, q, 0L, 0L);
     if (g == 0) {
       std::cerr << " Sorry, I couldn't make that graph (error code "
         << panic_code << ")" << std::endl;

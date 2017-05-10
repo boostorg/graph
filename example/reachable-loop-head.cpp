@@ -60,11 +60,10 @@ main(int argc, char *argv[])
     }
     loops_out<< "]";
   }
-  property_map<GraphvizDigraph, edge_attribute_t>::type
-    eattr_map = get(edge_attribute, g);
+  auto eattr_map = get(edge_attribute, g);
   for (const auto& edge : make_range_pair(edges(g))) {
     loops_out << source(edge, g) << " -> " << target(edge, g) << "[";
-    std::map<std::string,std::string>& attr_map = eattr_map[edge];
+    auto& attr_map = eattr_map[edge];
     for (auto eai = attr_map.begin();
          eai != attr_map.end(); ++eai) {
       loops_out << eai->first << "=" << eai->second;

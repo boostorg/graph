@@ -69,8 +69,8 @@ main()
   for (std::string line; std::getline(datafile, line);) {
     char_delimiters_separator<char> sep(false, "", ";");
     tokenizer <> line_toks(line, sep);
-    tokenizer <>::iterator i = line_toks.begin();
-    std::string actors_name = *i++;
+    auto i = line_toks.begin();
+    auto actors_name = *i++;
     Vertex u, v;
     auto [pos, inserted] = actors.insert(std::make_pair(actors_name, Vertex()));
     if (inserted) {
@@ -80,7 +80,7 @@ main()
     } else
       u = pos->second;
 
-    std::string movie_name = *i++;
+    auto movie_name = *i++;
 
     std::tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
     if (inserted) {

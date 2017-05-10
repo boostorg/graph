@@ -57,7 +57,7 @@ int main(int,char*[])
   name[E] = "E";
   name[F] = "F";
   
-  Graph& G1 = G0.create_subgraph();
+  auto& G1 = G0.create_subgraph();
   enum { A1, B1, C1 };          // for conveniently refering to vertices in G1
   
   add_vertex(C, G1); // global vertex C becomes local A1 for G1
@@ -84,7 +84,7 @@ int main(int,char*[])
   std::cout << "    G0[F]= " << boost::get(vertex_name, G0, vertex(F, G0)) << std::endl;// prints: "G0[F]= F"
   std::cout << "    G1[C1]= " << boost::get(vertex_name, G1, vertex(C1, G1)) << std::endl;// prints: "G1[C1]= C1"
   
-  Graph& G2 = G0.create_subgraph();
+  auto& G2 = G0.create_subgraph();
   enum { A2, B2 };              // for conveniently refering to vertices in G2
   
   add_vertex(A, G2); // global vertex A becomes local A2 for G2

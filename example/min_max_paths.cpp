@@ -71,7 +71,7 @@ main(int , char* [])
   std::vector<Vertex> p(num_vertices(G));
   std::vector<int> d(num_vertices(G));
 
-  Vertex s = *(vertices(G).first);
+  auto s = *(vertices(G).first);
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   dijkstra_shortest_paths

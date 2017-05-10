@@ -58,7 +58,7 @@ int main(int, char *[])
   for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++)
     add_edge(edges[i].first, edges[i].second, G);
 
-  size_t colors = edge_coloring(G, get(edge_bundle, G));
+  auto colors = edge_coloring(G, get(edge_bundle, G));
 
   std::cout << "Colored using " << colors << " colors" << std::endl;
   for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++) {

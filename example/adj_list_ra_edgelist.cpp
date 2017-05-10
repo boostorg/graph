@@ -25,7 +25,7 @@ main()
   Graph g(edge_array, edge_array + m, n);
 
   for (std::size_t i = 0; i < m; ++i) {
-    const graph_traits<Graph>::edge_iterator e = edges(g).first + i;
+    const auto e = edges(g).first + i;
     std::cout << *e << " ";
   }
   std::cout << std::endl;

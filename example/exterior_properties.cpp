@@ -99,7 +99,7 @@ int main(int , char* []) {
   boost::add_edge(6, 8, 9, G);
 
   using EdgeIndexMap = boost::property_map<Graph, boost::edge_index_t>::type;
-  EdgeIndexMap edge_id = boost::get(boost::edge_index, G);
+  auto edge_id = boost::get(boost::edge_index, G);
 
   using IterMap = boost::iterator_property_map<int*, EdgeIndexMap, int, int&>;
 

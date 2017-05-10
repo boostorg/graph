@@ -67,7 +67,7 @@ void modify_demo(MutableGraph& g)
     u = add_vertex(g);
     v = add_vertex(g);
 
-    std::pair<edge_descriptor, bool> p = add_edge(u, v, g);
+    auto p = add_edge(u, v, g);
   
     assert(num_edges(g) == m + 1);
     assert(p.second == true); // edge should have been added

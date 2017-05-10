@@ -20,12 +20,11 @@ read_graph_file(std::istream & graph_in, std::istream & name_in,
 {
   using size_type = typename graph_traits<Graph>::vertices_size_type;
   size_type n_vertices;
-  typename graph_traits<Graph>::vertex_descriptor u;
   typename property_traits<VertexNamePropertyMap>::value_type name;
 
   graph_in >> n_vertices;       // read in number of vertices
   for (size_type i = 0; i < n_vertices; ++i) {  // Add n vertices to the graph
-    u = add_vertex(g);
+    auto u = add_vertex(g);
     name_in >> name;
     put(name_map, u, name);     // ** Attach name property to vertex u **
   }
@@ -72,8 +71,7 @@ main()
   }
 
   // Obtain internal property map from the graph
-  property_map<graph_type, vertex_name_t>::type name_map =
-    get(vertex_name, g);
+  auto name_map = get(vertex_name, g);
   read_graph_file(file_in, name_in, g, name_map);
 
   print_dependencies(std::cout, g, get(vertex_name, g));

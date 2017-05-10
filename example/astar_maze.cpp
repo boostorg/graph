@@ -301,7 +301,7 @@ int main (int argc, char const *argv[]) {
   }
 
   random_generator.seed(std::time(0));
-  maze m = random_maze(x, y);
+  auto m = random_maze(x, y);
 
   if (m.solve())
     std::cout << "Solved the maze." << std::endl;

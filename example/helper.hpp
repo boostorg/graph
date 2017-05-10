@@ -44,12 +44,12 @@ read_graph(Graph& g, NameMap nm, InputStream& is)
     std::map<std::string, Vertex> verts;
     for(std::string line; std::getline(is, line); ) {
         if(line.empty()) continue;
-        std::size_t index = line.find_first_of(',');
+        auto index = line.find_first_of(',');
         std::string first(line, 0, index);
         std::string second(line, index + 1);
 
-        Vertex u = add_named_vertex(g, nm, first, verts);
-        Vertex v = add_named_vertex(g, nm, second, verts);
+        auto u = add_named_vertex(g, nm, first, verts);
+        auto v = add_named_vertex(g, nm, second, verts);
         add_edge(u, v, g);
     }
     return verts;
@@ -69,12 +69,11 @@ inline std::map<std::string, typename boost::graph_traits<Graph>::vertex_descrip
 read_weighted_graph(Graph& g, NameMap nm, WeightMap wm, InputStream& is)
 {
     using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
-    using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
     std::map<std::string, Vertex> verts;
     for(std::string line; std::getline(is, line); ) {
         if(line.empty()) continue;
-        std::size_t i = line.find_first_of(',');
-        std::size_t j = line.find_first_of(',', i + 1);
+        auto i = line.find_first_of(',');
+        auto j = line.find_first_of(',', i + 1);
         std::string first(line, 0, i);
         std::string second(line, i + 1, j - i - 1);
         std::string prob(line, j + 1);
@@ -85,11 +84,11 @@ read_weighted_graph(Graph& g, NameMap nm, WeightMap wm, InputStream& is)
         ss >> p;
 
         // add the vertices to the graph
-        Vertex u = add_named_vertex(g, nm, first, verts);
-        Vertex v = add_named_vertex(g, nm, second, verts);
+        auto u = add_named_vertex(g, nm, first, verts);
+        auto v = add_named_vertex(g, nm, second, verts);
 
         // add the edge and set the weight
-        Edge e = add_edge(u, v, g).first;
+        auto e = add_edge(u, v, g).first;
         put(wm, e, p);
     }
     return verts;

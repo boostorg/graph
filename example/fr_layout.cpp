@@ -50,7 +50,7 @@ using NameToVertex = std::map<std::string, Vertex>;
 
 Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 {
-  NameToVertex::iterator i = names.find(name);
+  auto i = names.find(name);
   if (i == names.end())
     i = names.insert(std::make_pair(name, add_vertex(name, g))).first;
   return i->second;

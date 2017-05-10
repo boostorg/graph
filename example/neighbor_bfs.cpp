@@ -118,7 +118,7 @@ int main(int , char* [])
   std::fill_n(d, 5, 0);
 
   // The source vertex
-  Vertex s = *(vertices(G).first);
+  auto s = *(vertices(G).first);
   p[s] = s;
   distance_and_pred_visitor<size_type*, Vertex*, ColorMap> 
     vis(d, &p[0], get(vertex_color, G));

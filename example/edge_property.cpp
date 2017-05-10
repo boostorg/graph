@@ -130,8 +130,7 @@ int main(int , char* [])
 
   print_network(G);
 
-  property_map<Graph, edge_myflow_t>::type
-    flow = get(edge_myflow, G);
+  auto flow = get(edge_myflow, G);
 
   int f = 0;
   for (const auto& vertex : make_range_pair(vertices(G)))

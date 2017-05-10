@@ -137,17 +137,13 @@ main()
   file_dep_graph2 g(input_begin, input_end, n_vertices);
 #endif
 
-  name_map_t
-    name_map =
+  auto name_map =
     get(vertex_name, g);
-  compile_cost_map_t
-    compile_cost_map =
+  auto compile_cost_map =
     get(vertex_compile_cost, g);
-  distance_map_t
-    distance_map =
+  auto distance_map =
     get(vertex_distance, g);
-  color_map_t
-    color_map =
+  auto color_map =
     get(vertex_color, g);
 
   {

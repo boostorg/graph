@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     (graph.wrapped(2) ? "W" : "U") << std::endl; // prints "W, U, W"
 
   // Start with the first vertex in the graph
-  Traits::vertex_descriptor first_vertex = vertex(0, graph);
+  auto first_vertex = vertex(0, graph);
   print_vertex(first_vertex); // prints "(0, 0, 0)"
 
   // Print the next vertex in dimension 0

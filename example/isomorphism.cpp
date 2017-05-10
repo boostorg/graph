@@ -30,8 +30,7 @@ main()
 
   std::vector<graph_traits<graph_t>::vertex_descriptor> v1(n), v2(n);
 
-  property_map<graph_t, vertex_index_t>::type 
-    v1_index_map = get(vertex_index, g1),
+  auto v1_index_map = get(vertex_index, g1),
     v2_index_map = get(vertex_index, g2);
 
   int id = 0;

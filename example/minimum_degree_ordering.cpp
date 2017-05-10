@@ -37,8 +37,7 @@ struct harwell_boeing
 {
   harwell_boeing(char* filename) {
     int Nrhs;
-    char* Type;
-    Type = new char[4];
+    auto Type = new char[4];
     isComplex = false;
     readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
     colptr = (int *)malloc((N+1)*sizeof(int));
@@ -103,7 +102,7 @@ int main(int argc, char* argv[])
   //must be BGL directed graph now
   using Graph = adjacency_list<vecS, vecS, directedS> ;
 
-  int n = hbs.nrows();
+  auto n = hbs.nrows();
 
   std::cout << "n is " << n << std::endl;
 

@@ -66,8 +66,7 @@ undirected_graph_demo2()
   const int V = 2;
   UndirectedGraph undigraph(V);
   using Weight = typename UndirectedGraph::edge_property_type;
-  typename property_map<UndirectedGraph, edge_weight_t>::type
-    weight = get(edge_weight, undigraph);
+  auto weight = get(edge_weight, undigraph);
 
   auto u = vertex(0, undigraph);
   auto v = vertex(1, undigraph);

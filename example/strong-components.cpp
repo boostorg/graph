@@ -28,7 +28,7 @@ main()
   add_edge(5, 2, G);
 
   std::vector<int> c(N);
-  int num = strong_components
+  auto num = strong_components
     (G, make_iterator_property_map(c.begin(), get(vertex_index, G), c[0]));
 
   std::cout << "Total number of components: " << num << std::endl;

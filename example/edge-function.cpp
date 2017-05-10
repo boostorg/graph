@@ -98,11 +98,9 @@ main()
   }
 
   // Obtain internal property map from the graph
-  property_map<graph_type, vertex_name_t>::type name_map =
-    get(vertex_name, g);
+  auto name_map = get(vertex_name, g);
   read_graph_file(file_in, name_in, g, name_map);
 
-  graph_traits<graph_type>::vertex_descriptor yow, zag, bar;
   // Get vertex name property map from the graph
   auto name = get(vertex_name, g);
   // Get iterators for the vertex set
@@ -110,13 +108,13 @@ main()
   // Find yow.h
   using name_map_t = property_map<graph_type, vertex_name_t >::type;
   name_equals_t<name_map_t> predicate1("yow.h", name);
-  yow = *std::find_if(i, end, predicate1);
+  auto yow = *std::find_if(i, end, predicate1);
   // Find zag.o
   name_equals_t<name_map_t> predicate2("zag.o", name);
-  zag = *std::find_if(i, end, predicate2);
+  auto zag = *std::find_if(i, end, predicate2);
   // Find bar.o
   name_equals_t<name_map_t> predicate3("bar.o", name);
-  bar = *std::find_if(i, end, predicate3);
+  auto bar = *std::find_if(i, end, predicate3);
 
 
   // Get the edge connecting yow.h to zag.o

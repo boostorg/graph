@@ -53,8 +53,7 @@ main()
     if (parent[u] != u)
       edge_attr_map[edge(parent[u], u, g_dot).first]["color"] = "black";
   std::ofstream out("figs/telephone-mst-prim.dot");
-  graph_property<GraphvizGraph, graph_edge_attribute_t>::type &
-    graph_edge_attr_map = get_property(g_dot, graph_edge_attribute);
+  auto& graph_edge_attr_map = get_property(g_dot, graph_edge_attribute);
   graph_edge_attr_map["color"] = "gray";
   write_graphviz(out, g_dot);
 

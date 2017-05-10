@@ -81,8 +81,7 @@ struct print_index {
   using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Vertex c) const
   {
-    typename boost::property_map<Graph,vertex_index_t>::type 
-      id = get(vertex_index, G);
+    auto id = get(vertex_index, G);
     std::cout << id[c] << " ";
   }
 
@@ -98,8 +97,7 @@ struct exercise_vertex {
 
   void operator()(Vertex v) const
   {
-    typename boost::property_map<Graph, vertex_index_t>::type 
-      id = get(vertex_index, g);
+    auto id = get(vertex_index, g);
 
     std::cout << "vertex id: " << id[v] << std::endl;
     
@@ -140,8 +138,7 @@ main()
   for (int i=0; i<11; ++i)
     add_edge(edge_array[i].first, edge_array[i].second, g);
 
-  boost::property_map<MyGraphType, vertex_index_t>::type 
-    id = get(vertex_index, g);
+  auto id = get(vertex_index, g);
 
   std::cout << "vertices(g) = ";
   for (const auto& vertex : make_range_pair(vertices(g)))

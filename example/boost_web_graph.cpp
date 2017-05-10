@@ -122,7 +122,7 @@ main()
       u = pos->second;
     ++i;
 
-    std::string hyperlink_name = *i++;
+    auto hyperlink_name =  *i++;
       
     std::tie(pos, inserted) = name2vertex.insert(std::make_pair(*i, Vertex()));
     if (inserted) {
@@ -152,7 +152,7 @@ main()
   size_type i;
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
-    Traits::vertex_descriptor src = vertices(g).first[i];
+    auto src = vertices(g).first[i];
     breadth_first_search(g, src, boost::visitor(vis));
   }
 
@@ -180,7 +180,7 @@ main()
 
   // Do a BFS starting at the home page, recording the parent of each
   // vertex (where parent is with respect to the search tree).
-  Traits::vertex_descriptor src = vertices(g).first[0];
+  auto src = vertices(g).first[0];
   breadth_first_search
     (g, src, 
      boost::visitor(make_bfs_visitor(record_predecessors(&parent[0],

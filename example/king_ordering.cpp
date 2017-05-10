@@ -87,7 +87,7 @@ int main(int , char* [])
               << std::endl;
   }
   {
-    Vertex s = vertex(0, G);
+    auto s = vertex(0, G);
     //king_ordering
     king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                   get(vertex_degree, G), get(vertex_index, G));

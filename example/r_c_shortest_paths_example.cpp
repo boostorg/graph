@@ -163,7 +163,7 @@ public:
     const SPPRC_Example_Graph_Vert_Prop& vert_prop = 
       get( vertex_bundle, g )[target( ed, g )];
     new_cont.cost = old_cont.cost + arc_prop.cost;
-    int& i_time = new_cont.time;
+    auto& i_time = new_cont.time;
     i_time = old_cont.time + arc_prop.time;
     i_time < vert_prop.eat ? i_time = vert_prop.eat : 0;
     return i_time <= vert_prop.lat ? true : false;

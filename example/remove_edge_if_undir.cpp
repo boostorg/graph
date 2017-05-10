@@ -74,8 +74,7 @@ main()
 #else
   Graph g(edge_array, edge_array + 5, 4);
 #endif
-  property_map<Graph, edge_weight_t>::type 
-    weight = get(edge_weight, g);
+  auto weight = get(edge_weight, g);
 
   int w = 0;
   for (const auto& edge : make_range_pair(edges(g)))

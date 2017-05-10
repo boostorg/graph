@@ -73,10 +73,9 @@ main()
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
 #endif
 
-  graph_traits<g_dot_type>::edge_descriptor e;
   for (size_type i = 0; i < num_vertices(g); ++i)
     if (parent[i] != i) {
-      e = edge(parent[i], i, g_dot).first;
+      auto e = edge(parent[i], i, g_dot).first;
       put(edge_color, g_dot, e, "black");
     }
 
@@ -91,10 +90,10 @@ main()
   for (const auto& vertex : make_range_pair(vertices(g_dot)))
     if (parent[vertex] != vertex) {
       rtable << get(vertex_name, g_dot, vertex) << "    ";
-      vertex_descriptor v = vertex, child;
+      auto v = vertex;
+      vertex_descriptor child;
       int path_cost = 0;
-      property_map<Graph, edge_weight_t>::type
-        weight_map = get(edge_weight, g);
+      auto weight_map = get(edge_weight, g);
       do {
         path_cost += get(weight_map, edge(parent[v], v, g).first);
         child = v;
