@@ -29,11 +29,10 @@ template <class Graph> struct exercise_vertex {
     // Write out the outgoing edges
     std::cout << "\tout-edges: ";
     typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
-    typename graph_traits<Graph>::edge_descriptor e;
     for (std::tie(out_i, out_end) = out_edges(v, g);
          out_i != out_end; ++out_i)
     {
-      e = *out_i;
+      auto e = *out_i;
       auto src = source(e, g), targ = target(e, g);
       std::cout << "(" << name[get(vertex_id, src)]
                 << "," << name[get(vertex_id, targ)] << ") ";
@@ -45,7 +44,7 @@ template <class Graph> struct exercise_vertex {
     typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
     for (std::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
     {
-      e = *in_i;
+      auto e = *in_i;
       Vertex src = source(e, g), targ = target(e, g);
       std::cout << "(" << name[get(vertex_id, src)]
                 << "," << name[get(vertex_id, targ)] << ") ";

@@ -70,9 +70,8 @@ int main(int argc, char** argv)
       std::cout << "Input graph is not planar" << std::endl;
 
       std::cout << "Edges in the Kuratowski subgraph: ";
-      kuratowski_edges_t::iterator ki, ki_end;
-      ki_end = kuratowski_edges.end();
-      for(ki = kuratowski_edges.begin(); ki != ki_end; ++ki)
+      auto ki_end = kuratowski_edges.end();
+      for(auto ki = kuratowski_edges.begin(); ki != ki_end; ++ki)
         {
           std::cout << *ki << " ";
         }
