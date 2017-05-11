@@ -10,7 +10,6 @@
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/topology.hpp>
-#include <boost/lexical_cast.hpp>
 #include <string>
 #include <iostream>
 #include <map>
@@ -90,10 +89,10 @@ int main(int argc, char* argv[])
     if (arg == "--iterations") {
       ++arg_idx;
       if (arg_idx >= argc) { usage(); return -1; }
-      iterations = lexical_cast<int>(argv[arg_idx]);
+      iterations = std::stoi(argv[arg_idx]);
     } else {
-      if (width == 0.0) width = lexical_cast<double>(arg);
-      else if (height == 0.0) height = lexical_cast<double>(arg);
+      if (width == 0.0) width = std::stod(arg);
+      else if (height == 0.0) height = std::stod(arg);
       else {
         usage();
         return -1;

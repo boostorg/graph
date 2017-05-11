@@ -9,7 +9,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 #include "range_pair.hpp"
@@ -26,7 +25,7 @@ main()
   Graph g(num_vertices(g_dot));
   auto edge_attr_map = get(edge_attribute, g_dot);
   for (const auto& edge : make_range_pair(edges(g_dot))) {
-    auto weight = lexical_cast<int>(edge_attr_map[edge]["label"]);
+    auto weight = std::stoi(edge_attr_map[edge]["label"]);
     property<edge_weight_t, int> edge_property(weight);
     add_edge(source(edge, g_dot), target(edge, g_dot), edge_property, g);
   }

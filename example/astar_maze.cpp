@@ -26,7 +26,6 @@
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/grid_graph.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -296,8 +295,8 @@ int main (int argc, char const *argv[]) {
   std::size_t y = 10;
 
   if (argc == 3) {
-    x = boost::lexical_cast<std::size_t>(argv[1]);
-    y = boost::lexical_cast<std::size_t>(argv[2]);
+    x = std::stoul(argv[1]);
+    y = std::stoul(argv[2]);
   }
 
   random_generator.seed(std::time(0));

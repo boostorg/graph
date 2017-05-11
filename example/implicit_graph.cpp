@@ -11,7 +11,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <utility>
 #include "range_pair.hpp"
@@ -460,7 +459,7 @@ int main (int argc, char const *argv[]) {
 
   // Specify the size of the graph on the command line, or use a default size
   // of 5.
-  std::size_t n = argc == 2 ? boost::lexical_cast<std::size_t>(argv[1]) : 5;
+  std::size_t n = argc == 2 ? std::stoul(argv[1]) : 5;
 
   // Create a small ring graph.
   ring_graph g(n);

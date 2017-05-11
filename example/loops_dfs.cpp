@@ -11,7 +11,6 @@
 #include <fstream>
 #include <stack>
 #include <map>
-#include <boost/lexical_cast.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graphviz.hpp>

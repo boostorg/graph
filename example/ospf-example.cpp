@@ -8,7 +8,6 @@
 #include <fstream>              // for file I/O
 #include <boost/graph/graphviz.hpp>     // for read/write_graphviz()
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/lexical_cast.hpp>
 #include "range_pair.hpp"
 
 namespace boost {

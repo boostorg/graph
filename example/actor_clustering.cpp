@@ -22,7 +22,6 @@
 #include <iostream>
 #include <string>
 #include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
 #include <map>
 #include "range_pair.hpp"
 
@@ -52,7 +51,7 @@ void load_actor_graph(std::istream& in, ActorGraph& g)
     using Tok = tokenizer<char_separator<char>>;
     Tok tok(line, char_separator<char>(" "));
     for (const auto& id : tok) {
-      auto actor_id = lexical_cast<int>(id);
+      auto actor_id = std::stoi(id);
       auto v = actors.find(actor_id);
       if (v == actors.end()) {
         auto new_vertex = add_vertex(Actor(actor_id), g);
@@ -132,7 +131,7 @@ int main(int argc, char* argv[])
         out_file = argv[on_arg];
       } else if (arg == "-threshold") {
         ++on_arg; assert(on_arg < argc);
-        threshold = lexical_cast<double>(argv[on_arg]);
+        threshold = std::stod(argv[on_arg]);
       } else if (arg == "-normalize") {
         normalize = true;
       } else {
