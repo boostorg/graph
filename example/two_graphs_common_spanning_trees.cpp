@@ -75,9 +75,11 @@ int main(int argc, char **argv)
       inL
     );
 
+  // Here you can play with the trees that the algorithm has found.
+  /*
   for(const auto& vec : coll) {
-    // Here you can play with the trees that the algorithm has found.
   }
+  */
 
   return 0;
 }

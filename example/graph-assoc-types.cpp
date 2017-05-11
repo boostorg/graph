@@ -14,11 +14,13 @@ template <typename Graph> void
 generic_foo(Graph & g)
 {
   // Access descriptor types
-  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
-  using Edge = typename graph_traits<Graph>::edge_descriptor;
+  // using Vertex = typename graph_traits<Graph>::vertex_descriptor;
+  // using Edge = typename graph_traits<Graph>::edge_descriptor;
+
   // Access category types
-  using Dir = typename graph_traits<Graph>::directed_category;
-  using Par = typename graph_traits<Graph>::edge_parallel_category;
+  // using Dir = typename graph_traits<Graph>::directed_category;
+  // using Par = typename graph_traits<Graph>::edge_parallel_category;
+
   // Access iterator types...
   // Access size types...
   // Now do something useful...
