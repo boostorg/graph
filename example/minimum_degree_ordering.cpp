@@ -41,19 +41,19 @@ struct harwell_boeing
     isComplex = false;
     readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
     colptr = (int *)malloc((N+1)*sizeof(int));
-    if ( colptr == NULL ) IOHBTerminate("Insufficient memory for colptr.\n");
+    if ( colptr == nullptr ) IOHBTerminate("Insufficient memory for colptr.\n");
     rowind = (int *)malloc(nonzeros*sizeof(int));
-    if ( rowind == NULL ) IOHBTerminate("Insufficient memory for rowind.\n");
+    if ( rowind == nullptr ) IOHBTerminate("Insufficient memory for rowind.\n");
 
     if ( Type[0] == 'C' ) {
       isComplex = true;
       val = (double *)malloc(nonzeros*sizeof(double)*2);
-      if ( val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+      if ( val == nullptr ) IOHBTerminate("Insufficient memory for val.\n");
 
     } else {
       if ( Type[0] != 'P' ) {   
         val = (double *)malloc(nonzeros*sizeof(double));
-        if ( val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+        if ( val == nullptr ) IOHBTerminate("Insufficient memory for val.\n");
       }
     }
 

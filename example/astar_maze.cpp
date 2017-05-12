@@ -299,7 +299,7 @@ int main (int argc, char const *argv[]) {
     y = std::stoul(argv[2]);
   }
 
-  random_generator.seed(std::time(0));
+  random_generator.seed(std::time(nullptr));
   auto m = random_maze(x, y);
 
   if (m.solve())

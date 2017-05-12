@@ -167,7 +167,7 @@ int main(int argc, char **argv)
   
   
   // pick random start/goal
-  boost::mt19937 gen(time(0));
+  boost::mt19937 gen(time(nullptr));
   auto start = random_vertex(g, gen);
   auto goal = random_vertex(g, gen);
   
