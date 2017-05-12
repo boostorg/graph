@@ -21,7 +21,7 @@
 #include <list>
 #include <iostream>
 #include <fstream>
-#include <math.h>    // for sqrt
+#include <cmath>    // for sqrt
 
 using namespace boost;
 

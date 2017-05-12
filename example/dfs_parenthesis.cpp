@@ -12,7 +12,7 @@
 //  (0(2(3(4(11)4)3)2)0)
 
 #include <boost/config.hpp>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 #include <vector>

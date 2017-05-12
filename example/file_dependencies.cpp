@@ -32,7 +32,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <time.h>
+#include <ctime>
 
 #include <boost/utility.hpp>
 #include <boost/graph/adjacency_list.hpp>
