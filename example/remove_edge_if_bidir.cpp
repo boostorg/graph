@@ -63,15 +63,15 @@ int
 main()
 {
   using Edge = std::pair<std::size_t,std::size_t>;
-  Edge edge_array[6] = { Edge(0,3), Edge(0,2), Edge(0, 3),
+  Edge edge_array[] = { Edge(0,3), Edge(0,2), Edge(0, 3),
                          Edge(1,3),
                          Edge(2, 0),
                          Edge(3, 2) };
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(4);
-  for (std::size_t j = 0; j < 6; ++j)
-    add_edge(edge_array[j].first, edge_array[j].second, g);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, g);
 #else
   Graph g(edge_array, edge_array + 6, 4);
 #endif

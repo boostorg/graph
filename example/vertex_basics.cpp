@@ -129,14 +129,14 @@ main()
   using MyGraphType = adjacency_list<vecS,vecS,bidirectionalS>;
 
   using Pair = std::pair<int,int>;
-  Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
+  Pair edge_array[] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4),
                           Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                           Pair(3,4), Pair(4,0), Pair(4,1) };
 
   /* Construct a graph using the edge_array*/
   MyGraphType g(5);
-  for (int i=0; i<11; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, g);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, g);
 
   auto id = get(vertex_index, g);
 

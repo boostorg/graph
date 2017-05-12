@@ -38,7 +38,7 @@ int main(int, char *[])
   using Graph = adjacency_list<vecS, vecS, undirectedS, no_property, size_t, no_property>;
 
   using Pair = std::pair<std::size_t, std::size_t>;
-  Pair edges[14] = { Pair(0,3), //a-d
+  Pair edges[] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e
@@ -55,14 +55,14 @@ int main(int, char *[])
 
   Graph G(10);
 
-  for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++)
-    add_edge(edges[i].first, edges[i].second, G);
+  for (const auto& e : edges)
+    add_edge(e.first, e.second, G);
 
   auto colors = edge_coloring(G, get(edge_bundle, G));
 
   std::cout << "Colored using " << colors << " colors" << std::endl;
-  for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++) {
-    std::cout << "  " << (char)('a' + edges[i].first) << "-" << (char)('a' + edges[i].second) << ": " << G[edge(edges[i].first, edges[i].second, G).first] << std::endl;
+  for (const auto& e : edges) {
+    std::cout << "  " << (char)('a' + e.first) << "-" << (char)('a' + e.second) << ": " << G[edge(e.first, e.second, G).first] << std::endl;
   }
 
   return 0;

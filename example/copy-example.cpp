@@ -33,8 +33,8 @@ main()
   E edges[] = { E(a, c), E(a, d), E(b, a), E(b, d), E(c, f),
     E(d, c), E(d, e), E(d, f), E(e, b), E(e, g), E(f, e), E(f, g)
   };
-  for (int i = 0; i < 12; ++i)
-    add_edge(edges[i].first, edges[i].second, G);
+  for (const auto& edge : edges)
+    add_edge(edge.first, edge.second, G);
 
   print_graph(G, name_map);
   std::cout << std::endl;

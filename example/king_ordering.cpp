@@ -40,7 +40,7 @@ int main(int , char* [])
   using size_type = graph_traits<Graph>::vertices_size_type;
 
   using Pair = std::pair<std::size_t, std::size_t>;
-  Pair edges[14] = { Pair(0,3), //a-d
+  Pair edges[] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e
@@ -56,8 +56,8 @@ int main(int , char* [])
                      Pair(6,7) }; //g-h 
   
   Graph G(10);
-  for (int i = 0; i < 14; ++i)
-    add_edge(edges[i].first, edges[i].second, G);
+  for (const auto& edge : edges)
+    add_edge(edge.first, edge.second, G);
 
   auto deg = get(vertex_degree, G);
   for (const auto& vertex : make_range_pair(vertices(G)))

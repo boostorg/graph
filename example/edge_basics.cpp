@@ -69,15 +69,15 @@ main()
   using MyGraph = adjacency_list<>;
 
   using Pair = std::pair<int,int>;
-  Pair edge_array[8] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
+  Pair edge_array[] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
 
   // Construct a graph using the edge_array (passing in pointers
   // (iterators) to the beginning and end of the array), and
   // specifying the number of vertices as 5
   MyGraph G(5);
-  for (int i=0; i<8; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, G);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, G);
 
   // Use the STL for_each algorithm to "exercise" all of the edges in
   // the graph

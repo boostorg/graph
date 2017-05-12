@@ -40,7 +40,7 @@ int main(int , char* [])
   using size_type = graph_traits<Graph>::vertices_size_type;
 
   using Pair = std::pair<std::size_t, std::size_t>;
-  Pair edges[14] = { Pair(0,3), //a-d
+  Pair edges[] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e

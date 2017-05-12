@@ -30,8 +30,8 @@ main()
   E edge_array[] = { E(a, c), E(a, d), E(b, a), E(b, d), E(c, f),
     E(d, c), E(d, e), E(d, f), E(e, b), E(e, g), E(f, e), E(f, g)
   };
-  for (int i = 0; i < 12; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, G);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, G);
 
   print_graph(G, name_map);
   std::cout << std::endl;
