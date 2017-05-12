@@ -16,7 +16,6 @@
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/progress.hpp>
-#include <boost/shared_ptr.hpp>
 #include "range_pair.hpp"
 
 using namespace boost;
@@ -72,7 +71,7 @@ class progress_cooling : public linear_cooling<double>
   }
 
  private:
-  shared_ptr<boost::progress_display> display;
+  std::shared_ptr<boost::progress_display> display;
 };
 
 int main(int argc, char* argv[])
