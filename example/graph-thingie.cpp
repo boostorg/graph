@@ -13,7 +13,7 @@
 
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/foreach.hpp>
+#include "range_pair.hpp"
 #include <string>
 #include <sstream>
 #include <cstdlib>
@@ -93,7 +93,7 @@ const char* dot =
   std::cout << "graph " << get("name",dp,&graph) <<
       " (" << get("identifier",dp,&graph) << ")\n\n";
 
-  BOOST_FOREACH( graph_t::vertex_descriptor v, vertices(graph) ) {
+  for (auto v : make_range_pair(vertices(graph))) {
     std::cout << "vertex " << get("node_id",dp,v) <<
       " (" << get("label",dp,v) << ")\n";
   }
