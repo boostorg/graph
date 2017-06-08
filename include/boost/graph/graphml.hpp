@@ -289,10 +289,13 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
     {
         if (i->second->key() == typeid(Graph*))
         {
+            std::string type_name = "string";
+            mpl::for_each<value_types>(get_type_name<value_types>(i->second->value(), type_names, type_name));
             // The const_cast here is just to get typeid correct for property
             // map key; the graph should not be mutated using it.
             out << "   <data key=\"" << graph_key_ids[i->first] << "\">"
-                << encode_char_entities(i->second->get_string(const_cast<Graph*>(&g))) << "</data>\n";
+                << (type_name == "boolean" ? (i->second->get_string(const_cast<Graph*>(&g)) == "1" ? "true" : "false")
+                    : encode_char_entities(i->second->get_string(const_cast<Graph*>(&g)))) << "</data>\n";
         }
     }
 
@@ -306,8 +309,11 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
         {
             if (i->second->key() == typeid(vertex_descriptor))
             {
+                std::string type_name = "string";
+                mpl::for_each<value_types>(get_type_name<value_types>(i->second->value(), type_names, type_name));
                 out << "      <data key=\"" << vertex_key_ids[i->first] << "\">"
-                    << encode_char_entities(i->second->get_string(*v)) << "</data>\n";
+                    << (type_name == "boolean" ? (i->second->get_string((*v)) == "1" ? "true" : "false")
+                        : encode_char_entities(i->second->get_string(*v))) << "</data>\n";
             }
         }
         out << "    </node>\n";
@@ -327,8 +333,11 @@ write_graphml(std::ostream& out, const Graph& g, VertexIndexMap vertex_index,
         {
             if (i->second->key() == typeid(edge_descriptor))
             {
+                std::string type_name = "string";
+                mpl::for_each<value_types>(get_type_name<value_types>(i->second->value(), type_names, type_name));
                 out << "      <data key=\"" << edge_key_ids[i->first] << "\">"
-                    << encode_char_entities(i->second->get_string(*e)) << "</data>\n";
+                    << (type_name == "boolean" ? (i->second->get_string((*e)) == "1" ? "true" : "false")
+                        : encode_char_entities(i->second->get_string(*e))) << "</data>\n";
             }
         }
         out << "    </edge>\n";
