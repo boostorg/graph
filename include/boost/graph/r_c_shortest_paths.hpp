@@ -13,6 +13,8 @@
 #include <vector>
 #include <list>
 
+#include <boost/make_shared.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -21,12 +23,12 @@ namespace boost {
 
 // r_c_shortest_paths_label struct
 template<class Graph, class Resource_Container>
-struct r_c_shortest_paths_label
+struct r_c_shortest_paths_label : public boost::enable_shared_from_this<r_c_shortest_paths_label<Graph, Resource_Container> >
 {
   r_c_shortest_paths_label
   ( const unsigned long n, 
     const Resource_Container& rc = Resource_Container(), 
-    const r_c_shortest_paths_label* const pl = 0, 
+    const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > pl = nullptr, 
     const typename graph_traits<Graph>::edge_descriptor& ed = 
       graph_traits<Graph>::edge_descriptor(), 
     const typename graph_traits<Graph>::vertex_descriptor& vd = 
@@ -37,8 +39,7 @@ struct r_c_shortest_paths_label
     pred_edge( ed ), 
     resident_vertex( vd ), 
     b_is_dominated( false ), 
-    b_is_processed( false ),
-    b_is_valid( true )
+    b_is_processed( false )
   {}
   r_c_shortest_paths_label& operator=( const r_c_shortest_paths_label& other )
   {
@@ -50,12 +51,11 @@ struct r_c_shortest_paths_label
   }
   const unsigned long num;
   Resource_Container cumulated_resource_consumption;
-  const r_c_shortest_paths_label* const p_pred_label;
+  const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > p_pred_label;
   const typename graph_traits<Graph>::edge_descriptor pred_edge;
   const typename graph_traits<Graph>::vertex_descriptor resident_vertex;
   bool b_is_dominated;
   bool b_is_processed;
-  bool b_is_valid;
 }; // r_c_shortest_paths_label
 
 template<class Graph, class Resource_Container>
@@ -63,7 +63,6 @@ inline bool operator==
 ( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return 
     l1.cumulated_resource_consumption == l2.cumulated_resource_consumption;
 }
@@ -73,17 +72,15 @@ inline bool operator!=
 ( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return 
     !( l1 == l2 );
 }
 
 template<class Graph, class Resource_Container>
 inline bool operator<
-( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
+( const r_c_shortest_paths_label<Graph, Resource_Container>& l1,
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return 
     l1.cumulated_resource_consumption < l2.cumulated_resource_consumption;
 }
@@ -93,7 +90,6 @@ inline bool operator>
 ( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return 
     l2.cumulated_resource_consumption < l1.cumulated_resource_consumption;
 }
@@ -103,7 +99,6 @@ inline bool operator<=
 ( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return 
     l1 < l2 || l1 == l2;
 }
@@ -113,53 +108,39 @@ inline bool operator>=
 ( const r_c_shortest_paths_label<Graph, Resource_Container>& l1, 
   const r_c_shortest_paths_label<Graph, Resource_Container>& l2 )
 {
-  assert (l1.b_is_valid && l2.b_is_valid);
   return l2 < l1 || l1 == l2;
 }
 
+template<typename Graph, typename Resource_Container>
+inline bool operator<
+        ( const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &t,
+          const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &u) {
+    return *t < *u;
+}
+
+template<typename Graph, typename Resource_Container>
+inline bool operator<=( const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &t,
+                        const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &u ) {
+    return *t <= *u;
+}
+
+template<typename Graph, typename Resource_Container>
+inline bool operator>
+        (
+          const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &t,
+          const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &u ) {
+    return *t > *u;
+}
+
+template<typename Graph, typename Resource_Container>
+inline bool operator>=
+        (
+          const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &t,
+          const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > &u) {
+    return *t >= *u;
+}
+
 namespace detail {
-
-// ks_smart_pointer class
-// from:
-// Kuhlins, S.; Schader, M. (1999):
-// Die C++-Standardbibliothek
-// Springer, Berlin
-// p. 333 f.
-template<class T>
-class ks_smart_pointer
-{
-public:
-  ks_smart_pointer( T* ptt = 0 ) : pt( ptt ) {}
-  ks_smart_pointer( const ks_smart_pointer& other ) : pt( other.pt ) {}
-  ks_smart_pointer& operator=( const ks_smart_pointer& other )
-    { pt = other.pt; return *this; }
-  ~ks_smart_pointer() {}
-  T& operator*() const { return *pt; }
-  T* operator->() const { return pt; }
-  T* get() const { return pt; }
-  operator T*() const { return pt; }
-  friend bool operator==( const ks_smart_pointer& t, 
-                          const ks_smart_pointer& u )
-    { return *t.pt == *u.pt; }
-  friend bool operator!=( const ks_smart_pointer& t, 
-                          const ks_smart_pointer& u )
-    { return *t.pt != *u.pt; }
-  friend bool operator<( const ks_smart_pointer& t, 
-                         const ks_smart_pointer& u )
-    { return *t.pt < *u.pt; }
-  friend bool operator>( const ks_smart_pointer& t, 
-                         const ks_smart_pointer& u )
-    { return *t.pt > *u.pt; }
-  friend bool operator<=( const ks_smart_pointer& t, 
-                          const ks_smart_pointer& u )
-    { return *t.pt <= *u.pt; }
-  friend bool operator>=( const ks_smart_pointer& t, 
-                          const ks_smart_pointer& u )
-    { return *t.pt >= *u.pt; }
-private:
-  T* pt;
-}; // ks_smart_pointer
-
 
 // r_c_shortest_paths_dispatch function (body/implementation)
 template<class Graph, 
@@ -203,26 +184,20 @@ void r_c_shortest_paths_dispatch
         <r_c_shortest_paths_label
           <Graph, Resource_Container> >::other LAlloc;
   LAlloc l_alloc;
-  typedef 
-    ks_smart_pointer
-      <r_c_shortest_paths_label<Graph, Resource_Container> > Splabel;
-  std::priority_queue<Splabel, std::vector<Splabel>, std::greater<Splabel> > 
+  typedef
+    boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > Splabel;
+  std::priority_queue<Splabel, std::vector<Splabel>, std::greater<Splabel> >
     unprocessed_labels;
 
   bool b_feasible = true;
-  r_c_shortest_paths_label<Graph, Resource_Container>* first_label = 
-    l_alloc.allocate( 1 );
-  l_alloc.construct
-    ( first_label, 
-      r_c_shortest_paths_label
-        <Graph, Resource_Container>( i_label_num++, 
-                                     rc, 
-                                     0, 
-                                     typename graph_traits<Graph>::
-                                       edge_descriptor(), 
-                                     s ) );
+  Splabel splabel_first_label = boost::allocate_shared<r_c_shortest_paths_label<Graph, Resource_Container> >(
+          l_alloc,
+          i_label_num++, 
+          rc, 
+          nullptr, 
+          typename graph_traits<Graph>::edge_descriptor(), 
+          s );
 
-  Splabel splabel_first_label = Splabel( first_label );
   unprocessed_labels.push( splabel_first_label );
   std::vector<std::list<Splabel> > vec_vertex_labels_data( num_vertices( g ) );
   iterator_property_map<typename std::vector<std::list<Splabel> >::iterator,
@@ -257,7 +232,6 @@ void r_c_shortest_paths_dispatch
   while( !unprocessed_labels.empty()  && vis.on_enter_loop(unprocessed_labels, g) )
   {
     Splabel cur_label = unprocessed_labels.top();
-    assert (cur_label->b_is_valid);
     unprocessed_labels.pop();
     vis.on_label_popped( *cur_label, g );
     // an Splabel object in unprocessed_labels and the respective Splabel 
@@ -272,7 +246,6 @@ void r_c_shortest_paths_dispatch
     // if there is a chance that extending the 
     // label leads to new undominated labels, which in turn is possible only 
     // if the label to be extended is undominated
-    assert (cur_label->b_is_valid);
     if( !cur_label->b_is_dominated )
     {
       typename boost::graph_traits<Graph>::vertex_descriptor
@@ -289,7 +262,6 @@ void r_c_shortest_paths_dispatch
         while( outer_iter != list_labels_cur_vertex.end() )
         {
           Splabel cur_outer_splabel = *outer_iter;
-          assert (cur_outer_splabel->b_is_valid);
           typename std::list<Splabel>::iterator inner_iter = outer_iter;
           if( !b_outer_iter_at_or_beyond_last_valid_pos_for_dominance 
               && outer_iter == 
@@ -312,7 +284,6 @@ void r_c_shortest_paths_dispatch
           while( inner_iter != list_labels_cur_vertex.end() )
           {
             Splabel cur_inner_splabel = *inner_iter;
-            assert (cur_inner_splabel->b_is_valid);
             if( dominance( cur_outer_splabel->
                              cumulated_resource_consumption, 
                            cur_inner_splabel->
@@ -323,9 +294,7 @@ void r_c_shortest_paths_dispatch
               list_labels_cur_vertex.erase( buf );
               if( cur_inner_splabel->b_is_processed )
               {
-                cur_inner_splabel->b_is_valid = false;
-                l_alloc.destroy( cur_inner_splabel.get() );
-                l_alloc.deallocate( cur_inner_splabel.get(), 1 );
+                cur_inner_splabel.reset();
               }
               else
                 cur_inner_splabel->b_is_dominated = true;
@@ -342,12 +311,9 @@ void r_c_shortest_paths_dispatch
               ++outer_iter;
               list_labels_cur_vertex.erase( buf );
               b_outer_iter_erased = true;
-              assert (cur_outer_splabel->b_is_valid);
               if( cur_outer_splabel->b_is_processed )
               {
-                cur_outer_splabel->b_is_valid = false;
-                l_alloc.destroy( cur_outer_splabel.get() );
-                l_alloc.deallocate( cur_outer_splabel.get(), 1 );
+                cur_outer_splabel.reset();
               }
               else
                 cur_outer_splabel->b_is_dominated = true;
@@ -369,28 +335,22 @@ void r_c_shortest_paths_dispatch
           list_labels_cur_vertex.size() - 1);
       }
     }
-    assert (b_all_pareto_optimal_solutions || cur_label->b_is_valid);
     if( !b_all_pareto_optimal_solutions && cur_label->resident_vertex == t )
     {
       // the devil don't sleep
       if( cur_label->b_is_dominated )
       {
-        cur_label->b_is_valid = false;
-        l_alloc.destroy( cur_label.get() );
-        l_alloc.deallocate( cur_label.get(), 1 );
+        cur_label.reset();
       }
       while( unprocessed_labels.size() )
       {
         Splabel l = unprocessed_labels.top();
-        assert (l->b_is_valid);
         unprocessed_labels.pop();
         // delete only dominated labels, because nondominated labels are 
         // deleted at the end of the function
         if( l->b_is_dominated )
         {
-          l->b_is_valid = false;
-          l_alloc.destroy( l.get() );
-          l_alloc.deallocate( l.get(), 1 );
+          l.reset();
         }
       }
       break;
@@ -407,16 +367,13 @@ void r_c_shortest_paths_dispatch
            ++oei )
       {
         b_feasible = true;
-        r_c_shortest_paths_label<Graph, Resource_Container>* new_label = 
-          l_alloc.allocate( 1 );
-        l_alloc.construct( new_label, 
-                           r_c_shortest_paths_label
-                             <Graph, Resource_Container>
-                               ( i_label_num++, 
-                                 cur_label->cumulated_resource_consumption, 
-                                 cur_label.get(), 
-                                 *oei, 
-                                 target( *oei, g ) ) );
+        Splabel new_label = boost::allocate_shared<r_c_shortest_paths_label<Graph, Resource_Container> >(
+                l_alloc, 
+                i_label_num++, 
+                cur_label->cumulated_resource_consumption, 
+                cur_label, 
+                *oei, 
+                target( *oei, g ) );
         b_feasible = 
           ref( g, 
                new_label->cumulated_resource_consumption, 
@@ -426,29 +383,21 @@ void r_c_shortest_paths_dispatch
         if( !b_feasible )
         {
           vis.on_label_not_feasible( *new_label, g );
-          new_label->b_is_valid = false;
-          l_alloc.destroy( new_label );
-          l_alloc.deallocate( new_label, 1 );
+          new_label.reset();
         }
         else
         {
-          const r_c_shortest_paths_label<Graph, Resource_Container>& 
-            ref_new_label = *new_label;
-          vis.on_label_feasible( ref_new_label, g );
-          Splabel new_sp_label( new_label );
-          vec_vertex_labels[new_sp_label->resident_vertex].
-            push_back( new_sp_label );
-          unprocessed_labels.push( new_sp_label );
+          vis.on_label_feasible( *new_label, g );
+          vec_vertex_labels[new_label->resident_vertex].
+            push_back( new_label );
+          unprocessed_labels.push( new_label );
         }
       }
     }
     else
     {
-      assert (cur_label->b_is_valid);
       vis.on_label_dominated( *cur_label, g );
-      cur_label->b_is_valid = false;
-      l_alloc.destroy( cur_label.get() );
-      l_alloc.deallocate( cur_label.get(), 1 );
+      cur_label.reset();
     }
   }
   std::list<Splabel> dsplabels = get(vec_vertex_labels, t);
@@ -461,16 +410,29 @@ void r_c_shortest_paths_dispatch
     {
       std::vector<typename graph_traits<Graph>::edge_descriptor> 
         cur_pareto_optimal_path;
-      const r_c_shortest_paths_label<Graph, Resource_Container>* p_cur_label = 
-        (*csi).get();
-      assert (p_cur_label->b_is_valid);
+      boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > p_cur_label = *csi;
       pareto_optimal_resource_containers.
         push_back( p_cur_label->cumulated_resource_consumption );
       while( p_cur_label->num != 0 )
       {
         cur_pareto_optimal_path.push_back( p_cur_label->pred_edge );
         p_cur_label = p_cur_label->p_pred_label;
-        assert (p_cur_label->b_is_valid);
+
+        // assertion b_is_valid beyond this point is not correct if the domination function
+        // requires resource levels to be strictly greater than existing values
+        //
+        // Example
+        // Customers
+        // id   min_arrival   max_departure
+        //  2             0             974
+        //  3             0             972
+        //  4             0             964
+        //  5           678             801
+        //
+        // Path A: 2-3-4-5 (times: 0-16-49-84-678)
+        // Path B: 3-2-4-5 (times: 0-18-51-62-678)
+        // The partial path 3-2-4 dominates the other partial path 2-3-4,
+        // though the path 3-2-4-5 does not strictly dominate the path 2-3-4-5
       }
       pareto_optimal_solutions.push_back( cur_pareto_optimal_path );
       if( !b_all_pareto_optimal_solutions )
@@ -479,14 +441,12 @@ void r_c_shortest_paths_dispatch
   }
 
   BGL_FORALL_VERTICES_T(i, g, Graph) {
-    const std::list<Splabel>& list_labels_cur_vertex = vec_vertex_labels[i];
-    csi_end = list_labels_cur_vertex.end();
-    for( csi = list_labels_cur_vertex.begin(); csi != csi_end; ++csi )
+    std::list<Splabel>& list_labels_cur_vertex = vec_vertex_labels[i];
+    typename std::list<Splabel>::iterator si = list_labels_cur_vertex.begin();
+    const typename std::list<Splabel>::iterator si_end = list_labels_cur_vertex.end();
+    for(; si != si_end; ++si )
     {
-      assert ((*csi)->b_is_valid);
-      (*csi)->b_is_valid = false;
-      l_alloc.destroy( (*csi).get() );
-      l_alloc.deallocate( (*csi).get(), 1 );
+      (*si).reset();
     }
   }
 } // r_c_shortest_paths_dispatch
