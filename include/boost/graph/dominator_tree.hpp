@@ -356,7 +356,8 @@ namespace boost {
 
     const IndexMap indexMap = get(vertex_index, g);
 
-    std::vector<VerticesSizeType> dfnum(numOfVertices, 0);
+    std::vector<VerticesSizeType> dfnum(
+      numOfVertices, std::numeric_limits<VerticesSizeType>::max());
     TimeMap dfnumMap(make_iterator_property_map(dfnum.begin(), indexMap));
 
     std::vector<Vertex> parent(numOfVertices,
