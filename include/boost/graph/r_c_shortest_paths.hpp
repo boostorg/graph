@@ -12,6 +12,7 @@
 #include <queue>
 #include <vector>
 #include <list>
+#include <memory>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -197,11 +198,20 @@ void r_c_shortest_paths_dispatch
   pareto_optimal_solutions.clear();
 
   size_t i_label_num = 0;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
   typedef 
     typename 
       Label_Allocator::template rebind
         <r_c_shortest_paths_label
           <Graph, Resource_Container> >::other LAlloc;
+#else
+  typedef 
+    typename 
+      std::allocator_traits<Label_Allocator>::template rebind_alloc
+        <r_c_shortest_paths_label
+          <Graph, Resource_Container> > LAlloc;
+  typedef std::allocator_traits<LAlloc> LTraits;
+#endif
   LAlloc l_alloc;
   typedef 
     ks_smart_pointer
@@ -211,9 +221,15 @@ void r_c_shortest_paths_dispatch
 
   bool b_feasible = true;
   r_c_shortest_paths_label<Graph, Resource_Container>* first_label = 
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
     l_alloc.allocate( 1 );
-  l_alloc.construct
-    ( first_label, 
+  l_alloc.construct(
+#else
+    LTraits::allocate( l_alloc, 1 );
+  LTraits::construct(
+      l_alloc,
+ #endif
+      first_label, 
       r_c_shortest_paths_label
         <Graph, Resource_Container>( i_label_num++, 
                                      rc, 
@@ -324,8 +340,13 @@ void r_c_shortest_paths_dispatch
               if( cur_inner_splabel->b_is_processed )
               {
                 cur_inner_splabel->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
                 l_alloc.destroy( cur_inner_splabel.get() );
                 l_alloc.deallocate( cur_inner_splabel.get(), 1 );
+#else
+                LTraits::destroy( l_alloc, cur_inner_splabel.get() );
+                LTraits::deallocate( l_alloc, cur_inner_splabel.get(), 1 );
+#endif
               }
               else
                 cur_inner_splabel->b_is_dominated = true;
@@ -346,8 +367,13 @@ void r_c_shortest_paths_dispatch
               if( cur_outer_splabel->b_is_processed )
               {
                 cur_outer_splabel->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
                 l_alloc.destroy( cur_outer_splabel.get() );
                 l_alloc.deallocate( cur_outer_splabel.get(), 1 );
+#else
+                LTraits::destroy( l_alloc, cur_outer_splabel.get() );
+                LTraits::deallocate( l_alloc, cur_outer_splabel.get(), 1 );
+#endif
               }
               else
                 cur_outer_splabel->b_is_dominated = true;
@@ -376,8 +402,13 @@ void r_c_shortest_paths_dispatch
       if( cur_label->b_is_dominated )
       {
         cur_label->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
         l_alloc.destroy( cur_label.get() );
         l_alloc.deallocate( cur_label.get(), 1 );
+#else
+        LTraits::destroy( l_alloc, cur_label.get() );
+        LTraits::deallocate( l_alloc, cur_label.get(), 1 );
+#endif
       }
       while( unprocessed_labels.size() )
       {
@@ -389,8 +420,13 @@ void r_c_shortest_paths_dispatch
         if( l->b_is_dominated )
         {
           l->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
           l_alloc.destroy( l.get() );
           l_alloc.deallocate( l.get(), 1 );
+#else
+          LTraits::destroy( l_alloc, l.get() );
+          LTraits::deallocate( l_alloc, l.get(), 1 );
+#endif
         }
       }
       break;
@@ -408,8 +444,13 @@ void r_c_shortest_paths_dispatch
       {
         b_feasible = true;
         r_c_shortest_paths_label<Graph, Resource_Container>* new_label = 
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
           l_alloc.allocate( 1 );
         l_alloc.construct( new_label, 
+#else
+          LTraits::allocate( l_alloc, 1 );
+        LTraits::construct( l_alloc, new_label,
+ #endif
                            r_c_shortest_paths_label
                              <Graph, Resource_Container>
                                ( i_label_num++, 
@@ -427,8 +468,13 @@ void r_c_shortest_paths_dispatch
         {
           vis.on_label_not_feasible( *new_label, g );
           new_label->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
           l_alloc.destroy( new_label );
           l_alloc.deallocate( new_label, 1 );
+#else
+          LTraits::destroy( l_alloc, new_label );
+          LTraits::deallocate( l_alloc, new_label, 1 );
+#endif
         }
         else
         {
@@ -447,8 +493,13 @@ void r_c_shortest_paths_dispatch
       assert (cur_label->b_is_valid);
       vis.on_label_dominated( *cur_label, g );
       cur_label->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
       l_alloc.destroy( cur_label.get() );
       l_alloc.deallocate( cur_label.get(), 1 );
+#else
+      LTraits::destroy( l_alloc, cur_label.get() );
+      LTraits::deallocate( l_alloc, cur_label.get(), 1 );
+#endif
     }
   }
   std::list<Splabel> dsplabels = get(vec_vertex_labels, t);
@@ -485,8 +536,13 @@ void r_c_shortest_paths_dispatch
     {
       assert ((*csi)->b_is_valid);
       (*csi)->b_is_valid = false;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
       l_alloc.destroy( (*csi).get() );
       l_alloc.deallocate( (*csi).get(), 1 );
+#else
+      LTraits::destroy( l_alloc, (*csi).get() );
+      LTraits::deallocate( l_alloc, (*csi).get(), 1 );
+#endif
     }
   }
 } // r_c_shortest_paths_dispatch
