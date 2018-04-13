@@ -4,7 +4,7 @@
     "authors": [
         "Jeremy Siek and a University of Notre Dame team."
     ],
-    "description": "The BGL graph interface and graph components are generic, in the same sense as the the Standard Template Library (STL).",
+    "description": "The BGL graph interface and graph components are generic, in the same sense as the Standard Template Library (STL).",
     "category": [
         "Algorithms",
         "Containers",
