@@ -24,7 +24,7 @@ main()
   const std::size_t m = sizeof(edge_array) / sizeof(E);
   Graph g(edge_array, edge_array + m, n);
 
-  typename graph_traits<Graph>::edge_iterator edge_iterator;
+  graph_traits<Graph>::edge_iterator edge_iterator;
   for (std::size_t i = 0; i < m; ++i) {
     const graph_traits<Graph>::edge_iterator e = edges(g).first + i;
     std::cout << *e << " ";

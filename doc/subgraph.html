@@ -71,7 +71,7 @@ create the root graph object.  Here we use <tt>adjacency_list</tt> as
 the underlying graph implementation. The underlying graph type is
 required to have <tt>vertex_index</tt> and <tt>edge_index</tt>
 internal properties, so we add an edge index property to the adjacency
-list. We do not need to add a vertex index properety because that is
+list. We do not need to add a vertex index property because that is
 built in to the <tt>adjacency_list</tt>. We will be building the graph
 and subgraphs in Figure 1, so we will need a total of six vertices.
 
@@ -83,7 +83,7 @@ typedef subgraph&lt; adjacency_list&lt; vecS, vecS, directedS,
 const int N = 6;
 Graph G0(N);
 
-enum { A, B, C, D, E, F};  // for conveniently refering to vertices in G0
+enum { A, B, C, D, E, F};  // for conveniently referring to vertices in G0
 </pre>
 
 Next we create two empty subgraph objects, specifying <tt>G0</tt> as
@@ -91,8 +91,8 @@ their parent.
 
 <pre>
 Graph& G1 = G0.create_subgraph(), G2 = G0.create_subgraph();
-enum { A1, B1, C2 }; // for conveniently refering to vertices in G1
-enum { A2, B2 };     // for conveniently refering to vertices in G2
+enum { A1, B1, C2 }; // for conveniently referring to vertices in G1
+enum { A2, B2 };     // for conveniently referring to vertices in G2
 </pre>
 
 We can add vertices from the root graph to the subgraphs using the
@@ -605,7 +605,7 @@ get(PropertyTag, const subgraph&amp; g, Key k_local)
     This returns the property value for the key <tt>k_local</tt>, which
     is either a local vertex or local edge descriptor. See the above
     <tt>get</tt> function
-    for more information about the propert maps.
+    for more information about the property maps.
     (Required by <a href="PropertyGraph.html">PropertyGraph</a>.)
 
 <hr>
