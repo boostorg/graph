@@ -31,6 +31,13 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/graphviz.hpp>
 
+#ifndef BOOST_NO_CXX11_HDR_RANDOM
+#include <random>
+typedef std::mt19937 random_generator_type;
+#else
+typedef boost::mt19937 random_generator_type;
+#endif
+
 using namespace boost;
 
 #ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
@@ -56,10 +63,10 @@ void randomly_permute_graph(Graph1& g1, const Graph2& g2) {
   typedef typename graph_traits<Graph2>::vertex_descriptor vertex2;
   typedef typename graph_traits<Graph1>::vertex_iterator vertex_iterator;
   typedef typename graph_traits<Graph2>::edge_iterator edge_iterator;
-  
-  boost::mt19937 gen;
+
+  random_generator_type gen;
 #ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-  random_functor<boost::mt19937> rand_fun(gen);
+  random_functor<random_generator_type> rand_fun(gen);
 #endif
   
   // Decide new order
@@ -100,9 +107,9 @@ void generate_random_digraph(Graph& g, double edge_probability,
   BOOST_REQUIRE(0 <= max_vertex_name);
 
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
-  boost::mt19937 random_gen;
+  random_generator_type random_gen;
   boost::uniform_real<double> dist_real(0.0, 1.0);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<double> >
+  boost::variate_generator<random_generator_type&, boost::uniform_real<double> >
     random_real_dist(random_gen, dist_real);
 
   for (vertex_iterator u = vertices(g).first; u != vertices(g).second; ++u) {
@@ -119,14 +126,14 @@ void generate_random_digraph(Graph& g, double edge_probability,
   
   {
     boost::uniform_int<int> dist_int(0, max_edge_name);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<int> >
+    boost::variate_generator<random_generator_type&, boost::uniform_int<int> >
       random_int_dist(random_gen, dist_int);
     randomize_property<vertex_name_t>(g, random_int_dist);
   }
 
   {
     boost::uniform_int<int> dist_int(0, max_vertex_name);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<int> >
+    boost::variate_generator<random_generator_type&, boost::uniform_int<int> >
       random_int_dist(random_gen, dist_int);
     
     randomize_property<edge_name_t>(g, random_int_dist);
