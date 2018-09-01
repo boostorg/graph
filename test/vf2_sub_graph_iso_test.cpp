@@ -33,7 +33,7 @@
 
 using namespace boost;
 
-
+#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
 template <typename Generator>
 struct random_functor {
   random_functor(Generator& g) : g(g) { }
@@ -45,7 +45,7 @@ struct random_functor {
   }
   Generator& g;
 };
-
+#endif
 
 template<typename Graph1, typename Graph2>
 void randomly_permute_graph(Graph1& g1, const Graph2& g2) {
@@ -58,12 +58,18 @@ void randomly_permute_graph(Graph1& g1, const Graph2& g2) {
   typedef typename graph_traits<Graph2>::edge_iterator edge_iterator;
   
   boost::mt19937 gen;
+#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
   random_functor<boost::mt19937> rand_fun(gen);
+#endif
   
   // Decide new order
   std::vector<vertex2> orig_vertices;
   std::copy(vertices(g2).first, vertices(g2).second, std::back_inserter(orig_vertices));
+#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
   std::random_shuffle(orig_vertices.begin(), orig_vertices.end(), rand_fun);
+#else
+  std::shuffle(orig_vertices.begin(), orig_vertices.end(), gen);
+#endif
   std::map<vertex2, vertex1> vertex_map;
   
   std::size_t i = 0;
