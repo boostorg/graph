@@ -199,6 +199,89 @@ public:
 };
 // end data structures for shortest path problem with time windows (spptw)
 
+struct spp_spptw_marked_res_cont {
+    spp_spptw_marked_res_cont(SPPRC_Example_Graph::vertex_descriptor v, int c = 0, int t = 0 ) : cost( c ), time( t ), marked() {
+        marked.insert(v);
+    }
+    spp_spptw_marked_res_cont& operator=( const spp_spptw_marked_res_cont& other )
+    {
+        if( this == &other )
+            return *this;
+        this->~spp_spptw_marked_res_cont();
+        new( this ) spp_spptw_marked_res_cont( other );
+        return *this;
+    }
+    int cost;
+    int time;
+    std::set<SPPRC_Example_Graph::vertex_descriptor> marked;
+};
+
+bool operator==( const spp_spptw_marked_res_cont& res_cont_1,
+                 const spp_spptw_marked_res_cont& res_cont_2 )
+{
+    return res_cont_1.cost == res_cont_2.cost
+            && res_cont_1.time == res_cont_2.time
+            && res_cont_1.marked == res_cont_2.marked;
+}
+
+bool operator<( const spp_spptw_marked_res_cont& res_cont_1,
+                const spp_spptw_marked_res_cont& res_cont_2 )
+{
+    if( res_cont_1.cost > res_cont_2.cost || res_cont_1.time > res_cont_2.time) {
+        return false;
+    }
+
+    if( !std::includes( res_cont_2.marked.begin(),
+                        res_cont_2.marked.end(),
+                        res_cont_1.marked.begin(),
+                        res_cont_1.marked.end() ) ) {
+        return false;
+    }
+
+    if( res_cont_1.cost == res_cont_2.cost ) {
+        return res_cont_1.time < res_cont_2.time;
+    }
+    return true;
+}
+
+class ref_spptw_marked {
+public:
+    inline bool operator()(const SPPRC_Example_Graph &g,
+                           spp_spptw_marked_res_cont &new_cont,
+                           const spp_spptw_marked_res_cont &old_cont,
+                           graph_traits
+                                   <SPPRC_Example_Graph>::edge_descriptor ed) const {
+        const graph_traits <SPPRC_Example_Graph>::vertex_descriptor dest = target(ed, g);
+
+        if(old_cont.marked.find(dest) != old_cont.marked.end()) {
+            return false;
+        }
+
+        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get( edge_bundle, g )[ed];
+        const SPPRC_Example_Graph_Vert_Prop& vert_prop = get( vertex_bundle, g )[dest];
+        new_cont.cost = old_cont.cost + arc_prop.cost;
+        new_cont.marked = old_cont.marked;
+        new_cont.marked.insert(dest);
+        int& i_time = new_cont.time;
+        i_time = old_cont.time + arc_prop.time;
+        i_time < vert_prop.eat ? i_time = vert_prop.eat : 0;
+        return i_time <= vert_prop.lat;
+}
+};
+
+class dominance_spptw_marked {
+public:
+    inline bool operator()( const spp_spptw_marked_res_cont& res_cont_1,
+                            const spp_spptw_marked_res_cont& res_cont_2 ) const {
+        return res_cont_1.time <= res_cont_2.time
+                && res_cont_1.cost <= res_cont_2.cost
+                && std::includes( res_cont_1.marked.begin(),
+                                  res_cont_1.marked.end(),
+                                  res_cont_2.marked.begin(),
+                                  res_cont_2.marked.end() );
+    }
+};
+
 int test_main(int, char*[])
 {
   SPPRC_Example_Graph g;
@@ -636,6 +719,81 @@ int test_main(int, char*[])
                       default_r_c_shortest_paths_visitor() );
 
   BOOST_CHECK(pareto_opt_rc.cost == 3);
+
+  SPPRC_Example_Graph g3;
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 0, 0, 1000 ), g3 );
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 1, 0, 1000 ), g3 );
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 2, 0, 974 ), g3 );
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 3, 0, 972 ), g3 );
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 4, 0, 967 ), g3 );
+  add_vertex( SPPRC_Example_Graph_Vert_Prop( 5, 678, 801 ), g3 );
+  add_edge( 0, 2, SPPRC_Example_Graph_Arc_Prop( 0, 0, 16 ), g3 );
+  add_edge( 0, 3, SPPRC_Example_Graph_Arc_Prop( 1, 0, 18 ), g3 );
+  add_edge( 0, 4, SPPRC_Example_Graph_Arc_Prop( 2, 0, 23 ), g3 );
+  add_edge( 0, 5, SPPRC_Example_Graph_Arc_Prop( 3, 0, 25 ), g3 );
+  add_edge( 2, 3, SPPRC_Example_Graph_Arc_Prop( 4, 0, 33 ), g3 );
+  add_edge( 2, 4, SPPRC_Example_Graph_Arc_Prop( 5, 0, 15 ), g3 );
+  add_edge( 2, 5, SPPRC_Example_Graph_Arc_Prop( 6, 0, 33 ), g3 );
+  add_edge( 2, 1, SPPRC_Example_Graph_Arc_Prop( 7, 0, 16 ), g3 );
+  add_edge( 3, 2, SPPRC_Example_Graph_Arc_Prop( 8, 0, 33 ), g3 );
+  add_edge( 3, 4, SPPRC_Example_Graph_Arc_Prop( 9, 0, 35 ), g3 );
+  add_edge( 3, 5, SPPRC_Example_Graph_Arc_Prop( 10, 0, 21 ), g3 );
+  add_edge( 3, 1, SPPRC_Example_Graph_Arc_Prop( 11, 0, 18 ), g3 );
+  add_edge( 4, 2, SPPRC_Example_Graph_Arc_Prop( 12, 0, 15 ), g3 );
+  add_edge( 4, 3, SPPRC_Example_Graph_Arc_Prop( 13, 0, 35 ), g3 );
+  add_edge( 4, 5, SPPRC_Example_Graph_Arc_Prop( 14, 0, 25 ), g3 );
+  add_edge( 4, 1, SPPRC_Example_Graph_Arc_Prop( 15, 0, 23 ), g3 );
+  add_edge( 5, 2, SPPRC_Example_Graph_Arc_Prop( 16, 0, 33 ), g3 );
+  add_edge( 5, 3, SPPRC_Example_Graph_Arc_Prop( 17, 0, 21 ), g3 );
+  add_edge( 5, 4, SPPRC_Example_Graph_Arc_Prop( 18, 0, 25 ), g3 );
+  add_edge( 5, 1, SPPRC_Example_Graph_Arc_Prop( 19, 0, 25 ), g3 );
+
+  std::vector<std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
+  pareto_opt_marked_solutions;
+  std::vector<spp_spptw_marked_res_cont> pareto_opt_marked_resource_containers;
+
+  typename graph_traits<SPPRC_Example_Graph>::vertex_descriptor g3_source = 0, g3_target = 1;
+  r_c_shortest_paths( g3,
+                      get( &SPPRC_Example_Graph_Vert_Prop::num, g3 ),
+                      get( &SPPRC_Example_Graph_Arc_Prop::num, g3 ),
+                      g3_source,
+                      g3_target,
+                      pareto_opt_marked_solutions,
+                      pareto_opt_marked_resource_containers,
+                      spp_spptw_marked_res_cont( 0, 0, 0 ),
+                      ref_spptw_marked(),
+                      dominance_spptw_marked(),
+                      std::allocator
+                              <r_c_shortest_paths_label
+                                      <SPPRC_Example_Graph, spp_spptw_marked_res_cont> >(),
+                      default_r_c_shortest_paths_visitor() );
+
+  BOOST_CHECK(!pareto_opt_marked_solutions.empty());
+  std::vector<std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> >::const_iterator path_it, path_end_it;
+  for (path_it = pareto_opt_marked_solutions.begin(), path_end_it = pareto_opt_marked_solutions.end(); path_it != path_end_it; ++path_it) {
+    const std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> &path = *path_it;
+    BOOST_CHECK(!path.empty());
+
+    const typename graph_traits<SPPRC_Example_Graph>::edge_descriptor front = path.front();
+    BOOST_CHECK(boost::target(front, g3) == g3_target);
+
+    std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor>::const_iterator edge_it, edge_it_end;
+    typename graph_traits<SPPRC_Example_Graph>::edge_descriptor prev_edge = front;
+
+    for(edge_it = path.begin() + 1, edge_it_end = path.end(); edge_it != edge_it_end; ++edge_it) {
+        typename graph_traits<SPPRC_Example_Graph>::edge_descriptor edge = *edge_it;
+
+        typename graph_traits<SPPRC_Example_Graph>::vertex_descriptor prev_end, current_end;
+        prev_end = boost::source(prev_edge, g3);
+        current_end = boost::target(edge, g3);
+        BOOST_CHECK(prev_end == current_end);
+
+        prev_edge = edge;
+    }
+
+    const typename graph_traits<SPPRC_Example_Graph>::edge_descriptor back = path.back();
+    BOOST_CHECK(boost::source(back, g3) == g3_source);
+  }
 
   return 0;
 }
