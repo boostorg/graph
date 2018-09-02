@@ -239,8 +239,6 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
 {
   typedef typename graph_traits<MutableGraph>::directed_category
     directed_category;
-  const bool is_undirected = 
-    is_same<directed_category, undirected_tag>::value;
 
   minstd_rand gen;
   uniform_01<minstd_rand, double> rand_gen(gen);
@@ -250,7 +248,7 @@ void randomly_add_edges(MutableGraph& g, double edge_probability)
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     vertex v = *vi;
     typename graph_traits<MutableGraph>::vertex_iterator wi 
-      = is_undirected? vi : vertices(g).first;
+      = is_same<directed_category, undirected_tag>::value ? vi : vertices(g).first;
     while (wi != vi_end) {
       vertex w = *wi++;
       if (v != w) {
