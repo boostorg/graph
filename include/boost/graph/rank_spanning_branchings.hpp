@@ -495,14 +495,14 @@ namespace boost {
 
       BranchingGraph C;
 
-      BGL_FORALL_VERTICES_T( v, g, Graph )
+      for( size_t i = 0; i < num_vertices( g ); i++ )
       {
         add_vertex( C );
       }
 
       BOOST_FOREACH( const Edge& e, branching )
       {
-        add_edge( v_id[source( e, g)], v_id[target( e, g )], C );
+        add_edge( v_id[source( e, g )], v_id[target( e, g )], C );
       }
 
       // Create other types and data.
