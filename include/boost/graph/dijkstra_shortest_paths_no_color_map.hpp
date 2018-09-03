@@ -106,7 +106,7 @@ namespace boost {
           !distance_compare(neighbor_vertex_distance, distance_infinity);
 
         // Attempt to relax the edge
-        bool was_edge_relaxed = relax(current_edge, graph, weight_map,
+        bool was_edge_relaxed = relax_target(current_edge, graph, weight_map,
           predecessor_map, distance_map,
           distance_weight_combine, distance_compare);
   
@@ -195,7 +195,7 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<DistanceType>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<DistanceType>(inf)),
+                      std::plus<DistanceType>()),
          inf,
          choose_param(get_param(params, distance_zero_t()),
                       DistanceType()),
