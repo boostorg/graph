@@ -279,7 +279,7 @@ IN: <tt>distance_combine(CombineFunction distance_weight_combine)</tt>
   <tt>WeightMap</tt> property map.  The result type must be the same
   type as the distance value type.<br>
 
-  <b>Default:</b> <tt>boost::closed_plus&lt;D&gt;</tt> with
+  <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
 </blockquote>
 
