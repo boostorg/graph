@@ -245,15 +245,15 @@ BOOST_AUTO_TEST_CASE(addEdge) {
     BOOST_CHECK(num_vertices(G2) == 3);
 
     std::cerr << "All G0 vertices: " << std::endl;
-    for(auto v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
+    for(decltype(G0.m_local_vertex.begin()) v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
         std::cerr << G0.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G1 vertices: " << std::endl;
-    for(auto v = G1.m_local_vertex.begin(); v != G1.m_local_vertex.end(); ++v) {
+    for(decltype(G1.m_local_vertex.begin()) v = G1.m_local_vertex.begin(); v != G1.m_local_vertex.end(); ++v) {
         std::cerr << G1.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G2 vertices: " << std::endl;
-    for(auto v = G2.m_local_vertex.begin(); v != G2.m_local_vertex.end(); ++v) {
+    for(decltype(G2.m_local_vertex.begin()) v = G2.m_local_vertex.begin(); v != G2.m_local_vertex.end(); ++v) {
         std::cerr << G2.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G0 edges: " << std::endl;
