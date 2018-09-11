@@ -163,16 +163,18 @@ BOOST_AUTO_TEST_CASE(addVertices) {
     BOOST_CHECK(num_vertices(G1) == 4);
     BOOST_CHECK(num_vertices(G2) == 2);
 
+    typedef typename std::map<graph_traits<Graph::graph_type>::vertex_descriptor, graph_traits<Graph::graph_type>::vertex_descriptor>::iterator v_itr;
+
     std::cerr << "All G0 vertices: " << std::endl;
-    for(auto v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
+    for(v_itr v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
         std::cerr << G0.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G1 vertices: " << std::endl;
-    for(auto v = G1.m_local_vertex.begin(); v != G1.m_local_vertex.end(); ++v) {
+    for(v_itr v = G1.m_local_vertex.begin(); v != G1.m_local_vertex.end(); ++v) {
         std::cerr << G1.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G2 vertices: " << std::endl;
-    for(auto v = G2.m_local_vertex.begin(); v != G2.m_local_vertex.end(); ++v) {
+    for(v_itr v = G2.m_local_vertex.begin(); v != G2.m_local_vertex.end(); ++v) {
         std::cerr << G2.local_to_global(v->first) << std::endl;
     }
 }
