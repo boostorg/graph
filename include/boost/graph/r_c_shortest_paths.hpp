@@ -26,21 +26,20 @@ template<class Graph, class Resource_Container>
 struct r_c_shortest_paths_label : public boost::enable_shared_from_this<r_c_shortest_paths_label<Graph, Resource_Container> >
 {
   r_c_shortest_paths_label
-  ( const unsigned long n, 
-    const Resource_Container& rc = Resource_Container(), 
-    const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > pl = nullptr, 
-    const typename graph_traits<Graph>::edge_descriptor& ed = 
-      graph_traits<Graph>::edge_descriptor(), 
-    const typename graph_traits<Graph>::vertex_descriptor& vd = 
-      graph_traits<Graph>::vertex_descriptor() )
-  : num( n ), 
-    cumulated_resource_consumption( rc ), 
-    p_pred_label( pl ), 
-    pred_edge( ed ), 
-    resident_vertex( vd ), 
-    b_is_dominated( false ), 
+  ( const unsigned long n,
+    const Resource_Container& rc = Resource_Container(),
+    const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > pl = boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> >(),
+    const typename graph_traits<Graph>::edge_descriptor& ed = graph_traits<Graph>::edge_descriptor(),
+    const typename graph_traits<Graph>::vertex_descriptor& vd = graph_traits<Graph>::vertex_descriptor() )
+  : num( n ),
+    cumulated_resource_consumption( rc ),
+    p_pred_label( pl ),
+    pred_edge( ed ),
+    resident_vertex( vd ),
+    b_is_dominated( false ),
     b_is_processed( false )
   {}
+
   r_c_shortest_paths_label& operator=( const r_c_shortest_paths_label& other )
   {
     if( this == &other )
@@ -192,10 +191,10 @@ void r_c_shortest_paths_dispatch
   bool b_feasible = true;
   Splabel splabel_first_label = boost::allocate_shared<r_c_shortest_paths_label<Graph, Resource_Container> >(
           l_alloc,
-          i_label_num++, 
-          rc, 
-          nullptr, 
-          typename graph_traits<Graph>::edge_descriptor(), 
+          i_label_num++,
+          rc,
+          boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> >(),
+          typename graph_traits<Graph>::edge_descriptor(),
           s );
 
   unprocessed_labels.push( splabel_first_label );
