@@ -28,11 +28,9 @@ struct r_c_shortest_paths_label : public boost::enable_shared_from_this<r_c_shor
   r_c_shortest_paths_label
   ( const unsigned long n,
     const Resource_Container& rc = Resource_Container(),
-    const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > pl = NULL,
-    const typename graph_traits<Graph>::edge_descriptor& ed =
-      graph_traits<Graph>::edge_descriptor(),
-    const typename graph_traits<Graph>::vertex_descriptor& vd =
-      graph_traits<Graph>::vertex_descriptor() )
+    const boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > pl = boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> >(),
+    const typename graph_traits<Graph>::edge_descriptor& ed = graph_traits<Graph>::edge_descriptor(),
+    const typename graph_traits<Graph>::vertex_descriptor& vd = graph_traits<Graph>::vertex_descriptor() )
   : num( n ),
     cumulated_resource_consumption( rc ),
     p_pred_label( pl ),
@@ -41,6 +39,7 @@ struct r_c_shortest_paths_label : public boost::enable_shared_from_this<r_c_shor
     b_is_dominated( false ),
     b_is_processed( false )
   {}
+
   r_c_shortest_paths_label& operator=( const r_c_shortest_paths_label& other )
   {
     if( this == &other )
@@ -194,7 +193,7 @@ void r_c_shortest_paths_dispatch
           l_alloc,
           i_label_num++,
           rc,
-          NULL, 
+          boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> >(),
           typename graph_traits<Graph>::edge_descriptor(),
           s );
 
