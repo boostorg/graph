@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(addVertices) {
     BOOST_CHECK(num_vertices(G1) == 4);
     BOOST_CHECK(num_vertices(G2) == 2);
 
-    typedef typename std::map<graph_traits<Graph::graph_type>::vertex_descriptor, graph_traits<Graph::graph_type>::vertex_descriptor>::iterator v_itr;
+    typedef std::map<graph_traits<Graph::graph_type>::vertex_descriptor, graph_traits<Graph::graph_type>::vertex_descriptor>::iterator v_itr;
 
     std::cerr << "All G0 vertices: " << std::endl;
     for(v_itr v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE(addEdge) {
     BOOST_CHECK(num_vertices(G1) == 3);
     BOOST_CHECK(num_vertices(G2) == 3);
 
-    typedef typename std::map<graph_traits<Graph::graph_type>::vertex_descriptor, graph_traits<Graph::graph_type>::vertex_descriptor>::iterator v_itr;
+    typedef std::map<graph_traits<Graph::graph_type>::vertex_descriptor, graph_traits<Graph::graph_type>::vertex_descriptor>::iterator v_itr;
 
     std::cerr << "All G0 vertices: " << std::endl;
     for(v_itr v = G0.m_local_vertex.begin(); v != G0.m_local_vertex.end(); ++v) {
@@ -261,15 +261,15 @@ BOOST_AUTO_TEST_CASE(addEdge) {
         std::cerr << G2.local_to_global(v->first) << std::endl;
     }
     std::cerr << "All G0 edges: " << std::endl;
-    BGL_FORALL_EDGES_T(e, G0, Graph) {
+    BGL_FORALL_EDGES(e, G0, Graph) {
         std::cerr << source(e, G0) << "->" << target(e, G0) << std::endl;
     }
     std::cerr << "All G1 edges: " << std::endl;
-    BGL_FORALL_EDGES_T(e, G1, Graph) {
+    BGL_FORALL_EDGES(e, G1, Graph) {
         std::cerr << source(e, G1) << "->" << target(e, G1) << std::endl;
     }
     std::cerr << "All G2 edges: " << std::endl;
-    BGL_FORALL_EDGES_T(e, G2, Graph) {
+    BGL_FORALL_EDGES(e, G2, Graph) {
         std::cerr << source(e, G2) << "->" << target(e, G2) << std::endl;
     }
 }
