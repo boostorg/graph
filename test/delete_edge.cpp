@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 #include <boost/test/minimal.hpp>
 
@@ -28,13 +29,13 @@ int test_main(int argc, char* argv[])
                                       > Graph_t;
 
     typedef Graph_t::edge_descriptor EdgeDesc;
-
+    typedef Graph_t::vertex_descriptor VertexType;
 
     Graph_t m_graph;
 
-    auto v1 = boost::add_vertex(m_graph);
-    auto v2 = boost::add_vertex(m_graph);
-    auto v3 = boost::add_vertex(m_graph);
+    VertexType v1 = boost::add_vertex(m_graph);
+    VertexType v2 = boost::add_vertex(m_graph);
+    VertexType v3 = boost::add_vertex(m_graph);
 
     EdgeDesc ed1;
     bool inserted1;
