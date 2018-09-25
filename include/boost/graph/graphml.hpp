@@ -34,7 +34,7 @@ namespace boost
 /////////////////////////////////////////////////////////////////////////////
 // Graph reader exceptions
 /////////////////////////////////////////////////////////////////////////////
-struct parse_error: public graph_exception
+struct BOOST_SYMBOL_VISIBLE parse_error: public graph_exception
 {
     parse_error(const std::string& err) {error = err; statement = "parse error: " + error;}
     virtual ~parse_error() throw() {}

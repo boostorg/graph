@@ -32,7 +32,7 @@ namespace boost {
      */
 
     template <typename Vertex>
-    struct bipartite_visitor_error: std::exception
+    struct BOOST_SYMBOL_VISIBLE bipartite_visitor_error: std::exception
     {
       std::pair <Vertex, Vertex> witnesses;
 
