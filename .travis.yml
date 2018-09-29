@@ -39,16 +39,15 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
 
-    # Fails in Boost.Range dependency:
-    #- os: linux
-    #  compiler: g++-4.6
-    #  env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - g++-4.6
-    #      sources:
-    #        - ubuntu-toolchain-r-test
+    - os: linux
+      compiler: g++-4.6
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
+      addons:
+        apt:
+          packages:
+            - g++-4.6
+          sources:
+            - ubuntu-toolchain-r-test
 
     - os: linux
       env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
