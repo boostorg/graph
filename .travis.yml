@@ -17,6 +17,7 @@ branches:
   only:
     - master
     - develop
+    - /feature\/.*/
 
 env:
   matrix:
@@ -218,8 +219,9 @@ matrix:
 
 
 install:
+  - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
   - cd ..
-  - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+  - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
   - git submodule update --init tools/build
   - git submodule update --init libs/config
