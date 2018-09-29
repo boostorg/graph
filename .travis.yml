@@ -40,15 +40,15 @@ matrix:
             - ubuntu-toolchain-r-test
 
     # Fails in Boost.Range dependency:
-    #- os: linux
-    #  compiler: g++-4.6
-    #  env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - g++-4.6
-    #      sources:
-    #        - ubuntu-toolchain-r-test
+    - os: linux
+      compiler: g++-4.6
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
+      addons:
+        apt:
+          packages:
+            - g++-4.6
+          sources:
+            - ubuntu-toolchain-r-test
 
     - os: linux
       env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
@@ -151,25 +151,25 @@ matrix:
             - llvm-toolchain-precise-3.7
     
     # Fails to compile std lib headers (toolset issue):
-    #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - clang-3.8
-    #      sources:
-    #        - ubuntu-toolchain-r-test
-    #        - llvm-toolchain-precise-3.8
-    #
-    #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11,14,1z
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - clang-3.9
-    #      sources:
-    #        - ubuntu-toolchain-r-test
-    #        - llvm-toolchain-precise-3.9
+    - os: linux
+      env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z
+      addons:
+        apt:
+          packages:
+            - clang-3.8
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+
+    - os: linux
+      env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11,14,1z
+      addons:
+        apt:
+          packages:
+            - clang-3.9
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.9
 
     - os: linux
       compiler: clang++-4.0
@@ -196,14 +196,6 @@ matrix:
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
       osx_image: xcode8.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
-      osx_image: xcode8.2
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
-      osx_image: xcode8.1
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
