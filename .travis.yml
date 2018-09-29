@@ -195,19 +195,14 @@ matrix:
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
       osx_image: xcode8.3
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
-      osx_image: xcode8.2
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
-      osx_image: xcode8.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
-      osx_image: xcode8.0
+      osx_image: xcode8
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
