@@ -235,7 +235,7 @@ script:
   - IFS=','
   - for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
   - unset IFS
-  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined debug-symbols=on}
+  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD ${UBSAN:+cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=undefined linkflags=-fsanitize=undefined debug-symbols=on visibility=global}
 
 notifications:
   email:
