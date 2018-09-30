@@ -18,6 +18,13 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
+local VIS ;
+
+if [ os.environ UBSAN ]
+{
+    VIS = <visibility>global
+}
+
 test-suite graph_test :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
@@ -62,13 +69,14 @@ test-suite graph_test :
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph/<visibility>global # for ubsan
-            ../../regex/build//boost_regex : --log_level=all ]
+            ../../regex/build//boost_regex $(VIS) : --log_level=all ]
     [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
     [ run gursoy_atun_layout_test.cpp ]
     [ run layout_test.cpp : : : <test-info>always_show_run_output <toolset>intel:<debug-symbols>off ]
 
     [ run serialize.cpp
           ../../serialization/build//boost_serialization/<visibility>global # for ubsan
+          $(VIS)
       : : : ]
 
     [ compile reverse_graph_cc.cpp ]
@@ -94,7 +102,7 @@ test-suite graph_test :
     [ run matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
-    [ run cycle_ratio_tests.cpp ../build//boost_graph/<visibility>global ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
+    [ run cycle_ratio_tests.cpp ../build//boost_graph/<visibility>global ../../regex/build//boost_regex $(VIS) : $(CYCLE_RATIO_INPUT_FILE) ]
     [ run basic_planarity_test.cpp ]
     [ run make_connected_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
@@ -128,7 +136,7 @@ test-suite graph_test :
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph/<visibility>global ]
-    [ run graphml_test.cpp ../build//boost_graph/<visibility>global : : "graphml_test.xml" ]
+    [ run graphml_test.cpp ../build//boost_graph/<visibility>global $(VIS) : : "graphml_test.xml" ]
     [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
