@@ -9,6 +9,7 @@
 
 import modules ;
 import path ;
+import os ;
 
 path-constant TEST_DIR : . ;
 
