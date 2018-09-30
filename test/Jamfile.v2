@@ -22,7 +22,7 @@ local VIS ;
 
 if [ os.environ UBSAN ]
 {
-    VIS = <visibility>global
+    VIS = <visibility>global ;
 }
 
 test-suite graph_test :
