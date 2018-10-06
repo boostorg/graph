@@ -56,8 +56,7 @@ struct spp_no_rc_res_cont
   {
     if( this == &other )
       return *this;
-    this->~spp_no_rc_res_cont();
-    new( this ) spp_no_rc_res_cont( other );
+    cost = other.cost;
     return *this;
   }
   int cost;
@@ -125,8 +124,8 @@ struct spp_spptw_res_cont
   {
     if( this == &other )
       return *this;
-    this->~spp_spptw_res_cont();
-    new( this ) spp_spptw_res_cont( other );
+    cost = other.cost;
+    time = other.time;
     return *this;
   }
   int cost;
@@ -207,8 +206,9 @@ struct spp_spptw_marked_res_cont {
     {
         if( this == &other )
             return *this;
-        this->~spp_spptw_marked_res_cont();
-        new( this ) spp_spptw_marked_res_cont( other );
+        cost = other.cost;
+        time = other.time;
+        marked = other.marked;
         return *this;
     }
     int cost;
