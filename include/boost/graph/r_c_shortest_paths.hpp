@@ -726,9 +726,8 @@ void check_r_c_path( const Graph& g,
       return;
   }
   if( b_result_must_be_equal_to_desired_final_resource_levels )
-    b_correctly_extended = 
-     actual_final_resource_levels == desired_final_resource_levels ? 
-       true : false;
+    b_correctly_extended =
+            actual_final_resource_levels == desired_final_resource_levels;
   else
   {
     if( actual_final_resource_levels < desired_final_resource_levels 

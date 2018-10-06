@@ -168,7 +168,7 @@ public:
     int& i_time = new_cont.time;
     i_time = old_cont.time + arc_prop.time;
     i_time < vert_prop.eat ? i_time = vert_prop.eat : 0;
-    return i_time <= vert_prop.lat ? true : false;
+    return i_time <= vert_prop.lat;
   }
 };
 
