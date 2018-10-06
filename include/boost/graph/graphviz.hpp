@@ -27,6 +27,7 @@
 #include <boost/graph/dll_import_export.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/spirit/include/classic_multi_pass.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/static_assert.hpp>
@@ -951,8 +952,6 @@ bool read_graphviz(std::istream& in, MutableGraph& graph,
 
 } // namespace boost
 
-#ifdef BOOST_GRAPH_USE_MPI
-#  include <boost/graph/distributed/graphviz.hpp>
-#endif
+#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/graphviz.hpp>)
 
 #endif // BOOST_GRAPHVIZ_HPP

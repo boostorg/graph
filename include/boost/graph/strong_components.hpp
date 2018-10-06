@@ -18,6 +18,7 @@
 #include <boost/type_traits/conversion_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/graph/overloading.hpp>
+#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/concept/assert.hpp>
 
 namespace boost {
@@ -336,8 +337,6 @@ namespace boost {
 
 } // namespace boost
 
-#ifdef BOOST_GRAPH_USE_MPI
-#  include <boost/graph/distributed/strong_components.hpp>
-#endif
+#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/strong_components.hpp>)
 
 #endif // BOOST_GRAPH_STRONG_COMPONENTS_HPP
