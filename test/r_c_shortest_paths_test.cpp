@@ -748,11 +748,11 @@ int test_main(int, char*[])
   add_edge( 5, 4, SPPRC_Example_Graph_Arc_Prop( 18, 0, 25 ), g3 );
   add_edge( 5, 1, SPPRC_Example_Graph_Arc_Prop( 19, 0, 25 ), g3 );
 
-  std::vector<std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
+  std::vector<std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
   pareto_opt_marked_solutions;
   std::vector<spp_spptw_marked_res_cont> pareto_opt_marked_resource_containers;
 
-  typename graph_traits<SPPRC_Example_Graph>::vertex_descriptor g3_source = 0, g3_target = 1;
+  graph_traits<SPPRC_Example_Graph>::vertex_descriptor g3_source = 0, g3_target = 1;
   r_c_shortest_paths( g3,
                       get( &SPPRC_Example_Graph_Vert_Prop::num, g3 ),
                       get( &SPPRC_Example_Graph_Arc_Prop::num, g3 ),
@@ -769,21 +769,21 @@ int test_main(int, char*[])
                       default_r_c_shortest_paths_visitor() );
 
   BOOST_CHECK(!pareto_opt_marked_solutions.empty());
-  std::vector<std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> >::const_iterator path_it, path_end_it;
+  std::vector<std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> >::const_iterator path_it, path_end_it;
   for (path_it = pareto_opt_marked_solutions.begin(), path_end_it = pareto_opt_marked_solutions.end(); path_it != path_end_it; ++path_it) {
-    const std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor> &path = *path_it;
+    const std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> &path = *path_it;
     BOOST_CHECK(!path.empty());
 
-    const typename graph_traits<SPPRC_Example_Graph>::edge_descriptor front = path.front();
+    const graph_traits<SPPRC_Example_Graph>::edge_descriptor front = path.front();
     BOOST_CHECK(boost::target(front, g3) == g3_target);
 
-    std::vector<typename graph_traits<SPPRC_Example_Graph>::edge_descriptor>::const_iterator edge_it, edge_it_end;
-    typename graph_traits<SPPRC_Example_Graph>::edge_descriptor prev_edge = front;
+    std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor>::const_iterator edge_it, edge_it_end;
+    graph_traits<SPPRC_Example_Graph>::edge_descriptor prev_edge = front;
 
     for(edge_it = path.begin() + 1, edge_it_end = path.end(); edge_it != edge_it_end; ++edge_it) {
-        typename graph_traits<SPPRC_Example_Graph>::edge_descriptor edge = *edge_it;
+        graph_traits<SPPRC_Example_Graph>::edge_descriptor edge = *edge_it;
 
-        typename graph_traits<SPPRC_Example_Graph>::vertex_descriptor prev_end, current_end;
+        graph_traits<SPPRC_Example_Graph>::vertex_descriptor prev_end, current_end;
         prev_end = boost::source(prev_edge, g3);
         current_end = boost::target(edge, g3);
         BOOST_CHECK(prev_end == current_end);
@@ -791,7 +791,7 @@ int test_main(int, char*[])
         prev_edge = edge;
     }
 
-    const typename graph_traits<SPPRC_Example_Graph>::edge_descriptor back = path.back();
+    const graph_traits<SPPRC_Example_Graph>::edge_descriptor back = path.back();
     BOOST_CHECK(boost::source(back, g3) == g3_source);
   }
 
