@@ -222,6 +222,7 @@ install:
   - git submodule update --init tools/boostdep
   - cp -r $TRAVIS_BUILD_DIR/* libs/graph
   - python tools/boostdep/depinst/depinst.py graph
+  - rm libs/graph_parallel/include/boost/pending/property_serialize.hpp
   - ./bootstrap.sh
   - ./b2 headers
 
