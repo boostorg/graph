@@ -14,7 +14,7 @@
 // "Neighbourhood Preserving Load Balancing: A Self-Organizing Approach"
 // in 6th International Euro-Par Conference Munich, Germany, August 29 – September 1, 2000 Proceedings,
 // pp 234-241
-// http://dx.doi.org/10.1007/3-540-44520-X_32
+// https://doi.org/10.1007/3-540-44520-X_32
 
 #include <boost/config/no_tr1/cmath.hpp>
 #include <boost/throw_exception.hpp>

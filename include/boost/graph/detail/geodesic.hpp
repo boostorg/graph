@@ -33,7 +33,7 @@ namespace boost
 //         pages = {466--484},
 //         priority = {0},
 //         title = {A Graph-theoretic perspective on centrality},
-//         url = {http://dx.doi.org/10.1016/j.socnet.2005.11.005},
+//         url = {https://doi.org/10.1016/j.socnet.2005.11.005},
 //             volume = {28},
 //             year = {2006}
 //         }
