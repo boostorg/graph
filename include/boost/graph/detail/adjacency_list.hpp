@@ -2058,12 +2058,16 @@ namespace boost {
       {
         typename EdgeList::iterator ei = el.begin(), e_end = el.end();
         while (ei != e_end) {
-          typename EdgeList::value_type ce = *ei;
-          ++ei;
-          if (ce.get_target() > u) {
+          if (ei->get_target() > u) {
+            typename EdgeList::value_type ce = *ei;
+            ++ei;
             el.erase(ce);
             --ce.get_target();
             el.insert(ce);
+          }
+          else
+          {
+            ++ei;
           }
         }
       }
