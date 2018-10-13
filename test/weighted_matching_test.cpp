@@ -147,8 +147,8 @@ int test_main(int, char*[])
     // you can also lower the max_num_v and/or max_num_e
     
     std::size_t max_num_v = 16;
-    std::size_t max_num_e = 24;
-    std::size_t batch_size = 100000;
+    std::size_t max_num_e = 20;
+    std::size_t batch_size = 100;
 
     boost::mt19937 generator(static_cast<unsigned int>(std::time(0)));
     
@@ -156,7 +156,7 @@ int test_main(int, char*[])
     {
         for (std::size_t num_e = num_v-1; num_e <= std::min(max_num_e,num_v*(num_v-1)/2); ++num_e)
         {
-            for (std::size_t batch = 0; batch < batch_size/max_num_e; ++batch)
+            for (std::size_t batch = 0; batch < batch_size; ++batch)
             {
                 weighted_matching_test<undirected_graph>(num_v, num_e, "adjacency_list (using vectors)", generator);
                 weighted_matching_test<undirected_list_graph>(num_v, num_e, "adjacency_list (using lists)", generator);
