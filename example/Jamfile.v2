@@ -3,6 +3,7 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
+import ../../config/checks/config : requires ;
 
 exe accum-compile-times : accum-compile-times.cpp ;
 exe actor_clustering : actor_clustering.cpp ;
@@ -10,7 +11,7 @@ exe adjacency_list : adjacency_list.cpp ;
 exe adjacency_list_io : adjacency_list_io.cpp ;
 exe adjacency_matrix : adjacency_matrix.cpp ;
 exe adj_list_ra_edgelist : adj_list_ra_edgelist.cpp ;
-exe astar-cities : astar-cities.cpp ;
+exe astar-cities : astar-cities.cpp : [ requires unistd_h ] ;
 exe astar_maze : astar_maze.cpp ;
 exe bellman-example : bellman-example.cpp ;
 exe bellman-ford-internet : bellman-ford-internet.cpp ;
@@ -125,7 +126,7 @@ exe kruskal-example : kruskal-example.cpp ;
 # exe kruskal-telephone : kruskal-telephone.cpp ;
 exe kuratowski_subgraph : kuratowski_subgraph.cpp ;
 # exe labeled_graph : last-mod-time.cpp ;
-exe last-mod-time : last-mod-time.cpp ;
+exe last-mod-time : last-mod-time.cpp  : [ requires unistd_h ] ;
 
 # These need LEDA:
 # exe leda-concept-check : leda-concept-check.cpp ;

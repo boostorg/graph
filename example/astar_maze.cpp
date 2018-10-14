@@ -46,7 +46,9 @@ typedef boost::graph_traits<grid>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<grid>::vertices_size_type vertices_size_type;
 
 // A hash function for vertices.
-struct vertex_hash:std::unary_function<vertex_descriptor, std::size_t> {
+struct vertex_hash{
+  typedef vertex_descriptor argument_type;
+  typedef std::size_t result_type;
   std::size_t operator()(vertex_descriptor const& u) const {
     std::size_t seed = 0;
     boost::hash_combine(seed, u[0]);
