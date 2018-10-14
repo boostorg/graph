@@ -173,6 +173,7 @@ alias graph_test_with_filesystem :
         ../../filesystem/build
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
+    [ run pending/bucket_sorter_2u.cpp ]
     ;
 
 test-suite graph_test :
