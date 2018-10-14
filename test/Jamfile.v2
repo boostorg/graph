@@ -142,6 +142,7 @@ test-suite graph_test :
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run delete_edge.cpp ]
+    [ run pending/bucket_sorter_2u.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
