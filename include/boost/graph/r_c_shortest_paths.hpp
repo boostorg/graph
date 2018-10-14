@@ -177,11 +177,20 @@ void r_c_shortest_paths_dispatch
   pareto_optimal_solutions.clear();
 
   size_t i_label_num = 0;
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
   typedef
     typename
       Label_Allocator::template rebind
         <r_c_shortest_paths_label
           <Graph, Resource_Container> >::other LAlloc;
+#else
+  typedef
+     typename
+     std::allocator_traits<Label_Allocator>::template rebind_alloc
+     <r_c_shortest_paths_label
+     <Graph, Resource_Container> > LAlloc;
+  typedef std::allocator_traits<LAlloc> LTraits;
+#endif
   LAlloc l_alloc;
   typedef
     boost::shared_ptr<r_c_shortest_paths_label<Graph, Resource_Container> > Splabel;
