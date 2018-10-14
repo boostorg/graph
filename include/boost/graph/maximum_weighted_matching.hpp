@@ -54,7 +54,7 @@ namespace boost
         {
             typedef boost::iterator_property_map<typename std::vector<T>::iterator, VertexIndexMap> type;
         };
-        typedef decltype(graph::detail::V_EVEN) vertex_state_t; // anonymous enum defined elsewhere
+        typedef unsigned short vertex_state_t;
         typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
         typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor_t;
         typedef typename std::vector<vertex_descriptor_t>::const_iterator vertex_vec_iter_t;

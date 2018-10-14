@@ -108,6 +108,8 @@ void weighted_matching_test(typename graph_traits<Graph>::vertices_size_type num
                 ++num_edges;
         }
     }
+
+    //print_graph(g);
     
     mate_t mate1(num_v), mate2(num_v);
     
@@ -147,8 +149,8 @@ int test_main(int, char*[])
     // you can also lower the max_num_v and/or max_num_e
     
     std::size_t max_num_v = 16;
-    std::size_t max_num_e = 20;
-    std::size_t batch_size = 100;
+    std::size_t max_num_e = 24;
+    std::size_t batch_size = 16;
 
     boost::mt19937 generator(static_cast<unsigned int>(std::time(0)));
     
