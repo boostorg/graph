@@ -64,10 +64,10 @@ void merge_vertex
 template <class StoredEdge>
 struct order_by_name
 {
-   typedef StoredEdge first_argument_type;
-   typedef StoredEdge second_argument_type;
-   typedef bool result_type;
-   bool operator()(const StoredEdge& e1, const StoredEdge& e2) const {
+  typedef StoredEdge first_argument_type;
+  typedef StoredEdge second_argument_type;
+  typedef bool result_type;
+  bool operator()(const StoredEdge& e1, const StoredEdge& e2) const {
     // Using std::pair operator< as an easy way to get lexicographical
     // compare over tuples.
     return std::make_pair(e1.get_target(), boost::get(boost::edge_name, e1))
