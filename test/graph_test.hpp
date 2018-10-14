@@ -7,8 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#ifndef BOOST_GRAPH_TEST_HPP
-#define BOOST_GRAPH_TEST_HPP
+#ifndef GRAPH_TEST_HPP
+#define GRAPH_TEST_HPP
 
 #include <vector>
 #include <boost/test/minimal.hpp>
@@ -381,4 +381,4 @@ namespace boost {
 
 #include <boost/graph/iteration_macros_undef.hpp>
 
-#endif // BOOST_GRAPH_TEST_HPP
+#endif // GRAPH_TEST_HPP
