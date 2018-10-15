@@ -14,9 +14,9 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <memory>
+#include <iterator>
 #include <boost/assert.hpp>
 #include <boost/limits.hpp>
-#include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
