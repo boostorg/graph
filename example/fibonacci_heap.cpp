@@ -10,7 +10,13 @@
 #include <iostream>
 #include <vector>
 #include <boost/graph/random.hpp>
+#ifndef BOOST_NO_CXX11_HDR_RANDOM
+#include <random>
+namespace random_ns = std;
+#else
 #include <boost/random/mersenne_twister.hpp>
+namespace random_ns = boost;
+#endif
 #include <algorithm>
 #include <boost/pending/fibonacci_heap.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -23,10 +29,10 @@ main()
 {
   typedef indirect_cmp<float*,std::less<float> > ICmp;
   int i;
-  boost::mt19937 gen;
+  random_ns::mt19937 gen;
   for (int N = 2; N < 200; ++N) {
-    uniform_int<> distrib(0, N-1);
-    variate_generator<boost::mt19937&, uniform_int<> > rand_gen(gen, distrib);
+     uniform_int<> distrib(0, N-1);
+     boost::variate_generator<random_ns::mt19937&, uniform_int<> > rand_gen(gen, distrib);
     for (int t = 0; t < 10; ++t) {
       std::vector<float> v, w(N);
 
