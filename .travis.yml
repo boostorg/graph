@@ -194,7 +194,7 @@ matrix:
 
     - os: linux
       compiler: clang++-4.0
-      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,1z
       addons:
         apt:
           packages:
@@ -205,7 +205,18 @@ matrix:
 
     - os: linux
       compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - clang-5.0
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+
+    - os: linux
+      compiler: clang++-5.0
+      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=14,1z
       addons:
         apt:
           packages:
@@ -215,22 +226,22 @@ matrix:
             - llvm-toolchain-trusty-5.0
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
       osx_image: xcode8.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
       osx_image: xcode8
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
       osx_image: xcode7.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
       osx_image: xcode6.4
 
 
