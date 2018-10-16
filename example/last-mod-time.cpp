@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <boost/graph/adjacency_list.hpp>

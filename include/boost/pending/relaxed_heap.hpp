@@ -6,8 +6,12 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
+#warning "Use of relaxed_heap is depreciated; please use the standard heap functions."
 #ifndef BOOST_RELAXED_HEAP_HEADER
 #define BOOST_RELAXED_HEAP_HEADER
+
+#include <boost/config/header_deprecated.hpp>
+BOOST_HEADER_DEPRECATED("the standard heap functions")
 
 #include <functional>
 #include <boost/property_map/property_map.hpp>

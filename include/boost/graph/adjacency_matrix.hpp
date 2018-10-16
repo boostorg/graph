@@ -14,9 +14,9 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <memory>
+#include <iterator>
 #include <boost/assert.hpp>
 #include <boost/limits.hpp>
-#include <boost/iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/graph_selectors.hpp>
@@ -499,7 +499,11 @@ namespace boost {
 #if defined(BOOST_NO_STD_ALLOCATOR)
     typedef std::vector<StoredEdge> Matrix;
 #else
+#if defined(BOOST_NO_CXX11_ALLOCATOR)
     typedef typename Allocator::template rebind<StoredEdge>::other Alloc;
+#else
+    typedef typename std::allocator_traits<Allocator>::template rebind_alloc<StoredEdge> Alloc;
+#endif
     typedef std::vector<StoredEdge, Alloc> Matrix;
 #endif
     typedef typename Matrix::iterator MatrixIter;
