@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #=======================================================================
 # Copyright 2009 Trustees of Indiana University.

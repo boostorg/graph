@@ -62,7 +62,7 @@ int ParseIfmt(char* fmt, int* perline, int* width);
 
 int ParseRfmt(char* fmt, int* perline, int* width, int* prec, int* flag);
 
-void IOHBTerminate(const char* message);
+void IOHBTerminate(char* message);
 #ifdef __cplusplus
 }
 #endif

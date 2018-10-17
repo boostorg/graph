@@ -20,6 +20,14 @@
 
 #include <boost/unordered_set.hpp>
 
+#if !defined BOOST_NO_SLIST
+#  ifdef BOOST_SLIST_HEADER
+#    include BOOST_SLIST_HEADER
+#  else
+#    include <slist>
+#  endif
+#endif
+
 #include <boost/scoped_ptr.hpp>
 
 #include <boost/graph/graph_traits.hpp>
@@ -44,6 +52,10 @@ namespace boost {
   // to map the selectors to the container type used to implement the
   // graph.
 
+#if !defined BOOST_NO_SLIST
+  struct slistS {};
+#endif
+
   struct vecS  { };
   struct listS { };
   struct setS { };
@@ -62,7 +74,12 @@ namespace boost {
   struct container_gen<listS, ValueType> {
     typedef std::list<ValueType> type;
   };
-
+#if !defined BOOST_NO_SLIST
+  template <class ValueType>
+  struct container_gen<slistS, ValueType> {
+    typedef BOOST_STD_EXTENSION_NAMESPACE::slist<ValueType> type;
+  };
+#endif
   template <class ValueType>
   struct container_gen<vecS, ValueType> {
     typedef std::vector<ValueType> type;
@@ -118,6 +135,12 @@ namespace boost {
   template <>
   struct parallel_edge_traits<listS> {
     typedef allow_parallel_edge_tag type; };
+
+#if !defined BOOST_NO_SLIST
+  template <>
+  struct parallel_edge_traits<slistS> {
+    typedef allow_parallel_edge_tag type; };
+#endif
 
   template <>
   struct parallel_edge_traits<setS> {

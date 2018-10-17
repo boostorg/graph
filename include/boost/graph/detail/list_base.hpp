@@ -58,10 +58,10 @@ namespace boost {
 
     template <class Node, class Next>
     inline Node
-    slist_previous(Node head, Node x, Node empty,
+    slist_previous(Node head, Node x, Node nil, 
                    Next next)
     {
-      while (head != empty && next(head) != x)
+      while (head != nil && next(head) != x)
         head = next(head);
       return head;
     }
@@ -82,12 +82,12 @@ namespace boost {
 
     template <class Node, class Next>
     inline Node
-    slist_reverse(Node node, Node empty,
+    slist_reverse(Node node, Node nil, 
                   Next next)
     {
       Node result = node;
       node = next(node);
-      next(result) = empty;
+      next(result) = nil;
       while(node) {
         Node next = next(node);
         next(node) = result;
@@ -99,11 +99,11 @@ namespace boost {
 
     template <class Node, class Next>
     inline std::size_t
-    slist_size(Node head, Node empty,
+    slist_size(Node head, Node nil, 
                Next next)
     {
       std::size_t s = 0;
-      for ( ; head != empty; head = next(head))
+      for ( ; head != nil; head = next(head))
         ++s;
       return s;
     }

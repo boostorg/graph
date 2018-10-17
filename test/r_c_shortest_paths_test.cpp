@@ -1,6 +1,6 @@
 // Copyright Michael Drexl 2005, 2006.
 // Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE_1_0.txt or copy at
+// (See accompanying file LICENSE_1_0.txt or copy at 
 // http://boost.org/LICENSE_1_0.txt)
 
 #include <boost/config.hpp>
@@ -20,7 +20,7 @@ using namespace boost;
 
 struct SPPRC_Example_Graph_Vert_Prop
 {
-  SPPRC_Example_Graph_Vert_Prop( int n = 0, int e = 0, int l = 0 )
+  SPPRC_Example_Graph_Vert_Prop( int n = 0, int e = 0, int l = 0 ) 
   : num( n ), eat( e ), lat( l ) {}
   int num;
   // earliest arrival time
@@ -31,7 +31,7 @@ struct SPPRC_Example_Graph_Vert_Prop
 
 struct SPPRC_Example_Graph_Arc_Prop
 {
-  SPPRC_Example_Graph_Arc_Prop( int n = 0, int c = 0, int t = 0 )
+  SPPRC_Example_Graph_Arc_Prop( int n = 0, int c = 0, int t = 0 ) 
   : num( n ), cost( c ), time( t ) {}
   int num;
   // traversal cost
@@ -40,11 +40,11 @@ struct SPPRC_Example_Graph_Arc_Prop
   int time;
 };
 
-typedef adjacency_list<vecS,
-                       vecS,
-                       directedS,
-                       SPPRC_Example_Graph_Vert_Prop,
-                       SPPRC_Example_Graph_Arc_Prop>
+typedef adjacency_list<vecS, 
+                       vecS, 
+                       directedS, 
+                       SPPRC_Example_Graph_Vert_Prop, 
+                       SPPRC_Example_Graph_Arc_Prop> 
   SPPRC_Example_Graph;
 
 // data structures for spp without resource constraints:
@@ -63,13 +63,13 @@ struct spp_no_rc_res_cont
   int cost;
 };
 
-bool operator==( const spp_no_rc_res_cont& res_cont_1,
+bool operator==( const spp_no_rc_res_cont& res_cont_1, 
                  const spp_no_rc_res_cont& res_cont_2 )
 {
   return ( res_cont_1.cost == res_cont_2.cost );
 }
 
-bool operator<( const spp_no_rc_res_cont& res_cont_1,
+bool operator<( const spp_no_rc_res_cont& res_cont_1, 
                 const spp_no_rc_res_cont& res_cont_2 )
 {
   return ( res_cont_1.cost < res_cont_2.cost );
@@ -79,9 +79,9 @@ bool operator<( const spp_no_rc_res_cont& res_cont_1,
 class ref_no_res_cont
 {
 public:
-  inline bool operator()( const SPPRC_Example_Graph& g,
-                          spp_no_rc_res_cont& new_cont,
-                          const spp_no_rc_res_cont& old_cont,
+  inline bool operator()( const SPPRC_Example_Graph& g, 
+                          spp_no_rc_res_cont& new_cont, 
+                          const spp_no_rc_res_cont& old_cont, 
                           graph_traits
                             <SPPRC_Example_Graph>::edge_descriptor ed ) const
   {
@@ -94,7 +94,7 @@ public:
 class dominance_no_res_cont
 {
 public:
-  inline bool operator()( const spp_no_rc_res_cont& res_cont_1,
+  inline bool operator()( const spp_no_rc_res_cont& res_cont_1, 
                           const spp_no_rc_res_cont& res_cont_2 ) const
   {
     // must be "<=" here!!!
@@ -102,15 +102,15 @@ public:
     return res_cont_1.cost <= res_cont_2.cost;
     // this is not a contradiction to the documentation
     // the documentation says:
-    // "A label $l_1$ dominates a label $l_2$ if and only if both are resident
-    // at the same vertex, and if, for each resource, the resource consumption
-    // of $l_1$ is less than or equal to the resource consumption of $l_2$,
-    // and if there is at least one resource where $l_1$ has a lower resource
+    // "A label $l_1$ dominates a label $l_2$ if and only if both are resident 
+    // at the same vertex, and if, for each resource, the resource consumption 
+    // of $l_1$ is less than or equal to the resource consumption of $l_2$, 
+    // and if there is at least one resource where $l_1$ has a lower resource 
     // consumption than $l_2$."
-    // one can think of a new label with a resource consumption equal to that
-    // of an old label as being dominated by that old label, because the new
-    // one will have a higher number and is created at a later point in time,
-    // so one can implicitly use the number or the creation time as a resource
+    // one can think of a new label with a resource consumption equal to that 
+    // of an old label as being dominated by that old label, because the new 
+    // one will have a higher number and is created at a later point in time, 
+    // so one can implicitly use the number or the creation time as a resource 
     // for tie-breaking
   }
 };
@@ -133,14 +133,14 @@ struct spp_spptw_res_cont
   int time;
 };
 
-bool operator==( const spp_spptw_res_cont& res_cont_1,
+bool operator==( const spp_spptw_res_cont& res_cont_1, 
                  const spp_spptw_res_cont& res_cont_2 )
 {
-  return ( res_cont_1.cost == res_cont_2.cost
+  return ( res_cont_1.cost == res_cont_2.cost 
            && res_cont_1.time == res_cont_2.time );
 }
 
-bool operator<( const spp_spptw_res_cont& res_cont_1,
+bool operator<( const spp_spptw_res_cont& res_cont_1, 
                 const spp_spptw_res_cont& res_cont_2 )
 {
   if( res_cont_1.cost > res_cont_2.cost )
@@ -154,15 +154,15 @@ bool operator<( const spp_spptw_res_cont& res_cont_1,
 class ref_spptw
 {
 public:
-  inline bool operator()( const SPPRC_Example_Graph& g,
-                          spp_spptw_res_cont& new_cont,
-                          const spp_spptw_res_cont& old_cont,
+  inline bool operator()( const SPPRC_Example_Graph& g, 
+                          spp_spptw_res_cont& new_cont, 
+                          const spp_spptw_res_cont& old_cont, 
                           graph_traits
                             <SPPRC_Example_Graph>::edge_descriptor ed ) const
   {
-    const SPPRC_Example_Graph_Arc_Prop& arc_prop =
+    const SPPRC_Example_Graph_Arc_Prop& arc_prop = 
       get( edge_bundle, g )[ed];
-    const SPPRC_Example_Graph_Vert_Prop& vert_prop =
+    const SPPRC_Example_Graph_Vert_Prop& vert_prop = 
       get( vertex_bundle, g )[target( ed, g )];
     new_cont.cost = old_cont.cost + arc_prop.cost;
     int& i_time = new_cont.time;
@@ -176,111 +176,28 @@ public:
 class dominance_spptw
 {
 public:
-  inline bool operator()( const spp_spptw_res_cont& res_cont_1,
+  inline bool operator()( const spp_spptw_res_cont& res_cont_1, 
                           const spp_spptw_res_cont& res_cont_2 ) const
   {
     // must be "<=" here!!!
     // must NOT be "<"!!!
-    return res_cont_1.cost <= res_cont_2.cost
+    return res_cont_1.cost <= res_cont_2.cost 
            && res_cont_1.time <= res_cont_2.time;
     // this is not a contradiction to the documentation
     // the documentation says:
-    // "A label $l_1$ dominates a label $l_2$ if and only if both are resident
-    // at the same vertex, and if, for each resource, the resource consumption
-    // of $l_1$ is less than or equal to the resource consumption of $l_2$,
-    // and if there is at least one resource where $l_1$ has a lower resource
+    // "A label $l_1$ dominates a label $l_2$ if and only if both are resident 
+    // at the same vertex, and if, for each resource, the resource consumption 
+    // of $l_1$ is less than or equal to the resource consumption of $l_2$, 
+    // and if there is at least one resource where $l_1$ has a lower resource 
     // consumption than $l_2$."
-    // one can think of a new label with a resource consumption equal to that
-    // of an old label as being dominated by that old label, because the new
-    // one will have a higher number and is created at a later point in time,
-    // so one can implicitly use the number or the creation time as a resource
+    // one can think of a new label with a resource consumption equal to that 
+    // of an old label as being dominated by that old label, because the new 
+    // one will have a higher number and is created at a later point in time, 
+    // so one can implicitly use the number or the creation time as a resource 
     // for tie-breaking
   }
 };
 // end data structures for shortest path problem with time windows (spptw)
-
-struct spp_spptw_marked_res_cont {
-    spp_spptw_marked_res_cont(SPPRC_Example_Graph::vertex_descriptor v, int c = 0, int t = 0 ) : cost( c ), time( t ), marked() {
-        marked.insert(v);
-    }
-    spp_spptw_marked_res_cont& operator=( const spp_spptw_marked_res_cont& other )
-    {
-        if( this == &other )
-            return *this;
-        this->~spp_spptw_marked_res_cont();
-        new( this ) spp_spptw_marked_res_cont( other );
-        return *this;
-    }
-    int cost;
-    int time;
-    std::set<SPPRC_Example_Graph::vertex_descriptor> marked;
-};
-
-bool operator==( const spp_spptw_marked_res_cont& res_cont_1,
-                 const spp_spptw_marked_res_cont& res_cont_2 )
-{
-    return res_cont_1.cost == res_cont_2.cost
-            && res_cont_1.time == res_cont_2.time
-            && res_cont_1.marked == res_cont_2.marked;
-}
-
-bool operator<( const spp_spptw_marked_res_cont& res_cont_1,
-                const spp_spptw_marked_res_cont& res_cont_2 )
-{
-    if( res_cont_1.cost > res_cont_2.cost || res_cont_1.time > res_cont_2.time) {
-        return false;
-    }
-
-    if( !std::includes( res_cont_2.marked.begin(),
-                        res_cont_2.marked.end(),
-                        res_cont_1.marked.begin(),
-                        res_cont_1.marked.end() ) ) {
-        return false;
-    }
-
-    if( res_cont_1.cost == res_cont_2.cost ) {
-        return res_cont_1.time < res_cont_2.time;
-    }
-    return true;
-}
-
-class ref_spptw_marked {
-public:
-    inline bool operator()(const SPPRC_Example_Graph &g,
-                           spp_spptw_marked_res_cont &new_cont,
-                           const spp_spptw_marked_res_cont &old_cont,
-                           graph_traits
-                                   <SPPRC_Example_Graph>::edge_descriptor ed) const {
-        const graph_traits <SPPRC_Example_Graph>::vertex_descriptor dest = target(ed, g);
-
-        if(old_cont.marked.find(dest) != old_cont.marked.end()) {
-            return false;
-        }
-
-        const SPPRC_Example_Graph_Arc_Prop& arc_prop = get( edge_bundle, g )[ed];
-        const SPPRC_Example_Graph_Vert_Prop& vert_prop = get( vertex_bundle, g )[dest];
-        new_cont.cost = old_cont.cost + arc_prop.cost;
-        new_cont.marked = old_cont.marked;
-        new_cont.marked.insert(dest);
-        int& i_time = new_cont.time;
-        i_time = old_cont.time + arc_prop.time;
-        i_time < vert_prop.eat ? i_time = vert_prop.eat : 0;
-        return i_time <= vert_prop.lat;
-}
-};
-
-class dominance_spptw_marked {
-public:
-    inline bool operator()( const spp_spptw_marked_res_cont& res_cont_1,
-                            const spp_spptw_marked_res_cont& res_cont_2 ) const {
-        return res_cont_1.time <= res_cont_2.time
-                && res_cont_1.cost <= res_cont_2.cost
-                && std::includes( res_cont_1.marked.begin(),
-                                  res_cont_1.marked.end(),
-                                  res_cont_2.marked.begin(),
-                                  res_cont_2.marked.end() );
-    }
-};
 
 int test_main(int, char*[])
 {
@@ -345,12 +262,12 @@ int test_main(int, char*[])
   add_edge( 8, 3, SPPRC_Example_Graph_Arc_Prop( 45, 11, 9 ), g );
   add_edge( 9, 0, SPPRC_Example_Graph_Arc_Prop( 48, 41, 5 ), g );
   add_edge( 9, 1, SPPRC_Example_Graph_Arc_Prop( 49, 44, 7 ), g );
-
+  
   // spp without resource constraints
 
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
         opt_solutions;
   std::vector<spp_no_rc_res_cont> pareto_opt_rcs_no_rc;
   std::vector<int> i_vec_opt_solutions_spp_no_rc;
@@ -360,19 +277,19 @@ int test_main(int, char*[])
     for( int t = 0; t < 10; ++t )
     {
       r_c_shortest_paths
-      ( g,
-        get( &SPPRC_Example_Graph_Vert_Prop::num, g ),
-        get( &SPPRC_Example_Graph_Arc_Prop::num, g ),
-        s,
-        t,
-        opt_solutions,
-        pareto_opt_rcs_no_rc,
-        spp_no_rc_res_cont( 0 ),
-        ref_no_res_cont(),
-        dominance_no_res_cont(),
+      ( g, 
+        get( &SPPRC_Example_Graph_Vert_Prop::num, g ), 
+        get( &SPPRC_Example_Graph_Arc_Prop::num, g ), 
+        s, 
+        t, 
+        opt_solutions, 
+        pareto_opt_rcs_no_rc, 
+        spp_no_rc_res_cont( 0 ), 
+        ref_no_res_cont(), 
+        dominance_no_res_cont(), 
         std::allocator
           <r_c_shortest_paths_label
-            <SPPRC_Example_Graph, spp_no_rc_res_cont> >(),
+            <SPPRC_Example_Graph, spp_no_rc_res_cont> >(), 
         default_r_c_shortest_paths_visitor() );
       i_vec_opt_solutions_spp_no_rc.push_back( pareto_opt_rcs_no_rc[0].cost );
       //std::cout << "From " << s << " to " << t << ": ";
@@ -380,23 +297,23 @@ int test_main(int, char*[])
     }
   }
 
-  //std::vector<graph_traits<SPPRC_Example_Graph>::vertex_descriptor>
+  //std::vector<graph_traits<SPPRC_Example_Graph>::vertex_descriptor> 
   //  p( num_vertices( g ) );
   //std::vector<int> d( num_vertices( g ) );
   //std::vector<int> i_vec_dijkstra_distances;
   //std::cout << "Dijkstra:" << std::endl;
   //for( int s = 0; s < 10; ++s )
   //{
-  //  dijkstra_shortest_paths( g,
-  //                           s,
-  //                           &p[0],
-  //                           &d[0],
-  //                           get( &SPPRC_Example_Graph_Arc_Prop::cost, g ),
-  //                           get( &SPPRC_Example_Graph_Vert_Prop::num, g ),
-  //                           std::less<int>(),
-  //                           closed_plus<int>(),
-  //                           (std::numeric_limits<int>::max)(),
-  //                           0,
+  //  dijkstra_shortest_paths( g, 
+  //                           s, 
+  //                           &p[0], 
+  //                           &d[0], 
+  //                           get( &SPPRC_Example_Graph_Arc_Prop::cost, g ), 
+  //                           get( &SPPRC_Example_Graph_Vert_Prop::num, g ), 
+  //                           std::less<int>(), 
+  //                           closed_plus<int>(), 
+  //                           (std::numeric_limits<int>::max)(), 
+  //                           0, 
   //                           default_dijkstra_visitor() );
   //  for( int t = 0; t < 10; ++t )
   //  {
@@ -513,14 +430,14 @@ int test_main(int, char*[])
   // spptw
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
         opt_solutions_spptw;
   std::vector<spp_spptw_res_cont> pareto_opt_rcs_spptw;
   std::vector
     <std::vector
       <std::vector
         <std::vector
-          <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > > >
+          <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > > > 
             vec_vec_vec_vec_opt_solutions_spptw( 10 );
 
   for( int s = 0; s < 10; ++s )
@@ -528,56 +445,56 @@ int test_main(int, char*[])
     for( int t = 0; t < 10; ++t )
     {
       r_c_shortest_paths
-      ( g,
-        get( &SPPRC_Example_Graph_Vert_Prop::num, g ),
-        get( &SPPRC_Example_Graph_Arc_Prop::num, g ),
-        s,
-        t,
-        opt_solutions_spptw,
-        pareto_opt_rcs_spptw,
+      ( g, 
+        get( &SPPRC_Example_Graph_Vert_Prop::num, g ), 
+        get( &SPPRC_Example_Graph_Arc_Prop::num, g ), 
+        s, 
+        t, 
+        opt_solutions_spptw, 
+        pareto_opt_rcs_spptw, 
         // be careful, do not simply take 0 as initial value for time
-        spp_spptw_res_cont( 0, g[s].eat ),
-        ref_spptw(),
-        dominance_spptw(),
+        spp_spptw_res_cont( 0, g[s].eat ), 
+        ref_spptw(), 
+        dominance_spptw(), 
         std::allocator
           <r_c_shortest_paths_label
-            <SPPRC_Example_Graph, spp_spptw_res_cont> >(),
+            <SPPRC_Example_Graph, spp_spptw_res_cont> >(), 
         default_r_c_shortest_paths_visitor() );
       vec_vec_vec_vec_opt_solutions_spptw[s].push_back( opt_solutions_spptw );
       if( opt_solutions_spptw.size() )
       {
         bool b_is_a_path_at_all = false;
-        bool b_feasible = false;
+        bool b_feasible = false; 
         bool b_correctly_extended = false;
         spp_spptw_res_cont actual_final_resource_levels( 0, 0 );
         graph_traits<SPPRC_Example_Graph>::edge_descriptor ed_last_extended_arc;
-        check_r_c_path( g,
-                        opt_solutions_spptw[0],
-                        spp_spptw_res_cont( 0, g[s].eat ),
-                        true,
-                        pareto_opt_rcs_spptw[0],
-                        actual_final_resource_levels,
-                        ref_spptw(),
-                        b_is_a_path_at_all,
-                        b_feasible,
-                        b_correctly_extended,
+        check_r_c_path( g, 
+                        opt_solutions_spptw[0], 
+                        spp_spptw_res_cont( 0, g[s].eat ), 
+                        true, 
+                        pareto_opt_rcs_spptw[0], 
+                        actual_final_resource_levels, 
+                        ref_spptw(), 
+                        b_is_a_path_at_all, 
+                        b_feasible, 
+                        b_correctly_extended, 
                         ed_last_extended_arc );
         BOOST_CHECK(b_is_a_path_at_all && b_feasible && b_correctly_extended);
         b_is_a_path_at_all = false;
-        b_feasible = false;
+        b_feasible = false; 
         b_correctly_extended = false;
         spp_spptw_res_cont actual_final_resource_levels2( 0, 0 );
         graph_traits<SPPRC_Example_Graph>::edge_descriptor ed_last_extended_arc2;
-        check_r_c_path( g,
-                        opt_solutions_spptw[0],
-                        spp_spptw_res_cont( 0, g[s].eat ),
-                        false,
-                        pareto_opt_rcs_spptw[0],
-                        actual_final_resource_levels2,
-                        ref_spptw(),
-                        b_is_a_path_at_all,
-                        b_feasible,
-                        b_correctly_extended,
+        check_r_c_path( g, 
+                        opt_solutions_spptw[0], 
+                        spp_spptw_res_cont( 0, g[s].eat ), 
+                        false, 
+                        pareto_opt_rcs_spptw[0], 
+                        actual_final_resource_levels2, 
+                        ref_spptw(), 
+                        b_is_a_path_at_all, 
+                        b_feasible, 
+                        b_correctly_extended, 
                         ed_last_extended_arc2 );
         BOOST_CHECK(b_is_a_path_at_all && b_feasible && b_correctly_extended);
       }
@@ -688,7 +605,7 @@ int test_main(int, char*[])
   for( int s = 0; s < 10; ++s )
     for( int t = 0; t < 10; ++t )
       BOOST_CHECK( static_cast<int>
-            ( vec_vec_vec_vec_opt_solutions_spptw[s][t].size() ) ==
+            ( vec_vec_vec_vec_opt_solutions_spptw[s][t].size() ) == 
                    i_vec_correct_num_solutions_spptw[10 * s + t] );
 
   // one pareto-optimal solution
@@ -703,97 +620,22 @@ int test_main(int, char*[])
   add_edge( 2, 3, SPPRC_Example_Graph_Arc_Prop( 3, 1, 1 ), g2 );
   std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> opt_solution;
   spp_spptw_res_cont pareto_opt_rc;
-  r_c_shortest_paths( g2,
-                      get( &SPPRC_Example_Graph_Vert_Prop::num, g2 ),
-                      get( &SPPRC_Example_Graph_Arc_Prop::num, g2 ),
-                      0,
-                      3,
-                      opt_solution,
-                      pareto_opt_rc,
-                      spp_spptw_res_cont( 0, 0 ),
-                      ref_spptw(),
-                      dominance_spptw(),
+  r_c_shortest_paths( g2, 
+                      get( &SPPRC_Example_Graph_Vert_Prop::num, g2 ), 
+                      get( &SPPRC_Example_Graph_Arc_Prop::num, g2 ), 
+                      0, 
+                      3, 
+                      opt_solution, 
+                      pareto_opt_rc, 
+                      spp_spptw_res_cont( 0, 0 ), 
+                      ref_spptw(), 
+                      dominance_spptw(), 
                       std::allocator
                         <r_c_shortest_paths_label
-                          <SPPRC_Example_Graph, spp_spptw_res_cont> >(),
+                          <SPPRC_Example_Graph, spp_spptw_res_cont> >(), 
                       default_r_c_shortest_paths_visitor() );
 
   BOOST_CHECK(pareto_opt_rc.cost == 3);
-
-  SPPRC_Example_Graph g3;
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 0, 0, 1000 ), g3 );
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 1, 0, 1000 ), g3 );
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 2, 0, 974 ), g3 );
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 3, 0, 972 ), g3 );
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 4, 0, 967 ), g3 );
-  add_vertex( SPPRC_Example_Graph_Vert_Prop( 5, 678, 801 ), g3 );
-  add_edge( 0, 2, SPPRC_Example_Graph_Arc_Prop( 0, 0, 16 ), g3 );
-  add_edge( 0, 3, SPPRC_Example_Graph_Arc_Prop( 1, 0, 18 ), g3 );
-  add_edge( 0, 4, SPPRC_Example_Graph_Arc_Prop( 2, 0, 23 ), g3 );
-  add_edge( 0, 5, SPPRC_Example_Graph_Arc_Prop( 3, 0, 25 ), g3 );
-  add_edge( 2, 3, SPPRC_Example_Graph_Arc_Prop( 4, 0, 33 ), g3 );
-  add_edge( 2, 4, SPPRC_Example_Graph_Arc_Prop( 5, 0, 15 ), g3 );
-  add_edge( 2, 5, SPPRC_Example_Graph_Arc_Prop( 6, 0, 33 ), g3 );
-  add_edge( 2, 1, SPPRC_Example_Graph_Arc_Prop( 7, 0, 16 ), g3 );
-  add_edge( 3, 2, SPPRC_Example_Graph_Arc_Prop( 8, 0, 33 ), g3 );
-  add_edge( 3, 4, SPPRC_Example_Graph_Arc_Prop( 9, 0, 35 ), g3 );
-  add_edge( 3, 5, SPPRC_Example_Graph_Arc_Prop( 10, 0, 21 ), g3 );
-  add_edge( 3, 1, SPPRC_Example_Graph_Arc_Prop( 11, 0, 18 ), g3 );
-  add_edge( 4, 2, SPPRC_Example_Graph_Arc_Prop( 12, 0, 15 ), g3 );
-  add_edge( 4, 3, SPPRC_Example_Graph_Arc_Prop( 13, 0, 35 ), g3 );
-  add_edge( 4, 5, SPPRC_Example_Graph_Arc_Prop( 14, 0, 25 ), g3 );
-  add_edge( 4, 1, SPPRC_Example_Graph_Arc_Prop( 15, 0, 23 ), g3 );
-  add_edge( 5, 2, SPPRC_Example_Graph_Arc_Prop( 16, 0, 33 ), g3 );
-  add_edge( 5, 3, SPPRC_Example_Graph_Arc_Prop( 17, 0, 21 ), g3 );
-  add_edge( 5, 4, SPPRC_Example_Graph_Arc_Prop( 18, 0, 25 ), g3 );
-  add_edge( 5, 1, SPPRC_Example_Graph_Arc_Prop( 19, 0, 25 ), g3 );
-
-  std::vector<std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> >
-  pareto_opt_marked_solutions;
-  std::vector<spp_spptw_marked_res_cont> pareto_opt_marked_resource_containers;
-
-  graph_traits<SPPRC_Example_Graph>::vertex_descriptor g3_source = 0, g3_target = 1;
-  r_c_shortest_paths( g3,
-                      get( &SPPRC_Example_Graph_Vert_Prop::num, g3 ),
-                      get( &SPPRC_Example_Graph_Arc_Prop::num, g3 ),
-                      g3_source,
-                      g3_target,
-                      pareto_opt_marked_solutions,
-                      pareto_opt_marked_resource_containers,
-                      spp_spptw_marked_res_cont( 0, 0, 0 ),
-                      ref_spptw_marked(),
-                      dominance_spptw_marked(),
-                      std::allocator
-                              <r_c_shortest_paths_label
-                                      <SPPRC_Example_Graph, spp_spptw_marked_res_cont> >(),
-                      default_r_c_shortest_paths_visitor() );
-
-  BOOST_CHECK(!pareto_opt_marked_solutions.empty());
-  std::vector<std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> >::const_iterator path_it, path_end_it;
-  for (path_it = pareto_opt_marked_solutions.begin(), path_end_it = pareto_opt_marked_solutions.end(); path_it != path_end_it; ++path_it) {
-    const std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor> &path = *path_it;
-    BOOST_CHECK(!path.empty());
-
-    const graph_traits<SPPRC_Example_Graph>::edge_descriptor front = path.front();
-    BOOST_CHECK(boost::target(front, g3) == g3_target);
-
-    std::vector<graph_traits<SPPRC_Example_Graph>::edge_descriptor>::const_iterator edge_it, edge_it_end;
-    graph_traits<SPPRC_Example_Graph>::edge_descriptor prev_edge = front;
-
-    for(edge_it = path.begin() + 1, edge_it_end = path.end(); edge_it != edge_it_end; ++edge_it) {
-        graph_traits<SPPRC_Example_Graph>::edge_descriptor edge = *edge_it;
-
-        graph_traits<SPPRC_Example_Graph>::vertex_descriptor prev_end, current_end;
-        prev_end = boost::source(prev_edge, g3);
-        current_end = boost::target(edge, g3);
-        BOOST_CHECK(prev_end == current_end);
-
-        prev_edge = edge;
-    }
-
-    const graph_traits<SPPRC_Example_Graph>::edge_descriptor back = path.back();
-    BOOST_CHECK(boost::source(back, g3) == g3_source);
-  }
 
   return 0;
 }

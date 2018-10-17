@@ -10,11 +10,10 @@
 #ifndef BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP
 #define BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP
 
-// Gürsoy-Atun graph layout, based on:
+// Gursoy-Atun graph layout, based on:
 // "Neighbourhood Preserving Load Balancing: A Self-Organizing Approach"
-// in 6th International Euro-Par Conference Munich, Germany, August 29 – September 1, 2000 Proceedings,
-// pp 234-241
-// https://doi.org/10.1007/3-540-44520-X_32
+// in EuroPar 2000, p. 234 of LNCS 1900
+// http://springerlink.metapress.com/link.asp?id=pcu07ew5rhexp9yt
 
 #include <boost/config/no_tr1/cmath.hpp>
 #include <boost/throw_exception.hpp>
