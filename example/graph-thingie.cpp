@@ -89,10 +89,6 @@ const char* dot =
   istringstream gvgraph(dot);
 
   bool status = read_graphviz(gvgraph,graph,dp,"node_id");
-  if (!status) {
-    cerr << "read_graphviz() failed." << endl;
-    return -1;
-  }
 
   cout << "graph " << get("name",dp,&graph) <<
       " (" << get("identifier",dp,&graph) << ")\n\n";

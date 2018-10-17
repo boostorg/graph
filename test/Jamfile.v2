@@ -41,7 +41,7 @@ test-suite graph_test :
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
     [ run bipartite_test.cpp ]
-    # [ run csr_graph_test.cpp : : : : : <variant>release ]
+    [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
     [ run undirected_dfs.cpp ../../test/build//boost_test_exec_monitor ]
@@ -50,10 +50,7 @@ test-suite graph_test :
     [ run dijkstra_heap_performance.cpp : 10000 ]
     [ run dijkstra_no_color_map_compare.cpp : 10000 ]
     [ run dominator_tree_test.cpp ]
-
-    # Unused and deprecated.
-    #[ run relaxed_heap_test.cpp : 5000 15000 ]
-
+    [ run relaxed_heap_test.cpp : 5000 15000 ]
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
     [ run generator_test.cpp ]
@@ -77,7 +74,6 @@ test-suite graph_test :
     # TODO: Merge these into a single test framework.
     [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
     [ run subgraph_bundled.cpp ]
-    [ run subgraph_add.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run subgraph_props.cpp ]
 
     [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
@@ -139,9 +135,6 @@ test-suite graph_test :
     [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run strong_components_test.cpp ]
-    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run delete_edge.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
@@ -164,5 +157,3 @@ if $(LEDA)
     compile leda_graph_cc.cpp :
         <include>$(leda-include) ;
 }
-
-build-project ../example ;

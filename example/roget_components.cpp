@@ -7,8 +7,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
 #include <iostream>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/strong_components.hpp>

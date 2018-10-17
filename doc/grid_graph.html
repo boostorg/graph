@@ -111,7 +111,7 @@
     <h4>Example</h4>
     <pre class="code">
 <span class="comment">// Define dimension lengths, a 3x3 in this case</span>
-<span class="name">boost</span>::<span class="type">array</span>&lt;<span class="name">std</span>::<span class="type">size_t</span>, <span class="literal">2</span>&gt; lengths = { { <span class="literal">3</span>, <span class="literal">3</span> } };
+<span class="name">boost</span>::<span class="type">array</span>&lt;<span class="keyword">int</span>, <span class="literal">2</span>&gt; lengths = { { <span class="literal">3</span>, <span class="literal">3</span> } };
 
 <span class="comment">// Create a 3x3 two-dimensional, unwrapped grid graph (Figure 1)</span>
 <span class="type">grid_graph</span>&lt;<span class="literal">2</span>&gt; graph(lengths);
@@ -185,7 +185,7 @@ in_edge_at(<span class="name">Traits</span>::<span class="type">vertex_descripto
 <span class="keyword">typedef</span> <span class="type">graph_traits</span>&lt;<span class="name">Graph</span>&gt; <span class="name">Traits</span>;
 
 <span class="comment">// Create a 3x3, unwrapped grid_graph (Figure 3)</span>
-<span class="name">boost</span>::<span class="type">array</span>&lt;<span class="name">std</span>::<span class="type">size_t</span>, <span class="literal">2</span>&gt; lengths = { { <span class="literal">3</span>, <span class="literal">3</span> } };
+<span class="name">boost</span>::<span class="type">array</span>&lt;<span class="keyword">int</span>, <span class="literal">2</span>&gt; lengths = { { <span class="literal">3</span>, <span class="literal">3</span> } };
 <span class="name">Graph</span> graph(lengths);
 
 <span class="comment">// Do a round-trip test of the vertex index functions</span>

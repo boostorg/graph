@@ -9,7 +9,6 @@
 
 #include <boost/config.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <iostream>
 
 int
 main()
@@ -23,12 +22,8 @@ main()
   E edge_array[] = { E(0,1), E(0,2), E(0,1) };
   const std::size_t m = sizeof(edge_array) / sizeof(E);
   Graph g(edge_array, edge_array + m, n);
-
-  graph_traits<Graph>::edge_iterator edge_iterator;
-  for (std::size_t i = 0; i < m; ++i) {
-    const graph_traits<Graph>::edge_iterator e = edges(g).first + i;
-    std::cout << *e << " ";
-  }
+  for (std::size_t i = 0; i < m; ++i)
+    std::cout << edges(g).first[i] << " ";
   std::cout << std::endl;
   
   return 0;
