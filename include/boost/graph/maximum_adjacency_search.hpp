@@ -149,7 +149,7 @@ namespace boost {
       //weight_type w;
       while (!pq.empty()) { // while PQ \neq {} do
         const vertex_descriptor u = pq.top(); // u = extractmax(PQ)
-        get(keys, u);                        vis.start_vertex(u, g);
+        /* weight_type w = */ get(keys, u);      vis.start_vertex(u, g);
         pq.pop();                  //            vis.start_vertex(u, g);
 
         BGL_FORALL_OUTEDGES_T(u, e, g, Graph) { // foreach (u, v) \in E do

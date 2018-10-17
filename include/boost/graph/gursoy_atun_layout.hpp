@@ -183,7 +183,7 @@ gursoy_atun_step
     typedef detail::gursoy_shortest<EdgeWeightMap> shortest;
     shortest::run(graph, min_distance_loc, node_distance, update_position,
                   weight);    
-  } catch (detail::over_distance_limit) { 
+  } catch (const detail::over_distance_limit&) { 
     /* Thrown to break out of BFS or Dijkstra early */ 
   }
 }
