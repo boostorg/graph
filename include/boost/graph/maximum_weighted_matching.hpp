@@ -54,7 +54,7 @@ namespace boost
         {
             typedef boost::iterator_property_map<typename std::vector<T>::iterator, VertexIndexMap> type;
         };
-        typedef unsigned short vertex_state_t;
+        typedef typename graph::detail::VERTEX_STATE vertex_state_t;
         typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
         typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor_t;
         typedef typename std::vector<vertex_descriptor_t>::const_iterator vertex_vec_iter_t;
@@ -77,8 +77,10 @@ namespace boost
             
             typedef boost::shared_ptr<blossom> blossom_ptr_t;
             std::vector<blossom_ptr_t> sub_blossoms;
-            edge_property_t dual_var = 0;
-            blossom_ptr_t father = blossom_ptr_t();
+            edge_property_t dual_var;
+            blossom_ptr_t father;
+
+            blossom() : dual_var(0), father(blossom_ptr_t()) {}
             
             // get the base vertex of a blossom by recursively getting
             // its base sub-blossom, which is always the first one in
@@ -123,7 +125,6 @@ namespace boost
         class trivial_blossom : public blossom
         {
         public:
-            
             trivial_blossom(vertex_descriptor_t v) : trivial_vertex(v) {}
             virtual vertex_descriptor_t get_base() const
             {

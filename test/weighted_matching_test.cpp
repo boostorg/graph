@@ -10,42 +10,26 @@
 #include <boost/graph/max_cardinality_matching.hpp>
 #include <boost/graph/maximum_weighted_matching.hpp>
 
-#include <iostream>                      // for std::cout
-#include <boost/property_map/vector_property_map.hpp>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
-#include <boost/graph/random.hpp>
-#include <ctime>
-#include <boost/random.hpp>
 #include <boost/test/minimal.hpp>
 
 using namespace boost;
 
 typedef property<edge_weight_t, float, property<edge_index_t, int> > EdgeProperty;
 
-typedef adjacency_list<vecS,
-vecS,
-undirectedS,
-property<vertex_index_t,int>,
-EdgeProperty> undirected_graph;
-
-typedef adjacency_list<listS,
-listS,
-undirectedS,
-property<vertex_index_t,int>,
-EdgeProperty> undirected_list_graph;
-
-typedef adjacency_matrix<undirectedS,
-property<vertex_index_t,int>,
-EdgeProperty> undirected_adjacency_matrix_graph;
-
+typedef adjacency_list<vecS, vecS, undirectedS, property<vertex_index_t,int>, EdgeProperty> undirected_graph;
+typedef adjacency_list<listS, listS, undirectedS, property<vertex_index_t,int>, EdgeProperty> undirected_list_graph;
+typedef adjacency_matrix<undirectedS, property<vertex_index_t,int>, EdgeProperty> undirected_adjacency_matrix_graph;
 
 template <typename Graph>
 struct vertex_index_installer
 {
     static void install(Graph&) {}
 };
-
 
 template <>
 struct vertex_index_installer<undirected_list_graph>
@@ -73,100 +57,82 @@ void print_graph(const Graph& g)
 }
 
 template <typename Graph>
-void weighted_matching_test(typename graph_traits<Graph>::vertices_size_type num_v,
-                            typename graph_traits<Graph>::edges_size_type num_e,
-                            const std::string& graph_name,
-                            boost::mt19937& generator)
+void weighted_matching_test(const Graph& g, 
+                            typename property_traits<typename property_map<Graph, edge_weight_t>::type>::value_type answer)
 {
     typedef typename property_map<Graph,vertex_index_t>::type vertex_index_map_t;
     typedef vector_property_map< typename graph_traits<Graph>::vertex_descriptor, vertex_index_map_t > mate_t;
-    typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
-    typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor_t;
-    
-    boost::uniform_int<> distribution(0, num_v-1);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<> > rand_num(generator, distribution);
-    
-    num_e = std::min(num_e, num_v*num_v);
-    typename graph_traits<Graph>::edges_size_type num_edges = 0;
-    bool success;
-    
-    Graph g(num_v);
-    vertex_index_installer<Graph>::install(g);
-    
-    while (num_edges < num_e)
-    {
-        vertex_descriptor_t u = random_vertex(g, rand_num);
-        vertex_descriptor_t v = random_vertex(g, rand_num);
-        if (u != v)
-        {
-            if (!edge(u,v,g).second)
-                boost::tie(tuples::ignore, success) = add_edge(u, v, EdgeProperty(distribution(generator)), g);
-            else
-                success = false;
-            
-            if (success)
-                ++num_edges;
-        }
-    }
-
-    //print_graph(g);
-    
-    mate_t mate1(num_v), mate2(num_v);
-    
-    maximum_weighted_matching(g, mate1);
-    brute_force_maximum_weighted_matching(g, mate2);
-    
-    bool same_result = (matching_weight_sum(g, mate1) == matching_weight_sum(g, mate2));
+    mate_t mate(num_vertices(g));
+    maximum_weighted_matching(g, mate);
+    bool same_result = (matching_weight_sum(g, mate) == answer);
     BOOST_CHECK(same_result);
     if (!same_result)
     {
-        std::cout << std::endl << "Found a weighted matching of weight sum " << matching_weight_sum(g, mate1) << std::endl
-        << "While brute-force search found a weighted matching of weight sum " << matching_weight_sum(g, mate2) << std::endl;
+        mate_t max_mate(num_vertices(g));
+        brute_force_maximum_weighted_matching(g, max_mate);
+
+        std::cout << std::endl << "Found a weighted matching of weight sum " << matching_weight_sum(g, mate) << std::endl
+        << "While brute-force search found a weighted matching of weight sum " << matching_weight_sum(g, max_mate) << std::endl;
         
+        typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator_t;
         vertex_iterator_t vi, vi_end;
         
         print_graph(g);
         
         std::cout << std::endl << "The algorithmic matching is:" << std::endl;
         for (boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-            if (mate1[*vi] != graph_traits<Graph>::null_vertex() && *vi < mate1[*vi])
-                std::cout << "{" << *vi << ", " << mate1[*vi] << "}" << std::endl;
+            if (mate[*vi] != graph_traits<Graph>::null_vertex() && *vi < mate[*vi])
+                std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
         
         std::cout << std::endl << "The brute-force matching is:" << std::endl;
         for (boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-            if (mate2[*vi] != graph_traits<Graph>::null_vertex() && *vi < mate2[*vi])
-                std::cout << "{" << *vi << ", " << mate2[*vi] << "}" << std::endl;
+            if (max_mate[*vi] != graph_traits<Graph>::null_vertex() && *vi < max_mate[*vi])
+                std::cout << "{" << *vi << ", " << max_mate[*vi] << "}" << std::endl;
         
         std::cout << std::endl;
     }
-
 }
 
+template <typename Graph>
+Graph make_graph(typename graph_traits<Graph>::vertices_size_type num_v, 
+                 typename graph_traits<Graph>::edges_size_type num_e,
+                 std::deque<std::size_t> input_edges)
+{
+    Graph g(num_v);
+    vertex_index_installer<Graph>::install(g);
+    for (std::size_t i = 0; i < num_e; ++i)
+    {
+        std::size_t src_v, tgt_v, edge_weight;
+        src_v = input_edges.front();
+        input_edges.pop_front();
+        tgt_v = input_edges.front();
+        input_edges.pop_front();
+        edge_weight = input_edges.front();
+        input_edges.pop_front();
+        add_edge(vertex(src_v, g), vertex(tgt_v, g), EdgeProperty(edge_weight), g);
+    }
+    return g;
+}
 
 int test_main(int, char*[])
 {
-    // this test may take quite a while because of the brute-force verifier,
-    // you can also lower the max_num_v and/or max_num_e
-    
-    std::size_t max_num_v = 16;
-    std::size_t max_num_e = 24;
-    std::size_t batch_size = 16;
-
-    boost::mt19937 generator(static_cast<unsigned int>(std::time(0)));
-    
-    for (std::size_t num_v = 1; num_v <= max_num_v; ++num_v)
+    std::ifstream in_file("weighted_matching.dat");
+    std::string line;
+    while (std::getline(in_file, line))
     {
-        for (std::size_t num_e = num_v-1; num_e <= std::min(max_num_e,num_v*(num_v-1)/2); ++num_e)
-        {
-            for (std::size_t batch = 0; batch < batch_size; ++batch)
-            {
-                weighted_matching_test<undirected_graph>(num_v, num_e, "adjacency_list (using vectors)", generator);
-                weighted_matching_test<undirected_list_graph>(num_v, num_e, "adjacency_list (using lists)", generator);
-                weighted_matching_test<undirected_adjacency_matrix_graph>(num_v, num_e, "adjacency_matrix", generator);
-            }
-        }
+        std::istringstream in_graph(line);
+        std::size_t answer, num_v, num_e;
+        in_graph >> answer >> num_v >> num_e;
+
+        std::deque<std::size_t> input_edges;
+        std::size_t i;
+        while (in_graph >> i)
+            input_edges.push_back(i);
+        
+        weighted_matching_test(make_graph<undirected_graph>(num_v, num_e, input_edges), answer);
+        weighted_matching_test(make_graph<undirected_list_graph>(num_v, num_e, input_edges), answer);
+        weighted_matching_test(make_graph<undirected_adjacency_matrix_graph>(num_v, num_e, input_edges), answer);
     }
-    
     return 0;
 }
 
