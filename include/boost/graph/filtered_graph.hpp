@@ -14,6 +14,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/set_adaptor.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
 namespace boost {
@@ -277,21 +278,19 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
-  std::pair<typename filtered_graph<G, EP, VP>::vertex_iterator,
-            typename filtered_graph<G, EP, VP>::vertex_iterator>
+  graph_detail::iterator_range<typename filtered_graph<G, EP, VP>::vertex_iterator>
   vertices(const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;    
     typename graph_traits<G>::vertex_iterator f, l;
     boost::tie(f, l) = vertices(g.m_g);
     typedef typename Graph::vertex_iterator iter;
-    return std::make_pair(iter(g.m_vertex_pred, f, l), 
+    return graph_detail::make_iterator_range(iter(g.m_vertex_pred, f, l), 
                           iter(g.m_vertex_pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>
-  std::pair<typename filtered_graph<G, EP, VP>::edge_iterator,
-            typename filtered_graph<G, EP, VP>::edge_iterator>
+  graph_detail::iterator_range<typename filtered_graph<G, EP, VP>::edge_iterator>
   edges(const filtered_graph<G, EP, VP>& g)
   {
     typedef filtered_graph<G, EP, VP> Graph;
@@ -299,7 +298,7 @@ namespace boost {
     typename graph_traits<G>::edge_iterator f, l;
     boost::tie(f, l) = edges(g.m_g);
     typedef typename Graph::edge_iterator iter;
-    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
+    return graph_detail::make_iterator_range(iter(pred, f, l), iter(pred, l, l));
   }
 
   // An alternative for num_vertices() and num_edges() would be to
@@ -344,8 +343,7 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
-  std::pair<typename filtered_graph<G, EP, VP>::out_edge_iterator,
-            typename filtered_graph<G, EP, VP>::out_edge_iterator>
+  graph_detail::iterator_range<typename filtered_graph<G, EP, VP>::out_edge_iterator>
   out_edges(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
             const filtered_graph<G, EP, VP>& g)
   {
@@ -354,7 +352,7 @@ namespace boost {
     typedef typename Graph::out_edge_iterator iter;
     typename graph_traits<G>::out_edge_iterator f, l;
     boost::tie(f, l) = out_edges(u, g.m_g);
-    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
+    return graph_detail::make_iterator_range(iter(pred, f, l), iter(pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>
@@ -370,8 +368,7 @@ namespace boost {
   }
 
   template <typename G, typename EP, typename VP>
-  std::pair<typename filtered_graph<G, EP, VP>::adjacency_iterator,
-            typename filtered_graph<G, EP, VP>::adjacency_iterator>
+  graph_detail::iterator_range<typename filtered_graph<G, EP, VP>::adjacency_iterator>
   adjacent_vertices(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
                     const filtered_graph<G, EP, VP>& g)
   {
@@ -379,13 +376,12 @@ namespace boost {
     typedef typename Graph::adjacency_iterator adjacency_iterator;
     typename Graph::out_edge_iterator f, l;
     boost::tie(f, l) = out_edges(u, g);
-    return std::make_pair(adjacency_iterator(f, const_cast<Graph*>(&g)),
+    return graph_detail::make_iterator_range(adjacency_iterator(f, const_cast<Graph*>(&g)),
                           adjacency_iterator(l, const_cast<Graph*>(&g)));
   }
   
   template <typename G, typename EP, typename VP>
-  std::pair<typename filtered_graph<G, EP, VP>::in_edge_iterator,
-            typename filtered_graph<G, EP, VP>::in_edge_iterator>
+  graph_detail::iterator_range<typename filtered_graph<G, EP, VP>::in_edge_iterator>
   in_edges(typename filtered_graph<G, EP, VP>::vertex_descriptor u,
             const filtered_graph<G, EP, VP>& g)
   {
@@ -394,7 +390,7 @@ namespace boost {
     typedef typename Graph::in_edge_iterator iter;
     typename graph_traits<G>::in_edge_iterator f, l;
     boost::tie(f, l) = in_edges(u, g.m_g);
-    return std::make_pair(iter(pred, f, l), iter(pred, l, l));
+    return graph_detail::make_iterator_range(iter(pred, f, l), iter(pred, l, l));
   }
 
   template <typename G, typename EP, typename VP>

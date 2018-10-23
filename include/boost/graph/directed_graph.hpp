@@ -9,6 +9,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/pending/property.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
 #include <boost/type_traits.hpp>
@@ -427,8 +428,7 @@ num_vertices(DIRECTED_GRAPH const& g)
 { return g.num_vertices(); }
 
 template <DIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename DIRECTED_GRAPH::vertex_iterator,
+inline graph_detail::iterator_range<
     typename DIRECTED_GRAPH::vertex_iterator
 >
 vertices(DIRECTED_GRAPH const& g)
@@ -441,8 +441,7 @@ num_edges(DIRECTED_GRAPH const& g)
 { return g.num_edges(); }
 
 template <DIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename DIRECTED_GRAPH::edge_iterator,
+inline graph_detail::iterator_range<
     typename DIRECTED_GRAPH::edge_iterator
 >
 edges(DIRECTED_GRAPH const& g)

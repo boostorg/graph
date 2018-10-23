@@ -14,6 +14,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/graph_iterator_range.hpp>
 
 // Thanks to Andreas Scherer for numerous suggestions and fixes!
 
@@ -206,17 +207,17 @@ namespace boost {
 
 namespace boost {
 
-  inline std::pair<sgb_vertex_iterator,sgb_vertex_iterator>
+  inline graph_detail::iterator_range<sgb_vertex_iterator>
   vertices(sgb_const_graph_ptr g)
   {
-    return std::make_pair(sgb_vertex_iterator(g->vertices),
+    return graph_detail::make_iterator_range(sgb_vertex_iterator(g->vertices),
                           sgb_vertex_iterator(g->vertices + g->n));
   }
 
-  inline std::pair<sgb_out_edge_iterator,sgb_out_edge_iterator>
+  inline graph_detail::iterator_range<sgb_out_edge_iterator>
   out_edges(Vertex* u, sgb_const_graph_ptr)
   {
-    return std::make_pair( sgb_out_edge_iterator(u, u->arcs),
+    return graph_detail::make_iterator_range( sgb_out_edge_iterator(u, u->arcs),
                            sgb_out_edge_iterator(u, 0) );
   }
 
@@ -230,10 +231,10 @@ namespace boost {
 
   // in_edges?
 
-  inline std::pair<sgb_adj_iterator,sgb_adj_iterator>
+  inline graph_detail::iterator_range<sgb_adj_iterator>
   adjacent_vertices(Vertex* u, sgb_const_graph_ptr)
   {
-    return std::make_pair( sgb_adj_iterator(u->arcs),
+    return graph_detail::make_iterator_range( sgb_adj_iterator(u->arcs),
                            sgb_adj_iterator(0) );
   }
 

@@ -19,6 +19,7 @@
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
@@ -628,8 +629,7 @@ adjacenct_vertices(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH co
 /** @name VertexListGraph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::vertex_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::vertex_iterator>
 vertices(LABELED_GRAPH const& g)
 { return vertices(g.graph()); }
@@ -643,8 +643,7 @@ num_vertices(LABELED_GRAPH const& g)
 /** @name EdgeListGraph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::edge_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::edge_iterator>
 edges(LABELED_GRAPH const& g)
 { return edges(g.graph()); }

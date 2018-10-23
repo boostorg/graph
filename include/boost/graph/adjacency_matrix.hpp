@@ -24,6 +24,7 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/detail/edge.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/range/irange.hpp>
@@ -865,12 +866,11 @@ namespace boost {
   // Functions required by the VertexListGraph concept
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
-  std::pair<typename adjacency_matrix<D,VP,EP,GP,A>::vertex_iterator,
-            typename adjacency_matrix<D,VP,EP,GP,A>::vertex_iterator>
+  graph_detail::iterator_range<typename adjacency_matrix<D,VP,EP,GP,A>::vertex_iterator>
   vertices(const adjacency_matrix<D,VP,EP,GP,A>& g_) {
     typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
     Graph& g = const_cast<Graph&>(g_);
-    return std::make_pair(g.m_vertex_set.begin(), g.m_vertex_set.end());
+    return graph_detail::make_iterator_range(g.m_vertex_set.begin(), g.m_vertex_set.end());
   }
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
@@ -883,8 +883,7 @@ namespace boost {
   // Functions required by the EdgeListGraph concept
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
-  std::pair<typename adjacency_matrix<D,VP,EP,GP,A>::edge_iterator,
-            typename adjacency_matrix<D,VP,EP,GP,A>::edge_iterator>
+  graph_detail::iterator_range<typename adjacency_matrix<D,VP,EP,GP,A>::edge_iterator>
   edges(const adjacency_matrix<D,VP,EP,GP,A>& g_)
   {
     typedef adjacency_matrix<D,VP,EP,GP,A> Graph;
@@ -897,7 +896,7 @@ namespace boost {
                                     g.m_vertex_set.size());
     detail::does_edge_exist pred;
     typedef typename Graph::edge_iterator edge_iterator;
-    return std::make_pair(edge_iterator(pred, first, last),
+    return graph_detail::make_iterator_range(edge_iterator(pred, first, last),
                           edge_iterator(pred, last, last));
   }
 

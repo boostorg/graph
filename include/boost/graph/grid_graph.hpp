@@ -19,6 +19,7 @@
 #include <boost/limits.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -743,14 +744,13 @@ namespace boost {
     // VertexListGraph
     //================
 
-    friend inline std::pair<typename type::vertex_iterator,
-                            typename type::vertex_iterator> 
+    friend inline graph_detail::iterator_range<typename type::vertex_iterator> 
     vertices(const type& graph) {
       typedef typename type::vertex_iterator vertex_iterator;
       typedef typename type::vertex_function vertex_function;
       typedef typename type::vertex_index_iterator vertex_index_iterator;
 
-      return (std::make_pair
+      return (graph_detail::make_iterator_range
               (vertex_iterator(vertex_index_iterator(0),
                                vertex_function(&graph)),
                vertex_iterator(vertex_index_iterator(graph.num_vertices()),
@@ -773,15 +773,14 @@ namespace boost {
     // IncidenceGraph
     //===============
 
-    friend inline std::pair<typename type::out_edge_iterator,
-                            typename type::out_edge_iterator>
+    friend inline graph_detail::iterator_range<typename type::out_edge_iterator>
     out_edges(typename type::vertex_descriptor vertex,
               const type& graph) {
       typedef typename type::degree_iterator degree_iterator;
       typedef typename type::out_edge_function out_edge_function;
       typedef typename type::out_edge_iterator out_edge_iterator;
 
-      return (std::make_pair
+      return (graph_detail::make_iterator_range
               (out_edge_iterator(degree_iterator(0),
                                  out_edge_function(vertex, &graph)),
                out_edge_iterator(degree_iterator(graph.out_degree(vertex)),
@@ -806,15 +805,14 @@ namespace boost {
     // AdjacencyGraph
     //===============
 
-    friend typename std::pair<typename type::adjacency_iterator,
-                              typename type::adjacency_iterator>
+    friend typename graph_detail::iterator_range<typename type::adjacency_iterator>
     adjacent_vertices (typename type::vertex_descriptor vertex,
                        const type& graph) {
       typedef typename type::degree_iterator degree_iterator;
       typedef typename type::adjacent_vertex_function adjacent_vertex_function;
       typedef typename type::adjacency_iterator adjacency_iterator;
 
-      return (std::make_pair
+      return (graph_detail::make_iterator_range
               (adjacency_iterator(degree_iterator(0),
                                  adjacent_vertex_function(vertex, &graph)),
                adjacency_iterator(degree_iterator(graph.out_degree(vertex)),
@@ -836,14 +834,13 @@ namespace boost {
       return (graph.edge_at(edge_index));
     }
 
-    friend inline std::pair<typename type::edge_iterator,
-                            typename type::edge_iterator>
+    friend inline graph_detail::iterator_range<typename type::edge_iterator>
     edges(const type& graph) {
       typedef typename type::edge_index_iterator edge_index_iterator;
       typedef typename type::edge_function edge_function;
       typedef typename type::edge_iterator edge_iterator;
 
-      return (std::make_pair
+      return (graph_detail::make_iterator_range
               (edge_iterator(edge_index_iterator(0),
                              edge_function(&graph)),
                edge_iterator(edge_index_iterator(graph.num_edges()),
@@ -854,15 +851,14 @@ namespace boost {
     // BiDirectionalGraph
     //===================
 
-    friend inline std::pair<typename type::in_edge_iterator,
-                            typename type::in_edge_iterator>
+    friend inline graph_detail::iterator_range<typename type::in_edge_iterator>
     in_edges(typename type::vertex_descriptor vertex,
              const type& graph) {
       typedef typename type::in_edge_function in_edge_function;
       typedef typename type::degree_iterator degree_iterator;
       typedef typename type::in_edge_iterator in_edge_iterator;
 
-      return (std::make_pair
+      return (graph_detail::make_iterator_range
               (in_edge_iterator(degree_iterator(0),
                                 in_edge_function(vertex, &graph)),
                in_edge_iterator(degree_iterator(graph.in_degree(vertex)),

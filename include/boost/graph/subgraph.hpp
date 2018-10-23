@@ -20,6 +20,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
 #include <boost/static_assert.hpp>
@@ -479,8 +480,7 @@ adjacent_vertices(typename subgraph<G>::vertex_descriptor v, const subgraph<G>& 
 // Functions required by the VertexListGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::vertex_iterator,
-          typename subgraph<G>::vertex_iterator>
+graph_detail::iterator_range<typename subgraph<G>::vertex_iterator>
 vertices(const subgraph<G>& g)
 { return vertices(g.m_graph); }
 
@@ -493,8 +493,7 @@ num_vertices(const subgraph<G>& g)
 // Functions required by the EdgeListGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::edge_iterator,
-          typename subgraph<G>::edge_iterator>
+graph_detail::iterator_range<typename subgraph<G>::edge_iterator>
 edges(const subgraph<G>& g)
 { return edges(g.m_graph); }
 

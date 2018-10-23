@@ -9,6 +9,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/pending/property.hpp>
 #include <boost/property_map/transform_value_property_map.hpp>
 #include <boost/type_traits.hpp>
@@ -425,8 +426,7 @@ num_vertices(UNDIRECTED_GRAPH const& g)
 { return g.num_vertices(); }
 
 template <UNDIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename UNDIRECTED_GRAPH::vertex_iterator,
+inline graph_detail::iterator_range<
     typename UNDIRECTED_GRAPH::vertex_iterator
 >
 vertices(UNDIRECTED_GRAPH const& g)
@@ -439,8 +439,7 @@ num_edges(UNDIRECTED_GRAPH const& g)
 { return g.num_edges(); }
 
 template <UNDIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename UNDIRECTED_GRAPH::edge_iterator,
+inline graph_detail::iterator_range<
     typename UNDIRECTED_GRAPH::edge_iterator
 >
 edges(UNDIRECTED_GRAPH const& g)

@@ -24,6 +24,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <algorithm>
 
 /*
@@ -32,7 +33,7 @@
   graph object). The edge-lists type of the graph is templated, so the
   user can choose any STL container, so long as the value_type of the
   container is convertible to the size_type of the vector. For now any
-  graph properties must be stored seperately.
+  graph properties must be stored separately.
 
   This module requires the C++ compiler to support partial
   specialization for the graph_traits class, so this is not portable
@@ -178,12 +179,11 @@ namespace boost {
   // source() and target() already provided for pairs in graph_traits.hpp
 
   template <class EdgeList, class Alloc>
-  std::pair<boost::counting_iterator<typename EdgeList::value_type>,
-            boost::counting_iterator<typename EdgeList::value_type> >
+  graph_detail::iterator_range<boost::counting_iterator<typename EdgeList::value_type> >
   vertices(const std::vector<EdgeList, Alloc>& v)
   {
     typedef boost::counting_iterator<typename EdgeList::value_type> Iter;
-    return std::make_pair(Iter(0), Iter(v.size()));
+    return graph_detail::make_iterator_range(Iter(0), Iter(v.size()));
   }
 
   template <class EdgeList, class Alloc>

@@ -28,6 +28,8 @@ void test_vertex_list_graph(Graph const& g) {
     BOOST_ASSERT(num_vertices(g) == N);
     BOOST_ASSERT(rng.first != rng.second);
     BOOST_ASSERT(std::distance(rng.first, rng.second) == int(N));
+    BOOST_ASSERT(vertices(g).begin() != vertices(g).end());
+    BOOST_ASSERT(std::distance(vertices(g).begin(), vertices(g).end()) == int(N));
 }
 //@}
 
@@ -49,6 +51,8 @@ void test_edge_list_graph(Graph const& g) {
     BOOST_ASSERT(num_edges(g) == M);
     BOOST_ASSERT(rng.first != rng.second);
     BOOST_ASSERT(std::distance(rng.first, rng.second) == int(M));
+    BOOST_ASSERT(edges(g).begin() != edges(g).end());
+    BOOST_ASSERT(std::distance(edges(g).begin(), edges(g).end()) == int(M));
 }
 //@}
 
