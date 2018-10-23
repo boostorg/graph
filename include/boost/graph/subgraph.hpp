@@ -428,8 +428,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
 // Functions required by the IncidenceGraph concept
 
 template <typename G>
-std::pair<typename graph_traits<G>::out_edge_iterator,
-          typename graph_traits<G>::out_edge_iterator>
+graph_detail::iterator_range<typename graph_traits<G>::out_edge_iterator>
 out_edges(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 { return out_edges(v, g.m_graph); }
 
@@ -452,8 +451,7 @@ target(typename graph_traits<G>::edge_descriptor e, const subgraph<G>& g)
 // Functions required by the BidirectionalGraph concept
 
 template <typename G>
-std::pair<typename graph_traits<G>::in_edge_iterator,
-          typename graph_traits<G>::in_edge_iterator>
+graph_detail::iterator_range<typename graph_traits<G>::in_edge_iterator>
 in_edges(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 { return in_edges(v, g.m_graph); }
 
@@ -471,8 +469,7 @@ degree(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 // Functions required by the AdjacencyGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::adjacency_iterator,
-          typename subgraph<G>::adjacency_iterator>
+graph_detail::iterator_range<typename subgraph<G>::adjacency_iterator>
 adjacent_vertices(typename subgraph<G>::vertex_descriptor v, const subgraph<G>& g)
 { return adjacent_vertices(v, g.m_graph); }
 

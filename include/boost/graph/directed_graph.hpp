@@ -384,8 +384,7 @@ in_degree(typename DIRECTED_GRAPH::vertex_descriptor v, DIRECTED_GRAPH const& g)
 { return in_degree(v, g.impl()); }
 
 template <DIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename DIRECTED_GRAPH::in_edge_iterator,
+inline graph_detail::iterator_range<
     typename DIRECTED_GRAPH::in_edge_iterator
 >
 in_edges(typename DIRECTED_GRAPH::vertex_descriptor v,
@@ -400,8 +399,7 @@ degree(typename DIRECTED_GRAPH::vertex_descriptor v, DIRECTED_GRAPH const& g)
 
 // AdjacencyGraph concepts
 template <DIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename DIRECTED_GRAPH::adjacency_iterator,
+inline graph_detail::iterator_range<
     typename DIRECTED_GRAPH::adjacency_iterator
     >
 adjacent_vertices(typename DIRECTED_GRAPH::vertex_descriptor v,

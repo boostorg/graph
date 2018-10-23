@@ -89,6 +89,11 @@ namespace boost {
           BOOST_CHECK(source(e, g) == u);
           BOOST_CHECK(container_contains(adj, target(e, g)) == true);
         }
+
+        for (edge_t e : out_edges(u, g)) {
+          BOOST_CHECK(source(e, g) == u);
+          BOOST_CHECK(container_contains(adj, target(e, g)) == true);
+        }
       }
     }
 
@@ -118,6 +123,11 @@ namespace boost {
           BOOST_CHECK(target(e, g) == v);
           BOOST_CHECK(container_contains(inv_adj, source(e, g)) == true);
         }
+
+        for (edge_t e : in_edges(v, g)) {
+          BOOST_CHECK(target(e, g) == v);
+          BOOST_CHECK(container_contains(inv_adj, source(e, g)));
+        }
       }
     }
 
@@ -144,6 +154,9 @@ namespace boost {
           vertex_t v = *p.first;
           BOOST_CHECK(container_contains(adj, v) == true);
         }
+
+        for (vertex_t v : adjacent_vertices(u, g))
+          BOOST_CHECK(container_contains(adj, v));
       }
     }      
 
@@ -159,6 +172,9 @@ namespace boost {
         vertex_t v = *p.first;
         BOOST_CHECK(container_contains(vertex_set, v) == true);
       }
+
+      for (vertex_t v : vertices(g))
+        BOOST_CHECK(container_contains(vertex_set, v));
     }
 
     void test_edge_list_graph
@@ -176,6 +192,12 @@ namespace boost {
         BOOST_CHECK(find_if(edge_set, connects(source(e, g), target(e, g), g)) != boost::end(edge_set));
         BOOST_CHECK(container_contains(vertex_set, source(e, g)) == true);
         BOOST_CHECK(container_contains(vertex_set, target(e, g)) == true);
+      }
+
+      for (edge_t e : edges(g)) {
+        BOOST_CHECK(find_if(edge_set, connects(source(e, g), target(e, g), g)) != boost::end(edge_set));
+        BOOST_CHECK(container_contains(vertex_set, source(e, g)));
+        BOOST_CHECK(container_contains(vertex_set, target(e, g)));
       }
     }
 

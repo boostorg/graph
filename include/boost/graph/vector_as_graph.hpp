@@ -168,12 +168,11 @@ namespace boost {
   }
 
   template <class EdgeList, class Alloc>
-  std::pair<typename EdgeList::const_iterator,
-            typename EdgeList::const_iterator>
+  graph_detail::iterator_range<typename EdgeList::const_iterator>
   adjacent_vertices(typename EdgeList::value_type v,
                     const std::vector<EdgeList, Alloc>& g)
   {
-    return std::make_pair(g[v].begin(), g[v].end());
+    return graph_detail::make_iterator_range(g[v].begin(), g[v].end());
   }
 
   // source() and target() already provided for pairs in graph_traits.hpp

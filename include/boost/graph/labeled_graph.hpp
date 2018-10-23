@@ -599,8 +599,7 @@ target(typename LABELED_GRAPH::edge_descriptor e, LABELED_GRAPH const& g)
 /** @name Bidirectional Graph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::in_edge_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::in_edge_iterator>
 in_edges(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 { return in_edges(v, g.graph()); }
@@ -619,8 +618,7 @@ degree(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 /** @name Adjacency Graph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::adjacency_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::adjacency_iterator>
 adjacenct_vertices(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 { return adjacent_vertices(v, g.graph()); }

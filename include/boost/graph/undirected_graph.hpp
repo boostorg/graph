@@ -373,8 +373,7 @@ in_degree(typename UNDIRECTED_GRAPH::vertex_descriptor v,
 { return in_degree(v, g.impl()); }
 
 template <UNDIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename UNDIRECTED_GRAPH::in_edge_iterator,
+inline graph_detail::iterator_range<
     typename UNDIRECTED_GRAPH::in_edge_iterator
 >
 in_edges(typename UNDIRECTED_GRAPH::vertex_descriptor v,
@@ -382,8 +381,7 @@ in_edges(typename UNDIRECTED_GRAPH::vertex_descriptor v,
 { return in_edges(v, g.impl()); }
 
 template <UNDIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename UNDIRECTED_GRAPH::out_edge_iterator,
+inline graph_detail::iterator_range<
     typename UNDIRECTED_GRAPH::out_edge_iterator
 >
 incident_edges(typename UNDIRECTED_GRAPH::vertex_descriptor v,
@@ -398,8 +396,7 @@ degree(typename UNDIRECTED_GRAPH::vertex_descriptor v,
 
 // AdjacencyGraph concepts
 template <UNDIRECTED_GRAPH_PARAMS>
-inline std::pair<
-    typename UNDIRECTED_GRAPH::adjacency_iterator,
+inline graph_detail::iterator_range<
     typename UNDIRECTED_GRAPH::adjacency_iterator
     >
 adjacent_vertices(typename UNDIRECTED_GRAPH::vertex_descriptor v,

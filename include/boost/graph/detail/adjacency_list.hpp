@@ -1553,8 +1553,7 @@ namespace boost {
     };
 
     template <class Config, class Base>
-    inline std::pair<typename Config::adjacency_iterator,
-                     typename Config::adjacency_iterator>
+    inline graph_detail::iterator_range<typename Config::adjacency_iterator>
     adjacent_vertices(typename Config::vertex_descriptor u,
                       const adj_list_helper<Config, Base>& g_)
     {
@@ -1564,7 +1563,7 @@ namespace boost {
       typedef typename Config::adjacency_iterator adjacency_iterator;
       typename Config::out_edge_iterator first, last;
       boost::tie(first, last) = out_edges(u, g);
-      return std::make_pair(adjacency_iterator(first, &g),
+      return graph_detail::make_iterator_range(adjacency_iterator(first, &g),
                             adjacency_iterator(last, &g));
     }
     template <class Config, class Base>

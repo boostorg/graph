@@ -846,8 +846,7 @@ namespace boost {
   // Functions required by the AdjacencyGraph concept
 
   template <typename D, typename VP, typename EP, typename GP, typename A>
-  std::pair<typename adjacency_matrix<D,VP,EP,GP,A>::adjacency_iterator,
-            typename adjacency_matrix<D,VP,EP,GP,A>::adjacency_iterator>
+  graph_detail::iterator_range<typename adjacency_matrix<D,VP,EP,GP,A>::adjacency_iterator>
   adjacent_vertices
     (typename adjacency_matrix<D,VP,EP,GP,A>::vertex_descriptor u,
      const adjacency_matrix<D,VP,EP,GP,A>& g_)
@@ -858,7 +857,7 @@ namespace boost {
       typedef typename Graph::adjacency_iterator adjacency_iterator;
       typename Graph::out_edge_iterator first, last;
       boost::tie(first, last) = out_edges(u, g);
-      return std::make_pair(adjacency_iterator(first, &g),
+      return graph_detail::make_iterator_range(adjacency_iterator(first, &g),
                             adjacency_iterator(last, &g));
   }
 
