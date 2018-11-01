@@ -86,7 +86,16 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11,14,1z
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - g++-6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=14,1z
       addons:
         apt:
           packages:
