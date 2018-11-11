@@ -4,7 +4,7 @@
 
 #include <vector>
 
-int test_main(int, char* [])
+int test_main(int, char**)
 {
 	typedef boost::iterator_property_map<unsigned*,
 			  boost::identity_property_map, unsigned, unsigned&> map_type;
@@ -51,4 +51,3 @@ int test_main(int, char* [])
 
         return 0;
 }
-
