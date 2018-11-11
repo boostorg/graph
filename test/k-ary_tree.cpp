@@ -70,15 +70,23 @@ void incidence_graph()
 
   vertex_descriptor u = add_vertex(tree);
   BOOST_CHECK(boost::distance(out_edges(u, tree)) == Tree::k);
-  BOOST_CHECK(out_degree(u, tree) == Tree::k);
+  BOOST_CHECK(out_degree(u, tree) == 0);
 }
 
+void bidirectional_graph()
+{
+  boost::bidirectional_binary_tree tree;
+  typedef boost::graph_traits<boost::bidirectional_binary_tree>::vertex_descriptor vertex_descriptor;
+  vertex_descriptor u = add_vertex(tree);
+  in_edges(u, tree);
+  in_degree(u, tree);
+}
 
 
 int test_main(int, char*[])
 {
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();

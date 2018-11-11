@@ -68,14 +68,42 @@ namespace boost
     {
       typedef bidirectional_tag directed_category;
     };
-  }
+
+    template <typename Tree>
+    struct k_ary_tree_forward_node
+    {
+      typedef typename graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+      k_ary_tree_forward_node()
+      {
+        fill(successors, graph_traits<Tree>::null_vertex());
+      }
+
+      template <typename VertexRange>
+      k_ary_tree_forward_node(VertexRange const &successors)
+        : successors(successors)
+      {
+      }
+
+      array<vertex_descriptor, Tree::k> successors;
+    };
 
 
-  template <std::size_t K, bool Predecessor, typename Vertex = std::size_t>
-  class k_ary_tree : public detail::k_ary_tree_traits<K, Predecessor, Vertex>
+    template <typename Tree>
+    struct k_ary_tree_bidirectional_node : k_ary_tree_forward_node<Tree>
+    {
+      using typename k_ary_tree_forward_node<Tree>::vertex_descriptor;
+
+      k_ary_tree_bidirectional_node(vertex_descriptor predecessor = graph_traits<Tree>::null_vertex())
+        : predecessor(predecessor)
+      {}
+
+      vertex_descriptor predecessor;
+    };
+
+  template <std::size_t K, typename Vertex, typename Node>
+  class k_ary_tree_base
   {
-    typedef detail::k_ary_tree_traits<K, Predecessor, Vertex> super_t;
-
   public:
     typedef Vertex vertex_descriptor;
 
@@ -86,60 +114,28 @@ namespace boost
 
     typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
     typedef disallow_parallel_edge_tag edge_parallel_category;
-    class traversal_category: public incidence_graph_tag,
-                              public adjacency_graph_tag,
-                              public vertex_list_graph_tag {};
-                              // TODO: edge_list_graph_tag
     typedef std::size_t degree_size_type;
     BOOST_STATIC_CONSTEXPR std::size_t k = K;
 
-  private:
-    struct k_ary_tree_forward_node
+  protected:
+    typedef typename array<vertex_descriptor, k>::const_iterator vertex_iterator;
+
+    struct make_out_edge_descriptor
     {
-      k_ary_tree_forward_node()
+      make_out_edge_descriptor(vertex_descriptor source) : source(source) {}
+
+      edge_descriptor operator()(vertex_descriptor target) const
       {
-        fill(successors, null_vertex());
+        return edge_descriptor(source, target);
       }
 
-      template <typename VertexRange>
-      k_ary_tree_forward_node(VertexRange const &successors)
-        : successors(successors)
-      {
-      }
-
-      array<vertex_descriptor, k> successors;
+      vertex_descriptor source;
     };
-
-    typedef typename array<vertex_descriptor, k>::iterator vertex_iterator;
-
-    struct k_ary_tree_bidirectional_node : k_ary_tree_forward_node
-    {
-      k_ary_tree_bidirectional_node(vertex_descriptor predecessor = null_vertex())
-        : predecessor(predecessor)
-      {}
-
-      vertex_descriptor predecessor;
-    };
-
-    struct make_edge_descriptor
-    {
-      make_edge_descriptor(vertex_descriptor u) : u(u) {}
-
-      edge_descriptor operator()(vertex_descriptor v) const
-      {
-        return edge_descriptor(u, v);
-      }
-
-      vertex_descriptor u;
-    };
-
-    typedef typename conditional<Predecessor, k_ary_tree_bidirectional_node,
-                                              k_ary_tree_forward_node>::type node;
 
   public:
-    typedef transform_iterator<make_edge_descriptor, vertex_descriptor const *, edge_descriptor> out_edge_iterator;
+    typedef transform_iterator<make_out_edge_descriptor, vertex_descriptor const *, edge_descriptor> out_edge_iterator;
 
-    k_ary_tree()
+    k_ary_tree_base()
     {
       free_list.push_back(0);
     }
@@ -147,35 +143,37 @@ namespace boost
     // *** IncidenceGraph ***
 
     friend
-    vertex_descriptor source(edge_descriptor e, k_ary_tree const &)
+    vertex_descriptor source(edge_descriptor e, k_ary_tree_base const &)
     {
       return e.first;
     }
 
     friend
-    vertex_descriptor target(edge_descriptor e, k_ary_tree const &)
+    vertex_descriptor target(edge_descriptor e, k_ary_tree_base const &)
     {
       return e.second;
     }
 
     friend
     std::pair<out_edge_iterator, out_edge_iterator>
-    out_edges(vertex_descriptor u, k_ary_tree const &g)
+    out_edges(vertex_descriptor u, k_ary_tree_base const &g)
     {
-      return std::make_pair(out_edge_iterator(begin(g.nodes[u].successors), make_edge_descriptor(u)),
-                            out_edge_iterator(end(g.nodes[u].successors), make_edge_descriptor(u)));
+      return std::make_pair(out_edge_iterator(begin(g.nodes[u].successors),
+                                              make_out_edge_descriptor(u)),
+                            out_edge_iterator(end(g.nodes[u].successors),
+                                              make_out_edge_descriptor(u)));
     }
 
     friend
-    degree_size_type out_degree(vertex_descriptor, k_ary_tree const &)
+    degree_size_type out_degree(vertex_descriptor v, k_ary_tree_base const &g)
     {
-      return k;
+      return k - count(g.nodes[v].successors, null_vertex());
     }
 
     // *** VertexListGraph interface ***
 
     friend
-    std::size_t num_vertices(k_ary_tree const &g)
+    std::size_t num_vertices(k_ary_tree_base const &g)
     {
       return g.num_vertices();
     }
@@ -183,18 +181,18 @@ namespace boost
     // *** MutableGraph interface ***
 
     friend
-    vertex_descriptor add_vertex(k_ary_tree &g)
+    vertex_descriptor add_vertex(k_ary_tree_base &g)
     {
       return g.add_vertex();
     }
 
     friend
-    void remove_vertex(vertex_descriptor u, k_ary_tree &g)
+    void remove_vertex(vertex_descriptor u, k_ary_tree_base &g)
     {
       g.remove_vertex(u);
     }
 
-  private:
+  protected:
     std::size_t num_vertices() const
     {
       BOOST_ASSERT(!free_list.empty());
@@ -236,8 +234,86 @@ namespace boost
       BOOST_ASSERT(find(free_list, u) != end(free_list));
     }
 
-    std::vector<node> nodes;
+    std::vector<Node> nodes;
     std::vector<vertex_descriptor> free_list; // Keeps track of holes in storage.
+  };
+
+  }
+
+  template <std::size_t K, bool Predecessor, typename Vertex = std::size_t>
+  class k_ary_tree;
+
+  template <std::size_t K, typename Vertex>
+  class k_ary_tree<K, false, Vertex>
+    : public detail::k_ary_tree_base<K, Vertex,
+              detail::k_ary_tree_forward_node<k_ary_tree<K, false, Vertex> > >
+  {
+  public:
+    /*
+    class traversal_category: public incidence_graph_tag,
+                              public adjacency_graph_tag,
+                              public vertex_list_graph_tag {};
+                              // TODO: edge_list_graph_tag
+    */
+    typedef directed_tag directed_category;
+    typedef incidence_graph_tag traversal_category;
+  };
+
+  template <std::size_t K, typename Vertex>
+  class k_ary_tree<K, true, Vertex>
+    : public detail::k_ary_tree_base<K, Vertex,
+          detail::k_ary_tree_bidirectional_node<k_ary_tree<K, true, Vertex> > >
+  {
+    typedef detail::k_ary_tree_base<K, Vertex,
+    detail::k_ary_tree_bidirectional_node<k_ary_tree<K, true, Vertex> > > super_t;
+
+  public:
+    typedef bidirectional_tag directed_category;
+    typedef bidirectional_graph_tag traversal_category;
+    using typename super_t::vertex_descriptor;
+    using typename super_t::edge_descriptor;
+    using typename super_t::degree_size_type;
+    using super_t::k;
+
+  private:
+    struct make_in_edge_descriptor
+    {
+      make_in_edge_descriptor(vertex_descriptor target) : target(target) {}
+
+      edge_descriptor operator()(vertex_descriptor source) const
+      {
+        return edge_descriptor(source, target);
+      }
+
+      vertex_descriptor target;
+    };
+
+  public:
+    typedef transform_iterator<make_in_edge_descriptor, vertex_descriptor const *,
+                                              edge_descriptor> in_edge_iterator;
+
+    friend
+    std::pair<in_edge_iterator, in_edge_iterator>
+    in_edges(vertex_descriptor u, k_ary_tree const &g)
+    {
+      return std::make_pair(in_edge_iterator(begin(g.nodes[u].successors),
+                                             make_in_edge_descriptor(u)),
+                            in_edge_iterator(end(g.nodes[u].successors),
+                                             make_in_edge_descriptor(u)));
+    }
+
+    friend
+    degree_size_type in_degree(vertex_descriptor v, k_ary_tree const &g)
+    {
+      return g.nodes[v].predecessor != g.null_vertex();
+    }
+
+    friend
+    degree_size_type degree(vertex_descriptor v, k_ary_tree const &g)
+    {
+      return in_degree(v, g) + out_degree(v, g);
+    }
+
   };
 
   // IncidenceGraph interface
