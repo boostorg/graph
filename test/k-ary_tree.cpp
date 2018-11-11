@@ -77,8 +77,6 @@ void incidence_graph()
 
 int test_main(int, char*[])
 {
-  BOOST_CONCEPT_ASSERT((boost::concepts::Graph<boost::forward_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::Graph<boost::bidirectional_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::bidirectional_binary_tree>));
 
