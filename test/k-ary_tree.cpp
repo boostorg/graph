@@ -78,8 +78,8 @@ void bidirectional_graph()
   boost::bidirectional_binary_tree tree;
   typedef boost::graph_traits<boost::bidirectional_binary_tree>::vertex_descriptor vertex_descriptor;
   vertex_descriptor u = add_vertex(tree);
-  in_edges(u, tree);
-  in_degree(u, tree);
+  BOOST_CHECK(boost::distance(in_edges(u, tree)) == 1);
+  BOOST_CHECK(in_degree(u, tree) == 0);
 }
 
 
@@ -90,9 +90,13 @@ int test_main(int, char*[])
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
+  push_pop_binary_tree<boost::forward_binary_tree>();
   push_pop_binary_tree<boost::bidirectional_binary_tree>();
+  insert_remove_randomly<boost::forward_binary_tree>();
   insert_remove_randomly<boost::bidirectional_binary_tree>();
+  incidence_graph<boost::forward_binary_tree>();
   incidence_graph<boost::bidirectional_binary_tree>();
+  bidirectional_graph();
 
   return 0;
 }
