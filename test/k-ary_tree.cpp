@@ -4,6 +4,9 @@
 
 #include <boost/test/minimal.hpp>
 
+#include <boost/range.hpp>
+#include <boost/range/algorithm.hpp>
+
 
 void empty_forward_binary_tree()
 {
@@ -59,16 +62,31 @@ void insert_remove_randomly()
   BOOST_ASSERT(num_vertices(tree) == 1);
 }
 
+template <typename Tree>
+void incidence_graph()
+{
+  Tree tree;
+  typedef typename boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+  vertex_descriptor u = add_vertex(tree);
+  BOOST_CHECK(boost::distance(out_edges(u, tree)) == Tree::k);
+  BOOST_CHECK(out_degree(u, tree) == Tree::k);
+}
+
+
+
 int test_main(int, char*[])
 {
   BOOST_CONCEPT_ASSERT((boost::concepts::Graph<boost::forward_binary_tree>));
-  // BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
-
+  BOOST_CONCEPT_ASSERT((boost::concepts::Graph<boost::bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::bidirectional_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
   push_pop_binary_tree<boost::bidirectional_binary_tree>();
   insert_remove_randomly<boost::bidirectional_binary_tree>();
+  incidence_graph<boost::bidirectional_binary_tree>();
 
   return 0;
 }
