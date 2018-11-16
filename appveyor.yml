@@ -29,12 +29,12 @@ environment:
     - ARGS: --toolset=msvc-12.0 address-model=64
       TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-14.0 address-model=64
-      TEST_SUITE: graph_test
+      TEST_SUITE: graph_test_regular
     - ARGS: --toolset=msvc-14.0 address-model=64 cxxflags=-std:c++latest
       TEST_SUITE: graph_test_regular
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARGS: --toolset=msvc-14.1 address-model=64
-      TEST_SUITE: graph_test_regular
+      TEST_SUITE: graph_test
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARGS: --toolset=msvc-14.1 address-model=32
       TEST_SUITE: graph_test
