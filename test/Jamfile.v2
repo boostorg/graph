@@ -18,17 +18,23 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-test-suite graph_test :
+alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
-    [ run test_graphs.cpp ]
-    [ run index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
-    [ run labeled_graph.cpp ]
+    [ run test_graphs.cpp : : : : : <preserve-target-tests>off ]
+
+    # TODO: Make this part of the test_graphs framework
+    [ run index_graph.cpp : : : : : <preserve-target-tests>off ]
+
+    [ run labeled_graph.cpp : : : : : <preserve-target-tests>off ]
     [ run finish_edge_bug.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
 
     [ run transitive_closure_test.cpp
@@ -36,16 +42,27 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ compile adj_list_cc.cpp ]
 
     # adj_list_test needs some work -JGS
     # unit-test adj_list_test : adj_list_test.cpp  ;
 
-    [ run adj_list_edge_list_set.cpp ]
-    [ run adj_list_loops.cpp ]
+    [ run adj_list_edge_list_set.cpp : : : : : <preserve-target-tests>off ]
+    [ run adj_list_loops.cpp : : : : : <preserve-target-tests>off ]
     [ compile adj_matrix_cc.cpp ]
-    [ run bfs.cpp ../../test/build//boost_test_exec_monitor ]
+    [ run bfs.cpp
+        ../../test/build//boost_test_exec_monitor
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
     [ compile bfs_cc.cpp ]
     [ run bellman-test.cpp
         :
@@ -53,13 +70,24 @@ test-suite graph_test :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ]
-    [ run betweenness_centrality_test.cpp : 100 ]
-    [ run bidir_remove_edge.cpp ]
+    [ run betweenness_centrality_test.cpp
+        :
+            100
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run bidir_remove_edge.cpp : : : : : <preserve-target-tests>off ]
     [ run bipartite_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     # [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp
@@ -67,6 +95,9 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run dfs.cpp
         ../../test/build//boost_test_exec_monitor
@@ -74,21 +105,36 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run undirected_dfs.cpp ../../test/build//boost_test_exec_monitor
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ compile dfs_cc.cpp ]
-    [ compile dijkstra_cc.cpp ]
+    [ compile dfs_cc.cpp
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
+    [ compile dijkstra_cc.cpp
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
     [ run dijkstra_heap_performance.cpp
         :
             10000
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run dijkstra_no_color_map_compare.cpp
         :
@@ -96,12 +142,18 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run dominator_tree_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
 
     # Unused and deprecated.
@@ -109,8 +161,8 @@ test-suite graph_test :
 
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
-    [ run generator_test.cpp ]
-    [ run graph.cpp ]
+    [ run generator_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run graph.cpp : : : : : <preserve-target-tests>off ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
         /boost/test//boost_test_exec_monitor/<link>static
@@ -118,14 +170,30 @@ test-suite graph_test :
         ../../regex/build//boost_regex
         :
             --log_level=all
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run metis_test.cpp : $(METIS_INPUT_FILE) ]
-    [ run gursoy_atun_layout_test.cpp ]
+    [ run metis_test.cpp
+        :
+            $(METIS_INPUT_FILE)
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run gursoy_atun_layout_test.cpp : : : : : <preserve-target-tests>off ]
     [ run layout_test.cpp
         :
         :
         :
             <test-info>always_show_run_output <toolset>intel:<debug-symbols>off
+        :
+        :
+            <preserve-target-tests>off
     ]
 
     [ run serialize.cpp
@@ -133,10 +201,20 @@ test-suite graph_test :
         :
         :
         :
+        :
+        :
+            <preserve-target-tests>off
     ]
 
     [ compile reverse_graph_cc.cpp ]
-    [ run sequential_vertex_coloring.cpp ]
+    [ run sequential_vertex_coloring.cpp
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
 
     # TODO: Merge these into a single test framework.
     [ run subgraph.cpp
@@ -145,22 +223,41 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run subgraph_bundled.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run subgraph_add.cpp
         ../../test/build//boost_unit_test_framework/<link>static
         :
             $(TEST_DIR)
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run subgraph_props.cpp ]
+    [ run subgraph_props.cpp : : : : : <preserve-target-tests>off ]
 
-    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
-    [ run adjacency_matrix_test.cpp ]
+    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run adjacency_matrix_test.cpp : : : : : <preserve-target-tests>off ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
     [ compile swap.cpp ]
@@ -168,35 +265,53 @@ test-suite graph_test :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
     ]
-    [ run bundled_properties.cpp ]
+    [ run bundled_properties.cpp : : : : : <preserve-target-tests>off ]
     [ run floyd_warshall_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run astar_search_test.cpp ]
     [ run biconnected_components_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run cuthill_mckee_ordering.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run king_ordering.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run matching_test.cpp ]
-    [ run max_flow_test.cpp ]
-    [ run boykov_kolmogorov_max_flow_test.cpp ]
+    [ run matching_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run max_flow_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run boykov_kolmogorov_max_flow_test.cpp
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
     [ run cycle_ratio_tests.cpp
         ../build//boost_graph
         ../../regex/build//boost_regex
@@ -205,32 +320,204 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ run basic_planarity_test.cpp
         :
         :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+            <preserve-target-tests>off
     ]
     [ run make_connected_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run named_vertices_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run r_c_shortest_paths_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run rcsp_custom_vertex_id.cpp : : : : : <preserve-target-tests>off ]
+    [ run is_straight_line_draw_test.cpp
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run metric_tsp_approx.cpp
+        :
+            metric_tsp_approx.graph
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ compile dimacs.cpp ]
+    [ run bron_kerbosch_all_cliques.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run tiernan_all_cycles.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run closeness_centrality.cpp : : : : : <preserve-target-tests>off ]
+    [ run degree_centrality.cpp : : : : : <preserve-target-tests>off ]
+    [ run mean_geodesic.cpp : : : : : <preserve-target-tests>off ]
+    [ run eccentricity.cpp : : : : : <preserve-target-tests>off ]
+    [ run clustering_coefficient.cpp : : : : : <preserve-target-tests>off ]
+    [ run core_numbers_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run read_propmap.cpp : : : : : <preserve-target-tests>off ]
+    [ run mcgregor_subgraphs_test.cpp
+        ../build//boost_graph
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ compile grid_graph_cc.cpp ]
+    [ run grid_graph_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run incremental_components_test.cpp
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run two_graphs_common_spanning_trees_test.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run graphml_test.cpp
+        ../build//boost_graph
+        :
+        :
+            "graphml_test.xml"
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ compile filtered_graph_properties_dijkstra.cpp
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+    ]
+    [ run vf2_sub_graph_iso_test.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run vf2_sub_graph_iso_test_2.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run hawick_circuits.cpp : : : : : <preserve-target-tests>off ]
+    [ run successive_shortest_path_nonnegative_weights_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run cycle_canceling_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run strong_components_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp
+        ../../test/build//boost_unit_test_framework/<link>static
+        :
+        :
+        :
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
+    ;
+
+alias graph_test_no_msvc14 :
+    [ run astar_search_test.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
+    ]
+    [ run basic_planarity_test.cpp
+        :
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run make_bicon_planar_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run make_maximal_planar_test.cpp
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run named_vertices_test.cpp ]
     [ run all_planar_input_files_test.cpp
         ../../filesystem/build
         ../../system/build
@@ -239,6 +526,9 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run parallel_edges_loops_test.cpp
         ../../filesystem/build
@@ -248,53 +538,30 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ run r_c_shortest_paths_test.cpp ]
-    [ run rcsp_custom_vertex_id.cpp ]
-    [ run is_straight_line_draw_test.cpp ]
-    [ run metric_tsp_approx.cpp : metric_tsp_approx.graph ]
-    [ compile dimacs.cpp ]
-    [ run bron_kerbosch_all_cliques.cpp
-        :
-        :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ run tiernan_all_cycles.cpp
-        :
-        :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ run closeness_centrality.cpp ]
-    [ run degree_centrality.cpp ]
-    [ run mean_geodesic.cpp ]
-    [ run eccentricity.cpp ]
-    [ run clustering_coefficient.cpp ]
-    [ run core_numbers_test.cpp ]
-    [ run read_propmap.cpp ]
-    [ run mcgregor_subgraphs_test.cpp
+    [ run random_spanning_tree_test.cpp
         ../build//boost_graph
         :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
-    [ compile grid_graph_cc.cpp ]
-    [ run grid_graph_test.cpp ]
-    [ run incremental_components_test.cpp ]
-    [ run two_graphs_common_spanning_trees_test.cpp
-        :
-        :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
-    [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp
         ../../test/build//boost_unit_test_framework/<link>static
         :
             $(TEST_DIR)
+        :
+        :
+            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+        :
+        :
+            <preserve-target-tests>off
     ]
     [ run stoer_wagner_test.cpp
         ../../test/build//boost_unit_test_framework/<link>static
@@ -303,35 +570,15 @@ test-suite graph_test :
         :
         :
             <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ compile filtered_graph_properties_dijkstra.cpp ]
-    [ run vf2_sub_graph_iso_test.cpp
         :
         :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
+            <preserve-target-tests>off
     ]
-    [ run vf2_sub_graph_iso_test_2.cpp
-        :
-        :
-        :
-            <define>BOOST_PARAMETER_EXPONENTIAL_OVERLOAD_THRESHOLD_ARITY=0
-    ]
-    [ run hawick_circuits.cpp ]
-    [ run successive_shortest_path_nonnegative_weights_test.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-    ]
-    [ run cycle_canceling_test.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-    ]
-    [ run strong_components_test.cpp ]
-    [ run find_flow_cost_bundled_properties_and_named_params_test.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-    ]
-    [ run max_flow_algorithms_bundled_properties_and_named_params.cpp
-        ../../test/build//boost_unit_test_framework/<link>static
-    ]
-    [ run delete_edge.cpp ]
+    ;
+
+alias graph_test :
+    graph_test_regular
+    graph_test_no_msvc14
     ;
 
 # Run SDB tests only when -sSDB= is set.

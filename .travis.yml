@@ -31,7 +31,7 @@ matrix:
   include:
     - os: linux
       compiler: g++-4.4
-      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98,0x
+      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98,0x TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -41,7 +41,7 @@ matrix:
 
     - os: linux
       compiler: g++-4.6
-      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -50,7 +50,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -59,7 +59,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -68,7 +68,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -77,7 +77,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03,11,14
+      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03,11,14 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -86,7 +86,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -95,7 +95,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=14,1z
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=14,1z TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -106,7 +106,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -117,7 +117,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,17
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,17 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -128,7 +128,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -139,7 +139,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,17
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,17 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -148,10 +148,10 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11 TEST_SUITE=graph_test
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -161,7 +161,7 @@ matrix:
             - llvm-toolchain-precise-3.5
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -171,7 +171,7 @@ matrix:
             - llvm-toolchain-precise-3.6
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -182,7 +182,7 @@ matrix:
     
     # Fails to compile std lib headers (toolset issue):
     #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z
+    #  env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z TEST_SUITE=graph_test
     #  addons:
     #    apt:
     #      packages:
@@ -192,7 +192,7 @@ matrix:
     #        - llvm-toolchain-precise-3.8
     #
     #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11,14,1z
+    #  env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11,14,1z TEST_SUITE=graph_test
     #  addons:
     #    apt:
     #      packages:
@@ -203,7 +203,7 @@ matrix:
 
     - os: linux
       compiler: clang++-4.0
-      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,1z
+      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,1z TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -214,7 +214,7 @@ matrix:
 
     - os: linux
       compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11 TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -225,7 +225,7 @@ matrix:
 
     - os: linux
       compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=14,1z
+      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=14,1z TEST_SUITE=graph_test
       addons:
         apt:
           packages:
@@ -235,22 +235,22 @@ matrix:
             - llvm-toolchain-trusty-5.0
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z TEST_SUITE=graph_test
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z TEST_SUITE=graph_test
       osx_image: xcode8.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z TEST_SUITE=graph_test
       osx_image: xcode8
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14 TEST_SUITE=graph_test
       osx_image: xcode7.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14 TEST_SUITE=graph_test
       osx_image: xcode6.4
 
 
@@ -274,7 +274,9 @@ script:
   - IFS=','
   - for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
   - unset IFS
-  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD
+  - cd libs/graph/test
+  - ../../../b2 $TEST_SUITE -j`(nproc || sysctl -n hw.ncpu) 2> /dev/null` toolset=$TOOLSET cxxstd=$CXXSTD $CXXSTD_DIALECT
+  - cd ../../..
 
 notifications:
   email:
