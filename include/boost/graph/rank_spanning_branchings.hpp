@@ -31,8 +31,7 @@
 #include <boost/heap/fibonacci_heap.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace boost {
@@ -235,7 +234,7 @@ namespace boost {
 
       Vertex root_vertex;
 
-      BranchingGraph C;
+      BranchingGraph Cycle_branching;
 
       vertex_idx_t n = num_vertices(g);
 
@@ -264,7 +263,7 @@ namespace boost {
         W.make_set( v );
         S.make_set( v );
         parent[v]  = v_id[v];
-        add_vertex( C );
+        add_vertex( Cycle_branching );
         unvisited_vertex_set.insert( v );
       }
 
@@ -300,7 +299,7 @@ namespace boost {
 	  }
 	  else
 	  {
-	    BranchingVertex v_new = add_vertex( C );
+	    BranchingVertex v_new = add_vertex( Cycle_branching );
 
 	    edge_node_t least_costly_edge_node = critical_edge_node; 
 
@@ -315,7 +314,7 @@ namespace boost {
 	    {
               Vertex u = S.find_set( v );
 	      cycle_vertex_set.insert( u );
-	      add_edge( v_new, parent[u], C ); 
+	      add_edge( v_new, parent[u], Cycle_branching ); 
               if(
                 comp( beta[parent[u]].weight, least_costly_edge_node.weight )
               )
@@ -379,19 +378,20 @@ namespace boost {
       }
 
       // Create a set containing possible roots of the cycle branching.
-      // In each cycle expansion, remove isolated vertices of C to avoid
-      // considering them in subsequent cycle expansions.
+      // In each cycle expansion, remove isolated vertices of the
+      // cycle branching to avoid considering them in subsequent cycle
+      // expansions.
 
       unordered_set<BranchingVertex> root_set;
 
-      BGL_FORALL_VERTICES( u, C, BranchingGraph )
+      BGL_FORALL_VERTICES( u, Cycle_branching, BranchingGraph )
       {
         root_set.insert( u );
       }
 
       while( !root_set.empty() )
       {
-        expand( g, v_id, C, root_set, beta );
+        expand( g, v_id, Cycle_branching, root_set, beta );
       }
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
@@ -458,7 +458,7 @@ namespace boost {
     template <typename Graph, typename Edge, typename IndexMap,
               typename WeightMap, typename Rank, typename Pred,
               typename Compare>
-    shared_ptr<
+    boost::optional<
       std::pair<Edge, typename property_traits<WeightMap>::value_type>
     >
     next_spanning_branching( const Graph& g, 
@@ -480,15 +480,11 @@ namespace boost {
 
       typedef typename property_traits<WeightMap>::value_type weight_t;
 
-      scoped_ptr<weight_t> delta;
+      boost::optional<weight_t> delta;
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
       edge_node_t b;
-
-      // Initialize delta. 
-
-      delta.reset();
 
       // Create a branching graph to check whether a vertex is an ancestor of
       // another vertex in the branching.
@@ -510,11 +506,9 @@ namespace boost {
       typedef heap::fibonacci_heap<edge_node_t> f_heap_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
 
-      shared_ptr<
+      boost::optional<
         std::pair<Edge, typename property_traits<WeightMap>::value_type>
-      > p(
-          new std::pair<Edge, typename property_traits<WeightMap>::value_type>
-        );
+      > p;
 
       unordered_set<Vertex> unvisited_vertex_set;
 
@@ -536,7 +530,6 @@ namespace boost {
         )
       )
       {
-        p.reset();
         return p;
       }
 
@@ -622,16 +615,15 @@ namespace boost {
                 {
                   if( !delta )
                   {
-                    delta.reset( new weight_t );
-                    *delta = b.weight - (*ei).weight;
+                    delta = b.weight - (*ei).weight;
                     return_edge = b.edge;
                     break;
                   }
                   else if(
-                    comp( b.weight - (*ei).weight, *delta )
+                    comp( b.weight - (*ei).weight, delta.get() )
                   )
                   {
-                    *delta = b.weight - (*ei).weight;
+                    delta = b.weight - (*ei).weight;
                     return_edge = b.edge;
                     break;
                   }
@@ -768,14 +760,10 @@ namespace boost {
 
       if( delta )
       {
-        *p = std::make_pair( return_edge, *delta );
-        return p;
+        p = std::make_pair( return_edge, delta.get() );
       }
-      else
-      {
-        p.reset();
-        return p;
-      }
+
+      return p;
 
     }
 
@@ -835,24 +823,22 @@ namespace boost {
 
        typedef typename property_traits<WeightMap>::value_type weight_t;
 
-       scoped_ptr<weight_t> weight;
-       weight.reset();
+       boost::optional<weight_t> weight;
 
        BOOST_FOREACH( const Edge& e, branching )
        {
          
          if( !weight )
          {
-           weight.reset( new weight_t );
-           *weight = get( w, e );
+           weight = get( w, e );
          }
          else
          {
-	   *weight += get( w, e );
+	   weight = weight.get() + get( w, e );
          }
        }
 
-       return *weight;
+       return weight.get();
 
     }
      
@@ -883,7 +869,7 @@ namespace boost {
 
       unordered_set<Edge> best_branching, empty_set;
 
-      shared_ptr< std::pair<Edge, weight_t> > p;
+      boost::optional<std::pair<Edge, weight_t> > p;
 
       Edge e;
 
@@ -922,8 +908,8 @@ namespace boost {
       {
 	Q.push(
 	  BranchingEntry<Edge, WeightMap, Compare>(
-	    compute_branching_weight( w, best_branching ) - (*p.get()).second,
-	    (*p.get()).first,
+	    compute_branching_weight( w, best_branching ) - (p.get()).second,
+	    (p.get()).first,
 	    comp,
 	    best_branching,
 	    empty_set,
@@ -987,8 +973,8 @@ namespace boost {
 	{
 	  Q.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
-	      compute_branching_weight( w, P.branching ) - (*p.get()).second,
-	      (*p.get()).first,
+	      compute_branching_weight( w, P.branching ) - (p.get()).second,
+	      (p.get()).first,
 	      comp,
 	      P.branching,
 	      include_edges,
@@ -1014,8 +1000,8 @@ namespace boost {
 	{
 	  Q.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
-	      P.weight - (*p.get()).second,
-	      (*p.get()).first,
+	      P.weight - (p.get()).second,
+	      (p.get()).first,
 	      comp,
 	      branching,
 	      P.include_edges,
