@@ -17,41 +17,26 @@ platform:
 environment:
   matrix:
     - ARGS: --toolset=msvc-9.0  address-model=32
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-10.0 address-model=32
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-11.0 address-model=32
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-12.0 address-model=32
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-14.0 address-model=32
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-12.0 address-model=64
-      TEST_SUITE: graph_test
     - ARGS: --toolset=msvc-14.0 address-model=64
-      TEST_SUITE: graph_test_regular
     - ARGS: --toolset=msvc-14.0 address-model=64 cxxflags=-std:c++latest
-      TEST_SUITE: graph_test_regular
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARGS: --toolset=msvc-14.1 address-model=64
-      TEST_SUITE: graph_test
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARGS: --toolset=msvc-14.1 address-model=32
-      TEST_SUITE: graph_test
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARGS: --toolset=msvc-14.1 address-model=64 cxxflags=-std:c++latest
-      TEST_SUITE: graph_test
     - ARGS: --toolset=gcc address-model=64
-      TEST_SUITE: graph_test
       PATH: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
     - ARGS: --toolset=gcc address-model=64 cxxflags=-std=gnu++1z
-      TEST_SUITE: graph_test
       PATH: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin;%PATH%
     - ARGS: --toolset=gcc address-model=32
-      TEST_SUITE: graph_test
       PATH: C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
     - ARGS: --toolset=gcc address-model=32 linkflags=-Wl,-allow-multiple-definition
-      TEST_SUITE: graph_test
       PATH: C:\MinGW\bin;%PATH%
 
 
@@ -74,5 +59,4 @@ test_script:
   - ..\..\..\b2 config_info_travis_install %ARGS%
   - config_info_travis
   - cd ..\..\graph\test
-  - ..\..\..\b2 -j%NUMBER_OF_PROCESSORS%  --hash %ARGS% %TEST_SUITE%
-  - cd ..\..\..
+  - ..\..\..\b2 -j3 --hash %ARGS%
