@@ -182,11 +182,12 @@ namespace boost
       }
 
     protected:
+      // Requires that u and v are in the tree.
       std::pair<edge_descriptor, bool>
       add_edge(vertex_descriptor u, vertex_descriptor v)
       {
         array<vertex_descriptor, 2> const keys = {null_vertex(), v};
-        vertex_descriptor *p = find_first_of(nodes[u].successors, keys);
+        vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
 
         if (p == end(nodes[u].successors) or *p == v)
