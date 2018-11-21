@@ -81,7 +81,10 @@ namespace boost
     class k_ary_tree_base
     {
     public:
+      BOOST_STATIC_CONSTEXPR std::size_t k = K;
+
       typedef Vertex vertex_descriptor;
+      typedef vertex_descriptor const * vertex_iterator;
 
       BOOST_STATIC_CONSTEXPR vertex_descriptor null_vertex()
       {
@@ -91,10 +94,9 @@ namespace boost
       typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
       typedef disallow_parallel_edge_tag edge_parallel_category;
       typedef std::size_t degree_size_type;
-      BOOST_STATIC_CONSTEXPR std::size_t k = K;
+      typedef std::size_t vertices_size_type;
 
     protected:
-      typedef typename array<vertex_descriptor, k>::const_iterator vertex_iterator;
 
       struct make_out_edge_descriptor
       {
@@ -226,14 +228,12 @@ namespace boost
               detail::k_ary_tree_forward_node<k_ary_tree<K, false, Vertex> > >
   {
   public:
-    /*
-    class traversal_category: public incidence_graph_tag,
-                              public adjacency_graph_tag,
-                              public vertex_list_graph_tag {};
-                              // TODO: edge_list_graph_tag
-    */
     typedef directed_tag directed_category;
-    typedef incidence_graph_tag traversal_category;
+    class traversal_category: public incidence_graph_tag {};
+    using typename super_t::edge_descriptor;
+    using typename super_t::vertex_descriptor;
+    using typename super_t::vertex_iterator;
+
   };
 
   template <std::size_t K, typename Vertex>
@@ -246,8 +246,9 @@ namespace boost
 
   public:
     typedef bidirectional_tag directed_category;
-    typedef bidirectional_graph_tag traversal_category;
+    class traversal_category : public bidirectional_graph_tag {};
     using typename super_t::vertex_descriptor;
+    using typename super_t::vertex_iterator;
     using typename super_t::edge_descriptor;
     using typename super_t::degree_size_type;
     using super_t::k;
