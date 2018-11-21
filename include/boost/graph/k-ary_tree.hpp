@@ -173,6 +173,32 @@ namespace boost
       }
 
     protected:
+      std::pair<edge_descriptor, bool>
+      add_edge(vertex_descriptor u, vertex_descriptor v)
+      {
+        array<vertex_descriptor, 2> const keys = {null_vertex(), v};
+        vertex_descriptor *p = find_first_of(nodes[u].successors, keys);
+        edge_descriptor const result(u, v);
+
+        if (p == end(nodes[u].successors) or *p == v)
+          return std::make_pair(result, false);
+        else
+        {
+          *p = v;
+          return std::make_pair(result, true);
+        }
+      }
+
+      void
+      remove_edge(vertex_descriptor u, vertex_descriptor v)
+      {
+        vertex_descriptor *p = find(nodes[u].successors);
+        if (p != end(nodes[u].successors))
+        {
+          *p = null_vertex();
+        }
+      }
+
       std::size_t num_vertices() const
       {
         BOOST_ASSERT(!free_list.empty());
@@ -234,6 +260,22 @@ namespace boost
     using typename super_t::vertex_descriptor;
     using typename super_t::vertex_iterator;
 
+    // *** MutableGraph interface ***
+
+    friend
+    std::pair<edge_descriptor, bool>
+    add_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
+    {
+      return g.add_edge(u, v);
+    }
+
+    friend
+    void
+    remove_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
+    {
+      g.remove_edge(u, v);
+    }
+
   };
 
   template <std::size_t K, typename Vertex>
@@ -292,6 +334,18 @@ namespace boost
       return in_degree(v, g) + out_degree(v, g);
     }
 
+    friend
+    std::pair<edge_descriptor, bool>
+    add_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
+    {
+      if (g.nodes[v].predecessor != g.null_vertex())
+        return std::make_pair(edge_descriptor(), false);
+
+      std::pair<edge_descriptor, bool> const result = g.add_edge(u, v);
+      if (result.second)
+        g.nodes[v].predecessor = u;
+      return result;
+    }
   };
 
   // IncidenceGraph interface
