@@ -316,9 +316,10 @@ namespace boost
     std::pair<in_edge_iterator, in_edge_iterator>
     in_edges(vertex_descriptor u, k_ary_tree const &g)
     {
+      int const i = g.nodes[u].predecessor != g.null_vertex();
       return std::make_pair(in_edge_iterator(&g.nodes[u].predecessor,
                                              make_in_edge_descriptor(u)),
-                            in_edge_iterator(&g.nodes[u].predecessor + 1,
+                            in_edge_iterator(&g.nodes[u].predecessor + i,
                                              make_in_edge_descriptor(u)));
     }
 
