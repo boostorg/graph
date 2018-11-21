@@ -110,7 +110,9 @@ namespace boost
       };
 
     public:
-      typedef transform_iterator<make_out_edge_descriptor, vertex_descriptor const *, edge_descriptor> out_edge_iterator;
+      typedef transform_iterator<make_out_edge_descriptor,
+                                 vertex_descriptor const *,
+                                 edge_descriptor> out_edge_iterator;
 
       k_ary_tree_base()
       {
