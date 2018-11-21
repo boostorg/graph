@@ -202,11 +202,13 @@ namespace boost
       void
       remove_edge(vertex_descriptor u, vertex_descriptor v)
       {
-        vertex_descriptor *p = find(nodes[u].successors);
-        if (p != end(nodes[u].successors))
-        {
-          *p = null_vertex();
-        }
+        assert(u != v);
+        assert(u < nodes.size() && v < nodes.size());
+        assert(find(free_list, u) == find(free_list, v)); // i.e., end.
+
+        vertex_descriptor * const p = find(nodes[u].successors, v);
+        assert(p != end(nodes[u].successors));
+        *p = null_vertex();
       }
 
       std::size_t num_vertices() const
@@ -361,6 +363,16 @@ namespace boost
         g.nodes[v].predecessor = u;
       return result;
     }
+
+    friend
+    void
+    remove_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
+    {
+      assert(g.nodes[v].predecessor == u);
+      g.remove_edge(u, v);
+      g.nodes[v].predecessor = super_t::null_vertex();
+    }
+
   };
 
   // IncidenceGraph interface

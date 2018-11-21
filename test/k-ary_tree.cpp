@@ -108,6 +108,11 @@ void binary_tree()
   BOOST_CHECK(!has_right_successor(added[1], tree));
   BOOST_CHECK(!has_left_successor(added[2], tree));
   BOOST_CHECK(!has_right_successor(added[2], tree));
+
+  remove_edge(added[0], added[1], tree);
+  remove_edge(added[0], added[2], tree);
+  BOOST_CHECK(!has_left_successor(added[0], tree));
+  BOOST_CHECK(!has_right_successor(added[0], tree));
 }
 
 int test_main(int, char*[])
@@ -115,6 +120,8 @@ int test_main(int, char*[])
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
   // BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
+  // BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
+
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
