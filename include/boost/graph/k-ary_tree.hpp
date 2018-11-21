@@ -21,8 +21,7 @@
 
 #include <boost/array.hpp>
 #include <boost/range.hpp>
-#include <boost/range/algorithm/find.hpp>
-#include <boost/range/algorithm/fill.hpp>
+#include <boost/range/algorithm.hpp>
 
 #include <boost/type_traits/conditional.hpp>
 
