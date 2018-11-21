@@ -113,7 +113,7 @@ namespace boost
     public:
       template <std::size_t N>
       typename enable_if_c<N < K, bool>::type
-      has_successor(vertex_descriptor u)
+      has_successor(vertex_descriptor u) const
       {
         return nodes[u].successors[N] != null_vertex();
       }
