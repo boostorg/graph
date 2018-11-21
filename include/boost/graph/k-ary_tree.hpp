@@ -111,6 +111,14 @@ namespace boost
       };
 
     public:
+      template <std::size_t N>
+      typename enable_if_c<N < K, bool>::type
+      has_successor(vertex_descriptor u)
+      {
+        return nodes[u].successors[N] != null_vertex();
+      }
+
+
       typedef transform_iterator<make_out_edge_descriptor,
                                  vertex_descriptor const *,
                                  edge_descriptor> out_edge_iterator;
