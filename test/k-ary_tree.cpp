@@ -88,11 +88,33 @@ void bidirectional_graph()
   add_edge(u, u, tree);
 }
 
+template <bool Predecessor>
+void binary_tree()
+{
+  typedef boost::k_ary_tree<2, Predecessor> Tree;
+  boost::k_ary_tree<2, Predecessor> tree;
+  typedef typename boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+  std::vector<vertex_descriptor> added;
+
+  added.push_back(add_vertex(tree));
+  added.push_back(add_vertex(tree));
+  added.push_back(add_vertex(tree));
+  add_edge(added[0], added[1], tree);
+  add_edge(added[0], added[2], tree);
+  BOOST_CHECK(has_left_successor(added[0], tree));
+  BOOST_CHECK(has_right_successor(added[0], tree));
+  BOOST_CHECK(!has_left_successor(added[1], tree));
+  BOOST_CHECK(!has_right_successor(added[1], tree));
+  BOOST_CHECK(!has_left_successor(added[2], tree));
+  BOOST_CHECK(!has_right_successor(added[2], tree));
+}
 
 int test_main(int, char*[])
 {
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
+  // BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
@@ -103,6 +125,9 @@ int test_main(int, char*[])
   incidence_graph<boost::forward_binary_tree>();
   incidence_graph<boost::bidirectional_binary_tree>();
   bidirectional_graph();
+
+  binary_tree<0>();
+  binary_tree<1>();
 
   return 0;
 }

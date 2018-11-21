@@ -367,6 +367,22 @@ namespace boost
 
   typedef k_ary_tree<2, false> forward_binary_tree;
   typedef k_ary_tree<2, true> bidirectional_binary_tree;
+
+  template <bool Predecessor, typename Vertex>
+  bool
+  has_left_successor(Vertex u, k_ary_tree<2, Predecessor, Vertex> const &g)
+  {
+    return g.template has_successor<0>(u);
+  }
+
+
+  template <bool Predecessor, typename Vertex>
+  bool
+  has_right_successor(Vertex u, k_ary_tree<2, Predecessor, Vertex> const &g)
+  {
+    return g.template has_successor<1>(u);
+  }
+
 }
 
 #endif
