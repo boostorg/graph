@@ -335,13 +335,15 @@ namespace boost
     }
 
     friend
-    degree_size_type in_degree(vertex_descriptor v, k_ary_tree const &g)
+    degree_size_type
+    in_degree(vertex_descriptor v, k_ary_tree const &g)
     {
       return g.nodes[v].predecessor != g.null_vertex();
     }
 
     friend
-    degree_size_type degree(vertex_descriptor v, k_ary_tree const &g)
+    degree_size_type
+    degree(vertex_descriptor v, k_ary_tree const &g)
     {
       return in_degree(v, g) + out_degree(v, g);
     }
