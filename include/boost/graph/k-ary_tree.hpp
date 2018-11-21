@@ -146,6 +146,7 @@ namespace boost
       std::pair<out_edge_iterator, out_edge_iterator>
       out_edges(vertex_descriptor u, k_ary_tree_base const &g)
       {
+        // TODO: Filter successors to skip null_vertex.
         return std::make_pair(out_edge_iterator(begin(g.nodes[u].successors),
                                                 make_out_edge_descriptor(u)),
                               out_edge_iterator(end(g.nodes[u].successors),
@@ -256,6 +257,7 @@ namespace boost
   template <std::size_t K, bool Predecessor, typename Vertex = std::size_t>
   class k_ary_tree;
 
+  // Directed (forward) tree
   template <std::size_t K, typename Vertex>
   class k_ary_tree<K, false, Vertex>
     : public detail::k_ary_tree_base<K, Vertex,
@@ -286,6 +288,7 @@ namespace boost
 
   };
 
+  // Bidirectional tree
   template <std::size_t K, typename Vertex>
   class k_ary_tree<K, true, Vertex>
     : public detail::k_ary_tree_base<K, Vertex,
