@@ -88,6 +88,17 @@ void bidirectional_graph()
   add_edge(u, u, tree);
 }
 
+template <typename Order, typename Vertex>
+struct tree_visitor
+{
+  void operator()(Order visit, Vertex u)
+  {
+    visited.push_back(std::make_pair(visit, u));
+  }
+
+  std::vector< std::pair<Order, Vertex> > visited;
+};
+
 template <bool Predecessor>
 void binary_tree()
 {
@@ -108,6 +119,10 @@ void binary_tree()
   BOOST_CHECK(!has_right_successor(added[1], tree));
   BOOST_CHECK(!has_left_successor(added[2], tree));
   BOOST_CHECK(!has_right_successor(added[2], tree));
+
+  std::vector<boost::default_color_type> color;
+  tree_visitor<typename Tree::visit, vertex_descriptor> visitor;
+  depth_first_visit(tree, added[0], visitor, color);
 
   remove_edge(added[0], added[1], tree);
   remove_edge(added[0], added[2], tree);
