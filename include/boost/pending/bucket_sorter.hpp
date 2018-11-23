@@ -19,7 +19,6 @@
 #include <vector>
 #include <cassert>
 #include <boost/limits.hpp>
-#include <boost/config.hpp>
 
 namespace boost {
 
@@ -81,31 +80,13 @@ namespace boost {
     public:
       stack(bucket_type _bucket_id, Iter h, Iter n, Iter p, IndexValueMap v,
             const ValueIndexMap& _id)
-#if defined(BOOST_CLANG) && (1 == BOOST_CLANG) && defined(__APPLE_CC__)
-      : bucket_id(_bucket_id), head(), next(), prev(), value(v), id(_id)
-      {
-        head = h;
-        next = n;
-        prev = p;
-      }
-#else
       : bucket_id(_bucket_id), head(h), next(n), prev(p), value(v), id(_id) {}
-#endif
 
       // Avoid using default arg for ValueIndexMap so that the default
       // constructor of the ValueIndexMap is not required if not used.
       stack(bucket_type _bucket_id, Iter h, Iter n, Iter p, IndexValueMap v)
-#if defined(BOOST_CLANG) && (1 == BOOST_CLANG) && defined(__APPLE_CC__)
-        : bucket_id(_bucket_id), head(), next(), prev(), value(v)
-      {
-        head = h;
-        next = n;
-        prev = p;
-      }
-#else
         : bucket_id(_bucket_id), head(h), next(n), prev(p), value(v) {}
-#endif
-
+      
       void push(const value_type& x) {
         const size_type new_head = get(id, x);
         const size_type current = head[bucket_id];
