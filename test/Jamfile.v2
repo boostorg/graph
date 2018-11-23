@@ -69,7 +69,7 @@ alias graph_test_regular :
 
     [ run serialize.cpp
           ../../serialization/build//boost_serialization
-        : : : ]
+      : : : ]
 
     [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
@@ -123,10 +123,10 @@ alias graph_test_regular :
     [ run hawick_circuits.cpp ]
     [ run successive_shortest_path_nonnegative_weights_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run cycle_canceling_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run strong_components_test.cpp : : : : : <preserve-target-tests>off ]
+    [ run strong_components_test.cpp ]
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
-    [ run delete_edge.cpp : : : : : <preserve-target-tests>off ]
+    [ run delete_edge.cpp ]
     ;
 
 alias graph_test_no_msvc14 : :
