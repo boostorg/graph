@@ -65,6 +65,7 @@ void insert_remove_randomly()
   added[1] = add_vertex(tree);
   BOOST_ASSERT(num_vertices(tree) == 3);
   add_edge(added[0], added[1], tree);
+  add_edge(4, 5, tree);
 }
 
 template <typename Tree>
@@ -85,7 +86,6 @@ void bidirectional_graph()
   vertex_descriptor u = add_vertex(tree);
   BOOST_CHECK(boost::distance(in_edges(u, tree)) == 0);
   BOOST_CHECK(in_degree(u, tree) == 0);
-  add_edge(u, u, tree);
 }
 
 template <typename Order, typename Vertex>

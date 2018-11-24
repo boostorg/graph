@@ -218,10 +218,17 @@ namespace boost
       }
 
     protected:
-      // Requires that u and v are in the tree.
+      // Adds an edge between vertices, adding them if necessary.
       std::pair<edge_descriptor, bool>
       add_edge(vertex_descriptor u, vertex_descriptor v)
       {
+        BOOST_ASSERT(u != v);
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+
+        add_vertex(u);
+        add_vertex(v);
         array<vertex_descriptor, 2> const keys = {null_vertex(), v};
         vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
@@ -233,23 +240,59 @@ namespace boost
           *p = v;
           return std::make_pair(result, true);
         }
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
       }
+
+      // Adds an edge between existing vertices.
+      std::pair<edge_descriptor, bool>
+      add_edge_strict(vertex_descriptor u, vertex_descriptor v)
+      {
+        BOOST_ASSERT(u != v);
+        BOOST_ASSERT(u < nodes.size());
+        BOOST_ASSERT(v < nodes.size());
+        BOOST_ASSERT(find(free_list, u) == find(free_list, v));
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+
+        array<vertex_descriptor, 2> const keys = {null_vertex(), v};
+        vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
+        edge_descriptor const result(u, v);
+
+        if (p == end(nodes[u].successors) or *p == v)
+          return std::make_pair(result, false);
+        else
+        {
+          *p = v;
+          return std::make_pair(result, true);
+        }
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+      }
+
 
       void
       remove_edge(vertex_descriptor u, vertex_descriptor v)
       {
-        assert(u != v);
-        assert(u < nodes.size() && v < nodes.size());
-        assert(find(free_list, u) == find(free_list, v)); // i.e., end.
+        BOOST_ASSERT(u != v);
+        BOOST_ASSERT(u < nodes.size() && v < nodes.size());
+        BOOST_ASSERT(find(free_list, u) == find(free_list, v)); // i.e., end.
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
 
         vertex_descriptor * const p = find(nodes[u].successors, v);
-        assert(p != end(nodes[u].successors));
+        BOOST_ASSERT(p != end(nodes[u].successors));
         *p = null_vertex();
       }
 
       std::size_t num_vertices() const
       {
         BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
         // Careful arithmetic so no underflow.
         return nodes.size() - (free_list.size() - 1);
       }
@@ -257,6 +300,7 @@ namespace boost
       vertex_descriptor add_vertex()
       {
         BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
 
         nodes.resize(std::max(vertex_descriptor(nodes.size()), free_list.back() + 1));
         vertex_descriptor const result = free_list.back();
@@ -264,13 +308,50 @@ namespace boost
           free_list.back() = nodes.size();
         else
           free_list.pop_back();
+        BOOST_ASSERT(!free_list.empty());
         return result;
       }
+
+      // Internal use.
+      bool add_vertex(vertex_descriptor u)
+      {
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+
+        // First handle the case where it's not on the free list.
+        if (nodes.size() < u) {
+          for (std::size_t i = nodes.size(); i != u; i++)
+            free_list.push_back(i);
+          nodes.resize(u + 1);
+          free_list[0] = nodes.size();
+          BOOST_ASSERT(!free_list.empty());
+          BOOST_ASSERT(free_list[0] == nodes.size());
+          return true;
+        }
+
+        typename std::vector<vertex_descriptor>::iterator const which =
+                                                            find(free_list, u);
+        if (which == end(free_list))
+          return false;
+
+        if (which == begin(free_list)) {
+          (*which)++;
+          nodes.resize(*which);
+        }
+        else
+          free_list.erase(which);
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        return true;
+      }
+
 
       void remove_vertex(vertex_descriptor u)
       {
         BOOST_ASSERT(num_vertices() > 0);
         BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(find(free_list, u) == end(free_list));
         // TODO: Assertions that u is disconnected.
 
@@ -286,6 +367,8 @@ namespace boost
         }
 
         BOOST_ASSERT(find(free_list, u) != end(free_list));
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
       }
 
       std::vector<Node> nodes;
@@ -387,7 +470,7 @@ namespace boost
     std::pair<in_edge_iterator, in_edge_iterator>
     in_edges(vertex_descriptor u, k_ary_tree const &g)
     {
-      int const i = g.nodes[u].predecessor != g.null_vertex();
+      std::ptrdiff_t const i = g.nodes[u].predecessor != g.null_vertex();
       return std::make_pair(in_edge_iterator(&g.nodes[u].predecessor,
                                              make_in_edge_descriptor(u)),
                             in_edge_iterator(&g.nodes[u].predecessor + i,
@@ -412,10 +495,11 @@ namespace boost
     std::pair<edge_descriptor, bool>
     add_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
     {
-      if (g.nodes[v].predecessor != g.null_vertex())
-        return std::make_pair(edge_descriptor(), false);
+      if (!g.add_vertex(v) && predecessor(v, g) != g.null_vertex())
+          return std::make_pair(edge_descriptor(), false);
+      g.add_vertex(u);
 
-      std::pair<edge_descriptor, bool> const result = g.add_edge(u, v);
+      std::pair<edge_descriptor, bool> const result = g.add_edge_strict(u, v);
       if (result.second)
         g.nodes[v].predecessor = u;
       return result;
@@ -425,7 +509,7 @@ namespace boost
     void
     remove_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
     {
-      assert(g.nodes[v].predecessor == u);
+      BOOST_ASSERT(predecessor(v, g) == u);
       g.remove_edge(u, v);
       g.nodes[v].predecessor = super_t::null_vertex();
     }
@@ -443,6 +527,8 @@ namespace boost
     Visitor traverse_nonempty(typename graph_traits<Tree>::vertex_descriptor u,
                               Tree const &g, Visitor vis)
     {
+      BOOST_ASSERT(u != graph_traits<Tree>::null_vertex());
+
       vis(pre, u);
       if (has_left_successor(u, g))
         vis = traverse_nonempty(left_successor(u, g), g, vis);
@@ -457,6 +543,7 @@ namespace boost
     int traverse_step(visit &v, typename graph_traits<Graph>::vertex_descriptor &u,
                       Graph const &g)
     {
+      // Requires BidirectionalTree<Graph>
       switch (v)
       {
         case pre:
@@ -480,6 +567,9 @@ namespace boost
           u = predecessor(u, g);
           return -1;
       }
+      // This is to silence the compiler warning about control reaches end of
+      // non-void function, even though this code is unreachable.
+      throw std::logic_error("Something magic and impossible happened.");
     }
 
     template <typename Graph, typename Visitor>
