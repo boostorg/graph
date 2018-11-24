@@ -37,7 +37,7 @@ namespace boost
   {
     // Concept assert that t is BidirectionalTree?
     BOOST_ASSERT(u < num_vertices(g));
-    return g[u].predecessor;
+    return g[u].predecessor != graph_traits<BidirectionalTree>::null_vertex();
   }
 
   template <typename Vertex, typename BidirectionalTree>
@@ -45,9 +45,10 @@ namespace boost
   {
     // Concept assert that t is BidirectionalTree?
     BOOST_ASSERT(u < num_vertices(g));
-    BOOST_ASSERT(g[u].predecessor);
-    return *g[u].predecessor;
+    return g[u].predecessor;
   }
+
+  enum visit { pre, in, post };
 
   namespace detail
   {
@@ -96,8 +97,6 @@ namespace boost
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
 
-      enum visit { pre, in, post };
-
     protected:
 
       struct make_out_edge_descriptor
@@ -113,6 +112,12 @@ namespace boost
       };
 
     public:
+      Node
+      operator[](vertex_descriptor u) const
+      {
+        return nodes[u];
+      }
+
       template <std::size_t N>
       typename enable_if_c<N < K, bool>::type
       has_successor(vertex_descriptor u) const
@@ -361,6 +366,24 @@ namespace boost
                                               edge_descriptor> in_edge_iterator;
 
     friend
+    bool
+    is_left_successor(vertex_descriptor u, k_ary_tree const &g)
+    {
+      vertex_descriptor v = predecessor(u, g);
+      return left_successor(v, g) == u;
+    }
+
+
+    friend
+    bool
+    is_right_successor(vertex_descriptor u, k_ary_tree const &g)
+    {
+      vertex_descriptor v = predecessor(u, g);
+      return right_successor(v, g) == u;
+    }
+
+
+    friend
     std::pair<in_edge_iterator, in_edge_iterator>
     in_edges(vertex_descriptor u, k_ary_tree const &g)
     {
@@ -420,13 +443,58 @@ namespace boost
     Visitor traverse_nonempty(typename graph_traits<Tree>::vertex_descriptor u,
                               Tree const &g, Visitor vis)
     {
-      vis(Tree::pre, u);
+      vis(pre, u);
       if (has_left_successor(u, g))
         vis = traverse_nonempty(left_successor(u, g), g, vis);
-      vis(Tree::in, u);
+      vis(in, u);
       if (has_right_successor(u, g))
         vis = traverse_nonempty(right_successor(u, g), g, vis);
-      vis(Tree::post, u);
+      vis(post, u);
+      return vis;
+    }
+
+    template <typename Graph>
+    int traverse_step(visit &v, typename graph_traits<Graph>::vertex_descriptor &u,
+                      Graph const &g)
+    {
+      switch (v)
+      {
+        case pre:
+          if (has_left_successor(u, g)) {
+            u = left_successor(u, g);
+            return 1;
+          }
+          v = in;
+          return 0;
+        case in:
+          if (has_right_successor(u, g)) {
+            v = pre;
+            u = right_successor(u, g);
+            return 1;
+          }
+          v = post;
+          return 0;
+        case post:
+          if (is_left_successor(u, g))
+            v = in;
+          u = predecessor(u, g);
+          return -1;
+      }
+    }
+
+    template <typename Graph, typename Visitor>
+    Visitor traverse(typename graph_traits<Graph>::vertex_descriptor u,
+                    Graph const &g, Visitor vis)
+    {
+      if (u == graph_traits<Graph>::null_vertex())
+        return vis;
+      typename graph_traits<Graph>::vertex_descriptor root = u;
+      visit v = pre;
+      vis(v, u);
+      do {
+        traverse_step(v, u, g);
+        vis(v, u);
+      } while (u != root || v != post);
       return vis;
     }
   }
@@ -434,7 +502,7 @@ namespace boost
 
   template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
   void
-  depth_first_visit(k_ary_tree<2, false, Vertex> &g, Vertex s,
+  depth_first_visit(k_ary_tree<2, false, Vertex> const &g, Vertex s,
                     DFSTreeVisitor &vis, ColorMap)
   {
     vis = detail::traverse_nonempty(s, g, vis);
@@ -445,6 +513,7 @@ namespace boost
   depth_first_visit(k_ary_tree<2, true, Vertex> &g, Vertex s,
                     DFSTreeVisitor &vis, ColorMap)
   {
+    vis = detail::traverse(s, g, vis);
   }
 
 }
