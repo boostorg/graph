@@ -30,24 +30,6 @@
 
 namespace boost
 {
-
-
-  template <typename Vertex, typename BidirectionalTree>
-  bool has_predecessor(Vertex u, BidirectionalTree const &g)
-  {
-    // Concept assert that t is BidirectionalTree?
-    BOOST_ASSERT(u < num_vertices(g));
-    return g[u].predecessor != graph_traits<BidirectionalTree>::null_vertex();
-  }
-
-  template <typename Vertex, typename BidirectionalTree>
-  Vertex predecessor(Vertex u, BidirectionalTree const &g)
-  {
-    // Concept assert that t is BidirectionalTree?
-    BOOST_ASSERT(u < num_vertices(g));
-    return g[u].predecessor;
-  }
-
   namespace order {
     enum visit { pre, in, post };
   }
@@ -465,6 +447,22 @@ namespace boost
     {
       vertex_descriptor v = predecessor(u, g);
       return right_successor(v, g) == u;
+    }
+
+    friend
+    bool
+    has_predecessor(vertex_descriptor u, k_ary_tree const &g)
+    {
+      BOOST_ASSERT(u < g.nodes.size());
+      return g[u].predecessor != graph_traits<k_ary_tree>::null_vertex();
+    }
+
+    friend
+    vertex_descriptor
+    predecessor(vertex_descriptor u, k_ary_tree const &g)
+    {
+      BOOST_ASSERT(u < g.nodes.size());
+      return g[u].predecessor;
     }
 
 
