@@ -121,19 +121,19 @@ void binary_tree()
   BOOST_CHECK(!has_right_successor(added[2], tree));
 
   std::vector<boost::default_color_type> color;
-  boost::array< std::pair<boost::visit, vertex_descriptor>, 9> const expected_seq =
+  boost::array< std::pair<boost::order::visit, vertex_descriptor>, 9> const expected_seq =
   {
-    std::make_pair(boost::pre, 0),
-    std::make_pair(boost::pre, 1),
-    std::make_pair(boost::in, 1),
-    std::make_pair(boost::post, 1),
-    std::make_pair(boost::in, 0),
-    std::make_pair(boost::pre, 2),
-    std::make_pair(boost::in, 2),
-    std::make_pair(boost::post, 2),
-    std::make_pair(boost::post, 0)
+    std::make_pair(boost::order::pre, 0),
+    std::make_pair(boost::order::pre, 1),
+    std::make_pair(boost::order::in, 1),
+    std::make_pair(boost::order::post, 1),
+    std::make_pair(boost::order::in, 0),
+    std::make_pair(boost::order::pre, 2),
+    std::make_pair(boost::order::in, 2),
+    std::make_pair(boost::order::post, 2),
+    std::make_pair(boost::order::post, 0)
   };
-  tree_visitor<boost::visit, vertex_descriptor> visitor;
+  tree_visitor<boost::order::visit, vertex_descriptor> visitor;
   depth_first_visit(tree, added[0], visitor, color);
   BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
 

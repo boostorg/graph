@@ -48,7 +48,9 @@ namespace boost
     return g[u].predecessor;
   }
 
-  enum visit { pre, in, post };
+  namespace order {
+    enum visit { pre, in, post };
+  }
 
   namespace detail
   {
@@ -529,41 +531,41 @@ namespace boost
     {
       BOOST_ASSERT(u != graph_traits<Tree>::null_vertex());
 
-      vis(pre, u);
+      vis(order::pre, u);
       if (has_left_successor(u, g))
         vis = traverse_nonempty(left_successor(u, g), g, vis);
-      vis(in, u);
+      vis(order::in, u);
       if (has_right_successor(u, g))
         vis = traverse_nonempty(right_successor(u, g), g, vis);
-      vis(post, u);
+      vis(order::post, u);
       return vis;
     }
 
     template <typename Graph>
-    int traverse_step(visit &v, typename graph_traits<Graph>::vertex_descriptor &u,
+    int traverse_step(order::visit &v, typename graph_traits<Graph>::vertex_descriptor &u,
                       Graph const &g)
     {
       // Requires BidirectionalTree<Graph>
       switch (v)
       {
-        case pre:
+        case order::pre:
           if (has_left_successor(u, g)) {
             u = left_successor(u, g);
             return 1;
           }
-          v = in;
+          v = order::in;
           return 0;
-        case in:
+        case order::in:
           if (has_right_successor(u, g)) {
-            v = pre;
+            v = order::pre;
             u = right_successor(u, g);
             return 1;
           }
-          v = post;
+          v = order::post;
           return 0;
-        case post:
+        case order::post:
           if (is_left_successor(u, g))
-            v = in;
+            v = order::in;
           u = predecessor(u, g);
           return -1;
       }
@@ -579,12 +581,12 @@ namespace boost
       if (u == graph_traits<Graph>::null_vertex())
         return vis;
       typename graph_traits<Graph>::vertex_descriptor root = u;
-      visit v = pre;
+      order::visit v = order::pre;
       vis(v, u);
       do {
         traverse_step(v, u, g);
         vis(v, u);
-      } while (u != root || v != post);
+      } while (u != root || v != order::post);
       return vis;
     }
   }
