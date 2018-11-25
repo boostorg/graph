@@ -99,6 +99,8 @@ namespace boost
       Node
       operator[](vertex_descriptor u) const
       {
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
         return nodes[u];
       }
 
@@ -117,6 +119,9 @@ namespace boost
       k_ary_tree_base()
       {
         free_list.push_back(0);
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
       }
 
       // *** IncidenceGraph ***
