@@ -96,7 +96,7 @@ namespace boost
       };
 
     public:
-      Node
+      Node const&
       operator[](vertex_descriptor u) const
       {
         BOOST_ASSERT(!free_list.empty());
