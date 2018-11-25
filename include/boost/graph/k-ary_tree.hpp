@@ -34,6 +34,13 @@ namespace boost
     enum visit { pre, in, post };
   }
 
+  template <typename Graph>
+  bool
+  empty(typename graph_traits<Graph>::vertex_descriptor u, Graph const &)
+  {
+    return u == graph_traits<Graph>::null_vertex();
+  }
+
   namespace detail
   {
     template <typename Tree>
