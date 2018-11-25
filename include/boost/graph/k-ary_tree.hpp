@@ -55,7 +55,8 @@ namespace boost
     {
       using typename k_ary_tree_forward_node<Tree>::vertex_descriptor;
 
-      k_ary_tree_bidirectional_node(vertex_descriptor predecessor = graph_traits<Tree>::null_vertex())
+      k_ary_tree_bidirectional_node(vertex_descriptor predecessor
+                                    = graph_traits<Tree>::null_vertex())
         : predecessor(predecessor)
       {}
 
@@ -318,8 +319,8 @@ namespace boost
           return true;
         }
 
-        typename std::vector<vertex_descriptor>::iterator const which =
-                                                            find(free_list, u);
+        typedef typename std::vector<vertex_descriptor>::iterator iterator;
+        iterator const which = find(free_list, u);
         if (which == end(free_list))
           return false;
 
