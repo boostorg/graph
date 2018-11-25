@@ -598,7 +598,7 @@ namespace boost
 
   template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
   void
-  depth_first_visit(k_ary_tree<2, false, Vertex> const &g, Vertex s,
+  depth_first_visit(k_ary_tree<2, false, Vertex> &g, Vertex s,
                     DFSTreeVisitor &vis, ColorMap)
   {
     vis = detail::traverse_nonempty(s, g, vis);
