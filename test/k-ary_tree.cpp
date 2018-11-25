@@ -137,6 +137,8 @@ void binary_tree()
   depth_first_visit(tree, added[0], visitor, color);
   BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
 
+  BOOST_CHECK(isomorphism(tree, tree));
+
   remove_edge(added[0], added[1], tree);
   remove_edge(added[0], added[2], tree);
   BOOST_CHECK(!has_left_successor(added[0], tree));

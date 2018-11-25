@@ -600,6 +600,31 @@ namespace boost
       } while (u != root || v != order::post);
       return vis;
     }
+
+
+    template <typename Graph0, typename Graph1>
+    bool
+    bifurcate_isomorphic(typename graph_traits<Graph0>::vertex_descriptor u,
+                          Graph0 const &g,
+                         typename graph_traits<Graph1>::vertex_descriptor v,
+                         Graph1 const &h)
+    {
+      if (empty(u, g))
+        return empty(v, h);
+      if (empty(v, h))
+        return false;
+      typename graph_traits<Graph0>::vertex_descriptor root0 = u;
+      order::visit visit0 = order::pre;
+      order::visit visit1 = order::pre;
+      while (true) {
+        traverse_step(visit0, u, g);
+        traverse_step(visit1, v, h);
+        if (visit0 != visit1)
+          return false;
+        if (u == root0 && visit0 == order::post)
+          return true;
+      }
+    }
   }
 
 
@@ -619,6 +644,21 @@ namespace boost
     vis = detail::traverse(s, g, vis);
   }
 
+  template <typename Vertex>
+  bool
+  isomorphism(k_ary_tree<2, false, Vertex> const &g, k_ary_tree<2, false, Vertex> const &h)
+  {
+    // return detail::bifurcate_isomorphic(u, g, v, h);
+    return true;
+  }
+
+
+  template <typename Vertex>
+  bool
+  isomorphism(k_ary_tree<2, true, Vertex> const &g, k_ary_tree<2, true, Vertex> const &h)
+  {
+    return detail::bifurcate_isomorphic(0, g, 0, h);
+  }
 }
 
 #endif
