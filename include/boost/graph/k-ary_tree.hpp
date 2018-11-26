@@ -631,18 +631,18 @@ namespace boost
     vis = detail::traverse(s, g, vis);
   }
 
-  template <typename Vertex>
+  template <typename Vertex0, typename Vertex1>
   bool
-  isomorphism(k_ary_tree<2, false, Vertex> const &g, k_ary_tree<2, false, Vertex> const &h)
+  isomorphism(k_ary_tree<2, false, Vertex0> const &g, k_ary_tree<2, false, Vertex1> const &h)
   {
     // return detail::bifurcate_isomorphic(u, g, v, h);
     return true;
   }
 
 
-  template <typename Vertex>
+  template <typename Vertex0, typename Vertex1>
   bool
-  isomorphism(k_ary_tree<2, true, Vertex> const &g, k_ary_tree<2, true, Vertex> const &h)
+  isomorphism(k_ary_tree<2, true, Vertex0> const &g, k_ary_tree<2, true, Vertex1> const &h)
   {
     return detail::bifurcate_isomorphic(0, g, 0, h);
   }
