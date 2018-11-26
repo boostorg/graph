@@ -589,6 +589,47 @@ namespace boost
     }
 
 
+    // This is for forward trees.
+    template <typename Graph0, typename Graph1>
+    bool
+    bifurcate_isomorphic_nonempty(typename graph_traits<Graph0>::vertex_descriptor u,
+                                  Graph0 const &g,
+                                  typename graph_traits<Graph1>::vertex_descriptor v,
+                                  Graph1 const &h)
+    {
+      BOOST_ASSERT(!empty(u, g));
+      BOOST_ASSERT(!empty(v, h));
+
+      if (has_left_successor(u, g)) {
+        if (has_left_successor(v, h)) {
+          if (!bifurcate_isomorphic_nonempty(left_successor(u, g),
+                                             left_successor(v, h)))
+            return false;
+        }
+        else
+          return false;
+      }
+      else
+        if (has_left_successor(u, g))
+          return false;
+
+      if (has_right_successor(u, g)) {
+        if (has_right_successor(v, h)) {
+          if (!bifurcate_isomorphic_nonempty(right_successor(u, g),
+                                              right_successor(v, h)))
+            return false;
+        }
+        else
+          return false;
+      }
+      else
+        if (has_right_successor(u, g))
+          return false;
+
+      return true;
+    }
+
+    // This is for bidirectional trees.
     template <typename Graph0, typename Graph1>
     bool
     bifurcate_isomorphic(typename graph_traits<Graph0>::vertex_descriptor u,
