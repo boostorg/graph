@@ -226,20 +226,7 @@ namespace boost
 
         add_vertex(u);
         add_vertex(v);
-        array<vertex_descriptor, 2> const keys = {null_vertex(), v};
-        vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
-        edge_descriptor const result(u, v);
-
-        if (p == end(nodes[u].successors) or *p == v)
-          return std::make_pair(result, false);
-        else
-        {
-          *p = v;
-          return std::make_pair(result, true);
-        }
-
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
+        return add_edge_strict(u, v);
       }
 
       // Adds an edge between existing vertices.
