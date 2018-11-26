@@ -576,7 +576,7 @@ namespace boost
     Visitor traverse(typename graph_traits<Graph>::vertex_descriptor u,
                     Graph const &g, Visitor vis)
     {
-      if (u == graph_traits<Graph>::null_vertex())
+      if (empty(u, g))
         return vis;
       typename graph_traits<Graph>::vertex_descriptor root = u;
       order::visit v = order::pre;
