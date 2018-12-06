@@ -149,9 +149,9 @@ int test_main(int, char*[])
 {
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::forward_binary_tree>));
   // BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
-  // BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
-
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();

@@ -158,7 +158,8 @@ namespace boost
       }
 
       friend
-      degree_size_type out_degree(vertex_descriptor v, k_ary_tree_base const &g)
+      degree_size_type
+      out_degree(vertex_descriptor v, k_ary_tree_base const &g)
       {
         return k - count(g.nodes[v].successors, null_vertex());
       }
@@ -355,6 +356,17 @@ namespace boost
         BOOST_ASSERT(free_list[0] == nodes.size());
       }
 
+
+      void clear_vertex(vertex_descriptor u)
+      {
+        BOOST_ASSERT(num_vertices() > 0);
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(find(free_list, u) == end(free_list));
+
+        fill(nodes[u].successors, null_vertex());
+      }
+
       std::vector<Node> nodes;
       std::vector<vertex_descriptor> free_list; // Keeps track of holes in storage.
     };
@@ -395,6 +407,19 @@ namespace boost
       g.remove_edge(u, v);
     }
 
+    friend
+    void
+    remove_edge(edge_descriptor e, k_ary_tree &g)
+    {
+      remove_edge(e.first, e.second, g);
+    }
+
+    friend
+    void
+    clear_vertex(vertex_descriptor u, k_ary_tree &g)
+    {
+      g.clear_vertex(u);
+    }
   };
 
   // Bidirectional tree
@@ -514,6 +539,30 @@ namespace boost
       g.nodes[v].predecessor = super_t::null_vertex();
     }
 
+    friend
+    void
+    remove_edge(edge_descriptor e, k_ary_tree &g)
+    {
+      remove_edge(e.first, e.second, g);
+    }
+
+    friend
+    void
+    clear_vertex(vertex_descriptor u, k_ary_tree &g)
+    {
+      g.clear_childrens_predecessor(u);
+      g.clear_vertex(u);
+      g.nodes[u].predecessor = super_t::null_vertex();
+    }
+
+    void
+    clear_childrens_predecessor(vertex_descriptor u)
+    {
+      for (int i = 0; i != k; i++)
+      {
+        super_t::nodes[super_t::nodes[u].successors[i]].predecessor = super_t::null_vertex();
+      }
+    }
   };
 
   // IncidenceGraph interface
