@@ -151,9 +151,9 @@ namespace boost
       out_edges(vertex_descriptor u, k_ary_tree_base const &g)
       {
         // TODO: Filter successors to skip null_vertex.
-        return std::make_pair(out_edge_iterator(begin(g.nodes[u].successors),
+        return std::make_pair(out_edge_iterator(boost::begin(g.nodes[u].successors),
                                                 make_out_edge_descriptor(u)),
-                              out_edge_iterator(end(g.nodes[u].successors),
+                              out_edge_iterator(boost::end(g.nodes[u].successors),
                                                 make_out_edge_descriptor(u)));
       }
 
@@ -246,7 +246,7 @@ namespace boost
         vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
 
-        if (p == end(nodes[u].successors) or *p == v)
+        if (p == boost::end(nodes[u].successors) or *p == v)
           return std::make_pair(result, false);
         else
         {
@@ -270,7 +270,7 @@ namespace boost
         BOOST_ASSERT(free_list[0] == nodes.size());
 
         vertex_descriptor * const p = find(nodes[u].successors, v);
-        BOOST_ASSERT(p != end(nodes[u].successors));
+        BOOST_ASSERT(p != boost::end(nodes[u].successors));
         *p = null_vertex();
       }
 
@@ -316,10 +316,10 @@ namespace boost
 
         typedef typename std::vector<vertex_descriptor>::iterator iterator;
         iterator const which = find(free_list, u);
-        if (which == end(free_list))
+        if (which == boost::end(free_list))
           return false;
 
-        if (which == begin(free_list)) {
+        if (which == boost::begin(free_list)) {
           (*which)++;
           nodes.resize(*which);
         }
@@ -337,7 +337,7 @@ namespace boost
         BOOST_ASSERT(num_vertices() > 0);
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(find(free_list, u) == end(free_list));
+        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
         // TODO: Assertions that u is disconnected.
 
         if (u == nodes.size() - 1)
@@ -351,7 +351,7 @@ namespace boost
           free_list.push_back(u);
         }
 
-        BOOST_ASSERT(find(free_list, u) != end(free_list));
+        BOOST_ASSERT(find(free_list, u) != boost::end(free_list));
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
       }
@@ -362,7 +362,7 @@ namespace boost
         BOOST_ASSERT(num_vertices() > 0);
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(find(free_list, u) == end(free_list));
+        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
 
         fill(nodes[u].successors, null_vertex());
       }
