@@ -3,7 +3,7 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/isomorphism.hpp>
-#include <boost/graph/vf2_sub_graph_iso.hpp>
+// #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/property_maps/container_property_map.hpp>
@@ -78,20 +78,18 @@ static void BM_graph_isomorphism(benchmark::State &s)
   }
 }
 
-template <typename Graph>
-static void BM_graph_vf2_isomorphism(benchmark::State &s)
-{
-  typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-
-  Graph g(s.range(0));
-  create_tree(g, s.range(0));
-  vf2_print_callback<Graph, Graph> callback(g, g);
-
-  while (s.KeepRunning())
-  {
-    benchmark::DoNotOptimize(vf2_subgraph_iso(g, g, callback));
-  }
-}
+// template <typename Graph>
+// static void BM_graph_vf2_isomorphism(benchmark::State &s)
+// {
+//   Graph g(s.range(0));
+//   create_tree(g, s.range(0));
+//   vf2_print_callback<Graph, Graph> callback(g, g);
+//
+//   while (s.KeepRunning())
+//   {
+//     benchmark::DoNotOptimize(vf2_subgraph_iso(g, g, callback));
+//   }
+// }
 
 BENCHMARK_TEMPLATE(BM_graph_isomorphism, bidirectional_binary_tree)->Range(8, 8<<14);
 BENCHMARK_TEMPLATE(BM_graph_isomorphism, adjacency_list<>)->Range(8, 8<<10);
