@@ -29,7 +29,7 @@ void create_tree(Graph &tree, typename graph_traits<Graph>::vertex_descriptor we
 template <typename Order, typename Vertex>
 struct tree_visitor
 {
-  void operator()(Order visit, Vertex u)
+  void operator()(Order, Vertex)
   {
     // visited.push_back(std::make_pair(visit, u));
   }
@@ -56,8 +56,6 @@ static void BM_depth_first_visit_bidirectional_binary_tree(benchmark::State &s)
 
 static void BM_depth_first_visit_adjacency_list(benchmark::State &s)
 {
-  typedef graph_traits< adjacency_list<> >::vertex_descriptor vertex_descriptor;
-
   adjacency_list<> g;
 
   create_tree(g, s.range(0));
@@ -71,8 +69,6 @@ static void BM_depth_first_visit_adjacency_list(benchmark::State &s)
 template <typename Graph>
 static void BM_graph_isomorphism(benchmark::State &s)
 {
-  typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-
   Graph g;
   create_tree(g, s.range(0));
 
