@@ -1,3 +1,11 @@
+//=======================================================================
+// Copyright 2018 Jeremy William Murphy
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//=======================================================================
+
 #include <boost/graph/k-ary_tree.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -6,6 +14,22 @@
 #include <boost/array.hpp>
 #include <boost/range.hpp>
 #include <boost/range/algorithm.hpp>
+
+
+template <typename Graph>
+void create_full_tree(Graph &tree,
+                      typename boost::graph_traits<Graph>::vertex_descriptor weight)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+
+  vertex_descriptor parent = 0;
+  for (vertex_descriptor child = 1; child != weight; child++)
+  {
+    add_edge(parent, child, tree);
+    if (!(child & 1))
+      parent++;
+  }
+}
 
 
 void empty_forward_binary_tree()
@@ -99,6 +123,70 @@ struct tree_visitor
   std::vector< std::pair<Order, Vertex> > visited;
 };
 
+
+template <bool Predecessor>
+void depth_first_search()
+{
+  typedef boost::k_ary_tree<2, Predecessor> Tree;
+  boost::k_ary_tree<2, Predecessor> tree;
+  typedef typename boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+  create_full_tree(tree, 3);
+
+  std::vector<boost::default_color_type> color;
+  typedef std::pair<boost::order::visit, vertex_descriptor> visiting;
+  boost::array< visiting, 9> const expected_seq =
+  {
+    std::make_pair(boost::order::pre, 0),
+    std::make_pair(boost::order::pre, 1),
+    std::make_pair(boost::order::in, 1),
+    std::make_pair(boost::order::post, 1),
+    std::make_pair(boost::order::in, 0),
+    std::make_pair(boost::order::pre, 2),
+    std::make_pair(boost::order::in, 2),
+    std::make_pair(boost::order::post, 2),
+    std::make_pair(boost::order::post, 0)
+  };
+  tree_visitor<boost::order::visit, vertex_descriptor> visitor;
+  depth_first_visit(tree, vertex_descriptor(0), visitor, color);
+  BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
+}
+
+
+void mutable_bidirectional()
+{
+  typedef boost::k_ary_tree<2, true> Tree;
+  Tree tree;
+  typedef boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+  create_full_tree(tree, 3);
+
+  BOOST_CHECK(predecessor(vertex_descriptor(1), tree) == 0);
+  BOOST_CHECK(predecessor(vertex_descriptor(2), tree) == 0);
+
+  BOOST_CHECK(has_left_successor(vertex_descriptor(0), tree));
+  BOOST_CHECK(has_right_successor(vertex_descriptor(0), tree));
+
+  clear_vertex(vertex_descriptor(0), tree);
+
+  BOOST_CHECK(num_vertices(tree) == 3);
+
+  vertex_descriptor null = boost::graph_traits<Tree>::null_vertex();
+
+  BOOST_CHECK(predecessor(vertex_descriptor(1), tree) == null);
+  BOOST_CHECK(predecessor(vertex_descriptor(2), tree) == null);
+
+  BOOST_CHECK(!has_left_successor(vertex_descriptor(0), tree));
+  BOOST_CHECK(!has_right_successor(vertex_descriptor(0), tree));
+
+  // Remove after clearing.
+  remove_vertex(vertex_descriptor(0), tree);
+
+  BOOST_CHECK(num_vertices(tree) == 2);
+
+}
+
+
 template <bool Predecessor>
 void binary_tree()
 {
@@ -119,23 +207,6 @@ void binary_tree()
   BOOST_CHECK(!has_right_successor(added[1], tree));
   BOOST_CHECK(!has_left_successor(added[2], tree));
   BOOST_CHECK(!has_right_successor(added[2], tree));
-
-  std::vector<boost::default_color_type> color;
-  boost::array< std::pair<boost::order::visit, vertex_descriptor>, 9> const expected_seq =
-  {
-    std::make_pair(boost::order::pre, 0),
-    std::make_pair(boost::order::pre, 1),
-    std::make_pair(boost::order::in, 1),
-    std::make_pair(boost::order::post, 1),
-    std::make_pair(boost::order::in, 0),
-    std::make_pair(boost::order::pre, 2),
-    std::make_pair(boost::order::in, 2),
-    std::make_pair(boost::order::post, 2),
-    std::make_pair(boost::order::post, 0)
-  };
-  tree_visitor<boost::order::visit, vertex_descriptor> visitor;
-  depth_first_visit(tree, added[0], visitor, color);
-  BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
 
   BOOST_CHECK(isomorphism(tree, tree));
 
@@ -165,6 +236,11 @@ int test_main(int, char*[])
 
   binary_tree<0>();
   binary_tree<1>();
+
+  depth_first_search<0>();
+  depth_first_search<1>();
+
+  mutable_bidirectional();
 
   return 0;
 }
