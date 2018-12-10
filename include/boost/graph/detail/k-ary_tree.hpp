@@ -15,6 +15,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 
+#include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <boost/range.hpp>
@@ -89,12 +90,21 @@ namespace boost
         vertex_descriptor source;
       };
 
+      struct not_null
+      {
+        bool operator()(vertex_descriptor u) const
+        {
+          return u != null_vertex();
+        }
+      };
+
     public:
       Node const&
       operator[](vertex_descriptor u) const
       {
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
+
         return nodes[u];
       }
 
@@ -107,8 +117,8 @@ namespace boost
 
 
       typedef transform_iterator<make_out_edge_descriptor,
-                                 vertex_descriptor const *,
-                                 edge_descriptor> out_edge_iterator;
+                          filter_iterator<not_null, vertex_descriptor const *>,
+                          edge_descriptor> out_edge_iterator;
 
       k_ary_tree_base()
       {

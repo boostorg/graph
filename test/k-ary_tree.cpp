@@ -99,8 +99,11 @@ void incidence_graph()
   typedef typename boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
 
   vertex_descriptor u = add_vertex(tree);
-  BOOST_CHECK(boost::distance(out_edges(u, tree)) == Tree::k);
+  BOOST_CHECK(boost::distance(out_edges(u, tree)) == 0);
   BOOST_CHECK(out_degree(u, tree) == 0);
+  add_edge(u, u + 1, tree);
+  BOOST_CHECK(boost::distance(out_edges(u, tree)) == 1);
+  BOOST_CHECK(out_degree(u, tree) == 1);
 }
 
 void bidirectional_graph()
