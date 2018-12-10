@@ -324,7 +324,7 @@ namespace boost
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
-        // TODO: Assertions that u is disconnected.
+        BOOST_ASSERT(out_degree(u, *this) == 0);
 
         if (u == nodes.size() - 1)
         {

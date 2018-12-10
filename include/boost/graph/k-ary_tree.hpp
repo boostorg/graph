@@ -182,6 +182,8 @@ namespace boost
       return in_degree(v, g) + out_degree(v, g);
     }
 
+    // *** MutableGraph interface ***
+
     friend
     std::pair<edge_descriptor, bool>
     add_edge(vertex_descriptor u, vertex_descriptor v, k_ary_tree &g)
@@ -220,6 +222,17 @@ namespace boost
       g.clear_vertex(u);
       g.nodes[u].predecessor = super_t::null_vertex();
     }
+
+
+    friend
+    void
+    remove_vertex(vertex_descriptor u, k_ary_tree &g)
+    {
+      BOOST_ASSERT(in_degree(u, g) == 0);
+
+      g.remove_vertex(u);
+    }
+
 
     void
     clear_childrens_predecessor(vertex_descriptor u)
