@@ -130,6 +130,9 @@ alias graph_test_regular :
     ;
 
 alias graph_test_no_msvc14 : :
+        # TODO: Track down and fix memory access violations in this environment.
+        # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
+        # Tried using Boost.Parameter exclusively vice bgl_named_params: no change.
         <toolset>msvc
         <toolset-msvc:version>14.0
         <address-model>64
@@ -140,6 +143,27 @@ alias graph_test_no_msvc14 :
     [ run basic_planarity_test.cpp ]
     [ run make_bicon_planar_test.cpp ]
     [ run make_maximal_planar_test.cpp ]
+    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
+    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    ;
+
+alias graph_test_with_filesystem : :
+        # TODO: Track down and fix memory access violations in this environment.
+        # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
+        <toolset>msvc
+        <toolset-msvc:version>14.0
+        <address-model>64
+    ;
+
+alias graph_test_with_filesystem : :
+        # The tests below started failing to compile for xcode with cxxstd=11
+        # due to issues with constexpr ctors in Boost.Filesystem
+        <target-os>darwin
+        <cxxstd>11
+    ;
+
+alias graph_test_with_filesystem :
     [ run all_planar_input_files_test.cpp
         ../../filesystem/build
         ../../system/build
@@ -148,14 +172,12 @@ alias graph_test_no_msvc14 :
         ../../filesystem/build
         ../../system/build
         : $(PLANAR_INPUT_FILES) ]
-    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
-    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     ;
 
 test-suite graph_test :
     graph_test_regular
     graph_test_no_msvc14
+    graph_test_with_filesystem
     ;
 
 # Run SDB tests only when -sSDB= is set.
