@@ -53,9 +53,9 @@ namespace boost
   public:
     typedef directed_tag directed_category;
     class traversal_category: public incidence_graph_tag {};
-    using typename super_t::edge_descriptor;
-    using typename super_t::vertex_descriptor;
-    using typename super_t::vertex_iterator;
+    typedef typename super_t::edge_descriptor edge_descriptor;
+    typedef typename super_t::vertex_descriptor vertex_descriptor;
+    typedef typename super_t::vertex_iterator vertex_iterator;
 
     // *** MutableGraph interface ***
 
@@ -100,10 +100,10 @@ namespace boost
   public:
     typedef bidirectional_tag directed_category;
     class traversal_category : public bidirectional_graph_tag {};
-    using typename super_t::vertex_descriptor;
-    using typename super_t::vertex_iterator;
-    using typename super_t::edge_descriptor;
-    using typename super_t::degree_size_type;
+    typedef typename super_t::edge_descriptor edge_descriptor;
+    typedef typename super_t::vertex_descriptor vertex_descriptor;
+    typedef typename super_t::vertex_iterator vertex_iterator;
+    typedef typename super_t::degree_size_type degree_size_type;
     using super_t::k;
 
   private:
