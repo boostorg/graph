@@ -233,7 +233,11 @@ matrix:
             - llvm-toolchain-trusty-5.0
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode7.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode7.3
 
     - os: osx
@@ -241,7 +245,11 @@ matrix:
       osx_image: xcode7.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode8.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode8.3
 
     - os: osx
@@ -249,7 +257,11 @@ matrix:
       osx_image: xcode8.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode9.4.1
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
       osx_image: xcode9.4.1
 
     - os: osx

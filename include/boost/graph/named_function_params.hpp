@@ -367,7 +367,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename T>
     struct convert_bgl_params_to_boost_parameter {
       typedef typename convert_one_keyword<typename T::tag_type>::type new_kw;
-      typedef boost::parameter::aux::tagged_argument<new_kw,const typename T::value_type> tagged_arg_type;
+      typedef boost::parameter::aux::tagged_argument<new_kw, const typename T::value_type> tagged_arg_type;
       typedef convert_bgl_params_to_boost_parameter<typename T::next_type> rest_conv;
       typedef boost::parameter::aux::arg_list<tagged_arg_type, typename rest_conv::type> type;
       static type conv(const T& x) {
