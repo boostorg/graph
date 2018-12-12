@@ -48,33 +48,25 @@ namespace boost
       {
         //Dispatch for no planar embedding, no kuratowski subgraph isolation
 
-        typedef typename remove_const
-                < 
-                    typename remove_reference
-                    < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;
+        typedef typename remove_const< 
+            typename parameter::value_type<ArgumentPack, tag::graph>::type 
+        >::type graph_t;
 
-        typedef typename parameter::binding
-          < ArgumentPack, 
+        typedef typename parameter::value_type<
+            ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map
-              < typename remove_reference<graph_t>::type, 
-                vertex_index_t>::const_type
-          >::type vertex_index_map_t;
+            typename property_map<graph_t, vertex_index_t>::const_type
+        >::type vertex_index_map_t;
 
+        graph_t const& g = args[graph];
+        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
         boyer_myrvold_impl
           <graph_t, 
            vertex_index_map_t,
            graph::detail::no_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
-                                get(vertex_index, args[graph])
-                                ]
-                           );
+          planarity_tester(g, i_map);
 
         return planarity_tester.is_planar() ? true : false;
       }
@@ -88,40 +80,39 @@ namespace boost
                                     )
       {
         //Dispatch for no planar embedding, kuratowski subgraph isolation
-        typedef typename remove_const
-                < 
-                    typename remove_reference
-                    < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;
-        
-        typedef typename parameter::binding
-          < ArgumentPack, 
+        typedef typename remove_const< 
+            typename parameter::value_type<ArgumentPack, tag::graph>::type 
+        >::type graph_t;
+
+        typedef typename parameter::value_type<
+            ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map<graph_t, vertex_index_t>::type
-          >::type vertex_index_map_t;
-      
+            typename property_map<graph_t, vertex_index_t>::const_type
+        >::type vertex_index_map_t;
+
+        typedef typename parameter::value_type<
+            ArgumentPack, 
+            tag::edge_index_map,
+            typename property_map<graph_t, edge_index_t>::const_type
+        >::type edge_index_map_t;
+
+        graph_t const& g = args[graph];
+        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
+        edge_index_map_t e_map = args[edge_index_map | get(edge_index, g)];
         boyer_myrvold_impl 
           <graph_t, 
            vertex_index_map_t,
            graph::detail::store_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
-                                get(vertex_index, args[graph])
-                                ]
-                           );
+          planarity_tester(g, i_map);
 
         if (planarity_tester.is_planar())
           return true;
         else
           {
             planarity_tester.extract_kuratowski_subgraph
-              (args[kuratowski_subgraph],
-               args[edge_index_map|get(edge_index, args[graph])]
-               );          
+              (args[kuratowski_subgraph], e_map);          
             return false;
           }
       }
@@ -136,20 +127,18 @@ namespace boost
                                     )
       {
         //Dispatch for planar embedding, no kuratowski subgraph isolation
-        typedef typename remove_const
-                < 
-                    typename remove_reference
-                    < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;        
-        
-        typedef typename parameter::binding
-          < ArgumentPack, 
-          tag::vertex_index_map,
-          typename property_map<graph_t, vertex_index_t>::type
-          >::type  vertex_index_map_t;
+        typedef typename remove_const< 
+            typename parameter::value_type<ArgumentPack, tag::graph>::type 
+        >::type graph_t;
 
+        typedef typename parameter::value_type<
+            ArgumentPack, 
+            tag::vertex_index_map,
+            typename property_map<graph_t, vertex_index_t>::const_type
+        >::type vertex_index_map_t;
+
+        graph_t const& g = args[graph];
+        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
         boyer_myrvold_impl
           <graph_t, 
            vertex_index_map_t,
@@ -160,11 +149,7 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
-                                get(vertex_index, args[graph])
-                                ]
-                           );
+          planarity_tester(g, i_map);
 
         if (planarity_tester.is_planar())
           {
@@ -184,20 +169,25 @@ namespace boost
                                     )
       {
         //Dispatch for planar embedding, kuratowski subgraph isolation
-        typedef typename remove_const
-                < 
-                    typename remove_reference
-                    < typename parameter::binding
-                        < ArgumentPack, tag::graph>::type 
-                    >::type 
-                >::type graph_t;        
-        
-        typedef typename parameter::binding
-          < ArgumentPack, 
-          tag::vertex_index_map, 
-          typename property_map<graph_t, vertex_index_t>::type
-          >::type vertex_index_map_t;
-        
+        typedef typename remove_const< 
+            typename parameter::value_type<ArgumentPack, tag::graph>::type 
+        >::type graph_t;
+
+        typedef typename parameter::value_type<
+            ArgumentPack, 
+            tag::vertex_index_map,
+            typename property_map<graph_t, vertex_index_t>::const_type
+        >::type vertex_index_map_t;
+
+        typedef typename parameter::value_type<
+            ArgumentPack, 
+            tag::edge_index_map,
+            typename property_map<graph_t, edge_index_t>::const_type
+        >::type edge_index_map_t;
+
+        graph_t const& g = args[graph];
+        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
+        edge_index_map_t e_map = args[edge_index_map | get(edge_index, g)];
         boyer_myrvold_impl
           <graph_t, 
           vertex_index_map_t,
@@ -208,11 +198,7 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(args[graph], 
-                           args[vertex_index_map | 
-                                get(vertex_index, args[graph])
-                                ]
-                           );
+          planarity_tester(g, i_map);
 
         if (planarity_tester.is_planar())
           {
@@ -222,9 +208,7 @@ namespace boost
         else
           {
             planarity_tester.extract_kuratowski_subgraph
-              (args[kuratowski_subgraph], 
-               args[edge_index_map | get(edge_index, args[graph])]
-               );          
+              (args[kuratowski_subgraph], e_map);          
             return false;
           } 
       }
