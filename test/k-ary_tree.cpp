@@ -109,10 +109,16 @@ void incidence_graph()
 void bidirectional_graph()
 {
   boost::bidirectional_binary_tree tree;
-  typedef boost::graph_traits<boost::bidirectional_binary_tree>::vertex_descriptor vertex_descriptor;
-  vertex_descriptor u = add_vertex(tree);
-  BOOST_CHECK(boost::distance(in_edges(u, tree)) == 0);
-  BOOST_CHECK(in_degree(u, tree) == 0);
+  create_full_tree(tree, 3);
+  BOOST_CHECK(boost::distance(in_edges(0, tree)) == 0);
+  BOOST_CHECK(in_degree(0, tree) == 0);
+  BOOST_CHECK(boost::distance(in_edges(1, tree)) == 1);
+  BOOST_CHECK(in_degree(1, tree) == 1);
+  BOOST_CHECK(boost::distance(in_edges(2, tree)) == 1);
+  BOOST_CHECK(in_degree(2, tree) == 1);
+  BOOST_CHECK(root(0, tree) == 0);
+  BOOST_CHECK(root(1, tree) == 0);
+  BOOST_CHECK(root(2, tree) == 0);
 }
 
 template <typename Order, typename Vertex>

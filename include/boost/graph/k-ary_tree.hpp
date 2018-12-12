@@ -123,6 +123,24 @@ namespace boost
     typedef transform_iterator<make_in_edge_descriptor, vertex_descriptor const *,
                                               edge_descriptor> in_edge_iterator;
 
+
+    // NOTE: This function will be an infinite loop if called on a recurrent
+    // tree (which is not a tree any more).
+    friend
+    vertex_descriptor
+    root(vertex_descriptor u, k_ary_tree const &g)
+    {
+      BOOST_ASSERT(u != graph_traits<k_ary_tree>::null_vertex());
+
+      while (g[u].predecessor != graph_traits<k_ary_tree>::null_vertex())
+      {
+        u = g[u].predecessor;
+      }
+
+      BOOST_ASSERT(u != graph_traits<k_ary_tree>::null_vertex());
+      return u;
+    }
+
     friend
     bool
     is_left_successor(vertex_descriptor u, k_ary_tree const &g)
