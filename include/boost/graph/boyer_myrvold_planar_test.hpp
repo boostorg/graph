@@ -52,21 +52,27 @@ namespace boost
             typename parameter::value_type<ArgumentPack, tag::graph>::type 
         >::type graph_t;
 
+        typedef typename property_map<
+            graph_t,
+            vertex_index_t
+        >::const_type vertex_default_index_map_t;
+
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map<graph_t, vertex_index_t>::const_type
+            vertex_default_index_map_t
         >::type vertex_index_map_t;
 
         graph_t const& g = args[graph];
-        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
+        vertex_default_index_map_t v_d_map = get(vertex_index, g);
+        vertex_index_map_t v_i_map = args[vertex_index_map | v_d_map];
         boyer_myrvold_impl
           <graph_t, 
            vertex_index_map_t,
            graph::detail::no_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(g, i_map);
+          planarity_tester(g, v_i_map);
 
         return planarity_tester.is_planar() ? true : false;
       }
@@ -84,35 +90,47 @@ namespace boost
             typename parameter::value_type<ArgumentPack, tag::graph>::type 
         >::type graph_t;
 
+        typedef typename property_map<
+            graph_t,
+            vertex_index_t
+        >::const_type vertex_default_index_map_t;
+
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map<graph_t, vertex_index_t>::const_type
+            vertex_default_index_map_t
         >::type vertex_index_map_t;
+
+        typedef typename property_map<
+            graph_t,
+            edge_index_t
+        >::const_type edge_default_index_map_t;
 
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::edge_index_map,
-            typename property_map<graph_t, edge_index_t>::const_type
+            edge_default_index_map_t
         >::type edge_index_map_t;
 
         graph_t const& g = args[graph];
-        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
-        edge_index_map_t e_map = args[edge_index_map | get(edge_index, g)];
+        vertex_default_index_map_t v_d_map = get(vertex_index, g);
+        vertex_index_map_t v_i_map = args[vertex_index_map | v_d_map];
+        edge_default_index_map_t e_d_map = get(edge_index, g);
+        edge_index_map_t e_i_map = args[edge_index_map | e_d_map];
         boyer_myrvold_impl 
           <graph_t, 
            vertex_index_map_t,
            graph::detail::store_old_handles,
            graph::detail::no_embedding
           >
-          planarity_tester(g, i_map);
+          planarity_tester(g, v_i_map);
 
         if (planarity_tester.is_planar())
           return true;
         else
           {
             planarity_tester.extract_kuratowski_subgraph
-              (args[kuratowski_subgraph], e_map);          
+              (args[kuratowski_subgraph], e_i_map);          
             return false;
           }
       }
@@ -131,14 +149,20 @@ namespace boost
             typename parameter::value_type<ArgumentPack, tag::graph>::type 
         >::type graph_t;
 
+        typedef typename property_map<
+            graph_t,
+            vertex_index_t
+        >::const_type vertex_default_index_map_t;
+
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map<graph_t, vertex_index_t>::const_type
+            vertex_default_index_map_t
         >::type vertex_index_map_t;
 
         graph_t const& g = args[graph];
-        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
+        vertex_default_index_map_t v_d_map = get(vertex_index, g);
+        vertex_index_map_t v_i_map = args[vertex_index_map | v_d_map];
         boyer_myrvold_impl
           <graph_t, 
            vertex_index_map_t,
@@ -149,7 +173,7 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(g, i_map);
+          planarity_tester(g, v_i_map);
 
         if (planarity_tester.is_planar())
           {
@@ -173,21 +197,33 @@ namespace boost
             typename parameter::value_type<ArgumentPack, tag::graph>::type 
         >::type graph_t;
 
+        typedef typename property_map<
+            graph_t,
+            vertex_index_t
+        >::const_type vertex_default_index_map_t;
+
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::vertex_index_map,
-            typename property_map<graph_t, vertex_index_t>::const_type
+            vertex_default_index_map_t
         >::type vertex_index_map_t;
+
+        typedef typename property_map<
+            graph_t,
+            edge_index_t
+        >::const_type edge_default_index_map_t;
 
         typedef typename parameter::value_type<
             ArgumentPack, 
             tag::edge_index_map,
-            typename property_map<graph_t, edge_index_t>::const_type
+            edge_default_index_map_t
         >::type edge_index_map_t;
 
         graph_t const& g = args[graph];
-        vertex_index_map_t i_map = args[vertex_index_map | get(vertex_index, g)];
-        edge_index_map_t e_map = args[edge_index_map | get(edge_index, g)];
+        vertex_default_index_map_t v_d_map = get(vertex_index, g);
+        vertex_index_map_t v_i_map = args[vertex_index_map | v_d_map];
+        edge_default_index_map_t e_d_map = get(edge_index, g);
+        edge_index_map_t e_i_map = args[edge_index_map | e_d_map];
         boyer_myrvold_impl
           <graph_t, 
           vertex_index_map_t,
@@ -198,7 +234,7 @@ namespace boost
            graph::detail::recursive_lazy_list
 #endif
           >
-          planarity_tester(g, i_map);
+          planarity_tester(g, v_i_map);
 
         if (planarity_tester.is_planar())
           {
@@ -208,7 +244,7 @@ namespace boost
         else
           {
             planarity_tester.extract_kuratowski_subgraph
-              (args[kuratowski_subgraph], e_map);          
+              (args[kuratowski_subgraph], e_i_map);          
             return false;
           } 
       }

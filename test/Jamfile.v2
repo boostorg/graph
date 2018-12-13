@@ -120,6 +120,8 @@ alias graph_test_regular :
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
+    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
+    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ compile filtered_graph_properties_dijkstra.cpp ]
     [ run vf2_sub_graph_iso_test.cpp ]
     [ run vf2_sub_graph_iso_test_2.cpp ]
@@ -144,16 +146,6 @@ alias graph_test_no_msvc14 : :
 alias graph_test_no_msvc14 :
     [ run astar_search_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
-    [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
-    ;
-
-alias graph_test_with_filesystem : :
-        # TODO: Track down and fix memory access violations in this environment.
-        # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
-        <toolset>msvc
-        <toolset-msvc:version>14.0
-        <address-model>64
     ;
 
 alias graph_test_with_filesystem : :
