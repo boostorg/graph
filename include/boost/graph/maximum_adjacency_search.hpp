@@ -233,12 +233,25 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
 
           typename boost::result_of<default_pq_gen_type(const Graph&, const ArgPack&)>::type pq = pq_gen(g, params);
 
+          boost::null_visitor null_vis;
+          boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
+          vertex_descriptor v = vertex_descriptor();
+          boost::detail::make_property_map_from_arg_pack_gen<
+              boost::graph::keywords::tag::vertex_assignment_map,
+              vertex_descriptor
+          > map_gen(v);
+          typename boost::detail::map_maker<
+              Graph,
+              ArgPack,
+              boost::graph::keywords::tag::vertex_assignment_map,
+              vertex_descriptor
+          >::map_type default_map = map_gen(g, params);
           boost::maximum_adjacency_search
                (g,
                 w,
-                params [ _visitor | make_mas_visitor(null_visitor())],
+                params [ _visitor | default_visitor],
                 params [ _root_vertex | *vertices(g).first],
-                params [ _vertex_assignment_map | boost::detail::make_property_map_from_arg_pack_gen<boost::graph::keywords::tag::vertex_assignment_map, vertex_descriptor>(vertex_descriptor())(g, params)],
+                params [ _vertex_assignment_map | default_map],
                 pq
                 );
         }
@@ -266,12 +279,25 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
 
           typename boost::result_of<default_pq_gen_type(const Graph&, const ArgPack&)>::type pq = pq_gen(g, params);
 
+          boost::null_visitor null_vis;
+          boost::mas_visitor<boost::null_visitor> default_visitor(null_vis);
+          vertex_descriptor v = vertex_descriptor();
+          boost::detail::make_property_map_from_arg_pack_gen<
+              boost::graph::keywords::tag::vertex_assignment_map,
+              vertex_descriptor
+          > map_gen(v);
+          typename boost::detail::map_maker<
+              Graph,
+              ArgPack,
+              boost::graph::keywords::tag::vertex_assignment_map,
+              vertex_descriptor
+          >::map_type default_map = map_gen(g, params);
           boost::maximum_adjacency_search
                (g,
                 get(edge_weight, g),
-                params [ _visitor | make_mas_visitor(null_visitor())],
+                params [ _visitor | default_visitor],
                 params [ _root_vertex | *vertices(g).first],
-                params [ _vertex_assignment_map | boost::detail::make_property_map_from_arg_pack_gen<boost::graph::keywords::tag::vertex_assignment_map, vertex_descriptor>(vertex_descriptor())(g, params)],
+                params [ _vertex_assignment_map | default_map],
                 pq
                 );
         }
