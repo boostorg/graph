@@ -88,6 +88,7 @@ alias graph_test_regular :
     [ compile property_iter.cpp ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
+    [ run astar_search_test.cpp ]
     [ run biconnected_components_test.cpp ]
     [ run cuthill_mckee_ordering.cpp ]
     [ run king_ordering.cpp ]
@@ -119,6 +120,7 @@ alias graph_test_regular :
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
+    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
@@ -132,20 +134,6 @@ alias graph_test_regular :
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run delete_edge.cpp ]
-    ;
-
-alias graph_test_no_msvc14 : :
-        # TODO: Track down and fix memory access violations in this environment.
-        # Tried switching from Boost.Test to Boost.Core.LightweightTest: no change.
-        # Tried using Boost.Parameter exclusively vice bgl_named_params: no change.
-        <toolset>msvc
-        <toolset-msvc:version>14.0
-        <address-model>64
-    ;
-
-alias graph_test_no_msvc14 :
-    [ run astar_search_test.cpp ]
-    [ run random_spanning_tree_test.cpp ../build//boost_graph ]
     ;
 
 alias graph_test_with_filesystem : :
@@ -168,7 +156,6 @@ alias graph_test_with_filesystem :
 
 test-suite graph_test :
     graph_test_regular
-    graph_test_no_msvc14
     graph_test_with_filesystem
     ;
 
