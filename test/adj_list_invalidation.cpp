@@ -8,7 +8,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "../../../../../gpld/common/typestr.hpp"
+#include "typestr.hpp"
 
 using namespace std;
 using namespace boost;
