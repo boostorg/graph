@@ -7,6 +7,10 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <boost/config.hpp>
 #include <iostream>
 #include <string>

@@ -5,12 +5,19 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <boost/config.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <ctime>
+#ifdef BOOST_HAS_UNISTD_H
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <boost/graph/adjacency_list.hpp>
 
