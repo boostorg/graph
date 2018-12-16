@@ -27,6 +27,7 @@ test-suite graph_test :
     [ run finish_edge_bug.cpp ]
 
     [ run transitive_closure_test.cpp ]
+    [ run transitive_closure_test2.cpp ]
     [ compile adj_list_cc.cpp ]
 
     # adj_list_test needs some work -JGS
@@ -139,6 +140,7 @@ test-suite graph_test :
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
+    [ run random_matching_test.cpp : 1000 1020 ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
@@ -152,6 +154,8 @@ test-suite graph_test :
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run delete_edge.cpp ]
+    [ run johnson-test.cpp ]
+    [ run lvalue_pmap.cpp ]
     ;
 
 # Run SDB tests only when -sSDB= is set.
