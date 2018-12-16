@@ -57,6 +57,7 @@ test-suite graph_test :
 
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
+    [ run filter_graph_vp_test.cpp ]
     [ run generator_test.cpp ]
     [ run graph.cpp : : : <define>TEST=1 : graph_1 ]
     [ run graph.cpp : : : <define>TEST=2 : graph_2 ]
