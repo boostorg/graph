@@ -310,7 +310,6 @@ namespace boost {
         work_space(n_)
       {
         typename graph_traits<Graph>::vertex_iterator v, vend;
-        typename Traits::degree_size_type d;
         size_type vid = 0;
         for (boost::tie(v, vend) = vertices(G); v != vend; ++v, ++vid)
           index_vertex_vec[vid] = *v;
@@ -319,7 +318,8 @@ namespace boost {
         // Initialize degreelists.  Degreelists organizes the nodes
         // according to their degree.
         for (boost::tie(v, vend) = vertices(G); v != vend; ++v) {
-          put(degree, *v, d = out_degree(*v, G));
+          typename Traits::degree_size_type d = out_degree(*v, G);
+          put(degree, *v, d);
           if (0 < d) has_no_edges = false;
           degreelists.push(*v);
         }
