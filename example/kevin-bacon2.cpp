@@ -56,9 +56,9 @@ private:
   int* d;
 };
 
-int main()
+int main(int argc, const char** argv)
 {
-  std::ifstream ifs("./kevin-bacon2.dat");
+  std::ifstream ifs(argc >= 2 ? argv[1] : "./kevin-bacon2.dat");
   if (!ifs) {
     std::cerr << "No ./kevin-bacon2.dat file" << std::endl;
     return EXIT_FAILURE;

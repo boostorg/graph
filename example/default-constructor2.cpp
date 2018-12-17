@@ -32,7 +32,7 @@ read_graph_file(std::istream & in, Graph & g)
 
 
 int
-main()
+main(int argc, const char** argv)
 {
   typedef adjacency_list < listS,       // Store out-edges of each vertex in a std::list
     vecS,                       // Store vertex set in a std::vector
@@ -40,7 +40,7 @@ main()
   > graph_type;
 
   graph_type g;                 // use default constructor to create empty graph
-  std::ifstream file_in("makefile-dependencies.dat");
+  std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat");
   read_graph_file(file_in, g);
 
   assert(num_vertices(g) == 15);
