@@ -6,6 +6,17 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
+
+
+/*
+   IMPORTANT:
+   ~~~~~~~~~~
+
+   This example appears to be broken and does not compile, see https://github.com/boostorg/graph/issues/150
+
+*/
+
+
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #include <string>
 #include <boost/graph/iteration_macros.hpp>
