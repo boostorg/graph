@@ -80,7 +80,7 @@ run graph_property.cpp ;
 run graph-assoc-types.cpp ;
 run graph-property-iter-eg.cpp ;
 run graph-thingie.cpp ../build//boost_graph ;
-run graphviz.cpp ../build//boost_graph ;
+run graphviz.cpp ../build//boost_graph : $(TEST_DIR)/graphviz_example.dot ;
 run grid_graph_example.cpp ;
 run grid_graph_properties.cpp ;
 exe hawick_circuits : hawick_circuits.cpp ;
@@ -101,7 +101,6 @@ run king_ordering.cpp ;
 run knights_tour.cpp ;
 run kruskal-example.cpp ;
 run kuratowski_subgraph.cpp ;
-run last-mod-time.cpp : $(TEST_DIR)/makefile-dependencies.dat ;
 run make_biconnected_planar.cpp ;
 run make_connected.cpp ;
 run make_maximal_planar.cpp ;
@@ -217,6 +216,8 @@ explicit girth ;
 #
 # run astar_maze.cpp ;
 # run kevin-bacon2.cpp /boost/serialization//boost_serialization : $(TEST_DIR)/kevin-bacon.dat ;
+# Crashes with msvc-12.0:
+# run last-mod-time.cpp : $(TEST_DIR)/makefile-dependencies.dat ;
 #
 # This one dereferences a null-iterator:
 #
