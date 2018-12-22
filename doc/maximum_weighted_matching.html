@@ -105,8 +105,8 @@ Unlike <tt>max_cardinality_matching</tt>, the initial matching and augmenting pa
 because the algorithm maintains blossoms, dual variables and node labels across all augmentations.
 
 The algorithm's time complexity is reduced from <i>O(V<sup>4</sup>)</i> (naive implementation of [<a href="bibliography.html#edmonds65:_max_weighted_match">74</a>]) 
-to <i>O(V<sup>3</sup>)</i>, by the avoidance of re-scanning labels after revision of the dual solution. 
-Several special node variables <i>pi, tau, gamma</i> and arrays <i>critical_edge, tau_idx</i> are introduced for this purpose.
+to <i>O(V<sup>3</sup>)</i>, by a delicate labeling procedure [<a href="bibliography.html#gabow76">75</a>] to avoid re-scanning labels after revision of the dual solution. 
+Special variables <i>pi, tau, gamma</i> and two arrays <i>critical_edge, tau_idx</i> are introduced for this purpose.
 Please refer to [<a href="bibliography.html#lawler76:_comb_opt">20</a>] and code comments for more implementation details.
 
 </p><h3>Where Defined</h3>
@@ -143,7 +143,7 @@ Let <i>m</i> and <i>n</i> be the number of edges and vertices in the input graph
 <tt>VertexIndexMap</tt> supplied allows constant-time lookup, the time complexity for 
 <tt>maximum_weighted_matching</tt> is <i>O(n<sup>3</sup>)</i>. For <tt>brute_force_maximum_weighted_matching</tt>, the time complexity is exponential of <i>m</i>.
 Note that the best known time complexity for maximum weighted matching in general graph
-is <i>O(nm+n<sup>2</sup>log(n))</i> by [<a href="bibliography.html#gabow90">75</a>], but relies on an
+is <i>O(nm+n<sup>2</sup>log(n))</i> by [<a href="bibliography.html#gabow90">76</a>], but relies on an
 efficient algorithm for solving nearest ancestor problem on trees, which is not provided in Boost C++ libraries.
 </p><p>
 
