@@ -16,8 +16,8 @@
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/detail/indexed_properties.hpp>
-#include <boost/graph/detail/k-ary_tree.hpp>
 
+#include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <boost/type_traits/conditional.hpp>
@@ -30,6 +30,12 @@ namespace boost
   namespace order {
     enum visit { pre, in, post };
   }
+}
+
+#include <boost/graph/detail/k-ary_tree.hpp>
+
+namespace boost
+{
 
   template <typename Graph>
   bool
@@ -55,7 +61,83 @@ namespace boost
     class traversal_category: public incidence_graph_tag {};
     typedef typename super_t::edge_descriptor edge_descriptor;
     typedef typename super_t::vertex_descriptor vertex_descriptor;
-    typedef typename super_t::vertex_iterator vertex_iterator;
+
+    // *** VertexListGraph interface ***
+
+    template <order::visit Mode = order::pre>
+    struct vertex_iterator : public iterator_facade<vertex_iterator<Mode>,
+                                                    vertex_descriptor const,
+                                                    forward_traversal_tag>
+    {
+      typedef iterator_facade<vertex_iterator<Mode>, vertex_descriptor const,
+                              forward_traversal_tag> super_t;
+    public:
+      vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
+        : g(&g)
+      {
+        traversal.push(start);
+      }
+
+      typedef typename super_t::value_type value_type;
+      typedef typename super_t::reference reference;
+
+    private:
+      friend class iterator_core_access;
+
+      reference dereference() const
+      {
+        return traversal.top();
+      }
+
+      void increment()
+      {
+        // vis(order::pre, u);
+        if (has_left_successor(traversal.top(), *g))
+        {
+          traversal.push(left_successor(traversal.top(), *g));
+          return;
+        }
+        // vis(order::in, u);
+        if (has_right_successor(traversal.top(), *g))
+        {
+          traversal.push(right_successor(traversal.top(), *g));
+          return;
+        }
+        // vis(order::post, u);
+
+        while (!traversal.empty())
+        {
+          traversal.pop();
+          if (has_right_successor(traversal.top(), *g))
+          {
+            traversal.push(right_successor(traversal.top(), *g));
+            return;
+          }
+        }
+      }
+
+      bool equal(vertex_iterator const &other) const
+      {
+        return traversal == other.traversal
+              && order == other.order
+              // && *g == *other.g
+              ;
+      }
+
+      std::stack<vertex_descriptor> traversal;
+      k_ary_tree const *g;
+      boost::order::visit order;
+    };
+
+    friend
+    std::pair<vertex_iterator<>, vertex_iterator<>>
+    vertices(k_ary_tree const &g)
+    {
+      return std::make_pair(vertex_iterator<>(vertex_descriptor(), g),
+                            vertex_iterator<>(vertex_descriptor(), g));
+    }
+
+
 
     // *** MutableGraph interface ***
 
@@ -102,7 +184,6 @@ namespace boost
     class traversal_category : public bidirectional_graph_tag {};
     typedef typename super_t::edge_descriptor edge_descriptor;
     typedef typename super_t::vertex_descriptor vertex_descriptor;
-    typedef typename super_t::vertex_iterator vertex_iterator;
     typedef typename super_t::degree_size_type degree_size_type;
     using super_t::k;
 
@@ -273,7 +354,7 @@ namespace boost
     Visitor traverse_nonempty(typename graph_traits<Tree>::vertex_descriptor u,
                               Tree const &g, Visitor vis)
     {
-      BOOST_ASSERT(u != graph_traits<Tree>::null_vertex());
+      BOOST_ASSERT(!empty(u, g));
 
       vis(order::pre, u);
       if (has_left_successor(u, g))

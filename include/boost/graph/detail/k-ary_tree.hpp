@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <utility>
 #include <vector>
+#include <stack>
 
 namespace boost
 {
@@ -64,7 +65,6 @@ namespace boost
       BOOST_STATIC_CONSTEXPR std::size_t k = K;
 
       typedef Vertex vertex_descriptor;
-      typedef vertex_descriptor const * vertex_iterator;
 
       BOOST_STATIC_CONSTEXPR vertex_descriptor null_vertex()
       {
@@ -75,6 +75,8 @@ namespace boost
       typedef disallow_parallel_edge_tag edge_parallel_category;
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
+
+
 
     protected:
 

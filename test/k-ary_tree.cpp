@@ -15,6 +15,7 @@
 #include <boost/range.hpp>
 #include <boost/range/algorithm.hpp>
 
+#include <utility>
 
 template <typename Graph>
 void create_full_tree(Graph &tree,
@@ -225,6 +226,22 @@ void binary_tree()
   BOOST_CHECK(!has_right_successor(added[0], tree));
 }
 
+
+template <bool Predecessor>
+void VertexListGraph_test()
+{
+  typedef boost::k_ary_tree<2, Predecessor> Tree;
+  Tree tree;
+  typedef typename boost::graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+
+  create_full_tree(tree, 7);
+
+  boost::array<vertex_descriptor, 7> actual,
+                                      expected = {0, 1, 2, 3, 4, 5, 6};
+  copy(vertices(tree), boost::begin(actual));
+  BOOST_CHECK(actual == expected);
+}
+
 int test_main(int, char*[])
 {
   BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
@@ -250,6 +267,9 @@ int test_main(int, char*[])
   depth_first_search<1>();
 
   mutable_bidirectional();
+
+  VertexListGraph_test<0>();
+  // VertexListGraph_test<1>();
 
   return 0;
 }
