@@ -18,7 +18,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-test-suite graph_test :
+alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
     [ run test_graphs.cpp ]
@@ -117,14 +117,6 @@ test-suite graph_test :
     [ run make_bicon_planar_test.cpp ]
     [ run make_maximal_planar_test.cpp ]
     [ run named_vertices_test.cpp ]
-    [ run all_planar_input_files_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) ]
-    [ run parallel_edges_loops_test.cpp
-        ../../filesystem/build
-        ../../system/build
-        : $(PLANAR_INPUT_FILES) ]
     [ run r_c_shortest_paths_test.cpp ]
     [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
@@ -161,6 +153,29 @@ test-suite graph_test :
     [ run delete_edge.cpp ]
     [ run johnson-test.cpp ]
     [ run lvalue_pmap.cpp ]
+    ;
+
+alias graph_test_with_filesystem : :
+        # The tests below started failing to compile for xcode with cxxstd=11
+        # due to issues with constexpr ctors in Boost.Filesystem
+        <target-os>darwin
+        <cxxstd>11
+    ;
+
+alias graph_test_with_filesystem :
+    [ run all_planar_input_files_test.cpp
+        ../../filesystem/build
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+    [ run parallel_edges_loops_test.cpp
+        ../../filesystem/build
+        ../../system/build
+        : $(PLANAR_INPUT_FILES) ]
+    ;
+
+test-suite graph_test :
+    graph_test_regular
+    graph_test_with_filesystem
     ;
 
 # Run SDB tests only when -sSDB= is set.
