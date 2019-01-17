@@ -286,7 +286,8 @@ namespace boost
     }
 
     template <typename Graph>
-    int traverse_step(order::visit &v, typename graph_traits<Graph>::vertex_descriptor &u,
+    int traverse_step(order::visit &v,
+                      typename graph_traits<Graph>::vertex_descriptor &u,
                       Graph const &g)
     {
       // Requires BidirectionalTree<Graph>
@@ -362,7 +363,7 @@ namespace boost
       if (has_right_successor(u, g)) {
         if (has_right_successor(v, h)) {
           if (!bifurcate_isomorphic_nonempty(right_successor(u, g),
-                                              right_successor(v, h)))
+                                             right_successor(v, h)))
             return false;
         }
         else
