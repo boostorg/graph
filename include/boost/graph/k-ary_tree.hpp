@@ -58,24 +58,33 @@ namespace boost
 
   public:
     typedef directed_tag directed_category;
-    class traversal_category: public incidence_graph_tag {};
+    class traversal_category : public incidence_graph_tag,
+                               public vertex_list_graph_tag {};
     typedef typename super_t::edge_descriptor edge_descriptor;
     typedef typename super_t::vertex_descriptor vertex_descriptor;
 
     // *** VertexListGraph interface ***
 
-    template <order::visit Mode = order::pre>
-    struct vertex_iterator : public iterator_facade<vertex_iterator<Mode>,
-                                                    vertex_descriptor const,
-                                                    forward_traversal_tag>
+    struct vertex_iterator : public iterator_facade<
+                                                  vertex_iterator,
+                                                  vertex_descriptor const,
+                                                  multi_pass_input_iterator_tag
+                                                     >
     {
-      typedef iterator_facade<vertex_iterator<Mode>, vertex_descriptor const,
+      typedef iterator_facade<vertex_iterator,
+                              vertex_descriptor const,
                               forward_traversal_tag> super_t;
     public:
-      vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
+      vertex_iterator(k_ary_tree const& g)
         : g(&g)
+      {}
+
+      vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
+        : g(&g), last(g.null_vertex())
       {
         traversal.push(start);
+        while (has_left_successor(traversal.top(), g))
+          traversal.push(left_successor(traversal.top(), g));
       }
 
       typedef typename super_t::value_type value_type;
@@ -91,50 +100,51 @@ namespace boost
 
       void increment()
       {
-        // vis(order::pre, u);
-        if (has_left_successor(traversal.top(), *g))
-        {
-          traversal.push(left_successor(traversal.top(), *g));
-          return;
-        }
-        // vis(order::in, u);
         if (has_right_successor(traversal.top(), *g))
         {
-          traversal.push(right_successor(traversal.top(), *g));
-          return;
-        }
-        // vis(order::post, u);
-
-        while (!traversal.empty())
-        {
-          traversal.pop();
-          if (has_right_successor(traversal.top(), *g))
+          if (right_successor(traversal.top(), *g) != last)
           {
             traversal.push(right_successor(traversal.top(), *g));
+            while (has_left_successor(traversal.top(), *g))
+              traversal.push(left_successor(traversal.top(), *g));
             return;
           }
+
+        }
+
+        while (!traversal.empty()
+              && (!has_right_successor(traversal.top(), *g)
+                  || right_successor(traversal.top(), *g) == last))
+        {
+          last = traversal.top();
+          traversal.pop();
         }
       }
 
       bool equal(vertex_iterator const &other) const
       {
-        return traversal == other.traversal
-              && order == other.order
+        if (traversal.empty())
+          return other.traversal.empty();
+
+        if (other.traversal.empty())
+          return false;
+
+        return traversal.top() == other.traversal.top()
               // && *g == *other.g
               ;
       }
 
+      vertex_descriptor last;
       std::stack<vertex_descriptor> traversal;
       k_ary_tree const *g;
-      boost::order::visit order;
     };
 
     friend
-    std::pair<vertex_iterator<>, vertex_iterator<>>
+    std::pair< vertex_iterator, vertex_iterator >
     vertices(k_ary_tree const &g)
     {
-      return std::make_pair(vertex_iterator<>(vertex_descriptor(), g),
-                            vertex_iterator<>(vertex_descriptor(), g));
+      return std::make_pair(vertex_iterator(vertex_descriptor(), g),
+                            vertex_iterator(g));
     }
 
 

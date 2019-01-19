@@ -237,7 +237,7 @@ void VertexListGraph_test()
   create_full_tree(tree, 7);
 
   boost::array<vertex_descriptor, 7> actual,
-                                      expected = {0, 1, 2, 3, 4, 5, 6};
+                                      expected = {3, 1, 4, 0, 5, 2, 6};
   copy(vertices(tree), boost::begin(actual));
   BOOST_CHECK(actual == expected);
 }
@@ -248,7 +248,7 @@ int test_main(int, char*[])
   BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::forward_binary_tree>));
-  // BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::forward_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
