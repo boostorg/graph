@@ -80,7 +80,7 @@ namespace boost
       {}
 
       vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
-        : g(&g), last(g.null_vertex())
+        : last(g.null_vertex()), g(&g)
       {
         traversal.push(start);
         while (has_left_successor(traversal.top(), g))
@@ -112,13 +112,14 @@ namespace boost
 
         }
 
-        while (!traversal.empty()
-              && (!has_right_successor(traversal.top(), *g)
-                  || right_successor(traversal.top(), *g) == last))
+        do
         {
           last = traversal.top();
           traversal.pop();
         }
+        while (!traversal.empty()
+              && (!has_right_successor(traversal.top(), *g)
+                  || right_successor(traversal.top(), *g) == last));
       }
 
       bool equal(vertex_iterator const &other) const
@@ -140,7 +141,7 @@ namespace boost
     };
 
     friend
-    std::pair< vertex_iterator, vertex_iterator >
+    std::pair<vertex_iterator, vertex_iterator>
     vertices(k_ary_tree const &g)
     {
       return std::make_pair(vertex_iterator(vertex_descriptor(), g),
