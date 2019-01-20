@@ -249,6 +249,7 @@ int test_main(int, char*[])
   BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::forward_binary_tree>));
   BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::forward_binary_tree>));
+  BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
@@ -269,7 +270,7 @@ int test_main(int, char*[])
   mutable_bidirectional();
 
   VertexListGraph_test<0>();
-  // VertexListGraph_test<1>();
+  VertexListGraph_test<1>();
 
   return 0;
 }

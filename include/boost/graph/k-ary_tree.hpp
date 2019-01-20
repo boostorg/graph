@@ -192,7 +192,8 @@ namespace boost
 
   public:
     typedef bidirectional_tag directed_category;
-    class traversal_category : public bidirectional_graph_tag {};
+    class traversal_category : public bidirectional_graph_tag,
+                               public vertex_list_graph_tag {};
     typedef typename super_t::edge_descriptor edge_descriptor;
     typedef typename super_t::vertex_descriptor vertex_descriptor;
     typedef typename super_t::degree_size_type degree_size_type;
@@ -214,6 +215,81 @@ namespace boost
   public:
     typedef transform_iterator<make_in_edge_descriptor, vertex_descriptor const *,
                                               edge_descriptor> in_edge_iterator;
+
+    // *** VertexListGraph interface ***
+
+    struct vertex_iterator : public iterator_facade<
+                                                  vertex_iterator,
+                                                  vertex_descriptor const,
+                                                  multi_pass_input_iterator_tag
+                                                     >
+    {
+      typedef iterator_facade<vertex_iterator,
+                              vertex_descriptor const,
+                              forward_traversal_tag> super_t;
+    public:
+      vertex_iterator(k_ary_tree const& g) : current(g.null_vertex()), g(&g) {}
+
+      vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
+        : current(start), g(&g)
+      {
+        while (has_left_successor(current, g))
+          current = (left_successor(current, g));
+      }
+
+      typedef typename super_t::value_type value_type;
+      typedef typename super_t::reference reference;
+
+    private:
+      friend class iterator_core_access;
+
+      reference dereference() const
+      {
+        return current;
+      }
+
+      void increment()
+      {
+        if (has_right_successor(current, *g))
+        {
+          if (right_successor(current, *g) != last)
+          {
+            current = (right_successor(current, *g));
+            while (has_left_successor(current, *g))
+              current = (left_successor(current, *g));
+            return;
+          }
+        }
+
+        do
+        {
+          last = current;
+          current = predecessor(current, *g);
+        }
+        while (current != g->null_vertex()
+              && (!has_right_successor(current, *g)
+                  || right_successor(current, *g) == last));
+      }
+
+      bool equal(vertex_iterator const &other) const
+      {
+        return current == other.current
+               && (last == other.last || current == g->null_vertex());
+              // && *g == *other.g
+              ;
+      }
+
+      vertex_descriptor current, last;
+      k_ary_tree const *g;
+    };
+
+    friend
+    std::pair<vertex_iterator, vertex_iterator>
+    vertices(k_ary_tree const &g)
+    {
+      return std::make_pair(vertex_iterator(vertex_descriptor(), g),
+                            vertex_iterator(g));
+    }
 
 
     // NOTE: This function will be an infinite loop if called on a recurrent
