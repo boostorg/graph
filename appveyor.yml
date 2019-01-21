@@ -44,6 +44,8 @@ install:
   - cd ..
   - git clone -b %APPVEYOR_REPO_BRANCH% --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
+  - git submodule update --init tools/boost_install
+  - git submodule update --init libs/headers
   - git submodule update --init tools/build
   - git submodule update --init libs/config
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\graph
