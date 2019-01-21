@@ -33,13 +33,13 @@ int main()
     "http://www.boost.org/libs/graph/doc/using_adjacency_list.html",
   };
 
-  E the_edges[] = { E(0, 1), E(0, 2), E(0, 3), E(1, 0), E(1, 3), E(1, 5), 
-                    E(2, 0), E(2, 5), E(3, 1), E(3, 4), E(4, 1), E(5, 0), 
+  E the_edges[] = { E(0, 1), E(0, 2), E(0, 3), E(1, 0), E(1, 3), E(1, 5),
+                    E(2, 0), E(2, 5), E(3, 1), E(3, 4), E(4, 1), E(5, 0),
                     E(5, 2) };
 
   typedef compressed_sparse_row_graph<directedS, WebPage> WebGraph;
   WebGraph g(boost::edges_are_sorted, &the_edges[0], &the_edges[0] + sizeof(the_edges)/sizeof(E), 6);
-  
+
   // Set the URLs of each vertex
   int index = 0;
   BGL_FORALL_VERTICES(v, g, WebGraph)
@@ -48,13 +48,13 @@ int main()
   // Output each of the links
   std::cout << "The web graph:" << std::endl;
   BGL_FORALL_EDGES(e, g, WebGraph)
-    std::cout << "  " << g[source(e, g)].url << " -> " << g[target(e, g)].url 
+    std::cout << "  " << g[source(e, g)].url << " -> " << g[target(e, g)].url
               << std::endl;
-    
+
   // Output the graph in DOT format
   dynamic_properties dp;
   dp.property("label", get(&WebPage::url, g));
   std::ofstream out("web-graph.dot");
-  write_graphviz(out, g, dp, std::string(), get(vertex_index, g));
+  write_graphviz_dp(out, g, dp, std::string(), get(vertex_index, g));
   return 0;
 }

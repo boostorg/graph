@@ -40,7 +40,7 @@ exe connected-components : connected-components.cpp ;
 
 exe container_gen : container_gen.cpp ;
 exe copy-example : copy-example.cpp ;
-# exe csr-example : csr-example.cpp ;
+exe csr-example : csr-example.cpp ;
 exe cuthill_mckee_ordering : cuthill_mckee_ordering.cpp ;
 exe cycle_canceling_example : cycle_canceling_example.cpp ;
 exe cycle-file-dep2 : cycle-file-dep2.cpp ;
