@@ -30,7 +30,7 @@ alias graph_test_regular :
     [ run transitive_closure_test2.cpp ]
     [ compile adj_list_cc.cpp ]
 
-    [ run adj_list_invalidation.cpp ]
+    #[ run adj_list_invalidation.cpp ]
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
