@@ -26,7 +26,7 @@ exe boost_web_graph : boost_web_graph.cpp ;
 exe boykov_kolmogorov-eg : boykov_kolmogorov-eg.cpp ;
 exe bron_kerbosch_clique_number : bron_kerbosch_clique_number.cpp ;
 exe bron_kerbosch_print_cliques : bron_kerbosch_print_cliques.cpp ;
-#exe bucket_sorter : bucket_sorter.cpp ;
+exe bucket_sorter : bucket_sorter.cpp ;
 exe canonical_ordering : canonical_ordering.cpp ;
 # exe cc-internet : cc-internet.cpp ../build//boost_graph ;
 exe city_visitor : city_visitor.cpp ;
