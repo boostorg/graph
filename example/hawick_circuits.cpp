@@ -8,7 +8,6 @@
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/hawick_circuits.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <cstdlib>
@@ -32,11 +31,7 @@ struct cycle_printer
 
         // Get the property map containing the vertex indices
         // so we can print them.
-        typedef typename boost::property_map<
-                    Graph, boost::vertex_index_t
-                >::const_type IndexMap;
-
-        IndexMap indices = get(boost::vertex_index, g);
+        auto indices = get(boost::vertex_index, g);
 
         // Iterate over path printing each vertex that forms the cycle.
         typename Path::const_iterator i, before_end = boost::prior(p.end());
@@ -54,8 +49,8 @@ struct cycle_printer
 template <typename Graph, typename VertexPairIterator>
 void build_graph(Graph& graph, unsigned int const nvertices,
                  VertexPairIterator first, VertexPairIterator last) {
-    typedef boost::graph_traits<Graph> Traits;
-    typedef typename Traits::vertex_descriptor vertex_descriptor;
+    using Traits = boost::graph_traits<Graph>;
+    using vertex_descriptor = typename Traits::vertex_descriptor;
     std::map<unsigned int, vertex_descriptor> vertices;
 
     for (unsigned int i = 0; i < nvertices; ++i)
@@ -84,7 +79,7 @@ int main(int argc, char const* argv[]) {
         return EXIT_FAILURE;
     }
 
-    unsigned int num_vertices = boost::lexical_cast<unsigned int>(argv[1]);
+    unsigned int num_vertices = std::stoul(argv[1]);
     std::istream_iterator<unsigned int> first_vertex(std::cin), last_vertex;
     boost::directed_graph<> graph;
     build_graph(graph, num_vertices, first_vertex, last_vertex);

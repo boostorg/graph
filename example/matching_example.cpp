@@ -12,11 +12,12 @@
 #include <cassert>
 
 #include <boost/graph/max_cardinality_matching.hpp>
+#include "range_pair.hpp"
 
 
 using namespace boost;
 
-typedef adjacency_list<vecS, vecS, undirectedS> my_graph; 
+using my_graph = adjacency_list<vecS, vecS, undirectedS>; 
 
 int main()
 {
@@ -26,15 +27,14 @@ int main()
 
   const int n_vertices = 18;
 
-  std::vector<std::string> ascii_graph;
-
-  ascii_graph.push_back("           0       1---2       3       ");
-  ascii_graph.push_back("            \\     /     \\     /        ");
-  ascii_graph.push_back("             4---5       6---7         ");
-  ascii_graph.push_back("             |   |       |   |         ");
-  ascii_graph.push_back("             8---9      10---11        ");
-  ascii_graph.push_back("            /     \\     /     \\        ");
-  ascii_graph.push_back("     12   13      14---15      16   17 ");
+  std::vector<std::string> ascii_graph = {
+    "           0       1---2       3       ",
+    "            \\     /     \\     /        ",
+    "             4---5       6---7         ",
+    "             |   |       |   |         ",
+    "             8---9      10---11        ",
+    "            /     \\     /     \\        ",
+    "     12   13      14---15      16   17 "};
 
   // It has a perfect matching of size 8. There are two isolated
   // vertices that we'll use later...
@@ -76,24 +76,23 @@ int main()
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
-  for(std::vector<std::string>::iterator itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
-    std::cout << *itr << std::endl;
+  for (const auto& str : ascii_graph)
+    std::cout << str << std::endl;
 
   std::cout << std::endl << "Found a matching of size " << matching_size(g, &mate[0]) << std::endl;
 
   std::cout << "The matching is:" << std::endl;
-  
-  graph_traits<my_graph>::vertex_iterator vi, vi_end;
-  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
-      std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
+
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (mate[vertex] != graph_traits<my_graph>::null_vertex() && vertex < mate[vertex])
+      std::cout << "{" << vertex << ", " << mate[vertex] << "}" << std::endl;
 
   std::cout << std::endl;
 
   //now we'll add two edges, and the perfect matching has size 9
 
   ascii_graph.pop_back();
-  ascii_graph.push_back("     12---13      14---15      16---17 ");
+  ascii_graph.emplace_back("     12---13      14---15      16---17 ");
 
   add_edge(12,13,g);
   add_edge(16,17,g);
@@ -103,16 +102,16 @@ int main()
 
   std::cout << "In the following graph:" << std::endl << std::endl;
 
-  for(std::vector<std::string>::iterator itr = ascii_graph.begin(); itr != ascii_graph.end(); ++itr)
-    std::cout << *itr << std::endl;
+  for (const auto& str : ascii_graph)
+    std::cout << str << std::endl;
 
   std::cout << std::endl << "Found a matching of size " << matching_size(g, &mate[0]) << std::endl;
 
   std::cout << "The matching is:" << std::endl;
   
-  for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (mate[*vi] != graph_traits<my_graph>::null_vertex() && *vi < mate[*vi])
-      std::cout << "{" << *vi << ", " << mate[*vi] << "}" << std::endl;
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (mate[vertex] != graph_traits<my_graph>::null_vertex() && vertex < mate[vertex])
+      std::cout << "{" << vertex << ", " << mate[vertex] << "}" << std::endl;
 
   return 0;
 }

@@ -7,7 +7,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #include <boost/config.hpp>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 
 #include <vector>
@@ -48,37 +48,36 @@
  */
 
 using namespace boost;
-using namespace std;
 
 
 template <class VisitorList>
 struct edge_categorizer : public dfs_visitor<VisitorList> {
-  typedef dfs_visitor<VisitorList> Base;
+  using Base = dfs_visitor<VisitorList>;
 
   edge_categorizer(const VisitorList& v = null_visitor()) : Base(v) { }
 
   template <class Edge, class Graph>
   void tree_edge(Edge e, Graph& G) {
-    cout << "Tree edge: " << source(e, G) <<
-      " --> " <<  target(e, G) << endl;
+    std::cout << "Tree edge: " << source(e, G) <<
+      " --> " <<  target(e, G) << std::endl;
     Base::tree_edge(e, G);
   }
   template <class Edge, class Graph>
   void back_edge(Edge e, Graph& G) {
-    cout << "Back edge: " << source(e, G)
-         << " --> " <<  target(e, G) << endl;
+    std::cout << "Back edge: " << source(e, G)
+         << " --> " <<  target(e, G) << std::endl;
     Base::back_edge(e, G);
   }
   template <class Edge, class Graph>
   void forward_or_cross_edge(Edge e, Graph& G) {
-    cout << "Forward or cross edge: " << source(e, G)
-         << " --> " <<  target(e, G) << endl;
+    std::cout << "Forward or cross edge: " << source(e, G)
+         << " --> " <<  target(e, G) << std::endl;
     Base::forward_or_cross_edge(e, G);
   }
   template <class Edge, class Graph> 
   void finish_edge(Edge e, Graph& G) { 
-    cout << "Finish edge: " << source(e, G) << 
-      " --> " <<  target(e, G) << endl; 
+    std::cout << "Finish edge: " << source(e, G) << 
+      " --> " <<  target(e, G) << std::endl;
     Base::finish_edge(e, G); 
   } 
 };
@@ -94,7 +93,7 @@ main(int , char* [])
 
   using namespace boost;
   
-  typedef adjacency_list<> Graph;
+  using Graph = adjacency_list<>;
   
   Graph G(5);
   add_edge(0, 2, G);
@@ -107,18 +106,17 @@ main(int , char* [])
   add_edge(4, 0, G);
   add_edge(4, 1, G);
 
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+  using size_type = graph_traits<Graph>::vertices_size_type;
 
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
   int t = 0;
   depth_first_search(G, visitor(categorize_edges(
-                     make_pair(stamp_times(&d[0], t, on_discover_vertex()),
+                     std::make_pair(stamp_times(&d[0], t, on_discover_vertex()),
                                stamp_times(&f[0], t, on_finish_vertex())))));
 
-  std::vector<size_type>::iterator i, j;
-  for (i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)
-    cout << *i << " " << *j << endl;
+  for (auto i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)
+    std::cout << *i << " " << *j << std::endl;
 
   return 0;
 }

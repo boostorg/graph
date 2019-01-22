@@ -11,6 +11,8 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/tuple/tuple.hpp>
+#include "range_pair.hpp"
+
 enum family
 { Jeanie, Debbie, Rick, John, Amanda, Margaret, Benjamin, N };
 int
@@ -29,14 +31,11 @@ main()
   add_edge(Rick, Margaret, g);
   add_edge(John, Benjamin, g);
 
-  graph_traits < adjacency_list <> >::vertex_iterator i, end;
-  graph_traits < adjacency_list <> >::adjacency_iterator ai, a_end;
-  property_map < adjacency_list <>, vertex_index_t >::type
-    index_map = get(vertex_index, g);
+  auto index_map = get(vertex_index, g);
 
-  for (boost::tie(i, end) = vertices(g); i != end; ++i) {
-    std::cout << name[get(index_map, *i)];
-    boost::tie(ai, a_end) = adjacent_vertices(*i, g);
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << name[get(index_map, vertex)];
+    auto [ai, a_end] = adjacent_vertices(vertex, g);
     if (ai == a_end)
       std::cout << " has no children";
     else

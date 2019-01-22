@@ -10,14 +10,13 @@
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/topology.hpp>
-#include <boost/lexical_cast.hpp>
 #include <string>
 #include <iostream>
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/progress.hpp>
-#include <boost/shared_ptr.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -37,19 +36,19 @@ void usage()
             << "  Vertices and their positions are written to standard output with the label,\n  x-position, and y-position of a vertex on each line, separated by spaces.\n";
 }
 
-typedef boost::rectangle_topology<> topology_type;
-typedef topology_type::point_type point_type;
+using topology_type = boost::rectangle_topology<>;
+using point_type = topology_type::point_type;
 
-typedef adjacency_list<listS, vecS, undirectedS, 
-                       property<vertex_name_t, std::string> > Graph;
+using Graph = adjacency_list<listS, vecS, undirectedS, 
+                       property<vertex_name_t, std::string>>;
 
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
 
-typedef std::map<std::string, Vertex> NameToVertex;
+using NameToVertex = std::map<std::string, Vertex>;
 
 Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 {
-  NameToVertex::iterator i = names.find(name);
+  auto i = names.find(name);
   if (i == names.end())
     i = names.insert(std::make_pair(name, add_vertex(name, g))).first;
   return i->second;
@@ -57,7 +56,7 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 
 class progress_cooling : public linear_cooling<double>
 {
-  typedef linear_cooling<double> inherited;
+  using inherited = linear_cooling<double>;
 
  public:
   explicit progress_cooling(std::size_t iterations) : inherited(iterations) 
@@ -72,7 +71,7 @@ class progress_cooling : public linear_cooling<double>
   }
 
  private:
-  shared_ptr<boost::progress_display> display;
+  std::shared_ptr<boost::progress_display> display;
 };
 
 int main(int argc, char* argv[])
@@ -89,10 +88,10 @@ int main(int argc, char* argv[])
     if (arg == "--iterations") {
       ++arg_idx;
       if (arg_idx >= argc) { usage(); return -1; }
-      iterations = lexical_cast<int>(argv[arg_idx]);
+      iterations = std::stoi(argv[arg_idx]);
     } else {
-      if (width == 0.0) width = lexical_cast<double>(arg);
-      else if (height == 0.0) height = lexical_cast<double>(arg);
+      if (width == 0.0) width = std::stod(arg);
+      else if (height == 0.0) height = std::stod(arg);
       else {
         usage();
         return -1;
@@ -113,11 +112,10 @@ int main(int argc, char* argv[])
     add_edge(get_vertex(source, g, names), get_vertex(target, g, names), g);
   }
   
-  typedef std::vector<point_type> PositionVec;
+  using PositionVec = std::vector<point_type>;
   PositionVec position_vec(num_vertices(g));
-  typedef iterator_property_map<PositionVec::iterator, 
-                                property_map<Graph, vertex_index_t>::type>
-    PositionMap;
+  using PositionMap = iterator_property_map<PositionVec::iterator, 
+                                property_map<Graph, vertex_index_t>::type>;
   PositionMap position(position_vec.begin(), get(vertex_index, g));
 
   minstd_rand gen;
@@ -127,10 +125,9 @@ int main(int argc, char* argv[])
     (g, position, topo,
      cooling(progress_cooling(iterations)));
 
-  graph_traits<Graph>::vertex_iterator vi, vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    std::cout << get(vertex_name, g, *vi) << '\t'
-              << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << get(vertex_name, g, vertex) << '\t'
+              << position[vertex][0] << '\t' << position[vertex][1] << std::endl;
   }
   return 0;
 }

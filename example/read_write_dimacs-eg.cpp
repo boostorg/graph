@@ -35,6 +35,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/write_dimacs.hpp>
+#include "range_pair.hpp"
 
 
 /*************************************
@@ -61,25 +62,21 @@ struct zero_edge_capacity{
 int main()
 {
   using namespace boost;
-  typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
-  typedef adjacency_list < vecS, vecS, directedS,
-  no_property,
-  property < edge_capacity_t, long,
-  property < edge_reverse_t, Traits::edge_descriptor > > > Graph;
-  
-  typedef graph_traits<Graph>::out_edge_iterator out_edge_iterator;
-  typedef graph_traits<Graph>::edge_descriptor edge_descriptor;
-  typedef graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  using Traits = adjacency_list_traits<vecS, vecS, directedS>;
+  using Graph = adjacency_list<vecS, vecS, directedS,
+    no_property,
+    property<edge_capacity_t, long,
+    property<edge_reverse_t, Traits::edge_descriptor>>>;
+
+  using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   
   Graph g;
 
-  typedef property_map < Graph, edge_capacity_t >::type tCapMap;
-  typedef tCapMap::value_type tCapMapValue;
+  using tCapMap = property_map<Graph, edge_capacity_t>::type;
+  using tCapMapValue = tCapMap::value_type;
   
-  typedef property_map < Graph, edge_reverse_t >::type tRevEdgeMap;
-  
-  tCapMap capacity = get(edge_capacity, g);
-  tRevEdgeMap rev = get(edge_reverse, g);
+  auto capacity = get(edge_capacity, g);
+  auto rev = get(edge_reverse, g);
   
   vertex_descriptor s, t;
   /*reading the graph from stdin*/
@@ -89,21 +86,17 @@ int main()
   tCapMapValue augmented_flow = 0;
   
   //we take the source node and check for each outgoing edge e which has a target(p) if we can augment that path
-  out_edge_iterator oei,oe_end;
-  for(boost::tie(oei, oe_end) = out_edges(s, g); oei != oe_end; ++oei){
-    edge_descriptor from_source = *oei;
-    vertex_descriptor v = target(from_source, g);
-    edge_descriptor to_sink;
-    bool is_there;
-    boost::tie(to_sink, is_there) = edge(v, t, g);
+  for(const auto& from_source : make_range_pair(out_edges(s, g))){
+    auto v = target(from_source, g);
+    auto [to_sink, is_there] = edge(v, t, g);
     if( is_there ){
       if( get(capacity, to_sink) > get(capacity, from_source) ){ 
-        tCapMapValue to_augment = get(capacity, from_source);
+        auto to_augment = get(capacity, from_source);
         capacity[from_source] = 0;
         capacity[to_sink] -= to_augment;
         augmented_flow += to_augment;
       }else{
-        tCapMapValue to_augment = get(capacity, to_sink);
+        auto to_augment = get(capacity, to_sink);
         capacity[to_sink] = 0;
         capacity[from_source] -= to_augment;
         augmented_flow += to_augment;

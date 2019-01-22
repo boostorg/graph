@@ -13,31 +13,31 @@
 #include <boost/graph/degree_centrality.hpp>
 
 #include "helper.hpp"
+#include "range_pair.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The Actor type stores the name of each vertex in the graph.
 struct Actor
 {
-    string name;
+    std::string name;
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = directed_graph<Actor>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+using NameMap = property_map<Graph, std::string Actor::*>::type;
 
 // Declare a container type for influence and prestige (both
 // of which are degree centralities) and its corresponding
 // property map.
-typedef exterior_vertex_property<Graph, unsigned> CentralityProperty;
-typedef CentralityProperty::container_type CentralityContainer;
-typedef CentralityProperty::map_type CentralityMap;
+using CentralityProperty = exterior_vertex_property<Graph, unsigned>;
+using CentralityContainer = CentralityProperty::container_type;
+using CentralityMap = CentralityProperty::map_type;
 
 int
 main(int argc, char *argv[])
@@ -48,7 +48,7 @@ main(int argc, char *argv[])
     NameMap nm(get(&Actor::name, g));
 
     // Read the graph from standard input.
-    read_graph(g, nm, cin);
+    read_graph(g, nm, std::cin);
 
     // Compute the influence for the graph.
     CentralityContainer influence(num_vertices(g));
@@ -61,13 +61,11 @@ main(int argc, char *argv[])
     all_prestige_values(g, pm);
 
     // Print the degree centrality of each vertex
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        Vertex v = *i;
-        cout << setiosflags(ios::left) << setw(12)
+    for(const auto& v : make_range_pair(vertices(g))) {
+      std::cout << std::setiosflags(std::ios::left) << std::setw(12)
              << g[v].name << "\t"
              << im[v] << "\t"
-             << pm[v] << endl;
+             << pm[v] << std::endl;
     }
 
     return 0;

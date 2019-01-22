@@ -12,7 +12,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The cycle_printer is a visitor that will print the path that comprises
@@ -31,33 +30,31 @@ struct cycle_printer
     {
         // Get the property map containing the vertex indices
         // so we can print them.
-        typedef typename property_map<Graph, vertex_index_t>::const_type IndexMap;
-        IndexMap indices = get(vertex_index, g);
+        auto indices = get(vertex_index, g);
 
         // Iterate over path printing each vertex that forms the cycle.
-        typename Path::const_iterator i, end = p.end();
-        for(i = p.begin(); i != end; ++i) {
-            os << get(indices, *i) << " ";
+        for(const auto& vertex : p) {
+            os << get(indices, vertex) << " ";
         }
-        os << endl;
+        os << std::endl;
     }
     OutputStream& os;
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = directed_graph<>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 int
 main(int argc, char *argv[])
 {
     // Create the graph and read it from standard input.
     Graph g;
-    read_graph(g, cin);
+    read_graph(g, std::cin);
 
     // Instantiate the visitor for printing cycles
-    cycle_printer<ostream> vis(cout);
+    cycle_printer<std::ostream> vis(std::cout);
 
     // Use the Tiernan algorithm to visit all cycles, printing them
     // as they are found.

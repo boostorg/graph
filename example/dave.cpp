@@ -20,8 +20,8 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
-using namespace std;
 using namespace boost;
 /*
   This example does a best-first-search (using dijkstra's) and
@@ -71,20 +71,20 @@ b(14); d a
 
 */
 
-typedef property<vertex_color_t, default_color_type, 
-         property<vertex_distance_t,int> > VProperty;
-typedef int weight_t;
-typedef property<edge_weight_t,weight_t> EProperty;
+using VProperty = property<vertex_color_t, default_color_type, 
+         property<vertex_distance_t,int>>;
+using weight_t = int;
+using EProperty = property<edge_weight_t,weight_t>;
 
-typedef adjacency_list<vecS, vecS, directedS, VProperty, EProperty > Graph;
+using Graph = adjacency_list<vecS, vecS, directedS, VProperty, EProperty >;
 
 
 
 template <class Tag>
 struct endl_printer
-  : public boost::base_visitor< endl_printer<Tag> >
+  : public boost::base_visitor<endl_printer<Tag>>
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
   endl_printer(std::ostream& os) : m_os(os) { }
   template <class T, class Graph>
   void operator()(T, Graph&) { m_os << std::endl; }
@@ -97,9 +97,9 @@ endl_printer<Tag> print_endl(std::ostream& os, Tag) {
 
 template <class PA, class Tag>
 struct edge_printer
- : public boost::base_visitor< edge_printer<PA, Tag> >
+ : public boost::base_visitor<edge_printer<PA, Tag>>
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
 
   edge_printer(PA pa, std::ostream& os) : m_pa(pa), m_os(os) { }
 
@@ -120,9 +120,9 @@ print_edge(PA pa, std::ostream& os, Tag) {
 
 template <class NewGraph, class Tag>
 struct graph_copier 
-  : public boost::base_visitor<graph_copier<NewGraph, Tag> >
+  : public boost::base_visitor<graph_copier<NewGraph, Tag>>
 {
-  typedef Tag event_filter;
+  using event_filter = Tag;
 
   graph_copier(NewGraph& graph) : new_g(graph) { }
 
@@ -142,15 +142,12 @@ copy_graph(NewGraph& g, Tag) {
 template <class Graph, class Name>
 void print(Graph& G, Name name)
 {
-  typename boost::graph_traits<Graph>::vertex_iterator ui, uiend;
-  for (boost::tie(ui, uiend) = vertices(G); ui != uiend; ++ui) {
-    cout << name[*ui] << " --> ";
-    typename boost::graph_traits<Graph>::adjacency_iterator vi, viend;
-    for(boost::tie(vi, viend) = adjacent_vertices(*ui, G); vi != viend; ++vi)
-      cout << name[*vi] << " ";
-    cout << endl;
+  for(const auto& u : make_range_pair(vertices(G))) {
+    std::cout << name[u] << " --> ";
+    for(const auto& v : make_range_pair(adjacent_vertices(u, G)))
+      std::cout << name[v] << " ";
+    std::cout << std::endl;
   }
-    
 }
 
 
@@ -162,14 +159,13 @@ main(int , char* [])
   enum { a, b, c, d, e, f, g, N};
 
   Graph G(N);
-  boost::property_map<Graph, vertex_index_t>::type 
-    vertex_id = get(vertex_index, G);
+  auto vertex_id = get(vertex_index, G);
 
-  std::vector<weight_t> distance(N, (numeric_limits<weight_t>::max)());
-  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  std::vector<weight_t> distance(N, (std::numeric_limits<weight_t>::max)());
+  using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
   std::vector<Vertex> parent(N);
 
-  typedef std::pair<int,int> E;
+  using E = std::pair<int,int>;
 
   E edges[] = { E(a,c), E(a,d),
                 E(b,a), E(b,d),
@@ -191,9 +187,9 @@ main(int , char* [])
   print(G, name);
 
   adjacency_list<listS, vecS, directedS, 
-    property<vertex_color_t, default_color_type> > G_copy(N);
+    property<vertex_color_t, default_color_type>> G_copy(N);
 
-  cout << "Starting graph:" << endl;
+  std::cout << "Starting graph:" << std::endl;
 
   std::ostream_iterator<int> cout_int(std::cout, " ");
   std::ostream_iterator<char> cout_char(std::cout, " ");
@@ -227,8 +223,8 @@ main(int , char* [])
                                                 parent[0])).
      visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
 
-  cout << endl;
-  cout << "Result:" << endl;
+  std::cout << std::endl;
+  std::cout << "Result:" << std::endl;
   boost::breadth_first_search
     (G, vertex(a, G), 
      visitor(make_bfs_visitor(

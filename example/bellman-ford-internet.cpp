@@ -16,19 +16,18 @@ main()
   // ID numbers for the routers (vertices).
   enum
   { A, B, C, D, E, F, G, H, n_vertices };
-  const int n_edges = 11;
-  typedef std::pair < int, int >Edge;
+  using Edge = std::pair<int, int>;
 
   // The list of connections between routers stored in an array.
-  Edge edges[] = {
-  Edge(A, B), Edge(A, C),
-        Edge(B, D), Edge(B, E), Edge(C, E), Edge(C, F), Edge(D, H),
-        Edge(D, E), Edge(E, H), Edge(F, G), Edge(G, H)
+  const auto edges = {
+    Edge(A, B), Edge(A, C),
+    Edge(B, D), Edge(B, E), Edge(C, E), Edge(C, F), Edge(D, H),
+    Edge(D, E), Edge(E, H), Edge(F, G), Edge(G, H)
   };
 
   // Specify the graph type and declare a graph object
-  typedef edge_list < Edge*, Edge, std::ptrdiff_t, std::random_access_iterator_tag> Graph;
-  Graph g(edges, edges + n_edges);
+  using Graph = edge_list <const Edge*, Edge, std::ptrdiff_t, std::random_access_iterator_tag>;
+  Graph g(std::begin(edges), std::end(edges));
 
   // The transmission delay values for each edge.  
   float delay[] =
@@ -40,7 +39,7 @@ main()
   for (int i = 0; i < n_vertices; ++i)
     parent[i] = i;
   float distance[n_vertices];
-  std::fill(distance, distance + n_vertices, (std::numeric_limits < float >::max)());
+  std::fill(distance, distance + n_vertices, (std::numeric_limits<float>::max)());
   // Specify A as the source vertex
   distance[A] = 0;
 

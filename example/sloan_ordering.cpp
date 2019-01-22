@@ -19,10 +19,7 @@
 #include <boost/graph/bandwidth.hpp>
 #include <boost/graph/profile.hpp>
 #include <boost/graph/wavefront.hpp>
-
-
-using std::cout;
-using std::endl;
+#include "range_pair.hpp"
 
 /*
   Sample Output
@@ -63,17 +60,16 @@ using std::endl;
 
 int main(int , char* [])
 {
-  cout << endl;  
-  cout << "#####################################" << endl; 
-  cout << "### First light of sloan-ordering ###" << endl;
-  cout << "#####################################" << endl << endl;
+  std::cout << std::endl;  
+  std::cout << "#####################################" << std::endl; 
+  std::cout << "### First light of sloan-ordering ###" << std::endl;
+  std::cout << "#####################################" << std::endl << std::endl;
 
   using namespace boost;
-  using namespace std;
  
 
   //Defining the graph type 
-  typedef adjacency_list<
+  using Graph = adjacency_list<
     setS, 
     vecS, 
     undirectedS, 
@@ -85,14 +81,14 @@ int main(int , char* [])
     int,
     property<
     vertex_priority_t,
-    double > > > > Graph;
+    double>>>>;
   
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
+  using size_type = graph_traits<Graph>::vertices_size_type;
 
-  typedef std::pair<std::size_t, std::size_t> Pair;
+  using Pair = std::pair<std::size_t, std::size_t>;
   
-  Pair edges[14] = { Pair(0,3), //a-d
+  Pair edges[] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e
@@ -110,19 +106,16 @@ int main(int , char* [])
   
   //Creating a graph and adding the edges from above into it
   Graph G(10);
-  for (int i = 0; i < 14; ++i)
-    add_edge(edges[i].first, edges[i].second, G);
-
-  //Creating two iterators over the vertices
-  graph_traits<Graph>::vertex_iterator ui, ui_end;
+  for (const auto& edge : edges)
+    add_edge(edge.first, edge.second, G);
 
   //Creating a property_map with the degrees of the degrees of each vertex
-  property_map<Graph,vertex_degree_t>::type deg = get(vertex_degree, G);
-  for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-    deg[*ui] = degree(*ui, G);
+  auto deg = get(vertex_degree, G);
+  for (const auto& vertex : make_range_pair(vertices(G)))
+    deg[vertex] = degree(vertex, G);
 
   //Creating a property_map for the indices of a vertex
-  property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, G);
+  auto index_map = get(vertex_index, G);
 
   std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
   std::cout << "original profile: " << profile(G) << std::endl;
@@ -139,16 +132,16 @@ int main(int , char* [])
   {
     
     //Setting the start node
-    Vertex s = vertex(0, G);
+    auto s = vertex(0, G);
     int ecc;   //defining a variable for the pseudoperipheral radius
     
     //Calculating the pseudoeperipheral node and radius
-    Vertex e = pseudo_peripheral_pair(G, s, ecc, get(vertex_color, G), get(vertex_degree, G) );
+    auto e = pseudo_peripheral_pair(G, s, ecc, get(vertex_color, G), get(vertex_degree, G) );
 
-    cout << endl;
-    cout << "Starting vertex: " << s << endl;
-    cout << "Pseudoperipheral vertex: " << e << endl;
-    cout << "Pseudoperipheral radius: " << ecc << endl << endl;
+    std::cout << std::endl;
+    std::cout << "Starting vertex: " << s << std::endl;
+    std::cout << "Pseudoperipheral vertex: " << e << std::endl;
+    std::cout << "Pseudoperipheral radius: " << ecc << std::endl << std::endl;
 
 
 
@@ -156,13 +149,12 @@ int main(int , char* [])
     sloan_ordering(G, s, e, sloan_order.begin(), get(vertex_color, G), 
                            get(vertex_degree, G), get(vertex_priority, G));
     
-    cout << "Sloan ordering starting at: " << s << endl;
-    cout << "  ";    
+    std::cout << "Sloan ordering starting at: " << s << std::endl;
+    std::cout << "  ";    
     
-    for (std::vector<Vertex>::const_iterator i = sloan_order.begin();
-         i != sloan_order.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    for (const auto& vertex : sloan_order)
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != sloan_order.size(); ++c)
       perm[index_map[sloan_order[c]]] = c;
@@ -197,12 +189,11 @@ int main(int , char* [])
                         make_degree_map(G), 
                         get(vertex_priority, G) );
       
-      cout << endl << "Sloan ordering without a start-vertex:" << endl;
-      cout << "  ";
-      for (std::vector<Vertex>::const_iterator i=sloan_order.begin();
-           i != sloan_order.end(); ++i)
-        cout << index_map[*i] << " ";
-      cout << endl;
+      std::cout << std::endl << "Sloan ordering without a start-vertex:" << std::endl;
+      std::cout << "  ";
+      for (const auto& vertex : sloan_order)
+        std::cout << index_map[vertex] << " ";
+      std::cout << std::endl;
       
       for (size_type c = 0; c != sloan_order.size(); ++c)
         perm[index_map[sloan_order[c]]] = c;
@@ -225,10 +216,10 @@ int main(int , char* [])
   
 
   
-  cout << endl;
-  cout << "###############################" << endl;
-  cout << "### sloan-ordering finished ###" << endl;
-  cout << "###############################" << endl << endl;
+  std::cout << std::endl;
+  std::cout << "###############################" << std::endl;
+  std::cout << "### sloan-ordering finished ###" << std::endl;
+  std::cout << "###############################" << std::endl << std::endl;
   return 0;
 
 }

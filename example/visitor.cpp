@@ -45,11 +45,10 @@
 #include <boost/graph/depth_first_search.hpp>
 
 using namespace boost;
-using namespace std;
 
 template <class Tag>
-struct edge_printer : public base_visitor<edge_printer<Tag> > {
-  typedef Tag event_filter;
+struct edge_printer : public base_visitor<edge_printer<Tag>> {
+  using event_filter = Tag;
   edge_printer(std::string edge_t) : m_edge_type(edge_t) { }
   template <class Edge, class Graph>
   void operator()(Edge e, Graph& G) {
@@ -69,34 +68,28 @@ main(int, char*[])
 
   using namespace boost;
   
-  typedef adjacency_list<> Graph;
-  typedef std::pair<int,int> E;
-  E edges[] = { E(0, 2),
+  using Graph = adjacency_list<>;
+  using E = std::pair<int,int>;
+  const auto edges = { E(0, 2),
                 E(1, 1), E(1, 3),
                 E(2, 1), E(2, 3),
                 E(3, 1), E(3, 4),
                 E(4, 0), E(4, 1) };  
-#if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  Graph G(5);
-  for (std::size_t j = 0; j < sizeof(edges)/sizeof(E); ++j)
-    add_edge(edges[j].first, edges[j].second, G);
-#else
-  Graph G(edges, edges + sizeof(edges)/sizeof(E), 5);
-#endif
+  Graph G(std::begin(edges), std::end(edges), 5);
 
-  typedef boost::graph_traits<Graph>::vertices_size_type size_type;
+  using size_type = boost::graph_traits<Graph>::vertices_size_type;
   
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
 
-  cout << "DFS categorized directed graph" << endl;
+  std::cout << "DFS categorized directed graph" << std::endl;
   depth_first_search(G, visitor(make_dfs_visitor(
       make_list(print_edge("tree", on_tree_edge()),
                 print_edge("back", on_back_edge()),
                 print_edge("forward or cross", on_forward_or_cross_edge())
                 ))));
 
-  cout << endl << "BFS categorized directed graph" << endl;
+  std::cout << std::endl << "BFS categorized directed graph" << std::endl;
   boost::breadth_first_search
     (G, vertex(0, G), visitor(make_bfs_visitor(
      std::make_pair(print_edge("tree", on_tree_edge()),

@@ -19,21 +19,19 @@ main()
   GraphvizDigraph g;
   read_graphviz("figs/scc.dot", g);
 
-  typedef graph_traits < GraphvizDigraph >::vertex_descriptor vertex_t;
-  std::map < vertex_t, int >component;
+  using vertex_t = graph_traits<GraphvizDigraph>::vertex_descriptor;
+  std::map<vertex_t, int> component;
 
   strong_components(g, make_assoc_property_map(component));
 
-  property_map < GraphvizDigraph, vertex_attribute_t >::type
-    vertex_attr_map = get(vertex_attribute, g);
+  auto vertex_attr_map = get(vertex_attribute, g);
   std::string color[] = {
   "white", "gray", "black", "lightgray"};
-  graph_traits < GraphvizDigraph >::vertex_iterator vi, vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    vertex_attr_map[*vi]["color"] = color[component[*vi]];
-    vertex_attr_map[*vi]["style"] = "filled";
-    if (vertex_attr_map[*vi]["color"] == "black")
-      vertex_attr_map[*vi]["fontcolor"] = "white";
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    vertex_attr_map[vertex]["color"] = color[component[vertex]];
+    vertex_attr_map[vertex]["style"] = "filled";
+    if (vertex_attr_map[vertex]["color"] == "black")
+      vertex_attr_map[vertex]["fontcolor"] = "white";
   }
   write_graphviz("figs/scc-out.dot", g);
 

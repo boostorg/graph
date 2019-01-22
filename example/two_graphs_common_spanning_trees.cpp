@@ -14,10 +14,7 @@
 #include <exception>
 #include <vector>
 
-
-using namespace std;
-
-typedef
+using Graph =
 boost::adjacency_list
   <
     boost::vecS,         // OutEdgeList
@@ -27,52 +24,45 @@ boost::adjacency_list
     boost::no_property,  // EdgeProperties
     boost::no_property,  // GraphProperties
     boost::listS         // EdgeList
-  >
-Graph
-;
+  >;
 
-typedef
-boost::graph_traits<Graph>::vertex_descriptor
-vertex_descriptor;
+using vertex_descriptor =
+boost::graph_traits<Graph>::vertex_descriptor;
 
-typedef
-boost::graph_traits<Graph>::edge_descriptor
-edge_descriptor;
+using edge_descriptor =
+boost::graph_traits<Graph>::edge_descriptor;
 
-typedef
-boost::graph_traits<Graph>::vertex_iterator
-vertex_iterator;
+using vertex_iterator =
+boost::graph_traits<Graph>::vertex_iterator;
 
-typedef
-boost::graph_traits<Graph>::edge_iterator
-edge_iterator;
+using edge_iterator =
+boost::graph_traits<Graph>::edge_iterator;
 
 
 int main(int argc, char **argv)
 {
   Graph iG, vG;
-  vector< edge_descriptor > iG_o;
-  vector< edge_descriptor > vG_o;
+  std::vector<edge_descriptor> iG_o = {
+    boost::add_edge(0, 1, iG).first,
+    boost::add_edge(0, 2, iG).first,
+    boost::add_edge(0, 3, iG).first,
+    boost::add_edge(0, 4, iG).first,
+    boost::add_edge(1, 2, iG).first,
+    boost::add_edge(3, 4, iG).first};
 
-  iG_o.push_back(boost::add_edge(0, 1, iG).first);
-  iG_o.push_back(boost::add_edge(0, 2, iG).first);
-  iG_o.push_back(boost::add_edge(0, 3, iG).first);
-  iG_o.push_back(boost::add_edge(0, 4, iG).first);
-  iG_o.push_back(boost::add_edge(1, 2, iG).first);
-  iG_o.push_back(boost::add_edge(3, 4, iG).first);
+  std::vector<edge_descriptor> vG_o= {
+    boost::add_edge(1, 2, vG).first,
+    boost::add_edge(2, 0, vG).first,
+    boost::add_edge(2, 3, vG).first,
+    boost::add_edge(4, 3, vG).first,
+    boost::add_edge(0, 3, vG).first,
+    boost::add_edge(0, 4, vG).first};
 
-  vG_o.push_back(boost::add_edge(1, 2, vG).first);
-  vG_o.push_back(boost::add_edge(2, 0, vG).first);
-  vG_o.push_back(boost::add_edge(2, 3, vG).first);
-  vG_o.push_back(boost::add_edge(4, 3, vG).first);
-  vG_o.push_back(boost::add_edge(0, 3, vG).first);
-  vG_o.push_back(boost::add_edge(0, 4, vG).first);
+  std::vector<bool> inL(iG_o.size(), false);
 
-  vector<bool> inL(iG_o.size(), false);
-
-  std::vector< std::vector<bool> > coll;
+  std::vector<std::vector<bool>> coll;
   boost::tree_collector<
-      std::vector< std::vector<bool> >,
+      std::vector<std::vector<bool>>,
       std::vector<bool>
     > tree_collector(coll);
   boost::two_graphs_common_spanning_trees
@@ -84,11 +74,12 @@ int main(int argc, char **argv)
       tree_collector,
       inL
     );
-  
-  std::vector< std::vector<bool> >::iterator it;
-  for(it = coll.begin(); it != coll.end(); ++it) {
-    // Here you can play with the trees that the algorithm has found.
+
+  // Here you can play with the trees that the algorithm has found.
+  /*
+  for(const auto& vec : coll) {
   }
+  */
 
   return 0;
 }

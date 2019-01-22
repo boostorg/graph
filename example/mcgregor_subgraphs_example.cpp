@@ -11,7 +11,6 @@
 #include <iostream>
 #include <string>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -26,7 +25,7 @@ using namespace boost;
 template <typename Graph>
 struct example_callback {
 
-  typedef typename graph_traits<Graph>::vertices_size_type VertexSizeFirst;
+  using VertexSizeFirst = typename graph_traits<Graph>::vertices_size_type;
 
   example_callback(const Graph& graph1) :
     m_graph1(graph1) { }
@@ -38,8 +37,8 @@ struct example_callback {
                   VertexSizeFirst subgraph_size) {
 
     // Fill membership map for first graph
-    typedef typename property_map<Graph, vertex_index_t>::type VertexIndexMap;
-    typedef shared_array_property_map<bool, VertexIndexMap> MembershipMap;
+    using VertexIndexMap = typename property_map<Graph, vertex_index_t>::type;
+    using MembershipMap = shared_array_property_map<bool, VertexIndexMap>;
       
     MembershipMap membership_map1(num_vertices(m_graph1),
                                   get(vertex_index, m_graph1));
@@ -47,8 +46,8 @@ struct example_callback {
     fill_membership_map<Graph>(m_graph1, correspondence_map_1_to_2, membership_map1);
 
     // Generate filtered graphs using membership map
-    typedef typename membership_filtered_graph_traits<Graph, MembershipMap>::graph_type
-      MembershipFilteredGraph;
+    using MembershipFilteredGraph =
+      typename membership_filtered_graph_traits<Graph, MembershipMap>::graph_type;
 
     MembershipFilteredGraph subgraph1 =
       make_membership_filtered_graph(m_graph1, membership_map1);
@@ -71,19 +70,17 @@ int main (int argc, char *argv[]) {
 
   // Using a vecS graph here so that we don't have to mess around with
   // a vertex index map; it will be implicit.
-  typedef adjacency_list<listS, vecS, directedS,
+  using Graph = adjacency_list<listS, vecS, directedS,
     property<vertex_name_t, unsigned int,
-    property<vertex_index_t, unsigned int> >,
-    property<edge_name_t, unsigned int> > Graph;
-
-  typedef property_map<Graph, vertex_name_t>::type VertexNameMap;
+    property<vertex_index_t, unsigned int>>,
+    property<edge_name_t, unsigned int>>;
 
   // Test maximum and unique variants on known graphs
   Graph graph_simple1, graph_simple2;
   example_callback<Graph> user_callback(graph_simple1);
 
-  VertexNameMap vname_map_simple1 = get(vertex_name, graph_simple1);
-  VertexNameMap vname_map_simple2 = get(vertex_name, graph_simple2);
+  auto vname_map_simple1 = get(vertex_name, graph_simple1);
+  auto vname_map_simple2 = get(vertex_name, graph_simple2);
 
   // Graph that looks like a triangle
   put(vname_map_simple1, add_vertex(graph_simple1), 1);

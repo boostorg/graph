@@ -18,18 +18,16 @@
 namespace foo
 {
   using namespace boost;
-    template < class RandomAccessIterator, class IndexMap >
+    template <class RandomAccessIterator, class IndexMap>
     class iterator_property_map:public boost::put_get_helper <
-    typename std::iterator_traits < RandomAccessIterator >::reference,
-    iterator_property_map < RandomAccessIterator, IndexMap > >
+    typename std::iterator_traits<RandomAccessIterator>::reference,
+    iterator_property_map<RandomAccessIterator, IndexMap>>
   {
   public:
-    typedef std::ptrdiff_t key_type;
-    typedef typename std::iterator_traits < RandomAccessIterator >::value_type
-      value_type;
-    typedef typename std::iterator_traits < RandomAccessIterator >::reference
-      reference;
-    typedef boost::lvalue_property_map_tag category;
+    using key_type = std::ptrdiff_t;
+    using value_type = typename std::iterator_traits<RandomAccessIterator>::value_type;
+    using reference = typename std::iterator_traits<RandomAccessIterator>::reference;
+    using category = boost::lvalue_property_map_tag;
 
       iterator_property_map(RandomAccessIterator cc = RandomAccessIterator(),
                             const IndexMap & _id =
@@ -50,9 +48,9 @@ namespace foo
 int
 main()
 {
-  typedef std::vector < std::string > vec_t;
-  typedef foo::iterator_property_map < vec_t::iterator,
-    boost::identity_property_map > pmap_t;
+  using vec_t = std::vector<std::string>;
+  using pmap_t = foo::iterator_property_map<vec_t::iterator,
+    boost::identity_property_map>;
   using namespace boost;
   BOOST_CONCEPT_ASSERT(( Mutable_LvaluePropertyMapConcept<pmap_t, int> ));
   return 0;

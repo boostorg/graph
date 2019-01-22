@@ -8,7 +8,7 @@
 #include <fstream>              // for file I/O
 #include <boost/graph/graphviz.hpp>     // for read/write_graphviz()
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/lexical_cast.hpp>
+#include "range_pair.hpp"
 
 namespace boost {
   enum graph_color_t { graph_color = 5556 };
@@ -19,13 +19,12 @@ int
 main()
 {
   using namespace boost;
-  typedef 
+  using g_dot_type = 
     adjacency_list<vecS, vecS, directedS,
                    property<vertex_name_t, std::string>, 
                    property<edge_color_t, std::string,
-                            property<edge_weight_t, int> >,
-                   property<graph_color_t, std::string> >
-    g_dot_type;
+                            property<edge_weight_t, int>>,
+                   property<graph_color_t, std::string>>;
   g_dot_type g_dot;
 
   dynamic_properties dp(ignore_other_properties);
@@ -38,35 +37,33 @@ main()
     read_graphviz(infile, g_dot, dp);
   }
 
-  typedef adjacency_list < vecS, vecS, directedS, no_property,
-    property < edge_weight_t, int > > Graph;
-  typedef graph_traits < Graph >::vertex_descriptor vertex_descriptor;
+  using Graph = adjacency_list<vecS, vecS, directedS, no_property,
+    property<edge_weight_t, int>>;
+  using vertex_descriptor = graph_traits<Graph>::vertex_descriptor;
   Graph g(num_vertices(g_dot));
-  graph_traits < g_dot_type >::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g_dot); ei != ei_end; ++ei) {
-    int weight = get(edge_weight, g_dot, *ei);
-    property < edge_weight_t, int >edge_property(weight);
-    add_edge(source(*ei, g_dot), target(*ei, g_dot), edge_property, g);
+  for (const auto& edge : make_range_pair(edges(g_dot))) {
+    auto weight = get(edge_weight, g_dot, edge);
+    property<edge_weight_t, int> edge_property(weight);
+    add_edge(source(edge, g_dot), target(edge, g_dot), edge_property, g);
   }
 
   vertex_descriptor router_six;
-  graph_traits < g_dot_type >::vertex_iterator vi, vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
-    if ("RT6" == get(vertex_name, g_dot, *vi)) {
-      router_six = *vi;
+  for (const auto& vertex : make_range_pair(vertices(g_dot)))
+    if ("RT6" == get(vertex_name, g_dot, vertex)) {
+      router_six = vertex;
       break;
     }
 
-  std::vector < vertex_descriptor > parent(num_vertices(g));
+  std::vector<vertex_descriptor> parent(num_vertices(g));
   // All vertices start out as there own parent
-  typedef graph_traits < Graph >::vertices_size_type size_type;
+  using size_type = graph_traits<Graph>::vertices_size_type;
   for (size_type p = 0; p < num_vertices(g); ++p)
     parent[p] = p;
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   std::vector<int> distance(num_vertices(g));
-  property_map<Graph, edge_weight_t>::type weightmap = get(edge_weight, g);
-  property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
+  auto weightmap = get(edge_weight, g);
+  auto indexmap = get(vertex_index, g);
   dijkstra_shortest_paths
     (g, router_six, &parent[0], &distance[0], weightmap,
      indexmap, std::less<int>(), closed_plus<int>(), 
@@ -75,10 +72,9 @@ main()
   dijkstra_shortest_paths(g, router_six, predecessor_map(&parent[0]));
 #endif
 
-  graph_traits < g_dot_type >::edge_descriptor e;
   for (size_type i = 0; i < num_vertices(g); ++i)
     if (parent[i] != i) {
-      e = edge(parent[i], i, g_dot).first;
+      auto e = edge(parent[i], i, g_dot).first;
       put(edge_color, g_dot, e, "black");
     }
 
@@ -90,13 +86,13 @@ main()
 
   std::ofstream rtable("routing-table.dat");
   rtable << "Dest    Next Hop    Total Cost" << std::endl;
-  for (boost::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
-    if (parent[*vi] != *vi) {
-      rtable << get(vertex_name, g_dot, *vi) << "    ";
-      vertex_descriptor v = *vi, child;
+  for (const auto& vertex : make_range_pair(vertices(g_dot)))
+    if (parent[vertex] != vertex) {
+      rtable << get(vertex_name, g_dot, vertex) << "    ";
+      auto v = vertex;
+      vertex_descriptor child;
       int path_cost = 0;
-      property_map < Graph, edge_weight_t >::type
-        weight_map = get(edge_weight, g);
+      auto weight_map = get(edge_weight, g);
       do {
         path_cost += get(weight_map, edge(parent[v], v, g).first);
         child = v;

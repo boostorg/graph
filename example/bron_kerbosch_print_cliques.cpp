@@ -12,7 +12,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // The clique_printer is a visitor that will print the vertices that comprise
@@ -28,11 +27,10 @@ struct clique_printer
     void clique(const Clique& c, const Graph& g)
     {
         // Iterate over the clique and print each vertex within it.
-        typename Clique::const_iterator i, end = c.end();
-        for(i = c.begin(); i != end; ++i) {
-            os << g[*i].name << " ";
+        for(const auto& vertex : c) {
+            os << g[vertex].name << " ";
         }
-        os << endl;
+        os << std::endl;
     }
     OutputStream& os;
 };
@@ -40,17 +38,17 @@ struct clique_printer
 // The Actor type stores the name of each vertex in the graph.
 struct Actor
 {
-    string name;
+    std::string name;
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef undirected_graph<Actor> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = undirected_graph<Actor>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string Actor::*>::type NameMap;
+using NameMap = property_map<Graph, std::string Actor::*>::type;
 
 int
 main(int argc, char *argv[])
@@ -60,10 +58,10 @@ main(int argc, char *argv[])
     NameMap nm(get(&Actor::name, g));
 
     // Read the graph from standard input.
-    read_graph(g, nm, cin);
+    read_graph(g, nm, std::cin);
 
     // Instantiate the visitor for printing cliques
-    clique_printer<ostream> vis(cout);
+    clique_printer<std::ostream> vis(std::cout);
 
     // Use the Bron-Kerbosch algorithm to find all cliques, printing them
     // as they are found.

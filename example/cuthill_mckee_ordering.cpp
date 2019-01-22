@@ -15,6 +15,7 @@
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
+#include "range_pair.hpp"
 
 /*
   Sample Output
@@ -32,15 +33,14 @@
 int main(int , char* [])
 {
   using namespace boost;
-  using namespace std;
-  typedef adjacency_list<vecS, vecS, undirectedS, 
+  using Graph = adjacency_list<vecS, vecS, undirectedS, 
      property<vertex_color_t, default_color_type,
-       property<vertex_degree_t,int> > > Graph;
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+       property<vertex_degree_t,int>>>;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
+  using size_type = graph_traits<Graph>::vertices_size_type;
 
-  typedef std::pair<std::size_t, std::size_t> Pair;
-  Pair edges[14] = { Pair(0,3), //a-d
+  using Pair = std::pair<std::size_t, std::size_t>;
+  Pair edges[] = { Pair(0,3), //a-d
                      Pair(0,5),  //a-f
                      Pair(1,2),  //b-c
                      Pair(1,4),  //b-e
@@ -56,33 +56,29 @@ int main(int , char* [])
                      Pair(6,7) }; //g-h 
   
   Graph G(10);
-  for (int i = 0; i < 14; ++i)
-    add_edge(edges[i].first, edges[i].second, G);
+  for (const auto& edge : edges)
+    add_edge(edge.first, edge.second, G);
 
-  graph_traits<Graph>::vertex_iterator ui, ui_end;
+  auto deg = get(vertex_degree, G);
+  for(const auto& v : make_range_pair(vertices(G)))
+    deg[v] = degree(v, G);
 
-  property_map<Graph,vertex_degree_t>::type deg = get(vertex_degree, G);
-  for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
-    deg[*ui] = degree(*ui, G);
-
-  property_map<Graph, vertex_index_t>::type
-    index_map = get(vertex_index, G);
+  auto index_map = get(vertex_index, G);
 
   std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
 
   std::vector<Vertex> inv_perm(num_vertices(G));
   std::vector<size_type> perm(num_vertices(G));
   {
-    Vertex s = vertex(6, G);
+    auto s = vertex(6, G);
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G), 
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";    
-    for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
-         i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    std::cout << "Reverse Cuthill-McKee ordering starting at: " << s << std::endl;
+    std::cout << "  ";    
+    for (const auto& vertex : inv_perm)
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
@@ -91,16 +87,15 @@ int main(int , char* [])
               << std::endl;
   }
   {
-    Vertex s = vertex(0, G);
+    auto s = vertex(0, G);
     //reverse cuthill_mckee_ordering
     cuthill_mckee_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                            get(vertex_degree, G));
-    cout << "Reverse Cuthill-McKee ordering starting at: " << s << endl;
-    cout << "  ";
-    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    std::cout << "Reverse Cuthill-McKee ordering starting at: " << s << std::endl;
+    std::cout << "  ";
+    for (const auto& vertex : inv_perm)
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
@@ -114,12 +109,11 @@ int main(int , char* [])
     cuthill_mckee_ordering(G, inv_perm.rbegin(), get(vertex_color, G),
                            make_degree_map(G));
     
-    cout << "Reverse Cuthill-McKee ordering:" << endl;
-    cout << "  ";
-    for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
-       i != inv_perm.end(); ++i)
-      cout << index_map[*i] << " ";
-    cout << endl;
+    std::cout << "Reverse Cuthill-McKee ordering:" << std::endl;
+    std::cout << "  ";
+    for (const auto& vertex : inv_perm)
+      std::cout << index_map[vertex] << " ";
+    std::cout << std::endl;
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;

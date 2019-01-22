@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
 
-using namespace std;
 using namespace boost;
 
 
@@ -43,8 +42,8 @@ template <class Graph>
 struct exercise_edge {
   exercise_edge(Graph& g) : G(g) {}
 
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Edge e) const
   {
     //begin
@@ -52,11 +51,11 @@ struct exercise_edge {
     // edge_traits class
     // Use the source() and target() functions to access the vertices
     // that belong to Edge e
-    Vertex src = source(e, G);
-    Vertex targ = target(e, G);
+    auto src = source(e, G);
+    auto targ = target(e, G);
 
     // print out the vertex id's just because 
-    cout << "(" << src << "," << targ << ") ";
+    std::cout << "(" << src << "," << targ << ") ";
     //end
   }
 
@@ -67,22 +66,22 @@ struct exercise_edge {
 int
 main()
 {
-  typedef adjacency_list<> MyGraph;
+  using MyGraph = adjacency_list<>;
 
-  typedef pair<int,int> Pair;
-  Pair edge_array[8] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
+  using Pair = std::pair<int,int>;
+  Pair edge_array[] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
                          Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1) };
 
   // Construct a graph using the edge_array (passing in pointers
   // (iterators) to the beginning and end of the array), and
   // specifying the number of vertices as 5
   MyGraph G(5);
-  for (int i=0; i<8; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, G);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, G);
 
   // Use the STL for_each algorithm to "exercise" all of the edges in
   // the graph
-  for_each(edges(G).first, edges(G).second, exercise_edge<MyGraph>(G));
-  cout << endl;
+  std::for_each(edges(G).first, edges(G).second, exercise_edge<MyGraph>(G));
+  std::cout << std::endl;
   return 0;
 }

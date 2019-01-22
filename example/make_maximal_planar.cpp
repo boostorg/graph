@@ -17,6 +17,7 @@
 #include <boost/graph/make_maximal_planar.hpp>
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
+#include "range_pair.hpp"
 
 
 
@@ -43,14 +44,10 @@ struct face_counter : public planar_face_traversal_visitor
 int main(int argc, char** argv)
 {
 
-  typedef adjacency_list
-    < vecS,
-      vecS,
-      undirectedS,
-      property<vertex_index_t, int>,
-      property<edge_index_t, int>
-    > 
-    graph;
+  using graph = adjacency_list<vecS, vecS,
+    undirectedS,
+    property<vertex_index_t, int>,
+    property<edge_index_t, int>>;
 
   // Create the graph - a straight line
   graph g(10);
@@ -71,15 +68,14 @@ int main(int argc, char** argv)
             << 2*num_vertices(g) - 4 << " faces." << std::endl;
 
   //Initialize the interior edge index
-  property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
+  auto e_index = get(edge_index, g);
   graph_traits<graph>::edges_size_type edge_count = 0;
-  graph_traits<graph>::edge_iterator ei, ei_end;
-  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    put(e_index, *ei, edge_count++);
+  for(const auto& edge : make_range_pair(edges(g)))
+    put(e_index, edge, edge_count++);
   
   
   //Test for planarity; compute the planar embedding as a side-effect
-  typedef std::vector< graph_traits<graph>::edge_descriptor > vec_t;
+  using vec_t = std::vector<graph_traits<graph>::edge_descriptor>;
   std::vector<vec_t> embedding(num_vertices(g));
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::embedding = 
@@ -94,8 +90,8 @@ int main(int argc, char** argv)
 
   // Re-initialize the edge index, since we just added a few edges
   edge_count = 0;
-  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    put(e_index, *ei, edge_count++);
+  for(const auto& edge : make_range_pair(edges(g)))
+    put(e_index, edge, edge_count++);
 
 
   //Test for planarity again; compute the planar embedding as a side-effect
@@ -116,8 +112,8 @@ int main(int argc, char** argv)
 
   // Re-initialize the edge index, since we just added a few edges
   edge_count = 0;
-  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    put(e_index, *ei, edge_count++);
+  for(const auto& edge : make_range_pair(edges(g)))
+    put(e_index, edge, edge_count++);
 
   // Test for planarity one final time; compute the planar embedding as a 
   // side-effect

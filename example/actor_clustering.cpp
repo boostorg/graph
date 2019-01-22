@@ -22,8 +22,8 @@
 #include <iostream>
 #include <string>
 #include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
 #include <map>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -34,10 +34,10 @@ struct Actor
   int id;
 };
 
-typedef adjacency_list<vecS, vecS, undirectedS, Actor,
-                       property<edge_centrality_t, double> > ActorGraph;
-typedef graph_traits<ActorGraph>::vertex_descriptor Vertex;
-typedef graph_traits<ActorGraph>::edge_descriptor Edge;
+using ActorGraph = adjacency_list<vecS, vecS, undirectedS, Actor,
+  property<edge_centrality_t, double>>;
+using Vertex = graph_traits<ActorGraph>::vertex_descriptor;
+using Edge = graph_traits<ActorGraph>::edge_descriptor;
 
 void load_actor_graph(std::istream& in, ActorGraph& g)
 {
@@ -48,23 +48,23 @@ void load_actor_graph(std::istream& in, ActorGraph& g)
     std::vector<Vertex> actors_in_movie;
 
     // Map from the actor numbers on this line to the actor vertices
-    typedef tokenizer<char_separator<char> > Tok;
+    using Tok = tokenizer<char_separator<char>>;
     Tok tok(line, char_separator<char>(" "));
-    for (Tok::iterator id = tok.begin(); id != tok.end(); ++id) {
-      int actor_id = lexical_cast<int>(*id);
-      std::map<int, Vertex>::iterator v = actors.find(actor_id);
+    for (const auto& id : tok) {
+      auto actor_id = std::stoi(id);
+      auto v = actors.find(actor_id);
       if (v == actors.end()) {
-        Vertex new_vertex = add_vertex(Actor(actor_id), g);
+        auto new_vertex = add_vertex(Actor(actor_id), g);
         actors[actor_id] = new_vertex;
-        actors_in_movie.push_back(new_vertex);
+        actors_in_movie.emplace_back(new_vertex);
       } else {
-        actors_in_movie.push_back(v->second);
+        actors_in_movie.emplace_back(v->second);
       }
     }
 
-    for (std::vector<Vertex>::iterator i = actors_in_movie.begin();
+    for (auto i = actors_in_movie.begin();
          i != actors_in_movie.end(); ++i) {
-      for (std::vector<Vertex>::iterator j = i + 1; 
+      for (auto j = i + 1;
            j != actors_in_movie.end(); ++j) {
         if (!edge(*i, *j, g).second) add_edge(*i, *j, g);
       }
@@ -78,23 +78,21 @@ write_pajek_graph(std::ostream& out, const Graph& g,
                   VertexIndexMap vertex_index, VertexNameMap vertex_name)
 {
   out << "*Vertices " << num_vertices(g) << '\n';
-  typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
-  for (vertex_iterator v = vertices(g).first; v != vertices(g).second; ++v) {
-    out << get(vertex_index, *v)+1 << " \"" << get(vertex_name, *v) << "\"\n";
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    out << get(vertex_index, vertex)+1 << " \"" << get(vertex_name, vertex) << "\"\n";
   }
 
   out << "*Edges\n";
-  typedef typename graph_traits<Graph>::edge_iterator edge_iterator;
-  for (edge_iterator e = edges(g).first; e != edges(g).second; ++e) {
-    out << get(vertex_index, source(*e, g))+1 << ' ' 
-        << get(vertex_index, target(*e, g))+1 << " 1.0\n"; // HACK!
+  for (const auto& edge : make_range_pair(edges(g))) {
+    out << get(vertex_index, source(edge, g))+1 << ' ' 
+        << get(vertex_index, target(edge, g))+1 << " 1.0\n"; // HACK!
   }
   return out;
 }
 
 class actor_clustering_threshold : public bc_clustering_threshold<double>
 {
-  typedef bc_clustering_threshold<double> inherited;
+  using inherited = bc_clustering_threshold<double>;
 
  public:
   actor_clustering_threshold(double threshold, const ActorGraph& g,
@@ -133,7 +131,7 @@ int main(int argc, char* argv[])
         out_file = argv[on_arg];
       } else if (arg == "-threshold") {
         ++on_arg; assert(on_arg < argc);
-        threshold = lexical_cast<double>(argv[on_arg]);
+        threshold = std::stod(argv[on_arg]);
       } else if (arg == "-normalize") {
         normalize = true;
       } else {

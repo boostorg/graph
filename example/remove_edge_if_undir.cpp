@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -39,14 +40,14 @@ using namespace boost;
   
  */
 
-typedef adjacency_list<vecS, vecS, undirectedS, 
-  no_property, property<edge_weight_t, int> > Graph;
+using Graph = adjacency_list<vecS, vecS, undirectedS, 
+  no_property, property<edge_weight_t, int>>;
 
 struct has_weight_greater_than {
   has_weight_greater_than(int w_, Graph& g_) : w(w_), g(g_) { }
   bool operator()(graph_traits<Graph>::edge_descriptor e) {
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-    property_map<Graph, edge_weight_t>::type weight = get(edge_weight, g);
+    auto weight = get(edge_weight, g);
     return get(weight, e) > w;
 #else
     // This version of get breaks VC++
@@ -60,26 +61,24 @@ struct has_weight_greater_than {
 int
 main()
 {
-  typedef std::pair<std::size_t,std::size_t> Edge;
-  Edge edge_array[5] = { Edge(0, 3), Edge(0, 3),
+  using Edge = std::pair<std::size_t,std::size_t>;
+  Edge edge_array[] = { Edge(0, 3), Edge(0, 3),
                     Edge(1, 3),
                     Edge(2, 0),
                     Edge(3, 2) };
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   Graph g(4);
-  for (std::size_t j = 0; j < 5; ++j)
-    add_edge(edge_array[j].first, edge_array[j].second, g);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, g);
 #else
   Graph g(edge_array, edge_array + 5, 4);
 #endif
-  property_map<Graph, edge_weight_t>::type 
-    weight = get(edge_weight, g);
+  auto weight = get(edge_weight, g);
 
   int w = 0;
-  graph_traits<Graph>::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    weight[*ei] = ++w;
+  for (const auto& edge : make_range_pair(edges(g)))
+    weight[edge] = ++w;
 
   std::cout << "original graph:" << std::endl;
   print_graph(g, get(vertex_index, g));

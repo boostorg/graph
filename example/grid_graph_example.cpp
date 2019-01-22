@@ -14,8 +14,8 @@
 #define DIMENSIONS 3
 using namespace boost;
 
-typedef grid_graph<DIMENSIONS> Graph;
-typedef graph_traits<Graph> Traits;
+using Graph = grid_graph<DIMENSIONS>;
+using Traits = graph_traits<Graph>;
 
 // Define a simple function to print vertices
 void print_vertex(Traits::vertex_descriptor vertex_to_print) {
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     (graph.wrapped(2) ? "W" : "U") << std::endl; // prints "W, U, W"
 
   // Start with the first vertex in the graph
-  Traits::vertex_descriptor first_vertex = vertex(0, graph);
+  auto first_vertex = vertex(0, graph);
   print_vertex(first_vertex); // prints "(0, 0, 0)"
 
   // Print the next vertex in dimension 0

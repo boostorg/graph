@@ -17,6 +17,7 @@
 #include <boost/graph/adj_list_serialize.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/string.hpp>
+#include "range_pair.hpp"
 
 struct vertex_properties {
   std::string name;
@@ -38,10 +39,10 @@ struct edge_properties {
 
 using namespace boost;
 
-typedef adjacency_list<vecS, vecS, undirectedS, 
-               vertex_properties, edge_properties> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = adjacency_list<vecS, vecS, undirectedS, 
+               vertex_properties, edge_properties>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 class bacon_number_recorder : public default_bfs_visitor
 {
@@ -49,7 +50,7 @@ public:
   bacon_number_recorder(int* dist) : d(dist) { }
 
   void tree_edge(Edge e, const Graph& g) const {
-    Vertex u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     d[v] = d[u] + 1;
   }
 private:
@@ -71,10 +72,9 @@ int main()
 
   // Get the vertex for Kevin Bacon
   Vertex src;
-  graph_traits<Graph>::vertex_iterator i, end;
-  for (boost::tie(i, end) = vertices(g); i != end; ++i)
-    if (g[*i].name == "Kevin Bacon")
-      src = *i;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (g[vertex].name == "Kevin Bacon")
+      src = vertex;
 
   // Set Kevin's number to zero
   bacon_number[src] = 0;
@@ -83,9 +83,9 @@ int main()
   breadth_first_search(g, src,
                        visitor(bacon_number_recorder(&bacon_number[0])));
 
-  for (boost::tie(i, end) = vertices(g); i != end; ++i)
-    std::cout << g[*i].name << " has a Bacon number of "
-          << bacon_number[*i] << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << g[vertex].name << " has a Bacon number of "
+          << bacon_number[vertex] << std::endl;
 
   return 0;
 }

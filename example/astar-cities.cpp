@@ -21,10 +21,9 @@
 #include <list>
 #include <iostream>
 #include <fstream>
-#include <math.h>    // for sqrt
+#include <cmath>    // for sqrt
 
 using namespace boost;
-using namespace std;
 
 
 // auxiliary types
@@ -32,7 +31,7 @@ struct location
 {
   float y, x; // lat, long
 };
-typedef float cost;
+using cost = float;
 
 template <class Name, class LocMap>
 class city_writer {
@@ -43,7 +42,7 @@ public:
     : name(n), loc(l), minx(_minx), maxx(_maxx), miny(_miny),
       maxy(_maxy), ptx(_ptx), pty(_pty) {}
   template <class Vertex>
-  void operator()(ostream& out, const Vertex& v) const {
+  void operator()(std::ostream& out, const Vertex& v) const {
     float px = 1 - (loc[v].x - minx) / (maxx - minx);
     float py = (loc[v].y - miny) / (maxy - miny);
     out << "[label=\"" << name[v] << "\", pos=\""
@@ -62,8 +61,8 @@ template <class WeightMap>
 class time_writer {
 public:
   time_writer(WeightMap w) : wm(w) {}
-  template <class Edge>
-  void operator()(ostream &out, const Edge& e) const {
+  template <class Edge>	
+  void operator()(std::ostream &out, const Edge& e) const {
     out << "[label=\"" << wm[e] << "\", fontsize=\"11\"]";
   }
 private:
@@ -76,13 +75,13 @@ template <class Graph, class CostType, class LocMap>
 class distance_heuristic : public astar_heuristic<Graph, CostType>
 {
 public:
-  typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename graph_traits<Graph>::vertex_descriptor;
   distance_heuristic(LocMap l, Vertex goal)
     : m_location(l), m_goal(goal) {}
   CostType operator()(Vertex u)
   {
-    CostType dx = m_location[m_goal].x - m_location[u].x;
-    CostType dy = m_location[m_goal].y - m_location[u].y;
+    auto dx = m_location[m_goal].x - m_location[u].x;
+    auto dy = m_location[m_goal].y - m_location[u].y;
     return ::sqrt(dx * dx + dy * dy);
   }
 private:
@@ -113,12 +112,11 @@ int main(int argc, char **argv)
 {
   
   // specify some types
-  typedef adjacency_list<listS, vecS, undirectedS, no_property,
-    property<edge_weight_t, cost> > mygraph_t;
-  typedef property_map<mygraph_t, edge_weight_t>::type WeightMap;
-  typedef mygraph_t::vertex_descriptor vertex;
-  typedef mygraph_t::edge_descriptor edge_descriptor;
-  typedef std::pair<int, int> edge;
+  using mygraph_t = adjacency_list<listS, vecS, undirectedS, no_property,
+    property<edge_weight_t, cost>>;
+  using WeightMap = property_map<mygraph_t, edge_weight_t>::type;
+  using vertex = mygraph_t::vertex_descriptor;
+  using edge = std::pair<int, int>;
   
   // specify data
   enum nodes {
@@ -160,25 +158,24 @@ int main(int argc, char **argv)
   
   // create graph
   mygraph_t g(N);
-  WeightMap weightmap = get(edge_weight, g);
+  auto weightmap = get(edge_weight, g);
   for(std::size_t j = 0; j < num_edges; ++j) {
-    edge_descriptor e; bool inserted;
-    boost::tie(e, inserted) = add_edge(edge_array[j].first,
+    const auto [e, inserted] = add_edge(edge_array[j].first,
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
   
   
   // pick random start/goal
-  boost::mt19937 gen(time(0));
-  vertex start = random_vertex(g, gen);
-  vertex goal = random_vertex(g, gen);
+  boost::mt19937 gen(time(nullptr));
+  auto start = random_vertex(g, gen);
+  auto goal = random_vertex(g, gen);
   
   
-  cout << "Start vertex: " << name[start] << endl;
-  cout << "Goal vertex: " << name[goal] << endl;
+  std::cout << "Start vertex: " << name[start] << std::endl;
+  std::cout << "Goal vertex: " << name[goal] << std::endl;
   
-  ofstream dotfile;
+  std::ofstream dotfile;
   dotfile.open("test-astar-cities.dot");
   write_graphviz(dotfile, g,
                  city_writer<const char **, location*>
@@ -187,8 +184,8 @@ int main(int argc, char **argv)
                  time_writer<WeightMap>(weightmap));
   
   
-  vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
-  vector<cost> d(num_vertices(g));
+  std::vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
+  std::vector<cost> d(num_vertices(g));
   try {
     // call astar named parameter interface
     astar_search_tree
@@ -201,24 +198,23 @@ int main(int argc, char **argv)
   
   
   } catch(found_goal fg) { // found a path to the goal
-    list<vertex> shortest_path;
-    for(vertex v = goal;; v = p[v]) {
-      shortest_path.push_front(v);
+    std::list<vertex> shortest_path;
+    for(auto v = goal;; v = p[v]) {
+      shortest_path.emplace_front(v);
       if(p[v] == v)
         break;
     }
-    cout << "Shortest path from " << name[start] << " to "
+    std::cout << "Shortest path from " << name[start] << " to "
          << name[goal] << ": ";
-    list<vertex>::iterator spi = shortest_path.begin();
-    cout << name[start];
-    for(++spi; spi != shortest_path.end(); ++spi)
-      cout << " -> " << name[*spi];
-    cout << endl << "Total travel time: " << d[goal] << endl;
+    std::cout << name[start];
+    for(const auto& sp : shortest_path)
+      std::cout << " -> " << name[sp];
+    std::cout << std::endl << "Total travel time: " << d[goal] << std::endl;
     return 0;
   }
   
-  cout << "Didn't find a path from " << name[start] << "to"
-       << name[goal] << "!" << endl;
+  std::cout << "Didn't find a path from " << name[start] << "to"
+       << name[goal] << "!" << std::endl;
   return 0;
   
 }

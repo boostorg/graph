@@ -22,7 +22,7 @@ int
 main()
 {
   const int N = 8;
-  typedef adjacency_list<vecS, vecS, undirectedS> UndirectedGraph;
+  using UndirectedGraph = adjacency_list<vecS, vecS, undirectedS>;
   UndirectedGraph g(N);
 
   add_edge(0, 1, g);
@@ -40,11 +40,10 @@ main()
   add_edge(5, 7, g);
   add_edge(6, 7, g);
 
-  typedef graph_traits<UndirectedGraph>::edge_descriptor edge_descriptor;
-  typedef graph_traits<UndirectedGraph>::degree_size_type degree_size_type;
+  using edge_descriptor = graph_traits<UndirectedGraph>::edge_descriptor;
   std::vector<edge_descriptor> disconnecting_set;
 
-  degree_size_type c = edge_connectivity(g, std::back_inserter(disconnecting_set));
+  auto c = edge_connectivity(g, std::back_inserter(disconnecting_set));
 
   std::cout << "The edge connectivity is " << c << "." << std::endl;
   std::cout << "The disconnecting set is {";

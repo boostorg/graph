@@ -15,6 +15,7 @@
 
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 #include <boost/graph/is_kuratowski_subgraph.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -22,14 +23,10 @@ using namespace boost;
 int main(int argc, char** argv)
 {
 
-  typedef adjacency_list
-    < vecS,
-      vecS,
-      undirectedS,
-      property<vertex_index_t, int>,
-      property<edge_index_t, int>
-    > 
-    graph;
+  using graph = adjacency_list<vecS, vecS,
+    undirectedS,
+    property<vertex_index_t, int>,
+    property<edge_index_t, int>>;
 
   // Create a K_6 (complete graph on 6 vertices), which
   // contains both Kuratowski subgraphs as minors.
@@ -52,17 +49,15 @@ int main(int argc, char** argv)
 
 
   // Initialize the interior edge index
-  property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
+  auto e_index = get(edge_index, g);
   graph_traits<graph>::edges_size_type edge_count = 0;
-  graph_traits<graph>::edge_iterator ei, ei_end;
-  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    put(e_index, *ei, edge_count++);
+  for(const auto& edge : make_range_pair(edges(g)))
+    put(e_index, edge, edge_count++);
   
 
   // Test for planarity - we know it is not planar, we just want to 
   // compute the kuratowski subgraph as a side-effect
-  typedef std::vector< graph_traits<graph>::edge_descriptor > 
-    kuratowski_edges_t;
+  using kuratowski_edges_t = std::vector<graph_traits<graph>::edge_descriptor>;
   kuratowski_edges_t kuratowski_edges;
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::kuratowski_subgraph = 
@@ -75,11 +70,9 @@ int main(int argc, char** argv)
       std::cout << "Input graph is not planar" << std::endl;
 
       std::cout << "Edges in the Kuratowski subgraph: ";
-      kuratowski_edges_t::iterator ki, ki_end;
-      ki_end = kuratowski_edges.end();
-      for(ki = kuratowski_edges.begin(); ki != ki_end; ++ki)
+      for(const auto& k : kuratowski_edges)
         {
-          std::cout << *ki << " ";
+          std::cout << k << " ";
         }
       std::cout << std::endl;
 

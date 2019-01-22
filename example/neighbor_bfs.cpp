@@ -53,8 +53,8 @@ struct print_parent {
 template <class DistanceMap, class PredecessorMap, class ColorMap>
 class distance_and_pred_visitor : public neighbor_bfs_visitor<>
 {
-  typedef typename property_traits<ColorMap>::value_type ColorValue;
-  typedef color_traits<ColorValue> Color;
+  using ColorValue = typename property_traits<ColorMap>::value_type;
+  using Color = color_traits<ColorValue>;
 public:
   distance_and_pred_visitor(DistanceMap d, PredecessorMap p, ColorMap c)
     : m_distance(d), m_predecessor(p), m_color(c) { }
@@ -62,16 +62,14 @@ public:
   template <class Edge, class Graph>
   void tree_out_edge(Edge e, const Graph& g) const
   {
-    typename graph_traits<Graph>::vertex_descriptor 
-      u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     put(m_distance, v, get(m_distance, u) + 1);
     put(m_predecessor, v, u);
   }
   template <class Edge, class Graph>
   void tree_in_edge(Edge e, const Graph& g) const
   {
-    typename graph_traits<Graph>::vertex_descriptor 
-      u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     put(m_distance, u, get(m_distance, v) + 1);
     put(m_predecessor, u, v);
   }
@@ -83,13 +81,12 @@ public:
 
 int main(int , char* []) 
 {
-  typedef adjacency_list< 
+  using Graph = adjacency_list< 
     mapS, vecS, bidirectionalS,
     property<vertex_color_t, default_color_type>
-  > Graph;
+  >;
 
-  typedef property_map<Graph, vertex_color_t>::type
-    ColorMap;
+  using ColorMap = property_map<Graph, vertex_color_t>::type;
   
   Graph G(5);
   add_edge(0, 2, G);
@@ -104,24 +101,24 @@ int main(int , char* [])
   add_edge(4, 0, G);
   add_edge(4, 1, G);
 
-  typedef Graph::vertex_descriptor Vertex;
+  using Vertex = Graph::vertex_descriptor;
 
   // Array to store predecessor (parent) of each vertex. This will be
   // used as a Decorator (actually, its iterator will be).
   std::vector<Vertex> p(num_vertices(G));
   // VC++ version of std::vector has no ::pointer, so
   // I use ::value_type* instead.
-  typedef std::vector<Vertex>::value_type* Piter;
+  using Piter = std::vector<Vertex>::value_type*;
 
   // Array to store distances from the source to each vertex .  We use
   // a built-in array here just for variety. This will also be used as
   // a Decorator.  
-  typedef graph_traits<Graph>::vertices_size_type size_type;
+  using size_type = graph_traits<Graph>::vertices_size_type;
   size_type d[5];
   std::fill_n(d, 5, 0);
 
   // The source vertex
-  Vertex s = *(vertices(G).first);
+  auto s = *(vertices(G).first);
   p[s] = s;
   distance_and_pred_visitor<size_type*, Vertex*, ColorMap> 
     vis(d, &p[0], get(vertex_color, G));

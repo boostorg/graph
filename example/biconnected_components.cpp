@@ -12,6 +12,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <iterator>
 #include <iostream>
+#include "range_pair.hpp"
 
 namespace boost
 {
@@ -19,7 +20,7 @@ namespace boost
   {
     enum
     { num = 555 };
-    typedef edge_property_tag kind;
+    using kind = edge_property_tag;
   }
   edge_component;
 }
@@ -28,9 +29,9 @@ int
 main()
 {
   using namespace boost;
-  typedef adjacency_list < vecS, vecS, undirectedS,
-    no_property, property < edge_component_t, std::size_t > >graph_t;
-  typedef graph_traits < graph_t >::vertex_descriptor vertex_t;
+  using graph_t = adjacency_list<vecS, vecS, undirectedS,
+    no_property, property<edge_component_t, std::size_t>>;
+  using vertex_t = graph_traits<graph_t>::vertex_descriptor;
   graph_t g(9);
   add_edge(0, 5, g);
   add_edge(0, 1, g);
@@ -44,10 +45,9 @@ main()
   add_edge(6, 7, g);
   add_edge(7, 8, g);
 
-  property_map < graph_t, edge_component_t >::type
-    component = get(edge_component, g);
+  auto component = get(edge_component, g);
 
-  std::size_t num_comps = biconnected_components(g, component);
+  auto num_comps = biconnected_components(g, component);
   std::cerr << "Found " << num_comps << " biconnected components.\n";
 
   std::vector<vertex_t> art_points;
@@ -62,11 +62,10 @@ main()
               << std::endl;
   }
 
-  graph_traits < graph_t >::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << (char)(source(*ei, g) + 'A') << " -- " 
-              << (char)(target(*ei, g) + 'A')
-              << "[label=\"" << component[*ei] << "\"]\n";
+  for(const auto& edge : make_range_pair(edges(g)))
+    std::cout << (char)(source(edge, g) + 'A') << " -- " 
+              << (char)(target(edge, g) + 'A')
+              << "[label=\"" << component[edge] << "\"]\n";
   std::cout << "}\n";
 
   return 0;

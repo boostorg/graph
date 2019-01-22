@@ -14,6 +14,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/read_dimacs.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 // Use a DIMACS network flow file as stdin.
 // max_flow < max_flow.dat
@@ -49,47 +50,40 @@ main()
 {
   using namespace boost;
 
-  typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
-  typedef adjacency_list<listS, vecS, directedS, 
+  using Traits = adjacency_list_traits<vecS, vecS, directedS>;
+  using Graph = adjacency_list<listS, vecS, directedS, 
     property<vertex_name_t, std::string>,
     property<edge_capacity_t, long,
       property<edge_residual_capacity_t, long,
-        property<edge_reverse_t, Traits::edge_descriptor> > >
-  > Graph;
+        property<edge_reverse_t, Traits::edge_descriptor>>>
+  >;
 
   Graph g;
 
-  property_map<Graph, edge_capacity_t>::type 
-    capacity = get(edge_capacity, g);
-  property_map<Graph, edge_reverse_t>::type 
-    rev = get(edge_reverse, g);
-  property_map<Graph, edge_residual_capacity_t>::type 
-    residual_capacity = get(edge_residual_capacity, g);
+  auto capacity = get(edge_capacity, g);
+  auto rev = get(edge_reverse, g);
+  auto residual_capacity = get(edge_residual_capacity, g);
 
   Traits::vertex_descriptor s, t;
   read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  long flow;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // Use non-named parameter version
-  property_map<Graph, vertex_index_t>::type 
-    indexmap = get(vertex_index, g);
-  flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev, indexmap);
+  auto indexmap = get(vertex_index, g);
+  auto flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev, indexmap);
 #else
-  flow = push_relabel_max_flow(g, s, t);
+  auto flow = push_relabel_max_flow(g, s, t);
 #endif
 
   std::cout << "c  The total flow:" << std::endl;
   std::cout << "s " << flow << std::endl << std::endl;
 
   std::cout << "c flow values:" << std::endl;
-  graph_traits<Graph>::vertex_iterator u_iter, u_end;
-  graph_traits<Graph>::out_edge_iterator ei, e_end;
-  for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-    for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-      if (capacity[*ei] > 0)
-        std::cout << "f " << *u_iter << " " << target(*ei, g) << " " 
-                  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    for (const auto& edge : make_range_pair(out_edges(vertex, g)))
+      if (capacity[edge] > 0)
+        std::cout << "f " << vertex << " " << target(edge, g) << " " 
+                  << (capacity[edge] - residual_capacity[edge]) << std::endl;
   
   return 0;
 }

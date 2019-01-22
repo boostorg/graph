@@ -11,19 +11,19 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/incremental_components.hpp>
 #include <boost/pending/disjoint_sets.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
 int main(int argc, char* argv[]) 
 {
-  typedef adjacency_list <vecS, vecS, undirectedS> Graph;
-  typedef graph_traits<Graph>::vertex_descriptor Vertex;
-  //typedef graph_traits<Graph>::edge_descriptor Edge;
-  typedef graph_traits<Graph>::vertices_size_type VertexIndex;
+  using Graph = adjacency_list <vecS, vecS, undirectedS>;
+  using Vertex = graph_traits<Graph>::vertex_descriptor;
+  //using Edge = graph_traits<Graph>::edge_descriptor;
+  using VertexIndex = graph_traits<Graph>::vertices_size_type;
  
   // Create a graph
   const int VERTEX_COUNT = 6;
@@ -37,8 +37,8 @@ int main(int argc, char* argv[])
   std::vector<Vertex> rank(num_vertices(graph));
   std::vector<Vertex> parent(num_vertices(graph));
 
-  typedef VertexIndex* Rank;
-  typedef Vertex* Parent;
+  using Rank = VertexIndex*;
+  using Parent = Vertex*;
   disjoint_sets<Rank, Parent> ds(&rank[0], &parent[0]);
 
   // Determine the connected components, storing the results in the
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   ds.union_set(4, 0);
   ds.union_set(2, 5);
 
-  BOOST_FOREACH(Vertex current_vertex, vertices(graph)) {
+  for (auto current_vertex : make_range_pair(vertices(graph))) {
     std::cout << "representative[" << current_vertex << "] = " <<
       ds.find_set(current_vertex) << std::endl;
   }
@@ -64,16 +64,15 @@ int main(int argc, char* argv[])
   // index map into the component_index constructor if our graph type
   // used listS instead of vecS (identity_property_map is used by
   // default).
-  typedef component_index<VertexIndex> Components;
+  using Components = component_index<VertexIndex>;
   Components components(parent.begin(), parent.end());
 
   // Iterate through the component indices
-  BOOST_FOREACH(VertexIndex component_index, components) {
+  for (auto component_index : components) {
     std::cout << "component " << component_index << " contains: ";
 
     // Iterate through the child vertex indices for [component_index]
-    BOOST_FOREACH(VertexIndex child_index,
-                  components[component_index]) {
+    for (auto child_index : make_range_pair(components[component_index])) {
       std::cout << child_index << " ";
     }
 

@@ -27,19 +27,19 @@ using namespace boost;
 int
 main()
 {
-  typedef indirect_cmp<float*,std::less<float> > ICmp;
+  using ICmp = indirect_cmp<float*,std::less<float>>;
   int i;
   random_ns::mt19937 gen;
   for (int N = 2; N < 200; ++N) {
-     uniform_int<> distrib(0, N-1);
-     boost::variate_generator<random_ns::mt19937&, uniform_int<> > rand_gen(gen, distrib);
-    for (int t = 0; t < 10; ++t) {
+    uniform_int<> distrib(0, N-1);
+    boost::variate_generator<random_ns::mt19937&, uniform_int<>> rand_gen(gen, distrib);
+    for (std::size_t t = 0; t < 10; ++t) {
       std::vector<float> v, w(N);
 
       ICmp cmp(&w[0], std::less<float>());
       fibonacci_heap<int, ICmp> Q(N, cmp);
 
-      for (int c = 0; c < w.size(); ++c)
+      for (std::size_t c = 0; c < w.size(); ++c)
         w[c] = c;
 #ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
       std::random_shuffle(w.begin(), w.end());
@@ -58,7 +58,7 @@ main()
       }
 
       for (i = 0; i < N; ++i) {
-        v.push_back(w[Q.top()]);
+        v.emplace_back(w[Q.top()]);
         Q.pop();
       }
       std::sort(w.begin(), w.end());

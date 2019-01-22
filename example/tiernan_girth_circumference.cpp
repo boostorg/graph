@@ -12,28 +12,26 @@
 
 #include "helper.hpp"
 
-using namespace std;
 using namespace boost;
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+using Graph = directed_graph<>;
+using Vertex = graph_traits<Graph>::vertex_descriptor;
+using Edge = graph_traits<Graph>::edge_descriptor;
 
 int
 main(int argc, char *argv[])
 {
     // Create the graph and read it from standard input.
     Graph g;
-    read_graph(g, cin);
+    read_graph(g, std::cin);
 
     // Compute the girth and circumference simulataneously
-    size_t girth, circ;
-    boost::tie(girth, circ) = tiernan_girth_and_circumference(g);
+    auto [girth, circ] = tiernan_girth_and_circumference(g);
 
     // Print the result
-    cout << "girth: " << girth << endl;
-    cout << "circumference: " << circ << endl;
+    std::cout << "girth: " << girth << std::endl;
+    std::cout << "circumference: " << circ << std::endl;
 
     return 0;
 }

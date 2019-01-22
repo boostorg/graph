@@ -12,21 +12,22 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
 int
 main(int, char *[])
 {
-  typedef adjacency_list_traits<listS, listS, 
-    directedS>::vertex_descriptor vertex_descriptor;
-  typedef adjacency_list < listS, listS, directedS,
+  using vertex_descriptor = adjacency_list_traits<listS, listS, 
+    directedS>::vertex_descriptor;
+  using graph_t = adjacency_list<listS, listS, directedS,
     property<vertex_index_t, int, 
     property<vertex_name_t, char,
     property<vertex_distance_t, int,
-    property<vertex_predecessor_t, vertex_descriptor> > > >, 
-    property<edge_weight_t, int> > graph_t;
-  typedef std::pair<int, int> Edge;
+    property<vertex_predecessor_t, vertex_descriptor>>>>, 
+    property<edge_weight_t, int>>;
+  using Edge = std::pair<int, int>;
 
   const int num_nodes = 5;
   enum nodes { A, B, C, D, E };
@@ -35,34 +36,30 @@ main(int, char *[])
   };
   int weights[] = { 1, 2, 1, 2, 7, 3, 1, 1, 1 };
   int num_arcs = sizeof(edge_array) / sizeof(Edge);
-  graph_traits<graph_t>::vertex_iterator i, iend;
 
   graph_t g(edge_array, edge_array + num_arcs, weights, num_nodes);
-  property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
+  auto weightmap = get(edge_weight, g);
 
   // Manually intialize the vertex index and name maps
-  property_map<graph_t, vertex_index_t>::type indexmap = get(vertex_index, g);
-  property_map<graph_t, vertex_name_t>::type name = get(vertex_name, g);
+  auto indexmap = get(vertex_index, g);
+  auto name = get(vertex_name, g);
   int c = 0;
-  for (boost::tie(i, iend) = vertices(g); i != iend; ++i, ++c) {
-    indexmap[*i] = c;
-    name[*i] = 'A' + c;
+  for (const auto& vertex : make_range_pair(vertices(g))) {
+    indexmap[vertex] = c;
+    name[vertex] = 'A' + c;
+    ++c;
   }
 
-  vertex_descriptor s = vertex(A, g);
+  auto s = vertex(A, g);
 
-  property_map<graph_t, vertex_distance_t>::type
-    d = get(vertex_distance, g);
-  property_map<graph_t, vertex_predecessor_t>::type
-    p = get(vertex_predecessor, g);
+  auto d = get(vertex_distance, g);
+  auto p = get(vertex_predecessor, g);
   dijkstra_shortest_paths(g, s, predecessor_map(p).distance_map(d));
 
   std::cout << "distances and parents:" << std::endl;
-  graph_traits < graph_t >::vertex_iterator vi, vend;
-  for (boost::tie(vi, vend) = vertices(g); vi != vend; ++vi) {
-    std::cout << "distance(" << name[*vi] << ") = " << d[*vi] << ", ";
-    std::cout << "parent(" << name[*vi] << ") = " << name[p[*vi]] << std::
-      endl;
+  for(const auto& vertex : make_range_pair(vertices(g))) {
+    std::cout << "distance(" << name[vertex] << ") = " << d[vertex] << ", ";
+    std::cout << "parent(" << name[vertex] << ") = " << name[p[vertex]] << std::endl;
   }
   std::cout << std::endl;
 
@@ -73,11 +70,8 @@ main(int, char *[])
     << "  ratio=\"fill\"\n"
     << "  edge[style=\"bold\"]\n" << "  node[shape=\"circle\"]\n";
 
-  graph_traits < graph_t >::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
-    graph_traits < graph_t >::edge_descriptor e = *ei;
-    graph_traits < graph_t >::vertex_descriptor
-      u = source(e, g), v = target(e, g);
+  for (const auto& e : make_range_pair(edges(g))) {
+    auto u = source(e, g), v = target(e, g);
     dot_file << name[u] << " -> " << name[v]
       << "[label=\"" << get(weightmap, e) << "\"";
     if (p[v] == u)

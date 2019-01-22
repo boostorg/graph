@@ -39,12 +39,11 @@ struct SPPRC_Example_Graph_Arc_Prop
   int time;
 };
 
-typedef adjacency_list<vecS, 
+using SPPRC_Example_Graph = adjacency_list<vecS, 
                        vecS, 
                        directedS, 
                        SPPRC_Example_Graph_Vert_Prop, 
-                       SPPRC_Example_Graph_Arc_Prop> 
-  SPPRC_Example_Graph;
+                       SPPRC_Example_Graph_Arc_Prop>;
 
 // data structures for spp without resource constraints:
 // ResourceContainer model
@@ -164,7 +163,7 @@ public:
     const SPPRC_Example_Graph_Vert_Prop& vert_prop = 
       get( vertex_bundle, g )[target( ed, g )];
     new_cont.cost = old_cont.cost + arc_prop.cost;
-    int& i_time = new_cont.time;
+    auto& i_time = new_cont.time;
     i_time = old_cont.time + arc_prop.time;
     i_time < vert_prop.eat ? i_time = vert_prop.eat : 0;
     return i_time <= vert_prop.lat ? true : false;
@@ -244,7 +243,7 @@ int main()
 
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor>> 
         opt_solutions;
   std::vector<spp_no_rc_res_cont> pareto_opt_rcs_no_rc;
 
@@ -261,7 +260,7 @@ int main()
     dominance_no_res_cont(), 
     std::allocator
       <r_c_shortest_paths_label
-        <SPPRC_Example_Graph, spp_no_rc_res_cont> >(), 
+        <SPPRC_Example_Graph, spp_no_rc_res_cont>>(), 
     default_r_c_shortest_paths_visitor() );
 
   std::cout << "SPP without resource constraints:" << std::endl;
@@ -281,7 +280,7 @@ int main()
   // spptw
   std::vector
     <std::vector
-      <graph_traits<SPPRC_Example_Graph>::edge_descriptor> > 
+      <graph_traits<SPPRC_Example_Graph>::edge_descriptor>> 
         opt_solutions_spptw;
   std::vector<spp_spptw_res_cont> pareto_opt_rcs_spptw;
 
@@ -298,7 +297,7 @@ int main()
     dominance_spptw(), 
     std::allocator
       <r_c_shortest_paths_label
-        <SPPRC_Example_Graph, spp_spptw_res_cont> >(), 
+        <SPPRC_Example_Graph, spp_spptw_res_cont>>(), 
           default_r_c_shortest_paths_visitor() );
 
   std::cout << "SPP with time windows:" << std::endl;

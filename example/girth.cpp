@@ -48,21 +48,22 @@
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
-typedef boost::graph_traits<Graph*> Traits;
-typedef Traits::vertex_descriptor vertex_descriptor;
-typedef Traits::edge_descriptor edge_descriptor;
-typedef Traits::vertex_iterator vertex_iterator;
+using Traits = boost::graph_traits<Graph*>;
+using vertex_descriptor = Traits::vertex_descriptor;
+using edge_descriptor = Traits::edge_descriptor;
+using vertex_iterator = Traits::vertex_iterator;
 
 std::vector<std::size_t> distance_list;
 
-typedef boost::v_property<long> dist_t;
+using dist_t = boost::v_property<long>;
 boost::property_map<Graph*, dist_t>::type d_map;
 
-typedef boost::u_property<vertex_descriptor> pred_t;
+using pred_t = boost::u_property<vertex_descriptor>;
 boost::property_map<Graph*, pred_t>::type p_map;
 
-typedef boost::w_property<long> color_t;
+using color_t = boost::w_property<long>;
 boost::property_map<Graph*, color_t>::type c_map;
 
 class diameter_and_girth_visitor : public boost::bfs_visitor<>
@@ -72,14 +73,14 @@ public:
     : k(k_), girth(girth_) { }
 
   void tree_edge(edge_descriptor e, Graph* g) {
-    vertex_descriptor u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     k = d_map[u] + 1;
     d_map[v] = k;
     ++distance_list[k];
     p_map[v] = u;
   }
   void non_tree_edge(edge_descriptor e, Graph* g) {
-    vertex_descriptor u = source(e, g), v = target(e, g);
+    auto u = source(e, g), v = target(e, g);
     k = d_map[u] + 1;
     if (d_map[v] + k < girth && v != p_map[u])
       girth = d_map[v]+ k;
@@ -118,8 +119,7 @@ main()
     if (q == 0)
       break;
 
-    Graph* g;
-    g = raman(p, q, 0L, 0L);
+    auto g = raman(p, q, 0L, 0L);
     if (g == 0) {
       std::cerr << " Sorry, I couldn't make that graph (error code "
         << panic_code << ")" << std::endl;
@@ -133,9 +133,8 @@ main()
     p_map = get(pred_t(), g);
     c_map = get(color_t(), g);
 
-    vertex_iterator i, end;
-    for (boost::tie(i, end) = boost::vertices(g); i != end; ++i)
-      d_map[*i] = 0;
+    for (const auto& vertex : make_range_pair(boost::vertices(g)))
+      d_map[vertex] = 0;
 
     std::size_t k = 0;
     std::size_t girth = (std::numeric_limits<std::size_t>::max)();

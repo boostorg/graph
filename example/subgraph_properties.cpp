@@ -38,18 +38,18 @@
 int main(int,char*[])
 {
   using namespace boost;
-  //typedef adjacency_list_traits<vecS, vecS, directedS> Traits;// Does nothing?
-  typedef property<   vertex_color_t, int,
-    property< vertex_name_t, std::string > > VertexProperty;
+  //using Traits = adjacency_list_traits<vecS, vecS, directedS>;// Does nothing?
+  using VertexProperty = property<vertex_color_t, int,
+    property<vertex_name_t, std::string>>;
   
-  typedef subgraph< adjacency_list<  vecS, vecS, directedS,
-    VertexProperty, property<edge_index_t, int> > > Graph;
+  using Graph = subgraph<adjacency_list<vecS, vecS, directedS,
+    VertexProperty, property<edge_index_t, int>>>;
   
   const int N = 6;
   Graph G0(N);
   enum { A, B, C, D, E, F};     // for conveniently refering to vertices in G0
   
-  property_map<Graph, vertex_name_t>::type name = get(vertex_name_t(), G0);
+  auto name = get(vertex_name_t(), G0);
   name[A] = "A";
   name[B] = "B";
   name[C] = "C";
@@ -57,14 +57,14 @@ int main(int,char*[])
   name[E] = "E";
   name[F] = "F";
   
-  Graph& G1 = G0.create_subgraph();
+  auto& G1 = G0.create_subgraph();
   enum { A1, B1, C1 };          // for conveniently refering to vertices in G1
   
   add_vertex(C, G1); // global vertex C becomes local A1 for G1
   add_vertex(E, G1); // global vertex E becomes local B1 for G1
   add_vertex(F, G1); // global vertex F becomes local C1 for G1
   
-  property_map<Graph, vertex_name_t>::type name1 = get(vertex_name_t(), G1);
+  auto name1 = get(vertex_name_t(), G1);
   name1[A1] = "A1";
   
   std::cout << std::endl << "After initializing properties for G1:" << std::endl;
@@ -84,13 +84,13 @@ int main(int,char*[])
   std::cout << "    G0[F]= " << boost::get(vertex_name, G0, vertex(F, G0)) << std::endl;// prints: "G0[F]= F"
   std::cout << "    G1[C1]= " << boost::get(vertex_name, G1, vertex(C1, G1)) << std::endl;// prints: "G1[C1]= C1"
   
-  Graph& G2 = G0.create_subgraph();
+  auto& G2 = G0.create_subgraph();
   enum { A2, B2 };              // for conveniently refering to vertices in G2
   
   add_vertex(A, G2); // global vertex A becomes local A2 for G2
   add_vertex(C, G2); // global vertex C becomes local B2 for G2
   
-  property_map<Graph, vertex_name_t>::type name2 = get(vertex_name_t(), G2);
+  auto name2 = get(vertex_name_t(), G2);
   name2[A2] = "A2";
   
   std::cout << std::endl << std::endl << "After initializing properties for G2:" << std::endl;

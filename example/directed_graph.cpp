@@ -15,10 +15,10 @@ int main(int,char*[])
   // like add_vertex and add_edge, which makes the code easier to understand. However, it hard codes many
   // of the template parameters, so it is much less flexible.
 
-  typedef boost::directed_graph<> Graph;
+  using Graph = boost::directed_graph<>;
   Graph g;
-  boost::graph_traits<Graph>::vertex_descriptor v0 = g.add_vertex();
-  boost::graph_traits<Graph>::vertex_descriptor v1 = g.add_vertex();
+  auto v0 = g.add_vertex();
+  auto v1 = g.add_vertex();
 
   g.add_edge(v0, v1);
 

@@ -11,8 +11,8 @@
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
-using namespace std;
 using namespace boost;
 
 
@@ -59,17 +59,16 @@ template <class Graph>
 struct print_edge {
   print_edge(Graph& g) : G(g) { }
 
-  typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Edge = typename boost::graph_traits<Graph>::edge_descriptor;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Edge e) const
   {
-    typename boost::property_map<Graph, vertex_index_t>::type 
-      id = get(vertex_index, G);
+    auto id = get(vertex_index, G);
 
-    Vertex src = source(e, G);
-    Vertex targ = target(e, G);
+    auto src = source(e, G);
+    auto targ = target(e, G);
 
-    cout << "(" << id[src] << "," << id[targ] << ") ";
+    std::cout << "(" << id[src] << "," << id[targ] << ") ";
   }
 
   Graph& G;
@@ -79,12 +78,11 @@ template <class Graph>
 struct print_index {
   print_index(Graph& g) : G(g){ }
 
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
   void operator()(Vertex c) const
   {
-    typename boost::property_map<Graph,vertex_index_t>::type 
-      id = get(vertex_index, G);
-    cout << id[c] << " ";
+    auto id = get(vertex_index, G);
+    std::cout << id[c] << " ";
   }
 
   Graph& G;
@@ -93,33 +91,32 @@ struct print_index {
 
 template <class Graph>
 struct exercise_vertex {
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor Vertex;
+  using Vertex = typename boost::graph_traits<Graph>::vertex_descriptor;
 
   exercise_vertex(Graph& _g) : g(_g) { }
 
   void operator()(Vertex v) const
   {
-    typename boost::property_map<Graph, vertex_index_t>::type 
-      id = get(vertex_index, g);
+    auto id = get(vertex_index, g);
 
-    cout << "vertex id: " << id[v] << endl;
+    std::cout << "vertex id: " << id[v] << std::endl;
     
-    cout << "out-edges: ";
-    for_each(out_edges(v, g).first, out_edges(v,g).second, 
+    std::cout << "out-edges: ";
+    std::for_each(out_edges(v, g).first, out_edges(v,g).second, 
              print_edge<Graph>(g));
 
-    cout << endl;
+    std::cout << std::endl;
 
-    cout << "in-edges: ";
-    for_each(in_edges(v, g).first, in_edges(v,g).second, 
+    std::cout << "in-edges: ";
+    std::for_each(in_edges(v, g).first, in_edges(v,g).second, 
              print_edge<Graph>(g));
 
-    cout << endl;
+    std::cout << std::endl;
     
-    cout << "adjacent vertices: ";
-    for_each(adjacent_vertices(v,g).first, 
+    std::cout << "adjacent vertices: ";
+    std::for_each(adjacent_vertices(v,g).first, 
              adjacent_vertices(v,g).second, print_index<Graph>(g));
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
   }
 
   Graph& g;
@@ -129,30 +126,28 @@ struct exercise_vertex {
 int
 main()
 {
-  typedef adjacency_list<vecS,vecS,bidirectionalS> MyGraphType;
+  using MyGraphType = adjacency_list<vecS,vecS,bidirectionalS>;
 
-  typedef pair<int,int> Pair;
-  Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
+  using Pair = std::pair<int,int>;
+  Pair edge_array[] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4),
                           Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
                           Pair(3,4), Pair(4,0), Pair(4,1) };
 
   /* Construct a graph using the edge_array*/
   MyGraphType g(5);
-  for (int i=0; i<11; ++i)
-    add_edge(edge_array[i].first, edge_array[i].second, g);
+  for (const auto& edge : edge_array)
+    add_edge(edge.first, edge.second, g);
 
-  boost::property_map<MyGraphType, vertex_index_t>::type 
-    id = get(vertex_index, g);
+  auto id = get(vertex_index, g);
 
-  cout << "vertices(g) = ";
-  boost::graph_traits<MyGraphType>::vertex_iterator vi;
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
-    std::cout << id[*vi] <<  " ";
+  std::cout << "vertices(g) = ";
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    std::cout << id[vertex] <<  " ";
   std::cout << std::endl;
 
   /* Use the STL for_each algorithm to "exercise" all
      of the vertices in the graph */
-  for_each(vertices(g).first, vertices(g).second,
+  std::for_each(vertices(g).first, vertices(g).second,
            exercise_vertex<MyGraphType>(g));
 
   return 0;

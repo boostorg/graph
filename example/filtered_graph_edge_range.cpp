@@ -24,6 +24,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 template <typename EdgeWeightMap>
 struct positive_edge_weight {
@@ -41,9 +42,9 @@ int main()
 {
   using namespace boost;
   
-  typedef adjacency_list<multisetS, vecS, directedS,
-    no_property, property<edge_weight_t, int> > Graph;
-  typedef property_map<Graph, edge_weight_t>::type EdgeWeightMap;
+  using Graph = adjacency_list<multisetS, vecS, directedS,
+    no_property, property<edge_weight_t, int>>;
+  using EdgeWeightMap = property_map<Graph, edge_weight_t>::type;
 
   enum { A, B, C, D, E, N };
   const char* name = "ABCDE";
@@ -57,23 +58,21 @@ int main()
   add_edge(D, B, 3, g);
   add_edge(E, C, 0, g);
 
-  EdgeWeightMap weight = get(edge_weight, g);
+  auto weight = get(edge_weight, g);
 
   std::cout << "unfiltered edge_range(C,D)\n";
-  graph_traits<Graph>::out_edge_iterator f, l;
-  for (boost::tie(f, l) = edge_range(C, D, g); f != l; ++f)
-    std::cout << name[source(*f, g)] << " --" << weight[*f]
-              << "-> " <<  name[target(*f, g)] << "\n";
+  for (const auto& edge : make_range_pair(edge_range(C, D, g)))
+    std::cout << name[source(edge, g)] << " --" << weight[edge]
+              << "-> " <<  name[target(edge, g)] << "\n";
 
   positive_edge_weight<EdgeWeightMap> filter(weight);
-  typedef filtered_graph<Graph, positive_edge_weight<EdgeWeightMap> > FGraph;
+  using FGraph = filtered_graph<Graph, positive_edge_weight<EdgeWeightMap>>;
   FGraph fg(g, filter);
 
   std::cout << "filtered edge_range(C,D)\n";
-  graph_traits<FGraph>::out_edge_iterator first, last;
-  for (boost::tie(first, last) = edge_range(C, D, fg); first != last; ++first)
-    std::cout << name[source(*first, fg)] << " --" << weight[*first]
-              << "-> " <<  name[target(*first, fg)] << "\n";
+  for (const auto& edge : make_range_pair(edge_range(C, D, fg)))
+    std::cout << name[source(edge, fg)] << " --" << weight[edge]
+              << "-> " <<  name[target(edge, fg)] << "\n";
   
   return 0;
 }

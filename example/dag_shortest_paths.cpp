@@ -9,6 +9,7 @@
 
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 #include <iostream>
 
@@ -25,8 +26,8 @@
 int main()
 {
   using namespace boost;
-  typedef adjacency_list<vecS, vecS, directedS, 
-    property<vertex_distance_t, int>, property<edge_weight_t, int> > graph_t;
+  using graph_t = adjacency_list<vecS, vecS, directedS, 
+    property<vertex_distance_t, int>, property<edge_weight_t, int>>;
   graph_t g(6);
   enum verts { r, s, t, u, v, x };
   char name[] = "rstuvx";
@@ -41,8 +42,7 @@ int main()
   add_edge(u, x, 1, g);
   add_edge(v, x, -2, g);
 
-  property_map<graph_t, vertex_distance_t>::type
-    d_map = get(vertex_distance, g);
+  auto d_map = get(vertex_distance, g);
 
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the named-parameter mechanism, so
@@ -52,18 +52,17 @@ int main()
   default_dijkstra_visitor vis;
   std::less<int> compare;
   closed_plus<int> combine;
-  property_map<graph_t, edge_weight_t>::type w_map = get(edge_weight, g);
+  auto w_map = get(edge_weight, g);
   dag_shortest_paths(g, s, d_map, w_map, &color[0], &pred[0], 
      vis, compare, combine, (std::numeric_limits<int>::max)(), 0);
 #else
   dag_shortest_paths(g, s, distance_map(d_map));
 #endif
 
-  graph_traits<graph_t>::vertex_iterator vi , vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (d_map[*vi] == (std::numeric_limits<int>::max)())
-      std::cout << name[*vi] << ": inifinity\n";
+  for(const auto& vertex : make_range_pair(vertices(g)))
+    if (d_map[vertex] == (std::numeric_limits<int>::max)())
+      std::cout << name[vertex] << ": inifinity\n";
     else
-      std::cout << name[*vi] << ": " << d_map[*vi] << '\n';
+      std::cout << name[vertex] << ": " << d_map[vertex] << '\n';
   return 0;
 }

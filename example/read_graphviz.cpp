@@ -16,34 +16,30 @@
 #include <sstream>
 
 using namespace boost;
-using namespace std;
 
 int main() {
   // Vertex properties
-  typedef property < vertex_name_t, std::string,
-            property < vertex_color_t, float > > vertex_p;  
+  using vertex_p = property<vertex_name_t, std::string,
+    property<vertex_color_t, float>>;  
   // Edge properties
-  typedef property < edge_weight_t, double > edge_p;
+  using edge_p = property<edge_weight_t, double>;
   // Graph properties
-  typedef property < graph_name_t, std::string > graph_p;
+  using graph_p = property<graph_name_t, std::string>;
   // adjacency_list-based type
-  typedef adjacency_list < vecS, vecS, directedS,
-    vertex_p, edge_p, graph_p > graph_t;
+  using graph_t = adjacency_list < vecS, vecS, directedS,
+    vertex_p, edge_p, graph_p >;
 
   // Construct an empty graph and prepare the dynamic_property_maps.
   graph_t graph(0);
   dynamic_properties dp;
 
-  property_map<graph_t, vertex_name_t>::type name =
-    get(vertex_name, graph);
+  auto name = get(vertex_name, graph);
   dp.property("node_id",name);
 
-  property_map<graph_t, vertex_color_t>::type mass =
-    get(vertex_color, graph);
+  auto mass = get(vertex_color, graph);
   dp.property("mass",mass);
 
-  property_map<graph_t, edge_weight_t>::type weight =
-    get(edge_weight, graph);
+  auto weight = get(edge_weight, graph);
   dp.property("weight",weight);
 
   // Use ref_property_map to turn a graph property into a property map

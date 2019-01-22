@@ -15,6 +15,7 @@
 
 #include <boost/graph/planar_face_traversal.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
+#include "range_pair.hpp"
 
 
 using namespace boost;
@@ -56,14 +57,13 @@ struct edge_output_visitor : public output_visitor
 int main(int argc, char** argv)
 {
 
-  typedef adjacency_list
+  using graph = adjacency_list
     < vecS,
       vecS,
       undirectedS,
       property<vertex_index_t, int>,
       property<edge_index_t, int>
-    > 
-    graph;
+    >;
 
   // Create a graph - this is a biconnected, 3 x 3 grid.
   // It should have four small (four vertex/four edge) faces and
@@ -91,16 +91,15 @@ int main(int argc, char** argv)
   
 
   // Initialize the interior edge index
-  property_map<graph, edge_index_t>::type e_index = get(edge_index, g);
+  auto e_index = get(edge_index, g);
   graph_traits<graph>::edges_size_type edge_count = 0;
-  graph_traits<graph>::edge_iterator ei, ei_end;
-  for(boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    put(e_index, *ei, edge_count++);
+  for(const auto& edge : make_range_pair(edges(g)))
+    put(e_index, edge, edge_count++);
   
 
   // Test for planarity - we know it is planar, we just want to 
   // compute the planar embedding as a side-effect
-  typedef std::vector< graph_traits<graph>::edge_descriptor > vec_t;
+  using vec_t = std::vector<graph_traits<graph>::edge_descriptor>;
   std::vector<vec_t> embedding(num_vertices(g));
   if (boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
                                    boyer_myrvold_params::embedding = 

@@ -49,14 +49,12 @@
  */
 
 
-using namespace std;
-using boost::tie;
 
 int main(int , char* []) 
 {
   using namespace boost;
-  typedef int Index; // ID of a Vertex
-  typedef pair<Index,Index> Edge;
+  using Index = int; // ID of a Vertex
+  using Edge = std::pair<Index,Index>;
   const int N = 6;
   const int E = 4;
   Edge edgelist[] = { Edge(0, 1), Edge(1, 4), Edge(4, 0), Edge(2, 5) };
@@ -64,9 +62,9 @@ int main(int , char* [])
 
 
   edge_list<Edge*,Edge,ptrdiff_t,std::random_access_iterator_tag> g(edgelist, edgelist + E);
-  cout << "An undirected graph (edge list):" << endl;
+  std::cout << "An undirected graph (edge list):" << std::endl;
   print_edges(g, identity_property_map());
-  cout << endl;
+  std::cout << std::endl;
 
   disjoint_sets_with_storage<> ds(N);
   incremental_components(g, ds);
@@ -74,20 +72,20 @@ int main(int , char* [])
   component_index<int> components(&ds.parents()[0], 
                                   &ds.parents()[0] + ds.parents().size());
 
-  cout << "Total number of components: " << components.size() << endl;
+  std::cout << "Total number of components: " << components.size() << std::endl;
   for (int k = 0; k != N; ++k)
-    cout << "Vertex " << k << " is in the component who's representative is "
-         << ds.find_set(k) << endl;
-  cout << endl;
+    std::cout << "Vertex " << k << " is in the component who's representative is "
+         << ds.find_set(k) << std::endl;
+  std::cout << std::endl;
 
   for (std::size_t i = 0; i < components.size(); ++i) {
-    cout << "component " << i << " contains: ";
+    std::cout << "component " << i << " contains: ";
     component_index<int>::component_iterator
       j = components[i].first,
       jend = components[i].second;
     for ( ; j != jend; ++j)
-      cout << *j << " ";
-    cout << endl;
+      std::cout << *j << " ";
+    std::cout << std::endl;
   }
 
   return 0;

@@ -13,43 +13,40 @@
 #include <algorithm>
 
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
-using namespace std;
 
-typedef property<vertex_color_t, default_color_type,
+using VertexProperty = property<vertex_color_t, default_color_type,
     property<vertex_distance_t,int,
       property<vertex_degree_t,int,
         property<vertex_in_degree_t, int,
-          property<vertex_out_degree_t,int> > > > > VertexProperty;
-typedef property<edge_weight_t,int> EdgeProperty;
-typedef adjacency_list<vecS, vecS, bidirectionalS, 
-                       VertexProperty, EdgeProperty> Graph;
+          property<vertex_out_degree_t,int>>>>>;
+using EdgeProperty = property<edge_weight_t,int>;
+using Graph = adjacency_list<vecS, vecS, bidirectionalS, 
+                       VertexProperty, EdgeProperty>;
 
 template <class Graph>
 void print(Graph& g) {
-  typename Graph::vertex_iterator i, end;
-  typename Graph::out_edge_iterator ei, edge_end;
-  for(boost::tie(i,end) = vertices(g); i != end; ++i) {
-    cout << *i << " --> ";
-    for (boost::tie(ei,edge_end) = out_edges(*i, g); ei != edge_end; ++ei)
-      cout << target(*ei, g) << "  ";
-    cout << endl;
+  for (const auto& vertex : make_range_pair(boost::vertices(g))) {
+    std::cout << vertex << " --> ";
+    for (const auto& edge : make_range_pair(out_edges(vertex, g)))
+      std::cout << target(edge, g) << "  ";
+    std::cout << std::endl;
   }
 }
 
 std::size_t myrand(std::size_t N) {
   std::size_t ret = rand() % N; 
-  //  cout << "N = " << N << "  rand = " << ret << endl;
+  //  std::cout << "N = " << N << "  rand = " << ret << std::endl;
   return ret;
 }
 
 template <class Graph>
 bool check_edge(Graph& g, std::size_t a, std::size_t b) {
-  typename Graph::adjacency_iterator vi, viend, found;
-  boost::tie(vi, viend) = adjacent_vertices(vertex(a,g), g);
+  auto [vi, viend] = adjacent_vertices(vertex(a,g), g);
 
-  found = find(vi, viend, vertex(b, g));
+  auto found = find(vi, viend, vertex(b, g));
   if ( found == viend )
     return false;
 
@@ -68,16 +65,16 @@ int main(int, char*[])
   for (i=0; i<6; ++i) {
     std::size_t a = myrand(N), b = myrand(N);
     while ( a == b ) b = myrand(N);
-    cout << "edge edge (" << a << "," << b <<")" << endl;
+    std::cout << "edge edge (" << a << "," << b <<")" << std::endl;
     //add edges
     add_edge(a, b, g);
     is_failed =  is_failed || (! check_edge(g, a, b) );
   }
   
   if ( is_failed )
-    cerr << "    Failed."<< endl;
+    std::cerr << "    Failed."<< std::endl;
   else
-    cerr << "           Passed."<< endl;
+    std::cerr << "           Passed."<< std::endl;
   
   print(g);
   
@@ -85,14 +82,14 @@ int main(int, char*[])
   for (i = 0; i<2; ++i) {
     std::size_t a = myrand(N), b = myrand(N);
     while ( a == b ) b = myrand(N);
-    cout << "remove edge (" << a << "," << b <<")" << endl;
+    std::cout << "remove edge (" << a << "," << b <<")" << std::endl;
     remove_edge(a, b, g);
     is_failed = is_failed || check_edge(g, a, b);
   }
   if ( is_failed )
-    cerr << "    Failed."<< endl;
+    std::cerr << "    Failed."<< std::endl;
   else
-    cerr << "           Passed."<< endl;
+    std::cerr << "           Passed."<< std::endl;
 
   print(g);
   
@@ -104,26 +101,26 @@ int main(int, char*[])
   
   N = num_vertices(g);
   if ( (N - 2) != old_N )
-    cerr << "    Failed."<< endl;
+    std::cerr << "    Failed."<< std::endl;
   else
-    cerr << "           Passed."<< endl;      
+    std::cerr << "           Passed."<< std::endl;      
   
   is_failed = false;
   for (i=0; i<2; ++i) {
     std::size_t a = myrand(N), b = myrand(N);
     while ( a == vid ) a = myrand(N);
     while ( b == vidp1 ) b = myrand(N);
-    cout << "add edge (" << vid << "," << a <<")" << endl;
-    cout << "add edge (" << vid << "," << vidp1 <<")" << endl;
+    std::cout << "add edge (" << vid << "," << a <<")" << std::endl;
+    std::cout << "add edge (" << vid << "," << vidp1 <<")" << std::endl;
     add_edge(vid, a, g);
     add_edge(b, vidp1, g);
     is_failed = is_failed || ! check_edge(g, vid, a);
     is_failed = is_failed || ! check_edge(g, b, vidp1);
   }
   if ( is_failed )
-    cerr << "    Failed."<< endl;
+    std::cerr << "    Failed."<< std::endl;
   else
-    cerr << "           Passed."<< endl;
+    std::cerr << "           Passed."<< std::endl;
   print(g);
   
   // clear_vertex
@@ -134,7 +131,7 @@ int main(int, char*[])
   if ( out_degree(c, g) != 0 )
     is_failed = true;
 
-  cout << "Removing vertex " << c << endl;
+  std::cout << "Removing vertex " << c << std::endl;
   remove_vertex(c, g);
   
   old_N = N;
@@ -144,9 +141,9 @@ int main(int, char*[])
     is_failed = true;
   
   if ( is_failed )
-    cerr << "    Failed."<< endl;
+    std::cerr << "    Failed."<< std::endl;
   else
-    cerr << "           Passed."<< endl;      
+    std::cerr << "           Passed."<< std::endl;      
   
   print(g);
   

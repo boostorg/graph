@@ -51,42 +51,41 @@
 
  */
 
-using namespace std;
 using namespace boost;
 
 
 struct city_arrival : public base_visitor<city_arrival>
 {
-  city_arrival(string* n) : names(n) { }
-  typedef on_discover_vertex event_filter;
+  city_arrival(std::string* n) : names(n) { }
+  using event_filter = on_discover_vertex;
   template <class Vertex, class Graph>
   inline void operator()(Vertex u, Graph&) {
-    cout << endl << "arriving at " << names[u] << endl
+    std::cout << std::endl << "arriving at " << names[u] << std::endl
          << "  neighboring cities are: ";
   }
-  string* names;
+  std::string* names;
 };
 
 struct neighbor_cities : public base_visitor<neighbor_cities>
 {
-  neighbor_cities(string* n) : names(n) { }
-  typedef on_examine_edge event_filter;
+  neighbor_cities(std::string* n) : names(n) { }
+  using event_filter = on_examine_edge;
   template <class Edge, class Graph>
   inline void operator()(Edge e, Graph& g) {
-    cout << names[ target(e, g) ] << ", ";
+    std::cout << names[ target(e, g) ] << ", ";
   }
-  string* names;
+  std::string* names;
 };
 
 struct finish_city : public base_visitor<finish_city>
 {
-  finish_city(string* n) : names(n) { }
-  typedef on_finish_vertex event_filter;
+  finish_city(std::string* n) : names(n) { }
+  using event_filter = on_finish_vertex;
   template <class Vertex, class Graph>
   inline void operator()(Vertex u, Graph&) {
-    cout << endl << "finished with " << names[u] << endl;
+    std::cout << std::endl << "finished with " << names[u] << std::endl;
   }
-  string* names;
+  std::string* names;
 };
 
 int main(int, char*[]) 
@@ -95,11 +94,11 @@ int main(int, char*[])
   enum { SanJose, SanFran, LA, SanDiego, Fresno, LasVegas, Reno,
          Sacramento, SaltLake, Phoenix, N };
 
-  string names[] = { "San Jose", "San Francisco", "Los Angeles", "San Diego", 
+  std::string names[] = { "San Jose", "San Francisco", "Los Angeles", "San Diego", 
                      "Fresno", "Las Vegas", "Reno", "Sacramento",
                      "Salt Lake City", "Phoenix" };
 
-  typedef std::pair<int,int> E;
+  using E = std::pair<int,int>;
   E edge_array[] = { E(Sacramento, Reno), E(Sacramento, SanFran),
                      E(Reno, SaltLake),
                      E(SanFran, SanJose),
@@ -108,7 +107,7 @@ int main(int, char*[])
                      E(LasVegas, Phoenix) };
 
   /* Create the graph type we want. */
-  typedef adjacency_list<vecS, vecS, undirectedS> Graph;
+  using Graph = adjacency_list<vecS, vecS, undirectedS>;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   // VC++ has trouble with the edge iterator constructor
   Graph G(N);
@@ -118,19 +117,18 @@ int main(int, char*[])
   Graph G(edge_array, edge_array + sizeof(edge_array)/sizeof(E), N);
 #endif
 
-  cout << "*** Depth First ***" << endl;
+  std::cout << "*** Depth First ***" << std::endl;
   depth_first_search
     (G, 
      visitor(make_dfs_visitor(boost::make_list(city_arrival(names),
                                                neighbor_cities(names),
                                                finish_city(names)))));
-  cout << endl;
+  std::cout << std::endl;
 
   /* Get the source vertex */
-  boost::graph_traits<Graph>::vertex_descriptor 
-    s = vertex(SanJose,G);
+  auto s = vertex(SanJose,G);
 
-  cout << "*** Breadth First ***" << endl;
+  std::cout << "*** Breadth First ***" << std::endl;
   breadth_first_search
     (G, s, visitor(make_bfs_visitor(boost::make_list(city_arrival(names), 
                                                      neighbor_cities(names), 

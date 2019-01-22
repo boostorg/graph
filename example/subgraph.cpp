@@ -37,19 +37,20 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 int main(int,char*[])
 {
   using namespace boost;
-  typedef subgraph< adjacency_list<vecS, vecS, directedS,
-    property<vertex_color_t, int>, property<edge_index_t, int> > > Graph;
+  using Graph = subgraph<adjacency_list<vecS, vecS, directedS,
+    property<vertex_color_t, int>, property<edge_index_t, int>>>;
 
   const int N = 6;
   Graph G0(N);
   enum { A, B, C, D, E, F};     // for conveniently refering to vertices in G0
 
-  Graph& G1 = G0.create_subgraph();
-  Graph& G2 = G0.create_subgraph();
+  auto& G1 = G0.create_subgraph();
+  auto& G2 = G0.create_subgraph();
   enum { A1, B1, C1 };          // for conveniently refering to vertices in G1
   enum { A2, B2 };              // for conveniently refering to vertices in G2
 
@@ -74,12 +75,11 @@ int main(int,char*[])
   print_edges2(G0, get(vertex_index, G0), get(edge_index, G0));
   std::cout << std::endl;
 
-  Graph::children_iterator ci, ci_end;
   int num = 1;
-  for (boost::tie(ci, ci_end) = G0.children(); ci != ci_end; ++ci) {
+  for (const auto& vertex : make_range_pair(G0.children())) {
     std::cout << "G" << num++ << ":" << std::endl;
-    print_graph(*ci, get(vertex_index, *ci));
-    print_edges2(*ci, get(vertex_index, *ci), get(edge_index, *ci));
+    print_graph(vertex, get(vertex_index, vertex));
+    print_edges2(vertex, get(vertex_index, vertex), get(edge_index, vertex));
     std::cout << std::endl;
   }
 

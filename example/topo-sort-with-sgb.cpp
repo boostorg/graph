@@ -16,7 +16,7 @@ main()
 {
   using namespace boost;
   const int n_vertices = 7;
-  Graph *sgb_g = gb_new_graph(n_vertices);
+  auto sgb_g = gb_new_graph(n_vertices);
 
   const char *tasks[] = {
     "pick up kids from school",
@@ -37,12 +37,12 @@ main()
   gb_new_arc(sgb_g->vertices + 4, sgb_g->vertices + 6, 0);
   gb_new_arc(sgb_g->vertices + 5, sgb_g->vertices + 6, 0);
 
-  typedef graph_traits < Graph * >::vertex_descriptor vertex_t;
-  std::vector < vertex_t > topo_order;
+  using vertex_t = graph_traits<Graph *>::vertex_descriptor;
+  std::vector<vertex_t> topo_order;
   topological_sort(sgb_g, std::back_inserter(topo_order),
                    vertex_index_map(get(vertex_index, sgb_g)));
   int n = 1;
-  for (std::vector < vertex_t >::reverse_iterator i = topo_order.rbegin();
+  for (auto i = topo_order.rbegin();
        i != topo_order.rend(); ++i, ++n)
     std::cout << n << ": " << tasks[get(vertex_index, sgb_g)[*i]] << std::endl;
 

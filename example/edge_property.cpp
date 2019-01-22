@@ -54,10 +54,10 @@
 #include <boost/utility.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include "range_pair.hpp"
 
 
 using namespace boost;
-using namespace std;
 
 
 enum edge_myflow_t { edge_myflow };
@@ -72,45 +72,32 @@ namespace boost {
 template <class Graph>
 void print_network(const Graph& G)
 {
-  typedef typename boost::graph_traits<Graph>::vertex_iterator    Viter;
-  typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
-  typedef typename boost::graph_traits<Graph>::in_edge_iterator InEdgeIter;
+  auto capacity = get(edge_mycapacity, G);
+  auto flow = get(edge_myflow, G);
 
-  typename property_map<Graph, edge_mycapacity_t>::const_type
-    capacity = get(edge_mycapacity, G);
-  typename property_map<Graph, edge_myflow_t>::const_type    
-    flow = get(edge_myflow, G);
+  for (const auto& vertex : make_range_pair(vertices(G))) {
+    std::cout << vertex << "\t";
 
-  Viter ui, uiend;
-  boost::tie(ui, uiend) = vertices(G);
+    for (const auto& edge : make_range_pair(out_edges(vertex, G)))
+      std::cout << "--(" << capacity[edge] << ", " << flow[edge] << ")--> "
+           << target(edge,G) << "\t";
 
-  for (; ui != uiend; ++ui) {
-    OutEdgeIter out, out_end;
-    cout << *ui << "\t";
+    std::cout << std::endl << "\t";
+    for (const auto& edge : make_range_pair(in_edges(vertex, G)))
+      std::cout << "<--(" << capacity[edge] << "," << flow[edge] << ")-- "
+           << source(edge, G) << "\t";
 
-    boost::tie(out, out_end) = out_edges(*ui, G);
-    for(; out != out_end; ++out)
-      cout << "--(" << capacity[*out] << ", " << flow[*out] << ")--> "
-           << target(*out,G) << "\t";
-
-    InEdgeIter in, in_end;
-    cout << endl << "\t";
-    boost::tie(in, in_end) = in_edges(*ui, G);
-    for(; in != in_end; ++in)
-      cout << "<--(" << capacity[*in] << "," << flow[*in] << ")-- "
-           << source(*in,G) << "\t";
-
-    cout << endl;
+    std::cout << std::endl;
   }
 }
 
 
 int main(int , char* [])
 {
-  typedef property<edge_mycapacity_t, int> Cap;
-  typedef property<edge_myflow_t, int, Cap> Flow;
-  typedef adjacency_list<vecS, vecS, bidirectionalS, 
-     no_property, Flow> Graph;
+  using Cap = property<edge_mycapacity_t, int>;
+  using Flow = property<edge_myflow_t, int, Cap>;
+  using Graph = adjacency_list<vecS, vecS, bidirectionalS, 
+     no_property, Flow>;
 
   const int num_vertices = 9;
   Graph G(num_vertices);
@@ -143,16 +130,13 @@ int main(int , char* [])
 
   print_network(G);
 
-  property_map<Graph, edge_myflow_t>::type
-    flow = get(edge_myflow, G);
+  auto flow = get(edge_myflow, G);
 
-  boost::graph_traits<Graph>::vertex_iterator v, v_end;
-  boost::graph_traits<Graph>::out_edge_iterator e, e_end;
   int f = 0;
-  for (boost::tie(v, v_end) = vertices(G); v != v_end; ++v)
-    for (boost::tie(e, e_end) = out_edges(*v, G); e != e_end; ++e)
-      flow[*e] = ++f;
-  cout << endl << endl;
+  for (const auto& vertex : make_range_pair(vertices(G)))
+    for (const auto& edge : make_range_pair(out_edges(vertex, G)))
+      flow[edge] = ++f;
+  std::cout << std::endl << std::endl;
 
   remove_edge(6, 8, G);
 

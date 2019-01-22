@@ -12,6 +12,7 @@
 #include <iostream>
 #include <boost/graph/stanford_graph.hpp>
 #include <boost/graph/strong_components.hpp>
+#include "range_pair.hpp"
 
 #define specs(v) \
  (filename ? index_map[v] : v->cat_no) << " " << v->name
@@ -19,8 +20,7 @@
 int main(int argc, char* argv[])
 {
   using namespace boost;
-  Graph* g;
-  typedef graph_traits<Graph*>::vertex_descriptor vertex_t;
+  using vertex_t = graph_traits<Graph*>::vertex_descriptor;
   unsigned long n = 0;
   unsigned long d = 0;
   unsigned long p = 0;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  g = (filename ? restore_graph(filename) : roget(n, d, p, s));
+  auto g = (filename ? restore_graph(filename) : roget(n, d, p, s));
   if (g == NULL) {
     fprintf(stderr, "Sorry, can't create the graph! (error code %ld)\n",
             panic_code);
@@ -57,37 +57,34 @@ int main(int argc, char* argv[])
   //   a separate field for marking colors, so we use the w field.
 
   std::vector<int> comp(num_vertices(g));
-  property_map<Graph*, vertex_index_t>::type 
-    index_map = get(vertex_index, g);
+  auto index_map = get(vertex_index, g);
 
-  property_map<Graph*, v_property<vertex_t> >::type 
-    root = get(v_property<vertex_t>(), g);
+  auto root = get(v_property<vertex_t>(), g);
 
-  int num_comp = strong_components
+  auto num_comp = strong_components
     (g, make_iterator_property_map(comp.begin(), index_map),
      root_map(root).
      discover_time_map(get(z_property<long>(), g)).
      color_map(get(w_property<long>(), g)));
 
-  std::vector< std::vector<vertex_t> > strong_comp(num_comp);
+  std::vector<std::vector<vertex_t>> strong_comp(num_comp);
 
   // First add representative vertices to each component's list
-  graph_traits<Graph*>::vertex_iterator vi, vi_end;
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (root[*vi] == *vi)
-      strong_comp[comp[index_map[*vi]]].push_back(*vi);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (root[vertex] == vertex)
+      strong_comp[comp[index_map[vertex]]].emplace_back(vertex);
 
   // Then add the other vertices of the component
-  for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-    if (root[*vi] != *vi)
-      strong_comp[comp[index_map[*vi]]].push_back(*vi);
+  for (const auto& vertex : make_range_pair(vertices(g)))
+    if (root[vertex] != vertex)
+      strong_comp[comp[index_map[vertex]]].emplace_back(vertex);
 
   // We do not print out the "from" and "to" information as Knuth
   // does because we no longer have easy access to that information
   // from outside the algorithm.
 
   for (c = 0; c < num_comp; ++c) {
-    vertex_t v = strong_comp[c].front();
+    auto v = strong_comp[c].front();
     std::cout << "Strong component `" << specs(v) << "'";
     if (strong_comp[c].size() > 1) {
       std::cout << " also includes:\n";
@@ -114,13 +111,12 @@ int main(int argc, char* argv[])
   // We go in reverse order just to mimic the output ordering in
   // Knuth's version.
   for (c = num_comp - 1; c >= 0; --c) {
-    vertex_t u = strong_comp[c][0];
+    auto u = strong_comp[c][0];
     for (i = 0; i < strong_comp[c].size(); ++i) {
-      vertex_t v = strong_comp[c][i];
-      graph_traits<Graph*>::out_edge_iterator ei, ei_end;
-      for (boost::tie(ei, ei_end) = out_edges(v, g); ei != ei_end; ++ei) {
-        vertex_t x = target(*ei, g);
-        int comp_x = comp[index_map[x]];
+      auto v = strong_comp[c][i];
+      for (const auto& edge : make_range_pair(out_edges(v, g))) {
+        auto x = target(edge, g);
+        auto comp_x = comp[index_map[x]];
         if (comp_x != c && mark[comp_x] != c) {
           mark[comp_x] = c;
           vertex_t w = strong_comp[comp_x][0];

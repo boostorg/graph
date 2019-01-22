@@ -12,6 +12,7 @@
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -39,17 +40,14 @@ name_equals(const std::string& str, NamePropertyMap name) {
 template <class MutableGraph>
 void modify_demo(MutableGraph& g)
 {
-  typedef graph_traits<MutableGraph> GraphTraits;
-  typedef typename GraphTraits::vertices_size_type size_type;
-  typedef typename GraphTraits::edge_descriptor edge_descriptor;
+  using GraphTraits = graph_traits<MutableGraph>;
+  using size_type = typename GraphTraits::vertices_size_type;
+  using edge_descriptor = typename GraphTraits::edge_descriptor;
   size_type n = 0;
   typename GraphTraits::edges_size_type m = 0;
   typename GraphTraits::vertex_descriptor u, v, w;
   edge_descriptor e, e1, e2;
-  typename property_map<MutableGraph, edge_name_t>::type
-    name_map = get(edge_name, g);
-  bool added;
-  typename GraphTraits::vertex_iterator vi, vi_end;
+  auto name_map = get(edge_name, g);
 
   {
     v = add_vertex(g);
@@ -69,7 +67,7 @@ void modify_demo(MutableGraph& g)
     u = add_vertex(g);
     v = add_vertex(g);
 
-    std::pair<edge_descriptor, bool> p = add_edge(u, v, g);
+    auto p = add_edge(u, v, g);
   
     assert(num_edges(g) == m + 1);
     assert(p.second == true); // edge should have been added
@@ -86,7 +84,7 @@ void modify_demo(MutableGraph& g)
     u = add_vertex(g);
     v = add_vertex(g);
     
-    boost::tie(e, added) = add_edge(u, v, g);
+    auto [e, added] = add_edge(u, v, g);
 
     assert(num_edges(g) == m + 2);
     assert(added == true); // edge should have been added
@@ -101,15 +99,14 @@ void modify_demo(MutableGraph& g)
     remove_edge(u, v, g);
 
     assert(num_edges(g) == m + 1);
-    bool exists;
-    boost::tie(e, exists) = edge(u, v, g);
+    auto [e, exists] = edge(u, v, g);
     assert(exists == false);
     assert(out_degree(u, g) == 0);
     assert(in_degree(v, g) == 0);
   }
   {
     e = *edges(g).first;
-    boost::tie(u, v) = incident(e, g);
+    auto [u, v] = incident(e, g);
 
     remove_edge(e, g);
 
@@ -120,8 +117,7 @@ void modify_demo(MutableGraph& g)
   {
     add_edge(u, v, g);
 
-    typename GraphTraits::out_edge_iterator iter, iter_end;
-    boost::tie(iter, iter_end) = out_edges(u, g);
+    auto [iter, iter_end] = out_edges(u, g);
 
     remove_edge(iter, g);
     
@@ -131,13 +127,12 @@ void modify_demo(MutableGraph& g)
   }
   {
     w = add_vertex(g);
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(v, w, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(v, w, g);
     name_map[e1] = "I-5";
     name_map[e2] = "Route 66";
     
-    typename GraphTraits::out_edge_iterator iter, iter_end;
-    boost::tie(iter, iter_end) = out_edges(u, g);
+    auto [iter, iter_end] = out_edges(u, g);
 
     remove_edge_if(name_equals("Route 66", name_map), g);
     
@@ -152,8 +147,8 @@ void modify_demo(MutableGraph& g)
     assert(in_degree(w, g) == 0);
   }
   {
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(u, w, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(u, w, g);
     name_map[e1] = "foo";
     name_map[e2] = "foo";
     
@@ -163,8 +158,8 @@ void modify_demo(MutableGraph& g)
     assert(out_degree(u, g) == 0);
   }
   {
-    boost::tie(e1, added) = add_edge(u, v, g);
-    boost::tie(e2, added) = add_edge(w, v, g);
+    auto [e1, added1] = add_edge(u, v, g);
+    auto [e2, added2] = add_edge(w, v, g);
     name_map[e1] = "bar";
     name_map[e2] = "bar";
     
@@ -183,11 +178,9 @@ void modify_demo(MutableGraph& g)
     
     assert(out_degree(u, g) == 0);
     
-    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-      typename GraphTraits::adjacency_iterator ai, ai_end;
-      for (boost::tie(ai, ai_end) = adjacent_vertices(*vi, g);
-           ai != ai_end; ++ai)
-        assert(*ai != u);
+    for (const auto& vertex : make_range_pair(vertices(g))) {
+      for (const auto& adjacent_vertex : make_range_pair(adjacent_vertices(vertex, g)))
+        assert(adjacent_vertex != vertex);
     }
   }
 }
@@ -196,7 +189,7 @@ int
 main()
 {
   adjacency_list<listS, vecS, bidirectionalS,
-    no_property, property<edge_name_t, std::string> > g;
+    no_property, property<edge_name_t, std::string>> g;
 
   modify_demo(g);
   return 0;

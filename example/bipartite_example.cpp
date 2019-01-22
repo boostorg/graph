@@ -13,6 +13,7 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bipartite.hpp>
+#include "range_pair.hpp"
 
 using namespace boost;
 
@@ -21,8 +22,7 @@ using namespace boost;
 template <typename Graph>
 void print_bipartite (const Graph& g)
 {
-  typedef graph_traits <Graph> traits;
-  typename traits::vertex_iterator vertex_iter, vertex_end;
+  using traits = graph_traits <Graph>;
 
   /// Most simple interface just tests for bipartiteness. 
 
@@ -30,9 +30,9 @@ void print_bipartite (const Graph& g)
 
   if (bipartite)
   {
-    typedef std::vector <default_color_type> partition_t;
-    typedef typename property_map <Graph, vertex_index_t>::type index_map_t;
-    typedef iterator_property_map <partition_t::iterator, index_map_t> partition_map_t;
+    using partition_t = std::vector <default_color_type>;
+    using index_map_t = typename property_map <Graph, vertex_index_t>::type;
+    using partition_map_t = iterator_property_map <partition_t::iterator, index_map_t>;
 
     partition_t partition (num_vertices (g));
     partition_map_t partition_map (partition.begin (), get (vertex_index, g));
@@ -41,15 +41,15 @@ void print_bipartite (const Graph& g)
 
     is_bipartite (g, get (vertex_index, g), partition_map);
 
-    for (boost::tie (vertex_iter, vertex_end) = vertices (g); vertex_iter != vertex_end; ++vertex_iter)
+    for (const auto& vertex : make_range_pair(vertices (g)))
     {
-      std::cout << "Vertex " << *vertex_iter << " has color " << (get (partition_map, *vertex_iter) == color_traits <
+      std::cout << "Vertex " << vertex << " has color " << (get (partition_map, vertex) == color_traits <
           default_color_type>::white () ? "white" : "black") << std::endl;
     }
   }
   else
   {
-    typedef std::vector <typename traits::vertex_descriptor> vertex_vector_t;
+    using vertex_vector_t = std::vector <typename traits::vertex_descriptor>;
     vertex_vector_t odd_cycle;
 
     /// A third interface yields an odd-cycle if the graph is not bipartite.
@@ -67,8 +67,8 @@ void print_bipartite (const Graph& g)
 
 int main (int argc, char **argv)
 {
-  typedef adjacency_list <vecS, vecS, undirectedS> vector_graph_t;
-  typedef std::pair <int, int> E;
+  using vector_graph_t = adjacency_list <vecS, vecS, undirectedS>;
+  using E = std::pair <int, int>;
 
   /**
    * Create the graph drawn below.

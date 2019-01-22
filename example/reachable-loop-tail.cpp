@@ -26,18 +26,18 @@ main(int argc, char *argv[])
   GraphvizDigraph g_in;
   read_graphviz(argv[1], g_in);
 
-  typedef adjacency_list < vecS, vecS, bidirectionalS,
+  using Graph = adjacency_list < vecS, vecS, bidirectionalS,
     GraphvizVertexProperty,
-    GraphvizEdgeProperty, GraphvizGraphProperty > Graph;
+    GraphvizEdgeProperty, GraphvizGraphProperty >;
   Graph g;
   copy_graph(g_in, g);
 
-  graph_traits < GraphvizDigraph >::vertex_descriptor loop_tail = 6;
-  typedef color_traits < default_color_type > Color;
+  graph_traits<GraphvizDigraph>::vertex_descriptor loop_tail = 6;
+  using Color = color_traits<default_color_type>;
   default_color_type c;
 
-  std::vector < default_color_type > reachable_to_tail(num_vertices(g));
-  reverse_graph < Graph > reverse_g(g);
+  std::vector<default_color_type> reachable_to_tail(num_vertices(g));
+  reverse_graph<Graph> reverse_g(g);
   depth_first_visit(reverse_g, loop_tail, default_dfs_visitor(),
                     make_iterator_property_map(reachable_to_tail.begin(),
                                                get(vertex_index, g), c));
@@ -47,20 +47,18 @@ main(int argc, char *argv[])
     << "  graph [ratio=\"fill\",size=\"3,3\"];\n"
     << "  node [shape=\"box\"];\n" << "  edge [style=\"bold\"];\n";
 
-  property_map<Graph, vertex_attribute_t>::type
-    vattr_map = get(vertex_attribute, g);
-  graph_traits < GraphvizDigraph >::vertex_iterator i, i_end;
-  for (boost::tie(i, i_end) = vertices(g_in); i != i_end; ++i) {
-    loops_out << *i << "[label=\"" << vattr_map[*i]["label"]
+  auto vattr_map = get(vertex_attribute, g);
+  for (const auto& vertex : make_range_pair(vertices(g_in))) {
+    loops_out << vertex << "[label=\"" << vattr_map[vertex]["label"]
       << "\"";
-    if (reachable_to_tail[*i] != Color::white()) {
+    if (reachable_to_tail[vertex] != Color::white()) {
       loops_out << ", color=\"gray\", style=\"filled\"";
     }
     loops_out << "]\n";
   }
-  graph_traits < GraphvizDigraph >::edge_iterator e, e_end;
-  for (boost::tie(e, e_end) = edges(g_in); e != e_end; ++e)
-    loops_out << source(*e, g) << " -> " << target(*e, g) << ";\n";
+
+  for (const auto& edge : make_range_pair(edges(g_in)))
+    loops_out << source(edge, g) << " -> " << target(edge, g) << ";\n";
   loops_out << "}\n";
   return EXIT_SUCCESS;
 }

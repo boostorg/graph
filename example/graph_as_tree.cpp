@@ -33,29 +33,28 @@ public:
 int main()
 {
   using namespace boost;
-  typedef adjacency_list<vecS, vecS, directedS, 
-    property<vertex_name_t, std::string> > graph_t;
-  typedef graph_traits<graph_t>::vertex_descriptor vertex_t;
+  using graph_t = adjacency_list<vecS, vecS, directedS, 
+    property<vertex_name_t, std::string>>;
+  using vertex_t = graph_traits<graph_t>::vertex_descriptor;
 
   graph_t g;
 
-  vertex_t a = add_vertex(g),
+  auto a = add_vertex(g),
     b = add_vertex(g),
     c = add_vertex(g);
 
   add_edge(a, b, g);
   add_edge(a, c, g);
   
-  typedef property_map<graph_t, vertex_name_t>::type vertex_name_map_t;
-  vertex_name_map_t name = get(vertex_name, g);
+  auto name = get(vertex_name, g);
   name[a] = "A";
   name[b] = "B";
   name[c] = "C";
 
-  typedef iterator_property_map<std::vector<vertex_t>::iterator,
-    property_map<graph_t, vertex_index_t>::type> parent_map_t;
+  using parent_map_t = iterator_property_map<std::vector<vertex_t>::iterator,
+    property_map<graph_t, vertex_index_t>::type>;
   std::vector<vertex_t> parent(num_vertices(g));
-  typedef graph_as_tree<graph_t, parent_map_t> tree_t;
+  using tree_t = graph_as_tree<graph_t, parent_map_t>;
   tree_t t(g, a, make_iterator_property_map(parent.begin(), 
                                             get(vertex_index, g)));
 
