@@ -90,6 +90,7 @@ alias graph_test_regular :
     [ run floyd_warshall_test.cpp ]
     [ run astar_search_test.cpp ]
     [ run biconnected_components_test.cpp ]
+    [ run min_degree_empty.cpp ]
     [ run cuthill_mckee_ordering.cpp ]
     [ run king_ordering.cpp ]
     [ run matching_test.cpp ]
