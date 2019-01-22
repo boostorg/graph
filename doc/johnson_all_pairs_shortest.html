@@ -129,7 +129,7 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   This function is use to compare distances to determine
   which vertex is closer to the source vertex.
   The <tt>CompareFunction</tt> type must be a model of
-  <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary Predicate</a>
+  <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary Predicate</a>
   and have argument types that
   match the value type of the <tt>WeightMap</tt> property map.<br>
   <b>Default:</b> <tt>std::less&lt;DT&gt;</tt> with
@@ -140,7 +140,7 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
 <blockquote>
   This function is used to combine distances to compute the distance
   of a path. The <tt>CombineFunction</tt> type must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary
+  href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
   Function</a>. Both argument types and the return type of the binary function
   must match the value type of the <tt>WeightMap</tt> property map.  This operation is required to act as the sum operation for the weight type; in particular, it must be the inverse of the binary <tt>-</tt> operator on that type.<br>
   <b>Default:</b> <tt>std::plus&lt;DT&gt;</tt> with
