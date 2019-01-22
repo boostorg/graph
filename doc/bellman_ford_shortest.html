@@ -34,7 +34,7 @@ bool bellman_ford_shortest_paths(const VertexAndEdgeListGraph&amp; g,
 <i>// non-named parameter version</i>
 template &lt;class <a href="./EdgeListGraph.html">EdgeListGraph</a>, class Size, class WeightMap,
 	  class PredecessorMap, class DistanceMap,
-	  class <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>,
+	  class <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">BinaryFunction</a>, class <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>,
 	  class <a href="./BellmanFordVisitor.html">BellmanFordVisitor</a>&gt;
 bool bellman_ford_shortest_paths(EdgeListGraph&amp; g, Size N, 
   WeightMap weight, PredecessorMap pred, DistanceMap distance, 
@@ -236,7 +236,7 @@ IN/OUT: <tt>distance_map(DistanceMap d)</tt>
   Property Map</a>. The key type of the property map must be the
   vertex descriptor type of the graph, and the value type of the
   distance map must be <a
-  href="http://www.sgi.com/tech/stl/LessThanComparable.html"> Less
+  href="http://www.boost.org/sgi/stl/LessThanComparable.html"> Less
   Than Comparable</a>.<br> <b>Default:</b> <tt>get(vertex_distance,
   g)</tt><br>
   <b>Python</b>: Must be a <tt>vertex_double_map</tt> for the graph.<br>

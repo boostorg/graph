@@ -153,7 +153,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   href="./Monoid.html">Monoid</tt> formed with the <tt>combine</tt>
   function object and the <tt>zero</tt> object for the identity
   element. Also the distance value type must have a <a
-  href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html">
+  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html">
   StrictWeakOrdering</a> provided by the <tt>compare</tt> function
   object.<br>
   <b>Default:</b> <a
@@ -171,7 +171,7 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   This function is use to compare distances to determine which vertex
   is closer to the source vertex.  The <tt>CompareFunction</tt> type
   must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+  href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
   Predicate</a> and have argument types that match the value type of
   the <tt>DistanceMap</tt> property map.<br>
 
@@ -186,7 +186,7 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
 <blockquote>
   This function is used to combine distances to compute the distance
   of a path. The <tt>CombineFunction</tt> type must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary
+  href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
   Function</a>. The first argument type of the binary function must
   match the value type of the <tt>DistanceMap</tt> property map and
   the second argument type must match the value type of the
