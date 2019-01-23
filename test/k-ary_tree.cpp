@@ -168,7 +168,7 @@ void depth_first_search()
     std::make_pair(boost::order::post, 0)
   };
   tree_visitor<boost::order::visit, vertex_descriptor> visitor;
-  depth_first_visit(tree, vertex_descriptor(0), visitor, color);
+  depth_first_visit(tree, 0, visitor, color);
   BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
 }
 
