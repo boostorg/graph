@@ -110,7 +110,7 @@ void incidence_graph()
 void bidirectional_graph()
 {
   boost::bidirectional_binary_tree tree;
-  create_full_tree(tree, 3);
+  create_full_tree(tree, 5);
   BOOST_CHECK(boost::distance(in_edges(0, tree)) == 0);
   BOOST_CHECK(in_degree(0, tree) == 0);
   BOOST_CHECK(boost::distance(in_edges(1, tree)) == 1);
@@ -120,6 +120,16 @@ void bidirectional_graph()
   BOOST_CHECK(root(0, tree) == 0);
   BOOST_CHECK(root(1, tree) == 0);
   BOOST_CHECK(root(2, tree) == 0);
+  BOOST_CHECK(root(3, tree) == 0);
+  BOOST_CHECK(root(4, tree) == 0);
+  // detach the (1(3, 4)) subtree.
+  remove_edge(0, 1, tree);
+  BOOST_CHECK(!has_left_successor(0, tree));
+  BOOST_CHECK(root(0, tree) == 0);
+  BOOST_CHECK(root(1, tree) == 1);
+  BOOST_CHECK(root(2, tree) == 0);
+  BOOST_CHECK(root(3, tree) == 1);
+  BOOST_CHECK(root(4, tree) == 1);
 }
 
 template <typename Order, typename Vertex>
