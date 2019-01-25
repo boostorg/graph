@@ -22,6 +22,14 @@
 // The default maze size is 20x10, though different dimensions may be
 // specified on the command line.
 
+/*
+   IMPORTANT:
+   ~~~~~~~~~~
+
+   This example appears to be broken and crashes at runtime, see https://github.com/boostorg/graph/issues/148
+
+*/
+
 
 #include <boost/graph/astar_search.hpp>
 #include <boost/graph/filtered_graph.hpp>
