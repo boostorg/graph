@@ -7,13 +7,6 @@
 //=======================================================================
 
 
-/*
-   IMPORTANT:
-   ~~~~~~~~~~
-
-   This example appears to be broken and crashes at runtime, see https://github.com/boostorg/graph/issues/148
-
-*/
 
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
