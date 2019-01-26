@@ -395,7 +395,7 @@ namespace boost {
                          CopyVertex cv, CopyEdge ce)
         : g_out(graph), orig2copy(c), copy_vertex(cv), copy_edge(ce) { }
 
-      template <class Vertex, class Graph>
+      template <class Vertex>
       typename graph_traits<NewGraph>::vertex_descriptor copy_one_vertex(Vertex u) const {
         typename graph_traits<NewGraph>::vertex_descriptor
           new_u = add_vertex(g_out);
