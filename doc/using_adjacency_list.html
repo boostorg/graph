@@ -55,9 +55,9 @@ object.
 
 <P>
 BGL uses containers from the STL such as
-<a href="http://www.sgi.com/tech/stl/Vector.html"><TT>std::vector</TT></a>,
-<a href="http://www.sgi.com/tech/stl/List.html"><TT>std::list</TT></a>,
-and <a href="http://www.sgi.com/tech/stl/set.html"><TT>std::set</TT></a>
+<a href="http://www.boost.org/sgi/stl/Vector.html"><TT>std::vector</TT></a>,
+<a href="http://www.boost.org/sgi/stl/List.html"><TT>std::list</TT></a>,
+and <a href="http://www.boost.org/sgi/stl/set.html"><TT>std::set</TT></a>
 to represent the set of vertices and the adjacency structure
 (out-edges and in-edges) of the graph.  There are several selector
 types that are used to specify the choice of container for
@@ -82,9 +82,9 @@ types that are used to specify the choice of container for
 The <TT>VertexList</TT> parameter determines what kind of container
 will be used to represent the vertex set, or two-dimensional structure
 of the graph.  The container must model <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> or
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a> or
 <a
-href="http://www.sgi.com/tech/stl/RandomAccessContainer.html">RandomAccessContainer</a>. In
+href="http://www.boost.org/sgi/stl/RandomAccessContainer.html">RandomAccessContainer</a>. In
 general, <TT>listS</TT> is a good choice if you need to add and remove
 vertices quickly. The price for this is extra space overhead compared
 to choosing <TT>vecS</TT>.
@@ -150,9 +150,9 @@ The <TT>OutEdgeList</TT> parameter determines what kind of container will
 be used to store the out-edges (and possibly in-edges) for each vertex
 in the graph. The containers used for edge lists must either satisfy
 the requirements for <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> or for
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a> or for
 <a
-href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContainer</a>.
+href="http://www.boost.org/sgi/stl/AssociativeContainer.html">AssociativeContainer</a>.
 
 <P>
 One of the first things to consider when choosing the
@@ -162,7 +162,7 @@ that the graph not become a multi-graph). If you want this enforced
 then use the <TT>setS</TT> or <TT>hash_setS</TT> selectors.  If you
 want to represent a multi-graph, or know that you will not be
 inserting parallel edges into the graph, then choose one of the <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a>
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a>
 types: <TT>vecS</TT>, <TT>listS</TT>, or <TT>slistS</TT>. 
 You will also want to take into account the differences in time and space
 complexity for the various graph operations. Below we use <i>V</i> for
@@ -202,11 +202,11 @@ considered a constant.
 add_edge()
 </PRE>
 When the <TT>OutEdgeList</TT> is a <a
-href="http://www.sgi.com/tech/stl/UniqueAssociativeContainer.html">UniqueAssociativeContainer</a>
+href="http://www.boost.org/sgi/stl/UniqueAssociativeContainer.html">UniqueAssociativeContainer</a>
 like <TT>std::set</TT> the absence of parallel edges is enforced when
 an edge is added. The extra lookup involved has time complexity
 <i>O(log(E/V))</i>. The <TT>OutEdgeList</TT> types that model <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> do
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a> do
 not perform this check and therefore <TT>add_edge()</TT> is amortized
 constant time.  This means that it if you don't care whether the graph
 has parallel edges, or know that the input to the graph does not
@@ -236,9 +236,9 @@ edge()
 </PRE>
 The time complexity for this operation is <i>O(E/V)</i> when the
 <TT>OutEdgeList</TT> type is a <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a> and it
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a> and it
 is <i>O(log(E/V))</i> when the <TT>OutEdgeList</TT> type is an <a
-href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContainer</a>.
+href="http://www.boost.org/sgi/stl/AssociativeContainer.html">AssociativeContainer</a>.
 <p></p>
 
 <li>
@@ -405,7 +405,7 @@ add more.
 The <b><TT>T</TT></b> template parameter of <TT>property</TT>
 specifies the type of the property values. The type <tt>T</tt> must be
 <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default
+href="http://www.boost.org/sgi/stl/DefaultConstructible.html">Default
 Constructible</a>, <a
 href="../../utility/Assignable.html">Assignable</a>, and <a
 href="../../utility/CopyConstructible.html">Copy Constructible</a>.
@@ -762,9 +762,9 @@ Parallel Edge Traits</A>
 When customizing the <TT>OutEdgeList</TT>, you must also specialize
 the <TT>parallel_edge_traits</TT> class to specify whether the
 container type allows parallel edges (and is a <a
-href="http://www.sgi.com/tech/stl/Sequence.html">Sequence</a>) or if
+href="http://www.boost.org/sgi/stl/Sequence.html">Sequence</a>) or if
 the container does not allow parallel edges (and is an <a
-href="http://www.sgi.com/tech/stl/AssociativeContainer.html">AssociativeContainer</a>).
+href="http://www.boost.org/sgi/stl/AssociativeContainer.html">AssociativeContainer</a>).
 
 <P>
 <PRE>

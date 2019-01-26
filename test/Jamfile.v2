@@ -27,11 +27,10 @@ alias graph_test_regular :
     [ run finish_edge_bug.cpp ]
 
     [ run transitive_closure_test.cpp ]
+    [ run transitive_closure_test2.cpp ]
     [ compile adj_list_cc.cpp ]
 
-    # adj_list_test needs some work -JGS
-    # unit-test adj_list_test : adj_list_test.cpp  ;
-
+    #[ run adj_list_invalidation.cpp ]
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
@@ -41,7 +40,7 @@ alias graph_test_regular :
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
     [ run bipartite_test.cpp ]
-    # [ run csr_graph_test.cpp : : : : : <variant>release ]
+    [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
     [ run undirected_dfs.cpp ../../test/build//boost_test_exec_monitor ]
@@ -56,8 +55,17 @@ alias graph_test_regular :
 
     [ compile edge_list_cc.cpp ]
     [ compile filtered_graph_cc.cpp ]
+    [ run filter_graph_vp_test.cpp ]
     [ run generator_test.cpp ]
-    [ run graph.cpp ]
+    [ run graph.cpp : : : <define>TEST=1 : graph_1 ]
+    [ run graph.cpp : : : <define>TEST=2 : graph_2 ]
+    [ run graph.cpp : : : <define>TEST=3 : graph_3 ]
+    [ run graph.cpp : : : <define>TEST=4 : graph_4 ]
+    [ run graph.cpp : : : <define>TEST=5 : graph_5 ]
+    [ run graph.cpp : : : <define>TEST=6 : graph_6 ]
+    [ run graph.cpp : : : <define>TEST=7 : graph_7 ]
+    [ run graph.cpp : : : <define>TEST=8 : graph_8 ]
+    [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
     [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
@@ -85,14 +93,24 @@ alias graph_test_regular :
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]
     [ compile swap.cpp ]
-    [ compile property_iter.cpp ]
+    [ compile property_iter.cpp : <define>TEST=1 : property_iter_1 ]
+    [ compile property_iter.cpp : <define>TEST=2 : property_iter_2 ]
+    [ compile property_iter.cpp : <define>TEST=3 : property_iter_3 ]
+    [ compile property_iter.cpp : <define>TEST=4 : property_iter_4 ]
+    [ compile property_iter.cpp : <define>TEST=5 : property_iter_5 ]
+    [ compile property_iter.cpp : <define>TEST=6 : property_iter_6 ]
+    [ compile property_iter.cpp : <define>TEST=7 : property_iter_7 ]
+    [ compile property_iter.cpp : <define>TEST=8 : property_iter_8 ]
+    [ compile property_iter.cpp : <define>TEST=9 : property_iter_9 ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
     [ run astar_search_test.cpp ]
     [ run biconnected_components_test.cpp ]
+    [ run min_degree_empty.cpp ]
     [ run cuthill_mckee_ordering.cpp ]
     [ run king_ordering.cpp ]
     [ run matching_test.cpp ]
+    [ run weighted_matching_test.cpp ]
     [ run max_flow_test.cpp ]
     [ run boykov_kolmogorov_max_flow_test.cpp ]
     [ run cycle_ratio_tests.cpp ../build//boost_graph ../../regex/build//boost_regex : $(CYCLE_RATIO_INPUT_FILE) ]
@@ -121,6 +139,7 @@ alias graph_test_regular :
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
     [ run random_spanning_tree_test.cpp ../build//boost_graph ]
+    [ run random_matching_test.cpp : 1000 1020 ]
     [ run graphml_test.cpp ../build//boost_graph : : "graphml_test.xml" ]
     [ run mas_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
     [ run stoer_wagner_test.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
@@ -134,6 +153,8 @@ alias graph_test_regular :
     [ run find_flow_cost_bundled_properties_and_named_params_test.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run max_flow_algorithms_bundled_properties_and_named_params.cpp ../../test/build//boost_unit_test_framework/<link>static ]
     [ run delete_edge.cpp ]
+    [ run johnson-test.cpp ]
+    [ run lvalue_pmap.cpp ]
     ;
 
 alias graph_test_with_filesystem : :

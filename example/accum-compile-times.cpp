@@ -48,9 +48,9 @@ typedef graph_traits<file_dep_graph2>::vertex_descriptor vertex_t;
 typedef graph_traits<file_dep_graph2>::edge_descriptor edge_t;
 
 int
-main()
+main(int argc, const char** argv)
 {
-  std::ifstream file_in("makefile-dependencies.dat");
+  std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat");
   typedef graph_traits<file_dep_graph2>::vertices_size_type size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
@@ -76,8 +76,8 @@ main()
   name_map_t name_map = get(vertex_name, g);
   compile_cost_map_t compile_cost_map = get(vertex_compile_cost, g);
 
-  std::ifstream name_in("makefile-target-names.dat");
-  std::ifstream compile_cost_in("target-compile-costs.dat");
+  std::ifstream name_in(argc >= 3 ? argv[2] : "makefile-target-names.dat");
+  std::ifstream compile_cost_in(argc >= 4 ? argv[3] : "target-compile-costs.dat");
   graph_traits < file_dep_graph2 >::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     name_in >> name_map[*vi];
