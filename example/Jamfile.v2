@@ -39,6 +39,7 @@ run connected_components.cpp ;
 run connected-components.cpp ;
 run container_gen.cpp ;
 run copy-example.cpp ;
+run csr-example.cpp ;
 run cuthill_mckee_ordering.cpp ;
 run cycle_canceling_example.cpp ;
 run cycle_ratio_example.cpp ;
@@ -226,4 +227,3 @@ explicit girth ;
 # does not compile:
 #
 # run bucket_sorter.cpp ;
-# run csr-example.cpp ;
