@@ -45,9 +45,9 @@ record_bacon_number(DistanceMap d)
 
 
 int
-main()
+main(int argc, const char** argv)
 {
-  std::ifstream datafile("./kevin-bacon.dat");
+  std::ifstream datafile(argc >= 2 ? argv[1] : "./kevin-bacon.dat");
   if (!datafile) {
     std::cerr << "No ./kevin-bacon.dat file" << std::endl;
     return EXIT_FAILURE;
