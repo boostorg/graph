@@ -16,6 +16,7 @@ run adjacency_list.cpp ;
 run adjacency_list_io.cpp ;
 run adjacency_matrix.cpp ;
 run astar-cities.cpp ;
+run astar_maze.cpp ;
 run bellman-example.cpp ;
 run bellman-ford-internet.cpp ;
 run bfs.cpp ;
@@ -214,7 +215,6 @@ explicit girth ;
 #
 # This one crashes at runtime:
 #
-# run astar_maze.cpp ;
 # run kevin-bacon2.cpp /boost/serialization//boost_serialization : $(TEST_DIR)/kevin-bacon.dat ;
 # Crashes with msvc-12.0:
 # run last-mod-time.cpp : $(TEST_DIR)/makefile-dependencies.dat ;
