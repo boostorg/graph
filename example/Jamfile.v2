@@ -30,6 +30,7 @@ run boost_web_graph.cpp : $(TEST_DIR)/boost_web.dat ;
 exe boykov_kolmogorov-eg : boykov_kolmogorov-eg.cpp ;
 exe bron_kerbosch_clique_number : bron_kerbosch_clique_number.cpp ;
 exe bron_kerbosch_print_cliques : bron_kerbosch_print_cliques.cpp ;
+run bucket_sorter.cpp ;
 run canonical_ordering.cpp ;
 run city_visitor.cpp ;
 exe closeness_centrality : closeness_centrality.cpp ;
@@ -223,7 +224,3 @@ explicit girth ;
 # This one dereferences a null-iterator:
 #
 # run ordered_out_edges.cpp ;
-#
-# does not compile:
-#
-# run bucket_sorter.cpp ;
