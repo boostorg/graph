@@ -126,7 +126,7 @@ exe kruskal-example : kruskal-example.cpp ;
 # exe kruskal-telephone : kruskal-telephone.cpp ;
 exe kuratowski_subgraph : kuratowski_subgraph.cpp ;
 # exe labeled_graph : last-mod-time.cpp ;
-exe last-mod-time : last-mod-time.cpp  : [ requires unistd_h ] ;
+exe last-mod-time : last-mod-time.cpp /boost//filesystem ;
 
 # These need LEDA:
 # exe leda-concept-check : leda-concept-check.cpp ;
