@@ -39,7 +39,7 @@ namespace boost {
                   const ValueIndexMap& _id = ValueIndexMap()) 
       : next(_length+_max_bucket, invalid_value()),
         prev(_length, invalid_value()),
-        head(next.size()?(&next[_length]):NULL),
+        head(next.size()?(next.begin()+_length):next.end()),
         id_to_value(_length),
         bucket(_bucket), id(_id) { }
 
@@ -79,7 +79,7 @@ namespace boost {
 
     class stack {
     public:
-      stack(bucket_type _bucket_id, typename Iter::value_type* h,
+      stack(bucket_type _bucket_id, Iter h,
             Iter n, Iter p, IndexValueMap v, const ValueIndexMap& _id)
 #if defined(BOOST_CLANG) && (1 == BOOST_CLANG) && defined(__APPLE_CC__)
       : bucket_id(_bucket_id), head(), next(), prev(), value(v), id(_id)
@@ -94,7 +94,7 @@ namespace boost {
 
       // Avoid using default arg for ValueIndexMap so that the default
       // constructor of the ValueIndexMap is not required if not used.
-      stack(bucket_type _bucket_id, typename Iter::value_type* h,
+      stack(bucket_type _bucket_id, Iter h,
             Iter n, Iter p, IndexValueMap v)
 #if defined(BOOST_CLANG) && (1 == BOOST_CLANG) && defined(__APPLE_CC__)
         : bucket_id(_bucket_id), head(), next(), prev(), value(v)
@@ -143,7 +143,7 @@ namespace boost {
   protected:
     std::vector<size_type>   next;
     std::vector<size_type>   prev;
-    typename std::vector<size_type>::value_type* head;
+    typename std::vector<size_type>::iterator head;
     std::vector<value_type>  id_to_value;
     Bucket bucket;
     ValueIndexMap id;
