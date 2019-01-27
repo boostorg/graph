@@ -204,7 +204,7 @@ explicit girth ;
 #run edge-connectivity.cpp ;
 #
 # These compile, but still use the old graphviz interface and die and runtime:
-# run strong_components.cpp ../build//boost_graph ;
+run strong_components.cpp ../build//boost_graph ;
 
 
 #
