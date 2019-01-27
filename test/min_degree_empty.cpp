@@ -42,8 +42,7 @@ int test_main(int argc, char** argv)
       , id
     );
 
-    for (int k = 0; k < n; ++k)
-    {
+    for (size_t k=0; k<n; ++k){
         BOOST_CHECK(o[io[k]] == k);
     }
 
