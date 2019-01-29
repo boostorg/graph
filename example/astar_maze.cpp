@@ -87,7 +87,7 @@ typedef boost::vertex_subset_complement_filter<grid, vertex_set>::type
 class maze {
 public:
   friend std::ostream& operator<<(std::ostream&, const maze&);
-  friend maze random_maze(std::size_t, std::size_t);
+  friend void random_maze(maze&);
 
   maze():m_grid(create_grid(0, 0)),m_barrier_grid(create_barrier_grid()) {};
   maze(std::size_t x, std::size_t y):m_grid(create_grid(x, y)),
@@ -127,10 +127,10 @@ private:
 
   // The grid underlying the maze
   grid m_grid;
-  // The underlying maze grid with barrier vertices filtered out
-  filtered_grid m_barrier_grid;
   // The barriers in the maze
   vertex_set m_barriers;
+  // The underlying maze grid with barrier vertices filtered out
+  filtered_grid m_barrier_grid;
   // The vertices on a solution path through the maze
   vertex_set m_solution;
   // The length of the solution path
@@ -264,8 +264,7 @@ std::size_t random_int(std::size_t a, std::size_t b) {
 }
 
 // Generate a maze with a random assignment of barriers.
-maze random_maze(std::size_t x, std::size_t y) {
-  maze m(x, y);
+void random_maze(maze& m) {
   vertices_size_type n = num_vertices(m.m_grid);
   vertex_descriptor s = m.source();
   vertex_descriptor g = m.goal();
@@ -294,9 +293,7 @@ maze random_maze(std::size_t x, std::size_t y) {
       u = v;
     }
   }
-  return m;
 }
-
 
 int main (int argc, char const *argv[]) {
   // The default maze size is 20x10.  A different size may be specified on
@@ -310,8 +307,8 @@ int main (int argc, char const *argv[]) {
   }
 
   random_generator.seed(std::time(0));
-  maze m = random_maze(x, y);
-
+  maze m(x, y);
+  random_maze(m);
   if (m.solve())
     std::cout << "Solved the maze." << std::endl;
   else
