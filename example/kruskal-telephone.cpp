@@ -46,7 +46,7 @@ main(int argc, char *argv[]) {
   std::ifstream ifs(filename);
   if (!ifs) {
     std::cerr << "Could not open " << filename << std::endl;
-    return 0;
+    return 1;
   }
   typedef property< vertex_name_t, std::string > VertexProperty;
   typedef property< edge_weight_t, int, property< edge_weight2_t, int > > EdgeProperty;

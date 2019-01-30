@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   std::ifstream ifs(filename);
   if (!ifs) {
     std::cerr << "Could not open " << filename << std::endl;
-    return 0;
+    return 1;
   }
  read_graphviz(ifs, G, dp);
 
