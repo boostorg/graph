@@ -195,7 +195,7 @@ explicit girth ;
 #
 # These all use an interface that has been removed:
 #
-#run kruskal-telephone.cpp ;
+run kruskal-telephone.cpp ../build//boost_graph ;
 #run loops_dfs.cpp ;
 #run scc.cpp ;
 #run reachable-loop-head.cpp ;
