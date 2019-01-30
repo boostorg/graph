@@ -55,8 +55,13 @@ int main(int argc, char* argv[])
 
   adjacency_list<vecS, vecS, directedS> G;
   dynamic_properties dp(ignore_other_properties);
-  std::ifstream ifs(argc >=2 ? argv[1] : "./scc.dot");
-  read_graphviz(ifs, G, dp);
+  std::string filename = (argc >= 2 ? argv[1] : "./scc.dot");
+  std::ifstream ifs(filename);
+  if (!ifs) {
+    std::cerr << "Could not open " << filename << std::endl;
+    return 1;
+  }
+ read_graphviz(ifs, G, dp);
 
   std::cout << "A directed graph:" << std::endl;
   print_graph(G, name);

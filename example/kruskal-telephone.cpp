@@ -8,6 +8,7 @@
 #include <boost/config.hpp>
 #include <iostream>
 #include <fstream>
+#include <set>
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
@@ -41,7 +42,12 @@ struct edge_writer{
 
 int
 main(int argc, char *argv[]) {
-  std::ifstream ifs(argc >= 2 ? argv[1] : "figs/telephone-network.dot");
+  std::string filename = (argc >= 2 ? argv[1] : "figs/telephone-network.dot");
+  std::ifstream ifs(filename);
+  if (!ifs) {
+    std::cerr << "Could not open " << filename << std::endl;
+    return 1;
+  }
   typedef property< vertex_name_t, std::string > VertexProperty;
   typedef property< edge_weight_t, int, property< edge_weight2_t, int > > EdgeProperty;
   typedef adjacency_list< vecS, vecS, undirectedS, VertexProperty, EdgeProperty > Graph;
