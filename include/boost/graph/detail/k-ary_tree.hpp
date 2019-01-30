@@ -48,7 +48,8 @@ namespace boost
     template <typename Tree>
     struct k_ary_tree_bidirectional_node : k_ary_tree_forward_node<Tree>
     {
-      using typename k_ary_tree_forward_node<Tree>::vertex_descriptor;
+      typedef typename k_ary_tree_forward_node<Tree>::vertex_descriptor
+      vertex_descriptor;
 
       k_ary_tree_bidirectional_node(vertex_descriptor predecessor
       = graph_traits<Tree>::null_vertex())
