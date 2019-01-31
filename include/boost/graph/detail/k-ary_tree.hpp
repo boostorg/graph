@@ -241,8 +241,8 @@ namespace boost
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
 
-        array<vertex_descriptor, 2> const keys = {null_vertex(), v};
-        vertex_descriptor *p = find_first_of(nodes[u].successors, keys); // O(k)
+        array<vertex_descriptor, 2> const keys = {{null_vertex(), v}};
+        vertex_descriptor * const p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
 
         if (p == boost::end(nodes[u].successors) or *p == v)
@@ -304,6 +304,7 @@ namespace boost
 
         // First handle the case where it's not on the free list.
         if (nodes.size() < u) {
+          free_list.reserve(free_list.size() + u - nodes.size());
           for (std::size_t i = nodes.size(); i != u; i++)
             free_list.push_back(i);
           nodes.resize(u + 1);
