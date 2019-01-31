@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 
   adjacency_list<vecS, vecS, directedS> G;
   dynamic_properties dp(ignore_other_properties);
-  std::string filename = (argc >= 2 ? argv[1] : "./scc.dot");
+  const char * filename = (argc >= 2 ? argv[1] : "./scc.dot");
   std::ifstream ifs(filename);
   if (!ifs) {
     std::cerr << "Could not open " << filename << std::endl;

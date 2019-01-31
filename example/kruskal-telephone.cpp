@@ -42,7 +42,7 @@ struct edge_writer{
 
 int
 main(int argc, char *argv[]) {
-  std::string filename = (argc >= 2 ? argv[1] : "figs/telephone-network.dot");
+  const char * filename = (argc >= 2 ? argv[1] : "figs/telephone-network.dot");
   std::ifstream ifs(filename);
   if (!ifs) {
     std::cerr << "Could not open " << filename << std::endl;
