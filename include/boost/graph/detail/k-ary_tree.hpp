@@ -35,13 +35,14 @@ namespace boost
     struct k_ary_tree_forward_node
     {
       typedef typename graph_traits<Tree>::vertex_descriptor vertex_descriptor;
+      typedef array<vertex_descriptor, Tree::k> vertex_array_t;
 
       k_ary_tree_forward_node()
       {
         fill(successors, graph_traits<Tree>::null_vertex());
       }
 
-      array<vertex_descriptor, Tree::k> successors;
+      vertex_array_t successors;
     };
 
 
@@ -156,11 +157,10 @@ namespace boost
       std::pair<out_edge_iterator, out_edge_iterator>
       out_edges(vertex_descriptor u, k_ary_tree_base const &g)
       {
-        // TODO: Filter successors to skip null_vertex.
-        return std::make_pair(out_edge_iterator(boost::begin(g.nodes[u].successors),
-                                                make_out_edge_descriptor(u)),
-                              out_edge_iterator(boost::end(g.nodes[u].successors),
-                                                make_out_edge_descriptor(u)));
+        typename Node::vertex_array_t const &successors = g.nodes[u].successors;
+        make_out_edge_descriptor const out(u);
+        return std::make_pair(out_edge_iterator(boost::begin(successors), out),
+                              out_edge_iterator(boost::end(successors), out));
       }
 
       friend
