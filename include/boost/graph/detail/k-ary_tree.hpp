@@ -107,6 +107,8 @@ namespace boost
       {
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(u < nodes.size());
+        BOOST_ASSERT(find(free_list, u) == end(free_list));
 
         return nodes[u];
       }
@@ -115,6 +117,11 @@ namespace boost
       typename enable_if_c<N < K, bool>::type
       has_successor(vertex_descriptor u) const
       {
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(u < nodes.size());
+        BOOST_ASSERT(find(free_list, u) == end(free_list));
+
         return nodes[u].successors[N] != null_vertex();
       }
 
