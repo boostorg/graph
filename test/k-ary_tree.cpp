@@ -156,7 +156,7 @@ void depth_first_search()
   std::vector<boost::default_color_type> color;
   typedef std::pair<boost::order::visit, vertex_descriptor> visiting;
   boost::array< visiting, 9> const expected_seq =
-  {
+  {{
     std::make_pair(boost::order::pre, 0),
     std::make_pair(boost::order::pre, 1),
     std::make_pair(boost::order::in, 1),
@@ -166,7 +166,7 @@ void depth_first_search()
     std::make_pair(boost::order::in, 2),
     std::make_pair(boost::order::post, 2),
     std::make_pair(boost::order::post, 0)
-  };
+  }};
   tree_visitor<boost::order::visit, vertex_descriptor> visitor;
   depth_first_visit(tree, 0, visitor, color);
   BOOST_CHECK(boost::equal(visitor.visited, expected_seq));
@@ -247,7 +247,7 @@ void VertexListGraph_test()
   create_full_tree(tree, 7);
 
   boost::array<vertex_descriptor, 7> actual,
-                                      expected = {3, 1, 4, 0, 5, 2, 6};
+                                      expected = {{3, 1, 4, 0, 5, 2, 6}};
   copy(vertices(tree), boost::begin(actual));
   BOOST_CHECK(actual == expected);
 }
