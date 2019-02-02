@@ -20,6 +20,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/indirect_iterator.hpp>
 
 #include <boost/static_assert.hpp>
@@ -433,8 +434,7 @@ add_vertex(typename subgraph<G>::vertex_descriptor u_global,
 // Functions required by the IncidenceGraph concept
 
 template <typename G>
-std::pair<typename graph_traits<G>::out_edge_iterator,
-          typename graph_traits<G>::out_edge_iterator>
+graph_detail::iterator_range<typename graph_traits<G>::out_edge_iterator>
 out_edges(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 { return out_edges(v, g.m_graph); }
 
@@ -457,8 +457,7 @@ target(typename graph_traits<G>::edge_descriptor e, const subgraph<G>& g)
 // Functions required by the BidirectionalGraph concept
 
 template <typename G>
-std::pair<typename graph_traits<G>::in_edge_iterator,
-          typename graph_traits<G>::in_edge_iterator>
+graph_detail::iterator_range<typename graph_traits<G>::in_edge_iterator>
 in_edges(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 { return in_edges(v, g.m_graph); }
 
@@ -476,8 +475,7 @@ degree(typename graph_traits<G>::vertex_descriptor v, const subgraph<G>& g)
 // Functions required by the AdjacencyGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::adjacency_iterator,
-          typename subgraph<G>::adjacency_iterator>
+graph_detail::iterator_range<typename subgraph<G>::adjacency_iterator>
 adjacent_vertices(typename subgraph<G>::vertex_descriptor v, const subgraph<G>& g)
 { return adjacent_vertices(v, g.m_graph); }
 
@@ -485,8 +483,7 @@ adjacent_vertices(typename subgraph<G>::vertex_descriptor v, const subgraph<G>& 
 // Functions required by the VertexListGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::vertex_iterator,
-          typename subgraph<G>::vertex_iterator>
+graph_detail::iterator_range<typename subgraph<G>::vertex_iterator>
 vertices(const subgraph<G>& g)
 { return vertices(g.m_graph); }
 
@@ -499,8 +496,7 @@ num_vertices(const subgraph<G>& g)
 // Functions required by the EdgeListGraph concept
 
 template <typename G>
-std::pair<typename subgraph<G>::edge_iterator,
-          typename subgraph<G>::edge_iterator>
+graph_detail::iterator_range<typename subgraph<G>::edge_iterator>
 edges(const subgraph<G>& g)
 { return edges(g.m_graph); }
 

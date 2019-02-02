@@ -27,6 +27,7 @@
 #include <boost/graph/filtered_graph.hpp> // For keep_all
 #include <boost/graph/detail/indexed_properties.hpp>
 #include <boost/graph/detail/compressed_sparse_row_struct.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
@@ -1115,9 +1116,9 @@ num_vertices(const BOOST_CSR_GRAPH_TYPE& g) {
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-std::pair<counting_iterator<Vertex>, counting_iterator<Vertex> >
+graph_detail::iterator_range<counting_iterator<Vertex> >
 inline vertices(const BOOST_CSR_GRAPH_TYPE& g) {
-  return std::make_pair(counting_iterator<Vertex>(0),
+  return graph_detail::make_iterator_range(counting_iterator<Vertex>(0),
                         counting_iterator<Vertex>(num_vertices(g)));
 }
 
@@ -1139,15 +1140,14 @@ target(typename BOOST_CSR_GRAPH_TYPE::edge_descriptor e,
 }
 
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline std::pair<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator,
-                 typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
+inline graph_detail::iterator_range<typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator>
 out_edges(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   typedef typename BOOST_CSR_GRAPH_TYPE::edge_descriptor ed;
   typedef typename BOOST_CSR_GRAPH_TYPE::out_edge_iterator it;
   EdgeIndex v_row_start = g.m_forward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_forward.m_rowstart[v + 1];
-  return std::make_pair(it(ed(v, v_row_start)),
+  return graph_detail::make_iterator_range(it(ed(v, v_row_start)),
                         it(ed(v, next_row_start)));
 }
 
@@ -1161,14 +1161,13 @@ out_degree(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 }
 
 template<BOOST_BIDIR_CSR_GRAPH_TEMPLATE_PARMS>
-inline std::pair<typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator,
-                 typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator>
+inline graph_detail::iterator_range<typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator>
 in_edges(Vertex v, const BOOST_BIDIR_CSR_GRAPH_TYPE& g)
 {
   typedef typename BOOST_BIDIR_CSR_GRAPH_TYPE::in_edge_iterator it;
   EdgeIndex v_row_start = g.m_backward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_backward.m_rowstart[v + 1];
-  return std::make_pair(it(g, v_row_start),
+  return graph_detail::make_iterator_range(it(g, v_row_start),
                         it(g, next_row_start));
 }
 
@@ -1183,13 +1182,12 @@ in_degree(Vertex v, const BOOST_BIDIR_CSR_GRAPH_TYPE& g)
 
 // From AdjacencyGraph
 template<BOOST_CSR_GRAPH_TEMPLATE_PARMS>
-inline std::pair<typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator,
-                 typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator>
+inline graph_detail::iterator_range<typename BOOST_CSR_GRAPH_TYPE::adjacency_iterator>
 adjacent_vertices(Vertex v, const BOOST_CSR_GRAPH_TYPE& g)
 {
   EdgeIndex v_row_start = g.m_forward.m_rowstart[v];
   EdgeIndex next_row_start = g.m_forward.m_rowstart[v + 1];
-  return std::make_pair(g.m_forward.m_column.begin() + v_row_start,
+  return graph_detail::make_iterator_range(g.m_forward.m_column.begin() + v_row_start,
                         g.m_forward.m_column.begin() + next_row_start);
 }
 

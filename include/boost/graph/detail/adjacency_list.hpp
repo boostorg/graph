@@ -32,6 +32,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/detail/adj_list_edge_iterator.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/pending/property.hpp>
 #include <boost/graph/adjacency_iterator.hpp>
@@ -584,15 +585,14 @@ namespace boost {
 
     // O(1)
     template <class Config>
-    inline std::pair<typename Config::edge_iterator,
-                     typename Config::edge_iterator>
+    inline graph_detail::iterator_range<typename Config::edge_iterator>
     edges(const directed_edges_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::edge_iterator edge_iterator;
       const graph_type& cg = static_cast<const graph_type&>(g_);
       graph_type& g = const_cast<graph_type&>(cg);
-      return std::make_pair( edge_iterator(g.vertex_set().begin(),
+      return graph_detail::make_iterator_range( edge_iterator(g.vertex_set().begin(),
                                            g.vertex_set().begin(),
                                            g.vertex_set().end(), g),
                              edge_iterator(g.vertex_set().begin(),
@@ -1005,15 +1005,14 @@ namespace boost {
 
     // O(1)
     template <class Config>
-    inline std::pair<typename Config::edge_iterator,
-                     typename Config::edge_iterator>
+    inline graph_detail::iterator_range<typename Config::edge_iterator>
     edges(const undirected_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::edge_iterator edge_iterator;
       const graph_type& cg = static_cast<const graph_type&>(g_);
       graph_type& g = const_cast<graph_type&>(cg);
-      return std::make_pair( edge_iterator(g.m_edges.begin()),
+      return graph_detail::make_iterator_range( edge_iterator(g.m_edges.begin()),
                              edge_iterator(g.m_edges.end()) );
     }
     // O(1)
@@ -1097,8 +1096,7 @@ namespace boost {
     }
 
     template <class Config>
-    inline std::pair<typename Config::in_edge_iterator,
-                     typename Config::in_edge_iterator>
+    inline graph_detail::iterator_range<typename Config::in_edge_iterator>
     in_edges(typename Config::vertex_descriptor u,
              const undirected_graph_helper<Config>& g_)
     {
@@ -1107,7 +1105,7 @@ namespace boost {
       Graph& g = const_cast<Graph&>(cg);
       typedef typename Config::in_edge_iterator in_edge_iterator;
       return
-        std::make_pair(in_edge_iterator(g.out_edge_list(u).begin(), u),
+        graph_detail::make_iterator_range(in_edge_iterator(g.out_edge_list(u).begin(), u),
                        in_edge_iterator(g.out_edge_list(u).end(), u));
     }
 
@@ -1170,8 +1168,7 @@ namespace boost {
     }
 
     template <class Config>
-    inline std::pair<typename Config::in_edge_iterator,
-                     typename Config::in_edge_iterator>
+    inline graph_detail::iterator_range<typename Config::in_edge_iterator>
     in_edges(typename Config::vertex_descriptor u,
              const bidirectional_graph_helper<Config>& g_)
     {
@@ -1180,21 +1177,20 @@ namespace boost {
       graph_type& g = const_cast<graph_type&>(cg);
       typedef typename Config::in_edge_iterator in_edge_iterator;
       return
-        std::make_pair(in_edge_iterator(in_edge_list(g, u).begin(), u),
+        graph_detail::make_iterator_range(in_edge_iterator(in_edge_list(g, u).begin(), u),
                        in_edge_iterator(in_edge_list(g, u).end(), u));
     }
 
     // O(1)
     template <class Config>
-    inline std::pair<typename Config::edge_iterator,
-                     typename Config::edge_iterator>
+    inline graph_detail::iterator_range<typename Config::edge_iterator>
     edges(const bidirectional_graph_helper<Config>& g_)
     {
       typedef typename Config::graph_type graph_type;
       typedef typename Config::edge_iterator edge_iterator;
       const graph_type& cg = static_cast<const graph_type&>(g_);
       graph_type& g = const_cast<graph_type&>(cg);
-      return std::make_pair( edge_iterator(g.m_edges.begin()),
+      return graph_detail::make_iterator_range( edge_iterator(g.m_edges.begin()),
                              edge_iterator(g.m_edges.end()) );
     }
 
@@ -1557,8 +1553,7 @@ namespace boost {
     };
 
     template <class Config, class Base>
-    inline std::pair<typename Config::adjacency_iterator,
-                     typename Config::adjacency_iterator>
+    inline graph_detail::iterator_range<typename Config::adjacency_iterator>
     adjacent_vertices(typename Config::vertex_descriptor u,
                       const adj_list_helper<Config, Base>& g_)
     {
@@ -1568,7 +1563,7 @@ namespace boost {
       typedef typename Config::adjacency_iterator adjacency_iterator;
       typename Config::out_edge_iterator first, last;
       boost::tie(first, last) = out_edges(u, g);
-      return std::make_pair(adjacency_iterator(first, &g),
+      return graph_detail::make_iterator_range(adjacency_iterator(first, &g),
                             adjacency_iterator(last, &g));
     }
     template <class Config, class Base>
@@ -1601,14 +1596,13 @@ namespace boost {
                        out_edge_iterator(g.out_edge_list(u).end(), u));
     }
     template <class Config, class Base>
-    inline std::pair<typename Config::vertex_iterator,
-                     typename Config::vertex_iterator>
+    inline graph_detail::iterator_range<typename Config::vertex_iterator>
     vertices(const adj_list_helper<Config, Base>& g_)
     {
       typedef typename Config::graph_type AdjList;
       const AdjList& cg = static_cast<const AdjList&>(g_);
       AdjList& g = const_cast<AdjList&>(cg);
-      return std::make_pair( g.vertex_set().begin(), g.vertex_set().end() );
+      return graph_detail::make_iterator_range( g.vertex_set().begin(), g.vertex_set().end() );
     }
     template <class Config, class Base>
     inline typename Config::vertices_size_type

@@ -8,6 +8,7 @@
 
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits.hpp>
@@ -278,8 +279,7 @@ edge(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
 }
 
 template <class BidirectionalGraph, class GRef>
-inline std::pair<typename reverse_graph<BidirectionalGraph>::in_edge_iterator,
-                 typename reverse_graph<BidirectionalGraph>::in_edge_iterator>
+inline graph_detail::iterator_range<typename reverse_graph<BidirectionalGraph>::in_edge_iterator>
 in_edges(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
          const reverse_graph<BidirectionalGraph,GRef>& g)
 {
@@ -287,8 +287,7 @@ in_edges(const typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
 }
 
 template <class BidirectionalGraph, class GRef>
-inline std::pair<typename reverse_graph<BidirectionalGraph,GRef>::adjacency_iterator,
-    typename reverse_graph<BidirectionalGraph,GRef>::adjacency_iterator>
+inline graph_detail::iterator_range<typename reverse_graph<BidirectionalGraph,GRef>::adjacency_iterator>
 adjacent_vertices(typename graph_traits<BidirectionalGraph>::vertex_descriptor u,
                   const reverse_graph<BidirectionalGraph,GRef>& g)
 {
@@ -296,7 +295,7 @@ adjacent_vertices(typename graph_traits<BidirectionalGraph>::vertex_descriptor u
     typename graph_traits<Graph>::out_edge_iterator first, last;
     boost::tie(first, last) = out_edges(u, g);
     typedef typename graph_traits<Graph>::adjacency_iterator adjacency_iterator;
-    return std::make_pair(adjacency_iterator(first, const_cast<Graph*>(&g)),
+    return graph_detail::make_iterator_range(adjacency_iterator(first, const_cast<Graph*>(&g)),
                           adjacency_iterator(last, const_cast<Graph*>(&g)));
 }
 

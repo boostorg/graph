@@ -11,6 +11,7 @@
 #define BOOST_GRAPH_VERTEX_AND_EDGE_RANGE_HPP
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 #include <iterator>
 
 namespace boost { 
@@ -80,9 +81,9 @@ namespace graph {
   };
 
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
-  inline std::pair<VertexIterator, VertexIterator>
+  inline graph_detail::iterator_range<VertexIterator>
   vertices(const vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>& g)
-  { return std::make_pair(g.first_vertex, g.last_vertex); }
+  { return graph_detail::make_iterator_range(g.first_vertex, g.last_vertex); }
 
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
   inline typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>
@@ -92,9 +93,9 @@ namespace graph {
   { return g.m_num_vertices; }
 
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
-  inline std::pair<EdgeIterator, EdgeIterator>
+  inline graph_detail::iterator_range<EdgeIterator, EdgeIterator>
   edges(const vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>& g)
-  { return std::make_pair(g.first_edge, g.last_edge); }
+  { return graph_detail::make_iterator_range(g.first_edge, g.last_edge); }
 
   template<typename Graph, typename VertexIterator, typename EdgeIterator>
   inline typename vertex_and_edge_range<Graph, VertexIterator, EdgeIterator>

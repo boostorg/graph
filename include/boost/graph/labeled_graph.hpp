@@ -19,6 +19,7 @@
 #include <boost/type_traits/is_unsigned.hpp>
 #include <boost/pending/container_traits.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 
 // This file implements a utility for creating mappings from arbitrary
 // identifiers to the vertices of a graph.
@@ -598,8 +599,7 @@ target(typename LABELED_GRAPH::edge_descriptor e, LABELED_GRAPH const& g)
 /** @name Bidirectional Graph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::in_edge_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::in_edge_iterator>
 in_edges(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 { return in_edges(v, g.graph()); }
@@ -618,8 +618,7 @@ degree(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 /** @name Adjacency Graph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::adjacency_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::adjacency_iterator>
 adjacenct_vertices(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH const& g)
 { return adjacent_vertices(v, g.graph()); }
@@ -628,8 +627,7 @@ adjacenct_vertices(typename LABELED_GRAPH::vertex_descriptor v, LABELED_GRAPH co
 /** @name VertexListGraph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::vertex_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::vertex_iterator>
 vertices(LABELED_GRAPH const& g)
 { return vertices(g.graph()); }
@@ -643,8 +641,7 @@ num_vertices(LABELED_GRAPH const& g)
 /** @name EdgeListGraph */
 //@{
 template <LABELED_GRAPH_PARAMS>
-inline std::pair<
-    typename LABELED_GRAPH::edge_iterator,
+inline graph_detail::iterator_range<
     typename LABELED_GRAPH::edge_iterator>
 edges(LABELED_GRAPH const& g)
 { return edges(g.graph()); }

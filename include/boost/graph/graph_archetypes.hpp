@@ -14,6 +14,7 @@
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 
 namespace boost { // should use a different namespace for this
 
@@ -112,12 +113,11 @@ namespace boost { // should use a different namespace for this
   };
   
   template <typename V, typename D, typename P, typename B>
-  std::pair<typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator,
-            typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator>
+  graph_detail::iterator_range<typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator>
   adjacent_vertices(const V&, const adjacency_graph_archetype<V,D,P,B>& )
   {
     typedef typename adjacency_graph_archetype<V,D,P,B>::adjacency_iterator Iter;
-    return std::make_pair(Iter(), Iter());
+    return graph_detail::make_iterator_range(Iter(), Iter());
   }
 
   template <typename V, typename D, typename P, typename B>
@@ -163,12 +163,11 @@ namespace boost { // should use a different namespace for this
   };
   
   template <typename V, typename D, typename P, typename B>
-  std::pair<typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator,
-            typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator>
+  graph_detail::iterator_range<typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator>
   vertices(const vertex_list_graph_archetype<V,D,P,B>& )
   {
     typedef typename vertex_list_graph_archetype<V,D,P,B>::vertex_iterator Iter;
-    return std::make_pair(Iter(), Iter());
+    return graph_detail::make_iterator_range(Iter(), Iter());
   }
 
   template <typename V, typename D, typename P, typename B>

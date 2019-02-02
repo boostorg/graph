@@ -16,6 +16,7 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <boost/graph/detail/graph_iterator_range.hpp>
 
 #include <LEDA/graph/graph.h>
 #include <LEDA/graph/node_array.h>
@@ -393,8 +394,7 @@ namespace boost {
   }
 
   template <class vtype, class etype>
-  inline std::pair<
-    typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator,
+  inline graph_detail::iterator_range<
     typename graph_traits< leda::GRAPH<vtype,etype> >::in_edge_iterator >  
   in_edges(
     typename graph_traits< leda::GRAPH<vtype,etype> >::vertex_descriptor u, 
@@ -402,7 +402,7 @@ namespace boost {
   {
     typedef typename graph_traits< leda::GRAPH<vtype,etype> >
       ::in_edge_iterator Iter;
-    return std::make_pair( Iter(g.first_adj_edge(u,1),&g), Iter(0,&g) );
+    return graph_detail::make_iterator_range( Iter(g.first_adj_edge(u,1),&g), Iter(0,&g) );
   }
 
   template <class vtype, class etype>
@@ -590,8 +590,7 @@ namespace boost {
     return std::make_pair( Iter(g.first_adj_edge(u),&g), Iter(0,&g) );
   }
 
-  inline std::pair<
-    graph_traits<leda::graph>::in_edge_iterator,
+  inline graph_detail::iterator_range<
     graph_traits<leda::graph>::in_edge_iterator >
   in_edges(
     graph_traits<leda::graph>::vertex_descriptor u, 
@@ -599,11 +598,10 @@ namespace boost {
   {
     typedef graph_traits<leda::graph>
       ::in_edge_iterator Iter;
-    return std::make_pair( Iter(g.first_in_edge(u),&g), Iter(0,&g) );
+    return graph_detail::make_iterator_range( Iter(g.first_in_edge(u),&g), Iter(0,&g) );
   }
 
-  inline std::pair<
-    graph_traits<leda::graph>::adjacency_iterator,
+  inline graph_detail::iterator_range<
     graph_traits<leda::graph>::adjacency_iterator >  
   adjacent_vertices(
     graph_traits<leda::graph>::vertex_descriptor u, 
@@ -611,7 +609,7 @@ namespace boost {
   {
     typedef graph_traits<leda::graph>
       ::adjacency_iterator Iter;
-    return std::make_pair( Iter(g.first_adj_edge(u),&g), Iter(0,&g) );
+    return graph_detail::make_iterator_range( Iter(g.first_adj_edge(u),&g), Iter(0,&g) );
   }
 
   graph_traits<leda::graph>::vertices_size_type

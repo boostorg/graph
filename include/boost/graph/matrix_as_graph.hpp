@@ -43,22 +43,22 @@ namespace boost { \
     typedef Matrix::size_type size_type; \
     typedef boost::int_iterator<size_type> vertex_iterator; \
     \
-    friend std::pair<vertex_iterator, vertex_iterator> \
+    friend graph_detail::iterator_range<vertex_iterator> \
     vertices(const Matrix& g) { \
       typedef vertex_iterator VIter; \
-      return std::make_pair(VIter(0), VIter(g.nrows())); \
+      return graph_detail::make_iterator_range(VIter(0), VIter(g.nrows())); \
     } \
     \
-    friend std::pair<out_edge_iterator, out_edge_iterator> \
+    friend graph_detail::iterator_range<out_edge_iterator> \
     out_edges(V v, const Matrix& g) { \
       typedef out_edge_iterator IncIter; \
-      return std::make_pair(IncIter(g[v].begin()), \
+      return graph_detail::make_iterator_range(IncIter(g[v].begin()), \
                             IncIter(g[v].end())); \
     } \
-    friend std::pair<adjacency_iterator, adjacency_iterator> \
+    friend graph_detail::iterator_range<adjacency_iterator> \
     adjacent_vertices(V v, const Matrix& g) { \
       typedef adjacency_iterator AdjIter; \
-      return std::make_pair(AdjIter(g[v].begin()), \
+      return graph_detail::make_iterator_range(AdjIter(g[v].begin()), \
                             AdjIter(g[v].end())); \
     } \
     friend vertex_descriptor \
