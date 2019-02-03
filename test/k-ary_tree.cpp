@@ -254,21 +254,27 @@ void VertexListGraph_test()
 
 int test_main(int, char*[])
 {
-  BOOST_CONCEPT_ASSERT((boost::concepts::IncidenceGraph<boost::forward_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::BidirectionalGraph<boost::bidirectional_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::bidirectional_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::MutableGraph<boost::forward_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::forward_binary_tree>));
-  BOOST_CONCEPT_ASSERT((boost::concepts::VertexListGraph<boost::bidirectional_binary_tree>));
+  using namespace boost::concepts;
+  using boost::forward_binary_tree;
+  using boost::bidirectional_binary_tree;
+
+  BOOST_CONCEPT_ASSERT((IncidenceGraph<forward_binary_tree>));
+  BOOST_CONCEPT_ASSERT((BidirectionalGraph<bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((MutableGraph<bidirectional_binary_tree>));
+  BOOST_CONCEPT_ASSERT((MutableGraph<forward_binary_tree>));
+  BOOST_CONCEPT_ASSERT((VertexListGraph<forward_binary_tree>));
+  BOOST_CONCEPT_ASSERT((VertexListGraph<bidirectional_binary_tree>));
+  // BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree>));
+  // BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree>));
 
   empty_forward_binary_tree();
   empty_bidirectional_binary_tree();
-  push_pop_binary_tree<boost::forward_binary_tree>();
-  push_pop_binary_tree<boost::bidirectional_binary_tree>();
-  insert_remove_randomly<boost::forward_binary_tree>();
-  insert_remove_randomly<boost::bidirectional_binary_tree>();
-  incidence_graph<boost::forward_binary_tree>();
-  incidence_graph<boost::bidirectional_binary_tree>();
+  push_pop_binary_tree<forward_binary_tree>();
+  push_pop_binary_tree<bidirectional_binary_tree>();
+  insert_remove_randomly<forward_binary_tree>();
+  insert_remove_randomly<bidirectional_binary_tree>();
+  incidence_graph<forward_binary_tree>();
+  incidence_graph<bidirectional_binary_tree>();
   bidirectional_graph();
 
   binary_tree<0>();
