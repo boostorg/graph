@@ -16,7 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/iterator_adaptor.hpp>
 
 #include <boost/range.hpp>
 #include <boost/range/algorithm.hpp>
@@ -54,7 +54,7 @@ namespace boost
 
       k_ary_tree_bidirectional_node(vertex_descriptor predecessor
       = graph_traits<Tree>::null_vertex())
-      : predecessor(predecessor)
+        : predecessor(predecessor)
       {}
 
       vertex_descriptor predecessor;
@@ -78,31 +78,78 @@ namespace boost
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
 
-
-
     protected:
 
       struct make_out_edge_descriptor
       {
-        make_out_edge_descriptor(vertex_descriptor source) : source(source) {}
+        make_out_edge_descriptor(vertex_descriptor source) : source(source)
+        {
+          BOOST_ASSERT(source != null_vertex());
+        }
 
         edge_descriptor operator()(vertex_descriptor target) const
         {
+          BOOST_ASSERT(source != null_vertex());
+          BOOST_ASSERT(target != null_vertex());
+
           return edge_descriptor(source, target);
         }
 
         vertex_descriptor source;
       };
 
-      struct not_null
+      struct equal_to_null
       {
         bool operator()(vertex_descriptor u) const
         {
-          return u != null_vertex();
+          return u == null_vertex();
         }
       };
 
+
     public:
+
+      class out_edge_iterator : public boost::iterator_adaptor<out_edge_iterator, vertex_descriptor const *,
+                                                 edge_descriptor,
+                                                 forward_traversal_tag,
+                                                 edge_descriptor>
+      {
+      public:
+        out_edge_iterator() {}
+
+        out_edge_iterator(vertex_descriptor const *first,
+                          vertex_descriptor const *last,
+                          vertex_descriptor source)
+          : out_edge_iterator::iterator_adaptor_(first), last(last),
+            foo(source)
+        {
+          while (this->base_reference() != last
+              && missing_child(*this->base_reference()))
+          {
+            this->base_reference()++;
+          }
+        }
+
+      private:
+        typename out_edge_iterator::iterator_adaptor_::reference
+        dereference() const
+        {
+          return foo(*this->base_reference());
+        }
+
+        void increment()
+        {
+          while (++this->base_reference() != last
+              && missing_child(*this->base_reference()));
+        }
+
+        friend class boost::iterator_core_access;
+
+        vertex_descriptor const *last;
+        make_out_edge_descriptor foo;
+        equal_to_null missing_child;
+      };
+
       Node const&
       operator[](vertex_descriptor u) const
       {
@@ -125,11 +172,6 @@ namespace boost
 
         return nodes[u].successors[N] != null_vertex();
       }
-
-
-      typedef transform_iterator<make_out_edge_descriptor,
-                          filter_iterator<not_null, vertex_descriptor const *>,
-                          edge_descriptor> out_edge_iterator;
 
       k_ary_tree_base()
       {
@@ -158,9 +200,11 @@ namespace boost
       out_edges(vertex_descriptor u, k_ary_tree_base const &g)
       {
         typename Node::vertex_array_t const &successors = g.nodes[u].successors;
-        make_out_edge_descriptor const out(u);
-        return std::make_pair(out_edge_iterator(boost::begin(successors), out),
-                              out_edge_iterator(boost::end(successors), out));
+
+        return std::make_pair(out_edge_iterator(boost::begin(successors),
+                                                boost::end(successors), u),
+                              out_edge_iterator(boost::end(successors),
+                                                boost::end(successors), u));
       }
 
       friend
@@ -377,7 +421,8 @@ namespace boost
       std::vector<Node> nodes;
       std::vector<vertex_descriptor> free_list; // Keeps track of holes in storage.
     };
-  }
-}
+
+  } // namespace detail
+} // namespace boost
 
 #endif
