@@ -36,10 +36,8 @@ namespace boost
 
 namespace boost
 {
-
   template <typename Graph>
-  bool
-  empty(typename graph_traits<Graph>::vertex_descriptor u, Graph const &)
+  bool empty(typename graph_traits<Graph>::vertex_descriptor u, Graph const&)
   {
     return u == graph_traits<Graph>::null_vertex();
   }
@@ -548,7 +546,7 @@ namespace boost
     template <typename Graph0, typename Graph1>
     bool
     bifurcate_isomorphic(typename graph_traits<Graph0>::vertex_descriptor u,
-                          Graph0 const &g,
+                         Graph0 const &g,
                          typename graph_traits<Graph1>::vertex_descriptor v,
                          Graph1 const &h)
     {
