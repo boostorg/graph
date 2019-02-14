@@ -311,6 +311,8 @@ namespace boost
     bool
     is_left_successor(vertex_descriptor u, k_ary_tree const &g)
     {
+      BOOST_ASSERT(!empty(u, g));
+
       vertex_descriptor v = predecessor(u, g);
       return left_successor(v, g) == u;
     }
@@ -320,6 +322,8 @@ namespace boost
     bool
     is_right_successor(vertex_descriptor u, k_ary_tree const &g)
     {
+      BOOST_ASSERT(!empty(u, g));
+
       vertex_descriptor v = predecessor(u, g);
       return right_successor(v, g) == u;
     }
@@ -328,7 +332,9 @@ namespace boost
     bool
     has_predecessor(vertex_descriptor u, k_ary_tree const &g)
     {
+      BOOST_ASSERT(!empty(u, g));
       BOOST_ASSERT(u < g.nodes.size());
+
       return g[u].predecessor != graph_traits<k_ary_tree>::null_vertex();
     }
 
@@ -336,7 +342,9 @@ namespace boost
     vertex_descriptor
     predecessor(vertex_descriptor u, k_ary_tree const &g)
     {
+      BOOST_ASSERT(!empty(u, g));
       BOOST_ASSERT(u < g.nodes.size());
+
       return g[u].predecessor;
     }
 
