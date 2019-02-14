@@ -602,7 +602,7 @@ namespace boost
 
   template <typename Vertex0, typename Vertex1>
   bool
-  isomorphism(k_ary_tree<2, false, Vertex0> const &g, k_ary_tree<2, false, Vertex1> const &h)
+  isomorphism(k_ary_tree<2, false, Vertex0> const &/*g*/, k_ary_tree<2, false, Vertex1> const &/*h*/)
   {
     // return detail::bifurcate_isomorphic(u, g, v, h);
     return true;
