@@ -139,7 +139,11 @@ namespace boost
 
         void increment()
         {
-          while (++this->base_reference() != last
+          do
+          {
+            this->base_reference()++;
+          }
+          while (this->base_reference() != last
               && missing_child(*this->base_reference()));
         }
 
