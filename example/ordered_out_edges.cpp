@@ -32,8 +32,10 @@
 
 template <class StoredEdge>
 struct order_by_name
-  : public std::binary_function<StoredEdge,StoredEdge,bool> 
 {
+  typedef StoredEdge first_argument_type;
+  typedef StoredEdge second_argument_type;
+  typedef bool result_type;
   bool operator()(const StoredEdge& e1, const StoredEdge& e2) const {
     // Order by target vertex, then by name. 
     // std::pair's operator< does a nice job of implementing

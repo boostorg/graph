@@ -57,7 +57,7 @@ int main(int, char *[])
   Graph G(10);
 
   for (size_t i = 0; i < sizeof(edges)/sizeof(edges[0]); i++)
-    add_edge(edges[i].first, edges[i].second, G).first;
+    add_edge(edges[i].first, edges[i].second, G);
 
   size_t colors = edge_coloring(G, get(edge_bundle, G));
 
