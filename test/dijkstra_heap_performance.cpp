@@ -50,7 +50,7 @@ struct show_events_visitor : dijkstra_visitor<>
 
 
 template<typename Graph, typename Kind>
-void run_test(const Graph& g, const char* name, Kind kind,
+void run_test(const Graph& g, const char* name, Kind kind, 
               const std::vector<double>& correct_distances)
 {
   std::vector<double> distances(num_vertices(g));
@@ -111,7 +111,11 @@ int main(int argc, char* argv[])
   std::cout << "Running Dijkstra's with binary heap...";
   std::cout.flush();
   timer t;
-
+#ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
+  dijkstra_heap_kind = dijkstra_binary_heap;
+#else
+  dijkstra_relaxed_heap = false;
+#endif
   dijkstra_shortest_paths(g, vertex(0, g),
                           distance_map(
                             boost::make_iterator_property_map(
@@ -119,11 +123,19 @@ int main(int argc, char* argv[])
   double binary_heap_time = t.elapsed();
   std::cout << binary_heap_time << " seconds.\n";
 
-
+  // Run relaxed heap version
+#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
+  std::cout << "Running Dijkstra's with relaxed heap...";
+#else
   std::cout << "Running Dijkstra's with d-ary heap (d=4)...";
+#endif
   std::cout.flush();
   t.restart();
-
+#ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
+  dijkstra_heap_kind = dijkstra_relaxed_heap;
+#else
+  dijkstra_relaxed_heap = true;
+#endif
   dijkstra_shortest_paths(g, vertex(0, g),
                           distance_map(
                             boost::make_iterator_property_map(
@@ -136,11 +148,18 @@ int main(int argc, char* argv[])
   BOOST_TEST(binary_heap_distances == relaxed_heap_distances);
 
   // Run Michael's no-color-map version
-
+#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
+  std::cout << "Running Dijkstra's (no color map) with relaxed heap...";
+#else
   std::cout << "Running Dijkstra's (no color map) with d-ary heap (d=4)...";
+#endif
   std::cout.flush();
   t.restart();
-
+#ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
+  dijkstra_heap_kind = dijkstra_relaxed_heap;
+#else
+  dijkstra_relaxed_heap = true;
+#endif
   dijkstra_shortest_paths_no_color_map
     (g, vertex(0, g),
      boost::dummy_property_map(),

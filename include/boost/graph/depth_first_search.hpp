@@ -19,7 +19,6 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
@@ -146,11 +145,6 @@ namespace boost {
         src_e = back.second.first;
         boost::tie(ei, ei_end) = back.second.second;
         stack.pop_back();
-	// finish_edge has to be called here, not after the
-	// loop. Think of the pop as the return from a recursive call.
-        if (src_e) {
-	  call_finish_edge(vis, src_e.get(), g);
-	}
         while (ei != ei_end) {
           Vertex v = target(*ei, g);
           vis.examine_edge(*ei, g);
@@ -178,6 +172,7 @@ namespace boost {
         }
         put(color, u, Color::black());
         vis.finish_vertex(u, g);
+        if (src_e) call_finish_edge(vis, src_e.get(), g);
       }
     }
 
@@ -367,6 +362,8 @@ namespace boost {
   }
 } // namespace boost
 
-#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)
+#ifdef BOOST_GRAPH_USE_MPI
+#  include <boost/graph/distributed/depth_first_search.hpp>
+#endif
 
 #endif

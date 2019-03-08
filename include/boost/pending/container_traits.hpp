@@ -23,6 +23,14 @@
 #include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 
+#if !defined BOOST_NO_SLIST
+#  ifdef BOOST_SLIST_HEADER
+#    include BOOST_SLIST_HEADER
+#  else
+#    include <slist>
+#  endif
+#endif
+
 #ifndef BOOST_NO_CXX11_HDR_UNORDERED_SET
 #include <unordered_set>
 #endif
@@ -140,6 +148,27 @@ namespace boost { namespace graph_detail {
     typedef list_tag category;
     typedef stable_tag iterator_stability;
   };
+
+
+  // std::slist
+#ifndef BOOST_NO_SLIST
+  template <class T, class Alloc>
+  struct container_traits<BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc> > {
+    typedef front_insertion_sequence_tag category;
+    typedef stable_tag iterator_stability;
+  };
+  template <class T, class Alloc>
+  front_insertion_sequence_tag container_category(
+  const BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc>&
+  )
+    { return front_insertion_sequence_tag(); }
+
+  template <class T, class Alloc>
+  stable_tag iterator_stability(
+  const BOOST_STD_EXTENSION_NAMESPACE::slist<T,Alloc>&)
+    { return stable_tag(); }
+#endif
+
 
   // std::set
   struct set_tag :

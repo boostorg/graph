@@ -57,5 +57,5 @@ int main() {
 
   bool status = read_graphviz(gvgraph,graph,dp,"node_id");
 
-  return status ? EXIT_SUCCESS : EXIT_FAILURE;
+  return 0;
 }

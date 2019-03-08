@@ -12,8 +12,6 @@
 #define BOOST_GRAPH_MATRIX2GRAPH_HPP
 
 #include <utility>
-#include <cstddef>
-#include <iterator>
 #include <boost/config.hpp>
 #include <boost/operators.hpp>
 #include <boost/pending/detail/int_iterator.hpp>
@@ -88,14 +86,10 @@ namespace boost {
 
   template <class Iter, class Vertex>
   class matrix_adj_iterator
+    : public std::iterator<std::input_iterator_tag, Vertex >
   {
     typedef matrix_adj_iterator self;
   public:
-    typedef std::input_iterator_tag iterator_category;
-    typedef Vertex value_type;
-    typedef std::ptrdiff_t difference_type;
-    typedef Vertex* pointer;
-    typedef Vertex& reference;
     matrix_adj_iterator() { }
     matrix_adj_iterator(Iter i) : _iter(i) { }
     matrix_adj_iterator(const self& x) : _iter(x._iter) { }
@@ -111,14 +105,10 @@ namespace boost {
 
   template <class Iter, class Vertex>
   class matrix_incidence_iterator
+    : public std::iterator<std::input_iterator_tag, Iter >
   {
     typedef matrix_incidence_iterator self;
   public:
-    typedef std::input_iterator_tag iterator_category;
-    typedef Iter value_type;
-    typedef std::ptrdiff_t difference_type;
-    typedef Iter* pointer;
-    typedef Iter& reference;
     matrix_incidence_iterator() { }
     matrix_incidence_iterator(Iter i) : _iter(i) { }
     matrix_incidence_iterator(const self& x) : _iter(x._iter) { }

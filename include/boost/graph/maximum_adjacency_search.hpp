@@ -146,10 +146,10 @@ namespace boost {
 
       // start traversing the graph
       //vertex_descriptor s, t;
-      //weight_type w;
+      weight_type w;
       while (!pq.empty()) { // while PQ \neq {} do
         const vertex_descriptor u = pq.top(); // u = extractmax(PQ)
-        get(keys, u);                        vis.start_vertex(u, g);
+        w = get(keys, u);                        vis.start_vertex(u, g);
         pq.pop();                  //            vis.start_vertex(u, g);
 
         BGL_FORALL_OUTEDGES_T(u, e, g, Graph) { // foreach (u, v) \in E do
@@ -218,9 +218,9 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
       struct mas_dispatch {
         typedef void result_type;
         template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g,
-                          //const bgl_named_params<P,T,R>& params,
-                          const ArgPack& params,
+        static result_type apply(const Graph& g, 
+                          //const bgl_named_params<P,T,R>& params, 
+                          const ArgPack& params, 
                           WeightMap w) {
 
           using namespace boost::graph::keywords;
@@ -249,8 +249,8 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
         typedef void result_type;
 
         template <typename Graph, typename ArgPack>
-        static result_type apply(const Graph& g,
-                          const ArgPack& params,
+        static result_type apply(const Graph& g, 
+                          const ArgPack& params, 
                           param_not_found) {
 
           using namespace boost::graph::keywords;
