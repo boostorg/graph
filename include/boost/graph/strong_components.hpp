@@ -64,7 +64,6 @@ namespace boost {
           do {
             w = s.top(); s.pop();
             put(comp, w, c);
-	    put(root, w, v);
           } while (w != v);
           ++c;
         }

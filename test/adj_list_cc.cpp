@@ -168,6 +168,7 @@ int main(int,char*[])
   {
     typedef adjacency_list<vecS, vecS, directedS > Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
@@ -182,6 +183,7 @@ int main(int,char*[])
   {
     typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
@@ -194,6 +196,8 @@ int main(int,char*[])
   }
   {
     typedef adjacency_list< listS, listS, directedS> Graph;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
@@ -203,6 +207,8 @@ int main(int,char*[])
   }
   {
     typedef adjacency_list< listS, listS, undirectedS> Graph;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
@@ -214,6 +220,7 @@ int main(int,char*[])
   {
     typedef adjacency_list<setS, vecS, bidirectionalS> Graph;
     typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
@@ -226,11 +233,15 @@ int main(int,char*[])
   }
   {
     typedef adjacency_list< setS, listS, directedS> Graph;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( MutableIncidenceGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
   }
   {
     typedef adjacency_list< setS, listS, undirectedS> Graph;
+    typedef graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));

@@ -13,8 +13,6 @@
 
 #include <iosfwd>
 
-#include <boost/functional/hash.hpp>
-
 namespace boost {
 
   namespace  detail {
