@@ -22,7 +22,6 @@
 
 #include <boost/type_traits/conditional.hpp>
 
-#include <stdexcept> // temporary
 #include <utility>
 
 namespace boost
@@ -465,32 +464,41 @@ namespace boost
                       Graph const &g)
     {
       // Requires BidirectionalTree<Graph>
+      int result;
+
       switch (v)
       {
         case order::pre:
           if (has_left_successor(u, g)) {
             u = left_successor(u, g);
-            return 1;
+            result = 1;
           }
-          v = order::in;
-          return 0;
+          else {
+            v = order::in;
+            result = 0;
+          }
+          break;
+
         case order::in:
           if (has_right_successor(u, g)) {
             v = order::pre;
             u = right_successor(u, g);
-            return 1;
+            result = 1;
           }
-          v = order::post;
-          return 0;
+          else {
+            v = order::post;
+            result = 0;
+          }
+          break;
+
         case order::post:
           if (is_left_successor(u, g))
             v = order::in;
           u = predecessor(u, g);
-          return -1;
+          result = -1;
+          break;
       }
-      // This is to silence the compiler warning about control reaches end of
-      // non-void function, even though this code is unreachable.
-      throw std::logic_error("Something magic and impossible happened.");
+      return result;
     }
 
     template <typename Graph, typename Visitor>
