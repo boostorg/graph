@@ -28,7 +28,7 @@ typedef grid_graph<2> graph_type;
 typedef graph_traits<graph_type> gt;
 
 template <typename Graph, typename PredMap, typename WeightMap>
-void write_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, string filename) {
+void write_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, string const& filename) {
   shared_array_property_map<string, typename property_map<Graph, edge_index_t>::const_type> edge_style(num_edges(g), get(edge_index, g));
   shared_array_property_map<string, typename property_map<Graph, vertex_index_t>::const_type> vertex_pos(num_vertices(g), get(vertex_index, g));
   BGL_FORALL_EDGES_T(e, g, Graph) {
@@ -46,7 +46,10 @@ void write_spanning_tree(const Graph& g, PredMap pred, WeightMap weight, string 
   write_graphviz_dp(out, g, dp);
 }
 
+#include <boost/core/lightweight_test.hpp>
+
 int main(int, char**) {
+  using namespace boost::graph::keywords;
 
   boost::array<size_t, 2> sizes = {{ 5, 5 }};
   graph_type g(sizes);
@@ -57,13 +60,19 @@ int main(int, char**) {
   BGL_FORALL_EDGES(e, g, graph_type) {put(weight, e, (1. + get(edge_index, g, e)) / num_edges(g));}
 
   boost::mt19937 gen;
-  random_spanning_tree(g, gen, predecessor_map(pred));
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  random_spanning_tree(g, gen, _predecessor_map = pred);
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st.dot");
-  random_spanning_tree(g, gen, predecessor_map(pred));
+  random_spanning_tree(g, gen, _predecessor_map = pred);
   // write_spanning_tree(g, pred, constant_property_map<gt::edge_descriptor, double>(1.), "unweight_random_st2.dot");
-
-  random_spanning_tree(g, gen, predecessor_map(pred).weight_map(weight));
+  random_spanning_tree(g, gen, _predecessor_map = pred, _weight_map = weight);
   // write_spanning_tree(g, pred, weight, "weight_random_st.dot");
+#else
+  random_spanning_tree(g, gen, boost::predecessor_map(pred));
+  random_spanning_tree(g, gen, boost::predecessor_map(pred));
+  random_spanning_tree(g, gen, boost::predecessor_map(pred).weight_map(weight));
+#endif
 
-  return 0;
+  return boost::report_errors();
 }

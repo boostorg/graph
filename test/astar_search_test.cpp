@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <utility>
 #include <vector>
 #include <list>
@@ -160,8 +161,7 @@ int main(int, char **)
     my_float(96), my_float(134), my_float(143), my_float(65), my_float(115), my_float(133), my_float(117), my_float(116), my_float(74), my_float(56),
     my_float(84), my_float(73), my_float(69), my_float(70), my_float(116), my_float(147), my_float(173), my_float(183), my_float(74), my_float(71), my_float(124)
   };
-  
-  
+
   // create graph
   mygraph_t g(N);
   WeightMap weightmap = get(edge_weight, g);
@@ -171,17 +171,15 @@ int main(int, char **)
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
-  
-  
+
   // pick random start/goal
-  boost::minstd_rand gen(time(0));
+  boost::minstd_rand gen(static_cast<unsigned int>(time(0)));
   vertex start = gen() % num_vertices(g);
   vertex goal = gen() % num_vertices(g);
-  
-  
+
   cout << "Start vertex: " << name[start] << endl;
   cout << "Goal vertex: " << name[goal] << endl;
-  
+
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
 
@@ -190,16 +188,24 @@ int main(int, char **)
 
   try {
     // call astar named parameter interface
+    using namespace boost::graph::keywords;
     astar_search
       (g, start,
        distance_heuristic<mygraph_t, cost, location*>
         (locations, goal),
-       predecessor_map(make_iterator_property_map(p.begin(), idx)).
-       distance_map(make_iterator_property_map(d.begin(), idx)).
-       visitor(astar_goal_visitor<vertex>(goal)).distance_inf(my_float((std::numeric_limits<float>::max)())));
-  
-  
-  } catch(found_goal fg) { // found a path to the goal
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+       _predecessor_map = make_iterator_property_map(p.begin(), idx),
+       _distance_map = make_iterator_property_map(d.begin(), idx),
+       _visitor = astar_goal_visitor<vertex>(goal),
+       _distance_inf = my_float((std::numeric_limits<float>::max)())
+#else
+       boost::predecessor_map(make_iterator_property_map(p.begin(), idx))
+       .distance_map(make_iterator_property_map(d.begin(), idx))
+       .visitor(astar_goal_visitor<vertex>(goal))
+       .distance_inf(my_float((std::numeric_limits<float>::max)()))
+#endif
+       );
+  } catch(found_goal const& fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
       shortest_path.push_front(v);
@@ -218,6 +224,6 @@ int main(int, char **)
   
   cout << "Didn't find a path from " << name[start] << "to"
        << name[goal] << "!" << endl;
-  return 0;
+  return boost::report_errors();
   
 }

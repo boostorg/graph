@@ -23,9 +23,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #endif
 
-namespace boost {
-
-  namespace detail {
+namespace boost { namespace detail {
 
     template <typename Graph1, typename Graph2, typename IsoMapping,
       typename Invariant1, typename Invariant2,
@@ -326,7 +324,6 @@ fi_adj_loop_k:++fi_adj.first;
       }
     };
 
-    
     template <typename Graph, typename InDegreeMap>
     void compute_in_degree(const Graph& g, InDegreeMap in_degree_map)
     {
@@ -337,9 +334,10 @@ fi_adj_loop_k:++fi_adj.first;
         BGL_FORALL_ADJ_T(u, v, g, Graph)
         put(in_degree_map, v, get(in_degree_map, v) + 1);
     }
+}} // namespace boost::detail
 
-  } // namespace detail
 
+namespace boost {
 
   template <typename InDegreeMap, typename Graph>
   class degree_vertex_invariant
@@ -436,10 +434,11 @@ fi_adj_loop_k:++fi_adj.first;
            index_map1, index_map2);
     return algo.test_isomorphism();
   }
+}
 
 
-  namespace detail {
-  
+namespace boost { namespace detail {
+
     template <typename Graph1, typename Graph2, 
       typename IsoMapping, 
       typename IndexMap1, typename IndexMap2,
@@ -493,54 +492,147 @@ fi_adj_loop_k:++fi_adj.first;
         return result_type(pm, g);
       }
     };
-   
-  } // namespace detail
+}} // namespace boost::detail
 
-  namespace graph {
-    namespace detail {
-      template <typename Graph1, typename Graph2>
-      struct isomorphism_impl {
+namespace boost { namespace graph {
+  namespace detail {
+
+    template <typename Graph1, typename Graph2>
+    struct isomorphism_impl {
         typedef bool result_type;
         typedef result_type type;
         template <typename ArgPack>
-        bool operator()(const Graph1& g1, const Graph2& g2, const ArgPack& arg_pack) const {
+        bool operator()(
+          const Graph1& g1, const Graph2& g2, const ArgPack& arg_pack
+        ) const {
           using namespace boost::graph::keywords;
-          typedef typename boost::detail::override_const_property_result<ArgPack, tag::vertex_index1_map, boost::vertex_index_t, Graph1>::type index1_map_type;
-          typedef typename boost::detail::override_const_property_result<ArgPack, tag::vertex_index2_map, boost::vertex_index_t, Graph2>::type index2_map_type;
-          index1_map_type index1_map = boost::detail::override_const_property(arg_pack, _vertex_index1_map, g1, boost::vertex_index);
-          index2_map_type index2_map = boost::detail::override_const_property(arg_pack, _vertex_index2_map, g2, boost::vertex_index);
+          typedef typename boost::detail::override_const_property_result<
+            ArgPack, tag::vertex_index1_map, boost::vertex_index_t, Graph1
+          >::type index1_map_type;
+          typedef typename boost::detail::override_const_property_result<
+            ArgPack, tag::vertex_index2_map, boost::vertex_index_t, Graph2
+          >::type index2_map_type;
+          index1_map_type index1_map = boost::detail::override_const_property(
+            arg_pack, _vertex_index1_map, g1, boost::vertex_index
+          );
+          index2_map_type index2_map = boost::detail::override_const_property(
+            arg_pack, _vertex_index2_map, g2, boost::vertex_index
+          );
           typedef typename graph_traits<Graph2>::vertex_descriptor vertex2_t;
-          typename std::vector<vertex2_t>::size_type n = (typename std::vector<vertex2_t>::size_type)num_vertices(g1);
+          typename std::vector<vertex2_t>::size_type n = static_cast<
+            typename std::vector<vertex2_t>::size_type
+          >(num_vertices(g1));
           std::vector<vertex2_t> f(n);
           typename boost::parameter::lazy_binding<
-                     ArgPack,
-                     tag::vertex_invariant1,
-                     boost::detail::make_degree_invariant<Graph1, index1_map_type> >::type
-            invariant1 =
-              arg_pack[_vertex_invariant1 || boost::detail::make_degree_invariant<Graph1, index1_map_type>(g1, index1_map)];
+            ArgPack,
+            tag::vertex_invariant1,
+            boost::detail::make_degree_invariant<Graph1, index1_map_type>
+          >::type invariant1 = arg_pack[
+            _vertex_invariant1 ||
+            boost::detail::make_degree_invariant<Graph1, index1_map_type>(
+              g1, index1_map
+            )
+          ];
           typename boost::parameter::lazy_binding<
-                     ArgPack,
-                     tag::vertex_invariant2,
-                     boost::detail::make_degree_invariant<Graph2, index2_map_type> >::type
-            invariant2 =
-              arg_pack[_vertex_invariant2 || boost::detail::make_degree_invariant<Graph2, index2_map_type>(g2, index2_map)];
-          return boost::isomorphism
-                   (g1, g2,
-                    choose_param(arg_pack[_isomorphism_map | boost::param_not_found()],
-                                 make_shared_array_property_map(num_vertices(g1), vertex2_t(), index1_map)),
-                    invariant1,
-                    invariant2,
-                    arg_pack[_vertex_max_invariant | (invariant2.max)()],
-                    index1_map,
-                    index2_map);
+            ArgPack,
+            tag::vertex_invariant2,
+            boost::detail::make_degree_invariant<Graph2, index2_map_type>
+          >::type invariant2 = arg_pack[
+            _vertex_invariant2 ||
+            boost::detail::make_degree_invariant<Graph2, index2_map_type>(
+              g2, index2_map
+            )
+          ];
+          return boost::isomorphism(
+            g1, g2,
+            choose_param(
+              arg_pack[_isomorphism_map | boost::param_not_found()],
+              make_shared_array_property_map(
+                num_vertices(g1), vertex2_t(), index1_map
+              )
+            ),
+            invariant1,
+            invariant2,
+            arg_pack[_vertex_max_invariant | (invariant2.max)()],
+            index1_map,
+            index2_map
+          );
         }
-      };
-    }
-    BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+    };
+  } // namespace detail
+  BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(isomorphism, 2, 6)
+}} // namespace boost::graph
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost {
+
+  template <typename Graph1, typename Graph2, typename Args>
+  inline typename boost::enable_if<
+    boost::parameter::is_argument_pack<Args>, bool
+  >::type isomorphism(const Graph1& g1, const Graph2& g2, const Args& args)
+  {
+    boost::graph::detail::isomorphism_impl<Graph1, Graph2> f;
+    return f(g1, g2, args);
   }
 
+  template <typename Graph1, typename Graph2>
+  inline bool isomorphism(const Graph1& g1, const Graph2& g2)
+  {
+    return boost::isomorphism(g1, g2, boost::parameter::compose());
+  }
+
+  template <typename G1, typename G2, typename P, typename T, typename R>
+  inline bool
+  isomorphism(const G1& g1, const G2& g2, const bgl_named_params<P, T, R>& p)
+  {
+    typedef bgl_named_params<P, T, R> params_type;
+    BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(params_type, p)
+    boost::graph::detail::isomorphism_impl<G1, G2> f;
+    return f(g1, g2, arg_pack);
+  }
+} // namespace boost
+
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph1, typename Graph2, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline typename boost::enable_if< \
+    parameter::are_tagged_arguments< \
+      TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+    >, bool \
+  >::type name( \
+    const Graph1& g1, const Graph2& g2, const TA& ta \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+  ) \
+  { \
+    return name( \
+      g1, g2, \
+      parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+    ); \
+  }
+
+namespace boost {
+
+BOOST_PP_REPEAT_FROM_TO(1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, isomorphism)
+}
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#else
+namespace boost {
   // Named parameter interface
   BOOST_GRAPH_MAKE_OLD_STYLE_PARAMETER_FUNCTION(isomorphism, 2)
+}
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
   // Verify that the given mapping iso_map from the vertices of g1 to the
   // vertices of g2 describes an isomorphism.

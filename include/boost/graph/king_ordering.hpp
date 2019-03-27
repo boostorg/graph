@@ -26,11 +26,11 @@ namespace boost {
     class bfs_king_visitor:public default_bfs_visitor
     {
     public:
-      bfs_king_visitor(OutputIterator *iter, Buffer *b, Compare compare, 
+      bfs_king_visitor(OutputIterator& iter, Buffer& b, Compare compare, 
                        PseudoDegreeMap deg, std::vector<int> loc, VecMap color, 
                        VertexIndexMap vertices): 
-        permutation(iter), Qptr(b), degree(deg), comp(compare), 
-        Qlocation(loc), colors(color), vertex_map(vertices) { }
+        default_bfs_visitor(), permutation(iter), Qref(b), degree(deg),
+        comp(compare), Qlocation(loc), colors(color), vertex_map(vertices) { }
       
       template <typename Vertex, typename Graph>
       void finish_vertex(Vertex, Graph& g) {
@@ -39,8 +39,8 @@ namespace boost {
 
         typedef typename std::deque<Vertex>::reverse_iterator reverse_iterator;
 
-        reverse_iterator rend = Qptr->rend()-index_begin;
-        reverse_iterator rbegin = Qptr->rbegin();
+        reverse_iterator rend = Qref.rend()-index_begin;
+        reverse_iterator rbegin = Qref.rbegin();
 
 
         //heap the vertices already there
@@ -48,16 +48,16 @@ namespace boost {
 
         unsigned i = 0;
         
-        for(i = index_begin; i != Qptr->size(); ++i){
-          colors[get(vertex_map, (*Qptr)[i])] = 1;
-          Qlocation[get(vertex_map, (*Qptr)[i])] = i;
+        for(i = index_begin; i != Qref.size(); ++i){
+          colors[get(vertex_map, Qref[i])] = 1;
+          Qlocation[get(vertex_map, Qref[i])] = i;
         }
 
         i = 0;
 
         for( ; rbegin != rend; rend--){
           percolate_down<Vertex>(i);
-          w = (*Qptr)[index_begin+i];
+          w = Qref[index_begin+i];
           for (boost::tie(ei, ei_end) = out_edges(w, g); ei != ei_end; ++ei) {
             v = target(*ei, g);
             put(degree, v, get(degree, v) - 1);
@@ -75,8 +75,8 @@ namespace boost {
       template <typename Vertex, typename Graph>
       void examine_vertex(Vertex u, const Graph&) {
         
-        *(*permutation)++ = u;
-        index_begin = Qptr->size();
+        *permutation++ = u;
+        index_begin = Qref.size();
         
       }
     protected:
@@ -86,90 +86,88 @@ namespace boost {
       template <typename Vertex>
       void percolate_down(int offset){
         int heap_last = index_begin + offset;
-        int heap_first = Qptr->size() - 1;
+        int heap_first = Qref.size() - 1;
         
         //pop_heap functionality:
         //swap first, last
-        std::swap((*Qptr)[heap_last], (*Qptr)[heap_first]);
+        std::swap(Qref[heap_last], Qref[heap_first]);
         
         //swap in the location queue
         std::swap(Qlocation[heap_first], Qlocation[heap_last]);
 
         //set drifter, children
         int drifter = heap_first;
-        int drifter_heap = Qptr->size() - drifter;
+        int drifter_heap = Qref.size() - drifter;
 
         int right_child_heap = drifter_heap * 2 + 1;
-        int right_child = Qptr->size() - right_child_heap;
+        int right_child = Qref.size() - right_child_heap;
 
         int left_child_heap = drifter_heap * 2;
-        int left_child = Qptr->size() - left_child_heap;
+        int left_child = Qref.size() - left_child_heap;
 
         //check that we are staying in the heap
         bool valid = (right_child < heap_last) ? false : true;
         
         //pick smallest child of drifter, and keep in mind there might only be left child
-        int smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
+        int smallest_child = (valid && get(degree, Qref[left_child]) > get(degree, Qref[right_child])) ? 
           right_child : left_child;
         
-        while(valid && smallest_child < heap_last && comp((*Qptr)[drifter], (*Qptr)[smallest_child])){
+        while(valid && smallest_child < heap_last && comp(Qref[drifter], Qref[smallest_child])){
           
           //if smallest child smaller than drifter, swap them
-          std::swap((*Qptr)[smallest_child], (*Qptr)[drifter]);
+          std::swap(Qref[smallest_child], Qref[drifter]);
           std::swap(Qlocation[drifter], Qlocation[smallest_child]);
 
           //update the values, run again, as necessary
           drifter = smallest_child;
-          drifter_heap = Qptr->size() - drifter;
+          drifter_heap = Qref.size() - drifter;
 
           right_child_heap = drifter_heap * 2 + 1;
-          right_child = Qptr->size() - right_child_heap;
+          right_child = Qref.size() - right_child_heap;
 
           left_child_heap = drifter_heap * 2;
-          left_child = Qptr->size() - left_child_heap;
+          left_child = Qref.size() - left_child_heap;
 
           valid = (right_child < heap_last) ? false : true;
 
-          smallest_child = (valid && get(degree, (*Qptr)[left_child]) > get(degree,(*Qptr)[right_child])) ? 
+          smallest_child = (valid && get(degree, Qref[left_child]) > get(degree, Qref[right_child])) ? 
             right_child : left_child;
         }
 
       }
 
-
-      
       // this is like percolate down, but we always compare against the
       // parent, as there is only a single choice
       template <typename Vertex>
       void percolate_up(int vertex, int offset){
-        
+
         int child_location = Qlocation[vertex];
-        int heap_child_location = Qptr->size() - child_location;
+        int heap_child_location = Qref.size() - child_location;
         int heap_parent_location = (int)(heap_child_location/2);
-        unsigned parent_location = Qptr->size() - heap_parent_location; 
+        unsigned parent_location = Qref.size() - heap_parent_location; 
 
         bool valid = (heap_parent_location != 0 && child_location > index_begin + offset && 
-                      parent_location < Qptr->size());
+                      parent_location < Qref.size());
 
-        while(valid && comp((*Qptr)[child_location], (*Qptr)[parent_location])){
-          
+        while(valid && comp(Qref[child_location], Qref[parent_location])){
+
           //swap in the heap
-          std::swap((*Qptr)[child_location], (*Qptr)[parent_location]);
-          
+          std::swap(Qref[child_location], Qref[parent_location]);
+
           //swap in the location queue
           std::swap(Qlocation[child_location], Qlocation[parent_location]);
 
           child_location = parent_location;
           heap_child_location = heap_parent_location;
           heap_parent_location = (int)(heap_child_location/2);
-          parent_location = Qptr->size() - heap_parent_location; 
+          parent_location = Qref.size() - heap_parent_location; 
           valid = (heap_parent_location != 0 && child_location > index_begin + offset);
         }
       }
-      
-      OutputIterator *permutation;
+
+      OutputIterator& permutation;
       int index_begin;
-      Buffer *Qptr;
+      Buffer& Qref;
       PseudoDegreeMap degree;
       Compare comp;
       std::vector<int> Qlocation;
@@ -223,7 +221,7 @@ namespace boost {
     std::vector<int> loc(num_vertices(g));
 
     //create the visitor
-    Visitor vis(&permutation, &Q, comp, pseudo_degree, loc, colors, index_map);
+    Visitor vis(permutation, Q, comp, pseudo_degree, loc, colors, index_map);
     
     while( !vertex_queue.empty() ) {
       Vertex s = vertex_queue.front();
@@ -248,7 +246,7 @@ namespace boost {
   {
 
     std::deque< typename graph_traits<Graph>::vertex_descriptor > vertex_queue;
-    vertex_queue.push_front( s );
+    vertex_queue.push_back( s );
     return king_ordering(g, vertex_queue, permutation, color, degree,
                          index_map);
   }
@@ -282,10 +280,11 @@ namespace boost {
 
     // Find starting nodes for all vertices
     // TBD: How to do this with a directed graph?
-    for (typename std::deque<Vertex>::iterator i = vertex_queue.begin();
-         i != vertex_queue.end(); ++i)
-      *i = find_starting_node(G, *i, color, degree);
-    
+    for (typename std::deque<Vertex>::size_type i = 0;
+         i < vertex_queue.size(); ++i) {
+      vertex_queue[i] = find_starting_node(G, vertex_queue[i], color, degree);
+    }
+
     return king_ordering(G, vertex_queue, permutation, color, degree,
                          index_map);
   }
@@ -299,9 +298,9 @@ namespace boost {
       return permutation;
 
     std::vector<default_color_type> colors(num_vertices(G));
-    return king_ordering(G, permutation, 
-                         make_iterator_property_map(&colors[0], index_map,
-                                                    colors[0]),
+    return king_ordering(G, permutation,
+                         make_iterator_property_map(colors.begin(), index_map,
+                                                    white_color),
                          make_out_degree_map(G), index_map);
   }
 

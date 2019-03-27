@@ -55,6 +55,8 @@ int main()
   property_map<graph_t, edge_weight_t>::type w_map = get(edge_weight, g);
   dag_shortest_paths(g, s, d_map, w_map, &color[0], &pred[0], 
      vis, compare, combine, (std::numeric_limits<int>::max)(), 0);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  dag_shortest_paths(g, s, boost::graph::keywords::_distance_map = d_map);
 #else
   dag_shortest_paths(g, s, distance_map(d_map));
 #endif

@@ -12,10 +12,15 @@
 #include <boost/graph/betweenness_centrality.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <algorithm>
 #include <vector>
 #include <boost/property_map/property_map.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#include <boost/parameter/preprocessor.hpp>
+#endif
 
 namespace boost {
 
@@ -58,7 +63,7 @@ struct bc_clustering_threshold
    * normalized) falls below the threshold.
    */
   template<typename Graph, typename Edge>
-  bool operator()(T max_centrality, Edge, const Graph&)
+  bool operator()(T max_centrality, Edge, const Graph&) const
   {
     return (max_centrality / dividend) < threshold;
   }
@@ -103,36 +108,111 @@ struct bc_clustering_threshold
  * value type must be an integral type. Defaults to 
  * @c get(vertex_index, g).
  */
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+BOOST_PARAMETER_FUNCTION(
+    (bool), betweenness_centrality_clustering, ::boost::graph::keywords::tag,
+    (required
+        (graph, *)
+    )
+    (deduced
+        (required
+            (terminator_function
+              ,*(detail::clustering_terminator_function_predicate)
+            )
+        )
+        (optional
+            (edge_centrality_map
+              ,*(
+                    detail::argument_with_graph_predicate<
+                        detail::is_edge_property_map_of_graph
+                    >
+                )
+              , make_shared_array_property_map(
+                    num_edges(graph),
+                    detail::make_default_centrality_value(
+                        terminator_function
+                    ),
+                    detail::edge_or_dummy_property_map(graph, edge_index)
+                )
+            )
+            (vertex_index_map
+              ,*(
+                    detail::argument_with_graph_predicate<
+                        detail::is_vertex_to_integer_map_of_graph
+                    >
+                )
+              , detail::vertex_or_dummy_property_map(graph, vertex_index)
+            )
+        )
+    )
+)
+#else
 template<typename MutableGraph, typename Done, typename EdgeCentralityMap,
          typename VertexIndexMap>
-void 
-betweenness_centrality_clustering(MutableGraph& g, Done done,
-                                  EdgeCentralityMap edge_centrality,
-                                  VertexIndexMap vertex_index)
+void betweenness_centrality_clustering(
+    MutableGraph& graph, Done terminator_function,
+    EdgeCentralityMap edge_centrality_map, VertexIndexMap vertex_index_map
+)
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 {
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  typedef typename boost::remove_const<
+    typename boost::remove_reference<graph_type>::type
+  >::type MutableGraph;
+  typedef typename boost::remove_const<
+    typename boost::remove_reference<terminator_function_type>::type
+  >::type Done;
+  typedef typename boost::remove_const<
+    typename boost::remove_reference<edge_centrality_map_type>::type
+  >::type EdgeCentralityMap;
+#endif
   typedef typename property_traits<EdgeCentralityMap>::value_type
     centrality_type;
   typedef typename graph_traits<MutableGraph>::edge_iterator edge_iterator;
   typedef typename graph_traits<MutableGraph>::edge_descriptor edge_descriptor;
 
-  if (has_no_edges(g)) return;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  if (has_no_edges(graph)) return true;
+
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+  Done tf = terminator_function;
+#endif
+#else
+  if (has_no_edges(graph)) return;
+#endif
 
   // Function object that compares the centrality of edges
   indirect_cmp<EdgeCentralityMap, std::less<centrality_type> > 
-    cmp(edge_centrality);
+    cmp(edge_centrality_map);
 
   bool is_done;
   do {
-    brandes_betweenness_centrality(g, 
-                                   edge_centrality_map(edge_centrality)
-                                   .vertex_index_map(vertex_index));
-    std::pair<edge_iterator, edge_iterator> edges_iters = edges(g);
+    brandes_betweenness_centrality(
+      graph,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_edge_centrality_map = edge_centrality_map,
+      boost::graph::keywords::_vertex_index_map = vertex_index_map
+#else
+      boost::edge_centrality_map(edge_centrality_map)
+      .vertex_index_map(vertex_index_map)
+#endif
+    );
+    std::pair<edge_iterator, edge_iterator> edges_iters = edges(graph);
     edge_descriptor e = *max_element(edges_iters.first, edges_iters.second, cmp);
-    is_done = done(get(edge_centrality, e), e, g);
-    if (!is_done) remove_edge(e, g);
-  } while (!is_done && !has_no_edges(g));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS) && \
+    !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    is_done = tf(get(edge_centrality_map, e), e, graph);
+#else
+    is_done = terminator_function(get(edge_centrality_map, e), e, graph);
+#endif
+    if (!is_done) remove_edge(e, graph);
+  } while (!is_done && !has_no_edges(graph));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  return true;
+#endif
 }
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 /**
  * \overload
  */ 
@@ -158,7 +238,7 @@ betweenness_centrality_clustering(MutableGraph& g, Done done)
     make_iterator_property_map(edge_centrality.begin(), get(edge_index, g)),
     get(vertex_index, g));
 }
-
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
 } // end namespace boost
 
 #endif // BOOST_GRAPH_BETWEENNESS_CENTRALITY_CLUSTERING_HPP

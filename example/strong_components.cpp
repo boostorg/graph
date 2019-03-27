@@ -62,14 +62,24 @@ int main(int, char*[])
   std::cout << std::endl;
 
   typedef graph_traits<adjacency_list<vecS, vecS, directedS> >::vertex_descriptor Vertex;
-    
+
   std::vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
   std::vector<default_color_type> color(num_vertices(G));
   std::vector<Vertex> root(num_vertices(G));
-  int num = strong_components(G, make_iterator_property_map(component.begin(), get(vertex_index, G)), 
-                              root_map(make_iterator_property_map(root.begin(), get(vertex_index, G))).
-                              color_map(make_iterator_property_map(color.begin(), get(vertex_index, G))).
-                              discover_time_map(make_iterator_property_map(discover_time.begin(), get(vertex_index, G))));
+  using namespace boost::graph::keywords;
+  int num = strong_components(
+    G,
+    make_iterator_property_map(component.begin(), get(vertex_index, G)),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    _root_map = make_iterator_property_map(root.begin(), get(vertex_index, G)),
+    _color_map = make_iterator_property_map(color.begin(), get(vertex_index, G)),
+    _discover_time_map = make_iterator_property_map(discover_time.begin(), get(vertex_index, G))
+#else
+    boost::root_map(make_iterator_property_map(root.begin(), get(vertex_index, G)))
+    .color_map(make_iterator_property_map(color.begin(), get(vertex_index, G)))
+    .discover_time_map(make_iterator_property_map(discover_time.begin(), get(vertex_index, G)))
+#endif
+  );
     
   std::cout << "Total number of components: " << num << std::endl;
   std::vector<int>::size_type i;

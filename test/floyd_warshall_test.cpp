@@ -17,7 +17,6 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
-#include <boost/test/minimal.hpp>
 #include <algorithm>
 using namespace boost;
 
@@ -112,33 +111,51 @@ bool acceptance_test(Graph& g, int vec, int e)
       }
     }
 
-
-    bool bellman, floyd1, floyd2, floyd3;
-    floyd1 =
-      boost::floyd_warshall_initialized_all_pairs_shortest_paths
-        (g,
-         matrix, weight_map(boost::get(boost::edge_weight, g)).
-         distance_inf(int_inf). distance_zero(0));
-
-    floyd2 =
-      boost::floyd_warshall_all_pairs_shortest_paths
-        (g, matrix3,
-         weight_map(local_edge_map).
-         distance_inf(int_inf). distance_zero(0));
-
-    floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
-
+    bool bellman = false;
+    bool floyd1 = boost::floyd_warshall_initialized_all_pairs_shortest_paths(
+      g,
+      matrix,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
+      boost::graph::keywords::_distance_inf = int_inf,
+      boost::graph::keywords::_distance_zero = 0
+#else
+      weight_map(boost::get(boost::edge_weight, g)).
+      distance_inf(int_inf).
+      distance_zero(0)
+#endif
+    );
+    bool floyd2 = boost::floyd_warshall_all_pairs_shortest_paths(
+      g,
+      matrix3,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_weight_map = local_edge_map,
+      boost::graph::keywords::_distance_inf = int_inf,
+      boost::graph::keywords::_distance_zero = 0
+#else
+      weight_map(local_edge_map).distance_inf(int_inf).distance_zero(0)
+#endif
+    );
+    bool floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 
     boost::dummy_property_map dummy_map;
     std::map<vertex_des, std::map<vertex_des, int> > matrix2;
     for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++){
       boost::put(distance_row, *firstv, 0);
-      bellman =
-        boost::bellman_ford_shortest_paths
-          (g, vec,
-           weight_map(boost::get(boost::edge_weight, g)).
-           distance_map(boost::get(boost::vertex_distance, g)).
-           predecessor_map(dummy_map));
+      bellman = boost::bellman_ford_shortest_paths(
+        g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_size = vec,
+        boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
+        boost::graph::keywords::_distance_map = boost::get(boost::vertex_distance, g),
+        boost::graph::keywords::_predecessor_map = dummy_map
+#else
+        vec,
+        weight_map(boost::get(boost::edge_weight, g)).
+        distance_map(boost::get(boost::vertex_distance, g)).
+        predecessor_map(dummy_map)
+#endif
+      );
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
           firstv2++){
@@ -149,7 +166,6 @@ bool acceptance_test(Graph& g, int vec, int e)
         break;
       }
     }
-
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
       std::cout <<
@@ -195,7 +211,6 @@ bool acceptance_test(Graph& g, int vec, int e)
         }
       }
     }
-
   }
   return true;
 }
@@ -204,9 +219,7 @@ template<typename Graph>
 bool acceptance_test2(Graph& g, int vec, int e)
 {
   boost::minstd_rand ran(vec);
-
   {
-
     typename boost::property_map<Graph, boost::vertex_name_t>::type index =
       boost::get(boost::vertex_name, g);
     typename boost::graph_traits<Graph>::vertex_iterator firstv, lastv,
@@ -284,33 +297,51 @@ bool acceptance_test2(Graph& g, int vec, int e)
       }
     }
 
-
-    bool bellman, floyd1, floyd2, floyd3;
-    floyd1 =
-      boost::floyd_warshall_initialized_all_pairs_shortest_paths
-        (g,
-         matrix, weight_map(boost::get(boost::edge_weight, g)).
-         distance_inf(int_inf). distance_zero(0));
-
-    floyd2 =
-      boost::floyd_warshall_all_pairs_shortest_paths
-        (g, matrix3,
-         weight_map(local_edge_map).
-         distance_inf(int_inf). distance_zero(0));
-
-    floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
-
+    bool bellman = false;
+    bool floyd1 = boost::floyd_warshall_initialized_all_pairs_shortest_paths(
+      g,
+      matrix,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
+      boost::graph::keywords::_distance_inf = int_inf,
+      boost::graph::keywords::_distance_zero = 0
+#else
+      weight_map(boost::get(boost::edge_weight, g)).
+      distance_inf(int_inf).
+      distance_zero(0)
+#endif
+    );
+    bool floyd2 = boost::floyd_warshall_all_pairs_shortest_paths(
+      g,
+      matrix3,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_weight_map = local_edge_map,
+      boost::graph::keywords::_distance_inf = int_inf,
+      boost::graph::keywords::_distance_zero = 0
+#else
+      weight_map(local_edge_map).distance_inf(int_inf).distance_zero(0)
+#endif
+    );
+    bool floyd3 = boost::floyd_warshall_all_pairs_shortest_paths(g, matrix4);
 
     boost::dummy_property_map dummy_map;
     std::map<vertex_des, std::map<vertex_des, int> > matrix2;
     for(boost::tie(firstv, lastv) = vertices(g); firstv != lastv; firstv++){
       boost::put(distance_row, *firstv, 0);
-      bellman =
-        boost::bellman_ford_shortest_paths
-          (g, vec,
-           weight_map(boost::get(boost::edge_weight, g)).
-           distance_map(boost::get(boost::vertex_distance, g)).
-           predecessor_map(dummy_map));
+      bellman = boost::bellman_ford_shortest_paths(
+        g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_size = vec,
+        boost::graph::keywords::_weight_map = boost::get(boost::edge_weight, g),
+        boost::graph::keywords::_distance_map = boost::get(boost::vertex_distance, g),
+        boost::graph::keywords::_predecessor_map = dummy_map
+#else
+        vec,
+        weight_map(boost::get(boost::edge_weight, g)).
+        distance_map(boost::get(boost::vertex_distance, g)).
+        predecessor_map(dummy_map)
+#endif
+      );
       distance_row = boost::get(boost::vertex_distance, g);
       for(boost::tie(firstv2, lastv2) = vertices(g); firstv2 != lastv2;
           firstv2++){
@@ -321,7 +352,6 @@ bool acceptance_test2(Graph& g, int vec, int e)
         break;
       }
     }
-
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
       std::cout <<
@@ -367,26 +397,27 @@ bool acceptance_test2(Graph& g, int vec, int e)
         }
       }
     }
-
   }
   return true;
 }
 
-int test_main(int, char*[])
+#include <boost/core/lightweight_test.hpp>
+
+int main(int, char*[])
 {
   typedef boost::adjacency_list<boost::listS, boost::listS, boost::directedS,
             boost::property<boost::vertex_distance_t, int,
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Digraph;
   Digraph adjlist_digraph;
-  BOOST_CHECK(acceptance_test2(adjlist_digraph, 100, 2000));
+  BOOST_TEST(acceptance_test2(adjlist_digraph, 100, 2000));
 
   typedef boost::adjacency_matrix<boost::undirectedS,
             boost::property<boost::vertex_distance_t, int,
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Graph;
   Graph matrix_graph(100);
-  BOOST_CHECK(acceptance_test(matrix_graph, 100, 2000));
+  BOOST_TEST(acceptance_test(matrix_graph, 100, 2000));
 
-  return 0;
+  return boost::report_errors();
 }

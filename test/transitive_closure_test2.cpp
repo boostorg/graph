@@ -33,4 +33,5 @@ int main(int argc, char *argv[]) {
     cout << source(*i,g_TC) << "->" << target(*i,g_TC) << " ";
   }
   cout << endl;
+  return 0;
 }

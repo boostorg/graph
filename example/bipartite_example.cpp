@@ -39,7 +39,7 @@ void print_bipartite (const Graph& g)
 
     /// A second interface yields a bipartition in a color map, if the graph is bipartite.
 
-    is_bipartite (g, get (vertex_index, g), partition_map);
+    is_bipartite (g, partition_map);
 
     for (boost::tie (vertex_iter, vertex_end) = vertices (g); vertex_iter != vertex_end; ++vertex_iter)
     {
@@ -54,7 +54,7 @@ void print_bipartite (const Graph& g)
 
     /// A third interface yields an odd-cycle if the graph is not bipartite.
 
-    find_odd_cycle (g, get (vertex_index, g), std::back_inserter (odd_cycle));
+    find_odd_cycle (g, std::back_inserter (odd_cycle));
 
     std::cout << "Odd cycle consists of the vertices:";
     for (size_t i = 0; i < odd_cycle.size (); ++i)

@@ -1,8 +1,8 @@
 //=======================================================================
 // Copyright 2001 Jeremy G. Siek, Andrew Lumsdaine, Lie-Quan Lee, 
 //
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 #include <boost/config.hpp>
@@ -10,6 +10,7 @@
 #include <boost/graph/transpose_graph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 int
 main()
@@ -44,6 +45,6 @@ main()
 
   graph_traits < graph_t >::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(G); ei != ei_end; ++ei)
-    assert(edge(target(*ei, G), source(*ei, G), G_T).second == true);
-  return 0;
+    BOOST_TEST(edge(target(*ei, G), source(*ei, G), G_T).second);
+  return boost::report_errors();
 }

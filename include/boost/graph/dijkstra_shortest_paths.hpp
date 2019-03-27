@@ -32,6 +32,18 @@
 #include <boost/type_traits.hpp>
 #include <boost/concept/assert.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING
 #  include <boost/pending/mutable_queue.hpp>
 #endif // BOOST_GRAPH_DIJKSTRA_TESTING
@@ -316,7 +328,8 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis)
   {
-    dijkstra_shortest_paths_no_init(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths_no_init(g, srcs, srcs + 1, predecessor, distance,
                                     weight, index_map, compare, combine, zero,
                                     vis);
   }
@@ -373,7 +386,8 @@ namespace boost {
      Compare compare, Combine combine, DistZero zero,
      DijkstraVisitor vis, ColorMap color)
   {
-    dijkstra_shortest_paths_no_init(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths_no_init(g, srcs, srcs + 1, predecessor, distance,
                                     weight, index_map, compare, combine,
                                     zero, vis, color);
   }
@@ -418,7 +432,8 @@ namespace boost {
      const bgl_named_params<T, Tag, Base>&
      BOOST_GRAPH_ENABLE_IF_MODELS_PARM(VertexListGraph,vertex_list_graph_tag))
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance, weight,
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
                             index_map, compare, combine, inf, zero, vis);
   }
 
@@ -466,9 +481,20 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis, ColorMap color)
+     DijkstraVisitor vis, ColorMap color
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
+       parameter::are_tagged_arguments<
+         PredecessorMap, DistanceMap, WeightMap, IndexMap,
+         Compare, Combine, DistInf, DistZero, DijkstraVisitor, ColorMap
+       >,
+       mpl::true_
+     >::type = mpl::true_()
+#endif
+     )
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance, weight,
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance, weight,
                             index_map, compare, combine, inf, zero,
                             vis, color);
   }
@@ -506,9 +532,20 @@ namespace boost {
      PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
      IndexMap index_map,
      Compare compare, Combine combine, DistInf inf, DistZero zero,
-     DijkstraVisitor vis)
+     DijkstraVisitor vis
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
+       parameter::are_tagged_arguments<
+         PredecessorMap, DistanceMap, WeightMap, IndexMap,
+         Compare, Combine, DistInf, DistZero, DijkstraVisitor
+       >,
+       mpl::true_
+     >::type = mpl::true_()
+#endif
+     )
   {
-    dijkstra_shortest_paths(g, &s, &s + 1, predecessor, distance,
+    typename graph_traits<VertexListGraph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(g, srcs, srcs + 1, predecessor, distance,
                             weight, index_map,
                             compare, combine, inf, zero, vis);
   }
@@ -589,6 +626,115 @@ namespace boost {
        choose_const_pmap(get_param(params, vertex_index), g, vertex_index),
        params);
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Args>
+  inline void dijkstra_shortest_paths
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
+     const Args& arg_pack, typename boost::enable_if<
+       parameter::is_argument_pack<Args>, mpl::true_
+     >::type = mpl::true_())
+  {
+    using namespace boost::graph::keywords;
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
+    null_visitor null_vis;
+    dijkstra_visitor<null_visitor> default_visitor(null_vis);
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::visitor,
+        dijkstra_visitor<null_visitor>&
+    >::type vis = arg_pack[_visitor | default_visitor];
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::predecessor_map,
+        dummy_property_map&
+    >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        D
+    > dist_map_gen(zero_actual);
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::distance_map,
+        D
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    std::less<D> default_compare;
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::distance_compare,
+        std::less<D>&
+    >::type dist_comp = arg_pack[_distance_compare | default_compare];
+    closed_plus<D> default_combine(inf);
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::distance_combine,
+        closed_plus<D>&
+    >::type dist_comb = arg_pack[_distance_combine | default_combine];
+    typename graph_traits<Graph>::vertex_descriptor srcs[1] = {s};
+    dijkstra_shortest_paths(
+      g,
+      srcs,
+      srcs + 1,
+      pred_map,
+      dist_map,
+      w_map,
+      v_i_map,
+      dist_comp,
+      dist_comb,
+      inf,
+      zero_d,
+      vis,
+      arg_pack[_color_map | make_two_bit_color_map(num_vertices(g), v_i_map)]
+    );
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dijkstra_shortest_paths)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

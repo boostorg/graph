@@ -70,11 +70,11 @@ private:
 };
 
 int
-main(int argc, const char** argv)
+main()
 {
   using namespace boost;
 
-  std::ifstream datafile(argc >= 2 ? argv[1] : "./boost_web.dat");
+  std::ifstream datafile("./boost_web.dat");
   if (!datafile) {
     std::cerr << "No ./boost_web.dat file" << std::endl;
     return -1;
@@ -156,7 +156,13 @@ main(int argc, const char** argv)
   for (i = 0; i < num_vertices(g); ++i) {
     calc_distance_visitor<size_type*> vis(&d_matrix[i][0]);
     Traits::vertex_descriptor src = vertices(g).first[i];
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    breadth_first_search(g, src, vis);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(g, src, boost::graph::keywords::_visitor = vis);
+#else
     breadth_first_search(g, src, boost::visitor(vis));
+#endif
   }
 
   size_type diameter = 0;
@@ -185,10 +191,18 @@ main(int argc, const char** argv)
   // Do a BFS starting at the home page, recording the parent of each
   // vertex (where parent is with respect to the search tree).
   Traits::vertex_descriptor src = vertices(g).first[0];
-  breadth_first_search
-    (g, src, 
-     boost::visitor(make_bfs_visitor(record_predecessors(&parent[0],
-                                                         on_tree_edge()))));
+  breadth_first_search(
+    g, src,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
+#endif
+    make_bfs_visitor(record_predecessors(&parent[0], on_tree_edge()))
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 
   // Add all the search tree edges into a new graph
   Graph search_tree(num_vertices(g));
@@ -207,7 +221,11 @@ main(int argc, const char** argv)
     tree_printer(node_name, &dfs_distances[0]);
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     get(vertex_color, g)[*vi] = white_color;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  depth_first_visit(search_tree, tree_printer, get(vertex_color, g), src);
+#else
   depth_first_visit(search_tree, src, tree_printer, get(vertex_color, g));
-  
+#endif
+
   return EXIT_SUCCESS;
 }

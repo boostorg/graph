@@ -14,6 +14,7 @@
 #include <boost/config.hpp>
 #include <vector>
 #include <queue>
+#include <utility>
 #include <boost/pending/queue.hpp>
 #include <boost/pending/mutable_queue.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -44,58 +45,63 @@ namespace boost {
     template < class Vertex, class DegreeMap,
                class Container = std::deque<Vertex> >
     class rcm_queue : public std::queue<Vertex, Container> {
-      typedef std::queue<Vertex> base;
+      typedef std::queue<Vertex, Container> base;
     public:
       typedef typename base::value_type value_type;
       typedef typename base::size_type size_type;
 
       /* SGI queue has not had a contructor queue(const Container&) */
-      inline rcm_queue(DegreeMap deg)
-        : _size(0), Qsize(1), eccen(-1), degree(deg) { }
+      inline rcm_queue(DegreeMap deg) :
+        base(), _size(0), Qsize(1), eccen(-1), w(0), degree(deg) { }
+
+      inline rcm_queue(rcm_queue const& copy) :
+        base(static_cast<base const&>(copy)), _size(copy._size),
+        Qsize(copy.Qsize), eccen(copy.eccen), w(copy.w),
+        degree(copy.degree) { }
 
       inline void pop() {
-        if ( !_size ) 
-          Qsize = base::size();
+        if ( !this->_size ) 
+          this->Qsize = base::size();
 
         base::pop();
-        if ( _size == Qsize-1 ) {
-          _size = 0;
-          ++eccen;
+        if ( this->_size == this->Qsize-1 ) {
+          this->_size = 0;
+          ++this->eccen;
         } else 
-          ++_size;
+          ++this->_size;
 
       }
 
       inline value_type& front() {
         value_type& u =  base::front();
-        if ( _size == 0 ) 
-          w = u;
-        else if (get(degree,u) < get(degree,w) )
-          w = u;
+        if ( this->_size == 0 ) 
+          this->w = u;
+        else if (get(this->degree,u) < get(this->degree,this->w) )
+          this->w = u;
         return u;
       }
 
       inline const value_type& front() const {
         const value_type& u =  base::front();
-        if ( _size == 0 ) 
-          w = u;
-        else if (get(degree,u) < get(degree,w) )
-          w = u;
+        if ( this->_size == 0 ) 
+          this->w = u;
+        else if (get(this->degree,u) < get(this->degree,this->w) )
+          this->w = u;
         return u;
       }
 
-      inline value_type& top() { return front(); }
-      inline const value_type& top() const { return front(); }
+      inline value_type& top() { return this->front(); }
+      inline const value_type& top() const { return this->front(); }
 
       inline size_type size() const { return base::size(); }
 
-      inline size_type eccentricity() const { return eccen; }
-      inline value_type spouse() const { return w; }
+      inline size_type eccentricity() const { return this->eccen; }
+      inline value_type spouse() const { return this->w; }
 
     protected:
       size_type _size;
       size_type Qsize;
-      int eccen;
+      size_type eccen;
       mutable value_type w;
       DegreeMap degree;
     };
@@ -106,15 +112,18 @@ namespace boost {
     public:      
       typedef typename Sequence::iterator iterator;
       typedef typename Sequence::reverse_iterator reverse_iterator;
-      typedef queue<Tp,Sequence> base;
-      typedef typename Sequence::size_type size_type;
+      typedef queue<Tp, Sequence> base;
+      typedef typename base::size_type size_type;
+      typedef typename base::value_type value_type;
 
+      inline sparse_ordering_queue() : base() { }
+      inline sparse_ordering_queue(sparse_ordering_queue const& copy) :
+        base(static_cast<base const&>(copy)) { }
       inline iterator begin() { return this->c.begin(); }
       inline reverse_iterator rbegin() { return this->c.rbegin(); }
       inline iterator end() { return this->c.end(); }
       inline reverse_iterator rend() { return this->c.rend(); }
       inline Tp &operator[](int n) { return this->c[n]; }
-      inline size_type size() {return this->c.size(); }
     protected:
       //nothing
     };
@@ -127,22 +136,41 @@ namespace boost {
   // Used in <tt>king_ordering</tt> algorithm.
   //
   template <class Graph, class Vertex, class ColorMap, class DegreeMap>
-  Vertex 
-  pseudo_peripheral_pair(Graph const& G, const Vertex& u, int& ecc,
+  std::pair<Vertex, std::size_t>
+  pseudo_peripheral_pair(Graph const& G, Vertex u,
                          ColorMap color, DegreeMap degree)
   {
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
-    
+
     sparse::rcm_queue<Vertex, DegreeMap> Q(degree);
 
     typename boost::graph_traits<Graph>::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       if (get(color, *ui) != Color::red()) put(color, *ui, Color::white());
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_visit(
+      G,
+      u,
+      boost::graph::keywords::_buffer = Q,
+      boost::graph::keywords::_color_map = color
+    );
+#else
     breadth_first_visit(G, u, buffer(Q).color_map(color));
+#endif
 
-    ecc = Q.eccentricity(); 
-    return Q.spouse();
+    return std::make_pair(Q.spouse(), Q.eccentricity());
+  }
+
+  // Original Pseudo peripheral interface
+  template <class Graph, class Vertex, class ColorMap, class DegreeMap>
+  Vertex
+  pseudo_peripheral_pair(Graph const& G, Vertex u, int& ecc,
+                         ColorMap color, DegreeMap degree)
+  {
+    std::pair<Vertex, std::size_t> result = pseudo_peripheral_pair(G, u, color, degree);
+    ecc = static_cast<int>(result.second);
+    return result.first;
   }
 
   // Find a good starting node
@@ -155,16 +183,16 @@ namespace boost {
   Vertex find_starting_node(Graph const& G, Vertex r, Color color, Degree degree)
   {
     Vertex x, y;
-    int eccen_r, eccen_x;
+    std::size_t eccen_r, eccen_x;
 
-    x = pseudo_peripheral_pair(G, r, eccen_r, color, degree);
-    y = pseudo_peripheral_pair(G, x, eccen_x, color, degree);
+    boost::tie(x, eccen_r) = pseudo_peripheral_pair(G, r, color, degree);
+    boost::tie(y, eccen_x) = pseudo_peripheral_pair(G, x, color, degree);
 
     while (eccen_x > eccen_r) {
       r = x;
       eccen_r = eccen_x;
       x = y;
-      y = pseudo_peripheral_pair(G, x, eccen_x, color, degree);
+      boost::tie(y, eccen_x) = pseudo_peripheral_pair(G, x, color, degree);
     }
     return x;
   }

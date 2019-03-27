@@ -167,11 +167,17 @@ namespace boost {
       
       //generating the RLS (rooted level structure)
       breadth_first_search
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        (G, s, boost::graph::keywords::_visitor =
+           make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+          );
+#else
         (G, s, visitor
          (
            make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
            )
           );
+#endif
       
       //end 2
       
@@ -213,11 +219,17 @@ namespace boost {
         for(typename std::vector<typename graph_traits<Graph>::vertices_size_type>::iterator iter = dist.begin(); iter != dist.end(); ++iter) *iter = 0;
         
         breadth_first_search
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+          (G, i, boost::graph::keywords::_visitor =
+             make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+            );
+#else
           (G, i, boost::visitor
            (
              make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
              )
             );
+#endif
         
         //Calculating depth and width of the rooted level
         h_i = RLS_depth(dist);
@@ -282,11 +294,17 @@ namespace boost {
     boost::iterator_property_map<vec_iter, VertexID, size_type, size_type&> dist_pmap(dist.begin(), get(vertex_index, g)); 
     
     breadth_first_search
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      (g, e, boost::graph::keywords::_visitor =
+           make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
+       );
+#else
       (g, e, visitor
        (
            make_bfs_visitor(record_distances(dist_pmap, on_tree_edge() ) )
         )
        );
+#endif
     
     //Creating a property_map for the indices of a vertex
     typename property_map<Graph, vertex_index_t>::type index_map = get(vertex_index, g);

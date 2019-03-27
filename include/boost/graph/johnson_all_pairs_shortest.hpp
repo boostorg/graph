@@ -31,12 +31,35 @@
 #include <boost/type_traits/same_traits.hpp>
 #include <boost/concept/assert.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 namespace boost {
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
             class VertexID, class Weight, typename BinaryPredicate, 
             typename BinaryFunction, typename Infinity, class DistanceZero>
-  bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      VertexID, Weight, BinaryPredicate, BinaryFunction,
+      Infinity, DistanceZero
+    >,
+#endif
+    bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  >::type
+#endif
   johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
                DistanceMatrix& D,
                VertexID id1, Weight w1, const BinaryPredicate& compare, 
@@ -132,7 +155,14 @@ namespace boost {
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
             class VertexID, class Weight, class DistanceZero>
-  bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<VertexID, Weight, DistanceZero>,
+#endif
+    bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  >::type
+#endif
   johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
                DistanceMatrix& D,
                VertexID id1, Weight w1, DistanceZero zero)
@@ -144,6 +174,39 @@ namespace boost {
                                             (std::numeric_limits<WT>::max)(),
                                             zero);
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename VertexAndEdgeListGraph, typename DistanceMatrix,
+            typename Args>
+  inline typename boost::enable_if<
+    parameter::is_argument_pack<Args>, bool
+  >::type
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+               DistanceMatrix& D, const Args& args)
+  {
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        VertexAndEdgeListGraph
+    >::type weight_map_type;
+    typedef typename property_traits<weight_map_type>::value_type WT;
+    return johnson_all_pairs_shortest_paths(
+      g1,
+      D,
+      args[
+        _vertex_index_map |
+        detail::vertex_or_dummy_property_map(g1, vertex_index)
+      ],
+      args[_weight_map | detail::edge_or_dummy_property_map(g1, edge_weight)],
+      args[_distance_compare | std::less<WT>()],
+      args[_distance_combine | closed_plus<WT>()],
+      args[_distance_inf || detail::get_max<WT>()],
+      args[_distance_zero | WT()]
+    );
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   namespace detail {
 
@@ -195,6 +258,27 @@ namespace boost {
     return detail::johnson_dispatch
       (g, D, params, get(edge_weight, g), get(vertex_index, g));
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename DistanceMatrix, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline typename boost::enable_if< \
+    parameter::are_tagged_arguments< \
+      TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+    >, bool \
+  >::type name( \
+    Graph& g, DistanceMatrix& d, const TA& ta \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+  ) \
+  { \
+    return name(g, d, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, johnson_all_pairs_shortest_paths)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 

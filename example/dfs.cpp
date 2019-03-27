@@ -112,9 +112,21 @@ main(int , char* [])
   std::vector<size_type> d(num_vertices(G));  
   std::vector<size_type> f(num_vertices(G));
   int t = 0;
-  depth_first_search(G, visitor(categorize_edges(
-                     make_pair(stamp_times(&d[0], t, on_discover_vertex()),
-                               stamp_times(&f[0], t, on_finish_vertex())))));
+  depth_first_search(
+    G,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#endif
+    categorize_edges(
+      make_pair(
+        stamp_times(&d[0], t, on_discover_vertex()),
+        stamp_times(&f[0], t, on_finish_vertex())
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 
   std::vector<size_type>::iterator i, j;
   for (i = d.begin(), j = f.begin(); i != d.end(); ++i, ++j)

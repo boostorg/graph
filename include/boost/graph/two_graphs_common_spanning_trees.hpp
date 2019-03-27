@@ -151,14 +151,14 @@ namespace detail {
     (
       const Graph& iG,
       bimap<
-          bimaps::set_of<int>,
+          bimaps::set_of< typename Seq::size_type >,
           bimaps::set_of< typename graph_traits<Graph>::edge_descriptor >
         > iG_bimap,
       Map aiG_inL,
       Map diG,
       const Graph& vG,
       bimap<
-          bimaps::set_of<int>,
+          bimaps::set_of< typename Seq::size_type >,
           bimaps::set_of< typename graph_traits<Graph>::edge_descriptor >
         > vG_bimap,
       Map avG_inL,
@@ -174,7 +174,7 @@ namespace detail {
 
     typedef typename Seq::size_type seq_size_type;
 
-    int edges = num_vertices(iG) - 1;
+    typename GraphTraits::vertices_size_type edges = num_vertices(iG) - 1;
 //
 //  [ Michele Caini ]
 //
@@ -205,7 +205,7 @@ namespace detail {
       std::stack<edge_descriptor> iG_buf, vG_buf;
       bool found = false;
 
-      seq_size_type m;
+      seq_size_type m = 0;
       for(seq_size_type j = 0; j < inL.size() && !found; ++j) {
         if(!inL[j]
             && !get(diG, iG_bimap.left.at(j))
@@ -617,7 +617,7 @@ two_graphs_common_spanning_trees
     return;
 
   typedef bimaps::bimap<
-      bimaps::set_of< int >,
+      bimaps::set_of< order_size_type >,
       bimaps::set_of< order_value_type >
     > bimap_type;
   typedef typename bimap_type::value_type bimap_value;

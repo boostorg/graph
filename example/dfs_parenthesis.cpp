@@ -65,8 +65,16 @@ main(int, char*[])
 #endif
 
   std::cout << "DFS parenthesis:" << std::endl;
-  depth_first_search(G, visitor(make_dfs_visitor(std::make_pair(open_paren(), 
-                                                        close_paren()))));
+  depth_first_search(
+    G,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#endif
+    make_dfs_visitor(std::make_pair(open_paren(), close_paren()))
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
   std::cout << std::endl;
   return 0;
 }

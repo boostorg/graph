@@ -5,14 +5,6 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-
-/*
-   IMPORTANT!!!
-   ~~~~~~~~~~~~
-   This example uses interfaces that have been deprecated and removed from Boost.Grpah.
-   Someone needs to update it, as it does NOT compile.
-*/
-
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/depth_first_search.hpp>
 
@@ -49,7 +41,11 @@ main()
       << name[target(*e, g)] << ')' << std::endl;
   parenthesis_visitor
     paren_vis;
-  depth_first_search(g, visitor(paren_vis));
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  depth_first_search(g, paren_vis);
+#else
+  depth_first_search(g, boost::visitor(paren_vis));
+#endif
   std::cout << std::endl;
   return 0;
 }

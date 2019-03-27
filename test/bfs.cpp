@@ -7,7 +7,8 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/ref.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -15,6 +16,8 @@
 #include <boost/graph/breadth_first_search.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/variate_generator.hpp>
 
 #ifdef BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
 using namespace boost;
@@ -35,45 +38,45 @@ public:
     : current_distance(0), distance(d), parent(p), color(c), src(s) { }
 
   void initialize_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_CHECK(get(color, u) == Color::white());
+    BOOST_TEST(get(color, u) == Color::white());
   }
   void examine_vertex(const Vertex& u, const Graph& ) const {
     current_vertex = u;
     // Ensure that the distances monotonically increase.
-    BOOST_CHECK( distance[u] == current_distance
+    BOOST_TEST( distance[u] == current_distance
                        || distance[u] == current_distance + 1 );
     if (distance[u] == current_distance + 1) // new level
       ++current_distance;
   }
   void discover_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_CHECK( get(color, u) == Color::gray() );
+    BOOST_TEST( get(color, u) == Color::gray() );
     if (u == src) {
       current_vertex = src;
     } else {
-      BOOST_CHECK( parent[u] == current_vertex );
-      BOOST_CHECK( distance[u] == current_distance + 1 );
-      BOOST_CHECK( distance[u] == distance[parent[u]] + 1 );
+      BOOST_TEST( parent[u] == current_vertex );
+      BOOST_TEST( distance[u] == current_distance + 1 );
+      BOOST_TEST( distance[u] == distance[parent[u]] + 1 );
     }
   }
   void examine_edge(const Edge& e, const Graph& g) const {
-    BOOST_CHECK( source(e, g) == current_vertex );
+    BOOST_TEST( source(e, g) == current_vertex );
   }
   void tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_CHECK( get(color, target(e, g)) == Color::white() );
+    BOOST_TEST( get(color, target(e, g)) == Color::white() );
     Vertex u = source(e, g), v = target(e, g);
-    BOOST_CHECK( distance[u] == current_distance );
+    BOOST_TEST( distance[u] == current_distance );
     parent[v] = u;
     distance[v] = distance[u] + 1;
   }
   void non_tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_CHECK( color[target(e, g)] != Color::white() );
+    BOOST_TEST( color[target(e, g)] != Color::white() );
 
     if (boost::is_directed(g))
       // cross or back edge
-      BOOST_CHECK(distance[target(e, g)] <= distance[source(e, g)] + 1);
+      BOOST_TEST(distance[target(e, g)] <= distance[source(e, g)] + 1);
     else {
       // cross edge (or going backwards on a tree edge)
-      BOOST_CHECK(distance[target(e, g)] == distance[source(e, g)]
+      BOOST_TEST(distance[target(e, g)] == distance[source(e, g)]
                         || distance[target(e, g)] == distance[source(e, g)] + 1
                         || distance[target(e, g)] == distance[source(e, g)] - 1
                         );
@@ -81,20 +84,20 @@ public:
   }
 
   void gray_target(const Edge& e, const Graph& g) const {
-    BOOST_CHECK( color[target(e, g)] == Color::gray() );
+    BOOST_TEST( color[target(e, g)] == Color::gray() );
   }
 
   void black_target(const Edge& e, const Graph& g) const {
-    BOOST_CHECK( color[target(e, g)] == Color::black() );
+    BOOST_TEST( color[target(e, g)] == Color::black() );
 
     // All vertices adjacent to a black vertex must already be discovered
     typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g);
          ai != ai_end; ++ai)
-      BOOST_CHECK( color[*ai] != Color::white() );
+      BOOST_TEST( color[*ai] != Color::white() );
   }
   void finish_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_CHECK( color[u] == Color::black() );
+    BOOST_TEST( color[u] == Color::black() );
 
   }
 private:
@@ -123,6 +126,17 @@ struct bfs_test
     typename Traits::vertex_iterator ui, ui_end;
 
     boost::mt19937 gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::mt19937 dfs_chooser_gen;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::uniform_int<> dfs_choices(0, 6);
+#else
+    boost::uniform_int<> dfs_choices(0, 1);
+#endif
+    boost::variate_generator<
+      boost::mt19937&, boost::uniform_int<>
+    > dfs_rand(dfs_chooser_gen, dfs_choices);
+#endif
 
     for (i = 0; i < max_V; ++i)
       for (j = 0; j < i*i; ++j) {
@@ -163,28 +177,72 @@ struct bfs_test
           color_pm_type>
           vis(start, distance_pm, parent_pm, color_pm);
 
-        boost::breadth_first_search(g, start,
-                                    visitor(vis).
-                                    color_map(color_pm));
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        switch (dfs_rand())
+        {
+          case 0:
+            boost::breadth_first_search(
+              g,
+              start,
+              visitor(vis).color_map(color_pm)
+            );
+            break;
+          case 1:
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+            boost::breadth_first_search(g, start, vis, color_pm);
+#else
+            boost::breadth_first_search(
+              g,
+              start,
+              boost::graph::keywords::_visitor = vis,
+              boost::graph::keywords::_color_map = color_pm
+            );
+#endif
+            break;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+          case 2:
+            boost::breadth_first_search(g, start, color_pm, vis);
+            break;
+          case 3:
+            boost::breadth_first_search(g, vis, start, color_pm);
+            break;
+          case 4:
+            boost::breadth_first_search(g, vis, color_pm, start);
+            break;
+          case 5:
+            boost::breadth_first_search(g, color_pm, start, vis);
+            break;
+          case 6:
+            boost::breadth_first_search(g, color_pm, vis, start);
+            break;
+#endif
+        }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::breadth_first_search(
+          g,
+          start,
+          boost::visitor(vis).color_map(color_pm)
+        );
+#endif
 
         // All white vertices should be unreachable from the source.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
           if (color[*ui] == Color::white()) {
             std::vector<boost::default_color_type> color2(i, Color::white());
-            BOOST_CHECK(!boost::is_reachable(start, *ui, g, color_pm_type(color2.begin(), idx)));
+            BOOST_TEST(!boost::is_reachable(start, *ui, g, color_pm_type(color2.begin(), idx)));
           }
 
         // The shortest path to a child should be one longer than
         // shortest path to the parent.
         for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
           if (parent[*ui] != *ui) // *ui not the root of the bfs tree
-            BOOST_CHECK(distance[*ui] == distance[parent[*ui]] + 1);
+            BOOST_TEST(distance[*ui] == distance[parent[*ui]] + 1);
       }
   }
 };
 
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   using namespace boost;
   int max_V = 7;
@@ -193,5 +251,5 @@ int test_main(int argc, char* argv[])
 
   bfs_test< adjacency_list<vecS, vecS, directedS> >::go(max_V);
   bfs_test< adjacency_list<vecS, vecS, undirectedS> >::go(max_V);
-  return 0;
+  return boost::report_errors();
 }

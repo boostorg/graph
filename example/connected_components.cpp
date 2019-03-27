@@ -49,7 +49,10 @@ int main(int , char* [])
     add_edge(2, 5, G);
     
     std::vector<int> component(num_vertices(G));
-    int num = connected_components(G, &component[0]);
+    int num = connected_components(
+      G,
+      make_iterator_property_map(component.begin(), get(vertex_index, G))
+    );
     
     std::vector<int>::size_type i;
     cout << "Total number of components: " << num << endl;

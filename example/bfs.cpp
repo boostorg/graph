@@ -133,12 +133,22 @@ int main(int , char* [])
   p[s] = s;
   boost::breadth_first_search
     (G, s, 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     boost::graph::keywords::_visitor = boost::make_bfs_visitor
+     (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
+                     std::make_pair
+                     (boost::record_predecessors(&p[0], 
+                                                 boost::on_tree_edge()),
+                      copy_graph(G_copy, boost::on_examine_edge()))))
+#else
      boost::visitor(boost::make_bfs_visitor
      (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
                      std::make_pair
                      (boost::record_predecessors(&p[0], 
                                                  boost::on_tree_edge()),
-                      copy_graph(G_copy, boost::on_examine_edge())))) ));
+                      copy_graph(G_copy, boost::on_examine_edge())))))
+#endif
+    );
 
   boost::print_graph(G);
   boost::print_graph(G_copy);

@@ -17,6 +17,7 @@
 #include <set>
 #include <algorithm>
 #include <boost/graph/edmonds_karp_max_flow.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 
@@ -98,7 +99,19 @@ namespace boost {
     std::set<vertex_descriptor> S, neighbor_S;
     std::vector<vertex_descriptor> S_star, non_neighbor_S;
     std::vector<default_color_type> color(num_vertices(g));
+    boost::iterator_property_map<
+      std::vector<default_color_type>::iterator,
+      typename property_map<VertexListGraph,vertex_index_t>::const_type,
+      default_color_type,
+      default_color_type&
+    > color_pm(color.begin(), get(vertex_index, g));
     std::vector<edge_descriptor> pred(num_vertices(g));
+    boost::iterator_property_map<
+      typename std::vector<edge_descriptor>::iterator,
+      typename property_map<VertexListGraph,vertex_index_t>::const_type,
+      edge_descriptor,
+      edge_descriptor&
+    > pred_edge_pm(pred.begin(), get(vertex_index, g));
 
     //-------------------------------------------------------------------------
     // Create a network flow graph out of the undirected graph
@@ -141,7 +154,7 @@ namespace boost {
       k = non_neighbor_S.front();
 
       alpha_S_k = edmonds_karp_max_flow
-        (flow_g, p, k, cap, res_cap, rev_edge, &color[0], &pred[0]);
+        (flow_g, p, k, cap, res_cap, rev_edge, color_pm, pred_edge_pm);
 
       if (alpha_S_k < alpha_star) {
         alpha_star = alpha_S_k;

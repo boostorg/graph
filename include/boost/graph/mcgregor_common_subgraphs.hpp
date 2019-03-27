@@ -52,7 +52,7 @@ namespace boost {
   template <typename PropertyMapFirst,
             typename PropertyMapSecond>
   struct property_map_equivalent {
-  
+
     property_map_equivalent(const PropertyMapFirst property_map1,
                             const PropertyMapSecond property_map2) :
       m_property_map1(property_map1),
@@ -60,10 +60,10 @@ namespace boost {
 
     template <typename ItemFirst,
               typename ItemSecond>
-    bool operator()(const ItemFirst item1, const ItemSecond item2) {
+    bool operator()(const ItemFirst item1, const ItemSecond item2) const {
       return (get(m_property_map1, item1) == get(m_property_map2, item2));
     }
-  
+
   private:
     const PropertyMapFirst m_property_map1;
     const PropertyMapSecond m_property_map2;
@@ -86,10 +86,10 @@ namespace boost {
   // Binary function object that always returns true.  Used when
   // vertices or edges are always equivalent (i.e. have no labels).
   struct always_equivalent {
-  
+
     template <typename ItemFirst,
               typename ItemSecond>
-    bool operator()(const ItemFirst&, const ItemSecond&) {
+    bool operator()(const ItemFirst&, const ItemSecond&) const {
       return (true);
     }
   };
@@ -300,7 +300,7 @@ namespace boost {
         if (existing_vertex2 != graph_traits<GraphSecond>::null_vertex()) {
           continue;
         }
-    
+
         BGL_FORALL_VERTICES_T(new_vertex2, graph2, GraphSecond) {
 
           VertexFirst existing_vertex1 = get(correspondence_map_2_to_1, new_vertex2);
@@ -311,16 +311,21 @@ namespace boost {
           }
 
           // Check if current sub-graph can be extended with the matched vertex pair
-          if (can_extend_graph(graph1, graph2,
-                               correspondence_map_1_to_2, correspondence_map_2_to_1,
-                               (VertexSizeFirst)vertex_stack1.size(),
-                               new_vertex1, new_vertex2,
-                               edges_equivalent, vertices_equivalent,
-                               only_connected_subgraphs)) {
+          if (
+              can_extend_graph(
+                  graph1, graph2,
+                  correspondence_map_1_to_2, correspondence_map_2_to_1,
+                  static_cast<VertexSizeFirst>(vertex_stack1.size()),
+                  new_vertex1, new_vertex2,
+                  edges_equivalent, vertices_equivalent,
+                  only_connected_subgraphs
+              )
+          ) {
 
             // Keep track of old graph size for restoring later
-            VertexSizeFirst old_graph_size = (VertexSizeFirst)vertex_stack1.size(),
-              new_graph_size = old_graph_size + 1;
+            VertexSizeFirst old_graph_size = static_cast<VertexSizeFirst>(
+                vertex_stack1.size()
+            ), new_graph_size = old_graph_size + 1;
 
             // Extend subgraph
             put(correspondence_map_1_to_2, new_vertex1, new_vertex2);
@@ -333,7 +338,7 @@ namespace boost {
                                    new_graph_size)) {
               return (false);
             }
-      
+
             // Depth-first search into the state space of possible sub-graphs
             bool continue_iteration =
               mcgregor_common_subgraphs_internal
@@ -427,7 +432,7 @@ namespace boost {
          only_connected_subgraphs,
          subgraph_callback);
     }
-    
+
   } // namespace detail
 
   // ==========================================================================
@@ -452,7 +457,7 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-      
+
     detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        vindex_map1, vindex_map2,
@@ -460,7 +465,59 @@ namespace boost {
        only_connected_subgraphs,
        user_callback);
   }
-  
+} // namespace boost
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost {
+
+  // Named parameter variant of mcgregor_common_subgraphs
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Args>
+  void mcgregor_common_subgraphs(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    bool only_connected_subgraphs,
+    SubGraphCallback user_callback,
+    const Args& args,
+    typename boost::enable_if<
+      parameter::is_argument_pack<Args>,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    detail::mcgregor_common_subgraphs_internal_init(
+      graph1, graph2,
+      args[
+        boost::graph::keywords::_vertex_index1_map |
+        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_vertex_index2_map |
+        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_edges_equivalent |
+        always_equivalent()
+      ],
+      args[
+        boost::graph::keywords::_vertices_equivalent |
+        always_equivalent()
+      ],
+      only_connected_subgraphs, user_callback
+    );
+  }
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
+
   // Variant of mcgregor_common_subgraphs with all default parameters
   template <typename GraphFirst,
             typename GraphSecond,
@@ -471,7 +528,7 @@ namespace boost {
    bool only_connected_subgraphs,
    SubGraphCallback user_callback)
   {
-      
+
     detail::mcgregor_common_subgraphs_internal_init
       (graph1, graph2,
        get(vertex_index, graph1), get(vertex_index, graph2),
@@ -479,7 +536,7 @@ namespace boost {
        only_connected_subgraphs, user_callback);
   }
 
-  // Named parameter variant of mcgregor_common_subgraphs
+  // Old-style named parameter variant of mcgregor_common_subgraphs
   template <typename GraphFirst,
             typename GraphSecond,
             typename SubGraphCallback,
@@ -647,6 +704,53 @@ namespace boost {
        edges_equivalent, vertices_equivalent,
        only_connected_subgraphs, unique_callback);
   }
+} // namespace boost
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+  // Named parameter variant of mcgregor_common_subgraphs
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Args>
+  inline void mcgregor_common_subgraphs_unique(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    bool only_connected_subgraphs,
+    SubGraphCallback user_callback,
+    const Args& args,
+    typename boost::enable_if<
+      parameter::is_argument_pack<Args>,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    mcgregor_common_subgraphs_unique(
+      graph1, graph2,
+      args[
+        boost::graph::keywords::_vertex_index1_map |
+        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_vertex_index2_map |
+        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_edges_equivalent |
+        always_equivalent()
+      ],
+      args[
+        boost::graph::keywords::_vertices_equivalent |
+        always_equivalent()
+      ],
+      only_connected_subgraphs, user_callback
+    );
+  }
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
   // Variant of mcgregor_common_subgraphs_unique with all default
   // parameters.
@@ -833,6 +937,53 @@ namespace boost {
     // Only output the largest subgraphs
     max_interceptor.output_subgraphs();
   }
+} // namespace boost
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+  // Named parameter variant of mcgregor_common_subgraphs
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Args>
+  inline void mcgregor_common_subgraphs_maximum(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    bool only_connected_subgraphs,
+    SubGraphCallback user_callback,
+    const Args& args,
+    typename boost::enable_if<
+      parameter::is_argument_pack<Args>,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    mcgregor_common_subgraphs_maximum(
+      graph1, graph2,
+      args[
+        boost::graph::keywords::_vertex_index1_map |
+        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_vertex_index2_map |
+        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_edges_equivalent |
+        always_equivalent()
+      ],
+      args[
+        boost::graph::keywords::_vertices_equivalent |
+        always_equivalent()
+      ],
+      only_connected_subgraphs, user_callback
+    );
+  }
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
   // Variant of mcgregor_common_subgraphs_maximum with all default
   // parameters.
@@ -1036,6 +1187,53 @@ namespace boost {
     // Only output the largest, unique subgraphs
     unique_max_interceptor.output_subgraphs();
   }
+} // namespace boost
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+namespace boost {
+
+  // Named parameter variant of mcgregor_common_subgraphs
+  template <typename GraphFirst,
+            typename GraphSecond,
+            typename SubGraphCallback,
+            typename Args>
+  inline void mcgregor_common_subgraphs_maximum_unique(
+    const GraphFirst& graph1,
+    const GraphSecond& graph2,
+    bool only_connected_subgraphs,
+    SubGraphCallback user_callback,
+    const Args& args,
+    typename boost::enable_if<
+      parameter::is_argument_pack<Args>,
+      mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    mcgregor_common_subgraphs_maximum_unique(
+      graph1, graph2,
+      args[
+        boost::graph::keywords::_vertex_index1_map |
+        detail::vertex_or_dummy_property_map(graph1, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_vertex_index2_map |
+        detail::vertex_or_dummy_property_map(graph2, vertex_index)
+      ],
+      args[
+        boost::graph::keywords::_edges_equivalent |
+        always_equivalent()
+      ],
+      args[
+        boost::graph::keywords::_vertices_equivalent |
+        always_equivalent()
+      ],
+      only_connected_subgraphs, user_callback
+    );
+  }
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
   // Variant of mcgregor_common_subgraphs_maximum_unique with all default parameters
   template <typename GraphFirst,
@@ -1131,7 +1329,56 @@ namespace boost {
     return (MembershipFilteredGraph(graph, keep_all(), v_filter));
     
   }
-  
 } // namespace boost
 
-#endif // BOOST_GRAPH_MCGREGOR_COMMON_SUBGRAPHS_HPP
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template < \
+        typename GraphFirst, typename GraphSecond, \
+        typename SubGraphCallback, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        const GraphFirst& graph1, const GraphSecond& graph2, \
+        bool only_connected_subgraphs, SubGraphCallback user_callback, \
+        const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            >, mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            graph1, graph2, only_connected_subgraphs, user_callback, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
+
+namespace boost {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, mcgregor_common_subgraphs
+)
+BOOST_PP_REPEAT_FROM_TO(
+    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, mcgregor_common_subgraphs_unique
+)
+BOOST_PP_REPEAT_FROM_TO(
+    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, mcgregor_common_subgraphs_maximum
+)
+BOOST_PP_REPEAT_FROM_TO(
+    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+    mcgregor_common_subgraphs_maximum_unique
+)
+} // namespace boost
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // BOOST_GRAPH_MCGREGOR_COMMON_SUBGRAPHS_HPP

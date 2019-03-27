@@ -1,7 +1,7 @@
 // Copyright 2004 The Trustees of Indiana University.
 
-// Use, modification and distribution is subject to the Boost Software
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  Authors: Douglas Gregor
@@ -123,9 +123,14 @@ int main(int argc, char* argv[])
   minstd_rand gen;
   topology_type topo(gen, -width/2, -height/2, width/2, height/2);
   random_graph_layout(g, position, topo);
-  fruchterman_reingold_force_directed_layout
-    (g, position, topo,
-     cooling(progress_cooling(iterations)));
+  fruchterman_reingold_force_directed_layout(
+    g, position, topo,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_cooling = progress_cooling(iterations)
+#else
+    cooling(progress_cooling(iterations))
+#endif
+  );
 
   graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {

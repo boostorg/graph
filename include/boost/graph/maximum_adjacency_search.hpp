@@ -45,8 +45,22 @@
 #include <boost/graph/named_function_params.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/tuple/tuple.hpp>
-
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <set>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/d_ary_heap.hpp>
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
 
 namespace boost {
   template <class Visitor, class Graph>
@@ -114,21 +128,60 @@ namespace boost {
   typedef mas_visitor<> default_mas_visitor;
 
   namespace detail {
-    template <class Graph, class WeightMap, class MASVisitor, class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
-      void
-      maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, const typename boost::graph_traits<Graph>::vertex_descriptor start, VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq) {
+    template <
+      typename Graph, typename WeightMap, typename MASVisitor,
+      typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+    >
+    void
+    maximum_adjacency_search(
+      const Graph& g, WeightMap weights,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      MASVisitor& vis,
+#else
+      MASVisitor vis,
+#endif
+      const typename boost::graph_traits<Graph>::vertex_descriptor start,
+      VertexAssignmentMap assignments,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      KeyedUpdatablePriorityQueue& pq
+#else
+      KeyedUpdatablePriorityQueue pq
+#endif
+    )
+    {
+      BOOST_CONCEPT_ASSERT((boost::IncidenceGraphConcept<Graph>));
+      BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<Graph>));
+      typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+      typedef typename boost::graph_traits<Graph>::vertices_size_type vertices_size_type;
+      typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
+      BOOST_CONCEPT_ASSERT((boost::Convertible<typename boost::graph_traits<Graph>::directed_category, boost::undirected_tag>));
+      BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept<WeightMap, edge_descriptor>));
+      // typedef typename boost::property_traits<WeightMap>::value_type weight_type;
+      boost::function_requires< MASVisitorConcept<MASVisitor, Graph> >();
+      BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
+      BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
+      BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept<KeyedUpdatablePriorityQueue>));
+
+      vertices_size_type n = num_vertices(g);
+      if (n < 2)
+        throw boost::bad_graph("the input graph must have at least two vertices.");
+      else if (!pq.empty())
+        throw std::invalid_argument("the max-priority queue must be empty initially.");
+
       typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
       typedef typename boost::property_traits<WeightMap>::value_type weight_type;
 
-     std::set<vertex_descriptor> assignedVertices;
+      std::set<vertex_descriptor> assignedVertices;
 
-     // initialize `assignments` (all vertices are initially
-     // assigned to themselves)
-     BGL_FORALL_VERTICES_T(v, g, Graph) {
-       put(assignments, v, v);
-     }
+      // initialize `assignments` (all vertices are initially
+      // assigned to themselves)
+      BGL_FORALL_VERTICES_T(v, g, Graph) {
+        put(assignments, v, v);
+      }
 
-      typename KeyedUpdatablePriorityQueue::key_map keys = pq.keys();
+      typename boost::remove_const<
+        typename boost::remove_reference<KeyedUpdatablePriorityQueue>::type
+      >::type::key_map keys = pq.keys();
 
       // set number of visited neighbors for all vertices to 0
       BGL_FORALL_VERTICES_T(v, g, Graph) {
@@ -183,34 +236,64 @@ namespace boost {
                                                  vis.finish_vertex(u, g);
       }
     }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    template <
+      typename Graph, typename WeightMap, typename MASVisitor,
+      typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+    >
+    void
+    maximum_adjacency_search(
+      const Graph& g, WeightMap weights,
+      const MASVisitor& vis,
+      const typename boost::graph_traits<Graph>::vertex_descriptor start,
+      VertexAssignmentMap vam,
+      KeyedUpdatablePriorityQueue& pq
+    )
+    {
+      MASVisitor mas_vis = vis;
+      detail::maximum_adjacency_search(g, weights, mas_vis, start, vam, pq);
+    }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
   } // end namespace detail
 
-  template <class Graph, class WeightMap, class MASVisitor, class VertexAssignmentMap, class KeyedUpdatablePriorityQueue>
-    void
-maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, const typename boost::graph_traits<Graph>::vertex_descriptor start, VertexAssignmentMap assignments, KeyedUpdatablePriorityQueue pq) {
-    BOOST_CONCEPT_ASSERT((boost::IncidenceGraphConcept<Graph>));
-    BOOST_CONCEPT_ASSERT((boost::VertexListGraphConcept<Graph>));
-    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<Graph>::vertices_size_type vertices_size_type;
-    typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
-    BOOST_CONCEPT_ASSERT((boost::Convertible<typename boost::graph_traits<Graph>::directed_category, boost::undirected_tag>));
-    BOOST_CONCEPT_ASSERT((boost::ReadablePropertyMapConcept<WeightMap, edge_descriptor>));
-    // typedef typename boost::property_traits<WeightMap>::value_type weight_type;
-    boost::function_requires< MASVisitorConcept<MASVisitor, Graph> >();
-    BOOST_CONCEPT_ASSERT((boost::ReadWritePropertyMapConcept<VertexAssignmentMap, vertex_descriptor>));
-    BOOST_CONCEPT_ASSERT((boost::Convertible<vertex_descriptor, typename boost::property_traits<VertexAssignmentMap>::value_type>));
-    BOOST_CONCEPT_ASSERT((boost::KeyedUpdatableQueueConcept<KeyedUpdatablePriorityQueue>));
-
-    vertices_size_type n = num_vertices(g);
-    if (n < 2)
-      throw boost::bad_graph("the input graph must have at least two vertices.");
-    else if (!pq.empty())
-      throw std::invalid_argument("the max-priority queue must be empty initially.");
-
-    detail::maximum_adjacency_search(g, weights,
-                                            vis, start,
-                                            assignments, pq);
+  template <
+    typename Graph, typename WeightMap, typename MASVisitor,
+    typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+  >
+  void
+  maximum_adjacency_search(
+    const Graph& g, WeightMap weights,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    MASVisitor& vis,
+#else
+    MASVisitor vis,
+#endif
+    const typename boost::graph_traits<Graph>::vertex_descriptor start,
+    VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue pq
+  )
+  {
+    detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <
+    typename Graph, typename WeightMap, typename MASVisitor,
+    typename VertexAssignmentMap, typename KeyedUpdatablePriorityQueue
+  >
+  void
+  maximum_adjacency_search(
+    const Graph& g, WeightMap weights,
+    const MASVisitor& vis,
+    const typename boost::graph_traits<Graph>::vertex_descriptor start,
+    VertexAssignmentMap assignments,
+    KeyedUpdatablePriorityQueue pq
+  )
+  {
+    detail::maximum_adjacency_search(g, weights, vis, start, assignments, pq);
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   namespace graph {
     namespace detail {
@@ -320,6 +403,86 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
     graph::detail::mas_dispatch<W>::apply(g, arg_pack, get_param(params, edge_weight));
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Args>
+  inline void maximum_adjacency_search(
+    const Graph& g, const Args& arg_pack, typename boost::enable_if<
+      parameter::is_argument_pack<Args>, mpl::true_
+    >::type = mpl::true_()
+  )
+  {
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type WeightMap;
+    WeightMap w_map = detail::override_const_property(
+        arg_pack,
+        boost::graph::keywords::_weight_map,
+        g,
+        edge_weight
+    );
+    default_mas_visitor default_visitor;
+    typename boost::remove_const<
+        typename parameter::value_type<
+            Args,
+            boost::graph::keywords::tag::visitor,
+            default_mas_visitor
+        >::type
+    >::type vis = arg_pack[
+        boost::graph::keywords::_visitor | default_visitor
+    ];
+    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    const Vertex zero_vertex = Vertex();
+    Vertex s = arg_pack[boost::graph::keywords::_root_vertex | zero_vertex];
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::vertex_assignment_map,
+        Vertex
+    > vertex_assignment_map_gen(zero_vertex);
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::vertex_assignment_map,
+        Vertex
+    >::map_type vert_asgn_map = vertex_assignment_map_gen(g, arg_pack);
+    typedef typename boost::property_traits<WeightMap>::value_type Weight;
+    const Weight zero_weight = Weight();
+    typedef boost::detail::make_priority_queue_from_arg_pack_gen<
+        boost::graph::keywords::tag::max_priority_queue,
+        Weight,
+        Vertex,
+        std::greater<Weight>
+    > PQGenerator;
+    PQGenerator pq_gen(
+        choose_param(get_param(arg_pack, boost::distance_zero_t()), zero_weight)
+    );
+    typename PQGenerator::BOOST_NESTED_TEMPLATE result<
+        PQGenerator(const Graph&, const Args&)
+    >::type pq = pq_gen(g, arg_pack);
+    detail::maximum_adjacency_search(g, w_map, vis, s, vert_asgn_map, pq);
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name( \
+    const Graph &g, const TA& ta \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+    typename boost::enable_if< \
+      parameter::are_tagged_arguments< \
+        TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+      >, mpl::true_ \
+    >::type = mpl::true_() \
+  ) \
+  { \
+    name(g, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, maximum_adjacency_search)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   namespace graph {
     namespace detail {
       template <typename Graph>
@@ -337,6 +500,7 @@ maximum_adjacency_search(const Graph& g, WeightMap weights, MASVisitor vis, cons
     } // end namespace detail
     BOOST_GRAPH_MAKE_FORWARDING_FUNCTION(maximum_adjacency_search,1,5)
   } // end namespace graph
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // end namespace boost
 

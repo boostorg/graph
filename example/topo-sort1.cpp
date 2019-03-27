@@ -38,8 +38,17 @@ main()
 
   std::deque < int >topo_order;
 
-  topological_sort(g, std::front_inserter(topo_order),
-                   vertex_index_map(identity_property_map()));
+  topological_sort(
+    g,
+    std::front_inserter(topo_order),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::vertex_index_map(
+#endif
+    typed_identity_property_map<int>()
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 
   int n = 1;
   for (std::deque < int >::iterator i = topo_order.begin();

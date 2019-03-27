@@ -112,12 +112,14 @@ bool test(int n, double p)
   generate_graph(n, p, g1);
   cout << "Created graph with " << n << " vertices.\n";
 
-  vector< vector<int> > g1_c(g1);
-
   {
     progress_timer t;
     cout << "transitive_closure" << endl;
+#if defined(__MINGW32__) && BOOST_WORKAROUND(BOOST_GCC, < 60000)
     transitive_closure(g1, g1_tc, vertex_index_map(get(boost::vertex_index, g1)));
+#else
+    transitive_closure(g1, g1_tc);
+#endif
   }
 
   if(check_transitive_closure(g1, g1_tc))
@@ -131,10 +133,11 @@ bool test(int n, double p)
   }
 }
 
+#include <boost/core/lightweight_test.hpp>
 
 int main()
 {
-  srand(time(0));
+  srand(static_cast<unsigned int>(time(0)));
   static class {
   public:
     double operator()() {
@@ -146,11 +149,8 @@ int main()
   for (size_t i = 0; i < 100; ++i) {
     int n = 0 + int(20*gen());
     double p = gen();
-    if (!test(n, p)) {
-      cout << "Failed." << endl;
-      return 1; 
-    }
+    BOOST_TEST(test(n, p));
   }
-  cout << "Passed." << endl;
+  return boost::report_errors();
 }
 

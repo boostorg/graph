@@ -20,13 +20,64 @@
 #include <boost/parameter/is_argument_pack.hpp>
 #include <boost/parameter/name.hpp>
 #include <boost/parameter/binding.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/config.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
+#include <boost/mpl/identity.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
+
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_TEST_NAMED_ARGUMENTS) && ( \
+        BOOST_WORKAROUND(BOOST_MSVC, >= 1900) && \
+        BOOST_WORKAROUND(BOOST_MSVC, < 1910) && defined(_WIN64) \
+    )
+// Unless this macro is defined for these compilers:
+// Tests built by MSVC-14.0 with address model set to 64 bits, such as
+// dag_shortest_paths, dijkstra_no_color_map_compare, gursoy_atun_layout_test,
+// floyed_warshall_test, max_flow_test, metric_tsp_approx, stoer_wagner_test,
+// and cycle_canceling_test, emit access violations. -- Cromwell D. Enage
+#define BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
+#endif
+
+#if !defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS) && \
+    !defined(BOOST_GRAPH_CONFIG_TEST_UNNAMED_ARGUMENT_DEDUCTION) && ( \
+        defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS) || \
+        defined(__MINGW32__) || BOOST_WORKAROUND(BOOST_MSVC, < 1900) \
+    )
+// Unless this macro is defined for these compilers:
+// MSVC-12.0 and below emit compiler errors such as top() not being a member
+// of shared_array_property_map.  Tests built by MinGW, such as
+// betweenness_centrality_test, emit access violations and/or assertion
+// failures. -- Cromwell D. Enage
+#define BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+
+#if defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#else   // !defined(BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS)
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif
+#if defined(BOOST_GRAPH_CONFIG_CANNOT_DEDUCE_UNNAMED_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#undef BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+#define BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+#endif
+#endif  // BOOST_GRAPH_CONFIG_CANNOT_NAME_ARGUMENTS
 
 namespace boost {
 
@@ -116,14 +167,20 @@ namespace boost {
     BOOST_BGL_ONE_PARAM_CREF(index_in_heap_map, index_in_heap_map) \
     BOOST_BGL_ONE_PARAM_REF(max_priority_queue, max_priority_queue)
 
+    namespace detail {
+        struct bgl_named_params_base { };
+    }
+
   template <typename T, typename Tag, typename Base = no_property>
   struct bgl_named_params
+    : detail::bgl_named_params_base
   {
     typedef bgl_named_params self;
     typedef Base next_type;
     typedef Tag tag_type;
     typedef T value_type;
-    bgl_named_params(T v = T()) : m_value(v) { }
+    bgl_named_params() : m_value() { }
+    bgl_named_params(T v) : m_value(v) { }
     bgl_named_params(T v, const Base& b) : m_value(v), m_base(b) { }
     T m_value;
     Base m_base;
@@ -344,6 +401,15 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   // Declare all new tags
   namespace graph {
     namespace keywords {
+      BOOST_PARAMETER_NAME(graph)
+      BOOST_PARAMETER_NAME(result)
+      BOOST_PARAMETER_NAME(terminator_function)
+      BOOST_PARAMETER_NAME(incoming_map)
+      BOOST_PARAMETER_NAME(dependency_map)
+      BOOST_PARAMETER_NAME(path_count_map)
+      BOOST_PARAMETER_NAME(partition_map)
+      BOOST_PARAMETER_NAME(component_map)
+      BOOST_PARAMETER_NAME(size)
 #define BOOST_BGL_ONE_PARAM_REF(name, key) BOOST_PARAMETER_NAME(name)
 #define BOOST_BGL_ONE_PARAM_CREF(name, key) BOOST_PARAMETER_NAME(name)
       BOOST_BGL_DECLARE_NAMED_PARAMS
@@ -445,13 +511,21 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename ArgType, typename Prop, typename Graph, bool Exists>
     struct override_property_t {
       typedef ArgType result_type;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      result_type operator()(Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+#else
       result_type operator()(const Graph&, typename boost::add_lvalue_reference<ArgType>::type a) const {return a;}
+#endif
     };
 
     template <typename ArgType, typename Prop, typename Graph>
     struct override_property_t<ArgType, Prop, Graph, false> {
       typedef typename boost::property_map<Graph, Prop>::type result_type;
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      result_type operator()(Graph& g, const ArgType&) const {return get(Prop(), g);}
+#else
       result_type operator()(const Graph& g, const ArgType&) const {return get(Prop(), g);}
+#endif
     };
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
@@ -469,7 +543,12 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     typename override_property_result<ArgPack, Tag, Prop, Graph>::type
-    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, Graph& g, Prop)
+#else
+    override_property(const ArgPack& ap, const boost::parameter::keyword<Tag>& t, const Graph& g, Prop)
+#endif
+    {
     typedef typename boost::mpl::has_key<ArgPack, Tag>::type _parameter_exists;
     return override_property_t<
              typename boost::parameter::value_type<ArgPack, Tag, int>::type,
@@ -478,6 +557,71 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
              _parameter_exists::value
            >()(g, ap[t | 0]);
     }
+
+    template <typename ArgPack, typename Tag, typename Prop, typename Graph>
+    struct arg_packed_property_map_value
+    {
+      typedef typename property_traits<
+        typename detail::override_const_property_result<
+          ArgPack,
+          Tag,
+          Prop,
+          Graph
+        >::type
+      >::value_type type;
+    };
+
+// need parameter::result_of::compose
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <typename Tag, typename Prop, typename Graph, typename ...TaggedArgs>
+    struct tagged_property_map_value
+        : arg_packed_property_map_value<
+            typename parameter::result_of::compose<TaggedArgs...>::type,
+            Tag,
+            Prop,
+            Graph
+        >
+    {
+    };
+#else   // !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING)
+    template <
+        typename Tag, typename Prop, typename Graph
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(
+            BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY)
+          , typename TaggedArg
+          , = void BOOST_PP_INTERCEPT
+        )
+    >
+    struct tagged_property_map_value;
+
+#define BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION(z, n, _) \
+    template < \
+        typename Tag, typename Prop, typename Graph \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TaggedArg) \
+    > \
+    struct tagged_property_map_value< \
+        Tag, Prop, Graph BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TaggedArg) \
+    > : arg_packed_property_map_value< \
+            typename parameter::result_of::compose< \
+                BOOST_PP_ENUM_PARAMS_Z(z, n, TaggedArg) \
+            >::type, \
+            Tag, \
+            Prop, \
+            Graph \
+        > \
+    { \
+    };
+/**/
+
+BOOST_PP_REPEAT(
+    BOOST_PP_INC(BOOST_PARAMETER_COMPOSE_MAX_ARITY),
+    BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION,
+    _
+)
+#undef BOOST_GRAPH_PP_METAFUNCTION_SPECIALIZATION
+#endif  // BOOST_PARAMETER_HAS_PERFECT_FORWARDING
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
     template <typename F> struct make_arg_pack_type;
     template <> struct make_arg_pack_type<void()> {typedef boost::parameter::aux::empty_arg_list type;};
@@ -616,7 +760,9 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
                                         >::type> helper;
       typedef typename helper::map_type map_type;
       static map_type make_map(const Graph& g, const ArgPack& ap, ValueType default_value) {
-        return helper::make_map(g, default_value, ap[::boost::parameter::keyword<MapTag>::instance | 0], ap);
+        return helper::make_map(
+          g, default_value, ap[::boost::parameter::keyword<MapTag>::instance | 0], ap
+        );
       }
     };
 
@@ -687,8 +833,11 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
                          int_refw
                        >::type
         param_value_type_wrapper;
-      typedef typename param_value_type_wrapper::type
-        param_value_type;
+      typedef typename mpl::eval_if<
+        boost::is_reference_wrapper<param_value_type_wrapper>,
+        param_value_type_wrapper,
+        mpl::identity<param_value_type_wrapper>
+      >::type param_value_type;
       typedef typename boost::remove_const<param_value_type>::type param_value_type_no_const;
       typedef priority_queue_maker_helper<g_hasQ, Graph, ArgPack, KeyT, ValueT, KeyMapTag, IndexInHeapMapTag, Compare,
                                           param_value_type_no_const> helper;
@@ -749,8 +898,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
   } // namespace detail
 
-} // namespace boost
-
 #undef BOOST_BGL_DECLARE_NAMED_PARAMS
+
+} // namespace boost
 
 #endif // BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

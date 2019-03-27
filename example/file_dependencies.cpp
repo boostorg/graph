@@ -156,7 +156,17 @@ int main(int,char*[])
   {
     cout << "A change to yow.h will cause what to be re-made?" << endl;
     print_visitor vis;
-    breadth_first_search(g, vertex(yow_h, g), visitor(vis));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    breadth_first_search(g, vertex(yow_h, g), vis);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(
+      g,
+      vertex(yow_h, g),
+      boost::graph::keywords::_visitor = vis
+    );
+#else
+    breadth_first_search(g, vertex(yow_h, g), boost::visitor(vis));
+#endif
     cout << endl;
   }
   cout << endl;
@@ -165,7 +175,11 @@ int main(int,char*[])
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, visitor(vis));
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    depth_first_search(g, vis);
+#else
+    depth_first_search(g, boost::visitor(vis));
+#endif
     cout << "The graph has a cycle? " << has_cycle << endl;
   }
   cout << endl;
@@ -181,7 +195,11 @@ int main(int,char*[])
   {
     bool has_cycle = false;
     cycle_detector vis(has_cycle);
-    depth_first_search(g, visitor(vis));
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    depth_first_search(g, vis);
+#else
+    depth_first_search(g, boost::visitor(vis));
+#endif
     cout << "The graph has a cycle now? " << has_cycle << endl;
   }
 

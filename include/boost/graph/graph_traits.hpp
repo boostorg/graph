@@ -28,8 +28,36 @@
 #include <boost/detail/workaround.hpp>
 
 namespace boost {
+    namespace graph_detail {
+        BOOST_MPL_HAS_XXX_TRAIT_DEF(vertex_descriptor)
+        BOOST_MPL_HAS_XXX_TRAIT_DEF(edge_descriptor)
+        BOOST_MPL_HAS_XXX_TRAIT_DEF(directed_category)
+        BOOST_MPL_HAS_XXX_TRAIT_DEF(edge_parallel_category)
+        BOOST_MPL_HAS_XXX_TRAIT_DEF(traversal_category)
+    }
 
     namespace detail {
+        template <typename T>
+        struct has_graph_typedefs
+            : mpl::eval_if<
+                graph_detail::has_vertex_descriptor<T>,
+                mpl::eval_if<
+                    graph_detail::has_edge_descriptor<T>,
+                    mpl::eval_if<
+                        graph_detail::has_directed_category<T>,
+                        mpl::if_<
+                            graph_detail::has_edge_parallel_category<T>,
+                            graph_detail::has_traversal_category<T>,
+                            mpl::false_
+                        >,
+                        mpl::false_
+                    >,
+                    mpl::false_
+                >,
+                mpl::false_
+            >::type
+        { };
+
 #define BOOST_GRAPH_MEMBER_OR_VOID(name) \
       BOOST_MPL_HAS_XXX_TRAIT_DEF(name) \
       template <typename T> struct BOOST_JOIN(get_member_, name) {typedef typename T::name type;}; \
@@ -47,37 +75,58 @@ namespace boost {
       BOOST_GRAPH_MEMBER_OR_VOID(vertices_size_type)
       BOOST_GRAPH_MEMBER_OR_VOID(edges_size_type)
       BOOST_GRAPH_MEMBER_OR_VOID(degree_size_type)
-    }
+#undef BOOST_GRAPH_MEMBER_OR_VOID
 
-    template <typename G>
-    struct graph_traits {
+        template <typename G>
+        struct graph_traits_impl {
 #define BOOST_GRAPH_PULL_OPT_MEMBER(name) \
-        typedef typename detail::BOOST_JOIN(get_opt_member_, name)<G>::type name;
+            typedef typename detail::BOOST_JOIN(get_opt_member_, name)< \
+                G \
+            >::type name;
 
-        typedef typename G::vertex_descriptor      vertex_descriptor;
-        typedef typename G::edge_descriptor        edge_descriptor;
-        BOOST_GRAPH_PULL_OPT_MEMBER(adjacency_iterator)
-        BOOST_GRAPH_PULL_OPT_MEMBER(out_edge_iterator)
-        BOOST_GRAPH_PULL_OPT_MEMBER(in_edge_iterator)
-        BOOST_GRAPH_PULL_OPT_MEMBER(vertex_iterator)
-        BOOST_GRAPH_PULL_OPT_MEMBER(edge_iterator)
+            typedef typename G::vertex_descriptor      vertex_descriptor;
+            typedef typename G::edge_descriptor        edge_descriptor;
+            BOOST_GRAPH_PULL_OPT_MEMBER(adjacency_iterator)
+            BOOST_GRAPH_PULL_OPT_MEMBER(out_edge_iterator)
+            BOOST_GRAPH_PULL_OPT_MEMBER(in_edge_iterator)
+            BOOST_GRAPH_PULL_OPT_MEMBER(vertex_iterator)
+            BOOST_GRAPH_PULL_OPT_MEMBER(edge_iterator)
 
-        typedef typename G::directed_category      directed_category;
-        typedef typename G::edge_parallel_category edge_parallel_category;
-        typedef typename G::traversal_category     traversal_category;
+            typedef typename G::directed_category      directed_category;
+            typedef typename G::edge_parallel_category edge_parallel_category;
+            typedef typename G::traversal_category     traversal_category;
 
-        BOOST_GRAPH_PULL_OPT_MEMBER(vertices_size_type)
-        BOOST_GRAPH_PULL_OPT_MEMBER(edges_size_type)
-        BOOST_GRAPH_PULL_OPT_MEMBER(degree_size_type)
+            BOOST_GRAPH_PULL_OPT_MEMBER(vertices_size_type)
+            BOOST_GRAPH_PULL_OPT_MEMBER(edges_size_type)
+            BOOST_GRAPH_PULL_OPT_MEMBER(degree_size_type)
 #undef BOOST_GRAPH_PULL_OPT_MEMBER
 
-        static inline vertex_descriptor null_vertex();
-    };
+            static vertex_descriptor null_vertex();
+        };
 
+        template <typename G>
+        inline typename graph_traits_impl<G>::vertex_descriptor
+        graph_traits_impl<G>::null_vertex()
+        { return G::null_vertex(); }
+
+        struct graph_traits_no_impl { };
+    }
+
+    // The primary template definition is SFINAE-friendly so that is_bgl_graph and
+    // its relatives can be used for template argument deduction.
+    // -- Cromwell D. Enage
     template <typename G>
-    inline typename graph_traits<G>::vertex_descriptor
-    graph_traits<G>::null_vertex()
-    { return G::null_vertex(); }
+    struct graph_traits
+        : mpl::if_<
+            detail::has_graph_typedefs<G>,
+            detail::graph_traits_impl<G>,
+            detail::graph_traits_no_impl
+        >::type
+    { };
+
+    template <typename T>
+    struct is_bgl_graph : detail::has_graph_typedefs< graph_traits<T> >::type
+    { };
 
     // directed_category tags
     struct directed_tag { };
@@ -102,8 +151,6 @@ namespace boost {
         return !is_directed(g);
     }
 
-    /** @name Directed/Undirected Graph Traits */
-    //@{
     namespace graph_detail {
         template <typename Tag>
         struct is_directed_tag
@@ -111,16 +158,33 @@ namespace boost {
         { };
     } // namespace graph_detail
 
+    namespace detail {
+        template <typename Graph>
+        struct is_directed_graph_impl
+            : graph_detail::is_directed_tag<
+                typename graph_traits<Graph>::directed_category
+            >
+        { };
+    }
+
+    /** @name Directed/Undirected Graph Traits */
+    //@{
     template <typename Graph>
     struct is_directed_graph
-        : graph_detail::is_directed_tag<
-            typename graph_traits<Graph>::directed_category
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_directed_graph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
 
     template <typename Graph>
     struct is_undirected_graph
-        : mpl::not_< is_directed_graph<Graph> >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            mpl::not_< is_directed_graph<Graph> >,
+            mpl::false_
+        >::type
     { };
     //@}
 
@@ -139,6 +203,18 @@ namespace boost {
         return detail::allows_parallel(Cat());
     }
 
+    namespace detail {
+        template <typename Graph>
+        struct is_multigraph_impl
+            : mpl::bool_<
+                is_same<
+                    typename graph_traits<Graph>::edge_parallel_category,
+                    allow_parallel_edge_tag
+                >::value
+            >
+        { };
+    }
+
     /** @name Parallel Edges Traits */
     //@{
     /**
@@ -149,12 +225,11 @@ namespace boost {
      */
     template <typename Graph>
     struct is_multigraph
-        : mpl::bool_<
-            is_same<
-                typename graph_traits<Graph>::edge_parallel_category,
-                allow_parallel_edge_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_multigraph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
     //@}
 
@@ -172,6 +247,54 @@ namespace boost {
     struct distributed_edge_list_graph_tag { };
 #define BOOST_GRAPH_SEQUENTIAL_TRAITS_DEFINES_DISTRIBUTED_TAGS // Disable these from external versions of PBGL
 
+    namespace detail {
+        template <typename Graph>
+        struct is_incidence_graph_impl
+            : mpl::bool_<
+                is_convertible<
+                    typename graph_traits<Graph>::traversal_category,
+                    incidence_graph_tag
+                >::value
+            >
+        { };
+        template <typename Graph>
+        struct is_bidirectional_graph_impl
+            : mpl::bool_<
+                is_convertible<
+                    typename graph_traits<Graph>::traversal_category,
+                    bidirectional_graph_tag
+                >::value
+            >
+        { };
+        template <typename Graph>
+        struct is_vertex_list_graph_impl
+            : mpl::bool_<
+                is_convertible<
+                    typename graph_traits<Graph>::traversal_category,
+                    vertex_list_graph_tag
+                >::value
+            >
+        { };
+        template <typename Graph>
+        struct is_edge_list_graph_impl
+            : mpl::bool_<
+                is_convertible<
+                    typename graph_traits<Graph>::traversal_category,
+                    edge_list_graph_tag
+                >::value
+            >
+        { };
+        template <typename Graph>
+        struct is_adjacency_matrix_impl
+            : mpl::bool_<
+                is_convertible<
+                    typename graph_traits<Graph>::traversal_category,
+                    adjacency_matrix_tag
+                >::value
+            >
+        { };
+    }
+
     /** @name Traversal Category Traits
      * These traits classify graph types by their supported methods of
      * vertex and edge traversal.
@@ -179,54 +302,70 @@ namespace boost {
     //@{
     template <typename Graph>
     struct is_incidence_graph
-        : mpl::bool_<
-            is_convertible<
-                typename graph_traits<Graph>::traversal_category,
-                incidence_graph_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_incidence_graph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
 
     template <typename Graph>
     struct is_bidirectional_graph
-        : mpl::bool_<
-            is_convertible<
-                typename graph_traits<Graph>::traversal_category,
-                bidirectional_graph_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_bidirectional_graph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
 
     template <typename Graph>
     struct is_vertex_list_graph
-        : mpl::bool_<
-            is_convertible<
-                typename graph_traits<Graph>::traversal_category,
-                vertex_list_graph_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_vertex_list_graph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
 
     template <typename Graph>
     struct is_edge_list_graph
-        : mpl::bool_<
-            is_convertible<
-                typename graph_traits<Graph>::traversal_category,
-                edge_list_graph_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_edge_list_graph_impl<Graph>,
+            mpl::false_
+        >::type
     { };
 
     template <typename Graph>
     struct is_adjacency_matrix
-        : mpl::bool_<
-            is_convertible<
-                typename graph_traits<Graph>::traversal_category,
-                adjacency_matrix_tag
-            >::value
-        >
+        : mpl::if_<
+            is_bgl_graph<Graph>,
+            detail::is_adjacency_matrix_impl<Graph>,
+            mpl::false_
+        >::type
     { };
     //@}
+
+    namespace detail {
+        template <typename Vertex, typename Graph>
+        struct is_vertex_of_graph_impl
+            : mpl::bool_<
+                is_same<
+                    Vertex,
+                    typename graph_traits<Graph>::vertex_descriptor
+                >::value
+            >
+        { };
+
+        template <typename Vertex, typename Graph>
+        struct is_vertex_of_graph
+            : mpl::if_<
+                is_bgl_graph<Graph>,
+                detail::is_vertex_of_graph_impl<Vertex, Graph>,
+                mpl::false_
+            >::type
+        { };
+    }
 
     /** @name Directed Graph Traits
      * These metafunctions are used to fully classify directed vs. undirected

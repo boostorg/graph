@@ -26,10 +26,14 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/concept/assert.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/preprocessor.hpp>
+#endif
 
 namespace boost {
 
@@ -95,6 +99,105 @@ namespace boost {
 
   // Named Parameters Variants
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), kruskal_minimum_spanning_tree, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+      )
+      (optional
+        (weight_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_edge_property_map_of_graph
+            >
+          )
+          ,detail::edge_or_dummy_property_map(graph, edge_weight)
+        )
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+        )
+        (predecessor_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_vertex_map_of_graph
+            >
+          )
+          ,make_shared_array_property_map(
+            num_vertices(graph),
+            detail::get_null_vertex(graph),
+            vertex_index_map
+          )
+        )
+      )
+    )
+    (optional
+      (rank_map
+        ,*(
+          detail::argument_with_graph_predicate<
+            detail::is_vertex_to_integer_map_of_graph
+          >
+        )
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          vertex_index_map
+        )
+      )
+    )
+  )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), kruskal_minimum_spanning_tree, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+      (result, *)
+    )
+    (optional
+      (weight_map
+        ,*
+        ,detail::edge_or_dummy_property_map(graph, edge_weight)
+      )
+      (vertex_index_map
+        ,*
+        ,detail::vertex_or_dummy_property_map(graph, vertex_index)
+      )
+      (predecessor_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          detail::get_null_vertex(graph),
+          vertex_index_map
+        )
+      )
+      (rank_map
+        ,*
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          num_vertices(graph) - num_vertices(graph),
+          vertex_index_map
+        )
+      )
+    )
+  )
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
+  {
+    if (0 < num_vertices(graph))
+      detail::kruskal_mst_impl
+        (graph, result, rank_map, predecessor_map, weight_map);
+    return true;
+  }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   template <class Graph, class OutputIterator>
   inline void 
   kruskal_minimum_spanning_tree(const Graph& g,
@@ -114,6 +217,7 @@ namespace boost {
        make_iterator_property_map(pred_map.begin(), get(vertex_index, g), pred_map[0]),
        get(edge_weight, g));
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   template <class Graph, class OutputIterator, class P, class T, class R>
   inline void

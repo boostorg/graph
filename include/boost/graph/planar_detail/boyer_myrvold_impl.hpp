@@ -37,7 +37,8 @@ namespace boost
     planar_dfs_visitor(LowPointMap lpm, DFSParentMap dfs_p,
                        DFSNumberMap dfs_n, LeastAncestorMap lam,
                        DFSParentEdgeMap dfs_edge)
-      : low(lpm),
+      : dfs_visitor<>(),
+        low(lpm),
         parent(dfs_p),
         df_number(dfs_n),
         least_ancestor(lam),
@@ -267,7 +268,15 @@ namespace boost
 
       // Perform a depth-first search to find each vertex's low point, least
       // ancestor, and dfs tree information
-      depth_first_search(g, visitor(vis).vertex_index_map(vm));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+      depth_first_search(g, vis, vm);
+#else
+      depth_first_search(
+        g,
+        vis,
+        make_shared_array_property_map(num_vertices(g), white_color, vm)
+      );
+#endif
 
       // Sort vertices by their lowpoint - need this later in the constructor
       vertex_vector_t vertices_by_lowpoint(num_vertices(g));
@@ -591,8 +600,7 @@ namespace boost
                 first_face_itr, second_face_itr, face_end;
               vertex_t first_side_vertex
                 = graph_traits<Graph>::null_vertex();
-              vertex_t second_side_vertex
-                 = graph_traits<Graph>::null_vertex();
+              vertex_t second_side_vertex;
               vertex_t first_tail, second_tail;
 
               first_tail = second_tail = curr_face_handle.get_anchor();

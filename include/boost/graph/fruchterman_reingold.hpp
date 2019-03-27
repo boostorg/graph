@@ -204,8 +204,10 @@ scale_graph(const Graph& g, PositionMap position, const Topology& topology,
     put(position, v, topology.adjust(new_origin, relative_loc));
   }
 }
+} // end namespace boost
 
-namespace detail {
+namespace boost { namespace detail {
+
   template<typename Topology, typename PropMap, typename Vertex>
   void 
   maybe_jitter_point(const Topology& topology,
@@ -266,8 +268,15 @@ namespace detail {
     double k;
     const Graph& g;
   };
+}} // end namespace boost::detail
 
-} // end namespace detail
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#endif
+
+namespace boost {
 
 template<typename Topology, typename Graph, typename PositionMap, 
          typename AttractiveForce, typename RepulsiveForce,
@@ -281,7 +290,16 @@ fruchterman_reingold_force_directed_layout
   RepulsiveForce  repulsive_force,
   ForcePairs      force_pairs,
   Cooling         cool,
-  DisplacementMap displacement)
+  DisplacementMap displacement
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  , typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      AttractiveForce, RepulsiveForce, ForcePairs, Cooling, DisplacementMap
+    >,
+    mpl::true_
+  >::type = mpl::true_()
+#endif
+  )
 {
   typedef typename graph_traits<Graph>::vertex_iterator   vertex_iterator;
   typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -336,8 +354,10 @@ fruchterman_reingold_force_directed_layout
     }
   } while (true);
 }
+} // end namespace boost
 
-namespace detail {
+namespace boost { namespace detail {
+
   template<typename DisplacementMap>
   struct fr_force_directed_layout
   {
@@ -392,8 +412,104 @@ namespace detail {
           PointDiff()));
     }
   };
+}} // end namespace boost::detail
 
-} // end namespace detail
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/is_argument_pack.hpp>
+
+namespace boost {
+
+template <
+    typename Topology, typename Graph, typename PositionMap, typename Args
+>
+void
+fruchterman_reingold_force_directed_layout(
+    const Graph&    g,
+    PositionMap     position,
+    const Topology& topology,
+    const Args&     args,
+    typename boost::enable_if<
+        parameter::is_argument_pack<Args>,
+        mpl::true_
+    >::type = mpl::true_()
+)
+{
+    typedef typename Topology::point_difference_type PointDiff;
+    const PointDiff zero_pd = PointDiff();
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::displacement_map,
+        PointDiff
+    > disp_map_gen(zero_pd);
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::displacement_map,
+        PointDiff
+    >::map_type disp_map = disp_map_gen(g, args);
+    fruchterman_reingold_force_directed_layout(
+        g,
+        position,
+        topology,
+        args[
+            boost::graph::keywords::_attractive_force |
+            square_distance_attractive_force()
+        ],
+        args[
+            boost::graph::keywords::_repulsive_force |
+            square_distance_repulsive_force()
+        ],
+        args[
+            boost::graph::keywords::_force_pairs |
+            make_grid_force_pairs(topology, position, g)
+        ],
+        args[
+            boost::graph::keywords::_cooling |
+            linear_cooling<double>(100)
+        ],
+        disp_map
+    );
+}
+} // end namespace boost
+
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template < \
+        typename Topology, typename Graph, typename PositionMap, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        const Graph& g, PositionMap position, const Topology& topology, \
+        const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            >, mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            g, position, topology, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
+
+namespace boost {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+    fruchterman_reingold_force_directed_layout
+)
+} // end namespace boost
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
 template<typename Topology, typename Graph, typename PositionMap, typename Param,
          typename Tag, typename Rest>
@@ -420,18 +536,24 @@ fruchterman_reingold_force_directed_layout
      params);
 }
 
-template<typename Topology, typename Graph, typename PositionMap>
-void
-fruchterman_reingold_force_directed_layout
-  (const Graph&    g,
-   PositionMap     position,
-   const Topology& topology)
+template <typename Topology, typename Graph, typename PositionMap>
+inline void
+fruchterman_reingold_force_directed_layout(
+    const Graph&    g,
+    PositionMap     position,
+    const Topology& topology
+)
 {
-  fruchterman_reingold_force_directed_layout
-    (g, position, topology,
-     attractive_force(square_distance_attractive_force()));
+    fruchterman_reingold_force_directed_layout(
+        g, position, topology,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        boost::graph::keywords::_attractive_force =
+        square_distance_attractive_force()
+#else
+        attractive_force(square_distance_attractive_force())
+#endif
+    );
 }
-
 } // end namespace boost
 
 #include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/fruchterman_reingold.hpp>)

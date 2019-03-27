@@ -29,7 +29,17 @@ matrix:
   include:
     - os: linux
       compiler: g++-4.4
-      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98,0x
+      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98
+      addons:
+        apt:
+          packages:
+            - g++-4.4
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      compiler: g++-4.4
+      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=0x
       addons:
         apt:
           packages:
@@ -39,7 +49,7 @@ matrix:
 
     - os: linux
       compiler: g++-4.6
-      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03
       addons:
         apt:
           packages:
@@ -48,7 +58,17 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
+      compiler: g++-4.6
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=0x
+      addons:
+        apt:
+          packages:
+            - g++-4.6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03
       addons:
         apt:
           packages:
@@ -57,7 +77,16 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-4.7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03
       addons:
         apt:
           packages:
@@ -66,7 +95,16 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03,11
+      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-4.8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03
       addons:
         apt:
           packages:
@@ -75,7 +113,25 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03,11,14
+      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - g++-4.9
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03
+      addons:
+        apt:
+          packages:
+            - g++-5
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=11,14
       addons:
         apt:
           packages:
@@ -149,7 +205,7 @@ matrix:
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03
       addons:
         apt:
           packages:
@@ -159,7 +215,17 @@ matrix:
             - llvm-toolchain-precise-3.5
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - clang-3.5
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.5
+
+    - os: linux
+      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03
       addons:
         apt:
           packages:
@@ -169,7 +235,17 @@ matrix:
             - llvm-toolchain-precise-3.6
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03,11
+      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - clang-3.6
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+
+    - os: linux
+      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03
       addons:
         apt:
           packages:
@@ -177,7 +253,17 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
-    
+
+    - os: linux
+      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=11
+      addons:
+        apt:
+          packages:
+            - clang-3.7
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+
     # Fails to compile std lib headers (toolset issue):
     #- os: linux
     #  env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z
@@ -201,7 +287,18 @@ matrix:
 
     - os: linux
       compiler: clang++-4.0
-      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,1z
+      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03
+      addons:
+        apt:
+          packages:
+            - clang-4.0
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-4.0
+
+    - os: linux
+      compiler: clang++-4.0
+      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=11,1z
       addons:
         apt:
           packages:

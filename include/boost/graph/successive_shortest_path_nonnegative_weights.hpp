@@ -1,13 +1,14 @@
-//=======================================================================
+//============================================================================
 // Copyright 2013 University of Warsaw.
 // Authors: Piotr Wygocki
 //
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
-//=======================================================================
+//============================================================================
 //
-//This algorithm is described in "Network Flows: Theory, Algorithms, and Applications"
+// This algorithm is described in
+// "Network Flows: Theory, Algorithms, and Applications"
 // by Ahuja, Magnanti, Orlin.
 
 #ifndef BOOST_GRAPH_SUCCESSIVE_SHORTEST_PATH_HPP
@@ -24,10 +25,7 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/augment.hpp>
 
-namespace boost {
-
-
-namespace detail {
+namespace boost { namespace detail {
 
 template <class Graph, class Weight, class Distance, class Reversed>
 class MapReducedWeight :
@@ -57,8 +55,15 @@ make_mapReducedWeight(const Graph & g, Weight w, Distance d, Reversed r)  {
     return MapReducedWeight<Graph, Weight, Distance, Reversed>(g, w, d, r);
 }
 
-}//detail
+}} // namespace boost::detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#endif
+
+namespace boost {
 
 template <class Graph, class Capacity, class ResidualCapacity, class Reversed, class Pred, class Weight, class Distance, class Distance2, class VertexIndex>
 void successive_shortest_path_nonnegative_weights(
@@ -72,7 +77,18 @@ void successive_shortest_path_nonnegative_weights(
         VertexIndex index,
         Pred pred,
         Distance distance,
-        Distance2 distance_prev) {
+        Distance2 distance_prev
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+        , typename boost::disable_if<
+            parameter::are_tagged_arguments<
+                Capacity, ResidualCapacity, Weight, Reversed, VertexIndex,
+                Pred, Distance, Distance2
+            >,
+            mpl::true_
+        >::type = mpl::true_()
+#endif
+        )
+{
     filtered_graph<const Graph, is_residual_edge<ResidualCapacity> >
         gres = detail::residual_graph(g, residual_capacity);
     typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
@@ -107,8 +123,10 @@ void successive_shortest_path_nonnegative_weights(
     }
 }
 
-//in this namespace argument dispatching tak place
-namespace detail {
+} // namespace boost
+
+//in this namespace argument dispatching takes place
+namespace boost { namespace detail {
 
 template <class Graph, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class Distance2, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch3(
@@ -224,11 +242,150 @@ void successive_shortest_path_nonnegative_weights_dispatch1(
             get_param(params, vertex_distance), params);
 }
 
-}//detail
+}} // namespace boost::detail
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+namespace boost {
+
+template <typename Graph, typename Args>
+void successive_shortest_path_nonnegative_weights(
+        Graph &g,
+        typename graph_traits<Graph>::vertex_descriptor s,
+        typename graph_traits<Graph>::vertex_descriptor t,
+        const Args& args,
+        typename boost::enable_if<
+            parameter::is_argument_pack<Args>,
+            mpl::true_
+        >::type = mpl::true_()) {
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = detail::override_const_property(
+        args,
+        boost::graph::keywords::_vertex_index_map,
+        g,
+        vertex_index
+    );
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::capacity_map,
+        edge_capacity_t,
+        Graph
+    >::type e_c_map = detail::override_const_property(
+        args,
+        boost::graph::keywords::_capacity_map,
+        g,
+        edge_capacity
+    );
+    typename boost::detail::override_property_result<
+        Args,
+        boost::graph::keywords::tag::residual_capacity_map,
+        edge_residual_capacity_t,
+        Graph
+    >::type e_rc_map = detail::override_property(
+        args,
+        boost::graph::keywords::_residual_capacity_map,
+        g,
+        edge_residual_capacity
+    );
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::reverse_edge_map,
+        edge_reverse_t,
+        Graph
+    >::type e_rev_map = detail::override_const_property(
+        args,
+        boost::graph::keywords::_reverse_edge_map,
+        g,
+        edge_reverse
+    );
+    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    const Edge zer_edge = Edge();
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::predecessor_map,
+        Edge
+    > pred_map_gen(zer_edge);
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type WeightMap;
+    WeightMap e_w_map = detail::override_const_property(
+        args,
+        boost::graph::keywords::_weight_map,
+        g,
+        edge_weight
+    );
+    typedef typename boost::property_traits<WeightMap>::value_type Distance;
+    const Distance zero_distance = Distance();
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        Distance
+    > dist_map_gen(zero_distance);
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map2,
+        Distance
+    > dist_map2_gen(zero_distance);
+    successive_shortest_path_nonnegative_weights(
+        g, s, t,
+        e_c_map,
+        e_rc_map,
+        e_w_map,
+        e_rev_map,
+        v_i_map,
+        pred_map_gen(g, args),
+        dist_map_gen(g, args),
+        dist_map2_gen(g, args)
+    );
+}
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template < \
+        typename Graph, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        Graph& g, \
+        typename graph_traits<Graph>::vertex_descriptor s, \
+        typename graph_traits<Graph>::vertex_descriptor t, \
+        const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            >, mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            g, s, t, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 9, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+    successive_shortest_path_nonnegative_weights
+)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+
+} // namespace boost
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
+namespace boost {
 
 template <class Graph, class P, class T, class R>
-void successive_shortest_path_nonnegative_weights(
+inline void successive_shortest_path_nonnegative_weights(
         Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
@@ -246,12 +403,18 @@ void successive_shortest_path_nonnegative_weights(
 }
 
 template <class Graph>
-void successive_shortest_path_nonnegative_weights(
+inline void successive_shortest_path_nonnegative_weights(
         Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    successive_shortest_path_nonnegative_weights(
+        g, s, t, parameter::compose()
+    );
+#else
     bgl_named_params<int, buffer_param_t> params(0);
     successive_shortest_path_nonnegative_weights(g, s, t, params);
+#endif
 }
 
 

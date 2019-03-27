@@ -76,11 +76,30 @@ void cycle_canceling(const Graph &g, Weight weight, Reversed rev, ResidualCapaci
     }
 
     vertex_descriptor cycleStart;
-    while(!bellman_ford_shortest_paths(gres, N,
-            weight_map(weight).
-            distance_map(distance).
-            visitor(detail::RecordEdgeMapAndCycleVertex<Pred, vertex_descriptor>(pred, cycleStart)))) {
-
+    while(
+        !bellman_ford_shortest_paths(
+            gres,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+            boost::graph::keywords::_size = N,
+            boost::graph::keywords::_weight_map = weight,
+            boost::graph::keywords::_distance_map = distance,
+            boost::graph::keywords::_visitor =
+                detail::RecordEdgeMapAndCycleVertex<Pred, vertex_descriptor>(
+                    pred,
+                    cycleStart
+                )
+#else
+            N,
+            weight_map(weight).distance_map(distance).visitor(
+                detail::RecordEdgeMapAndCycleVertex<Pred, vertex_descriptor>(
+                    pred,
+                    cycleStart
+                )
+            )
+#endif
+        )
+    )
+    {
         detail::augment(g, cycleStart, cycleStart, pred, residual_capacity, rev);
 
         BGL_FORALL_VERTICES_T(v, g, Graph) {

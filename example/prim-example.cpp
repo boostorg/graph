@@ -40,10 +40,13 @@ main()
   property_map<Graph, vertex_distance_t>::type distance = get(vertex_distance, g);
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
   prim_minimum_spanning_tree
-    (g, *vertices(g).first, &p[0], distance, weightmap, indexmap, 
-     default_dijkstra_visitor());
+    (g, *vertices(g).first, make_iterator_property_map(p.begin(), indexmap),
+     distance, weightmap, indexmap, default_dijkstra_visitor());
 #else
-  prim_minimum_spanning_tree(g, &p[0]);
+  prim_minimum_spanning_tree(
+    g,
+    make_iterator_property_map(p.begin(), get(vertex_index, g))
+  );
 #endif
 
   for (std::size_t i = 0; i != p.size(); ++i)

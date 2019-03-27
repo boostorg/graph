@@ -21,6 +21,16 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 namespace boost {
 
   // The "labeling" algorithm from "Network Flows" by Ahuja, Magnanti,
@@ -75,7 +85,17 @@ namespace boost {
   template <class Graph, 
             class CapacityEdgeMap, class ResidualCapacityEdgeMap,
             class ReverseEdgeMap, class ColorMap, class PredEdgeMap>
-  typename property_traits<CapacityEdgeMap>::value_type
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      CapacityEdgeMap, ResidualCapacityEdgeMap, ReverseEdgeMap, ColorMap,
+      PredEdgeMap
+    >,
+#endif
+    typename property_traits<CapacityEdgeMap>::value_type
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  >::type
+#endif
   edmonds_karp_max_flow
     (Graph& g, 
      typename graph_traits<Graph>::vertex_descriptor src,
@@ -218,32 +238,122 @@ namespace boost {
     
   } // namespace detail
 
-  template <class Graph, class P, class T, class R>
-  typename detail::edge_capacity_value<Graph, P, T, R>::type
-  edmonds_karp_max_flow
-    (Graph& g,
-     typename graph_traits<Graph>::vertex_descriptor src,
-     typename graph_traits<Graph>::vertex_descriptor sink,
-     const bgl_named_params<P, T, R>& params)
-  {
-    typedef typename get_param_type< vertex_predecessor_t, bgl_named_params<P,T,R> >::type Pred;
-    return detail::edmonds_karp_dispatch1<Pred>::apply
-      (g, src, sink, params, get_param(params, vertex_predecessor));
-  }
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+// Boost.Parameter-enabled argument-pack overload
+template <typename Graph, typename Args>
+inline typename boost::lazy_enable_if<
+  parameter::is_argument_pack<Args>,
+  detail::arg_packed_property_map_value<
+    Args, boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph
+  >
+>::type
+edmonds_karp_max_flow(Graph& g,
+                      typename graph_traits<Graph>::vertex_descriptor src,
+                      typename graph_traits<Graph>::vertex_descriptor sink,
+                      const Args& arg_pack)
+{
+  using namespace boost::graph::keywords;
+  return edmonds_karp_max_flow(
+    g,
+    src,
+    sink,
+    detail::override_const_property(arg_pack, _capacity_map, g, edge_capacity),
+    detail::override_property(arg_pack, _residual_capacity_map, g, edge_residual_capacity),
+    detail::override_const_property(arg_pack, _reverse_edge_map, g, edge_reverse),
+    arg_pack[
+      _color_map | make_shared_array_property_map(
+        num_vertices(g),
+        white_color,
+        arg_pack[
+          _vertex_index_map |
+          detail::vertex_or_dummy_property_map(g, vertex_index)
+        ]
+      )
+    ],
+    arg_pack[
+      _predecessor_map | make_shared_array_property_map(
+        num_vertices(g),
+        typename graph_traits<Graph>::edge_descriptor(),
+        arg_pack[
+          _vertex_index_map |
+          detail::vertex_or_dummy_property_map(g, vertex_index)
+        ]
+      )
+    ]
+  );
+}
+#endif  // defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
-  template <class Graph>
-  typename property_traits<
+// old-style named-parameter overload
+template <typename Graph, typename P, typename T, typename R>
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+inline typename property_traits<
+  typename detail::choose_impl_result<
+    boost::is_const<Graph>,
+    Graph,
+    typename get_param_type<bgl_named_params<P, T, R>, edge_capacity_t>::type,
+    edge_capacity_t
+  >::type
+>::value_type
+#else
+inline typename detail::edge_capacity_value<Graph, P, T, R>::type
+#endif
+edmonds_karp_max_flow(Graph& g,
+                      typename graph_traits<Graph>::vertex_descriptor src,
+                      typename graph_traits<Graph>::vertex_descriptor sink,
+                      const bgl_named_params<P, T, R>& params)
+{
+  typedef typename get_param_type< vertex_predecessor_t, bgl_named_params<P,T,R> >::type Pred;
+  return detail::edmonds_karp_dispatch1<Pred>::apply
+    (g, src, sink, params, get_param(params, vertex_predecessor));
+}
+
+// all-defaults overload
+template <typename Graph>
+inline typename property_traits<
     typename property_map<Graph, edge_capacity_t>::const_type
-  >::value_type
-  edmonds_karp_max_flow
-    (Graph& g,
-     typename graph_traits<Graph>::vertex_descriptor src,
-     typename graph_traits<Graph>::vertex_descriptor sink)
-  {
-    bgl_named_params<int, buffer_param_t> params(0);
-    return edmonds_karp_max_flow(g, src, sink, params);
-  }
+>::value_type
+edmonds_karp_max_flow(Graph& g,
+                      typename graph_traits<Graph>::vertex_descriptor src,
+                      typename graph_traits<Graph>::vertex_descriptor sink)
+{
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  return edmonds_karp_max_flow(g, src, sink, parameter::compose());
+#else
+  bgl_named_params<int, buffer_param_t> params(0);
+  return edmonds_karp_max_flow(g, src, sink, params);
+#endif
+}
+
+#if 0//defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+// Boost.Parameter-enabled tagged-argument overloads
+// TODO: return the same type as the argument-pack overload
+// need parameter::result_of::compose
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+template <typename Graph, typename TA \
+          BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+inline typename boost::lazy_enable_if< \
+  parameter::are_tagged_arguments< \
+    TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+  >, \
+  detail::tagged_property_map_value< \
+    boost::graph::keywords::tag::capacity_map, edge_capacity_t, Graph \
+    BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+  > \
+>::type \
+name(Graph& g, typename graph_traits<Graph>::vertex_descriptor src, \
+     typename graph_traits<Graph>::vertex_descriptor sink, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta)) \
+{ \
+  return name(g, src, sink, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+}
+
+BOOST_PP_REPEAT_FROM_TO(1, 7, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, edmonds_karp_max_flow)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
 } // namespace boost
 
 #endif // EDMONDS_KARP_MAX_FLOW_HPP
+

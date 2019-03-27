@@ -27,7 +27,7 @@
 namespace boost
 {
   namespace graph { namespace detail {
-    enum VERTEX_STATE { V_EVEN, V_ODD, V_UNREACHED };
+    enum { V_EVEN, V_ODD, V_UNREACHED };
   } } // end namespace graph::detail
 
   template <typename Graph, typename MateMap, typename VertexIndexMap>
@@ -229,14 +229,15 @@ namespace boost
         else
           vertex_state[u] = graph::detail::V_UNREACHED;      
       }
-    
+
       //end initializations
-    
+
       vertex_descriptor_t v,w,w_free_ancestor,v_free_ancestor;
       w_free_ancestor = graph_traits<Graph>::null_vertex();
-      v_free_ancestor = graph_traits<Graph>::null_vertex(); 
+      v_free_ancestor = graph_traits<Graph>::null_vertex();
       bool found_alternating_path = false;
-      
+      v = w = graph_traits<Graph>::null_vertex();
+
       while(!even_edges.empty() && !found_alternating_path)
       {
         // since we push even edges onto the back of the list as
@@ -247,10 +248,10 @@ namespace boost
 
         v = source(current_edge,g);
         w = target(current_edge,g);
-      
+
         vertex_descriptor_t v_prime = origin[ds.find_set(v)];
         vertex_descriptor_t w_prime = origin[ds.find_set(w)];
-      
+
         // because of the way we put all of the edges on the queue,
         // v_prime should be labeled V_EVEN; the following is a
         // little paranoid but it could happen...
@@ -818,7 +819,15 @@ namespace boost
 
       v_size_t num_odd_components;
       detail::odd_components_counter<v_size_t> occ(num_odd_components);
-      depth_first_search(fg, visitor(occ).vertex_index_map(vm));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+      depth_first_search(fg, occ, vm);
+#else
+      depth_first_search(
+        fg,
+        occ,
+        make_shared_array_property_map(num_vertices(fg), white_color, vm)
+      );
+#endif
 
       if (2 * matching_size(g,mate,vm) == num_vertices(g) + num_odd_vertices - num_odd_components)
         return true;

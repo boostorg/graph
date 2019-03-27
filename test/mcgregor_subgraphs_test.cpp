@@ -373,9 +373,18 @@ int test_main (int argc, char *argv[]) {
 
   test_callback<Graph> user_callback(common_subgraph, graph1, graph2);
 
-  boost::mcgregor_common_subgraphs(graph1, graph2, true, user_callback,
+  boost::mcgregor_common_subgraphs(
+    graph1, graph2, true, user_callback,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_edges_equivalent =
+    boost::make_property_map_equivalent(ename_map1, ename_map2),
+    boost::graph::keywords::_vertices_equivalent =
+    boost::make_property_map_equivalent(vname_map1, vname_map2)
+#else
     boost::edges_equivalent(boost::make_property_map_equivalent(ename_map1, ename_map2)).
-    vertices_equivalent(boost::make_property_map_equivalent(vname_map1, vname_map2)));
+    vertices_equivalent(boost::make_property_map_equivalent(vname_map1, vname_map2))
+#endif
+  );
 
   BOOST_CHECK(was_common_subgraph_found);
 
@@ -408,7 +417,15 @@ int test_main (int argc, char *argv[]) {
   std::cout << "Searching for unique subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_vertices_equivalent =
+    boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+#else
+    boost::vertices_equivalent(
+      boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+    )
+#endif
+  );
 
   BOOST_CHECK(has_subgraph_string("0,0 1,1 "));
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
@@ -428,7 +445,15 @@ int test_main (int argc, char *argv[]) {
   std::cout << "Searching for maximum subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_maximum(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_vertices_equivalent =
+    boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+#else
+    boost::vertices_equivalent(
+      boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+    )
+#endif
+  );
 
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
 
@@ -445,7 +470,15 @@ int test_main (int argc, char *argv[]) {
   std::cout << "Searching for maximum unique subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_maximum_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
-    boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2))); 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_vertices_equivalent =
+    boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+#else
+    boost::vertices_equivalent(
+      boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)
+    )
+#endif
+  );
 
   BOOST_CHECK(simple_subgraph_list.size() == 1);
   BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));

@@ -24,8 +24,8 @@
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/random.hpp>
-#include <boost/test/minimal.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #define INITIALIZE_VERTEX 0
 #define DISCOVER_VERTEX 1
@@ -34,7 +34,6 @@
 #define EDGE_RELAXED 4
 #define EDGE_NOT_RELAXED 5
 #define FINISH_VERTEX 6
-
 
 template <typename Graph>
 void run_dijkstra_test(const Graph& graph)
@@ -57,30 +56,46 @@ void run_dijkstra_test(const Graph& graph)
                  no_color_map_distance_map(no_color_map_vertex_double_map);
 
   // Run dijkstra algoirthms
-  dijkstra_shortest_paths(graph, vertex(0, graph),
-                          predecessor_map(default_predecessor_map)
-                          .distance_map(default_distance_map));
-                                       
-  dijkstra_shortest_paths_no_color_map(graph, vertex(0, graph),
-                                       predecessor_map(no_color_map_predecessor_map)
-                                       .distance_map(no_color_map_distance_map));
+  dijkstra_shortest_paths(
+    graph,
+    vertex(0, graph),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_predecessor_map = default_predecessor_map,
+    boost::graph::keywords::_distance_map = default_distance_map
+#else
+    boost::predecessor_map(default_predecessor_map)
+    .distance_map(default_distance_map)
+#endif
+  );
+
+  dijkstra_shortest_paths_no_color_map(
+    graph,
+    vertex(0, graph),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_predecessor_map = no_color_map_predecessor_map,
+    boost::graph::keywords::_distance_map = no_color_map_distance_map
+#else
+    boost::predecessor_map(no_color_map_predecessor_map)
+    .distance_map(no_color_map_distance_map)
+#endif
+  );
 
   // Verify that predecessor maps are equal
-  BOOST_CHECK(std::equal(default_vertex_map.begin(), default_vertex_map.end(),
-              no_color_map_vertex_map.begin()));
+  BOOST_TEST(std::equal(default_vertex_map.begin(), default_vertex_map.end(),
+             no_color_map_vertex_map.begin()));
 
   // Verify that distance maps are equal
-  BOOST_CHECK(std::equal(default_vertex_double_map.begin(), default_vertex_double_map.end(),
-              no_color_map_vertex_double_map.begin()));
+  BOOST_TEST(std::equal(default_vertex_double_map.begin(), default_vertex_double_map.end(),
+             no_color_map_vertex_double_map.begin()));
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   using namespace boost;
 
   int vertices_to_create = 10; 
   int edges_to_create = 500;
-  std::size_t random_seed = time(0);
+  unsigned int random_seed = static_cast<unsigned int>(time(0));
   
   if (argc > 1) {
     vertices_to_create = lexical_cast<int>(argv[1]);
@@ -91,7 +106,7 @@ int test_main(int argc, char* argv[])
   }
   
   if (argc > 3) {
-    random_seed = lexical_cast<std::size_t>(argv[3]);
+    random_seed = lexical_cast<unsigned int>(argv[3]);
   }
 
   minstd_rand generator(random_seed);
@@ -121,6 +136,6 @@ int test_main(int argc, char* argv[])
     
   run_dijkstra_test(graph);
 
-  return 0;
+  return boost::report_errors();
 }
 

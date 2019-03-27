@@ -20,7 +20,17 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/one_bit_color_map.hpp>
+#include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/traits.hpp>
 #include <boost/bind.hpp>
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/preprocessor.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/mpl/has_key.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#endif
 
 namespace boost {
 
@@ -191,13 +201,65 @@ namespace boost {
    * @param partition_map A color map to fill with the bipartition.
    * @return true if and only if the given graph is bipartite.
    */
-
-  template <typename Graph, typename IndexMap, typename PartitionMap>
-  bool is_bipartite (const Graph& graph, const IndexMap index_map, PartitionMap partition_map)
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), is_bipartite, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (optional
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,get(vertex_index, graph)
+        )
+        (partition_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
+        )
+      )
+    )
+  )
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (bool), is_bipartite, ::boost::graph::keywords::tag,
+    (required
+      (graph, *)
+    )
+    (optional
+      (vertex_index_map, *, get(vertex_index, graph))
+      (partition_map
+        ,*
+        ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
+      )
+    )
+  )
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename graph_type, typename IndexMap,
+            typename partition_map_type>
+  bool is_bipartite(const graph_type& graph, const IndexMap vertex_index_map,
+                    partition_map_type partition_map)
+#endif
   {
     /// General types and variables
-    typedef typename property_traits <PartitionMap>::value_type partition_color_t;
-    typedef typename graph_traits <Graph>::vertex_descriptor vertex_descriptor_t;
+    typedef typename property_traits<
+      typename boost::remove_const<
+        typename boost::remove_reference<partition_map_type>::type
+      >::type
+    >::value_type partition_color_t;
+    typedef typename graph_traits<
+      typename boost::remove_const<
+        typename boost::remove_reference<graph_type>::type
+      >::type
+    >::vertex_descriptor vertex_descriptor_t;
 
     /// Declare dfs visitor
     //    detail::empty_recorder recorder;
@@ -208,11 +270,34 @@ namespace boost {
     /// Call dfs
     try
     {
-      depth_first_search (graph, vertex_index_map (index_map).visitor (make_dfs_visitor (std::make_pair (
-          detail::colorize_bipartition (partition_map), std::make_pair (detail::check_bipartition (partition_map),
-              put_property (partition_map, color_traits <partition_color_t>::white (), on_start_vertex ()))))));
+      depth_first_search(
+        graph,
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        vertex_index_map,
+#endif
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              put_property(
+                partition_map,
+                color_traits<partition_color_t>::white(),
+                on_start_vertex()
+              )
+            )
+          )
+        )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+        ,make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          vertex_index_map
+        )
+#endif
+      );
     }
-    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>&)
+    catch (const detail::bipartite_visitor_error<vertex_descriptor_t>&)
     {
       return false;
     }
@@ -220,6 +305,7 @@ namespace boost {
     return true;
   }
 
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
   /**
    * Checks a given graph for bipartiteness.
    *
@@ -251,6 +337,7 @@ namespace boost {
   {
     return is_bipartite (graph, get (vertex_index, graph));
   }
+#endif  // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
 
   /**
    * Checks a given graph for bipartiteness and fills a given color map with
@@ -266,7 +353,139 @@ namespace boost {
    * @param result An iterator to write the odd-cycle vertices to.
    * @return The final iterator value after writing.
    */
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  BOOST_PARAMETER_FUNCTION(
+    (
+      boost::lazy_enable_if<
+        typename mpl::has_key<Args,boost::graph::keywords::tag::result>::type,
+        detail::mutable_value_type<Args,boost::graph::keywords::tag::result>
+      >
+    ), find_odd_cycle, ::boost::graph::keywords::tag,
+    (required
+      (graph, *(detail::argument_predicate<is_vertex_list_graph>))
+    )
+    (deduced
+      (required
+        (result, *(detail::argument_predicate<detail::is_iterator>))
+      )
+      (optional
+        (vertex_index_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_to_integer_map_of_graph
+            >
+          )
+          ,get(vertex_index, graph)
+        )
+        (partition_map
+          ,*(
+            detail::argument_with_graph_predicate<
+              detail::is_vertex_color_map_of_graph
+            >
+          )
+          ,make_one_bit_color_map(num_vertices(graph), vertex_index_map)
+        )
+      )
+    )
+  )
+  {
+    /// General types and variables
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<graph_type>::type
+    >::type Graph;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<result_type>::type
+    >::type OutputIterator;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<vertex_index_map_type>::type
+    >::type IndexMap;
+    typedef typename boost::remove_const<
+      typename boost::remove_reference<partition_map_type>::type
+    >::type PartitionMap;
+    typedef typename property_traits <PartitionMap>::value_type partition_color_t;
+    typedef typename graph_traits <Graph>::vertex_descriptor vertex_descriptor_t;
+    typedef typename graph_traits <Graph>::vertex_iterator vertex_iterator_t;
+    vertex_iterator_t vertex_iter, vertex_end;
 
+    /// Declare predecessor map
+    typedef std::vector <vertex_descriptor_t> predecessors_t;
+    typedef iterator_property_map <typename predecessors_t::iterator, IndexMap, vertex_descriptor_t,
+        vertex_descriptor_t&> predecessor_map_t;
+
+    predecessors_t predecessors (num_vertices (graph), graph_traits <Graph>::null_vertex ());
+    predecessor_map_t predecessor_map (predecessors.begin (), vertex_index_map);
+
+    /// Initialize predecessor map
+    for (boost::tie (vertex_iter, vertex_end) = vertices (graph); vertex_iter != vertex_end; ++vertex_iter)
+    {
+      put (predecessor_map, *vertex_iter, *vertex_iter);
+    }
+
+    /// Call dfs
+    try
+    {
+      depth_first_search(
+        graph,
+        vertex_index_map,
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              std::make_pair(
+                put_property(
+                  partition_map,
+                  color_traits<partition_color_t>::white(),
+                  on_start_vertex()
+                ),
+                record_predecessors(predecessor_map, on_tree_edge())
+              )
+            )
+          )
+        )
+      );
+    }
+    catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
+    {
+      typedef std::vector <vertex_descriptor_t> path_t;
+
+      path_t path1, path2;
+      vertex_descriptor_t next, current;
+
+      /// First path
+      next = error.witnesses.first;
+      do
+      {
+        current = next;
+        path1.push_back (current);
+        next = predecessor_map[current];
+      }
+      while (current != next);
+
+      /// Second path
+      next = error.witnesses.second;
+      do
+      {
+        current = next;
+        path2.push_back (current);
+        next = predecessor_map[current];
+      }
+      while (current != next);
+
+      /// Find beginning of common suffix
+      std::pair <typename path_t::iterator, typename path_t::iterator> mismatch = detail::reverse_mismatch (
+          std::make_pair (path1.begin (), path1.end ()), std::make_pair (path2.begin (), path2.end ()));
+
+      /// Copy the odd-length cycle
+      OutputIterator r = result;
+      r = std::copy (path1.begin (), mismatch.first + 1, r);
+      return std::reverse_copy (path2.begin (), mismatch.second, r);
+    }
+
+    return result;
+  }
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  // Fall back on the old public interface. -- Cromwell D. Enage
   template <typename Graph, typename IndexMap, typename PartitionMap, typename OutputIterator>
   OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, PartitionMap partition_map,
       OutputIterator result)
@@ -294,10 +513,30 @@ namespace boost {
     /// Call dfs
     try
     {
-      depth_first_search (graph, vertex_index_map (index_map).visitor (make_dfs_visitor (std::make_pair (
-          detail::colorize_bipartition (partition_map), std::make_pair (detail::check_bipartition (partition_map),
-              std::make_pair (put_property (partition_map, color_traits <partition_color_t>::white (),
-                  on_start_vertex ()), record_predecessors (predecessor_map, on_tree_edge ())))))));
+      depth_first_search(
+        graph,
+        make_dfs_visitor(
+          std::make_pair(
+            detail::colorize_bipartition(partition_map),
+            std::make_pair(
+              detail::check_bipartition(partition_map),
+              std::make_pair(
+                put_property(
+                  partition_map,
+                  color_traits<partition_color_t>::white(),
+                  on_start_vertex()
+                ),
+                record_predecessors(predecessor_map, on_tree_edge())
+              )
+            )
+          )
+        ),
+        make_shared_array_property_map(
+          num_vertices(graph),
+          white_color,
+          index_map
+        )
+      );
     }
     catch (const detail::bipartite_visitor_error <vertex_descriptor_t>& error)
     {
@@ -338,18 +577,6 @@ namespace boost {
     return result;
   }
 
-  /**
-   * Checks a given graph for bipartiteness. If the graph is not bipartite, a
-   * sequence of vertices, producing an odd-cycle, is written to the output
-   * iterator. The final iterator value is returned. Runs in linear time in the
-   * size of the graph, if access to the property maps is in constant time.
-   *
-   * @param graph The given graph.
-   * @param index_map An index map associating vertices with an index.
-   * @param result An iterator to write the odd-cycle vertices to.
-   * @return The final iterator value after writing.
-   */
-
   template <typename Graph, typename IndexMap, typename OutputIterator>
   OutputIterator find_odd_cycle (const Graph& graph, const IndexMap index_map, OutputIterator result)
   {
@@ -359,23 +586,12 @@ namespace boost {
     return find_odd_cycle (graph, index_map, partition_map, result);
   }
 
-  /**
-   * Checks a given graph for bipartiteness. If the graph is not bipartite, a
-   * sequence of vertices, producing an odd-cycle, is written to the output
-   * iterator. The final iterator value is returned. The graph must have an
-   * internal vertex_index property. Runs in linear time in the size of the
-   * graph, if access to the property maps is in constant time.
-   *
-   * @param graph The given graph.
-   * @param result An iterator to write the odd-cycle vertices to.
-   * @return The final iterator value after writing.
-   */
-
   template <typename Graph, typename OutputIterator>
   OutputIterator find_odd_cycle (const Graph& graph, OutputIterator result)
   {
     return find_odd_cycle (graph, get (vertex_index, graph), result);
   }
+#endif  // BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS
 }
 
 #endif /// BOOST_GRAPH_BIPARTITE_HPP

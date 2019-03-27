@@ -44,13 +44,21 @@ main()
   // Specify A as the source vertex
   distance[A] = 0;
 
-  bool r = bellman_ford_shortest_paths(g, int (n_vertices),
-                                       weight_map(make_iterator_property_map
-                                                  (&delay[0],
-                                                   get(edge_index, g),
-                                                   delay[0])).
-                                       distance_map(&distance[0]).
-                                       predecessor_map(&parent[0]));
+  bool r = bellman_ford_shortest_paths(
+    g,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_size = int (n_vertices),
+    boost::graph::keywords::_weight_map =
+    make_iterator_property_map(&delay[0], get(edge_index, g), delay[0]),
+    boost::graph::keywords::_distance_map = &distance[0],
+    boost::graph::keywords::_predecessor_map = &parent[0]
+#else   // !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    int (n_vertices),
+    weight_map(
+      make_iterator_property_map(&delay[0], get(edge_index, g), delay[0])
+    ).distance_map(&distance[0]).predecessor_map(&parent[0])
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+  );
 
   if (r)
     for (int i = 0; i < n_vertices; ++i)

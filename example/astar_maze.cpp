@@ -194,12 +194,21 @@ bool maze::solve() {
   astar_goal_visitor visitor(g);
 
   try {
+    using namespace boost::graph::keywords;
     astar_search(m_barrier_grid, s, heuristic,
-                 boost::weight_map(weight).
-                 predecessor_map(pred_pmap).
-                 distance_map(dist_pmap).
-                 visitor(visitor) );
-  } catch(found_goal fg) {
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+                 _weight_map = weight,
+                 _predecessor_map = pred_pmap,
+                 _distance_map = dist_pmap,
+                 _visitor = visitor
+#else
+                 boost::weight_map(weight)
+                 .predecessor_map(pred_pmap)
+                 .distance_map(dist_pmap)
+                 .visitor(visitor)
+#endif
+                 );
+  } catch(found_goal) {
     // Walk backwards from the goal through the predecessor chain adding
     // vertices to the solution path.
     for (vertex_descriptor u = g; u != s; u = predecessor[u])
@@ -295,6 +304,7 @@ void random_maze(maze& m) {
   }
 }
 
+
 int main (int argc, char const *argv[]) {
   // The default maze size is 20x10.  A different size may be specified on
   // the command line.
@@ -306,9 +316,10 @@ int main (int argc, char const *argv[]) {
     y = boost::lexical_cast<std::size_t>(argv[2]);
   }
 
-  random_generator.seed(std::time(0));
+  random_generator.seed(static_cast<unsigned int>(std::time(0)));
   maze m(x, y);
   random_maze(m);
+
   if (m.solve())
     std::cout << "Solved the maze." << std::endl;
   else

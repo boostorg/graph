@@ -36,7 +36,11 @@ main(int, char *[])
   print_graph(G, get(vertex_name, G));
 
   adjacency_list <> TC;
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  transitive_closure(G, TC, get(vertex_index, G));
+#else
   transitive_closure(G, TC);
+#endif
 
   std::cout << std::endl << "Graph G+:" << std::endl;
   char name[] = "abcd";

@@ -25,18 +25,14 @@
   This examples shows how to use the breadth_first_search() GGCL
   algorithm, specifically the 3 argument variant of bfs that assumes
   the graph has a color property (property) stored internally.
-
   Two pre-defined visitors are used to record the distance of each
   vertex from the source vertex, and also to record the parent of each
   vertex. Any number of visitors can be layered and passed to a GGCL
   algorithm.
-
   The call to vertices(G) returns an STL-compatible container which
   contains all of the vertices in the graph.  In this example we use
   the vertices container in the STL for_each() function.
-
   Sample Output:
-
   0 --> 2 
   1 --> 1 3 4 
   2 --> 1 3 4 
@@ -48,7 +44,6 @@
   parent[2] = 0
   parent[3] = 2
   parent[4] = 0
-
 */
 
 template <class ParentDecorator>
@@ -125,12 +120,24 @@ int main(int , char* [])
   // The source vertex
   Vertex s = *(boost::vertices(G).first);
   p[s] = s;
-  boost::neighbor_breadth_first_search
-    (G, s, 
-     boost::visitor(boost::make_neighbor_bfs_visitor
-     (std::make_pair(boost::record_distances(d, boost::on_tree_edge()),
-                     boost::record_predecessors(&p[0], 
-                                                 boost::on_tree_edge())))));
+  boost::neighbor_breadth_first_search(
+    G,
+    s,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
+#endif
+    boost::make_neighbor_bfs_visitor(
+      std::make_pair(
+        boost::record_distances(d, boost::on_tree_edge()),
+        boost::record_predecessors(&p[0], boost::on_tree_edge())
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
 
   boost::print_graph(G);
 

@@ -25,7 +25,13 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     read_write_property_map_archetype<vertex_t, color_value_archetype> color;
-    breadth_first_search(g, s, color_map(color));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    breadth_first_search(g, s, color);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(g, s, boost::graph::keywords::_color_map = color);
+#else
+    breadth_first_search(g, s, boost::color_map(color));
+#endif
   }
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag, 
@@ -35,7 +41,17 @@ int main()
     graph_t& g = static_object<graph_t>::get();
     vertex_t s;
     readable_property_map_archetype<vertex_t, std::size_t> v_index;
-    breadth_first_search(g, s, vertex_index_map(v_index));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    breadth_first_search(g, s, v_index);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(
+      g,
+      s,
+      boost::graph::keywords::_vertex_index_map = v_index
+    );
+#else
+    breadth_first_search(g, s, boost::vertex_index_map(v_index));
+#endif
   }
   {
     typedef incidence_graph_archetype<vertex_t, undirected_tag, 
@@ -48,7 +64,18 @@ int main()
     vertex_t s;
     bfs_visitor<> v;
     buffer_archetype<vertex_t> b;
-    breadth_first_search(g, s, visitor(v).buffer(b));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    breadth_first_search(g, s, v, b);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    breadth_first_search(
+      g,
+      s,
+      boost::graph::keywords::_buffer = b,
+      boost::graph::keywords::_visitor = v
+    );
+#else
+    breadth_first_search(g, s, boost::buffer(b).visitor(v));
+#endif
   }
   return 0;
 }

@@ -94,10 +94,25 @@ struct gursoy_shortest
       NodeDistanceMap node_distance,  UpdatePosition& update_position,
       EdgeWeightMap weight)
   {
-    boost::dijkstra_shortest_paths(g, s, weight_map(weight).
-      visitor(boost::make_dijkstra_visitor(std::make_pair(
-       boost::record_distances(node_distance, boost::on_edge_relaxed()),
-        update_position))));
+    boost::dijkstra_shortest_paths(
+      g,
+      s,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_weight_map = weight,
+      boost::graph::keywords::_visitor =
+#else
+      boost::weight_map(weight).visitor(
+#endif
+        boost::make_dijkstra_visitor(
+          std::make_pair(
+            boost::record_distances(node_distance, boost::on_edge_relaxed()),
+            update_position
+          )
+        )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      )
+#endif
+    );
   }
 };
 
@@ -110,10 +125,24 @@ struct gursoy_shortest<dummy_property_map>
       NodeDistanceMap node_distance,  UpdatePosition& update_position,
       dummy_property_map)
   {
-    boost::breadth_first_search(g, s,
-      visitor(boost::make_bfs_visitor(std::make_pair(
-        boost::record_distances(node_distance, boost::on_tree_edge()),
-        update_position))));
+    boost::breadth_first_search(
+      g,
+      s,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+      boost::graph::keywords::_visitor =
+#endif
+        boost::make_bfs_visitor(
+          std::make_pair(
+            boost::record_distances(node_distance, boost::on_tree_edge()),
+            update_position
+          )
+        )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      )
+#endif
+    );
   }
 };
 
@@ -352,7 +381,112 @@ gursoy_atun_layout(const VertexListAndIncidenceGraph& graph,
                      choose_param(get_param(params, edge_weight), 
                                   dummy_property_map()));
 }
-
 } // namespace boost
 
-#endif // BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+
+namespace boost {
+
+template <
+    typename Graph, typename Topology, typename PositionMap, typename Args
+>
+void
+gursoy_atun_layout(
+    const Graph& graph,
+    const Topology& space,
+    PositionMap position,
+    const Args& args,
+    typename boost::enable_if<
+        parameter::is_argument_pack<Args>,
+        mpl::true_
+    >::type = mpl::true_()
+)
+{
+#if !defined(BOOST_NO_STDC_NAMESPACE)
+    using std::sqrt;
+#endif
+    std::pair<double, double> default_diam_range(
+        sqrt(static_cast<double>(num_vertices(graph))),
+        1.0
+    );
+    typename parameter::binding<
+        Args,
+        boost::graph::keywords::tag::diameter_range,
+        std::pair<double, double>&
+    >::type diam_range = args[
+        boost::graph::keywords::_diameter_range |
+        default_diam_range
+    ];
+    std::pair<double, double> default_learn_range(0.8, 0.2);
+    typename parameter::binding<
+        Args,
+        boost::graph::keywords::tag::learning_constant_range,
+        std::pair<double, double>&
+    >::type learn_range = args[
+        boost::graph::keywords::_learning_constant_range |
+        default_learn_range
+    ];
+    gursoy_atun_layout(
+        graph,
+        space,
+        position,
+        args[boost::graph::keywords::_iterations | num_vertices(graph)],
+        diam_range.first,
+        diam_range.second,
+        learn_range.first,
+        learn_range.second,
+        args[
+            boost::graph::keywords::_vertex_index_map |
+            detail::vertex_or_dummy_property_map(graph, vertex_index)
+        ],
+        args[
+            boost::graph::keywords::_weight_map |
+            detail::edge_or_dummy_property_map(graph, edge_weight)
+        ]
+    );
+}
+} // end namespace boost
+
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+    template < \
+        typename Graph, typename Topology, typename PositionMap, typename TA \
+        BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA) \
+    > \
+    inline void name( \
+        const Graph& graph, const Topology& space, PositionMap position, \
+        const TA& ta \
+        BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+        typename boost::enable_if< \
+            parameter::are_tagged_arguments< \
+                TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+            >, mpl::true_ \
+        >::type = mpl::true_() \
+    ) \
+    { \
+        name( \
+            graph, space, position, \
+            parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta)) \
+        ); \
+    }
+
+namespace boost {
+
+BOOST_PP_REPEAT_FROM_TO(
+    1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, gursoy_atun_layout
+)
+} // end namespace boost
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+#endif  // BOOST_GRAPH_GURSOY_ATUN_LAYOUT_HPP

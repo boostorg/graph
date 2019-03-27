@@ -38,8 +38,7 @@ main()
 
   std::deque < int >topo_order;
 
-  topological_sort(g, std::front_inserter(topo_order),
-                   vertex_index_map(identity_property_map()));
+  topological_sort(g, std::front_inserter(topo_order));
 
   int n = 1;
   for (std::deque < int >::iterator i = topo_order.begin();

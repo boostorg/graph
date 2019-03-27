@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <fstream>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -223,7 +223,7 @@ long test_overloads(int n_verts, int n_edges, std::size_t seed){
                                get(vertex_index,g),
                                src, sink);
 
-  BOOST_CHECK(flow_overload_1 == flow_overload_2);
+  BOOST_TEST(flow_overload_1 == flow_overload_2);
   return flow_overload_1;
 }
 
@@ -277,16 +277,16 @@ class boykov_kolmogorov_test
               const tVertex& other_node = target(*ei, tSuper::m_g);
               if(this->get_tree(other_node) != this->get_tree(v)){
                 if(this->get_tree(v) == tColorTraits::black())
-                  BOOST_CHECK(tSuper::m_res_cap_map[*ei] == 0);
+                  BOOST_TEST(tSuper::m_res_cap_map[*ei] == 0);
                 else
-                  BOOST_CHECK(tSuper::m_res_cap_map[tSuper::m_rev_edge_map[*ei]] == 0);
+                  BOOST_TEST(tSuper::m_res_cap_map[tSuper::m_rev_edge_map[*ei]] == 0);
               }
              }
           }
         }
 
         void invariant_five(const tVertex& v) const{
-          BOOST_CHECK(this->get_tree(v) != tColorTraits::gray() || tSuper::m_time_map[v] <= tSuper::m_time);
+          BOOST_TEST(this->get_tree(v) != tColorTraits::gray() || tSuper::m_time_map[v] <= tSuper::m_time);
         }
 
         void invariant_six(const tVertex& v) const{
@@ -298,14 +298,14 @@ class boykov_kolmogorov_test
             tColorValue color = this->get_tree(v);
             tVertex terminal = (color == tColorTraits::black()) ? tSuper::m_source : tSuper::m_sink;
             while(current_node != terminal){
-              BOOST_CHECK(tSuper::has_parent(current_node));
+              BOOST_TEST(tSuper::has_parent(current_node));
               tEdge e = this->get_edge_to_parent(current_node);
               ++distance;
               current_node = (color == tColorTraits::black())? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(distance > tSuper::m_dist_map[v])
                 break;
             }
-            BOOST_CHECK(distance == tSuper::m_dist_map[v]);
+            BOOST_TEST(distance == tSuper::m_dist_map[v]);
           }
         }
 
@@ -319,7 +319,7 @@ class boykov_kolmogorov_test
             while(tSuper::has_parent(current_node)){
               tEdge e = this->get_edge_to_parent(current_node);
               current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
-              BOOST_CHECK(tSuper::m_time_map[current_node] >= time);
+              BOOST_TEST(tSuper::m_time_map[current_node] >= time);
             }
           }
         }//invariant_seven
@@ -336,7 +336,7 @@ class boykov_kolmogorov_test
               tEdge e = this->get_edge_to_parent(current_node);
               current_node = (color == tColorTraits::black()) ? source(e, tSuper::m_g) : target(e, tSuper::m_g);
               if(tSuper::m_time_map[current_node] == time)
-                BOOST_CHECK(tSuper::m_dist_map[current_node] < distance);
+                BOOST_TEST(tSuper::m_dist_map[current_node] < distance);
             }
           }
         }//invariant_eight
@@ -379,14 +379,14 @@ class boykov_kolmogorov_test
           for(boost::tie(ei, e_end) = out_edges(this->m_source, this->m_g); ei != e_end; ++ei){
             src_sum += this->m_cap_map[*ei] - this->m_res_cap_map[*ei];
           }
-          BOOST_CHECK(this->m_flow == src_sum);
+          BOOST_TEST(this->m_flow == src_sum);
           //check if flow is the sum of ingoing edges of sink
           tEdgeVal sink_sum = 0;
           for(boost::tie(ei, e_end) = out_edges(this->m_sink, this->m_g); ei != e_end; ++ei){
             tEdge in_edge = this->m_rev_edge_map[*ei];
             sink_sum += this->m_cap_map[in_edge] - this->m_res_cap_map[in_edge];
           }
-          BOOST_CHECK(this->m_flow == sink_sum);
+          BOOST_TEST(this->m_flow == sink_sum);
           return this->m_flow;
         }
 };
@@ -423,7 +423,7 @@ long test_algorithms_invariant(int n_verts, int n_edges, std::size_t seed)
   return instance.test();
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   int n_verts = 10;
   int n_edges = 500;
@@ -446,20 +446,20 @@ int test_main(int argc, char* argv[])
   //checks support of listS storage (especially problems with vertex indices)
   long flow_listS = test_adjacency_list_listS(n_verts, n_edges, seed);
   std::cout << "listS flow: " << flow_listS << std::endl;
-  BOOST_CHECK(flow_vecS == flow_listS);
+  BOOST_TEST(flow_vecS == flow_listS);
   //checks bundled properties
   long flow_bundles = test_bundled_properties(n_verts, n_edges, seed);
   std::cout << "bundles flow: " << flow_bundles << std::endl;
-  BOOST_CHECK(flow_listS == flow_bundles);
+  BOOST_TEST(flow_listS == flow_bundles);
   //checks overloads
   long flow_overloads = test_overloads(n_verts, n_edges, seed);
   std::cout << "overloads flow: " << flow_overloads << std::endl;
-  BOOST_CHECK(flow_bundles == flow_overloads);
+  BOOST_TEST(flow_bundles == flow_overloads);
 
   // excessive test version where Boykov-Kolmogorov's algorithm invariants are
   // checked
   long flow_invariants = test_algorithms_invariant(n_verts, n_edges, seed);
   std::cout << "invariants flow: " << flow_invariants << std::endl;
-  BOOST_CHECK(flow_overloads == flow_invariants);
-  return 0;
+  BOOST_TEST(flow_overloads == flow_invariants);
+  return boost::report_errors();
 }

@@ -119,11 +119,22 @@ int main(int, char*[])
 #endif
 
   cout << "*** Depth First ***" << endl;
-  depth_first_search
-    (G, 
-     visitor(make_dfs_visitor(boost::make_list(city_arrival(names),
-                                               neighbor_cities(names),
-                                               finish_city(names)))));
+  depth_first_search(
+    G,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#endif
+    make_dfs_visitor(
+      boost::make_list(
+        city_arrival(names),
+        neighbor_cities(names),
+        finish_city(names)
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
   cout << endl;
 
   /* Get the source vertex */
@@ -131,10 +142,25 @@ int main(int, char*[])
     s = vertex(SanJose,G);
 
   cout << "*** Breadth First ***" << endl;
-  breadth_first_search
-    (G, s, visitor(make_bfs_visitor(boost::make_list(city_arrival(names), 
-                                                     neighbor_cities(names), 
-                                                     finish_city(names)))));
-  
+  breadth_first_search(
+    G,
+    s,
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+    boost::graph::keywords::_visitor =
+#endif
+    make_bfs_visitor(
+      boost::make_list(
+        city_arrival(names),
+        neighbor_cities(names),
+        finish_city(names)
+      )
+    )
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    )
+#endif
+  );
+
   return 0;
 }

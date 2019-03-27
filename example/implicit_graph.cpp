@@ -90,6 +90,19 @@ struct edge_weight_map;
 
 // ReadablePropertyGraph associated types
 namespace boost {
+
+  template<>
+  struct property_map< ring_graph, vertex_index_t > {
+    typedef typed_identity_property_map<std::size_t> type;
+    typedef typed_identity_property_map<std::size_t> const_type;
+  };
+
+  template<>
+  struct property_map< const ring_graph, vertex_index_t > {
+    typedef typed_identity_property_map<std::size_t> type;
+    typedef typed_identity_property_map<std::size_t> const_type;
+  };
+
   template<>
   struct property_map< ring_graph, edge_weight_t > {
     typedef edge_weight_map type;
@@ -149,7 +162,7 @@ public:
 
   // This type is not part of a graph concept, but is used to return the
   // default vertex index map used by the Dijkstra search algorithm.
-  typedef vertex_descriptor vertex_property_type;
+  typedef std::size_t vertex_property_type;
 
   ring_graph(std::size_t n):m_n(n) {};
   std::size_t n() const {return m_n;}
@@ -414,11 +427,15 @@ typedef boost::property_traits<const_edge_weight_map>::key_type
         edge_weight_map_key;
 
 // PropertyMap valid expressions
+boost::typed_identity_property_map<std::size_t>
+get(boost::vertex_index_t, ring_graph&) {
+    return boost::typed_identity_property_map<std::size_t>();
+}
+
 edge_weight_map_value_type
 get(const_edge_weight_map pmap, edge_weight_map_key e) {
   return pmap[e];
 }
-
 
 // ReadablePropertyGraph valid expressions
 const_edge_weight_map get(boost::edge_weight_t, const ring_graph&) {
@@ -434,10 +451,11 @@ edge_weight_map_value_type get(boost::edge_weight_t tag,
 
 // This expression is not part of a graph concept, but is used to return the
 // default vertex index map used by the Dijkstra search algorithm.
-boost::identity_property_map get(boost::vertex_index_t, const ring_graph&) {
+boost::typed_identity_property_map<std::size_t>
+get(boost::vertex_index_t, const ring_graph&) {
   // The vertex descriptors are already unsigned integer indices, so just
   // return an identity map.
-  return boost::identity_property_map();
+  return boost::typed_identity_property_map<std::size_t>();
 }
 
 // Print edges as (x, y)
@@ -534,9 +552,16 @@ int main (int argc, char const *argv[]) {
                           property_map<ring_graph, vertex_index_t>::const_type>
       dist_pm(dist.begin(), get(vertex_index, g));
 
-    dijkstra_shortest_paths(g, source,
-                            predecessor_map(pred_pm).
-                            distance_map(dist_pm) );
+    dijkstra_shortest_paths(
+      g,
+      source,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_predecessor_map = pred_pm,
+      boost::graph::keywords::_distance_map = dist_pm
+#else
+      predecessor_map(pred_pm).distance_map(dist_pm) 
+#endif
+    );
 
     std::cout << "Dijkstra search from vertex " << source << std::endl;
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {

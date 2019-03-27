@@ -14,7 +14,7 @@
 #include <boost/assign/std/vector.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/compressed_pair.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/two_graphs_common_spanning_trees.hpp>
 #include <vector>
 
@@ -78,7 +78,7 @@ public:
     {
       Seq& coll_seq = *iterator;
 
-      BOOST_REQUIRE(coll_seq.size() == seq.size());
+      BOOST_TEST(coll_seq.size() == seq.size());
 
       found = true;
       for(typename Seq::size_type pos = 0; found && pos < seq.size(); ++pos) {
@@ -86,7 +86,7 @@ public:
       }
     }
 
-    BOOST_REQUIRE(found);
+    BOOST_TEST(found);
   }
 };
 
@@ -141,8 +141,8 @@ void two_graphs_common_spanning_trees_test()
 }
 
 
-int test_main ( int argc, char** argv )
+int main ( int argc, char** argv )
 {
   boost::two_graphs_common_spanning_trees_test();
-  return EXIT_SUCCESS;
+  return boost::report_errors();
 }

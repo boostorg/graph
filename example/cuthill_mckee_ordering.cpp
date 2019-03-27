@@ -9,6 +9,7 @@
 //=======================================================================
 
 #include <boost/config.hpp>
+#include <cstddef>
 #include <vector>
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
@@ -35,7 +36,7 @@ int main(int , char* [])
   using namespace std;
   typedef adjacency_list<vecS, vecS, undirectedS, 
      property<vertex_color_t, default_color_type,
-       property<vertex_degree_t,int> > > Graph;
+       property<vertex_degree_t,std::size_t> > > Graph;
   typedef graph_traits<Graph>::vertex_descriptor Vertex;
   typedef graph_traits<Graph>::vertices_size_type size_type;
 
@@ -56,7 +57,7 @@ int main(int , char* [])
                      Pair(6,7) }; //g-h 
   
   Graph G(10);
-  for (int i = 0; i < 14; ++i)
+  for (std::size_t i = 0; i < 14; ++i)
     add_edge(edges[i].first, edges[i].second, G);
 
   graph_traits<Graph>::vertex_iterator ui, ui_end;
@@ -87,7 +88,7 @@ int main(int , char* [])
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
     std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
               << std::endl;
   }
   {
@@ -105,7 +106,7 @@ int main(int , char* [])
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
     std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
               << std::endl;
   }
 
@@ -124,7 +125,7 @@ int main(int , char* [])
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
     std::cout << "  bandwidth: " 
-              << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
+              << bandwidth(G, make_iterator_property_map(perm.begin(), index_map, perm[0]))
               << std::endl;
   }
   return 0;

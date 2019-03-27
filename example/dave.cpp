@@ -220,18 +220,33 @@ main(int , char* [])
 
   parent[vertex(a, G)] = vertex(a, G);
   boost::dijkstra_shortest_paths
-    (G, vertex(a, G), 
+    (G, vertex(a, G),
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     boost::graph::keywords::_distance_map =
+     make_iterator_property_map(distance.begin(), vertex_id, distance[0]),
+     boost::graph::keywords::_predecessor_map =
+     make_iterator_property_map(parent.begin(), vertex_id, parent[0]),
+     boost::graph::keywords::_visitor =
+     make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))
+#else
      distance_map(make_iterator_property_map(distance.begin(), vertex_id, 
                                              distance[0])).
      predecessor_map(make_iterator_property_map(parent.begin(), vertex_id,
                                                 parent[0])).
-     visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge()))));
+     visitor(make_dijkstra_visitor(copy_graph(G_copy, on_examine_edge())))
+#endif
+    );
 
   cout << endl;
   cout << "Result:" << endl;
   boost::breadth_first_search
-    (G, vertex(a, G), 
-     visitor(make_bfs_visitor(
+    (G, vertex(a, G),
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     visitor(
+#elif !defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+     boost::graph::keywords::_visitor =
+#endif
+     make_bfs_visitor(
      boost::make_list
      (write_property(make_iterator_property_map(name, vertex_id,
                                                 name[0]),
@@ -243,7 +258,11 @@ main(int , char* [])
       print_edge(make_iterator_property_map(name, vertex_id, 
                                             name[0]),
                  std::cout, on_examine_edge()),
-      print_endl(std::cout, on_finish_vertex())))));
+      print_endl(std::cout, on_finish_vertex())))
+#if !defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      )
+#endif
+    );
 
   return 0;
 }

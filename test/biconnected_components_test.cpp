@@ -8,7 +8,7 @@
 //           Andrew Lumsdaine
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
 #include <iterator>
@@ -26,10 +26,8 @@ struct EdgeProperty
   std::size_t component;
 };
 
-static bool any_errors = false;
-
 template<typename Graph, typename Vertex>
-void 
+bool 
 check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
 {
   std::vector<int> components(num_vertices(g));
@@ -62,7 +60,7 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   std::sort(art_points.begin(), art_points.end());
   std::sort(art_points_check.begin(), art_points_check.end());
 
-  BOOST_CHECK(art_points == art_points_check);
+  BOOST_TEST(art_points == art_points_check);
   if (art_points != art_points_check) {
     std::cerr << "ERROR!" << std::endl;
     std::cerr << "\tComputed: ";
@@ -73,8 +71,8 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
     for (i = 0; i < art_points_check.size(); ++i)
       std::cout << art_points_check[i] << ' ';
     std::cout << std::endl;
-    any_errors = true;
-  } else std::cout << "OK." << std::endl;
+    return true;
+  } else { std::cout << "OK." << std::endl; return false; }
 }
 
 typedef adjacency_list<listS, vecS, undirectedS,
@@ -97,9 +95,7 @@ bool test_graph(Graph& g) { // Returns false on failure
             << "\tTesting articulation points...";
   std::cout.flush();
 
-  check_articulation_points(g, art_points);
-
-  if (any_errors) {
+  if (check_articulation_points(g, art_points)) {
     std::ofstream out("biconnected_components_test_failed.dot");
 
     out << "graph A {\n" << "  node[shape=\"circle\"]\n";
@@ -113,26 +109,27 @@ bool test_graph(Graph& g) { // Returns false on failure
       out << source(*ei, g) << " -- " << target(*ei, g)
           << "[label=\"" << g[*ei].component << "\"]\n";
     out << "}\n";
+    return false;
   }
 
-  return any_errors;
+  return true;
 }
   
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   std::size_t n = 100;
   std::size_t m = 500;
-  std::size_t seed = 1;
+  unsigned int seed = 1;
 
   if (argc > 1) n = lexical_cast<std::size_t>(argv[1]);
   if (argc > 2) m = lexical_cast<std::size_t>(argv[2]);
-  if (argc > 3) seed = lexical_cast<std::size_t>(argv[3]);
+  if (argc > 3) seed = lexical_cast<unsigned int>(argv[3]);
 
   {
     Graph g(n);
     minstd_rand gen(seed);
     generate_random_graph(g, n, m, gen);
-    if (test_graph(g)) return 1;
+    if (!test_graph(g)) return boost::report_errors();
   }
 
   {
@@ -141,8 +138,8 @@ int test_main(int argc, char* argv[])
     add_edge(0, 3, g);
     add_edge(0, 2, g);
     add_edge(1, 0, g);
-    if (test_graph(g)) return 1;
+    if (!test_graph(g)) return boost::report_errors();
   }
 
-  return 0;
+  return boost::report_errors();
 }

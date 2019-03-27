@@ -36,6 +36,19 @@
 #include <boost/graph/relax.hpp>
 #include <boost/concept/assert.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/graph/detail/traits.hpp>
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 namespace boost
 {
   namespace detail {
@@ -79,7 +92,17 @@ namespace boost
   template <typename VertexListGraph, typename DistanceMatrix, 
     typename BinaryPredicate, typename BinaryFunction,
     typename Infinity, typename Zero>
-  bool floyd_warshall_initialized_all_pairs_shortest_paths(
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      BinaryPredicate, BinaryFunction, Infinity, Zero
+    >,
+#endif
+    bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  >::type
+#endif
+  floyd_warshall_initialized_all_pairs_shortest_paths(
     const VertexListGraph& g, DistanceMatrix& d, 
     const BinaryPredicate& compare, 
     const BinaryFunction& combine, const Infinity& inf, 
@@ -90,13 +113,21 @@ namespace boost
     return detail::floyd_warshall_dispatch(g, d, compare, combine, 
     inf, zero);
   }
-  
 
-  
   template <typename VertexAndEdgeListGraph, typename DistanceMatrix, 
     typename WeightMap, typename BinaryPredicate, 
     typename BinaryFunction, typename Infinity, typename Zero>
-  bool floyd_warshall_all_pairs_shortest_paths(
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  typename boost::disable_if<
+    parameter::are_tagged_arguments<
+      WeightMap, BinaryPredicate, BinaryFunction, Infinity, Zero
+    >,
+#endif
+    bool
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  >::type
+#endif
+  floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph& g, 
     DistanceMatrix& d, const WeightMap& w, 
     const BinaryPredicate& compare, const BinaryFunction& combine, 
@@ -154,7 +185,63 @@ namespace boost
     return detail::floyd_warshall_dispatch(g, d, compare, combine, 
       inf, zero);
   }
-  
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename VertexAndEdgeListGraph, typename DistanceMatrix,
+            typename Args>
+  inline typename boost::enable_if<
+    parameter::is_argument_pack<Args>, bool
+  >::type
+  floyd_warshall_initialized_all_pairs_shortest_paths(
+    const VertexAndEdgeListGraph& g1, 
+    DistanceMatrix& D, const Args& args)
+  {
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        VertexAndEdgeListGraph
+    >::type weight_map_type;
+    typedef typename property_traits<weight_map_type>::value_type WT;
+    return floyd_warshall_initialized_all_pairs_shortest_paths(
+      g1,
+      D,
+      args[_distance_compare | std::less<WT>()],
+      args[_distance_combine | closed_plus<WT>()],
+      args[_distance_inf || detail::get_max<WT>()],
+      args[_distance_zero | WT()]
+    );
+  }
+
+  template <typename VertexAndEdgeListGraph, typename DistanceMatrix,
+            typename Args>
+  inline typename boost::enable_if<
+    parameter::is_argument_pack<Args>, bool
+  >::type
+  floyd_warshall_all_pairs_shortest_paths(
+    const VertexAndEdgeListGraph& g1, 
+    DistanceMatrix& D, const Args& args)
+  {
+    using namespace boost::graph::keywords;
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        VertexAndEdgeListGraph
+    >::type weight_map_type;
+    typedef typename property_traits<weight_map_type>::value_type WT;
+    return floyd_warshall_all_pairs_shortest_paths(
+      g1,
+      D,
+      args[_weight_map | detail::edge_or_dummy_property_map(g1, edge_weight)],
+      args[_distance_compare | std::less<WT>()],
+      args[_distance_combine | closed_plus<WT>()],
+      args[_distance_inf || detail::get_max<WT>()],
+      args[_distance_zero | WT()]
+    );
+  }
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
 
   namespace detail {        
     template <class VertexListGraph, class DistanceMatrix, 
@@ -225,10 +312,7 @@ namespace boost
     return detail::floyd_warshall_init_dispatch(g, d,
       get(edge_weight, g), params);
   }
-  
 
-  
-  
   template <class VertexAndEdgeListGraph, class DistanceMatrix, 
     class P, class T, class R>
   bool floyd_warshall_all_pairs_shortest_paths(
@@ -239,7 +323,7 @@ namespace boost
       choose_const_pmap(get_param(params, edge_weight), g, edge_weight), 
       params);
   }
-  
+
   template <class VertexAndEdgeListGraph, class DistanceMatrix>
   bool floyd_warshall_all_pairs_shortest_paths(
     const VertexAndEdgeListGraph& g, DistanceMatrix& d)
@@ -248,7 +332,34 @@ namespace boost
     return detail::floyd_warshall_noninit_dispatch(g, d,
       get(edge_weight, g), params);
   }
-  
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename DistanceMatrix, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline typename boost::enable_if< \
+    parameter::are_tagged_arguments< \
+      TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+    >, bool \
+  >::type name( \
+    const Graph& g, DistanceMatrix& d, const TA& ta \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta) \
+  ) \
+  { \
+    return name(g, d, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(
+  1, 5, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+  floyd_warshall_initialized_all_pairs_shortest_paths
+)
+BOOST_PP_REPEAT_FROM_TO(
+  1, 6, BOOST_GRAPH_PP_FUNCTION_OVERLOAD,
+  floyd_warshall_all_pairs_shortest_paths
+)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif
 
 } // namespace boost
 

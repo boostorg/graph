@@ -18,19 +18,27 @@
 namespace boost {
 
   // Initalize distances and call depth first search
-  template <class VertexListGraph, class DijkstraVisitor, 
-            class DistanceMap, class WeightMap, class ColorMap, 
-            class PredecessorMap,
-            class Compare, class Combine, 
+  template <class VertexListGraph, class DijkstraVisitor,
+            class DistanceMap, class WeightMap, class ColorMap,
+            class PredecessorMap, class Compare, class Combine,
             class DistInf, class DistZero>
   inline void
   dag_shortest_paths
     (const VertexListGraph& g,
-     typename graph_traits<VertexListGraph>::vertex_descriptor s, 
+     typename graph_traits<VertexListGraph>::vertex_descriptor s,
      DistanceMap distance, WeightMap weight, ColorMap color,
-     PredecessorMap pred,
-     DijkstraVisitor vis, Compare compare, Combine combine, 
-     DistInf inf, DistZero zero)
+     PredecessorMap pred, DijkstraVisitor vis, Compare compare,
+     Combine combine, DistInf inf, DistZero zero
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+     , typename boost::disable_if<
+       parameter::are_tagged_arguments<
+         DistanceMap, ColorMap, WeightMap, PredecessorMap,
+         DijkstraVisitor, Compare, Combine, DistInf, DistZero
+       >,
+       mpl::true_
+     >::type = mpl::true_()
+#endif
+     )
   {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor Vertex;
     std::vector<Vertex> rev_topo_order;
@@ -153,7 +161,113 @@ namespace boost {
                     make_dijkstra_visitor(null_vis)),
        params);
   }
-  
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Args>
+  inline void dag_shortest_paths
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s,
+     const Args& arg_pack, typename boost::enable_if<
+       parameter::is_argument_pack<Args>, mpl::true_
+     >::type = mpl::true_())
+  {
+    using namespace boost::graph::keywords;
+    typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::vertex_index_map,
+        vertex_index_t,
+        Graph
+    >::type v_i_map = detail::override_const_property(
+        arg_pack,
+        _vertex_index_map,
+        g,
+        vertex_index
+    );
+    typedef typename boost::detail::override_const_property_result<
+        Args,
+        boost::graph::keywords::tag::weight_map,
+        edge_weight_t,
+        Graph
+    >::type weight_map_type;
+    typedef typename boost::property_traits<weight_map_type>::value_type D;
+    const D inf = arg_pack[_distance_inf || detail::get_max<D>()];
+    const D zero_actual = D();
+    const D zero_d = arg_pack[_distance_zero | zero_actual];
+    null_visitor null_vis;
+    dijkstra_visitor<null_visitor> default_visitor(null_vis);
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::visitor,
+        dijkstra_visitor<null_visitor>&
+    >::type vis = arg_pack[_visitor | default_visitor];
+    dummy_property_map dummy_prop;
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::predecessor_map,
+        dummy_property_map&
+    >::type pred_map = arg_pack[_predecessor_map | dummy_prop];
+    boost::detail::make_property_map_from_arg_pack_gen<
+        boost::graph::keywords::tag::distance_map,
+        D
+    > dist_map_gen(zero_actual);
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::distance_map,
+        D
+    >::map_type dist_map = dist_map_gen(g, arg_pack);
+    weight_map_type w_map = detail::override_const_property(
+        arg_pack,
+        _weight_map,
+        g,
+        edge_weight
+    );
+    std::less<D> default_compare;
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::distance_compare,
+        std::less<D>&
+    >::type dist_comp = arg_pack[_distance_compare | default_compare];
+    closed_plus<D> default_combine(inf);
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::distance_combine,
+        closed_plus<D>&
+    >::type dist_comb = arg_pack[_distance_combine | default_combine];
+    dag_shortest_paths(
+      g,
+      s,
+      dist_map,
+      w_map,
+      arg_pack[_color_map | make_two_bit_color_map(num_vertices(g), v_i_map)],
+      pred_map,
+      vis,
+      dist_comp,
+      dist_comb,
+      inf,
+      zero_d
+    );
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph &g, typename graph_traits<Graph>::vertex_descriptor s, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, s, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 11, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, dag_shortest_paths)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_DAG_SHORTEST_PATHS_HPP

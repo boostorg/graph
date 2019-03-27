@@ -45,10 +45,17 @@ main()
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
   property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);  
   std::vector<std::size_t> distance(num_vertices(g));
-  prim_minimum_spanning_tree(g, *vertices(g).first, &parent[0], &distance[0],
-                             weight, indexmap, default_dijkstra_visitor());
+  prim_minimum_spanning_tree(
+    g, *vertices(g).first,
+    make_iterator_property_map(parent.begin(), indexmap),
+    make_iterator_property_map(distance.begin(), indexmap),
+    weight, indexmap, default_dijkstra_visitor()
+  );
 #else
-  prim_minimum_spanning_tree(g, &parent[0]);
+  prim_minimum_spanning_tree(
+    g,
+    make_iterator_property_map(parent.begin(), get(vertex_index, g))
+  );
 #endif
 
   int total_weight = 0;

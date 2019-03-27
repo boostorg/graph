@@ -12,8 +12,8 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/lookup_edge.hpp>
-#include <boost/test/minimal.hpp>
 #include <boost/graph/bipartite.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 /// Verifies a 2-coloring
 
@@ -28,7 +28,7 @@ void check_two_coloring (const Graph& g, const ColorMap color_map)
     typename traits::vertex_descriptor source, target;
     source = boost::source (*edge_iter, g);
     target = boost::target (*edge_iter, g);
-    BOOST_REQUIRE (boost::get(color_map, source) != boost::get(color_map, target));
+    BOOST_TEST (boost::get(color_map, source) != boost::get(color_map, target));
   }
 }
 
@@ -41,7 +41,7 @@ void check_odd_cycle (const Graph& g, RandomAccessIterator first, RandomAccessIt
 
   typename traits::vertex_descriptor first_vertex, current_vertex, last_vertex;
 
-  BOOST_CHECK ((beyond - first) % 2 == 1);
+  BOOST_TEST ((beyond - first) % 2 == 1);
 
   //  std::cout << "odd_cycle: " << int(*first) << std::endl;
 
@@ -52,10 +52,10 @@ void check_odd_cycle (const Graph& g, RandomAccessIterator first, RandomAccessIt
     last_vertex = current_vertex;
     current_vertex = *first;
 
-    BOOST_REQUIRE (boost::lookup_edge (current_vertex, last_vertex, g).second);
+    BOOST_TEST (boost::lookup_edge (current_vertex, last_vertex, g).second);
   }
 
-  BOOST_REQUIRE (boost::lookup_edge (first_vertex, current_vertex, g).second);
+  BOOST_TEST (boost::lookup_edge (first_vertex, current_vertex, g).second);
 }
 
 /// Call the is_bipartite and find_odd_cycle functions and verify their results.
@@ -75,19 +75,24 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
 
   bool first_result = boost::is_bipartite (g, index_map, partition_map);
 
-  BOOST_REQUIRE (first_result == boost::is_bipartite(g, index_map));
+  BOOST_TEST (first_result == boost::is_bipartite(g, index_map));
 
   if (first_result)
     check_two_coloring (g, partition_map);
 
-  BOOST_CHECK (first_result == is_bipartite);
+  BOOST_TEST (first_result == is_bipartite);
 
   typename vertex_vector_t::iterator second_first = odd_cycle.begin ();
-  typename vertex_vector_t::iterator second_beyond = boost::find_odd_cycle (g, index_map, partition_map, second_first);
+  typename vertex_vector_t::iterator second_beyond = boost::find_odd_cycle
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  (g, second_first, index_map, partition_map);
+#else
+  (g, index_map, partition_map, second_first);
+#endif
 
   if (is_bipartite)
   {
-    BOOST_CHECK (second_beyond == second_first);
+    BOOST_TEST (second_beyond == second_first);
     check_two_coloring (g, partition_map);
   }
   else
@@ -95,10 +100,15 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
     check_odd_cycle (g, second_first, second_beyond);
   }
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  second_beyond = boost::find_odd_cycle (g, second_first, index_map);
+#else
   second_beyond = boost::find_odd_cycle (g, index_map, second_first);
+#endif
+
   if (is_bipartite)
   {
-    BOOST_CHECK (second_beyond == second_first);
+    BOOST_TEST (second_beyond == second_first);
   }
   else
   {
@@ -106,7 +116,7 @@ void check_bipartite (const Graph& g, IndexMap index_map, bool is_bipartite)
   }
 }
 
-int test_main (int argc, char **argv)
+int main (int argc, char **argv)
 {
   typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> vector_graph_t;
   typedef boost::adjacency_list <boost::listS, boost::listS, boost::undirectedS> list_graph_t;
@@ -182,8 +192,8 @@ int test_main (int argc, char **argv)
 
   /// Test some more interfaces
 
-  BOOST_REQUIRE (is_bipartite (bipartite_vector_graph));
-  BOOST_REQUIRE (!is_bipartite (non_bipartite_vector_graph));
+  BOOST_TEST (is_bipartite (bipartite_vector_graph));
+  BOOST_TEST (!is_bipartite (non_bipartite_vector_graph));
 
-  return 0;
+  return boost::report_errors();
 }

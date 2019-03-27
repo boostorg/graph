@@ -22,6 +22,18 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/named_function_params.hpp>
 
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+#include <boost/parameter/are_tagged_arguments.hpp>
+#include <boost/parameter/is_argument_pack.hpp>
+#include <boost/parameter/compose.hpp>
+#include <boost/parameter/binding.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/core/enable_if.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#endif
+
 namespace boost {
 
   namespace detail {
@@ -116,6 +128,54 @@ namespace boost {
     >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
     random_spanning_tree(g, gen, start_vertex, pred_map, e_w_map, c_map);
   }
+
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  template <typename Graph, typename Gen, typename Args>
+  void random_spanning_tree(const Graph& g, Gen& gen, const Args& arg_pack,
+                            typename boost::enable_if<parameter::is_argument_pack<Args>, mpl::true_>::type = mpl::true_()) {
+    using namespace boost::graph::keywords;
+    typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+    vertex_descriptor default_vertex = *vertices(g).first;
+    vertex_descriptor start_vertex = arg_pack[_root_vertex | default_vertex];
+    typename boost::parameter::binding<
+        Args, 
+        boost::graph::keywords::tag::predecessor_map
+    >::type pred_map = arg_pack[_predecessor_map];
+    static_property_map<double> default_weight_map(1.);
+    typename boost::parameter::value_type<
+        Args, 
+        boost::graph::keywords::tag::weight_map,
+        static_property_map<double>
+    >::type e_w_map = arg_pack[_weight_map | default_weight_map];
+    typename boost::detail::map_maker<
+        Graph,
+        Args,
+        boost::graph::keywords::tag::color_map,
+        boost::default_color_type
+    >::map_type c_map = boost::detail::make_color_map_from_arg_pack(g, arg_pack);
+    random_spanning_tree(g, gen, start_vertex, pred_map, e_w_map, c_map);
+  }
+
+#define BOOST_GRAPH_PP_FUNCTION_OVERLOAD(z, n, name) \
+  template <typename Graph, typename Gen, typename TA \
+            BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, typename TA)> \
+  inline void name \
+    (const Graph& g, Gen& gen, \
+     const TA& ta BOOST_PP_ENUM_TRAILING_BINARY_PARAMS_Z(z, n, const TA, &ta), \
+     typename boost::enable_if< \
+       parameter::are_tagged_arguments< \
+         TA BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, TA) \
+       >, mpl::true_ \
+     >::type = mpl::true_()) \
+  { \
+    name(g, gen, parameter::compose(ta BOOST_PP_ENUM_TRAILING_PARAMS_Z(z, n, ta))); \
+  }
+
+BOOST_PP_REPEAT_FROM_TO(1, 4, BOOST_GRAPH_PP_FUNCTION_OVERLOAD, random_spanning_tree)
+
+#undef BOOST_GRAPH_PP_FUNCTION_OVERLOAD
+#endif  // BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS
+
 }
 
 #include <boost/graph/iteration_macros_undef.hpp>

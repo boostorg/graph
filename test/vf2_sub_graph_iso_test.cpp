@@ -247,8 +247,17 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
     callback(g1, g2, edge_comp, vertex_comp, output);
 
   std::cout << std::endl;
-  BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback, vertex_order_by_mult(g1),
-                               edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)));
+  bool b = vf2_subgraph_iso(
+    g1, g2, callback,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_edges_equivalent = edge_comp,
+    boost::graph::keywords::_vertices_equivalent = vertex_comp
+#else
+    vertex_order_by_mult(g1),
+    edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)
+#endif
+  );
+  BOOST_CHECK(b);
   BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback,
                                IndirectIndexMap<graph1>(g1),
                                IndirectIndexMap<graph2>(g2),
@@ -260,9 +269,18 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
 
   if (num_vertices(g1) == num_vertices(g2)) {
     std::cout << std::endl;
-    BOOST_CHECK(vf2_graph_iso(g1, g2, callback, vertex_order_by_mult(g1),
-                              edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)));
-    
+    bool b = vf2_graph_iso(
+      g1, g2, callback,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+      boost::graph::keywords::_edges_equivalent = edge_comp,
+      boost::graph::keywords::_vertices_equivalent = vertex_comp
+#else
+      vertex_order_by_mult(g1),
+      edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)
+#endif
+    );
+    BOOST_CHECK(b);
+
     std::clock_t end2 = std::clock();
     std::cout << "vf2_graph_iso: elapsed time (clock cycles): " << (end2 - end1) << std::endl;
   }

@@ -31,7 +31,7 @@ public:
 struct VertexProps {
   boost::default_color_type color;
   std::size_t discover_time;
-  unsigned int index;
+  std::size_t index;
 };
 
 int
@@ -71,14 +71,28 @@ main()
   typedef property_map<graph_t, std::size_t VertexProps::*>::type dtime_map_t;
   dtime_map_t dtime_map = get(&VertexProps::discover_time, g);
   bfs_time_visitor < dtime_map_t > vis(dtime_map, time);
-  breadth_first_search(g, vertex(s, g), color_map(get(&VertexProps::color, g)).
-    visitor(vis));
+#if defined(BOOST_GRAPH_CONFIG_CAN_DEDUCE_UNNAMED_ARGUMENTS)
+  breadth_first_search(g, vertex(s, g), get(&VertexProps::color, g), vis);
+#elif defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+  breadth_first_search(
+    g,
+    vertex(s, g),
+    boost::graph::keywords::_color_map = get(&VertexProps::color, g),
+    boost::graph::keywords::_visitor = vis
+  );
+#else
+  breadth_first_search(
+    g,
+    vertex(s, g),
+    boost::color_map(get(&VertexProps::color, g)).visitor(vis)
+  );
+#endif
 
   // a vector to hold the discover time property for each vertex
   std::vector < Size > dtime(num_vertices(g));
   typedef
     iterator_property_map<std::vector<Size>::iterator,
-                          property_map<graph_t, unsigned int VertexProps::*>::type>
+                          property_map<graph_t, std::size_t VertexProps::*>::type>
     dtime_pm_type;
   graph_traits<graph_t>::vertex_iterator vi, vi_end;
   std::size_t c = 0;

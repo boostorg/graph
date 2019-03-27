@@ -128,8 +128,14 @@ int main(int, char*[]) {
                         graph_writer());
 #endif
 
-  boost::gursoy_atun_layout(graph, space, position,
-                            weight_map(get(boost::edge_weight, graph)));
+  boost::gursoy_atun_layout(
+    graph, space, position,
+#if defined(BOOST_GRAPH_CONFIG_CAN_NAME_ARGUMENTS)
+    boost::graph::keywords::_weight_map = get(boost::edge_weight, graph)
+#else
+    weight_map(get(boost::edge_weight, graph))
+#endif
+  );
 
 #if 0
   std::cerr << "--------Weighted layout--------\n";
