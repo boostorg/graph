@@ -591,7 +591,8 @@ namespace boost
                 first_face_itr, second_face_itr, face_end;
               vertex_t first_side_vertex
                 = graph_traits<Graph>::null_vertex();
-              vertex_t second_side_vertex;
+              vertex_t second_side_vertex
+                 = graph_traits<Graph>::null_vertex();
               vertex_t first_tail, second_tail;
 
               first_tail = second_tail = curr_face_handle.get_anchor();

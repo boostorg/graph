@@ -10,6 +10,12 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <boost/config.hpp>
+
+#ifdef BOOST_MSVC
+// Without disabling this we get hard errors about initialialized pointers:
+#pragma warning(disable:4703)
+#endif
 
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
@@ -28,6 +34,7 @@
 #define EDGE_RELAXED 4
 #define EDGE_NOT_RELAXED 5
 #define FINISH_VERTEX 6
+
 
 template <typename Graph>
 void run_dijkstra_test(const Graph& graph)

@@ -234,7 +234,7 @@ Future Work
 
 .. _GraphViz: http://graphviz.org/
 .. _`Mutable Graph`: MutableGraph.html
-.. _`Input Iterator`: http://www.sgi.com/tech/stl/InputIterator.html
+.. _`Input Iterator`: http://www.boost.org/sgi/stl/InputIterator.html
 .. _dynamic_properties: ../../property_map/doc/dynamic_property_map.html
 .. _write_graphviz: write-graphviz.html
 .. _Boost Jam Build Instructions: ../../../more/getting_started.html#Build_Install

@@ -8,6 +8,13 @@
 //=======================================================================
 
 
+/*
+   IMPORTANT!!!
+   ~~~~~~~~~~~~
+   This example uses interfaces that have been deprecated and removed from Boost.Grpah.
+   Someone needs to update it, as it does NOT compile.
+*/
+
 #include <boost/config.hpp>
 #include <set>
 #include <iostream>
