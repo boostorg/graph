@@ -225,10 +225,11 @@ namespace boost
                               vertex_descriptor const,
                               forward_traversal_tag> super_t;
     public:
-      vertex_iterator(k_ary_tree const& g) : current(g.null_vertex()), g(&g) {}
+      vertex_iterator(k_ary_tree const& g)
+        : current(g.null_vertex()), last(g.null_vertex()), g(&g) {}
 
       vertex_iterator(vertex_descriptor start, k_ary_tree const& g)
-        : current(start), g(&g)
+        : current(start), last(g.null_vertex()), g(&g)
       {
         while (has_left_successor(current, g))
           current = (left_successor(current, g));
