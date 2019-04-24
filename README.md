@@ -1,6 +1,8 @@
 Boost Graph Library
 ===================
 
+[![Coverage Status](https://coveralls.io/repos/github/anadon/graph/badge.svg?branch=develop)](https://coveralls.io/github/anadon/graph?branch=develop)
+
 A generic interface for traversing graphs, using C++ templates.
 
 The full documentation is available on [boost.org](http://www.boost.org/doc/libs/release/libs/graph/doc/index.html).
