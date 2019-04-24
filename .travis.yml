@@ -29,10 +29,11 @@ env:
 addons:
   apt:
     sources: ubuntu-toolchain-r-test
-    packages: g++-4.8
+    packages: g++-4.9
 
 before_install:
   # Clone boost repository
+  - pip install --user cpp-coveralls
   - cd
   - mkdir $BOOST && cd $BOOST
   - git init .
@@ -61,5 +62,10 @@ before_install:
 
 # This part is meant for unit tests
 script:
+  - ./configure --enable-gcov && make && make check
   - cd $HOME/$BOOST/libs/graph/test
-  - ../../../b2 toolset=gcc-4.8 cxxflags=-std=c++11
+  - ../../../b2 toolset=gcc-4.9 cxxflags=-std=c++11
+
+after_success:
+  - GCOV=gcov
+  - coveralls --exclude lib --exclude tests --gcov-options '\-lp'

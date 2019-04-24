@@ -1,7 +1,14 @@
 Boost Graph Library
 ===================
 
-[![Coverage Status](https://coveralls.io/repos/github/anadon/graph/badge.svg?branch=develop)](https://coveralls.io/github/anadon/graph?branch=develop)
+
+Branch  | Linux and OSX | Coveralls | Codecov |
+------- | ------------- | --------- | ------- |
+develop | [![Build Status Travis](https://travis-ci.com/anadon/graph.svg?branch=develop)](https://travis-ci.com/anadon/graph?branch=develop) | [![Coverage Status](https://coveralls.io/repos/github/anadon/graph/badge.svg?branch=develop)](https://coveralls.io/github/anadon/graph?branch=develop) | N/A
+master  | [![Build Status Travis](https://travis-ci.com/anadon/graph.svg?branch=master)](https://travis-ci.com/anadon/graph?branch=master) | [![Coverage Status](https://coveralls.io/repos/github/anadon/graph/badge.svg?branch=master)](https://coveralls.io/github/anadon/graph?branch=master) | N/A
+
+
+
 
 A generic interface for traversing graphs, using C++ templates.
 
