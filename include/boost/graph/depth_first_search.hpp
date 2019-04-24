@@ -103,7 +103,7 @@ namespace boost {
     // The corresponding context shift back from the adjacent vertex occurs
     // after all of its out-edges have been examined.
     //
-    // See http://lists.boost.org/MailArchives/boost/msg48752.php for FAQ.
+    // See https://lists.boost.org/Archives/boost/2003/06/49265.php for FAQ.
 
     template <class IncidenceGraph, class DFSVisitor, class ColorMap,
             class TerminatorFunc>
