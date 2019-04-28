@@ -10,13 +10,40 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/random.hpp>
-#include <boost/graph/graph_test.hpp>
+#include "graph_test.hpp"
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/random/mersenne_twister.hpp>
 
 #include "test_graph.hpp"
 
 // UNDER CONSTRUCTION
+
+
+// This is a helper function to recusively compare two subgraphs,
+// including the index for every local edges and their children.
+template<typename subgraph_t>
+void sub_cmp(subgraph_t const &g1, subgraph_t const &g2)
+{
+    BOOST_CHECK(g1.is_root() == g2.is_root());
+    BOOST_CHECK(num_vertices(g1) == num_vertices(g2));
+    BOOST_CHECK(num_edges(g1) == num_edges(g2));
+    typename subgraph_t::edge_iterator e1_i, e1_i_end, e2_i, e2_i_end;
+    boost::tie(e1_i, e1_i_end) = edges(g1);
+    boost::tie(e2_i, e2_i_end) = edges(g2);
+    for(; e1_i != e1_i_end; ++e1_i, ++e2_i)
+    {
+        BOOST_CHECK(get(boost::edge_index, g1, *e1_i)
+                    == get(boost::edge_index, g2, *e2_i));
+    }
+    typename subgraph_t::const_children_iterator g1_i, g1_i_end, g2_i, g2_i_end;
+    boost::tie(g1_i, g1_i_end) = g1.children();
+    boost::tie(g2_i, g2_i_end) = g2.children();
+    for(; g1_i != g1_i_end && g2_i != g2_i_end; ++g1_i, ++g2_i)
+    {
+        sub_cmp(*g1_i, *g2_i);
+    }
+    BOOST_CHECK(g1_i == g1_i_end && g2_i == g2_i_end);
+}
 
 int test_main(int, char*[])
 {
@@ -108,6 +135,56 @@ int test_main(int, char*[])
             // This used to segfault.
             get(edge_weight, sub, *ei);
         }
+    }
+
+    // This block generates a complete graph with 8 vertices,
+    // and puts the first and last four of the vertices into two children.
+    // Do these again to the children, so there are 4 grandchildren with 2 vertices for each.
+    // Use the copy constructor to generate a copy and compare with the original one.
+    {
+        subgraph_t g1;
+
+        for(size_t i = 0; i < 8; i ++)
+        {
+            add_vertex(g1);
+        }
+        subgraph_t::vertex_iterator vi_start, vi, vi_end, vj_start, vj, vj_end;
+        for(tie(vi, vi_end) = vertices(g1); vi != vi_end; ++vi)
+        {
+            for(tie(vj, vj_end) = vertices(g1); vj != vj_end; ++vj)
+            {
+                if(*vi != *vj)
+                {
+                    add_edge(*vi, *vj, g1);
+                }
+            }
+        }
+        tie(vi_start, vi_end) = vertices(g1);
+        vi = vi_start;
+        for(size_t i = 0; i < 4; i++)
+        {
+            ++vi;
+        }
+        g1.create_subgraph(vi_start, vi);
+        g1.create_subgraph(++vi, vi_end);
+        subgraph_t::children_iterator gi1, gi2;
+        gi2 = g1.children().first;
+        gi1 = gi2++;
+        tie(vi_start, vi_end) = vertices(*gi1);
+        vi = vi_start;
+        tie(vj_start, vj_end) = vertices(*gi2);
+        vj = vj_start;
+        for(size_t i = 0; i < 2; i++)
+        {
+          ++vi;
+          ++vj;
+        }
+        (*gi1).create_subgraph(vi_start, vi);
+        (*gi1).create_subgraph(++vi, vi_end);
+        (*gi2).create_subgraph(vj_start, vj);
+        (*gi2).create_subgraph(++vj, vj_end);
+        subgraph_t g2(g1);
+        sub_cmp(g1, g2);
     }
 
     // Bootstrap the test_graph framework.

@@ -5,11 +5,28 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+
+/*
+   IMPORTANT:
+   ~~~~~~~~~~
+
+   This example appears to be broken and crashes at runtime, see https://github.com/boostorg/graph/issues/148
+
+*/
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <boost/config.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
+#ifdef BOOST_HAS_UNISTD_H
 #include <unistd.h>
+#endif
 #include <sys/stat.h>
 #include <boost/graph/adjacency_list.hpp>
 
@@ -40,7 +57,7 @@ read_graph_file(std::istream & graph_in, std::istream & name_in,
 
 
 int
-main()
+main(int argc, const char** argv)
 {
   typedef adjacency_list < listS,       // Store out-edges of each vertex in a std::list
     vecS,                       // Store vertex set in a std::vector
@@ -49,8 +66,8 @@ main()
    >graph_type;
 
   graph_type g;                 // use default constructor to create empty graph
-  std::ifstream file_in("makefile-dependencies.dat"),
-    name_in("makefile-target-names.dat");
+  std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat"),
+    name_in(argc >= 2 ? argv[1] : "makefile-target-names.dat");
   if (!file_in) {
     std::cerr << "** Error: could not open file makefile-target-names.dat"
       << std::endl;

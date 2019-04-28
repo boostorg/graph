@@ -123,7 +123,7 @@ in:<br>
 Desaulniers, G.; Desrosiers, J.; Solomon, M. (eds.) (2005):<br>
 Column Generation<br>
 Springer, New York, pp. 33&ndash;65<br>
-(available online <a href="http://logistik.bwl.uni-mainz.de/Dateien/or_2004-01.pdf">
+(available online <a href="https://www.researchgate.net/publication/227142556_Shortest_Path_Problems_with_Resource_Constraints">
 here</a>)
 <p>
 
@@ -161,7 +161,7 @@ A type modelling the ResourceContainer concept is used to store the current reso
 
 <p>
 <b>Refinement of</b><br>
-<a href="http://www.sgi.com/tech/stl/DefaultConstructible.html">DefaultConstructible</a>, <a href="../../utility/CopyConstructible.html">CopyConstructible</a>, <a href="http://www.sgi.com/tech/stl/Assignable.html">Assignable</a>, <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">LessThanComparable</a>, <a href="http://www.sgi.com/tech/stl/EqualityComparable.html">EqualityComparable</a>
+<a href="http://www.boost.org/sgi/stl/DefaultConstructible.html">DefaultConstructible</a>, <a href="../../utility/CopyConstructible.html">CopyConstructible</a>, <a href="http://www.boost.org/sgi/stl/Assignable.html">Assignable</a>, <a href="http://www.boost.org/sgi/stl/LessThanComparable.html">LessThanComparable</a>, <a href="http://www.boost.org/sgi/stl/EqualityComparable.html">EqualityComparable</a>
 </p>
 
 <p>
@@ -262,7 +262,7 @@ Moreover, a reference to a type modelling the ResourceExtensionFunction concept 
 </p>
 
 <p>
-Hence, a type modelling the ResourceExtensionFunction concept is likely to be a function or a <a href="http://www.sgi.com/tech/stl/functors.html">function object</a>.
+Hence, a type modelling the ResourceExtensionFunction concept is likely to be a function or a <a href="http://www.boost.org/sgi/stl/functors.html">function object</a>.
 </p>
 
 <p>
@@ -286,7 +286,7 @@ A model of DominanceFunction is used to specify a dominance relation between two
 
 <p>
 <b>Refinement of</b><br>
-<a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">BinaryPredicate</a>
+<a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">BinaryPredicate</a>
 </p>
 
 <p>
@@ -320,7 +320,7 @@ This concept defines the visitor interface for <tt>r_c_shortest_paths</tt>. A us
 
 <p>
 <b>Refinement of</b><br>
-<a href="http://www.sgi.com/tech/stl/DefaultConstructible.html">DefaultConstructible</a>, <a href="../../utility/CopyConstructible.html">CopyConstructible</a>
+<a href="http://www.boost.org/sgi/stl/DefaultConstructible.html">DefaultConstructible</a>, <a href="../../utility/CopyConstructible.html">CopyConstructible</a>
 </p>
 
 <p>
@@ -458,11 +458,11 @@ An object specifying the initial resource consumptions at vertex <tt>s</tt>. The
 </blockquote>
 IN: <tt>Resource_Extension_Function&amp; ref</tt>
 <blockquote>
-A <a href="http://www.sgi.com/tech/stl/functors.html">function object</a> or function pointer or function specifying how a label is to be extended along an arc. The type <tt>Resource_Extension_Function</tt> must be a model of the ResourceExtensionFunction concept.
+A <a href="http://www.boost.org/sgi/stl/functors.html">function object</a> or function pointer or function specifying how a label is to be extended along an arc. The type <tt>Resource_Extension_Function</tt> must be a model of the ResourceExtensionFunction concept.
 </blockquote>
 IN: <tt>Dominance_Function&amp; dominance</tt>
 <blockquote>
-A <a href="http://www.sgi.com/tech/stl/functors.html">function object</a> or function pointer or function specifying a dominance relation between two labels. The type <tt>Dominance_Function</tt> must be a model of the DominanceFunction concept.
+A <a href="http://www.boost.org/sgi/stl/functors.html">function object</a> or function pointer or function specifying a dominance relation between two labels. The type <tt>Dominance_Function</tt> must be a model of the DominanceFunction concept.
 </blockquote>
 IN: <tt>Label_Allocator la</tt>
 <blockquote>

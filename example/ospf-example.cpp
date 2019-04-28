@@ -16,7 +16,7 @@ namespace boost {
 }
 
 int
-main()
+main(int argc, const char** argv)
 {
   using namespace boost;
   typedef 
@@ -34,7 +34,7 @@ main()
   dp.property("color", get(edge_color, g_dot));
   dp.property("color", ref_property_map<g_dot_type*, std::string>(get_property(g_dot, graph_color)));
   {
-    std::ifstream infile("figs/ospf-graph.dot");
+    std::ifstream infile(argc >= 2 ? argv[1] : "figs/ospf-graph.dot");
     read_graphviz(infile, g_dot, dp);
   }
 
@@ -84,11 +84,11 @@ main()
 
   get_property(g_dot, graph_color) = "grey";
   {
-    std::ofstream outfile("figs/ospf-sptree.dot");
+    std::ofstream outfile(argc >= 3 ? argv[2] : "figs/ospf-sptree.dot");
     write_graphviz_dp(outfile, g_dot, dp);
   }
 
-  std::ofstream rtable("routing-table.dat");
+  std::ofstream rtable(argc >= 4 ? argv[3] : "routing-table.dat");
   rtable << "Dest    Next Hop    Total Cost" << std::endl;
   for (boost::tie(vi, vi_end) = vertices(g_dot); vi != vi_end; ++vi)
     if (parent[*vi] != *vi) {

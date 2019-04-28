@@ -397,9 +397,9 @@ The type for the iterators returned by <TT>vertices()</TT>.
 
 When <tt>VertexList=vecS</tt> then the <tt>vertex_iterator</tt> models
 <a
-href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
+href="http://www.boost.org/sgi/stl/RandomAccessIterator.html">RandomAccessIterator</a>. Otherwise
 the <tt>vertex_iterator</tt> models <a
-href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.boost.org/sgi/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 <hr>
 
@@ -407,7 +407,7 @@ href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalItera
 <br><br>
 The type for the iterators returned by <TT>edges()</TT>.
 The <tt>edge_iterator</tt> models <a
-href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
+href="http://www.boost.org/sgi/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
 
 
 <hr>
@@ -418,13 +418,13 @@ href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalItera
 
 The type for the iterators returned by <TT>out_edges()</TT>.
 When <tt>OutEdgeList=vecS</tt> then the <tt>out_edge_iterator</tt> models
-<a href="http://www.sgi.com/tech/stl/RandomAccessIterator.html">
+<a href="http://www.boost.org/sgi/stl/RandomAccessIterator.html">
 RandomAccessIterator</a>.  When <tt>OutEdgeList=slistS</tt> then the
 <tt>out_edge_iterator</tt> models <a
-href="http://www.sgi.com/tech/stl/ForwardIterator.html">
+href="http://www.boost.org/sgi/stl/ForwardIterator.html">
 ForwardIterator</a>.  Otherwise the <tt>out_edge_iterator</tt> models
 <a
-href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">
+href="http://www.boost.org/sgi/stl/BidirectionalIterator.html">
 BidirectionalIterator</a>.
 
 <hr>
@@ -578,7 +578,7 @@ adjacency_list(EdgeIterator&nbsp;first, EdgeIterator&nbsp;last,
 Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> must be a model of <a
-href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
+href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -599,7 +599,7 @@ Creates a graph object with <TT>n</TT> vertices and with the edges
 specified in the edge list given by the range <TT>[first, last)</TT>.
 The <tt>EdgeIterator</tt> and <tt>EdgePropertyIterator</tt> must be a
 model of <a
-href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>.
+href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>.
 The value type of the <TT>EdgeIterator</TT> must be a
 <TT>std::pair</TT>, where the type in the pair is an integer type. The
 integers will correspond to vertices, and they must all fall in the
@@ -884,7 +884,7 @@ has time complexity <i>O(E/V)</i>.
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.boost.org/sgi/stl/Predicate.html">Predicate</a>&gt;
 void remove_out_edge_if(vertex_descriptor u, Predicate predicate,
                         adjacency_list&amp; g)
 </pre>
@@ -899,7 +899,7 @@ invoking <tt>remove_edge()</tt> on each of the removed edges.
 
 <pre>
 template &lt;class <a
-href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
+href="http://www.boost.org/sgi/stl/Predicate.html">Predicate</a>&gt;
 void remove_in_edge_if(vertex_descriptor v, Predicate predicate,
                        adjacency_list&amp; g)
 </pre>
@@ -917,7 +917,7 @@ This operation is available for undirected and bidirectional
 <hr>
 
 <pre>
-template &lt;class <a href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>&gt;
+template &lt;class <a href="http://www.boost.org/sgi/stl/Predicate.html">Predicate</a>&gt;
 void remove_edge_if(Predicate predicate, adjacency_list&amp; g)
 </pre>
 Removes all edges from the graph that satisfy
@@ -1127,7 +1127,7 @@ Include <a href="../../../boost/graph/adj_list_serialize.hpp"><tt>boost/graph/ad
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>

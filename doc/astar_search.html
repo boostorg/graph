@@ -65,7 +65,7 @@ template &lt;typename VertexListGraph, typename AStarHeuristic,
           typename CostMap, typename DistanceMap,
           typename WeightMap, typename VertexIndexMap,
 	  typename ColorMap,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search
@@ -82,7 +82,7 @@ template &lt;typename VertexListGraph, typename AStarHeuristic,
           typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_tree
@@ -100,7 +100,7 @@ template &lt;typename IncidenceGraph, typename AStarHeuristic,
           typename CostMap, typename DistanceMap,
           typename WeightMap, typename ColorMap,
           typename VertexIndexMap,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init
@@ -121,7 +121,7 @@ template &lt;typename IncidenceGraph, typename AStarHeuristic,
           typename <a href="AStarVisitor.html">AStarVisitor</a>, typename PredecessorMap,
           typename CostMap, typename DistanceMap,
           typename WeightMap,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
           typename CostInf, typename CostZero&gt;
 inline void
 astar_search_no_init_tree
@@ -394,7 +394,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   href="./Monoid.html"><tt>Monoid</tt></a> formed with the
   <tt>combine</tt> function object and the zero object for the
   identity element.  Also the distance value type must have a <a
-  href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
+  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
   provided by the <tt>compare</tt> function object.  A
   <tt>constant_writable_property_map</tt> returning the infinity value can be
   used for this parameter in tree versions of the algorithm when the graph does
@@ -424,7 +424,7 @@ UTIL/OUT: <tt>rank_map(CostMap c_map)</tt>
   href="./Monoid.html"><tt>Monoid</tt></a> formed with the
   <tt>combine</tt> function object and the zero object for the
   identity element.  Also the distance value type must have a <a
-  href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
+  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html"><tt>StrictWeakOrdering</tt></a>
   provided by the <tt>compare</tt> function object.  The value type
   for this map must be the same as the value type for the distance
   map.  In tree versions of the algorithm, <tt>null_property_map</tt> can be
@@ -466,7 +466,7 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   is closer to the start vertex, and to compare <i>f</i>-values to
   determine which vertex on the OPEN list to examine next.  The
   <tt>CompareFunction</tt> type must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryPredicate.html"><tt>Binary
+  href="http://www.boost.org/sgi/stl/BinaryPredicate.html"><tt>Binary
   Predicate</tt></a> and have argument types that match the value type
   of the <tt>DistanceMap</tt> property map.<br>
 
@@ -481,7 +481,7 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
   of a path, and to combine distance and heuristic values to compute
   the <i>f</i>-value of a vertex.  The <tt>CombineFunction</tt> type
   must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryFunction.html"><tt>Binary
+  href="http://www.boost.org/sgi/stl/BinaryFunction.html"><tt>Binary
   Function</tt></a>.  Both argument types of the binary function must
   match the value type of the <tt>DistanceMap</tt> property map (which
   is the same as that of the <tt>WeightMap</tt> and <tt>CostMap</tt>
@@ -580,7 +580,7 @@ this state by pointer or reference.
 <TABLE>
 <TR valign=top>
 <TD nowrap>Copyright &copy; 2004</TD><TD>
-<A HREF="http://www.cs.rpi.edu/~beevek/">Kristopher Beevers</A>,
+<A HREF="http://cs.krisbeevers.com/">Kristopher Beevers</A>,
 Rensselaer Polytechnic Institute (<A
 HREF="mailto:beevek@cs.rpi.edu">beevek@cs.rpi.edu</A>)
 </TD></TR></TABLE>

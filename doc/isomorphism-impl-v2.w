@@ -25,7 +25,7 @@
 \fi
 
 \ifpdf
-  \newcommand{\stlconcept}[1]{\href{http://www.sgi.com/tech/stl/#1.html}{{\small \textsf{#1}}}}
+  \newcommand{\stlconcept}[1]{\href{https://boost.org/sgi/stl/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\bglconcept}[1]{\href{http://www.boost.org/libs/graph/doc/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\pmconcept}[1]{\href{http://www.boost.org/libs/property_map/#1.html}{{\small \textsf{#1}}}}
   \newcommand{\myhyperref}[2]{\hyperref[#1]{#2}}

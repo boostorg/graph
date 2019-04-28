@@ -119,9 +119,9 @@ has_cycle(const file_dep_graph & g)
 
 
 int
-main()
+main(int argc, const char** argv)
 {
-  std::ifstream file_in("makefile-dependencies.dat");
+  std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat");
   typedef graph_traits <file_dep_graph >::vertices_size_type size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices
@@ -140,7 +140,7 @@ main()
 #endif
 
   std::vector < std::string > name(num_vertices(g));
-  std::ifstream name_in("makefile-target-names.dat");
+  std::ifstream name_in(argc >= 3 ? argv[2] : "makefile-target-names.dat");
   graph_traits < file_dep_graph >::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     name_in >> name[*vi];

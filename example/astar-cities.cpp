@@ -16,7 +16,7 @@
 #include <boost/graph/random.hpp>
 #include <boost/random.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <sys/time.h>
+#include <ctime>
 #include <vector>
 #include <list>
 #include <iostream>
@@ -170,7 +170,7 @@ int main(int argc, char **argv)
   
   
   // pick random start/goal
-  boost::mt19937 gen(time(0));
+  boost::mt19937 gen(std::time(0));
   vertex start = random_vertex(g, gen);
   vertex goal = random_vertex(g, gen);
   

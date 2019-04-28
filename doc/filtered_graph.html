@@ -129,10 +129,10 @@ E -->
 <TD><TT>EdgePredicate</TT></TD> <TD>A function object that selects
 which edges from the original graph will appear in the filtered
 graph. The function object must model <a
-href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>. The
+href="http://www.boost.org/sgi/stl/Predicate.html">Predicate</a>. The
 argument type for the function object must be the edge descriptor type
 of the graph. Also, the predicate must be <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
+href="http://www.boost.org/sgi/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
 <TD>&nbsp;</TD>
 </TR>
 
@@ -141,10 +141,10 @@ href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructib
 <TD>A function object that selects
 which vertices from the original graph will appear in the filtered
 graph. The function object must model <a
-href="http://www.sgi.com/tech/stl/Predicate.html">Predicate</a>. The
+href="http://www.boost.org/sgi/stl/Predicate.html">Predicate</a>. The
 argument type for the function object must be the vertex descriptor type
 of the graph. Also, the predicate must be <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
+href="http://www.boost.org/sgi/stl/DefaultConstructible.html">Default Constructible</a> <a href="#1">[1]</a>.</TD>
 <TD><TT>keep_all</TT></TD>
 </TR>
 
@@ -501,7 +501,7 @@ This sets the property value for <tt>x</tt> to
 
 <p>
 <a name="1">[1]</a> The reason for requiring <a
-href="http://www.sgi.com/tech/stl/DefaultConstructible.html">Default
+href="http://www.boost.org/sgi/stl/DefaultConstructible.html">Default
 Constructible</a> in the <tt>EdgePredicate</tt> and
 <tt>VertexPredicate</tt> types is that these predicates are stored
 by-value (for performance reasons) in the filter iterator adaptor, and
@@ -526,7 +526,7 @@ num_edges(g))</tt>) which is assumed in many of the algorithms.
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
