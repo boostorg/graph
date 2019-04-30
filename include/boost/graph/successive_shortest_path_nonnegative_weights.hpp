@@ -19,7 +19,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/indirect_cmp.hpp>
-#include <boost/pending/relaxed_heap.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -258,4 +257,3 @@ void successive_shortest_path_nonnegative_weights(
 
 }//boost
 #endif /* BOOST_GRAPH_SUCCESSIVE_SHORTEST_PATH_HPP */
-

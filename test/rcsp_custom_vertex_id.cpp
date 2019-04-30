@@ -7,6 +7,13 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+#include <boost/config.hpp>
+
+#ifdef BOOST_MSVC
+// Without disabling this we get hard errors about initialialized pointers:
+#pragma warning(disable:4703)
+#endif
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/r_c_shortest_paths.hpp>

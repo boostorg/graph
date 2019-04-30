@@ -6,6 +6,13 @@
 
 //  Authors: Douglas Gregor
 //           Andrew Lumsdaine
+#include <boost/config.hpp>
+
+#ifdef BOOST_MSVC
+// Without disabling this we get hard errors about initialialized pointers:
+#pragma warning(disable:4703)
+#endif
+
 #include <boost/graph/fruchterman_reingold.hpp>
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/kamada_kawai_spring_layout.hpp>

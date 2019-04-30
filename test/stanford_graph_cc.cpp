@@ -6,6 +6,14 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+#include <boost/config.hpp>
+
+#ifdef BOOST_MSVC
+// Without disabling this we get hard errors about initialialized pointers:
+#pragma warning(disable:4703)
+#endif
+
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/stanford_graph.hpp>

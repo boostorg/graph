@@ -13,7 +13,6 @@
 
 #include <boost/pending/indirect_cmp.hpp>
 #include <boost/graph/relax.hpp>
-#include <boost/pending/relaxed_heap.hpp>
 #include <boost/graph/detail/d_ary_heap.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -46,14 +45,7 @@ namespace boost {
     DistanceIndirectCompare
       distance_indirect_compare(distance_map, distance_compare);
 
-    // Choose vertex queue type
-#if BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
-    typedef relaxed_heap<Vertex, DistanceIndirectCompare, VertexIndexMap>
-      VertexQueue;
-    VertexQueue vertex_queue(num_vertices(graph),
-                             distance_indirect_compare,
-                             index_map);
-#else
+
     // Default - use d-ary heap (d = 4)
     typedef
       detail::vertex_property_map_generator<Graph, VertexIndexMap, std::size_t>
@@ -68,7 +60,6 @@ namespace boost {
       IndexInHeapMapHelper::build(graph, index_map,
                                   index_in_heap_map_holder);
     VertexQueue vertex_queue(distance_map, index_in_heap, distance_compare);
-#endif
 
     // Add vertex to the queue
     vertex_queue.push(start_vertex);
@@ -106,7 +97,7 @@ namespace boost {
           !distance_compare(neighbor_vertex_distance, distance_infinity);
 
         // Attempt to relax the edge
-        bool was_edge_relaxed = relax(current_edge, graph, weight_map,
+        bool was_edge_relaxed = relax_target(current_edge, graph, weight_map,
           predecessor_map, distance_map,
           distance_weight_combine, distance_compare);
 
@@ -195,7 +186,7 @@ namespace boost {
          choose_param(get_param(params, distance_compare_t()),
                       std::less<DistanceType>()),
          choose_param(get_param(params, distance_combine_t()),
-                      closed_plus<DistanceType>(inf)),
+                      std::plus<DistanceType>()),
          inf,
          choose_param(get_param(params, distance_zero_t()),
                       DistanceType()),

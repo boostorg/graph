@@ -416,7 +416,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       edges are specified by the iterator range <code>[edge_begin,
       edge_end)</code>. The <tt>InputIterator</tt> must be a model of
       <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
       whose <code>value_type</code> is an <code>std::pair</code> of
       integer values. These integer values are the source and target
       vertices for the edges, and must fall within the range <code>[0,
@@ -448,7 +448,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       to the <a href="#edge-const">edge range constructor</a>, except
       that edge properties are also initialized. The type
       <tt>EdgePropertyIterator</tt> must be a model of the <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
       concept whose <tt>value_type</tt> is convertible to
       <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
         m)</tt> will be used to initialize the properties on the edges
@@ -532,7 +532,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       <code>edges_are_sorted</code> can be used to initialize this parameter.
       The <tt>InputIterator</tt> must be a model of
       <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
       whose <code>value_type</code> is an <code>std::pair</code> of
       integer values. These integer values are the source and target
       vertices for the edges, and must fall within the range <code>[0,
@@ -572,7 +572,7 @@ void <a href="#add_edges_sorted_prop">add_edges_sorted</a>(BidirectionalIterator
       to the <a href="#edge-const">edge range constructor</a>, except
       that edge properties are also initialized. The type
       <tt>EdgePropertyIterator</tt> must be a model of the <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
       concept whose <tt>value_type</tt> is convertible to
       <tt>EdgeProperty</tt>. The iterator range <tt>[ep_iter, ep_ter +
         m)</tt> will be used to initialize the properties on the edges
@@ -844,7 +844,7 @@ void add_edges(InputIterator first, InputIterator last, compressed_sparse_row_gr
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>InputIterator</tt> must be a model of <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
       whose <code>value_type</code> is an <code>std::pair</code> of integer
       values. These integer values are the source and target vertices of the
       new edges.  The edges do not need to be sorted.
@@ -862,7 +862,7 @@ void add_edges(InputIterator first, InputIterator last, EPIter ep_first, EPIter 
       corresponding edge properties (from <tt>ep_first</tt> to
       <tt>ep_last</tt>) to the graph.  The <tt>InputIterator</tt> and
       <tt>EPIter</tt> must be models of <a
-      href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>;
+      href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>;
       the <code>value_type</code> of <tt>InputIterator</tt> must be an
       <code>std::pair</code> of integer values, and the <code>value_type</code>
       of <tt>EPIter</tt> must be the edge property type of the graph. The
@@ -880,7 +880,7 @@ void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, c
     <p class="indent">
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>BidirectionalIterator</tt> must be a model of <a
-      href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>
+      href="http://www.boost.org/sgi/stl/BidirectionalIterator.html">BidirectionalIterator</a>
       whose <code>value_type</code> is an <code>std::pair</code> of integer
       values. These integer values are the source and target vertices of the
       new edges.  The edges must be sorted in increasing order by source vertex
@@ -898,7 +898,7 @@ void add_edges_sorted(BidirectionalIterator first, BidirectionalIterator last, E
       Add a range of edges (from <tt>first</tt> to <tt>last</tt>) to the graph.
       The <tt>BidirectionalIterator</tt> and <tt>EPIter</tt> must be models of
       <a
-      href="http://www.sgi.com/tech/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
+      href="http://www.boost.org/sgi/stl/BidirectionalIterator.html">BidirectionalIterator</a>.
       The <code>value_type</code> of the <tt>BidirectionalIterator</tt> must be
       an <code>std::pair</code> of integer
       values. These integer values are the source and target vertices of the

@@ -30,35 +30,40 @@
 #include "boost/graph/adjacency_list.hpp"
 #include "boost/graph/graph_utility.hpp"
 #include "boost/graph/minimum_degree_ordering.hpp"
-#include "iohb.h"
+
+void terminate(const char* msg)
+{
+   std::cerr << msg << std::endl;
+   abort();
+}
 
 //copy and modify from mtl harwell boeing stream 
 struct harwell_boeing
 {
   harwell_boeing(char* filename) {
-    int Nrhs;
     char* Type;
     Type = new char[4];
     isComplex = false;
-    readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
+    // Never called:
+    //readHB_info(filename, &M, &N, &nonzeros, &Type, &Nrhs);
     colptr = (int *)malloc((N+1)*sizeof(int));
-    if ( colptr == NULL ) IOHBTerminate("Insufficient memory for colptr.\n");
+    if ( colptr == NULL ) terminate("Insufficient memory for colptr.\n");
     rowind = (int *)malloc(nonzeros*sizeof(int));
-    if ( rowind == NULL ) IOHBTerminate("Insufficient memory for rowind.\n");
+    if ( rowind == NULL ) terminate("Insufficient memory for rowind.\n");
 
     if ( Type[0] == 'C' ) {
       isComplex = true;
       val = (double *)malloc(nonzeros*sizeof(double)*2);
-      if ( val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+      if ( val == NULL ) terminate("Insufficient memory for val.\n");
 
     } else {
       if ( Type[0] != 'P' ) {   
         val = (double *)malloc(nonzeros*sizeof(double));
-        if ( val == NULL ) IOHBTerminate("Insufficient memory for val.\n");
+        if ( val == NULL ) terminate("Insufficient memory for val.\n");
       }
     }
-
-    readHB_mat_double(filename, colptr, rowind, val);
+    // Never called:
+    //readHB_mat_double(filename, colptr, rowind, val);
 
     cnt = 0;
     col = 0;

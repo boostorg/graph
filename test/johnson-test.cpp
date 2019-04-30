@@ -32,6 +32,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
 
+
 int main()
 {
     using namespace boost;
@@ -63,17 +64,5 @@ int main()
     int D[V][V];
     johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
-    std::cout << std::setw(5) <<" ";
-    for (int k = 0; k < 10; ++k)
-      std::cout << std::setw(5) << k ;
-    std::cout << std::endl;
-    for (int i = 0; i < 10; ++i) {
-      std::cout <<std::setw(5) <<  i ;
-      for (int j = 0; j < 10; ++j) {
-          std::cout << std::setw(5) << D[i][j] ;
-      }
-      std::cout << std::endl;
-    }
-
-    return boost::report_errors();
+    return 0;
 }

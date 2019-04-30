@@ -56,8 +56,8 @@ template &lt;typename GraphFirst,
           typename GraphSecond,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">VertexIndexMapFirst</a>,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">VertexIndexMapSecond</a>,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
           typename SubGraphCallback&gt;
   void mcgregor_common_subgraphs
   (const GraphFirst&amp; graph1,
@@ -215,7 +215,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       This function is used to determine if edges
       between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
       The <tt>EdgeEquivalencePredicate</tt> type must be a model
-      of <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+      of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
       Predicate</a> and have argument types
       of <tt>graph_traits&lt;GraphFirst&gt;::edge_descriptor</tt>
       and <tt>graph_traits&lt;GraphSecond&gt;::edge_descriptor</tt>.
@@ -229,7 +229,7 @@ bool operator()(CorrespondenceMapFirstToSecond correspondence_map_1_to_2,
       This function is used to determine if vertices
       between <tt>graph1</tt> and <tt>graph2</tt> are equivalent.
       The <tt>VertexEquivalencePredicate</tt> type must be a model
-      of <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+      of <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
       Predicate</a> and have argument types
       of <tt>graph_traits&lt;GraphFirst&gt;::vertex_descriptor</tt>
       and <tt>graph_traits&lt;GraphSecond&gt;::vertex_descriptor</tt>.

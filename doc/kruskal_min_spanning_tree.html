@@ -91,7 +91,7 @@ IN: <tt>const Graph&amp; g</tt>
 IN: <tt>OutputIterator spanning_tree_edges</tt>
 <blockquote>
    The edges of the minimum spanning tree are output to this <a
-   href="http://www.sgi.com/tech/stl/OutputIterator.html">Output
+   href="http://www.boost.org/sgi/stl/OutputIterator.html">Output
    Iterator</a>.<br>
 
    <b>Python</b>: This parameter is not used in Python. Instead, a
@@ -108,7 +108,7 @@ The weight or ``length'' of
   each edge in the graph.  The <tt>WeightMap</tt> type must be a model
   of <a href="../../property_map/doc/ReadablePropertyMap.html">Readable
   Property Map</a> and its value type must be <a
-  href="http://www.sgi.com/tech/stl/LessThanComparable.html">Less Than
+  href="http://www.boost.org/sgi/stl/LessThanComparable.html">Less Than
   Comparable</a>. The key type of this map needs to be the graph's
   edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_weight, g)</tt><br>

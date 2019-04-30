@@ -3,6 +3,10 @@
 //   (See accompanying file LICENSE_1_0.txt or the copy at
 //         http://www.boost.org/LICENSE_1_0.txt)
 
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#  define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <fstream>
 #include <iostream>
 #include <map>

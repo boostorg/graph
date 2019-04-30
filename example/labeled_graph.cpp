@@ -4,6 +4,14 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
+/*
+   IMPORTANT!!!
+   ~~~~~~~~~~~~
+
+   This example does not compile, see https://github.com/boostorg/graph/issues/147
+
+*/
+
 #include <iostream>
 #include <string>
 

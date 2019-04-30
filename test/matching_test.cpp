@@ -7,6 +7,13 @@
 //
 //=======================================================================
 
+#include <boost/config.hpp>
+
+#ifdef BOOST_MSVC
+// Without disabling this we get hard errors about initialialized pointers:
+#pragma warning(disable:4703)
+#endif
+
 #include <boost/graph/max_cardinality_matching.hpp>
 
 #include <iostream>                      // for std::cout

@@ -20,7 +20,7 @@ template < typename T >
 
 
 int
-main()
+main(int argc, const char** argv)
 {
   typedef adjacency_list <
     listS,                     // Store out-edges of each vertex in a std::list
@@ -28,7 +28,7 @@ main()
     directedS                  // The graph is directed
     > graph_type;
 
-  std::ifstream file_in("makefile-dependencies.dat");
+  std::ifstream file_in(argc >= 2 ? argv[1] : "makefile-dependencies.dat");
   typedef graph_traits < graph_type >::vertices_size_type size_type;
   size_type n_vertices;
   file_in >> n_vertices;        // read in number of vertices

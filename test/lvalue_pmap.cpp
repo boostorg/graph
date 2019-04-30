@@ -17,7 +17,7 @@ struct edge_info_t { };
 namespace boost {
   BOOST_INSTALL_PROPERTY(vertex, info);
   BOOST_INSTALL_PROPERTY(edge, info);
-};
+}
 
 typedef property<vertex_info_t, double> vertex_properties;
 typedef property<edge_info_t, double> edge_properties;
@@ -56,5 +56,5 @@ const double& bar_2(graph_t const & x)
 int
 main()
 {
-  return boost::report_errors();
+  return 0;
 }

@@ -97,7 +97,6 @@ int main(int argc, char* argv[])
                               binary_heap_distances.begin(), get(boost::vertex_index, g))));
 
   // Run relaxed heap version
-
   dijkstra_shortest_paths(g, vertex(0, g),
                           distance_map(
                             boost::make_iterator_property_map(

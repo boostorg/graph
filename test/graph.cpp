@@ -54,7 +54,7 @@ check_vertex_cleared(Graph& g, Vertex v, ID id)
     typename graph_traits<Graph>::adjacency_iterator ai, aiend, found;
     boost::tie(ai, aiend) = adjacent_vertices(*vi, g);
 
-    found = std::find_if(ai, aiend, [v](const void *i){ return v == i; });
+    found = std::find_if(ai, aiend, [v](Vertex i){ return v == i; });
 
     BOOST_TEST(found == aiend);
   }

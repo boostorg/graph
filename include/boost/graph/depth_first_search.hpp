@@ -19,6 +19,7 @@
 #include <boost/graph/properties.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/graph/detail/mpi_include.hpp>
 #include <boost/ref.hpp>
 #include <boost/implicit_cast.hpp>
 #include <boost/optional.hpp>
@@ -366,8 +367,6 @@ namespace boost {
   }
 } // namespace boost
 
-#ifdef BOOST_GRAPH_USE_MPI
-#  include <boost/graph/distributed/depth_first_search.hpp>
-#endif
+#include BOOST_GRAPH_MPI_INCLUDE(<boost/graph/distributed/depth_first_search.hpp>)
 
 #endif

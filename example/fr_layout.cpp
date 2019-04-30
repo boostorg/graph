@@ -16,7 +16,7 @@
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/progress.hpp>
+// #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
 
 using namespace boost;
@@ -62,17 +62,17 @@ class progress_cooling : public linear_cooling<double>
  public:
   explicit progress_cooling(std::size_t iterations) : inherited(iterations) 
   {
-    display.reset(new progress_display(iterations + 1, std::cerr));
+    // display.reset(new progress_display(iterations + 1, std::cerr));
   }
 
   double operator()()
   {
-    ++(*display);
+    // ++(*display);
     return inherited::operator()();
   }
 
  private:
-  shared_ptr<boost::progress_display> display;
+  // shared_ptr<boost::progress_display> display;
 };
 
 int main(int argc, char* argv[])

@@ -19,12 +19,15 @@
 #include <vector>
 #include <cassert>
 #include <boost/limits.hpp>
+#include <boost/concept/assert.hpp>
+#include <boost/property_map/property_map.hpp>
 
 namespace boost {
 
   template <class BucketType, class ValueType, class Bucket,
             class ValueIndexMap>
   class bucket_sorter {
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyMapConcept<ValueIndexMap, ValueType> ));
   public:
     typedef BucketType bucket_type;
     typedef ValueType value_type;

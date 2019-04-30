@@ -2051,16 +2051,15 @@ namespace boost {
           if ((*ei).get_target() > u)
             --(*ei).get_target();
       }
+
       template <class EdgeList, class vertex_descriptor>
       inline void
       reindex_edge_list(EdgeList& el, vertex_descriptor u,
                         boost::disallow_parallel_edge_tag)
       {
-        typename EdgeList::iterator ei = el.begin(), e_end = el.end();
-        while (ei != e_end) {
-          typename EdgeList::value_type ce = *ei;
-          ++ei;
-          if (ce.get_target() > u) {
+        for(typename EdgeList::iterator ei = el.begin(); ei != el.end(); ++ei) {
+          if (ei->get_target() > u) {
+            typename EdgeList::value_type ce = *ei;
             el.erase(ce);
             --ce.get_target();
             el.insert(ce);

@@ -20,7 +20,6 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/concept_check.hpp> // for ignore_unused_variable_warning
-#include <cassert>
 #include <iostream>
 #include <vector>
 #include <algorithm>

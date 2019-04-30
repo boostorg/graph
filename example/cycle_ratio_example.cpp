@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
             vim[target(*itr, tgr)] << ") ";
     }
     cout << endl;
-    assert(std::abs(cr.first / cr.second - min_cr) < epsilon);
+    assert(std::abs(cr.first / cr.second - min_cr) < epsilon * 2);
     return EXIT_SUCCESS;
 }
 

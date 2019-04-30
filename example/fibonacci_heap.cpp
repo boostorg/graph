@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <boost/graph/random.hpp>
-#include <boost/random/mersenne_twister.hpp>
+#include <random>
 #include <algorithm>
 #include <boost/pending/fibonacci_heap.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -23,19 +23,19 @@ main()
 {
   typedef indirect_cmp<float*,std::less<float> > ICmp;
   int i;
-  boost::mt19937 gen;
+  std::mt19937 gen;
   for (int N = 2; N < 200; ++N) {
-    uniform_int<> distrib(0, N-1);
-    variate_generator<boost::mt19937&, uniform_int<> > rand_gen(gen, distrib);
+     uniform_int<> distrib(0, N-1);
+     boost::variate_generator<std::mt19937&, uniform_int<> > rand_gen(gen, distrib);
     for (int t = 0; t < 10; ++t) {
       std::vector<float> v, w(N);
 
       ICmp cmp(&w[0], std::less<float>());
       fibonacci_heap<int, ICmp> Q(N, cmp);
 
-      for (int c = 0; c < w.size(); ++c)
+      for (size_t c = 0; c < w.size(); ++c)
         w[c] = c;
-      std::random_shuffle(w.begin(), w.end());
+      std::shuffle(w.begin(), w.end(), gen);
 
       for (i = 0; i < N; ++i)
         Q.push(i);

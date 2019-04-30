@@ -20,7 +20,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/indirect_cmp.hpp>
-#include <boost/pending/relaxed_heap.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <boost/graph/detail/augment.hpp>
@@ -178,4 +177,3 @@ void cycle_canceling(Graph &g) {
 }
 
 #endif /* BOOST_GRAPH_CYCLE_CANCELING_HPP */
-

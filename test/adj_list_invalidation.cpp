@@ -4,11 +4,19 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
+/***********************************************************
+
+IMPORTANT: this file should not be tested - it creates invalid graphs/sequences 
+which *do* crash at runtime - this seems to be the intent, but it's not
+clear why or whether the file should be retained.
+
+***********************************************************/
+
 #include <iostream>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 
-#include "../../../../../gpld/common/typestr.hpp"
+#include "typestr.hpp"
 
 using namespace std;
 using namespace boost;

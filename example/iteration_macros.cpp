@@ -6,7 +6,12 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+#include <boost/config.hpp>
 
+#ifdef BOOST_MSVC
+// Without this we get hard errors, not warnings:
+#pragma warning(disable:4703)
+#endif
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
