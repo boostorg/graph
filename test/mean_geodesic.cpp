@@ -13,6 +13,8 @@
 
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <boost/graph/geodesic_distance.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace std;
 using namespace boost;
@@ -137,4 +139,6 @@ main(int, char *[])
 
     test_undirected<Graph>();
     test_directed<Digraph>();
+
+    return boost::report_errors();
 }

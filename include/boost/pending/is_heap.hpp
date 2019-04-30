@@ -19,7 +19,7 @@ bool __is_heap(RandomAccessIterator first, RandomAccessIterator last,
 
   Distance parent = 0;
   for (Distance child = 1; child < n; ++child) {
-    if (first[parent] < first[child]) 
+    if (first[parent] < first[child])
       return false;
     if ((child & 1) == 0)
       ++parent;

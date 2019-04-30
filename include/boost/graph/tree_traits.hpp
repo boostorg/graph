@@ -12,8 +12,8 @@ namespace boost {
 
   template <class T>
   struct tree_traits {
-    typedef typename T::node_descriptor node_descriptor;    
-    typedef typename T::children_iterator children_iterator;    
+    typedef typename T::node_descriptor node_descriptor;
+    typedef typename T::children_iterator children_iterator;
   };
 
 

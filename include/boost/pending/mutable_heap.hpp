@@ -42,9 +42,9 @@ namespace boost {
   template <class TreeNode, class Compare, class ExternalData>
   inline TreeNode down_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
     while (x.children().size() > 0) {
-      typename TreeNode::children_type::iterator 
+      typename TreeNode::children_type::iterator
         child_iter = std::min_element(x.children().begin(),
-                                      x.children().end(), 
+                                      x.children().end(),
                                       comp);
       if (comp(*child_iter, x))
         x.swap(*child_iter, edata);

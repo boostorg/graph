@@ -13,7 +13,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/point_traits.hpp>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <iostream>
 #include <boost/limits.hpp>
 #include <fstream>
@@ -46,10 +46,10 @@ void print_graph_layout(const Graph& g, PositionMap position, const Topology& to
           break;
       }
 
-      if (vi == vi_end) std::cout << ' ';
-      else std::cout << (char)(index + 'A');
+      // if (vi == vi_end) std::cout << ' ';
+      // else std::cout << (char)(index + 'A');
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
   }
 }
 
@@ -61,8 +61,8 @@ void dump_graph_layout(std::string name, const Graph& g, PositionMap position)
 
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-    out << "  n" << get(vertex_index, g, *vi) << "[ pos=\"" 
-        << (int)position[*vi][0] + 25 << ", " << (int)position[*vi][1] + 25 
+    out << "  n" << get(vertex_index, g, *vi) << "[ pos=\""
+        << (int)position[*vi][0] + 25 << ", " << (int)position[*vi][1] + 25
         << "\" ];\n";
   }
 
@@ -75,7 +75,7 @@ void dump_graph_layout(std::string name, const Graph& g, PositionMap position)
 }
 
 template<typename Graph>
-void 
+void
 test_circle_layout(Graph*, typename graph_traits<Graph>::vertices_size_type n)
 {
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
@@ -85,12 +85,12 @@ test_circle_layout(Graph*, typename graph_traits<Graph>::vertices_size_type n)
 
   // Initialize vertex indices
   vertex_iterator vi = vertices(g).first;
-  for (vertices_size_type i = 0; i < n; ++i, ++vi) 
+  for (vertices_size_type i = 0; i < n; ++i, ++vi)
     put(vertex_index, g, *vi, i);
 
   circle_graph_layout(g, get(vertex_position, g), 10.0);
 
-  std::cout << "Regular polygon layout with " << n << " points.\n";
+  // std::cout << "Regular polygon layout with " << n << " points.\n";
   square_topology<> topology;
   print_graph_layout(g, get(vertex_position, g), topology);
 }
@@ -100,12 +100,12 @@ struct simple_edge
   int first, second;
 };
 
-struct kamada_kawai_done 
+struct kamada_kawai_done
 {
   kamada_kawai_done() : last_delta() {}
 
   template<typename Graph>
-  bool operator()(double delta_p, 
+  bool operator()(double delta_p,
                   typename boost::graph_traits<Graph>::vertex_descriptor /*p*/,
                   const Graph& /*g*/,
                   bool global)
@@ -131,7 +131,7 @@ test_triangle(Graph*)
   typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
 
   Graph g;
-  
+
   vertex_descriptor u = add_vertex(g); put(vertex_index, g, u, 0);
   vertex_descriptor v = add_vertex(g); put(vertex_index, g, v, 1);
   vertex_descriptor w = add_vertex(g); put(vertex_index, g, w, 2);
@@ -142,14 +142,14 @@ test_triangle(Graph*)
 
   circle_graph_layout(g, get(vertex_position, g), 25.0);
 
-  bool ok = kamada_kawai_spring_layout(g, 
+  bool ok = kamada_kawai_spring_layout(g,
                                        get(vertex_position, g),
                                        get(edge_weight, g),
                                        square_topology<>(50.0),
                                        side_length(50.0));
-  BOOST_CHECK(ok);
+  BOOST_TEST(ok);
 
-  std::cout << "Triangle layout (Kamada-Kawai).\n";
+  // std::cout << "Triangle layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
 }
 
@@ -159,12 +159,12 @@ test_cube(Graph*)
 {
   enum {A, B, C, D, E, F, G, H};
   simple_edge cube_edges[12] = {
-    {A, E}, {A, B}, {A, D}, {B, F}, {B, C}, {C, D}, {C, G}, {D, H}, 
+    {A, E}, {A, B}, {A, D}, {B, F}, {B, C}, {C, D}, {C, G}, {D, H},
     {E, H}, {E, F}, {F, G}, {G, H}
   };
 
   Graph g(&cube_edges[0], &cube_edges[12], 8);
-  
+
   typedef typename graph_traits<Graph>::edge_iterator edge_iterator;
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
 
@@ -176,23 +176,23 @@ test_cube(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
-              << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-              << ") ";
+    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
+    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
+    //           << ") ";
   }
   std::cerr << std::endl;
 
   circle_graph_layout(g, get(vertex_position, g), 25.0);
 
-  bool ok = kamada_kawai_spring_layout(g, 
+  bool ok = kamada_kawai_spring_layout(g,
                                        get(vertex_position, g),
                                        get(edge_weight, g),
                                        square_topology<>(50.0),
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_CHECK(ok);
+  BOOST_TEST(ok);
 
-  std::cout << "Cube layout (Kamada-Kawai).\n";
+  // std::cout << "Cube layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube", g, get(vertex_position, g));
@@ -216,7 +216,7 @@ test_cube(Graph*)
                                 get(vertex_index, g),
                                 Topology::point_difference_type()));
 
-  std::cout << "Cube layout (Fruchterman-Reingold).\n";
+  // std::cout << "Cube layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube-fr", g, get(vertex_position, g));
@@ -233,7 +233,7 @@ test_triangular(Graph*)
   };
 
   Graph g(&triangular_edges[0], &triangular_edges[18], 10);
-  
+
   typedef typename graph_traits<Graph>::edge_iterator edge_iterator;
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
 
@@ -245,9 +245,9 @@ test_triangular(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
-              << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-              << ") ";
+    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
+    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
+    //           << ") ";
   }
   std::cerr << std::endl;
 
@@ -261,18 +261,18 @@ test_triangular(Graph*)
 
   circle_graph_layout(g, get(vertex_position, g), 25.0);
 
-  bool ok = kamada_kawai_spring_layout(g, 
+  bool ok = kamada_kawai_spring_layout(g,
                                        get(vertex_position, g),
                                        get(edge_weight, g),
                                        topology,
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_CHECK(ok);
+  BOOST_TEST(ok);
 
-  std::cout << "Triangular layout (Kamada-Kawai).\n";
+  // std::cout << "Triangular layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
-  dump_graph_layout("triangular-kk", g, get(vertex_position, g));
+  // dump_graph_layout("triangular-kk", g, get(vertex_position, g));
 
   rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
   random_graph_layout(g, get(vertex_position, g), rect_top);
@@ -287,7 +287,7 @@ test_triangular(Graph*)
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(100)));
 
-  std::cout << "Triangular layout (Fruchterman-Reingold).\n";
+  // std::cout << "Triangular layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("triangular-fr", g, get(vertex_position, g));
@@ -299,13 +299,13 @@ test_disconnected(Graph*)
 {
   enum {A, B, C, D, E, F, G, H};
   simple_edge triangular_edges[13] = {
-    {A, B}, {B, C}, {C, A}, 
+    {A, B}, {B, C}, {C, A},
     {D, E}, {E, F}, {F, G}, {G, H}, {H, D},
     {D, F}, {F, H}, {H, E}, {E, G}, {G, D}
   };
 
   Graph g(&triangular_edges[0], &triangular_edges[13], 8);
-  
+
   typedef typename graph_traits<Graph>::edge_iterator edge_iterator;
   typedef typename graph_traits<Graph>::vertex_iterator vertex_iterator;
 
@@ -317,21 +317,21 @@ test_disconnected(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A') 
-              << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-              << ") ";
+    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
+    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
+    //           << ") ";
   }
   std::cerr << std::endl;
 
   circle_graph_layout(g, get(vertex_position, g), 25.0);
 
-  bool ok = kamada_kawai_spring_layout(g, 
+  bool ok = kamada_kawai_spring_layout(g,
                                        get(vertex_position, g),
                                        get(edge_weight, g),
                                        square_topology<>(50.0),
                                        side_length(50.0),
                                        kamada_kawai_done());
-  BOOST_CHECK(!ok);
+  BOOST_TEST(!ok);
 
   minstd_rand gen;
   rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
@@ -347,15 +347,15 @@ test_disconnected(Graph*)
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(50)));
 
-  std::cout << "Disconnected layout (Fruchterman-Reingold).\n";
+  // std::cout << "Disconnected layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("disconnected-fr", g, get(vertex_position, g));
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
-  typedef adjacency_list<listS, listS, undirectedS, 
+  typedef adjacency_list<listS, listS, undirectedS,
                          // Vertex properties
                          property<vertex_index_t, int,
                          property<vertex_position_t, point> >,
@@ -366,5 +366,6 @@ int test_main(int, char*[])
   test_cube((Graph*)0);
   test_triangular((Graph*)0);
   test_disconnected((Graph*)0);
-  return 0;
+
+  return boost::report_errors();
 }

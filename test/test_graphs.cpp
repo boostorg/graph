@@ -197,5 +197,6 @@ int main()
 
   // TODO: What other kinds of graphs do we have here...
 
+  return 0;
 }
 

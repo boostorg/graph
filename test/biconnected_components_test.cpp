@@ -8,7 +8,7 @@
 //           Andrew Lumsdaine
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
 #include <iterator>
@@ -29,18 +29,18 @@ struct EdgeProperty
 static bool any_errors = false;
 
 template<typename Graph, typename Vertex>
-void 
+void
 check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
 {
   std::vector<int> components(num_vertices(g));
-  int basic_comps = 
-    connected_components(g, 
-                         make_iterator_property_map(components.begin(), 
+  int basic_comps =
+    connected_components(g,
+                         make_iterator_property_map(components.begin(),
                                                     get(vertex_index, g),
                                                     int()));
 
   std::vector<Vertex> art_points_check;
-  
+
   typename graph_traits<Graph>::vertex_iterator vi, vi_end;
   for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
     Graph g_copy(g);
@@ -48,10 +48,10 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
     clear_vertex(victim, g_copy);
     remove_vertex(victim, g_copy);
 
-    int copy_comps = 
+    int copy_comps =
       connected_components
-        (g_copy, 
-         make_iterator_property_map(components.begin(), 
+        (g_copy,
+         make_iterator_property_map(components.begin(),
                                     get(vertex_index, g_copy),
                                     int()));
 
@@ -62,19 +62,19 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
   std::sort(art_points.begin(), art_points.end());
   std::sort(art_points_check.begin(), art_points_check.end());
 
-  BOOST_CHECK(art_points == art_points_check);
+  BOOST_TEST(art_points == art_points_check);
   if (art_points != art_points_check) {
-    std::cerr << "ERROR!" << std::endl;
-    std::cerr << "\tComputed: ";
-    std::size_t i;
-    for (i = 0; i < art_points.size(); ++i) 
-      std::cout << art_points[i] << ' ';
-    std::cout << std::endl << "\tExpected: ";
-    for (i = 0; i < art_points_check.size(); ++i)
-      std::cout << art_points_check[i] << ' ';
-    std::cout << std::endl;
+    // std::cerr << "ERROR!" << std::endl;
+    // std::cerr << "\tComputed: ";
+    // std::size_t i;
+    // for (i = 0; i < art_points.size(); ++i)
+      // std::cout << art_points[i] << ' ';
+    // std::cout << std::endl << "\tExpected: ";
+    // for (i = 0; i < art_points_check.size(); ++i)
+      // std::cout << art_points_check[i] << ' ';
+    // std::cout << std::endl;
     any_errors = true;
-  } else std::cout << "OK." << std::endl;
+  }
 }
 
 typedef adjacency_list<listS, vecS, undirectedS,
@@ -84,18 +84,18 @@ typedef graph_traits<Graph>::vertex_descriptor Vertex;
 bool test_graph(Graph& g) { // Returns false on failure
   std::vector<Vertex> art_points;
 
-  std::cout << "Computing biconnected components & articulation points... ";
-  std::cout.flush();
+  // std::cout << "Computing biconnected components & articulation points... ";
+  // std::cout.flush();
 
-  std::size_t num_comps = 
-    biconnected_components(g, 
+  // std::size_t num_comps =
+  biconnected_components(g,
                            get(&EdgeProperty::component, g),
-                           std::back_inserter(art_points)).first;
-  
-  std::cout << "done.\n\t" << num_comps << " biconnected components.\n"
-            << "\t" << art_points.size() << " articulation points.\n"
-            << "\tTesting articulation points...";
-  std::cout.flush();
+                           std::back_inserter(art_points));
+
+  // std::cout << "done.\n\t" << num_comps << " biconnected components.\n"
+  //           << "\t" << art_points.size() << " articulation points.\n"
+  //           << "\tTesting articulation points...";
+  // std::cout.flush();
 
   check_articulation_points(g, art_points);
 
@@ -107,7 +107,7 @@ bool test_graph(Graph& g) { // Returns false on failure
     for (std::size_t i = 0; i < art_points.size(); ++i) {
       out << art_points[i] << " [ style=\"filled\" ];" << std::endl;
     }
-    
+
     graph_traits<Graph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
       out << source(*ei, g) << " -- " << target(*ei, g)
@@ -117,8 +117,8 @@ bool test_graph(Graph& g) { // Returns false on failure
 
   return any_errors;
 }
-  
-int test_main(int argc, char* argv[])
+
+int main(int argc, char* argv[])
 {
   std::size_t n = 100;
   std::size_t m = 500;
@@ -141,8 +141,8 @@ int test_main(int argc, char* argv[])
     add_edge(0, 3, g);
     add_edge(0, 2, g);
     add_edge(1, 0, g);
-    if (test_graph(g)) return 1;
+    test_graph(g);
   }
 
-  return 0;
+  return boost::report_errors();
 }

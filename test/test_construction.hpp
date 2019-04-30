@@ -29,7 +29,7 @@ void build_graph(Graph& g, boost::mpl::true_, boost::mpl::false_) {
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
     BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept<Graph>));
 
-    std::cout << "...build_normal\n";
+    // std::cout << "...build_normal\n";
     for(std::size_t i = 0; i < N; ++i) {
         add_vertex(g);
     }
@@ -43,7 +43,7 @@ void build_graph(Graph& g, boost::mpl::false_, boost::mpl::true_) {
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
     // BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept<Graph>));
 
-    std::cout << "...build_labeled\n";
+    // std::cout << "...build_labeled\n";
     // Add each vertex labeled with the number i.
     for(std::size_t i = 0; i < N; ++i) {
         add_vertex(i, g);
@@ -68,7 +68,7 @@ void build_property_graph(Graph const&, boost::mpl::true_, boost::mpl::false_) {
     BOOST_CONCEPT_ASSERT((VertexMutablePropertyGraphConcept<Graph>));
     typedef typename vertex_property_type<Graph>::type VertexProp;
 
-    std::cout << "...build mutable\n";
+    // std::cout << "...build mutable\n";
 
     // Start with clean graph. Nothing really to assert. Just make sure it
     // copmpiles.
@@ -92,7 +92,7 @@ void connect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
     BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept<Graph>));
     BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
 
-    std::cout << "...connect_normal\n";
+    // std::cout << "...connect_normal\n";
     Pair *f, *l;
     for(boost::tie(f, l) = edge_pairs(); f != l; ++f) {
         Pair const& e = *f;
@@ -110,7 +110,7 @@ void connect_graph(Graph& g, VertexSet const& verts, boost::mpl::true_) {
     BOOST_CONCEPT_ASSERT((AdjacencyMatrixConcept<Graph>));
     // BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
 
-    std::cout << "...connect_labeled\n";
+    // std::cout << "...connect_labeled\n";
     // With labeled graphs, we want to operate directly on the edge numbers
     // rather than looking up the correct vertex index. This is because the
     // vertices are already mapped to indices.

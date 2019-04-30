@@ -17,13 +17,15 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
 struct vertex_properties {
   std::string name;
 
   template<class Archive>
   void serialize(Archive & ar, const unsigned int /*version*/) {
     ar & BOOST_SERIALIZATION_NVP(name);
-  }  
+  }
 };
 
 struct edge_properties {
@@ -32,18 +34,18 @@ struct edge_properties {
   template<class Archive>
   void serialize(Archive & ar, const unsigned int /*version*/) {
     ar & BOOST_SERIALIZATION_NVP(name);
-  }  
+  }
 };
 
 using namespace boost;
 
-typedef adjacency_list<vecS, vecS, undirectedS, 
+typedef adjacency_list<vecS, vecS, undirectedS,
                vertex_properties, edge_properties> Graph;
 
 typedef graph_traits<Graph>::vertex_descriptor vd_type;
 
 
-typedef adjacency_list<vecS, vecS, undirectedS, 
+typedef adjacency_list<vecS, vecS, undirectedS,
                vertex_properties> Graph_no_edge_property;
 
 int main()
@@ -74,10 +76,11 @@ int main()
     Graph g;
     ia >> BOOST_SERIALIZATION_NVP(g);
 
-    if  (!( g[*(vertices( g ).first)].name == "A" )) return -1;
+    if  (!( g[*(vertices( g ).first)].name == "A" )) return boost::report_errors();
 
     Graph_no_edge_property g_n;
     ia >> BOOST_SERIALIZATION_NVP(g_n);
   }
-  return 0;
+
+  return boost::report_errors();
 }

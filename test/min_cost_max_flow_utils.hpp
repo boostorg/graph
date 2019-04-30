@@ -1,6 +1,6 @@
 //=======================================================================
 // Copyright 2013 University of Warsaw.
-// Authors: Piotr Wygocki 
+// Authors: Piotr Wygocki
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -8,7 +8,7 @@
 //=======================================================================
 
 #ifndef SAMPLE_GRAPH_UNDIRECTED_HPP
-#define SAMPLE_GRAPH_UNDIRECTED_HPP 
+#define SAMPLE_GRAPH_UNDIRECTED_HPP
 
 #include <iostream>
 #include <cstdlib>
@@ -22,10 +22,10 @@ struct SampleGraph {
     typedef adjacency_list < vecS, vecS, directedS, no_property,
             property < edge_capacity_t, long,
                 property < edge_residual_capacity_t, long,
-                    property < edge_reverse_t, Traits::edge_descriptor, 
+                    property < edge_reverse_t, Traits::edge_descriptor,
                         property <edge_weight_t, long>
-                             > 
-                        > 
+                             >
+                        >
                      > > Graph;
     typedef property_map < Graph, edge_capacity_t >::type Capacity;
     typedef property_map < Graph, edge_residual_capacity_t >::type ResidualCapacity;
@@ -33,7 +33,7 @@ struct SampleGraph {
     typedef property_map < Graph, edge_reverse_t>::type Reversed;
     typedef boost::graph_traits<Graph>::vertices_size_type size_type;
     typedef Traits::vertex_descriptor vertex_descriptor;
-    
+
     template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
     class EdgeAdder {
     public:
@@ -43,13 +43,13 @@ struct SampleGraph {
           Traits::edge_descriptor e,f;
           e = add(v, w, weight, capacity);
           f = add(w, v, -weight, 0);
-          m_rev[e] = f; 
-          m_rev[f] = e; 
+          m_rev[e] = f;
+          m_rev[f] = e;
         }
 
     private:
       Traits::edge_descriptor add(vertex_descriptor v, vertex_descriptor w
-        , long weight, long capacity) 
+        , long weight, long capacity)
       {
         bool b;
         Traits::edge_descriptor e;
@@ -72,14 +72,14 @@ struct SampleGraph {
     static void getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
         Capacity  capacity = get(edge_capacity, g);
         Reversed rev = get(edge_reverse, g);
-        ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
+        ResidualCapacity residual_capacity = get(edge_residual_capacity, g);
         Weight weight = get(edge_weight, g);
         getSampleGraph(g,s,t,capacity,residual_capacity,weight,rev);
     }
 
     template <class Graph, class Weight, class Capacity, class Reversed, class ResidualCapacity>
-    static void 
-    getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t, 
+    static void
+    getSampleGraph(Graph &g, vertex_descriptor & s, vertex_descriptor & t,
             Capacity capacity, ResidualCapacity residual_capacity, Weight weight, Reversed rev) {
         size_type N(6);
 
@@ -102,7 +102,7 @@ struct SampleGraph {
 
         ea.addEdge(3, 5, 4 ,20);
         ea.addEdge(4, 5, 2 ,20);
-    }       
+    }
 
     static void getSampleGraph2(Graph &g, vertex_descriptor & s, vertex_descriptor & t) {
 
@@ -115,7 +115,7 @@ struct SampleGraph {
 
         Capacity  capacity = get(edge_capacity, g);
         Reversed rev = get(edge_reverse, g);
-        ResidualCapacity residual_capacity = get(edge_residual_capacity, g); 
+        ResidualCapacity residual_capacity = get(edge_residual_capacity, g);
         Weight weight = get(edge_weight, g);
 
         s = 0;
@@ -137,7 +137,7 @@ struct SampleGraph {
         ea.addEdge(3, 2, 1 ,1);
         ea.addEdge(4, 2, 2 ,2);
         ea.addEdge(4, 3, 1 ,3);
-    }       
+    }
 };
 } //boost
 

@@ -22,7 +22,7 @@ namespace boost {
     // EdgeDir tags
     struct in_edge_tag { };
     struct out_edge_tag { };
-    
+
     template <class Vertex, class Edge, class Iterator1D, class EdgeDir>
     struct bidir_incidence_iterator {
       typedef bidir_incidence_iterator self;
@@ -35,17 +35,17 @@ namespace boost {
       typedef edge_type value_type;
       typedef value_type* pointer;
       inline bidir_incidence_iterator() {}
-      inline bidir_incidence_iterator(Iterator1D ii, Vertex src) 
+      inline bidir_incidence_iterator(Iterator1D ii, Vertex src)
         : i(ii), _src(src) { }
-      
+
       inline self& operator++() { ++i; return *this; }
       inline self operator++(int) { self tmp = *this; ++(*this); return tmp; }
-      
+
       inline reference operator*() const {
         return deref_helper(EdgeDir());
       }
       inline self* operator->() { return this; }
-      
+
       Iterator1D& iter() { return i; }
       const Iterator1D& iter() const { return i; }
 
@@ -75,5 +75,5 @@ namespace boost {
 
 
   }
-} 
+}
 #endif

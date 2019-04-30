@@ -26,7 +26,7 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::m
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
     BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept<Graph>));
 
-    std::cout << "...destroy_normal\n";
+    // std::cout << "...destroy_normal\n";
     // Remove the roof vertex
     remove_vertex(verts[0], g);
     BOOST_ASSERT(num_vertices(g) == N - 1);
@@ -39,7 +39,7 @@ void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::t
     BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
     // BOOST_CONCEPT_ASSERT(( VeretexMutableGraphConcept<Graph> ));
 
-    std::cout << "...destroy_labeled\n";
+    // std::cout << "...destroy_labeled\n";
     // Remove the roof vertex
     remove_vertex(0, g);
     BOOST_ASSERT(num_vertices(g) == N - 1);
@@ -63,7 +63,7 @@ void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
     BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
 
-    std::cout << "...disconnect_normal\n";
+    // std::cout << "...disconnect_normal\n";
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.
@@ -90,7 +90,7 @@ void disconnect_graph(Graph& g, VertexSet const&, boost::mpl::true_) {
     BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
     // BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
 
-    std::cout << "...disconnect_labeled\n";
+    // std::cout << "...disconnect_labeled\n";
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.

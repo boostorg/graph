@@ -258,7 +258,7 @@ namespace boost {
 
   template <std::size_t Dimensions,
             typename VertexIndex = std::size_t,
-            typename EdgeIndex = VertexIndex> 
+            typename EdgeIndex = VertexIndex>
   class grid_graph {
 
   private:
@@ -303,7 +303,7 @@ namespace boost {
 
     // categories
     typedef directed_tag directed_category;
-    typedef disallow_parallel_edge_tag edge_parallel_category;    
+    typedef disallow_parallel_edge_tag edge_parallel_category;
     struct traversal_category : virtual public incidence_graph_tag,
                                 virtual public adjacency_graph_tag,
                                 virtual public vertex_list_graph_tag,
@@ -335,7 +335,7 @@ namespace boost {
     grid_graph(vertex_descriptor dimension_lengths,
                bool wrap_all_dimensions) :
       m_dimension_lengths(dimension_lengths) {
-      
+
       std::fill(m_wrap_dimension.begin(),
                 m_wrap_dimension.end(),
                 wrap_all_dimensions);
@@ -390,7 +390,7 @@ namespace boost {
 
       vertex[dimension_index] = new_position;
 
-      return (vertex);    
+      return (vertex);
     }
 
     // Gets the vertex that is [distance] units behind [vertex] in
@@ -399,7 +399,7 @@ namespace boost {
     (vertex_descriptor vertex,
      std::size_t dimension_index,
      vertices_size_type distance = 1) const {
-    
+
       // We're assuming that vertices_size_type is unsigned, so we
       // need to be careful about the math.
       vertex[dimension_index] =
@@ -408,7 +408,7 @@ namespace boost {
          (length(dimension_index) - (distance % length(dimension_index))) : 0) :
         vertex[dimension_index] - distance;
 
-      return (vertex);    
+      return (vertex);
     }
 
   protected:
@@ -417,7 +417,7 @@ namespace boost {
     inline vertices_size_type num_vertices() const {
       return (m_num_vertices);
     }
-    
+
     // Returns the number of edges in the graph
     inline edges_size_type num_edges() const {
       return (m_num_edges);
@@ -450,7 +450,7 @@ namespace boost {
     // index_of(vertex_descriptor))
     vertex_descriptor vertex_at
     (vertices_size_type vertex_index) const {
-    
+
       boost::array<vertices_size_type, Dimensions> vertex;
       vertices_size_type index_divider = 1;
 
@@ -465,7 +465,7 @@ namespace boost {
       }
 
       return (vertex);
-    }    
+    }
 
     // Returns the edge whose index is [edge_index] (See also
     // index_of(edge_descriptor)).  NOTE: The index mapping is
@@ -532,10 +532,10 @@ namespace boost {
         }
 
       } // if (wrapped(dimension_index))
-      
+
       return (std::make_pair(vertex_source, vertex_target));
     }
-    
+
     // Returns the index for [edge] (See also edge_at)
     edges_size_type index_of(edge_descriptor edge) const {
       vertex_descriptor source_vertex = source(edge, *this);
@@ -550,18 +550,18 @@ namespace boost {
       while (source_vertex[different_dimension_index] ==
              target_vertex[different_dimension_index]) {
 
-        ++different_dimension_index; 
+        ++different_dimension_index;
       }
 
       edges_size_type edge_index = 0;
-      
+
       // Offset the edge index into the appropriate "bin" (see edge_at
       // for a more in-depth description).
       for (std::size_t dimension_index = 0;
            dimension_index < different_dimension_index;
            ++dimension_index) {
 
-        edge_index += num_edges(dimension_index);      
+        edge_index += num_edges(dimension_index);
       }
 
       // Get the position of both vertices in the differing dimension.
@@ -570,7 +570,7 @@ namespace boost {
 
       // Determine if edge is forward or backward
       bool is_forward = true;
-        
+
       if (wrapped(different_dimension_index)) {
 
         // If the dimension is wrapped, an edge is going backward if
@@ -675,7 +675,7 @@ namespace boost {
 
         if (edges_left > 0) {
           is_forward = !is_forward;
-        
+
           if (!is_forward) {
             ++dimension_index;
           }
@@ -744,7 +744,7 @@ namespace boost {
     //================
 
     friend inline std::pair<typename type::vertex_iterator,
-                            typename type::vertex_iterator> 
+                            typename type::vertex_iterator>
     vertices(const type& graph) {
       typedef typename type::vertex_iterator vertex_iterator;
       typedef typename type::vertex_function vertex_function;
@@ -987,14 +987,14 @@ namespace boost {
                 type,
                 typename type::edge_descriptor,
                 typename type::edges_size_type>(graph));
-    }                                       
+    }
 
     friend inline grid_graph_reverse_edge_map<
                     typename type::edge_descriptor>
     get(edge_reverse_t, const type& graph) {
       return (grid_graph_reverse_edge_map<
                 typename type::edge_descriptor>());
-    }                                       
+    }
 
     template<typename Graph,
              typename Descriptor,

@@ -61,7 +61,7 @@ void permute_helper(RandIter first, RandIter last, RandIterPerm p, D, T)
       std::swap(tmp, first[pi]);
       i = pi;
     } while (i != cycle_start);
-    
+
     // find the next cycle
     for (i = 0; i < n; ++i)
       if (visited[i] == false)
@@ -158,7 +158,7 @@ inline void sortp(Iter first, Iter last, IterP p, Cmp cmp, Alloc alloc)
   typedef typename std::iterator_traits<IterP>::difference_type D;
   D n = last - first;
   std::vector<P, Alloc> q(n);
-  for (D i = 0; i < n; ++i) 
+  for (D i = 0; i < n; ++i)
     q[i] = i;
   std::sort(make_shadow_iter(first, q.begin()),
             make_shadow_iter(last, q.end()),
@@ -170,15 +170,15 @@ inline void sortp(Iter first, Iter last, IterP p, Cmp cmp, Alloc alloc)
 template <class Iter, class IterP, class Cmp>
 inline void sortp(Iter first, Iter last, IterP p, Cmp cmp)
 {
-  typedef typename std::iterator_traits<IterP>::value_type P;  
+  typedef typename std::iterator_traits<IterP>::value_type P;
   sortp(first, last, p, cmp, std::allocator<P>());
 }
 
 template <class Iter, class IterP>
 inline void sortp(Iter first, Iter last, IterP p)
 {
-  typedef typename std::iterator_traits<Iter>::value_type T;  
-  typedef typename std::iterator_traits<IterP>::value_type P;  
+  typedef typename std::iterator_traits<Iter>::value_type T;
+  typedef typename std::iterator_traits<IterP>::value_type P;
   sortp(first, last, p, std::less<T>(), std::allocator<P>());
 }
 
@@ -189,10 +189,10 @@ inline void sortv(Iter first, Iter last, IterP p, Cmp cmp, Alloc alloc)
   typedef typename std::iterator_traits<IterP>::difference_type D;
   D n = last - first;
   std::vector<P, Alloc> q(n), q_inv(n);
-  for (D i = 0; i < n; ++i) 
+  for (D i = 0; i < n; ++i)
     q_inv[i] = i;
-  std::sort(make_shadow_iter(first, q_inv.begin()), 
-            make_shadow_iter(last, q_inv.end()), 
+  std::sort(make_shadow_iter(first, q_inv.begin()),
+            make_shadow_iter(last, q_inv.end()),
             shadow_cmp<Cmp>(cmp));
   std::copy(q_inv, q_inv.end(), q.begin());
   invert_permutation(q.begin(), q.end());

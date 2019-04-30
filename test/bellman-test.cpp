@@ -1,4 +1,4 @@
-//  (C) Copyright Jeremy Siek 2004 
+//  (C) Copyright Jeremy Siek 2004
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -18,14 +18,14 @@ B: 2147483647 B
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/cstdlib.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   using namespace boost;
 
   enum { A, B, Z };
-  char const name[] = "ABZ";
+  // char const name[] = "ABZ";
   int const numVertex = static_cast<int>(Z) + 1;
   typedef std::pair<int,int> Edge;
   Edge edge_array[] = {Edge(B,A)};
@@ -55,55 +55,55 @@ int test_main(int, char*[])
 
   bool const r = bellman_ford_shortest_paths
     (g, int (numVertex),
-     weight_pmap, 
+     weight_pmap,
      boost::make_iterator_property_map(parent.begin(), get(boost::vertex_index, g)),
      boost::make_iterator_property_map(distance.begin(), get(boost::vertex_index, g)),
      closed_plus<int>(),
      std::less<int>(),
      default_bellman_visitor());
 
-  if (r) {
-    for(int i = 0; i < numVertex; ++i) {
-      std::cout << name[i] << ": ";
-      if (distance[i] == inf)
-        std::cout  << std::setw(3) << "inf";
-      else
-        std::cout << std::setw(3) << distance[i];
-      std::cout << " " << name[parent[i]] << std::endl;
-    }
-  } else {
-    std::cout << "negative cycle" << std::endl;
-  }
+  // if (r) {
+  //   for(int i = 0; i < numVertex; ++i) {
+  //     // std::cout << name[i] << ": ";
+  //     if (distance[i] == inf)
+  //       // std::cout  << std::setw(3) << "inf";
+  //     else
+  //       // std::cout << std::setw(3) << distance[i];
+  //     // std::cout << " " << name[parent[i]] << std::endl;
+  //   }
+  // } else {
+  //   // std::cout << "negative cycle" << std::endl;
+  // }
 
 #if !(defined(__INTEL_COMPILER) && __INTEL_COMPILER <= 700) && !(defined(BOOST_MSVC) && BOOST_MSVC <= 1300)
   graph_traits<Graph>::vertex_descriptor s = vertex(A, g);
   std::vector<int> parent2(numVertex);
   std::vector<int> distance2(numVertex, 17);
   bool const r2 = bellman_ford_shortest_paths
-                    (g, 
+                    (g,
                      weight_map(weight_pmap).
                      distance_map(boost::make_iterator_property_map(distance2.begin(), get(boost::vertex_index, g))).
                      predecessor_map(boost::make_iterator_property_map(parent2.begin(), get(boost::vertex_index, g))).
                      root_vertex(s));
-  if (r2) {
-    for(int i = 0; i < numVertex; ++i) {
-      std::cout << name[i] << ": ";
-      if (distance2[i] == inf)
-        std::cout  << std::setw(3) << "inf";
-      else
-        std::cout << std::setw(3) << distance2[i];
-      std::cout << " " << name[parent2[i]] << std::endl;
-    }
-  } else {
-    std::cout << "negative cycle" << std::endl;
-  }
+  // if (r2) {
+  //   for(int i = 0; i < numVertex; ++i) {
+  //     // std::cout << name[i] << ": ";
+  //     // if (distance2[i] == inf)
+  //       // std::cout  << std::setw(3) << "inf";
+  //     // else
+  //       // std::cout << std::setw(3) << distance2[i];
+  //     // std::cout << " " << name[parent2[i]] << std::endl;
+  //   }
+  // } else {
+  //   // std::cout << "negative cycle" << std::endl;
+  // }
 
-  BOOST_CHECK(r == r2);
+  BOOST_TEST(r == r2);
   if (r && r2) {
-    BOOST_CHECK(parent == parent2);
-    BOOST_CHECK(distance == distance2);
+    BOOST_TEST(parent == parent2);
+    BOOST_TEST(distance == distance2);
   }
 #endif
 
-  return boost::exit_success;
+  return boost::report_errors();
 }

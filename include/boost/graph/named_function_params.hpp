@@ -231,7 +231,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   static param_not_found g_param_not_found;
 
   template <typename Tag, typename Args>
-  struct get_param_type: 
+  struct get_param_type:
     lookup_named_param_def<Tag, Args, param_not_found> {};
 
   template <class Tag, typename Args>
@@ -241,8 +241,8 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     return lookup_named_param_def<Tag, Args, param_not_found>::get(p, g_param_not_found);
   }
 
-  template <class P, class Default> 
-  const P& choose_param(const P& param, const Default&) { 
+  template <class P, class Default>
+  const P& choose_param(const P& param, const Default&) {
     return param;
   }
 
@@ -261,15 +261,15 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
     template <typename T>
     struct const_type_as_type {typedef typename T::const_type type;};
   } // namespace detail
-  
+
 
   // Use this function instead of choose_param() when you want
-  // to avoid requiring get(tag, g) when it is not used. 
+  // to avoid requiring get(tag, g) when it is not used.
   namespace detail {
     template <typename GraphIsConst, typename Graph, typename Param, typename Tag>
     struct choose_impl_result:
       boost::mpl::eval_if<
-        boost::is_same<Param, param_not_found>, 
+        boost::is_same<Param, param_not_found>,
         boost::mpl::eval_if<
           GraphIsConst,
           detail::const_type_as_type<property_map<Graph, Tag> >,
@@ -304,7 +304,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   template <typename Param, typename Graph, typename PropertyTag>
   typename detail::choose_impl_result<boost::mpl::true_, Graph, Param, PropertyTag>::type
   choose_const_pmap(const Param& p, const Graph& g, PropertyTag tag)
-  { 
+  {
     return detail::choose_impl_helper<!boost::is_same<Param, param_not_found>::value>
              ::f(boost::mpl::true_(), g, p, tag);
   }
@@ -312,7 +312,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
   template <typename Param, typename Graph, typename PropertyTag>
   typename detail::choose_impl_result<boost::mpl::false_, Graph, Param, PropertyTag>::type
   choose_pmap(const Param& p, Graph& g, PropertyTag tag)
-  { 
+  {
     return detail::choose_impl_helper<!boost::is_same<Param, param_not_found>::value>
              ::f(boost::mpl::false_(), g, p, tag);
   }
@@ -419,7 +419,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     struct override_const_property_result {
-      typedef 
+      typedef
         typename override_const_property_t<
                    typename boost::parameter::value_type<ArgPack, Tag, int>::type,
                    Prop,
@@ -454,7 +454,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
 
     template <typename ArgPack, typename Tag, typename Prop, typename Graph>
     struct override_property_result {
-      typedef 
+      typedef
         typename override_property_t<
                    typename boost::parameter::value_type<ArgPack, Tag, int>::type,
                    Prop,
@@ -578,7 +578,7 @@ BOOST_BGL_DECLARE_NAMED_PARAMS
                                const PM&,
                                const ArgPack& ap) {
         return make_shared_array_property_map(
-                 num_vertices(g), 
+                 num_vertices(g),
                  v,
                  override_const_property(
                    ap,

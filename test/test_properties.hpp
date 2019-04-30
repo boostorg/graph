@@ -15,7 +15,7 @@ template<typename T> void ignore(T const&) { }
 template<typename Graph>
 void test_graph_bundle(Graph& g, boost::mpl::true_) {
   using namespace boost;
-  std::cout << "...test_graph_bundle\n";
+  // std::cout << "...test_graph_bundle\n";
 
   GraphBundle& b1 = g[graph_bundle];
   GraphBundle& b2 = get_property(g);
@@ -78,7 +78,7 @@ void test_edge_bundle(Graph& g, VertexSet const& verts, boost::mpl::true_) {
     typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT((PropertyGraphConcept<Graph, Edge, edge_bundle_t>));
 
-    std::cout << "...test_edge_bundle\n";
+    // std::cout << "...test_edge_bundle\n";
 
     // Test bundling via the graph object on the lollipop edge.
     Edge e = boost::edge(verts[5], verts[3], g).first;

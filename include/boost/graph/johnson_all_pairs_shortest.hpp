@@ -14,7 +14,7 @@
             class P, class T, class R>
   bool
   johnson_all_pairs_shortest_paths
-    (VertexAndEdgeListGraph& g, 
+    (VertexAndEdgeListGraph& g,
      DistanceMatrix& D,
      const bgl_named_params<P, T, R>& params)
  */
@@ -34,12 +34,12 @@
 namespace boost {
 
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
-            class VertexID, class Weight, typename BinaryPredicate, 
+            class VertexID, class Weight, typename BinaryPredicate,
             typename BinaryFunction, typename Infinity, class DistanceZero>
   bool
-  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1,
                DistanceMatrix& D,
-               VertexID id1, Weight w1, const BinaryPredicate& compare, 
+               VertexID id1, Weight w1, const BinaryPredicate& compare,
                const BinaryFunction& combine, const Infinity& inf,
                DistanceZero zero)
   {
@@ -51,25 +51,25 @@ namespace boost {
     typedef typename Traits1::directed_category DirCat;
     bool is_undirected = is_same<DirCat, undirected_tag>::value;
 
-    typedef adjacency_list<vecS, vecS, directedS, 
+    typedef adjacency_list<vecS, vecS, directedS,
       property< vertex_distance_t, DT>,
-      property< edge_weight_t, DT, 
+      property< edge_weight_t, DT,
       property< edge_weight2_t, DT > > > Graph2;
     typedef graph_traits<Graph2> Traits2;
 
     Graph2 g2(num_vertices(g1) + 1);
-    typename property_map<Graph2, edge_weight_t>::type 
+    typename property_map<Graph2, edge_weight_t>::type
       w = get(edge_weight, g2);
-    typename property_map<Graph2, edge_weight2_t>::type 
+    typename property_map<Graph2, edge_weight2_t>::type
       w_hat = get(edge_weight2, g2);
-    typename property_map<Graph2, vertex_distance_t>::type 
+    typename property_map<Graph2, vertex_distance_t>::type
       d = get(vertex_distance, g2);
     typedef typename property_map<Graph2, vertex_index_t>::type VertexID2;
     VertexID2 id2 = get(vertex_index, g2);
 
     // Construct g2 where V[g2] = V[g1] U {s}
     //   and  E[g2] = E[g1] U {(s,v)| v in V[g1]}
-    std::vector<typename Traits1::vertex_descriptor> 
+    std::vector<typename Traits1::vertex_descriptor>
       verts1(num_vertices(g1) + 1);
     typename Traits2::vertex_descriptor s = *vertices(g2).first;
     {
@@ -84,11 +84,11 @@ namespace boost {
       typename Traits1::edge_iterator e, e_end;
       for (boost::tie(e, e_end) = edges(g1); e != e_end; ++e) {
         typename Traits2::edge_descriptor e2; bool z;
-        boost::tie(e2, z) = add_edge(get(id1, source(*e, g1)) + 1, 
+        boost::tie(e2, z) = add_edge(get(id1, source(*e, g1)) + 1,
                                      get(id1, target(*e, g1)) + 1, g2);
         put(w, e2, get(w1, *e));
         if (is_undirected) {
-          boost::tie(e2, z) = add_edge(get(id1, target(*e, g1)) + 1, 
+          boost::tie(e2, z) = add_edge(get(id1, target(*e, g1)) + 1,
                                        get(id1, source(*e, g1)) + 1, g2);
           put(w, e2, get(w1, *e));
         }
@@ -133,12 +133,12 @@ namespace boost {
   template <class VertexAndEdgeListGraph, class DistanceMatrix,
             class VertexID, class Weight, class DistanceZero>
   bool
-  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1,
                DistanceMatrix& D,
                VertexID id1, Weight w1, DistanceZero zero)
   {
     typedef typename property_traits<Weight>::value_type WT;
-    return johnson_all_pairs_shortest_paths(g1, D, id1, w1, 
+    return johnson_all_pairs_shortest_paths(g1, D, id1, w1,
                                             std::less<WT>(),
                                             closed_plus<WT>(),
                                             (std::numeric_limits<WT>::max)(),
@@ -148,23 +148,23 @@ namespace boost {
   namespace detail {
 
     template <class VertexAndEdgeListGraph, class DistanceMatrix,
-              class P, class T, class R, class Weight, 
+              class P, class T, class R, class Weight,
               class VertexID>
     bool
-    johnson_dispatch(VertexAndEdgeListGraph& g, 
+    johnson_dispatch(VertexAndEdgeListGraph& g,
                      DistanceMatrix& D,
                      const bgl_named_params<P, T, R>& params,
                      Weight w, VertexID id)
     {
       typedef typename property_traits<Weight>::value_type WT;
-      
+
       return johnson_all_pairs_shortest_paths
         (g, D, id, w,
-        choose_param(get_param(params, distance_compare_t()), 
+        choose_param(get_param(params, distance_compare_t()),
           std::less<WT>()),
-        choose_param(get_param(params, distance_combine_t()), 
+        choose_param(get_param(params, distance_combine_t()),
           closed_plus<WT>()),
-        choose_param(get_param(params, distance_inf_t()), 
+        choose_param(get_param(params, distance_inf_t()),
           std::numeric_limits<WT>::max BOOST_PREVENT_MACRO_SUBSTITUTION()),
          choose_param(get_param(params, distance_zero_t()), WT()) );
     }
@@ -175,7 +175,7 @@ namespace boost {
             class P, class T, class R>
   bool
   johnson_all_pairs_shortest_paths
-    (VertexAndEdgeListGraph& g, 
+    (VertexAndEdgeListGraph& g,
      DistanceMatrix& D,
      const bgl_named_params<P, T, R>& params)
   {

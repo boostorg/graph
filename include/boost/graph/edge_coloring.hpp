@@ -112,7 +112,7 @@ namespace boost {
         }
       }
     }
-    
+
     template<typename Graph, typename ColorMap, typename ForwardIterator>
     void
     rotate_fan(const Graph &g,

@@ -13,7 +13,7 @@
 #include <boost/mpl/bool.hpp>
 #include <boost/graph/graph_traits.hpp>
 
-namespace boost 
+namespace boost
 {
 
   //tags for defining traversal properties
@@ -35,21 +35,21 @@ namespace boost
   struct current_iteration {};
   struct previous_iteration {};
 
-  // Why TraversalType AND TraversalSubType? TraversalSubType is a function 
-  // template parameter passed in to the constructor of the face iterator, 
-  // whereas TraversalType is a class template parameter. This lets us decide 
-  // at runtime whether to move along the first or second side of a bicomp (by 
-  // assigning a face_iterator that has been constructed with TraversalSubType 
-  // = first_side or second_side to a face_iterator variable) without any of 
-  // the virtual function overhead that comes with implementing this 
-  // functionality as a more structured form of type erasure. It also allows 
-  // a single face_iterator to be the end iterator of two iterators traversing 
+  // Why TraversalType AND TraversalSubType? TraversalSubType is a function
+  // template parameter passed in to the constructor of the face iterator,
+  // whereas TraversalType is a class template parameter. This lets us decide
+  // at runtime whether to move along the first or second side of a bicomp (by
+  // assigning a face_iterator that has been constructed with TraversalSubType
+  // = first_side or second_side to a face_iterator variable) without any of
+  // the virtual function overhead that comes with implementing this
+  // functionality as a more structured form of type erasure. It also allows
+  // a single face_iterator to be the end iterator of two iterators traversing
   // both sides of a bicomp.
 
-  //ValueType is either graph_traits<Graph>::vertex_descriptor 
+  //ValueType is either graph_traits<Graph>::vertex_descriptor
   //or graph_traits<Graph>::edge_descriptor
 
-  
+
   //forward declaration (defining defaults)
   template <typename Graph,
             typename FaceHandlesMap,
@@ -59,7 +59,7 @@ namespace boost
             typename Time = current_iteration
             >
   class face_iterator;
-  
+
 
 
   template <typename Graph, bool StoreEdge>
@@ -94,71 +94,71 @@ namespace boost
                                                       >,
                                         ValueType,
                                         boost::forward_traversal_tag,
-                                        ValueType 
+                                        ValueType
                                       >
   {
   public:
 
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
-    typedef face_iterator 
+    typedef face_iterator
       <Graph,FaceHandlesMap,ValueType,TraversalType,VisitorType,Time> self;
     typedef typename FaceHandlesMap::value_type face_handle_t;
 
-    face_iterator() : 
+    face_iterator() :
       m_lead(graph_traits<Graph>::null_vertex()),
       m_follow(graph_traits<Graph>::null_vertex())
     {}
 
     template <typename TraversalSubType>
-    face_iterator(face_handle_t anchor_handle, 
-                  FaceHandlesMap face_handles, 
+    face_iterator(face_handle_t anchor_handle,
+                  FaceHandlesMap face_handles,
                   TraversalSubType traversal_type):
-      m_follow(anchor_handle.get_anchor()), 
+      m_follow(anchor_handle.get_anchor()),
       m_face_handles(face_handles)
     {
       set_lead_dispatch(anchor_handle, traversal_type);
     }
 
     template <typename TraversalSubType>
-    face_iterator(vertex_t anchor, 
-                  FaceHandlesMap face_handles, 
+    face_iterator(vertex_t anchor,
+                  FaceHandlesMap face_handles,
                   TraversalSubType traversal_type):
-      m_follow(anchor), 
+      m_follow(anchor),
       m_face_handles(face_handles)
     {
       set_lead_dispatch(m_face_handles[anchor], traversal_type);
     }
 
   private:
-    
+
     friend class boost::iterator_core_access;
-    
 
 
 
-    inline vertex_t get_first_vertex(face_handle_t anchor_handle, 
+
+    inline vertex_t get_first_vertex(face_handle_t anchor_handle,
                                      current_iteration
                                      )
     {
       return anchor_handle.first_vertex();
     }
 
-    inline vertex_t get_second_vertex(face_handle_t anchor_handle, 
+    inline vertex_t get_second_vertex(face_handle_t anchor_handle,
                                       current_iteration
                                       )
     {
       return anchor_handle.second_vertex();
     }
 
-    inline vertex_t get_first_vertex(face_handle_t anchor_handle, 
+    inline vertex_t get_first_vertex(face_handle_t anchor_handle,
                                      previous_iteration
                                      )
     {
       return anchor_handle.old_first_vertex();
     }
 
-    inline vertex_t get_second_vertex(face_handle_t anchor_handle, 
+    inline vertex_t get_second_vertex(face_handle_t anchor_handle,
                                       previous_iteration
                                       )
     {
@@ -174,7 +174,7 @@ namespace boost
       m_lead = get_first_vertex(anchor_handle, Time());
       set_edge_to_first_dispatch(anchor_handle, ValueType(), Time());
     }
-    
+
     inline void set_lead_dispatch(face_handle_t anchor_handle, second_side)
     {
       m_lead = get_second_vertex(anchor_handle, Time());
@@ -185,38 +185,38 @@ namespace boost
 
 
 
-    inline void set_edge_to_first_dispatch(face_handle_t anchor_handle, 
-                                           edge_t, 
+    inline void set_edge_to_first_dispatch(face_handle_t anchor_handle,
+                                           edge_t,
                                            current_iteration
                                            )
     {
       m_edge.value = anchor_handle.first_edge();
     }
 
-    inline void set_edge_to_second_dispatch(face_handle_t anchor_handle, 
-                                            edge_t, 
+    inline void set_edge_to_second_dispatch(face_handle_t anchor_handle,
+                                            edge_t,
                                             current_iteration
                                             )
     {
       m_edge.value = anchor_handle.second_edge();
     }
 
-    inline void set_edge_to_first_dispatch(face_handle_t anchor_handle, 
-                                           edge_t, 
+    inline void set_edge_to_first_dispatch(face_handle_t anchor_handle,
+                                           edge_t,
                                            previous_iteration
                                            )
     {
       m_edge.value = anchor_handle.old_first_edge();
     }
 
-    inline void set_edge_to_second_dispatch(face_handle_t anchor_handle, 
-                                            edge_t, 
+    inline void set_edge_to_second_dispatch(face_handle_t anchor_handle,
+                                            edge_t,
                                             previous_iteration
                                             )
     {
       m_edge.value = anchor_handle.old_second_edge();
     }
-    
+
     template<typename T>
     inline void set_edge_to_first_dispatch(face_handle_t, vertex_t, T)
     {}
@@ -245,27 +245,27 @@ namespace boost
       else
         m_lead = m_follow = graph_traits<Graph>::null_vertex();
     }
-    
+
     bool equal(self const& other) const
     {
       return m_lead == other.m_lead && m_follow == other.m_follow;
     }
-    
-    ValueType dereference() const 
-    { 
+
+    ValueType dereference() const
+    {
       return dereference_dispatch(VisitorType(), ValueType());
     }
-    
-    inline ValueType dereference_dispatch(lead_visitor, vertex_t) const 
+
+    inline ValueType dereference_dispatch(lead_visitor, vertex_t) const
     { return m_lead; }
-    
-    inline ValueType dereference_dispatch(follow_visitor, vertex_t) const 
+
+    inline ValueType dereference_dispatch(follow_visitor, vertex_t) const
     { return m_follow; }
 
-    inline ValueType dereference_dispatch(lead_visitor, edge_t) const 
+    inline ValueType dereference_dispatch(lead_visitor, edge_t) const
     { return m_edge.value; }
 
-    inline ValueType dereference_dispatch(follow_visitor, edge_t) const 
+    inline ValueType dereference_dispatch(follow_visitor, edge_t) const
     { return m_edge.value; }
 
     vertex_t m_lead;
@@ -273,7 +273,7 @@ namespace boost
     edge_storage<Graph, boost::is_same<ValueType, edge_t>::value > m_edge;
     FaceHandlesMap m_face_handles;
   };
-  
+
 
 
 
@@ -288,7 +288,7 @@ namespace boost
             typename VisitorType,
             typename Time
             >
-  class face_iterator 
+  class face_iterator
     <Graph, FaceHandlesMap, ValueType, both_sides, VisitorType, Time>
     : public boost::iterator_facade< face_iterator<Graph,
                                                    FaceHandlesMap,
@@ -322,15 +322,15 @@ namespace boost
       first_is_active(true),
       first_increment(true)
     {}
-    
+
   private:
-    
+
     friend class boost::iterator_core_access;
 
     typedef face_iterator
-      <Graph, FaceHandlesMap, ValueType, single_side, follow_visitor, Time> 
+      <Graph, FaceHandlesMap, ValueType, single_side, follow_visitor, Time>
       inner_itr_t;
-    
+
     void increment()
     {
       if (first_increment)
@@ -345,7 +345,7 @@ namespace boost
         ++second_itr;
       first_is_active = !first_is_active;
     }
-    
+
     bool equal(self const& other) const
     {
       //Want this iterator to be equal to the "end" iterator when at least
@@ -354,9 +354,9 @@ namespace boost
 
       return (first_itr == other.first_itr || second_itr == other.second_itr);
     }
-    
-    ValueType dereference() const 
-    { 
+
+    ValueType dereference() const
+    {
       return first_is_active ? *first_itr : *second_itr;
     }
 
@@ -367,8 +367,8 @@ namespace boost
     bool first_increment;
 
   };
-  
-  
+
+
 } /* namespace boost */
 
 

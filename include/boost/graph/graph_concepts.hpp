@@ -59,7 +59,7 @@ typename T::ThereReallyIsNoMemberByThisNameInT vertices(T const&);
         typedef typename graph_traits<G>::vertex_descriptor vertex_descriptor;
         typedef typename graph_traits<G>::edge_descriptor edge_descriptor;
         typedef typename graph_traits<G>::directed_category directed_category;
-        typedef typename graph_traits<G>::edge_parallel_category edge_parallel_category; 
+        typedef typename graph_traits<G>::edge_parallel_category edge_parallel_category;
         typedef typename graph_traits<G>::traversal_category traversal_category;
 
         BOOST_CONCEPT_USAGE(Graph)

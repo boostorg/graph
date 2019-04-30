@@ -30,8 +30,8 @@ namespace boost {
     {
       typedef typename property_traits<ComponentsPA>::value_type comp_type;
     public:
-      components_recorder(ComponentsPA c, 
-                          comp_type& c_count, 
+      components_recorder(ComponentsPA c,
+                          comp_type& c_count,
                           DFSVisitor v)
         : DFSVisitor(v), m_component(c), m_count(c_count) {}
 
@@ -50,7 +50,7 @@ namespace boost {
       comp_type& m_count;
     };
 
-    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
+    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT,
       class DFSVisitor>
     class time_recorder : public DFSVisitor
     {
@@ -73,7 +73,7 @@ namespace boost {
       FinishTimeMap m_finish_time;
       TimeT m_t;
     };
-    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT, 
+    template <class DiscoverTimeMap, class FinishTimeMap, class TimeT,
       class DFSVisitor>
     time_recorder<DiscoverTimeMap, FinishTimeMap, TimeT, DFSVisitor>
     record_times(DiscoverTimeMap d, FinishTimeMap f, TimeT& t, DFSVisitor vis)
@@ -88,26 +88,26 @@ namespace boost {
 
     //-------------------------------------------------------------------------
     // Helper functions for the component_index class
-    
+
     // Record the representative vertices in the header array.
     // Representative vertices now point to the component number.
-    
+
     template <class Parent, class OutputIterator, class Integer>
     inline void
-    build_components_header(Parent p, 
+    build_components_header(Parent p,
                             OutputIterator header,
                             Integer num_nodes)
     {
       Parent component = p;
       Integer component_num = 0;
-      for (Integer v = 0; v != num_nodes; ++v) 
+      for (Integer v = 0; v != num_nodes; ++v)
         if (p[v] == v) {
           *header++ = v;
           component[v] = component_num++;
         }
     }
-    
-    
+
+
     // Pushes x onto the front of the list. The list is represented in
     // an array.
     template <class Next, class T, class V>
@@ -117,14 +117,14 @@ namespace boost {
       head = x;
       next[x] = tmp;
     }
-    
-    
+
+
     // Create a linked list of the vertices in each component
     // by reusing the representative array.
-    template <class Parent1, class Parent2, 
+    template <class Parent1, class Parent2,
               class Integer>
     void
-    link_components(Parent1 component, Parent2 header, 
+    link_components(Parent1 component, Parent2 header,
                     Integer num_nodes, Integer num_components)
     {
       // Make the non-representative vertices point to their component
@@ -132,53 +132,53 @@ namespace boost {
       for (Integer v = 0; v != num_nodes; ++v)
         if (component[v] >= num_components || header[component[v]] != v)
           component[v] = component[representative[v]];
-      
+
       // initialize the "head" of the lists to "NULL"
       std::fill_n(header, num_components, num_nodes);
-      
+
       // Add each vertex to the linked list for its component
       Parent1 next = component;
       for (Integer k = 0; k != num_nodes; ++k)
         push_front(next, header[component[k]], k);
     }
-    
 
-    
+
+
     template <class IndexContainer, class HeaderContainer>
     void
     construct_component_index(IndexContainer& index, HeaderContainer& header)
     {
-      build_components_header(index.begin(), 
+      build_components_header(index.begin(),
                               std::back_inserter(header),
                               index.end() - index.begin());
-      
+
       link_components(index.begin(), header.begin(),
-                      index.end() - index.begin(), 
+                      index.end() - index.begin(),
                       header.end() - header.begin());
     }
-    
-    
-    
+
+
+
     template <class IndexIterator, class Integer, class Distance>
-    class component_iterator 
-      : boost::forward_iterator_helper< 
+    class component_iterator
+      : boost::forward_iterator_helper<
     component_iterator<IndexIterator,Integer,Distance>,
               Integer, Distance,Integer*, Integer&>
     {
     public:
       typedef component_iterator self;
-      
+
       IndexIterator next;
       Integer node;
-      
+
       typedef std::forward_iterator_tag iterator_category;
       typedef Integer value_type;
       typedef Integer& reference;
       typedef Integer* pointer;
       typedef Distance difference_type;
-      
+
       component_iterator() {}
-      component_iterator(IndexIterator x, Integer i) 
+      component_iterator(IndexIterator x, Integer i)
         : next(x), node(i) {}
       Integer operator*() const {
         return node;
@@ -188,21 +188,21 @@ namespace boost {
         return *this;
       }
     };
-    
+
     template <class IndexIterator, class Integer, class Distance>
-    inline bool 
+    inline bool
     operator==(const component_iterator<IndexIterator, Integer, Distance>& x,
                const component_iterator<IndexIterator, Integer, Distance>& y)
     {
       return x.node == y.node;
     }
-  
+
   } // namespace detail
-  
+
 } // namespace detail
 
 #if defined(__sgi) && !defined(__GNUC__)
 #pragma reset woff 1234
 #endif
 
-#endif 
+#endif

@@ -24,7 +24,7 @@
 namespace boost {
 
 
-template <class T, 
+template <class T,
           class Compare = std::less<T>,
           class ID = identity_property_map>
 class fibonacci_heap
@@ -37,8 +37,8 @@ protected:
   typedef typename LinkVec::iterator LinkIter;
 public:
 
-  fibonacci_heap(size_type n, 
-                 const Compare& cmp, 
+  fibonacci_heap(size_type n,
+                 const Compare& cmp,
                  const ID& id = identity_property_map())
     : _key(n), _left(n), _right(n), _p(n), _mark(n), _degree(n),
       _n(0), _root(n), _id(id), _compare(cmp), _child(n),
@@ -97,7 +97,7 @@ public:
     }
   }
   // 39
-  inline void add_tree_to_new_roots(size_type v, 
+  inline void add_tree_to_new_roots(size_type v,
                                     LinkIter new_roots,
                                     int& h)
   {
@@ -106,8 +106,8 @@ public:
     r = _degree[v];
     while (1) {
       if (h < r) {
-        do { 
-          ++h; 
+        do {
+          ++h;
           new_roots[h] = (h == r ? v : nil());
         } while (h < r);
         break;
@@ -251,7 +251,7 @@ protected:
       }
     }
   }
-  
+
   size_type nil() const { return _left.size(); }
 
   std::vector<T> _key;

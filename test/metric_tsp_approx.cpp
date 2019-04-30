@@ -16,13 +16,15 @@
 #include <boost/assert.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <boost/integer_traits.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/simple_point.hpp>
 #include <boost/graph/metric_tsp_approx.hpp>
 #include <boost/graph/graphviz.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 // TODO: Integrate this into the test system a little better. We need to run
 // the test with some kind of input file.
@@ -112,16 +114,16 @@ void testScalability(unsigned numpts)
     connectAllEuclidean(g, point_vec, weight_map, get(vertex_index, g), numpts);
 
     Container c;
-    timer t;
+    // timer t;
     double len = 0.0;
 
     // Run the TSP approx, creating the visitor on the fly.
     metric_tsp_approx(g, make_tsp_tour_len_visitor(g, back_inserter(c), len, weight_map));
 
-    cout << "Number of points: " << num_vertices(g) << endl;
-    cout << "Number of edges: " << num_edges(g) << endl;
-    cout << "Length of tour: " << len << endl;
-    cout << "Elapsed: " << t.elapsed() << endl;
+    // cout << "Number of points: " << num_vertices(g) << endl;
+    // cout << "Number of edges: " << num_edges(g) << endl;
+    // cout << "Length of tour: " << len << endl;
+    // cout << "Elapsed: " << t.elapsed() << endl;
 }
 
 template <typename PositionVec>
@@ -168,11 +170,11 @@ void checkAdjList(PositionVec v)
         tsp_tour_visitor<back_insert_iterator<Container > >
         (back_inserter(c)));
 
-    cout << "adj_list" << endl;
-    for (Container::iterator itr = c.begin(); itr != c.end(); ++itr) {
-        cout << v_map[*itr] << " ";
-    }
-    cout << endl << endl;
+    // cout << "adj_list" << endl;
+    // for (Container::iterator itr = c.begin(); itr != c.end(); ++itr) {
+    //     cout << v_map[*itr] << " ";
+    // }
+    // cout << endl << endl;
 
     c.clear();
 }
@@ -180,13 +182,13 @@ void checkAdjList(PositionVec v)
 static void usage()
 {
     using namespace std;
-    cerr << "To run this program properly please place a "
-         << "file called graph.txt"
-         << endl << "into the current working directory." << endl
-         << "Each line of this file should be a coordinate specifying the"
-         << endl << "location of a vertex" << endl
-         << "For example: " << endl << "1,2" << endl << "20,4" << endl
-         << "15,7" << endl << endl;
+    // cerr << "To run this program properly please place a "
+    //      << "file called graph.txt"
+    //      << endl << "into the current working directory." << endl
+    //      << "Each line of this file should be a coordinate specifying the"
+    //      << endl << "location of a vertex" << endl
+    //      << "For example: " << endl << "1,2" << endl << "20,4" << endl
+    //      << "15,7" << endl << endl;
 }
 
 int main(int argc, char* argv[])
@@ -248,11 +250,11 @@ int main(int argc, char* argv[])
 
    metric_tsp_approx_tour(g, back_inserter(c));
 
-   for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
-   {
-       cout << *itr << " ";
-   }
-   cout << endl << endl;
+   // for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
+   // {
+   //     cout << *itr << " ";
+   // }
+   // cout << endl << endl;
 
    c.clear();
 
@@ -263,11 +265,11 @@ int main(int argc, char* argv[])
        tsp_tour_visitor<back_insert_iterator<vector<Vertex> > >
        (back_inserter(c)));
 
-   for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
-   {
-       cout << *itr << " ";
-   }
-   cout << endl << endl;
+   // for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
+   // {
+   //     cout << *itr << " ";
+   // }
+   // cout << endl << endl;
 
    c.clear();
 
@@ -280,16 +282,16 @@ int main(int argc, char* argv[])
        return -1;
    }
 
-   cout << "Number of points: " << num_vertices(g) << endl;
-   cout << "Number of edges: " << num_edges(g) << endl;
-   cout << "Length of Tour: " << len << endl;
+   // cout << "Number of points: " << num_vertices(g) << endl;
+   // cout << "Number of edges: " << num_edges(g) << endl;
+   // cout << "Length of Tour: " << len << endl;
 
    int cnt(0);
    pair<Vertex,Vertex> triangleEdge;
    for (vector<Vertex>::iterator itr = c.begin(); itr != c.end();
        ++itr, ++cnt)
    {
-       cout << *itr << " ";
+       // cout << *itr << " ";
 
        if (cnt == 2)
        {
@@ -300,7 +302,7 @@ int main(int argc, char* argv[])
            triangleEdge.second = *itr;
        }
    }
-   cout << endl << endl;
+   // cout << endl << endl;
    c.clear();
 
    testScalability(1000);
@@ -318,5 +320,5 @@ int main(int argc, char* argv[])
     catch (const bad_graph& e) { caught = true; }
     BOOST_ASSERT(caught);
 
-   return 0;
+   return boost::report_errors();
 }

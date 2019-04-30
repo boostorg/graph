@@ -21,6 +21,8 @@
 #include <iostream>
 #include <math.h>    // for sqrt
 #include <time.h>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace boost;
 using namespace std;
@@ -115,7 +117,7 @@ private:
 
 int main(int, char **)
 {
-  
+
   // specify some types
   typedef adjacency_list<listS, vecS, undirectedS, no_property,
     property<edge_weight_t, cost> > mygraph_t;
@@ -123,18 +125,18 @@ int main(int, char **)
   typedef mygraph_t::vertex_descriptor vertex;
   typedef mygraph_t::edge_descriptor edge_descriptor;
   typedef std::pair<int, int> edge;
-  
+
   // specify data
   enum nodes {
     Troy, LakePlacid, Plattsburgh, Massena, Watertown, Utica,
     Syracuse, Rochester, Buffalo, Ithaca, Binghamton, Woodstock,
     NewYork, N
   };
-  const char *name[] = {
-    "Troy", "Lake Placid", "Plattsburgh", "Massena",
-    "Watertown", "Utica", "Syracuse", "Rochester", "Buffalo",
-    "Ithaca", "Binghamton", "Woodstock", "New York"
-  };
+  // const char *name[] = {
+  //   "Troy", "Lake Placid", "Plattsburgh", "Massena",
+  //   "Watertown", "Utica", "Syracuse", "Rochester", "Buffalo",
+  //   "Ithaca", "Binghamton", "Woodstock", "New York"
+  // };
   location locations[] = { // lat/long
     {42.73, 73.68}, {44.28, 73.99}, {44.70, 73.46},
     {44.93, 74.89}, {43.97, 75.91}, {43.10, 75.23},
@@ -160,8 +162,8 @@ int main(int, char **)
     my_float(96), my_float(134), my_float(143), my_float(65), my_float(115), my_float(133), my_float(117), my_float(116), my_float(74), my_float(56),
     my_float(84), my_float(73), my_float(69), my_float(70), my_float(116), my_float(147), my_float(173), my_float(183), my_float(74), my_float(71), my_float(124)
   };
-  
-  
+
+
   // create graph
   mygraph_t g(N);
   WeightMap weightmap = get(edge_weight, g);
@@ -171,17 +173,17 @@ int main(int, char **)
                                        edge_array[j].second, g);
     weightmap[e] = weights[j];
   }
-  
-  
+
+
   // pick random start/goal
   boost::minstd_rand gen(time(0));
   vertex start = gen() % num_vertices(g);
   vertex goal = gen() % num_vertices(g);
-  
-  
-  cout << "Start vertex: " << name[start] << endl;
-  cout << "Goal vertex: " << name[goal] << endl;
-  
+
+
+  // cout << "Start vertex: " << name[start] << endl;
+  // cout << "Goal vertex: " << name[goal] << endl;
+
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
 
@@ -197,8 +199,8 @@ int main(int, char **)
        predecessor_map(make_iterator_property_map(p.begin(), idx)).
        distance_map(make_iterator_property_map(d.begin(), idx)).
        visitor(astar_goal_visitor<vertex>(goal)).distance_inf(my_float((std::numeric_limits<float>::max)())));
-  
-  
+
+    BOOST_TEST(false);//did not find a path
   } catch(found_goal fg) { // found a path to the goal
     list<vertex> shortest_path;
     for(vertex v = goal;; v = p[v]) {
@@ -206,18 +208,18 @@ int main(int, char **)
       if(p[v] == v)
         break;
     }
-    cout << "Shortest path from " << name[start] << " to "
-         << name[goal] << ": ";
-    list<vertex>::iterator spi = shortest_path.begin();
-    cout << name[start];
-    for(++spi; spi != shortest_path.end(); ++spi)
-      cout << " -> " << name[*spi];
-    cout << endl << "Total travel time: " << d[goal] << endl;
-    return 0;
+    // cout << "Shortest path from " << name[start] << " to "
+         // << name[goal] << ": ";
+    // list<vertex>::iterator spi = shortest_path.begin();
+    // cout << name[start];
+    // for(++spi; spi != shortest_path.end(); ++spi)
+      // cout << " -> " << name[*spi];
+    // cout << endl << "Total travel time: " << d[goal] << endl;
+    // return boost::report_errors();
   }
-  
-  cout << "Didn't find a path from " << name[start] << "to"
-       << name[goal] << "!" << endl;
-  return 0;
-  
+
+  // cout << "Didn't find a path from " << name[start] << "to"
+       // << name[goal] << "!" << endl;
+  return boost::report_errors();
+
 }

@@ -5,7 +5,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
@@ -30,7 +30,7 @@ typedef adjacency_list<
     bidirectionalS,
     property<vertex_index_t, std::size_t>, no_property> G;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   typedef DominatorCorrectnessTestSet::edge edge;
 
@@ -144,7 +144,7 @@ int test_main(int, char*[])
   testSet[3].correctIdoms.push_back(4);
   testSet[3].correctIdoms.push_back(4);
   testSet[3].correctIdoms.push_back(1);
-  
+
   // Muchnick. p256. figure 8.21
   testSet[4].numOfVertices = 8,
   testSet[4].edges.push_back(edge(0, 1));
@@ -261,11 +261,11 @@ int test_main(int, char*[])
         idom[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
     }
 
-    copy(idom.begin(), idom.end(), ostream_iterator<int>(cout, " "));
-    cout << endl;
+    // copy(idom.begin(), idom.end(), ostream_iterator<int>(cout, " "));
+    // cout << endl;
 
     // dominator tree correctness test
-    BOOST_CHECK(std::equal(idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
+    BOOST_TEST(std::equal(idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
 
     // compare results of fast version and slow version of dominator tree
     domTreePredVector2 =
@@ -285,13 +285,13 @@ int test_main(int, char*[])
         idom2[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
     }
 
-    copy(idom2.begin(), idom2.end(), ostream_iterator<int>(cout, " "));
-    cout << endl;
+    // copy(idom2.begin(), idom2.end(), ostream_iterator<int>(cout, " "));
+    // cout << endl;
 
     size_t k;
     for (k = 0; k < num_vertices(g); ++k)
-      BOOST_CHECK(domTreePredVector[k] == domTreePredVector2[k]);
+      BOOST_TEST(domTreePredVector[k] == domTreePredVector2[k]);
   }
 
-  return 0;
+  return boost::report_errors();
 }

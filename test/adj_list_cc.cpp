@@ -6,17 +6,24 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
+///////////////////////////////////////////////////////////////////////////////
+// COMPILE TEST ///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 int main(int,char*[])
 {
   using namespace boost;
   // Check adjacency_list with properties
   {
-    typedef adjacency_list<vecS, vecS, directedS, 
+    typedef adjacency_list<vecS, vecS, directedS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -30,15 +37,15 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
-    typedef adjacency_list<vecS, vecS, bidirectionalS, 
+    typedef adjacency_list<vecS, vecS, bidirectionalS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -53,15 +60,15 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
-    typedef adjacency_list< listS, listS, directedS, 
+    typedef adjacency_list< listS, listS, directedS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -75,13 +82,13 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
-    typedef adjacency_list< listS, listS, undirectedS, 
+    typedef adjacency_list< listS, listS, undirectedS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -95,14 +102,14 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   // Checking adjacency_list with EdgeList=setS
   {
-    typedef adjacency_list<setS, vecS, bidirectionalS, 
+    typedef adjacency_list<setS, vecS, bidirectionalS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -117,15 +124,15 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
-    typedef adjacency_list< setS, listS, directedS, 
+    typedef adjacency_list< setS, listS, directedS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -139,13 +146,13 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   {
-    typedef adjacency_list< setS, listS, undirectedS, 
+    typedef adjacency_list< setS, listS, undirectedS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>
     > Graph;
@@ -159,9 +166,9 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
   // Check adjacency_list without any properties
@@ -176,7 +183,7 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( VertexMutablePropertyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( EdgeMutablePropertyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
   }
   {
@@ -189,7 +196,7 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableBidirectionalGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, vertex_index_t> ));
   }
   {
@@ -221,7 +228,7 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableBidirectionalGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, 
+    BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph,
       Vertex, vertex_index_t> ));
   }
   {
@@ -238,5 +245,5 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( MutableBidirectionalGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( MutableEdgeListGraphConcept<Graph> ));
   }
-  return 0;
+  return boost::report_errors();
 }

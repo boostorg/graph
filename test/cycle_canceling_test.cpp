@@ -1,6 +1,6 @@
 //=======================================================================
 // Copyright 2013 University of Warsaw.
-// Authors: Piotr Wygocki 
+// Authors: Piotr Wygocki
 //
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(cycle_canceling_def_test) {
 
 BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
     boost::SampleGraph::vertex_descriptor s,t;
-    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::Graph g;
     boost::SampleGraph::getSampleGraph2(g, s, t);
 
     boost::edmonds_karp_max_flow(g, s, t);
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(path_augmentation_def_test2) {
 BOOST_AUTO_TEST_CASE(cycle_canceling_test) {
     boost::SampleGraph::vertex_descriptor s,t;
     typedef boost::SampleGraph::Graph Graph;
-    boost::SampleGraph::Graph g; 
+    boost::SampleGraph::Graph g;
     boost::SampleGraph::getSampleGraph(g, s, t);
 
     int N = num_vertices(g);

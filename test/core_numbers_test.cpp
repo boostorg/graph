@@ -9,6 +9,8 @@
 #include <boost/graph/core_numbers.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <stdio.h>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace boost;
 
@@ -150,5 +152,5 @@ int main(int, char **) {
   printf("Total tests  : %3i\n", ntotal);
   printf("Total failed : %3i\n", nfail);
 
-  return nfail!=0;
+  return boost::report_errors();
 }

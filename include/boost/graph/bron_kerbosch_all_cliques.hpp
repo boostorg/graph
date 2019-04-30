@@ -224,8 +224,7 @@ namespace detail
 
         // otherwise, iterate over candidates and and test
         // for maxmimal cliquiness.
-        typename Container::iterator i, j;
-        for(i = cands.begin(); i != cands.end(); ) {
+        for(typename Container::iterator i = cands.begin(); i != cands.end(); ) {
             Vertex candidate = *i;
 
             // add the candidate to the clique (keeping the iterator!)

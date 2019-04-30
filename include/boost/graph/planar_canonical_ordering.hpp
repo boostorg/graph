@@ -23,36 +23,36 @@ namespace boost
 
   namespace detail {
     enum planar_canonical_ordering_state
-         {PCO_PROCESSED, 
-          PCO_UNPROCESSED, 
-          PCO_ONE_NEIGHBOR_PROCESSED, 
+         {PCO_PROCESSED,
+          PCO_UNPROCESSED,
+          PCO_ONE_NEIGHBOR_PROCESSED,
           PCO_READY_TO_BE_PROCESSED};
   }
-    
-  template<typename Graph, 
-           typename PlanarEmbedding, 
-           typename OutputIterator, 
+
+  template<typename Graph,
+           typename PlanarEmbedding,
+           typename OutputIterator,
            typename VertexIndexMap>
-  void planar_canonical_ordering(const Graph& g, 
-                                 PlanarEmbedding embedding, 
-                                 OutputIterator ordering, 
+  void planar_canonical_ordering(const Graph& g,
+                                 PlanarEmbedding embedding,
+                                 OutputIterator ordering,
                                  VertexIndexMap vm)
   {
-    
+
     typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
     typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     typedef typename graph_traits<Graph>::adjacency_iterator
       adjacency_iterator_t;
-    typedef typename property_traits<PlanarEmbedding>::value_type 
+    typedef typename property_traits<PlanarEmbedding>::value_type
       embedding_value_t;
     typedef typename embedding_value_t::const_iterator embedding_iterator_t;
     typedef iterator_property_map
-      <typename std::vector<vertex_t>::iterator, VertexIndexMap> 
+      <typename std::vector<vertex_t>::iterator, VertexIndexMap>
       vertex_to_vertex_map_t;
     typedef iterator_property_map
-      <typename std::vector<std::size_t>::iterator, VertexIndexMap> 
+      <typename std::vector<std::size_t>::iterator, VertexIndexMap>
       vertex_to_size_t_map_t;
-    
+
     std::vector<vertex_t> processed_neighbor_vector(num_vertices(g));
     vertex_to_vertex_map_t processed_neighbor
       (processed_neighbor_vector.begin(), vm);
@@ -61,7 +61,7 @@ namespace boost
     vertex_to_size_t_map_t status(status_vector.begin(), vm);
 
     std::list<vertex_t> ready_to_be_processed;
-    
+
     vertex_t first_vertex = *vertices(g).first;
     vertex_t second_vertex = first_vertex;
     adjacency_iterator_t ai, ai_end;
@@ -97,14 +97,14 @@ namespace boost
 
         for(ei = ei_start; ei != ei_end; ++ei)
           {
-            
+
             edge_t e(*ei); // e = (u,v)
             next_edge_itr = boost::next(ei) == ei_end ? ei_start : boost::next(ei);
             vertex_t v = source(e,g) == u ? target(e,g) : source(e,g);
 
-            vertex_t prior_vertex = source(*prior_edge_itr, g) == u ? 
+            vertex_t prior_vertex = source(*prior_edge_itr, g) == u ?
               target(*prior_edge_itr, g) : source(*prior_edge_itr, g);
-            vertex_t next_vertex = source(*next_edge_itr, g) == u ? 
+            vertex_t next_vertex = source(*next_edge_itr, g) == u ?
               target(*next_edge_itr, g) : source(*next_edge_itr, g);
 
             // Need prior_vertex, u, v, and next_vertex to all be
@@ -120,14 +120,14 @@ namespace boost
             //Skip any self-loops
             if (u == v)
                 continue;
-                                                                
+
             // Move next_edge_itr (and next_vertex) forwards
             // past any loops or parallel edges
             while (next_vertex == v || next_vertex == u)
               {
                 next_edge_itr = boost::next(next_edge_itr) == ei_end ?
                   ei_start : boost::next(next_edge_itr);
-                next_vertex = source(*next_edge_itr, g) == u ? 
+                next_vertex = source(*next_edge_itr, g) == u ?
                   target(*next_edge_itr, g) : source(*next_edge_itr, g);
               }
 
@@ -158,7 +158,7 @@ namespace boost
                 else
                   {
                     status[v] = detail::PCO_READY_TO_BE_PROCESSED + 1;
-                  }                                                        
+                  }
               }
             else if (status[v] > detail::PCO_ONE_NEIGHBOR_PROCESSED)
               {
@@ -191,21 +191,21 @@ namespace boost
         status[u] = detail::PCO_PROCESSED;
         *ordering = u;
         ++ordering;
-        
+
       }
-    
+
   }
 
 
   template<typename Graph, typename PlanarEmbedding, typename OutputIterator>
-  void planar_canonical_ordering(const Graph& g, 
-                                 PlanarEmbedding embedding, 
+  void planar_canonical_ordering(const Graph& g,
+                                 PlanarEmbedding embedding,
                                  OutputIterator ordering
                                  )
   {
     planar_canonical_ordering(g, embedding, ordering, get(vertex_index,g));
   }
- 
+
 
 } //namespace boost
 

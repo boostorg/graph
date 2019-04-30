@@ -1,4 +1,5 @@
-# Copyright (c) 2002 Trustees of Indiana University
+# Copyright (c) 2002 Trustees of Indiana University]
+# Copyright (C) 2019 Josh Marshall
 #
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
@@ -9,6 +10,34 @@
 
 import modules ;
 import path ;
+
+
+local WOPTS =
+  -pipe
+  -Wall
+  -Wextra
+  -Wpedantic
+  -Wno-sign-compare
+  -fPIC
+  -O0
+  -ggdb
+#  -fsanitize=address
+  -fno-omit-frame-pointer
+  -Wredundant-decls
+  -Wcast-align
+  -Wmissing-include-dirs
+  -Wswitch-enum
+  -Wswitch-default
+  -Winvalid-pch
+  -Wformat=2
+  -Wmissing-format-attribute
+  -Wformat-nonliteral
+  -flto
+  -Wno-unused-parameter
+  -std=c++11 ;
+
+project : requirements <toolset>gcc:<cxxflags>$(WOPTS) <toolset>clang:<cxxflags>$(WOPTS) ;
+
 
 path-constant TEST_DIR : . ;
 
@@ -35,16 +64,16 @@ test-suite graph_test :
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
     [ compile adj_matrix_cc.cpp ]
-    [ run bfs.cpp ../../test/build//boost_test_exec_monitor ]
+    [ run bfs.cpp ]
     [ compile bfs_cc.cpp ]
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
     [ run bipartite_test.cpp ]
-    # [ run csr_graph_test.cpp : : : : : <variant>release ]
+    [ run csr_graph_test.cpp : : : : : <variant>release ]
     [ run dag_longest_paths.cpp ]
-    [ run dfs.cpp ../../test/build//boost_test_exec_monitor ]
-    [ run undirected_dfs.cpp ../../test/build//boost_test_exec_monitor ]
+    [ run dfs.cpp ]
+    [ run undirected_dfs.cpp ]
     [ compile dfs_cc.cpp ]
     [ compile dijkstra_cc.cpp ]
     [ run dijkstra_heap_performance.cpp : 10000 ]
@@ -72,11 +101,12 @@ test-suite graph_test :
     [ run sequential_vertex_coloring.cpp ]
 
     # TODO: Merge these into a single test framework.
-    [ run subgraph.cpp ../../test/build//boost_test_exec_monitor ]
+    [ run subgraph.cpp ]
     [ run subgraph_bundled.cpp ]
     [ run subgraph_props.cpp ]
 
-    [ run isomorphism.cpp ../../test/build//boost_test_exec_monitor ]
+    [ compile isomorphism.cpp ]
+    [ run isomorphism.cpp ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]
     [ compile copy.cpp ]

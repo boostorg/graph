@@ -7,10 +7,16 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+///////////////////////////////////////////////////////////////////////////////
+// COMPILE TEST ///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/grid_graph.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace boost;
 
@@ -37,5 +43,5 @@ int main (int, char*[]) {
   check<3>();
   check<4>();
 
-  return (0);
+  return boost::report_errors();
 }

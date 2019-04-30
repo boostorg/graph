@@ -8,12 +8,14 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/metis.hpp>
 #include <fstream>
+#include <boost/core/lightweight_test.hpp>
+
 
 #ifdef BOOST_NO_EXCEPTIONS
 void
 boost::throw_exception(std::exception const& ex)
 {
-    std::cout << ex.what() << std::endl;
+    // std::cout << ex.what() << std::endl;
     abort();
 }
 #endif
@@ -40,5 +42,5 @@ int main(int argc, char* argv[])
   Graph g(reader.begin(), reader.end(),
           reader.num_vertices());
 
-  return 0;
+  return boost::report_errors();
 }

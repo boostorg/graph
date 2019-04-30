@@ -1,4 +1,4 @@
-//  (C) Copyright Jeremy Siek 2004 
+//  (C) Copyright Jeremy Siek 2004
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -11,7 +11,7 @@
 
 namespace boost {
 
-template <class _Tp, 
+template <class _Tp,
           class _Sequence = std::deque<_Tp> >
 class queue;
 
@@ -67,7 +67,7 @@ public:
 };
 
 template <class _Tp, class _Sequence>
-bool 
+bool
 operator==(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 {
   return __x.c == __y.c;
@@ -88,21 +88,21 @@ operator!=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 }
 
 template <class _Tp, class _Sequence>
-bool 
+bool
 operator>(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 {
   return __y < __x;
 }
 
 template <class _Tp, class _Sequence>
-bool 
+bool
 operator<=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 {
   return !(__y < __x);
 }
 
 template <class _Tp, class _Sequence>
-bool 
+bool
 operator>=(const queue<_Tp, _Sequence>& __x, const queue<_Tp, _Sequence>& __y)
 {
   return !(__x < __y);

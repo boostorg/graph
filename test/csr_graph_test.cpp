@@ -30,7 +30,7 @@
 #include <boost/limits.hpp>
 #include <string>
 #include <boost/graph/iteration_macros.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 // Algorithms to test against
 #include <boost/graph/betweenness_centrality.hpp>
@@ -61,8 +61,8 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
                          const IsomorphismMap& iso) {
   using boost::out_degree;
 
-  BOOST_CHECK (num_vertices(g1) == num_vertices(g2));
-  BOOST_CHECK (num_edges(g1) == num_edges(g2));
+  BOOST_TEST(num_vertices(g1) == num_vertices(g2));
+  BOOST_TEST(num_edges(g1) == num_edges(g2));
 
   typedef typename boost::graph_traits<G1>::vertex_iterator vertiter1;
   {
@@ -71,19 +71,19 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
       typename boost::graph_traits<G1>::vertex_descriptor v1 = *i;
       typename boost::graph_traits<G2>::vertex_descriptor v2 = iso[v1];
 
-      BOOST_CHECK (vi1[v1] == vi2[v2]);
+      BOOST_TEST(vi1[v1] == vi2[v2]);
 
-      BOOST_CHECK (out_degree(v1, g1) == out_degree(v2, g2));
+      BOOST_TEST(out_degree(v1, g1) == out_degree(v2, g2));
       std::vector<std::size_t> edges1(out_degree(v1, g1));
       typename boost::graph_traits<G1>::out_edge_iterator oe1, oe1end;
       for (boost::tie(oe1, oe1end) = out_edges(v1, g1); oe1 != oe1end; ++oe1) {
-        BOOST_CHECK (source(*oe1, g1) == v1);
+        BOOST_TEST(source(*oe1, g1) == v1);
         edges1.push_back(vi1[target(*oe1, g1)]);
       }
       std::vector<std::size_t> edges2(out_degree(v2, g2));
       typename boost::graph_traits<G2>::out_edge_iterator oe2, oe2end;
       for (boost::tie(oe2, oe2end) = out_edges(v2, g2); oe2 != oe2end; ++oe2) {
-        BOOST_CHECK (source(*oe2, g2) == v2);
+        BOOST_TEST(source(*oe2, g2) == v2);
         edges2.push_back(vi2[target(*oe2, g2)]);
       }
 
@@ -98,7 +98,7 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
         for (size_t i = 0; i < edges2.size(); ++i) std::cerr << " " << edges2[i];
         std::cerr << std::endl;
       }
-      BOOST_CHECK (edges1 == edges2);
+      BOOST_TEST(edges1 == edges2);
     }
   }
 
@@ -115,7 +115,7 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
                                           vi2[target(*ei2, g2)]));
     std::sort(all_edges1.begin(), all_edges1.end());
     std::sort(all_edges2.begin(), all_edges2.end());
-    BOOST_CHECK (all_edges1 == all_edges2);
+    BOOST_TEST(all_edges1 == all_edges2);
   }
 }
 
@@ -124,16 +124,16 @@ void check_consistency_one(const Structure& g) {
   // Do a bunch of tests on the graph internal data
   // Check that m_rowstart entries are valid, and that entries after
   // m_last_source + 1 are all zero
-  BOOST_CHECK(g.m_rowstart[0] == 0);
+  BOOST_TEST(g.m_rowstart[0] == 0);
   for (size_t i = 0;
        i < g.m_rowstart.size() - 1;
        ++i) {
-    BOOST_CHECK(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
-    BOOST_CHECK(g.m_rowstart[i + 1] <= g.m_rowstart.back());
+    BOOST_TEST(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
+    BOOST_TEST(g.m_rowstart[i + 1] <= g.m_rowstart.back());
   }
   // Check that m_column entries are within range
   for (size_t i = 0; i < g.m_rowstart.back(); ++i) {
-    BOOST_CHECK(g.m_column[i] < g.m_rowstart.size() - 1);
+    BOOST_TEST(g.m_column[i] < g.m_rowstart.size() - 1);
   }
 }
 
@@ -145,8 +145,8 @@ void check_consistency_dispatch(const Graph& g,
 
 template <class G>
 void assert_bidir_equal_in_both_dirs(const G& g) {
-  BOOST_CHECK (g.m_forward.m_rowstart.size() == g.m_backward.m_rowstart.size());
-  BOOST_CHECK (g.m_forward.m_column.size() == g.m_backward.m_column.size());
+  BOOST_TEST(g.m_forward.m_rowstart.size() == g.m_backward.m_rowstart.size());
+  BOOST_TEST(g.m_forward.m_column.size() == g.m_backward.m_column.size());
   typedef typename boost::graph_traits<G>::vertex_descriptor Vertex;
   typedef typename boost::graph_traits<G>::edges_size_type EdgeIndex;
   std::vector<boost::tuple<EdgeIndex, Vertex, Vertex> > edges_forward, edges_backward;
@@ -164,7 +164,7 @@ void assert_bidir_equal_in_both_dirs(const G& g) {
   }
   std::sort(edges_forward.begin(), edges_forward.end());
   std::sort(edges_backward.begin(), edges_backward.end());
-  BOOST_CHECK (edges_forward == edges_backward);
+  BOOST_TEST(edges_forward == edges_backward);
 }
 
 template <typename Graph>
@@ -186,7 +186,7 @@ void graph_test(const OrigGraph& g)
   // Check copying of a graph
   CSRGraphT g2(g);
   check_consistency(g2);
-  BOOST_CHECK((std::size_t)std::distance(edges(g2).first, edges(g2).second)
+  BOOST_TEST((std::size_t)std::distance(edges(g2).first, edges(g2).second)
               == num_edges(g2));
   assert_graphs_equal(g, boost::identity_property_map(),
                       g2, boost::identity_property_map(),
@@ -200,7 +200,7 @@ void graph_test(const OrigGraph& g)
                                               boost::detail::make_edge_to_index_pair(g2)),
                num_vertices(g));
   check_consistency(g3);
-  BOOST_CHECK((std::size_t)std::distance(edges(g3).first, edges(g3).second)
+  BOOST_TEST((std::size_t)std::distance(edges(g3).first, edges(g3).second)
               == num_edges(g3));
   assert_graphs_equal(g2, boost::identity_property_map(),
                       g3, boost::identity_property_map(),
@@ -282,10 +282,10 @@ void graph_test(const OrigGraph& g)
   // each edge in g2
   std::size_t last_src = 0;
   for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei) {
-    BOOST_CHECK(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
+    BOOST_TEST(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
     std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
     (void)(std::size_t)get(boost::vertex_index, g2, target(*ei, g2));
-    BOOST_CHECK(src >= last_src);
+    BOOST_TEST(src >= last_src);
     last_src = src;
   }
 
@@ -295,13 +295,13 @@ void graph_test(const OrigGraph& g)
   bool first_iter = true;
   for (boost::tie(vi, vi_end) = vertices(g2); vi != vi_end; ++vi) {
     std::size_t v = get(boost::vertex_index, g2, *vi);
-    BOOST_CHECK(first_iter || v > last_vertex);
+    BOOST_TEST(first_iter || v > last_vertex);
     last_vertex = v;
     first_iter = false;
 
     CSRGraphT::out_edge_iterator oei, oei_end;
     for (boost::tie(oei, oei_end) = out_edges(*vi, g2); oei != oei_end; ++oei) {
-      BOOST_CHECK(source(*oei, g2) == *vi);
+      BOOST_TEST(source(*oei, g2) == *vi);
     }
 
     // Find a vertex for testing
@@ -347,7 +347,7 @@ void graph_test(const OrigGraph& g)
 void graph_test(int nnodes, double density, int seed)
 {
   boost::minstd_rand gen(seed);
-  std::cout << "Testing " << nnodes << " density " << density << std::endl;
+  // std::cout << "Testing " << nnodes << " density " << density << std::endl;
   GraphT g(ERGen(gen, nnodes, density), ERGen(), nnodes);
   graph_test(g);
 }
@@ -363,9 +363,9 @@ void test_graph_properties()
     CSRGraphT;
 
   CSRGraphT g;
-  BOOST_CHECK(get_property(g, graph_name) == "");
+  BOOST_TEST(get_property(g, graph_name) == "");
   set_property(g, graph_name, "beep");
-  BOOST_CHECK(get_property(g, graph_name) == "beep");
+  BOOST_TEST(get_property(g, graph_name) == "beep");
 }
 
 struct Vertex
@@ -400,18 +400,18 @@ void test_vertex_and_edge_properties()
      edge_centrality_map(get(&Edge::centrality, g)));
 
   BGL_FORALL_VERTICES(v, g, CSRGraphWithPropsT)
-    BOOST_CHECK(g[v].centrality == centrality[v]);
+    BOOST_TEST(g[v].centrality == centrality[v]);
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   // Optionally accept a seed value
   int seed = int(std::time(0));
   if (argc > 1) seed = boost::lexical_cast<int>(argv[1]);
 
-  std::cout << "Seed = " << seed << std::endl;
+  // std::cout << "Seed = " << seed << std::endl;
   {
-    std::cout << "Testing empty graph" << std::endl;
+    // std::cout << "Testing empty graph" << std::endl;
     CSRGraphT g;
     graph_test(g);
   }
@@ -425,7 +425,7 @@ int test_main(int argc, char* argv[])
   test_vertex_and_edge_properties();
 
   {
-    std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
+    // std::cout << "Testing CSR graph built from unsorted edges" << std::endl;
     std::pair<int, int> unsorted_edges[] = {std::make_pair(5, 0), std::make_pair(3, 2), std::make_pair(4, 1), std::make_pair(4, 0), std::make_pair(0, 2), std::make_pair(5, 2)};
     CSRGraphT g(boost::edges_are_unsorted, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
 
@@ -455,7 +455,7 @@ int test_main(int argc, char* argv[])
     assert_graphs_equal(g, boost::identity_property_map(),
                         g2, boost::identity_property_map(),
                         boost::identity_property_map());
-    std::cout << "Testing bidir CSR graph built from unsorted edges" << std::endl;
+    // std::cout << "Testing bidir CSR graph built from unsorted edges" << std::endl;
     BidirCSRGraphT g2b(boost::edges_are_unsorted_multi_pass, unsorted_edges, unsorted_edges + sizeof(unsorted_edges) / sizeof(*unsorted_edges), 6);
     graph_test(g2b);
     assert_graphs_equal(g, boost::identity_property_map(),
@@ -464,10 +464,10 @@ int test_main(int argc, char* argv[])
     // Check in edge access
     typedef boost::graph_traits<BidirCSRGraphT>::in_edge_iterator in_edge_iterator;
     std::pair<in_edge_iterator, in_edge_iterator> ie(in_edges(vertex(0, g2b), g2b));
-    // quiet unused variable warning 
+    // quiet unused variable warning
     ie.first = ie.second;
 
-    std::cout << "Testing CSR graph built using add_edges" << std::endl;
+    // std::cout << "Testing CSR graph built using add_edges" << std::endl;
     // Test building a graph using add_edges on unsorted lists
     CSRGraphT g3(boost::edges_are_unsorted, unsorted_edges, unsorted_edges, 6); // Empty range
     add_edges(unsorted_edges, unsorted_edges + 3, g3);
@@ -479,5 +479,5 @@ int test_main(int argc, char* argv[])
                         boost::identity_property_map());
   }
 
-  return 0;
+  return boost::report_errors();
 }

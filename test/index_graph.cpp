@@ -7,6 +7,8 @@
 #include <iostream>
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/directed_graph.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace std;
 using namespace boost;
@@ -89,5 +91,5 @@ int main(int, char*[])
 
     build< undirected_graph<> >();
 
-    return 0;
+    return boost::report_errors();
 }

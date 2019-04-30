@@ -8,8 +8,8 @@
 //=======================================================================
 
 // Revision History:
-//   17 March 2006: Fixed a bug: when updating the degree a vertex 
-//                  could be moved to a wrong bucket. (Roman Dementiev) 
+//   17 March 2006: Fixed a bug: when updating the degree a vertex
+//                  could be moved to a wrong bucket. (Roman Dementiev)
 //
 
 
@@ -35,29 +35,29 @@
 namespace boost {
 
   template <class VertexListGraph, class Order, class Degree, class Marker>
-  void 
-  smallest_last_vertex_ordering(const VertexListGraph& G, Order order, 
+  void
+  smallest_last_vertex_ordering(const VertexListGraph& G, Order order,
                                 Degree degree, Marker marker) {
     typedef typename boost::graph_traits<VertexListGraph> GraphTraits;
     typedef typename GraphTraits::vertex_descriptor Vertex;
     //typedef typename GraphTraits::size_type size_type;
     typedef std::size_t size_type;
-    
+
     const size_type num = num_vertices(G);
-    
+
     typedef typename boost::property_map<VertexListGraph, vertex_index_t>::type ID;
     typedef bucket_sorter<size_type, Vertex, Degree, ID> BucketSorter;
-    
-    BucketSorter degree_bucket_sorter(num, num, degree,  
+
+    BucketSorter degree_bucket_sorter(num, num, degree,
                                       get(vertex_index,G));
 
     smallest_last_vertex_ordering(G, order, degree, marker, degree_bucket_sorter);
   }
 
-  template <class VertexListGraph, class Order, class Degree, 
+  template <class VertexListGraph, class Order, class Degree,
             class Marker, class BucketSorter>
-  void 
-  smallest_last_vertex_ordering(const VertexListGraph& G, Order order, 
+  void
+  smallest_last_vertex_ordering(const VertexListGraph& G, Order order,
                                 Degree degree, Marker marker,
                                 BucketSorter& degree_buckets) {
     typedef typename boost::graph_traits<VertexListGraph> GraphTraits;
@@ -66,59 +66,59 @@ namespace boost {
     typedef std::size_t size_type;
 
     const size_type num = num_vertices(G);
-    
+
     typename GraphTraits::vertex_iterator v, vend;
     for (boost::tie(v, vend) = vertices(G); v != vend; ++v) {
       put(marker, *v, num);
       put(degree, *v, out_degree(*v, G));
       degree_buckets.push(*v);
     }
- 
+
     size_type minimum_degree = 0;
     size_type current_order = num - 1;
-    
+
     while ( 1 ) {
       typedef typename BucketSorter::stack MDStack;
       MDStack minimum_degree_stack = degree_buckets[minimum_degree];
       while (minimum_degree_stack.empty())
         minimum_degree_stack = degree_buckets[++minimum_degree];
-      
+
       Vertex node = minimum_degree_stack.top();
       put(order, current_order, node);
-      
+
       if ( current_order == 0 ) //find all vertices
         break;
-      
+
       minimum_degree_stack.pop();
       put(marker, node, 0); //node has been ordered.
-      
+
       typename GraphTraits::adjacency_iterator v, vend;
       for (boost::tie(v,vend) = adjacent_vertices(node, G); v != vend; ++v)
-        
+
         if ( get(marker,*v) > current_order ) { //*v is unordered vertex
           put(marker, *v, current_order);  //mark the columns adjacent to node
 
-          //delete *v from the bucket sorter         
+          //delete *v from the bucket sorter
           degree_buckets.remove(*v);
- 
+
           //It is possible minimum degree goes down
           //Here we keep tracking it.
-          put(degree, *v, get(degree, *v) - 1); 
+          put(degree, *v, get(degree, *v) - 1);
           BOOST_USING_STD_MIN();
-          minimum_degree = min BOOST_PREVENT_MACRO_SUBSTITUTION(minimum_degree, get(degree, *v)); 
-          
+          minimum_degree = min BOOST_PREVENT_MACRO_SUBSTITUTION(minimum_degree, get(degree, *v));
+
           //reinsert *v in the bucket sorter with the new degree
           degree_buckets.push(*v);
         }
 
       current_order--;
     }
-    
+
     //at this point, order[i] = v_i;
   }
-  
+
   template <class VertexListGraph, class Order>
-  void 
+  void
   smallest_last_vertex_ordering(const VertexListGraph& G, Order order) {
     typedef typename graph_traits<VertexListGraph>::vertex_descriptor vertex_descriptor;
     typedef typename graph_traits<VertexListGraph>::degree_size_type degree_size_type;

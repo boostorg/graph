@@ -23,7 +23,7 @@
 
 namespace boost
 {
-  
+
   namespace detail
   {
 
@@ -42,7 +42,7 @@ namespace boost
     template <typename Graph>
     Graph make_K_3_3()
     {
-      typename graph_traits<Graph>::vertex_iterator 
+      typename graph_traits<Graph>::vertex_iterator
         vi, vi_end, bipartition_start, inner_vi;
       Graph K_3_3(6);
       bipartition_start = next(next(next(vertices(K_3_3).first)));
@@ -57,40 +57,40 @@ namespace boost
     void contract_edge(AdjacencyList& neighbors, Vertex u, Vertex v)
     {
       // Remove u from v's neighbor list
-      neighbors[v].erase(std::remove(neighbors[v].begin(), 
+      neighbors[v].erase(std::remove(neighbors[v].begin(),
                                      neighbors[v].end(), u
-                                     ), 
+                                     ),
                          neighbors[v].end()
                          );
-      
+
       // Replace any references to u with references to v
-      typedef typename AdjacencyList::value_type::iterator 
+      typedef typename AdjacencyList::value_type::iterator
         adjacency_iterator_t;
-      
+
       adjacency_iterator_t u_neighbor_end = neighbors[u].end();
       for(adjacency_iterator_t u_neighbor_itr = neighbors[u].begin();
           u_neighbor_itr != u_neighbor_end; ++u_neighbor_itr
           )
         {
           Vertex u_neighbor(*u_neighbor_itr);
-          std::replace(neighbors[u_neighbor].begin(), 
+          std::replace(neighbors[u_neighbor].begin(),
                        neighbors[u_neighbor].end(), u, v
                        );
         }
-      
+
       // Remove v from u's neighbor list
-      neighbors[u].erase(std::remove(neighbors[u].begin(), 
+      neighbors[u].erase(std::remove(neighbors[u].begin(),
                                      neighbors[u].end(), v
-                                     ), 
+                                     ),
                          neighbors[u].end()
                          );
-      
+
       // Add everything in u's neighbor list to v's neighbor list
-      std::copy(neighbors[u].begin(), 
-                neighbors[u].end(), 
+      std::copy(neighbors[u].begin(),
+                neighbors[u].end(),
                 std::back_inserter(neighbors[v])
                 );
-      
+
       // Clear u's neighbor list
       neighbors[u].clear();
 
@@ -105,8 +105,8 @@ namespace boost
 
   template <typename Graph, typename ForwardIterator, typename VertexIndexMap>
   bool is_kuratowski_subgraph(const Graph& g,
-                              ForwardIterator begin, 
-                              ForwardIterator end, 
+                              ForwardIterator begin,
+                              ForwardIterator end,
                               VertexIndexMap vm
                               )
   {
@@ -119,7 +119,7 @@ namespace boost
     typedef typename std::vector<vertex_t> v_list_t;
     typedef typename v_list_t::iterator v_list_iterator_t;
     typedef iterator_property_map
-      <typename std::vector<v_list_t>::iterator, VertexIndexMap> 
+      <typename std::vector<v_list_t>::iterator, VertexIndexMap>
       vertex_to_v_list_map_t;
 
     typedef adjacency_list<vecS, vecS, undirectedS> small_graph_t;
@@ -176,34 +176,34 @@ namespace boost
             while (neighbors[v].size() > 0 && neighbors[v].size() < max_size)
               {
                 // Find one of v's neighbors u such that v and u
-                // have no neighbors in common. We'll look for such a 
-                // neighbor with a naive cubic-time algorithm since the 
-                // max size of any of the neighbor sets we'll consider 
+                // have no neighbors in common. We'll look for such a
+                // neighbor with a naive cubic-time algorithm since the
+                // max size of any of the neighbor sets we'll consider
                 // merging is 3
-                
+
                 bool neighbor_sets_intersect = false;
-                
+
                 vertex_t min_u = graph_traits<Graph>::null_vertex();
                 vertex_t u;
                 v_list_iterator_t v_neighbor_end = neighbors[v].end();
                 for(v_list_iterator_t v_neighbor_itr = neighbors[v].begin();
-                    v_neighbor_itr != v_neighbor_end; 
+                    v_neighbor_itr != v_neighbor_end;
                     ++v_neighbor_itr
                     )
                   {
                     neighbor_sets_intersect = false;
                     u = *v_neighbor_itr;
                     v_list_iterator_t u_neighbor_end = neighbors[u].end();
-                    for(v_list_iterator_t u_neighbor_itr = 
+                    for(v_list_iterator_t u_neighbor_itr =
                           neighbors[u].begin();
-                        u_neighbor_itr != u_neighbor_end && 
-                          !neighbor_sets_intersect; 
+                        u_neighbor_itr != u_neighbor_end &&
+                          !neighbor_sets_intersect;
                         ++u_neighbor_itr
                         )
                       {
-                        for(v_list_iterator_t inner_v_neighbor_itr = 
+                        for(v_list_iterator_t inner_v_neighbor_itr =
                               neighbors[v].begin();
-                            inner_v_neighbor_itr != v_neighbor_end; 
+                            inner_v_neighbor_itr != v_neighbor_end;
                             ++inner_v_neighbor_itr
                             )
                           {
@@ -213,16 +213,16 @@ namespace boost
                                 break;
                               }
                           }
-                        
+
                       }
                     if (!neighbor_sets_intersect &&
-                        (min_u == graph_traits<Graph>::null_vertex() || 
+                        (min_u == graph_traits<Graph>::null_vertex() ||
                          neighbors[u].size() < neighbors[min_u].size())
                         )
                       {
                         min_u = u;
                       }
-                        
+
                   }
 
                 if (min_u == graph_traits<Graph>::null_vertex())
@@ -251,32 +251,32 @@ namespace boost
             if (target_graph == detail::tg_k_3_3)
               break;
           }
-        
+
       }//end iteration through max degree 2,3, and 4
 
-    
+
     //Now, there should only be 5 or 6 vertices with any neighbors. Find them.
-    
+
     v_list_t main_vertices;
     vertex_iterator_t vi, vi_end;
-    
+
     for(boost::tie(vi,vi_end) = vertices(g); vi != vi_end; ++vi)
       {
         if (!neighbors[*vi].empty())
           main_vertices.push_back(*vi);
       }
-    
-    // create a graph isomorphic to the contracted graph to test 
+
+    // create a graph isomorphic to the contracted graph to test
     // against K_5 and K_3_3
     small_graph_t contracted_graph(main_vertices.size());
-    std::map<vertex_t,typename graph_traits<small_graph_t>::vertex_descriptor> 
+    std::map<vertex_t,typename graph_traits<small_graph_t>::vertex_descriptor>
       contracted_vertex_map;
-    
+
     typename v_list_t::iterator itr, itr_end;
     itr_end = main_vertices.end();
-    typename graph_traits<small_graph_t>::vertex_iterator 
+    typename graph_traits<small_graph_t>::vertex_iterator
       si = vertices(contracted_graph).first;
-    
+
     for(itr = main_vertices.begin(); itr != itr_end; ++itr, ++si)
       {
         contracted_vertex_map[*itr] = *si;
@@ -297,7 +297,7 @@ namespace boost
               }
           }
       }
-    
+
     if (target_graph == detail::tg_k_5)
       {
         return boost::isomorphism(K_5,contracted_graph);
@@ -306,8 +306,8 @@ namespace boost
       {
         return boost::isomorphism(K_3_3,contracted_graph);
       }
-    
-    
+
+
   }
 
 
@@ -315,8 +315,8 @@ namespace boost
 
 
   template <typename Graph, typename ForwardIterator>
-  bool is_kuratowski_subgraph(const Graph& g, 
-                              ForwardIterator begin, 
+  bool is_kuratowski_subgraph(const Graph& g,
+                              ForwardIterator begin,
                               ForwardIterator end
                               )
   {
@@ -325,7 +325,7 @@ namespace boost
 
 
 
-  
+
 }
 
 #endif //__IS_KURATOWSKI_SUBGRAPH_HPP__

@@ -10,6 +10,8 @@
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/exterior_property.hpp>
 #include <boost/graph/clustering_coefficient.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace std;
 using namespace boost;
@@ -102,4 +104,6 @@ main(int, char *[])
 
     test_undirected<Graph>();
     // test<Digraph>();
+
+    return boost::report_errors();
 }

@@ -18,7 +18,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -45,7 +45,7 @@ void test_graph(const Graph& graph) {
   RankMap rank_map;
   RankPropertyMap rank_property_map(rank_map);
 
-  ParentMap parent_map(num_vertices(graph));  
+  ParentMap parent_map(num_vertices(graph));
   IndexParentMap index_parent_map(parent_map.begin());
 
   // Create disjoint sets of vertices from the graph
@@ -80,7 +80,7 @@ void test_graph(const Graph& graph) {
 
       vertex_descriptor child_vertex = reverse_index_map[child_index];
       component_vertices.insert(child_vertex);
-      
+
     } // foreach child_index
 
     // Verify that children are connected to each other in some
@@ -107,7 +107,7 @@ void test_graph(const Graph& graph) {
 
       } // foreach child_edge
 
-      BOOST_REQUIRE(edge_exists);
+      BOOST_TEST(edge_exists);
 
     } // foreach child_vertex
 
@@ -115,7 +115,7 @@ void test_graph(const Graph& graph) {
 
 } // test_graph
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   std::size_t vertices_to_generate = 100,
     edges_to_generate = 50,
@@ -155,8 +155,8 @@ int test_main(int argc, char* argv[])
     put(get(boost::vertex_index, list_graph), vertex, index++);
   }
 
-  test_graph(list_graph); 
+  test_graph(list_graph);
 
-  return 0;
+  return boost::report_errors();
 
 }

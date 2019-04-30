@@ -386,7 +386,10 @@ public:
 
     /** Remove the vertex with the given label. */
     void remove_vertex(Label const& l)
-    { return boost::remove_vertex(vertex(l), _graph); }
+    {
+        // _map.erase(l);
+        return boost::remove_vertex(vertex(l), _graph);
+    }
 
     /** Return a descriptor for the given label. */
     vertex_descriptor vertex(Label const& l) const
@@ -415,7 +418,7 @@ public:
     static vertex_descriptor null_vertex()
     { return graph_traits<graph_type>::null_vertex(); }
 
-private:
+protected:
     graph_type _graph;
     map_type _map;
 };
@@ -529,7 +532,7 @@ public:
     static vertex_descriptor null_vertex()
     { return graph_traits<graph_type>::null_vertex(); }
 
-private:
+protected:
     graph_type* _graph;
     map_type _map;
 };

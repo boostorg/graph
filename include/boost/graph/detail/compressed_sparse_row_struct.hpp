@@ -104,7 +104,7 @@ namespace detail {
     compressed_sparse_row_structure(Vertex numverts = 0)
       : m_rowstart(numverts + 1, EdgeIndex(0)), m_column()
       {}
-    
+
     //  Rebuild graph from number of vertices and multi-pass unsorted list of
     //  edges (filtered using source_pred and mapped using global_to_local)
     template <typename MultiPassInputIterator, typename GlobalToLocal, typename SourcePred>

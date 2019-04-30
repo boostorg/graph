@@ -20,7 +20,7 @@ void test_outdirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::
     using namespace boost;
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
 
-    std::cout << "...test_outdirected_graph\n";
+    // std::cout << "...test_outdirected_graph\n";
     typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;
@@ -63,7 +63,7 @@ void test_indirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
     using namespace boost;
     BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<Graph>));
 
-    std::cout << "...test_indirected_graph\n";
+    // std::cout << "...test_indirected_graph\n";
     typedef typename graph_traits<Graph>::in_edge_iterator InIter;
     typedef std::pair<InIter, InIter> InRange;
     typedef std::vector<InRange> InSet;
@@ -101,7 +101,7 @@ void test_undirected_graph(Graph const& g, VertexSet const& verts, boost::mpl::t
     using namespace boost;
     BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<Graph>));
 
-    std::cout << "...test_undirected_graph\n";
+    // std::cout << "...test_undirected_graph\n";
     typedef typename graph_traits<Graph>::out_edge_iterator OutIter;
     typedef std::pair<OutIter, OutIter> OutRange;
     typedef std::vector<OutRange> OutSet;

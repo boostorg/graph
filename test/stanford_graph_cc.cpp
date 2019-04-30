@@ -23,9 +23,9 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_length_t > ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       PropertyGraphConcept<Graph, Vertex, u_property<Vertex> > ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       PropertyGraphConcept<Graph, Edge, a_property<Vertex> > ));
   }
   {
@@ -35,12 +35,13 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Edge, edge_length_t > ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Vertex, u_property<Vertex> > ));
-    BOOST_CONCEPT_ASSERT(( 
+    BOOST_CONCEPT_ASSERT((
       ReadablePropertyGraphConcept<Graph, Edge, a_property<Vertex> > ));
   }
-  return 0;
+
+  return boost::report_errors();
 }

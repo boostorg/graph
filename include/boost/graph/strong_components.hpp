@@ -29,15 +29,15 @@ namespace boost {
   // We implement the algorithm as a dfs-visitor.
 
   namespace detail {
-    
+
     template <typename ComponentMap, typename RootMap, typename DiscoverTime,
               typename Stack>
-    class tarjan_scc_visitor : public dfs_visitor<> 
+    class tarjan_scc_visitor : public dfs_visitor<>
     {
       typedef typename property_traits<ComponentMap>::value_type comp_type;
       typedef typename property_traits<DiscoverTime>::value_type time_type;
     public:
-      tarjan_scc_visitor(ComponentMap comp_map, RootMap r, DiscoverTime d, 
+      tarjan_scc_visitor(ComponentMap comp_map, RootMap r, DiscoverTime d,
                          comp_type& c_, Stack& s_)
         : c(c_), comp(comp_map), root(r), discover_time(d),
           dfs_time(time_type()), s(s_) { }
@@ -82,7 +82,7 @@ namespace boost {
       time_type dfs_time;
       Stack& s;
     };
-    
+
     template <class Graph, class ComponentMap, class RootMap,
               class DiscoverTime, class P, class T, class R>
     typename property_traits<ComponentMap>::value_type
@@ -90,7 +90,7 @@ namespace boost {
       (const Graph& g,    // Input
        ComponentMap comp, // Output
        // Internal record keeping
-       RootMap root, 
+       RootMap root,
        DiscoverTime discover_time,
        const bgl_named_params<P, T, R>& params)
     {
@@ -104,8 +104,8 @@ namespace boost {
       typename property_traits<ComponentMap>::value_type total = 0;
 
       std::stack<Vertex> s;
-      detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime, 
-        std::stack<Vertex> > 
+      detail::tarjan_scc_visitor<ComponentMap, RootMap, DiscoverTime,
+        std::stack<Vertex> >
         vis(comp, root, discover_time, total, s);
       depth_first_search(g, params.visitor(vis));
       return total;
@@ -182,7 +182,7 @@ namespace boost {
     template <>
     struct strong_comp_dispatch1<param_not_found> {
 
-      template <class Graph, class ComponentMap, 
+      template <class Graph, class ComponentMap,
                 class P, class T, class R>
       inline static typename property_traits<ComponentMap>::value_type
       apply(const Graph& g,
@@ -195,11 +195,11 @@ namespace boost {
           n = num_vertices(g) > 0 ? num_vertices(g) : 1;
         std::vector<Vertex> root_vec(n);
         return scc_helper2
-          (g, comp, 
+          (g, comp,
            make_iterator_property_map(root_vec.begin(), choose_const_pmap
                                       (get_param(params, vertex_index),
                                        g, vertex_index), root_vec[0]),
-           params, 
+           params,
            get_param(params, vertex_discover_time));
       }
     };
@@ -216,9 +216,9 @@ namespace boost {
                                                            r_map);
     }
 
-  } // namespace detail 
+  } // namespace detail
 
-  template <class Graph, class ComponentMap, 
+  template <class Graph, class ComponentMap,
             class P, class T, class R>
   inline typename property_traits<ComponentMap>::value_type
   strong_components(const Graph& g, ComponentMap comp,
@@ -227,7 +227,7 @@ namespace boost {
   {
     typedef typename graph_traits<Graph>::directed_category DirCat;
     BOOST_STATIC_ASSERT((is_convertible<DirCat*, directed_tag*>::value == true));
-    return detail::scc_helper1(g, comp, params, 
+    return detail::scc_helper1(g, comp, params,
                                get_param(params, vertex_root_t()));
   }
 
@@ -286,7 +286,7 @@ namespace boost {
   {
     BOOST_CONCEPT_ASSERT(( MutableGraphConcept<Graph> ));
     // ...
-    
+
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename property_traits<ColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
@@ -328,7 +328,7 @@ namespace boost {
       Q.pop();
       if  (get(color, u) == Color::white()) {
         depth_first_visit(G_T, u, vis, color);
-        ++c_count; 
+        ++c_count;
       }
     }
     return c_count;

@@ -267,7 +267,7 @@ namespace boost {
         : Base(static_cast< Base const& >(x)), m_property(const_cast<self&>(x).m_property) { }
       self& operator=(const self& x) {
         // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug 55771 of Mozilla).
-        static_cast<Base&>(*this) = static_cast< Base const& >(x); 
+        static_cast<Base&>(*this) = static_cast< Base const& >(x);
         m_property = const_cast<self&>(x).m_property;
         return *this;
       }
@@ -277,7 +277,7 @@ namespace boost {
         : Base(static_cast< Base&& >(x)), m_property(std::move(x.m_property)) { }
       self& operator=(self&& x) {
         // NOTE: avoid 'Base::operator=(x);' broken on SGI MIPSpro (bug 55771 of Mozilla).
-        static_cast<Base&>(*this) = static_cast< Base&& >(x); 
+        static_cast<Base&>(*this) = static_cast< Base&& >(x);
         m_property = std::move(x.m_property);
         return *this;
       }

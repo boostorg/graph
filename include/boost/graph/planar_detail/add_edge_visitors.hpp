@@ -28,16 +28,16 @@ namespace boost
   struct edge_index_update_visitor
   {
 
-    typedef typename 
+    typedef typename
       property_traits<EdgeIndexMap>::value_type edge_index_value_t;
 
-    edge_index_update_visitor(EdgeIndexMap em, 
+    edge_index_update_visitor(EdgeIndexMap em,
                               edge_index_value_t next_index_available
-                              ) : 
+                              ) :
       m_em(em),
       m_next_index(next_index_available)
     {}
-    
+
     template <typename Graph, typename Vertex>
     void visit_vertex_pair(Vertex u, Vertex v, Graph& g)
     {
@@ -54,6 +54,6 @@ namespace boost
 
   };
 
-} // namespace boost 
+} // namespace boost
 
 #endif //__ADD_EDGE_VISITORS_HPP__

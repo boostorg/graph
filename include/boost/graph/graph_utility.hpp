@@ -30,7 +30,7 @@ namespace boost {
   // Provide an undirected graph interface alternative to the
   // the source() and target() edge functions.
   template <class UndirectedGraph>
-  inline 
+  inline
   std::pair<typename graph_traits<UndirectedGraph>::vertex_descriptor,
             typename graph_traits<UndirectedGraph>::vertex_descriptor>
   incident(typename graph_traits<UndirectedGraph>::edge_descriptor e,
@@ -42,7 +42,7 @@ namespace boost {
   // Provide an undirected graph interface alternative
   // to the out_edges() function.
   template <class Graph>
-  inline 
+  inline
   std::pair<typename graph_traits<Graph>::out_edge_iterator,
             typename graph_traits<Graph>::out_edge_iterator>
   incident_edges(typename graph_traits<Graph>::vertex_descriptor u,
@@ -85,7 +85,7 @@ namespace boost {
   incident_from(Vertex u, const Graph& g) {
     return incident_from_predicate<Vertex, Graph>(u, g);
   }
-  
+
   template <typename Vertex, typename Graph>
   struct incident_to_predicate {
     incident_to_predicate(Vertex u, const Graph& g)
@@ -119,7 +119,7 @@ namespace boost {
   incident_on(Vertex u, const Graph& g) {
     return incident_on_predicate<Vertex, Graph>(u, g);
   }
-  
+
   template <typename Vertex, typename Graph>
   struct connects_predicate {
     connects_predicate(Vertex u, Vertex v, const Graph& g)
@@ -229,21 +229,21 @@ namespace boost {
   template <class Graph, class Vertex>
   bool is_adj_dispatch(Graph& g, Vertex a, Vertex b, bidirectional_tag)
   {
-    typename graph_traits<Graph>::adjacency_iterator vi, viend, 
+    typename graph_traits<Graph>::adjacency_iterator vi, viend,
       adj_found;
     boost::tie(vi, viend) = adjacent_vertices(a, g);
     adj_found = std::find(vi, viend, b);
     if (adj_found == viend)
-      return false;  
+      return false;
 
-    typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
+    typename graph_traits<Graph>::out_edge_iterator oi, oiend,
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
     out_found = std::find_if(oi, oiend, incident_to(b, g));
     if (out_found == oiend)
       return false;
 
-    typename graph_traits<Graph>::in_edge_iterator ii, iiend, 
+    typename graph_traits<Graph>::in_edge_iterator ii, iiend,
       in_found;
     boost::tie(ii, iiend) = in_edges(b, g);
     in_found = std::find_if(ii, iiend, incident_from(a, g));
@@ -261,7 +261,7 @@ namespace boost {
     if ( found == viend )
       return false;
 
-    typename graph_traits<Graph>::out_edge_iterator oi, oiend, 
+    typename graph_traits<Graph>::out_edge_iterator oi, oiend,
       out_found;
     boost::tie(oi, oiend) = out_edges(a, g);
 
@@ -315,7 +315,7 @@ namespace boost {
   inline bool is_descendant
   (typename property_traits<ParentMap>::value_type x,
    typename property_traits<ParentMap>::value_type y,
-   ParentMap parent) 
+   ParentMap parent)
   {
     if (get(parent, x) == x) // x is the root of the tree
       return false;
@@ -346,12 +346,12 @@ namespace boost {
   {
     typedef typename property_traits<VertexColorMap>::value_type ColorValue;
     typedef color_traits<ColorValue> Color;
-    typename graph_traits<VertexListGraph>::vertex_iterator 
+    typename graph_traits<VertexListGraph>::vertex_iterator
       ui, ui_end, vi, vi_end, ci, ci_end;
     for (boost::tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui)
       for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
         if (*ui != *vi) {
-          for (boost::tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci) 
+          for (boost::tie(ci, ci_end) = vertices(g); ci != ci_end; ++ci)
             put(color, *ci, Color::white());
           if (! is_reachable(*ui, *vi, g, color))
             return false;
@@ -369,33 +369,33 @@ namespace boost {
 
 
   template <class T1, class T2>
-  std::pair<T1,T2> 
-  make_list(const T1& t1, const T2& t2) 
+  std::pair<T1,T2>
+  make_list(const T1& t1, const T2& t2)
     { return std::make_pair(t1, t2); }
 
   template <class T1, class T2, class T3>
-  std::pair<T1,std::pair<T2,T3> > 
+  std::pair<T1,std::pair<T2,T3> >
   make_list(const T1& t1, const T2& t2, const T3& t3)
     { return std::make_pair(t1, std::make_pair(t2, t3)); }
 
   template <class T1, class T2, class T3, class T4>
-  std::pair<T1,std::pair<T2,std::pair<T3,T4> > > 
+  std::pair<T1,std::pair<T2,std::pair<T3,T4> > >
   make_list(const T1& t1, const T2& t2, const T3& t3, const T4& t4)
     { return std::make_pair(t1, std::make_pair(t2, std::make_pair(t3, t4))); }
 
   template <class T1, class T2, class T3, class T4, class T5>
-  std::pair<T1,std::pair<T2,std::pair<T3,std::pair<T4,T5> > > > 
+  std::pair<T1,std::pair<T2,std::pair<T3,std::pair<T4,T5> > > >
   make_list(const T1& t1, const T2& t2, const T3& t3, const T4& t4, const T5& t5)
     { return std::make_pair(t1, std::make_pair(t2, std::make_pair(t3, std::make_pair(t4, t5)))); }
 
   namespace graph {
-    
+
     // Functor for remove_parallel_edges: edge property of the removed edge is added to the remaining
     template <typename EdgeProperty>
     struct add_removed_edge_property
     {
       add_removed_edge_property(EdgeProperty ep) : ep(ep) {}
-      
+
       template <typename Edge>
       void operator() (Edge stay, Edge away)
       {
@@ -411,7 +411,7 @@ namespace boost {
     {
       typedef add_removed_edge_property<typename property_map<Graph, edge_capacity_t>::type> base;
       add_removed_edge_capacity(Graph& g) : base(get(edge_capacity, g)) {}
-    };    
+    };
 
     template <typename Graph>
     bool has_no_vertices(const Graph& g) {
@@ -461,7 +461,7 @@ namespace boost {
   (const PropertyMapFirst property_map1,
    const PropertyMapSecond property_map2,
    const Graph& graph) {
-  
+
     BGL_FORALL_VERTICES_T(vertex, graph, Graph) {
       if (get(property_map1, vertex) !=
           get(property_map2, vertex)) {

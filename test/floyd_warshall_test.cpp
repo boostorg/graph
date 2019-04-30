@@ -17,12 +17,12 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <algorithm>
 using namespace boost;
 
 template<typename T>
-inline const T& my_min(const T& x, const T& y) 
+inline const T& my_min(const T& x, const T& y)
 { return x < y? x : y; }
 
 template<typename Graph>
@@ -152,9 +152,9 @@ bool acceptance_test(Graph& g, int vec, int e)
 
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
-      std::cout <<
-        "A negative cycle was detected in one algorithm but not the others. "
-                << std::endl;
+      // std::cout <<
+      //   "A negative cycle was detected in one algorithm but not the others. "
+      //           << std::endl;
       return false;
     }
     else if (bellman == false && floyd1 == false && floyd2 == false &&
@@ -169,27 +169,27 @@ bool acceptance_test(Graph& g, int vec, int e)
         for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
              first2++){
           if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 1 results " << matrix[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 1 results " << matrix[*first1][*first2]
+            //           << std::endl;
             return false;
           }
           if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 2 results " << matrix3[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 2 results " << matrix3[*first1][*first2]
+            //           << std::endl;
             return false;
           }
           if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 3 results " << matrix4[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 3 results " << matrix4[*first1][*first2]
+            //           << std::endl;
             return false;
           }
         }
@@ -324,9 +324,9 @@ bool acceptance_test2(Graph& g, int vec, int e)
 
 
     if (bellman != floyd1 || bellman != floyd2 || bellman != floyd3){
-      std::cout <<
-        "A negative cycle was detected in one algorithm but not the others. "
-                << std::endl;
+      // std::cout <<
+      //   "A negative cycle was detected in one algorithm but not the others. "
+      //           << std::endl;
       return false;
     }
     else if (bellman == false && floyd1 == false && floyd2 == false &&
@@ -341,27 +341,27 @@ bool acceptance_test2(Graph& g, int vec, int e)
         for (boost::tie(first2, last2) = boost::vertices(g); first2 != last2;
              first2++){
           if (matrix2[*first1][*first2] != matrix[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 1 results " << matrix[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 1 results " << matrix[*first1][*first2]
+            //           << std::endl;
             return false;
           }
           if (matrix2[*first1][*first2] != matrix3[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 2 results " << matrix3[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 2 results " << matrix3[*first1][*first2]
+            //           << std::endl;
             return false;
           }
           if (matrix2[*first1][*first2] != matrix4[*first1][*first2]){
-            std::cout << "Algorithms do not match at matrix point "
-                      << index[*first1] << " " << index[*first2]
-                      << " Bellman results: " << matrix2[*first1][*first2]
-                      << " floyd 3 results " << matrix4[*first1][*first2]
-                      << std::endl;
+            // std::cout << "Algorithms do not match at matrix point "
+            //           << index[*first1] << " " << index[*first2]
+            //           << " Bellman results: " << matrix2[*first1][*first2]
+            //           << " floyd 3 results " << matrix4[*first1][*first2]
+            //           << std::endl;
             return false;
           }
         }
@@ -372,21 +372,21 @@ bool acceptance_test2(Graph& g, int vec, int e)
   return true;
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   typedef boost::adjacency_list<boost::listS, boost::listS, boost::directedS,
             boost::property<boost::vertex_distance_t, int,
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Digraph;
   Digraph adjlist_digraph;
-  BOOST_CHECK(acceptance_test2(adjlist_digraph, 100, 2000));
+  BOOST_TEST(acceptance_test2(adjlist_digraph, 100, 2000));
 
   typedef boost::adjacency_matrix<boost::undirectedS,
             boost::property<boost::vertex_distance_t, int,
             boost::property<boost::vertex_name_t, int> > ,
             boost::property<boost::edge_weight_t, int> > Graph;
   Graph matrix_graph(100);
-  BOOST_CHECK(acceptance_test(matrix_graph, 100, 2000));
+  BOOST_TEST(acceptance_test(matrix_graph, 100, 2000));
 
-  return 0;
+  return boost::report_errors();
 }

@@ -36,7 +36,7 @@ namespace boost {
       inline self& operator^=(const self& x) { return *this; } // JGS
       inline friend D operator-(const self& x, const self& y) {
         return x.a - y.a;
-      } 
+      }
       inline bool operator==(const self& x) const { return a == x.a;  }
       inline bool operator<(const self& x) const { return a < x.a;  }
       //  protected:
@@ -50,13 +50,13 @@ namespace boost {
       void initialize(const iter_pair&) { }
 
       template <typename Iter>
-      typename Iter::reference dereference(const Iter& i) const { 
+      typename Iter::reference dereference(const Iter& i) const {
         typedef typename Iter::reference R;
-        return R(*i.base().first, *i.base().second); 
+        return R(*i.base().first, *i.base().second);
       }
       template <typename Iter>
-      bool equal(const Iter& p1, const Iter& p2) const { 
-        return p1.base().first == p2.base().first;  
+      bool equal(const Iter& p1, const Iter& p2) const {
+        return p1.base().first == p2.base().first;
       }
       template <typename Iter>
       void increment(Iter& i) { ++i.base().first; ++i.base().second; }
@@ -65,13 +65,13 @@ namespace boost {
       void decrement(Iter& i) { --i.base().first; --i.base().second; }
 
       template <typename Iter>
-      bool less(const Iter& x, const Iter& y) const { 
-        return x.base().first < y.base().first;  
+      bool less(const Iter& x, const Iter& y) const {
+        return x.base().first < y.base().first;
       }
       template <typename Iter>
       typename Iter::difference_type
-      distance(const Iter& x, const Iter& y) const { 
-        return y.base().first - x.base().first; 
+      distance(const Iter& x, const Iter& y) const {
+        return y.base().first - x.base().first;
       }
       template <typename D, typename Iter>
       void advance(Iter& p, D n) { p.base().first += n; p.base().second += n; }
@@ -81,7 +81,7 @@ namespace boost {
 
   template <typename IterA, typename IterB>
   struct shadow_iterator_generator {
-    
+
     // To use the iterator_adaptor we can't derive from
     // random_access_iterator because we don't have a real reference.
     // However, we want the STL algorithms to treat the shadow
@@ -109,7 +109,7 @@ namespace boost {
   inline typename shadow_iterator_generator<IterA,IterB>::type
   make_shadow_iter(IterA a, IterB b) {
     typedef typename shadow_iterator_generator<IterA,IterB>::type Iter;
-    return Iter(std::make_pair(a,b)); 
+    return Iter(std::make_pair(a,b));
   }
 
   template <class Cmp>

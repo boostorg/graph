@@ -34,13 +34,13 @@ namespace boost {
        return a + b;
       }
     };
-    
-    template <class Graph, class WeightMap, 
-            class PredecessorMap, class DistanceMap, 
+
+    template <class Graph, class WeightMap,
+            class PredecessorMap, class DistanceMap,
             class BinaryFunction, class BinaryPredicate>
-    bool relax(typename graph_traits<Graph>::edge_descriptor e, 
-               const Graph& g, const WeightMap& w, 
-               PredecessorMap& p, DistanceMap& d, 
+    bool relax(typename graph_traits<Graph>::edge_descriptor e,
+               const Graph& g, const WeightMap& w,
+               PredecessorMap& p, DistanceMap& d,
                const BinaryFunction& combine, const BinaryPredicate& compare)
     {
       typedef typename graph_traits<Graph>::directed_category DirCat;
@@ -52,7 +52,7 @@ namespace boost {
       const D d_u = get(d, u);
       const D d_v = get(d, v);
       const W& w_e = get(w, e);
-      
+
       // The seemingly redundant comparisons after the distance puts are to
       // ensure that extra floating-point precision in x87 registers does not
       // lead to relax() returning true when the distance did not actually
@@ -76,8 +76,8 @@ namespace boost {
       } else
         return false;
     }
-    
-    template <class Graph, class WeightMap, 
+
+    template <class Graph, class WeightMap,
       class PredecessorMap, class DistanceMap>
     bool relax(typename graph_traits<Graph>::edge_descriptor e,
                const Graph& g, WeightMap w, PredecessorMap p, DistanceMap d)

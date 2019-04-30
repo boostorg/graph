@@ -32,7 +32,7 @@ namespace boost {
   template <typename PropMap>
   inline void property_map_swap(
          PropMap prop_map,
-         const typename boost::property_traits<PropMap>::key_type& ka, 
+         const typename boost::property_traits<PropMap>::key_type& ka,
          const typename boost::property_traits<PropMap>::key_type& kb) {
     typename boost::property_traits<PropMap>::value_type va = get(prop_map, ka);
     put(prop_map, ka, get(prop_map, kb));

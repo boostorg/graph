@@ -7,7 +7,7 @@
 // Test support for named vertices in adjacency_list.
 #include <boost/config.hpp>
 #include <boost/throw_exception.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <string>
@@ -17,7 +17,7 @@
 void
 boost::throw_exception(std::exception const& ex)
 {
-    std::cout << ex.what() << std::endl;
+    // std::cout << ex.what() << std::endl;
     abort();
 }
 #endif
@@ -30,7 +30,7 @@ struct City {
 
   City(const std::string& name, int population = -1)
     : name(name), population(population) { }
-  
+
   std::string name;
   int population;
 };
@@ -58,7 +58,7 @@ struct internal_vertex_constructor<City>
 typedef adjacency_list<vecS, vecS, directedS, City> RoadMap;
 typedef graph_traits<RoadMap>::vertex_descriptor Vertex;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   RoadMap map;
 
@@ -67,25 +67,25 @@ int test_main(int, char*[])
   Vertex indianapolis = add_vertex(City("Indianapolis", 791926), map);
   Vertex chicago = add_vertex(City("Chicago", 9500000), map);
 
-  BOOST_CHECK(add_vertex(City("Bloomington", 69291), map) == bloomington);
+  BOOST_TEST(add_vertex(City("Bloomington", 69291), map) == bloomington);
 
-  BGL_FORALL_VERTICES(city, map, RoadMap)
-    std::cout << map[city].name << ", population " << map[city].population
-              << std::endl;
+  // BGL_FORALL_VERTICES(city, map, RoadMap)
+  //   std::cout << map[city].name << ", population " << map[city].population
+  //             << std::endl;
 
-  BOOST_CHECK(*find_vertex("Bloomington", map) == bloomington);
-  BOOST_CHECK(*find_vertex("Indianapolis", map) == indianapolis);
-  BOOST_CHECK(*find_vertex("Chicago", map) == chicago);
+  BOOST_TEST(*find_vertex("Bloomington", map) == bloomington);
+  BOOST_TEST(*find_vertex("Indianapolis", map) == indianapolis);
+  BOOST_TEST(*find_vertex("Chicago", map) == chicago);
 
   add_edge(bloomington, "Indianapolis", map);
   add_edge("Indianapolis", chicago, map);
   add_edge("Indianapolis", "Cincinnatti", map);
 
-  BGL_FORALL_EDGES(road, map, RoadMap)
-    std::cout << map[source(road, map)].name << " -> " 
-              << map[target(road, map)].name << std::endl;
+  // BGL_FORALL_EDGES(road, map, RoadMap)
+  //   std::cout << map[source(road, map)].name << " -> "
+  //             << map[target(road, map)].name << std::endl;
 
-  BOOST_CHECK(map[*find_vertex("Cincinnatti", map)].population == -1);
+  BOOST_TEST(map[*find_vertex("Cincinnatti", map)].population == -1);
 
-  return 0;
+  return boost::report_errors();
 }

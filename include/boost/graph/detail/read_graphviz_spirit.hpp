@@ -5,15 +5,15 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //
-// read_graphviz_spirit.hpp - 
+// read_graphviz_spirit.hpp -
 //   Initialize a model of the BGL's MutableGraph concept and an associated
 //  collection of property maps using a graph expressed in the GraphViz
-// DOT Language.  
+// DOT Language.
 //
 //   Based on the grammar found at:
 //   http://www.graphviz.org/cvs/doc/info/lang.html
 //
-//   See documentation for this code at: 
+//   See documentation for this code at:
 //     http://www.boost.org/libs/graph/doc/read_graphviz.html
 //
 
@@ -133,28 +133,28 @@ struct subgraph_closure : boost::spirit::classic::closure<subgraph_closure,
 /////////////////////////////////////////////////////////////////////////////
 
 // Grammar for a dot file.
-struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> { 
+struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
   mutate_graph& graph_;
   explicit dot_grammar(mutate_graph& graph) : graph_(graph) { }
 
   template <class ScannerT>
   struct definition {
-   
+
     definition(dot_grammar const& self) : self(self), subgraph_depth(0),
     keyword_p("0-9a-zA-Z_") {
       using namespace boost::spirit::classic;
       using namespace phoenix;
-      
+
       // RG - Future Work
       // - Handle multi-line strings using \ line continuation
       // - Make keywords case insensitive
-      ID 
+      ID
           = ( lexeme_d[((alpha_p | ch_p('_')) >> *(alnum_p | ch_p('_')))]
             | real_p
             | lexeme_d[confix_p('"', *c_escape_ch_p, '"')]
             | comment_nest_p('<', '>')
             )[ID.name = construct_<std::string>(arg1,arg2)]
-          ; 
+          ;
 
       a_list
           = list_p( ID[(a_list.key = arg1),
@@ -164,11 +164,11 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
                           >> ID[a_list.value = arg1])
                           [phoenix::bind(&definition::call_prop_actor)
                           (var(*this),a_list.key,a_list.value)],!ch_p(','));
-      
+
       attr_list = +(ch_p('[') >> !a_list >> ch_p(']'));
 
       // RG - disregard port id's for now.
-      port_location 
+      port_location
           = (ch_p(':') >> ID)
           | (ch_p(':') >> ch_p('(') >> ID >> ch_p(',') >> ID >> ch_p(')'))
           ;
@@ -218,13 +218,13 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
                     (var(*this),data_stmt.sources,data_stmt.dests,
                      var(edges), var(default_edge_props))]
               );
-      
+
 
       // To avoid backtracking, edge, node, and subgraph statements are
       // processed as one nonterminal.
       data_stmt
           = ( subgraph[(data_stmt.dests = arg1),// will get moved in rhs
-                       (data_stmt.saw_node = false)] 
+                       (data_stmt.saw_node = false)]
             | node_id[(phoenix::bind(&definition::insert_node)
                        (var(*this),data_stmt.dests,arg1)),
                       (data_stmt.saw_node = true),
@@ -246,7 +246,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
 
 
       stmt
-          = graph_stmt 
+          = graph_stmt
           | attr_stmt
           | data_stmt
           ;
@@ -255,16 +255,16 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
 
       subgraph
           = !(  as_lower_d[keyword_p("subgraph")]
-                >> (!ID[(subgraph.name = arg1), 
+                >> (!ID[(subgraph.name = arg1),
                         (subgraph.nodes = (var(subgraph_nodes))[arg1]),
                         (subgraph.edges = (var(subgraph_edges))[arg1])])
                 )
           >> ch_p('{')[++var(subgraph_depth)]
-          >> stmt_list 
+          >> stmt_list
           >> ch_p('}')[--var(subgraph_depth)]
                       [(var(subgraph_nodes))[subgraph.name] = subgraph.nodes]
                       [(var(subgraph_edges))[subgraph.name] = subgraph.edges]
-                     
+
           | as_lower_d[keyword_p("subgraph")]
                 >> ID[(subgraph.nodes = (var(subgraph_nodes))[arg1]),
                       (subgraph.edges = (var(subgraph_edges))[arg1])]
@@ -288,7 +288,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
     rule_t const& start() const { return the_grammar; }
 
 
-    //  
+    //
     // Semantic actions
     //
 
@@ -301,10 +301,10 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
       if(!self.graph_.is_directed())
           boost::throw_exception(boost::directed_graph_error());
     }
-    
+
     void memoize_node() {
       id_t const& node = node_id.name();
-      props_t& node_props = default_node_props; 
+      props_t& node_props = default_node_props;
 
       if(nodes.find(node) == nodes.end()) {
         nodes.insert(node);
@@ -405,7 +405,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
 
       // add this to the selected list of default node properties.
       node_props_[key] = value;
-      // for each node, set its property to default-constructed value 
+      // for each node, set its property to default-constructed value
       //   if it hasn't been set already.
       // set the dynamic property map value
       for(nodes_t::iterator i = nodes_.begin(); i != nodes_.end(); ++i)
@@ -422,7 +422,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
         subgraph_depth == 0 ?
         default_edge_props :
         subgraph_edge_props[subgraph.name()];
-  
+
       // add this to the list of default edge properties.
       edge_props_[key] = value;
       // for each edge, set its property to be empty string
@@ -478,10 +478,10 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
       self.graph_.set_edge_property(key, edge, value);
 #ifdef BOOST_GRAPH_DEBUG
       // Tell the world
-#if 0 // RG - edge representation changed, 
+#if 0 // RG - edge representation changed,
             std::cout << "(" << edge.first << "," << edge.second << "): "
 #else
-            std::cout << "an edge: " 
+            std::cout << "an edge: "
 #endif // 0
                 << key << " = " << value << std::endl;
 #endif // BOOST_GRAPH_DEBUG
@@ -490,7 +490,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
     // Variables explicitly initialized
     dot_grammar const& self;
     // if subgraph_depth > 0, then we're processing a subgraph.
-    int subgraph_depth; 
+    int subgraph_depth;
 
     // Keywords;
     const boost::spirit::classic::distinct_parser<> keyword_p;
@@ -514,14 +514,14 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
     rule_t stmt_list;
     rule_t the_grammar;
 
-    
+
     // The grammar uses edge_head to dynamically set the syntax for edges
     // directed graphs: edge_head = '>', and so edgeop = "->"
     // undirected graphs: edge_head = '-', and so edgeop = "--"
     char edge_head;
 
 
-    // 
+    //
     // Support data structures
     //
 
@@ -532,7 +532,7 @@ struct dot_grammar : public boost::spirit::classic::grammar<dot_grammar> {
 
     subgraph_nodes_t subgraph_nodes;   // per-subgraph lists of nodes
     subgraph_edges_t subgraph_edges;   // per-subgraph lists of edges
-    
+
     props_t default_node_props;  // global default node properties
     props_t default_edge_props;  // global default edge properties
     subgraph_props_t subgraph_node_props;  // per-subgraph default node properties
@@ -556,9 +556,9 @@ struct dot_skipper : public boost::spirit::classic::grammar<dot_skipper>
           using namespace boost::spirit::classic;
           using namespace phoenix;
           // comment forms
-          skip = eol_p >> comment_p("#")  
+          skip = eol_p >> comment_p("#")
                | space_p
-               | comment_p("//")                 
+               | comment_p("//")
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1400)
                | confix_p(str_p("/*") ,*anychar_p, str_p("*/"))
 #else
@@ -593,7 +593,7 @@ bool read_graphviz_spirit(MultiPassIterator begin, MultiPassIterator end,
   typedef scanner_policies<iter_policy_t> scanner_policies_t;
   typedef scanner<iterator_t, scanner_policies_t> scanner_t;
 
-  ::boost::detail::graph::mutate_graph_impl<MutableGraph> 
+  ::boost::detail::graph::mutate_graph_impl<MutableGraph>
       m_graph(graph, dp, node_id);
 
   ::boost::detail::graph::dot_grammar p(m_graph);

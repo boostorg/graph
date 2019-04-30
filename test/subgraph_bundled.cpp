@@ -13,6 +13,7 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/graph_test.hpp>
 #include <boost/graph/iteration_macros.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -38,7 +39,7 @@ typedef graph_traits<Subgraph>::edge_descriptor Edge;
 typedef graph_traits<Subgraph>::vertex_iterator VertexIter;
 typedef graph_traits<Subgraph>::edge_iterator EdgeIter;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   mt19937 gen;
   for (int t = 0; t < 100; t += 5) {
@@ -96,8 +97,7 @@ int test_main(int, char*[])
     gt.test_edge_list_graph(sub_vertex_set, sub_edge_set, g_s);
     gt.test_adjacency_matrix(sub_vertex_set, sub_edge_set, g_s);
 
-    if (num_vertices(g_s) == 0)
-      return 0;
+    BOOST_TEST_NE(num_vertices(g_s), 0);
 
     // Test property maps for vertices.
     typedef property_map<Subgraph, int node::*>::type ColorMap;
@@ -132,5 +132,5 @@ int test_main(int, char*[])
     }
 
   }
-  return 0;
+  return boost::report_errors();
 }

@@ -28,15 +28,15 @@ namespace boost
     {
       return get(itrm, x) < get(itrm, y);
     }
-    
+
   private:
     ItemToRankMap itrm;
 
   };
 
 
-  template <typename TupleType, 
-            int N, 
+  template <typename TupleType,
+            int N,
             typename PropertyMapWrapper = identity_property_map>
   struct property_map_tuple_adaptor :
     public put_get_helper< typename PropertyMapWrapper::value_type,
@@ -50,7 +50,7 @@ namespace boost
     typedef readable_property_map_tag category;
 
     property_map_tuple_adaptor() {}
-    
+
     property_map_tuple_adaptor(PropertyMapWrapper wrapper_map) :
       m_wrapper_map(wrapper_map)
     {}
@@ -70,13 +70,13 @@ namespace boost
 
   // This function sorts a sequence of n items by their ranks in linear time,
   // given that all ranks are in the range [0, range). This sort is stable.
-  template <typename ForwardIterator, 
-            typename ItemToRankMap, 
+  template <typename ForwardIterator,
+            typename ItemToRankMap,
             typename SizeType>
-  void bucket_sort(ForwardIterator begin, 
-                   ForwardIterator end, 
+  void bucket_sort(ForwardIterator begin,
+                   ForwardIterator end,
                    ItemToRankMap rank,
-                   SizeType range = 0)  
+                   SizeType range = 0)
   {
 #ifdef BOOST_GRAPH_PREFER_STD_LIB
     std::stable_sort(begin, end, rank_comparison<ItemToRankMap>(rank));
@@ -104,12 +104,12 @@ namespace boost
 
     ForwardIterator orig_seq_itr = begin;
     typename vector_of_vectors_t::iterator itr_end = temp_values.end();
-    for(typename vector_of_vectors_t::iterator itr = temp_values.begin(); 
+    for(typename vector_of_vectors_t::iterator itr = temp_values.begin();
         itr != itr_end; ++itr
         )
       {
         typename vector_of_values_t::iterator jtr_end = itr->end();
-        for(typename vector_of_values_t::iterator jtr = itr->begin(); 
+        for(typename vector_of_values_t::iterator jtr = itr->begin();
             jtr != jtr_end; ++jtr
             )
         {
@@ -120,23 +120,23 @@ namespace boost
 #endif
   }
 
-  
+
   template <typename ForwardIterator, typename ItemToRankMap>
-  void bucket_sort(ForwardIterator begin, 
-                   ForwardIterator end, 
-                   ItemToRankMap rank)  
+  void bucket_sort(ForwardIterator begin,
+                   ForwardIterator end,
+                   ItemToRankMap rank)
   {
     bucket_sort(begin, end, rank, 0);
   }
 
   template <typename ForwardIterator>
-  void bucket_sort(ForwardIterator begin, 
-                   ForwardIterator end 
-                   )  
+  void bucket_sort(ForwardIterator begin,
+                   ForwardIterator end
+                   )
   {
     bucket_sort(begin, end, identity_property_map());
   }
-  
+
 
 } //namespace boost
 

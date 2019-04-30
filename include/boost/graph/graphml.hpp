@@ -100,7 +100,7 @@ class mutate_graph_impl : public mutate_graph
             mpl::for_each<value_types>(put_property<MutableGraph *,value_types>
                                        (name, m_dp, &m_g, value, value_type, m_type_names, type_found));
         }
-        catch (bad_lexical_cast)
+        catch (bad_lexical_cast&)
         {
             BOOST_THROW_EXCEPTION(
               parse_error("invalid value \"" + value + "\" for key " +
@@ -125,7 +125,7 @@ class mutate_graph_impl : public mutate_graph
                                        (name, m_dp, any_cast<vertex_descriptor>(vertex),
                                         value, value_type, m_type_names, type_found));
         }
-        catch (bad_lexical_cast)
+        catch (bad_lexical_cast&)
         {
             BOOST_THROW_EXCEPTION(
               parse_error("invalid value \"" + value + "\" for key " +
@@ -150,7 +150,7 @@ class mutate_graph_impl : public mutate_graph
                                        (name, m_dp, any_cast<edge_descriptor>(edge),
                                         value, value_type, m_type_names, type_found));
         }
-        catch (bad_lexical_cast)
+        catch (bad_lexical_cast&)
         {
             BOOST_THROW_EXCEPTION(
               parse_error("invalid value \"" + value + "\" for key " +

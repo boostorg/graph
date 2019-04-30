@@ -7,6 +7,8 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/concept/assert.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 // Test contributed by Dmitry that validates a read-only property map bug
 // for bundled properties.
@@ -27,5 +29,6 @@ int main()
     typedef graph_traits<graph_t>::edge_descriptor Edge;
     BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept<WeightMap, Edge> ));
     BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept<cWeightMap, Edge> ));
-    return 0;
+
+    return boost::report_errors();
 }

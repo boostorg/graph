@@ -13,6 +13,7 @@
 #include <boost/graph/closeness_centrality.hpp>
 #include <boost/graph/exterior_property.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace std;
 using namespace boost;
@@ -129,4 +130,6 @@ main(int, char *[])
 
     test_undirected<Graph>();
     test_directed<Digraph>();
+
+    return boost::report_errors();
 }

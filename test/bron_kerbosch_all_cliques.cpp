@@ -18,6 +18,9 @@
 
 #include <boost/random/linear_congruential.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
+
 using namespace std;
 using namespace boost;
 
@@ -70,9 +73,11 @@ main(int, char *[])
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;
 
-    std::cout << "*** undirected ***\n";
+    // std::cout << "*** undirected ***\n";
     test<Graph>();
 
-    std::cout << "*** directed ***\n";
+    // std::cout << "*** directed ***\n";
     test<DiGraph>();
+
+    return boost::report_errors();
 }

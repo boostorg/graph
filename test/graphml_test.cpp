@@ -28,7 +28,7 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graphml.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <cmath>
 #include <fstream>
 #include <string>
@@ -37,9 +37,9 @@
 using namespace std;
 using namespace boost;
 
-int test_main(int argc, char** argv)
+int main(int, char **argv)
 {
-    typedef adjacency_list<vecS,vecS,directedS, 
+    typedef adjacency_list<vecS,vecS,directedS,
                            property<vertex_color_t,int,
                              property<vertex_name_t,string> >,
                            property<edge_weight_t,double>,
@@ -57,13 +57,13 @@ int test_main(int argc, char** argv)
     read_graphml(ifile, g, dp);
     ifile.close();
 
-    BOOST_CHECK(num_vertices(g) == 9);
-    BOOST_CHECK(num_edges(g) == 9);
-    BOOST_CHECK(get(vertex_color_t(), g, vertex(2,g)) == 100);
-    BOOST_CHECK(get(vertex_color_t(), g, vertex(3,g)) == 42);    
-    BOOST_CHECK(std::abs(get(edge_weight_t(), g, edge(vertex(0,g),vertex(1,g),g).first) - 0.0) < 0.00001);
-    BOOST_CHECK(std::abs(get(edge_weight_t(), g, edge(vertex(1,g),vertex(2,g),g).first) - 0.8) < 0.00001);
-    BOOST_CHECK(get("description", dp, &g) == "Root graph.");
+    BOOST_TEST_EQ(num_vertices(g), 9);
+    BOOST_TEST_EQ(num_edges(g), 9);
+    BOOST_TEST_EQ(get(vertex_color_t(), g, vertex(2,g)), 100);
+    BOOST_TEST_EQ(get(vertex_color_t(), g, vertex(3,g)), 42);
+    BOOST_TEST_LT(std::abs(get(edge_weight_t(), g, edge(vertex(0,g),vertex(1,g),g).first) - 0.0), 0.00001);
+    BOOST_TEST_LT(std::abs(get(edge_weight_t(), g, edge(vertex(1,g),vertex(2,g),g).first) - 0.8), 0.00001);
+    BOOST_TEST_EQ(get("description", dp, &g), "Root graph.");
 
 
     ofstream ofile("graphml_test_out.xml");
@@ -82,17 +82,17 @@ int test_main(int argc, char** argv)
     read_graphml(ifile, g2, dp2);
     ifile.close();
 
-    BOOST_CHECK(num_vertices(g) == num_vertices(g2));
-    BOOST_CHECK(num_edges(g) == num_edges(g2));
-    BOOST_CHECK(get("description", dp, &g) == get("description", dp2, &g2));
+    BOOST_TEST_EQ(num_vertices(g), num_vertices(g2));
+    BOOST_TEST_EQ(num_edges(g), num_edges(g2));
+    BOOST_TEST_EQ(get("description", dp, &g), get("description", dp2, &g2));
 
     graph_traits<graph_t>::vertex_iterator v, v_end;
     for (boost::tie(v,v_end) = vertices(g); v != v_end; ++v)
-      BOOST_CHECK(get(vertex_color_t(), g, *v) == get(vertex_color_t(), g2, *v));
+      BOOST_TEST_EQ(get(vertex_color_t(), g, *v), get(vertex_color_t(), g2, *v));
 
     graph_traits<graph_t>::edge_iterator e, e_end;
     for (boost::tie(e,e_end) = edges(g); e != e_end; ++e)
-      BOOST_CHECK(std::abs(get(edge_weight_t(), g, *e) - get(edge_weight_t(), g2, *e)) < 0.00001);
+      BOOST_TEST_LT(std::abs(get(edge_weight_t(), g, *e) - get(edge_weight_t(), g2, *e)), 0.00001);
 
-    return 0;
+    return boost::report_errors();
 }

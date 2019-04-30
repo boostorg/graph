@@ -17,8 +17,8 @@
 namespace boost { namespace graph {
 
 template<typename Graph, typename ColorMap>
-bool 
-st_connected(const Graph& g, 
+bool
+st_connected(const Graph& g,
              typename graph_traits<Graph>::vertex_descriptor s,
              typename graph_traits<Graph>::vertex_descriptor t,
              ColorMap color)
@@ -51,7 +51,7 @@ st_connected(const Graph& g,
         // We have not seen "v" before; mark it with the same color as u
         Color u_color = get(color, u);
         put(color, v, u_color);
-        
+
         // Push it on the queue
         Q.push(v);
       } else if (v_color != ColorTraits::black() && u_color != v_color) {
@@ -67,12 +67,12 @@ st_connected(const Graph& g,
 }
 
 template<typename Graph>
-inline bool 
-st_connected(const Graph& g, 
+inline bool
+st_connected(const Graph& g,
              typename graph_traits<Graph>::vertex_descriptor s,
              typename graph_traits<Graph>::vertex_descriptor t)
 {
-  return st_connected(g, s, t, 
+  return st_connected(g, s, t,
                       make_two_bit_color_map(num_vertices(g),
                                              get(vertex_index, g)));
 }

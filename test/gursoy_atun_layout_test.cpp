@@ -17,6 +17,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <boost/core/lightweight_test.hpp>
+
 
 #if 0
 #include <boost/graph/plod_generator.hpp>
@@ -47,7 +49,7 @@ int main(int, char*[]) {
   // a square grid; and output it in dot format
 
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                                boost::no_property, 
+                                boost::no_property,
                                 boost::property<boost::edge_weight_t, double>
                                 > graph_type;
   typedef boost::graph_traits<graph_type>::vertex_descriptor vertex_descriptor;
@@ -74,10 +76,10 @@ int main(int, char*[]) {
 #if 0
       // Uncomment parts of this to get a cylinder or torus
       if (i == 0)
-        add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(), 
+        add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(),
                  graph);
       if (j == 0)
-        add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(), 
+        add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(),
                  graph);
 #endif
     }
@@ -93,7 +95,7 @@ int main(int, char*[]) {
   graph_type graph(plod_iterator<minstd_rand, graph_type>(gen, n, alpha, beta),
                    plod_iterator<minstd_rand, graph_type>(),
                    n);
-#else 
+#else
   int n = 1000;
   int k = 6;
   double p = 0.001;
@@ -105,7 +107,7 @@ int main(int, char*[]) {
 #endif
   // boost::read_graphviz(stdin, graph);
 
-  typedef boost::property_map<graph_type, boost::vertex_index_t>::type 
+  typedef boost::property_map<graph_type, boost::vertex_index_t>::type
     VertexIndexMap;
   VertexIndexMap vertex_index = get(boost::vertex_index_t(), graph);
 
@@ -122,7 +124,7 @@ int main(int, char*[]) {
 
 #if 0
   std::cerr << "--------Unweighted layout--------\n";
-  boost::write_graphviz(std::cout, graph, 
+  boost::write_graphviz(std::cout, graph,
                         position_writer<Position, vertex_descriptor>(position),
                         boost::default_writer(),
                         graph_writer());
@@ -133,10 +135,10 @@ int main(int, char*[]) {
 
 #if 0
   std::cerr << "--------Weighted layout--------\n";
-  boost::write_graphviz(std::cout, graph, 
+  boost::write_graphviz(std::cout, graph,
                         position_writer<Position, vertex_descriptor>(position),
                         boost::default_writer(),
                         graph_writer());
 #endif
-  return 0;
+  return boost::report_errors();
 }

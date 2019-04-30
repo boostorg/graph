@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <fstream>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 //three max_flows we test here
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
@@ -57,9 +57,9 @@
 
 using namespace boost;
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-  
+
   typedef adjacency_list_traits < vecS, vecS, directedS > Traits;
   typedef adjacency_list < vecS, vecS, directedS,
   property < vertex_index_t, long,
@@ -69,10 +69,10 @@ int test_main(int argc, char* argv[])
   property < edge_capacity_t, long,
   property < edge_residual_capacity_t, long,
   property < edge_reverse_t, Traits::edge_descriptor > > > > Graph;
-  
+
   typedef graph_traits<Graph>::edge_descriptor tEdge;
   typedef graph_traits<Graph>::vertex_descriptor tVertex;
-  
+
   graph_traits<Graph>::vertices_size_type n_verts = 100;
   graph_traits<Graph>::edges_size_type n_edges = 1000;
   std::size_t seed = 1;
@@ -80,57 +80,57 @@ int test_main(int argc, char* argv[])
   if (argc > 1) n_verts = lexical_cast<std::size_t>(argv[1]);
   if (argc > 2) n_edges = lexical_cast<std::size_t>(argv[2]);
   if (argc > 3) seed = lexical_cast<std::size_t>(argv[3]);
-  
-  Graph g;  
+
+  Graph g;
   const int cap_low = 1;
   const int cap_high = 1000;
-  
+
   //init random numer generator
   minstd_rand gen(seed);
   //generate graph
-  generate_random_graph(g, n_verts, n_edges, gen);   
-  
+  generate_random_graph(g, n_verts, n_edges, gen);
+
   //init an uniform distribution int generator
   typedef variate_generator<minstd_rand, uniform_int<int> > tIntGen;
   tIntGen int_gen(gen, uniform_int<int>(cap_low, cap_high));
   //init edge-capacities
   randomize_property<edge_capacity_t, Graph, tIntGen> (g,int_gen);
-  
+
   //get source and sink node
   tVertex source_vertex = random_vertex(g, gen);
   tVertex sink_vertex = graph_traits<Graph>::null_vertex();
   while(sink_vertex == graph_traits<Graph>::null_vertex() || sink_vertex == source_vertex)
     sink_vertex = random_vertex(g, gen);
-  
+
   //add reverse edges (ugly... how to do better?!)
   property_map < Graph, edge_reverse_t >::type rev = get(edge_reverse, g);
   property_map < Graph, edge_capacity_t >::type cap = get(edge_capacity, g);
   std::list<tEdge> edges_copy;
   graph_traits<Graph>::edge_iterator ei, e_end;
-  boost::tie(ei, e_end) = edges(g);  
+  boost::tie(ei, e_end) = edges(g);
   std::copy(ei, e_end, std::back_insert_iterator< std::list<tEdge> >(edges_copy));
   while( ! edges_copy.empty()){
     tEdge old_edge=edges_copy.front();
     edges_copy.pop_front();
-    tVertex source_vertex = target(old_edge, g);  
+    tVertex source_vertex = target(old_edge, g);
     tVertex target_vertex = source(old_edge, g);
     bool inserted;
-    tEdge new_edge;        
-    boost::tie(new_edge,inserted) = add_edge(source_vertex, target_vertex, g); 
+    tEdge new_edge;
+    boost::tie(new_edge,inserted) = add_edge(source_vertex, target_vertex, g);
     assert(inserted);
     rev[old_edge] = new_edge;
     rev[new_edge] = old_edge ;
     cap[new_edge] = 0;
   }
-  
+
   typedef property_traits< property_map<Graph, edge_capacity_t>::const_type>::value_type tEdgeVal;
-  
-  tEdgeVal bk = boykov_kolmogorov_max_flow(g,source_vertex,sink_vertex); 
+
+  tEdgeVal bk = boykov_kolmogorov_max_flow(g,source_vertex,sink_vertex);
   tEdgeVal push_relabel = push_relabel_max_flow(g,source_vertex,sink_vertex);
   tEdgeVal edmonds_karp = edmonds_karp_max_flow(g,source_vertex,sink_vertex);
-  
-  BOOST_REQUIRE( bk == push_relabel );
-  BOOST_REQUIRE( push_relabel == edmonds_karp );
 
-  return 0;
+  BOOST_TEST( bk == push_relabel );
+  BOOST_TEST( push_relabel == edmonds_karp );
+
+  return boost::report_errors();
 }

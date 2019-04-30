@@ -21,7 +21,7 @@
 
 #ifdef BOOST_GRAPH_NO_OPTIONAL
 #  define BOOST_GRAPH_MEMBER .
-#else 
+#else
 #  define BOOST_GRAPH_MEMBER ->
 #  include <boost/optional.hpp>
 #endif // ndef BOOST_GRAPH_NO_OPTIONAL
@@ -43,15 +43,15 @@ namespace boost {
 
       inline adj_list_edge_iterator() {}
 
-      inline adj_list_edge_iterator(const self& x) 
+      inline adj_list_edge_iterator(const self& x)
       : vBegin(x.vBegin), vCurr(x.vCurr), vEnd(x.vEnd),
         edges(x.edges), m_g(x.m_g) { }
 
       template <class G>
-      inline adj_list_edge_iterator(VertexIterator b, 
+      inline adj_list_edge_iterator(VertexIterator b,
                                     VertexIterator c,
                                     VertexIterator e,
-                                    const G& g) 
+                                    const G& g)
         : vBegin(b), vCurr(c), vEnd(e), m_g(&g) {
         if ( vCurr != vEnd ) {
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
@@ -62,12 +62,12 @@ namespace boost {
       }
 
       /*Note:
-        In the directed graph cases, it is fine. 
+        In the directed graph cases, it is fine.
         For undirected graphs, one edge go through twice.
       */
       inline self& operator++() {
         ++edges BOOST_GRAPH_MEMBER first;
-        if (edges BOOST_GRAPH_MEMBER first == edges BOOST_GRAPH_MEMBER second) 
+        if (edges BOOST_GRAPH_MEMBER first == edges BOOST_GRAPH_MEMBER second)
         {
           ++vCurr;
           while ( vCurr != vEnd && out_degree(*vCurr, *m_g) == 0 )
@@ -82,16 +82,16 @@ namespace boost {
         ++(*this);
         return tmp;
       }
-      inline value_type operator*() const 
-      { return *edges BOOST_GRAPH_MEMBER first; } 
+      inline value_type operator*() const
+      { return *edges BOOST_GRAPH_MEMBER first; }
       inline bool operator==(const self& x) const {
-        return vCurr == x.vCurr 
-          && (vCurr == vEnd 
+        return vCurr == x.vCurr
+          && (vCurr == vEnd
               || edges BOOST_GRAPH_MEMBER first == x.edges BOOST_GRAPH_MEMBER first);
       }
       inline bool operator!=(const self& x) const {
-        return vCurr != x.vCurr 
-          || (vCurr != vEnd 
+        return vCurr != x.vCurr
+          || (vCurr != vEnd
               && edges BOOST_GRAPH_MEMBER first != x.edges BOOST_GRAPH_MEMBER first);
       }
     protected:

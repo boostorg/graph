@@ -23,7 +23,7 @@ namespace boost {
 
   namespace detail {
 
-    // 
+    //
     // Given a set of n integers (where the integer values range from
     // zero to n-1), we want to keep track of a collection of stacks
     // of integers. It so happens that an integer will appear in at
@@ -39,8 +39,8 @@ namespace boost {
       typedef typename std::vector<value_type>::size_type size_type;
     public:
       Stacks(size_type n) : data(n) {}
-      
-      //: stack 
+
+      //: stack
       class stack {
         typedef typename std::vector<value_type>::iterator Iterator;
       public:
@@ -51,17 +51,17 @@ namespace boost {
         // in g++.
         stack(Iterator _data)
           : data(_data), current(-(std::numeric_limits<value_type>::max)()) {}
-        
+
         void pop() {
           BOOST_ASSERT(! empty());
           current = data[current];
         }
         void push(value_type v) {
-          data[v] = current; 
+          data[v] = current;
           current = v;
         }
         bool empty() {
-          return current == -(std::numeric_limits<value_type>::max)(); 
+          return current == -(std::numeric_limits<value_type>::max)();
         }
         value_type& top() { return current; }
       private:
@@ -69,7 +69,7 @@ namespace boost {
         value_type current;
       };
 
-      // To return a stack object 
+      // To return a stack object
       stack make_stack()
         { return stack(data.begin()); }
     protected:
@@ -77,14 +77,14 @@ namespace boost {
     };
 
 
-    // marker class, a generalization of coloring. 
+    // marker class, a generalization of coloring.
     //
     // This class is to provide a generalization of coloring which has
     // complexity of amortized constant time to set all vertices' color
     // back to be untagged. It implemented by increasing a tag.
     //
     // The colors are:
-    //   not tagged 
+    //   not tagged
     //   tagged
     //   multiple_tagged
     //   done
@@ -93,28 +93,28 @@ namespace boost {
     class Marker {
       typedef SignedInteger value_type;
       typedef typename std::vector<value_type>::size_type size_type;
-      
-      static value_type done() 
+
+      static value_type done()
       { return (std::numeric_limits<value_type>::max)()/2; }
     public:
-      Marker(size_type _num, VertexIndexMap index_map) 
+      Marker(size_type _num, VertexIndexMap index_map)
         : tag(1 - (std::numeric_limits<value_type>::max)()),
           data(_num, - (std::numeric_limits<value_type>::max)()),
           id(index_map) {}
-      
+
       void mark_done(Vertex node) { data[get(id, node)] = done(); }
-      
+
       bool is_done(Vertex node) { return data[get(id, node)] == done(); }
-      
+
       void mark_tagged(Vertex node) { data[get(id, node)] = tag; }
-      
+
       void mark_multiple_tagged(Vertex node) { data[get(id, node)] = multiple_tag; }
-  
+
       bool is_tagged(Vertex node) const { return data[get(id, node)] >= tag; }
 
       bool is_not_tagged(Vertex node) const { return data[get(id, node)] < tag; }
 
-      bool is_multiple_tagged(Vertex node) const 
+      bool is_multiple_tagged(Vertex node) const
         { return data[get(id, node)] >= multiple_tag; }
 
       void increment_tag() {
@@ -123,37 +123,37 @@ namespace boost {
         if ( tag >= done() ) {
           tag = 1 - (std::numeric_limits<value_type>::max)();
           for (size_type i = 0; i < num; ++i)
-            if ( data[i] < done() ) 
+            if ( data[i] < done() )
               data[i] = - (std::numeric_limits<value_type>::max)();
         }
       }
-      
-      void set_multiple_tag(value_type mdeg0) 
-      { 
+
+      void set_multiple_tag(value_type mdeg0)
+      {
         const size_type num = data.size();
-        multiple_tag = tag + mdeg0; 
-        
+        multiple_tag = tag + mdeg0;
+
         if ( multiple_tag >= done() ) {
           tag = 1-(std::numeric_limits<value_type>::max)();
-          
+
           for (size_type i=0; i<num; i++)
-            if ( data[i] < done() ) 
+            if ( data[i] < done() )
               data[i] = -(std::numeric_limits<value_type>::max)();
-          
-          multiple_tag = tag + mdeg0; 
+
+          multiple_tag = tag + mdeg0;
         }
       }
-      
+
       void set_tag_as_multiple_tag() { tag = multiple_tag; }
-      
+
     protected:
       value_type tag;
       value_type multiple_tag;
       std::vector<value_type> data;
       VertexIndexMap id;
     };
-    
-    template< class Iterator, class SignedInteger, 
+
+    template< class Iterator, class SignedInteger,
        class Vertex, class VertexIndexMap, int offset = 1 >
     class Numbering {
       typedef SignedInteger number_type;
@@ -162,7 +162,7 @@ namespace boost {
       number_type max_num;
       VertexIndexMap id;
     public:
-      Numbering(Iterator _data, number_type _max_num, VertexIndexMap id) 
+      Numbering(Iterator _data, number_type _max_num, VertexIndexMap id)
         : num(1), data(_data), max_num(_max_num), id(id) {}
       void operator()(Vertex node) { data[get(id, node)] = -num; }
       bool all_done(number_type i = 0) const { return num + i > max_num; }
@@ -199,7 +199,7 @@ namespace boost {
       typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
       typedef typename graph_traits<Graph>::edge_descriptor edge_t;
     public:
-      predicateRemoveEdge1(Graph& _g, MarkerP& _marker, 
+      predicateRemoveEdge1(Graph& _g, MarkerP& _marker,
                            NumberD _numbering, Stack& n_e, VertexIndexMap id)
         : g(&_g), marker(&_marker), numbering(_numbering),
           neighbor_elements(&n_e), id(id) {}
@@ -244,28 +244,28 @@ namespace boost {
       MarkerP* marker;
     };
 
-    template<class Graph, class DegreeMap, 
-             class InversePermutationMap, 
+    template<class Graph, class DegreeMap,
+             class InversePermutationMap,
              class PermutationMap,
-             class SuperNodeMap, 
+             class SuperNodeMap,
              class VertexIndexMap>
     class mmd_impl
     {
       // Typedefs
       typedef graph_traits<Graph> Traits;
       typedef typename Traits::vertices_size_type size_type;
-      typedef typename detail::integer_traits<size_type>::difference_type 
+      typedef typename detail::integer_traits<size_type>::difference_type
         diff_t;
       typedef typename Traits::vertex_descriptor vertex_t;
       typedef typename Traits::adjacency_iterator adj_iter;
-      typedef iterator_property_map<vertex_t*, 
+      typedef iterator_property_map<vertex_t*,
         identity_property_map, vertex_t, vertex_t&> IndexVertexMap;
       typedef detail::Stacks<diff_t> Workspace;
-      typedef bucket_sorter<size_type, vertex_t, DegreeMap, VertexIndexMap> 
+      typedef bucket_sorter<size_type, vertex_t, DegreeMap, VertexIndexMap>
         DegreeLists;
       typedef Numbering<InversePermutationMap, diff_t, vertex_t,VertexIndexMap>
         NumberingD;
-      typedef degreelists_marker<diff_t, vertex_t, VertexIndexMap> 
+      typedef degreelists_marker<diff_t, vertex_t, VertexIndexMap>
         DegreeListsMarker;
       typedef Marker<diff_t, vertex_t, VertexIndexMap> MarkerP;
 
@@ -290,21 +290,21 @@ namespace boost {
       MarkerP marker;
       Workspace work_space;
     public:
-      mmd_impl(Graph& g, size_type n_, int delta, DegreeMap degree, 
-               InversePermutationMap inverse_perm, 
+      mmd_impl(Graph& g, size_type n_, int delta, DegreeMap degree,
+               InversePermutationMap inverse_perm,
                PermutationMap perm,
-               SuperNodeMap supernode_size, 
-               VertexIndexMap id) 
-        : G(g), delta(delta), degree(degree), 
-        inverse_perm(inverse_perm), 
-        perm(perm), 
-        supernode_size(supernode_size), 
+               SuperNodeMap supernode_size,
+               VertexIndexMap id)
+        : G(g), delta(delta), degree(degree),
+        inverse_perm(inverse_perm),
+        perm(perm),
+        supernode_size(supernode_size),
         vertex_index_map(id),
-        index_vertex_vec(n_), 
+        index_vertex_vec(n_),
         n(n_),
         degreelists(n_ + 1, n_, degree, id),
         numbering(inverse_perm, n_, vertex_index_map),
-        degree_lists_marker(n_, vertex_index_map), 
+        degree_lists_marker(n_, vertex_index_map),
         marker(n_, vertex_index_map),
         work_space(n_)
       {
@@ -354,8 +354,8 @@ namespace boost {
           while (delta >= 0) {
 
             // Find the next non-empty degree
-            for (list_min_degree = degreelists[min_degree]; 
-                 list_min_degree.empty() && min_degree <= min_degree_limit; 
+            for (list_min_degree = degreelists[min_degree];
+                 list_min_degree.empty() && min_degree <= min_degree_limit;
                  ++min_degree, list_min_degree = degreelists[min_degree])
               ;
             if (min_degree > min_degree_limit)
@@ -380,7 +380,7 @@ namespace boost {
             llist.push(node_id);
           } // multiple elimination
 
-          if (numbering.all_done()) 
+          if (numbering.all_done())
             break;
 
           this->update( llist, min_degree);
@@ -394,7 +394,7 @@ namespace boost {
 
         // Create two function objects for edge removal
         typedef typename Workspace::stack WorkStack;
-        predicateRemoveEdge1<Graph, MarkerP, NumberingD, 
+        predicateRemoveEdge1<Graph, MarkerP, NumberingD,
                              WorkStack, VertexIndexMap>
           p(G, marker, numbering, element_neighbor, vertex_index_map);
 
@@ -421,7 +421,7 @@ namespace boost {
         adj_iter v, ve;
         for (boost::tie(v, ve) = adjacent_vertices(node, G); v != ve; ++v) {
           vertex_t v_node = *v;
-          if (!degree_lists_marker.need_update(v_node) 
+          if (!degree_lists_marker.need_update(v_node)
               && !degree_lists_marker.outmatched_or_done(v_node)) {
             degreelists.remove(v_node);
           }
@@ -519,7 +519,7 @@ namespace boost {
             degreelists[deg].push(u_node);
             //u_id has been pushed back into degreelists
             degree_lists_marker.unmark(u_node);
-            if (min_degree > deg) 
+            if (min_degree > deg)
               min_degree = deg;
             q2list.pop();
           } // while (!q2list.empty())
@@ -538,7 +538,7 @@ namespace boost {
             adj_iter i, ie;
             for (boost::tie(i, ie) = adjacent_vertices(u_node, G); i != ie; ++i) {
               vertex_t i_node = *i;
-              if (marker.is_tagged(i_node)) 
+              if (marker.is_tagged(i_node))
                 continue;
               marker.mark_tagged(i_node);
 
@@ -558,7 +558,7 @@ namespace boost {
             degree[u_node] = deg;
             degreelists[deg].push(u_node);
             // u_id has been pushed back into degreelists
-            degree_lists_marker.unmark(u_node); 
+            degree_lists_marker.unmark(u_node);
             if (min_degree > deg)
               min_degree = deg;
             qxlist.pop();
@@ -572,7 +572,7 @@ namespace boost {
 
 
       void build_permutation(InversePermutationMap next,
-                             PermutationMap prev) 
+                             PermutationMap prev)
       {
         // collect the permutation info
         size_type i;
@@ -618,7 +618,7 @@ namespace boost {
 
 
   // MMD algorithm
-  // 
+  //
   //The implementation presently includes the enhancements for mass
   //elimination, incomplete degree update, multiple elimination, and
   //external degree.
@@ -629,22 +629,22 @@ namespace boost {
   //
   //see Alan George and Joseph W. H. Liu, The Evolution of the Minimum
   //Degree Ordering Algorithm, SIAM Review, 31, 1989, Page 1-19
-  template<class Graph, class DegreeMap, 
-           class InversePermutationMap, 
+  template<class Graph, class DegreeMap,
+           class InversePermutationMap,
            class PermutationMap,
            class SuperNodeMap, class VertexIndexMap>
   void minimum_degree_ordering
-    (Graph& G, 
-     DegreeMap degree, 
-     InversePermutationMap inverse_perm, 
-     PermutationMap perm, 
-     SuperNodeMap supernode_size, 
-     int delta, 
+    (Graph& G,
+     DegreeMap degree,
+     InversePermutationMap inverse_perm,
+     PermutationMap perm,
+     SuperNodeMap supernode_size,
+     int delta,
      VertexIndexMap vertex_index_map)
   {
     detail::mmd_impl<Graph,DegreeMap,InversePermutationMap,
-      PermutationMap, SuperNodeMap, VertexIndexMap> 
-      impl(G, num_vertices(G), delta, degree, inverse_perm, 
+      PermutationMap, SuperNodeMap, VertexIndexMap>
+      impl(G, num_vertices(G), delta, degree, inverse_perm,
            perm, supernode_size, vertex_index_map);
     impl.do_mmd();
     impl.build_permutation(inverse_perm, perm);

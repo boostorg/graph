@@ -23,6 +23,7 @@
 #include <boost/pending/indirect_cmp.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 
 enum vertex_id_t { vertex_id = 500 };
@@ -41,9 +42,9 @@ using namespace boost;
   This program tests models of the MutableGraph concept.
  */
 
-using std::cout;
-using std::endl;
-using std::cerr;
+// using std::cout;
+// using std::endl;
+// using std::cerr;
 using std::find;
 
 
@@ -72,7 +73,7 @@ bool check_vertex_cleared(Graph& g, Vertex v, ID id)
 
     if ( found != aiend ) {
 #if VERBOSE
-      std::cerr << "should not have found vertex " << id[*found] << std::endl;
+      // std::cerr << "should not have found vertex " << id[*found] << std::endl;
 #endif
       return false;
     }
@@ -81,45 +82,45 @@ bool check_vertex_cleared(Graph& g, Vertex v, ID id)
 }
 
 template <class Graph, class Edge, class EdgeID>
-bool check_edge_added(Graph& g, Edge e, 
-                      typename graph_traits<Graph>::vertex_descriptor a, 
-                      typename graph_traits<Graph>::vertex_descriptor b, 
-                      EdgeID edge_id, std::size_t correct_id, 
+bool check_edge_added(Graph& g, Edge e,
+                      typename graph_traits<Graph>::vertex_descriptor a,
+                      typename graph_traits<Graph>::vertex_descriptor b,
+                      EdgeID edge_id, std::size_t correct_id,
                       bool inserted)
 {
   if (! (source(e, g) == a)) {
 #if VERBOSE
-    cerr << "    Failed, vertex a not source of e."<< endl;
+    // cerr << "    Failed, vertex a not source of e."<< endl;
 #endif
     return false;
   } else if (! (target(e, g) == b)) {
 #if VERBOSE
-    cerr << "    Failed, vertex b not source of e."<< endl;
+    // cerr << "    Failed, vertex b not source of e."<< endl;
 #endif
     return false;
   } else if (! is_adjacent(g, a, b)) {
 #if VERBOSE
-    cerr << "    Failed, not adj."<< endl;
+    // cerr << "    Failed, not adj."<< endl;
 #endif
     return false;
   } else if (! in_edge_set(g,e)) {
 #if VERBOSE
-    cerr << "    Failed, not in edge set."<< endl;
+    // cerr << "    Failed, not in edge set."<< endl;
 #endif
     return false;
   } else if (inserted && edge_id[e] != correct_id) {
 #if VERBOSE
-    cerr << "    Failed, invalid edge property."<< endl;
+    // cerr << "    Failed, invalid edge property."<< endl;
 #endif
     return false;
   } else if (!inserted && edge_id[e] != edge_id[edge(a, b, g).first]) {
 #if VERBOSE
-    cerr << "    Failed, invalid edge property."<< endl;
+    // cerr << "    Failed, invalid edge property."<< endl;
 #endif
     return false;
   } else if (num_edges(g) != count_edges(g)) {
 #if VERBOSE
-    cerr << "    Failed, invalid number of edges."<< endl;
+    // cerr << "    Failed, invalid number of edges."<< endl;
 #endif
     return false;
   }
@@ -164,12 +165,12 @@ int main(int, char* [])
 
   // also need to test EdgeIterator graph constructor -JGS
   mt19937 gen;
-    
+
   for (j=0; j < 10; ++j) {
 
     // add_edge
 #if VERBOSE
-    cerr << "Testing add_edge ..." << endl;
+    // cerr << "Testing add_edge ..." << endl;
 #endif
     for (i=0; i < 6; ++i) {
       Vertex a, b;
@@ -178,22 +179,22 @@ int main(int, char* [])
         b = random_vertex(g, gen);
       } while ( a == b ); // don't do self edges
 #if VERBOSE
-      cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] <<")" << endl; 
+      // cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] <<")" << endl;
 #endif
       Edge e;
       bool inserted;
       boost::tie(e, inserted) = add_edge(a, b, current_edge_id++, g);
 #if VERBOSE
-      std::cout << "inserted: " << inserted << std::endl;
-      std::cout << "source(e,g)" << source(e,g) << endl;
-      std::cout << "target(e,g)" << target(e,g) << endl;
-      std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
+      // std::cout << "inserted: " << inserted << std::endl;
+      // std::cout << "source(e,g)" << source(e,g) << endl;
+      // std::cout << "target(e,g)" << target(e,g) << endl;
+      // std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
       print_edges2(g, vertex_id_map, edge_id_map);
       print_graph(g, vertex_id_map);
-      std::cout << "finished printing" << std::endl;
+      // std::cout << "finished printing" << std::endl;
       //      print_in_edges(g, vertex_id_map);
 #endif
-      if (! check_edge_added(g, e, a, b, edge_id_map, 
+      if (! check_edge_added(g, e, a, b, edge_id_map,
                              current_edge_id - 1, inserted)) {
         ret = -1;
         break;
@@ -203,19 +204,19 @@ int main(int, char* [])
 
     // remove_edge(u, v, g)
 #if VERBOSE
-    cerr << "Testing remove_edge(u, v, g) ..." << endl; is_failed = false;
+    // cerr << "Testing remove_edge(u, v, g) ..." << endl; is_failed = false;
 #endif
     for (i = 0; i < 2; ++i) {
 #if VERBOSE
       print_edges(g, vertex_id_map);
 #endif
       Vertex a, b;
-      
+
       Edge e = random_edge(g, gen);
       boost::tie(a,b) = boost::incident(e, g);
       --E;
 #if VERBOSE
-      cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
+      // cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
 #endif
       remove_edge(a, b, g);
 #if VERBOSE
@@ -231,17 +232,17 @@ int main(int, char* [])
     if ( is_failed ) {
       ret = -1;
 #if VERBOSE
-      cerr << "    Failed."<< endl;
+      // cerr << "    Failed."<< endl;
 #endif
     } else {
 #if VERBOSE
-      cerr << "           Passed."<< endl;
+      // cerr << "           Passed."<< endl;
 #endif
     }
 
     // remove_edge(e, g)
 #if VERBOSE
-    cerr << "Testing remove_edge(e, g) ..." << endl; is_failed = false;
+    // cerr << "Testing remove_edge(e, g) ..." << endl; is_failed = false;
 #endif
     for (i = 0; i < 2; ++i) {
 #if VERBOSE
@@ -252,7 +253,7 @@ int main(int, char* [])
       boost::tie(a,b) = boost::incident(e, g);
       --E;
 #if VERBOSE
-      cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
+      // cerr << "remove_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] << ")" << endl;
 #endif
       graph_traits<Graph>::edges_size_type old_E = num_edges(g);
       remove_edge(e, g);
@@ -271,17 +272,17 @@ int main(int, char* [])
     if ( is_failed ) {
       ret = -1;
 #if VERBOSE
-      cerr << "    Failed."<< endl;
+      // cerr << "    Failed."<< endl;
 #endif
     } else {
 #if VERBOSE
-      cerr << "           Passed."<< endl;
+      // cerr << "           Passed."<< endl;
 #endif
     }
 
     // add_vertex
 #if VERBOSE
-    cerr << "Testing add_vertex ..." << endl; is_failed = false;
+    // cerr << "Testing add_vertex ..." << endl; is_failed = false;
 #endif
     old_N = num_vertices(g);
     graph_traits<Graph>::vertex_descriptor vid = add_vertex(g),
@@ -299,14 +300,14 @@ int main(int, char* [])
     {
       if (!in_vertex_set(g, vid)) {
 #if VERBOSE
-        cerr << "   Failed, " << vertex_id_map[vid] << " not in vertices(g)" << endl;
+        // cerr << "   Failed, " << vertex_id_map[vid] << " not in vertices(g)" << endl;
 #endif
         ret = -1;
         break;
       }
       if (!in_vertex_set(g, vidp1)) {
 #if VERBOSE
-        cerr << "   Failed, " << vertex_id_map[vidp1] << " not in vertices(g)" << endl;
+        // cerr << "   Failed, " << vertex_id_map[vidp1] << " not in vertices(g)" << endl;
 #endif
         ret = -1;
         break;
@@ -319,8 +320,8 @@ int main(int, char* [])
       boost::tie(e,e_end) = out_edges(vid,g);
       if (e != e_end) {
 #if VERBOSE
-        cerr << "   Failed, " << vertex_id_map[vid] 
-             << " should not have any out-edges yet" << endl;
+        // cerr << "   Failed, " << vertex_id_map[vid]
+        //      << " should not have any out-edges yet" << endl;
 #endif
         ret = -1;
         break;
@@ -328,8 +329,8 @@ int main(int, char* [])
       boost::tie(e,e_end) = out_edges(vidp1,g);
       if (e != e_end) {
 #if VERBOSE
-        cerr << "   Failed, " << vertex_id_map[vidp1] 
-             << " should not have any out-edges yet" << endl;
+        // cerr << "   Failed, " << vertex_id_map[vidp1]
+        //      << " should not have any out-edges yet" << endl;
 #endif
         ret = -1;
         break;
@@ -342,16 +343,16 @@ int main(int, char* [])
       for (boost::tie(e, e_end) = edges(g); e != e_end; ++e) {
         if (source(*e,g) == vid || target(*e,g) == vid) {
 #if VERBOSE
-          cerr << "   Failed, " << vertex_id_map[vid]
-               << " should not have any edges" << endl;
+          // cerr << "   Failed, " << vertex_id_map[vid]
+          //      << " should not have any edges" << endl;
 #endif
           ret = -1;
           break;
         }
         if (source(*e,g) == vidp1 || target(*e,g) == vidp1) {
 #if VERBOSE
-          cerr << "   Failed, " << vertex_id_map[vidp1]
-               << " should not have any edges" << endl;
+          // cerr << "   Failed, " << vertex_id_map[vidp1]
+          //      << " should not have any edges" << endl;
 #endif
           ret = -1;
           break;
@@ -363,31 +364,31 @@ int main(int, char* [])
     if ( (N - 2) != old_N ) {
       ret = -1;
 #if VERBOSE
-      cerr << "    Failed. N = " << N
-           << " but should be " << old_N + 2 << endl;
+      // cerr << "    Failed. N = " << N
+      //      << " but should be " << old_N + 2 << endl;
 #endif
       break;
     } else {
 #if VERBOSE
-      cerr << "           Passed."<< endl;      
+      // cerr << "           Passed."<< endl;
 #endif
     }
     // add_edge again
 #if VERBOSE
-    cerr << "Testing add_edge after add_vertex ..." << endl; is_failed = false;
+    // cerr << "Testing add_edge after add_vertex ..." << endl; is_failed = false;
 #endif
 
     for (i=0; i<2; ++i) {
       Vertex a = random_vertex(g, gen), b = random_vertex(g, gen);
       while ( a == vid ) a = random_vertex(g, gen);
       while ( b == vidp1 ) b = random_vertex(g, gen);
-      Edge e; 
+      Edge e;
       bool inserted;
 #if VERBOSE
-      cerr << "add_edge(" << vertex_id_map[vid] << "," << vertex_id_map[a] <<")" << endl;
+      // cerr << "add_edge(" << vertex_id_map[vid] << "," << vertex_id_map[a] <<")" << endl;
 #endif
       boost::tie(e,inserted) = add_edge(vid, a, EdgeID(current_edge_id++), g);
-      
+
       if (! check_edge_added(g, e, vid, a, edge_id_map, current_edge_id - 1,
                              inserted)) {
         ret = -1;
@@ -395,7 +396,7 @@ int main(int, char* [])
       }
 
 #if VERBOSE
-      cerr << "add_edge(" << vertex_id_map[b] << "," << vertex_id_map[vidp1] <<")" << endl;
+      // cerr << "add_edge(" << vertex_id_map[b] << "," << vertex_id_map[vidp1] <<")" << endl;
 #endif
       // add_edge without plugin
       boost::tie(e,inserted) = add_edge(b, vidp1, g);
@@ -403,42 +404,42 @@ int main(int, char* [])
         edge_id_map[e] = current_edge_id;
       ++current_edge_id;
 
-      if (! check_edge_added(g, e, b, vidp1, edge_id_map, 
+      if (! check_edge_added(g, e, b, vidp1, edge_id_map,
                              current_edge_id - 1, inserted)) {
         ret = -1;
         break;
       }
     }
-    
+
     // clear_vertex
     Vertex c = random_vertex(g, gen);
 #if VERBOSE
-    cerr << "Testing clear vertex ..." << endl; is_failed = false;
+    // cerr << "Testing clear vertex ..." << endl; is_failed = false;
     print_graph(g, vertex_id_map);
     //    print_in_edges(g, vertex_id_map);
-    cerr << "clearing vertex " << vertex_id_map[c] << endl;
+    // cerr << "clearing vertex " << vertex_id_map[c] << endl;
 #endif
     clear_vertex(c, g);
 #if VERBOSE
     print_graph(g, vertex_id_map);
     //    print_in_edges(g, vertex_id_map);
     print_edges(g, vertex_id_map);
-#endif  
+#endif
     if (check_vertex_cleared(g, c, vertex_id_map) && num_edges(g) == count_edges(g)) {
 #if VERBOSE
-      cerr << " Passed."<< endl;
+      // cerr << " Passed."<< endl;
 #endif
     } else {
 #if VERBOSE
-      cerr << "**** Failed" << endl;
+      // cerr << "**** Failed" << endl;
 #endif
       ret = -1;
       break;
     }
 
 #if VERBOSE
-    cerr << "Testing remove vertex ..." << endl; is_failed = false;
-    cerr << "removing vertex " << vertex_id_map[c] << endl;
+    // cerr << "Testing remove vertex ..." << endl; is_failed = false;
+    // cerr << "removing vertex " << vertex_id_map[c] << endl;
 #endif
 
     old_N = num_vertices(g);
@@ -458,8 +459,8 @@ int main(int, char* [])
       if (N != old_N - 1) {
         ret = -1;
 #if VERBOSE
-        cerr << "    Failed. N = " << N
-             << " but should be " << old_N - 1 << endl;
+        // cerr << "    Failed. N = " << N
+        //      << " but should be " << old_N - 1 << endl;
 #endif
       }
     }
@@ -468,17 +469,17 @@ int main(int, char* [])
     if (N != old_N - 1) {
       ret = -1;
 #if VERBOSE
-      cerr << "    Failed. N = " << N
-           << " but should be " << old_N - 1 << endl;
+      // cerr << "    Failed. N = " << N
+      //      << " but should be " << old_N - 1 << endl;
 #endif
     } else {
 #if VERBOSE
-      cerr << "           Passed."<< endl;      
+      // cerr << "           Passed."<< endl;
 #endif
     }
   }
   if (ret == 0)
-    std::cout << "tests passed" << std::endl;
+    // std::cout << "tests passed" << std::endl;
 
-  return ret;
+  return boost::report_errors();
 }

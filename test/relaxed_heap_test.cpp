@@ -11,14 +11,13 @@
 #endif
 
 #include <boost/pending/relaxed_heap.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <utility>
 #include <iostream>
 #include <vector>
 #include <boost/optional.hpp>
 #include <boost/random.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/progress.hpp>
 
 typedef std::vector<boost::optional<double> > values_type;
 values_type values;
@@ -112,10 +111,10 @@ void interactive_test()
           if (boost::optional<double> min_value = get_min_value()) {
             cout << "Top value is (" << heap.top() << ", "
                  << *values[heap.top()] << ").\n";
-            BOOST_CHECK(*min_value == *values[heap.top()]);
+            BOOST_TEST(*min_value == *values[heap.top()]);
           } else {
             cout << "Queue is empty.\n";
-            BOOST_CHECK(heap.empty());
+            BOOST_TEST(heap.empty());
           }
         }
         break;
@@ -126,14 +125,14 @@ void interactive_test()
             unsigned victim = heap.top();
             double value = *values[victim];
             cout << "Removed top value (" << victim << ", " << value << ")\n";
-            BOOST_CHECK(*min_value == value);
+            BOOST_TEST(*min_value == value);
 
             heap.pop();
             heap.dump_tree();
             values[victim].reset();
           } else {
             cout << "Queue is empty.\n";
-            BOOST_CHECK(heap.empty());
+            BOOST_TEST(heap.empty());
           }
         }
         break;
@@ -157,22 +156,15 @@ void random_test(int n, int iterations, int seed)
   boost::uniform_real<> rand_value(-1000.0, 1000.0);
   boost::uniform_int<unsigned> which_option(0, 3);
 
-  cout << n << std::endl;
+  // cout << n << std::endl;
 
-#if BOOST_RELAXED_HEAP_DEBUG > 1
   heap.dump_tree();
-#endif
 
-  BOOST_REQUIRE(heap.valid());
+  BOOST_TEST_EQ(heap.valid(), true);
 
-#if BOOST_RELAXED_HEAP_DEBUG == 0
-  boost::progress_display progress(iterations);
-#endif
 
   for (int iteration = 0; iteration < iterations; ++iteration) {
-#if BOOST_RELAXED_HEAP_DEBUG > 1
-    std::cout << "Iteration #" << iteration << std::endl;
-#endif
+    // std::cout << "Iteration #" << iteration << std::endl;
     unsigned victim = rand_index(gen);
     if (values[victim]) {
       switch (which_option(gen)) {
@@ -184,10 +176,8 @@ void random_test(int n, int iterations, int seed)
           assert(*values[victim] >= (rand_smaller.min)());
           assert(*values[victim] <= (rand_smaller.max)());
 
-#if BOOST_RELAXED_HEAP_DEBUG > 0
-          cout << "u " << victim << " " << *values[victim] << std::endl;
-          cout.flush();
-#endif
+          // cout << "u " << victim << " " << *values[victim] << std::endl;
+          // cout.flush();
           heap.update(victim);
         }
         break;
@@ -197,17 +187,12 @@ void random_test(int n, int iterations, int seed)
           // Delete minimum value in the queue.
           victim = heap.top();
           double top_value = *values[victim];
-          BOOST_CHECK(*get_min_value() == top_value);
+          BOOST_TEST_EQ(*get_min_value(), top_value);
           if (*get_min_value() != top_value) return;
-#if BOOST_RELAXED_HEAP_DEBUG > 0
-          cout << "d" << std::endl;
-          cout.flush();
-#endif
+          // cout << "d" << std::endl;
           heap.pop();
           values[victim].reset();
-#if BOOST_RELAXED_HEAP_DEBUG > 1
-          cout << "(Removed " << victim << ")\n";
-#endif // BOOST_RELAXED_HEAP_DEBUG > 1
+          // cout << "(Removed " << victim << ")\n";
         }
         break;
 
@@ -215,45 +200,35 @@ void random_test(int n, int iterations, int seed)
         {
           // Just remove this value from the queue completely
           values[victim].reset();
-#if BOOST_RELAXED_HEAP_DEBUG > 0
-          cout << "r " << victim << std::endl;
-          cout.flush();
-#endif
+          // cout << "r " << victim << std::endl;
           heap.remove(victim);
         }
         break;
 
       default:
-        cout << "Random number generator failed." << endl;
-        BOOST_CHECK(false);
+        // cout << "Random number generator failed." << endl;
+        BOOST_TEST(false);
         return;
         break;
       }
     } else {
       values[victim] = rand_value(gen);
-      assert(*values[victim] >= (rand_value.min)());
-      assert(*values[victim] <= (rand_value.max)());
+      BOOST_TEST_GE(*values[victim], (rand_value.min)());
+      BOOST_TEST_LE(*values[victim], (rand_value.max)());
 
-#if BOOST_RELAXED_HEAP_DEBUG > 0
-      cout << "i " << victim << " " << *values[victim] << std::endl;
-      cout.flush();
-#endif
+      // cout << "i " << victim << " " << *values[victim] << std::endl;
+      // cout.flush();
       heap.push(victim);
     }
 
-#if BOOST_RELAXED_HEAP_DEBUG > 1
     heap.dump_tree();
-#endif // BOOST_RELAXED_HEAP_DEBUG > 1
 
-    BOOST_REQUIRE(heap.valid());
+    BOOST_TEST(heap.valid());
 
-#if BOOST_RELAXED_HEAP_DEBUG == 0
-    ++progress;
-#endif
   }
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   if (argc >= 3) {
     int n = boost::lexical_cast<int>(argv[1]);
@@ -261,5 +236,6 @@ int test_main(int argc, char* argv[])
     int seed = (argc >= 4? boost::lexical_cast<int>(argv[3]) : 1);
     random_test(n, iterations, seed);
   } else interactive_test();
-  return 0;
+
+  return boost::report_errors();
 }

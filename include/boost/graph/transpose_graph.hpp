@@ -19,15 +19,15 @@
 
 namespace boost {
 
-  template <class VertexListGraph, class MutableGraph> 
+  template <class VertexListGraph, class MutableGraph>
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T)
   {
     reverse_graph<VertexListGraph> R(G);
     copy_graph(R, G_T);
   }
-  
-  template <class VertexListGraph, class MutableGraph, 
-    class P, class T, class R> 
+
+  template <class VertexListGraph, class MutableGraph,
+    class P, class T, class R>
   void transpose_graph(const VertexListGraph& G, MutableGraph& G_T,
                        const bgl_named_params<P, T, R>& params)
   {

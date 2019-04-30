@@ -28,7 +28,7 @@ namespace boost {
 
     template <class Node, class Next>
     inline Node
-    slist_insert_after(Node pos, Node x, 
+    slist_insert_after(Node pos, Node x,
                        Next next)
     {
       next(x) = next(pos);
@@ -39,7 +39,7 @@ namespace boost {
     // return next(pos) or next(next(pos)) ?
     template <class Node, class Next>
     inline Node
-    slist_remove_after(Node pos, 
+    slist_remove_after(Node pos,
                        Next next)
     {
       Node n = next(pos);
@@ -49,7 +49,7 @@ namespace boost {
 
     template <class Node, class Next>
     inline Node
-    slist_remove_range(Node before_first, Node last, 
+    slist_remove_range(Node before_first, Node last,
                        Next next)
     {
       next(before_first) = last;
@@ -68,7 +68,7 @@ namespace boost {
 
     template<class Node, class Next>
     inline void
-    slist_splice_after(Node pos, Node before_first, Node before_last, 
+    slist_splice_after(Node pos, Node before_first, Node before_last,
                        Next next)
     {
       if (pos != before_first && pos != before_last) {
@@ -137,7 +137,7 @@ namespace boost {
 
     template <class Node, class Next, class Prev>
     inline void
-    dlist_insert_before(Node pos, Node x, 
+    dlist_insert_before(Node pos, Node x,
                         Next next, Prev prev)
     {
       next(x) = pos;
@@ -148,7 +148,7 @@ namespace boost {
 
     template <class Node, class Next, class Prev>
     void
-    dlist_remove(Node pos, 
+    dlist_remove(Node pos,
                  Next next, Prev prev)
     {
       Node next_node = next(pos);
@@ -171,7 +171,7 @@ namespace boost {
         del(tmp);
       }
     }
-    
+
     template <class Node>
     inline bool
     dlist_empty(Node dummy)
@@ -179,9 +179,9 @@ namespace boost {
       return next(dummy) == dummy;
     }
 
-    template <class Node, class Next, class Prev>  
+    template <class Node, class Next, class Prev>
     void
-    dlist_transfer(Node pos, Node first, Node last, 
+    dlist_transfer(Node pos, Node first, Node last,
                    Next next, Prev prev)
     {
       if (pos != last) {
@@ -196,7 +196,7 @@ namespace boost {
         prev(last) = prev(first);
         prev(first) = tmp;
       }
-    }  
+    }
 
     template <class Next, class Prev, class Data>
     class dlist_iterator_policies
@@ -208,7 +208,7 @@ namespace boost {
       void decrement(Node& x) const
         { x = m_prev(x); }
 
-      dlist_iterator_policies(Next n, Prev p, Data d) 
+      dlist_iterator_policies(Next n, Prev p, Data d)
         : Base(n,d), m_prev(p) { }
     protected:
       Prev m_prev;

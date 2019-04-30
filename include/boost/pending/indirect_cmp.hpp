@@ -38,7 +38,7 @@ namespace boost {
       : d(df), cmp(c) { }
 
     template <class A, class B>
-    inline bool 
+    inline bool
     operator()(const A& u, const B& v) const {
       const T& du = get(d, u);
       const T& dv = get(d, v);

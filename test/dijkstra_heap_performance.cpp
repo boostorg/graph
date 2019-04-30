@@ -16,7 +16,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <vector>
 #include <iostream>
 
@@ -28,10 +28,10 @@
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/detail/lightweight_test.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
-#ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
 
 struct show_events_visitor : dijkstra_visitor<>
 {
@@ -50,36 +50,34 @@ struct show_events_visitor : dijkstra_visitor<>
 
 
 template<typename Graph, typename Kind>
-void run_test(const Graph& g, const char* name, Kind kind, 
+void run_test(const Graph& g, const char* name, Kind kind,
               const std::vector<double>& correct_distances)
 {
   std::vector<double> distances(num_vertices(g));
 
-  std::cout << "Running Dijkstra's with " << name << "...";
-  std::cout.flush();
-  timer t;
-  dijkstra_heap_kind = kind;
+  // std::cout << "Running Dijkstra's with " << name << "...";
+  // std::cout.flush();
+  // dijkstra_heap_kind = kind;
 
   dijkstra_shortest_paths(g, vertex(0, g),
                           distance_map(&distances[0]).
                           visitor(show_events_visitor()));
-  double run_time = t.elapsed();
-  std::cout << run_time << " seconds.\n";
+  // std::cout << run_time << " seconds.\n";
 
   BOOST_TEST(distances == correct_distances);
 
-  if (distances != correct_distances)
-    {
-      std::cout << "Expected: ";
-      std::copy(correct_distances.begin(), correct_distances.end(),
-                std::ostream_iterator<double>(std::cout, " "));
-      std::cout << "\nReceived: ";
-      std::copy(distances.begin(), distances.end(),
-                std::ostream_iterator<double>(std::cout, " "));
-      std::cout << std::endl;
-    }
+//   if (distances != correct_distances)
+//     {
+//       // std::cout << "Expected: ";
+//       std::copy(correct_distances.begin(), correct_distances.end(),
+//                 std::ostream_iterator<double>(std::cout, " "));
+//       // std::cout << "\nReceived: ";
+//       std::copy(distances.begin(), distances.end(),
+//                 std::ostream_iterator<double>(std::cout, " "));
+//       // std::cout << std::endl;
+//     }
 }
-#endif
+
 
 int main(int argc, char* argv[])
 {
@@ -90,14 +88,14 @@ int main(int argc, char* argv[])
   // Build random graph
   typedef adjacency_list<vecS, vecS, directedS, no_property,
                          property<edge_weight_t, double> > Graph;
-  std::cout << "Generating graph...";
-  std::cout.flush();
+  // std::cout << "Generating graph...";
+  // std::cout.flush();
   minstd_rand gen(seed);
   double p = double(m)/(double(n)*double(n));
   Graph g(erdos_renyi_iterator<minstd_rand, Graph>(gen, n, p),
           erdos_renyi_iterator<minstd_rand, Graph>(),
           n);
-  std::cout << n << " vertices, " << num_edges(g) << " edges.\n";
+  // std::cout << n << " vertices, " << num_edges(g) << " edges.\n";
   uniform_real<double> rand01(0.0, 1.0);
   graph_traits<Graph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
@@ -108,9 +106,8 @@ int main(int argc, char* argv[])
   std::vector<double> no_color_map_distances(n);
 
   // Run binary or d-ary heap version
-  std::cout << "Running Dijkstra's with binary heap...";
-  std::cout.flush();
-  timer t;
+  // std::cout << "Running Dijkstra's with binary heap...";
+  // std::cout.flush();
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
   dijkstra_heap_kind = dijkstra_binary_heap;
 #else
@@ -120,17 +117,9 @@ int main(int argc, char* argv[])
                           distance_map(
                             boost::make_iterator_property_map(
                               binary_heap_distances.begin(), get(boost::vertex_index, g))));
-  double binary_heap_time = t.elapsed();
-  std::cout << binary_heap_time << " seconds.\n";
 
   // Run relaxed heap version
-#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
-  std::cout << "Running Dijkstra's with relaxed heap...";
-#else
-  std::cout << "Running Dijkstra's with d-ary heap (d=4)...";
-#endif
-  std::cout.flush();
-  t.restart();
+
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
   dijkstra_heap_kind = dijkstra_relaxed_heap;
 #else
@@ -140,21 +129,15 @@ int main(int argc, char* argv[])
                           distance_map(
                             boost::make_iterator_property_map(
                               relaxed_heap_distances.begin(), get(boost::vertex_index, g))));
-  double relaxed_heap_time = t.elapsed();
-  std::cout << relaxed_heap_time << " seconds.\n"
-            << "Speedup = " << (binary_heap_time / relaxed_heap_time) << ".\n";
+  // double relaxed_heap_time = t.elapsed();
+  // std::cout << relaxed_heap_time << " seconds.\n"
+            // << "Speedup = " << (binary_heap_time / relaxed_heap_time) << ".\n";
 
   // Verify that the results are equivalent
   BOOST_TEST(binary_heap_distances == relaxed_heap_distances);
 
   // Run Michael's no-color-map version
-#ifdef BOOST_GRAPH_DIJKSTRA_USE_RELAXED_HEAP
-  std::cout << "Running Dijkstra's (no color map) with relaxed heap...";
-#else
-  std::cout << "Running Dijkstra's (no color map) with d-ary heap (d=4)...";
-#endif
-  std::cout.flush();
-  t.restart();
+  // t.restart();
 #ifdef BOOST_GRAPH_DIJKSTRA_TESTING_DIETMAR
   dijkstra_heap_kind = dijkstra_relaxed_heap;
 #else
@@ -174,9 +157,9 @@ int main(int argc, char* argv[])
      0,
      make_dijkstra_visitor(null_visitor())
      );
-  double no_color_map_time = t.elapsed();
-  std::cout << no_color_map_time << " seconds.\n"
-            << "Speedup = " << (binary_heap_time / no_color_map_time) << ".\n";
+  // double no_color_map_time = t.elapsed();
+  // std::cout << no_color_map_time << " seconds.\n"
+  //           << "Speedup = " << (binary_heap_time / no_color_map_time) << ".\n";
 
   // Verify that the results are equivalent
   BOOST_TEST(binary_heap_distances == no_color_map_distances);
@@ -189,5 +172,6 @@ int main(int argc, char* argv[])
   run_test(g, "Pairing heap", dijkstra_pairing_heap, binary_heap_distances);
   run_test(g, "Splay heap", dijkstra_splay_heap, binary_heap_distances);
 #endif
+
   return boost::report_errors();
 }

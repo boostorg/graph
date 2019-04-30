@@ -10,7 +10,7 @@
 //=======================================================================
 
 #include <iostream>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 
@@ -43,23 +43,23 @@ void test_empty_graph_cases() {
     bool got_hit = false;
     test_callback callback(got_hit, true);
     bool exists = vf2_graph_iso(gEmpty, gEmpty, callback);
-    BOOST_CHECK(exists);
-    BOOST_CHECK(got_hit); // even empty matches are reported
+    BOOST_TEST(exists);
+    BOOST_TEST(got_hit); // even empty matches are reported
   }
   { // subgraph isomorphism (induced)
     { // empty vs. empty
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_iso(gEmpty, gEmpty, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit); // even empty matches are reported
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit); // even empty matches are reported
     }
     { // empty vs. non-empty
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_iso(gEmpty, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit); // even empty matches are reported
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit); // even empty matches are reported
     }
   }
   { // subgraph monomorphism (non-induced subgraph isomorphism)
@@ -67,15 +67,15 @@ void test_empty_graph_cases() {
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_mono(gEmpty, gEmpty, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit); // even empty matches are reported
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit); // even empty matches are reported
     }
     { // empty vs. non-empty
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_mono(gEmpty, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit); // even empty matches are reported
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit); // even empty matches are reported
     }
   }
 }
@@ -94,8 +94,8 @@ void test_return_value() {
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_graph_iso(gSmall, gLarge, callback);
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // no morphism due to vertex mismatches
       bool got_hit = false;
@@ -103,22 +103,22 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_graph_iso(gLarge, gLarge, callback, vertex_order_by_mult(gLarge),
                                   boost::edges_equivalent(pred).vertices_equivalent(pred));
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // morphism, find all
       bool got_hit = false;
       test_callback callback(got_hit, false);
       bool exists = vf2_graph_iso(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
     { // morphism, stop after first hit
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_graph_iso(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
   }
   { // subgraph isomorphism (induced)
@@ -126,8 +126,8 @@ void test_return_value() {
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_iso(gLarge, gSmall, callback);
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // no morphism due to vertex mismatches
       bool got_hit = false;
@@ -135,22 +135,22 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_subgraph_iso(gLarge, gLarge, callback, vertex_order_by_mult(gLarge),
                                   boost::edges_equivalent(pred).vertices_equivalent(pred));
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // morphism, find all
       bool got_hit = false;
       test_callback callback(got_hit, false);
       bool exists = vf2_subgraph_iso(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
     { // morphism, stop after first hit
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_iso(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
   }
   { // subgraph monomorphism (non-induced subgraph isomorphism)
@@ -158,8 +158,8 @@ void test_return_value() {
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_mono(gLarge, gSmall, callback);
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // no morphism due to vertex mismatches
       bool got_hit = false;
@@ -167,28 +167,29 @@ void test_return_value() {
       false_predicate pred;
       bool exists = vf2_subgraph_mono(gLarge, gLarge, callback, vertex_order_by_mult(gLarge),
                                   boost::edges_equivalent(pred).vertices_equivalent(pred));
-      BOOST_CHECK(!exists);
-      BOOST_CHECK(!got_hit);
+      BOOST_TEST(!exists);
+      BOOST_TEST(!got_hit);
     }
     { // morphism, find all
       bool got_hit = false;
       test_callback callback(got_hit, false);
       bool exists = vf2_subgraph_mono(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
     { // morphism, stop after first hit
       bool got_hit = false;
       test_callback callback(got_hit, true);
       bool exists = vf2_subgraph_mono(gLarge, gLarge, callback);
-      BOOST_CHECK(exists);
-      BOOST_CHECK(got_hit);
+      BOOST_TEST(exists);
+      BOOST_TEST(got_hit);
     }
   }
 }
 
-int test_main(int argc, char* argv[]) {
+int main() {
   test_empty_graph_cases();
   test_return_value();
-  return 0;
+
+  return boost::report_errors();
 }

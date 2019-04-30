@@ -99,7 +99,7 @@ void test_graph(Graph& g) {
     using namespace boost;
     BOOST_CONCEPT_ASSERT((GraphConcept<Graph>));
 
-    std::cout << typestr(g) << "\n";
+    // std::cout << typestr(g) << "\n";
 
     // Define a bunch of tags for the graph.
     typename graph_has_add_vertex<Graph>::type can_add_vertex;

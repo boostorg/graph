@@ -21,7 +21,7 @@ namespace boost {
     // each array element represent the next index in the list.  A
     // special value (the maximum index + 1) is used to terminate a
     // list.
-    template <typename IndexRandomAccessIterator> 
+    template <typename IndexRandomAccessIterator>
     class component_index_iterator :
       boost::forward_iterator_helper<component_index_iterator<IndexRandomAccessIterator>,
                                      typename std::iterator_traits<IndexRandomAccessIterator>::value_type,
@@ -53,7 +53,7 @@ namespace boost {
       inline value_type operator*() const {
         return (m_current_index);
       }
-    
+
       self& operator++() {
         // Move to the next element in the linked list
         m_current_index = m_index_iterator[m_current_index];
@@ -71,7 +71,7 @@ namespace boost {
     }; // class component_index_iterator
 
   } // namespace detail
-  
+
 } // namespace detail
 
 #endif // BOOST_GRAPH_DETAIL_INCREMENTAL_COMPONENTS_HPP

@@ -81,7 +81,7 @@ namespace boost {
     }
     return sum;
   }
-  
+
 } // namespace boost
 
 #endif // BOOST_GRAPH_BANDWIDTH_HPP

@@ -9,6 +9,8 @@
 #include <boost/graph/subgraph.hpp>
 #include "typestr.hpp"
 
+#include <boost/core/lightweight_test.hpp>
+
 using namespace boost;
 
 struct TestProps {
@@ -123,10 +125,11 @@ struct TestBundles {
     }
 };
 
-int main(int argc, char* argv[])
-{
+int
+main(
+){
     TestProps::run();
     TestBundles::run();
 
-    return 0;
+    return boost::report_errors();
 }

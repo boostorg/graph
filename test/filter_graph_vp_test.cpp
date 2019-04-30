@@ -24,4 +24,6 @@ int main()
 {
     adjacency_list<> graph;
     make_filtered_graph(graph, keep_all(), NotMuchOfAFilter());
+
+    return boost::report_errors();
 }

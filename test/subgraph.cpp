@@ -5,7 +5,7 @@
 
 #include <set>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -18,7 +18,7 @@
 
 // UNDER CONSTRUCTION
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
   using namespace boost;
   typedef adjacency_list<vecS, vecS, bidirectionalS,
@@ -129,8 +129,8 @@ int test_main(int, char*[])
 //         BOOST_ASSERT(get(map, v) == 5);
 
 //         test_graph(g);
-        return 0;
+        return boost::report_errors();
     }
   }
-  return 0;
+  return boost::report_errors();
 }

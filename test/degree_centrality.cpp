@@ -10,6 +10,8 @@
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/degree_centrality.hpp>
 #include <boost/graph/exterior_property.hpp>
+#include <boost/core/lightweight_test.hpp>
+
 
 using namespace std;
 using namespace boost;
@@ -118,4 +120,6 @@ main(int, char *[])
     test_undirected<Graph>();
     test_influence<Digraph>();
     test_prestige<Digraph>();
+
+    return boost::report_errors();
 }

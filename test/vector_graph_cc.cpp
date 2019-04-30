@@ -19,6 +19,9 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/graph_archetypes.hpp>
 
+#include <boost/core/lightweight_test.hpp>
+
+
 int main(int,char*[])
 {
   using namespace boost;
@@ -29,5 +32,6 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph> ));
     BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph> ));
   }
-  return 0;
+
+  return boost::report_errors();
 }

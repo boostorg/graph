@@ -34,5 +34,6 @@ main(int,char*[])
     BOOST_CONCEPT_ASSERT((
       LvaluePropertyGraphConcept<Graph, Vertex, edge_all_t> ));
   }
-  return 0;
+
+  return boost::report_errors();
 }

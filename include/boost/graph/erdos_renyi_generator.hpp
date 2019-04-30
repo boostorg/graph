@@ -31,7 +31,7 @@ namespace boost {
                std::pair<typename graph_traits<Graph>::vertices_size_type,
                          typename graph_traits<Graph>::vertices_size_type>,
                std::input_iterator_tag,
-               const 
+               const
                  std::pair<typename graph_traits<Graph>::vertices_size_type,
                            typename graph_traits<Graph>::vertices_size_type>&>
   {
@@ -97,7 +97,7 @@ namespace boost {
                std::pair<typename graph_traits<Graph>::vertices_size_type,
                          typename graph_traits<Graph>::vertices_size_type>,
                std::input_iterator_tag,
-               const 
+               const
                  std::pair<typename graph_traits<Graph>::vertices_size_type,
                            typename graph_traits<Graph>::vertices_size_type>&>
   {

@@ -6,7 +6,8 @@
 
 #include "cycle_test.hpp"
 #include <boost/graph/hawick_circuits.hpp>
-#include <iostream>
+// #include <iostream>
+#include <boost/core/lightweight_test.hpp>
 
 
 struct call_hawick_circuits {
@@ -24,9 +25,11 @@ struct call_hawick_unique_circuits {
 };
 
 int main() {
-    std::cout << "---------hawick_circuits---------\n";
+    // std::cout << "---------hawick_circuits---------\n";
     cycle_test(call_hawick_circuits());
 
-    std::cout << "\n\n---------hawick_unique_circuits---------\n";
+    // std::cout << "\n\n---------hawick_unique_circuits---------\n";
     cycle_test(call_hawick_unique_circuits());
+
+    return boost::report_errors();
 }

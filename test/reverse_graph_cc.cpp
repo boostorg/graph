@@ -12,13 +12,15 @@
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/concept/assert.hpp>
 #include <string>
+#include <boost/core/lightweight_test.hpp>
+
 
 int main(int,char*[])
 {
   using namespace boost;
   // Check const reverse_graph
   {
-    typedef adjacency_list< vecS, vecS, bidirectionalS, 
+    typedef adjacency_list< vecS, vecS, bidirectionalS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>,
       property<graph_name_t, std::string>
@@ -33,11 +35,11 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<Graph, Edge, edge_underlying_t> ));
     AdjList g;
     Graph gr(g);
-    get_property(gr, graph_name_t());
+    get_property (gr, graph_name_t());
   }
   // Check non-const reverse_graph
   {
-    typedef adjacency_list< vecS, vecS, bidirectionalS, 
+    typedef adjacency_list< vecS, vecS, bidirectionalS,
       property<vertex_color_t, int>,
       property<edge_weight_t, int>,
       property<graph_name_t, std::string>
@@ -55,5 +57,6 @@ int main(int,char*[])
     get_property(gr, graph_name_t());
     set_property(gr, graph_name_t(), "foo");
   }
-  return 0;
+
+  return boost::report_errors();
 }

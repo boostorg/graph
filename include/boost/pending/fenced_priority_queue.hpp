@@ -1,4 +1,4 @@
-//  (C) Copyright Jeremiah Willcock 2004 
+//  (C) Copyright Jeremiah Willcock 2004
 //  Distributed under the Boost Software License, Version 1.0. (See
 //  accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -39,9 +39,9 @@ namespace boost {
     typedef T value_type;
     typedef typename Buffer::size_type size_type;
 
-    fenced_priority_queue(const Compare _comp = Compare() ) 
-      : PQ(_comp) {} 
-    
+    fenced_priority_queue(const Compare _comp = Compare() )
+      : PQ(_comp) {}
+
     void push(const T& data);
     void pop(void);
     T& top(void);
@@ -49,18 +49,18 @@ namespace boost {
     size_type size(void) const;
     bool empty(void) const;
     void fence(void);
-    
+
   private:
     void fence(void) const;
 
-    //let them mutable to allow const version of top and the same 
+    //let them mutable to allow const version of top and the same
     //semantics with non-constant version. Rich Lee
     mutable std::priority_queue<T, std::vector<T>, Compare> PQ;
     mutable Buffer Q;
   };
-  
+
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline void 
+  inline void
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   push(const T &t) {
     // Push a new element after the last fence.  This puts it into the
@@ -110,7 +110,7 @@ namespace boost {
   }
 
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline typename fenced_priority_queue<T, Compare, implicit_fence, Buffer>::size_type 
+  inline typename fenced_priority_queue<T, Compare, implicit_fence, Buffer>::size_type
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   size(void) const {
     // Returns the size of the queue (both parts together).
@@ -118,15 +118,15 @@ namespace boost {
   }
 
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline bool 
+  inline bool
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   empty(void) const {
     // Returns if the queue is empty, i.e. both parts are empty.
     return Q.empty() && PQ.empty();
   }
-  
+
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline void 
+  inline void
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   fence(void) {
     // Perform a fence operation.  Remove elements from PQ in sorted
@@ -137,7 +137,7 @@ namespace boost {
     }
   }
   template<class T, class Compare, bool implicit_fence, class Buffer>
-  inline void 
+  inline void
   fenced_priority_queue<T, Compare, implicit_fence, Buffer>::
   fence(void) const {
     // Perform a fence operation.  Remove elements from PQ in sorted
@@ -148,5 +148,5 @@ namespace boost {
     }
   }
 
-}  
+}
 #endif /* BOOST_FENCED_PRIORITY_QUEUE_HPP */
