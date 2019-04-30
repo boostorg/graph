@@ -64,15 +64,6 @@ check_articulation_points(const Graph& g, std::vector<Vertex> art_points)
 
   BOOST_TEST(art_points == art_points_check);
   if (art_points != art_points_check) {
-    // std::cerr << "ERROR!" << std::endl;
-    // std::cerr << "\tComputed: ";
-    // std::size_t i;
-    // for (i = 0; i < art_points.size(); ++i)
-      // std::cout << art_points[i] << ' ';
-    // std::cout << std::endl << "\tExpected: ";
-    // for (i = 0; i < art_points_check.size(); ++i)
-      // std::cout << art_points_check[i] << ' ';
-    // std::cout << std::endl;
     any_errors = true;
   }
 }
@@ -84,18 +75,10 @@ typedef graph_traits<Graph>::vertex_descriptor Vertex;
 bool test_graph(Graph& g) { // Returns false on failure
   std::vector<Vertex> art_points;
 
-  // std::cout << "Computing biconnected components & articulation points... ";
-  // std::cout.flush();
-
-  // std::size_t num_comps =
   biconnected_components(g,
                            get(&EdgeProperty::component, g),
                            std::back_inserter(art_points));
 
-  // std::cout << "done.\n\t" << num_comps << " biconnected components.\n"
-  //           << "\t" << art_points.size() << " articulation points.\n"
-  //           << "\tTesting articulation points...";
-  // std::cout.flush();
 
   check_articulation_points(g, art_points);
 

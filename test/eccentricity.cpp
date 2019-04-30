@@ -28,6 +28,7 @@ struct vertex_vector
     typedef vector<typename traits::vertex_descriptor> type;
 };
 
+
 template <typename Graph>
 void build_graph(Graph& g,
                  typename vertex_vector<Graph>::type& v)
@@ -47,8 +48,9 @@ void build_graph(Graph& g,
 
 
 template <typename Graph>
-void test_undirected()
-{
+void 
+test_undirected(
+){
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
 

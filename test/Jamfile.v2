@@ -105,7 +105,6 @@ test-suite graph_test :
     [ run subgraph_bundled.cpp ]
     [ run subgraph_props.cpp ]
 
-    [ compile isomorphism.cpp ]
     [ run isomorphism.cpp ]
     [ run adjacency_matrix_test.cpp ]
     [ compile vector_graph_cc.cpp ]

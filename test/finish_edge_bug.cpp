@@ -1,6 +1,6 @@
 // Author: Alex Lauser
 
-// Output (Note that 'finish_edge' is never printed):
+// Output:
 // The example graph:
 // 0 --> 1 2
 // 1 --> 2
@@ -20,35 +20,6 @@ struct TalkativeVisitor
 {
   typedef typename boost::graph_traits<graph_t>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<graph_t>::edge_descriptor edge_descriptor;
-
-  // // Commented out to avoid clutter of the output.
-  // void discover_vertex(vertex_descriptor u, const graph_t&) { // check!
-  //   std::cout << "discover_vertex: " << u << std::endl;
-  // }
-  // void finish_vertex(vertex_descriptor u, const graph_t&) { // check!
-  //     std::cout << "finish_vertex: " << u << std::endl;
-  // }
-  // void initialize_vertex(vertex_descriptor u, const graph_t&) { // check!
-  //     std::cout << "initialize_vertex: " << u << std::endl;
-  // }
-  // void start_vertex(vertex_descriptor u, const graph_t&) { // check!
-  //     std::cout << "start_vertex: " << u << std::endl;
-  // }
-  // void examine_edge(edge_descriptor u, const graph_t&) { // check!
-  //     std::cout << "examine_edge: " << u << std::endl;
-  // }
-  // void tree_edge(edge_descriptor u, const graph_t&) { // check!
-  //     std::cout << "tree_edge: " << u << std::endl;
-  // }
-  // void back_edge(edge_descriptor u, const graph_t&) { // check!
-  //     std::cout << "back_edge: " << u << std::endl;
-  // }
-  // void forward_or_cross_edge(edge_descriptor u, const graph_t&) { // check!
-  //     std::cout << "forward_or_cross_edge: " << u << std::endl;
-  // }
-  void finish_edge(edge_descriptor u, const graph_t&) { // uncalled!
-      std::cout << "finish_edge: " << u << std::endl;
-  }
 };
 
 template <typename t>
@@ -74,7 +45,6 @@ int main(int, char*[])
   add_edge(c, a, G);
   add_edge(a, c, G);
 
-  // std::cout << "The example graph:" << std::endl;
   print_graph(G);
 
   std::vector<default_color_type> color(num_vertices(G));

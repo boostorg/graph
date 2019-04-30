@@ -220,8 +220,7 @@ int main(int, char*[])
   testSet[6].correctIdoms.push_back(11);
   testSet[6].correctIdoms.push_back(0);
 
-  for (size_t i = 0; i < sizeof(testSet)/sizeof(testSet[0]); ++i)
-  {
+  for (size_t i = 0; i < sizeof(testSet)/sizeof(testSet[0]); ++i) {
     const int numOfVertices = testSet[i].numOfVertices;
 
     G g(
@@ -261,8 +260,6 @@ int main(int, char*[])
         idom[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
     }
 
-    // copy(idom.begin(), idom.end(), ostream_iterator<int>(cout, " "));
-    // cout << endl;
 
     // dominator tree correctness test
     BOOST_TEST(std::equal(idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
@@ -285,12 +282,10 @@ int main(int, char*[])
         idom2[get(indexMap, *uItr)] = (numeric_limits<int>::max)();
     }
 
-    // copy(idom2.begin(), idom2.end(), ostream_iterator<int>(cout, " "));
-    // cout << endl;
 
     size_t k;
     for (k = 0; k < num_vertices(g); ++k)
-      BOOST_TEST(domTreePredVector[k] == domTreePredVector2[k]);
+      BOOST_TEST_EQ(domTreePredVector[k], domTreePredVector2[k]);
   }
 
   return boost::report_errors();

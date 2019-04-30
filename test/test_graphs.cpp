@@ -22,6 +22,9 @@
 
 using namespace boost;
 
+
+#define BOOST_META_ASSERT(x) BOOST_ASSERT(x::value)
+
 int main()
 {
   // Bootstrap all of the tests by declaring a kind graph and  asserting some
@@ -73,7 +76,6 @@ int main()
   }
   {
     typedef adjacency_list<vecS, vecS, directedS, VertexBundle, EdgeBundle, GraphBundle> Graph;
-    Graph g;
     BOOST_META_ASSERT(is_directed_graph<Graph>);
     BOOST_META_ASSERT(is_multigraph<Graph>);
     BOOST_META_ASSERT(is_incidence_graph<Graph>);
@@ -84,6 +86,7 @@ int main()
     BOOST_META_ASSERT(has_edge_property<Graph>);
     BOOST_META_ASSERT(has_bundled_edge_property<Graph>);
     BOOST_META_ASSERT(is_add_only_property_graph<Graph>);
+    Graph g;
     test_graph(g);
   }
   {

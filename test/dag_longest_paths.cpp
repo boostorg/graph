@@ -45,7 +45,6 @@ int main(int, char*[])
                        .distance_inf((std::numeric_limits<int>::min)())
                        .distance_zero(0));
 
-    // cout << distance[2] << "\n";
 
     BOOST_TEST_EQ(distance[2], 2);
 

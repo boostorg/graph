@@ -61,8 +61,8 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
                          const IsomorphismMap& iso) {
   using boost::out_degree;
 
-  BOOST_TEST(num_vertices(g1) == num_vertices(g2));
-  BOOST_TEST(num_edges(g1) == num_edges(g2));
+  BOOST_TEST_EQ(num_vertices(g1), num_vertices(g2));
+  BOOST_TEST_EQ(num_edges(g1), num_edges(g2));
 
   typedef typename boost::graph_traits<G1>::vertex_iterator vertiter1;
   {
@@ -73,11 +73,11 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
 
       BOOST_TEST(vi1[v1] == vi2[v2]);
 
-      BOOST_TEST(out_degree(v1, g1) == out_degree(v2, g2));
+      BOOST_TEST_EQ(out_degree(v1, g1), out_degree(v2, g2));
       std::vector<std::size_t> edges1(out_degree(v1, g1));
       typename boost::graph_traits<G1>::out_edge_iterator oe1, oe1end;
       for (boost::tie(oe1, oe1end) = out_edges(v1, g1); oe1 != oe1end; ++oe1) {
-        BOOST_TEST(source(*oe1, g1) == v1);
+        BOOST_TEST_EQ(source(*oe1, g1), v1);
         edges1.push_back(vi1[target(*oe1, g1)]);
       }
       std::vector<std::size_t> edges2(out_degree(v2, g2));
@@ -89,15 +89,6 @@ void assert_graphs_equal(const G1& g1, const VI1& vi1,
 
       std::sort(edges1.begin(), edges1.end());
       std::sort(edges2.begin(), edges2.end());
-      if (edges1 != edges2) {
-        std::cerr << "For vertex " << v1 << std::endl;
-        std::cerr << "edges1:";
-        for (size_t i = 0; i < edges1.size(); ++i) std::cerr << " " << edges1[i];
-        std::cerr << std::endl;
-        std::cerr << "edges2:";
-        for (size_t i = 0; i < edges2.size(); ++i) std::cerr << " " << edges2[i];
-        std::cerr << std::endl;
-      }
       BOOST_TEST(edges1 == edges2);
     }
   }
@@ -124,16 +115,16 @@ void check_consistency_one(const Structure& g) {
   // Do a bunch of tests on the graph internal data
   // Check that m_rowstart entries are valid, and that entries after
   // m_last_source + 1 are all zero
-  BOOST_TEST(g.m_rowstart[0] == 0);
+  BOOST_TEST_EQ(g.m_rowstart[0], 0);
   for (size_t i = 0;
        i < g.m_rowstart.size() - 1;
        ++i) {
-    BOOST_TEST(g.m_rowstart[i + 1] >= g.m_rowstart[i]);
-    BOOST_TEST(g.m_rowstart[i + 1] <= g.m_rowstart.back());
+    BOOST_TEST_GE(g.m_rowstart[i + 1], g.m_rowstart[i]);
+    BOOST_TEST_LE(g.m_rowstart[i + 1], g.m_rowstart.back());
   }
   // Check that m_column entries are within range
   for (size_t i = 0; i < g.m_rowstart.back(); ++i) {
-    BOOST_TEST(g.m_column[i] < g.m_rowstart.size() - 1);
+    BOOST_TEST_LT(g.m_column[i],  g.m_rowstart.size() - 1);
   }
 }
 

@@ -35,7 +35,7 @@ public:
     : current_distance(0), distance(d), parent(p), color(c), src(s) { }
 
   void initialize_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST(get(color, u) == Color::white());
+    BOOST_TEST_EQ(get(color, u), Color::white());
   }
   void examine_vertex(const Vertex& u, const Graph& ) const {
     current_vertex = u;
@@ -46,31 +46,31 @@ public:
       ++current_distance;
   }
   void discover_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST( get(color, u) == Color::gray() );
+    BOOST_TEST_EQ( get(color, u), Color::gray() );
     if (u == src) {
       current_vertex = src;
     } else {
-      BOOST_TEST( parent[u] == current_vertex );
-      BOOST_TEST( distance[u] == current_distance + 1 );
-      BOOST_TEST( distance[u] == distance[parent[u]] + 1 );
+      BOOST_TEST_EQ( parent[u], current_vertex );
+      BOOST_TEST_EQ( distance[u], current_distance + 1 );
+      BOOST_TEST_EQ( distance[u], distance[parent[u]] + 1 );
     }
   }
   void examine_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST( source(e, g) == current_vertex );
+    BOOST_TEST_EQ( source(e, g), current_vertex );
   }
   void tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST( get(color, target(e, g)) == Color::white() );
+    BOOST_TEST_EQ( get(color, target(e, g)), Color::white() );
     Vertex u = source(e, g), v = target(e, g);
-    BOOST_TEST( distance[u] == current_distance );
+    BOOST_TEST_EQ( distance[u], current_distance );
     parent[v] = u;
     distance[v] = distance[u] + 1;
   }
   void non_tree_edge(const Edge& e, const Graph& g) const {
-    BOOST_TEST( color[target(e, g)] != Color::white() );
+    BOOST_TEST_NE( color[target(e, g)], Color::white() );
 
     if (boost::is_directed(g))
       // cross or back edge
-      BOOST_TEST(distance[target(e, g)] <= distance[source(e, g)] + 1);
+      BOOST_TEST_LE(distance[target(e, g)], distance[source(e, g)] + 1);
     else {
       // cross edge (or going backwards on a tree edge)
       BOOST_TEST(distance[target(e, g)] == distance[source(e, g)]
@@ -81,20 +81,20 @@ public:
   }
 
   void gray_target(const Edge& e, const Graph& g) const {
-    BOOST_TEST( color[target(e, g)] == Color::gray() );
+    BOOST_TEST_EQ( color[target(e, g)], Color::gray() );
   }
 
   void black_target(const Edge& e, const Graph& g) const {
-    BOOST_TEST( color[target(e, g)] == Color::black() );
+    BOOST_TEST_EQ( color[target(e, g)], Color::black() );
 
     // All vertices adjacent to a black vertex must already be discovered
     typename boost::graph_traits<Graph>::adjacency_iterator ai, ai_end;
     for (boost::tie(ai, ai_end) = adjacent_vertices(target(e, g), g);
          ai != ai_end; ++ai)
-      BOOST_TEST( color[*ai] != Color::white() );
+      BOOST_TEST_NE( color[*ai], Color::white() );
   }
   void finish_vertex(const Vertex& u, const Graph& ) const {
-    BOOST_TEST( color[u] == Color::black() );
+    BOOST_TEST_EQ( color[u], Color::black() );
 
   }
 private:

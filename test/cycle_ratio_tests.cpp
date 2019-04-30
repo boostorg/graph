@@ -144,8 +144,10 @@ template <typename TW1, typename TW2> struct Graph
         edge_props_t>
     type;
 };
+
 typedef Graph<int, int>::type diGraphInt;
 typedef Graph<double, double>::type diGraphReal;
+
 
 template <typename TW1, typename TW2>
 struct CEdgeProps
@@ -157,7 +159,9 @@ struct CEdgeProps
   TW2 m_w2;
   int m_edge_index;
 };
+
 typedef  adjacency_matrix<directedS, no_property, CEdgeProps<int, int> > GraphMInt;
+
 
 ///Create "tokens_map" for reading graph properties from .dot file
 template <typename TG>
@@ -169,34 +173,32 @@ void  make_dynamic_properties(TG &g, dynamic_properties &p)
   p.property("w2", get(edge_weight2, g));
 }
 
+
 template <typename TG>
 void read_data1(std::istream &is, TG &g)
 {
   dynamic_properties p;
   make_dynamic_properties(g, p);
   read_graphviz(is, g, p);
-  // std::cout << "Number of vertices: " << num_vertices(g) << std::endl;
-  // std::cout << "Number of edges: " << num_edges(g) << std::endl;
   int i = 0;
-  BGL_FORALL_VERTICES_T(vd, g, TG)
-  {
+  BGL_FORALL_VERTICES_T(vd, g, TG){
     put(vertex_index, g, vd, i++);
   }
   i=0;
-  BGL_FORALL_EDGES_T(ed, g, TG)
-  {
+  BGL_FORALL_EDGES_T(ed, g, TG){
     put(edge_index, g, ed, i++);
   }
 }
 
+
 template <typename TG>
 void read_data(const char *file, TG &g)
 {
-  // std::cout << "Reading data from file: " << file << std::endl;
   std::ifstream ifs(file);
   BOOST_TEST(ifs.good());
   read_data1(ifs, g);
 }
+
 
 struct my_float : boost::mcr_float<>
 {
@@ -206,10 +208,12 @@ struct my_float : boost::mcr_float<>
   }
 };
 
+
 struct my_float2 : boost::mcr_float<>
 {
   static double infinity() { return 2; }
 };
+
 
 int main(int argc, char* argv[])
 {
@@ -226,15 +230,12 @@ int main(int argc, char* argv[])
   property_map<diGraphInt, edge_weight_t>::type ew1m = get(edge_weight, tg);
   property_map<diGraphInt, edge_weight2_t>::type ew2m = get(edge_weight2, tg);
 
-
-
   {
     std::istringstream  iss(test_graph1);
     assert(iss.good());
     read_data1(iss, tg);
     max_cr = maximum_cycle_ratio(tg, vim, ew1m, ew2m);
-    // cout << "Maximum cycle ratio is " << max_cr << endl;
-    BOOST_TEST(std::abs( max_cr - 0.666666666) < epsilon );
+    BOOST_TEST_LT(std::abs( max_cr - 0.666666666), epsilon );
     tg.clear();
   }
 
@@ -255,10 +256,8 @@ int main(int argc, char* argv[])
     read_data1(iss, tgi);
     double max_cr = maximum_cycle_ratio(tgi, vim, ew1m, ew2m,
       static_cast<ccInt_t*>(0));
-    // cout << "Maximum cycle ratio is " << max_cr << endl;
     BOOST_TEST(std::abs( max_cr - 2.75) < epsilon );
     double maxmc = maximum_cycle_mean(tgi, vim, ew1m, get(edge_index, tgi));
-    // cout << "Maximum cycle mean is " << maxmc << endl;
     BOOST_TEST(std::abs( maxmc - 5.5) < epsilon );
     tg.clear();
   }
@@ -267,10 +266,8 @@ int main(int argc, char* argv[])
     std::istringstream  iss(test_graph4);
     read_data1(iss, tg);
     max_cr = maximum_cycle_ratio(tg, vim, ew1m, ew2m);
-    // cout << "Maximum cycle ratio is " << max_cr << endl;
     BOOST_TEST(std::abs( max_cr - 2.5) < epsilon );
     min_cr = minimum_cycle_ratio(tg, vim, ew1m, ew2m);
-    // cout << "Minimum cycle ratio is " << min_cr << endl;
     BOOST_TEST(std::abs( min_cr - 0.5) < epsilon );
     tg.clear();
   }
@@ -280,29 +277,13 @@ int main(int argc, char* argv[])
     read_data1(iss, tg);
         min_cr = minimum_cycle_ratio(tg, vim, ew1m, ew2m, &cc, my_float());
     BOOST_TEST(std::abs( min_cr - 0.666666666) < epsilon );
-    // cout << "Minimum cycle ratio is " << min_cr << endl;
-    // cout << "Critical cycle is:\n";
-    for (ccInt_t::iterator itr = cc.begin(); itr != cc.end(); ++itr)
-    {
-      // cout << "(" << get(vertex_name, tg, source(*itr, tg)) <<
-      //   "," << get(vertex_name, tg, target(*itr, tg)) << ") ";
-    }
-    // cout << endl;
     tg.clear();
   }
 
   {
       read_data(argv[1], tg);
       min_cr = boost::minimum_cycle_ratio(tg, vim, ew1m, ew2m, &cc, my_float2());
-      // cout << "Minimum cycle ratio is " << min_cr << endl;
       BOOST_TEST(std::abs(min_cr - 0.33333333333) < epsilon );
-      // cout << "Critical cycle is:" << endl;
-      for (ccInt_t::iterator it = cc.begin(); it != cc.end(); ++it)
-    {
-          // cout << "(" << get(vertex_name, tg, source(*it, tg)) << "," <<
-          //   get(vertex_name, tg, target(*it, tg)) << ") ";
-    }
-      // cout << endl;
       tg.clear();
   }
 
@@ -312,20 +293,14 @@ int main(int argc, char* argv[])
     std::istringstream  iss(test_graph6);
     read_data1(iss, tgr);
     max_cr = maximum_cycle_ratio(tgr, get(vertex_index, tgr), get(edge_weight, tgr), get(edge_weight2, tgr));
-    // cout << "Maximum cycle ratio is " << max_cr << endl;
     min_cr = minimum_cycle_ratio(tgr, get(vertex_index, tgr), get(edge_weight, tgr),
                                      get(edge_weight2, tgr), &cc);
-    // cout << "Minimal cycle ratio is " << min_cr << endl;
     std::pair<double, double> cr(.0,.0);
-    // cout << "Critical cycle is:\n";
     for (ccReal_t::iterator itr = cc.begin(); itr != cc.end(); ++itr)
     {
       cr.first += get(edge_weight, tgr, *itr); cr.second += get(edge_weight2, tgr, *itr);
-      // cout << "(" << get(vertex_name, tgr, source(*itr, tgr)) << "," <<
-        // get(vertex_name, tgr, target(*itr, tgr)) << ") ";
     }
-    BOOST_TEST(std::abs(cr.first / cr.second - min_cr) < epsilon);
-    // cout << endl;
+    BOOST_TEST_LT(std::abs(cr.first / cr.second - min_cr), epsilon);
   }
 
   {
@@ -339,7 +314,7 @@ int main(int argc, char* argv[])
     }
     max_cr = maximum_cycle_ratio(gm, get(vertex_index, gm),
       get(&CEdgeProps<int, int>::m_w1, gm), get(&CEdgeProps<int, int>::m_w2, gm));
-    BOOST_TEST(std::abs(max_cr - 0.5) < epsilon);
+    BOOST_TEST_LT(std::abs(max_cr - 0.5), epsilon);
   }
 
   return boost::report_errors();

@@ -20,7 +20,9 @@
 #include <map>
 #include <algorithm>
 #include <cstdlib>
+#include <random>
 #include <time.h> // clock used without std:: qualifier?
+//#include <boost/test/minimal.hpp>
 #include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/isomorphism.hpp>
@@ -28,23 +30,15 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_int.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/lexical_cast.hpp>
-#include <random>
-
-#include <boost/core/lightweight_test.hpp>
 
 
 using namespace boost;
 
-
-template<
-  typename Graph1,
-  typename Graph2>
-void
-randomly_permute_graph(
-  const Graph1& g1,
-  Graph2& g2
-){
+template<typename Graph1, typename Graph2>
+void randomly_permute_graph(const Graph1& g1, Graph2& g2)
+{
   // Need a clean graph to start with
   BOOST_TEST_EQ(num_vertices(g2), 0);
   BOOST_TEST_EQ(num_edges(g2), 0);
@@ -110,41 +104,12 @@ void test_isomorphism2()
 
   std::map<graph1::vertex_descriptor, graph2::vertex_descriptor> mapping;
 
-  bool isomorphism_correct = boost::graph::isomorphism
-               (g1, g2, _isomorphism_map = make_assoc_property_map(mapping));
-  // clock_t start = clock();
-  BOOST_TEST_EQ(isomorphism_correct, true);
-  // clock_t end = clock();
+  BOOST_TEST(boost::graph::isomorphism
+               (g1, g2, _vertex_index1_map = get(vertex_index, g1),
+                _isomorphism_map = make_assoc_property_map(mapping)));
 
-  // std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
+  BOOST_TEST(verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 
-  bool verify_correct =
-             verify_isomorphism(g1, g2, make_assoc_property_map(mapping));
-  BOOST_TEST_EQ(verify_correct, true);
-
-  // if (!isomorphism_correct || !verify_correct) {
-  //   // Output graph 1
-  //   {
-  //     std::ofstream out("isomorphism_failure.bg1");
-  //     out << num_vertices(g1) << std::endl;
-  //     for (graph1::edge_iterator e = edges(g1).first;
-  //          e != edges(g1).second; ++e) {
-  //       out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
-  //           << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
-  //     }
-  //   }
-
-  //   // Output graph 2
-  //   {
-  //     std::ofstream out("isomorphism_failure.bg2");
-  //     out << num_vertices(g2) << std::endl;
-  //     for (graph2::edge_iterator e = edges(g2).first;
-  //          e != edges(g2).second; ++e) {
-  //       out << get(vertex_index_t(), g2, source(*e, g2)) << ' '
-  //           << get(vertex_index_t(), g2, target(*e, g2)) << std::endl;
-  //     }
-  //   }
-  // }
 }
 
 void test_isomorphism(int n, double edge_probability)
@@ -167,55 +132,28 @@ void test_isomorphism(int n, double edge_probability)
 
   std::map<graph1::vertex_descriptor, graph2::vertex_descriptor> mapping;
 
-  bool isomorphism_correct = boost::graph::isomorphism
-               (g1, g2, _isomorphism_map = make_assoc_property_map(mapping));
-  // clock_t start = clock();
-  BOOST_TEST_EQ(isomorphism_correct, true);
-  // clock_t end = clock();
+  BOOST_TEST(boost::graph::isomorphism
+               (g1, g2, _isomorphism_map = make_assoc_property_map(mapping)));
 
-  // std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
-
-  bool verify_correct =
-             verify_isomorphism(g1, g2, make_assoc_property_map(mapping));
-  BOOST_TEST_EQ(verify_correct, true);
-
-  return;
-
-  // if (!isomorphism_correct || !verify_correct) {
-  //   // Output graph 1
-  //   {
-  //     std::ofstream out("isomorphism_failure.bg1");
-  //     out << num_vertices(g1) << std::endl;
-  //     for (graph1::edge_iterator e = edges(g1).first;
-  //          e != edges(g1).second; ++e) {
-  //       out << get(vertex_index_t(), g1, source(*e, g1)) << ' '
-  //           << get(vertex_index_t(), g1, target(*e, g1)) << std::endl;
-  //     }
-  //   }
-
-  //   // Output graph 2
-  //   {
-  //     std::ofstream out("isomorphism_failure.bg2");
-  //     out << num_vertices(g2) << std::endl;
-  //     for (graph2::edge_iterator e = edges(g2).first;
-  //          e != edges(g2).second; ++e) {
-  //       out << get(vertex_index_t(), g2, source(*e, g2)) << ' '
-  //           << get(vertex_index_t(), g2, target(*e, g2)) << std::endl;
-  //     }
-  //   }
-  // }
+  BOOST_TEST(verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 }
 
-int main(int argc, char* argv[])
-{
+int
+main(
+  int argc, 
+  char* argv[]
+){
   if (argc < 3) {
     test_isomorphism(30, 0.45);
-    return 0;
+    test_isomorphism2();
+
+    return boost::report_errors();
   }
 
   int n = boost::lexical_cast<int>(argv[1]);
   double edge_prob = boost::lexical_cast<double>(argv[2]);
   test_isomorphism(n, edge_prob);
+  test_isomorphism2();
 
   return boost::report_errors();
 }

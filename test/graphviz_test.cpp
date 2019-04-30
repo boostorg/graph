@@ -30,7 +30,7 @@
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
-#include <boost/core/lightweight_test.hpp>
+//#include <boost/core/lightweight_test.hpp>
 
 
 using namespace std;
@@ -84,7 +84,7 @@ template <
   typename NameMap,
   typename MassMap,
   typename WeightMap>
-bool
+void
 test_graph_full(
   std::istream& dotfile,
   graph_t& graph,
@@ -108,8 +108,6 @@ test_graph_full(
     get_property(graph,graph_name));
   dp.property("name",gname);
 
-  bool result = true;
-
   std::string data;
   dotfile >> std::noskipws;
   std::copy(std::istream_iterator<char>(dotfile),
@@ -118,7 +116,7 @@ test_graph_full(
   BOOST_TEST(read_graphviz(data.begin(),data.end(),graph,dp,node_id));
 
   // check correct vertex count
-  BOOST_TEST_EQ(num_vertices(graph), correct_num_vertices);
+  BOOST_TEST(num_vertices(graph) == correct_num_vertices);
   // check masses
   if(!masses.empty()) {
     // assume that all the masses have been set
@@ -126,13 +124,13 @@ test_graph_full(
     typename graph_traits<graph_t>::vertex_iterator i,j;
     for(boost::tie(i,j) = vertices(graph); i != j; ++i) {
       //  - get its name
-      std::string node_name = get(name,*i);
+      auto node_name = get(name,*i);
       //  - get its mass
-      float node_mass = get(mass,*i);
-      BOOST_TEST_NE(masses.find(node_name), masses.end());
+      bool eq_check = masses.find(node_name) != masses.end();
+      BOOST_TEST(eq_check);
       float ref_mass = masses.find(node_name)->second;
       //  - compare the mass to the result in the table
-      BOOST_CHECK_CLOSE(node_mass, ref_mass, 0.01f);
+      BOOST_CHECK_CLOSE(get(mass,*i), ref_mass, 0.01f);
     }
   }
   // check weights
@@ -142,12 +140,11 @@ test_graph_full(
     typename graph_traits<graph_t>::edge_iterator i,j;
     for(boost::tie(i,j) = edges(graph); i != j; ++i) {
       //  - get its name
-      std::pair<std::string,std::string>
-        edge_name = make_pair(get(name, source(*i,graph)),
-                              get(name, target(*i,graph)));
+      auto edge_name = make_pair(get(name, source(*i,graph)), get(name, target(*i,graph)));
       // - get its weight
       double edge_weight = get(weight,*i);
-      BOOST_TEST(weights.find(edge_name) != weights.end());
+      bool eq_check = weights.find(edge_name) != weights.end();
+      BOOST_TEST(eq_check);
       double ref_weight = weights.find(edge_name)->second;
       // - compare the weight to teh result in the table
       BOOST_CHECK_CLOSE(edge_weight, ref_weight, 0.01);
@@ -157,15 +154,13 @@ test_graph_full(
     std::string parsed_name = get_property(graph,graph_name);
     BOOST_TEST(parsed_name == g_name);
   }
-
-  return result;
 }
 
 
 
 template <
   typename graph_t>
-bool
+void
 test_graph_short(
   std::istream& dotfile,
   std::size_t correct_num_vertices,
@@ -177,7 +172,7 @@ test_graph_short(
 
   graph_t g;
 
-  bool passed = test_graph_full(
+  test_graph_full(
     dotfile,
     g,
     correct_num_vertices,
@@ -188,8 +183,6 @@ test_graph_short(
     get(vertex_name, g),
     get(vertex_color, g),
     get(edge_weight, g));
-
-  return passed;
 }
 
 
@@ -201,7 +194,7 @@ void basic_directed_graph_1(
   gs_t gs("digraph { a  node [mass = 7.7] c e [mass = 6.66] }");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t())));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t());
 }
 
 
@@ -213,7 +206,7 @@ basic_directed_graph_2(
   gs_t gs("digraph { a  node [mass = 7.7] \"a\" e [mass = 6.66] }");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,2,masses,weight_map_t())));
+  test_graph_short<graph_t>(gs,2,masses,weight_map_t());
 }
 
 
@@ -229,7 +222,7 @@ basic_directed_graph_3(
           "d ->e->a [weight=.5]}");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,6,mass_map_t(),weights)));
+  test_graph_short<graph_t>(gs,6,mass_map_t(),weights);
 }
 
 
@@ -242,8 +235,7 @@ undirected_graph_alternate_node_id(
   gs_t gs("graph { a  node [mass = 7.7] c e [mass = 6.66] }");
   typedef adjacency_list < vecS, vecS, undirectedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t(),
-                                   "nodenames")));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t(), "nodenames");
 }
 
 
@@ -256,7 +248,7 @@ basic_undirected_graph_1(
   gs_t gs("graph { a  node [mass = 7.7] c e [mass =\\\n6.66] }");
   typedef adjacency_list < vecS, vecS, undirectedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t())));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t());
 }
 
 
@@ -270,7 +262,7 @@ basic_undirected_graph_2(
           "c -- d e -- f [weight = 6.66] }");
   typedef adjacency_list < vecS, vecS, undirectedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,6,mass_map_t(),weights)));
+  test_graph_short<graph_t>(gs,6,mass_map_t(),weights);
 }
 
 
@@ -335,7 +327,7 @@ handle_parallel_edges_gracefully(
   gs_t gs("digraph { a -> b [weight = 7.7]  a -> b [weight = 7.7] }");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,2,mass_map_t(),weights)));
+  test_graph_short<graph_t>(gs,2,mass_map_t(),weights);
 }
 
 
@@ -349,8 +341,7 @@ graph_property_test_1(
   std::string graph_name("foo \"escaped\"");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"",
-                                   graph_name)));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"", graph_name);
 }
 
 
@@ -364,8 +355,7 @@ graph_property_test_2(
   std::string graph_name("foo");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"",
-                                   graph_name)));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"", graph_name);
 }
 
 
@@ -379,8 +369,7 @@ graph_property_test_3(
   gs_t gs("digraph { name=" + graph_name + "  a  c e [mass = 6.66] }");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"",
-                                   graph_name)));
+  test_graph_short<graph_t>(gs,3,masses,weight_map_t(),"", graph_name);
 }
 
 
@@ -396,7 +385,7 @@ comments_embedded_in_strings(
     "}");
   typedef adjacency_list < vecS, vecS, directedS,
     vertex_p, edge_p, graph_p > graph_t;
-  BOOST_TEST((test_graph_short<graph_t>(gs,2,mass_map_t(),weight_map_t())));
+  test_graph_short<graph_t>(gs,2,mass_map_t(),weight_map_t());
 }
 
 
@@ -434,11 +423,11 @@ comments_embedded_in_strings(
 
 //   graph_t g;
 
-//   bool test_result = test_graph_full<
-//     graph_t,
-//     vertex_name_t,
-//     vertex_color_t,
-//     edge_weight_t
+//   test_graph_full<
+//     // graph_t,
+//     // vertex_name_t,
+//     // vertex_color_t,
+//     // edge_weight_t
 //   >(
 //     gs,
 //     g,
@@ -450,8 +439,6 @@ comments_embedded_in_strings(
 //     get(vertex_index, g),
 //     get(vertex_index, g),
 //     get(edge_index, g));
-
-//   BOOST_TEST(test_result);
 // }
 
 

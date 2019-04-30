@@ -31,33 +31,33 @@ void test()
     }
 
     // after the first build, we should have these conditions
-    BOOST_ASSERT(max_vertex_index(g) == N);
+    BOOST_TEST_EQ(max_vertex_index(g), N);
     for(size_t i = 0; i < N; ++i) {
-        BOOST_ASSERT(get_vertex_index(v[i], g) == i);
+        BOOST_TEST_EQ(get_vertex_index(v[i], g), i);
     }
 
     // Remove all vertices and then re-add them.
     for(size_t i = 0; i < N; ++i) remove_vertex(v[i], g);
-    BOOST_ASSERT(num_vertices(g) == 0);
+    BOOST_TEST_EQ(num_vertices(g), 0);
     for(size_t i = 0; i < N; ++i) {
         v[i] = add_vertex(g);
     }
-    BOOST_ASSERT(num_vertices(g) == N);
+    BOOST_TEST_EQ(num_vertices(g), N);
 
     // Before renumbering, our vertices should be off by N. In other words,
     // we're not in a good state.
-    BOOST_ASSERT(max_vertex_index(g) == 10);
+    BOOST_TEST_EQ(max_vertex_index(g), 10);
     for(size_t i = 0; i < N; ++i) {
-        BOOST_ASSERT(get_vertex_index(v[i], g) == N + i);
+        BOOST_TEST_EQ(get_vertex_index(v[i], g), N + i);
     }
 
     // Renumber vertices
     renumber_vertex_indices(g);
 
     // And we should be back to the initial condition
-    BOOST_ASSERT(max_vertex_index(g) == N);
+    BOOST_TEST_EQ(max_vertex_index(g), N);
     for(size_t i = 0; i < N; ++i) {
-        BOOST_ASSERT(get_vertex_index(v[i], g) == i);
+        BOOST_TEST_EQ(get_vertex_index(v[i], g), i);
     }
 }
 
@@ -72,7 +72,7 @@ void build()
     static const size_t N = 5;
 
     Graph g(N);
-    BOOST_ASSERT(max_vertex_index(g) == N);
+    BOOST_TEST_EQ(max_vertex_index(g), N);
 
     (void)(IndexMap)get(vertex_index, g);
 
@@ -80,16 +80,19 @@ void build()
     Iterator i, end;
     boost::tie(i, end) = vertices(g);
     for(size_t x = 0; i != end; ++i, ++x) {
-        BOOST_ASSERT(get_vertex_index(*i, g) == x);
+        BOOST_TEST_EQ(get_vertex_index(*i, g), x);
     }
 }
 
 int main(int, char*[])
 {
+
+    build< undirected_graph<> >();
+    build< directed_graph<> >();
+
     test< undirected_graph<> >();
     test< directed_graph<> >();
 
-    build< undirected_graph<> >();
 
     return boost::report_errors();
 }

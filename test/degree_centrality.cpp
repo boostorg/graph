@@ -37,6 +37,7 @@ void build_graph(Graph& g,
     add_edge(v[4], v[0], g);
 }
 
+
 template <typename Graph>
 void test_undirected()
 {
@@ -54,12 +55,13 @@ void test_undirected()
     CentralityMap cm(cents, g);
     all_degree_centralities(g, cm);
 
-    BOOST_ASSERT(cm[v[0]] == 3);
-    BOOST_ASSERT(cm[v[1]] == 2);
-    BOOST_ASSERT(cm[v[2]] == 2);
-    BOOST_ASSERT(cm[v[3]] == 1);
-    BOOST_ASSERT(cm[v[4]] == 2);
+    BOOST_TEST_EQ(cm[v[0]], 3);
+    BOOST_TEST_EQ(cm[v[1]], 2);
+    BOOST_TEST_EQ(cm[v[2]], 2);
+    BOOST_TEST_EQ(cm[v[3]], 1);
+    BOOST_TEST_EQ(cm[v[4]], 2);
 }
+
 
 template <typename Graph>
 void test_influence()
@@ -79,12 +81,13 @@ void test_influence()
     CentralityMap cm(cents, g);
     all_influence_values(g, cm);
 
-    BOOST_ASSERT(cm[v[0]] == 1);
-    BOOST_ASSERT(cm[v[1]] == 1);
-    BOOST_ASSERT(cm[v[2]] == 1);
-    BOOST_ASSERT(cm[v[3]] == 1);
-    BOOST_ASSERT(cm[v[4]] == 1);
+    BOOST_TEST_EQ(cm[v[0]], 1);
+    BOOST_TEST_EQ(cm[v[1]], 1);
+    BOOST_TEST_EQ(cm[v[2]], 1);
+    BOOST_TEST_EQ(cm[v[3]], 1);
+    BOOST_TEST_EQ(cm[v[4]], 1);
 }
+
 
 template <typename Graph>
 void test_prestige()
@@ -104,12 +107,13 @@ void test_prestige()
     CentralityMap cm(cents, g);
     all_prestige_values(g, cm);
 
-    BOOST_ASSERT(cm[v[0]] == 2);
-    BOOST_ASSERT(cm[v[1]] == 1);
-    BOOST_ASSERT(cm[v[2]] == 1);
-    BOOST_ASSERT(cm[v[3]] == 0);
-    BOOST_ASSERT(cm[v[4]] == 1);
+    BOOST_TEST_EQ(cm[v[0]], 2);
+    BOOST_TEST_EQ(cm[v[1]], 1);
+    BOOST_TEST_EQ(cm[v[2]], 1);
+    BOOST_TEST_EQ(cm[v[3]], 0);
+    BOOST_TEST_EQ(cm[v[4]], 1);
 }
+
 
 int
 main(int, char *[])

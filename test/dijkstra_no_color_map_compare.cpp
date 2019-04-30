@@ -67,6 +67,7 @@ void run_dijkstra_test(const Graph& graph)
               no_color_map_vertex_double_map.begin()));
 }
 
+
 int main(int argc, char* argv[])
 {
   using namespace boost;
@@ -109,8 +110,6 @@ int main(int argc, char* argv[])
   randomize_property<edge_weight_t>(graph, generator);
 
   // Run comparison test with original dijkstra_shortest_paths
-  // std::cout << "Running dijkstra shortest paths test with " << num_vertices(graph) <<
-  //   " vertices and " << num_edges(graph) << " edges " << std::endl;
 
   run_dijkstra_test(graph);
 

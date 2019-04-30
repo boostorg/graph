@@ -26,8 +26,6 @@
 #include <boost/graph/graph_mutability_traits.hpp>
 #include <boost/graph/labeled_graph.hpp>
 
-#define BOOST_META_ASSERT(x) BOOST_ASSERT(x::value)
-
 typedef std::pair<std::size_t, std::size_t> Pair;
 
 static const std::size_t N = 6;

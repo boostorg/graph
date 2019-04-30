@@ -20,11 +20,8 @@
 #include <boost/core/lightweight_test.hpp>
 
 
-#if 0
-#include <boost/graph/plod_generator.hpp>
-#include <boost/graph/small_world_generator.hpp>
-#endif
 using namespace boost;
+
 
 template <class Property, class Vertex>
 struct position_writer {
@@ -53,10 +50,7 @@ int main(int, char*[]) {
                                 boost::property<boost::edge_weight_t, double>
                                 > graph_type;
   typedef boost::graph_traits<graph_type>::vertex_descriptor vertex_descriptor;
-  // boost::mt19937 rng;
-  // boost::generate_random_graph(graph, 100, 600, rng, false, false);
 
-#if 1
   graph_type graph;
 
   // Make grid, like Gursoy and Atun used
@@ -73,39 +67,8 @@ int main(int, char*[]) {
         add_edge(verts[i][j], verts[i-1][j], random_edge_weight(), graph);
       if (j != 0)
         add_edge(verts[i][j], verts[i][j-1], random_edge_weight(), graph);
-#if 0
-      // Uncomment parts of this to get a cylinder or torus
-      if (i == 0)
-        add_edge(verts[0][j], verts[grid_size-1][j], random_edge_weight(),
-                 graph);
-      if (j == 0)
-        add_edge(verts[i][0], verts[i][grid_size-1], random_edge_weight(),
-                 graph);
-#endif
     }
   }
-#else
-  using namespace boost;
-
-#if 0
-  int n = 10000;
-  double alpha = 0.4;
-  double beta = 50;
-  minstd_rand gen;
-  graph_type graph(plod_iterator<minstd_rand, graph_type>(gen, n, alpha, beta),
-                   plod_iterator<minstd_rand, graph_type>(),
-                   n);
-#else
-  int n = 1000;
-  int k = 6;
-  double p = 0.001;
-  minstd_rand gen;
-  graph_type graph(small_world_iterator<minstd_rand>(gen, n, k, p),
-                   small_world_iterator<minstd_rand>(n, k),
-                   n);
-#endif
-#endif
-  // boost::read_graphviz(stdin, graph);
 
   typedef boost::property_map<graph_type, boost::vertex_index_t>::type
     VertexIndexMap;
@@ -122,23 +85,9 @@ int main(int, char*[]) {
 
   boost::gursoy_atun_layout(graph, space, position);
 
-#if 0
-  std::cerr << "--------Unweighted layout--------\n";
-  boost::write_graphviz(std::cout, graph,
-                        position_writer<Position, vertex_descriptor>(position),
-                        boost::default_writer(),
-                        graph_writer());
-#endif
 
   boost::gursoy_atun_layout(graph, space, position,
                             weight_map(get(boost::edge_weight, graph)));
 
-#if 0
-  std::cerr << "--------Weighted layout--------\n";
-  boost::write_graphviz(std::cout, graph,
-                        position_writer<Position, vertex_descriptor>(position),
-                        boost::default_writer(),
-                        graph_writer());
-#endif
   return boost::report_errors();
 }

@@ -31,28 +31,11 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#ifndef BOOST_NO_CXX11_HDR_RANDOM
 #include <random>
 typedef std::mt19937 random_generator_type;
-#else
-typedef boost::mt19937 random_generator_type;
-#endif
 
 using namespace boost;
 
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-template <typename Generator>
-struct random_functor {
-  random_functor(Generator& g) : g(g) { }
-  std::size_t operator()(std::size_t n) {
-    boost::uniform_int<std::size_t> distrib(0, n-1);
-    boost::variate_generator<Generator&, boost::uniform_int<std::size_t> >
-      x(g, distrib);
-    return x();
-  }
-  Generator& g;
-};
-#endif
 
 template<typename Graph1, typename Graph2>
 void randomly_permute_graph(Graph1& g1, const Graph2& g2) {
@@ -65,18 +48,11 @@ void randomly_permute_graph(Graph1& g1, const Graph2& g2) {
   typedef typename graph_traits<Graph2>::edge_iterator edge_iterator;
 
   random_generator_type gen;
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-  random_functor<random_generator_type> rand_fun(gen);
-#endif
 
   // Decide new order
   std::vector<vertex2> orig_vertices;
   std::copy(vertices(g2).first, vertices(g2).second, std::back_inserter(orig_vertices));
-#ifndef BOOST_NO_CXX98_RANDOM_SHUFFLE
-  std::random_shuffle(orig_vertices.begin(), orig_vertices.end(), rand_fun);
-#else
   std::shuffle(orig_vertices.begin(), orig_vertices.end(), gen);
-#endif
   std::map<vertex2, vertex1> vertex_map;
 
   std::size_t i = 0;

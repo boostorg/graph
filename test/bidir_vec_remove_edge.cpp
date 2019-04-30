@@ -42,7 +42,7 @@ main(int, char*[])
     bool b2;
     boost::tie(e2, b2) = boost::edge(1, 0, g);
     BOOST_TEST( b2 );
-    BOOST_TEST( g[e2].weight == 17 );
+    BOOST_TEST_EQ( g[e2].weight, 17);
 
     /* Now remove the other edge. Here, the fact that
      * stored_ra_edge_iterator keeps an index but does not update it

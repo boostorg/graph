@@ -361,16 +361,6 @@ main(
   matching_test<undirected_list_graph>(21); //"adjacency_list (using lists)"
   matching_test<undirected_adjacency_matrix_graph>(21); //"adjacency_matrix"
 
-#if 0
-  matching_test<undirected_graph>(50, "adjacency_list (using vectors)");
-  matching_test<undirected_list_graph>(50, "adjacency_list (using lists)");
-  matching_test<undirected_adjacency_matrix_graph>(50, "adjacency_matrix");
-
-  matching_test<undirected_graph>(51, "adjacency_list (using vectors)");
-  matching_test<undirected_list_graph>(51, "adjacency_list (using lists)");
-  matching_test<undirected_adjacency_matrix_graph>(51, "adjacency_matrix");
-#endif
-
   return boost::report_errors();
 }
 

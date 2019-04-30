@@ -63,6 +63,7 @@ int main()
                                          weight_map(weight).
                                          distance_map(distance));
   }
+
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag,
       allow_parallel_edge_tag> IncidenceGraph;
@@ -83,6 +84,7 @@ int main()
                                          predecessor_map(pred).
                                          weight_map(weight));
   }
+
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag,
       allow_parallel_edge_tag> IncidenceGraph;
@@ -102,6 +104,7 @@ int main()
                                           predecessor_map(pred).
                                           vertex_index_map(index));
   }
+  
   {
     typedef incidence_graph_archetype<vertex_t, directed_tag,
       allow_parallel_edge_tag> IncidenceGraph;
