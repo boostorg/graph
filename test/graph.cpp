@@ -53,8 +53,21 @@ check_vertex_cleared(Graph& g, Vertex v, ID id)
   for (boost::tie(vi,viend) = vertices(g); vi != viend; ++vi) {
     typename graph_traits<Graph>::adjacency_iterator ai, aiend, found;
     boost::tie(ai, aiend) = adjacent_vertices(*vi, g);
+    boost::indirect_cmp<ID, std::equal_to<std::size_t> > cmp(id);
 
-    found = std::find_if(ai, aiend, [v](Vertex i){ return v == i; });
+#if (defined(BOOST_MSVC) && BOOST_MSVC <= 1300) && defined(__SGI_STL_PORT)
+        // seeing internal compiler errors when using std::find_if()
+    found = aiend;
+    for ( ; ai != aiend; ++ai)
+      if (cmp(*ai, v)) {
+        found = ai;
+        break;
+      }
+#elif defined(BOOST_NO_CXX98_BINDERS)
+    found = std::find_if(ai, aiend, std::bind(cmp,v,std::placeholders::_1));
+#else
+    found = std::find_if(ai, aiend, std::bind1st(cmp,v));
+#endif
 
     BOOST_TEST(found == aiend);
   }
@@ -92,11 +105,8 @@ count_edges(
 }
 
 
-int 
-main(
-  int, 
-  char* []
-){
+int main(int, char* [])
+{
   std::size_t N = 5, E = 0;
   std::size_t old_N;
 

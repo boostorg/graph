@@ -14,9 +14,6 @@
 
 #include <boost/random/linear_congruential.hpp>
 
-#include <boost/core/lightweight_test.hpp>
-
-
 using namespace std;
 using namespace boost;
 
@@ -63,7 +60,6 @@ void test()
     size_t cycles = 0;
     cycle_validator vis(cycles);
     tiernan_all_cycles(g, vis);
-    // cout << "# cycles: " << vis.cycles << "\n";
 }
 
 int
@@ -72,11 +68,9 @@ main(int, char *[])
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;
 
-    // std::cout << "*** undirected ***\n";
     test<Graph>();
 
-    // std::cout << "*** directed ***\n";
     test<DiGraph>();
 
-    return boost::report_errors();
+    return 0;
 }

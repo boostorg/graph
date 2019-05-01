@@ -20,7 +20,6 @@
 #include <boost/graph/iteration_macros.hpp>
 #include <vector>
 #include <memory>
-#include <boost/core/lightweight_test.hpp>
 
 
 using std::vector;
@@ -115,5 +114,5 @@ int main() {
                       allocator<r_c_shortest_paths_label<Graph, ResourceCont> >(),
                       default_r_c_shortest_paths_visitor());
 
-  return boost::report_errors();
+  return 0;
 }

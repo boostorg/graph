@@ -12,8 +12,6 @@
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/concept/assert.hpp>
 #include <string>
-#include <boost/core/lightweight_test.hpp>
-
 
 int main(int,char*[])
 {
@@ -57,6 +55,5 @@ int main(int,char*[])
     get_property(gr, graph_name_t());
     set_property(gr, graph_name_t(), "foo");
   }
-
-  return boost::report_errors();
+  return 0;
 }

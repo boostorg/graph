@@ -24,8 +24,6 @@
 #include <utility>
 #include <algorithm>
 
-#define VERBOSE 0
-
 #include <boost/utility.hpp>
 #include <boost/graph/property_iter_range.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -33,8 +31,6 @@
 #include <boost/pending/indirect_cmp.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
-
-#include <boost/core/lightweight_test.hpp>
 
 
 enum vertex_id_t { vertex_id = 500 };
@@ -61,7 +57,6 @@ using std::find;
 
 int main(int, char* [])
 {
-  // int ret = 0;
   std::size_t N = 5, E = 0;
 
   typedef ::Graph Graph;
@@ -87,30 +82,15 @@ int main(int, char* [])
   for (j=0; j < 10; ++j) {
 
     // add_edge
-#if VERBOSE
-    // cerr << "Testing add_edge ..." << endl;
-#endif
     for (i=0; i < 6; ++i) {
       Vertex a, b;
       a = random_vertex(g, gen);
       do {
         b = random_vertex(g, gen);
       } while ( a == b ); // don't do self edges
-#if VERBOSE
-      // cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] <<")" << endl;
-#endif
       Edge e;
       bool inserted;
       boost::tie(e, inserted) = add_edge(a, b, current_edge_id++, g);
-#if VERBOSE
-      // std::cout << "inserted: " << inserted << std::endl;
-      // std::cout << "source(e,g)" << source(e,g) << endl;
-      // std::cout << "target(e,g)" << target(e,g) << endl;
-      // std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
-      print_edges2(g, vertex_id_map, edge_id_map);
-      print_graph(g, vertex_id_map);
-      // std::cout << "finished printing" << std::endl;
-#endif
       }
       ++E;
     }
@@ -123,24 +103,9 @@ int main(int, char* [])
 
   boost::tie(itEdgeBegin, itEdgeEnd) = get_property_iter_range(g, edge_id);
 
-  // cout << "Edge iteration:" << endl;
-  // for (; itEdgeBegin != itEdgeEnd; ++itEdgeBegin)
-  // {
-  //     cout << *itEdgeBegin;
-  // }
-  // cout << endl;
-
   TNodeIterator itVertexBegin, itVertexEnd;
 
   boost::tie(itVertexBegin, itVertexEnd) = get_property_iter_range(g, vertex_id);
 
-  // cout << "Vertex iteration:" << endl;
-  // for (; itVertexBegin != itVertexEnd; ++itVertexBegin)
-  // {
-  //     cout << *itVertexBegin;
-  // }
-  // cout << endl;
-
-
-  return boost::report_errors();
+  return 0;
 }

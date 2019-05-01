@@ -5,7 +5,6 @@
 
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/undirected_graph.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // COMPILE TEST ///////////////////////////////////////////////////////////////
@@ -25,5 +24,5 @@ int main()
     test_member_swap<boost::directed_graph<> >();
     test_member_swap<boost::undirected_graph<> >();
 
-    return boost::report_errors();
+    return 0;
 }

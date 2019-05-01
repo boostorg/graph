@@ -16,14 +16,12 @@
 #include <boost/assert.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
-#include <boost/timer/timer.hpp>
 #include <boost/integer_traits.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/simple_point.hpp>
 #include <boost/graph/metric_tsp_approx.hpp>
 #include <boost/graph/graphviz.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 
 // TODO: Integrate this into the test system a little better. We need to run
@@ -114,16 +112,10 @@ void testScalability(unsigned numpts)
     connectAllEuclidean(g, point_vec, weight_map, get(vertex_index, g), numpts);
 
     Container c;
-    // timer t;
     double len = 0.0;
 
     // Run the TSP approx, creating the visitor on the fly.
     metric_tsp_approx(g, make_tsp_tour_len_visitor(g, back_inserter(c), len, weight_map));
-
-    // cout << "Number of points: " << num_vertices(g) << endl;
-    // cout << "Number of edges: " << num_edges(g) << endl;
-    // cout << "Length of tour: " << len << endl;
-    // cout << "Elapsed: " << t.elapsed() << endl;
 }
 
 template <typename PositionVec>
@@ -170,26 +162,9 @@ void checkAdjList(PositionVec v)
         tsp_tour_visitor<back_insert_iterator<Container > >
         (back_inserter(c)));
 
-    // cout << "adj_list" << endl;
-    // for (Container::iterator itr = c.begin(); itr != c.end(); ++itr) {
-    //     cout << v_map[*itr] << " ";
-    // }
-    // cout << endl << endl;
-
     c.clear();
 }
 
-static void usage()
-{
-    using namespace std;
-    // cerr << "To run this program properly please place a "
-    //      << "file called graph.txt"
-    //      << endl << "into the current working directory." << endl
-    //      << "Each line of this file should be a coordinate specifying the"
-    //      << endl << "location of a vertex" << endl
-    //      << "For example: " << endl << "1,2" << endl << "20,4" << endl
-    //      << "15,7" << endl << endl;
-}
 
 int main(int argc, char* argv[])
 {
@@ -206,18 +181,13 @@ int main(int argc, char* argv[])
 
     // Make sure that the the we can parse the given file.
     if(argc < 2) {
-        usage();
-        // return -1;
-        return 0;
+        return -1;
     }
 
     // Open the graph file, failing if one isn't given on the command line.
     ifstream fin(argv[1]);
-    if (!fin)
-    {
-        usage();
-        // return -1;
-        return 0;
+    if(!fin){
+      return -1;
     }
 
    string line;
@@ -250,11 +220,6 @@ int main(int argc, char* argv[])
 
    metric_tsp_approx_tour(g, back_inserter(c));
 
-   // for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
-   // {
-   //     cout << *itr << " ";
-   // }
-   // cout << endl << endl;
 
    c.clear();
 
@@ -265,11 +230,6 @@ int main(int argc, char* argv[])
        tsp_tour_visitor<back_insert_iterator<vector<Vertex> > >
        (back_inserter(c)));
 
-   // for (vector<Vertex>::iterator itr = c.begin(); itr != c.end(); ++itr)
-   // {
-   //     cout << *itr << " ";
-   // }
-   // cout << endl << endl;
 
    c.clear();
 
@@ -282,17 +242,12 @@ int main(int argc, char* argv[])
        return -1;
    }
 
-   // cout << "Number of points: " << num_vertices(g) << endl;
-   // cout << "Number of edges: " << num_edges(g) << endl;
-   // cout << "Length of Tour: " << len << endl;
 
    int cnt(0);
    pair<Vertex,Vertex> triangleEdge;
    for (vector<Vertex>::iterator itr = c.begin(); itr != c.end();
        ++itr, ++cnt)
    {
-       // cout << *itr << " ";
-
        if (cnt == 2)
        {
            triangleEdge.first = *itr;
@@ -302,7 +257,6 @@ int main(int argc, char* argv[])
            triangleEdge.second = *itr;
        }
    }
-   // cout << endl << endl;
    c.clear();
 
    testScalability(1000);
@@ -320,5 +274,5 @@ int main(int argc, char* argv[])
     catch (const bad_graph& e) { caught = true; }
     BOOST_ASSERT(caught);
 
-   return boost::report_errors();
+   return 0;
 }

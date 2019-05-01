@@ -22,7 +22,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/tuple/tuple_io.hpp>
-// #include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/iteration_macros.hpp>
 
@@ -56,7 +55,7 @@ class mas_edge_connectivity_visitor : public boost::default_mas_visitor {
     typedef typename KeyedUpdatablePriorityQueue::key_type weight_type;
 #if 0
     mas_edge_connectivity_visitor(const mas_edge_connectivity_visitor<Graph, KeyedUpdatablePriorityQueue>& r)
-      : m_pq(r.m_pq), m_curr(r.m_curr), m_prev(r.m_prev),
+      : m_pq(r.m_pq), m_curr(r.m_curr), m_prev(r.m_prev), 
         m_reach_weight(r.m_reach_weight) {
           BOOST_TEST_MESSAGE( "COPY CTOR" );
         }
@@ -200,7 +199,7 @@ BOOST_AUTO_TEST_CASE(test1)
 
   mas_edge_connectivity_visitor<undirected_unweighted_graph,boost::d_ary_heap_indirect<vertex_descriptor, 22, indicesInHeap_type, distances_type, std::greater<weight_type> > >  test_vis(pq);
 
-  boost::maximum_adjacency_search(g,
+  boost::maximum_adjacency_search(g, 
          boost::weight_map(boost::make_constant_property<edge_descriptor>(weight_type(1))).visitor(test_vis).max_priority_queue(pq));
 
   BOOST_CHECK_EQUAL(test_vis.curr(), vertex_descriptor(7));

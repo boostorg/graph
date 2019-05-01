@@ -403,43 +403,38 @@ comments_embedded_in_strings(
 // }
 
 
-// void basic_csr_directed_graph_ext_props(
-// ){
-//   weight_map_t weights;
-//   insert( weights )(make_pair("a","b"),0.0)
-//     (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
-//     (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
+void basic_csr_directed_graph_ext_props(
+){
+  weight_map_t weights;
+  insert( weights )(make_pair("a","b"),0.0)
+    (make_pair("c","d"),7.7)(make_pair("e","f"),6.66)
+    (make_pair("d","e"),0.5)(make_pair("e","a"),0.5);
 
-//   gs_t gs("digraph { a -> b eDge [weight = 7.7] "
-//           "c -> d e-> f [weight = 6.66] "
-//           "d ->e->a [weight=.5]}");
+  gs_t gs("digraph { a -> b eDge [weight = 7.7] "
+          "c -> d e-> f [weight = 6.66] "
+          "d ->e->a [weight=.5]}");
 
-//   typedef compressed_sparse_row_graph<
-//     directedS,
-//     no_property,
-//     no_property,
-//     graph_p >
-//   graph_t;
+  typedef compressed_sparse_row_graph<
+    directedS,
+    no_property,
+    no_property,
+    graph_p >
+  graph_t;
 
-//   graph_t g;
+  graph_t g;
 
-//   test_graph_full<
-//     // graph_t,
-//     // vertex_name_t,
-//     // vertex_color_t,
-//     // edge_weight_t
-//   >(
-//     gs,
-//     g,
-//     6,
-//     mass_map_t(),
-//     weights,
-//     "node_id",
-//     "",
-//     get(vertex_index, g),
-//     get(vertex_index, g),
-//     get(edge_index, g));
-// }
+  test_graph_full(
+    gs,
+    g,
+    6,
+    mass_map_t(),
+    weights,
+    "node_id",
+    "",
+    get(vertex_index, g),
+    get(vertex_index, g),
+    get(edge_index, g));
+}
 
 
 int

@@ -20,7 +20,6 @@
 #include <iostream>
 #include <fstream>
 #include <boost/graph/iteration_macros.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 
 using namespace boost;
@@ -67,5 +66,5 @@ int main(int, char**) {
   random_spanning_tree(g, gen, predecessor_map(pred).weight_map(weight));
   // write_spanning_tree(g, pred, weight, "weight_random_st.dot");
 
-  return boost::report_errors();
+  return 0;
 }

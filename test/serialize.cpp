@@ -76,7 +76,7 @@ int main()
     Graph g;
     ia >> BOOST_SERIALIZATION_NVP(g);
 
-    if  (!( g[*(vertices( g ).first)].name == "A" )) return boost::report_errors();
+    BOOST_TEST(g[*(vertices( g ).first)].name == "A" );
 
     Graph_no_edge_property g_n;
     ia >> BOOST_SERIALIZATION_NVP(g_n);
