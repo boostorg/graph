@@ -39,12 +39,8 @@ template <typename Graph, typename Iterator, typename Descriptor>
 void test(Graph& g, Iterator i, Descriptor d, string const& str)
 {
     int x;
-    cout << "... " << str << " iter" << endl;
     x = g[*i];
-//     cout << "... " << x << endl;
-    cout << "... " << str << " desc" << endl;
     x = g[d];
-//     cout << "... " << x << endl;
 }
 
 template <typename Graph>
@@ -123,14 +119,12 @@ void invalidate_adj_verts()
 int main()
 {
     typedef adjacency_list<vecS, vecS, undirectedS, int, int> VVU;
-    // cout << "vecS vecS undirectedS" << endl;
     invalidate_vertices<VVU>();
     invalidate_edges<VVU>();
     invalidate_out_edges<VVU>();
     invalidate_adj_verts<VVU>();
 
     typedef adjacency_list<vecS, vecS, bidirectionalS, int, int> VVB;
-    // cout << "vecS vecS bidirectionals" << endl;
     invalidate_vertices<VVB>();
     invalidate_edges<VVB>();
     invalidate_out_edges<VVB>();
@@ -141,7 +135,6 @@ int main()
     // but I'm guessing it's still not generating valid results, and shouldn't
     // be taken as an indicator of stability.
     typedef adjacency_list<vecS, vecS, directedS, int, int> VVD;
-    // cout << "vecS vecS directedS" << endl;
     invalidate_vertices<VVD>();
 //     invalidate_edges<VVD>();
 //     invalidate_out_edges<VVD>();
@@ -153,6 +146,6 @@ int main()
 //     invalidate_edges<LVD>();
 //     invalidate_out_edges<LVD>();
 //     invalidate_adj_verts<LVD>();
-    return boost::report_errors();
+    return 0;
 }
 

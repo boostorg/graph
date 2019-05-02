@@ -14,8 +14,6 @@
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/graph_archetypes.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 int main()
 {
@@ -56,5 +54,5 @@ int main()
     buffer_archetype<vertex_t> b;
     breadth_first_search(g, s, visitor(v).buffer(b));
   }
-  return boost::report_errors();
+  return 0;
 }

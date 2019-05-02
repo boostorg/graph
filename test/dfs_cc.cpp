@@ -14,8 +14,6 @@
 #include <boost/concept_archetype.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_archetypes.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 int main()
 {
@@ -53,5 +51,5 @@ int main()
     depth_first_search(g, visitor(v));
   }
 
-  return boost::report_errors();
+  return 0;
 }

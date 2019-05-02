@@ -10,9 +10,6 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/concept/assert.hpp>
 
-#include <boost/core/lightweight_test.hpp>
-
-
 int main(int,char*[])
 {
   using namespace boost;
@@ -40,5 +37,5 @@ int main(int,char*[])
     Graph4;
   BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph4, Vertex, vertex_color_t> ));
 
-  return boost::report_errors();
+  return 0;
 }

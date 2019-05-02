@@ -132,11 +132,7 @@ int main(int, char **)
     Syracuse, Rochester, Buffalo, Ithaca, Binghamton, Woodstock,
     NewYork, N
   };
-  // const char *name[] = {
-  //   "Troy", "Lake Placid", "Plattsburgh", "Massena",
-  //   "Watertown", "Utica", "Syracuse", "Rochester", "Buffalo",
-  //   "Ithaca", "Binghamton", "Woodstock", "New York"
-  // };
+
   location locations[] = { // lat/long
     {42.73, 73.68}, {44.28, 73.99}, {44.70, 73.46},
     {44.93, 74.89}, {43.97, 75.91}, {43.10, 75.23},
@@ -180,10 +176,6 @@ int main(int, char **)
   vertex start = gen() % num_vertices(g);
   vertex goal = gen() % num_vertices(g);
 
-
-  // cout << "Start vertex: " << name[start] << endl;
-  // cout << "Goal vertex: " << name[goal] << endl;
-
   vector<mygraph_t::vertex_descriptor> p(num_vertices(g));
   vector<cost> d(num_vertices(g));
 
@@ -208,18 +200,8 @@ int main(int, char **)
       if(p[v] == v)
         break;
     }
-    // cout << "Shortest path from " << name[start] << " to "
-         // << name[goal] << ": ";
-    // list<vertex>::iterator spi = shortest_path.begin();
-    // cout << name[start];
-    // for(++spi; spi != shortest_path.end(); ++spi)
-      // cout << " -> " << name[*spi];
-    // cout << endl << "Total travel time: " << d[goal] << endl;
-    // return boost::report_errors();
   }
 
-  // cout << "Didn't find a path from " << name[start] << "to"
-       // << name[goal] << "!" << endl;
   return boost::report_errors();
 
 }

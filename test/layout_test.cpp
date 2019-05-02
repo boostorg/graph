@@ -52,11 +52,7 @@ void print_graph_layout(const Graph& g, PositionMap position, const Topology& to
         if ((int)position[*vi][0] == x && (int)position[*vi][1] == y)
           break;
       }
-
-      // if (vi == vi_end) std::cout << ' ';
-      // else std::cout << (char)(index + 'A');
     }
-    // std::cout << std::endl;
   }
 }
 
@@ -97,7 +93,6 @@ test_circle_layout(Graph*, typename graph_traits<Graph>::vertices_size_type n)
 
   circle_graph_layout(g, get(vertex_position, g), 10.0);
 
-  // std::cout << "Regular polygon layout with " << n << " points.\n";
   square_topology<> topology;
   print_graph_layout(g, get(vertex_position, g), topology);
 }
@@ -156,7 +151,6 @@ test_triangle(Graph*)
                                        side_length(50.0));
   BOOST_TEST(ok);
 
-  // std::cout << "Triangle layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g));
 }
 
@@ -183,9 +177,6 @@ test_cube(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
-    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-    //           << ") ";
   }
   std::cerr << std::endl;
 
@@ -199,7 +190,6 @@ test_cube(Graph*)
                                        kamada_kawai_done());
   BOOST_TEST(ok);
 
-  // std::cout << "Cube layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube", g, get(vertex_position, g));
@@ -223,7 +213,6 @@ test_cube(Graph*)
                                 get(vertex_index, g),
                                 Topology::point_difference_type()));
 
-  // std::cout << "Cube layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("cube-fr", g, get(vertex_position, g));
@@ -252,9 +241,6 @@ test_triangular(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
-    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-    //           << ") ";
   }
   std::cerr << std::endl;
 
@@ -276,7 +262,6 @@ test_triangular(Graph*)
                                        kamada_kawai_done());
   BOOST_TEST(ok);
 
-  // std::cout << "Triangular layout (Kamada-Kawai).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   // dump_graph_layout("triangular-kk", g, get(vertex_position, g));
@@ -324,9 +309,6 @@ test_disconnected(Graph*)
   edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     put(edge_weight, g, *ei, 1.0);
-    // std::cerr << "(" << (char)(get(vertex_index, g, source(*ei, g)) + 'A')
-    //           << ", " << (char)(get(vertex_index, g, target(*ei, g)) + 'A')
-    //           << ") ";
   }
   std::cerr << std::endl;
 
@@ -354,7 +336,6 @@ test_disconnected(Graph*)
      attractive_force(square_distance_attractive_force()).
      cooling(linear_cooling<double>(50)));
 
-  // std::cout << "Disconnected layout (Fruchterman-Reingold).\n";
   print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
 
   dump_graph_layout("disconnected-fr", g, get(vertex_position, g));

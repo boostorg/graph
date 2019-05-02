@@ -7,10 +7,6 @@
  * http://www.boost.org/LICENSE_1_0.txt)
  */
 
-/*
- * Defines the std::ios class and std::cout, its global output instance.
- */
-// #include <iostream>
 
 /*
  * Defines the boost::property_map class template and the boost::get and

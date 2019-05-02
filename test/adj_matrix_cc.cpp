@@ -15,8 +15,6 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 int main(int,char*[])
 {
@@ -77,5 +75,5 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Vertex, vertex_color_t> ));
     BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph, Edge, edge_weight_t> ));
   }
-  return boost::report_errors();
+  return 0;
 }

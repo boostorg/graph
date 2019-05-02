@@ -55,12 +55,9 @@ void run_test(const Graph& g, const char* name, Kind kind,
 {
   std::vector<double> distances(num_vertices(g));
 
-  // dijkstra_heap_kind = kind;
-
   dijkstra_shortest_paths(g, vertex(0, g),
                           distance_map(&distances[0]).
                           visitor(show_events_visitor()));
-  // std::cout << run_time << " seconds.\n";
 
   BOOST_TEST(distances == correct_distances);
 }

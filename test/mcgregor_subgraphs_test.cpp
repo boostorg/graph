@@ -369,8 +369,6 @@ int main (int argc, char *argv[]) {
 
   }
 
-  // std::cout << "Searching for common subgraph of size " <<
-    // num_vertices(common_subgraph) << std::endl;
 
   test_callback<Graph> user_callback(common_subgraph, graph1, graph2);
 
@@ -406,7 +404,6 @@ int main (int argc, char *argv[]) {
   add_edge(1, 3, graph_simple2);
 
   // Unique subgraphs
-  // std::cout << "Searching for unique subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
     boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)));
@@ -416,34 +413,18 @@ int main (int argc, char *argv[]) {
   BOOST_TEST(has_subgraph_string("0,0 2,2 "));
   BOOST_TEST(has_subgraph_string("1,1 2,2 "));
 
-  // if (output_graphs) {
-    // std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
-              // std::ostream_iterator<std::string>(std::cout, "\n"));
-
-    // std::cout << std::endl;
-  // }
-
   simple_subgraph_list.clear();
 
   // Maximum subgraphs
-  // std::cout << "Searching for maximum subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_maximum(graph_simple1, graph_simple2,
     true, user_callback_simple,
     boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)));
 
   BOOST_TEST(has_subgraph_string("0,0 1,1 2,2 "));
 
-  // if (output_graphs) {
-  //   std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
-  //             std::ostream_iterator<std::string>(std::cout, "\n"));
-
-  //   std::cout << std::endl;
-  // }
-
   simple_subgraph_list.clear();
 
   // Maximum, unique subgraphs
-  // std::cout << "Searching for maximum unique subgraphs" << std::endl;
   boost::mcgregor_common_subgraphs_maximum_unique(graph_simple1, graph_simple2,
     true, user_callback_simple,
     boost::vertices_equivalent(boost::make_property_map_equivalent(vname_map_simple1, vname_map_simple2)));
@@ -451,12 +432,6 @@ int main (int argc, char *argv[]) {
   BOOST_TEST(simple_subgraph_list.size() == 1);
   BOOST_TEST(has_subgraph_string("0,0 1,1 2,2 "));
 
-  // if (output_graphs) {
-  //   std::copy(simple_subgraph_list.begin(), simple_subgraph_list.end(),
-  //             std::ostream_iterator<std::string>(std::cout, "\n"));
-
-  //   std::cout << std::endl;
-  // }
 
   return boost::report_errors();
 }

@@ -17,7 +17,6 @@
 
 #include "typestr.hpp"
 
-// using std::cout;
 using std::string;
 using namespace boost;
 

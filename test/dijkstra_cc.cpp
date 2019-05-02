@@ -16,8 +16,6 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/graph/graph_archetypes.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 typedef boost::default_constructible_archetype<
   boost::sgi_assignable_archetype<> > dist_value;
@@ -141,5 +139,5 @@ int main()
                                          distance_compare(compare).
                                          visitor(vis));
   }
-  return boost::report_errors();
+  return 0;
 }

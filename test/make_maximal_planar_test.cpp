@@ -104,9 +104,6 @@ void test_cycle(VertexIndexUpdater vertex_index_updater, int size)
 }
 
 
-
-
-
 int main(int, char* [])
 {
   typedef adjacency_list

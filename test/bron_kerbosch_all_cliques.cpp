@@ -4,7 +4,6 @@
 // Boost Software License, Version 1.0 (See accompanying file
 // LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
 
-#include <iostream>
 #include <iterator>
 #include <algorithm>
 #include <vector>
@@ -17,9 +16,6 @@
 #include <boost/graph/erdos_renyi_generator.hpp>
 
 #include <boost/random/linear_congruential.hpp>
-
-#include <boost/core/lightweight_test.hpp>
-
 
 using namespace std;
 using namespace boost;
@@ -73,11 +69,9 @@ main(int, char *[])
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;
 
-    // std::cout << "*** undirected ***\n";
     test<Graph>();
 
-    // std::cout << "*** directed ***\n";
     test<DiGraph>();
 
-    return boost::report_errors();
+    return 0;
 }

@@ -17,14 +17,9 @@
 #include <boost/concept/assert.hpp>
 #include <cstddef>
 #include <iterator>
-#include <boost/core/lightweight_test.hpp>
 
-
-int 
-main(
-    int,
-    char*[]
-){
+int main(int,char*[])
+{
     // Check edge_list
     using namespace boost;
 
@@ -39,5 +34,5 @@ main(
     BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<EdgeList, Edge,
         edge_index_t> ));
 
-    return boost::report_errors();
+    return 0;
 }

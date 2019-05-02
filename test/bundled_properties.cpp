@@ -117,7 +117,6 @@ void test_io(adjacency_list<EL,VL,D,VP,EP,GP>& map, int)
   typedef adjacency_list<EL,VL,D,VP,EP,GP> Map;
 
   ostringstream out;
-  // cout << write(map);
   out << write(map);
 
   istringstream in(out.str());

@@ -15,8 +15,6 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/graph/grid_graph.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 using namespace boost;
 
@@ -43,5 +41,5 @@ int main (int, char*[]) {
   check<3>();
   check<4>();
 
-  return boost::report_errors();
+  return (0);
 }

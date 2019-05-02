@@ -15,7 +15,6 @@
 #include <boost/graph/king_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 /*
   Sample Output
@@ -69,8 +68,6 @@ int main(int , char* [])
   property_map<Graph, vertex_index_t>::type
     index_map = get(vertex_index, G);
 
-  // std::cout << "original bandwidth: " << bandwidth(G) << std::endl;
-
   std::vector<Vertex> inv_perm(num_vertices(G));
   std::vector<size_type> perm(num_vertices(G));
   {
@@ -78,8 +75,6 @@ int main(int , char* [])
     //king_ordering
     king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                   get(vertex_degree, G), get(vertex_index, G));
-    // cout << "King ordering starting at: " << s << endl;
-    // cout << "  ";
     for (std::vector<Vertex>::const_iterator i = inv_perm.begin();
          i != inv_perm.end(); ++i)
       cout << index_map[*i] << " ";
@@ -87,35 +82,20 @@ int main(int , char* [])
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    // std::cout << "  bandwidth: "
-              // << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-              // << std::endl;
   }
   {
     Vertex s = vertex(0, G);
     //king_ordering
     king_ordering(G, s, inv_perm.rbegin(), get(vertex_color, G),
                   get(vertex_degree, G), get(vertex_index, G));
-    // cout << "King ordering starting at: " << s << endl;
-    // cout << "  ";
-    // for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
-    //    i != inv_perm.end(); ++i)
-    //   cout << index_map[*i] << " ";
-    // cout << endl;
-
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    // std::cout << "  bandwidth: "
-    //           << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-    //           << std::endl;
   }
 
   {
     //king_ordering
     king_ordering(G, inv_perm.rbegin());
 
-    // cout << "King ordering:" << endl;
-    // cout << "  ";
     for (std::vector<Vertex>::const_iterator i=inv_perm.begin();
        i != inv_perm.end(); ++i)
       cout << index_map[*i] << " ";
@@ -123,10 +103,6 @@ int main(int , char* [])
 
     for (size_type c = 0; c != inv_perm.size(); ++c)
       perm[index_map[inv_perm[c]]] = c;
-    // std::cout << "  bandwidth: "
-    //           << bandwidth(G, make_iterator_property_map(&perm[0], index_map, perm[0]))
-    //           << std::endl;
   }
-
-  return boost::report_errors();
+  return 0;
 }

@@ -16,8 +16,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/concept/assert.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 int main(int,char*[])
 {
@@ -54,5 +52,5 @@ int main(int,char*[])
     BOOST_CONCEPT_ASSERT(( BidirectionalGraphConcept<ResGraph> ));
   }
 
-  return boost::report_errors();
+  return 0;
 }

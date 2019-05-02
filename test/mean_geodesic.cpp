@@ -14,7 +14,6 @@
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <boost/graph/geodesic_distance.hpp>
 
-
 using namespace std;
 using namespace boost;
 

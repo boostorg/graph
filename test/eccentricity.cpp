@@ -12,8 +12,6 @@
 #include <boost/graph/eccentricity.hpp>
 #include <boost/graph/exterior_property.hpp>
 #include <boost/graph/property_maps/constant_property_map.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 using namespace std;
 using namespace boost;
@@ -48,9 +46,8 @@ void build_graph(Graph& g,
 
 
 template <typename Graph>
-void 
-test_undirected(
-){
+void test_undirected()
+{
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename graph_traits<Graph>::edge_descriptor Edge;
 
@@ -143,5 +140,5 @@ main(int, char *[])
     test_undirected<Graph>();
     test_directed<Digraph>();
 
-    return boost::report_errors();
+    return 0;
 }

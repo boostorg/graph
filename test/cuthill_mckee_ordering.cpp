@@ -15,7 +15,6 @@
 #include <boost/graph/cuthill_mckee_ordering.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/bandwidth.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 /*
   Sample Output
@@ -114,5 +113,5 @@ int main(int , char* [])
       perm[index_map[inv_perm[c]]] = c;
   }
 
-  return boost::report_errors();
+  return 0;
 }

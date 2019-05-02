@@ -48,10 +48,6 @@ This test needs to be linked against Boost.Filesystem.
 #include <boost/graph/planar_detail/add_edge_visitors.hpp>
 
 
-
-
-
-
 using namespace boost;
 
 struct coord_t
@@ -336,9 +332,6 @@ int main(int argc, char* argv[])
       input_directory_str = std::string(argv[1]);
     }
 
-  // std::cout << "Reading planar input files from " << input_directory_str
-  //           << std::endl;
-
   filesystem::path input_directory =
     filesystem::system_complete(filesystem::path(input_directory_str));
   const std::string dimacs_extension = ".dimacs";
@@ -351,12 +344,8 @@ int main(int argc, char* argv[])
     if (dir_itr->path().extension() != dimacs_extension)
       continue;
 
-    // std::cerr << "Testing " << dir_itr->path().leaf() << "... ";
     BOOST_TEST (test_graph(dir_itr->path().string()) == 0);
-
-    // std::cerr << std::endl;
   }
 
   return boost::report_errors();
-
 }

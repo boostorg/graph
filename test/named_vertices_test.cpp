@@ -11,13 +11,11 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/iteration_macros.hpp>
 #include <string>
-#include <iostream>
 
 #ifdef BOOST_NO_EXCEPTIONS
 void
 boost::throw_exception(std::exception const& ex)
 {
-    // std::cout << ex.what() << std::endl;
     abort();
 }
 #endif
@@ -69,10 +67,6 @@ int main(int, char*[])
 
   BOOST_TEST(add_vertex(City("Bloomington", 69291), map) == bloomington);
 
-  // BGL_FORALL_VERTICES(city, map, RoadMap)
-  //   std::cout << map[city].name << ", population " << map[city].population
-  //             << std::endl;
-
   BOOST_TEST(*find_vertex("Bloomington", map) == bloomington);
   BOOST_TEST(*find_vertex("Indianapolis", map) == indianapolis);
   BOOST_TEST(*find_vertex("Chicago", map) == chicago);
@@ -80,10 +74,6 @@ int main(int, char*[])
   add_edge(bloomington, "Indianapolis", map);
   add_edge("Indianapolis", chicago, map);
   add_edge("Indianapolis", "Cincinnatti", map);
-
-  // BGL_FORALL_EDGES(road, map, RoadMap)
-  //   std::cout << map[source(road, map)].name << " -> "
-  //             << map[target(road, map)].name << std::endl;
 
   BOOST_TEST(map[*find_vertex("Cincinnatti", map)].population == -1);
 

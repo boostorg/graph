@@ -9,7 +9,6 @@
 
 // Make sure adjacency_list works with EdgeListS=setS
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -21,5 +20,5 @@ int main(int,char*[])
   GraphType g(10);
   add_vertex(g);
   add_edge(0, 5, g);
-  return boost::report_errors();
+  return 0;
 }

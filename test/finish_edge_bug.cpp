@@ -11,8 +11,6 @@
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_utility.hpp>
-#include <boost/core/lightweight_test.hpp>
-
 
 template<typename graph_t>
 struct TalkativeVisitor
@@ -50,5 +48,5 @@ int main(int, char*[])
   std::vector<default_color_type> color(num_vertices(G));
   depth_first_search(G, visitor(TalkativeVisitor<Graph>()));
 
-  return boost::report_errors();
+  return 0;
 }

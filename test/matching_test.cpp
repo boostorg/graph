@@ -165,8 +165,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(edmonds_result);
   if (!edmonds_result)
     {
-      // std::cout << "Verifier reporting a problem finding a perfect matching on" << std::endl
-                // << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -179,8 +177,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(greedy_result);
   if (!greedy_result)
     {
-      // std::cout << "Verifier reporting a problem finding a greedy matching on" << std::endl
-                // << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -193,8 +189,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(extra_greedy_result);
   if (!extra_greedy_result)
     {
-      // std::cout << "Verifier reporting a problem finding an extra greedy matching on" << std::endl
-                // << "the complete graph using " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -207,9 +201,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(edmonds_sanity_check);
   if (edmonds_result && !edmonds_sanity_check)
     {
-      // std::cout << "Verifier okayed edmonds' algorithm on the complete graph, but" << std::endl
-                // << "the matching returned either wasn't a valid matching or wasn't" << std::endl
-                // << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
 
@@ -219,9 +210,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(greedy_sanity_check);
   if (greedy_result && !greedy_sanity_check)
     {
-      // std::cout << "Verifier okayed greedy algorithm on the complete graph, but" << std::endl
-                // << "the matching returned either wasn't a valid matching or wasn't" << std::endl
-                // << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
 
@@ -231,9 +219,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(extra_greedy_sanity_check);
   if (extra_greedy_result && !extra_greedy_sanity_check)
     {
-      // std::cout << "Verifier okayed extra greedy algorithm on the complete graph, but" << std::endl
-                // << "the matching returned either wasn't a valid matching or wasn't" << std::endl
-                // << "actually a maximum cardinality matching." << std::endl;
       all_tests_passed = false;
     }
 
@@ -254,7 +239,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(!modified_edmonds_verification_result);
   if (modified_edmonds_verification_result)
     {
-      // std::cout << "Verifier was fooled into thinking that a non-maximum matching was maximum" << std::endl;
       all_tests_passed = false;
     }
 
@@ -273,18 +257,12 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(gabows_graph_result);
   if (!gabows_graph_result)
     {
-      // std::cout << "Problem on Gabow's Graph with " << graph_name << ":" << std::endl
-      //           << "   Verifier reporting a maximum cardinality matching not found." << std::endl;
       all_tests_passed = false;
     }
 
   BOOST_TEST(matching_size(h,gabow_mate) == num_v);
   if (gabows_graph_result && matching_size(h,gabow_mate) != num_v)
     {
-      // std::cout << "Problem on Gabow's Graph with " << graph_name << ":" << std::endl
-      //           << "   Verifier reported a maximum cardinality matching found," << std::endl
-      //           << "   but matching size is " << matching_size(h,gabow_mate)
-      //           << " when it should be " << num_v << std::endl;
       all_tests_passed = false;
     }
 
@@ -317,7 +295,6 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(random_graph_result);
   if (!random_graph_result)
     {
-      // std::cout << "Matching in random graph not maximum for " << graph_name << std::endl;
       all_tests_passed = false;
     }
 
@@ -337,15 +314,10 @@ void matching_test(std::size_t num_v)
   BOOST_TEST(!modified_random_verification_result);
   if (modified_random_verification_result)
     {
-      // std::cout << "Verifier was fooled into thinking that a non-maximum matching was maximum" << std::endl;
       all_tests_passed = false;
     }
 
   BOOST_TEST(all_tests_passed);
-  if (all_tests_passed)
-    {
-      // std::cout << graph_name << " passed all tests for n = " << num_v << '.' << std::endl;
-    }
 
 }
 

@@ -5,7 +5,6 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
-#include <boost/core/lightweight_test.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // COMPILE TEST ///////////////////////////////////////////////////////////////
@@ -29,5 +28,5 @@ int main()
     copier c;
     copy_graph(g3, g1, vertex_copy(c));
 
-    return boost::report_errors();
+    return 0;
 }

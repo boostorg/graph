@@ -199,7 +199,6 @@ public:
 };
 // end data structures for shortest path problem with time windows (spptw)
 
-
 struct spp_spptw_marked_res_cont {
     spp_spptw_marked_res_cont(SPPRC_Example_Graph::vertex_descriptor v, int c = 0, int t = 0 ) : cost( c ), time( t ), marked() {
         marked.insert(v);
