@@ -45,7 +45,7 @@ static void BM_depth_first_visit_bidirectional_binary_tree(benchmark::State &s)
   bidirectional_binary_tree g;
   std::vector<boost::default_color_type> color;
 
-  create_tree(g, s.range(0));
+  create_tree(g, s.range(0) - 1);
 
   while (s.KeepRunning())
   {
