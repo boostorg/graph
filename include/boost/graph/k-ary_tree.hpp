@@ -588,7 +588,7 @@ namespace boost
 
   template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
   void
-  depth_first_visit(k_ary_tree<2, false, Vertex> &g,
+  depth_first_search(k_ary_tree<2, false, Vertex> &g,
                     typename boost::graph_traits<
                               k_ary_tree<2, false, Vertex>
                                                 >::vertex_descriptor s,
@@ -600,7 +600,7 @@ namespace boost
 
   template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
   void
-  depth_first_visit(k_ary_tree<2, true, Vertex> &g,
+  depth_first_search(k_ary_tree<2, true, Vertex> &g,
                     typename boost::graph_traits<
                               k_ary_tree<2, false, Vertex>
                                                 >::vertex_descriptor s,

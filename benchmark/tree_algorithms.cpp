@@ -50,7 +50,7 @@ static void BM_depth_first_visit_bidirectional_binary_tree(benchmark::State &s)
   while (s.KeepRunning())
   {
     tree_visitor<boost::order::visit, vertex_descriptor> visitor;
-    depth_first_visit(g, vertex_descriptor(), visitor, color);
+    depth_first_search(g, vertex_descriptor(), visitor, color);
   }
 }
 
