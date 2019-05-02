@@ -91,12 +91,15 @@ static void BM_graph_isomorphism(benchmark::State &s)
 //   }
 // }
 
-BENCHMARK_TEMPLATE(BM_graph_isomorphism, bidirectional_binary_tree)->Range(8, 8<<14);
-BENCHMARK_TEMPLATE(BM_graph_isomorphism, adjacency_list<>)->Range(8, 8<<10);
+/*
+BENCHMARK_TEMPLATE(BM_graph_isomorphism, forward_binary_tree)->Range(2, 2<<11);
+BENCHMARK_TEMPLATE(BM_graph_isomorphism, bidirectional_binary_tree)->Range(2, 2<<11);
+BENCHMARK_TEMPLATE(BM_graph_isomorphism, adjacency_list<>)->Range(2, 2<<11);
+*/
 // BENCHMARK_TEMPLATE(BM_graph_vf2_isomorphism, adjacency_matrix<>)->Range(8, 8<<22);
 
 BENCHMARK(BM_depth_first_visit_bidirectional_binary_tree)->Range(8, 8<<16);
-BENCHMARK(BM_depth_first_visit_adjacency_list)->Range(8, 8<<16);
+BENCHMARK(BM_depth_first_visit_adjacency_list)->Range(1, 1<<16);
 
 
 BENCHMARK_MAIN();
