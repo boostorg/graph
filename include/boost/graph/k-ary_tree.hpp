@@ -508,7 +508,7 @@ namespace boost
     {
       if (empty(u, g))
         return vis;
-      typename graph_traits<Graph>::vertex_descriptor root = u;
+      auto root = u;
       order::visit v = order::pre;
       vis(v, u);
       do {
@@ -571,7 +571,7 @@ namespace boost
         return empty(v, h);
       if (empty(v, h))
         return false;
-      typename graph_traits<Graph0>::vertex_descriptor root0 = u;
+      auto root0 = u;
       order::visit visit0 = order::pre;
       order::visit visit1 = order::pre;
       while (true) {

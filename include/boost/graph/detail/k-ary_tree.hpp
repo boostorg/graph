@@ -203,7 +203,7 @@ namespace boost
       std::pair<out_edge_iterator, out_edge_iterator>
       out_edges(vertex_descriptor u, k_ary_tree_base const &g)
       {
-        typename Node::vertex_array_t const &successors = g.nodes[u].successors;
+        auto const &successors = g.nodes[u].successors;
 
         return std::make_pair(out_edge_iterator(boost::begin(successors),
                                                 boost::end(successors), u),
@@ -369,8 +369,7 @@ namespace boost
           return true;
         }
 
-        typedef typename std::vector<vertex_descriptor>::iterator iterator;
-        iterator const which = find(free_list, u);
+        auto const which = find(free_list, u);
         if (which == boost::end(free_list))
           return false;
 
