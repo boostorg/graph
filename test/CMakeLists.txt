@@ -2,5 +2,5 @@
 # add_executable(grid_graph_test grid_graph_test.cpp)
 # add_executable(tree_traversal tree_traversal.cpp)
 add_executable(k-ary_tree k-ary_tree.cpp)
-target_link_libraries(k-ary_tree ${BOOST_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(k-ary_tree Boost::unit_test_framework)
 add_test(k-ary_tree k-ary_tree)
