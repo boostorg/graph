@@ -10,32 +10,39 @@
 #include <boost/graph/graph_archetypes.hpp>
 #include <boost/concept/assert.hpp>
 
-int main(int,char*[])
+int main(int, char*[])
 {
-  using namespace boost;
+    using namespace boost;
 
-  // Check graph concepts againt their archetypes
-  typedef default_constructible_archetype<
-    sgi_assignable_archetype< equality_comparable_archetype<> > > Vertex;
+    // Check graph concepts againt their archetypes
+    typedef default_constructible_archetype<
+        sgi_assignable_archetype< equality_comparable_archetype<> > >
+        Vertex;
 
-  typedef incidence_graph_archetype<Vertex, directed_tag, 
-    allow_parallel_edge_tag> Graph1;
-  BOOST_CONCEPT_ASSERT(( IncidenceGraphConcept<Graph1> ));
+    typedef incidence_graph_archetype< Vertex, directed_tag,
+        allow_parallel_edge_tag >
+        Graph1;
+    BOOST_CONCEPT_ASSERT((IncidenceGraphConcept< Graph1 >));
 
-  typedef adjacency_graph_archetype<Vertex, directed_tag, 
-    allow_parallel_edge_tag> Graph2;
-  BOOST_CONCEPT_ASSERT(( AdjacencyGraphConcept<Graph2> ));
+    typedef adjacency_graph_archetype< Vertex, directed_tag,
+        allow_parallel_edge_tag >
+        Graph2;
+    BOOST_CONCEPT_ASSERT((AdjacencyGraphConcept< Graph2 >));
 
-  typedef vertex_list_graph_archetype<Vertex, directed_tag, 
-    allow_parallel_edge_tag> Graph3;
-  BOOST_CONCEPT_ASSERT(( VertexListGraphConcept<Graph3> ));
+    typedef vertex_list_graph_archetype< Vertex, directed_tag,
+        allow_parallel_edge_tag >
+        Graph3;
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph3 >));
 
-  BOOST_CONCEPT_ASSERT(( ColorValueConcept<color_value_archetype> ));
+    BOOST_CONCEPT_ASSERT((ColorValueConcept< color_value_archetype >));
 
-  typedef incidence_graph_archetype<Vertex, directed_tag, allow_parallel_edge_tag> G;
-  typedef property_graph_archetype<G, vertex_color_t, color_value_archetype>
-    Graph4;
-  BOOST_CONCEPT_ASSERT(( PropertyGraphConcept<Graph4, Vertex, vertex_color_t> ));
+    typedef incidence_graph_archetype< Vertex, directed_tag,
+        allow_parallel_edge_tag >
+        G;
+    typedef property_graph_archetype< G, vertex_color_t, color_value_archetype >
+        Graph4;
+    BOOST_CONCEPT_ASSERT(
+        (PropertyGraphConcept< Graph4, Vertex, vertex_color_t >));
 
-  return 0;
+    return 0;
 }

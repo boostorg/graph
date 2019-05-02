@@ -3,11 +3,11 @@
 ============================
 
 .. Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
-  
+
    Distributed under the Boost Software License, Version 1.0. (See
    accompanying file LICENSE_1_0.txt or copy at
    http://www.boost.org/LICENSE_1_0.txt)
- 
+
    Authors: Tiago de Paula Peixoto
 
 .. |(logo)| image:: ../../../boost.png
@@ -21,11 +21,11 @@ __ ../../../index.htm
   void read_graphml(std::istream& in, MutableGraph& graph,
                     dynamic_properties& dp, size_t graph_index = 0);
 
- 
+
 The ``read_graphml`` function interprets a graph described using the
 GraphML_ format and builds a BGL graph that captures that
 description.  Using this function, you can initialize a graph using
-data stored as text. 
+data stored as text.
 
 The GraphML format can specify both directed and undirected graphs, and
 ``read_graphml`` differentiates between the two. One must pass

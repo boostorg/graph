@@ -26,19 +26,20 @@ using namespace boost;
 
 struct clique_validator
 {
-    clique_validator()
-    { }
+    clique_validator() {}
 
-    template <typename Clique, typename Graph>
-    inline void
-    clique(const Clique& c, Graph& g)
+    template < typename Clique, typename Graph >
+    inline void clique(const Clique& c, Graph& g)
     {
         // Simply assert that each vertex in the clique is connected
         // to all others in the clique.
         typename Clique::const_iterator i, j, end = c.end();
-        for(i = c.begin(); i != end; ++i) {
-            for(j = c.begin(); j != end; ++j) {
-                if(i != j) {
+        for (i = c.begin(); i != end; ++i)
+        {
+            for (j = c.begin(); j != end; ++j)
+            {
+                if (i != j)
+                {
                     BOOST_ASSERT(edge(*i, *j, g).second);
                 }
             }
@@ -46,10 +47,9 @@ struct clique_validator
     }
 };
 
-template <typename Graph>
-void test()
+template < typename Graph > void test()
 {
-    typedef erdos_renyi_iterator<boost::minstd_rand, Graph> er;
+    typedef erdos_renyi_iterator< boost::minstd_rand, Graph > er;
 
     // Generate random graphs with 15 vertices and 15% probability
     // of edge connection.
@@ -64,15 +64,14 @@ void test()
     bron_kerbosch_all_cliques(g, clique_validator());
 }
 
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;
 
     std::cout << "*** undirected ***\n";
-    test<Graph>();
+    test< Graph >();
 
     std::cout << "*** directed ***\n";
-    test<DiGraph>();
+    test< DiGraph >();
 }

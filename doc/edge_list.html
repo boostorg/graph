@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Edge List Class</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -52,7 +52,7 @@ Applying the Bellman-Ford shortest paths algorithm to an
                 E(x,y), E(x,v),
                 E(y,v), E(y,z),
                 E(z,u), E(z,x) };
-  
+
   int weight[] = { -4, 8, 5,
                    -2,
                    9, -3,
@@ -61,16 +61,16 @@ Applying the Bellman-Ford shortest paths algorithm to an
 
   typedef boost::edge_list&lt;E*&gt; Graph;
   Graph g(edges, edges + sizeof(edges) / sizeof(E));
-    
+
   std::vector&lt;int&gt; distance(N, std::numeric_limits&lt;short&gt;::max());
   std::vector&lt;int&gt; parent(N,-1);
-  
+
   distance[z] = 0;
   parent[z] = z;
   bool r = boost::bellman_ford_shortest_paths(g, int(N), weight,
                                               distance.begin(),
                                               parent.begin());
-  if (r)  
+  if (r)
     for (int i = 0; i &lt; N; ++i)
       std::cout &lt;&lt; name[i] &lt;&lt; ": " &lt;&lt; distance[i]
                 &lt;&lt; " " &lt;&lt; name[parent[i]] &lt;&lt; std::endl;
@@ -145,7 +145,7 @@ boost::graph_traits&lt;edge_list&gt;::edge_descriptor
 </tt>
 <br><br>
 The type for the edge descriptors associated with the
-<TT>edge_list</TT>. 
+<TT>edge_list</TT>.
 
 <hr>
 
@@ -218,4 +218,4 @@ HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -20,21 +20,21 @@ using namespace boost;
 // This template structure defines the function that we will apply
 // to compute both the per-vertex mean geodesic distances and the
 // graph's mean geodesic distance.
-template <typename Graph,
-          typename DistanceType,
-          typename ResultType,
-          typename Divides = divides<ResultType> >
+template < typename Graph, typename DistanceType, typename ResultType,
+    typename Divides = divides< ResultType > >
 struct inclusive_average
 {
     typedef DistanceType distance_type;
     typedef ResultType result_type;
 
-    result_type operator ()(distance_type d, const Graph& g)
+    result_type operator()(distance_type d, const Graph& g)
     {
-        if(d == numeric_values<distance_type>::infinity()) {
-            return numeric_values<result_type>::infinity();
+        if (d == numeric_values< distance_type >::infinity())
+        {
+            return numeric_values< result_type >::infinity();
         }
-        else {
+        else
+        {
             return div(result_type(d), result_type(num_vertices(g)));
         }
     }
@@ -56,36 +56,35 @@ struct Link
 };
 
 // Declare the graph type and its vertex and edge types.
-typedef directed_graph<WebPage, Link> Graph;
-typedef graph_traits<Graph>::vertex_descriptor Vertex;
-typedef graph_traits<Graph>::edge_descriptor Edge;
+typedef directed_graph< WebPage, Link > Graph;
+typedef graph_traits< Graph >::vertex_descriptor Vertex;
+typedef graph_traits< Graph >::edge_descriptor Edge;
 
 // The name map provides an abstract accessor for the names of
 // each vertex. This is used during graph creation.
-typedef property_map<Graph, string WebPage::*>::type NameMap;
+typedef property_map< Graph, string WebPage::* >::type NameMap;
 
 // Declare a matrix type and its corresponding property map that
 // will contain the distances between each pair of vertices.
-typedef exterior_vertex_property<Graph, float> DistanceProperty;
+typedef exterior_vertex_property< Graph, float > DistanceProperty;
 typedef DistanceProperty::matrix_type DistanceMatrix;
 typedef DistanceProperty::matrix_map_type DistanceMatrixMap;
 
 // Declare the weight map as an accessor into the bundled
 // edge property.
-typedef property_map<Graph, float Link::*>::type WeightMap;
+typedef property_map< Graph, float Link::* >::type WeightMap;
 
 // Declare a container and its corresponding property map that
 // will contain the resulting mean geodesic distances of each
 // vertex in the graph.
-typedef exterior_vertex_property<Graph, float> GeodesicProperty;
+typedef exterior_vertex_property< Graph, float > GeodesicProperty;
 typedef GeodesicProperty::container_type GeodesicContainer;
 typedef GeodesicProperty::map_type GeodesicMap;
 
 static float exclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);
 static float inclusive_geodesics(const Graph&, DistanceMatrixMap, GeodesicMap);
 
-int
-main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Create the graph, a name map that providse abstract access
     // to the web page names, and the weight map as an accessor to
@@ -120,12 +119,11 @@ main(int argc, char *argv[])
     cout << setw(12) << setiosflags(ios::left) << "vertex";
     cout << setw(12) << setiosflags(ios::left) << "excluding";
     cout << setw(12) << setiosflags(ios::left) << "including" << endl;
-    graph_traits<Graph>::vertex_iterator i, end;
-    for(boost::tie(i, end) = vertices(g); i != end; ++i) {
-        cout << setw(12) << setiosflags(ios::left)
-             << g[*i].name
-             << setw(12) << get(exmap, *i)
-             << setw(12) << get(inmap, *i) << endl;
+    graph_traits< Graph >::vertex_iterator i, end;
+    for (boost::tie(i, end) = vertices(g); i != end; ++i)
+    {
+        cout << setw(12) << setiosflags(ios::left) << g[*i].name << setw(12)
+             << get(exmap, *i) << setw(12) << get(inmap, *i) << endl;
     }
     cout << "small world (excluding self-loops): " << ex << endl;
     cout << "small world (including self-loops): " << in << endl;
@@ -133,22 +131,19 @@ main(int argc, char *argv[])
     return 0;
 }
 
-float
-exclusive_geodesics(const Graph& g, DistanceMatrixMap dm, GeodesicMap gm)
+float exclusive_geodesics(const Graph& g, DistanceMatrixMap dm, GeodesicMap gm)
 {
     // Compute the mean geodesic distances, which excludes distances
     // of self-loops by default. Return the measure for the entire graph.
     return all_mean_geodesics(g, dm, gm);
 }
 
-
-float
-inclusive_geodesics(const Graph &g, DistanceMatrixMap dm, GeodesicMap gm)
+float inclusive_geodesics(const Graph& g, DistanceMatrixMap dm, GeodesicMap gm)
 {
     // Create a new measure object for computing the mean geodesic
     // distance of all vertices. This measure will actually be used
     // for both averages.
-    inclusive_average<Graph, float, float> m;
+    inclusive_average< Graph, float, float > m;
 
     // Compute the mean geodesic distance using the inclusive average
     // to account for self-loop distances. Return the measure for the

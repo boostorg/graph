@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Piotr Wygocki 2013
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Find Flow Cost</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -29,19 +29,19 @@ find_flow_cost(const Graph &amp; g,
 <i>// non-named parameter version</i>
 template&lt;class <a href="./Graph.html">Graph</a>, class Capacity, class ResidualCapacity, class Weight&gt;
 typename property_traits&lt;typename property_map &lt; Graph, edge_capacity_t &gt;::type&gt;::value_type
-find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight) 
+find_flow_cost(const Graph &amp; g, Capacity capacity, ResidualCapacity residual_capacity, Weight weight)
 </PRE>
 
 <P>
 The <tt>find_flow_cost()</tt> function calculates the minimum cost maximum flow value of a network and given flow. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow.  
+Flow Algorithms</a> for a description of maximum flow.
 The function  calculates the cost from the flow values <i>f(u,v)</i> for <i>(u,v)</i> in
 <i>E</i>, which are passed in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>.
 
 <p>
-In order to compute the min cost max flow use : 
+In order to compute the min cost max flow use :
 <a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a>  or
 <a href="./cycle_canceling.html"><tt>cycle_canceling()</tt></a>.
 
@@ -73,7 +73,7 @@ IN: <tt>capacity_map(CapacityEdgeMap cap)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_capacity, g)</tt>
 </blockquote>
-  
+
 IN: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   This maps edges to their residual capacity. The type must be a model
@@ -85,7 +85,7 @@ IN: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 </blockquote>
 
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or ``cost'' of each edge in the graph.
   The type <tt>WeightMap</tt> must be a model of
@@ -98,7 +98,7 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
 </blockquote>
 
 <h3>Complexity</h3>
-The complexity is <i> O(|E|)</i>, 
+The complexity is <i> O(|E|)</i>,
 
 <h3>Example</h3>
 
@@ -119,7 +119,7 @@ Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos a
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt

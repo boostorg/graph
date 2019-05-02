@@ -8,16 +8,19 @@
 
 using namespace boost;
 
-class copier {
+class copier
+{
 public:
-    template<class V1, class V2>
-    void operator()(const V1&, const V2&) const {}
+    template < class V1, class V2 > void operator()(const V1&, const V2&) const
+    {
+    }
 };
 
 int main()
 {
-    adjacency_list<vecS, vecS, directedS, property<vertex_root_t, int> > g1, g2;
-    adjacency_list<vecS, setS, directedS, property<vertex_index_t, int> > g3;
+    adjacency_list< vecS, vecS, directedS, property< vertex_root_t, int > > g1,
+        g2;
+    adjacency_list< vecS, setS, directedS, property< vertex_index_t, int > > g3;
 
     copy_graph(g1, g2);
     copier c;

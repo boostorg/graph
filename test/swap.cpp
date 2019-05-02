@@ -6,16 +6,15 @@
 #include <boost/graph/directed_graph.hpp>
 #include <boost/graph/undirected_graph.hpp>
 
-template<typename Graph>
-void test_member_swap()
+template < typename Graph > void test_member_swap()
 {
-  Graph lhs, rhs;
-  lhs.swap(rhs);
+    Graph lhs, rhs;
+    lhs.swap(rhs);
 }
 
 int main()
 {
-    test_member_swap<boost::adjacency_list<> >();
-    test_member_swap<boost::directed_graph<> >();
-    test_member_swap<boost::undirected_graph<> >();
+    test_member_swap< boost::adjacency_list<> >();
+    test_member_swap< boost::directed_graph<> >();
+    test_member_swap< boost::undirected_graph<> >();
 }

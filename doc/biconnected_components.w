@@ -5,7 +5,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{latexsym}     
+\usepackage{latexsym}
 \usepackage{jweb}
 \usepackage{times}
 \usepackage{graphicx}
@@ -358,7 +358,7 @@ int main()
 
 
 
-% \paragraph{Definition.} A \emph{palm tree} $P$ is a directed graph that 
+% \paragraph{Definition.} A \emph{palm tree} $P$ is a directed graph that
 % consists of two disjoint sets of edges, denoted by $v \rightarrow w$
 % and $v \backedge w$ respectively, with the following properties:
 

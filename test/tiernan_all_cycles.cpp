@@ -19,11 +19,9 @@ using namespace boost;
 
 struct cycle_validator
 {
-    cycle_validator(size_t& c)
-        : cycles(c)
-    { }
+    cycle_validator(size_t& c) : cycles(c) {}
 
-    template <typename Path, typename Graph>
+    template < typename Path, typename Graph >
     void cycle(const Path& p, const Graph& g)
     {
         ++cycles;
@@ -32,7 +30,8 @@ struct cycle_validator
         // front - it's not validating that we find all paths, just
         // that the paths are valid.
         typename Path::const_iterator i, j, last = prior(p.end());
-        for(i = p.begin(); i != last; ++i) {
+        for (i = p.begin(); i != last; ++i)
+        {
             j = boost::next(i);
             BOOST_ASSERT(edge(*i, *j, g).second);
         }
@@ -42,10 +41,9 @@ struct cycle_validator
     size_t& cycles;
 };
 
-template <typename Graph>
-void test()
+template < typename Graph > void test()
 {
-    typedef erdos_renyi_iterator<boost::minstd_rand, Graph> er;
+    typedef erdos_renyi_iterator< boost::minstd_rand, Graph > er;
 
     // Generate random graphs with 15 vertices and 15% probability
     // of edge connection.
@@ -63,15 +61,14 @@ void test()
     cout << "# cycles: " << vis.cycles << "\n";
 }
 
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     typedef directed_graph<> DiGraph;
 
     std::cout << "*** undirected ***\n";
-    test<Graph>();
+    test< Graph >();
 
     std::cout << "*** directed ***\n";
-    test<DiGraph>();
+    test< DiGraph >();
 }

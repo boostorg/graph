@@ -3,11 +3,11 @@
 ============================
 
 .. Copyright (C) 2006  Tiago de Paula Peixoto <tiago@forked.de>
-  
+
    Distributed under the Boost Software License, Version 1.0. (See
    accompanying file LICENSE_1_0.txt or copy at
    http://www.boost.org/LICENSE_1_0.txt)
- 
+
    Authors: Tiago de Paula Peixoto
 
 .. |(logo)| image:: ../../../boost.png
@@ -20,7 +20,7 @@ __ ../../../index.htm
 
   template<typename Graph>
   void
-  write_graphml(std::ostream& out, const Graph& g, const dynamic_properties& dp, 
+  write_graphml(std::ostream& out, const Graph& g, const dynamic_properties& dp,
 	        bool ordered_vertices=false);
 
   template<typename Graph, typename VertexIndexMap>
@@ -48,7 +48,7 @@ Parameters
 OUT: ``std::ostream& out``
   A standard ``std::ostream`` object.
 
-IN: ``VertexListGraph& g`` 
+IN: ``VertexListGraph& g``
   A directed or undirected graph.  The
   graph's type must be a model of VertexListGraph_. If the graph
   doesn't have an internal ``vertex_index`` property map, one
@@ -74,7 +74,7 @@ IN: ``bool ordered_vertices``
 Example
 -------
 
-This example demonstrates using BGL-GraphML interface to write 
+This example demonstrates using BGL-GraphML interface to write
 a BGL graph into a GraphML format file.
 
 ::

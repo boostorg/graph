@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000, 2001
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Breadth-First Visit</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -22,14 +22,14 @@
 <P>
 <PRE>
   template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class P, class T, class R&gt;
-  void breadth_first_visit(IncidenceGraph& G, 
-    typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+  void breadth_first_visit(IncidenceGraph& G,
+    typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
     const bgl_named_params&lt;P, T, R&gt;&amp; params);
 
   template &lt;class <a href="./IncidenceGraph.html">IncidenceGraph</a>, class <a href="./Buffer.html">Buffer</a>, class <a href="./BFSVisitor.html">BFSVisitor</a>, class ColorMap&gt;
   void breadth_first_visit
-    (const IncidenceGraph&amp; g, 
-     typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s, 
+    (const IncidenceGraph&amp; g,
+     typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
      Buffer&amp; Q, BFSVisitor vis, ColorMap color)
 </PRE>
 
@@ -110,7 +110,7 @@ UTIL: <tt>buffer(Buffer&amp; Q)</tt>
 
   <b>Python</b>: The buffer must derive from the <a
   href="./Buffer.html">Buffer</a> type for the graph.
-</blockquote>  
+</blockquote>
 
 
 <H3><A NAME="SECTION001330300000000000000">
@@ -118,7 +118,7 @@ Complexity</A>
 </H3>
 
 <P>
-The time complexity is <i>O(E)</i>. 
+The time complexity is <i>O(E)</i>.
 
 <P>
 
@@ -129,7 +129,7 @@ The time complexity is <i>O(E)</i>.
   vertex as it is removed from the queue.
 
 <li><b><tt>vis.examine_edge(e, g)</tt></b> is invoked on every out-edge
-  of each vertex immediately after the vertex is removed from the queue. 
+  of each vertex immediately after the vertex is removed from the queue.
 
 <li><b><tt>vis.tree_edge(e, g)</tt></b> is invoked (in addition to
   <tt>examine_edge()</tt>) if the edge is a tree edge. The
@@ -138,20 +138,20 @@ The time complexity is <i>O(E)</i>.
 <li><b><tt>vis.discover_vertex(u, g)</tt></b> is invoked the first time the
   algorithm encounters vertex <i>u</i>. All vertices closer to the
   source vertex have been discovered, and vertices further from the
-  source have not yet been discovered. 
+  source have not yet been discovered.
 
 <li><b><tt>vis.non_tree_edge(e, g)</tt></b> is invoked (in addition to
-  <tt>examine_edge()</tt>) if the edge is not a tree edge. 
+  <tt>examine_edge()</tt>) if the edge is not a tree edge.
 
 <li><b><tt>vis.gray_target(e, g)</tt></b> is invoked (in addition to
   <tt>non_tree_edge()</tt>) if the target vertex is colored gray at the
   time of examination. The color gray indicates that
-  the vertex is currently in the queue. 
+  the vertex is currently in the queue.
 
 <li><b><tt>vis.black_target(e, g)</tt></b> is invoked (in addition to
   <tt>non_tree_edge()</tt>) if the target vertex is colored black at the
   time of examination. The color black indicates that the
-  vertex is no longer in the queue. 
+  vertex is no longer in the queue.
 
 <li><b><tt>vis.finish_vertex(u, g)</tt></b> is invoked after all of the out
   edges of <i>u</i> have been examined and all of the adjacent vertices
@@ -167,7 +167,7 @@ The time complexity is <i>O(E)</i>.
 
 <h3>Notes</h3>
 
-<p><a name="1">[1]</a> 
+<p><a name="1">[1]</a>
   Since the visitor parameter is passed by value, if your visitor
   contains state then any changes to the state during the algorithm
   will be made to a copy of the visitor object, not the visitor object
@@ -183,4 +183,4 @@ The time complexity is <i>O(E)</i>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

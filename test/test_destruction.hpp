@@ -15,16 +15,19 @@
  */
 //@{
 // This will basically catch adjacency matrices, which don't get torn down.
-template <typename Graph, typename VertexSet, typename Remove, typename Label>
+template < typename Graph, typename VertexSet, typename Remove, typename Label >
 void destroy_graph(Graph&, VertexSet const&, Remove, Label)
-{ }
+{
+}
 
 // This matches MutableGraph, so just remove a vertex and then clear.
-template <typename Graph, typename VertexSet>
-void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::mpl::false_) {
+template < typename Graph, typename VertexSet >
+void destroy_graph(
+    Graph& g, VertexSet const& verts, boost::mpl::true_, boost::mpl::false_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
-    BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
+    BOOST_CONCEPT_ASSERT((VertexMutableGraphConcept< Graph >));
 
     std::cout << "...destroy_normal\n";
     // Remove the roof vertex
@@ -33,10 +36,12 @@ void destroy_graph(Graph& g, VertexSet const& verts, boost::mpl::true_, boost::m
 }
 
 // This will match labeled graphs.
-template <typename Graph, typename VertexSet>
-void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::true_) {
+template < typename Graph, typename VertexSet >
+void destroy_graph(
+    Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::true_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
     // BOOST_CONCEPT_ASSERT(( VeretexMutableGraphConcept<Graph> ));
 
     std::cout << "...destroy_labeled\n";
@@ -45,7 +50,6 @@ void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::t
     BOOST_ASSERT(num_vertices(g) == N - 1);
 }
 //@}
-
 
 /** @name Disconnect Graph
  * Disconnect edges in the graph. Note that this doesn't fully disconnect the
@@ -57,14 +61,15 @@ void destroy_graph(Graph& g, VertexSet const&, boost::mpl::false_, boost::mpl::t
  */
 //@{
 
-template <typename Graph, typename VertexSet>
-void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
+template < typename Graph, typename VertexSet >
+void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
-    BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
+    BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept< Graph >));
 
     std::cout << "...disconnect_normal\n";
-    typedef typename graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename graph_traits< Graph >::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.
     Edge e = edge(verts[5], verts[3], g).first;
@@ -84,14 +89,15 @@ void disconnect_graph(Graph& g, VertexSet const& verts, boost::mpl::false_) {
     BOOST_ASSERT(num_edges(g) == M - 4);
 }
 
-template <typename Graph, typename VertexSet>
-void disconnect_graph(Graph& g, VertexSet const&, boost::mpl::true_) {
+template < typename Graph, typename VertexSet >
+void disconnect_graph(Graph& g, VertexSet const&, boost::mpl::true_)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
     // BOOST_CONCEPT_ASSERT((EdgeMutableGraphConcept<Graph>));
 
     std::cout << "...disconnect_labeled\n";
-    typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
 
     // Disconnect the "lollipop" from the house.
     Edge e = boost::edge_by_label(5, 3, g).first;

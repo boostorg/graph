@@ -1,14 +1,14 @@
 A directed graph:
-a --> b f h 
-b --> c a 
-c --> d b 
-d --> e 
-e --> d 
-f --> g 
-g --> f d 
-h --> i 
-i --> h j e c 
-j --> 
+a --> b f h
+b --> c a
+c --> d b
+d --> e
+e --> d
+f --> g
+g --> f d
+h --> i
+i --> h j e c
+j -->
 
 Total number of components: 4
 Vertex a is in component 3

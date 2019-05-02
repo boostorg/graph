@@ -10,8 +10,7 @@
 #include <fstream>
 
 #ifdef BOOST_NO_EXCEPTIONS
-void
-boost::throw_exception(std::exception const& ex)
+void boost::throw_exception(std::exception const& ex)
 {
     std::cout << ex.what() << std::endl;
     abort();
@@ -21,24 +20,24 @@ boost::throw_exception(std::exception const& ex)
 using namespace boost;
 
 /* An undirected graph with distance values stored on the vertices. */
-typedef adjacency_list<vecS, vecS, undirectedS,
-                       property<vertex_distance_t, std::size_t> >
-  Graph;
+typedef adjacency_list< vecS, vecS, undirectedS,
+    property< vertex_distance_t, std::size_t > >
+    Graph;
 
 int main(int argc, char* argv[])
 {
-  // Parse command-line options
-  const char* filename = "weighted_graph.gr";
-  if (argc > 1) filename = argv[1];
+    // Parse command-line options
+    const char* filename = "weighted_graph.gr";
+    if (argc > 1)
+        filename = argv[1];
 
-  // Open the METIS input file
-  std::ifstream in(filename);
-  assert (in.good());
-  graph::metis_reader reader(in);
+    // Open the METIS input file
+    std::ifstream in(filename);
+    assert(in.good());
+    graph::metis_reader reader(in);
 
-  // Load the graph using the default distribution
-  Graph g(reader.begin(), reader.end(),
-          reader.num_vertices());
+    // Load the graph using the default distribution
+    Graph g(reader.begin(), reader.end(), reader.num_vertices());
 
-  return 0;
+    return 0;
 }

@@ -38,7 +38,7 @@ while(<>) {
     $thispage = $4;
 
     if ($thispage ne $lastpage) {
-      
+
       $counter = 1;
 
       print $saved_empty;

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Lie-Quan Lee and Jeremy Siek, 2001
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Minimum Degree Ordering</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -23,14 +23,14 @@
 
 <pre>
   template &lt;class AdjacencyGraph, class OutDegreeMap,
-           class InversePermutationMap, 
+           class InversePermutationMap,
            class PermutationMap, class SuperNodeSizeMap, class VertexIndexMap&gt;
   void minimum_degree_ordering
     (AdjacencyGraph& G,
      OutDegreeMap outdegree,
      InversePermutationMap inverse_perm,
-     PermutationMap perm, 
-     SuperNodeSizeMap supernode_size, int delta, VertexIndexMap id) 
+     PermutationMap perm,
+     SuperNodeSizeMap supernode_size, int delta, VertexIndexMap id)
 </pre>
 
 <p>The minimum degree ordering algorithm&nbsp;[<A
@@ -66,7 +66,7 @@ The output of the algorithm are the vertices in the new ordering.
 <pre>
   inverse_perm[new_index[u]] == old_index[u]
 </pre>
-<p> and the permutation from the old index to the new index. 
+<p> and the permutation from the old index to the new index.
 <pre>
   perm[old_index[u]] == new_index[u]
 </pre>
@@ -80,7 +80,7 @@ The output of the algorithm are the vertices in the new ordering.
 
 <ul>
 
-<li> <tt>AdjacencyGraph&amp; G</tt> &nbsp;(IN) <br> 
+<li> <tt>AdjacencyGraph&amp; G</tt> &nbsp;(IN) <br>
   A directed graph. The graph's type must be a model of <a
   href="./AdjacencyGraph.html">Adjacency Graph</a>,
   <a
@@ -97,32 +97,32 @@ The output of the algorithm are the vertices in the new ordering.
   descriptor type of the graph, and with a value type that is an
   integer type.
 
-<li> <tt>InversePermutationMap inverse_perm</tt> &nbsp(OUT) <br> 
+<li> <tt>InversePermutationMap inverse_perm</tt> &nbsp(OUT) <br>
   The new vertex ordering, given as the mapping from the
   new indices to the old indices (an inverse permutation).
   This must be an <a href="../../property_map/doc/LvaluePropertyMap.html">
-  LvaluePropertyMap</a> with a value type and key type a signed integer. 
+  LvaluePropertyMap</a> with a value type and key type a signed integer.
 
-<li> <tt>PermutationMap perm</tt> &nbsp(OUT) <br> 
+<li> <tt>PermutationMap perm</tt> &nbsp(OUT) <br>
   The new vertex ordering, given as the mapping from the
   old indices to the new indices (a permutation).
   This must be an <a href="../../property_map/doc/LvaluePropertyMap.html">
-  LvaluePropertyMap</a> with a value type and key type a signed integer. 
+  LvaluePropertyMap</a> with a value type and key type a signed integer.
 
-<li> <tt>SuperNodeSizeMap supernode_size</tt> &nbsp(WORK/OUT) <br> 
+<li> <tt>SuperNodeSizeMap supernode_size</tt> &nbsp(WORK/OUT) <br>
   This is used internally to record the size of supernodes and is also
   useful information to have. This is a <a
   href="../../property_map/doc/LvaluePropertyMap.html">
   LvaluePropertyMap</a> with an unsigned integer value type and key
   type of vertex descriptor.
 
-<li> <tt>int delta</tt> &nbsp(IN) <br> 
+<li> <tt>int delta</tt> &nbsp(IN) <br>
   Multiple elimination control variable. If it is larger than or equal
   to zero then multiple elimination is enabled. The value of
   <tt>delta</tt> specifies the difference between the minimum degree
   and the degree of vertices that are to be eliminated.
-  
-<li> <tt>VertexIndexMap id</tt> &nbsp(IN) <br> 
+
+<li> <tt>VertexIndexMap id</tt> &nbsp(IN) <br>
   Used internally to map vertices to their indices. This must be a <a
   href="../../property_map/doc/ReadablePropertyMap.html"> Readable
   Property Map</a> with key type the same as the vertex descriptor of
@@ -155,7 +155,7 @@ An <b>elimination graph</b> <i>G<sub>v</sub></i> is obtained from the
 graph <i>G</i> by removing vertex <i>v</i> and all of its incident
 edges and by then adding edges to make all of the vertices adjacent to
 <i>v</i> into a clique (that is, add an edge between each pair of
-adjacent vertices if an edge doesn't already exist). 
+adjacent vertices if an edge doesn't already exist).
 
 Suppose that graph <i>G</i> is the graph representing the nonzero
 structure of a matrix <i>A</i>. Then performing a step of Guassian
@@ -175,4 +175,4 @@ elimination on row <i>i</i> of matrix <i>A</i> is equivalent to
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

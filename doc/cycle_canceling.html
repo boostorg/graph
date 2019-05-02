@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Piotr Wygocki 2013
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Cycle Canceling for  Min Cost Max Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -23,25 +23,25 @@
 <i>// named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
 void cycle_canceling(
-        Graph &amp;g, 
+        Graph &amp;g,
         const bgl_named_params&lt;P, T, R&gt; &amp; params  = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class Pred, class Distance, class Reversed, class ResidualCapacity, class Weight&gt;
-void cycle_canceling(const Graph &amp; g, Weight weight, Reversed rev, ResidualCapacity residual_capacity, Pred pred, Distance distance) 
+void cycle_canceling(const Graph &amp; g, Weight weight, Reversed rev, ResidualCapacity residual_capacity, Pred pred, Distance distance)
 </PRE>
 
 <P>
 The <tt>cycle_canceling()</tt> function calculates the minimum cost flow of a network with given flow. See Section <a
 href="./graph_theory_review.html#sec:network-flow-algorithms">Network
-Flow Algorithms</a> for a description of maximum flow. 
+Flow Algorithms</a> for a description of maximum flow.
 For given flow values <i> f(u,v)</i>  function minimizes flow cost in such a way, that for each <i>v in V</i> the
  <i> sum<sub> u in V</sub>  f(v,u) </i> is preserved. Particularly if the input flow was the maximum flow, the function produces min cost max flow.
-  
+
 
  The function calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>.
 
 <p>
 There are several special requirements on the input graph and property
@@ -51,12 +51,12 @@ include the reverse edge for every edge in <i>E</i>.  That is, the
 input graph should be <i>G<sub>in</sub> = (V,{E U
 E<sup>T</sup>})</i>. The <tt>ReverseEdgeMap</tt> argument <tt>rev</tt>
 must map each edge in the original graph to its reverse edge, that is
-<i>(u,v) -> (v,u)</i> for all <i>(u,v)</i> in <i>E</i>. 
+<i>(u,v) -> (v,u)</i> for all <i>(u,v)</i> in <i>E</i>.
 The <tt>WeightMap</tt> has to map each edge from <i>E<sup>T</sup></i> to <i>-weight</i> of its reversed edge.
-Note that edges from <i>E</i> can have negative weights. 
+Note that edges from <i>E</i> can have negative weights.
 <p>
-If weights in the graph are nonnegative, the 
-<a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a> 
+If weights in the graph are nonnegative, the
+<a href="./successive_shortest_path_nonnegative_weights.html"><tt>successive_shortest_path_nonnegative_weights()</tt></a>
 might be better choice for min cost max flow.
 
 <p>
@@ -70,7 +70,7 @@ If there is no negative cycle in the network, the cost is optimized.
 <p>
 Note that, although we mention capacity in the problem description, the actual algorithm doesn't have to now it.
 
-<p> 
+<p>
 In order to find the cost of the result flow use:
 <a href="./find_flow_cost.html"><tt>find_flow_cost()</tt></a>.
 
@@ -92,10 +92,10 @@ IN: <tt>Graph&amp; g</tt>
   <i>(u,v)</i> in the graph, the reverse edge <i>(v,u)</i> must also
   be in the graph.
 </blockquote>
-  
+
 <h3>Named Parameters</h3>
 
-  
+
 IN/OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   This maps edges to their residual capacity. The type must be a model
@@ -142,7 +142,7 @@ UTIL: <tt>predecessor_map(PredEdgeMap pred)</tt>
   using the <tt>i_map</tt> for the index map.
 </blockquote>
 
-UTIL: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL: <tt>distance_map(DistanceMap d_map)</tt>
 <blockquote>
   The shortest path weight from the source vertex <tt>s</tt> to each
   vertex in the graph <tt>g</tt> is recorded in this property map. The
@@ -150,7 +150,7 @@ UTIL: <tt>distance_map(DistanceMap d_map)</tt>
   shortest path.  The type <tt>DistanceMap</tt> must be a model of <a
   href="../../property_map/doc/ReadWritePropertyMap.html">Read/Write
   Property Map</a>. The vertex descriptor type of the graph needs to
-  be usable as the key type of the distance map. 
+  be usable as the key type of the distance map.
 
   <b>Default:</b> <a
   href="../../property_map/doc/iterator_property_map.html">
@@ -178,8 +178,8 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 </blockquote>
 
 <h3>Complexity</h3>
-In the integer capacity and weight case, if <i>C</i> is the initial cost of the flow, then the complexity is <i> O(C * |V| * |E|)</i>, 
-where <i>O(|E|* |V|)</i> is the complexity of the bellman ford shortest paths algorithm and <i>C</i> is upper bound on number of iteration. 
+In the integer capacity and weight case, if <i>C</i> is the initial cost of the flow, then the complexity is <i> O(C * |V| * |E|)</i>,
+where <i>O(|E|* |V|)</i> is the complexity of the bellman ford shortest paths algorithm and <i>C</i> is upper bound on number of iteration.
 In many real world cases number of iterations is much smaller than <i>C</i>.
 
 
@@ -203,7 +203,7 @@ Piotr Wygocki, University of Warsaw (<A HREF="mailto:wygos@mimuw.edu.pl">wygos a
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt

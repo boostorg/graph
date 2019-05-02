@@ -15,8 +15,7 @@
 #include <iterator>
 #include <utility>
 
-
-typedef std::pair<std::size_t,std::size_t> Pair;
+typedef std::pair< std::size_t, std::size_t > Pair;
 
 /*
   Topological sort example
@@ -31,44 +30,41 @@ typedef std::pair<std::size_t,std::size_t> Pair;
 
 */
 
-int
-main(int , char* [])
+int main(int, char*[])
 {
-  //begin
-  using namespace boost;
+    // begin
+    using namespace boost;
 
-  /* Topological sort will need to color the graph.  Here we use an
-     internal decorator, so we "property" the color to the graph.
-     */
-  typedef adjacency_list<vecS, vecS, directedS, 
-    property<vertex_color_t, default_color_type> > Graph;
+    /* Topological sort will need to color the graph.  Here we use an
+       internal decorator, so we "property" the color to the graph.
+       */
+    typedef adjacency_list< vecS, vecS, directedS,
+        property< vertex_color_t, default_color_type > >
+        Graph;
 
-  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-  Pair edges[6] = { Pair(0,1), Pair(2,4),
-                    Pair(2,5),
-                    Pair(0,3), Pair(1,4),
-                    Pair(4,3) };
+    typedef boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    Pair edges[6] = { Pair(0, 1), Pair(2, 4), Pair(2, 5), Pair(0, 3),
+        Pair(1, 4), Pair(4, 3) };
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  // VC++ can't handle the iterator constructor
-  Graph G(6);
-  for (std::size_t j = 0; j < 6; ++j)
-    add_edge(edges[j].first, edges[j].second, G);
+    // VC++ can't handle the iterator constructor
+    Graph G(6);
+    for (std::size_t j = 0; j < 6; ++j)
+        add_edge(edges[j].first, edges[j].second, G);
 #else
-  Graph G(edges, edges + 6, 6);
+    Graph G(edges, edges + 6, 6);
 #endif
 
-  boost::property_map<Graph, vertex_index_t>::type id = get(vertex_index, G);
+    boost::property_map< Graph, vertex_index_t >::type id
+        = get(vertex_index, G);
 
-  typedef std::vector< Vertex > container;
-  container c;
-  topological_sort(G, std::back_inserter(c));
+    typedef std::vector< Vertex > container;
+    container c;
+    topological_sort(G, std::back_inserter(c));
 
-  std::cout << "A topological ordering: ";
-  for (container::reverse_iterator ii = c.rbegin(); 
-       ii != c.rend(); ++ii)
-    std::cout << id[*ii] << " ";
-  std::cout << std::endl;
+    std::cout << "A topological ordering: ";
+    for (container::reverse_iterator ii = c.rbegin(); ii != c.rend(); ++ii)
+        std::cout << id[*ii] << " ";
+    std::cout << std::endl;
 
-  return 0;
-} 
-
+    return 0;
+}

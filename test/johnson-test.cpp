@@ -7,7 +7,6 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
-
 /* Expected Output
          0    1    2    3    4    5    6    7    8    9
     0    0   99  111  123  103  107  125  105  111  123
@@ -35,44 +34,43 @@
 int main()
 {
     using namespace boost;
-    typedef adjacency_list<vecS, vecS, undirectedS, no_property,
-      property< edge_weight_t, int, 
-      property< edge_weight2_t, int > > > Graph;
+    typedef adjacency_list< vecS, vecS, undirectedS, no_property,
+        property< edge_weight_t, int, property< edge_weight2_t, int > > >
+        Graph;
     const int V = 10;
-    typedef std::pair < int, int >Edge;
-    Edge edge_array[] =
-      { Edge(0,1), Edge(1,2), Edge(2,3), Edge(1,4), Edge(2,5), Edge(3,6),
-          Edge(4,5), Edge(5,6), Edge(4,7), Edge(5,8), Edge(6,9), Edge(7,8),
-          Edge(8,9)
-   };
+    typedef std::pair< int, int > Edge;
+    Edge edge_array[] = { Edge(0, 1), Edge(1, 2), Edge(2, 3), Edge(1, 4),
+        Edge(2, 5), Edge(3, 6), Edge(4, 5), Edge(5, 6), Edge(4, 7), Edge(5, 8),
+        Edge(6, 9), Edge(7, 8), Edge(8, 9) };
 
     const std::size_t E = sizeof(edge_array) / sizeof(Edge);
 
     Graph g(edge_array, edge_array + E, V);
 
+    property_map< Graph, edge_weight_t >::type w = get(edge_weight, g);
+    int weights[] = { 99, 12, 12, 4, 99, 12, 4, 99, 2, 4, 2, 99, 12 };
+    int* wp = weights;
 
-    property_map < Graph, edge_weight_t >::type w = get(edge_weight, g);
-    int weights[] = { 99, 12, 12, 4, 99, 12, 4, 99, 2, 4, 2, 99, 12  };
-    int *wp = weights;
-
-    graph_traits < Graph >::edge_iterator e, e_end;
+    graph_traits< Graph >::edge_iterator e, e_end;
     for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
-      w[*e] = *wp++;
+        w[*e] = *wp++;
 
-    std::vector < int >d(V, (std::numeric_limits < int >::max)());
+    std::vector< int > d(V, (std::numeric_limits< int >::max)());
     int D[V][V];
     johnson_all_pairs_shortest_paths(g, D, distance_map(&d[0]));
 
-    std::cout << std::setw(5) <<" ";
+    std::cout << std::setw(5) << " ";
     for (int k = 0; k < 10; ++k)
-      std::cout << std::setw(5) << k ;
+        std::cout << std::setw(5) << k;
     std::cout << std::endl;
-    for (int i = 0; i < 10; ++i) {
-      std::cout <<std::setw(5) <<  i ;
-      for (int j = 0; j < 10; ++j) {
-          std::cout << std::setw(5) << D[i][j] ;
-      }
-      std::cout << std::endl;
+    for (int i = 0; i < 10; ++i)
+    {
+        std::cout << std::setw(5) << i;
+        for (int j = 0; j < 10; ++j)
+        {
+            std::cout << std::setw(5) << D[i][j];
+        }
+        std::cout << std::endl;
     }
 
     return 0;

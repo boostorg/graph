@@ -7,7 +7,7 @@ digraph G {
 
     subgraph inner { //subgraph<Graph> or subgraph of subgraph
 	node [color = green];
-	a1 -> a2 -> a3 
+	a1 -> a2 -> a3
 
     };
 

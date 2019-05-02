@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Edmonds-Karp Maximum Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -23,20 +23,20 @@
 <i>// named parameter version</i>
 template &lt;class <a href="./Graph.html">Graph</a>, class P, class T, class R&gt;
 typename detail::edge_capacity_value&lt;Graph, P, T, R&gt;::value_type
-edmonds_karp_max_flow(Graph& g, 
+edmonds_karp_max_flow(Graph& g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
-template &lt;class <a href="./Graph.html">Graph</a>, 
+template &lt;class <a href="./Graph.html">Graph</a>,
 	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	  class ReverseEdgeMap, class ColorMap, class PredEdgeMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-edmonds_karp_max_flow(Graph&amp; g, 
+edmonds_karp_max_flow(Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
-   CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev, 
+   CapacityEdgeMap cap, ResidualCapacityEdgeMap res, ReverseEdgeMap rev,
    ColorMap color, PredEdgeMap pred)
 </PRE>
 
@@ -48,7 +48,7 @@ Flow Algorithms</a> for a description of maximum flow.  The calculated
 maximum flow will be the return value of the function. The function
 also calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>.
 
 <p>
 There are several special requirements on the input graph and property
@@ -112,12 +112,12 @@ IN: <tt>vertex_descriptor src</tt>
 <blockquote>
   The source vertex for the flow network graph.
 </blockquote>
-  
+
 IN: <tt>vertex_descriptor sink</tt>
 <blockquote>
   The sink vertex for the flow network graph.
 </blockquote>
-  
+
 <h3>Named Parameters</h3>
 
 
@@ -129,7 +129,7 @@ IN: <tt>capacity_map(CapacityEdgeMap cap)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_capacity, g)</tt>
 </blockquote>
-  
+
 OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   This maps edges to their residual capacity. The type must be a model
@@ -228,7 +228,7 @@ from a file in the DIMACS format and computes the maximum flow.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  HTML Siek Edmonds BGCOLOR ffffff ee VLINK ALINK ff IMG SRC
  -->
 <!--  LocalWords:  gif ALT BR sec edmonds karp TT DIV CELLPADDING TR TD PRE lt

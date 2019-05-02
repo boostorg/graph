@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>EdgeListGraph</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -109,7 +109,7 @@ Return type: <TT>vertex_descriptor</TT>
 <tr>
 <TD><TT>target(e, g)</TT></TD>
 <TD>
-Returns the vertex descriptor for 
+Returns the vertex descriptor for
 <i>v</i> of the edge <i>(u,v)</i> represented by  <TT>e</TT>.<br>
 Return type: <TT>vertex_descriptor</TT>
 </TD>
@@ -143,7 +143,7 @@ must all return in constant time.
   template &lt;class G&gt;
   struct EdgeListGraphConcept
   {
-    typedef typename boost::graph_traits&lt;G&gt;::edge_iterator 
+    typedef typename boost::graph_traits&lt;G&gt;::edge_iterator
       edge_iterator;
     void constraints() {
       BOOST_CONCEPT_ASSERT(( GraphConcept&lt;G&gt; ));
@@ -181,4 +181,4 @@ must all return in constant time.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

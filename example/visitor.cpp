@@ -47,61 +47,56 @@
 using namespace boost;
 using namespace std;
 
-template <class Tag>
-struct edge_printer : public base_visitor<edge_printer<Tag> > {
-  typedef Tag event_filter;
-  edge_printer(std::string edge_t) : m_edge_type(edge_t) { }
-  template <class Edge, class Graph>
-  void operator()(Edge e, Graph& G) {
-    std::cout << m_edge_type << ": " << source(e, G) 
-              << " --> " <<  target(e, G) << std::endl;
-  }
-  std::string m_edge_type;
+template < class Tag >
+struct edge_printer : public base_visitor< edge_printer< Tag > >
+{
+    typedef Tag event_filter;
+    edge_printer(std::string edge_t) : m_edge_type(edge_t) {}
+    template < class Edge, class Graph > void operator()(Edge e, Graph& G)
+    {
+        std::cout << m_edge_type << ": " << source(e, G) << " --> "
+                  << target(e, G) << std::endl;
+    }
+    std::string m_edge_type;
 };
-template <class Tag>
-edge_printer<Tag> print_edge(std::string type, Tag) { 
-  return edge_printer<Tag>(type);
+template < class Tag > edge_printer< Tag > print_edge(std::string type, Tag)
+{
+    return edge_printer< Tag >(type);
 }
 
-int 
-main(int, char*[])
+int main(int, char*[])
 {
 
-  using namespace boost;
-  
-  typedef adjacency_list<> Graph;
-  typedef std::pair<int,int> E;
-  E edges[] = { E(0, 2),
-                E(1, 1), E(1, 3),
-                E(2, 1), E(2, 3),
-                E(3, 1), E(3, 4),
-                E(4, 0), E(4, 1) };  
+    using namespace boost;
+
+    typedef adjacency_list<> Graph;
+    typedef std::pair< int, int > E;
+    E edges[] = { E(0, 2), E(1, 1), E(1, 3), E(2, 1), E(2, 3), E(3, 1), E(3, 4),
+        E(4, 0), E(4, 1) };
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  Graph G(5);
-  for (std::size_t j = 0; j < sizeof(edges)/sizeof(E); ++j)
-    add_edge(edges[j].first, edges[j].second, G);
+    Graph G(5);
+    for (std::size_t j = 0; j < sizeof(edges) / sizeof(E); ++j)
+        add_edge(edges[j].first, edges[j].second, G);
 #else
-  Graph G(edges, edges + sizeof(edges)/sizeof(E), 5);
+    Graph G(edges, edges + sizeof(edges) / sizeof(E), 5);
 #endif
 
-  typedef boost::graph_traits<Graph>::vertices_size_type size_type;
-  
-  std::vector<size_type> d(num_vertices(G));  
-  std::vector<size_type> f(num_vertices(G));
+    typedef boost::graph_traits< Graph >::vertices_size_type size_type;
 
-  cout << "DFS categorized directed graph" << endl;
-  depth_first_search(G, visitor(make_dfs_visitor(
-      make_list(print_edge("tree", on_tree_edge()),
-                print_edge("back", on_back_edge()),
-                print_edge("forward or cross", on_forward_or_cross_edge())
-                ))));
+    std::vector< size_type > d(num_vertices(G));
+    std::vector< size_type > f(num_vertices(G));
 
-  cout << endl << "BFS categorized directed graph" << endl;
-  boost::breadth_first_search
-    (G, vertex(0, G), visitor(make_bfs_visitor(
-     std::make_pair(print_edge("tree", on_tree_edge()),
-                    print_edge("cycle", on_non_tree_edge())))));
+    cout << "DFS categorized directed graph" << endl;
+    depth_first_search(G,
+        visitor(make_dfs_visitor(make_list(print_edge("tree", on_tree_edge()),
+            print_edge("back", on_back_edge()),
+            print_edge("forward or cross", on_forward_or_cross_edge())))));
 
-  return 0;
+    cout << endl << "BFS categorized directed graph" << endl;
+    boost::breadth_first_search(G, vertex(0, G),
+        visitor(
+            make_bfs_visitor(std::make_pair(print_edge("tree", on_tree_edge()),
+                print_edge("cycle", on_non_tree_edge())))));
+
+    return 0;
 }
-

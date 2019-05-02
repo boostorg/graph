@@ -46,63 +46,67 @@ using namespace boost;
 
 // create a tag for our new property
 
-enum vertex_first_name_t { vertex_first_name };
-namespace boost {
-  BOOST_INSTALL_PROPERTY(vertex, first_name);
+enum vertex_first_name_t
+{
+    vertex_first_name
+};
+namespace boost
+{
+BOOST_INSTALL_PROPERTY(vertex, first_name);
 }
 
-template <class EdgeIter, class Graph>
+template < class EdgeIter, class Graph >
 void who_owes_who(EdgeIter first, EdgeIter last, const Graph& G)
 {
-  // Access the propety acessor type for this graph
-  typedef typename property_map<Graph, vertex_first_name_t>
-    ::const_type NamePA;
-  NamePA name = get(vertex_first_name, G);
+    // Access the propety acessor type for this graph
+    typedef
+        typename property_map< Graph, vertex_first_name_t >::const_type NamePA;
+    NamePA name = get(vertex_first_name, G);
 
-  typedef typename boost::property_traits<NamePA>::value_type NameType;
+    typedef typename boost::property_traits< NamePA >::value_type NameType;
 
-  NameType src_name, targ_name;
+    NameType src_name, targ_name;
 
-  while (first != last) {
-    src_name = boost::get(name, source(*first,G));
-    targ_name = boost::get(name, target(*first,G));
-    cout << src_name << " owes " 
-         << targ_name << " some money" << endl;
-    ++first;
-  }
+    while (first != last)
+    {
+        src_name = boost::get(name, source(*first, G));
+        targ_name = boost::get(name, target(*first, G));
+        cout << src_name << " owes " << targ_name << " some money" << endl;
+        ++first;
+    }
 }
 
-int
-main()
+int main()
 {
-  {
-    // Create the graph, and specify that we will use std::string to
-    // store the first name's.
-    typedef adjacency_list<vecS, vecS, directedS, 
-      property<vertex_first_name_t, std::string> > MyGraphType;
-    
-    typedef pair<int,int> Pair;
-    Pair edge_array[11] = { Pair(0,1), Pair(0,2), Pair(0,3), Pair(0,4), 
-                            Pair(2,0), Pair(3,0), Pair(2,4), Pair(3,1), 
-                            Pair(3,4), Pair(4,0), Pair(4,1) };
-    
-    MyGraphType G(5);
-    for (int i=0; i<11; ++i)
-      add_edge(edge_array[i].first, edge_array[i].second, G);
+    {
+        // Create the graph, and specify that we will use std::string to
+        // store the first name's.
+        typedef adjacency_list< vecS, vecS, directedS,
+            property< vertex_first_name_t, std::string > >
+            MyGraphType;
 
-    property_map<MyGraphType, vertex_first_name_t>::type name
-      = get(vertex_first_name, G);
-    
-    boost::put(name, 0, "Jeremy");
-    boost::put(name, 1, "Rich");
-    boost::put(name, 2, "Andrew");
-    boost::put(name, 3, "Jeff");
-    name[4] = "Kinis"; // you can use operator[] too
-    
-    who_owes_who(edges(G).first, edges(G).second, G);
-  }
+        typedef pair< int, int > Pair;
+        Pair edge_array[11] = { Pair(0, 1), Pair(0, 2), Pair(0, 3), Pair(0, 4),
+            Pair(2, 0), Pair(3, 0), Pair(2, 4), Pair(3, 1), Pair(3, 4),
+            Pair(4, 0), Pair(4, 1) };
 
-  cout << endl;
+        MyGraphType G(5);
+        for (int i = 0; i < 11; ++i)
+            add_edge(edge_array[i].first, edge_array[i].second, G);
 
-  return 0;
+        property_map< MyGraphType, vertex_first_name_t >::type name
+            = get(vertex_first_name, G);
+
+        boost::put(name, 0, "Jeremy");
+        boost::put(name, 1, "Rich");
+        boost::put(name, 2, "Andrew");
+        boost::put(name, 3, "Jeff");
+        name[4] = "Kinis"; // you can use operator[] too
+
+        who_owes_who(edges(G).first, edges(G).second, G);
+    }
+
+    cout << endl;
+
+    return 0;
 }

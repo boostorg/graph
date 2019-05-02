@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Concepts</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -130,30 +130,30 @@ each of the concepts. The notation used in the table is as follows.
 <CAPTION ALIGN="BOTTOM"><STRONG>Table 1:</STRONG>
     Summary of the graph concepts.
     </CAPTION>
-<TR><TD>  
+<TR><TD>
 <TABLE border>
 <TR><TH ALIGN="LEFT">
 <B>Expression</B> </TH>
 <TH ALIGN="LEFT" VALIGN="TOP"> <B>Return Type or Description</B> </TH>
 </TR>
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
  <a href="./Graph.html">Graph</a> </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::vertex_descriptor</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">  The type for
   vertex representative objects. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::edge_descriptor</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> The type for
   edge representative objects. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::directed_category</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Directed or undirected? </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::edge_parallel_category</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Allow parallel edges? </TD>
 </TR>
@@ -163,201 +163,201 @@ ALIGN="LEFT" VALIGN="TOP">The ways in which the vertices and edges of
 the graph can be visited.</TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
  <a href="./IncidenceGraph.html">IncidenceGraph</a> refines Graph </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::out_edge_iterator</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Iterate through
   the out-edges. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::degree_size_type</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> The integer type for
 vertex degree. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>out_edges(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;out_edge_iterator, out_edge_iterator&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>source(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>target(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>out_degree(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>degree_size_type</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
  <a href="./BidirectionalGraph.html">BidirectionalGraph</a> refines
   IncidenceGraph </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::in_edge_iterator</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Iterate through the in-edges. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>in_edges(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;in_edge_iterator, in_edge_iterator&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>in_degree(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>degree_size_type</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>degree(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>degree_size_type</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./AdjacencyGraph.html">AdjacencyGraph</a> refines Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::adjacency_iterator</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Iterate through
   adjacent vertices. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>adjacent_vertices(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"><TT>std::pair&lt;adjacency_iterator, adjacency_iterator&gt;</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./VertexListGraph.html">VertexListGraph</a> refines
   Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::vertex_iterator</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Iterate through the
   graph's vertex set. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::vertices_size_type</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> The unsigned integer type for
 number of vertices in the graph. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>vertices(g)</TT>  </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"><TT>std::pair&lt;vertex_iterator, vertex_iterator&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>num_vertices(g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertices_size_type</TT>  </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./EdgeListGraph.html">EdgeListGraph</a> refines Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::edge_iterator</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Iterate through the graph's
   edge set. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::graph_traits&lt;G&gt;::edges_size_type</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> The unsigned integer type for
 number of edges in the graph. </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>edges(g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_iterator, edge_iterator&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>num_edges(g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>edges_size_type</TT>  </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>source(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>target(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./AdjacencyMatrix.html">AdjacencyMatrix</a> refines Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>edge(u, v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_descriptor, bool&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./MutableGraph.html">MutableGraph</a> refines
   Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>add_vertex(g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>clear_vertex(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>remove_vertex(v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>add_edge(u, v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_descriptor, bool&gt;</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>remove_edge(u, v, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>remove_edge(e, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>remove_edge(e_iter, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>void</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
-<TR><TD ALIGN="LEFT" COLSPAN=2>  
+<TR><TD ALIGN="LEFT" COLSPAN=2>
 <a href="./MutablePropertyGraph.html">MutablePropertyGraph</a> refines
   Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>add_vertex(vp, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>vertex_descriptor</TT> </TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>add_edge(u, v, ep, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> <TT>std::pair&lt;edge_descriptor,
   bool&gt;</TT> </TD>
 </TR>
 <!---------------------------------------------------------------->
 <TR>
-<TD ALIGN="LEFT" COLSPAN=2>  
+<TD ALIGN="LEFT" COLSPAN=2>
 <a href="./PropertyGraph.html">PropertyGraph</a> refines Graph</TD>
 </TR>
-<TR><TD ALIGN="LEFT">  
+<TR><TD ALIGN="LEFT">
 <TT>boost::property_map&lt;G, Property&gt;::type</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">Type for a mutable property map.</TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>boost::property_map&lt;G, Property&gt;::const_type</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">Type for a non-mutable property map.</TD>
 </TR>
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>get(property, g)</TT> </TD>
 <TD ALIGN="LEFT" VALIGN="TOP"> Function to get a property map. </TD>
 </TR>
 
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>get(property,&nbsp;g,&nbsp;x)</TT>
 </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">Get property value for vertex or edge <tt>x</tt>. </TD>
 </TR>
 
-<TR><TD ALIGN="LEFT"> 
+<TR><TD ALIGN="LEFT">
 <TT>put(property,&nbsp;g,&nbsp;x,&nbsp;v)</TT>
 </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">Set property value for vertex or edge
@@ -406,10 +406,10 @@ href="../example/undirected_adjacency_list.cpp"><TT>example/undirected_adjacency
 
   std::cout &lt;&lt; "the edges incident to v: ";
   boost::graph_traits&lt;UndirectedGraph&gt;::out_edge_iterator e, e_end;
-  boost::graph_traits&lt;UndirectedGraph&gt;::vertex_descriptor 
+  boost::graph_traits&lt;UndirectedGraph&gt;::vertex_descriptor
     s = vertex(0, undigraph);
   for (boost::tie(e, e_end) = out_edges(s, undigraph); e != e_end; ++e)
-    std::cout &lt;&lt; "(" &lt;&lt; source(*e, undigraph) 
+    std::cout &lt;&lt; "(" &lt;&lt; source(*e, undigraph)
               &lt;&lt; "," &lt;&lt; target(*e, undigraph) &lt;&lt; ")" &lt;&lt; endl;
 </PRE>
 
@@ -495,4 +495,4 @@ weight[(v,u)] = 3.1
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

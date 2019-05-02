@@ -11,25 +11,26 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <iostream>
 
-int
-main()
+int main()
 {
-  using namespace boost;
-  typedef adjacency_list<vecS, vecS, bidirectionalS, no_property, 
-    property<int, edge_weight_t>, no_property, vecS> Graph;
+    using namespace boost;
+    typedef adjacency_list< vecS, vecS, bidirectionalS, no_property,
+        property< int, edge_weight_t >, no_property, vecS >
+        Graph;
 
-  const std::size_t n = 3;
-  typedef std::pair<std::size_t, std::size_t> E;
-  E edge_array[] = { E(0,1), E(0,2), E(0,1) };
-  const std::size_t m = sizeof(edge_array) / sizeof(E);
-  Graph g(edge_array, edge_array + m, n);
+    const std::size_t n = 3;
+    typedef std::pair< std::size_t, std::size_t > E;
+    E edge_array[] = { E(0, 1), E(0, 2), E(0, 1) };
+    const std::size_t m = sizeof(edge_array) / sizeof(E);
+    Graph g(edge_array, edge_array + m, n);
 
-  graph_traits<Graph>::edge_iterator edge_iterator;
-  for (std::size_t i = 0; i < m; ++i) {
-    const graph_traits<Graph>::edge_iterator e = edges(g).first + i;
-    std::cout << *e << " ";
-  }
-  std::cout << std::endl;
-  
-  return 0;
+    graph_traits< Graph >::edge_iterator edge_iterator;
+    for (std::size_t i = 0; i < m; ++i)
+    {
+        const graph_traits< Graph >::edge_iterator e = edges(g).first + i;
+        std::cout << *e << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
 }

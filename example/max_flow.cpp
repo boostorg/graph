@@ -48,52 +48,51 @@
 //  f 7 6 0
 //  f 7 5 0
 
-int
-main()
+int main()
 {
-  using namespace boost;
+    using namespace boost;
 
-  typedef adjacency_list_traits<vecS, vecS, directedS> Traits;
-  typedef adjacency_list<listS, vecS, directedS, 
-    property<vertex_name_t, std::string>,
-    property<edge_capacity_t, long,
-      property<edge_residual_capacity_t, long,
-        property<edge_reverse_t, Traits::edge_descriptor> > >
-  > Graph;
+    typedef adjacency_list_traits< vecS, vecS, directedS > Traits;
+    typedef adjacency_list< listS, vecS, directedS,
+        property< vertex_name_t, std::string >,
+        property< edge_capacity_t, long,
+            property< edge_residual_capacity_t, long,
+                property< edge_reverse_t, Traits::edge_descriptor > > > >
+        Graph;
 
-  Graph g;
+    Graph g;
 
-  property_map<Graph, edge_capacity_t>::type 
-    capacity = get(edge_capacity, g);
-  property_map<Graph, edge_reverse_t>::type 
-    rev = get(edge_reverse, g);
-  property_map<Graph, edge_residual_capacity_t>::type 
-    residual_capacity = get(edge_residual_capacity, g);
+    property_map< Graph, edge_capacity_t >::type capacity
+        = get(edge_capacity, g);
+    property_map< Graph, edge_reverse_t >::type rev = get(edge_reverse, g);
+    property_map< Graph, edge_residual_capacity_t >::type residual_capacity
+        = get(edge_residual_capacity, g);
 
-  Traits::vertex_descriptor s, t;
-  read_dimacs_max_flow(g, capacity, rev, s, t);
+    Traits::vertex_descriptor s, t;
+    read_dimacs_max_flow(g, capacity, rev, s, t);
 
-  long flow;
+    long flow;
 #if defined(BOOST_MSVC) && BOOST_MSVC <= 1300
-  // Use non-named parameter version
-  property_map<Graph, vertex_index_t>::type 
-    indexmap = get(vertex_index, g);
-  flow = push_relabel_max_flow(g, s, t, capacity, residual_capacity, rev, indexmap);
+    // Use non-named parameter version
+    property_map< Graph, vertex_index_t >::type indexmap = get(vertex_index, g);
+    flow = push_relabel_max_flow(
+        g, s, t, capacity, residual_capacity, rev, indexmap);
 #else
-  flow = push_relabel_max_flow(g, s, t);
+    flow = push_relabel_max_flow(g, s, t);
 #endif
 
-  std::cout << "c  The total flow:" << std::endl;
-  std::cout << "s " << flow << std::endl << std::endl;
+    std::cout << "c  The total flow:" << std::endl;
+    std::cout << "s " << flow << std::endl << std::endl;
 
-  std::cout << "c flow values:" << std::endl;
-  graph_traits<Graph>::vertex_iterator u_iter, u_end;
-  graph_traits<Graph>::out_edge_iterator ei, e_end;
-  for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
-    for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
-      if (capacity[*ei] > 0)
-        std::cout << "f " << *u_iter << " " << target(*ei, g) << " " 
-                  << (capacity[*ei] - residual_capacity[*ei]) << std::endl;
-  
-  return 0;
+    std::cout << "c flow values:" << std::endl;
+    graph_traits< Graph >::vertex_iterator u_iter, u_end;
+    graph_traits< Graph >::out_edge_iterator ei, e_end;
+    for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
+        for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
+            if (capacity[*ei] > 0)
+                std::cout << "f " << *u_iter << " " << target(*ei, g) << " "
+                          << (capacity[*ei] - residual_capacity[*ei])
+                          << std::endl;
+
+    return 0;
 }

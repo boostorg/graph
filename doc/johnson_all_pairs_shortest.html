@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Johnson All Pairs Shortest Paths</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -22,12 +22,12 @@
 <PRE>
 <i>// named parameter version</i>
   template &lt;class VertexAndEdgeListGraph, class DistanceMatrix,
-            class VertexID, class Weight, class BinaryPredicate, 
+            class VertexID, class Weight, class BinaryPredicate,
             class BinaryFunction, class Infinity, class DistanceZero&gt;
   bool
-  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1, 
+  johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph& g1,
                DistanceMatrix&amp; D,
-               VertexID id1, Weight w1, const BinaryPredicate&amp; compare, 
+               VertexID id1, Weight w1, const BinaryPredicate&amp; compare,
                const BinaryFunction&amp; combine, const Infinity&amp; inf,
                DistanceZero zero);
 
@@ -39,7 +39,7 @@ bool johnson_all_pairs_shortest_paths(Graph&amp; g, DistanceMatrix&amp; D,
 template &lt;typename Graph, typename DistanceMatrix,
           typename VertexIndex, typename WeightMap, typename DT&gt;
 bool
-johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1, 
+johnson_all_pairs_shortest_paths(VertexAndEdgeListGraph&amp; g1,
   DistanceMatrix&amp; D,
   VertexIndex i_map, WeightMap w_map, DT zero)
 </PRE>
@@ -86,7 +86,7 @@ map.
 
 <h3>Named Parameters</h3>
 
-IN: <tt>weight_map(WeightMap w_map)</tt>   
+IN: <tt>weight_map(WeightMap w_map)</tt>
 <blockquote>
   The weight or "length" of each edge in the graph.
   The type <tt>WeightMap</tt> must be a model of
@@ -96,12 +96,12 @@ IN: <tt>weight_map(WeightMap w_map)</tt>
   <b>Default:</b>  <tt>get(edge_weight, g)</tt>
 </blockquote>
 
-UTIL: <tt>weight_map2(WeightMap2 w2_map)</tt>   
+UTIL: <tt>weight_map2(WeightMap2 w2_map)</tt>
 <blockquote>
   This parameter is no longer needed, and will be ignored.
 </blockquote>
 
-IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt> 
+IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 <blockquote>
   This maps each vertex to an integer in the range <tt>[0,
     num_vertices(g))</tt>. This is necessary for efficient updates of the
@@ -119,12 +119,12 @@ IN: <tt>vertex_index_map(VertexIndexMap i_map)</tt>
 </blockquote>
 
 
-UTIL: <tt>distance_map(DistanceMap d_map)</tt> 
+UTIL: <tt>distance_map(DistanceMap d_map)</tt>
 <blockquote>
   This parameter is no longer needed, and will be ignored.
 </blockquote>
 
-IN: <tt>distance_compare(CompareFunction cmp)</tt> 
+IN: <tt>distance_compare(CompareFunction cmp)</tt>
 <blockquote>
   This function is use to compare distances to determine
   which vertex is closer to the source vertex.
@@ -136,7 +136,7 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   <tt>DT=typename&nbsp;property_traits&lt;WeightMap&gt;::value_type</tt>
 </blockquote>
 
-IN: <tt>distance_combine(CombineFunction cmb)</tt> 
+IN: <tt>distance_combine(CombineFunction cmb)</tt>
 <blockquote>
   This function is used to combine distances to compute the distance
   of a path. The <tt>CombineFunction</tt> type must be a model of <a
@@ -147,15 +147,15 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
    <tt>DT=typename&nbsp;property_traits&lt;WeightMap&gt;::value_type</tt>
 </blockquote>
 
-IN: <tt>distance_inf(DT inf)</tt> 
+IN: <tt>distance_inf(DT inf)</tt>
 <blockquote>
   This value is used to initialize the distance for each
-  vertex before the start of the algorithm. 
+  vertex before the start of the algorithm.
   The type <tt>DT</tt> must be the value type of the <tt>WeightMap</tt>.<br>
   <b>Default:</b> <tt>std::numeric_limits::max()</tt>
 </blockquote>
 
-IN: <tt>distance_zero(DT zero)</tt> 
+IN: <tt>distance_zero(DT zero)</tt>
 <blockquote>
   This value is used to initialize the distance for the source
   vertex before the start of the algorithm.  The type <tt>DT</tt>
@@ -163,7 +163,7 @@ IN: <tt>distance_zero(DT zero)</tt>
   <b>Default:</b> <tt>0</tt>
 </blockquote>
 
-UTIL/OUT: <tt>color_map(ColorMap c_map)</tt> 
+UTIL/OUT: <tt>color_map(ColorMap c_map)</tt>
 <blockquote>
   This is used during the execution of the algorithm to mark the
   vertices. The vertices start out white and become gray when they are
@@ -208,4 +208,4 @@ HREF="bibliography.html#clr90">8</A>].
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
