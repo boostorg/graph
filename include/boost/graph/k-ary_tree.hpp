@@ -532,8 +532,8 @@ namespace boost
 
       if (has_left_successor(u, g)) {
         if (has_left_successor(v, h)) {
-          if (!bifurcate_isomorphic_nonempty(left_successor(u, g),
-                                             left_successor(v, h)))
+          if (!bifurcate_isomorphic_nonempty(left_successor(u, g), g,
+                                             left_successor(v, h), h))
             return false;
         }
         else
@@ -545,8 +545,8 @@ namespace boost
 
       if (has_right_successor(u, g)) {
         if (has_right_successor(v, h)) {
-          if (!bifurcate_isomorphic_nonempty(right_successor(u, g),
-                                             right_successor(v, h)))
+          if (!bifurcate_isomorphic_nonempty(right_successor(u, g), g,
+                                             right_successor(v, h), h))
             return false;
         }
         else
@@ -611,10 +611,13 @@ namespace boost
 
   template <typename Vertex0, typename Vertex1>
   bool
-  isomorphism(k_ary_tree<2, false, Vertex0> const &/*g*/, k_ary_tree<2, false, Vertex1> const &/*h*/)
+  isomorphism(k_ary_tree<2, false, Vertex0> const &g,
+              k_ary_tree<2, false, Vertex1> const &h)
   {
-    // return detail::bifurcate_isomorphic(u, g, v, h);
-    return true;
+    // TODO: Find root nodes???
+    return num_vertices(g) == num_vertices(h) &&
+            (num_vertices(g) == 0
+            || detail::bifurcate_isomorphic_nonempty(0, g, 0, h));
   }
 
 
