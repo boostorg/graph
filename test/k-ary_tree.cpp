@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(push_pop, BinaryTree, tree_types)
 {
   BinaryTree tree;
   typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
-  vertex_descriptor u = add_vertex(tree);
+  auto u = add_vertex(tree);
   BOOST_TEST(num_vertices(tree) == 1);
   remove_vertex(u, tree);
   BOOST_TEST(num_vertices(tree) == 0);
@@ -97,9 +97,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(insert_remove_randomly, BinaryTree, tree_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(incidence_graph, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
 
-  vertex_descriptor u = add_vertex(tree);
+  auto u = add_vertex(tree);
   BOOST_TEST(boost::distance(out_edges(u, tree)) == 0);
   BOOST_TEST(out_degree(u, tree) == 0);
   add_edge(u, u + 1, tree);
@@ -153,7 +152,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
   using boost::visit;
   std::vector<boost::default_color_type> color;
   typedef std::pair<visit, vertex_descriptor> visiting;
-  std::array< visiting, 9> const expected_seq =
+  std::array< visiting, 9> const expected_seq
   {{
     std::make_pair(visit::pre, 0),
     std::make_pair(visit::pre, 1),
