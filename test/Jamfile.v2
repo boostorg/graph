@@ -29,8 +29,7 @@ local WOPTS =
   -Winvalid-pch
   -Wformat=2
   -Wmissing-format-attribute
-  -Wformat-nonliteral
-  -std=c++03 ;
+  -Wformat-nonliteral ;
 
 project : requirements <toolset>gcc:<cxxflags>$(WOPTS) <toolset>clang:<cxxflags>$(WOPTS) ;
 
