@@ -48,14 +48,20 @@
   Vertex j is in component 2
  */
 
-int main(int, char*[])
+int main(int argc, char* argv[])
 {
   using namespace boost;
   const char* name = "abcdefghij";
 
   adjacency_list<vecS, vecS, directedS> G;
-  dynamic_properties dp;
-  read_graphviz("scc.dot", G, dp);
+  dynamic_properties dp(ignore_other_properties);
+  const char * filename = (argc >= 2 ? argv[1] : "./scc.dot");
+  std::ifstream ifs(filename);
+  if (!ifs) {
+    std::cerr << "Could not open " << filename << std::endl;
+    return 1;
+  }
+ read_graphviz(ifs, G, dp);
 
   std::cout << "A directed graph:" << std::endl;
   print_graph(G, name);

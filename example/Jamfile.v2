@@ -195,7 +195,7 @@ explicit girth ;
 #
 # These all use an interface that has been removed:
 #
-#run kruskal-telephone.cpp ;
+run kruskal-telephone.cpp ../build//boost_graph : $(TEST_DIR)/figs/telephone-network.dot ;
 #run loops_dfs.cpp ;
 #run scc.cpp ;
 #run reachable-loop-head.cpp ;
@@ -207,7 +207,7 @@ explicit girth ;
 #run edge-connectivity.cpp ;
 #
 # These compile, but still use the old graphviz interface and die and runtime:
-# run strong_components.cpp ../build//boost_graph ;
+run strong_components.cpp ../build//boost_graph : $(TEST_DIR)/scc.dot ;
 
 
 #
