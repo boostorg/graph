@@ -1,4 +1,4 @@
-# Copyright (c) 2002 Trustees of Indiana University]
+# Copyright (c) 2002 Trustees of Indiana University
 # Copyright (C) 2019 Josh Marshall
 #
 # Distributed under the Boost Software License, Version 1.0.
@@ -18,7 +18,6 @@ local WOPTS =
   -Wextra
   -Wpedantic
   -Wno-sign-compare
-  -fPIC
   -O0
   -ggdb
   -fno-omit-frame-pointer
@@ -31,9 +30,7 @@ local WOPTS =
   -Wformat=2
   -Wmissing-format-attribute
   -Wformat-nonliteral
-  -flto
-  -Wno-unused-parameter
-  -std=c++11 ;
+  -std=c++03 ;
 
 project : requirements <toolset>gcc:<cxxflags>$(WOPTS) <toolset>clang:<cxxflags>$(WOPTS) ;
 
