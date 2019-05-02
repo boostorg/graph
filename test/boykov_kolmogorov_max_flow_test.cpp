@@ -442,24 +442,19 @@ int main(int argc, char* argv[])
 
   //checks support of vecS storage
   long flow_vecS = test_adjacency_list_vecS(n_verts, n_edges, seed);
-  // std::cout << "vecS flow: " << flow_vecS << std::endl;
   //checks support of listS storage (especially problems with vertex indices)
   long flow_listS = test_adjacency_list_listS(n_verts, n_edges, seed);
-  // std::cout << "listS flow: " << flow_listS << std::endl;
   BOOST_TEST_EQ(flow_vecS, flow_listS);
   //checks bundled properties
   long flow_bundles = test_bundled_properties(n_verts, n_edges, seed);
-  // std::cout << "bundles flow: " << flow_bundles << std::endl;
   BOOST_TEST_EQ(flow_listS, flow_bundles);
   //checks overloads
   long flow_overloads = test_overloads(n_verts, n_edges, seed);
-  // std::cout << "overloads flow: " << flow_overloads << std::endl;
   BOOST_TEST_EQ(flow_bundles, flow_overloads);
 
   // excessive test version where Boykov-Kolmogorov's algorithm invariants are
   // checked
   long flow_invariants = test_algorithms_invariant(n_verts, n_edges, seed);
-  // std::cout << "invariants flow: " << flow_invariants << std::endl;
   BOOST_TEST_EQ(flow_overloads, flow_invariants);
   return boost::report_errors();
 }

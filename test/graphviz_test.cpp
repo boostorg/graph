@@ -21,17 +21,15 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/property_map/dynamic_property_map.hpp>
+#include <boost/test/test_tools.hpp>
+#include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 #include <algorithm>
 #include <string>
 #include <iostream>
 #include <iterator>
 #include <map>
 #include <utility>
-#include <boost/test/test_tools.hpp>
-#include <boost/test/unit_test.hpp>
-#include <boost/test/floating_point_comparison.hpp>
-//#include <boost/core/lightweight_test.hpp>
-
 
 using namespace std;
 using namespace boost;
@@ -39,11 +37,9 @@ using namespace boost;
 using namespace boost::assign;
 
 typedef std::string node_t;
-
 typedef std::pair<node_t,node_t> edge_t;
 
 typedef std::map<node_t,float> mass_map_t;
-
 typedef std::map<edge_t,double> weight_map_t;
 
 typedef istringstream gs_t;

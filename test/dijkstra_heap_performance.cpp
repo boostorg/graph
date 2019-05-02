@@ -16,7 +16,6 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/timer/timer.hpp>
 #include <vector>
 #include <iostream>
 

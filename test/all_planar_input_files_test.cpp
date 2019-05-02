@@ -251,13 +251,9 @@ int main(int argc, char* argv[])
 {
 
   std::string input_directory_str = "planar_input_graphs";
-  if (argc > 1)
-    {
-      input_directory_str = std::string(argv[1]);
-    }
-
-  // std::cout << "Reading planar input files from " << input_directory_str
-            // << std::endl;
+  if (argc > 1) {
+    input_directory_str = std::string(argv[1]);
+  }
 
   filesystem::path input_directory =
     filesystem::system_complete(filesystem::path(input_directory_str));
@@ -271,12 +267,8 @@ int main(int argc, char* argv[])
     if (dir_itr->path().extension() != dimacs_extension)
       continue;
 
-    // std::cout << "Testing " << dir_itr->path().leaf() << "... ";
     BOOST_TEST (test_graph(dir_itr->path().string()) == 0);
-
-    // std::cout << std::endl;
   }
 
   return boost::report_errors();
-
 }
