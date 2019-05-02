@@ -120,7 +120,8 @@ test_graph_full(
     typename graph_traits<graph_t>::vertex_iterator i,j;
     for(boost::tie(i,j) = vertices(graph); i != j; ++i) {
       //  - get its name
-      auto node_name = get(name,*i);
+      // auto node_name = get(name,*i);
+      const std::string node_name = get(name,*i);
       //  - get its mass
       bool eq_check = masses.find(node_name) != masses.end();
       BOOST_TEST(eq_check);
@@ -136,7 +137,8 @@ test_graph_full(
     typename graph_traits<graph_t>::edge_iterator i,j;
     for(boost::tie(i,j) = edges(graph); i != j; ++i) {
       //  - get its name
-      auto edge_name = make_pair(get(name, source(*i,graph)), get(name, target(*i,graph)));
+      // auto edge_name = make_pair(get(name, source(*i,graph)), get(name, target(*i,graph)));
+      std::pair<std::string, std::string> edge_name = make_pair(get(name, source(*i,graph)), get(name, target(*i,graph)));
       // - get its weight
       double edge_weight = get(weight,*i);
       bool eq_check = weights.find(edge_name) != weights.end();
