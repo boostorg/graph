@@ -6,6 +6,9 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 
+#if __cplusplus > 201103L
+
+
 #include <boost/graph/k-ary_tree.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -162,7 +165,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
     std::make_pair(boost::order::post, 0)
   }};
   tree_visitor<boost::order::visit, vertex_descriptor> visitor;
-  depth_first_visit(tree, 0, visitor, color);
+  depth_first_search(tree, 0, visitor, color);
   BOOST_TEST(boost::equal(visitor.visited, expected_seq));
 }
 
@@ -264,3 +267,6 @@ BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree>));
+
+#endif // #if __cplusplus > 201103L
+

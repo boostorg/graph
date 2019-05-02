@@ -9,6 +9,9 @@
 #ifndef BOOST_GRAPH_K_ARY_TREE
 #define BOOST_GRAPH_K_ARY_TREE
 
+#if __cplusplus > 201103L
+
+
 #include <boost/config.hpp>
 
 #include <boost/graph/graph_traits.hpp>
@@ -630,4 +633,6 @@ namespace boost
   }
 }
 
-#endif
+#endif // #if __cplusplus > 201103L
+
+#endif // #ifndef BOOST_GRAPH_K_ARY_TREE
