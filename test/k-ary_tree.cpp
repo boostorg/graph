@@ -150,21 +150,22 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
 
   create_full_tree(tree, 3);
 
+  using boost::visit;
   std::vector<boost::default_color_type> color;
-  typedef std::pair<boost::order::visit, vertex_descriptor> visiting;
+  typedef std::pair<visit, vertex_descriptor> visiting;
   std::array< visiting, 9> const expected_seq =
   {{
-    std::make_pair(boost::order::pre, 0),
-    std::make_pair(boost::order::pre, 1),
-    std::make_pair(boost::order::in, 1),
-    std::make_pair(boost::order::post, 1),
-    std::make_pair(boost::order::in, 0),
-    std::make_pair(boost::order::pre, 2),
-    std::make_pair(boost::order::in, 2),
-    std::make_pair(boost::order::post, 2),
-    std::make_pair(boost::order::post, 0)
+    std::make_pair(visit::pre, 0),
+    std::make_pair(visit::pre, 1),
+    std::make_pair(visit::in, 1),
+    std::make_pair(visit::post, 1),
+    std::make_pair(visit::in, 0),
+    std::make_pair(visit::pre, 2),
+    std::make_pair(visit::in, 2),
+    std::make_pair(visit::post, 2),
+    std::make_pair(visit::post, 0)
   }};
-  tree_visitor<boost::order::visit, vertex_descriptor> visitor;
+  tree_visitor<visit, vertex_descriptor> visitor;
   depth_first_search(tree, 0, visitor, color);
   BOOST_TEST(boost::equal(visitor.visited, expected_seq));
 }

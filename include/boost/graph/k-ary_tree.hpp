@@ -29,9 +29,7 @@
 
 namespace boost
 {
-  namespace order {
-    enum visit { pre, in, post };
-  }
+  enum class visit { pre, in, post };
 }
 
 #include <boost/graph/detail/k-ary_tree.hpp>
@@ -452,18 +450,18 @@ namespace boost
     {
       BOOST_ASSERT(!empty(u, g));
 
-      vis(order::pre, u);
+      vis(visit::pre, u);
       if (has_left_successor(u, g))
         vis = traverse_nonempty(left_successor(u, g), g, vis);
-      vis(order::in, u);
+      vis(visit::in, u);
       if (has_right_successor(u, g))
         vis = traverse_nonempty(right_successor(u, g), g, vis);
-      vis(order::post, u);
+      vis(visit::post, u);
       return vis;
     }
 
     template <typename Graph>
-    int traverse_step(order::visit &v,
+    int traverse_step(visit &v,
                       typename graph_traits<Graph>::vertex_descriptor &u,
                       Graph const &g)
     {
@@ -472,32 +470,32 @@ namespace boost
 
       switch (v)
       {
-        case order::pre:
+        case visit::pre:
           if (has_left_successor(u, g)) {
             u = left_successor(u, g);
             result = 1;
           }
           else {
-            v = order::in;
+            v = visit::in;
             result = 0;
           }
           break;
 
-        case order::in:
+        case visit::in:
           if (has_right_successor(u, g)) {
-            v = order::pre;
+            v = visit::pre;
             u = right_successor(u, g);
             result = 1;
           }
           else {
-            v = order::post;
+            v = visit::post;
             result = 0;
           }
           break;
 
-        case order::post:
+        case visit::post:
           if (is_left_successor(u, g))
-            v = order::in;
+            v = visit::in;
           u = predecessor(u, g);
           result = -1;
           break;
@@ -512,12 +510,12 @@ namespace boost
       if (empty(u, g))
         return vis;
       auto root = u;
-      order::visit v = order::pre;
+      visit v = visit::pre;
       vis(v, u);
       do {
         traverse_step(v, u, g);
         vis(v, u);
-      } while (u != root || v != order::post);
+      } while (u != root || v != visit::post);
       return vis;
     }
 
@@ -575,14 +573,14 @@ namespace boost
       if (empty(v, h))
         return false;
       auto root0 = u;
-      order::visit visit0 = order::pre;
-      order::visit visit1 = order::pre;
+      visit visit0 = visit::pre;
+      visit visit1 = visit::pre;
       while (true) {
         traverse_step(visit0, u, g);
         traverse_step(visit1, v, h);
         if (visit0 != visit1)
           return false;
-        if (u == root0 && visit0 == order::post)
+        if (u == root0 && visit0 == visit::post)
           return true;
       }
     }
