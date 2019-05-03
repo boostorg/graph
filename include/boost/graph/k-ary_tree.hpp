@@ -55,11 +55,11 @@ namespace boost
       detail::k_ary_tree_forward_node<k_ary_tree<K, false, Vertex> > > super_t;
 
   public:
-    typedef directed_tag directed_category;
+    using directed_category = directed_tag;
     class traversal_category : public incidence_graph_tag,
                                public vertex_list_graph_tag {};
-    typedef typename super_t::edge_descriptor edge_descriptor;
-    typedef typename super_t::vertex_descriptor vertex_descriptor;
+    using edge_descriptor = typename super_t::edge_descriptor;
+    using vertex_descriptor = typename super_t::vertex_descriptor;
 
     // *** VertexListGraph interface ***
 
