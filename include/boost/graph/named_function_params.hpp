@@ -714,7 +714,7 @@ namespace detail
     template < BOOST_PP_ENUM_PARAMS(nfixed, typename Param)                    \
                    BOOST_PP_COMMA_IF(nfixed) class P,                          \
         class T, class R >                                                     \
-    typename boost::result_of<::boost::graph::detail::BOOST_PP_CAT(            \
+    typename boost::result_of< ::boost::graph::detail::BOOST_PP_CAT(           \
         name, _impl) BOOST_PP_EXPR_IF(nfixed, <) BOOST_PP_ENUM_PARAMS(nfixed,  \
         Param) BOOST_PP_EXPR_IF(nfixed, >)(BOOST_PP_ENUM_PARAMS(nfixed, Param) \
             BOOST_PP_COMMA_IF(nfixed) const typename boost::detail::           \
@@ -733,8 +733,9 @@ namespace detail
     }                                                                          \
     BOOST_PP_EXPR_IF(nfixed, template < )                                      \
     BOOST_PP_ENUM_PARAMS(nfixed, typename Param)                               \
-    BOOST_PP_EXPR_IF(nfixed, >) BOOST_PP_EXPR_IF(nfixed, typename)             \
-        boost::result_of<::boost::graph::detail::BOOST_PP_CAT(                 \
+    BOOST_PP_EXPR_IF(nfixed, >)                                                \
+    BOOST_PP_EXPR_IF(nfixed, typename)                                         \
+        boost::result_of< ::boost::graph::detail::BOOST_PP_CAT(                \
             name, _impl) BOOST_PP_EXPR_IF(nfixed,                              \
             <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed,    \
             >)(BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed)   \
