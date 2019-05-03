@@ -223,8 +223,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Mutable, BinaryTree, tree_types)
   BOOST_TEST(!has_left_successor(added[2], tree));
   BOOST_TEST(!has_right_successor(added[2], tree));
 
-  BOOST_TEST(isomorphism(tree, tree));
-
   remove_edge(added[0], added[1], tree);
   remove_edge(added[0], added[2], tree);
   BOOST_TEST(!has_left_successor(added[0], tree));
