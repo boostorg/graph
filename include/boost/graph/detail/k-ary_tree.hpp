@@ -132,7 +132,7 @@ namespace boost
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == end(free_list));
+        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
 
         return nodes[u];
       }
@@ -144,7 +144,7 @@ namespace boost
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == end(free_list));
+        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
 
         return nodes[u].successors[N] != null_vertex();
       }
