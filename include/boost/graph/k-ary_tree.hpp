@@ -143,6 +143,8 @@ namespace boost
     std::pair<vertex_iterator, vertex_iterator>
     vertices(k_ary_tree const &g)
     {
+      if (num_vertices(g) == 0)
+        return std::make_pair(vertex_iterator(g), vertex_iterator(g));
       vertex_descriptor start = 0;
       if (g.free_list.back() == 0)
       {
@@ -292,10 +294,17 @@ namespace boost
     std::pair<vertex_iterator, vertex_iterator>
     vertices(k_ary_tree const &g)
     {
-      return std::make_pair(vertex_iterator(vertex_descriptor(), g),
-                            vertex_iterator(g));
+      if (num_vertices(g) == 0)
+        return std::make_pair(vertex_iterator(g), vertex_iterator(g));
+      vertex_descriptor start = 0;
+      if (g.free_list.back() == 0)
+      {
+        auto const not_successors = [](auto x, auto y){ return ++x != y; };
+        auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
+        start = *q + 1;
+      }
+      return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
     }
-
 
     // NOTE: This function will be an infinite loop if called on a recurrent
     // tree (which is not a tree any more).
@@ -638,6 +647,8 @@ namespace boost
   isomorphism(k_ary_tree<2, true, Vertex0> const &g,
               k_ary_tree<2, true, Vertex1> const &h)
   {
+    if (num_vertices(g) != num_vertices(h))
+      return false;
     auto const start_g = detail::get_default_starting_vertex(g),
                start_h = detail::get_default_starting_vertex(h);
     return detail::bifurcate_isomorphic(start_g, g, start_h, h);
