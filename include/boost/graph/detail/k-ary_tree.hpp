@@ -78,38 +78,10 @@ namespace boost
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
 
-    protected:
-
-      struct make_out_edge_descriptor
-      {
-        make_out_edge_descriptor(vertex_descriptor source) : source(source)
-        {
-          BOOST_ASSERT(source != null_vertex());
-        }
-
-        edge_descriptor operator()(vertex_descriptor target) const
-        {
-          BOOST_ASSERT(source != null_vertex());
-          BOOST_ASSERT(target != null_vertex());
-
-          return edge_descriptor(source, target);
-        }
-
-        vertex_descriptor source;
-      };
-
-      struct equal_to_null
-      {
-        bool operator()(vertex_descriptor u) const
-        {
-          return u == null_vertex();
-        }
-      };
-
-
     public:
-
-      class out_edge_iterator : public boost::iterator_adaptor<out_edge_iterator, vertex_descriptor const *,
+      class out_edge_iterator
+                : public boost::iterator_adaptor<out_edge_iterator,
+                                                 vertex_descriptor const *,
                                                  edge_descriptor,
                                                  forward_traversal_tag,
                                                  edge_descriptor>
@@ -121,37 +93,37 @@ namespace boost
                           vertex_descriptor const *last,
                           vertex_descriptor source)
           : out_edge_iterator::iterator_adaptor_(first), last(last),
-            foo(source)
+            source(source)
         {
-          while (this->base_reference() != last
-              && missing_child(*this->base_reference()))
-          {
-            this->base_reference()++;
-          }
+          BOOST_ASSERT(source != null_vertex());
+          post_increment();
         }
 
       private:
-        typename out_edge_iterator::iterator_adaptor_::reference
-        dereference() const
+        auto dereference() const
         {
-          return foo(*this->base_reference());
+          return edge_descriptor(source, *this->base_reference());
+        }
+
+        void post_increment()
+        {
+          while (this->base_reference() != last
+            && *this->base_reference() == null_vertex())
+          {
+            this->base_reference()++;
+          }
         }
 
         void increment()
         {
-          do
-          {
-            this->base_reference()++;
-          }
-          while (this->base_reference() != last
-              && missing_child(*this->base_reference()));
+          this->base_reference()++;
+          post_increment();
         }
 
         friend class boost::iterator_core_access;
 
         vertex_descriptor const *last;
-        make_out_edge_descriptor foo;
-        equal_to_null missing_child;
+        vertex_descriptor source;
       };
 
       Node const&
