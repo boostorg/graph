@@ -444,10 +444,11 @@ namespace boost
 
   namespace detail
   {
-    template <typename Tree, typename Visitor>
-    Visitor traverse_nonempty(typename graph_traits<Tree>::vertex_descriptor u,
-                              Tree const &g, Visitor vis)
+    template <typename BinaryTree, typename Visitor>
+    Visitor traverse_nonempty(typename graph_traits<BinaryTree>::vertex_descriptor u,
+                              BinaryTree const &g, Visitor vis)
     {
+      // Requires ForwardBinaryTreeConcept<BinaryTree>
       BOOST_ASSERT(!empty(u, g));
 
       vis(visit::pre, u);
@@ -460,12 +461,12 @@ namespace boost
       return vis;
     }
 
-    template <typename Graph>
+    template <typename BinaryTree>
     int traverse_step(visit &v,
-                      typename graph_traits<Graph>::vertex_descriptor &u,
-                      Graph const &g)
+                      typename graph_traits<BinaryTree>::vertex_descriptor &u,
+                      BinaryTree const &g)
     {
-      // Requires BidirectionalTree<Graph>
+      // Requires BidirectionalBinaryTreeConcept<BinaryTree>
       int result;
 
       switch (v)
@@ -503,9 +504,9 @@ namespace boost
       return result;
     }
 
-    template <typename Graph, typename Visitor>
-    Visitor traverse(typename graph_traits<Graph>::vertex_descriptor u,
-                    Graph const &g, Visitor vis)
+    template <typename BinaryTree, typename Visitor>
+    Visitor traverse(typename graph_traits<BinaryTree>::vertex_descriptor u,
+                    BinaryTree const &g, Visitor vis)
     {
       if (empty(u, g))
         return vis;
@@ -521,12 +522,12 @@ namespace boost
 
 
     // This is for forward trees.
-    template <typename Graph0, typename Graph1>
+    template <typename BinaryTree0, typename BinaryTree1>
     bool
-    bifurcate_isomorphic_nonempty(typename graph_traits<Graph0>::vertex_descriptor u,
-                                  Graph0 const &g,
-                                  typename graph_traits<Graph1>::vertex_descriptor v,
-                                  Graph1 const &h)
+    bifurcate_isomorphic_nonempty(typename graph_traits<BinaryTree0>::vertex_descriptor u,
+                                  BinaryTree0 const &g,
+                                  typename graph_traits<BinaryTree1>::vertex_descriptor v,
+                                  BinaryTree1 const &h)
     {
       BOOST_ASSERT(!empty(u, g));
       BOOST_ASSERT(!empty(v, h));
@@ -561,12 +562,12 @@ namespace boost
     }
 
     // This is for bidirectional trees.
-    template <typename Graph0, typename Graph1>
+    template <typename BinaryTree0, typename BinaryTree1>
     bool
-    bifurcate_isomorphic(typename graph_traits<Graph0>::vertex_descriptor u,
-                         Graph0 const &g,
-                         typename graph_traits<Graph1>::vertex_descriptor v,
-                         Graph1 const &h)
+    bifurcate_isomorphic(typename graph_traits<BinaryTree0>::vertex_descriptor u,
+                         BinaryTree0 const &g,
+                         typename graph_traits<BinaryTree1>::vertex_descriptor v,
+                         BinaryTree1 const &h)
     {
       if (empty(u, g))
         return empty(v, h);
@@ -609,6 +610,7 @@ namespace boost
   {
     vis = detail::traverse(s, g, vis);
   }
+
 
   template <typename Vertex0, typename Vertex1>
   bool
