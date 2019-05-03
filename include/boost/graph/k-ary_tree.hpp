@@ -11,7 +11,6 @@
 
 #if __cplusplus > 201103L
 
-
 #include <boost/config.hpp>
 
 #include <boost/graph/graph_traits.hpp>
@@ -19,11 +18,13 @@
 #include <boost/graph/graph_selectors.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/detail/indexed_properties.hpp>
+#include <boost/graph/named_function_params.hpp>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
-#include <boost/type_traits/conditional.hpp>
+#include <boost/range.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 
 #include <utility>
 
@@ -122,15 +123,15 @@ namespace boost
 
       bool equal(vertex_iterator const &other) const
       {
+        BOOST_ASSERT(g == other.g);
+
         if (traversal.empty())
           return other.traversal.empty();
 
         if (other.traversal.empty())
           return false;
 
-        return traversal.top() == other.traversal.top()
-              // && *g == *other.g
-              ;
+        return traversal.top() == other.traversal.top();
       }
 
       vertex_descriptor last;
@@ -142,10 +143,15 @@ namespace boost
     std::pair<vertex_iterator, vertex_iterator>
     vertices(k_ary_tree const &g)
     {
-      return std::make_pair(vertex_iterator(vertex_descriptor(), g),
-                            vertex_iterator(g));
+      vertex_descriptor start = 0;
+      if (g.free_list.back() == 0)
+      {
+        auto const not_successors = [](auto x, auto y){ return ++x != y; };
+        auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
+        start = *q + 1;
+      }
+      return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
     }
-
 
 
     // *** MutableGraph interface ***
@@ -445,8 +451,9 @@ namespace boost
   namespace detail
   {
     template <typename BinaryTree, typename Visitor>
-    Visitor traverse_nonempty(typename graph_traits<BinaryTree>::vertex_descriptor u,
-                              BinaryTree const &g, Visitor vis)
+    Visitor
+    traverse_nonempty(typename graph_traits<BinaryTree>::vertex_descriptor u,
+                      BinaryTree const &g, Visitor vis)
     {
       // Requires ForwardBinaryTreeConcept<BinaryTree>
       BOOST_ASSERT(!empty(u, g));
@@ -617,10 +624,12 @@ namespace boost
   isomorphism(k_ary_tree<2, false, Vertex0> const &g,
               k_ary_tree<2, false, Vertex1> const &h)
   {
-    // TODO: Find root nodes???
-    return num_vertices(g) == num_vertices(h) &&
-            (num_vertices(g) == 0
-            || detail::bifurcate_isomorphic_nonempty(0, g, 0, h));
+    if (num_vertices(g) != num_vertices(h))
+      return false;
+    auto const start_g = detail::get_default_starting_vertex(g),
+               start_h = detail::get_default_starting_vertex(h);
+    return num_vertices(g) == 0
+            || detail::bifurcate_isomorphic_nonempty(start_g, g, start_h, h);
   }
 
 
@@ -629,7 +638,9 @@ namespace boost
   isomorphism(k_ary_tree<2, true, Vertex0> const &g,
               k_ary_tree<2, true, Vertex1> const &h)
   {
-    return detail::bifurcate_isomorphic(0, g, 0, h);
+    auto const start_g = detail::get_default_starting_vertex(g),
+               start_h = detail::get_default_starting_vertex(h);
+    return detail::bifurcate_isomorphic(start_g, g, start_h, h);
   }
 }
 
