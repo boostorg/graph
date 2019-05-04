@@ -19,6 +19,8 @@
 #include <boost/range.hpp>
 #include <boost/range/algorithm.hpp>
 
+#include <boost/assert.hpp>
+
 #include <array>
 #include <tuple>
 #include <utility>
@@ -27,6 +29,17 @@ template <typename Graph>
 void create_full_tree(Graph &tree,
                       typename boost::graph_traits<Graph>::vertex_descriptor weight)
 {
+  BOOST_ASSERT(weight >= 0);
+
+  if (weight == 0)
+    return;
+
+  if (weight == 1)
+  {
+    add_vertex(tree);
+    return;
+  }
+
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 
   vertex_descriptor parent = 0;
