@@ -229,7 +229,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(Mutable, BinaryTree, tree_types)
   BOOST_TEST(!has_right_successor(added[0], tree));
 }
 
-
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_isomorphism, BinaryTree, tree_types)
 {
   BinaryTree tree0, tree1;
@@ -238,7 +237,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_isomorphism, BinaryTree, tree_types)
   create_full_tree(tree1, 15);
   BOOST_TEST(isomorphism(tree0, tree1));
 }
-
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(VertexListGraph, BinaryTree, tree_types)
 {
@@ -265,9 +263,14 @@ BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree>));
 BOOST_CONCEPT_ASSERT((ForwardBinaryTreeConcept<forward_binary_tree>));
 BOOST_CONCEPT_ASSERT((BidirectionalBinaryTreeConcept<bidirectional_binary_tree>));
-
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree>));
 
-#endif // #if __cplusplus > 201103L
+#else
 
+int main()
+{
+
+}
+
+#endif // #if __cplusplus > 201103L
