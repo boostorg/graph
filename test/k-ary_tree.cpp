@@ -263,6 +263,9 @@ BOOST_CONCEPT_ASSERT((MutableGraphConcept<bidirectional_binary_tree>));
 BOOST_CONCEPT_ASSERT((MutableGraphConcept<forward_binary_tree>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree>));
+BOOST_CONCEPT_ASSERT((ForwardBinaryTreeConcept<forward_binary_tree>));
+BOOST_CONCEPT_ASSERT((BidirectionalBinaryTreeConcept<bidirectional_binary_tree>));
+
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree>));
 
