@@ -145,13 +145,7 @@ namespace boost
     {
       if (num_vertices(g) == 0)
         return std::make_pair(vertex_iterator(g), vertex_iterator(g));
-      vertex_descriptor start = 0;
-      if (g.free_list.back() == 0)
-      {
-        auto const not_successors = [](auto x, auto y){ return ++x != y; };
-        auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
-        start = *q + 1;
-      }
+      auto start = default_starting_vertex(g);
       return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
     }
 
@@ -296,13 +290,7 @@ namespace boost
     {
       if (num_vertices(g) == 0)
         return std::make_pair(vertex_iterator(g), vertex_iterator(g));
-      vertex_descriptor start = 0;
-      if (g.free_list.back() == 0)
-      {
-        auto const not_successors = [](auto x, auto y){ return ++x != y; };
-        auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
-        start = *q + 1;
-      }
+      auto start = default_starting_vertex(g);
       return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
     }
 
@@ -312,11 +300,11 @@ namespace boost
     vertex_descriptor
     root(vertex_descriptor u, k_ary_tree const &g)
     {
-      BOOST_ASSERT(u != graph_traits<k_ary_tree>::null_vertex());
+      BOOST_ASSERT(!empty(u, g));
 
-      while (g[u].predecessor != graph_traits<k_ary_tree>::null_vertex())
+      while (has_predecessor(u, g))
       {
-        u = g[u].predecessor;
+        u = predecessor(u, g);
       }
 
       BOOST_ASSERT(u != graph_traits<k_ary_tree>::null_vertex());
@@ -635,10 +623,8 @@ namespace boost
   {
     if (num_vertices(g) != num_vertices(h))
       return false;
-    auto const start_g = detail::get_default_starting_vertex(g),
-               start_h = detail::get_default_starting_vertex(h);
     return num_vertices(g) == 0
-            || detail::bifurcate_isomorphic_nonempty(start_g, g, start_h, h);
+            || detail::bifurcate_isomorphic_nonempty(0, g, 0, h);
   }
 
 
@@ -649,9 +635,8 @@ namespace boost
   {
     if (num_vertices(g) != num_vertices(h))
       return false;
-    auto const start_g = detail::get_default_starting_vertex(g),
-               start_h = detail::get_default_starting_vertex(h);
-    return detail::bifurcate_isomorphic(start_g, g, start_h, h);
+    return num_vertices(g) == 0 ||
+            detail::bifurcate_isomorphic(0, g, 0, h);
   }
 }
 

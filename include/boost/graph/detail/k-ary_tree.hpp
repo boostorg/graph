@@ -244,6 +244,18 @@ namespace boost
         return g.nodes[u].successors[1];
       }
 
+      friend
+      Vertex default_starting_vertex(k_ary_tree_base const &g)
+      {
+        Vertex start = 0;
+        if (g.free_list.size() != 1)
+        {
+          auto const not_successors = [](auto x, auto y){ return ++x != y; };
+          auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
+          start = *q + 1;
+        }
+        return start;
+      }
     protected:
       // Adds an edge between vertices, adding them if necessary.
       std::pair<edge_descriptor, bool>
