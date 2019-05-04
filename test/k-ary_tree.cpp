@@ -249,6 +249,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_isomorphism, BinaryTree, tree_types)
   create_full_tree(tree0, 15);
   create_full_tree(tree1, 15);
   BOOST_TEST(isomorphism(tree0, tree1));
+  tree0.clear();
+  tree1.clear();
+  // create in different sequence
+  add_edge(0, 1, tree0);
+  add_edge(0, 2, tree0);
+  add_edge(0, 2, tree1);
+  add_edge(0, 1, tree1);
+  BOOST_TEST(isomorphism(tree0, tree1));
+
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(VertexListGraph, BinaryTree, tree_types)
