@@ -376,13 +376,20 @@ BOOST_concept(BidirectionalBinaryTree,(G))
     BOOST_CONCEPT_USAGE(BidirectionalBinaryTree) {
         t = has_predecessor(u, g);
         t = predecessor(u, g);
+        u = root(u, g);
         const_constraints(g);
     }
 
     void const_constraints(G const &g) {
         t = has_predecessor(u, g);
         t = predecessor(u, g);
-    }
+        u = root(u, g);
+      }
+
+      bool t;
+      G g;
+      typename graph_traits<G>::vertex_descriptor u;
+    };
 
     bool t;
     G g;
