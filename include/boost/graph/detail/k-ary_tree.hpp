@@ -431,6 +431,8 @@ namespace boost
 
       void remove_vertex(vertex_descriptor u)
       {
+        BOOST_ASSERT(u || nodes.size() == 1); // FIXME: Kludge for now.
+
         BOOST_ASSERT(num_vertices() > 0);
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
