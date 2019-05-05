@@ -19,6 +19,8 @@
 #include <boost/range.hpp>
 #include <boost/range/algorithm.hpp>
 
+#include <boost/concept/assert.hpp>
+
 #include <boost/assert.hpp>
 
 #include <array>

@@ -23,6 +23,9 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
+#include <boost/concept/assert.hpp>
+#include <boost/graph/graph_concepts.hpp>
+
 #include <boost/range.hpp>
 #include <boost/range/adaptor/reversed.hpp>
 
@@ -503,7 +506,7 @@ namespace boost
     traverse_nonempty(typename graph_traits<BinaryTree>::vertex_descriptor u,
                       BinaryTree const &g, Visitor vis)
     {
-      // Requires ForwardBinaryTreeConcept<BinaryTree>
+      BOOST_CONCEPT_ASSERT((concepts::ForwardBinaryTreeConcept<BinaryTree>));
       BOOST_ASSERT(!empty(u, g));
 
       vis(visit::pre, u);
@@ -521,7 +524,8 @@ namespace boost
                       typename graph_traits<BinaryTree>::vertex_descriptor &u,
                       BinaryTree const &g)
     {
-      // Requires BidirectionalBinaryTreeConcept<BinaryTree>
+      BOOST_CONCEPT_ASSERT((concepts::BidirectionalBinaryTreeConcept<BinaryTree>));
+
       int result;
 
       switch (v)
@@ -576,7 +580,6 @@ namespace boost
     }
 
 
-    // This is for forward trees.
     template <typename BinaryTree0, typename BinaryTree1>
     bool
     bifurcate_isomorphic_nonempty(typename graph_traits<BinaryTree0>::vertex_descriptor u,
@@ -584,6 +587,8 @@ namespace boost
                                   typename graph_traits<BinaryTree1>::vertex_descriptor v,
                                   BinaryTree1 const &h)
     {
+      BOOST_CONCEPT_ASSERT((concepts::ForwardBinaryTreeConcept<BinaryTree0>));
+      BOOST_CONCEPT_ASSERT((concepts::ForwardBinaryTreeConcept<BinaryTree1>));
       BOOST_ASSERT(!empty(u, g));
       BOOST_ASSERT(!empty(v, h));
 
@@ -616,7 +621,7 @@ namespace boost
       return true;
     }
 
-    // This is for bidirectional trees.
+
     template <typename BinaryTree0, typename BinaryTree1>
     bool
     bifurcate_isomorphic(typename graph_traits<BinaryTree0>::vertex_descriptor u,
@@ -624,6 +629,9 @@ namespace boost
                          typename graph_traits<BinaryTree1>::vertex_descriptor v,
                          BinaryTree1 const &h)
     {
+      BOOST_CONCEPT_ASSERT((concepts::BidirectionalBinaryTreeConcept<BinaryTree0>));
+      BOOST_CONCEPT_ASSERT((concepts::BidirectionalBinaryTreeConcept<BinaryTree1>));
+
       if (empty(u, g))
         return empty(v, h);
       if (empty(v, h))
