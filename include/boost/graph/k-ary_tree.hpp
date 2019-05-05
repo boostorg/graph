@@ -491,8 +491,10 @@ namespace boost
 
   // IncidenceGraph interface
 
-  typedef k_ary_tree<2, false> forward_binary_tree;
-  typedef k_ary_tree<2, true> bidirectional_binary_tree;
+  template <typename Vertex = std::size_t>
+  using forward_binary_tree = k_ary_tree<2, false, Vertex>;
+  template <typename Vertex = std::size_t>
+  using bidirectional_binary_tree = k_ary_tree<2, true, Vertex>;
 
   namespace detail
   {
@@ -641,25 +643,25 @@ namespace boost
   }
 
 
-  template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
+  template <typename Vertex, typename DFSTreeVisitor>
   void
   depth_first_search(k_ary_tree<2, false, Vertex> &g,
                     typename boost::graph_traits<
                               k_ary_tree<2, false, Vertex>
                                                 >::vertex_descriptor s,
-                    DFSTreeVisitor &vis, ColorMap)
+                    DFSTreeVisitor &vis)
   {
     if (!empty(s, g))
       vis = detail::traverse_nonempty(s, g, vis);
   }
 
-  template <typename Vertex, typename DFSTreeVisitor, typename ColorMap>
+  template <typename Vertex, typename DFSTreeVisitor>
   void
   depth_first_search(k_ary_tree<2, true, Vertex> &g,
                     typename boost::graph_traits<
                               k_ary_tree<2, false, Vertex>
                                                 >::vertex_descriptor s,
-                    DFSTreeVisitor &vis, ColorMap)
+                    DFSTreeVisitor &vis)
   {
     vis = detail::traverse(s, g, vis);
   }

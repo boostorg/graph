@@ -51,8 +51,8 @@ void create_full_tree(Graph &tree,
   }
 }
 
-using tree_types = std::tuple<boost::forward_binary_tree,
-                              boost::bidirectional_binary_tree>;
+using tree_types = std::tuple<boost::forward_binary_tree<>,
+                              boost::bidirectional_binary_tree<>>;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(empty_tree, BinaryTree, tree_types)
 {
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(incidence_graph, BinaryTree, tree_types)
 
 BOOST_AUTO_TEST_CASE(bidirectional)
 {
-  boost::bidirectional_binary_tree tree;
+  boost::bidirectional_binary_tree<> tree;
   create_full_tree(tree, 5);
   BOOST_TEST(boost::distance(in_edges(0, tree)) == 0);
   BOOST_TEST(in_degree(0, tree) == 0);
@@ -163,7 +163,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
   create_full_tree(tree, 3);
 
   using boost::visit;
-  std::vector<boost::default_color_type> color;
   typedef std::pair<visit, vertex_descriptor> visiting;
   std::array< visiting, 9> const expected_seq
   {{
@@ -178,7 +177,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
     std::make_pair(visit::post, 0)
   }};
   tree_visitor<visit, vertex_descriptor> visitor;
-  depth_first_search(tree, 0, visitor, color);
+  depth_first_search(tree, 0, visitor);
   BOOST_TEST(boost::equal(visitor.visited, expected_seq));
 }
 
@@ -289,16 +288,16 @@ using namespace boost::concepts;
 using boost::forward_binary_tree;
 using boost::bidirectional_binary_tree;
 
-BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<forward_binary_tree>));
-BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<bidirectional_binary_tree>));
-BOOST_CONCEPT_ASSERT((MutableGraphConcept<bidirectional_binary_tree>));
-BOOST_CONCEPT_ASSERT((MutableGraphConcept<forward_binary_tree>));
-BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree>));
-BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree>));
-BOOST_CONCEPT_ASSERT((ForwardBinaryTreeConcept<forward_binary_tree>));
-BOOST_CONCEPT_ASSERT((BidirectionalBinaryTreeConcept<bidirectional_binary_tree>));
-// BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree>));
-// BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree>));
+BOOST_CONCEPT_ASSERT((IncidenceGraphConcept<forward_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((BidirectionalGraphConcept<bidirectional_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((MutableGraphConcept<bidirectional_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((MutableGraphConcept<forward_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((ForwardBinaryTreeConcept<forward_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((BidirectionalBinaryTreeConcept<bidirectional_binary_tree<>>));
+// BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree<>>));
+// BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree<>>));
 
 #else
 
