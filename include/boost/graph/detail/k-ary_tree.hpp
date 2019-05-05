@@ -412,15 +412,15 @@ namespace boost
         }
 
         auto const which = find(free_list, u);
-        if (which == boost::end(free_list))
-          return false;
-
         if (which == boost::begin(free_list)) {
           (*which)++;
           nodes.resize(*which);
         }
-        else
+        else {
+          if (which == boost::end(free_list))
+            return false;
           free_list.erase(which);
+        }
 
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
