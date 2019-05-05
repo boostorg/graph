@@ -46,7 +46,9 @@ namespace boost
   template <std::size_t K, bool Predecessor, typename Vertex = std::size_t>
   class k_ary_tree;
 
-  // Directed (forward) tree
+  /******************
+   *  Forward tree  *
+   ******************/
   template <std::size_t K, typename Vertex>
   class k_ary_tree<K, false, Vertex>
     : public detail::k_ary_tree_base<K, Vertex,
@@ -202,7 +204,10 @@ namespace boost
     }
   };
 
-  // Bidirectional tree
+
+  /************************
+   *  Bidirectional tree  *
+   ************************/
   template <std::size_t K, typename Vertex>
   class k_ary_tree<K, true, Vertex>
     : public detail::k_ary_tree_base<K, Vertex,
