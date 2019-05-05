@@ -62,6 +62,8 @@ namespace boost
     using edge_descriptor = typename super_t::edge_descriptor;
     using vertex_descriptor = typename super_t::vertex_descriptor;
 
+    using super_t::super_t;
+
     friend
     void add_left_edge(vertex_descriptor parent, vertex_descriptor child,
                        k_ary_tree &g)

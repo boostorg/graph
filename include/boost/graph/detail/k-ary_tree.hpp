@@ -80,6 +80,8 @@ namespace boost
       typedef std::size_t vertices_size_type;
 
     public:
+      k_ary_tree_base(Vertex n) : nodes(n), free_list{{n}} {}
+
       class out_edge_iterator
                 : public boost::iterator_adaptor<out_edge_iterator,
                                                  vertex_descriptor const *,
