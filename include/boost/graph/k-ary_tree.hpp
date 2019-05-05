@@ -526,41 +526,21 @@ namespace boost
     {
       BOOST_CONCEPT_ASSERT((concepts::BidirectionalBinaryTreeConcept<BinaryTree>));
 
-      int result;
-
       switch (v)
       {
         case visit::pre:
           if (has_left_successor(u, g)) {
-            u = left_successor(u, g);
-            result = 1;
-          }
-          else {
-            v = visit::in;
-            result = 0;
-          }
-          break;
-
+                            u = left_successor(u, g);   return 1;
+          } v = visit::in;                              return 0;
         case visit::in:
           if (has_right_successor(u, g)) {
-            v = visit::pre;
-            u = right_successor(u, g);
-            result = 1;
-          }
-          else {
-            v = visit::post;
-            result = 0;
-          }
-          break;
-
+            v = visit::pre; u = right_successor(u, g);  return 1;
+          } v = visit::post;                            return 0;
         case visit::post:
-          if (is_left_successor(u, g))
+          if (is_left_successor(u, g)) {
             v = visit::in;
-          u = predecessor(u, g);
-          result = -1;
-          break;
+          }                 u = predecessor(u, g);      return -1;
       }
-      return result;
     }
 
     template <typename BinaryTree, typename Visitor>
