@@ -62,6 +62,25 @@ namespace boost
     using edge_descriptor = typename super_t::edge_descriptor;
     using vertex_descriptor = typename super_t::vertex_descriptor;
 
+    friend
+    void add_left_edge(vertex_descriptor parent, vertex_descriptor child,
+                       k_ary_tree &g)
+    {
+      BOOST_ASSERT(parent != child);
+
+      g.add_left_edge(parent, child);
+    }
+
+    friend
+    void add_right_edge(vertex_descriptor parent, vertex_descriptor child,
+                        k_ary_tree &g)
+    {
+      BOOST_ASSERT(parent != child);
+
+      g.add_right_edge(parent, child);
+    }
+
+
     // *** VertexListGraph interface ***
 
     struct vertex_iterator : public iterator_facade<
@@ -198,6 +217,29 @@ namespace boost
     typedef typename super_t::vertex_descriptor vertex_descriptor;
     typedef typename super_t::degree_size_type degree_size_type;
     using super_t::k;
+
+    using super_t::super_t;
+
+    friend
+    void add_left_edge(vertex_descriptor parent, vertex_descriptor child,
+                       k_ary_tree &g)
+    {
+      BOOST_ASSERT(parent != child);
+
+      g.add_left_edge(parent, child);
+      g.nodes[child].predecessor = parent;
+    }
+
+    friend
+    void add_right_edge(vertex_descriptor parent, vertex_descriptor child,
+                        k_ary_tree &g)
+    {
+      BOOST_ASSERT(parent != child);
+
+      g.add_right_edge(parent, child);
+      g.nodes[child].predecessor = parent;
+    }
+
 
   private:
     struct make_in_edge_descriptor

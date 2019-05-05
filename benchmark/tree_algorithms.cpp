@@ -26,6 +26,25 @@ void create_tree(Graph &tree, typename graph_traits<Graph>::vertex_descriptor we
   }
 }
 
+template <typename BinaryTree>
+void create_binary_tree(BinaryTree &tree,
+                        typename graph_traits<BinaryTree>::vertex_descriptor weight)
+{
+  BOOST_ASSERT(weight >= 0);
+
+  tree = BinaryTree(weight);
+  typedef typename graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  vertex_descriptor parent = 0;
+  for (vertex_descriptor child = 1; child < weight; child++)
+  {
+    if (child % 2 == 1)
+      add_left_edge(parent, child, tree);
+    else
+      add_right_edge(parent++, child, tree);
+  }
+}
+
+
 template <typename Order, typename Vertex>
 struct tree_visitor
 {

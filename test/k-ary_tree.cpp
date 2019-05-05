@@ -209,6 +209,17 @@ BOOST_AUTO_TEST_CASE(mutable_bidirectional)
   BOOST_TEST(!has_left_successor(vertex_descriptor(0), tree));
   BOOST_TEST(!has_right_successor(vertex_descriptor(0), tree));
 
+  auto u = add_vertex(tree);
+  add_left_edge(0, u, tree);
+
+  BOOST_TEST(has_left_successor(vertex_descriptor(0), tree));
+  BOOST_TEST(left_successor(vertex_descriptor(0), tree) == u);
+
+  add_right_edge(0, u, tree);
+
+  BOOST_TEST(has_right_successor(vertex_descriptor(0), tree));
+  BOOST_TEST(right_successor(vertex_descriptor(0), tree) == u);
+
   // Remove after clearing.
   remove_vertex(vertex_descriptor(0), tree);
 

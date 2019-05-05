@@ -304,6 +304,48 @@ namespace boost
 
 
       void
+      add_left_edge(vertex_descriptor parent, vertex_descriptor child)
+      {
+        BOOST_ASSERT(parent != child);
+        BOOST_ASSERT(parent < nodes.size());
+        BOOST_ASSERT(child < nodes.size());
+        BOOST_ASSERT(find(free_list, parent) == find(free_list, child));
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+
+        BOOST_ASSERT(!has_left_successor(parent, *this));
+
+        nodes[parent].successors[0] = child;
+
+        BOOST_ASSERT(has_left_successor(parent, *this));
+        BOOST_ASSERT(left_successor(parent, *this) == child);
+      }
+
+
+      void
+      add_right_edge(vertex_descriptor parent, vertex_descriptor child)
+      {
+        BOOST_ASSERT(parent != child);
+        BOOST_ASSERT(parent < nodes.size());
+        BOOST_ASSERT(child < nodes.size());
+        BOOST_ASSERT(find(free_list, parent) == find(free_list, child));
+
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+
+        BOOST_ASSERT(!has_right_successor(parent, *this));
+
+        nodes[parent].successors[1] = child;
+
+        BOOST_ASSERT(has_right_successor(parent, *this));
+        BOOST_ASSERT(right_successor(parent, *this) == child);
+      }
+
+
+      void
       remove_edge(vertex_descriptor u, vertex_descriptor v)
       {
         BOOST_ASSERT(u != v);

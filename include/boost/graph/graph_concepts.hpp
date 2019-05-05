@@ -352,6 +352,9 @@ BOOST_concept(ForwardBinaryTree,(G))
         v = left_successor(u, g);
         v = right_successor(u, g);
         t = empty(u, g);
+        add_left_edge(u, v, g);
+        add_right_edge(u, v, g);
+        // TODO: remove_left_edge, remove_right_edge
         const_constraints(g);
     }
     void const_constraints(G const &g) {
