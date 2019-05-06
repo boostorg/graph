@@ -40,7 +40,7 @@ namespace detail
     };                                                                                                                              \
     template < typename T >                                                                                                         \
     struct BOOST_JOIN(get_opt_member_, name)                                                                                        \
-    : boost::mpl::eval_if_c< BOOST_JOIN(has_, name) < T >::value, BOOST_JOIN(get_member_, name)< T >, boost::mpl::identity< void >> \
+    : boost::mpl::eval_if_c< BOOST_JOIN(has_, name) < T >::value, BOOST_JOIN(get_member_, name)< T >, boost::mpl::identity< void > >\
     {                                                                                                                               \
     };
     BOOST_GRAPH_MEMBER_OR_VOID(adjacency_iterator)
