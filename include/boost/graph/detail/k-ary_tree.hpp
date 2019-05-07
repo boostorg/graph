@@ -26,110 +26,62 @@
 #include <cstddef>
 #include <utility>
 #include <vector>
-#include <stack>
 
 namespace boost
 {
+  template <typename Graph>
+  using vertex_descriptor_t = typename graph_traits<Graph>::vertex_descriptor;
+
   namespace detail
   {
-    template <typename Tree>
-    struct k_ary_tree_forward_node
-    {
-      typedef typename graph_traits<Tree>::vertex_descriptor vertex_descriptor;
-      typedef array<vertex_descriptor, Tree::k> vertex_array_t;
 
-      k_ary_tree_forward_node()
+    template <typename BinaryTree>
+    struct binary_tree_forward_node {
+      using vertex_descriptor = vertex_descriptor_t<BinaryTree>;
+
+      binary_tree_forward_node()
       {
-        fill(successors, graph_traits<Tree>::null_vertex());
+        fill(successors, graph_traits<BinaryTree>::null_vertex());
       }
 
-      vertex_array_t successors;
+      array<vertex_descriptor, 2> successors;
     };
 
+    template <typename BinaryTree>
+    struct binary_tree_bidirectional_node
+      : binary_tree_forward_node<BinaryTree> {
+      using vertex_descriptor = vertex_descriptor_t<BinaryTree>;
 
-    template <typename Tree>
-    struct k_ary_tree_bidirectional_node : k_ary_tree_forward_node<Tree>
-    {
-      typedef typename k_ary_tree_forward_node<Tree>::vertex_descriptor
-      vertex_descriptor;
-
-      k_ary_tree_bidirectional_node(vertex_descriptor predecessor
-      = graph_traits<Tree>::null_vertex())
+      binary_tree_bidirectional_node(
+        vertex_descriptor predecessor = graph_traits<BinaryTree>::null_vertex())
         : predecessor(predecessor)
       {}
 
       vertex_descriptor predecessor;
     };
 
-    template <std::size_t K, typename Vertex, typename Node>
-    class k_ary_tree_base
+    template <typename Vertex, typename Node>
+    class binary_tree_base
     {
+    protected:
+      std::vector<Node> nodes;
+      std::vector<Vertex> free_list;
     public:
-      BOOST_STATIC_CONSTEXPR std::size_t k = K;
-
       typedef Vertex vertex_descriptor;
-
-      BOOST_STATIC_CONSTEXPR vertex_descriptor null_vertex()
-      {
-        return vertex_descriptor(-1);
-      }
-
       typedef std::pair<vertex_descriptor, vertex_descriptor> edge_descriptor;
       typedef disallow_parallel_edge_tag edge_parallel_category;
       typedef std::size_t degree_size_type;
       typedef std::size_t vertices_size_type;
 
+      BOOST_STATIC_CONSTEXPR
+      vertex_descriptor null_vertex() {
+        return vertex_descriptor(-1);
+      }
+
     public:
-      k_ary_tree_base(Vertex n) : nodes(n), free_list{{n}} {}
+      binary_tree_base(Vertex n) : nodes(n), free_list{{n}} {}
 
-      class out_edge_iterator
-                : public boost::iterator_adaptor<out_edge_iterator,
-                                                 vertex_descriptor const *,
-                                                 edge_descriptor,
-                                                 forward_traversal_tag,
-                                                 edge_descriptor>
-      {
-      public:
-        out_edge_iterator() {}
-
-        out_edge_iterator(vertex_descriptor const *first,
-                          vertex_descriptor const *last,
-                          vertex_descriptor source)
-          : out_edge_iterator::iterator_adaptor_(first), last(last),
-            source(source)
-        {
-          BOOST_ASSERT(source != null_vertex());
-          post_increment();
-        }
-
-      private:
-        auto dereference() const
-        {
-          return edge_descriptor(source, *this->base_reference());
-        }
-
-        void post_increment()
-        {
-          while (this->base_reference() != last
-            && *this->base_reference() == null_vertex())
-          {
-            this->base_reference()++;
-          }
-        }
-
-        void increment()
-        {
-          this->base_reference()++;
-          post_increment();
-        }
-
-        friend class boost::iterator_core_access;
-
-        vertex_descriptor const *last;
-        vertex_descriptor source;
-      };
-
-      Node const&
+      Node const &
       operator[](vertex_descriptor u) const
       {
         BOOST_ASSERT(!free_list.empty());
@@ -142,8 +94,7 @@ namespace boost
       }
 
       template <std::size_t N>
-      typename enable_if_c<N < K, bool>::type
-      has_successor(vertex_descriptor u) const
+      bool has_successor(vertex_descriptor u) const
       {
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
@@ -154,7 +105,7 @@ namespace boost
         return nodes[u].successors[N] != null_vertex();
       }
 
-      k_ary_tree_base()
+      binary_tree_base()
       {
         free_list.push_back(0);
 
@@ -164,21 +115,61 @@ namespace boost
 
       // *** IncidenceGraph ***
 
-      friend
-      vertex_descriptor source(edge_descriptor e, k_ary_tree_base const &)
+      class out_edge_iterator
+        : public boost::iterator_adaptor<out_edge_iterator,
+                                         vertex_descriptor const *,
+                                         edge_descriptor,
+                                         forward_traversal_tag,
+                                         edge_descriptor>
       {
+        vertex_descriptor const *last;
+        vertex_descriptor source;
+
+      public:
+        out_edge_iterator(Vertex const *first, Vertex const *last, Vertex source)
+          : out_edge_iterator::iterator_adaptor_(first), last(last),
+            source(source)
+        {
+          BOOST_ASSERT(source != null_vertex());
+          post_increment();
+        }
+
+      private:
+        edge_descriptor dereference() const
+        {
+          return edge_descriptor(source, *this->base_reference());
+        }
+
+        void post_increment()
+        {
+          while (this->base_reference() != last
+                 && *this->base_reference() == null_vertex()) {
+            this->base_reference()++;
+          }
+        }
+
+        void increment()
+        {
+          this->base_reference()++;
+          post_increment();
+        }
+
+        friend class boost::iterator_core_access;
+      };
+
+      friend
+      vertex_descriptor source(edge_descriptor e, binary_tree_base const &) {
         return e.first;
       }
 
       friend
-      vertex_descriptor target(edge_descriptor e, k_ary_tree_base const &)
-      {
+      vertex_descriptor target(edge_descriptor e, binary_tree_base const &) {
         return e.second;
       }
 
       friend
       std::pair<out_edge_iterator, out_edge_iterator>
-      out_edges(vertex_descriptor u, k_ary_tree_base const &g)
+      out_edges(vertex_descriptor u, binary_tree_base const &g)
       {
         auto const &successors = g.nodes[u].successors;
 
@@ -190,15 +181,15 @@ namespace boost
 
       friend
       degree_size_type
-      out_degree(vertex_descriptor v, k_ary_tree_base const &g)
+      out_degree(vertex_descriptor v, binary_tree_base const &g)
       {
-        return k - count(g.nodes[v].successors, null_vertex());
+        return 2 - count(g.nodes[v].successors, null_vertex());
       }
 
       // *** VertexListGraph interface ***
 
       friend
-      std::size_t num_vertices(k_ary_tree_base const &g)
+      std::size_t num_vertices(binary_tree_base const &g)
       {
         return g.num_vertices();
       }
@@ -206,58 +197,71 @@ namespace boost
       // *** MutableGraph interface ***
 
       friend
-      vertex_descriptor add_vertex(k_ary_tree_base &g)
+      vertex_descriptor add_vertex(binary_tree_base &g)
       {
         return g.add_vertex();
       }
 
       friend
-      void remove_vertex(vertex_descriptor u, k_ary_tree_base &g)
+      void remove_vertex(vertex_descriptor u, binary_tree_base &g)
       {
         g.remove_vertex(u);
       }
 
       friend
       bool
-      has_left_successor(Vertex u, k_ary_tree_base const &g)
+      has_left_successor(Vertex u, binary_tree_base const &g)
       {
         return g.template has_successor<0>(u);
       }
 
       friend
       bool
-      has_right_successor(Vertex u, k_ary_tree_base const &g)
+      has_right_successor(Vertex u, binary_tree_base const &g)
       {
         return g.template has_successor<1>(u);
       }
 
 
       friend
-      typename enable_if_c<K == 2, Vertex>::type
-      left_successor(Vertex u, k_ary_tree_base const &g)
+      Vertex
+      left_successor(Vertex u, binary_tree_base const &g)
       {
         return g.nodes[u].successors[0];
       }
 
       friend
-      typename enable_if_c<K == 2, Vertex>::type
-      right_successor(Vertex u, k_ary_tree_base const &g)
+      Vertex
+      right_successor(Vertex u, binary_tree_base const &g)
       {
         return g.nodes[u].successors[1];
       }
 
+      void clear()
+      {
+        nodes.clear();
+        free_list.resize(1);
+        free_list[0] = 0;
+      }
+
+      void shrink_to_fit()
+      {
+        nodes.shrink_to_fit();
+        free_list.shrink_to_fit();
+      }
+
       friend
-      Vertex default_starting_vertex(k_ary_tree_base const &g)
+      Vertex default_starting_vertex(binary_tree_base const &g)
       {
         Vertex start = 0;
-        if (g.free_list.size() != 1)
-        {
-          auto const not_successors = [](auto x, auto y){ return ++x != y; };
+        if (g.free_list.size() != 1) {
+          auto const not_successors = [](auto x, auto y) { return ++x != y; };
           auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
           start = *q + 1;
         }
         return start;
       }
+
     protected:
       // Adds an edge between vertices, adding them if necessary.
       std::pair<edge_descriptor, bool>
@@ -295,17 +299,16 @@ namespace boost
         auto const p = find_first_of(nodes[u].successors, keys); // O(k)
         edge_descriptor const result(u, v);
 
-        if (p == boost::end(nodes[u].successors) or *p == v)
+        if (p == boost::end(nodes[u].successors) or * p == v)
           return std::make_pair(result, false);
-        else
-        {
+        else {
           *p = v;
           return std::make_pair(result, true);
         }
       }
 
 
-      void
+      edge_descriptor
       add_left_edge(vertex_descriptor parent, vertex_descriptor child)
       {
         BOOST_ASSERT(parent != child);
@@ -323,10 +326,12 @@ namespace boost
 
         BOOST_ASSERT(has_left_successor(parent, *this));
         BOOST_ASSERT(left_successor(parent, *this) == child);
+
+        return {parent, child};
       }
 
 
-      void
+      edge_descriptor
       add_right_edge(vertex_descriptor parent, vertex_descriptor child)
       {
         BOOST_ASSERT(parent != child);
@@ -344,6 +349,8 @@ namespace boost
 
         BOOST_ASSERT(has_right_successor(parent, *this));
         BOOST_ASSERT(right_successor(parent, *this) == child);
+
+        return {parent, child};
       }
 
 
@@ -381,12 +388,10 @@ namespace boost
                      || free_list.size() == 1);
 
         vertex_descriptor const result = free_list.back();
-        if (free_list.size() == 1)
-        {
+        if (free_list.size() == 1) {
           nodes.resize(result + 1);
           free_list.back() = nodes.size();
-        }
-        else
+        } else
           free_list.pop_back();
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
@@ -417,8 +422,7 @@ namespace boost
         if (which == boost::begin(free_list)) {
           (*which)++;
           nodes.resize(*which);
-        }
-        else {
+        } else {
           if (which == boost::end(free_list))
             return false;
           free_list.erase(which);
@@ -442,27 +446,21 @@ namespace boost
         BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
         BOOST_ASSERT(out_degree(u, *this) == 0);
 
-        if (u == nodes.size() - 1)
-        {
+        if (u == nodes.size() - 1) {
           // happens to be the last node
-          if (free_list.size() == 1)
-          {
+          if (free_list.size() == 1) {
             // simple case, no other nodes to consider
             free_list[0]--;
             nodes.pop_back();
-          }
-          else
-          {
+          } else {
             // might be a run of nodes to erase
-            auto const not_successors = [](auto x, auto y){ return x != ++y; };
+            auto const not_successors = [](auto x, auto y) { return x != ++y; };
             auto const least = boost::adjacent_find(free_list, not_successors);
             auto const n = least - boost::begin(free_list);
             nodes.erase(boost::end(nodes) - n, boost::end(nodes)); //pop_back(n)
             free_list.erase(boost::begin(free_list), least); //pop_front(n) :/
           }
-        }
-        else
-        {
+        } else {
           auto const here = boost::lower_bound(free_list, u, std::greater<>());
           free_list.insert(here, u);
         }
@@ -484,11 +482,9 @@ namespace boost
 
         fill(nodes[u].successors, null_vertex());
       }
-
-      std::vector<Node> nodes;
-      std::vector<vertex_descriptor> free_list; // Keeps track of holes.
     };
   } // namespace detail
 } // namespace boost
 
 #endif
+

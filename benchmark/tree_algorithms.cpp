@@ -127,12 +127,12 @@ struct tree_visitor
 };
 
 
-template <typename BinaryTree>
+template <typename Graph>
 static void BM_create_tree(benchmark::State &s)
 {
   while (s.KeepRunning())
   {
-    BinaryTree g;
+    Graph g;
     create_tree(g, s.range(0) - 1);
     benchmark::DoNotOptimize(g);
   }
@@ -226,11 +226,12 @@ static void BM_depth_first_search_binary_tree(benchmark::State &s)
   }
 }
 
-static void BM_depth_first_search_adjacency_list(benchmark::State &s)
+template <typename Graph>
+static void BM_depth_first_search_graph(benchmark::State &s)
 {
-  adjacency_list<> g;
+  Graph g;
 
-  create_tree(g, s.range(0));
+  create_tree(g, s.range(0) - 1);
 
   while (s.KeepRunning())
   {
@@ -249,19 +250,6 @@ static void BM_graph_isomorphism(benchmark::State &s)
     benchmark::DoNotOptimize(boost::isomorphism(g, g));
   }
 }
-
-// template <typename Graph>
-// static void BM_graph_vf2_isomorphism(benchmark::State &s)
-// {
-//   Graph g(s.range(0));
-//   create_tree(g, s.range(0));
-//   vf2_print_callback<Graph, Graph> callback(g, g);
-//
-//   while (s.KeepRunning())
-//   {
-//     benchmark::DoNotOptimize(vf2_subgraph_iso(g, g, callback));
-//   }
-// }
 
 int const dfs_min = 8, dfs_max = 8<<17;
 

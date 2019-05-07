@@ -27,9 +27,10 @@
 #include <tuple>
 #include <utility>
 
+using boost::vertex_descriptor_t;
+
 template <typename Graph>
-void create_full_tree(Graph &tree,
-                      typename boost::graph_traits<Graph>::vertex_descriptor weight)
+void create_full_tree(Graph &tree, vertex_descriptor_t<Graph> weight)
 {
   BOOST_ASSERT(weight >= 0);
 
@@ -42,7 +43,7 @@ void create_full_tree(Graph &tree,
     return;
   }
 
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<Graph> vertex_descriptor;
 
   vertex_descriptor parent = 0;
   for (vertex_descriptor child = 1; child != weight; child++)
@@ -66,7 +67,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(empty_tree, BinaryTree, tree_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(push_pop, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
   auto u = add_vertex(tree);
   BOOST_TEST(num_vertices(tree) == 1);
   remove_vertex(u, tree);
@@ -90,7 +91,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(push_pop, BinaryTree, tree_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(insert_remove_randomly, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
 
   std::vector<vertex_descriptor> added;
   added.push_back(add_vertex(tree));
@@ -160,7 +161,7 @@ struct tree_visitor
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
 
   create_full_tree(tree, 3);
 
@@ -186,7 +187,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_depth_first_search, BinaryTree, tree_types)
 
 BOOST_AUTO_TEST_CASE(mutable_bidirectional)
 {
-  typedef boost::k_ary_tree<2, true> BinaryTree;
+  typedef boost::binary_tree<true> BinaryTree;
   BinaryTree tree;
   typedef boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
 
@@ -233,7 +234,7 @@ BOOST_AUTO_TEST_CASE(mutable_bidirectional)
 BOOST_AUTO_TEST_CASE_TEMPLATE(Mutable, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
 
   std::vector<vertex_descriptor> added;
 
@@ -276,7 +277,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_isomorphism, BinaryTree, tree_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(VertexListGraph, BinaryTree, tree_types)
 {
   BinaryTree tree;
-  typedef typename boost::graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
+  typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
 
   create_full_tree(tree, 7);
 
@@ -297,13 +298,58 @@ BOOST_CONCEPT_ASSERT((MutableGraphConcept<forward_binary_tree<>>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<forward_binary_tree<>>));
 BOOST_CONCEPT_ASSERT((VertexListGraphConcept<bidirectional_binary_tree<>>));
 BOOST_CONCEPT_ASSERT((ForwardBinaryTreeConcept<forward_binary_tree<>>));
+BOOST_CONCEPT_ASSERT((MutableForwardBinaryTreeConcept<forward_binary_tree<>>));
 BOOST_CONCEPT_ASSERT((BidirectionalBinaryTreeConcept<bidirectional_binary_tree<>>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<forward_binary_tree<>>));
 // BOOST_CONCEPT_ASSERT((EdgeListGraph<bidirectional_binary_tree<>>));
 
+template <typename BinaryTree>
+vertex_descriptor_t<BinaryTree>
+create_binary_subtree(BinaryTree &tree, vertex_descriptor_t<BinaryTree> parent,
+                      vertex_descriptor_t<BinaryTree> child, int depth)
+{
+  if (depth == 0)
+    return child;
+
+  add_left_edge(parent, child, tree);
+  child = create_binary_subtree(tree, child, child + 1, depth - 1);
+  add_right_edge(parent, child, tree);
+  return create_binary_subtree(tree, child, child + 1, depth - 1);
+}
+
+
+template <typename BinaryTree>
+void create_binary_tree_recursive(BinaryTree &tree, int depth)
+{
+  BOOST_ASSERT(depth >= 0);
+
+  if (depth == 0)
+    return;
+
+  vertex_descriptor_t<BinaryTree> const weight = (1 << depth) - 1;
+  tree = BinaryTree(weight);
+  auto result = create_binary_subtree(tree, 0, 1, depth - 1);
+  BOOST_ASSERT(result == weight);
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_create_binary_tree_recursive, BinaryTree,
+                              tree_types)
+{
+  BinaryTree tree;
+  create_binary_tree_recursive(tree, 0);
+  BOOST_ASSERT(num_vertices(tree) == 0);
+  create_binary_tree_recursive(tree, 1);
+  BOOST_ASSERT(num_vertices(tree) == 1);
+  create_binary_tree_recursive(tree, 2);
+  BOOST_ASSERT(num_vertices(tree) == 3);
+  create_binary_tree_recursive(tree, 3);
+  BOOST_ASSERT(num_vertices(tree) == 7);
+}
+
+
 #else
 
-int main()
+int main(int argc, char **argv)
 {
 
 }

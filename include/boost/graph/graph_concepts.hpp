@@ -352,9 +352,6 @@ BOOST_concept(ForwardBinaryTree,(G))
         v = left_successor(u, g);
         v = right_successor(u, g);
         t = empty(u, g);
-        add_left_edge(u, v, g);
-        add_right_edge(u, v, g);
-        // TODO: remove_left_edge, remove_right_edge
         const_constraints(g);
     }
     void const_constraints(G const &g) {
@@ -384,19 +381,37 @@ BOOST_concept(BidirectionalBinaryTree,(G))
         t = has_predecessor(u, g);
         t = predecessor(u, g);
         u = root(u, g);
-      }
-
-      bool t;
-      G g;
-      typename graph_traits<G>::vertex_descriptor u;
-    };
+    }
 
     bool t;
     G g;
     typename graph_traits<G>::vertex_descriptor u;
 };
 
+BOOST_concept(MutableForwardBinaryTree,(G))
+    : ForwardBinaryTree<G>
+{
+    BOOST_CONCEPT_USAGE(MutableForwardBinaryTree) {
+    e = add_left_edge(u, v, g);
+    e = add_right_edge(u, v, g);
+    // TODO: remove_left_edge, remove_right_edge
+    }
+    G g;
+    typename graph_traits<G>::vertex_descriptor u, v;
+    typename graph_traits<G>::edge_descriptor e;
+};
 
+BOOST_concept(MutableBidirectionalBinaryTree,(G))
+    : MutableForwardBinaryTree<G>
+{
+    BOOST_CONCEPT_USAGE(MutableBidirectionalBinaryTree) {
+    e = add_predecessor(u, v, g);
+    remove_predecessor(u, g);
+    }
+    G g;
+    typename graph_traits<G>::vertex_descriptor u, v;
+    typename graph_traits<G>::edge_descriptor e;
+};
 
 BOOST_concept(VertexMutablePropertyGraph, (G)) : VertexMutableGraph< G >
 {
