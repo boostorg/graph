@@ -7,6 +7,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/property_maps/container_property_map.hpp>
+#include <boost/graph/compressed_sparse_row_graph.hpp>
 
 #include <benchmark/benchmark.h>
 
@@ -40,6 +41,32 @@ void create_tree(Graph &tree, typename graph_traits<Graph>::vertex_descriptor we
   }
 }
 
+
+void create_tree(compressed_sparse_row_graph<> &tree,
+                 vertex_descriptor_t<compressed_sparse_row_graph<>> weight)
+{
+  BOOST_ASSERT(weight >= 0);
+
+  if (weight == 0)
+    return;
+
+  adjacency_list<> tmp;
+
+  auto parent = add_vertex(tmp);
+  if (weight == 1)
+    return;
+
+  for (auto child = parent + 1; child != weight; child++)
+  {
+    add_edge(parent, child, tmp);
+    if (!(child & 1))
+      parent++;
+  }
+
+  tree = compressed_sparse_row_graph<>(tmp);
+}
+
+
 template <typename BinaryTree>
 void create_binary_tree(BinaryTree &tree,
                         typename graph_traits<BinaryTree>::vertex_descriptor weight)
@@ -56,6 +83,35 @@ void create_binary_tree(BinaryTree &tree,
     else
       add_right_edge(parent++, child, tree);
   }
+}
+
+template <typename BinaryTree>
+vertex_descriptor_t<BinaryTree>
+create_binary_subtree(BinaryTree &tree, vertex_descriptor_t<BinaryTree> parent,
+                      vertex_descriptor_t<BinaryTree> child, int depth)
+{
+  if (depth == 0)
+    return child;
+
+  add_left_edge(parent, child, tree);
+  child = create_binary_subtree(tree, child, child + 1, depth - 1);
+  add_right_edge(parent, child, tree);
+  return create_binary_subtree(tree, child, child + 1, depth - 1);
+}
+
+
+template <typename BinaryTree>
+void create_binary_tree_recursive(BinaryTree &tree, int depth)
+{
+  BOOST_ASSERT(depth >= 0);
+
+  if (depth == 0)
+    return;
+
+  vertex_descriptor_t<BinaryTree> const weight = (1 << depth) - 1;
+  tree = BinaryTree(weight);
+  auto result = create_binary_subtree(tree, 0, 1, depth - 1);
+  BOOST_ASSERT(result == weight);
 }
 
 
@@ -90,6 +146,65 @@ static void BM_create_binary_tree(benchmark::State &s)
   {
     BinaryTree g;
     create_binary_tree(g, s.range(0) - 1);
+    benchmark::DoNotOptimize(g);
+  }
+}
+
+template <typename Integer>
+std::enable_if_t<sizeof(Integer) == 4, char>
+nlz(Integer x)
+{
+  int n;
+  if (x == 0) return(32);
+  n = 1;
+  if ((x >> 16) == 0) {n = n +16; x = x <<16;}
+  if ((x >> 24) == 0) {n = n + 8; x = x << 8;}
+  if ((x >> 28) == 0) {n = n + 4; x = x << 4;}
+  if ((x >> 30) == 0) {n = n + 2; x = x << 2;}
+  n = n - (x >> 31);
+  return n;
+}
+
+template <typename Integer>
+std::enable_if_t<sizeof(Integer) == 8
+                && !std::numeric_limits<Integer>::is_signed, char>
+nlz(Integer x)
+{
+  if (x == 0) return(32);
+  int n = 0;
+  if (x <= 0x00000000FFFFFFFF) {n = n +32; x = x <<32;}
+  if (x <= 0x0000FFFFFFFFFFFF) {n = n + 16; x = x << 16;}
+  if (x <= 0x00FFFFFFFFFFFFFF) {n = n + 8; x = x << 8;}
+  if (x <= 0x0FFFFFFFFFFFFFFF) {n = n + 4; x = x << 4;}
+  if (x <= 0x3FFFFFFFFFFFFFFF) {n = n + 2; x = x << 2;}
+  if (x <= 0x7FFFFFFFFFFFFFFF) {n = n + 1;}
+  return n;
+}
+
+
+template <typename Integer>
+std::enable_if_t<sizeof(Integer) == 4, char>
+ilog2(Integer x)
+{
+  return 31 - nlz(x);
+}
+
+template <typename Integer>
+std::enable_if_t<sizeof(Integer) == 8
+                && !std::numeric_limits<Integer>::is_signed, char>
+ilog2(Integer x)
+{
+  return 63 - nlz(x);
+}
+
+
+template <typename BinaryTree>
+static void BM_create_binary_tree_recursive(benchmark::State &s)
+{
+  while (s.KeepRunning())
+  {
+    BinaryTree g;
+    create_binary_tree_recursive(g, ilog2(static_cast<std::uint64_t>(s.range(0))));
     benchmark::DoNotOptimize(g);
   }
 }
@@ -153,44 +268,29 @@ int const dfs_min = 8, dfs_max = 8<<17;
 using adjacency_list_vec = adjacency_list<vecS, vecS, directedS, no_property,
 no_property, no_property, vecS>;
 
-BENCHMARK_TEMPLATE(BM_create_binary_tree,
-                   forward_binary_tree<unsigned>)->Range(dfs_min, dfs_max);
-BENCHMARK_TEMPLATE(BM_create_binary_tree,
-                   bidirectional_binary_tree<unsigned>)->Range(dfs_min, dfs_max);
-
-BENCHMARK_TEMPLATE(BM_create_binary_tree,
-                   forward_binary_tree<>)->Range(dfs_min, dfs_max);
-BENCHMARK_TEMPLATE(BM_create_binary_tree,
-                   bidirectional_binary_tree<>)->Range(dfs_min, dfs_max);
 BENCHMARK_TEMPLATE(BM_create_tree,
                    adjacency_list<>)->Range(dfs_min, dfs_max);
-
-
 BENCHMARK_TEMPLATE(BM_create_tree,
                    forward_binary_tree<>)->Range(dfs_min, dfs_max);
 BENCHMARK_TEMPLATE(BM_create_tree,
                    bidirectional_binary_tree<>)->Range(dfs_min, dfs_max);
-/*
-// Same as default.
-BENCHMARK_TEMPLATE(BM_create_tree,
-                   adjacency_list_vec)->Range(dfs_min, dfs_max);
-*/
+BENCHMARK_TEMPLATE(BM_create_binary_tree,
+                   forward_binary_tree<>)->Range(dfs_min, dfs_max);
+BENCHMARK_TEMPLATE(BM_create_binary_tree,
+                   bidirectional_binary_tree<>)->Range(dfs_min, dfs_max);
 
 BENCHMARK_TEMPLATE(BM_depth_first_search_binary_tree,
                    forward_binary_tree<>)->Range(dfs_min, dfs_max);
 BENCHMARK_TEMPLATE(BM_depth_first_search_binary_tree,
                    bidirectional_binary_tree<>)->Range(dfs_min, dfs_max);
-BENCHMARK(BM_depth_first_search_adjacency_list)->Range(dfs_min, dfs_max);
+BENCHMARK_TEMPLATE(BM_depth_first_search_graph, adjacency_list<>)->Range(dfs_min, dfs_max);
+BENCHMARK_TEMPLATE(BM_depth_first_search_graph, compressed_sparse_row_graph<>)->Range(dfs_min, dfs_max);
 
 BENCHMARK_TEMPLATE(BM_graph_isomorphism, forward_binary_tree<>)->Range(2, 2<<17);
 BENCHMARK_TEMPLATE(BM_graph_isomorphism, bidirectional_binary_tree<>)->Range(2, 2<<17);
 BENCHMARK_TEMPLATE(BM_graph_isomorphism, adjacency_list<>)->Range(2, 2<<13);
-/*
-*/
-// BENCHMARK_TEMPLATE(BM_graph_vf2_isomorphism, adjacency_matrix<>)->Range(8, 8<<22);
-
-
-
-BENCHMARK_MAIN();
+BENCHMARK_TEMPLATE(BM_graph_isomorphism, compressed_sparse_row_graph<>)->Range(2, 2<<13);
 
 #endif
+
+BENCHMARK_MAIN();
