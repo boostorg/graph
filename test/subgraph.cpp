@@ -5,7 +5,7 @@
 
 #include <set>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/subgraph.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -23,15 +23,15 @@
 template < typename subgraph_t >
 void sub_cmp(subgraph_t const& g1, subgraph_t const& g2)
 {
-    BOOST_CHECK(g1.is_root() == g2.is_root());
-    BOOST_CHECK(num_vertices(g1) == num_vertices(g2));
-    BOOST_CHECK(num_edges(g1) == num_edges(g2));
+    BOOST_TEST(g1.is_root() == g2.is_root());
+    BOOST_TEST(num_vertices(g1) == num_vertices(g2));
+    BOOST_TEST(num_edges(g1) == num_edges(g2));
     typename subgraph_t::edge_iterator e1_i, e1_i_end, e2_i, e2_i_end;
     boost::tie(e1_i, e1_i_end) = edges(g1);
     boost::tie(e2_i, e2_i_end) = edges(g2);
     for (; e1_i != e1_i_end; ++e1_i, ++e2_i)
     {
-        BOOST_CHECK(get(boost::edge_index, g1, *e1_i)
+        BOOST_TEST(get(boost::edge_index, g1, *e1_i)
             == get(boost::edge_index, g2, *e2_i));
     }
     typename subgraph_t::const_children_iterator g1_i, g1_i_end, g2_i, g2_i_end;
@@ -41,10 +41,10 @@ void sub_cmp(subgraph_t const& g1, subgraph_t const& g2)
     {
         sub_cmp(*g1_i, *g2_i);
     }
-    BOOST_CHECK(g1_i == g1_i_end && g2_i == g2_i_end);
+    BOOST_TEST(g1_i == g1_i_end && g2_i == g2_i_end);
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     using namespace boost;
     typedef adjacency_list< vecS, vecS, bidirectionalS,
@@ -212,8 +212,8 @@ int test_main(int, char*[])
             //         BOOST_ASSERT(get(map, v) == 5);
 
             //         test_graph(g);
-            return 0;
+            return boost::report_errors();
         }
     }
-    return 0;
+    return boost::report_errors();
 }

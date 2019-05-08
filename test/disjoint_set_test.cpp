@@ -4,7 +4,7 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 #include <boost/pending/disjoint_sets.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/cstdlib.hpp>
 
 template < typename DisjointSet > struct test_disjoint_set
@@ -30,32 +30,32 @@ template < typename DisjointSet > struct test_disjoint_set
         ds.make_set(elts[2]);
         ds.make_set(elts[3]);
 
-        BOOST_CHECK(ds.find_set(0) != ds.find_set(1));
-        BOOST_CHECK(ds.find_set(0) != ds.find_set(2));
-        BOOST_CHECK(ds.find_set(0) != ds.find_set(3));
-        BOOST_CHECK(ds.find_set(1) != ds.find_set(2));
-        BOOST_CHECK(ds.find_set(1) != ds.find_set(3));
-        BOOST_CHECK(ds.find_set(2) != ds.find_set(3));
+        BOOST_TEST(ds.find_set(0) != ds.find_set(1));
+        BOOST_TEST(ds.find_set(0) != ds.find_set(2));
+        BOOST_TEST(ds.find_set(0) != ds.find_set(3));
+        BOOST_TEST(ds.find_set(1) != ds.find_set(2));
+        BOOST_TEST(ds.find_set(1) != ds.find_set(3));
+        BOOST_TEST(ds.find_set(2) != ds.find_set(3));
 
         ds.union_set(0, 1);
         ds.union_set(2, 3);
-        BOOST_CHECK(ds.find_set(0) != ds.find_set(3));
+        BOOST_TEST(ds.find_set(0) != ds.find_set(3));
         int a = ds.find_set(0);
-        BOOST_CHECK(a == ds.find_set(1));
+        BOOST_TEST(a == ds.find_set(1));
         int b = ds.find_set(2);
-        BOOST_CHECK(b == ds.find_set(3));
+        BOOST_TEST(b == ds.find_set(3));
 
         ds.link(a, b);
-        BOOST_CHECK(ds.find_set(a) == ds.find_set(b));
-        BOOST_CHECK(1 == ds.count_sets(elts, elts + N));
+        BOOST_TEST(ds.find_set(a) == ds.find_set(b));
+        BOOST_TEST(1 == ds.count_sets(elts, elts + N));
 
         ds.normalize_sets(elts, elts + N);
         ds.compress_sets(elts, elts + N);
-        BOOST_CHECK(1 == ds.count_sets(elts, elts + N));
+        BOOST_TEST(1 == ds.count_sets(elts, elts + N));
     }
 };
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     using namespace boost;
     {
@@ -70,5 +70,5 @@ int test_main(int, char*[])
             ds_type;
         test_disjoint_set< ds_type >::do_test();
     }
-    return boost::exit_success;
+    return boost::report_errors();
 }

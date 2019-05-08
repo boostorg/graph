@@ -29,7 +29,7 @@ This test needs to be linked against Boost.Filesystem.
 #include <boost/tuple/tuple.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
@@ -227,7 +227,7 @@ int test_graph(const std::string& dimacs_filename)
             = std::back_inserter(kuratowski_edges)))
     {
         std::cerr << "Not planar. ";
-        BOOST_REQUIRE(is_kuratowski_subgraph(
+        BOOST_TEST(is_kuratowski_subgraph(
             g, kuratowski_edges.begin(), kuratowski_edges.end()));
 
         return 0;
@@ -237,7 +237,7 @@ int test_graph(const std::string& dimacs_filename)
     make_biconnected_planar(g, perm, get(edge_index, g), edge_updater);
 
     // Compute the planar embedding of the (now) biconnected planar graph
-    BOOST_CHECK(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
+    BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = perm));
 
     // If we get this far, we have a biconnected planar graph
@@ -245,20 +245,20 @@ int test_graph(const std::string& dimacs_filename)
         g, perm, get(vertex_index, g), get(edge_index, g), edge_updater);
 
     // Now the graph is triangulated - we can compute the final planar embedding
-    BOOST_CHECK(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
+    BOOST_TEST(boyer_myrvold_planarity_test(boyer_myrvold_params::graph = g,
         boyer_myrvold_params::embedding = perm));
 
     // Make sure Euler's formula holds
     face_counter vis;
     planar_face_traversal(g, perm, vis, get(edge_index, g));
 
-    BOOST_CHECK(num_vertices(g) - num_edges(g) + vis.num_faces() == 2);
+    BOOST_TEST(num_vertices(g) - num_edges(g) + vis.num_faces() == 2);
 
     // Compute a planar canonical ordering of the vertices
     std::vector< vertex_t > ordering;
     planar_canonical_ordering(g, perm, std::back_inserter(ordering));
 
-    BOOST_CHECK(ordering.size() == num_vertices(g));
+    BOOST_TEST(ordering.size() == num_vertices(g));
 
     typedef std::vector< coord_t > drawing_storage_t;
     typedef boost::iterator_property_map< drawing_storage_t::iterator,
@@ -273,12 +273,12 @@ int test_graph(const std::string& dimacs_filename)
         g, perm, ordering.begin(), ordering.end(), drawing);
 
     std::cerr << "Planar. ";
-    BOOST_REQUIRE(is_straight_line_drawing(g, drawing));
+    BOOST_TEST(is_straight_line_drawing(g, drawing));
 
     return 0;
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
     std::string input_directory_str = "planar_input_graphs";
@@ -303,10 +303,10 @@ int test_main(int argc, char* argv[])
             continue;
 
         std::cerr << "Testing " << dir_itr->path().leaf() << "... ";
-        BOOST_REQUIRE(test_graph(dir_itr->path().string()) == 0);
+        BOOST_TEST(test_graph(dir_itr->path().string()) == 0);
 
         std::cerr << std::endl;
     }
 
-    return 0;
+    return boost::report_errors();
 }

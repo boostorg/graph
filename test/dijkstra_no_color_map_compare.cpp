@@ -24,7 +24,7 @@
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/iteration_macros.hpp>
 
 #define INITIALIZE_VERTEX 0
@@ -65,16 +65,16 @@ template < typename Graph > void run_dijkstra_test(const Graph& graph)
             .distance_map(no_color_map_distance_map));
 
     // Verify that predecessor maps are equal
-    BOOST_CHECK(std::equal(default_vertex_map.begin(), default_vertex_map.end(),
+    BOOST_TEST(std::equal(default_vertex_map.begin(), default_vertex_map.end(),
         no_color_map_vertex_map.begin()));
 
     // Verify that distance maps are equal
-    BOOST_CHECK(std::equal(default_vertex_double_map.begin(),
+    BOOST_TEST(std::equal(default_vertex_double_map.begin(),
         default_vertex_double_map.end(),
         no_color_map_vertex_double_map.begin()));
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     using namespace boost;
 
@@ -127,5 +127,5 @@ int test_main(int argc, char* argv[])
 
     run_dijkstra_test(graph);
 
-    return 0;
+    return boost::report_errors();
 }

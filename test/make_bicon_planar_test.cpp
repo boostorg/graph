@@ -13,7 +13,7 @@
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -83,19 +83,19 @@ void test_line_graph(VertexIndexUpdater vertex_index_updater, int size)
         std::copy(out_edges(*vi, g).first, out_edges(*vi, g).second,
             std::back_inserter(embedding[*vi]));
 
-    BOOST_CHECK(biconnected_components(
+    BOOST_TEST(biconnected_components(
                     g, make_vector_property_map< int >(get(edge_index, g)))
         > 1);
-    BOOST_CHECK(boyer_myrvold_planarity_test(g));
+    BOOST_TEST(boyer_myrvold_planarity_test(g));
     make_biconnected_planar(g, embedding);
     reset_edge_index(g);
-    BOOST_CHECK(biconnected_components(
+    BOOST_TEST(biconnected_components(
                     g, make_vector_property_map< int >(get(edge_index, g)))
         == 1);
-    BOOST_CHECK(boyer_myrvold_planarity_test(g));
+    BOOST_TEST(boyer_myrvold_planarity_test(g));
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef adjacency_list< vecS, vecS, undirectedS,
         property< vertex_index_t, int >, property< edge_index_t, int > >
@@ -132,5 +132,5 @@ int test_main(int, char*[])
     test_line_graph< SSgraph_t >(UpdateVertexIndex(), 13);
     test_line_graph< SSgraph_t >(UpdateVertexIndex(), 20);
 
-    return 0;
+    return boost::report_errors();
 }

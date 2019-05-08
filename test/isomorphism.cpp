@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <time.h> // clock used without std:: qualifier?
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/isomorphism.hpp>
 #include <boost/property_map/property_map.hpp>
@@ -60,8 +60,8 @@ template < typename Graph1, typename Graph2 >
 void randomly_permute_graph(const Graph1& g1, Graph2& g2)
 {
     // Need a clean graph to start with
-    BOOST_REQUIRE(num_vertices(g2) == 0);
-    BOOST_REQUIRE(num_edges(g2) == 0);
+    BOOST_TEST(num_vertices(g2) == 0);
+    BOOST_TEST(num_edges(g2) == 0);
 
     typedef typename graph_traits< Graph1 >::vertex_descriptor vertex1;
     typedef typename graph_traits< Graph2 >::vertex_descriptor vertex2;
@@ -142,7 +142,7 @@ void test_isomorphism2()
 
     bool isomorphism_correct;
     clock_t start = clock();
-    BOOST_CHECK(isomorphism_correct = boost::graph::isomorphism(g1, g2,
+    BOOST_TEST(isomorphism_correct = boost::graph::isomorphism(g1, g2,
                     _vertex_index1_map = get(vertex_index, g1),
                     _isomorphism_map = make_assoc_property_map(mapping)));
     clock_t end = clock();
@@ -150,7 +150,7 @@ void test_isomorphism2()
     std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
 
     bool verify_correct;
-    BOOST_CHECK(verify_correct
+    BOOST_TEST(verify_correct
         = verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 
     if (!isomorphism_correct || !verify_correct)
@@ -205,14 +205,14 @@ void test_isomorphism(int n, double edge_probability)
 
     bool isomorphism_correct;
     clock_t start = clock();
-    BOOST_CHECK(isomorphism_correct = boost::graph::isomorphism(g1, g2,
+    BOOST_TEST(isomorphism_correct = boost::graph::isomorphism(g1, g2,
                     _isomorphism_map = make_assoc_property_map(mapping)));
     clock_t end = clock();
 
     std::cout << "Elapsed time (clock cycles): " << (end - start) << std::endl;
 
     bool verify_correct;
-    BOOST_CHECK(verify_correct
+    BOOST_TEST(verify_correct
         = verify_isomorphism(g1, g2, make_assoc_property_map(mapping)));
 
     if (!isomorphism_correct || !verify_correct)
@@ -243,17 +243,11 @@ void test_isomorphism(int n, double edge_probability)
     }
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-    if (argc < 3)
-    {
-        test_isomorphism(30, 0.45);
-        return 0;
-    }
-
-    int n = boost::lexical_cast< int >(argv[1]);
-    double edge_prob = boost::lexical_cast< double >(argv[2]);
+    int n = argc < 3 ? 30 : boost::lexical_cast< int >(argv[1]);
+    double edge_prob = argc < 3 ? 0.45 : boost::lexical_cast< double >(argv[2]);
     test_isomorphism(n, edge_prob);
 
-    return 0;
+    return boost::report_errors();
 }

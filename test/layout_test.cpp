@@ -20,7 +20,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/point_traits.hpp>
 #include <boost/random/linear_congruential.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <iostream>
 #include <boost/limits.hpp>
 #include <fstream>
@@ -175,7 +175,7 @@ template < typename Graph > void test_triangle(Graph*)
 
     bool ok = kamada_kawai_spring_layout(g, get(vertex_position, g),
         get(edge_weight, g), square_topology<>(50.0), side_length(50.0));
-    BOOST_CHECK(ok);
+    BOOST_TEST(ok);
 
     std::cout << "Triangle layout (Kamada-Kawai).\n";
     print_graph_layout(g, get(vertex_position, g));
@@ -223,7 +223,7 @@ template < typename Graph > void test_cube(Graph*)
     bool ok = kamada_kawai_spring_layout(g, get(vertex_position, g),
         get(edge_weight, g), square_topology<>(50.0), side_length(50.0),
         kamada_kawai_done());
-    BOOST_CHECK(ok);
+    BOOST_TEST(ok);
 
     std::cout << "Cube layout (Kamada-Kawai).\n";
     print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
@@ -302,7 +302,7 @@ template < typename Graph > void test_triangular(Graph*)
 
     bool ok = kamada_kawai_spring_layout(g, get(vertex_position, g),
         get(edge_weight, g), topology, side_length(50.0), kamada_kawai_done());
-    BOOST_CHECK(ok);
+    BOOST_TEST(ok);
 
     std::cout << "Triangular layout (Kamada-Kawai).\n";
     print_graph_layout(g, get(vertex_position, g), square_topology<>(50.));
@@ -369,7 +369,7 @@ template < typename Graph > void test_disconnected(Graph*)
     bool ok = kamada_kawai_spring_layout(g, get(vertex_position, g),
         get(edge_weight, g), square_topology<>(50.0), side_length(50.0),
         kamada_kawai_done());
-    BOOST_CHECK(!ok);
+    BOOST_TEST(!ok);
 
     minstd_rand gen;
     rectangle_topology<> rect_top(gen, -25, -25, 25, 25);
@@ -390,7 +390,7 @@ template < typename Graph > void test_disconnected(Graph*)
     dump_graph_layout("disconnected-fr", g, get(vertex_position, g));
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef adjacency_list< listS, listS, undirectedS,
         // Vertex properties
@@ -403,5 +403,5 @@ int test_main(int, char*[])
     test_cube((Graph*)0);
     test_triangular((Graph*)0);
     test_disconnected((Graph*)0);
-    return 0;
+    return boost::report_errors();
 }

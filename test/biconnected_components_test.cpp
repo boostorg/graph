@@ -8,7 +8,7 @@
 //           Andrew Lumsdaine
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/lexical_cast.hpp>
 #include <vector>
 #include <iterator>
@@ -57,7 +57,7 @@ void check_articulation_points(const Graph& g, std::vector< Vertex > art_points)
     std::sort(art_points.begin(), art_points.end());
     std::sort(art_points_check.begin(), art_points_check.end());
 
-    BOOST_CHECK(art_points == art_points_check);
+    BOOST_TEST(art_points == art_points_check);
     if (art_points != art_points_check)
     {
         std::cerr << "ERROR!" << std::endl;
@@ -119,7 +119,7 @@ bool test_graph(Graph& g)
     return any_errors;
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     std::size_t n = 100;
     std::size_t m = 500;
@@ -150,5 +150,5 @@ int test_main(int argc, char* argv[])
             return 1;
     }
 
-    return 0;
+    return boost::report_errors();
 }

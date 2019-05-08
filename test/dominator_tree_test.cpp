@@ -5,7 +5,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <iostream>
 #include <algorithm>
 #include <boost/graph/adjacency_list.hpp>
@@ -28,7 +28,7 @@ typedef adjacency_list< listS, listS, bidirectionalS,
     property< vertex_index_t, std::size_t >, no_property >
     G;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef DominatorCorrectnessTestSet::edge edge;
 
@@ -255,7 +255,7 @@ int test_main(int, char*[])
         cout << endl;
 
         // dominator tree correctness test
-        BOOST_CHECK(std::equal(
+        BOOST_TEST(std::equal(
             idom.begin(), idom.end(), testSet[i].correctIdoms.begin()));
 
         // compare results of fast version and slow version of dominator tree
@@ -281,8 +281,8 @@ int test_main(int, char*[])
 
         size_t k;
         for (k = 0; k < num_vertices(g); ++k)
-            BOOST_CHECK(domTreePredVector[k] == domTreePredVector2[k]);
+            BOOST_TEST(domTreePredVector[k] == domTreePredVector2[k]);
     }
 
-    return 0;
+    return boost::report_errors();
 }

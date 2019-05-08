@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <time.h>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/random.hpp>
@@ -59,8 +59,8 @@ template < typename Generator > struct random_functor
 template < typename Graph1, typename Graph2 >
 void randomly_permute_graph(Graph1& g1, const Graph2& g2)
 {
-    BOOST_REQUIRE(num_vertices(g1) <= num_vertices(g2));
-    BOOST_REQUIRE(num_edges(g1) == 0);
+    BOOST_TEST(num_vertices(g1) <= num_vertices(g2));
+    BOOST_TEST(num_edges(g1) == 0);
 
     typedef typename graph_traits< Graph1 >::vertex_descriptor vertex1;
     typedef typename graph_traits< Graph2 >::vertex_descriptor vertex2;
@@ -108,12 +108,12 @@ void generate_random_digraph(Graph& g, double edge_probability,
     int max_vertex_name)
 {
 
-    BOOST_REQUIRE((0 <= edge_probability) && (edge_probability <= 1));
-    BOOST_REQUIRE(
+    BOOST_TEST((0 <= edge_probability) && (edge_probability <= 1));
+    BOOST_TEST(
         (0 <= parallel_edge_probability) && (parallel_edge_probability <= 1));
-    BOOST_REQUIRE(0 <= max_parallel_edges);
-    BOOST_REQUIRE(0 <= max_edge_name);
-    BOOST_REQUIRE(0 <= max_vertex_name);
+    BOOST_TEST(0 <= max_parallel_edges);
+    BOOST_TEST(0 <= max_edge_name);
+    BOOST_TEST(0 <= max_vertex_name);
 
     typedef typename graph_traits< Graph >::vertex_iterator vertex_iterator;
     random_generator_type random_gen;
@@ -178,7 +178,7 @@ struct test_callback
     {
 
         bool verified;
-        BOOST_CHECK(verified = verify_vf2_subgraph_iso(
+        BOOST_TEST(verified = verify_vf2_subgraph_iso(
                         graph1_, graph2_, f, edge_comp_, vertex_comp_));
 
         // Output (sub)graph isomorphism map
@@ -281,9 +281,9 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
         g1, g2, edge_comp, vertex_comp, output);
 
     std::cout << std::endl;
-    BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback, vertex_order_by_mult(g1),
+    BOOST_TEST(vf2_subgraph_iso(g1, g2, callback, vertex_order_by_mult(g1),
         edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)));
-    BOOST_CHECK(vf2_subgraph_iso(g1, g2, callback,
+    BOOST_TEST(vf2_subgraph_iso(g1, g2, callback,
         IndirectIndexMap< graph1 >(g1), IndirectIndexMap< graph2 >(g2),
         vertex_order_by_mult(g1), edge_comp, vertex_comp));
 
@@ -294,7 +294,7 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
     if (num_vertices(g1) == num_vertices(g2))
     {
         std::cout << std::endl;
-        BOOST_CHECK(vf2_graph_iso(g1, g2, callback, vertex_order_by_mult(g1),
+        BOOST_TEST(vf2_graph_iso(g1, g2, callback, vertex_order_by_mult(g1),
             edges_equivalent(edge_comp).vertices_equivalent(vertex_comp)));
 
         std::clock_t end2 = std::clock();
@@ -316,7 +316,7 @@ void test_vf2_sub_graph_iso(int n1, int n2, double edge_probability,
     }
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
     int num_vertices_g1 = 10;
@@ -372,5 +372,5 @@ int test_main(int argc, char* argv[])
         max_parallel_edges, parallel_edge_probability, max_edge_name,
         max_vertex_name, output);
 
-    return 0;
+    return boost::report_errors();
 }

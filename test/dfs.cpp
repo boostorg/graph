@@ -8,7 +8,7 @@
 //=======================================================================
 
 #include <boost/config.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <stdlib.h>
 
 #include <boost/graph/depth_first_search.hpp>
@@ -40,54 +40,54 @@ public:
     template < class Vertex, class Graph >
     void initialize_vertex(Vertex u, Graph&)
     {
-        BOOST_CHECK(boost::get(m_color, u) == Color::white());
+        BOOST_TEST(boost::get(m_color, u) == Color::white());
     }
     template < class Vertex, class Graph > void start_vertex(Vertex u, Graph&)
     {
-        BOOST_CHECK(boost::get(m_color, u) == Color::white());
+        BOOST_TEST(boost::get(m_color, u) == Color::white());
     }
     template < class Vertex, class Graph >
     void discover_vertex(Vertex u, Graph&)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, u) == Color::gray());
-        BOOST_CHECK(get(m_color, get(m_parent, u)) == Color::gray());
+        BOOST_TEST(get(m_color, u) == Color::gray());
+        BOOST_TEST(get(m_color, get(m_parent, u)) == Color::gray());
 
         put(m_discover_time, u, m_time++);
     }
     template < class Edge, class Graph > void examine_edge(Edge e, Graph& g)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, source(e, g)) == Color::gray());
+        BOOST_TEST(get(m_color, source(e, g)) == Color::gray());
     }
     template < class Edge, class Graph > void tree_edge(Edge e, Graph& g)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, target(e, g)) == Color::white());
+        BOOST_TEST(get(m_color, target(e, g)) == Color::white());
 
         put(m_parent, target(e, g), source(e, g));
     }
     template < class Edge, class Graph > void back_edge(Edge e, Graph& g)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, target(e, g)) == Color::gray());
+        BOOST_TEST(get(m_color, target(e, g)) == Color::gray());
     }
     template < class Edge, class Graph >
     void forward_or_cross_edge(Edge e, Graph& g)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, target(e, g)) == Color::black());
+        BOOST_TEST(get(m_color, target(e, g)) == Color::black());
     }
     template < class Edge, class Graph > void finish_edge(Edge e, Graph& g)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, target(e, g)) == Color::gray()
+        BOOST_TEST(get(m_color, target(e, g)) == Color::gray()
             || get(m_color, target(e, g)) == Color::black());
     }
     template < class Vertex, class Graph > void finish_vertex(Vertex u, Graph&)
     {
         using namespace boost;
-        BOOST_CHECK(get(m_color, u) == Color::black());
+        BOOST_TEST(get(m_color, u) == Color::black());
 
         put(m_finish_time, u, m_time++);
     }
@@ -159,7 +159,7 @@ template < typename Graph > struct dfs_test
 
                 // all vertices should be black
                 for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-                    BOOST_CHECK(get(color, *vi) == Color::black());
+                    BOOST_TEST(get(color, *vi) == Color::black());
 
                 // check parenthesis structure of discover/finish times
                 // See CLR p.480
@@ -170,7 +170,7 @@ template < typename Graph > struct dfs_test
                         vertex_descriptor u = *ui, v = *vi;
                         if (u != v)
                         {
-                            BOOST_CHECK(finish_time[u] < discover_time[v]
+                            BOOST_TEST(finish_time[u] < discover_time[v]
                                 || finish_time[v] < discover_time[u]
                                 || (discover_time[v] < discover_time[u]
                                     && finish_time[u] < finish_time[v]
@@ -186,7 +186,7 @@ template < typename Graph > struct dfs_test
 
 // usage: dfs.exe [max-vertices=15]
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     int max_V = 7;
     if (argc > 1)
@@ -202,5 +202,5 @@ int test_main(int argc, char* argv[])
             boost::property< boost::vertex_color_t,
                 boost::default_color_type > > >::go(max_V);
 
-    return 0;
+    return boost::report_errors();
 }

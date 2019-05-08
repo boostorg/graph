@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <fstream>
 
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 // three max_flows we test here
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
@@ -57,7 +57,7 @@
 
 using namespace boost;
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
     typedef adjacency_list_traits< vecS, vecS, directedS > Traits;
@@ -141,8 +141,8 @@ int test_main(int argc, char* argv[])
     tEdgeVal edmonds_karp
         = edmonds_karp_max_flow(g, source_vertex, sink_vertex);
 
-    BOOST_REQUIRE(bk == push_relabel);
-    BOOST_REQUIRE(push_relabel == edmonds_karp);
+    BOOST_TEST(bk == push_relabel);
+    BOOST_TEST(push_relabel == edmonds_karp);
 
-    return 0;
+    return boost::report_errors();
 }
