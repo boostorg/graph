@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(VertexListGraph, BinaryTree, tree_types)
 
   std::array<vertex_descriptor, 7> actual,
                                    expected = {{3, 1, 4, 0, 5, 2, 6}};
-  copy(vertices(tree), begin(actual));
+  boost::copy(vertices(tree), begin(actual));
   BOOST_TEST(actual == expected);
 }
 

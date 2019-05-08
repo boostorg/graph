@@ -41,7 +41,7 @@ namespace boost
 
       binary_tree_forward_node()
       {
-        fill(successors, graph_traits<BinaryTree>::null_vertex());
+        boost::fill(successors, graph_traits<BinaryTree>::null_vertex());
       }
 
       array<vertex_descriptor, 2> successors;
@@ -88,7 +88,7 @@ namespace boost
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
         BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
+        BOOST_ASSERT(boost::find(free_list, u) == boost::end(free_list));
 
         return nodes[u];
       }
@@ -100,7 +100,7 @@ namespace boost
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
         BOOST_ASSERT(u < nodes.size());
-        BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
+        BOOST_ASSERT(boost::find(free_list, u) == boost::end(free_list));
 
         return nodes[u].successors[N] != null_vertex();
       }
@@ -188,10 +188,93 @@ namespace boost
 
       // *** VertexListGraph interface ***
 
+      struct vertex_iterator
+        : public iterator_facade <vertex_iterator,
+                                  vertex_descriptor,
+                                  multi_pass_input_iterator_tag,
+                                  vertex_descriptor const &> {
+        typedef iterator_facade<vertex_iterator,
+                                vertex_descriptor,
+                                multi_pass_input_iterator_tag,
+                                vertex_descriptor const &> super_t;
+        typedef typename super_t::value_type value_type;
+        typedef typename super_t::reference reference;
+
+        vertex_descriptor last;
+        std::stack<vertex_descriptor> traversal;
+        binary_tree_base const *g;
+
+      public:
+        vertex_iterator(binary_tree_base const &g) : g(&g) {}
+
+        vertex_iterator(vertex_descriptor start, binary_tree_base const &g)
+          : last(g.null_vertex()), g(&g)
+        {
+          traversal.push(start);
+          while (has_left_successor(traversal.top(), g))
+            traversal.push(left_successor(traversal.top(), g));
+        }
+
+      private:
+        friend class boost::iterator_core_access;
+
+        reference dereference() const
+        {
+          return traversal.top();
+        }
+
+        void increment()
+        {
+          if (has_right_successor(traversal.top(), *g)) {
+            if (right_successor(traversal.top(), *g) != last) {
+              traversal.push(right_successor(traversal.top(), *g));
+              while (has_left_successor(traversal.top(), *g))
+                traversal.push(left_successor(traversal.top(), *g));
+              return;
+            }
+
+          }
+
+          do {
+            last = traversal.top();
+            traversal.pop();
+          } while (!traversal.empty()
+          && (!has_right_successor(traversal.top(), *g)
+          || right_successor(traversal.top(), *g) == last));
+        }
+
+        bool equal(vertex_iterator const &other) const
+        {
+          BOOST_ASSERT(g == other.g);
+
+          if (traversal.empty())
+            return other.traversal.empty();
+
+          if (other.traversal.empty())
+            return false;
+
+          return traversal.top() == other.traversal.top();
+        }
+      };
+
+      friend
+      std::pair<vertex_iterator, vertex_iterator>
+      vertices(binary_tree_base const &g)
+      {
+        if (num_vertices(g) == 0)
+          return std::make_pair(vertex_iterator(g), vertex_iterator(g));
+        auto start = default_starting_vertex(g);
+        return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
+      }
+
       friend
       std::size_t num_vertices(binary_tree_base const &g)
       {
-        return g.num_vertices();
+        BOOST_ASSERT(!g.free_list.empty());
+        BOOST_ASSERT(g.free_list[0] == g.nodes.size());
+        BOOST_ASSERT(boost::is_sorted(g.free_list, std::greater<>()));
+
+        return g.nodes.size() - g.free_list.size() + 1;
       }
 
       // *** MutableGraph interface ***
@@ -370,15 +453,6 @@ namespace boost
         *p = null_vertex();
       }
 
-      std::size_t num_vertices() const
-      {
-        BOOST_ASSERT(!free_list.empty());
-        BOOST_ASSERT(free_list[0] == nodes.size());
-        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
-
-        return nodes.size() - free_list.size() + 1;
-      }
-
       vertex_descriptor add_vertex()
       {
         BOOST_ASSERT(!free_list.empty());
@@ -480,7 +554,7 @@ namespace boost
         BOOST_ASSERT(free_list[0] == nodes.size());
         BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
 
-        fill(nodes[u].successors, null_vertex());
+        boost::fill(nodes[u].successors, null_vertex());
       }
     };
   } // namespace detail
