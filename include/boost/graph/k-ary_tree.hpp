@@ -493,5 +493,3 @@ namespace boost
 #endif // #if __cplusplus > 201103L
 
 #endif // #ifndef BOOST_GRAPH_K_ARY_TREE
-
-

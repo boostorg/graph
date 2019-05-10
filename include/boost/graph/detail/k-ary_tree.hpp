@@ -36,7 +36,8 @@ namespace boost
   {
 
     template <typename BinaryTree>
-    struct binary_tree_forward_node {
+    struct binary_tree_forward_node
+    {
       using vertex_descriptor = vertex_descriptor_t<BinaryTree>;
 
       binary_tree_forward_node()
@@ -49,7 +50,8 @@ namespace boost
 
     template <typename BinaryTree>
     struct binary_tree_bidirectional_node
-      : binary_tree_forward_node<BinaryTree> {
+      : binary_tree_forward_node<BinaryTree>
+    {
       using vertex_descriptor = vertex_descriptor_t<BinaryTree>;
 
       binary_tree_bidirectional_node(
@@ -74,7 +76,8 @@ namespace boost
       typedef std::size_t vertices_size_type;
 
       BOOST_STATIC_CONSTEXPR
-      vertex_descriptor null_vertex() {
+      vertex_descriptor null_vertex()
+      {
         return vertex_descriptor(-1);
       }
 
@@ -143,7 +146,8 @@ namespace boost
         void post_increment()
         {
           while (this->base_reference() != last
-                 && *this->base_reference() == null_vertex()) {
+                 && *this->base_reference() == null_vertex())
+          {
             this->base_reference()++;
           }
         }
@@ -158,12 +162,14 @@ namespace boost
       };
 
       friend
-      vertex_descriptor source(edge_descriptor e, binary_tree_base const &) {
+      vertex_descriptor source(edge_descriptor e, binary_tree_base const &)
+      {
         return e.first;
       }
 
       friend
-      vertex_descriptor target(edge_descriptor e, binary_tree_base const &) {
+      vertex_descriptor target(edge_descriptor e, binary_tree_base const &)
+      {
         return e.second;
       }
 
@@ -189,21 +195,17 @@ namespace boost
       // *** VertexListGraph interface ***
 
       struct vertex_iterator
-        : public iterator_facade <vertex_iterator,
-                                  vertex_descriptor,
-                                  multi_pass_input_iterator_tag,
-                                  vertex_descriptor const &> {
-        typedef iterator_facade<vertex_iterator,
-                                vertex_descriptor,
-                                multi_pass_input_iterator_tag,
-                                vertex_descriptor const &> super_t;
+        : public iterator_facade <vertex_iterator, vertex_descriptor,
+          multi_pass_input_iterator_tag, vertex_descriptor const &>
+      {
+        typedef iterator_facade<vertex_iterator, vertex_descriptor,
+                multi_pass_input_iterator_tag, vertex_descriptor const &> super_t;
         typedef typename super_t::value_type value_type;
         typedef typename super_t::reference reference;
 
         vertex_descriptor last;
         std::stack<vertex_descriptor> traversal;
         binary_tree_base const *g;
-
       public:
         vertex_iterator(binary_tree_base const &g) : g(&g) {}
 
@@ -225,22 +227,25 @@ namespace boost
 
         void increment()
         {
-          if (has_right_successor(traversal.top(), *g)) {
-            if (right_successor(traversal.top(), *g) != last) {
+          if (has_right_successor(traversal.top(), *g))
+          {
+            if (right_successor(traversal.top(), *g) != last)
+            {
               traversal.push(right_successor(traversal.top(), *g));
               while (has_left_successor(traversal.top(), *g))
                 traversal.push(left_successor(traversal.top(), *g));
               return;
             }
-
           }
 
-          do {
+          do
+          {
             last = traversal.top();
             traversal.pop();
-          } while (!traversal.empty()
-          && (!has_right_successor(traversal.top(), *g)
-          || right_successor(traversal.top(), *g) == last));
+          }
+          while (!traversal.empty()
+                 && (!has_right_successor(traversal.top(), *g)
+                     || right_successor(traversal.top(), *g) == last));
         }
 
         bool equal(vertex_iterator const &other) const
@@ -337,7 +342,8 @@ namespace boost
       Vertex default_starting_vertex(binary_tree_base const &g)
       {
         Vertex start = 0;
-        if (g.free_list.size() != 1) {
+        if (g.free_list.size() != 1)
+        {
           auto const not_successors = [](auto x, auto y) { return ++x != y; };
           auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
           start = *q + 1;
@@ -384,7 +390,8 @@ namespace boost
 
         if (p == boost::end(nodes[u].successors) or * p == v)
           return std::make_pair(result, false);
-        else {
+        else
+        {
           *p = v;
           return std::make_pair(result, true);
         }
@@ -462,10 +469,12 @@ namespace boost
                      || free_list.size() == 1);
 
         vertex_descriptor const result = free_list.back();
-        if (free_list.size() == 1) {
+        if (free_list.size() == 1)
+        {
           nodes.resize(result + 1);
           free_list.back() = nodes.size();
-        } else
+        }
+        else
           free_list.pop_back();
         BOOST_ASSERT(!free_list.empty());
         BOOST_ASSERT(free_list[0] == nodes.size());
@@ -481,7 +490,8 @@ namespace boost
         BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
 
         // First handle the case where it's not on the free list.
-        if (nodes.size() < u) {
+        if (nodes.size() < u)
+        {
           free_list.reserve(free_list.size() + u - nodes.size());
           for (auto i = u - 1; i != nodes.size() - 1; i--)
             free_list.push_back(i);
@@ -493,10 +503,13 @@ namespace boost
         }
 
         auto const which = find(free_list, u);
-        if (which == boost::begin(free_list)) {
+        if (which == boost::begin(free_list))
+        {
           (*which)++;
           nodes.resize(*which);
-        } else {
+        }
+        else
+        {
           if (which == boost::end(free_list))
             return false;
           free_list.erase(which);
@@ -520,13 +533,17 @@ namespace boost
         BOOST_ASSERT(find(free_list, u) == boost::end(free_list));
         BOOST_ASSERT(out_degree(u, *this) == 0);
 
-        if (u == nodes.size() - 1) {
+        if (u == nodes.size() - 1)
+        {
           // happens to be the last node
-          if (free_list.size() == 1) {
+          if (free_list.size() == 1)
+          {
             // simple case, no other nodes to consider
             free_list[0]--;
             nodes.pop_back();
-          } else {
+          }
+          else
+          {
             // might be a run of nodes to erase
             auto const not_successors = [](auto x, auto y) { return x != ++y; };
             auto const least = boost::adjacent_find(free_list, not_successors);
@@ -534,7 +551,9 @@ namespace boost
             nodes.erase(boost::end(nodes) - n, boost::end(nodes)); //pop_back(n)
             free_list.erase(boost::begin(free_list), least); //pop_front(n) :/
           }
-        } else {
+        }
+        else
+        {
           auto const here = boost::lower_bound(free_list, u, std::greater<>());
           free_list.insert(here, u);
         }
