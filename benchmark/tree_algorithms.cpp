@@ -16,30 +16,44 @@ using namespace boost::graph;
 
 #ifdef NDEBUG
 
-template <typename Graph>
-void create_tree(Graph &tree, typename graph_traits<Graph>::vertex_descriptor weight)
-{
-  BOOST_ASSERT(weight >= 0);
-
-  if (weight == 0)
-    return;
-
-  if (weight == 1)
+  template <typename Graph>
+  void create_tree(Graph &tree, vertex_descriptor_t<Graph> weight)
   {
-    add_vertex(tree);
-    return;
+    BOOST_ASSERT(weight >= 0);
+    if (weight == 0) return;
+    if (weight == 1) {
+      add_vertex(tree);
+      return;
+    }
+
+    typedef vertex_descriptor_t<Graph> vertex_descriptor;
+    vertex_descriptor parent = 0;
+    for (vertex_descriptor child = 1; child != weight; child++) {
+      add_edge(parent, child, tree);
+      if (!(child & 1))
+        parent++;
+    }
   }
 
-  typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
 
-  vertex_descriptor parent = 0;
-  for (vertex_descriptor child = 1; child != weight; child++)
+  template <typename BinaryTree>
+  void create_binary_tree(BinaryTree &tree,
+                          vertex_descriptor_t<BinaryTree> weight)
   {
-    add_edge(parent, child, tree);
-    if (!(child & 1))
-      parent++;
+    BOOST_ASSERT(weight >= 0);
+
+    tree = BinaryTree(weight);
+    typedef vertex_descriptor_t<BinaryTree> vertex_descriptor;
+    vertex_descriptor parent = 0;
+    for (vertex_descriptor child = 1; child < weight; child++)
+    {
+      if (child % 2 == 1)
+        add_left_edge(parent, child, tree);
+      else
+        add_right_edge(parent++, child, tree);
+    }
   }
-}
+
 
 
 void create_tree(compressed_sparse_row_graph<> &tree,
@@ -59,7 +73,7 @@ void create_tree(compressed_sparse_row_graph<> &tree,
   for (auto child = parent + 1; child != weight; child++)
   {
     add_edge(parent, child, tmp);
-    if (!(child & 1))
+    if (child % 2 == 0)
       parent++;
   }
 
