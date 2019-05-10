@@ -82,24 +82,6 @@ void create_tree(compressed_sparse_row_graph<> &tree,
 
 
 template <typename BinaryTree>
-void create_binary_tree(BinaryTree &tree,
-                        typename graph_traits<BinaryTree>::vertex_descriptor weight)
-{
-  BOOST_ASSERT(weight >= 0);
-
-  tree = BinaryTree(weight);
-  typedef typename graph_traits<BinaryTree>::vertex_descriptor vertex_descriptor;
-  vertex_descriptor parent = 0;
-  for (vertex_descriptor child = 1; child < weight; child++)
-  {
-    if (child % 2 == 1)
-      add_left_edge(parent, child, tree);
-    else
-      add_right_edge(parent++, child, tree);
-  }
-}
-
-template <typename BinaryTree>
 vertex_descriptor_t<BinaryTree>
 create_binary_subtree(BinaryTree &tree, vertex_descriptor_t<BinaryTree> parent,
                       vertex_descriptor_t<BinaryTree> child, int depth)
