@@ -11,11 +11,11 @@ os:
   - linux
   - osx
 
-branches:
-  only:
-    - master
-    - develop
-    - /feature\/.*/
+# branches:
+#   only:
+#     - master
+#     - develop
+#     - /feature\/.*/
 
 env:
   matrix:
