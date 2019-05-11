@@ -6,7 +6,7 @@ set -o nounset
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
-  find test example -type f -name '*.h' -o -name '*.cpp' \
+  find ${TRAVIS_BUILD_DIR} -type f -name '*.h' -o -name '*.cpp' \
   | xargs -I{} -P "$(nproc)" clang-format -i -style=file {}
 
   dirty=$(git ls-files --modified)
