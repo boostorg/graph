@@ -286,6 +286,7 @@ install:
 
 
 script:
+  - ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh
   - |-
     echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
   - IFS=','
