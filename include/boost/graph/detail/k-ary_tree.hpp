@@ -345,7 +345,8 @@ namespace boost
         if (g.free_list.size() != 1)
         {
           auto const not_successors = [](auto x, auto y) { return ++x != y; };
-          auto q = adjacent_find(adaptors::reverse(g.free_list), not_successors);
+          auto const q = boost::adjacent_find(adaptors::reverse(g.free_list),
+                                              not_successors);
           start = *q + 1;
         }
         return start;
