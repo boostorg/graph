@@ -464,7 +464,7 @@ namespace boost {
     next_spanning_branching( const Graph& g, 
                              const unordered_set<Edge>& branching,
                              IndexMap& v_id,
-                             WeightMap& w,
+                             WeightMap& weight_map,
                              Compare& comp,
                              Rank rank,
                              Pred pred1,
@@ -522,7 +522,7 @@ namespace boost {
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
         (
           g,
-          w,
+          weight_map,
           comp,
           in_edges,
           include_edges,
