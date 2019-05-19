@@ -17,6 +17,12 @@ os:
 #     - develop
 #     - /feature\/.*/
 
+stages:
+  - code_QC
+  - repo_initialization
+  - test
+
+
 env:
   matrix:
     - BOGUS_JOB=true
@@ -270,6 +276,7 @@ matrix:
 
 
 install:
+  stage: repo_initialization
   - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
   - cd ..
   - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
@@ -286,7 +293,11 @@ install:
 
 
 script:
+  stage: code_QC
   - ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh
+
+script:
+  stage: test
   - |-
     echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
   - IFS=','
