@@ -12,9 +12,6 @@ language: cpp
 #   - osx
 
 
-matrix:
-  fast_finish: true
-
 # branches:
 #   only:
 #     - master
@@ -45,7 +42,7 @@ install:
 
 
 script:
-  - &run ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh
+  - &run ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh || exit 1
   - |-
     echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
   - IFS=','
@@ -55,6 +52,7 @@ script:
 
 
 matrix:
+  fast_finish: true
   include:
     - os: linux
       compiler: g++-4.4
