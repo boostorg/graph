@@ -60,12 +60,12 @@ int main(int argc, char** argv)
     BOOST_TEST(get(vertex_color_t(), g, vertex(2, g)) == 100);
     BOOST_TEST(get(vertex_color_t(), g, vertex(3, g)) == 42);
     BOOST_TEST(std::abs(get(edge_weight_t(), g,
-                             edge(vertex(0, g), vertex(1, g), g).first)
-                    - 0.0)
+                            edge(vertex(0, g), vertex(1, g), g).first)
+                   - 0.0)
         < 0.00001);
     BOOST_TEST(std::abs(get(edge_weight_t(), g,
-                             edge(vertex(1, g), vertex(2, g), g).first)
-                    - 0.8)
+                            edge(vertex(1, g), vertex(2, g), g).first)
+                   - 0.8)
         < 0.00001);
     BOOST_TEST(get("description", dp, &g) == "Root graph.");
 

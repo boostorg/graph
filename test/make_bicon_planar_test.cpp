@@ -84,13 +84,13 @@ void test_line_graph(VertexIndexUpdater vertex_index_updater, int size)
             std::back_inserter(embedding[*vi]));
 
     BOOST_TEST(biconnected_components(
-                    g, make_vector_property_map< int >(get(edge_index, g)))
+                   g, make_vector_property_map< int >(get(edge_index, g)))
         > 1);
     BOOST_TEST(boyer_myrvold_planarity_test(g));
     make_biconnected_planar(g, embedding);
     reset_edge_index(g);
     BOOST_TEST(biconnected_components(
-                    g, make_vector_property_map< int >(get(edge_index, g)))
+                   g, make_vector_property_map< int >(get(edge_index, g)))
         == 1);
     BOOST_TEST(boyer_myrvold_planarity_test(g));
 }

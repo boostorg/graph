@@ -179,7 +179,7 @@ struct test_callback
 
         bool verified;
         BOOST_TEST(verified = verify_vf2_subgraph_iso(
-                        graph1_, graph2_, f, edge_comp_, vertex_comp_));
+                       graph1_, graph2_, f, edge_comp_, vertex_comp_));
 
         // Output (sub)graph isomorphism map
         if (!verified || output_)

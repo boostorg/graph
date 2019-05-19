@@ -117,12 +117,12 @@ int main(int, char*[])
     make_disconnected_cycles(gVL, num_cycles, cycle_size);
     reset_edge_index(gVL);
     reset_vertex_index(gVL);
-    BOOST_TEST(connected_components(gVL,
-                    make_vector_property_map< int >(get(vertex_index, gVL)))
+    BOOST_TEST(connected_components(
+                   gVL, make_vector_property_map< int >(get(vertex_index, gVL)))
         == static_cast< int >(num_cycles));
     make_connected(gVL);
-    BOOST_TEST(connected_components(gVL,
-                    make_vector_property_map< int >(get(vertex_index, gVL)))
+    BOOST_TEST(connected_components(
+                   gVL, make_vector_property_map< int >(get(vertex_index, gVL)))
         == 1);
     BOOST_TEST(num_edges(gVL) == num_cycles * cycle_size + num_cycles - 1);
 
@@ -132,12 +132,12 @@ int main(int, char*[])
     make_disconnected_cycles(gLL, num_cycles, cycle_size);
     reset_edge_index(gLL);
     reset_vertex_index(gLL);
-    BOOST_TEST(connected_components(gLL,
-                    make_vector_property_map< int >(get(vertex_index, gLL)))
+    BOOST_TEST(connected_components(
+                   gLL, make_vector_property_map< int >(get(vertex_index, gLL)))
         == static_cast< int >(num_cycles));
     make_connected(gLL);
-    BOOST_TEST(connected_components(gLL,
-                    make_vector_property_map< int >(get(vertex_index, gLL)))
+    BOOST_TEST(connected_components(
+                   gLL, make_vector_property_map< int >(get(vertex_index, gLL)))
         == 1);
     BOOST_TEST(num_edges(gLL) == num_cycles * cycle_size + num_cycles - 1);
 

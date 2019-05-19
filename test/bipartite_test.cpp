@@ -56,8 +56,7 @@ void check_odd_cycle(
         last_vertex = current_vertex;
         current_vertex = *first;
 
-        BOOST_TEST(
-            boost::lookup_edge(current_vertex, last_vertex, g).second);
+        BOOST_TEST(boost::lookup_edge(current_vertex, last_vertex, g).second);
     }
 
     BOOST_TEST(boost::lookup_edge(first_vertex, current_vertex, g).second);

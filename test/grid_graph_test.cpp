@@ -73,18 +73,15 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     for (unsigned int dimension_index = 0; dimension_index < Dims;
          ++dimension_index)
     {
-        BOOST_TEST(
-            graph.length(dimension_index) == lengths[dimension_index]);
-        BOOST_TEST(
-            graph.wrapped(dimension_index) == wrapped[dimension_index]);
+        BOOST_TEST(graph.length(dimension_index) == lengths[dimension_index]);
+        BOOST_TEST(graph.wrapped(dimension_index) == wrapped[dimension_index]);
     }
 
     // Verify matching indices
     for (vertices_size_type vertex_index = 0;
          vertex_index < num_vertices(graph); ++vertex_index)
     {
-        BOOST_TEST(
-            get(boost::vertex_index, graph, vertex(vertex_index, graph))
+        BOOST_TEST(get(boost::vertex_index, graph, vertex(vertex_index, graph))
             == vertex_index);
     }
 
@@ -93,8 +90,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     {
 
         edge_descriptor current_edge = edge_at(edge_index, graph);
-        BOOST_TEST(
-            get(boost::edge_index, graph, current_edge) == edge_index);
+        BOOST_TEST(get(boost::edge_index, graph, current_edge) == edge_index);
     }
 
     // Verify all vertices are within bounds
@@ -135,8 +131,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         BOOST_FOREACH (edge_descriptor in_edge, in_edges(current_vertex, graph))
         {
 
-            BOOST_TEST(target_vertices.count(get(boost::vertex_index, graph,
-                              source(in_edge, graph)))
+            BOOST_TEST(target_vertices.count(get(
+                           boost::vertex_index, graph, source(in_edge, graph)))
                 > 0);
 
             ++in_edge_count;
@@ -157,7 +153,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         {
 
             BOOST_TEST(target_vertices.count(
-                              get(boost::vertex_index, graph, adjacent_vertex))
+                           get(boost::vertex_index, graph, adjacent_vertex))
                 > 0);
 
             ++adjacent_count;
@@ -179,10 +175,8 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
                 continue;
             }
 
-            BOOST_TEST(
-                !edge(current_vertex, unconnected_vertex, graph).second);
-            BOOST_TEST(
-                !edge(unconnected_vertex, current_vertex, graph).second);
+            BOOST_TEST(!edge(current_vertex, unconnected_vertex, graph).second);
+            BOOST_TEST(!edge(unconnected_vertex, current_vertex, graph).second);
         }
 
         ++vertex_count;
@@ -210,10 +204,10 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         // Verify that the edge is listed as existing in both directions
         BOOST_TEST(edge(
             source(current_edge, graph), target(current_edge, graph), graph)
-                          .second);
+                       .second);
         BOOST_TEST(edge(
             target(current_edge, graph), source(current_edge, graph), graph)
-                          .second);
+                       .second);
 
         ++edge_count;
     }

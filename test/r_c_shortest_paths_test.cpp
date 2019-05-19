@@ -668,7 +668,7 @@ int main(int, char*[])
     for (int s = 0; s < 10; ++s)
         for (int t = 0; t < 10; ++t)
             BOOST_TEST(static_cast< int >(
-                            vec_vec_vec_vec_opt_solutions_spptw[s][t].size())
+                           vec_vec_vec_vec_opt_solutions_spptw[s][t].size())
                 == i_vec_correct_num_solutions_spptw[10 * s + t]);
 
     // one pareto-optimal solution

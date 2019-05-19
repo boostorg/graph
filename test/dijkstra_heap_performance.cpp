@@ -128,8 +128,8 @@ int main(int argc, char* argv[])
             relaxed_heap_distances.begin(), get(boost::vertex_index, g))));
     boost::timer::cpu_times relaxed_heap_time = t.elapsed();
     std::cout << boost::timer::format(relaxed_heap_time) << " seconds.\n"
-              << "Speedup = " << (binary_heap_time.user / relaxed_heap_time.user)
-              << ".\n";
+              << "Speedup = "
+              << (binary_heap_time.user / relaxed_heap_time.user) << ".\n";
 
     // Verify that the results are equivalent
     BOOST_TEST(binary_heap_distances == relaxed_heap_distances);
@@ -150,8 +150,8 @@ int main(int argc, char* argv[])
         make_dijkstra_visitor(null_visitor()));
     boost::timer::cpu_times no_color_map_time = t.elapsed();
     std::cout << boost::timer::format(no_color_map_time) << " seconds.\n"
-              << "Speedup = " << (binary_heap_time.user / no_color_map_time.user)
-              << ".\n";
+              << "Speedup = "
+              << (binary_heap_time.user / no_color_map_time.user) << ".\n";
 
     // Verify that the results are equivalent
     BOOST_TEST(binary_heap_distances == no_color_map_distances);

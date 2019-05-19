@@ -239,8 +239,8 @@ int main(int argc, char* argv[])
         // BOOST_TEST(std::abs(maximum_cycle_ratio(tg, vim, ew1m, ew2m) +
         // (std::numeric_limits<double>::max)()) < epsilon );
         BOOST_TEST(std::abs(boost::maximum_cycle_ratio(tg, vim, ew1m, ew2m,
-                                 static_cast< ccInt_t* >(0), my_float())
-                        + 1000)
+                                static_cast< ccInt_t* >(0), my_float())
+                       + 1000)
             < epsilon);
         tg.clear();
     }

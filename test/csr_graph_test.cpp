@@ -154,8 +154,7 @@ void check_consistency_dispatch(const Graph& g, boost::incidence_graph_tag)
 
 template < class G > void assert_bidir_equal_in_both_dirs(const G& g)
 {
-    BOOST_TEST(
-        g.m_forward.m_rowstart.size() == g.m_backward.m_rowstart.size());
+    BOOST_TEST(g.m_forward.m_rowstart.size() == g.m_backward.m_rowstart.size());
     BOOST_TEST(g.m_forward.m_column.size() == g.m_backward.m_column.size());
     typedef typename boost::graph_traits< G >::vertex_descriptor Vertex;
     typedef typename boost::graph_traits< G >::edges_size_type EdgeIndex;
@@ -296,8 +295,7 @@ template < typename OrigGraph > void graph_test(const OrigGraph& g)
     std::size_t last_src = 0;
     for (boost::tie(ei, ei_end) = edges(g2); ei != ei_end; ++ei)
     {
-        BOOST_TEST(
-            edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
+        BOOST_TEST(edge_from_index(get(boost::edge_index, g2, *ei), g2) == *ei);
         std::size_t src = get(boost::vertex_index, g2, source(*ei, g2));
         (void)(std::size_t) get(boost::vertex_index, g2, target(*ei, g2));
         BOOST_TEST(src >= last_src);
