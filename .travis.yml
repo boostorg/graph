@@ -5,11 +5,15 @@
 
 language: cpp
 
-python: "2.7"
+# python: "3"
 
-os:
-  - linux
-  - osx
+# os:
+#   - linux
+#   - osx
+
+
+matrix:
+  fast_finish: true
 
 # branches:
 #   only:
@@ -17,21 +21,40 @@ os:
 #     - develop
 #     - /feature\/.*/
 
-stages:
-  - code_QC
-  - repo_initialization
-  - test
+# stages:
+#   - code_QC
+#   - repo_initialization
+#   - test
 
 
-env:
-  matrix:
-    - BOGUS_JOB=true
+
+install:
+  - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
+  - cd ..
+  - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
+  - cd boost-root
+  - git submodule update --init tools/boost_install
+  - git submodule update --init libs/headers
+  - git submodule update --init tools/build
+  - git submodule update --init libs/config
+  - git submodule update --init tools/boostdep
+  - cp -r $TRAVIS_BUILD_DIR/* libs/graph
+  - python tools/boostdep/depinst/depinst.py graph
+  - ./bootstrap.sh
+  - ./b2 headers
+
+
+script:
+  - &run ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh
+  - |-
+    echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
+  - IFS=','
+  - for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
+  - unset IFS
+  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD
+
 
 matrix:
-
-  exclude:
-    - env: BOGUS_JOB=true
-
   include:
     - os: linux
       compiler: g++-4.4
@@ -275,35 +298,8 @@ matrix:
       osx_image: xcode9.4.1
 
 
-install:
-  stage: repo_initialization
-  - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
-  - cd ..
-  - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-  - cd boost-root
-  - git submodule update --init tools/boost_install
-  - git submodule update --init libs/headers
-  - git submodule update --init tools/build
-  - git submodule update --init libs/config
-  - git submodule update --init tools/boostdep
-  - cp -r $TRAVIS_BUILD_DIR/* libs/graph
-  - python tools/boostdep/depinst/depinst.py graph
-  - ./bootstrap.sh
-  - ./b2 headers
 
 
-script:
-  stage: code_QC
-  - ${TRAVIS_BUILD_DIR}/utility/ci/travis/script.sh
-
-script:
-  stage: test
-  - |-
-    echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-  - IFS=','
-  - for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
-  - unset IFS
-  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD
 
 notifications:
   email:
