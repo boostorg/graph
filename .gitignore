@@ -6,3 +6,8 @@ kevin-bacon2.dat
 random.dot
 triangular-fr.dot
 triangular-kk.dot
+ospf-sptree.dot
+routing-table.dat
+tc-out.dot
+test-astar-cities.dot
+web-graph.dot
