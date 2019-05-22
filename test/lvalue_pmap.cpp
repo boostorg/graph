@@ -22,7 +22,7 @@ namespace boost
 {
 BOOST_INSTALL_PROPERTY(vertex, info);
 BOOST_INSTALL_PROPERTY(edge, info);
-};
+}
 
 typedef property< vertex_info_t, double > vertex_properties;
 typedef property< edge_info_t, double > edge_properties;

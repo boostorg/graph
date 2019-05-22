@@ -197,7 +197,6 @@ namespace detail
             template rebind_alloc<
                 r_c_shortest_paths_label< Graph, Resource_Container > >
                 LAlloc;
-        typedef std::allocator_traits< LAlloc > LTraits;
 #endif
         LAlloc l_alloc;
         typedef boost::shared_ptr<
