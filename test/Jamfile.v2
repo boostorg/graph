@@ -45,12 +45,14 @@ local COPTS =
     -Wno-unused-parameter
     -Wno-missing-declarations
     -Wno-sign-compare
+    -fPIC
     ;
 
 local LOPTS =
 #    -lasan
     -lubsan
 #    -llsan
+    -fPIC
     ;
 
 
@@ -62,7 +64,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-project : requirements <toolset>gcc:<cxxflags>$(COPTS) <toolset>clang:<cxxflags>$(COPTS) <toolset>gcc:<linkflags>$(LOPTS) ;
+project : requirements <toolset>gcc:<cxxflags>$(COPTS) <toolset>clang:<cxxflags>$(COPTS) <toolset>gcc:<linkflags>$(LOPTS) <toolset>clang:<linkflags>$(LOPTS) ;
 
 
 alias graph_test_regular :
