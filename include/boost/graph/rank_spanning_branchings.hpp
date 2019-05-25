@@ -43,6 +43,8 @@ namespace boost {
 
     typedef graph_traits<BranchingGraph>::vertex_descriptor BranchingVertex;
 
+    // Structure to store edges and compare them by weight.
+
     template <typename Edge, typename WeightMap, typename Compare>
     struct EdgeNode
     {
@@ -58,6 +60,9 @@ namespace boost {
       bool operator<( EdgeNode const & rhs ) const
       { return compare( weight, rhs.weight ); }
     };
+
+    // Alias template for heap used in the routine.  Current version
+    // is the boost::fibonacci_heap.  The heap must be mergable.
 
     template<typename T>
     struct MyHeap
@@ -773,6 +778,8 @@ namespace boost {
 
     }
 
+    // Class to filter graph.
+
     template<typename EdgeSet>
     class branching_filter
     {
@@ -794,6 +801,8 @@ namespace boost {
        const EdgeSet * p_es;
 
     };
+
+    // Structure to store branchings and compare them by weight.
 
     template<typename Edge, typename WeightMap, typename Compare>
     struct BranchingEntry
@@ -818,6 +827,8 @@ namespace boost {
       bool operator<( BranchingEntry const & rhs ) const
       { return compare( weight, rhs.weight ); }
     };
+
+    // Compute the weight of a branching.
 
     template<typename WeightMap, typename Edge>
     typename property_traits<WeightMap>::value_type
@@ -847,6 +858,8 @@ namespace boost {
        return weight.get();
 
     }
+
+    // Routine implementation.
      
     template <typename Graph, typename BranchingProcessor, typename IndexMap,
               typename WeightMap, typename Compare, typename Rank,
