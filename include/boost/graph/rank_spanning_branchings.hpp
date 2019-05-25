@@ -78,7 +78,7 @@ namespace boost {
     insert_edges
     (
       const Graph& g,
-      WeightMap& w,
+      WeightMap& weight_map,
       Compare& comp,
       std::map<
         Vertex,
@@ -106,7 +106,7 @@ namespace boost {
       {
         include_vertices.insert( target( e, g ) );
         in_edges[target( e, g )].push(
-          EdgeNode<Edge,WeightMap,Compare>( e, get( w, e ), comp )
+          EdgeNode<Edge,WeightMap,Compare>( e, get( weight_map, e ), comp )
         );
         it = in_set.find( target( e, g ) );
         if( it != in_set.end() ) { in_set.erase( it ); }
@@ -128,7 +128,7 @@ namespace boost {
           if( source(e, g) != target(e, g) )
           {
             in_edges[target(e,g)].push(
-              EdgeNode<Edge,WeightMap,Compare>( e, get( w, e ), comp )
+              EdgeNode<Edge,WeightMap,Compare>( e, get( weight_map, e ), comp )
             );
             it = in_set.find( target( e, g ) );
             if( it != in_set.end() ) { in_set.erase( it ); }
@@ -153,15 +153,15 @@ namespace boost {
 
     void
     find_back_path(
-      BranchingGraph& C,
+      BranchingGraph& cycle_branching,
       std::vector<BranchingVertex>& bv
     )
     {
 
-      BGL_FORALL_INEDGES( bv[0], e, C, BranchingGraph )
+      BGL_FORALL_INEDGES( bv[0], e, cycle_branching, BranchingGraph )
       {
-        bv.insert( bv.begin(), source( e, C ) );
-        find_back_path( C, bv );
+        bv.insert( bv.begin(), source( e, cycle_branching ) );
+        find_back_path( cycle_branching, bv );
       }
 
     }
@@ -174,7 +174,7 @@ namespace boost {
     expand(
       const Graph& g,
       IndexMap& v_id,
-      BranchingGraph& C,
+      BranchingGraph& cycle_branching,
       unordered_set<BranchingVertex>& root_set,
       std::vector<EdgeNode< Edge, WeightMap, Compare> >& beta
     )
@@ -182,15 +182,18 @@ namespace boost {
 
       BOOST_FOREACH( BranchingVertex v, root_set )
       {
-        if( in_degree( v, C ) == 0 && out_degree( v, C ) != 0 ) 
+        if(
+          in_degree( v, cycle_branching ) == 0 &&
+          out_degree( v, cycle_branching ) != 0
+        )
         {
           std::vector<BranchingVertex> bv;
           bv.push_back( v_id[target( beta[v].edge, g )] );
-          find_back_path( C, bv );
+          find_back_path( cycle_branching, bv );
           for( std::size_t i = 0; i < bv.size() - 1; i++ )
           {
             beta[bv[i+1]] = beta[bv[i]];
-            clear_vertex( bv[i], C );
+            clear_vertex( bv[i], cycle_branching );
           }
         }
       }
@@ -201,7 +204,10 @@ namespace boost {
 
       BOOST_FOREACH( BranchingVertex v, root_set )
       {
-        if( in_degree( v, C ) == 0 && out_degree( v, C ) == 0 ) 
+        if(
+           in_degree( v, cycle_branching ) == 0 &&
+           out_degree( v, cycle_branching ) == 0
+        )
         {
           vertices_to_remove_from_set.push_back( v );
         }
@@ -223,7 +229,7 @@ namespace boost {
     best_spanning_branching( const Graph& g, 
                              unordered_set<Edge>& branching,
                              IndexMap& v_id,
-                             WeightMap& w,
+                             WeightMap& weight_map,
                              Compare& comp,
                              Rank rank,
                              Pred pred1,
@@ -257,7 +263,7 @@ namespace boost {
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
         (
           g,
-          w,
+          weight_map,
           comp,
           in_edges,
           include_edges,
@@ -500,16 +506,18 @@ namespace boost {
       // Create a branching graph to check whether a vertex is an ancestor of
       // another vertex in the branching.
 
-      BranchingGraph C;
+      BranchingGraph ancestor_branching;
 
       for( size_t i = 0; i < num_vertices( g ); i++ )
       {
-        add_vertex( C );
+        add_vertex( ancestor_branching );
       }
 
       BOOST_FOREACH( const Edge& e, branching )
       {
-        add_edge( v_id[source( e, g )], v_id[target( e, g )], C );
+        add_edge(
+          v_id[source( e, g )], v_id[target( e, g )], ancestor_branching
+        );
       }
 
       // Create other types and data.
@@ -557,7 +565,7 @@ namespace boost {
         if( in_edges[v].empty() ) { start_vertex = v_id[v]; }
       }
 
-      // Create the ancestor checker from C.
+      // Create the ancestor checker from ancestor_branching.
 
       typedef std::map<BranchingVertex, std::size_t> OrderMap;
 
@@ -566,7 +574,9 @@ namespace boost {
 
       dfs_order_visitor<OrderMap> vis(pr, po);
 
-      depth_first_search(C, visitor(vis).root_vertex( start_vertex ) );
+      depth_first_search(
+        ancestor_branching, visitor(vis).root_vertex( start_vertex )
+      );
 
       ancestor_checker<OrderMap> is_ancestor(pr, po);
 
