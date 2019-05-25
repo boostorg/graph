@@ -1,4 +1,4 @@
-//=======================================================================
+///=======================================================================
 // Copyright 2015-2018 Clemson University
 // Authors: Bradley S. Meyer
 //
@@ -59,6 +59,12 @@ namespace boost {
       { return compare( weight, rhs.weight ); }
     };
 
+    template<typename T>
+    struct MyHeap
+    { 
+      typedef heap::fibonacci_heap<T> type;
+    };
+
     // Insert edges from graph into heap, taking into account constraints.
 
     template <typename Graph, typename Vertex, typename Edge,
@@ -71,7 +77,7 @@ namespace boost {
       Compare& comp,
       std::map<
         Vertex,
-        heap::fibonacci_heap<EdgeNode<Edge,WeightMap,Compare> >
+        typename MyHeap<EdgeNode<Edge,WeightMap,Compare> >::type
       >& in_edges,
       const unordered_set<Edge>& include_edges,
       const unordered_set<Edge>& exclude_edges
@@ -227,7 +233,7 @@ namespace boost {
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
-      typedef heap::fibonacci_heap<edge_node_t> f_heap_t;
+      typedef typename MyHeap<edge_node_t>::type heap_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       unordered_set<Vertex> unvisited_vertex_set;
@@ -240,7 +246,7 @@ namespace boost {
 
       disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
 
-      std::map<Vertex, f_heap_t> in_edges;
+      std::map<Vertex, heap_t> in_edges;
 
       if(
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
@@ -354,7 +360,7 @@ namespace boost {
                   }
                 }
 	      }
-              f_heap_t tmp_heap;
+              heap_t tmp_heap;
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
               {
                 tmp_heap.push( t.second );
@@ -503,7 +509,7 @@ namespace boost {
 
       // Create other types and data.
 
-      typedef heap::fibonacci_heap<edge_node_t> f_heap_t;
+      typedef typename MyHeap<edge_node_t>::type heap_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       boost::optional<
@@ -514,7 +520,7 @@ namespace boost {
 
       disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
 
-      std::map<Vertex, f_heap_t> in_edges;
+      std::map<Vertex, heap_t> in_edges;
 
       std::map<Vertex, edge_node_t> max_e;
 
@@ -578,7 +584,7 @@ namespace boost {
           // input branching.
 
           for(
-            typename f_heap_t::ordered_iterator ei =
+            typename heap_t::ordered_iterator ei =
               in_edges[*it].ordered_begin();
             ei != in_edges[*it].ordered_end();
             ei++
@@ -598,7 +604,7 @@ namespace boost {
           if( branching.find( b.edge ) != branching.end() )
           {
             for(
-              typename f_heap_t::ordered_iterator ei =
+              typename heap_t::ordered_iterator ei =
                 in_edges[*it].ordered_begin();
               ei != in_edges[*it].ordered_end();
               ei++
@@ -729,7 +735,7 @@ namespace boost {
                   }
                 }
 	      }
-              f_heap_t tmp_heap;
+              heap_t tmp_heap;
               BOOST_FOREACH( typename exit_map_t::value_type& t, b_exit )
               {
                 tmp_heap.push( t.second );
@@ -873,7 +879,7 @@ namespace boost {
 
       Edge e;
 
-      heap::fibonacci_heap<BranchingEntry<Edge, WeightMap, Compare> > Q;
+      typename MyHeap<BranchingEntry<Edge, WeightMap, Compare> >::type Q;
 
       best_spanning_branching( g,
                                best_branching,
