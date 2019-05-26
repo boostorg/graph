@@ -36,7 +36,7 @@ that graph with <tt>N-1</tt> edges such that no vertex has indegree larger than
 one.  The weight of the branching is the sum of the weights of the edges
 in the branching.
 This function uses the Camerini et al. algorithm
-[<a href="bibliography.html#camerini80">74</a>]
+[<a href="bibliography.html#camerini80">77</a>]
 to compute the
 branchings in order by branching weight.  Once the routine finds a branching,
 the routine calls a user-supplied 
@@ -102,12 +102,12 @@ RANK(<i>G, BranchingProcessor()</i>)
 
 <p>
 The procedure <tt>BEST</tt> is the Chu-Liu/Edmond's algorithm
-[<a HREF="bibliography.html#chu-liu65">75</A>,
-<a HREF="bibliography.html#edmonds67">76</A>]
+[<a HREF="bibliography.html#chu-liu65">78</A>,
+<a HREF="bibliography.html#edmonds67">79</A>]
 in the form adopted by
-Tarjan [<a HREF="bibliography.html#tarjan77">77</A>] and
+Tarjan [<a HREF="bibliography.html#tarjan77">80</A>] and
 Camerini et al.
-[<a HREF="bibliography.html#camerini79">78</A>].
+[<a HREF="bibliography.html#camerini79">81</A>].
 The procedure begins by
 constructing a subgraph <i>H</i> of <i>G</i>.  To construct <i>H</i>,
 the procedure loops over each edge in <i>Y</i> and removes from the graph

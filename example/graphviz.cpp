@@ -71,9 +71,9 @@ void test_graph_read_write(const std::string& filename)
   write_graphviz_dp(std::cout, g, dp, std::string("id"));
 }
 
-int test_main(int, char*[])
+int test_main(int argc, char* argv[])
 {
-  test_graph_read_write("graphviz_example.dot");
+  test_graph_read_write(argc >= 2 ? argv[1] : "graphviz_example.dot");
   
   return 0;
 }

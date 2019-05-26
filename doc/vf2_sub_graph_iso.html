@@ -68,8 +68,8 @@ template &lt;typename GraphSmall,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapSmall</a>,
           typename <a href="../../property_map/doc/ReadablePropertyMap.html">IndexMapLarge</a>,
           typename VertexOrderSmall,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
-          typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">EdgeEquivalencePredicate</a>,
+          typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">VertexEquivalencePredicate</a>,
           typename SubGraphIsoMapCallback&gt;
 bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
                       const GraphLarge&amp; graph_large,
@@ -149,7 +149,7 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
         <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
         <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
         The edge descriptors <tt>graph_traits&lt;GraphSmall&gt;::edge_descriptor</tt>
-        must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
+        must be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html">
         LessThan Comparable</a>, cf. also the remark <a href="#notes">below</a>.
       </p>
     </blockquote>
@@ -164,7 +164,7 @@ bool vf2_subgraph_iso(const GraphSmall&amp; graph_small,
         <a href="./BidirectionalGraph.html">Bidirectional Graph</a> and
         <a href="./AdjacencyMatrix.html">Adjacency Matrix</a>.
         The edge descriptors <tt>graph_traits&lt;GraphLarge&gt;::edge_descriptor</tt>
-        must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
+        must be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html">
         LessThan Comparable</a>, cf. also the remark <a href="#notes">below</a>. 
       </p>
     </blockquote>
@@ -208,7 +208,7 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
         The ordered vertices of the smaller (first) graph <tt>graph_small</tt>.
         During the matching process the vertices are examined in the order given by
         <tt>vertex_order_small</tt>. Type <tt>VertexOrderSmall</tt> must be a model 
-        of <a href="http://www.sgi.com/tech/stl/Container.html">ContainerConcept</a> 
+        of <a href="http://www.boost.org/sgi/stl/Container.html">ContainerConcept</a> 
         with value type 
         <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt>.
         <br>
@@ -247,11 +247,11 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
         This function object is used to determine if edges between the two graphs 
         <tt>graph_small</tt> and <tt>graph_large</tt> are equivalent. 
         Type <tt>EdgeEquivalencePredicate</tt> must be a model of 
-        <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+        <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
           Predicate</a> and have argument types of
         <tt>graph_traits&lt;GraphSmall&gt;::edge_descriptor</tt> and
         <tt>graph_traits&lt;GraphLarge&gt;::edge_descriptor</tt>.
-        The edge descriptors must be <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
+        The edge descriptors must be <a href="http://www.boost.org/sgi/stl/LessThanComparable.html">
         LessThan Comparable</a>. A return value of true indicates that the edges are equivalent.
         <br>
         <b>Default:</b> <tt><a href="./mcgregor_common_subgraphs.html#always_equivalent">
@@ -265,7 +265,7 @@ bool operator()(CorrespondenceMap1To2 f, CorrespondenceMap2To1 g) const
         This function object is used to determine if vertices between the two graphs 
         <tt>graph_small</tt> and <tt>graph_large</tt> are equivalent. 
         Type <tt>VertexEquivalencePredicate</tt> must be a model of 
-        <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary Predicate</a> 
+        <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary Predicate</a> 
         and have argument types of
         <tt>graph_traits&lt;GraphSmall&gt;::vertex_descriptor</tt> and
         <tt>graph_traits&lt;GraphLarge&gt;::vertex_descriptor</tt>. A return value of true
@@ -490,7 +490,7 @@ vf2_subgraph_iso(graph1, graph2, callback, vertex_order_by_mult(graph1),
       If the <tt>EdgeList</tt> allows for parallel edges, e.g. <tt>vecS</tt>, the
       algorithm does some bookkeeping of already identified edges. Matched edges
       are temporarily stored using <tt>std::set</tt> as container, requiring that
-      <tt>edge_descriptor</tt> are <a href="http://www.sgi.com/tech/stl/LessThanComparable.html">
+      <tt>edge_descriptor</tt> are <a href="http://www.boost.org/sgi/stl/LessThanComparable.html">
         LessThan Comparable</a>. In contrast, if instead you enforce the absence of
       parallel edges, e.g. by using <tt>setS</tt>, the lookup function falls back
       to <tt>edge()</tt> without performing any bookkeeping.

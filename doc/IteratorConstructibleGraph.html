@@ -22,7 +22,7 @@ IteratorConstructibleGraph
 The IteratorConstructibleGraph concept describes the interface for
 graph types that can be constructed using a kind of edge iterator. The
 edge iterator can be any <a
-href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
 that dereferences to a pair of integers <i>(i,j)</i>, which represent
 an edge that should be in the graph. The two integers <i>i</i> and
 <i>j</i> represent vertices where <i>0 <= i < |V|</i> and <i>0 <= j <
@@ -44,7 +44,7 @@ the second constructor can be more efficient than the first.
 The following exampe creates two graph objects from an array of edges
 (vertex pairs). The type <tt>Edge*</tt> satisfies the requirements for
 an <a
-href="http://www.sgi.com/tech/stl/InputIterator.html">InputIterator</a>
+href="http://www.boost.org/sgi/stl/InputIterator.html">InputIterator</a>
 and can therefore be used to construct a graph.
 
 <pre>
@@ -152,7 +152,7 @@ constructor lacking the graph size information.
 Indiana University (<A
 HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)<br>
 <A HREF="http://www.boost.org/people/liequan_lee.htm">Lie-Quan Lee</A>, Indiana University (<A HREF="mailto:llee@cs.indiana.edu">llee@cs.indiana.edu</A>)<br>
-<A HREF="http://www.osl.iu.edu/~lums">Andrew Lumsdaine</A>,
+<A HREF="https://homes.cs.washington.edu/~al75">Andrew Lumsdaine</A>,
 Indiana University (<A
 HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>

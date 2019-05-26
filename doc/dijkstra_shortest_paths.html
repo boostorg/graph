@@ -31,7 +31,7 @@ dijkstra_shortest_paths(Graph&amp; g,
 <i>// non-named parameter version</i>
 template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
 	  typename PredecessorMap, typename DistanceMap,
-	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.sgi.com/tech/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.sgi.com/tech/stl/BinaryFunction.html">CombineFunction</a>, 
+	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>, 
 	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
 void dijkstra_shortest_paths
   (const Graph&amp; g,
@@ -280,7 +280,7 @@ UTIL/OUT: <tt>distance_map(DistanceMap d_map)</tt>
   href="./Monoid.html">Monoid</a> formed with the <tt>combine</tt>
   function object and the <tt>zero</tt> object for the identity
   element. Also the distance value type must have a <a
-  href="http://www.sgi.com/tech/stl/StrictWeakOrdering.html">
+  href="http://www.boost.org/sgi/stl/StrictWeakOrdering.html">
   StrictWeakOrdering</a> provided by the <tt>compare</tt> function
   object.<br>
   <b>Default:</b> <a
@@ -298,7 +298,7 @@ IN: <tt>distance_compare(CompareFunction cmp)</tt>
   This function is use to compare distances to determine which vertex
   is closer to the source vertex.  The <tt>CompareFunction</tt> type
   must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryPredicate.html">Binary
+  href="http://www.boost.org/sgi/stl/BinaryPredicate.html">Binary
   Predicate</a> and have argument types that match the value type of
   the <tt>DistanceMap</tt> property map.<br>
 
@@ -313,14 +313,14 @@ IN: <tt>distance_combine(CombineFunction cmb)</tt>
 <blockquote>
   This function is used to combine distances to compute the distance
   of a path. The <tt>CombineFunction</tt> type must be a model of <a
-  href="http://www.sgi.com/tech/stl/BinaryFunction.html">Binary
+  href="http://www.boost.org/sgi/stl/BinaryFunction.html">Binary
   Function</a>. The first argument type of the binary function must
   match the value type of the <tt>DistanceMap</tt> property map and
   the second argument type must match the value type of the
   <tt>WeightMap</tt> property map.  The result type must be the same
   type as the distance value type.<br>
 
-  <b>Default:</b> <tt>closed_plus&lt;D&gt;</tt> with
+  <b>Default:</b> <tt>std::plus&lt;D&gt;</tt> with
    <tt>D=typename property_traits&lt;DistanceMap&gt;::value_type</tt><br>
 
   <b>Python</b>: Unsupported parameter.

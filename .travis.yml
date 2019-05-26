@@ -5,8 +5,6 @@
 
 language: cpp
 
-sudo: false
-
 python: "2.7"
 
 os:
@@ -235,23 +233,40 @@ matrix:
             - llvm-toolchain-trusty-5.0
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
-      osx_image: xcode8.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,1z
-      osx_image: xcode8
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
       osx_image: xcode7.3
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14
-      osx_image: xcode6.4
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
+      osx_image: xcode7.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
+      osx_image: xcode7.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode8.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
+      osx_image: xcode8.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
+      osx_image: xcode8.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode9.4.1
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
+      osx_image: xcode9.4.1
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
+      osx_image: xcode9.4.1
 
 
 install:
@@ -259,6 +274,8 @@ install:
   - cd ..
   - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
+  - git submodule update --init tools/boost_install
+  - git submodule update --init libs/headers
   - git submodule update --init tools/build
   - git submodule update --init libs/config
   - git submodule update --init tools/boostdep
