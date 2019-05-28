@@ -43,13 +43,11 @@ env:
 
 
 install:
-  - cd $BOOST_ROOT/libs/graph
   - utility/ci/travis/install.sh
 
 
 
 script:
-  - cd $BOOST_ROOT/libs/graph
   - &run utility/ci/travis/format-check.sh || exit 1
   - utility/build.sh
 
@@ -121,14 +119,12 @@ jobs:
       addons: *gcc-8
       script:
         - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
-        - cd $BOOST_ROOT/libs/graph
         - utility/ci/codecov/coverage.sh
 
     - os: linux
       env:
         - COMMENT=cppcheck
       script:
-        - cd $BOOST_ROOT/libs/graph
         - utility/ci/travis/cppcheck.sh
 
     - os: linux
@@ -154,7 +150,6 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
       addons: *clang-6
       script:
-        - cd $BOOST_ROOT/libs/graph
         - utility/ci/travis/valgrind.sh
 
     #################### Jobs to run on pushes to master, develop ###################
@@ -165,7 +160,6 @@ jobs:
         - COMMENT="Coverity Scan"
         - B2_TOOLSET=clang
       script:
-        - cd $BOOST_ROOT/libs/graph
         - utility/ci/travis/coverity.sh
 
 

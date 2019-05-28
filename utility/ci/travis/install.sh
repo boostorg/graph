@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd $BOOST_ROOT/libs/graph
 BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
 cd ..
 git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
