@@ -48,7 +48,6 @@ install:
 
 
 script:
-  - &run utility/ci/travis/format-check.sh || exit 1
   - utility/build.sh
 
 
@@ -102,7 +101,7 @@ jobs:
     - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17" ], addons: *clang-5   }
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a" ], addons: *clang-6   }
     - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a" ], addons: *clang-7   }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a" ], addons: *clang-8   }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a" ], addons: *clang-8, script: {&run utility/ci/travis/format-check.sh || exit 1 }  }
 
     # libc++
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
