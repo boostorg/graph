@@ -251,7 +251,7 @@ namespace boost {
 
       Vertex root_vertex;
 
-      BranchingGraph Cycle_branching;
+      BranchingGraph cycle_branching;
 
       vertex_idx_t n = num_vertices(g);
 
@@ -280,7 +280,7 @@ namespace boost {
         W.make_set( v );
         S.make_set( v );
         parent[v]  = v_id[v];
-        add_vertex( Cycle_branching );
+        add_vertex( cycle_branching );
         unvisited_vertex_set.insert( v );
       }
 
@@ -316,7 +316,7 @@ namespace boost {
 	  }
 	  else
 	  {
-	    BranchingVertex v_new = add_vertex( Cycle_branching );
+	    BranchingVertex v_new = add_vertex( cycle_branching );
 
 	    edge_node_t least_costly_edge_node = critical_edge_node; 
 
@@ -331,7 +331,7 @@ namespace boost {
 	    {
               Vertex u = S.find_set( v );
 	      cycle_vertex_set.insert( u );
-	      add_edge( v_new, parent[u], Cycle_branching ); 
+	      add_edge( v_new, parent[u], cycle_branching ); 
               if(
                 comp( beta[parent[u]].weight, least_costly_edge_node.weight )
               )
@@ -401,14 +401,14 @@ namespace boost {
 
       unordered_set<BranchingVertex> root_set;
 
-      BGL_FORALL_VERTICES( u, Cycle_branching, BranchingGraph )
+      BGL_FORALL_VERTICES( u, cycle_branching, BranchingGraph )
       {
         root_set.insert( u );
       }
 
       while( !root_set.empty() )
       {
-        expand( g, v_id, Cycle_branching, root_set, beta );
+        expand( g, v_id, cycle_branching, root_set, beta );
       }
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
@@ -527,7 +527,7 @@ namespace boost {
 
       boost::optional<
         std::pair<Edge, typename property_traits<WeightMap>::value_type>
-      > p;
+      > next_edge_and_weight_delta;
 
       unordered_set<Vertex> unvisited_vertex_set;
 
@@ -549,7 +549,7 @@ namespace boost {
         )
       )
       {
-        return p;
+        return next_edge_and_weight_delta;
       }
 
       // Initialize data structures and find start vertex for depth
@@ -781,10 +781,10 @@ namespace boost {
 
       if( delta )
       {
-        p = std::make_pair( return_edge, delta.get() );
+        next_edge_and_weight_delta = std::make_pair( return_edge, delta.get() );
       }
 
-      return p;
+      return next_edge_and_weight_delta;
 
     }
 
@@ -898,11 +898,12 @@ namespace boost {
 
       unordered_set<Edge> best_branching, empty_set;
 
-      boost::optional<std::pair<Edge, weight_t> > p;
+      boost::optional<std::pair<Edge, weight_t> > next_edge_and_weight_delta;
 
       Edge e;
 
-      typename MyHeap<BranchingEntry<Edge, WeightMap, Compare> >::type Q;
+      typename MyHeap<BranchingEntry<Edge, WeightMap, Compare> >::type
+        branching_heap;
 
       best_spanning_branching( g,
                                best_branching,
@@ -921,24 +922,26 @@ namespace boost {
 
       if( !bp( fg1 ) ) return;
 
-      p = next_spanning_branching( g,
-                                   best_branching,
-                                   v_id,
-                                   w,
-                                   comp,
-                                   rank,
-                                   pred1,
-                                   pred2,
-                                   empty_set,
-                                   empty_set
-                                 );
+      next_edge_and_weight_delta =
+        next_spanning_branching( g,
+                                 best_branching,
+                                  v_id,
+                                  w,
+                                  comp,
+                                  rank,
+                                  pred1,
+                                  pred2,
+                                  empty_set,
+                                  empty_set
+                               );
 
-      if( p )
+      if( next_edge_and_weight_delta )
       {
-	Q.push(
+	branching_heap.push(
 	  BranchingEntry<Edge, WeightMap, Compare>(
-	    compute_branching_weight( w, best_branching ) - (p.get()).second,
-	    (p.get()).first,
+	    compute_branching_weight( w, best_branching ) -
+              (next_edge_and_weight_delta.get()).second,
+	    (next_edge_and_weight_delta.get()).first,
 	    comp,
 	    best_branching,
 	    empty_set,
@@ -951,14 +954,14 @@ namespace boost {
 	return;
       }
 
-      while( !Q.empty() )
+      while( !branching_heap.empty() )
       {
 
 	unordered_set<Edge> branching;
 
-	BranchingEntry<Edge, WeightMap, Compare> P = Q.top();
+	BranchingEntry<Edge, WeightMap, Compare> P = branching_heap.top();
 
-	Q.pop();
+	branching_heap.pop();
 
 	unordered_set<Edge> include_edges = P.include_edges;
 
@@ -985,7 +988,7 @@ namespace boost {
 
         if( !bp( fg ) ) return;
 
-	p =
+	next_edge_and_weight_delta =
 	  next_spanning_branching( g,
                                    P.branching,
                                    v_id,
@@ -998,12 +1001,13 @@ namespace boost {
                                    P.exclude_edges
                                  );
 
-	if( p )
+	if( next_edge_and_weight_delta )
 	{
-	  Q.push(
+	  branching_heap.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
-	      compute_branching_weight( w, P.branching ) - (p.get()).second,
-	      (p.get()).first,
+	      compute_branching_weight( w, P.branching ) -
+                (next_edge_and_weight_delta.get()).second,
+	      (next_edge_and_weight_delta.get()).first,
 	      comp,
 	      P.branching,
 	      include_edges,
@@ -1012,7 +1016,7 @@ namespace boost {
 	  );
 	}
 
-	p =
+	next_edge_and_weight_delta =
 	  next_spanning_branching( g,
                                    branching,
                                    v_id,
@@ -1025,12 +1029,12 @@ namespace boost {
                                    exclude_edges
                                  );
 
-	if( p )
+	if( next_edge_and_weight_delta )
 	{
-	  Q.push(
+	  branching_heap.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
-	      P.weight - (p.get()).second,
-	      (p.get()).first,
+	      P.weight - (next_edge_and_weight_delta.get()).second,
+	      (next_edge_and_weight_delta.get()).first,
 	      comp,
 	      branching,
 	      P.include_edges,
@@ -1049,7 +1053,7 @@ namespace boost {
     rank_spanning_branchings_dispatch2( const Graph& g,
                                         BranchingProcessor bp,
                                         IndexMap id_map,
-                                        WeightMap w_map,
+                                        WeightMap weight_map,
                                         Compare compare
                                       )
     {
@@ -1071,7 +1075,7 @@ namespace boost {
         g,
         bp,
         id_map,
-        w_map,
+        weight_map,
         compare,
         make_iterator_property_map( rank.begin(), id_map, rank[0] ),
         make_iterator_property_map( pred1.begin(), id_map, pred1[0] ),

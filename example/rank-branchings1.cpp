@@ -29,7 +29,7 @@ struct print_branching
 
     std::cout << "Branching:";
 
-    weight = 0.;
+    weight = 0;
 
     BGL_FORALL_EDGES_T( e, bg, BranchingGraph )
     {
