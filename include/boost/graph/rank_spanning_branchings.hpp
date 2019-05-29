@@ -239,6 +239,8 @@ namespace boost {
                            )
     {
 
+      // Define types.
+
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       typedef typename graph_traits<Graph>::vertices_size_type vertex_idx_t;
 
@@ -246,6 +248,11 @@ namespace boost {
 
       typedef typename MyHeap<edge_node_t>::type heap_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
+
+      // Create various objects.  Note in particular the two disjoint
+      // sets.  The set of weakly connected components is used to determine
+      // cycles.  The set of strongly connected components is used to
+      // represent supervertices (condensed cycles).
 
       unordered_set<Vertex> unvisited_vertex_set;
 
@@ -255,9 +262,14 @@ namespace boost {
 
       vertex_idx_t n = num_vertices(g);
 
-      disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
-
       std::map<Vertex, heap_t> in_edges;
+
+      // Create disjoint sets.  The set of weakly connected components is
+      // used to determine cycles.  The set of strongly connected components
+      // is used to represent supervertices (condensed cycles).
+
+      disjoint_sets<Rank, Pred>
+        weak_cc( rank, pred1 ), strong_cc( rank, pred2 );
 
       if(
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
@@ -277,8 +289,8 @@ namespace boost {
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
       {
-        W.make_set( v );
-        S.make_set( v );
+        weak_cc.make_set( v );
+        strong_cc.make_set( v );
         parent[v]  = v_id[v];
         add_vertex( cycle_branching );
         unvisited_vertex_set.insert( v );
@@ -305,11 +317,11 @@ namespace boost {
 	  unvisited_vertex_set.erase( it );
 
 	  if(
-	    W.find_set( source( critical_edge_node.edge, g ) ) !=
-	    W.find_set( target( critical_edge_node.edge, g ) )
+	    weak_cc.find_set( source( critical_edge_node.edge, g ) ) !=
+	    weak_cc.find_set( target( critical_edge_node.edge, g ) )
 	  )
 	  {
-	    W.union_set(
+	    weak_cc.union_set(
               source( critical_edge_node.edge, g ),
               target( critical_edge_node.edge, g )
 	    );
@@ -324,12 +336,12 @@ namespace boost {
 
 	    for(
               Vertex v = source( critical_edge_node.edge, g );
-	      cycle_vertex_set.find( S.find_set( v ) ) ==
+	      cycle_vertex_set.find( strong_cc.find_set( v ) ) ==
                 cycle_vertex_set.end();
-	      v = source( beta[parent[S.find_set( v )]].edge, g )
+	      v = source( beta[parent[strong_cc.find_set( v )]].edge, g )
 	    )
 	    {
-              Vertex u = S.find_set( v );
+              Vertex u = strong_cc.find_set( v );
 	      cycle_vertex_set.insert( u );
 	      add_edge( v_new, parent[u], cycle_branching ); 
               if(
@@ -344,8 +356,8 @@ namespace boost {
 
 	    BOOST_FOREACH( Vertex u, cycle_vertex_set )
 	    {
-              S.link( u, new_repr );
-              new_repr = S.find_set( new_repr );
+              strong_cc.link( u, new_repr );
+              new_repr = strong_cc.find_set( new_repr );
             }
 
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
@@ -353,11 +365,11 @@ namespace boost {
               exit_map_t v_exit;
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
-                if( S.find_set( source( en.edge, g ) ) != new_repr )
+                if( strong_cc.find_set( source( en.edge, g ) ) != new_repr )
                 {
                   en.weight += least_costly_edge_node.weight -
                       beta[parent[v]].weight;
-                  Vertex u = S.find_set( source( en.edge, g ) );
+                  Vertex u = strong_cc.find_set( source( en.edge, g ) );
                   if( v_exit.find(u) != v_exit.end() )
                   {
                     if( comp( v_exit[u].weight, en.weight ) )
@@ -493,15 +505,37 @@ namespace boost {
 
       typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
 
-      Edge return_edge;
+      typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
+
+      typedef typename MyHeap<edge_node_t>::type heap_t;
+      typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       typedef typename property_traits<WeightMap>::value_type weight_t;
 
+      Edge return_edge;
+
       boost::optional<weight_t> delta;
 
-      typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
-
       edge_node_t b;
+
+      // Create various objects.
+
+      boost::optional<
+        std::pair<Edge, typename property_traits<WeightMap>::value_type>
+      > next_edge_and_weight_delta;
+
+      unordered_set<Vertex> unvisited_vertex_set;
+
+      std::map<Vertex, heap_t> in_edges;
+
+      std::map<Vertex, edge_node_t> max_e;
+
+      // Create disjoint sets.  The set of weakly connected components is
+      // used to determine cycles.  The set of strongly connected components
+      // is used to represent supervertices (condensed cycles).
+
+      disjoint_sets<Rank, Pred>
+        weak_cc( rank, pred1 ), strong_cc( rank, pred2 );
 
       // Create a branching graph to check whether a vertex is an ancestor of
       // another vertex in the branching.
@@ -519,23 +553,6 @@ namespace boost {
           v_id[source( e, g )], v_id[target( e, g )], ancestor_branching
         );
       }
-
-      // Create other types and data.
-
-      typedef typename MyHeap<edge_node_t>::type heap_t;
-      typedef std::map<Vertex, edge_node_t > exit_map_t;
-
-      boost::optional<
-        std::pair<Edge, typename property_traits<WeightMap>::value_type>
-      > next_edge_and_weight_delta;
-
-      unordered_set<Vertex> unvisited_vertex_set;
-
-      disjoint_sets<Rank, Pred> W( rank, pred1 ), S( rank, pred2 );
-
-      std::map<Vertex, heap_t> in_edges;
-
-      std::map<Vertex, edge_node_t> max_e;
 
       if(
         !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
@@ -559,8 +576,8 @@ namespace boost {
 
       BGL_FORALL_VERTICES_T( v, g, Graph )
       {
-        W.make_set( v );
-        S.make_set( v );
+        weak_cc.make_set( v );
+        strong_cc.make_set( v );
         unvisited_vertex_set.insert( v );
         if( in_edges[v].empty() ) { start_vertex = v_id[v]; }
       }
@@ -656,11 +673,11 @@ namespace boost {
 	  unvisited_vertex_set.erase( it );
 
 	  if(
-	    W.find_set( source( b.edge, g ) ) !=
-	    W.find_set( target( b.edge, g ) )
+	    weak_cc.find_set( source( b.edge, g ) ) !=
+	    weak_cc.find_set( target( b.edge, g ) )
 	  )
 	  {
-	    W.union_set( source( b.edge, g ), target( b.edge, g ) );
+	    weak_cc.union_set( source( b.edge, g ), target( b.edge, g ) );
 	  }
 	  else
 	  {
@@ -671,12 +688,12 @@ namespace boost {
 
 	    for(
               Vertex v = source( b.edge, g );
-	      cycle_vertex_set.find( S.find_set( v ) ) ==
+	      cycle_vertex_set.find( strong_cc.find_set( v ) ) ==
                 cycle_vertex_set.end();
-	      v = source( max_e[S.find_set( v )].edge, g )
+	      v = source( max_e[strong_cc.find_set( v )].edge, g )
 	    )
 	    {
-              Vertex u = S.find_set( v );
+              Vertex u = strong_cc.find_set( v );
 	      cycle_vertex_set.insert( u );
 	      if( comp( max_e[u].weight, least_costly_edge_node.weight ) )
               {
@@ -688,8 +705,8 @@ namespace boost {
 
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
 	    {
-              S.link( v, new_repr );
-              new_repr = S.find_set( new_repr );
+              strong_cc.link( v, new_repr );
+              new_repr = strong_cc.find_set( new_repr );
             }
 
             // Adjust arc weights and remove parallel arcs.  Keep the
@@ -702,10 +719,10 @@ namespace boost {
               exit_map_t b_exit, v_exit1, v_exit2;
               BOOST_FOREACH( edge_node_t en, in_edges[v] )
               {
-                if( S.find_set( source( en.edge, g ) ) != new_repr )
+                if( strong_cc.find_set( source( en.edge, g ) ) != new_repr )
                 {
                   en.weight += least_costly_edge_node.weight - max_e[v].weight;
-                  Vertex u = S.find_set( source( en.edge, g ) );
+                  Vertex u = strong_cc.find_set( source( en.edge, g ) );
                   if( branching.find( en.edge ) != branching.end() )
                   {
                     b_exit[u] = en;
