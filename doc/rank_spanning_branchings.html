@@ -170,11 +170,8 @@ weight difference.  Only those alternative
 edges for which the target of the
 branching edge (to be replaced) is not an ancestor of the source of the
 alternative edge in the branching are allowed as possible
-swapped edges (as determined by procedure <tt>SEEK</tt>).  The implementation
-of <tt>rank_spanning_branchings()</tt> does not in fact use a separate
-<tt>SEEK</tt> routine but rather simply an ordered iteration over the
-priority queue containing in edges to the vertex under
-examination.  Cycles are handled as in <tt>BEST</tt>.   <tt>NEXT</tt>
+swapped edges (as determined by procedure <tt>SEEK</tt>).
+Cycles are handled as in <tt>BEST</tt>.   <tt>NEXT</tt>
 returns the edge <i>e</i> that when removed from the input graph to
 <tt>BEST</tt> will
 give the next best branching and the weight difference between the current
