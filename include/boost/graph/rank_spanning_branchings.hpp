@@ -61,33 +61,31 @@ namespace boost {
       { return compare( weight, rhs.weight ); }
     };
 
-    // Alias template for heap used in the routine.  Current version
-    // is the boost::fibonacci_heap.  The heap must be mergable.
+    // Alias template for priority queue used in the routine.  Current version
+    // is the boost::fibonacci_heap.  The priority queue must be mergable.
 
     template<typename T>
-    struct MyHeap
+    struct MyPriorityQueue
     { 
       typedef heap::fibonacci_heap<T> type;
     };
 
-    // Insert edges from graph into heap, taking into account constraints.
+    // Insert edges from graph into queue, taking into account constraints.
 
-    template <typename Graph, typename Vertex, typename Edge,
-              typename WeightMap, typename Compare>
+    template <typename Graph, typename Edge, typename WeightMap,
+              typename Compare, typename PriorityQueueMap>
     bool
     insert_edges
     (
       const Graph& g,
       WeightMap& weight_map,
       Compare& comp,
-      std::map<
-        Vertex,
-        typename MyHeap<EdgeNode<Edge,WeightMap,Compare> >::type
-      >& in_edges,
+      PriorityQueueMap& in_edges,
       const unordered_set<Edge>& include_edges,
       const unordered_set<Edge>& exclude_edges
     )
     {
+      typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
       unordered_set<Vertex> include_vertices, in_set, out_set;
       typename unordered_set<Vertex>::iterator it;
 
@@ -246,7 +244,7 @@ namespace boost {
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
-      typedef typename MyHeap<edge_node_t>::type heap_t;
+      typedef typename MyPriorityQueue<edge_node_t>::type pq_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       // Create various objects.  Note in particular the two disjoint
@@ -262,7 +260,7 @@ namespace boost {
 
       vertex_idx_t n = num_vertices(g);
 
-      std::map<Vertex, heap_t> in_edges;
+      std::map<Vertex, pq_t> in_edges;
 
       // Create disjoint sets.  The set of weakly connected components is
       // used to determine cycles.  The set of strongly connected components
@@ -272,8 +270,7 @@ namespace boost {
         weak_cc( rank, pred1 ), strong_cc( rank, pred2 );
 
       if(
-        !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
-        (
+        !insert_edges(
           g,
           weight_map,
           comp,
@@ -383,12 +380,12 @@ namespace boost {
                   }
                 }
 	      }
-              heap_t tmp_heap;
+              pq_t tmp_queue;
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit )
               {
-                tmp_heap.push( t.second );
+                tmp_queue.push( t.second );
               }
-              in_edges[v].swap( tmp_heap );
+              in_edges[v].swap( tmp_queue );
 	    }
                  
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
@@ -482,7 +479,84 @@ namespace boost {
       { return ( m_pr[v1] < m_pr[v2] && m_po[v1] > m_po[v2] ); }
     };
 
-    // Camerini et al. NEXT routine.
+    template<typename Graph, typename Edge, typename IndexMap>
+    BranchingGraph
+    create_branching_graph_from_edge_set(
+      Graph& g,
+      IndexMap& v_id,
+      const unordered_set<Edge>& branching
+    )
+    {
+
+      BranchingGraph ancestor_branching;
+
+      for( size_t i = 0; i < num_vertices( g ); i++ )
+      {
+        add_vertex( ancestor_branching );
+      }
+
+      BOOST_FOREACH( const Edge& e, branching )
+      {
+        add_edge(
+          v_id[source( e, g )], v_id[target( e, g )], ancestor_branching
+        );
+      }
+
+      return ancestor_branching;
+
+    }
+
+    // Camerini et al. SEEK routine.  Find the in edge that gives the
+    // next best branching for a vertex and the weight difference.
+
+    template <typename Graph, typename Edge, typename IndexMap,
+              typename PriorityQueue, typename EdgeNodeType, typename Compare,
+              typename OrderMap, typename OptionalWeight>
+    void
+    seek_next_edge_weight_diff(
+      Graph& g,
+      PriorityQueue& in_edges,
+      IndexMap& v_id,
+      ancestor_checker<OrderMap>& is_ancestor,
+      const unordered_set<Edge>& branching,
+      EdgeNodeType& b,
+      Compare& comp,
+      Edge& return_edge,
+      OptionalWeight& delta
+    )
+    {
+
+      if( branching.find( b.edge ) != branching.end() )
+      {
+        for(
+          typename PriorityQueue::ordered_iterator ei =
+            in_edges.ordered_begin();
+          ei != in_edges.ordered_end();
+          ei++
+        )
+        {
+          if( (*ei).edge != b.edge )
+          {
+            if(
+              !is_ancestor(
+                v_id[target( b.edge, g )],
+                v_id[source( (*ei).edge, g )]
+              )
+            )
+            {
+              if( !delta || comp( b.weight - (*ei).weight, delta.get() ) )
+              {
+                delta = b.weight - (*ei).weight;
+                return_edge = b.edge;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Camerini et al. NEXT routine.  Find the next best branching.
 
     template <typename Graph, typename Edge, typename IndexMap,
               typename WeightMap, typename Rank, typename Pred,
@@ -507,7 +581,7 @@ namespace boost {
 
       typedef EdgeNode<Edge, WeightMap, Compare> edge_node_t;
 
-      typedef typename MyHeap<edge_node_t>::type heap_t;
+      typedef typename MyPriorityQueue<edge_node_t>::type pq_t;
       typedef std::map<Vertex, edge_node_t > exit_map_t;
 
       typedef typename property_traits<WeightMap>::value_type weight_t;
@@ -526,7 +600,7 @@ namespace boost {
 
       unordered_set<Vertex> unvisited_vertex_set;
 
-      std::map<Vertex, heap_t> in_edges;
+      std::map<Vertex, pq_t> in_edges;
 
       std::map<Vertex, edge_node_t> max_e;
 
@@ -540,23 +614,13 @@ namespace boost {
       // Create a branching graph to check whether a vertex is an ancestor of
       // another vertex in the branching.
 
-      BranchingGraph ancestor_branching;
+      BranchingGraph ancestor_branching =
+        create_branching_graph_from_edge_set( g, v_id, branching );
 
-      for( size_t i = 0; i < num_vertices( g ); i++ )
-      {
-        add_vertex( ancestor_branching );
-      }
-
-      BOOST_FOREACH( const Edge& e, branching )
-      {
-        add_edge(
-          v_id[source( e, g )], v_id[target( e, g )], ancestor_branching
-        );
-      }
+      // Insert edges.
 
       if(
-        !insert_edges<Graph, Vertex, Edge, WeightMap, Compare>
-        (
+        !insert_edges(
           g,
           weight_map,
           comp,
@@ -616,7 +680,7 @@ namespace boost {
           // input branching.
 
           for(
-            typename heap_t::ordered_iterator ei =
+            typename pq_t::ordered_iterator ei =
               in_edges[*it].ordered_begin();
             ei != in_edges[*it].ordered_end();
             ei++
@@ -631,44 +695,12 @@ namespace boost {
 
 	  max_e[*it] = b;
 
-          // Camerini et al. SEEK routine.
-                  
-          if( branching.find( b.edge ) != branching.end() )
-          {
-            for(
-              typename heap_t::ordered_iterator ei =
-                in_edges[*it].ordered_begin();
-              ei != in_edges[*it].ordered_end();
-              ei++
-            )
-            {
-              if( (*ei).edge != b.edge )
-              {
-                if(
-                  !is_ancestor(
-                    v_id[target( b.edge, g )],
-                    v_id[source( (*ei).edge, g )]
-                  )
-                )
-                {
-                  if( !delta )
-                  {
-                    delta = b.weight - (*ei).weight;
-                    return_edge = b.edge;
-                    break;
-                  }
-                  else if(
-                    comp( b.weight - (*ei).weight, delta.get() )
-                  )
-                  {
-                    delta = b.weight - (*ei).weight;
-                    return_edge = b.edge;
-                    break;
-                  }
-                }
-              }
-            }
-          }
+          // Seek next edge weight difference.
+
+          seek_next_edge_weight_diff(
+            g, in_edges[*it], v_id, is_ancestor, branching, b, comp,
+            return_edge, delta
+          );
 
 	  unvisited_vertex_set.erase( it );
 
@@ -767,20 +799,20 @@ namespace boost {
                   }
                 }
 	      }
-              heap_t tmp_heap;
+              pq_t tmp_queue;
               BOOST_FOREACH( typename exit_map_t::value_type& t, b_exit )
               {
-                tmp_heap.push( t.second );
+                tmp_queue.push( t.second );
               }
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit1 )
               {
-                tmp_heap.push( t.second );
+                tmp_queue.push( t.second );
               }
               BOOST_FOREACH( typename exit_map_t::value_type& t, v_exit2 )
               {
-                tmp_heap.push( t.second );
+                tmp_queue.push( t.second );
               }
-              in_edges[v].swap( tmp_heap );
+              in_edges[v].swap( tmp_queue );
 	    }
                  
 	    BOOST_FOREACH( Vertex v, cycle_vertex_set )
@@ -919,8 +951,8 @@ namespace boost {
 
       Edge e;
 
-      typename MyHeap<BranchingEntry<Edge, WeightMap, Compare> >::type
-        branching_heap;
+      typename MyPriorityQueue<BranchingEntry<Edge, WeightMap, Compare> >::type
+        branching_queue;
 
       best_spanning_branching( g,
                                best_branching,
@@ -954,7 +986,7 @@ namespace boost {
 
       if( next_edge_and_weight_delta )
       {
-	branching_heap.push(
+	branching_queue.push(
 	  BranchingEntry<Edge, WeightMap, Compare>(
 	    compute_branching_weight( w, best_branching ) -
               (next_edge_and_weight_delta.get()).second,
@@ -971,14 +1003,14 @@ namespace boost {
 	return;
       }
 
-      while( !branching_heap.empty() )
+      while( !branching_queue.empty() )
       {
 
 	unordered_set<Edge> branching;
 
-	BranchingEntry<Edge, WeightMap, Compare> P = branching_heap.top();
+	BranchingEntry<Edge, WeightMap, Compare> P = branching_queue.top();
 
-	branching_heap.pop();
+	branching_queue.pop();
 
 	unordered_set<Edge> include_edges = P.include_edges;
 
@@ -1020,7 +1052,7 @@ namespace boost {
 
 	if( next_edge_and_weight_delta )
 	{
-	  branching_heap.push(
+	  branching_queue.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
 	      compute_branching_weight( w, P.branching ) -
                 (next_edge_and_weight_delta.get()).second,
@@ -1048,7 +1080,7 @@ namespace boost {
 
 	if( next_edge_and_weight_delta )
 	{
-	  branching_heap.push(
+	  branching_queue.push(
 	    BranchingEntry<Edge, WeightMap, Compare>(
 	      P.weight - (next_edge_and_weight_delta.get()).second,
 	      (next_edge_and_weight_delta.get()).first,
