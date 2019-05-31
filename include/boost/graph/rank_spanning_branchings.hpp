@@ -311,7 +311,11 @@ namespace boost {
 
 	  beta[parent[*it]] = critical_edge_node;
 
+          // Done with this vertex.
+
 	  unvisited_vertex_set.erase( it );
+
+          // Check for cycle and, if present, condense.
 
 	  if(
 	    weak_cc.find_set( source( critical_edge_node.edge, g ) ) !=
@@ -479,6 +483,8 @@ namespace boost {
       { return ( m_pr[v1] < m_pr[v2] && m_po[v1] > m_po[v2] ); }
     };
 
+    // Create a new branching from an input edge set.
+
     template<typename Graph, typename Edge, typename IndexMap>
     BranchingGraph
     create_branching_graph_from_edge_set(
@@ -488,26 +494,26 @@ namespace boost {
     )
     {
 
-      BranchingGraph ancestor_branching;
+      BranchingGraph new_branching;
 
       for( size_t i = 0; i < num_vertices( g ); i++ )
       {
-        add_vertex( ancestor_branching );
+        add_vertex( new_branching );
       }
 
       BOOST_FOREACH( const Edge& e, branching )
       {
         add_edge(
-          v_id[source( e, g )], v_id[target( e, g )], ancestor_branching
+          v_id[source( e, g )], v_id[target( e, g )], new_branching
         );
       }
 
-      return ancestor_branching;
+      return new_branching;
 
     }
 
-    // Camerini et al. SEEK routine.  Find the in edge that gives the
-    // next best branching for a vertex and the weight difference.
+    // Camerini et al. SEEK routine.  Find the in edge that, when removed,
+    //  gives the next best branching for a vertex and the weight difference.
 
     template <typename Graph, typename Edge, typename IndexMap,
               typename PriorityQueue, typename EdgeNodeType, typename Compare,
@@ -556,7 +562,8 @@ namespace boost {
       }
     }
 
-    // Camerini et al. NEXT routine.  Find the next best branching.
+    // Camerini et al. NEXT routine.  Find the edge that, when removed,
+    // gives the next best branching and the resulting weight difference.
 
     template <typename Graph, typename Edge, typename IndexMap,
               typename WeightMap, typename Rank, typename Pred,
@@ -702,7 +709,11 @@ namespace boost {
             return_edge, delta
           );
 
+          // Done with this vertex.
+
 	  unvisited_vertex_set.erase( it );
+
+          // Check for cycle and, if present, condense.
 
 	  if(
 	    weak_cc.find_set( source( b.edge, g ) ) !=
