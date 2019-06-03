@@ -7,7 +7,7 @@ if [ "$TRAVIS_OS_NAME" == "osx" ]; then
 fi
 
 
-$(dirname "${BASH_SOURCE[0]}")/enforce.sh
+${TRAVIS_BUILD_DIR}/utility/ci/enforce_b2_env.sh
 
 function show_bootstrap_log
 {
