@@ -20,7 +20,7 @@ if [ "${B2_TOOLSET%%-*}" == "gcc" ]; then
 fi
 
 B2_VARIANT=debug
-utility/build.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile-arcs linkflags=-ftest-coverage
+utility/ci/travis/install.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile-arcs linkflags=-ftest-coverage
 
 # switch back to the original source code directory
 cd $TRAVIS_BUILD_DIR

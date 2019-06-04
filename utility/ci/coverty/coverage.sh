@@ -31,9 +31,9 @@ COVBIN=$(echo $(pwd)/cov-analysis*/bin)
 export PATH=$COVBIN:$PATH
 popd
 
-utility/build.sh clean
+utility/ci/travis/install.sh clean
 rm -rf cov-int/
-cov-build --dir cov-int utility/build.sh
+cov-build --dir cov-int utility/ci/travis/install.sh
 tail -50 cov-int/build-log.txt 
 tar cJf cov-int.tar.xz cov-int/
 curl --cacert /tmp/scanca.cer \
