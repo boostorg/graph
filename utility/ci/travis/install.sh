@@ -29,11 +29,7 @@ fi
 git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
 cd boost-root
 
-git submodule update --init libs/headers
-git submodule update --init tools/boost_install
-git submodule update --init tools/boostdep
-git submodule update --init tools/build
-git submodule update --init libs/config
+git submodule update                         
 cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
 
 export BOOST_ROOT="`pwd`"
@@ -62,12 +58,11 @@ if [ "${B2_TOOLSET%%-*}" == "clang" ]; then
     fi
 fi
 
-trap show_bootstrap_log ERR
+
 if [[ "${B2_TOOLSET}" == "gcc-"* ]] || [[ "${B2_TOOLSET}" == "clang-"* ]]; then
     ./bootstrap.sh --with-toolset=${B2_TOOLSET%%-*}
 else
     ./bootstrap.sh --with-toolset=${B2_TOOLSET}
 fi
-trap - ERR
 
 ./b2 headers
