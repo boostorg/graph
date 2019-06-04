@@ -80,5 +80,5 @@ if [[ ! -z $CXXSTD ]] ; then
 	for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
 	unset IFS
 
-	./b2 -j3 libs/$SELF/test toolset=$B2_TOOLSET cxxstd=$CXXSTD
+	./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD
 fi
