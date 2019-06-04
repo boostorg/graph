@@ -44,7 +44,6 @@ env:
 
 install:
   - utility/ci/travis/install.sh
-  - utility/build.sh
 
 
 anchors:
