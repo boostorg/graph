@@ -29,7 +29,12 @@ fi
 git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
 cd boost-root
 
-git submodule update                         
+git submodule update --init
+git submodule update --init libs/headers
+git submodule update --init tools/boost_install
+git submodule update --init tools/boostdep
+git submodule update --init tools/build
+git submodule update --init libs/config
 cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
 
 export BOOST_ROOT="`pwd`"
