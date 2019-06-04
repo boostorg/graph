@@ -73,7 +73,7 @@ fi
 
 ./b2 headers
 
-if [[ ! -z CXXSTD && ! -z TOOLSET ]] ; then
+if [[ ! -z "$CXXSTD" && ! -z "$TOOLSET" ]] ; then
 	cd "$BOOST_ROOT"
 	echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
 	IFS=','
