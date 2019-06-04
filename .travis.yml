@@ -44,10 +44,6 @@ env:
 
 install:
   - utility/ci/travis/install.sh
-
-
-
-script:
   - utility/build.sh
 
 
