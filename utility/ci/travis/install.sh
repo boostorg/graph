@@ -64,6 +64,7 @@ if [ "${B2_TOOLSET%%-*}" == "clang" ]; then
 fi
 
 
+./bootstrap.sh
 if [[ "${B2_TOOLSET}" == "gcc-"* ]] || [[ "${B2_TOOLSET}" == "clang-"* ]]; then
     ./bootstrap.sh --with-toolset=${B2_TOOLSET%%-*}
 else
