@@ -35,7 +35,11 @@ cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
 export BOOST_ROOT="`pwd`"
 export PATH="`pwd`":$PATH
 
-python tools/boostdep/depinst/depinst.py --include example $SELF
+echo "$(ls)"
+echo "$(ls tools)"
+echo "$(ls tools/boostdep)"
+echo "$(ls tools/boostdep/depinst)"
+python tools/boostdep/depinst/depinst.py --include $SELF
 
 
 # If clang was installed from LLVM APT it will not have a /usr/bin/clang++
