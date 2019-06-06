@@ -64,21 +64,13 @@ if [ "${B2_TOOLSET%%-*}" == "clang" ]; then
 fi
 
 
-./bootstrap.sh
+# trap show_bootstrap_log ERR
 if [[ "${B2_TOOLSET}" == "gcc-"* ]] || [[ "${B2_TOOLSET}" == "clang-"* ]]; then
     ./bootstrap.sh --with-toolset=${B2_TOOLSET%%-*}
 else
     ./bootstrap.sh --with-toolset=${B2_TOOLSET}
 fi
+# trap - ERR
 
 ./b2 headers
 
-if [[ ! -z "$CXXSTD" && ! -z "$TOOLSET" ]] ; then
-	cd "$BOOST_ROOT"
-	echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-	IFS=','
-	for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
-	unset IFS
-
-	./b2 -j3 libs/$SELF/test toolset=$TOOLSET cxxstd=$CXXSTD
-fi

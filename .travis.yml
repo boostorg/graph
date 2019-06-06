@@ -45,6 +45,9 @@ env:
 install:
   - utility/ci/travis/install.sh
 
+build:
+  - utility/ci/travis/build.sh
+
 
 anchors:
   clang-38: &clang-38 { apt: { packages: [ "clang-3.8",

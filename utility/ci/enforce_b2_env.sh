@@ -34,9 +34,9 @@ enforce_b2 "LINKFLAGS"
 enforce_b2 "TESTFLAGS"
 enforce_b2 "TOOLSET"
 
-# default language level: C++11
+# default language level: C++03
 if [ -z "$B2_CXXSTD" ]; then
-    export B2_CXXSTD=11
+    export B2_CXXSTD=03
 fi
 
 # default parallel build jobs: number of CPUs available + 1
