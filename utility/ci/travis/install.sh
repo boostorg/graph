@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+#
+# 
 
 set -exv
 
@@ -7,7 +9,8 @@ if [ "$TRAVIS_OS_NAME" == "osx" ]; then
 fi
 
 
-${TRAVIS_BUILD_DIR}/utility/ci/enforce_b2_env.sh
+./utility/ci/enforce_b2_env.sh
+# ${TRAVIS_BUILD_DIR}/utility/ci/enforce_b2_env.sh
 
 function show_bootstrap_log
 {
