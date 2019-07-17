@@ -12,10 +12,10 @@ fi
 ./utility/ci/enforce_b2_env.sh
 # ${TRAVIS_BUILD_DIR}/utility/ci/enforce_b2_env.sh
 
-function show_bootstrap_log
-{
-    cat bootstrap.log
-}
+# function show_bootstrap_log
+# {
+#     cat bootstrap.log
+# }
 
 export SELF=`basename $TRAVIS_BUILD_DIR`
 cd ..
