@@ -77,3 +77,5 @@ fi
 
 ./b2 headers
 
+echo "b2 is located in $(pwd)"
+
