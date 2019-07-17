@@ -47,7 +47,7 @@ install: utility/ci/travis/install.sh
 
 before_script: true
 
-script: utility/ci/travis/build.sh
+script: BOOST_ROOT="`pwd`" utility/ci/travis/build.sh
 
 after_script: true
 
