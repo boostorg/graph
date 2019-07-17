@@ -8,7 +8,7 @@
 # Enforce B2 build variables understood by boost-ci scripts.
 #
 
-set -e
+set -ev
 
 function enforce_b2
 {

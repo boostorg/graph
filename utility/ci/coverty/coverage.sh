@@ -17,7 +17,7 @@
 # COVERITY_SCAN_TOKEN               - the Coverity Scan token (should be secure)
 # SELF                              - the boost libs directory name
 
-set -ex
+set -exv
 
 sudo wget -nv https://entrust.com/root-certificates/entrust_l1k.cer -O /tmp/scanca.cer
 

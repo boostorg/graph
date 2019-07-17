@@ -5,7 +5,7 @@
 # for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
 # unset IFS
 
-set -ex
+set -exv
 
 . $(dirname "${BASH_SOURCE[0]}")/../enforce_b2_env.sh
 

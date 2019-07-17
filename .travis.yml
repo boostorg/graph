@@ -40,13 +40,16 @@ env:
 #   - repo_initialization
 #   - test
 
+before_install: true
 
 
-install:
-  - utility/ci/travis/install.sh
+install: utility/ci/travis/install.sh
 
-build:
-  - utility/ci/travis/build.sh
+before_script: true
+
+script: utility/ci/travis/build.sh
+
+after_script: true
 
 
 anchors:
@@ -86,20 +89,20 @@ anchors:
 jobs:
   include:
     # xenial has libstdc++ from gcc 5.4.0 with newer ABI
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11"    ], addons: *gcc-48    }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11"    ], addons: *gcc-49    }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14" ], addons: *clang-38  }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11"    ], addons: *gcc-48, script: true }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11"    ], addons: *gcc-49, script: true }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14" ], addons: *clang-38, script: true }
 
     # libstdc++
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11"       ], addons: *gcc-5     }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14"    ], addons: *gcc-6     }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17" ], addons: *gcc-7     }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a" ], addons: *gcc-8     }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14"    ], addons: *clang-4   }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17" ], addons: *clang-5   }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a" ], addons: *clang-6   }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a" ], addons: *clang-7   }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a" ], addons: *clang-8, script: {&run utility/ci/travis/format-check.sh || exit 1 }  }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11"       ], addons: *gcc-5,   script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14"    ], addons: *gcc-6,   script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17" ], addons: *gcc-7,   script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a" ], addons: *gcc-8,   script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14"    ], addons: *clang-4, script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17" ], addons: *clang-5, script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a" ], addons: *clang-6, script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a" ], addons: *clang-7, script: true }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }  }
 
     # libc++
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
@@ -135,6 +138,7 @@ jobs:
         - B2_LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS=print_stacktrace=1
       addons: *gcc-8
+      script: true
 
     - os: linux
       env:

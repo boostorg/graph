@@ -9,7 +9,7 @@
 # cwd should be $BOOST_ROOT before running
 #
 
-set -ex
+set -exv
 
 . $(dirname "${BASH_SOURCE[0]}")/enforce_b2_env.sh || exit 1
 

@@ -3,6 +3,7 @@
 set -o errexit
 set -o pipefail
 set -o nounset
+set -ev
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 

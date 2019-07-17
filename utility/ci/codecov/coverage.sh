@@ -11,7 +11,7 @@
 # assumes cwd is the top level directory of the boost project
 # assumes an environment variable $SELF is the boost project name
 
-set -ex
+set -exv
 
 . utility/ci/enforce_b2_env.sh
 

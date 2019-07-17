@@ -9,7 +9,7 @@
 # cwd should be $BOOST_ROOT before running
 #
 
-set -ex
+set -exv
 
 # valgrind on travis (xenial) is 3.11 which is old
 # using valgrind 3.14 but we have to build it

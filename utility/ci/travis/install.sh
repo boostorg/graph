@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
-set -ex
+set -exv
 
 if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     unset -f cd
