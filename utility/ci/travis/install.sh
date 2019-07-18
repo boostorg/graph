@@ -42,7 +42,7 @@ git submodule update --init tools/build
 git submodule update --init libs/config
 cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
 
-export BOOST_ROOT="`pwd`"
+export BOOST_ROOT="$(pwd)"
 export PATH="`pwd`":$PATH
 
 python tools/boostdep/depinst/depinst.py $SELF
