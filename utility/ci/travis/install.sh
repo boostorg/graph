@@ -17,6 +17,8 @@ fi
 #     cat bootstrap.log
 # }
 
+CALLED_FROM_DIR="$(pwd)"
+
 export SELF=`basename $TRAVIS_BUILD_DIR`
 cd ..
 
@@ -78,4 +80,6 @@ fi
 ./b2 headers
 
 echo "b2 is located in $(pwd)"
+
+cd "$CALLED_FROM_DIR"
 
