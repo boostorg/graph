@@ -43,11 +43,11 @@ env:
 before_install: true
 
 
-install: utility/ci/travis/install.sh
+install: source utility/ci/travis/install.sh
 
 before_script: true
 
-script: BOOST_ROOT="`pwd`" utility/ci/travis/build.sh
+script: utility/ci/travis/build.sh
 
 after_script: true
 
