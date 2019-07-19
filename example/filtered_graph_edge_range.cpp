@@ -10,13 +10,13 @@
 /* 
    Sample output:
 
-   filtered edge set: (A,B) (C,D) (D,B) 
-   filtered out-edges:
-   A --> B 
-   B --> 
-   C --> D 
-   D --> B 
-   E --> 
+   unfiltered edge_range(C,D)
+   C --1-> D
+   C --0-> D
+   C --3-> D
+   filtered edge_range(C,D)
+   C --1-> D
+   C --3-> D
  */
 
 #include <boost/config.hpp>
