@@ -19,15 +19,16 @@
 
 namespace boost {
 
-  // No init version
+  // No init version for multiple start vertices
   template <typename Graph, typename DijkstraVisitor,
+            typename SourceInputIter,
             typename PredecessorMap, typename DistanceMap,
             typename WeightMap, typename VertexIndexMap,
             typename DistanceCompare, typename DistanceWeightCombine,
             typename DistanceInfinity, typename DistanceZero>
   void dijkstra_shortest_paths_no_color_map_no_init
     (const Graph& graph,
-     typename graph_traits<Graph>::vertex_descriptor start_vertex,
+     SourceInputIter s_begin, SourceInputIter s_end,
      PredecessorMap predecessor_map,
      DistanceMap distance_map,
      WeightMap weight_map,
@@ -61,11 +62,15 @@ namespace boost {
                                   index_in_heap_map_holder);
     VertexQueue vertex_queue(distance_map, index_in_heap, distance_compare);
 
-    // Add vertex to the queue
-    vertex_queue.push(start_vertex);
+    // Add start vertices to the queue
+    for (SourceInputIter it = s_begin; it != s_end; ++it) {
+      vertex_queue.push(*it);
+    }
 
-    // Starting vertex will always be the first discovered vertex
-    visitor.discover_vertex(start_vertex, graph);
+    // Starting vertices will always be the first discovered vertices
+    for (SourceInputIter it = s_begin; it != s_end; ++it) {
+      visitor.discover_vertex(*it, graph);
+    }
 
     while (!vertex_queue.empty()) {
       Vertex min_vertex = vertex_queue.top();
@@ -119,15 +124,42 @@ namespace boost {
     } // end while queue not empty
   }
 
-  // Full init version
+  // No init version for a single start vertex
   template <typename Graph, typename DijkstraVisitor,
+            typename PredecessorMap, typename DistanceMap,
+            typename WeightMap, typename VertexIndexMap,
+            typename DistanceCompare, typename DistanceWeightCombine,
+            typename DistanceInfinity, typename DistanceZero>
+  void dijkstra_shortest_paths_no_color_map_no_init
+    (const Graph& graph,
+     typename graph_traits<Graph>::vertex_descriptor start_vertex,
+     PredecessorMap predecessor_map,
+     DistanceMap distance_map,
+     WeightMap weight_map,
+     VertexIndexMap index_map,
+     DistanceCompare distance_compare,
+     DistanceWeightCombine distance_weight_combine,
+     DistanceInfinity distance_infinity,
+     DistanceZero distance_zero,
+     DijkstraVisitor visitor)
+  {
+    dijkstra_shortest_paths_no_color_map_no_init(graph,
+      &start_vertex, &start_vertex + 1,
+      predecessor_map, distance_map, weight_map, index_map,
+      distance_compare, distance_weight_combine, distance_infinity,
+      distance_zero, visitor);
+  }
+
+  // Full init version for multiple start vertices
+  template <typename Graph, typename DijkstraVisitor,
+            typename SourceInputIter,
             typename PredecessorMap, typename DistanceMap,
             typename WeightMap, typename VertexIndexMap,
             typename DistanceCompare, typename DistanceWeightCombine,
             typename DistanceInfinity, typename DistanceZero>
   void dijkstra_shortest_paths_no_color_map
     (const Graph& graph,
-     typename graph_traits<Graph>::vertex_descriptor start_vertex,
+     SourceInputIter s_begin, SourceInputIter s_end,
      PredecessorMap predecessor_map,
      DistanceMap distance_map,
      WeightMap weight_map,
@@ -149,26 +181,55 @@ namespace boost {
       put(predecessor_map, current_vertex, current_vertex);
     }
 
-    // Set distance for start_vertex to zero
-    put(distance_map, start_vertex, distance_zero);
+    // Set distance for start vertices to zero
+    for (SourceInputIter it = s_begin; it != s_end; ++it) {
+      put(distance_map, *it, distance_zero);
+    }
 
     // Pass everything on to the no_init version
     dijkstra_shortest_paths_no_color_map_no_init(graph,
-      start_vertex, predecessor_map, distance_map, weight_map,
-      index_map, distance_compare, distance_weight_combine,
-      distance_infinity, distance_zero, visitor);
+      s_begin, s_end, predecessor_map, distance_map,
+      weight_map, index_map, distance_compare,
+      distance_weight_combine, distance_infinity, distance_zero,
+      visitor);
+  }
+
+  // Full init version for a single start vertex
+  template <typename Graph, typename DijkstraVisitor,
+            typename PredecessorMap, typename DistanceMap,
+            typename WeightMap, typename VertexIndexMap,
+            typename DistanceCompare, typename DistanceWeightCombine,
+            typename DistanceInfinity, typename DistanceZero>
+  void dijkstra_shortest_paths_no_color_map
+    (const Graph& graph,
+     typename graph_traits<Graph>::vertex_descriptor start_vertex,
+     PredecessorMap predecessor_map,
+     DistanceMap distance_map,
+     WeightMap weight_map,
+     VertexIndexMap index_map,
+     DistanceCompare distance_compare,
+     DistanceWeightCombine distance_weight_combine,
+     DistanceInfinity distance_infinity,
+     DistanceZero distance_zero,
+     DijkstraVisitor visitor)
+  {
+    dijkstra_shortest_paths_no_color_map(graph,
+      &start_vertex, &start_vertex + 1,
+      predecessor_map, distance_map, weight_map, index_map,
+      distance_compare, distance_weight_combine, distance_infinity,
+      distance_zero, visitor);
   }
 
   namespace detail {
 
     // Handle defaults for PredecessorMap, DistanceCompare,
     // DistanceWeightCombine, DistanceInfinity and DistanceZero
-    template <typename Graph, typename DistanceMap, typename WeightMap,
-              typename VertexIndexMap, typename Params>
+    template <typename Graph, typename SourceInputIter, typename DistanceMap,
+              typename WeightMap, typename VertexIndexMap, typename Params>
     inline void
     dijkstra_no_color_map_dispatch2
       (const Graph& graph,
-       typename graph_traits<Graph>::vertex_descriptor start_vertex,
+       SourceInputIter s_begin, SourceInputIter s_end,
        DistanceMap distance_map, WeightMap weight_map,
        VertexIndexMap index_map, const Params& params)
     {
@@ -180,7 +241,7 @@ namespace boost {
         choose_param(get_param(params, distance_inf_t()),
                      (std::numeric_limits<DistanceType>::max)());
       dijkstra_shortest_paths_no_color_map
-        (graph, start_vertex,
+        (graph, s_begin, s_end,
          choose_param(get_param(params, vertex_predecessor), predecessor_map),
          distance_map, weight_map, index_map,
          choose_param(get_param(params, distance_compare_t()),
@@ -194,12 +255,12 @@ namespace boost {
                       make_dijkstra_visitor(null_visitor())));
     }
 
-    template <typename Graph, typename DistanceMap, typename WeightMap,
-              typename IndexMap, typename Params>
+    template <typename Graph, typename SourceInputIter, typename DistanceMap,
+              typename WeightMap, typename IndexMap, typename Params>
     inline void
     dijkstra_no_color_map_dispatch1
       (const Graph& graph,
-       typename graph_traits<Graph>::vertex_descriptor start_vertex,
+       SourceInputIter s_begin, SourceInputIter s_end,
        DistanceMap distance_map, WeightMap weight_map,
        IndexMap index_map, const Params& params)
     {
@@ -211,14 +272,33 @@ namespace boost {
       std::vector<DistanceType> default_distance_map(vertex_count);
 
       detail::dijkstra_no_color_map_dispatch2
-        (graph, start_vertex, choose_param(distance_map,
+        (graph, s_begin, s_end, choose_param(distance_map,
          make_iterator_property_map(default_distance_map.begin(), index_map,
                                     default_distance_map[0])),
          weight_map, index_map, params);
     }
   } // namespace detail
 
-  // Named parameter version
+  // Named parameter version for multiple start vertices
+  template <typename Graph, typename SourceInputIter, typename Param,
+            typename Tag, typename Rest>
+  inline void
+  dijkstra_shortest_paths_no_color_map
+    (const Graph& graph,
+     SourceInputIter s_begin, SourceInputIter s_end,
+     const bgl_named_params<Param, Tag, Rest>& params)
+  {
+    // Default for edge weight and vertex index map is to ask for them
+    // from the graph. Default for the visitor is null_visitor.
+    detail::dijkstra_no_color_map_dispatch1
+      (graph, s_begin, s_end,
+       get_param(params, vertex_distance),
+       choose_const_pmap(get_param(params, edge_weight), graph, edge_weight),
+       choose_const_pmap(get_param(params, vertex_index), graph, vertex_index),
+       params);
+  }
+
+  // Named parameter version for a single start vertex
   template <typename Graph, typename Param, typename Tag, typename Rest>
   inline void
   dijkstra_shortest_paths_no_color_map
@@ -226,14 +306,8 @@ namespace boost {
      typename graph_traits<Graph>::vertex_descriptor start_vertex,
      const bgl_named_params<Param, Tag, Rest>& params)
   {
-    // Default for edge weight and vertex index map is to ask for them
-    // from the graph. Default for the visitor is null_visitor.
-    detail::dijkstra_no_color_map_dispatch1
-      (graph, start_vertex,
-       get_param(params, vertex_distance),
-       choose_const_pmap(get_param(params, edge_weight), graph, edge_weight),
-       choose_const_pmap(get_param(params, vertex_index), graph, vertex_index),
-       params);
+    dijkstra_shortest_paths_no_color_map(graph,
+       &start_vertex, &start_vertex + 1, params);
   }
 
 } // namespace boost

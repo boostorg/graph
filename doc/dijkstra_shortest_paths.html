@@ -21,15 +21,19 @@
 
 <P>
 <PRE>
-<i>// named parameter version</i>
-template &lt;typename Graph, typename P, typename T, typename R&gt;
-void
-dijkstra_shortest_paths(Graph&amp; g,
-  typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
-  const bgl_named_params&lt;P, T, R&gt;&amp; params);
+<i>//////////////////////////////////////////</i>
+<i>// functions that take one start vertex //</i>
+<i>//////////////////////////////////////////</i>
 
-<i>// non-named parameter version</i>
-template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>, 
+<i>// named parameter version for a single start vertex</i>
+template &lt;typename Graph, typename P, typename T, typename R&gt;
+void dijkstra_shortest_paths
+  (const Graph&amp; g,
+   typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+   const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+<i>// non-named parameter version for a single start vertex</i>
+template &lt;typename Graph, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>,
 	  typename PredecessorMap, typename DistanceMap,
 	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>, 
 	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
@@ -46,10 +50,47 @@ template &lt;class Graph, class DijkstraVisitor,
           class PredecessorMap, class DistanceMap,
           class WeightMap, class IndexMap, class Compare, class Combine,
           class DistZero, class ColorMap&gt;
-void
-dijkstra_shortest_paths_no_init
+void dijkstra_shortest_paths_no_init
   (const Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor s,
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+   IndexMap index_map,
+   Compare compare, Combine combine, DistZero zero,
+   DijkstraVisitor vis, ColorMap color = <i>default</i>);
+
+
+<i>/////////////////////////////////////////////////</i>
+<i>// functions that take multiple start vertices //</i>
+<i>/////////////////////////////////////////////////</i>
+
+<i>// named parameter version for multiple start vertices</i>
+template &lt;typename Graph, typename SourceInputIter, typename P, typename T, typename R&gt;
+void dijkstra_shortest_paths
+  (const Graph&amp; g,
+   SourceInputIter s_begin, SourceInputIter s_end,
+   const bgl_named_params&lt;P, T, R&gt;&amp; params);
+
+<i>// non-named parameter version for multiple start vertices</i>
+template &lt;typename Graph, typename SourceInputIter, typename <a href="DijkstraVisitor.html">DijkstraVisitor</a>,
+	  typename PredecessorMap, typename DistanceMap,
+	  typename WeightMap, typename VertexIndexMap, typename <a href="http://www.boost.org/sgi/stl/BinaryPredicate.html">CompareFunction</a>, typename <a href="http://www.boost.org/sgi/stl/BinaryFunction.html">CombineFunction</a>,
+	  typename DistInf, typename DistZero, typename ColorMap = <i>default</i>&gt;
+void dijkstra_shortest_paths
+  (const Graph&amp; g,
+   SourceInputIter s_begin, SourceInputIter s_end,
+   PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
+   VertexIndexMap index_map,
+   CompareFunction compare, CombineFunction combine, DistInf inf, DistZero zero,
+   DijkstraVisitor vis, ColorMap color = <i>default</i>)
+
+<i>// version that does not initialize the property maps (except for the default color map)</i>
+template &lt;class Graph, class SourceInputIter, class DijkstraVisitor,
+          class PredecessorMap, class DistanceMap,
+          class WeightMap, class IndexMap, class Compare, class Combine,
+          class DistZero, class ColorMap&gt;
+void dijkstra_shortest_paths_no_init
+  (const Graph&amp; g,
+   SourceInputIter s_begin, SourceInputIter s_end,
    PredecessorMap predecessor, DistanceMap distance, WeightMap weight,
    IndexMap index_map,
    Compare compare, Combine combine, DistZero zero,
@@ -67,6 +108,8 @@ weights are equal to one.  For the definition of the shortest-path
 problem see Section <A
 HREF="graph_theory_review.html#sec:shortest-paths-algorithms">Shortest-Paths
 Algorithms</A> for some background to the shortest-path problem.
+For some cases the Dijkstra algorithm can also be applied to a multiple-source
+shortest-paths problem, see the section below for more details.
 </P>
 
 <P>
@@ -186,6 +229,38 @@ finish vertex <i>u</i>
 
 <a href="../../../boost/graph/dijkstra_shortest_paths.hpp"><tt>boost/graph/dijkstra_shortest_paths.hpp</tt></a>
 
+<h3>Multiple Sources</h3>
+With some restrictions the Dijkstra algorithm can be used for the
+multiple-source shortest path problem.
+
+The following cases can be identified:
+
+<h4>Multiple Sources and Single Target</h4>
+<p>
+Use <a href="./reverse_graph.html"><tt>reverse_graph</tt></a> to
+transfer the problem into a single-source and multiple-targets
+shortest path problem. Then you can use the Dijkstra algorithms that
+take a single source vertex as input.
+</p>
+
+<p>
+Alternatively, when you are only interested in the results (distance
+and route) for the source vertex closest to the target, use the
+Dijkstra algorithm that takes multiple sources as input.
+</p>
+
+<h4>Multiple Sources and Multiple Targets</h4>
+<p>
+You can call the Dijkstra algorithm multiple times with just one
+source vertex.
+</p>
+
+<p>
+Alternatively, when you are only interested in the results (distance
+and route) for the source vertex closest to a target, use the Dijkstra
+algorithm that takes multiple sources as input.
+</p>
+
 <h3>Parameters</h3>
 
 IN: <tt>const Graph&amp; g</tt> 
@@ -204,6 +279,18 @@ IN: <tt>vertex_descriptor s</tt>
   and the shortest paths tree will be rooted at this vertex.<br>
 
   <b>Python</b>: The parameter is named <tt>root_vertex</tt>.
+</blockquote>
+
+IN: <tt>SourceInputIter s_begin, SourceInputIter s_end</tt>
+<blockquote>
+  Range [s_begin, s_end) of source vertices denoted by two input
+  iterators that are used for a multiple-source shortest path problem.
+  The distance to a target vertex will be calculated from the source
+  vertex in the range [s_begin, s_end) that is closest to the target,
+  the shortest path will then have this source vertex as root.
+  As a result, using these parameters you can not create an order of
+  the distances from all source vertices to a target vertex, you can
+  only retrieve the information for the closest target vertex.
 </blockquote>
 
 <h3>Named Parameters</h3>
@@ -433,7 +520,9 @@ The time complexity is <i>O(V log V + E)</i>.
 <P>
 See <a href="../example/dijkstra-example.cpp">
 <TT>example/dijkstra-example.cpp</TT></a> for an example of using Dijkstra's
-algorithm.
+algorithm and <a href="../example/dijkstra-example-multiple-sources.cpp">
+<TT>dijkstra-example-multiple-sources.cpp</TT></a> for using multiple source
+vertices.
 
 <H3>See also</H3> <a href="dijkstra_shortest_paths_no_color_map.html">dijkstra_shortest_paths_no_color_map</a> for a version of Dijkstra's shortest path that does not use a color map.
 

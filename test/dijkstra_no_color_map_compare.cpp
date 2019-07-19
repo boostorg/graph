@@ -74,6 +74,102 @@ void run_dijkstra_test(const Graph& graph)
               no_color_map_vertex_double_map.begin()));
 }
 
+template <typename Graph>
+void run_dijkstra_multiple_start_vertices_test(const Graph& graph)
+{
+  /*
+     Calculate from two start vertices A and B (MULTIPLE).
+     Also calculate with a single start vertex A (CALC_A) and B (CALC_B).
+     When the distance from A to a target X is shorter than from B to X
+     compare MULTIPLE with CALC_B and vice versa.
+     In case distance A -> X and B -> X are equal check that any of
+     CALC_A/CALC_B matches MULTIPLE.
+   */
+  using namespace boost;
+
+  // Set up property maps
+  typedef typename graph_traits<Graph>::vertex_descriptor vertex_t;
+
+  typedef typename std::map<vertex_t, vertex_t> vertex_map_t;
+  typedef associative_property_map<vertex_map_t> predecessor_map_t;
+  vertex_map_t vertex_predecessor_map_1,
+               vertex_predecessor_map_2,
+               vertex_predecessor_map_12,
+               vertex_predecessor_map_12_color;
+  predecessor_map_t predecessors_1(vertex_predecessor_map_1),
+                    predecessors_2(vertex_predecessor_map_2),
+                    predecessors_12(vertex_predecessor_map_12),
+                    predecessors_12_color(vertex_predecessor_map_12_color);
+
+  typedef typename std::map<vertex_t, double> vertex_double_map_t;
+  typedef associative_property_map<vertex_double_map_t> distance_map_t;
+  vertex_double_map_t vertex_distance_map_1,
+                      vertex_distance_map_2,
+                      vertex_distance_map_12,
+                      vertex_distance_map_12_color;
+  distance_map_t distances_1(vertex_distance_map_1),
+                 distances_2(vertex_distance_map_2),
+                 distances_12(vertex_distance_map_12),
+                 distances_12_color(vertex_distance_map_12_color);
+
+  // calculate from two start vertices
+  vertex_t start_vertex_1 = vertex(0, graph);
+  vertex_t start_vertex_2 = vertex(num_vertices(graph) / 2, graph);
+  std::vector<vertex_t> start_vertices;
+  start_vertices.push_back(start_vertex_1);
+  start_vertices.push_back(start_vertex_2);
+
+  // Run dijkstra algorithms
+  dijkstra_shortest_paths_no_color_map(
+      graph, start_vertex_1,
+      predecessor_map(predecessors_1)
+      .distance_map(distances_1));
+  dijkstra_shortest_paths_no_color_map(
+      graph, start_vertex_2,
+      predecessor_map(predecessors_2)
+      .distance_map(distances_2));
+  dijkstra_shortest_paths_no_color_map(
+      graph, start_vertices.begin(), start_vertices.end(),
+      predecessor_map(predecessors_12)
+      .distance_map(distances_12));
+  dijkstra_shortest_paths(
+      graph, start_vertices.begin(), start_vertices.end(),
+      predecessor_map(predecessors_12_color)
+      .distance_map(distances_12_color));
+
+  // Check the results
+  typedef typename vertex_map_t::const_iterator vertex_map_t_iter;
+  vertex_map_t_iter it_pred1 = vertex_predecessor_map_1.begin(),
+                    it_pred2 = vertex_predecessor_map_2.begin(),
+                    it_pred12 = vertex_predecessor_map_12.begin(),
+                    it_pred12_color = vertex_predecessor_map_12_color.begin();
+
+  typedef typename vertex_double_map_t::const_iterator vertex_double_map_t_iter;
+  vertex_double_map_t_iter it_dist1 = vertex_distance_map_1.begin(),
+                           it_dist2 = vertex_distance_map_2.begin(),
+                           it_dist12 = vertex_distance_map_12.begin(),
+                           it_dist12_color = vertex_distance_map_12_color.begin();
+
+  while (it_pred1 != vertex_predecessor_map_1.end()) {
+      BOOST_CHECK(*it_pred12 == *it_pred12_color);
+      BOOST_CHECK(*it_dist12 == *it_dist12_color);
+
+      if (it_dist1->second < it_dist2->second) {
+        BOOST_CHECK(*it_pred1 == *it_pred12);
+        BOOST_CHECK(*it_dist1 == *it_dist12);
+      } else if (it_dist2->second < it_dist1->second) {
+        BOOST_CHECK(*it_pred2 == *it_pred12);
+        BOOST_CHECK(*it_dist2 == *it_dist12);
+      } else {
+          BOOST_CHECK(*it_pred1 == *it_pred12 || *it_pred2 == *it_pred12);
+          BOOST_CHECK(*it_dist1 == *it_dist12);
+      }
+
+      ++it_pred1, ++it_pred2, ++it_pred12, ++it_pred12_color;
+      ++it_dist1, ++it_dist2, ++it_dist12, ++it_dist12_color;
+  }
+}
+
 int test_main(int argc, char* argv[])
 {
   using namespace boost;
@@ -120,6 +216,7 @@ int test_main(int argc, char* argv[])
     " vertices and " << num_edges(graph) << " edges " << std::endl;
     
   run_dijkstra_test(graph);
+  run_dijkstra_multiple_start_vertices_test(graph);
 
   return 0;
 }
