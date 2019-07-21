@@ -9,6 +9,7 @@
 
 import modules ;
 import path ;
+import testing ;
 
 local COPTS =
     -Wall
