@@ -7,7 +7,6 @@
 # Define SGB (stanford graph base top level directory) and
 # LEDA (also top level directory) at the command line of jam using -s
 
-import requires ;
 import modules ;
 import path ;
 import testing ;
