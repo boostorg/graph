@@ -81,8 +81,16 @@ namespace boost
         return vertex_descriptor(-1);
       }
 
-    public:
       binary_tree_base(Vertex n) : nodes(n), free_list{{n}} {}
+
+      std::size_t num_vertices() const
+      {
+        BOOST_ASSERT(!free_list.empty());
+        BOOST_ASSERT(free_list[0] == nodes.size());
+        BOOST_ASSERT(boost::is_sorted(free_list, std::greater<>()));
+
+        return nodes.size() - free_list.size() + 1;
+      }
 
       Node const &
       operator[](vertex_descriptor u) const
@@ -263,23 +271,19 @@ namespace boost
       };
 
       friend
-      std::pair<vertex_iterator, vertex_iterator>
-      vertices(binary_tree_base const &g)
+      std::size_t num_vertices(binary_tree_base const &g)
       {
-        if (num_vertices(g) == 0)
-          return std::make_pair(vertex_iterator(g), vertex_iterator(g));
-        auto start = default_starting_vertex(g);
-        return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
+        return g.num_vertices();
       }
 
       friend
-      std::size_t num_vertices(binary_tree_base const &g)
+      std::pair<vertex_iterator, vertex_iterator>
+      vertices(binary_tree_base const &g)
       {
-        BOOST_ASSERT(!g.free_list.empty());
-        BOOST_ASSERT(g.free_list[0] == g.nodes.size());
-        BOOST_ASSERT(boost::is_sorted(g.free_list, std::greater<>()));
-
-        return g.nodes.size() - g.free_list.size() + 1;
+        if (g.num_vertices() == 0)
+          return std::make_pair(vertex_iterator(g), vertex_iterator(g));
+        auto const start = default_starting_vertex(g);
+        return std::make_pair(vertex_iterator(start, g), vertex_iterator(g));
       }
 
       // *** MutableGraph interface ***
