@@ -47,7 +47,7 @@ install: source utility/ci/travis/install.sh
 
 before_script: true
 
-script: utility/ci/travis/build.sh
+script: source utility/ci/travis/build.sh
 
 after_script: true
 
