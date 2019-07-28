@@ -79,6 +79,8 @@ fi
 
 ./b2 headers
 
+./b2
+
 echo "b2 is located in $(pwd)"
 
 cd "$CALLED_FROM_DIR"
