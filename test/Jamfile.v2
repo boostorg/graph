@@ -8,7 +8,7 @@
 # LEDA (also top level directory) at the command line of jam using -s
 
 
-import ../../config/checks/config : requires ;
+import ../../config/checks/config ;
 import testing ;
 import path ;
 
