@@ -53,60 +53,50 @@ after_script: true
 
 
 anchors:
-  clang-38: &clang-38 { apt: { packages: [ "clang-3.8",
-                                           "libstdc++-6-dev" ], sources: [ "llvm-toolchain-xenial-3.8",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  clang-4:  &clang-4  { apt: { packages: [ "clang-4.0",
-                                           "libstdc++-6-dev" ], sources: [ "llvm-toolchain-xenial-4.0",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  clang-5:  &clang-5  { apt: { packages: [ "clang-5.0",
-                                           "libstdc++-7-dev" ], sources: [ "llvm-toolchain-xenial-5.0",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  clang-6:  &clang-6  { apt: { packages: [ "clang-6.0",
-                                           "libc6-dbg",
-                                           "libc++-dev",
-                                           "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-6.0",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  clang-7:  &clang-7  { apt: { packages: [ "clang-7",
-                                           "libc6-dbg",
-                                           "libc++-dev",
-                                           "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-7",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  clang-8:  &clang-8  { apt: { packages: [ "clang-8",
-                                           "libc6-dbg",
-                                           "libc++-dev",
-                                           "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-8",
-                                                                           "ubuntu-toolchain-r-test"   ] } }
-  gcc-48:   &gcc-48   { apt: { packages: [ "g++-4.8"         ]                                           } }
-  gcc-49:   &gcc-49   { apt: { packages: [ "g++-4.9"         ], sources: [ "ubuntu-toolchain-r-test"   ] } }
-  gcc-5:    &gcc-5    { apt: { packages: [ "g++-5"           ]                                           } }
-  gcc-6:    &gcc-6    { apt: { packages: [ "g++-6"           ], sources: [ "ubuntu-toolchain-r-test"   ] } }
-  gcc-7:    &gcc-7    { apt: { packages: [ "g++-7"           ], sources: [ "ubuntu-toolchain-r-test"   ] } }
-  gcc-8:    &gcc-8    { apt: { packages: [ "g++-8"           ], sources: [ "ubuntu-toolchain-r-test"   ] } }
+  clang-38: &clang-38 { apt: { packages: [ "clang-3.8", "libstdc++-6-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-3.8", "ubuntu-toolchain-r-test"   ] } }
+  clang-4:  &clang-4  { apt: { packages: [ "clang-4.0", "libstdc++-6-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-4.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-5:  &clang-5  { apt: { packages: [ "clang-5.0", "libstdc++-7-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-5.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-6:  &clang-6  { apt: { packages: [ "clang-6.0", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-6.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-7:  &clang-7  { apt: { packages: [ "clang-7", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-7", "ubuntu-toolchain-r-test"   ] } }
+  clang-8:  &clang-8  { apt: { packages: [ "clang-8", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
+                               sources: [ "llvm-toolchain-xenial-8", "ubuntu-toolchain-r-test"   ] } }
+  gcc-48:   &gcc-48   { apt: { packages: [ "g++-4.8" ] } }
+  gcc-49:   &gcc-49   { apt: { packages: [ "g++-4.9" ], 
+                               sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-5:    &gcc-5    { apt: { packages: [ "g++-5" ] } }
+  gcc-6:    &gcc-6    { apt: { packages: [ "g++-6" ], sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-7:    &gcc-7    { apt: { packages: [ "g++-7" ], sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-8:    &gcc-8    { apt: { packages: [ "g++-8" ], sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-8:    &gcc-9    { apt: { packages: [ "g++-9" ], sources: [ "ubuntu-toolchain-r-test" ] } }
 
 
 
 jobs:
   include:
     # xenial has libstdc++ from gcc 5.4.0 with newer ABI
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11"    ], addons: *gcc-48 }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11"    ], addons: *gcc-49 }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14" ], addons: *clang-38 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11", "COPTS=", "LOPTS="    ], addons: *gcc-48 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11", "COPTS=", "LOPTS="    ], addons: *gcc-49 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14", "COPTS=", "LOPTS=" ], addons: *clang-38 }
 
     # libstdc++
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11"       ], addons: *gcc-5 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14"    ], addons: *gcc-6 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17" ], addons: *gcc-7 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a" ], addons: *gcc-8 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14"    ], addons: *clang-4 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17" ], addons: *clang-5 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a" ], addons: *clang-6 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a" ], addons: *clang-7 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }  }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11",       "COPTS=", "LOPTS=" ], addons: *gcc-5 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14",    "COPTS=", "LOPTS=" ], addons: *gcc-6 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17", "COPTS=", "LOPTS=" ], addons: *gcc-7 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a", "COPTS=", "LOPTS=" ], addons: *gcc-8 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14",    "COPTS=", "LOPTS=" ], addons: *clang-4 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17", "COPTS=", "LOPTS=" ], addons: *clang-5 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a", "COPTS=", "LOPTS=" ], addons: *clang-6 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a", "COPTS=", "LOPTS=" ], addons: *clang-7 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=", "LOPTS=" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }  }
 
     # libc++
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
-                            "B2_CXXFLAGS=-stdlib=libc++"                   ], addons: *clang-6   }
+                            "B2_CXXFLAGS=-stdlib=libc++", "COPTS=", "LOPTS="                   ], addons: *clang-6   }
     
     - { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
 
@@ -116,6 +106,8 @@ jobs:
         - B2_CXXSTD=03,11
         - B2_TOOLSET=gcc-8
         - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
+        - COPTS=
+        - LOPTS=
       addons: *gcc-8
       script:
         - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
@@ -137,6 +129,8 @@ jobs:
         - B2_CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
         - B2_LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS=print_stacktrace=1
+        - COPTS=
+        - LOPTS=
       addons: *gcc-8
 
     - os: linux
@@ -148,6 +142,8 @@ jobs:
         - B2_VARIANT=variant=debug
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
+        - COPTS=
+        - LOPTS=
       addons: *clang-6
       script:
         - utility/ci/travis/valgrind.sh
@@ -159,6 +155,8 @@ jobs:
       env:
         - COMMENT="Coverity Scan"
         - B2_TOOLSET=clang
+        - COPTS=
+        - LOPTS=
       script:
         - utility/ci/travis/coverity.sh
 
