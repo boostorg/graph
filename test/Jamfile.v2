@@ -10,51 +10,6 @@
 import testing ;
 import path ;
 
-local COPTS =
-    -Wall
-    -Wextra
-    -Wpedantic
-    -Wredundant-decls
-    -Wcast-align
-    -Wmissing-declarations
-    -Wmissing-include-dirs
-    -Wswitch-enum
-    -Wswitch-default
-    -Werror
-    -Winvalid-pch
-    -Wredundant-decls
-    -Wformat=2
-    -Wmissing-format-attribute
-    -Wformat-nonliteral
-    -Wodr
-#    -fsanitize=address
-#    -fsanitize=pointer-compare
-#    -fsanitize=leak
-    -fsanitize=undefined
-    -fsanitize-address-use-after-scope
-#    -fsanitize-coverage=trace-pc
-#    -fsanitize-coverage=trace-cmp
-#    -fcf-protection=full
-    -fstack-protector-all
-    -fstack-check
-#    -fvtable-verify=std
-    -fvtv-debug
-#    -lasan
-    -lubsan
-#    -llsan
-    -Wno-unused-parameter
-    -Wno-missing-declarations
-    -Wno-sign-compare
-    -fPIC
-    ;
-
-local LOPTS =
-#    -lasan
-    -lubsan
-#    -llsan
-    -fPIC
-    ;
-
 
 path-constant TEST_DIR : . ;
 
@@ -64,7 +19,7 @@ path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
 path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-project : requirements <toolset>gcc:<cxxflags>$(COPTS) <toolset>clang:<cxxflags>$(COPTS) <toolset>gcc:<linkflags>$(LOPTS) <toolset>clang:<linkflags>$(LOPTS) ;
+# project : requirements <toolset>gcc <toolset>clang ;
 
 
 alias graph_test_regular :
