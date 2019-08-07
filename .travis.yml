@@ -835,7 +835,7 @@ jobs:
     - os: linux
       env:
         - COMMENT=valgrind
-        - B2_TOOLSET=clang-6.0
+        - B2_TOOLSET=gcc-8
         - B2_CXXSTD=03,11,14,17,2a
         - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
         - B2_VARIANT=variant=debug
