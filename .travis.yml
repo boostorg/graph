@@ -828,8 +828,8 @@ jobs:
         - B2_CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
         - B2_LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS=print_stacktrace=1
-        - COPTS=
-        - LOPTS=
+        - COPTS=$GCC_8_COPTS
+        - LOPTS=$GCC_8_LOPTS
       addons: *gcc-8
 
     - os: linux
@@ -841,9 +841,9 @@ jobs:
         - B2_VARIANT=variant=debug
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - COPTS=
-        - LOPTS=
-      addons: *clang-6
+        - COPTS=$GCC_8_COPTS
+        - LOPTS=$GCC_8_LOPTS
+      addons: *gcc-8
       script:
         - utility/ci/travis/valgrind.sh
 
@@ -853,9 +853,9 @@ jobs:
     - os: linux
       env:
         - COMMENT="Coverity Scan"
-        - B2_TOOLSET=clang
-        - COPTS=
-        - LOPTS=
+        - B2_TOOLSET=clang-6.0
+        - COPTS=$CLANG_6_COPTS
+        - LOPTS=$CLANG_6_LOPTS
       script:
         - utility/ci/travis/coverity.sh
 
