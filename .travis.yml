@@ -113,7 +113,6 @@ local GCC_4_9_COPTS="
   -Wformat-nonliteral
   -Wodr
   -fsanitize=undefined
-  -fsanitize-address-use-after-scope
   -fstack-protector-all
   -fstack-check
   -fvtv-debug
@@ -150,7 +149,6 @@ local GCC_5_COPTS=
   -Wformat-nonliteral
   -Wodr
   -fsanitize=undefined
-  -fsanitize-address-use-after-scope
   -fstack-protector-all
   -fstack-check
   -fvtv-debug
