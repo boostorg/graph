@@ -771,13 +771,30 @@ jobs:
     - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17", "COPTS=$CLANG_5_COPTS", "LOPTS=$CLANG_5_LOPTS" ], addons: *clang-5 }
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_6_COPTS", "LOPTS=$CLANG_6_LOPTS" ], addons: *clang-6 }
     - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_7_COPTS", "LOPTS=$CLANG_7_LOPTS" ], addons: *clang-7 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_8_COPTS", "LOPTS=$CLANG_8_LOPTS" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }  }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_8_COPTS", "LOPTS=$CLANG_8_LOPTS" ], addons: *clang-8 }
 
     # libc++
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
                             "B2_CXXFLAGS=-stdlib=libc++", "COPTS=$CLANG_6_COPTS", "LOPTS=$CLANG_6_LOPTS"                   ], addons: *clang-6   }
     
     - { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
+
+
+
+    - os: "linux" 
+      env: 
+        - COMMENT=Formatting
+        - B2_TOOLSET=clang-8
+        - B2_CXXSTD=14,17,2a
+        - COPTS=$CLANG_8_COPTS
+        - LOPTS=$CLANG_8_LOPTS
+      addons: *clang-8
+      before_install: {&run utility/ci/travis/format-check.sh || exit 1 }
+      before_install: true
+      install: true
+      before_script: true
+      script: true
+      after_script: true
 
     - os: linux
       env:
