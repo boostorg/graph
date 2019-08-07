@@ -801,8 +801,8 @@ jobs:
         - B2_CXXSTD=03,11
         - B2_TOOLSET=gcc-8
         - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-        - COPTS=
-        - LOPTS=
+        - COPTS=$GCC_8_COPTS
+        - LOPTS=$GCC_8_LOPTS
       addons: *gcc-8
       script:
         - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
