@@ -41,7 +41,7 @@ git submodule update --init tools/boostdep
 git submodule update --init tools/build
 git submodule update --init libs/config
 rm -rf libs/$SELF
-mv -r $TRAVIS_BUILD_DIR libs/$SELF
+mv -$TRAVIS_BUILD_DIR libs/$SELF
 
 export BOOST_ROOT="$(pwd)"
 export PATH="`pwd`":$PATH
