@@ -825,11 +825,9 @@ jobs:
         - B2_TOOLSET=gcc-8
         - B2_CXXSTD=03,11,14,17,2a
         - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-        - B2_CXXFLAGS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
-        - B2_LINKFLAGS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
+        - COPTS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
+        - LOPTS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS=print_stacktrace=1
-        - COPTS=$GCC_8_COPTS
-        - LOPTS=$GCC_8_LOPTS
       addons: *gcc-8
 
     - os: linux
