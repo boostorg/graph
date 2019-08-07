@@ -7,8 +7,6 @@
 # Define SGB (stanford graph base top level directory) and
 # LEDA (also top level directory) at the command line of jam using -s
 
-
-import ../../config/checks/config ;
 import testing ;
 import path ;
 
@@ -69,34 +67,6 @@ path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 project : requirements <toolset>gcc:<cxxflags>$(COPTS) <toolset>clang:<cxxflags>$(COPTS) <toolset>gcc:<linkflags>$(LOPTS) <toolset>clang:<linkflags>$(LOPTS) ;
 
 
-alias compile_time_tests :
-    [ compile adj_list_cc.cpp ]
-    [ compile adj_matrix_cc.cpp ]
-    [ compile bfs_cc.cpp ]
-    [ compile dfs_cc.cpp ]
-    [ compile dijkstra_cc.cpp ]
-    [ compile edge_list_cc.cpp ]
-    [ compile filtered_graph_cc.cpp ]
-    [ compile graph_concepts.cpp ]
-    [ compile reverse_graph_cc.cpp ]
-    [ compile vector_graph_cc.cpp ]
-    [ compile copy.cpp ]
-    [ compile swap.cpp ]
-    [ compile property_iter.cpp : <define>TEST=1 : property_iter_1 ]
-    [ compile property_iter.cpp : <define>TEST=2 : property_iter_2 ]
-    [ compile property_iter.cpp : <define>TEST=3 : property_iter_3 ]
-    [ compile property_iter.cpp : <define>TEST=4 : property_iter_4 ]
-    [ compile property_iter.cpp : <define>TEST=5 : property_iter_5 ]
-    [ compile property_iter.cpp : <define>TEST=6 : property_iter_6 ]
-    [ compile property_iter.cpp : <define>TEST=7 : property_iter_7 ]
-    [ compile property_iter.cpp : <define>TEST=8 : property_iter_8 ]
-    [ compile property_iter.cpp : <define>TEST=9 : property_iter_9 ]
-    [ compile dimacs.cpp ]
-    [ compile grid_graph_cc.cpp ]
-    [ compile filtered_graph_properties_dijkstra.cpp ]
-    ;
-
-
 alias graph_test_regular :
     # test_graphs will eventually defined a framework for testing the structure
     # and implementation of graph data structures and adaptors.
@@ -107,11 +77,14 @@ alias graph_test_regular :
 
     [ run transitive_closure_test.cpp /boost/timer//boost_timer ]
     [ run transitive_closure_test2.cpp ]
+    [ compile adj_list_cc.cpp ]
 
     #[ run adj_list_invalidation.cpp ]
     [ run adj_list_edge_list_set.cpp ]
     [ run adj_list_loops.cpp ]
+    [ compile adj_matrix_cc.cpp ]
     [ run bfs.cpp ]
+    [ compile bfs_cc.cpp ]
     [ run bellman-test.cpp ]
     [ run betweenness_centrality_test.cpp : 100 ]
     [ run bidir_remove_edge.cpp ]
@@ -120,6 +93,8 @@ alias graph_test_regular :
     [ run dag_longest_paths.cpp ]
     [ run dfs.cpp ]
     [ run undirected_dfs.cpp ]
+    [ compile dfs_cc.cpp ]
+    [ compile dijkstra_cc.cpp ]
     [ run dijkstra_heap_performance.cpp /boost/timer//boost_timer : 10000 ]
     [ run dijkstra_no_color_map_compare.cpp : 10000 ]
     [ run disjoint_set_test.cpp ]
@@ -128,6 +103,8 @@ alias graph_test_regular :
     # Unused and deprecated.
     #[ run relaxed_heap_test.cpp : 5000 15000 ]
 
+    [ compile edge_list_cc.cpp ]
+    [ compile filtered_graph_cc.cpp ]
     [ run filter_graph_vp_test.cpp ]
     [ run generator_test.cpp ]
     [ run graph.cpp : : : <define>TEST=1 : graph_1 ]
@@ -139,6 +116,7 @@ alias graph_test_regular :
     [ run graph.cpp : : : <define>TEST=7 : graph_7 ]
     [ run graph.cpp : : : <define>TEST=8 : graph_8 ]
     [ run graph.cpp : : : <define>TEST=9 : graph_9 ]
+    [ compile graph_concepts.cpp ]
     [ run graphviz_test.cpp
             /boost/test//boost_test_exec_monitor/<link>static
             ../build//boost_graph
@@ -151,6 +129,7 @@ alias graph_test_regular :
           ../../serialization/build//boost_serialization
       : : : ]
 
+    [ compile reverse_graph_cc.cpp ]
     [ run sequential_vertex_coloring.cpp ]
 
     # TODO: Merge these into a single test framework.
@@ -161,6 +140,18 @@ alias graph_test_regular :
 
     [ run isomorphism.cpp ]
     [ run adjacency_matrix_test.cpp ]
+    [ compile vector_graph_cc.cpp ]
+    [ compile copy.cpp ]
+    [ compile swap.cpp ]
+    [ compile property_iter.cpp : <define>TEST=1 : property_iter_1 ]
+    [ compile property_iter.cpp : <define>TEST=2 : property_iter_2 ]
+    [ compile property_iter.cpp : <define>TEST=3 : property_iter_3 ]
+    [ compile property_iter.cpp : <define>TEST=4 : property_iter_4 ]
+    [ compile property_iter.cpp : <define>TEST=5 : property_iter_5 ]
+    [ compile property_iter.cpp : <define>TEST=6 : property_iter_6 ]
+    [ compile property_iter.cpp : <define>TEST=7 : property_iter_7 ]
+    [ compile property_iter.cpp : <define>TEST=8 : property_iter_8 ]
+    [ compile property_iter.cpp : <define>TEST=9 : property_iter_9 ]
     [ run bundled_properties.cpp ]
     [ run floyd_warshall_test.cpp ]
     [ run astar_search_test.cpp ]
@@ -182,6 +173,7 @@ alias graph_test_regular :
     [ run rcsp_custom_vertex_id.cpp ]
     [ run is_straight_line_draw_test.cpp ]
     [ run metric_tsp_approx.cpp /boost/timer//boost_timer : metric_tsp_approx.graph : : ]
+    [ compile dimacs.cpp ]
     [ run bron_kerbosch_all_cliques.cpp ]
     [ run tiernan_all_cycles.cpp ]
     [ run closeness_centrality.cpp ]
@@ -192,6 +184,7 @@ alias graph_test_regular :
     [ run core_numbers_test.cpp ]
     [ run read_propmap.cpp ]
     [ run mcgregor_subgraphs_test.cpp ../build//boost_graph ]
+    [ compile grid_graph_cc.cpp ]
     [ run grid_graph_test.cpp ]
     [ run incremental_components_test.cpp ]
     [ run two_graphs_common_spanning_trees_test.cpp ]
