@@ -82,5 +82,5 @@ fi
 
 # ./b2
 
-cd "$CALLED_FROM_DIR"
+# cd "$CALLED_FROM_DIR"
 
