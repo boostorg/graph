@@ -790,7 +790,6 @@ jobs:
         - LOPTS=$CLANG_8_LOPTS
       addons: *clang-8
       before_install: {&run utility/ci/travis/format-check.sh || exit 1 }
-      before_install: true
       install: true
       before_script: true
       script: true
@@ -812,8 +811,12 @@ jobs:
     - os: linux
       env:
         - COMMENT=cppcheck
-      script:
-        - utility/ci/travis/cppcheck.sh
+      addons: *clang-8
+      before_install: true
+      install: true
+      before_script: true
+      script: utility/ci/travis/cppcheck.sh
+      after_script: true
 
     - os: linux
       env:
