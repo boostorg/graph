@@ -23,7 +23,8 @@ env:
   - B2_ADDRESS_MODEL=address-model=64,32
   - B2_THREADING=threading=multi,single
   - B2_VARIANT=variant=release,debug
-  - GCC_3_8_COPTS="
+
+local: GCC_3_8_COPTS=
     -Wall 
     -Wextra 
     -Wpedantic 
@@ -55,46 +56,50 @@ env:
     -fvtable-verify=std 
     -lasan 
     -llsan 
-    "
-  - GCC_4_9_COPTS="$GCC_4_8_COPTS 
+    ;
+
+local: GCC_4_9_COPTS=$GCC_4_8_COPTS +
     -Wodr 
     -fsanitize=undefined 
     -fsanitize-address-use-after-scope 
     -fvtv-debug 
-    "
-  - GCC_5_COPTS=$GCC_4_9_COPTS
-  - GCC_6_COPTS=$GCC_5_COPTS
-  - GCC_7_COPTS=$GCC_6_COPTS
-  - GCC_8_COPTS=$GCC_7_COPTS
-  - GCC_9_COPTS=$GCC_8_COPTS
-  - GCC_10_COPTS=$GCC_9_COPTS
-  - CLANG_3_8_COPTS=$GCC_4_9_COPTS
-  - CLANG_3_9_COPTS=$CLANG_3_8_COPTS
-  - CLANG_4_COPTS=$CLANG_3_9_COPTS
-  - CLANG_5_COPTS=$CLANG_4_COPTS
-  - CLANG_6_COPTS=$CLANG_5_COPTS
-  - CLANG_7_COPTS=$CLANG_6_COPTS
-  - CLANG_8_COPTS=$CLANG_7_COPTS
-  - GCC_4_8_LOPTS="
+    ;
+
+local: GCC_5_COPTS=$GCC_4_9_COPTS ;
+local: GCC_6_COPTS=$GCC_5_COPTS ;
+local: GCC_7_COPTS=$GCC_6_COPTS ;
+local: GCC_8_COPTS=$GCC_7_COPTS ;
+local: GCC_9_COPTS=$GCC_8_COPTS ;
+local: GCC_10_COPTS=$GCC_9_COPTS ;
+local: CLANG_3_8_COPTS=$GCC_4_9_COPTS ;
+local: CLANG_3_9_COPTS=$CLANG_3_8_COPTS ;
+local: CLANG_4_COPTS=$CLANG_3_9_COPTS ;
+local: CLANG_5_COPTS=$CLANG_4_COPTS ;
+local: CLANG_6_COPTS=$CLANG_5_COPTS ;
+local: CLANG_7_COPTS=$CLANG_6_COPTS ;
+local: CLANG_8_COPTS=$CLANG_7_COPTS ;
+
+local: GCC_4_8_LOPTS=
     -lubsan 
     -fPIC 
     -llsan 
     -lasan 
-    "
-  - GCC_4_9_LOPTS=$GCC_4_8_LOPTS
-  - GCC_5_LOPTS=$GCC_4_9_LOPTS
-  - GCC_6_LOPTS=$GCC_5_LOPTS
-  - GCC_7_LOPTS=$GCC_6_LOPTS
-  - GCC_8_LOPTS=$GCC_7_LOPTS
-  - GCC_9_LOPTS=$GCC_8_LOPTS
-  - GCC_10_LOPTS=$GCC_9_LOPTS
-  - CLANG_3_8_LOPTS=$GCC_4_8_LOPTS
-  - CLANG_3_9_LOPTS=$CLANG_3_8_LOPTS
-  - CLANG_4_LOPTS=$CLANG_3_9_LOPTS
-  - CLANG_5_LOPTS=$CLANG_4_LOPTS
-  - CLANG_6_LOPTS=$CLANG_5_LOPTS
-  - CLANG_7_LOPTS=$CLANG_6_LOPTS
-  - CLANG_8_LOPTS=$CLANG_7_LOPTS
+    ;
+
+local: GCC_4_9_LOPTS=$GCC_4_8_LOPTS ;
+local: GCC_5_LOPTS=$GCC_4_9_LOPTS ;
+local: GCC_6_LOPTS=$GCC_5_LOPTS ;
+local: GCC_7_LOPTS=$GCC_6_LOPTS ;
+local: GCC_8_LOPTS=$GCC_7_LOPTS ;
+local: GCC_9_LOPTS=$GCC_8_LOPTS ;
+local: GCC_10_LOPTS=$GCC_9_LOPTS ;
+local: CLANG_3_8_LOPTS=$GCC_4_8_LOPTS ;
+local: CLANG_3_9_LOPTS=$CLANG_3_8_LOPTS ;
+local: CLANG_4_LOPTS=$CLANG_3_9_LOPTS ;
+local: CLANG_5_LOPTS=$CLANG_4_LOPTS ;
+local: CLANG_6_LOPTS=$CLANG_5_LOPTS ;
+local: CLANG_7_LOPTS=$CLANG_6_LOPTS ;
+local: CLANG_8_LOPTS=$CLANG_7_LOPTS ;
 
 
 # os:
