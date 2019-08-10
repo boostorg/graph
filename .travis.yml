@@ -24,46 +24,12 @@ env:
   - B2_THREADING=threading=multi,single
   - B2_VARIANT=variant=release,debug
 
-local: GCC_3_8_COPTS=
-    -Wall 
-    -Wextra 
-    -Wpedantic 
-    -Wredundant-decls 
-    -Wcast-align 
-    -Wmissing-declarations 
-    -Wmissing-include-dirs 
-    -Wswitch-enum 
-    -Wswitch-default 
-    -Werror 
-    -Winvalid-pch 
-    -Wredundant-decls 
-    -Wformat=2 
-    -Wmissing-format-attribute 
-    -Wformat-nonliteral 
-    -fstack-protector-all 
-    -fstack-check
-    -lubsan 
-    -Wno-unused-parameter 
-    -Wno-missing-declarations 
-    -Wno-sign-compare 
-    -fPIC 
-    -fsanitize=address 
-    -fsanitize=pointer-compare 
-    -fsanitize=leak 
-    -fsanitize-coverage=trace-pc 
-    -fsanitize-coverage=trace-cmp 
-    -fcf-protection=full 
-    -fvtable-verify=std 
-    -lasan 
-    -llsan 
+local: GCC_4_8_COPTS=
+    -Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan 
     ;
 
 local: GCC_4_9_COPTS=$GCC_4_8_COPTS +
-    -Wodr 
-    -fsanitize=undefined 
-    -fsanitize-address-use-after-scope 
-    -fvtv-debug 
-    ;
+-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug 
 
 local: GCC_5_COPTS=$GCC_4_9_COPTS ;
 local: GCC_6_COPTS=$GCC_5_COPTS ;
@@ -80,10 +46,7 @@ local: CLANG_7_COPTS=$CLANG_6_COPTS ;
 local: CLANG_8_COPTS=$CLANG_7_COPTS ;
 
 local: GCC_4_8_LOPTS=
-    -lubsan 
-    -fPIC 
-    -llsan 
-    -lasan 
+ 
     ;
 
 local: GCC_4_9_LOPTS=$GCC_4_8_LOPTS ;
@@ -157,24 +120,24 @@ anchors:
 jobs:
   include:
     # xenial has libstdc++ from gcc 5.4.0 with newer ABI
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11", "COPTS=$GCC_4_8_COPTS", "LOPTS=$GCC_4_8_LOPTS" ], addons: *gcc-48 }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11", "COPTS=$GCC_4_9_COPTS", "LOPTS=$GCC_4_9_LOPTS"    ], addons: *gcc-49 }
-    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14", "COPTS=$CLANG_3_8_COPTS", "LOPTS=$CLANG_3_8_LOPTS" ], addons: *clang-38 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11", "COPTS=$GCC_4_8_COPTS", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-48 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"    ], addons: *gcc-49 }
+    - { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-38 }
 
     # libstdc++
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11",       "COPTS=$GCC_5_COPTS", "LOPTS=$GCC_5_LOPTS" ], addons: *gcc-5 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14",    "COPTS=$GCC_6_COPTS", "LOPTS=$GCC_6_LOPTS" ], addons: *gcc-6 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17", "COPTS=$GCC_7_COPTS", "LOPTS=$GCC_7_LOPTS" ], addons: *gcc-7 }
-    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a", "COPTS=$GCC_8_COPTS", "LOPTS=$GCC_8_LOPTS" ], addons: *gcc-8 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14",    "COPTS=$CLANG_4_COPTS", "LOPTS=$CLANG_4_LOPTS" ], addons: *clang-4 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17", "COPTS=$CLANG_5_COPTS", "LOPTS=$CLANG_5_LOPTS" ], addons: *clang-5 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_6_COPTS", "LOPTS=$CLANG_6_LOPTS" ], addons: *clang-6 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_7_COPTS", "LOPTS=$CLANG_7_LOPTS" ], addons: *clang-7 }
-    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=$CLANG_8_COPTS", "LOPTS=$CLANG_8_LOPTS" ], addons: *clang-8 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11",       "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-5 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14",    "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-6 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-7 }
+    - { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-8 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14",    "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-4 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-5 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-6 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-7 }
+    - { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-8 }
 
     # libc++
     - { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
-                            "B2_CXXFLAGS=-stdlib=libc++", "COPTS=$CLANG_6_COPTS", "LOPTS=$CLANG_6_LOPTS"                   ], addons: *clang-6   }
+                            "B2_CXXFLAGS=-stdlib=libc++", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"                   ], addons: *clang-6   }
     
     - { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
 
@@ -185,8 +148,6 @@ jobs:
         - COMMENT=Formatting
         - B2_TOOLSET=clang-8
         - B2_CXXSTD=14,17,2a
-        - COPTS=$CLANG_8_COPTS
-        - LOPTS=$CLANG_8_LOPTS
       addons: *clang-8
       before_install: {&run utility/ci/travis/format-check.sh || exit 1 }
       install: true
@@ -200,8 +161,6 @@ jobs:
         - B2_CXXSTD=03,11
         - B2_TOOLSET=gcc-8
         - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-        - COPTS=$GCC_8_COPTS
-        - LOPTS=$GCC_8_LOPTS
       addons: *gcc-8
       script:
         - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
