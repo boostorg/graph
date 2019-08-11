@@ -397,8 +397,8 @@ jobs:
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03,11,14,17,2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
-        - "LOPTS=linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "Undefined behavior sanitizer"
       os: linux
