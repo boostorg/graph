@@ -5,9 +5,9 @@ set -o pipefail
 set -o nounset
 set -ev
 
-echo "Using $(clang-format --version)"
+echo "Using $(clang-format-8 --version)"
 
-find . -type f -name '*.h' -o -name '*.cpp' | xargs -I{} -P "$(nproc)" clang-format -i -style=file {}
+find . -type f -name '*.h' -o -name '*.cpp' | xargs -I{} -P "$(nproc)" clang-format-8 -i -style=file {}
 
 dirty=$(git ls-files --modified)
 
