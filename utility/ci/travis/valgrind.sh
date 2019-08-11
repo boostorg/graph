@@ -27,4 +27,3 @@ popd
 export PATH=/tmp/vg/bin:$PATH
 export B2_INCLUDE=include=/tmp/vg/include
 
-utility/ci/travis/install.sh

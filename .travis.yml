@@ -422,7 +422,7 @@ jobs:
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "Valgrind"
       os: linux
-      script: utility/ci/travis/valgrind.sh
+      before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
     - 
       env: 
@@ -432,7 +432,7 @@ jobs:
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "Coverty"
       os: linux
-      script: utility/ci/travis/coverity.sh
+      script: utility/ci/coverty/coverage.sh
       stage: Dynamic_QC
 language: cpp
 notifications: 
