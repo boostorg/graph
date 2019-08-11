@@ -1,4 +1,4 @@
---- 
+--  - 
 addons: 
   apt: 
     packages: 
@@ -346,6 +346,7 @@ jobs:
       before_install: 
         - "utility/ci/travis/format-check.sh || exit 1"
       before_script: true
+      dist: bionic
       install: true
       name: clang-format
       os: linux
@@ -362,6 +363,7 @@ jobs:
       before_install: 
         - "utility/ci/travis/cppcheck.sh || exit 1"
       before_script: true
+      dist: bionic
       install: true
       name: cppcheck
       os: linux
@@ -374,6 +376,7 @@ jobs:
             - g++-8
           sources: 
             - ubuntu-toolchain-r-test
+      dist: bionic
       env: 
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03,11"
@@ -391,6 +394,7 @@ jobs:
             - g++-8
           sources: 
             - ubuntu-toolchain-r-test
+      dist: bionic
       env: 
         - COMMENT=ubsan
         - B2_VARIANT=variant=debug
@@ -411,6 +415,7 @@ jobs:
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
+      dist: bionic
       env: 
         - COMMENT=valgrind
         - B2_VARIANT=variant=debug
@@ -426,6 +431,7 @@ jobs:
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
     - 
+      dist: bionic
       env: 
         - "COMMENT='Coverity Scan'"
         - B2_TOOLSET=clang-6.0
