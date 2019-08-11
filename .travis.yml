@@ -349,34 +349,24 @@ jobs:
       before_install: 
         - "utility/ci/travis/format-check.sh || exit 1"
       before_script: true
-      env: 
-        - COMMENT=Formatting
-        - B2_TOOLSET=clang-8
-        - "B2_CXXSTD=14,17,2a"
       install: true
-      name: "Static Code Quality Checks"
+      name: clang-format
       os: linux
       script: true
       stage: Static_QC
     - 
       addons: 
         apt: 
-          packages: 
-            - clang-8
-            - libc6-dbg
-            - libc++-dev
-            - libstdc++-8-dev
-          sources: 
-            - llvm-toolchain-xenial-8
+          packages:
+            - cppcheck
+          sources:
             - ubuntu-toolchain-r-test
       after_script: true
       before_install: 
-        - utility/ci/travis/cppcheck.sh
+        - "utility/ci/travis/cppcheck.sh || exit 1"
       before_script: true
-      env: 
-        - COMMENT=cppcheck
       install: true
-      name: "Static Code Quality Checks"
+      name: cppcheck
       os: linux
       script: true
       stage: Static_QC
@@ -388,11 +378,10 @@ jobs:
           sources: 
             - ubuntu-toolchain-r-test
       env: 
-        - COMMENT=codecov.io
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03,11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-      name: "Dynamic Code Quality Checks"
+      name: codecov.io
       os: linux
       script: 
         - "pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd"
@@ -411,8 +400,8 @@ jobs:
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03,11,14,17,2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=\"cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all\\\"\","
-        - "LOPTS=\"linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold\""
+        - "COPTS=cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "Dynamic Code Quality Checks"
       os: linux

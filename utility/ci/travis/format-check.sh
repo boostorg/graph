@@ -5,17 +5,15 @@ set -o pipefail
 set -o nounset
 set -ev
 
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+echo "Using $(clang-format --version)"
 
-  find ${TRAVIS_BUILD_DIR} -type f -name '*.h' -o -name '*.cpp' \
-  | xargs -I{} -P "$(nproc)" clang-format -i -style=file {}
+find . -type f -name '*.h' -o -name '*.cpp' | xargs -I{} -P "$(nproc)" clang-format -i -style=file {}
 
-  dirty=$(git ls-files --modified)
+dirty=$(git ls-files --modified)
 
-  if [[ $dirty ]]; then
-    echo "The following files have been modified:"
-    echo "$dirty"
+if [[ $dirty ]]; then
+echo "The following files have been modified:"
+echo "$dirty"
 
-    exit 1
-  fi
+exit 1
 fi
