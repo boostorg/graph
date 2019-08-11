@@ -403,7 +403,7 @@ jobs:
         - "COPTS=cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
         - "LOPTS=linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "Dynamic Code Quality Checks"
+      name: "Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -423,7 +423,7 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "Dynamic Code Quality Checks"
+      name: "Valgrind"
       os: linux
       script: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
@@ -433,7 +433,7 @@ jobs:
         - B2_TOOLSET=clang-6.0
         - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "Dynamic Code Quality Checks"
+      name: "Coverty"
       os: linux
       script: utility/ci/travis/coverity.sh
       stage: Dynamic_QC
