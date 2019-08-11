@@ -11,7 +11,7 @@
 
 set -exv
 
-. $(dirname "${BASH_SOURCE[0]}")/enforce_b2_env.sh || exit 1
+. $(dirname "${BASH_SOURCE[0]}")/../enforce_b2_env.sh || exit 1
 
 # Travis comes with older cppcheck, so...
 if [ -z "$CPPCHKVER" ]; then
