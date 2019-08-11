@@ -97,87 +97,21 @@ jobs:
       { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-8 }
 
     # libc++
-      { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a",
-                            "B2_CXXFLAGS=-stdlib=libc++", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"                   ], addons: *clang-6   }
-    
-      { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ]                     }
+      { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a", "B2_CXXFLAGS=-stdlib=libc++", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"                   ], addons: *clang-6   }
+      { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ] }
 
 
     - stage: Static_QC
       name: "Static Code Quality Checks"
-      - os: "linux" 
-        env: 
-          - COMMENT=Formatting
-          - B2_TOOLSET=clang-8
-          - B2_CXXSTD=14,17,2a
-        addons: *clang-8
-        before_install: {&run utility/ci/travis/format-check.sh || exit 1 }
-        install: true
-        before_script: true
-        script: true
-        after_script: true
-
-      - os: linux
-        env:
-          - COMMENT=cppcheck
-        addons: *clang-8
-        before_install: {&run utility/ci/travis/cppcheck.sh}
-        install: true
-        before_script: true
-        script: true
-        after_script: true
+      { os: "linux", env: [ "COMMENT=Formatting", "B2_TOOLSET=clang-8", "B2_CXXSTD=14,17,2a" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }, install: true, before_script: true, script: true, after_script: true }
+      { os: "linux", env: [ "COMMENT=cppcheck" ], addons: *clang-8, before_install: {&run utility/ci/travis/cppcheck.sh}, install: true, before_script: true, script: true, after_script: true }
 
     - stage: Dynamic_QC
       name: "Dynamic Code Quality Checks"
-      - os: linux
-        env:
-          - COMMENT=codecov.io
-          - B2_CXXSTD=03,11
-          - B2_TOOLSET=gcc-8
-          - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-        addons: *gcc-8
-        script:
-          - pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd
-          - utility/ci/codecov/coverage.sh
-
-      - os: linux
-        env:
-          - COMMENT=ubsan
-          - B2_VARIANT=variant=debug
-          - B2_TOOLSET=gcc-8
-          - B2_CXXSTD=03,11,14,17,2a
-          - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-          - COPTS="cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all"
-          - LOPTS="linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold"
-          - UBSAN_OPTIONS=print_stacktrace=1
-        addons: *gcc-8
-
-      - os: linux
-        env:
-          - COMMENT=valgrind
-          - B2_TOOLSET=gcc-8
-          - B2_CXXSTD=03,11,14,17,2a
-          - B2_DEFINES="define=BOOST_NO_STRESS_TEST=1"
-          - B2_VARIANT=variant=debug
-          - B2_TESTFLAGS=testing.launcher=valgrind
-          - VALGRIND_OPTS=--error-exitcode=1
-          - COPTS=$GCC_8_COPTS
-          - LOPTS=$GCC_8_LOPTS
-        addons: *gcc-8
-        script:
-          - utility/ci/travis/valgrind.sh
-
-      #################### Jobs to run on pushes to master, develop ###################
-
-      # Coverity Scan
-      - os: linux
-        env:
-          - COMMENT="Coverity Scan"
-          - B2_TOOLSET=clang-6.0
-          - COPTS=$CLANG_6_COPTS
-          - LOPTS=$CLANG_6_LOPTS
-        script:
-          - utility/ci/travis/coverity.sh
+      { os: "linux", env: [ "COMMENT=codecov.io",                                  "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11",          "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'" ], addons: *gcc-8, script: { "pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd", "utility/ci/codecov/coverage.sh" ] }
+      { os: "linux", env: [ "COMMENT=ubsan",           "B2_VARIANT=variant=debug", "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11,14,17,2a", "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'",                                                                               "COPTS=\"cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all\"", "LOPTS=\"linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold\"", "UBSAN_OPTIONS='print_stacktrace=1'" ], addons: *gcc-8 }
+      { os: "linux", env: [ "COMMENT=valgrind",        "B2_VARIANT=variant=debug", "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11,14,17,2a", "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'", "B2_TESTFLAGS=testing.launcher=valgrind", "VALGRIND_OPTS=--error-exitcode=1", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-8, script: utility/ci/travis/valgrind.sh }
+      { os: "linux", env: [ "COMMENT='Coverity Scan'",                             "B2_TOOLSET=clang-6.0",                                                                                                                                                         "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], script: utility/ci/travis/coverity.sh }
 
 
 notifications:
