@@ -408,6 +408,7 @@ jobs:
         apt: 
           packages: 
             - g++-8
+            - valgrind
           sources: 
             - ubuntu-toolchain-r-test
       env: 
