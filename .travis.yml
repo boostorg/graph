@@ -53,26 +53,19 @@ after_script: true
 
 
 anchors:
-  clang-38: &clang-38 { apt: { packages: [ "clang-3.8", "libstdc++-6-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-3.8", "ubuntu-toolchain-r-test"   ] } }
-  clang-4:  &clang-4  { apt: { packages: [ "clang-4.0", "libstdc++-6-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-4.0", "ubuntu-toolchain-r-test"   ] } }
-  clang-5:  &clang-5  { apt: { packages: [ "clang-5.0", "libstdc++-7-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-5.0", "ubuntu-toolchain-r-test"   ] } }
-  clang-6:  &clang-6  { apt: { packages: [ "clang-6.0", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-6.0", "ubuntu-toolchain-r-test"   ] } }
-  clang-7:  &clang-7  { apt: { packages: [ "clang-7", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-7", "ubuntu-toolchain-r-test"   ] } }
-  clang-8:  &clang-8  { apt: { packages: [ "clang-8", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], 
-                               sources: [ "llvm-toolchain-xenial-8", "ubuntu-toolchain-r-test"   ] } }
+  clang-38: &clang-38 { apt: { packages: [ "clang-3.8", "libstdc++-6-dev" ], sources: [ "llvm-toolchain-xenial-3.8", "ubuntu-toolchain-r-test"   ] } }
+  clang-4:  &clang-4  { apt: { packages: [ "clang-4.0", "libstdc++-6-dev" ], sources: [ "llvm-toolchain-xenial-4.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-5:  &clang-5  { apt: { packages: [ "clang-5.0", "libstdc++-7-dev" ], sources: [ "llvm-toolchain-xenial-5.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-6:  &clang-6  { apt: { packages: [ "clang-6.0", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-6.0", "ubuntu-toolchain-r-test"   ] } }
+  clang-7:  &clang-7  { apt: { packages: [ "clang-7", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-7", "ubuntu-toolchain-r-test"   ] } }
+  clang-8:  &clang-8  { apt: { packages: [ "clang-8", "libc6-dbg", "libc++-dev", "libstdc++-8-dev" ], sources: [ "llvm-toolchain-xenial-8", "ubuntu-toolchain-r-test"   ] } }
   gcc-48:   &gcc-48   { apt: { packages: [ "g++-4.8" ] } }
-  gcc-49:   &gcc-49   { apt: { packages: [ "g++-4.9" ], 
-                               sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-49:   &gcc-49   { apt: { packages: [ "g++-4.9" ], sources: [ "ubuntu-toolchain-r-test" ] } }
   gcc-5:    &gcc-5    { apt: { packages: [ "g++-5" ] } }
   gcc-6:    &gcc-6    { apt: { packages: [ "g++-6" ], sources: [ "ubuntu-toolchain-r-test" ] } }
   gcc-7:    &gcc-7    { apt: { packages: [ "g++-7" ], sources: [ "ubuntu-toolchain-r-test" ] } }
   gcc-8:    &gcc-8    { apt: { packages: [ "g++-8" ], sources: [ "ubuntu-toolchain-r-test" ] } }
-  gcc-8:    &gcc-9    { apt: { packages: [ "g++-9" ], sources: [ "ubuntu-toolchain-r-test" ] } }
+  gcc-9:    &gcc-9    { apt: { packages: [ "g++-9" ], sources: [ "ubuntu-toolchain-r-test" ] } }
 
 
 
@@ -82,35 +75,69 @@ jobs:
       name: "Unit Tests"
     # xenial has libstdc++ from gcc 5.4.0 with newer ABI
       { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.8",     "B2_CXXSTD=03,11", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-fPIC -llsan -lasan" ], addons: *gcc-48 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=gcc-4.9",     "B2_CXXSTD=03,11", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"    ], addons: *gcc-49 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", dist: "trusty", env: [ "B2_TOOLSET=clang-3.8",   "B2_CXXSTD=03,11,14", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-38 }
 
     # libstdc++
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=gcc-5",       "B2_CXXSTD=11",       "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-5 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=gcc-6",       "B2_CXXSTD=11,14",    "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-6 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=gcc-7",       "B2_CXXSTD=11,14,17", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-7 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=gcc-8",       "B2_CXXSTD=14,17,2a", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-8 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=clang-4.0",   "B2_CXXSTD=11,14",    "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-4 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=clang-5.0",   "B2_CXXSTD=11,14,17", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-5 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=14,17,2a", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-6 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=clang-7",     "B2_CXXSTD=14,17,2a", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-7 }
+    - stage: test
+      name: "Unit Tests"
       { os: "linux", env: [ "B2_TOOLSET=clang-8",     "B2_CXXSTD=14,17,2a", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *clang-8 }
 
+    - stage: test
+      name: "Unit Tests"
     # libc++
       { os: "linux", env: [ "B2_TOOLSET=clang-6.0",   "B2_CXXSTD=03,11,14,17,2a", "B2_CXXFLAGS=-stdlib=libc++", "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan"                   ], addons: *clang-6   }
+    - stage: test
+      name: "Unit Tests"
       { os: "osx"  , env: [ "B2_TOOLSET=clang",       "B2_CXXSTD=03,11,17" ] }
 
 
     - stage: Static_QC
       name: "Static Code Quality Checks"
       { os: "linux", env: [ "COMMENT=Formatting", "B2_TOOLSET=clang-8", "B2_CXXSTD=14,17,2a" ], addons: *clang-8, before_install: {&run utility/ci/travis/format-check.sh || exit 1 }, install: true, before_script: true, script: true, after_script: true }
+    - stage: Static_QC
+      name: "Static Code Quality Checks"
       { os: "linux", env: [ "COMMENT=cppcheck" ], addons: *clang-8, before_install: {&run utility/ci/travis/cppcheck.sh}, install: true, before_script: true, script: true, after_script: true }
 
     - stage: Dynamic_QC
       name: "Dynamic Code Quality Checks"
-      { os: "linux", env: [ "COMMENT=codecov.io",                                  "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11",          "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'" ], addons: *gcc-8, script: { "pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd", "utility/ci/codecov/coverage.sh" ] }
+      { os: "linux", env: [ "COMMENT=codecov.io",                                  "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11",          "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'" ], addons: *gcc-8, script: { "pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd", "utility/ci/codecov/coverage.sh" } }
+    - stage: Dynamic_QC
+      name: "Dynamic Code Quality Checks"
       { os: "linux", env: [ "COMMENT=ubsan",           "B2_VARIANT=variant=debug", "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11,14,17,2a", "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'",                                                                               "COPTS=\"cxxflags=-fno-omit-frame-pointer cxxflags=-fsanitize=undefined cxxflags=-fno-sanitize-recover=all\"", "LOPTS=\"linkflags=-fsanitize=undefined linkflags=-fno-sanitize-recover=all linkflags=-fuse-ld=gold\"", "UBSAN_OPTIONS='print_stacktrace=1'" ], addons: *gcc-8 }
+    - stage: Dynamic_QC
+      name: "Dynamic Code Quality Checks"
       { os: "linux", env: [ "COMMENT=valgrind",        "B2_VARIANT=variant=debug", "B2_TOOLSET=gcc-8",     "B2_CXXSTD=03,11,14,17,2a", "B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'", "B2_TESTFLAGS=testing.launcher=valgrind", "VALGRIND_OPTS=--error-exitcode=1", "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], addons: *gcc-8, script: utility/ci/travis/valgrind.sh }
+    - stage: Dynamic_QC
+      name: "Dynamic Code Quality Checks"
       { os: "linux", env: [ "COMMENT='Coverity Scan'",                             "B2_TOOLSET=clang-6.0",                                                                                                                                                         "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug", "LOPTS=-lubsan -fPIC -llsan -lasan" ], script: utility/ci/travis/coverity.sh }
 
 
