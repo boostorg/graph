@@ -338,10 +338,7 @@ jobs:
       addons: 
         apt: 
           packages: 
-            - clang-8
-            - libc6-dbg
-            - libc++-dev
-            - libstdc++-8-dev
+            - clang-format-8
           sources: 
             - llvm-toolchain-xenial-8
             - ubuntu-toolchain-r-test
