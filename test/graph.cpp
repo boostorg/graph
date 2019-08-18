@@ -41,7 +41,6 @@ BOOST_INSTALL_PROPERTY(edge, id);
 
 #include <boost/graph/adjacency_list.hpp>
 
-
 using namespace boost;
 
 /*
@@ -158,18 +157,14 @@ template < class Graph > std::size_t count_edges(Graph& g)
     return e;
 }
 
-
-template<
-    typename test_type_T,
-    typename directed_type_T>
-void test_instance(){
+template < typename test_type_T, typename directed_type_T > void test_instance()
+{
 
     typedef typename boost::adjacency_list< test_type_T, test_type_T,
         directed_type_T, boost::property< vertex_id_t, std::size_t >,
         boost::property< edge_id_t, std::size_t > >
         Graph;
     typedef typename boost::property< edge_id_t, std::size_t > EdgeID;
-
 
     std::size_t N = 5, E = 0;
     std::size_t old_N;
@@ -182,9 +177,11 @@ void test_instance(){
     std::size_t current_vertex_id = 0;
     std::size_t current_edge_id = 0;
 
-    typename property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
+    typename property_map< Graph, vertex_id_t >::type vertex_id_map
+        = get(vertex_id, g);
 
-    typename property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
+    typename property_map< Graph, edge_id_t >::type edge_id_map
+        = get(edge_id, g);
 
     for (std::size_t k = 0; k < N; ++k)
         add_vertex(current_vertex_id++, g);
@@ -225,7 +222,7 @@ void test_instance(){
             //      print_in_edges(g, vertex_id_map);
 #endif
             BOOST_ASSERT(check_edge_added(
-                    g, e, a, b, edge_id_map, current_edge_id - 1, inserted));
+                g, e, a, b, edge_id_map, current_edge_id - 1, inserted));
             ++E;
         }
 
@@ -276,7 +273,8 @@ void test_instance(){
             cerr << "remove_edge(" << vertex_id_map[a] << ","
                  << vertex_id_map[b] << ")" << endl;
 #endif
-            typename graph_traits< Graph >::edges_size_type old_E = num_edges(g);
+            typename graph_traits< Graph >::edges_size_type old_E
+                = num_edges(g);
             remove_edge(e, g);
 
 #if VERBOSE
@@ -296,7 +294,7 @@ void test_instance(){
 #endif
         old_N = num_vertices(g);
         typename graph_traits< Graph >::vertex_descriptor vid = add_vertex(g),
-                                                 vidp1 = add_vertex(g);
+                                                          vidp1 = add_vertex(g);
         vertex_id_map[vid] = current_vertex_id++;
         vertex_id_map[vidp1] = current_vertex_id++;
 
@@ -355,7 +353,7 @@ void test_instance(){
                 = add_edge(vid, a, EdgeID(current_edge_id++), g);
 
             BOOST_ASSERT(check_edge_added(
-                    g, e, vid, a, edge_id_map, current_edge_id - 1, inserted));
+                g, e, vid, a, edge_id_map, current_edge_id - 1, inserted));
 
 #if VERBOSE
             cerr << "add_edge(" << vertex_id_map[b] << ","
@@ -368,7 +366,7 @@ void test_instance(){
             ++current_edge_id;
 
             BOOST_ASSERT(check_edge_added(
-                    g, e, b, vidp1, edge_id_map, current_edge_id - 1, inserted));
+                g, e, b, vidp1, edge_id_map, current_edge_id - 1, inserted));
         }
 
         // clear_vertex
@@ -416,22 +414,20 @@ void test_instance(){
         N = num_vertices(g);
         BOOST_ASSERT(N == old_N - 1);
     }
-
 }
-
 
 int main(int, char*[])
 {
 
-    test_instance<boost::vecS, boost::bidirectionalS>();
-    test_instance<boost::vecS, boost::directedS>();
-    test_instance<boost::vecS, boost::undirectedS>();
-    test_instance<boost::listS, boost::bidirectionalS>();
-    test_instance<boost::listS, boost::directedS>();
-    test_instance<boost::listS, boost::undirectedS>();
-    test_instance<boost::setS, boost::bidirectionalS>();
-    test_instance<boost::setS, boost::directedS>();
-    test_instance<boost::setS, boost::undirectedS>();
+    test_instance< boost::vecS, boost::bidirectionalS >();
+    test_instance< boost::vecS, boost::directedS >();
+    test_instance< boost::vecS, boost::undirectedS >();
+    test_instance< boost::listS, boost::bidirectionalS >();
+    test_instance< boost::listS, boost::directedS >();
+    test_instance< boost::listS, boost::undirectedS >();
+    test_instance< boost::setS, boost::bidirectionalS >();
+    test_instance< boost::setS, boost::directedS >();
+    test_instance< boost::setS, boost::undirectedS >();
 
     return 0;
 }

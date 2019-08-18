@@ -44,10 +44,7 @@ BOOST_INSTALL_PROPERTY(vertex, id);
 BOOST_INSTALL_PROPERTY(edge, id);
 }
 
-
 #include <boost/graph/adjacency_list.hpp>
-
-
 
 using namespace boost;
 
@@ -60,14 +57,11 @@ using std::cout;
 using std::endl;
 using std::find;
 
+template < typename test_type_T, typename directed_type_T > void test_instance()
+{
 
-template<
-    typename test_type_T,
-    typename directed_type_T>
-void test_instance(){
-
-    typedef boost::adjacency_list< test_type_T, test_type_T,
-        directed_type_T, boost::property< vertex_id_t, std::size_t >,
+    typedef boost::adjacency_list< test_type_T, test_type_T, directed_type_T,
+        boost::property< vertex_id_t, std::size_t >,
         boost::property< edge_id_t, std::size_t > >
         Graph;
 
@@ -81,10 +75,12 @@ void test_instance(){
     std::size_t current_vertex_id = 0;
     std::size_t current_edge_id = 0;
 
-    typename property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
+    typename property_map< Graph, vertex_id_t >::type vertex_id_map
+        = get(vertex_id, g);
     (void)vertex_id_map;
 
-    typename property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
+    typename property_map< Graph, edge_id_t >::type edge_id_map
+        = get(edge_id, g);
     (void)edge_id_map;
 
     for (std::size_t k = 0; k < N; ++k)
@@ -127,11 +123,12 @@ void test_instance(){
         ++E;
     }
 
-    typedef typename boost::graph_property_iter_range< Graph, vertex_id_t >::iterator
-        TNodeIterator;
+    typedef typename boost::graph_property_iter_range< Graph,
+        vertex_id_t >::iterator TNodeIterator;
 
-    typedef typename boost::graph_property_iter_range< Graph, edge_id_t >::iterator
-        TLinkIterator;
+    typedef
+        typename boost::graph_property_iter_range< Graph, edge_id_t >::iterator
+            TLinkIterator;
 
     TLinkIterator itEdgeBegin, itEdgeEnd;
 
@@ -157,19 +154,18 @@ void test_instance(){
     cout << endl;
 }
 
-
 int main(int, char*[])
 {
 
-    test_instance<boost::vecS, boost::bidirectionalS>();
-    test_instance<boost::vecS, boost::directedS>();
-    test_instance<boost::vecS, boost::undirectedS>();
-    test_instance<boost::listS, boost::bidirectionalS>();
-    test_instance<boost::listS, boost::directedS>();
-    test_instance<boost::listS, boost::undirectedS>();
-    test_instance<boost::setS, boost::bidirectionalS>();
-    test_instance<boost::setS, boost::directedS>();
-    test_instance<boost::setS, boost::undirectedS>();
+    test_instance< boost::vecS, boost::bidirectionalS >();
+    test_instance< boost::vecS, boost::directedS >();
+    test_instance< boost::vecS, boost::undirectedS >();
+    test_instance< boost::listS, boost::bidirectionalS >();
+    test_instance< boost::listS, boost::directedS >();
+    test_instance< boost::listS, boost::undirectedS >();
+    test_instance< boost::setS, boost::bidirectionalS >();
+    test_instance< boost::setS, boost::directedS >();
+    test_instance< boost::setS, boost::undirectedS >();
 
     return 0;
 }
