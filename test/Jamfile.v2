@@ -1,40 +1,41 @@
-#Copyright(c) 2002 Trustees of Indiana University
+# Copyright (c) 2002 Trustees of Indiana University
 #
-#Distributed under the Boost Software License, Version 1.0.
-#(See accompanying file LICENSE_1_0.txt or copy at
-#http: // www.boost.org/LICENSE_1_0.txt)
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
 
-#Define SGB(stanford graph base top level directory)and
-#LEDA(also top level directory) at the command line of jam using - s
+# Define SGB (stanford graph base top level directory) and
+# LEDA (also top level directory) at the command line of jam using -s
 
-import testing;
-import path;
-import pch;
+import testing ;
+import path ;
+import pch ;
 
-path - constant TEST_DIR :.;
 
-path - constant PLANAR_INPUT_FILES :./ planar_input_graphs;
+path-constant TEST_DIR : . ;
 
-path - constant CYCLE_RATIO_INPUT_FILE :./ cycle_ratio_s382 .90.dot;
+path-constant PLANAR_INPUT_FILES : ./planar_input_graphs ;
 
-path - constant METIS_INPUT_FILE :./ weighted_graph.gr;
+path-constant CYCLE_RATIO_INPUT_FILE : ./cycle_ratio_s382.90.dot ;
 
-#project : requirements < toolset> gcc < toolset> clang;
+path-constant METIS_INPUT_FILE : ./weighted_graph.gr ;
 
-local pchs;
+# project : requirements <toolset>gcc <toolset>clang ;
 
-for
-    local hpp in[glob - tree *.hpp]
-    {
-        cpp - pch $(hpp : B) : $(hpp) : < include > include;
-        explicit $(hpp : B);
-        pchs += $(hpp : B);
-    }
-alias headers : $(pchs);
+
+local pchs ;
+
+for local hpp in [ glob-tree *.hpp ] {
+    cpp-pch $(hpp:B) : $(hpp) : <include>include ;
+    explicit $(hpp:B) ;
+    pchs += $(hpp:B) ;
+}
+alias headers : $(pchs) ;
+
 
 alias graph_test_regular :
-#test_graphs will eventually defined a framework for testing the structure
-#and implementation of graph data structures and adaptors.
+    # test_graphs will eventually defined a framework for testing the structure
+    # and implementation of graph data structures and adaptors.
     [ run $(headers) test_graphs.cpp ]
     [ run $(headers) index_graph.cpp ]     # TODO: Make this part of the test_graphs framework
     [ run $(headers) labeled_graph.cpp ]
@@ -44,7 +45,7 @@ alias graph_test_regular :
     [ run $(headers) transitive_closure_test2.cpp ]
     [ compile $(headers) adj_list_cc.cpp ]
 
-#[run $(headers) adj_list_invalidation.cpp]
+    #[ run $(headers) adj_list_invalidation.cpp ]
     [ run $(headers) adj_list_edge_list_set.cpp ]
     [ run $(headers) adj_list_loops.cpp ]
     [ compile $(headers) adj_matrix_cc.cpp ]
@@ -65,8 +66,8 @@ alias graph_test_regular :
     [ run $(headers) disjoint_set_test.cpp ]
     [ run $(headers) dominator_tree_test.cpp ]
 
-#Unused and deprecated.
-#[run $(headers) relaxed_heap_test.cpp : 5000 15000]
+    # Unused and deprecated.
+    #[ run $(headers) relaxed_heap_test.cpp : 5000 15000 ]
 
     [ compile $(headers) edge_list_cc.cpp ]
     [ compile $(headers) filtered_graph_cc.cpp ]
@@ -89,7 +90,7 @@ alias graph_test_regular :
     [ compile $(headers) reverse_graph_cc.cpp ]
     [ run $(headers) sequential_vertex_coloring.cpp ]
 
-#TODO : Merge these into a single test framework.
+    # TODO: Merge these into a single test framework.
     [ run $(headers) subgraph.cpp ]
     [ run $(headers) subgraph_bundled.cpp ]
     [ run $(headers) subgraph_add.cpp ../../test/build//boost_unit_test_framework/<link>static : $(TEST_DIR) ]
@@ -157,8 +158,8 @@ alias graph_test_regular :
     ;
 
 alias graph_test_with_filesystem : :
-#The tests below started failing to compile for xcode with cxxstd = 11
-#due to issues with constexpr ctors in Boost.Filesystem
+        # The tests below started failing to compile for xcode with cxxstd=11
+        # due to issues with constexpr ctors in Boost.Filesystem
         <target-os>darwin
         <cxxstd>11
     ;
@@ -179,23 +180,25 @@ test-suite graph_test :
     graph_test_with_filesystem
     ;
 
-#Run SDB tests only when - sSDB = is set.
+# Run SDB tests only when -sSDB= is set.
 local SDB = [ modules.peek : SDB ] ;
 if $(SDB)
 {
-    local sdb - root = [path.root[path.make $(SDB)][path.pwd]];
+    local sdb-root = [ path.root [ path.make $(SDB) ] [ path.pwd ] ] ;
 
-    compile stanford_graph_cc.cpp : < include > $(sdb - root);
+    compile stanford_graph_cc.cpp :
+        <include>$(sdb-root) ;
 }
 
-#Run LEDA tests only when - sLEDA = is set.
+# Run LEDA tests only when -sLEDA= is set.
 local LEDA = [ modules.peek : LEDA ] ;
 if $(LEDA)
 {
-    local leda - root = [path.root[path.make $(LEDA)][path.pwd]];
-    local leda - include = [path.join $(leda - root) incl];
+    local leda-root = [ path.root [ path.make $(LEDA) ] [ path.pwd ] ] ;
+    local leda-include = [ path.join $(leda-root) incl ] ;
 
-    compile leda_graph_cc.cpp : < include > $(leda - include);
+    compile leda_graph_cc.cpp :
+        <include>$(leda-include) ;
 }
 
 build-project ../example ;
