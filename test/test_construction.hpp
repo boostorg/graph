@@ -8,7 +8,11 @@
 #define TEST_CONSTRUCTION_HPP
 
 #include <boost/concept/assert.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <utility>
+#include <iostream>
+
+#include "test_graph.hpp"
 
 /** @name Build Graph
  * Build the standard graph structure used in the remaining tests. Depending

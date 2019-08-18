@@ -21,6 +21,7 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/random.hpp>
 #include <boost/pending/indirect_cmp.hpp>
+#include <boost/concept/assert.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
 
@@ -38,7 +39,8 @@ BOOST_INSTALL_PROPERTY(vertex, id);
 BOOST_INSTALL_PROPERTY(edge, id);
 }
 
-#include "graph_type.hpp" // this provides a typedef for Graph
+#include <boost/graph/adjacency_list.hpp>
+
 
 using namespace boost;
 
@@ -156,26 +158,33 @@ template < class Graph > std::size_t count_edges(Graph& g)
     return e;
 }
 
-int main(int, char*[])
-{
-    int ret = 0;
+
+template<
+    typename test_type_T,
+    typename directed_type_T>
+void test_instance(){
+
+    typedef typename boost::adjacency_list< test_type_T, test_type_T,
+        directed_type_T, boost::property< vertex_id_t, std::size_t >,
+        boost::property< edge_id_t, std::size_t > >
+        Graph;
+    typedef typename boost::property< edge_id_t, std::size_t > EdgeID;
+
+
     std::size_t N = 5, E = 0;
     std::size_t old_N;
 
-    typedef ::Graph Graph;
     Graph g;
-    typedef boost::graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef boost::graph_traits< Graph >::edge_descriptor Edge;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
 
     int i, j;
     std::size_t current_vertex_id = 0;
     std::size_t current_edge_id = 0;
 
-    bool is_failed = false;
+    typename property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
 
-    property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
-
-    property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
+    typename property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
 
     for (std::size_t k = 0; k < N; ++k)
         add_vertex(current_vertex_id++, g);
@@ -215,12 +224,8 @@ int main(int, char*[])
             std::cout << "finished printing" << std::endl;
             //      print_in_edges(g, vertex_id_map);
 #endif
-            if (!check_edge_added(
-                    g, e, a, b, edge_id_map, current_edge_id - 1, inserted))
-            {
-                ret = -1;
-                break;
-            }
+            BOOST_ASSERT(check_edge_added(
+                    g, e, a, b, edge_id_map, current_edge_id - 1, inserted));
             ++E;
         }
 
@@ -249,26 +254,11 @@ int main(int, char*[])
             //      print_in_edges(g, vertex_id_map);
             print_edges(g, vertex_id_map);
 #endif
-            is_failed = is_failed || is_adjacent(g, a, b)
-                || in_edge_set(g, a, b) || num_edges(g) != count_edges(g);
-            if (is_failed)
-                break;
-        }
-        if (is_failed)
-        {
-            ret = -1;
-#if VERBOSE
-            cerr << "    Failed." << endl;
-#endif
-        }
-        else
-        {
-#if VERBOSE
-            cerr << "           Passed." << endl;
-#endif
+            BOOST_ASSERT(!is_adjacent(g, a, b));
+            BOOST_ASSERT(!in_edge_set(g, a, b));
+            BOOST_ASSERT(num_edges(g) == count_edges(g));
         }
 
-        // remove_edge(e, g)
 #if VERBOSE
         cerr << "Testing remove_edge(e, g) ..." << endl;
         is_failed = false;
@@ -286,7 +276,7 @@ int main(int, char*[])
             cerr << "remove_edge(" << vertex_id_map[a] << ","
                  << vertex_id_map[b] << ")" << endl;
 #endif
-            graph_traits< Graph >::edges_size_type old_E = num_edges(g);
+            typename graph_traits< Graph >::edges_size_type old_E = num_edges(g);
             remove_edge(e, g);
 
 #if VERBOSE
@@ -295,23 +285,8 @@ int main(int, char*[])
             print_edges(g, vertex_id_map);
 #endif
 
-            is_failed = is_failed || old_E != num_edges(g) + 1
-                || num_edges(g) != count_edges(g);
-            if (is_failed)
-                break;
-        }
-        if (is_failed)
-        {
-            ret = -1;
-#if VERBOSE
-            cerr << "    Failed." << endl;
-#endif
-        }
-        else
-        {
-#if VERBOSE
-            cerr << "           Passed." << endl;
-#endif
+            BOOST_ASSERT(old_E == num_edges(g) + 1);
+            BOOST_ASSERT(num_edges(g) == count_edges(g));
         }
 
         // add_vertex
@@ -320,7 +295,7 @@ int main(int, char*[])
         is_failed = false;
 #endif
         old_N = num_vertices(g);
-        graph_traits< Graph >::vertex_descriptor vid = add_vertex(g),
+        typename graph_traits< Graph >::vertex_descriptor vid = add_vertex(g),
                                                  vidp1 = add_vertex(g);
         vertex_id_map[vid] = current_vertex_id++;
         vertex_id_map[vidp1] = current_vertex_id++;
@@ -332,94 +307,31 @@ int main(int, char*[])
         print_edges(g, vertex_id_map);
 #endif
         // make sure the two added vertices are in the graph's vertex set
-        {
-            if (!in_vertex_set(g, vid))
-            {
-#if VERBOSE
-                cerr << "   Failed, " << vertex_id_map[vid]
-                     << " not in vertices(g)" << endl;
-#endif
-                ret = -1;
-                break;
-            }
-            if (!in_vertex_set(g, vidp1))
-            {
-#if VERBOSE
-                cerr << "   Failed, " << vertex_id_map[vidp1]
-                     << " not in vertices(g)" << endl;
-#endif
-                ret = -1;
-                break;
-            }
-        }
+        BOOST_ASSERT(in_vertex_set(g, vid));
+        BOOST_ASSERT(in_vertex_set(g, vidp1));
 
         // make sure the vertices do not have any out edges yet
-        {
-            graph_traits< Graph >::out_edge_iterator e, e_end;
-            boost::tie(e, e_end) = out_edges(vid, g);
-            if (e != e_end)
-            {
-#if VERBOSE
-                cerr << "   Failed, " << vertex_id_map[vid]
-                     << " should not have any out-edges yet" << endl;
-#endif
-                ret = -1;
-                break;
-            }
-            boost::tie(e, e_end) = out_edges(vidp1, g);
-            if (e != e_end)
-            {
-#if VERBOSE
-                cerr << "   Failed, " << vertex_id_map[vidp1]
-                     << " should not have any out-edges yet" << endl;
-#endif
-                ret = -1;
-                break;
-            }
-        }
+        typename graph_traits< Graph >::out_edge_iterator e, e_end;
+        boost::tie(e, e_end) = out_edges(vid, g);
+        BOOST_ASSERT(e == e_end);
+        boost::tie(e, e_end) = out_edges(vidp1, g);
+        BOOST_ASSERT(e == e_end);
 
         // make sure the vertices do not yet appear in any of the edges
         {
-            graph_traits< Graph >::edge_iterator e, e_end;
+            typename graph_traits< Graph >::edge_iterator e, e_end;
             for (boost::tie(e, e_end) = edges(g); e != e_end; ++e)
             {
-                if (source(*e, g) == vid || target(*e, g) == vid)
-                {
-#if VERBOSE
-                    cerr << "   Failed, " << vertex_id_map[vid]
-                         << " should not have any edges" << endl;
-#endif
-                    ret = -1;
-                    break;
-                }
-                if (source(*e, g) == vidp1 || target(*e, g) == vidp1)
-                {
-#if VERBOSE
-                    cerr << "   Failed, " << vertex_id_map[vidp1]
-                         << " should not have any edges" << endl;
-#endif
-                    ret = -1;
-                    break;
-                }
+                BOOST_ASSERT(source(*e, g) != vid);
+                BOOST_ASSERT(target(*e, g) != vid);
+                BOOST_ASSERT(source(*e, g) != vidp1);
+                BOOST_ASSERT(target(*e, g) != vidp1);
             }
         }
         // Make sure num_vertices(g) has been updated
         N = num_vertices(g);
-        if ((N - 2) != old_N)
-        {
-            ret = -1;
-#if VERBOSE
-            cerr << "    Failed. N = " << N << " but should be " << old_N + 2
-                 << endl;
-#endif
-            break;
-        }
-        else
-        {
-#if VERBOSE
-            cerr << "           Passed." << endl;
-#endif
-        }
+        BOOST_ASSERT((N - 2) == old_N);
+
         // add_edge again
 #if VERBOSE
         cerr << "Testing add_edge after add_vertex ..." << endl;
@@ -442,12 +354,8 @@ int main(int, char*[])
             boost::tie(e, inserted)
                 = add_edge(vid, a, EdgeID(current_edge_id++), g);
 
-            if (!check_edge_added(
-                    g, e, vid, a, edge_id_map, current_edge_id - 1, inserted))
-            {
-                ret = -1;
-                break;
-            }
+            BOOST_ASSERT(check_edge_added(
+                    g, e, vid, a, edge_id_map, current_edge_id - 1, inserted));
 
 #if VERBOSE
             cerr << "add_edge(" << vertex_id_map[b] << ","
@@ -459,12 +367,8 @@ int main(int, char*[])
                 edge_id_map[e] = current_edge_id;
             ++current_edge_id;
 
-            if (!check_edge_added(
-                    g, e, b, vidp1, edge_id_map, current_edge_id - 1, inserted))
-            {
-                ret = -1;
-                break;
-            }
+            BOOST_ASSERT(check_edge_added(
+                    g, e, b, vidp1, edge_id_map, current_edge_id - 1, inserted));
         }
 
         // clear_vertex
@@ -482,21 +386,8 @@ int main(int, char*[])
         //    print_in_edges(g, vertex_id_map);
         print_edges(g, vertex_id_map);
 #endif
-        if (check_vertex_cleared(g, c, vertex_id_map)
-            && num_edges(g) == count_edges(g))
-        {
-#if VERBOSE
-            cerr << " Passed." << endl;
-#endif
-        }
-        else
-        {
-#if VERBOSE
-            cerr << "**** Failed" << endl;
-#endif
-            ret = -1;
-            break;
-        }
+        BOOST_ASSERT(check_vertex_cleared(g, c, vertex_id_map)
+            && num_edges(g) == count_edges(g));
 
 #if VERBOSE
         cerr << "Testing remove vertex ..." << endl;
@@ -515,38 +406,32 @@ int main(int, char*[])
         // is no longer valid, we'll just make sure the vertex set has
         // one fewer vertex
         {
-            graph_traits< Graph >::vertex_iterator v, v_end;
+            typename graph_traits< Graph >::vertex_iterator v, v_end;
             boost::tie(v, v_end) = vertices(g);
             for (N = 0; v != v_end; ++v)
                 ++N; // N = std::distance(v, v_end);
-            if (N != old_N - 1)
-            {
-                ret = -1;
-#if VERBOSE
-                cerr << "    Failed. N = " << N << " but should be "
-                     << old_N - 1 << endl;
-#endif
-            }
+            BOOST_ASSERT(N == old_N - 1);
         }
 
         N = num_vertices(g);
-        if (N != old_N - 1)
-        {
-            ret = -1;
-#if VERBOSE
-            cerr << "    Failed. N = " << N << " but should be " << old_N - 1
-                 << endl;
-#endif
-        }
-        else
-        {
-#if VERBOSE
-            cerr << "           Passed." << endl;
-#endif
-        }
+        BOOST_ASSERT(N == old_N - 1);
     }
-    if (ret == 0)
-        std::cout << "tests passed" << std::endl;
 
-    return ret;
+}
+
+
+int main(int, char*[])
+{
+
+    test_instance<boost::vecS, boost::bidirectionalS>();
+    test_instance<boost::vecS, boost::directedS>();
+    test_instance<boost::vecS, boost::undirectedS>();
+    test_instance<boost::listS, boost::bidirectionalS>();
+    test_instance<boost::listS, boost::directedS>();
+    test_instance<boost::listS, boost::undirectedS>();
+    test_instance<boost::setS, boost::bidirectionalS>();
+    test_instance<boost::setS, boost::directedS>();
+    test_instance<boost::setS, boost::undirectedS>();
+
+    return 0;
 }

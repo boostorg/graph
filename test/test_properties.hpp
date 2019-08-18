@@ -7,7 +7,11 @@
 #ifndef TEST_PROPERTIES_HPP
 #define TEST_PROPERTIES_HPP
 
+#include <iostream>
 #include <boost/concept/assert.hpp>
+#include <boost/mpl/bool.hpp>
+
+#include "test_graph.hpp"
 
 template < typename T > T const& as_const(T& x) { return x; }
 template < typename T > void ignore(T const&) {}

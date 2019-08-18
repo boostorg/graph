@@ -44,7 +44,10 @@ BOOST_INSTALL_PROPERTY(vertex, id);
 BOOST_INSTALL_PROPERTY(edge, id);
 }
 
-#include "graph_type.hpp" // this provides a typedef for Graph
+
+#include <boost/graph/adjacency_list.hpp>
+
+
 
 using namespace boost;
 
@@ -57,24 +60,31 @@ using std::cout;
 using std::endl;
 using std::find;
 
-int main(int, char*[])
-{
-    int ret = 0;
+
+template<
+    typename test_type_T,
+    typename directed_type_T>
+void test_instance(){
+
+    typedef boost::adjacency_list< test_type_T, test_type_T,
+        directed_type_T, boost::property< vertex_id_t, std::size_t >,
+        boost::property< edge_id_t, std::size_t > >
+        Graph;
+
     std::size_t N = 5, E = 0;
 
-    typedef ::Graph Graph;
     Graph g;
-    typedef boost::graph_traits< Graph >::vertex_descriptor Vertex;
-    typedef boost::graph_traits< Graph >::edge_descriptor Edge;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
 
     int i, j;
     std::size_t current_vertex_id = 0;
     std::size_t current_edge_id = 0;
 
-    property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
+    typename property_map< Graph, vertex_id_t >::type vertex_id_map = get(vertex_id, g);
     (void)vertex_id_map;
 
-    property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
+    typename property_map< Graph, edge_id_t >::type edge_id_map = get(edge_id, g);
     (void)edge_id_map;
 
     for (std::size_t k = 0; k < N; ++k)
@@ -117,10 +127,10 @@ int main(int, char*[])
         ++E;
     }
 
-    typedef boost::graph_property_iter_range< Graph, vertex_id_t >::iterator
+    typedef typename boost::graph_property_iter_range< Graph, vertex_id_t >::iterator
         TNodeIterator;
 
-    typedef boost::graph_property_iter_range< Graph, edge_id_t >::iterator
+    typedef typename boost::graph_property_iter_range< Graph, edge_id_t >::iterator
         TLinkIterator;
 
     TLinkIterator itEdgeBegin, itEdgeEnd;
@@ -145,6 +155,21 @@ int main(int, char*[])
         cout << *itVertexBegin;
     }
     cout << endl;
+}
 
-    return ret;
+
+int main(int, char*[])
+{
+
+    test_instance<boost::vecS, boost::bidirectionalS>();
+    test_instance<boost::vecS, boost::directedS>();
+    test_instance<boost::vecS, boost::undirectedS>();
+    test_instance<boost::listS, boost::bidirectionalS>();
+    test_instance<boost::listS, boost::directedS>();
+    test_instance<boost::listS, boost::undirectedS>();
+    test_instance<boost::setS, boost::bidirectionalS>();
+    test_instance<boost::setS, boost::directedS>();
+    test_instance<boost::setS, boost::undirectedS>();
+
+    return 0;
 }

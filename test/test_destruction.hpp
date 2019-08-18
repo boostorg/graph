@@ -8,7 +8,12 @@
 #define TEST_DESTRUCTION_HPP
 
 #include <boost/concept/assert.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <utility>
+#include <iostream>
+
+#include "test_graph.hpp"
 
 /** @name Destroy Graph
  * Destroy the graph by removing vertices (if possible).
