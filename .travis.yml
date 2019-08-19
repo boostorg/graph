@@ -11,6 +11,7 @@ anchors:
     apt: 
       packages: 
         - clang-3.8
+        - gcc-multilib
         - libstdc++-6-dev
       sources: 
         - llvm-toolchain-xenial-3.8
@@ -19,6 +20,7 @@ anchors:
     apt: 
       packages: 
         - clang-4.0
+        - gcc-multilib
         - libstdc++-6-dev
       sources: 
         - llvm-toolchain-xenial-4.0
@@ -27,6 +29,7 @@ anchors:
     apt: 
       packages: 
         - clang-5.0
+        - gcc-multilib
         - libstdc++-7-dev
       sources: 
         - llvm-toolchain-xenial-5.0
@@ -35,6 +38,7 @@ anchors:
     apt: 
       packages: 
         - clang-6.0
+        - gcc-multilib
         - libc6-dbg
         - libc++-dev
         - libstdc++-8-dev
@@ -45,6 +49,7 @@ anchors:
     apt: 
       packages: 
         - clang-7
+        - gcc-multilib
         - libc6-dbg
         - libc++-dev
         - libstdc++-8-dev
@@ -55,6 +60,7 @@ anchors:
     apt: 
       packages: 
         - clang-8
+        - gcc-multilib
         - libc6-dbg
         - libc++-dev
         - libstdc++-8-dev
@@ -65,43 +71,50 @@ anchors:
     apt: 
       packages: 
         - g++-4.8
+        - g++-4.8-multilib
   gcc-49: 
     apt: 
       packages: 
         - g++-4.9
+        - g++-4.9-multilib
       sources: 
         - ubuntu-toolchain-r-test
   gcc-5: 
     apt: 
       packages: 
         - g++-5
+        - g++-5-multilib
   gcc-6: 
     apt: 
       packages: 
         - g++-6
+        - g++-6-multilib
       sources: 
         - ubuntu-toolchain-r-test
   gcc-7: 
     apt: 
       packages: 
         - g++-7
+        - g++-7-multilib
       sources: 
         - ubuntu-toolchain-r-test
   gcc-8: 
     apt: 
       packages: 
         - g++-8
+        - g++-8-multilib
       sources: 
         - ubuntu-toolchain-r-test
   gcc-9: 
     apt: 
       packages: 
         - g++-9
+        - g++-9-multilib
       sources: 
         - ubuntu-toolchain-r-test
 before_install: true
 before_script: true
-dist: xenial
+dist: bionic
 env: 
   global: 
     - "B2_ADDRESS_MODEL=address-model=64,32"
