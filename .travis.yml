@@ -405,7 +405,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
           sources: 
             - ubuntu-toolchain-r-test
       dist: bionic
@@ -426,7 +427,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
           sources: 
             - ubuntu-toolchain-r-test
       dist: bionic
@@ -447,7 +449,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
           sources: 
             - ubuntu-toolchain-r-test
       dist: bionic
@@ -468,7 +471,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
           sources: 
             - ubuntu-toolchain-r-test
       dist: bionic
@@ -489,7 +493,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
           sources: 
             - ubuntu-toolchain-r-test
       dist: bionic
@@ -510,7 +515,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
@@ -534,7 +540,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
@@ -558,7 +565,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
@@ -582,7 +590,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
@@ -606,7 +615,8 @@ jobs:
         apt: 
           packages: 
             - g++-8
-            - gcc-multilib
+            - gcc-8-multilib
+            - g++-8-multilib
             - valgrind
           sources: 
             - ubuntu-toolchain-r-test
