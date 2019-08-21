@@ -116,7 +116,7 @@ before_install: true
 before_script: true
 dist: bionic
 env: 
-  global: 
+  global:
     - "B2_ADDRESS_MODEL=address-model=64,32"
     - "B2_THREADING=threading=multi,single"
     - "B2_VARIANT=variant=release,debug"
@@ -414,6 +414,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03"
@@ -421,7 +422,7 @@ jobs:
         - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
         - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "C++03 Undefined behavior sanitizer"
+      name: "x86 C++03 Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -438,6 +439,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=11"
@@ -445,7 +447,7 @@ jobs:
         - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
         - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "C++11 Undefined behavior sanitizer"
+      name: "x86 C++11 Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -462,6 +464,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=14"
@@ -469,7 +472,7 @@ jobs:
         - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
         - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "C++14 Undefined behavior sanitizer"
+      name: "x86 C++14 Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -486,6 +489,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=17"
@@ -493,7 +497,7 @@ jobs:
         - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
         - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "C++17 Undefined behavior sanitizer"
+      name: "x86 C++17 Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -510,6 +514,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=2a"
@@ -517,7 +522,112 @@ jobs:
         - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
         - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
-      name: "C++2a Undefined behavior sanitizer"
+      name: "x86 C++2a Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC  
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++03 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++11 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++14 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++17 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++2a Undefined behavior sanitizer"
       os: linux
       stage: Dynamic_QC
     - 
@@ -535,6 +645,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=03"
@@ -543,7 +654,7 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "C++03 Valgrind"
+      name: "x86 C++03 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
@@ -562,6 +673,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=11"
@@ -570,7 +682,7 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "C++11 Valgrind"
+      name: "x86 C++11 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
@@ -589,6 +701,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=14"
@@ -597,7 +710,7 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "C++14 Valgrind"
+      name: "x86 C++14 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
@@ -616,6 +729,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=17"
@@ -624,7 +738,7 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "C++17 Valgrind"
+      name: "x86 C++17 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
@@ -643,6 +757,7 @@ jobs:
       dist: bionic
       env: 
         - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
         - "B2_CXXSTD=2a"
@@ -651,7 +766,127 @@ jobs:
         - VALGRIND_OPTS=--error-exitcode=1
         - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
         - "LOPTS=-lubsan -fPIC -llsan -lasan"
-      name: "C++2a Valgrind"
+      name: "x86 C++2a Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - VALGRIND_OPTS=--error-exitcode=1
+        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+      name: "x86_64 C++03 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - VALGRIND_OPTS=--error-exitcode=1
+        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+      name: "x86_64 C++11 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - VALGRIND_OPTS=--error-exitcode=1
+        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+      name: "x86_64 C++14 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - VALGRIND_OPTS=--error-exitcode=1
+        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+      name: "x86_64 C++17 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - VALGRIND_OPTS=--error-exitcode=1
+        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+      name: "x86_64 C++2a Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
       stage: Dynamic_QC
