@@ -652,6 +652,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86 C++03 Valgrind"
       os: linux
@@ -679,6 +680,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86 C++11 Valgrind"
       os: linux
@@ -706,6 +708,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86 C++14 Valgrind"
       os: linux
@@ -733,6 +736,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86 C++17 Valgrind"
       os: linux
@@ -760,6 +764,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86 C++2a Valgrind"
       os: linux
@@ -783,6 +788,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86_64 C++03 Valgrind"
       os: linux
@@ -806,6 +812,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86_64 C++11 Valgrind"
       os: linux
@@ -829,6 +836,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86_64 C++14 Valgrind"
       os: linux
@@ -852,6 +860,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1
       name: "x86_64 C++17 Valgrind"
       os: linux
@@ -875,6 +884,7 @@ jobs:
         - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
         - VALGRIND_OPTS=--error-exitcode=1"
       name: "x86_64 C++2a Valgrind"
       os: linux
