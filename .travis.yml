@@ -131,9 +131,9 @@ jobs:
       dist: trusty
       env: 
         - B2_TOOLSET=gcc-4.8
-        - "B2_CXXSTD=03,11"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=03,11"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -147,9 +147,9 @@ jobs:
       dist: trusty
       env: 
         - B2_TOOLSET=gcc-4.9
-        - "B2_CXXSTD=03,11"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=03,11"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -165,9 +165,9 @@ jobs:
       dist: trusty
       env: 
         - B2_TOOLSET=clang-3.8
-        - "B2_CXXSTD=03,11,14"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=03,11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -178,9 +178,9 @@ jobs:
             - g++-5
       env: 
         - B2_TOOLSET=gcc-5
-        - B2_CXXSTD=11
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan\""
+        - B2_CXXSTD=cxxstd=11
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan\""
       name: "Unit Tests"
       os: linux
       stage: test
@@ -193,9 +193,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=gcc-6
-        - "B2_CXXSTD=11,14"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -208,9 +208,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=gcc-7
-        - "B2_CXXSTD=11,14,17"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=11,14,17"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -223,9 +223,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=14,17,2a"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -240,9 +240,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-4.0
-        - "B2_CXXSTD=11,14"
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -257,9 +257,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-5.0
-        - "B2_CXXSTD=11,14,17"
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=11,14,17"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -276,9 +276,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-6.0
-        - "B2_CXXSTD=14,17,2a"
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -295,9 +295,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-7
-        - "B2_CXXSTD=14,17,2a"
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -314,9 +314,9 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-8
-        - "B2_CXXSTD=14,17,2a"
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
@@ -333,17 +333,17 @@ jobs:
             - ubuntu-toolchain-r-test
       env: 
         - B2_TOOLSET=clang-6.0
-        - "B2_CXXSTD=03,11,14,17,2a"
+        - "B2_CXXSTD=cxxstd=03,11,14,17,2a"
         - B2_CXXFLAGS=-stdlib=libc++
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Unit Tests"
       os: linux
       stage: test
     - 
       env: 
         - B2_TOOLSET=clang
-        - "B2_CXXSTD=03,11,17"
+        - "B2_CXXSTD=cxxstd=03,11,17"
       name: "Unit Tests"
       os: osx
       stage: test
@@ -392,7 +392,7 @@ jobs:
       dist: bionic
       env: 
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=03,11"
+        - "B2_CXXSTD=cxxstd=03,11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
       name: codecov.io
       os: linux
@@ -417,10 +417,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=03"
+        - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86 C++03 Undefined behavior sanitizer"
       os: linux
@@ -442,10 +442,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=11"
+        - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86 C++11 Undefined behavior sanitizer"
       os: linux
@@ -467,10 +467,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=14"
+        - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86 C++14 Undefined behavior sanitizer"
       os: linux
@@ -492,10 +492,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=17"
+        - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86 C++17 Undefined behavior sanitizer"
       os: linux
@@ -517,10 +517,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=2a"
+        - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86 C++2a Undefined behavior sanitizer"
       os: linux
@@ -538,10 +538,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=03"
+        - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86_64 C++03 Undefined behavior sanitizer"
       os: linux
@@ -559,10 +559,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=11"
+        - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86_64 C++11 Undefined behavior sanitizer"
       os: linux
@@ -580,10 +580,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=14"
+        - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86_64 C++14 Undefined behavior sanitizer"
       os: linux
@@ -601,10 +601,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=17"
+        - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86_64 C++17 Undefined behavior sanitizer"
       os: linux
@@ -622,10 +622,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=2a"
+        - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
-        - "COPTS=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
-        - "LOPTS=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
         - UBSAN_OPTIONS='print_stacktrace=1'
       name: "x86_64 C++2a Undefined behavior sanitizer"
       os: linux
@@ -649,12 +649,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=03"
+        - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86 C++03 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -678,12 +676,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=11"
+        - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86 C++11 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -707,12 +703,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=14"
+        - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86 C++14 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -736,12 +730,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=17"
+        - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86 C++17 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -765,12 +757,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=32"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=2a"
+        - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86 C++2a Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -790,12 +780,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=03"
+        - "B2_CXXSTD=cxxstd=03"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86_64 C++03 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -815,12 +803,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=11"
+        - "B2_CXXSTD=cxxstd=11"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86_64 C++11 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -840,12 +826,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=14"
+        - "B2_CXXSTD=cxxstd=14"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86_64 C++14 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -865,12 +849,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=17"
+        - "B2_CXXSTD=cxxstd=17"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
         - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
       name: "x86_64 C++17 Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -890,12 +872,10 @@ jobs:
         - "B2_ADDRESS_MODEL=address-model=64"
         - B2_VARIANT=variant=debug
         - B2_TOOLSET=gcc-8
-        - "B2_CXXSTD=2a"
+        - "B2_CXXSTD=cxxstd=2a"
         - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
         - B2_TESTFLAGS=testing.launcher=valgrind
-        - VALGRIND_OPTS=--error-exitcode=1
-        - "COPTS=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - VALGRIND_OPTS=--error-exitcode=1"
       name: "x86_64 C++2a Valgrind"
       os: linux
       before_install: utility/ci/travis/valgrind.sh
@@ -905,8 +885,8 @@ jobs:
       env: 
         - "COMMENT='Coverity Scan'"
         - B2_TOOLSET=clang-6.0
-        - "COPTS=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=-lubsan -fPIC -llsan -lasan"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
       name: "Coverty"
       os: linux
       script: utility/ci/coverty/coverage.sh
