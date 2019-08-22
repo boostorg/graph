@@ -180,7 +180,7 @@ jobs:
         - B2_TOOLSET=gcc-5
         - B2_CXXSTD=cxxstd=11
         - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
-        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan\""
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan
       name: "Unit Tests"
       os: linux
       stage: test
@@ -232,7 +232,7 @@ jobs:
     - 
       addons: 
         apt: 
-          packages: 
+          packages:
             - clang-4.0
             - libstdc++-6-dev
           sources: 
