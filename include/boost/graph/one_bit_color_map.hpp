@@ -53,10 +53,8 @@ struct one_bit_color_map
   typedef read_write_property_map_tag category;
 
   explicit one_bit_color_map(std::size_t n, const IndexMap& index = IndexMap())
-    : n(n), index(index), data(new unsigned char[(n + bits_per_char - 1) / bits_per_char])
+    : n(n), index(index), data(new unsigned char[(n + bits_per_char - 1) / bits_per_char]())
   {
-    // Fill to white
-    std::fill(data.get(), data.get() + (n + bits_per_char - 1) / bits_per_char, 0);
   }
 };
 

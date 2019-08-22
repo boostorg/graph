@@ -56,10 +56,8 @@ struct two_bit_color_map
   typedef read_write_property_map_tag category;
 
   explicit two_bit_color_map(std::size_t n, const IndexMap& index = IndexMap())
-    : n(n), index(index), data(new unsigned char[(n + elements_per_char - 1) / elements_per_char])
+    : n(n), index(index), data(new unsigned char[(n + elements_per_char - 1) / elements_per_char]())
   {
-    // Fill to white
-    std::fill(data.get(), data.get() + (n + elements_per_char - 1) / elements_per_char, 0);
   }
 };
 
