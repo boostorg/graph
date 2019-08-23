@@ -19,6 +19,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/pending/indirect_cmp.hpp>
+#include <boost/pending/relaxed_heap.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/iteration_macros.hpp>
@@ -129,7 +130,7 @@ void successive_shortest_path_nonnegative_weights_dispatch3(
 //setting default distance map
 template <class Graph, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch3(
-        Graph &g,
+        const Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -150,7 +151,7 @@ void successive_shortest_path_nonnegative_weights_dispatch3(
 
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class Distance, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch2(
-        Graph &g,
+        const Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -167,7 +168,7 @@ void successive_shortest_path_nonnegative_weights_dispatch2(
 //setting default distance map
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch2(
-        Graph &g,
+        const Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -189,7 +190,7 @@ void successive_shortest_path_nonnegative_weights_dispatch2(
 
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class Pred, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch1(
-        Graph &g,
+        const Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -206,7 +207,7 @@ void successive_shortest_path_nonnegative_weights_dispatch1(
 //setting default predecessors map
 template <class Graph, class P, class T, class R, class Capacity, class ResidualCapacity, class Weight, class Reversed, class VertexIndex>
 void successive_shortest_path_nonnegative_weights_dispatch1(
-        Graph &g,
+        const Graph &g,
         typename graph_traits<Graph>::vertex_descriptor s,
         typename graph_traits<Graph>::vertex_descriptor t,
         Capacity capacity,
@@ -257,3 +258,4 @@ void successive_shortest_path_nonnegative_weights(
 
 }//boost
 #endif /* BOOST_GRAPH_SUCCESSIVE_SHORTEST_PATH_HPP */
+
