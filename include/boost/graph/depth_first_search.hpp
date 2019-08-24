@@ -77,7 +77,7 @@ namespace boost {
 
     template <typename E, typename G, typename Vis>
     void call_finish_edge(Vis& vis, E e, const G& g) { // Only call if method exists
-#if ((defined(__GNUC__) && (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9))) || \
+#if ((defined(__GNUC__) && (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 9) && (__GNUC_PATCHLEVEL__ >= 3))) || \
       defined(__clang__) || \
      (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 1200)))
       do_call_finish_edge<
