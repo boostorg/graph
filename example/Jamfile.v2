@@ -100,10 +100,12 @@ run iteration_macros.cpp ;
 run iterator-property-map-eg.cpp ;
 run johnson-eg.cpp ;
 run kevin-bacon.cpp : $(TEST_DIR)/kevin-bacon.dat ;
+run kevin-bacon2.cpp /boost/serialization//boost_serialization : $(TEST_DIR)/kevin-bacon2.dat ;
 run king_ordering.cpp ;
 run knights_tour.cpp ;
 run kruskal-example.cpp ;
 run kuratowski_subgraph.cpp ;
+run last-mod-time.cpp /boost/filesystem//boost_filesystem : $(TEST_DIR)/makefile-dependencies.dat ;
 run make_biconnected_planar.cpp ;
 run make_connected.cpp ;
 run make_maximal_planar.cpp ;
@@ -215,11 +217,6 @@ explicit girth ;
 #
 # run labeled_graph.cpp ;
 #
-# This one crashes at runtime:
-#
-# run kevin-bacon2.cpp /boost/serialization//boost_serialization : $(TEST_DIR)/kevin-bacon.dat ;
-# Crashes with msvc-12.0:
-# run last-mod-time.cpp : $(TEST_DIR)/makefile-dependencies.dat ;
 #
 # This one dereferences a null-iterator:
 #

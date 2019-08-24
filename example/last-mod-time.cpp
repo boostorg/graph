@@ -7,13 +7,6 @@
 //=======================================================================
 
 
-/*
-   IMPORTANT:
-   ~~~~~~~~~~
-
-   This example appears to be broken and crashes at runtime, see https://github.com/boostorg/graph/issues/148
-
-*/
 
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
@@ -24,11 +17,8 @@
 #include <fstream>
 #include <string>
 #include <ctime>
-#ifdef BOOST_HAS_UNISTD_H
-#include <unistd.h>
-#endif
-#include <sys/stat.h>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace boost;
 
@@ -87,15 +77,17 @@ main(int argc, const char** argv)
   iter_map_t mod_time_map(last_mod_vec.begin(), get(vertex_index, g));
 
   property_map < graph_type, vertex_name_t >::type name = get(vertex_name, g);
-  struct stat stat_buf;
   graph_traits < graph_type >::vertex_descriptor u;
   typedef graph_traits < graph_type >::vertex_iterator vertex_iter_t;
   std::pair < vertex_iter_t, vertex_iter_t > p;
   for (p = vertices(g); p.first != p.second; ++p.first) {
     u = *p.first;
-    if (stat(name[u].c_str(), &stat_buf) != 0)
-      std::cerr << "error in stat() for file " << name[u] << std::endl;
-    put(mod_time_map, u, stat_buf.st_mtime);
+    filesystem::path file_path(name[u]);
+    if (exists(file_path)) {
+      put(mod_time_map, u, filesystem::last_write_time(file_path));
+    } else {
+      put(mod_time_map, u, 0);
+    }
   }
 
   for (p = vertices(g); p.first != p.second; ++p.first) {
