@@ -16,9 +16,9 @@ digraph SCC {
  a -> b
  a -> f
  a -> h
- b -> c 
+ b -> c
  b -> a
- c -> d 
+ c -> d
  c -> b
  d -> e
  e -> d

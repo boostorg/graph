@@ -3,7 +3,7 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
@@ -11,10 +11,10 @@
 <Head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 <Title>The Boost Graph Library</Title>
-<BODY bgcolor="#ffffff" link="#0000ee" text="#000000" vlink="#551a8b" 
-        alink="#ff0000"> 
-<IMG src="../../../boost.png" 
-     alt="C++ Boost" width="277" height="86"> 
+<BODY bgcolor="#ffffff" link="#0000ee" text="#000000" vlink="#551a8b"
+        alink="#ff0000">
+<IMG src="../../../boost.png"
+     alt="C++ Boost" width="277" height="86">
 
 <h1>The Boost Graph Library (BGL)
 <a href="http://www.awprofessional.com/title/0201729148">
@@ -73,7 +73,7 @@ to GCC. </p>
 <H2>Genericity in STL</H2>
 
 <P>
-There are three ways in which the STL is generic.  
+There are three ways in which the STL is generic.
 
 <P>
 
@@ -189,17 +189,17 @@ include methods like <TT>start_vertex()</TT>,
 The third way that the BGL is generic is analogous to the parameterization
 of the element-type in STL containers, though again the story is a bit
 more complicated for graphs. We need to associate values (called
-&ldquo;properties&rdquo;) with both the vertices and the edges of the graph. 
+&ldquo;properties&rdquo;) with both the vertices and the edges of the graph.
 In addition, it will often be necessary to associate
 multiple properties with each vertex and edge; this is what we mean
-by multi-parameterization. 
+by multi-parameterization.
 The STL <tt>std::list&lt;T&gt;</tt> class has a parameter <tt>T</tt>
 for its element type. Similarly, BGL graph classes have template
 parameters for vertex and edge &ldquo;properties&rdquo;. A
 property specifies the parameterized type of the property and also assigns
 an identifying tag to the property. This tag is used to distinguish
 between the multiple properties which an edge or vertex may have. A
-property value that is attached to a 
+property value that is attached to a
 particular vertex or edge can be obtained via a <I>property
 map</I>. There is a separate property map for each property.
 
@@ -302,4 +302,4 @@ HREF="mailto:lums@osl.iu.edu">lums@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

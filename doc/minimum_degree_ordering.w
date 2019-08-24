@@ -53,7 +53,7 @@ complete subgraph. That is, it is a subgraph where each vertex is
 adjacent to every other vertex in the subgraph}.
 
 
-quotient graph 
+quotient graph
 set of cliques in the graph
 
 
@@ -81,7 +81,7 @@ external degree
 
 @d MMD Algorithm Overview @{
   @<Eliminate isolated nodes@>
-  
+
 @}
 
 
@@ -153,7 +153,7 @@ void eliminate(vertex_t node)
     tagged or if it is numbered
   add vertices adjacent to node to the clique
   put all numbered adjacent vertices into the temporary neighbors stack
-  
+
   @<Perform element absorption optimization@>
 }
 @}
@@ -201,7 +201,7 @@ while (!neighbors.empty()) {
 
 @d
 @{
-predicateRemoveEdge1<Graph, MarkerP, NumberingD, 
+predicateRemoveEdge1<Graph, MarkerP, NumberingD,
                      typename Workspace::stack, VertexIndexMap>
   p(G, marker, numbering, element_neighbor, vertex_index_map);
 
@@ -213,16 +213,16 @@ remove_out_edge_if(node, p, G);
 
 
 @d Interface of the MMD function @{
-template<class Graph, class DegreeMap, 
-         class InversePermutationMap, 
+template<class Graph, class DegreeMap,
+         class InversePermutationMap,
          class PermutationMap,
          class SuperNodeMap, class VertexIndexMap>
 void minimum_degree_ordering
-  (Graph& G, 
-   DegreeMap degree, 
-   InversePermutationMap inverse_perm, 
-   PermutationMap perm, 
-   SuperNodeMap supernode_size, 
+  (Graph& G,
+   DegreeMap degree,
+   InversePermutationMap inverse_perm,
+   PermutationMap perm,
+   SuperNodeMap supernode_size,
    int delta,
    VertexIndexMap vertex_index_map)
 @}
@@ -253,8 +253,8 @@ public:
   typedef typename property_traits<ValueIndex>::key_type value_type;
   typedef typename property_traits<ValueIndex>::value_type size_type;
 
-  bucket_sorter(size_type length, bucket_type max_bucket, 
-                const BucketMap& bucket = BucketMap(), 
+  bucket_sorter(size_type length, bucket_type max_bucket,
+                const BucketMap& bucket = BucketMap(),
                 const ValueIndexMap& index_map = ValueIndexMap());
   void remove(const value_type& x);
   void push(const value_type& x);
@@ -300,10 +300,10 @@ value object to (the minimum is assumed to be zero).
 @d Bucket Sorter Constructor @{
 bucket_sorter::bucket_sorter
   (size_type N, bucket_type max_bucket,
-   const BucketMap& bucket_map = BucketMap(), 
+   const BucketMap& bucket_map = BucketMap(),
    const ValueIndexMap& index_map = ValueIndexMap())
   : head(max_bucket, invalid_value()),
-    next(N, invalid_value()), 
+    next(N, invalid_value()),
     prev(N, invalid_value()),
     id_to_value(N),
     bucket_map(bucket_map), index_map(index_map) { }

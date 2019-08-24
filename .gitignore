@@ -6,3 +6,12 @@ kevin-bacon2.dat
 random.dot
 triangular-fr.dot
 triangular-kk.dot
+ospf-sptree.dot
+routing-table.dat
+tc-out.dot
+test-astar-cities.dot
+web-graph.dot
+cycle_ratio_s382.90.dot
+test/metric_tsp_approx.graph
+test/weighted_graph.gr
+test/weighted_matching.dat

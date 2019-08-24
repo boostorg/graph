@@ -97,7 +97,7 @@ void transitive_closure(const Graph& g, GraphTC& tc)
 
   typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
   std::vector<tc_vertex> to_tc_vec(num_vertices(g));
-  iterator_property_map<tc_vertex*, VertexIndexMap> 
+  iterator_property_map<tc_vertex*, VertexIndexMap>
     g_to_tc_map(&to_tc_vec[0], index_map);
 
   transitive_closure(g, tc, g_to_tc_map, index_map);
@@ -118,7 +118,7 @@ void transitive_closure(const Graph& g, GraphTC& tc,
   const bgl_named_params<P, T, R>& params)
 {
   if (num_vertices(g) == 0) return;
-  detail::transitive_closure_dispatch(g, tc, 
+  detail::transitive_closure_dispatch(g, tc,
     get_param(params, orig_to_copy),
     choose_const_pmap(get_param(params, vertex_index), g, vertex_index)
   );
@@ -132,7 +132,7 @@ mapping or to use the default, a vector, to map between the two.
 @d Construct Default G to TC Vertex Mapping
 @{
 namespace detail {
-  template <typename Graph, typename GraphTC, 
+  template <typename Graph, typename GraphTC,
           typename G_to_TC_VertexMap,
           typename VertexIndexMap>
   void transitive_closure_dispatch
@@ -141,7 +141,7 @@ namespace detail {
      VertexIndexMap index_map)
   {
     typedef typename graph_traits<GraphTC>::vertex_descriptor tc_vertex;
-    typename std::vector<tc_vertex>::size_type 
+    typename std::vector<tc_vertex>::size_type
       n = is_default_param(g_to_tc_map) ? num_vertices(g) : 1;
     std::vector<tc_vertex> to_tc_vec(n);
 
@@ -192,7 +192,7 @@ the same integer type \code{cg\_vertex} for both.
 @{
 typedef size_type cg_vertex;
 std::vector<cg_vertex> component_number_vec(num_vertices(g));
-iterator_property_map<cg_vertex*, VertexIndexMap> 
+iterator_property_map<cg_vertex*, VertexIndexMap>
   component_number(&component_number_vec[0], index_map);
 
 int num_scc = strong_components(g, component_number,
@@ -259,7 +259,7 @@ for (cg_vertex s = 0; s < components.size(); ++s) {
   std::sort(adj.begin(), adj.end());
   std::vector<cg_vertex>::iterator di = std::unique(adj.begin(), adj.end());
   if (di != adj.end())
-    adj.erase(di, adj.end());        
+    adj.erase(di, adj.end());
   CG[s] = adj;
 }
 @}
@@ -335,7 +335,7 @@ topological numbers to the vertices.
 @{
 std::vector<cg_vertex> topo_order;
 std::vector<cg_vertex> topo_number(num_vertices(CG));
-topological_sort(CG, std::back_inserter(topo_order), 
+topological_sort(CG, std::back_inserter(topo_order),
   vertex_index_map(identity_property_map()));
 std::reverse(topo_order.begin(), topo_order.end());
 size_type n = 0;
@@ -354,10 +354,10 @@ returns the topological number of its input argument.
 @d Sort the out-edge lists by topological number
 @{
 for (size_type i = 0; i < num_vertices(CG); ++i)
-  std::sort(CG[i].begin(), CG[i].end(), 
+  std::sort(CG[i].begin(), CG[i].end(),
             compose_f_gx_hy(std::less<cg_vertex>(),
                             detail::subscript(topo_number),
-                            detail::subscript(topo_number)));   
+                            detail::subscript(topo_number)));
 @}
 
 Here is the code that defines the \code{subscript\_t} function object
@@ -366,7 +366,7 @@ and its associated helper object generation function.
 @d Subscript function object
 @{
 namespace detail {
-  template <typename Container, typename ST = std::size_t, 
+  template <typename Container, typename ST = std::size_t,
     typename VT = typename Container::value_type>
   struct subscript_t : public std::unary_function<ST, VT> {
     subscript_t(Container& c) : container(&c) { }
@@ -443,7 +443,7 @@ for (size_type i = 0; i < chains.size(); ++i)
     cg_vertex v = chains[i][j];
     chain_number[v] = i;
     pos_in_chain[v] = j;
-  }             
+  }
 @}
 
 Now that we have completed the chain decomposition we are ready to
@@ -471,7 +471,7 @@ for (std::vector<cg_vertex>::reverse_iterator i = topo_order.rbegin();
     cg_vertex v = *adj;
     if (topo_number[v] < successors[u][chain_number[v]]) {
       // Succ(u) = Succ(u) U Succ(v)
-      detail::union_successor_sets(successors[u], successors[v], 
+      detail::union_successor_sets(successors[u], successors[v],
         successors[u]);
       // Succ(u) = Succ(u) U {v}
       successors[u][chain_number[v]] = topo_number[v];
@@ -490,7 +490,7 @@ vector.
 @{
 for (size_type i = 0; i < CG.size(); ++i)
   CG[i].clear();
-for (size_type i = 0; i < CG.size(); ++i) 
+for (size_type i = 0; i < CG.size(); ++i)
   for (size_type j = 0; j < chains.size(); ++j) {
     size_type topo_num = successors[i][j];
     if (topo_num < inf) {
@@ -539,11 +539,11 @@ for (size_type i = 0; i < components.size(); ++i)
         add_edge(g_to_tc_map[u], g_to_tc_map[v], tc);
       }
 
-// Find loopbacks in the original graph. 
+// Find loopbacks in the original graph.
 // Need to add it to transitive closure.
 {
   vertex_iterator i, i_end;
-  for (tie(i, i_end) = vertices(g); i != i_end; ++i) 
+  for (tie(i, i_end) = vertices(g); i != i_end; ++i)
   {
     adjacency_iterator ab, ae;
     for (boost::tie(ab, ae) = adjacent_vertices(*i, g); ab != ae; ++ab)
@@ -577,14 +577,14 @@ void warshall_transitive_closure(G& g)
   //        A[i,j] = A[i,j] | A[k,j]
   vertex_iterator ki, ke, ii, ie, ji, je;
   for (tie(ki, ke) = vertices(g); ki != ke; ++ki)
-    for (tie(ii, ie) = vertices(g); ii != ie; ++ii) 
+    for (tie(ii, ie) = vertices(g); ii != ie; ++ii)
       if (edge(*ii, *ki, g).second)
         for (tie(ji, je) = vertices(g); ji != je; ++ji)
           if (!edge(*ii, *ji, g).second &&
             edge(*ki, *ji, g).second)
           {
             add_edge(*ii, *ji, g);
-          }               
+          }
 }
 @}
 
@@ -600,12 +600,12 @@ void warren_transitive_closure(G& g)
   BOOST_CONCEPT_ASSERT(( AdjacencyMatrixConcept<G> ));
   BOOST_CONCEPT_ASSERT(( EdgeMutableGraphConcept<G> ));
 
-  // Make sure second loop will work  
+  // Make sure second loop will work
   if (num_vertices(g) == 0)
     return;
 
   // for i = 2 to n
-  //    for k = 1 to i - 1 
+  //    for k = 1 to i - 1
   //      if A[i,k]
   //        for j = 1 to n
   //          A[i,j] = A[i,j] | A[k,j]
@@ -635,7 +635,7 @@ void warren_transitive_closure(G& g)
             edge(*kc, *jc, g).second)
           {
             add_edge(*ic, *jc, g);
-          }                     
+          }
 }
 @}
 
@@ -653,7 +653,7 @@ indent -nut -npcs -i2 -br -cdw -ce transitive_closure.hpp
 // Copyright (C) 2001 Vladimir Prus <ghost@@cs.msu.su>
 // Copyright (C) 2001 Jeremy Siek <jsiek@@cs.indiana.edu>
 // Permission to copy, use, modify, sell and distribute this software is
-// granted, provided this copyright notice appears in all copies and 
+// granted, provided this copyright notice appears in all copies and
 // modified version are clearly marked as such. This software is provided
 // "as is" without express or implied warranty, and with no claim as to its
 // suitability for any purpose.

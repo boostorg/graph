@@ -40,7 +40,7 @@ have a common ancestor in $F$. Also, if $u$ is the common ancestor of
 $u$ and $v$ with the latest discover time then $w$ is also in the same
 SCC as $u$ and $v$.
 
-Proof. 
+Proof.
 
 If there is a path from $v$ to $w$ and if they are in different DFS
 trees, then the discover time for $w$ must be earlier than for $v$.
@@ -76,13 +76,13 @@ following cases:
   $u$ in the DFS tree and therefore we have a cycle and $u$ must be in
   a SCC with $a$. We then set $root[u] = a$ and continue our way back up
   the DFS.
-  
+
 \item If $a = u$ then we know that $u$ must be the topmost vertex of a
   subtree that defines a SCC.  All of the vertices in this subtree are
   further down on the stack than vertex $u$ so we pop the vertices off
   of the stack until we reach $u$ and mark each one as being in the
   same component.
-  
+
 \item If $d[a] > d[u]$ then the adjacent vertices are in different
   strongly connected components. We continue our way back up the
   DFS.

@@ -8,21 +8,23 @@
 #define TEST_ITERATION_HPP
 
 #include <boost/concept/assert.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <algorithm>
+
+#include "test_graph.hpp"
 
 /** @name Test Vertex List
  * Test the vertex list interface. Note that there are currently no graphs that
  * do not expose this interface.
  */
 //@{
-template <typename Graph>
-void test_vertex_list_graph(Graph const& g) {
+template < typename Graph > void test_vertex_list_graph(Graph const& g)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((VertexListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((VertexListGraphConcept< Graph >));
 
-    std::cout << "...test_vertex_list_graph\n";
-    typedef typename graph_traits<Graph>::vertex_iterator Iterator;
-    typedef std::pair<Iterator, Iterator> Range;
+    typedef typename graph_traits< Graph >::vertex_iterator Iterator;
+    typedef std::pair< Iterator, Iterator > Range;
 
     Range rng = vertices(g);
     BOOST_ASSERT(num_vertices(g) == N);
@@ -36,14 +38,13 @@ void test_vertex_list_graph(Graph const& g) {
  * do not expose this interface.
  */
 //@{
-template <typename Graph>
-void test_edge_list_graph(Graph const& g) {
+template < typename Graph > void test_edge_list_graph(Graph const& g)
+{
     using namespace boost;
-    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept<Graph>));
+    BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< Graph >));
 
-    std::cout << "...test_edge_list_graph\n";
-    typedef typename graph_traits<Graph>::edge_iterator Iterator;
-    typedef std::pair<Iterator, Iterator> Range;
+    typedef typename graph_traits< Graph >::edge_iterator Iterator;
+    typedef std::pair< Iterator, Iterator > Range;
 
     Range rng = edges(g);
     BOOST_ASSERT(num_edges(g) == M);

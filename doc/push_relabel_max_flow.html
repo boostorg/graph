@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Boost Graph Library: Push-Relabel Maximum Flow</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -24,17 +24,17 @@
 <i>// named parameter version</i>
 template &lt;class Graph, class P, class T, class R&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-push_relabel_max_flow(Graph&amp; g, 
+push_relabel_max_flow(Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    const bgl_named_params&lt;P, T, R&gt;&amp; params = <i>all defaults</i>)
 
 <i>// non-named parameter version</i>
-template &lt;class Graph, 
+template &lt;class Graph,
 	  class CapacityEdgeMap, class ResidualCapacityEdgeMap,
 	  class ReverseEdgeMap, class VertexIndexMap&gt;
 typename property_traits&lt;CapacityEdgeMap&gt;::value_type
-push_relabel_max_flow(Graph&amp; g, 
+push_relabel_max_flow(Graph&amp; g,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor src,
    typename graph_traits&lt;Graph&gt;::vertex_descriptor sink,
    CapacityEdgeMap cap, ResidualCapacityEdgeMap res,
@@ -49,7 +49,7 @@ Flow Algorithms</a> for a description of maximum flow.  The calculated
 maximum flow will be the return value of the function. The function
 also calculates the flow values <i>f(u,v)</i> for all <i>(u,v)</i> in
 <i>E</i>, which are returned in the form of the residual capacity
-<i>r(u,v) = c(u,v) - f(u,v)</i>. 
+<i>r(u,v) = c(u,v) - f(u,v)</i>.
 
 <p>
 There are several special requirements on the input graph and property
@@ -96,14 +96,14 @@ IN: <tt>vertex_descriptor src</tt>
 <blockquote>
   The source vertex for the flow network graph.
 </blockquote>
-  
+
 IN: <tt>vertex_descriptor sink</tt>
 <blockquote>
   The sink vertex for the flow network graph.
 </blockquote>
 
 <h3>Named Parameters</h3>
-  
+
 IN: <tt>capacity_map(EdgeCapacityMap cap)</tt>
 <blockquote>
   The edge capacity property map. The type must be a model of a
@@ -112,7 +112,7 @@ IN: <tt>capacity_map(EdgeCapacityMap cap)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_capacity, g)</tt>
 </blockquote>
-  
+
 OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
 <blockquote>
   The edge residual capacity property map. The type must be a model of
@@ -121,7 +121,7 @@ OUT: <tt>residual_capacity_map(ResidualCapacityEdgeMap res)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_residual_capacity, g)</tt>
 </blockquote>
-  
+
 IN: <tt>reverse_edge_map(ReverseEdgeMap rev)</tt>
 <blockquote>
   An edge property map that maps every edge <i>(u,v)</i> in the graph
@@ -131,7 +131,7 @@ IN: <tt>reverse_edge_map(ReverseEdgeMap rev)</tt>
   key type of the map must be the graph's edge descriptor type.<br>
   <b>Default:</b> <tt>get(edge_reverse, g)</tt>
 </blockquote>
-   
+
 IN: <tt>vertex_index_map(VertexIndexMap index_map)</tt>
 <blockquote>
   Maps each vertex of the graph to a unique integer in the range
@@ -168,7 +168,7 @@ main()
   using namespace boost;
 
   typedef adjacency_list_traits&lt;vecS, vecS, directedS&gt; Traits;
-  typedef adjacency_list&lt;vecS, vecS, directedS, 
+  typedef adjacency_list&lt;vecS, vecS, directedS,
     property&lt;vertex_name_t, std::string&gt;,
     property&lt;edge_capacity_t, long,
       property&lt;edge_residual_capacity_t, long,
@@ -178,11 +178,11 @@ main()
   Graph g;
   long flow;
 
-  property_map&lt;Graph, edge_capacity_t&gt;::type 
+  property_map&lt;Graph, edge_capacity_t&gt;::type
     capacity = get(edge_capacity, g);
-  property_map&lt;Graph, edge_reverse_t&gt;::type 
+  property_map&lt;Graph, edge_reverse_t&gt;::type
     rev = get(edge_reverse, g);
-  property_map&lt;Graph, edge_residual_capacity_t&gt;::type 
+  property_map&lt;Graph, edge_residual_capacity_t&gt;::type
     residual_capacity = get(edge_residual_capacity, g);
 
   Traits::vertex_descriptor s, t;
@@ -199,7 +199,7 @@ main()
   for (boost::tie(u_iter, u_end) = vertices(g); u_iter != u_end; ++u_iter)
     for (boost::tie(ei, e_end) = out_edges(*u_iter, g); ei != e_end; ++ei)
       if (capacity[*ei] &gt; 0)
-        std::cout &lt;&lt; "f " &lt;&lt; *u_iter &lt;&lt; " " &lt;&lt; target(*ei, g) &lt;&lt; " " 
+        std::cout &lt;&lt; "f " &lt;&lt; *u_iter &lt;&lt; " " &lt;&lt; target(*ei, g) &lt;&lt; " "
                   &lt;&lt; (capacity[*ei] - residual_capacity[*ei]) &lt;&lt; std::endl;
   return 0;
 }
@@ -237,7 +237,7 @@ f 6 7 1
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  HTML Siek BGCOLOR ffffff ee VLINK ALINK ff IMG SRC preflow
  -->
 <!--  LocalWords:  gif ALT BR sec TT DIV CELLPADDING TR TD PRE lt

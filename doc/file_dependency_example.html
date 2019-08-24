@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>File Dependency Example</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -108,9 +108,9 @@ the following sections.
 
 <P>
 <PRE>
-  enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp, 
+  enum files_e { dax_h, yow_h, boz_h, zow_h, foo_cpp,
                  foo_o, bar_cpp, bar_o, libfoobar_a,
-                 zig_cpp, zig_o, zag_cpp, zag_o, 
+                 zig_cpp, zig_o, zag_cpp, zag_o,
                  libzigzag_a, killerapp, N };
   const char* name[] = { "dax.h", "yow.h", "boz.h", "zow.h", "foo.cpp",
                          "foo.o", "bar.cpp", "bar.o", "libfoobar.a",
@@ -122,7 +122,7 @@ the following sections.
     Edge(dax_h, foo_cpp), Edge(dax_h, bar_cpp), Edge(dax_h, yow_h),
     Edge(yow_h, bar_cpp), Edge(yow_h, zag_cpp),
     Edge(boz_h, bar_cpp), Edge(boz_h, zig_cpp), Edge(boz_h, zag_cpp),
-    Edge(zow_h, foo_cpp), 
+    Edge(zow_h, foo_cpp),
     Edge(foo_cpp, foo_o),
     Edge(foo_o, libfoobar_a),
     Edge(bar_cpp, bar_o),
@@ -136,7 +136,7 @@ the following sections.
   };
 
   using namespace boost;
-  typedef adjacency_list&lt;vecS, vecS, bidirectionalS, 
+  typedef adjacency_list&lt;vecS, vecS, bidirectionalS,
       property&lt;vertex_color_t, default_color_type&gt;
     &gt; Graph;
   Graph g(used_by, used_by + sizeof(used_by) / sizeof(Edge), N);
@@ -175,7 +175,7 @@ STL or custom-made container.
   typedef std::list&lt;Vertex&gt; MakeOrder;
   MakeOrder make_order;
   boost::topological_sort(g, std::front_inserter(make_order));
-    
+
   std::cout &lt;&lt; "make ordering: ";
   for (MakeOrder::iterator i = make_order.begin();
        i != make_order.end(); ++i)
@@ -229,7 +229,7 @@ it depends on.
   zero.</p>
 
 <pre>
-    for (i = make_order.begin(); i != make_order.end(); ++i) {    
+    for (i = make_order.begin(); i != make_order.end(); ++i) {
       if (in_degree (*i, g) &gt; 0) {
         Graph::in_edge_iterator j, j_end;
         int maxdist = 0;
@@ -253,8 +253,8 @@ Last, we output the time-slot that we've calculated for each vertex.
 </PRE>
 The output is:
 <PRE>
-  parallel make ordering, 
-    vertices with same group number 
+  parallel make ordering,
+    vertices with same group number
     can be made in parallel
   time_slot[dax.h] = 0
   time_slot[yow.h] = 1
@@ -289,7 +289,7 @@ can be removed. One easy way to detect a cycle is to run a <a
 href="./depth_first_search.html">depth-first search</a>, and if the
 search runs into an already discovered vertex (of the current search
 tree), then there is a cycle. The BGL graph search algorithms (which
-includes 
+includes
 <TT>depth_first_search()</TT>) are all extensible via the
 <I>visitor</I> mechanism. A visitor is similar to a function object,
 but it has several methods instead of just the one
@@ -304,7 +304,7 @@ We will create a visitor class and fill in the <TT>back_edge()</TT>
 method, which is the <a href="./DFSVisitor.html">DFSVisitor</a> method
 that is called when DFS explores an edge to an already discovered
 vertex. A call to this method indicates the existence of a
-cycle. Inheriting from <TT>dfs_visitor&lt;&gt;</TT> 
+cycle. Inheriting from <TT>dfs_visitor&lt;&gt;</TT>
 provides the visitor with empty versions of the other visitor methods.
 Once our visitor is created, we can construct and object and pass it
 to the BGL algorithm.  Visitor objects are passed by value inside of
@@ -315,7 +315,7 @@ reference in this visitor.
 <PRE>
   struct cycle_detector : public dfs_visitor&lt;&gt;
   {
-    cycle_detector( bool&amp; has_cycle) 
+    cycle_detector( bool&amp; has_cycle)
       : _has_cycle(has_cycle) { }
 
     template &lt;class Edge, class Graph&gt;
@@ -360,4 +360,4 @@ dependency would be flagged as a user error.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Kevin Bacon Example</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -91,7 +91,7 @@ actors appearing together in a movie is symmetric.
 <P>
 <PRE>
   using namespace boost;
-  typedef adjacency_list&lt;vecS, vecS, undirectedS, 
+  typedef adjacency_list&lt;vecS, vecS, undirectedS,
     property&lt;vertex_name_t, string&gt;,
     property&lt;edge_name_t, string &gt; &gt;
   &gt; Graph;
@@ -149,7 +149,7 @@ descriptor from the map's <TT>pos</TT> iterator.
 
 <P>
 <PRE>
-  NameVertexMap::iterator pos; 
+  NameVertexMap::iterator pos;
   bool inserted;
   Vertex u, v;
 
@@ -173,7 +173,7 @@ actor into the graph.
 <P>
 <PRE>
   std::string movie_name = *i++;
-      
+
   boost::tie(pos, inserted) = actors.insert(std::make_pair(*i, Vertex()));
   if (inserted) {
     v = add_vertex(g);
@@ -185,7 +185,7 @@ actor into the graph.
 
 <P>
 The final step is to add an edge connecting the two actors, and record
-the name of the connecting movie. 
+the name of the connecting movie.
 
 <P>
 <PRE>
@@ -270,7 +270,7 @@ through all the vertices in the graph and use them to index into the
 <PRE>
   graph_traits&lt;Graph&gt;::vertex_iterator i, end;
   for (boost::tie(i, end) = vertices(g); i != end; ++i)
-    std::cout &lt;&lt; actor_name[*i] &lt;&lt; "'s bacon number is " 
+    std::cout &lt;&lt; actor_name[*i] &lt;&lt; "'s bacon number is "
               &lt;&lt; bacon_number[*i] &lt;&lt; std::endl;
 </PRE>
 
@@ -290,7 +290,7 @@ William Shatner's bacon number is 2
 Denise Richards's bacon number is 1
 Kevin Bacon's bacon number is 0
 Patrick Stewart's bacon number is 2
-Steve Martin's bacon number is 1    
+Steve Martin's bacon number is 1
 ...
 </PRE>
 
@@ -306,7 +306,7 @@ Steve Martin's bacon number is 1
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
 <!--  LocalWords:  gif Hesburgh Ginelli Fass Erd vertices cerr namespace vecS
  -->
 <!--  LocalWords:  undirectedS Tokenizer sep tokenizer toks NameVertexMap pos

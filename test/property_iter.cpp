@@ -1,13 +1,13 @@
 //=======================================================================
 //
-//  Copyright (c) 2003 Institute of Transport, 
-//                     Railway Construction and Operation, 
+//  Copyright (c) 2003 Institute of Transport,
+//                     Railway Construction and Operation,
 //                     University of Hanover, Germany
 //
 //  Author: Juergen Hunold
 //
-//  Use, modification and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
+//  Use, modification and distribution are subject to the
+//  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 //=======================================================================
@@ -30,16 +30,21 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
-
-enum vertex_id_t { vertex_id = 500 };
-enum edge_id_t { edge_id = 501 };
-namespace boost {
-  BOOST_INSTALL_PROPERTY(vertex, id);
-  BOOST_INSTALL_PROPERTY(edge, id);
+enum vertex_id_t
+{
+    vertex_id = 500
+};
+enum edge_id_t
+{
+    edge_id = 501
+};
+namespace boost
+{
+BOOST_INSTALL_PROPERTY(vertex, id);
+BOOST_INSTALL_PROPERTY(edge, id);
 }
 
-
-#include "graph_type.hpp" // this provides a typedef for Graph
+#include <boost/graph/adjacency_list.hpp>
 
 using namespace boost;
 
@@ -47,94 +52,120 @@ using namespace boost;
   This program tests the property range iterators
  */
 
+using std::cerr;
 using std::cout;
 using std::endl;
-using std::cerr;
 using std::find;
 
-
-int main(int, char* [])
+template < typename test_type_T, typename directed_type_T > void test_instance()
 {
-  int ret = 0;
-  std::size_t N = 5, E = 0;
 
-  typedef ::Graph Graph;
-  Graph g;
-  typedef boost::graph_traits<Graph>::vertex_descriptor Vertex;
-  typedef boost::graph_traits<Graph>::edge_descriptor Edge;
+    typedef boost::adjacency_list< test_type_T, test_type_T, directed_type_T,
+        boost::property< vertex_id_t, std::size_t >,
+        boost::property< edge_id_t, std::size_t > >
+        Graph;
 
-  int i, j;
-  std::size_t current_vertex_id = 0;
-  std::size_t current_edge_id = 0;
+    std::size_t N = 5, E = 0;
 
-  property_map<Graph, vertex_id_t>::type vertex_id_map = get(vertex_id, g);
-  (void)vertex_id_map;
+    Graph g;
+    typedef typename boost::graph_traits< Graph >::vertex_descriptor Vertex;
+    typedef typename boost::graph_traits< Graph >::edge_descriptor Edge;
 
-  property_map<Graph, edge_id_t>::type edge_id_map = get(edge_id, g);
-  (void)edge_id_map;
+    int i, j;
+    std::size_t current_vertex_id = 0;
+    std::size_t current_edge_id = 0;
 
-  for (std::size_t k = 0; k < N; ++k)
-    add_vertex(current_vertex_id++, g);
+    typename property_map< Graph, vertex_id_t >::type vertex_id_map
+        = get(vertex_id, g);
+    (void)vertex_id_map;
 
-  mt19937 gen;
+    typename property_map< Graph, edge_id_t >::type edge_id_map
+        = get(edge_id, g);
+    (void)edge_id_map;
 
-  for (j=0; j < 10; ++j) {
+    for (std::size_t k = 0; k < N; ++k)
+        add_vertex(current_vertex_id++, g);
 
-    // add_edge
+    mt19937 gen;
+
+    for (j = 0; j < 10; ++j)
+    {
+
+        // add_edge
 #if VERBOSE
-    cerr << "Testing add_edge ..." << endl;
+        cerr << "Testing add_edge ..." << endl;
 #endif
-    for (i=0; i < 6; ++i) {
-      Vertex a, b;
-      a = random_vertex(g, gen);
-      do {
-        b = random_vertex(g, gen);
-      } while ( a == b ); // don't do self edges
+        for (i = 0; i < 6; ++i)
+        {
+            Vertex a, b;
+            a = random_vertex(g, gen);
+            do
+            {
+                b = random_vertex(g, gen);
+            } while (a == b); // don't do self edges
 #if VERBOSE
-      cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b] <<")" << endl;
+            cerr << "add_edge(" << vertex_id_map[a] << "," << vertex_id_map[b]
+                 << ")" << endl;
 #endif
-      Edge e;
-      bool inserted;
-      boost::tie(e, inserted) = add_edge(a, b, current_edge_id++, g);
+            Edge e;
+            bool inserted;
+            boost::tie(e, inserted) = add_edge(a, b, current_edge_id++, g);
 #if VERBOSE
-      std::cout << "inserted: " << inserted << std::endl;
-      std::cout << "source(e,g)" << source(e,g) << endl;
-      std::cout << "target(e,g)" << target(e,g) << endl;
-      std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
-      print_edges2(g, vertex_id_map, edge_id_map);
-      print_graph(g, vertex_id_map);
-      std::cout << "finished printing" << std::endl;
+            std::cout << "inserted: " << inserted << std::endl;
+            std::cout << "source(e,g)" << source(e, g) << endl;
+            std::cout << "target(e,g)" << target(e, g) << endl;
+            std::cout << "edge_id[e] = " << edge_id_map[e] << std::endl;
+            print_edges2(g, vertex_id_map, edge_id_map);
+            print_graph(g, vertex_id_map);
+            std::cout << "finished printing" << std::endl;
 #endif
-      }
-      ++E;
+        }
+        ++E;
     }
 
-  typedef boost::graph_property_iter_range< Graph, vertex_id_t>::iterator    TNodeIterator;
+    typedef typename boost::graph_property_iter_range< Graph,
+        vertex_id_t >::iterator TNodeIterator;
 
-  typedef boost::graph_property_iter_range< Graph, edge_id_t>::iterator    TLinkIterator;
+    typedef
+        typename boost::graph_property_iter_range< Graph, edge_id_t >::iterator
+            TLinkIterator;
 
-  TLinkIterator itEdgeBegin, itEdgeEnd;
+    TLinkIterator itEdgeBegin, itEdgeEnd;
 
-  boost::tie(itEdgeBegin, itEdgeEnd) = get_property_iter_range(g, edge_id);
+    boost::tie(itEdgeBegin, itEdgeEnd) = get_property_iter_range(g, edge_id);
 
-  cout << "Edge iteration:" << endl;
-  for (; itEdgeBegin != itEdgeEnd; ++itEdgeBegin)
-  {
-      cout << *itEdgeBegin;
-  }
-  cout << endl;
+    cout << "Edge iteration:" << endl;
+    for (; itEdgeBegin != itEdgeEnd; ++itEdgeBegin)
+    {
+        cout << *itEdgeBegin;
+    }
+    cout << endl;
 
-  TNodeIterator itVertexBegin, itVertexEnd;
+    TNodeIterator itVertexBegin, itVertexEnd;
 
-  boost::tie(itVertexBegin, itVertexEnd) = get_property_iter_range(g, vertex_id);
+    boost::tie(itVertexBegin, itVertexEnd)
+        = get_property_iter_range(g, vertex_id);
 
-  cout << "Vertex iteration:" << endl;
-  for (; itVertexBegin != itVertexEnd; ++itVertexBegin)
-  {
-      cout << *itVertexBegin;
-  }
-  cout << endl;
+    cout << "Vertex iteration:" << endl;
+    for (; itVertexBegin != itVertexEnd; ++itVertexBegin)
+    {
+        cout << *itVertexBegin;
+    }
+    cout << endl;
+}
 
-  
-  return ret;
+int main(int, char*[])
+{
+
+    test_instance< boost::vecS, boost::bidirectionalS >();
+    test_instance< boost::vecS, boost::directedS >();
+    test_instance< boost::vecS, boost::undirectedS >();
+    test_instance< boost::listS, boost::bidirectionalS >();
+    test_instance< boost::listS, boost::directedS >();
+    test_instance< boost::listS, boost::undirectedS >();
+    test_instance< boost::setS, boost::bidirectionalS >();
+    test_instance< boost::setS, boost::directedS >();
+    test_instance< boost::setS, boost::undirectedS >();
+
+    return 0;
 }

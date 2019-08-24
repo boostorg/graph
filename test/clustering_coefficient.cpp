@@ -17,18 +17,18 @@ using namespace boost;
 // number of vertices in the graph
 static const unsigned N = 5;
 
-template <typename Graph>
-struct vertex_vector
+template < typename Graph > struct vertex_vector
 {
-    typedef graph_traits<Graph> traits;
-    typedef vector<typename traits::vertex_descriptor> type;
+    typedef graph_traits< Graph > traits;
+    typedef vector< typename traits::vertex_descriptor > type;
 };
 
-template <typename Graph>
-void build_graph(Graph& g, typename vertex_vector<Graph>::type& v)
+template < typename Graph >
+void build_graph(Graph& g, typename vertex_vector< Graph >::type& v)
 {
     // add vertices
-    for(size_t i = 0; i < N; ++i) {
+    for (size_t i = 0; i < N; ++i)
+    {
         v[i] = add_vertex(g);
     }
 
@@ -40,17 +40,16 @@ void build_graph(Graph& g, typename vertex_vector<Graph>::type& v)
     add_edge(v[4], v[0], g);
 }
 
-template <typename Graph>
-void test_undirected()
+template < typename Graph > void test_undirected()
 {
-    typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+    typedef typename graph_traits< Graph >::vertex_descriptor Vertex;
 
-    typedef exterior_vertex_property<Graph, double> ClusteringProperty;
+    typedef exterior_vertex_property< Graph, double > ClusteringProperty;
     typedef typename ClusteringProperty::container_type ClusteringContainer;
     typedef typename ClusteringProperty::map_type ClusteringMap;
 
     Graph g;
-    vector<Vertex> v(N);
+    vector< Vertex > v(N);
     build_graph(g, v);
 
     ClusteringContainer cc(num_vertices(g));
@@ -92,14 +91,13 @@ void test_undirected()
     BOOST_ASSERT((coef - (7.0f / 15.0f)) < 1e-7f);
 }
 
-int
-main(int, char *[])
+int main(int, char*[])
 {
     typedef undirected_graph<> Graph;
     // typedef directed_graph<> Digraph;
 
     // TODO: write a test for directed clustering coefficient.
 
-    test_undirected<Graph>();
+    test_undirected< Graph >();
     // test<Digraph>();
 }

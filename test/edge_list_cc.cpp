@@ -13,22 +13,24 @@
 #include <cstddef>
 #include <iterator>
 
-int main(int,char*[])
+int main(int, char*[])
 {
     // Check edge_list
     {
         using namespace boost;
-        
-        typedef std::pair<int,int> E;
-    
-        typedef edge_list<E*,E,std::ptrdiff_t,std::random_access_iterator_tag> EdgeList;
-    
-        typedef graph_traits<EdgeList>::edge_descriptor Edge;
-    
-        BOOST_CONCEPT_ASSERT(( EdgeListGraphConcept<EdgeList> ));
-    
-        BOOST_CONCEPT_ASSERT(( ReadablePropertyGraphConcept<EdgeList, Edge, 
-            edge_index_t> ));
+
+        typedef std::pair< int, int > E;
+
+        typedef edge_list< E*, E, std::ptrdiff_t,
+            std::random_access_iterator_tag >
+            EdgeList;
+
+        typedef graph_traits< EdgeList >::edge_descriptor Edge;
+
+        BOOST_CONCEPT_ASSERT((EdgeListGraphConcept< EdgeList >));
+
+        BOOST_CONCEPT_ASSERT(
+            (ReadablePropertyGraphConcept< EdgeList, Edge, edge_index_t >));
     }
     return 0;
 }

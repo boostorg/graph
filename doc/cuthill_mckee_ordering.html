@@ -1,19 +1,19 @@
 <HTML>
 
 <!--   Copyright (c) Jeremy Siek 2000
-  
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 
-<Head> 
+<Head>
 <Title>Boost Graph Library: Cuthill-Mckee Ordering</Title>
 </Head>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -46,25 +46,25 @@
   OutputIterator
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
                          typename graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor s,
-                         OutputIterator inverse_permutation, 
+                         OutputIterator inverse_permutation,
                          ColorMap color, DegreeMap degree)
 
   (2)
   template &lt;class VertexListGraph, class OutputIterator&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation); 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation);
 
   template &lt;class VertexListGraph, class OutputIterator, class VertexIndexMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
-                         VertexIndexMap index_map); 
- 
-  template &lt;class VertexListGraph, class OutputIterator, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation,
+                         VertexIndexMap index_map);
+
+  template &lt;class VertexListGraph, class OutputIterator,
             class ColorMap, class DegreeMap&gt;
   OutputIterator
-  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation, 
+  cuthill_mckee_ordering(const VertexListGraph&amp; g, OutputIterator inverse_permutation,
                          ColorMap color, DegreeMap degree)
-                         
+
   (3)
   template &lt;class IncidenceGraph, class OutputIterator,
             class ColorMap, class DegreeMap&gt;
@@ -72,7 +72,7 @@
   cuthill_mckee_ordering(const IncidenceGraph&amp; g,
     			 std::deque&lt; typename
 			 graph_traits&lt;IncidenceGraph&gt;::vertex_descriptor &gt; vertex_queue,
-                         OutputIterator inverse_permutation, 
+                         OutputIterator inverse_permutation,
                          ColorMap color, DegreeMap degree)
 </pre>
 
@@ -92,10 +92,10 @@ increasing degree.
 <p>
 Version 1 of the algorithm lets the user choose the ``starting
 vertex'', version 2 finds a good starting vertex using the
-pseudo-peripheral pair heuristic (among each component), while version 3 
-contains the starting nodes for each vertex in the deque.  The choice of the 
-``starting vertex'' can have a significant effect on the quality of the 
-ordering.  For versions 2 and 3, <tt>find_starting_vertex</tt> will be called 
+pseudo-peripheral pair heuristic (among each component), while version 3
+contains the starting nodes for each vertex in the deque.  The choice of the
+``starting vertex'' can have a significant effect on the quality of the
+ordering.  For versions 2 and 3, <tt>find_starting_vertex</tt> will be called
 for each component in the graph, increasing run time significantly.
 </p>
 
@@ -140,7 +140,7 @@ For version 1:
 
 <ul>
 
-<li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br> 
+<li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br>
   An undirected graph. The graph's type must be a model of <a
   href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
   <b>Python</b>: The parameter is named <tt>graph</tt>.
@@ -149,13 +149,13 @@ For version 1:
   The starting vertex.<br>
   <b>Python</b>: Unsupported parameter.
 
-<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br> 
+<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br>
   The new vertex ordering. The vertices are written to the <a
   href="http://www.boost.org/sgi/stl/OutputIterator.html">output
   iterator</a> in their new order.<br>
   <b>Python</b>: This parameter is unused in Python. The new vertex
   ordering is returned as a Python <tt>list</tt>.
-  
+
 <li> <tt>ColorMap color_map</tt> &nbsp(WORK) <br>
   Used internally to keep track of the progress of the algorithm
   (to avoid visiting the same vertex twice).<br>
@@ -171,13 +171,13 @@ For version 2:
 
 <ul>
 
-<li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br> 
+<li> <tt>VertexListGraph&amp; g</tt> &nbsp;(IN) <br>
   An undirected graph. The graph's type must be a model of <a
                                                               href="./VertexListGraph.html">VertexListGraph</a> and <a href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
   <b>Python</b>: The parameter is named <tt>graph</tt>.
 
 <li> <tt><a href="http://www.boost.org/sgi/stl/OutputIterator.html">
-  OutputIterator</a> inverse_permutation</tt> &nbsp(OUT) <br> 
+  OutputIterator</a> inverse_permutation</tt> &nbsp(OUT) <br>
   The new vertex ordering. The vertices are written to the
   output iterator in their new order.<br>
   <b>Python</b>: This parameter is unused in Python. The new vertex
@@ -198,7 +198,7 @@ For version 3:
 
 <ul>
 
-<li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br> 
+<li> <tt>IncidenceGraph&amp; g</tt> &nbsp;(IN) <br>
   An undirected graph. The graph's type must be a model of <a
   href="./IncidenceGraph.html">IncidenceGraph</a>.<br>
   <b>Python</b>: The parameter is named <tt>graph</tt>.
@@ -207,13 +207,13 @@ For version 3:
   The deque containing the starting vertices for each component.<br>
   <b>Python</b>: Unsupported parameter.
 
-<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br> 
+<li> <tt>OutputIterator inverse_permutation</tt> &nbsp(OUT) <br>
   The new vertex ordering. The vertices are written to the <a
   href="http://www.boost.org/sgi/stl/OutputIterator.html">output
   iterator</a> in their new order.<br>
   <b>Python</b>: This parameter is unused in Python. The new vertex
   ordering is returned as a Python <tt>list</tt>.
-  
+
 <li> <tt>ColorMap color_map</tt> &nbsp(WORK) <br>
   Used internally to keep track of the progress of the algorithm
   (to avoid visiting the same vertex twice).<br>
@@ -245,4 +245,4 @@ and <tt>degree_property_map</tt> in <tt>boost/graph/properties.hpp</tt>.
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

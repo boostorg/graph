@@ -10,7 +10,7 @@
 <title>Boost Graph Library: Stoer&ndash;Wagner Min-Cut</title>
 </head>
 <body>
-<img src="../../../boost.png"  alt="C++ Boost"> 
+<img src="../../../boost.png"  alt="C++ Boost">
 
 <h1><a name="sec:stoer_wagner"><tt>stoer_wagner_min_cut</tt></a></h1>
 <table border="0" cellspacing="0" style="float: right">
@@ -67,7 +67,7 @@ stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
 
 <h4>Expert Parameters</h4>
 
-<p>IN: <tt>vertex_index_map(VertexIndexMap vertexIndices)</tt> 
+<p>IN: <tt>vertex_index_map(VertexIndexMap vertexIndices)</tt>
 <blockquote>
   This maps each vertex to an integer in the range [0, <tt>num_vertices(g)</tt>). This
   is only necessary if the default is used for the assignment, index-in-heap, or distance maps.
@@ -92,7 +92,7 @@ stoer_wagner_min_cut(const UndirectedGraph&amp; g, WeightMap weights,
 <blockquote>
   <tt>MaxPriorityQueue</tt> must be a model of <a href="./KeyedUpdatableQueue.html">Keyed Updatable Queue</a>
   and a max-<a href="./UpdatableQueue.html#concept%3AUpdatablePriorityQueue">Updatable Priority Queue</a>.
-  The value type must be the graph's vertex descriptor and the key type must be 
+  The value type must be the graph's vertex descriptor and the key type must be
   the weight type.
   <b>Default:</b> A <tt>boost::d_ary_heap_indirect</tt> using a default index-in-heap
   and distance map.

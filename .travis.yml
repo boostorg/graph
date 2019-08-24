@@ -1,298 +1,911 @@
-# Copyright 2016, 2017 Peter Dimov
-# Copyright 2018 Joh Maddock
-# Distributed under the Boost Software License, Version 1.0.
-# (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
-
-language: cpp
-
-python: "2.7"
-
-os:
-  - linux
-  - osx
-
-branches:
-  only:
-    - master
-    - develop
-    - /feature\/.*/
-
-env:
-  matrix:
-    - BOGUS_JOB=true
-
-matrix:
-
-  exclude:
-    - env: BOGUS_JOB=true
-
-  include:
-    - os: linux
-      compiler: g++-4.4
-      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98,0x
-      addons:
-        apt:
-          packages:
-            - g++-4.4
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      compiler: g++-4.6
-      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
-      addons:
-        apt:
-          packages:
-            - g++-4.6
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
-            - g++-4.7
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+---
+addons: 
+  apt: 
+    packages: 
+      - binutils-gold
+      - gdb
+      - libc6-dbg
+after_script: true
+anchors: 
+  clang-38: 
+    apt: 
+      packages: 
+        - clang-3.8
+        - gcc-multilib
+        - libstdc++-6-dev
+      sources: 
+        - llvm-toolchain-xenial-3.8
+        - ubuntu-toolchain-r-test
+  clang-4: 
+    apt: 
+      packages: 
+        - clang-4.0
+        - gcc-multilib
+        - libstdc++-6-dev
+      sources: 
+        - llvm-toolchain-xenial-4.0
+        - ubuntu-toolchain-r-test
+  clang-5: 
+    apt: 
+      packages: 
+        - clang-5.0
+        - gcc-multilib
+        - libstdc++-7-dev
+      sources: 
+        - llvm-toolchain-xenial-5.0
+        - ubuntu-toolchain-r-test
+  clang-6: 
+    apt: 
+      packages: 
+        - clang-6.0
+        - gcc-multilib
+        - libc6-dbg
+        - libc++-dev
+        - libstdc++-8-dev
+      sources: 
+        - llvm-toolchain-xenial-6.0
+        - ubuntu-toolchain-r-test
+  clang-7: 
+    apt: 
+      packages: 
+        - clang-7
+        - gcc-multilib
+        - libc6-dbg
+        - libc++-dev
+        - libstdc++-8-dev
+      sources: 
+        - llvm-toolchain-xenial-7
+        - ubuntu-toolchain-r-test
+  clang-8: 
+    apt: 
+      packages: 
+        - clang-8
+        - gcc-multilib
+        - libc6-dbg
+        - libc++-dev
+        - libstdc++-8-dev
+      sources: 
+        - llvm-toolchain-xenial-8
+        - ubuntu-toolchain-r-test
+  gcc-48: 
+    apt: 
+      packages: 
+        - g++-4.8
+        - g++-4.8-multilib
+  gcc-49: 
+    apt: 
+      packages: 
+        - g++-4.9
+        - g++-4.9-multilib
+      sources: 
+        - ubuntu-toolchain-r-test
+  gcc-5: 
+    apt: 
+      packages: 
+        - g++-5
+        - g++-5-multilib
+  gcc-6: 
+    apt: 
+      packages: 
+        - g++-6
+        - g++-6-multilib
+      sources: 
+        - ubuntu-toolchain-r-test
+  gcc-7: 
+    apt: 
+      packages: 
+        - g++-7
+        - g++-7-multilib
+      sources: 
+        - ubuntu-toolchain-r-test
+  gcc-8: 
+    apt: 
+      packages: 
+        - g++-8
+        - g++-8-multilib
+      sources: 
+        - ubuntu-toolchain-r-test
+  gcc-9: 
+    apt: 
+      packages: 
+        - g++-9
+        - g++-9-multilib
+      sources: 
+        - ubuntu-toolchain-r-test
+before_install: true
+before_script: true
+dist: bionic
+env: 
+  global:
+    - "B2_ADDRESS_MODEL=address-model=64,32"
+    - "B2_THREADING=threading=multi,single"
+    - "B2_VARIANT=variant=release,debug"
+install: "source utility/ci/travis/install.sh"
+jobs: 
+  include: 
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-4.8
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+      dist: trusty
+      env: 
+        - B2_TOOLSET=gcc-4.8
+        - "B2_CXXSTD=cxxstd=03,11"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-4.9
-          sources:
+          sources: 
             - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03,11,14
-      addons:
-        apt:
-          packages:
+      dist: trusty
+      env: 
+        - B2_TOOLSET=gcc-4.9
+        - "B2_CXXSTD=cxxstd=03,11"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-3.8
+            - libstdc++-6-dev
+          sources: 
+            - llvm-toolchain-xenial-3.8
+            - ubuntu-toolchain-r-test
+      dist: trusty
+      env: 
+        - B2_TOOLSET=clang-3.8
+        - "B2_CXXSTD=cxxstd=03,11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-5
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+      env: 
+        - B2_TOOLSET=gcc-5
+        - B2_CXXSTD=cxxstd=11
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-6
-          sources:
+          sources: 
             - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=14,1z
-      addons:
-        apt:
-          packages:
-            - g++-6
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      dist: trusty
-      compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+      env: 
+        - B2_TOOLSET=gcc-6
+        - "B2_CXXSTD=cxxstd=11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-7
-          sources:
+          sources: 
             - ubuntu-toolchain-r-test
-
-    - os: linux
-      dist: trusty
-      compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=14,17
-      addons:
-        apt:
-          packages:
-            - g++-7
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      dist: trusty
-      compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+      env: 
+        - B2_TOOLSET=gcc-7
+        - "B2_CXXSTD=cxxstd=11,14,17"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - g++-8
-          sources:
+          sources: 
             - ubuntu-toolchain-r-test
-
-    - os: linux
-      dist: trusty
-      compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=14,17
-      addons:
-        apt:
-          packages:
-            - g++-8
-          sources:
-            - ubuntu-toolchain-r-test
-
-    - os: linux
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11
-
-    - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
-            - clang-3.5
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.5
-
-    - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
-            - clang-3.6
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.6
-
-    - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
-            - clang-3.7
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-    
-    # Fails to compile std lib headers (toolset issue):
-    #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11,14,1z
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - clang-3.8
-    #      sources:
-    #        - ubuntu-toolchain-r-test
-    #        - llvm-toolchain-precise-3.8
-    #
-    #- os: linux
-    #  env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11,14,1z
-    #  addons:
-    #    apt:
-    #      packages:
-    #        - clang-3.9
-    #      sources:
-    #        - ubuntu-toolchain-r-test
-    #        - llvm-toolchain-precise-3.9
-
-    - os: linux
-      compiler: clang++-4.0
-      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,1z
-      addons:
-        apt:
+      env: 
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
           packages:
             - clang-4.0
-          sources:
+            - libstdc++-6-dev
+          sources: 
+            - llvm-toolchain-xenial-4.0
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-4.0
-
-    - os: linux
-      compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11
-      addons:
-        apt:
-          packages:
+      env: 
+        - B2_TOOLSET=clang-4.0
+        - "B2_CXXSTD=cxxstd=11,14"
+        - "COPTS=cxxflags=-Wall -Wextra -Wpedantic -Wredundant-decls -Wcast-align -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Werror -Winvalid-pch -Wredundant-decls -Wformat=2 -Wmissing-format-attribute -Wformat-nonliteral -fstack-protector-all -fstack-check-lubsan -Wno-unused-parameter -Wno-missing-declarations -Wno-sign-compare -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -Wodr -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
             - clang-5.0
-          sources:
+            - libstdc++-7-dev
+          sources: 
+            - llvm-toolchain-xenial-5.0
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
-
-    - os: linux
-      compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=14,1z
-      addons:
-        apt:
+      env: 
+        - B2_TOOLSET=clang-5.0
+        - "B2_CXXSTD=cxxstd=11,14,17"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-6.0
+            - libc6-dbg
+            - libc++-dev
+            - libstdc++-8-dev
+          sources: 
+            - llvm-toolchain-xenial-6.0
+            - ubuntu-toolchain-r-test
+      env: 
+        - B2_TOOLSET=clang-6.0
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-7
+            - libc6-dbg
+            - libc++-dev
+            - libstdc++-8-dev
+          sources: 
+            - llvm-toolchain-xenial-7
+            - ubuntu-toolchain-r-test
+      env: 
+        - B2_TOOLSET=clang-7
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-8
+            - libc6-dbg
+            - libc++-dev
+            - libstdc++-8-dev
+          sources: 
+            - llvm-toolchain-xenial-8
+            - ubuntu-toolchain-r-test
+      env: 
+        - B2_TOOLSET=clang-8
+        - "B2_CXXSTD=cxxstd=14,17,2a"
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-6.0
+            - libc6-dbg
+            - libc++-dev
+            - libstdc++-8-dev
+          sources: 
+            - llvm-toolchain-xenial-6.0
+            - ubuntu-toolchain-r-test
+      env: 
+        - B2_TOOLSET=clang-6.0
+        - "B2_CXXSTD=cxxstd=03,11,14,17,2a"
+        - B2_CXXFLAGS=-stdlib=libc++
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Unit Tests"
+      os: linux
+      stage: test
+    - 
+      env: 
+        - B2_TOOLSET=clang
+        - "B2_CXXSTD=cxxstd=03,11,17"
+      name: "Unit Tests"
+      os: osx
+      stage: test
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - clang-format-8
+          sources: 
+            - llvm-toolchain-xenial-8
+            - ubuntu-toolchain-r-test
+      after_script: true
+      before_install: 
+        - "utility/ci/travis/format-check.sh || exit 1"
+      before_script: true
+      dist: bionic
+      install: true
+      name: clang-format
+      os: linux
+      script: true
+      stage: Static_QC
+    - 
+      addons: 
+        apt: 
           packages:
-            - clang-5.0
+            - cppcheck
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-trusty-5.0
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
-      osx_image: xcode7.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
-      osx_image: xcode7.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
-      osx_image: xcode7.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
-      osx_image: xcode8.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
-      osx_image: xcode8.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
-      osx_image: xcode8.3
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
-      osx_image: xcode9.4.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
-      osx_image: xcode9.4.1
-
-    - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=14,1z
-      osx_image: xcode9.4.1
-
-
-install:
-  - BOOST_BRANCH=develop && [ "$TRAVIS_BRANCH" == "master" ] && BOOST_BRANCH=master || true
-  - cd ..
-  - git clone -b $BOOST_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
-  - cd boost-root
-  - git submodule update --init tools/boost_install
-  - git submodule update --init libs/headers
-  - git submodule update --init tools/build
-  - git submodule update --init libs/config
-  - git submodule update --init tools/boostdep
-  - cp -r $TRAVIS_BUILD_DIR/* libs/graph
-  - python tools/boostdep/depinst/depinst.py graph
-  - ./bootstrap.sh
-  - ./b2 headers
-
-
-script:
-  - |-
-    echo "using $TOOLSET : : $COMPILER ;" > ~/user-config.jam
-  - IFS=','
-  - for CXXLOCAL in $CXXSTD; do  (cd libs/config/test && ../../../b2 config_info_travis_install toolset=$TOOLSET cxxstd=$CXXLOCAL && ./config_info_travis && rm ./config_info_travis)  done
-  - unset IFS
-  - ./b2 -j3 libs/graph/test toolset=$TOOLSET cxxstd=$CXXSTD
-
-notifications:
-  email:
-    on_success: always
+      after_script: true
+      before_install: 
+        - "utility/ci/travis/cppcheck.sh || exit 1"
+      before_script: true
+      dist: bionic
+      install: true
+      name: cppcheck
+      os: linux
+      script: true
+      stage: Static_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=03,11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+      name: codecov.io
+      os: linux
+      script: 
+        - "pushd /tmp && git clone https://github.com/linux-test-project/lcov.git && export PATH=/tmp/lcov/bin:$PATH && which lcov && lcov --version && popd"
+        - utility/ci/codecov/coverage.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86 C++03 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86 C++11 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86 C++14 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86 C++17 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86 C++2a Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC  
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++03 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++11 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++14 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++17 Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=ubsan
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - "COPTS=cxxflags=-fno-omit-frame-pointer -fsanitize=undefined -fno-sanitize-recover=all"
+        - "LOPTS=linkflags=-fsanitize=undefined -fno-sanitize-recover=all -fuse-ld=gold"
+        - UBSAN_OPTIONS='print_stacktrace=1'
+      name: "x86_64 C++2a Undefined behavior sanitizer"
+      os: linux
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+            - valgrind
+            - libc6-dbg:i386
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86 C++03 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+            - valgrind
+            - libc6-dbg:i386
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86 C++11 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+            - valgrind
+            - libc6-dbg:i386
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86 C++14 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+            - valgrind
+            - libc6-dbg:i386
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86 C++17 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - gcc-8-multilib
+            - g++-8-multilib
+            - gcc-multilib
+            - g++-multilib
+            - valgrind
+            - libc6-dbg:i386
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=32"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86 C++2a Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+            - libc6-dbg
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=03"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86_64 C++03 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+            - libc6-dbg
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=11"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86_64 C++11 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+            - libc6-dbg
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=14"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86_64 C++14 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+            - libc6-dbg
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=17"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1
+      name: "x86_64 C++17 Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      addons: 
+        apt: 
+          packages: 
+            - g++-8
+            - valgrind
+            - libc6-dbg
+          sources: 
+            - ubuntu-toolchain-r-test
+      dist: bionic
+      env: 
+        - COMMENT=valgrind
+        - "B2_ADDRESS_MODEL=address-model=64"
+        - B2_VARIANT=variant=debug
+        - B2_TOOLSET=gcc-8
+        - "B2_CXXSTD=cxxstd=2a"
+        - B2_DEFINES='define=BOOST_NO_STRESS_TEST=1'
+        - B2_TESTFLAGS=testing.launcher=valgrind
+        - "COPTS=cxxflags=-O2"
+        - VALGRIND_OPTS=--error-exitcode=1"
+      name: "x86_64 C++2a Valgrind"
+      os: linux
+      before_install: utility/ci/travis/valgrind.sh
+      stage: Dynamic_QC
+    - 
+      dist: bionic
+      env: 
+        - "COMMENT='Coverity Scan'"
+        - B2_TOOLSET=clang-6.0
+        - "COPTS=cxxflags=-Weverything -Werror -fstack-protector-all -fstack-check-lubsan -fPIC -fsanitize=address -fsanitize=pointer-compare -fsanitize=leak -fsanitize-coverage=trace-pc -fsanitize-coverage=trace-cmp -fcf-protection=full -fvtable-verify=std -lasan -llsan -fsanitize=undefined -fsanitize-address-use-after-scope -fvtv-debug"
+        - "LOPTS=linkflags=-lubsan -fPIC -llsan -lasan"
+      name: "Coverty"
+      os: linux
+      script: utility/ci/coverty/coverage.sh
+      stage: Dynamic_QC
+language: cpp
+notifications: 
+  email: false
+script: "source utility/ci/travis/build.sh"
+stages: 
+  - Static_QC
+  - Dynamic_QC
+  - test

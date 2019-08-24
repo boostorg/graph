@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek, Lie-Quan Lee, and Andrew Lumsdaine 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>BasicMatrix</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -78,11 +78,11 @@ Element access is constant time.
     void constraints() {
       V&amp; elt = A[i][j];
       const_constraints(A);
-      ignore_unused_variable_warning(elt);      
+      ignore_unused_variable_warning(elt);
     }
     void const_constraints(const M&amp; A) {
       const V&amp; elt = A[i][j];
-      ignore_unused_variable_warning(elt);      
+      ignore_unused_variable_warning(elt);
     }
     M A;
     I i, j;
@@ -100,4 +100,4 @@ HREF="mailto:jsiek@osl.iu.edu">jsiek@osl.iu.edu</A>)
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>

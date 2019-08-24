@@ -1,17 +1,17 @@
 <HTML>
 <!--
      Copyright (c) Jeremy Siek 2000
-    
+
      Distributed under the Boost Software License, Version 1.0.
      (See accompanying file LICENSE_1_0.txt or copy at
      http://www.boost.org/LICENSE_1_0.txt)
   -->
 <Head>
 <Title>Sparse Matrix Ordering Example</Title>
-<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b" 
-        ALINK="#ff0000"> 
-<IMG SRC="../../../boost.png" 
-     ALT="C++ Boost" width="277" height="86"> 
+<BODY BGCOLOR="#ffffff" LINK="#0000ee" TEXT="#000000" VLINK="#551a8b"
+        ALINK="#ff0000">
+<IMG SRC="../../../boost.png"
+     ALT="C++ Boost" width="277" height="86">
 
 <BR Clear>
 
@@ -134,24 +134,24 @@ HREF="#fig:ggcl_find_starting_vertex">Figure
 <pre>
 namespace boost {
   template &lt;class Graph, class Vertex, class Color, class Degree&gt;
-  Vertex 
+  Vertex
   pseudo_peripheral_pair(Graph& G, const Vertex& u, int& ecc,
                          Color color, Degree degree)
   {
     typename property_traits&lt;Color&gt;::value_type c = get(color, u);
 
     rcm_queue&lt;Vertex, Degree&gt; Q(degree);
-    
+
     typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       put(color, *ui, white(c));
     breadth_first_search(G, u, Q, bfs_visitor&lt;&gt;(), color);
 
-    ecc = Q.eccentricity(); 
+    ecc = Q.eccentricity();
     return Q.spouse();
   }
-  
-  template &lt;class Graph, class Vertex, class Color, class Degree&gt; 
+
+  template &lt;class Graph, class Vertex, class Color, class Degree&gt;
   Vertex find_starting_node(Graph& G, Vertex r, Color c, Degree d) {
     int eccen_r, eccen_x;
     Vertex x = pseudo_peripheral_pair(G, r, eccen_r, c, d);
@@ -196,12 +196,12 @@ from BGL can be reused.
 <DIV ALIGN="CENTER"><A NAME="fig:cuthill-mckee"></A><A NAME="6261"></A>
 <table border><tr><td>
 <pre>
-  template &lt; class Graph, class Vertex, class OutputIterator, 
+  template &lt; class Graph, class Vertex, class OutputIterator,
              class Color, class Degree &gt;
-  inline void 
-  cuthill_mckee_ordering(Graph& G, 
+  inline void
+  cuthill_mckee_ordering(Graph& G,
                          Vertex s,
-                         OutputIterator inverse_permutation, 
+                         OutputIterator inverse_permutation,
                          Color color, Degree degree)
   {
     typedef typename property_traits&lt;Degree&gt;::value_type DS;
@@ -212,12 +212,12 @@ from BGL can be reused.
 
     typedef cuthill_mckee_visitor&lt;OutputIterator&gt;  CMVisitor;
     CMVisitor cm_visitor(inverse_permutation);
-    
+
     typename boost::graph_traits&lt;Graph&gt;::vertex_iterator ui, ui_end;
     for (boost::tie(ui, ui_end) = vertices(G); ui != ui_end; ++ui)
       put(color, *ui, white(c));
     breadth_first_search(G, s, Q, cm_visitor, color);
-  }  
+  }
 </pre>
 </td></tr></table>
 <CAPTION ALIGN="BOTTOM">
@@ -246,18 +246,18 @@ algorithms is as follows:
 <OL>
 <LI><EM>Start:</EM> Construct undirected graph <i>G<sup>0</sup></i>
  corresponding to matrix <i>A</i>
- 
+
 </LI>
-<LI><EM>Iterate:</EM> For <i>k = 1, 2, ... </i> until 
+<LI><EM>Iterate:</EM> For <i>k = 1, 2, ... </i> until
   <i>G<sup>k</sup> = { }</i> do:
-    
+
 <UL>
 <LI>Choose a vertex <i>v<sup>k</sup></i> from <i>G<sup>k</sup></i>
       according to some criterion
 </LI>
-<LI>Eliminate <i>v<sup>k</sup></i> from <i>G<sup>k</sup></i> to form 
+<LI>Eliminate <i>v<sup>k</sup></i> from <i>G<sup>k</sup></i> to form
   <i>G<sup>k+1</sup></i>
- 
+
 </LI>
 </UL>
 </LI>
@@ -374,4 +374,4 @@ which is to extend partial PSAW in case by case and function
 </TD></TR></TABLE>
 
 </BODY>
-</HTML> 
+</HTML>
