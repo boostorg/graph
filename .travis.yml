@@ -902,7 +902,7 @@ jobs:
       script: utility/ci/coverty/coverage.sh
       stage: Dynamic_QC
 language: cpp
-cache ccache
+cache: ccache
 notifications: 
   email: false
 script: "source utility/ci/travis/build.sh"
