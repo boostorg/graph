@@ -735,12 +735,12 @@ namespace detail
     BOOST_PP_ENUM_PARAMS(nfixed, typename Param)                               \
     BOOST_PP_EXPR_IF(nfixed, >)                                                \
     BOOST_PP_EXPR_IF(nfixed, typename)                                         \
-        boost::result_of< ::boost::graph::detail::BOOST_PP_CAT(                \
-            name, _impl) BOOST_PP_EXPR_IF(nfixed,                              \
-            <) BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed,    \
-            >)(BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed)   \
-                const boost::parameter::aux::empty_arg_list&) >::type          \
-            name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, &param))     \
+    boost::result_of< ::boost::graph::detail::BOOST_PP_CAT(                    \
+        name, _impl) BOOST_PP_EXPR_IF(nfixed, <)                               \
+            BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_EXPR_IF(nfixed, >)(   \
+                BOOST_PP_ENUM_PARAMS(nfixed, Param) BOOST_PP_COMMA_IF(nfixed)  \
+                    const boost::parameter::aux::empty_arg_list&) >::type      \
+        name(BOOST_PP_ENUM_BINARY_PARAMS(nfixed, const Param, &param))         \
     {                                                                          \
         BOOST_GRAPH_DECLARE_CONVERTED_PARAMETERS(                              \
             boost::no_named_parameters, boost::no_named_parameters())          \
