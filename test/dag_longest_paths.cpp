@@ -7,14 +7,14 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dag_shortest_paths.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
 #include <iostream>
 using namespace std;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef adjacency_list< vecS, vecS, directedS, no_property,
         property< edge_weight_t, int > >
@@ -48,7 +48,7 @@ int test_main(int, char*[])
 
     cout << distance[2] << "\n";
 
-    BOOST_CHECK(distance[2] == 2);
+    BOOST_TEST(distance[2] == 2);
 
-    return 0;
+    return boost::report_errors();
 }

@@ -18,7 +18,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -116,7 +116,7 @@ template < typename Graph > void test_graph(const Graph& graph)
 
             } // foreach child_edge
 
-            BOOST_REQUIRE(edge_exists);
+            BOOST_TEST(edge_exists);
 
         } // foreach child_vertex
 
@@ -124,7 +124,7 @@ template < typename Graph > void test_graph(const Graph& graph)
 
 } // test_graph
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     std::size_t vertices_to_generate = 100, edges_to_generate = 50,
                 random_seed = time(0);
@@ -169,5 +169,5 @@ int test_main(int argc, char* argv[])
 
     test_graph(list_graph);
 
-    return 0;
+    return boost::report_errors();
 }

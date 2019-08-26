@@ -18,9 +18,9 @@ B: 2147483647 B
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/bellman_ford_shortest_paths.hpp>
 #include <boost/cstdlib.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     using namespace boost;
 
@@ -112,13 +112,13 @@ int test_main(int, char*[])
         std::cout << "negative cycle" << std::endl;
     }
 
-    BOOST_CHECK(r == r2);
+    BOOST_TEST(r == r2);
     if (r && r2)
     {
-        BOOST_CHECK(parent == parent2);
-        BOOST_CHECK(distance == distance2);
+        BOOST_TEST(parent == parent2);
+        BOOST_TEST(distance == distance2);
     }
 #endif
 
-    return boost::exit_success;
+    return boost::report_errors();
 }

@@ -12,7 +12,7 @@
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/property_map/vector_property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -85,17 +85,17 @@ void test_cycle(VertexIndexUpdater vertex_index_updater, int size)
         std::copy(out_edges(*vi, g).first, out_edges(*vi, g).second,
             std::back_inserter(embedding[*vi]));
 
-    BOOST_CHECK(boyer_myrvold_planarity_test(g));
+    BOOST_TEST(boyer_myrvold_planarity_test(g));
     make_maximal_planar(g, embedding);
     reset_edge_index(g);
 
     // A graph is maximal planar exactly when it's both
     // planar and has 3 * num_vertices(g) - 6 edges.
-    BOOST_CHECK(num_edges(g) == 3 * num_vertices(g) - 6);
-    BOOST_CHECK(boyer_myrvold_planarity_test(g));
+    BOOST_TEST(num_edges(g) == 3 * num_vertices(g) - 6);
+    BOOST_TEST(boyer_myrvold_planarity_test(g));
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef adjacency_list< vecS, vecS, undirectedS,
         property< vertex_index_t, int >, property< edge_index_t, int > >
@@ -132,5 +132,5 @@ int test_main(int, char*[])
     test_cycle< SSgraph_t >(UpdateVertexIndex(), 13);
     test_cycle< SSgraph_t >(UpdateVertexIndex(), 20);
 
-    return 0;
+    return boost::report_errors();
 }

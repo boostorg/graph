@@ -23,7 +23,7 @@
 #include <boost/graph/random.hpp>
 #include <boost/graph/mcgregor_common_subgraphs.hpp>
 #include <boost/property_map/shared_array_property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 bool was_common_subgraph_found = false, output_graphs = false;
 std::vector< std::string > simple_subgraph_list;
@@ -307,7 +307,7 @@ bool has_subgraph_string(std::string set_string)
         != simple_subgraph_list.end());
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     int vertices_to_create = 10;
     int max_edges_per_vertex = 2;
@@ -424,7 +424,7 @@ int test_main(int argc, char* argv[])
             .vertices_equivalent(
                 boost::make_property_map_equivalent(vname_map1, vname_map2)));
 
-    BOOST_CHECK(was_common_subgraph_found);
+    BOOST_TEST(was_common_subgraph_found);
 
     // Test maximum and unique variants on known graphs
     Graph graph_simple1, graph_simple2;
@@ -458,10 +458,10 @@ int test_main(int argc, char* argv[])
         boost::vertices_equivalent(boost::make_property_map_equivalent(
             vname_map_simple1, vname_map_simple2)));
 
-    BOOST_CHECK(has_subgraph_string("0,0 1,1 "));
-    BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
-    BOOST_CHECK(has_subgraph_string("0,0 2,2 "));
-    BOOST_CHECK(has_subgraph_string("1,1 2,2 "));
+    BOOST_TEST(has_subgraph_string("0,0 1,1 "));
+    BOOST_TEST(has_subgraph_string("0,0 1,1 2,2 "));
+    BOOST_TEST(has_subgraph_string("0,0 2,2 "));
+    BOOST_TEST(has_subgraph_string("1,1 2,2 "));
 
     if (output_graphs)
     {
@@ -480,7 +480,7 @@ int test_main(int argc, char* argv[])
         boost::vertices_equivalent(boost::make_property_map_equivalent(
             vname_map_simple1, vname_map_simple2)));
 
-    BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
+    BOOST_TEST(has_subgraph_string("0,0 1,1 2,2 "));
 
     if (output_graphs)
     {
@@ -499,8 +499,8 @@ int test_main(int argc, char* argv[])
         boost::vertices_equivalent(boost::make_property_map_equivalent(
             vname_map_simple1, vname_map_simple2)));
 
-    BOOST_CHECK(simple_subgraph_list.size() == 1);
-    BOOST_CHECK(has_subgraph_string("0,0 1,1 2,2 "));
+    BOOST_TEST(simple_subgraph_list.size() == 1);
+    BOOST_TEST(has_subgraph_string("0,0 1,1 2,2 "));
 
     if (output_graphs)
     {
@@ -510,5 +510,5 @@ int test_main(int argc, char* argv[])
         std::cout << std::endl;
     }
 
-    return 0;
+    return boost::report_errors();
 }

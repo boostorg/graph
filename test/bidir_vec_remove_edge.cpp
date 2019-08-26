@@ -9,14 +9,14 @@
 
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 struct edge_prop
 {
     int weight;
 };
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     {
         typedef boost::adjacency_list< boost::vecS, boost::vecS,
@@ -34,17 +34,17 @@ int test_main(int, char*[])
 
         edge e1 = boost::edge(0, 1, g).first;
         edge e2 = boost::edge(1, 0, g).first;
-        BOOST_CHECK(num_edges(g) == 2);
-        BOOST_CHECK(g[e1].weight == 42);
-        BOOST_CHECK(g[e2].weight == 17);
+        BOOST_TEST(num_edges(g) == 2);
+        BOOST_TEST(g[e1].weight == 42);
+        BOOST_TEST(g[e2].weight == 17);
         remove_edge(e1, g);
-        BOOST_CHECK(num_edges(g) == 1);
+        BOOST_TEST(num_edges(g) == 1);
 
         // e2 has been invalidated, so grab it again
         bool b2;
         boost::tie(e2, b2) = boost::edge(1, 0, g);
-        BOOST_CHECK(b2);
-        BOOST_CHECK(g[e2].weight == 17);
+        BOOST_TEST(b2);
+        BOOST_TEST(g[e2].weight == 17);
 
         /* Now remove the other edge. Here, the fact that
          * stored_ra_edge_iterator keeps an index but does not update it
@@ -54,5 +54,5 @@ int test_main(int, char*[])
          */
         remove_edge(e2, g);
     }
-    return boost::exit_success;
+    return boost::report_errors();
 }

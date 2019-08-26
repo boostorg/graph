@@ -35,7 +35,7 @@ typedef graph_traits< Subgraph >::edge_descriptor Edge;
 typedef graph_traits< Subgraph >::vertex_iterator VertexIter;
 typedef graph_traits< Subgraph >::edge_iterator EdgeIter;
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     mt19937 gen;
     for (int t = 0; t < 100; t += 5)
@@ -134,5 +134,5 @@ int test_main(int, char*[])
             }
         }
     }
-    return 0;
+    return boost::report_errors();
 }

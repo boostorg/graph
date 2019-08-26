@@ -13,7 +13,7 @@
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/transitive_closure.hpp>
-#include <boost/progress.hpp>
+#include <boost/timer/timer.hpp>
 
 using namespace std;
 using namespace boost;
@@ -138,7 +138,7 @@ bool test(int n, double p)
     vector< vector< int > > g1_c(g1);
 
     {
-        progress_timer t;
+        boost::timer::auto_cpu_timer t;
         cout << "transitive_closure" << endl;
         transitive_closure(
             g1, g1_tc, vertex_index_map(get(boost::vertex_index, g1)));

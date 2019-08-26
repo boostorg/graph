@@ -14,7 +14,7 @@
 
 #include <boost/graph/r_c_shortest_paths.hpp>
 #include <iostream>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -287,7 +287,7 @@ public:
     }
 };
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     SPPRC_Example_Graph g;
     add_vertex(SPPRC_Example_Graph_Vert_Prop(0, 0, 1000000000), g);
@@ -503,10 +503,10 @@ int test_main(int, char*[])
     i_vec_correct_solutions.push_back(68);
     i_vec_correct_solutions.push_back(91);
     i_vec_correct_solutions.push_back(0);
-    BOOST_CHECK(
+    BOOST_TEST(
         i_vec_opt_solutions_spp_no_rc.size() == i_vec_correct_solutions.size());
     for (int i = 0; i < static_cast< int >(i_vec_correct_solutions.size()); ++i)
-        BOOST_CHECK(
+        BOOST_TEST(
             i_vec_opt_solutions_spp_no_rc[i] == i_vec_correct_solutions[i]);
 
     // spptw
@@ -545,7 +545,7 @@ int test_main(int, char*[])
                     pareto_opt_rcs_spptw[0], actual_final_resource_levels,
                     ref_spptw(), b_is_a_path_at_all, b_feasible,
                     b_correctly_extended, ed_last_extended_arc);
-                BOOST_CHECK(
+                BOOST_TEST(
                     b_is_a_path_at_all && b_feasible && b_correctly_extended);
                 b_is_a_path_at_all = false;
                 b_feasible = false;
@@ -558,7 +558,7 @@ int test_main(int, char*[])
                     pareto_opt_rcs_spptw[0], actual_final_resource_levels2,
                     ref_spptw(), b_is_a_path_at_all, b_feasible,
                     b_correctly_extended, ed_last_extended_arc2);
-                BOOST_CHECK(
+                BOOST_TEST(
                     b_is_a_path_at_all && b_feasible && b_correctly_extended);
             }
         }
@@ -667,7 +667,7 @@ int test_main(int, char*[])
     i_vec_correct_num_solutions_spptw.push_back(1);
     for (int s = 0; s < 10; ++s)
         for (int t = 0; t < 10; ++t)
-            BOOST_CHECK(static_cast< int >(
+            BOOST_TEST(static_cast< int >(
                             vec_vec_vec_vec_opt_solutions_spptw[s][t].size())
                 == i_vec_correct_num_solutions_spptw[10 * s + t]);
 
@@ -691,7 +691,7 @@ int test_main(int, char*[])
             spp_spptw_res_cont > >(),
         default_r_c_shortest_paths_visitor());
 
-    BOOST_CHECK(pareto_opt_rc.cost == 3);
+    BOOST_TEST(pareto_opt_rc.cost == 3);
 
     SPPRC_Example_Graph g3;
     add_vertex(SPPRC_Example_Graph_Vert_Prop(0, 0, 1000), g3);
@@ -738,7 +738,7 @@ int test_main(int, char*[])
             spp_spptw_marked_res_cont > >(),
         default_r_c_shortest_paths_visitor());
 
-    BOOST_CHECK(!pareto_opt_marked_solutions.empty());
+    BOOST_TEST(!pareto_opt_marked_solutions.empty());
     std::vector< std::vector<
         graph_traits< SPPRC_Example_Graph >::edge_descriptor > >::const_iterator
         path_it,
@@ -750,11 +750,11 @@ int test_main(int, char*[])
         const std::vector<
             graph_traits< SPPRC_Example_Graph >::edge_descriptor >& path
             = *path_it;
-        BOOST_CHECK(!path.empty());
+        BOOST_TEST(!path.empty());
 
         const graph_traits< SPPRC_Example_Graph >::edge_descriptor front
             = path.front();
-        BOOST_CHECK(boost::target(front, g3) == g3_target);
+        BOOST_TEST(boost::target(front, g3) == g3_target);
 
         std::vector< graph_traits< SPPRC_Example_Graph >::edge_descriptor >::
             const_iterator edge_it,
@@ -771,15 +771,15 @@ int test_main(int, char*[])
                 current_end;
             prev_end = boost::source(prev_edge, g3);
             current_end = boost::target(edge, g3);
-            BOOST_CHECK(prev_end == current_end);
+            BOOST_TEST(prev_end == current_end);
 
             prev_edge = edge;
         }
 
         const graph_traits< SPPRC_Example_Graph >::edge_descriptor back
             = path.back();
-        BOOST_CHECK(boost::source(back, g3) == g3_source);
+        BOOST_TEST(boost::source(back, g3) == g3_source);
     }
 
-    return 0;
+    return boost::report_errors();
 }

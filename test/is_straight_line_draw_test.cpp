@@ -7,7 +7,7 @@
 //=======================================================================
 
 #include <boost/property_map/property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -23,7 +23,7 @@ struct coord_t
     std::size_t y;
 };
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     typedef adjacency_list< vecS, vecS, undirectedS,
         property< vertex_index_t, int > >
@@ -52,7 +52,7 @@ int test_main(int, char*[])
     drawing[3].x = 2;
     drawing[3].y = 1;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // two parallel horizontal lines
     drawing[0].x = 0;
@@ -60,7 +60,7 @@ int test_main(int, char*[])
     drawing[1].x = 2;
     drawing[1].y = 0;
 
-    BOOST_REQUIRE(is_straight_line_drawing(g, drawing));
+    BOOST_TEST(is_straight_line_drawing(g, drawing));
 
     // two parallel vertical lines
     drawing[0].x = 0;
@@ -72,7 +72,7 @@ int test_main(int, char*[])
     drawing[3].x = 1;
     drawing[3].y = 2;
 
-    BOOST_REQUIRE(is_straight_line_drawing(g, drawing));
+    BOOST_TEST(is_straight_line_drawing(g, drawing));
 
     // two lines that intersect at (1,1)
     drawing[0].x = 0;
@@ -84,7 +84,7 @@ int test_main(int, char*[])
     drawing[3].x = 2;
     drawing[3].y = 0;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // K_4 arranged in a diamond pattern, so that edges intersect
     g = graph_t(4);
@@ -107,7 +107,7 @@ int test_main(int, char*[])
     drawing[3].x = 0;
     drawing[3].y = 1;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // K_4 arranged so that no edges intersect
     drawing[0].x = 0;
@@ -119,7 +119,7 @@ int test_main(int, char*[])
     drawing[3].x = 2;
     drawing[3].y = 0;
 
-    BOOST_REQUIRE(is_straight_line_drawing(g, drawing));
+    BOOST_TEST(is_straight_line_drawing(g, drawing));
 
     // a slightly more complicated example - edges (0,1) and (4,5)
     // intersect
@@ -149,7 +149,7 @@ int test_main(int, char*[])
     drawing[7].x = 1;
     drawing[7].y = 1;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // form a graph consisting of a bunch of parallel vertical edges,
     // then place an edge at various positions to intersect edges
@@ -174,7 +174,7 @@ int test_main(int, char*[])
     drawing[21].x = 7;
     drawing[21].y = 5;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // make the final edge a diagonal intersecting multiple edges
     drawing[20].x = 2;
@@ -182,7 +182,7 @@ int test_main(int, char*[])
     drawing[21].x = 9;
     drawing[21].y = 7;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
     // reverse the slope
     drawing[20].x = 2;
@@ -190,7 +190,7 @@ int test_main(int, char*[])
     drawing[21].x = 9;
     drawing[21].y = 4;
 
-    BOOST_REQUIRE(!is_straight_line_drawing(g, drawing));
+    BOOST_TEST(!is_straight_line_drawing(g, drawing));
 
-    return 0;
+    return boost::report_errors();
 }

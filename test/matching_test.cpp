@@ -23,7 +23,7 @@
 #include <boost/graph/random.hpp>
 #include <ctime>
 #include <boost/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -153,7 +153,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
         maximum_cardinality_matching_verifier >(
         g, edmonds_mate, get(vertex_index, g));
 
-    BOOST_CHECK(edmonds_result);
+    BOOST_TEST(edmonds_result);
     if (!edmonds_result)
     {
         std::cout
@@ -169,7 +169,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
         maximum_cardinality_matching_verifier >(
         g, greedy_mate, get(vertex_index, g));
 
-    BOOST_CHECK(greedy_result);
+    BOOST_TEST(greedy_result);
     if (!greedy_result)
     {
         std::cout << "Verifier reporting a problem finding a greedy matching on"
@@ -184,7 +184,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
         maximum_cardinality_matching_verifier >(
         g, extra_greedy_mate, get(vertex_index, g));
 
-    BOOST_CHECK(extra_greedy_result);
+    BOOST_TEST(extra_greedy_result);
     if (!extra_greedy_result)
     {
         std::cout << "Verifier reporting a problem finding an extra greedy "
@@ -200,7 +200,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     bool edmonds_sanity_check = is_a_matching(g, edmonds_mate)
         && matching_size(g, edmonds_mate) == num_v;
 
-    BOOST_CHECK(edmonds_sanity_check);
+    BOOST_TEST(edmonds_sanity_check);
     if (edmonds_result && !edmonds_sanity_check)
     {
         std::cout
@@ -215,7 +215,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     bool greedy_sanity_check = is_a_matching(g, greedy_mate)
         && matching_size(g, greedy_mate) == num_v;
 
-    BOOST_CHECK(greedy_sanity_check);
+    BOOST_TEST(greedy_sanity_check);
     if (greedy_result && !greedy_sanity_check)
     {
         std::cout
@@ -230,7 +230,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     bool extra_greedy_sanity_check = is_a_matching(g, extra_greedy_mate)
         && matching_size(g, extra_greedy_mate) == num_v;
 
-    BOOST_CHECK(extra_greedy_sanity_check);
+    BOOST_TEST(extra_greedy_sanity_check);
     if (extra_greedy_result && !extra_greedy_sanity_check)
     {
         std::cout
@@ -259,7 +259,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
             vertex_index_map_t >::verify_matching(g, edmonds_mate,
             get(vertex_index, g));
 
-    BOOST_CHECK(!modified_edmonds_verification_result);
+    BOOST_TEST(!modified_edmonds_verification_result);
     if (modified_edmonds_verification_result)
     {
         std::cout << "Verifier was fooled into thinking that a non-maximum "
@@ -281,7 +281,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     bool gabows_graph_result
         = checked_edmonds_maximum_cardinality_matching(h, gabow_mate);
 
-    BOOST_CHECK(gabows_graph_result);
+    BOOST_TEST(gabows_graph_result);
     if (!gabows_graph_result)
     {
         std::cout
@@ -292,7 +292,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
         all_tests_passed = false;
     }
 
-    BOOST_CHECK(matching_size(h, gabow_mate) == num_v);
+    BOOST_TEST(matching_size(h, gabow_mate) == num_v);
     if (gabows_graph_result && matching_size(h, gabow_mate) != num_v)
     {
         std::cout
@@ -333,7 +333,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     bool random_graph_result
         = checked_edmonds_maximum_cardinality_matching(j, random_mate);
 
-    BOOST_CHECK(random_graph_result);
+    BOOST_TEST(random_graph_result);
     if (!random_graph_result)
     {
         std::cout << "Matching in random graph not maximum for " << graph_name
@@ -356,7 +356,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
             vertex_index_map_t >::verify_matching(j, random_mate,
             get(vertex_index, j));
 
-    BOOST_CHECK(!modified_random_verification_result);
+    BOOST_TEST(!modified_random_verification_result);
     if (modified_random_verification_result)
     {
         std::cout << "Verifier was fooled into thinking that a non-maximum "
@@ -365,7 +365,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
         all_tests_passed = false;
     }
 
-    BOOST_CHECK(all_tests_passed);
+    BOOST_TEST(all_tests_passed);
     if (all_tests_passed)
     {
         std::cout << graph_name << " passed all tests for n = " << num_v << '.'
@@ -373,7 +373,7 @@ void matching_test(std::size_t num_v, const std::string& graph_name)
     }
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
 
     matching_test< undirected_graph >(10, "adjacency_list (using vectors)");
@@ -398,5 +398,5 @@ int test_main(int, char*[])
   matching_test<undirected_adjacency_matrix_graph>(51, "adjacency_matrix");
 #endif
 
-    return 0;
+    return boost::report_errors();
 }

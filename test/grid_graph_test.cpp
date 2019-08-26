@@ -15,7 +15,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/grid_graph.hpp>
 #include <boost/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -73,9 +73,9 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     for (unsigned int dimension_index = 0; dimension_index < Dims;
          ++dimension_index)
     {
-        BOOST_REQUIRE(
+        BOOST_TEST(
             graph.length(dimension_index) == lengths[dimension_index]);
-        BOOST_REQUIRE(
+        BOOST_TEST(
             graph.wrapped(dimension_index) == wrapped[dimension_index]);
     }
 
@@ -83,7 +83,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     for (vertices_size_type vertex_index = 0;
          vertex_index < num_vertices(graph); ++vertex_index)
     {
-        BOOST_REQUIRE(
+        BOOST_TEST(
             get(boost::vertex_index, graph, vertex(vertex_index, graph))
             == vertex_index);
     }
@@ -93,7 +93,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
     {
 
         edge_descriptor current_edge = edge_at(edge_index, graph);
-        BOOST_REQUIRE(
+        BOOST_TEST(
             get(boost::edge_index, graph, current_edge) == edge_index);
     }
 
@@ -108,7 +108,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         for (unsigned int dimension_index = 0; dimension_index < Dims;
              ++dimension_index)
         {
-            BOOST_REQUIRE(
+            BOOST_TEST(
                 /*(current_vertex[dimension_index] >= 0) && */ // Always true
                 (current_vertex[dimension_index] < lengths[dimension_index]));
         }
@@ -127,7 +127,7 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
             ++out_edge_count;
         }
 
-        BOOST_REQUIRE(out_edge_count == out_degree(current_vertex, graph));
+        BOOST_TEST(out_edge_count == out_degree(current_vertex, graph));
 
         // Verify in-edges of this vertex
         edges_size_type in_edge_count = 0;
@@ -135,17 +135,17 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         BOOST_FOREACH (edge_descriptor in_edge, in_edges(current_vertex, graph))
         {
 
-            BOOST_REQUIRE(target_vertices.count(get(boost::vertex_index, graph,
+            BOOST_TEST(target_vertices.count(get(boost::vertex_index, graph,
                               source(in_edge, graph)))
                 > 0);
 
             ++in_edge_count;
         }
 
-        BOOST_REQUIRE(in_edge_count == in_degree(current_vertex, graph));
+        BOOST_TEST(in_edge_count == in_degree(current_vertex, graph));
 
         // The number of out-edges and in-edges should be the same
-        BOOST_REQUIRE(degree(current_vertex, graph)
+        BOOST_TEST(degree(current_vertex, graph)
             == out_degree(current_vertex, graph)
                 + in_degree(current_vertex, graph));
 
@@ -156,14 +156,14 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
             adjacent_vertices(current_vertex, graph))
         {
 
-            BOOST_REQUIRE(target_vertices.count(
+            BOOST_TEST(target_vertices.count(
                               get(boost::vertex_index, graph, adjacent_vertex))
                 > 0);
 
             ++adjacent_count;
         }
 
-        BOOST_REQUIRE(adjacent_count == out_degree(current_vertex, graph));
+        BOOST_TEST(adjacent_count == out_degree(current_vertex, graph));
 
         // Verify that this vertex is not listed as connected to any
         // vertices outside of its adjacent vertices.
@@ -179,16 +179,16 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
                 continue;
             }
 
-            BOOST_REQUIRE(
+            BOOST_TEST(
                 !edge(current_vertex, unconnected_vertex, graph).second);
-            BOOST_REQUIRE(
+            BOOST_TEST(
                 !edge(unconnected_vertex, current_vertex, graph).second);
         }
 
         ++vertex_count;
     }
 
-    BOOST_REQUIRE(vertex_count == num_vertices(graph));
+    BOOST_TEST(vertex_count == num_vertices(graph));
 
     // Verify all edges are within bounds
     edges_size_type edge_count = 0;
@@ -201,27 +201,27 @@ template < unsigned int Dims > void do_test(minstd_rand& generator)
         vertices_size_type target_index
             = get(boost::vertex_index, graph, target(current_edge, graph));
 
-        BOOST_REQUIRE(source_index != target_index);
-        BOOST_REQUIRE(/* (source_index >= 0) : always true && */ (
+        BOOST_TEST(source_index != target_index);
+        BOOST_TEST(/* (source_index >= 0) : always true && */ (
             source_index < num_vertices(graph)));
-        BOOST_REQUIRE(/* (target_index >= 0) : always true && */ (
+        BOOST_TEST(/* (target_index >= 0) : always true && */ (
             target_index < num_vertices(graph)));
 
         // Verify that the edge is listed as existing in both directions
-        BOOST_REQUIRE(edge(
+        BOOST_TEST(edge(
             source(current_edge, graph), target(current_edge, graph), graph)
                           .second);
-        BOOST_REQUIRE(edge(
+        BOOST_TEST(edge(
             target(current_edge, graph), source(current_edge, graph), graph)
                           .second);
 
         ++edge_count;
     }
 
-    BOOST_REQUIRE(edge_count == num_edges(graph));
+    BOOST_TEST(edge_count == num_edges(graph));
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 
     std::size_t random_seed = time(0);
@@ -239,5 +239,5 @@ int test_main(int argc, char* argv[])
     do_test< 3 >(generator);
     do_test< 4 >(generator);
 
-    return (0);
+    return boost::report_errors();
 }

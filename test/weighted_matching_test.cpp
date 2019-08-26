@@ -15,7 +15,7 @@
 #include <sstream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 using namespace boost;
 
@@ -77,7 +77,7 @@ void weighted_matching_test(const Graph& g,
     mate_t mate(num_vertices(g));
     maximum_weighted_matching(g, mate);
     bool same_result = (matching_weight_sum(g, mate) == answer);
-    BOOST_CHECK(same_result);
+    BOOST_TEST(same_result);
     if (!same_result)
     {
         mate_t max_mate(num_vertices(g));
@@ -136,7 +136,7 @@ Graph make_graph(typename graph_traits< Graph >::vertices_size_type num_v,
     return g;
 }
 
-int test_main(int, char*[])
+int main(int, char*[])
 {
     std::ifstream in_file("weighted_matching.dat");
     std::string line;
@@ -160,5 +160,5 @@ int test_main(int, char*[])
                                    num_v, num_e, input_edges),
             answer);
     }
-    return 0;
+    return boost::report_errors();
 }

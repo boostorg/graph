@@ -16,7 +16,7 @@
 #include <boost/assert.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random.hpp>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <boost/integer_traits.hpp>
 #include <boost/graph/adjacency_matrix.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -111,7 +111,8 @@ void testScalability(unsigned numpts)
     connectAllEuclidean(g, point_vec, weight_map, get(vertex_index, g), numpts);
 
     Container c;
-    timer t;
+    boost::timer::cpu_timer t;
+    t.start();
     double len = 0.0;
 
     // Run the TSP approx, creating the visitor on the fly.
@@ -121,7 +122,7 @@ void testScalability(unsigned numpts)
     cout << "Number of points: " << num_vertices(g) << endl;
     cout << "Number of edges: " << num_edges(g) << endl;
     cout << "Length of tour: " << len << endl;
-    cout << "Elapsed: " << t.elapsed() << endl;
+    cout << "Elapsed: " << boost::timer::format(t.elapsed()) << endl;
 }
 
 template < typename PositionVec > void checkAdjList(PositionVec v)

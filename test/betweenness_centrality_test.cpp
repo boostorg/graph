@@ -13,7 +13,7 @@
 #include <stack>
 #include <queue>
 #include <boost/property_map/property_map.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
@@ -70,7 +70,7 @@ void run_weighted_test(Graph*, int V, weighted_edge edge_init[], int E,
 
     for (int v = 0; v < V; ++v)
     {
-        BOOST_CHECK(centrality[v] == correct_centrality[v]);
+        BOOST_TEST(centrality[v] == correct_centrality[v]);
     }
 }
 
@@ -137,20 +137,20 @@ void run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
 
     for (int v = 0; v < V; ++v)
     {
-        BOOST_CHECK(centrality[v] == centrality2[v]);
+        BOOST_TEST(centrality[v] == centrality2[v]);
 
         double relative_error = correct_centrality[v] == 0.0
             ? centrality[v]
             : (centrality[v] - correct_centrality[v]) / correct_centrality[v];
         if (relative_error < 0)
             relative_error = -relative_error;
-        BOOST_CHECK(relative_error < error_tolerance);
+        BOOST_TEST(relative_error < error_tolerance);
     }
 
     for (int e = 0; e < E; ++e)
     {
-        BOOST_CHECK(edge_centrality1[e] == edge_centrality2[e]);
-        BOOST_CHECK(edge_centrality1[e] == edge_centrality3[e]);
+        BOOST_TEST(edge_centrality1[e] == edge_centrality2[e]);
+        BOOST_TEST(edge_centrality1[e] == edge_centrality3[e]);
 
         if (correct_edge_centrality)
         {
@@ -160,7 +160,7 @@ void run_unweighted_test(Graph*, int V, unweighted_edge edge_init[], int E,
                     / correct_edge_centrality[e];
             if (relative_error < 0)
                 relative_error = -relative_error;
-            BOOST_CHECK(relative_error < error_tolerance);
+            BOOST_TEST(relative_error < error_tolerance);
 
             if (relative_error >= error_tolerance)
             {
@@ -220,15 +220,15 @@ template < typename Graph > void run_wheel_test(Graph*, int V)
 
     for (int v = 0; v < V; ++v)
     {
-        BOOST_CHECK(centrality[v] == centrality2[v]);
-        BOOST_CHECK(
+        BOOST_TEST(centrality[v] == centrality2[v]);
+        BOOST_TEST(
             (v == 0 && centrality[v] == 1) || (v != 0 && centrality[v] == 0));
     }
 
     double dominance = central_point_dominance(g,
         make_iterator_property_map(
             centrality2.begin(), get(vertex_index, g), double()));
-    BOOST_CHECK(dominance == 1.0);
+    BOOST_TEST(dominance == 1.0);
 }
 
 template < typename MutableGraph >
@@ -430,7 +430,7 @@ template < typename Graph > void random_unweighted_test(Graph*, int n)
                 : (centrality2[v] - centrality[v]) / centrality[v];
             if (relative_error < 0)
                 relative_error = -relative_error;
-            BOOST_CHECK(relative_error < error_tolerance);
+            BOOST_TEST(relative_error < error_tolerance);
         }
     }
 
@@ -456,12 +456,12 @@ template < typename Graph > void random_unweighted_test(Graph*, int n)
                 : (centrality3[v] - centrality[v]) / centrality[v];
             if (relative_error < 0)
                 relative_error = -relative_error;
-            BOOST_CHECK(relative_error < error_tolerance);
+            BOOST_TEST(relative_error < error_tolerance);
         }
     }
 }
 
-int test_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     int random_test_num_vertices = 300;
     if (argc >= 2)
@@ -509,5 +509,5 @@ int test_main(int argc, char* argv[])
 
     random_unweighted_test((Graph*)0, random_test_num_vertices);
 
-    return 0;
+    return boost::report_errors();
 }

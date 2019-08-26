@@ -8,7 +8,7 @@
 //           Andrew Lumsdaine
 
 #include <boost/random.hpp>
-#include <boost/test/minimal.hpp>
+#include <boost/core/lightweight_test.hpp>
 
 #include <boost/graph/rmat_graph_generator.hpp>
 #include <boost/graph/small_world_generator.hpp>
@@ -20,7 +20,7 @@
 
 using namespace boost;
 
-int test_main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 
     typedef rand48 RandomGenerator;
@@ -41,7 +41,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     {
@@ -51,7 +51,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     // Test Small World generator
@@ -62,7 +62,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     // Test SSCA generator
@@ -73,7 +73,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     // Test Mesh generator
@@ -84,7 +84,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     // Test R-MAT generator
@@ -97,7 +97,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     {
@@ -108,7 +108,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     {
@@ -119,7 +119,7 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
     {
@@ -130,8 +130,8 @@ int test_main(int argc, char** argv)
         while (start != end)
             ++start;
 
-        BOOST_CHECK(start == end);
+        BOOST_TEST(start == end);
     }
 
-    return 0;
+    return boost::report_errors();
 }

@@ -16,7 +16,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <vector>
 #include <iostream>
 
@@ -56,13 +56,14 @@ void run_test(const Graph& g, const char* name, Kind kind,
 
     std::cout << "Running Dijkstra's with " << name << "...";
     std::cout.flush();
-    timer t;
+    boost::timer::cpu_timer t;
+    t.start();
     dijkstra_heap_kind = kind;
 
     dijkstra_shortest_paths(g, vertex(0, g),
         distance_map(&distances[0]).visitor(show_events_visitor()));
-    double run_time = t.elapsed();
-    std::cout << run_time << " seconds.\n";
+    double run_time = t.stop();
+    std::cout << t.format() << " seconds.\n";
 
     BOOST_TEST(distances == correct_distances);
 
@@ -108,24 +109,26 @@ int main(int argc, char* argv[])
     // Run binary or d-ary heap version
     std::cout << "Running Dijkstra's with binary heap...";
     std::cout.flush();
-    timer t;
+    boost::timer::cpu_timer t;
+    t.start();
 
     dijkstra_shortest_paths(g, vertex(0, g),
         distance_map(boost::make_iterator_property_map(
             binary_heap_distances.begin(), get(boost::vertex_index, g))));
-    double binary_heap_time = t.elapsed();
-    std::cout << binary_heap_time << " seconds.\n";
+    t.stop();
+    boost::timer::cpu_times binary_heap_time = t.elapsed();
+    std::cout << boost::timer::format(binary_heap_time) << " seconds.\n";
 
     std::cout << "Running Dijkstra's with d-ary heap (d=4)...";
     std::cout.flush();
-    t.restart();
+    t.start();
 
     dijkstra_shortest_paths(g, vertex(0, g),
         distance_map(boost::make_iterator_property_map(
             relaxed_heap_distances.begin(), get(boost::vertex_index, g))));
-    double relaxed_heap_time = t.elapsed();
-    std::cout << relaxed_heap_time << " seconds.\n"
-              << "Speedup = " << (binary_heap_time / relaxed_heap_time)
+    boost::timer::cpu_times relaxed_heap_time = t.elapsed();
+    std::cout << boost::timer::format(relaxed_heap_time) << " seconds.\n"
+              << "Speedup = " << (binary_heap_time.user / relaxed_heap_time.user)
               << ".\n";
 
     // Verify that the results are equivalent
@@ -135,8 +138,8 @@ int main(int argc, char* argv[])
 
     std::cout << "Running Dijkstra's (no color map) with d-ary heap (d=4)...";
     std::cout.flush();
-    t.restart();
 
+    t.start();
     dijkstra_shortest_paths_no_color_map(g, vertex(0, g),
         boost::dummy_property_map(),
         boost::make_iterator_property_map(
@@ -145,9 +148,9 @@ int main(int argc, char* argv[])
         std::less< double >(), boost::closed_plus< double >(),
         (std::numeric_limits< double >::max)(), 0,
         make_dijkstra_visitor(null_visitor()));
-    double no_color_map_time = t.elapsed();
-    std::cout << no_color_map_time << " seconds.\n"
-              << "Speedup = " << (binary_heap_time / no_color_map_time)
+    boost::timer::cpu_times no_color_map_time = t.elapsed();
+    std::cout << boost::timer::format(no_color_map_time) << " seconds.\n"
+              << "Speedup = " << (binary_heap_time.user / no_color_map_time.user)
               << ".\n";
 
     // Verify that the results are equivalent
